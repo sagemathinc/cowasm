@@ -1,0 +1,22 @@
+{
+  "name": "@cocalcjs/mpir",
+  "version": "1.0.0",
+  "description": "MPIR",
+  "main": "index.js",
+  "files": ["dist.wasm/*", "index.js", "README.md", "src/*", "package.json"],
+  "scripts": {
+    "build": "./src/build.sh",
+    "clean": "rm -rf build dist.*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cocalcjs.git"
+  },
+  "keywords": ["number", "theory"],
+  "author": "William Stein",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cocalcjs/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/cocalcjs/tree/main/src/packages/mpir"
+}

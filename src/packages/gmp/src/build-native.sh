@@ -10,7 +10,7 @@ rm gmp-$GMP_VERSION.tar.bz2
 
 cd gmp-$GMP_VERSION
 
-CC=cc ./configure  --disable-assembly --prefix="$PREFIX" CFLAGS="-O3"
+CC=cc ./configure --prefix="$PREFIX" CFLAGS="-O3"
 
 make -j 8
 make install
