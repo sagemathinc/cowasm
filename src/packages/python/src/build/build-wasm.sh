@@ -1,20 +1,29 @@
 #!/usr/bin/env bash
 set -ev
-# We build both *native* Python and the WASM version.  Having the native vesion
-# is required for cross compilation.
 
-cd $BUILD/Python-$PYTHON_VERSION.wasm
+export SRC="$INIT_CWD"/src
 
-# Apply all the patches to the code to make it WASM friendly.
-# These patches initially come from pyodide.  They add a WASM cross compilation target
-# to the config scripts (shouldn't that get upstreamed to Python?).
-cat $SRC/build/python-patches/*.patch | patch -p1
 
-cp  $SRC/build/pthread-stub.c .
+if [ -f .patched ]; then
+    echo "Already patched"
+else
+    echo "Patching..."
+    # Apply all the patches to the code to make it WASM friendly.
+    # These patches initially come from pyodide.  They add a WASM cross compilation target
+    # to the config scripts (shouldn't that get upstreamed to Python?).
+    cat $SRC/build/python-patches/*.patch | patch -p1
 
-# Also copy the config.site, which answers some questions needed for
-# cross compiling, without which ./configure won't work.
-cp $SRC/build/config.site .
+    # TEMPORARY HACK
+    echo ""> Python/pyfpe.c
+
+    cp  $SRC/build/pthread-stub.c .
+
+    # Also copy the config.site, which answers some questions needed for
+    # cross compiling, without which ./configure won't work.
+    cp $SRC/build/config.site .
+
+    touch .patched
+fi
 
 # Do the cross-compile ./configure.  Here's an explanation of each
 # of the options we use:
@@ -28,21 +37,29 @@ cp $SRC/build/config.site .
 #     --host=wasm32-unknown-emscripten: target we are cross compiling for; matches paches above.
 #     --build=`./config.guess`: the host machine for cross compiling is easily computed via
 #       this config.guess autoconf script.
-mkdir -p "$PREFIX"
 
-CONFIG_SITE=./config.site READELF=true CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_MMAN" AR="zig ar" CXX="zig c++ -target wasm32-wasi  -D_WASI_EMULATED_MMAN" LDFLAGS="-lwasi-emulated-mman" ./configure \
-    --prefix=$PREFIX \
-    --enable-big-digits=30 \
-    --enable-optimizations \
-    --disable-shared \
-    --disable-ipv6 \
-    --with-ensurepip=no \
-    --host=wasm32-unknown-emscripten \
-    --build=`./config.guess`
+export CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -DGRND_NONBLOCK"
+export CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -DGRND_NONBLOCK"
+export AR="zig ar"
+export LDFLAGS="-lwasi-emulated-mman -lwasi-emulated-signal"
 
-make CC="zig cc -target wasm32-wasi  -D_WASI_EMULATED_MMAN" AR="zig ar" CXX="zig c++  -target wasm32-wasi  -D_WASI_EMULATED_MMAN"  LDFLAGS="-lwasi-emulated-mman" install
+if [ -f Makefile ]; then
+    echo "Already ran configure".
+else
+    CONFIG_SITE=./config.site READELF=true ./configure \
+        --prefix=$PREFIX \
+        --enable-big-digits=30 \
+        --enable-optimizations \
+        --disable-shared \
+        --disable-ipv6 \
+        --with-ensurepip=no \
+        --host=wasm32-unknown-emscripten \
+        --build=`./config.guess`
+fi
 
-zig cc -target wasm32-wasi Programs/python.o pthread-stub.c libpython3.9.a -ldl -lm -lc -o python.wasm
+make install
+
+# "$CC" Programs/python.o pthread-stub.c libpython3.9.a -ldl -lm -lc -o python.wasm
 
 # Rebuild python interpreter with the entire Python library as a filesystem:
 ## TODO -- see sagejs.
