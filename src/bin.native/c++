@@ -1,1 +1,4 @@
-exec zig c++   "$@"
+
+# Explicit choice of target is because of https://github.com/ziglang/zig/issues/5882
+
+exec zig c++ -target native-native-gnu.2.28  "$@"

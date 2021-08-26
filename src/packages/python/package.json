@@ -1,0 +1,21 @@
+{
+  "name": "@sagemath/python",
+  "version": "1.0.3",
+  "description": "Python is a programming language that lets you work quickly and integrate systems more effectively.",
+  "files": ["dist/*", "README.md", "src/*", "*.sh", "package.json"],
+  "scripts": {
+    "build": "./src/build/build.sh",
+    "clean": "rm -rf build dist.*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/sagejs.git"
+  },
+  "keywords": ["python", "wasm", "emscripten"],
+  "author": "William Stein",
+  "license": "PSF",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/sagejs/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/sagejs/tree/main/src/packages/python"
+}

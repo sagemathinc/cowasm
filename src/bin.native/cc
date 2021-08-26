@@ -1,1 +1,9 @@
-exec zig cc   "$@"
+
+# Explicit choice of target is because of https://github.com/ziglang/zig/issues/5882
+# native-native-musl
+# native-native-gnu.2.28
+
+#echo "WRAPPING cc" "$@" >> cc.log
+#exec zig cc -target native-native-gnu.2.28 "$@"
+
+exec zig cc "$@"
