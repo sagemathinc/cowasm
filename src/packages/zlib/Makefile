@@ -20,7 +20,7 @@ ${BUILD}/zlib-${ZLIB_VERSION}.native: ${BUILD}/zlib-${ZLIB_VERSION}.tar.xz
 	cd ${BUILD} && mv zlib-${ZLIB_VERSION} zlib-${ZLIB_VERSION}.native
 
 ${PREFIX_NATIVE}/.built: ${BUILD}/zlib-${ZLIB_VERSION}.native
-	cd ${BUILD}/zlib-${ZLIB_VERSION}.native && INIT_CWD=${INIT_CWD} PREFIX=${INIT_CWD}/${PREFIX_NATIVE} ${INIT_CWD}/src/build/build-native.sh
+	cd ${BUILD}/zlib-${ZLIB_VERSION}.native && INIT_CWD=${INIT_CWD} PREFIX=${INIT_CWD}/${PREFIX_NATIVE} ${INIT_CWD}/src/build-native.sh
 	touch ${PREFIX_NATIVE}/.built
 
 native: ${PREFIX_NATIVE}/.built
@@ -34,7 +34,7 @@ ${BUILD}/zlib-${ZLIB_VERSION}.wasm: ${BUILD}/zlib-${ZLIB_VERSION}.tar.xz
 	cd ${BUILD} && mv zlib-${ZLIB_VERSION} zlib-${ZLIB_VERSION}.wasm
 
 ${PREFIX_WASM}/.built: ${BUILD}/zlib-${ZLIB_VERSION}.wasm
-	cd ${BUILD}/zlib-${ZLIB_VERSION}.wasm && INIT_CWD=${INIT_CWD} PREFIX=${INIT_CWD}/${PREFIX_WASM} ${INIT_CWD}/src/build/build-wasm.sh
+	cd ${BUILD}/zlib-${ZLIB_VERSION}.wasm && INIT_CWD=${INIT_CWD} PREFIX=${INIT_CWD}/${PREFIX_WASM} ${INIT_CWD}/src/build-wasm.sh
 	touch ${PREFIX_WASM}/.built
 
 wasm: ${PREFIX_WASM}/.built
