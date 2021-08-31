@@ -41,7 +41,8 @@ fi
 export CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -DGRND_NONBLOCK"
 export CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -DGRND_NONBLOCK"
 export AR="zig ar"
-export LDFLAGS="-lwasi-emulated-mman -lwasi-emulated-signal"
+export LDFLAGS="-lwasi-emulated-mman -lwasi-emulated-signal -L`pwd`/../../../zlib/dist.wasm/lib"
+export CFLAGS="-I`pwd`/../../../zlib/dist.wasm/include"
 
 if [ -f Makefile ]; then
     echo "Already ran configure".

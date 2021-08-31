@@ -9,7 +9,9 @@ else
     touch .patched
 fi
 
-export LD_LIBRARY_PATH=`pwd`/../../../openssl/dist.native/lib
+export LD_LIBRARY_PATH=`pwd`/../../../openssl/dist.native/lib:`pwd`/../../../zlib/dist.native/lib
+export CFLAGS="-I`pwd`/../../../zlib/dist.native/include"
+export LDFLAGS="-L`pwd`/../../../zlib/dist.native/lib"
 
 export AR="zig ar"
 
