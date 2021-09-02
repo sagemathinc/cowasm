@@ -91,4 +91,99 @@ int setreuid(uid_t ruid, uid_t euid);
 int setregid(gid_t rgid, gid_t egid);
 int setgid(gid_t gid);
 
+typedef struct {
+  pid_t si_pid;
+  uid_t si_uid;
+  int si_signo;
+  int si_status;
+  int si_code;
+  int si_errno;
+} siginfo_t;
+typedef int idtype_t;
+int waitid(idtype_t idtype, id_t id, siginfo_t* infop, int options);
+pid_t wait(int* status);
+pid_t waitpid(pid_t pid, int* status, int options);
+
+pid_t getsid(pid_t pid);
+pid_t setsid(void);
+int setpgid(pid_t pid, pid_t pgid);
+
+pid_t tcgetpgrp(int fd);
+int tcsetpgrp(int fd, pid_t pgrp);
+
+int fdwalk(int (*func)(void*, int), void* cd);
+int dup2(int oldfd, int newfd);
+int dup3(int oldfd, int newfd, int flags);
+
+int lockf(int fd, int cmd, off_t len);
+ssize_t preadv(int fd, const struct iovec* iov, int iovcnt, off_t offset);
+ssize_t preadv2(int fd, const struct iovec* iov, int iovcnt, off_t offset,
+                int flags);
+
+int pipe(int pipefd[2]);
+int pipe2(int pipefd[2], int flags);
+
+ssize_t pwritev2(int fd, const struct iovec* iov, int iovcnt, off_t offset,
+                 int flags);
+
+typedef long long off64_t;
+ssize_t copy_file_range(int fd_in, off64_t* off_in, int fd_out,
+                        off64_t* off_out, size_t len, unsigned int flags);
+
+int mkfifoat(int dirfd, const char* pathname, mode_t mode);
+int mkfifo(const char* pathname, mode_t mode);
+int mknodat(int dirfd, const char* pathname, mode_t mode, dev_t dev);
+int mknod(const char* pathname, mode_t mode, dev_t dev);
+int getloadavg(double loadavg[], int nelem);
+int setresuid(uid_t ruid, uid_t euid, uid_t suid);
+int setresgid(gid_t rgid, gid_t egid, gid_t sgid);
+int getresuid(uid_t* ruid, uid_t* euid, uid_t* suid);
+int getresgid(gid_t* rgid, gid_t* egid, gid_t* sgid);
+
+struct itimerval {
+  struct timeval it_interval; /* Interval for periodic timer */
+  struct timeval it_value;    /* Time until next expiration */
+};
+
+unsigned int alarm(unsigned int seconds);
+int pause(void);
+
+int siginterrupt(int sig, int flag);
+int getitimer(int which, struct itimerval* curr_value);
+int setitimer(int which, const struct itimerval* restrict new_value,
+              struct itimerval* restrict old_value);
+int sigismember(const sigset_t* set, int signo);
+
+int pthread_sigmask(int how, const sigset_t* set, sigset_t* oldset);
+int sigpending(sigset_t* set);
+int sigwait(const sigset_t* restrict set, int* restrict sig);
+int sigfillset(sigset_t* set);
+
+int sigwaitinfo(const sigset_t* restrict set, siginfo_t* restrict info);
+int sigtimedwait(const sigset_t* set, siginfo_t* info,
+                 const struct timespec* timeout);
+int pthread_kill(pthread_t thread, int sig);
+
+int clock_settime(clockid_t clk_id, const struct timespec* tp);
+
+typedef struct {
+  void* ss_sp;    /* Base address of stack */
+  int ss_flags;   /* Flags */
+  size_t ss_size; /* Number of bytes in stack */
+} stack_t;
+int sigaltstack(const stack_t* restrict ss, stack_t* restrict old_ss);
+#define SA_NODEFER 0
+#define SA_ONSTACK 0
+#define SA_RESTART 0
+#define RLIMIT_CORE 0
+#define SIG_SETMASK 0
+#define SIGSTKSZ 0
+
+typedef int rlim_t;
+struct rlimit {
+  rlim_t rlim_cur; /* Soft limit */
+  rlim_t rlim_max; /* Hard limit (ceiling for rlim_cur) */
+};
+int getrlimit(int resource, struct rlimit* rlim);
+int setrlimit(int resource, const struct rlimit* rlim);
 #endif

@@ -28,6 +28,7 @@ else
 fi
 
 cp $SRC/build/stub.* .
+cp $SRC/build/go .
 zig cc -w -target wasm32-wasi stub.c -c -o stub.o
 zig ar -crs libstub.a stub.o
 
@@ -47,13 +48,16 @@ zig ar -crs libstub.a stub.o
 export CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS"
 export CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS"
 export AR="zig ar"
-export LDFLAGS="-lwasi-emulated-mman -lwasi-emulated-signal -lwasi-emulated-process-clocks -L`pwd`/../../../zlib/dist.wasm/lib "
+
+# -lwasi-emulated-mman -lwasi-emulated-signal -lwasi-emulated-process-clocks
+export LDFLAGS=" -L`pwd`/../../../zlib/dist.wasm/lib "
 export CFLAGS="-I`pwd`/../../../zlib/dist.wasm/include"
 
 if [ -f Makefile ]; then
     echo "Already ran configure".
 else
     CONFIG_SITE=./config.site READELF=true ./configure \
+        --with-pydebug \
         --prefix=$PREFIX \
         --enable-big-digits=30 \
         --enable-optimizations \
