@@ -1,5 +1,5 @@
 
-PYTHON_VERSION = 3.9.6
+PYTHON_VERSION = 3.9.7
 
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
 INIT_CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
@@ -19,7 +19,7 @@ ${BUILD}/Python-${PYTHON_VERSION}.native: ${BUILD}/Python-${PYTHON_VERSION}.tar.
 	cd ${BUILD} && mv Python-${PYTHON_VERSION} Python-${PYTHON_VERSION}.native
 
 ${PREFIX_NATIVE}/.built: ${BUILD}/Python-${PYTHON_VERSION}.native
-	cd ${BUILD}/Python-${PYTHON_VERSION}.native && INIT_CWD=${INIT_CWD} PREFIX=${INIT_CWD}/${PREFIX_NATIVE} ${INIT_CWD}/src/build/build-native.sh
+	cd ${BUILD}/Python-${PYTHON_VERSION}.native && INIT_CWD=${INIT_CWD} PREFIX=${INIT_CWD}/${PREFIX_NATIVE} ${INIT_CWD}/src/build/build-native-static.sh
 	touch ${PREFIX_NATIVE}/.built
 
 native: ${PREFIX_NATIVE}/.built
