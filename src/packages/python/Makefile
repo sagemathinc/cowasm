@@ -27,12 +27,17 @@ native: ${PREFIX_NATIVE}/.built
 
 # WASM
 
+${BUILD}/wasm-posix/libwasmposix.a:
+	# Copy over and build our wasm posix library.
+	mkdir -p ${BUILD}/wasm-posix/ && cp src/build/wasm-posix/* ${BUILD}/wasm-posix/
+	cd ${BUILD}/wasm-posix/ && zig cc -w -target wasm32-wasi wasm-posix.c -c -o wasm-posix.o && zig ar -crs libwasmposix.a wasm-posix.o
+
 ${BUILD}/Python-${PYTHON_VERSION}.wasm: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	rm -rf "${PREFIX_WASM}" && mkdir -p "${PREFIX_WASM}"
 	cd ${BUILD} && tar xvf Python-${PYTHON_VERSION}.tar.xz
 	cd ${BUILD} && mv Python-${PYTHON_VERSION} Python-${PYTHON_VERSION}.wasm
 
-${PREFIX_WASM}/.built: ${BUILD}/Python-${PYTHON_VERSION}.wasm
+${PREFIX_WASM}/.built: ${BUILD}/Python-${PYTHON_VERSION}.wasm ${BUILD}/wasm-posix/libwasmposix.a
 	cd ${BUILD}/Python-${PYTHON_VERSION}.wasm && INIT_CWD=${INIT_CWD} PREFIX=${INIT_CWD}/${PREFIX_WASM} ${INIT_CWD}/src/build/build-wasm.sh
 	touch ${PREFIX_WASM}/.built
 

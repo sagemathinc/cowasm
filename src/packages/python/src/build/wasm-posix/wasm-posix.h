@@ -1,5 +1,5 @@
-#ifndef LIBSTUB
-#define LIBSTUB
+#ifndef WASMPOSIX
+#define WASMPOSIX
 
 #include <sys/types.h>
 
@@ -104,6 +104,8 @@ int waitid(idtype_t idtype, id_t id, siginfo_t* infop, int options);
 pid_t wait(int* status);
 pid_t waitpid(pid_t pid, int* status, int options);
 
+pid_t getpid(void);
+
 pid_t getsid(pid_t pid);
 pid_t setsid(void);
 int setpgid(pid_t pid, pid_t pgid);
@@ -186,4 +188,7 @@ struct rlimit {
 };
 int getrlimit(int resource, struct rlimit* rlim);
 int setrlimit(int resource, const struct rlimit* rlim);
+
+char* realpath(const char* restrict path, char* restrict resolved_path);
+
 #endif

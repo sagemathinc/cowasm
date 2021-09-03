@@ -3,55 +3,52 @@ set -ev
 
 export SRC="$INIT_CWD"/src
 
-
-#cp "$SRC"/build/stub* .
-# TEMPORARY HACK
-#echo ""> Python/pyfpe.c
-
 # Also copy the config.site, which answers some questions needed for
 # cross compiling, without which ./configure won't work.
 cp $SRC/build/config.site .
-
-# Some legacy code assumes this is defined.  Not used really.
-mkdir -p bits
-echo "#define __jmp_buf int" > bits/setjmp.h
 
 if [ -f .patched ]; then
     echo "Already patched"
 else
     echo "Patching..."
+    touch .patched
     # Apply all the patches to the code to make it WASM friendly.
     # These patches initially come from pyodide.  They add a WASM cross compilation target
     # to the config scripts (shouldn't that get upstreamed to Python?).
     cat $SRC/build/python-patches/*.patch | patch -p1
-    touch .patched
+    # Some legacy code assumes this header exists.  Not actually
+    # used at all in Python, fortunately!
+    mkdir -p bits
+    echo "#define __jmp_buf int" > bits/setjmp.h
 fi
 
-cp $SRC/build/stub.* .
-cp $SRC/build/go .
-zig cc -w -target wasm32-wasi stub.c -c -o stub.o
-zig ar -crs libstub.a stub.o
+
+cp $SRC/build/go .  # temporary
+
+export CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS"
+export CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS"
+export AR="zig ar"
+
+# A message says to use these, but they don't seem to exist...
+# -lwasi-emulated-mman -lwasi-emulated-signal -lwasi-emulated-process-clocks
+
+export LDFLAGS="-lc ../wasm-posix/libwasmposix.a"
+# TODO -- for later
+#export LDFLAGS="-lc -L`pwd`/../../../zlib/dist.wasm/lib"
+#export CFLAGS="-I`pwd`/../../../zlib/dist.wasm/include"
 
 # Do the cross-compile ./configure.  Here's an explanation of each
 # of the options we use:
 #     --prefix=$PREFIX: we install the build locally, then copy from there.
 #     --enable-big-digits=30: see pyodide notes.
 #     --enable-optimizations: we want speed (e.g. ,compile with -O3)
-#     --disable-shared: do not need shared library, since WASM doesn't use them
+#     --disable-shared: do not need shared library, since WASM doesn't use it
 #     --disable-ipv6: no need, given the WASM sandbox.
 #     --with-ensurepip=no: because otherwise "make install" below fails
 #       trying to do something with pip; obviously, I don't understand this well yet.
 #     --host=wasm32-unknown-emscripten: target we are cross compiling for; matches paches above.
 #     --build=`./config.guess`: the host machine for cross compiling is easily computed via
 #       this config.guess autoconf script.
-
-export CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS"
-export CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS"
-export AR="zig ar"
-
-# -lwasi-emulated-mman -lwasi-emulated-signal -lwasi-emulated-process-clocks
-export LDFLAGS=" -L`pwd`/../../../zlib/dist.wasm/lib "
-export CFLAGS="-I`pwd`/../../../zlib/dist.wasm/include"
 
 if [ -f Makefile ]; then
     echo "Already ran configure".
@@ -69,10 +66,10 @@ else
         --build=`./config.guess`
 fi
 
-echo '#include "stub.h"' >> pyconfig.h
+# Make it so our WASM posix header file is included everywhere.
+echo '#include "../wasm-posix/wasm-posix.h"' >> pyconfig.h
 
-make install
-
+make python
 
 # Rebuild python interpreter with the entire Python library as a filesystem:
 ## TODO -- see sagejs.

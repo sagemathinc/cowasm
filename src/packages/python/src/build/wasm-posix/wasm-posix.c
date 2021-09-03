@@ -3,7 +3,7 @@ zig cc -w -target wasm32-wasi stub.c -c -o stub.o && zig ar -crs libstub.a
 stub.o
 */
 
-#include "stub.h"
+#include "wasm-posix.h"
 
 #define STUB(x) printf("STUB: %s\n", x);
 #include <pty.h>
@@ -116,10 +116,8 @@ void pthread_exit(void* retval) { STUB("pthread_exit") }
 
 int pthread_cond_destroy(pthread_cond_t* cond) { STUB("pthread_cond_destroy") }
 int pthread_cond_init(pthread_cond_t* restrict cond,
-                      const pthread_condattr_t* restrict attr) {
-  STUB("pthread_cond_init")
-  return 0;
-}
+                      const pthread_condattr_t* restrict attr){
+    STUB("pthread_cond_init")}
 
 ssize_t getrandom(void* buf, size_t buflen, unsigned int flags) {
   STUB("getrandom")
@@ -228,6 +226,11 @@ int waitid(idtype_t idtype, id_t id, siginfo_t* infop,
 pid_t wait(int* status){STUB("wait")}
 
 pid_t waitpid(pid_t pid, int* status, int options){STUB("waitpid")}
+
+pid_t getpid(void) {
+  STUB("getpid");
+  return 1;
+}
 
 pid_t getsid(pid_t pid){STUB("getsid")}
 
@@ -473,3 +476,31 @@ char* bindtextdomain(const char* domainname, const char* dirname) {
 char* bind_textdomain_codeset(const char* domainname, const char* codeset) {
   STUB("bind_textdomain_codeset")
 }
+
+char* realpath(const char* restrict path,
+               char* restrict resolved_path){STUB("realpath")}
+
+clock_t times(struct tms* buf) {
+  STUB("times")
+}
+
+int raise(int sig) {
+  STUB("raise");
+  return 0;
+}
+
+char* strsignal(int sig) {
+  STUB("strsignal");
+  return "a signal";
+}
+
+int getrusage(int who, struct rusage* usage) {
+  STUB("getrusage");
+  return 0;
+}
+
+clock_t clock(void) { STUB("clock") }
+
+void __SIG_IGN(int sig) { STUB("__SIG_IGN"); }
+
+void __SIG_ERR(int sig) { STUB("__SIG_ERR"); }

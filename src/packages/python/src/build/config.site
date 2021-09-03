@@ -6,8 +6,6 @@ ac_cv_header_linux_vm_sockets_h=yes
 ac_cv_little_endian_double=yes
 ax_cv_c_float_words_bigendian=no
 
-ac_cv_func_realpath=no
-ac_cv_func_getpid=no
 ac_cv_func_rtpSpawn=no
 ac_cv_func_wait3=no
 ac_cv_func_wait4=no
