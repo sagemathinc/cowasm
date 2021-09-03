@@ -59,65 +59,104 @@ int sem_post(sem_t* sem) { STUB("sem_post") }
 
 int pthread_key_create(pthread_key_t* key, void (*destructor)(void*)) {
   STUB("pthread_key_create")
+  return 0;
 }
 
-int pthread_key_delete(pthread_key_t key) { STUB("pthread_key_delete") }
+int pthread_key_delete(pthread_key_t key) {
+  STUB("pthread_key_delete");
+  return 0;
+}
 
-void* pthread_getspecific(pthread_key_t key) { STUB("pthread_getspecific") }
+void* pthread_key_value;
+void* pthread_getspecific(pthread_key_t key) {
+  //STUB("pthread_getspecific")
+  //printf("pthread_getspecific %p\n", (void*)key);
+  return pthread_key_value;
+}
+
 int pthread_setspecific(pthread_key_t key, const void* value) {
-  STUB("pthread_setspecific")
+  pthread_key_value = value;
+  STUB("pthread_setspecific");
+  printf("pthread_setspecific %p = %p\n", (void*)key, (void*)value);
+  return 0;
 }
 
-int pthread_kill(pthread_t thread, int sig) { STUB("pthread_kill") }
+int pthread_kill(pthread_t thread, int sig) {
+  STUB("pthread_kill")
+  return 0;
+}
 
 #include <time.h>
 int pthread_getcpuclockid(pthread_t thread, clockid_t* clock_id) {
   STUB("pthread_getcpuclockid")
+  return 0;
 }
 
-int pthread_mutex_lock(pthread_mutex_t* mutex) { STUB("pthread_mutex_lock") }
+int pthread_mutex_lock(pthread_mutex_t* mutex) {
+  STUB("pthread_mutex_lock")
+  return 0;
+}
 int pthread_mutex_trylock(pthread_mutex_t* mutex) {
   STUB("pthread_mutex_trylock")
+  return 0;
 }
 int pthread_mutex_unlock(pthread_mutex_t* mutex) {
   STUB("pthread_mutex_unlock")
+  return 0;
 }
 
 int pthread_mutex_destroy(pthread_mutex_t* mutex) {
   STUB("pthread_mutex_destroy")
+  return 0;
 }
 int pthread_mutex_init(pthread_mutex_t* restrict mutex,
                        const pthread_mutexattr_t* restrict attr) {
   STUB("pthread_mutex_init")
+  return 0;
 }
 int pthread_cond_broadcast(pthread_cond_t* cond) {
   STUB("pthread_cond_broadcast")
+  return 0;
 }
-int pthread_cond_signal(pthread_cond_t* cond) { STUB("pthread_cond_signal") }
+int pthread_cond_signal(pthread_cond_t* cond) {
+  STUB("pthread_cond_signal")
+  return 0;
+}
 
 int pthread_condattr_destroy(pthread_condattr_t* attr) {
   STUB("pthread_condattr_destroy")
+  return 0;
 }
 int pthread_condattr_init(pthread_condattr_t* attr) {
   STUB("pthread_condattr_init")
+  return 0;
 }
 
 int pthread_cond_timedwait(pthread_cond_t* restrict cond,
                            pthread_mutex_t* restrict mutex,
                            const struct timespec* restrict abstime) {
   STUB("pthread_cond_timedwait")
+  return 0;
 }
 int pthread_cond_wait(pthread_cond_t* restrict cond,
                       pthread_mutex_t* restrict mutex) {
   STUB("pthread_cond_wait")
+  return 0;
 }
 
 void pthread_exit(void* retval) { STUB("pthread_exit") }
 
-int pthread_cond_destroy(pthread_cond_t* cond) { STUB("pthread_cond_destroy") }
+int pthread_cond_destroy(pthread_cond_t* cond) {
+  STUB("pthread_cond_destroy");
+  return 0;
+}
+
 int pthread_cond_init(pthread_cond_t* restrict cond,
-                      const pthread_condattr_t* restrict attr){
-    STUB("pthread_cond_init")}
+                      const pthread_condattr_t* restrict attr) {
+  STUB("pthread_cond_init")
+  printf("returning 0 from pthread_cond_init!\n");
+  return 0;
+}
 
 ssize_t getrandom(void* buf, size_t buflen, unsigned int flags) {
   STUB("getrandom")
