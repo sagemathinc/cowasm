@@ -69,7 +69,7 @@ fi
 # Make it so our WASM posix header file is included everywhere.
 echo '#include "../wasm-posix/wasm-posix.h"' >> pyconfig.h
 
-make python
+make install
 
 # Rebuild python interpreter with the entire Python library as a filesystem:
 ## TODO -- see sagejs.

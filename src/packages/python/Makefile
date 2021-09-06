@@ -19,7 +19,7 @@ ${BUILD}/Python-${PYTHON_VERSION}.native: ${BUILD}/Python-${PYTHON_VERSION}.tar.
 	cd ${BUILD} && mv Python-${PYTHON_VERSION} Python-${PYTHON_VERSION}.native
 
 ${PREFIX_NATIVE}/.built: ${BUILD}/Python-${PYTHON_VERSION}.native
-	cd ${BUILD}/Python-${PYTHON_VERSION}.native && INIT_CWD=${INIT_CWD} PREFIX=${INIT_CWD}/${PREFIX_NATIVE} ${INIT_CWD}/src/build/build-native-static.sh
+	cd ${BUILD}/Python-${PYTHON_VERSION}.native && INIT_CWD=${INIT_CWD} PREFIX=${INIT_CWD}/${PREFIX_NATIVE} ${INIT_CWD}/src/build/build-native.sh
 	touch ${PREFIX_NATIVE}/.built
 
 native: ${PREFIX_NATIVE}/.built

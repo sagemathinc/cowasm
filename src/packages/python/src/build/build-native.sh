@@ -16,16 +16,8 @@ export LDFLAGS="-L`pwd`/../../../zlib/dist.native/lib"
 export AR="zig ar"
 
 export CC="zig cc -target native-native-gnu.2.28"
-export CXX="zig c++ -target native-native-gnu.2.28"
 #export CC="zig cc -target native-native-musl"
-#export CXX="zig c++ -target native-native-musl"
 
-if [ -f Makefile ]; then
-    echo "Already ran configure".
-else
-    ./configure --prefix="$PREFIX" --with-openssl=`pwd`/../../../openssl/dist.native/
-fi
+./configure --prefix="$PREFIX" --with-openssl=`pwd`/../../../openssl/dist.native/
 
-make install # -j8
-
-cd "$PREFIX"
+make install

@@ -1,22 +1,29 @@
 {
-  "name": "@cocalcjs/gmp",
+  "name": "@sagemath/gmp",
   "version": "1.0.0",
   "description": "GNU Multiprecision Arithmetic",
   "main": "index.js",
-  "files": ["dist.wasm/*", "index.js", "README.md", "src/*", "package.json"],
+  "files": [
+    "dist/wasm/*",
+    "index.js",
+    "README.md",
+    "src/*",
+    "package.json",
+    "Makefile"
+  ],
   "scripts": {
-    "build": "./src/build.sh",
-    "clean": "rm -rf build dist.*"
+    "build": "make dist",
+    "clean": "make clean"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/cocalcjs.git"
+    "url": "git+https://github.com/sagemathinc/sagejs.git"
   },
   "keywords": ["number", "theory"],
   "author": "William Stein",
-  "license": "GPL-3.0-or-later",
+  "license": "LGPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/sagemathinc/cocalcjs/issues"
+    "url": "https://github.com/sagemathinc/sagejs/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cocalcjs/tree/main/src/packages/gmp"
+  "homepage": "https://github.com/sagemathinc/sagejs/tree/main/src/packages/gmp"
 }

@@ -7,13 +7,13 @@ rm -rf "$BUILD"
 mkdir "$BUILD"
 export PATH0=$PATH
 
-export PREFIX="$DIST".native
-export PATH=`pwd`/../../bin.native:$PATH0
-time "$INIT_CWD"/src/build-native.sh
+export PREFIX="$DIST"/native
+export PATH=`pwd`/../../bin/native:$PATH0
+"$INIT_CWD"/src/build-native.sh
 
 rm -rf "$BUILD"
 mkdir "$BUILD"
 
-export PREFIX="$DIST".wasm
-export PATH=`pwd`/../../bin.wasm:$PATH0
-time "$INIT_CWD"/src/build-wasm.sh
+export PREFIX="$DIST"/wasm
+export PATH=`pwd`/../../bin/wasm:$PATH0
+"$INIT_CWD"/src/build-wasm.sh
