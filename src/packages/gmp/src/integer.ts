@@ -40,7 +40,46 @@ export default async function init() {
     }
   }
 
-  return { isPseudoPrime };
+  class Integer {
+    i: number;
+
+    constructor(n: number | string | null, i?: number) {
+      if (n === null && i !== undefined) {
+        this.i = i;
+        return;
+      }
+      if (typeof n == "number") {
+        this.i = (result.instance.exports.createIntegerInt as CallableFunction)(
+          n
+        );
+        return;
+      }
+      this.i = (result.instance.exports.createIntegerStr as CallableFunction)(
+        stringToU8(`${n}`, memory.buffer)
+      );
+    }
+
+    print() {
+      (result.instance.exports.printInteger as CallableFunction)(this.i);
+    }
+
+    nextPrime() {
+      return new Integer(
+        null,
+        (result.instance.exports.nextPrime as CallableFunction)(this.i)
+      );
+    }
+
+    isPseudoPrime() {
+      return (result.instance.exports.wrappedIsPseudoPrime as CallableFunction)(
+        this.i
+      );
+    }
+  }
+
+  exports.isPseudoPrime = isPseudoPrime;
+  exports.Integer = Integer;
+  return { isPseudoPrime, Integer };
 }
 
 const encoder = new TextEncoder();

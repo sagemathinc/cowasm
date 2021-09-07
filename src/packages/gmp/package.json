@@ -2,13 +2,13 @@
   "name": "@sagemath/gmp",
   "version": "1.0.0",
   "description": "GNU Multiprecision Arithmetic",
-  "main": "index.js",
+  "main": "dist/export/index.js",
   "files": [
-    "dist/wasm/*",
-    "index.js",
+    "dist/export/*",
     "README.md",
     "src/*",
     "package.json",
+    "tsconfig.json",
     "Makefile"
   ],
   "scripts": {

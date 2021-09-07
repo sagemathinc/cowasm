@@ -66,7 +66,14 @@ pub export fn addIntegers(a: u32, b: u32) i32 {
 
 pub export fn mulIntegers(a: u32, b: u32) i32 {
     const j: u32 = i;
-    integers[i] = integers[a].mul(integers[b]);
+    integers[j] = integers[a].mul(integers[b]);
+    i += 1;
+    return @intCast(i32, j);
+}
+
+pub export fn nextPrime(a: u32) i32 {
+    const j: u32 = i;
+    integers[j] = integers[a].nextPrime();
     i += 1;
     return @intCast(i32, j);
 }
@@ -77,4 +84,8 @@ pub export fn printInteger(a: u32) void {
 
 pub export fn freeInteger(a: u32) void {
     integers[a].clear();
+}
+
+pub export fn wrappedIsPseudoPrime(a: u32) i32 {
+    return integers[a].primalityTest(5);
 }

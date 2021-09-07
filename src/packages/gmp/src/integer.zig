@@ -72,6 +72,14 @@ pub fn IntegerType() type {
             return gmp.mpz_probab_prime_p(&self.x, reps);
         }
 
+        // void mpz_nextprime (mpz_t rop, const mpz_t op)
+        pub fn nextPrime(self: IntegerType()) IntegerType() {
+            var c = Integer();
+            c.init();
+            gmp.mpz_nextprime(&c.x, &self.x);
+            return c;
+        }
+
         pub fn print(self: IntegerType()) void {
             _ = gmp.gmp_printf("%Zd\n", &self.x);
         }
@@ -164,4 +172,13 @@ test "Use primality test to count primes up to 10000" {
         }
     }
     try expect(s == 168);
+}
+
+test "The nextPrime method" {
+    var a = Integer();
+    try a.initSet(97);
+    defer a.clear();
+    var b = a.nextPrime();
+    defer b.clear();
+    try expect(b.get_c_long() == 101);
 }
