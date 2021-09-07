@@ -3,7 +3,7 @@ const integer = @import("./integer.zig");
 const Integer = integer.Integer;
 const std = @import("std");
 
-pub export fn init() void {
+pub export fn initCustomAllocator() void {
     std.debug.print("init GMP integers", .{});
     custom.init();
 }

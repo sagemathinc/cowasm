@@ -44,13 +44,15 @@ ${DIST_WASM}/.built: ${BUILD}/gmp-${VERSION}.wasm
 .PHONE: wasm
 wasm: ${DIST_WASM}/.built
 
+tsc:
+	npx tsc
+
 test-integer: native
 	cd src && zig test integer.zig -lgmp -lc -I${DIST_NATIVE}/include -L${DIST_NATIVE}/lib
 
 ${EXPORT}/integer-export.wasm: wasm
 	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${DIST_WASM}/include -L${DIST_WASM}/lib ${DIST_WASM}/lib/libgmp.a -O ReleaseSmall integer-export.zig
 	mkdir -p ${EXPORT}
-	cp src/integer.js ${EXPORT}
 	mv src/integer-export.wasm ${EXPORT}/
 
 .PHONE: integer
