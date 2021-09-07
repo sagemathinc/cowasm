@@ -19,11 +19,17 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/sagejs.git"
   },
-  "keywords": ["number", "theory"],
+  "keywords": [
+    "number",
+    "theory"
+  ],
   "author": "William Stein",
   "license": "LGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/sagemathinc/sagejs/issues"
   },
-  "homepage": "https://github.com/sagemathinc/sagejs/tree/main/src/packages/gmp"
+  "homepage": "https://github.com/sagemathinc/sagejs/tree/main/src/packages/gmp",
+  "dependencies": {
+    "@wasmer/wasi": "^0.12.0"
+  }
 }
