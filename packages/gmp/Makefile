@@ -58,7 +58,10 @@ wasm: ${DIST_WASM}/.built
 
 # Javascript interface library
 
-${DIST_JS}/integer.js: src/integer.ts
+node_modules:
+	npm ci
+
+${DIST_JS}/integer.js: src/integer.ts node_modules
 	npx tsc
 
 test-integer: native
