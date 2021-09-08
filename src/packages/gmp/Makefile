@@ -8,6 +8,8 @@ DIST_WASM = ${INIT_CWD}/dist/wasm
 EXPORT = ${INIT_CWD}/dist/export
 SOURCE = ${BUILD}/gmp-${VERSION}.tar.bz2
 
+all: native wasm integer
+
 ${BUILD}/gmp-${VERSION}.tar.bz2:
 	mkdir -p ${BUILD}
 	cd ${BUILD} && curl https://gmplib.org/download/gmp/gmp-${VERSION}.tar.bz2 -o gmp-${VERSION}.tar.bz2
@@ -57,8 +59,6 @@ ${EXPORT}/integer-export.wasm: wasm
 
 .PHONE: integer
 integer: ${EXPORT}/integer-export.wasm
-
-all: native wasm integer
 
 clean:
 	rm -rf ${DIST_NATIVE} ${DIST_WASM} dist/tsconfig.tsbuildinfo ${BUILD}/native ${BUILD}/wasm ${EXPORT}
