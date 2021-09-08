@@ -18,11 +18,11 @@ source: ${BUILD}/mpir
 
 ## Native library
 
-${BUILD}/native/configure: ${BUILD}/mpir
+${BUILD}/native: ${BUILD}/mpir
 	rm -rf ${BUILD}/native
 	cd ${BUILD} && git clone --depth=1 mpir native
 
-${DIST_NATIVE}/.built: ${BUILD}/native/configure
+${DIST_NATIVE}/.built: ${BUILD}/native
 	cd ${BUILD}/native && CC="zig cc" AR="zig ar"  CFLAGS="-O3" ./configure --prefix=${DIST_NATIVE} && make install
 	touch ${DIST_NATIVE}/.built
 
@@ -35,11 +35,11 @@ test-native: native
 
 ## WebAssembly library
 
-${BUILD}/wasm/configure: ${BUILD}/mpir
+${BUILD}/wasm: ${BUILD}/mpir
 	rm -rf ${BUILD}/wasm
 	cd ${BUILD} && git clone --depth=1 mpir wasm
 
-${DIST_WASM}/.built: ${BUILD}/wasm/configure
+${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_SIGNAL" AR="zig ar" RANLIB="zig ranlib" ABI=long CC_FOR_BUILD="zig cc" CFLAGS="-O3" \
 		./configure --build i686-pc-linux-gnu --host=none --prefix=${DIST_WASM}
 	#  Edit config.h to change '#define HAVE_OBSTACK_VPRINTF 1' to '#define HAVE_OBSTACK_VPRINTF 0' because missing in zig...

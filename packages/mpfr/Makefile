@@ -20,11 +20,11 @@ source: ${BUILD}/mpfr-${VERSION}.tar.xz
 
 ## Native library
 
-${BUILD}/native/configure: ${BUILD}/mpfr-${VERSION}.tar.xz
+${BUILD}/native: ${BUILD}/mpfr-${VERSION}.tar.xz
 	rm -rf ${BUILD}/native
 	cd ${BUILD} && mkdir native && tar xvf mpfr-${VERSION}.tar.xz -C native --strip-components=1
 
-${DIST_NATIVE}/.built: ${BUILD}/native/configure
+${DIST_NATIVE}/.built: ${BUILD}/native
 	cd ${BUILD}/native && CC="zig cc" AR="zig ar" CFLAGS="-O3" ./configure --prefix=${DIST_NATIVE} --with-gmp=${CWD}/../gmp/dist/native && make install
 	touch ${DIST_NATIVE}/.built
 
@@ -37,11 +37,11 @@ test-native: native
 
 ## WebAssembly library
 
-${BUILD}/wasm/configure: ${BUILD}/mpfr-${VERSION}.tar.xz
+${BUILD}/wasm: ${BUILD}/mpfr-${VERSION}.tar.xz
 	rm -rf ${BUILD}/wasm
 	cd ${BUILD} && mkdir wasm && tar xvf mpfr-${VERSION}.tar.xz -C wasm --strip-components=1
 
-${DIST_WASM}/.built: ${BUILD}/wasm/configure
+${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_SIGNAL" AR="zig ar" RANLIB="zig ranlib" ABI=standard CC_FOR_BUILD="zig cc" CFLAGS="-O3" \
 		./configure --build i686-pc-linux-gnu --host=none --prefix=${DIST_WASM} --with-gmp=${CWD}/../gmp/dist/wasm
 	cd ${BUILD}/wasm && make install
