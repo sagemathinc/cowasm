@@ -15,30 +15,30 @@ ${BUILD}/gmp-${VERSION}.tar.bz2:
 .PHONY: source
 source: ${BUILD}/gmp-${VERSION}.tar.bz2
 
-${BUILD}/gmp-${VERSION}.native: ${BUILD}/gmp-${VERSION}.tar.bz2
-	rm -rf ${BUILD}/gmp-${VERSION}.native
-	cd ${BUILD} && tar xvf gmp-${VERSION}.tar.bz2 && mv gmp-${VERSION} gmp-${VERSION}.native
+${BUILD}/native: ${BUILD}/gmp-${VERSION}.tar.bz2
+	rm -rf ${BUILD}/native
+	cd ${BUILD} && mkdir native && tar xvf gmp-${VERSION}.tar.bz2 -C native --strip-components=1
 
-${DIST_NATIVE}/.built: ${BUILD}/gmp-${VERSION}.native
-	cd ${BUILD}/gmp-${VERSION}.native && CC="zig cc" AR="zig ar" ./configure --prefix=${DIST_NATIVE} CFLAGS="-O3" && make install
+${DIST_NATIVE}/.built: ${BUILD}/native
+	cd ${BUILD}/native && CC="zig cc" AR="zig ar" ./configure --prefix=${DIST_NATIVE} CFLAGS="-O3" && make install
 	touch ${DIST_NATIVE}/.built
 
 .PHONE: native
 native: ${DIST_NATIVE}/.built
 
 check-native: native
-	cd ${BUILD}/gmp-${VERSION}.native && make check
+	cd ${BUILD}/native && make check
 
-${BUILD}/gmp-${VERSION}.wasm: ${BUILD}/gmp-${VERSION}.tar.bz2
-	rm -rf ${BUILD}/gmp-${VERSION}.wasm
-	cd ${BUILD} && tar xvf gmp-${VERSION}.tar.bz2 && mv gmp-${VERSION} gmp-${VERSION}.wasm
+${BUILD}/wasm: ${BUILD}/gmp-${VERSION}.tar.bz2
+	rm -rf ${BUILD}/wasm
+	cd ${BUILD} && mkdir wasm && tar xvf gmp-${VERSION}.tar.bz2 -C wasm --strip-components=1
 
-${DIST_WASM}/.built: ${BUILD}/gmp-${VERSION}.wasm
-	cd ${BUILD}/gmp-${VERSION}.wasm && CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_SIGNAL" AR="zig ar" RANLIB="zig ranlib" ABI=standard CC_FOR_BUILD="zig cc" \
+${DIST_WASM}/.built: ${BUILD}/wasm
+	cd ${BUILD}/wasm && CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_SIGNAL" AR="zig ar" RANLIB="zig ranlib" ABI=standard CC_FOR_BUILD="zig cc" \
 		./configure --build i686-pc-linux-gnu --host=none --prefix=${DIST_WASM} CFLAGS="-O3"
 	#  Edit config.h to change '#define HAVE_OBSTACK_VPRINTF 1' to '#define HAVE_OBSTACK_VPRINTF 0' because missing in zig...
-	cd ${BUILD}/gmp-${VERSION}.wasm && sed -i 's/HAVE_OBSTACK_VPRINTF 1/HAVE_OBSTACK_VPRINTF 0/' config.h
-	cd ${BUILD}/gmp-${VERSION}.wasm && make install
+	cd ${BUILD}/wasm && sed -i 's/HAVE_OBSTACK_VPRINTF 1/HAVE_OBSTACK_VPRINTF 0/' config.h
+	cd ${BUILD}/wasm && make install
 	touch ${DIST_WASM}/.built
 
 .PHONE: wasm
@@ -58,5 +58,7 @@ ${EXPORT}/integer-export.wasm: wasm
 .PHONE: integer
 integer: ${EXPORT}/integer-export.wasm
 
+all: native wasm integer
+
 clean:
-	rm -rf ${DIST_NATIVE} ${DIST_WASM} ${BUILD}/gmp-${VERSION}.native ${BUILD}/gmp-${VERSION}.wasm ${EXPORT}
+	rm -rf ${DIST_NATIVE} ${DIST_WASM} dist/tsconfig.tsbuildinfo ${BUILD}/native ${BUILD}/wasm ${EXPORT}
