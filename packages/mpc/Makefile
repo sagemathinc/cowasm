@@ -1,7 +1,6 @@
 # See http://www.multiprecision.org/mpc/download.html for versions:
 VERSION = 1.2.1
 
-SOURCE = ${BUILD}/mpc-${VERSION}.tar.gz
 BUILD = build
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 DIST_NATIVE = ${CWD}/dist/native

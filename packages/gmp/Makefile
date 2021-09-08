@@ -1,7 +1,6 @@
 # See https://gmplib.org for versions.
 VERSION = 6.2.1
 
-SOURCE = ${BUILD}/gmp-${VERSION}.tar.bz2
 BUILD = build
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 DIST_NATIVE = ${CWD}/dist/native

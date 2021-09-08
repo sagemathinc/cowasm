@@ -1,7 +1,6 @@
 # See https://www.mpfr.org/mpfr-current/#download
 VERSION = 4.1.0
 
-SOURCE = ${BUILD}/mpfr-${VERSION}.tar.xz
 BUILD = build
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 DIST_NATIVE = ${CWD}/dist/native

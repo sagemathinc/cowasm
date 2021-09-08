@@ -1,4 +1,3 @@
-SOURCE = ${BUILD}/gmp-${VERSION}.tar.bz2
 BUILD = build
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 DIST_NATIVE = ${CWD}/dist/native

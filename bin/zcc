@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+
+from compile import build
+
+def main():
+    build("cc")
+
+if __name__ == "__main__":
+    main()
