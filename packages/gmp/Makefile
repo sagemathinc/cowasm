@@ -49,7 +49,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/Makefile
 	cd ${BUILD}/wasm && CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_SIGNAL" AR="zig ar" RANLIB="zig ranlib" ABI=standard CC_FOR_BUILD="zig cc" \
 		./configure --build i686-pc-linux-gnu --host=none --prefix=${DIST_WASM} CFLAGS="-O3"
 	#  Edit config.h to change '#define HAVE_OBSTACK_VPRINTF 1' to '#define HAVE_OBSTACK_VPRINTF 0' because missing in zig...
-	cd ${BUILD}/wasm && sed -i 's/HAVE_OBSTACK_VPRINTF 1/HAVE_OBSTACK_VPRINTF 0/' config.h
+	cd ${BUILD}/wasm && sed -i'.original' -e 's/HAVE_OBSTACK_VPRINTF 1/HAVE_OBSTACK_VPRINTF 0/' config.h
 	cd ${BUILD}/wasm && make install
 	touch ${DIST_WASM}/.built
 
