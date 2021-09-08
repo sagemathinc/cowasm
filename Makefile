@@ -1,16 +1,11 @@
-NATIVE = dist/native/.built
-WASM = dist/wasm/.built
+BUILT = dist/.built
 
-all: gmp
+all: packages/gmp/${BUILT}
 
-packages/gmp/${NATIVE}:
-	cd packages/gmp && make native
+packages/gmp/${BUILT}:
+	cd packages/gmp && make all
 
-packages/gmp/${WASM}:
-	cd packages/gmp && make wasm
-
-.PHONE: gmp
-gmp: packages/gmp/${NATIVE} packages/gmp/${WASM}
+.PHONY: packages/gmp/${BUILT}
 
 clean:
 	cd packages/gmp && make clean

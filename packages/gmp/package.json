@@ -2,9 +2,10 @@
   "name": "@sagemath/gmp",
   "version": "1.0.0",
   "description": "GNU Multiprecision Arithmetic",
-  "main": "dist/export/index.js",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
   "files": [
-    "dist/export/*",
+    "dist/js/*",
     "README.md",
     "src/*",
     "package.json",
@@ -17,18 +18,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/sagejs.git"
+    "url": "git+https://github.com/sagemathinc/sagemathjs.git"
   },
-  "keywords": [
-    "number",
-    "theory"
-  ],
+  "keywords": ["number", "theory"],
   "author": "William Stein",
   "license": "LGPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/sagemathinc/sagejs/issues"
+    "url": "https://github.com/sagemathinc/sagemathjs/issues"
   },
-  "homepage": "https://github.com/sagemathinc/sagejs/tree/main/src/packages/gmp",
+  "homepage": "https://github.com/sagemathinc/sagemathjs/tree/main/src/packages/gmp",
   "dependencies": {
     "@wasmer/wasi": "^0.12.0"
   },

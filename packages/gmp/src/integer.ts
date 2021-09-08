@@ -2,6 +2,11 @@ import { WASI } from "@wasmer/wasi";
 import { readFile } from "fs";
 import { promisify } from "util";
 
+import { dirname } from "path";
+const moduleURL = new URL(import.meta.url);
+const __dirname = dirname(moduleURL.pathname);
+
+
 const env = {
   raise: () => console.warn("raise"),
   main: console.log,
@@ -11,14 +16,14 @@ interface Memory {
   buffer: Int8Array;
 }
 
-export default async function init() {
+async function init() {
   const wasi = new WASI({
     args: process.argv,
     env: process.env,
   });
   const wasi_snapshot_preview1 = wasi.wasiImport;
 
-  const source = await promisify(readFile)(`${__dirname}/integer-export.wasm`);
+  const source = await promisify(readFile)(`${__dirname}/integer.wasm`);
   const typedArray = new Uint8Array(source);
 
   const result = await WebAssembly.instantiate(typedArray, {
@@ -40,7 +45,7 @@ export default async function init() {
     }
   }
 
-  class Integer {
+  class IntegerClass {
     i: number;
 
     constructor(n: number | string | null, i?: number) {
@@ -64,7 +69,7 @@ export default async function init() {
     }
 
     nextPrime() {
-      return new Integer(
+      return new IntegerClass(
         null,
         (result.instance.exports.nextPrime as CallableFunction)(this.i)
       );
@@ -75,10 +80,14 @@ export default async function init() {
         this.i
       );
     }
+
+    toString() {
+      this.print();
+      return ""; // since we don't have sending strings yet!
+    }
   }
 
-  exports.isPseudoPrime = isPseudoPrime;
-  exports.Integer = Integer;
+  const Integer = (x) => new IntegerClass(x);
   return { isPseudoPrime, Integer };
 }
 
@@ -89,3 +98,6 @@ function stringToU8(s, buffer) {
   array[s.length] = 0;
   return array;
 }
+
+const { isPseudoPrime, Integer } = await init();
+export { isPseudoPrime, Integer };

@@ -1,28 +1,8 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "incremental": true,
-    "target": "es5",
-    "lib": ["es6", "es2017", "dom"],
-    "allowJs": true,
-    "declaration": false,
-    "downlevelIteration": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "strictNullChecks": true,
     "rootDir": "src",
-    "outDir": "dist/export"
+    "outDir": "dist/js"
   },
-  "exclude": ["node_modules", "build", "dist"],
-  "watchOptions": {
-    "watchFile": "useFsEvents",
-    "watchDirectory": "useFsEvents",
-    "fallbackPolling": "dynamicPriority",
-    "synchronousWatchDirectory": true
-  }
+  "exclude": ["node_modules", "build", "dist"]
 }
