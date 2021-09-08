@@ -13,7 +13,7 @@
     "Makefile"
   ],
   "scripts": {
-    "build": "make dist",
+    "build": "make",
     "clean": "make clean"
   },
   "repository": {
@@ -26,7 +26,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/sagemathjs/issues"
   },
-  "homepage": "https://github.com/sagemathinc/sagemathjs/tree/main/src/packages/gmp",
+  "homepage": "https://github.com/sagemathinc/sagemathjs/tree/main/packages/gmp",
   "dependencies": {
     "@wasmer/wasi": "^0.12.0"
   },

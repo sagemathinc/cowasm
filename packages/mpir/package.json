@@ -1,22 +1,37 @@
 {
-  "name": "@cocalcjs/mpir",
+  "name": "@sagemath/mpir",
   "version": "1.0.0",
-  "description": "MPIR",
-  "main": "index.js",
-  "files": ["dist.wasm/*", "index.js", "README.md", "src/*", "package.json"],
+  "description": "MPIR: Multiprecision Integers and Rationals",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
+  "files": [
+    "dist/js/*",
+    "README.md",
+    "src/*",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
   "scripts": {
-    "build": "./src/build.sh",
-    "clean": "rm -rf build dist.*"
+    "build": "make",
+    "clean": "make clean"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/cocalcjs.git"
+    "url": "git+https://github.com/sagemathinc/sagemathjs.git"
   },
   "keywords": ["number", "theory"],
   "author": "William Stein",
-  "license": "GPL-3.0-or-later",
+  "license": "LGPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/sagemathinc/cocalcjs/issues"
+    "url": "https://github.com/sagemathinc/sagemathjs/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cocalcjs/tree/main/src/packages/mpir"
+  "homepage": "https://github.com/sagemathinc/sagemathjs/tree/main/packages/mpir",
+  "dependencies": {
+    "@wasmer/wasi": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.7.12",
+    "typescript": "^4.4.2"
+  }
 }
