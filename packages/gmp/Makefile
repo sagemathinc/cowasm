@@ -25,7 +25,7 @@ ${BUILD}/native/configure: ${BUILD}/gmp-${VERSION}.tar.bz2
 	cd ${BUILD} && mkdir native && tar xvf gmp-${VERSION}.tar.bz2 -C native --strip-components=1
 
 ${DIST_NATIVE}/.built: ${BUILD}/native/configure
-	cd ${BUILD}/native && CC="zig cc" AR="zig ar" ./configure --prefix=${DIST_NATIVE} CFLAGS="-O3" && make install
+	cd ${BUILD}/native && CC="zig cc" AR="zig ar" CFLAGS="-O3"  ./configure --prefix=${DIST_NATIVE} && make install
 	touch ${DIST_NATIVE}/.built
 
 .PHONY: native
@@ -42,8 +42,8 @@ ${BUILD}/wasm/configure: ${BUILD}/gmp-${VERSION}.tar.bz2
 	cd ${BUILD} && mkdir wasm && tar xvf gmp-${VERSION}.tar.bz2 -C wasm --strip-components=1
 
 ${DIST_WASM}/.built: ${BUILD}/wasm/configure
-	cd ${BUILD}/wasm && CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_SIGNAL" AR="zig ar" RANLIB="zig ranlib" ABI=standard CC_FOR_BUILD="zig cc" \
-		./configure --build i686-pc-linux-gnu --host=none --prefix=${DIST_WASM} CFLAGS="-O3"
+	cd ${BUILD}/wasm && CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_SIGNAL" AR="zig ar" RANLIB="zig ranlib" ABI=standard CC_FOR_BUILD="zig cc" CFLAGS="-O3" \
+		./configure --build i686-pc-linux-gnu --host=none --prefix=${DIST_WASM}
 	#  Edit config.h to change '#define HAVE_OBSTACK_VPRINTF 1' to '#define HAVE_OBSTACK_VPRINTF 0' because missing in zig...
 	cd ${BUILD}/wasm && sed -i'.original' -e 's/HAVE_OBSTACK_VPRINTF 1/HAVE_OBSTACK_VPRINTF 0/' config.h
 	cd ${BUILD}/wasm && make install
