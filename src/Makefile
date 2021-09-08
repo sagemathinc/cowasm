@@ -1,11 +1,17 @@
-all: packages/gmp/dist/local
+NATIVE = dist/native/.built
+WASM = dist/wasm/.built
 
-packages/gmp/dist/.built:
-	cd packages/gmp && npm run build
+all: gmp
 
-packages/mpir/dist/.built:
-	cd packages/mpir && npm run build
+packages/gmp/${NATIVE}:
+	cd packages/gmp && make native
+
+packages/gmp/${WASM}:
+	cd packages/gmp && make wasm
+
+.PHONE: gmp
+gmp: packages/gmp/${NATIVE} packages/gmp/${WASM}
 
 clean:
-	rm -rf packages/*/build packages/*/dist
+	cd packages/gmp && make clean
 
