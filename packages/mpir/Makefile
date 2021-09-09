@@ -19,7 +19,7 @@ source: ${BUILD}/mpir
 
 ${BUILD}/native: ${BUILD}/mpir
 	rm -rf ${BUILD}/native
-	cd ${BUILD} && git clone --depth=1 mpir native
+	cd ${BUILD} && git clone mpir native
 
 ${DIST_NATIVE}/.built: ${BUILD}/native
 	cd ${BUILD}/native && CC="zig cc" AR="zig ar"  CFLAGS="-O3" ./configure --prefix=${DIST_NATIVE} && make install
@@ -36,7 +36,7 @@ test-native: native
 
 ${BUILD}/wasm: ${BUILD}/mpir
 	rm -rf ${BUILD}/wasm
-	cd ${BUILD} && git clone --depth=1 mpir wasm
+	cd ${BUILD} && git clone mpir wasm
 
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_SIGNAL" AR="zig ar" RANLIB="zig ranlib" ABI=long CC_FOR_BUILD="zig cc" CFLAGS="-O3" \

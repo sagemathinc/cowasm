@@ -1,11 +1,12 @@
 # https://pari.math.u-bordeaux.fr/download.html
 VERSION = 2.13.2
 
-INIT_CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD = build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 DIST_JS = ${CWD}/dist/js
+ZCC = ${CWD}/../../bin/zcc
 
 GMP = ${CWD}/../gmp/dist
 
@@ -18,12 +19,13 @@ ${BUILD}/pari-${VERSION}.tar.gz:
 
 ${BUILD}/native: ${BUILD}/pari-${VERSION}.tar.gz
 	rm -rf ${BUILD}/native
-	cd ${BUILD} && mkdir native && tar xvf pari-${VERSION}.tar.gz -C native --strip-components=1
+	cd ${BUILD} && mkdir native && tar xf pari-${VERSION}.tar.gz -C native --strip-components=1
 
 ${DIST_NATIVE}/.built: ${BUILD}/native
 	cd ${BUILD}/native && CC="zig cc" AR="zig ar" RANLIB="zig ranlib" \
-		./Configure --prefix=${DIST_NATIVE} --graphic=none
-	cd ${BUILD}/native/O* && make AR="zig ar" RANLIB="zig ranlib" install
+		./Configure --prefix=${DIST_NATIVE} --graphic=none  --with-gmp=${GMP}/native
+	cd ${BUILD}/native/O* && make AR="zig ar" RANLIB="zig ranlib" -j8 gp
+	cd ${BUILD}/native/O* && make install
 	touch ${DIST_NATIVE}/.built
 
 .PHONY: native
@@ -34,12 +36,16 @@ native: ${DIST_NATIVE}/.built
 
 ${BUILD}/wasm: ${BUILD}/pari-${VERSION}.tar.gz
 	rm -rf ${BUILD}/wasm
-	cd ${BUILD} && mkdir wasm && tar xvf pari-${VERSION}.tar.gz -C wasm --strip-components=1
+	cd ${BUILD} && mkdir wasm && tar xf pari-${VERSION}.tar.gz -C wasm --strip-components=1
 
 ${DIST_WASM}/.built: ${BUILD}/wasm
-	cd ${BUILD}/wasm && CC="zig cc -target=wasm32-wasi" AR="zig ar" RANLIB="zig ranlib" \
-		./Configure --host=wasm-emscripten --prefix=${DIST_WASM} --graphic=none
-	cd ${BUILD}/wasm/Oemscripten-wasm && make AR="zig ar" RANLIB="zig ranlib" install
+	cd ${BUILD}/wasm && CC=${ZCC} AR="zig ar" RANLIB="zig ranlib" \
+		./Configure --host=wasm-wasi --prefix=${DIST_WASM} --graphic=none --with-gmp=${GMP}/wasm
+	cd ${BUILD}/wasm/O* && cp /usr/include/bits/setjmp.h  bits/
+	cd ${BUILD}/wasm/O* && cp /usr/include/bits/wordsize.h  bits/
+	cd ${BUILD}/wasm/O* && make AR="zig ar" RANLIB="zig ranlib" gp
+	cd ${BUILD}/wasm/O* && make AR="zig ar" RANLIB="zig ranlib" install
+	cp ${BUILD}/wasm/O*/gp-sta.wasm ${DIST_WASM}/bin
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
