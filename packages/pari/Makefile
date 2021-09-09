@@ -3,40 +3,47 @@ VERSION = 2.13.2
 
 INIT_CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD = build
-PREFIX_NATIVE = dist.native
-PREFIX_WASM = dist.wasm
+DIST_NATIVE = ${CWD}/dist/native
+DIST_WASM = ${CWD}/dist/wasm
+DIST_JS = ${CWD}/dist/js
+
+GMP = ${CWD}/../gmp/dist
 
 ${BUILD}/pari-${VERSION}.tar.gz:
 	mkdir -p ${BUILD}
+	# retry-max-time: For some reason pari.math.u-bordeaux.fr is flaky.
 	cd ${BUILD} && curl --retry-max-time 120 https://pari.math.u-bordeaux.fr/pub/pari/unix/pari-${VERSION}.tar.gz -o pari-${VERSION}.tar.gz
 
 # NATIVE
 
-${BUILD}/pari-${VERSION}.native: ${BUILD}/pari-${VERSION}.tar.gz
-	rm -rf "${PREFIX_NATIVE}" && mkdir -p "${PREFIX_NATIVE}"
-	cd ${BUILD} && tar xvf pari-${VERSION}.tar.gz
-	cd ${BUILD} && mv pari-${VERSION} pari-${VERSION}.native
+${BUILD}/native: ${BUILD}/pari-${VERSION}.tar.gz
+	rm -rf ${BUILD}/native
+	cd ${BUILD} && mkdir native && tar xvf pari-${VERSION}.tar.gz -C native --strip-components=1
 
-${PREFIX_NATIVE}/.built: ${BUILD}/pari-${VERSION}.native
-	cd ${BUILD}/pari-${VERSION}.native && INIT_CWD=${INIT_CWD} PREFIX=${INIT_CWD}/${PREFIX_NATIVE} ${INIT_CWD}/src/build-native.sh
-	touch ${PREFIX_NATIVE}/.built
+${DIST_NATIVE}/.built: ${BUILD}/native
+	cd ${BUILD}/native && CC="zig cc" AR="zig ar" RANLIB="zig ranlib" \
+		./Configure --prefix=${DIST_NATIVE} --graphic=none
+	cd ${BUILD}/native/O* && make AR="zig ar" RANLIB="zig ranlib" install
+	touch ${DIST_NATIVE}/.built
 
-native: ${PREFIX_NATIVE}/.built
-
+.PHONY: native
+native: ${DIST_NATIVE}/.built
 
 
 # WASM
 
-${BUILD}/pari-${VERSION}.wasm: ${BUILD}/pari-${VERSION}.tar.gz
-	rm -rf "${PREFIX_WASM}" && mkdir -p "${PREFIX_WASM}"
-	cd ${BUILD} && tar xvf pari-${VERSION}.tar.gz
-	cd ${BUILD} && mv pari-${VERSION} pari-${VERSION}.wasm
+${BUILD}/wasm: ${BUILD}/pari-${VERSION}.tar.gz
+	rm -rf ${BUILD}/wasm
+	cd ${BUILD} && mkdir wasm && tar xvf pari-${VERSION}.tar.gz -C wasm --strip-components=1
 
-${PREFIX_WASM}/.built: ${BUILD}/pari-${VERSION}.wasm
-	cd ${BUILD}/pari-${VERSION}.wasm && INIT_CWD=${INIT_CWD} PREFIX=${INIT_CWD}/${PREFIX_WASM} ${INIT_CWD}/src/build-wasm.sh
-	touch ${PREFIX_WASM}/.built
+${DIST_WASM}/.built: ${BUILD}/wasm
+	cd ${BUILD}/wasm && CC="zig cc -target=wasm32-wasi" AR="zig ar" RANLIB="zig ranlib" \
+		./Configure --host=wasm-emscripten --prefix=${DIST_WASM} --graphic=none
+	cd ${BUILD}/wasm/Oemscripten-wasm && make AR="zig ar" RANLIB="zig ranlib" install
+	touch ${DIST_WASM}/.built
 
-wasm: ${PREFIX_WASM}/.built
+.PHONY: wasm
+wasm: ${DIST_WASM}/.built
 
 
 

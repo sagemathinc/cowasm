@@ -3,11 +3,12 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 DIST_JS = ${CWD}/dist/js
-GMP = ${CWD}/../gmp/dist/
-MPFR = ${CWD}/../mpfr/dist/
-PARI = ${CWD}/../pari/dist/
-NTL = ${CWD}/../ntl/dist/
-FLINT = ${CWD}/../flint/dist/
+
+GMP = ${CWD}/../gmp/dist
+MPFR = ${CWD}/../mpfr/dist
+PARI = ${CWD}/../pari/dist
+NTL = ${CWD}/../ntl/dist
+FLINT = ${CWD}/../flint/dist
 
 all: ${DIST_NATIVE}/.built ${DIST_WASM}/.built
 
