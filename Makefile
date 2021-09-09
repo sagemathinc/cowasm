@@ -1,7 +1,8 @@
 BUILT = dist/.built
 
 all: packages/gmp/${BUILT} packages/mpir/${BUILT} packages/mpfr/${BUILT} packages/mpc/${BUILT} \
-	 packages/gf2x/${BUILT} packages/ntl/${BUILT} packages/flint/${BUILT} packages/pari/${BUILT}
+	 packages/gf2x/${BUILT} packages/ntl/${BUILT} packages/flint/${BUILT} packages/pari/${BUILT} \
+	 packages/eclib/${BUILT}
 
 packages/gmp/${BUILT}:
 	cd packages/gmp && make all
@@ -35,6 +36,9 @@ packages/pari/${BUILT}: packages/gmp/${BUILT}
 	cd packages/pari && make all
 .PHONY: packages/pari/${BUILT}
 
+packages/eclib/${BUILT}: packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/pari/${BUILT} packages/ntl/${BUILT} packages/flint/${BUILT}
+	cd packages/eclib && make all
+.PHONY: packages/eclib/${BUILT}
 
 
 clean:
@@ -45,4 +49,5 @@ clean:
 	cd packages/ntl && make clean
 	cd packages/flint && make clean
 	cd packages/pari && make clean
+	cd packages/eclib && make clean
 

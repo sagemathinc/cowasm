@@ -12,8 +12,8 @@ GMP = ${CWD}/../gmp/dist
 
 ${BUILD}/pari-${VERSION}.tar.gz:
 	mkdir -p ${BUILD}
-	# retry-max-time: For some reason pari.math.u-bordeaux.fr is flaky.
-	cd ${BUILD} && curl --retry-max-time 120 https://pari.math.u-bordeaux.fr/pub/pari/unix/pari-${VERSION}.tar.gz -o pari-${VERSION}.tar.gz
+	# retry-max-time: For some reason pari.math.u-bordeaux.fr is VERY flaky.
+	cd ${BUILD} && curl --retry-max-time 600 https://pari.math.u-bordeaux.fr/pub/pari/unix/pari-${VERSION}.tar.gz -o pari-${VERSION}.tar.gz
 
 # NATIVE
 

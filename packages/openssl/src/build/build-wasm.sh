@@ -5,6 +5,6 @@ cd $BUILD/openssl.wasm
 
 CC=cc ./configure --prefix="$PREFIX"
 
-make -j8
+make
 
 make install

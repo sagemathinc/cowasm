@@ -67,7 +67,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 		--with-boost=no
 	# We change PTHREAD_CFLAGS, which would be -pthread, which would break linking with all
 	# our other libraries.   Also a hack -- change the empty BOOST_LIBS to let us link in gmp.
-	cd ${BUILD}/wasm && make PTHREAD_CFLAGS="" BOOST_LIBS="-lgmp -lmpfr ${GMP}/wasm/lib/libgmp.a  ${PARI}/wasm/lib/libpari.a   ${NTL}/wasm/lib/libntl.a   ${FLINT}/wasm/lib/libflint.a  ${MPFR}/wasm/lib/libmpfr.a "
+	cd ${BUILD}/wasm && make -j8 PTHREAD_CFLAGS="" BOOST_LIBS="-lgmp -lmpfr ${GMP}/wasm/lib/libgmp.a  ${PARI}/wasm/lib/libpari.a   ${NTL}/wasm/lib/libntl.a   ${FLINT}/wasm/lib/libflint.a  ${MPFR}/wasm/lib/libmpfr.a "
 	cd ${BUILD}/wasm && make PTHREAD_CFLAGS="" BOOST_LIBS="-lgmp -lmpfr" install
 	cp -v ${BUILD}/wasm/progs/*.wasm ${DIST_WASM}/bin
 	touch ${DIST_WASM}/.built
