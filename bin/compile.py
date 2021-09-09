@@ -2,9 +2,23 @@
 import subprocess, sys
 
 
+def run(args):
+    # print(' '.join(args)) -- don't enable except for debugging, since would obviously break scripts trying to parse output
+    a = subprocess.run(args, capture_output=True, check=False)
+    sys.stdout.write(a.stdout.decode('utf-8'))
+    sys.stderr.write(a.stderr.decode('utf-8'))
+    if a.returncode:
+        sys.exit(1)
+
+
 def build(compiler):
     args = [
-        "zig", compiler, "-target", "wasm32-wasi", "-D_WASI_EMULATED_SIGNAL"
+        "zig",
+        compiler,
+        "-target",
+        "wasm32-wasi",
+        "-D_WASI_EMULATED_SIGNAL",
+        "-D_WASI_EMULATED_PROCESS_CLOCKS",
     ]
     prev = None
     make_exe = False
@@ -15,20 +29,11 @@ def build(compiler):
         else:
             args.append(x)
         prev = x
-    print(' '.join(args))
-    subprocess.run(args, capture_output=True, check=True)
+    run(args)
     if make_exe:
         file = open(make_exe, 'w')
-        file.write(f"""
-#!/usr/bin/env bash
-wasmer run {make_exe}.wasm --dir . -- "$@"
+        file.write("""#!/usr/bin/env bash
+wasmer run "${BASH_SOURCE[0]}.wasm" --dir . -- "$@"
 """)
         file.close()
-        subprocess.run(["chmod", "+x", make_exe],
-                       capture_output=True,
-                       check=True)
-        # This might be nice, but it is (1) slow, (2) big, and (3) I can't
-        # figure how to give it filesystem access.
-        #args = ["wasmer", "create-exe", make_exe + '.wasm', "-o", make_exe]
-        #print(' '.join(args))
-        #print(subprocess.run(args, capture_output=True, check=True))
+        run(["chmod", "+x", make_exe])

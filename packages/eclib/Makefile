@@ -4,7 +4,7 @@ DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 DIST_JS = ${CWD}/dist/js
 ZCC = ${CWD}/../../bin/zcc
-ZXX = ${CWD}/../../bin/zxx
+ZXX = ${CWD}/../../bin/z++
 
 GMP = ${CWD}/../gmp/dist
 MPFR = ${CWD}/../mpfr/dist
@@ -31,15 +31,15 @@ ${BUILD}/native: ${BUILD}/eclib
 ${DIST_NATIVE}/.built: ${BUILD}/native
 	cd ${BUILD}/native && \
 		CXXFLAGS="-I${GMP}/native/include  -I${MPFR}/native/include"  LDFLAGS="-L${GMP}/native/lib  -L${MPFR}/native/lib" \
-		LIBS="-lgmp -lmpfr" CC="zig cc" CXX="zig c++" AR="zig ar" \
+		LIBS="-lgmp -lmpfr" CC="zig cc" CXX="zig c++" AR="zig ar" RANLIB="zig ranlib"  \
 		./configure \
 			--with-pari=${PARI}/native  \
 			--with-ntl=${NTL}/native    \
 			--with-flint=${FLINT}/native   \
 			--prefix=${DIST_NATIVE}
 	# A hack -- change the empty BOOST_LIBS to let us link in gmp.
-	make BOOST_LIBS="-lgmp -lmpfr" PTHREAD_CFLAGS=""
-	make BOOST_LIBS="-lgmp -lmpfr" PTHREAD_CFLAGS="" install
+	cd ${BUILD}/native && make -j8 BOOST_LIBS="-lgmp -lmpfr" PTHREAD_CFLAGS=""
+	cd ${BUILD}/native && make BOOST_LIBS="-lgmp -lmpfr" PTHREAD_CFLAGS="" install
 	touch ${DIST_NATIVE}/.built
 
 .PHONY: native
@@ -55,7 +55,8 @@ ${BUILD}/wasm: ${BUILD}/eclib
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && \
 	CXXFLAGS="-I${GMP}/wasm/include  -I${MPFR}/wasm/include"  LDFLAGS="-L${GMP}/wasm/lib  -L${MPFR}/wasm/lib" \
-	LIBS="-lgmp -lmpfr" CC=${ZCC} CXX=${ZXX} AR="zig ar" \
+	LIBS="-lgmp -lmpfr" \
+	CC=${ZCC} CXX=${ZXX} AR="zig ar" RANLIB="zig ranlib" \
 	./configure \
 		--with-pari=${PARI}/wasm  \
 		--with-ntl=${NTL}/wasm    \
@@ -66,8 +67,9 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 		--with-boost=no
 	# We change PTHREAD_CFLAGS, which would be -pthread, which would break linking with all
 	# our other libraries.   Also a hack -- change the empty BOOST_LIBS to let us link in gmp.
-	make PTHREAD_CFLAGS="" BOOST_LIBS="-lgmp -lmpfr"
-	make PTHREAD_CFLAGS="" BOOST_LIBS="-lgmp -lmpfr" install
+	cd ${BUILD}/wasm && make PTHREAD_CFLAGS="" BOOST_LIBS="-lgmp -lmpfr ${GMP}/wasm/lib/libgmp.a  ${PARI}/wasm/lib/libpari.a   ${NTL}/wasm/lib/libntl.a   ${FLINT}/wasm/lib/libflint.a  ${MPFR}/wasm/lib/libmpfr.a "
+	cd ${BUILD}/wasm && make PTHREAD_CFLAGS="" BOOST_LIBS="-lgmp -lmpfr" install
+	cp -v ${BUILD}/wasm/progs/*.wasm ${DIST_WASM}/bin
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm

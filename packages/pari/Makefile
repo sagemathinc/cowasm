@@ -41,11 +41,13 @@ ${BUILD}/wasm: ${BUILD}/pari-${VERSION}.tar.gz
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && CC=${ZCC} AR="zig ar" RANLIB="zig ranlib" \
 		./Configure --host=wasm-wasi --prefix=${DIST_WASM} --graphic=none --with-gmp=${GMP}/wasm
-	cd ${BUILD}/wasm/O* && cp /usr/include/bits/setjmp.h  bits/
-	cd ${BUILD}/wasm/O* && cp /usr/include/bits/wordsize.h  bits/
+	# Horrible temporary hack because of missing bits/ headers with zig.  Will have to address this somehow...
+	cd ${BUILD}/wasm/O* && cp /usr/include/bits/setjmp.h /usr/include/bits/wordsize.h bits/
 	cd ${BUILD}/wasm/O* && make AR="zig ar" RANLIB="zig ranlib" gp
 	cd ${BUILD}/wasm/O* && make AR="zig ar" RANLIB="zig ranlib" install
 	cp ${BUILD}/wasm/O*/gp-sta.wasm ${DIST_WASM}/bin
+	# Horrible temporary hack because of missing bits/ headers with zig.  Will have to address this somehow...!!
+	mkdir ${DIST_WASM}/include/bits && cp /usr/include/bits/setjmp.h /usr/include/bits/wordsize.h ${DIST_WASM}/include/bits
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
