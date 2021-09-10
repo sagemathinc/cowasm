@@ -4,7 +4,7 @@ const Integer = integer.Integer;
 const std = @import("std");
 
 pub export fn initCustomAllocator() void {
-    std.debug.print("init GMP integers", .{});
+    std.debug.print("GMP: initCustomAllocator\n", .{});
     custom.init();
 }
 

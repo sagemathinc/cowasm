@@ -1,9 +1,3 @@
-/*
-Import as follows using a very recent version of node.js (at least 16.6?):
-
-You must call init once before using functions, or nothing will work.
-*/
-
 import { importWasm, stringToU8 } from "./interface";
 
 interface Memory {
@@ -17,7 +11,7 @@ export async function init(): Promise<void> {
   }
   wasm = await importWasm("integer");
   // Initialize GMP custom allocator:
-  (wasm.initCustomAllocator as CallableFunction)();
+  wasm.initCustomAllocator();
 }
 
 class IntegerClass {
@@ -29,24 +23,24 @@ class IntegerClass {
       return;
     }
     if (typeof n == "number") {
-      this.i = (wasm.createIntegerInt as CallableFunction)(n);
+      this.i = wasm.createIntegerInt(n);
       return;
     }
-    this.i = (wasm.createIntegerStr as CallableFunction)(
+    this.i = wasm.createIntegerStr(
       stringToU8(`${n}`, (wasm.memory as Memory).buffer)
     );
   }
 
   print() {
-    (wasm.printInteger as CallableFunction)(this.i);
+    wasm.printInteger(this.i);
   }
 
   nextPrime() {
-    return new IntegerClass(null, (wasm.nextPrime as CallableFunction)(this.i));
+    return new IntegerClass(null, wasm.nextPrime(this.i));
   }
 
   isPseudoPrime() {
-    return (wasm.wrappedIsPseudoPrime as CallableFunction)(this.i);
+    return wasm.wrappedIsPseudoPrime(this.i);
   }
 
   toString() {
@@ -57,11 +51,11 @@ class IntegerClass {
 
 export function isPseudoPrime(n: number | string): 0 | 1 | 2 {
   if (typeof n == "string") {
-    return (wasm.isPseudoPrime as CallableFunction)(
+    return wasm.isPseudoPrime(
       stringToU8(`${n}`, (wasm.memory as Memory).buffer)
     );
   } else {
-    return (wasm.isPseudoPrimeInt as CallableFunction)(n);
+    return wasm.isPseudoPrimeInt(n);
   }
 }
 
