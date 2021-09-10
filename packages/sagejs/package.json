@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "SageJS",
   "exports": { "./*": "./dist/*.js" },
-  "type": "module",
   "files": [
     "dist/*",
     "README.md",

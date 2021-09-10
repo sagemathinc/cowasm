@@ -1,12 +1,10 @@
 {
   "compilerOptions": {
     "incremental": true,
-    "target": "es2017",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "lib": ["es6", "es2017", "dom"],
+    "target": "es5",
+    "lib": ["es5", "es6", "es2017", "dom"],
     "allowJs": true,
-    "declaration": false,
+    "declaration": true,
     "downlevelIteration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -14,9 +12,10 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strictNullChecks": true,
+    "strictNullChecks": true
   },
   "watchOptions": {
     "watchFile": "useFsEvents",
