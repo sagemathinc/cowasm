@@ -1,3 +1,10 @@
+/*
+Import as follows using a very recent version of node.js (at least 16.6?):
+
+await import("@sagemath/sagejs/integer")
+
+*/
+
 import { WASI } from "@wasmer/wasi";
 import { readFile } from "fs";
 import { promisify } from "util";

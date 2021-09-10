@@ -5,9 +5,8 @@ BUILD = build
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
-DIST_JS = ${CWD}/dist/js
 
-all: ${DIST_NATIVE}/.built ${DIST_WASM}/.built ${DIST_JS}/.built
+all: ${DIST_NATIVE}/.built ${DIST_WASM}/.built
 
 ${BUILD}/gmp-${VERSION}.tar.bz2:
 	mkdir -p ${BUILD}
@@ -51,27 +50,5 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 .PHONY: wasm
 wasm: ${DIST_WASM}/.built
 
-# Javascript interface library
-
-node_modules:
-	npm ci
-
-${DIST_JS}/integer.js: src/integer.ts node_modules
-	npx tsc
-
-test-integer: native
-	cd src && zig test integer.zig -lgmp -lc -I${DIST_NATIVE}/include -L${DIST_NATIVE}/lib
-
-${DIST_JS}/integer.wasm: ${DIST_WASM}/.built
-	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${DIST_WASM}/include -L${DIST_WASM}/lib ${DIST_WASM}/lib/libgmp.a -O ReleaseSmall integer-export.zig
-	mkdir -p ${DIST_JS}
-	mv src/integer-export.wasm ${DIST_JS}/integer.wasm
-
-${DIST_JS}/.built: ${DIST_JS}/integer.wasm ${DIST_JS}/integer.js
-	touch ${DIST_JS}/.built
-
-.PHONY: interface
-interface: ${DIST_JS}/.built
-
 clean:
-	rm -rf ${DIST_NATIVE} ${DIST_WASM} ${DIST_JS} ${CWD}/dist/tsconfig.tsbuildinfo ${BUILD}/native ${BUILD}/wasm  node_modules
+	rm -rf ${DIST_NATIVE} ${DIST_WASM} ${BUILD}/native ${BUILD}/wasm
