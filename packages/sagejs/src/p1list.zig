@@ -53,7 +53,6 @@ pub fn P1Element(comptime T: type) type {
             u = g;
             v = @mod(s * v, N);
 
-            //TODO!
             var min_v: T = v;
             var min_t: T = 1;
             if (g != 1) {

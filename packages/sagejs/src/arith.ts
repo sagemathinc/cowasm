@@ -1,5 +1,26 @@
 import { importWasm } from "./interface";
 
+export function gcd_js(a, b) {
+  if (a == 0) {
+    return Math.abs(b);
+  }
+  if (b == 0) {
+    return Math.abs(a);
+  }
+  if (a < 0) {
+    a = -a;
+  }
+  if (b < 0) {
+    b = -b;
+  }
+  while (b != 0) {
+    const c = a % b;
+    a = b;
+    b = c;
+  }
+  return a;
+}
+
 export function gcd(n: number, m: number): number {
   return wasm.gcd(n, m);
 }
@@ -27,4 +48,36 @@ export function xgcd(
 let wasm: any = undefined;
 export async function init() {
   wasm = await importWasm("arith", { env: { xgcd_cb }, noWasi: true });
+}
+
+/*
+function f(k, B)
+    n = 0
+    s = 0
+    while n <= B
+        s += gcd(n, k)
+        n += 1
+    end
+    s
+end
+*/
+
+export function bench_gcd1(k, B) {
+  let s = 0;
+  for (let n = 0; n <= B; n++) {
+    s += wasm.gcd(n, k);
+  }
+  return s;
+}
+
+export function bench_gcd1_js(k, B) {
+  let s = 0;
+  for (let n = 0; n <= B; n++) {
+    s += gcd_js(n, k);
+  }
+  return s;
+}
+
+export function bench_gcd1_direct(k, B) {
+  return wasm.bench_gcd1(k, B);
 }

@@ -32,6 +32,16 @@ ${DIST}/arith.wasm: src/arith.zig src/arith-export.zig
 ${DIST}/arith.js: src/arith.ts node_modules
 	npx tsc
 
+
+${DIST}/factor.wasm: src/factor.zig src/factor-export.zig
+	cd src/ && zig build-lib -target wasm32-freestanding ${CFLAGS} factor-export.zig
+	mkdir -p ${DIST}
+	mv src/factor-export.wasm ${DIST}/factor.wasm
+
+${DIST}/factor.js: src/factor.ts node_modules
+	npx tsc
+
+
 ${DIST}/.built: ${DIST}/integer.wasm ${DIST}/integer.js ${DIST}/arith.wasm ${DIST}/arith.js
 	touch ${DIST}/.built
 
