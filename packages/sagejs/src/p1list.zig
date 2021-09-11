@@ -1,3 +1,4 @@
+const std = @import("std");
 const arith = @import("arith.zig");
 const errors = @import("errors.zig");
 
@@ -9,6 +10,10 @@ pub fn P1Element(comptime T: type) type {
     return struct {
         u: T,
         v: T,
+
+        pub fn init(u: T, v: T) P1Element(T) {
+            return P1Element(T){ .u = u, .v = v };
+        }
 
         pub fn reduceMod(self: P1Element(T), N: T) !P1Element(T) {
             if (N <= 0) return errors.MathError.ValueError;
@@ -77,18 +82,49 @@ pub fn P1Element(comptime T: type) type {
     };
 }
 
-pub fn P1ListSize(N: anytype) @TypeOf(N) {
-    return N + 1;
+fn P1ListType(comptime T: type) type {
+    return struct {
+        N: T,
+        list: std.ArrayList(P1Element(T)),
+
+        pub fn init(N: anytype, allocator: *std.mem.Allocator) !P1ListType(T) {
+            const Elt = P1Element(T);
+            var list = std.ArrayList(Elt).init(allocator);
+            // Enumerate the elements of P1.
+            // TODO -- this is fake for now!  only for primes
+            try list.append(Elt{ .u = 0, .v = 1 });
+            var v: T = 0;
+            while (v < N) : (v += 1) {
+                try list.append(Elt{ .u = 1, .v = v });
+            }
+            return P1ListType(T){ .N = N, .list = list };
+        }
+
+        pub fn deinit(self: P1ListType(T)) void {
+            self.list.deinit();
+        }
+    };
 }
 
-//fn P1ListType(comptime T: type) type {
-//    return struct {
-//        N: T,
-//    };
-//}
+pub fn P1List(N: anytype, allocator: *std.mem.Allocator) !P1ListType(@TypeOf(N)) {
+    return P1ListType(@TypeOf(N)).init(N, allocator);
+}
 
-//pub fn P1List(comptime T: type, comptime N: T) [P1ListSize(N)]P1Element(T) {
-//    const m: usize = P1ListSize(N);
-//    const v = [_]P1Element(T){P1Element(T){ .u = 0, .v = 0 }} ** m;
-//    return v;
-//}
+const expect = std.testing.expect;
+
+test "some basics with an element" {
+    const x = P1Element(i32).init(7, 5);
+    const y = try x.reduceMod(3);
+    try expect(y.u == 1);
+    try expect(y.v == 2);
+    const n = try x.normalize(11);
+    try expect(arith.mod(n.s * n.u, 11) == x.u);
+    try expect(arith.mod(n.s * n.v, 11) == x.v);
+}
+
+test "make a P1List" {
+    const P = try P1List(@as(i32, 11), std.testing.allocator);
+    defer P.deinit();
+    //std.debug.print("\n{s}\n", .{P.list});
+    try expect(P.list.items.len == 12);
+}
