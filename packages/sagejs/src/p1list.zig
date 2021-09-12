@@ -239,6 +239,23 @@ pub fn P1ListType(comptime T: type) type {
                 unreachable;
             };
         }
+
+        // Apply the matrix [-1,0;0,1] to the `i`'th element of P1.
+        pub fn applyI(self: P1ListType(T), i: usize) !usize {
+            const elt = try self.get(i);
+            return self.index(-elt.u, elt.v);
+        }
+
+        // Apply the matrix [0,-1;1,0] to the `i`'th element of P1.
+        pub fn applyS(self: P1ListType(T), i: usize) !usize {
+            const elt = try self.get(i);
+            return self.index(-elt.v, elt.u);
+        }
+        // Apply the matrix [0,1;-1,-1] to the `i`'th element of P1.
+        pub fn applyT(self: P1ListType(T), i: usize) !usize {
+            const elt = try self.get(i);
+            return self.index(elt.v, -elt.u - elt.v);
+        }
     };
 }
 
@@ -333,7 +350,7 @@ test "compute P1(N) for N up to 500 and add up the counts -- good double check t
     }
     try expect(s == 190272);
     // Also, this better not take very long! (should be around 100ms)
-    std.debug.print("\n{}\n", .{time() - t0});
+    //std.debug.print("\n{}\n", .{time() - t0});
     try expect(time() - t0 < 1000);
 }
 
@@ -370,6 +387,22 @@ test "test liftToSL2Z for all elements of P1(1000) -- add upper left entry" {
     //    P=P1List(1000); sum([P.lift_to_sl2z(i)[0] for i in range(len(P))])
 }
 
+test "applyI, applyS, applyT to elements of P1(10)" {
+    const N: i32 = 10;
+    const P = try P1List(N, std.testing.allocator);
+    defer P.deinit();
+    // from Sage:  P = P1List(10); [P.apply_I(n) for n in range(len(P))]
+    const correctI = [_]usize{ 0, 1, 10, 9, 8, 7, 6, 5, 4, 3, 2, 15, 14, 13, 12, 11, 16, 17 };
+    const correctS = [_]usize{ 1, 0, 10, 15, 4, 14, 16, 12, 8, 11, 2, 9, 7, 17, 5, 3, 6, 13 };
+    const correctT = [_]usize{ 10, 0, 9, 14, 3, 13, 17, 11, 7, 15, 1, 8, 6, 16, 4, 2, 5, 12 };
+    var i: usize = 0;
+    while (i < P.count()) : (i += 1) {
+        try expect((try P.applyI(i)) == correctI[i]);
+        try expect((try P.applyS(i)) == correctS[i]);
+        try expect((try P.applyT(i)) == correctT[i]);
+    }
+}
+
 fn bench1() !void {
     const t0 = time();
     var i: u32 = 0;
@@ -384,6 +417,33 @@ fn bench1() !void {
 // long time
 // test "make P1(10000) 200 times" {
 //     try bench1();
+// }
+
+fn bench2(comptime T: type, N: T, verbose: bool) !usize {
+    const t0 = time();
+    const P = try P1List(N, std.testing.allocator);
+    defer P.deinit();
+    var i: usize = 0;
+    var s: usize = 0;
+    while (i < P.count()) : (i += 1) {
+        s += try P.applyT(i);
+    }
+    if (verbose) {
+        std.debug.print("\nN={}, time={}ms, s={}\n", .{ N, time() - t0, s });
+    }
+    return s;
+}
+
+test "small bench2" {
+    try expect((try bench2(i32, 1000, false)) == 1619100);
+}
+
+// test "bench2" {
+//     try bench2(i32, 389, false);
+//     try bench2(i32, 1000, false);
+//     try bench2(i32, 10000, true);
+//     try bench2(i64, 100000, true);
+//     try bench2(i64, 1000000, true);
 // }
 
 // long time -- 3s
@@ -402,3 +462,4 @@ fn bench1() !void {
 //     try expect(P.list.items.len == 12963456);
 //     std.debug.print("\ntime={}ms\n", .{time() - t0});
 // }
+
