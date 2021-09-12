@@ -1,6 +1,7 @@
 const std = @import("std");
 const arith = @import("arith.zig");
 const errors = @import("errors.zig");
+const sl2z = @import("sl2z.zig");
 const gcd = arith.gcd;
 
 fn EltAndScalar(comptime T: type) type {
@@ -181,13 +182,13 @@ pub fn P1ListType(comptime T: type) type {
             return P1Element(T).init(n.u, n.v);
         }
 
-        pub fn normalize_with_scalar(self: P1ListType(T), u: T, v: T) !EltAndScalar(T) {
+        pub fn normalizeWithScalar(self: P1ListType(T), u: T, v: T) !EltAndScalar(T) {
             const elt = P1Element(T).init(u, v);
             return elt.normalize(self.N, true);
         }
 
         // (u,v) assumed already normalized.
-        pub fn index_of_normalized(self: P1ListType(T), u: T, v: T) !usize {
+        pub fn indexOfNormalized(self: P1ListType(T), u: T, v: T) !usize {
             if (self.N <= 1) {
                 return 0;
             }
@@ -216,12 +217,12 @@ pub fn P1ListType(comptime T: type) type {
             // Normalize u and v, then find their position in our sorted list
             // of elements of P1.
             const uv = try self.normalize(u, v);
-            return self.index_of_normalized(uv.u, uv.v);
+            return self.indexOfNormalized(uv.u, uv.v);
         }
 
-        pub fn index_and_scalar(self: P1ListType(T), u: T, v: T) !IndexAndScalar {
-            const z = try self.normalize_with_scalar(u, v);
-            const i = try self.index_of_normalized(z.u, z.v);
+        pub fn indexAndScalar(self: P1ListType(T), u: T, v: T) !IndexAndScalar {
+            const z = try self.normalizeWithScalar(u, v);
+            const i = try self.indexOfNormalized(z.u, z.v);
             return IndexAndScalar{ .i = i, .s = z.s };
         }
 
@@ -230,6 +231,13 @@ pub fn P1ListType(comptime T: type) type {
                 return errors.General.IndexError;
             }
             return self.list.items[i];
+        }
+
+        pub fn liftToSL2Z(self: P1ListType(T), i: usize) !sl2z.SL2ZElement(T) {
+            const elt = try self.get(i);
+            return sl2z.liftToSL2Z(T, elt.u, elt.v, self.N) catch {
+                unreachable;
+            };
         }
     };
 }
@@ -293,7 +301,7 @@ test "normalize" {
     const x = try P.normalize(7, 15);
     try expect(x.u == 1);
     try expect(x.v == 5);
-    const y = try P.normalize_with_scalar(7, 15);
+    const y = try P.normalizeWithScalar(7, 15);
     try expect(y.u == 1);
     try expect(y.v == 5);
     try expect(y.s == 7);
@@ -305,11 +313,11 @@ test "index of element in the sorted list" {
     const i = try P.index(1, 99);
     try expect(i == 100);
     // Also with the scalar
-    const z = try P.index_and_scalar(1, 99);
+    const z = try P.indexAndScalar(1, 99);
     try expect(z.i == 100);
     try expect(z.s == 1);
     // And another with a more interesting scalar
-    const z2 = try P.index_and_scalar(7, 7 * 99);
+    const z2 = try P.indexAndScalar(7, 7 * 99);
     try expect(z2.i == 100);
     try expect(z2.s == 7);
 }
@@ -345,6 +353,21 @@ test "getting items from P1" {
         caught = true;
     };
     try expect(caught);
+}
+
+test "test liftToSL2Z for all elements of P1(1000) -- add upper left entry" {
+    const N: i32 = 1000;
+    const P = try P1List(N, std.testing.allocator);
+    defer P.deinit();
+    var i: usize = 0;
+    var s: i32 = 0;
+    while (i < P.count()) : (i += 1) {
+        const m = try P.liftToSL2Z(i);
+        s += m.a;
+    }
+    try expect(s == 161);
+    // 161 computed with sage
+    //    P=P1List(1000); sum([P.lift_to_sl2z(i)[0] for i in range(len(P))])
 }
 
 fn bench1() !void {
