@@ -1,4 +1,4 @@
-import { importWasm, stringToU8 } from "./interface";
+import wasmImport, { stringToU8 } from "./wasm";
 
 interface Memory {
   buffer: Int8Array;
@@ -9,7 +9,7 @@ export async function init(): Promise<void> {
   if (wasm != null) {
     return;
   }
-  wasm = await importWasm("integer");
+  wasm = await wasmImport("integer");
   // Initialize GMP custom allocator:
   wasm.initCustomAllocator();
 }

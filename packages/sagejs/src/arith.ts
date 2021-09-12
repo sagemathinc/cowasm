@@ -1,4 +1,4 @@
-import { importWasm } from "./interface";
+import wasmImport from "./wasm";
 
 export function gcd_js(a, b) {
   if (a == 0) {
@@ -47,7 +47,7 @@ export function xgcd(
 
 let wasm: any = undefined;
 export async function init() {
-  wasm = await importWasm("arith", { env: { xgcd_cb }, noWasi: true });
+  wasm = await wasmImport("arith", { env: { xgcd_cb }, noWasi: true });
 }
 
 /*

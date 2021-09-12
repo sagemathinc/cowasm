@@ -96,7 +96,7 @@ pub fn P1Element(comptime T: type) type {
     };
 }
 
-fn P1ListType(comptime T: type) type {
+pub fn P1ListType(comptime T: type) type {
     return struct {
         N: T,
         list: std.ArrayList(P1Element(T)),
@@ -155,6 +155,10 @@ fn P1ListType(comptime T: type) type {
 
         pub fn deinit(self: P1ListType(T)) void {
             self.list.deinit();
+        }
+
+        pub fn count(self: P1ListType(T)) usize {
+            return self.list.items.len;
         }
     };
 }

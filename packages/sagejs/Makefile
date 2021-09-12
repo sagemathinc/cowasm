@@ -43,7 +43,7 @@ ${DIST}/factor.js: src/factor.ts node_modules
 
 
 
-${DIST}/p1list.wasm: src/p1list.zig src/p1list-export.zig
+${DIST}/p1list.wasm: src/p1list.zig src/p1list-export.zig src/p1list-container.zig
 	cd src/ && zig build-lib -target wasm32-freestanding ${CFLAGS} p1list-export.zig
 	mkdir -p ${DIST}
 	mv src/p1list-export.wasm ${DIST}/p1list.wasm

@@ -38,7 +38,7 @@ interface Options {
 // TODO: need to reuseInFlight importWasm
 const cache: { [name: string]: any } = {};
 
-export async function importWasm(name: string, options: Options = {}) {
+export default async function wasmImport(name: string, options: Options = {}) {
   if (!options.noCache) {
     if (cache[name] != null) {
       return cache[name];

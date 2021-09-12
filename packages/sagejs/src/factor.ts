@@ -1,8 +1,8 @@
-import { importWasm } from "./interface";
+import wasmImport from "./wasm";
 
 let wasm: any = undefined;
 export async function init() {
-  wasm = await importWasm("factor", {
+  wasm = await wasmImport("factor", {
     env: {
       sendPrimePower,
       reportError: () => {

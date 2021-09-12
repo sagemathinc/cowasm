@@ -1,19 +1,28 @@
-import { importWasm } from "./interface";
+import wasmImport from "./wasm";
 
-export function P1List(N: number): number {
-  return wasm.P1List(N);
+// @ts-ignore -- typescript doesn't have FinalizationRegistry
+const registry = new FinalizationRegistry((handle) => {
+  // console.log(`Freeing memory for ${handle}`);
+  wasm.P1List_free(handle);
+});
+
+export class P1List {
+  public readonly N: number;
+  private readonly handle: number;
+
+  constructor(N) {
+    this.N = N;
+    this.handle = wasm.P1List(N);
+    registry.register(this, this.handle); // so we get notified when garbage collected.
+  }
+
+  count(): number {
+    return wasm.P1List_count(this.handle);
+  }
 }
 
 let wasm: any = undefined;
 export async function init() {
-  wasm = await importWasm("p1list", { noWasi: true });
+  wasm = await wasmImport("p1list", { noWasi: true });
 }
 init();
-
-export function bench1(N: number, k: number): number {
-  let s = 0;
-  for (let n = 0; n < k; n++) {
-    s += P1List(N);
-  }
-  return s;
-}
