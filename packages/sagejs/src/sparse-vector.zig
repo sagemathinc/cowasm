@@ -3,24 +3,24 @@ const mod = @import("./arith.zig").mod;
 const errors = @import("./errors.zig");
 const AutoHashMap = std.AutoHashMap;
 
-pub fn SparseVectorModP(comptime T: type) type {
+pub fn SparseVectorModN(comptime T: type) type {
     return struct {
         const Vector = @This();
 
-        p: T,
+        n: T,
         map: AutoHashMap(usize, T),
 
-        pub fn init(p: T, allocator: *std.mem.Allocator) !Vector {
-            if (p <= 1) {
+        pub fn init(n: T, allocator: *std.mem.Allocator) !Vector {
+            if (n <= 1) {
                 return errors.Math.ValueError;
             }
             var map = AutoHashMap(usize, T).init(allocator);
-            return Vector{ .p = p, .map = map };
+            return Vector{ .n = n, .map = map };
         }
 
         pub fn clone(self: Vector) !Vector {
             var map = try self.map.clone();
-            return Vector{ .p = self.p, .map = map };
+            return Vector{ .n = self.n, .map = map };
         }
 
         pub fn deinit(self: *Vector) void {
@@ -28,7 +28,7 @@ pub fn SparseVectorModP(comptime T: type) type {
         }
 
         pub fn set(self: *Vector, i: usize, x: T) !void {
-            try self.map.put(i, mod(x, self.p));
+            try self.map.put(i, mod(x, self.n));
         }
 
         pub fn get(self: *Vector, i: usize) T {
@@ -36,9 +36,10 @@ pub fn SparseVectorModP(comptime T: type) type {
         }
 
         fn op(self: Vector, right: Vector, add: bool) !Vector {
-            if (self.p != right.p) {
+            if (self.n != right.n) {
                 return errors.Math.ValueError;
             }
+            // clone self and then add right into it.
             var v = try self.clone();
             var it = right.map.iterator();
             while (it.next()) |kv| {
@@ -50,17 +51,47 @@ pub fn SparseVectorModP(comptime T: type) type {
                 } else {
                     x = v.get(i) - val;
                 }
-                try v.set(i, mod(x, self.p));
+                try v.set(i, mod(x, self.n));
             }
             return v;
         }
 
-        fn add(self: Vector, right: Vector) !Vector {
+        pub fn add(self: Vector, right: Vector) !Vector {
             return self.op(right, true);
         }
 
-        fn sub(self: Vector, right: Vector) !Vector {
+        pub fn sub(self: Vector, right: Vector) !Vector {
             return self.op(right, false);
+        }
+
+        pub fn rescale(self: *Vector, s: T) void {
+            var scalar = mod(s, self.n);
+            if (scalar == 1) return;
+            var it = self.map.iterator();
+            while (it.next()) |kv| {
+                const i = kv.key_ptr.*;
+                const val = kv.value_ptr.*;
+                self.set(i, val * scalar) catch {
+                    // can't happen since not allocating, etc.
+                    unreachable;
+                };
+            }
+        }
+
+        pub fn scale(self: Vector, s: T) !Vector {
+            var v = try self.clone();
+            v.rescale(s);
+            return v;
+        }
+
+        // mutate self to equal self + s * right.
+        pub fn addInPlace(self: *Vector, right: Vector, s: T) !void {
+            var it = right.map.iterator();
+            while (it.next()) |kv| {
+                const i = kv.key_ptr.*;
+                const val = kv.value_ptr.*;
+                try self.set(i, self.get(i) + s * val);
+            }
         }
     };
 }
@@ -69,7 +100,7 @@ const expect = std.testing.expect;
 const allocator = std.testing.allocator;
 
 test "creating a vector, then set and get entries" {
-    var v = try SparseVectorModP(i32).init(11, allocator);
+    var v = try SparseVectorModN(i32).init(11, allocator);
     defer v.deinit();
     try expect(v.get(7) == 0);
     try v.set(7, 15);
@@ -81,11 +112,11 @@ test "creating a vector, then set and get entries" {
 }
 
 test "adding and subtracting two vectors" {
-    var v = try SparseVectorModP(i32).init(11, allocator);
+    var v = try SparseVectorModN(i32).init(11, allocator);
     defer v.deinit();
     try v.set(0, 5);
     try v.set(1, 3);
-    var w = try SparseVectorModP(i32).init(11, allocator);
+    var w = try SparseVectorModN(i32).init(11, allocator);
     defer w.deinit();
     try w.set(0, 8);
     try w.set(2, 10);
@@ -102,12 +133,27 @@ test "adding and subtracting two vectors" {
     try expect(z.get(2) == 1);
 }
 
+test "add a multiple of one vector into another" {
+    var v = try SparseVectorModN(i32).init(11, allocator);
+    defer v.deinit();
+    try v.set(0, 5);
+    try v.set(1, 3);
+    var w = try SparseVectorModN(i32).init(11, allocator);
+    defer w.deinit();
+    try w.set(0, 8);
+    try w.set(2, 10);
+    try v.addInPlace(w, 3); // (5,3) + 3*(8,0,10)
+    try expect(v.get(0) == 7);
+    try expect(v.get(1) == 3);
+    try expect(v.get(2) == 8);
+}
+
 fn bench1(comptime N: anytype) !void {
     const time = std.time.milliTimestamp;
     const t = time();
-    var v = try SparseVectorModP(i32).init(11, allocator);
+    var v = try SparseVectorModN(i32).init(11, allocator);
     defer v.deinit();
-    var w = try SparseVectorModP(i32).init(11, allocator);
+    var w = try SparseVectorModN(i32).init(11, allocator);
     defer w.deinit();
     var i: usize = 0;
     while (i < N) : (i += 1) {
@@ -127,3 +173,17 @@ fn bench1(comptime N: anytype) !void {
 //     try bench1(1000);
 //     try bench1(5000);
 // }
+
+test "scale and rescale a vector" {
+    var v = try SparseVectorModN(i32).init(15, allocator);
+    defer v.deinit();
+    try v.set(0, 5);
+    try v.set(1, 3);
+    var w = try v.scale(3);
+    defer w.deinit();
+    try expect(w.get(0) == 0);
+    try expect(w.get(1) == 9);
+    v.rescale(3);
+    try expect(v.get(0) == 0);
+    try expect(v.get(1) == 9);
+}
