@@ -219,6 +219,24 @@ fn bench1() !void {
     std.debug.print("\ntime={}ms\n", .{time() - t0});
 }
 
+// long time
 // test "make P1(10000) 200 times" {
 //     try bench1();
+// }
+
+// long time -- 3s
+// test "make P1(9393939) as i64" {
+//     const t0 = time();
+//     const P = try P1List(@as(i64, 9393939), std.testing.allocator);
+//     defer P.deinit();
+//     try expect(P.list.items.len == 12963456);
+//     std.debug.print("\ntime={}ms\n", .{time() - t0});
+// }
+
+// pub fn main() !void {
+//     const t0 = time();
+//     const P = try P1List(@as(i64, 9393939), std.testing.allocator);
+//     defer P.deinit();
+//     try expect(P.list.items.len == 12963456);
+//     std.debug.print("\ntime={}ms\n", .{time() - t0});
 // }

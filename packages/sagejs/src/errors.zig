@@ -1,1 +1,1 @@
-pub const MathError = error{ValueError, ZeroDivisionError};
+pub const MathError = error{ValueError, ZeroDivisionError, OverflowError};

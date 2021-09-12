@@ -16,6 +16,9 @@ const wasmEnv: { [name: string]: Function } = {};
 for (const name of STUBS.split(" ")) {
   wasmEnv[name] = stub(name);
 }
+wasmEnv.reportError = () => {
+  throw Error();
+};
 
 const encoder = new TextEncoder();
 export function stringToU8(s, buffer) {

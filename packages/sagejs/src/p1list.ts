@@ -8,6 +8,7 @@ let wasm: any = undefined;
 export async function init() {
   wasm = await importWasm("p1list", { noWasi: true });
 }
+init();
 
 export function bench1(N: number, k: number): number {
   let s = 0;
