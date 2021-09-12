@@ -23,7 +23,7 @@ pub fn P1Element(comptime T: type) type {
             return P1Element(T){ .u = u, .v = v };
         }
 
-        pub fn normalize(self: P1Element(T), N: T) !EltAndScalar(T) {
+        pub fn normalize(self: P1Element(T), N: T, compute_s: bool) !EltAndScalar(T) {
             var reduced = try self.reduceMod(N);
             var u = reduced.u;
             var v = reduced.v;
@@ -76,9 +76,11 @@ pub fn P1Element(comptime T: type) type {
                 }
             }
             v = min_v;
-            s = try arith.inverseMod(s * min_t, N);
-
-            return EltAndScalar(T){ .u = u, .v = v, .s = s };
+            if (compute_s) {
+                s = try arith.inverseMod(s * min_t, N);
+                return EltAndScalar(T){ .u = u, .v = v, .s = s };
+            }
+            return EltAndScalar(T){ .u = u, .v = v, .s = 0 };
         }
 
         pub fn eql(self: P1Element(T), other: P1Element(T)) bool {
@@ -139,7 +141,9 @@ fn P1ListType(comptime T: type) type {
                             while (gcd(d1, c) != 1) {
                                 d1 += h;
                             }
-                            const uv = try (Elt{ .u = c, .v = d1 }).normalize(N);
+                            // this normalize call dominates the runtime (not
+                            // memory allocation or anything else)
+                            const uv = try (Elt{ .u = c, .v = d1 }).normalize(N, false);
                             try list.append(Elt{ .u = uv.u, .v = uv.v });
                         }
                     }
@@ -169,9 +173,11 @@ test "some basics with an element" {
     const y = try x.reduceMod(3);
     try expect(y.u == 1);
     try expect(y.v == 2);
-    const n = try x.normalize(11);
+    const n = try x.normalize(11, true);
     try expect(arith.mod(n.s * n.u, 11) == x.u);
     try expect(arith.mod(n.s * n.v, 11) == x.v);
+    const n2 = try x.normalize(11, false);
+    try expect(n2.s == 0);
 }
 
 test "make a P1List(1)" {
