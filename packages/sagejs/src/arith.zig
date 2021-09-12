@@ -88,7 +88,7 @@ pub fn inverseMod(a: anytype, N: anytype) !@TypeOf(a) {
     }
     const xgcd_aN = xgcd(a, N);
     if (xgcd_aN.g != 1) {
-        return errors.MathError.ZeroDivisionError;
+        return errors.Math.ZeroDivisionError;
     }
     return mod(xgcd_aN.s, N);
 }

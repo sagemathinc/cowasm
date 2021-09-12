@@ -1,7 +1,8 @@
 const p1list = @import("./p1list.zig");
 const std = @import("std");
 const P1Lists = @import("./p1list-container.zig").P1Lists;
-const page_allocator = std.heap.page_allocator;
+
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 
 extern fn reportError(ptr: [*]const u8, len: usize) void;
 
@@ -12,7 +13,7 @@ fn sendError(s: [*]const u8) void {
 }
 
 fn P1ListT(comptime T: type, N: i32) !p1list.P1ListType(T) {
-    return p1list.P1List(@intCast(T, N), std.heap.page_allocator);
+    return p1list.P1List(@intCast(T, N), &gpa.allocator);
 }
 
 // pub export fn P1List(N: i32) i32 {

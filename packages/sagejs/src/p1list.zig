@@ -17,7 +17,7 @@ pub fn P1Element(comptime T: type) type {
         }
 
         pub fn reduceMod(self: P1Element(T), N: T) !P1Element(T) {
-            if (N <= 0) return errors.MathError.ValueError;
+            if (N <= 0) return errors.Math.ValueError;
             var u = arith.mod(self.u, N);
             var v = arith.mod(self.v, N);
             return P1Element(T){ .u = u, .v = v };
@@ -110,6 +110,7 @@ pub fn P1Element(comptime T: type) type {
 }
 
 pub fn P1ListType(comptime T: type) type {
+    const IndexAndScalar = struct { i: usize, s: T };
     return struct {
         N: T,
         list: std.ArrayList(P1Element(T)),
@@ -185,28 +186,50 @@ pub fn P1ListType(comptime T: type) type {
             return elt.normalize(self.N, true);
         }
 
-        pub fn index(self: P1ListType(T), u: T, v: T) !usize {
+        // (u,v) assumed already normalized.
+        pub fn index_of_normalized(self: P1ListType(T), u: T, v: T) !usize {
             if (self.N <= 1) {
                 return 0;
             }
-            // Normalize u and v, then find their position in our sorted list
-            // of elements of P1.
-            const key = try self.normalize(u, v);
             // some special cases; these could be deleted...
-            if (key.u == 1) { // (1, v)
-                return @intCast(usize, key.v) + 1;
+            if (u == 1) { // (1, v)
+                return @intCast(usize, v) + 1;
             }
-            if (key.u == 0) {
-                if (key.v == 0) {
-                    return errors.MathError.ValueError;
+            if (u == 0) {
+                if (v == 0) {
+                    return errors.Math.ValueError;
                 }
                 // (0, 1)
                 return 0;
             }
             // general case, using binary search
+            const key = P1Element(T){ .u = u, .v = v };
             return std.sort.binarySearch(P1Element(T), key, self.list.items, {}, P1Element(T).compareFn) orelse {
-                return errors.MathError.ValueError;
+                return errors.Math.ValueError;
             };
+        }
+
+        pub fn index(self: P1ListType(T), u: T, v: T) !usize {
+            if (self.N <= 1) {
+                return @as(usize, 0);
+            }
+            // Normalize u and v, then find their position in our sorted list
+            // of elements of P1.
+            const uv = try self.normalize(u, v);
+            return self.index_of_normalized(uv.u, uv.v);
+        }
+
+        pub fn index_and_scalar(self: P1ListType(T), u: T, v: T) !IndexAndScalar {
+            const z = try self.normalize_with_scalar(u, v);
+            const i = try self.index_of_normalized(z.u, z.v);
+            return IndexAndScalar{ .i = i, .s = z.s };
+        }
+
+        pub fn get(self: P1ListType(T), i: usize) !P1Element(T) {
+            if (i >= self.list.items.len) {
+                return errors.General.IndexError;
+            }
+            return self.list.items[i];
         }
     };
 }
@@ -214,8 +237,6 @@ pub fn P1ListType(comptime T: type) type {
 pub fn P1List(N: anytype, allocator: *std.mem.Allocator) !P1ListType(@TypeOf(N)) {
     return P1ListType(@TypeOf(N)).init(N, allocator);
 }
-
-// while inotifywait -e close_write src/p1list.zig; do zig test src/p1list.zig ; done
 
 const expect = std.testing.expect;
 const time = std.time.milliTimestamp;
@@ -283,6 +304,47 @@ test "index of element in the sorted list" {
     defer P.deinit();
     const i = try P.index(1, 99);
     try expect(i == 100);
+    // Also with the scalar
+    const z = try P.index_and_scalar(1, 99);
+    try expect(z.i == 100);
+    try expect(z.s == 1);
+    // And another with a more interesting scalar
+    const z2 = try P.index_and_scalar(7, 7 * 99);
+    try expect(z2.i == 100);
+    try expect(z2.s == 7);
+}
+
+test "compute P1(N) for N up to 500 and add up the counts -- good double check that things are correct" {
+    var s: usize = 0;
+    var N: i32 = 1;
+    const t0 = time();
+    while (N <= 500) : (N += 1) {
+        const P = try P1List(N, std.testing.allocator);
+        defer P.deinit();
+        s += P.count();
+    }
+    try expect(s == 190272);
+    // Also, this better not take very long! (should be around 100ms)
+    std.debug.print("\n{}\n", .{time() - t0});
+    try expect(time() - t0 < 1000);
+}
+
+test "getting items from P1" {
+    const N: i32 = 100;
+    const P = try P1List(N, std.testing.allocator);
+    defer P.deinit();
+    const i = try P.index(1, 17);
+    const elt = try P.get(i);
+    try expect(elt.u == 1);
+    try expect(elt.v == 17);
+
+    // testing for out-of-bounds -- kind of awkard
+    var caught = false;
+    _ = P.get(1000) catch |err| {
+        try expect(err == errors.General.IndexError);
+        caught = true;
+    };
+    try expect(caught);
 }
 
 fn bench1() !void {
