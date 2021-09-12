@@ -42,7 +42,16 @@ ${DIST}/factor.js: src/factor.ts node_modules
 	npx tsc
 
 
-${DIST}/.built: ${DIST}/integer.wasm ${DIST}/integer.js ${DIST}/arith.wasm ${DIST}/arith.js
+
+${DIST}/p1list.wasm: src/p1list.zig src/p1list-export.zig
+	cd src/ && zig build-lib -target wasm32-freestanding ${CFLAGS} p1list-export.zig
+	mkdir -p ${DIST}
+	mv src/p1list-export.wasm ${DIST}/p1list.wasm
+
+
+
+
+${DIST}/.built: ${DIST}/integer.wasm ${DIST}/integer.js ${DIST}/arith.wasm ${DIST}/arith.js ${DIST}/p1list.wasm
 	touch ${DIST}/.built
 
 .PHONY: all

@@ -1,6 +1,7 @@
 const std = @import("std");
 const arith = @import("arith.zig");
 const errors = @import("errors.zig");
+const gcd = arith.gcd;
 
 fn EltAndScalar(comptime T: type) type {
     return struct { u: T, v: T, s: T };
@@ -30,7 +31,7 @@ pub fn P1Element(comptime T: type) type {
                 return EltAndScalar(T){ .u = u, .v = v, .s = 1 };
             }
             if (u == 0) {
-                if (arith.gcd(v, N) == 1) {
+                if (gcd(v, N) == 1) {
                     return EltAndScalar(T){ .u = 0, .v = 1, .s = v };
                 } else {
                     return EltAndScalar(T){ .u = 0, .v = 0, .s = v };
@@ -39,7 +40,7 @@ pub fn P1Element(comptime T: type) type {
 
             const xgcd_uN = arith.xgcd(u, N);
             const g = xgcd_uN.g;
-            if (arith.gcd(g, v) != 1) {
+            if (gcd(g, v) != 1) {
                 // (u,v) has a common factor with N, so not elt of P1....
                 return EltAndScalar(T){ .u = 0, .v = 0, .s = 0 };
             }
@@ -49,7 +50,7 @@ pub fn P1Element(comptime T: type) type {
             // Adjust s modulo N/g so it is coprime to N.
             if (g != 1) {
                 const d = @divExact(N, g);
-                while (arith.gcd(s, N) != 1) {
+                while (gcd(s, N) != 1) {
                     s = @mod(s + d, N);
                 }
             }
@@ -68,7 +69,7 @@ pub fn P1Element(comptime T: type) type {
                 while (k <= g) : (k += 1) {
                     v = arith.mod(v + vNg, N);
                     t = arith.mod(t + Ng, N);
-                    if (v < min_v and arith.gcd(t, N) == 1) {
+                    if (v < min_v and gcd(t, N) == 1) {
                         min_v = v;
                         min_t = t;
                     }
@@ -78,6 +79,17 @@ pub fn P1Element(comptime T: type) type {
             s = try arith.inverseMod(s * min_t, N);
 
             return EltAndScalar(T){ .u = u, .v = v, .s = s };
+        }
+
+        pub fn eql(self: P1Element(T), other: P1Element(T)) bool {
+            return self.u == other.u and self.v == other.v;
+        }
+
+        pub fn sortLessThan(context: void, self: P1Element(T), right: P1Element(T)) bool {
+            _ = context;
+            if (self.u < right.u) return true;
+            if (self.u > right.u) return false;
+            return self.v < right.v;
         }
     };
 }
@@ -90,13 +102,50 @@ fn P1ListType(comptime T: type) type {
         pub fn init(N: anytype, allocator: *std.mem.Allocator) !P1ListType(T) {
             const Elt = P1Element(T);
             var list = std.ArrayList(Elt).init(allocator);
-            // Enumerate the elements of P1.
-            // TODO -- this is fake for now!  only for primes
+            if (N == 1) {
+                try list.append(Elt{ .u = 0, .v = 0 });
+                return P1ListType(T){ .N = N, .list = list };
+            }
+
             try list.append(Elt{ .u = 0, .v = 1 });
             var v: T = 0;
             while (v < N) : (v += 1) {
                 try list.append(Elt{ .u = 1, .v = v });
             }
+
+            var cmax: T = undefined;
+            if (@mod(N, 2) != 0) {
+                // N odd, max divisor is <= N/3
+                if (@mod(N, 3) != 0) {
+                    // N not a multiple of 3 either, max is N/5
+                    cmax = @divFloor(N, 5);
+                } else {
+                    cmax = @divFloor(N, 3);
+                }
+            } else {
+                cmax = @divFloor(N, 2);
+            }
+
+            var c: T = 2;
+            while (c <= cmax) : (c += 1) {
+                if (@mod(N, c) == 0) {
+                    // c is a proper divisor of N.
+                    var h = @divExact(N, c);
+                    var g = gcd(c, h);
+                    var d: T = 1;
+                    while (d <= h) : (d += 1) {
+                        if (gcd(d, g) == 1) {
+                            var d1 = d;
+                            while (gcd(d1, c) != 1) {
+                                d1 += h;
+                            }
+                            const uv = try (Elt{ .u = c, .v = d1 }).normalize(N);
+                            try list.append(Elt{ .u = uv.u, .v = uv.v });
+                        }
+                    }
+                }
+            }
+            std.sort.sort(P1Element(T), list.items, {}, P1Element(T).sortLessThan);
             return P1ListType(T){ .N = N, .list = list };
         }
 
@@ -110,7 +159,10 @@ pub fn P1List(N: anytype, allocator: *std.mem.Allocator) !P1ListType(@TypeOf(N))
     return P1ListType(@TypeOf(N)).init(N, allocator);
 }
 
+// while inotifywait -e close_write src/p1list.zig; do zig test src/p1list.zig ; done
+
 const expect = std.testing.expect;
+const time = std.time.milliTimestamp;
 
 test "some basics with an element" {
     const x = P1Element(i32).init(7, 5);
@@ -122,9 +174,51 @@ test "some basics with an element" {
     try expect(arith.mod(n.s * n.v, 11) == x.v);
 }
 
-test "make a P1List" {
+test "make a P1List(1)" {
+    const P = try P1List(@as(i16, 1), std.testing.allocator);
+    defer P.deinit();
+    try expect(P.list.items.len == 1);
+    try expect(P.list.items[0].eql(P1Element(i16){ .u = 0, .v = 0 }));
+}
+
+test "make P1List(11)" {
     const P = try P1List(@as(i32, 11), std.testing.allocator);
     defer P.deinit();
     //std.debug.print("\n{s}\n", .{P.list});
     try expect(P.list.items.len == 12);
 }
+
+test "make P1(6)" {
+    const P = try P1List(@as(i16, 6), std.testing.allocator);
+    defer P.deinit();
+    try expect(P.list.items.len == 12);
+    // std.debug.print("\n{s}\n", .{P.list});
+}
+
+test "make P1(10000)" {
+    const P = try P1List(@as(i32, 10000), std.testing.allocator);
+    defer P.deinit();
+    try expect(P.list.items.len == 18000);
+    // sum all the entries of all the elements, and compare with
+    // number I got from sage:
+    var s: i32 = 0;
+    for (P.list.items) |elt| {
+        s += elt.u + elt.v;
+    }
+    try expect(s == 60685964);
+}
+
+fn bench1() !void {
+    const t0 = time();
+    var i: u32 = 0;
+    while (i < 200) : (i += 1) {
+        const P = try P1List(@as(i32, 10000), std.testing.allocator);
+        defer P.deinit();
+        try expect(P.list.items.len == 18000);
+    }
+    std.debug.print("\ntime={}ms\n", .{time() - t0});
+}
+
+// test "make P1(10000) 200 times" {
+//     try bench1();
+// }
