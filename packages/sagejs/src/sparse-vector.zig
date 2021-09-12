@@ -3,7 +3,7 @@ const mod = @import("./arith.zig").mod;
 const errors = @import("./errors.zig");
 const AutoHashMap = std.AutoHashMap;
 
-pub fn SparseVectorModN(comptime T: type) type {
+pub fn SparseVectorMod(comptime T: type) type {
     return struct {
         const Vector = @This();
 
@@ -28,11 +28,25 @@ pub fn SparseVectorModN(comptime T: type) type {
         }
 
         pub fn set(self: *Vector, i: usize, x: T) !void {
-            try self.map.put(i, mod(x, self.n));
+            const v = mod(x, self.n);
+            if (v == 0) {
+                // delete entry i
+                _ = self.map.remove(i);
+            } else {
+                try self.map.put(i, v);
+            }
         }
 
-        pub fn get(self: *Vector, i: usize) T {
+        pub fn get(self: Vector, i: usize) T {
             return self.map.get(i) orelse 0;
+        }
+
+        pub fn print(self: Vector, degree: usize) void {
+            var i: usize = 0;
+            while (i < degree) : (i += 1) {
+                std.debug.print("{}, ", .{self.get(i)});
+            }
+            std.debug.print("\n", .{});
         }
 
         fn op(self: Vector, right: Vector, add: bool) !Vector {
@@ -93,6 +107,20 @@ pub fn SparseVectorModN(comptime T: type) type {
                 try self.set(i, self.get(i) + s * val);
             }
         }
+
+        // number of nonzero entries
+        pub fn count(self: Vector) usize {
+            return self.map.count();
+        }
+
+        // first nonzero position, if vector is nonzero; otherwise, undefined
+        pub fn firstNonzeroPosition(self: Vector) ?usize {
+            var it = self.map.iterator();
+            while (it.next()) |kv| {
+                return kv.key_ptr.*;
+            }
+            return undefined;
+        }
     };
 }
 
@@ -100,7 +128,7 @@ const expect = std.testing.expect;
 const allocator = std.testing.allocator;
 
 test "creating a vector, then set and get entries" {
-    var v = try SparseVectorModN(i32).init(11, allocator);
+    var v = try SparseVectorMod(i32).init(11, allocator);
     defer v.deinit();
     try expect(v.get(7) == 0);
     try v.set(7, 15);
@@ -109,14 +137,19 @@ test "creating a vector, then set and get entries" {
     try expect(v.get(7) == 8);
     try v.set(1234567, -5);
     try expect(v.get(1234567) == 6);
+    try expect(v.count() == 2);
+    // setting an entry to 0
+    try v.set(7, 0);
+    try expect(v.get(7) == 0);
+    try expect(v.count() == 1);
 }
 
 test "adding and subtracting two vectors" {
-    var v = try SparseVectorModN(i32).init(11, allocator);
+    var v = try SparseVectorMod(i32).init(11, allocator);
     defer v.deinit();
     try v.set(0, 5);
     try v.set(1, 3);
-    var w = try SparseVectorModN(i32).init(11, allocator);
+    var w = try SparseVectorMod(i32).init(11, allocator);
     defer w.deinit();
     try w.set(0, 8);
     try w.set(2, 10);
@@ -134,11 +167,11 @@ test "adding and subtracting two vectors" {
 }
 
 test "add a multiple of one vector into another" {
-    var v = try SparseVectorModN(i32).init(11, allocator);
+    var v = try SparseVectorMod(i32).init(11, allocator);
     defer v.deinit();
     try v.set(0, 5);
     try v.set(1, 3);
-    var w = try SparseVectorModN(i32).init(11, allocator);
+    var w = try SparseVectorMod(i32).init(11, allocator);
     defer w.deinit();
     try w.set(0, 8);
     try w.set(2, 10);
@@ -151,9 +184,9 @@ test "add a multiple of one vector into another" {
 fn bench1(comptime N: anytype) !void {
     const time = std.time.milliTimestamp;
     const t = time();
-    var v = try SparseVectorModN(i32).init(11, allocator);
+    var v = try SparseVectorMod(i32).init(11, allocator);
     defer v.deinit();
-    var w = try SparseVectorModN(i32).init(11, allocator);
+    var w = try SparseVectorMod(i32).init(11, allocator);
     defer w.deinit();
     var i: usize = 0;
     while (i < N) : (i += 1) {
@@ -175,7 +208,7 @@ fn bench1(comptime N: anytype) !void {
 // }
 
 test "scale and rescale a vector" {
-    var v = try SparseVectorModN(i32).init(15, allocator);
+    var v = try SparseVectorMod(i32).init(15, allocator);
     defer v.deinit();
     try v.set(0, 5);
     try v.set(1, 3);
@@ -186,4 +219,16 @@ test "scale and rescale a vector" {
     v.rescale(3);
     try expect(v.get(0) == 0);
     try expect(v.get(1) == 9);
+}
+
+test "firstNonzeroPosition" {
+    var v = try SparseVectorMod(i32).init(15, allocator);
+    defer v.deinit();
+    var isundef = false;
+    _ = v.firstNonzeroPosition() orelse {
+        isundef = true;
+    };
+    try expect(isundef);
+    try v.set(17, 1);
+    try expect((v.firstNonzeroPosition() orelse undefined) == 17);
 }
