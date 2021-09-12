@@ -87,11 +87,24 @@ pub fn P1Element(comptime T: type) type {
             return self.u == other.u and self.v == other.v;
         }
 
-        pub fn sortLessThan(context: void, self: P1Element(T), right: P1Element(T)) bool {
+        pub fn sortLessThan(context: void, lhs: P1Element(T), rhs: P1Element(T)) bool {
             _ = context;
-            if (self.u < right.u) return true;
-            if (self.u > right.u) return false;
-            return self.v < right.v;
+            if (lhs.u < rhs.u) return true;
+            if (lhs.u > rhs.u) return false;
+            return lhs.v < rhs.v;
+        }
+
+        pub fn compareFn(context: void, lhs: P1Element(T), rhs: P1Element(T)) std.math.Order {
+            _ = context;
+            if (lhs.u < rhs.u) return std.math.Order.lt;
+            if (lhs.u > rhs.u) return std.math.Order.gt;
+            if (lhs.v < rhs.v) {
+                return std.math.Order.lt;
+            }
+            if (lhs.v == rhs.v) {
+                return std.math.Order.eq;
+            }
+            return std.math.Order.gt;
         }
     };
 }
@@ -160,6 +173,41 @@ pub fn P1ListType(comptime T: type) type {
         pub fn count(self: P1ListType(T)) usize {
             return self.list.items.len;
         }
+
+        pub fn normalize(self: P1ListType(T), u: T, v: T) !P1Element(T) {
+            const elt = P1Element(T).init(u, v);
+            const n = try elt.normalize(self.N, false);
+            return P1Element(T).init(n.u, n.v);
+        }
+
+        pub fn normalize_with_scalar(self: P1ListType(T), u: T, v: T) !EltAndScalar(T) {
+            const elt = P1Element(T).init(u, v);
+            return elt.normalize(self.N, true);
+        }
+
+        pub fn index(self: P1ListType(T), u: T, v: T) !usize {
+            if (self.N <= 1) {
+                return 0;
+            }
+            // Normalize u and v, then find their position in our sorted list
+            // of elements of P1.
+            const key = try self.normalize(u, v);
+            // some special cases; these could be deleted...
+            if (key.u == 1) { // (1, v)
+                return @intCast(usize, key.v) + 1;
+            }
+            if (key.u == 0) {
+                if (key.v == 0) {
+                    return errors.MathError.ValueError;
+                }
+                // (0, 1)
+                return 0;
+            }
+            // general case, using binary search
+            return std.sort.binarySearch(P1Element(T), key, self.list.items, {}, P1Element(T).compareFn) orelse {
+                return errors.MathError.ValueError;
+            };
+        }
     };
 }
 
@@ -216,6 +264,25 @@ test "make P1(10000)" {
         s += elt.u + elt.v;
     }
     try expect(s == 60685964);
+}
+
+test "normalize" {
+    const P = try P1List(@as(i32, 20), std.testing.allocator);
+    defer P.deinit();
+    const x = try P.normalize(7, 15);
+    try expect(x.u == 1);
+    try expect(x.v == 5);
+    const y = try P.normalize_with_scalar(7, 15);
+    try expect(y.u == 1);
+    try expect(y.v == 5);
+    try expect(y.s == 7);
+}
+
+test "index of element in the sorted list" {
+    const P = try P1List(@as(i32, 120), std.testing.allocator);
+    defer P.deinit();
+    const i = try P.index(1, 99);
+    try expect(i == 100);
 }
 
 fn bench1() !void {

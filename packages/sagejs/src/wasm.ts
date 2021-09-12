@@ -16,9 +16,6 @@ const wasmEnv: { [name: string]: Function } = {};
 for (const name of STUBS.split(" ")) {
   wasmEnv[name] = stub(name);
 }
-wasmEnv.reportError = () => {
-  throw Error();
-};
 
 const encoder = new TextEncoder();
 export function stringToU8(s, buffer) {
@@ -49,6 +46,13 @@ export default async function wasmImport(name: string, options: Options = {}) {
     `${name}.wasm`
   );
 
+  wasmEnv.reportError = (ptr, len: number) => {
+    // @ts-ignore
+    const slice = result.instance.exports.memory.buffer.slice(ptr, ptr + len);
+    const textDecoder = new TextDecoder();
+    throw Error(textDecoder.decode(slice));
+  };
+
   const wasmOpts: any = { env: { ...wasmEnv, ...options.env } };
   let wasi: any = undefined;
   if (!options?.noWasi) {
@@ -61,7 +65,6 @@ export default async function wasmImport(name: string, options: Options = {}) {
 
   const source = await readFile(pathToWasm);
   const typedArray = new Uint8Array(source);
-  console.log(wasmOpts.env);
   const result = await WebAssembly.instantiate(typedArray, wasmOpts);
   if (wasi != null) {
     wasi.start(result.instance);
