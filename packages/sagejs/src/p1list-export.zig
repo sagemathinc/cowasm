@@ -73,7 +73,7 @@ pub export fn P1List_normalize_with_scalar(handle: i32, u: i32, v: i32) void {
         sendError("P1List_normalize_with_scalar: failed to get P1 with given handle");
         return;
     };
-    const z = P1.normalize_with_scalar(u, v) catch {
+    const z = P1.normalizeWithScalar(u, v) catch {
         sendError("P1List_normalize_with_scalar: failed to normalize");
         return;
     };
@@ -98,3 +98,9 @@ pub export fn P1List_index(handle: i32, u: i32, v: i32) i32 {
 //     var handle = P1List(5077);
 //     try expect(P1List_len(handle) == 5078);
 // }
+
+pub export fn sparseMatrixBench(N: i32) void {
+    @import("./sparse-matrix.zig").bench(N) catch {
+        sendError("failed");
+    };
+}

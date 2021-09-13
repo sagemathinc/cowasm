@@ -24,6 +24,7 @@ ${DIST}/integer.wasm: src/integer.zig src/integer-export.zig src/custom-allocato
 	mv src/integer-export.wasm ${DIST}/integer.wasm
 
 
+
 ${DIST}/arith.wasm: src/arith.zig src/arith-export.zig
 	cd src/ && zig build-lib -target wasm32-freestanding ${CFLAGS} arith-export.zig
 	mkdir -p ${DIST}
@@ -44,7 +45,7 @@ ${DIST}/factor.js: src/factor.ts node_modules
 
 
 ${DIST}/p1list.wasm: src/p1list.zig src/p1list-export.zig src/p1list-container.zig
-	cd src/ && zig build-lib -target wasm32-freestanding ${CFLAGS} p1list-export.zig
+	cd src/ && zig build-lib -target wasm32-wasi ${CFLAGS} p1list-export.zig
 	mkdir -p ${DIST}
 	mv src/p1list-export.wasm ${DIST}/p1list.wasm
 

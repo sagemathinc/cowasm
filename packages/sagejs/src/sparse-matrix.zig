@@ -114,12 +114,13 @@ pub fn SparseMatrixMod(comptime T: type) type {
         }
 
         pub fn randomize(self: *Matrix, cols: usize) !void {
+            var rand = (try @import("./random.zig").seededPrng()).random;
             var row: usize = 0;
             while (row < self.nrows) : (row += 1) {
                 var j: usize = 0;
                 while (j < cols) : (j += 1) {
-                    const x = std.crypto.random.intRangeLessThan(T, 0, self.modulus);
-                    const col = std.crypto.random.intRangeLessThan(usize, 0, self.ncols);
+                    const x = rand.intRangeLessThan(T, 0, self.modulus);
+                    const col = rand.intRangeLessThan(usize, 0, self.ncols);
                     try self.set(row, col, x);
                 }
             }
@@ -186,4 +187,12 @@ test "compute echelon form of a larger random matrix" {
     //m.print();
     //std.debug.print("pivots={}\n", .{pivots});
     std.debug.print("tm = {}\n", .{time() - t});
+}
+
+pub fn bench(N: i32) !void {
+    var m = try SparseMatrixMod(i32).init(17, @intCast(usize, N), @intCast(usize, 3 * N), allocator);
+    defer m.deinit();
+    try m.randomize(3);
+    const pivots = try m.echelonize();
+    defer pivots.deinit();
 }

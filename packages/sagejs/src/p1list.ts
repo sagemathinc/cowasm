@@ -43,7 +43,7 @@ function P1List_normalize_with_scalar_cb(u, v, s): void {
   result = [u, v, s];
 }
 
-let wasm: any = undefined;
+export let wasm: any = undefined;
 export async function init() {
   wasm = await wasmImport("p1list", {
     env: { P1List_normalize_cb, P1List_normalize_with_scalar_cb },
