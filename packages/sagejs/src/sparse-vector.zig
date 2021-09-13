@@ -44,7 +44,7 @@ pub fn SparseVectorMod(comptime T: type) type {
         pub fn print(self: Vector, degree: usize) void {
             var i: usize = 0;
             while (i < degree) : (i += 1) {
-                std.debug.print("{}, ", .{self.get(i)});
+                std.debug.print("{}  ", .{self.get(i)});
             }
             std.debug.print("\n", .{});
         }
@@ -111,15 +111,6 @@ pub fn SparseVectorMod(comptime T: type) type {
         // number of nonzero entries
         pub fn count(self: Vector) usize {
             return self.map.count();
-        }
-
-        // first nonzero position, if vector is nonzero; otherwise, undefined
-        pub fn firstNonzeroPosition(self: Vector) ?usize {
-            var it = self.map.iterator();
-            while (it.next()) |kv| {
-                return kv.key_ptr.*;
-            }
-            return undefined;
         }
     };
 }
@@ -221,14 +212,3 @@ test "scale and rescale a vector" {
     try expect(v.get(1) == 9);
 }
 
-test "firstNonzeroPosition" {
-    var v = try SparseVectorMod(i32).init(15, allocator);
-    defer v.deinit();
-    var isundef = false;
-    _ = v.firstNonzeroPosition() orelse {
-        isundef = true;
-    };
-    try expect(isundef);
-    try v.set(17, 1);
-    try expect((v.firstNonzeroPosition() orelse undefined) == 17);
-}
