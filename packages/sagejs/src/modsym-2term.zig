@@ -68,7 +68,7 @@ pub fn twoTermQuotient(rels: Relations) !List(Element) {
             }
         } else { // x1 = -c1/c0 * x2
             if (c0 != 1 and c0 != -1) {
-                std.debug.print("ValueError: invalid coefficient! c0={}, c1={}", .{ c0, c1 });
+                // std.debug.print("ValueError: invalid coefficient! c0={}, c1={}", .{ c0, c1 });
                 return errors.Math.ValueError;
             }
             const x = free.items[rel.a.index];
@@ -89,6 +89,7 @@ pub fn twoTermQuotient(rels: Relations) !List(Element) {
         }
     }
     var mod = try List(Element).initCapacity(rels.allocator, n);
+    errdefer mod.deinit();
     i = 0;
     while (i < n) : (i += 1) {
         try mod.append(Element{ .coeff = coef.items[i], .index = free.items[i] });
@@ -140,16 +141,31 @@ test "bench -- as a consistency check that code doesn't crash/leak/get too slow/
     }
 }
 
+test "invalid input doesn't leak memory" {
+    var rels = Relations.init(allocator);
+    defer rels.deinit();
+    // that coeff of 2 is invalid
+    try rels.append(Relation{ .a = Element{ .coeff = 2, .index = 0 }, .b = Element{ .coeff = 1, .index = 1 } });
+    var caught = false;
+    _ = twoTermQuotient(rels) catch {
+        caught = true;
+    };
+    try expect(caught);
+}
+
 // Need -lc due to timings here
-// zig test modsym-2term.zig -lc
+// zig test modsym-2term.zig -lc -O ReleaseFast
 // Timing should be slightly better than sage, since algorithm is identical.
-// test "bench -- how fast is it?" {
-//     const time = std.time.milliTimestamp;
-//     const values = [_]Index{ 4, 10, 100, 200, 10000, 100000, 200000, 500000 };
-//     for (values) |N| {
-//         const t = time();
-//         std.debug.print("\nN={}\n", .{N});
-//         try bench1(N, @divFloor(N, 2));
-//         std.debug.print("{}ms\n", .{time() - t});
-//     }
-// }
+const BENCH = false;
+test "bench -- how fast is it?" {
+    if (BENCH) {
+        const time = std.time.milliTimestamp;
+        const values = [_]Index{ 4, 10, 100, 200, 10000, 100000, 200000, 500000 };
+        for (values) |N| {
+            const t = time();
+            std.debug.print("\nN={}\n", .{N});
+            try bench1(N, @divFloor(N, 2));
+            std.debug.print("{}ms\n", .{time() - t});
+        }
+    }
+}
