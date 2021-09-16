@@ -61,13 +61,3 @@ clean:
 clean-all: clean
 	rm -rf "${PREFIX_NATIVE}" "${PREFIX_WASM}"
 
-
-######
-
-test-pari: src/pari.h src/pari.zig
-	cd src && zig test pari.zig -I. -L${DIST_NATIVE}/lib -L${GMP}/native/lib -I${DIST_NATIVE}/include -I${GMP}/native/include -lpari -lgmp -lc
-
-src/pari.wasm: src/pari.zig src/pari.h
-	cd src && zig build-lib -dynamic -target wasm32-wasi pari.zig  -I. -I${DIST_WASM}/include -I${GMP}/wasm/include -lc ${DIST_WASM}/lib/libpari.a ${GMP}/wasm/lib/libgmp.a -D_WASI_EMULATED_SIGNAL
-
-

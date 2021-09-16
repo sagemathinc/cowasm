@@ -3,6 +3,8 @@ CFLAGS = -dynamic -O ReleaseFast
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 GMP_NATIVE = ${CWD}/../gmp/dist/native
 GMP_WASM = ${CWD}/../gmp/dist/wasm
+PARI_NATIVE = ${CWD}/../pari/dist/native
+PARI_WASM = ${CWD}/../pari/dist/wasm
 
 DIST = ${CWD}/dist
 
@@ -15,7 +17,7 @@ node_modules:
 ${DIST}/integer.js: src/integer.ts node_modules
 	npx tsc
 
-test-integer:
+integer-test:
 	cd src && zig test integer.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib
 
 ${DIST}/integer.wasm: src/integer.zig src/integer-export.zig src/custom-allocator.zig
@@ -52,7 +54,19 @@ ${DIST}/p1list.wasm: src/p1list.zig src/p1list-export.zig src/p1list-container.z
 
 
 
-${DIST}/.built: ${DIST}/integer.wasm ${DIST}/integer.js ${DIST}/arith.wasm ${DIST}/arith.js ${DIST}/p1list.wasm
+${DIST}/pari.js: src/pari/pari.ts node_modules
+	npx tsc
+
+pari-test:
+	cd src/pari && zig test pari.zig -I. -L${PARI_NATIVE}/lib -L${GMP_NATIVE}/lib -I${PARI_NATIVE}/include -I${GMP_NATIVE}/include -lpari -lgmp -lc
+
+${DIST}/pari.wasm: src/pari/pari.zig src/pari/pari.h
+	cd src/pari && zig build-lib -target wasm32-wasi -lc -I. -I${GMP_WASM}/include ${GMP_WASM}/lib/libgmp.a -I${PARI_WASM}/include ${PARI_WASM}/lib/libpari.a ${CFLAGS} pari.zig
+	mkdir -p ${DIST}
+	mv src/pari/pari.wasm ${DIST}/pari.wasm
+
+
+${DIST}/.built: ${DIST}/integer.wasm ${DIST}/integer.js ${DIST}/arith.wasm ${DIST}/arith.js ${DIST}/p1list.wasm ${DIST}/pari.wasm
 	touch ${DIST}/.built
 
 .PHONY: all

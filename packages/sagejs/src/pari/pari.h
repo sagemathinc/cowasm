@@ -1,5 +1,6 @@
 #include <sys/types.h> // size_t
 
+typedef size_t sizet;
 typedef unsigned long ulong;
 typedef ulong pari_sp;
 typedef long *GEN;
