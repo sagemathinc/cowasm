@@ -7,7 +7,7 @@ import callsite from "callsite";
 const readFile = promisify(readFile0);
 
 const STUBS =
-  "main raise setjmp longjmp pclose popen getpwuid getpwnam geteuid system dlerror dlsym dlopen signal clock";
+  "main raise setjmp longjmp pclose popen getuid getpid getpwuid getpwnam geteuid system dlerror dlsym dlopen signal clock";
 function stub(name: string) {
   return function () {
     console.log(`stub.${name}`, arguments);

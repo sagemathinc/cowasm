@@ -1,0 +1,1 @@
+long pari_add(long a, long b);

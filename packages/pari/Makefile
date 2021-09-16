@@ -73,11 +73,12 @@ src/hello.wasm: src/hello.c
 src/pari-add-c-native.o: src/pari-add.c
 	cd src && zig cc -c pari-add.c -o pari-add-c-native.o  -I${DIST_NATIVE}/include -I${GMP}/native/include -L${DIST_NATIVE}/lib -L${GMP}/native/lib -lpari -lgmp
 
-src/pari-add-c-wasm.o: src/pari-add.c
-	cd src && zig cc -target wasm32-wasi -c pari-add.c -o pari-add-c-wasm.o ${DIST_WASM}/lib/libpari.a ${GMP}/wasm/lib/libgmp.a -I${DIST_WASM}/include -I${GMP}/wasm/include -lc -D_WASI_EMULATED_SIGNAL
-
 test-pari-add: src/pari-add-c-native.o
 	cd src && zig test pari-add.zig -I. -L${DIST_NATIVE}/lib -L${GMP}/native/lib -I${DIST_NATIVE}/include -I${GMP}/native/include -lpari -lgmp -lc pari-add-c-native.o
 
+src/pari-add-c-wasm.o: src/pari-add.c
+	cd src && zig cc -target wasm32-wasi -c pari-add.c -o pari-add-c-wasm.o  -I${DIST_WASM}/include -I${GMP}/wasm/include -lc -D_WASI_EMULATED_SIGNAL
+
 src/pari-add.wasm: src/pari-add.zig src/pari-add-c-wasm.o
-	cd src && zig build-lib -target wasm32-wasi pari-add.zig src/pari-add-c-wasm.o  -I. -I${DIST_WASM}/include -I${GMP}/wasm/include -lc -D_WASI_EMULATED_SIGNAL
+	cd src && zig build-lib -dynamic -target wasm32-wasi pari-add.zig  -I. -I${DIST_WASM}/include -I${GMP}/wasm/include -lc pari-add-c-wasm.o ${DIST_WASM}/lib/libpari.a ${GMP}/wasm/lib/libgmp.a
+
