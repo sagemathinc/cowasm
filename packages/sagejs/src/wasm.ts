@@ -43,6 +43,7 @@ export default async function wasmImport(name: string, options: Options = {}) {
       return cache[name];
     }
   }
+  const t = new Date().valueOf();
   const pathToWasm = join(
     dirname(callsite()[1]?.getFileName() ?? ""),
     `${name}.wasm`
@@ -76,5 +77,6 @@ export default async function wasmImport(name: string, options: Options = {}) {
     cache[name] = result.instance.exports;
   }
 
+  console.log(`imported ${name} in ${new Date().valueOf() - t}ms`);
   return result.instance.exports;
 }

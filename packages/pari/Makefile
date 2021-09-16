@@ -64,21 +64,10 @@ clean-all: clean
 
 ######
 
-src/hello: src/hello.c
-	cd src && zig cc pari-add.c hello.c -o hello -L${DIST_NATIVE}/lib -L${GMP}/native/lib -I${DIST_NATIVE}/include -I${GMP}/native/include -lpari -lgmp
+test-pari: src/pari.h src/pari.zig
+	cd src && zig test pari.zig -I. -L${DIST_NATIVE}/lib -L${GMP}/native/lib -I${DIST_NATIVE}/include -I${GMP}/native/include -lpari -lgmp -lc
 
-src/hello.wasm: src/hello.c
-	cd src && zig cc -target wasm32-wasi pari-add.c hello.c -o hello.wasm ${DIST_WASM}/lib/libpari.a ${GMP}/wasm/lib/libgmp.a -I${DIST_WASM}/include -I${GMP}/wasm/include -lc -D_WASI_EMULATED_SIGNAL
+src/pari.wasm: src/pari.zig src/pari.h
+	cd src && zig build-lib -dynamic -target wasm32-wasi pari.zig  -I. -I${DIST_WASM}/include -I${GMP}/wasm/include -lc ${DIST_WASM}/lib/libpari.a ${GMP}/wasm/lib/libgmp.a -D_WASI_EMULATED_SIGNAL
 
-src/pari-add-c-native.o: src/pari-add.c
-	cd src && zig cc -c pari-add.c -o pari-add-c-native.o  -I${DIST_NATIVE}/include -I${GMP}/native/include -L${DIST_NATIVE}/lib -L${GMP}/native/lib -lpari -lgmp
-
-test-pari-add: src/pari-add-c-native.o
-	cd src && zig test pari-add.zig -I. -L${DIST_NATIVE}/lib -L${GMP}/native/lib -I${DIST_NATIVE}/include -I${GMP}/native/include -lpari -lgmp -lc pari-add-c-native.o
-
-src/pari-add-c-wasm.o: src/pari-add.c
-	cd src && zig cc -target wasm32-wasi -c pari-add.c -o pari-add-c-wasm.o  -I${DIST_WASM}/include -I${GMP}/wasm/include -lc -D_WASI_EMULATED_SIGNAL
-
-src/pari-add.wasm: src/pari-add.zig src/pari-add-c-wasm.o
-	cd src && zig build-lib -dynamic -target wasm32-wasi pari-add.zig  -I. -I${DIST_WASM}/include -I${GMP}/wasm/include -lc pari-add-c-wasm.o ${DIST_WASM}/lib/libpari.a ${GMP}/wasm/lib/libgmp.a
 
