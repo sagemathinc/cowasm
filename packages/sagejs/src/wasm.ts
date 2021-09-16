@@ -11,7 +11,7 @@ const STUBS =
 function stub(name: string) {
   return function () {
     console.log(`stub.${name}`, arguments);
-    return '0';
+    return "0";
   };
 }
 const wasmEnv: { [name: string]: Function } = {};
@@ -25,6 +25,12 @@ export function stringToU8(s, buffer) {
   array.set(encoder.encode(s));
   array[s.length] = 0;
   return array;
+}
+
+export function string_cb(wasm, ptr, len) {
+  const slice = wasm.memory.buffer.slice(ptr, ptr + len);
+  const textDecoder = new TextDecoder();
+  return textDecoder.decode(slice);
 }
 
 interface Options {

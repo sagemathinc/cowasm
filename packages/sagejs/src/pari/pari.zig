@@ -1,11 +1,12 @@
 const pari = @cImport(@cInclude("pari.h"));
 const std = @import("std");
+pub const General = error{OverflowError};
 
 var didInit = false;
 export fn init(parisize: pari.sizet, maxprime: pari.ulong) void {
     if (didInit) return;
     didInit = true;
-    pari.pari_init(if (parisize == 0) 1000000 else parisize, if (maxprime == 0) 100000 else maxprime);
+    pari.pari_init(if (parisize == 0) 64 * 1000000 else parisize, if (maxprime == 0) 100000 else maxprime);
 }
 
 export fn add(a: c_long, b: c_long) c_long {
@@ -18,30 +19,41 @@ export fn add(a: c_long, b: c_long) c_long {
     return r;
 }
 
-export fn exec(s: [*:0]const u8) void {
-    _ = s;
-    var array = [_:0]u8{255} ** 10000;
-
+const EXEC_BUFSIZE = 10000;
+pub fn exec(s: [*:0]const u8) ![*:0]u8 {
+    // I do not understand why, but directly passing s to
+    // gp_read_str_multiline crashes PARI.  However, copying
+    // the data to a buffer on the stack here works fine.
+    // It could be a problem with how the string is encoded from js.
+    var array = [_:0]u8{255} ** EXEC_BUFSIZE;
     var i: usize = 0;
-    while (s[i] != 0) : (i += 1) {
+    while (s[i] != 0 and i < EXEC_BUFSIZE) : (i += 1) {
         array[i] = s[i];
+    }
+    if (i == EXEC_BUFSIZE) {
+        return General.OverflowError;
     }
     array[i] = 0;
 
-    //std.debug.print("s={*}  '{s}'\n", .{ s, s });
-    //std.debug.print("t={*}  '{s}'\n", .{ t, t });
     var av: pari.pari_sp = pari.avma;
-    var x: pari.GEN = pari.gp_read_str_multiline(@ptrCast([*:0]const u8, &array), null);
-    pari.output(x);
-    pari.avma = av;
+    var x: pari.GEN = pari.gp_read_str_multiline(&array, null);
+
+    var r = pari.GENtostr(x);
+    pari.avma = av; // don't need this anymore.
+    return r;
 }
 
+const expect = std.testing.expect;
 test "calling zig_add" {
     init(0, 0);
-    try std.testing.expect(add(2, 3) == 5);
+    try expect(add(2, 3) == 5);
 }
 
 test "calling exec" {
     init(0, 0);
-    exec("2+3");
+    const code = "nextprime(2021)";
+    var r: [*:0]u8 = try exec(code);
+    try expect(std.cstr.cmp(r, "2027") == 0);
+    std.debug.print("exec('{s}') = {s}\n", .{ code, r });
+    std.c.free(r);
 }

@@ -60,10 +60,10 @@ ${DIST}/pari.js: src/pari/pari.ts node_modules
 pari-test:
 	cd src/pari && zig test pari.zig -I. -L${PARI_NATIVE}/lib -L${GMP_NATIVE}/lib -I${PARI_NATIVE}/include -I${GMP_NATIVE}/include -lpari -lgmp -lc
 
-${DIST}/pari.wasm: src/pari/pari.zig src/pari/pari.h
-	cd src/pari && zig build-lib -target wasm32-wasi -lc -I. -I${GMP_WASM}/include ${GMP_WASM}/lib/libgmp.a -I${PARI_WASM}/include ${PARI_WASM}/lib/libpari.a ${CFLAGS} pari.zig
-	mkdir -p ${DIST}
-	mv src/pari/pari.wasm ${DIST}/pari.wasm
+${DIST}/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
+	cd src/pari && zig build-lib -target wasm32-wasi -lc -I. -I${GMP_WASM}/include ${GMP_WASM}/lib/libgmp.a -I${PARI_WASM}/include ${PARI_WASM}/lib/libpari.a ${CFLAGS} interface.zig
+	mkdir -p ${DIST}/pari
+	mv src/pari/interface.wasm ${DIST}/pari.wasm
 
 
 ${DIST}/.built: ${DIST}/integer.wasm ${DIST}/integer.js ${DIST}/arith.wasm ${DIST}/arith.js ${DIST}/p1list.wasm ${DIST}/pari.wasm
