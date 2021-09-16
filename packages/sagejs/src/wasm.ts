@@ -6,10 +6,12 @@ import callsite from "callsite";
 
 const readFile = promisify(readFile0);
 
-const STUBS = "main raise";
+const STUBS =
+  "main raise setjmp longjmp pclose popen getpwuid getpwnam geteuid system dlerror dlsym dlopen signal clock";
 function stub(name: string) {
   return function () {
-    return console.log(`stub.${name}`, arguments);
+    console.log(`stub.${name}`, arguments);
+    return '0';
   };
 }
 const wasmEnv: { [name: string]: Function } = {};
