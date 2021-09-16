@@ -19,17 +19,19 @@ export fn add(a: c_long, b: c_long) c_long {
 }
 
 export fn exec(s: [*:0]const u8) void {
-    var all_together: [100]u8 = undefined;
-    // You can use slice syntax on an array to convert an array into a slice.
-    const all_together_slice = all_together[0..];
-    const t = std.fmt.bufPrint(all_together_slice, "{s}", .{s}) catch {
-        std.debug.print("error in bufPrint\n",.{});
-        return;
-    };
-    std.debug.print("s={*}  '{s}'\n", .{ s, s });
-    std.debug.print("t={*}  '{s}'\n", .{ t, t });
+    _ = s;
+    var array = [_:0]u8{255} ** 10000;
+
+    var i: usize = 0;
+    while (s[i] != 0) : (i += 1) {
+        array[i] = s[i];
+    }
+    array[i] = 0;
+
+    //std.debug.print("s={*}  '{s}'\n", .{ s, s });
+    //std.debug.print("t={*}  '{s}'\n", .{ t, t });
     var av: pari.pari_sp = pari.avma;
-    var x: pari.GEN = pari.gp_read_str_multiline(s, null);
+    var x: pari.GEN = pari.gp_read_str_multiline(@ptrCast([*:0]const u8, &array), null);
     pari.output(x);
     pari.avma = av;
 }
