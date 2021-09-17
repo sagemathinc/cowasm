@@ -25,6 +25,9 @@ pub fn exec(s: [*:0]const u8) ![*:0]u8 {
     // gp_read_str_multiline crashes PARI.  However, copying
     // the data to a buffer on the stack here works fine.
     // It could be a problem with how the string is encoded from js.
+    // TODO: if I can't figure this out, use a smalller EXEC_BUFSIZE
+    // for small input (for speed),  and for bigger input dynamically
+    // allocate memory on the heap.
     var array = [_:0]u8{255} ** EXEC_BUFSIZE;
     var i: usize = 0;
     while (s[i] != 0 and i < EXEC_BUFSIZE) : (i += 1) {
@@ -56,4 +59,17 @@ test "calling exec" {
     try expect(std.cstr.cmp(r, "2027") == 0);
     std.debug.print("exec('{s}') = {s}\n", .{ code, r });
     std.c.free(r);
+}
+
+const BENCH = false;
+test "a little benchmark" {
+    if (BENCH) {
+        const time = std.time.milliTimestamp;
+        const t = time();
+        var i: usize = 0;
+        while (i < 10) : (i += 1) {
+            std.debug.print("pi(10^8) = {s}\n", .{try exec("primepi(10^8)")});
+        }
+        std.debug.print("{}ms\n", .{time() - t});
+    }
 }
