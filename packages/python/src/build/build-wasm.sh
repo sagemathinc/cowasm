@@ -26,15 +26,11 @@ fi
 export CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS"
 export CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS"
 export AR="zig ar"
+#export LDFLAGS="-lc"
 
-# A message says to use these, but they don't seem to exist...
-# -lwasi-emulated-mman -lwasi-emulated-signal -lwasi-emulated-process-clocks
-
-export LDFLAGS="-lc" # ../wasm-posix/libwasmposix.a"
-
-# TODO -- for later
-#export LDFLAGS="-lc -L`pwd`/../../../zlib/dist.wasm/lib"
-#export CFLAGS="-I`pwd`/../../../zlib/dist.wasm/include"
+# It's really helpful to link in zlib...
+export LDFLAGS="-lc -L`pwd`/../../../zlib/dist/wasm/lib"
+export CFLAGS="-I`pwd`/../../../zlib/dist/wasm/include"
 
 # Do the cross-compile ./configure.  Here's an explanation of each
 # of the options we use:
@@ -52,8 +48,8 @@ export LDFLAGS="-lc" # ../wasm-posix/libwasmposix.a"
 if [ -f Makefile ]; then
     echo "Already ran configure".
 else
-    CONFIG_SITE=./config.site READELF=true ./configure \
-        --with-pydebug \
+    CONFIG_SITE=./config.site READELF=true \
+    ./configure \
         --prefix=$PREFIX \
         --enable-big-digits=30 \
         --enable-optimizations \
@@ -69,29 +65,5 @@ fi
 # since otherwise we can't even compile.
 echo '#include "../wasm-posix/wasm-posix.h"' >> pyconfig.h
 
+make
 make install
-
-# Rebuild python interpreter with the entire Python library as a filesystem:
-## TODO -- see sagejs.
-# # TODO: This is *brittle* and needs to be done better!
-# # In particular the "3.9" will break for sure.
-# # Options:
-# #    --preload-file $PREFIX/lib/python3.9: the Python standard lib, which is needed
-# #       for Python to do anything.  This is BIG, unfortunately.
-# #    -s ALLOW_MEMORY_GROWTH=1: so Python can use more than a tiny amount of memory
-# #    -s ASSERTIONS=0: otherwise *much* use of stubs (related to signals/posix) gets
-# #       displayed to stderr.
-# cc -o python.js Programs/python.o libpython3.9.a -ldl  -lm --lz4 \
-#      --preload-file $PREFIX/lib/python3.9 \
-#      -s ALLOW_MEMORY_GROWTH=1 \
-#      -s ASSERTIONS=0
-
-# mkdir -p $DIST
-# cp python.js python.data python.wasm $DIST
-# Now you can do
-#  cd dist; node ./python.js -c 'print("hello world", 2+3)'
-# and get
-#  hello world 5
-# However, just "node ./python" doesn't work, since it terminates instead of waiting for input.
-# But we *don't* want the Python repl.  We want a function that evaluates a block of code, so
-# we can build a Jupyter kernel, node.js library interface, etc.
