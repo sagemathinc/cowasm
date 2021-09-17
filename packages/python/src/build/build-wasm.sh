@@ -63,7 +63,11 @@ fi
 
 # Make it so our WASM posix header file is included everywhere,
 # since otherwise we can't even compile.
-echo '#include "../wasm-posix/wasm-posix.h"' >> pyconfig.h
+echo '#include "wasm-posix.h"' >> pyconfig.h
+cp ../wasm-posix/wasm-posix.h .
 
 make
 make install
+
+cp ./wasm-posix.h $PREFIX/include/python3.9/
+

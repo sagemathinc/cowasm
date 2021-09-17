@@ -14,7 +14,7 @@ export fn finalize() c_int {
     return python.Py_FinalizeEx();
 }
 
-fn add() void {
+export fn add() void {
     _ = python.PyRun_SimpleString("print('2 + 3 =', 2 + 3)\n");
 }
 
