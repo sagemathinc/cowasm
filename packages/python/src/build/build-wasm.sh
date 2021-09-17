@@ -23,8 +23,6 @@ else
 fi
 
 
-cp $SRC/build/go .  # temporary
-
 export CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS"
 export CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS"
 export AR="zig ar"
@@ -32,7 +30,8 @@ export AR="zig ar"
 # A message says to use these, but they don't seem to exist...
 # -lwasi-emulated-mman -lwasi-emulated-signal -lwasi-emulated-process-clocks
 
-export LDFLAGS="-lc ../wasm-posix/libwasmposix.a"
+export LDFLAGS="-lc" # ../wasm-posix/libwasmposix.a"
+
 # TODO -- for later
 #export LDFLAGS="-lc -L`pwd`/../../../zlib/dist.wasm/lib"
 #export CFLAGS="-I`pwd`/../../../zlib/dist.wasm/include"
@@ -66,7 +65,8 @@ else
         --build=`./config.guess`
 fi
 
-# Make it so our WASM posix header file is included everywhere.
+# Make it so our WASM posix header file is included everywhere,
+# since otherwise we can't even compile.
 echo '#include "../wasm-posix/wasm-posix.h"' >> pyconfig.h
 
 make install

@@ -8,12 +8,14 @@ mkdir "$BUILD"
 . "$INIT_CWD"/src/build/download.sh
 
 export PATH0=$PATH
-export PREFIX="$DIST".native
+export PREFIX="$DIST"/native
+mkdir -p "$PREFIX"
 export PATH=`pwd`/../../bin.native:$PATH0
 time "$INIT_CWD"/src/build/build-native.sh
 
 
 # Include our new native Python in path
 export PATH=`pwd`/../../bin.wasm:$PREFIX.native/bin:$PATH0
-export PREFIX="$DIST".wasm
+export PREFIX="$DIST"/wasm
+mkdir -p "$PREFIX"
 time "$INIT_CWD"/src/build/build-wasm.sh

@@ -5,8 +5,8 @@ ZLIB_VERSION = 1.2.11
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
 INIT_CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD = build
-PREFIX_NATIVE = dist.native
-PREFIX_WASM = dist.wasm
+PREFIX_NATIVE = dist/native
+PREFIX_WASM = dist/wasm
 
 ${BUILD}/zlib-${ZLIB_VERSION}.tar.xz:
 	mkdir -p ${BUILD}

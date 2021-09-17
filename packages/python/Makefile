@@ -4,8 +4,8 @@ PYTHON_VERSION = 3.9.7
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
 INIT_CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD = build
-PREFIX_NATIVE = dist.native
-PREFIX_WASM = dist.wasm
+PREFIX_NATIVE = dist/native
+PREFIX_WASM = dist/wasm
 
 ${BUILD}/Python-${PYTHON_VERSION}.tar.xz:
 	mkdir -p ${BUILD}
