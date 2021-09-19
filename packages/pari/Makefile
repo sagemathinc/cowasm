@@ -2,7 +2,7 @@
 VERSION = 2.13.2
 
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-BUILD = build
+BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 DIST_JS = ${CWD}/dist/js
@@ -10,10 +10,18 @@ ZCC = ${CWD}/../../bin/zcc
 
 GMP = ${CWD}/../gmp/dist
 
+
+#############
+# Source code
+#############
 ${BUILD}/pari-${VERSION}.tar.gz:
 	mkdir -p ${BUILD}
 	# retry-max-time: For some reason pari.math.u-bordeaux.fr is VERY flaky.
 	cd ${BUILD} && curl --retry-max-time 600 https://pari.math.u-bordeaux.fr/pub/pari/unix/pari-${VERSION}.tar.gz -o pari-${VERSION}.tar.gz
+
+.PHONY: source
+source: ${BUILD}/pari-${VERSION}.tar.gz
+
 
 # NATIVE
 

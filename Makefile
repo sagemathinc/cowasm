@@ -2,7 +2,7 @@ BUILT = dist/.built
 
 all: packages/gmp/${BUILT} packages/mpir/${BUILT} packages/mpfr/${BUILT} packages/mpc/${BUILT} \
 	 packages/gf2x/${BUILT} packages/ntl/${BUILT} packages/flint/${BUILT} packages/pari/${BUILT} \
-	 packages/eclib/${BUILT} packages/sagejs/${BUILT} 
+	 packages/eclib/${BUILT} packages/sagejs/${BUILT}
 
 packages/gmp/${BUILT}:
 	cd packages/gmp && make all
@@ -44,6 +44,9 @@ packages/sagejs/${BUILT}: packages/gmp/${BUILT}
 	cd packages/sagejs && make all
 .PHONY: packages/sagejs/${BUILT}
 
+packages/python/${BUILT}: packages/openssl/${BUILT} packages/zlib/${BUILT}
+	cd packages/python && make all
+.PHONY: packages/python/${BUILT}
 
 clean:
 	cd packages/gmp && make clean
@@ -55,4 +58,7 @@ clean:
 	cd packages/pari && make clean
 	cd packages/eclib && make clean
 	cd packages/sagejs && make clean
+	cd packages/python && make clean
+	cd packages/openssl && make clean
+	cd packages/zlib && make clean
 
