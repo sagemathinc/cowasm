@@ -1,7 +1,9 @@
 // see https://gmplib.org/manual/Custom-Allocation
 
+
 const std = @import("std");
-const page_allocator = std.heap.page_allocator;
+//const page_allocator = std.heap.gp.allocator;
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 const gmp = @cImport(@cInclude("gmp.h"));
 
 pub fn init() void {
@@ -12,7 +14,7 @@ pub fn init() void {
 
 export fn gmp_alloc(n: usize) ?*c_void {
     // std.debug.print("allocating n = {} bytes\n", .{n});
-    const t = page_allocator.alloc(u8, n) catch |err|
+    const t = gpa.allocator.alloc(u8, n) catch |err|
         {
         std.debug.print("failed to alloc -- {}", .{err});
         unreachable;
@@ -26,13 +28,13 @@ export fn gmp_free(ptr: ?*c_void, n: usize) void {
     // This is how to turn void* from c into a **slice** of memory that
     // knows about its length!  Yes, this took me a long time to figure out.
     const p = @ptrCast([*]u8, ptr)[0..n];
-    page_allocator.free(p);
+    gpa.allocator.free(p);
 }
 
 export fn gmp_realloc(ptr: ?*c_void, n: usize, m: usize) ?*c_void {
     //std.debug.print("realloc n={},m={} bytes at ptr={*}\n", .{ n, m, ptr });
     const p = @ptrCast([*]u8, ptr)[0..n];
-    const t = page_allocator.realloc(p, m) catch |err|
+    const t = gpa.allocator.realloc(p, m) catch |err|
         {
         std.debug.print("failed to realloc -- {}", .{err});
         unreachable;

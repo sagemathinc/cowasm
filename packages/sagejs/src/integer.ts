@@ -13,6 +13,7 @@ export async function init(): Promise<void> {
   // Initialize GMP custom allocator:
   wasm.initCustomAllocator();
 }
+init();
 
 class IntegerClass {
   i: number;
