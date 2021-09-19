@@ -72,7 +72,6 @@ ${DIST}/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
 ####################
 ## Python
 ####################
-####################
 
 ${DIST}/python.js: src/python/python.ts node_modules
 	npx tsc
@@ -85,6 +84,12 @@ ${DIST}/python.wasm: src/python/python.zig src/python/interface.zig src/python/p
 	mkdir -p ${DIST}/python
 	mv src/python/python.wasm ${DIST}/python.wasm
 
+${DIST}/xpython.wasm: src/python/python.c
+	cd src/python && zig cc -target wasm32-wasi python.c -o python.wasm \
+	                 -Wl,--no-entry -Wl,--export-all \
+		             -I${PYTHON_WASM}/include/python3.9 ${PYTHON_WASM}/lib/libpython3.9.a
+	mkdir -p ${DIST}/python
+	mv src/python/python.wasm ${DIST}/python.wasm
 
 ## Put it all together
 

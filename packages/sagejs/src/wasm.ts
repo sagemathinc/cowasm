@@ -102,9 +102,10 @@ export default async function wasmImport(name: string, options: Options = {}) {
     // of random bytes.  It does randomize the buffer though.
     // I couldn't find this reported upstream.
     wasmOpts.env.getrandom = (bufPtr, bufLen, _flags) => {
+      //console.log("getrandom", bufPtr, bufLen, _flags);
       wasi.wasiImport.random_get(bufPtr, bufLen);
-      return bufLen;  // what we actually did!
-    }
+      return bufLen; // what we actually did!
+    };
   }
 
   const source = await readFile(pathToWasm);
