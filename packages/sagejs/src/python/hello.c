@@ -18,6 +18,8 @@ extern int go(void) {
   Py_Initialize();
   fprintf(stderr, "2\n");
   PyRun_SimpleString("print(sum(range(1,101)))\n");
+  PyRun_SimpleString("import sys; sys.path.append('/home/user/sagemathjs/packages/sagejs/src/python')");
+  PyRun_SimpleString("from xgcd import bench_xgcd; bench_xgcd()\n");
   return Py_FinalizeEx();
 }
 
