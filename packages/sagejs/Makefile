@@ -1,4 +1,4 @@
-CFLAGS = -dynamic -O ReleaseFast
+CFLAGS = -dynamic #-O ReleaseFast
 
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 GMP_NATIVE = ${CWD}/../gmp/dist/native

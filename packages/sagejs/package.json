@@ -33,6 +33,7 @@
   "homepage": "https://github.com/sagemathinc/sagemathjs/tree/main/packages/sagejs",
   "dependencies": {
     "@wasmer/wasi": "^0.12.0",
+    "@wasmer/wasmfs": "^0.12.0",
     "callsite": "^1.0.0",
     "timit": "^1.0.0"
   },

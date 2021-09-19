@@ -19,8 +19,32 @@ export fn add() void {
 }
 
 const expect = std.testing.expect;
-test "calling init" {
-    init();
-    add();
-    _ = finalize();
+// test "calling init" {
+//     init();
+//     add();
+//     _ = finalize();
+// }
+
+fn junk_file0() !void {
+    std.debug.print("\nHOME = {s}\n", .{std.os.getenv("HOME") orelse unreachable});
+    //     var x = std.fs.wasi.PreopenList.init(std.testing.allocator);
+    //     defer x.deinit();
+    //     try x.populate();
+    //     std.debug.print("\nstd.fs.wasi.PreopenList = {s}\n", .{x.asSlice()});
+    //     _ = try std.fs.createFileAbsolute("/tmp/x", .{});
+}
+
+export fn junk_file() void {
+    junk_file0() catch |err| {
+        std.debug.print("FAILED creating /tmp/x -- {} \n", .{err});
+        return;
+    };
+}
+
+test "createFile, write, seekTo, read" {
+    try junk_file0();
+}
+
+pub fn main() !void {
+    junk_file0();
 }
