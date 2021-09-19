@@ -13,7 +13,7 @@ const STUBS =
 
 function stub(_name: string) {
   return function () {
-    //console.log(`stub.${_name}`, arguments);
+    // console.log(`stub.${_name}`, arguments);
     return "0";
   };
 }
