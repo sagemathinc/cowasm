@@ -9,7 +9,7 @@ export fn init() void {
 export fn exec(s: [*:0]const u8) void {
     python.exec(s) catch |err| {
         //todo
-        std.debug.print("python error: '{}'\nwhen evluating '{s}'", .{ err, s });
+        std.debug.print("python error: '{}'\nwhen evaluating '{s}'", .{ err, s });
         return;
     };
 }

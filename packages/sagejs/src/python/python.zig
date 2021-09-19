@@ -15,15 +15,21 @@ pub fn exec(s: [*:0]const u8) !void {
     // std.debug.print("exec '{s}'\n", .{s});
     // Returns 0 on success or -1 if an exception was raised. If there was an error, there is no way to get the exception information.
     var pstr = python.PyRun_String(s, python.Py_single_input, globals, globals);
-    if (pstr != null) {
-        defer python._Py_DECREF(pstr);
+    if (pstr == null) {
+        python.PyErr_Clear();
+        // failed - some sort of exception got raised.
+        std.debug.print("failed to run '{s}'\n", .{s});
+        return General.RuntimeError;
     }
+    // it worked.  We don't use the return value for anything.
+    python._Py_DECREF(pstr);
 }
 
 pub fn eval(allocator: *std.mem.Allocator, s: [*:0]const u8) ![]u8 {
     // std.debug.print("eval '{s}'\n", .{s});
     var pstr = python.PyRun_String(s, python.Py_eval_input, globals, globals);
     if (pstr == null) {
+        python.PyErr_Clear();
         std.debug.print("eval -- PyRun_String failed\n", .{});
         return General.RuntimeError;
     }
@@ -31,6 +37,7 @@ pub fn eval(allocator: *std.mem.Allocator, s: [*:0]const u8) ![]u8 {
 
     var rep = python.PyObject_Repr(pstr);
     if (rep == null) {
+        python.PyErr_Clear();
         std.debug.print("eval -- PyObject_Repr failed\n", .{});
         return General.RuntimeError;
     }
