@@ -80,7 +80,7 @@ python-test:
 	cd src/python && zig test python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9 -lpython3.9 -lc  #-O ReleaseFast
 
 ${DIST}/python.wasm: src/python/python.zig src/python/interface.zig src/python/python.h
-	cd src/python && zig build-lib -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.9 ${PYTHON_WASM}/lib/libpython3.9.a ${CFLAGS} python.zig
+	cd src/python && zig build-lib -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.9 ${PYTHON_WASM}/lib/libpython3.9.a ${CFLAGS} python.zig
 	mkdir -p ${DIST}/python
 	mv src/python/python.wasm ${DIST}/python.wasm
 

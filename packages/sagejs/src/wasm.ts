@@ -42,6 +42,7 @@ interface Options {
   noCache?: boolean;
   env?: object; // functions to include in the environment
   dir?: string | null; // WASI pre-opened directory; default is to preopen /, i.e., full filesystem; explicitly set as null to sandbox.
+  traceSyscalls?: boolean;
 }
 
 // TODO: make this a weakref cache
@@ -73,7 +74,7 @@ export default async function wasmImport(name: string, options: Options = {}) {
     const opts: any = {
       args: process.argv,
       env: process.env,
-      traceSyscalls: false,
+      traceSyscalls: options.traceSyscalls,
     };
     if (options.dir === null) {
       // sandbox -- don't give any fs access
@@ -113,6 +114,15 @@ export default async function wasmImport(name: string, options: Options = {}) {
   const result = await WebAssembly.instantiate(typedArray, wasmOpts);
   if (wasi != null) {
     wasi.start(result.instance);
+  }
+  if (result.instance.exports.__wasm_call_ctors != null) {
+    // We also **MUST** explicitly call the WASM constructors. This is
+    // a library function that is part of the zig libc code.  We have
+    // to call this because the wasm file is built using build-lib, so
+    // there is no main that does this.  This call does things like
+    // setup the filesystem mapping.    Yes, it took me **days**
+    // to figure this out, including reading a lot of assembly code. :shrug:
+    (result.instance.exports.__wasm_call_ctors as CallableFunction)();
   }
 
   if (!options.noCache) {
