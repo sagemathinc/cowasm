@@ -30,7 +30,7 @@ ${DIST}/integer.wasm: src/integer.zig src/integer-export.zig src/custom-allocato
 	mv src/integer-export.wasm ${DIST}/integer.wasm
 
 
-## New low-level code from scratch
+## New low-level code from scratch written in Zig
 
 ${DIST}/arith.wasm: src/arith.zig src/arith-export.zig
 	cd src/ && zig build-lib -target wasm32-freestanding ${CFLAGS} arith-export.zig
@@ -53,9 +53,15 @@ ${DIST}/p1list.wasm: src/p1list.zig src/p1list-export.zig src/p1list-container.z
 	mkdir -p ${DIST}
 	mv src/p1list-export.wasm ${DIST}/p1list.wasm
 
+# Runs zig test on all zig files that contain the word "test" but do not
+# have interface or export in their filename (since can't test those).
+# Runs on each one individually, not all at once which doesn't work.
+zig-test:
+	cd src && \
+		grep -l test *.zig | grep -v interface |grep -v export | xargs -t -n 1 zig test -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib -lc -lgmp
 
 ####################
-## PARI
+## PARI interface
 ####################
 
 ${DIST}/pari.js: src/pari/pari.ts node_modules
@@ -70,7 +76,7 @@ ${DIST}/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
 	mv src/pari/interface.wasm ${DIST}/pari.wasm
 
 ####################
-## Python
+## Python interface
 ####################
 
 ${DIST}/python.js: src/python/python.ts node_modules

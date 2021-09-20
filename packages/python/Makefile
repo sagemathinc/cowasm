@@ -6,7 +6,6 @@ CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
-OPENSSL = ${CWD}/../openssl/dist
 ZLIB = ${CWD}/../zlib/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
@@ -42,7 +41,7 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 
 ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
-		LD_LIBRARY_PATH=${OPENSSL}/native/lib:${ZLIB}/native/lib \
+		LD_LIBRARY_PATH=${ZLIB}/native/lib \
 		CFLAGS=-I${ZLIB}/native/include \
 		LDFLAGS=-L${ZLIB}/native/lib \
 		AR="zig ar" \
@@ -52,8 +51,7 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 			--prefix=${DIST_NATIVE} \
 			--enable-big-digits=30 \
 			--enable-optimizations \
-			--enable-shared \
-			--with-openssl=${OPENSSL}/native
+			--enable-shared
 	cd ${BUILD}/native && make -j8
 	cd ${BUILD}/native && make install
 	touch ${DIST_NATIVE}/.built

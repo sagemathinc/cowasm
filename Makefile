@@ -59,6 +59,8 @@ packages/sagejs/${BUILT}: packages/gmp/${BUILT}
 .PHONY: sagejs
 sagejs: packages/sagejs/${BUILT}
 
+
+# Included here since I did the work, but we're not using it.
 packages/openssl/${BUILT}:
 	cd packages/openssl && make all
 .PHONY: openssl
@@ -71,7 +73,7 @@ packages/zlib/${BUILT}:
 zlib: packages/zlib/${BUILT}
 
 
-packages/python/${BUILT}: packages/openssl/${BUILT} packages/zlib/${BUILT} packages/wasm-posix/${BUILT}
+packages/python/${BUILT}: packages/zlib/${BUILT} packages/wasm-posix/${BUILT}
 	cd packages/python && make all
 .PHONY: python
 python: packages/python/${BUILT}

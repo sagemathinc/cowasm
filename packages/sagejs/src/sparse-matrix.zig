@@ -128,11 +128,11 @@ pub fn SparseMatrixMod(comptime T: type) type {
     };
 }
 
-const allocator = std.testing.allocator;
+const testing_allocator = std.testing.allocator;
 const expect = std.testing.expect;
 
 test "setting and getting " {
-    var m = try SparseMatrixMod(i32).init(11, 100, 100000, allocator);
+    var m = try SparseMatrixMod(i32).init(11, 100, 100000, testing_allocator);
     defer m.deinit();
     try expect((try m.get(0, 0)) == 0);
     try m.set(0, 0, 2);
@@ -142,7 +142,7 @@ test "setting and getting " {
 }
 
 test "computing an echelon form" {
-    var m = try SparseMatrixMod(i32).init(11, 2, 3, allocator);
+    var m = try SparseMatrixMod(i32).init(11, 2, 3, testing_allocator);
     defer m.deinit();
     try m.set(0, 1, 1);
     try m.set(0, 2, 2);
@@ -156,7 +156,7 @@ test "computing an echelon form" {
 
 test "compute echelon form of [1..N^2] square rank 2 matrix mod 997, for N=100" {
     const N = 100;
-    var m = try SparseMatrixMod(i32).init(997, N, N, allocator);
+    var m = try SparseMatrixMod(i32).init(997, N, N, testing_allocator);
     defer m.deinit();
     var i: usize = 0;
     var k: i32 = 0;
@@ -177,7 +177,7 @@ test "compute echelon form of [1..N^2] square rank 2 matrix mod 997, for N=100" 
 test "compute echelon form of a larger random matrix" {
     const time = std.time.milliTimestamp;
     const N = 100;
-    var m = try SparseMatrixMod(i16).init(17, N, 3 * N, allocator);
+    var m = try SparseMatrixMod(i16).init(17, N, 3 * N, testing_allocator);
     defer m.deinit();
     try m.randomize(3);
     //m.print();
@@ -190,7 +190,7 @@ test "compute echelon form of a larger random matrix" {
 }
 
 pub fn bench(N: i32) !void {
-    var m = try SparseMatrixMod(i32).init(17, @intCast(usize, N), @intCast(usize, 3 * N), allocator);
+    var m = try SparseMatrixMod(i32).init(17, @intCast(usize, N), @intCast(usize, 3 * N), testing_allocator);
     defer m.deinit();
     try m.randomize(3);
     const pivots = try m.echelonize();

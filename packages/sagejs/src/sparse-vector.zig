@@ -49,7 +49,7 @@ pub fn SparseVectorMod(comptime T: type) type {
             std.debug.print("\n", .{});
         }
 
-        fn op(self: Vector, right: Vector, add: bool) !Vector {
+        fn op(self: Vector, right: Vector, do_add: bool) !Vector {
             if (self.n != right.n) {
                 return errors.Math.ValueError;
             }
@@ -60,7 +60,7 @@ pub fn SparseVectorMod(comptime T: type) type {
                 const i = kv.key_ptr.*;
                 const val = kv.value_ptr.*;
                 var x: T = undefined;
-                if (add) {
+                if (do_add) {
                     x = v.get(i) + val;
                 } else {
                     x = v.get(i) - val;
@@ -116,10 +116,10 @@ pub fn SparseVectorMod(comptime T: type) type {
 }
 
 const expect = std.testing.expect;
-const allocator = std.testing.allocator;
+const testing_allocator = std.testing.allocator;
 
 test "creating a vector, then set and get entries" {
-    var v = try SparseVectorMod(i32).init(11, allocator);
+    var v = try SparseVectorMod(i32).init(11, testing_allocator);
     defer v.deinit();
     try expect(v.get(7) == 0);
     try v.set(7, 15);
@@ -136,11 +136,11 @@ test "creating a vector, then set and get entries" {
 }
 
 test "adding and subtracting two vectors" {
-    var v = try SparseVectorMod(i32).init(11, allocator);
+    var v = try SparseVectorMod(i32).init(11, testing_allocator);
     defer v.deinit();
     try v.set(0, 5);
     try v.set(1, 3);
-    var w = try SparseVectorMod(i32).init(11, allocator);
+    var w = try SparseVectorMod(i32).init(11, testing_allocator);
     defer w.deinit();
     try w.set(0, 8);
     try w.set(2, 10);
@@ -158,11 +158,11 @@ test "adding and subtracting two vectors" {
 }
 
 test "add a multiple of one vector into another" {
-    var v = try SparseVectorMod(i32).init(11, allocator);
+    var v = try SparseVectorMod(i32).init(11, testing_allocator);
     defer v.deinit();
     try v.set(0, 5);
     try v.set(1, 3);
-    var w = try SparseVectorMod(i32).init(11, allocator);
+    var w = try SparseVectorMod(i32).init(11, testing_allocator);
     defer w.deinit();
     try w.set(0, 8);
     try w.set(2, 10);
@@ -175,9 +175,9 @@ test "add a multiple of one vector into another" {
 fn bench1(comptime N: anytype) !void {
     const time = std.time.milliTimestamp;
     const t = time();
-    var v = try SparseVectorMod(i32).init(11, allocator);
+    var v = try SparseVectorMod(i32).init(11, testing_allocator);
     defer v.deinit();
-    var w = try SparseVectorMod(i32).init(11, allocator);
+    var w = try SparseVectorMod(i32).init(11, testing_allocator);
     defer w.deinit();
     var i: usize = 0;
     while (i < N) : (i += 1) {
@@ -199,7 +199,7 @@ fn bench1(comptime N: anytype) !void {
 // }
 
 test "scale and rescale a vector" {
-    var v = try SparseVectorMod(i32).init(15, allocator);
+    var v = try SparseVectorMod(i32).init(15, testing_allocator);
     defer v.deinit();
     try v.set(0, 5);
     try v.set(1, 3);
