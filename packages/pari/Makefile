@@ -9,7 +9,7 @@ DIST_JS = ${CWD}/dist/js
 
 ZCC = ${CWD}/../../bin/zcc
 GMP = ${CWD}/../gmp/dist
-WASMPOSIX = ${CWD}/../wasm-posix/
+WASMPOSIX = ${CWD}/../wasm-posix/dist
 
 #############
 # Source code
@@ -57,7 +57,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm/O* && make -j8 AR="zig ar" RANLIB="zig ranlib" gp
 	cd ${BUILD}/wasm/O* && make AR="zig ar" RANLIB="zig ranlib" install
 	# Also rebuild a new version of gp-sta.wasm with the extra posix lib included by abusing EXPORT_EXE.
-	cd ${BUILD}/wasm/O* && rm gp-sta && make EXPORT_EXE=${WASMPOSIX}/dist/libwasmposix.a gp-sta
+	cd ${BUILD}/wasm/O* && rm gp-sta && make EXPORT_EXE=${WASMPOSIX}/libwasmposix.a gp-sta
 	cp ${BUILD}/wasm/O*/gp-sta.wasm ${DIST_WASM}/bin
 	# Horrible temporary hack because of missing bits/ headers with zig.  Will have to address this somehow...!!
 	mkdir -p ${DIST_WASM}/include/bits && cp /usr/include/bits/setjmp.h /usr/include/bits/wordsize.h ${DIST_WASM}/include/bits

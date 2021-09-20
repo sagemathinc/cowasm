@@ -6,47 +6,75 @@ all: packages/gmp/${BUILT} packages/mpir/${BUILT} packages/mpfr/${BUILT} package
 
 packages/gmp/${BUILT}:
 	cd packages/gmp && make all
-.PHONY: packages/gmp/${BUILT}
+.PHONY: gmp
+gmp: packages/gmp/${BUILT}
 
 packages/mpir/${BUILT}:
 	cd packages/mpir && make all
-.PHONY: packages/mpir/${BUILT}
+.PHONY: mpir
+mpir: packages/mpir/${BUILT}
 
 packages/mpfr/${BUILT}: packages/gmp/${BUILT}
 	cd packages/mpfr && make all
-.PHONY: packages/mpfr/${BUILT}
+.PHONY: mpfr
+mpfr: packages/mpfr/${BUILT}
 
 packages/mpc/${BUILT}: packages/gmp/${BUILT} packages/mpfr/${BUILT}
 	cd packages/mpc && make all
-.PHONY: packages/mpc/${BUILT}
+.PHONY: mpc
+mpc: packages/mpc/${BUILT}
 
 packages/gf2x/${BUILT}:
 	cd packages/gf2x && make all
-.PHONY: packages/gf2x/${BUILT}
+.PHONY: gf2x
+gf2x: packages/gf2x/${BUILT}
 
 packages/ntl/${BUILT}: packages/gmp/${BUILT} packages/gf2x/${BUILT}
 	cd packages/ntl && make all
-.PHONY: packages/ntl/${BUILT}
+.PHONY: ntl
+ntl: packages/ntl/${BUILT}
 
 packages/flint/${BUILT}: packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/mpir/${BUILT} packages/ntl/${BUILT}
 	cd packages/flint && make all
-.PHONY: packages/flint/${BUILT}
+.PHONY: flint
+flint: packages/flint/${BUILT}
 
-packages/pari/${BUILT}: packages/gmp/${BUILT}
+packages/wasm-posix/${BUILT}:
+	cd packages/wasm-posix && make all
+.PHONY: wasm-posix
+wasm-posix: packages/wasm-posix/${BUILT}
+
+packages/pari/${BUILT}: packages/gmp/${BUILT} packages/wasm-posix/${BUILT}
 	cd packages/pari && make all
-.PHONY: packages/pari/${BUILT}
+.PHONY: pari
+pari: packages/pari/${BUILT}
 
 packages/eclib/${BUILT}: packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/pari/${BUILT} packages/ntl/${BUILT} packages/flint/${BUILT}
 	cd packages/eclib && make all
-.PHONY: packages/eclib/${BUILT}
+.PHONY: eclib
+eclib: packages/eclib/${BUILT}
 
 packages/sagejs/${BUILT}: packages/gmp/${BUILT}
 	cd packages/sagejs && make all
-.PHONY: packages/sagejs/${BUILT}
+.PHONY: sagejs
+sagejs: packages/sagejs/${BUILT}
 
-packages/python/${BUILT}: packages/openssl/${BUILT} packages/zlib/${BUILT}
+packages/openssl/${BUILT}:
+	cd packages/openssl && make all
+.PHONY: openssl
+openssl: packages/openssl/${BUILT}
+
+
+packages/zlib/${BUILT}:
+	cd packages/zlib && make all
+.PHONY: zlib
+zlib: packages/zlib/${BUILT}
+
+
+packages/python/${BUILT}: packages/openssl/${BUILT} packages/zlib/${BUILT} packages/wasm-posix/${BUILT}
 	cd packages/python && make all
-.PHONY: packages/python/${BUILT}
+.PHONY: python
+python: packages/python/${BUILT}
 
 clean:
 	cd packages/gmp && make clean
@@ -61,4 +89,5 @@ clean:
 	cd packages/python && make clean
 	cd packages/openssl && make clean
 	cd packages/zlib && make clean
+	cd packages/wasm-posix && make clean
 

@@ -8,9 +8,14 @@ DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 OPENSSL = ${CWD}/../openssl/dist
 ZLIB = ${CWD}/../zlib/dist
+WASMPOSIX = ${CWD}/../wasm-posix/dist
 
 # Default target
-all: native wasm
+.PHONY: all
+all: ${CWD}/dist/.built
+
+${CWD}/dist/.built: native wasm
+	touch ${CWD}/dist/.built
 
 #############
 # Source code
@@ -65,16 +70,6 @@ run-native: ${DIST_NATIVE}/.built
 # WASM
 #############
 
-# The posix library, which is needed to run Python standalone (via wasmer), rather
-# than in node.js.  Also, the headers are needed in order to build at all.
-${BUILD}/wasm-posix/libwasmposix.a: src/wasm-posix/wasm-posix.h src/wasm-posix/wasm-posix.c
-	# Copy over and build our wasm posix library.
-	mkdir -p ${BUILD}/wasm-posix/ && cp src/wasm-posix/wasm-posix.* ${BUILD}/wasm-posix/
-	# -w (=no warnings) since this is almost all fake/stubbed function and would generate massive warning issues:
-	cd ${BUILD}/wasm-posix/ \
-		&& zig cc -w -target wasm32-wasi wasm-posix.c -c -o wasm-posix.o \
-		&& zig ar -crs libwasmposix.a wasm-posix.o
-
 ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	rm -rf ${BUILD}/wasm
 	cd ${BUILD} && mkdir wasm && tar xf Python-${PYTHON_VERSION}.tar.xz -C wasm --strip-components=1 \
@@ -90,7 +85,7 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	cd ${BUILD}/wasm && mkdir -p bits && echo "#define __jmp_buf int" > bits/setjmp.h
 	touch ${BUILD}/wasm/.patched
 
-${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/wasm-posix/libwasmposix.a
+${DIST_WASM}/.built: ${BUILD}/wasm/.patched
 	# Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
 	# without-pymalloc below because pymalloc uses mmap and munmap, and WASI/our libc doesn't provide them.
 	# We could try to write them ourselves (?)...
@@ -114,15 +109,15 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/wasm-posix/libwasmposix.a
 			--build=`./config.guess`
 	# Make it so our WASM posix header file is included everywhere,
 	# since otherwise we can't even compile.  Must do this AFTER ./configure.
-	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ../wasm-posix/wasm-posix.h .
+	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ${WASMPOSIX}/wasm-posix.h .
 	cd ${BUILD}/wasm && make -j8
 	cd ${BUILD}/wasm && make install
 	# Also copy wasm-posix.h over, so it's possible to build programs against our new python.
-	cd ${BUILD}/wasm && cp ./wasm-posix.h ${DIST_WASM}/include/python3.9/
+	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm-posix.h ${DIST_WASM}/include/python3.9/
 	# Create a modified Python binary with libwasmposix.a linked in so that it can
 	# be run via wasmer on the command line (without node.js!).  We abuse LINKFORSHARED
 	# to add our wasmposix to the build line.  TODO: hardcoding "python3.9" :-(
-	cd ${BUILD}/wasm && rm python && make LINKFORSHARED=${BUILD}/wasm-posix/libwasmposix.a python && cp python ${DIST_WASM}/bin/python3.9
+	cd ${BUILD}/wasm && rm python && make LINKFORSHARED=${WASMPOSIX}/libwasmposix.a python && cp python ${DIST_WASM}/bin/python3.9
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
