@@ -191,4 +191,19 @@ int setrlimit(int resource, const struct rlimit* rlim);
 
 char* realpath(const char* restrict path, char* restrict resolved_path);
 
+// These are not needed by Python but are needed by PARI:
+typedef void* jmp_buf;
+typedef void* sigjmp_buf;
+int setjmp(jmp_buf env);
+int sigsetjmp(sigjmp_buf env, int savesigs);
+void longjmp(jmp_buf env, int val);
+void siglongjmp(sigjmp_buf env, int val);
+struct _IO_FILE { char __x; };
+typedef struct _IO_FILE FILE;
+FILE* popen(const char* command, const char* type);
+int pclose(FILE* stream);
+struct passwd* getpwnam(const char* name);
+struct passwd* getpwuid(uid_t uid);
+void (*signal(int sig, void (*func)(int)))(int);
+
 #endif

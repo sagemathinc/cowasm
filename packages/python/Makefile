@@ -56,9 +56,9 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 .PHONY: native
 native: ${DIST_NATIVE}/.built
 
-# Use "make run-python-native" to run native python at the command line.
-.PHONY: run-python-native
-run-python-native: ${DIST_NATIVE}/.built
+# Use "make run-native" to run native python at the command line.
+.PHONY: run-native
+run-native: ${DIST_NATIVE}/.built
 	LD_LIBRARY_PATH=${DIST_NATIVE}/lib ${DIST_NATIVE}/bin/python3
 
 #############
@@ -129,9 +129,9 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/wasm-posix/libwasmposix.a
 wasm: ${DIST_WASM}/.built
 
 
-# Use "make run-python-wasm" to run our WASM python at the command line.
-.PHONY: run-python-wasm
-run-python-wasm: ${DIST_WASM}/.built
+# Use "make run-wasm" to run our WASM python at the command line.
+.PHONY: run-wasm
+run-wasm: ${DIST_WASM}/.built
 	wasmer run ${DIST_WASM}/bin/python3 --mapdir /:/
 
 

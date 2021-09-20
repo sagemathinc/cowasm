@@ -6,10 +6,10 @@ BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 DIST_JS = ${CWD}/dist/js
+
 ZCC = ${CWD}/../../bin/zcc
-
 GMP = ${CWD}/../gmp/dist
-
+WASMPOSIX = ${CWD}/../wasm-posix/
 
 #############
 # Source code
@@ -39,6 +39,9 @@ ${DIST_NATIVE}/.built: ${BUILD}/native
 .PHONY: native
 native: ${DIST_NATIVE}/.built
 
+.PHONY: run-python-native
+run-native: ${DIST_NATIVE}/.built
+	${DIST_NATIVE}/bin/gp
 
 # WASM
 
@@ -50,16 +53,24 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && CC=${ZCC} AR="zig ar" RANLIB="zig ranlib" \
 		./Configure --host=wasm-wasi --prefix=${DIST_WASM} --graphic=none --with-gmp=${GMP}/wasm
 	# Horrible temporary hack because of missing bits/ headers with zig.  Will have to address this somehow...
-	cd ${BUILD}/wasm/O* && cp /usr/include/bits/setjmp.h /usr/include/bits/wordsize.h bits/
-	cd ${BUILD}/wasm/O* && make AR="zig ar" RANLIB="zig ranlib" gp
+	cd ${BUILD}/wasm/O* && mkdir -p bits && cp /usr/include/bits/setjmp.h /usr/include/bits/wordsize.h bits/
+	cd ${BUILD}/wasm/O* && make -j8 AR="zig ar" RANLIB="zig ranlib" gp
 	cd ${BUILD}/wasm/O* && make AR="zig ar" RANLIB="zig ranlib" install
+	# Also rebuild a new version of gp-sta.wasm with the extra posix lib included by abusing EXPORT_EXE.
+	cd ${BUILD}/wasm/O* && rm gp-sta && make EXPORT_EXE=${WASMPOSIX}/dist/libwasmposix.a gp-sta
 	cp ${BUILD}/wasm/O*/gp-sta.wasm ${DIST_WASM}/bin
 	# Horrible temporary hack because of missing bits/ headers with zig.  Will have to address this somehow...!!
-	mkdir ${DIST_WASM}/include/bits && cp /usr/include/bits/setjmp.h /usr/include/bits/wordsize.h ${DIST_WASM}/include/bits
+	mkdir -p ${DIST_WASM}/include/bits && cp /usr/include/bits/setjmp.h /usr/include/bits/wordsize.h ${DIST_WASM}/include/bits
+	# Also build a new version of gp-sta.wasm with the extra posix lib included.
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
 wasm: ${DIST_WASM}/.built
+
+.PHONY: run-wasm
+run-wasm: ${DIST_WASM}/.built
+	wasmer run ${DIST_WASM}/bin/gp-sta.wasm  --mapdir /:/
+
 
 all: native wasm
 

@@ -549,3 +549,38 @@ clock_t clock(void) { STUB("clock") }
 void __SIG_IGN(int sig) { STUB("__SIG_IGN"); }
 
 void __SIG_ERR(int sig) { STUB("__SIG_ERR"); }
+
+int setjmp(jmp_buf env) {
+  STUB("setjmp");
+  return 0;
+}
+int sigsetjmp(sigjmp_buf env, int savesigs) {
+  STUB("sigsetjmp");
+  return 0;
+}
+void longjmp(jmp_buf env, int val) {
+  STUB("longjmp");
+}
+void siglongjmp(sigjmp_buf env, int val) {
+  STUB("siglongjmp");
+}
+FILE* popen(const char* command, const char* type) {
+  STUB("popen");
+  return 0;
+}
+int pclose(FILE* stream) {
+  STUB("pclose");
+  return 0;
+}
+struct passwd* getpwnam(const char* name) {
+  STUB("getpwnam");
+  return 0;
+}
+struct passwd* getpwuid(uid_t uid) {
+  STUB("");
+  return 0;
+}
+void (*signal(int sig, void (*func)(int)))(int) {
+  STUB("");
+  return 0;
+}
