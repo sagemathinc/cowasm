@@ -43,7 +43,4 @@ wasm: ${PREFIX_WASM}/.built
 all: native wasm
 
 clean:
-	rm -rf "${BUILD}"
-
-clean-all: clean
-	rm -rf "${PREFIX_NATIVE}" "${PREFIX_WASM}"
+	rm -rf ${BUILD} ${PREFIX_NATIVE} ${PREFIX_WASM}

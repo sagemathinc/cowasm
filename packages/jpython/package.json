@@ -1,0 +1,39 @@
+{
+  "name": "@sagemath/jpython",
+  "description": "A Javascript/Python friendly language for use by Sagejs",
+  "homepage": "https://github.com/williamstein/jpython",
+  "keywords": ["javascript", "python", "language", "compiler"],
+  "main": "tools/compiler.js",
+  "scripts": {
+    "test": "npx tsc && node bin/jpython self --complete --test",
+    "start": "node bin/jpython",
+    "build": "npx tsc && node bin/jpython self --complete",
+    "tsc": "npx tsc -w",
+    "clean": "rm -rf dev",
+    "prettier": "prettier --write .",
+    "yapf": "yapf --write ."
+  },
+  "version": "0.1",
+  "license": "BSD-2-Clause",
+  "engines": {
+    "node": ">=0.12.0"
+  },
+  "maintainers": [
+    {
+      "name": "William Stein",
+      "email": "wstein@sagemath.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/williamstein/jpython"
+  },
+  "devDependencies": {
+    "@types/node": "^16.7.10",
+    "prettier": "^2.3.2",
+    "typescript": "^4.4.2"
+  },
+  "bin": {
+    "jpython": "bin/jpython"
+  }
+}

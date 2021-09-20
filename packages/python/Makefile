@@ -131,7 +131,4 @@ run-wasm: ${DIST_WASM}/.built
 # Cleaning up
 
 clean:
-	rm -rf ${BUILD}
-
-clean-all: clean
-	rm -rf ${DIST_NATIVE} ${DIST_WASM}
+	rm -rf ${BUILD} ${DIST_NATIVE} ${DIST_WASM}

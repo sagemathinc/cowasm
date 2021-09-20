@@ -4,8 +4,7 @@
   "description": "Python is a programming language that lets you work quickly and integrate systems more effectively.",
   "files": ["dist.wasm/*", "README.md", "src/*", "Makefile", "package.json"],
   "scripts": {
-    "build": "make all",
-    "clean": "make clean-all"
+    "build": "make all"
   },
   "repository": {
     "type": "git",

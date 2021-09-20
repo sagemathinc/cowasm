@@ -27,7 +27,4 @@ ${DIST_NATIVE}/.built: ${BUILD}/native
 native: ${DIST_NATIVE}/.built
 
 clean:
-	rm -rf build
-
-clean-all: clean
-	rm -rf dist
+	rm -rf build dist
