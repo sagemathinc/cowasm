@@ -20,7 +20,7 @@ Javascript is the most widely deployed language, but there is essentially nothin
 
 #### JIT: Just in time compiler
 
-Modern Javascript runtimes -- in particular, Chrome V8 and Firefox SpiderMonkey -- have incredible just-in-time (JIT) compilers that optimize a wide range of general Javascript code. It could be valuable for some users to bring combine math research software with the power of Javascript JIT's. The Python ecosystem is not as good at JIT as Javascript.   There's pypy, but it still feels "fringe" despite Python 3.x support, and it has serious performance issues with C extensions.  There's numba, which is amazing for what it is amazing at, but only works for specific types of code. 
+Modern Javascript runtimes -- in particular, Chrome V8 and Firefox SpiderMonkey -- have incredible just-in-time (JIT) compilers that optimize a wide range of general Javascript code. It could be valuable for some users to bring combine math research software with the power of Javascript JIT's. The Python ecosystem is not as good at JIT as Javascript.   There's pypy, but it still feels "fringe" despite Python 3.x support, and it has serious performance issues with C extensions.  There's numba, which is amazing for what it is amazing at, but only works for specific types of code.
 
 Compared to Julia, the Javascript JIT's are also very impressive due to how quickly and seamlessly they do their JIT'ing, since that's a critical requirement for web pages.
 

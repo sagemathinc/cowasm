@@ -54,7 +54,7 @@ packages/eclib/${BUILT}: packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/p
 .PHONY: eclib
 eclib: packages/eclib/${BUILT}
 
-packages/sagejs/${BUILT}: packages/gmp/${BUILT}
+packages/sagejs/${BUILT}: packages/gmp/${BUILT} packages/pari/${BUILT} packages/python/${BUILT}
 	cd packages/sagejs && make all
 .PHONY: sagejs
 sagejs: packages/sagejs/${BUILT}

@@ -67,9 +67,9 @@ module.exports = function (argv, base_path, src_path, lib_path) {
       return /^[^_].*\.py$/.test(name);
     });
   }
-  const t_start = new Date();
+  const t_start = new Date().valueOf();
   files.forEach(function (file) {
-    const t0 = new Date();
+    const t0 = new Date().valueOf();
     var ast;
     var filepath = join(test_path, file);
     var failed = false;
@@ -81,6 +81,7 @@ module.exports = function (argv, base_path, src_path, lib_path) {
         libdir: join(src_path, "lib"),
       });
     } catch (e) {
+      // @ts-ignore
       failures.push(file);
       failed = true;
       console.log(colored(file, "red") + ": " + e + "\n\n");
@@ -116,6 +117,7 @@ module.exports = function (argv, base_path, src_path, lib_path) {
         { filename: jsfile }
       );
     } catch (e) {
+      // @ts-ignore
       failures.push(file);
       failed = true;
       fs.writeFileSync(jsfile, code);

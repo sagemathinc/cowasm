@@ -4,8 +4,9 @@ PYTHON_VERSION = 3.9.7
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD = ${CWD}/build
-DIST_NATIVE = ${CWD}/dist/native
-DIST_WASM = ${CWD}/dist/wasm
+DIST = ${CWD}/dist
+DIST_NATIVE = ${DIST}/native
+DIST_WASM = ${DIST}/wasm
 ZLIB = ${CWD}/../zlib/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
@@ -131,4 +132,4 @@ run-wasm: ${DIST_WASM}/.built
 # Cleaning up
 
 clean:
-	rm -rf ${BUILD} ${DIST_NATIVE} ${DIST_WASM}
+	rm -rf ${BUILD} ${DIST}
