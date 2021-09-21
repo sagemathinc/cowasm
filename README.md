@@ -37,7 +37,7 @@ Another experimental project you will find here is `jpython`, which is a _very l
 
 ### Does this compete with SageMath?
 
-Unlike [Julia](https://julialang.org/) or [Oscar](https://oscar.computeralgebra.de/), this project does not compete with SageMath.  Indeed, one of the main goals is to provide an easier to use distribution of SageMath someday, and another goal is to make the components of Sage and ultimately much of the core Sage library efficiently usable in more situations (e.g., node.js, web browsers, [every language wasmer supports](https://github.com/wasmerio/wasmer#-language-integrations), etc.).   This project is about enriching the mathematical software ecosystem and expanding it far beyond Python. 
+Unlike [Julia](https://julialang.org/) or [Oscar](https://oscar.computeralgebra.de/), this project does not compete with SageMath.  Indeed, one of the main goals is to provide an easier to use distribution of SageMath someday, and another goal is to make the components of Sage and ultimately much of the core Sage library efficiently usable in more situations (e.g., node.js, web browsers, [every language wasmer supports](https://github.com/wasmerio/wasmer#-language-integrations), etc.).   This project is about enriching the mathematical software ecosystem and expanding it beyond Python or any particular language.
 
 ## Build SageMathJS from source
 

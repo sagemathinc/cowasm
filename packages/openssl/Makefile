@@ -9,7 +9,7 @@ all: ${DIST_NATIVE}/.built
 
 ${BUILD}/openssl:
 	mkdir -p ${BUILD}
-	cd ${BUILD} && git clone --depth 1 --branch openssl-3.0.0-beta2 https://github.com/openssl/openssl.git openssl
+	cd ${BUILD} && git clone --depth 1 --branch openssl-3.0.0 https://github.com/openssl/openssl.git openssl
 
 ## Native library
 
