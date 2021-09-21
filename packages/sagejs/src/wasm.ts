@@ -1,3 +1,4 @@
+import { reuseInFlight } from "async-await-utils/hof";
 import { WASI } from "@wasmer/wasi";
 import { readFile as readFile0 } from "fs";
 import { promisify } from "util";
@@ -43,92 +44,101 @@ interface Options {
   env?: object; // functions to include in the environment
   dir?: string | null; // WASI pre-opened directory; default is to preopen /, i.e., full filesystem; explicitly set as null to sandbox.
   traceSyscalls?: boolean;
+  time?: boolean;
+  init?: (exports: any) => void | Promise<void>; // initialization function that gets called when module first loaded.
 }
 
-// TODO: make this a weakref cache
-// TODO: need to reuseInFlight importWasm
 const cache: { [name: string]: any } = {};
 
-export default async function wasmImport(name: string, options: Options = {}) {
-  if (!options.noCache) {
-    if (cache[name] != null) {
-      return cache[name];
-    }
-  }
-  const t = new Date().valueOf();
-  if (!name.startsWith("/")) {
-    name = join(dirname(callsite()[1]?.getFileName() ?? ""), name);
-  }
-  const pathToWasm = `${name}${name.endsWith(".wasm") ? "" : ".wasm"}`;
-
-  wasmEnv.reportError = (ptr, len: number) => {
-    // @ts-ignore
-    const slice = result.instance.exports.memory.buffer.slice(ptr, ptr + len);
-    const textDecoder = new TextDecoder();
-    throw Error(textDecoder.decode(slice));
-  };
-
-  const wasmOpts: any = { env: { ...wasmEnv, ...options.env } };
-  let wasi: any = undefined;
-  if (!options?.noWasi) {
-    const opts: any = {
-      args: process.argv,
-      env: process.env,
-      traceSyscalls: options.traceSyscalls,
-    };
-    if (options.dir === null) {
-      // sandbox -- don't give any fs access
-    } else {
-      opts.bindings = {
-        ...(nodeBindings.default || nodeBindings),
-        fs: fs,
-      };
-      if (options.dir !== undefined) {
-        // something explicit
-        opts.preopenDirectories = { [options.dir]: options.dir };
-      } else {
-        // just give full access; security of fs access isn't
-        // really relevant for us at this point
-        opts.preopenDirectories = { "/": "/" };
+const wasmImport = reuseInFlight(
+  async function wasmImport(name: string, options: Options = {}) {
+    if (!options.noCache) {
+      if (cache[name] != null) {
+        return cache[name];
       }
     }
-    wasi = new WASI(opts);
-    wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
+    const t = new Date().valueOf();
+    if (!name.startsWith("/")) {
+      name = join(dirname(callsite()[1]?.getFileName() ?? ""), name);
+    }
+    const pathToWasm = `${name}${name.endsWith(".wasm") ? "" : ".wasm"}`;
 
-    // It's very important that this actually work properly.
-    // E.g., if you just return 0, then Python startup
-    // hangs at py_getrandom in bootstrap_hash.c.
-    // The wasmer code for random_get is broken in that it returns
-    // 0 for success, but getrandom is supposed to return the number
-    // of random bytes.  It does randomize the buffer though.
-    // I couldn't find this reported upstream.
-    wasmOpts.env.getrandom = (bufPtr, bufLen, _flags) => {
-      //console.log("getrandom", bufPtr, bufLen, _flags);
-      wasi.wasiImport.random_get(bufPtr, bufLen);
-      return bufLen; // what we actually did!
+    wasmEnv.reportError = (ptr, len: number) => {
+      // @ts-ignore
+      const slice = result.instance.exports.memory.buffer.slice(ptr, ptr + len);
+      const textDecoder = new TextDecoder();
+      throw Error(textDecoder.decode(slice));
     };
-  }
 
-  const source = await readFile(pathToWasm);
-  const typedArray = new Uint8Array(source);
-  const result = await WebAssembly.instantiate(typedArray, wasmOpts);
-  if (wasi != null) {
-    wasi.start(result.instance);
-  }
-  if (result.instance.exports.__wasm_call_ctors != null) {
-    // We also **MUST** explicitly call the WASM constructors. This is
-    // a library function that is part of the zig libc code.  We have
-    // to call this because the wasm file is built using build-lib, so
-    // there is no main that does this.  This call does things like
-    // setup the filesystem mapping.    Yes, it took me **days**
-    // to figure this out, including reading a lot of assembly code. :shrug:
-    (result.instance.exports.__wasm_call_ctors as CallableFunction)();
-  }
+    const wasmOpts: any = { env: { ...wasmEnv, ...options.env } };
+    let wasi: any = undefined;
+    if (!options?.noWasi) {
+      const opts: any = {
+        args: process.argv,
+        env: process.env,
+        traceSyscalls: options.traceSyscalls,
+      };
+      if (options.dir === null) {
+        // sandbox -- don't give any fs access
+      } else {
+        opts.bindings = {
+          ...(nodeBindings.default || nodeBindings),
+          fs: fs,
+        };
+        if (options.dir !== undefined) {
+          // something explicit
+          opts.preopenDirectories = { [options.dir]: options.dir };
+        } else {
+          // just give full access; security of fs access isn't
+          // really relevant for us at this point
+          opts.preopenDirectories = { "/": "/" };
+        }
+      }
+      wasi = new WASI(opts);
+      wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
 
-  if (!options.noCache) {
-    cache[name] = result.instance.exports;
-  }
+      // It's very important that this actually work properly.
+      // E.g., if you just return 0, then Python startup
+      // hangs at py_getrandom in bootstrap_hash.c.
+      // The wasmer code for random_get is broken in that it returns
+      // 0 for success, but getrandom is supposed to return the number
+      // of random bytes.  It does randomize the buffer though.
+      // I couldn't find this reported upstream.
+      wasmOpts.env.getrandom = (bufPtr, bufLen, _flags) => {
+        //console.log("getrandom", bufPtr, bufLen, _flags);
+        wasi.wasiImport.random_get(bufPtr, bufLen);
+        return bufLen; // what we actually did!
+      };
+    }
 
-  console.log(`imported ${name} in ${new Date().valueOf() - t}ms`);
-  return result.instance.exports;
-}
+    const source = await readFile(pathToWasm);
+    const typedArray = new Uint8Array(source);
+    const result = await WebAssembly.instantiate(typedArray, wasmOpts);
+    if (wasi != null) {
+      wasi.start(result.instance);
+    }
+    if (result.instance.exports.__wasm_call_ctors != null) {
+      // We also **MUST** explicitly call the WASM constructors. This is
+      // a library function that is part of the zig libc code.  We have
+      // to call this because the wasm file is built using build-lib, so
+      // there is no main that does this.  This call does things like
+      // setup the filesystem mapping.    Yes, it took me **days**
+      // to figure this out, including reading a lot of assembly code. :shrug:
+      (result.instance.exports.__wasm_call_ctors as CallableFunction)();
+    }
+
+    await options.init?.(result.instance.exports);
+
+    if (!options.noCache) {
+      cache[name] = result.instance.exports;
+    }
+
+    if (options.time) {
+      console.log(`imported ${name} in ${new Date().valueOf() - t}ms`);
+    }
+    return result.instance.exports;
+  },
+  { createKey: (args) => args[0] }
+);
+
+export default wasmImport;

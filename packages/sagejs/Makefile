@@ -16,6 +16,7 @@ NATIVE_CFLAGS = -I. -L${PARI_NATIVE}/lib -I${PARI_NATIVE}/include -lpari   -L${G
 
 DIST = ${CWD}/dist
 
+.PHONY: all
 all: ${DIST}/.built
 
 ## Interface with GMP directly:
@@ -53,9 +54,11 @@ ${DIST}/modular/p1list.wasm: src/modular/p1list.zig src/modular/p1list-export.zi
 # have interface or export in their filename (since can't test those).
 # Runs on each one individually, not all at once which doesn't work.
 # not in parallel
+.PHONY: zig-test1
 zig-test1:
 	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -n 1 zig test ${ZIG_PKG} ${NATIVE_CFLAGS}
 # in parallel
+.PHONY: zig-test
 zig-test:
 	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -P 8 -n 1 zig test ${ZIG_PKG} ${NATIVE_CFLAGS}
 
@@ -90,8 +93,11 @@ ${DIST}/.built: ${DIST}/integer.wasm ${DIST}/arith.wasm ${DIST}/modular/p1list.w
 	npx tsc
 	touch ${DIST}/.built
 
-.PHONY: all
-all: ${DIST}/.built
+# Run all test suites...
+.PHONY: test
+test: zig-test
+	npm run test
 
+.PHONY: clean
 clean:
-	rm -rf ${DIST} node_modules tsconfig.tsbuildinfo
+	rm -rf ${DIST} node_modules tsconfig.tsbuildinfo src/zig-cache src/*/zig-cache

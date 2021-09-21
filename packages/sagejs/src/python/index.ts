@@ -17,11 +17,11 @@ export function repr(s: string): string {
 }
 
 export async function init() {
-  const w = await wasmImport("python/python.wasm", {
+  if (wasm != null) return;
+  wasm = await wasmImport("python/python.wasm", {
     env: { eval_cb },
-    traceSyscalls: false,
+    init: (w) => w.init(),
   });
-  w.init(); // initialize python interpreter -- MUST do before any use of it.
-  wasm = w;
 }
+
 init();
