@@ -13,6 +13,7 @@ The longterm goals out outlined below.
 SageMath is a very large Python/Cython library that also includes a large number of other mathematical software systems such as PARI and Gap and Singular. Thus part of the goal is to build each of PARI, GAP, etc. using Zig. This could be distributed as a small native Electron app along with a few hundred megabytes of cross-platform WebAssembly and data files. When there's a new release of Sage, the WebAssembly files need to get rebuilt and tested once, and the resulting binary will then support all versions of Linux, Windows, MacOS, and iOS. For iOS we would use [a-shell](https://github.com/holzschu/a-shell#programming--add-more-commands) (or simple contribute a free package to a-shell).
 
 - There's probably [no way to build R](https://www.r-project.org/) with Zig, so we'll toss it; the Python community has not ended up building stats around rpy2 so this is fine.
+- It might be very difficult to build Maxima via ECL (embedded common lisp) for WASM, in which case we will simply have to change Sage to not depend on Maxima for symbolic computation.  We'll see.  This is a very challenging project!
 
 ### Make research level mathematical software available to the Javascript ecosystem
 
@@ -20,9 +21,11 @@ Javascript is the most widely deployed language, but there is essentially nothin
 
 #### JIT: Just in time compiler
 
-Modern Javascript runtimes -- in particular, Chrome V8 and Firefox SpiderMonkey -- have incredible just-in-time (JIT) compilers that optimize a wide range of general Javascript code. It could be valuable for some users to bring combine math research software with the power of Javascript JIT's. The Python ecosystem is not as good at JIT as Javascript.   There's pypy, but it still feels "fringe" despite Python 3.x support, and it has serious performance issues with C extensions.  There's numba, which is amazing for what it is amazing at, but only works for specific types of code.
+Modern Javascript runtimes -- in particular, Chrome V8 and Firefox SpiderMonkey -- have incredible just-in-time (JIT) compilers that optimize a wide range of general Javascript code. It could be valuable for some users to bring combine math research software with the power of Javascript JIT's. The Python ecosystem is not as good in some ways at JIT as Javascript.   Pypy still feels "fringe" despite Python 3.x support, and it has serious performance issues with C extensions.  There's numba, which is amazing for what it is amazing at, but only works for specific types of code. There's the new [Pyston](https://www.pyston.org/) spinoff from Dropbox.
 
-Compared to Julia, the Javascript JIT's are also very impressive due to how quickly and seamlessly they do their JIT'ing, since that's a critical requirement for web pages.
+Compared to Julia, the Javascript JIT's are also impressive due to how quickly and seamlessly it does JIT'ing, since that's a critical requirement for web pages.  Sometimes Julia's JIT experience can be slower than Javascript JIT, possibly due to reliance on LLVM.
+
+In any case, there may be situations where a program is fairly easy to write using a combination of Javascript and some of the WebAssembly libraries that come out of this project, and Javascript's JIT might also result in a very pleasant experience overall, as compared to other options.
 
 #### New low level code
 
@@ -31,6 +34,10 @@ Making libraries like Pari, Gap, etc., available to Javascript is just a first s
 #### A Python-to-Javascript compiler
 
 Another experimental project you will find here is `jpython`, which is a _very lightweight_ Python-to-Javascript compiler.  It makes it possible to write Python code, but benefit from a Javascript JIT and all the functionality we build for WASM above.   JPython runs natively in Javascript, so there is no dependence on Python itself (unlike Transcrypt).  JPython is a a fork of RapydScript, but with a goal of much better conformance with the Python language, and support for operator overloading.
+
+### Does this compete with SageMath?
+
+Unlike [Julia](https://julialang.org/) or [Oscar](https://oscar.computeralgebra.de/), this project does not compete with SageMath.  Indeed, one of the main goals is to provide an easier to use distribution of SageMath someday, and another goal is to make the components of Sage and ultimately much of the core Sage library efficiently usable in more situations (e.g., node.js, web browsers, [every language wasmer supports](https://github.com/wasmerio/wasmer#-language-integrations), etc.).   This project is about enriching the mathematical software ecosystem and expanding it far beyond Python. 
 
 ## Build SageMathJS from source
 
@@ -47,7 +54,6 @@ Just type "make"
 
 ```sh
 ...$ make
-...$ make -j8  # or this to build multiple packages in parallel
 ```
 
 This runs a single top level makefile to build all the packages. The build process for all individual packages is _also_ accomplished using a Makefile. We don't use shell scripts or Python code to orchestrate building anything, since `make` is much cleaner and easier to read and maintain.
