@@ -24,7 +24,7 @@ export function exec(s: string): string {
 }
 
 export async function init() {
-  wasm = await wasmImport("pari", { env: { exec_cb } });
+  wasm = await wasmImport("pari/pari.wasm", { env: { exec_cb } });
   wasm.init();
 }
 init();

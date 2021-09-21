@@ -1,7 +1,7 @@
 const std = @import("std");
-const errors = @import("./errors.zig");
+const errors = @import("../errors.zig");
+const inverseMod = @import("../arith.zig").inverseMod;
 const SparseVectorMod = @import("./sparse-vector.zig").SparseVectorMod;
-const inverseMod = @import("./arith.zig").inverseMod;
 
 pub fn SparseMatrixMod(comptime T: type) type {
     return struct {
@@ -114,7 +114,7 @@ pub fn SparseMatrixMod(comptime T: type) type {
         }
 
         pub fn randomize(self: *Matrix, cols: usize) !void {
-            var rand = (try @import("./random.zig").seededPrng()).random;
+            var rand = (try @import("../random.zig").seededPrng()).random;
             var row: usize = 0;
             while (row < self.nrows) : (row += 1) {
                 var j: usize = 0;

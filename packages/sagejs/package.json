@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "SageJS",
   "exports": {
-    "./*": "./dist/*.js"
+    "./*": "./dist/*.js",
+    "./python": "./dist/python/index.js",
+    "./pari": "./dist/pari/index.js",
+    "./modular": "./dist/modular/index.js"
   },
   "files": [
     "dist/*",
@@ -15,16 +18,14 @@
   ],
   "scripts": {
     "build": "make all",
-    "clean": "make clean"
+    "clean": "make clean",
+    "tsc": "npx tsc -w"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/sagemathjs.git"
   },
-  "keywords": [
-    "number",
-    "theory"
-  ],
+  "keywords": ["number", "theory"],
   "author": "William Stein",
   "license": "LGPL-3.0-or-later",
   "bugs": {

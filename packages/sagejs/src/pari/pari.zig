@@ -1,4 +1,4 @@
-const pari = @cImport(@cInclude("pari.h"));
+const pari = @cImport(@cInclude("pari/pari.h"));
 const std = @import("std");
 pub const General = error{OverflowError};
 

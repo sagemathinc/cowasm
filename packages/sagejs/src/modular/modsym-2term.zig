@@ -1,8 +1,8 @@
 // Port of src/sage/modular/modsym/relation_matrix_pyx.pyx
 
 const std = @import("std");
-const util = @import("./util.zig");
-const errors = @import("./errors.zig");
+const util = @import("../util.zig");
+const errors = @import("../errors.zig");
 
 const List = std.ArrayList;
 

@@ -1,0 +1,1 @@
+Create a zig build system for the zig code in src.  It's ugly having toexplicitly specify everywhere.  [This discussion](https://www.reddit.com/r/Zig/comments/l5g9ku/the_zig_build_system/) looks helpful.

@@ -17,7 +17,7 @@ export function repr(s: string): string {
 }
 
 export async function init() {
-  const w = await wasmImport("python", {
+  const w = await wasmImport("python/python.wasm", {
     env: { eval_cb },
     traceSyscalls: false,
   });

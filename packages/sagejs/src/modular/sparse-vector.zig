@@ -1,6 +1,6 @@
 const std = @import("std");
-const mod = @import("./arith.zig").mod;
-const errors = @import("./errors.zig");
+const mod = @import("../arith.zig").mod;
+const errors = @import("../errors.zig");
 const AutoHashMap = std.AutoHashMap;
 
 pub fn SparseVectorMod(comptime T: type) type {
