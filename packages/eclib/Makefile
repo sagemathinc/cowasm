@@ -1,8 +1,9 @@
 BUILD = build
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-DIST_NATIVE = ${CWD}/dist/native
-DIST_WASM = ${CWD}/dist/wasm
-DIST_JS = ${CWD}/dist/js
+DIST = ${CWD}/dist
+DIST_NATIVE = ${DIST}/native
+DIST_WASM = ${DIST}/wasm
+DIST_JS = ${DIST}/js
 ZCC = ${CWD}/../../bin/zcc
 ZXX = ${CWD}/../../bin/z++
 
@@ -76,4 +77,4 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 wasm: ${DIST_WASM}/.built
 
 clean:
-	rm -rf ${DIST_NATIVE} ${DIST_WASM} ${DIST_JS} ${CWD}/dist/tsconfig.tsbuildinfo ${BUILD}/native ${BUILD}/wasm  node_modules
+	rm -rf ${DIST} ${BUILD} node_module
