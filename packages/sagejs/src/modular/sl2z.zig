@@ -1,5 +1,5 @@
-const errors = @import("./errors.zig");
-const arith = @import("./arith.zig");
+const errors = @import("../errors.zig");
+const arith = @import("../arith.zig");
 const xgcd = arith.xgcd;
 const gcd = arith.gcd;
 

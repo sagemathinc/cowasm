@@ -1,4 +1,4 @@
-import wasmImport from "./wasm";
+import wasmImport from "../wasm";
 
 // @ts-ignore -- typescript doesn't have FinalizationRegistry
 const registry = new FinalizationRegistry((handle) => {

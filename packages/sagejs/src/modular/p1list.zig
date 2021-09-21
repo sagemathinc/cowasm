@@ -1,7 +1,7 @@
 const std = @import("std");
-const arith = @import("arith.zig");
-const errors = @import("errors.zig");
-const sl2z = @import("sl2z.zig");
+const arith = @import("../arith.zig");
+const errors = @import("../errors.zig");
+const sl2z = @import("./sl2z.zig");
 const gcd = arith.gcd;
 
 fn EltAndScalar(comptime T: type) type {
