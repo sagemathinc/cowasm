@@ -21,28 +21,10 @@ export fn add(a: c_long, b: c_long) c_long {
 
 const EXEC_BUFSIZE = 10000;
 pub fn exec(s: [*:0]const u8) ![*:0]u8 {
-    // I do not understand why, but directly passing s to
-    // gp_read_str_multiline crashes PARI.  However, copying
-    // the data to a buffer on the stack here works fine.
-    // It could be a problem with how the string is encoded from js.
-    // TODO: if I can't figure this out, use a smalller EXEC_BUFSIZE
-    // for small input (for speed),  and for bigger input dynamically
-    // allocate memory on the heap.
-    var array = [_:0]u8{255} ** EXEC_BUFSIZE;
-    var i: usize = 0;
-    while (s[i] != 0 and i < EXEC_BUFSIZE) : (i += 1) {
-        array[i] = s[i];
-    }
-    if (i == EXEC_BUFSIZE) {
-        return General.OverflowError;
-    }
-    array[i] = 0;
-
     var av: pari.pari_sp = pari.avma;
-    var x: pari.GEN = pari.gp_read_str_multiline(&array, null);
-
+    var x: pari.GEN = pari.gp_read_str_multiline(s, null);
     var r = pari.GENtostr(x);
-    pari.avma = av; // don't need this anymore.
+    pari.avma = av; // TODO: don't need this memory anymore???  Or am I subtly breaking everything?!
     return r;
 }
 
