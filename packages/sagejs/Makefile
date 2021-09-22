@@ -20,14 +20,14 @@ DIST = ${CWD}/dist
 all: ${DIST}/.built
 
 ## Interface with GMP directly:
+.PHONY: test-integer
+test-integer:
+	cd src && zig test integer/integer.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG}
 
-integer-test:
-	cd src && zig test integer.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG}
-
-${DIST}/integer.wasm: src/integer.zig src/integer-export.zig src/custom-allocator.zig
-	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a ${WASM_CFLAGS} integer-export.zig  ${ZIG_PKG}
+${DIST}/integer.wasm: src/integer/integer.zig src/integer/interface.zig src/custom-allocator.zig
+	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a ${WASM_CFLAGS} integer/interface.zig  ${ZIG_PKG}
 	mkdir -p ${DIST}
-	mv src/integer-export.wasm ${DIST}/integer.wasm
+	mv src/interface.wasm ${DIST}/integer.wasm
 
 
 ## New low-level code from scratch written in Zig
@@ -67,7 +67,7 @@ test-zig:
 ####################
 
 test-pari:
-	cd src && zig test pari.zig -I. ${NATIVE_CFLAGS}  ${ZIG_PKG}
+	cd src && zig test pari/pari.zig -I. ${NATIVE_CFLAGS}  ${ZIG_PKG}
 
 ${DIST}/pari/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
 	cd src && zig build-lib -target wasm32-wasi -lc -I. -I${GMP_WASM}/include ${GMP_WASM}/lib/libgmp.a -I${PARI_WASM}/include ${PARI_WASM}/lib/libpari.a ${WASM_CFLAGS} pari/interface.zig  ${ZIG_PKG}

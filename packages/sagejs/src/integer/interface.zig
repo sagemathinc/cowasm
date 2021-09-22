@@ -1,4 +1,4 @@
-const custom = @import("./custom-allocator.zig");
+const custom = @import("../custom-allocator.zig");
 const integer = @import("./integer.zig");
 const Integer = integer.Integer;
 const std = @import("std");

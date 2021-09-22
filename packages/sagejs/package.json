@@ -6,7 +6,8 @@
     "./*": "./dist/*.js",
     "./python": "./dist/python/index.js",
     "./pari": "./dist/pari/index.js",
-    "./modular": "./dist/modular/index.js"
+    "./modular": "./dist/modular/index.js",
+    "./integer": "./dist/integer/index.js"
   },
   "files": [
     "dist/*",
@@ -26,10 +27,7 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/sagemathjs.git"
   },
-  "keywords": [
-    "number",
-    "theory"
-  ],
+  "keywords": ["number", "theory"],
   "author": "William Stein",
   "license": "LGPL-3.0-or-later",
   "bugs": {

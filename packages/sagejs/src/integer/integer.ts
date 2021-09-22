@@ -1,4 +1,4 @@
-import wasmImport, { WasmInstance } from "./wasm";
+import wasmImport, { WasmInstance } from "../wasm";
 
 export let wasm: WasmInstance | undefined = undefined;
 

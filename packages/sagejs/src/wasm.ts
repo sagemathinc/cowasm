@@ -179,17 +179,18 @@ export class WasmInstance {
   public callWithString(name: string, str: string): any {
     this.result = undefined;
     const ptr = this.stringToCharStar(str);
+    let r;
     try {
       const f = this.exports[name];
       if (f == null) {
         throw Error(`no function ${name} defined in wasm module`);
       }
       // @ts-ignore
-      f(ptr);
+      r = f(ptr);
     } finally {
       // @ts-ignore
       this.exports.free(ptr);
     }
-    return this.result;
+    return this.result ?? r;
   }
 }
