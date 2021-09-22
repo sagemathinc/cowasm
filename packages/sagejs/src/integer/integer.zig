@@ -61,6 +61,14 @@ pub fn IntegerType() type {
             return c;
         }
 
+        pub fn eql(self: IntegerType(), right: IntegerType()) bool {
+            return self.cmp(right) == 0;
+        }
+
+        pub fn cmp(self: IntegerType(), right: IntegerType()) c_int {
+            return gmp.mpz_cmp(&self.x, &right.x);
+        }
+
         pub fn get_c_long(self: IntegerType()) c_long {
             return gmp.mpz_get_si(&self.x);
         }
@@ -109,6 +117,14 @@ test "basic arithmetic" {
     defer c.clear();
 
     try expect(c.get_c_long() == 37 * 389);
+
+    var d = Integer();
+    try d.initSet(37 * 389);
+    defer d.clear();
+    try expect(c.eql(d));
+    try expect(a.cmp(c) == -1);
+    try expect(d.cmp(c) == 0);
+    try expect(c.cmp(a) == 1);
 }
 
 test "setting using initSet - int literal" {

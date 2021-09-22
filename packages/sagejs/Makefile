@@ -24,10 +24,10 @@ all: ${DIST}/.built
 test-integer:
 	cd src && zig test integer/integer.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG}
 
-${DIST}/integer.wasm: src/integer/integer.zig src/integer/interface.zig src/custom-allocator.zig
+${DIST}/integer/integer.wasm: src/integer/integer.zig src/integer/interface.zig src/custom-allocator.zig
 	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a ${WASM_CFLAGS} integer/interface.zig  ${ZIG_PKG}
 	mkdir -p ${DIST}
-	mv src/interface.wasm ${DIST}/integer.wasm
+	mv src/interface.wasm ${DIST}/integer/integer.wasm
 
 
 ## New low-level code from scratch written in Zig
@@ -88,7 +88,7 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig
 
 ## Put it all together
 
-${DIST}/.built: ${DIST}/integer.wasm ${DIST}/arith.wasm ${DIST}/modular/p1list.wasm ${DIST}/pari/pari.wasm ${DIST}/python/python.wasm
+${DIST}/.built: ${DIST}/integer/integer.wasm ${DIST}/arith.wasm ${DIST}/modular/p1list.wasm ${DIST}/pari/pari.wasm ${DIST}/python/python.wasm
 	npm ci
 	npx tsc
 	touch ${DIST}/.built

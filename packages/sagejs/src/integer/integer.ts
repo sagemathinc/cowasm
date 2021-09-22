@@ -6,7 +6,7 @@ export async function init(): Promise<void> {
   if (wasm != null) {
     return;
   }
-  wasm = await wasmImport("integer");
+  wasm = await wasmImport("integer/integer");
   // Initialize GMP custom allocator:
   wasm.exports.initCustomAllocator();
 }
@@ -26,6 +26,31 @@ class IntegerClass {
       return;
     }
     this.i = wasm.callWithString("createIntegerStr", `${n}`);
+  }
+
+  add(m: IntegerClass): IntegerClass {
+    if (wasm == null) throw Error("await init() first");
+    return new IntegerClass(null, wasm.exports.addIntegers(this.i, m.i));
+  }
+
+  sub(m: IntegerClass): IntegerClass {
+    if (wasm == null) throw Error("await init() first");
+    return new IntegerClass(null, wasm.exports.subIntegers(this.i, m.i));
+  }
+
+  mul(m: IntegerClass): IntegerClass {
+    if (wasm == null) throw Error("await init() first");
+    return new IntegerClass(null, wasm.exports.mulIntegers(this.i, m.i));
+  }
+
+  eql(m: IntegerClass): boolean {
+    if (wasm == null) throw Error("await init() first");
+    return !!wasm.exports.eqlIntegers(this.i, m.i);
+  }
+
+  cmp(m: IntegerClass): number {
+    if (wasm == null) throw Error("await init() first");
+    return wasm.exports.cmpIntegers(this.i, m.i);
   }
 
   print() {

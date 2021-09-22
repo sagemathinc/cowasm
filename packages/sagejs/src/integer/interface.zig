@@ -4,7 +4,7 @@ const Integer = integer.Integer;
 const std = @import("std");
 
 pub export fn initCustomAllocator() void {
-    std.debug.print("GMP: initCustomAllocator\n", .{});
+    //std.debug.print("GMP: initCustomAllocator\n", .{});
     custom.init();
 }
 
@@ -57,9 +57,25 @@ pub export fn createIntegerInt(n: i32) i32 {
     return @intCast(i32, j);
 }
 
+
+pub export fn eqlIntegers(a: u32, b: u32) bool {
+    return integers[a].eql(integers[b]);
+}
+
+pub export fn cmpIntegers(a: u32, b: u32) i32 {
+    return integers[a].cmp(integers[b]);
+}
+
 pub export fn addIntegers(a: u32, b: u32) i32 {
     const j: u32 = i;
     integers[i] = integers[a].add(integers[b]);
+    i += 1;
+    return @intCast(i32, j);
+}
+
+pub export fn subIntegers(a: u32, b: u32) i32 {
+    const j: u32 = i;
+    integers[i] = integers[a].sub(integers[b]);
     i += 1;
     return @intCast(i32, j);
 }
