@@ -1,17 +1,14 @@
-import wasmImport, { stringToU8 } from "./wasm";
+import wasmImport, { WasmInstance } from "./wasm";
 
-interface Memory {
-  buffer: Int8Array;
-}
+export let wasm: WasmInstance | undefined = undefined;
 
-let wasm: any = undefined;
 export async function init(): Promise<void> {
   if (wasm != null) {
     return;
   }
   wasm = await wasmImport("integer");
   // Initialize GMP custom allocator:
-  wasm.initCustomAllocator();
+  wasm.exports.initCustomAllocator();
 }
 init();
 
@@ -19,29 +16,31 @@ class IntegerClass {
   i: number;
 
   constructor(n: number | string | null, i?: number) {
+    if (wasm == null) throw Error("await init() first");
     if (n === null && i !== undefined) {
       this.i = i;
       return;
     }
     if (typeof n == "number") {
-      this.i = wasm.createIntegerInt(n);
+      this.i = wasm.exports.createIntegerInt(n);
       return;
     }
-    this.i = wasm.createIntegerStr(
-      stringToU8(`${n}`, (wasm.memory as Memory).buffer)
-    );
+    this.i = wasm.callWithString("createIntegerStr", `${n}`);
   }
 
   print() {
-    wasm.printInteger(this.i);
+    if (wasm == null) throw Error("await init() first");
+    wasm.exports.printInteger(this.i);
   }
 
   nextPrime() {
-    return new IntegerClass(null, wasm.nextPrime(this.i));
+    if (wasm == null) throw Error("await init() first");
+    return new IntegerClass(null, wasm.exports.nextPrime(this.i));
   }
 
   isPseudoPrime() {
-    return wasm.wrappedIsPseudoPrime(this.i);
+    if (wasm == null) throw Error("await init() first");
+    return wasm.exports.wrappedIsPseudoPrime(this.i);
   }
 
   toString() {
@@ -51,12 +50,11 @@ class IntegerClass {
 }
 
 export function isPseudoPrime(n: number | string): 0 | 1 | 2 {
+  if (wasm == null) throw Error("await init() first");
   if (typeof n == "string") {
-    return wasm.isPseudoPrime(
-      stringToU8(`${n}`, (wasm.memory as Memory).buffer)
-    );
+    return wasm.callWithString("isPseudoPrime", `${n}`);
   } else {
-    return wasm.isPseudoPrimeInt(n);
+    return wasm.exports.isPseudoPrimeInt(n);
   }
 }
 

@@ -1,28 +1,17 @@
-import wasmImport, { stringToU8, string_cb } from "../wasm";
+import wasmImport, { WasmInstance } from "../wasm";
 
-export let wasm: any = undefined;
-function checkInit() {
-  if (wasm == null) {
-    throw Error("You must first init pari.");
-  }
-}
+export let wasm: WasmInstance | undefined = undefined;
 
-let result: string = "";
-function exec_cb(ptr, len) {
-  result = string_cb(wasm, ptr, len);
-}
-export function exec(s: string): string {
-  checkInit();
-  if (s.length > 10000) {
+export function exec(str: string): string {
+  if (wasm == null) throw Error("await init() first");
+  if (str.length > 10000) {
     throw Error("s must have length at most 10000"); // hardcoded in pari.zig
   }
-  wasm.exec(stringToU8(s, wasm.memory.buffer));
-  return result;
+  return wasm.callWithString("exec", str) as string;
 }
 
 export async function init(parisize: number = 0, maxprime: number = 0) {
   wasm = await wasmImport("pari/pari.wasm", {
-    env: { exec_cb },
-    init: (wasm) => wasm.init(parisize, maxprime),
+    init: (wasm) => wasm.exports.init(parisize, maxprime),
   });
 }

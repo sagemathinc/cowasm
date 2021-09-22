@@ -1,26 +1,21 @@
-import wasmImport, { stringToU8, string_cb } from "../wasm";
+import wasmImport, { WasmInstance } from "../wasm";
 
-export let wasm: any = undefined;
+export let wasm: WasmInstance | undefined = undefined;
 
-export function exec(s: string): void {
-  wasm.exec(stringToU8(s, wasm.memory.buffer));
+export function exec(str: string): void {
+  if (wasm == null) throw Error("call init");
+  wasm.callWithString("exec", str);
 }
 
-let result: string = "";
-function eval_cb(ptr, len) {
-  result = string_cb(wasm, ptr, len);
-}
-
-export function repr(s: string): string {
-  wasm.eval(stringToU8(s, wasm.memory.buffer));
-  return result;
+export function repr(str: string): string {
+  if (wasm == null) throw Error("call init");
+  return wasm.callWithString("eval", str) as string;
 }
 
 export async function init() {
   if (wasm != null) return;
   wasm = await wasmImport("python/python.wasm", {
-    env: { eval_cb },
-    init: (w) => w.init(),
+    init: (wasm) => wasm.exports.init(),
   });
 }
 

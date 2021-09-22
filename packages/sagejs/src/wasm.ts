@@ -24,17 +24,9 @@ for (const name of STUBS.split(" ")) {
   wasmEnv[name] = stub(name);
 }
 
-const encoder = new TextEncoder();
-export function stringToU8(s, buffer) {
-  const array = new Int8Array(buffer, 0, s.length + 1);
-  array.set(encoder.encode(s));
-  array[s.length] = 0;
-  return array;
-}
-
-export function string_cb(wasm, ptr, len) {
-  const slice = wasm.memory.buffer.slice(ptr, ptr + len);
-  const textDecoder = new TextDecoder();
+const textDecoder = new TextDecoder();
+function recvString(wasm, ptr, len) {
+  const slice = wasm.exports.memory.buffer.slice(ptr, ptr + len);
   return textDecoder.decode(slice);
 }
 
@@ -45,13 +37,21 @@ interface Options {
   dir?: string | null; // WASI pre-opened directory; default is to preopen /, i.e., full filesystem; explicitly set as null to sandbox.
   traceSyscalls?: boolean;
   time?: boolean;
-  init?: (exports: any) => void | Promise<void>; // initialization function that gets called when module first loaded.
+  init?: (wasm: WasmInstance) => void | Promise<void>; // initialization function that gets called when module first loaded.
 }
 
 const cache: { [name: string]: any } = {};
 
-const wasmImport = reuseInFlight(
-  async function wasmImport(name: string, options: Options = {}) {
+type WasmImportFunction = (
+  name: string,
+  options?: Options
+) => Promise<WasmInstance>;
+
+const wasmImport: WasmImportFunction = reuseInFlight(
+  async function wasmImport(
+    name: string,
+    options: Options = {}
+  ): Promise<WasmInstance> {
     if (!options.noCache) {
       if (cache[name] != null) {
         return cache[name];
@@ -71,6 +71,15 @@ const wasmImport = reuseInFlight(
     };
 
     const wasmOpts: any = { env: { ...wasmEnv, ...options.env } };
+
+    let wasm;
+
+    if (wasmOpts.env.wasmSendString == null) {
+      wasmOpts.env.wasmSendString = (ptr: number, len: number) => {
+        wasm.result = recvString(wasm, ptr, len);
+      };
+    }
+
     let wasi: any = undefined;
     if (!options?.noWasi) {
       const opts: any = {
@@ -127,18 +136,60 @@ const wasmImport = reuseInFlight(
       (result.instance.exports.__wasm_call_ctors as CallableFunction)();
     }
 
-    await options.init?.(result.instance.exports);
+    wasm = new WasmInstance(result.instance.exports);
+    if (options.init != null) {
+      await options.init(wasm);
+    }
 
     if (!options.noCache) {
-      cache[name] = result.instance.exports;
+      cache[name] = wasm;
     }
 
     if (options.time) {
       console.log(`imported ${name} in ${new Date().valueOf() - t}ms`);
     }
-    return result.instance.exports;
+
+    return wasm;
   },
   { createKey: (args) => args[0] }
 );
 
 export default wasmImport;
+
+const encoder = new TextEncoder();
+
+export class WasmInstance {
+  result: any = undefined;
+  exports: any;
+  constructor(exports) {
+    this.exports = exports;
+  }
+
+  private stringToCharStar(str: string): number {
+    // Caller MUST free the returned char* from stringToU8 using wasm.free!
+    const strAsArray = encoder.encode(str);
+    const len = strAsArray.length + 1;
+    const ptr = this.exports.malloc(len);
+    const array = new Int8Array(this.exports.memory.buffer, ptr, len);
+    array.set(strAsArray);
+    array[len - 1] = 0;
+    return ptr;
+  }
+
+  public callWithString(name: string, str: string): any {
+    this.result = undefined;
+    const ptr = this.stringToCharStar(str);
+    try {
+      const f = this.exports[name];
+      if (f == null) {
+        throw Error(`no function ${name} defined in wasm module`);
+      }
+      // @ts-ignore
+      f(ptr);
+    } finally {
+      // @ts-ignore
+      this.exports.free(ptr);
+    }
+    return this.result;
+  }
+}

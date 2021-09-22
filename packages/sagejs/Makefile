@@ -54,19 +54,19 @@ ${DIST}/modular/p1list.wasm: src/modular/p1list.zig src/modular/p1list-export.zi
 # have interface or export in their filename (since can't test those).
 # Runs on each one individually, not all at once which doesn't work.
 # not in parallel
-.PHONY: zig-test1
-zig-test1:
+.PHONY: test-zig1
+test-zig1:
 	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -n 1 zig test ${ZIG_PKG} ${NATIVE_CFLAGS}
 # in parallel
-.PHONY: zig-test
-zig-test:
+.PHONY: test-zig
+test-zig:
 	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -P 8 -n 1 zig test ${ZIG_PKG} ${NATIVE_CFLAGS}
 
 ####################
 ## PARI interface
 ####################
 
-pari-test:
+test-pari:
 	cd src && zig test pari.zig -I. ${NATIVE_CFLAGS}  ${ZIG_PKG}
 
 ${DIST}/pari/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
@@ -78,7 +78,7 @@ ${DIST}/pari/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
 ## Python interface
 ####################
 
-python-test:
+test-python:
 	cd src && zig test python/python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9  ${ZIG_PKG} -lpython3.9 -lc  #-O ReleaseFast
 
 ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig
@@ -95,7 +95,7 @@ ${DIST}/.built: ${DIST}/integer.wasm ${DIST}/arith.wasm ${DIST}/modular/p1list.w
 
 # Run all test suites...
 .PHONY: test
-test: zig-test
+test: test-zig
 	npm run test
 
 .PHONY: clean
