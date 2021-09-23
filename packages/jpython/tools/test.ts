@@ -5,7 +5,7 @@
  * Distributed under terms of the BSD license
  */
 
-import { join } from "path";
+import { basename, join } from "path";
 import { readFileSync, readdirSync, writeFileSync } from "fs";
 import createCompiler from "./compiler";
 import { colored, pathExists } from "./utils";
@@ -35,8 +35,12 @@ export default function (
 
   const files =
     argv.files.length > 0
-      ? argv.files.map((fname: string) => fname + ".py")
-      : readdirSync(testPath).filter((name) => /^[^_].*\.py$/.test(name));
+      ? argv.files.map((fname: string) =>
+          fname.endsWith(".py") ? fname : fname + ".py"
+        )
+      : readdirSync(testPath)
+          .filter((name) => /^[^_].*\.py$/.test(name))
+          .map((name) => join(testPath, name));
 
   const t_start = new Date().valueOf();
 
@@ -45,20 +49,17 @@ export default function (
     let failed = false;
     let toplevel: any = undefined;
     try {
-      toplevel = JPython.parse(
-        readFileSync(join(testPath, filename), "utf-8"),
-        {
-          filename,
-          toplevel: toplevel,
-          basedir: testPath,
-          libdir: join(srcPath, "lib"),
-        }
-      );
+      toplevel = JPython.parse(readFileSync(filename, "utf-8"), {
+        filename,
+        toplevel: toplevel,
+        basedir: testPath,
+        libdir: join(srcPath, "lib"),
+      });
     } catch (err) {
       failures.push(filename);
       failed = true;
       console.log(colored(filename, "red") + ": " + err + "\n\n");
-      return;
+      break;
     }
 
     // generate output
@@ -70,9 +71,19 @@ export default function (
     toplevel.print(output);
 
     // test that output performs correct JS operations
-    const jsfile = join(tmpdir(), filename + ".js");
+    const jsfile = join(tmpdir(), basename(filename) + ".js");
     const code = output.toString();
     const assrt = { ...require("assert"), deepEqual };
+
+    // We save and restore the console attributes since some tests,
+    // e.g., repl, have a side effect of stealing them, which means
+    // we suddenly can't report results.
+    const saveConsole = { ...console };
+    const restoreConsole = () => {
+      for (let name in saveConsole) {
+        console[name] = saveConsole[name];
+      }
+    };
     try {
       runInNewContext(
         code,
@@ -90,7 +101,9 @@ export default function (
         },
         { filename: jsfile }
       );
+      restoreConsole();
     } catch (err) {
+      restoreConsole();
       failures.push(filename);
       failed = true;
       writeFileSync(jsfile, code);

@@ -152,3 +152,9 @@ def test_completions():
 
 
 test_completions()
+
+
+def test_semicolons():
+    check("a=2;b=3;print(a+b)", "5")
+
+test_semicolons()
