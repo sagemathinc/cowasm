@@ -104,25 +104,25 @@ throw_test('for a in [1]\n   pass')
    }  # Check that arbitrary indentation is allowed after : for an object literal key
 
 # strict equality
-assrt(1 == 1)                  # number vs number: ok
-assrt(True == True)            # boolean vs boolean: ok
-assrt(not (1 == True))         # number vs boolean: NEVER equal
-assrt(1 != True)               # number vs boolean: NEVER equal
-assrt(not ("" == False))       # string vs boolean: NEVER equal
-assrt(not ("0" == 0))          # string vs integer: NEVER equal
-assrt(not ("" == 0))           # string vs integer: NEVER equal
-assrt(bool(1) == True)         # boolean conversion
-assrt(bool("") == False)       # boolean conversion
-assrt(v'1 == true')         # javascript override
-assrt(not v'(1 != true)')   # javascript override
-assrt(v'String("test")' == "test")  # this should do string conversion rather than creating a string object
-assrt(String("test") != "test")        # this should create a string object
+assrt.ok(1 == 1)                  # number vs number: ok
+assrt.ok(True == True)            # boolean vs boolean: ok
+assrt.ok(not (1 == True))         # number vs boolean: NEVER equal
+assrt.ok(1 != True)               # number vs boolean: NEVER equal
+assrt.ok(not ("" == False))       # string vs boolean: NEVER equal
+assrt.ok(not ("0" == 0))          # string vs integer: NEVER equal
+assrt.ok(not ("" == 0))           # string vs integer: NEVER equal
+assrt.ok(bool(1) == True)         # boolean conversion
+assrt.ok(bool("") == False)       # boolean conversion
+assrt.ok(v'1 == true')         # javascript override
+assrt.ok(not v'(1 != true)')   # javascript override
+assrt.ok(v'String("test")' == "test")  # this should do string conversion rather than creating a string object
+assrt.ok(String("test") != "test")        # this should create a string object
 
 
 # raw JavaScript
 v'var def = {}'                # ability to bypass reserved keywords in declaration
 v'def'.item = 3            # ability to use reserved keywords
-assrt(v'def.item' == 3)
+assrt.ok(v'def.item' == 3)
 
 n = 5
 assrt.equal(v"""

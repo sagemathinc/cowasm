@@ -37,12 +37,12 @@ if (!utils.generators_available()) {
         if (argv.test) {
             console.log('\nRunning test suite...\n');
             argv.files = [];  // Ensure all tests are run
-            load('test')(argv, base_path, src_path, path.join(base_path, 'dev'));
+            load('test').default(argv, base_path, src_path, path.join(base_path, 'dev'));
         }
         process.exit(0);
     } else
     if (argv.mode === 'test') {
-        load('test')(argv, base_path, src_path, lib_path);
+        load('test').default(argv, base_path, src_path, lib_path);
     } else
     if (argv.mode === 'lint') {
         load('lint').cli(argv, base_path, src_path, lib_path);

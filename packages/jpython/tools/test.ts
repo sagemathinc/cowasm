@@ -6,136 +6,109 @@
  */
 
 import { join } from "path";
-
-var fs = require("fs");
+import { readFileSync, readdirSync, writeFileSync } from "fs";
 import createCompiler from "./compiler";
-var utils = require("./utils");
-var colored = utils.colored;
+import { colored, pathExists } from "./utils";
+import { deepEqual as origDeepEqual, AssertionError } from "assert";
+import { tmpdir } from "os";
+import { runInNewContext } from "vm";
 
 const JPython = createCompiler();
 
-module.exports = function (argv, base_path, src_path, lib_path) {
+export default function (
+  argv: { files: string[] },
+  basePath,
+  srcPath,
+  libPath
+) {
   // run all tests and exit
-  var assert = require("assert");
-  var os = require("os");
-  var failures = [];
-  var vm = require("vm");
-  var compiler_dir = join(base_path, "dev");
-  if (!utils.pathExists(join(compiler_dir, "compiler.js")))
-    compiler_dir = join(base_path, "release");
-  var test_path = join(base_path, "test");
-  var baselib = fs.readFileSync(
-    join(lib_path, "baselib-plain-pretty.js"),
+  const failures: string[] = [];
+  let compilerDir = join(basePath, "dev");
+  if (!pathExists(join(compilerDir, "compiler.js"))) {
+    compilerDir = join(basePath, "release");
+  }
+  const testPath = join(basePath, "test");
+  const baselib = readFileSync(
+    join(libPath, "baselib-plain-pretty.js"),
     "utf-8"
   );
-  var files;
-  var deep_eq = assert.deepEqual;
-  assert.deepEqual = function (a, b, message) {
-    // Compare array objects that have extra properties as simple arrays
-    if (Array.isArray(a) && Array.isArray(b)) {
-      if (a === b) return;
-      if (a.length !== b.length)
-        throw new assert.AssertionError({
-          actual: a,
-          expected: b,
-          operator: "deepEqual",
-          stackStartFunction: assert.deepEqual,
-        });
-      for (var i = 0; i < a.length; i++) assert.deepEqual(a[i], b[i], message);
-    } else if (
-      a !== undefined &&
-      a !== null &&
-      typeof a.__eq__ === "function"
-    ) {
-      if (!a.__eq__(b))
-        throw new assert.AssertionError({
-          actual: a,
-          expected: b,
-          operator: "deepEqual",
-          stackStartFunction: assert.deepEqual,
-        });
-    } else return deep_eq(a, b, message);
-  };
 
-  if (argv.files.length) {
-    files = [];
-    argv.files.forEach(function (fname) {
-      files.push(fname + ".py");
-    });
-  } else {
-    files = fs.readdirSync(test_path).filter(function (name) {
-      return /^[^_].*\.py$/.test(name);
-    });
-  }
+  const files =
+    argv.files.length > 0
+      ? argv.files.map((fname: string) => fname + ".py")
+      : readdirSync(testPath).filter((name) => /^[^_].*\.py$/.test(name));
+
   const t_start = new Date().valueOf();
-  files.forEach(function (file) {
+
+  for (const filename of files) {
     const t0 = new Date().valueOf();
-    var ast;
-    var filepath = join(test_path, file);
-    var failed = false;
+    let failed = false;
+    let toplevel: any = undefined;
     try {
-      ast = JPython.parse(fs.readFileSync(filepath, "utf-8"), {
-        filename: file,
-        toplevel: ast,
-        basedir: test_path,
-        libdir: join(src_path, "lib"),
-      });
-    } catch (e) {
-      // @ts-ignore
-      failures.push(file);
+      toplevel = JPython.parse(
+        readFileSync(join(testPath, filename), "utf-8"),
+        {
+          filename,
+          toplevel: toplevel,
+          basedir: testPath,
+          libdir: join(srcPath, "lib"),
+        }
+      );
+    } catch (err) {
+      failures.push(filename);
       failed = true;
-      console.log(colored(file, "red") + ": " + e + "\n\n");
+      console.log(colored(filename, "red") + ": " + err + "\n\n");
       return;
     }
 
     // generate output
-    var output = new JPython.OutputStream({
+    const output = new JPython.OutputStream({
       baselib_plain: baselib,
       beautify: true,
       keep_docstrings: true,
     });
-    ast.print(output);
+    toplevel.print(output);
 
     // test that output performs correct JS operations
-    var jsfile = join(os.tmpdir(), file + ".js");
-    var code = output.toString();
+    const jsfile = join(tmpdir(), filename + ".js");
+    const code = output.toString();
+    const assrt = { ...require("assert"), deepEqual };
     try {
-      vm.runInNewContext(
+      runInNewContext(
         code,
         {
-          assrt: assert,
+          assrt, // patched version
           __name__: jsfile,
           require: require,
-          fs: fs,
+          fs: require("fs"),
           RapydScript: JPython, // todo...
           JPython,
           console,
-          compiler_dir,
-          test_path,
-          Buffer: Buffer,
+          compiler_dir: compilerDir,
+          test_path: testPath,
+          Buffer,
         },
         { filename: jsfile }
       );
-    } catch (e) {
-      // @ts-ignore
-      failures.push(file);
+    } catch (err) {
+      failures.push(filename);
       failed = true;
-      fs.writeFileSync(jsfile, code);
+      writeFileSync(jsfile, code);
       console.error("Failed running: " + colored(jsfile, "red"));
-      if (e.stack) {
-        console.error(colored(file, "red") + ":\n" + e.stack + "\n\n");
+      if (err.stack) {
+        console.error(colored(filename, "red") + ":\n" + err.stack + "\n\n");
       } else {
-        console.error(colored(file, "red") + ": " + e + "\n\n");
+        console.error(colored(filename, "red") + ": " + err + "\n\n");
       }
     }
     console.log(
-      `${colored(file, "green")}: test ${
+      `${colored(filename, "green")}: test ${
         failed ? "FAILED" : "completed successfully"
       } (${new Date().valueOf() - t0}ms)`
     );
-  });
+  }
 
-  if (failures.length) {
+  if (failures.length > 0) {
     console.log(
       colored("There were " + failures.length + " test failure(s):", "red")
     );
@@ -149,4 +122,35 @@ module.exports = function (argv, base_path, src_path, lib_path) {
     );
   }
   process.exit(failures.length ? 1 : 0);
-};
+}
+
+// Modified version of deepEqual test assertion that is more suitable
+// for testing python code.
+function deepEqual(a: any, b: any, message: any): void {
+  if (Array.isArray(a) && Array.isArray(b)) {
+    // Compare array objects that have extra properties as simple arrays
+    if (a === b) return;
+    if (a.length !== b.length)
+      throw new AssertionError({
+        actual: a,
+        expected: b,
+        operator: "deepEqual",
+        stackStartFn: deepEqual,
+      });
+    for (let i = 0; i < a.length; i++) {
+      deepEqual(a[i], b[i], message);
+    }
+  } else if (typeof a?.__eq__ === "function") {
+    // Python operator overloading
+    if (!a.__eq__(b))
+      throw new AssertionError({
+        actual: a,
+        expected: b,
+        operator: "deepEqual",
+        stackStartFn: deepEqual,
+      });
+  } else {
+    // Fallback to standard version in nodejs library.
+    return origDeepEqual(a, b, message);
+  }
+}
