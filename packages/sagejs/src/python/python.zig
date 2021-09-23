@@ -53,6 +53,32 @@ pub fn eval(allocator: *std.mem.Allocator, s: [*:0]const u8) ![]u8 {
     );
 }
 
+// var importedJson = false;
+// var json: *python.PyObject = undefined;
+// pub fn toJSON(allocator: *std.mem.Allocator, s: [*:0]const u8) ![]u8 {
+//     // Import the JSON module
+//     if (!importedJson) {
+//         json = python.PyImport_ImportModule("json");
+//         if (json == null) {
+//             python.PyErr_Clear();
+//             std.debug.print("toJSON -- failed to import json module\n", .{});
+//             return General.RuntimeError;
+//         }
+//         importedJson = true;
+//     }
+//     // Evaluate s:
+//     var pstr = python.PyRun_String(s, python.Py_eval_input, globals, globals);
+//     if (pstr == null) {
+//         python.PyErr_Clear();
+//         std.debug.print("toJSON -- PyRun_String failed\n", .{});
+//         return General.RuntimeError;
+//     }
+//     defer python._Py_DECREF(pstr);
+
+//     // Convert to JSON
+
+// }
+
 const eql = std.mem.eql;
 const expect = std.testing.expect;
 const test_allocator = std.testing.allocator;

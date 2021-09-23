@@ -12,6 +12,11 @@ export function repr(str: string): string {
   return wasm.callWithString("eval", str) as string;
 }
 
+// export function toObject(str: string): object {
+//   if (wasm == null) throw Error("call init");
+//   //return JSON.parse(wasm.callWithString("toJSON", str));
+// }
+
 export async function init() {
   if (wasm != null) return;
   wasm = await wasmImport("python/python.wasm", {

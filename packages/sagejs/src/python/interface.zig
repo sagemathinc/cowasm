@@ -27,3 +27,14 @@ export fn eval(s: [*:0]const u8) void {
     const ptr: [*]const u8 = r[0..1];
     wasmSendString(ptr, std.mem.lenZ(r));
 }
+
+// export fn toJSON(s: [*:0]const u8) void {
+//     const r = python.toJSON(&gpa.allocator, s) catch |err| {
+//         //todo
+//         std.debug.print("python error: '{}'\nwhen exporting '{s}' to JSON", .{ err, s });
+//         return;
+//     };
+//     defer gpa.allocator.free(r);
+//     const ptr: [*]const u8 = r[0..1];
+//     wasmSendString(ptr, std.mem.lenZ(r));
+// }
