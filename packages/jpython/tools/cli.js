@@ -410,7 +410,7 @@ create_group("repl", "", function () {
   /*
 Run a Read-Eval-Print-Loop (REPL). This allows
 you to type and run JPython at a live
-command prompt.
+command prompt.  Type show_js=True to show Javascript.
 */
 });
 

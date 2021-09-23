@@ -206,13 +206,13 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
     def unexpected(token):
         if token is undefined:
             token = S.token
-        token_error(token, "Unexpected token: " + token.type + " «" + token.value + "»")
+        token_error(token, "Unexpected token: " + token.type + " '" + token.value + "'")
 
     def expect_token(type, val):
         if is_(type, val):
             return next()
-        token_error(S.token, "Unexpected token " + S.token.type + " «" + S.token.value + "»" +
-                    ", expected " + type + " «" + val + "»")
+        token_error(S.token, "Unexpected token " + S.token.type + " '" + S.token.value + "'" +
+                    ", expected " + type + " '" + val + "'")
 
     def expect(punc):
         return expect_token("punc", punc)
@@ -430,7 +430,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         S.statement_starting_token = S.token
         tmp_ = S.token.type
         p = prev()
-        if p and not S.token.nlb and ATOMIC_START_TOKEN[p.type] and not is_('punc', ':'):
+        if p and not S.token.nlb and ATOMIC_START_TOKEN[p.type] and not is_('punc', ':') and not is_('punc', ';'):
             unexpected()
         if tmp_ is "string":
             return simple_statement()

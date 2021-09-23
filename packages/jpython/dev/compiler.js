@@ -9734,7 +9734,7 @@ return this.__repr__();
         var is_token = ρσ_modules.tokenizer.is_token;
         var RESERVED_WORDS = ρσ_modules.tokenizer.RESERVED_WORDS;
 
-        COMPILER_VERSION = "b50687a4fdc670b23ec1c71890e7052c7be1df57";
+        COMPILER_VERSION = "f0edd604756eda06ac4cdac9d9207caf96bba247";
         PYTHON_FLAGS = (function(){
             var ρσ_d = Object.create(null);
             ρσ_d["dict_literals"] = true;
@@ -9982,7 +9982,7 @@ return this.__repr__();
                 if (token === undefined) {
                     token = S.token;
                 }
-                token_error(token, ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("Unexpected token: ", token.type), " «"), token.value), "»"));
+                token_error(token, ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("Unexpected token: ", token.type), " '"), token.value), "'"));
             };
             if (!unexpected.__argnames__) Object.defineProperties(unexpected, {
                 __argnames__ : {value: ["token"]},
@@ -9993,7 +9993,7 @@ return this.__repr__();
                 if (is_(type, val)) {
                     return next();
                 }
-                token_error(S.token, ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("Unexpected token ", S.token.type), " «"), S.token.value), "»"), ", expected "), type), " «"), val), "»"));
+                token_error(S.token, ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("Unexpected token ", S.token.type), " '"), S.token.value), "'"), ", expected "), type), " '"), val), "'"));
             };
             if (!expect_token.__argnames__) Object.defineProperties(expect_token, {
                 __argnames__ : {value: ["type", "val"]},
@@ -10339,7 +10339,7 @@ return this.__repr__();
                     S.statement_starting_token = S.token;
                     tmp_ = S.token.type;
                     p = prev();
-                    if (p && !S.token.nlb && ATOMIC_START_TOKEN[ρσ_bound_index(p.type, ATOMIC_START_TOKEN)] && !is_("punc", ":")) {
+                    if (p && !S.token.nlb && ATOMIC_START_TOKEN[ρσ_bound_index(p.type, ATOMIC_START_TOKEN)] && !is_("punc", ":") && !is_("punc", ";")) {
                         unexpected();
                     }
                     if (tmp_ === "string") {
