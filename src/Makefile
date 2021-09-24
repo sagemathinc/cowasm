@@ -27,7 +27,7 @@ test-integer:
 
 ${DIST}/integer/integer.wasm: src/integer/integer.zig src/integer/interface.zig src/custom-allocator.zig
 	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a ${WASM_CFLAGS} integer/interface.zig  ${ZIG_PKG}
-	mkdir -p ${DIST}
+	mkdir -p ${DIST}/integer
 	mv src/interface.wasm ${DIST}/integer/integer.wasm
 
 
