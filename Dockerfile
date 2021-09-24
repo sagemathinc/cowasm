@@ -1,4 +1,4 @@
-# Work in progress Dockerfile for building sagemathjs in a predictable way.
+# Work in progress Dockerfile for building jsage in a predictable way.
 
 FROM ubuntu:20.04
 
@@ -17,7 +17,7 @@ RUN  curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
   && npm install -g npm@latest
 
 # Download and build wasmer from source using Rust.
-# We have to do this since, e.g., there's no wasmer binary for linux-aarch64, 
+# We have to do this since, e.g., there's no wasmer binary for linux-aarch64,
 # i.e., docker on a macbook, and we want to support that at least.
 RUN  curl https://sh.rustup.rs -sSf | sh \
   && cd / && git clone https://github.com/wasmerio/wasmer.git && cd wasmer \
@@ -35,5 +35,5 @@ RUN apt-get install -y vim
 # hack on aarch64 for now... needed for pari. right fix is my wasm-posix thing?
 RUN cd /usr/include && ln -s aarch64-linux-gnu/bits/ .
 
-RUN  git clone https://github.com/sagemathinc/sagemathjs \
-  && cd sagemathjs && make
+RUN  git clone https://github.com/sagemathinc/jsage \
+  && cd jsage && make

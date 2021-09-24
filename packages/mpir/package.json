@@ -15,15 +15,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/sagemathjs.git"
+    "url": "git+https://github.com/sagemathinc/jsage.git"
   },
   "keywords": ["number", "theory"],
   "author": "William Stein",
   "license": "LGPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/sagemathinc/sagemathjs/issues"
+    "url": "https://github.com/sagemathinc/jsage/issues"
   },
-  "homepage": "https://github.com/sagemathinc/sagemathjs/tree/main/packages/mpir",
+  "homepage": "https://github.com/sagemathinc/jsage/tree/main/packages/mpir",
   "dependencies": {},
   "devDependencies": {}
 }

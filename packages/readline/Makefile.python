@@ -142,7 +142,7 @@ run-wasmer-llvm: ${DIST_WASM}/.built
 # https://programming-language-benchmarks.vercel.app/wasm
 .PHONY: run-wasmedge
 run-wasmedge: ${DIST_WASM}/.built
-	wasmedge --dir /:/ /home/user/sagemathjs/packages/python/dist/wasm/bin/python3
+	wasmedge --dir /:/ /home/user/jsage/packages/python/dist/wasm/bin/python3
 
 # Cleaning up
 

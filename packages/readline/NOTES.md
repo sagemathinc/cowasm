@@ -9,7 +9,7 @@ build/native/examples/rlfe
 and if you build that then do
 
 ```sh
-~/sagemathjs/packages/readline/build/native/examples/rlfe$ ./rlfe wasmer run /home/user/sagemathjs/packages/pari/dist/wasm/bin/gp-sta.wasm  --mapdir /:/ 
+~/jsage/packages/readline/build/native/examples/rlfe$ ./rlfe wasmer run /home/user/jsage/packages/pari/dist/wasm/bin/gp-sta.wasm  --mapdir /:/ 
 ```
 
 then you get a much more usable version of the wasm pari.  Obviously there is

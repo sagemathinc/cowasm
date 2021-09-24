@@ -2,7 +2,7 @@ BUILT = dist/.built
 
 all: packages/gmp/${BUILT} packages/mpir/${BUILT} packages/mpfr/${BUILT} packages/mpc/${BUILT} \
 	 packages/gf2x/${BUILT} packages/ntl/${BUILT} packages/flint/${BUILT} packages/pari/${BUILT} \
-	 packages/eclib/${BUILT} packages/sagejs/${BUILT} packages/jpython/${BUILT}
+	 packages/eclib/${BUILT} src/${BUILT} packages/jpython/${BUILT}
 
 packages/gmp/${BUILT}:
 	cd packages/gmp && make all
@@ -54,10 +54,10 @@ packages/eclib/${BUILT}: packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/p
 .PHONY: eclib
 eclib: packages/eclib/${BUILT}
 
-packages/sagejs/${BUILT}: packages/gmp/${BUILT} packages/pari/${BUILT} packages/python/${BUILT}
-	cd packages/sagejs && make all
-.PHONY: sagejs
-sagejs: packages/sagejs/${BUILT}
+src/${BUILT}: packages/gmp/${BUILT} packages/pari/${BUILT} packages/python/${BUILT}
+	cd src && make all
+.PHONY: src
+src: packages/src/${BUILT}
 
 
 # Included here since I did the work, but we're not using it.
@@ -92,10 +92,10 @@ clean:
 	cd packages/flint && make clean
 	cd packages/pari && make clean
 	cd packages/eclib && make clean
-	cd packages/sagejs && make clean
 	cd packages/jpython && make clean
 	cd packages/python && make clean
 	cd packages/openssl && make clean
 	cd packages/zlib && make clean
 	cd packages/wasm-posix && make clean
+	cd src && make clean
 

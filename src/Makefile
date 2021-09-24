@@ -2,14 +2,15 @@ OPT           = #-O ReleaseFast
 CWD           = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 ZIG_PKG       = --main-pkg-path ${CWD}/src
-GMP_NATIVE    = ${CWD}/../gmp/dist/native
-GMP_WASM      = ${CWD}/../gmp/dist/wasm
+PACKAGES      = ${CWD}/../packages
+GMP_NATIVE    = ${PACKAGES}/gmp/dist/native
+GMP_WASM      = ${PACKAGES}/gmp/dist/wasm
 
-PARI_NATIVE   = ${CWD}/../pari/dist/native
-PARI_WASM     = ${CWD}/../pari/dist/wasm
+PARI_NATIVE   = ${PACKAGES}/pari/dist/native
+PARI_WASM     = ${PACKAGES}/pari/dist/wasm
 
-PYTHON_NATIVE = ${CWD}/../python/dist/native
-PYTHON_WASM   = ${CWD}/../python/dist/wasm
+PYTHON_NATIVE = ${PACKAGES}/python/dist/native
+PYTHON_WASM   = ${PACKAGES}/python/dist/wasm
 
 WASM_CFLAGS   = -dynamic ${OPT}
 NATIVE_CFLAGS = -I. -L${PARI_NATIVE}/lib -I${PARI_NATIVE}/include -lpari   -L${GMP_NATIVE}/lib -I${GMP_NATIVE}/include -lgmp -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9 -lpython3.9  -lc ${OPT}
