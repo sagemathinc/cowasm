@@ -1,4 +1,4 @@
-// Port of src/sage/modular/modsym/relation_matrix_pyx.pyx
+// Inspired by src/sage/modular/modsym/relation_matrix_pyx.pyx
 
 const std = @import("std");
 const util = @import("../util.zig");
@@ -6,7 +6,7 @@ const errors = @import("../errors.zig");
 
 const List = std.ArrayList;
 
-// coeff *MUST* be -1 or 1.
+// coeff *MUST* be -1 or 1 -- todo change to enum
 const Coeff = i4;
 const Index = u32; // note that with u64 it's MUCH slower for larger values...
 const Element = struct {
@@ -16,8 +16,8 @@ const Element = struct {
         return self.coeff == right.coeff and self.index == right.index;
     }
 };
-const Relation = struct { a: Element, b: Element }; // the relation a - b = 0
-const Relations = List(Relation);
+pub const Relation = struct { a: Element, b: Element }; // the relation a - b = 0
+pub const Relations = List(Relation);
 
 pub fn twoTermQuotient(rels: Relations) !List(Element) {
     // find largest index in any element
@@ -125,16 +125,19 @@ fn bench1(n: Index, nrels: Index) !void {
     var i: Index = 0;
     while (i < nrels) : (i += 1) {
         const c1: i4 = if (rand.boolean()) -1 else 1;
-        const in1: Index = rand.intRangeLessThan(Index, 0, n);
+        // I am using Biased because the version without that **HANGS**
+        // when these tests get run indirectly when running the manin-symbols.zig tests.
+        // I think this is an unreported bug in the zig standard library.
+        const in1: Index = rand.intRangeLessThanBiased(Index, 0, n);
         const c2: i4 = if (rand.boolean()) -1 else 1;
-        const in2: Index = rand.intRangeLessThan(Index, 0, n);
+        const in2: Index = rand.intRangeLessThanBiased(Index, 0, n);
         try rels.append(Relation{ .a = Element{ .coeff = c1, .index = in1 }, .b = Element{ .coeff = c2, .index = in2 } });
     }
     const mod = try twoTermQuotient(rels);
     mod.deinit();
 }
 
-test "bench -- as a consistency check that code doesn't crash/leak/get too slow/etc." {
+test "do a difficult consistency check that code doesn't crash/leak/get too slow/etc." {
     const values = [_]Index{ 4, 10, 100, 200, 10000, 50000 };
     for (values) |N| {
         try bench1(N, @divFloor(N, 2));

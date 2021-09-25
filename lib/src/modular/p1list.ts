@@ -3,7 +3,7 @@ import wasmImport from "../wasm";
 // @ts-ignore -- typescript doesn't have FinalizationRegistry
 const registry = new FinalizationRegistry((handle) => {
   // console.log(`Freeing memory for ${handle}`);
-  wasm.P1List_free(handle);
+  wasm.exports.P1List_free(handle);
 });
 
 export class P1List {
@@ -12,26 +12,26 @@ export class P1List {
 
   constructor(N) {
     this.N = N;
-    this.handle = wasm.P1List(N);
+    this.handle = wasm.exports.P1List(N);
     registry.register(this, this.handle); // so we get notified when garbage collected.
   }
 
   count(): number {
-    return wasm.P1List_count(this.handle);
+    return wasm.exports.P1List_count(this.handle);
   }
 
   normalize(u: number, v: number): [number, number] {
-    wasm.P1List_normalize(this.handle, u, v);
+    wasm.exports.P1List_normalize(this.handle, u, v);
     return result;
   }
 
   normalize_with_scalar(u: number, v: number): [number, number] {
-    wasm.P1List_normalize_with_scalar(this.handle, u, v);
+    wasm.exports.P1List_normalize_with_scalar(this.handle, u, v);
     return result;
   }
 
   index(u: number, v: number): number {
-    return wasm.P1List_index(this.handle, u, v);
+    return wasm.exports.P1List_index(this.handle, u, v);
   }
 }
 
@@ -45,7 +45,7 @@ function P1List_normalize_with_scalar_cb(u, v, s): void {
 
 export let wasm: any = undefined;
 export async function init() {
-  wasm = await wasmImport("p1list", {
+  wasm = await wasmImport("modular/p1list", {
     env: { P1List_normalize_cb, P1List_normalize_with_scalar_cb },
   });
 }

@@ -1,4 +1,6 @@
 // Compute continued fraction expansions.
+// zig test contfrac.zig --main-pkg-path ..
+
 const std = @import("std");
 const errors = @import("../errors.zig");
 
@@ -84,7 +86,7 @@ fn Convergents(comptime T: type) type {
     };
 }
 
-fn convergents(
+pub fn convergents(
     comptime T: type,
     numer: T,
     denom: T,

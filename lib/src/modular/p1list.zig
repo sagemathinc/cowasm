@@ -110,18 +110,19 @@ pub fn P1Element(comptime T: type) type {
     };
 }
 
-pub fn P1ListType(comptime T: type) type {
+pub fn P1List(comptime T: type) type {
     const IndexAndScalar = struct { i: usize, s: T };
     return struct {
+        const P1 = @This();
         N: T,
         list: std.ArrayList(P1Element(T)),
 
-        pub fn init(N: anytype, allocator: *std.mem.Allocator) !P1ListType(T) {
+        pub fn init(allocator: *std.mem.Allocator, N: T) !P1 {
             const Elt = P1Element(T);
             var list = std.ArrayList(Elt).init(allocator);
             if (N == 1) {
                 try list.append(Elt{ .u = 0, .v = 0 });
-                return P1ListType(T){ .N = N, .list = list };
+                return P1{ .N = N, .list = list };
             }
 
             try list.append(Elt{ .u = 0, .v = 1 });
@@ -165,30 +166,30 @@ pub fn P1ListType(comptime T: type) type {
                 }
             }
             std.sort.sort(P1Element(T), list.items, {}, P1Element(T).sortLessThan);
-            return P1ListType(T){ .N = N, .list = list };
+            return P1{ .N = N, .list = list };
         }
 
-        pub fn deinit(self: P1ListType(T)) void {
+        pub fn deinit(self: P1) void {
             self.list.deinit();
         }
 
-        pub fn count(self: P1ListType(T)) usize {
+        pub fn count(self: P1) usize {
             return self.list.items.len;
         }
 
-        pub fn normalize(self: P1ListType(T), u: T, v: T) !P1Element(T) {
+        pub fn normalize(self: P1, u: T, v: T) !P1Element(T) {
             const elt = P1Element(T).init(u, v);
             const n = try elt.normalize(self.N, false);
             return P1Element(T).init(n.u, n.v);
         }
 
-        pub fn normalizeWithScalar(self: P1ListType(T), u: T, v: T) !EltAndScalar(T) {
+        pub fn normalizeWithScalar(self: P1, u: T, v: T) !EltAndScalar(T) {
             const elt = P1Element(T).init(u, v);
             return elt.normalize(self.N, true);
         }
 
         // (u,v) assumed already normalized.
-        pub fn indexOfNormalized(self: P1ListType(T), u: T, v: T) !usize {
+        pub fn indexOfNormalized(self: P1, u: T, v: T) !usize {
             if (self.N <= 1) {
                 return 0;
             }
@@ -210,7 +211,7 @@ pub fn P1ListType(comptime T: type) type {
             };
         }
 
-        pub fn index(self: P1ListType(T), u: T, v: T) !usize {
+        pub fn index(self: P1, u: T, v: T) !usize {
             if (self.N <= 1) {
                 return @as(usize, 0);
             }
@@ -220,20 +221,20 @@ pub fn P1ListType(comptime T: type) type {
             return self.indexOfNormalized(uv.u, uv.v);
         }
 
-        pub fn indexAndScalar(self: P1ListType(T), u: T, v: T) !IndexAndScalar {
+        pub fn indexAndScalar(self: P1, u: T, v: T) !IndexAndScalar {
             const z = try self.normalizeWithScalar(u, v);
             const i = try self.indexOfNormalized(z.u, z.v);
             return IndexAndScalar{ .i = i, .s = z.s };
         }
 
-        pub fn get(self: P1ListType(T), i: usize) !P1Element(T) {
+        pub fn get(self: P1, i: usize) !P1Element(T) {
             if (i >= self.list.items.len) {
                 return errors.General.IndexError;
             }
             return self.list.items[i];
         }
 
-        pub fn liftToSL2Z(self: P1ListType(T), i: usize) !sl2z.SL2ZElement(T) {
+        pub fn liftToSL2Z(self: P1, i: usize) !sl2z.SL2ZElement(T) {
             const elt = try self.get(i);
             return sl2z.liftToSL2Z(T, elt.u, elt.v, self.N) catch {
                 unreachable;
@@ -241,26 +242,22 @@ pub fn P1ListType(comptime T: type) type {
         }
 
         // Apply the matrix [-1,0;0,1] to the `i`'th element of P1.
-        pub fn applyI(self: P1ListType(T), i: usize) !usize {
+        pub fn applyI(self: P1, i: usize) !usize {
             const elt = try self.get(i);
             return self.index(-elt.u, elt.v);
         }
 
         // Apply the matrix [0,-1;1,0] to the `i`'th element of P1.
-        pub fn applyS(self: P1ListType(T), i: usize) !usize {
+        pub fn applyS(self: P1, i: usize) !usize {
             const elt = try self.get(i);
             return self.index(-elt.v, elt.u);
         }
         // Apply the matrix [0,1;-1,-1] to the `i`'th element of P1.
-        pub fn applyT(self: P1ListType(T), i: usize) !usize {
+        pub fn applyT(self: P1, i: usize) !usize {
             const elt = try self.get(i);
             return self.index(elt.v, -elt.u - elt.v);
         }
     };
-}
-
-pub fn P1List(N: anytype, allocator: *std.mem.Allocator) !P1ListType(@TypeOf(N)) {
-    return P1ListType(@TypeOf(N)).init(N, allocator);
 }
 
 const expect = std.testing.expect;
@@ -279,28 +276,28 @@ test "some basics with an element" {
 }
 
 test "make a P1List(1)" {
-    const P = try P1List(@as(i16, 1), std.testing.allocator);
+    const P = try P1List(i16).init(std.testing.allocator, 1);
     defer P.deinit();
     try expect(P.list.items.len == 1);
     try expect(P.list.items[0].eql(P1Element(i16){ .u = 0, .v = 0 }));
 }
 
 test "make P1List(11)" {
-    const P = try P1List(@as(i32, 11), std.testing.allocator);
+    const P = try P1List(i32).init(std.testing.allocator, 11);
     defer P.deinit();
     //std.debug.print("\n{s}\n", .{P.list});
     try expect(P.list.items.len == 12);
 }
 
 test "make P1(6)" {
-    const P = try P1List(@as(i16, 6), std.testing.allocator);
+    const P = try P1List(i16).init(std.testing.allocator, 6);
     defer P.deinit();
     try expect(P.list.items.len == 12);
     // std.debug.print("\n{s}\n", .{P.list});
 }
 
 test "make P1(10000)" {
-    const P = try P1List(@as(i32, 10000), std.testing.allocator);
+    const P = try P1List(i32).init(std.testing.allocator, 10000);
     defer P.deinit();
     try expect(P.list.items.len == 18000);
     // sum all the entries of all the elements, and compare with
@@ -313,7 +310,7 @@ test "make P1(10000)" {
 }
 
 test "normalize" {
-    const P = try P1List(@as(i32, 20), std.testing.allocator);
+    const P = try P1List(i32).init(std.testing.allocator, 20);
     defer P.deinit();
     const x = try P.normalize(7, 15);
     try expect(x.u == 1);
@@ -325,7 +322,7 @@ test "normalize" {
 }
 
 test "index of element in the sorted list" {
-    const P = try P1List(@as(i32, 120), std.testing.allocator);
+    const P = try P1List(i32).init(std.testing.allocator, 120);
     defer P.deinit();
     const i = try P.index(1, 99);
     try expect(i == 100);
@@ -344,7 +341,7 @@ test "compute P1(N) for N up to 500 and add up the counts -- good double check t
     var N: i32 = 1;
     const t0 = time();
     while (N <= 500) : (N += 1) {
-        const P = try P1List(N, std.testing.allocator);
+        const P = try P1List(i32).init(std.testing.allocator, N);
         defer P.deinit();
         s += P.count();
     }
@@ -356,7 +353,7 @@ test "compute P1(N) for N up to 500 and add up the counts -- good double check t
 
 test "getting items from P1" {
     const N: i32 = 100;
-    const P = try P1List(N, std.testing.allocator);
+    const P = try P1List(i32).init(std.testing.allocator, N);
     defer P.deinit();
     const i = try P.index(1, 17);
     const elt = try P.get(i);
@@ -374,7 +371,7 @@ test "getting items from P1" {
 
 test "test liftToSL2Z for all elements of P1(1000) -- add upper left entry" {
     const N: i32 = 1000;
-    const P = try P1List(N, std.testing.allocator);
+    const P = try P1List(i32).init(std.testing.allocator, N);
     defer P.deinit();
     var i: usize = 0;
     var s: i32 = 0;
@@ -389,7 +386,7 @@ test "test liftToSL2Z for all elements of P1(1000) -- add upper left entry" {
 
 test "applyI, applyS, applyT to elements of P1(10)" {
     const N: i32 = 10;
-    const P = try P1List(N, std.testing.allocator);
+    const P = try P1List(i32).init(std.testing.allocator, N);
     defer P.deinit();
     // from Sage:  P = P1List(10); [P.apply_I(n) for n in range(len(P))]
     const correctI = [_]usize{ 0, 1, 10, 9, 8, 7, 6, 5, 4, 3, 2, 15, 14, 13, 12, 11, 16, 17 };
@@ -407,7 +404,7 @@ fn bench1() !void {
     const t0 = time();
     var i: u32 = 0;
     while (i < 200) : (i += 1) {
-        const P = try P1List(@as(i32, 10000), std.testing.allocator);
+        const P = try P1List(i32).init(std.testing.allocator, 10000);
         defer P.deinit();
         try expect(P.list.items.len == 18000);
     }
@@ -421,7 +418,7 @@ fn bench1() !void {
 
 fn bench2(comptime T: type, N: T, verbose: bool) !usize {
     const t0 = time();
-    const P = try P1List(N, std.testing.allocator);
+    const P = try P1List(T).init(std.testing.allocator, N);
     defer P.deinit();
     var i: usize = 0;
     var s: usize = 0;
@@ -449,7 +446,7 @@ test "small bench2" {
 // long time -- 3s
 // test "make P1(9393939) as i64" {
 //     const t0 = time();
-//     const P = try P1List(@as(i64, 9393939), std.testing.allocator);
+//     const P = try P1List(i64).init(std.testing.allocator, 9393939);
 //     defer P.deinit();
 //     try expect(P.list.items.len == 12963456);
 //     std.debug.print("\ntime={}ms\n", .{time() - t0});
@@ -457,7 +454,7 @@ test "small bench2" {
 
 // pub fn main() !void {
 //     const t0 = time();
-//     const P = try P1List(@as(i64, 9393939), std.testing.allocator);
+//     const P = try P1List(i64).init(std.testing.allocator, 9393939);
 //     defer P.deinit();
 //     try expect(P.list.items.len == 12963456);
 //     std.debug.print("\ntime={}ms\n", .{time() - t0});

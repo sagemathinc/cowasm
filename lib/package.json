@@ -21,7 +21,8 @@
     "build": "make all",
     "clean": "make clean",
     "tsc": "npx tsc -w",
-    "test": "jest ./dist"
+    "test": "jest ./dist",
+    "test-watch": "jest --watch ./dist"
   },
   "repository": {
     "type": "git",

@@ -12,8 +12,8 @@ fn sendError(s: [*]const u8) void {
     reportError(s, i);
 }
 
-fn P1ListT(comptime T: type, N: i32) !p1list.P1ListType(T) {
-    return p1list.P1List(@intCast(T, N), &gpa.allocator);
+fn P1ListT(comptime T: type, N: i32) !p1list.P1List(T) {
+    return p1list.P1List(T).init(&gpa.allocator, N);
 }
 
 // pub export fn P1List(N: i32) i32 {
