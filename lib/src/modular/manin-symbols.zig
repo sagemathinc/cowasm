@@ -1,5 +1,6 @@
 const std = @import("std");
 const twoTerm = @import("./modsym-2term.zig");
+const P1List = @import("./p1list.zig").P1List;
 
 pub const Sign = enum(i4) {
     minus = -1,
@@ -14,9 +15,11 @@ pub fn ManinSymbols(comptime T: type) type {
         allocator: *std.mem.Allocator,
         N: usize,
         sign: Sign,
+        P1: P1List(T),
 
-        pub fn init(allocator: *std.mem.Allocator, N: usize, sign: Sign) Syms {
-            return Syms{ .N = N, .sign = sign, .allocator = allocator };
+        pub fn init(allocator: *std.mem.Allocator, N: usize, sign: Sign) !Syms {
+            var P1 = try P1List(T).init(allocator, @intCast(T, N));
+            return Syms{ .N = N, .sign = sign, .allocator = allocator, .P1 = P1 };
         }
 
         pub fn print(self: Syms) void {
@@ -24,14 +27,27 @@ pub fn ManinSymbols(comptime T: type) type {
         }
 
         pub fn deinit(self: *Syms) void {
-            // todo
-            _ = self;
+            self.P1.deinit();
         }
 
         pub fn relationsModI(
-            self: *Syms,
-        ) twoTerm.Relations {
+            self: Syms,
+        ) !twoTerm.Relations {
             var rels = twoTerm.Relations.init(self.allocator);
+            if (self.sign == Sign.zero) {
+                // no relations
+                return rels;
+            }
+            const s: twoTerm.Coeff = if (self.sign == Sign.plus) 1 else -1;
+            const n = self.P1.count();
+            var i: twoTerm.Index = 0;
+            while (i < n) : (i += 1) {
+                const j = @intCast(twoTerm.Index, try self.P1.applyI(i));
+                const a = twoTerm.Element{ .coeff = 1, .index = i };
+                const b = twoTerm.Element{ .coeff = -s, .index = j };
+                const rel = twoTerm.Relation{ .a = a, .b = b };
+                try rels.append(rel);
+            }
             return rels;
         }
 
@@ -50,21 +66,41 @@ const test_allocator = std.testing.allocator;
 const expect = std.testing.expect;
 
 test "create a few spaces" {
-    var M = ManinSymbols(i32).init(test_allocator, 11, Sign.zero);
+    var M = try ManinSymbols(i32).init(test_allocator, 11, Sign.zero);
     defer M.deinit();
     M.print();
-    var M2 = ManinSymbols(i16).init(test_allocator, 15, Sign.plus);
+    var M2 = try ManinSymbols(i16).init(test_allocator, 15, Sign.plus);
     defer M2.deinit();
     M2.print();
-    var M3 = ManinSymbols(i64).init(test_allocator, 234446, Sign.minus);
+    var M3 = try ManinSymbols(i64).init(test_allocator, 234446, Sign.minus);
     defer M3.deinit();
     M3.print();
 }
 
 test "compute relationsModI" {
-    var M = ManinSymbols(i32).init(test_allocator, 11, Sign.zero);
+    var M = try ManinSymbols(i32).init(test_allocator, 11, Sign.zero);
     defer M.deinit();
-    var rels = M.relationsModI();
+    var rels = try M.relationsModI();
     defer rels.deinit();
-    std.debug.print("\nrels = {}\n\n", .{rels});
+    // no relations since sign is zero
+    try expect(rels.items.len == 0);
+}
+
+test "compute relationsModI with sign +" {
+    var M = try ManinSymbols(i32).init(test_allocator, 11, Sign.plus);
+    defer M.deinit();
+    var rels = try M.relationsModI();
+    defer rels.deinit();
+    // many relations since sign is 1
+    try expect(rels.items.len == 12);
+    // std.debug.print("{s}\n", .{rels.items});
+}
+
+test "compute relationsModI with sign - and composite N" {
+    var M = try ManinSymbols(i32).init(test_allocator, 12, Sign.minus);
+    defer M.deinit();
+    var rels = try M.relationsModI();
+    defer rels.deinit();
+    // many relations since sign is not 0.
+    try expect(rels.items.len == 24);
 }

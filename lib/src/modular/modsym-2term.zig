@@ -7,9 +7,9 @@ const errors = @import("../errors.zig");
 const List = std.ArrayList;
 
 // coeff *MUST* be -1 or 1 -- todo change to enum
-const Coeff = i4;
-const Index = u32; // note that with u64 it's MUCH slower for larger values...
-const Element = struct {
+pub const Coeff = i4;
+pub const Index = u32; // note that with u64 it's MUCH slower for larger values...
+pub const Element = struct {
     coeff: Coeff,
     index: Index,
     pub fn eq(self: Element, right: Element) bool {
