@@ -16,7 +16,7 @@ pub const Element = struct {
         return self.coeff == right.coeff and self.index == right.index;
     }
 };
-pub const Relation = struct { a: Element, b: Element }; // the relation a - b = 0
+pub const Relation = struct { a: Element, b: Element }; // the relation a + b = 0
 pub const Relations = List(Relation);
 
 pub fn twoTermQuotient(rels: Relations) !List(Element) {
@@ -86,6 +86,8 @@ pub fn twoTermQuotient(rels: Relations) !List(Element) {
                 free.items[j] = 0;
                 coef.items[j] = 0;
             }
+            free.items[die] = 0;
+            coef.items[die] = 0;
         }
     }
     var mod = try List(Element).initCapacity(rels.allocator, n);
@@ -99,6 +101,41 @@ pub fn twoTermQuotient(rels: Relations) !List(Element) {
 
 const allocator = std.testing.allocator;
 const expect = std.testing.expect;
+
+test "very basic example:  a+b = 0 where a=x0 and b=-x1, i.e., x0=x1." {
+    var rels = Relations.init(allocator);
+    defer rels.deinit();
+    try rels.append(Relation{ .a = Element{ .coeff = 1, .index = 0 }, .b = Element{ .coeff = -1, .index = 1 } });
+    const mod = try twoTermQuotient(rels);
+    defer mod.deinit();
+    // Result is that both generators in the quotient are equal to the second one:
+    try expect(mod.items[0].eq(Element{ .coeff = 1, .index = 1 }));
+    try expect(mod.items[1].eq(Element{ .coeff = 1, .index = 1 }));
+}
+
+test "another basic example:  a+b = 0 where a=x0 and b=x1, i.e., x0=-x1." {
+    var rels = Relations.init(allocator);
+    defer rels.deinit();
+    try rels.append(Relation{ .a = Element{ .coeff = 1, .index = 0 }, .b = Element{ .coeff = 1, .index = 1 } });
+    const mod = try twoTermQuotient(rels);
+    defer mod.deinit();
+    // std.debug.print("\nmod = {}\n", .{mod});
+    // Result is that x0 => -x1, x1 => x1
+    try expect(mod.items[0].eq(Element{ .coeff = -1, .index = 1 }));
+    try expect(mod.items[1].eq(Element{ .coeff = 1, .index = 1 }));
+}
+
+test "example in which a relation dies:  a+a = 0 so x0 = 0" {
+    var rels = Relations.init(allocator);
+    defer rels.deinit();
+    try rels.append(Relation{ .a = Element{ .coeff = 1, .index = 0 }, .b = Element{ .coeff = 1, .index = 0 } });
+    const mod = try twoTermQuotient(rels);
+    defer mod.deinit();
+    // std.debug.print("\nmod = {s}\n", .{mod.items});
+    // Result is x0 = 0.
+    try expect(mod.items[0].eq(Element{ .coeff = 0, .index = 0 }));
+}
+
 test "basic example from the sage doctest" {
     var rels = Relations.init(allocator);
     defer rels.deinit();
@@ -115,7 +152,7 @@ test "basic example from the sage doctest" {
     try expect(mod.items[3].eq(Element{ .coeff = 1, .index = 3 }));
     try expect(mod.items[4].eq(Element{ .coeff = 1, .index = 5 }));
     try expect(mod.items[5].eq(Element{ .coeff = 1, .index = 5 }));
-    // std.debug.print("mod = {}", .{mod});
+    // std.debug.print("\nmod = {}\n", .{mod});
 }
 
 var rand = std.rand.DefaultPrng.init(0).random;

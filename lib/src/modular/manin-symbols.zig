@@ -30,6 +30,8 @@ pub fn ManinSymbols(comptime T: type) type {
             self.P1.deinit();
         }
 
+        // Return distinct relations modulo the action of I for the given sign,
+        // so for nonzero sign, these are:   x - sign*I*x = 0.
         pub fn relationsModI(
             self: Syms,
         ) !twoTerm.Relations {
@@ -51,8 +53,28 @@ pub fn ManinSymbols(comptime T: type) type {
             return rels;
         }
 
-        pub fn relationsModS(self: *Syms) void {
-            _ = self;
+        // Return the distinct relations x + S*x = 0.
+        // S is an involution of the basis elements. Can think of the relations
+        // as x_i + x_{j=S(i)} = 0.  So the unique relations are of the form
+        // x_i + x_j = 0 with i <= j.
+        pub fn relationsModS(
+            self: Syms,
+        ) !twoTerm.Relations {
+            var rels = twoTerm.Relations.init(self.allocator);
+            const n = self.P1.count();
+            var i: twoTerm.Index = 0;
+            while (i < n) : (i += 1) {
+                const j = @intCast(twoTerm.Index, try self.P1.applyS(i));
+                if (j < i) {
+                    // We will see this same relation again when i is j.
+                    continue;
+                }
+                const a = twoTerm.Element{ .coeff = 1, .index = i };
+                const b = twoTerm.Element{ .coeff = 1, .index = j };
+                const rel = twoTerm.Relation{ .a = a, .b = b };
+                try rels.append(rel);
+            }
+            return rels;
         }
     };
 }
@@ -103,4 +125,13 @@ test "compute relationsModI with sign - and composite N" {
     defer rels.deinit();
     // many relations since sign is not 0.
     try expect(rels.items.len == 24);
+}
+
+test "compute relationsModS for N=7" {
+    var M = try ManinSymbols(i16).init(test_allocator, 7, Sign.zero);
+    defer M.deinit();
+    var rels = try M.relationsModS();
+    defer rels.deinit();
+    // std.debug.print("\n{s}\n", .{rels.items});
+    try expect(rels.items.len == 4);
 }
