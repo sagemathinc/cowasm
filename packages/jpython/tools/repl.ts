@@ -316,12 +316,8 @@ export default function Repl(options0: Partial<Options>) {
     if (more) {
       // We are in a block
       const lineIsEmpty = !line.trimLeft();
-      if (
-        lineIsEmpty &&
-        buffer.length &&
-        !buffer[buffer.length - 1].trimLeft()
-      ) {
-        // We have two empty lines, evaluate the block:
+      if (lineIsEmpty && buffer.length > 0) {
+        // We have an empty lines, so evaluate the block:
         more = push(line.trimLeft());
       } else {
         buffer.push(line);
