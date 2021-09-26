@@ -1,6 +1,7 @@
 const std = @import("std");
 const twoTerm = @import("./modsym-2term.zig");
 const P1List = @import("./p1list.zig").P1List;
+const SparseMatrixMod = @import("./sparse-matrix.zig").SparseMatrixMod;
 
 pub const Sign = enum(i4) {
     minus = -1,
@@ -30,9 +31,9 @@ pub fn ManinSymbols(comptime T: type) type {
             self.P1.deinit();
         }
 
-        // Return distinct relations modulo the action of I for the given sign,
+        // Return relations modulo the action of I for the given sign,
         // so for nonzero sign, these are:   x - sign*I*x = 0.
-        pub fn relationsModI(
+        pub fn relationsI(
             self: Syms,
         ) !twoTerm.Relations {
             var rels = twoTerm.Relations.init(self.allocator);
@@ -57,10 +58,15 @@ pub fn ManinSymbols(comptime T: type) type {
         // S is an involution of the basis elements. Can think of the relations
         // as x_i + x_{j=S(i)} = 0.  So the unique relations are of the form
         // x_i + x_j = 0 with i <= j.
-        pub fn relationsModS(
+        pub fn relationsS(
             self: Syms,
         ) !twoTerm.Relations {
             var rels = twoTerm.Relations.init(self.allocator);
+            try self.extendRelationsS(&rels);
+            return rels;
+        }
+
+        fn extendRelationsS(self: Syms, rels: *twoTerm.Relations) !void {
             const n = self.P1.count();
             var i: twoTerm.Index = 0;
             while (i < n) : (i += 1) {
@@ -74,15 +80,30 @@ pub fn ManinSymbols(comptime T: type) type {
                 const rel = twoTerm.Relation{ .a = a, .b = b };
                 try rels.append(rel);
             }
+        }
+
+        pub fn relationsIandS(self: Syms) !twoTerm.Relations {
+            var rels = try self.relationsI();
+            try self.extendRelationsS(&rels);
             return rels;
         }
+
+        // Compute map from basis manin symbols to quotient modulo
+        // the S and I relations.
+        pub fn twoTermQuotient(self: Syms) !twoTerm.List(twoTerm.Element) {
+            const relsIandS = try self.relationsIandS();
+            defer relsIandS.deinit();
+            return twoTerm.twoTermQuotient(relsIandS);
+        }
+
+        // pub fn relationMatrixModP(self: Syms, p: T) SparseMatrixMod(T) {}
     };
 }
 
 // fn relation_matrix(comptime T : type, syms, mod) xx {}
 
 // Compute quotient of Manin symbols by the S relations.
-//pub fn relationsModuloS(comptime T : type, N : usize) x
+//pub fn relationsuloS(comptime T : type, N : usize) x
 
 const test_allocator = std.testing.allocator;
 const expect = std.testing.expect;
@@ -99,39 +120,74 @@ test "create a few spaces" {
     M3.print();
 }
 
-test "compute relationsModI" {
+test "compute relationsI" {
     var M = try ManinSymbols(i32).init(test_allocator, 11, Sign.zero);
     defer M.deinit();
-    var rels = try M.relationsModI();
+    var rels = try M.relationsI();
     defer rels.deinit();
     // no relations since sign is zero
     try expect(rels.items.len == 0);
 }
 
-test "compute relationsModI with sign +" {
+test "compute relationsI with sign +" {
     var M = try ManinSymbols(i32).init(test_allocator, 11, Sign.plus);
     defer M.deinit();
-    var rels = try M.relationsModI();
+    var rels = try M.relationsI();
     defer rels.deinit();
     // many relations since sign is 1
     try expect(rels.items.len == 12);
     // std.debug.print("{s}\n", .{rels.items});
 }
 
-test "compute relationsModI with sign - and composite N" {
+test "compute relationsI with sign - and composite N" {
     var M = try ManinSymbols(i32).init(test_allocator, 12, Sign.minus);
     defer M.deinit();
-    var rels = try M.relationsModI();
+    var rels = try M.relationsI();
     defer rels.deinit();
     // many relations since sign is not 0.
     try expect(rels.items.len == 24);
 }
 
-test "compute relationsModS for N=7" {
+test "compute relationsS for N=7" {
     var M = try ManinSymbols(i16).init(test_allocator, 7, Sign.zero);
     defer M.deinit();
-    var rels = try M.relationsModS();
+    var rels = try M.relationsS();
     defer rels.deinit();
     // std.debug.print("\n{s}\n", .{rels.items});
     try expect(rels.items.len == 4);
+}
+
+test "compute quotient modulo two term relations for N=3" {
+    var M = try ManinSymbols(i32).init(test_allocator, 3, Sign.zero);
+    defer M.deinit();
+    var quo = try M.twoTermQuotient();
+    defer quo.deinit();
+    //std.debug.print("\nquo={}\n", .{quo});
+    try expect(quo.items.len == 4);
+    // quo collapses to a x1 and x3 being basis.
+    try expect(quo.items[0].coeff == -1);
+    try expect(quo.items[0].index == 1);
+    try expect(quo.items[1].coeff == 1);
+    try expect(quo.items[1].index == 1);
+    try expect(quo.items[2].coeff == -1);
+    try expect(quo.items[2].index == 3);
+    try expect(quo.items[3].coeff == 1);
+    try expect(quo.items[3].index == 3);
+}
+
+test "compute quotient modulo two term relations for N=3 with sign 1" {
+    var M = try ManinSymbols(i32).init(test_allocator, 3, Sign.plus);
+    defer M.deinit();
+    var quo = try M.twoTermQuotient();
+    defer quo.deinit();
+    // std.debug.print("\nquo={}\n", .{quo});
+    // quo collapses to basis x1; x0=-x1, x2=x3=0.  x1 = eisenstein series :-)
+    try expect(quo.items[0].coeff == -1);
+    try expect(quo.items[0].index == 1);
+    try expect(quo.items[1].coeff == 1);
+    try expect(quo.items[1].index == 1);
+    try expect(quo.items[2].coeff == 0);
+    try expect(quo.items[2].index == 0);
+    try expect(quo.items[3].coeff == 0);
+    try expect(quo.items[3].index == 0);
 }

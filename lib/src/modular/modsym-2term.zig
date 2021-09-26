@@ -4,7 +4,7 @@ const std = @import("std");
 const util = @import("../util.zig");
 const errors = @import("../errors.zig");
 
-const List = std.ArrayList;
+pub const List = std.ArrayList;
 
 // coeff *MUST* be -1 or 1 -- todo change to enum
 pub const Coeff = i4;
