@@ -199,13 +199,13 @@ test "compute quotient modulo two term relations for N=3" {
     try expect(items.len == 4);
     // quo collapses to a x1 and x3 being basis.
     try expect(items[0].coeff == -1);
-    try expect(items[0].index == 1);
+    try expect(items[0].index == 0);
     try expect(items[1].coeff == 1);
-    try expect(items[1].index == 1);
+    try expect(items[1].index == 0);
     try expect(items[2].coeff == -1);
-    try expect(items[2].index == 3);
+    try expect(items[2].index == 1);
     try expect(items[3].coeff == 1);
-    try expect(items[3].index == 3);
+    try expect(items[3].index == 1);
 }
 
 test "compute quotient modulo two term relations for N=3 with sign 1" {
@@ -217,9 +217,9 @@ test "compute quotient modulo two term relations for N=3 with sign 1" {
     // quo collapses to basis x1; x0=-x1, x2=x3=0.  x1 = eisenstein series :-)
     const items = quo.mod.items;
     try expect(items[0].coeff == -1);
-    try expect(items[0].index == 1);
+    try expect(items[0].index == 0);
     try expect(items[1].coeff == 1);
-    try expect(items[1].index == 1);
+    try expect(items[1].index == 0);
     try expect(items[2].coeff == 0);
     try expect(items[2].index == 0);
     try expect(items[3].coeff == 0);

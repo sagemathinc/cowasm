@@ -38,16 +38,60 @@ pub fn Quotient(comptime Index: type) type {
         const Quo = @This();
 
         mod: ArrayList(Element(Index)),
-        rank: Index,
+        basisToFreeGen: ArrayList(Index),
+        ngens: Index,
 
         pub fn init(rels: Relations(Index)) !Quo {
-            var mod = try quotient(Index, rels);
-            const rank: Index = 0; // TODO!
-            return Quo{ .mod = mod, .rank = rank };
+            var x = try quotient(Index, rels);
+            var mod = x.mod;
+            errdefer mod.deinit();
+            const ngens = x.ngens;
+
+            // Make a bitset containing the basis elements
+            var basis = try std.bit_set.DynamicBitSet.initEmpty(ngens, rels.allocator);
+            defer basis.deinit();
+            for (mod.items) |item| {
+                if (item.coeff != 0) {
+                    basis.set(item.index);
+                }
+            }
+            // Iterating through basis gives the basis elements in ascending order.
+            // What we need is a two-way map from generator index to basis index.
+            var basisToFreeGen = try ArrayList(Index).initCapacity(rels.allocator, basis.count());
+            errdefer basisToFreeGen.deinit();
+            try basisToFreeGen.resize(basis.count());
+            // map from the subset of free generators to the basis; undefined at the non-free gens.
+            var freeGenToBasis = try ArrayList(Index).initCapacity(rels.allocator, ngens);
+            defer freeGenToBasis.deinit();
+            try freeGenToBasis.resize(ngens);
+            var j: Index = 0;
+            var iter = basis.iterator(.{});
+            while (j < basis.count()) : (j += 1) {
+                const i = iter.next() orelse unreachable;
+                basisToFreeGen.items[j] = @intCast(Index, i);
+                freeGenToBasis.items[i] = j;
+            }
+
+            // We now modify mod and replace the gen index in each case by the basis index,
+            // so that mod is the quotient map from gens to the Quotient.
+            var i: Index = 0;
+            while (i < mod.items.len) : (i += 1) {
+                const item = mod.items[i];
+                if (item.coeff != 0) {
+                    mod.items[i] = Element(Index){ .coeff = item.coeff, .index = freeGenToBasis.items[item.index] };
+                }
+            }
+
+            return Quo{ .mod = mod, .ngens = ngens, .basisToFreeGen = basisToFreeGen };
+        }
+
+        pub fn rank(self: Quo) usize {
+            return self.basisToFreeGen.items.len;
         }
 
         pub fn deinit(self: *Quo) void {
             self.mod.deinit();
+            self.basisToFreeGen.deinit();
         }
 
         pub fn print(self: Quo) void {
@@ -56,7 +100,11 @@ pub fn Quotient(comptime Index: type) type {
     };
 }
 
-fn quotient(comptime Index: type, rels: Relations(Index)) !ArrayList(Element(Index)) {
+fn QuotientInfo(comptime Index: type) type {
+    return struct { ngens: Index, mod: ArrayList(Element(Index)) };
+}
+
+fn quotient(comptime Index: type, rels: Relations(Index)) !QuotientInfo(Index) {
     // find largest index in any element
     var n: Index = 0;
     for (rels.items) |rel| {
@@ -132,7 +180,7 @@ fn quotient(comptime Index: type, rels: Relations(Index)) !ArrayList(Element(Ind
     while (i < n) : (i += 1) {
         try mod.append(Element(Index){ .coeff = coef.items[i], .index = free.items[i] });
     }
-    return mod;
+    return QuotientInfo(Index){ .ngens = n, .mod = mod };
 }
 
 const allocator = std.testing.allocator;
@@ -145,9 +193,10 @@ test "very basic example:  a+b = 0 where a=x0 and b=-x1, i.e., x0=x1." {
     try rels.append(Relation(T){ .a = Element(T){ .coeff = 1, .index = 0 }, .b = Element(T){ .coeff = -1, .index = 1 } });
     var quo = try Quotient(T).init(rels);
     defer quo.deinit();
-    // Result is that both generators in the quotient are equal to the second one:
-    try expect(quo.mod.items[0].eq(Element(T){ .coeff = 1, .index = 1 }));
-    try expect(quo.mod.items[1].eq(Element(T){ .coeff = 1, .index = 1 }));
+    // Result is that both generators in the quotient are equal to first basis element:
+    try expect(quo.mod.items[0].eq(Element(T){ .coeff = 1, .index = 0 }));
+    try expect(quo.mod.items[1].eq(Element(T){ .coeff = 1, .index = 0 }));
+    try expect(quo.rank() == 1);
 }
 
 test "another basic example:  a+b = 0 where a=x0 and b=x1, i.e., x0=-x1." {
@@ -159,9 +208,10 @@ test "another basic example:  a+b = 0 where a=x0 and b=x1, i.e., x0=-x1." {
     defer quo.deinit();
     const mod = quo.mod;
     // std.debug.print("\nmod = {}\n", .{mod});
-    // Result is that x0 => -x1, x1 => x1
-    try expect(mod.items[0].eq(Element(T){ .coeff = -1, .index = 1 }));
-    try expect(mod.items[1].eq(Element(T){ .coeff = 1, .index = 1 }));
+    // Result is that x0 => -x1, x1 => x1, so 1 single basis element "0".
+    try expect(mod.items[0].eq(Element(T){ .coeff = -1, .index = 0 }));
+    try expect(mod.items[1].eq(Element(T){ .coeff = 1, .index = 0 }));
+    try expect(quo.rank() == 1);
 }
 
 test "example in which a relation dies:  a+a = 0 so x0 = 0" {
@@ -175,6 +225,7 @@ test "example in which a relation dies:  a+a = 0 so x0 = 0" {
     // std.debug.print("\nmod = {s}\n", .{mod.items});
     // Result is x0 = 0.
     try expect(mod.items[0].eq(Element(T){ .coeff = 0, .index = 0 }));
+    try expect(quo.rank() == 0);
 }
 
 test "basic example from the sage doctest" {
@@ -191,12 +242,12 @@ test "basic example from the sage doctest" {
     var quo = try Quotient(T).init(rels);
     defer quo.deinit();
     const mod = quo.mod;
-    try expect(mod.items[0].eq(E{ .coeff = -1, .index = 3 }));
-    try expect(mod.items[1].eq(E{ .coeff = -1, .index = 3 }));
-    try expect(mod.items[2].eq(E{ .coeff = -1, .index = 3 }));
-    try expect(mod.items[3].eq(E{ .coeff = 1, .index = 3 }));
-    try expect(mod.items[4].eq(E{ .coeff = 1, .index = 5 }));
-    try expect(mod.items[5].eq(E{ .coeff = 1, .index = 5 }));
+    try expect(mod.items[0].eq(E{ .coeff = -1, .index = 0 }));
+    try expect(mod.items[1].eq(E{ .coeff = -1, .index = 0 }));
+    try expect(mod.items[2].eq(E{ .coeff = -1, .index = 0 }));
+    try expect(mod.items[3].eq(E{ .coeff = 1, .index = 0 }));
+    try expect(mod.items[4].eq(E{ .coeff = 1, .index = 1 }));
+    try expect(mod.items[5].eq(E{ .coeff = 1, .index = 1 }));
     // std.debug.print("\nmod = {}\n", .{mod});
 }
 
