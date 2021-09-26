@@ -32,6 +32,13 @@ pub fn SparseMatrixMod(comptime T: type) type {
             self.rows.deinit();
         }
 
+        // Mutate this matrix by increasing the number of rows by 1.
+        // This is useful when building a sparse matrix.
+        pub fn appendRow(self: *Matrix) !void {
+            try self.rows.append(try SparseVectorMod(T).init(self.modulus, self.rows.allocator));
+            self.nrows += 1;
+        }
+
         pub fn print(self: Matrix) void {
             std.debug.print("\n", .{});
             var i: usize = 0;
@@ -139,6 +146,17 @@ test "setting and getting " {
     try expect((try m.get(0, 0)) == 2);
     try m.set(50, 50000, 13);
     try expect((try m.get(50, 50000)) == 2);
+}
+
+test "appending a row" {
+    var m = try SparseMatrixMod(i32).init(5, 1, 2, testing_allocator);
+    defer m.deinit();
+    try m.appendRow();
+    try expect(m.nrows == 2);
+    try expect(m.ncols == 2);
+    try m.appendRow();
+    try expect(m.nrows == 3);
+    try expect(m.ncols == 2);
 }
 
 test "computing an echelon form" {

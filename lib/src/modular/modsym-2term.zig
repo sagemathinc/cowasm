@@ -8,17 +8,16 @@ pub const ArrayList = std.ArrayList;
 
 // coeff *MUST* be -1 or 1 -- todo change to enum
 pub const Coeff = i4;
-pub const Index = u32;
 
 // IMPORTANT: T=u64 it's *MUCH* slower for larger values; use
 // small types when the number of generators is small.  Duh.
 
-pub fn Element(comptime T: type) type {
+pub fn Element(comptime Index: type) type {
     return struct {
         const Elt = @This();
 
         coeff: Coeff,
-        index: T,
+        index: Index,
 
         pub fn eq(self: Elt, right: Elt) bool {
             return self.coeff == right.coeff and self.index == right.index;
@@ -26,23 +25,25 @@ pub fn Element(comptime T: type) type {
     };
 }
 
-pub fn Relation(comptime T: type) type {
-    return struct { a: Element(T), b: Element(T) }; // the relation a + b = 0
+pub fn Relation(comptime Index: type) type {
+    return struct { a: Element(Index), b: Element(Index) }; // the relation a + b = 0
 }
 
-pub fn Relations(comptime T: type) type {
-    return ArrayList(Relation(T));
+pub fn Relations(comptime Index: type) type {
+    return ArrayList(Relation(Index));
 }
 
-pub fn TwoTermQuotient(comptime T: type) type {
+pub fn Quotient(comptime Index: type) type {
     return struct {
         const Quo = @This();
 
-        mod: ArrayList(Element(T)),
+        mod: ArrayList(Element(Index)),
+        rank: Index,
 
-        pub fn init(rels: Relations(T)) !Quo {
-            var mod = try twoTermQuotient(T, rels);
-            return Quo{ .mod = mod };
+        pub fn init(rels: Relations(Index)) !Quo {
+            var mod = try quotient(Index, rels);
+            const rank: Index = 0; // TODO!
+            return Quo{ .mod = mod, .rank = rank };
         }
 
         pub fn deinit(self: *Quo) void {
@@ -55,9 +56,9 @@ pub fn TwoTermQuotient(comptime T: type) type {
     };
 }
 
-fn twoTermQuotient(comptime T: type, rels: Relations(T)) !ArrayList(Element(T)) {
+fn quotient(comptime Index: type, rels: Relations(Index)) !ArrayList(Element(Index)) {
     // find largest index in any element
-    var n: T = 0;
+    var n: Index = 0;
     for (rels.items) |rel| {
         if (rel.a.index + 1 > n) {
             n = rel.a.index + 1;
@@ -66,15 +67,15 @@ fn twoTermQuotient(comptime T: type, rels: Relations(T)) !ArrayList(Element(T)) 
             n = rel.b.index + 1;
         }
     }
-    var free = try util.range(rels.allocator, T, n);
+    var free = try util.range(rels.allocator, Index, n);
     defer free.deinit();
     var coef = try util.constantList(rels.allocator, @as(Coeff, 1), n);
     defer coef.deinit();
-    var relatedToMe = try ArrayList(ArrayList(T)).initCapacity(rels.allocator, n);
+    var relatedToMe = try ArrayList(ArrayList(Index)).initCapacity(rels.allocator, n);
     defer relatedToMe.deinit();
-    var i: T = 0;
+    var i: Index = 0;
     while (i < n) : (i += 1) {
-        try relatedToMe.append(ArrayList(T).init(rels.allocator));
+        try relatedToMe.append(ArrayList(Index).init(rels.allocator));
     }
     defer {
         i = 0;
@@ -125,11 +126,11 @@ fn twoTermQuotient(comptime T: type, rels: Relations(T)) !ArrayList(Element(T)) 
             coef.items[die] = 0;
         }
     }
-    var mod = try ArrayList(Element(T)).initCapacity(rels.allocator, n);
+    var mod = try ArrayList(Element(Index)).initCapacity(rels.allocator, n);
     errdefer mod.deinit();
     i = 0;
     while (i < n) : (i += 1) {
-        try mod.append(Element(T){ .coeff = coef.items[i], .index = free.items[i] });
+        try mod.append(Element(Index){ .coeff = coef.items[i], .index = free.items[i] });
     }
     return mod;
 }
@@ -142,7 +143,7 @@ test "very basic example:  a+b = 0 where a=x0 and b=-x1, i.e., x0=x1." {
     var rels = Relations(T).init(allocator);
     defer rels.deinit();
     try rels.append(Relation(T){ .a = Element(T){ .coeff = 1, .index = 0 }, .b = Element(T){ .coeff = -1, .index = 1 } });
-    var quo = try TwoTermQuotient(T).init(rels);
+    var quo = try Quotient(T).init(rels);
     defer quo.deinit();
     // Result is that both generators in the quotient are equal to the second one:
     try expect(quo.mod.items[0].eq(Element(T){ .coeff = 1, .index = 1 }));
@@ -154,7 +155,7 @@ test "another basic example:  a+b = 0 where a=x0 and b=x1, i.e., x0=-x1." {
     var rels = Relations(T).init(allocator);
     defer rels.deinit();
     try rels.append(Relation(T){ .a = Element(T){ .coeff = 1, .index = 0 }, .b = Element(T){ .coeff = 1, .index = 1 } });
-    var quo = try TwoTermQuotient(T).init(rels);
+    var quo = try Quotient(T).init(rels);
     defer quo.deinit();
     const mod = quo.mod;
     // std.debug.print("\nmod = {}\n", .{mod});
@@ -168,7 +169,7 @@ test "example in which a relation dies:  a+a = 0 so x0 = 0" {
     var rels = Relations(T).init(allocator);
     defer rels.deinit();
     try rels.append(Relation(T){ .a = Element(T){ .coeff = 1, .index = 0 }, .b = Element(T){ .coeff = 1, .index = 0 } });
-    var quo = try TwoTermQuotient(T).init(rels);
+    var quo = try Quotient(T).init(rels);
     defer quo.deinit();
     const mod = quo.mod;
     // std.debug.print("\nmod = {s}\n", .{mod.items});
@@ -187,7 +188,7 @@ test "basic example from the sage doctest" {
     try rels.append(R{ .a = E{ .coeff = 1, .index = 1 }, .b = E{ .coeff = 1, .index = 3 } });
     try rels.append(R{ .a = E{ .coeff = 1, .index = 2 }, .b = E{ .coeff = 1, .index = 3 } });
     try rels.append(R{ .a = E{ .coeff = 1, .index = 4 }, .b = E{ .coeff = -1, .index = 5 } });
-    var quo = try TwoTermQuotient(T).init(rels);
+    var quo = try Quotient(T).init(rels);
     defer quo.deinit();
     const mod = quo.mod;
     try expect(mod.items[0].eq(E{ .coeff = -1, .index = 3 }));
@@ -200,21 +201,21 @@ test "basic example from the sage doctest" {
 }
 
 var rand = std.rand.DefaultPrng.init(0).random;
-fn bench1(comptime T: type, n: Index, nrels: Index) !void {
+fn bench1(comptime T: type, n: T, nrels: T) !void {
     var rels = Relations(T).init(allocator);
     defer rels.deinit();
-    var i: Index = 0;
+    var i: T = 0;
     while (i < nrels) : (i += 1) {
         const c1: i4 = if (rand.boolean()) -1 else 1;
         // I am using Biased because the version without that **HANGS**
         // when these tests get run indirectly when running the manin-symbols.zig tests.
         // I think this is an unreported bug in the zig standard library.
-        const in1: Index = rand.intRangeLessThanBiased(Index, 0, n);
+        const in1: T = rand.intRangeLessThanBiased(T, 0, n);
         const c2: i4 = if (rand.boolean()) -1 else 1;
-        const in2: Index = rand.intRangeLessThanBiased(Index, 0, n);
+        const in2: T = rand.intRangeLessThanBiased(T, 0, n);
         try rels.append(Relation(T){ .a = Element(T){ .coeff = c1, .index = in1 }, .b = Element(T){ .coeff = c2, .index = in2 } });
     }
-    var quo = try TwoTermQuotient(u32).init(rels);
+    var quo = try Quotient(u32).init(rels);
     quo.deinit();
 }
 
@@ -233,7 +234,7 @@ test "invalid input doesn't leak memory" {
     // that coeff of 2 is invalid
     try rels.append(Relation(T){ .a = Element(T){ .coeff = 2, .index = 0 }, .b = Element(T){ .coeff = 1, .index = 1 } });
     var caught = false;
-    _ = TwoTermQuotient(T).init(rels) catch {
+    _ = Quotient(T).init(rels) catch {
         caught = true;
     };
     try expect(caught);
@@ -245,8 +246,9 @@ test "invalid input doesn't leak memory" {
 const BENCH = false;
 test "bench -- how fast is it?" {
     if (BENCH) {
+        const T = u32;
         const time = std.time.milliTimestamp;
-        const values = [_]Index{ 4, 10, 100, 200, 10000, 100000, 200000, 500000 };
+        const values = [_]T{ 4, 10, 100, 200, 10000, 100000, 200000, 500000 };
         for (values) |N| {
             const t = time();
             std.debug.print("\nN={}\n", .{N});
