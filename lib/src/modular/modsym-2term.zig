@@ -89,6 +89,14 @@ pub fn Quotient(comptime Index: type) type {
             return self.basisToFreeGen.items.len;
         }
 
+        pub fn lift(self: Quo, basis: Index) Index {
+            return self.basisToFreeGen.items[basis];
+        }
+
+        pub fn reduce(self: Quo, gen: Index) Element(Index) {
+            return self.mod.items[gen];
+        }
+
         pub fn deinit(self: *Quo) void {
             self.mod.deinit();
             self.basisToFreeGen.deinit();

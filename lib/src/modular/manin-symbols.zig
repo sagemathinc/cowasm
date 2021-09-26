@@ -108,28 +108,47 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
             return twoTerm.Quotient(Index).init(relsIandS);
         }
 
-        pub fn relationMatrixModP(self: Syms, p: Coeff, quo: twoTerm.Quotient(Index)) !SparseMatrixMod(Coeff) {
-            defer quo.deinit();
-            var matrix = SparseMatrixMod(Coeff).init(p, 0, quo.rank);
-            var row: usize = 0;
-            var n = self.P1.count();
-            var alreadySeen = std.bit_set.DynamicBitSet.initEmpty(n, self.allocator);
+        pub fn relationMatrixMod(self: Syms, comptime T: type, p: T, quo: twoTerm.Quotient(Index)) !SparseMatrixMod(T) {
+
+            // Because S and T obviously do *not* commute, we have to compute
+            // *all* of the relations (up to x+T*x+T^2*x =Tx+T^2*x+x=T^2x+x+Tx)
+            // and reduce them modulo quo (the 2-term relations).
+
+            const rank = quo.rank();
+            var matrix = try SparseMatrixMod(T).init(p, 0, rank, self.allocator);
+            errdefer matrix.deinit();
+            var row: Index = 0; // current row we're adding to matrix.
+            const n: Index = quo.ngens;
+            var alreadySeen = try std.bit_set.DynamicBitSet.initEmpty(n, self.allocator);
             defer alreadySeen.deinit();
-            var i: usize = 0;
+            var i: Index = 0;
             while (i < n) : (i += 1) {
                 if (alreadySeen.isSet(i)) {
                     continue;
                 }
+                try matrix.appendRow();
+
+                // Put in the entry in new row for reduction of i-th gen via 2-term rels:
+                const mod = quo.reduce(i);
+                try matrix.set(row, mod.index, mod.coeff);
+
+                // Apply T:
                 const Ti = try self.P1.applyT(i);
                 alreadySeen.set(Ti);
+                const Ti_mod = quo.reduce(@intCast(Index, Ti));
+                if (Ti_mod.coeff != 0) {
+                    // important to add to the (row, col) positiion, not set it!
+                    const c = try matrix.get(row, Ti_mod.index);
+                    try matrix.set(row, Ti_mod.index, c + Ti_mod.coeff);
+                }
+                // Apply T^2:
                 const TTi = try self.P1.applyT(Ti);
                 alreadySeen.set(TTi);
-                try matrix.appendRow();
-                try matrix.set(row, i, 1);
-                const rTi = quo.reduce(Ti);
-                try matrix.set(row, rTi.index, rTi.coeff);
-                const rTTi = quo.reduce(TTi);
-                try matrix.set(row, rTTi.index, rTTi.coeff);
+                const TTi_mod = quo.reduce(@intCast(Index, TTi));
+                if (TTi_mod.coeff != 0) {
+                    const c = try matrix.get(row, TTi_mod.index);
+                    try matrix.set(row, TTi_mod.index, c + TTi_mod.coeff);
+                }
                 row += 1;
             }
             return matrix;
@@ -143,13 +162,13 @@ const expect = std.testing.expect;
 test "create a few spaces" {
     var M = try ManinSymbols(i32, u32).init(test_allocator, 11, Sign.zero);
     defer M.deinit();
-    M.print();
+    //M.print();
     var M2 = try ManinSymbols(i16, u32).init(test_allocator, 15, Sign.plus);
     defer M2.deinit();
-    M2.print();
+    //M2.print();
     var M3 = try ManinSymbols(i64, u32).init(test_allocator, 234446, Sign.minus);
     defer M3.deinit();
-    M3.print();
+    //M3.print();
 }
 
 test "compute relationsI" {
@@ -189,7 +208,7 @@ test "compute relationsS for N=7" {
     try expect(rels.items.len == 4);
 }
 
-test "compute quotient modulo two term relations for N=3" {
+test "compute quotient modulo two term relations for N=3, then the 3-term rels" {
     var M = try ManinSymbols(i32, u32).init(test_allocator, 3, Sign.zero);
     defer M.deinit();
     var quo = try M.twoTermQuotient();
@@ -206,6 +225,11 @@ test "compute quotient modulo two term relations for N=3" {
     try expect(items[2].index == 1);
     try expect(items[3].coeff == 1);
     try expect(items[3].index == 1);
+
+    // Now the 3-term rels
+    var matrix = try M.relationMatrixMod(i16, 97, quo);
+    defer matrix.deinit();
+    // matrix.print();
 }
 
 test "compute quotient modulo two term relations for N=3 with sign 1" {
@@ -224,4 +248,53 @@ test "compute quotient modulo two term relations for N=3 with sign 1" {
     try expect(items[2].index == 0);
     try expect(items[3].coeff == 0);
     try expect(items[3].index == 0);
+}
+
+// compute rank for given space modulo the given prime p.
+fn rankCheck(allocator: *std.mem.Allocator, N: usize, sign: Sign, p: i32) !usize {
+    var M = try ManinSymbols(i64, u32).init(allocator, N, sign);
+    defer M.deinit();
+    var quo = try M.twoTermQuotient();
+    defer quo.deinit();
+    var matrix = try M.relationMatrixMod(i64, p, quo);
+    defer matrix.deinit();
+    var pivots = try matrix.echelonize();
+    defer pivots.deinit();
+    return matrix.ncols - pivots.items.len;
+}
+
+test "compute some manin symbols presentations for prime N and do consistentcy checks on their dimension" {
+    try expect(1 == try rankCheck(test_allocator, 3, Sign.zero, 997));
+    try expect(1 + 2 == try rankCheck(test_allocator, 11, Sign.zero, 997));
+    try expect(5 == try rankCheck(test_allocator, 12, Sign.zero, 997));
+    try expect(5 == try rankCheck(test_allocator, 15, Sign.zero, 997));
+    try expect(9 == try rankCheck(test_allocator, 33, Sign.zero, 997));
+    try expect(1 + 4 == try rankCheck(test_allocator, 37, Sign.zero, 997));
+    //var r = try rankCheck(test_allocator, 389, Sign.zero, 997);
+    //std.debug.print("\nr={}\n",.{r});
+    //try expect(1 + 2*32 == try rankCheck(test_allocator, 389, Sign.zero, 997));
+}
+
+fn bench(N: usize, sign: Sign) !void {
+    const time = std.time.milliTimestamp;
+    const t = time();
+    const r = try rankCheck(test_allocator, N, sign, 997);
+    std.debug.print("\nbench({},{}) = {}ms, r={}\n", .{ N, sign, time() - t, r });
+}
+
+// zig test manin-symbols.zig --main-pkg-path .. -O ReleaseFast
+const DEBUG = false;
+//const DEBUG = true;
+test "bench" {
+    if (DEBUG) {
+        try bench(37, Sign.zero);
+        try bench(389, Sign.zero);
+        try bench(5000, Sign.zero);
+        try bench(5000, Sign.plus);
+        try bench(5000, Sign.minus);
+        try bench(5077, Sign.zero);
+        try bench(5077, Sign.plus);
+        try bench(10007, Sign.plus);
+        // try bench(100003, Sign.plus);
+    }
 }
