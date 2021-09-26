@@ -4,24 +4,59 @@ const std = @import("std");
 const util = @import("../util.zig");
 const errors = @import("../errors.zig");
 
-pub const List = std.ArrayList;
+pub const ArrayList = std.ArrayList;
 
 // coeff *MUST* be -1 or 1 -- todo change to enum
 pub const Coeff = i4;
-pub const Index = u32; // note that with u64 it's MUCH slower for larger values...
-pub const Element = struct {
-    coeff: Coeff,
-    index: Index,
-    pub fn eq(self: Element, right: Element) bool {
-        return self.coeff == right.coeff and self.index == right.index;
-    }
-};
-pub const Relation = struct { a: Element, b: Element }; // the relation a + b = 0
-pub const Relations = List(Relation);
+pub const Index = u32;
 
-pub fn twoTermQuotient(rels: Relations) !List(Element) {
+// IMPORTANT: T=u64 it's *MUCH* slower for larger values; use
+// small types when the number of generators is small.  Duh.
+
+pub fn Element(comptime T: type) type {
+    return struct {
+        const Elt = @This();
+
+        coeff: Coeff,
+        index: T,
+
+        pub fn eq(self: Elt, right: Elt) bool {
+            return self.coeff == right.coeff and self.index == right.index;
+        }
+    };
+}
+
+pub fn Relation(comptime T: type) type {
+    return struct { a: Element(T), b: Element(T) }; // the relation a + b = 0
+}
+
+pub fn Relations(comptime T: type) type {
+    return ArrayList(Relation(T));
+}
+
+pub fn TwoTermQuotient(comptime T: type) type {
+    return struct {
+        const Quo = @This();
+
+        mod: ArrayList(Element(T)),
+
+        pub fn init(rels: Relations(T)) !Quo {
+            var mod = try twoTermQuotient(T, rels);
+            return Quo{ .mod = mod };
+        }
+
+        pub fn deinit(self: *Quo) void {
+            self.mod.deinit();
+        }
+
+        pub fn print(self: Quo) void {
+            std.debug.print("{}\n", .{self.mod.items});
+        }
+    };
+}
+
+fn twoTermQuotient(comptime T: type, rels: Relations(T)) !ArrayList(Element(T)) {
     // find largest index in any element
-    const T = Index;
     var n: T = 0;
     for (rels.items) |rel| {
         if (rel.a.index + 1 > n) {
@@ -35,11 +70,11 @@ pub fn twoTermQuotient(rels: Relations) !List(Element) {
     defer free.deinit();
     var coef = try util.constantList(rels.allocator, @as(Coeff, 1), n);
     defer coef.deinit();
-    var relatedToMe = try List(List(T)).initCapacity(rels.allocator, n);
+    var relatedToMe = try ArrayList(ArrayList(T)).initCapacity(rels.allocator, n);
     defer relatedToMe.deinit();
     var i: T = 0;
     while (i < n) : (i += 1) {
-        try relatedToMe.append(List(T).init(rels.allocator));
+        try relatedToMe.append(ArrayList(T).init(rels.allocator));
     }
     defer {
         i = 0;
@@ -90,11 +125,11 @@ pub fn twoTermQuotient(rels: Relations) !List(Element) {
             coef.items[die] = 0;
         }
     }
-    var mod = try List(Element).initCapacity(rels.allocator, n);
+    var mod = try ArrayList(Element(T)).initCapacity(rels.allocator, n);
     errdefer mod.deinit();
     i = 0;
     while (i < n) : (i += 1) {
-        try mod.append(Element{ .coeff = coef.items[i], .index = free.items[i] });
+        try mod.append(Element(T){ .coeff = coef.items[i], .index = free.items[i] });
     }
     return mod;
 }
@@ -103,61 +138,70 @@ const allocator = std.testing.allocator;
 const expect = std.testing.expect;
 
 test "very basic example:  a+b = 0 where a=x0 and b=-x1, i.e., x0=x1." {
-    var rels = Relations.init(allocator);
+    const T = u16;
+    var rels = Relations(T).init(allocator);
     defer rels.deinit();
-    try rels.append(Relation{ .a = Element{ .coeff = 1, .index = 0 }, .b = Element{ .coeff = -1, .index = 1 } });
-    const mod = try twoTermQuotient(rels);
-    defer mod.deinit();
+    try rels.append(Relation(T){ .a = Element(T){ .coeff = 1, .index = 0 }, .b = Element(T){ .coeff = -1, .index = 1 } });
+    var quo = try TwoTermQuotient(T).init(rels);
+    defer quo.deinit();
     // Result is that both generators in the quotient are equal to the second one:
-    try expect(mod.items[0].eq(Element{ .coeff = 1, .index = 1 }));
-    try expect(mod.items[1].eq(Element{ .coeff = 1, .index = 1 }));
+    try expect(quo.mod.items[0].eq(Element(T){ .coeff = 1, .index = 1 }));
+    try expect(quo.mod.items[1].eq(Element(T){ .coeff = 1, .index = 1 }));
 }
 
 test "another basic example:  a+b = 0 where a=x0 and b=x1, i.e., x0=-x1." {
-    var rels = Relations.init(allocator);
+    const T = u16;
+    var rels = Relations(T).init(allocator);
     defer rels.deinit();
-    try rels.append(Relation{ .a = Element{ .coeff = 1, .index = 0 }, .b = Element{ .coeff = 1, .index = 1 } });
-    const mod = try twoTermQuotient(rels);
-    defer mod.deinit();
+    try rels.append(Relation(T){ .a = Element(T){ .coeff = 1, .index = 0 }, .b = Element(T){ .coeff = 1, .index = 1 } });
+    var quo = try TwoTermQuotient(T).init(rels);
+    defer quo.deinit();
+    const mod = quo.mod;
     // std.debug.print("\nmod = {}\n", .{mod});
     // Result is that x0 => -x1, x1 => x1
-    try expect(mod.items[0].eq(Element{ .coeff = -1, .index = 1 }));
-    try expect(mod.items[1].eq(Element{ .coeff = 1, .index = 1 }));
+    try expect(mod.items[0].eq(Element(T){ .coeff = -1, .index = 1 }));
+    try expect(mod.items[1].eq(Element(T){ .coeff = 1, .index = 1 }));
 }
 
 test "example in which a relation dies:  a+a = 0 so x0 = 0" {
-    var rels = Relations.init(allocator);
+    const T = u16;
+    var rels = Relations(T).init(allocator);
     defer rels.deinit();
-    try rels.append(Relation{ .a = Element{ .coeff = 1, .index = 0 }, .b = Element{ .coeff = 1, .index = 0 } });
-    const mod = try twoTermQuotient(rels);
-    defer mod.deinit();
+    try rels.append(Relation(T){ .a = Element(T){ .coeff = 1, .index = 0 }, .b = Element(T){ .coeff = 1, .index = 0 } });
+    var quo = try TwoTermQuotient(T).init(rels);
+    defer quo.deinit();
+    const mod = quo.mod;
     // std.debug.print("\nmod = {s}\n", .{mod.items});
     // Result is x0 = 0.
-    try expect(mod.items[0].eq(Element{ .coeff = 0, .index = 0 }));
+    try expect(mod.items[0].eq(Element(T){ .coeff = 0, .index = 0 }));
 }
 
 test "basic example from the sage doctest" {
-    var rels = Relations.init(allocator);
+    const T = u32;
+    var rels = Relations(T).init(allocator);
     defer rels.deinit();
     // [((0,1), (1,-1)), ((1,1), (3,1)), ((2,1),(3,1)), ((4,1),(5,-1))]
-    try rels.append(Relation{ .a = Element{ .coeff = 1, .index = 0 }, .b = Element{ .coeff = -1, .index = 1 } });
-    try rels.append(Relation{ .a = Element{ .coeff = 1, .index = 1 }, .b = Element{ .coeff = 1, .index = 3 } });
-    try rels.append(Relation{ .a = Element{ .coeff = 1, .index = 2 }, .b = Element{ .coeff = 1, .index = 3 } });
-    try rels.append(Relation{ .a = Element{ .coeff = 1, .index = 4 }, .b = Element{ .coeff = -1, .index = 5 } });
-    const mod = try twoTermQuotient(rels);
-    defer mod.deinit();
-    try expect(mod.items[0].eq(Element{ .coeff = -1, .index = 3 }));
-    try expect(mod.items[1].eq(Element{ .coeff = -1, .index = 3 }));
-    try expect(mod.items[2].eq(Element{ .coeff = -1, .index = 3 }));
-    try expect(mod.items[3].eq(Element{ .coeff = 1, .index = 3 }));
-    try expect(mod.items[4].eq(Element{ .coeff = 1, .index = 5 }));
-    try expect(mod.items[5].eq(Element{ .coeff = 1, .index = 5 }));
+    const E = Element(T);
+    const R = Relation(T);
+    try rels.append(R{ .a = E{ .coeff = 1, .index = 0 }, .b = E{ .coeff = -1, .index = 1 } });
+    try rels.append(R{ .a = E{ .coeff = 1, .index = 1 }, .b = E{ .coeff = 1, .index = 3 } });
+    try rels.append(R{ .a = E{ .coeff = 1, .index = 2 }, .b = E{ .coeff = 1, .index = 3 } });
+    try rels.append(R{ .a = E{ .coeff = 1, .index = 4 }, .b = E{ .coeff = -1, .index = 5 } });
+    var quo = try TwoTermQuotient(T).init(rels);
+    defer quo.deinit();
+    const mod = quo.mod;
+    try expect(mod.items[0].eq(E{ .coeff = -1, .index = 3 }));
+    try expect(mod.items[1].eq(E{ .coeff = -1, .index = 3 }));
+    try expect(mod.items[2].eq(E{ .coeff = -1, .index = 3 }));
+    try expect(mod.items[3].eq(E{ .coeff = 1, .index = 3 }));
+    try expect(mod.items[4].eq(E{ .coeff = 1, .index = 5 }));
+    try expect(mod.items[5].eq(E{ .coeff = 1, .index = 5 }));
     // std.debug.print("\nmod = {}\n", .{mod});
 }
 
 var rand = std.rand.DefaultPrng.init(0).random;
-fn bench1(n: Index, nrels: Index) !void {
-    var rels = Relations.init(allocator);
+fn bench1(comptime T: type, n: Index, nrels: Index) !void {
+    var rels = Relations(T).init(allocator);
     defer rels.deinit();
     var i: Index = 0;
     while (i < nrels) : (i += 1) {
@@ -168,26 +212,28 @@ fn bench1(n: Index, nrels: Index) !void {
         const in1: Index = rand.intRangeLessThanBiased(Index, 0, n);
         const c2: i4 = if (rand.boolean()) -1 else 1;
         const in2: Index = rand.intRangeLessThanBiased(Index, 0, n);
-        try rels.append(Relation{ .a = Element{ .coeff = c1, .index = in1 }, .b = Element{ .coeff = c2, .index = in2 } });
+        try rels.append(Relation(T){ .a = Element(T){ .coeff = c1, .index = in1 }, .b = Element(T){ .coeff = c2, .index = in2 } });
     }
-    const mod = try twoTermQuotient(rels);
-    mod.deinit();
+    var quo = try TwoTermQuotient(u32).init(rels);
+    quo.deinit();
 }
 
 test "do a difficult consistency check that code doesn't crash/leak/get too slow/etc." {
-    const values = [_]Index{ 4, 10, 100, 200, 10000, 50000 };
+    const T = u32;
+    const values = [_]T{ 4, 10, 100, 200, 10000, 50000 };
     for (values) |N| {
-        try bench1(N, @divFloor(N, 2));
+        try bench1(T, N, @divFloor(N, 2));
     }
 }
 
 test "invalid input doesn't leak memory" {
-    var rels = Relations.init(allocator);
+    const T = u32;
+    var rels = Relations(T).init(allocator);
     defer rels.deinit();
     // that coeff of 2 is invalid
-    try rels.append(Relation{ .a = Element{ .coeff = 2, .index = 0 }, .b = Element{ .coeff = 1, .index = 1 } });
+    try rels.append(Relation(T){ .a = Element(T){ .coeff = 2, .index = 0 }, .b = Element(T){ .coeff = 1, .index = 1 } });
     var caught = false;
-    _ = twoTermQuotient(rels) catch {
+    _ = TwoTermQuotient(T).init(rels) catch {
         caught = true;
     };
     try expect(caught);
@@ -204,7 +250,7 @@ test "bench -- how fast is it?" {
         for (values) |N| {
             const t = time();
             std.debug.print("\nN={}\n", .{N});
-            try bench1(N, @divFloor(N, 2));
+            try bench1(u32, N, @divFloor(N, 2));
             std.debug.print("{}ms\n", .{time() - t});
         }
     }
