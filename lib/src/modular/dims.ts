@@ -9,3 +9,7 @@ init();
 export function index(N) {
   return wasm.exports._index(N);
 }
+
+export function eulerPhi(N) {
+  return wasm.exports._eulerPhi(N);
+}

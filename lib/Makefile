@@ -1,4 +1,4 @@
-OPT           = #-O ReleaseFast
+OPT           = -O ReleaseFast
 CWD           = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 ZIG_PKG       = --main-pkg-path ${CWD}/src
