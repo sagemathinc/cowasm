@@ -7,9 +7,13 @@ export async function init() {
 init();
 
 export function index(N) {
-  return wasm.exports._index(N);
+  return wasm.exports.wasm_index(N);
 }
 
 export function eulerPhi(N) {
-  return wasm.exports._eulerPhi(N);
+  return wasm.exports.wasm_eulerPhi(N);
+}
+
+export function dimensionCuspForms(N) {
+  return wasm.exports.wasm_dimensionCuspForms(N);
 }

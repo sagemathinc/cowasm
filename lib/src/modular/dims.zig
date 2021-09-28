@@ -4,6 +4,7 @@ const std = @import("std");
 const trialDivision = @import("../trial-division.zig").trialDivision;
 const gcd = @import("../arith.zig").gcd;
 const errors = @import("../errors.zig");
+const factor = @import("../factor.zig");
 
 // Index of Gamma0(N) in SL2(Z), which is prod p^e + p^(e-1) for N = prod p^e.
 // The code below computes the powers of p in the course of finding how much
@@ -32,7 +33,7 @@ fn index(comptime T: type, N: T) T {
     return signed_prod(T, N, 1);
 }
 
-export fn _index(N: i32) i32 {
+export fn wasm_index(N: i32) i32 {
     return index(i32, N);
 }
 
@@ -40,7 +41,7 @@ fn eulerPhi(comptime T: type, N: T) T {
     return signed_prod(T, N, -1);
 }
 
-export fn _eulerPhi(N: i32) i32 {
+export fn wasm_eulerPhi(N: i32) i32 {
     return eulerPhi(i32, N);
 }
 
@@ -83,76 +84,80 @@ fn nu3(comptime T: type, N: T) T {
 }
 
 fn Divisors(comptime T: type) type {
-    if (@typeInfo(T).Int.bits > 128) {
-        // assuming that T is as at most 128 bits, since that what actually works with zig/LLVM.
-        unreachable;
-    }
+    const FACTORS: comptime_int = factor.maxFactors(T);
+
     return struct {
         const Divs = @This();
-        ppow: T,
-        p: T,
-        e: u8, // p^e exactly divides N
-        M: T, // prime to p part
+
+        factors: factor.SmallFactorization(T),
+        odometer: [FACTORS]u8, // the odometer that we step through
+        M: T, // current value of the iterator (what it will return when next is called).
         N: T,
-        divisorsOfM: *Divs,
+        i: u8, // current pointer to the odometer
 
         pub fn init(N: T) Divs {
-            if (N <= 1) {
-                // annoying special case; maybe shouldn't even allow this.
-                return Divs{ .p = 0, .ppow = 1, .e = 0, .M = 1, .N = 1, .divisorsOfM = undefined };
-            }
-            const p = trialDivision(N);
-            var e: u8 = 1;
-            var M = @divExact(N, p);
-            while (@mod(M, p) == 0) : (M = @divExact(M, p)) {
-                e += 1;
-            }
-            var divs = Divs.init(M);
-            return Divs{ .ppow = 1, .p = p, .e = e, .M = M, .N = N, .divisorsOfM = &divs };
+            return Divs{ .factors = factor.smallFactor(N), .odometer = [_]u8{0} ** FACTORS, .M = 1, .N = N, .i = 0 };
         }
 
         pub fn reset(self: *Divs) void {
-            self.ppow = 1;
-            self.divisorsOfM = &Divs.init(self.M);
+            self.current = [_]u8{0} ** FACTORS;
+            self.i = 0;
+            self.M = 1;
         }
 
-        pub fn next(self: *Divs) anyerror!T {
-            // returns error when no more divisors
-            if (self.N == 1) {
-                if (self.ppow == 1) {
-                    defer self.ppow += 1; // using 2 as a sentinel for done.
-                    return self.ppow;
-                } else {
-                    // stop iteration.
-                    return errors.General.StopIteration;
-                }
+        pub fn next(self: *Divs) !T {
+            if (self.M == 0) {
+                // done!
+                return errors.General.StopIteration;
             }
-            if (self.M == 1) {
-                // case when N is a prime power.
-                if (self.ppow > self.N) {
-                    return errors.General.StopIteration;
-                }
-                defer self.ppow *= self.p; // multiply by p "after" we return current prime power.
-                return self.ppow;
+            const result = self.M; // What we will return.
+            self.advance();
+            return result;
+        }
+
+        fn advance(self: *Divs) void {
+            if (self.N == 1) { // special case.
+                self.M = 0;
+                return;
             }
-            // Iterate through the powers 1, p, ..., p^e of p that divide N, and
-            // multiply each by all the divisors of M = N/p^e.
-            const d = self.divisorsOfM.next() catch {
-                // done iterating through divisors of M, so reset
-                // so can do again with next power of p.
-                self.divisorsOfM.reset();
-                _ = try self.divisorsOfM.next(); // move past the initial 1
-                self.ppow *= self.p;
-                return self.ppow;
-            };
-            std.debug.print("\ndivisors of M={} got d={}\n", .{ self.M, d });
-            return self.ppow * d;
+
+            // increment odometer one step forward
+            self.odometer[self.i] += 1;
+
+            while (self.i < self.factors.len) {
+                if (self.odometer[self.i] <= self.factors.factors[self.i].e) {
+                    // Last increment didn't overflow current position.
+                    self.M *= self.factors.factors[self.i].p;
+                    // Next iteration will be position 0.
+                    self.i = 0;
+                    return;
+                }
+                if (self.i == self.factors.len - 1 and self.odometer[self.i] >= self.factors.factors[self.i].e) {
+                    // We're done!
+                    self.M = 0;
+                    return;
+                }
+                // Last increment did overflow current digit, so account for that.
+                self.odometer[self.i] = 0;
+                var j: u8 = 0;
+                while (j < self.factors.factors[self.i].e) : (j += 1) {
+                    self.M = @divExact(self.M, self.factors.factors[self.i].p);
+                }
+                self.i += 1;
+                self.odometer[self.i] += 1;
+            }
         }
     };
 }
 
 pub fn divisors(N: anytype) Divisors(@TypeOf(N)) {
     return Divisors(@TypeOf(N)).init(N);
+}
+
+test "compute divisors of 3" {
+    var D = divisors(@as(i16, 3));
+    try expect((try D.next()) == 1);
+    try expect((try D.next()) == 3);
 }
 
 test "compute divisors of 9" {
@@ -169,34 +174,29 @@ test "compute divisors of 9" {
 }
 
 test "compute divisors of 12" {
-    var D = divisors(@as(i16, 12));
-    var i: u8 = 0;
-    while (i < 6) : (i += 1) {
-        std.debug.print("{}\n", .{try D.next()});
+    var D = divisors(@as(i8, 12));
+    for ([_]u8{ 1, 2, 4, 3, 6, 12 }) |d| {
+        try expect((try D.next()) == d);
     }
-    //     try expect((try D.next()) == 1);
-    //     try expect((try D.next()) == 3);
-    //     try expect((try D.next()) == 2);
-    //     try expect((try D.next()) == 6);
-    //     try expect((try D.next()) == 4);
-    //     try expect((try D.next()) == 12);
+}
+
+test "compute divisors of 100" {
+    var D = divisors(@as(i16, 100));
+    for ([_]u8{ 1, 2, 4, 5, 10, 20, 25, 50, 100 }) |d| {
+        try expect((try D.next()) == d);
+    }
 }
 
 // sum([arith.euler_phi(arith.gcd(d,N/d)) for d in N.divisors()])
 fn ncusps(comptime T: type, N: T) T {
-    // Trial division lets us easily run through the proper divisors d of N.
-    // THIS IS VERY WRONG, OF COURSE.
-    var d: T = N;
-    var N_over_d: T = 1;
-    var s: T = 1;
-    while (d > 1) {
-        const p = trialDivision(d);
-        d = @divExact(d, p);
-        N_over_d *= p;
-        s += eulerPhi(T, gcd(d, N_over_d));
-        //std.debug.print("\nd={}, N/d={}, sum phi(gcd(d,N/d))={}\n", .{ d, N_over_d, s });
+    var D = divisors(N);
+    var s: T = 0;
+    while (true) {
+        const d = D.next() catch {
+            return s;
+        };
+        s += eulerPhi(T, gcd(d, @divExact(N, d)));
     }
-    return s;
 }
 
 fn dimensionCuspForms(comptime T: type, N: T) T {
@@ -205,6 +205,10 @@ fn dimensionCuspForms(comptime T: type, N: T) T {
     const d = 12 + index(T, N) - nu2(T, N) * 3 - nu3(T, N) * 4 - ncusps(T, N) * 6;
     //std.debug.print("\nd12 = {}\n", .{d});
     return @divExact(d, 12);
+}
+
+export fn wasm_dimensionCuspForms(N: i32) i32 {
+    return dimensionCuspForms(i32, N);
 }
 
 // TESTING
@@ -277,13 +281,42 @@ test "Compute nu3" {
 
 test "Some number of cusps" {
     try expect(ncusps(i16, 11) == 2);
-    //try expect(ncusps(i16, 15) == 4);
+    try expect(ncusps(i16, 15) == 4);
     try expect(ncusps(i16, 97) == 2);
-    // try expect(ncusps(i16, 100) == 18);
+    try expect(ncusps(i16, 100) == 18);
 }
 
 test "Some dimensions" {
-    //try expect(dimensionCuspForms(i16, 11) == 1);
-    //try expect(dimensionCuspForms(i16, 12) == 0);
-    //try expect(dimensionCuspForms(i16, 100) == 7);
+    try expect(dimensionCuspForms(i16, 11) == 1);
+    try expect(dimensionCuspForms(i16, 12) == 0);
+    try expect(dimensionCuspForms(i16, 100) == 7);
+}
+
+fn sumDimBench(comptime T: type, B: T) T {
+    var s: T = 0;
+    var N: T = 1;
+    while (N <= B) : (N += 1) {
+        s += dimensionCuspForms(T, N);
+    }
+    return s;
+}
+
+test "Sum up the dimension to various bounds as a consistency check (with sage)" {
+    try expect(sumDimBench(i16, 11) == 1);
+    try expect(sumDimBench(i16, 100) == 429);
+    try expect(sumDimBench(i32, 1000) == 59365);
+    try expect(sumDimBench(i32, 10000) == 6268440);
+}
+
+test "Benchmark computing the sum of the dimensions of cusp forms" {
+    // %time sum(dimension_cusp_forms(N) for N in [1..100000])
+    // 10000:    sage:   603ms;  jsage:   21ms (factor of 29x);   nodejs:   11ms
+    // 100000:   sage:  6570ms;  jsage:  108ms (factor of 61x);   nodejs:  125ms
+    // 1000000:  sage: 72000ms;  jsage: 1612ms (factor of 45x);   nodejs: 1818ms
+    // and results matched
+    if (false) {
+        const t = time();
+        const s = sumDimBench(i64, 1000000);
+        std.debug.print("\nSum: s = {}, tm = {}ms\n", .{ s, time() - t });
+    }
 }
