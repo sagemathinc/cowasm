@@ -122,6 +122,23 @@ test "trial division with u64" {
     try expect(trialDivision(n2) == 10103);
 }
 
+// 128 bit works fine, even with WebAssembly.
+test "trial division with u128" {
+    const n: u128 = 170141183460469231731687303715884105728;
+    try expect(trialDivision(n) == 2);
+    const n2: u128 = 170141183460469231731687303715884105749; // = 2^127 + 21 = 71 * other stuff.
+    try expect(trialDivision(n2) == 71);
+}
+
+// This crashes at compile time with:
+//   LLVM ERROR: Unsupported library call operation!
+// My guess is this is because of using @mod; maybe we
+// have to write a better mod.
+// test "trial division with u256" {
+//     const n: u256 = 57896044618658097711785492504343953926634992332820282019728792003956564819967; // = 2^255 - 1 = 7 * other stuff.
+//     try expect(trialDivision(n) == 7);
+// }
+
 fn sumTest(start: u32, end: u32) u64 {
     var N: u32 = start;
     var s: u64 = 0;
