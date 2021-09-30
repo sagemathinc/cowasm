@@ -235,13 +235,8 @@ export default function Repl(options0: Partial<Options>) {
       }
     }
 
-    // TODO: very dumb temporary heuristic involving "="!
-    // We don't want to print anything when the result is
-    // from an assignment.  Easy to fool this of course with input "' = '".
-    // Fix might be to use our AST parser :-).
-    if (result != null && !js.includes(" = ") && global.ρσ_print != null) {
+    if (result != null && global.ρσ_print != null) {
       // We just print out the last result using normal Python printing.
-      // TODO: will move all this ρσ to a proper library.
       global.ρσ_print(result);
     }
   }
