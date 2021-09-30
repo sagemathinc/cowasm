@@ -114,9 +114,8 @@ export default async function Compile({
       console.log(output);
     }
     if (argv.execute) {
-      global.__require__ = require;
       // @ts-ignore
-      global.require = (name) => __require__(process.cwd() + "/" + name);
+      global.require = require;
       runInThisContext(output);
     }
   }

@@ -181,10 +181,8 @@ export default function Repl(options0: Partial<Options>) {
   }
 
   function initContext() {
-    // HORRIBLE TEMPORARY HACK: Install a hook so we can use js require directly from repl:
-    global.__require__ = require;
     // @ts-ignore
-    global.require = (name) => __require__(process.cwd() + "/" + name);
+    global.require = require;
 
     // and get all the code and name.
     runInThisContext(printAST(JPython.parse("(def ():\n yield 1\n)"), true));
