@@ -4,14 +4,12 @@
 
 # globals: ρσ_iterator_symbol, ρσ_bool
 
-def sum(iterable, start):
+def sum(iterable, start=0):
     if Array.isArray(iterable):
-        return iterable.reduce(
-            def(prev, cur): return prev+cur
-            ,
-            start or 0
-        )
-    ans = start or 0
+        def add(prev, cur):
+            return prev + cur
+        return iterable.reduce(add, start)
+    ans = start
     iterator = iter(iterable)
     r = iterator.next()
     while not r.done:

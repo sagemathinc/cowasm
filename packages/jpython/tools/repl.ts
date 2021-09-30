@@ -243,6 +243,11 @@ export default function Repl(options0: Partial<Options>) {
 
   // returns true if incomplete
   function compileAndRun(source: string): boolean {
+    let time: number | undefined = undefined;
+    if (source.startsWith("%time ") || source.startsWith("time ")) {
+      time = new Date().valueOf();
+      source = source.slice(5).trimLeft();
+    }
     const classes = toplevel?.classes;
     const scoped_flags = toplevel?.scoped_flags;
     try {
@@ -278,6 +283,9 @@ export default function Repl(options0: Partial<Options>) {
       }
     }
     runJS(output);
+    if (time) {
+      console.log(`Wall time: ${new Date().valueOf() - time}ms`);
+    }
     return false;
   }
 
