@@ -213,7 +213,7 @@ export default function Repl(options0: Partial<Options>) {
     }
   }
 
-  function runJS(js: string): void {
+  function runJS(js: string, noPrint: boolean): void {
     if (runInThisContext("show_js")) {
       options.console.log(
         colorize("---------- Compiled JavaScript ---------", "green", true)
@@ -235,7 +235,7 @@ export default function Repl(options0: Partial<Options>) {
       }
     }
 
-    if (result != null && global.ρσ_print != null) {
+    if (!noPrint && result != null && global.ρσ_print != null) {
       // We just print out the last result using normal Python printing.
       global.ρσ_print(result);
     }
@@ -282,7 +282,8 @@ export default function Repl(options0: Partial<Options>) {
         }
       }
     }
-    runJS(output);
+    const noPrint = source.trimRight().endsWith(";");
+    runJS(output, noPrint);
     if (time) {
       console.log(`Wall time: ${new Date().valueOf() - time}ms`);
     }

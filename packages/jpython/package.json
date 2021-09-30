@@ -1,13 +1,8 @@
 {
-  "name": "@sagemath/jpython",
-  "description": "A Javascript/Python friendly language for use by Sagejs",
-  "homepage": "https://github.com/williamstein/jpython",
-  "keywords": [
-    "javascript",
-    "python",
-    "language",
-    "compiler"
-  ],
+  "name": "@jsage/jpython",
+  "description": "A Python implementation in Javascript for use by JSage",
+  "homepage": "https://github.com/sagemathinc/JSage/tree/main/packages/jpython",
+  "keywords": ["javascript", "python", "language", "compiler"],
   "main": "tools/compiler.js",
   "scripts": {
     "test": "npx tsc && node bin/jpython self --complete --test",
@@ -18,10 +13,10 @@
     "prettier": "prettier --write .",
     "yapf": "yapf --write ."
   },
-  "version": "0.1",
+  "version": "1.0.1",
   "license": "BSD-2-Clause",
   "engines": {
-    "node": ">=0.12.0"
+    "node": ">=0.14.0"
   },
   "maintainers": [
     {
@@ -31,11 +26,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/williamstein/jpython"
+    "url": "https://github.com/sagemathinc/JSage"
   },
-  "workspaces": [
-    "../../lib"
-  ],
+  "workspaces": ["../../lib"],
   "dependencies": {
     "@jsage/lib": "*"
   },

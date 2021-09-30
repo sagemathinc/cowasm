@@ -448,6 +448,56 @@ function ρσ_range(start, stop, step) {
         });
         return ρσ_anonfunc;
     })();
+    function slice() {
+        var new_start = (arguments[0] === undefined || ( 0 === arguments.length-1 && arguments[arguments.length-1] !== null && typeof arguments[arguments.length-1] === "object" && arguments[arguments.length-1] [ρσ_kwargs_symbol] === true)) ? slice.__defaults__.new_start : arguments[0];
+        var new_stop = (arguments[1] === undefined || ( 1 === arguments.length-1 && arguments[arguments.length-1] !== null && typeof arguments[arguments.length-1] === "object" && arguments[arguments.length-1] [ρσ_kwargs_symbol] === true)) ? slice.__defaults__.new_stop : arguments[1];
+        var ρσ_kwargs_obj = arguments[arguments.length-1];
+        if (ρσ_kwargs_obj === null || typeof ρσ_kwargs_obj !== "object" || ρσ_kwargs_obj [ρσ_kwargs_symbol] !== true) ρσ_kwargs_obj = {};
+        if (Object.prototype.hasOwnProperty.call(ρσ_kwargs_obj, "new_start")){
+            new_start = ρσ_kwargs_obj.new_start;
+        }
+        if (Object.prototype.hasOwnProperty.call(ρσ_kwargs_obj, "new_stop")){
+            new_stop = ρσ_kwargs_obj.new_stop;
+        }
+        if (step < 0) {
+            if (new_start === undefined && new_stop === undefined) {
+                return ans;
+            }
+            return list(ans).slice(new_start, new_stop);
+        }
+        if (new_start === undefined) {
+            if (new_stop === undefined) {
+                return ans;
+            } else {
+                if (new_stop < 0) {
+                    new_stop = ρσ_operator_add(length, new_stop);
+                }
+                return ρσ_range(start, Math.max(start, Math.min(ρσ_operator_add(ρσ_operator_mul(new_stop, step), start), stop)), step);
+            }
+        }
+        if (new_stop === undefined) {
+            if (new_start < 0) {
+                new_start = ρσ_operator_add(length, new_start);
+            }
+            return ρσ_range(Math.min(stop, Math.max(ρσ_operator_add(ρσ_operator_mul(new_start, step), start), start)), stop, step);
+        } else {
+            if (new_stop < 0) {
+                new_stop = ρσ_operator_add(length, new_stop);
+            }
+            if (new_start < 0) {
+                new_start = ρσ_operator_add(length, new_start);
+            }
+            return ρσ_range(Math.min(ρσ_operator_mul(new_stop, step), Math.max(ρσ_operator_add(ρσ_operator_mul(new_start, step), start), start)), Math.max(ρσ_operator_add(ρσ_operator_mul(new_start, step), start), Math.min(ρσ_operator_add(ρσ_operator_mul(new_stop, step), start), stop)), step);
+        }
+    };
+    if (!slice.__defaults__) Object.defineProperties(slice, {
+        __defaults__ : {value: {new_start:undefined, new_stop:undefined}},
+        __handles_kwarg_interpolation__ : {value: true},
+        __argnames__ : {value: ["new_start", "new_stop"]},
+        __module__ : {value: "__main__"}
+    });
+
+    ans.slice = slice;
     ans.__len__ = (function() {
         var ρσ_anonfunc = function () {
             return length;
@@ -459,7 +509,11 @@ function ρσ_range(start, stop, step) {
     })();
     ans.__repr__ = (function() {
         var ρσ_anonfunc = function () {
-            return ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("range(", ρσ_str.format("{}", start)), ", "), ρσ_str.format("{}", stop)), ", "), ρσ_str.format("{}", step)), ")");
+            if (ρσ_equals(step, 1)) {
+                return ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("range(", ρσ_str.format("{}", start)), ", "), ρσ_str.format("{}", stop)), ")");
+            } else {
+                return ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("range(", ρσ_str.format("{}", start)), ", "), ρσ_str.format("{}", stop)), ", "), ρσ_str.format("{}", step)), ")");
+            }
         };
         if (!ρσ_anonfunc.__module__) Object.defineProperties(ρσ_anonfunc, {
             __module__ : {value: "__main__"}
@@ -2969,21 +3023,27 @@ function ρσ_instanceof() {
 if (!ρσ_instanceof.__module__) Object.defineProperties(ρσ_instanceof, {
     __module__ : {value: "__main__"}
 });
-function sum(iterable, start) {
+function sum() {
+    var iterable = ( 0 === arguments.length-1 && arguments[arguments.length-1] !== null && typeof arguments[arguments.length-1] === "object" && arguments[arguments.length-1] [ρσ_kwargs_symbol] === true) ? undefined : arguments[0];
+    var start = (arguments[1] === undefined || ( 1 === arguments.length-1 && arguments[arguments.length-1] !== null && typeof arguments[arguments.length-1] === "object" && arguments[arguments.length-1] [ρσ_kwargs_symbol] === true)) ? sum.__defaults__.start : arguments[1];
+    var ρσ_kwargs_obj = arguments[arguments.length-1];
+    if (ρσ_kwargs_obj === null || typeof ρσ_kwargs_obj !== "object" || ρσ_kwargs_obj [ρσ_kwargs_symbol] !== true) ρσ_kwargs_obj = {};
+    if (Object.prototype.hasOwnProperty.call(ρσ_kwargs_obj, "start")){
+        start = ρσ_kwargs_obj.start;
+    }
     var ans, iterator, r;
     if (Array.isArray(iterable)) {
-        return iterable.reduce((function() {
-            var ρσ_anonfunc = function (prev, cur) {
-                return ρσ_operator_add(prev, cur);
-            };
-            if (!ρσ_anonfunc.__argnames__) Object.defineProperties(ρσ_anonfunc, {
-                __argnames__ : {value: ["prev", "cur"]},
-                __module__ : {value: "__main__"}
-            });
-            return ρσ_anonfunc;
-        })(), start || 0);
+        function add(prev, cur) {
+            return ρσ_operator_add(prev, cur);
+        };
+        if (!add.__argnames__) Object.defineProperties(add, {
+            __argnames__ : {value: ["prev", "cur"]},
+            __module__ : {value: "__main__"}
+        });
+
+        return iterable.reduce(add, start);
     }
-    ans = start || 0;
+    ans = start;
     iterator = iter(iterable);
     r = iterator.next();
     while (!r.done) {
@@ -2992,7 +3052,9 @@ function sum(iterable, start) {
     }
     return ans;
 };
-if (!sum.__argnames__) Object.defineProperties(sum, {
+if (!sum.__defaults__) Object.defineProperties(sum, {
+    __defaults__ : {value: {start:0}},
+    __handles_kwarg_interpolation__ : {value: true},
     __argnames__ : {value: ["iterable", "start"]},
     __module__ : {value: "__main__"}
 });
@@ -9734,7 +9796,7 @@ return this.__repr__();
         var is_token = ρσ_modules.tokenizer.is_token;
         var RESERVED_WORDS = ρσ_modules.tokenizer.RESERVED_WORDS;
 
-        COMPILER_VERSION = "f0edd604756eda06ac4cdac9d9207caf96bba247";
+        COMPILER_VERSION = "2100f74102156744d52d52f46fa053ef29ecffbe";
         PYTHON_FLAGS = (function(){
             var ρσ_d = Object.create(null);
             ρσ_d["dict_literals"] = true;
