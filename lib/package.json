@@ -1,6 +1,6 @@
 {
   "name": "@jsage/lib",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "SageJS",
   "exports": {
     "./*": "./dist/*.js",
@@ -12,7 +12,6 @@
   "files": [
     "dist/*",
     "README.md",
-    "src/*",
     "package.json",
     "tsconfig.json",
     "Makefile"
