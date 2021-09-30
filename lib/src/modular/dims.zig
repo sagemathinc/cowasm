@@ -5,6 +5,8 @@ const trialDivision = @import("../trial-division.zig").trialDivision;
 const gcd = @import("../arith.zig").gcd;
 const errors = @import("../errors.zig");
 const factor = @import("../factor.zig");
+const expect = std.testing.expect;
+const time = std.time.milliTimestamp;
 
 // Index of Gamma0(N) in SL2(Z), which is prod p^e + p^(e-1) for N = prod p^e.
 // The code below computes the powers of p in the course of finding how much
@@ -199,8 +201,8 @@ fn ncusps(comptime T: type, N: T) T {
     }
 }
 
-fn dimensionCuspForms(comptime T: type, N: T) T {
-    // dim = 1 + index / 12  - nu2/4 - nu3/3 - ncusps/2
+pub fn dimensionCuspForms(comptime T: type, N: T) T {
+    // dim = 1 + index/12  - nu2/4 - nu3/3 - ncusps/2
     // we multiply by 12 to avoid arithmetic with rational numbers.
     const d = 12 + index(T, N) - nu2(T, N) * 3 - nu3(T, N) * 4 - ncusps(T, N) * 6;
     //std.debug.print("\nd12 = {}\n", .{d});
@@ -211,10 +213,52 @@ export fn wasm_dimensionCuspForms(N: i32) i32 {
     return dimensionCuspForms(i32, N);
 }
 
-// TESTING
+pub fn dimensionModularForms(comptime T: type, N: T) T {
+    // We compute directly instead of adding dim S and dim E like in Sage,
+    // to avoid computing ncpus twice -- it's expensive, after all!
+    // dim = dim S + dim E = 1 + index/12  - nu2/4 - nu3/3 - ncusps/2 + ncusps - 1
+    //     =index/12  - nu2/4 - nu3/3 + ncusps/2
+    const d = index(T, N) - nu2(T, N) * 3 - nu3(T, N) * 4 + ncusps(T, N) * 6;
+    return @divExact(d, 12);
+}
 
-const expect = std.testing.expect;
-const time = std.time.milliTimestamp;
+test "Compute dimension of space of modular forms" {
+    try expect(dimensionModularForms(i32, 389) == 33);
+    try expect(dimensionModularForms(i32, 100) == 24);
+    var N: i32 = 1;
+    var s: i32 = 0;
+    var t = time();
+    while (N <= 10000) : (N += 1) {
+        s += dimensionModularForms(i32, N);
+    }
+    std.debug.print("\n sum mod form dim = {}, {}ms\n", .{ s, time() - t });
+    try expect(s == 6402996);
+}
+
+export fn wasm_dimensionModularForms(N: i32) i32 {
+    return dimensionModularForms(i32, N);
+}
+
+pub fn dimensionEisensteinSeries(comptime T: type, N: T) T {
+    return ncusps(T, N) - 1;
+}
+
+test "Compute dimension of space of Eisenstein series" {
+    try expect(dimensionEisensteinSeries(i32, 389) == 1);
+    try expect(dimensionEisensteinSeries(i32, 100) == 17);
+    var N: i32 = 1;
+    var s: i32 = 0;
+    var t = time();
+    while (N <= 10000) : (N += 1) {
+        s += dimensionEisensteinSeries(i32, N);
+    }
+    std.debug.print("\n sum eis dim = {}, {}ms\n", .{ s, time() - t });
+    try expect(s == 134556);
+}
+
+export fn wasm_dimensionEisensteinSeries(N: i32) i32 {
+    return dimensionEisensteinSeries(i32, N);
+}
 
 test "Compute index of some Gamma0(N)'s'" {
     try expect(index(i16, 1) == 1);

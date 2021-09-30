@@ -17,3 +17,11 @@ export function eulerPhi(N) {
 export function dimensionCuspForms(N) {
   return wasm.exports.wasm_dimensionCuspForms(N);
 }
+
+export function dimensionModularForms(N) {
+  return wasm.exports.wasm_dimensionModularForms(N);
+}
+
+export function dimensionEisensteinSeries(N) {
+  return wasm.exports.wasm_dimensionEisensteinSeries(N);
+}
