@@ -310,9 +310,9 @@ test "Sum up the dimension to various bounds as a consistency check (with sage)"
 
 test "Benchmark computing the sum of the dimensions of cusp forms" {
     // %time sum(dimension_cusp_forms(N) for N in [1..100000])
-    // 10000:    sage:   603ms;  jsage:   21ms (factor of 29x);   nodejs:   11ms
-    // 100000:   sage:  6570ms;  jsage:  108ms (factor of 61x);   nodejs:  125ms
-    // 1000000:  sage: 72000ms;  jsage: 1612ms (factor of 45x);   nodejs: 1818ms
+    // 10000:    sage:   603ms;  native-zig:   21ms (factor of 29x);   nodejs:   11ms
+    // 100000:   sage:  6570ms;  native-zig:  108ms (factor of 61x);   nodejs:  125ms
+    // 1000000:  sage: 72000ms;  native-zig: 1612ms (factor of 45x);   nodejs: 1818ms
     // and results matched
     if (false) {
         const t = time();

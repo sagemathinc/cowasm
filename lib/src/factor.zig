@@ -54,7 +54,7 @@ pub fn factorTrialDivision(allocator: *std.mem.Allocator, N: anytype) !Factoriza
 // Also the exponent of any prime power divisor fits in a u8, obviously.
 // This wastes some memory, but doesn't require any dynamic heap allocation.
 // NOTE: our trial division implementation is way too slow to be useful
-// for most numbers near 128 bits!  (TODO: Probably adding a quick primality 
+// for most numbers near 128 bits!  (TODO: Probably adding a quick primality
 // test would make this usable up to 128 bits though.)
 fn SmallPrimePower(comptime T: type) type {
     return struct { p: T, e: u8 };
