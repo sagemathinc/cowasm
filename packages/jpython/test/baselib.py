@@ -268,7 +268,8 @@ a, b = range(1111111111)
 assrt.equal(a, 0)
 assrt.equal(b, 1)
 assrt.equal(len(range(10)), 10)
-assrt.equal(str(range(10)), 'range(0, 10, 1)')
+assrt.equal(str(range(10)), 'range(0, 10)')
+assrt.equal(str(range(1, 10, 2)), 'range(1, 10, 2)')
 
 assrt.deepEqual(divmod(7, 3), [2, 1])
 assrt.deepEqual(divmod(-7, 3), [-3, 2])
@@ -288,3 +289,16 @@ assrt.throws(def(): max([]);, TypeError)
 assrt.equal(9, max(defval=9))
 assrt.equal(9, max([], defval=9))
 assrt.equal(1, max([{'k':0}, {'k':1}], key=def(x): return x.k;))
+
+# Slicing ranges
+assrt.equal(str(range(10)[:]), 'range(0, 10)')
+assrt.equal(str(range(10)[-1:]), 'range(9, 10)')
+assrt.equal(str(range(10)[:-1]), 'range(0, 9)')
+assrt.equal(str(range(10)[5:]), 'range(5, 10)')
+assrt.equal(str(range(3, 15, 3)[3:]), 'range(12, 15, 3)')
+assrt.equal(str(range(3, 15, 3)[-3:]), 'range(6, 15, 3)')
+assrt.equal(str(range(3, 15, 3)[-3:-1]), 'range(6, 12, 3)')
+# lazy implementation for negative step
+assrt.equal(str(range(15,3,-3)[1:]), '[12, 9, 6]')
+
+

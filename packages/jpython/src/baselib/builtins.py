@@ -196,10 +196,42 @@ def ρσ_range(start, stop, step):
         if not this._cached:
             this._cached = list(this)
         return this._cached.index(val)
+
+    def slice(new_start=undefined, new_stop=undefined):
+        if step < 0:
+            if new_start is undefined and new_stop is undefined:
+                return ans
+            # I'm too lazy to do this directly, so just fallback for now.
+            return list(ans)[new_start:new_stop]
+
+        if new_start is undefined:
+            if new_stop is undefined:
+                return ans
+            else:
+                if new_stop < 0:
+                    new_stop = (length + new_stop);
+                return ρσ_range(start, Math.max(start, Math.min(new_stop*step+start, stop)), step)
+        if new_stop is undefined:
+            if new_start < 0:
+                new_start = (length + new_start);
+            return ρσ_range(Math.min(stop, Math.max(new_start*step+start, start)), stop, step)
+        else:
+            if new_stop < 0:
+                new_stop = (length + new_stop);
+            if new_start < 0:
+                new_start = (length + new_start);
+            return ρσ_range(Math.min(new_stop*step, Math.max(new_start*step+start, start)), Math.max(new_start*step+start, Math.min(new_stop*step+start, stop)), step)
+    ans.slice = slice;
+
+    # ans.__getitem__
+
     ans.__len__ = def():
         return length
     ans.__repr__ = def():
-        return f'range({start}, {stop}, {step})'
+        if step == 1:
+            return f'range({start}, {stop})'
+        else:
+            return f'range({start}, {stop}, {step})'
     ans.__str__ = ans.toString = ans.__repr__
     if jstype(Proxy) is 'function':
         ans = new Proxy(ans, {
@@ -287,7 +319,6 @@ def ρσ_max(*args, **kwargs):
     if kwargs.defval is not undefined:
         return kwargs.defval
     raise TypeError('expected at least one argument')
-
 
 v'var round = ρσ_round; var abs = Math.abs, max = ρσ_max.bind(Math.max), min = ρσ_max.bind(Math.min), bool = ρσ_bool, type = ρσ_type'
 v'var float = ρσ_float, int = ρσ_int, arraylike = ρσ_arraylike_creator(), ρσ_arraylike = arraylike'
