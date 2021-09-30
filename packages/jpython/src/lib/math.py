@@ -41,12 +41,22 @@ def factorial(x):
         raise ValueError("factorial() only accepts integral values")
     factorial.cache = []
 
-    def r(n):
-        if n is 0 or n is 1:
-            return 1
-        if not factorial.cache[n]:
-            factorial.cache[n] = r(n - 1) * n
-        return factorial.cache[n]
+    if x <= 12:
+        # normal javascript integer
+        def r(n):
+            if n is 0 or n is 1:
+                return 1
+            if not factorial.cache[n]:
+                factorial.cache[n] = r(n - 1) * n
+            return factorial.cache[n]
+    else:
+        # use BigInt to avoid overflow
+        def r(n):
+            if n is 0 or n is 1:
+                return BigInt(1)
+            if not factorial.cache[n]:
+                factorial.cache[n] = r(n - 1) * BigInt(n)
+            return factorial.cache[n]
 
     return r(x)
 
