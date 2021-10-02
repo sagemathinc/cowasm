@@ -172,21 +172,13 @@ def function_annotation(self, output, strip_first, name):
     props.__module__ = def():
         output.print(module_name)
 
-    names = Object.keys(props)
-    output.indent()
-    # Only define the properties if they were not already defined, which
-    # can happen if the function definition is inside a loop, for example.
-    output.spaced('if', '(!' + fname + '.' + names[0] + ')', 'Object.defineProperties(' + fname)
-    output.comma()
-    output.with_block(def():
-        for v'var i = 0; i < names.length; i++':
-            name = names[i]
-            output.indent(), output.spaced(name, ':', '{value:', ''), props[name](), output.print('}')
-            if i < names.length - 1:
-                output.print(',')
-            output.newline()
-    )
-    output.print(')'), output.end_statement()
+    for name in props:
+        output.print(f"{fname}.{name} = ")
+        props[name]()  # calling this prints it out
+        output.end_statement()
+
+    output.print("undefined") # so defining function in repl doesn't print out last assignment above.
+    output.end_statement()
 
 
 def function_definition(self, output, strip_first, as_expression):
