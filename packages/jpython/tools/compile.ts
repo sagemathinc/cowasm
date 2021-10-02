@@ -48,6 +48,7 @@ interface OutputOptions {
   module_cache_dir?: string;
   comments?: Function | boolean;
   baselib_plain?: string;
+  sage?: boolean; // sage-style preparsing
 }
 
 export default async function Compile({
@@ -68,6 +69,7 @@ export default async function Compile({
     stats?: boolean;
     filename_for_stdin?: string;
     comments?: string;
+    sage?: boolean;
   };
   src_path: string;
   lib_path: string;
@@ -97,6 +99,7 @@ export default async function Compile({
       import_dirs: getImportDirs(argv.import_path),
       discard_asserts: argv.discard_asserts,
       module_cache_dir,
+      sage: argv.sage,
     });
   }
 

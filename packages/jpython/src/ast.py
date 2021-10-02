@@ -350,7 +350,7 @@ class AST_Import(AST_Statement):
         )
 
 class AST_Imports(AST_Statement):
-    "Container for a single import"
+    "Container for any number of imports"
     properties = {
         'imports': "[AST_Import+] array of imports",
     }

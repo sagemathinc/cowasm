@@ -38,6 +38,7 @@
     "typescript": "^4.4.3"
   },
   "bin": {
-    "jpython": "bin/jpython"
+    "jpython": "bin/jpython",
+    "jsage": "bin/jsage"
   }
 }

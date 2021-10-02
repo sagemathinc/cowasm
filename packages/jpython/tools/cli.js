@@ -421,6 +421,12 @@ it.
 */
 });
 
+opt("jsage", "", "bool", false, function () {
+/*
+Enable everything implemented from our Sage-style preparser
+*/
+});
+
 create_group(
   "lint",
   "[input1.py input2.py ...]",

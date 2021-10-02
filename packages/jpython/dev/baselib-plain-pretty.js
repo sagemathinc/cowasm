@@ -1,6 +1,6 @@
 var ρσ_len;
 function ρσ_operator_add(a, b) {
-    return (typeof a == 'object'  && a.__add__ != null) ? a.__add__(b) : a + b;
+    return (typeof a !== 'object' ? a+b : ((a.__add__ != null ? a.__add__(b) : a.concat != null ? a.concat(b) : a + b)));
 };
 if (!ρσ_operator_add.__argnames__) Object.defineProperties(ρσ_operator_add, {
     __argnames__ : {value: ["a", "b"]},

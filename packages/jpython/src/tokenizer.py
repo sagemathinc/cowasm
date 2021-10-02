@@ -28,9 +28,9 @@ NAME_PAT = r"%js /[a-zA-Z ]/"
 
 OPERATORS = make_predicate([
     "in", "instanceof", "typeof", "new", "void", "del", "+", "-", "not", "~",
-    "&", "|", "^", "**", "*", "//", "/", "%", ">>", "<<", ">>>", "<", ">",
-    "<=", ">=", "==", "is", "!=", "=", "+=", "-=", "//=", "/=", "*=", "%=",
-    ">>=", "<<=", ">>>=", "|=", "^=", "&=", "and", "or", "@", "->"
+    "&", "|", "^^", "^", "**", "*", "//", "/", "%", ">>", "<<", ">>>", "<",
+    ">", "<=", ">=", "==", "is", "!=", "=", "+=", "-=", "//=", "/=", "*=",
+    "%=", ">>=", "<<=", ">>>=", "|=", "^=", "&=", "and", "or", "@", "->"
 ])
 
 OP_MAP = {
@@ -158,6 +158,8 @@ EX_EOF = {}
 
 def tokenizer(raw_text, filename):
     S = {
+        'exponent': # parse ^ as exponent and ^^ as xor
+        False,
         'text':
         raw_text.replace(r"%js /\r\n?|[\n\u2028\u2029]/g",
                          "\n").replace(r"%js /\uFEFF/g", ""),
@@ -231,6 +233,11 @@ def tokenizer(raw_text, filename):
         S.tokpos = S.pos
 
     def token(type, value, is_comment, keep_newline):
+        if S.exponent and type == 'operator':
+            if value == '^':
+                value = '**'
+            elif value == '^^':
+                value = '^'
         S.regex_allowed = (type is "operator" or type is "keyword"
                            and KEYWORDS_BEFORE_EXPRESSION[value]
                            or type is "punc" and PUNC_BEFORE_EXPRESSION[value])

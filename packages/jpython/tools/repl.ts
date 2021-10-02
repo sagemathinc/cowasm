@@ -42,6 +42,7 @@ export interface Options {
   histfile: string;
   historySize: number;
   mockReadline?: Function; // for mocking readline (for testing only)
+  jsage?: boolean; // sage-style preparsing
 }
 
 function replDefaults(options: Partial<Options>): Options {
@@ -122,7 +123,9 @@ function createReadlineInterface(options: Options, JPython) {
 
 export default function Repl(options0: Partial<Options>) {
   const options = replDefaults(options0);
-  const JPython = createCompiler({ console: options.console });
+  const JPython = createCompiler({
+    console: options.console,
+  });
   const readline = createReadlineInterface(options, JPython);
   const colorize = options.mockReadline
     ? (string, _color?, _bold?) => string
@@ -140,7 +143,9 @@ export default function Repl(options0: Partial<Options>) {
 
   options.console.log(
     colorize(
-      `Welcome to JPython.  Using Node.js ${process.version}.`,
+      `Welcome to ${options.jsage ? "JSage" : "JPython"}.  Using Node.js ${
+        process.version
+      }.`,
       "green",
       true
     )
@@ -258,6 +263,7 @@ export default function Repl(options0: Partial<Options>) {
         import_dirs: importDirs,
         classes,
         scoped_flags,
+        jsage: options.jsage,
       });
     } catch (err) {
       if (err.is_eof && err.line == buffer.length && err.col > 0) {

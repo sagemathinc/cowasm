@@ -7,7 +7,7 @@
     if( typeof HTMLCollection !== "undefined" && typeof Symbol === "function") NodeList.prototype[Symbol.iterator] = HTMLCollection.prototype[Symbol.iterator] = NamedNodeMap.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
 var ρσ_len;
 function ρσ_operator_add(a, b) {
-    return (typeof a == 'object'  && a.__add__ != null) ? a.__add__(b) : a + b;
+    return (typeof a !== 'object' ? a+b : ((a.__add__ != null ? a.__add__(b) : a.concat != null ? a.concat(b) : a + b)));
 };
 if (!ρσ_operator_add.__argnames__) Object.defineProperties(ρσ_operator_add, {
     __argnames__ : {value: ["a", "b"]},
@@ -8770,7 +8770,7 @@ return this.__repr__();
         }).call(this);
         HEX_PAT = /[a-fA-F0-9]/;
         NAME_PAT = /[a-zA-Z ]/;
-        OPERATORS = make_predicate(ρσ_list_decorate([ "in", "instanceof", "typeof", "new", "void", "del", "+", "-", "not", "~", "&", "|", "^", "**", "*", "//", "/", "%", ">>", "<<", ">>>", "<", ">", "<=", ">=", "==", "is", "!=", "=", "+=", "-=", "//=", "/=", "*=", "%=", ">>=", "<<=", ">>>=", "|=", "^=", "&=", "and", "or", "@", "->" ]));
+        OPERATORS = make_predicate(ρσ_list_decorate([ "in", "instanceof", "typeof", "new", "void", "del", "+", "-", "not", "~", "&", "|", "^^", "^", "**", "*", "//", "/", "%", ">>", "<<", ">>>", "<", ">", "<=", ">=", "==", "is", "!=", "=", "+=", "-=", "//=", "/=", "*=", "%=", ">>=", "<<=", ">>>=", "|=", "^=", "&=", "and", "or", "@", "->" ]));
         OP_MAP = (function(){
             var ρσ_d = Object.create(null);
             ρσ_d["or"] = "||";
@@ -8912,6 +8912,7 @@ return this.__repr__();
             var S, read_string, read_regexp;
             S = (function(){
                 var ρσ_d = Object.create(null);
+                ρσ_d["exponent"] = false;
                 ρσ_d["text"] = raw_text.replace(/\r\n?|[\n\u2028\u2029]/g, "\n").replace(/\uFEFF/g, "");
                 ρσ_d["filename"] = filename;
                 ρσ_d["pos"] = 0;
@@ -8992,6 +8993,13 @@ return this.__repr__();
 
             function token(type, value, is_comment, keep_newline) {
                 var ret, i;
+                if (S.exponent && ρσ_equals(type, "operator")) {
+                    if (ρσ_equals(value, "^")) {
+                        value = "**";
+                    } else if (ρσ_equals(value, "^^")) {
+                        value = "^";
+                    }
+                }
                 S.regex_allowed = type === "operator" || type === "keyword" && KEYWORDS_BEFORE_EXPRESSION[(typeof value === "number" && value < 0) ? KEYWORDS_BEFORE_EXPRESSION.length + value : value] || type === "punc" && PUNC_BEFORE_EXPRESSION[(typeof value === "number" && value < 0) ? PUNC_BEFORE_EXPRESSION.length + value : value];
                 if (type === "operator" && value === "is" && S.text.substr(S.pos).trimLeft().substr(0, 4).trimRight() === "not") {
                     next_token();
@@ -9805,9 +9813,10 @@ return this.__repr__();
         var is_token = ρσ_modules.tokenizer.is_token;
         var RESERVED_WORDS = ρσ_modules.tokenizer.RESERVED_WORDS;
 
-        COMPILER_VERSION = "1db087d6ed8e04ea46f2de11aef6e91bf5384735";
+        COMPILER_VERSION = "8eb1a76744b87a2f52351856406b56558d537303";
         PYTHON_FLAGS = (function(){
             var ρσ_d = Object.create(null);
+            ρσ_d["exponent"] = true;
             ρσ_d["dict_literals"] = true;
             ρσ_d["overload_getitem"] = true;
             ρσ_d["bound_methods"] = true;
@@ -10987,7 +10996,11 @@ return this.__repr__();
                     if (!PYTHON_FLAGS) {
                         croak(ρσ_operator_add("Unknown __python__ flag: ", name));
                     }
-                    S.scoped_flags.set(name, val);
+                    if (ρσ_equals(name, "exponent")) {
+                        S.input.context()["exponent"] = val;
+                    } else {
+                        S.scoped_flags.set(name, val);
+                    }
                     next();
                     if (is_("punc", ",")) {
                         next();
@@ -13091,6 +13104,7 @@ return this.__repr__();
                 ρσ_d["scoped_flags"] = Object.create(null);
                 ρσ_d["discard_asserts"] = false;
                 ρσ_d["module_cache_dir"] = "";
+                ρσ_d["jsage"] = false;
                 return ρσ_d;
             }).call(this));
             import_dirs = (function() {
@@ -13189,6 +13203,9 @@ return this.__repr__();
                 }).call(this);
                 return ρσ_d;
             }).call(this);
+            if (options.jsage) {
+                S.input.context()["exponent"] = true;
+            }
             if (options.classes) {
                 var ρσ_Iter74 = options.classes;
                 ρσ_Iter74 = ((typeof ρσ_Iter74[Symbol.iterator] === "function") ? (ρσ_Iter74 instanceof Map ? ρσ_Iter74.keys() : ρσ_Iter74) : Object.keys(ρσ_Iter74));

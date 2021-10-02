@@ -27,7 +27,7 @@ from tokenizer import tokenizer, is_token, RESERVED_WORDS
 
 
 COMPILER_VERSION = '__COMPILER_VERSION__'
-PYTHON_FLAGS = {'dict_literals':True, 'overload_getitem':True, 'bound_methods':True, 'hash_literals':True}
+PYTHON_FLAGS = {'exponent':True, 'dict_literals':True, 'overload_getitem':True, 'bound_methods':True, 'hash_literals':True}
 
 
 def get_compiler_version():
@@ -776,7 +776,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
                 'imported_modules': imported_modules,
                 'importing_modules': importing_modules,
                 'discard_asserts': options.discard_asserts,
-                'module_cache_dir': options.module_cache_dir,
+                'module_cache_dir': options.module_cache_dir
             })  # This function will add the module to imported_modules itself
 
         imported_modules[key].srchash = srchash
@@ -798,7 +798,10 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
                 name = name.slice(3)
             if not PYTHON_FLAGS:
                 croak('Unknown __python__ flag: ' + name)
-            S.scoped_flags.set(name, val)
+            if name == 'exponent':
+                S.input.context()['exponent'] = val
+            else:
+                S.scoped_flags.set(name, val)
             next()
             if is_('punc', ','):
                 next()
@@ -2194,6 +2197,7 @@ def parse(text, options):
         'scoped_flags': {},   # Global scoped flags (used by the REPL)
         'discard_asserts': False,
         'module_cache_dir': '',
+        'jsage': False,  # if true, do some of what the Sage preparser does, e.g., ^ --> **.
     })
     import_dirs = [x for x in options.import_dirs]
     for location in v'[options.libdir, options.basedir]':
@@ -2240,6 +2244,10 @@ def parse(text, options):
             'set': def (name, val): this.stack[-1][name] = val;,
         },
     }
+
+    if options.jsage:
+        # Set all the jsage compiler options; this is only used in the repl.
+        S.input.context()['exponent'] = True
 
     if options.classes:
         for cname in options.classes:
