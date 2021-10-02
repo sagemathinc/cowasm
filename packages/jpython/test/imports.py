@@ -65,8 +65,8 @@ eq(GLOBAL_SYMBOL, 'i am global')
 # prevent this file from being parsed.
 
 assrt.throws(def():
-    RapydScript.parse('from _import_one import not_exported', {'basedir':test_path}).body[0]
+    JPython.parse('from _import_one import not_exported', {'basedir':test_path}).body[0]
 , /not exported/)
 assrt.throws(def():
-    RapydScript.parse('import xxxx', {'basedir':test_path}).body[0]
+    JPython.parse('import xxxx', {'basedir':test_path}).body[0]
 , /doesn't exist/)

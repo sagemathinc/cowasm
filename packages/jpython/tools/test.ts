@@ -92,7 +92,6 @@ export default function (
           __name__: jsfile,
           require: require,
           fs: require("fs"),
-          RapydScript: JPython, // todo...
           JPython,
           console,
           compiler_dir: compilerDir,

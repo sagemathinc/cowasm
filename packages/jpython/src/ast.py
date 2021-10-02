@@ -525,7 +525,7 @@ class AST_Catch(AST_Block):
     "A `catch` node; only makes sense as part of a `try` statement"
 
 class AST_Except(AST_Block):
-    "An `except` node for RapydScript, which resides inside the catch block"
+    "An `except` node for JPython, which resides inside the catch block"
     properties = {
         'argname': "[AST_SymbolCatch] symbol for the exception",
         'errors': "[AST_SymbolVar*] error classes to catch in this block"

@@ -29,13 +29,13 @@ The JPython standard library can be found in `src/lib`. The various tools,such a
 The tests are in the test directory and can be run using the command:
 
 ```
-rapydscript test
+jpython test
 ```
 
 You can run individual test files by providing the name of the file, as
 
 ```
-rapydscript test classes
+jpython test test/generic.py
 ```
 
 ## Modifying the compiler

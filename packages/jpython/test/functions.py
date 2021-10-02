@@ -122,7 +122,7 @@ def fw(x):
 assrt.equal(fw.__module__, '__main__')
 assrt.equal(fw.__argnames__.length, 1)
 assrt.equal(fw.__argnames__[0], 'x')
-# just because something is a reserved keyword in RapydScript, doesn't mean other libraries won't attempt to use it
+# just because something is a reserved keyword in JPython, doesn't mean other libraries won't attempt to use it
 # let's make sure we parse that correctly
 five = {}
 v"five.is = function(n) { return 5 == n };"

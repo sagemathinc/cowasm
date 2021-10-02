@@ -119,7 +119,7 @@ assrt.equal(st.toUpperCase(), "TEST")
 assrt.equal(String.toUpperCase(st), "TEST")
 assrt.equal(String.fromCharCode(65), "A") # static method recognition
 
-# now we test RapydScript's ability to insert 'new' operator correctly
+# now we test JPython's ability to insert 'new' operator correctly
 assrt.ok(String('a') != 'a')   # string literal vs string object
 assrt.ok((String)('a') == 'a') # string literal vs string literal
 assrt.ok(String.call(this, 'a') == 'a') # string literal via static method on string

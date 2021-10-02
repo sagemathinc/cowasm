@@ -11,7 +11,7 @@ var utils = load('utils');
 // We need ES 6 generators so relaunch with the --harmony flag
 if (!utils.generators_available()) {
     if (process.execArgv.indexOf('--harmony') != -1) {
-        console.error('RapydScript needs ES 6 generators, update your version of nodejs');
+        console.error('JPython needs ES 6 generators; update your version of nodejs');
         process.exit(1);
     }
     var args = ['--harmony', module.filename].concat(process.argv.slice(2));

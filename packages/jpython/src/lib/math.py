@@ -1,16 +1,16 @@
 ###########################################################
-# RapydScript Standard Library
+# JPython Standard Library
 # Author: Alexander Tsepkov
 # Copyright 2013 Pyjeon Software LLC
 # License: Apache License    2.0
 # This library is covered under Apache license, so that
-# you can distribute it with your RapydScript applications.
+# you can distribute it with your JPython applications.
 ###########################################################
 
 # basic implementation of Python's 'math' library
 
-# NOTE: this is only meant to aid those porting lots of Python code into RapydScript,
-# if you're writing a new RapydScript application, in most cases you probably want to
+# NOTE: this is only meant to aid those porting lots of Python code into JPython.
+# If you're writing a new JPython application, in most cases you probably want to
 # use JavaScript's Math module directly instead
 
 pi = Math.PI

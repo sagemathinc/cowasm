@@ -1,10 +1,10 @@
 ###########################################################
-# RapydScript Standard Library
+# JPython Standard Library
 # Author: Alexander Tsepkov
 # Copyright 2013 Pyjeon Software LLC
 # License: Apache License    2.0
 # This library is covered under Apache license, so that
-# you can distribute it with your RapydScript applications.
+# you can distribute it with your JPython applications.
 ###########################################################
 
 # basic implementation of Python's 'random' library
