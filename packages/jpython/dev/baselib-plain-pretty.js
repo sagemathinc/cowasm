@@ -725,11 +725,13 @@ var print = ρσ_print, id = ρσ_id, get_module = ρσ_get_module, pow = ρσ_p
 var dir = ρσ_dir, ord = ρσ_ord, chr = ρσ_chr, bin = ρσ_bin, hex = ρσ_hex, callable = ρσ_callable;
 var enumerate = ρσ_enumerate, iter = ρσ_iter, reversed = ρσ_reversed, len = ρσ_len;
 var range = ρσ_range, getattr = ρσ_getattr, setattr = ρσ_setattr, hasattr = ρσ_hasattr;function ρσ_equals(a, b) {
-    var ρσ_unpack, akeys, bkeys, key;
+    var type_a, type_b, ρσ_unpack, akeys, bkeys, key;
     if (a === b) {
         return true;
     }
-    if (typeof a === "number" && typeof b === "number") {
+    type_a = typeof a;
+    type_b = typeof b;
+    if (type_a === type_b && (type_a === "number" || type_a === "string" || type_a === "boolean")) {
         return a === b;
     }
     if (a && typeof a.__eq__ === "function") {

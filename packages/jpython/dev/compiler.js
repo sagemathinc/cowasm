@@ -732,11 +732,13 @@ var print = ρσ_print, id = ρσ_id, get_module = ρσ_get_module, pow = ρσ_p
 var dir = ρσ_dir, ord = ρσ_ord, chr = ρσ_chr, bin = ρσ_bin, hex = ρσ_hex, callable = ρσ_callable;
 var enumerate = ρσ_enumerate, iter = ρσ_iter, reversed = ρσ_reversed, len = ρσ_len;
 var range = ρσ_range, getattr = ρσ_getattr, setattr = ρσ_setattr, hasattr = ρσ_hasattr;function ρσ_equals(a, b) {
-    var ρσ_unpack, akeys, bkeys, key;
+    var type_a, type_b, ρσ_unpack, akeys, bkeys, key;
     if (a === b) {
         return true;
     }
-    if (typeof a === "number" && typeof b === "number") {
+    type_a = typeof a;
+    type_b = typeof b;
+    if (type_a === type_b && (type_a === "number" || type_a === "string" || type_a === "boolean")) {
         return a === b;
     }
     if (a && typeof a.__eq__ === "function") {
@@ -9107,10 +9109,11 @@ return this.__repr__();
                 var ret, i, ch;
                 ret = "";
                 i = 0;
-                ch = "";
-                while ((ch = peek()) && pred(ch, i)) {
+                ch = peek();
+                while (ch && pred(ch, i)) {
                     i += 1;
                     ret += next();
+                    ch = peek();
                 }
                 return ret;
             };
@@ -9134,16 +9137,15 @@ return this.__repr__();
                 has_dot = prefix === ".";
                 if (!prefix && peek() === "0" && S.text.charAt(ρσ_operator_add(S.pos, 1)) === "b") {
                     [next(), next()];
-                    num = read_while((function() {
-                        var ρσ_anonfunc = function (ch) {
-                            return ch === "0" || ch === "1";
-                        };
-                        if (!ρσ_anonfunc.__argnames__) Object.defineProperties(ρσ_anonfunc, {
-                            __argnames__ : {value: ["ch"]},
-                            __module__ : {value: "tokenizer"}
-                        });
-                        return ρσ_anonfunc;
-                    })());
+                    function is01(ch) {
+                        return ch === "0" || ch === "1";
+                    };
+                    if (!is01.__argnames__) Object.defineProperties(is01, {
+                        __argnames__ : {value: ["ch"]},
+                        __module__ : {value: "tokenizer"}
+                    });
+
+                    num = read_while(is01);
                     valid = parseInt(num, 2);
                     if (isNaN(valid)) {
                         parse_error("Invalid syntax for a binary number");
@@ -9151,48 +9153,51 @@ return this.__repr__();
                     return token("num", valid);
                 }
                 seen = [];
-                num = read_while((function() {
-                    var ρσ_anonfunc = function (ch, i) {
-                        seen.push(ch);
-                        if (ch === "x" || ch === "X") {
-                            if (has_x || seen.length !== 2 || seen[0] !== "0") {
-                                return false;
-                            }
-                            has_x = true;
-                            return true;
-                        } else if (ch === "e" || ch === "E") {
-                            if (has_x) {
-                                return true;
-                            }
-                            if (has_e || ρσ_equals(i, 0)) {
-                                return false;
-                            }
-                            has_e = true;
-                            return true;
-                        } else if (ch === "-") {
-                            if (i === 0 && !prefix) {
-                                return true;
-                            }
-                            if (has_e && seen[ρσ_bound_index(ρσ_operator_sub(i, 1), seen)].toLowerCase() === "e") {
-                                return true;
-                            }
+                function is_num(ch, i) {
+                    seen.push(ch);
+                    if (ch === "x" || ch === "X") {
+                        if (has_x || seen.length !== 2 || seen[0] !== "0") {
                             return false;
-                        } else if (ch === "+") {
-                            if (has_e && seen[ρσ_bound_index(ρσ_operator_sub(i, 1), seen)].toLowerCase() === "e") {
-                                return true;
-                            }
-                            return false;
-                        } else if (ch === ".") {
-                            return (!has_dot && !has_x && !has_e) ? has_dot = true : false;
                         }
-                        return is_alphanumeric_char(ch.charCodeAt(0));
-                    };
-                    if (!ρσ_anonfunc.__argnames__) Object.defineProperties(ρσ_anonfunc, {
-                        __argnames__ : {value: ["ch", "i"]},
-                        __module__ : {value: "tokenizer"}
-                    });
-                    return ρσ_anonfunc;
-                })());
+                        has_x = true;
+                        return true;
+                    } else if (ch === "e" || ch === "E") {
+                        if (has_x) {
+                            return true;
+                        }
+                        if (has_e || ρσ_equals(i, 0)) {
+                            return false;
+                        }
+                        has_e = true;
+                        return true;
+                    } else if (ch === "-") {
+                        if (i === 0 && !prefix) {
+                            return true;
+                        }
+                        if (has_e && seen[ρσ_bound_index(ρσ_operator_sub(i, 1), seen)].toLowerCase() === "e") {
+                            return true;
+                        }
+                        return false;
+                    } else if (ch === "+") {
+                        if (has_e && seen[ρσ_bound_index(ρσ_operator_sub(i, 1), seen)].toLowerCase() === "e") {
+                            return true;
+                        }
+                        return false;
+                    } else if (ch === ".") {
+                        if (!has_dot && !has_x && !has_e) {
+                            has_dot = true;
+                            return true;
+                        }
+                        return false;
+                    }
+                    return is_alphanumeric_char(ch.charCodeAt(0));
+                };
+                if (!is_num.__argnames__) Object.defineProperties(is_num, {
+                    __argnames__ : {value: ["ch", "i"]},
+                    __module__ : {value: "tokenizer"}
+                });
+
+                num = read_while(is_num);
                 if (prefix) {
                     num = ρσ_operator_add(prefix, num);
                 }
@@ -9285,16 +9290,15 @@ return this.__repr__();
                 }
                 if (q === "N" && peek() === "{") {
                     next();
-                    name = read_while((function() {
-                        var ρσ_anonfunc = function (ch) {
-                            return NAME_PAT.test(ch);
-                        };
-                        if (!ρσ_anonfunc.__argnames__) Object.defineProperties(ρσ_anonfunc, {
-                            __argnames__ : {value: ["ch"]},
-                            __module__ : {value: "tokenizer"}
-                        });
-                        return ρσ_anonfunc;
-                    })());
+                    function is_name_ch(ch) {
+                        return NAME_PAT.test(ch);
+                    };
+                    if (!is_name_ch.__argnames__) Object.defineProperties(is_name_ch, {
+                        __argnames__ : {value: ["ch"]},
+                        __module__ : {value: "tokenizer"}
+                    });
+
+                    name = read_while(is_name_ch);
                     if (peek() !== "}") {
                         return ρσ_operator_add("\\N{", name);
                     }
@@ -9317,85 +9321,88 @@ return this.__repr__();
             });
 
             function with_eof_error(eof_error, cont) {
-                return (function() {
-                    var ρσ_anonfunc = function () {
-                        try {
-                            return cont.apply(null, arguments);
-                        } catch (ρσ_Exception) {
-                            ρσ_last_exception = ρσ_Exception;
-                            {
-                                var ex = ρσ_Exception;
-                                if (ex === EX_EOF) {
-                                    parse_error(eof_error, true);
-                                } else {
-                                    throw ρσ_Exception;
-                                }
-                            } 
+                function eof_error() {
+                    try {
+                        return cont.apply(null, arguments);
+                    } catch (ρσ_Exception) {
+                        ρσ_last_exception = ρσ_Exception;
+                        if (ρσ_Exception instanceof Error) {
+                            var ex = ρσ_Exception;
+                            if (ex === EX_EOF) {
+                                parse_error(eof_error, true);
+                            } else {
+                                throw ρσ_Exception;
+                            }
+                        } else {
+                            throw ρσ_Exception;
                         }
-                    };
-                    if (!ρσ_anonfunc.__module__) Object.defineProperties(ρσ_anonfunc, {
-                        __module__ : {value: "tokenizer"}
-                    });
-                    return ρσ_anonfunc;
-                })();
+                    }
+                };
+                if (!eof_error.__module__) Object.defineProperties(eof_error, {
+                    __module__ : {value: "tokenizer"}
+                });
+
+                return eof_error;
             };
             if (!with_eof_error.__argnames__) Object.defineProperties(with_eof_error, {
                 __argnames__ : {value: ["eof_error", "cont"]},
                 __module__ : {value: "tokenizer"}
             });
 
-            read_string = with_eof_error("Unterminated string constant", (function() {
-                var ρσ_anonfunc = function (is_raw_literal, is_js_literal) {
-                    var quote, tok_type, ret, is_multiline, ch;
-                    quote = next();
-                    tok_type = (is_js_literal) ? "js" : "string";
-                    ret = "";
-                    is_multiline = false;
+            function _read_string(is_raw_literal, is_js_literal) {
+                var quote, tok_type, ret, is_multiline, ch;
+                quote = next();
+                tok_type = (is_js_literal) ? "js" : "string";
+                ret = "";
+                is_multiline = false;
+                if (peek() === quote) {
+                    next(true);
                     if (peek() === quote) {
                         next(true);
-                        if (peek() === quote) {
-                            next(true);
-                            is_multiline = true;
-                        } else {
-                            return token(tok_type, "");
-                        }
+                        is_multiline = true;
+                    } else {
+                        return token(tok_type, "");
                     }
-                    while (true) {
-                        ch = next(true, true);
-                        if (!ch) {
+                }
+                while (true) {
+                    ch = next(true, true);
+                    if (!ch) {
+                        break;
+                    }
+                    if (ch === "\n" && !is_multiline) {
+                        parse_error("End of line while scanning string literal");
+                    }
+                    if (ch === "\\") {
+                        ret += (is_raw_literal) ? ρσ_operator_add("\\", next(true)) : read_escape_sequence();
+                        continue;
+                    }
+                    if (ch === quote) {
+                        if (!is_multiline) {
                             break;
                         }
-                        if (ch === "\n" && !is_multiline) {
-                            parse_error("End of line while scanning string literal");
-                        }
-                        if (ch === "\\") {
-                            ret += (is_raw_literal) ? ρσ_operator_add("\\", next(true)) : read_escape_sequence();
-                            continue;
-                        }
-                        if (ch === quote) {
-                            if (!is_multiline) {
-                                break;
-                            }
+                        if (peek() === quote) {
+                            next();
                             if (peek() === quote) {
                                 next();
-                                if (peek() === quote) {
-                                    next();
-                                    break;
-                                } else {
-                                    ch += quote;
-                                }
+                                break;
+                            } else {
+                                ch += quote;
                             }
                         }
-                        ret += ch;
                     }
-                    return token(tok_type, ret);
-                };
-                if (!ρσ_anonfunc.__argnames__) Object.defineProperties(ρσ_anonfunc, {
-                    __argnames__ : {value: ["is_raw_literal", "is_js_literal"]},
-                    __module__ : {value: "tokenizer"}
-                });
-                return ρσ_anonfunc;
-            })());
+                    ret += ch;
+                }
+                if (is_raw_literal && ρσ_equals(ret.slice(0, 3), "%js") && WHITESPACE_CHARS[ρσ_bound_index(ret[3], WHITESPACE_CHARS)]) {
+                    return token("js", ret.slice(4).trim());
+                }
+                return token(tok_type, ret);
+            };
+            if (!_read_string.__argnames__) Object.defineProperties(_read_string, {
+                __argnames__ : {value: ["is_raw_literal", "is_js_literal"]},
+                __module__ : {value: "tokenizer"}
+            });
+
+            read_string = with_eof_error("Unterminated string constant", _read_string);
             function handle_interpolated_string(string, start_tok) {
                 function raise_error(err) {
                     throw new SyntaxError(err, filename, start_tok.line, start_tok.col, start_tok.pos, false);
@@ -9436,7 +9443,11 @@ return this.__repr__();
             function read_name() {
                 var name, ch;
                 name = ch = "";
-                while ((ch = peek()) !== null) {
+                while (true) {
+                    ch = peek();
+                    if (ch === null) {
+                        break;
+                    }
                     if (ch === "\\") {
                         if (S.text.charAt(ρσ_operator_add(S.pos, 1)) === "\n") {
                             S.pos += 2;
@@ -9455,75 +9466,74 @@ return this.__repr__();
                 __module__ : {value: "tokenizer"}
             });
 
-            read_regexp = with_eof_error("Unterminated regular expression", (function() {
-                var ρσ_anonfunc = function () {
-                    var prev_backslash, regexp, ch, in_class, verbose_regexp, in_comment, mods;
-                    prev_backslash = false;
-                    regexp = ch = "";
-                    in_class = false;
-                    verbose_regexp = false;
-                    in_comment = false;
+            function do_read_regexp() {
+                var prev_backslash, regexp, ch, in_class, verbose_regexp, in_comment, mods;
+                prev_backslash = false;
+                regexp = ch = "";
+                in_class = false;
+                verbose_regexp = false;
+                in_comment = false;
+                if (peek() === "/") {
+                    next(true);
                     if (peek() === "/") {
+                        verbose_regexp = true;
                         next(true);
-                        if (peek() === "/") {
-                            verbose_regexp = true;
+                    } else {
+                        mods = read_name();
+                        return token("regexp", new RegExp(regexp, mods));
+                    }
+                }
+                while (true) {
+                    ch = next(true);
+                    if (!ch) {
+                        break;
+                    }
+                    if (in_comment) {
+                        if (ch === "\n") {
+                            in_comment = false;
+                        }
+                        continue;
+                    }
+                    if (prev_backslash) {
+                        regexp += ρσ_operator_add("\\", ch);
+                        prev_backslash = false;
+                    } else if (ch === "[") {
+                        in_class = true;
+                        regexp += ch;
+                    } else if (ch === "]" && in_class) {
+                        in_class = false;
+                        regexp += ch;
+                    } else if (ch === "/" && !in_class) {
+                        if (verbose_regexp) {
+                            if (peek() !== "/") {
+                                regexp += "\\/";
+                                continue;
+                            }
                             next(true);
-                        } else {
-                            mods = read_name();
-                            return token("regexp", new RegExp(regexp, mods));
-                        }
-                    }
-                    while (true) {
-                        ch = next(true);
-                        if (!ch) {
-                            break;
-                        }
-                        if (in_comment) {
-                            if (ch === "\n") {
-                                in_comment = false;
+                            if (peek() !== "/") {
+                                regexp += "\\/\\/";
+                                continue;
                             }
-                            continue;
+                            next(true);
                         }
-                        if (prev_backslash) {
-                            regexp += ρσ_operator_add("\\", ch);
-                            prev_backslash = false;
-                        } else if (ch === "[") {
-                            in_class = true;
-                            regexp += ch;
-                        } else if (ch === "]" && in_class) {
-                            in_class = false;
-                            regexp += ch;
-                        } else if (ch === "/" && !in_class) {
-                            if (verbose_regexp) {
-                                if (peek() !== "/") {
-                                    regexp += "\\/";
-                                    continue;
-                                }
-                                next(true);
-                                if (peek() !== "/") {
-                                    regexp += "\\/\\/";
-                                    continue;
-                                }
-                                next(true);
-                            }
-                            break;
-                        } else if (ch === "\\") {
-                            prev_backslash = true;
-                        } else if (verbose_regexp && !in_class && " \n\r\t".indexOf(ch) !== -1) {
-                        } else if (verbose_regexp && !in_class && ch === "#") {
-                            in_comment = true;
-                        } else {
-                            regexp += ch;
-                        }
+                        break;
+                    } else if (ch === "\\") {
+                        prev_backslash = true;
+                    } else if (verbose_regexp && !in_class && " \n\r\t".indexOf(ch) !== -1) {
+                    } else if (verbose_regexp && !in_class && ch === "#") {
+                        in_comment = true;
+                    } else {
+                        regexp += ch;
                     }
-                    mods = read_name();
-                    return token("regexp", new RegExp(regexp, mods));
-                };
-                if (!ρσ_anonfunc.__module__) Object.defineProperties(ρσ_anonfunc, {
-                    __module__ : {value: "tokenizer"}
-                });
-                return ρσ_anonfunc;
-            })());
+                }
+                mods = read_name();
+                return token("regexp", new RegExp(regexp, mods));
+            };
+            if (!do_read_regexp.__module__) Object.defineProperties(do_read_regexp, {
+                __module__ : {value: "tokenizer"}
+            });
+
+            read_regexp = with_eof_error("Unterminated regular expression", do_read_regexp);
             function read_operator(prefix) {
                 var op;
                 function grow(op) {
@@ -9625,7 +9635,7 @@ return this.__repr__();
                 }
                 if (is_identifier_start(code)) {
                     tok = read_word();
-                    if ("'\"".indexOf(peek()) !== -1 && is_string_modifier(tok.value)) {
+                    if ("'\"".includes(peek()) && is_string_modifier(tok.value)) {
                         mods = tok.value.toLowerCase();
                         start_pos_for_string = S.tokpos;
                         stok = read_string(mods.indexOf("r") !== -1, mods.indexOf("v") !== -1);
@@ -9639,25 +9649,24 @@ return this.__repr__();
                     }
                     return tok;
                 }
-                parse_error(ρσ_operator_add(ρσ_operator_add("Unexpected character «", ch), "»"));
+                parse_error(ρσ_operator_add(ρσ_operator_add("Unexpected character '", ch), "'"));
             };
             if (!next_token.__module__) Object.defineProperties(next_token, {
                 __module__ : {value: "tokenizer"}
             });
 
-            next_token.context = (function() {
-                var ρσ_anonfunc = function (nc) {
-                    if (nc) {
-                        S = nc;
-                    }
-                    return S;
-                };
-                if (!ρσ_anonfunc.__argnames__) Object.defineProperties(ρσ_anonfunc, {
-                    __argnames__ : {value: ["nc"]},
-                    __module__ : {value: "tokenizer"}
-                });
-                return ρσ_anonfunc;
-            })();
+            function context(nc) {
+                if (nc) {
+                    S = nc;
+                }
+                return S;
+            };
+            if (!context.__argnames__) Object.defineProperties(context, {
+                __argnames__ : {value: ["nc"]},
+                __module__ : {value: "tokenizer"}
+            });
+
+            next_token.context = context;
             return next_token;
         };
         if (!tokenizer.__argnames__) Object.defineProperties(tokenizer, {
@@ -9796,7 +9805,7 @@ return this.__repr__();
         var is_token = ρσ_modules.tokenizer.is_token;
         var RESERVED_WORDS = ρσ_modules.tokenizer.RESERVED_WORDS;
 
-        COMPILER_VERSION = "2100f74102156744d52d52f46fa053ef29ecffbe";
+        COMPILER_VERSION = "1db087d6ed8e04ea46f2de11aef6e91bf5384735";
         PYTHON_FLAGS = (function(){
             var ρσ_d = Object.create(null);
             ρσ_d["dict_literals"] = true;
