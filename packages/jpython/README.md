@@ -21,8 +21,8 @@ $ npm install @jsage/jpython
 
 ### Try out JPython
 
-Start up JPython and use some of the JSage functionality.  Of course you could also
-require any module you install from https://npmjs.com.  You can also create .py files
+Start up JPython and use some of the JSage functionality. Of course you could also
+require any module you install from https://npmjs.com. You can also create .py files
 and import them.
 
 ```python
@@ -61,6 +61,33 @@ Wall time: 2ms
 19/125
 >>> eval(a)
 0.152
+```
+
+### Math extensions (like the Sage preparser)
+
+Use `jsage` and the compiler is modified with some more
+mathematics friendly syntax.
+
+```python
+$ npx jsage
+>>> 2^3
+8
+```
+
+Right now only caret for exponentiation (and `^^` for xor) is implemented, but
+I'll probably implement more (e.g., nice notation [a..b] for ranges), arbitrary
+precision integers and rationals using GMP, etc.
+
+You can get the same effect in a .py file as follows:
+```python
+# a.py
+from __python__ import exponent
+print(2^3)
+```
+
+```bash
+$ npx jpython a.py
+8
 ```
 
 ### JSage is also available in Node.js
