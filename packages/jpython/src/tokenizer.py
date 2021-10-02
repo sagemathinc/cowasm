@@ -100,6 +100,8 @@ KEYWORDS_BEFORE_EXPRESSION = make_predicate(KEYWORDS_BEFORE_EXPRESSION)
 KEYWORDS_ATOM = make_predicate(KEYWORDS_ATOM)
 IDENTIFIER_PAT = /^[a-z_$][_a-z0-9$]*$/i
 
+
+# https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals
 def is_string_modifier(val):
     for ch in val:
         if 'vrufVRUF'.indexOf(ch) is -1:
@@ -443,7 +445,7 @@ def tokenizer(raw_text, filename):
                 else:
                     raise
 
-    read_string = with_eof_error("Unterminated string constant", def(is_raw_literal, is_js_literal):
+    def _read_string(is_raw_literal, is_js_literal):
         quote = next()
         tok_type = 'js' if is_js_literal else 'string'
         ret = ""
@@ -480,8 +482,11 @@ def tokenizer(raw_text, filename):
                     else:
                         ch += quote
             ret += ch
+        if is_raw_literal and ret[:4] == '%js ':
+            return token('js', ret[4:].trim())
         return token(tok_type, ret)
-    )
+
+    read_string = with_eof_error("Unterminated string constant", _read_string)
 
     def handle_interpolated_string(string, start_tok):
         def raise_error(err):
@@ -653,7 +658,7 @@ def tokenizer(raw_text, filename):
 
         if is_identifier_start(code):
             tok = read_word()
-            if '\'"'.indexOf(peek()) is not -1 and is_string_modifier(tok.value):
+            if '\'"'.includes(peek()) and is_string_modifier(tok.value):
                 mods = tok.value.toLowerCase()
                 start_pos_for_string = S.tokpos
                 stok = read_string(mods.indexOf('r') is not -1, mods.indexOf('v') is not -1)
@@ -665,7 +670,7 @@ def tokenizer(raw_text, filename):
                 tok.type = stok.type
             return tok
 
-        parse_error("Unexpected character «" + ch + "»")
+        parse_error("Unexpected character '" + ch + "'")
 
     next_token.context = def(nc):
         nonlocal S
