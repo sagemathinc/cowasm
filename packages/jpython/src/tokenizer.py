@@ -482,8 +482,8 @@ def tokenizer(raw_text, filename):
                     else:
                         ch += quote
             ret += ch
-        if is_raw_literal and ret[:4] == '%js ':
-            return token('js', ret[4:].trim())
+        if is_raw_literal and ret[:3] == '%js' and WHITESPACE_CHARS[ret[3]]:
+            return token('js', ret[4:].trim())  # trim since really javascript string.
         return token(tok_type, ret)
 
     read_string = with_eof_error("Unterminated string constant", _read_string)

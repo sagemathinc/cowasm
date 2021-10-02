@@ -7,7 +7,11 @@
 def ρσ_equals(a, b):
     if a is b:
         return True
-    if jstype(a) is 'number' and jstype(b) is 'number':  # important special case for speed
+    type_a = jstype(a)
+    type_b = jstype(b)
+    # WARNING: We have to use "is" here to avoid recursive call to ρσ_equals by getting "===".
+    # However, in genuine Python is comparison with a constant is a WARNING/Error.
+    if type_a is type_b and (type_a is 'number' or type_a is 'string' or type_a is 'boolean'):
         return a is b
     if a and jstype(a.__eq__) is 'function':
         return a.__eq__(b)
