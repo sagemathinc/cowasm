@@ -419,3 +419,7 @@ assrt.equal(str(range(3, 15, 3)[-3:]), 'range(6, 15, 3)')
 assrt.equal(str(range(3, 15, 3)[-3:-1]), 'range(6, 12, 3)')
 # lazy implementation for negative step
 assrt.equal(str(range(15, 3, -3)[1:]), '[12, 9, 6]')
+
+
+# Adding lists
+assrt.equal(str([1,2,3] + ['a','b','c']), str([1,2,3,'a','b','c']))

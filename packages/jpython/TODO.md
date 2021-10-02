@@ -12,7 +12,7 @@ List of the many, many little things that are broken or missing that specificall
 
 ---
 
-[ ] Completely eliminate raw "v"-strings.  These are not valid Python, hence they break all Python tooling (e.g., syntax highlighting, formatting, running the module under real Python, etc.).  Instead, replace them by a function call with a normal string.   With v-strings you can't even load the code into normal Python since it gets stopped at the parsing stage.  It's much better if it is at runtime for normal Python, so you can run the same code with both jpython and normal Python.  Example, it would be nice to make something like this possible:
+[x] Alternative to raw "v"-strings.  These are not valid Python, hence they break all Python tooling (e.g., syntax highlighting, formatting, running the module under real Python, etc.).  Instead, replace them by a function call with a normal string.   With v-strings you can't even load the code into normal Python since it gets stopped at the parsing stage.  It's much better if it is at runtime for normal Python, so you can run the same code with both jpython and normal Python.  Example, it would be nice to make something like this possible:
 
 ```py
 def hello():
@@ -58,7 +58,7 @@ r"%js for(i=0;i<10;i++){console.log('blah')}"
 
 ---
 
-[ ] Implement + for lists -- which falls back to string concat right now :frowning:
+[x] Implement + for lists -- which falls back to string concat right now :frowning:
 
 ```py
 >>> [1,2,3] + [4,5,6]
