@@ -80,7 +80,7 @@ err_test('def f():\n [x for x in [1,2]]; return x', 'undef', 2, 'x')
 ok_test('def f():\n for x in "":\n  pass\n return x')
 ok_test('def f():\n for x in "":\n  x += 1\n')
 ok_test('def f():\n for x, y in "":\n  pass\n return x, y')
-ok_test('for v"var i = 0; i < 1; i++":\n print(i)')
+ok_test('for r"%js var i = 0; i < 1; i++":\n print(i)')
 err_test('def f():\n a = 1\n for a in "":\n  a', 'loop-shadowed', 3, 'a', 2)
 
 # Semi-colons
