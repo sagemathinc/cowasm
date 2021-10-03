@@ -4,54 +4,27 @@ register = bench.register
 all = bench.all
 
 
-def operator_add(n=100000):
-    class A:
-        def __add__(self, right):
-            pass
-
-    a = A()
-    b = A()
+# JPython is really bad at these, since Javascript
+# doesn't really have a notion of generic lists.
+def list_times_number(n=100):
     for i in range(n):
-        a + b
+        [0] * 100000
 
 
-register("operator_add", operator_add)
+register('list_times_number', list_times_number)
 
 
-def gcd(a, b):
-    while b:
-        c = a % b
-        a = b
-        b = c
-    return a
+def list_times_number2(n=1000000):
+    v = [1, 2, list(range(100))]
+    len(v * n)
 
 
-def bench_gcd(n=10**6):
-    s = 0
+register('list_times_number2', list_times_number2)
+
+
+def list_times_number3(n=1000000):
     for i in range(n):
-        s += gcd(92250, 922350 + i)
-    return s
+        [0] * 10
 
 
-register("gcd", bench_gcd)
-
-
-def xgcd(a, b):
-    prevx, x = 1, 0
-    prevy, y = 0, 1
-    while b:
-        q, r = divmod(a, b)
-        x, prevx = prevx - q * x, x
-        y, prevy = prevy - q * y, y
-        a, b = b, r
-    return a, prevx, prevy
-
-
-def bench_xgcd(n=10**6):
-    s = 0
-    for i in range(n):
-        s += xgcd(92250, 922350 + i)[0]
-    return s
-
-
-register("xgcd", bench_xgcd)
+register('list_times_number3', list_times_number3)

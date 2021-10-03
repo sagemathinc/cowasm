@@ -192,6 +192,18 @@ def ρσ_list_eq(other):
             return False
     return True
 
+def ρσ_list_mul(other):
+    # In Javascript it seems that the fastest way
+    # is to directly assign using a for loop. Everything
+    # else seems much slower.  This is something that
+    # Python is just much faster at, perhaps because Javascript
+    # doesn't really have arrays (they are really hash maps).
+    ans = []
+    k = int(other)
+    n = this.length
+    r"%js let s=0; for(let i=0; i<k; i++) { for(let j=0; j<n; j++) {ans[s++]=this[j];}}"
+    return ans
+
 def ρσ_list_decorate(ans):
     ans.append = Array.prototype.push
     ans.toString = ρσ_list_to_string
@@ -211,6 +223,7 @@ def ρσ_list_decorate(ans):
     ans.__len__ = ρσ_list_len
     ans.__contains__ = ρσ_list_contains
     ans.__eq__ = ρσ_list_eq
+    ans.__mul__ = ρσ_list_mul
     ans.constructor = ρσ_list_constructor
     if jstype(ans[ρσ_iterator_symbol]) is not 'function':
         # Happens on ES 5 runtimes

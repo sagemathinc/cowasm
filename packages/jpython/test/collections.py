@@ -169,3 +169,6 @@ assrt.ok(r'js% {1:2}' == r'js% {1:2}')
 # iterating over TypedArrays
 assrt.deepEqual(list(Uint8Array(2)), [0, 0])
 assrt.deepEqual(list(Int32Array([1, -1])), [1, -1])
+
+# list times number
+assrt.deepEqual([1,[2],'a']*3, [1,[2],'a',1,[2],'a',1,[2],'a'])
