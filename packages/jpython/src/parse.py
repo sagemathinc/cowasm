@@ -27,7 +27,11 @@ from tokenizer import tokenizer, is_token, RESERVED_WORDS
 
 
 COMPILER_VERSION = '__COMPILER_VERSION__'
-PYTHON_FLAGS = {'exponent':True, 'dict_literals':True, 'overload_getitem':True, 'bound_methods':True, 'hash_literals':True}
+PYTHON_FLAGS = {'exponent':True,  # no performance impact at all
+                'dict_literals':True,  # This is MASSIVELY SLOWER -- e.g., 100x -- careful
+                'overload_getitem':True,
+                'bound_methods':True,
+                'hash_literals':True}
 
 
 def get_compiler_version():

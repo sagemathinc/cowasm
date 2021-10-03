@@ -729,52 +729,6 @@ define_str_func('zfill', def(width):
     return string
 )
 
-ρσ_str.uchrs = def(string, with_positions):
-    # Return iterator over unicode chars in string. Will yield the unicode
-    # replacement char U+FFFD for broken surrogate pairs
-    return {
-        '_string': string,
-        '_pos': 0,
-        ρσ_iterator_symbol: def(): return this;,
-        'next' : def():
-            length = this._string.length
-            if this._pos >= length:
-                return {'done': True}
-            pos = this._pos
-            value = v'this._string.charCodeAt(this._pos++)'
-            ans = '\ufffd'
-            if 0xD800 <= value <= 0xDBFF:
-                if this._pos < length:
-                    # high surrogate, and there is a next character
-                    extra = v'this._string.charCodeAt(this._pos++)'
-                    if (extra & 0xDC00) is 0xDC00: # low surrogate
-                        ans = String.fromCharCode(value, extra)
-            elif (value & 0xDC00) is not 0xDC00: # not a low surrogate
-                ans = String.fromCharCode(value)
-            if with_positions:
-                return {'done':False, 'value':[pos, ans]}
-            else:
-                return {'done':False, 'value':ans}
-    }
-
-ρσ_str.uslice = def(string, start, end):
-    items = v'[]'
-    iterator = ρσ_str.uchrs(string)
-    r = iterator.next()
-    while not r.done:
-        items.push(r.value)
-        r = iterator.next()
-    return items[start or 0:items.length if end is undefined else end].join('')
-
-ρσ_str.ulen = def(string):
-    iterator = ρσ_str.uchrs(string)
-    r = iterator.next()
-    ans = 0
-    while not r.done:
-        r = iterator.next()
-        ans += 1
-    return ans
-
 ρσ_str.ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
 ρσ_str.ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 ρσ_str.ascii_letters   = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'

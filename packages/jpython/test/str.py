@@ -153,8 +153,6 @@ for x in ['a\nb', 'a\r\nb', 'a\rb']:
 assrt.deepEqual(['a', '', 'b'], str.splitlines('a\n\rb'))
 assrt.deepEqual(['a\n', 'b'], str.splitlines('a\nb', True))
 assrt.deepEqual(['a\r\n', 'b'], str.splitlines('a\r\nb', True))
-assrt.deepEqual(['s', "🐱", 'a', '\u2028'], list(str.uchrs('s🐱a\u2028')))
-assrt.deepEqual([[0, 's'], [1, "🐱"], [3, 'a'], [4, '\u2028']], list(str.uchrs('s🐱a\u2028', True)))
 ae('bbb', str.replace('aaa', 'a', 'b'))
 ae('baa', str.replace('aaa', 'a', 'b', 1))
 ae('bba', str.replace('aaa', 'a', 'b', 2))
@@ -163,8 +161,6 @@ ae('', str.replace('aaa', 'a', ''))
 ae('a1B', str.swapcase('A1b'))
 ae('001', str.zfill('1', 3))
 ae('111', str.zfill('111', 2))
-ae('a\u2028', str.uslice('s🐱a\u2028', 2))
-ae(4, str.ulen('s🐱a\u2028', 2))
 
 for f in (str, repr):
     ae(f(True), 'True')

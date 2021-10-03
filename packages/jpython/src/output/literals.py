@@ -2,7 +2,7 @@
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
 
-from ast import AST_Binary, is_node_type
+from ast import AST_Binary, AST_Number, AST_String, is_node_type
 
 def print_array(self, output):
     output.print('ρσ_list_decorate')
@@ -22,7 +22,7 @@ def print_array(self, output):
     )
 
 
-def print_obj_literal(self, output):
+def print_obj_literal_slow(self, output):
     output.with_parens(def():
         output.print('function()')
         output.with_block(def():
@@ -53,6 +53,29 @@ def print_obj_literal(self, output):
         )
     )
     output.print('.call(this)')
+
+# This simple obj literal printer works fine for literals
+# that aren't supposed to be dict's, I think. The function
+# print_obj_literal_slow above was what RapydScript had,
+# but in running the brython benchmarks, I found it was
+# insanely slow, since e.g., {[0]:0} is 100x slower than
+# {0:0} in javascript.
+def print_obj_literal(self, output):
+    if self.is_pydict:
+        print_obj_literal_slow(self, output)
+        return
+    output.print("{")
+    for i, prop in enumerate(self.properties):
+        if is_node_type(prop.key, AST_Number) or is_node_type(prop.key, AST_String):
+            prop.key.print(output)
+        else:
+            def key(): prop.key.print(output)
+            output.with_square(key)
+        output.print(":")
+        prop.value.print(output)
+        if i + 1 < len(self.properties):
+            output.print(",")
+    output.print("}")
 
 def print_object(self, output):
     if self.is_pydict:

@@ -17,8 +17,12 @@ def register(name, f):
 
 
 def all():
+    t = 0
     for (name, f) in benchmarks:
-        print(name, time(f), "ms")
+        s = time(f)
+        t += s
+        print(name, s, "ms")
+    print("Total...", t, "ms")
 
 
 def simple_assignment(n=1000000):
