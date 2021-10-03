@@ -236,7 +236,7 @@ export default function Repl(options0: Partial<Options>) {
       if (err.stack) {
         options.console.error(err.stack);
       } else {
-        options.console.error(err.toString());
+        options.console.error(err);
       }
     }
 
@@ -272,7 +272,7 @@ export default function Repl(options0: Partial<Options>) {
       if (err.message && err.line !== undefined) {
         options.console.log(err.line + ":" + err.col + ":" + err.message);
       } else {
-        options.console.log(err.stack || err.toString());
+        options.console.log(err.stack || err);
       }
       return false;
     }
