@@ -90,6 +90,10 @@ def is_digit(code):
     return code >= 48 and code <= 57
 
 
+def is_dot(code):
+    return code == 46
+
+
 def is_alphanumeric_char(code):
     return is_digit(code) or is_letter(code)
 
@@ -203,6 +207,9 @@ def tokenizer(raw_text, filename):
 
     def peek():
         return S.text.charAt(S.pos)
+
+    #def peekpeek():
+    #    return S.text.charAt(S.pos+1)
 
     def prevChar():
         return S.text.charAt(S.tokpos - 1)
@@ -664,8 +671,17 @@ def tokenizer(raw_text, filename):
 
     def handle_dot():
         next()
-        return read_num(".") if is_digit(peek().charCodeAt(0)) else token(
-            "punc", ".")
+        c = peek().charCodeAt(0)
+
+        if is_digit(c):
+            return read_num(".")
+
+        if is_dot(c):
+            # ellipses: Two dots in a row, e.g., [a..b]
+            next()
+            return token("punc", "..")
+
+        return token("punc", ".")
 
     def read_word():
         word = read_name()

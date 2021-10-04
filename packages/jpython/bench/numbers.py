@@ -57,6 +57,8 @@ def bench_xgcd(n=10**6):
 register("xgcd", bench_xgcd)
 
 from math import sqrt
+
+
 def trial_division(N, bound=0, start=2):
     if N <= 1:
         return N
@@ -122,21 +124,28 @@ def pi(n=100000):
 register("pi(X)", pi)
 
 
-
 def sum_loop(n=1000000):
     s = 0
     for i in range(0, n, 3):
         s += 1
     return s
 
+
 register("sum_loop", sum_loop)
+
 
 def sum_range(n=1000000):
     return sum(range(0, n, 3))
 
+
 register("sum_range", sum_range)
+
 
 def sum_reversed(n=1000000):
     return sum(reversed(list(range(0, n, 3))))
 
+
 register("sum_reversed", sum_reversed)
+
+if __name__ == '__main__':
+    all()

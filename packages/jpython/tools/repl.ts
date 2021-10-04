@@ -43,6 +43,7 @@ export interface Options {
   historySize: number;
   mockReadline?: Function; // for mocking readline (for testing only)
   jsage?: boolean; // sage-style preparsing
+  tokens?: boolean; // show very verbose tokens as parsed
 }
 
 function replDefaults(options: Partial<Options>): Options {
@@ -56,10 +57,10 @@ function replDefaults(options: Partial<Options>): Options {
     options.show_js = true;
   }
   if (!options.ps1) {
-    options.ps1 = ">>> ";
+    options.ps1 = process.stdin.isTTY ? ">>> " : "";
   }
   if (!options.ps2) {
-    options.ps2 = "... ";
+    options.ps2 = process.stdin.isTTY ? "... " : "";
   }
   if (!options.console) {
     options.console = console;
@@ -141,34 +142,17 @@ export default function Repl(options0: Partial<Options>) {
   let toplevel;
   var importDirs = getImportDirs();
 
-  options.console.log(
-    colorize(
-      `Welcome to ${options.jsage ? "JSage" : "JPython"}.  Using Node.js ${
-        process.version
-      }.`,
-      "green",
-      true
-    )
-  );
-
-  /*
-  if (options.show_js) {
+  if (process.stdin.isTTY) {
     options.console.log(
       colorize(
-        "Use show_js=False to stop the REPL from showing compiled JavaScript.",
+        `Welcome to ${options.jsage ? "JSage" : "JPython"}.  Using Node.js ${
+          process.version
+        }.`,
         "green",
         true
       )
     );
-  } else {
-    options.console.log(
-      colorize(
-        "Use show_js=True to have the REPL show compiled JavaScript before executing it.",
-        "green",
-        true
-      )
-    );
-  }*/
+  }
 
   function printAST(ast, keepBaselib?: boolean) {
     const output = new JPython.OutputStream({
@@ -264,6 +248,7 @@ export default function Repl(options0: Partial<Options>) {
         classes,
         scoped_flags,
         jsage: options.jsage,
+        tokens: options.tokens,
       });
     } catch (err) {
       if (err.is_eof && err.line == buffer.length && err.col > 0) {

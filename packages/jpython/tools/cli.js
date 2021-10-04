@@ -247,7 +247,7 @@ function parse_args() {
       all_args.filter(function (a) {
         return a[0] !== "-";
       }).length > 0;
-    ans.mode = !has_files && process.stdin.isTTY ? "repl" : "compile";
+    ans.mode = !has_files ? "repl" : "compile";
     if (has_files) {
       ans.execute = true;
     }
@@ -424,6 +424,12 @@ it.
 opt("jsage", "", "bool", false, function () {
 /*
 Enable everything implemented from our Sage-style preparser
+*/
+});
+
+opt("tokens", "", "bool", false, function () {
+/*
+Show every token as they are parsed.
 */
 });
 

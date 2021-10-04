@@ -10,6 +10,7 @@ from ast import (
     AST_Array, AST_Assign, AST_BaseCall, AST_Binary, AST_BlockStatement, AST_Break,
     AST_Class, AST_Conditional, AST_Constant, AST_Continue,
     AST_Debugger, AST_Definitions, AST_Directive, AST_Do, AST_Dot, is_node_type,
+    AST_EllipsesRange,
     AST_EmptyStatement, AST_Exit, AST_ExpressiveObject, AST_ForIn,
     AST_ForJS, AST_Function, AST_Hole, AST_If, AST_Imports, AST_Infinity,
     AST_Lambda, AST_ListComprehension, AST_LoopControl, AST_NaN, AST_New, AST_Node,
@@ -23,7 +24,7 @@ from ast import (
 from output.exceptions import print_try
 from output.classes import print_class
 from output.literals import print_array, print_obj_literal, print_object, print_set, print_regexp
-from output.loops import print_do_loop, print_while_loop, print_for_loop_body, print_for_in, print_list_comprehension
+from output.loops import print_do_loop, print_while_loop, print_for_loop_body, print_for_in, print_list_comprehension, print_ellipses_range
 from output.modules import print_top_level, print_imports
 from output.comments import print_comments
 from output.operators import (
@@ -234,6 +235,8 @@ def generate_code():
     )
 
     DEFPRINT(AST_ListComprehension, print_list_comprehension)
+
+    DEFPRINT(AST_EllipsesRange, print_ellipses_range)
 
     DEFPRINT(AST_With, print_with)
 

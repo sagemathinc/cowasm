@@ -235,6 +235,13 @@ class AST_ForJS(AST_StatementWithBody):
         'condition': "[AST_Verbatim] raw JavaScript conditional"
     }
 
+class AST_EllipsesRange(AST_Node):
+    properties = {
+        'first': "[AST_Node] the 'a' in [a..b] expression",
+        'last': "[AST_Node] the 'b' in [a..b] expression"
+    }
+
+
 class AST_ListComprehension(AST_ForIn):
     "A list comprehension expression"
     properties = {

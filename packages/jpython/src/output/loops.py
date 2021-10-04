@@ -319,3 +319,10 @@ def print_list_comprehension(self, output):
         )
     )
     output.print("()")
+
+def print_ellipses_range(self, output):
+    output.print("ρσ_range(")
+    self.first.print(output)
+    output.print(",(")
+    self.last.print(output)
+    output.print("+1))")

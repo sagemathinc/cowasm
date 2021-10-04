@@ -28,3 +28,6 @@ def list_times_number3(n=1000000):
 
 
 register('list_times_number3', list_times_number3)
+
+if __name__ == '__main__':
+    all()

@@ -4,6 +4,7 @@
 #from bench import register, all
 
 import bench
+
 register = bench.register
 all = bench.all
 
@@ -164,40 +165,54 @@ register("create_function_single_positional_argument",
 
 def create_function_complex_arguments(n=1000000):
     for i in range(n):
+
         def f(x, y=1, *args, **kw):
             pass
 
-register("create_function_complex_arguments", create_function_complex_arguments)
+
+register("create_function_complex_arguments",
+         create_function_complex_arguments)
+
 
 def function_call(n=1000000):
     def f(x):
         return x
+
     for i in range(n):
         f(i)
 
+
 register("function_call", function_call)
+
 
 def function_call_complex_arguments(n=100000):
     def f(x, y=0, *args, **kw):
         return x
+
     for i in range(n):
         f(i, 5, 6, a=8)
+
 
 register("function call, complex arguments", function_call_complex_arguments)
 
 
 def create_simple_class(n=10000):
     for i in range(n):
+
         class A:
             pass
 
+
 register("create simple class", create_simple_class)
+
 
 def create_class_with_init(n=10000):
     for i in range(n):
+
         class A:
             def __init__(self, x):
                 self.x = x
+
 
 register("create class with init", create_class_with_init)
 
@@ -205,19 +220,26 @@ register("create class with init", create_class_with_init)
 def create_instance_of_simple_class(n=1000000):
     class A:
         pass
+
     for i in range(n):
         A()
 
+
 register("create instance of simple class", create_instance_of_simple_class)
+
 
 def create_instance_of_class_with_init(n=100000):
     class A:
         def __init__(self, x):
             self.x = x
+
     for i in range(n):
         A(i)
 
-register("create instance of class with init", create_instance_of_class_with_init)
+
+register("create instance of class with init",
+         create_instance_of_class_with_init)
+
 
 def call_instance_method(n=100000):
     class A:
@@ -231,6 +253,8 @@ def call_instance_method(n=100000):
     for i in range(n):
         a.f()
 
+
 register("call_instance_method", call_instance_method)
 
-
+if __name__ == '__main__':
+    all()

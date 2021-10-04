@@ -16,7 +16,7 @@ Version History:
                 Version 1.1 corrects two bugs in version 1.0:
 
                 First, it leaked memory: in Proc1(), NextRecord ends
-                up having a pointer to itself.  I have corrected this
+                up having a pointer to itself.  I have corrected thjpytis
                 by zapping NextRecord.PtrComp at the end of Proc1().
 
                 Second, Proc3() used the operator != to compare a
@@ -64,9 +64,11 @@ FALSE = 0
 
 def main(loops=LOOPS):
     benchtime, stones = pystones(loops)
-    print("Pystone(%s) time for %d passes = %g" % \
-          (__version__, loops, benchtime))
-    print("This machine benchmarks at %g pystones/second" % stones)
+    print(f"Pystone({__version__}) time for {loops} passes = {benchtime}")
+    print(f"This machine benchmarks at {stones} pystones/second")
+    #print("Pystone(%s) time for %d passes = %g" % \
+    #      (__version__, loops, benchtime))
+    #print("This machine benchmarks at %g pystones/second" % stones)
 
 
 def pystones(loops=LOOPS):
@@ -258,6 +260,8 @@ def Func3(EnumParIn):
     return FALSE
 
 if __name__ == '__main__':
+    main(LOOPS)
+    """
     import sys
     def error(msg):
         print(msg, end=' ', file=sys.stderr)
@@ -273,3 +277,4 @@ if __name__ == '__main__':
     else:
         loops = LOOPS
     main(loops)
+    """

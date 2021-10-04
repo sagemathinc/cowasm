@@ -13,10 +13,16 @@ def register(name, f):
     benchmarks.append((name, f))
 
 
-def all():
+def reset():
+    benchmarks.clear()
+
+
+def all(desc=''):
+    print("-"*20)
+    print("Running...", desc)
     t = 0
     for (name, f) in benchmarks:
         s = time(f)
         t += s
         print(name, s, "ms")
-    print("Total...", t, "ms")
+    print("Total: ", t, "ms")

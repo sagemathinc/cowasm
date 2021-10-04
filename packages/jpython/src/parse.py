@@ -9,7 +9,7 @@ from ast import (
 AST_Array, AST_Assign, AST_Binary, AST_BlockStatement, AST_Break,
 AST_Call, AST_Catch, AST_Class, AST_ClassCall, AST_Conditional,
 AST_Constant, AST_Continue, AST_DWLoop, AST_Debugger, AST_Decorator,
-AST_Definitions, AST_DictComprehension, AST_Directive, AST_Do, AST_Dot,
+AST_Definitions, AST_DictComprehension, AST_Directive, AST_Do, AST_Dot, AST_EllipsesRange,
 AST_Else, AST_EmptyStatement, AST_Except, AST_ExpressiveObject, AST_False, AST_Finally,
 AST_ForIn, AST_ForJS, AST_Function, AST_GeneratorComprehension, AST_Hole,
 AST_If, AST_Import, AST_ImportedVar, AST_Imports, AST_ListComprehension,
@@ -184,6 +184,8 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         else:
             S.token = S.input()
 
+        if options.tokens:
+            print("token", S.token.type, S.token.value)
         return S.token
 
     def is_(type, value):
@@ -215,8 +217,8 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
     def expect_token(type, val):
         if is_(type, val):
             return next()
-        token_error(S.token, "Unexpected token " + S.token.type + " '" + S.token.value + "'" +
-                    ", expected " + type + " '" + val + "'")
+        token_error(S.token, "Unexpected token: found type='" + S.token.type + "', value='" + S.token.value + "'" +
+                    ";  expected: '" + type + "', possible value='" + val + "'")
 
     def expect(punc):
         return expect_token("punc", punc)
@@ -1578,6 +1580,10 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         expr = []
         if not is_("punc", "]"):
             expr.push(expression(False))
+            if is_("punc", ".."):
+                # ellipses range
+                return read_ellipses_range(new AST_EllipsesRange({'first':expr[0]}), ']')
+
             if is_("keyword", "for"):
                 # list comprehension
                 return read_comprehension(new AST_ListComprehension({'statement': expr[0]}), ']')
@@ -1650,6 +1656,12 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
             a.push(new AST_SetItem({'start':start, 'value':expression(False), 'end':prev()}))
         next()
         return new AST_Set({'items':a, 'start':ostart, 'end':prev()})
+
+    def read_ellipses_range(obj, terminator):
+        next()
+        obj['last'] = expression(False)
+        expect("]")
+        return obj
 
     def read_comprehension(obj, terminator):
         if is_node_type(obj, AST_GeneratorComprehension):
@@ -2202,6 +2214,7 @@ def parse(text, options):
         'discard_asserts': False,
         'module_cache_dir': '',
         'jsage': False,  # if true, do some of what the Sage preparser does, e.g., ^ --> **.
+        'tokens': False, # if true, show every token as it is parsed
     })
     import_dirs = [x for x in options.import_dirs]
     for location in v'[options.libdir, options.basedir]':
