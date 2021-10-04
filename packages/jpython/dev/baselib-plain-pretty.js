@@ -1007,6 +1007,18 @@ function ρσ_list_eq(other) {
 ρσ_list_eq.__module__ = "__main__";
 undefined;
 
+function ρσ_list_mul(other) {
+    var ans, k, n;
+    ans = ρσ_list_decorate([]);
+    k = int(other);
+    n = this.length;
+    let s=0; for(let i=0; i<k; i++) { for(let j=0; j<n; j++) {ans[s++]=this[j];}};
+    return ans;
+};
+ρσ_list_mul.__argnames__ = ["other"];
+ρσ_list_mul.__module__ = "__main__";
+undefined;
+
 function ρσ_list_decorate(ans) {
     ans.append = Array.prototype.push;
     ans.toString = ρσ_list_to_string;
@@ -1026,6 +1038,7 @@ function ρσ_list_decorate(ans) {
     ans.__len__ = ρσ_list_len;
     ans.__contains__ = ρσ_list_contains;
     ans.__eq__ = ρσ_list_eq;
+    ans.__mul__ = ρσ_list_mul;
     ans.constructor = ρσ_list_constructor;
     if (typeof ans[ρσ_iterator_symbol] !== "function") {
         ans[ρσ_iterator_symbol] = ρσ_list_iterator;

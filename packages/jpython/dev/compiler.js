@@ -1014,6 +1014,18 @@ function ρσ_list_eq(other) {
 ρσ_list_eq.__module__ = "__main__";
 undefined;
 
+function ρσ_list_mul(other) {
+    var ans, k, n;
+    ans = ρσ_list_decorate([]);
+    k = int(other);
+    n = this.length;
+    let s=0; for(let i=0; i<k; i++) { for(let j=0; j<n; j++) {ans[s++]=this[j];}};
+    return ans;
+};
+ρσ_list_mul.__argnames__ = ["other"];
+ρσ_list_mul.__module__ = "__main__";
+undefined;
+
 function ρσ_list_decorate(ans) {
     ans.append = Array.prototype.push;
     ans.toString = ρσ_list_to_string;
@@ -1033,6 +1045,7 @@ function ρσ_list_decorate(ans) {
     ans.__len__ = ρσ_list_len;
     ans.__contains__ = ρσ_list_contains;
     ans.__eq__ = ρσ_list_eq;
+    ans.__mul__ = ρσ_list_mul;
     ans.constructor = ρσ_list_constructor;
     if (typeof ans[ρσ_iterator_symbol] !== "function") {
         ans[ρσ_iterator_symbol] = ρσ_list_iterator;
@@ -5233,6 +5246,25 @@ return this.__repr__();
         Object.defineProperty(AST_ForJS.prototype, "__bases__", {value: [AST_StatementWithBody]});
         AST_ForJS.prototype.properties = {"condition":"[AST_Verbatim] raw JavaScript conditional"};
 
+        function AST_EllipsesRange() {
+            if (this.ρσ_object_id === undefined) Object.defineProperty(this, "ρσ_object_id", {"value":++ρσ_object_counter});
+            AST_EllipsesRange.prototype.__init__.apply(this, arguments);
+        }
+        ρσ_extends(AST_EllipsesRange, AST_Node);
+        AST_EllipsesRange.prototype.__init__ = function __init__ () {
+            AST_Node.prototype.__init__ && AST_Node.prototype.__init__.apply(this, arguments);
+        };
+        AST_EllipsesRange.prototype.__repr__ = function __repr__ () {
+            if(AST_Node.prototype.__repr__) return AST_Node.prototype.__repr__.call(this);
+            return "<" + __name__ + "." + this.constructor.name + " #" + this.ρσ_object_id + ">";
+        };
+        AST_EllipsesRange.prototype.__str__ = function __str__ () {
+            if(AST_Node.prototype.__str__) return AST_Node.prototype.__str__.call(this);
+return this.__repr__();
+        };
+        Object.defineProperty(AST_EllipsesRange.prototype, "__bases__", {value: [AST_Node]});
+        AST_EllipsesRange.prototype.properties = {"first":"[AST_Node] the 'a' in [a..b] expression","last":"[AST_Node] the 'b' in [a..b] expression"};
+
         function AST_ListComprehension() {
             if (this.ρσ_object_id === undefined) Object.defineProperty(this, "ρσ_object_id", {"value":++ρσ_object_counter});
             AST_ListComprehension.prototype.__init__.apply(this, arguments);
@@ -7691,6 +7723,7 @@ undefined;
         ρσ_modules.ast.AST_While = AST_While;
         ρσ_modules.ast.AST_ForIn = AST_ForIn;
         ρσ_modules.ast.AST_ForJS = AST_ForJS;
+        ρσ_modules.ast.AST_EllipsesRange = AST_EllipsesRange;
         ρσ_modules.ast.AST_ListComprehension = AST_ListComprehension;
         ρσ_modules.ast.AST_SetComprehension = AST_SetComprehension;
         ρσ_modules.ast.AST_DictComprehension = AST_DictComprehension;
@@ -7945,6 +7978,13 @@ is_digit.__argnames__ = ["code"];
 is_digit.__module__ = "tokenizer";
 undefined;
 
+        function is_dot(code) {
+            return ρσ_equals(code, 46);
+        };
+is_dot.__argnames__ = ["code"];
+is_dot.__module__ = "tokenizer";
+undefined;
+
         function is_alphanumeric_char(code) {
             return is_digit(code) || is_letter(code);
         };
@@ -8018,6 +8058,12 @@ undefined;
                 return S.text.charAt(S.pos);
             };
 peek.__module__ = "tokenizer";
+undefined;
+
+            function peekpeek() {
+                return S.text.charAt(ρσ_operator_add(S.pos, 1));
+            };
+peekpeek.__module__ = "tokenizer";
 undefined;
 
             function prevChar() {
@@ -8249,6 +8295,9 @@ undefined;
                         }
                         return false;
                     } else if (ch === ".") {
+                        if (peekpeek() === ".") {
+                            return false;
+                        }
                         if (!has_dot && !has_x && !has_e) {
                             has_dot = true;
                             return true;
@@ -8623,8 +8672,17 @@ handle_slash.__module__ = "tokenizer";
 undefined;
 
             function handle_dot() {
+                var c;
                 next();
-                return (is_digit(peek().charCodeAt(0))) ? read_num(".") : token("punc", ".");
+                c = peek().charCodeAt(0);
+                if (is_digit(c)) {
+                    return read_num(".");
+                }
+                if (is_dot(c)) {
+                    next();
+                    return token("punc", "..");
+                }
+                return token("punc", ".");
             };
 handle_dot.__module__ = "tokenizer";
 undefined;
@@ -8741,6 +8799,7 @@ undefined;
         ρσ_modules.tokenizer.is_string_modifier = is_string_modifier;
         ρσ_modules.tokenizer.is_letter = is_letter;
         ρσ_modules.tokenizer.is_digit = is_digit;
+        ρσ_modules.tokenizer.is_dot = is_dot;
         ρσ_modules.tokenizer.is_alphanumeric_char = is_alphanumeric_char;
         ρσ_modules.tokenizer.is_unicode_combining_mark = is_unicode_combining_mark;
         ρσ_modules.tokenizer.is_unicode_connector_punctuation = is_unicode_connector_punctuation;
@@ -8784,6 +8843,7 @@ undefined;
         var AST_Directive = ρσ_modules.ast.AST_Directive;
         var AST_Do = ρσ_modules.ast.AST_Do;
         var AST_Dot = ρσ_modules.ast.AST_Dot;
+        var AST_EllipsesRange = ρσ_modules.ast.AST_EllipsesRange;
         var AST_Else = ρσ_modules.ast.AST_Else;
         var AST_EmptyStatement = ρσ_modules.ast.AST_EmptyStatement;
         var AST_Except = ρσ_modules.ast.AST_Except;
@@ -8849,8 +8909,8 @@ undefined;
         var is_token = ρσ_modules.tokenizer.is_token;
         var RESERVED_WORDS = ρσ_modules.tokenizer.RESERVED_WORDS;
 
-        COMPILER_VERSION = "02a36693fa96f2f289b1f247521aac34347d6eb6";
-        PYTHON_FLAGS = {"exponent":true,"dict_literals":true,"overload_getitem":true,"bound_methods":true,"hash_literals":true};
+        COMPILER_VERSION = "49ee0ab55ce876928d163fa2531c1373ee45225e";
+        PYTHON_FLAGS = {"exponent":true,"ellipses":true,"dict_literals":true,"overload_getitem":true,"bound_methods":true,"hash_literals":true};
         function get_compiler_version() {
             return COMPILER_VERSION;
         };
@@ -8878,24 +8938,24 @@ undefined;
         FORBIDDEN_CLASS_VARS = "prototype constructor".split(" ");
         UNARY_PREFIX = make_predicate("typeof void delete ~ - + ! @");
         ASSIGNMENT = make_predicate("= += -= /= //= *= %= >>= <<= >>>= |= ^= &=");
-        PRECEDENCE = (function() {
-            var ρσ_anonfunc = function (a, ret) {
-                var b, j, i;
-                for (var ρσ_Index38 = 0; ρσ_Index38 < a.length; ρσ_Index38++) {
-                    i = ρσ_Index38;
-                    b = a[(typeof i === "number" && i < 0) ? a.length + i : i];
-                    for (var ρσ_Index39 = 0; ρσ_Index39 < b.length; ρσ_Index39++) {
-                        j = ρσ_Index39;
-                        ret[ρσ_bound_index(b[(typeof j === "number" && j < 0) ? b.length + j : j], ret)] = ρσ_operator_add(i, 1);
-                    }
+        function operator_to_precedence(a) {
+            var op_to_prec, b, j, i;
+            op_to_prec = Object.create(null);
+            for (var ρσ_Index38 = 0; ρσ_Index38 < a.length; ρσ_Index38++) {
+                i = ρσ_Index38;
+                b = a[(typeof i === "number" && i < 0) ? a.length + i : i];
+                for (var ρσ_Index39 = 0; ρσ_Index39 < b.length; ρσ_Index39++) {
+                    j = ρσ_Index39;
+                    op_to_prec[ρσ_bound_index(b[(typeof j === "number" && j < 0) ? b.length + j : j], op_to_prec)] = ρσ_operator_add(i, 1);
                 }
-                return ret;
-            };
-ρσ_anonfunc.__argnames__ = ["a", "ret"];
-ρσ_anonfunc.__module__ = "parse";
+            }
+            return op_to_prec;
+        };
+operator_to_precedence.__argnames__ = ["a"];
+operator_to_precedence.__module__ = "parse";
 undefined;
-            return ρσ_anonfunc;
-        })()(ρσ_list_decorate([ ρσ_list_decorate([ "||" ]), ρσ_list_decorate([ "&&" ]), ρσ_list_decorate([ "|" ]), ρσ_list_decorate([ "^" ]), ρσ_list_decorate([ "&" ]), ρσ_list_decorate([ "==", "===", "!=", "!==" ]), ρσ_list_decorate([ "<", ">", "<=", ">=", "in", "nin", "instanceof" ]), ρσ_list_decorate([ ">>", "<<", ">>>" ]), ρσ_list_decorate([ "+", "-" ]), ρσ_list_decorate([ "*", "/", "//", "%" ]), ρσ_list_decorate([ "**" ]) ]), Object.create(null));
+
+        PRECEDENCE = operator_to_precedence(ρσ_list_decorate([ ρσ_list_decorate([ "||" ]), ρσ_list_decorate([ "&&" ]), ρσ_list_decorate([ "|" ]), ρσ_list_decorate([ "^" ]), ρσ_list_decorate([ "&" ]), ρσ_list_decorate([ "==", "===", "!=", "!==" ]), ρσ_list_decorate([ "<", ">", "<=", ">=", "in", "nin", "instanceof" ]), ρσ_list_decorate([ ">>", "<<", ">>>" ]), ρσ_list_decorate([ "+", "-" ]), ρσ_list_decorate([ "*", "/", "//", "%" ]), ρσ_list_decorate([ "**" ]) ]));
         STATEMENTS_WITH_LABELS = array_to_hash(ρσ_list_decorate([ "for", "do", "while", "switch" ]));
         ATOMIC_START_TOKEN = array_to_hash(ρσ_list_decorate([ "atom", "num", "string", "regexp", "name", "js" ]));
         compile_time_decorators = ρσ_list_decorate([ "staticmethod", "external", "property" ]);
@@ -8951,6 +9011,9 @@ undefined;
                 } else {
                     S.token = S.input();
                 }
+                if (options.tokens) {
+                    print("token", S.token.type, S.token.value);
+                }
                 return S.token;
             };
 next.__module__ = "parse";
@@ -9000,6 +9063,9 @@ undefined;
                 if (token === undefined) {
                     token = S.token;
                 }
+                if (token.type === "operator" && (token.value === "^^" || typeof token.value === "object" && ρσ_equals(token.value, "^^"))) {
+                    croak("Use 'from __python__ import exponent' to support the a^^b is a xor b and a^b is a**b");
+                }
                 token_error(token, ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("Unexpected token: ", token.type), " '"), token.value), "'"));
             };
 unexpected.__argnames__ = ["token"];
@@ -9010,7 +9076,7 @@ undefined;
                 if (is_(type, val)) {
                     return next();
                 }
-                token_error(S.token, ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("Unexpected token ", S.token.type), " '"), S.token.value), "'"), ", expected "), type), " '"), val), "'"));
+                token_error(S.token, ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("Unexpected token: found type='", S.token.type), "', value='"), S.token.value), "'"), ";  expected: '"), type), "', value='"), val), "'"));
             };
 expect_token.__argnames__ = ["type", "val"];
 expect_token.__module__ = "parse";
@@ -9761,7 +9827,10 @@ undefined;
                         croak(ρσ_operator_add("Unknown __python__ flag: ", name));
                     }
                     if (ρσ_equals(name, "exponent")) {
+                        S.scoped_flags.set("exponent", val);
                         S.input.context()["exponent"] = val;
+                    } else if (ρσ_equals(name, "ellipses")) {
+                        S.scoped_flags.set("ellipses", val);
                     } else {
                         S.scoped_flags.set(name, val);
                     }
@@ -10675,6 +10744,12 @@ undefined;
                     expr = ρσ_list_decorate([]);
                     if (!is_("punc", "]")) {
                         expr.push(expression(false));
+                        if (is_("punc", "..")) {
+                            if (!S.scoped_flags.get("ellipses")) {
+                                croak("Use 'from __python__ import ellipses' to support the [a..b] syntax");
+                            }
+                            return read_ellipses_range(new AST_EllipsesRange({"first":expr[0]}), "]");
+                        }
                         if (is_("keyword", "for")) {
                             return read_comprehension(new AST_ListComprehension({"statement":expr[0]}), "]");
                         }
@@ -10757,6 +10832,16 @@ undefined;
             };
 set_.__argnames__ = ["start", "end", "expr"];
 set_.__module__ = "parse";
+undefined;
+
+            function read_ellipses_range(obj, terminator) {
+                next();
+                obj["last"] = expression(false);
+                expect("]");
+                return obj;
+            };
+read_ellipses_range.__argnames__ = ["obj", "terminator"];
+read_ellipses_range.__module__ = "parse";
 undefined;
 
             function read_comprehension(obj, terminator) {
@@ -11203,7 +11288,7 @@ undefined;
 
                 if (commas) {
                     left = [ expr ];
-                    while (is_("punc", ",") && !peek().nlb) {
+                    while (is_("punc", ",")) {
                         next();
                         if (is_node_type(expr, AST_Assign)) {
                             left[left.length-1] = left[left.length-1].left;
@@ -11320,8 +11405,8 @@ create_parser_ctx.__module__ = "parse";
 undefined;
 
         function parse(text, options) {
-            var import_dirs, x, location, module_id, baselib_items, imported_module_ids, imported_modules, importing_modules, S, obj, cname;
-            options = defaults(options, {"filename":null,"module_id":"__main__","toplevel":null,"for_linting":false,"import_dirs":[],"classes":undefined,"scoped_flags":Object.create(null),"discard_asserts":false,"module_cache_dir":"","jsage":false});
+            var import_dirs, x, location, module_id, baselib_items, imported_module_ids, imported_modules, importing_modules, S, name, obj, cname;
+            options = defaults(options, {"filename":null,"module_id":"__main__","toplevel":null,"for_linting":false,"import_dirs":[],"classes":undefined,"scoped_flags":Object.create(null),"discard_asserts":false,"module_cache_dir":"","jsage":false,"tokens":false});
             import_dirs = (function() {
                 var ρσ_Iter = options.import_dirs, ρσ_Result = [], x;
                 ρσ_Iter = ((typeof ρσ_Iter[Symbol.iterator] === "function") ? (ρσ_Iter instanceof Map ? ρσ_Iter.keys() : ρσ_Iter) : Object.keys(ρσ_Iter));
@@ -11386,13 +11471,21 @@ undefined;
                 return ρσ_anonfunc;
             })()}};
             if (options.jsage) {
+                var ρσ_Iter74 = ρσ_list_decorate([ "exponent", "ellipses" ]);
+                ρσ_Iter74 = ((typeof ρσ_Iter74[Symbol.iterator] === "function") ? (ρσ_Iter74 instanceof Map ? ρσ_Iter74.keys() : ρσ_Iter74) : Object.keys(ρσ_Iter74));
+                for (var ρσ_Index74 of ρσ_Iter74) {
+                    name = ρσ_Index74;
+                    S.scoped_flags.set(name, true);
+                }
+            }
+            if (S.scoped_flags.get("exponent")) {
                 S.input.context()["exponent"] = true;
             }
             if (options.classes) {
-                var ρσ_Iter74 = options.classes;
-                ρσ_Iter74 = ((typeof ρσ_Iter74[Symbol.iterator] === "function") ? (ρσ_Iter74 instanceof Map ? ρσ_Iter74.keys() : ρσ_Iter74) : Object.keys(ρσ_Iter74));
-                for (var ρσ_Index74 of ρσ_Iter74) {
-                    cname = ρσ_Index74;
+                var ρσ_Iter75 = options.classes;
+                ρσ_Iter75 = ((typeof ρσ_Iter75[Symbol.iterator] === "function") ? (ρσ_Iter75 instanceof Map ? ρσ_Iter75.keys() : ρσ_Iter75) : Object.keys(ρσ_Iter75));
+                for (var ρσ_Index75 of ρσ_Iter75) {
+                    cname = ρσ_Index75;
                     obj = (ρσ_expr_temp = options.classes)[(typeof cname === "number" && cname < 0) ? ρσ_expr_temp.length + cname : cname];
                     (ρσ_expr_temp = S.classes[0])[(typeof cname === "number" && cname < 0) ? ρσ_expr_temp.length + cname : cname] = {"static":obj.static,"bound":obj.bound,"classvars":obj.classvars};
                 }
@@ -11417,6 +11510,7 @@ undefined;
         ρσ_modules.parse.compile_time_decorators = compile_time_decorators;
         ρσ_modules.parse.get_compiler_version = get_compiler_version;
         ρσ_modules.parse.static_predicate = static_predicate;
+        ρσ_modules.parse.operator_to_precedence = operator_to_precedence;
         ρσ_modules.parse.has_simple_decorator = has_simple_decorator;
         ρσ_modules.parse.has_setter_decorator = has_setter_decorator;
         ρσ_modules.parse.create_parser_ctx = create_parser_ctx;
@@ -11963,10 +12057,10 @@ undefined;
                 output.indent();
                 output.print("var");
                 output.space();
-                var ρσ_Iter75 = enumerate(vars);
-                ρσ_Iter75 = ((typeof ρσ_Iter75[Symbol.iterator] === "function") ? (ρσ_Iter75 instanceof Map ? ρσ_Iter75.keys() : ρσ_Iter75) : Object.keys(ρσ_Iter75));
-                for (var ρσ_Index75 of ρσ_Iter75) {
-                    ρσ_unpack = ρσ_Index75;
+                var ρσ_Iter76 = enumerate(vars);
+                ρσ_Iter76 = ((typeof ρσ_Iter76[Symbol.iterator] === "function") ? (ρσ_Iter76 instanceof Map ? ρσ_Iter76.keys() : ρσ_Iter76) : Object.keys(ρσ_Iter76));
+                for (var ρσ_Index76 of ρσ_Iter76) {
+                    ρσ_unpack = ρσ_Index76;
                     i = ρσ_unpack[0];
                     arg = ρσ_unpack[1];
                     if (i) {
@@ -11985,10 +12079,10 @@ undefined;
         function display_body(body, is_toplevel, output) {
             var last, ρσ_unpack, i, stmt;
             last = ρσ_operator_sub(body.length, 1);
-            var ρσ_Iter76 = enumerate(body);
-            ρσ_Iter76 = ((typeof ρσ_Iter76[Symbol.iterator] === "function") ? (ρσ_Iter76 instanceof Map ? ρσ_Iter76.keys() : ρσ_Iter76) : Object.keys(ρσ_Iter76));
-            for (var ρσ_Index76 of ρσ_Iter76) {
-                ρσ_unpack = ρσ_Index76;
+            var ρσ_Iter77 = enumerate(body);
+            ρσ_Iter77 = ((typeof ρσ_Iter77[Symbol.iterator] === "function") ? (ρσ_Iter77 instanceof Map ? ρσ_Iter77.keys() : ρσ_Iter77) : Object.keys(ρσ_Iter77));
+            for (var ρσ_Index77 of ρσ_Iter77) {
+                ρσ_unpack = ρσ_Index77;
                 i = ρσ_unpack[0];
                 stmt = ρσ_unpack[1];
                 if (!(is_node_type(stmt, AST_EmptyStatement)) && !(is_node_type(stmt, AST_Definitions))) {
@@ -12085,10 +12179,10 @@ undefined;
             var exits, clause_name, clause;
             exits = [];
             [output.assign("ρσ_with_exception"), output.print("undefined"), output.end_statement()];
-            var ρσ_Iter77 = self.clauses;
-            ρσ_Iter77 = ((typeof ρσ_Iter77[Symbol.iterator] === "function") ? (ρσ_Iter77 instanceof Map ? ρσ_Iter77.keys() : ρσ_Iter77) : Object.keys(ρσ_Iter77));
-            for (var ρσ_Index77 of ρσ_Iter77) {
-                clause = ρσ_Index77;
+            var ρσ_Iter78 = self.clauses;
+            ρσ_Iter78 = ((typeof ρσ_Iter78[Symbol.iterator] === "function") ? (ρσ_Iter78 instanceof Map ? ρσ_Iter78.keys() : ρσ_Iter78) : Object.keys(ρσ_Iter78));
+            for (var ρσ_Index78 of ρσ_Iter78) {
+                clause = ρσ_Index78;
                 output.with_counter += 1;
                 clause_name = ρσ_operator_add("ρσ_with_clause_", output.with_counter);
                 exits.push(clause_name);
@@ -12126,10 +12220,10 @@ undefined;
             output.with_block((function() {
                 var ρσ_anonfunc = function () {
                     var clause;
-                    var ρσ_Iter78 = exits;
-                    ρσ_Iter78 = ((typeof ρσ_Iter78[Symbol.iterator] === "function") ? (ρσ_Iter78 instanceof Map ? ρσ_Iter78.keys() : ρσ_Iter78) : Object.keys(ρσ_Iter78));
-                    for (var ρσ_Index78 of ρσ_Iter78) {
-                        clause = ρσ_Index78;
+                    var ρσ_Iter79 = exits;
+                    ρσ_Iter79 = ((typeof ρσ_Iter79[Symbol.iterator] === "function") ? (ρσ_Iter79 instanceof Map ? ρσ_Iter79.keys() : ρσ_Iter79) : Object.keys(ρσ_Iter79));
+                    for (var ρσ_Index79 of ρσ_Iter79) {
+                        clause = ρσ_Index79;
                         [output.indent(), output.print(ρσ_operator_add(clause, ".__exit__()")), output.end_statement()];
                     }
                 };
@@ -12142,10 +12236,10 @@ undefined;
                 var ρσ_anonfunc = function () {
                     var clause;
                     [output.indent(), output.assign("ρσ_with_suppress"), output.print("false"), output.end_statement()];
-                    var ρσ_Iter79 = exits;
-                    ρσ_Iter79 = ((typeof ρσ_Iter79[Symbol.iterator] === "function") ? (ρσ_Iter79 instanceof Map ? ρσ_Iter79.keys() : ρσ_Iter79) : Object.keys(ρσ_Iter79));
-                    for (var ρσ_Index79 of ρσ_Iter79) {
-                        clause = ρσ_Index79;
+                    var ρσ_Iter80 = exits;
+                    ρσ_Iter80 = ((typeof ρσ_Iter80[Symbol.iterator] === "function") ? (ρσ_Iter80 instanceof Map ? ρσ_Iter80.keys() : ρσ_Iter80) : Object.keys(ρσ_Iter80));
+                    for (var ρσ_Index80 of ρσ_Iter80) {
+                        clause = ρσ_Index80;
                         output.indent();
                         output.spaced("ρσ_with_suppress", "|=", ρσ_operator_add(ρσ_operator_add("ρσ_bool(", clause), ".__exit__(ρσ_with_exception.constructor,"), "ρσ_with_exception,", "ρσ_with_exception.stack))");
                         output.end_statement();
@@ -12245,10 +12339,10 @@ undefined;
                     [output.spaced("ρσ_last_exception", "=", "ρσ_Exception"), output.end_statement()];
                     output.indent();
                     no_default = true;
-                    var ρσ_Iter80 = enumerate(self.body);
-                    ρσ_Iter80 = ((typeof ρσ_Iter80[Symbol.iterator] === "function") ? (ρσ_Iter80 instanceof Map ? ρσ_Iter80.keys() : ρσ_Iter80) : Object.keys(ρσ_Iter80));
-                    for (var ρσ_Index80 of ρσ_Iter80) {
-                        ρσ_unpack = ρσ_Index80;
+                    var ρσ_Iter81 = enumerate(self.body);
+                    ρσ_Iter81 = ((typeof ρσ_Iter81[Symbol.iterator] === "function") ? (ρσ_Iter81 instanceof Map ? ρσ_Iter81.keys() : ρσ_Iter81) : Object.keys(ρσ_Iter81));
+                    for (var ρσ_Index81 of ρσ_Iter81) {
+                        ρσ_unpack = ρσ_Index81;
                         i = ρσ_unpack[0];
                         exception = ρσ_unpack[1];
                         if (i) {
@@ -12260,10 +12354,10 @@ undefined;
                             output.with_parens((function() {
                                 var ρσ_anonfunc = function () {
                                     var ρσ_unpack, i, err;
-                                    var ρσ_Iter81 = enumerate(exception.errors);
-                                    ρσ_Iter81 = ((typeof ρσ_Iter81[Symbol.iterator] === "function") ? (ρσ_Iter81 instanceof Map ? ρσ_Iter81.keys() : ρσ_Iter81) : Object.keys(ρσ_Iter81));
-                                    for (var ρσ_Index81 of ρσ_Iter81) {
-                                        ρσ_unpack = ρσ_Index81;
+                                    var ρσ_Iter82 = enumerate(exception.errors);
+                                    ρσ_Iter82 = ((typeof ρσ_Iter82[Symbol.iterator] === "function") ? (ρσ_Iter82 instanceof Map ? ρσ_Iter82.keys() : ρσ_Iter82) : Object.keys(ρσ_Iter82));
+                                    for (var ρσ_Index82 of ρσ_Iter82) {
+                                        ρσ_unpack = ρσ_Index82;
                                         i = ρσ_unpack[0];
                                         err = ρσ_unpack[1];
                                         if (i) {
@@ -12376,8 +12470,8 @@ undefined;
             var best, len_, i;
             best = a[0];
             len_ = best.length;
-            for (var ρσ_Index82 = 1; ρσ_Index82 < a.length; ρσ_Index82++) {
-                i = ρσ_Index82;
+            for (var ρσ_Index83 = 1; ρσ_Index83 < a.length; ρσ_Index83++) {
+                i = ρσ_Index83;
                 if (a[(typeof i === "number" && i < 0) ? a.length + i : i].length < len_) {
                     best = a[(typeof i === "number" && i < 0) ? a.length + i : i];
                     len_ = best.length;
@@ -12435,17 +12529,17 @@ undefined;
         function create_doctring(docstrings) {
             var ans, ds, lines, min_leading_whitespace, r, leading_whitespace, line, lw, ρσ_unpack, l;
             ans = [];
-            var ρσ_Iter83 = docstrings;
-            ρσ_Iter83 = ((typeof ρσ_Iter83[Symbol.iterator] === "function") ? (ρσ_Iter83 instanceof Map ? ρσ_Iter83.keys() : ρσ_Iter83) : Object.keys(ρσ_Iter83));
-            for (var ρσ_Index83 of ρσ_Iter83) {
-                ds = ρσ_Index83;
+            var ρσ_Iter84 = docstrings;
+            ρσ_Iter84 = ((typeof ρσ_Iter84[Symbol.iterator] === "function") ? (ρσ_Iter84 instanceof Map ? ρσ_Iter84.keys() : ρσ_Iter84) : Object.keys(ρσ_Iter84));
+            for (var ρσ_Index84 of ρσ_Iter84) {
+                ds = ρσ_Index84;
                 ds = str.rstrip(ds.value);
                 lines = [];
                 min_leading_whitespace = "";
-                var ρσ_Iter84 = ds.split(/$/gm);
-                ρσ_Iter84 = ((typeof ρσ_Iter84[Symbol.iterator] === "function") ? (ρσ_Iter84 instanceof Map ? ρσ_Iter84.keys() : ρσ_Iter84) : Object.keys(ρσ_Iter84));
-                for (var ρσ_Index84 of ρσ_Iter84) {
-                    line = ρσ_Index84;
+                var ρσ_Iter85 = ds.split(/$/gm);
+                ρσ_Iter85 = ((typeof ρσ_Iter85[Symbol.iterator] === "function") ? (ρσ_Iter85 instanceof Map ? ρσ_Iter85.keys() : ρσ_Iter85) : Object.keys(ρσ_Iter85));
+                for (var ρσ_Index85 of ρσ_Iter85) {
+                    line = ρσ_Index85;
                     r = /^\s+/.exec(line);
                     leading_whitespace = "";
                     if (r) {
@@ -12462,10 +12556,10 @@ undefined;
                         lines.push([leading_whitespace, line]);
                     }
                 }
-                var ρσ_Iter85 = lines;
-                ρσ_Iter85 = ((typeof ρσ_Iter85[Symbol.iterator] === "function") ? (ρσ_Iter85 instanceof Map ? ρσ_Iter85.keys() : ρσ_Iter85) : Object.keys(ρσ_Iter85));
-                for (var ρσ_Index85 of ρσ_Iter85) {
-                    ρσ_unpack = ρσ_Index85;
+                var ρσ_Iter86 = lines;
+                ρσ_Iter86 = ((typeof ρσ_Iter86[Symbol.iterator] === "function") ? (ρσ_Iter86 instanceof Map ? ρσ_Iter86.keys() : ρσ_Iter86) : Object.keys(ρσ_Iter86));
+                for (var ρσ_Index86 of ρσ_Iter86) {
+                    ρσ_unpack = ρσ_Index86;
                     lw = ρσ_unpack[0];
                     l = ρσ_unpack[1];
                     if (min_leading_whitespace) {
@@ -12503,10 +12597,10 @@ undefined;
 
         function unpack_tuple(elems, output, in_statement) {
             var ρσ_unpack, i, elem;
-            var ρσ_Iter86 = enumerate(elems);
-            ρσ_Iter86 = ((typeof ρσ_Iter86[Symbol.iterator] === "function") ? (ρσ_Iter86 instanceof Map ? ρσ_Iter86.keys() : ρσ_Iter86) : Object.keys(ρσ_Iter86));
-            for (var ρσ_Index86 of ρσ_Iter86) {
-                ρσ_unpack = ρσ_Index86;
+            var ρσ_Iter87 = enumerate(elems);
+            ρσ_Iter87 = ((typeof ρσ_Iter87[Symbol.iterator] === "function") ? (ρσ_Iter87 instanceof Map ? ρσ_Iter87.keys() : ρσ_Iter87) : Object.keys(ρσ_Iter87));
+            for (var ρσ_Index87 of ρσ_Iter87) {
+                ρσ_unpack = ρσ_Index87;
                 i = ρσ_unpack[0];
                 elem = ρσ_unpack[1];
                 output.indent();
@@ -12628,10 +12722,10 @@ undefined;
                         output.print(self.simple_for_index);
                         output.end_statement();
                     }
-                    var ρσ_Iter87 = self.body.body;
-                    ρσ_Iter87 = ((typeof ρσ_Iter87[Symbol.iterator] === "function") ? (ρσ_Iter87 instanceof Map ? ρσ_Iter87.keys() : ρσ_Iter87) : Object.keys(ρσ_Iter87));
-                    for (var ρσ_Index87 of ρσ_Iter87) {
-                        stmt = ρσ_Index87;
+                    var ρσ_Iter88 = self.body.body;
+                    ρσ_Iter88 = ((typeof ρσ_Iter88[Symbol.iterator] === "function") ? (ρσ_Iter88 instanceof Map ? ρσ_Iter88.keys() : ρσ_Iter88) : Object.keys(ρσ_Iter88));
+                    for (var ρσ_Index88 of ρσ_Iter88) {
+                        stmt = ρσ_Index88;
                         output.indent();
                         stmt.print(output);
                         output.newline();
@@ -12900,10 +12994,10 @@ undefined;
                                 body_out.print(result_obj);
                             }
                             if (is_node_type(self.init, AST_Array)) {
-                                var ρσ_Iter88 = self.init.elements;
-                                ρσ_Iter88 = ((typeof ρσ_Iter88[Symbol.iterator] === "function") ? (ρσ_Iter88 instanceof Map ? ρσ_Iter88.keys() : ρσ_Iter88) : Object.keys(ρσ_Iter88));
-                                for (var ρσ_Index88 of ρσ_Iter88) {
-                                    i = ρσ_Index88;
+                                var ρσ_Iter89 = self.init.elements;
+                                ρσ_Iter89 = ((typeof ρσ_Iter89[Symbol.iterator] === "function") ? (ρσ_Iter89 instanceof Map ? ρσ_Iter89.keys() : ρσ_Iter89) : Object.keys(ρσ_Iter89));
+                                for (var ρσ_Index89 of ρσ_Iter89) {
+                                    i = ρσ_Index89;
                                     body_out.comma();
                                     i.print(body_out);
                                 }
@@ -13015,6 +13109,17 @@ print_list_comprehension.__argnames__ = ["self", "output"];
 print_list_comprehension.__module__ = "output.loops";
 undefined;
 
+        function print_ellipses_range(self, output) {
+            output.print("ρσ_range(");
+            self.first.print(output);
+            output.print(",(");
+            self.last.print(output);
+            output.print("+1))");
+        };
+print_ellipses_range.__argnames__ = ["self", "output"];
+print_ellipses_range.__module__ = "output.loops";
+undefined;
+
         ρσ_modules["output.loops"].unpack_tuple = unpack_tuple;
         ρσ_modules["output.loops"].print_do_loop = print_do_loop;
         ρσ_modules["output.loops"].print_while_loop = print_while_loop;
@@ -13024,6 +13129,7 @@ undefined;
         ρσ_modules["output.loops"].init_es6_itervar = init_es6_itervar;
         ρσ_modules["output.loops"].print_for_in = print_for_in;
         ρσ_modules["output.loops"].print_list_comprehension = print_list_comprehension;
+        ρσ_modules["output.loops"].print_ellipses_range = print_ellipses_range;
     })();
 
     (function(){
@@ -13438,10 +13544,10 @@ undefined;
                 left_hand_sides = ρσ_unpack[0];
                 rhs = ρσ_unpack[1];
                 is_compound_assign = false;
-                var ρσ_Iter89 = left_hand_sides;
-                ρσ_Iter89 = ((typeof ρσ_Iter89[Symbol.iterator] === "function") ? (ρσ_Iter89 instanceof Map ? ρσ_Iter89.keys() : ρσ_Iter89) : Object.keys(ρσ_Iter89));
-                for (var ρσ_Index89 of ρσ_Iter89) {
-                    lhs = ρσ_Index89;
+                var ρσ_Iter90 = left_hand_sides;
+                ρσ_Iter90 = ((typeof ρσ_Iter90[Symbol.iterator] === "function") ? (ρσ_Iter90 instanceof Map ? ρσ_Iter90.keys() : ρσ_Iter90) : Object.keys(ρσ_Iter90));
+                for (var ρσ_Index90 of ρσ_Iter90) {
+                    lhs = ρσ_Index90;
                     if (is_node_type(lhs, AST_Seq) || is_node_type(lhs, AST_Array)) {
                         is_compound_assign = true;
                         break;
@@ -13450,18 +13556,18 @@ undefined;
                 if (is_compound_assign) {
                     temp_rhs = new AST_SymbolRef({"name":"ρσ_chain_assign_temp"});
                     print_assignment(new AST_Assign({"left":temp_rhs,"operator":"=","right":rhs}), output);
-                    var ρσ_Iter90 = left_hand_sides;
-                    ρσ_Iter90 = ((typeof ρσ_Iter90[Symbol.iterator] === "function") ? (ρσ_Iter90 instanceof Map ? ρσ_Iter90.keys() : ρσ_Iter90) : Object.keys(ρσ_Iter90));
-                    for (var ρσ_Index90 of ρσ_Iter90) {
-                        lhs = ρσ_Index90;
-                        [output.end_statement(), output.indent()];
-                        print_assignment(new AST_Assign({"left":lhs,"right":temp_rhs,"operator":self.operator}), output);
-                    }
-                } else {
                     var ρσ_Iter91 = left_hand_sides;
                     ρσ_Iter91 = ((typeof ρσ_Iter91[Symbol.iterator] === "function") ? (ρσ_Iter91 instanceof Map ? ρσ_Iter91.keys() : ρσ_Iter91) : Object.keys(ρσ_Iter91));
                     for (var ρσ_Index91 of ρσ_Iter91) {
                         lhs = ρσ_Index91;
+                        [output.end_statement(), output.indent()];
+                        print_assignment(new AST_Assign({"left":lhs,"right":temp_rhs,"operator":self.operator}), output);
+                    }
+                } else {
+                    var ρσ_Iter92 = left_hand_sides;
+                    ρσ_Iter92 = ((typeof ρσ_Iter92[Symbol.iterator] === "function") ? (ρσ_Iter92 instanceof Map ? ρσ_Iter92.keys() : ρσ_Iter92) : Object.keys(ρσ_Iter92));
+                    for (var ρσ_Index92 of ρσ_Iter92) {
+                        lhs = ρσ_Index92;
                         output.spaced(lhs, "=", "");
                     }
                     rhs.print(output);
@@ -13609,10 +13715,10 @@ undefined;
                 var ρσ_anonfunc = function () {
                     var ρσ_unpack, i, arg;
                     if (argnames && argnames.length && (argnames.is_simple_func === true || argnames.is_simple_func === undefined)) {
-                        var ρσ_Iter92 = enumerate((strip_first) ? argnames.slice(1) : argnames);
-                        ρσ_Iter92 = ((typeof ρσ_Iter92[Symbol.iterator] === "function") ? (ρσ_Iter92 instanceof Map ? ρσ_Iter92.keys() : ρσ_Iter92) : Object.keys(ρσ_Iter92));
-                        for (var ρσ_Index92 of ρσ_Iter92) {
-                            ρσ_unpack = ρσ_Index92;
+                        var ρσ_Iter93 = enumerate((strip_first) ? argnames.slice(1) : argnames);
+                        ρσ_Iter93 = ((typeof ρσ_Iter93[Symbol.iterator] === "function") ? (ρσ_Iter93 instanceof Map ? ρσ_Iter93.keys() : ρσ_Iter93) : Object.keys(ρσ_Iter93));
+                        for (var ρσ_Index93 of ρσ_Iter93) {
+                            ρσ_unpack = ρσ_Index93;
                             i = ρσ_unpack[0];
                             arg = ρσ_unpack[1];
                             if (i) {
@@ -13640,10 +13746,10 @@ undefined;
             }
             fname = (node.name) ? node.name.name : anonfunc;
             kw = "arguments[arguments.length-1]";
-            var ρσ_Iter93 = enumerate(a);
-            ρσ_Iter93 = ((typeof ρσ_Iter93[Symbol.iterator] === "function") ? (ρσ_Iter93 instanceof Map ? ρσ_Iter93.keys() : ρσ_Iter93) : Object.keys(ρσ_Iter93));
-            for (var ρσ_Index93 of ρσ_Iter93) {
-                ρσ_unpack = ρσ_Index93;
+            var ρσ_Iter94 = enumerate(a);
+            ρσ_Iter94 = ((typeof ρσ_Iter94[Symbol.iterator] === "function") ? (ρσ_Iter94 instanceof Map ? ρσ_Iter94.keys() : ρσ_Iter94) : Object.keys(ρσ_Iter94));
+            for (var ρσ_Index94 of ρσ_Iter94) {
+                ρσ_unpack = ρσ_Index94;
                 c = ρσ_unpack[0];
                 arg = ρσ_unpack[1];
                 i = ρσ_operator_sub(c, offset);
@@ -13672,10 +13778,10 @@ undefined;
                 output.spaced("if", ρσ_operator_add("(", kw), "===", "null", "||", "typeof", kw, "!==", "\"object\"", "||", kw, "[ρσ_kwargs_symbol]", "!==", "true)", kw, "=", "{}");
                 output.end_statement();
                 if (a.has_defaults) {
-                    var ρσ_Iter94 = Object.keys(a.defaults);
-                    ρσ_Iter94 = ((typeof ρσ_Iter94[Symbol.iterator] === "function") ? (ρσ_Iter94 instanceof Map ? ρσ_Iter94.keys() : ρσ_Iter94) : Object.keys(ρσ_Iter94));
-                    for (var ρσ_Index94 of ρσ_Iter94) {
-                        dname = ρσ_Index94;
+                    var ρσ_Iter95 = Object.keys(a.defaults);
+                    ρσ_Iter95 = ((typeof ρσ_Iter95[Symbol.iterator] === "function") ? (ρσ_Iter95 instanceof Map ? ρσ_Iter95.keys() : ρσ_Iter95) : Object.keys(ρσ_Iter95));
+                    for (var ρσ_Index95 of ρσ_Iter95) {
+                        dname = ρσ_Index95;
                         output.indent();
                         output.spaced("if", ρσ_operator_add(ρσ_operator_add("(Object.prototype.hasOwnProperty.call(", kw), ","), ρσ_operator_add(ρσ_operator_add("\"", dname), "\"))"));
                         output.with_block((function() {
@@ -13717,10 +13823,10 @@ undefined;
             if (self.return_annotation) {
                 return true;
             }
-            var ρσ_Iter95 = self.argnames;
-            ρσ_Iter95 = ((typeof ρσ_Iter95[Symbol.iterator] === "function") ? (ρσ_Iter95 instanceof Map ? ρσ_Iter95.keys() : ρσ_Iter95) : Object.keys(ρσ_Iter95));
-            for (var ρσ_Index95 of ρσ_Iter95) {
-                arg = ρσ_Index95;
+            var ρσ_Iter96 = self.argnames;
+            ρσ_Iter96 = ((typeof ρσ_Iter96[Symbol.iterator] === "function") ? (ρσ_Iter96 instanceof Map ? ρσ_Iter96.keys() : ρσ_Iter96) : Object.keys(ρσ_Iter96));
+            for (var ρσ_Index96 of ρσ_Iter96) {
+                arg = ρσ_Index96;
                 if (arg.annotation) {
                     return true;
                 }
@@ -13741,10 +13847,10 @@ undefined;
                         var ρσ_unpack, i, arg;
                         output.print("{");
                         if (self.argnames && self.argnames.length) {
-                            var ρσ_Iter96 = enumerate(self.argnames);
-                            ρσ_Iter96 = ((typeof ρσ_Iter96[Symbol.iterator] === "function") ? (ρσ_Iter96 instanceof Map ? ρσ_Iter96.keys() : ρσ_Iter96) : Object.keys(ρσ_Iter96));
-                            for (var ρσ_Index96 of ρσ_Iter96) {
-                                ρσ_unpack = ρσ_Index96;
+                            var ρσ_Iter97 = enumerate(self.argnames);
+                            ρσ_Iter97 = ((typeof ρσ_Iter97[Symbol.iterator] === "function") ? (ρσ_Iter97 instanceof Map ? ρσ_Iter97.keys() : ρσ_Iter97) : Object.keys(ρσ_Iter97));
+                            for (var ρσ_Index97 of ρσ_Iter97) {
+                                ρσ_unpack = ρσ_Index97;
                                 i = ρσ_unpack[0];
                                 arg = ρσ_unpack[1];
                                 if (arg.annotation) {
@@ -13775,10 +13881,10 @@ undefined;
                     var ρσ_anonfunc = function () {
                         var ρσ_unpack, i, k;
                         output.print("{");
-                        var ρσ_Iter97 = enumerate(dkeys);
-                        ρσ_Iter97 = ((typeof ρσ_Iter97[Symbol.iterator] === "function") ? (ρσ_Iter97 instanceof Map ? ρσ_Iter97.keys() : ρσ_Iter97) : Object.keys(ρσ_Iter97));
-                        for (var ρσ_Index97 of ρσ_Iter97) {
-                            ρσ_unpack = ρσ_Index97;
+                        var ρσ_Iter98 = enumerate(dkeys);
+                        ρσ_Iter98 = ((typeof ρσ_Iter98[Symbol.iterator] === "function") ? (ρσ_Iter98 instanceof Map ? ρσ_Iter98.keys() : ρσ_Iter98) : Object.keys(ρσ_Iter98));
+                        for (var ρσ_Index98 of ρσ_Iter98) {
+                            ρσ_unpack = ρσ_Index98;
                             i = ρσ_unpack[0];
                             k = ρσ_unpack[1];
                             [output.print(ρσ_operator_add(k, ":")), defaults[(typeof k === "number" && k < 0) ? defaults.length + k : k].print(output)];
@@ -13808,10 +13914,10 @@ undefined;
                     var ρσ_anonfunc = function () {
                         var ρσ_unpack, i, arg;
                         output.print("[");
-                        var ρσ_Iter98 = enumerate(self.argnames);
-                        ρσ_Iter98 = ((typeof ρσ_Iter98[Symbol.iterator] === "function") ? (ρσ_Iter98 instanceof Map ? ρσ_Iter98.keys() : ρσ_Iter98) : Object.keys(ρσ_Iter98));
-                        for (var ρσ_Index98 of ρσ_Iter98) {
-                            ρσ_unpack = ρσ_Index98;
+                        var ρσ_Iter99 = enumerate(self.argnames);
+                        ρσ_Iter99 = ((typeof ρσ_Iter99[Symbol.iterator] === "function") ? (ρσ_Iter99 instanceof Map ? ρσ_Iter99.keys() : ρσ_Iter99) : Object.keys(ρσ_Iter99));
+                        for (var ρσ_Index99 of ρσ_Iter99) {
+                            ρσ_unpack = ρσ_Index99;
                             i = ρσ_unpack[0];
                             arg = ρσ_unpack[1];
                             if (strip_first && i === 0) {
@@ -13847,10 +13953,10 @@ undefined;
 undefined;
                 return ρσ_anonfunc;
             })();
-            var ρσ_Iter99 = props;
-            ρσ_Iter99 = ((typeof ρσ_Iter99[Symbol.iterator] === "function") ? (ρσ_Iter99 instanceof Map ? ρσ_Iter99.keys() : ρσ_Iter99) : Object.keys(ρσ_Iter99));
-            for (var ρσ_Index99 of ρσ_Iter99) {
-                name = ρσ_Index99;
+            var ρσ_Iter100 = props;
+            ρσ_Iter100 = ((typeof ρσ_Iter100[Symbol.iterator] === "function") ? (ρσ_Iter100 instanceof Map ? ρσ_Iter100.keys() : ρσ_Iter100) : Object.keys(ρσ_Iter100));
+            for (var ρσ_Index100 of ρσ_Iter100) {
+                name = ρσ_Index100;
                 output.print(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("", ρσ_str.format("{}", fname)), "."), ρσ_str.format("{}", name)), " = "));
                 props[(typeof name === "number" && name < 0) ? props.length + name : name]();
                 output.end_statement();
@@ -14004,10 +14110,10 @@ undefined;
                 var ρσ_unpack, i, kwname, pair;
                 output.print("ρσ_desugar_kwargs(");
                 if (has_kwarg_items) {
-                    var ρσ_Iter100 = enumerate(self.args.kwarg_items);
-                    ρσ_Iter100 = ((typeof ρσ_Iter100[Symbol.iterator] === "function") ? (ρσ_Iter100 instanceof Map ? ρσ_Iter100.keys() : ρσ_Iter100) : Object.keys(ρσ_Iter100));
-                    for (var ρσ_Index100 of ρσ_Iter100) {
-                        ρσ_unpack = ρσ_Index100;
+                    var ρσ_Iter101 = enumerate(self.args.kwarg_items);
+                    ρσ_Iter101 = ((typeof ρσ_Iter101[Symbol.iterator] === "function") ? (ρσ_Iter101 instanceof Map ? ρσ_Iter101.keys() : ρσ_Iter101) : Object.keys(ρσ_Iter101));
+                    for (var ρσ_Index101 of ρσ_Iter101) {
+                        ρσ_unpack = ρσ_Index101;
                         i = ρσ_unpack[0];
                         kwname = ρσ_unpack[1];
                         if (i > 0) {
@@ -14023,10 +14129,10 @@ undefined;
                 }
                 if (has_kwarg_formals) {
                     output.print("{");
-                    var ρσ_Iter101 = enumerate(self.args.kwargs);
-                    ρσ_Iter101 = ((typeof ρσ_Iter101[Symbol.iterator] === "function") ? (ρσ_Iter101 instanceof Map ? ρσ_Iter101.keys() : ρσ_Iter101) : Object.keys(ρσ_Iter101));
-                    for (var ρσ_Index101 of ρσ_Iter101) {
-                        ρσ_unpack = ρσ_Index101;
+                    var ρσ_Iter102 = enumerate(self.args.kwargs);
+                    ρσ_Iter102 = ((typeof ρσ_Iter102[Symbol.iterator] === "function") ? (ρσ_Iter102 instanceof Map ? ρσ_Iter102.keys() : ρσ_Iter102) : Object.keys(ρσ_Iter102));
+                    for (var ρσ_Index102 of ρσ_Iter102) {
+                        ρσ_unpack = ρσ_Index102;
                         i = ρσ_unpack[0];
                         pair = ρσ_unpack[1];
                         if (i) {
@@ -14116,10 +14222,10 @@ undefined;
                 output.with_parens((function() {
                     var ρσ_anonfunc = function () {
                         var ρσ_unpack, i, a;
-                        var ρσ_Iter102 = enumerate(self.args);
-                        ρσ_Iter102 = ((typeof ρσ_Iter102[Symbol.iterator] === "function") ? (ρσ_Iter102 instanceof Map ? ρσ_Iter102.keys() : ρσ_Iter102) : Object.keys(ρσ_Iter102));
-                        for (var ρσ_Index102 of ρσ_Iter102) {
-                            ρσ_unpack = ρσ_Index102;
+                        var ρσ_Iter103 = enumerate(self.args);
+                        ρσ_Iter103 = ((typeof ρσ_Iter103[Symbol.iterator] === "function") ? (ρσ_Iter103 instanceof Map ? ρσ_Iter103.keys() : ρσ_Iter103) : Object.keys(ρσ_Iter103));
+                        for (var ρσ_Index103 of ρσ_Iter103) {
+                            ρσ_unpack = ρσ_Index103;
                             i = ρσ_unpack[0];
                             a = ρσ_unpack[1];
                             if (i) {
@@ -14336,8 +14442,8 @@ undefined;
                 self.name.print(output);
                 output.spaced(".ρσ_decorators", "=", "[");
                 num = decorators.length;
-                for (var ρσ_Index103 = 0; ρσ_Index103 < num; ρσ_Index103++) {
-                    i = ρσ_Index103;
+                for (var ρσ_Index104 = 0; ρσ_Index104 < num; ρσ_Index104++) {
+                    i = ρσ_Index104;
                     decorators[(typeof i === "number" && i < 0) ? decorators.length + i : i].expression.print(output);
                     output.spaced((i < ρσ_operator_sub(num, 1)) ? "," : "]");
                 }
@@ -14375,10 +14481,10 @@ undefined;
                                         output.end_statement();
                                     }
                                 }
-                                var ρσ_Iter104 = self.bound;
-                                ρσ_Iter104 = ((typeof ρσ_Iter104[Symbol.iterator] === "function") ? (ρσ_Iter104 instanceof Map ? ρσ_Iter104.keys() : ρσ_Iter104) : Object.keys(ρσ_Iter104));
-                                for (var ρσ_Index104 of ρσ_Iter104) {
-                                    bname = ρσ_Index104;
+                                var ρσ_Iter105 = self.bound;
+                                ρσ_Iter105 = ((typeof ρσ_Iter105[Symbol.iterator] === "function") ? (ρσ_Iter105 instanceof Map ? ρσ_Iter105.keys() : ρσ_Iter105) : Object.keys(ρσ_Iter105));
+                                for (var ρσ_Index105 of ρσ_Iter105) {
+                                    bname = ρσ_Index105;
                                     if (seen_methods[(typeof bname === "number" && bname < 0) ? seen_methods.length + bname : bname] || (ρσ_expr_temp = self.dynamic_properties)[(typeof bname === "number" && bname < 0) ? ρσ_expr_temp.length + bname : bname]) {
                                         continue;
                                     }
@@ -14408,10 +14514,10 @@ undefined;
                         output.with_block((function() {
                             var ρσ_anonfunc = function () {
                                 var prop, name;
-                                var ρσ_Iter105 = property_names;
-                                ρσ_Iter105 = ((typeof ρσ_Iter105[Symbol.iterator] === "function") ? (ρσ_Iter105 instanceof Map ? ρσ_Iter105.keys() : ρσ_Iter105) : Object.keys(ρσ_Iter105));
-                                for (var ρσ_Index105 of ρσ_Iter105) {
-                                    name = ρσ_Index105;
+                                var ρσ_Iter106 = property_names;
+                                ρσ_Iter106 = ((typeof ρσ_Iter106[Symbol.iterator] === "function") ? (ρσ_Iter106 instanceof Map ? ρσ_Iter106.keys() : ρσ_Iter106) : Object.keys(ρσ_Iter106));
+                                for (var ρσ_Index106 of ρσ_Iter106) {
+                                    name = ρσ_Index106;
                                     prop = (ρσ_expr_temp = self.dynamic_properties)[(typeof name === "number" && name < 0) ? ρσ_expr_temp.length + name : name];
                                     [output.indent(), output.print(ρσ_operator_add(JSON.stringify(name), ":")), output.space()];
                                     output.with_block((function() {
@@ -14475,10 +14581,10 @@ undefined;
                 })());
             }
             defined_methods = Object.create(null);
-            var ρσ_Iter106 = self.body;
-            ρσ_Iter106 = ((typeof ρσ_Iter106[Symbol.iterator] === "function") ? (ρσ_Iter106 instanceof Map ? ρσ_Iter106.keys() : ρσ_Iter106) : Object.keys(ρσ_Iter106));
-            for (var ρσ_Index106 of ρσ_Iter106) {
-                stmt = ρσ_Index106;
+            var ρσ_Iter107 = self.body;
+            ρσ_Iter107 = ((typeof ρσ_Iter107[Symbol.iterator] === "function") ? (ρσ_Iter107 instanceof Map ? ρσ_Iter107.keys() : ρσ_Iter107) : Object.keys(ρσ_Iter107));
+            for (var ρσ_Index107 of ρσ_Iter107) {
+                stmt = ρσ_Index107;
                 if (is_node_type(stmt, AST_Method)) {
                     if (stmt.is_getter || stmt.is_setter) {
                         continue;
@@ -14487,10 +14593,10 @@ undefined;
                     defined_methods[ρσ_bound_index(stmt.name.name, defined_methods)] = true;
                     sname = stmt.name.name;
                     if (sname === "__init__") {
-                        var ρσ_Iter107 = ρσ_list_decorate([ ".__argnames__", ".__handles_kwarg_interpolation__" ]);
-                        ρσ_Iter107 = ((typeof ρσ_Iter107[Symbol.iterator] === "function") ? (ρσ_Iter107 instanceof Map ? ρσ_Iter107.keys() : ρσ_Iter107) : Object.keys(ρσ_Iter107));
-                        for (var ρσ_Index107 of ρσ_Iter107) {
-                            attr = ρσ_Index107;
+                        var ρσ_Iter108 = ρσ_list_decorate([ ".__argnames__", ".__handles_kwarg_interpolation__" ]);
+                        ρσ_Iter108 = ((typeof ρσ_Iter108[Symbol.iterator] === "function") ? (ρσ_Iter108 instanceof Map ? ρσ_Iter108.keys() : ρσ_Iter108) : Object.keys(ρσ_Iter108));
+                        for (var ρσ_Index108 of ρσ_Iter108) {
+                            attr = ρσ_Index108;
                             [output.indent(), self.name.print(output), output.assign(attr)];
                             [self.name.print(output), output.print(ρσ_operator_add(".prototype.__init__", attr)), 
                             output.end_statement()];
@@ -14572,10 +14678,10 @@ undefined;
                     return ρσ_anonfunc;
                 })());
             }
-            var ρσ_Iter108 = self.statements;
-            ρσ_Iter108 = ((typeof ρσ_Iter108[Symbol.iterator] === "function") ? (ρσ_Iter108 instanceof Map ? ρσ_Iter108.keys() : ρσ_Iter108) : Object.keys(ρσ_Iter108));
-            for (var ρσ_Index108 of ρσ_Iter108) {
-                stmt = ρσ_Index108;
+            var ρσ_Iter109 = self.statements;
+            ρσ_Iter109 = ((typeof ρσ_Iter109[Symbol.iterator] === "function") ? (ρσ_Iter109 instanceof Map ? ρσ_Iter109.keys() : ρσ_Iter109) : Object.keys(ρσ_Iter109));
+            for (var ρσ_Index109 of ρσ_Iter109) {
+                stmt = ρσ_Index109;
                 if (!is_node_type(stmt, AST_Method)) {
                     output.indent();
                     stmt.print(output);
@@ -14585,8 +14691,8 @@ undefined;
             if (decorators.length) {
                 output.indent();
                 output.assign(self.name);
-                for (var ρσ_Index109 = 0; ρσ_Index109 < decorators.length; ρσ_Index109++) {
-                    di = ρσ_Index109;
+                for (var ρσ_Index110 = 0; ρσ_Index110 < decorators.length; ρσ_Index110++) {
+                    di = ρσ_Index110;
                     self.name.print(output);
                     output.print(ρσ_operator_add(ρσ_operator_add(".ρσ_decorators[", ρσ_str.format("{}", di)), "]("));
                 }
@@ -14628,10 +14734,10 @@ undefined;
                             if (len_ > 0) {
                                 output.space();
                             }
-                            var ρσ_Iter110 = enumerate(a);
-                            ρσ_Iter110 = ((typeof ρσ_Iter110[Symbol.iterator] === "function") ? (ρσ_Iter110 instanceof Map ? ρσ_Iter110.keys() : ρσ_Iter110) : Object.keys(ρσ_Iter110));
-                            for (var ρσ_Index110 of ρσ_Iter110) {
-                                ρσ_unpack = ρσ_Index110;
+                            var ρσ_Iter111 = enumerate(a);
+                            ρσ_Iter111 = ((typeof ρσ_Iter111[Symbol.iterator] === "function") ? (ρσ_Iter111 instanceof Map ? ρσ_Iter111.keys() : ρσ_Iter111) : Object.keys(ρσ_Iter111));
+                            for (var ρσ_Index111 of ρσ_Iter111) {
+                                ρσ_unpack = ρσ_Index111;
                                 i = ρσ_unpack[0];
                                 exp = ρσ_unpack[1];
                                 if (i) {
@@ -14671,10 +14777,10 @@ undefined;
                                 output.spaced("var", "ρσ_d", "=", (self.is_jshash) ? "Object.create(null)" : "{}");
                             }
                             output.end_statement();
-                            var ρσ_Iter111 = enumerate(self.properties);
-                            ρσ_Iter111 = ((typeof ρσ_Iter111[Symbol.iterator] === "function") ? (ρσ_Iter111 instanceof Map ? ρσ_Iter111.keys() : ρσ_Iter111) : Object.keys(ρσ_Iter111));
-                            for (var ρσ_Index111 of ρσ_Iter111) {
-                                ρσ_unpack = ρσ_Index111;
+                            var ρσ_Iter112 = enumerate(self.properties);
+                            ρσ_Iter112 = ((typeof ρσ_Iter112[Symbol.iterator] === "function") ? (ρσ_Iter112 instanceof Map ? ρσ_Iter112.keys() : ρσ_Iter112) : Object.keys(ρσ_Iter112));
+                            for (var ρσ_Index112 of ρσ_Iter112) {
+                                ρσ_unpack = ρσ_Index112;
                                 i = ρσ_unpack[0];
                                 prop = ρσ_unpack[1];
                                 output.indent();
@@ -14731,10 +14837,10 @@ undefined;
                 return;
             }
             output.print("{");
-            var ρσ_Iter112 = enumerate(self.properties);
-            ρσ_Iter112 = ((typeof ρσ_Iter112[Symbol.iterator] === "function") ? (ρσ_Iter112 instanceof Map ? ρσ_Iter112.keys() : ρσ_Iter112) : Object.keys(ρσ_Iter112));
-            for (var ρσ_Index112 of ρσ_Iter112) {
-                ρσ_unpack = ρσ_Index112;
+            var ρσ_Iter113 = enumerate(self.properties);
+            ρσ_Iter113 = ((typeof ρσ_Iter113[Symbol.iterator] === "function") ? (ρσ_Iter113 instanceof Map ? ρσ_Iter113.keys() : ρσ_Iter113) : Object.keys(ρσ_Iter113));
+            for (var ρσ_Index113 of ρσ_Iter113) {
+                ρσ_unpack = ρσ_Index113;
                 i = ρσ_unpack[0];
                 prop = ρσ_unpack[1];
                 if (is_node_type(prop.key, AST_Number) || is_node_type(prop.key, AST_String)) {
@@ -14793,10 +14899,10 @@ undefined;
                             output.indent();
                             output.spaced.apply(output, "var s = ρσ_set()".split(" "));
                             output.end_statement();
-                            var ρσ_Iter113 = self.items;
-                            ρσ_Iter113 = ((typeof ρσ_Iter113[Symbol.iterator] === "function") ? (ρσ_Iter113 instanceof Map ? ρσ_Iter113.keys() : ρσ_Iter113) : Object.keys(ρσ_Iter113));
-                            for (var ρσ_Index113 of ρσ_Iter113) {
-                                item = ρσ_Index113;
+                            var ρσ_Iter114 = self.items;
+                            ρσ_Iter114 = ((typeof ρσ_Iter114[Symbol.iterator] === "function") ? (ρσ_Iter114 instanceof Map ? ρσ_Iter114.keys() : ρσ_Iter114) : Object.keys(ρσ_Iter114));
+                            for (var ρσ_Index114 of ρσ_Iter114) {
+                                item = ρσ_Index114;
                                 output.indent();
                                 output.print("s.jsset.add");
                                 output.with_parens((function() {
@@ -14859,10 +14965,10 @@ undefined;
 
         function output_comments(comments, output, nlb) {
             var comm;
-            var ρσ_Iter114 = comments;
-            ρσ_Iter114 = ((typeof ρσ_Iter114[Symbol.iterator] === "function") ? (ρσ_Iter114 instanceof Map ? ρσ_Iter114.keys() : ρσ_Iter114) : Object.keys(ρσ_Iter114));
-            for (var ρσ_Index114 of ρσ_Iter114) {
-                comm = ρσ_Index114;
+            var ρσ_Iter115 = comments;
+            ρσ_Iter115 = ((typeof ρσ_Iter115[Symbol.iterator] === "function") ? (ρσ_Iter115 instanceof Map ? ρσ_Iter115.keys() : ρσ_Iter115) : Object.keys(ρσ_Iter115));
+            for (var ρσ_Index115 of ρσ_Iter115) {
+                comm = ρσ_Index115;
                 if (comm.type === "comment1") {
                     output.print(ρσ_operator_add(ρσ_operator_add("//", comm.value), "\n"));
                     output.indent();
@@ -14947,10 +15053,10 @@ undefined;
         function write_imports(module, output) {
             var imports, import_id, nonlocalvars, name, module_, module_id;
             imports = ρσ_list_decorate([]);
-            var ρσ_Iter115 = Object.keys(module.imports);
-            ρσ_Iter115 = ((typeof ρσ_Iter115[Symbol.iterator] === "function") ? (ρσ_Iter115 instanceof Map ? ρσ_Iter115.keys() : ρσ_Iter115) : Object.keys(ρσ_Iter115));
-            for (var ρσ_Index115 of ρσ_Iter115) {
-                import_id = ρσ_Index115;
+            var ρσ_Iter116 = Object.keys(module.imports);
+            ρσ_Iter116 = ((typeof ρσ_Iter116[Symbol.iterator] === "function") ? (ρσ_Iter116 instanceof Map ? ρσ_Iter116.keys() : ρσ_Iter116) : Object.keys(ρσ_Iter116));
+            for (var ρσ_Index116 of ρσ_Iter116) {
+                import_id = ρσ_Index116;
                 imports.push((ρσ_expr_temp = module.imports)[(typeof import_id === "number" && import_id < 0) ? ρσ_expr_temp.length + import_id : import_id]);
             }
             imports.sort((function() {
@@ -14972,14 +15078,14 @@ undefined;
                 output.newline();
             }
             nonlocalvars = Object.create(null);
-            var ρσ_Iter116 = imports;
-            ρσ_Iter116 = ((typeof ρσ_Iter116[Symbol.iterator] === "function") ? (ρσ_Iter116 instanceof Map ? ρσ_Iter116.keys() : ρσ_Iter116) : Object.keys(ρσ_Iter116));
-            for (var ρσ_Index116 of ρσ_Iter116) {
-                module_ = ρσ_Index116;
-                var ρσ_Iter117 = module_.nonlocalvars;
-                ρσ_Iter117 = ((typeof ρσ_Iter117[Symbol.iterator] === "function") ? (ρσ_Iter117 instanceof Map ? ρσ_Iter117.keys() : ρσ_Iter117) : Object.keys(ρσ_Iter117));
-                for (var ρσ_Index117 of ρσ_Iter117) {
-                    name = ρσ_Index117;
+            var ρσ_Iter117 = imports;
+            ρσ_Iter117 = ((typeof ρσ_Iter117[Symbol.iterator] === "function") ? (ρσ_Iter117 instanceof Map ? ρσ_Iter117.keys() : ρσ_Iter117) : Object.keys(ρσ_Iter117));
+            for (var ρσ_Index117 of ρσ_Iter117) {
+                module_ = ρσ_Index117;
+                var ρσ_Iter118 = module_.nonlocalvars;
+                ρσ_Iter118 = ((typeof ρσ_Iter118[Symbol.iterator] === "function") ? (ρσ_Iter118 instanceof Map ? ρσ_Iter118.keys() : ρσ_Iter118) : Object.keys(ρσ_Iter118));
+                for (var ρσ_Index118 of ρσ_Iter118) {
+                    name = ρσ_Index118;
                     nonlocalvars[(typeof name === "number" && name < 0) ? nonlocalvars.length + name : name] = true;
                 }
             }
@@ -14990,10 +15096,10 @@ undefined;
                 output.semicolon();
                 output.newline();
             }
-            var ρσ_Iter118 = imports;
-            ρσ_Iter118 = ((typeof ρσ_Iter118[Symbol.iterator] === "function") ? (ρσ_Iter118 instanceof Map ? ρσ_Iter118.keys() : ρσ_Iter118) : Object.keys(ρσ_Iter118));
-            for (var ρσ_Index118 of ρσ_Iter118) {
-                module_ = ρσ_Index118;
+            var ρσ_Iter119 = imports;
+            ρσ_Iter119 = ((typeof ρσ_Iter119[Symbol.iterator] === "function") ? (ρσ_Iter119 instanceof Map ? ρσ_Iter119.keys() : ρσ_Iter119) : Object.keys(ρσ_Iter119));
+            for (var ρσ_Index119 of ρσ_Iter119) {
+                module_ = ρσ_Index119;
                 module_id = module_.module_id;
                 if (module_id !== "__main__") {
                     output.indent();
@@ -15006,10 +15112,10 @@ undefined;
                     output.end_statement();
                 }
             }
-            var ρσ_Iter119 = imports;
-            ρσ_Iter119 = ((typeof ρσ_Iter119[Symbol.iterator] === "function") ? (ρσ_Iter119 instanceof Map ? ρσ_Iter119.keys() : ρσ_Iter119) : Object.keys(ρσ_Iter119));
-            for (var ρσ_Index119 of ρσ_Iter119) {
-                module_ = ρσ_Index119;
+            var ρσ_Iter120 = imports;
+            ρσ_Iter120 = ((typeof ρσ_Iter120[Symbol.iterator] === "function") ? (ρσ_Iter120 instanceof Map ? ρσ_Iter120.keys() : ρσ_Iter120) : Object.keys(ρσ_Iter120));
+            for (var ρσ_Index120 of ρσ_Iter120) {
+                module_ = ρσ_Index120;
                 if (module_.module_id !== "__main__") {
                     print_module(module_, output);
                 }
@@ -15044,10 +15150,10 @@ undefined;
                 output.end_statement();
             }
             output.newline();
-            var ρσ_Iter120 = exports;
-            ρσ_Iter120 = ((typeof ρσ_Iter120[Symbol.iterator] === "function") ? (ρσ_Iter120 instanceof Map ? ρσ_Iter120.keys() : ρσ_Iter120) : Object.keys(ρσ_Iter120));
-            for (var ρσ_Index120 of ρσ_Iter120) {
-                symbol = ρσ_Index120;
+            var ρσ_Iter121 = exports;
+            ρσ_Iter121 = ((typeof ρσ_Iter121[Symbol.iterator] === "function") ? (ρσ_Iter121 instanceof Map ? ρσ_Iter121.keys() : ρσ_Iter121) : Object.keys(ρσ_Iter121));
+            for (var ρσ_Index121 of ρσ_Iter121) {
+                symbol = ρσ_Index121;
                 if (!Object.prototype.hasOwnProperty.call(seen, symbol.name)) {
                     output.indent();
                     if (module_id.indexOf(".") === -1) {
@@ -15222,27 +15328,27 @@ undefined;
                                 output_module(output);
                                 if (self.srchash && self.filename) {
                                     cached = {"version":get_compiler_version(),"signature":self.srchash,"classes":Object.create(null),"baselib":self.baselib,"nonlocalvars":self.nonlocalvars,"imported_module_ids":self.imported_module_ids,"exports":ρσ_list_decorate([]),"outputs":Object.create(null),"discard_asserts":!!output.options.discard_asserts};
-                                    var ρσ_Iter121 = Object.keys(self.classes);
-                                    ρσ_Iter121 = ((typeof ρσ_Iter121[Symbol.iterator] === "function") ? (ρσ_Iter121 instanceof Map ? ρσ_Iter121.keys() : ρσ_Iter121) : Object.keys(ρσ_Iter121));
-                                    for (var ρσ_Index121 of ρσ_Iter121) {
-                                        cname = ρσ_Index121;
+                                    var ρσ_Iter122 = Object.keys(self.classes);
+                                    ρσ_Iter122 = ((typeof ρσ_Iter122[Symbol.iterator] === "function") ? (ρσ_Iter122 instanceof Map ? ρσ_Iter122.keys() : ρσ_Iter122) : Object.keys(ρσ_Iter122));
+                                    for (var ρσ_Index122 of ρσ_Iter122) {
+                                        cname = ρσ_Index122;
                                         cobj = (ρσ_expr_temp = self.classes)[(typeof cname === "number" && cname < 0) ? ρσ_expr_temp.length + cname : cname];
                                         (ρσ_expr_temp = cached.classes)[(typeof cname === "number" && cname < 0) ? ρσ_expr_temp.length + cname : cname] = {"name":{"name":cobj.name.name},"static":cobj.static,"bound":cobj.bound,"classvars":cobj.classvars};
                                     }
-                                    var ρσ_Iter122 = self.exports;
-                                    ρσ_Iter122 = ((typeof ρσ_Iter122[Symbol.iterator] === "function") ? (ρσ_Iter122 instanceof Map ? ρσ_Iter122.keys() : ρσ_Iter122) : Object.keys(ρσ_Iter122));
-                                    for (var ρσ_Index122 of ρσ_Iter122) {
-                                        symdef = ρσ_Index122;
-                                        cached.exports.push({"name":symdef.name});
-                                    }
-                                    var ρσ_Iter123 = ρσ_list_decorate([ true, false ]);
+                                    var ρσ_Iter123 = self.exports;
                                     ρσ_Iter123 = ((typeof ρσ_Iter123[Symbol.iterator] === "function") ? (ρσ_Iter123 instanceof Map ? ρσ_Iter123.keys() : ρσ_Iter123) : Object.keys(ρσ_Iter123));
                                     for (var ρσ_Index123 of ρσ_Iter123) {
-                                        beautify = ρσ_Index123;
-                                        var ρσ_Iter124 = ρσ_list_decorate([ true, false ]);
-                                        ρσ_Iter124 = ((typeof ρσ_Iter124[Symbol.iterator] === "function") ? (ρσ_Iter124 instanceof Map ? ρσ_Iter124.keys() : ρσ_Iter124) : Object.keys(ρσ_Iter124));
-                                        for (var ρσ_Index124 of ρσ_Iter124) {
-                                            keep_docstrings = ρσ_Index124;
+                                        symdef = ρσ_Index123;
+                                        cached.exports.push({"name":symdef.name});
+                                    }
+                                    var ρσ_Iter124 = ρσ_list_decorate([ true, false ]);
+                                    ρσ_Iter124 = ((typeof ρσ_Iter124[Symbol.iterator] === "function") ? (ρσ_Iter124 instanceof Map ? ρσ_Iter124.keys() : ρσ_Iter124) : Object.keys(ρσ_Iter124));
+                                    for (var ρσ_Index124 of ρσ_Iter124) {
+                                        beautify = ρσ_Index124;
+                                        var ρσ_Iter125 = ρσ_list_decorate([ true, false ]);
+                                        ρσ_Iter125 = ((typeof ρσ_Iter125[Symbol.iterator] === "function") ? (ρσ_Iter125 instanceof Map ? ρσ_Iter125.keys() : ρσ_Iter125) : Object.keys(ρσ_Iter125));
+                                        for (var ρσ_Index125 of ρσ_Iter125) {
+                                            keep_docstrings = ρσ_Index125;
                                             co = new OutputStream({"beautify":beautify,"keep_docstrings":keep_docstrings,"write_name":false,"discard_asserts":output.options.discard_asserts});
                                             co.with_indent(output.indentation(), (function() {
                                                 var ρσ_anonfunc = function () {
@@ -15317,15 +15423,15 @@ add_aname.__argnames__ = ["aname", "key", "from_import"];
 add_aname.__module__ = "output.modules";
 undefined;
 
-            var ρσ_Iter125 = container.imports;
-            ρσ_Iter125 = ((typeof ρσ_Iter125[Symbol.iterator] === "function") ? (ρσ_Iter125 instanceof Map ? ρσ_Iter125.keys() : ρσ_Iter125) : Object.keys(ρσ_Iter125));
-            for (var ρσ_Index125 of ρσ_Iter125) {
-                self = ρσ_Index125;
+            var ρσ_Iter126 = container.imports;
+            ρσ_Iter126 = ((typeof ρσ_Iter126[Symbol.iterator] === "function") ? (ρσ_Iter126 instanceof Map ? ρσ_Iter126.keys() : ρσ_Iter126) : Object.keys(ρσ_Iter126));
+            for (var ρσ_Index126 of ρσ_Iter126) {
+                self = ρσ_Index126;
                 if (self.argnames) {
-                    var ρσ_Iter126 = self.argnames;
-                    ρσ_Iter126 = ((typeof ρσ_Iter126[Symbol.iterator] === "function") ? (ρσ_Iter126 instanceof Map ? ρσ_Iter126.keys() : ρσ_Iter126) : Object.keys(ρσ_Iter126));
-                    for (var ρσ_Index126 of ρσ_Iter126) {
-                        argname = ρσ_Index126;
+                    var ρσ_Iter127 = self.argnames;
+                    ρσ_Iter127 = ((typeof ρσ_Iter127[Symbol.iterator] === "function") ? (ρσ_Iter127 instanceof Map ? ρσ_Iter127.keys() : ρσ_Iter127) : Object.keys(ρσ_Iter127));
+                    for (var ρσ_Index127 of ρσ_Iter127) {
+                        argname = ρσ_Index127;
                         akey = (argname.alias) ? argname.alias.name : argname.name;
                         add_aname(akey, self.key, argname.name);
                     }
@@ -15334,10 +15440,10 @@ undefined;
                         add_aname(self.alias.name, self.key, false);
                     } else {
                         parts = self.key.split(".");
-                        var ρσ_Iter127 = enumerate(parts);
-                        ρσ_Iter127 = ((typeof ρσ_Iter127[Symbol.iterator] === "function") ? (ρσ_Iter127 instanceof Map ? ρσ_Iter127.keys() : ρσ_Iter127) : Object.keys(ρσ_Iter127));
-                        for (var ρσ_Index127 of ρσ_Iter127) {
-                            ρσ_unpack = ρσ_Index127;
+                        var ρσ_Iter128 = enumerate(parts);
+                        ρσ_Iter128 = ((typeof ρσ_Iter128[Symbol.iterator] === "function") ? (ρσ_Iter128 instanceof Map ? ρσ_Iter128.keys() : ρσ_Iter128) : Object.keys(ρσ_Iter128));
+                        for (var ρσ_Index128 of ρσ_Iter128) {
+                            ρσ_unpack = ρσ_Index128;
                             i = ρσ_unpack[0];
                             part = ρσ_unpack[1];
                             if (i === 0) {
@@ -15388,6 +15494,7 @@ undefined;
         var AST_Do = ρσ_modules.ast.AST_Do;
         var AST_Dot = ρσ_modules.ast.AST_Dot;
         var is_node_type = ρσ_modules.ast.is_node_type;
+        var AST_EllipsesRange = ρσ_modules.ast.AST_EllipsesRange;
         var AST_EmptyStatement = ρσ_modules.ast.AST_EmptyStatement;
         var AST_Exit = ρσ_modules.ast.AST_Exit;
         var AST_ExpressiveObject = ρσ_modules.ast.AST_ExpressiveObject;
@@ -15453,6 +15560,7 @@ undefined;
         var print_for_loop_body = ρσ_modules["output.loops"].print_for_loop_body;
         var print_for_in = ρσ_modules["output.loops"].print_for_in;
         var print_list_comprehension = ρσ_modules["output.loops"].print_list_comprehension;
+        var print_ellipses_range = ρσ_modules["output.loops"].print_ellipses_range;
 
         var print_top_level = ρσ_modules["output.modules"].print_top_level;
         var print_imports = ρσ_modules["output.modules"].print_imports;
@@ -15801,10 +15909,10 @@ undefined;
                     output.with_block((function() {
                         var ρσ_anonfunc = function () {
                             var stmt;
-                            var ρσ_Iter128 = self.body.body;
-                            ρσ_Iter128 = ((typeof ρσ_Iter128[Symbol.iterator] === "function") ? (ρσ_Iter128 instanceof Map ? ρσ_Iter128.keys() : ρσ_Iter128) : Object.keys(ρσ_Iter128));
-                            for (var ρσ_Index128 of ρσ_Iter128) {
-                                stmt = ρσ_Index128;
+                            var ρσ_Iter129 = self.body.body;
+                            ρσ_Iter129 = ((typeof ρσ_Iter129[Symbol.iterator] === "function") ? (ρσ_Iter129 instanceof Map ? ρσ_Iter129.keys() : ρσ_Iter129) : Object.keys(ρσ_Iter129));
+                            for (var ρσ_Index129 of ρσ_Iter129) {
+                                stmt = ρσ_Index129;
                                 output.indent();
                                 stmt.print(output);
                                 output.newline();
@@ -15841,6 +15949,7 @@ undefined;
                 return ρσ_anonfunc;
             })());
             DEFPRINT(AST_ListComprehension, print_list_comprehension);
+            DEFPRINT(AST_EllipsesRange, print_ellipses_range);
             DEFPRINT(AST_With, print_with);
             DEFPRINT(AST_Assert, print_assert);
             AST_Lambda.prototype._do_print = print_function;
@@ -16005,10 +16114,10 @@ undefined;
                     var ρσ_unpack, i, def_, p, in_for, avoid_semicolon;
                     output.print(kind);
                     output.space();
-                    var ρσ_Iter129 = enumerate(this.definitions);
-                    ρσ_Iter129 = ((typeof ρσ_Iter129[Symbol.iterator] === "function") ? (ρσ_Iter129 instanceof Map ? ρσ_Iter129.keys() : ρσ_Iter129) : Object.keys(ρσ_Iter129));
-                    for (var ρσ_Index129 of ρσ_Iter129) {
-                        ρσ_unpack = ρσ_Index129;
+                    var ρσ_Iter130 = enumerate(this.definitions);
+                    ρσ_Iter130 = ((typeof ρσ_Iter130[Symbol.iterator] === "function") ? (ρσ_Iter130 instanceof Map ? ρσ_Iter130.keys() : ρσ_Iter130) : Object.keys(ρσ_Iter130));
+                    for (var ρσ_Index130 of ρσ_Iter130) {
+                        ρσ_unpack = ρσ_Index130;
                         i = ρσ_unpack[0];
                         def_ = ρσ_unpack[1];
                         if (i) {
@@ -16259,10 +16368,10 @@ undefined;
             exports.SyntaxError = SyntaxError;
             exports.tokenizer = tokenizer;
             ast = ρσ_modules["ast"];
-            var ρσ_Iter130 = ast;
-            ρσ_Iter130 = ((typeof ρσ_Iter130[Symbol.iterator] === "function") ? (ρσ_Iter130 instanceof Map ? ρσ_Iter130.keys() : ρσ_Iter130) : Object.keys(ρσ_Iter130));
-            for (var ρσ_Index130 of ρσ_Iter130) {
-                ast_node = ρσ_Index130;
+            var ρσ_Iter131 = ast;
+            ρσ_Iter131 = ((typeof ρσ_Iter131[Symbol.iterator] === "function") ? (ρσ_Iter131 instanceof Map ? ρσ_Iter131.keys() : ρσ_Iter131) : Object.keys(ρσ_Iter131));
+            for (var ρσ_Index131 of ρσ_Iter131) {
+                ast_node = ρσ_Index131;
                 if (ast_node.substr(0, 4) === "AST_") {
                     exports[(typeof ast_node === "number" && ast_node < 0) ? exports.length + ast_node : ast_node] = ast[(typeof ast_node === "number" && ast_node < 0) ? ast.length + ast_node : ast_node];
                 }
