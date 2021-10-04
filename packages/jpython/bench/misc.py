@@ -1,8 +1,4 @@
-import bench
-
-register = bench.register
-all = bench.all
-
+from bench import register, all
 
 # JPython is really bad at these, since Javascript
 # doesn't really have a notion of generic lists.

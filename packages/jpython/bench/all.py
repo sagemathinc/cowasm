@@ -1,16 +1,16 @@
 import misc
 import brython
 import numbers
-import bench
 import pystone
 import p1list
 import nbody
-from time import time
 
+from time import time
+from bench import all
 
 def run_all_benchmarks():
     t = time()
-    bench.all()
+    all()
     print("="*20)
     print("Grand total time: ", int((time() - t) * 1000), "ms")
 

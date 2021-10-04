@@ -148,9 +148,8 @@ def main(n=20000, ref='sun'):
     advance(0.01, n)
     #report_energy()
 
-import bench
-
-bench.register("nbody", main)
+from bench import register, all
+register("nbody", main)
 
 if __name__ == '__main__':
-    bench.all()
+    all()

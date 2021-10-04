@@ -1,13 +1,14 @@
 # The Tests from the Brython website https://brython.info/speed_results.html
 
-# BUG! This from / import doesn't work properly in jpython (but does in python of course)
-#from bench import register, all
+# NOTE about Brython: I tried running these exact benchmarks in Brython itself on node.js
+# via the node-bridge they provide, and it was overall 25x slower than
+# jpython/python, with every single benchmark seemingly equally slow.  This
+# contradicts the performance claims on their website.  I also saw this when
+# benchmarking early on -- where the version of Brython on their demo page
+# is much faster than anything I got when testing their releases, either on
+# node or in the browser.  I suspect they have a major performance regression.
 
-import bench
-
-register = bench.register
-all = bench.all
-
+from bench import register, all
 
 def simple_assignment(n=1000000):
     for i in range(n):

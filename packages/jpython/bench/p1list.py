@@ -1,6 +1,4 @@
-import bench
-register = bench.register
-all = bench.all
+from bench import register, all
 from nt import gcd, xgcd, inverse_mod
 
 def p1_normalize(N, u, v, compute_s = False):

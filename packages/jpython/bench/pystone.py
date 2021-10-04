@@ -273,9 +273,9 @@ def Func3(EnumParIn):
     return FALSE
 
 
-import bench
+from bench import register, all
 
-bench.register("Pystone", main)
+register("Pystone", main)
 
 if __name__ == '__main__':
-    bench.all()
+    all()
