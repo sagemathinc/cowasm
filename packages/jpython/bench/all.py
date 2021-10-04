@@ -4,6 +4,7 @@ import numbers
 import pystone
 import p1list
 import nbody
+import uuid_
 
 from time import time
 from bench import all
