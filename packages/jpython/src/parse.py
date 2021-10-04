@@ -27,8 +27,9 @@ from tokenizer import tokenizer, is_token, RESERVED_WORDS
 
 
 COMPILER_VERSION = '__COMPILER_VERSION__'
-PYTHON_FLAGS = {'exponent':True,  # no performance impact at all
-                'dict_literals':True,  # This is MASSIVELY SLOWER -- e.g., 100x -- careful
+PYTHON_FLAGS = {'exponent':True,  # support a^b-->a**b (and a^^b = a xor b), which is very math friendly (no performance impact)
+                'ellipses':True,   # support the [a..b] = range(a, b+1) notation, which is very math friendly  (no performance impact)
+                'dict_literals':True,  # MASSIVELY performance impact! -- e.g., 100x -- careful
                 'overload_getitem':True,
                 'bound_methods':True,
                 'hash_literals':True}
@@ -212,6 +213,8 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
     def unexpected(token):
         if token is undefined:
             token = S.token
+        if token.type is 'operator' and token.value == '^^':
+            croak("Use 'from __python__ import exponent' to support the a^^b is a xor b and a^b is a**b")
         token_error(token, "Unexpected token: " + token.type + " '" + token.value + "'")
 
     def expect_token(type, val):
@@ -805,7 +808,10 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
             if not PYTHON_FLAGS:
                 croak('Unknown __python__ flag: ' + name)
             if name == 'exponent':
-                S.input.context()['exponent'] = val
+                S.scoped_flags.set('exponent', val)
+                S.input.context()['exponent'] = val  # tell tokenizer
+            elif name == 'ellipses':
+                S.scoped_flags.set('ellipses', val)
             else:
                 S.scoped_flags.set(name, val)
             next()
@@ -1581,6 +1587,8 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         if not is_("punc", "]"):
             expr.push(expression(False))
             if is_("punc", ".."):
+                if not S.scoped_flags.get('ellipses'):
+                    croak("Use 'from __python__ import ellipses' to support the [a..b] syntax")
                 # ellipses range
                 return read_ellipses_range(new AST_EllipsesRange({'first':expr[0]}), ']')
 
@@ -2264,6 +2272,12 @@ def parse(text, options):
 
     if options.jsage:
         # Set all the jsage compiler options; this is only used in the repl.
+        for name in ['exponent', 'ellipses']:
+            S.scoped_flags.set(name, True)
+
+    if S.scoped_flags.get('exponent'):
+        # Since exponent parsing partly happens at the
+        # tokenizer, we have to tell it.
         S.input.context()['exponent'] = True
 
     if options.classes:

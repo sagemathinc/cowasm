@@ -1,6 +1,34 @@
 # TODO List of little things that I want to change in JPython
 
+## Not Done
 ---
+
+
+[ ] source maps.
+
+---
+
+[ ] The REPL doesn't let you use any of the string modifiers are variables, sort of. In particular, for any letter in `vrufVRUF` (defined in `tokenizer.py`) in the repl we have:
+
+```py
+>>> f = 10
+>>> f
+[Object: null prototype] {}
+>>> print(f)
+10
+```
+
+---
+
+[ ] eval.  The eval function is **Javascript** eval, rather than running our Python compiler, then evaling that, which makes way more sense.
+```py
+>>> eval('for(i=0;i<10;i++){console.log(i)}')
+0
+1
+...
+```
+
+## Done
 
 [x] sage preparser style mode that makes `^` be exponentiation. Have a bin script `jsage` (instead of `jpython`) that enables this mode everywhere.
 
@@ -22,21 +50,6 @@ Things I might want: exponents, [a..b] syntax for ranges (it's a PEP), arbitrary
 
 ---
 
-[ ] source maps.
-
----
-
-[ ] The REPL doesn't let you use any of the string modifiers are variables, sort of. In particular, for any letter in `vrufVRUF` (defined in `tokenizer.py`) in the repl we have:
-
-```py
->>> f = 10
->>> f
-1:0:Unterminated string constant
->>> print(f)
-10
-```
-
----
 
 [x] Alternative to raw "v"-strings. These are not valid Python, hence they break all Python tooling (e.g., syntax highlighting, formatting, running the module under real Python, etc.). Instead, replace them by a function call with a normal string. With v-strings you can't even load the code into normal Python since it gets stopped at the parsing stage. It's much better if it is at runtime for normal Python, so you can run the same code with both jpython and normal Python. Example, it would be nice to make something like this possible:
 

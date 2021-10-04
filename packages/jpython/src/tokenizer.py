@@ -208,8 +208,8 @@ def tokenizer(raw_text, filename):
     def peek():
         return S.text.charAt(S.pos)
 
-    #def peekpeek():
-    #    return S.text.charAt(S.pos+1)
+    def peekpeek():
+        return S.text.charAt(S.pos+1)
 
     def prevChar():
         return S.text.charAt(S.tokpos - 1)
@@ -401,6 +401,10 @@ def tokenizer(raw_text, filename):
                     return True
                 return False
             elif ch is '.':
+                # If next ch after this is also a ., then its
+                # something like [389..5077], so we stop
+                if peekpeek() is '.':
+                    return False
                 if not has_dot and not has_x and not has_e:
                     has_dot = True
                     return True
