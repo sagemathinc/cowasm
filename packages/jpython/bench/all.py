@@ -4,6 +4,7 @@ import numbers
 import bench
 import pystone
 import p1list
+import nbody
 from time import time
 
 

@@ -734,7 +734,7 @@ def tokenizer(raw_text, filename):
             return read_operator()
 
         if code is 92 and S.text.charAt(S.pos + 1) is "\n":
-            # backslash will consume the newline character that follows
+            # backslash(=92) will consume the newline character that follows
             next()
             # backslash
             next()

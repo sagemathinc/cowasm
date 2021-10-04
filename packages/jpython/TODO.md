@@ -1,8 +1,44 @@
 # TODO List of little things that I want to change in JPython
 
 ## Not Done
+
 ---
 
+[ ] Bug in tuple unpacking:
+In Jpython:
+
+```py
+>>> [a,[b,c]] = [1,[[17,23],3]]
+23
+>>> a
+1
+>>> b
+17
+>>> c
+23
+```
+
+It should be as you can see in normal python:
+
+```py
+>>> [a,[b,c]] = [1,[[17,23],3]]
+>>> a
+1
+>>> b
+[17, 23]
+>>> c
+3
+```
+
+See `def expression(commas, no_in):` in `src/parse.py`
+
+This broke bench/nbody.py pretty badly...
+
+---
+
+[ ] tuples aren't really implemented at all...
+
+---
 
 [ ] source maps.
 
@@ -21,6 +57,7 @@
 ---
 
 [ ] eval.  The eval function is **Javascript** eval, rather than running our Python compiler, then evaling that, which makes way more sense.
+
 ```py
 >>> eval('for(i=0;i<10;i++){console.log(i)}')
 0
@@ -30,7 +67,8 @@
 
 ---
 
-[ ] parenthesis line continuation (a nice newer feature of python), e.g. this:
+[x] parenthesis line continuation (a nice newer feature of python), e.g. this:
+
 ```py
 ~/jsage/packages/jpython$ jpython
 Welcome to JPython.  Using Node.js v16.7.0.
@@ -67,7 +105,6 @@ code that can work in official Python or "preparsed Python".
 Things I might want: exponents, [a..b] syntax for ranges (it's a PEP), arbitrary precision integers (wrapping GMP rather than BigInt, since BigInt is way too slow and no rationals).
 
 ---
-
 
 [x] Alternative to raw "v"-strings. These are not valid Python, hence they break all Python tooling (e.g., syntax highlighting, formatting, running the module under real Python, etc.). Instead, replace them by a function call with a normal string. With v-strings you can't even load the code into normal Python since it gets stopped at the parsing stage. It's much better if it is at runtime for normal Python, so you can run the same code with both jpython and normal Python. Example, it would be nice to make something like this possible:
 

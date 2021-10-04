@@ -110,9 +110,8 @@ assrt.equal(jstype(st), r"%js typeof st")
 # testing inlined functions
 inlined = [
     def(x): return x+1;, def(x): return x+2;,
-    def(x): return x+3
-    ,
-    def(x): return x+4
+    def(x): return x+3;,
+    def(x): return x+4;
 ]
 assrt.equal(inlined[0](1), 2)
 assrt.equal(inlined[1](1), 3)

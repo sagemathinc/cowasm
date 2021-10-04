@@ -226,7 +226,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         if is_(type, val):
             return next()
         token_error(S.token, "Unexpected token: found type='" + S.token.type + "', value='" + S.token.value + "'" +
-                    ";  expected: '" + type + "', possible value='" + val + "'")
+                    ";  expected: '" + type + "', value='" + val + "'")
 
     def expect(punc):
         return expect_token("punc", punc)
@@ -1456,6 +1456,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
                 next()
                 if is_('punc', ')'):
                     next()
+                    # since we don't have tuples in jpython (yet?)...
                     return new AST_Array({'elements':[]})
                 ex = expression(True)
                 if is_('keyword', 'for'):
@@ -2107,7 +2108,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
             })
         if commas:
             left = r'%js [ expr ]'
-            while is_("punc", ",") and not peek().nlb:
+            while is_("punc", ","):
                 next()
                 if is_node_type(expr, AST_Assign):
                     left[-1] = left[-1].left
