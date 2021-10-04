@@ -37,7 +37,7 @@ Version History:
 
 """
 
-LOOPS = 50000
+LOOPS = 500000
 
 from time import time
 
@@ -45,10 +45,14 @@ __version__ = "1.2"
 
 [Ident1, Ident2, Ident3, Ident4, Ident5] = range(1, 6)
 
-class Record:
 
-    def __init__(self, PtrComp = None, Discr = 0, EnumComp = 0,
-                       IntComp = 0, StringComp = 0):
+class Record:
+    def __init__(self,
+                 PtrComp=None,
+                 Discr=0,
+                 EnumComp=0,
+                 IntComp=0,
+                 StringComp=0):
         self.PtrComp = PtrComp
         self.Discr = Discr
         self.EnumComp = EnumComp
@@ -56,32 +60,30 @@ class Record:
         self.StringComp = StringComp
 
     def copy(self):
-        return Record(self.PtrComp, self.Discr, self.EnumComp,
-                      self.IntComp, self.StringComp)
+        return Record(self.PtrComp, self.Discr, self.EnumComp, self.IntComp,
+                      self.StringComp)
+
 
 TRUE = 1
 FALSE = 0
 
-def main(loops=LOOPS):
-    benchtime, stones = pystones(loops)
-    print(f"Pystone({__version__}) time for {loops} passes = {benchtime}")
-    print(f"This machine benchmarks at {stones} pystones/second")
-    #print("Pystone(%s) time for %d passes = %g" % \
-    #      (__version__, loops, benchtime))
-    #print("This machine benchmarks at %g pystones/second" % stones)
 
+def main(loops=LOOPS):
+    pystones(loops)
 
 def pystones(loops=LOOPS):
-    return Proc0(loops)
+    Proc0(loops)
+
 
 IntGlob = 0
 BoolGlob = FALSE
 Char1Glob = '\0'
 Char2Glob = '\0'
-Array1Glob = [0]*51
-Array2Glob = [x[:] for x in [Array1Glob]*51]
+Array1Glob = [0] * 51
+Array2Glob = [x[:] for x in [Array1Glob] * 51]
 PtrGlb = None
 PtrGlbNext = None
+
 
 def Proc0(loops=LOOPS):
     global IntGlob
@@ -128,7 +130,7 @@ def Proc0(loops=LOOPS):
         while CharIndex <= Char2Glob:
             if EnumLoc == Func1(CharIndex, 'C'):
                 EnumLoc = Proc6(Ident1)
-            CharIndex = chr(ord(CharIndex)+1)
+            CharIndex = chr(ord(CharIndex) + 1)
         IntLoc3 = IntLoc2 * IntLoc1
         IntLoc2 = IntLoc3 // IntLoc1
         IntLoc2 = 7 * (IntLoc3 - IntLoc2) - IntLoc1
@@ -140,6 +142,7 @@ def Proc0(loops=LOOPS):
     else:
         loopsPerBenchtime = (loops / benchtime)
     return benchtime, loopsPerBenchtime
+
 
 def Proc1(PtrParIn):
     PtrParIn.PtrComp = NextRecord = PtrGlb.copy()
@@ -157,6 +160,7 @@ def Proc1(PtrParIn):
     NextRecord.PtrComp = None
     return PtrParIn
 
+
 def Proc2(IntParIO):
     IntLoc = IntParIO + 10
     while 1:
@@ -168,6 +172,7 @@ def Proc2(IntParIO):
             break
     return IntParIO
 
+
 def Proc3(PtrParOut):
     global IntGlob
 
@@ -178,6 +183,7 @@ def Proc3(PtrParOut):
     PtrGlb.IntComp = Proc7(10, IntGlob)
     return PtrParOut
 
+
 def Proc4():
     global Char2Glob
 
@@ -185,12 +191,14 @@ def Proc4():
     BoolLoc = BoolLoc or BoolGlob
     Char2Glob = 'B'
 
+
 def Proc5():
     global Char1Glob
     global BoolGlob
 
     Char1Glob = 'A'
     BoolGlob = FALSE
+
 
 def Proc6(EnumParIn):
     EnumParOut = EnumParIn
@@ -211,23 +219,26 @@ def Proc6(EnumParIn):
         EnumParOut = Ident3
     return EnumParOut
 
+
 def Proc7(IntParI1, IntParI2):
     IntLoc = IntParI1 + 2
     IntParOut = IntParI2 + IntLoc
     return IntParOut
+
 
 def Proc8(Array1Par, Array2Par, IntParI1, IntParI2):
     global IntGlob
 
     IntLoc = IntParI1 + 5
     Array1Par[IntLoc] = IntParI2
-    Array1Par[IntLoc+1] = Array1Par[IntLoc]
-    Array1Par[IntLoc+30] = IntLoc
-    for IntIndex in range(IntLoc, IntLoc+2):
+    Array1Par[IntLoc + 1] = Array1Par[IntLoc]
+    Array1Par[IntLoc + 30] = IntLoc
+    for IntIndex in range(IntLoc, IntLoc + 2):
         Array2Par[IntLoc][IntIndex] = IntLoc
-    Array2Par[IntLoc][IntLoc-1] = Array2Par[IntLoc][IntLoc-1] + 1
-    Array2Par[IntLoc+20][IntLoc] = Array1Par[IntLoc]
+    Array2Par[IntLoc][IntLoc - 1] = Array2Par[IntLoc][IntLoc - 1] + 1
+    Array2Par[IntLoc + 20][IntLoc] = Array1Par[IntLoc]
     IntGlob = 5
+
 
 def Func1(CharPar1, CharPar2):
     CharLoc1 = CharPar1
@@ -237,10 +248,11 @@ def Func1(CharPar1, CharPar2):
     else:
         return Ident2
 
+
 def Func2(StrParI1, StrParI2):
     IntLoc = 1
     while IntLoc <= 1:
-        if Func1(StrParI1[IntLoc], StrParI2[IntLoc+1]) == Ident1:
+        if Func1(StrParI1[IntLoc], StrParI2[IntLoc + 1]) == Ident1:
             CharLoc = 'A'
             IntLoc = IntLoc + 1
     if CharLoc >= 'W' and CharLoc <= 'Z':
@@ -254,27 +266,16 @@ def Func2(StrParI1, StrParI2):
         else:
             return FALSE
 
+
 def Func3(EnumParIn):
     EnumLoc = EnumParIn
     if EnumLoc == Ident3: return TRUE
     return FALSE
 
+
+import bench
+
+bench.register("Pystone", main)
+
 if __name__ == '__main__':
-    main(LOOPS)
-    """
-    import sys
-    def error(msg):
-        print(msg, end=' ', file=sys.stderr)
-        print("usage: %s [number_of_loops]" % sys.argv[0], file=sys.stderr)
-        sys.exit(100)
-    nargs = len(sys.argv) - 1
-    if nargs > 1:
-        error("%d arguments are too many;" % nargs)
-    elif nargs == 1:
-        try: loops = int(sys.argv[1])
-        except ValueError:
-            error("Invalid argument %r;" % sys.argv[1])
-    else:
-        loops = LOOPS
-    main(loops)
-    """
+    bench.all()

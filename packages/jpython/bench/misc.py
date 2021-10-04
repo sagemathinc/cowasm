@@ -23,8 +23,9 @@ register('list_times_number2', list_times_number2)
 
 
 def list_times_number3(n=1000000):
+    w = [0]
     for i in range(n):
-        [0] * 10
+        w * 3
 
 
 register('list_times_number3', list_times_number3)

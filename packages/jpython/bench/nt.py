@@ -1,18 +1,49 @@
-from math import sqrt
-import cython
+# A little pure python number theory library, which is useful
+# as a foundation for some microbenchmarks
 
-#@cython.ccall
-@cython.cfunc
-@cython.exceptval(-2, check=True)
-def trial_division(N : cython.int, bound : cython.int =0, start : cython.int=2) -> cython.int:
+from math import sqrt
+
+def gcd(a, b):
+    while b:
+        c = a % b
+        a = b
+        b = c
+    return a
+
+
+def xgcd(a, b):
+    prevx, x = 1, 0
+    prevy, y = 0, 1
+    while b:
+        q, r = divmod(a, b)
+        x, prevx = prevx - q * x, x
+        y, prevy = prevy - q * y, y
+        a, b = b, r
+    return a, prevx, prevy
+
+
+def inverse_mod(a, N):
+    """
+    Compute multiplicative inverse of a modulo N.
+    """
+    if a == 1 or N <= 1:  # common special cases
+        return a % N
+    [g, s, _] = xgcd(a, N)
+    if g != 1:
+        raise ZeroDivisionError
+    b = s % N
+    if b < 0:
+        b += N
+    return b
+
+
+def trial_division(N, bound=0, start=2):
     if N <= 1:
         return N
-    m : cython.int = 7
-    i : cython.int = 1
-    dif : cython.int[8] = [6, 4, 2, 4, 2, 4, 6, 2]
-
+    m = 7
+    i = 1
+    dif = [6, 4, 2, 4, 2, 4, 6, 2]
     if start > 7:
-        # We need to find i.
         m = start % 30
         if m <= 1:
             i = 0
@@ -38,20 +69,15 @@ def trial_division(N : cython.int, bound : cython.int =0, start : cython.int=2) 
         elif m <= 29:
             i = 7
             m = start + (29 - m)
-
     if start <= 2 and N % 2 == 0:
         return 2
     if start <= 3 and N % 3 == 0:
         return 3
     if start <= 5 and N % 5 == 0:
         return 5
-
-    limit : cython.int = round(sqrt(N))
+    limit = round(sqrt(N))
     if bound != 0 and bound < limit:
         limit = bound
-
-    # Algorithm: only trial divide by numbers that
-    # are congruent to 1,7,11,13,17,19,23,29 mod 30=2*3*5.
     while m <= limit:
         if N % m == 0:
             return m
@@ -61,20 +87,13 @@ def trial_division(N : cython.int, bound : cython.int =0, start : cython.int=2) 
     return N
 
 
-def is_prime(N : cython.int) -> cython.int:
+def is_prime(N):
     return N > 1 and trial_division(N) == N
 
-# Prime counting using trial division.
-# This is a silly algorithm and obviously
-# is mainly for testing!
-def pi(x : cython.int):
-    s : cython.int = 0
-    for i in range(1, x+1):
+
+def pi(n=100000):
+    s = 0
+    for i in range(1, n + 1):
         if is_prime(i):
             s += 1
     return s
-
-def bench_pi(x):
-    from time import time
-    t = time()
-    print(pi(x),time()-t)

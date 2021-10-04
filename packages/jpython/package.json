@@ -5,7 +5,7 @@
   "keywords": ["javascript", "python", "language", "compiler"],
   "main": "tools/compiler.js",
   "scripts": {
-    "test": "npx tsc && node bin/jpython self --complete --test",
+    "test": "npx tsc && jpython self --complete --test && cd bench && jpython all.py",
     "start": "node bin/jpython",
     "build": "npx tsc && node bin/jpython self --complete",
     "tsc": "npx tsc -w",

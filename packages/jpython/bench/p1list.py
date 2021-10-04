@@ -1,5 +1,7 @@
-from gcd import gcd
-from xgcd import inverse_mod, xgcd
+import bench
+register = bench.register
+all = bench.all
+from nt import gcd, xgcd, inverse_mod
 
 def p1_normalize(N, u, v, compute_s = False):
     if N == 1:
@@ -51,18 +53,13 @@ def p1_normalize(N, u, v, compute_s = False):
     return [u, v, s]
 
 
-def bench1(n):
-    from time import time
-    t = time()
+def p1_normalize_many_times(n=10**5):
     s = 0
     for a in range(n):
         s += p1_normalize(46100, 39949, a)[0]
-    print(s, time() - t)
+    return s
 
-try:
-    exports.bench1 = bench1
-    exports.p1_normalize = p1_normalize
-    exports.gcd = gcd
-    exports.xgcd = xgcd
-except:
-    pass
+register("p1_normalize_many_times", p1_normalize_many_times)
+
+if __name__ == '__main__':
+    all('p1list')
