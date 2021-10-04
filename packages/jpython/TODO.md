@@ -28,6 +28,24 @@
 ...
 ```
 
+---
+
+[ ] parenthesis line continuation (a nice newer feature of python), e.g. this:
+```py
+~/jsage/packages/jpython$ jpython
+Welcome to JPython.  Using Node.js v16.7.0.
+>>> # this shouldn't be broken
+>>> a = (1,
+... 2)
+... 
+1:6:Unexpected token: found type='punc', value=',';  expected: 'punc', possible value=')'
+>>> # this is NOT broken:
+>>> a = (1,\
+... 2)
+... 
+[1, 2]
+```
+
 ## Done
 
 [x] sage preparser style mode that makes `^` be exponentiation. Have a bin script `jsage` (instead of `jpython`) that enables this mode everywhere.

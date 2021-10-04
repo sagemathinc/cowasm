@@ -121,13 +121,18 @@ UNARY_PREFIX = make_predicate('typeof void delete ~ - + ! @')
 
 ASSIGNMENT = make_predicate('= += -= /= //= *= %= >>= <<= >>>= |= ^= &=')
 
-PRECEDENCE = (def(a, ret):
+def operator_to_precedence(a):
+    """
+    Compute map from operator to its precendence number.
+    """
+    op_to_prec = {}
     for i in range(a.length):
         b = a[i]
         for j in range(b.length):
-            ret[b[j]] = i+1
-    return ret
-)([
+            op_to_prec[b[j]] = i+1
+    return op_to_prec
+
+PRECEDENCE = operator_to_precedence([
     # lowest precedence
     [ "||" ],
     [ "&&" ],
@@ -141,7 +146,7 @@ PRECEDENCE = (def(a, ret):
     [ "*", "/", "//", "%" ],
     [ "**" ]
     # highest precedence
-], {})
+])
 
 STATEMENTS_WITH_LABELS = array_to_hash([ "for", "do", "while", "switch" ])
 
@@ -150,27 +155,27 @@ ATOMIC_START_TOKEN = array_to_hash([ "atom", "num", "string", "regexp", "name", 
 compile_time_decorators = ['staticmethod', 'external', 'property']
 
 def has_simple_decorator(decorators, name):
-    remove = v'[]'
-    for v'var i = 0; i < decorators.length; i++':
+    remove = r'%js []'
+    for r'%js var i = 0; i < decorators.length; i++':
         s = decorators[i]
         if is_node_type(s, AST_SymbolRef) and not s.parens and s.name is name:
             remove.push(i)
     if remove.length:
         remove.reverse()
-        for v'var i = 0; i < remove.length; i++':
+        for r'%js var i = 0; i < remove.length; i++':
             decorators.splice(remove[i], 1)
         return True
     return False
 
 def has_setter_decorator(decorators, name):
-    remove = v'[]'
-    for v'var i = 0; i < decorators.length; i++':
+    remove = r'%js []'
+    for r'%js var i = 0; i < decorators.length; i++':
         s = decorators[i]
         if is_node_type(s, AST_Dot) and is_node_type(s.expression, AST_SymbolRef) and s.expression.name is name and s.property is 'setter':
             remove.push(i)
     if remove.length:
         remove.reverse()
-        for v'var i = 0; i < remove.length; i++':
+        for r'%js var i = 0; i < remove.length; i++':
             decorators.splice(remove[i], 1)
         return True
     return False
@@ -244,7 +249,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         return with_embedded_tokens
 
     def scan_for_top_level_callables(body):
-        ans = v'[]'
+        ans = r'%js []'
         # Get the named functions and classes
         if Array.isArray(body):
             for obj in body:
@@ -286,7 +291,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
 
         body        body to be scanned
         """
-        localvars = v'[]'
+        localvars = r'%js []'
         seen = {}
 
         def push(x):
@@ -386,7 +391,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         return localvars
 
     def scan_for_nonlocal_defs(body):
-        vars = v'[]'
+        vars = r'%js []'
         if Array.isArray(body):
             for stmt in body:
                 if is_node_type(stmt, AST_Scope):
@@ -578,7 +583,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
                 unexpected()
 
     def with_():
-        clauses = v'[]'
+        clauses = r'%js []'
         start = S.token
         while True:
             if is_('eof'):
@@ -766,7 +771,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
             cached = None
 
         srchash = sha1sum(src_code)  # noqa:undef
-        if cached and cached.version is COMPILER_VERSION and cached.signature is srchash and cached.discard_asserts is v'!!options.discard_asserts':
+        if cached and cached.version is COMPILER_VERSION and cached.signature is srchash and cached.discard_asserts is r'%js !!options.discard_asserts':
             for ikey in cached.imported_module_ids:
                 do_import(ikey)  # Ensure all modules imported by the cached module are also imported
             imported_modules[key] = {
@@ -914,12 +919,12 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
 
         class_details = {
             "static": {},
-            'bound': v'[]',
+            'bound': r'%js []',
             'classvars': {},
             'processing': name.name,
             'provisional_classvars': {},
         }
-        bases = v'[]'
+        bases = r'%js []'
         class_parent = None
 
         # read the bases of the class, if any
@@ -939,7 +944,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
                     next()
                     continue
 
-        docstrings = v'[]'
+        docstrings = r'%js []'
         definition = new AST_Class({
             'name': name,
             'docstrings': docstrings,
@@ -959,7 +964,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
                     d.push(new AST_Decorator({
                         'expression': decorator
                     }))
-                S.decorators = v'[]'
+                S.decorators = r'%js []'
                 return d
             )(),
             'body': (def(loop, labels):
@@ -1046,8 +1051,8 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         S.in_parenthesized_expr = True
         ctor = AST_Method if in_class else AST_Function
         return_annotation = None
-        is_generator = v'[]'
-        docstrings = v'[]'
+        is_generator = r'%js []'
+        docstrings = r'%js []'
         definition = new ctor({
             'name': name,
             'is_expression': is_expression,
@@ -1157,15 +1162,15 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
                 a.defaults = defaults
                 a.is_simple_func = not a.starargs and not a.kwargs and not a.has_defaults
                 return a
-            )(v'[]'),
+            )(r'%js []'),
             'localvars': [],
             'decorators': (def():
-                d = v'[]'
+                d = r'%js []'
                 for decorator in S.decorators:
                     d.push(new AST_Decorator({
                         'expression': decorator
                     }))
-                S.decorators = v'[]'
+                S.decorators = r'%js []'
                 return d
             )(),
             'docstrings': docstrings,
@@ -1245,7 +1250,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
     def block_(docstrings):
         prev_whitespace = S.token.leading_whitespace
         expect(":")
-        a = v'[]'
+        a = r'%js []'
         if not S.token.nlb:
             while not S.token.nlb:
                 if is_("eof"):
@@ -1277,7 +1282,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
 
     def try_():
         body = block_()
-        bcatch = v'[]'
+        bcatch = r'%js []'
         bfinally = None
         belse = None
         while is_("keyword", "except"):
@@ -1377,7 +1382,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         }), True)
 
     def string_():
-        strings = v'[]'
+        strings = r'%js []'
         start = S.token
         while True:
             strings.push(S.token.value)
@@ -1540,10 +1545,10 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         return a
 
     def func_call_list(empty):
-        a = v'[]'
+        a = r'%js []'
         first = True
-        a.kwargs = v'[]'
-        a.kwarg_items = v'[]'
+        a.kwargs = r'%js []'
+        a.kwarg_items = r'%js []'
         a.starargs = False
         if empty:
             return a
@@ -1745,7 +1750,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         start = expr.start
         next()
         is_py_sub = S.scoped_flags.get('overload_getitem', False)
-        slice_bounds = v'[]'
+        slice_bounds = r'%js []'
         is_slice = False
         if is_("punc", ":"):
             # slice [:n]
@@ -1924,7 +1929,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         c = get_class_in_scope(expr)
         if c:
             classvars = c.provisional_classvars if c.processing else c.classvars
-            if classvars and v'classvars[prop]':
+            if classvars and r'%js classvars[prop]':
                 prop = 'prototype.' + prop
 
         return subscripts(new AST_Dot({
@@ -2101,7 +2106,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
                 'end': peek()
             })
         if commas:
-            left = v'[ expr ]'
+            left = r'%js [ expr ]'
             while is_("punc", ",") and not peek().nlb:
                 next()
                 if is_node_type(expr, AST_Assign):
@@ -2146,8 +2151,8 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
 
     def run_parser():
         start = S.token = next()
-        body = v'[]'
-        docstrings = v'[]'
+        body = r'%js []'
+        docstrings = r'%js []'
         first_token = True
         toplevel = options.toplevel
         while not is_("eof"):
@@ -2205,7 +2210,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
         toplevel.baselib = baselib_items
         toplevel.scoped_flags = S.scoped_flags.stack[0]
         importing_modules[module_id] = False
-        toplevel.comments_after = S.token.comments_before or v'[]'
+        toplevel.comments_after = S.token.comments_before or r'%js []'
         return toplevel
 
     return run_parser
@@ -2216,7 +2221,7 @@ def parse(text, options):
         'module_id':'__main__', # The id of the module being parsed
         'toplevel': None,
         'for_linting': False, # If True certain actions are not performed, such as importing modules
-        'import_dirs': v'[]',
+        'import_dirs': r'%js []',
         'classes': undefined, # Map of class names to AST_Class that are available in the global namespace (used by the REPL)
         'scoped_flags': {},   # Global scoped flags (used by the REPL)
         'discard_asserts': False,
@@ -2225,7 +2230,7 @@ def parse(text, options):
         'tokens': False, # if true, show every token as it is parsed
     })
     import_dirs = [x for x in options.import_dirs]
-    for location in v'[options.libdir, options.basedir]':
+    for location in r'%js [options.libdir, options.basedir]':
         if location:
             import_dirs.push(location)
     module_id = options.module_id
@@ -2239,7 +2244,7 @@ def parse(text, options):
     S = {
         'input': tokenizer(text, options.filename) if jstype(text) is 'string' else text,
         'token': None,
-        'prev': None,
+        'prev' : None,
         'peeked': [],
         'in_function': 0,
         'statement_starting_token': None,
@@ -2251,15 +2256,15 @@ def parse(text, options):
         'classes': [ {} ],
         'functions': [ {} ],
         'labels': [],
-        'decorators': v'[]',
+        'decorators': r'%js []',
         'parsing_decorator': False,
-        'globals': v'[]',
+        'globals': r'%js []',
         'scoped_flags': {
-            'stack': v'[options.scoped_flags || Object.create(null)]',
+            'stack': r'%js [options.scoped_flags || Object.create(null)]',
             'push': def (): this.stack.push(Object.create(None));,
             'pop': def (): this.stack.pop();,
             'get': def (name, defval):
-                for v'var i = this.stack.length - 1; i >= 0; i--':
+                for r'%js var i = this.stack.length - 1; i >= 0; i--':
                     d = this.stack[i]
                     q = d[name]
                     if q:
