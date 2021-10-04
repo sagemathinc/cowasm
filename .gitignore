@@ -9,3 +9,4 @@ packages/*/node_modules
 *.o
 zig-cache
 tsconfig.tsbuildinfo
+.hypothesis

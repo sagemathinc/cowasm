@@ -4,6 +4,8 @@
 
 ---
 
+[ ] Rewrite the tests to use builtin assert statement, rather than the Javascript assrt.  Make sure every test in the test suite (except special jsage extensions) works equally well with Pure python via pytest.    Also, is maybe rewrite a little of pytest to do our testing?
+
 [ ] Bug in tuple unpacking:
 In Jpython:
 

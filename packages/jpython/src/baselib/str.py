@@ -23,7 +23,7 @@ def ρσ_repr_js_builtin(x, as_array):
         keys = Object.keys(x)
         for v'var k = 0; k < keys.length; k++':
             key = keys[k]
-            ans.push(JSON.stringify(key) + ':' + ρσ_repr(x[key]))
+            ans.push(ρσ_repr(key) + ': ' + ρσ_repr(x[key]))
     return b[0] + ans.join(', ') + b[1]
 
 def ρσ_html_element_to_string(elem):
@@ -51,6 +51,8 @@ def ρσ_repr(x):
         ans = 'True' if x else 'False'
     elif Array.isArray(x):
         ans = ρσ_repr_js_builtin(x, True)
+    elif jstype(x) is 'string':  # python uses single quotes for repr(string)
+        ans = "'" + x + "'"
     elif jstype(x) is 'function':
         ans = x.toString()
     elif jstype(x) is 'object' and not x.toString:
