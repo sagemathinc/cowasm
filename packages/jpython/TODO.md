@@ -8,6 +8,8 @@
 
 [ ] Support for using mypy typing.
 
+ - [x] function declarations
+ - [ ] type hints for vars, e.g. `my_global_dict: dict[int, float] = {}`.   Doesn't work now.  Just need to make everything between identifier and = be discarded.
 ---
 
 [ ] A Jsage / JPython Jupyter kernel.
