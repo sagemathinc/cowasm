@@ -5,7 +5,7 @@ from __python__ import hash_literals
 
 from utils import make_predicate, array_to_hash, defaults, has_prop, cache_file_name
 from errors import SyntaxError, ImportError
-from ast import (
+from ast_types import (
 AST_Array, AST_Assign, AST_Binary, AST_BlockStatement, AST_Break,
 AST_Call, AST_Catch, AST_Class, AST_ClassCall, AST_Conditional,
 AST_Constant, AST_Continue, AST_DWLoop, AST_Debugger, AST_Decorator,

@@ -28,7 +28,7 @@ if jstype(exports) is 'object':
     exports.SyntaxError = SyntaxError
     exports.tokenizer = tokenizer
     # Magic! Export all the AST_* nodes
-    ast = ρσ_modules['ast']
+    ast = ρσ_modules['ast_types']
     for ast_node in ast:
         if ast_node.substr(0, 4) is 'AST_':
             exports[ast_node] = ast[ast_node]  # noqa:undef

@@ -2,7 +2,7 @@
 # License: BSD Copyright: 2018, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
 
-from ast import AST_Exit, is_node_type
+from ast_types import AST_Exit, is_node_type
 
 
 def output_comments(comments, output, nlb):

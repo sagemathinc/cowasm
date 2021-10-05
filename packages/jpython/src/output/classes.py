@@ -2,7 +2,7 @@
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
 
-from ast import AST_Class, AST_Method, is_node_type
+from ast_types import AST_Class, AST_Method, is_node_type
 from output.functions import decorate, function_definition, function_annotation
 from output.utils import create_doctring
 from utils import has_prop

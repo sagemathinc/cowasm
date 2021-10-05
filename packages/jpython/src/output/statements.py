@@ -2,7 +2,7 @@
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
 
-from ast import (
+from ast_types import (
     AST_Definitions, AST_Scope, AST_Method, AST_Except, AST_EmptyStatement,
     AST_Statement, AST_Seq, AST_BaseCall, AST_Dot, AST_Sub, AST_ItemAccess,
     AST_Conditional, AST_Binary, AST_BlockStatement, is_node_type

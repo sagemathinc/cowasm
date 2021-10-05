@@ -2,7 +2,7 @@
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
 
-from ast import AST_Binary, AST_Number, AST_String, is_node_type
+from ast_types import AST_Binary, AST_Number, AST_String, is_node_type
 
 def print_array(self, output):
     output.print('ρσ_list_decorate')

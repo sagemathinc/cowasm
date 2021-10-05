@@ -6,7 +6,7 @@ from __python__ import hash_literals
 
 from utils import noop
 from parse import PRECEDENCE
-from ast import (
+from ast_types import (
     AST_Array, AST_Assign, AST_BaseCall, AST_Binary, AST_BlockStatement, AST_Break,
     AST_Class, AST_Conditional, AST_Constant, AST_Continue,
     AST_Debugger, AST_Definitions, AST_Directive, AST_Do, AST_Dot, is_node_type,

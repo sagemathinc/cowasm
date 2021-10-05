@@ -2,7 +2,7 @@
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
 
-from ast import AST_BaseCall, AST_SymbolRef, AST_Array, AST_Unary, AST_Number, has_calls, AST_Seq, AST_ListComprehension, is_node_type
+from ast_types import AST_BaseCall, AST_SymbolRef, AST_Array, AST_Unary, AST_Number, has_calls, AST_Seq, AST_ListComprehension, is_node_type
 from output.stream import OutputStream
 
 def unpack_tuple(elems, output, in_statement):

@@ -2,7 +2,7 @@
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
 
-from ast import AST_BlockStatement, is_node_type
+from ast_types import AST_BlockStatement, is_node_type
 
 def best_of(a):
     best = a[0]

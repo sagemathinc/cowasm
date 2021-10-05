@@ -4,7 +4,7 @@ from __python__ import hash_literals # type: ignore
 
 from unicode_aliases import ALIAS_MAP
 from utils import make_predicate, characters
-from ast import AST_Token
+from ast_types import AST_Token
 from errors import SyntaxError
 from string_interpolation import interpolate
 

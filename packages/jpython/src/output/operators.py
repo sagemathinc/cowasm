@@ -1,7 +1,7 @@
 # vim:fileencoding=utf-8
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
-from ast import (
+from ast_types import (
     AST_Array, AST_Assign, AST_BaseCall, AST_Binary, AST_Conditional,
     AST_ItemAccess, AST_Number, AST_Object, AST_Return, AST_Seq, AST_Set,
     AST_SimpleStatement, AST_Statement, AST_String, AST_Sub, AST_Symbol,
