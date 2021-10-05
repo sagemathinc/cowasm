@@ -1,24 +1,27 @@
-def time(f, *args):
-    from time import time
-    t = time()
+from typing import Callable
+
+
+def time(f: Callable, *args) -> int:
+    from time import time as time0
+    t = time0()
     f(*args)
-    return int((time() - t) * 1000)
+    return int((time0() - t) * 1000)
 
 
 benchmarks = []
 
 
-def register(name, f):
+def register(name: str, f: Callable) -> None:
     global benchmarks
     benchmarks.append((name, f))
 
 
-def reset():
+def reset() -> None:
     benchmarks.clear()
 
 
-def all(desc=''):
-    print("-"*20)
+def all(desc: str = '') -> None:
+    print("-" * 20)
     print("Running...", desc)
     t = 0
     for (name, f) in benchmarks:

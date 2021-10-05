@@ -1,6 +1,6 @@
 # vim:fileencoding=utf-8
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
-from __python__ import hash_literals
+from __python__ import hash_literals # type: ignore
 
 from unicode_aliases import ALIAS_MAP
 from utils import make_predicate, characters
@@ -74,7 +74,7 @@ IDENTIFIER_PAT = r"%js /^[a-z_$][_a-z0-9$]*$/i"
 
 
 # https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals
-def is_string_modifier(val):
+def is_string_modifier(val : str) -> bool:
     for ch in val:
         if 'vrufVRUF'.indexOf(ch) is -1:
             return False

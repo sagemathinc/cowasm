@@ -1,3 +1,7 @@
+# Annotations are completely disabled by default, so that it is possible to use mypy.
+# This turns them back on:
+from __python__ import annotations
+
 def add(a: int, b: float):
     return a + b
 

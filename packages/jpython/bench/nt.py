@@ -2,8 +2,10 @@
 # as a foundation for some microbenchmarks
 
 from math import sqrt
+from typing import Tuple
 
-def gcd(a, b):
+
+def gcd(a: int, b: int) -> int:
     while b:
         c = a % b
         a = b
@@ -11,7 +13,7 @@ def gcd(a, b):
     return a
 
 
-def xgcd(a, b):
+def xgcd(a: int, b: int) -> Tuple[int, int, int]:
     prevx, x = 1, 0
     prevy, y = 0, 1
     while b:
@@ -22,7 +24,7 @@ def xgcd(a, b):
     return a, prevx, prevy
 
 
-def inverse_mod(a, N):
+def inverse_mod(a: int, N: int) -> int:
     """
     Compute multiplicative inverse of a modulo N.
     """
@@ -37,7 +39,7 @@ def inverse_mod(a, N):
     return b
 
 
-def trial_division(N, bound=0, start=2):
+def trial_division(N: int, bound: int = 0, start: int = 2) -> int:
     if N <= 1:
         return N
     m = 7
@@ -87,11 +89,11 @@ def trial_division(N, bound=0, start=2):
     return N
 
 
-def is_prime(N):
+def is_prime(N: int) -> bool:
     return N > 1 and trial_division(N) == N
 
 
-def pi(n=100000):
+def pi(n: int = 100000) -> int:
     s = 0
     for i in range(1, n + 1):
         if is_prime(i):

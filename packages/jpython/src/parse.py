@@ -29,6 +29,7 @@ from tokenizer import tokenizer, is_token, RESERVED_WORDS
 COMPILER_VERSION = '__COMPILER_VERSION__'
 PYTHON_FLAGS = {'exponent':True,  # support a^b-->a**b (and a^^b = a xor b), which is very math friendly (no performance impact)
                 'ellipses':True,   # support the [a..b] = range(a, b+1) notation, which is very math friendly  (no performance impact)
+                'annotations': False, # if true, set function annotations; off by default since breaks mypy
                 'dict_literals':True,  # MASSIVELY performance impact! -- e.g., 100x -- careful
                 'overload_getitem':True,
                 'bound_methods':True,
@@ -817,6 +818,9 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
                 S.input.context()['exponent'] = val  # tell tokenizer
             elif name == 'ellipses':
                 S.scoped_flags.set('ellipses', val)
+            elif name == 'annotations':
+                print("setting annotations", val)
+                S.scoped_flags.set('annotations', val)
             else:
                 S.scoped_flags.set(name, val)
             next()
@@ -831,6 +835,29 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
                 break
         return new AST_EmptyStatement({'stype':'scoped_flags', 'start':prev(), 'end':prev()})
 
+    def mock_typing_module():
+        # This enables us to fully use mypy with jpython code.
+        # See test/typing_.py for an example.
+        expect_token("keyword", "import")
+        bracketed = is_('punc', '(')
+        if bracketed:
+            next()
+        while True:
+            if not is_('name'):
+                croak('Name expected')
+            name = S.token.value
+            next()
+            if is_('punc', ','):
+                next()
+            else:
+                if bracketed:
+                    if is_('punc', ')'):
+                        next()
+                    else:
+                        continue
+                break
+        return new AST_EmptyStatement({'start':prev(), 'end':prev()})
+
     def import_(from_import):
         ans = new AST_Imports({'imports':[]})
         while True:
@@ -842,6 +869,8 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
             key = tmp.name + key
             if from_import and key is '__python__':
                 return read_python_flags()
+            if from_import and key is 'typing':
+                return mock_typing_module()
             alias = None
             if not from_import and is_('keyword', 'as'):
                 next()
@@ -1057,6 +1086,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
             'name': name,
             'is_expression': is_expression,
             'is_anonymous': is_anonymous,
+            'annotations': S.scoped_flags.get('annotations'),  # whether or not to annotate
             'argnames': (def(a):
                 defaults = {}
                 first = True
@@ -1776,6 +1806,12 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
             else:
                 slice_bounds.push(expression(False))
 
+        # multi-index notation, e.g., [n,m,r]
+        # I added parsing it so that mypy can be used.
+        while is_("punc", ","):
+            next()
+            slice_bounds.push(expression(False))
+
         expect("]")
 
         if is_slice:
@@ -1833,6 +1869,13 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
                 }), allow_calls)
         else:
             # regular index (arr[index])
+            if len(slice_bounds) == 1:
+                prop = slice_bounds[0] or new AST_Number({
+                    'value': 0
+                })
+            else:
+                # arr[index1,index2]
+                prop = new AST_Array({'elements': slice_bounds})
             if is_py_sub:
                 assignment = None
                 if is_("operator") and S.token.value is "=":
@@ -1841,9 +1884,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
                 return subscripts(new AST_ItemAccess({
                     'start': start,
                     'expression': expr,
-                    'property': slice_bounds[0] or new AST_Number({
-                        'value': 0
-                    }),
+                    'property': prop,
                     'assignment':assignment,
                     'end': prev()
                 }), allow_calls)
@@ -1851,9 +1892,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items, imported_module_
             return subscripts(new AST_Sub({
                 'start': start,
                 'expression': expr,
-                'property': slice_bounds[0] or new AST_Number({
-                    'value': 0
-                }),
+                'property': prop,
                 'end': prev()
             }), allow_calls)
 

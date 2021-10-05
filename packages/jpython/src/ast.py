@@ -386,6 +386,7 @@ class AST_Lambda(AST_Scope):
         'name': "[AST_SymbolDeclaration?] the name of this function",
         'argnames': "[AST_SymbolFunarg*] array of function arguments",
         'decorators': "[AST_Decorator*] function decorators, if any",
+        'annotations': "[bool*] True iff this function should have annotations set",
         'is_generator': "[bool*] True iff this function is a generator",
         'is_expression': "[bool*] True iff this function is a function expression",
         'is_anonymous': "[bool*] True iff this function is an anonymous function",

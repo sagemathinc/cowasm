@@ -2975,7 +2975,7 @@ function ρσ_repr_js_builtin(x, as_array) {
         keys = Object.keys(x);
         for (var k = 0; k < keys.length; k++) {
             key = keys[(typeof k === "number" && k < 0) ? keys.length + k : k];
-            ans.push(ρσ_operator_add(ρσ_operator_add(JSON.stringify(key), ":"), ρσ_repr(x[(typeof key === "number" && key < 0) ? x.length + key : key])));
+            ans.push(ρσ_operator_add(ρσ_operator_add(ρσ_repr(key), ": "), ρσ_repr(x[(typeof key === "number" && key < 0) ? x.length + key : key])));
         }
     }
     return ρσ_operator_add(ρσ_operator_add(b[0], ans.join(", ")), b[1]);
@@ -3023,6 +3023,8 @@ function ρσ_repr(x) {
         ans = (x) ? "True" : "False";
     } else if (Array.isArray(x)) {
         ans = ρσ_repr_js_builtin(x, true);
+    } else if (typeof x === "string") {
+        ans = ρσ_operator_add(ρσ_operator_add("'", x), "'");
     } else if (typeof x === "function") {
         ans = x.toString();
     } else if (typeof x === "object" && !x.toString) {

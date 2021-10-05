@@ -119,7 +119,13 @@ def function_annotation(self, output, strip_first, name):
     props = Object.create(None)
 
     # Create __annotations__
-    if has_annotations(self):
+    # TODO: These are completely disabled, since to really using
+    # them the typings module has to be properly implemented...
+    # otherwise trying to use them with a mocked typings module
+    # doesn't work at all.  For now we just ignore this data
+    # and mock typings, so you can fully typecheck code with mypy
+    # while still *running* it with jpython.
+    if self.annotations and has_annotations(self):
         props.__annotations__ = def():
             output.print('{')
             if self.argnames and self.argnames.length:
