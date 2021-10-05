@@ -2,7 +2,16 @@
 
 ## Not Done
 
-[ ] Actually add typings to the compiler implementation.
+[ ] exception types; almost none of them work or are even defined.  TypeError is there, but RuntimeError isn't...
+
+---
+
+[ ] Use ES6 classes instead of functions and prototypes to model classes.  
+
+---
+
+[ ] Actually add typings to the compiler implementation. 
+I added some...
 
 ---
 

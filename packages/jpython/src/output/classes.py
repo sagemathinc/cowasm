@@ -1,5 +1,3 @@
-# vim:fileencoding=utf-8
-# License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
 
 from ast_types import AST_Class, AST_Method, is_node_type
