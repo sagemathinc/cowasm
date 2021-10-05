@@ -5,7 +5,7 @@ from __python__ import hash_literals
 from utils import noop
 
 def is_node_type(node, typ):
-    return v'node instanceof typ'
+    return r'%js node instanceof typ'
 
 # Basic classes {{{
 
@@ -22,11 +22,13 @@ class AST:
                 obj = Object.getPrototypeOf(obj)
                 if obj is None:
                     break
-                for v'var i in obj.properties':  # noqa: unused-local
-                    v'self[i] = initializer[i]'
+                r"""%js
+for(const i in obj.properties) {
+  self[i] = initializer[i];
+}"""
 
     def clone(self):
-        return v'new self.constructor(self)'
+        return r'%js new self.constructor(self)'
 
 
 class AST_Token(AST):
@@ -833,7 +835,7 @@ class AST_Assign(AST_Binary):
                     right = right.cdr.right
                     continue
             break
-        left_hand_sides = v'[self.left]'
+        left_hand_sides = r'%js [self.left]'
         next = self.right
         while True:
             if is_node_type(next, AST_Assign):
@@ -1031,19 +1033,19 @@ class AST_Null(AST_Atom):
 
 class AST_NaN(AST_Atom):
     "The impossible value"
-    value = v'NaN'
+    value = r'%js NaN'
 
 class AST_Undefined(AST_Atom):
     "The `undefined` value"
-    value = v'undefined'
+    value = r'%js undefined'
 
 class AST_Hole(AST_Atom):
     "A hole in an array"
-    value = v'undefined'
+    value = r'%js undefined'
 
 class AST_Infinity(AST_Atom):
     "The `Infinity` value"
-    value = v'Infinity'
+    value = r'%js Infinity'
 
 class AST_Boolean(AST_Atom):
     "Base class for booleans"

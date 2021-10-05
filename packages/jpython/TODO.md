@@ -2,11 +2,15 @@
 
 ## Not Done
 
+[ ] implement normal python lambda function
+
+---
+
 [ ] exception types; almost none of them work or are even defined.  TypeError is there, but RuntimeError isn't...
 
 ---
 
-[ ] Use ES6 classes instead of functions and prototypes to model classes.  
+[ ] Use ES6 classes instead of functions and prototypes to model classes.
 
 ---
 
@@ -17,8 +21,9 @@ I added some...
 
 [ ] Support for using mypy typing.
 
- - [x] function declarations
- - [ ] type hints for vars, e.g. `my_global_dict: dict[int, float] = {}`.   Doesn't work now.  Just need to make everything between identifier and = be discarded.
+- [x] function declarations
+- [ ] type hints for vars, e.g. `my_global_dict: dict[int, float] = {}`.   Doesn't work now.  Just need to make everything between identifier and = be discarded.
+
 ---
 
 [ ] A Jsage / JPython Jupyter kernel.
@@ -61,7 +66,7 @@ This broke bench/nbody.py pretty badly...
 
 ---
 
-[ ] tuples aren't really implemented at all...
+[ ] tuples aren't implemented at all...
 
 ---
 

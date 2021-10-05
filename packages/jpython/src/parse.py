@@ -1,7 +1,7 @@
 # vim:fileencoding=utf-8
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 # globals: readfile
-from __python__ import hash_literals
+from __python__ import hash_literals # type: ignore
 
 from utils import make_predicate, array_to_hash, defaults, has_prop, cache_file_name
 from errors import SyntaxError, ImportError
