@@ -1,12 +1,13 @@
 // see https://gmplib.org/manual/Custom-Allocation
 
-
 const std = @import("std");
-//const page_allocator = std.heap.gp.allocator;
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 const gmp = @cImport(@cInclude("gmp.h"));
 
+var initialized = false;
 pub fn init() void {
+    if (initialized) return;
+    initialized = true;
     gmp.mp_set_memory_functions(gmp_alloc, gmp_realloc, gmp_free);
 }
 
@@ -29,6 +30,15 @@ export fn gmp_free(ptr: ?*c_void, n: usize) void {
     // knows about its length!  Yes, this took me a long time to figure out.
     const p = @ptrCast([*]u8, ptr)[0..n];
     gpa.allocator.free(p);
+}
+
+pub fn free(slice: []u8) void {
+    if (initialized) {
+        gpa.allocator.free(slice);
+    } else {
+        // still using malloc
+        std.c.free(slice.ptr);
+    }
 }
 
 export fn gmp_realloc(ptr: ?*c_void, n: usize, m: usize) ?*c_void {

@@ -1,6 +1,7 @@
 const gmp = @cImport(@cInclude("gmp.h"));
 const std = @import("std");
-pub const Errors = error{ ValueError, ZeroDivisionError };
+const ValueError = @import("../errors.zig").Math.ValueError;
+const custom_allocator = @import("../custom-allocator.zig");
 
 pub fn IntegerType() type {
     return struct {
@@ -25,14 +26,14 @@ pub fn IntegerType() type {
                 i32, i64, comptime_int => gmp.mpz_init_set_si(&self.x, @intCast(c_long, op)),
                 else => {
                     std.debug.warn("invalid type {}\n", .{T});
-                    return Errors.ValueError;
+                    return ValueError;
                 },
             }
         }
 
         pub fn initSetStr(self: *IntegerType(), str: [*]const u8, base: c_int) !void {
             if (gmp.mpz_init_set_str(&self.x, str, base) != 0) {
-                return Errors.ValueError;
+                return ValueError;
             }
         }
 
@@ -60,7 +61,6 @@ pub fn IntegerType() type {
             gmp.mpz_mul(&c.x, &self.x, &right.x);
             return c;
         }
-
 
         pub fn pow(self: *IntegerType(), exponent: usize) IntegerType() {
             var c = Integer();
@@ -99,6 +99,32 @@ pub fn IntegerType() type {
         pub fn print(self: IntegerType()) void {
             _ = gmp.gmp_printf("%Zd\n", &self.x);
         }
+
+        pub fn sizeInBase(self: IntegerType(), base: c_int) usize {
+            return gmp.mpz_sizeinbase(&self.x, base);
+        }
+
+        // Caller must free allocated string using freeString method.
+        // TODO: need to check if there was an error.  This will
+        // involve implementing an error flag in custom-allocator.zig.
+        // Right now, I think program terminates due to the "unreachable" there.
+        // "The base argument may vary from 2 to 62 or from -2 to -36."
+        pub fn toString(self: IntegerType(), base: c_int) ![]u8 {
+            if (base < -36 or base == -1 or base == 0 or base == 1 or base >62) {
+                return ValueError;
+            }
+            var size = self.sizeInBase(base);
+            var str = gmp.mpz_get_str(0, base, &self.x);
+            if (str[0] == '-') {
+                size += 1;
+            }
+            return str[0..size];
+        }
+
+        pub fn freeString(self: IntegerType(), str: []u8) void {
+            _ = self;
+            custom_allocator.free(str);
+        }
     };
 }
 
@@ -108,11 +134,12 @@ pub fn Integer() IntegerType() {
     return n;
 }
 
-const expect = std.testing.expect;
-//const custom = @import("custom-gmp-allocator.zig");
-test "basic arithmetic" {
-    //custom.initCustomGMPAllocator();
+test "initialize the custom GMP allocator" {
+    custom_allocator.init();
+}
 
+const expect = std.testing.expect;
+test "basic arithmetic" {
     var a = Integer();
     try a.initSetStr("37", 10);
     defer a.clear();
@@ -205,4 +232,46 @@ test "The nextPrime method" {
     var b = a.nextPrime();
     defer b.clear();
     try expect(b.get_c_long() == 101);
+}
+
+test "getting the size of an integer" {
+    var a = Integer();
+    try a.initSetStr("123456", 10);
+    defer a.clear();
+    try expect(a.sizeInBase(10) == 6);
+
+    var b = Integer();
+    try b.initSetStr("-123456", 10);
+    defer b.clear();
+    try expect(b.sizeInBase(10) == 6); // sign NOT included
+
+    // 123456 is 11110001001000000 in binary
+    try expect(b.sizeInBase(2) == 17); // sign NOT included
+}
+
+test "converting an integer to a string" {
+    var a = Integer();
+    try a.initSetStr("123456", 10);
+    defer a.clear();
+    var str = try a.toString(10);
+    defer a.freeString(str);
+    try expect(std.mem.eql(u8, str, "123456"));
+}
+
+test "converting a negative integer to a string" {
+    var a = Integer();
+    try a.initSetStr("-123456", 10);
+    defer a.clear();
+    var str = try a.toString(10);
+    defer a.freeString(str);
+    try expect(std.mem.eql(u8, str, "-123456"));
+}
+
+test "converting an integer to a string in base 2" {
+    var a = Integer();
+    try a.initSetStr("123456", 10);
+    defer a.clear();
+    var str = try a.toString(2);
+    defer a.freeString(str);
+    try expect(std.mem.eql(u8, str, "11110001001000000"));
 }

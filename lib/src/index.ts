@@ -2,24 +2,23 @@
 
 import * as dims from "./modular/dims";
 export { dims };
-import * as p1list from "./modular/p1list";
-export { p1list };
+import P1List, { init as p1listInit } from "./modular/p1list";
+export { P1List };
 import * as factor from "./factor";
-export { factor }
+export { factor };
 import * as arith from "./arith";
-export { arith }
-import * as integer from "./integer";
-export { integer };
-import * as pari from "./pari";
-export { pari };
-
+export { arith };
+import Integer, { init as integerInit } from "./integer/integer";
+export { Integer };
+//import * as pari from "./pari";
+//export { pari };
 
 export async function init(): Promise<void> {
   await dims.init();
-  await p1list.init();
+  await p1listInit();
   await factor.init();
   await arith.init();
-  await integer.init();
-  await pari.init();
+  await integerInit();
+  //await pari.init();
 }
 init();

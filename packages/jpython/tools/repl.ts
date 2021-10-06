@@ -176,13 +176,17 @@ export default async function Repl(options0: Partial<Options>): Promise<void> {
     // and get all the code and name.
     runInThisContext(printAST(JPython.parse("(def ():\n yield 1\n)"), true));
     runInThisContext('var __name__ = "__repl__"; show_js=false;');
-    if (options.jsage) {
-      //const t = new Date().valueOf();
-      //console.log("Initializing jsage...");
-      //const jsage = require("@jsage/lib");
-      //await jsage.init();
+    const BLOCK = false;
+    if (BLOCK && options.jsage) {
+      const t = new Date().valueOf();
+      console.log("Initializing jsage...");
+      const jsage = require("@jsage/lib");
+      await jsage.init();
       runInThisContext("jsage = require('@jsage/lib');");
-      //console.log(new Date().valueOf() - t);
+      console.log(new Date().valueOf() - t);
+    }
+    if (!BLOCK && options.jsage) {
+      runInThisContext("jsage = require('@jsage/lib');");
     }
   }
 

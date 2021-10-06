@@ -6,7 +6,7 @@ const registry = new FinalizationRegistry((handle) => {
   wasm.exports.P1List_free(handle);
 });
 
-export class P1List {
+class P1ListClass {
   public readonly N: number;
   private readonly handle: number;
 
@@ -54,3 +54,7 @@ export async function init() {
   });
 }
 init();
+
+export default function P1List(N: number) {
+  return new P1ListClass(N);
+}

@@ -1,14 +1,14 @@
-import { Integer, init, isPseudoPrime } from "./integer";
+import Integer, { init } from "./integer";
 
 beforeEach(async () => {
   await init();
 });
 
-test("check some primality directly", async () => {
-  expect(isPseudoPrime(101)).toBe(2);
-  expect(isPseudoPrime("101")).toBe(2);
-  expect(isPseudoPrime(2021)).toBe(0);
-  expect(isPseudoPrime("2021")).toBe(0);
+test("check some primality", async () => {
+  expect(Integer(101).isPseudoPrime()).toBe(2);
+  expect(Integer("101").isPseudoPrime()).toBe(2);
+  expect(Integer(2021).isPseudoPrime()).toBe(0);
+  expect(Integer("2021").isPseudoPrime()).toBe(0);
 });
 
 test("Create integer object and do basic arithmetic", async () => {

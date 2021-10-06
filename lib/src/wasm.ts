@@ -176,7 +176,7 @@ export class WasmInstance {
     return ptr;
   }
 
-  public callWithString(name: string, str: string): any {
+  public callWithString(name: string, str: string, ...args): any {
     this.result = undefined;
     const ptr = this.stringToCharStar(str);
     let r;
@@ -186,7 +186,7 @@ export class WasmInstance {
         throw Error(`no function ${name} defined in wasm module`);
       }
       // @ts-ignore
-      r = f(ptr);
+      r = f(ptr, ...args);
     } finally {
       // @ts-ignore
       this.exports.free(ptr);

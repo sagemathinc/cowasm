@@ -15,7 +15,7 @@ init();
 class IntegerClass {
   i: number;
 
-  constructor(n: number | string | null, i?: number) {
+  constructor(n: number | string | null, i?: number, base?: number) {
     if (wasm == null) throw Error("await init() first");
     if (n === null && i !== undefined) {
       this.i = i;
@@ -25,7 +25,7 @@ class IntegerClass {
       this.i = wasm.exports.createIntegerInt(n);
       return;
     }
-    this.i = wasm.callWithString("createIntegerStr", `${n}`);
+    this.i = wasm.callWithString("createIntegerStr", `${n}`, base ?? 10);
   }
 
   __add__(m: IntegerClass): IntegerClass {
@@ -43,7 +43,7 @@ class IntegerClass {
     return new IntegerClass(null, wasm.exports.mulIntegers(this.i, m.i));
   }
 
-  __pow__(e: number) : IntegerClass {
+  __pow__(e: number): IntegerClass {
     if (wasm == null) throw Error("await init() first");
     return new IntegerClass(null, wasm.exports.powIntegers(this.i, e));
   }
@@ -73,19 +73,18 @@ class IntegerClass {
     return wasm.exports.wrappedIsPseudoPrime(this.i);
   }
 
-  toString() {
-    this.print();
-    return ""; // since we don't have sending strings yet!
+  toString(base: number = 10): string {
+    if (wasm == null) throw Error("await init() first");
+    wasm.exports.toString(this.i, base);
+    return wasm.result;
+  }
+
+  numDigits(base: number = 10): string {
+    if (wasm == null) throw Error("await init() first");
+    return wasm.exports.sizeInBase(this.i, base);
   }
 }
 
-export function isPseudoPrime(n: number | string): 0 | 1 | 2 {
-  if (wasm == null) throw Error("await init() first");
-  if (typeof n == "string") {
-    return wasm.callWithString("isPseudoPrime", `${n}`);
-  } else {
-    return wasm.exports.isPseudoPrimeInt(n);
-  }
+export default function Integer(n: number | string, base: number = 10) {
+  return new IntegerClass(n, undefined, base);
 }
-
-export const Integer = (x) => new IntegerClass(x);

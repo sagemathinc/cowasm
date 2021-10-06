@@ -1,1 +1,2 @@
-export { Integer, init, isPseudoPrime } from "./integer";
+import Integer, { init } from "./integer";
+export { Integer, init };

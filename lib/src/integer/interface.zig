@@ -2,14 +2,11 @@ const custom = @import("../custom-allocator.zig");
 const integer = @import("./integer.zig");
 const Integer = integer.Integer;
 const std = @import("std");
+extern fn reportError(ptr: [*]const u8, len: usize) void;
 
 pub export fn initCustomAllocator() void {
     //std.debug.print("GMP: initCustomAllocator\n", .{});
     custom.init();
-}
-
-pub export fn fromString(s: [*:0]const u8) void {
-    std.debug.print("\nzig sees ='{s}'\n", .{s});
 }
 
 pub export fn isPseudoPrime(s: [*:0]const u8) i32 {
@@ -35,11 +32,13 @@ pub export fn isPseudoPrimeInt(s: i32) i32 {
 
 var integers: [10000]integer.IntegerType() = undefined;
 var i: u32 = 0;
-pub export fn createIntegerStr(s: [*:0]const u8) i32 {
+pub export fn createIntegerStr(s: [*:0]const u8, base: i32) i32 {
     const j: u32 = i;
     integers[j] = Integer();
-    integers[j].initSetStr(s, 10) catch |err| {
+    integers[j].initSetStr(s, base) catch |err| {
         std.debug.print("createIntegerStr -- {}\n", .{err});
+        const e = "error creating integer from string";
+        reportError(e, e.len);
         return -1;
     };
     i += 1;
@@ -51,12 +50,13 @@ pub export fn createIntegerInt(n: i32) i32 {
     integers[j] = Integer();
     integers[j].initSet(n) catch |err| {
         std.debug.print("createIntegerInt -- {}\n", .{err});
+        const e = "error creating integer from int";
+        reportError(e, e.len);
         return -1;
     };
     i += 1;
     return @intCast(i32, j);
 }
-
 
 pub export fn eqlIntegers(a: u32, b: u32) bool {
     return integers[a].eql(integers[b]);
@@ -94,7 +94,6 @@ pub export fn powIntegers(a: u32, b: u32) i32 {
     return @intCast(i32, j);
 }
 
-
 pub export fn nextPrime(a: u32) i32 {
     const j: u32 = i;
     integers[j] = integers[a].nextPrime();
@@ -104,6 +103,25 @@ pub export fn nextPrime(a: u32) i32 {
 
 pub export fn printInteger(a: u32) void {
     integers[a].print();
+}
+
+extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
+
+pub export fn toString(a: u32, base: i32) void {
+    const n = integers[a];
+    var str = n.toString(base) catch |err| {
+        std.debug.print("toString -- {}\n", .{err});
+        const e = "error converting to string";
+        reportError(e, e.len);
+        return;
+    };
+    defer n.freeString(str);
+    wasmSendString(str.ptr, str.len);
+}
+
+pub export fn sizeInBase(a: u32, base: i32) i32 {
+    const n = integers[a];
+    return @intCast(i32, n.sizeInBase(base));
 }
 
 pub export fn freeInteger(a: u32) void {
