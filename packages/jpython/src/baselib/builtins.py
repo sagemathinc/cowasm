@@ -15,6 +15,9 @@ def ρσ_operator_sub(a, b):
 def ρσ_operator_mul(a, b):
     return v"(typeof a == 'object'  && a.__mul__ != null) ? a.__mul__(b) : a * b"
 
+def ρσ_operator_pow(a, b):
+    return v"(typeof a == 'object'  && a.__pow__ != null) ? a.__pow__(b) : a ** b"
+
 def ρσ_operator_truediv(a, b):
     return v"(typeof a == 'object'  && a.__truediv__ != null) ? a.__truediv__(b) : a / b"
 

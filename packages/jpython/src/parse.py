@@ -880,7 +880,6 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
             elif name == 'ellipses':
                 S.scoped_flags.set('ellipses', val)
             elif name == 'annotations':
-                print("setting annotations", val)
                 S.scoped_flags.set('annotations', val)
             else:
                 S.scoped_flags.set(name, val)

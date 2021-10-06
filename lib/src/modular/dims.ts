@@ -25,3 +25,4 @@ export function dimensionModularForms(N) {
 export function dimensionEisensteinSeries(N) {
   return wasm.exports.wasm_dimensionEisensteinSeries(N);
 }
+

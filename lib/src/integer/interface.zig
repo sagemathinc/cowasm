@@ -87,6 +87,14 @@ pub export fn mulIntegers(a: u32, b: u32) i32 {
     return @intCast(i32, j);
 }
 
+pub export fn powIntegers(a: u32, b: u32) i32 {
+    const j: u32 = i;
+    integers[j] = integers[a].pow(b);
+    i += 1;
+    return @intCast(i32, j);
+}
+
+
 pub export fn nextPrime(a: u32) i32 {
     const j: u32 = i;
     integers[j] = integers[a].nextPrime();

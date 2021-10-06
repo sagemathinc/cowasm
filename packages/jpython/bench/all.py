@@ -5,6 +5,7 @@ import pystone
 import p1list
 import nbody
 import uuid_
+import fib
 
 from time import time
 from bench import all

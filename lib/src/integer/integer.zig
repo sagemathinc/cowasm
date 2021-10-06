@@ -61,6 +61,14 @@ pub fn IntegerType() type {
             return c;
         }
 
+
+        pub fn pow(self: *IntegerType(), exponent: usize) IntegerType() {
+            var c = Integer();
+            c.init();
+            gmp.mpz_pow_ui(&c.x, &self.x, exponent);
+            return c;
+        }
+
         pub fn eql(self: IntegerType(), right: IntegerType()) bool {
             return self.cmp(right) == 0;
         }

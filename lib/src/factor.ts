@@ -12,6 +12,7 @@ export async function init() {
     noWasi: true,
   });
 }
+init();
 
 interface PrimePower {
   p: number;
@@ -28,6 +29,6 @@ export function factorTrialDivision(N: number) {
     throw Error("N must be a positive 32-bit signed int");
   }
   v = [];
-  wasm.factorTrialDivision(N);
+  wasm.exports.factorTrialDivision(N);
   return v;
 }

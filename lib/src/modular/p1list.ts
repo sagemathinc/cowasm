@@ -33,6 +33,10 @@ export class P1List {
   index(u: number, v: number): number {
     return wasm.exports.P1List_index(this.handle, u, v);
   }
+
+  __repr__(): string {
+    return `P1List(${this.N})`;
+  }
 }
 
 let result;

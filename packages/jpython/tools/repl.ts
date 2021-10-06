@@ -122,7 +122,7 @@ function createReadlineInterface(options: Options, JPython) {
   return readline;
 }
 
-export default function Repl(options0: Partial<Options>) {
+export default async function Repl(options0: Partial<Options>): Promise<void> {
   const options = replDefaults(options0);
   const JPython = createCompiler({
     console: options.console,
@@ -147,7 +147,7 @@ export default function Repl(options0: Partial<Options>) {
       colorize(
         `Welcome to ${options.jsage ? "JSage" : "JPython"}.  Using Node.js ${
           process.version
-        }.`,
+        }.  ${options.jsage ? "Type jsage.[tab][tab]" : ""}`,
         "green",
         true
       )
@@ -169,13 +169,21 @@ export default function Repl(options0: Partial<Options>) {
     return output.get();
   }
 
-  function initContext() {
+  async function initContext() {
     // @ts-ignore
     global.require = require;
 
     // and get all the code and name.
     runInThisContext(printAST(JPython.parse("(def ():\n yield 1\n)"), true));
     runInThisContext('var __name__ = "__repl__"; show_js=false;');
+    if (options.jsage) {
+      //const t = new Date().valueOf();
+      //console.log("Initializing jsage...");
+      //const jsage = require("@jsage/lib");
+      //await jsage.init();
+      runInThisContext("jsage = require('@jsage/lib');");
+      //console.log(new Date().valueOf() - t);
+    }
   }
 
   function resetBuffer() {

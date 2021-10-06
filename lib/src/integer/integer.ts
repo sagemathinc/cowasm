@@ -28,19 +28,24 @@ class IntegerClass {
     this.i = wasm.callWithString("createIntegerStr", `${n}`);
   }
 
-  add(m: IntegerClass): IntegerClass {
+  __add__(m: IntegerClass): IntegerClass {
     if (wasm == null) throw Error("await init() first");
     return new IntegerClass(null, wasm.exports.addIntegers(this.i, m.i));
   }
 
-  sub(m: IntegerClass): IntegerClass {
+  __sub__(m: IntegerClass): IntegerClass {
     if (wasm == null) throw Error("await init() first");
     return new IntegerClass(null, wasm.exports.subIntegers(this.i, m.i));
   }
 
-  mul(m: IntegerClass): IntegerClass {
+  __mul__(m: IntegerClass): IntegerClass {
     if (wasm == null) throw Error("await init() first");
     return new IntegerClass(null, wasm.exports.mulIntegers(this.i, m.i));
+  }
+
+  __pow__(e: number) : IntegerClass {
+    if (wasm == null) throw Error("await init() first");
+    return new IntegerClass(null, wasm.exports.powIntegers(this.i, e));
   }
 
   eql(m: IntegerClass): boolean {
