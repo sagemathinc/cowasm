@@ -147,7 +147,7 @@ export default async function Repl(options0: Partial<Options>): Promise<void> {
       colorize(
         `Welcome to ${options.jsage ? "JSage" : "JPython"}.  Using Node.js ${
           process.version
-        }.  ${options.jsage ? "Type jsage.[tab][tab]" : ""}`,
+        }.  ${options.jsage ? "\nType dir(jsage) for available functions." : ""}`,
         "green",
         true
       )
@@ -187,6 +187,7 @@ export default async function Repl(options0: Partial<Options>): Promise<void> {
     }
     if (!BLOCK && options.jsage) {
       runInThisContext("jsage = require('@jsage/lib');");
+      runInThisContext("for(const x in jsage) { global[x] = jsage[x]; }");
     }
   }
 
