@@ -1,9 +1,10 @@
-# vim:fileencoding=utf-8
-# License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
 
+
 def quoted_string(x):
-    return '"' + x.replace(/\\/g, '\\\\').replace(/"/g, r'\"').replace(/\n/g, '\\n') + '"'
+    return '"' + x.replace(RegExp('\\\\', 'g'), '\\\\').replace(
+        RegExp('"', 'g'), r'\"').replace(RegExp('\n', 'g'), '\\n') + '"'
+
 
 def render_markup(markup):
     pos, key = 0, ''
@@ -16,7 +17,7 @@ def render_markup(markup):
     fmtspec = markup[pos:]
     prefix = ''
     if key.endsWith('='):
-        prefix=key
+        prefix = key
         key = key[:-1]
     return 'ρσ_str.format("' + prefix + '{' + fmtspec + '}", ' + key + ')'
 
@@ -24,7 +25,7 @@ def render_markup(markup):
 def interpolate(template, raise_error):
     pos = in_brace = 0
     markup = ''
-    ans = v'[""]'
+    ans = [""]
     while pos < template.length:
         ch = template[pos]
         if in_brace:
@@ -36,20 +37,20 @@ def interpolate(template, raise_error):
                 if in_brace > 0:
                     markup += '}'
                 else:
-                    ans.push(v'[markup]')
+                    ans.push(r'%js [markup]')
                     ans.push('')
             else:
                 markup += ch
         else:
             if ch is '{':
-                if template[pos+1] is '{':
+                if template[pos + 1] is '{':
                     pos += 1
                     ans[-1] += '{'
                 else:
                     in_brace = 1
                     markup = ''
             elif ch is '}':
-                if template[pos+1] is '}':
+                if template[pos + 1] is '}':
                     pos += 1
                     ans[-1] += '}'
                 else:
@@ -64,7 +65,7 @@ def interpolate(template, raise_error):
 
     if ans[-1] is '+':
         ans[-1] = ''
-    for v'var i = 0; i < ans.length; i++':
+    for i in range(len(ans)):
         if jstype(ans[i]) is 'string':
             ans[i] = quoted_string(ans[i])
         else:

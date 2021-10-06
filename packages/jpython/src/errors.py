@@ -2,8 +2,8 @@
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
 
-class SyntaxError(Error):
 
+class SyntaxError(Error):
     def __init__(self, message, filename, line, col, pos, is_eof):
         self.stack = Error().stack
         self.message = message
@@ -27,4 +27,3 @@ class SyntaxError(Error):
 
 class ImportError(SyntaxError):
     pass
-
