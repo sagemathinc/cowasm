@@ -13,7 +13,7 @@
     "prettier": "prettier --write .",
     "yapf": "yapf --write ."
   },
-  "version": "1.5.1",
+  "version": "1.5.2",
   "license": "BSD-2-Clause",
   "engines": {
     "node": ">=0.14.0"
@@ -30,7 +30,7 @@
   },
   "workspaces": ["../../lib"],
   "dependencies": {
-    "@jsage/lib": "*"
+    "@jsage/lib": "1.1.2"
   },
   "devDependencies": {
     "@types/node": "^16.7.10",

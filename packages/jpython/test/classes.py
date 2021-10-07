@@ -270,12 +270,14 @@ class Context:
 
 with Context() as c:
     assrt.eq(c.val, 2)
+
 assrt.equal(c.val, 3)
 
 with Context() as d:
     assrt.equal(d.val, 2)
     raise Exception('error')
 assrt.equal(d.val, 3)
+
 
 class Throws:
 

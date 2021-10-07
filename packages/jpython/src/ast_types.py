@@ -1123,10 +1123,10 @@ def has_calls(expression):
     if not expression:
         return False
     try:
-        expression.walk(new TreeWalker(def(node):
+        def is_call(node):
             if is_node_type(node, AST_BaseCall) or is_node_type(node, AST_ItemAccess):
                 raise Found()
-        ))
+        expression.walk(new TreeWalker(is_call))
     except Found:
         return True
     return False

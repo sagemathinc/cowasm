@@ -230,8 +230,8 @@ export default async function Repl(options0: Partial<Options>): Promise<void> {
       global.console = options.console;
       result = runInThisContext(js);
     } catch (err) {
-      if (err.stack) {
-        options.console.error(err.stack);
+      if (err?.stack) {
+        options.console.error(err?.stack);
       } else {
         options.console.error(err);
       }

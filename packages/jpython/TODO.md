@@ -2,7 +2,27 @@
 
 ## Not Done
 
-[ ] implement normal python lambda function
+[ ] make %time/time command also show cpu time (https://www.geeksforgeeks.org/node-js-process-cpuusage-method/), and similar for benchmark suite
+
+---
+
+
+[x] implement `__call__` dunder method.  Actually NO -- I tried this and it's **just too slow.** The JIT just isn't good enough to deal with this.  In fact, this should help clarify our tradeoffs.  Similar remark about dealing with `new`.
+
+[ ] implement `__eq__`, `__ne__` dunder methods?
+
+---
+
+[ ] improve tab completion:
+
+- filenames in the current directory
+- seems pretty in some cases, e.g., in a function call
+- maybe make it evaluate code up to some time limit?
+- do NOT show private methods by default
+
+---
+
+[ ] implement normal python lambda functions?
 
 ---
 

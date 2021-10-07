@@ -1,13 +1,14 @@
-# vim:fileencoding=utf-8
-# License: BSD
-# Copyright: 2015, Kovid Goyal <kovid at kovidgoyal.net>
-
 # globals: exports, console, ρσ_iterator_symbol, ρσ_kwargs_symbol, ρσ_arraylike, ρσ_list_contains
 
-# Object.prototype.toString.call(obj) === "[object Array]"
-
 def ρσ_operator_add(a, b):
-    return r"%js (typeof a !== 'object' ? a+b : ((a.__add__ != null ? a.__add__(b) : a.concat != null ? a.concat(b) : a + b)))"
+    return r"""%js (
+typeof a !== 'object' ? a + b :
+    ((a.__add__ !== undefined ? a.__add__(b) :
+      a.concat !== undefined ? a.concat(b) :
+      a + b)
+    )
+)
+"""
 
 def ρσ_operator_sub(a, b):
     return v"(typeof a == 'object' && a.__sub__ != null) ? a.__sub__(b) : a - b"

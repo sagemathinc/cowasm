@@ -2,7 +2,7 @@
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
 
-from ast_types import AST_ClassCall, AST_New, has_calls, AST_Dot, AST_SymbolRef, is_node_type
+from ast_types import AST_ClassCall, AST_New, has_calls, AST_Dot, AST_PropAccess, AST_SymbolRef, is_node_type
 from output.stream import OutputStream
 from output.statements import print_bracketed
 from output.utils import create_doctring
@@ -15,9 +15,6 @@ module_name = 'null'
 def set_module_name(x):
     nonlocal module_name
     module_name = '"' + x + '"' if x else 'null'
-
-
-# Function definition {{{
 
 
 def decorate(decorators, output, func):
@@ -295,11 +292,6 @@ def print_function(output):
             function_annotation(self, output, False)
 
 
-# }}}
-
-# Function call {{{
-
-
 def find_this(expression):
     if is_node_type(expression, AST_Dot):
         return expression.expression
@@ -416,16 +408,14 @@ def print_function_call(self, output):
 
     if not has_kwargs and not self.args.starargs:
         # A simple function call, do nothing special
-        if is_new:
-            output.print('new'), output.space()
-        print_function_name()
-
         def print_args():
             for i, a in enumerate(self.args):
                 if i:
                     output.comma()
                 a.print(output)
-
+        if is_new:
+            output.print('new'), output.space()
+        print_function_name()
         output.with_parens(print_args)
         return
 
@@ -471,4 +461,3 @@ def print_function_call(self, output):
         output.print(')')
 
 
-# }}}

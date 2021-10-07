@@ -8,6 +8,7 @@ def xgcd(a, b):
         a, b = b, r
     return a, prevx, prevy
 
+
 def inverse_mod(a, N):
     """
     Compute multiplicative inverse of a modulo N.
@@ -21,6 +22,7 @@ def inverse_mod(a, N):
     if b < 0:
         b += N
     return b
+
 
 class Mod:
     def __init__(self, x, n):
@@ -37,12 +39,12 @@ class Mod:
                 return False
         return self.x == right.x and self.n == right.n
 
-    def __pow__(self, right, n): # not implemented yet
+    def __pow__(self, right, n):  # not implemented yet
         """Dumb algorithm, of course."""
         if n == 0:
             return Mod(1, self.n)
         ans = Mod(self.x, self.n)
-        for i in range(n-1):
+        for i in range(n - 1):
             ans *= self
         return ans
 
@@ -68,34 +70,98 @@ class Mod:
     def __str__(self):
         print(f"Mod({self.x}, {self.n})")
 
+
 def test1():
     #print('test1')
     a = Mod(3, 10)
     b = Mod(5, 10)
-    c = a*b
-    assert(c.x == 5)
-    assert((a * (b / a)).x == b.x)
-    assert((b//a).x == 1)
+    c = a * b
+    assert (c.x == 5)
+    assert ((a * (b / a)).x == b.x)
+    assert ((b // a).x == 1)
+
+
+test1()
+
 
 def test_arith():
     #print("test_arith")
     a = Mod(17, 35)
     b = Mod(2, 35)
-    assert(a+b == Mod(19,35))
-    assert(b - a == 20)
+    assert (a + b == Mod(19, 35))
+    assert (b - a == 20)
+
+
+test_arith()
+
 
 def test_equality():
     #print("test_equality")
     a = Mod(3, 10)
     b = Mod(5, 10)
-    assert(not (a==b))
-    assert(a==a)
-    assert(b==b)
-    assert(a != b)
-    assert(a == 13)
-    assert(a != 'fred')
+    assert (not (a == b))
+    assert (a == a)
+    assert (b == b)
+    assert (a != b)
+    assert (a == 13)
+    assert (a != 'fred')
 
-if __name__ == "__main__":
-    test1()
-    test_arith()
-    test_equality()
+
+test_equality()
+
+
+class IntegerModRing:
+    def __init__(self, n):
+        self._n = n
+
+    def __repr__(self):
+        return f"Ring of Integers Modulo {self._n}"
+
+    def __call__(self, x):
+        return Mod(x, self._n)
+
+# We have chosen NOT to allow overloading
+# of __call__, since I can't find any way
+# to do it sufficiently efficiently.  We
+# are NOT implemented the full Python language.
+# That's not the goal.
+
+def test_integer_mod_ring():
+    R = IntegerModRing(10)
+    assert repr(R) == 'Ring of Integers Modulo 10'
+    a = R.__call__(13)
+    assert (a == Mod(3, 10))
+
+
+test_integer_mod_ring()
+
+
+class ComplicatedCall:
+    def __call__(self, x, *args, **kwds):
+        return [x, args, kwds]
+
+
+def test_complicated_call():
+    C = ComplicatedCall()
+    v = C.__call__(10)
+    assert v[0] == 10
+    # little awkward so test passes in pure python too
+    assert len(v[1]) == 0
+    assert v[2] == {}
+
+    v = C.__call__(10, 'y', z=2, xx='15')
+    assert v[0] == 10
+    assert v[1][0] == 'y'
+    assert v[2] == {'z': 2, 'xx': '15'}
+
+
+test_complicated_call()
+
+
+def test_attribute_call():
+    R = IntegerModRing(10)
+    z = {'R': R}
+    assert z['R'].__call__(3) == Mod(3, 10)
+
+
+test_attribute_call()

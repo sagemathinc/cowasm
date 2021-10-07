@@ -11,7 +11,8 @@ def ρσ_equals(a, b):
     type_b = jstype(b)
     # WARNING: We have to use "is" here to avoid recursive call to ρσ_equals by getting "===".
     # However, in genuine Python is comparison with a constant is a WARNING/Error.
-    if type_a is type_b and (type_a is 'number' or type_a is 'string' or type_a is 'boolean'):
+    if type_a is type_b and (type_a is 'number' or type_a is 'string'
+                             or type_a is 'boolean'):
         return a is b
     if a and jstype(a.__eq__) is 'function':
         return a.__eq__(b)
@@ -20,19 +21,21 @@ def ρσ_equals(a, b):
     if ρσ_arraylike(a) and ρσ_arraylike(b):
         if a.length != b.length:
             return False
-        for v'var i=0; i < a.length; i++':
+        for i in range(len(a)):
             if not (a[i] == b[i]):
                 return False
         return True
-    if jstype(a) is 'object' and jstype(b) is 'object' and a is not None and b is not None and (
-        (a.constructor is Object and b.constructor is Object) or (Object.getPrototypeOf(a) is None and Object.getPrototypeOf(b) is None)
-    ):
+    if jstype(a) is 'object' and jstype(
+            b) is 'object' and a is not None and b is not None and (
+                (a.constructor is Object or Object.getPrototypeOf(a) is None)
+                and
+                (b.constructor is Object or Object.getPrototypeOf(b) is None)):
         # Do a dict like comparison as this is most likely either a JS has
         # (Object.create(null) or a JS object used as a hash (v"{}"))
         akeys, bkeys = Object.keys(a), Object.keys(b)
         if akeys.length is not bkeys.length:
             return False
-        for v'var j=0; j < akeys.length; j++':
+        for j in range(len(akeys)):
             key = akeys[j]
             if not (a[key] == b[key]):
                 return False

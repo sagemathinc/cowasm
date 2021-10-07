@@ -57,6 +57,7 @@ NATIVE_CLASSES = {
     'EvalError': {},
     'InternalError': {},
     'RangeError': {},
+    'RumtimeError': {},
     'ReferenceError': {},
     'SyntaxError': {},
     'TypeError': {},
