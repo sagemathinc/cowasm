@@ -31,7 +31,7 @@ def print_class(output):
 
         # decorate the method
         if stmt.decorators and stmt.decorators.length:
-            decorate(stmt.decorators, output, def():function_definition(stmt, output, strip_first, True);)
+            decorate(stmt.decorators, output, lambda:function_definition(stmt, output, strip_first, True))
             output.end_statement()
         else:
             function_definition(stmt, output, strip_first)
@@ -43,7 +43,7 @@ def print_class(output):
     def define_default_method(name, body):
         class_def(name)
         output.spaced('function', name, '()', '')
-        output.with_block(def(): output.indent(), body();)
+        output.with_block(lambda: [output.indent(), body()])
         output.end_statement()
 
     def add_hidden_property(name, proceed):
@@ -59,7 +59,7 @@ def print_class(output):
         output.print("()")
         output.space()
 
-        output.with_block(def():
+        def f_constructor():
             output.indent()
             output.spaced('if', '(this.ρσ_object_id', '===', 'undefined)', 'Object.defineProperty(this,', '"ρσ_object_id",', '{"value":++ρσ_object_counter})')
             output.end_statement()
@@ -71,9 +71,9 @@ def print_class(output):
             self.name.print(output)
             output.print(".prototype.__init__.apply(this"), output.comma(), output.print('arguments)')
             output.end_statement()
-        )
+        output.with_block(f_constructor)
 
-    decorators = self.decorators or v'[]'
+    decorators = self.decorators or []
     if decorators.length:
         output.print('var ')
         output.assign(self.name)
@@ -97,21 +97,21 @@ def print_class(output):
     if self.parent:
         output.indent()
         output.print("ρσ_extends")
-        output.with_parens(def():
+        def f_extends():
             self.name.print(output)
             output.comma()
             self.parent.print(output)
-        )
+        output.with_parens(f_extends)
         output.end_statement()
 
     # method binding
     if self.bound.length:
         seen_methods = Object.create(None)
-        add_hidden_property('__bind_methods__', def():
+        def f_bind_methods():
             output.spaced('function', '()', '')
-            output.with_block(def():
+            def f_bases():
                 if self.bases.length:
-                    for v'var i = self.bases.length - 1; i >= 0; i--':
+                    for i in range(self.bases.length - 1, -1, -1):
                         base = self.bases[i]
                         output.indent(), base.print(output), output.spaced('.prototype.__bind_methods__', '&&', '')
                         base.print(output), output.print('.prototype.__bind_methods__.call(this)')
@@ -123,20 +123,25 @@ def print_class(output):
                     output.indent(), output.assign('this.' + bname)
                     self.name.print(output), output.print('.prototype.' + bname + '.bind(this)')
                     output.end_statement()
-            )
-        )
+            output.with_block(f_bases)
+
+        add_hidden_property('__bind_methods__', f_bind_methods)
 
     # dynamic properties
     property_names = Object.keys(self.dynamic_properties)
     if property_names.length:
         output.indent()
         output.print('Object.defineProperties')
-        output.with_parens(def():
-            self.name.print(output), output.print('.prototype'), output.comma(), output.space(), output.with_block(def():
+        def f_props():
+            self.name.print(output)
+            output.print('.prototype')
+            output.comma()
+            output.space()
+            def f_enum():
                 for name in property_names:
                     prop = self.dynamic_properties[name]
                     output.indent(), output.print(JSON.stringify(name) + ':'), output.space()
-                    output.with_block(def():
+                    def f_enum2():
                         output.indent(), output.print('"enumerable":'), output.space(), output.print('true'), output.comma(), output.newline()
                         if prop.getter:
                             output.indent(), output.print('"get":'), output.space()
@@ -146,28 +151,30 @@ def print_class(output):
                             define_method(prop.setter, True), output.newline()
                         else:
                             output.spaced('function', '()', '{', '''throw new AttributeError("can't set attribute")''', '}'), output.newline()
-                    )
-                    output.comma(), output.newline()
-            )
-        )
+                    output.with_block(f_enum2)
+                    output.comma()
+                    output.newline()
+            output.with_block(f_enum)
+
+        output.with_parens(f_props)
         output.end_statement()
 
     # actual methods
     if not self.init:
         # Create a default __init__ method
-        define_default_method('__init__', def():
+        def f_default():
             if self.parent:
                 self.parent.print(output)
                 output.spaced('.prototype.__init__', '&&')
                 output.space(), self.parent.print(output)
                 output.print(".prototype.__init__.apply")
-                output.with_parens(def():
+                def f_this_arguments():
                     output.print("this")
                     output.comma()
                     output.print("arguments")
-                )
+                output.with_parens(f_this_arguments)
                 output.end_statement()
-        )
+        define_default_method('__init__', f_default)
 
     defined_methods = {}
 
@@ -193,48 +200,48 @@ def print_class(output):
             console.error('Nested classes aren\'t supported yet')  # noqa:undef
 
     if not defined_methods['__repr__']:
-        define_default_method('__repr__', def():
+        def f_repr():
             if self.parent:
                 output.print('if('), self.parent.print(output), output.spaced('.prototype.__repr__)', 'return', self.parent)
                 output.print('.prototype.__repr__.call(this)'), output.end_statement()
             output.indent(), output.spaced('return', '"<"', '+', '__name__', '+', '"."', '+', 'this.constructor.name', '')
             output.spaced('+', '" #"', '+', 'this.ρσ_object_id', '+', '">"')
             output.end_statement()
-        )
+        define_default_method('__repr__', f_repr)
 
     if not defined_methods['__str__']:
-        define_default_method('__str__', def():
+        def f_str():
             if self.parent:
                 output.print('if('), self.parent.print(output), output.spaced('.prototype.__str__)', 'return', self.parent)
                 output.print('.prototype.__str__.call(this)'), output.end_statement()
             output.spaced('return', 'this.__repr__()')
             output.end_statement()
-        )
+        define_default_method('__str__', f_str)
 
     # Multiple inheritance
-    add_hidden_property('__bases__', def():
+    def f_basis():
         output.print('[')
-        for v'var i = 0; i < self.bases.length; i++':
+        for i in range(len(self.bases)):
             self.bases[i].print(output)
             if i < self.bases.length - 1:
                 output.comma()
         output.print(']')
-    )
+    add_hidden_property('__bases__', f_basis)
 
     if self.bases.length > 1:
         output.indent()
         output.print("ρσ_mixin(")
         self.name.print(output)
-        for v'var i = 1; i < self.bases.length; i++':
+        for i in range(1, len(self.bases)):
             output.comma()
             self.bases[i].print(output)
         output.print(')'), output.end_statement()
 
     # Docstring
     if self.docstrings and self.docstrings.length and output.options.keep_docstrings:
-        add_hidden_property('__doc__', def():
+        def f_doc():
             output.print(JSON.stringify(create_doctring(self.docstrings)))
-        )
+        add_hidden_property('__doc__', f_doc)
 
     # Other statements in the class context
     for stmt in self.statements:
