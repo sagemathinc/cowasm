@@ -5,17 +5,17 @@ from __python__ import hash_literals
 from ast_types import AST_BaseCall, AST_SymbolRef, AST_Array, AST_Unary, AST_Number, has_calls, AST_Seq, AST_ListComprehension, is_node_type
 from output.stream import OutputStream
 
+
 def unpack_tuple(elems, output, in_statement):
     for i, elem in enumerate(elems):
         output.indent()
         output.assign(elem)
         output.print("ρσ_unpack")
-        output.with_square(def():
-            output.print(i)
-        )
+        output.with_square(lambda: output.print(i))
         if not in_statement or i < elems.length - 1:
             output.semicolon()
             output.newline()
+
 
 def print_do_loop(self, output):
     output.print("do")
@@ -24,43 +24,49 @@ def print_do_loop(self, output):
     output.space()
     output.print("while")
     output.space()
-    output.with_parens(def(): self.condition.print(output);)
+    output.with_parens(lambda: self.condition.print(output))
     output.semicolon()
+
 
 def print_while_loop(self, output):
     output.print("while")
     output.space()
-    output.with_parens(def(): self.condition.print(output);)
+    output.with_parens(lambda: self.condition.print(output))
     output.space()
     self._do_print_body(output)
 
+
 def is_simple_for_in(self):
     # return true if this loop can be simplified into a basic for (i in j) loop
-    if is_node_type(self.object, AST_BaseCall)
-    and is_node_type(self.object.expression, AST_SymbolRef)
-    and self.object.expression.name is "dir" and self.object.args.length is 1:
+    if (is_node_type(self.object, AST_BaseCall)
+            and is_node_type(self.object.expression, AST_SymbolRef)
+            and self.object.expression.name is "dir"
+            and self.object.args.length is 1):
         return True
     return False
 
+
 def is_simple_for(self):
     # returns true if this loop can be simplified into a basic for(i=n;i<h;i++) loop
-    if (is_node_type(self.object, AST_BaseCall) and
-            is_node_type(self.object.expression, AST_SymbolRef) and
-            self.object.expression.name is "range" and
-            not (is_node_type(self.init, AST_Array))):
+    if (is_node_type(self.object, AST_BaseCall)
+            and is_node_type(self.object.expression, AST_SymbolRef)
+            and self.object.expression.name is "range"
+            and not (is_node_type(self.init, AST_Array))):
         a = self.object.args
         l = a.length
-        if l < 3 or (
-            is_node_type(a[2], AST_Number) or (
-                is_node_type(a[2], AST_Unary) and a[2].operator is '-' and is_node_type(a[2].expression, AST_Number)
-        )):
-            if (l is 1 and not has_calls(a[0])) or (l > 1 and not has_calls(a[1])):
+        if l < 3 or (is_node_type(a[2], AST_Number) or
+                     (is_node_type(a[2], AST_Unary) and a[2].operator is '-'
+                      and is_node_type(a[2].expression, AST_Number))):
+            if (l is 1 and not has_calls(a[0])) or (l > 1
+                                                    and not has_calls(a[1])):
                 return True
     return False
 
+
 def print_for_loop_body(output):
     self = this
-    output.with_block(def():
+
+    def f_print_for_loop_body():
         if not (self.simple_for_index or is_simple_for_in(self)):
             # if we're using multiple iterators, unpack them
             output.indent()
@@ -90,18 +96,23 @@ def print_for_loop_body(output):
             output.indent()
             stmt.print(output)
             output.newline()
-    )
+
+    output.with_block(f_print_for_loop_body)
+
 
 def init_es6_itervar(output, itervar):
     output.indent()
-    output.spaced(itervar, '=', '((typeof', itervar + '[Symbol.iterator]', '===', '"function")', '?',
-                    '('+itervar, 'instanceof', 'Map', '?', itervar + '.keys()', ':', itervar+')', ':', 'Object.keys(' + itervar + '))')
+    output.spaced(itervar, '=', '((typeof', itervar + '[Symbol.iterator]',
+                  '===', '"function")', '?', '(' + itervar, 'instanceof',
+                  'Map', '?', itervar + '.keys()', ':', itervar + ')', ':',
+                  'Object.keys(' + itervar + '))')
     output.end_statement()
+
 
 def print_for_in(self, output):
     def write_object():
         if self.object.constructor is AST_Seq:
-            (new AST_Array({'elements':self.object.to_array()})).print(output)
+            (AST_Array({'elements': self.object.to_array()})).print(output)
         else:
             self.object.print(output)
 
@@ -125,20 +136,23 @@ def print_for_in(self, output):
         output.index_counter += 1
         output.print("for")
         output.space()
-        output.with_parens(def():
+
+        def f_simple_for():
             output.spaced('var', idx, '='), output.space()
             start.print(output) if start.print else output.print(start)
             output.semicolon()
             output.space()
             output.print(idx)
             output.space()
-            output.print(">") if is_node_type(increment, AST_Unary) else output.print("<")
+            output.print(">") if is_node_type(increment,
+                                              AST_Unary) else output.print("<")
             output.space()
             end.print(output)
             output.semicolon()
             output.space()
             output.print(idx)
-            if increment and (not (is_node_type(increment, AST_Unary)) or increment.expression.value is not "1"):
+            if increment and (not (is_node_type(increment, AST_Unary))
+                              or increment.expression.value is not "1"):
                 if is_node_type(increment, AST_Unary):
                     output.print("-=")
                     increment.expression.print(output)
@@ -150,18 +164,22 @@ def print_for_in(self, output):
                     output.print("--")
                 else:
                     output.print("++")
-        )
+
+        output.with_parens(f_simple_for)
+
     elif is_simple_for_in(self):
         # optimize dir() into a simple for in loop
         output.print("for")
         output.space()
-        output.with_parens(def():
+
+        def f_simple_for_in():
             self.init.print(output)
             output.space()
             output.print('in')
             output.space()
             self.object.args[0].print(output)
-        )
+
+        output.with_parens(f_simple_for_in)
     else:
         # regular loop
         itervar = "ρσ_Iter" + output.index_counter
@@ -170,71 +188,102 @@ def print_for_in(self, output):
         output.end_statement()
         init_es6_itervar(output, itervar)
         output.indent()
-        output.spaced('for', '(var', 'ρσ_Index' + output.index_counter, 'of', itervar + ')')
+        output.spaced('for', '(var', 'ρσ_Index' + output.index_counter, 'of',
+                      itervar + ')')
 
     output.space()
     self._do_print_body(output)
 
+
 def print_list_comprehension(self, output):
     tname = self.constructor.name.slice(4)
-    result_obj = {'ListComprehension':'[]', 'DictComprehension':('Object.create(null)' if self.is_jshash else '{}'), 'SetComprehension':'ρσ_set()'}[tname]
+    result_obj = {
+        'ListComprehension': '[]',
+        'DictComprehension':
+        ('Object.create(null)' if self.is_jshash else '{}'),
+        'SetComprehension': 'ρσ_set()'
+    }[tname]
     is_generator = tname is 'GeneratorComprehension'
+    add_to_result = None
     if tname is 'DictComprehension':
         if self.is_pydict:
             result_obj = 'ρσ_dict()'
-            add_to_result = def(output):
+
+            def add_to_result0(output):
                 output.indent()
                 output.print('ρσ_Result.set')
-                output.with_parens(def():
+
+                def f_dict():
                     self.statement.print(output)
-                    output.space(), output.print(','), output.space()
-                    output.with_parens(def():
+                    output.space()
+                    output.print(',')
+                    output.space()
+
+                    def f_dict0():
                         if self.value_statement.constructor is AST_Seq:
-                            output.with_square(def():self.value_statement.print(output);)
+                            output.with_square(
+                                lambda: self.value_statement.print(output))
                         else:
                             self.value_statement.print(output)
-                    )
-                )
+
+                    output.with_parens(f_dict0)
+
+                output.with_parens(f_dict)
                 output.end_statement()
+
+            add_to_result = add_to_result0
+
         else:
-            add_to_result = def(output):
+
+            def add_to_result0(output):
                 output.indent()
                 output.print('ρσ_Result')
-                output.with_square(def():
-                    self.statement.print(output)
-                )
+                output.with_square(lambda: self.statement.print(output))
                 output.space(), output.print('='), output.space()
-                output.with_parens(def():
+
+                def f_result():
                     if self.value_statement.constructor is AST_Seq:
-                        output.with_square(def():self.value_statement.print(output);)
+                        output.with_square(
+                            lambda: self.value_statement.print(output))
                     else:
                         self.value_statement.print(output)
-                )
+
+                output.with_parens(f_result)
                 output.end_statement()
+
+            add_to_result = add_to_result0
     else:
-        push_func = "ρσ_Result." + ('push' if self.constructor is AST_ListComprehension else 'add')
+        push_func = "ρσ_Result." + (
+            'push' if self.constructor is AST_ListComprehension else 'add')
         if is_generator:
             push_func = 'yield '
-        add_to_result = def(output):
+
+        def add_to_result0(output):
             output.indent()
             output.print(push_func)
-            output.with_parens(def():
+
+            def f_output_statement():
                 if self.statement.constructor is AST_Seq:
-                    output.with_square(def():self.statement.print(output);)
+                    output.with_square(lambda: self.statement.print(output))
                 else:
                     self.statement.print(output)
-            )
+
+            output.with_parens(f_output_statement)
             output.end_statement()
 
-    output.with_parens(def():
+        add_to_result = add_to_result0
+
+    def f_body():
         output.print("function")
         output.print("()")
         output.space()
-        output.with_block(def():
+
+        def f_body0():
             body_out = output
             if is_generator:
                 body_out.indent()
-                body_out.print('function* js_generator()'), body_out.space(), body_out.print('{')
+                body_out.print('function* js_generator()'), body_out.space(
+                ), body_out.print('{')
                 body_out.newline()
                 previous_indentation = output.indentation()
                 output.set_indentation(output.next_indent())
@@ -260,11 +309,11 @@ def print_list_comprehension(self, output):
             body_out.indent()
             body_out.print("for")
             body_out.space()
-            body_out.with_parens(def():
-                body_out.spaced('var', 'ρσ_Index', 'of', 'ρσ_Iter')
-            )
+            body_out.with_parens(
+                lambda: body_out.spaced('var', 'ρσ_Index', 'of', 'ρσ_Iter'))
             body_out.space()
-            body_out.with_block(def():
+
+            def f_body_out():
                 body_out.indent()
                 itervar = 'ρσ_Index'
                 if is_node_type(self.init, AST_Array):
@@ -285,19 +334,20 @@ def print_list_comprehension(self, output):
                     body_out.indent()
                     body_out.print("if")
                     body_out.space()
-                    body_out.with_parens(def(): self.condition.print(body_out);)
+                    body_out.with_parens(
+                        lambda: self.condition.print(body_out))
                     body_out.space()
-                    body_out.with_block(def():
-                        add_to_result(body_out)
-                    )
+                    body_out.with_block(lambda: add_to_result(body_out))
                     body_out.newline()
                 else:
                     add_to_result(body_out)
-            )
+
+            body_out.with_block(f_body_out)
             body_out.newline()
             if self.constructor is AST_ListComprehension:
                 body_out.indent()
-                body_out.spaced('ρσ_Result', '=', 'ρσ_list_constructor(ρσ_Result)')
+                body_out.spaced('ρσ_Result', '=',
+                                'ρσ_list_constructor(ρσ_Result)')
                 body_out.end_statement()
             if not is_generator:
                 body_out.indent()
@@ -305,7 +355,8 @@ def print_list_comprehension(self, output):
                 body_out.end_statement()
             if is_generator:
                 output.set_indentation(previous_indentation)
-                body_out.newline(), body_out.indent(), body_out.print('}')  # end js_generator
+                body_out.newline(), body_out.indent(), body_out.print(
+                    '}')  # end js_generator
                 output.newline(), output.indent()
                 output.spaced('var', 'result', '=', 'js_generator.call(this)')
                 output.end_statement()
@@ -316,9 +367,12 @@ def print_list_comprehension(self, output):
                 output.indent()
                 output.spaced('return', 'result')
                 output.end_statement()
-        )
-    )
+
+        output.with_block(f_body0)
+
+    output.with_parens(f_body)
     output.print("()")
+
 
 def print_ellipses_range(self, output):
     output.print("ρσ_range(")
