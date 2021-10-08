@@ -199,7 +199,7 @@ def print_module(self, output):
                     cached = {
                         'version':get_compiler_version(), 'signature':self.srchash, 'classes': {}, 'baselib':self.baselib,
                         'nonlocalvars':self.nonlocalvars, 'imported_module_ids':self.imported_module_ids, 'exports':[],
-                        'outputs':{}, 'discard_asserts': v'!!output.options.discard_asserts'
+                        'outputs':{}, 'discard_asserts': bool(output.options.discard_asserts)
                     }
                     for cname in Object.keys(self.classes):
                         cobj = self.classes[cname]

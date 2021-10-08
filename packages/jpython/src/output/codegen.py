@@ -7,34 +7,33 @@ from __python__ import hash_literals
 from utils import noop
 from parse import PRECEDENCE
 from ast_types import (
-    AST_Array, AST_Assign, AST_BaseCall, AST_Binary, AST_BlockStatement, AST_Break,
-    AST_Class, AST_Conditional, AST_Constant, AST_Continue,
-    AST_Debugger, AST_Definitions, AST_Directive, AST_Do, AST_Dot, is_node_type,
-    AST_EllipsesRange,
-    AST_EmptyStatement, AST_Exit, AST_ExpressiveObject, AST_ForIn,
-    AST_ForJS, AST_Function, AST_Hole, AST_If, AST_Imports, AST_Infinity,
-    AST_Lambda, AST_ListComprehension, AST_LoopControl, AST_NaN, AST_New, AST_Node,
-    AST_Number, AST_Object, AST_ObjectKeyVal, AST_ObjectProperty, AST_PropAccess,
-    AST_RegExp, AST_Return, AST_Set, AST_Seq, AST_SimpleStatement, AST_Splice,
+    AST_Array, AST_Assign, AST_BaseCall, AST_Binary, AST_BlockStatement,
+    AST_Break, AST_Class, AST_Conditional, AST_Constant, AST_Continue,
+    AST_Debugger, AST_Definitions, AST_Directive, AST_Do, AST_Dot,
+    is_node_type, AST_EllipsesRange, AST_EmptyStatement, AST_Exit,
+    AST_ExpressiveObject, AST_ForIn, AST_ForJS, AST_Function, AST_Hole, AST_If,
+    AST_Imports, AST_Infinity, AST_Lambda, AST_ListComprehension,
+    AST_LoopControl, AST_NaN, AST_New, AST_Node, AST_Number, AST_Object,
+    AST_ObjectKeyVal, AST_ObjectProperty, AST_PropAccess, AST_RegExp,
+    AST_Return, AST_Set, AST_Seq, AST_SimpleStatement, AST_Splice,
     AST_Statement, AST_StatementWithBody, AST_String, AST_Sub, AST_ItemAccess,
     AST_Symbol, AST_This, AST_Throw, AST_Toplevel, AST_Try, AST_Unary,
     AST_UnaryPrefix, AST_Undefined, AST_Var, AST_VarDef, AST_Assert,
-    AST_Verbatim, AST_While, AST_With, AST_Yield, TreeWalker, AST_Existential
-)
+    AST_Verbatim, AST_While, AST_With, AST_Yield, TreeWalker, AST_Existential)
 from output.exceptions import print_try
 from output.classes import print_class
 from output.literals import print_array, print_obj_literal, print_object, print_set, print_regexp
 from output.loops import print_do_loop, print_while_loop, print_for_loop_body, print_for_in, print_list_comprehension, print_ellipses_range
 from output.modules import print_top_level, print_imports
 from output.comments import print_comments
-from output.operators import (
-    print_getattr, print_getitem, print_rich_getitem, print_splice_assignment,
-    print_unary_prefix, print_binary_op, print_assign,
-    print_conditional, print_seq, print_existential
-)
+from output.operators import (print_getattr, print_getitem, print_rich_getitem,
+                              print_splice_assignment, print_unary_prefix,
+                              print_binary_op, print_assign, print_conditional,
+                              print_seq, print_existential)
 from output.functions import print_function, print_function_call
 from output.statements import print_bracketed, first_in_statement, force_statement, print_with, print_assert
 from output.utils import make_block, make_num
+
 
 # -----[ code generators ]-----
 def generate_code():
@@ -42,52 +41,58 @@ def generate_code():
     def DEFPRINT(nodetype, generator):
         nodetype.prototype._codegen = generator
 
-    AST_Node.prototype.print = def(stream, force_parens):
+    def f_print_generate(stream, force_parens):
         self = this
         generator = self._codegen
         stream.push_node(self)
         if force_parens or self.needs_parens(stream):
-            stream.with_parens(def():
+            stream.with_parens(f_comments_then_generator)
+
+            def f_comments_then_generator():
                 self.add_comments(stream)
                 generator(self, stream)
-            )
         else:
             self.add_comments(stream)
             generator(self, stream)
 
         stream.pop_node()
 
+    AST_Node.prototype.print = f_print_generate
+
     # -----[ comments ]-----
-    AST_Node.prototype.add_comments = def(output):
+    def add_comments(output):
         if not is_node_type(this, AST_Toplevel):
             print_comments(this, output)
+
+    AST_Node.prototype.add_comments = add_comments
 
     # -----[ PARENTHESES ]-----
     def PARENS(nodetype, func):
         nodetype.prototype.needs_parens = func
 
-    PARENS(AST_Node, def():
-        return False
-    )
+    PARENS(AST_Node, lambda: False)
     # a function expression needs parens around it when it's provably
     # the first token to appear in a statement.
-    PARENS(AST_Function, def(output):
-        return first_in_statement(output)
-    )
+    PARENS(AST_Function, first_in_statement)
     # same goes for an object literal, because otherwise it would be
     # interpreted as a block of code.
-    PARENS(AST_Object, def(output):
-        return first_in_statement(output)
-    )
-    PARENS(AST_Unary, def(output):
+    PARENS(AST_Object, first_in_statement)
+
+    def f_unary(output):
         p = output.parent()
         return is_node_type(p, AST_PropAccess) and p.expression is this
-    )
-    PARENS(AST_Seq, def(output):
+
+    PARENS(AST_Unary, f_unary)
+
+    def f_seq(output):
         p = output.parent()
-        return is_node_type(p, AST_Unary) or is_node_type(p, AST_VarDef) or is_node_type(p, AST_Dot) or is_node_type(p, AST_ObjectProperty) or is_node_type(p, AST_Conditional)
-    )
-    PARENS(AST_Binary, def(output):
+        return is_node_type(p, AST_Unary) or is_node_type(
+            p, AST_VarDef) or is_node_type(p, AST_Dot) or is_node_type(
+                p, AST_ObjectProperty) or is_node_type(p, AST_Conditional)
+
+    PARENS(AST_Seq, f_seq)
+
+    def f_binary(output):
         p = output.parent()
         # (foo && bar)()
         if is_node_type(p, AST_BaseCall) and p.expression is this:
@@ -107,10 +112,13 @@ def generate_code():
             pp = PRECEDENCE[po]
             so = this.operator
             sp = PRECEDENCE[so]
-            if pp > sp or pp is sp and this is p.right and not (so is po and (so is "*" or so is "&&" or so is "||")):
+            if pp > sp or pp is sp and this is p.right and not (
+                    so is po and (so is "*" or so is "&&" or so is "||")):
                 return True
-    )
-    PARENS(AST_PropAccess, def(output):
+
+    PARENS(AST_Binary, f_binary)
+
+    def f_prop_access(output):
         p = output.parent()
         if is_node_type(p, AST_New) and p.expression is this:
             # i.e. new (foo.bar().baz)
@@ -120,35 +128,48 @@ def generate_code():
             # interpreted as passing the arguments to the upper New
             # expression.
             try:
-                this.walk(new TreeWalker(def(node):
+
+                def error_on_base_call(node):
                     if is_node_type(node, AST_BaseCall):
                         raise p
-                ))
-            except as ex:
-                if ex is not p:
-                    raise ex
+
+                this.walk(TreeWalker(error_on_base_call))
+            except:
                 return True
-    )
-    PARENS(AST_BaseCall, def(output):
+
+    PARENS(AST_PropAccess, f_prop_access)
+
+    def f_base_call(output):
         p = output.parent()
         return is_node_type(p, AST_New) and p.expression is this
-    )
-    PARENS(AST_New, def(output):
+
+    PARENS(AST_BaseCall, f_base_call)
+
+    def f_new(output):
         p = output.parent()
-        if this.args.length is 0 and (is_node_type(p, AST_PropAccess) or is_node_type(p, AST_BaseCall) and p.expression is this):
+        if this.args.length is 0 and (is_node_type(p, AST_PropAccess)
+                                      or is_node_type(p, AST_BaseCall)
+                                      and p.expression is this):
             # (new foo)(bar)
             return True
-    )
-    PARENS(AST_Number, def(output):
+
+    PARENS(AST_New, f_new)
+
+    def f_number(output):
         p = output.parent()
-        if this.value < 0 and is_node_type(p, AST_PropAccess) and p.expression is this:
+        if this.value < 0 and is_node_type(
+                p, AST_PropAccess) and p.expression is this:
             return True
-    )
-    PARENS(AST_NaN, def(output):
+
+    PARENS(AST_Number, f_number)
+
+    def f_nan(output):
         p = output.parent()
         if is_node_type(p, AST_PropAccess) and p.expression is this:
             return True
-    )
+
+    PARENS(AST_NaN, f_nan)
+
     def assign_and_conditional_paren_rules(output):
         p = output.parent()
         # !(a = false) → true
@@ -175,37 +196,40 @@ def generate_code():
     PARENS(AST_Conditional, assign_and_conditional_paren_rules)
 
     # -----[ PRINTERS ]-----
-    DEFPRINT(AST_Directive, def(self, output):
+    def f_directive(self, output):
         output.print_string(self.value)
         output.semicolon()
-    )
-    DEFPRINT(AST_Debugger, def(self, output):
+
+    DEFPRINT(AST_Directive, f_directive)
+
+    def f_debugger(self, output):
         output.print("debugger")
         output.semicolon()
-    )
-    AST_StatementWithBody.prototype._do_print_body = def(output):
-        force_statement(this.body, output)
 
-    DEFPRINT(AST_Statement, def(self, output):
+    DEFPRINT(AST_Debugger, f_debugger)
+
+    AST_StatementWithBody.prototype._do_print_body = lambda output: force_statement(
+        this.body, output)
+
+    def f_statement(self, output):
         self.body.print(output)
         output.semicolon()
-    )
+
+    DEFPRINT(AST_Statement, f_statement)
     DEFPRINT(AST_Toplevel, print_top_level)
 
     DEFPRINT(AST_Imports, print_imports)
 
-    DEFPRINT(AST_SimpleStatement, def(self, output):
+    def f_simple_statement(self, output):
         if not (is_node_type(self.body, AST_EmptyStatement)):
             self.body.print(output)
             output.semicolon()
-    )
-    DEFPRINT(AST_BlockStatement, def(self, output):
-        print_bracketed(self, output)
-    )
 
-    DEFPRINT(AST_EmptyStatement, def(self, output):
-        pass
-    )
+    DEFPRINT(AST_SimpleStatement, f_simple_statement)
+    DEFPRINT(AST_BlockStatement,
+             lambda self, output: print_bracketed(self, output))
+
+    DEFPRINT(AST_EmptyStatement, lambda self, output: None)
 
     DEFPRINT(AST_Do, print_do_loop)
 
@@ -215,24 +239,27 @@ def generate_code():
 
     DEFPRINT(AST_ForIn, print_for_in)
 
-    AST_ForJS.prototype._do_print_body = def(output):
+    def f_do_print_body(output):
         self = this
-        output.with_block(def():
+
+        def f_print_stmt():
             for stmt in self.body.body:
                 output.indent()
                 stmt.print(output)
                 output.newline()
-        )
 
-    DEFPRINT(AST_ForJS, def(self, output):
+        output.with_block(f_print_stmt)
+
+    AST_ForJS.prototype._do_print_body = f_do_print_body
+
+    def f_for_js(self, output):
         output.print("for")
         output.space()
-        output.with_parens(def():
-            self.condition.print(output)
-        )
+        output.with_parens(lambda: self.condition.print(output))
         output.space()
         self._do_print_body(output)
-    )
+
+    DEFPRINT(AST_ForJS, f_for_js)
 
     DEFPRINT(AST_ListComprehension, print_list_comprehension)
 
@@ -244,15 +271,12 @@ def generate_code():
 
     AST_Lambda.prototype._do_print = print_function
 
-    DEFPRINT(AST_Lambda, def(self, output):
-        self._do_print(output)
-    )
+    DEFPRINT(AST_Lambda, lambda self, output: self._do_print(output))
     AST_Class.prototype._do_print = print_class
-    DEFPRINT(AST_Class, def(self, output):
-        self._do_print(output)
-    )
+    DEFPRINT(AST_Class, lambda self, output: self._do_print(output))
+
     # -----[ exits ]-----
-    AST_Exit.prototype._do_print = def(output, kind):
+    def f_do_print_exit(output, kind):
         self = this
         output.print(kind)
         if self.value:
@@ -261,18 +285,16 @@ def generate_code():
 
         output.semicolon()
 
-    DEFPRINT(AST_Yield, def(self, output):
-        self._do_print(output, "yield" + ('*' if self.is_yield_from else ''))
-    )
-    DEFPRINT(AST_Return, def(self, output):
-        self._do_print(output, "return")
-    )
-    DEFPRINT(AST_Throw, def(self, output):
-        self._do_print(output, "throw")
-    )
+    AST_Exit.prototype._do_print = f_do_print_exit
+
+    DEFPRINT(
+        AST_Yield, lambda self, output: self._do_print(
+            output, "yield" + ('*' if self.is_yield_from else '')))
+    DEFPRINT(AST_Return, lambda self, output: self._do_print(output, "return"))
+    DEFPRINT(AST_Throw, lambda self, output: self._do_print(output, "throw"))
 
     # -----[ loop control ]-----
-    AST_LoopControl.prototype._do_print = def(output, kind):
+    def f_do_print_loop(output, kind):
         output.print(kind)
         if this.label:
             output.space()
@@ -280,12 +302,12 @@ def generate_code():
 
         output.semicolon()
 
-    DEFPRINT(AST_Break, def(self, output):
-        self._do_print(output, "break")
-    )
-    DEFPRINT(AST_Continue, def(self, output):
-        self._do_print(output, "continue")
-    )
+    AST_LoopControl.prototype._do_print = f_do_print_loop
+
+    DEFPRINT(AST_Break, lambda self, output: self._do_print(output, "break"))
+
+    DEFPRINT(AST_Continue,
+             lambda self, output: self._do_print(output, "continue"))
 
     # -----[ if ]-----
     def make_then(self, output):
@@ -326,10 +348,10 @@ def generate_code():
 
         force_statement(self.body, output)
 
-    DEFPRINT(AST_If, def(self, output):
+    def f_if(self, output):
         output.print("if")
         output.space()
-        output.with_parens(def(): self.condition.print(output);)
+        output.with_parens(lambda: self.condition.print(output))
         output.space()
         if self.alternative:
             make_then(self, output)
@@ -340,13 +362,13 @@ def generate_code():
         else:
             self._do_print_body(output)
 
-    )
+    DEFPRINT(AST_If, f_if)
 
     # -----[ exceptions ]-----
     DEFPRINT(AST_Try, print_try)
 
     # -----[ var/const ]-----
-    AST_Definitions.prototype._do_print = def(output, kind):
+    def f_do_print_definition(output, kind):
         output.print(kind)
         output.space()
         for i, def_ in enumerate(this.definitions):
@@ -359,9 +381,10 @@ def generate_code():
         if not avoid_semicolon:
             output.semicolon()
 
-    DEFPRINT(AST_Var, def(self, output):
-        self._do_print(output, "var")
-    )
+    AST_Definitions.prototype._do_print = f_do_print_definition
+
+    DEFPRINT(AST_Var, lambda self, output: self._do_print(output, "var"))
+
     def parenthesize_for_noin(node, output, noin):
         if not noin:
             node.print(output)
@@ -369,17 +392,17 @@ def generate_code():
             try:
                 # need to take some precautions here:
                 #    https://github.com/mishoo/RapydScript2/issues/60
-                node.walk(new TreeWalker(def(node):
-                    if is_node_type(node, AST_Binary) and node.operator is "in":
+                def f_for_noin(node):
+                    if is_node_type(node,
+                                    AST_Binary) and node.operator is "in":
                         raise output
-                ))
+
+                node.walk(TreeWalker(f_for_noin))
                 node.print(output)
-            except as ex:
-                if ex is not output:
-                    raise ex
+            except:
                 node.print(output, True)
 
-    DEFPRINT(AST_VarDef, def(self, output):
+    def f_print_var_def(self, output):
         self.name.print(output)
         if self.value:
             output.assign("")
@@ -389,16 +412,16 @@ def generate_code():
             p = output.parent(1)
             noin = is_node_type(p, AST_ForIn)
             parenthesize_for_noin(self.value, output, noin)
-    )
+
+    DEFPRINT(AST_VarDef, f_print_var_def)
 
     # -----[ other expressions ]-----
     DEFPRINT(AST_BaseCall, print_function_call)
 
     AST_Seq.prototype._do_print = print_seq
 
-    DEFPRINT(AST_Seq, def(self, output):
-        self._do_print(output)
-    )
+    DEFPRINT(AST_Seq, lambda self, output: self._do_print(output))
+
     DEFPRINT(AST_Dot, print_getattr)
 
     DEFPRINT(AST_Sub, print_getitem)
@@ -424,44 +447,33 @@ def generate_code():
 
     DEFPRINT(AST_Object, print_object)
 
-    DEFPRINT(AST_ObjectKeyVal, def(self, output):
+    DEFPRINT(AST_ObjectKeyVal, f_print_obj_key_val)
+
+    def f_print_obj_key_val(self, output):
         self.key.print(output)
         output.colon()
         self.value.print(output)
-    )
+
     DEFPRINT(AST_Set, print_set)
 
-    AST_Symbol.prototype.definition = def():
-        return this.thedef
+    AST_Symbol.prototype.definition = lambda: this.thedef
 
-    DEFPRINT(AST_Symbol, def(self, output):
+    DEFPRINT(AST_Symbol, f_print_symbol)
+
+    def f_print_symbol(self, output):
         def_ = self.definition()
-        output.print_name((def_.mangled_name or def_.name) if def_ else self.name)
-    )
-    DEFPRINT(AST_Undefined, def(self, output):
-        output.print("void 0")
-    )
+        output.print_name((
+            def_.mangled_name or def_.name) if def_ else self.name)
+
+    DEFPRINT(AST_Undefined, lambda self, output: output.print("void 0"))
     DEFPRINT(AST_Hole, noop)
 
-    DEFPRINT(AST_Infinity, def(self, output):
-        output.print("1/0")
-    )
-    DEFPRINT(AST_NaN, def(self, output):
-        output.print("0/0")
-    )
-    DEFPRINT(AST_This, def(self, output):
-        output.print("this")
-    )
-    DEFPRINT(AST_Constant, def(self, output):
-        output.print(self.value)
-    )
-    DEFPRINT(AST_String, def(self, output):
-        output.print_string(self.value)
-    )
-    DEFPRINT(AST_Verbatim, def(self, output):
-        output.print(self.value)
-    )
-    DEFPRINT(AST_Number, def(self, output):
-        output.print(make_num(self.value))
-    )
+    DEFPRINT(AST_Infinity, lambda self, output: output.print("1/0"))
+    DEFPRINT(AST_NaN, lambda self, output: output.print("0/0"))
+    DEFPRINT(AST_This, lambda self, output: output.print("this"))
+    DEFPRINT(AST_Constant, lambda self, output: output.print(self.value))
+    DEFPRINT(AST_String, lambda self, output: output.print_string(self.value))
+    DEFPRINT(AST_Verbatim, lambda self, output: output.print(self.value))
+    DEFPRINT(AST_Number,
+             lambda self, output: output.print(make_num(self.value)))
     DEFPRINT(AST_RegExp, print_regexp)

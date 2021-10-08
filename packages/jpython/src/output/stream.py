@@ -5,7 +5,9 @@ from __python__ import hash_literals
 from utils import make_predicate, defaults, repeat_string
 from tokenizer import is_identifier_char
 
-DANGEROUS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g
+DANGEROUS = RegExp(
+    r"[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]",
+    "g")
 
 
 def as_hex(code, sz):
@@ -23,11 +25,15 @@ def to_ascii(str_, identifier):
         else:
             return '\\u' + as_hex(code, 4)
 
-    return str_.replace(/[\u0080-\uffff]/g, f)
+    return str_.replace(RegExp(r"[\u0080-\uffff]", "g"), f)
+
 
 def encode_string(str_):
-    def f(a): return '\\u' + as_hex(a.charCodeAt(0), 4)
+    def f(a):
+        return '\\u' + as_hex(a.charCodeAt(0), 4)
+
     return JSON.stringify(str_).replace(DANGEROUS, f)
+
 
 require_semi_colon_chars = make_predicate("( [ + * / - , .")
 
@@ -55,8 +61,8 @@ output_stream_defaults = {
     'write_name': True,
 }
 
-class OutputStream:
 
+class OutputStream:
     def __init__(self, options):
         self.options = defaults(options, output_stream_defaults, True)
         self._indentation = 0
@@ -87,7 +93,9 @@ class OutputStream:
         self.print(self.make_name(name))
 
     def make_indent(self, back):
-        return repeat_string(" ", self.options.indent_start + self._indentation - back * self.options.indent_level)
+        return repeat_string(
+            " ", self.options.indent_start + self._indentation -
+            back * self.options.indent_level)
 
     # -----[ beautification/minification ]-----
     def last_char(self):
@@ -98,10 +106,11 @@ class OutputStream:
             self.print("\n")
 
     def print(self, str_):
-        str_ = v"String(str_)"
+        str_ = String(str_)
         ch = str_.charAt(0)
         if self.might_need_semicolon:
-            if (not ch or ";}".indexOf(ch) < 0) and not /[;]$/.test(self._last):
+            if (not ch or ";}".indexOf(ch) < 0) and not RegExp(r"[;]").test(
+                    self._last):
                 if self.options.semicolons or require_semi_colon_chars[ch]:
                     self.OUTPUT += ";"
                     self.current_col += 1
@@ -115,11 +124,11 @@ class OutputStream:
                 if not self.options.beautify:
                     self.might_need_space = False
 
-
             self.might_need_semicolon = False
             self.maybe_newline()
 
-        if not self.options.beautify and self.options.preserve_line and self._stack[self._stack.length - 1]:
+        if not self.options.beautify and self.options.preserve_line and self._stack[
+                self._stack.length - 1]:
             target_line = self._stack[self._stack.length - 1].start.line
             while self.current_line < target_line:
                 self.OUTPUT += "\n"
@@ -128,18 +137,18 @@ class OutputStream:
                 self.current_col = 0
                 self.might_need_space = False
 
-
         if self.might_need_space:
             prev = self.last_char()
-            if is_identifier_char(prev) and (is_identifier_char(ch) or ch is "\\")
-            or /^[\+\-\/]$/.test(ch) and ch is prev:
+            if (is_identifier_char(prev) and
+                (is_identifier_char(ch) or ch is "\\")
+                    or RegExp(r"^[\+\-\/]$").test(ch) and ch is prev):
                 self.OUTPUT += " "
                 self.current_col += 1
                 self.current_pos += 1
 
             self.might_need_space = False
 
-        a = str_.split(/\r?\n/)
+        a = str_.split(RegExp(r"\r?\n"))
         n = a.length - 1
         self.current_line += n
         if n is 0:
@@ -199,7 +208,7 @@ class OutputStream:
         return self._indentation + self.options.indent_level
 
     def spaced(self):
-        for v'var i=0; i < arguments.length; i++':
+        for i in range(len(arguments)):
             if i > 0:
                 self.space()
             if jstype(arguments[i].print) is 'function':
@@ -215,10 +224,12 @@ class OutputStream:
         ret = None
         self.print("{")
         self.newline()
-        self.with_indent(self.next_indent(), def():
+
+        def f():
             nonlocal ret
             ret = cont()
-        )
+
+        self.with_indent(self.next_indent(), f)
         self.indent()
         self.print("}")
         return ret
@@ -246,6 +257,7 @@ class OutputStream:
 
     def get(self):
         return self.OUTPUT
+
     toString = get
 
     def assign(self, name):
@@ -262,7 +274,8 @@ class OutputStream:
         return self.current_col - self._indentation
 
     def should_break(self):
-        return self.options.width and self.current_width() >= self.options.width
+        return self.options.width and self.current_width(
+        ) >= self.options.width
 
     def last(self):
         return self._last
