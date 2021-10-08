@@ -2,11 +2,12 @@
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 from __python__ import hash_literals
 
-from ast_types import (
-    AST_Definitions, AST_Scope, AST_Method, AST_Except, AST_EmptyStatement,
-    AST_Statement, AST_Seq, AST_BaseCall, AST_Dot, AST_Sub, AST_ItemAccess,
-    AST_Conditional, AST_Binary, AST_BlockStatement, is_node_type
-)
+from ast_types import (AST_Definitions, AST_Scope, AST_Method, AST_Except,
+                       AST_EmptyStatement, AST_Statement, AST_Seq,
+                       AST_BaseCall, AST_Dot, AST_Sub, AST_ItemAccess,
+                       AST_Conditional, AST_Binary, AST_BlockStatement,
+                       is_node_type)
+
 
 def force_statement(stat, output):
     if output.options.bracketize:
@@ -15,16 +16,19 @@ def force_statement(stat, output):
         elif is_node_type(stat, AST_BlockStatement):
             stat.print(output)
         else:
-            output.with_block(def():
+
+            def f():
                 output.indent()
                 stat.print(output)
                 output.newline()
-            )
+
+            output.with_block(f)
     else:
         if not stat or is_node_type(stat, AST_EmptyStatement):
             output.force_semicolon()
         else:
             stat.print(output)
+
 
 # return true if the node at the top of the stack (that means the
 # innermost node in the current output) is lexically the first in
@@ -32,20 +36,23 @@ def force_statement(stat, output):
 def first_in_statement(output):
     a = output.stack()
     i = a.length
-    node = a[i -= 1]
-    p = a[i -= 1]
+    i -= 1
+    node = a[i]
+    i -= 1
+    p = a[i]
     while i > 0:
         if is_node_type(p, AST_Statement) and p.body is node:
             return True
-        if is_node_type(p, AST_Seq) and p.car is node
-        or is_node_type(p, AST_BaseCall) and p.expression is node
-        or is_node_type(p, AST_Dot) and p.expression is node
-        or is_node_type(p, AST_Sub) and p.expression is node
-        or is_node_type(p, AST_ItemAccess) and p.expression is node
-        or is_node_type(p, AST_Conditional) and p.condition is node
-        or is_node_type(p, AST_Binary) and p.left is node:
+        if (is_node_type(p, AST_Seq) and p.car is node
+                or is_node_type(p, AST_BaseCall) and p.expression is node
+                or is_node_type(p, AST_Dot) and p.expression is node
+                or is_node_type(p, AST_Sub) and p.expression is node
+                or is_node_type(p, AST_ItemAccess) and p.expression is node
+                or is_node_type(p, AST_Conditional) and p.condition is node
+                or is_node_type(p, AST_Binary) and p.left is node):
             node = p
-            p = a[i -= 1]
+            i -= 1
+            p = a[i]
         else:
             return False
 
@@ -64,10 +71,12 @@ def declare_vars(vars, output):
         output.semicolon()
         output.newline()
 
+
 def display_body(body, is_toplevel, output):
     last = body.length - 1
     for i, stmt in enumerate(body):
-        if not (is_node_type(stmt, AST_EmptyStatement)) and not (is_node_type(stmt, AST_Definitions)):
+        if not (is_node_type(stmt, AST_EmptyStatement)) and not (is_node_type(
+                stmt, AST_Definitions)):
             output.indent()
             stmt.print(output)
             if not (i is last and is_toplevel):
@@ -104,6 +113,7 @@ def display_complex_body(node, is_toplevel, output, function_preamble):
 
     display_body(node.body, is_toplevel, output)
 
+
 def display_lambda_body(node, output, function_preamble):
     if function_preamble is not None:
         function_preamble(node, output, 0)
@@ -112,34 +122,42 @@ def display_lambda_body(node, output, function_preamble):
     node.body.print(output)
     output.print(";")
 
+
 def print_bracketed(node, output, complex, function_preamble, before, after):
     if node.body.length > 0 or node.is_lambda:
+
         def f():
             if before:
                 before(output)
             if node.is_lambda:
-                display_lambda_body(node, output, function_preamble if complex else None)
+                display_lambda_body(node, output,
+                                    function_preamble if complex else None)
             elif complex:
                 display_complex_body(node, False, output, function_preamble)
             else:
                 display_body(node.body, False, output)
             if after:
                 after(output)
+
         output.with_block(f)
     else:
         if before or after:
+
             def f():
                 if before:
                     before(output)
                 if after:
                     after(output)
+
             output.with_block(f)
         else:
             output.print("{}")
 
+
 def print_with(self, output):
-    exits = v'[]'
-    output.assign('ρσ_with_exception'), output.print('undefined'), output.end_statement()
+    exits = []
+    output.assign('ρσ_with_exception'), output.print(
+        'undefined'), output.end_statement()
     for clause in self.clauses:
         output.with_counter += 1
         clause_name = 'ρσ_with_clause_' + output.with_counter
@@ -153,35 +171,59 @@ def print_with(self, output):
         output.print(clause_name + '.__enter__()')
         output.end_statement()
     output.indent(), output.print('try'), output.space()
-    output.with_block(def():
+
+    def f_body():
         output.indent()
         self._do_print_body(output)
         output.newline()
-    )
+
+    output.with_block(f_body)
+
     output.space(), output.print('catch(e)')
-    output.with_block(def():
-        output.indent(), output.assign('ρσ_with_exception'), output.print('e'), output.end_statement()
-    )
-    output.newline(), output.indent(), output.spaced('if', '(ρσ_with_exception', '===', 'undefined)')
-    output.with_block(def():
+
+    def f_with():
+        output.indent()
+        output.assign('ρσ_with_exception')
+        output.print('e')
+        output.end_statement()
+
+    output.with_block(f_with)
+
+    output.newline(), output.indent(), output.spaced('if',
+                                                     '(ρσ_with_exception',
+                                                     '===', 'undefined)')
+
+    def f_exit():
         for clause in exits:
-            output.indent(), output.print(clause + '.__exit__()'), output.end_statement()
-    )
+            output.indent(), output.print(
+                clause + '.__exit__()'), output.end_statement()
+
+    output.with_block(f_exit)
+
     output.space(), output.print('else'), output.space()
-    output.with_block(def():
-        output.indent(), output.assign('ρσ_with_suppress'), output.print('false'), output.end_statement()
+
+    def f_suppress():
+        output.indent(), output.assign('ρσ_with_suppress'), output.print(
+            'false'), output.end_statement()
         for clause in exits:
             output.indent()
-            output.spaced('ρσ_with_suppress', '|=', 'ρσ_bool(' + clause + '.__exit__(ρσ_with_exception.constructor,',
-                            'ρσ_with_exception,', 'ρσ_with_exception.stack))')
+            output.spaced(
+                'ρσ_with_suppress', '|=', 'ρσ_bool(' + clause +
+                '.__exit__(ρσ_with_exception.constructor,',
+                'ρσ_with_exception,', 'ρσ_with_exception.stack))')
             output.end_statement()
-        output.indent(), output.spaced('if', '(!ρσ_with_suppress)', 'throw ρσ_with_exception'), output.end_statement()
-    )
+        output.indent(), output.spaced(
+            'if', '(!ρσ_with_suppress)',
+            'throw ρσ_with_exception'), output.end_statement()
+
+    output.with_block(f_suppress)
+
 
 def print_assert(self, output):
     if output.options.discard_asserts:
         return
-    output.spaced('if', '(!('), self.condition.print(output), output.spaced('))', 'throw new AssertionError')
+    output.spaced('if', '(!('), self.condition.print(output), output.spaced(
+        '))', 'throw new AssertionError')
     if self.message:
         output.print('(')
         self.message.print(output)
