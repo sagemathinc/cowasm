@@ -318,7 +318,7 @@ def print_conditional(self, output, condition, consequent, alternative):
 def print_seq(output):
     self = this
     p = output.parent()
-    print_seq = def():
+    def print_seq0():
         self.car.print(output)
         if self.cdr:
             output.comma()
@@ -333,6 +333,6 @@ def print_seq(output):
     or is_node_type(p, AST_Array)
     or is_node_type(p, AST_BaseCall)
     or is_node_type(p, AST_SimpleStatement):
-        output.with_square(print_seq)
+        output.with_square(print_seq0)
     else:
-        print_seq()
+        print_seq0()

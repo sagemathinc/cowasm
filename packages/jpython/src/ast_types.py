@@ -390,6 +390,7 @@ class AST_Lambda(AST_Scope):
         'decorators': "[AST_Decorator*] function decorators, if any",
         'annotations': "[bool*] True iff this function should have annotations set",
         'is_generator': "[bool*] True iff this function is a generator",
+        'is_lambda': "[bool*] True iff this function is a Python lambda function",
         'is_expression': "[bool*] True iff this function is a function expression",
         'is_anonymous': "[bool*] True iff this function is an anonymous function",
         "return_annotation": "[AST_Node?] The return type annotation provided (if any)",

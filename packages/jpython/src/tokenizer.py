@@ -49,7 +49,7 @@ PUNC_BEFORE_EXPRESSION = make_predicate(characters("[{(,.;:"))
 
 PUNC_CHARS = make_predicate(characters("[]{}(),;:?"))
 
-KEYWORDS = "as assert break class continue def del do elif else except finally for from global if import in is new nonlocal pass raise return yield try while with or and not"
+KEYWORDS = "as assert break class continue def del do elif else except finally for from global if import in is lambda new nonlocal pass raise return yield try while with or and not"
 
 KEYWORDS_ATOM = "False None True"
 

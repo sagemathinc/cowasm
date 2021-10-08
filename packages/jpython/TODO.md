@@ -2,6 +2,19 @@
 
 ## Not Done
 
+[ ] include context in parse errors, e.g., jpython versus python:
+```bash
+~/jsage/packages/jpython/test$ jpython lambda.py
+lambda.py:Unexpected token: punc ']' (line: 39, col: 33, pos: 667)
+~/jsage/packages/jpython/test$ python lambda.py
+  File "/home/user/jsage/packages/jpython/test/lambda.py", line 39
+    assert v[1] == {'world': 'there'}]
+                                     ^
+SyntaxError: unmatched ']'
+```
+
+---
+
 [ ] make %time/time command also show cpu time (https://www.geeksforgeeks.org/node-js-process-cpuusage-method/), and similar for benchmark suite
 
 ---

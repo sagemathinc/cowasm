@@ -1,6 +1,12 @@
 var ρσ_len;
 function ρσ_operator_add(a, b) {
-    return (typeof a !== 'object' ? a+b : ((a.__add__ != null ? a.__add__(b) : a.concat != null ? a.concat(b) : a + b)));
+    return (
+typeof a !== 'object' ? a + b :
+    ((a.__add__ !== undefined ? a.__add__(b) :
+      a.concat !== undefined ? a.concat(b) :
+      a + b)
+    )
+);
 };
 ρσ_operator_add.__argnames__ = ["a", "b"];
 ρσ_operator_add.__module__ = "__main__";
@@ -18,6 +24,13 @@ function ρσ_operator_mul(a, b) {
 };
 ρσ_operator_mul.__argnames__ = ["a", "b"];
 ρσ_operator_mul.__module__ = "__main__";
+undefined;
+
+function ρσ_operator_pow(a, b) {
+    return (typeof a == 'object'  && a.__pow__ != null) ? a.__pow__(b) : a ** b;
+};
+ρσ_operator_pow.__argnames__ = ["a", "b"];
+ρσ_operator_pow.__module__ = "__main__";
 undefined;
 
 function ρσ_operator_truediv(a, b) {
@@ -53,7 +66,7 @@ function ρσ_print() {
     if (typeof console === "object") {
         parts = [];
         for (var i = 0; i < arguments.length; i++) {
-            parts.push(ρσ_str(arguments[(typeof i === "number" && i < 0) ? arguments.length + i : i]));
+            parts.push((ρσ_str?.__call__?.bind(ρσ_str) ?? ρσ_str)(arguments[(typeof i === "number" && i < 0) ? arguments.length + i : i]));
         }
         console.log(parts.join(" "));
     }
@@ -66,10 +79,10 @@ function ρσ_int(val, base) {
     if (typeof val === "number") {
         ans = val | 0;
     } else {
-        ans = parseInt(val, base || 10);
+        ans = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(val, base || 10);
     }
-    if (isNaN(ans)) {
-        throw new ValueError(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("Invalid literal for int with base ", (base || 10)), ": "), val));
+    if ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(ans)) {
+        throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("Invalid literal for int with base ", (base || 10)), ": "), val));
     }
     return ans;
 };
@@ -82,10 +95,10 @@ function ρσ_float(val) {
     if (typeof val === "number") {
         ans = val;
     } else {
-        ans = parseFloat(val);
+        ans = (parseFloat?.__call__?.bind(parseFloat) ?? parseFloat)(val);
     }
-    if (isNaN(ans)) {
-        throw new ValueError(ρσ_operator_add("Could not convert string to float: ", arguments[0]));
+    if ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(ans)) {
+        throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add("Could not convert string to float: ", arguments[0]));
     }
     return ans;
 };
@@ -159,7 +172,7 @@ function ρσ_ord(x) {
         if (56320 <= second && second <= 57343) {
             return ρσ_operator_add(ρσ_operator_sub(ρσ_operator_add(ρσ_operator_mul((ρσ_operator_sub(ans, 55296)), 1024), second), 56320), 65536);
         }
-        throw new TypeError("string is missing the low surrogate char");
+        throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("string is missing the low surrogate char");
     }
     return ans;
 };
@@ -188,7 +201,7 @@ undefined;
 function ρσ_bin(x) {
     var ans;
     if (typeof x !== "number" || x % 1 !== 0) {
-        throw new TypeError("integer required");
+        throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("integer required");
     }
     ans = x.toString(2);
     if (ans[0] === "-") {
@@ -205,7 +218,7 @@ undefined;
 function ρσ_hex(x) {
     var ans;
     if (typeof x !== "number" || x % 1 !== 0) {
-        throw new TypeError("integer required");
+        throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("integer required");
     }
     ans = x.toString(16);
     if (ans[0] === "-") {
@@ -230,7 +243,7 @@ function ρσ_enumerate(iterable) {
 undefined;
         return ρσ_anonfunc;
     })();
-    if (ρσ_arraylike(iterable)) {
+    if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(iterable)) {
         ans["next"] = (function() {
             var ρσ_anonfunc = function () {
                 this._i += 1;
@@ -264,7 +277,7 @@ undefined;
         })();
         return ans;
     }
-    return ρσ_enumerate(Object.keys(iterable));
+    return (ρσ_enumerate?.__call__?.bind(ρσ_enumerate) ?? ρσ_enumerate)(Object.keys(iterable));
 };
 ρσ_enumerate.__argnames__ = ["iterable"];
 ρσ_enumerate.__module__ = "__main__";
@@ -272,7 +285,7 @@ undefined;
 
 function ρσ_reversed(iterable) {
     var ans;
-    if (ρσ_arraylike(iterable)) {
+    if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(iterable)) {
         ans = {"_i": iterable.length};
         ans["next"] = (function() {
             var ρσ_anonfunc = function () {
@@ -296,7 +309,7 @@ undefined;
         })();
         return ans;
     }
-    throw new TypeError("reversed() can only be called on arrays or strings");
+    throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("reversed() can only be called on arrays or strings");
 };
 ρσ_reversed.__argnames__ = ["iterable"];
 ρσ_reversed.__module__ = "__main__";
@@ -307,7 +320,7 @@ function ρσ_iter(iterable) {
     if (typeof iterable[ρσ_iterator_symbol] === "function") {
         return (typeof Map === "function" && iterable instanceof Map) ? iterable.keys() : iterable[ρσ_iterator_symbol]();
     }
-    if (ρσ_arraylike(iterable)) {
+    if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(iterable)) {
         ans = {"_i":-1};
         ans[ρσ_iterator_symbol] = (function() {
             var ρσ_anonfunc = function () {
@@ -331,7 +344,7 @@ undefined;
         })();
         return ans;
     }
-    return ρσ_iter(Object.keys(iterable));
+    return (ρσ_iter?.__call__?.bind(ρσ_iter) ?? ρσ_iter)(Object.keys(iterable));
 };
 ρσ_iter.__argnames__ = ["iterable"];
 ρσ_iter.__module__ = "__main__";
@@ -384,7 +397,7 @@ undefined;
     ans.count = (function() {
         var ρσ_anonfunc = function (val) {
             if (!this._cached) {
-                this._cached = list(this);
+                this._cached = (list?.__call__?.bind(list) ?? list)(this);
             }
             return this._cached.count(val);
         };
@@ -396,7 +409,7 @@ undefined;
     ans.index = (function() {
         var ρσ_anonfunc = function (val) {
             if (!this._cached) {
-                this._cached = list(this);
+                this._cached = (list?.__call__?.bind(list) ?? list)(this);
             }
             return this._cached.index(val);
         };
@@ -420,7 +433,7 @@ undefined;
             if (new_start === undefined && new_stop === undefined) {
                 return ans;
             }
-            return list(ans).slice(new_start, new_stop);
+            return (list?.__call__?.bind(list) ?? list)(ans).slice(new_start, new_stop);
         }
         if (new_start === undefined) {
             if (new_stop === undefined) {
@@ -429,14 +442,14 @@ undefined;
                 if (new_stop < 0) {
                     new_stop = ρσ_operator_add(length, new_stop);
                 }
-                return ρσ_range(start, Math.max(start, Math.min(ρσ_operator_add(ρσ_operator_mul(new_stop, step), start), stop)), step);
+                return (ρσ_range?.__call__?.bind(ρσ_range) ?? ρσ_range)(start, Math.max(start, Math.min(ρσ_operator_add(ρσ_operator_mul(new_stop, step), start), stop)), step);
             }
         }
         if (new_stop === undefined) {
             if (new_start < 0) {
                 new_start = ρσ_operator_add(length, new_start);
             }
-            return ρσ_range(Math.min(stop, Math.max(ρσ_operator_add(ρσ_operator_mul(new_start, step), start), start)), stop, step);
+            return (ρσ_range?.__call__?.bind(ρσ_range) ?? ρσ_range)(Math.min(stop, Math.max(ρσ_operator_add(ρσ_operator_mul(new_start, step), start), start)), stop, step);
         } else {
             if (new_stop < 0) {
                 new_stop = ρσ_operator_add(length, new_stop);
@@ -444,7 +457,7 @@ undefined;
             if (new_start < 0) {
                 new_start = ρσ_operator_add(length, new_start);
             }
-            return ρσ_range(Math.min(ρσ_operator_mul(new_stop, step), Math.max(ρσ_operator_add(ρσ_operator_mul(new_start, step), start), start)), Math.max(ρσ_operator_add(ρσ_operator_mul(new_start, step), start), Math.min(ρσ_operator_add(ρσ_operator_mul(new_stop, step), start), stop)), step);
+            return (ρσ_range?.__call__?.bind(ρσ_range) ?? ρσ_range)(Math.min(ρσ_operator_mul(new_stop, step), Math.max(ρσ_operator_add(ρσ_operator_mul(new_start, step), start), start)), Math.max(ρσ_operator_add(ρσ_operator_mul(new_start, step), start), Math.min(ρσ_operator_add(ρσ_operator_mul(new_stop, step), start), stop)), step);
         }
     };
 slice.__defaults__ = {new_start:undefined, new_stop:undefined};
@@ -476,18 +489,18 @@ undefined;
     })();
     ans.__str__ = ans.toString = ans.__repr__;
     if (typeof Proxy === "function") {
-        ans = new Proxy(ans, {"get":(function() {
+        ans = new (Proxy?.__call__?.bind(Proxy) ?? Proxy)(ans, {"get":(function() {
             var ρσ_anonfunc = function (obj, prop) {
                 var iprop;
                 if (typeof prop === "string") {
-                    iprop = parseInt(prop);
-                    if (!isNaN(iprop)) {
+                    iprop = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(prop);
+                    if (!(isNaN?.__call__?.bind(isNaN) ?? isNaN)(iprop)) {
                         prop = iprop;
                     }
                 }
                 if (typeof prop === "number") {
                     if (!obj._cached) {
-                        obj._cached = list(obj);
+                        obj._cached = (list?.__call__?.bind(list) ?? list)(obj);
                     }
                     return (ρσ_expr_temp = obj._cached)[(typeof prop === "number" && prop < 0) ? ρσ_expr_temp.length + prop : prop];
                 }
@@ -513,7 +526,7 @@ function ρσ_getattr(obj, name, defval) {
         ρσ_last_exception = ρσ_Exception;
         if (ρσ_Exception instanceof TypeError) {
             if (defval === undefined) {
-                throw new AttributeError(ρσ_operator_add(ρσ_operator_add("The attribute ", name), " is not present"));
+                throw new (AttributeError?.__call__?.bind(AttributeError) ?? AttributeError)(ρσ_operator_add(ρσ_operator_add("The attribute ", name), " is not present"));
             }
             return defval;
         } else {
@@ -522,7 +535,7 @@ function ρσ_getattr(obj, name, defval) {
     }
     if (ret === undefined && !(name in obj)) {
         if (defval === undefined) {
-            throw new AttributeError(ρσ_operator_add(ρσ_operator_add("The attribute ", name), " is not present"));
+            throw new (AttributeError?.__call__?.bind(AttributeError) ?? AttributeError)(ρσ_operator_add(ρσ_operator_add("The attribute ", name), " is not present"));
         }
         ret = defval;
     }
@@ -549,7 +562,7 @@ undefined;
 ρσ_len = (function() {
     var ρσ_anonfunc = function () {
         function len(obj) {
-            if (ρσ_arraylike(obj)) {
+            if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(obj)) {
                 return obj.length;
             }
             if (typeof obj.__len__ === "function") {
@@ -565,7 +578,7 @@ len.__module__ = "__main__";
 undefined;
 
         function len5(obj) {
-            if (ρσ_arraylike(obj)) {
+            if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(obj)) {
                 return obj.length;
             }
             if (typeof obj.__len__ === "function") {
@@ -612,7 +625,7 @@ undefined;
 function ρσ_divmod(x, y) {
     var d;
     if (y === 0) {
-        throw new ZeroDivisionError("integer division or modulo by zero");
+        throw new (ZeroDivisionError?.__call__?.bind(ZeroDivisionError) ?? ZeroDivisionError)("integer division or modulo by zero");
     }
     d = Math.floor(ρσ_operator_truediv(x, y));
     return [d, ρσ_operator_sub(x, ρσ_operator_mul(d, y))];
@@ -631,7 +644,7 @@ function ρσ_max() {
         if (kwargs.defval !== undefined) {
             return kwargs.defval;
         }
-        throw new TypeError("expected at least one argument");
+        throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("expected at least one argument");
     }
     if (args.length === 1) {
         args = args[0];
@@ -649,7 +662,7 @@ function ρσ_max() {
         })();
     }
     if (!Array.isArray(args)) {
-        args = list(args);
+        args = (list?.__call__?.bind(list) ?? list)(args);
     }
     if (args.length) {
         return this.apply(null, args);
@@ -657,7 +670,7 @@ function ρσ_max() {
     if (kwargs.defval !== undefined) {
         return kwargs.defval;
     }
-    throw new TypeError("expected at least one argument");
+    throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("expected at least one argument");
 };
 ρσ_max.__handles_kwarg_interpolation__ = true;
 ρσ_max.__module__ = "__main__";
@@ -669,7 +682,7 @@ var print = ρσ_print, id = ρσ_id, get_module = ρσ_get_module, pow = ρσ_p
 var dir = ρσ_dir, ord = ρσ_ord, chr = ρσ_chr, bin = ρσ_bin, hex = ρσ_hex, callable = ρσ_callable;
 var enumerate = ρσ_enumerate, iter = ρσ_iter, reversed = ρσ_reversed, len = ρσ_len;
 var range = ρσ_range, getattr = ρσ_getattr, setattr = ρσ_setattr, hasattr = ρσ_hasattr;function ρσ_equals(a, b) {
-    var type_a, type_b, ρσ_unpack, akeys, bkeys, key;
+    var type_a, type_b, i, ρσ_unpack, akeys, bkeys, key, j;
     if (a === b) {
         return true;
     }
@@ -684,25 +697,31 @@ var range = ρσ_range, getattr = ρσ_getattr, setattr = ρσ_setattr, hasattr 
     if (b && typeof b.__eq__ === "function") {
         return b.__eq__(a);
     }
-    if (ρσ_arraylike(a) && ρσ_arraylike(b)) {
+    if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(a) && (ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(b)) {
         if ((a.length !== b.length && (typeof a.length !== "object" || ρσ_not_equals(a.length, b.length)))) {
             return false;
         }
-        for (var i=0; i < a.length; i++) {
+        var ρσ_Iter0 = (range?.__call__?.bind(range) ?? range)((len?.__call__?.bind(len) ?? len)(a));
+        ρσ_Iter0 = ((typeof ρσ_Iter0[Symbol.iterator] === "function") ? (ρσ_Iter0 instanceof Map ? ρσ_Iter0.keys() : ρσ_Iter0) : Object.keys(ρσ_Iter0));
+        for (var ρσ_Index0 of ρσ_Iter0) {
+            i = ρσ_Index0;
             if (!(((a[(typeof i === "number" && i < 0) ? a.length + i : i] === b[(typeof i === "number" && i < 0) ? b.length + i : i] || typeof a[(typeof i === "number" && i < 0) ? a.length + i : i] === "object" && ρσ_equals(a[(typeof i === "number" && i < 0) ? a.length + i : i], b[(typeof i === "number" && i < 0) ? b.length + i : i]))))) {
                 return false;
             }
         }
         return true;
     }
-    if (typeof a === "object" && typeof b === "object" && a !== null && b !== null && (a.constructor === Object && b.constructor === Object || Object.getPrototypeOf(a) === null && Object.getPrototypeOf(b) === null)) {
+    if (typeof a === "object" && typeof b === "object" && a !== null && b !== null && (a.constructor === Object || Object.getPrototypeOf(a) === null) && (b.constructor === Object || Object.getPrototypeOf(b) === null)) {
         ρσ_unpack = [Object.keys(a), Object.keys(b)];
         akeys = ρσ_unpack[0];
         bkeys = ρσ_unpack[1];
         if (akeys.length !== bkeys.length) {
             return false;
         }
-        for (var j=0; j < akeys.length; j++) {
+        var ρσ_Iter1 = (range?.__call__?.bind(range) ?? range)((len?.__call__?.bind(len) ?? len)(akeys));
+        ρσ_Iter1 = ((typeof ρσ_Iter1[Symbol.iterator] === "function") ? (ρσ_Iter1 instanceof Map ? ρσ_Iter1.keys() : ρσ_Iter1) : Object.keys(ρσ_Iter1));
+        for (var ρσ_Index1 of ρσ_Iter1) {
+            j = ρσ_Index1;
             key = akeys[(typeof j === "number" && j < 0) ? akeys.length + j : j];
             if (!(((a[(typeof key === "number" && key < 0) ? a.length + key : key] === b[(typeof key === "number" && key < 0) ? b.length + key : key] || typeof a[(typeof key === "number" && key < 0) ? a.length + key : key] === "object" && ρσ_equals(a[(typeof key === "number" && key < 0) ? a.length + key : key], b[(typeof key === "number" && key < 0) ? b.length + key : key]))))) {
                 return false;
@@ -726,7 +745,7 @@ function ρσ_not_equals(a, b) {
     if (b && typeof b.__ne__ === "function") {
         return b.__ne__(a);
     }
-    return !ρσ_equals(a, b);
+    return !(ρσ_equals?.__call__?.bind(ρσ_equals) ?? ρσ_equals)(a, b);
 };
 ρσ_not_equals.__argnames__ = ["a", "b"];
 ρσ_not_equals.__module__ = "__main__";
@@ -761,12 +780,12 @@ function ρσ_list_index(val, start, stop) {
         start = ρσ_operator_add(this.length, start);
     }
     if (start < 0) {
-        throw new ValueError(ρσ_operator_add(val, " is not in list"));
+        throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add(val, " is not in list"));
     }
     if (stop === undefined) {
         idx = this.indexOf(val, start);
         if (idx === -1) {
-            throw new ValueError(ρσ_operator_add(val, " is not in list"));
+            throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add(val, " is not in list"));
         }
         return idx;
     }
@@ -778,7 +797,7 @@ function ρσ_list_index(val, start, stop) {
             return i;
         }
     }
-    throw new ValueError(ρσ_operator_add(val, " is not in list"));
+    throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add(val, " is not in list"));
 };
 ρσ_list_index.__argnames__ = ["val", "start", "stop"];
 ρσ_list_index.__module__ = "__main__";
@@ -787,14 +806,14 @@ undefined;
 function ρσ_list_pop(index) {
     var ans;
     if (this.length === 0) {
-        throw new IndexError("list is empty");
+        throw new (IndexError?.__call__?.bind(IndexError) ?? IndexError)("list is empty");
     }
     if (index === undefined) {
         index = -1;
     }
     ans = this.splice(index, 1);
     if (!ans.length) {
-        throw new IndexError("pop index out of range");
+        throw new (IndexError?.__call__?.bind(IndexError) ?? IndexError)("pop index out of range");
     }
     return ans[0];
 };
@@ -806,7 +825,7 @@ function ρσ_list_remove(value) {
     var idx;
     idx = this.indexOf(value);
     if (idx === -1) {
-        throw new ValueError(ρσ_operator_add(value, " not in list"));
+        throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add(value, " not in list"));
     }
     this.splice(idx, 1);
 };
@@ -824,7 +843,7 @@ function ρσ_list_insert(index, val) {
     if (index < 0) {
         index += this.length;
     }
-    index = min(this.length, max(index, 0));
+    index = (min?.__call__?.bind(min) ?? min)(this.length, (max?.__call__?.bind(max) ?? max)(index, 0));
     if (index === 0) {
         this.unshift(val);
         return;
@@ -839,7 +858,7 @@ function ρσ_list_insert(index, val) {
 undefined;
 
 function ρσ_list_copy() {
-    return ρσ_list_constructor(this);
+    return (ρσ_list_constructor?.__call__?.bind(ρσ_list_constructor) ?? ρσ_list_constructor)(this);
 };
 ρσ_list_copy.__module__ = "__main__";
 undefined;
@@ -910,16 +929,16 @@ function ρσ_list_sort() {
     var mult, keymap, posmap, k;
     key = key || ρσ_list_sort_key;
     mult = (reverse) ? -1 : 1;
-    keymap = dict();
-    posmap = dict();
+    keymap = (dict?.__call__?.bind(dict) ?? dict)();
+    posmap = (dict?.__call__?.bind(dict) ?? dict)();
     for (var i=0; i < this.length; i++) {
         k = (ρσ_expr_temp = this)[(typeof i === "number" && i < 0) ? ρσ_expr_temp.length + i : i];
-        keymap.set(k, key(k));
+        keymap.set(k, (key?.__call__?.bind(key) ?? key)(k));
         posmap.set(k, i);
     }
     this.sort((function() {
         var ρσ_anonfunc = function (a, b) {
-            return ρσ_operator_mul(mult, ρσ_list_sort_cmp(keymap.get(a), keymap.get(b), posmap.get(a), posmap.get(b)));
+            return ρσ_operator_mul(mult, (ρσ_list_sort_cmp?.__call__?.bind(ρσ_list_sort_cmp) ?? ρσ_list_sort_cmp)(keymap.get(a), keymap.get(b), posmap.get(a), posmap.get(b)));
         };
 ρσ_anonfunc.__argnames__ = ["a", "b"];
 ρσ_anonfunc.__module__ = "__main__";
@@ -936,7 +955,7 @@ undefined;
 function ρσ_list_concat() {
     var ans;
     ans = Array.prototype.concat.apply(this, arguments);
-    ρσ_list_decorate(ans);
+    (ρσ_list_decorate?.__call__?.bind(ρσ_list_decorate) ?? ρσ_list_decorate)(ans);
     return ans;
 };
 ρσ_list_concat.__module__ = "__main__";
@@ -945,7 +964,7 @@ undefined;
 function ρσ_list_slice() {
     var ans;
     ans = Array.prototype.slice.apply(this, arguments);
-    ρσ_list_decorate(ans);
+    (ρσ_list_decorate?.__call__?.bind(ρσ_list_decorate) ?? ρσ_list_decorate)(ans);
     return ans;
 };
 ρσ_list_slice.__module__ = "__main__";
@@ -990,7 +1009,7 @@ function ρσ_list_contains(val) {
 undefined;
 
 function ρσ_list_eq(other) {
-    if (!ρσ_arraylike(other)) {
+    if (!(ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(other)) {
         return false;
     }
     if ((this.length !== other.length && (typeof this.length !== "object" || ρσ_not_equals(this.length, other.length)))) {
@@ -1010,7 +1029,7 @@ undefined;
 function ρσ_list_mul(other) {
     var ans, k, n;
     ans = ρσ_list_decorate([]);
-    k = int(other);
+    k = (int?.__call__?.bind(int) ?? int)(other);
     n = this.length;
     let s=0; for(let i=0; i<k; i++) { for(let j=0; j<n; j++) {ans[s++]=this[j];}};
     return ans;
@@ -1053,8 +1072,8 @@ function ρσ_list_constructor(iterable) {
     var ans, iterator, result;
     if (iterable === undefined) {
         ans = [];
-    } else if (ρσ_arraylike(iterable)) {
-        ans = new Array(iterable.length);
+    } else if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(iterable)) {
+        ans = new (Array?.__call__?.bind(Array) ?? Array)(iterable.length);
         for (var i = 0; i < iterable.length; i++) {
             ans[(typeof i === "number" && i < 0) ? ans.length + i : i] = iterable[(typeof i === "number" && i < 0) ? iterable.length + i : i];
         }
@@ -1067,11 +1086,11 @@ function ρσ_list_constructor(iterable) {
             result = iterator.next();
         }
     } else if (typeof iterable === "number") {
-        ans = new Array(iterable);
+        ans = new (Array?.__call__?.bind(Array) ?? Array)(iterable);
     } else {
         ans = Object.keys(iterable);
     }
-    return ρσ_list_decorate(ans);
+    return (ρσ_list_decorate?.__call__?.bind(ρσ_list_decorate) ?? ρσ_list_decorate)(ans);
 };
 ρσ_list_constructor.__argnames__ = ["iterable"];
 ρσ_list_constructor.__module__ = "__main__";
@@ -1092,7 +1111,7 @@ function sorted() {
         reverse = ρσ_kwargs_obj.reverse;
     }
     var ans;
-    ans = ρσ_list_constructor(iterable);
+    ans = (ρσ_list_constructor?.__call__?.bind(ρσ_list_constructor) ?? ρσ_list_constructor)(iterable);
     ans.pysort(key, reverse);
     return ans;
 };
@@ -1133,7 +1152,7 @@ undefined;
 ρσ_set_polyfill.prototype.add = (function() {
     var ρσ_anonfunc = function (x) {
         var key;
-        key = ρσ_set_keyfor(x);
+        key = (ρσ_set_keyfor?.__call__?.bind(ρσ_set_keyfor) ?? ρσ_set_keyfor)(x);
         if (!Object.prototype.hasOwnProperty.call(this._store, key)) {
             this.size += 1;
             (ρσ_expr_temp = this._store)[(typeof key === "number" && key < 0) ? ρσ_expr_temp.length + key : key] = x;
@@ -1158,7 +1177,7 @@ undefined;
 ρσ_set_polyfill.prototype.delete = (function() {
     var ρσ_anonfunc = function (x) {
         var key;
-        key = ρσ_set_keyfor(x);
+        key = (ρσ_set_keyfor?.__call__?.bind(ρσ_set_keyfor) ?? ρσ_set_keyfor)(x);
         if (Object.prototype.hasOwnProperty.call(this._store, key)) {
             this.size -= 1;
             delete this._store[key];
@@ -1173,7 +1192,7 @@ undefined;
 })();
 ρσ_set_polyfill.prototype.has = (function() {
     var ρσ_anonfunc = function (x) {
-        return Object.prototype.hasOwnProperty.call(this._store, ρσ_set_keyfor(x));
+        return Object.prototype.hasOwnProperty.call(this._store, (ρσ_set_keyfor?.__call__?.bind(ρσ_set_keyfor) ?? ρσ_set_keyfor)(x));
     };
 ρσ_anonfunc.__argnames__ = ["x"];
 ρσ_anonfunc.__module__ = "__main__";
@@ -1219,13 +1238,13 @@ if (typeof Set !== "function" || typeof Set.prototype.delete !== "function") {
 function ρσ_set(iterable) {
     var ans, s, iterator, result, keys;
     if (this instanceof ρσ_set) {
-        this.jsset = new ρσ_set_implementation;
+        this.jsset = new (ρσ_set_implementation?.__call__?.bind(ρσ_set_implementation) ?? ρσ_set_implementation);
         ans = this;
         if (iterable === undefined) {
             return ans;
         }
         s = ans.jsset;
-        if (ρσ_arraylike(iterable)) {
+        if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(iterable)) {
             for (var i = 0; i < iterable.length; i++) {
                 s.add(iterable[(typeof i === "number" && i < 0) ? iterable.length + i : i]);
             }
@@ -1244,7 +1263,7 @@ function ρσ_set(iterable) {
         }
         return ans;
     } else {
-        return new ρσ_set(iterable);
+        return new (ρσ_set?.__call__?.bind(ρσ_set) ?? ρσ_set)(iterable);
     }
 };
 ρσ_set.__argnames__ = ["iterable"];
@@ -1303,7 +1322,7 @@ undefined;
 })();
 ρσ_set.prototype.copy = (function() {
     var ρσ_anonfunc = function () {
-        return ρσ_set(this);
+        return (ρσ_set?.__call__?.bind(ρσ_set) ?? ρσ_set)(this);
     };
 ρσ_anonfunc.__module__ = "__main__";
 undefined;
@@ -1329,7 +1348,7 @@ undefined;
 ρσ_set.prototype.difference = (function() {
     var ρσ_anonfunc = function () {
         var ans, s, iterator, r, x, has;
-        ans = new ρσ_set;
+        ans = new (ρσ_set?.__call__?.bind(ρσ_set) ?? ρσ_set);
         s = ans.jsset;
         iterator = this.jsset.values();
         r = iterator.next();
@@ -1381,7 +1400,7 @@ undefined;
 ρσ_set.prototype.intersection = (function() {
     var ρσ_anonfunc = function () {
         var ans, s, iterator, r, x, has;
-        ans = new ρσ_set;
+        ans = new (ρσ_set?.__call__?.bind(ρσ_set) ?? ρσ_set);
         s = ans.jsset;
         iterator = this.jsset.values();
         r = iterator.next();
@@ -1494,7 +1513,7 @@ undefined;
         iterator = this.jsset.values();
         r = iterator.next();
         if (r.done) {
-            throw new KeyError("pop from an empty set");
+            throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)("pop from an empty set");
         }
         this.jsset.delete(r.value);
         return r.value;
@@ -1506,7 +1525,7 @@ undefined;
 ρσ_set.prototype.remove = (function() {
     var ρσ_anonfunc = function (x) {
         if (!this.jsset.delete(x)) {
-            throw new KeyError(x.toString());
+            throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)(x.toString());
         }
     };
 ρσ_anonfunc.__argnames__ = ["x"];
@@ -1538,7 +1557,7 @@ undefined;
 ρσ_set.prototype.union = (function() {
     var ρσ_anonfunc = function () {
         var ans;
-        ans = ρσ_set(this);
+        ans = (ρσ_set?.__call__?.bind(ρσ_set) ?? ρσ_set)(this);
         ans.update.apply(ans, arguments);
         return ans;
     };
@@ -1565,7 +1584,7 @@ undefined;
 })();
 ρσ_set.prototype.toString = ρσ_set.prototype.__repr__ = ρσ_set.prototype.__str__ = ρσ_set.prototype.inspect = (function() {
     var ρσ_anonfunc = function () {
-        return ρσ_operator_add(ρσ_operator_add("{", list(this).join(", ")), "}");
+        return ρσ_operator_add(ρσ_operator_add("{", (list?.__call__?.bind(list) ?? list)(this).join(", ")), "}");
     };
 ρσ_anonfunc.__module__ = "__main__";
 undefined;
@@ -1600,7 +1619,7 @@ undefined;
 })();
 function ρσ_set_wrap(x) {
     var ans;
-    ans = new ρσ_set;
+    ans = new (ρσ_set?.__call__?.bind(ρσ_set) ?? ρσ_set);
     ans.jsset = x;
     return ans;
 };
@@ -1620,7 +1639,7 @@ undefined;
 ρσ_dict_polyfill.prototype.set = (function() {
     var ρσ_anonfunc = function (x, value) {
         var key;
-        key = ρσ_set_keyfor(x);
+        key = (ρσ_set_keyfor?.__call__?.bind(ρσ_set_keyfor) ?? ρσ_set_keyfor)(x);
         if (!Object.prototype.hasOwnProperty.call(this._store, key)) {
             this.size += 1;
         }
@@ -1645,7 +1664,7 @@ undefined;
 ρσ_dict_polyfill.prototype.delete = (function() {
     var ρσ_anonfunc = function (x) {
         var key;
-        key = ρσ_set_keyfor(x);
+        key = (ρσ_set_keyfor?.__call__?.bind(ρσ_set_keyfor) ?? ρσ_set_keyfor)(x);
         if (Object.prototype.hasOwnProperty.call(this._store, key)) {
             this.size -= 1;
             delete this._store[key];
@@ -1660,7 +1679,7 @@ undefined;
 })();
 ρσ_dict_polyfill.prototype.has = (function() {
     var ρσ_anonfunc = function (x) {
-        return Object.prototype.hasOwnProperty.call(this._store, ρσ_set_keyfor(x));
+        return Object.prototype.hasOwnProperty.call(this._store, (ρσ_set_keyfor?.__call__?.bind(ρσ_set_keyfor) ?? ρσ_set_keyfor)(x));
     };
 ρσ_anonfunc.__argnames__ = ["x"];
 ρσ_anonfunc.__module__ = "__main__";
@@ -1670,7 +1689,7 @@ undefined;
 ρσ_dict_polyfill.prototype.get = (function() {
     var ρσ_anonfunc = function (x) {
         try {
-            return (ρσ_expr_temp = this._store)[ρσ_bound_index(ρσ_set_keyfor(x), ρσ_expr_temp)][1];
+            return (ρσ_expr_temp = this._store)[ρσ_bound_index((ρσ_set_keyfor?.__call__?.bind(ρσ_set_keyfor) ?? ρσ_set_keyfor)(x), ρσ_expr_temp)][1];
         } catch (ρσ_Exception) {
             ρσ_last_exception = ρσ_Exception;
             if (ρσ_Exception instanceof TypeError) {
@@ -1788,14 +1807,14 @@ function ρσ_dict() {
     var kw = arguments[arguments.length-1];
     if (kw === null || typeof kw !== "object" || kw [ρσ_kwargs_symbol] !== true) kw = {};
     if (this instanceof ρσ_dict) {
-        this.jsmap = new ρσ_dict_implementation;
+        this.jsmap = new (ρσ_dict_implementation?.__call__?.bind(ρσ_dict_implementation) ?? ρσ_dict_implementation);
         if (iterable !== undefined) {
             this.update(iterable);
         }
         this.update(kw);
         return this;
     } else {
-        return ρσ_interpolate_kwargs_constructor.call(Object.create(ρσ_dict.prototype), false, ρσ_dict, [iterable].concat([ρσ_desugar_kwargs(kw)]));
+        return ρσ_interpolate_kwargs_constructor.call(Object.create(ρσ_dict.prototype), false, (ρσ_dict?.__call__?.bind(ρσ_dict) ?? ρσ_dict), [iterable].concat([ρσ_desugar_kwargs(kw)]));
     }
 };
 ρσ_dict.__handles_kwarg_interpolation__ = true;
@@ -1864,7 +1883,7 @@ undefined;
 })();
 ρσ_dict.prototype.copy = (function() {
     var ρσ_anonfunc = function () {
-        return ρσ_dict(this);
+        return (ρσ_dict?.__call__?.bind(ρσ_dict) ?? ρσ_dict)(this);
     };
 ρσ_anonfunc.__module__ = "__main__";
 undefined;
@@ -1907,7 +1926,7 @@ undefined;
         var ans;
         ans = this.jsmap.get(key);
         if (ans === undefined && !this.jsmap.has(key)) {
-            throw new KeyError(ρσ_operator_add(key, ""));
+            throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)(ρσ_operator_add(key, ""));
         }
         return ans;
     };
@@ -1955,8 +1974,8 @@ undefined;
             value = ρσ_kwargs_obj.value;
         }
         var ans, iterator, r;
-        ans = ρσ_dict();
-        iterator = iter(iterable);
+        ans = (ρσ_dict?.__call__?.bind(ρσ_dict) ?? ρσ_dict)();
+        iterator = (iter?.__call__?.bind(iter) ?? iter)(iterable);
         r = iterator.next();
         while (!r.done) {
             ans.set(r.value, value);
@@ -1977,7 +1996,7 @@ undefined;
         ans = this.jsmap.get(key);
         if (ans === undefined && !this.jsmap.has(key)) {
             if (defval === undefined) {
-                throw new KeyError(key);
+                throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)(key);
             }
             return defval;
         }
@@ -1994,7 +2013,7 @@ undefined;
         var r;
         r = this.jsmap.entries().next();
         if (r.done) {
-            throw new KeyError("dict is empty");
+            throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)("dict is empty");
         }
         this.jsmap.delete(r.value[0]);
         return r.value;
@@ -2059,7 +2078,7 @@ undefined;
         iterator = this.jsmap.entries();
         r = iterator.next();
         while (!r.done) {
-            entries.push(ρσ_operator_add(ρσ_operator_add(ρσ_repr(r.value[0]), ": "), ρσ_repr(r.value[1])));
+            entries.push(ρσ_operator_add(ρσ_operator_add((ρσ_repr?.__call__?.bind(ρσ_repr) ?? ρσ_repr)(r.value[0]), ": "), (ρσ_repr?.__call__?.bind(ρσ_repr) ?? ρσ_repr)(r.value[1])));
             r = iterator.next();
         }
         return ρσ_operator_add(ρσ_operator_add("{", entries.join(", ")), "}");
@@ -2115,7 +2134,7 @@ undefined;
 })();
 function ρσ_dict_wrap(x) {
     var ans;
-    ans = new ρσ_dict;
+    ans = new (ρσ_dict?.__call__?.bind(ρσ_dict) ?? ρσ_dict);
     ans.jsmap = x;
     return ans;
 };
@@ -2134,7 +2153,7 @@ function Exception() {
 Exception.prototype.__init__ = function __init__(message) {
     var self = this;
     self.message = message;
-    self.stack = (new Error).stack;
+    self.stack = (new (Error?.__call__?.bind(Error) ?? Error)).stack;
     self.name = self.constructor.name;
 };
 Exception.prototype.__init__.__argnames__ = ["message"];
@@ -2379,7 +2398,7 @@ function ρσ_flatten(arr) {
     for (var i=0; i < arr.length; i++) {
         value = arr[(typeof i === "number" && i < 0) ? arr.length + i : i];
         if (Array.isArray(value)) {
-            ans = ans.concat(ρσ_flatten(value));
+            ans = ans.concat((ρσ_flatten?.__call__?.bind(ρσ_flatten) ?? ρσ_flatten)(value));
         } else {
             ans.push(value);
         }
@@ -2392,7 +2411,7 @@ undefined;
 
 function ρσ_unpack_asarray(num, iterable) {
     var ans, iterator, result;
-    if (ρσ_arraylike(iterable)) {
+    if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(iterable)) {
         return iterable;
     }
     ans = [];
@@ -2432,7 +2451,7 @@ undefined;
                     if (arr instanceof Map || arr instanceof Set) {
                         return arr.has(val);
                     }
-                    if (ρσ_arraylike(arr)) {
+                    if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(arr)) {
                         return ρσ_list_contains.call(arr, val);
                     }
                     return Object.prototype.hasOwnProperty.call(arr, val);
@@ -2451,7 +2470,7 @@ undefined;
                 if (typeof arr.__contains__ === "function") {
                     return arr.__contains__(val);
                 }
-                if (ρσ_arraylike(arr)) {
+                if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(arr)) {
                     return ρσ_list_contains.call(arr, val);
                 }
                 return Object.prototype.hasOwnProperty.call(arr, val);
@@ -2468,7 +2487,7 @@ undefined;
 })()();
 function ρσ_Iterable(iterable) {
     var iterator, ans, result;
-    if (ρσ_arraylike(iterable)) {
+    if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(iterable)) {
         return iterable;
     }
     if (typeof iterable[ρσ_iterator_symbol] === "function") {
@@ -2535,7 +2554,7 @@ function ρσ_interpolate_kwargs(f, supplied_args) {
     has_prop = Object.prototype.hasOwnProperty;
     kwobj = supplied_args.pop();
     if (f.__handles_kwarg_interpolation__) {
-        args = new Array(ρσ_operator_add(Math.max(supplied_args.length, f.__argnames__.length), 1));
+        args = new (Array?.__call__?.bind(Array) ?? Array)(ρσ_operator_add(Math.max(supplied_args.length, f.__argnames__.length), 1));
         args[args.length-1] = kwobj;
         for (var i = 0; i < args.length - 1; i++) {
             if (i < f.__argnames__.length) {
@@ -2806,7 +2825,7 @@ undefined;
         return iterable.reduce(add, start);
     }
     ans = start;
-    iterator = iter(iterable);
+    iterator = (iter?.__call__?.bind(iter) ?? iter)(iterable);
     r = iterator.next();
     while (!r.done) {
         ans += r.value;
@@ -2822,11 +2841,11 @@ undefined;
 
 function map() {
     var iterators, func, args, ans;
-    iterators = new Array(ρσ_operator_sub(arguments.length, 1));
+    iterators = new (Array?.__call__?.bind(Array) ?? Array)(ρσ_operator_sub(arguments.length, 1));
     func = arguments[0];
-    args = new Array(ρσ_operator_sub(arguments.length, 1));
+    args = new (Array?.__call__?.bind(Array) ?? Array)(ρσ_operator_sub(arguments.length, 1));
     for (var i = 1; i < arguments.length; i++) {
-        iterators[ρσ_bound_index(ρσ_operator_sub(i, 1), iterators)] = iter(arguments[(typeof i === "number" && i < 0) ? arguments.length + i : i]);
+        iterators[ρσ_bound_index(ρσ_operator_sub(i, 1), iterators)] = (iter?.__call__?.bind(iter) ?? iter)(arguments[(typeof i === "number" && i < 0) ? arguments.length + i : i]);
     }
     ans = {'_func':func, '_iterators':iterators, '_args':args};
     ans[ρσ_iterator_symbol] = (function() {
@@ -2894,9 +2913,9 @@ undefined;
 
 function zip() {
     var iterators, ans;
-    iterators = new Array(arguments.length);
+    iterators = new (Array?.__call__?.bind(Array) ?? Array)(arguments.length);
     for (var i = 0; i < arguments.length; i++) {
-        iterators[(typeof i === "number" && i < 0) ? iterators.length + i : i] = iter(arguments[(typeof i === "number" && i < 0) ? arguments.length + i : i]);
+        iterators[(typeof i === "number" && i < 0) ? iterators.length + i : i] = (iter?.__call__?.bind(iter) ?? iter)(arguments[(typeof i === "number" && i < 0) ? arguments.length + i : i]);
     }
     ans = {'_iterators':iterators};
     ans[ρσ_iterator_symbol] = (function() {
@@ -2910,7 +2929,7 @@ undefined;
     ans["next"] = (function() {
         var ρσ_anonfunc = function () {
             var args, r;
-            args = new Array(this._iterators.length);
+            args = new (Array?.__call__?.bind(Array) ?? Array)(this._iterators.length);
             for (var i = 0; i < this._iterators.length; i++) {
                 r = (ρσ_expr_temp = this._iterators)[(typeof i === "number" && i < 0) ? ρσ_expr_temp.length + i : i].next();
                 if (r.done) {
@@ -2969,13 +2988,13 @@ function ρσ_repr_js_builtin(x, as_array) {
     if (as_array) {
         b = "[]";
         for (var i = 0; i < x.length; i++) {
-            ans.push(ρσ_repr(x[(typeof i === "number" && i < 0) ? x.length + i : i]));
+            ans.push((ρσ_repr?.__call__?.bind(ρσ_repr) ?? ρσ_repr)(x[(typeof i === "number" && i < 0) ? x.length + i : i]));
         }
     } else {
         keys = Object.keys(x);
         for (var k = 0; k < keys.length; k++) {
             key = keys[(typeof k === "number" && k < 0) ? keys.length + k : k];
-            ans.push(ρσ_operator_add(ρσ_operator_add(ρσ_repr(key), ": "), ρσ_repr(x[(typeof key === "number" && key < 0) ? x.length + key : key])));
+            ans.push(ρσ_operator_add(ρσ_operator_add((ρσ_repr?.__call__?.bind(ρσ_repr) ?? ρσ_repr)(key), ": "), (ρσ_repr?.__call__?.bind(ρσ_repr) ?? ρσ_repr)(x[(typeof key === "number" && key < 0) ? x.length + key : key])));
         }
     }
     return ρσ_operator_add(ρσ_operator_add(b[0], ans.join(", ")), b[1]);
@@ -3022,13 +3041,13 @@ function ρσ_repr(x) {
     } else if (x === true || x === false) {
         ans = (x) ? "True" : "False";
     } else if (Array.isArray(x)) {
-        ans = ρσ_repr_js_builtin(x, true);
+        ans = (ρσ_repr_js_builtin?.__call__?.bind(ρσ_repr_js_builtin) ?? ρσ_repr_js_builtin)(x, true);
     } else if (typeof x === "string") {
         ans = ρσ_operator_add(ρσ_operator_add("'", x), "'");
     } else if (typeof x === "function") {
         ans = x.toString();
     } else if (typeof x === "object" && !x.toString) {
-        ans = ρσ_repr_js_builtin(x);
+        ans = (ρσ_repr_js_builtin?.__call__?.bind(ρσ_repr_js_builtin) ?? ρσ_repr_js_builtin)(x);
     } else {
         name = Object.prototype.toString.call(x).slice(8, -1);
         if (ρσ_not_equals("Int8Array Uint8Array Uint8ClampedArray Int16Array Uint16Array Int32Array Uint32Array Float32Array Float64Array".indexOf(name), -1)) {
@@ -3043,12 +3062,12 @@ undefined;
             })()).join(", ")), "])");
         }
         if (typeof HTMLElement !== "undefined" && x instanceof HTMLElement) {
-            ans = ρσ_html_element_to_string(x);
+            ans = (ρσ_html_element_to_string?.__call__?.bind(ρσ_html_element_to_string) ?? ρσ_html_element_to_string)(x);
         } else {
             ans = (typeof x.toString === "function") ? x.toString() : x;
         }
         if (ans === "[object Object]") {
-            return ρσ_repr_js_builtin(x);
+            return (ρσ_repr_js_builtin?.__call__?.bind(ρσ_repr_js_builtin) ?? ρσ_repr_js_builtin)(x);
         }
         try {
             ans = JSON.stringify(x);
@@ -3080,7 +3099,7 @@ function ρσ_str(x) {
     } else if (x === true || x === false) {
         ans = (x) ? "True" : "False";
     } else if (Array.isArray(x)) {
-        ans = ρσ_repr_js_builtin(x, true);
+        ans = (ρσ_repr_js_builtin?.__call__?.bind(ρσ_repr_js_builtin) ?? ρσ_repr_js_builtin)(x, true);
     } else if (typeof x.toString === "function") {
         name = Object.prototype.toString.call(x).slice(8, -1);
         if (ρσ_not_equals("Int8Array Uint8Array Uint8ClampedArray Int16Array Uint16Array Int32Array Uint32Array Float32Array Float64Array".indexOf(name), -1)) {
@@ -3095,15 +3114,15 @@ undefined;
             })()).join(", ")), "])");
         }
         if (typeof HTMLElement !== "undefined" && x instanceof HTMLElement) {
-            ans = ρσ_html_element_to_string(x);
+            ans = (ρσ_html_element_to_string?.__call__?.bind(ρσ_html_element_to_string) ?? ρσ_html_element_to_string)(x);
         } else {
             ans = x.toString();
         }
         if (ans === "[object Object]") {
-            ans = ρσ_repr_js_builtin(x);
+            ans = (ρσ_repr_js_builtin?.__call__?.bind(ρσ_repr_js_builtin) ?? ρσ_repr_js_builtin)(x);
         }
     } else if (typeof x === "object" && !x.toString) {
-        ans = ρσ_repr_js_builtin(x);
+        ans = (ρσ_repr_js_builtin?.__call__?.bind(ρσ_repr_js_builtin) ?? ρσ_repr_js_builtin)(x);
     }
     return ρσ_operator_add(ans, "");
 };
@@ -3128,12 +3147,12 @@ undefined;
 ρσ_unpack = [String.prototype.split.call.bind(String.prototype.split), String.prototype.replace.call.bind(String.prototype.replace)];
 ρσ_orig_split = ρσ_unpack[0];
 ρσ_orig_replace = ρσ_unpack[1];
-define_str_func("format", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("format", (function() {
     var ρσ_anonfunc = function () {
         var template, args, kwargs, explicit, implicit, idx, split, ans, pos, in_brace, markup, ch;
         template = this;
         if (template === undefined) {
-            throw new TypeError("Template is required");
+            throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("Template is required");
         }
         args = Array.prototype.slice.call(arguments);
         kwargs = {};
@@ -3155,13 +3174,13 @@ define_str_func("format", (function() {
             ρσ_unpack = [arg[0], arg.slice(1)];
             first = ρσ_unpack[0];
             arg = ρσ_unpack[1];
-            key = split(arg, ρσ_str.format._template_resolve_pat, 1)[0];
+            key = (split?.__call__?.bind(split) ?? split)(arg, ρσ_str.format._template_resolve_pat, 1)[0];
             rest = arg.slice(key.length);
-            ans = (first === "[") ? object[ρσ_bound_index(key.slice(0, -1), object)] : getattr(object, key);
+            ans = (first === "[") ? object[ρσ_bound_index(key.slice(0, -1), object)] : (getattr?.__call__?.bind(getattr) ?? getattr)(object, key);
             if (ans === undefined) {
-                throw new KeyError((first === "[") ? key.slice(0, -1) : key);
+                throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)((first === "[") ? key.slice(0, -1) : key);
             }
-            return resolve(rest, ans);
+            return (resolve?.__call__?.bind(resolve) ?? resolve)(rest, ans);
         };
 resolve.__argnames__ = ["arg", "object"];
 resolve.__module__ = "__main__";
@@ -3203,7 +3222,7 @@ undefined;
 
         function safe_comma(value, comma) {
             try {
-                return set_comma(value.toLocaleString(undefined, {useGrouping: true}), comma);
+                return (set_comma?.__call__?.bind(set_comma) ?? set_comma)(value.toLocaleString(undefined, {useGrouping: true}), comma);
             } catch (ρσ_Exception) {
                 ρσ_last_exception = ρσ_Exception;
                 {
@@ -3220,7 +3239,7 @@ undefined;
                 return value.toFixed(precision);
             }
             try {
-                return set_comma(value.toLocaleString(undefined, {useGrouping: true, minimumFractionDigits: precision, maximumFractionDigits: precision}), comma);
+                return (set_comma?.__call__?.bind(set_comma) ?? set_comma)(value.toLocaleString(undefined, {useGrouping: true, minimumFractionDigits: precision, maximumFractionDigits: precision}), comma);
             } catch (ρσ_Exception) {
                 ρσ_last_exception = ρσ_Exception;
                 {
@@ -3235,7 +3254,7 @@ undefined;
         function apply_formatting(value, format_spec) {
             var ρσ_unpack, fill, align, sign, fhash, zeropad, width, comma, precision, ftype, is_numeric, is_int, lftype, code, prec, exp, nval, is_positive, left, right;
             if (format_spec.indexOf("{") !== -1) {
-                format_spec = resolve_format_spec(format_spec);
+                format_spec = (resolve_format_spec?.__call__?.bind(resolve_format_spec) ?? resolve_format_spec)(format_spec);
             }
             if (ρσ_str.format._template_format_pat === undefined) {
                 ρσ_str.format._template_format_pat = /([^{}](?=[<>=^]))?([<>=^])?([-+\x20])?(\#)?(0)?(\d+)?([,_])?(?:\.(\d+))?([bcdeEfFgGnosxX%])?/;
@@ -3269,22 +3288,22 @@ undefined;
             }
             is_numeric = Number(value) === value;
             is_int = is_numeric && value % 1 === 0;
-            precision = parseInt(precision, 10);
+            precision = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(precision, 10);
             lftype = (ftype || "").toLowerCase();
             if (ftype === "n") {
                 is_numeric = true;
                 if (is_int) {
                     if (comma) {
-                        throw new ValueError("Cannot specify ',' with 'n'");
+                        throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("Cannot specify ',' with 'n'");
                     }
-                    value = parseInt(value, 10).toLocaleString();
+                    value = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(value, 10).toLocaleString();
                 } else {
-                    value = parseFloat(value).toLocaleString();
+                    value = (parseFloat?.__call__?.bind(parseFloat) ?? parseFloat)(value).toLocaleString();
                 }
             } else if (['b', 'c', 'd', 'o', 'x'].indexOf(lftype) !== -1) {
-                value = parseInt(value, 10);
+                value = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(value, 10);
                 is_numeric = true;
-                if (!isNaN(value)) {
+                if (!(isNaN?.__call__?.bind(isNaN) ?? isNaN)(value)) {
                     if (ftype === "b") {
                         value = (value >>> 0).toString(2);
                         if (fhash) {
@@ -3299,7 +3318,7 @@ undefined;
                         }
                     } else if (ftype === "d") {
                         if (comma) {
-                            value = safe_comma(value, comma);
+                            value = (safe_comma?.__call__?.bind(safe_comma) ?? safe_comma)(value, comma);
                         } else {
                             value = value.toString(10);
                         }
@@ -3318,22 +3337,22 @@ undefined;
                 }
             } else if (['e','f','g','%'].indexOf(lftype) !== -1) {
                 is_numeric = true;
-                value = parseFloat(value);
-                prec = (isNaN(precision)) ? 6 : precision;
+                value = (parseFloat?.__call__?.bind(parseFloat) ?? parseFloat)(value);
+                prec = ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(precision)) ? 6 : precision;
                 if (lftype === "e") {
                     value = value.toExponential(prec);
                     value = (ftype === "E") ? value.toUpperCase() : value.toLowerCase();
                 } else if (lftype === "f") {
-                    value = safe_fixed(value, prec, comma);
+                    value = (safe_fixed?.__call__?.bind(safe_fixed) ?? safe_fixed)(value, prec, comma);
                     value = (ftype === "F") ? value.toUpperCase() : value.toLowerCase();
                 } else if (lftype === "%") {
                     value *= 100;
-                    value = ρσ_operator_add(safe_fixed(value, prec, comma), "%");
+                    value = ρσ_operator_add((safe_fixed?.__call__?.bind(safe_fixed) ?? safe_fixed)(value, prec, comma), "%");
                 } else if (lftype === "g") {
-                    prec = max(1, prec);
-                    exp = parseInt(split(value.toExponential(ρσ_operator_sub(prec, 1)).toLowerCase(), "e")[1], 10);
+                    prec = (max?.__call__?.bind(max) ?? max)(1, prec);
+                    exp = (parseInt?.__call__?.bind(parseInt) ?? parseInt)((split?.__call__?.bind(split) ?? split)(value.toExponential(ρσ_operator_sub(prec, 1)).toLowerCase(), "e")[1], 10);
                     if (-4 <= exp && exp < prec) {
-                        value = safe_fixed(value, ρσ_operator_sub(ρσ_operator_sub(prec, 1), exp), comma);
+                        value = (safe_fixed?.__call__?.bind(safe_fixed) ?? safe_fixed)(value, ρσ_operator_sub(ρσ_operator_sub(prec, 1), exp), comma);
                     } else {
                         value = value.toExponential(ρσ_operator_sub(prec, 1));
                     }
@@ -3347,21 +3366,21 @@ undefined;
                 }
             } else {
                 if (comma) {
-                    value = parseInt(value, 10);
-                    if (isNaN(value)) {
-                        throw new ValueError("Must use numbers with , or _");
+                    value = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(value, 10);
+                    if ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(value)) {
+                        throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("Must use numbers with , or _");
                     }
-                    value = safe_comma(value, comma);
+                    value = (safe_comma?.__call__?.bind(safe_comma) ?? safe_comma)(value, comma);
                 }
                 value += "";
-                if (!isNaN(precision)) {
+                if (!(isNaN?.__call__?.bind(isNaN) ?? isNaN)(precision)) {
                     value = value.slice(0, precision);
                 }
             }
             value += "";
             if (is_numeric && sign) {
                 nval = Number(value);
-                is_positive = !isNaN(nval) && nval >= 0;
+                is_positive = !(isNaN?.__call__?.bind(isNaN) ?? isNaN)(nval) && nval >= 0;
                 if (is_positive && (sign === " " || sign === "+")) {
                     value = ρσ_operator_add(sign, value);
                 }
@@ -3379,27 +3398,27 @@ undefined;
                 fill = ρσ_unpack[0];
                 align = ρσ_unpack[1];
             }
-            width = parseInt(width || "-1", 10);
-            if (isNaN(width)) {
-                throw new ValueError(ρσ_operator_add("Invalid width specification: ", width));
+            width = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(width || "-1", 10);
+            if ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(width)) {
+                throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add("Invalid width specification: ", width));
             }
             if (fill && value.length < width) {
                 if (align === "<") {
-                    value = ρσ_operator_add(value, repeat(fill, ρσ_operator_sub(width, value.length)));
+                    value = ρσ_operator_add(value, (repeat?.__call__?.bind(repeat) ?? repeat)(fill, ρσ_operator_sub(width, value.length)));
                 } else if (align === ">") {
-                    value = ρσ_operator_add(repeat(fill, ρσ_operator_sub(width, value.length)), value);
+                    value = ρσ_operator_add((repeat?.__call__?.bind(repeat) ?? repeat)(fill, ρσ_operator_sub(width, value.length)), value);
                 } else if (align === "^") {
                     left = ρσ_operator_floordiv((ρσ_operator_sub(width, value.length)), 2);
                     right = ρσ_operator_sub(ρσ_operator_sub(width, left), value.length);
-                    value = ρσ_operator_add(ρσ_operator_add(repeat(fill, left), value), repeat(fill, right));
+                    value = ρσ_operator_add(ρσ_operator_add((repeat?.__call__?.bind(repeat) ?? repeat)(fill, left), value), (repeat?.__call__?.bind(repeat) ?? repeat)(fill, right));
                 } else if (align === "=") {
                     if (ρσ_in(value[0], "+- ")) {
-                        value = ρσ_operator_add(ρσ_operator_add(value[0], repeat(fill, ρσ_operator_sub(width, value.length))), value.slice(1));
+                        value = ρσ_operator_add(ρσ_operator_add(value[0], (repeat?.__call__?.bind(repeat) ?? repeat)(fill, ρσ_operator_sub(width, value.length))), value.slice(1));
                     } else {
-                        value = ρσ_operator_add(repeat(fill, ρσ_operator_sub(width, value.length)), value);
+                        value = ρσ_operator_add((repeat?.__call__?.bind(repeat) ?? repeat)(fill, ρσ_operator_sub(width, value.length)), value);
                     }
                 } else {
-                    throw new ValueError(ρσ_operator_add("Unrecognized alignment: ", align));
+                    throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add("Unrecognized alignment: ", align));
                 }
             }
             return value;
@@ -3442,50 +3461,50 @@ undefined;
 
         function render_markup(markup) {
             var ρσ_unpack, key, transformer, format_spec, ends_with_equal, lkey, nvalue, object, ans;
-            ρσ_unpack = parse_markup(markup);
+            ρσ_unpack = (parse_markup?.__call__?.bind(parse_markup) ?? parse_markup)(markup);
 ρσ_unpack = ρσ_unpack_asarray(3, ρσ_unpack);
             key = ρσ_unpack[0];
             transformer = ρσ_unpack[1];
             format_spec = ρσ_unpack[2];
             if (transformer && ['a', 'r', 's'].indexOf(transformer) === -1) {
-                throw new ValueError(ρσ_operator_add("Unknown conversion specifier: ", transformer));
+                throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add("Unknown conversion specifier: ", transformer));
             }
             ends_with_equal = key.endsWith("=");
             if (ends_with_equal) {
                 key = key.slice(0, -1);
             }
-            lkey = key.length && split(key, /[.\[]/, 1)[0];
+            lkey = key.length && (split?.__call__?.bind(split) ?? split)(key, /[.\[]/, 1)[0];
             if (lkey) {
                 explicit = true;
                 if (implicit) {
-                    throw new ValueError("cannot switch from automatic field numbering to manual field specification");
+                    throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("cannot switch from automatic field numbering to manual field specification");
                 }
-                nvalue = parseInt(lkey);
-                object = (isNaN(nvalue)) ? kwargs[(typeof lkey === "number" && lkey < 0) ? kwargs.length + lkey : lkey] : args[(typeof nvalue === "number" && nvalue < 0) ? args.length + nvalue : nvalue];
+                nvalue = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(lkey);
+                object = ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(nvalue)) ? kwargs[(typeof lkey === "number" && lkey < 0) ? kwargs.length + lkey : lkey] : args[(typeof nvalue === "number" && nvalue < 0) ? args.length + nvalue : nvalue];
                 if (object === undefined) {
-                    if (isNaN(nvalue)) {
-                        throw new KeyError(lkey);
+                    if ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(nvalue)) {
+                        throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)(lkey);
                     }
-                    throw new IndexError(lkey);
+                    throw new (IndexError?.__call__?.bind(IndexError) ?? IndexError)(lkey);
                 }
-                object = resolve(key.slice(lkey.length), object);
+                object = (resolve?.__call__?.bind(resolve) ?? resolve)(key.slice(lkey.length), object);
             } else {
                 implicit = true;
                 if (explicit) {
-                    throw new ValueError("cannot switch from manual field specification to automatic field numbering");
+                    throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("cannot switch from manual field specification to automatic field numbering");
                 }
                 if (idx >= args.length) {
-                    throw new IndexError(ρσ_operator_add("Not enough arguments to match template: ", template));
+                    throw new (IndexError?.__call__?.bind(IndexError) ?? IndexError)(ρσ_operator_add("Not enough arguments to match template: ", template));
                 }
                 object = args[(typeof idx === "number" && idx < 0) ? args.length + idx : idx];
                 idx += 1;
             }
             if (typeof object === "function") {
-                object = object();
+                object = (object?.__call__?.bind(object) ?? object)();
             }
             ans = ρσ_operator_add("", object);
             if (format_spec) {
-                ans = apply_formatting(ans, format_spec);
+                ans = (apply_formatting?.__call__?.bind(apply_formatting) ?? apply_formatting)(ans, format_spec);
             }
             if (ends_with_equal) {
                 ans = ρσ_operator_add(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("", ρσ_str.format("{}", key)), "="), ρσ_str.format("{}", ans)), "");
@@ -3511,7 +3530,7 @@ undefined;
                     if (in_brace > 0) {
                         markup += "}";
                     } else {
-                        ans += render_markup(markup);
+                        ans += (render_markup?.__call__?.bind(render_markup) ?? render_markup)(markup);
                     }
                 } else {
                     markup += ch;
@@ -3535,7 +3554,7 @@ undefined;
             pos += 1;
         }
         if (in_brace) {
-            throw new ValueError("expected '}' before end of string");
+            throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("expected '}' before end of string");
         }
         return ans;
     };
@@ -3543,7 +3562,7 @@ undefined;
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("capitalize", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("capitalize", (function() {
     var ρσ_anonfunc = function () {
         var string;
         string = this;
@@ -3556,7 +3575,7 @@ define_str_func("capitalize", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("center", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("center", (function() {
     var ρσ_anonfunc = function (width, fill) {
         var left, right;
         left = ρσ_operator_floordiv((ρσ_operator_sub(width, this.length)), 2);
@@ -3569,7 +3588,7 @@ define_str_func("center", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("count", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("count", (function() {
     var ρσ_anonfunc = function (needle, start, end) {
         var string, ρσ_unpack, pos, step, ans;
         string = this;
@@ -3601,7 +3620,7 @@ define_str_func("count", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("endswith", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("endswith", (function() {
     var ρσ_anonfunc = function (suffixes, start, end) {
         var string, q;
         string = this;
@@ -3625,7 +3644,7 @@ define_str_func("endswith", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("startswith", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("startswith", (function() {
     var ρσ_anonfunc = function (prefixes, start, end) {
         var prefix;
         start = start || 0;
@@ -3646,7 +3665,7 @@ define_str_func("startswith", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("find", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("find", (function() {
     var ρσ_anonfunc = function (needle, start, end) {
         var ans;
         while (start < 0) {
@@ -3668,7 +3687,7 @@ define_str_func("find", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("rfind", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("rfind", (function() {
     var ρσ_anonfunc = function (needle, start, end) {
         var ans;
         while (end < 0) {
@@ -3690,12 +3709,12 @@ define_str_func("rfind", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("index", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("index", (function() {
     var ρσ_anonfunc = function (needle, start, end) {
         var ans;
         ans = ρσ_str.prototype.find.apply(this, arguments);
         if (ans === -1) {
-            throw new ValueError("substring not found");
+            throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("substring not found");
         }
         return ans;
     };
@@ -3704,12 +3723,12 @@ define_str_func("index", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("rindex", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("rindex", (function() {
     var ρσ_anonfunc = function (needle, start, end) {
         var ans;
         ans = ρσ_str.prototype.rfind.apply(this, arguments);
         if (ans === -1) {
-            throw new ValueError("substring not found");
+            throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("substring not found");
         }
         return ans;
     };
@@ -3718,7 +3737,7 @@ define_str_func("rindex", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("islower", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("islower", (function() {
     var ρσ_anonfunc = function () {
         return this.length > 0 && this.toLowerCase() === this.toString();
     };
@@ -3726,7 +3745,7 @@ define_str_func("islower", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("isupper", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("isupper", (function() {
     var ρσ_anonfunc = function () {
         return this.length > 0 && this.toUpperCase() === this.toString();
     };
@@ -3734,7 +3753,7 @@ define_str_func("isupper", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("isspace", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("isspace", (function() {
     var ρσ_anonfunc = function () {
         return this.length > 0 && /^\s+$/.test(this);
     };
@@ -3742,7 +3761,7 @@ define_str_func("isspace", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("join", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("join", (function() {
     var ρσ_anonfunc = function (iterable) {
         var ans, r;
         if (Array.isArray(iterable)) {
@@ -3764,7 +3783,7 @@ define_str_func("join", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("ljust", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("ljust", (function() {
     var ρσ_anonfunc = function (width, fill) {
         var string;
         string = this;
@@ -3779,7 +3798,7 @@ define_str_func("ljust", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("rjust", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("rjust", (function() {
     var ρσ_anonfunc = function (width, fill) {
         var string;
         string = this;
@@ -3794,7 +3813,7 @@ define_str_func("rjust", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("lower", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("lower", (function() {
     var ρσ_anonfunc = function () {
         return this.toLowerCase();
     };
@@ -3802,7 +3821,7 @@ define_str_func("lower", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("upper", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("upper", (function() {
     var ρσ_anonfunc = function () {
         return this.toUpperCase();
     };
@@ -3810,7 +3829,7 @@ define_str_func("upper", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("lstrip", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("lstrip", (function() {
     var ρσ_anonfunc = function (chars) {
         var string, pos;
         string = this;
@@ -3829,7 +3848,7 @@ define_str_func("lstrip", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("rstrip", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("rstrip", (function() {
     var ρσ_anonfunc = function (chars) {
         var string, pos;
         string = this;
@@ -3848,7 +3867,7 @@ define_str_func("rstrip", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("strip", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("strip", (function() {
     var ρσ_anonfunc = function (chars) {
         return ρσ_str.prototype.lstrip.call(ρσ_str.prototype.rstrip.call(this, chars), chars);
     };
@@ -3857,7 +3876,7 @@ define_str_func("strip", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("partition", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("partition", (function() {
     var ρσ_anonfunc = function (sep) {
         var idx;
         idx = this.indexOf(sep);
@@ -3871,7 +3890,7 @@ define_str_func("partition", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("rpartition", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("rpartition", (function() {
     var ρσ_anonfunc = function (sep) {
         var idx;
         idx = this.lastIndexOf(sep);
@@ -3885,12 +3904,12 @@ define_str_func("rpartition", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("replace", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("replace", (function() {
     var ρσ_anonfunc = function (old, repl, count) {
         var string, pos, idx;
         string = this;
         if (count === 1) {
-            return ρσ_orig_replace(string, old, repl);
+            return (ρσ_orig_replace?.__call__?.bind(ρσ_orig_replace) ?? ρσ_orig_replace)(string, old, repl);
         }
         if (count < 1) {
             return string;
@@ -3913,7 +3932,7 @@ define_str_func("replace", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("split", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("split", (function() {
     var ρσ_anonfunc = function (sep, maxsplit) {
         var split, ans, extra, parts;
         if (maxsplit === 0) {
@@ -3922,7 +3941,7 @@ define_str_func("split", (function() {
         split = ρσ_orig_split;
         if (sep === undefined || sep === null) {
             if (maxsplit > 0) {
-                ans = split(this, /(\s+)/);
+                ans = (split?.__call__?.bind(split) ?? split)(this, /(\s+)/);
                 extra = "";
                 parts = [];
                 for (var i = 0; i < ans.length; i++) {
@@ -3935,27 +3954,27 @@ define_str_func("split", (function() {
                 parts[parts.length-1] += extra;
                 ans = parts;
             } else {
-                ans = split(this, /\s+/);
+                ans = (split?.__call__?.bind(split) ?? split)(this, /\s+/);
             }
         } else {
             if (sep === "") {
-                throw new ValueError("empty separator");
+                throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("empty separator");
             }
-            ans = split(this, sep);
+            ans = (split?.__call__?.bind(split) ?? split)(this, sep);
             if (maxsplit > 0 && ans.length > maxsplit) {
                 extra = ans.slice(maxsplit).join(sep);
                 ans = ans.slice(0, maxsplit);
                 ans.push(extra);
             }
         }
-        return ρσ_list_decorate(ans);
+        return (ρσ_list_decorate?.__call__?.bind(ρσ_list_decorate) ?? ρσ_list_decorate)(ans);
     };
 ρσ_anonfunc.__argnames__ = ["sep", "maxsplit"];
 ρσ_anonfunc.__module__ = "__main__";
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("rsplit", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("rsplit", (function() {
     var ρσ_anonfunc = function (sep, maxsplit) {
         var split, ans, is_space, pos, current, spc, ch, end, idx;
         if (!maxsplit) {
@@ -3989,11 +4008,11 @@ define_str_func("rsplit", (function() {
                 ans.push(ρσ_operator_add(this.slice(0, ρσ_operator_add(pos, 1)), current));
                 ans.reverse();
             } else {
-                ans = split(this, /\s+/);
+                ans = (split?.__call__?.bind(split) ?? split)(this, /\s+/);
             }
         } else {
             if (sep === "") {
-                throw new ValueError("empty separator");
+                throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("empty separator");
             }
             ans = [];
             pos = end = this.length;
@@ -4010,19 +4029,19 @@ define_str_func("rsplit", (function() {
             ans.push(this.slice(0, end));
             ans.reverse();
         }
-        return ρσ_list_decorate(ans);
+        return (ρσ_list_decorate?.__call__?.bind(ρσ_list_decorate) ?? ρσ_list_decorate)(ans);
     };
 ρσ_anonfunc.__argnames__ = ["sep", "maxsplit"];
 ρσ_anonfunc.__module__ = "__main__";
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("splitlines", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("splitlines", (function() {
     var ρσ_anonfunc = function (keepends) {
         var split, parts, ans;
         split = ρσ_orig_split;
         if (keepends) {
-            parts = split(this, /((?:\r?\n)|\r)/);
+            parts = (split?.__call__?.bind(split) ?? split)(this, /((?:\r?\n)|\r)/);
             ans = [];
             for (var i = 0; i < parts.length; i++) {
                 if (i % 2 === 0) {
@@ -4032,16 +4051,16 @@ define_str_func("splitlines", (function() {
                 }
             }
         } else {
-            ans = split(this, /(?:\r?\n)|\r/);
+            ans = (split?.__call__?.bind(split) ?? split)(this, /(?:\r?\n)|\r/);
         }
-        return ρσ_list_decorate(ans);
+        return (ρσ_list_decorate?.__call__?.bind(ρσ_list_decorate) ?? ρσ_list_decorate)(ans);
     };
 ρσ_anonfunc.__argnames__ = ["keepends"];
 ρσ_anonfunc.__module__ = "__main__";
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("swapcase", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("swapcase", (function() {
     var ρσ_anonfunc = function () {
         var ans, a, b;
         ans = new Array(this.length);
@@ -4059,7 +4078,7 @@ define_str_func("swapcase", (function() {
 undefined;
     return ρσ_anonfunc;
 })());
-define_str_func("zfill", (function() {
+(define_str_func?.__call__?.bind(define_str_func) ?? define_str_func)("zfill", (function() {
     var ρσ_anonfunc = function (width) {
         var string;
         string = this;

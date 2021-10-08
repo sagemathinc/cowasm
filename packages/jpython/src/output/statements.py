@@ -104,26 +104,36 @@ def display_complex_body(node, is_toplevel, output, function_preamble):
 
     display_body(node.body, is_toplevel, output)
 
+def display_lambda_body(node, output, function_preamble):
+    if function_preamble is not None:
+        function_preamble(node, output, 0)
+    output.indent()
+    output.print("return ")
+    node.body.print(output)
+    output.print(";")
+
 def print_bracketed(node, output, complex, function_preamble, before, after):
-    if node.body.length > 0:
-        output.with_block(def():
+    if node.body.length > 0 or node.is_lambda:
+        def f():
             if before:
                 before(output)
-            if complex:
+            if node.is_lambda:
+                display_lambda_body(node, output, function_preamble if complex else None)
+            elif complex:
                 display_complex_body(node, False, output, function_preamble)
             else:
                 display_body(node.body, False, output)
             if after:
                 after(output)
-        )
+        output.with_block(f)
     else:
         if before or after:
-            output.with_block(def():
+            def f():
                 if before:
                     before(output)
                 if after:
                     after(output)
-            )
+            output.with_block(f)
         else:
             output.print("{}")
 

@@ -563,7 +563,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
                 return class_()
             elif tmp_ is "def":
                 start = prev()
-                func = function_(S.in_class[-1], False)
+                func = function_(S.in_class[-1], False, False)
                 func.start = start
                 func.end = prev()
                 chain = subscripts(func, True)
@@ -1146,12 +1146,20 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
                 definition.statements.push(stmt)
         return definition
 
-    def function_(in_class, is_expression):
-        name = as_symbol(AST_SymbolDefun if in_class else AST_SymbolLambda
-                         ) if is_('name') else None
-        if in_class and not name:
-            croak('Cannot use anonymous function as class methods')
-        is_anonymous = not name
+    def function_(in_class, is_expression, is_lambda):
+        if is_lambda:
+            if in_class or not is_expression:
+                # Note: is_lambda implies is_expression and not in_class.
+                croak('Compiler bug -- lambda must be an expression and not in a class')
+            # Lambda functions are always anonymous.
+            is_anonymous = True
+            name = None
+        else:
+            name = as_symbol(AST_SymbolDefun if in_class else AST_SymbolLambda
+                             ) if is_('name') else None
+            if in_class and not name:
+                croak('Cannot use anonymous function as class methods')
+            is_anonymous = not name
 
         staticmethod = property_getter = property_setter = False
         if in_class:
@@ -1170,8 +1178,9 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
                     'bound_methods'):
                 S.classes[S.classes.length - 2][in_class].bound.push(name.name)
 
-        expect("(")
-        S.in_parenthesized_expr = True
+        if not is_lambda:
+            expect("(")
+            S.in_parenthesized_expr = True
         ctor = AST_Method if in_class else AST_Function
         return_annotation = None
         is_generator = r'%js []'
@@ -1202,7 +1211,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
                 name_ctx = S.input.context()
                 # check if we have an argument annotation
                 ntok = peek()
-                if ntok.type is 'punc' and ntok.value is ':':
+                if ntok.type is 'punc' and ntok.value is ':' and not is_lambda:
                     next()
                     expect(':')
                     annotation = maybe_conditional()
@@ -1241,12 +1250,13 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
                     next()
                     return sym
 
-            while not is_("punc", ")"):
+            end_punctuation = ':' if is_lambda else ')'
+            while not is_("punc", end_punctuation):
                 if first:
                     first = False
                 else:
                     expect(",")
-                    if is_('punc', ')'):
+                    if is_('punc', end_punctuation):
                         break
                 if is_('operator', '**'):
                     # **kwargs
@@ -1295,12 +1305,16 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
                             )
 
             next()
-            # check if we have a return type annotation
-            if is_("punc", "->"):
+
+            # Check if we have a return type annotation.
+            # Note: lambda does not allow for type annotation:
+            #    https://stackoverflow.com/questions/33833881/is-it-possible-to-type-hint-a-lambda-function
+            if not is_lambda and is_("punc", "->"):
                 next()
                 nonlocal return_annotation
                 return_annotation = maybe_conditional()
-            S.in_parenthesized_expr = False
+            if not is_lambda:
+                S.in_parenthesized_expr = False
             a.defaults = defaults
             a.is_simple_func = not a.starargs and not a.kwargs and not a.has_defaults
             return a
@@ -1320,7 +1334,10 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
             S.functions.push({})
             S.in_loop = 0
             S.labels = []
-            a = block_(docstrings)
+            if is_lambda:
+                a = expression(False, True)
+            else:
+                a = block_(docstrings)
             S.in_function -= 1
             S.scoped_flags.pop()
             is_generator.push(bool(S.functions.pop().is_generator))
@@ -1332,6 +1349,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
 
         args = {
             'name': name,
+            'is_lambda': is_lambda,
             'is_expression': is_expression,
             'is_anonymous': is_anonymous,
             'annotations':
@@ -1636,7 +1654,14 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
 
         if is_("keyword", "def"):
             next()
-            func = function_(False, True)
+            func = function_(False, True, False)
+            func.start = start
+            func.end = prev()
+            return subscripts(func, allow_calls)
+
+        if is_("keyword", "lambda"):
+            next()
+            func = function_(False, True, True)
             func.start = start
             func.end = prev()
             return subscripts(func, allow_calls)

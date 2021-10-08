@@ -275,6 +275,7 @@ def function_definition(self, output, strip_first, as_expression):
 
 def print_function(output):
     self = this
+
     if self.decorators and self.decorators.length:
         output.print("var")
         output.space()
@@ -427,6 +428,7 @@ def print_function_call(self, output):
                 if i:
                     output.comma()
                 a.print(output)
+
         if is_new:
             output.print('new'), output.space()
         print_function_name()
@@ -473,5 +475,3 @@ def print_function_call(self, output):
     output.print(')')
     if not is_repeatable:
         output.print(')')
-
-

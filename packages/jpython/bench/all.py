@@ -6,6 +6,8 @@ import p1list
 import nbody
 import uuid_
 import fib
+import lambda_
+import call
 
 from time import time
 from bench import all
