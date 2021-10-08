@@ -2,6 +2,10 @@
 
 ## Not Done
 
+[ ] put a file `a.js` in the current directory and do `require("./a.js")`; it doesn't work.  You need to give the exact path.  fix.   
+
+---
+
 [ ] One of brython benchmarks -- for creating a trivial class -- is an order of magnitude too slow. This is because of NOT using ES6 classes. Changing
 to that makes it **much** faster. This is very important for math. We're talking 100x speedup.
 
