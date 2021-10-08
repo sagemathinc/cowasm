@@ -7,7 +7,10 @@
 ---
 
 
-[x] implement `__call__` dunder method.  Actually NO -- I tried this and it's **just too slow.** The JIT just isn't good enough to deal with this.  In fact, this should help clarify our tradeoffs.  Similar remark about dealing with `new`.
+[ ] implement `__call__` dunder method.  Actually NO -- I tried this and it's **just too slow.** The JIT just isn't good enough to deal with this.  In fact, this should help clarify our tradeoffs.  Similar remark about dealing with `new`.
+  - Did implement the easy special case of `identifier(foo...)`.
+  - Actually, if I change the classes that jpython produces to be ES6 classes (which I plan to do), then https://www.npmjs.com/package/callable-instance provides a nice efficient solution.  Just generate a javascript class that is itself callable.  It will also work from Javascript (not just jpython).  It's efficient when in use, though surely making the callable object in the first place is slower, though for my application that is fine.  Also [this approach](https://stackoverflow.com/questions/19335983/can-you-make-an-object-callable) for old non-ES6.
+
 
 [ ] implement `__eq__`, `__ne__` dunder methods?
 

@@ -143,13 +143,13 @@ class ComplicatedCall:
 
 def test_complicated_call():
     C = ComplicatedCall()
-    v = C.__call__(10)
+    v = C(10)
     assert v[0] == 10
     # little awkward so test passes in pure python too
     assert len(v[1]) == 0
     assert v[2] == {}
 
-    v = C.__call__(10, 'y', z=2, xx='15')
+    v = C(10, 'y', z=2, xx='15')
     assert v[0] == 10
     assert v[1][0] == 'y'
     assert v[2] == {'z': 2, 'xx': '15'}
@@ -161,6 +161,8 @@ test_complicated_call()
 def test_attribute_call():
     R = IntegerModRing(10)
     z = {'R': R}
+    # We only implement __call__ in a special case
+    # that does NOT include this.  The lhs must be an identifier.
     assert z['R'].__call__(3) == Mod(3, 10)
 
 
