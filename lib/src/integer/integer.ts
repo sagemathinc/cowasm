@@ -12,7 +12,7 @@ export async function init(): Promise<void> {
 }
 init();
 
-class IntegerClass {
+export class IntegerClass {
   i: number;
 
   constructor(n: number | string | null, i?: number, base?: number) {

@@ -8,8 +8,8 @@ import * as factor from "./factor";
 export { factor };
 import * as arith from "./arith";
 export { arith };
-import Integer, { init as integerInit } from "./integer/integer";
-export { Integer };
+import { Integer, init as integerInit, ZZ } from "./integer";
+export { Integer, ZZ };
 //import * as pari from "./pari";
 //export { pari };
 
