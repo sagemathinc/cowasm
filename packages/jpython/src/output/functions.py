@@ -331,7 +331,7 @@ def print_function_call(self, output):
                 output.print('ρσ_expr_temp')
                 if is_node_type(self.expression, AST_Dot):
                     print_getattr(self.expression, output, True)
-            elif is_node_type(self.expression, AST_SymbolRef):
+            elif not is_new and is_node_type(self.expression, AST_SymbolRef):
                 # Easy special case where we can make the __call__
                 # operator work.  We are not doing the general case yet,
                 # which is difficult because of this binding.
