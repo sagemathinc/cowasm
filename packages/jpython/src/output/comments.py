@@ -29,17 +29,17 @@ def print_comments(self, output):
             # XXX: ugly fix for https://github.com/mishoo/RapydScript2/issues/112
             #      if this node is `return` or `throw`, we cannot allow comments before
             #      the returned or thrown value.
-            if is_node_type(self, AST_Exit) and self.value and self.value.start.comments_before and self.value.start.comments_before.length > 0:
-                comments = (comments or v'[]').concat(self.value.start.comments_before)
-                self.value.start.comments_before = v'[]'
+            if is_node_type(
+                    self, AST_Exit
+            ) and self.value and self.value.start.comments_before and self.value.start.comments_before.length > 0:
+                comments = (comments
+                            or []).concat(self.value.start.comments_before)
+                self.value.start.comments_before = []
 
             if c.test:
-                comments = comments.filter(def(comment):
-                    return c.test(comment.value)
-                )
+                comments = comments.filter(
+                    lambda comment: c.test(comment.value))
             elif jstype(c) is "function":
-                comments = comments.filter(def(comment):
-                    return c(self, comment)
-                )
+                comments = comments.filter(lambda comment: c(self, comment))
 
             output_comments(comments, output, start.nlb)
