@@ -3,11 +3,12 @@
 from __python__ import hash_literals
 
 from utils import noop
+from js import js_instanceof, js_new
 
 def is_node_type(node, typ):
-    return r'%js node instanceof typ'
+    return js_instanceof(node, typ)
 
-# Basic classes {{{
+# Basic classes
 
 class AST:
 
@@ -22,13 +23,12 @@ class AST:
                 obj = Object.getPrototypeOf(obj)
                 if obj is None:
                     break
-                r"""%js
-for(const i in obj.properties) {
-  self[i] = initializer[i];
-}"""
+                if obj.properties:
+                    for i in obj.properties:
+                        self[i] = initializer[i]
 
     def clone(self):
-        return r'%js new self.constructor(self)'
+        return js_new(self.constructor(self))
 
 
 class AST_Token(AST):
@@ -112,9 +112,8 @@ class AST_Node(AST):
     def dump(self, depth=2, omit={}):
         ' a more user-friendly way to dump the AST tree than console.log'
         return self._dump(depth, omit, 0, True)
-# }}}
 
-# Statements {{{
+# Statements
 
 class AST_Statement(AST_Node):
     "Base class of all statements"
@@ -136,9 +135,7 @@ class AST_SimpleStatement(AST_Statement):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
-            self.body._walk(visitor)
-        )
+        return visitor._visit(self, lambda: self.body._walk(visitor))
 
 class AST_Assert(AST_Statement):
     "An assert statement, e.g. assert True, 'an error message'"
@@ -148,11 +145,11 @@ class AST_Assert(AST_Statement):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_assert():
             self.condition._walk(visitor)
             if self.message:
                 self.message._walk(visitor)
-        )
+        return visitor._visit(self, f_assert)
 
 
 def walk_body(node, visitor):
@@ -169,9 +166,7 @@ class AST_Block(AST_Statement):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
-            walk_body(self, visitor)
-        )
+        return visitor._visit(self, lambda : walk_body(self, visitor))
 
 class AST_BlockStatement(AST_Block):
     "A block statement"
@@ -192,9 +187,7 @@ class AST_StatementWithBody(AST_Statement):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
-            self.body._walk(visitor)
-        )
+        return visitor._visit(self, lambda : self.body._walk(visitor))
 
 class AST_DWLoop(AST_StatementWithBody):
     "Base class for do/while statements"
@@ -203,10 +196,7 @@ class AST_DWLoop(AST_StatementWithBody):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
-            self.condition._walk(visitor)
-            self.body._walk(visitor)
-        )
+        return visitor._visit(self, lambda : [self.condition._walk(visitor), self.body._walk(visitor)])
 
 class AST_Do(AST_DWLoop):
     "A `do` statement"
@@ -223,13 +213,13 @@ class AST_ForIn(AST_StatementWithBody):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_for_in():
             self.init._walk(visitor)
-            if (self.name) self.name._walk(visitor)
+            if self.name: self.name._walk(visitor)
             self.object._walk(visitor)
             if self.body:
                 self.body._walk(visitor)
-        )
+        return visitor._visit(self, f_for_in)
 
 class AST_ForJS(AST_StatementWithBody):
     "A `for ... in` statement"
@@ -252,12 +242,12 @@ class AST_ListComprehension(AST_ForIn):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_list_comprehension():
             self.init._walk(visitor)
             self.object._walk(visitor)
             self.statement._walk(visitor)
-            if (self.condition) self.condition._walk(visitor)
-        )
+            if self.condition: self.condition._walk(visitor)
+        return visitor._visit(self, f_list_comprehension)
 
 class AST_SetComprehension(AST_ListComprehension):
     'A set comprehension'
@@ -271,13 +261,13 @@ class AST_DictComprehension(AST_ListComprehension):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_dict_comprehension():
             self.init._walk(visitor)
             self.object._walk(visitor)
             self.statement._walk(visitor)
             self.value_statement._walk(visitor)
-            if (self.condition) self.condition._walk(visitor)
-        )
+            if self.condition: self.condition._walk(visitor)
+        return visitor._visit(self, f_dict_comprehension)
 
 class AST_GeneratorComprehension(AST_ListComprehension):
     'A generator comprehension'
@@ -289,11 +279,11 @@ class AST_With(AST_StatementWithBody):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_with():
             for exp in self.clauses:
                 exp._walk(visitor)
             self.body._walk(visitor)
-        )
+        return visitor._visit(self, f_with)
 
 class AST_WithClause(AST_Node):
     'A clause in a with statement'
@@ -303,14 +293,14 @@ class AST_WithClause(AST_Node):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_with_clause():
             self.expression._walk(visitor)
             if self.alias:
                 self.alias._walk(visitor)
-        )
-# }}}
+        return visitor._visit(self, f_with_clause)
 
-# Scope and functions {{{
+
+# Scope and functions:
 
 class AST_Scope(AST_Block):
     "Base class for all statements introducing a lexical scope"
@@ -350,13 +340,13 @@ class AST_Import(AST_Statement):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_import():
             if self.alias:
                 self.alias._walk(visitor)
             if self.argnames:
                 for arg in self.argnames:
                     arg._walk(visitor)
-        )
+        return visitor._visit(self, f_import)
 
 class AST_Imports(AST_Statement):
     "Container for any number of imports"
@@ -365,10 +355,11 @@ class AST_Imports(AST_Statement):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_imports():
             for imp in self.imports:
                 imp._walk(visitor)
-        )
+
+        return visitor._visit(self, f_imports)
 
 class AST_Decorator(AST_Node):
     "Class for function decorators"
@@ -377,10 +368,10 @@ class AST_Decorator(AST_Node):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_decorator():
             if self.expression:
                 self.expression.walk(visitor)
-        )
+        return visitor._visit(self, f_decorator)
 
 class AST_Lambda(AST_Scope):
     "Base class for functions"
@@ -397,7 +388,7 @@ class AST_Lambda(AST_Scope):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_lambda():
             if self.decorators:
                 for d in self.decorators:
                     d.walk(visitor)
@@ -411,7 +402,7 @@ class AST_Lambda(AST_Scope):
             if self.argnames.kwargs:
                 self.argnames.kwargs._walk(visitor)
             walk_body(self, visitor)
-        )
+        return visitor._visit(self, f_lambda)
 
 class AST_Function(AST_Lambda):
     "A function expression"
@@ -434,14 +425,14 @@ class AST_Class(AST_Scope):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_class():
             if self.decorators:
                 for d in self.decorators:
                     d.walk(visitor)
             self.name._walk(visitor)
             walk_body(self, visitor)
-            if (self.parent) self.parent._walk(visitor)
-        )
+            if self.parent: self.parent._walk(visitor)
+        return visitor._visit(self, f_class)
 
 class AST_Method(AST_Lambda):
     "A class method definition"
@@ -451,9 +442,7 @@ class AST_Method(AST_Lambda):
         "is_setter": "[boolean] true if method is a property setter",
     }
 
-# }}}
-
-# Jumps(break/continue/etc) {{{
+# Jumps(break/continue/etc)
 
 class AST_Jump(AST_Statement):
     "Base class for “jumps” (for now that's `return`, `throw`, `break` and `continue`)"
@@ -465,10 +454,10 @@ class AST_Exit(AST_Jump):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_exit():
             if self.value:
                 self.value._walk(visitor)
-        )
+        return visitor._visit(self, f_exit)
 
 class AST_Return(AST_Exit):
     "A `return` statement"
@@ -490,9 +479,8 @@ class AST_Break(AST_LoopControl):
 
 class AST_Continue(AST_LoopControl):
     "A `continue` statement"
-# }}}
 
-# If {{{
+# If
 class AST_If(AST_StatementWithBody):
     "A `if` statement"
     properties = {
@@ -501,15 +489,15 @@ class AST_If(AST_StatementWithBody):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_if():
             self.condition._walk(visitor)
             self.body._walk(visitor)
             if self.alternative:
                 self.alternative._walk(visitor)
-        )
-# }}}
+        return visitor._visit(self, f_if)
 
-# EXCEPTIONS {{{
+
+# EXCEPTIONS
 
 class AST_Try(AST_Block):
     "A `try` statement"
@@ -520,7 +508,7 @@ class AST_Try(AST_Block):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_try():
             walk_body(self, visitor)
             if self.bcatch:
                 self.bcatch._walk(visitor)
@@ -530,7 +518,7 @@ class AST_Try(AST_Block):
 
             if self.bfinally:
                 self.bfinally._walk(visitor)
-        )
+        return visitor._visit(self, f_try)
 
 class AST_Catch(AST_Block):
     "A `catch` node; only makes sense as part of a `try` statement"
@@ -543,13 +531,13 @@ class AST_Except(AST_Block):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(this, def():
-            if (self.argname):
+        def f_except():
+            if self.argname:
                 self.argname.walk(visitor)
-            if (self.errors):
+            if self.errors:
                 for e in self.errors: e.walk(visitor)
             walk_body(self, visitor)
-        )
+        return visitor._visit(this, f_except)
 
 class AST_Finally(AST_Block):
     "A `finally` node; only makes sense as part of a `try` statement"
@@ -557,9 +545,7 @@ class AST_Finally(AST_Block):
 class AST_Else(AST_Block):
     'An `else` node; only makes sense as part of `try` statement'
 
-# }}}
-
-# VAR/CONST {{{
+# VAR/CONST
 class AST_Definitions(AST_Statement):
     "Base class for `var` or `const` nodes (variable declarations/initializations)"
     properties = {
@@ -567,10 +553,10 @@ class AST_Definitions(AST_Statement):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_definitions():
             for def_ in self.definitions:
                 def_._walk(visitor)
-        )
+        return visitor._visit(self, f_definitions)
 
 class AST_Var(AST_Definitions):
     "A `var` statement"
@@ -583,14 +569,13 @@ class AST_VarDef(AST_Node):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_var_def():
             self.name._walk(visitor)
             if self.value:
                 self.value._walk(visitor)
-        )
-# }}}
+        return visitor._visit(self, f_var_def)
 
-# Miscellaneous {{{
+# Miscellaneous
 
 class AST_BaseCall(AST_Node):
     "A base class for function calls"
@@ -605,7 +590,7 @@ class AST_Call(AST_BaseCall):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_call():
             self.expression._walk(visitor)
             for arg in self.args:
                 arg._walk(visitor)
@@ -616,7 +601,7 @@ class AST_Call(AST_BaseCall):
             if self.args.kwarg_items:
                 for arg in self.args.kwarg_items:
                     arg._walk(visitor)
-        )
+        return visitor._visit(self, f_call)
 
 
 class AST_ClassCall(AST_BaseCall):
@@ -628,8 +613,8 @@ class AST_ClassCall(AST_BaseCall):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
-            if (self.expression) self.expression._walk(visitor)
+        def f_class_call():
+            if self.expression: self.expression._walk(visitor)
             for arg in self.args:
                 arg._walk(visitor)
             for arg in self.args.kwargs:
@@ -637,7 +622,7 @@ class AST_ClassCall(AST_BaseCall):
                 arg[1]._walk(visitor)
             for arg in self.args.kwarg_items:
                 arg._walk(visitor)
-        )
+        return visitor._visit(self, f_class_call)
 
 class AST_New(AST_Call):
     "An object instantiation. Derives from a function call since it has exactly the same properties"
@@ -665,19 +650,20 @@ class AST_Seq(AST_Node):
         while p:
             if not (is_node_type(p.cdr, AST_Seq)):
                 cell = AST_Seq.cons(p.cdr, node)
-                return p.cdr = cell
+                p.cdr = cell
+                return p.cdr
             p = p.cdr
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_seq():
             self.car._walk(visitor)
             if self.cdr:
                 self.cdr._walk(visitor)
-        )
+        return visitor._visit(self, f_seq)
 
     def cons(self, x, y):
         # Should be called as a classmethod: AST_Seq.cons()
-        seq = new AST_Seq(x)
+        seq = AST_Seq(x)
         seq.car = x
         seq.cdr = y
         return seq
@@ -713,18 +699,13 @@ class AST_Dot(AST_PropAccess):
     "A dotted property access expression"
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
-            self.expression._walk(visitor)
-        )
+        return visitor._visit(self, lambda : self.expression._walk(visitor))
 
 class AST_Sub(AST_PropAccess):
     'Index-style property access, i.e. `a["foo"]`'
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
-            self.expression._walk(visitor)
-            self.property._walk(visitor)
-        )
+        return visitor._visit(self, lambda: [self.expression._walk(visitor), self.property._walk(visitor)])
 
 class AST_ItemAccess(AST_PropAccess):
     'Python index-style property access, i.e. `a.__getitem__("foo")`'
@@ -733,12 +714,12 @@ class AST_ItemAccess(AST_PropAccess):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_item_access():
             self.expression._walk(visitor)
             self.property._walk(visitor)
             if self.assignment:
                 self.assignment._walk(visitor)
-        )
+        return visitor._visit(self, f_item_access)
 
 class AST_Splice(AST_PropAccess):
     'Index-style property access, i.e. `a[3:5]`'
@@ -748,11 +729,11 @@ class AST_Splice(AST_PropAccess):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_prop_access():
             self.expression._walk(visitor)
             self.property._walk(visitor)
             self.property2._walk(visitor)
-        )
+        return visitor._visit(self, f_prop_access)
 
 class AST_Unary(AST_Node):
     "Base class for unary expressions"
@@ -763,9 +744,7 @@ class AST_Unary(AST_Node):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
-            self.expression._walk(visitor)
-        )
+        return visitor._visit(self, lambda:self.expression._walk(visitor))
 
 class AST_UnaryPrefix(AST_Unary):
     "Unary prefix expression, i.e. `typeof i` or `del i`"
@@ -779,11 +758,9 @@ class AST_Binary(AST_Node):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
-            self.left._walk(visitor)
-            self.right._walk(visitor)
-        )
+        return visitor._visit(self, lambda:[self.left._walk(visitor), self.right._walk(visitor)])
 
+# TODO: eliminate this -- it's useful but not syntactically valid python.
 class AST_Existential(AST_Node):
     "Existential operator a?"
     properties = {
@@ -792,11 +769,11 @@ class AST_Existential(AST_Node):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_existential():
             self.expression._walk(visitor)
             if self.after is not None and jstype(self.after) is 'object':
                 self.after._walk(visitor)
-        )
+        return visitor._visit(self, f_existential)
 
 class AST_Conditional(AST_Node):
     "Conditional expression using the ternary operator, i.e. `a if b else c`"
@@ -807,11 +784,12 @@ class AST_Conditional(AST_Node):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_conditional():
             self.condition._walk(visitor)
             self.consequent._walk(visitor)
             self.alternative._walk(visitor)
-        )
+        return visitor._visit(self, f_conditional)
+
 
 class AST_Assign(AST_Binary):
     "An assignment expression — `a = b + 5`"
@@ -830,7 +808,7 @@ class AST_Assign(AST_Binary):
                 continue
             if is_node_type(right, AST_Seq):
                 if is_node_type(right.car, AST_Assign):
-                    right = new AST_Seq({'car':right.car.right, 'cdr': right.cdr})
+                    right = AST_Seq({'car':right.car.right, 'cdr': right.cdr})
                     continue
                 if is_node_type(right.cdr, AST_Assign):
                     right = right.cdr.right
@@ -846,16 +824,14 @@ class AST_Assign(AST_Binary):
             if is_node_type(next, AST_Seq):
                 if is_node_type(next.cdr, AST_Assign):
                     assign = next.cdr
-                    left_hand_sides.push(new AST_Seq({'car':next.car, 'cdr':assign.left}))
+                    left_hand_sides.push(AST_Seq({'car':next.car, 'cdr':assign.left}))
                     next = assign.right
                     continue
             break
         return left_hand_sides, right
 
 
-# }}}
-
-# LITERALS {{{
+# LITERALS
 
 class AST_Array(AST_Node):
     "An array literal"
@@ -864,10 +840,10 @@ class AST_Array(AST_Node):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_array():
             for el in self.elements:
                 el._walk(visitor)
-        )
+        return visitor._visit(self, f_array)
 
     def flatten(self):
         def flatten(arr):
@@ -893,10 +869,10 @@ class AST_Object(AST_Node):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_object():
             for prop in self.properties:
                 prop._walk(visitor)
-        )
+        return visitor._visit(self, f_object)
 
 class AST_ExpressiveObject(AST_Object):
     'An object literal with expressions for some keys'
@@ -910,10 +886,10 @@ class AST_ObjectProperty(AST_Node):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_object_property():
             self.key._walk(visitor)
             self.value._walk(visitor)
-        )
+        return visitor._visit(self, f_object_property)
 
 class AST_ObjectKeyVal(AST_ObjectProperty):
     "A key: value object property"
@@ -925,10 +901,10 @@ class AST_Set(AST_Node):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
+        def f_node():
             for prop in self.items:
                 prop._walk(visitor)
-        )
+        return visitor._visit(self, f_node)
 
 class AST_SetItem(AST_Node):
     "An item in a set literal"
@@ -937,9 +913,7 @@ class AST_SetItem(AST_Node):
     }
 
     def _walk(self, visitor):
-        return visitor._visit(self, def():
-            self.value._walk(visitor)
-        )
+        return visitor._visit(self, lambda : self.value._walk(visitor)        )
 
 class AST_Symbol(AST_Node):
     "Base class for all symbols"
@@ -1059,9 +1033,7 @@ class AST_True(AST_Boolean):
     "The `true` atom"
     value = True
 
-# }}}
-
-# TreeWalker {{{
+# TreeWalker
 
 class TreeWalker:
 
@@ -1071,7 +1043,8 @@ class TreeWalker:
 
     def _visit(self, node, descend):
         self.stack.push(node)
-        ret = self.visit(node, ((def(): descend.call(node);) if descend else noop))
+        ret = self.visit(node,
+                         (lambda: descend.call(node)) if descend else noop)
         if not ret and descend:
             descend.call(node)
 
@@ -1100,18 +1073,19 @@ class TreeWalker:
     def in_boolean_context(self):
         stack = self.stack
         i = stack.length
-        self = stack[i -= 1]
+        i -= 1
+        self = stack[i]
         while i > 0:
-            p = stack[i -= 1]
-            if is_node_type(p, AST_If) and p.condition is self
+            i -= 1
+            p = stack[i]
+            if (is_node_type(p, AST_If) and p.condition is self
             or is_node_type(p, AST_Conditional) and p.condition is self
             or is_node_type(p, AST_DWLoop) and p.condition is self
-            or is_node_type(p, AST_UnaryPrefix) and p.operator is "!" and p.expression is self:
+            or is_node_type(p, AST_UnaryPrefix) and p.operator is "!" and p.expression is self):
                 return True
             if not (is_node_type(p, AST_Binary) and (p.operator is "&&" or p.operator is "||")):
                 return False
             self = p
-# }}}
 
 class Found(Exception):
     pass
@@ -1127,7 +1101,7 @@ def has_calls(expression):
         def is_call(node):
             if is_node_type(node, AST_BaseCall) or is_node_type(node, AST_ItemAccess):
                 raise Found()
-        expression.walk(new TreeWalker(is_call))
+        expression.walk(TreeWalker(is_call))
     except Found:
         return True
     return False

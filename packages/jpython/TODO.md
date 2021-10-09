@@ -2,6 +2,10 @@
 
 ## Not Done
 
+[ ] get rid of existential operator
+
+[ ] Implement `await`, e.g., `await init()` in repl isn't supported at all.
+
 [ ] put a file `a.js` in the current directory and do `require("./a.js")`; it doesn't work. You need to give the exact path. fix.
 
 ---
