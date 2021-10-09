@@ -11,7 +11,7 @@
     "tsc": "npx tsc -w",
     "clean": "rm -rf dist",
     "format": "npm run yapf && npm run prettier",
-    "mypy": "git grep -l '^from typing import' | xargs mypy",
+    "mypy": "git grep -l '^# mypy' | xargs mypy",
     "prettier": "prettier --write .",
     "yapf": "yapf -p -i --recursive src/output bench src/compiler.py src/parse.py src/utils.py  src/tokenizer.py"
   },

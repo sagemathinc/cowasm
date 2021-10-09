@@ -1,5 +1,4 @@
-# vim:fileencoding=utf-8
-# License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
+# mypy
 from __python__ import hash_literals, Object  # type: ignore
 
 from typing import Any, Callable, Literal, Optional, Union

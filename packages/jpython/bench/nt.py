@@ -1,3 +1,4 @@
+# mypy
 # A little pure python number theory library, which is useful
 # as a foundation for some microbenchmarks
 

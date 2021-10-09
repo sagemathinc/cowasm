@@ -1,3 +1,4 @@
+# mypy
 from typing import Callable
 
 

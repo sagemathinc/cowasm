@@ -1,8 +1,6 @@
 test/newlines.py
 test/jsage.py
 
-src/ast_types.py
-src/errors.py
 src/baselib/*
 src/lib/*
 

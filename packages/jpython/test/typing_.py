@@ -1,3 +1,4 @@
+# mypy
 # You can run this file through mypy and it passes the checks.
 # You can also use it in jpython.
 #

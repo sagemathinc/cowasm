@@ -1,4 +1,4 @@
-from __python__ import hash_literals
+from __python__ import hash_literals # type: ignore
 
 
 def quoted_string(x):

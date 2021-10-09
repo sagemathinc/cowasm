@@ -1,10 +1,10 @@
-# vim:fileencoding=utf-8
-# License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
-from __python__ import hash_literals
+# mypy
+from __python__ import hash_literals, Error  # type: ignore
 
 
 class SyntaxError(Error):
-    def __init__(self, message, filename, line, col, pos, is_eof):
+    def __init__(self, message, filename, line: int, col: int, pos: int,
+                 is_eof: bool):
         self.stack = Error().stack
         self.message = message
         self.line = line
@@ -26,6 +26,10 @@ class SyntaxError(Error):
 
 
 class ImportError(SyntaxError):
+    pass
+
+
+class EOFError(Error):
     pass
 
 

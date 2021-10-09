@@ -1,6 +1,8 @@
-from utils import noop
-from js import js_instanceof, js_new
+# mypy
 
+from utils import noop
+from js import js_instanceof, js_new # type: ignore
+from typing import Any, Dict
 
 def is_node_type(node, typ):
     return js_instanceof(node, typ)
@@ -11,7 +13,7 @@ def is_node_type(node, typ):
 
 class AST:
 
-    properties = {}
+    properties = {} # type: Dict[str, Any]
 
     def __init__(self, initializer):
         # Walk the prototype change and copy all defined properties from the

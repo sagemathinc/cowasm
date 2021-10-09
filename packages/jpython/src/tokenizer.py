@@ -1,10 +1,11 @@
-from __python__ import hash_literals  # type: ignore
+# mypy
+from __python__ import hash_literals, RegExp  # type: ignore
 
-from unicode_aliases import ALIAS_MAP
+from unicode_aliases import ALIAS_MAP  # type: ignore
 from utils import make_predicate, characters
 from ast_types import AST_Token
-from errors import SyntaxError
-from string_interpolation import interpolate
+from errors import EOFError, SyntaxError
+from string_interpolation import interpolate  # type: ignore
 
 RE_HEX_NUMBER = r"%js /^0x[0-9a-f]+$/i"
 RE_OCT_NUMBER = r"%js /^0[0-7]+$/"
@@ -49,32 +50,32 @@ PUNC_BEFORE_EXPRESSION = make_predicate(characters("[{(,.;:"))
 
 PUNC_CHARS = make_predicate(characters("[]{}(),;:?"))
 
-KEYWORDS = "as assert break class continue def del do elif else except finally for from global if import in is lambda new nonlocal pass raise return yield try while with or and not"
+keywords = "as assert break class continue def del do elif else except finally for from global if import in is lambda new nonlocal pass raise return yield try while with or and not"
 
-KEYWORDS_ATOM = "False None True"
+keywords_atom = "False None True"
 
 # see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar
-RESERVED_WORDS = (
+reserved_words = (
     "break case class catch const continue debugger default delete do else export extends"
     " finally for function if import in instanceof new return super switch this throw try typeof var void"
     " while with yield enum implements static private package let public protected interface await null true false"
 )
 
-KEYWORDS_BEFORE_EXPRESSION = "return yield new del raise elif else if"
+keyword_before_expression = "return yield new del raise elif else if"
 
-ALL_KEYWORDS = KEYWORDS + " " + KEYWORDS_ATOM
+ALL_KEYWORDS = keywords + " " + keywords_atom
 
-KEYWORDS = make_predicate(KEYWORDS)
-RESERVED_WORDS = make_predicate(RESERVED_WORDS)
-KEYWORDS_BEFORE_EXPRESSION = make_predicate(KEYWORDS_BEFORE_EXPRESSION)
-KEYWORDS_ATOM = make_predicate(KEYWORDS_ATOM)
+KEYWORDS = make_predicate(keywords)
+RESERVED_WORDS = make_predicate(reserved_words)
+KEYWORDS_BEFORE_EXPRESSION = make_predicate(keyword_before_expression)
+KEYWORDS_ATOM = make_predicate(keywords_atom)
 IDENTIFIER_PAT = r"%js /^[a-z_$][_a-z0-9$]*$/i"
 
 
 # https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals
 def is_string_modifier(val: str) -> bool:
     for ch in val:
-        if 'vrufVRUF'.indexOf(ch) is -1:
+        if ch not in 'vrufVRUF':
             return False
     return True
 
@@ -155,9 +156,6 @@ def is_token(token, type, val):
                                    or token.value is val)
 
 
-EX_EOF = {}
-
-
 def tokenizer(raw_text, filename):
     S = {
         'exponent': # parse ^ as exponent and ^^ as xor
@@ -216,7 +214,7 @@ def tokenizer(raw_text, filename):
         ch = S.text.charAt(S.pos)
         S.pos += 1
         if signal_eof and not ch:
-            raise EX_EOF
+            raise EOFError
 
         if ch is "\n":
             S.newline_before = S.newline_before or not in_string
@@ -229,7 +227,7 @@ def tokenizer(raw_text, filename):
     def find(what, signal_eof):
         pos = S.text.indexOf(what, S.pos)
         if signal_eof and pos is -1:
-            raise EX_EOF
+            raise EOFError
         return pos
 
     def start_token():
@@ -497,7 +495,7 @@ def tokenizer(raw_text, filename):
             try:
                 return cont.apply(None, arguments)
             except Exception as ex:
-                if ex is EX_EOF:
+                if ex is EOFError :
                     parse_error(eof_error, True)
                 else:
                     raise
