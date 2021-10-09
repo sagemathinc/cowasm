@@ -28,9 +28,10 @@ class SyntaxError(Error):
 class ImportError(SyntaxError):
     pass
 
+
 class RuntimeError(Error):
     def __init__(self, message):
         self.message = message
-    def __call__(self, message):
-        return new RuntimeError(message)
 
+    def __call__(self, message):
+        return RuntimeError(message)
