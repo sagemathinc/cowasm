@@ -1,5 +1,5 @@
 # mypy
-from __python__ import hash_literals, RegExp  # type: ignore
+from __python__ import hash_literals, RegExp, String  # type: ignore
 
 from unicode_aliases import ALIAS_MAP  # type: ignore
 from utils import make_predicate, characters
@@ -7,9 +7,9 @@ from ast_types import AST_Token
 from errors import EOFError, SyntaxError
 from string_interpolation import interpolate  # type: ignore
 
-RE_HEX_NUMBER = r"%js /^0x[0-9a-f]+$/i"
-RE_OCT_NUMBER = r"%js /^0[0-7]+$/"
-RE_DEC_NUMBER = r"%js /^\d*\.?\d*(?:e[+-]?\d*(?:\d\.?|\.?\d)\d*)?$/i"
+RE_HEX_NUMBER = RegExp(r"^0x[0-9a-f]+$", "i")
+RE_OCT_NUMBER = RegExp(r"^0[0-7]+$")
+RE_DEC_NUMBER = RegExp(r"^\d*\.?\d*(?:e[+-]?\d*(?:\d\.?|\.?\d)\d*)?$", "i")
 
 OPERATOR_CHARS = make_predicate(characters("+-*&%=<>!?|~^@"))
 
@@ -22,8 +22,8 @@ ASCII_CONTROL_CHARS = {
     't': 9,
     'v': 11
 }
-HEX_PAT = r"%js /[a-fA-F0-9]/"
-NAME_PAT = r"%js /[a-zA-Z ]/"
+HEX_PAT = RegExp(r"[a-fA-F0-9]")
+NAME_PAT = RegExp(r"[a-zA-Z ]")
 
 OPERATORS = make_predicate([
     "in", "instanceof", "typeof", "new", "void", "del", "+", "-", "not", "~",
@@ -69,7 +69,7 @@ KEYWORDS = make_predicate(keywords)
 RESERVED_WORDS = make_predicate(reserved_words)
 KEYWORDS_BEFORE_EXPRESSION = make_predicate(keyword_before_expression)
 KEYWORDS_ATOM = make_predicate(keywords_atom)
-IDENTIFIER_PAT = r"%js /^[a-z_$][_a-z0-9$]*$/i"
+IDENTIFIER_PAT = RegExp(r"^[a-z_$][_a-z0-9$]*$", "i")
 
 
 # https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals
@@ -80,33 +80,33 @@ def is_string_modifier(val: str) -> bool:
     return True
 
 
-def is_letter(code):
-    return code >= 97 and code <= 122 or code >= 65 and code <= 90 or code >= 170 and UNICODE.letter.test(
-        String.fromCharCode(code))
+def is_letter(code: int) -> bool:
+    return code >= 97 and code <= 122 or code >= 65 and code <= 90 or code >= 170 and UNICODE[
+        'letter'].test(chr(code))
 
 
-def is_digit(code):
+def is_digit(code: int) -> bool:
     return code >= 48 and code <= 57
 
 
-def is_dot(code):
+def is_dot(code: int) -> bool:
     return code == 46
 
 
-def is_alphanumeric_char(code):
+def is_alphanumeric_char(code: int) -> bool:
     return is_digit(code) or is_letter(code)
 
 
-def is_unicode_combining_mark(ch):
-    return UNICODE.non_spacing_mark.test(
-        ch) or UNICODE.space_combining_mark.test(ch)
+def is_unicode_combining_mark(ch: str) -> bool:
+    return UNICODE['non_spacing_mark'].test(
+        ch) or UNICODE['space_combining_mark'].test(ch)
 
 
-def is_unicode_connector_punctuation(ch):
-    return UNICODE.connector_punctuation.test(ch)
+def is_unicode_connector_punctuation(ch: str) -> bool:
+    return UNICODE['connector_punctuation'].test(ch)
 
 
-def is_identifier(name):
+def is_identifier(name: str) -> bool:
     return not RESERVED_WORDS[name] and not KEYWORDS[
         name] and not KEYWORDS_ATOM[name] and IDENTIFIER_PAT.test(name)
 
@@ -161,8 +161,8 @@ def tokenizer(raw_text, filename):
         'exponent': # parse ^ as exponent and ^^ as xor
         False,
         'text':
-        raw_text.replace(r"%js /\r\n?|[\n\u2028\u2029]/g",
-                         "\n").replace(r"%js /\uFEFF/g", ""),
+        raw_text.replace(RegExp(r"\r\n?|[\n\u2028\u2029]","g"),
+                         "\n").replace(RegExp(r"\uFEFF","g"), ""),
         'filename':
         filename,
         'pos':
@@ -495,7 +495,7 @@ def tokenizer(raw_text, filename):
             try:
                 return cont.apply(None, arguments)
             except Exception as ex:
-                if ex is EOFError :
+                if ex is EOFError:
                     parse_error(eof_error, True)
                 else:
                     raise
