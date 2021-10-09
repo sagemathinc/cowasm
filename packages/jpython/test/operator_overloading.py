@@ -120,11 +120,13 @@ class IntegerModRing:
     def __call__(self, x):
         return Mod(x, self._n)
 
+
 # We have chosen NOT to allow overloading
 # of __call__, since I can't find any way
 # to do it sufficiently efficiently.  We
 # are NOT implemented the full Python language.
 # That's not the goal.
+
 
 def test_integer_mod_ring():
     R = IntegerModRing(10)

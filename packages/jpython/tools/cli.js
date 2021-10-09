@@ -422,13 +422,13 @@ it.
 });
 
 opt("jsage", "", "bool", false, function () {
-/*
+  /*
 Enable everything implemented from our Sage-style preparser
 */
 });
 
 opt("tokens", "", "bool", false, function () {
-/*
+  /*
 Show every token as they are parsed.
 */
 });

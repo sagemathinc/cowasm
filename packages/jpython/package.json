@@ -5,13 +5,15 @@
   "keywords": ["javascript", "python", "language", "compiler"],
   "main": "tools/compiler.js",
   "scripts": {
-    "test": "npx tsc && ./bin/jpython self --complete --test && cd bench && ../bin/jpython all.py",
+    "test": "npx tsc && ./bin/jpython self --complete --test && cd bench && ../bin/jpython all.py && npm run mypy",
     "start": "node bin/jpython",
     "build": "npx tsc && node bin/jpython self --complete",
     "tsc": "npx tsc -w",
-    "clean": "rm -rf dev",
+    "clean": "rm -rf dist",
+    "format": "npm run yapf && npm run prettier",
+    "mypy": "git grep -l '^from typing import' | xargs mypy",
     "prettier": "prettier --write .",
-    "yapf": "yapf --write ."
+    "yapf": "yapf -p -i --recursive src/output bench src/compiler.py src/parse.py src/utils.py  src/tokenizer.py"
   },
   "version": "1.6.0",
   "license": "BSD-2-Clause",

@@ -2,6 +2,7 @@ from bench import register, all
 
 from nt import gcd, xgcd, inverse_mod, pi
 
+
 def operator_add(n=100000):
     class A:
         def __add__(self, right):
@@ -14,7 +15,6 @@ def operator_add(n=100000):
 
 
 register("operator_add", operator_add)
-
 
 
 def bench_gcd(n=10**5):
@@ -36,14 +36,14 @@ def bench_xgcd(n=10**5):
 
 register("xgcd", bench_xgcd)
 
+
 def bench_inverse_mod(n=10**5):
     s = 0
     for i in range(1, n):
-        s += inverse_mod(i, 1073741827)   # nextprime(2^30)
+        s += inverse_mod(i, 1073741827)  # nextprime(2^30)
 
 
 register("bench_inverse_mod", bench_inverse_mod)
-
 
 register("pi(X)", pi)
 

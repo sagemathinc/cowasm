@@ -3,25 +3,29 @@ nonlocal GLOBAL_SYMBOL
 
 'Module level ds1'
 
+
 def toplevel_func(a):
     return a + 'toplevel'
+
 
 '''
 Module level ds2
 line2
 '''
 
-class TopLevel:
 
+class TopLevel:
     def __init__(self, a):
         self.a = a
+
 
 'Module level ds 3'
 
-class AClass(TopLevel):
 
+class AClass(TopLevel):
     def __init__(self, a):
         self.a = a
+
 
 toplevel_var = 'foo'
 

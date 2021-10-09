@@ -4,10 +4,11 @@
 
 sub_var = 'sub'
 
+
 def sub_func():
     return sub_var
 
-class Sub:
 
+class Sub:
     def __init__(self, a):
         self.a = a

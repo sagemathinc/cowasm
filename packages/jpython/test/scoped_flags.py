@@ -1,11 +1,12 @@
 # vim:fileencoding=utf-8
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 
-a = {1:1}
+a = {1: 1}
 assrt.ok(not isinstance(a, dict))
 
 from __python__ import dict_literals, overload_getitem
-a = {1:1}
+
+a = {1: 1}
 assrt.ok(isinstance(a, dict))
 assrt.equal(a[1], 1)
 a[2] = 2
@@ -13,17 +14,19 @@ assrt.equal(a[2], 2)
 assrt.deepEqual(list(a.keys()), [1, 2])
 from __python__ import no_dict_literals, no_overload_getitem
 
-
-a = {1:1}
+a = {1: 1}
 assrt.ok(not isinstance(a, dict))
+
 
 def f():
     from __python__ import dict_literals
-    a = {1:1}
+    a = {1: 1}
     assrt.ok(isinstance(a, dict))
 
-a = {1:1}
+
+a = {1: 1}
 assrt.ok(not isinstance(a, dict))
+
 
 class S:
     from __python__ import bound_methods
@@ -34,22 +37,24 @@ class S:
     def val(self):
         return self.a if self else None
 
+
 f = S().val
 assrt.equal(f(), S().val())
 
-class U:
 
+class U:
     def __init__(self):
         self.a = 3
 
     def val(self):
         return self.a if self else None
 
+
 f = U().val
 assrt.equal(f(), None)
 
-class C:
 
+class C:
     def __init__(self):
         self.a = 3
 
@@ -65,6 +70,7 @@ class C:
 
     def uval2(self):
         return self.a if self else None
+
 
 c = C()
 u1, u2 = c.uval1, c.uval2

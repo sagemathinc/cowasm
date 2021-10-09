@@ -1,5 +1,6 @@
 from bench import register, all
 
+
 # JPython is really bad at these, since Javascript
 # doesn't really have a notion of generic lists.
 def list_times_number(n=100):
@@ -26,8 +27,10 @@ def list_times_number3(n=1000000):
 
 register('list_times_number3', list_times_number3)
 
+
 def list_to_string(n=10**5):
     len(str(list(range(n))))
+
 
 register("list_to_string", list_to_string)
 

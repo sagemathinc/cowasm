@@ -561,6 +561,7 @@ E01EF;VS256;abbreviation
 '''
 # }}}
 
+
 def make_alias_map():
     ans = {}
     for line in DB.split('\n'):
@@ -573,5 +574,6 @@ def make_alias_map():
             if code_point is not undefined and parts[1]:
                 ans[parts[1].toLowerCase()] = code_point
     return ans
+
 
 ALIAS_MAP = make_alias_map()

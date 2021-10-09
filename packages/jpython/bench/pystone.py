@@ -71,6 +71,7 @@ FALSE = 0
 def main(loops=LOOPS):
     pystones(loops)
 
+
 def pystones(loops=LOOPS):
     Proc0(loops)
 

@@ -10,6 +10,7 @@
 
 from bench import register, all
 
+
 def simple_assignment(n=1000000):
     for i in range(n):
         a = 1
@@ -233,7 +234,8 @@ register("create instance of simple class", create_instance_of_simple_class)
 # This is because classes in Jpython are not written using ES6 classes, which
 # will make this massively faster (i.e., 100x!)
 def create_instance_of_simple_jsclass(n=1000000):
-    class A: pass # so works in pure python
+    class A:
+        pass  # so works in pure python
 
     r"""%js
 A = class A {
@@ -244,7 +246,9 @@ __repr__() { return "I am a class"; }
     for i in range(n):
         A()
 
-register("create instance of simple jsclass", create_instance_of_simple_jsclass)
+
+register("create instance of simple jsclass",
+         create_instance_of_simple_jsclass)
 
 
 def create_instance_of_class_with_init(n=100000):

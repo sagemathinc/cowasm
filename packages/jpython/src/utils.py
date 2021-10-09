@@ -92,5 +92,3 @@ def cache_file_name(src: str, cache_dir: str) -> Union[None, str]:
         return cache_dir + '/' + str.lstrip(
             str.replace(src, '/', '-') + '.json', '-')
     return None
-
-

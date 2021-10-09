@@ -1,4 +1,4 @@
-from __python__ import hash_literals # type: ignore
+from __python__ import hash_literals  # type: ignore
 
 from unicode_aliases import ALIAS_MAP
 from utils import make_predicate, characters
@@ -72,7 +72,7 @@ IDENTIFIER_PAT = r"%js /^[a-z_$][_a-z0-9$]*$/i"
 
 
 # https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals
-def is_string_modifier(val : str) -> bool:
+def is_string_modifier(val: str) -> bool:
     for ch in val:
         if 'vrufVRUF'.indexOf(ch) is -1:
             return False
@@ -207,7 +207,7 @@ def tokenizer(raw_text, filename):
         return S.text.charAt(S.pos)
 
     def peekpeek():
-        return S.text.charAt(S.pos+1)
+        return S.text.charAt(S.pos + 1)
 
     def prevChar():
         return S.text.charAt(S.tokpos - 1)

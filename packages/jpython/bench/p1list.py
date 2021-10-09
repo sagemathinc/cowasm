@@ -1,7 +1,8 @@
 from bench import register, all
 from nt import gcd, xgcd, inverse_mod
 
-def p1_normalize(N, u, v, compute_s = False):
+
+def p1_normalize(N, u, v, compute_s=False):
     if N == 1:
         return [0, 0, 1]
 
@@ -56,6 +57,7 @@ def p1_normalize_many_times(n=10**5):
     for a in range(n):
         s += p1_normalize(46100, 39949, a)[0]
     return s
+
 
 register("p1_normalize_many_times", p1_normalize_many_times)
 

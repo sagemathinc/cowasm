@@ -152,7 +152,8 @@ test_completions()
 
 def test_semicolons():
     check("a=2;b=3;print(a+b)", "5")
-    check("2+3","5")
+    check("2+3", "5")
     check("import math; print(math.sin(1))", "0.8414709848078965")
+
 
 test_semicolons()

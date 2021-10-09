@@ -147,7 +147,9 @@ export default async function Repl(options0: Partial<Options>): Promise<void> {
       colorize(
         `Welcome to ${options.jsage ? "JSage" : "JPython"}.  Using Node.js ${
           process.version
-        }.  ${options.jsage ? "\nType dir(jsage) for available functions." : ""}`,
+        }.  ${
+          options.jsage ? "\nType dir(jsage) for available functions." : ""
+        }`,
         "green",
         true
       )

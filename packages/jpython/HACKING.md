@@ -15,7 +15,7 @@ This will generate a build of the compiler in the `dev` directory. Now, the`jpyt
 The way the compiler works, given some JPython source code:
 
 - The source code is lexed into a stream of tokens (`src/tokenizer.py`)
-- The tokens are parsed into a Abstract Syntax Tree (`src/parse.py and src/ast_types.py`).  During parsing any import statement are resolved. This is different from Python, where imports happen at runtime, not compile time; an implication is that if an import would fail at runtime in Python, it will fail at compile time here, so you can't include imports that will fail only when certain code runs.
+- The tokens are parsed into a Abstract Syntax Tree (`src/parse.py and src/ast_types.py`). During parsing any import statement are resolved. This is different from Python, where imports happen at runtime, not compile time; an implication is that if an import would fail at runtime in Python, it will fail at compile time here, so you can't include imports that will fail only when certain code runs.
 - The Abstract Syntax Tree is transformed into the output JavaScript (`src/output/*.py`)
 - Various bits of functionality in JPython depend upon the _Base Library_
   (`src/baselib*.py`). This includes things like the basic container types
@@ -40,7 +40,7 @@ jpython test test/generic.py
 
 ## Modifying the compiler
 
-Edit the files in the `src` directory to make your changes, then do `npm run test` to test them. This will compile an updated version of the compiler with your changes, if any, and use it to run the test suite.  You can also use `try.py` to test specific things.  For example:
+Edit the files in the `src` directory to make your changes, then do `npm run test` to test them. This will compile an updated version of the compiler with your changes, if any, and use it to run the test suite. You can also use `try.py` to test specific things. For example:
 
 ```sh
 ~/jpython$ ./try.py 'print("Hello world")'

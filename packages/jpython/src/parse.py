@@ -1,7 +1,7 @@
 # vim:fileencoding=utf-8
 # License: BSD Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 # globals: readfile
-from __python__ import hash_literals # type: ignore
+from __python__ import hash_literals  # type: ignore
 
 from utils import make_predicate, array_to_hash, defaults, has_prop, cache_file_name
 from errors import SyntaxError, ImportError
@@ -1150,7 +1150,9 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
         if is_lambda:
             if in_class or not is_expression:
                 # Note: is_lambda implies is_expression and not in_class.
-                croak('Compiler bug -- lambda must be an expression and not in a class')
+                croak(
+                    'Compiler bug -- lambda must be an expression and not in a class'
+                )
             # Lambda functions are always anonymous.
             is_anonymous = True
             name = None
