@@ -91,3 +91,10 @@ def cache_file_name(src: str, cache_dir: str) -> Union[None, str]:
         return cache_dir + '/' + str.lstrip(
             str.replace(src, '/', '-') + '.json', '-')
     return None
+
+
+# This charAt is defined in Javascript and is definitely not s[n],
+# so here's a Python version. Doing s.charAt(n) would be faster...
+def charAt(s: str, n: int) -> str:
+    if n < 0 or n >= len(s): return ''
+    return s[n]
