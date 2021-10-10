@@ -169,3 +169,12 @@ def test_attribute_call():
 
 
 test_attribute_call()
+
+
+### Absolute value
+
+class X:
+    def __abs__(self):
+        return 10
+
+assert abs(X()) == 10

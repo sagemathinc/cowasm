@@ -1,5 +1,6 @@
 // Import and initialize everything.  This is convenient for interactive use.
 
+export { ComplexNumber } from "./complex/complex";
 import * as dims from "./modular/dims";
 export { dims };
 import P1List, { init as p1listInit } from "./modular/p1list";

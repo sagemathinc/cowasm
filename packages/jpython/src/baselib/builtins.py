@@ -1,5 +1,8 @@
 # globals: exports, console, ρσ_iterator_symbol, ρσ_kwargs_symbol, ρσ_arraylike, ρσ_list_contains
 
+def abs(a):
+    return r"%js (typeof a === 'object' && a.__abs__ !== null) ? a.__abs__() : Math.abs(a)"
+
 def ρσ_operator_add(a, b):
     return r"""%js (
 typeof a !== 'object' ? a + b :
@@ -11,19 +14,19 @@ typeof a !== 'object' ? a + b :
 """
 
 def ρσ_operator_sub(a, b):
-    return v"(typeof a == 'object' && a.__sub__ != null) ? a.__sub__(b) : a - b"
+    return v"(typeof a === 'object' && a.__sub__ !== null) ? a.__sub__(b) : a - b"
 
 def ρσ_operator_mul(a, b):
-    return v"(typeof a == 'object'  && a.__mul__ != null) ? a.__mul__(b) : a * b"
+    return v"(typeof a === 'object'  && a.__mul__ !== null) ? a.__mul__(b) : a * b"
 
 def ρσ_operator_pow(a, b):
-    return v"(typeof a == 'object'  && a.__pow__ != null) ? a.__pow__(b) : a ** b"
+    return v"(typeof a === 'object'  && a.__pow__ !== null) ? a.__pow__(b) : a ** b"
 
 def ρσ_operator_truediv(a, b):
-    return v"(typeof a == 'object'  && a.__truediv__ != null) ? a.__truediv__(b) : a / b"
+    return v"(typeof a === 'object'  && a.__truediv__ !== null) ? a.__truediv__(b) : a / b"
 
 def ρσ_operator_floordiv(a, b):
-    return v"(typeof a == 'object'  && a.__floordiv__ != null) ? a.__floordiv__(b) : Math.floor(a / b)"
+    return v"(typeof a === 'object'  && a.__floordiv__ !== null) ? a.__floordiv__(b) : Math.floor(a / b)"
 
 def ρσ_bool(val):
     return v'!!val'
@@ -326,7 +329,7 @@ def ρσ_max(*args, **kwargs):
         return kwargs.defval
     raise TypeError('expected at least one argument')
 
-v'var round = ρσ_round; var abs = Math.abs, max = ρσ_max.bind(Math.max), min = ρσ_max.bind(Math.min), bool = ρσ_bool, type = ρσ_type'
+v'var round = ρσ_round; var max = ρσ_max.bind(Math.max), min = ρσ_max.bind(Math.min), bool = ρσ_bool, type = ρσ_type'
 v'var float = ρσ_float, int = ρσ_int, arraylike = ρσ_arraylike_creator(), ρσ_arraylike = arraylike'
 v'var print = ρσ_print, id = ρσ_id, get_module = ρσ_get_module, pow = ρσ_pow, divmod = ρσ_divmod'
 v'var dir = ρσ_dir, ord = ρσ_ord, chr = ρσ_chr, bin = ρσ_bin, hex = ρσ_hex, callable = ρσ_callable'

@@ -249,7 +249,7 @@ export default async function Repl(options0: Partial<Options>): Promise<void> {
   function compileAndRun(source: string): boolean {
     let time: number | undefined = undefined;
     if (source.startsWith("%time ") || source.startsWith("time ")) {
-      time = new Date().valueOf();
+      time = 0;
       source = source.slice(5).trimLeft();
     }
     const classes = toplevel?.classes;
@@ -289,6 +289,9 @@ export default async function Repl(options0: Partial<Options>): Promise<void> {
       }
     }
     const noPrint = source.trimRight().endsWith(";");
+    if (time != null) {
+      time = new Date().valueOf();
+    }
     runJS(output, noPrint);
     if (time) {
       console.log(`Wall time: ${new Date().valueOf() - time}ms`);

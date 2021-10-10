@@ -44,6 +44,11 @@ ${DIST}/factor.wasm: src/factor.zig src/factor-export.zig
 	mkdir -p ${DIST}
 	mv src/factor-export.wasm ${DIST}/factor.wasm
 
+${DIST}/complex/complex.wasm: src/complex/complex.zig
+	cd src/complex && zig build-lib -target wasm32-freestanding ${WASM_CFLAGS} complex.zig  ${ZIG_PKG}
+	mkdir -p ${DIST}/complex
+	mv src/complex/complex.wasm ${DIST}/complex/complex.wasm
+
 ${DIST}/modular/p1list.wasm: src/modular/p1list.zig src/modular/p1list-export.zig src/modular/p1list-container.zig src/modular/sl2z.zig
 	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} modular/p1list-export.zig  ${ZIG_PKG}
 	mkdir -p ${DIST}/modular
@@ -97,7 +102,7 @@ node_modules:
 
 ## Put it all together
 
-${DIST}/.built: node_modules ${DIST}/factor.wasm ${DIST}/integer/integer.wasm ${DIST}/arith.wasm ${DIST}/modular/p1list.wasm ${DIST}/modular/dims.wasm ${DIST}/pari/pari.wasm ${DIST}/python/python.wasm
+${DIST}/.built: node_modules ${DIST}/factor.wasm ${DIST}/complex/complex.wasm ${DIST}/integer/integer.wasm ${DIST}/arith.wasm ${DIST}/modular/p1list.wasm ${DIST}/modular/dims.wasm ${DIST}/pari/pari.wasm ${DIST}/python/python.wasm
 	npx tsc
 	touch ${DIST}/.built
 

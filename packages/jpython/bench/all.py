@@ -8,6 +8,7 @@ import uuid_
 import fib
 import lambda_
 import call
+import mandel
 
 from time import time
 from bench import all
