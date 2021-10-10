@@ -2,10 +2,10 @@ from __python__ import hash_literals  # type: ignore
 
 # mypy
 from __python__ import RegExp, String, undefined, parseFloat
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Optional, Union, List, Literal
 
 from unicode_aliases import ALIAS_MAP  # type: ignore
-from utils import make_predicate, characters, charAt
+from utils import make_predicate, characters, charAt, startswith
 from ast_types import AST_Token
 from errors import EOFError, SyntaxError
 from string_interpolation import interpolate  # type: ignore
@@ -125,17 +125,14 @@ def is_identifier_char(ch: str) -> bool:
             ch) or is_unicode_connector_punctuation(ch)
 
 
-def parse_js_number(num: str) -> Optional[Union[float, int]]:
-    try:
-        if RE_HEX_NUMBER.test(num):
-            return int(num[2:], 16)
-        elif RE_OCT_NUMBER.test(num):
-            return int(num[1:], 8)
-        elif RE_DEC_NUMBER.test(num):
-            return parseFloat(num)
-    except:
-        pass
-    return undefined
+def parse_js_number(num: str) -> Union[float, int]:
+    if RE_HEX_NUMBER.test(num):
+        return int(num[2:], 16)
+    elif RE_OCT_NUMBER.test(num):
+        return int(num[1:], 8)
+    elif RE_DEC_NUMBER.test(num):
+        return float(num)
+    raise ValueError("invalid number")
 
 
 # regexps adapted from http://xregexp.com/plugins/#unicode
@@ -189,9 +186,9 @@ def tokenizer(raw_text: str, filename: str) -> Callable[[], Any]:
         'regex_allowed':
         False,
         'comments_before':
-        r'%js []',
+        [],
         'whitespace_before':
-        r'%js []',
+        [],
         'newblock':
         False,
         'endblock':
@@ -215,42 +212,46 @@ def tokenizer(raw_text: str, filename: str) -> Callable[[], Any]:
         return charAt(S['text'], S['pos'] + 1)
 
     def prevChar():
-        return charAt(S['text'], S.tokpos - 1)
+        return charAt(S['text'], S['tokpos'] - 1)
 
-    def next(signal_eof, in_string):
+    def next(signal_eof=False, in_string=False):
         ch = charAt(S['text'], S['pos'])
         S['pos'] += 1
         if signal_eof and not ch:
             raise EOFError
 
         if ch is "\n":
-            S.newline_before = S.newline_before or not in_string
-            S.line += 1
-            S.col = 0
+            S['newline_before'] = S['newline_before'] or not in_string
+            S['line'] += 1
+            S['col'] = 0
         else:
-            S.col += 1
+            S['col'] += 1
         return ch
 
-    def find(what : str, signal_eof : bool) -> int:
+    def find(what: str, signal_eof: bool = False) -> int:
         pos = S['text'].indexOf(what, S['pos'])
         if signal_eof and pos is -1:
             raise EOFError
         return pos
 
     def start_token() -> None:
-        S['tokline']  = S['line']
+        S['tokline'] = S['line']
         S['tokcol'] = S['col']
         S['tokpos'] = S['pos']
 
-    def token(type, value, is_comment, keep_newline):
-        if S.exponent and type == 'operator':
+    def token(type: str,
+              value: Any,
+              is_comment: bool = False,
+              keep_newline: bool = False) -> AST_Token:
+        if S['exponent'] and type == 'operator':
             if value == '^':
                 value = '**'
             elif value == '^^':
                 value = '^'
-        S.regex_allowed = (type is "operator" or type is "keyword"
-                           and KEYWORDS_BEFORE_EXPRESSION[value]
-                           or type is "punc" and PUNC_BEFORE_EXPRESSION[value])
+        S['regex_allowed'] = (
+            type is "operator"
+            or type is "keyword" and KEYWORDS_BEFORE_EXPRESSION[value]
+            or type is "punc" and PUNC_BEFORE_EXPRESSION[value])
 
         if type is "operator" and value is "is" and S['text'].substr(
                 S['pos']).trimLeft().substr(0, 4).trimRight() is "not":
@@ -263,53 +264,53 @@ def tokenizer(raw_text: str, filename: str) -> Callable[[], Any]:
         ret = {
             'type': type,
             'value': value,
-            'line': S.tokline,
-            'col': S.tokcol,
-            'pos': S.tokpos,
+            'line': S['tokline'],
+            'col': S['tokcol'],
+            'pos': S['tokpos'],
             'endpos': S['pos'],
-            'nlb': S.newline_before,
+            'nlb': S['newline_before'],
             'file': filename,
-            'leading_whitespace': S.whitespace_before[-1] or '',
+            'leading_whitespace': S['whitespace_before'][-1] or '',
         }
         if not is_comment:
-            ret.comments_before = S.comments_before
-            S.comments_before = r'%js []'  # Use a plain JS array for speed
+            ret['comments_before'] = S['comments_before']
+            S['comments_before'] = []
             # make note of any newlines in the comments that came before
-            for i in range(ret.comments_before.length):
-                ret.nlb = ret.nlb or ret.comments_before[i].nlb
+            for i in range(ret['comments_before.length']):
+                ret['nlb'] = ret['nlb'] or ret['comments_before'][i]['nlb']
 
         if not keep_newline:
-            S.newline_before = False
+            S['newline_before'] = False
 
         if type is "punc":
-            if (value is ":" and not S.index_or_slice[-1]
-                    and not S.expecting_object_literal_key and
+            if (value is ":" and not S['index_or_slice'][-1]
+                    and not S['expecting_object_literal_key'] and
                 (not S['text'].substring(S['pos'] + 1, find("\n")).trim()
                  or not S['text'].substring(S['pos'] + 1, find("#")).trim())):
-                S.newblock = True
-                S.indentation_matters.push(True)
+                S['newblock'] = True
+                S['indentation_matters'].push(True)
 
             if value is "[":
-                if S.prev and (S.prev.type is "name" or
-                               (S.prev.type is 'punc'
-                                and ')]'.indexOf(S.prev.value) is not -1)):
-                    S.index_or_slice.push(True)
+                if S['prev'] and (S['prev'].type is "name" or
+                                  (S['prev'].type is 'punc'
+                                   and S['prev'].value in ')]')):
+                    S['index_or_slice'].push(True)
                 else:
-                    S.index_or_slice.push(False)
-                S.indentation_matters.push(False)
+                    S['index_or_slice'].push(False)
+                S['indentation_matters'].push(False)
             elif value is "{" or value is "(":
-                S.indentation_matters.push(False)
+                S['indentation_matters'].push(False)
             elif value is "]":
-                S.index_or_slice.pop()
-                S.indentation_matters.pop()
+                S['index_or_slice'].pop()
+                S['indentation_matters'].pop()
             elif value is "}" or value is ")":
-                S.indentation_matters.pop()
-        S.prev = AST_Token(ret)
-        return S.prev
+                S['indentation_matters'].pop()
+        S['prev'] = AST_Token(ret)
+        return S['prev']
 
     # this will transform leading whitespace to block tokens unless
     # part of array/hash, and skip non-leading whitespace
-    def parse_whitespace():
+    def parse_whitespace() -> Union[Literal[-1], Literal[1], Literal[0]]:
         leading_whitespace = ""
         whitespace_exists = False
         while WHITESPACE_CHARS[peek()]:
@@ -321,33 +322,37 @@ def tokenizer(raw_text: str, filename: str) -> Callable[[], Any]:
                 leading_whitespace += ch
         if peek() is not "#":
             if not whitespace_exists:
-                leading_whitespace = S.cached_whitespace
+                leading_whitespace = S['cached_whitespace']
             else:
-                S.cached_whitespace = leading_whitespace
-            if S.newline_before or S.endblock:
+                S['cached_whitespace'] = leading_whitespace
+            if S['newline_before'] or S['endblock']:
                 return test_indent_token(leading_whitespace)
+        return 0
 
-    def test_indent_token(leading_whitespace):
-        most_recent = S.whitespace_before[-1] or ""
-        S.endblock = False
-        if S.indentation_matters[-1] and leading_whitespace is not most_recent:
-            if S.newblock and leading_whitespace and leading_whitespace.indexOf(
-                    most_recent) is 0:
+    def test_indent_token(
+            leading_whitespace: str
+    ) -> Union[Literal[-1], Literal[1], Literal[0]]:
+        most_recent = S['whitespace_before'][-1] or ""
+        S['endblock'] = False
+        if S['indentation_matters'][
+                -1] and leading_whitespace is not most_recent:
+            if S['newblock'] and leading_whitespace and startswith(
+                    leading_whitespace, most_recent):
                 # positive indent, new block
-                S.newblock = False
-                S.whitespace_before.push(leading_whitespace)
+                S['newblock'] = False
+                S['whitespace_before'].push(leading_whitespace)
                 return 1
-            elif most_recent and most_recent.indexOf(leading_whitespace) is 0:
+            elif most_recent and startswith(most_recent, leading_whitespace):
                 # negative indent, block is ending
-                S.endblock = True
-                S.whitespace_before.pop()
+                S['endblock'] = True
+                S['whitespace_before'].pop()
                 return -1
             else:
                 # indent mismatch, inconsistent indentation
                 parse_error("Inconsistent indentation")
         return 0
 
-    def read_while(pred):
+    def read_while(pred: Callable) -> str:
         ret = ""
         i = 0
         ch = peek()
@@ -357,13 +362,16 @@ def tokenizer(raw_text: str, filename: str) -> Callable[[], Any]:
             ch = peek()
         return ret
 
-    def parse_error(err, is_eof):
-        raise SyntaxError(err, filename, S.tokline, S.tokcol, S.tokpos, is_eof)
+    def parse_error(err: str, is_eof: bool = False) -> SyntaxError:
+        raise SyntaxError(err, filename, S['tokline'], S['tokcol'],
+                          S['tokpos'], is_eof)
 
-    def read_num(prefix):
+    def read_num(prefix: str) -> Optional[AST_Token]:
         has_e = False
         has_x = False
         has_dot = prefix is "."
+
+        # Read a binary number
         if not prefix and peek() is '0' and charAt(S['text'],
                                                    S['pos'] + 1) is 'b':
             next(), next()
@@ -372,11 +380,12 @@ def tokenizer(raw_text: str, filename: str) -> Callable[[], Any]:
                 return ch is '0' or ch is '1'
 
             num = read_while(is01)
-            valid = parseInt(num, 2)
-            if isNaN(valid):
+            try:
+                valid = int(num, 2)  # type: Union[float, int]
+            except:
                 parse_error('Invalid syntax for a binary number')
             return token('num', valid)
-        seen = r'%js []'
+        seen = []  # type: List[str]
 
         def is_num(ch, i):
             nonlocal has_dot, has_e, has_x
@@ -418,21 +427,24 @@ def tokenizer(raw_text: str, filename: str) -> Callable[[], Any]:
         if prefix:
             num = prefix + num
 
-        valid = parse_js_number(num)
-        if not isNaN(valid):
-            return token("num", valid)
-        else:
+        try:
+            valid = parse_js_number(num)
+        except:
             parse_error("SyntaxError: invalid syntax in numeric literal -- " +
                         num)
+            return undefined
+        return token("num", valid)
 
-    def read_hex_digits(count):
+    # This returns str or int, since it could be a
+    # hex number or a hex character code.
+    def read_hex_digits(count: int) -> Union[str, int]:
         ans = ''
         while count > 0:
             count -= 1
             if not HEX_PAT.test(peek()):
                 return ans
             ans += next()
-        nval = parseInt(ans, 16)
+        nval = int(ans, 16)
         if nval > 0x10FFFF:
             return ans
         return nval
@@ -675,7 +687,7 @@ def tokenizer(raw_text: str, filename: str) -> Callable[[], Any]:
 
     def handle_slash():
         next()
-        return read_regexp("") if S.regex_allowed else read_operator("/")
+        return read_regexp("") if S['regex_allowed'] else read_operator("/")
 
     def handle_dot():
         next()
@@ -719,9 +731,9 @@ def tokenizer(raw_text: str, filename: str) -> Callable[[], Any]:
             if S['pos'] is 0 and charAt(S['text'], 1) is '!':
                 #shebang
                 return read_line_comment(True)
-            regex_allowed = S.regex_allowed
-            S.comments_before.push(read_line_comment())
-            S.regex_allowed = regex_allowed
+            regex_allowed = S['regex_allowed']
+            S['comments_before'].push(read_line_comment())
+            S['regex_allowed'] = regex_allowed
             return next_token()
         elif tmp_ is 46:  # dot (.)
             return handle_dot()
@@ -743,14 +755,14 @@ def tokenizer(raw_text: str, filename: str) -> Callable[[], Any]:
             # backslash
             next()
             # newline
-            S.newline_before = False
+            S['newline_before'] = False
             return next_token()
 
         if is_identifier_start(code):
             tok = read_word()
             if '\'"'.includes(peek()) and is_string_modifier(tok.value):
                 mods = tok.value.toLowerCase()
-                start_pos_for_string = S.tokpos
+                start_pos_for_string = S['tokpos']
                 stok = read_string(
                     mods.indexOf('r') is not -1,
                     mods.indexOf('v') is not -1)

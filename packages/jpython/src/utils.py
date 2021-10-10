@@ -94,7 +94,31 @@ def cache_file_name(src: str, cache_dir: str) -> Union[None, str]:
 
 
 # This charAt is defined in Javascript and is definitely not s[n],
-# so here's a Python version. Doing s.charAt(n) would be faster...
+# so here's a version that will work in pure Python *and* jpython.
 def charAt(s: str, n: int) -> str:
-    if n < 0 or n >= len(s): return ''
-    return s[n]
+    try:
+        return s.charAt(n)  # type: ignore
+    except:
+        if n < 0 or n >= len(s): return ''
+        return s[n]
+
+
+# Version of indexOf that works in pure python and jpython
+def indexOf(s: str, t: str) -> int:
+    try:
+        return s.indexOf(t)  # type: ignore
+    except:
+        # pure python
+        try:
+            return s.index(t)
+        except:
+            return -1
+
+
+def startswith(s: str, t: str) -> bool:
+    try:
+        # jpython
+        return s.startsWith(t)  # type: ignore
+    except:
+        # pure python
+        return s.startswith(t)
