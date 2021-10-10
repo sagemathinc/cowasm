@@ -2,6 +2,20 @@
 
 ## Not Done
 
+[ ] dict setitem messed up
+
+```
+>>> w = dict()
+{}
+>>> w.set('x',10)
+>>> w
+{'x': 10}
+>>> w['y'] = 15
+15
+>>> w
+{'x': 10}
+```
+
 [ ] get rid of existential operator
 
 [ ] Implement `await`, e.g., `await init()` in repl isn't supported at all.

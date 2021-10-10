@@ -241,12 +241,7 @@ def ρσ_list_constructor(iterable):
         for v'var i = 0; i < iterable.length; i++':
             ans[i] = iterable[i]  # noqa:undef
     elif jstype(iterable[ρσ_iterator_symbol]) is 'function':
-        iterator = iterable.keys() if jstype(Map) is 'function' and v'iterable instanceof Map' else iterable[ρσ_iterator_symbol]()
-        ans = []
-        result = iterator.next()
-        while not result.done:
-            ans.push(result.value)
-            result = iterator.next()
+        ans = Array.from(iterable)
     elif jstype(iterable) is 'number':
         # non-pythonic optimization to allocate all needed memory in a single operation
         ans = new Array(iterable)
@@ -589,6 +584,7 @@ else:
 
 def ρσ_dict(iterable, **kw):
     if v'this instanceof ρσ_dict':
+        # TODO: this is really for copying dicts.
         this.jsmap = new ρσ_dict_implementation()  # noqa:undef
         if iterable is not undefined:
             this.update(iterable)

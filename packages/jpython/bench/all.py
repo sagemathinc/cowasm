@@ -9,6 +9,7 @@ import fib
 import lambda_
 import call
 import mandel
+import mypyc_micro
 
 from time import time
 from bench import all
