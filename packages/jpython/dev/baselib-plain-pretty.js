@@ -1,4 +1,11 @@
 var ρσ_len;
+function abs(a) {
+    return (typeof a === 'object' && a.__abs__ !== null) ? a.__abs__() : Math.abs(a);
+};
+abs.__argnames__ = ["a"];
+abs.__module__ = "__main__";
+undefined;
+
 function ρσ_operator_add(a, b) {
     return (
 typeof a !== 'object' ? a + b :
@@ -13,35 +20,35 @@ typeof a !== 'object' ? a + b :
 undefined;
 
 function ρσ_operator_sub(a, b) {
-    return (typeof a == 'object' && a.__sub__ != null) ? a.__sub__(b) : a - b;
+    return (typeof a === 'object' && a.__sub__ !== null) ? a.__sub__(b) : a - b;
 };
 ρσ_operator_sub.__argnames__ = ["a", "b"];
 ρσ_operator_sub.__module__ = "__main__";
 undefined;
 
 function ρσ_operator_mul(a, b) {
-    return (typeof a == 'object'  && a.__mul__ != null) ? a.__mul__(b) : a * b;
+    return (typeof a === 'object'  && a.__mul__ !== null) ? a.__mul__(b) : a * b;
 };
 ρσ_operator_mul.__argnames__ = ["a", "b"];
 ρσ_operator_mul.__module__ = "__main__";
 undefined;
 
 function ρσ_operator_pow(a, b) {
-    return (typeof a == 'object'  && a.__pow__ != null) ? a.__pow__(b) : a ** b;
+    return (typeof a === 'object'  && a.__pow__ !== null) ? a.__pow__(b) : a ** b;
 };
 ρσ_operator_pow.__argnames__ = ["a", "b"];
 ρσ_operator_pow.__module__ = "__main__";
 undefined;
 
 function ρσ_operator_truediv(a, b) {
-    return (typeof a == 'object'  && a.__truediv__ != null) ? a.__truediv__(b) : a / b;
+    return (typeof a === 'object'  && a.__truediv__ !== null) ? a.__truediv__(b) : a / b;
 };
 ρσ_operator_truediv.__argnames__ = ["a", "b"];
 ρσ_operator_truediv.__module__ = "__main__";
 undefined;
 
 function ρσ_operator_floordiv(a, b) {
-    return (typeof a == 'object'  && a.__floordiv__ != null) ? a.__floordiv__(b) : Math.floor(a / b);
+    return (typeof a === 'object'  && a.__floordiv__ !== null) ? a.__floordiv__(b) : Math.floor(a / b);
 };
 ρσ_operator_floordiv.__argnames__ = ["a", "b"];
 ρσ_operator_floordiv.__module__ = "__main__";
@@ -82,7 +89,7 @@ function ρσ_int(val, base) {
         ans = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(val, base || 10);
     }
     if ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(ans)) {
-        throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("Invalid literal for int with base ", (base || 10)), ": "), val));
+        throw new ValueError(ρσ_operator_add(ρσ_operator_add(ρσ_operator_add("Invalid literal for int with base ", (base || 10)), ": "), val));
     }
     return ans;
 };
@@ -98,7 +105,7 @@ function ρσ_float(val) {
         ans = (parseFloat?.__call__?.bind(parseFloat) ?? parseFloat)(val);
     }
     if ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(ans)) {
-        throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add("Could not convert string to float: ", arguments[0]));
+        throw new ValueError(ρσ_operator_add("Could not convert string to float: ", arguments[0]));
     }
     return ans;
 };
@@ -172,7 +179,7 @@ function ρσ_ord(x) {
         if (56320 <= second && second <= 57343) {
             return ρσ_operator_add(ρσ_operator_sub(ρσ_operator_add(ρσ_operator_mul((ρσ_operator_sub(ans, 55296)), 1024), second), 56320), 65536);
         }
-        throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("string is missing the low surrogate char");
+        throw new TypeError("string is missing the low surrogate char");
     }
     return ans;
 };
@@ -201,7 +208,7 @@ undefined;
 function ρσ_bin(x) {
     var ans;
     if (typeof x !== "number" || x % 1 !== 0) {
-        throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("integer required");
+        throw new TypeError("integer required");
     }
     ans = x.toString(2);
     if (ans[0] === "-") {
@@ -218,7 +225,7 @@ undefined;
 function ρσ_hex(x) {
     var ans;
     if (typeof x !== "number" || x % 1 !== 0) {
-        throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("integer required");
+        throw new TypeError("integer required");
     }
     ans = x.toString(16);
     if (ans[0] === "-") {
@@ -309,7 +316,7 @@ undefined;
         })();
         return ans;
     }
-    throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("reversed() can only be called on arrays or strings");
+    throw new TypeError("reversed() can only be called on arrays or strings");
 };
 ρσ_reversed.__argnames__ = ["iterable"];
 ρσ_reversed.__module__ = "__main__";
@@ -489,7 +496,7 @@ undefined;
     })();
     ans.__str__ = ans.toString = ans.__repr__;
     if (typeof Proxy === "function") {
-        ans = new (Proxy?.__call__?.bind(Proxy) ?? Proxy)(ans, {"get":(function() {
+        ans = new Proxy(ans, {"get":(function() {
             var ρσ_anonfunc = function (obj, prop) {
                 var iprop;
                 if (typeof prop === "string") {
@@ -526,7 +533,7 @@ function ρσ_getattr(obj, name, defval) {
         ρσ_last_exception = ρσ_Exception;
         if (ρσ_Exception instanceof TypeError) {
             if (defval === undefined) {
-                throw new (AttributeError?.__call__?.bind(AttributeError) ?? AttributeError)(ρσ_operator_add(ρσ_operator_add("The attribute ", name), " is not present"));
+                throw new AttributeError(ρσ_operator_add(ρσ_operator_add("The attribute ", name), " is not present"));
             }
             return defval;
         } else {
@@ -535,7 +542,7 @@ function ρσ_getattr(obj, name, defval) {
     }
     if (ret === undefined && !(name in obj)) {
         if (defval === undefined) {
-            throw new (AttributeError?.__call__?.bind(AttributeError) ?? AttributeError)(ρσ_operator_add(ρσ_operator_add("The attribute ", name), " is not present"));
+            throw new AttributeError(ρσ_operator_add(ρσ_operator_add("The attribute ", name), " is not present"));
         }
         ret = defval;
     }
@@ -625,7 +632,7 @@ undefined;
 function ρσ_divmod(x, y) {
     var d;
     if (y === 0) {
-        throw new (ZeroDivisionError?.__call__?.bind(ZeroDivisionError) ?? ZeroDivisionError)("integer division or modulo by zero");
+        throw new ZeroDivisionError("integer division or modulo by zero");
     }
     d = Math.floor(ρσ_operator_truediv(x, y));
     return [d, ρσ_operator_sub(x, ρσ_operator_mul(d, y))];
@@ -644,7 +651,7 @@ function ρσ_max() {
         if (kwargs.defval !== undefined) {
             return kwargs.defval;
         }
-        throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("expected at least one argument");
+        throw new TypeError("expected at least one argument");
     }
     if (args.length === 1) {
         args = args[0];
@@ -670,13 +677,13 @@ function ρσ_max() {
     if (kwargs.defval !== undefined) {
         return kwargs.defval;
     }
-    throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("expected at least one argument");
+    throw new TypeError("expected at least one argument");
 };
 ρσ_max.__handles_kwarg_interpolation__ = true;
 ρσ_max.__module__ = "__main__";
 undefined;
 
-var round = ρσ_round; var abs = Math.abs, max = ρσ_max.bind(Math.max), min = ρσ_max.bind(Math.min), bool = ρσ_bool, type = ρσ_type;
+var round = ρσ_round; var max = ρσ_max.bind(Math.max), min = ρσ_max.bind(Math.min), bool = ρσ_bool, type = ρσ_type;
 var float = ρσ_float, int = ρσ_int, arraylike = ρσ_arraylike_creator(), ρσ_arraylike = arraylike;
 var print = ρσ_print, id = ρσ_id, get_module = ρσ_get_module, pow = ρσ_pow, divmod = ρσ_divmod;
 var dir = ρσ_dir, ord = ρσ_ord, chr = ρσ_chr, bin = ρσ_bin, hex = ρσ_hex, callable = ρσ_callable;
@@ -780,12 +787,12 @@ function ρσ_list_index(val, start, stop) {
         start = ρσ_operator_add(this.length, start);
     }
     if (start < 0) {
-        throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add(val, " is not in list"));
+        throw new ValueError(ρσ_operator_add(val, " is not in list"));
     }
     if (stop === undefined) {
         idx = this.indexOf(val, start);
         if (idx === -1) {
-            throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add(val, " is not in list"));
+            throw new ValueError(ρσ_operator_add(val, " is not in list"));
         }
         return idx;
     }
@@ -797,7 +804,7 @@ function ρσ_list_index(val, start, stop) {
             return i;
         }
     }
-    throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add(val, " is not in list"));
+    throw new ValueError(ρσ_operator_add(val, " is not in list"));
 };
 ρσ_list_index.__argnames__ = ["val", "start", "stop"];
 ρσ_list_index.__module__ = "__main__";
@@ -806,14 +813,14 @@ undefined;
 function ρσ_list_pop(index) {
     var ans;
     if (this.length === 0) {
-        throw new (IndexError?.__call__?.bind(IndexError) ?? IndexError)("list is empty");
+        throw new IndexError("list is empty");
     }
     if (index === undefined) {
         index = -1;
     }
     ans = this.splice(index, 1);
     if (!ans.length) {
-        throw new (IndexError?.__call__?.bind(IndexError) ?? IndexError)("pop index out of range");
+        throw new IndexError("pop index out of range");
     }
     return ans[0];
 };
@@ -825,7 +832,7 @@ function ρσ_list_remove(value) {
     var idx;
     idx = this.indexOf(value);
     if (idx === -1) {
-        throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add(value, " not in list"));
+        throw new ValueError(ρσ_operator_add(value, " not in list"));
     }
     this.splice(idx, 1);
 };
@@ -1069,24 +1076,18 @@ function ρσ_list_decorate(ans) {
 undefined;
 
 function ρσ_list_constructor(iterable) {
-    var ans, iterator, result;
+    var ans;
     if (iterable === undefined) {
         ans = [];
     } else if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(iterable)) {
-        ans = new (Array?.__call__?.bind(Array) ?? Array)(iterable.length);
+        ans = new Array(iterable.length);
         for (var i = 0; i < iterable.length; i++) {
             ans[(typeof i === "number" && i < 0) ? ans.length + i : i] = iterable[(typeof i === "number" && i < 0) ? iterable.length + i : i];
         }
     } else if (typeof iterable[ρσ_iterator_symbol] === "function") {
-        iterator = (typeof Map === "function" && iterable instanceof Map) ? iterable.keys() : iterable[ρσ_iterator_symbol]();
-        ans = ρσ_list_decorate([]);
-        result = iterator.next();
-        while (!result.done) {
-            ans.push(result.value);
-            result = iterator.next();
-        }
+        ans = Array.from(iterable);
     } else if (typeof iterable === "number") {
-        ans = new (Array?.__call__?.bind(Array) ?? Array)(iterable);
+        ans = new Array(iterable);
     } else {
         ans = Object.keys(iterable);
     }
@@ -1238,7 +1239,7 @@ if (typeof Set !== "function" || typeof Set.prototype.delete !== "function") {
 function ρσ_set(iterable) {
     var ans, s, iterator, result, keys;
     if (this instanceof ρσ_set) {
-        this.jsset = new (ρσ_set_implementation?.__call__?.bind(ρσ_set_implementation) ?? ρσ_set_implementation);
+        this.jsset = new ρσ_set_implementation;
         ans = this;
         if (iterable === undefined) {
             return ans;
@@ -1263,7 +1264,7 @@ function ρσ_set(iterable) {
         }
         return ans;
     } else {
-        return new (ρσ_set?.__call__?.bind(ρσ_set) ?? ρσ_set)(iterable);
+        return new ρσ_set(iterable);
     }
 };
 ρσ_set.__argnames__ = ["iterable"];
@@ -1348,7 +1349,7 @@ undefined;
 ρσ_set.prototype.difference = (function() {
     var ρσ_anonfunc = function () {
         var ans, s, iterator, r, x, has;
-        ans = new (ρσ_set?.__call__?.bind(ρσ_set) ?? ρσ_set);
+        ans = new ρσ_set;
         s = ans.jsset;
         iterator = this.jsset.values();
         r = iterator.next();
@@ -1400,7 +1401,7 @@ undefined;
 ρσ_set.prototype.intersection = (function() {
     var ρσ_anonfunc = function () {
         var ans, s, iterator, r, x, has;
-        ans = new (ρσ_set?.__call__?.bind(ρσ_set) ?? ρσ_set);
+        ans = new ρσ_set;
         s = ans.jsset;
         iterator = this.jsset.values();
         r = iterator.next();
@@ -1513,7 +1514,7 @@ undefined;
         iterator = this.jsset.values();
         r = iterator.next();
         if (r.done) {
-            throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)("pop from an empty set");
+            throw new KeyError("pop from an empty set");
         }
         this.jsset.delete(r.value);
         return r.value;
@@ -1525,7 +1526,7 @@ undefined;
 ρσ_set.prototype.remove = (function() {
     var ρσ_anonfunc = function (x) {
         if (!this.jsset.delete(x)) {
-            throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)(x.toString());
+            throw new KeyError(x.toString());
         }
     };
 ρσ_anonfunc.__argnames__ = ["x"];
@@ -1619,7 +1620,7 @@ undefined;
 })();
 function ρσ_set_wrap(x) {
     var ans;
-    ans = new (ρσ_set?.__call__?.bind(ρσ_set) ?? ρσ_set);
+    ans = new ρσ_set;
     ans.jsset = x;
     return ans;
 };
@@ -1807,14 +1808,14 @@ function ρσ_dict() {
     var kw = arguments[arguments.length-1];
     if (kw === null || typeof kw !== "object" || kw [ρσ_kwargs_symbol] !== true) kw = {};
     if (this instanceof ρσ_dict) {
-        this.jsmap = new (ρσ_dict_implementation?.__call__?.bind(ρσ_dict_implementation) ?? ρσ_dict_implementation);
+        this.jsmap = new ρσ_dict_implementation;
         if (iterable !== undefined) {
             this.update(iterable);
         }
         this.update(kw);
         return this;
     } else {
-        return ρσ_interpolate_kwargs_constructor.call(Object.create(ρσ_dict.prototype), false, (ρσ_dict?.__call__?.bind(ρσ_dict) ?? ρσ_dict), [iterable].concat([ρσ_desugar_kwargs(kw)]));
+        return ρσ_interpolate_kwargs_constructor.call(Object.create(ρσ_dict.prototype), false, ρσ_dict, [iterable].concat([ρσ_desugar_kwargs(kw)]));
     }
 };
 ρσ_dict.__handles_kwarg_interpolation__ = true;
@@ -1926,7 +1927,7 @@ undefined;
         var ans;
         ans = this.jsmap.get(key);
         if (ans === undefined && !this.jsmap.has(key)) {
-            throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)(ρσ_operator_add(key, ""));
+            throw new KeyError(ρσ_operator_add(key, ""));
         }
         return ans;
     };
@@ -1996,7 +1997,7 @@ undefined;
         ans = this.jsmap.get(key);
         if (ans === undefined && !this.jsmap.has(key)) {
             if (defval === undefined) {
-                throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)(key);
+                throw new KeyError(key);
             }
             return defval;
         }
@@ -2013,7 +2014,7 @@ undefined;
         var r;
         r = this.jsmap.entries().next();
         if (r.done) {
-            throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)("dict is empty");
+            throw new KeyError("dict is empty");
         }
         this.jsmap.delete(r.value[0]);
         return r.value;
@@ -2134,7 +2135,7 @@ undefined;
 })();
 function ρσ_dict_wrap(x) {
     var ans;
-    ans = new (ρσ_dict?.__call__?.bind(ρσ_dict) ?? ρσ_dict);
+    ans = new ρσ_dict;
     ans.jsmap = x;
     return ans;
 };
@@ -2153,7 +2154,7 @@ function Exception() {
 Exception.prototype.__init__ = function __init__(message) {
     var self = this;
     self.message = message;
-    self.stack = (new (Error?.__call__?.bind(Error) ?? Error)).stack;
+    self.stack = (new Error).stack;
     self.name = self.constructor.name;
 };
 Exception.prototype.__init__.__argnames__ = ["message"];
@@ -2554,7 +2555,7 @@ function ρσ_interpolate_kwargs(f, supplied_args) {
     has_prop = Object.prototype.hasOwnProperty;
     kwobj = supplied_args.pop();
     if (f.__handles_kwarg_interpolation__) {
-        args = new (Array?.__call__?.bind(Array) ?? Array)(ρσ_operator_add(Math.max(supplied_args.length, f.__argnames__.length), 1));
+        args = new Array(ρσ_operator_add(Math.max(supplied_args.length, f.__argnames__.length), 1));
         args[args.length-1] = kwobj;
         for (var i = 0; i < args.length - 1; i++) {
             if (i < f.__argnames__.length) {
@@ -2841,9 +2842,9 @@ undefined;
 
 function map() {
     var iterators, func, args, ans;
-    iterators = new (Array?.__call__?.bind(Array) ?? Array)(ρσ_operator_sub(arguments.length, 1));
+    iterators = new Array(ρσ_operator_sub(arguments.length, 1));
     func = arguments[0];
-    args = new (Array?.__call__?.bind(Array) ?? Array)(ρσ_operator_sub(arguments.length, 1));
+    args = new Array(ρσ_operator_sub(arguments.length, 1));
     for (var i = 1; i < arguments.length; i++) {
         iterators[ρσ_bound_index(ρσ_operator_sub(i, 1), iterators)] = (iter?.__call__?.bind(iter) ?? iter)(arguments[(typeof i === "number" && i < 0) ? arguments.length + i : i]);
     }
@@ -2913,7 +2914,7 @@ undefined;
 
 function zip() {
     var iterators, ans;
-    iterators = new (Array?.__call__?.bind(Array) ?? Array)(arguments.length);
+    iterators = new Array(arguments.length);
     for (var i = 0; i < arguments.length; i++) {
         iterators[(typeof i === "number" && i < 0) ? iterators.length + i : i] = (iter?.__call__?.bind(iter) ?? iter)(arguments[(typeof i === "number" && i < 0) ? arguments.length + i : i]);
     }
@@ -2929,7 +2930,7 @@ undefined;
     ans["next"] = (function() {
         var ρσ_anonfunc = function () {
             var args, r;
-            args = new (Array?.__call__?.bind(Array) ?? Array)(this._iterators.length);
+            args = new Array(this._iterators.length);
             for (var i = 0; i < this._iterators.length; i++) {
                 r = (ρσ_expr_temp = this._iterators)[(typeof i === "number" && i < 0) ? ρσ_expr_temp.length + i : i].next();
                 if (r.done) {
@@ -3152,7 +3153,7 @@ undefined;
         var template, args, kwargs, explicit, implicit, idx, split, ans, pos, in_brace, markup, ch;
         template = this;
         if (template === undefined) {
-            throw new (TypeError?.__call__?.bind(TypeError) ?? TypeError)("Template is required");
+            throw new TypeError("Template is required");
         }
         args = Array.prototype.slice.call(arguments);
         kwargs = {};
@@ -3178,7 +3179,7 @@ undefined;
             rest = arg.slice(key.length);
             ans = (first === "[") ? object[ρσ_bound_index(key.slice(0, -1), object)] : (getattr?.__call__?.bind(getattr) ?? getattr)(object, key);
             if (ans === undefined) {
-                throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)((first === "[") ? key.slice(0, -1) : key);
+                throw new KeyError((first === "[") ? key.slice(0, -1) : key);
             }
             return (resolve?.__call__?.bind(resolve) ?? resolve)(rest, ans);
         };
@@ -3294,7 +3295,7 @@ undefined;
                 is_numeric = true;
                 if (is_int) {
                     if (comma) {
-                        throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("Cannot specify ',' with 'n'");
+                        throw new ValueError("Cannot specify ',' with 'n'");
                     }
                     value = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(value, 10).toLocaleString();
                 } else {
@@ -3368,7 +3369,7 @@ undefined;
                 if (comma) {
                     value = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(value, 10);
                     if ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(value)) {
-                        throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("Must use numbers with , or _");
+                        throw new ValueError("Must use numbers with , or _");
                     }
                     value = (safe_comma?.__call__?.bind(safe_comma) ?? safe_comma)(value, comma);
                 }
@@ -3400,7 +3401,7 @@ undefined;
             }
             width = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(width || "-1", 10);
             if ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(width)) {
-                throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add("Invalid width specification: ", width));
+                throw new ValueError(ρσ_operator_add("Invalid width specification: ", width));
             }
             if (fill && value.length < width) {
                 if (align === "<") {
@@ -3418,7 +3419,7 @@ undefined;
                         value = ρσ_operator_add((repeat?.__call__?.bind(repeat) ?? repeat)(fill, ρσ_operator_sub(width, value.length)), value);
                     }
                 } else {
-                    throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add("Unrecognized alignment: ", align));
+                    throw new ValueError(ρσ_operator_add("Unrecognized alignment: ", align));
                 }
             }
             return value;
@@ -3467,7 +3468,7 @@ undefined;
             transformer = ρσ_unpack[1];
             format_spec = ρσ_unpack[2];
             if (transformer && ['a', 'r', 's'].indexOf(transformer) === -1) {
-                throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)(ρσ_operator_add("Unknown conversion specifier: ", transformer));
+                throw new ValueError(ρσ_operator_add("Unknown conversion specifier: ", transformer));
             }
             ends_with_equal = key.endsWith("=");
             if (ends_with_equal) {
@@ -3477,24 +3478,24 @@ undefined;
             if (lkey) {
                 explicit = true;
                 if (implicit) {
-                    throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("cannot switch from automatic field numbering to manual field specification");
+                    throw new ValueError("cannot switch from automatic field numbering to manual field specification");
                 }
                 nvalue = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(lkey);
                 object = ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(nvalue)) ? kwargs[(typeof lkey === "number" && lkey < 0) ? kwargs.length + lkey : lkey] : args[(typeof nvalue === "number" && nvalue < 0) ? args.length + nvalue : nvalue];
                 if (object === undefined) {
                     if ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(nvalue)) {
-                        throw new (KeyError?.__call__?.bind(KeyError) ?? KeyError)(lkey);
+                        throw new KeyError(lkey);
                     }
-                    throw new (IndexError?.__call__?.bind(IndexError) ?? IndexError)(lkey);
+                    throw new IndexError(lkey);
                 }
                 object = (resolve?.__call__?.bind(resolve) ?? resolve)(key.slice(lkey.length), object);
             } else {
                 implicit = true;
                 if (explicit) {
-                    throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("cannot switch from manual field specification to automatic field numbering");
+                    throw new ValueError("cannot switch from manual field specification to automatic field numbering");
                 }
                 if (idx >= args.length) {
-                    throw new (IndexError?.__call__?.bind(IndexError) ?? IndexError)(ρσ_operator_add("Not enough arguments to match template: ", template));
+                    throw new IndexError(ρσ_operator_add("Not enough arguments to match template: ", template));
                 }
                 object = args[(typeof idx === "number" && idx < 0) ? args.length + idx : idx];
                 idx += 1;
@@ -3554,7 +3555,7 @@ undefined;
             pos += 1;
         }
         if (in_brace) {
-            throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("expected '}' before end of string");
+            throw new ValueError("expected '}' before end of string");
         }
         return ans;
     };
@@ -3714,7 +3715,7 @@ undefined;
         var ans;
         ans = ρσ_str.prototype.find.apply(this, arguments);
         if (ans === -1) {
-            throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("substring not found");
+            throw new ValueError("substring not found");
         }
         return ans;
     };
@@ -3728,7 +3729,7 @@ undefined;
         var ans;
         ans = ρσ_str.prototype.rfind.apply(this, arguments);
         if (ans === -1) {
-            throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("substring not found");
+            throw new ValueError("substring not found");
         }
         return ans;
     };
@@ -3958,7 +3959,7 @@ undefined;
             }
         } else {
             if (sep === "") {
-                throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("empty separator");
+                throw new ValueError("empty separator");
             }
             ans = (split?.__call__?.bind(split) ?? split)(this, sep);
             if (maxsplit > 0 && ans.length > maxsplit) {
@@ -4012,7 +4013,7 @@ undefined;
             }
         } else {
             if (sep === "") {
-                throw new (ValueError?.__call__?.bind(ValueError) ?? ValueError)("empty separator");
+                throw new ValueError("empty separator");
             }
             ans = [];
             pos = end = this.length;

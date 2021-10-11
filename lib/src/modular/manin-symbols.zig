@@ -51,8 +51,10 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
             if (self.sign == Sign.zero) {
                 return 2 * dims.dimensionCuspForms(i64, @intCast(i64, self.N)) + dims.dimensionEisensteinSeries(i64, @intCast(i64, self.N));
             } else {
+                self.print();
+                std.debug.print("Error: dimension formula not yet implemented for nonzero sign -- returning incorrect answer that does not take into account Eisenstein series.\n", .{});
                 // not yet implemented -- kind of tricky...
-                unreachable;
+                return dims.dimensionCuspForms(i64, @intCast(i64, self.N));
             }
         }
 

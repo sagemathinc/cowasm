@@ -5,6 +5,10 @@ import * as dims from "./modular/dims";
 export { dims };
 import P1List, { init as p1listInit } from "./modular/p1list";
 export { P1List };
+import ManinSymbols, {
+  init as maninSymbolsInit,
+} from "./modular/manin-symbols";
+export { ManinSymbols };
 import * as factor from "./factor";
 export { factor };
 import * as arith from "./arith";
@@ -17,6 +21,7 @@ export { Integer, ZZ };
 export async function init(): Promise<void> {
   await dims.init();
   await p1listInit();
+  await maninSymbolsInit();
   await factor.init();
   await arith.init();
   await integerInit();
