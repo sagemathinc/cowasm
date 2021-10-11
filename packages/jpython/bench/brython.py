@@ -14,6 +14,7 @@ from bench import register, all
 def simple_assignment(n=1000000):
     for i in range(n):
         a = 1
+    assert a == 1
 
 
 register('simple assignment', simple_assignment)
@@ -23,6 +24,7 @@ def augmented_assignment(n=1000000):
     a = 0
     for i in range(n):
         a += 1
+    assert a == n
 
 
 register('augmented_assignment', augmented_assignment)
@@ -34,6 +36,7 @@ def augmented_assignment_and_list_append(n=100000):
     while i < n:
         t.append(i)
         i += 1
+    assert len(t) == n
 
 
 register('augmented_assignment_and_list_append',
@@ -43,6 +46,7 @@ register('augmented_assignment_and_list_append',
 def simple_assignment_to_float(n=1000000):
     for i in range(n):
         a = 1.0
+    assert a == 1.0
 
 
 register('simple_assignment_to_float', simple_assignment_to_float)
@@ -60,6 +64,7 @@ register('big_integers', big_integers)
 def build_dictionary(n=1000000):
     for i in range(n):
         a = {0: 0}
+    assert a == {0: 0}
 
 
 register('build_dictionary', build_dictionary)
@@ -69,6 +74,7 @@ def build_dictionary_2(n=100000):
     d = {}
     for i in range(n):
         d[i] = i
+    assert len(d) == n
 
 
 register('build_dictionary_2', build_dictionary_2)
@@ -78,6 +84,7 @@ def set_dictionary_item(n=1000000):
     a = {0: 0}
     for i in range(n):
         a[0] = i
+    assert a == {0: n - 1}
 
 
 register('set_dictionary_item', set_dictionary_item)
@@ -86,6 +93,7 @@ register('set_dictionary_item', set_dictionary_item)
 def build_set(n=1000000):
     for i in range(n):
         a = {0, 2.7, "x"}
+    assert a == {0, 2.7, "x"}
 
 
 register('build_set', build_set)
@@ -94,6 +102,7 @@ register('build_set', build_set)
 def build_list(n=1000000):
     for i in range(n):
         a = [1, 2, 3]
+    assert a == [1, 2, 3]
 
 
 register("build_list", build_list)
@@ -103,6 +112,7 @@ def set_list_item(n=1000000):
     a = [0]
     for i in range(n):
         a[0] = i
+    assert a[0] == n - 1
 
 
 register("set_list_item", set_list_item)
@@ -112,6 +122,7 @@ def list_slice(n=100000):
     a = [1, 2, 3]
     for i in range(n):
         a[:]
+    assert a[:] == [1, 2, 3]
 
 
 register("list_slice", list_slice)
@@ -121,6 +132,7 @@ def integer_addition(n=1000000):
     a, b, c = 1, 2, 3
     for i in range(1000000):
         a + b + c
+    assert a + b + c == 6
 
 
 register("integer_addition", integer_addition)
@@ -130,6 +142,7 @@ def string_addition(n=1000000):
     a, b, c = 'a', 'b', 'c'
     for i in range(n):
         a + b + c
+    assert a + b + c == 'abc'
 
 
 register("string_addition", string_addition)
@@ -183,6 +196,8 @@ def function_call(n=1000000):
     for i in range(n):
         f(i)
 
+    assert f(1) == 1
+
 
 register("function_call", function_call)
 
@@ -193,6 +208,7 @@ def function_call_complex_arguments(n=100000):
 
     for i in range(n):
         f(i, 5, 6, a=8)
+    assert f(10) == 10
 
 
 register("function call, complex arguments", function_call_complex_arguments)
