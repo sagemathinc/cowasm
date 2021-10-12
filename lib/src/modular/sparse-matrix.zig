@@ -75,11 +75,13 @@ pub fn SparseMatrixMod(comptime T: type) type {
         // We use Gauss elimination, in a slightly intelligent way,
         // in that we clear each column using a row with the minimum
         // number of nonzero entries.  Return pivot columns (caller
-        // must deinit that).
-        pub fn echelonize(self: *Matrix) !std.ArrayList(usize) {
-            var pivots = std.ArrayList(usize).init(self.rows.allocator);
+        // must deinit that) that is *sorted*.
+        pub fn echelonize(self: *Matrix) !std.ArrayList(ColumnType) {
+            var columnTypes = std.ArrayList(ColumnType).init(self.rows.allocator);
             var c: usize = 0;
             var startRow: usize = 0;
+            var nonPivotIndex: usize = 0;
+            var pivotIndex: usize = 0;
             while (c < self.ncols) : (c += 1) {
                 // Goal -- clear column c, if not already cleared.
                 // First find row that we can use that has min number of nonzero entries:
@@ -97,9 +99,13 @@ pub fn SparseMatrixMod(comptime T: type) type {
                     }
                 }
                 if (!found) {
+                    // non-pivot column
+                    try columnTypes.append(ColumnType{ .isPivot = false, .index = nonPivotIndex });
+                    nonPivotIndex += 1;
                     continue;
                 }
-                try pivots.append(c);
+                try columnTypes.append(ColumnType{ .isPivot = true, .index = pivotIndex });
+                pivotIndex += 1;
                 r = minRow;
                 // Now use the row we found to clear column c.
                 const a = self.rows.items[r].get(c);
@@ -117,7 +123,7 @@ pub fn SparseMatrixMod(comptime T: type) type {
                 }
                 startRow += 1;
             }
-            return pivots;
+            return columnTypes;
         }
 
         pub fn randomize(self: *Matrix, cols: usize) !void {
@@ -134,6 +140,8 @@ pub fn SparseMatrixMod(comptime T: type) type {
         }
     };
 }
+
+const ColumnType = struct { isPivot: bool, index: usize };
 
 const testing_allocator = std.testing.allocator;
 const expect = std.testing.expect;
@@ -167,8 +175,8 @@ test "computing an echelon form" {
     try m.set(1, 0, 3);
     try m.set(1, 1, 4);
     try m.set(1, 2, 5);
-    const pivots = try m.echelonize();
-    defer pivots.deinit();
+    const columnTypes = try m.echelonize();
+    defer columnTypes.deinit();
     try expect((try m.get(0, 0)) == 1);
 }
 
@@ -185,11 +193,15 @@ test "compute echelon form of [1..N^2] square rank 2 matrix mod 997, for N=100" 
             k += 1;
         }
     }
-    const pivots = try m.echelonize();
-    defer pivots.deinit();
-    try expect(pivots.items[0] == 0);
-    try expect(pivots.items[1] == 1);
-    try expect(pivots.items.len == 2);
+    const columnTypes = try m.echelonize();
+    defer columnTypes.deinit();
+    try expect(columnTypes.items[0].isPivot);
+    try expect(columnTypes.items[0].index == 0);
+    try expect(columnTypes.items[1].isPivot);
+    try expect(columnTypes.items[1].index == 1);
+    try expect(!columnTypes.items[2].isPivot);
+    try expect(columnTypes.items[2].index == 0);
+    try expect(columnTypes.items.len == N);
 }
 
 test "compute echelon form of a larger random matrix" {
@@ -200,10 +212,8 @@ test "compute echelon form of a larger random matrix" {
     try m.randomize(3);
     //m.print();
     const t = time();
-    const pivots = try m.echelonize();
-    defer pivots.deinit();
-    //m.print();
-    //std.debug.print("pivots={}\n", .{pivots});
+    const columnTypes = try m.echelonize();
+    defer columnTypes.deinit();
     std.debug.print("tm = {}\n", .{time() - t});
 }
 
@@ -211,6 +221,6 @@ pub fn bench(N: i32) !void {
     var m = try SparseMatrixMod(i32).init(17, @intCast(usize, N), @intCast(usize, 3 * N), testing_allocator);
     defer m.deinit();
     try m.randomize(3);
-    const pivots = try m.echelonize();
-    defer pivots.deinit();
+    const columnTypes = try m.echelonize();
+    defer columnTypes.deinit();
 }

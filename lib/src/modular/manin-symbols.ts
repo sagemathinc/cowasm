@@ -17,7 +17,7 @@ class ManinSymbolsClass {
     this.N = N;
     this.sign = sign;
     this.handle = wasm.exports.ManinSymbols(N, sign);
-    registry.register(this, this.handle); // so we get notified when garbage collected.
+    registry.register(this, this.handle);
   }
 
   dimensionFormula(): number {

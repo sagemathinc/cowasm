@@ -3,6 +3,7 @@ const twoTerm = @import("./modsym-2term.zig");
 const P1List = @import("./p1list.zig").P1List;
 const SparseMatrixMod = @import("./sparse-matrix.zig").SparseMatrixMod;
 const dims = @import("./dims.zig");
+const errors = @import("../errors.zig");
 
 pub const Sign = enum(i4) {
     minus = -1,
@@ -125,7 +126,7 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
 
         pub fn relationMatrixMod(self: Syms, comptime T: type, p: T, quo: twoTerm.Quotient(Index)) !SparseMatrixMod(T) {
 
-            // Because S and T obviously do *not* commute, we have to compute
+            // Because operators S and T obviously do *not* commute, we have to compute
             // *all* of the relations (up to x+T*x+T^2*x =Tx+T^2*x+x=T^2x+x+Tx)
             // and reduce them modulo quo (the 2-term relations).
 
@@ -152,7 +153,7 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
                 alreadySeen.set(Ti);
                 const Ti_mod = quo.reduce(@intCast(Index, Ti));
                 if (Ti_mod.coeff != 0) {
-                    // important to add to the (row, col) positiion, not set it!
+                    // important to add to the (row, col) position, not set it!
                     const c = try matrix.get(row, Ti_mod.index);
                     try matrix.set(row, Ti_mod.index, c + Ti_mod.coeff);
                 }
@@ -167,6 +168,78 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
                 row += 1;
             }
             return matrix;
+        }
+
+        pub fn presentation(self: Syms, comptime T: type, p: T) !Presentation(T) {
+            var basis = std.ArrayList(usize).init(self.allocator);
+            var quo = try self.twoTermQuotient();
+            defer quo.deinit();
+            var rel3 = try self.relationMatrixMod(T, p, quo);
+            defer rel3.deinit();
+            var columnTypes = try rel3.echelonize();
+            defer columnTypes.deinit();
+            // write each generator in terms of the r non-pivot columns.
+            const n: Index = quo.ngens;
+            var r: usize = 0;
+            var j: usize = 0;
+            while (j < columnTypes.items.len) : (j += 1) {
+                if (!columnTypes.items[j].isPivot) {
+                    r += 1;
+                }
+            }
+            var matrix = try SparseMatrixMod(T).init(p, 0, r, self.allocator);
+            var i: Index = 0;
+            while (i < n) : (i += 1) {
+                try matrix.appendRow();
+                const mod = quo.reduce(i);
+                // i-th generator is equal to mod.coeff * [mod.index].
+                if (mod.coeff == 0) {
+                    // equivalent to 0
+                    continue;
+                }
+                const columnType = columnTypes.items[mod.index];
+                if (columnType.isPivot) {
+                    // if mod.index is a pivot column of rel3, then we
+                    // write it in terms of generators.
+                    // Read off and copy over -mod.coeff * non-pivot positions of
+                    // row the index of this pivot of rel3 as row of i of matrix.
+                    var c: usize = 0;
+                    var it = rel3.rows.items[columnType.index].map.iterator();
+                    while (it.next()) |kv| {
+                        const ind = kv.key_ptr.*;
+                        if (!columnTypes.items[ind].isPivot) {
+                            // *not* a pivot, so copy it.
+                            const val = -mod.coeff * (kv.value_ptr.*);
+                            try matrix.set(i, c, val);
+                            c += 1;
+                        }
+                    }
+                } else {
+                    // if mod.index is not a pivot column, it is one of the free generators
+                    try matrix.set(i, columnType.index, mod.coeff);
+                    if (mod.coeff == 1 and basis.items.len < columnType.index + 1) {
+                        try basis.append(i);
+                    }
+                }
+            }
+            if (matrix.ncols != basis.items.len) {
+                std.debug.print("not even basis elements; need to do with coefficient issue?", .{});
+                return errors.General.RuntimeError;
+            }
+            return Presentation(T){ .matrix = matrix, .basis = basis };
+        }
+    };
+}
+
+fn Presentation(comptime T: type) type {
+    return struct {
+        const P = @This();
+        matrix: SparseMatrixMod(T),
+        basis: std.ArrayList(usize),
+
+        pub fn deinit(self: *P) void {
+            self.matrix.deinit();
+            self.basis.deinit();
         }
     };
 }
@@ -269,17 +342,13 @@ test "compute quotient modulo two term relations for N=3 with sign 1" {
 fn rankCheck(allocator: *std.mem.Allocator, N: usize, sign: Sign, p: i32) !usize {
     var M = try ManinSymbols(i64, u32).init(allocator, N, sign);
     defer M.deinit();
-    var quo = try M.twoTermQuotient();
-    defer quo.deinit();
-    var matrix = try M.relationMatrixMod(i64, p, quo);
-    defer matrix.deinit();
-    var pivots = try matrix.echelonize();
-    defer pivots.deinit();
-    const r = matrix.ncols - pivots.items.len;
+    var presentation = try M.presentation(i64, p);
+    defer presentation.deinit();
     const d = M.dimensionFormula();
+    const r = presentation.basis.items.len;
     if (r != d) {
-        std.debug.print("\nquo={}\n", .{quo});
         std.debug.print("\ndimension wrong for N={}; have r={} and d={}\n", .{ N, r, d });
+        return errors.General.RuntimeError;
     }
     return r;
 }
@@ -289,15 +358,6 @@ test "compute some manin symbols presentations for prime N and do consistency ch
     while (N < 40) : (N += 1) {
         _ = try rankCheck(test_allocator, N, Sign.zero, 2003);
     }
-    //     try expect(1 == try rankCheck(test_allocator, 3, Sign.zero, 997));
-    //     try expect(1 + 2 == try rankCheck(test_allocator, 11, Sign.zero, 997));
-    //     try expect(5 == try rankCheck(test_allocator, 12, Sign.zero, 997));
-    //     try expect(5 == try rankCheck(test_allocator, 15, Sign.zero, 997));
-    //     try expect(9 == try rankCheck(test_allocator, 33, Sign.zero, 997));
-    //     try expect(1 + 4 == try rankCheck(test_allocator, 37, Sign.zero, 997));
-    //var r = try rankCheck(test_allocator, 389, Sign.zero, 997);
-    //std.debug.print("\nr={}\n",.{r});
-    //try expect(1 + 2*32 == try rankCheck(test_allocator, 389, Sign.zero, 997));
 }
 
 fn bench(N: usize, sign: Sign) !void {
@@ -308,10 +368,10 @@ fn bench(N: usize, sign: Sign) !void {
 }
 
 // zig test manin-symbols.zig --main-pkg-path .. -O ReleaseFast
-const DEBUG = false;
-//const DEBUG = true;
+const BENCH = false;
+//const BENCH = true;
 test "bench" {
-    if (DEBUG) {
+    if (BENCH) {
         try bench(37, Sign.zero);
         try bench(389, Sign.zero);
         try bench(5000, Sign.zero);
@@ -322,4 +382,11 @@ test "bench" {
         try bench(10007, Sign.plus);
         // try bench(100003, Sign.plus);
     }
+}
+
+test "compute presentation" {
+    var M = try ManinSymbols(i64, u32).init(test_allocator, 36, Sign.zero);
+    defer M.deinit();
+    var presentation = try M.presentation(i64, 997);
+    defer presentation.deinit();
 }

@@ -60,6 +60,11 @@ ${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/ma
 	mkdir -p ${DIST}/modular
 	mv src/manin-symbols-export.wasm ${DIST}/modular/manin-symbols.wasm
 
+.PHONY: test-manin-symbols
+test-manin-symbols:
+	cd src && zig test modular/manin-symbols.zig  ${ZIG_PKG}
+
+
 ${DIST}/modular/dims.wasm: src/modular/dims.zig src/trial-division.zig
 	cd src/ && zig build-lib -target wasm32-freestanding ${WASM_CFLAGS} modular/dims.zig  ${ZIG_PKG}
 	mkdir -p ${DIST}/modular
