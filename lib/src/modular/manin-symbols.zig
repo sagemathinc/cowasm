@@ -1,7 +1,8 @@
 const std = @import("std");
 const twoTerm = @import("./modsym-2term.zig");
 const P1List = @import("./p1list.zig").P1List;
-const SparseMatrixMod = @import("./sparse-matrix.zig").SparseMatrixMod;
+const sparse_matrix = @import("./sparse-matrix.zig");
+const dense_matrix = @import("./dense-matrix.zig");
 const dims = @import("./dims.zig");
 const errors = @import("../errors.zig");
 
@@ -124,14 +125,14 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
             return twoTerm.Quotient(Index).init(relsIandS);
         }
 
-        pub fn relationMatrixMod(self: Syms, comptime T: type, p: T, quo: twoTerm.Quotient(Index)) !SparseMatrixMod(T) {
+        pub fn relationMatrixMod(self: Syms, comptime T: type, p: T, quo: twoTerm.Quotient(Index)) !sparse_matrix.SparseMatrixMod(T) {
 
             // Because operators S and T obviously do *not* commute, we have to compute
             // *all* of the relations (up to x+T*x+T^2*x =Tx+T^2*x+x=T^2x+x+Tx)
             // and reduce them modulo quo (the 2-term relations).
 
             const rank = quo.rank();
-            var matrix = try SparseMatrixMod(T).init(p, 0, rank, self.allocator);
+            var matrix = try sparse_matrix.SparseMatrixMod(T).init(p, 0, rank, self.allocator);
             errdefer matrix.deinit();
             var row: Index = 0; // current row we're adding to matrix.
             const n: Index = quo.ngens;
@@ -171,6 +172,8 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
         }
 
         pub fn presentation(self: Syms, comptime T: type, p: T) !Presentation(T) {
+            const time = std.time.milliTimestamp;
+            var t = time();
             var basis = std.ArrayList(usize).init(self.allocator);
             var quo = try self.twoTermQuotient();
             defer quo.deinit();
@@ -178,6 +181,8 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
             defer rel3.deinit();
             var columnTypes = try rel3.echelonize();
             defer columnTypes.deinit();
+            std.debug.print("\ncomputed echelon = {}ms\n", .{time() - t});
+            t = time();
             // write each generator in terms of the r non-pivot columns.
             const n: Index = quo.ngens;
             var r: usize = 0;
@@ -187,10 +192,9 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
                     r += 1;
                 }
             }
-            var matrix = try SparseMatrixMod(T).init(p, 0, r, self.allocator);
+            var matrix = try dense_matrix.DenseMatrixMod(T).init(p, n, r, self.allocator);
             var i: Index = 0;
             while (i < n) : (i += 1) {
-                try matrix.appendRow();
                 const mod = quo.reduce(i);
                 // i-th generator is equal to mod.coeff * [mod.index].
                 if (mod.coeff == 0) {
@@ -226,6 +230,7 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
                 std.debug.print("not even basis elements; need to do with coefficient issue?", .{});
                 return errors.General.RuntimeError;
             }
+            std.debug.print("\nmanage presentation = {}ms\n", .{time() - t});
             return Presentation(T){ .matrix = matrix, .basis = basis };
         }
     };
@@ -234,7 +239,7 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
 fn Presentation(comptime T: type) type {
     return struct {
         const P = @This();
-        matrix: SparseMatrixMod(T),
+        matrix: dense_matrix.DenseMatrixMod(T),
         basis: std.ArrayList(usize),
 
         pub fn deinit(self: *P) void {
@@ -353,23 +358,26 @@ fn rankCheck(allocator: *std.mem.Allocator, N: usize, sign: Sign, p: i32) !usize
     return r;
 }
 
-test "compute some manin symbols presentations for prime N and do consistency checks on their dimension" {
-    var N: usize = 3;
-    while (N < 40) : (N += 1) {
-        _ = try rankCheck(test_allocator, N, Sign.zero, 2003);
-    }
-}
+// test "compute some manin symbols presentations for prime N and do consistency checks on their dimension" {
+//     var N: usize = 3;
+//     while (N < 40) : (N += 1) {
+//         _ = try rankCheck(test_allocator, N, Sign.zero, 2003);
+//     }
+// }
 
 fn bench(N: usize, sign: Sign) !void {
     const time = std.time.milliTimestamp;
     const t = time();
-    const r = try rankCheck(test_allocator, N, sign, 997);
-    std.debug.print("\nbench({},{}) = {}ms, r={}\n", .{ N, sign, time() - t, r });
+    var M = try ManinSymbols(i64, u32).init(test_allocator, N, sign);
+    defer M.deinit();
+    var presentation = try M.presentation(i64, 997);
+    defer presentation.deinit();
+    std.debug.print("\nbench({},{}) = {}ms, r={}\n", .{ N, sign, time() - t, presentation.basis.items.len });
 }
 
-// zig test manin-symbols.zig --main-pkg-path .. -O ReleaseFast
-const BENCH = false;
-//const BENCH = true;
+// zig test manin-symbols.zig --main-pkg-path .. -O ReleaseFast -lc
+//const BENCH = false;
+const BENCH = true;
 test "bench" {
     if (BENCH) {
         try bench(37, Sign.zero);
@@ -380,7 +388,7 @@ test "bench" {
         try bench(5077, Sign.zero);
         try bench(5077, Sign.plus);
         try bench(10007, Sign.plus);
-        // try bench(100003, Sign.plus);
+        try bench(100003, Sign.plus);
     }
 }
 
