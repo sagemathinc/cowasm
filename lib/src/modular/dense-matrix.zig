@@ -1,5 +1,3 @@
-//pub const DenseMatrixMod = @import("./sparse-matrix.zig").SparseMatrixMod;
-
 const std = @import("std");
 const errors = @import("../errors.zig");
 

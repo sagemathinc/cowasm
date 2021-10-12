@@ -246,6 +246,11 @@ fn Presentation(comptime T: type) type {
             self.matrix.deinit();
             self.basis.deinit();
         }
+
+        pub fn print(self: P) void {
+            self.matrix.print();
+            std.debug.print("{}\n", .{self.basis});
+        }
     };
 }
 
@@ -376,8 +381,8 @@ fn bench(N: usize, sign: Sign) !void {
 }
 
 // zig test manin-symbols.zig --main-pkg-path .. -O ReleaseFast -lc
-//const BENCH = false;
-const BENCH = true;
+const BENCH = false;
+//const BENCH = true;
 test "bench" {
     if (BENCH) {
         try bench(37, Sign.zero);
@@ -393,8 +398,9 @@ test "bench" {
 }
 
 test "compute presentation" {
-    var M = try ManinSymbols(i64, u32).init(test_allocator, 36, Sign.zero);
+    var M = try ManinSymbols(i64, u32).init(test_allocator, 11, Sign.zero);
     defer M.deinit();
     var presentation = try M.presentation(i64, 997);
+    presentation.print();
     defer presentation.deinit();
 }
