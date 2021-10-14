@@ -1,5 +1,11 @@
 import wasmImport, { WasmInstance } from "../wasm";
 
+// @ts-ignore -- typescript doesn't have FinalizationRegistry
+const registry = new FinalizationRegistry((handle) => {
+  // console.log(`Freeing memory for ${handle}`);
+  wasm?.exports.freeInteger(handle);
+});
+
 export let wasm: WasmInstance | undefined = undefined;
 
 export async function init(): Promise<void> {
@@ -19,13 +25,12 @@ export class IntegerClass {
     if (wasm == null) throw Error("await init() first");
     if (n === null && i !== undefined) {
       this.i = i;
-      return;
-    }
-    if (typeof n == "number") {
+    } else if (typeof n == "number") {
       this.i = wasm.exports.createIntegerInt(n);
-      return;
+    } else {
+      this.i = wasm.callWithString("createIntegerStr", `${n}`, base ?? 10);
     }
-    this.i = wasm.callWithString("createIntegerStr", `${n}`, base ?? 10);
+    registry.register(this, this.i); // so we get notified when garbage collected.
   }
 
   __add__(m: IntegerClass): IntegerClass {

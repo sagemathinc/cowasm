@@ -2,6 +2,7 @@ const std = @import("std");
 const AutoHashMap = std.AutoHashMap;
 
 // A collection of proxy objects of a given type.
+// Assumes that the objects have a deinit function.
 // Used to support using our code from Web Assembly.
 // The handle assigned to an object is never 0.
 pub fn ProxyObjects(comptime T: type) type {
