@@ -33,28 +33,33 @@ export class IntegerClass {
     registry.register(this, this.i); // so we get notified when garbage collected.
   }
 
-  __add__(m: IntegerClass): IntegerClass {
+  _coerce(m): IntegerClass {
     if (wasm == null) throw Error("await init() first");
     if (!(m instanceof IntegerClass)) {
-      m = new IntegerClass(m);
+      return new IntegerClass(m);
     }
-    return new IntegerClass(null, wasm.exports.addIntegers(this.i, m.i));
+    return m;
   }
 
-  __sub__(m: IntegerClass): IntegerClass {
-    if (wasm == null) throw Error("await init() first");
-    if (!(m instanceof IntegerClass)) {
-      m = new IntegerClass(m);
+  _bin_op(m, name: string): IntegerClass {
+    m = this._coerce(m);
+    const op = wasm?.exports[name];
+    if (op === undefined) {
+      throw Error(`BUG -- unknown op ${name}`);
     }
-    return new IntegerClass(null, wasm.exports.subIntegers(this.i, m.i));
+    return new IntegerClass(null, op(this.i, m.i));
   }
 
-  __mul__(m: IntegerClass): IntegerClass {
-    if (wasm == null) throw Error("await init() first");
-    if (!(m instanceof IntegerClass)) {
-      m = new IntegerClass(m);
-    }
-    return new IntegerClass(null, wasm.exports.mulIntegers(this.i, m.i));
+  __add__(m): IntegerClass {
+    return this._bin_op(m, "addIntegers");
+  }
+
+  __sub__(m): IntegerClass {
+    return this._bin_op(m, "subIntegers");
+  }
+
+  __mul__(m): IntegerClass {
+    return this._bin_op(m, "mulIntegers");
   }
 
   __pow__(e: number): IntegerClass {
@@ -62,7 +67,7 @@ export class IntegerClass {
     return new IntegerClass(null, wasm.exports.powIntegers(this.i, e));
   }
 
-  eql(m: IntegerClass): boolean {
+  eql(m): boolean {
     if (wasm == null) throw Error("await init() first");
     if (!(m instanceof IntegerClass)) {
       m = new IntegerClass(m);
@@ -70,12 +75,13 @@ export class IntegerClass {
     return !!wasm.exports.eqlIntegers(this.i, m.i);
   }
 
-  cmp(m: IntegerClass): number {
-    if (wasm == null) throw Error("await init() first");
-    if (!(m instanceof IntegerClass)) {
-      m = new IntegerClass(m);
-    }
-    return wasm.exports.cmpIntegers(this.i, m.i);
+  gcd(m): IntegerClass {
+    return this._bin_op(m, "gcdIntegers");
+  }
+
+  cmp(m): number {
+    m = this._coerce(m);
+    return wasm?.exports.cmpIntegers(this.i, m.i);
   }
 
   print() {
@@ -99,8 +105,12 @@ export class IntegerClass {
     return wasm.result;
   }
 
-  __repr__() : string { return this.toString(); }
-  __str__() : string { return this.toString(); }
+  __repr__(): string {
+    return this.toString();
+  }
+  __str__(): string {
+    return this.toString();
+  }
 
   numDigits(base: number = 10): string {
     if (wasm == null) throw Error("await init() first");

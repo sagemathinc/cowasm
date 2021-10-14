@@ -88,6 +88,12 @@ pub export fn nextPrime(a: i32) i32 {
     return put(A.nextPrime()) catch return 0;
 }
 
+pub export fn gcdIntegers(a: i32, b: i32) i32 {
+    const A = get(a) catch return 0;
+    const B = get(b) catch return 0;
+    return put(A.gcd(B)) catch return 0;
+}
+
 pub export fn printInteger(a: i32) void {
     const A = get(a) catch return;
     A.print();

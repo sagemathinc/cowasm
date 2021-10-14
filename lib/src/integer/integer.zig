@@ -96,6 +96,18 @@ pub const Integer = struct {
         return c;
     }
 
+    pub fn gcd(self: Integer, right: Integer) Integer {
+        var c = Integer.init();
+        gmp.mpz_gcd(&c.x, &self.x, &right.x);
+        return c;
+    }
+
+//     pub fn xgcd(self: Integer, right: Integer) struct { g: Integer, s: Integer, t: Integer } {
+//         // gmp.mpz_extgcd()
+
+
+//     }
+
     pub fn print(self: Integer) void {
         _ = gmp.gmp_printf("%Zd\n", &self.x);
     }

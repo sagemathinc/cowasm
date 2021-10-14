@@ -18,7 +18,6 @@ export { Integer, ZZ };
 //import * as pari from "./pari";
 //export { pari };
 export * as misc from "./misc";
-export { misc };
 
 export async function init(): Promise<void> {
   await dims.init();
