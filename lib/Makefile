@@ -64,6 +64,9 @@ ${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/ma
 test-manin-symbols:
 	cd src && zig test modular/manin-symbols.zig  ${ZIG_PKG}
 
+.PHONY: test-heilbronn
+test-heilbronn:
+	cd src && zig test modular/heilbronn.zig  ${ZIG_PKG}
 
 ${DIST}/modular/dims.wasm: src/modular/dims.zig src/trial-division.zig
 	cd src/ && zig build-lib -target wasm32-freestanding ${WASM_CFLAGS} modular/dims.zig  ${ZIG_PKG}
