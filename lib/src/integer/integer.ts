@@ -35,16 +35,19 @@ export class IntegerClass {
 
   __add__(m: IntegerClass): IntegerClass {
     if (wasm == null) throw Error("await init() first");
+    if (!(m instanceof IntegerClass)) throw Error("TypeError");
     return new IntegerClass(null, wasm.exports.addIntegers(this.i, m.i));
   }
 
   __sub__(m: IntegerClass): IntegerClass {
     if (wasm == null) throw Error("await init() first");
+    if (!(m instanceof IntegerClass)) throw Error("TypeError");
     return new IntegerClass(null, wasm.exports.subIntegers(this.i, m.i));
   }
 
   __mul__(m: IntegerClass): IntegerClass {
     if (wasm == null) throw Error("await init() first");
+    if (!(m instanceof IntegerClass)) throw Error("TypeError");
     return new IntegerClass(null, wasm.exports.mulIntegers(this.i, m.i));
   }
 
@@ -55,11 +58,13 @@ export class IntegerClass {
 
   eql(m: IntegerClass): boolean {
     if (wasm == null) throw Error("await init() first");
+    if (!(m instanceof IntegerClass)) throw Error("TypeError");
     return !!wasm.exports.eqlIntegers(this.i, m.i);
   }
 
   cmp(m: IntegerClass): number {
     if (wasm == null) throw Error("await init() first");
+    if (!(m instanceof IntegerClass)) throw Error("TypeError");
     return wasm.exports.cmpIntegers(this.i, m.i);
   }
 
