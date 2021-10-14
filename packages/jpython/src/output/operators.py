@@ -337,6 +337,30 @@ def print_assign(self, output):
 
         output.with_parens(f_slash)
         return
+    if self.operator is '+=':
+        output.assign(self.left)
+        output.print('ρσ_operator_iadd('), self.left.print(
+            output), output.comma(), self.right.print(output), output.print(
+                ')')
+        return
+    if self.operator is '-=':
+        output.assign(self.left)
+        output.print('ρσ_operator_isub('), self.left.print(
+            output), output.comma(), self.right.print(output), output.print(
+                ')')
+        return
+    if self.operator is '*=':
+        output.assign(self.left)
+        output.print('ρσ_operator_imul('), self.left.print(
+            output), output.comma(), self.right.print(output), output.print(
+                ')')
+        return
+    if self.operator is '/=':
+        output.assign(self.left)
+        output.print('ρσ_operator_idiv('), self.left.print(
+            output), output.comma(), self.right.print(output), output.print(
+                ')')
+        return
     if self.operator is '=' and self.is_chained():
         left_hand_sides, rhs = self.traverse_chain()
         is_compound_assign = False

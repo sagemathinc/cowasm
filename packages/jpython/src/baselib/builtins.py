@@ -1,7 +1,7 @@
 # globals: exports, console, ρσ_iterator_symbol, ρσ_kwargs_symbol, ρσ_arraylike, ρσ_list_contains
 
 def abs(a):
-    return r"%js (typeof a === 'object' && a.__abs__ !== null) ? a.__abs__() : Math.abs(a)"
+    return r"%js (typeof a === 'object' && a.__abs__ !== undefined) ? a.__abs__() : Math.abs(a)"
 
 def ρσ_operator_add(a, b):
     return r"""%js (
@@ -14,19 +14,39 @@ typeof a !== 'object' ? a + b :
 """
 
 def ρσ_operator_sub(a, b):
-    return v"(typeof a === 'object' && a.__sub__ !== null) ? a.__sub__(b) : a - b"
+    return v"(typeof a === 'object' && a.__sub__ !== undefined) ? a.__sub__(b) : a - b"
 
 def ρσ_operator_mul(a, b):
-    return v"(typeof a === 'object'  && a.__mul__ !== null) ? a.__mul__(b) : a * b"
+    return v"(typeof a === 'object'  && a.__mul__ !== undefined) ? a.__mul__(b) : a * b"
+
+def ρσ_operator_div(a, b):
+    return v"(typeof a === 'object'  && a.__div__ !== undefined) ? a.__div__(b) : a / b"
 
 def ρσ_operator_pow(a, b):
-    return v"(typeof a === 'object'  && a.__pow__ !== null) ? a.__pow__(b) : a ** b"
+    return v"(typeof a === 'object'  && a.__pow__ !== undefined) ? a.__pow__(b) : a ** b"
+
+
+def ρσ_operator_iadd(a, b):
+    return v"(typeof a === 'object' && a.__iadd__ !== undefined) ? a.__iadd__(b) : ρσ_operator_add(a,b)"
+
+def ρσ_operator_isub(a, b):
+    return v"(typeof a === 'object' && a.__isub__ !== undefined) ? a.__isub__(b) : ρσ_operator_sub(a,b)"
+
+def ρσ_operator_imul(a, b):
+    return v"(typeof a === 'object' && a.__imul__ !== undefined) ? a.__imul__(b) : ρσ_operator_mul(a,b)"
+
+def ρσ_operator_idiv(a, b):
+    return v"(typeof a === 'object' && a.__idiv__ !== undefined) ? a.__idiv__(b) : ρσ_operator_div(a,b)"
+
+def ρσ_operator_ipow(a, b):
+    return v"(typeof a === 'object' && a.__ipow__ !== undefined) ? a.__ipow__(b) : ρσ_operator_pow(a,b)"
+
 
 def ρσ_operator_truediv(a, b):
-    return v"(typeof a === 'object'  && a.__truediv__ !== null) ? a.__truediv__(b) : a / b"
+    return v"(typeof a === 'object'  && a.__truediv__ !== undefined) ? a.__truediv__(b) : a / b"
 
 def ρσ_operator_floordiv(a, b):
-    return v"(typeof a === 'object'  && a.__floordiv__ !== null) ? a.__floordiv__(b) : Math.floor(a / b)"
+    return v"(typeof a === 'object'  && a.__floordiv__ !== undefined) ? a.__floordiv__(b) : Math.floor(a / b)"
 
 def ρσ_bool(val):
     return v'!!val'
