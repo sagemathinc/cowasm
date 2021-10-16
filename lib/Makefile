@@ -30,6 +30,15 @@ ${DIST}/integer/integer.wasm: src/integer/integer.zig src/integer/interface.zig 
 	mkdir -p ${DIST}/integer
 	mv src/interface.wasm ${DIST}/integer/integer.wasm
 
+.PHONY: test-rational
+test-rational:
+	cd src && zig test rational/rational.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG}
+
+${DIST}/rational/rational.wasm: src/rational/rational.zig src/rational/interface.zig src/custom-allocator.zig
+	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a ${WASM_CFLAGS} rational/interface.zig  ${ZIG_PKG}
+	mkdir -p ${DIST}/rational
+	mv src/interface.wasm ${DIST}/rational/rational.wasm
+
 
 ## New low-level code from scratch written in Zig
 

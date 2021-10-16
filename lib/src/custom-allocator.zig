@@ -13,12 +13,22 @@ pub fn init() void {
 
 //const stdout = std.io.getStdOut().writer();
 
+var allocError = false;
+pub fn checkError() bool {
+    if (allocError) {
+        allocError = false;
+        return true;
+    }
+    return false;
+}
+
 export fn gmp_alloc(n: usize) ?*c_void {
     // std.debug.print("allocating n = {} bytes\n", .{n});
     const t = gpa.allocator.alloc(u8, n) catch |err|
         {
         std.debug.print("failed to alloc -- {}", .{err});
-        unreachable;
+        allocError = true;
+        return null;
     };
     //std.debug.print("successfully got memory t={*}\n", .{t});
     return t.ptr;

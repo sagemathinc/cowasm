@@ -1,14 +1,17 @@
-const gmp = @cImport(@cInclude("gmp.h"));
+pub const gmp = @cImport(@cInclude("gmp.h"));
 const std = @import("std");
-const ValueError = @import("../errors.zig").Math.ValueError;
+const errors = @import("../errors.zig");
 const custom_allocator = @import("../custom-allocator.zig");
 
 pub const Integer = struct {
     x: gmp.mpz_t,
 
-    pub fn init() Integer {
+    pub fn init() !Integer {
         var x: gmp.mpz_t = undefined;
         gmp.mpz_init(&x);
+        if (custom_allocator.checkError()) {
+            return errors.General.MemoryError;
+        }
         return Integer{ .x = x };
     }
 
@@ -16,6 +19,7 @@ pub const Integer = struct {
         var x: gmp.mpz_t = undefined;
         const T = @TypeOf(op);
         switch (T) {
+            gmp.mpz_t => gmp.mpz_init_set(&x, &op),
             // void mpz_init_set (mpz_t rop, const mpz_t op)
             Integer => gmp.mpz_init_set(&x, &op.x),
             // void mpz_init_set_ui (mpz_t rop, unsigned long int op)
@@ -24,8 +28,11 @@ pub const Integer = struct {
             i32, i64, comptime_int => gmp.mpz_init_set_si(&x, @intCast(c_long, op)),
             else => {
                 std.debug.warn("invalid type {}\n", .{T});
-                return ValueError;
+                return errors.Math.ValueError;
             },
+        }
+        if (custom_allocator.checkError()) {
+            return errors.General.MemoryError;
         }
         return Integer{ .x = x };
     }
@@ -33,7 +40,10 @@ pub const Integer = struct {
     pub fn initSetStr(str: [*]const u8, base: c_int) !Integer {
         var x: gmp.mpz_t = undefined;
         if (gmp.mpz_init_set_str(&x, str, base) != 0) {
-            return ValueError;
+            return errors.Math.ValueError;
+        }
+        if (custom_allocator.checkError()) {
+            return errors.General.MemoryError;
         }
         return Integer{ .x = x };
     }
@@ -42,8 +52,8 @@ pub const Integer = struct {
         gmp.mpz_clear(&self.x);
     }
 
-    pub fn add(self: Integer, right: Integer) Integer {
-        var c = Integer.init();
+    pub fn add(self: Integer, right: Integer) !Integer {
+        var c = try Integer.init();
         gmp.mpz_add(&c.x, &self.x, &right.x);
         return c;
     }
@@ -52,20 +62,20 @@ pub const Integer = struct {
         gmp.mpz_add(&self.x, &self.x, &right.x);
     }
 
-    pub fn sub(self: Integer, right: Integer) Integer {
-        var c = Integer.init();
+    pub fn sub(self: Integer, right: Integer) !Integer {
+        var c = try Integer.init();
         gmp.mpz_sub(&c.x, &self.x, &right.x);
         return c;
     }
 
-    pub fn mul(self: Integer, right: Integer) Integer {
-        var c = Integer.init();
+    pub fn mul(self: Integer, right: Integer) !Integer {
+        var c = try Integer.init();
         gmp.mpz_mul(&c.x, &self.x, &right.x);
         return c;
     }
 
-    pub fn pow(self: Integer, exponent: usize) Integer {
-        var c = Integer.init();
+    pub fn pow(self: Integer, exponent: usize) !Integer {
+        var c = try Integer.init();
         gmp.mpz_pow_ui(&c.x, &self.x, exponent);
         return c;
     }
@@ -90,23 +100,22 @@ pub const Integer = struct {
     }
 
     // void mpz_nextprime (mpz_t rop, const mpz_t op)
-    pub fn nextPrime(self: Integer) Integer {
-        var c = Integer.init();
+    pub fn nextPrime(self: Integer) !Integer {
+        var c = try Integer.init();
         gmp.mpz_nextprime(&c.x, &self.x);
         return c;
     }
 
-    pub fn gcd(self: Integer, right: Integer) Integer {
-        var c = Integer.init();
+    pub fn gcd(self: Integer, right: Integer) !Integer {
+        var c = try Integer.init();
         gmp.mpz_gcd(&c.x, &self.x, &right.x);
         return c;
     }
 
-//     pub fn xgcd(self: Integer, right: Integer) struct { g: Integer, s: Integer, t: Integer } {
-//         // gmp.mpz_extgcd()
+    //     pub fn xgcd(self: Integer, right: Integer) struct { g: Integer, s: Integer, t: Integer } {
+    //         // gmp.mpz_extgcd()
 
-
-//     }
+    //     }
 
     pub fn print(self: Integer) void {
         _ = gmp.gmp_printf("%Zd\n", &self.x);
@@ -123,10 +132,13 @@ pub const Integer = struct {
     // "The base argument may vary from 2 to 62 or from -2 to -36."
     pub fn toString(self: Integer, base: c_int) ![]u8 {
         if (base < -36 or base == -1 or base == 0 or base == 1 or base > 62) {
-            return ValueError;
+            return errors.Math.ValueError;
         }
         var size = self.sizeInBase(base);
         var str = gmp.mpz_get_str(0, base, &self.x);
+        if (custom_allocator.checkError()) {
+            return errors.General.MemoryError;
+        }
         if (str[0] == '-') {
             size += 1;
         }
@@ -151,7 +163,7 @@ test "basic arithmetic" {
     var b = try Integer.initSetStr("389", 10);
     defer b.deinit();
 
-    var c = a.mul(b);
+    var c = try a.mul(b);
     defer c.deinit();
 
     try expect(c.get_c_long() == 37 * 389);
@@ -222,7 +234,7 @@ test "Use primality test to count primes up to 10000" {
 test "The nextPrime method" {
     var a = try Integer.initSet(97);
     defer a.deinit();
-    var b = a.nextPrime();
+    var b = try a.nextPrime();
     defer b.deinit();
     try expect(b.get_c_long() == 101);
 }
