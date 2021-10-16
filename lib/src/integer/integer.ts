@@ -12,7 +12,7 @@ export async function init(): Promise<void> {
   if (wasm != null) {
     return;
   }
-  wasm = await wasmImport("integer/integer");
+  wasm = await wasmImport("gmp");
   // Initialize GMP custom allocator:
   wasm.exports.initCustomAllocator();
 }
@@ -62,6 +62,10 @@ export class IntegerClass {
     return this._bin_op(m, "mulIntegers");
   }
 
+  __div__(_m): IntegerClass {
+    throw Error("NotImplementedError");
+  }
+
   __pow__(e: number): IntegerClass {
     if (wasm == null) throw Error("await init() first");
     return new IntegerClass(null, wasm.exports.powIntegers(this.i, e));
@@ -101,7 +105,7 @@ export class IntegerClass {
 
   toString(base: number = 10): string {
     if (wasm == null) throw Error("await init() first");
-    wasm.exports.toString(this.i, base);
+    wasm.exports.IntegerToString(this.i, base);
     return wasm.result;
   }
 

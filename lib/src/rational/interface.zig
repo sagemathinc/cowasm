@@ -5,9 +5,8 @@ const interface = @import("../interface.zig");
 const std = @import("std");
 const RuntimeError = @import("../errors.zig").General.RuntimeError;
 
-pub export fn initCustomAllocator() void {
-    custom.init();
-}
+pub fn init() void {} // trick so whole module doesn't get optimized away
+
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 
 // The collection of proxied rationals
@@ -92,7 +91,7 @@ pub export fn printRational(a: i32) void {
 
 extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
 
-pub export fn toString(a: i32, base: i32) void {
+pub export fn RationalToString(a: i32, base: i32) void {
     const n = get(a) catch return;
     var str = n.toString(base) catch |err| {
         std.debug.print("toString -- {}\n", .{err});

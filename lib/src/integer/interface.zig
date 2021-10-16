@@ -1,15 +1,10 @@
-const custom = @import("../custom-allocator.zig");
 const integer = @import("./integer.zig");
 const Integer = integer.Integer;
 const interface = @import("../interface.zig");
 const std = @import("std");
 const RuntimeError = @import("../errors.zig").General.RuntimeError;
 
-// Change to using Zig instead of malloc for GMP memory.
-pub export fn initCustomAllocator() void {
-    //std.debug.print("GMP: initCustomAllocator\n", .{});
-    custom.init();
-}
+pub fn init() void {} // trick so whole module doesn't get optimized away
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 
@@ -105,7 +100,7 @@ pub export fn printInteger(a: i32) void {
 
 extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
 
-pub export fn toString(a: i32, base: i32) void {
+pub export fn IntegerToString(a: i32, base: i32) void {
     const n = get(a) catch return;
     var str = n.toString(base) catch |err| {
         std.debug.print("toString -- {}\n", .{err});

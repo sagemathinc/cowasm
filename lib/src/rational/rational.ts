@@ -12,7 +12,7 @@ export async function init(): Promise<void> {
   if (wasm != null) {
     return;
   }
-  wasm = await wasmImport("rational/rational");
+  wasm = await wasmImport("gmp");
   wasm.exports.initCustomAllocator();
 }
 init();
@@ -92,7 +92,7 @@ export class RationalNumber {
 
   toString(base: number = 10): string {
     if (wasm == null) throw Error("await init() first");
-    wasm.exports.toString(this.i, base);
+    wasm.exports.RationalToString(this.i, base);
     return wasm.result;
   }
 

@@ -120,6 +120,7 @@ const wasmImport: WasmImportFunction = reuseInFlight(
       };
     }
 
+    //console.log(`reading ${pathToWasm}`);
     const source = await readFile(pathToWasm);
     const typedArray = new Uint8Array(source);
     const result = await WebAssembly.instantiate(typedArray, wasmOpts);
@@ -151,7 +152,7 @@ const wasmImport: WasmImportFunction = reuseInFlight(
 
     return wasm;
   },
-  { createKey: (args) => args[0] }
+  { createKey: (args) => args[0] } // todo -- needs to be the absolute path, because now we import same thing multiple time is from multiple callers!
 );
 
 export default wasmImport;

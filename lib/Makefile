@@ -25,20 +25,14 @@ all: ${DIST}/.built
 test-integer:
 	cd src && zig test integer/integer.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG}
 
-${DIST}/integer/integer.wasm: src/integer/integer.zig src/integer/interface.zig src/custom-allocator.zig
-	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a ${WASM_CFLAGS} integer/interface.zig  ${ZIG_PKG}
-	mkdir -p ${DIST}/integer
-	mv src/interface.wasm ${DIST}/integer/integer.wasm
-
 .PHONY: test-rational
 test-rational:
 	cd src && zig test rational/rational.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG} -I rational
 
-${DIST}/rational/rational.wasm: src/rational/rational.zig src/rational/interface.zig src/custom-allocator.zig
-	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a ${WASM_CFLAGS} rational/interface.zig  ${ZIG_PKG}
-	mkdir -p ${DIST}/rational
-	mv src/interface.wasm ${DIST}/rational/rational.wasm
-
+${DIST}/gmp.wasm: src/rational/rational.zig src/rational/interface.zig src/custom-allocator.zig src/integer/integer.zig src/integer/interface.zig  src/interface/gmp.zig src/interface/proxy.zig
+	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a ${WASM_CFLAGS} interface/gmp.zig  ${ZIG_PKG}
+	mkdir -p ${DIST}
+	mv src/gmp.wasm ${DIST}/
 
 ## New low-level code from scratch written in Zig
 
@@ -136,7 +130,7 @@ node_modules:
 
 ## Put it all together
 
-${DIST}/.built: node_modules ${DIST}/factor.wasm ${DIST}/complex/complex.wasm ${DIST}/integer/integer.wasm ${DIST}/rational/rational.wasm ${DIST}/arith.wasm ${DIST}/modular/p1list.wasm ${DIST}/modular/manin-symbols.wasm ${DIST}/modular/dims.wasm ${DIST}/pari/pari.wasm ${DIST}/python/python.wasm
+${DIST}/.built: node_modules ${DIST}/factor.wasm ${DIST}/complex/complex.wasm ${DIST}/gmp.wasm ${DIST}/arith.wasm ${DIST}/modular/p1list.wasm ${DIST}/modular/manin-symbols.wasm ${DIST}/modular/dims.wasm ${DIST}/pari/pari.wasm ${DIST}/python/python.wasm
 	npx tsc
 	touch ${DIST}/.built
 
