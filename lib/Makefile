@@ -32,7 +32,7 @@ ${DIST}/integer/integer.wasm: src/integer/integer.zig src/integer/interface.zig 
 
 .PHONY: test-rational
 test-rational:
-	cd src && zig test rational/rational.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG}
+	cd src && zig test rational/rational.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG} -I rational
 
 ${DIST}/rational/rational.wasm: src/rational/rational.zig src/rational/interface.zig src/custom-allocator.zig
 	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a ${WASM_CFLAGS} rational/interface.zig  ${ZIG_PKG}
@@ -46,6 +46,10 @@ ${DIST}/arith.wasm: src/arith.zig src/arith-export.zig
 	cd src/ && zig build-lib -target wasm32-freestanding ${WASM_CFLAGS} arith-export.zig  ${ZIG_PKG}
 	mkdir -p ${DIST}
 	mv src/arith-export.wasm ${DIST}/arith.wasm
+
+.PHONY: test-generic-power
+test-generic-power:
+	cd src && zig test arith/generic-power.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG}
 
 
 ${DIST}/factor.wasm: src/factor.zig src/factor-export.zig
