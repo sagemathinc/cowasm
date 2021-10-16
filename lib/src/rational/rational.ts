@@ -1,4 +1,5 @@
 import wasmImport, { WasmInstance } from "../wasm";
+import genericPower from "../arith/generic-power";
 
 // @ts-ignore
 const registry = new FinalizationRegistry((handle) => {
@@ -67,10 +68,9 @@ export class RationalNumber {
     return this._bin_op(m, "divRationals");
   }
 
-  //   __pow__(e: number): RationalNumber {
-  //     if (wasm == null) throw Error("await init() first");
-  //     return new RationalNumber(null, wasm.exports.powRationals(this.i, e));
-  //   }
+  __pow__(e: number): RationalNumber {
+    return genericPower(this, e) as RationalNumber;
+  }
 
   eql(m): boolean {
     if (wasm == null) throw Error("await init() first");
