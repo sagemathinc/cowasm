@@ -132,7 +132,7 @@ node_modules:
 
 ## Put it all together
 
-${DIST}/.built: node_modules ${DIST}/factor.wasm ${DIST}/complex/complex.wasm ${DIST}/integer/integer.wasm ${DIST}/arith.wasm ${DIST}/modular/p1list.wasm ${DIST}/modular/manin-symbols.wasm ${DIST}/modular/dims.wasm ${DIST}/pari/pari.wasm ${DIST}/python/python.wasm
+${DIST}/.built: node_modules ${DIST}/factor.wasm ${DIST}/complex/complex.wasm ${DIST}/integer/integer.wasm ${DIST}/rational/rational.wasm ${DIST}/arith.wasm ${DIST}/modular/p1list.wasm ${DIST}/modular/manin-symbols.wasm ${DIST}/modular/dims.wasm ${DIST}/pari/pari.wasm ${DIST}/python/python.wasm
 	npx tsc
 	touch ${DIST}/.built
 

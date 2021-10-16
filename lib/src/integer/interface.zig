@@ -23,8 +23,12 @@ fn get(n: i32) !Integer {
     };
 }
 
-fn put(x: Integer) !i32 {
-    return integers.put(x) catch {
+fn put(x: anyerror!Integer) !i32 {
+    var y = x catch {
+        interface.throw("Integer: memory error");
+        return 0;
+    };
+    return integers.put(y) catch {
         interface.throw("Integer: failed to store integer");
         return 0;
     };

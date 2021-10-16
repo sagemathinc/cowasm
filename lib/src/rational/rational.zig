@@ -32,12 +32,12 @@ pub const Rational = struct {
             // void mpq_init_set_ui (mpq_t rop, unsigned long int op)
             u32, u64 => {
                 gmp.mpq_init(&x);
-                gmp.mpq_set_ui(&x, op);
+                gmp.mpq_set_ui(&x, op, 1);
             },
             // void mpq_init_set_si (mpq_t rop, signed long int op)
             i32, i64, comptime_int => {
                 gmp.mpq_init(&x);
-                gmp.mpq_set_si(&x, @intCast(c_long, op));
+                gmp.mpq_set_si(&x, @intCast(c_long, op), 1);
             },
             else => {
                 std.debug.warn("invalid type {}\n", .{T});
@@ -88,19 +88,41 @@ pub const Rational = struct {
         return c;
     }
 
-    pub fn pow(self: Rational, exponent: usize) !Rational {
+    pub fn div(self: Rational, right: Rational) !Rational {
         var c = try Rational.init();
-        gmp.mpz_pow_ui(gmp.mpq_numref(&c.x), gmp.mpq_numref(&self.x), exponent);
-        gmp.mpz_pow_ui(gmp.mpq_denref(&c.x), gmp.mpq_denref(&self.x), exponent);
+        gmp.mpq_div(&c.x, &self.x, &right.x);
         return c;
     }
 
+    //     pub fn pow(self: Rational, exponent: usize) !Rational {
+    //         var c = try Rational.init();
+    //         gmp.mpz_pow_ui(gmp.mpq_numref(&c.x), gmp.mpq_numref(&self.x), exponent);
+    //         gmp.mpz_pow_ui(gmp.mpq_denref(&c.x), gmp.mpq_denref(&self.x), exponent);
+    //         return c;
+    //     }
+
     pub fn eql(self: Rational, right: Rational) bool {
-        return self.cmp(right) == 0;
+        return gmp.mpq_equal(&self.x, &right.x) != 0;
     }
 
     pub fn cmp(self: Rational, right: Rational) c_int {
         return gmp.mpq_cmp(&self.x, &right.x);
+    }
+
+    pub fn cmp_si(self: Rational, num: c_long, den: c_ulong) c_int {
+        var x: gmp.mpq_t = undefined;
+        gmp.mpq_init(&x);
+        defer gmp.mpq_clear(&x);
+        gmp.mpq_set_si(&x, num, den);
+        return gmp.mpq_cmp(&self.x, &x);
+    }
+
+    pub fn eql_si(self: Rational, num: c_long, den: c_ulong) bool {
+        var x: gmp.mpq_t = undefined;
+        gmp.mpq_init(&x);
+        defer gmp.mpq_clear(&x);
+        gmp.mpq_set_si(&x, num, den);
+        return gmp.mpq_equal(&self.x, &x) != 0;
     }
 
     pub fn numerator(self: Rational) !Integer {
@@ -143,7 +165,7 @@ test "initialize the custom GMP allocator" {
     custom_allocator.init();
 }
 
-test "create a rational number" {
+test "create a rational number and verify numerator and denominator" {
     var a = try Rational.initSetStr("-2/3", 10);
     defer a.deinit();
     var s = try a.toString(10);
@@ -156,5 +178,44 @@ test "create a rational number" {
     defer d.deinit();
     try expect(d.get_c_long() == 3);
 }
+
+test "arithmetic with two rationals" {
+    var a = try Rational.initSetStr("3/5", 10);
+    defer a.deinit();
+    var b = try Rational.initSetStr("2/3", 10);
+    defer b.deinit();
+    var add = try a.add(b);
+    defer add.deinit();
+    try expect(add.eql_si(19, 15));
+    try expect(add.cmp_si(19, 15) == 0);
+
+    var sub = try a.sub(b);
+    defer sub.deinit();
+    try expect(sub.eql_si(-1, 15));
+
+    var mul = try a.mul(b);
+    defer mul.deinit();
+    try expect(mul.eql_si(2, 5));
+
+    var div = try a.div(b);
+    defer div.deinit();
+    try expect(div.eql_si(9, 10));
+}
+
+test "conversion to a string" {
+    var a = try Rational.initSetStr("-2/3", 10);
+    defer a.deinit();
+    var s = try a.toString(10);
+    defer a.freeString(s);
+    try expect(std.mem.eql(u8, s, "-2/3"));
+}
+
+// test "exponents" {
+//     var a = try Rational.initSetStr("-3/5", 10);
+//     defer a.deinit();
+//     var pow = try a.pow(5);
+//     defer pow.deinit();
+//     try expect(pow.eql_si(-243, 3125));
+// }
 
 const expect = std.testing.expect;
