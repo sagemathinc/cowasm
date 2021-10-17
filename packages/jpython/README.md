@@ -73,10 +73,8 @@ $ npx jsage
 >>> 2^3
 8
 ```
-
-Right now only caret for exponentiation (and `^^` for xor) is implemented, but
-I'll probably implement more (e.g., nice notation [a..b] for ranges), arbitrary
-precision integers and rationals using GMP, etc.
+Right now only the notation [a..b] for ranges and caret for exponentiation (and
+`^^` for xor) is implemented. I might implement more, though maybe that's enough.
 
 You can get the same effect in a .py file as follows:
 
