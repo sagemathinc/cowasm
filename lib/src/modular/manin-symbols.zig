@@ -1,8 +1,9 @@
 const std = @import("std");
 const twoTerm = @import("./modsym-2term.zig");
-const P1List = @import("./p1list.zig").P1List;
+const p1list = @import("./p1list.zig");
 const sparse_matrix = @import("./sparse-matrix.zig");
 const dense_matrix = @import("./dense-matrix.zig");
+const dense_vector = @import("./dense-vector.zig");
 const dims = @import("./dims.zig");
 const errors = @import("../errors.zig");
 
@@ -31,10 +32,10 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
         allocator: *std.mem.Allocator,
         N: usize,
         sign: Sign,
-        P1: P1List(Coeff),
+        P1: p1list.P1List(Coeff),
 
         pub fn init(allocator: *std.mem.Allocator, N: usize, sign: Sign) !Syms {
-            var P1 = try P1List(Coeff).init(allocator, @intCast(Coeff, N));
+            var P1 = try p1list.P1List(Coeff).init(allocator, @intCast(Coeff, N));
             return Syms{ .N = N, .sign = sign, .allocator = allocator, .P1 = P1 };
         }
 
@@ -171,7 +172,7 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
             return matrix;
         }
 
-        pub fn presentation(self: Syms, comptime T: type, p: T) !Presentation(T) {
+        pub fn presentation(self: Syms, comptime T: type, p: T) !Presentation(Syms, T, Coeff) {
             const time = std.time.milliTimestamp;
             var t = time();
             var basis = std.ArrayList(usize).init(self.allocator);
@@ -206,7 +207,7 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
                     // if mod.index is a pivot column of rel3, then we
                     // write it in terms of generators.
                     // Read off and copy over -mod.coeff * non-pivot positions of
-                    // row the index of this pivot of rel3 as row of i of matrix.
+                    // row the index of this pivot of rel3 as row i of matrix.
                     var c: usize = 0;
                     var it = rel3.rows.items[columnType.index].map.iterator();
                     while (it.next()) |kv| {
@@ -227,20 +228,21 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
                 }
             }
             if (matrix.ncols != basis.items.len) {
-                std.debug.print("not even basis elements; need to do with coefficient issue?", .{});
+                std.debug.print("not even basis elements; need to deal with coefficient issue?", .{});
                 return errors.General.RuntimeError;
             }
             std.debug.print("\nmanage presentation = {}ms\n", .{time() - t});
-            return Presentation(T){ .matrix = matrix, .basis = basis };
+            return Presentation(Syms, T, Coeff){ .matrix = matrix, .basis = basis, .manin_symbols = self };
         }
     };
 }
 
-fn Presentation(comptime T: type) type {
+fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime Coeff: type) type {
     return struct {
         const P = @This();
         matrix: dense_matrix.DenseMatrixMod(T),
         basis: std.ArrayList(usize),
+        manin_symbols: ManinSymbolsType,
 
         pub fn deinit(self: *P) void {
             self.matrix.deinit();
@@ -248,8 +250,14 @@ fn Presentation(comptime T: type) type {
         }
 
         pub fn print(self: P) void {
+            std.debug.print("matrix:", .{});
             self.matrix.print();
-            std.debug.print("{}\n", .{self.basis});
+            std.debug.print("basis: {}\n", .{self.basis});
+        }
+
+        pub fn reduce(self: P, u: Coeff, v: Coeff) !dense_vector.DenseVectorMod(T) {
+            const i = try self.manin_symbols.P1.index(u, v);
+            return try self.matrix.getRow(i);
         }
     };
 }
@@ -400,7 +408,13 @@ test "bench" {
 test "compute presentation" {
     var M = try ManinSymbols(i64, u32).init(test_allocator, 11, Sign.zero);
     defer M.deinit();
+    M.P1.print();
     var presentation = try M.presentation(i64, 997);
-    presentation.print();
     defer presentation.deinit();
+    presentation.print();
+    var v = try presentation.reduce(3, 9);
+    defer v.deinit();
+    try expect((try v.get(0)) == 1);
+    try expect((try v.get(1)) == 996);
+    try expect((try v.get(2)) == 0);
 }

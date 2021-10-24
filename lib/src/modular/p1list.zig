@@ -10,21 +10,26 @@ fn EltAndScalar(comptime T: type) type {
 
 pub fn P1Element(comptime T: type) type {
     return struct {
+        const Elt = @This();
         u: T,
         v: T,
 
-        pub fn init(u: T, v: T) P1Element(T) {
-            return P1Element(T){ .u = u, .v = v };
+        pub fn init(u: T, v: T) Elt {
+            return Elt{ .u = u, .v = v };
         }
 
-        pub fn reduceMod(self: P1Element(T), N: T) !P1Element(T) {
+        pub fn print(self: Elt) void {
+            std.debug.print("[{} : {}]", .{ self.u, self.v });
+        }
+
+        pub fn reduceMod(self: Elt, N: T) !Elt {
             if (N <= 0) return errors.Math.ValueError;
             var u = arith.mod(self.u, N);
             var v = arith.mod(self.v, N);
-            return P1Element(T){ .u = u, .v = v };
+            return Elt{ .u = u, .v = v };
         }
 
-        pub fn normalize(self: P1Element(T), N: T, compute_s: bool) !EltAndScalar(T) {
+        pub fn normalize(self: Elt, N: T, compute_s: bool) !EltAndScalar(T) {
             var reduced = try self.reduceMod(N);
             var u = reduced.u;
             var v = reduced.v;
@@ -84,18 +89,18 @@ pub fn P1Element(comptime T: type) type {
             return EltAndScalar(T){ .u = u, .v = v, .s = 0 };
         }
 
-        pub fn eql(self: P1Element(T), other: P1Element(T)) bool {
+        pub fn eql(self: Elt, other: Elt) bool {
             return self.u == other.u and self.v == other.v;
         }
 
-        pub fn sortLessThan(context: void, lhs: P1Element(T), rhs: P1Element(T)) bool {
+        pub fn sortLessThan(context: void, lhs: Elt, rhs: Elt) bool {
             _ = context;
             if (lhs.u < rhs.u) return true;
             if (lhs.u > rhs.u) return false;
             return lhs.v < rhs.v;
         }
 
-        pub fn compareFn(context: void, lhs: P1Element(T), rhs: P1Element(T)) std.math.Order {
+        pub fn compareFn(context: void, lhs: Elt, rhs: Elt) std.math.Order {
             _ = context;
             if (lhs.u < rhs.u) return std.math.Order.lt;
             if (lhs.u > rhs.u) return std.math.Order.gt;
@@ -114,11 +119,11 @@ pub fn P1List(comptime T: type) type {
     const IndexAndScalar = struct { i: usize, s: T };
     return struct {
         const P1 = @This();
+        const Elt = P1Element(T);
         N: T,
-        list: std.ArrayList(P1Element(T)),
+        list: std.ArrayList(Elt),
 
         pub fn init(allocator: *std.mem.Allocator, N: T) !P1 {
-            const Elt = P1Element(T);
             var list = std.ArrayList(Elt).init(allocator);
             if (N == 1) {
                 try list.append(Elt{ .u = 0, .v = 0 });
@@ -165,7 +170,7 @@ pub fn P1List(comptime T: type) type {
                     }
                 }
             }
-            std.sort.sort(P1Element(T), list.items, {}, P1Element(T).sortLessThan);
+            std.sort.sort(Elt, list.items, {}, Elt.sortLessThan);
             return P1{ .N = N, .list = list };
         }
 
@@ -177,14 +182,26 @@ pub fn P1List(comptime T: type) type {
             return self.list.items.len;
         }
 
-        pub fn normalize(self: P1, u: T, v: T) !P1Element(T) {
-            const elt = P1Element(T).init(u, v);
+        pub fn print(self: P1) void {
+            var i: usize = 0;
+            std.debug.print("P1({}): ", .{self.N});
+            while (i < self.list.items.len) : (i += 1) {
+                if (i > 0) {
+                    std.debug.print(", ", .{});
+                }
+                self.list.items[i].print();
+            }
+            std.debug.print("\n", .{});
+        }
+
+        pub fn normalize(self: P1, u: T, v: T) !Elt {
+            const elt = Elt.init(u, v);
             const n = try elt.normalize(self.N, false);
-            return P1Element(T).init(n.u, n.v);
+            return Elt.init(n.u, n.v);
         }
 
         pub fn normalizeWithScalar(self: P1, u: T, v: T) !EltAndScalar(T) {
-            const elt = P1Element(T).init(u, v);
+            const elt = Elt.init(u, v);
             return elt.normalize(self.N, true);
         }
 
@@ -205,8 +222,8 @@ pub fn P1List(comptime T: type) type {
                 return 0;
             }
             // general case, using binary search
-            const key = P1Element(T){ .u = u, .v = v };
-            return std.sort.binarySearch(P1Element(T), key, self.list.items, {}, P1Element(T).compareFn) orelse {
+            const key = Elt{ .u = u, .v = v };
+            return std.sort.binarySearch(Elt, key, self.list.items, {}, Elt.compareFn) orelse {
                 return errors.Math.ValueError;
             };
         }
@@ -227,7 +244,7 @@ pub fn P1List(comptime T: type) type {
             return IndexAndScalar{ .i = i, .s = z.s };
         }
 
-        pub fn get(self: P1, i: usize) !P1Element(T) {
+        pub fn get(self: P1, i: usize) !Elt {
             if (i >= self.list.items.len) {
                 return errors.General.IndexError;
             }

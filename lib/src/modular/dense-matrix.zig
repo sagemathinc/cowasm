@@ -1,5 +1,6 @@
 const std = @import("std");
 const errors = @import("../errors.zig");
+const vector = @import("./dense-vector.zig");
 
 pub fn DenseMatrixMod(comptime T: type) type {
     return struct {
@@ -32,18 +33,35 @@ pub fn DenseMatrixMod(comptime T: type) type {
             }
         }
 
+        pub fn unsafeSet(self: *Matrix, row: usize, col: usize, x: T) void {
+            self.entries.items[row * self.ncols + col] = x;
+        }
+
         pub fn set(self: *Matrix, row: usize, col: usize, x: T) !void {
             if (col >= self.ncols or row >= self.nrows) {
                 return errors.General.IndexError;
             }
-            self.entries.items[row * self.ncols + col] = x;
+            self.unsafeSet(row, col, x);
+        }
+
+        pub fn unsafeGet(self: Matrix, row: usize, col: usize) T {
+            return self.entries.items[row * self.ncols + col];
         }
 
         pub fn get(self: Matrix, row: usize, col: usize) !T {
             if (col >= self.ncols or row >= self.nrows) {
                 return errors.General.IndexError;
             }
-            return self.entries.items[row * self.ncols + col];
+            return self.unsafeGet(row, col);
+        }
+
+        pub fn getRow(self: Matrix, row: usize) !vector.DenseVectorMod(T) {
+            var v = try vector.DenseVectorMod(T).init(self.modulus, self.ncols, self.entries.allocator);
+            var i: usize = 0;
+            while (i < self.ncols) : (i += 1) {
+                v.unsafeSet(i, self.unsafeGet(row, i));
+            }
+            return v;
         }
     };
 }
@@ -79,4 +97,17 @@ test "create a matrix" {
         }
     }
     //m.print();
+}
+
+test "extract a row" {
+    var nrows: usize = 2;
+    var ncols: usize = 2;
+    var m = try DenseMatrixMod(i32).init(19, nrows, ncols, testing_allocator);
+    defer m.deinit();
+    try m.set(1, 0, 3);
+    try m.set(1, 1, 5);
+    var v = try m.getRow(1);
+    defer v.deinit();
+    try expect((try v.get(0)) == 3);
+    try expect((try v.get(1)) == 5);
 }

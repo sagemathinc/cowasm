@@ -22,7 +22,7 @@ pub fn DenseVectorMod(comptime T: type) type {
         }
 
         pub fn print(self: Vector) void {
-            std.debug.print("\n[", .{});
+            std.debug.print("(", .{});
             var i: usize = 0;
             while (i < self.degree) : (i += 1) {
                 if (i > 0) {
@@ -30,21 +30,29 @@ pub fn DenseVectorMod(comptime T: type) type {
                 }
                 std.debug.print("{}", .{self.entries.items[i]});
             }
-            std.debug.print("]\n", .{});
+            std.debug.print(")\n", .{});
+        }
+
+        pub fn unsafeSet(self: *Vector, i: usize, x: T) void {
+            self.entries.items[i] = x;
         }
 
         pub fn set(self: *Vector, i: usize, x: T) !void {
             if (i >= self.degree) {
                 return errors.General.IndexError;
             }
-            self.entries.items[i] = x;
+            self.unsafeSet(i, x);
+        }
+
+        pub fn unsafeGet(self: Vector, i: usize) T {
+            return self.entries.items[i];
         }
 
         pub fn get(self: Vector, i: usize) !T {
             if (i >= self.degree) {
                 return errors.General.IndexError;
             }
-            return self.entries.items[i];
+            return self.unsafeGet(i);
         }
 
         // Compute self * right, where right is a matrix with degree rows.

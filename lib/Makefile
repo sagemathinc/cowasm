@@ -1,4 +1,6 @@
-OPT           = -O ReleaseFast
+# NOTE a test for sparse-matrix fails with ReleaseFast due to something
+# weird involving random number generation.
+OPT           = #-O ReleaseFast
 CWD           = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 ZIG_PKG       = --main-pkg-path ${CWD}/src
@@ -71,6 +73,10 @@ ${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/ma
 test-manin-symbols:
 	cd src && zig test modular/manin-symbols.zig  ${ZIG_PKG}
 
+.PHONY: test-p1list
+test-p1list:
+	cd src && zig test modular/p1list.zig  ${ZIG_PKG}
+
 .PHONY: test-heilbronn
 test-heilbronn:
 	cd src && zig test modular/heilbronn.zig  ${ZIG_PKG}
@@ -87,6 +93,7 @@ ${DIST}/modular/dims.wasm: src/modular/dims.zig src/trial-division.zig
 .PHONY: test-zig1
 test-zig1:
 	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -n 1 zig test ${ZIG_PKG} ${NATIVE_CFLAGS}
+
 # in parallel
 .PHONY: test-zig
 test-zig:

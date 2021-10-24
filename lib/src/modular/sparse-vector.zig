@@ -43,10 +43,14 @@ pub fn SparseVectorMod(comptime T: type) type {
 
         pub fn print(self: Vector, degree: usize) void {
             var i: usize = 0;
+            std.debug.print("\n(", .{});
             while (i < degree) : (i += 1) {
+                if (i > 0) {
+                    std.debug.print(", ", .{});
+                }
                 std.debug.print("{}  ", .{self.get(i)});
             }
-            std.debug.print("\n", .{});
+            std.debug.print(")\n", .{});
         }
 
         fn op(self: Vector, right: Vector, do_add: bool) !Vector {
@@ -211,4 +215,3 @@ test "scale and rescale a vector" {
     try expect(v.get(0) == 0);
     try expect(v.get(1) == 9);
 }
-
