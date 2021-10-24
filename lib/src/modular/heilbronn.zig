@@ -1,41 +1,23 @@
 // We will implement Heilbronn matrices here.
 // See sage/src/sage/modular/modsym/heilbronn.pyx
 const std = @import("std");
-
-pub fn Matrix(comptime T: type) type {
-    return struct {
-        const Mat = @This();
-        a: T,
-        b: T,
-        c: T,
-        d: T,
-        pub fn init(a: T, b: T, c: T, d: T) Mat {
-            return Mat{ .a = a, .b = b, .c = c, .d = d };
-        }
-        pub fn print(self: Mat) void {
-            std.debug.print("[{},{}; {},{}]\n", .{ self.a, self.b, self.c, self.d });
-        }
-        pub fn eql(x: Mat, y: Mat) bool {
-            return x.a == y.a and x.b == y.b and x.c == y.c and x.d == y.d;
-        }
-    };
-}
+const Mat2x2 = @import("./mat2x2.zig").Mat2x2;
 
 pub fn HeilbronnCremona(comptime T: type) type {
     return struct {
         const HC = @This();
         p: T,
-        v: std.ArrayList(Matrix(T)),
+        v: std.ArrayList(Mat2x2(T)),
 
         pub fn init(allocator: *std.mem.Allocator, p: T) !HC {
-            var v = std.ArrayList(Matrix(T)).init(allocator);
+            var v = std.ArrayList(Mat2x2(T)).init(allocator);
 
-            try v.append(Matrix(T).init(1, 0, 0, p));
+            try v.append(Mat2x2(T).init(1, 0, 0, p));
 
             if (p == 2) {
-                try v.append(Matrix(T).init(2, 0, 0, 1));
-                try v.append(Matrix(T).init(2, 1, 0, 1));
-                try v.append(Matrix(T).init(1, 0, 1, 2));
+                try v.append(Mat2x2(T).init(2, 0, 0, 1));
+                try v.append(Mat2x2(T).init(2, 1, 0, 1));
+                try v.append(Mat2x2(T).init(1, 0, 1, 2));
             } else {
                 var r: T = @divTrunc(-p, 2);
                 while (r <= @divTrunc(p, 2)) : (r += 1) {
@@ -49,7 +31,7 @@ pub fn HeilbronnCremona(comptime T: type) type {
                     var x3: T = 0;
                     var y3: T = 0;
                     var q: T = 0;
-                    try v.append(Matrix(T).init(x1, x2, y1, y2));
+                    try v.append(Mat2x2(T).init(x1, x2, y1, y2));
 
                     while (b != 0) {
                         q = @floatToInt(T, @round(@intToFloat(f64, a) / @intToFloat(f64, b)));
@@ -62,7 +44,7 @@ pub fn HeilbronnCremona(comptime T: type) type {
                         y3 = q * y2 - y1;
                         y1 = y2;
                         y2 = y3;
-                        try v.append(Matrix(T).init(x1, x2, y1, y2));
+                        try v.append(Mat2x2(T).init(x1, x2, y1, y2));
                     }
                 }
             }
@@ -78,7 +60,7 @@ pub fn HeilbronnCremona(comptime T: type) type {
             return self.v.items.len;
         }
 
-        pub fn get(self: HC, n: usize) !Matrix(T) {
+        pub fn get(self: HC, n: usize) !Mat2x2(T) {
             return self.v.items[n];
         }
 
@@ -98,7 +80,7 @@ test "HC matrices for p=2" {
     var h = try HeilbronnCremona(i32).init(test_allocator, 2);
     defer h.deinit();
     try expect(h.count() == 4);
-    try expect((try h.get(1)).eql(Matrix(i32).init(2, 0, 0, 1)));
+    try expect((try h.get(1)).eql(Mat2x2(i32).init(2, 0, 0, 1)));
     //h.print();
 }
 
@@ -106,7 +88,7 @@ test "HC matrices for p=3" {
     var h = try HeilbronnCremona(i32).init(test_allocator, 3);
     defer h.deinit();
     try expect(h.count() == 6);
-    try expect((try h.get(5)).eql(Matrix(i32).init(-1, 0, 1, -3)));
+    try expect((try h.get(5)).eql(Mat2x2(i32).init(-1, 0, 1, -3)));
     //h.print();
 }
 
@@ -114,7 +96,7 @@ test "HC matrices for p=5" {
     var h = try HeilbronnCremona(i32).init(test_allocator, 5);
     defer h.deinit();
     try expect(h.count() == 12);
-    try expect((try h.get(11)).eql(Matrix(i32).init(1, 0, -3, 5)));
+    try expect((try h.get(11)).eql(Mat2x2(i32).init(1, 0, -3, 5)));
     //h.print();
 }
 

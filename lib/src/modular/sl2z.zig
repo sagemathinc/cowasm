@@ -17,7 +17,7 @@ pub fn SL2ZElement(comptime T: type) type {
         }
 
         pub fn print(self: Elt) void {
-            std.debug.print("[{} {}]\n[{} {}]\n", .{ self.a, self.b, self.c, self.d });
+            std.debug.print("[{} {}; {} {}]\n", .{ self.a, self.b, self.c, self.d });
         }
     };
 }

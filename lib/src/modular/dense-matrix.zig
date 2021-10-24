@@ -63,6 +63,19 @@ pub fn DenseMatrixMod(comptime T: type) type {
             }
             return v;
         }
+
+        pub fn addToRow(self: *Matrix, row: usize, v: vector.DenseVectorMod(T)) !void {
+            if (v.degree != self.ncols or v.modulus != self.modulus) {
+                return errors.General.TypeError;
+            }
+            if (row >= self.nrows) {
+                return errors.General.IndexError;
+            }
+            var i: usize = 0;
+            while (i < self.ncols) : (i += 1) {
+                self.unsafeSet(row, i, self.unsafeGet(row, i) + v.unsafeGet(i));
+            }
+        }
     };
 }
 

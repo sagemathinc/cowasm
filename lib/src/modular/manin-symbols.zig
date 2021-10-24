@@ -7,6 +7,7 @@ const dense_matrix = @import("./dense-matrix.zig");
 const dense_vector = @import("./dense-vector.zig");
 const dims = @import("./dims.zig");
 const errors = @import("../errors.zig");
+const heilbronn = @import("./heilbronn.zig");
 
 pub const Sign = enum(i4) {
     minus = -1,
@@ -273,6 +274,27 @@ fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime Coef
             const j = self.basis.items[i];
             return try self.manin_symbols.P1.liftToSL2Z(j);
         }
+
+        // compute dense matrix representation of the p-th Hecke operator.
+        pub fn HeckeOperator(self: P, p: i32) !dense_matrix.DenseMatrixMod(T) {
+            var h = try heilbronn.HeilbronnCremona(i64).init(test_allocator, p);
+            defer h.deinit();
+            const n = self.basis.items.len;
+            var Tp = try dense_matrix.DenseMatrixMod(T).init(self.matrix.modulus, n, n, self.manin_symbols.allocator);
+            var b: usize = 0;
+            while (b < n) : (b += 1) {
+                var uv = try self.lift(b);
+                var i: usize = 0;
+                while (i < h.count()) : (i += 1) {
+                    const m2 = try h.get(i);
+                    const uv_m2 = uv.actionFromRight(m2);
+                    var v = try self.reduce(uv_m2.u, uv_m2.v);
+                    defer v.deinit();
+                    try Tp.addToRow(b, v);
+                }
+            }
+            return Tp;
+        }
     };
 }
 
@@ -440,4 +462,8 @@ test "compute presentation" {
 
     var m2 = try presentation.liftToSL2Z(1);
     m2.print();
+
+    var t2 = try presentation.HeckeOperator(2);
+    defer t2.deinit();
+    t2.print();
 }

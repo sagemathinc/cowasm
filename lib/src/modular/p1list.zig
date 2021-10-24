@@ -2,6 +2,7 @@ const std = @import("std");
 const arith = @import("../arith.zig");
 const errors = @import("../errors.zig");
 const sl2z = @import("./sl2z.zig");
+const Mat2x2 = @import("./mat2x2.zig").Mat2x2;
 const gcd = arith.gcd;
 
 fn EltAndScalar(comptime T: type) type {
@@ -111,6 +112,10 @@ pub fn P1Element(comptime T: type) type {
                 return std.math.Order.eq;
             }
             return std.math.Order.gt;
+        }
+
+        pub fn actionFromRight(self: Elt, m2: Mat2x2(T)) Elt {
+            return Elt{ .u = self.u * m2.a + self.v * m2.c, .v = self.u * m2.b + self.v * m2.d };
         }
     };
 }
