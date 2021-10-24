@@ -1,6 +1,7 @@
 const std = @import("std");
 const twoTerm = @import("./modsym-2term.zig");
 const p1list = @import("./p1list.zig");
+const sl2z = @import("./sl2z.zig");
 const sparse_matrix = @import("./sparse-matrix.zig");
 const dense_matrix = @import("./dense-matrix.zig");
 const dense_vector = @import("./dense-vector.zig");
@@ -252,12 +253,25 @@ fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime Coef
         pub fn print(self: P) void {
             std.debug.print("matrix:", .{});
             self.matrix.print();
-            std.debug.print("basis: {}\n", .{self.basis});
+            std.debug.print("basis: {any} ", .{self.basis.items});
         }
 
+        // Given an element of P1(Z/NZ), write it in terms
+        // of our basis.
         pub fn reduce(self: P, u: Coeff, v: Coeff) !dense_vector.DenseVectorMod(T) {
             const i = try self.manin_symbols.P1.index(u, v);
             return try self.matrix.getRow(i);
+        }
+
+        // Lift the ith basis vector to an element of P1(Z/NZ)
+        pub fn lift(self: P, i: usize) !p1list.P1Element(Coeff) {
+            const j = self.basis.items[i];
+            return try self.manin_symbols.P1.get(j);
+        }
+
+        pub fn liftToSL2Z(self: P, i: usize) !sl2z.SL2ZElement(Coeff) {
+            const j = self.basis.items[i];
+            return try self.manin_symbols.P1.liftToSL2Z(j);
         }
     };
 }
@@ -417,4 +431,13 @@ test "compute presentation" {
     try expect((try v.get(0)) == 1);
     try expect((try v.get(1)) == 996);
     try expect((try v.get(2)) == 0);
+
+    var uv = try presentation.lift(1);
+    uv.print();
+    std.debug.print("\n", .{});
+    try expect(uv.u == 1);
+    try expect(uv.v == 8);
+
+    var m2 = try presentation.liftToSL2Z(1);
+    m2.print();
 }

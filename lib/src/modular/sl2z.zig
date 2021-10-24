@@ -5,12 +5,19 @@ const gcd = arith.gcd;
 
 pub fn SL2ZElement(comptime T: type) type {
     return struct {
+        const Elt = @This();
+
         a: T,
         b: T,
         c: T,
         d: T,
-        pub fn eql(self: SL2ZElement(T), other: SL2ZElement(T)) bool {
+
+        pub fn eql(self: Elt, other: Elt) bool {
             return self.a == other.a and self.b == other.b and self.c == other.c and self.d == other.d;
+        }
+
+        pub fn print(self: Elt) void {
+            std.debug.print("[{} {}]\n[{} {}]\n", .{ self.a, self.b, self.c, self.d });
         }
     };
 }
