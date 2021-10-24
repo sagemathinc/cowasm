@@ -1,5 +1,11 @@
 import wasmImport from "../wasm";
 
+export let wasm: any = undefined;
+export async function init() {
+  wasm = await wasmImport("modular/manin-symbols");
+}
+init();
+
 // @ts-ignore -- typescript doesn't have FinalizationRegistry
 const registry = new FinalizationRegistry((handle) => {
   wasm.exports.ManinSymbols_free(handle);
@@ -39,7 +45,7 @@ class ManinSymbolsClass {
 }
 
 // @ts-ignore
-const presentationRegistry = new FinalizationRegistry((handle) => {
+const ManinSymbolsPresentation_registry = new FinalizationRegistry((handle) => {
   wasm.exports.Presentation_free(handle);
 });
 
@@ -52,11 +58,15 @@ class ManinSymbolsPresentation {
     this.handle = handle;
     this.p = p;
     this.ms = ms;
-    presentationRegistry.register(this, this.handle);
+    ManinSymbolsPresentation_registry.register(this, this.handle);
   }
 
   print(): number {
     return wasm.exports.Presentation_print(this.handle);
+  }
+
+  reduce(u: number, v: number): DenseVector {
+    return new DenseVector(wasm.exports.Presentation_reduce(this.handle, u, v));
   }
 
   __repr__(): string {
@@ -64,11 +74,24 @@ class ManinSymbolsPresentation {
   }
 }
 
-export let wasm: any = undefined;
-export async function init() {
-  wasm = await wasmImport("modular/manin-symbols");
+// @ts-ignore
+const DenseVector_registry = new FinalizationRegistry((handle) => {
+  wasm.exports.DenseVector_free(handle);
+});
+
+class DenseVector {
+  private readonly handle: number;
+
+  constructor(handle: number) {
+    this.handle = handle;
+    DenseVector_registry.register(this, this.handle);
+  }
+
+  __repr__(): string {
+    wasm.exports.DenseVector_string(this.handle);
+    return wasm.result;
+  }
 }
-init();
 
 export default function ManinSymbols(
   N: number,

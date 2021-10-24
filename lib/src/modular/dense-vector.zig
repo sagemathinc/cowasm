@@ -21,16 +21,18 @@ pub fn DenseVectorMod(comptime T: type) type {
             self.entries.deinit();
         }
 
-        pub fn print(self: Vector) void {
-            std.debug.print("(", .{});
+        pub fn format(self: Vector, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+            _ = fmt;
+            _ = options;
+            try writer.print("[", .{});
             var i: usize = 0;
             while (i < self.degree) : (i += 1) {
                 if (i > 0) {
-                    std.debug.print(", ", .{});
+                    try writer.print(", ", .{});
                 }
-                std.debug.print("{}", .{self.entries.items[i]});
+                try writer.print("{}", .{self.entries.items[i]});
             }
-            std.debug.print(")\n", .{});
+            try writer.print("]", .{});
         }
 
         pub fn unsafeSet(self: *Vector, i: usize, x: T) void {
@@ -88,7 +90,7 @@ test "create a vector" {
     var degree: usize = 5;
     var m = try DenseVectorMod(i32).init(19, degree, testing_allocator);
     defer m.deinit();
-    //m.print();
+    //std.debug.print("m={}\n", .{m});
     var i: usize = 0;
     while (i < degree) : (i += 1) {
         try expect((try m.get(i)) == 0);
@@ -101,7 +103,7 @@ test "create a vector" {
     while (i < degree) : (i += 1) {
         try expect((try m.get(i)) == i);
     }
-    // m.print();
+    std.debug.print("m={}\n", .{m});
 }
 
 test "multiply a vector by a matrix" {

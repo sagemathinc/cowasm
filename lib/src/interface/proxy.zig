@@ -1,5 +1,7 @@
 const std = @import("std");
 const AutoHashMap = std.AutoHashMap;
+const util = @import("./util.zig");
+extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
 
 // A collection of proxy objects of a given type.
 // Assumes that the objects have a deinit function.
@@ -50,6 +52,24 @@ pub fn ProxyObjects(comptime T: type) type {
 
         pub fn count(self: Proxy) usize {
             return self.map.count();
+        }
+
+        // Send string representation of the object with
+        // given handle to Javascript.  The proxied object
+        // must have a format method and should be JSON
+        // parseable.
+        pub fn stringify(self: Proxy, handle: i32) void {
+            const obj = self.get(handle) orelse {
+                util.throw("no object with handle");
+                return;
+            };
+            var out = std.ArrayList(u8).init(self.map.allocator);
+            defer out.deinit();
+            out.writer().print("{}", .{obj}) catch {
+                util.throw("error stringifying object");
+                return;
+            };
+            wasmSendString(out.items.ptr, out.items.len);
         }
     };
 }

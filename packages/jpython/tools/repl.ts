@@ -57,7 +57,11 @@ function replDefaults(options: Partial<Options>): Options {
     options.show_js = true;
   }
   if (!options.ps1) {
-    options.ps1 = process.stdin.isTTY ? ">>> " : "";
+    if (options.jsage) {
+      options.ps1 = process.stdin.isTTY ? "jsage: " : "";
+    } else {
+      options.ps1 = process.stdin.isTTY ? ">>> " : "";
+    }
   }
   if (!options.ps2) {
     options.ps2 = process.stdin.isTTY ? "... " : "";

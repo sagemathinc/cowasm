@@ -5,3 +5,5 @@ pub fn throw(s: [*]const u8) void {
     while (s[i] != 0) : (i += 1) {}
     reportError(s, i);
 }
+
+
