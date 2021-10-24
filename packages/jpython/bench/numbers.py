@@ -2,16 +2,19 @@ from bench import register, all
 
 from nt import gcd, xgcd, inverse_mod, pi
 
+
 def test_pi(n=100000):
     assert pi(n) == 9592
 
 
 register("pi(10**5)", pi)
 
+
 def operator_add(n=100000):
     class A:
         def __init__(self, i):
             self.i = i
+
         def __add__(self, right):
             return A(self.i + right.i)
 

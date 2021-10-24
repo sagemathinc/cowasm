@@ -73,6 +73,7 @@ $ npx jsage
 >>> 2^3
 8
 ```
+
 Right now only the notation [a..b] for ranges and caret for exponentiation (and
 `^^` for xor) is implemented. I might implement more, though maybe that's enough.
 
