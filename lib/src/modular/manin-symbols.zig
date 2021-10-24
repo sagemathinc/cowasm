@@ -8,6 +8,7 @@ const dense_vector = @import("./dense-vector.zig");
 const dims = @import("./dims.zig");
 const errors = @import("../errors.zig");
 const heilbronn = @import("./heilbronn.zig");
+const timer = @import("../timer.zig").timer;
 
 pub const Sign = enum(i4) {
     minus = -1,
@@ -175,17 +176,25 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
         }
 
         pub fn presentation(self: Syms, comptime T: type, p: T) !Presentation(Syms, T, Coeff) {
-            const time = std.time.milliTimestamp;
-            var t = time();
+            var tm = timer(true);
+            tm.print("computing presentation");
+
             var basis = std.ArrayList(usize).init(self.allocator);
             var quo = try self.twoTermQuotient();
             defer quo.deinit();
+
+            tm.print("computed quotient by 2-term relations");
+
             var rel3 = try self.relationMatrixMod(T, p, quo);
             defer rel3.deinit();
+
+            tm.print("computed relation matrix");
+
             var columnTypes = try rel3.echelonize();
             defer columnTypes.deinit();
-            std.debug.print("\ncomputed echelon = {}ms\n", .{time() - t});
-            t = time();
+
+            tm.print("computed echelon");
+
             // write each generator in terms of the r non-pivot columns.
             const n: Index = quo.ngens;
             var r: usize = 0;
@@ -233,13 +242,13 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
                 std.debug.print("not even basis elements; need to deal with coefficient issue?", .{});
                 return errors.General.RuntimeError;
             }
-            std.debug.print("\nmanage presentation = {}ms\n", .{time() - t});
+            tm.print("computed presentation matrix");
             return Presentation(Syms, T, Coeff){ .matrix = matrix, .basis = basis, .manin_symbols = self };
         }
     };
 }
 
-fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime Coeff: type) type {
+pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime Coeff: type) type {
     return struct {
         const P = @This();
         matrix: dense_matrix.DenseMatrixMod(T),
@@ -254,7 +263,7 @@ fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime Coef
         pub fn print(self: P) void {
             std.debug.print("matrix:", .{});
             self.matrix.print();
-            std.debug.print("basis: {any} ", .{self.basis.items});
+            std.debug.print("basis: {any}\n", .{self.basis.items});
         }
 
         // Given an element of P1(Z/NZ), write it in terms
@@ -277,7 +286,7 @@ fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime Coef
 
         // compute dense matrix representation of the p-th Hecke operator.
         pub fn HeckeOperator(self: P, p: i32) !dense_matrix.DenseMatrixMod(T) {
-            var h = try heilbronn.HeilbronnCremona(i64).init(test_allocator, p);
+            var h = try heilbronn.HeilbronnCremona(T).init(test_allocator, p);
             defer h.deinit();
             const n = self.basis.items.len;
             var Tp = try dense_matrix.DenseMatrixMod(T).init(self.matrix.modulus, n, n, self.manin_symbols.allocator);
@@ -442,10 +451,10 @@ test "bench" {
 }
 
 test "compute presentation" {
-    var M = try ManinSymbols(i64, u32).init(test_allocator, 11, Sign.zero);
+    var M = try ManinSymbols(i32, u32).init(test_allocator, 11, Sign.zero);
     defer M.deinit();
     M.P1.print();
-    var presentation = try M.presentation(i64, 997);
+    var presentation = try M.presentation(i32, 997);
     defer presentation.deinit();
     presentation.print();
     var v = try presentation.reduce(3, 9);

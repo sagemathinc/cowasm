@@ -21,11 +21,46 @@ class ManinSymbolsClass {
   }
 
   dimensionFormula(): number {
-    return wasm.exports.dimensionFormula(this.handle);
+    return wasm.exports.ManinSymbols_dimensionFormula(this.handle);
+  }
+
+  print(): number {
+    return wasm.exports.ManinSymbols_print(this.handle);
+  }
+
+  presentation(p: number): ManinSymbolsPresentation {
+    const handle = wasm.exports.ManinSymbols_presentation(this.handle, p);
+    return new ManinSymbolsPresentation(handle, p, this);
   }
 
   __repr__(): string {
     return `ManinSymbols(N=${this.N}, sign=${this.sign})`;
+  }
+}
+
+// @ts-ignore
+const presentationRegistry = new FinalizationRegistry((handle) => {
+  wasm.exports.Presentation_free(handle);
+});
+
+class ManinSymbolsPresentation {
+  private readonly handle: number;
+  public readonly p: number;
+  public readonly ms: ManinSymbolsClass;
+
+  constructor(handle: number, p: number, ms: ManinSymbolsClass) {
+    this.handle = handle;
+    this.p = p;
+    this.ms = ms;
+    presentationRegistry.register(this, this.handle);
+  }
+
+  print(): number {
+    return wasm.exports.Presentation_print(this.handle);
+  }
+
+  __repr__(): string {
+    return `Presentation of ${this.ms.__repr__()} modulo ${this.p}`;
   }
 }
 
