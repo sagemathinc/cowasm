@@ -3,6 +3,7 @@ const manin_symbols = @import("./manin-symbols.zig");
 const errors = @import("../errors.zig");
 const interface = @import("../interface.zig");
 const dense_vector_interface = @import("./dense-vector-interface.zig");
+const dense_matrix_interface = @import("./dense-matrix-interface.zig");
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 
@@ -89,13 +90,21 @@ fn Presentation_get(n: i32) !PresentationType {
     };
 }
 
-pub export fn Presentation_print(handle: i32) void {
-    var P = Presentation_get(handle) catch return;
-    P.print();
+pub export fn Presentation_stringify(handle: i32) void {
+    Presentation_objects.stringify(handle);
+}
+pub export fn Presentation_format(handle: i32) void {
+    Presentation_objects.format(handle);
 }
 
 pub export fn Presentation_reduce(handle: i32, u: i32, v: i32) i32 {
     var P = Presentation_get(handle) catch return 0;
     var vec = P.reduce(u, v) catch return 0;
     return dense_vector_interface.DenseVector_put(vec);
+}
+
+pub export fn Presentation_HeckeOperator(handle: i32, p: i32) i32 {
+    var P = Presentation_get(handle) catch return 0;
+    var Tp = P.HeckeOperator(p) catch return 0;
+    return dense_matrix_interface.DenseMatrix_put(Tp);
 }

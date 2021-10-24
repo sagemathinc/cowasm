@@ -54,10 +54,9 @@ pub fn ProxyObjects(comptime T: type) type {
             return self.map.count();
         }
 
-        // Send string representation of the object with
+        // Send JSON stringify representation of the object with
         // given handle to Javascript.  The proxied object
-        // must have a format method and should be JSON
-        // parseable.
+        // must have a jsonStringify method.
         pub fn stringify(self: Proxy, handle: i32) void {
             const obj = self.get(handle) orelse {
                 util.throw("no object with handle");
@@ -65,8 +64,25 @@ pub fn ProxyObjects(comptime T: type) type {
             };
             var out = std.ArrayList(u8).init(self.map.allocator);
             defer out.deinit();
-            out.writer().print("{}", .{obj}) catch {
+            std.json.stringify(obj, .{}, out.writer()) catch {
                 util.throw("error stringifying object");
+                return;
+            };
+            wasmSendString(out.items.ptr, out.items.len);
+        }
+
+        // Send string representation to Javascript.  Need
+        // not be JSON or otherwise parseable. Should be
+        // reasonable to look at.
+        pub fn format(self: Proxy, handle: i32) void {
+            const obj = self.get(handle) orelse {
+                util.throw("no object with handle");
+                return;
+            };
+            var out = std.ArrayList(u8).init(self.map.allocator);
+            defer out.deinit();
+            out.writer().print("{}", .{obj}) catch {
+                util.throw("error printing object object");
                 return;
             };
             wasmSendString(out.items.ptr, out.items.len);

@@ -21,15 +21,30 @@ pub fn DenseMatrixMod(comptime T: type) type {
             self.entries.deinit();
         }
 
-        pub fn print(self: Matrix) void {
-            std.debug.print("\n", .{});
+        pub fn jsonStringify(
+            self: Matrix,
+            options: std.json.StringifyOptions,
+            writer: anytype,
+        ) !void {
+            _ = options;
+            const obj = .{ .type = "DenseMatrixMod", .modulus = self.modulus, .nrows = self.nrows, .ncols = self.ncols, .entries = self.entries.items };
+            try std.json.stringify(obj, options, writer);
+        }
+
+        pub fn format(self: Matrix, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+            _ = fmt;
+            _ = options;
+
             var i: usize = 0;
             while (i < self.nrows) : (i += 1) {
+                if (i > 0) try writer.print("\n", .{});
+                try writer.print("[", .{});
                 var j: usize = 0;
                 while (j < self.ncols) : (j += 1) {
-                    std.debug.print("{} ", .{self.entries.items[i * self.ncols + j]});
+                    if (j > 0) try writer.print(" ", .{});
+                    try writer.print("{}", .{self.entries.items[i * self.ncols + j]});
                 }
-                std.debug.print("\n", .{});
+                try writer.print("]", .{});
             }
         }
 
@@ -87,7 +102,7 @@ test "create a matrix" {
     var ncols: usize = 5;
     var m = try DenseMatrixMod(i32).init(19, nrows, ncols, testing_allocator);
     defer m.deinit();
-    //m.print();
+    //std.debug.print("\nm={}\n", .{m});
     var i: usize = 0;
     while (i < nrows) : (i += 1) {
         var j: usize = 0;
@@ -109,7 +124,15 @@ test "create a matrix" {
             try expect((try m.get(i, j)) == @intCast(i32, i + j));
         }
     }
-    //m.print();
+    //std.debug.print("m={}\n", .{m});
+
+    // output to json
+    var out = std.ArrayList(u8).init(testing_allocator);
+    defer out.deinit();
+    try std.json.stringify(m, .{}, out.writer());
+    try expect(std.mem.eql(u8, out.items,
+        \\{"type":"DenseMatrixMod","modulus":19,"nrows":3,"ncols":5,"entries":[0,1,2,3,4,1,2,3,4,5,2,3,4,5,6]}
+    ));
 }
 
 test "extract a row" {

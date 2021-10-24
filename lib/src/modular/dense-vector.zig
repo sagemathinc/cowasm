@@ -21,10 +21,20 @@ pub fn DenseVectorMod(comptime T: type) type {
             self.entries.deinit();
         }
 
+        pub fn jsonStringify(
+            self: Vector,
+            options: std.json.StringifyOptions,
+            writer: anytype,
+        ) !void {
+            _ = options;
+            const obj = .{ .type = "DenseVectorMod", .modulus = self.modulus, .degree = self.degree, .entries = self.entries.items };
+            try std.json.stringify(obj, options, writer);
+        }
+
         pub fn format(self: Vector, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
             _ = fmt;
             _ = options;
-            try writer.print("[", .{});
+            try writer.print("(", .{});
             var i: usize = 0;
             while (i < self.degree) : (i += 1) {
                 if (i > 0) {
@@ -32,7 +42,7 @@ pub fn DenseVectorMod(comptime T: type) type {
                 }
                 try writer.print("{}", .{self.entries.items[i]});
             }
-            try writer.print("]", .{});
+            try writer.print(")", .{});
         }
 
         pub fn unsafeSet(self: *Vector, i: usize, x: T) void {
@@ -103,7 +113,15 @@ test "create a vector" {
     while (i < degree) : (i += 1) {
         try expect((try m.get(i)) == i);
     }
-    std.debug.print("m={}\n", .{m});
+    //std.debug.print("m={}\n", .{m});
+
+    // output to json
+    var out = std.ArrayList(u8).init(testing_allocator);
+    defer out.deinit();
+    try std.json.stringify(m, .{}, out.writer());
+    try expect(std.mem.eql(u8, out.items,
+        \\{"type":"DenseVectorMod","modulus":19,"degree":5,"entries":[0,1,2,3,4]}
+    ));
 }
 
 test "multiply a vector by a matrix" {

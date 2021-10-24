@@ -1,5 +1,7 @@
-import wasmImport from "../wasm";
+import { DenseVector } from "./dense-vector";
+import { DenseMatrix } from "./dense-matrix";
 
+import wasmImport from "../wasm";
 export let wasm: any = undefined;
 export async function init() {
   wasm = await wasmImport("modular/manin-symbols");
@@ -14,14 +16,10 @@ const registry = new FinalizationRegistry((handle) => {
 export type Sign = -1 | 0 | 1;
 
 class ManinSymbolsClass {
-  private readonly N: number;
-  private readonly sign: Sign;
   private readonly handle: number;
 
   constructor(N: number, sign: Sign) {
     if (wasm == null) throw Error("call init first");
-    this.N = N;
-    this.sign = sign;
     this.handle = wasm.exports.ManinSymbols(N, sign);
     registry.register(this, this.handle);
   }
@@ -39,8 +37,14 @@ class ManinSymbolsClass {
     return new ManinSymbolsPresentation(handle, p, this);
   }
 
+  __str__(): string {
+    wasm.exports.ManinSymbols_format(this.handle);
+    return wasm.result;
+  }
+
   __repr__(): string {
-    return `ManinSymbols(N=${this.N}, sign=${this.sign})`;
+    wasm.exports.ManinSymbols_stringify(this.handle);
+    return wasm.result;
   }
 }
 
@@ -61,34 +65,23 @@ class ManinSymbolsPresentation {
     ManinSymbolsPresentation_registry.register(this, this.handle);
   }
 
-  print(): number {
-    return wasm.exports.Presentation_print(this.handle);
-  }
-
   reduce(u: number, v: number): DenseVector {
     return new DenseVector(wasm.exports.Presentation_reduce(this.handle, u, v));
   }
 
-  __repr__(): string {
-    return `Presentation of ${this.ms.__repr__()} modulo ${this.p}`;
+  HeckeOperator(p: number): DenseMatrix {
+    return new DenseMatrix(
+      wasm.exports.Presentation_HeckeOperator(this.handle, p)
+    );
   }
-}
 
-// @ts-ignore
-const DenseVector_registry = new FinalizationRegistry((handle) => {
-  wasm.exports.DenseVector_free(handle);
-});
-
-class DenseVector {
-  private readonly handle: number;
-
-  constructor(handle: number) {
-    this.handle = handle;
-    DenseVector_registry.register(this, this.handle);
+  __str__(): string {
+    wasm.exports.Presentation_format(this.handle);
+    return wasm.result;
   }
 
   __repr__(): string {
-    wasm.exports.DenseVector_string(this.handle);
+    wasm.exports.Presentation_stringify(this.handle);
     return wasm.result;
   }
 }

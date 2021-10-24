@@ -260,10 +260,20 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
             self.basis.deinit();
         }
 
-        pub fn print(self: P) void {
-            std.debug.print("matrix:", .{});
-            self.matrix.print();
-            std.debug.print("basis: {any}\n", .{self.basis.items});
+        pub fn jsonStringify(
+            self: P,
+            options: std.json.StringifyOptions,
+            writer: anytype,
+        ) !void {
+            _ = options;
+            const obj = .{ .matrix = self.matrix, .basis = self.basis.items };
+            try std.json.stringify(obj, options, writer);
+        }
+
+        pub fn format(self: P, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+            _ = fmt;
+            _ = options;
+            try writer.print("{{\"p\":{}, \"matrix\":{},\n\"basis\":{any}}}", .{ self.matrix.modulus, self.matrix, self.basis.items });
         }
 
         // Given an element of P1(Z/NZ), write it in terms
@@ -456,7 +466,7 @@ test "compute presentation" {
     M.P1.print();
     var presentation = try M.presentation(i32, 997);
     defer presentation.deinit();
-    presentation.print();
+    std.debug.print("\npresentation={}\n", .{presentation});
     var v = try presentation.reduce(3, 9);
     defer v.deinit();
     try expect((try v.get(0)) == 1);
@@ -474,5 +484,5 @@ test "compute presentation" {
 
     var t2 = try presentation.HeckeOperator(2);
     defer t2.deinit();
-    t2.print();
+    std.debug.print("\nt2 = {}\n", .{t2});
 }

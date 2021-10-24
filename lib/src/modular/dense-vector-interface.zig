@@ -25,8 +25,10 @@ pub fn DenseVector_put(v: DenseVectorType) i32 {
     };
 }
 
-extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
-
-pub export fn DenseVector_string(handle: i32) void {
+pub export fn DenseVector_stringify(handle: i32) void {
     DenseVector_objects.stringify(handle);
+}
+
+pub export fn DenseVector_format(handle: i32) void {
+    DenseVector_objects.format(handle);
 }
