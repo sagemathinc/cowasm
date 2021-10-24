@@ -7,7 +7,7 @@
     if( typeof HTMLCollection !== "undefined" && typeof Symbol === "function") NodeList.prototype[Symbol.iterator] = HTMLCollection.prototype[Symbol.iterator] = NamedNodeMap.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
 var ρσ_len;
 function abs(a) {
-    return (typeof a === 'object' && a.__abs__ !== null) ? a.__abs__() : Math.abs(a);
+    return (typeof a === 'object' && a.__abs__ !== undefined) ? a.__abs__() : Math.abs(a);
 };
 abs.__argnames__ = ["a"];
 abs.__module__ = "__main__";
@@ -27,35 +27,77 @@ typeof a !== 'object' ? a + b :
 undefined;
 
 function ρσ_operator_sub(a, b) {
-    return (typeof a === 'object' && a.__sub__ !== null) ? a.__sub__(b) : a - b;
+    return (typeof a === 'object' && a.__sub__ !== undefined) ? a.__sub__(b) : a - b;
 };
 ρσ_operator_sub.__argnames__ = ["a", "b"];
 ρσ_operator_sub.__module__ = "__main__";
 undefined;
 
 function ρσ_operator_mul(a, b) {
-    return (typeof a === 'object'  && a.__mul__ !== null) ? a.__mul__(b) : a * b;
+    return (typeof a === 'object'  && a.__mul__ !== undefined) ? a.__mul__(b) : a * b;
 };
 ρσ_operator_mul.__argnames__ = ["a", "b"];
 ρσ_operator_mul.__module__ = "__main__";
 undefined;
 
+function ρσ_operator_div(a, b) {
+    return (typeof a === 'object'  && a.__div__ !== undefined) ? a.__div__(b) : a / b;
+};
+ρσ_operator_div.__argnames__ = ["a", "b"];
+ρσ_operator_div.__module__ = "__main__";
+undefined;
+
 function ρσ_operator_pow(a, b) {
-    return (typeof a === 'object'  && a.__pow__ !== null) ? a.__pow__(b) : a ** b;
+    return (typeof a === 'object'  && a.__pow__ !== undefined) ? a.__pow__(b) : a ** b;
 };
 ρσ_operator_pow.__argnames__ = ["a", "b"];
 ρσ_operator_pow.__module__ = "__main__";
 undefined;
 
+function ρσ_operator_iadd(a, b) {
+    return (typeof a === 'object' && a.__iadd__ !== undefined) ? a.__iadd__(b) : ρσ_operator_add(a,b);
+};
+ρσ_operator_iadd.__argnames__ = ["a", "b"];
+ρσ_operator_iadd.__module__ = "__main__";
+undefined;
+
+function ρσ_operator_isub(a, b) {
+    return (typeof a === 'object' && a.__isub__ !== undefined) ? a.__isub__(b) : ρσ_operator_sub(a,b);
+};
+ρσ_operator_isub.__argnames__ = ["a", "b"];
+ρσ_operator_isub.__module__ = "__main__";
+undefined;
+
+function ρσ_operator_imul(a, b) {
+    return (typeof a === 'object' && a.__imul__ !== undefined) ? a.__imul__(b) : ρσ_operator_mul(a,b);
+};
+ρσ_operator_imul.__argnames__ = ["a", "b"];
+ρσ_operator_imul.__module__ = "__main__";
+undefined;
+
+function ρσ_operator_idiv(a, b) {
+    return (typeof a === 'object' && a.__idiv__ !== undefined) ? a.__idiv__(b) : ρσ_operator_div(a,b);
+};
+ρσ_operator_idiv.__argnames__ = ["a", "b"];
+ρσ_operator_idiv.__module__ = "__main__";
+undefined;
+
+function ρσ_operator_ipow(a, b) {
+    return (typeof a === 'object' && a.__ipow__ !== undefined) ? a.__ipow__(b) : ρσ_operator_pow(a,b);
+};
+ρσ_operator_ipow.__argnames__ = ["a", "b"];
+ρσ_operator_ipow.__module__ = "__main__";
+undefined;
+
 function ρσ_operator_truediv(a, b) {
-    return (typeof a === 'object'  && a.__truediv__ !== null) ? a.__truediv__(b) : a / b;
+    return (typeof a === 'object'  && a.__truediv__ !== undefined) ? a.__truediv__(b) : a / b;
 };
 ρσ_operator_truediv.__argnames__ = ["a", "b"];
 ρσ_operator_truediv.__module__ = "__main__";
 undefined;
 
 function ρσ_operator_floordiv(a, b) {
-    return (typeof a === 'object'  && a.__floordiv__ !== null) ? a.__floordiv__(b) : Math.floor(a / b);
+    return (typeof a === 'object'  && a.__floordiv__ !== undefined) ? a.__floordiv__(b) : Math.floor(a / b);
 };
 ρσ_operator_floordiv.__argnames__ = ["a", "b"];
 ρσ_operator_floordiv.__module__ = "__main__";
@@ -198,7 +240,7 @@ function ρσ_chr(code) {
     if (code <= 65535) {
         return String.fromCharCode(code);
     }
-    code -= 65536;
+    code = ρσ_operator_isub(code, 65536);
     return String.fromCharCode(ρσ_operator_add(55296, (code >> 10)), ρσ_operator_add(56320, (code & 1023)));
 };
 ρσ_chr.__argnames__ = ["code"];
@@ -260,7 +302,7 @@ undefined;
     if ((ρσ_arraylike?.__call__?.bind(ρσ_arraylike) ?? ρσ_arraylike)(iterable)) {
         ans["next"] = (function() {
             var ρσ_anonfunc = function () {
-                this._i += 1;
+                this._i = ρσ_operator_iadd(this._i, 1);
                 if (this._i < iterable.length) {
                     return {'done':false, 'value':[this._i, iterable[this._i]]};
                 }
@@ -282,7 +324,7 @@ undefined;
                 if (r.done) {
                     return {'done':true};
                 }
-                this._i += 1;
+                this._i = ρσ_operator_iadd(this._i, 1);
                 return {'done':false, 'value':[this._i, r.value]};
             };
 ρσ_anonfunc.__module__ = "__main__";
@@ -303,7 +345,7 @@ function ρσ_reversed(iterable) {
         ans = {"_i": iterable.length};
         ans["next"] = (function() {
             var ρσ_anonfunc = function () {
-                this._i -= 1;
+                this._i = ρσ_operator_isub(this._i, 1);
                 if (this._i > -1) {
                     return {'done':false, 'value':iterable[this._i]};
                 }
@@ -346,7 +388,7 @@ undefined;
         })();
         ans["next"] = (function() {
             var ρσ_anonfunc = function () {
-                this._i += 1;
+                this._i = ρσ_operator_iadd(this._i, 1);
                 if (this._i < iterable.length) {
                     return {'done':false, 'value':iterable[this._i]};
                 }
@@ -366,8 +408,8 @@ undefined;
 
 function ρσ_range_next(step, length) {
     var ρσ_unpack;
-    this._i += step;
-    this._idx += 1;
+    this._i = ρσ_operator_iadd(this._i, step);
+    this._idx = ρσ_operator_iadd(this._idx, 1);
     if (this._idx >= length) {
         ρσ_unpack = [this.__i, -1];
         this._i = ρσ_unpack[0];
@@ -770,7 +812,7 @@ function ρσ_list_extend(iterable) {
     var start, iterator, result;
     if (Array.isArray(iterable) || typeof iterable === "string") {
         start = this.length;
-        this.length += iterable.length;
+        this.length = ρσ_operator_iadd(this.length, iterable.length);
         for (var i = 0; i < iterable.length; i++) {
             (ρσ_expr_temp = this)[ρσ_bound_index(ρσ_operator_add(start, i), ρσ_expr_temp)] = iterable[(typeof i === "number" && i < 0) ? iterable.length + i : i];
         }
@@ -855,7 +897,7 @@ undefined;
 
 function ρσ_list_insert(index, val) {
     if (index < 0) {
-        index += this.length;
+        index = ρσ_operator_iadd(index, this.length);
     }
     index = (min?.__call__?.bind(min) ?? min)(this.length, (max?.__call__?.bind(max) ?? max)(index, 0));
     if (index === 0) {
@@ -989,7 +1031,7 @@ function ρσ_list_iterator(value) {
     self = this;
     return {"_i":-1,"_list":self,"next":(function() {
         var ρσ_anonfunc = function () {
-            this._i += 1;
+            this._i = ρσ_operator_iadd(this._i, 1);
             if (this._i >= this._list.length) {
                 return {"done":true};
             }
@@ -1162,7 +1204,7 @@ undefined;
         var key;
         key = (ρσ_set_keyfor?.__call__?.bind(ρσ_set_keyfor) ?? ρσ_set_keyfor)(x);
         if (!Object.prototype.hasOwnProperty.call(this._store, key)) {
-            this.size += 1;
+            this.size = ρσ_operator_iadd(this.size, 1);
             (ρσ_expr_temp = this._store)[(typeof key === "number" && key < 0) ? ρσ_expr_temp.length + key : key] = x;
         }
         return this;
@@ -1187,7 +1229,7 @@ undefined;
         var key;
         key = (ρσ_set_keyfor?.__call__?.bind(ρσ_set_keyfor) ?? ρσ_set_keyfor)(x);
         if (Object.prototype.hasOwnProperty.call(this._store, key)) {
-            this.size -= 1;
+            this.size = ρσ_operator_isub(this.size, 1);
             delete this._store[key];
             return true;
         }
@@ -1221,7 +1263,7 @@ undefined;
         })();
         ans["next"] = (function() {
             var ρσ_anonfunc = function () {
-                this._i += 1;
+                this._i = ρσ_operator_iadd(this._i, 1);
                 if (this._i >= this._keys.length) {
                     return {'done': true};
                 }
@@ -1649,7 +1691,7 @@ undefined;
         var key;
         key = (ρσ_set_keyfor?.__call__?.bind(ρσ_set_keyfor) ?? ρσ_set_keyfor)(x);
         if (!Object.prototype.hasOwnProperty.call(this._store, key)) {
-            this.size += 1;
+            this.size = ρσ_operator_iadd(this.size, 1);
         }
         (ρσ_expr_temp = this._store)[(typeof key === "number" && key < 0) ? ρσ_expr_temp.length + key : key] = [x, value];
         return this;
@@ -1674,7 +1716,7 @@ undefined;
         var key;
         key = (ρσ_set_keyfor?.__call__?.bind(ρσ_set_keyfor) ?? ρσ_set_keyfor)(x);
         if (Object.prototype.hasOwnProperty.call(this._store, key)) {
-            this.size -= 1;
+            this.size = ρσ_operator_isub(this.size, 1);
             delete this._store[key];
             return true;
         }
@@ -1726,7 +1768,7 @@ undefined;
         })();
         ans["next"] = (function() {
             var ρσ_anonfunc = function () {
-                this._i += 1;
+                this._i = ρσ_operator_iadd(this._i, 1);
                 if (this._i >= this._keys.length) {
                     return {'done': true};
                 }
@@ -1757,7 +1799,7 @@ undefined;
         })();
         ans["next"] = (function() {
             var ρσ_anonfunc = function () {
-                this._i += 1;
+                this._i = ρσ_operator_iadd(this._i, 1);
                 if (this._i >= this._keys.length) {
                     return {'done': true};
                 }
@@ -1788,7 +1830,7 @@ undefined;
         })();
         ans["next"] = (function() {
             var ρσ_anonfunc = function () {
-                this._i += 1;
+                this._i = ρσ_operator_iadd(this._i, 1);
                 if (this._i >= this._keys.length) {
                     return {'done': true};
                 }
@@ -2608,7 +2650,7 @@ function ρσ_getitem(obj, key) {
         return obj.__getitem__(key);
     }
     if (typeof key === "number" && key < 0) {
-        key += obj.length;
+        key = ρσ_operator_iadd(key, obj.length);
     }
     return obj[(typeof key === "number" && key < 0) ? obj.length + key : key];
 };
@@ -2621,7 +2663,7 @@ function ρσ_setitem(obj, key, val) {
         obj.__setitem__(key, val);
     } else {
         if (typeof key === "number" && key < 0) {
-            key += obj.length;
+            key = ρσ_operator_iadd(key, obj.length);
         }
         obj[(typeof key === "number" && key < 0) ? obj.length + key : key] = val;
     }
@@ -2637,7 +2679,7 @@ function ρσ_delitem(obj, key) {
         obj.splice(key, 1);
     } else {
         if (typeof key === "number" && key < 0) {
-            key += obj.length;
+            key = ρσ_operator_iadd(key, obj.length);
         }
         delete obj[key];
     }
@@ -2648,7 +2690,7 @@ undefined;
 
 function ρσ_bound_index(idx, arr) {
     if (typeof idx === "number" && idx < 0) {
-        idx += arr.length;
+        idx = ρσ_operator_iadd(idx, arr.length);
     }
     return idx;
 };
@@ -2659,13 +2701,13 @@ undefined;
 function ρσ_splice(arr, val, start, end) {
     start = start || 0;
     if (start < 0) {
-        start += arr.length;
+        start = ρσ_operator_iadd(start, arr.length);
     }
     if (end === undefined) {
         end = arr.length;
     }
     if (end < 0) {
-        end += arr.length;
+        end = ρσ_operator_iadd(end, arr.length);
     }
     Array.prototype.splice.apply(arr, [start, end - start].concat(val));
 };
@@ -2836,7 +2878,7 @@ undefined;
     iterator = (iter?.__call__?.bind(iter) ?? iter)(iterable);
     r = iterator.next();
     while (!r.done) {
-        ans += r.value;
+        ans = ρσ_operator_iadd(ans, r.value);
         r = iterator.next();
     }
     return ans;
@@ -3354,7 +3396,7 @@ undefined;
                     value = (safe_fixed?.__call__?.bind(safe_fixed) ?? safe_fixed)(value, prec, comma);
                     value = (ftype === "F") ? value.toUpperCase() : value.toLowerCase();
                 } else if (lftype === "%") {
-                    value *= 100;
+                    value = ρσ_operator_imul(value, 100);
                     value = ρσ_operator_add((safe_fixed?.__call__?.bind(safe_fixed) ?? safe_fixed)(value, prec, comma), "%");
                 } else if (lftype === "g") {
                     prec = (max?.__call__?.bind(max) ?? max)(1, prec);
@@ -3380,12 +3422,12 @@ undefined;
                     }
                     value = (safe_comma?.__call__?.bind(safe_comma) ?? safe_comma)(value, comma);
                 }
-                value += "";
+                value = ρσ_operator_iadd(value, "");
                 if (!(isNaN?.__call__?.bind(isNaN) ?? isNaN)(precision)) {
                     value = value.slice(0, precision);
                 }
             }
-            value += "";
+            value = ρσ_operator_iadd(value, "");
             if (is_numeric && sign) {
                 nval = Number(value);
                 is_positive = !(isNaN?.__call__?.bind(isNaN) ?? isNaN)(nval) && nval >= 0;
@@ -3448,18 +3490,18 @@ undefined;
                     } else if (ch === ":") {
                         state = 2;
                     } else {
-                        key += ch;
+                        key = ρσ_operator_iadd(key, ch);
                     }
                 } else if (state === 1) {
                     if (ch === ":") {
                         state = 2;
                     } else {
-                        transformer += ch;
+                        transformer = ρσ_operator_iadd(transformer, ch);
                     }
                 } else {
-                    format_spec += ch;
+                    format_spec = ρσ_operator_iadd(format_spec, ch);
                 }
-                pos += 1;
+                pos = ρσ_operator_iadd(pos, 1);
             }
             return [key, transformer, format_spec];
         };
@@ -3505,7 +3547,7 @@ undefined;
                     throw new IndexError(ρσ_operator_add("Not enough arguments to match template: ", template));
                 }
                 object = args[(typeof idx === "number" && idx < 0) ? args.length + idx : idx];
-                idx += 1;
+                idx = ρσ_operator_iadd(idx, 1);
             }
             if (typeof object === "function") {
                 object = (object?.__call__?.bind(object) ?? object)();
@@ -3531,35 +3573,35 @@ undefined;
             ch = template[(typeof pos === "number" && pos < 0) ? template.length + pos : pos];
             if (in_brace) {
                 if (ch === "{") {
-                    in_brace += 1;
-                    markup += "{";
+                    in_brace = ρσ_operator_iadd(in_brace, 1);
+                    markup = ρσ_operator_iadd(markup, "{");
                 } else if (ch === "}") {
-                    in_brace -= 1;
+                    in_brace = ρσ_operator_isub(in_brace, 1);
                     if (in_brace > 0) {
-                        markup += "}";
+                        markup = ρσ_operator_iadd(markup, "}");
                     } else {
-                        ans += (render_markup?.__call__?.bind(render_markup) ?? render_markup)(markup);
+                        ans = ρσ_operator_iadd(ans, (render_markup?.__call__?.bind(render_markup) ?? render_markup)(markup));
                     }
                 } else {
-                    markup += ch;
+                    markup = ρσ_operator_iadd(markup, ch);
                 }
             } else {
                 if (ch === "{") {
                     if (template[ρσ_bound_index(ρσ_operator_add(pos, 1), template)] === "{") {
-                        pos += 1;
-                        ans += "{";
+                        pos = ρσ_operator_iadd(pos, 1);
+                        ans = ρσ_operator_iadd(ans, "{");
                     } else {
                         in_brace = 1;
                         markup = "";
                     }
                 } else {
-                    ans += ch;
+                    ans = ρσ_operator_iadd(ans, ch);
                     if (ch === "}" && template[ρσ_bound_index(ρσ_operator_add(pos, 1), template)] === "}") {
-                        pos += 1;
+                        pos = ρσ_operator_iadd(pos, 1);
                     }
                 }
             }
-            pos += 1;
+            pos = ρσ_operator_iadd(pos, 1);
         }
         if (in_brace) {
             throw new ValueError("expected '}' before end of string");
@@ -3617,8 +3659,8 @@ undefined;
         while (pos !== -1) {
             pos = string.indexOf(needle, pos);
             if (pos !== -1) {
-                ans += 1;
-                pos += step;
+                ans = ρσ_operator_iadd(ans, 1);
+                pos = ρσ_operator_iadd(pos, step);
             }
         }
         return ans;
@@ -3677,12 +3719,12 @@ undefined;
     var ρσ_anonfunc = function (needle, start, end) {
         var ans;
         while (start < 0) {
-            start += this.length;
+            start = ρσ_operator_iadd(start, this.length);
         }
         ans = this.indexOf(needle, start);
         if (end !== undefined && ans !== -1) {
             while (end < 0) {
-                end += this.length;
+                end = ρσ_operator_iadd(end, this.length);
             }
             if (ans >= ρσ_operator_sub(end, needle.length)) {
                 return -1;
@@ -3699,12 +3741,12 @@ undefined;
     var ρσ_anonfunc = function (needle, start, end) {
         var ans;
         while (end < 0) {
-            end += this.length;
+            end = ρσ_operator_iadd(end, this.length);
         }
         ans = this.lastIndexOf(needle, ρσ_operator_sub(end, 1));
         if (start !== undefined && ans !== -1) {
             while (start < 0) {
-                start += this.length;
+                start = ρσ_operator_iadd(start, this.length);
             }
             if (ans < start) {
                 return -1;
@@ -3779,9 +3821,9 @@ undefined;
         r = iterable.next();
         while (!r.done) {
             if (ans) {
-                ans += this;
+                ans = ρσ_operator_iadd(ans, this);
             }
-            ans += r.value;
+            ans = ρσ_operator_iadd(ans, r.value);
             r = iterable.next();
         }
         return ans;
@@ -3797,7 +3839,7 @@ undefined;
         string = this;
         if (width > string.length) {
             fill = fill || " ";
-            string += new Array(width - string.length + 1).join(fill);
+            string = ρσ_operator_iadd(string, new Array(width - string.length + 1).join(fill));
         }
         return string;
     };
@@ -3844,7 +3886,7 @@ undefined;
         pos = 0;
         chars = chars || ρσ_str.whitespace;
         while (chars.indexOf(string[(typeof pos === "number" && pos < 0) ? string.length + pos : pos]) !== -1) {
-            pos += 1;
+            pos = ρσ_operator_iadd(pos, 1);
         }
         if (pos) {
             string = string.slice(pos);
@@ -3863,7 +3905,7 @@ undefined;
         pos = ρσ_operator_sub(string.length, 1);
         chars = chars || ρσ_str.whitespace;
         while (chars.indexOf(string[(typeof pos === "number" && pos < 0) ? string.length + pos : pos]) !== -1) {
-            pos -= 1;
+            pos = ρσ_operator_isub(pos, 1);
         }
         if (pos < ρσ_operator_sub(string.length, 1)) {
             string = string.slice(0, ρσ_operator_add(pos, 1));
@@ -3925,7 +3967,7 @@ undefined;
         count = count || Number.MAX_VALUE;
         pos = 0;
         while (count > 0) {
-            count -= 1;
+            count = ρσ_operator_isub(count, 1);
             idx = string.indexOf(old, pos);
             if (idx === -1) {
                 break;
@@ -3954,12 +3996,12 @@ undefined;
                 parts = [];
                 for (var i = 0; i < ans.length; i++) {
                     if (parts.length >= ρσ_operator_add(maxsplit, 1)) {
-                        extra += ans[(typeof i === "number" && i < 0) ? ans.length + i : i];
+                        extra = ρσ_operator_iadd(extra, ans[(typeof i === "number" && i < 0) ? ans.length + i : i]);
                     } else if (i % 2 === 0) {
                         parts.push(ans[(typeof i === "number" && i < 0) ? ans.length + i : i]);
                     }
                 }
-                parts[parts.length-1] += extra;
+                parts[parts.length-1] = ρσ_operator_iadd(parts[parts.length-1], extra);
                 ans = parts;
             } else {
                 ans = (split?.__call__?.bind(split) ?? split)(this, /\s+/);
@@ -4005,13 +4047,13 @@ undefined;
                     if (spc) {
                         if (current) {
                             ans.push(current);
-                            maxsplit -= 1;
+                            maxsplit = ρσ_operator_isub(maxsplit, 1);
                         }
                         current = ch;
                     } else {
-                        current += ch;
+                        current = ρσ_operator_iadd(current, ch);
                     }
-                    pos -= 1;
+                    pos = ρσ_operator_isub(pos, 1);
                 }
                 ans.push(ρσ_operator_add(this.slice(0, ρσ_operator_add(pos, 1)), current));
                 ans.reverse();
@@ -4025,7 +4067,7 @@ undefined;
             ans = [];
             pos = end = this.length;
             while (pos > -1 && maxsplit > 0) {
-                maxsplit -= 1;
+                maxsplit = ρσ_operator_isub(maxsplit, 1);
                 idx = this.lastIndexOf(sep, pos);
                 if (idx === -1) {
                     break;
@@ -4055,7 +4097,7 @@ undefined;
                 if (i % 2 === 0) {
                     ans.push(parts[(typeof i === "number" && i < 0) ? parts.length + i : i]);
                 } else {
-                    ans[ans.length-1] += parts[(typeof i === "number" && i < 0) ? parts.length + i : i];
+                    ans[ans.length-1] = ρσ_operator_iadd(ans[ans.length-1], parts[(typeof i === "number" && i < 0) ? parts.length + i : i]);
                 }
             }
         } else {
@@ -4166,9 +4208,9 @@ undefined;
                 return str_;
             }
             d = (repeat_string?.__call__?.bind(repeat_string) ?? repeat_string)(str_, i >> 1);
-            d += d;
+            d = ρσ_operator_iadd(d, d);
             if (i & 1) {
-                d += str_;
+                d = ρσ_operator_iadd(d, str_);
             }
             return d;
         };
@@ -4401,7 +4443,7 @@ undefined;
                 ans = ρσ_operator_add(ρσ_operator_add(self.filename, ":"), ans);
             }
             if (self.stack) {
-                ans += ρσ_operator_add("\n\n", self.stack);
+                ans = ρσ_operator_iadd(ans, ρσ_operator_add("\n\n", self.stack));
             }
             return ans;
         };
@@ -7518,10 +7560,10 @@ undefined;
             var stack, i, p;
             stack = self.stack;
             i = stack.length;
-            i -= 1;
+            i = ρσ_operator_isub(i, 1);
             self = stack[(typeof i === "number" && i < 0) ? stack.length + i : i];
             while (i > 0) {
-                i -= 1;
+                i = ρσ_operator_isub(i, 1);
                 p = stack[(typeof i === "number" && i < 0) ? stack.length + i : i];
                 if ((is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(p, AST_If) && p.condition === self || (is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(p, AST_Conditional) && p.condition === self || (is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(p, AST_DWLoop) && p.condition === self || (is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(p, AST_UnaryPrefix) && p.operator === "!" && p.expression === self) {
                     return true;
@@ -7715,8 +7757,8 @@ undefined;
                 if (ch === "!" || ch === ":") {
                     break;
                 }
-                key += ch;
-                pos += 1;
+                key = ρσ_operator_iadd(key, ch);
+                pos = ρσ_operator_iadd(pos, 1);
             }
             fmtspec = markup.slice(pos);
             prefix = "";
@@ -7739,40 +7781,40 @@ undefined;
                 ch = template[(typeof pos === "number" && pos < 0) ? template.length + pos : pos];
                 if (in_brace) {
                     if (ch === "{") {
-                        in_brace += 1;
-                        markup += "{";
+                        in_brace = ρσ_operator_iadd(in_brace, 1);
+                        markup = ρσ_operator_iadd(markup, "{");
                     } else if (ch === "}") {
-                        in_brace -= 1;
+                        in_brace = ρσ_operator_isub(in_brace, 1);
                         if (in_brace > 0) {
-                            markup += "}";
+                            markup = ρσ_operator_iadd(markup, "}");
                         } else {
                             ans.push([markup]);
                             ans.push("");
                         }
                     } else {
-                        markup += ch;
+                        markup = ρσ_operator_iadd(markup, ch);
                     }
                 } else {
                     if (ch === "{") {
                         if (template[ρσ_bound_index(ρσ_operator_add(pos, 1), template)] === "{") {
-                            pos += 1;
-                            ans[ans.length-1] += "{";
+                            pos = ρσ_operator_iadd(pos, 1);
+                            ans[ans.length-1] = ρσ_operator_iadd(ans[ans.length-1], "{");
                         } else {
                             in_brace = 1;
                             markup = "";
                         }
                     } else if (ch === "}") {
                         if (template[ρσ_bound_index(ρσ_operator_add(pos, 1), template)] === "}") {
-                            pos += 1;
-                            ans[ans.length-1] += "}";
+                            pos = ρσ_operator_iadd(pos, 1);
+                            ans[ans.length-1] = ρσ_operator_iadd(ans[ans.length-1], "}");
                         } else {
                             (raise_error?.__call__?.bind(raise_error) ?? raise_error)("f-string: single '}' is not allowed");
                         }
                     } else {
-                        ans[ans.length-1] += ch;
+                        ans[ans.length-1] = ρσ_operator_iadd(ans[ans.length-1], ch);
                     }
                 }
-                pos += 1;
+                pos = ρσ_operator_iadd(pos, 1);
             }
             if (in_brace) {
                 (raise_error?.__call__?.bind(raise_error) ?? raise_error)("expected '}' before end of string");
@@ -7977,16 +8019,16 @@ undefined;
                 }
                 var ch;
                 ch = (charAt?.__call__?.bind(charAt) ?? charAt)(S["text"], S["pos"]);
-                S["pos"] += 1;
+                S["pos"] = ρσ_operator_iadd(S["pos"], 1);
                 if (signal_eof && !ch) {
                     throw EOFError;
                 }
                 if (ch === "\n") {
                     S["newline_before"] = S["newline_before"] || !in_string;
-                    S["line"] += 1;
+                    S["line"] = ρσ_operator_iadd(S["line"], 1);
                     S["col"] = 0;
                 } else {
-                    S["col"] += 1;
+                    S["col"] = ρσ_operator_iadd(S["col"], 1);
                 }
                 return ch;
             };
@@ -8106,7 +8148,7 @@ undefined;
                     if (ch === "\n") {
                         leading_whitespace = "";
                     } else {
-                        leading_whitespace += ch;
+                        leading_whitespace = ρσ_operator_iadd(leading_whitespace, ch);
                     }
                 }
                 if ((peek?.__call__?.bind(peek) ?? peek)() !== "#") {
@@ -8153,8 +8195,8 @@ undefined;
                 i = 0;
                 ch = (peek?.__call__?.bind(peek) ?? peek)();
                 while (ch && (pred?.__call__?.bind(pred) ?? pred)(ch, i)) {
-                    i += 1;
-                    ret += (next?.__call__?.bind(next) ?? next)();
+                    i = ρσ_operator_iadd(i, 1);
+                    ret = ρσ_operator_iadd(ret, (next?.__call__?.bind(next) ?? next)());
                     ch = (peek?.__call__?.bind(peek) ?? peek)();
                 }
                 return ret;
@@ -8274,11 +8316,11 @@ undefined;
                 var ans, nval;
                 ans = "";
                 while (count > 0) {
-                    count -= 1;
+                    count = ρσ_operator_isub(count, 1);
                     if (!HEX_PAT.test((peek?.__call__?.bind(peek) ?? peek)())) {
                         return ans;
                     }
-                    ans += (next?.__call__?.bind(next) ?? next)();
+                    ans = ρσ_operator_iadd(ans, (next?.__call__?.bind(next) ?? next)());
                 }
                 nval = (int?.__call__?.bind(int) ?? int)(ans, 16);
                 if (nval > 1114111) {
@@ -8308,10 +8350,10 @@ undefined;
                 if ("0" <= q && q <= "7") {
                     octal = q;
                     if ("0" <= (ρσ_cond_temp = (peek?.__call__?.bind(peek) ?? peek)()) && ρσ_cond_temp <= "7") {
-                        octal += (next?.__call__?.bind(next) ?? next)();
+                        octal = ρσ_operator_iadd(octal, (next?.__call__?.bind(next) ?? next)());
                     }
                     if ("0" <= (ρσ_cond_temp = (peek?.__call__?.bind(peek) ?? peek)()) && ρσ_cond_temp <= "7") {
-                        octal += (next?.__call__?.bind(next) ?? next)();
+                        octal = ρσ_operator_iadd(octal, (next?.__call__?.bind(next) ?? next)());
                     }
                     code = (parseInt?.__call__?.bind(parseInt) ?? parseInt)(octal, 8);
                     if ((isNaN?.__call__?.bind(isNaN) ?? isNaN)(code)) {
@@ -8339,7 +8381,7 @@ undefined;
                         if (code <= 65535) {
                             return String.fromCharCode(code);
                         }
-                        code -= 65536;
+                        code = ρσ_operator_isub(code, 65536);
                         return String.fromCharCode(ρσ_operator_add(55296, (code >> 10)), ρσ_operator_add(56320, (code & 1023)));
                     }
                     return ρσ_operator_add("\\U", code);
@@ -8366,7 +8408,7 @@ undefined;
                     if (code <= 65535) {
                         return String.fromCharCode(code);
                     }
-                    code -= 65536;
+                    code = ρσ_operator_isub(code, 65536);
                     return String.fromCharCode(ρσ_operator_add(55296, (code >> 10)), ρσ_operator_add(56320, (code & 1023)));
                 }
                 return ρσ_operator_add("\\", q);
@@ -8425,7 +8467,7 @@ undefined;
                         (parse_error?.__call__?.bind(parse_error) ?? parse_error)("End of line while scanning string literal");
                     }
                     if (ch === "\\") {
-                        ret += (is_raw_literal) ? ρσ_operator_add("\\", (next?.__call__?.bind(next) ?? next)(true)) : (read_escape_sequence?.__call__?.bind(read_escape_sequence) ?? read_escape_sequence)();
+                        ret = ρσ_operator_iadd(ret, (is_raw_literal) ? ρσ_operator_add("\\", (next?.__call__?.bind(next) ?? next)(true)) : (read_escape_sequence?.__call__?.bind(read_escape_sequence) ?? read_escape_sequence)());
                         continue;
                     }
                     if (ch === quote) {
@@ -8438,11 +8480,11 @@ undefined;
                                 (next?.__call__?.bind(next) ?? next)();
                                 break;
                             } else {
-                                ch += quote;
+                                ch = ρσ_operator_iadd(ch, quote);
                             }
                         }
                     }
-                    ret += ch;
+                    ret = ρσ_operator_iadd(ret, ch);
                 }
                 if (is_raw_literal && ρσ_equals(ret.slice(0, 3), "%js") && WHITESPACE_CHARS[ρσ_bound_index(ret[3], WHITESPACE_CHARS)]) {
                     return (token?.__call__?.bind(token) ?? token)("js", ret.slice(4).trim());
@@ -8498,12 +8540,12 @@ undefined;
                     }
                     if (ch === "\\") {
                         if ((charAt?.__call__?.bind(charAt) ?? charAt)(S["text"], ρσ_operator_add(S["pos"], 1)) === "\n") {
-                            S["pos"] += 2;
+                            S["pos"] = ρσ_operator_iadd(S["pos"], 2);
                             continue;
                         }
                         break;
                     } else if ((is_identifier_char?.__call__?.bind(is_identifier_char) ?? is_identifier_char)(ch)) {
-                        name += (next?.__call__?.bind(next) ?? next)();
+                        name = ρσ_operator_iadd(name, (next?.__call__?.bind(next) ?? next)());
                     } else {
                         break;
                     }
@@ -8542,23 +8584,23 @@ undefined;
                         continue;
                     }
                     if (prev_backslash) {
-                        regexp += ρσ_operator_add("\\", ch);
+                        regexp = ρσ_operator_iadd(regexp, ρσ_operator_add("\\", ch));
                         prev_backslash = false;
                     } else if (ch === "[") {
                         in_class = true;
-                        regexp += ch;
+                        regexp = ρσ_operator_iadd(regexp, ch);
                     } else if (ch === "]" && in_class) {
                         in_class = false;
-                        regexp += ch;
+                        regexp = ρσ_operator_iadd(regexp, ch);
                     } else if (ch === "/" && !in_class) {
                         if (verbose_regexp) {
                             if ((peek?.__call__?.bind(peek) ?? peek)() !== "/") {
-                                regexp += "\\/";
+                                regexp = ρσ_operator_iadd(regexp, "\\/");
                                 continue;
                             }
                             (next?.__call__?.bind(next) ?? next)(true);
                             if ((peek?.__call__?.bind(peek) ?? peek)() !== "/") {
-                                regexp += "\\/\\/";
+                                regexp = ρσ_operator_iadd(regexp, "\\/\\/");
                                 continue;
                             }
                             (next?.__call__?.bind(next) ?? next)(true);
@@ -8570,7 +8612,7 @@ undefined;
                     } else if (verbose_regexp && !in_class && ch === "#") {
                         in_comment = true;
                     } else {
-                        regexp += ch;
+                        regexp = ρσ_operator_iadd(regexp, ch);
                     }
                 }
                 mods = (read_name?.__call__?.bind(read_name) ?? read_name)();
@@ -8691,7 +8733,7 @@ undefined;
                         stok = (read_string?.__call__?.bind(read_string) ?? read_string)(mods.indexOf("r") !== -1, mods.indexOf("v") !== -1);
                         tok.endpos = stok.endpos;
                         if (stok.type !== "js" && mods.indexOf("f") !== -1) {
-                            tok.col += ρσ_operator_sub(start_pos_for_string, tok.pos);
+                            tok.col = ρσ_operator_iadd(tok.col, ρσ_operator_sub(start_pos_for_string, tok.pos));
                             return (handle_interpolated_string?.__call__?.bind(handle_interpolated_string) ?? handle_interpolated_string)(stok.value, tok);
                         }
                         tok.value = stok.value;
@@ -8859,7 +8901,7 @@ undefined;
 
         var js_new = ρσ_modules.js.js_new;
 
-        COMPILER_VERSION = "8cef68acccdb7caee3c2a17659702e38ee994b0c";
+        COMPILER_VERSION = "006f1ff8db17bdfc51fd0753abb86919266efca5";
         PYTHON_FLAGS = {"exponent":true,"ellipses":true,"annotations":false,"dict_literals":true,"overload_getitem":true,"bound_methods":true,"hash_literals":true};
         function get_compiler_version() {
             return COMPILER_VERSION;
@@ -10002,11 +10044,11 @@ undefined;
                     (ρσ_expr_temp = (ρσ_expr_temp = S.classes)[ρσ_bound_index(ρσ_operator_sub(S.classes.length, 1), ρσ_expr_temp)])[ρσ_bound_index(name.name, ρσ_expr_temp)] = class_details;
                     S.classes.push(Object.create(null));
                     S.scoped_flags.push();
-                    S.in_function += 1;
+                    S.in_function = ρσ_operator_iadd(S.in_function, 1);
                     S.in_loop = 0;
                     S.labels = ρσ_list_decorate([]);
                     a = (block_?.__call__?.bind(block_) ?? block_)(docstrings);
-                    S.in_function -= 1;
+                    S.in_function = ρσ_operator_isub(S.in_function, 1);
                     S.scoped_flags.pop();
                     S.classes.pop();
                     S.in_class.pop();
@@ -10251,7 +10293,7 @@ undefined;
                     S.in_class.push(false);
                     S.classes.push(Object.create(null));
                     S.scoped_flags.push();
-                    S.in_function += 1;
+                    S.in_function = ρσ_operator_iadd(S.in_function, 1);
                     S.functions.push(Object.create(null));
                     S.in_loop = 0;
                     S.labels = ρσ_list_decorate([]);
@@ -10260,7 +10302,7 @@ undefined;
                     } else {
                         a = (block_?.__call__?.bind(block_) ?? block_)(docstrings);
                     }
-                    S.in_function -= 1;
+                    S.in_function = ρσ_operator_isub(S.in_function, 1);
                     S.scoped_flags.pop();
                     is_generator.push((bool?.__call__?.bind(bool) ?? bool)(S.functions.pop().is_generator));
                     S.classes.pop();
@@ -11337,9 +11379,9 @@ undefined;
 
             function in_loop(cont) {
                 var ret;
-                S.in_loop += 1;
+                S.in_loop = ρσ_operator_iadd(S.in_loop, 1);
                 ret = (cont?.__call__?.bind(cont) ?? cont)();
-                S.in_loop -= 1;
+                S.in_loop = ρσ_operator_isub(S.in_loop, 1);
                 return ret;
             };
 in_loop.__argnames__ = ["cont"];
@@ -11630,7 +11672,7 @@ undefined;
         OutputStream.__handles_kwarg_interpolation__ = OutputStream.prototype.__init__.__handles_kwarg_interpolation__;
         OutputStream.prototype.new_try_else_counter = function new_try_else_counter() {
             var self = this;
-            self.try_else_counter += 1;
+            self.try_else_counter = ρσ_operator_iadd(self.try_else_counter, 1);
             return ρσ_operator_add("ρσ_try_else_", self.try_else_counter);
         };
 OutputStream.prototype.new_try_else_counter.__module__ = "output.stream";
@@ -11682,13 +11724,13 @@ undefined;
             if (self.might_need_semicolon) {
                 if ((!ch || ";}".indexOf(ch) < 0) && !new RegExp("[;]").test(self._last)) {
                     if (self.options.semicolons || require_semi_colon_chars[(typeof ch === "number" && ch < 0) ? require_semi_colon_chars.length + ch : ch]) {
-                        self.OUTPUT += ";";
-                        self.current_col += 1;
-                        self.current_pos += 1;
+                        self.OUTPUT = ρσ_operator_iadd(self.OUTPUT, ";");
+                        self.current_col = ρσ_operator_iadd(self.current_col, 1);
+                        self.current_pos = ρσ_operator_iadd(self.current_pos, 1);
                     } else {
-                        self.OUTPUT += "\n";
-                        self.current_pos += 1;
-                        self.current_line += 1;
+                        self.OUTPUT = ρσ_operator_iadd(self.OUTPUT, "\n");
+                        self.current_pos = ρσ_operator_iadd(self.current_pos, 1);
+                        self.current_line = ρσ_operator_iadd(self.current_line, 1);
                         self.current_col = 0;
                     }
                     if (!self.options.beautify) {
@@ -11701,9 +11743,9 @@ undefined;
             if (!self.options.beautify && self.options.preserve_line && (ρσ_expr_temp = self._stack)[ρσ_bound_index(ρσ_operator_sub(self._stack.length, 1), ρσ_expr_temp)]) {
                 target_line = (ρσ_expr_temp = self._stack)[ρσ_bound_index(ρσ_operator_sub(self._stack.length, 1), ρσ_expr_temp)].start.line;
                 while (self.current_line < target_line) {
-                    self.OUTPUT += "\n";
-                    self.current_pos += 1;
-                    self.current_line += 1;
+                    self.OUTPUT = ρσ_operator_iadd(self.OUTPUT, "\n");
+                    self.current_pos = ρσ_operator_iadd(self.current_pos, 1);
+                    self.current_line = ρσ_operator_iadd(self.current_line, 1);
                     self.current_col = 0;
                     self.might_need_space = false;
                 }
@@ -11711,23 +11753,23 @@ undefined;
             if (self.might_need_space) {
                 prev = self.last_char();
                 if ((is_identifier_char?.__call__?.bind(is_identifier_char) ?? is_identifier_char)(prev) && ((is_identifier_char?.__call__?.bind(is_identifier_char) ?? is_identifier_char)(ch) || ch === "\\") || new RegExp("^[\\+\\-\\/]$").test(ch) && ch === prev) {
-                    self.OUTPUT += " ";
-                    self.current_col += 1;
-                    self.current_pos += 1;
+                    self.OUTPUT = ρσ_operator_iadd(self.OUTPUT, " ");
+                    self.current_col = ρσ_operator_iadd(self.current_col, 1);
+                    self.current_pos = ρσ_operator_iadd(self.current_pos, 1);
                 }
                 self.might_need_space = false;
             }
             a = str_.split(new RegExp("\\r?\\n"));
             n = ρσ_operator_sub(a.length, 1);
-            self.current_line += n;
+            self.current_line = ρσ_operator_iadd(self.current_line, n);
             if (n === 0) {
-                self.current_col += a[(typeof n === "number" && n < 0) ? a.length + n : n].length;
+                self.current_col = ρσ_operator_iadd(self.current_col, a[(typeof n === "number" && n < 0) ? a.length + n : n].length);
             } else {
                 self.current_col = a[(typeof n === "number" && n < 0) ? a.length + n : n].length;
             }
-            self.current_pos += str_.length;
+            self.current_pos = ρσ_operator_iadd(self.current_pos, str_.length);
             self._last = str_;
-            self.OUTPUT += str_;
+            self.OUTPUT = ρσ_operator_iadd(self.OUTPUT, str_);
         };
 OutputStream.prototype.print.__argnames__ = ["str_"];
 OutputStream.prototype.print.__module__ = "output.stream";
@@ -12058,9 +12100,9 @@ undefined;
             var a, i, node, p;
             a = output.stack();
             i = a.length;
-            i -= 1;
+            i = ρσ_operator_isub(i, 1);
             node = a[(typeof i === "number" && i < 0) ? a.length + i : i];
-            i -= 1;
+            i = ρσ_operator_isub(i, 1);
             p = a[(typeof i === "number" && i < 0) ? a.length + i : i];
             while (i > 0) {
                 if ((is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(p, AST_Statement) && p.body === node) {
@@ -12068,7 +12110,7 @@ undefined;
                 }
                 if ((is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(p, AST_Seq) && p.car === node || (is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(p, AST_BaseCall) && p.expression === node || (is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(p, AST_Dot) && p.expression === node || (is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(p, AST_Sub) && p.expression === node || (is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(p, AST_ItemAccess) && p.expression === node || (is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(p, AST_Conditional) && p.condition === node || (is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(p, AST_Binary) && p.left === node) {
                     node = p;
-                    i -= 1;
+                    i = ρσ_operator_isub(i, 1);
                     p = a[(typeof i === "number" && i < 0) ? a.length + i : i];
                 } else {
                     return false;
@@ -12137,7 +12179,7 @@ undefined;
                 output.print("this");
                 output.semicolon();
                 output.newline();
-                offset += 1;
+                offset = ρσ_operator_iadd(offset, 1);
             }
             if ((is_node_type?.__call__?.bind(is_node_type) ?? is_node_type)(node, AST_Scope)) {
                 (function_preamble?.__call__?.bind(function_preamble) ?? function_preamble)(node, output, offset);
@@ -12224,7 +12266,7 @@ undefined;
             ρσ_Iter81 = ((typeof ρσ_Iter81[Symbol.iterator] === "function") ? (ρσ_Iter81 instanceof Map ? ρσ_Iter81.keys() : ρσ_Iter81) : Object.keys(ρσ_Iter81));
             for (var ρσ_Index81 of ρσ_Iter81) {
                 clause = ρσ_Index81;
-                output.with_counter += 1;
+                output.with_counter = ρσ_operator_iadd(output.with_counter, 1);
                 clause_name = ρσ_operator_add("ρσ_with_clause_", output.with_counter);
                 exits.push(clause_name);
                 [output.indent(), output.print("var "), output.assign(clause_name)];
@@ -12748,7 +12790,7 @@ undefined;
                         output.print(itervar);
                         output.end_statement();
                     }
-                    output.index_counter += 1;
+                    output.index_counter = ρσ_operator_iadd(output.index_counter, 1);
                 }
                 if (self.simple_for_index) {
                     output.indent();
@@ -12811,7 +12853,7 @@ undefined;
                     increment = args[2];
                 }
                 self.simple_for_index = idx = ρσ_operator_add("ρσ_Index", output.index_counter);
-                output.index_counter += 1;
+                output.index_counter = ρσ_operator_iadd(output.index_counter, 1);
                 output.print("for");
                 output.space();
                 function f_simple_for() {
@@ -13557,6 +13599,30 @@ undefined;
                 output.with_parens(f_slash);
                 return;
             }
+            if (self.operator === "+=") {
+                output.assign(self.left);
+                [output.print("ρσ_operator_iadd("), self.left.print(output), output.comma(), self.right.print(output), 
+                output.print(")")];
+                return;
+            }
+            if (self.operator === "-=") {
+                output.assign(self.left);
+                [output.print("ρσ_operator_isub("), self.left.print(output), output.comma(), self.right.print(output), 
+                output.print(")")];
+                return;
+            }
+            if (self.operator === "*=") {
+                output.assign(self.left);
+                [output.print("ρσ_operator_imul("), self.left.print(output), output.comma(), self.right.print(output), 
+                output.print(")")];
+                return;
+            }
+            if (self.operator === "/=") {
+                output.assign(self.left);
+                [output.print("ρσ_operator_idiv("), self.left.print(output), output.comma(), self.right.print(output), 
+                output.print(")")];
+                return;
+            }
             if (self.operator === "=" && self.is_chained()) {
                 ρσ_unpack = self.traverse_chain();
 ρσ_unpack = ρσ_unpack_asarray(2, ρσ_unpack);
@@ -13705,7 +13771,7 @@ undefined;
             function wrap() {
                 if (pos < decorators.length) {
                     decorators[(typeof pos === "number" && pos < 0) ? decorators.length + pos : pos].expression.print(output);
-                    pos += 1;
+                    pos = ρσ_operator_iadd(pos, 1);
                     output.with_parens(wrap);
                 } else {
                     (func?.__call__?.bind(func) ?? func)();
@@ -14191,7 +14257,7 @@ undefined;
                     }
                     if (expr.is_array) {
                         expr.print(output);
-                        i += 1;
+                        i = ρσ_operator_iadd(i, 1);
                     } else {
                         output.print("[");
                         while (i < self.args.length && !(ρσ_expr_temp = self.args)[(typeof i === "number" && i < 0) ? ρσ_expr_temp.length + i : i].is_array) {
@@ -14200,7 +14266,7 @@ undefined;
                                 output.print(",");
                                 output.space();
                             }
-                            i += 1;
+                            i = ρσ_operator_iadd(i, 1);
                         }
                         output.print("]");
                     }
