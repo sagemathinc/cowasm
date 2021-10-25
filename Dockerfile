@@ -32,8 +32,5 @@ RUN apt-get install -y vim
 # the latest zig automatic as part of the make below soon enough,
 # since there is no easy way from the zig devs yet to do this.
 
-# hack on aarch64 for now... needed for pari. right fix is my wasm-posix thing?
-RUN cd /usr/include && ln -s aarch64-linux-gnu/bits/ .
-
 RUN  git clone https://github.com/sagemathinc/jsage \
   && cd jsage && make
