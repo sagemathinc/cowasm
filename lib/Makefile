@@ -64,10 +64,10 @@ ${DIST}/modular/p1list.wasm: src/modular/p1list.zig src/modular/p1list-export.zi
 	mv src/p1list-export.wasm ${DIST}/modular/p1list.wasm
 
 
-${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/manin-symbols-export.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig
-	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} modular/manin-symbols-export.zig  ${ZIG_PKG}
+${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/interface.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig
+	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} modular/interface.zig  ${ZIG_PKG}
 	mkdir -p ${DIST}/modular
-	mv src/manin-symbols-export.wasm ${DIST}/modular/manin-symbols.wasm
+	mv src/interface.wasm ${DIST}/modular/manin-symbols.wasm
 
 .PHONY: test-manin-symbols
 test-manin-symbols:

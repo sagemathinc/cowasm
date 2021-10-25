@@ -44,3 +44,10 @@ pub export fn DenseMatrix_getRow(handle: i32, row: i32) i32 {
     };
     return dense_vector_interface.DenseVector_put(v);
 }
+
+pub export fn DenseMatrix_modulus(handle: i32) i32 {
+    const x = DenseMatrix_get(handle) catch {
+        return 0;
+    };
+    return x.modulus;
+}
