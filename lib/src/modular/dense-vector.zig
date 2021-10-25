@@ -53,7 +53,7 @@ pub fn DenseVectorMod(comptime T: type) type {
             if (i >= self.degree) {
                 return errors.General.IndexError;
             }
-            self.unsafeSet(i, x);
+            self.unsafeSet(i, mod(x, self.modulus));
         }
 
         pub fn unsafeGet(self: Vector, i: usize) T {

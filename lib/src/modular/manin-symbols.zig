@@ -42,8 +42,20 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
             return Syms{ .N = N, .sign = sign, .allocator = allocator, .P1 = P1 };
         }
 
-        pub fn print(self: Syms) void {
-            std.debug.print("ManinSymbols({},N={},sign={})\n", .{ Coeff, self.N, self.sign });
+        pub fn format(self: Syms, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+            _ = fmt;
+            _ = options;
+            try writer.print("Manin Symbols for Gamma_0({}) of weight 2 with sign {}", .{ self.N, self.sign });
+        }
+
+        pub fn jsonStringify(
+            self: Syms,
+            options: std.json.StringifyOptions,
+            writer: anytype,
+        ) !void {
+            _ = options;
+            const obj = .{ .type = "ManinSymbols", .N = self.N, .sign = @enumToInt(self.sign) };
+            try std.json.stringify(obj, options, writer);
         }
 
         pub fn deinit(self: *Syms) void {
@@ -57,8 +69,7 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
             if (self.sign == Sign.zero) {
                 return 2 * dims.dimensionCuspForms(i64, @intCast(i64, self.N)) + dims.dimensionEisensteinSeries(i64, @intCast(i64, self.N));
             } else {
-                self.print();
-                std.debug.print("Error: dimension formula not yet implemented for nonzero sign -- returning incorrect answer that does not take into account Eisenstein series.\n", .{});
+                std.debug.print("{}\nError: dimension formula not yet implemented for nonzero sign -- returning incorrect answer that does not take into account Eisenstein series.\n", .{self});
                 // not yet implemented -- kind of tricky...
                 return dims.dimensionCuspForms(i64, @intCast(i64, self.N));
             }
@@ -266,14 +277,14 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
             writer: anytype,
         ) !void {
             _ = options;
-            const obj = .{ .matrix = self.matrix, .basis = self.basis.items };
+            const obj = .{ .type = "ManinSymbolsPresentation", .matrix = self.matrix, .basis = self.basis.items };
             try std.json.stringify(obj, options, writer);
         }
 
         pub fn format(self: P, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
             _ = fmt;
             _ = options;
-            try writer.print("{{\"p\":{}, \"matrix\":{},\n\"basis\":{any}}}", .{ self.matrix.modulus, self.matrix, self.basis.items });
+            try writer.print("Manin Symbols presentation modulo {} of {}.", .{ self.matrix.modulus, self.manin_symbols });
         }
 
         // Given an element of P1(Z/NZ), write it in terms
@@ -295,7 +306,7 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
         }
 
         // compute dense matrix representation of the p-th Hecke operator.
-        pub fn HeckeOperator(self: P, p: i32) !dense_matrix.DenseMatrixMod(T) {
+        pub fn heckeOperator(self: P, p: i32) !dense_matrix.DenseMatrixMod(T) {
             var h = try heilbronn.HeilbronnCremona(T).init(test_allocator, p);
             defer h.deinit();
             const n = self.basis.items.len;
@@ -323,13 +334,10 @@ const expect = std.testing.expect;
 test "create a few spaces" {
     var M = try ManinSymbols(i32, u32).init(test_allocator, 11, Sign.zero);
     defer M.deinit();
-    //M.print();
     var M2 = try ManinSymbols(i16, u32).init(test_allocator, 15, Sign.plus);
     defer M2.deinit();
-    //M2.print();
     var M3 = try ManinSymbols(i64, u32).init(test_allocator, 234446, Sign.minus);
     defer M3.deinit();
-    //M3.print();
 }
 
 test "compute relationsI" {
@@ -390,7 +398,7 @@ test "compute quotient modulo two term relations for N=3, then the 3-term rels" 
     // Now the 3-term rels
     var matrix = try M.relationMatrixMod(i16, 97, quo);
     defer matrix.deinit();
-    // matrix.print();
+    //std.debug.print("matrix={}\n", .{matrix});
 }
 
 test "compute quotient modulo two term relations for N=3 with sign 1" {
@@ -466,7 +474,7 @@ test "compute presentation" {
     M.P1.print();
     var presentation = try M.presentation(i32, 997);
     defer presentation.deinit();
-    std.debug.print("\npresentation={}\n", .{presentation});
+    //std.debug.print("\npresentation={}\n", .{presentation});
     var v = try presentation.reduce(3, 9);
     defer v.deinit();
     try expect((try v.get(0)) == 1);
@@ -474,15 +482,19 @@ test "compute presentation" {
     try expect((try v.get(2)) == 0);
 
     var uv = try presentation.lift(1);
-    uv.print();
-    std.debug.print("\n", .{});
+    //uv.print();
+    //std.debug.print("\n", .{});
     try expect(uv.u == 1);
     try expect(uv.v == 8);
 
     var m2 = try presentation.liftToSL2Z(1);
-    m2.print();
+    try expect(m2.a == 0);
+    try expect(m2.b == -1);
+    try expect(m2.c == 1);
+    try expect(m2.d == 8);
+    //m2.print();
 
-    var t2 = try presentation.HeckeOperator(2);
+    var t2 = try presentation.heckeOperator(2);
     defer t2.deinit();
-    std.debug.print("\nt2 = {}\n", .{t2});
+    //std.debug.print("\nt2 = {}\n", .{t2});
 }

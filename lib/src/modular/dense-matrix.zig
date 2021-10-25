@@ -1,6 +1,7 @@
 const std = @import("std");
 const errors = @import("../errors.zig");
 const vector = @import("./dense-vector.zig");
+const mod = @import("../arith.zig").mod;
 
 pub fn DenseMatrixMod(comptime T: type) type {
     return struct {
@@ -56,7 +57,7 @@ pub fn DenseMatrixMod(comptime T: type) type {
             if (col >= self.ncols or row >= self.nrows) {
                 return errors.General.IndexError;
             }
-            self.unsafeSet(row, col, x);
+            self.unsafeSet(row, col, mod(x, self.modulus));
         }
 
         pub fn unsafeGet(self: Matrix, row: usize, col: usize) T {
@@ -88,7 +89,7 @@ pub fn DenseMatrixMod(comptime T: type) type {
             }
             var i: usize = 0;
             while (i < self.ncols) : (i += 1) {
-                self.unsafeSet(row, i, self.unsafeGet(row, i) + v.unsafeGet(i));
+                self.unsafeSet(row, i, mod(self.unsafeGet(row, i) + v.unsafeGet(i), self.modulus));
             }
         }
     };

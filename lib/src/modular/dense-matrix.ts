@@ -1,3 +1,4 @@
+import { DenseVector } from "./dense-vector";
 import wasmImport from "../wasm";
 export let wasm: any = undefined;
 export async function init() {
@@ -26,5 +27,9 @@ export class DenseMatrix {
   __repr__(): string {
     wasm.exports.DenseMatrix_stringify(this.handle);
     return wasm.result;
+  }
+
+  getRow(i: number): DenseVector {
+    return new DenseVector(wasm.exports.DenseMatrix_getRow(this.handle, i));
   }
 }

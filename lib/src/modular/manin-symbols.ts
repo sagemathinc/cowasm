@@ -69,9 +69,9 @@ class ManinSymbolsPresentation {
     return new DenseVector(wasm.exports.Presentation_reduce(this.handle, u, v));
   }
 
-  HeckeOperator(p: number): DenseMatrix {
+  heckeOperator(p: number): DenseMatrix {
     return new DenseMatrix(
-      wasm.exports.Presentation_HeckeOperator(this.handle, p)
+      wasm.exports.Presentation_heckeOperator(this.handle, p)
     );
   }
 

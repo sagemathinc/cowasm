@@ -2,6 +2,7 @@ const std = @import("std");
 const errors = @import("../errors.zig");
 const inverseMod = @import("../arith.zig").inverseMod;
 const SparseVectorMod = @import("./sparse-vector.zig").SparseVectorMod;
+const mod = @import("../arith.zig").mod;
 
 pub fn SparseMatrixMod(comptime T: type) type {
     return struct {
@@ -19,7 +20,7 @@ pub fn SparseMatrixMod(comptime T: type) type {
             var rows = try std.ArrayList(SparseVectorMod(T)).initCapacity(allocator, nrows);
             var i: usize = 0;
             while (i < nrows) : (i += 1) {
-                try rows.append(try SparseVectorMod(T).init(modulus, allocator));
+                try rows.append(try SparseVectorMod(T).init(modulus, ncols, allocator));
             }
             return Matrix{ .rows = rows, .modulus = modulus, .ncols = ncols, .nrows = nrows };
         }
@@ -35,15 +36,34 @@ pub fn SparseMatrixMod(comptime T: type) type {
         // Mutate this matrix by increasing the number of rows by 1.
         // This is useful when building a sparse matrix.
         pub fn appendRow(self: *Matrix) !void {
-            try self.rows.append(try SparseVectorMod(T).init(self.modulus, self.rows.allocator));
+            try self.rows.append(try SparseVectorMod(T).init(self.modulus, self.ncols, self.rows.allocator));
             self.nrows += 1;
         }
 
-        pub fn print(self: Matrix) void {
-            std.debug.print("\n", .{});
+        pub fn jsonStringify(
+            self: Matrix,
+            options: std.json.StringifyOptions,
+            writer: anytype,
+        ) !void {
+            _ = options;
+            const obj = .{ .type = "SparseMatrixMod", .modulus = self.modulus, .nrows = self.nrows, .ncols = self.ncols };
+            try std.json.stringify(obj, options, writer);
+        }
+
+        pub fn format(self: Matrix, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+            _ = fmt;
+            _ = options;
+
             var i: usize = 0;
             while (i < self.nrows) : (i += 1) {
-                self.rows.items[i].print(self.ncols);
+                if (i > 0) try writer.print("\n", .{});
+                try writer.print("[", .{});
+                var j: usize = 0;
+                while (j < self.ncols) : (j += 1) {
+                    if (j > 0) try writer.print(" ", .{});
+                    try writer.print("{}", .{self.get(i, j)});
+                }
+                try writer.print("]", .{});
             }
         }
 
@@ -51,14 +71,14 @@ pub fn SparseMatrixMod(comptime T: type) type {
             if (col >= self.ncols or row >= self.nrows) {
                 return errors.General.IndexError;
             }
-            try self.rows.items[row].set(col, x);
+            try self.rows.items[row].unsafeSet(col, mod(x, self.modulus));
         }
 
         pub fn get(self: Matrix, row: usize, col: usize) !T {
             if (col >= self.ncols or row >= self.nrows) {
                 return errors.General.IndexError;
             }
-            return self.rows.items[row].get(col);
+            return self.rows.items[row].unsafeGet(col);
         }
 
         pub fn swapRows(self: *Matrix, row1: usize, row2: usize) !void {
@@ -92,7 +112,7 @@ pub fn SparseMatrixMod(comptime T: type) type {
                 while (r < self.nrows) : (r += 1) {
                     const row = self.rows.items[r];
                     const cnt = row.count();
-                    if (cnt > 0 and cnt < min and row.get(c) != 0) {
+                    if (cnt > 0 and cnt < min and row.unsafeGet(c) != 0) {
                         minRow = r;
                         min = cnt;
                         found = true;
@@ -108,7 +128,7 @@ pub fn SparseMatrixMod(comptime T: type) type {
                 pivotIndex += 1;
                 r = minRow;
                 // Now use the row we found to clear column c.
-                const a = self.rows.items[r].get(c);
+                const a = self.rows.items[r].unsafeGet(c);
                 if (a != 1) {
                     const aInverse = try inverseMod(a, self.modulus);
                     self.rows.items[r].rescale(aInverse);

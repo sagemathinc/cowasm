@@ -1,6 +1,7 @@
 const std = @import("std");
 const interface = @import("../interface.zig");
 const dense_matrix = @import("./dense-matrix.zig");
+const dense_vector_interface = @import("./dense-vector-interface.zig");
 const errors = @import("../errors.zig");
 
 const DenseMatrixType = dense_matrix.DenseMatrixMod(i32);
@@ -31,4 +32,15 @@ pub export fn DenseMatrix_stringify(handle: i32) void {
 
 pub export fn DenseMatrix_format(handle: i32) void {
     DenseMatrix_objects.format(handle);
+}
+
+pub export fn DenseMatrix_getRow(handle: i32, row: i32) i32 {
+    const x = DenseMatrix_get(handle) catch {
+        return 0;
+    };
+    var v = x.getRow(@intCast(usize, row)) catch {
+        interface.throw("DenseMatrix: failed to allocate space for row");
+        return 0;
+    };
+    return dense_vector_interface.DenseVector_put(v);
 }

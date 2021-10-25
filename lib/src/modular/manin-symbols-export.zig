@@ -4,6 +4,8 @@ const errors = @import("../errors.zig");
 const interface = @import("../interface.zig");
 const dense_vector_interface = @import("./dense-vector-interface.zig");
 const dense_matrix_interface = @import("./dense-matrix-interface.zig");
+const sparse_vector_interface = @import("./sparse-vector-interface.zig");
+const sparse_matrix_interface = @import("./sparse-matrix-interface.zig");
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 
@@ -56,9 +58,12 @@ pub export fn ManinSymbols_dimensionFormula(handle: i32) i32 {
     return @intCast(i32, M.dimensionFormula());
 }
 
-pub export fn ManinSymbols_print(handle: i32) void {
-    var M = ManinSymbols_get(handle) catch return;
-    M.print();
+pub export fn ManinSymbols_stringify(handle: i32) void {
+    ManinSymbols_objects.stringify(handle);
+}
+
+pub export fn ManinSymbols_format(handle: i32) void {
+    ManinSymbols_objects.format(handle);
 }
 
 pub export fn ManinSymbols_presentation(handle: i32, p: i32) i32 {
@@ -103,8 +108,8 @@ pub export fn Presentation_reduce(handle: i32, u: i32, v: i32) i32 {
     return dense_vector_interface.DenseVector_put(vec);
 }
 
-pub export fn Presentation_HeckeOperator(handle: i32, p: i32) i32 {
+pub export fn Presentation_heckeOperator(handle: i32, p: i32) i32 {
     var P = Presentation_get(handle) catch return 0;
-    var Tp = P.HeckeOperator(p) catch return 0;
+    var Tp = P.heckeOperator(p) catch return 0;
     return dense_matrix_interface.DenseMatrix_put(Tp);
 }
