@@ -1,4 +1,5 @@
 import Integer, { init } from "./integer";
+import ZZ from "./integer-ring";
 
 beforeEach(async () => {
   await init();
@@ -27,4 +28,15 @@ test("Find the next prime year", async () => {
   const n = Integer(2021);
   const m = n.nextPrime();
   expect(m.eql(Integer(2027))).toBe(true);
+});
+
+test("converting integer to string", async () => {
+  const n = Integer(-17);
+  expect(n.__str__() == "-17");
+  expect(n.__repr__() == '{"type":"Integer","hex":"-11"}');
+});
+
+test("using the integer ring", async () => {
+  expect(ZZ.element(-17).__str__() == "-17");
+  expect(ZZ.element("-11", 16).__str__() == "-17");
 });

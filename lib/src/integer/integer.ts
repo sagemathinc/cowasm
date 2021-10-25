@@ -103,17 +103,22 @@ export class IntegerClass {
     return wasm.exports.wrappedIsPseudoPrime(this.i);
   }
 
-  toString(base: number = 10): string {
+  __repr__(): string {
     if (wasm == null) throw Error("await init() first");
-    wasm.exports.IntegerToString(this.i, base);
+    wasm.exports.Integer_stringify(this.i);
     return wasm.result;
   }
 
-  __repr__(): string {
-    return this.toString();
-  }
   __str__(): string {
-    return this.toString();
+    if (wasm == null) throw Error("await init() first");
+    wasm.exports.Integer_format(this.i);
+    return wasm.result;
+  }
+
+  toString(base: number = 10): string {
+    if (wasm == null) throw Error("await init() first");
+    wasm.exports.Integer_toString(this.i, base);
+    return wasm.result;
   }
 
   numDigits(base: number = 10): string {

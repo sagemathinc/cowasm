@@ -111,6 +111,25 @@ pub export fn IntegerToString(a: i32, base: i32) void {
     wasmSendString(str.ptr, str.len);
 }
 
+pub export fn Integer_stringify(handle: i32) void {
+    integers.stringify(handle);
+}
+
+pub export fn Integer_format(handle: i32) void {
+    integers.format(handle);
+}
+
+pub export fn Integer_toString(a: i32, base: i32) void {
+    const n = get(a) catch return;
+    var str = n.toString(base) catch |err| {
+        std.debug.print("toString -- {}\n", .{err});
+        interface.throw("error converting to string");
+        return;
+    };
+    defer n.freeString(str);
+    wasmSendString(str.ptr, str.len);
+}
+
 pub export fn sizeInBase(a: i32, base: i32) i32 {
     const n = get(a) catch return 0;
     return @intCast(i32, n.sizeInBase(base));

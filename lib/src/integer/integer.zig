@@ -145,6 +145,35 @@ pub const Integer = struct {
         return str[0..size];
     }
 
+    pub fn format(self: Integer, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+        _ = fmt;
+        _ = options;
+        var str = self.toString(10) catch {
+            // I don't know how to return an error that doesn't break compiler.
+            _ = try writer.write("[OUT OF MEMORY FORMATTING INTEGER]");
+            return;
+        };
+        defer self.freeString(str);
+        _ = try writer.write(str);
+    }
+
+    pub fn jsonStringify(
+        self: Integer,
+        options: std.json.StringifyOptions,
+        writer: anytype,
+    ) !void {
+        _ = options;
+        var hex = self.toString(16) catch {
+            // I don't know how to return an error that doesn't break compiler.
+            const obj = .{ .type = "Integer", .err = "ERROR STRINGIFYING INTEGER" };
+            try std.json.stringify(obj, options, writer);
+            return;
+        };
+        defer self.freeString(hex);
+        const obj = .{ .type = "Integer", .hex = hex };
+        try std.json.stringify(obj, options, writer);
+    }
+
     pub fn freeString(self: Integer, str: []u8) void {
         _ = self;
         custom_allocator.free(str);
@@ -159,6 +188,7 @@ const expect = std.testing.expect;
 test "basic arithmetic" {
     var a = try Integer.initSetStr("37", 10);
     defer a.deinit();
+    std.debug.print("a = {}\n", .{a});
 
     var b = try Integer.initSetStr("389", 10);
     defer b.deinit();

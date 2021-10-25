@@ -97,10 +97,15 @@ export class RationalNumber {
   }
 
   __repr__(): string {
-    return this.toString();
+    if (wasm == null) throw Error("await init() first");
+    wasm.exports.Rational_stringify(this.i);
+    return wasm.result;
   }
+
   __str__(): string {
-    return this.toString();
+    if (wasm == null) throw Error("await init() first");
+    wasm.exports.Rational_format(this.i);
+    return wasm.result;
   }
 }
 

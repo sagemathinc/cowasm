@@ -159,6 +159,51 @@ pub const Rational = struct {
         _ = self; // not used
         custom_allocator.free(str);
     }
+
+    pub fn format(self: Rational, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+        _ = fmt;
+        _ = options;
+        var str = self.toString(10) catch {
+            // I don't know how to return an error that doesn't break compiler.
+            _ = try writer.write("[OUT OF MEMORY FORMATTING RATIONAL]");
+            return;
+        };
+        defer self.freeString(str);
+        _ = try writer.write(str);
+    }
+
+    pub fn jsonStringify(
+        self: Rational,
+        options: std.json.StringifyOptions,
+        writer: anytype,
+    ) !void {
+        _ = options;
+        var numer = self.numerator() catch {
+            const obj = .{ .type = "Rational", .err = "ERROR GETTING NUMERATOR" };
+            try std.json.stringify(obj, options, writer);
+            return;
+        };
+        var denom = self.denominator() catch {
+            const obj = .{ .type = "Rational", .err = "ERROR GETTING DENOMINATOR" };
+            try std.json.stringify(obj, options, writer);
+            return;
+        };
+        var hexNumerator = numer.toString(16) catch {
+            // I don't know how to return an error that doesn't break compiler.
+            const obj = .{ .type = "Rational", .err = "ERROR STRINGIFYING NUMERATOR" };
+            try std.json.stringify(obj, options, writer);
+            return;
+        };
+        defer numer.freeString(hexNumerator);
+        var hexDenominator = denom.toString(16) catch {
+            const obj = .{ .type = "Rational", .err = "ERROR STRINGIFYING DENOMINATOR" };
+            try std.json.stringify(obj, options, writer);
+            return;
+        };
+        defer denom.freeString(hexDenominator);
+        const obj = .{ .type = "Rational", .hexNumerator = hexNumerator, .hexDenominator = hexDenominator };
+        try std.json.stringify(obj, options, writer);
+    }
 };
 
 test "initialize the custom GMP allocator" {
@@ -208,6 +253,7 @@ test "conversion to a string" {
     var s = try a.toString(10);
     defer a.freeString(s);
     try expect(std.mem.eql(u8, s, "-2/3"));
+    std.debug.print("a = {}\n", .{a});
 }
 
 // test "exponents" {

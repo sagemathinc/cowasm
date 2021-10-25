@@ -105,3 +105,11 @@ pub export fn RationalToString(a: i32, base: i32) void {
 pub export fn freeRational(a: i32) void {
     rationals.free(a);
 }
+
+pub export fn Rational_stringify(handle: i32) void {
+    rationals.stringify(handle);
+}
+
+pub export fn Rational_format(handle: i32) void {
+    rationals.format(handle);
+}
