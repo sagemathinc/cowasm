@@ -1,6 +1,6 @@
 # NOTE a test for sparse-matrix fails with ReleaseFast due to something
 # weird involving random number generation.
-OPT           = #-O ReleaseFast
+OPT           = -O ReleaseFast
 CWD           = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 ZIG_PKG       = --main-pkg-path ${CWD}/src

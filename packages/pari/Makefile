@@ -1,5 +1,5 @@
 # https://pari.math.u-bordeaux.fr/download.html
-VERSION = 2.13.2
+VERSION = 2.13.3
 
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD = ${CWD}/build
@@ -10,6 +10,10 @@ DIST_JS = ${CWD}/dist/js
 ZCC = ${CWD}/../../bin/zcc
 GMP = ${CWD}/../gmp/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
+
+
+all: native wasm
+
 
 #############
 # Source code
@@ -71,8 +75,6 @@ wasm: ${DIST_WASM}/.built
 run-wasm: ${DIST_WASM}/.built
 	wasmer run ${DIST_WASM}/bin/gp-sta.wasm  --mapdir /:/
 
-
-all: native wasm
 
 clean:
 	rm -rf ${BUILD} ${PREFIX_NATIVE} ${PREFIX_WASM}

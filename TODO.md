@@ -1,3 +1,15 @@
 # Todo
 
-- Remove MPIR as a dependency, since it has to be possible.  See https://trac.sagemath.org/ticket/32549#comment:44
+## Build
+[ ] Remove MPIR as a dependency, since it has to be possible.  See https://trac.sagemath.org/ticket/32549#comment:44Weird bug:
+
+
+## Bugs
+
+Something wrong with powers when exponent is an Integer:
+```py
+jsage: a = ZZ(2)^ZZ(900)
+1
+jsage: a = ZZ(2)^900
+8452712498170643941637436558664265704301557216577944354047371344426782440907597751590676094202515006314790319892114058862117560952042968596008623655407033230534186943984081346699704282822823056848387726531379014466368452684024987821414350380272583623832617294363807973376
+```
