@@ -56,8 +56,8 @@ ${BUILD}/wasm: ${BUILD}/pari-${VERSION}.tar.gz
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && CC=${ZCC} AR="zig ar" RANLIB="zig ranlib" \
 		./Configure --host=wasm-wasi --prefix=${DIST_WASM} --graphic=none --with-gmp=${GMP}/wasm
-	# Horrible temporary hack because of missing bits/ headers with zig.  Will have to address this somehow...
-	cd ${BUILD}/wasm/O* && mkdir -p bits && cp /usr/include/bits/setjmp.h /usr/include/bits/wordsize.h bits/
+	# Missing bits/ headers with zig:
+	cd ${BUILD}/wasm/O* && mkdir -p bits && cd bits && echo "#define __jmp_buf int"> setjmp.h && echo "" > wordsize.h
 	cd ${BUILD}/wasm/O* && make -j8 AR="zig ar" RANLIB="zig ranlib" gp
 	cd ${BUILD}/wasm/O* && make AR="zig ar" RANLIB="zig ranlib" install
 	# Also rebuild a new version of gp-sta.wasm with the extra posix lib included by abusing EXPORT_EXE.
