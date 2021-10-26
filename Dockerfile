@@ -38,6 +38,7 @@ RUN  cd / \
   && curl https://ziglang.org/download/0.8.1/zig-linux-`uname -m`-0.8.1.tar.xz > zig.tar.xz \
   && mkdir zig \
   && tar xf zig.tar.xz -C zig --strip-components=1 \
+  && rm zig.tar.xz \
   && cd /usr/bin \
   && ln -s /zig/zig .
 
