@@ -19,7 +19,9 @@ RUN  curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
 # Download and build wasmer from source using Rust.
 # We have to do this since, e.g., there's no wasmer binary for linux-aarch64,
 # i.e., docker on a macbook, and we want to support that at least.
-RUN  curl https://sh.rustup.rs -sSf | sh \
+RUN  curl https://sh.rustup.rs -sSf > /tmp/install.sh \
+  && cd /tmp \
+  && sh ./install.sh -y \
   && cd / && git clone https://github.com/wasmerio/wasmer.git && cd wasmer \
   && PATH=/root/.cargo/bin/:$PATH make build-wasmer \
   && cp ./target/release/wasmer  /usr/local/bin/
