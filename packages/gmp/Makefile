@@ -8,7 +8,7 @@ DIST_WASM = ${CWD}/dist/wasm
 
 # Assembly + clang do NOT work on aarch64 for some reason involving alignment,
 # which I'm stumped fixing. 
-ifeq ($(uname -m),aarch64)
+ifeq ($(shell uname -m),aarch64)
 NATIVE_CONF = --disable-assembly
 else
 NATIVE_CONF =
