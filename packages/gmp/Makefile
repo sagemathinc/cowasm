@@ -6,6 +6,14 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 
+# Assembly + clang do NOT work on aarch64 for some reason involving alignment,
+# which I'm stumped fixing. 
+ifeq ($(uname -m),aarch64)
+NATIVE_CONF = --disable-assembly
+else
+NATIVE_CONF =
+endif
+
 all: ${DIST_NATIVE}/.built ${DIST_WASM}/.built
 
 ${BUILD}/gmp-${VERSION}.tar.bz2:
@@ -23,7 +31,7 @@ ${BUILD}/native: ${BUILD}/gmp-${VERSION}.tar.bz2
 	cd ${BUILD} && mkdir native && tar xvf gmp-${VERSION}.tar.bz2 -C native --strip-components=1
 
 ${DIST_NATIVE}/.built: ${BUILD}/native
-	cd ${BUILD}/native && CC="zig cc" AR="zig ar" CFLAGS="-O3"  ./configure --prefix=${DIST_NATIVE} && make install
+	cd ${BUILD}/native && CC="zig cc" AR="zig ar" CFLAGS="-O3"  ./configure ${NATIVE_CONF} --prefix=${DIST_NATIVE} && make install
 	touch ${DIST_NATIVE}/.built
 
 .PHONY: native
