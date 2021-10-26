@@ -1,5 +1,5 @@
 # See http://www.flintlib.org/downloads.html
-VERSION = 2.8.1
+VERSION = 2.8.2
 
 BUILD = build
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
