@@ -34,5 +34,12 @@ RUN apt-get install -y vim
 # the latest zig automatic as part of the make below soon enough,
 # since there is no easy way from the zig devs yet to do this.
 
+RUN  cd / \
+  && curl https://ziglang.org/download/0.8.1/zig-linux-`uname -m`-0.8.1.tar.xz > zig.tar.xz \
+  && mkdir zig \
+  && tar xf zig.tar.xz -C zig --strip-components=1 \
+  && cd /usr/bin \
+  && ln -s /zig/zig .
+
 RUN  git clone https://github.com/sagemathinc/jsage \
   && cd jsage && make
