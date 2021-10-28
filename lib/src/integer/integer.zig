@@ -121,7 +121,10 @@ pub const Integer = struct {
         _ = gmp.gmp_printf("%Zd\n", &self.x);
     }
 
-    pub fn sizeInBase(self: Integer, base: c_int) usize {
+    // NOTE: this is potentially 1 more than the actual number of digits!
+    // It's just a fast to compute upper bound.  E.g., for 423 it is 3,
+    // but for 523 it is 4!
+    pub fn sizeInBaseBound(self: Integer, base: c_int) usize {
         return gmp.mpz_sizeinbase(&self.x, base);
     }
 
@@ -134,13 +137,17 @@ pub const Integer = struct {
         if (base < -36 or base == -1 or base == 0 or base == 1 or base > 62) {
             return errors.Math.ValueError;
         }
-        var size = self.sizeInBase(base);
+        var size = self.sizeInBaseBound(base);
         var str = gmp.mpz_get_str(0, base, &self.x);
         if (custom_allocator.checkError()) {
             return errors.General.MemoryError;
         }
         if (str[0] == '-') {
             size += 1;
+        }
+        if (str[size - 1] == 0) {
+            // From the docs: "The result will be either exact or 1 too big."
+            size -= 1;
         }
         return str[0..size];
     }
@@ -272,14 +279,18 @@ test "The nextPrime method" {
 test "getting the size of an integer" {
     var a = try Integer.initSetStr("123456", 10);
     defer a.deinit();
-    try expect(a.sizeInBase(10) == 6);
+    try expect(a.sizeInBaseBound(10) == 6);
+    // WARNING -- it's just a lower bound!
+    var a2 = try Integer.initSetStr("623456", 10);
+    defer a2.deinit();
+    try expect(a2.sizeInBaseBound(10) == 7);
 
     var b = try Integer.initSetStr("-123456", 10);
     defer b.deinit();
-    try expect(b.sizeInBase(10) == 6); // sign NOT included
+    try expect(b.sizeInBaseBound(10) == 6); // sign NOT included
 
     // 123456 is 11110001001000000 in binary
-    try expect(b.sizeInBase(2) == 17); // sign NOT included
+    try expect(b.sizeInBaseBound(2) == 17); // sign NOT included
 }
 
 test "converting an integer to a string" {
@@ -288,6 +299,17 @@ test "converting an integer to a string" {
     var str = try a.toString(10);
     defer a.freeString(str);
     try expect(std.mem.eql(u8, str, "123456"));
+}
+
+test "converting an integer to a string where the bound is not sharp" {
+    var a = try Integer.initSetStr("567", 10);
+    defer a.deinit();
+    try expect(a.sizeInBaseBound(10) == 4); // not 3!
+    var str = try a.toString(10);
+    defer a.freeString(str);
+    std.debug.print("str='{s}', len={}\n", .{ str, str.len });
+    try expect(std.mem.eql(u8, str, "567"));
+    try expect(str.len == 3);
 }
 
 test "converting a negative integer to a string" {

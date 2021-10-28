@@ -3,7 +3,7 @@ import wasmImport, { WasmInstance } from "../wasm";
 // @ts-ignore -- typescript doesn't have FinalizationRegistry
 const registry = new FinalizationRegistry((handle) => {
   // console.log(`Freeing memory for ${handle}`);
-  wasm?.exports.freeInteger(handle);
+  wasm?.exports.Integer_free(handle);
 });
 
 export let wasm: WasmInstance | undefined = undefined;
@@ -26,9 +26,9 @@ export class IntegerClass {
     if (n === null && i !== undefined) {
       this.i = i;
     } else if (typeof n == "number") {
-      this.i = wasm.exports.createIntegerInt(n);
+      this.i = wasm.exports.Integer_createInt(n);
     } else {
-      this.i = wasm.callWithString("createIntegerStr", `${n}`, base ?? 10);
+      this.i = wasm.callWithString("Integer_createStr", `${n}`, base ?? 10);
     }
     registry.register(this, this.i); // so we get notified when garbage collected.
   }
@@ -43,7 +43,7 @@ export class IntegerClass {
 
   _bin_op(m, name: string): IntegerClass {
     m = this._coerce(m);
-    const op = wasm?.exports[name];
+    const op = wasm?.exports["Integer_" + name];
     if (op === undefined) {
       throw Error(`BUG -- unknown op ${name}`);
     }
@@ -51,15 +51,15 @@ export class IntegerClass {
   }
 
   __add__(m): IntegerClass {
-    return this._bin_op(m, "addIntegers");
+    return this._bin_op(m, "add");
   }
 
   __sub__(m): IntegerClass {
-    return this._bin_op(m, "subIntegers");
+    return this._bin_op(m, "sub");
   }
 
   __mul__(m): IntegerClass {
-    return this._bin_op(m, "mulIntegers");
+    return this._bin_op(m, "mul");
   }
 
   __div__(_m): IntegerClass {
@@ -68,7 +68,7 @@ export class IntegerClass {
 
   __pow__(e: number): IntegerClass {
     if (wasm == null) throw Error("await init() first");
-    return new IntegerClass(null, wasm.exports.powIntegers(this.i, e));
+    return new IntegerClass(null, wasm.exports.Integer_pow(this.i, e));
   }
 
   eql(m): boolean {
@@ -76,31 +76,31 @@ export class IntegerClass {
     if (!(m instanceof IntegerClass)) {
       m = new IntegerClass(m);
     }
-    return !!wasm.exports.eqlIntegers(this.i, m.i);
+    return !!wasm.exports.Integer_eql(this.i, m.i);
   }
 
   gcd(m): IntegerClass {
-    return this._bin_op(m, "gcdIntegers");
+    return this._bin_op(m, "gcd");
   }
 
   cmp(m): number {
     m = this._coerce(m);
-    return wasm?.exports.cmpIntegers(this.i, m.i);
+    return wasm?.exports.Integer_cmp(this.i, m.i);
   }
 
   print() {
     if (wasm == null) throw Error("await init() first");
-    wasm.exports.printInteger(this.i);
+    wasm.exports.Integer_print(this.i);
   }
 
   nextPrime() {
     if (wasm == null) throw Error("await init() first");
-    return new IntegerClass(null, wasm.exports.nextPrime(this.i));
+    return new IntegerClass(null, wasm.exports.Integer_nextPrime(this.i));
   }
 
   isPseudoPrime() {
     if (wasm == null) throw Error("await init() first");
-    return wasm.exports.wrappedIsPseudoPrime(this.i);
+    return wasm.exports.Integer_wrappedIsPseudoPrime(this.i);
   }
 
   __repr__(): string {
@@ -121,9 +121,9 @@ export class IntegerClass {
     return wasm.result;
   }
 
-  numDigits(base: number = 10): string {
+  ndigitsBound(base: number = 10): string {
     if (wasm == null) throw Error("await init() first");
-    return wasm.exports.sizeInBase(this.i, base);
+    return wasm.exports.Integer_sizeInBaseBound(this.i, base);
   }
 }
 
