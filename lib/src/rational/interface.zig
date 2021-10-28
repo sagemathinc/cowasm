@@ -19,7 +19,7 @@ fn get(n: i32) !Rational {
     };
 }
 
-fn put(x: anyerror!Rational) !i32 {
+pub fn put(x: anyerror!Rational) !i32 {
     var y = x catch {
         interface.throw("Rational: memory error");
         return 0;

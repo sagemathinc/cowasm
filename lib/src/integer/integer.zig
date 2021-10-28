@@ -2,6 +2,7 @@ pub const gmp = @cImport(@cInclude("gmp.h"));
 const std = @import("std");
 const errors = @import("../errors.zig");
 const custom_allocator = @import("../custom-allocator.zig");
+const rational = @import("../rational/rational.zig");
 
 pub const Integer = struct {
     x: gmp.mpz_t,
@@ -74,6 +75,12 @@ pub const Integer = struct {
         return c;
     }
 
+    pub fn div(self: Integer, right: Integer) !rational.Rational {
+        var n = try rational.Rational.initSet(self);
+        var d = try rational.Rational.initSet(right);
+        return try n.div(d);
+    }
+
     pub fn pow(self: Integer, exponent: usize) !Integer {
         var c = try Integer.init();
         gmp.mpz_pow_ui(&c.x, &self.x, exponent);
@@ -103,6 +110,13 @@ pub const Integer = struct {
     pub fn nextPrime(self: Integer) !Integer {
         var c = try Integer.init();
         gmp.mpz_nextprime(&c.x, &self.x);
+        return c;
+    }
+
+    // additive inverse
+    pub fn neg(self: Integer) !Integer {
+        var c = try Integer.init();
+        gmp.mpz_neg(&c.x, &self.x);
         return c;
     }
 
@@ -326,4 +340,16 @@ test "converting an integer to a string in base 2" {
     var str = try a.toString(2);
     defer a.freeString(str);
     try expect(std.mem.eql(u8, str, "11110001001000000"));
+}
+
+test "divide two integers" {
+    var a = try Integer.initSet(-4);
+    defer a.deinit();
+    var b = try Integer.initSet(6);
+    defer b.deinit();
+    var c = try a.div(b);
+    defer c.deinit();
+    var str = try c.toString(10);
+    defer c.freeString(str);
+    try expect(std.mem.eql(u8, str, "-2/3"));
 }

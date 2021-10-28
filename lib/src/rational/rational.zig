@@ -34,8 +34,8 @@ pub const Rational = struct {
         const T = @TypeOf(op);
         switch (T) {
             Integer => {
-                gmp.mpz_init_set(gmp.mpq_numref(&x), &op.x);
-                gmp.mpz_init_set_si(gmp.mpq_denref(&x), 1);
+                gmp.mpz_init_set(mpq_numref(&x), &op.x);
+                gmp.mpz_init_set_si(mpq_denref(&x), 1);
             },
             Rational => {
                 gmp.mpq_init(&x);
@@ -300,6 +300,14 @@ test "exponents" {
     var pow2 = try a.pow(-5);
     defer pow2.deinit();
     try expect(pow2.eql_si(-3125, 243));
+}
+
+test "set a rational from an integer" {
+    var n = try Integer.initSet(389);
+    defer n.deinit();
+    var a = try Rational.initSet(n);
+    defer a.deinit();
+    try expect(a.eql_si(389, 1));
 }
 
 const expect = std.testing.expect;

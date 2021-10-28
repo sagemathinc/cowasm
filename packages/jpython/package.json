@@ -15,7 +15,7 @@
     "prettier": "prettier --write .",
     "yapf": "yapf -p -i --recursive src/output bench src/compiler.py src/parse.py src/utils.py  src/tokenizer.py"
   },
-  "version": "1.10.0",
+  "version": "1.10.1",
   "license": "BSD-2-Clause",
   "engines": {
     "node": ">=0.14.0"
@@ -32,7 +32,7 @@
   },
   "workspaces": ["../../lib"],
   "dependencies": {
-    "@jsage/lib": "^1.6.0"
+    "@jsage/lib": "^1.6.3"
   },
   "devDependencies": {
     "@types/node": "^16.7.10",

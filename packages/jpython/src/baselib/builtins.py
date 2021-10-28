@@ -13,6 +13,9 @@ typeof a !== 'object' ? a + b :
 )
 """
 
+def ρσ_operator_neg(a):
+    return v"(typeof a === 'object' && a.__neg__ !== undefined) ? a.__neg__() : (-a)"
+
 def ρσ_operator_sub(a, b):
     return v"(typeof a === 'object' && a.__sub__ !== undefined) ? a.__sub__(b) : a - b"
 

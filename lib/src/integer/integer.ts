@@ -1,4 +1,5 @@
 import wasmImport, { WasmInstance } from "../wasm";
+import { RationalNumber } from "../rational/rational";
 
 // @ts-ignore -- typescript doesn't have FinalizationRegistry
 const registry = new FinalizationRegistry((handle) => {
@@ -62,13 +63,22 @@ export class IntegerClass {
     return this._bin_op(m, "mul");
   }
 
-  __div__(_m): IntegerClass {
-    throw Error("NotImplementedError");
+  __div__(m): RationalNumber {
+    return this.__truediv__(m);
+  }
+
+  __truediv__(m): RationalNumber {
+    m = this._coerce(m);
+    const j = wasm?.exports.Integer_div(this.i, m.i);
+    return new RationalNumber(null, j);
   }
 
   __pow__(e: number): IntegerClass {
-    if (wasm == null) throw Error("await init() first");
-    return new IntegerClass(null, wasm.exports.Integer_pow(this.i, e));
+    return new IntegerClass(null, wasm?.exports.Integer_pow(this.i, e));
+  }
+
+  __neg__(): IntegerClass {
+    return new IntegerClass(null, wasm?.exports.Integer_neg(this.i));
   }
 
   eql(m): boolean {
@@ -121,7 +131,7 @@ export class IntegerClass {
     return wasm.result;
   }
 
-  ndigitsBound(base: number = 10): string {
+  ndigitsBound(base: number = 10): number {
     if (wasm == null) throw Error("await init() first");
     return wasm.exports.Integer_sizeInBaseBound(this.i, base);
   }

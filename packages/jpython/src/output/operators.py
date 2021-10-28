@@ -89,6 +89,23 @@ def print_delete(self, output):
         output.spaced('delete', self)
 
 
+# def print_unary_prefix(self, output):
+#     op = self.operator
+#     if op is 'delete':
+#         return print_delete(self.expression, output)
+#     if op is '-':
+#         output.print("ρσ_operator_neg(")
+#     else:
+#         output.print(op)
+#     if RegExp("^[a-z]", "i").test(op):
+#         output.space()
+#     if self.parenthesized:
+#         output.with_parens(lambda: self.expression.print(output))
+#     else:
+#         self.expression.print(output)
+#     if op is '-':
+#         output.print(")")
+
 def print_unary_prefix(self, output):
     op = self.operator
     if op is 'delete':
@@ -100,7 +117,6 @@ def print_unary_prefix(self, output):
         output.with_parens(lambda: self.expression.print(output))
     else:
         self.expression.print(output)
-
 
 def write_instanceof(left, right, output):
     def do_many(vals):

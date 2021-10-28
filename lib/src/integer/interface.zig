@@ -3,13 +3,14 @@ const Integer = integer.Integer;
 const interface = @import("../interface.zig");
 const std = @import("std");
 const RuntimeError = @import("../errors.zig").General.RuntimeError;
+const rational_interface = @import("../rational/interface.zig");
 
 pub fn init() void {} // trick so whole module doesn't get optimized away
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 
 // The collection of proxied integers
-var integers = interface.ProxyObjects(Integer).init(&gpa.allocator);
+pub var integers = interface.ProxyObjects(Integer).init(&gpa.allocator);
 
 fn get(n: i32) !Integer {
     return integers.get(n) orelse {
@@ -77,9 +78,21 @@ pub export fn Integer_mul(a: i32, b: i32) i32 {
     return put(A.mul(B)) catch return 0;
 }
 
+// always returns handle of a RATIONAL number!
+pub export fn Integer_div(a: i32, b: i32) i32 {
+    const A = get(a) catch return 0;
+    const B = get(b) catch return 0;
+    return rational_interface.put(A.div(B)) catch return 0;
+}
+
 pub export fn Integer_pow(a: i32, b: u32) i32 {
     const A = get(a) catch return 0;
     return put(A.pow(b)) catch return 0;
+}
+
+pub export fn Integer_neg(a: i32) i32 {
+    const A = get(a) catch return 0;
+    return put(A.neg()) catch return 0;
 }
 
 pub export fn Integer_nextPrime(a: i32) i32 {
