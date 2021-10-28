@@ -7,6 +7,7 @@ const gmp = @cImport(@cInclude("gmp.h"));
 var initialized = false;
 pub fn init() void {
     if (initialized) return;
+    //std.debug.print("initializing custom GMP allocator...\n", .{});
     initialized = true;
     gmp.mp_set_memory_functions(gmp_alloc, gmp_realloc, gmp_free);
 }

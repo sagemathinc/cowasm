@@ -19,7 +19,6 @@ export fn add(a: c_long, b: c_long) c_long {
     return r;
 }
 
-const EXEC_BUFSIZE = 10000;
 pub fn exec(s: [*:0]const u8) ![*:0]u8 {
     var av: pari.pari_sp = pari.avma;
     var x: pari.GEN = pari.gp_read_str_multiline(s, null);
