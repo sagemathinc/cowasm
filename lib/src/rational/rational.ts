@@ -3,7 +3,7 @@ import genericPower from "../arith/generic-power";
 
 // @ts-ignore
 const registry = new FinalizationRegistry((handle) => {
-  wasm?.exports.freeRational(handle);
+  wasm?.exports.Rational_free(handle);
 });
 
 export let wasm: WasmInstance | undefined = undefined;
@@ -25,9 +25,9 @@ export class RationalNumber {
     if (n === null && i !== undefined) {
       this.i = i;
     } else if (typeof n == "number") {
-      this.i = wasm.exports.createRationalInt(n);
+      this.i = wasm.exports.Rational_createInt(n);
     } else {
-      this.i = wasm.callWithString("createRationalStr", `${n}`, base ?? 10);
+      this.i = wasm.callWithString("Rational_createStr", `${n}`, base ?? 10);
     }
     registry.register(this, this.i); // so we get notified when garbage collected.
   }
@@ -42,7 +42,7 @@ export class RationalNumber {
 
   _bin_op(m, name: string): RationalNumber {
     m = this._coerce(m);
-    const op = wasm?.exports[name];
+    const op = wasm?.exports["Rational_" + name];
     if (op === undefined) {
       throw Error(`BUG -- unknown op ${name}`);
     }
@@ -50,26 +50,42 @@ export class RationalNumber {
   }
 
   __add__(m): RationalNumber {
-    return this._bin_op(m, "addRationals");
+    return this._bin_op(m, "add");
   }
 
   __sub__(m): RationalNumber {
-    return this._bin_op(m, "subRationals");
+    return this._bin_op(m, "sub");
   }
 
   __mul__(m): RationalNumber {
-    return this._bin_op(m, "mulRationals");
+    return this._bin_op(m, "mul");
   }
 
   __div__(m): RationalNumber {
-    return this._bin_op(m, "divRationals");
+    return this._bin_op(m, "div");
   }
   __truediv__(m): RationalNumber {
-    return this._bin_op(m, "divRationals");
+    return this._bin_op(m, "div");
   }
 
   __pow__(e: number): RationalNumber {
+    const j = wasm?.exports.Rational_pow(this.i, e);
+    return new RationalNumber(null, j);
+  }
+
+  _generic_pow(e: number): RationalNumber {
+    if (e == 0) {
+      return new RationalNumber(1);
+    }
+    if (e < 0) {
+      return this.inverse()._generic_pow(-e);
+    }
     return genericPower(this, e) as RationalNumber;
+  }
+
+  inverse(): RationalNumber {
+    const j = wasm?.exports.Rational_inverse(this.i);
+    return new RationalNumber(null, j);
   }
 
   eql(m): boolean {
@@ -77,22 +93,22 @@ export class RationalNumber {
     if (!(m instanceof RationalNumber)) {
       m = new RationalNumber(m);
     }
-    return !!wasm.exports.eqlRationals(this.i, m.i);
+    return !!wasm.exports.Rational_eql(this.i, m.i);
   }
 
   cmp(m): number {
     m = this._coerce(m);
-    return wasm?.exports.cmpRationals(this.i, m.i);
+    return wasm?.exports.Rational_cmp(this.i, m.i);
   }
 
   print() {
     if (wasm == null) throw Error("await init() first");
-    wasm.exports.printRational(this.i);
+    wasm.exports.Rational_print(this.i);
   }
 
   toString(base: number = 10): string {
     if (wasm == null) throw Error("await init() first");
-    wasm.exports.RationalToString(this.i, base);
+    wasm.exports.Rational_toString(this.i, base);
     return wasm.result;
   }
 

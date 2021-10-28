@@ -5,6 +5,18 @@ const integer = @import("../integer/integer.zig");
 const gmp = integer.gmp;
 const Integer = integer.Integer;
 
+// zig can't parse these macros from gmp.h, so we
+// implement them directly using zig!
+// #define mpq_numref(Q) (&((Q)->_mp_num))
+// #define mpq_denref(Q) (&((Q)->_mp_den))
+fn mpq_numref(Q: *gmp.mpq_t) *gmp.mpz_t {
+    return &((Q.*)[0]._mp_num);
+}
+
+fn mpq_denref(Q: *gmp.mpq_t) *gmp.mpz_t {
+    return &((Q.*)[0]._mp_den);
+}
+
 pub const Rational = struct {
     x: gmp.mpq_t,
 
@@ -94,12 +106,28 @@ pub const Rational = struct {
         return c;
     }
 
-    //     pub fn pow(self: Rational, exponent: usize) !Rational {
-    //         var c = try Rational.init();
-    //         gmp.mpz_pow_ui(gmp.mpq_numref(&c.x), gmp.mpq_numref(&self.x), exponent);
-    //         gmp.mpz_pow_ui(gmp.mpq_denref(&c.x), gmp.mpq_denref(&self.x), exponent);
-    //         return c;
-    //     }
+    pub fn inverse(self: Rational) !Rational {
+        var c = try Rational.init();
+        gmp.mpq_inv(&c.x, &self.x);
+        return c;
+    }
+
+    pub fn pow(self: *Rational, exponent: i32) !Rational {
+        var c = try Rational.init();
+        if (exponent < 0) {
+            // invert and then pow with negative.
+            var inv = try self.inverse();
+            var exp: u32 = @intCast(u32, -exponent);
+            gmp.mpz_pow_ui(mpq_numref(&c.x), mpq_numref(&inv.x), exp);
+            gmp.mpz_pow_ui(mpq_denref(&c.x), mpq_denref(&inv.x), exp);
+        } else {
+            // Here we can assume exponent is nonnegative.
+            var exp: u32 = @intCast(u32, exponent);
+            gmp.mpz_pow_ui(mpq_numref(&c.x), mpq_numref(&self.x), exp);
+            gmp.mpz_pow_ui(mpq_denref(&c.x), mpq_denref(&self.x), exp);
+        }
+        return c;
+    }
 
     pub fn eql(self: Rational, right: Rational) bool {
         return gmp.mpq_equal(&self.x, &right.x) != 0;
@@ -256,12 +284,22 @@ test "conversion to a string" {
     std.debug.print("a = {}\n", .{a});
 }
 
-// test "exponents" {
-//     var a = try Rational.initSetStr("-3/5", 10);
-//     defer a.deinit();
-//     var pow = try a.pow(5);
-//     defer pow.deinit();
-//     try expect(pow.eql_si(-243, 3125));
-// }
+test "inverse" {
+    var a = try Rational.initSetStr("-3/5", 10);
+    defer a.deinit();
+    var inv = try a.inverse();
+    try expect(inv.eql_si(-5, 3));
+}
+
+test "exponents" {
+    var a = try Rational.initSetStr("-3/5", 10);
+    defer a.deinit();
+    var pow = try a.pow(5);
+    defer pow.deinit();
+    try expect(pow.eql_si(-243, 3125));
+    var pow2 = try a.pow(-5);
+    defer pow2.deinit();
+    try expect(pow2.eql_si(-3125, 243));
+}
 
 const expect = std.testing.expect;

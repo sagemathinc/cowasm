@@ -3,7 +3,7 @@ interface MonoidElement {
 }
 
 export default function genericPower(a: MonoidElement, n: number) {
-  if (n == 0) {
+  if (n <= 0) {
     throw Error("n must be positive");
   }
   // Find least significant set bit as starting point

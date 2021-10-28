@@ -30,7 +30,7 @@ fn put(x: anyerror!Rational) !i32 {
     };
 }
 
-pub export fn createRationalStr(s: [*:0]const u8, base: i32) i32 {
+pub export fn Rational_createStr(s: [*:0]const u8, base: i32) i32 {
     var x = Rational.initSetStr(s, base) catch |err| {
         std.debug.print("createRationalStr -- {}\n", .{err});
         interface.throw("error creating rational from string");
@@ -39,7 +39,7 @@ pub export fn createRationalStr(s: [*:0]const u8, base: i32) i32 {
     return put(x) catch return 0;
 }
 
-pub export fn createRationalInt(n: i32) i32 {
+pub export fn Rational_createInt(n: i32) i32 {
     var x = Rational.initSet(n) catch |err| {
         std.debug.print("createRationalInt -- {}\n", .{err});
         interface.throw("error creating rational from int");
@@ -48,50 +48,60 @@ pub export fn createRationalInt(n: i32) i32 {
     return put(x) catch return 0;
 }
 
-pub export fn eqlRationals(a: i32, b: i32) bool {
+pub export fn Rational_eql(a: i32, b: i32) bool {
     const A = get(a) catch return false;
     const B = get(b) catch return false;
     return A.eql(B);
 }
 
-pub export fn cmpRationals(a: i32, b: i32) i32 {
+pub export fn Rational_cmp(a: i32, b: i32) i32 {
     const A = get(a) catch return -1;
     const B = get(b) catch return -1;
     return A.cmp(B);
 }
 
-pub export fn addRationals(a: i32, b: i32) i32 {
+pub export fn Rational_add(a: i32, b: i32) i32 {
     const A = get(a) catch return 0;
     const B = get(b) catch return 0;
     return put(A.add(B)) catch return 0;
 }
 
-pub export fn subRationals(a: i32, b: i32) i32 {
+pub export fn Rational_sub(a: i32, b: i32) i32 {
     const A = get(a) catch return 0;
     const B = get(b) catch return 0;
     return put(A.sub(B)) catch return 0;
 }
 
-pub export fn mulRationals(a: i32, b: i32) i32 {
+pub export fn Rational_mul(a: i32, b: i32) i32 {
     const A = get(a) catch return 0;
     const B = get(b) catch return 0;
     return put(A.mul(B)) catch return 0;
 }
 
-pub export fn divRationals(a: i32, b: i32) i32 {
+pub export fn Rational_div(a: i32, b: i32) i32 {
     const A = get(a) catch return 0;
     const B = get(b) catch return 0;
     return put(A.div(B)) catch return 0;
 }
 
-pub export fn printRational(a: i32) void {
+pub export fn Rational_pow(a: i32, exponent: i32) i32 {
+    var A = get(a) catch return 0;
+    return put(A.pow(exponent)) catch return 0;
+}
+
+pub export fn Rational_inverse(a: i32) i32 {
+    var A = get(a) catch return 0;
+    return put(A.inverse()) catch return 0;
+}
+
+pub export fn Rational_print(a: i32) void {
     const A = get(a) catch return;
     A.print();
 }
 
 extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
 
-pub export fn RationalToString(a: i32, base: i32) void {
+pub export fn Rational_toString(a: i32, base: i32) void {
     const n = get(a) catch return;
     var str = n.toString(base) catch |err| {
         std.debug.print("toString -- {}\n", .{err});
@@ -102,7 +112,7 @@ pub export fn RationalToString(a: i32, base: i32) void {
     wasmSendString(str.ptr, str.len);
 }
 
-pub export fn freeRational(a: i32) void {
+pub export fn Rational_free(a: i32) void {
     rationals.free(a);
 }
 
