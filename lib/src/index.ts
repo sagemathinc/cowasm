@@ -17,8 +17,8 @@ import { Integer, init as integerInit, ZZ } from "./integer";
 export { Integer, ZZ };
 import { Rational, init as rationalInit, QQ } from "./rational";
 export { Rational, QQ };
-//import * as pari from "./pari";
-//export { pari };
+import * as pari from "./pari";
+export { pari };
 export * as misc from "./misc";
 
 export async function init(): Promise<void> {
@@ -29,6 +29,6 @@ export async function init(): Promise<void> {
   await arith.init();
   await integerInit();
   await rationalInit();
-  //await pari.init();
+  //await pari.init(); // it takes noticeable time and default init might not be good.
 }
 init();
