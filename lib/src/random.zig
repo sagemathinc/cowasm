@@ -19,7 +19,8 @@ pub fn seededPrng() !std.rand.DefaultPrng {
 const expect = std.testing.expect;
 
 test "can make a random number" {
-    var random = (try seededPrng()).random;
+    var prng = try seededPrng();
+    var random = prng.random();
     var r = random.intRangeLessThan(i32, 0, 5);
     try expect(r >= 0);
     try expect(r < 5);

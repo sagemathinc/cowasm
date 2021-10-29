@@ -147,7 +147,7 @@ pub fn SparseMatrixMod(comptime T: type) type {
         }
 
         pub fn randomize(self: *Matrix, cols: usize) !void {
-            var rand = (try @import("../random.zig").seededPrng()).random;
+            var rand = (try @import("../random.zig").seededPrng()).random();
             var row: usize = 0;
             while (row < self.nrows) : (row += 1) {
                 var j: usize = 0;
