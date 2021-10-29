@@ -63,8 +63,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 	# Also rebuild a new version of gp-sta.wasm with the extra posix lib included by abusing EXPORT_EXE.
 	cd ${BUILD}/wasm/O* && rm gp-sta && make EXPORT_EXE=${WASMPOSIX}/libwasmposix.a gp-sta
 	cp ${BUILD}/wasm/O*/gp-sta.wasm ${DIST_WASM}/bin
-	# Horrible temporary hack because of missing bits/ headers with zig.  Will have to address this somehow...!!
-	mkdir -p ${DIST_WASM}/include/bits && cp /usr/include/bits/setjmp.h /usr/include/bits/wordsize.h ${DIST_WASM}/include/bits
+	mkdir -p ${DIST_WASM}/include/bits && cp ${BUILD}/wasm/O*/bits/* ${DIST_WASM}/include/bits/
 	# Also build a new version of gp-sta.wasm with the extra posix lib included.
 	touch ${DIST_WASM}/.built
 
