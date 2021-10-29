@@ -29,13 +29,16 @@ RUN  curl https://sh.rustup.rs -sSf > /tmp/install.sh \
 # Optional convenience dependencies
 RUN apt-get install -y vim
 
-# TODO: you must install zig for the architecture you are on
-# manually right now -- this won't work.  We will make installing
-# the latest zig automatic as part of the make below soon enough,
-# since there is no easy way from the zig devs yet to do this.
-
+# Note that zig-0.8.1 -- though stable -- is completely useless and broken
+#  for wasm, unfortunately.   In particular, we quickly hit this with 0.8.x:
+#. /zig/lib/std/c.zig:40:16: error: use of undeclared identifier '_errno'
+#        return _errno().*;
+# This is fixed in 0.9.x: https://github.com/ziglang/zig/issue<sub></sub>s/9414
+# Of course it *is* good hardcoding a specific dev version, since these can
+# easily go from working to completely broken from one day to the next...
 RUN  cd / \
-  && curl https://ziglang.org/download/0.8.1/zig-linux-`uname -m`-0.8.1.tar.xz > zig.tar.xz \
+  && export VERSION=0.9.0-dev.1524+d2f9646d9 \
+  && curl https://ziglang.org/builds/zig-linux-`uname -m`-$VERSION.tar.xz > zig.tar.xz \
   && mkdir zig \
   && tar xf zig.tar.xz -C zig --strip-components=1 \
   && rm zig.tar.xz \
