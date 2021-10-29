@@ -10,6 +10,14 @@ DIST_WASM = ${DIST}/wasm
 ZLIB = ${CWD}/../zlib/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
+# On Linux it is "python", but on MacOS it is "python.exe".
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+PYTHON_EXE = python.exe
+else
+PYTHON_EXE = python
+endif
+
 # Default target
 .PHONY: all
 all: ${CWD}/dist/.built
@@ -116,7 +124,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched
 	# Create a modified Python binary with libwasmposix.a linked in so that it can
 	# be run via wasmer on the command line (without node.js!).  We abuse LINKFORSHARED
 	# to add our wasmposix to the build line.  TODO: hardcoding "python3.9" :-(
-	cd ${BUILD}/wasm && rm python && make LINKFORSHARED=${WASMPOSIX}/libwasmposix.a python && cp python ${DIST_WASM}/bin/python3.9
+	cd ${BUILD}/wasm && rm ${PYTHON_EXE} && make LINKFORSHARED=${WASMPOSIX}/libwasmposix.a ${PYTHON_EXE} && cp ${PYTHON_EXE} ${DIST_WASM}/bin/python3.9
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
