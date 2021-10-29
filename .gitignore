@@ -6,6 +6,7 @@ packages/*/node_modules
 *.term
 *.wasm
 *.wat
+*.pyc
 *.o
 zig-cache
 tsconfig.tsbuildinfo
