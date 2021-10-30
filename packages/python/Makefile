@@ -92,13 +92,13 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	cd ${BUILD}/wasm && mkdir -p bits && echo "#define __jmp_buf int" > bits/setjmp.h
 	touch ${BUILD}/wasm/.patched
 
-${DIST_WASM}/.built: ${BUILD}/wasm/.patched native
+${DIST_WASM}/.built: export LD_LIBRARY_PATH:=${DIST_NATIVE}/lib:"${LD_LIBRARY_PATH}"
+${DIST_WASM}/.built: export PATH:=${DIST_NATIVE}/bin:"${PATH}"
+${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	# Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
 	# without-pymalloc below because pymalloc uses mmap and munmap, and WASI/our libc doesn't provide them.
 	# We could try to write them ourselves (?)...
 	cd ${BUILD}/wasm && \
-		LD_LIBRARY_PATH=${DIST_NATIVE}/lib:${LD_LIBRARY_PATH} \
-		PATH=${DIST_NATIVE}/bin:"${PATH}" \
 		CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
 		CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
 		AR="zig ar" \
