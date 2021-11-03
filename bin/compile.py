@@ -29,6 +29,11 @@ def build(compiler):
         else:
             args.append(x)
         prev = x
+    if not make_exe and '-c' not in sys.argv:
+        # E.g., zcc foo.c produces a.out always.
+        make_exe = "a.out"
+        args.append("-o")
+        args.append("a.out.wasm")
     run(args)
     if make_exe:
         file = open(make_exe, 'w')

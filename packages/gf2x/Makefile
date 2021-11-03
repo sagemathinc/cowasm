@@ -8,6 +8,7 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 DIST_JS = ${CWD}/dist/js
+ZCC = ${CWD}/../../bin/zcc
 
 all: ${DIST_NATIVE}/.built ${DIST_WASM}/.built
 
@@ -42,7 +43,7 @@ ${BUILD}/wasm: ${BUILD}/gf2x.tar.gz
 	cd ${BUILD} && mkdir wasm && tar xvf gf2x.tar.gz -C wasm --strip-components=1
 
 ${DIST_WASM}/.built: ${BUILD}/wasm
-	cd ${BUILD}/wasm && CC="zig cc -target wasm32-wasi" AR="zig ar" CFLAGS="-O3" \
+	cd ${BUILD}/wasm && CC=${ZCC} AR="zig ar" RANLIB="zig ranlib" CFLAGS="-O3" \
 		./configure --build i686-pc-linux-gnu --host=none --prefix=${DIST_WASM}
 	cd ${BUILD}/wasm && make install
 	touch ${DIST_WASM}/.built
