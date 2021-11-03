@@ -1,6 +1,6 @@
 BUILT = dist/.built
 
-all: packages/gmp/${BUILT} packages/mpir/${BUILT} packages/mpfr/${BUILT} packages/mpc/${BUILT} \
+all: packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/mpc/${BUILT} \
 	 packages/gf2x/${BUILT} packages/ntl/${BUILT} packages/flint/${BUILT} packages/pari/${BUILT} \
 	 packages/eclib/${BUILT} lib/${BUILT} packages/jpython/${BUILT}
 
@@ -34,7 +34,7 @@ packages/ntl/${BUILT}: packages/gmp/${BUILT} packages/gf2x/${BUILT}
 .PHONY: ntl
 ntl: packages/ntl/${BUILT}
 
-packages/flint/${BUILT}: packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/mpir/${BUILT} packages/ntl/${BUILT}
+packages/flint/${BUILT}: packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/ntl/${BUILT}
 	cd packages/flint && make all
 .PHONY: flint
 flint: packages/flint/${BUILT}
