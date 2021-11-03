@@ -1,5 +1,5 @@
-# See http://www.flintlib.org/downloads.html
-VERSION = 2.8.2
+# See https://github.com/wbhart/flint2/tags
+VERSION = 2.8.3
 
 BUILD = build
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
@@ -9,14 +9,13 @@ DIST_JS = ${CWD}/dist/js
 
 GMP = ${CWD}/../gmp/dist
 MPFR = ${CWD}/../mpfr/dist
-MPIR = ${CWD}/../mpir/dist
 NTL = ${CWD}/../ntl/dist
 
 all: ${DIST_NATIVE}/.built ${DIST_WASM}/.built
 
 ${BUILD}/flint-${VERSION}.tar.gz:
 	mkdir -p ${BUILD}
-	cd ${BUILD} && curl http://www.flintlib.org/flint-${VERSION}.tar.gz -o flint-${VERSION}.tar.gz
+	cd ${BUILD} && curl https://codeload.github.com/wbhart/flint2/tar.gz/refs/tags/v${VERSION} -o flint-${VERSION}.tar.gz
 
 .PHONY: source
 source: ${BUILD}/flint
@@ -32,7 +31,6 @@ ${DIST_NATIVE}/.built: ${BUILD}/native
 	cd ${BUILD}/native && CC="zig cc" CXX="zig c++" AR="zig ar" RANLIB="zig ranlib" \
 		./configure \
 			--disable-shared  \
-			--with-mpir=${MPIR}/native  \
 			--with-mpfr=${MPFR}/native  \
 			--with-gmp=${GMP}/native    \
 			--with-ntl=${NTL}/native    \
@@ -49,6 +47,7 @@ native: ${DIST_NATIVE}/.built
 ${BUILD}/wasm: ${BUILD}/flint-${VERSION}.tar.gz
 	rm -rf ${BUILD}/wasm
 	cd ${BUILD} && mkdir wasm && tar xf flint-${VERSION}.tar.gz -C wasm --strip-components=1
+	cd ${BUILD}/wasm && patch -p1 < ${CWD}/patches/ulong.patch   # https://github.com/wbhart/flint2/pull/1020
 
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && CC="zig cc -target wasm32-wasi" CXX="zig c++ -target wasm32-wasi" AR="zig ar" RANLIB="zig ranlib" \
@@ -56,7 +55,6 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 		./configure \
 			--disable-shared  \
 			--disable-pthread \
-			--with-mpir=${MPIR}/wasm  \
 			--with-mpfr=${MPFR}/wasm  \
 			--with-gmp=${GMP}/wasm    \
 			--with-ntl=${NTL}/wasm    \
