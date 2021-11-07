@@ -85,6 +85,7 @@ jpython: packages/jpython/${BUILT}
 
 clean:
 	cd packages/gmp && make clean
+	cd packages/gf2x && make clean
 	cd packages/mpir && make clean
 	cd packages/mpfr && make clean
 	cd packages/mpc && make clean

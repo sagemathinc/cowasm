@@ -76,5 +76,5 @@ run-wasm: ${DIST_WASM}/.built
 
 
 clean:
-	rm -rf ${BUILD} ${PREFIX_NATIVE} ${PREFIX_WASM}
+	rm -rf ${BUILD} ${DIST_WASM} ${DIST_NATIVE} ${PREFIX_NATIVE} ${PREFIX_WASM}
 
