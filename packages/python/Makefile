@@ -42,9 +42,8 @@ source: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	rm -rf ${BUILD}/native
 	cd ${BUILD} && mkdir native && tar xf Python-${PYTHON_VERSION}.tar.xz -C native --strip-components=1
-	# We only use the 0008-setup.patch patch, which is needed to get module building
-	# to work when compiling with zig, I think due to having to explicitly build gnu libc 2.28,
-	# which is to work around another issue with Zig...
+	# We only use the 0008-setup.patch patch, which is *maybe* needed to get module building
+	# to work when compiling with zig...
 	cd ${BUILD}/native && cat ${CWD}/src/python-patches/0008-setup.patch | patch -p1
 	touch ${BUILD}/native/.patched
 
@@ -54,8 +53,8 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 		CFLAGS=-I${ZLIB}/native/include \
 		LDFLAGS=-L${ZLIB}/native/lib \
 		AR="zig ar" \
-		CXX="zig c++ -target native-native-gnu.2.28" \
-		CC="zig cc -target native-native-gnu.2.28" \
+		CXX="zig c++" \
+		CC="zig cc" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
 			--enable-big-digits=30 \
