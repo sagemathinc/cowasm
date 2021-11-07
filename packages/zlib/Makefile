@@ -37,7 +37,7 @@ ${BUILD}/wasm: ${BUILD}/zlib-${ZLIB_VERSION}.tar.xz
 
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && AR="zig ar" CC="zig cc -target wasm32-wasi-musl" CXX="zig c++ -target wasm32-wasi-musl" ./configure --prefix=${DIST_WASM}
-	cd ${BUILD}/native && make install -j8
+	cd ${BUILD}/wasm && make install -j8
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
