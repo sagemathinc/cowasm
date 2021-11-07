@@ -31,6 +31,7 @@ ${DIST_NATIVE}/.built: ${BUILD}/native
 		CXX="zig c++" RANLIB="zig ranlib" AR="zig ar" \
 		GMP_PREFIX=${CWD}/../gmp/dist/native \
 		GF2X_PREFIX=${CWD}/../gf2x/dist/native \
+		NTL_GMP_LIP=off \
 		PREFIX=${DIST_NATIVE}
 	cd ${BUILD}/native/src && make && make install
 	touch ${DIST_NATIVE}/.built
