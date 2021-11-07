@@ -1,4 +1,6 @@
 # See https://www.python.org/downloads/
+# Current version is 3.10.0, but many of the WASM patches fail to apply to that version,
+# so will need to be updated first.
 PYTHON_VERSION = 3.9.7
 
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
