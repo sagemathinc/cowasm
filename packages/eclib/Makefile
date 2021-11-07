@@ -32,7 +32,7 @@ ${BUILD}/native: ${BUILD}/eclib
 ${DIST_NATIVE}/.built: ${BUILD}/native
 	cd ${BUILD}/native && \
 		CXXFLAGS="-I${GMP}/native/include  -I${MPFR}/native/include"  LDFLAGS="-L${GMP}/native/lib  -L${MPFR}/native/lib" \
-		LIBS="-lgmp -lmpfr" CC="zig cc" CXX="zig c++" AR="zig ar" RANLIB="zig ranlib"  \
+		CC="zig cc" CXX="zig c++" AR="zig ar" RANLIB="zig ranlib"  \
 		./configure \
 			--with-pari=${PARI}/native  \
 			--with-ntl=${NTL}/native    \
