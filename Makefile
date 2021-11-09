@@ -2,7 +2,8 @@ BUILT = dist/.built
 
 all: packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/mpc/${BUILT} \
 	 packages/gf2x/${BUILT} packages/ntl/${BUILT} packages/flint/${BUILT} packages/pari/${BUILT} \
-	 packages/eclib/${BUILT} lib/${BUILT} packages/jpython/${BUILT}
+	 lib/${BUILT} packages/jpython/${BUILT} \
+	 packages/eclib/${BUILT}
 
 packages/gmp/${BUILT}:
 	cd packages/gmp && make all
@@ -78,10 +79,14 @@ packages/python/${BUILT}: packages/zlib/${BUILT} packages/wasm-posix/${BUILT}
 .PHONY: python
 python: packages/python/${BUILT}
 
-packages/jpython/${BUILT}:
+packages/jpython/${BUILT}: lib/${BUILT}
 	cd packages/jpython && make all
 .PHONY: jpython
 jpython: packages/jpython/${BUILT}
+
+.PHONY: docker
+docker:
+	docker build . -t jsage
 
 clean:
 	cd packages/gmp && make clean
