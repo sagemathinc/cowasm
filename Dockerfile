@@ -9,7 +9,7 @@ USER root
 
 # Critical required apt dependencies
 RUN apt-get update \
-  && apt-get install -y git make curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool libffi-dev
+  && apt-get install -y git make curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool
 
 # Required nodejs dependency
 RUN  curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \

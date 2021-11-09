@@ -47,9 +47,10 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	cd ${BUILD}/native && cat ${CWD}/src/python-patches/0008-setup.patch | patch -p1
 	touch ${BUILD}/native/.patched
 
+${DIST_WASM}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
+${DIST_WASM}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
 ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
-		LD_LIBRARY_PATH=${ZLIB}/native/lib \
 		CFLAGS=-I${ZLIB}/native/include \
 		LDFLAGS=-L${ZLIB}/native/lib \
 		AR="zig ar" \
@@ -70,7 +71,7 @@ native: ${DIST_NATIVE}/.built
 # Use "make run-native" to run native python at the command line.
 .PHONY: run-native
 run-native: ${DIST_NATIVE}/.built
-	LD_LIBRARY_PATH=${DIST_NATIVE}/lib ${DIST_NATIVE}/bin/python3
+	DYLD_LIBRARY_PATH=${DIST_NATIVE}/lib LD_LIBRARY_PATH=${DIST_NATIVE}/lib ${DIST_NATIVE}/bin/python3
 
 #############
 # WASM
@@ -92,6 +93,7 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	touch ${BUILD}/wasm/.patched
 
 ${DIST_WASM}/.built: export LD_LIBRARY_PATH:=${DIST_NATIVE}/lib:"${LD_LIBRARY_PATH}"
+${DIST_WASM}/.built: export DYLD_LIBRARY_PATH:=${DIST_NATIVE}/lib:"${DYLD_LIBRARY_PATH}"
 ${DIST_WASM}/.built: export PATH:=${DIST_NATIVE}/bin:"${PATH}"
 ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	# Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.

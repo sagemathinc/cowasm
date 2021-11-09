@@ -26,6 +26,13 @@ typeof a !== 'object' ? a + b :
 ρσ_operator_add.__module__ = "__main__";
 undefined;
 
+function ρσ_operator_neg(a) {
+    return (typeof a === 'object' && a.__neg__ !== undefined) ? a.__neg__() : (-a);
+};
+ρσ_operator_neg.__argnames__ = ["a"];
+ρσ_operator_neg.__module__ = "__main__";
+undefined;
+
 function ρσ_operator_sub(a, b) {
     return (typeof a === 'object' && a.__sub__ !== undefined) ? a.__sub__(b) : a - b;
 };
@@ -8901,7 +8908,7 @@ undefined;
 
         var js_new = ρσ_modules.js.js_new;
 
-        COMPILER_VERSION = "006f1ff8db17bdfc51fd0753abb86919266efca5";
+        COMPILER_VERSION = "f45c2d6b2ef0ef97f6a6a14699d40926b55a5f53";
         PYTHON_FLAGS = {"exponent":true,"ellipses":true,"annotations":false,"dict_literals":true,"overload_getitem":true,"bound_methods":true,"hash_literals":true};
         function get_compiler_version() {
             return COMPILER_VERSION;

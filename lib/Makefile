@@ -11,8 +11,8 @@ GMP_WASM      = ${PACKAGES}/gmp/dist/wasm
 PARI_NATIVE   = ${PACKAGES}/pari/dist/native
 PARI_WASM     = ${PACKAGES}/pari/dist/wasm
 
-PYTHON_NATIVE = ${PACKAGES}/python/dist/native
-PYTHON_WASM   = ${PACKAGES}/python/dist/wasm
+# PYTHON_NATIVE = ${PACKAGES}/python/dist/native
+# PYTHON_WASM   = ${PACKAGES}/python/dist/wasm
 
 WASM_CFLAGS   = -dynamic ${OPT}
 NATIVE_CFLAGS = -I. -L${PARI_NATIVE}/lib -I${PARI_NATIVE}/include -lpari   -L${GMP_NATIVE}/lib -I${GMP_NATIVE}/include -lgmp -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9 -lpython3.9  -lc ${OPT}
@@ -137,7 +137,9 @@ node_modules:
 
 ## Put it all together
 
-${DIST}/.built: node_modules ${DIST}/factor.wasm ${DIST}/complex/complex.wasm ${DIST}/gmp.wasm ${DIST}/arith.wasm ${DIST}/modular/p1list.wasm ${DIST}/modular/manin-symbols.wasm ${DIST}/modular/dims.wasm ${DIST}/pari/pari.wasm ${DIST}/python/python.wasm
+# ${DIST}/python/python.wasm
+
+${DIST}/.built: node_modules ${DIST}/factor.wasm ${DIST}/complex/complex.wasm ${DIST}/gmp.wasm ${DIST}/arith.wasm ${DIST}/modular/p1list.wasm ${DIST}/modular/manin-symbols.wasm ${DIST}/modular/dims.wasm ${DIST}/pari/pari.wasm
 	npx tsc
 	touch ${DIST}/.built
 

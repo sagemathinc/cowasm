@@ -2,8 +2,7 @@ BUILT = dist/.built
 
 all: packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/mpc/${BUILT} \
 	 packages/gf2x/${BUILT} packages/ntl/${BUILT} packages/flint/${BUILT} packages/pari/${BUILT} \
-	 lib/${BUILT} packages/jpython/${BUILT} \
-	 packages/eclib/${BUILT}
+	 lib/${BUILT} packages/jpython/${BUILT}
 
 packages/gmp/${BUILT}:
 	cd packages/gmp && make all
@@ -55,10 +54,10 @@ packages/eclib/${BUILT}: packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/p
 .PHONY: eclib
 eclib: packages/eclib/${BUILT}
 
-lib/${BUILT}: packages/gmp/${BUILT} packages/pari/${BUILT} packages/python/${BUILT}
+lib/${BUILT}: packages/gmp/${BUILT} packages/pari/${BUILT} # packages/python/${BUILT}
 	cd lib && make all
 .PHONY: lib
-lib: packages/lib/${BUILT}
+lib: lib/${BUILT}
 
 
 # Included here since I did the work, but we're not using it.

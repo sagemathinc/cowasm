@@ -19,6 +19,13 @@ typeof a !== 'object' ? a + b :
 ρσ_operator_add.__module__ = "__main__";
 undefined;
 
+function ρσ_operator_neg(a) {
+    return (typeof a === 'object' && a.__neg__ !== undefined) ? a.__neg__() : (-a);
+};
+ρσ_operator_neg.__argnames__ = ["a"];
+ρσ_operator_neg.__module__ = "__main__";
+undefined;
+
 function ρσ_operator_sub(a, b) {
     return (typeof a === 'object' && a.__sub__ !== undefined) ? a.__sub__(b) : a - b;
 };
