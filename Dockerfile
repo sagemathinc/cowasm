@@ -9,7 +9,7 @@ USER root
 
 # Critical required apt dependencies
 RUN apt-get update \
-  && apt-get install -y git make curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool
+  && apt-get install -y git make curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool libffi-dev
 
 # Required nodejs dependency
 RUN  curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
@@ -46,4 +46,4 @@ RUN  cd / \
   && ln -s /zig/zig .
 
 RUN  git clone https://github.com/sagemathinc/jsage \
-  && cd jsage && make
+  && cd jsage && make jpython
