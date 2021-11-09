@@ -47,3 +47,5 @@ RUN  cd / \
 
 RUN  git clone https://github.com/sagemathinc/jsage \
   && cd jsage && make jpython
+
+RUN echo "export PATH=/jsage/packages/jpython/bin:$PATH" >> /root/.bashrc
