@@ -42,3 +42,10 @@ assrt.equal(str([f(10)..f(1000)]), 'range(11, 1002)')
 
 # With a floating point literal
 assrt.equal(str([1.5..5]), 'range(1.5, 6)')
+
+# Numerical literals
+from __python__ import numbers
+# will parse all numbers as one less!
+def Number(s):
+    return parseFloat(s) - parseFloat('1.0')
+assrt.equal(2.5, parseFloat('1.5'))

@@ -21,6 +21,8 @@ import * as pari from "./pari";
 export { pari };
 export * as misc from "./misc";
 
+export { Number } from "./number";
+
 export async function init(): Promise<void> {
   await dims.init();
   await p1listInit();

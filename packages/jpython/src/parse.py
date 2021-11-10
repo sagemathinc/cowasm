@@ -31,6 +31,8 @@ PYTHON_FLAGS = {
     True,  # support a^b-->a**b (and a^^b = a xor b), which is very math friendly (no performance impact)
     'ellipses':
     True,  # support the [a..b] = range(a, b+1) notation, which is very math friendly  (no performance impact)
+    'numbers':
+    True,  # numbers are arbitrary precision (potentially massive performance impact and breakage!)
     'annotations':
     False,  # if true, set function annotations; off by default since breaks mypy
     'dict_literals':
@@ -882,6 +884,8 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
                 S.scoped_flags.set('ellipses', val)
             elif name == 'annotations':
                 S.scoped_flags.set('annotations', val)
+            elif name == 'numbers':
+                S.scoped_flags.set('numbers', val)
             else:
                 S.scoped_flags.set(name, val)
             next()
@@ -1563,7 +1567,7 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
             }), True)
 
     def string_():
-        strings = r'%js []'
+        strings = []
         start = S.token
         while True:
             strings.push(S.token.value)
@@ -1582,7 +1586,22 @@ def create_parser_ctx(S, import_dirs, module_id, baselib_items,
         if tmp_ is "name":
             return token_as_symbol(tok, AST_SymbolRef)
         elif tmp_ is "num":
-            return AST_Number({'start': tok, 'end': tok, 'value': tok.value})
+            if not S.scoped_flags.get('numbers'):
+                return AST_Number({
+                    'start': tok,
+                    'end': tok,
+                    'value': tok.value
+                })
+            return AST_Call({
+                'expression':
+                AST_SymbolRef({'name': 'Number'}),
+                'args':
+                [AST_String({
+                    'start': tok,
+                    'end': tok,
+                    'value': str(tok.value)
+                })]
+            })
         elif tmp_ is "string":
             return string_()
         elif tmp_ is "regexp":
@@ -2580,7 +2599,7 @@ def parse(text, options):
 
     if options.jsage:
         # Set all the jsage compiler options; this is only used in the repl.
-        for name in ['exponent', 'ellipses']:
+        for name in ['exponent', 'ellipses', 'numbers']:
             S.scoped_flags.set(name, True)
 
     if S.scoped_flags.get('exponent'):

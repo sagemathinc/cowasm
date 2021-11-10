@@ -8908,8 +8908,8 @@ undefined;
 
         var js_new = ρσ_modules.js.js_new;
 
-        COMPILER_VERSION = "f45c2d6b2ef0ef97f6a6a14699d40926b55a5f53";
-        PYTHON_FLAGS = {"exponent":true,"ellipses":true,"annotations":false,"dict_literals":true,"overload_getitem":true,"bound_methods":true,"hash_literals":true};
+        COMPILER_VERSION = "c35dd09f3b3ed57aad038ea6ff3e105026076e73";
+        PYTHON_FLAGS = {"exponent":true,"ellipses":true,"numbers":true,"annotations":false,"dict_literals":true,"overload_getitem":true,"bound_methods":true,"hash_literals":true};
         function get_compiler_version() {
             return COMPILER_VERSION;
         };
@@ -9831,6 +9831,8 @@ undefined;
                         S.scoped_flags.set("ellipses", val);
                     } else if (ρσ_equals(name, "annotations")) {
                         S.scoped_flags.set("annotations", val);
+                    } else if (ρσ_equals(name, "numbers")) {
+                        S.scoped_flags.set("numbers", val);
                     } else {
                         S.scoped_flags.set(name, val);
                     }
@@ -10554,7 +10556,7 @@ undefined;
 
             function string_() {
                 var strings, start;
-                strings = [];
+                strings = ρσ_list_decorate([]);
                 start = S.token;
                 while (true) {
                     strings.push(S.token.value);
@@ -10575,7 +10577,10 @@ undefined;
                 if (tmp_ === "name") {
                     return (token_as_symbol?.__call__?.bind(token_as_symbol) ?? token_as_symbol)(tok, AST_SymbolRef);
                 } else if (tmp_ === "num") {
-                    return new AST_Number({"start":tok,"end":tok,"value":tok.value});
+                    if (!S.scoped_flags.get("numbers")) {
+                        return new AST_Number({"start":tok,"end":tok,"value":tok.value});
+                    }
+                    return new AST_Call({"expression":new AST_SymbolRef({"name":"Number"}),"args":ρσ_list_decorate([ new AST_String({"start":tok,"end":tok,"value":(str?.__call__?.bind(str) ?? str)(tok.value)}) ])});
                 } else if (tmp_ === "string") {
                     return (string_?.__call__?.bind(string_) ?? string_)();
                 } else if (tmp_ === "regexp") {
@@ -11543,7 +11548,7 @@ undefined;
 
             S = {"input":(typeof text === "string") ? (tokenizer?.__call__?.bind(tokenizer) ?? tokenizer)(text, options.filename) : text,"token":null,"prev":null,"peeked":ρσ_list_decorate([]),"in_function":0,"statement_starting_token":null,"in_comprehension":false,"in_parenthesized_expr":false,"in_delete":false,"in_loop":0,"in_class":ρσ_list_decorate([ false ]),"classes":ρσ_list_decorate([ Object.create(null) ]),"functions":ρσ_list_decorate([ Object.create(null) ]),"labels":ρσ_list_decorate([]),"decorators":[],"parsing_decorator":false,"globals":[],"scoped_flags":{"stack":[options.scoped_flags || Object.create(null)],"push":push,"pop":pop,"get":get,"set":set}};
             if (options.jsage) {
-                var ρσ_Iter76 = ρσ_list_decorate([ "exponent", "ellipses" ]);
+                var ρσ_Iter76 = ρσ_list_decorate([ "exponent", "ellipses", "numbers" ]);
                 ρσ_Iter76 = ((typeof ρσ_Iter76[Symbol.iterator] === "function") ? (ρσ_Iter76 instanceof Map ? ρσ_Iter76.keys() : ρσ_Iter76) : Object.keys(ρσ_Iter76));
                 for (var ρσ_Index76 of ρσ_Iter76) {
                     name = ρσ_Index76;

@@ -32,7 +32,7 @@ fn put(x: anyerror!Integer) !i32 {
 
 pub export fn Integer_createStr(s: [*:0]const u8, base: i32) i32 {
     var x = Integer.initSetStr(s, base) catch |err| {
-        std.debug.print("createIntegerStr -- {}\n", .{err});
+        std.debug.print("createIntegerStr -- s={s}, base={}, err={}\n", .{ s, base, err });
         interface.throw("error creating integer from string");
         return 0;
     };
