@@ -1,6 +1,6 @@
 {
   "name": "@jsage/lib",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "description": "SageJS",
   "exports": {
     ".": "./dist/index.js",
