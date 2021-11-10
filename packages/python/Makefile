@@ -49,8 +49,9 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	cd ${BUILD}/native && cat ${CWD}/src/python-patches/0008-setup.patch | patch -p1
 	touch ${BUILD}/native/.patched
 
-${DIST_WASM}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
-${DIST_WASM}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
+# Possibly doesn't work due to https://stackoverflow.com/questions/63629878/dyld-library-path-environment-variable-is-not-forwarded-to-external-command-in-m
+${DIST_NATIVE}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
+${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
 ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
 		CFLAGS=-I${ZLIB}/native/include \

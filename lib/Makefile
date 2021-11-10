@@ -13,9 +13,10 @@ PARI_WASM     = ${PACKAGES}/pari/dist/wasm
 
 # PYTHON_NATIVE = ${PACKAGES}/python/dist/native
 # PYTHON_WASM   = ${PACKAGES}/python/dist/wasm
+### (was below in NATIVE_CFLAGS) -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9 -lpython3.9
 
 WASM_CFLAGS   = -dynamic ${OPT}
-NATIVE_CFLAGS = -I. -L${PARI_NATIVE}/lib -I${PARI_NATIVE}/include -lpari   -L${GMP_NATIVE}/lib -I${GMP_NATIVE}/include -lgmp -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9 -lpython3.9  -lc ${OPT}
+NATIVE_CFLAGS = -I. -L${PARI_NATIVE}/lib -I${PARI_NATIVE}/include -lpari   -L${GMP_NATIVE}/lib -I${GMP_NATIVE}/include -lgmp -lc ${OPT}
 
 DIST = ${CWD}/dist
 
