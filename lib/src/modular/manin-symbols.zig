@@ -496,5 +496,5 @@ test "compute presentation" {
 
     var t2 = try presentation.heckeOperator(2);
     defer t2.deinit();
-    //std.debug.print("\nt2 = {}\n", .{t2});
+    std.debug.print("\nt2 = {}\n", .{t2});
 }

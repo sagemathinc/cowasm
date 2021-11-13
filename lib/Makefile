@@ -26,11 +26,11 @@ all: ${DIST}/.built
 ## Interface with GMP directly:
 .PHONY: test-integer
 test-integer:
-	cd src && ./zig-test integer/integer.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG}
+	cd src && ./zig-test integer/integer.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib
 
 .PHONY: test-rational
 test-rational:
-	cd src && ./zig-test rational/rational.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG} -I rational
+	cd src && ./zig-test rational/rational.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib  -I rational
 
 ${DIST}/gmp.wasm: src/rational/rational.zig src/rational/interface.zig src/custom-allocator.zig src/integer/integer.zig src/integer/interface.zig  src/interface/gmp.zig src/interface/proxy.zig
 	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a ${WASM_CFLAGS} interface/gmp.zig  ${ZIG_PKG}
@@ -46,7 +46,7 @@ ${DIST}/arith.wasm: src/arith.zig src/arith-export.zig
 
 .PHONY: test-generic-power
 test-generic-power:
-	cd src && zig test arith/generic-power.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG}
+	cd src && ./zig-test arith/generic-power.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib
 
 
 ${DIST}/factor.wasm: src/factor.zig src/factor-export.zig
@@ -72,15 +72,15 @@ ${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/in
 
 .PHONY: test-manin-symbols
 test-manin-symbols:
-	cd src && zig test modular/manin-symbols.zig  ${ZIG_PKG}
+	cd src && ./zig-test modular/manin-symbols.zig
 
 .PHONY: test-p1list
 test-p1list:
-	cd src && zig test modular/p1list.zig  ${ZIG_PKG}
+	cd src && ./zig-test modular/p1list.zig
 
 .PHONY: test-heilbronn
 test-heilbronn:
-	cd src && zig test modular/heilbronn.zig  ${ZIG_PKG}
+	cd src && ./zig-test modular/heilbronn.zig
 
 .PHONY: test-modular
 test-modular:
@@ -98,19 +98,19 @@ ${DIST}/modular/dims.wasm: src/modular/dims.zig src/trial-division.zig
 # not in parallel
 .PHONY: test-zig1
 test-zig1:
-	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -n 1 zig test ${ZIG_PKG} ${NATIVE_CFLAGS}
+	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -n 1 ./zig-test ${NATIVE_CFLAGS}
 
 # in parallel
 .PHONY: test-zig
 test-zig:
-	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -P 8 -n 1 zig test ${ZIG_PKG} ${NATIVE_CFLAGS}
+	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -P 8 -n 1 ./zig-test  ${NATIVE_CFLAGS}
 
 ####################
 ## PARI interface
 ####################
 
 test-pari:
-	cd src && zig test pari/pari.zig -I. ${NATIVE_CFLAGS}  ${ZIG_PKG}
+	cd src && ./zig-test pari/pari.zig -I. ${NATIVE_CFLAGS} 
 
 ${DIST}/pari/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
 	cd src && zig build-lib -target wasm32-wasi -lc -I. -I${GMP_WASM}/include ${GMP_WASM}/lib/libgmp.a -I${PARI_WASM}/include ${PARI_WASM}/lib/libpari.a ${WASM_CFLAGS} pari/interface.zig  ${ZIG_PKG}
@@ -122,7 +122,7 @@ ${DIST}/pari/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
 ####################
 
 test-python:
-	cd src && zig test python/python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9  ${ZIG_PKG} -lpython3.9 -lc  #-O ReleaseFast
+	cd src && ./zig-test python/python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9  -lpython3.9 -lc  #-O ReleaseFast
 
 ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig
 	cd src && zig build-lib -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.9 ${PYTHON_WASM}/lib/libpython3.9.a ${WASM_CFLAGS} python/interface.zig  ${ZIG_PKG}
@@ -135,7 +135,7 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig
 ##################
 
 test-proxy-objects:
-	cd src && zig test interface/proxy.zig  ${ZIG_PKG}
+	cd src && ./zig-test interface/proxy.zig
 
 ## Node modules
 node_modules:
