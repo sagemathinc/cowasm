@@ -37,7 +37,7 @@ RUN apt-get install -y vim
 # Of course it *is* good hardcoding a specific dev version, since these can
 # easily go from working to completely broken from one day to the next...
 RUN  cd / \
-  && export VERSION=0.9.0-dev.1524+d2f9646d9 \
+  && export VERSION=0.9.0-dev.1610+e5bc09240 \
   && curl https://ziglang.org/builds/zig-linux-`uname -m`-$VERSION.tar.xz > zig.tar.xz \
   && mkdir zig \
   && tar xf zig.tar.xz -C zig --strip-components=1 \
