@@ -3,6 +3,7 @@
 const std = @import("std");
 const util = @import("../util.zig");
 const errors = @import("../errors.zig");
+const random = @import("../random.zig");
 
 pub const ArrayList = std.ArrayList;
 
@@ -259,8 +260,8 @@ test "basic example from the sage doctest" {
     // std.debug.print("\nmod = {}\n", .{mod});
 }
 
-var rand = std.rand.DefaultPrng.init(0).random;
 fn bench1(comptime T: type, n: T, nrels: T) !void {
+    var rand = (try random.seededPrng()).random();
     var rels = Relations(T).init(allocator);
     defer rels.deinit();
     var i: T = 0;
