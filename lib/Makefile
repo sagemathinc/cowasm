@@ -26,11 +26,11 @@ all: ${DIST}/.built
 ## Interface with GMP directly:
 .PHONY: test-integer
 test-integer:
-	cd src && zig test integer/integer.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG}
+	cd src && ./zig-test integer/integer.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG}
 
 .PHONY: test-rational
 test-rational:
-	cd src && zig test rational/rational.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG} -I rational
+	cd src && ./zig-test rational/rational.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib ${ZIG_PKG} -I rational
 
 ${DIST}/gmp.wasm: src/rational/rational.zig src/rational/interface.zig src/custom-allocator.zig src/integer/integer.zig src/integer/interface.zig  src/interface/gmp.zig src/interface/proxy.zig
 	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a ${WASM_CFLAGS} interface/gmp.zig  ${ZIG_PKG}
@@ -81,6 +81,11 @@ test-p1list:
 .PHONY: test-heilbronn
 test-heilbronn:
 	cd src && zig test modular/heilbronn.zig  ${ZIG_PKG}
+
+.PHONY: test-modular
+test-modular:
+	cd src && grep -l test modular/*.zig | grep -v interface |grep -v export | xargs -t -n 1 ./zig-test
+
 
 ${DIST}/modular/dims.wasm: src/modular/dims.zig src/trial-division.zig
 	cd src/ && zig build-lib -target wasm32-freestanding ${WASM_CFLAGS} modular/dims.zig  ${ZIG_PKG}
