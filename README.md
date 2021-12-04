@@ -47,12 +47,15 @@ Unlike [Julia](https://julialang.org/) or [Oscar](https://oscar.computeralgebra.
 
 ### Dependencies to build
 
-- Install the latest [devel version of zig](https://ziglang.org/download/), i.e., at least 0.9.x.
-- Node.js at least version 16.x (though 14.x might mostly work).
-- **A bunch** of other standard build tools, e.g., make, autoconf stuff, since some packages assume these are available.
-- You do **not** need any compilers or other build tools such as GCC, CLANG, LLVM, etc. _**All compilation is done using zig**_ (which [has clang/llvm built in](https://andrewkelley.me/post/zig-cc-powerful-drop-in-replacement-gcc-clang.html)).
-- Some weird assumptions about the build environment.
-- See [this Dockerfile](./Dockerfile) for my first attempts at automating this.  It doesn't work yet.
+- **Node.js at least version 16.x:** the `node` in your path must be this recent version of node.js, which is very [easy to install](https://nodejs.org/en/download/) on most computers.
+- **Standard build tools:** e.g., git, make, curl, m4, etc. For Linux see the Dockerfile remark below, and for macOS, just make sure to install XCode which includes all this.
+  - This [Dockerfile](./Dockerfile) automates building JSage from source on Ubuntu Linux 20.04.  It fully works on both x86\_64 and aarch64 Linux, and looking at it might answer any questions about build dependencies.  Also, if you're having trouble building JSage and have Docker installed, you could instead do `make docker` and build this Docker image locally.
+- **Tested Platforms:** I've tested building on the following platforms:
+  - _x86\_64 and aarch64 Linux_ -- via the Dockerfile above
+  - _macOS 12.x with Apple Silicon_, and XCode installed (to provide make, git, etc.)
+  - x86\_64 Linux as in any [CoCalc](https://cocalc.com) project with network access.
+
+The build takes on the order of **one hour** or so.
 
 ### How to build
 
@@ -62,7 +65,7 @@ Just type "make"
 ...$ make
 ```
 
-This runs a single top level makefile to build all the packages. The build process for all individual packages is _also_ accomplished using a Makefile. We don't use shell scripts or Python code to orchestrate building anything, since `make` is much cleaner and easier to read and maintain.
+This runs a single top level makefile to build all the packages. The build process for all individual packages is _also_ accomplished using a Makefile. We don't use shell scripts or Python code to orchestrate building anything, since `make` is much cleaner and easier to read, maintain and debug.
 
 ### What happens
 
@@ -77,7 +80,7 @@ Unlike SageMath, where everything is built into a single `local` directory, here
 
 ### Native and Wasm
 
-The build creates directories dist/native and dist/wasm. The `dist/native` artifacts are only of value on the computer where you ran the build, since they are architecture dependent and can easily depend on libraries on your system. In contrast, the `dist/wasm` artifacts are <u> </u>_**MAGIC™!**_ They are completely architecture independent, and can be used nearly everywhere -- on servers via WASM, on ARM computers (e.g., ARM linux, Apple Silicon), and in any modern web browser (though many details remain, obviously).
+The build creates directories dist/native and dist/wasm. The `dist/native` artifacts are only of value on the computer where you ran the build, since they are architecture dependent and can easily depend on libraries on your system. In contrast, the `dist/wasm` artifacts are platform independent.  They can be used nearly everywhere: on servers via WASM, on ARM computers (e.g., aarch64 linux, Apple Silicon, etc.), and in any modern web browser (though many details remain, obviously).
 
 ### Contact
 
