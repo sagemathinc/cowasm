@@ -459,30 +459,37 @@ test "compute some manin symbols presentations for levels N and do a consistency
     }
 }
 
-fn bench(N: usize, sign: Sign) !void {
+fn bench(comptime T: type, N: usize, sign: Sign) !void {
     const time = std.time.milliTimestamp;
     const t = time();
-    var M = try ManinSymbols(i64, u32).init(test_allocator, N, sign);
+    const p = 97;
+    var M = try ManinSymbols(T, u32).init(test_allocator, N, sign);
     defer M.deinit();
-    var presentation = try M.presentation(i64, 997, true);
+    var presentation = try M.presentation(T, p, true);
     defer presentation.deinit();
-    std.debug.print("\nbench({},{}) = {}ms, r={}\n", .{ N, sign, time() - t, presentation.basis.items.len });
-}
-
-// zig test manin-symbols.zig --main-pkg-path .. -O ReleaseFast -lc
-//const BENCH = false;
-const BENCH = true;
-test "bench" {
-    if (BENCH) {
-        try bench(37, Sign.zero);
-        try bench(389, Sign.zero);
-        try bench(5000, Sign.zero);
-        try bench(5000, Sign.plus);
-        try bench(5000, Sign.minus);
-        try bench(5077, Sign.zero);
-        try bench(5077, Sign.plus);
-        try bench(10007, Sign.plus);
-        try bench(100003, Sign.plus);
+    const r = presentation.basis.items.len;
+    if (sign == Sign.zero) {
+        const d = M.dimensionFormula();
+        try expect(d == r);
+        std.debug.print("\nbench({},{}) = {}ms, rank={}={}\n-----------\n\n", .{ N, sign, time() - t, r, d });
+    } else {
+        std.debug.print("\nbench({},{}) = {}ms, rank={}\n-----------\n\n", .{ N, sign, time() - t, r });
     }
 }
 
+// zig test manin-symbols.zig --main-pkg-path .. -O ReleaseFast -lc
+const BENCH = false;
+//const BENCH = true;
+test "bench" {
+    if (BENCH) {
+        try bench(i32, 37, Sign.zero);
+        try bench(i32, 389, Sign.zero);
+        try bench(i32, 5000, Sign.zero);
+        try bench(i32, 5000, Sign.plus);
+        try bench(i32, 5000, Sign.minus);
+        try bench(i32, 5077, Sign.zero);
+        try bench(i32, 5077, Sign.plus);
+        try bench(i64, 10007, Sign.plus);
+        try bench(i64, 100003, Sign.plus);
+    }
+}
