@@ -54,6 +54,7 @@ Unlike [Julia](https://julialang.org/) or [Oscar](https://oscar.computeralgebra.
   - _x86\_64 and aarch64 Linux_ -- via the Dockerfile above
   - _macOS 12.x with Apple Silicon_, and XCode installed (to provide make, git, etc.)
   - x86\_64 Linux as in any [CoCalc](https://cocalc.com) project with network access.
+  - [Microsoft Windows via WSL](https://docs.microsoft.com/en-us/windows/wsl/install#change-the-default-linux-distribution-installed) -- works fine, at least using Ubuntu (the default) after `apt install` the packages in the Dockerfile.
 
 The build takes on the order of **one hour** or so.
 
