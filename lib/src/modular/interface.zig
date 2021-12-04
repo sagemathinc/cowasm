@@ -66,9 +66,9 @@ pub export fn ManinSymbols_format(handle: i32) void {
     ManinSymbols_objects.format(handle);
 }
 
-pub export fn ManinSymbols_presentation(handle: i32, p: i32) i32 {
+pub export fn ManinSymbols_presentation(handle: i32, p: i32, verbose: i32) i32 {
     var M = ManinSymbols_get(handle) catch return 0;
-    var P = M.presentation(i32, p) catch {
+    var P = M.presentation(i32, p, verbose != 0) catch {
         interface.throw("Failed to compute presentation.");
         return 0;
     };

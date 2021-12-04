@@ -32,8 +32,12 @@ class ManinSymbolsClass {
     return wasm.exports.ManinSymbols_print(this.handle);
   }
 
-  presentation(p: number): ManinSymbolsPresentation {
-    const handle = wasm.exports.ManinSymbols_presentation(this.handle, p);
+  presentation(p: number, verbose: boolean = false): ManinSymbolsPresentation {
+    const handle = wasm.exports.ManinSymbols_presentation(
+      this.handle,
+      p,
+      verbose
+    );
     return new ManinSymbolsPresentation(handle, p, this);
   }
 

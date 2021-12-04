@@ -131,7 +131,7 @@ pub fn SparseMatrixMod(comptime T: type) type {
                 const a = self.rows.items[r].unsafeGet(c);
                 if (a != 1) {
                     const aInverse = try inverseMod(a, self.modulus);
-                    self.rows.items[r].rescale(aInverse);
+                    try self.rows.items[r].rescale(aInverse);
                 }
                 try self.swapRows(r, startRow);
                 var i: usize = 0;

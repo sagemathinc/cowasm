@@ -186,28 +186,28 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
             return matrix;
         }
 
-        pub fn presentation(self: Syms, comptime T: type, p: T) !Presentation(Syms, T, Coeff) {
+        pub fn presentation(self: Syms, comptime T: type, p: T, verbose: bool) !Presentation(Syms, T, Coeff) {
             var tm = timer(true);
-            tm.print("computing presentation");
+            if (verbose) tm.print("computing presentation");
 
             var basis = std.ArrayList(usize).init(self.allocator);
             var quo2term = try self.twoTermQuotient();
             defer quo2term.deinit();
 
-            tm.print("computed quotient by 2-term relations");
+            if (verbose) tm.print("computed quotient by 2-term relations");
 
             var rel3 = try self.relationMatrixMod(T, p, quo2term);
             defer rel3.deinit();
 
-            tm.print("computed 3-term relation matrix");
-            // std.debug.print("rel3=\n{}\n", .{rel3});
+            if (verbose) tm.print("computed 3-term relation matrix");
+            //std.debug.print("rel3=\n{}\n", .{rel3});
 
             var columnTypes = try rel3.echelonize();
             defer columnTypes.deinit();
 
-            // std.debug.print("rref(rel3)=\n{}\n", .{rel3});
+            //std.debug.print("rref(rel3)=\n{}\n", .{rel3});
 
-            tm.print("computed echelon form of 3-term relation matrix");
+            if (verbose) tm.print("computed echelon form of 3-term relation matrix");
 
             // write each generator in terms of the r non-pivot columns.
             const n: Index = quo2term.ngens;
@@ -224,6 +224,9 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
                     r += 1;
                 }
             }
+
+            //std.debug.print("rank = {}\n", .{r});
+
             var matrix = try dense_matrix.DenseMatrixMod(T).init(p, n, r, self.allocator);
             var i: Index = 0;
             while (i < n) : (i += 1) {
@@ -258,10 +261,10 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
                 }
             }
             if (matrix.ncols != basis.items.len) {
-                std.debug.print("not even basis elements; need to deal with coefficient issue?", .{});
+                std.debug.print("not enough basis elements; need to deal with coefficient issue?", .{});
                 return errors.General.RuntimeError;
             }
-            tm.print("computed presentation matrix");
+            if (verbose) tm.print("computed presentation matrix");
             // std.debug.print("presentation matrix=\n{}\n", .{matrix});
             return Presentation(Syms, T, Coeff){ .matrix = matrix, .basis = basis, .manin_symbols = self };
         }
@@ -436,23 +439,23 @@ test "compute quotient modulo two term relations for N=3 with sign 1" {
 // compute rank for given space modulo the given prime p.
 fn rankCheck(allocator: *std.mem.Allocator, N: usize, sign: Sign, p: i32) !usize {
     //std.debug.print("\nrankCheck N={},sign={},p={}\n", .{ N, sign, p });
-    var M = try ManinSymbols(i64, u32).init(allocator, N, sign);
+    var M = try ManinSymbols(i32, u32).init(allocator, N, sign);
     defer M.deinit();
-    var presentation = try M.presentation(i64, p);
+    var presentation = try M.presentation(i32, p, false);
     defer presentation.deinit();
     const d = M.dimensionFormula();
     const r = presentation.basis.items.len;
     if (r != d) {
-        std.debug.print("\ndimension wrong for N={}; have r={} and d={}\n", .{ N, r, d });
+        std.debug.print("\nrankCheck: dimension wrong for N={},sign={},p={}; have r={} and d={}\n", .{ N, sign, p, r, d });
         return errors.General.RuntimeError;
     }
     return r;
 }
 
-test "compute some manin symbols presentations for prime N and do consistency checks on their dimension" {
-    var N: usize = 3;
-    while (N < 40) : (N += 1) {
-        _ = try rankCheck(test_allocator, N, Sign.zero, 2003);
+test "compute some manin symbols presentations for levels N and do a consistency checks on the dimension" {
+    var N: usize = 2;
+    while (N <= 100) : (N += 1) {
+        _ = try rankCheck(test_allocator, N, Sign.zero, 997);
     }
 }
 
@@ -461,14 +464,14 @@ fn bench(N: usize, sign: Sign) !void {
     const t = time();
     var M = try ManinSymbols(i64, u32).init(test_allocator, N, sign);
     defer M.deinit();
-    var presentation = try M.presentation(i64, 997);
+    var presentation = try M.presentation(i64, 997, true);
     defer presentation.deinit();
     std.debug.print("\nbench({},{}) = {}ms, r={}\n", .{ N, sign, time() - t, presentation.basis.items.len });
 }
 
 // zig test manin-symbols.zig --main-pkg-path .. -O ReleaseFast -lc
-const BENCH = false;
-//const BENCH = true;
+//const BENCH = false;
+const BENCH = true;
 test "bench" {
     if (BENCH) {
         try bench(37, Sign.zero);
@@ -483,33 +486,3 @@ test "bench" {
     }
 }
 
-test "compute presentation" {
-    var M = try ManinSymbols(i32, u32).init(test_allocator, 11, Sign.zero);
-    defer M.deinit();
-    M.P1.print();
-    var presentation = try M.presentation(i32, 997);
-    defer presentation.deinit();
-    //std.debug.print("\npresentation={}\n", .{presentation});
-    var v = try presentation.reduce(3, 9);
-    defer v.deinit();
-    try expect((try v.get(0)) == 1);
-    try expect((try v.get(1)) == 996);
-    try expect((try v.get(2)) == 0);
-
-    var uv = try presentation.lift(1);
-    //uv.print();
-    //std.debug.print("\n", .{});
-    try expect(uv.u == 1);
-    try expect(uv.v == 8);
-
-    var m2 = try presentation.liftToSL2Z(1);
-    try expect(m2.a == 0);
-    try expect(m2.b == -1);
-    try expect(m2.c == 1);
-    try expect(m2.d == 8);
-    //m2.print();
-
-    var t2 = try presentation.heckeOperator(2);
-    defer t2.deinit();
-    std.debug.print("\nt2 = {}\n", .{t2});
-}

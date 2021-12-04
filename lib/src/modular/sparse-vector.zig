@@ -112,14 +112,21 @@ pub fn SparseVectorMod(comptime T: type) type {
             return self.op(right, false);
         }
 
-        pub fn rescale(self: *Vector, s: T) void {
+        pub fn rescale(self: *Vector, s: T) !void {
             var scalar = mod(s, self.modulus);
             if (scalar == 1) return;
-            var it = self.map.iterator();
+            // IMPORTANT:  "any modification invalidates live iterators."
+            // (seee zig/lib/std/hash/hash_map.zig).
+            // This really is a problem!   If you try to iterate and rescale
+            // in one loop, then this will definitely cause subtle bugs.
+            var copy = try self.map.clone();
+            defer copy.deinit();
+            var it = copy.iterator();
             while (it.next()) |kv| {
                 const i = kv.key_ptr.*;
                 const val = kv.value_ptr.*;
-                self.unsafeSet(i, mod(val * scalar, self.modulus)) catch {
+                const x = mod(val * scalar, self.modulus);
+                self.unsafeSet(i, x) catch {
                     // can't happen since not allocating, etc.
                     unreachable;
                 };
@@ -128,7 +135,7 @@ pub fn SparseVectorMod(comptime T: type) type {
 
         pub fn scale(self: Vector, s: T) !Vector {
             var v = try self.clone();
-            v.rescale(s);
+            try v.rescale(s);
             return v;
         }
 
@@ -242,7 +249,7 @@ test "scale and rescale a vector" {
     defer w.deinit();
     try expect((try w.get(0)) == 0);
     try expect((try w.get(1)) == 9);
-    v.rescale(3);
+    try v.rescale(3);
     try expect((try v.get(0)) == 0);
     try expect((try v.get(1)) == 9);
 }
