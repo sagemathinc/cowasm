@@ -3,6 +3,8 @@
 OPT           = -O ReleaseFast
 CWD           = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
+export PATH := ${CWD}/packages/zig/dist:$(PATH)
+
 ZIG_PKG       = --main-pkg-path ${CWD}/src
 PACKAGES      = ${CWD}/../packages
 GMP_NATIVE    = ${PACKAGES}/gmp/dist/native
