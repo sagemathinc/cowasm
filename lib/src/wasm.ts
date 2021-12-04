@@ -195,3 +195,7 @@ export class WasmInstance {
     return this.result ?? r;
   }
 }
+
+export function run(filename: string) {
+  wasmImport(filename);
+}

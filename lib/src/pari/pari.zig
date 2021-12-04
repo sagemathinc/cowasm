@@ -9,16 +9,6 @@ export fn init(parisize: pari.sizet, maxprime: pari.ulong) void {
     pari.pari_init(if (parisize == 0) 64 * 1000000 else parisize, if (maxprime == 0) 100000 else maxprime);
 }
 
-export fn add(a: c_long, b: c_long) c_long {
-    var av: pari.pari_sp = pari.avma;
-    var x: pari.GEN = pari.stoi(a);
-    var y: pari.GEN = pari.stoi(b);
-    var z: pari.GEN = pari.gadd(x, y);
-    const r: c_long = pari.itos(z);
-    pari.avma = av;
-    return r;
-}
-
 pub fn exec(s: [*:0]const u8) ![*:0]u8 {
     var av: pari.pari_sp = pari.avma;
     var x: pari.GEN = pari.gp_read_str_multiline(s, null);
@@ -28,10 +18,6 @@ pub fn exec(s: [*:0]const u8) ![*:0]u8 {
 }
 
 const expect = std.testing.expect;
-test "calling zig_add" {
-    init(0, 0);
-    try expect(add(2, 3) == 5);
-}
 
 test "calling exec" {
     init(0, 0);

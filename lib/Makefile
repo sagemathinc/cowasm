@@ -105,12 +105,17 @@ test-zig1:
 test-zig:
 	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -P 8 -n 1 ./zig-test  ${NATIVE_CFLAGS}
 
+# native m1 mac development -- test what works (e.g., Python doesn't, and maybe we don't need it)
+.PHONY: test-macos
+test-macos:
+	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | grep -v python | grep -v pari | xargs -t -n 1 ./zig-test ${NATIVE_CFLAGS}
+
 ####################
 ## PARI interface
 ####################
 
 test-pari:
-	cd src && ./zig-test pari/pari.zig -I. ${NATIVE_CFLAGS} 
+	cd src && ./zig-test pari/pari.zig -I. ${NATIVE_CFLAGS}
 
 ${DIST}/pari/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
 	cd src && zig build-lib -target wasm32-wasi -lc -I. -I${GMP_WASM}/include ${GMP_WASM}/lib/libgmp.a -I${PARI_WASM}/include ${PARI_WASM}/lib/libpari.a ${WASM_CFLAGS} pari/interface.zig  ${ZIG_PKG}
