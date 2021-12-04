@@ -191,35 +191,45 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
             tm.print("computing presentation");
 
             var basis = std.ArrayList(usize).init(self.allocator);
-            var quo = try self.twoTermQuotient();
-            defer quo.deinit();
+            var quo2term = try self.twoTermQuotient();
+            defer quo2term.deinit();
 
             tm.print("computed quotient by 2-term relations");
 
-            var rel3 = try self.relationMatrixMod(T, p, quo);
+            var rel3 = try self.relationMatrixMod(T, p, quo2term);
             defer rel3.deinit();
 
-            tm.print("computed relation matrix");
+            tm.print("computed 3-term relation matrix");
+            // std.debug.print("rel3=\n{}\n", .{rel3});
 
             var columnTypes = try rel3.echelonize();
             defer columnTypes.deinit();
 
-            tm.print("computed echelon");
+            // std.debug.print("rref(rel3)=\n{}\n", .{rel3});
+
+            tm.print("computed echelon form of 3-term relation matrix");
 
             // write each generator in terms of the r non-pivot columns.
-            const n: Index = quo.ngens;
-            var r: usize = 0;
+            const n: Index = quo2term.ngens;
+            var r: usize = 0; // number of non-pivot columns (=the rank)
             var j: usize = 0;
+            // As we do this, we also compute map from non-pivot column
+            // positions to columns of the final presentation matrix.
+            var nonpivotToPresentation = try std.ArrayList(usize).initCapacity(self.allocator, columnTypes.items.len);
+            defer nonpivotToPresentation.deinit();
+            nonpivotToPresentation.appendNTimesAssumeCapacity(0, columnTypes.items.len);
             while (j < columnTypes.items.len) : (j += 1) {
                 if (!columnTypes.items[j].isPivot) {
+                    nonpivotToPresentation.items[j] = r;
                     r += 1;
                 }
             }
             var matrix = try dense_matrix.DenseMatrixMod(T).init(p, n, r, self.allocator);
             var i: Index = 0;
             while (i < n) : (i += 1) {
-                const mod = quo.reduce(i);
+                const mod = quo2term.reduce(i);
                 // i-th generator is equal to mod.coeff * [mod.index].
+                // std.debug.print("{}th gen is equal to {} * [{}]\n", .{ i, mod.coeff, mod.index });
                 if (mod.coeff == 0) {
                     // equivalent to 0
                     continue;
@@ -230,15 +240,13 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
                     // write it in terms of generators.
                     // Read off and copy over -mod.coeff * non-pivot positions of
                     // row the index of this pivot of rel3 as row i of matrix.
-                    var c: usize = 0;
                     var it = rel3.rows.items[columnType.index].map.iterator();
                     while (it.next()) |kv| {
                         const ind = kv.key_ptr.*;
                         if (!columnTypes.items[ind].isPivot) {
                             // *not* a pivot, so copy it.
                             const val = -mod.coeff * (kv.value_ptr.*);
-                            try matrix.set(i, c, val);
-                            c += 1;
+                            try matrix.set(i, nonpivotToPresentation.items[ind], val);
                         }
                     }
                 } else {
@@ -254,6 +262,7 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
                 return errors.General.RuntimeError;
             }
             tm.print("computed presentation matrix");
+            // std.debug.print("presentation matrix=\n{}\n", .{matrix});
             return Presentation(Syms, T, Coeff){ .matrix = matrix, .basis = basis, .manin_symbols = self };
         }
     };
@@ -305,7 +314,8 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
             return try self.manin_symbols.P1.liftToSL2Z(j);
         }
 
-        // compute dense matrix representation of the p-th Hecke operator.
+        // compute dense matrix representation of the p-th Hecke operator,
+        // where p is assumed prime (or you get nonsense),
         pub fn heckeOperator(self: P, p: i32) !dense_matrix.DenseMatrixMod(T) {
             var h = try heilbronn.HeilbronnCremona(T).init(test_allocator, p);
             defer h.deinit();
@@ -314,11 +324,15 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
             var b: usize = 0;
             while (b < n) : (b += 1) {
                 var uv = try self.lift(b);
+                // std.debug.print("\n\nb={}; uv={}\n", .{ b, uv });
                 var i: usize = 0;
                 while (i < h.count()) : (i += 1) {
                     const m2 = try h.get(i);
+                    // std.debug.print("applying {}th Heilbronn matrix {}\n", .{ i, m2 });
                     const uv_m2 = uv.actionFromRight(m2);
+                    // std.debug.print("uv*m2 = {}\n", .{uv_m2});
                     var v = try self.reduce(uv_m2.u, uv_m2.v);
+                    // std.debug.print("reduces to {}\n", .{v});
                     defer v.deinit();
                     try Tp.addToRow(b, v);
                 }
@@ -421,6 +435,7 @@ test "compute quotient modulo two term relations for N=3 with sign 1" {
 
 // compute rank for given space modulo the given prime p.
 fn rankCheck(allocator: *std.mem.Allocator, N: usize, sign: Sign, p: i32) !usize {
+    //std.debug.print("\nrankCheck N={},sign={},p={}\n", .{ N, sign, p });
     var M = try ManinSymbols(i64, u32).init(allocator, N, sign);
     defer M.deinit();
     var presentation = try M.presentation(i64, p);
@@ -434,12 +449,12 @@ fn rankCheck(allocator: *std.mem.Allocator, N: usize, sign: Sign, p: i32) !usize
     return r;
 }
 
-// test "compute some manin symbols presentations for prime N and do consistency checks on their dimension" {
-//     var N: usize = 3;
-//     while (N < 40) : (N += 1) {
-//         _ = try rankCheck(test_allocator, N, Sign.zero, 2003);
-//     }
-// }
+test "compute some manin symbols presentations for prime N and do consistency checks on their dimension" {
+    var N: usize = 3;
+    while (N < 40) : (N += 1) {
+        _ = try rankCheck(test_allocator, N, Sign.zero, 2003);
+    }
+}
 
 fn bench(N: usize, sign: Sign) !void {
     const time = std.time.milliTimestamp;
