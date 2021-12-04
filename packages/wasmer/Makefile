@@ -7,6 +7,8 @@ VERSION = 2.1.0
 
 export PATH := ${HOME}/.cargo/bin:$(PATH)
 
+export RUSTUP_HOME := /tmp/rustup
+
 all: dist/${VERSION}
 
 dist/${VERSION}:
@@ -19,6 +21,7 @@ dist/${VERSION}:
 	mkdir -p dist
 	cp build/wasmer/target/release/wasmer dist/
 	rm -rf build
+	rm -rf ${RUSTUP_HOME}
 	touch dist/${VERSION}
 
 clean:
