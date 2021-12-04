@@ -2,6 +2,10 @@
 # We have to do this since, e.g., there's no wasmer binary for linux-aarch64,
 # i.e., Docker on a macbook, and that is a required platform to support.
 
+# Another weird thing is that when we build wasmer from source it's about
+# 23MB, but the binary they distribute for Linux is 119MB; maybe it is
+# a "very fat binary".
+
 # See https://github.com/wasmerio/wasmer/tags
 VERSION = 2.1.0
 
