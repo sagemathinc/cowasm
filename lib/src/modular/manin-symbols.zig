@@ -9,6 +9,7 @@ const dims = @import("./dims.zig");
 const errors = @import("../errors.zig");
 const heilbronn = @import("./heilbronn.zig");
 const timer = @import("../timer.zig").timer;
+const contfrac = @import("./contfrac.zig");
 
 pub const Sign = enum(i4) {
     minus = -1,
@@ -300,13 +301,14 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
         }
 
         // Given an element of P1(Z/NZ), write it in terms
-        // of our basis.
+        // of our basis.  Be sure to deinit the returned DenseVector .
         pub fn reduce(self: P, u: Coeff, v: Coeff) !dense_vector.DenseVectorMod(T) {
             const i = try self.manin_symbols.P1.index(u, v);
             return try self.matrix.getRow(i);
         }
 
         // Lift the ith basis vector to an element of P1(Z/NZ)
+        // Returned element doesn't need to be deinit'd.
         pub fn lift(self: P, i: usize) !p1list.P1Element(Coeff) {
             const j = self.basis.items[i];
             return try self.manin_symbols.P1.get(j);
@@ -341,6 +343,34 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
                 }
             }
             return Tp;
+        }
+
+        // Compute the modular symbol {0, numer/denom} in terms of this presentation.
+        // cf. sage/src/sage/modular/modsym/ambient.py
+        pub fn modularSymbol0(self: P, numer: T, denom: T) !dense_vector.DenseVectorMod(T) {
+            if (denom == 0) {
+                return try self.reduce(0, 1);
+            }
+            const cf = try contfrac.convergents(T, numer, denom);
+            var sign: T = 1;
+            var x = try self.reduce(cf.q[1], cf.q[0]);
+            var k: usize = 2;
+            while (k < cf.len) : (k += 1) {
+                sign *= -1;
+                var y = try self.reduce(cf.q[k], sign * cf.q[k - 1]);
+                defer y.deinit();
+                try x.addInPlace(y, 1);
+            }
+            return x;
+        }
+
+        // Compute the modular symbol {oo, numer/denom} in terms of this presentation.
+        pub fn modularSymbol(self: P, numer: T, denom: T) !dense_vector.DenseVectorMod(T) {
+            var x = try self.modularSymbol0(numer, denom);
+            var y = try self.reduce(0, 1);
+            defer y.deinit();
+            try x.addInPlace(y, -1);
+            return x;
         }
     };
 }
@@ -492,4 +522,37 @@ test "bench" {
         try bench(i64, 10007, Sign.plus);
         try bench(i64, 100003, Sign.plus);
     }
+}
+
+test "compute some modular symbols {0,n/d} for level 11" {
+    // I computed the example below using Sage.
+    var M = try ManinSymbols(i32, u32).init(test_allocator, 11, Sign.zero);
+    defer M.deinit();
+    var P = try M.presentation(i32, 97, false);
+    defer P.deinit();
+    // {0, oo} --> (-1,0,0)
+    var x0 = try P.modularSymbol0(1, 0);
+    defer x0.deinit();
+    try expect(std.mem.eql(i32, x0.entries.items, &[3]i32{ 96, 0, 0 }));
+    // {0, 1/5} --> (0,0,1)
+    var x1 = try P.modularSymbol0(1, 5);
+    defer x1.deinit();
+    try expect(std.mem.eql(i32, x1.entries.items, &[3]i32{ 0, 0, 1 }));
+    // {0, 17/389} --> (0,1,0)
+    var x2 = try P.modularSymbol0(17, 389);
+    defer x2.deinit();
+    try expect(std.mem.eql(i32, x2.entries.items, &[3]i32{ 0, 1, 0 }));
+
+    // {oo, oo} --> (0,0,0)
+    var y0 = try P.modularSymbol(1, 0);
+    defer y0.deinit();
+    try expect(std.mem.eql(i32, y0.entries.items, &[3]i32{ 0, 0, 0 }));
+    // {oo, 1/5} --> (0,0,1)
+    var y1 = try P.modularSymbol(1, 5);
+    defer y1.deinit();
+    try expect(std.mem.eql(i32, y1.entries.items, &[3]i32{ 1, 0, 1 }));
+    // {oo, 17/389} --> (0,1,0)
+    var y2 = try P.modularSymbol(17, 389);
+    defer y2.deinit();
+    try expect(std.mem.eql(i32, y2.entries.items, &[3]i32{ 1, 1, 0 }));
 }

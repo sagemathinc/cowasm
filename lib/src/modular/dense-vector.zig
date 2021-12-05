@@ -21,6 +21,12 @@ pub fn DenseVectorMod(comptime T: type) type {
             self.entries.deinit();
         }
 
+        fn checkCompatible(self: Vector, right: Vector) !void {
+            if (self.modulus != right.modulus or self.degree != right.degree) {
+                return errors.Math.ValueError;
+            }
+        }
+
         pub fn jsonStringify(
             self: Vector,
             options: std.json.StringifyOptions,
@@ -65,6 +71,22 @@ pub fn DenseVectorMod(comptime T: type) type {
                 return errors.General.IndexError;
             }
             return self.unsafeGet(i);
+        }
+
+        // mutate self to equal self + s * right.
+        pub fn addInPlace(self: *Vector, right: Vector, s: T) !void {
+            if (s == 0) return;
+            try self.checkCompatible(right);
+            var i: usize = 0;
+            if (s == 1) {
+                while (i < right.degree) : (i += 1) {
+                    self.unsafeSet(i, mod(self.unsafeGet(i) + right.unsafeGet(i), self.modulus));
+                }
+            } else {
+                while (i < right.degree) : (i += 1) {
+                    self.unsafeSet(i, mod(self.unsafeGet(i) + s * right.unsafeGet(i), self.modulus));
+                }
+            }
         }
 
         // Compute self * right, where right is a matrix with degree rows.
