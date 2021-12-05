@@ -1,6 +1,7 @@
 const std = @import("std");
 const AutoHashMap = std.AutoHashMap;
 const util = @import("./util.zig");
+const allocator = @import("./allocator.zig");
 extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
 
 // A collection of proxy objects of a given type.
@@ -14,8 +15,8 @@ pub fn ProxyObjects(comptime T: type) type {
         map: AutoHashMap(i32, T),
         nextHandle: i32,
 
-        pub fn init(allocator: *std.mem.Allocator) Proxy {
-            var map = AutoHashMap(i32, T).init(allocator);
+        pub fn init() Proxy {
+            var map = AutoHashMap(i32, T).init(allocator.get());
             return Proxy{ .nextHandle = 0, .map = map };
         }
 
@@ -33,15 +34,20 @@ pub fn ProxyObjects(comptime T: type) type {
                     self.nextHandle = -2147483647;
                 }
             }
+            // std.debug.print("Proxy({}).put, handle={}, obj={}\n", .{ T, self.nextHandle, obj });
             try self.map.put(self.nextHandle, obj);
+            // std.debug.print("put definitely worked\n", .{});
+            // std.debug.print("test get: {}\n", .{self.get(self.nextHandle)});
             return self.nextHandle;
         }
 
         pub fn get(self: Proxy, handle: i32) ?T {
+            // std.debug.print("Proxy({}).get, handle={}, count={}\n", .{ T, handle, self.map.count() });
             return self.map.get(handle);
         }
 
         pub fn free(self: *Proxy, handle: i32) void {
+            // std.debug.print("Proxy({}).free, handle={}\n", .{ T, handle });
             var obj = self.map.get(handle) orelse {
                 // no need to do anything.
                 return;
@@ -59,7 +65,8 @@ pub fn ProxyObjects(comptime T: type) type {
         // must have a jsonStringify method.
         pub fn stringify(self: Proxy, handle: i32) void {
             const obj = self.get(handle) orelse {
-                util.throw("no object with handle");
+                // std.debug.print("Proxy({}).get({}) ERROR\n", .{ T, handle });
+                util.throw("stringify -- no object with handle");
                 return;
             };
             var out = std.ArrayList(u8).init(self.map.allocator);
@@ -76,7 +83,8 @@ pub fn ProxyObjects(comptime T: type) type {
         // reasonable to look at.
         pub fn format(self: Proxy, handle: i32) void {
             const obj = self.get(handle) orelse {
-                util.throw("no object with handle");
+                // std.debug.print("Proxy({}).get({}) ERROR\n", .{ T, handle });
+                util.throw("format -- no object with handle");
                 return;
             };
             var out = std.ArrayList(u8).init(self.map.allocator);
@@ -94,7 +102,7 @@ const expect = std.testing.expect;
 
 test "creating an object and storing it using a handle-based interface container" {
     const p1list = @import("../modular/p1list.zig");
-    var Proxy = ProxyObjects(p1list.P1List(i32)).init(std.testing.allocator);
+    var Proxy = ProxyObjects(p1list.P1List(i32)).init();
     defer Proxy.deinit();
     const P1 = try p1list.P1List(i32).init(std.testing.allocator, 11);
     const handle = try Proxy.put(P1);

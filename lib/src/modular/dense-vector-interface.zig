@@ -4,8 +4,7 @@ const dense_vector = @import("./dense-vector.zig");
 const errors = @import("../errors.zig");
 
 const DenseVectorType = dense_vector.DenseVectorMod(i32);
-var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-var DenseVector_objects = interface.ProxyObjects(DenseVectorType).init(&gpa.allocator);
+var DenseVector_objects = interface.ProxyObjects(DenseVectorType).init();
 
 pub export fn DenseVector_free(handle: i32) void {
     DenseVector_objects.free(handle);

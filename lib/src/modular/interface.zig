@@ -6,9 +6,6 @@ const dense_vector_interface = @import("./dense-vector-interface.zig");
 const dense_matrix_interface = @import("./dense-matrix-interface.zig");
 const sparse_vector_interface = @import("./sparse-vector-interface.zig");
 const sparse_matrix_interface = @import("./sparse-matrix-interface.zig");
-
-var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-
 const ManinSymbolsType = manin_symbols.ManinSymbols(i32, u32);
 
 fn toSign(sign: i32) !manin_symbols.Sign {
@@ -20,10 +17,10 @@ fn toSign(sign: i32) !manin_symbols.Sign {
 }
 
 fn ManinSymbols_create(N: u32, sign: i32) !ManinSymbolsType {
-    return try ManinSymbolsType.init(&gpa.allocator, N, try toSign(sign));
+    return try ManinSymbolsType.init(interface.allocator(), N, try toSign(sign));
 }
 
-var ManinSymbols_objects = interface.ProxyObjects(ManinSymbolsType).init(&gpa.allocator);
+var ManinSymbols_objects = interface.ProxyObjects(ManinSymbolsType).init();
 
 pub export fn ManinSymbols(N: i32, sign: i32) i32 {
     if (N <= 0) {
@@ -82,7 +79,7 @@ pub export fn ManinSymbols_presentation(handle: i32, p: i32, verbose: i32) i32 {
 
 const PresentationType = manin_symbols.Presentation(ManinSymbolsType, i32, i32);
 
-var Presentation_objects = interface.ProxyObjects(PresentationType).init(&gpa.allocator);
+var Presentation_objects = interface.ProxyObjects(PresentationType).init();
 
 pub export fn Presentation_free(handle: i32) void {
     Presentation_objects.free(handle);
@@ -105,6 +102,12 @@ pub export fn Presentation_format(handle: i32) void {
 pub export fn Presentation_reduce(handle: i32, u: i32, v: i32) i32 {
     var P = Presentation_get(handle) catch return 0;
     var vec = P.reduce(u, v) catch return 0;
+    return dense_vector_interface.DenseVector_put(vec);
+}
+
+pub export fn Presentation_modularSymbol(handle: i32, numer_a: i32, denom_a: i32, numer_b: i32, denom_b: i32) i32 {
+    var P = Presentation_get(handle) catch return 0;
+    var vec = P.modularSymbol(numer_a, denom_a, numer_b, denom_b) catch return 0;
     return dense_vector_interface.DenseVector_put(vec);
 }
 

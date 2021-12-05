@@ -4,8 +4,7 @@ const sparse_vector = @import("./dense-vector.zig");
 const errors = @import("../errors.zig");
 
 const SparseVectorType = sparse_vector.SparseVectorMod(i32);
-var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-var SparseVector_objects = interface.ProxyObjects(SparseVectorType).init(&gpa.allocator);
+var SparseVector_objects = interface.ProxyObjects(SparseVectorType).init();
 
 pub export fn SparseVector_free(handle: i32) void {
     SparseVector_objects.free(handle);

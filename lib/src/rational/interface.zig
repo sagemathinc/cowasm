@@ -7,10 +7,8 @@ const RuntimeError = @import("../errors.zig").General.RuntimeError;
 
 pub fn init() void {} // trick so whole module doesn't get optimized away
 
-var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-
 // The collection of proxied rationals
-var rationals = interface.ProxyObjects(Rational).init(&gpa.allocator);
+var rationals = interface.ProxyObjects(Rational).init();
 
 fn get(n: i32) !Rational {
     return rationals.get(n) orelse {

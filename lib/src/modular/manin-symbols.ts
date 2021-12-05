@@ -73,6 +73,27 @@ class ManinSymbolsPresentation {
     return new DenseVector(wasm.exports.Presentation_reduce(this.handle, u, v));
   }
 
+  modularSymbol(
+    a_numer: number,
+    b_numer: number,
+    a_denom?: number,
+    b_denom?: number
+  ): DenseVector {
+    if (a_denom == null) {
+      // {oo,a}
+      [a_numer, a_denom, b_numer, b_denom] = [1, 0, a_numer, a_denom];
+    }
+    return new DenseVector(
+      wasm.exports.Presentation_modularSymbol(
+        this.handle,
+        a_numer,
+        a_denom,
+        b_numer,
+        b_denom
+      )
+    );
+  }
+
   heckeOperator(p: number): DenseMatrix {
     return new DenseMatrix(
       wasm.exports.Presentation_heckeOperator(this.handle, p)

@@ -2,13 +2,11 @@ const p1list = @import("./p1list.zig");
 const std = @import("std");
 const interface = @import("../interface.zig");
 
-var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-
 fn P1ListT(comptime T: type, N: i32) !p1list.P1List(T) {
-    return p1list.P1List(T).init(&gpa.allocator, N);
+    return p1list.P1List(T).init(interface.allocator(), N);
 }
 
-var p1lists32 = interface.ProxyObjects(p1list.P1List(i32)).init(&gpa.allocator);
+var p1lists32 = interface.ProxyObjects(p1list.P1List(i32)).init();
 
 pub export fn P1List(N: i32) i32 {
     var P1 = P1ListT(i32, N) catch {

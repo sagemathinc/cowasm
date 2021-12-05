@@ -5,8 +5,7 @@ const sparse_vector_interface = @import("./sparse-vector-interface.zig");
 const errors = @import("../errors.zig");
 
 const SparseMatrixType = sparse_matrix.SparseMatrixMod(i32);
-var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-var SparseMatrix_objects = interface.ProxyObjects(SparseMatrixType).init(&gpa.allocator);
+var SparseMatrix_objects = interface.ProxyObjects(SparseMatrixType).init();
 
 pub export fn SparseMatrix_free(handle: i32) void {
     SparseMatrix_objects.free(handle);

@@ -7,9 +7,9 @@ extern fn reportError() void;
 // The static version below is fine up to 128 bits
 // and probably much faster than dynamic allocation.
 
-// var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+// const allocator = @import("./interface/allocator.zig");
 // pub export fn factorTrialDivision(N: i32) void {
-//     const F = factor.factorTrialDivision(&gpa.allocator, N) catch {
+//     const F = factor.factorTrialDivision(allocator.get(), N) catch {
 //         reportError();
 //         return;
 //     };

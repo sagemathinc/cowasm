@@ -5,8 +5,7 @@ const dense_vector_interface = @import("./dense-vector-interface.zig");
 const errors = @import("../errors.zig");
 
 const DenseMatrixType = dense_matrix.DenseMatrixMod(i32);
-var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-var DenseMatrix_objects = interface.ProxyObjects(DenseMatrixType).init(&gpa.allocator);
+var DenseMatrix_objects = interface.ProxyObjects(DenseMatrixType).init();
 
 pub export fn DenseMatrix_free(handle: i32) void {
     DenseMatrix_objects.free(handle);

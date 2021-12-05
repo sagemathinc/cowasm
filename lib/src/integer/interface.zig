@@ -7,10 +7,8 @@ const rational_interface = @import("../rational/interface.zig");
 
 pub fn init() void {} // trick so whole module doesn't get optimized away
 
-var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-
 // The collection of proxied integers
-pub var integers = interface.ProxyObjects(Integer).init(&gpa.allocator);
+pub var integers = interface.ProxyObjects(Integer).init();
 
 fn get(n: i32) !Integer {
     return integers.get(n) orelse {
