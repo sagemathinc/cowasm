@@ -347,7 +347,11 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
 
         // Compute the modular symbol {0, numer/denom} in terms of this presentation.
         // cf. sage/src/sage/modular/modsym/ambient.py
+        // Be sure to deinit the returned value.
         pub fn modularSymbol0(self: P, numer: T, denom: T) !dense_vector.DenseVectorMod(T) {
+            if (numer == 0) {
+                return try dense_vector.DenseVectorMod(T).init(self.matrix.modulus, self.matrix.ncols, self.manin_symbols.allocator);
+            }
             if (denom == 0) {
                 return try self.reduce(0, 1);
             }
@@ -364,10 +368,11 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
             return x;
         }
 
-        // Compute the modular symbol {oo, numer/denom} in terms of this presentation.
-        pub fn modularSymbol(self: P, numer: T, denom: T) !dense_vector.DenseVectorMod(T) {
-            var x = try self.modularSymbol0(numer, denom);
-            var y = try self.reduce(0, 1);
+        // Compute the modular symbol {a_numer/a_denom, b_numer/b_denom}
+        // in terms of this presentation.  Be sure to deinit the returned value.
+        pub fn modularSymbol(self: P, a_numer: T, a_denom: T, b_numer: T, b_denom: T) !dense_vector.DenseVectorMod(T) {
+            var x = try self.modularSymbol0(b_numer, b_denom);
+            var y = try self.modularSymbol0(a_numer, a_denom);
             defer y.deinit();
             try x.addInPlace(y, -1);
             return x;
@@ -543,16 +548,21 @@ test "compute some modular symbols {0,n/d} for level 11" {
     defer x2.deinit();
     try expect(std.mem.eql(i32, x2.entries.items, &[3]i32{ 0, 1, 0 }));
 
-    // {oo, oo} --> (0,0,0)
-    var y0 = try P.modularSymbol(1, 0);
+    // {0, 0} --> (0,0,0)
+    var y0 = try P.modularSymbol(0, 1, 0, 1);
     defer y0.deinit();
     try expect(std.mem.eql(i32, y0.entries.items, &[3]i32{ 0, 0, 0 }));
     // {oo, 1/5} --> (0,0,1)
-    var y1 = try P.modularSymbol(1, 5);
+    var y1 = try P.modularSymbol(1, 0, 1, 5);
     defer y1.deinit();
     try expect(std.mem.eql(i32, y1.entries.items, &[3]i32{ 1, 0, 1 }));
     // {oo, 17/389} --> (0,1,0)
-    var y2 = try P.modularSymbol(17, 389);
+    var y2 = try P.modularSymbol(1, 0, 17, 389);
     defer y2.deinit();
     try expect(std.mem.eql(i32, y2.entries.items, &[3]i32{ 1, 1, 0 }));
+
+    // {1/5, 17/389} --> ()
+    var z = try P.modularSymbol(1, 5, 17, 389);
+    defer z.deinit();
+    try expect(std.mem.eql(i32, z.entries.items, &[3]i32{ 0, 1, 96 }));
 }
