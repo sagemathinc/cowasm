@@ -138,7 +138,15 @@ export default async function Repl(options0: Partial<Options>): Promise<void> {
   const ps1 = colorize(options.ps1, "blue");
   const ps2 = colorize(options.ps2, "green");
 
-  initContext();
+  // We capture input *during* initialization, so it
+  // doesn't get lost, since initContext is async.
+  let initLines: string[] = [];
+  function duringInit(line: string) {
+    initLines.push(line);
+  }
+  readline.on("line", duringInit);
+  await initContext();
+  readline.off("line", duringInit);
 
   const buffer: string[] = [];
   let more: boolean = false;
@@ -182,16 +190,15 @@ export default async function Repl(options0: Partial<Options>): Promise<void> {
     // and get all the code and name.
     runInThisContext(printAST(JPython.parse("(def ():\n yield 1\n)"), true));
     runInThisContext('var __name__ = "__repl__"; show_js=false;');
-    const BLOCK = false;
-    if (BLOCK && options.jsage) {
-      const t = new Date().valueOf();
-      console.log("Initializing jsage...");
-      const jsage = require("@jsage/lib");
-      await jsage.init();
-      runInThisContext("jsage = require('@jsage/lib');");
-      console.log(new Date().valueOf() - t);
-    }
-    if (!BLOCK && options.jsage) {
+    if (options.jsage) {
+      const BLOCK = true;
+      if (BLOCK) {
+        //const t = new Date().valueOf();
+        // console.log("Initializing jsage...");
+        const jsage = require("@jsage/lib");
+        await jsage.init();
+        //console.log(new Date().valueOf() - t);
+      }
       runInThisContext("jsage = require('@jsage/lib');");
       runInThisContext("for(const x in jsage) { global[x] = jsage[x]; }");
     }
@@ -327,7 +334,7 @@ export default async function Repl(options0: Partial<Options>): Promise<void> {
     return isIncomplete;
   }
 
-  readline.on("line", (line: string) => {
+  function readLine(line: string) {
     if (more) {
       // We are in a block
       const lineIsEmpty = !line.trimLeft();
@@ -342,7 +349,13 @@ export default async function Repl(options0: Partial<Options>): Promise<void> {
       more = push(line);
     }
     prompt();
-  });
+  }
+  // Run code we received during initialization.
+  for (const line of initLines) {
+    readLine(line);
+  }
+
+  readline.on("line", readLine);
 
   readline.on("history", (history) => {
     // Note -- this only exists in node >15.x.
