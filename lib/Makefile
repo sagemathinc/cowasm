@@ -67,7 +67,7 @@ ${DIST}/modular/p1list.wasm: src/modular/p1list.zig src/modular/p1list-export.zi
 	mv src/p1list-export.wasm ${DIST}/modular/p1list.wasm
 
 
-${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/interface.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig
+${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/interface.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig src/modular/dense-vector-interface.zig src/modular/dense-matrix-interface.zig
 	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} modular/interface.zig  ${ZIG_PKG}
 	mkdir -p ${DIST}/modular
 	mv src/interface.wasm ${DIST}/modular/manin-symbols.wasm
@@ -141,7 +141,7 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig
 ##   - Proxy Objects
 ##################
 
-test-proxy-objects:
+test-proxy:
 	cd src && ./zig-test interface/proxy.zig
 
 ## Node modules
