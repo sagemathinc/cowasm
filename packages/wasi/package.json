@@ -10,13 +10,10 @@
     "lib"
   ],
   "scripts": {
-    "precompile": "cd test/rs && make all",
-    "build": "run-s build:clean build:ts build:prod",
-    "build:clean": "rm -rf lib",
-    "build:ts": "tsc -b",
-    "build:prod": "rollup -c --environment PROD",
-    "build:dev": "rollup -c --environment DEV",
+    "clean": "rm -rf dist",
+    "build": "tsc -b",
     "dev": "watch \"npm run build:dev\" src",
+    "test-precompile": "cd test/rs && make all",
     "test": "jest --config jest.config.js --verbose",
     "test:watch": "jest --config jest.config.js --watch --verbose",
     "docs": "typedoc src/ --out docs --target es6 --theme minimal --mode file"
