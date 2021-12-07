@@ -1,27 +1,24 @@
 // @ts-ignore
-import * as randomfill from "randomfill";
-import hrtime from "../polyfills/browser-hrtime";
-// @ts-ignore
-import * as path from "path-browserify";
+import { randomFillSync } from "randomfill";
+import path from "path-browserify";
+import hrtime from "browser-hrtime";
 
 import { WASIBindings, WASIExitError, WASIKillError } from "../index";
-import getBigIntHrtime from "../polyfills/hrtime.bigint";
 
 const bindings: WASIBindings = {
-  hrtime: getBigIntHrtime(hrtime),
+  hrtime: hrtime.bigint,
   exit: (code: number | null) => {
     throw new WASIExitError(code);
   },
   kill: (signal: string) => {
     throw new WASIKillError(signal);
   },
-  // @ts-ignore
-  randomFillSync: randomfill.randomFillSync,
+  randomFillSync,
   isTTY: () => true,
-  path: path,
+  path,
 
   // Let the user attach the fs at runtime
-  fs: null
+  fs: null,
 };
 
 export default bindings;

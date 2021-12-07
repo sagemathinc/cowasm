@@ -30,8 +30,6 @@ IN THE SOFTWARE.
 
  */
 
-import { BigIntPolyfill as BigInt } from "./polyfills/bigint";
-
 export const WASI_ESUCCESS = 0;
 export const WASI_E2BIG = 1;
 export const WASI_EACCES = 2;

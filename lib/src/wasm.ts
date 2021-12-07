@@ -1,11 +1,12 @@
+import { WASI } from "@jsage/wasi";
+
 import { reuseInFlight } from "async-await-utils/hof";
-import { WASI } from "@wasmer/wasi";
 import { readFile as readFile0 } from "fs";
 import { promisify } from "util";
 import { dirname, join } from "path";
 import callsite from "callsite";
-import * as fs from "fs";
-import * as nodeBindings from "@wasmer/wasi/lib/bindings/node";
+import fs from "fs";
+import nodeBindings from "@wasmer/wasi/lib/bindings/node";
 
 const readFile = promisify(readFile0);
 
@@ -87,8 +88,8 @@ async function doWasmImport(
       // sandbox -- don't give any fs access
     } else {
       opts.bindings = {
-        ...(nodeBindings.default || nodeBindings),
-        fs: fs,
+        ...nodeBindings,
+        fs,
       };
       if (options.dir !== undefined) {
         // something explicit

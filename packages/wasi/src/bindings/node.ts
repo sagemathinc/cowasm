@@ -1,31 +1,22 @@
-const crypto = require("crypto");
-const fs = require("fs");
-const { isatty: isTTY } = require("tty");
-const path = require("path");
+import { randomFillSync } from "crypto";
+import fs from "fs";
+import { isatty as isTTY } from "tty";
+import path from "path";
 
 import { WASIBindings } from "../index";
-import { BigIntPolyfillType } from "../polyfills/bigint";
-import getBigIntHrtime from "../polyfills/hrtime.bigint";
-
-let bigIntHrtime: (
-  time?: [number, number]
-) => BigIntPolyfillType = getBigIntHrtime(process.hrtime);
-if (process.hrtime && process.hrtime.bigint) {
-  bigIntHrtime = process.hrtime.bigint;
-}
 
 const bindings: WASIBindings = {
-  hrtime: bigIntHrtime,
+  hrtime: process.hrtime.bigint,
   exit: (code: number) => {
     process.exit(code);
   },
   kill: (signal: string) => {
     process.kill(process.pid, signal);
   },
-  randomFillSync: crypto.randomFillSync,
-  isTTY: isTTY,
-  fs: fs,
-  path: path
+  randomFillSync,
+  isTTY,
+  fs,
+  path,
 };
 
 export default bindings;

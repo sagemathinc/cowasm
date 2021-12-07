@@ -1,17 +1,7 @@
 /* eslint-disable no-unused-vars */
 
-import {
-  BigIntPolyfill as BigInt,
-  BigIntPolyfillType
-} from "./polyfills/bigint";
-import {
-  DataViewPolyfill as DataView,
-  DataViewPolyfillType
-} from "./polyfills/dataview";
-import Buffer from "./polyfills/buffer";
-
 // Import our default bindings depending on the environment
-let defaultBindings: WASIBindings;
+//let defaultBindings: WASIBindings;
 /*ROLLUP_REPLACE_NODE
 import nodeBindings from "./bindings/node";
 defaultBindings = nodeBindings;
@@ -20,6 +10,10 @@ ROLLUP_REPLACE_NODE*/
 import browserBindings from "./bindings/browser";
 defaultBindings = browserBindings;
 ROLLUP_REPLACE_BROWSER*/
+
+import defaultBindings from "./bindings/node";
+// TODO -- figure out how to do this...
+//import browserBindings from "./bindings/browser";
 
 /*
 
@@ -135,10 +129,9 @@ import {
   WASI_STDERR_FILENO,
   ERROR_MAP,
   SIGNAL_MAP,
-  WASI_ENOENT,
   WASI_WHENCE_CUR,
   WASI_WHENCE_END,
-  WASI_WHENCE_SET
+  WASI_WHENCE_SET,
 } from "./constants";
 
 const STDIN_DEFAULT_RIGHTS =
@@ -165,29 +158,32 @@ const msToNs = (ms: number) => {
 };
 
 const nsToMs = (ns: number | bigint) => {
-  if (typeof ns === 'number') {
+  if (typeof ns === "number") {
     ns = Math.trunc(ns);
   }
   const nsInt = BigInt(ns);
   return Number(nsInt / BigInt(1000000));
 };
 
-const wrap = <T extends Function>(f: T) => (...args: any[]) => {
-  try {
-    return f(...args);
-  } catch (e) {
-    // If it's an error from the fs
-    if (e && e.code && typeof e.code === "string") {
-      return ERROR_MAP[e.code] || WASI_EINVAL;
+const wrap =
+  <T extends Function>(f: T) =>
+  (...args: any[]) => {
+    try {
+      return f(...args);
+    } catch (err) {
+      const e: any = err;
+      // If it's an error from the fs
+      if (e?.code && typeof e?.code === "string") {
+        return ERROR_MAP[e.code] || WASI_EINVAL;
+      }
+      // If it's a WASI error, we return it directly
+      if (e instanceof WASIError) {
+        return e.errno;
+      }
+      // Otherwise we let the error bubble up
+      throw e;
     }
-    // If it's a WASI error, we return it directly
-    if (e instanceof WASIError) {
-      return e.errno;
-    }
-    // Otherwise we let the error bubble up
-    throw e;
-  }
-};
+  };
 
 const stat = (wasi: WASI, fd: number): File => {
   const entry = wasi.FD_MAP.get(fd);
@@ -205,7 +201,7 @@ const stat = (wasi: WASI, fd: number): File => {
     if (!entry.rights) {
       entry.rights = {
         base: rightsBase,
-        inheriting: rightsInheriting
+        inheriting: rightsInheriting,
       };
     }
   }
@@ -222,7 +218,7 @@ const translateFileAttributes = (
       return {
         filetype: WASI_FILETYPE_BLOCK_DEVICE,
         rightsBase: RIGHTS_BLOCK_DEVICE_BASE,
-        rightsInheriting: RIGHTS_BLOCK_DEVICE_INHERITING
+        rightsInheriting: RIGHTS_BLOCK_DEVICE_INHERITING,
       };
     case stats.isCharacterDevice(): {
       const filetype = WASI_FILETYPE_CHARACTER_DEVICE;
@@ -230,57 +226,57 @@ const translateFileAttributes = (
         return {
           filetype,
           rightsBase: RIGHTS_TTY_BASE,
-          rightsInheriting: RIGHTS_TTY_INHERITING
+          rightsInheriting: RIGHTS_TTY_INHERITING,
         };
       }
       return {
         filetype,
         rightsBase: RIGHTS_CHARACTER_DEVICE_BASE,
-        rightsInheriting: RIGHTS_CHARACTER_DEVICE_INHERITING
+        rightsInheriting: RIGHTS_CHARACTER_DEVICE_INHERITING,
       };
     }
     case stats.isDirectory():
       return {
         filetype: WASI_FILETYPE_DIRECTORY,
         rightsBase: RIGHTS_DIRECTORY_BASE,
-        rightsInheriting: RIGHTS_DIRECTORY_INHERITING
+        rightsInheriting: RIGHTS_DIRECTORY_INHERITING,
       };
     case stats.isFIFO():
       return {
         filetype: WASI_FILETYPE_SOCKET_STREAM,
         rightsBase: RIGHTS_SOCKET_BASE,
-        rightsInheriting: RIGHTS_SOCKET_INHERITING
+        rightsInheriting: RIGHTS_SOCKET_INHERITING,
       };
     case stats.isFile():
       return {
         filetype: WASI_FILETYPE_REGULAR_FILE,
         rightsBase: RIGHTS_REGULAR_FILE_BASE,
-        rightsInheriting: RIGHTS_REGULAR_FILE_INHERITING
+        rightsInheriting: RIGHTS_REGULAR_FILE_INHERITING,
       };
     case stats.isSocket():
       return {
         filetype: WASI_FILETYPE_SOCKET_STREAM,
         rightsBase: RIGHTS_SOCKET_BASE,
-        rightsInheriting: RIGHTS_SOCKET_INHERITING
+        rightsInheriting: RIGHTS_SOCKET_INHERITING,
       };
     case stats.isSymbolicLink():
       return {
         filetype: WASI_FILETYPE_SYMBOLIC_LINK,
         rightsBase: BigInt(0),
-        rightsInheriting: BigInt(0)
+        rightsInheriting: BigInt(0),
       };
     default:
       return {
         filetype: WASI_FILETYPE_UNKNOWN,
         rightsBase: BigInt(0),
-        rightsInheriting: BigInt(0)
+        rightsInheriting: BigInt(0),
       };
   }
 };
 
 interface Rights {
-  base: BigIntPolyfillType;
-  inheriting: BigIntPolyfillType;
+  base: bigint;
+  inheriting: bigint;
 }
 
 interface File {
@@ -296,12 +292,6 @@ type Exports = {
   [key: string]: any;
 };
 
-type TypedArray = ArrayLike<any> & {
-  BYTES_PER_ELEMENT: number;
-  set(array: ArrayLike<number>, offset?: number): void;
-  slice(start?: number, end?: number): TypedArray;
-};
-
 export type WASIBindings = {
   // Current high-resolution real time in a bigint
   hrtime: () => bigint;
@@ -309,7 +299,7 @@ export type WASIBindings = {
   exit: (rval: number) => void;
   kill: (signal: string) => void;
   // Crypto functions
-  randomFillSync: <T>(buffer: T, offset: number, size: number) => T;
+  randomFillSync: Function;
   // isTTY
   isTTY: (fd: number) => boolean;
 
@@ -367,7 +357,7 @@ export class WASIKillError extends Error {
 
 export default class WASIDefault {
   memory: WebAssembly.Memory;
-  view: DataViewPolyfillType;
+  view: DataView;
   FD_MAP: Map<number, File>;
   wasiImport: Exports;
   bindings: WASIBindings;
@@ -411,10 +401,10 @@ export default class WASIDefault {
           // offset: BigInt(0),
           rights: {
             base: STDIN_DEFAULT_RIGHTS,
-            inheriting: BigInt(0)
+            inheriting: BigInt(0),
           },
-          path: undefined
-        }
+          path: undefined,
+        },
       ],
       [
         WASI_STDOUT_FILENO,
@@ -424,10 +414,10 @@ export default class WASIDefault {
           // offset: BigInt(0),
           rights: {
             base: STDOUT_DEFAULT_RIGHTS,
-            inheriting: BigInt(0)
+            inheriting: BigInt(0),
           },
-          path: undefined
-        }
+          path: undefined,
+        },
       ],
       [
         WASI_STDERR_FILENO,
@@ -437,11 +427,11 @@ export default class WASIDefault {
           // offset: BigInt(0),
           rights: {
             base: STDERR_DEFAULT_RIGHTS,
-            inheriting: BigInt(0)
+            inheriting: BigInt(0),
           },
-          path: undefined
-        }
-      ]
+          path: undefined,
+        },
+      ],
     ]);
 
     let fs = this.bindings.fs;
@@ -456,10 +446,10 @@ export default class WASIDefault {
         // offset: BigInt(0),
         rights: {
           base: RIGHTS_DIRECTORY_BASE,
-          inheriting: RIGHTS_DIRECTORY_INHERITING
+          inheriting: RIGHTS_DIRECTORY_INHERITING,
         },
         fakePath: k,
-        path: v
+        path: v,
       });
     }
 
@@ -482,7 +472,7 @@ export default class WASIDefault {
       return buffers;
     };
 
-    const CHECK_FD = (fd: number, rights: BigIntPolyfillType) => {
+    const CHECK_FD = (fd: number, rights: bigint) => {
       const stats = stat(this, fd);
       // console.log(`CHECK_FD: stats.real: ${stats.real}, stats.path:`, stats.path);
       if (rights !== BigInt(0) && (stats.rights.base & rights) === BigInt(0)) {
@@ -492,7 +482,7 @@ export default class WASIDefault {
     };
     const CPUTIME_START = bindings.hrtime();
 
-    const now = (clockId: number) => {
+    const now = (clockId?: number) => {
       switch (clockId) {
         case WASI_CLOCK_MONOTONIC:
           return bindings.hrtime();
@@ -500,7 +490,6 @@ export default class WASIDefault {
           return msToNs(Date.now());
         case WASI_CLOCK_PROCESS_CPUTIME_ID:
         case WASI_CLOCK_THREAD_CPUTIME_ID:
-          // return bindings.hrtime(CPUTIME_START)
           return bindings.hrtime() - CPUTIME_START;
         default:
           return null;
@@ -512,7 +501,7 @@ export default class WASIDefault {
         this.refreshMemory();
         let coffset = argv;
         let offset = argvBuf;
-        args.forEach(a => {
+        args.forEach((a) => {
           this.view.setUint32(coffset, offset, true);
           coffset += 4;
           offset += Buffer.from(this.memory.buffer).write(`${a}\0`, offset);
@@ -554,7 +543,7 @@ export default class WASIDefault {
         return WASI_ESUCCESS;
       },
       clock_res_get: (clockId: number, resolution: number) => {
-        let res
+        let res;
         switch (clockId) {
           case WASI_CLOCK_MONOTONIC:
           case WASI_CLOCK_PROCESS_CPUTIME_ID:
@@ -564,13 +553,16 @@ export default class WASIDefault {
           }
           case WASI_CLOCK_REALTIME: {
             res = BigInt(1000);
-            break
+            break;
           }
+        }
+        if (!res) {
+          throw Error("invalid clockId");
         }
         this.view.setBigUint64(resolution, res);
         return WASI_ESUCCESS;
       },
-      clock_time_get: (clockId: number, precision: number, time: number) => {
+      clock_time_get: (clockId: number, _precision: number, time: number) => {
         this.refreshMemory();
         const n = now(clockId);
         if (n === null) {
@@ -580,12 +572,12 @@ export default class WASIDefault {
         return WASI_ESUCCESS;
       },
       fd_advise: wrap(
-        (fd: number, offset: number, len: number, advice: number) => {
+        (fd: number, _offset: number, _len: number, _advice: number) => {
           CHECK_FD(fd, WASI_RIGHT_FD_ADVISE);
           return WASI_ENOSYS;
         }
       ),
-      fd_allocate: wrap((fd: number, offset: number, len: number) => {
+      fd_allocate: wrap((fd: number, _offset: number, _len: number) => {
         CHECK_FD(fd, WASI_RIGHT_FD_ALLOCATE);
         return WASI_ENOSYS;
       }),
@@ -603,6 +595,9 @@ export default class WASIDefault {
       fd_fdstat_get: wrap((fd: number, bufPtr: number) => {
         const stats = CHECK_FD(fd, BigInt(0));
         this.refreshMemory();
+        if (stats.filetype == null) {
+          throw Error("stats.filetype must be set");
+        }
         this.view.setUint8(bufPtr, stats.filetype); // FILETYPE u8
         this.view.setUint16(bufPtr + 2, 0, true); // FDFLAG u16
         this.view.setUint16(bufPtr + 4, 0, true); // FDFLAG u16
@@ -614,16 +609,12 @@ export default class WASIDefault {
         ); // u64
         return WASI_ESUCCESS;
       }),
-      fd_fdstat_set_flags: wrap((fd: number, flags: number) => {
+      fd_fdstat_set_flags: wrap((fd: number, _flags: number) => {
         CHECK_FD(fd, WASI_RIGHT_FD_FDSTAT_SET_FLAGS);
         return WASI_ENOSYS;
       }),
       fd_fdstat_set_rights: wrap(
-        (
-          fd: number,
-          fsRightsBase: BigIntPolyfillType,
-          fsRightsInheriting: BigIntPolyfillType
-        ) => {
+        (fd: number, fsRightsBase: bigint, fsRightsInheriting: bigint) => {
           const stats = CHECK_FD(fd, BigInt(0));
           const nrb = stats.rights.base | fsRightsBase;
           if (nrb > stats.rights.base) {
@@ -646,6 +637,9 @@ export default class WASIDefault {
         bufPtr += 8;
         this.view.setBigUint64(bufPtr, BigInt(rstats.ino), true);
         bufPtr += 8;
+        if (stats.filetype == null) {
+          throw Error("stats.filetype must be set");
+        }
         this.view.setUint8(bufPtr, stats.filetype);
         bufPtr += 8;
         this.view.setBigUint64(bufPtr, BigInt(rstats.nlink), true);
@@ -680,20 +674,22 @@ export default class WASIDefault {
             return WASI_EINVAL;
           }
           if ((fstflags & WASI_FILESTAT_SET_ATIM) === WASI_FILESTAT_SET_ATIM) {
-            atim = nsToMs(stAtim)
-          } else if ((fstflags & WASI_FILESTAT_SET_ATIM_NOW) === WASI_FILESTAT_SET_ATIM_NOW) {
-            atim = n
+            atim = nsToMs(stAtim);
+          } else if (
+            (fstflags & WASI_FILESTAT_SET_ATIM_NOW) ===
+            WASI_FILESTAT_SET_ATIM_NOW
+          ) {
+            atim = n;
           }
           if ((fstflags & WASI_FILESTAT_SET_MTIM) === WASI_FILESTAT_SET_MTIM) {
-            mtim = nsToMs(stMtim)
-          } else if ((fstflags & WASI_FILESTAT_SET_MTIM_NOW) === WASI_FILESTAT_SET_MTIM_NOW) {
-            mtim = n
+            mtim = nsToMs(stMtim);
+          } else if (
+            (fstflags & WASI_FILESTAT_SET_MTIM_NOW) ===
+            WASI_FILESTAT_SET_MTIM_NOW
+          ) {
+            mtim = n;
           }
-          fs.futimesSync(
-            stats.real,
-            new Date(atim),
-            new Date(mtim)
-          );
+          fs.futimesSync(stats.real, new Date(atim), new Date(mtim));
           return WASI_ESUCCESS;
         }
       ),
@@ -737,7 +733,7 @@ export default class WASIDefault {
         ) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_WRITE | WASI_RIGHT_FD_SEEK);
           let written = 0;
-          getiovs(iovs, iovsLen).forEach(iov => {
+          getiovs(iovs, iovsLen).forEach((iov) => {
             let w = 0;
             while (w < iov.byteLength) {
               w += fs.writeSync(
@@ -758,7 +754,7 @@ export default class WASIDefault {
         (fd: number, iovs: number, iovsLen: number, nwritten: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_WRITE);
           let written = 0;
-          getiovs(iovs, iovsLen).forEach(iov => {
+          getiovs(iovs, iovsLen).forEach((iov) => {
             let w = 0;
             while (w < iov.byteLength) {
               const i = fs.writeSync(
@@ -798,15 +794,15 @@ export default class WASIDefault {
                 iov.byteLength - r,
                 Number(offset) + read + r
               );
-              r += rr
-              read += rr
+              r += rr;
+              read += rr;
               // If we don't read anything, or we receive less than requested
               if (rr === 0 || rr < length) {
                 break outer;
               }
             }
             read += r;
-          };
+          }
           this.view.setUint32(nread, read, true);
           return WASI_ESUCCESS;
         }
@@ -955,6 +951,9 @@ export default class WASIDefault {
               stats.offset = BigInt(offset);
               break;
           }
+          if (stats.offset == null) {
+            throw Error("stats.offset must be defined");
+          }
           this.view.setBigUint64(newOffsetPtr, stats.offset, true);
           return WASI_ESUCCESS;
         }
@@ -992,7 +991,7 @@ export default class WASIDefault {
       path_filestat_get: wrap(
         (
           fd: number,
-          flags: number,
+          _flags: number,
           pathPtr: number,
           pathLen: number,
           bufPtr: number
@@ -1032,7 +1031,7 @@ export default class WASIDefault {
       path_filestat_set_times: wrap(
         (
           fd: number,
-          dirflags: number,
+          _dirflags: number,
           pathPtr: number,
           pathLen: number,
           stAtim: number,
@@ -1057,14 +1056,20 @@ export default class WASIDefault {
             return WASI_EINVAL;
           }
           if ((fstflags & WASI_FILESTAT_SET_ATIM) === WASI_FILESTAT_SET_ATIM) {
-            atim = nsToMs(stAtim)
-          } else if ((fstflags & WASI_FILESTAT_SET_ATIM_NOW) === WASI_FILESTAT_SET_ATIM_NOW) {
-            atim = n
+            atim = nsToMs(stAtim);
+          } else if (
+            (fstflags & WASI_FILESTAT_SET_ATIM_NOW) ===
+            WASI_FILESTAT_SET_ATIM_NOW
+          ) {
+            atim = n;
           }
           if ((fstflags & WASI_FILESTAT_SET_MTIM) === WASI_FILESTAT_SET_MTIM) {
-            mtim = nsToMs(stMtim)
-          } else if ((fstflags & WASI_FILESTAT_SET_MTIM_NOW) === WASI_FILESTAT_SET_MTIM_NOW) {
-            mtim = n
+            mtim = nsToMs(stMtim);
+          } else if (
+            (fstflags & WASI_FILESTAT_SET_MTIM_NOW) ===
+            WASI_FILESTAT_SET_MTIM_NOW
+          ) {
+            mtim = n;
           }
           const p = Buffer.from(
             this.memory.buffer,
@@ -1082,7 +1087,7 @@ export default class WASIDefault {
       path_link: wrap(
         (
           oldFd: number,
-          oldFlags: number,
+          _oldFlags: number,
           oldPath: number,
           oldPathLen: number,
           newFd: number,
@@ -1115,12 +1120,12 @@ export default class WASIDefault {
       path_open: wrap(
         (
           dirfd: number,
-          dirflags: number,
+          _dirflags: number,
           pathPtr: number,
           pathLen: number,
           oflags: number,
-          fsRightsBase: BigIntPolyfillType | number,
-          fsRightsInheriting: BigIntPolyfillType | number,
+          fsRightsBase: bigint | number,
+          fsRightsInheriting: bigint | number,
           fsFlags: number,
           fd: number
         ) => {
@@ -1218,7 +1223,7 @@ export default class WASIDefault {
               return WASI_ENOTCAPABLE;
             }
           } catch (e) {
-            if (e.code === "ENOENT") {
+            if ((e as any)?.code === "ENOENT") {
               full = fullUnresolved;
             } else {
               throw e;
@@ -1229,12 +1234,12 @@ export default class WASIDefault {
            * in which case the file may not exist and should be created) */
           let isDirectory;
           try {
-            isDirectory = fs.statSync(full).isDirectory()
+            isDirectory = fs.statSync(full).isDirectory();
           } catch (e) {}
 
           let realfd;
           if (!write && isDirectory) {
-            realfd = fs.openSync(full, fs.constants.O_RDONLY)
+            realfd = fs.openSync(full, fs.constants.O_RDONLY);
           } else {
             realfd = fs.openSync(full, noflags);
           }
@@ -1245,9 +1250,9 @@ export default class WASIDefault {
             // offset: BigInt(0),
             rights: {
               base: neededBase,
-              inheriting: neededInheriting
+              inheriting: neededInheriting,
             },
-            path: full
+            path: full,
           });
           stat(this, newfd);
           this.view.setUint32(fd, newfd, true);
@@ -1383,14 +1388,14 @@ export default class WASIDefault {
           switch (type) {
             case WASI_EVENTTYPE_CLOCK: {
               sin += 7; // padding
-              const identifier = this.view.getBigUint64(sin, true);
+              //const identifier = this.view.getBigUint64(sin, true);
               sin += 8;
               const clockid = this.view.getUint32(sin, true);
               sin += 4;
               sin += 4; // padding
               const timestamp = this.view.getBigUint64(sin, true);
               sin += 8;
-              const precision = this.view.getBigUint64(sin, true);
+              //const precision = this.view.getBigUint64(sin, true);
               sin += 8;
               const subclockflags = this.view.getUint16(sin, true);
               sin += 2;
@@ -1399,13 +1404,12 @@ export default class WASIDefault {
               const absolute = subclockflags === 1;
 
               let e = WASI_ESUCCESS;
-              const n = BigInt(now(clockid));
-              if (n === null) {
+              const t = now(clockid);
+              if (t == null) {
                 e = WASI_EINVAL;
               } else {
-                const end = absolute ? timestamp : n + timestamp;
-                waitEnd =
-                  end > waitEnd ? ((end as unknown) as number) : waitEnd;
+                const end = absolute ? timestamp : BigInt(t) + timestamp;
+                waitEnd = end > waitEnd ? (end as unknown as number) : waitEnd;
               }
 
               this.view.setBigUint64(sout, userdata, true);
@@ -1423,7 +1427,7 @@ export default class WASIDefault {
             case WASI_EVENTTYPE_FD_READ:
             case WASI_EVENTTYPE_FD_WRITE: {
               sin += 3; // padding
-              const fd = this.view.getUint32(sin, true);
+              //const fd = this.view.getUint32(sin, true);
               sin += 4;
 
               this.view.setBigUint64(sout, userdata, true);
@@ -1484,13 +1488,13 @@ export default class WASIDefault {
       },
       sock_shutdown() {
         return WASI_ENOSYS;
-      }
+      },
     };
     // Wrap each of the imports to show the calls in the console
     if ((wasiConfig as WASIConfig).traceSyscalls) {
       Object.keys(this.wasiImport).forEach((key: string) => {
         const prevImport = this.wasiImport[key];
-        this.wasiImport[key] = function(...args: any[]) {
+        this.wasiImport[key] = function (...args: any[]) {
           console.log(`WASI: wasiImport called: ${key} (${args})`);
           try {
             let result = prevImport(...args);
@@ -1537,7 +1541,7 @@ export default class WASIDefault {
   }
 
   private getImportNamespace(module: WebAssembly.Module): string {
-    let namespace = null;
+    let namespace: string | null = null;
     for (let imp of WebAssembly.Module.imports(module)) {
       // We only check for the functions
       if (imp.kind !== "function") {
@@ -1545,33 +1549,36 @@ export default class WASIDefault {
       }
       // We allow functions in other namespaces other than wasi
       if (!imp.module.startsWith("wasi_")) {
-        continue
+        continue;
       }
       if (!namespace) {
         namespace = imp.module;
-      }
-      else {
+      } else {
         if (namespace !== imp.module) {
-          throw new Error("Multiple namespaces detected.")
+          throw new Error("Multiple namespaces detected.");
         }
       }
     }
     return namespace!;
   }
 
-  getImports(module: WebAssembly.Module): Record<string, Record<string, Function>> {
+  getImports(
+    module: WebAssembly.Module
+  ): Record<string, Record<string, Function>> {
     let namespace = this.getImportNamespace(module);
     switch (namespace) {
       case "wasi_unstable":
         return {
-          wasi_unstable: this.wasiImport
-        }
+          wasi_unstable: this.wasiImport,
+        };
       case "wasi_snapshot_preview1":
         return {
-          wasi_snapshot_preview1:  this.wasiImport
-        }
+          wasi_snapshot_preview1: this.wasiImport,
+        };
       default:
-        throw new Error("Can't detect a WASI namespace for the WebAssembly Module")
+        throw new Error(
+          "Can't detect a WASI namespace for the WebAssembly Module"
+        );
     }
   }
 }

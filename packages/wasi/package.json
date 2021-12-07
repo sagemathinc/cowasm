@@ -1,17 +1,12 @@
 {
   "name": "@jsage/wasi",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Isomorphic Javascript library for interacting with WASI Modules in Node.js and the Browser.",
-  "main": "lib/index.cjs.js",
-  "module": "lib/index.esm.js",
-  "iife": "lib/index.iife.js",
-  "typings": "lib/packages/wasi/src/index.d.ts",
-  "files": [
-    "lib"
-  ],
+  "main": "dist/index.js",
   "scripts": {
     "clean": "rm -rf dist",
     "build": "tsc -b",
+    "tsc": "tsc -w",
     "dev": "watch \"npm run build:dev\" src",
     "test-precompile": "cd test/rs && make all",
     "test": "jest --config jest.config.js --verbose",
@@ -42,12 +37,13 @@
   },
   "homepage": "https://github.com/sagemathinc/JSage/tree/main/packages/wasi",
   "dependencies": {
-    "browser-process-hrtime": "^1.0.0",
-    "buffer-es6": "^4.9.3",
+    "browser-hrtime": "^1.1.8",
     "path-browserify": "^1.0.0",
     "randomfill": "^1.0.4"
   },
   "devDependencies": {
+    "@types/node": "^16.11.12",
+    "@types/path-browserify": "^1.0.0",
     "typescript": "^4.5.2"
   }
 }

@@ -66,7 +66,7 @@ packages/eclib/${BUILT}: wasmer packages/gmp/${BUILT} packages/mpfr/${BUILT} pac
 .PHONY: eclib
 eclib: packages/eclib/${BUILT}
 
-lib/${BUILT}: packages/gmp/${BUILT} packages/pari/${BUILT}  zig # packages/python/${BUILT}
+lib/${BUILT}: packages/gmp/${BUILT} packages/pari/${BUILT} wasi zig # packages/python/${BUILT}
 	cd lib && make all
 .PHONY: lib
 lib: lib/${BUILT}
@@ -95,6 +95,13 @@ packages/jpython/${BUILT}: lib/${BUILT}
 .PHONY: jpython
 jpython: packages/jpython/${BUILT}
 
+
+packages/wasi/${BUILT}: lib/${BUILT}
+	cd packages/wasi && make all
+.PHONY: wasi
+wasi: packages/wasi/${BUILT}
+
+
 .PHONY: docker
 docker:
 	docker build . -t jsage
@@ -109,6 +116,7 @@ clean:
 	cd packages/flint && make clean
 	cd packages/pari && make clean
 	cd packages/eclib && make clean
+	cd packages/wasi && make clean
 	cd packages/jpython && make clean
 	cd packages/python && make clean
 	cd packages/openssl && make clean
