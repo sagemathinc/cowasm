@@ -1,0 +1,56 @@
+{
+  "name": "@jsage/wasi",
+  "version": "0.12.0",
+  "description": "Isomorphic Javascript library for interacting with WASI Modules in Node.js and the Browser.",
+  "main": "lib/index.cjs.js",
+  "module": "lib/index.esm.js",
+  "iife": "lib/index.iife.js",
+  "typings": "lib/packages/wasi/src/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "precompile": "cd test/rs && make all",
+    "build": "run-s build:clean build:ts build:prod",
+    "build:clean": "rm -rf lib",
+    "build:ts": "tsc -b",
+    "build:prod": "rollup -c --environment PROD",
+    "build:dev": "rollup -c --environment DEV",
+    "dev": "watch \"npm run build:dev\" src",
+    "test": "jest --config jest.config.js --verbose",
+    "test:watch": "jest --config jest.config.js --watch --verbose",
+    "docs": "typedoc src/ --out docs --target es6 --theme minimal --mode file"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/jsage.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "wasi",
+    "webassembly",
+    "wasm",
+    "wasmer",
+    "abi",
+    "esm",
+    "es",
+    "module"
+  ],
+  "author": "William Stein <wstein@sagemath.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/jsage/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/JSage/tree/main/packages/wasi",
+  "dependencies": {
+    "browser-process-hrtime": "^1.0.0",
+    "buffer-es6": "^4.9.3",
+    "path-browserify": "^1.0.0",
+    "randomfill": "^1.0.4"
+  },
+  "devDependencies": {
+    "typescript": "^4.5.2"
+  }
+}
