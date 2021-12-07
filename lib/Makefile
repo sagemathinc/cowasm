@@ -13,8 +13,8 @@ GMP_WASM      = ${PACKAGES}/gmp/dist/wasm
 PARI_NATIVE   = ${PACKAGES}/pari/dist/native
 PARI_WASM     = ${PACKAGES}/pari/dist/wasm
 
-# PYTHON_NATIVE = ${PACKAGES}/python/dist/native
-# PYTHON_WASM   = ${PACKAGES}/python/dist/wasm
+PYTHON_NATIVE = ${PACKAGES}/python/dist/native
+PYTHON_WASM   = ${PACKAGES}/python/dist/wasm
 ### (was below in NATIVE_CFLAGS) -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9 -lpython3.9
 
 WASM_CFLAGS   = -dynamic ${OPT}
@@ -135,6 +135,9 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig
 	cd src && zig build-lib -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.9 ${PYTHON_WASM}/lib/libpython3.9.a ${WASM_CFLAGS} python/interface.zig  ${ZIG_PKG}
 	mkdir -p ${DIST}/python
 	mv src/interface.wasm ${DIST}/python/python.wasm
+
+.PHONEY: python
+python: ${DIST}/python/python.wasm
 
 ##################
 ## Interface support functionality for WebAssembly.
