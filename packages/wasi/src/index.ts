@@ -1,21 +1,9 @@
-/* eslint-disable no-unused-vars */
-
-// Import our default bindings depending on the environment
-//let defaultBindings: WASIBindings;
-/*ROLLUP_REPLACE_NODE
-import nodeBindings from "./bindings/node";
-defaultBindings = nodeBindings;
-ROLLUP_REPLACE_NODE*/
-/*ROLLUP_REPLACE_BROWSER
-import browserBindings from "./bindings/browser";
-defaultBindings = browserBindings;
-ROLLUP_REPLACE_BROWSER*/
-
-import defaultBindings from "./bindings/node";
-// TODO -- figure out how to do this...
-//import browserBindings from "./bindings/browser";
-
 /*
+
+William Stein: This is based on what the wasmer devs based on what Gus Caplan did...
+
+
+And here's what the WASMER people wrote:
 
 This project is based from the Node implementation made by Gus Caplan
 https://github.com/devsnek/node-wasi
@@ -313,18 +301,11 @@ export type WASIBindings = {
 export type WASIArgs = string[];
 export type WASIEnv = { [key: string]: string | undefined };
 export type WASIPreopenedDirs = { [key: string]: string };
-export type WASIConfigOld = {
-  // preopenDirectories is deprecated in favour of preopens
-  preopenDirectories?: WASIPreopenedDirs;
-  env?: WASIEnv;
-  args?: WASIArgs;
-  bindings?: WASIBindings;
-};
 export type WASIConfig = {
   preopens?: WASIPreopenedDirs;
   env?: WASIEnv;
   args?: WASIArgs;
-  bindings?: WASIBindings;
+  bindings: WASIBindings;
   traceSyscalls?: boolean;
 };
 
@@ -361,16 +342,12 @@ export default class WASIDefault {
   FD_MAP: Map<number, File>;
   wasiImport: Exports;
   bindings: WASIBindings;
-  static defaultBindings: WASIBindings = defaultBindings;
 
-  constructor(wasiConfig?: WASIConfigOld | WASIConfig) {
+  constructor(wasiConfig: WASIConfig) {
     // Destructure our wasiConfig
     let preopens: WASIPreopenedDirs = {};
-    if (wasiConfig && (wasiConfig as WASIConfig).preopens) {
-      preopens = (wasiConfig as WASIConfig).preopens as WASIPreopenedDirs;
-    } else if (wasiConfig && (wasiConfig as WASIConfigOld).preopenDirectories) {
-      preopens = (wasiConfig as WASIConfigOld)
-        .preopenDirectories as WASIPreopenedDirs;
+    if (wasiConfig.preopens) {
+      preopens = wasiConfig.preopens;
     }
 
     let env: WASIEnv = {};
@@ -381,10 +358,7 @@ export default class WASIDefault {
     if (wasiConfig && wasiConfig.args) {
       args = wasiConfig.args;
     }
-    let bindings: WASIBindings = defaultBindings;
-    if (wasiConfig && wasiConfig.bindings) {
-      bindings = wasiConfig.bindings;
-    }
+    let bindings = wasiConfig.bindings;
 
     // @ts-ignore
     this.memory = undefined;

@@ -1,4 +1,5 @@
 import { WASI } from "@jsage/wasi";
+import nodeBindings from "@jsage/wasi/dist/bindings/node";
 
 import { reuseInFlight } from "async-await-utils/hof";
 import { readFile as readFile0 } from "fs";
@@ -6,7 +7,6 @@ import { promisify } from "util";
 import { dirname, join } from "path";
 import callsite from "callsite";
 import fs from "fs";
-import nodeBindings from "@wasmer/wasi/lib/bindings/node";
 
 const readFile = promisify(readFile0);
 
@@ -106,7 +106,7 @@ async function doWasmImport(
     // It's very important that this actually work properly.
     // E.g., if you just return 0, then Python startup
     // hangs at py_getrandom in bootstrap_hash.c.
-    // The wasmer code for random_get is broken in that it returns
+    // The wasi code for random_get is broken in that it returns
     // 0 for success, but getrandom is supposed to return the number
     // of random bytes.  It does randomize the buffer though.
     // I couldn't find this reported upstream.

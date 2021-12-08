@@ -39,7 +39,7 @@ npm install @jsage/wasi
 ```js
 import { WASI } from "@jsage/wasi";
 import fs from "fs";
-import nodeBindings from "@jsage/wasi/lib/bindings/node";
+import nodeBindings from "@jsage/wasi/dist/bindings/node";
 
 const wasi = new WASI({
   args: [],
