@@ -9,4 +9,4 @@ ${DIST}/.built:
 	touch ${DIST}/.built
 
 clean:
-	rm -rf ${DIST} node_modules
+	rm -rf ${DIST} node_modules tsconfig.tsbuildinfo
