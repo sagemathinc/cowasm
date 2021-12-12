@@ -1,5 +1,7 @@
-# Work in progress Dockerfile for building jsage in a predictable way.
-
+# Dockerfile for building jsage in a predictable way.
+# This should fully work on both x86_64 and ARM hosts,
+# and results in /jsage having everything built
+# and the commands jsage and jpython in the PATH.
 FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive LANG=C.UTF-8 LC_ALL=C.UTF-8

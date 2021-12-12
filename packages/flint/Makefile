@@ -1,5 +1,5 @@
 # See https://github.com/wbhart/flint2/tags
-VERSION = 2.8.3
+VERSION = 2.8.4
 
 BUILD = build
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
