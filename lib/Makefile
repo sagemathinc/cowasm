@@ -7,23 +7,51 @@ export PATH := ${CWD}/../packages/zig/dist:$(PATH)
 
 ZIG_PKG       = --main-pkg-path ${CWD}/src
 PACKAGES      = ${CWD}/../packages
-GMP_NATIVE    = ${PACKAGES}/gmp/dist/native
-GMP_WASM      = ${PACKAGES}/gmp/dist/wasm
 
-PARI_NATIVE   = ${PACKAGES}/pari/dist/native
-PARI_WASM     = ${PACKAGES}/pari/dist/wasm
+GMP_NATIVE        = ${PACKAGES}/gmp/dist/native
+GMP_WASM          = ${PACKAGES}/gmp/dist/wasm
+GMP_NATIVE_CFLAGS = -L${GMP_NATIVE}/lib -I${GMP_NATIVE}/include -lgmp
+GMP_WASM_CFLAGS   = -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a
+
+MPFR_NATIVE        = ${PACKAGES}/mpfr/dist/native
+MPFR_WASM          = ${PACKAGES}/mpfr/dist/wasm
+MPFR_NATIVE_CFLAGS = -L${MPFR_NATIVE}/lib -I${MPFR_NATIVE}/include -lmpfr
+MPFR_WASM_CFLAGS   = -L${MPFR_WASM}/lib -I${MPFR_WASM}/include ${MPFR_WASM}/lib/libmpfr.a
+
+FLINT_NATIVE        = ${PACKAGES}/flint/dist/native
+FLINT_WASM          = ${PACKAGES}/flint/dist/wasm
+FLINT_NATIVE_CFLAGS = -L${FLINT_NATIVE}/lib -I${FLINT_NATIVE}/include/flint -lflint
+FLINT_WASM_CFLAGS   = -L${FLINT_WASM}/lib -I${FLINT_WASM}/include ${FLINT_WASM}/lib/libflint.a
+
+PARI_NATIVE        = ${PACKAGES}/pari/dist/native
+PARI_WASM          = ${PACKAGES}/pari/dist/wasm
+PARI_NATIVE_CFLAGS = -L${PARI_NATIVE}/lib -I${PARI_NATIVE}/include -lpari
+PARI_WASM_CFLAGS   = -L${PARI_WASM}/lib -I${PARI_WASM}/include ${PARI_WASM}/lib/libpari.a
 
 PYTHON_NATIVE = ${PACKAGES}/python/dist/native
 PYTHON_WASM   = ${PACKAGES}/python/dist/wasm
 ### (was below in NATIVE_CFLAGS) -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9 -lpython3.9
 
 WASM_CFLAGS   = -dynamic ${OPT}
-NATIVE_CFLAGS = -I. -L${PARI_NATIVE}/lib -I${PARI_NATIVE}/include -lpari   -L${GMP_NATIVE}/lib -I${GMP_NATIVE}/include -lgmp -lc ${OPT}
+
+NATIVE_CFLAGS = -I. ${PARI_NATIVE_CFLAGS}  ${GMP_NATIVE_CFLAGS}  ${FLINT_NATIVE_CFLAGS}  -lc ${OPT}
 
 DIST = ${CWD}/dist
 
 .PHONY: all
 all: ${DIST}/.built
+
+## Interface with FLINT
+.PHONY: test-flint-nmod-mat
+test-flint-nmod-mat:
+	cd src && ./zig-test flint/nmod-mat.zig ${FLINT_NATIVE_CFLAGS}  ${GMP_NATIVE_CFLAGS} ${MPFR_NATIVE_CFLAGS}
+
+${DIST}/flint.wasm: src/flint/nmod-mat.zig
+	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc \
+	  ${GMP_WASM_CFLAGS} ${FLINT_WASM_CFLAGS} ${MPFR_WASM_CFLAGS} \
+	    ${WASM_CFLAGS} flint/interface.zig  ${ZIG_PKG}
+	mkdir -p ${DIST}
+	mv src/interface.wasm ${DIST}/flint.wasm
 
 ## Interface with GMP directly:
 .PHONY: test-integer
