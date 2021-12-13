@@ -2,6 +2,7 @@ const std = @import("std");
 const errors = @import("../errors.zig");
 const vector = @import("./dense-vector.zig");
 const mod = @import("../arith.zig").mod;
+const flint_nmod_mat = @import("../flint/nmod-mat.zig");
 
 pub fn DenseMatrixMod(comptime T: type) type {
     return struct {
@@ -92,6 +93,18 @@ pub fn DenseMatrixMod(comptime T: type) type {
                 self.unsafeSet(row, i, mod(self.unsafeGet(row, i) + v.unsafeGet(i), self.modulus));
             }
         }
+
+        pub fn toFlint(self: Matrix) flint_nmod_mat.MatrixModN {
+            var m = flint_nmod_mat.MatrixModN.init(@intCast(c_ulong, self.modulus), @intCast(c_long, self.nrows), @intCast(c_long, self.ncols));
+            var i: usize = 0;
+            while (i < self.nrows) : (i += 1) {
+                var j: usize = 0;
+                while (j < self.ncols) : (j += 1) {
+                    m.set(@intCast(c_long, i), @intCast(c_long, j), @intCast(c_ulong, self.unsafeGet(i, j)));
+                }
+            }
+            return m;
+        }
     };
 }
 
@@ -147,4 +160,18 @@ test "extract a row" {
     defer v.deinit();
     try expect((try v.get(0)) == 3);
     try expect((try v.get(1)) == 5);
+}
+
+test "convert a matrix to flint" {
+    var m = try DenseMatrixMod(i32).init(19, 2, 3, testing_allocator);
+    defer m.deinit();
+    try m.set(1, 0, 3);
+    try m.set(1, 1, 5);
+    var f = m.toFlint();
+    defer f.deinit();
+    try expect(f.get(1, 0) == 3);
+    try expect(f.get(1, 1) == 5);
+    try expect(f.modulus == 19);
+    try expect(f.nrows() == 2);
+    try expect(f.ncols() == 3);
 }

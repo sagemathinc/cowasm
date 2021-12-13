@@ -5,7 +5,7 @@ const nmod_mat = @cImport(@cInclude("nmod_mat.h"));
 const mp_limb_t = nmod_mat.mp_limb_t;
 const errors = @import("../errors.zig");
 
-const MatrixModN = struct {
+pub const MatrixModN = struct {
     mat: nmod_mat.nmod_mat_t,
     modulus: nmod_mat.mp_limb_t,
 

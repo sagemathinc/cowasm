@@ -11,6 +11,6 @@ export DYLD_LIBRARY_PATH="$GMP_NATIVE/lib":"$PARI_NATIVE/lib":"$MPFR_NATIVE/lib"
 export LD_LIBRARY_PATH="$GMP_NATIVE/lib":"$PARI_NATIVE/lib":"$MPFR_NATIVE/lib"
 export ZIG_SYSTEM_LINKER_HACK=1
 
-echo $DYLD_LIBRARY_PATH
-echo $@
+#echo $DYLD_LIBRARY_PATH
+#echo $@
 zig test --main-pkg-path "$SRC" $@

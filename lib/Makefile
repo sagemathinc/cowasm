@@ -34,7 +34,10 @@ PYTHON_WASM   = ${PACKAGES}/python/dist/wasm
 
 WASM_CFLAGS   = -dynamic ${OPT}
 
-NATIVE_CFLAGS = -I. ${PARI_NATIVE_CFLAGS}  ${GMP_NATIVE_CFLAGS}  ${FLINT_NATIVE_CFLAGS}  -lc ${OPT}
+NATIVE_CFLAGS_NOOPT = -I. ${PARI_NATIVE_CFLAGS}  ${GMP_NATIVE_CFLAGS}  ${FLINT_NATIVE_CFLAGS} ${MPFR_NATIVE_CFLAGS} -lc
+NATIVE_CFLAGS = ${NATIVE_CFLAGS_NOOPT} ${OPT}
+
+TEST = ./zig-test.sh ${NATIVE_CFLAGS_NOOPT}
 
 DIST = ${CWD}/dist
 
@@ -44,7 +47,7 @@ all: ${DIST}/.built
 ## Interface with FLINT
 .PHONY: test-flint-nmod-mat
 test-flint-nmod-mat:
-	cd src && ./zig-test flint/nmod-mat.zig ${FLINT_NATIVE_CFLAGS}  ${GMP_NATIVE_CFLAGS} ${MPFR_NATIVE_CFLAGS}
+	cd src && ${TEST} flint/nmod-mat.zig
 
 ${DIST}/flint.wasm: src/flint/nmod-mat.zig
 	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc \
@@ -56,11 +59,11 @@ ${DIST}/flint.wasm: src/flint/nmod-mat.zig
 ## Interface with GMP directly:
 .PHONY: test-integer
 test-integer:
-	cd src && ./zig-test integer/integer.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib
+	cd src && ${TEST} integer/integer.zig
 
 .PHONY: test-rational
 test-rational:
-	cd src && ./zig-test rational/rational.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib  -I rational
+	cd src && ${TEST} rational/rational.zig
 
 ${DIST}/gmp.wasm: src/rational/rational.zig src/rational/interface.zig src/custom-allocator.zig src/integer/integer.zig src/integer/interface.zig  src/interface/gmp.zig src/interface/proxy.zig
 	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc -I${GMP_WASM}/include -L${GMP_WASM}/lib ${GMP_WASM}/lib/libgmp.a ${WASM_CFLAGS} interface/gmp.zig  ${ZIG_PKG}
@@ -76,7 +79,7 @@ ${DIST}/arith.wasm: src/arith.zig src/arith-export.zig
 
 .PHONY: test-generic-power
 test-generic-power:
-	cd src && ./zig-test arith/generic-power.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib
+	cd src && ./zig-test.sh arith/generic-power.zig -lgmp -lc -I${GMP_NATIVE}/include -L${GMP_NATIVE}/lib
 
 
 ${DIST}/factor.wasm: src/factor.zig src/factor-export.zig
@@ -102,19 +105,23 @@ ${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/in
 
 .PHONY: test-manin-symbols
 test-manin-symbols:
-	cd src && ./zig-test modular/manin-symbols.zig
+	cd src && ${TEST} modular/manin-symbols.zig
+
+.PHONY: test-dense-matrix
+test-dense-matrix:
+	cd src && ${TEST} modular/dense-matrix.zig
 
 .PHONY: test-p1list
 test-p1list:
-	cd src && ./zig-test modular/p1list.zig
+	cd src && ${TEST} modular/p1list.zig
 
 .PHONY: test-heilbronn
 test-heilbronn:
-	cd src && ./zig-test modular/heilbronn.zig
+	cd src && ${TEST} modular/heilbronn.zig
 
 .PHONY: test-modular
 test-modular:
-	cd src && grep -l test modular/*.zig | grep -v interface |grep -v export | xargs -t -n 1 ./zig-test
+	cd src && grep -l test modular/*.zig | grep -v interface |grep -v export | xargs -t -n 1 ${TEST}
 
 
 ${DIST}/modular/dims.wasm: src/modular/dims.zig src/trial-division.zig
@@ -128,24 +135,24 @@ ${DIST}/modular/dims.wasm: src/modular/dims.zig src/trial-division.zig
 # not in parallel
 .PHONY: test-zig1
 test-zig1:
-	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -n 1 ./zig-test ${NATIVE_CFLAGS}
+	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -n 1 ${TEST}
 
 # in parallel
 .PHONY: test-zig
 test-zig:
-	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -P 8 -n 1 ./zig-test  ${NATIVE_CFLAGS}
+	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -P 8 -n 1 ${TEST}
 
 # native m1 mac development -- test what works (e.g., Python doesn't, and maybe we don't need it)
 .PHONY: test-macos
 test-macos:
-	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | grep -v python | grep -v pari | xargs -t -n 1 ./zig-test ${NATIVE_CFLAGS}
+	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | grep -v python | grep -v pari | xargs -t -n 1 ${TEST}
 
 ####################
 ## PARI interface
 ####################
 
 test-pari:
-	cd src && ./zig-test pari/pari.zig -I. ${NATIVE_CFLAGS}
+	cd src && ${TEST} pari/pari.zig -I.
 
 ${DIST}/pari/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
 	cd src && zig build-lib -target wasm32-wasi -lc -I. -I${GMP_WASM}/include ${GMP_WASM}/lib/libgmp.a -I${PARI_WASM}/include ${PARI_WASM}/lib/libpari.a ${WASM_CFLAGS} pari/interface.zig  ${ZIG_PKG}
@@ -157,7 +164,7 @@ ${DIST}/pari/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
 ####################
 
 test-python:
-	cd src && ./zig-test python/python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9  -lpython3.9 -lc  #-O ReleaseFast
+	cd src && ${TEST} python/python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9  -lpython3.9 -lc  #-O ReleaseFast
 
 ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig
 	cd src && zig build-lib -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.9 ${PYTHON_WASM}/lib/libpython3.9.a ${WASM_CFLAGS} python/interface.zig  ${ZIG_PKG}
@@ -173,7 +180,7 @@ python: ${DIST}/python/python.wasm
 ##################
 
 test-proxy:
-	cd src && ./zig-test interface/proxy.zig
+	cd src && ${TEST} interface/proxy.zig
 
 ## Node modules
 node_modules:
