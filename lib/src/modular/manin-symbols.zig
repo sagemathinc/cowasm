@@ -33,12 +33,12 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
         const Rel = twoTerm.Relation(Index);
         const Rels = twoTerm.Relations(Index);
 
-        allocator: *std.mem.Allocator,
+        allocator: std.mem.Allocator,
         N: usize,
         sign: Sign,
         P1: p1list.P1List(Coeff),
 
-        pub fn init(allocator: *std.mem.Allocator, N: usize, sign: Sign) !Syms {
+        pub fn init(allocator: std.mem.Allocator, N: usize, sign: Sign) !Syms {
             var P1 = try p1list.P1List(Coeff).init(allocator, @intCast(Coeff, N));
             return Syms{ .N = N, .sign = sign, .allocator = allocator, .P1 = P1 };
         }
@@ -152,7 +152,7 @@ pub fn ManinSymbols(comptime Coeff: type, comptime Index: type) type {
             errdefer matrix.deinit();
             var row: Index = 0; // current row we're adding to matrix.
             const n: Index = quo.ngens;
-            var alreadySeen = try std.bit_set.DynamicBitSet.initEmpty(n, self.allocator);
+            var alreadySeen = try std.bit_set.DynamicBitSet.initEmpty(self.allocator, n);
             defer alreadySeen.deinit();
             var i: Index = 0;
             while (i < n) : (i += 1) {
@@ -472,7 +472,7 @@ test "compute quotient modulo two term relations for N=3 with sign 1" {
 }
 
 // compute rank for given space modulo the given prime p.
-fn rankCheck(allocator: *std.mem.Allocator, N: usize, sign: Sign, p: i32) !usize {
+fn rankCheck(allocator: std.mem.Allocator, N: usize, sign: Sign, p: i32) !usize {
     //std.debug.print("\nrankCheck N={},sign={},p={}\n", .{ N, sign, p });
     var M = try ManinSymbols(i32, u32).init(allocator, N, sign);
     defer M.deinit();

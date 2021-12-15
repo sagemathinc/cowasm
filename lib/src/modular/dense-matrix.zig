@@ -13,7 +13,7 @@ pub fn DenseMatrixMod(comptime T: type) type {
         ncols: usize,
         entries: std.ArrayList(T),
 
-        pub fn init(modulus: T, nrows: usize, ncols: usize, allocator: *std.mem.Allocator) !Matrix {
+        pub fn init(modulus: T, nrows: usize, ncols: usize, allocator: std.mem.Allocator) !Matrix {
             var entries = try std.ArrayList(T).initCapacity(allocator, nrows * ncols);
             entries.appendNTimesAssumeCapacity(0, nrows * ncols);
             return Matrix{ .modulus = modulus, .nrows = nrows, .ncols = ncols, .entries = entries };

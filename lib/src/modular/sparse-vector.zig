@@ -11,7 +11,7 @@ pub fn SparseVectorMod(comptime T: type) type {
         degree: usize,
         map: AutoHashMap(usize, T),
 
-        pub fn init(modulus: T, degree: usize, allocator: *std.mem.Allocator) !Vector {
+        pub fn init(modulus: T, degree: usize, allocator: std.mem.Allocator) !Vector {
             if (modulus <= 1) {
                 return errors.Math.ValueError;
             }

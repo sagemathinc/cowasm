@@ -179,7 +179,7 @@ pub const Rational = struct {
             return errors.Math.ValueError;
         }
         var str = gmp.mpq_get_str(0, base, &self.x);
-        const size = std.mem.lenZ(str);
+        const size = std.mem.len(str);
         return str[0..size];
     }
 

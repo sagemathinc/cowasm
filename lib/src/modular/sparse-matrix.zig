@@ -13,7 +13,7 @@ pub fn SparseMatrixMod(comptime T: type) type {
         nrows: usize,
         rows: std.ArrayList(SparseVectorMod(T)),
 
-        pub fn init(modulus: T, nrows: usize, ncols: usize, allocator: *std.mem.Allocator) !Matrix {
+        pub fn init(modulus: T, nrows: usize, ncols: usize, allocator: std.mem.Allocator) !Matrix {
             if (modulus <= 0) {
                 return errors.Math.ValueError;
             }

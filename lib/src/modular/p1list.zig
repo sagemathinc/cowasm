@@ -128,7 +128,7 @@ pub fn P1List(comptime T: type) type {
         N: T,
         list: std.ArrayList(Elt),
 
-        pub fn init(allocator: *std.mem.Allocator, N: T) !P1 {
+        pub fn init(allocator: std.mem.Allocator, N: T) !P1 {
             var list = std.ArrayList(Elt).init(allocator);
             if (N == 1) {
                 try list.append(Elt{ .u = 0, .v = 0 });

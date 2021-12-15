@@ -20,7 +20,7 @@ fn Expand(comptime T: type, F: Factorization(T)) !T {
     return N;
 }
 
-pub fn factorTrialDivision(allocator: *std.mem.Allocator, N: anytype) !Factorization(@TypeOf(N)) {
+pub fn factorTrialDivision(allocator: std.mem.Allocator, N: anytype) !Factorization(@TypeOf(N)) {
     const T = @TypeOf(N);
     var v = Factorization(T).init(allocator);
     var M = N;

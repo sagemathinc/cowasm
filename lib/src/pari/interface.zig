@@ -9,6 +9,6 @@ export fn exec(s: [*:0]const u8) void {
         std.debug.print("pari interface exec error: {}\n", .{err});
         return;
     };
-    wasmSendString(r, std.mem.lenZ(r));
+    wasmSendString(r, std.mem.len(r));
     std.c.free(r);
 }

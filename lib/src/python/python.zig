@@ -25,7 +25,7 @@ pub fn exec(s: [*:0]const u8) !void {
     python._Py_DECREF(pstr);
 }
 
-pub fn eval(allocator: *std.mem.Allocator, s: [*:0]const u8) ![]u8 {
+pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
     // std.debug.print("eval '{s}'\n", .{s});
     var pstr = python.PyRun_String(s, python.Py_eval_input, globals, globals);
     if (pstr == null) {
@@ -55,7 +55,7 @@ pub fn eval(allocator: *std.mem.Allocator, s: [*:0]const u8) ![]u8 {
 
 // var importedJson = false;
 // var json: *python.PyObject = undefined;
-// pub fn toJSON(allocator: *std.mem.Allocator, s: [*:0]const u8) ![]u8 {
+// pub fn toJSON(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
 //     // Import the JSON module
 //     if (!importedJson) {
 //         json = python.PyImport_ImportModule("json");

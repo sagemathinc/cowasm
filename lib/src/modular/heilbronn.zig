@@ -9,7 +9,7 @@ pub fn HeilbronnCremona(comptime T: type) type {
         p: T,
         v: std.ArrayList(Mat2x2(T)),
 
-        pub fn init(allocator: *std.mem.Allocator, p: T) !HC {
+        pub fn init(allocator: std.mem.Allocator, p: T) !HC {
             var v = std.ArrayList(Mat2x2(T)).init(allocator);
 
             try v.append(Mat2x2(T).init(1, 0, 0, p));

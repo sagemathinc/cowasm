@@ -49,7 +49,7 @@ pub fn Quotient(comptime Index: type) type {
             const ngens = x.ngens;
 
             // Make a bitset containing the basis elements
-            var basis = try std.bit_set.DynamicBitSet.initEmpty(ngens, rels.allocator);
+            var basis = try std.bit_set.DynamicBitSet.initEmpty(rels.allocator, ngens);
             defer basis.deinit();
             for (mod.items) |item| {
                 if (item.coeff != 0) {

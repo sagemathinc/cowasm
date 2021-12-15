@@ -11,7 +11,7 @@ pub fn DenseVectorMod(comptime T: type) type {
         degree: usize,
         entries: std.ArrayList(T),
 
-        pub fn init(modulus: T, degree: usize, allocator: *std.mem.Allocator) !Vector {
+        pub fn init(modulus: T, degree: usize, allocator: std.mem.Allocator) !Vector {
             var entries = try std.ArrayList(T).initCapacity(allocator, degree);
             entries.appendNTimesAssumeCapacity(0, degree);
             return Vector{ .modulus = modulus, .degree = degree, .entries = entries };

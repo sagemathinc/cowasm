@@ -1,7 +1,7 @@
 const std = @import("std");
 const List = std.ArrayList;
 
-pub fn range(allocator: *std.mem.Allocator, comptime T: type, n: usize) !List(T) {
+pub fn range(allocator: std.mem.Allocator, comptime T: type, n: usize) !List(T) {
     var v = try List(T).initCapacity(allocator, n);
     var i: T = 0;
     while (i < n) : (i += 1) {
@@ -10,7 +10,7 @@ pub fn range(allocator: *std.mem.Allocator, comptime T: type, n: usize) !List(T)
     return v;
 }
 
-pub fn constantList(allocator: *std.mem.Allocator, x: anytype, n: usize) !List(@TypeOf(x)) {
+pub fn constantList(allocator: std.mem.Allocator, x: anytype, n: usize) !List(@TypeOf(x)) {
     const T = @TypeOf(x);
     var v = try List(T).initCapacity(allocator, n);
     var i: usize = 0;

@@ -25,7 +25,7 @@ export fn eval(s: [*:0]const u8) void {
     // Todo: this r[0..1] is a casting hack -- I think it's harmless
     // because r itself is null terminated (?).
     const ptr: [*]const u8 = r[0..1];
-    wasmSendString(ptr, std.mem.lenZ(r));
+    wasmSendString(ptr, std.mem.len(r));
 }
 
 // export fn toJSON(s: [*:0]const u8) void {
@@ -36,5 +36,5 @@ export fn eval(s: [*:0]const u8) void {
 //     };
 //     defer interface.allocator().free(r);
 //     const ptr: [*]const u8 = r[0..1];
-//     wasmSendString(ptr, std.mem.lenZ(r));
+//     wasmSendString(ptr, std.mem.len(r));
 // }
