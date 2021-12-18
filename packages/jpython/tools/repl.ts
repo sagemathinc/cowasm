@@ -252,7 +252,15 @@ export default async function Repl(options0: Partial<Options>): Promise<void> {
 
     if (!noPrint && result != null && global.ρσ_print != null) {
       // We just print out the last result using normal Python printing.
-      global.ρσ_print(result);
+      try {
+        global.ρσ_print(result);
+      } catch (err) {
+        if (err?.stack) {
+          options.console.error(err?.stack);
+        } else {
+          options.console.error(err);
+        }
+      }
     }
   }
 
