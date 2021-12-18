@@ -19,6 +19,22 @@ pub fn DenseMatrixMod(comptime T: type) type {
             return Matrix{ .modulus = modulus, .nrows = nrows, .ncols = ncols, .entries = entries };
         }
 
+        pub fn initFromFlint(A: flint_nmod_mat.MatrixModN, allocator: std.mem.Allocator) !Matrix {
+            // Create the correctly sized zero matrix with the correct modulus
+            const nrows = @intCast(usize, A.nrows());
+            const ncols = @intCast(usize, A.ncols());
+            var M = try DenseMatrixMod(T).init(@intCast(T, A.modulus), nrows, ncols, allocator);
+            // Copy the entries over
+            var i: usize = 0;
+            while (i < nrows) : (i += 1) {
+                var j: usize = 0;
+                while (j < ncols) : (j += 1) {
+                    M.unsafeSet(i, j, @intCast(T, A.get(@intCast(c_long, i), @intCast(c_long, j))));
+                }
+            }
+            return M;
+        }
+
         pub fn deinit(self: *Matrix) void {
             self.entries.deinit();
         }
@@ -105,6 +121,14 @@ pub fn DenseMatrixMod(comptime T: type) type {
             }
             return m;
         }
+
+        pub fn kernel(self: Matrix) !Matrix {
+            var A = self.toFlint();
+            defer A.deinit();
+            var K = A.kernel();
+            defer K.deinit();
+            return try Matrix.initFromFlint(K, self.entries.allocator);
+        }
     };
 }
 
@@ -174,4 +198,15 @@ test "convert a matrix to flint" {
     try expect(f.modulus == 19);
     try expect(f.nrows() == 2);
     try expect(f.ncols() == 3);
+}
+
+test "compute a kernel using FLINT" {
+    var m = try DenseMatrixMod(i32).init(19, 2, 2, testing_allocator);
+    defer m.deinit();
+    try m.set(0, 0, 1);
+    try m.set(0, 1, 1);
+    var K = try m.kernel();
+    defer K.deinit();
+    try expect((try K.get(0,0)) == 18);
+    try expect((try K.get(1,0)) == 1);
 }

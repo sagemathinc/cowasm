@@ -54,7 +54,8 @@ pub const MatrixModN = struct {
         return nmod_mat.nmod_mat_rref(&self.mat);
     }
 
-    // Matrix whose independent columns are a basis for the right kernel.
+    // Matrix whose columns are a basis for the right kernel.
+    // NOTE: unlike flint, we do remove extra 0 columns.
     pub fn kernel(self: MatrixModN) MatrixModN {
         var ker: nmod_mat.nmod_mat_t = undefined;
         const nc = @minimum(self.nrows(), self.ncols());
