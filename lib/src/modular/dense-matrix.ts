@@ -16,6 +16,9 @@ export class DenseMatrix {
   private readonly handle: number;
 
   constructor(handle: number) {
+    if (handle <= 0) {
+      throw Error(`invalid handle ${handle}`);
+    }
     this.handle = handle;
     registry.register(this, this.handle);
   }
@@ -36,6 +39,14 @@ export class DenseMatrix {
 
   modulus(): number {
     return wasm.exports.DenseMatrix_modulus(this.handle);
+  }
+
+  kernel(): DenseMatrix {
+    return new DenseMatrix(wasm.exports.DenseMatrix_kernel(this.handle));
+  }
+
+  rank(): number {
+    return wasm.exports.DenseMatrix_rank(this.handle);
   }
 
   pariString(): string {

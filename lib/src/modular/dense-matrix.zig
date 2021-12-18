@@ -129,6 +129,15 @@ pub fn DenseMatrixMod(comptime T: type) type {
             defer K.deinit();
             return try Matrix.initFromFlint(K, self.entries.allocator);
         }
+
+        pub fn rank(self: Matrix) usize {
+            var A = self.toFlint();
+            defer A.deinit();
+            std.debug.print("\nA = {}\n", .{A});
+            const r = A.rank();
+            std.debug.print("\nr = {}\n", .{r});
+            return @intCast(usize, r);
+        }
     };
 }
 
@@ -207,6 +216,27 @@ test "compute a kernel using FLINT" {
     try m.set(0, 1, 1);
     var K = try m.kernel();
     defer K.deinit();
-    try expect((try K.get(0,0)) == 18);
-    try expect((try K.get(1,0)) == 1);
+    try expect((try K.get(0, 0)) == 18);
+    try expect((try K.get(1, 0)) == 1);
+    try expect(m.rank() == 1);
+}
+
+test "compute a trivial kernel using FLINT" {
+    var m = try DenseMatrixMod(i32).init(19, 1, 1, testing_allocator);
+    defer m.deinit();
+    try m.set(0, 0, 1);
+    var K = try m.kernel();
+    defer K.deinit();
+    try expect(K.ncols == 0);
+    try expect(m.rank() == 1);
+}
+
+test "compute a trivial kernel using FLINT" {
+    var m = try DenseMatrixMod(i32).init(3, 1, 1, testing_allocator);
+    defer m.deinit();
+    try m.set(0, 0, 1);
+    var K = try m.kernel();
+    defer K.deinit();
+    try expect(K.ncols == 0);
+    try expect(m.rank() == 1);
 }

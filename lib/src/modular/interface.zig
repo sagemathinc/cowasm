@@ -113,6 +113,9 @@ pub export fn Presentation_modularSymbol(handle: i32, numer_a: i32, denom_a: i32
 
 pub export fn Presentation_heckeOperator(handle: i32, p: i32) i32 {
     var P = Presentation_get(handle) catch return 0;
-    var Tp = P.heckeOperator(p) catch return 0;
+    var Tp = P.heckeOperator(p) catch |err| {
+        std.debug.print("\nPresentation_heckeOperator -- {}\n", .{err});
+        return 0;
+    };
     return dense_matrix_interface.DenseMatrix_put(Tp);
 }

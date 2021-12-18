@@ -17,6 +17,7 @@ else
 NATIVE_CONF =
 endif
 
+# one of WASM64 or WASM32... (also fix above)
 all: ${DIST_NATIVE}/.built ${DIST_WASM64}/.built
 
 ${BUILD}/gmp-${VERSION}.tar.bz2:
@@ -48,7 +49,7 @@ test-native: native
 
 ${BUILD}/wasm32: ${BUILD}/gmp-${VERSION}.tar.bz2
 	rm -rf ${BUILD}/wasm32
-	cd ${BUILD} && mkdir wasm32 && tar xvf gmp-${VERSION}.tar.bz2 -C wasm --strip-components=1
+	cd ${BUILD} && mkdir wasm32 && tar xvf gmp-${VERSION}.tar.bz2 -C wasm32 --strip-components=1
 
 ${DIST_WASM32}/.built: ${BUILD}/wasm32
 	cd ${BUILD}/wasm32 && CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_SIGNAL" AR="zig ar" RANLIB="zig ranlib" ABI=standard CC_FOR_BUILD="zig cc" CFLAGS="-O3" \
@@ -66,8 +67,8 @@ wasm32: ${DIST_WASM32}/.built
 
 ## WebAssembly 64-bit ABI library
 # This is often twice as fast or more for big numbers, but might subtly break
-# everything without more work.  In particular, it might mess up building FLINT
-# and NTL in various ways.  So we make it easy to build, but don't use it by default.
+# everything (though I have no evidence it does).  In particular, it might mess up building FLINT
+# and NTL in various ways. 
 
 ${BUILD}/wasm64: ${BUILD}/gmp-${VERSION}.tar.bz2
 	rm -rf ${BUILD}/wasm64

@@ -50,3 +50,22 @@ pub export fn DenseMatrix_modulus(handle: i32) i32 {
     };
     return x.modulus;
 }
+
+pub export fn DenseMatrix_kernel(handle: i32) i32 {
+    const A = DenseMatrix_get(handle) catch {
+        return 0;
+    };
+    var K = A.kernel() catch {
+        interface.throw("DenseMatrix: failed to allocate space for kernel");
+        return 0;
+    };
+    return DenseMatrix_put(K);
+}
+
+pub export fn DenseMatrix_rank(handle: i32) i32 {
+    const A = DenseMatrix_get(handle) catch {
+        return 0;
+    };
+    // cast is from usize, but due to memory size rank can't possibly lead to overflow.
+    return @intCast(i32, A.rank());
+}

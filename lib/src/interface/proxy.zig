@@ -83,7 +83,7 @@ pub fn ProxyObjects(comptime T: type) type {
         // reasonable to look at.
         pub fn format(self: Proxy, handle: i32) void {
             const obj = self.get(handle) orelse {
-                // std.debug.print("Proxy({}).get({}) ERROR\n", .{ T, handle });
+                std.debug.print("Proxy({}).get({}) ERROR\n", .{ T, handle });
                 util.throw("format -- no object with handle");
                 return;
             };

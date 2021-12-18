@@ -95,9 +95,11 @@ class ManinSymbolsPresentation {
   }
 
   heckeOperator(p: number): DenseMatrix {
-    return new DenseMatrix(
-      wasm.exports.Presentation_heckeOperator(this.handle, p)
-    );
+    const handle = wasm.exports.Presentation_heckeOperator(this.handle, p);
+    if (handle == 0) {
+      throw Error(`error computing hecke operator p=${p}`);
+    }
+    return new DenseMatrix(handle);
   }
 
   __str__(): string {

@@ -21,7 +21,7 @@ MPFR_WASM_CFLAGS   = -L${MPFR_WASM}/lib -I${MPFR_WASM}/include ${MPFR_WASM}/lib/
 FLINT_NATIVE        = ${PACKAGES}/flint/dist/native
 FLINT_WASM          = ${PACKAGES}/flint/dist/wasm
 FLINT_NATIVE_CFLAGS = -L${FLINT_NATIVE}/lib -I${FLINT_NATIVE}/include/flint -lflint
-FLINT_WASM_CFLAGS   = -L${FLINT_WASM}/lib -I${FLINT_WASM}/include ${FLINT_WASM}/lib/libflint.a
+FLINT_WASM_CFLAGS   = -L${FLINT_WASM}/lib -I${FLINT_WASM}/include/flint ${FLINT_WASM}/lib/libflint.a
 
 PARI_NATIVE        = ${PACKAGES}/pari/dist/native
 PARI_WASM          = ${PACKAGES}/pari/dist/wasm
@@ -93,13 +93,13 @@ ${DIST}/complex/complex.wasm: src/complex/complex.zig
 	mv src/complex/complex.wasm ${DIST}/complex/complex.wasm
 
 ${DIST}/modular/p1list.wasm: src/modular/p1list.zig src/modular/p1list-export.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig src/modular/sl2z.zig
-	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} modular/p1list-export.zig  ${ZIG_PKG}
+	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} ${FLINT_WASM_CFLAGS} modular/p1list-export.zig  ${ZIG_PKG} -lc
 	mkdir -p ${DIST}/modular
 	mv src/p1list-export.wasm ${DIST}/modular/p1list.wasm
 
 
-${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/interface.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig src/modular/dense-vector-interface.zig src/modular/dense-matrix-interface.zig
-	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} modular/interface.zig  ${ZIG_PKG}
+${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/interface.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig src/modular/dense-vector-interface.zig src/modular/dense-matrix.zig src/modular/dense-matrix-interface.zig
+	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} ${FLINT_WASM_CFLAGS} ${GMP_WASM_CFLAGS} ${MPFR_WASM_CFLAGS} modular/interface.zig  ${ZIG_PKG} -lc
 	mkdir -p ${DIST}/modular
 	mv src/interface.wasm ${DIST}/modular/manin-symbols.wasm
 
