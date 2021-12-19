@@ -26,7 +26,7 @@ FLINT_WASM_CFLAGS   = -L${FLINT_WASM}/lib -I${FLINT_WASM}/include/flint ${FLINT_
 PARI_NATIVE        = ${PACKAGES}/pari/dist/native
 PARI_WASM          = ${PACKAGES}/pari/dist/wasm
 PARI_NATIVE_CFLAGS = -L${PARI_NATIVE}/lib -I${PARI_NATIVE}/include -lpari
-PARI_WASM_CFLAGS   = -L${PARI_WASM}/lib -I${PARI_WASM}/include ${PARI_WASM}/lib/libpari.a
+PARI_WASM_CFLAGS   = -L${PARI_WASM}/lib -I${CWD}/src/pari ${PARI_WASM}/lib/libpari.a
 
 PYTHON_NATIVE = ${PACKAGES}/python/dist/native
 PYTHON_WASM   = ${PACKAGES}/python/dist/wasm
@@ -98,8 +98,8 @@ ${DIST}/modular/p1list.wasm: src/modular/p1list.zig src/modular/p1list-export.zi
 	mv src/p1list-export.wasm ${DIST}/modular/p1list.wasm
 
 
-${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/interface.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig src/modular/dense-vector-interface.zig src/modular/dense-matrix.zig src/modular/dense-matrix-interface.zig
-	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} ${FLINT_WASM_CFLAGS} ${GMP_WASM_CFLAGS} ${MPFR_WASM_CFLAGS} modular/interface.zig  ${ZIG_PKG} -lc
+${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/interface.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig src/modular/dense-vector-interface.zig src/modular/dense-matrix.zig src/modular/dense-matrix-interface.zig src/pari/pari.h src/pari/pari.zig
+	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} ${FLINT_WASM_CFLAGS} ${GMP_WASM_CFLAGS} ${MPFR_WASM_CFLAGS}  ${PARI_WASM_CFLAGS}  modular/interface.zig  ${ZIG_PKG} -lc
 	mkdir -p ${DIST}/modular
 	mv src/interface.wasm ${DIST}/modular/manin-symbols.wasm
 
@@ -155,7 +155,7 @@ test-pari:
 	cd src && ${TEST} pari/pari.zig -I.
 
 ${DIST}/pari/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
-	cd src && zig build-lib -target wasm32-wasi -lc -I. -I${GMP_WASM}/include ${GMP_WASM}/lib/libgmp.a -I${PARI_WASM}/include ${PARI_WASM}/lib/libpari.a ${WASM_CFLAGS} pari/interface.zig  ${ZIG_PKG}
+	cd src && zig build-lib -target wasm32-wasi -lc  ${PARI_WASM_CFLAGS} ${GMP_WASM_CFLAGS} ${WASM_CFLAGS} pari/interface.zig  ${ZIG_PKG}
 	mkdir -p ${DIST}/pari
 	mv src/interface.wasm ${DIST}/pari/pari.wasm
 

@@ -69,3 +69,12 @@ pub export fn DenseMatrix_rank(handle: i32) i32 {
     // cast is from usize, but due to memory size rank can't possibly lead to overflow.
     return @intCast(i32, A.rank());
 }
+
+pub export fn DenseMatrix_rank2(handle: i32) i32 {
+    const A = DenseMatrix_get(handle) catch {
+        return 0;
+    };
+    // cast is from usize, but due to memory size rank can't possibly lead to overflow.
+    return @intCast(i32, A.rank2());
+}
+

@@ -3,6 +3,7 @@ const errors = @import("../errors.zig");
 const vector = @import("./dense-vector.zig");
 const mod = @import("../arith.zig").mod;
 const flint_nmod_mat = @import("../flint/nmod-mat.zig");
+const pari = @import("../pari/pari.zig");
 
 pub fn DenseMatrixMod(comptime T: type) type {
     return struct {
@@ -133,9 +134,24 @@ pub fn DenseMatrixMod(comptime T: type) type {
         pub fn rank(self: Matrix) usize {
             var A = self.toFlint();
             defer A.deinit();
-            std.debug.print("\nA = {}\n", .{A});
             const r = A.rank();
-            std.debug.print("\nr = {}\n", .{r});
+            return @intCast(usize, r);
+        }
+
+        pub fn rank2(self: Matrix) usize {
+            pari.init(0, 0);
+            var av = pari.clib.avma;
+            var z = pari.clib.zeromatcopy(@intCast(c_long, self.nrows), @intCast(c_long, self.ncols));
+            var i: usize = 0;
+            while (i < self.nrows) : (i += 1) {
+                var j: usize = 0;
+                while (j < self.ncols) : (j += 1) {
+                    const x = pari.clib.gmodulss(self.unsafeGet(i, j), self.modulus);
+                    pari.gsetcoeff(z, i + 1, j + 1, x);
+                }
+            }
+            var r = pari.clib.rank(z);
+            pari.clib.avma = av;
             return @intCast(usize, r);
         }
     };

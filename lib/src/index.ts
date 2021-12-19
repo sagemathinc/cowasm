@@ -31,6 +31,6 @@ export async function init(): Promise<void> {
   await arith.init();
   await integerInit();
   await rationalInit();
-  await pari.init();
+  //await pari.init();
 }
 init();

@@ -1,12 +1,12 @@
-const pari = @cImport(@cInclude("pari/pari.h"));
+pub const clib = @cImport(@cInclude("pari.h"));
 const std = @import("std");
 pub const General = error{OverflowError};
 
 // The headers that define this are too hard for zig to parse due to macros.
-extern fn pari_init_opts(parisize: pari.sizet, maxprime: pari.ulong, flags: c_int) void;
+extern fn pari_init_opts(parisize: clib.sizet, maxprime: clib.ulong, flags: c_int) void;
 
 var didInit = false;
-export fn init(parisize: pari.sizet, maxprime: pari.ulong) void {
+pub export fn init(parisize: clib.sizet, maxprime: clib.ulong) void {
     if (didInit) return;
     didInit = true;
     // We must use pari_init_opts rather than just pari_init, so we can set
@@ -16,11 +16,17 @@ export fn init(parisize: pari.sizet, maxprime: pari.ulong) void {
 }
 
 pub fn exec(s: [*:0]const u8) ![*:0]u8 {
-    var av: pari.pari_sp = pari.avma;
-    var x: pari.GEN = pari.gp_read_str_multiline(s, null);
-    var r = pari.GENtostr(x);
-    pari.avma = av; // TODO: don't need this memory anymore???  Or am I subtly breaking everything?!
+    var av: clib.pari_sp = clib.avma;
+    var x: clib.GEN = clib.gp_read_str_multiline(s, null);
+    var r = clib.GENtostr(x);
+    clib.avma = av;
     return r;
+}
+
+// This is equivalent to "gcoeff(z, i, j) = x" in pari library code,
+// but we have to rewrite because gcoeff is a macro.
+pub fn gsetcoeff(z: clib.GEN, i: usize, j: usize, x: clib.GEN) void {
+    @ptrCast([*][*]clib.GEN, z)[j][i] = x;
 }
 
 const expect = std.testing.expect;

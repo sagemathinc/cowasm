@@ -49,6 +49,10 @@ export class DenseMatrix {
     return wasm.exports.DenseMatrix_rank(this.handle);
   }
 
+  rank2(): number {
+    return wasm.exports.DenseMatrix_rank2(this.handle);
+  }
+
   pariString(): string {
     const { modulus, nrows, ncols, entries } = JSON.parse(this.__repr__());
     // make it in pari
