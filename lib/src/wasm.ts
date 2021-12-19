@@ -110,11 +110,7 @@ async function doWasmImport(
     // 0 for success, but getrandom is supposed to return the number
     // of random bytes.  It does randomize the buffer though.
     // I couldn't find this reported upstream.
-    wasmOpts.env.getrandom = (bufPtr, bufLen, _flags) => {
-      //console.log("getrandom", bufPtr, bufLen, _flags);
-      wasi.wasiImport.random_get(bufPtr, bufLen);
-      return bufLen; // what we actually did!
-    };
+    wasmOpts.env.getrandom = wasi.wasiImport.random_get;
   }
 
   //console.log(`reading ${pathToWasm}`);

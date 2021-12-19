@@ -1447,7 +1447,12 @@ export default class WASIDefault {
           bufPtr,
           bufLen
         );
-        return WASI_ESUCCESS;
+        // NOTE: upstream had "return WASI_ESUCCESS;" here, which is a major
+        // bug, since this is supposed to return the *number of random bytes*.
+        // This bug made it so Python hung mysteriously on startup, which tooks
+        // me days of suffering to figure out. In particular, Python startup
+        // hangs at py_getrandom in bootstrap_hash.c.
+        return bufLen;
       },
       sched_yield() {
         // Single threaded environment
@@ -1475,7 +1480,7 @@ export default class WASIDefault {
             console.log(`WASI:  => ${result}`);
             return result;
           } catch (e) {
-            console.log(`Catched error: ${e}`);
+            console.log(`Caught error: ${e}`);
             throw e;
           }
         };
