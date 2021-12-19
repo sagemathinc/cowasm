@@ -2,11 +2,17 @@ const pari = @cImport(@cInclude("pari/pari.h"));
 const std = @import("std");
 pub const General = error{OverflowError};
 
+// The headers that define this are too hard for zig to parse due to macros.
+extern fn pari_init_opts(parisize: pari.sizet, maxprime: pari.ulong, flags: c_int) void;
+
 var didInit = false;
 export fn init(parisize: pari.sizet, maxprime: pari.ulong) void {
     if (didInit) return;
     didInit = true;
-    pari.pari_init(if (parisize == 0) 64 * 1000000 else parisize, if (maxprime == 0) 100000 else maxprime);
+    // We must use pari_init_opts rather than just pari_init, so we can set
+    // different options (the last argument).
+    const OPTIONS = 4; // this is INIT_DFTm = "initialize the defaults" -- header that has this is too hard to parse.
+    pari_init_opts(if (parisize == 0) 64 * 1000000 else parisize, maxprime, OPTIONS);
 }
 
 pub fn exec(s: [*:0]const u8) ![*:0]u8 {
