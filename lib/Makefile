@@ -134,17 +134,12 @@ ${DIST}/modular/dims.wasm: src/modular/dims.zig src/trial-division.zig
 # not in parallel
 .PHONY: test-zig1
 test-zig1:
-	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -n 1 ${TEST}
+	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | grep -v python | xargs -t -n 1 ${TEST}
 
 # in parallel
 .PHONY: test-zig
 test-zig:
-	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -P 8 -n 1 ${TEST}
-
-# native m1 mac development -- test what works (e.g., Python doesn't, and maybe we don't need it)
-.PHONY: test-macos
-test-macos:
-	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | grep -v python | grep -v pari | xargs -t -n 1 ${TEST}
+	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | grep -v python | xargs -t -P 8 -n 1 ${TEST}
 
 ####################
 ## PARI interface
@@ -160,6 +155,10 @@ ${DIST}/pari/pari.wasm: src/pari/pari.zig src/pari/interface.zig src/pari/pari.h
 
 ####################
 ## Python interface
+## This is NOT built by deafult.  It is currently completely broken on startup on Linux due to
+## packages/wasi, I think.  I never got Python to build natively on M1 mac either.  Finally, I'm
+## seriously considering not bothering with Python at all -- it doesn't really make sense to support,
+## given **our goals** and how well JPython works.
 ####################
 
 test-python:
@@ -193,7 +192,8 @@ ${DIST}/.built: node_modules ${DIST}/factor.wasm ${DIST}/complex/complex.wasm ${
 	npx tsc
 	touch ${DIST}/.built
 
-# Run all test suites...
+# Run all test suites: (1) the Native zig test suite; (2) the Javascript test suite.
+# This exercise zig-related code both via a native build, and then via the separate WebAssembly build.
 .PHONY: test
 test: test-zig
 	npm run test
