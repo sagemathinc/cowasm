@@ -23,6 +23,15 @@ void output(GEN x);
 void pari_init(size_t parisize, ulong maxprime);
 
 long rank(GEN x);
+GEN  ker(GEN x);
+long lgcols(GEN x); // number of columns of t_MAT with at least one column
+long nbrows(GEN x); // number of columns of t_MAT with at least one column
+
+GEN lift(GEN x);
+long itos(GEN x); // x must be of type t_INT,
+
+GEN matsize(GEN x);
+
 GEN zeromatcopy(long m, long n);
 GEN stoi(long s);
 

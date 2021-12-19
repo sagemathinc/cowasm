@@ -21,7 +21,6 @@ pub fn DenseMatrixMod(comptime T: type) type {
         }
 
         pub fn initFromFlint(A: flint_nmod_mat.MatrixModN, allocator: std.mem.Allocator) !Matrix {
-            // Create the correctly sized zero matrix with the correct modulus
             const nrows = @intCast(usize, A.nrows());
             const ncols = @intCast(usize, A.ncols());
             var M = try DenseMatrixMod(T).init(@intCast(T, A.modulus), nrows, ncols, allocator);
@@ -31,6 +30,23 @@ pub fn DenseMatrixMod(comptime T: type) type {
                 var j: usize = 0;
                 while (j < ncols) : (j += 1) {
                     M.unsafeSet(i, j, @intCast(T, A.get(@intCast(c_long, i), @intCast(c_long, j))));
+                }
+            }
+            return M;
+        }
+
+        pub fn initFromPari(modulus: T, A: pari.clib.GEN, min_nrows: usize, min_ncols: usize, allocator: std.mem.Allocator) !Matrix {
+            const size = pari.clib.matsize(A);
+            const nrows = @maximum(min_nrows, @intCast(usize, pari.clib.itos(pari.getcoeff1(size, 1))));
+            const ncols = @maximum(min_ncols, @intCast(usize, pari.clib.itos(pari.getcoeff1(size, 2))));
+            var M = try DenseMatrixMod(T).init(@intCast(T, modulus), nrows, ncols, allocator);
+            // Copy the entries over
+            var i: usize = 0;
+            while (i < nrows) : (i += 1) {
+                var j: usize = 0;
+                while (j < ncols) : (j += 1) {
+                    const x = @intCast(T, pari.clib.itos(pari.clib.lift(pari.getcoeff2(A, i + 1, j + 1))));
+                    M.unsafeSet(i, j, x);
                 }
             }
             return M;
@@ -138,21 +154,34 @@ pub fn DenseMatrixMod(comptime T: type) type {
             return @intCast(usize, r);
         }
 
-        pub fn rank2(self: Matrix) usize {
-            pari.init(0, 0);
-            var av = pari.clib.avma;
+        pub fn toPari(self: Matrix) pari.clib.GEN {
             var z = pari.clib.zeromatcopy(@intCast(c_long, self.nrows), @intCast(c_long, self.ncols));
             var i: usize = 0;
             while (i < self.nrows) : (i += 1) {
                 var j: usize = 0;
                 while (j < self.ncols) : (j += 1) {
                     const x = pari.clib.gmodulss(self.unsafeGet(i, j), self.modulus);
-                    pari.gsetcoeff(z, i + 1, j + 1, x);
+                    pari.setcoeff2(z, i + 1, j + 1, x);
                 }
             }
+            return z;
+        }
+
+        pub fn rank2(self: Matrix) usize {
+            const context = pari.Context();
+            defer context.deinit();
+            var z = self.toPari();
             var r = pari.clib.rank(z);
-            pari.clib.avma = av;
             return @intCast(usize, r);
+        }
+
+        pub fn kernel2(self: Matrix) !Matrix {
+            const context = pari.Context();
+            defer context.deinit();
+            var z = self.toPari();
+            var K = pari.clib.ker(z);
+            var m = try Matrix.initFromPari(self.modulus, K, self.ncols, 0, self.entries.allocator);
+            return m;
         }
     };
 }
@@ -247,7 +276,7 @@ test "compute a trivial kernel using FLINT" {
     try expect(m.rank() == 1);
 }
 
-test "compute a trivial kernel using FLINT" {
+test "compute another trivial kernel using FLINT" {
     var m = try DenseMatrixMod(i32).init(3, 1, 1, testing_allocator);
     defer m.deinit();
     try m.set(0, 0, 1);
@@ -256,3 +285,40 @@ test "compute a trivial kernel using FLINT" {
     try expect(K.ncols == 0);
     try expect(m.rank() == 1);
 }
+
+
+test "compute a kernel using PARI" {
+    pari.init(0, 0);
+    var m = try DenseMatrixMod(i32).init(19, 2, 2, testing_allocator);
+    defer m.deinit();
+    try m.set(0, 0, 1);
+    try m.set(0, 1, 1);
+    var K = try m.kernel2();
+    defer K.deinit();
+    try expect((try K.get(0, 0)) == 18);
+    try expect((try K.get(1, 0)) == 1);
+    try expect(m.rank() == 1);
+}
+
+
+test "compute a trivial kernel using PARI" {
+    var m = try DenseMatrixMod(i32).init(19, 1, 1, testing_allocator);
+    defer m.deinit();
+    try m.set(0, 0, 1);
+    var K = try m.kernel2();
+    defer K.deinit();
+    try expect(K.ncols == 0);
+    try expect(m.rank() == 1);
+}
+
+test "compute another trivial kernel using PARI" {
+    var m = try DenseMatrixMod(i32).init(3, 1, 1, testing_allocator);
+    defer m.deinit();
+    try m.set(0, 0, 1);
+    var K = try m.kernel2();
+    defer K.deinit();
+    try expect(K.ncols == 0);
+    try expect(m.rank() == 1);
+}
+
+

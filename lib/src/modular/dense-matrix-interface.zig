@@ -3,6 +3,7 @@ const interface = @import("../interface.zig");
 const dense_matrix = @import("./dense-matrix.zig");
 const dense_vector_interface = @import("./dense-vector-interface.zig");
 const errors = @import("../errors.zig");
+const pari = @import("../pari/pari.zig");
 
 const DenseMatrixType = dense_matrix.DenseMatrixMod(i32);
 var DenseMatrix_objects = interface.ProxyObjects(DenseMatrixType).init();
@@ -62,6 +63,20 @@ pub export fn DenseMatrix_kernel(handle: i32) i32 {
     return DenseMatrix_put(K);
 }
 
+pub export fn DenseMatrix_nrows(handle: i32) i32 {
+    const A = DenseMatrix_get(handle) catch {
+        return 0;
+    };
+    return @intCast(i32, A.nrows);
+}
+
+pub export fn DenseMatrix_ncols(handle: i32) i32 {
+    const A = DenseMatrix_get(handle) catch {
+        return 0;
+    };
+    return @intCast(i32, A.ncols);
+}
+
 pub export fn DenseMatrix_rank(handle: i32) i32 {
     const A = DenseMatrix_get(handle) catch {
         return 0;
@@ -78,3 +93,13 @@ pub export fn DenseMatrix_rank2(handle: i32) i32 {
     return @intCast(i32, A.rank2());
 }
 
+pub export fn DenseMatrix_kernel2(handle: i32) i32 {
+    const A = DenseMatrix_get(handle) catch {
+        return 0;
+    };
+    var K = A.kernel2() catch {
+        interface.throw("DenseMatrix: failed to compute kernel");
+        return 0;
+    };
+    return DenseMatrix_put(K);
+}

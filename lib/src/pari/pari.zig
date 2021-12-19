@@ -16,17 +16,36 @@ pub export fn init(parisize: clib.sizet, maxprime: clib.ulong) void {
 }
 
 pub fn exec(s: [*:0]const u8) ![*:0]u8 {
-    var av: clib.pari_sp = clib.avma;
+    const context = Context();
+    defer context.deinit();
     var x: clib.GEN = clib.gp_read_str_multiline(s, null);
-    var r = clib.GENtostr(x);
-    clib.avma = av;
-    return r;
+    return clib.GENtostr(x);
+}
+
+const ContextType = struct {
+    av: clib.pari_sp,
+    pub fn deinit(C: ContextType) void {
+        clib.avma = C.av;
+    }
+};
+
+pub fn Context() ContextType {
+    init(0, 0);
+    return ContextType{ .av = clib.avma };
 }
 
 // This is equivalent to "gcoeff(z, i, j) = x" in pari library code,
 // but we have to rewrite because gcoeff is a macro.
-pub fn gsetcoeff(z: clib.GEN, i: usize, j: usize, x: clib.GEN) void {
+pub fn setcoeff2(z: clib.GEN, i: usize, j: usize, x: clib.GEN) void {
     @ptrCast([*][*]clib.GEN, z)[j][i] = x;
+}
+
+pub fn getcoeff2(z: clib.GEN, i: usize, j: usize) clib.GEN {
+    return @ptrCast([*][*]clib.GEN, z)[j][i];
+}
+
+pub fn getcoeff1(z: clib.GEN, i: usize) clib.GEN {
+    return @ptrCast([*]clib.GEN, z)[i];
 }
 
 const expect = std.testing.expect;
