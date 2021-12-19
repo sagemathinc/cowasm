@@ -45,6 +45,12 @@ export class DenseMatrix {
     return new DenseMatrix(wasm.exports.DenseMatrix_kernel(this.handle));
   }
 
+  subtractScalar(scalar: number): DenseMatrix {
+    return new DenseMatrix(
+      wasm.exports.DenseMatrix_subtractScalar(this.handle, scalar)
+    );
+  }
+
   nrows(): number {
     return wasm.exports.DenseMatrix_nrows(this.handle);
   }
@@ -71,11 +77,11 @@ export class DenseMatrix {
     return s;
   }
 
-  // quick and dirty factored charpoly for now.
-  fcp(): string {
+  // quick and dirty factored charpoly for now that just prints it.
+  async fcp(): Promise<void> {
     // NOTE: this will just fail the first time due to needing to
     // init pari...
-    pariInit();
-    return pariExec(`lift(factor(charpoly(${this.pariString()})))`);
+    await pariInit();
+    console.log(pariExec(`lift(factor(charpoly(${this.pariString()})))`));
   }
 }

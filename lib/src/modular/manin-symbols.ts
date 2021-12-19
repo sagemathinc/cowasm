@@ -19,6 +19,17 @@ class ManinSymbolsClass {
   private readonly handle: number;
 
   constructor(N: number, sign: Sign) {
+    if (sign) {
+      console.warn(
+        "ManinSymbols with sign 0 seems always right, but with sign 1 or -1 it is often very wrong."
+      );
+      console.warn(
+        "A good example input is inconsistent with what you get for sign=0:"
+      );
+      console.warn(
+        "N=23; p=1009; M = ManinSymbols(N,1); P = M.presentation(p); t = P.heckeOperator(2); t.fcp()"
+      );
+    }
     if (wasm == null) throw Error("call init first");
     this.handle = wasm.exports.ManinSymbols(N, sign);
     registry.register(this, this.handle);
