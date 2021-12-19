@@ -1,9 +1,5 @@
 # Todo
 
-## Build
-
-[ ] Remove MPIR as a dependency, since it has to be possible. See https://trac.sagemath.org/ticket/32549#comment:44Weird bug:
-
 ## MacOS
 
 I can't run the zig tests (and some build stuff is confused/broken) because

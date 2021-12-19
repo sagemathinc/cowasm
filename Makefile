@@ -21,11 +21,6 @@ packages/gmp/${BUILT}: zig
 .PHONY: gmp
 gmp: packages/gmp/${BUILT}
 
-packages/mpir/${BUILT}: zig
-	cd packages/mpir && make all
-.PHONY: mpir
-mpir: packages/mpir/${BUILT}
-
 packages/mpfr/${BUILT}: packages/gmp/${BUILT} zig
 	cd packages/mpfr && make all
 .PHONY: mpfr
@@ -113,7 +108,6 @@ docker-nocache:
 clean:
 	cd packages/gmp && make clean
 	cd packages/gf2x && make clean
-	cd packages/mpir && make clean
 	cd packages/mpfr && make clean
 	cd packages/mpc && make clean
 	cd packages/ntl && make clean
