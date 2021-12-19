@@ -19,8 +19,11 @@ RUN  curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
   && npm install -g npm@latest
 
 # Get source code of JSage and build everything:
+ARG commit=HEAD
+
 RUN  git clone https://github.com/sagemathinc/jsage \
   && cd jsage \
+  && git checkout ${commit:-HEAD} \
   && make
 
 RUN echo "export PATH=/jsage/packages/jpython/bin:/jsage/packages/zig/dist/:/jsage/packages/wasmer/dist/bin:$PATH" >> /root/.bashrc
