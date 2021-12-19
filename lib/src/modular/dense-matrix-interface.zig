@@ -85,21 +85,3 @@ pub export fn DenseMatrix_rank(handle: i32) i32 {
     return @intCast(i32, A.rank());
 }
 
-pub export fn DenseMatrix_rank2(handle: i32) i32 {
-    const A = DenseMatrix_get(handle) catch {
-        return 0;
-    };
-    // cast is from usize, but due to memory size rank can't possibly lead to overflow.
-    return @intCast(i32, A.rank2());
-}
-
-pub export fn DenseMatrix_kernel2(handle: i32) i32 {
-    const A = DenseMatrix_get(handle) catch {
-        return 0;
-    };
-    var K = A.kernel2() catch {
-        interface.throw("DenseMatrix: failed to compute kernel");
-        return 0;
-    };
-    return DenseMatrix_put(K);
-}

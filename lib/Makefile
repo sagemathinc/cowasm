@@ -37,7 +37,7 @@ WASM_CFLAGS   = -dynamic ${OPT}
 NATIVE_CFLAGS_NOOPT = -I. ${PARI_NATIVE_CFLAGS}  ${GMP_NATIVE_CFLAGS}  ${FLINT_NATIVE_CFLAGS} ${MPFR_NATIVE_CFLAGS} -lc
 NATIVE_CFLAGS = ${NATIVE_CFLAGS_NOOPT} ${OPT}
 
-TEST = ./zig-test.sh ${NATIVE_CFLAGS_NOOPT} -I${CWD}/src/pari 
+TEST = ./zig-test.sh ${NATIVE_CFLAGS_NOOPT} -I${CWD}/src/pari
 
 DIST = ${CWD}/dist
 
@@ -93,13 +93,12 @@ ${DIST}/complex/complex.wasm: src/complex/complex.zig
 	mv src/complex/complex.wasm ${DIST}/complex/complex.wasm
 
 ${DIST}/modular/p1list.wasm: src/modular/p1list.zig src/modular/p1list-export.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig src/modular/sl2z.zig
-	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} ${FLINT_WASM_CFLAGS} modular/p1list-export.zig  ${ZIG_PKG} -lc
+	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} modular/p1list-export.zig  ${ZIG_PKG} -lc
 	mkdir -p ${DIST}/modular
 	mv src/p1list-export.wasm ${DIST}/modular/p1list.wasm
 
-
 ${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/interface.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig src/modular/dense-vector-interface.zig src/modular/dense-matrix.zig src/modular/dense-matrix-interface.zig src/pari/pari.h src/pari/pari.zig
-	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS} ${FLINT_WASM_CFLAGS} ${GMP_WASM_CFLAGS} ${MPFR_WASM_CFLAGS}  ${PARI_WASM_CFLAGS}  modular/interface.zig  ${ZIG_PKG} -lc
+	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS}  ${GMP_WASM_CFLAGS} ${PARI_WASM_CFLAGS}  modular/interface.zig  ${ZIG_PKG} -lc
 	mkdir -p ${DIST}/modular
 	mv src/interface.wasm ${DIST}/modular/manin-symbols.wasm
 

@@ -2,7 +2,6 @@ const std = @import("std");
 const errors = @import("../errors.zig");
 const vector = @import("./dense-vector.zig");
 const mod = @import("../arith.zig").mod;
-const flint_nmod_mat = @import("../flint/nmod-mat.zig");
 const pari = @import("../pari/pari.zig");
 
 pub fn DenseMatrixMod(comptime T: type) type {
@@ -18,21 +17,6 @@ pub fn DenseMatrixMod(comptime T: type) type {
             var entries = try std.ArrayList(T).initCapacity(allocator, nrows * ncols);
             entries.appendNTimesAssumeCapacity(0, nrows * ncols);
             return Matrix{ .modulus = modulus, .nrows = nrows, .ncols = ncols, .entries = entries };
-        }
-
-        pub fn initFromFlint(A: flint_nmod_mat.MatrixModN, allocator: std.mem.Allocator) !Matrix {
-            const nrows = @intCast(usize, A.nrows());
-            const ncols = @intCast(usize, A.ncols());
-            var M = try DenseMatrixMod(T).init(@intCast(T, A.modulus), nrows, ncols, allocator);
-            // Copy the entries over
-            var i: usize = 0;
-            while (i < nrows) : (i += 1) {
-                var j: usize = 0;
-                while (j < ncols) : (j += 1) {
-                    M.unsafeSet(i, j, @intCast(T, A.get(@intCast(c_long, i), @intCast(c_long, j))));
-                }
-            }
-            return M;
         }
 
         pub fn initFromPari(modulus: T, A: pari.clib.GEN, min_nrows: usize, min_ncols: usize, allocator: std.mem.Allocator) !Matrix {
@@ -54,6 +38,17 @@ pub fn DenseMatrixMod(comptime T: type) type {
 
         pub fn deinit(self: *Matrix) void {
             self.entries.deinit();
+        }
+
+        pub fn copy(self: Matrix) !Matrix {
+            var entries = try std.ArrayList(T).initCapacity(self.entries.allocator, self.nrows * self.ncols);
+            entries.appendNTimesAssumeCapacity(0, self.nrows * self.ncols);
+            var i: usize = 0;
+            var n: usize = self.nrows * self.ncols;
+            while (i < n) : (i += 1) {
+                entries.items[i] = self.entries.items[i];
+            }
+            return Matrix{ .modulus = self.modulus, .nrows = self.nrows, .ncols = self.ncols, .entries = entries };
         }
 
         pub fn jsonStringify(
@@ -85,6 +80,20 @@ pub fn DenseMatrixMod(comptime T: type) type {
 
         pub fn unsafeSet(self: *Matrix, row: usize, col: usize, x: T) void {
             self.entries.items[row * self.ncols + col] = x;
+        }
+
+        // return new matrix "self - x"
+        pub fn subtractScalar(self: Matrix, x: T) !Matrix {
+            if (self.nrows != self.ncols) {
+                // must be square.
+                return errors.Math.ValueError;
+            }
+            var A = try self.copy();
+            var i: usize = 0;
+            while (i < self.nrows) : (i += 1) {
+                A.unsafeSet(i, i, mod(self.unsafeGet(i, i) - x, self.modulus));
+            }
+            return A;
         }
 
         pub fn set(self: *Matrix, row: usize, col: usize, x: T) !void {
@@ -127,33 +136,6 @@ pub fn DenseMatrixMod(comptime T: type) type {
             }
         }
 
-        pub fn toFlint(self: Matrix) flint_nmod_mat.MatrixModN {
-            var m = flint_nmod_mat.MatrixModN.init(@intCast(c_ulong, self.modulus), @intCast(c_long, self.nrows), @intCast(c_long, self.ncols));
-            var i: usize = 0;
-            while (i < self.nrows) : (i += 1) {
-                var j: usize = 0;
-                while (j < self.ncols) : (j += 1) {
-                    m.set(@intCast(c_long, i), @intCast(c_long, j), @intCast(c_ulong, self.unsafeGet(i, j)));
-                }
-            }
-            return m;
-        }
-
-        pub fn kernel(self: Matrix) !Matrix {
-            var A = self.toFlint();
-            defer A.deinit();
-            var K = A.kernel();
-            defer K.deinit();
-            return try Matrix.initFromFlint(K, self.entries.allocator);
-        }
-
-        pub fn rank(self: Matrix) usize {
-            var A = self.toFlint();
-            defer A.deinit();
-            const r = A.rank();
-            return @intCast(usize, r);
-        }
-
         pub fn toPari(self: Matrix) pari.clib.GEN {
             var z = pari.clib.zeromatcopy(@intCast(c_long, self.nrows), @intCast(c_long, self.ncols));
             var i: usize = 0;
@@ -167,7 +149,7 @@ pub fn DenseMatrixMod(comptime T: type) type {
             return z;
         }
 
-        pub fn rank2(self: Matrix) usize {
+        pub fn rank(self: Matrix) usize {
             const context = pari.Context();
             defer context.deinit();
             var z = self.toPari();
@@ -175,7 +157,7 @@ pub fn DenseMatrixMod(comptime T: type) type {
             return @intCast(usize, r);
         }
 
-        pub fn kernel2(self: Matrix) !Matrix {
+        pub fn kernel(self: Matrix) !Matrix {
             const context = pari.Context();
             defer context.deinit();
             var z = self.toPari();
@@ -240,72 +222,23 @@ test "extract a row" {
     try expect((try v.get(1)) == 5);
 }
 
-test "convert a matrix to flint" {
-    var m = try DenseMatrixMod(i32).init(19, 2, 3, testing_allocator);
-    defer m.deinit();
-    try m.set(1, 0, 3);
-    try m.set(1, 1, 5);
-    var f = m.toFlint();
-    defer f.deinit();
-    try expect(f.get(1, 0) == 3);
-    try expect(f.get(1, 1) == 5);
-    try expect(f.modulus == 19);
-    try expect(f.nrows() == 2);
-    try expect(f.ncols() == 3);
-}
-
-test "compute a kernel using FLINT" {
-    var m = try DenseMatrixMod(i32).init(19, 2, 2, testing_allocator);
-    defer m.deinit();
-    try m.set(0, 0, 1);
-    try m.set(0, 1, 1);
-    var K = try m.kernel();
-    defer K.deinit();
-    try expect((try K.get(0, 0)) == 18);
-    try expect((try K.get(1, 0)) == 1);
-    try expect(m.rank() == 1);
-}
-
-test "compute a trivial kernel using FLINT" {
-    var m = try DenseMatrixMod(i32).init(19, 1, 1, testing_allocator);
-    defer m.deinit();
-    try m.set(0, 0, 1);
-    var K = try m.kernel();
-    defer K.deinit();
-    try expect(K.ncols == 0);
-    try expect(m.rank() == 1);
-}
-
-test "compute another trivial kernel using FLINT" {
-    var m = try DenseMatrixMod(i32).init(3, 1, 1, testing_allocator);
-    defer m.deinit();
-    try m.set(0, 0, 1);
-    var K = try m.kernel();
-    defer K.deinit();
-    try expect(K.ncols == 0);
-    try expect(m.rank() == 1);
-}
-
-
 test "compute a kernel using PARI" {
-    pari.init(0, 0);
     var m = try DenseMatrixMod(i32).init(19, 2, 2, testing_allocator);
     defer m.deinit();
     try m.set(0, 0, 1);
     try m.set(0, 1, 1);
-    var K = try m.kernel2();
+    var K = try m.kernel();
     defer K.deinit();
     try expect((try K.get(0, 0)) == 18);
     try expect((try K.get(1, 0)) == 1);
     try expect(m.rank() == 1);
 }
-
 
 test "compute a trivial kernel using PARI" {
     var m = try DenseMatrixMod(i32).init(19, 1, 1, testing_allocator);
     defer m.deinit();
     try m.set(0, 0, 1);
-    var K = try m.kernel2();
+    var K = try m.kernel();
     defer K.deinit();
     try expect(K.ncols == 0);
     try expect(m.rank() == 1);
@@ -315,10 +248,19 @@ test "compute another trivial kernel using PARI" {
     var m = try DenseMatrixMod(i32).init(3, 1, 1, testing_allocator);
     defer m.deinit();
     try m.set(0, 0, 1);
-    var K = try m.kernel2();
+    var K = try m.kernel();
     defer K.deinit();
     try expect(K.ncols == 0);
     try expect(m.rank() == 1);
 }
 
-
+test "subtract a scalar" {
+    var m = try DenseMatrixMod(i32).init(19, 2, 2, testing_allocator);
+    defer m.deinit();
+    var n = try m.subtractScalar(3);
+    defer n.deinit();
+    try expect((try n.get(0, 0)) == 16);
+    try expect((try n.get(1, 1)) == 16);
+    try expect((try n.get(0, 1)) == 0);
+    try expect((try n.get(1, 0)) == 0);
+}

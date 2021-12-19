@@ -24,13 +24,15 @@ export * as misc from "./misc";
 export { Number } from "./number";
 
 export async function init(): Promise<void> {
-  await dims.init();
-  await p1listInit();
-  await maninSymbolsInit();
-  await factor.init();
-  await arith.init();
-  await integerInit();
-  await rationalInit();
-  //await pari.init();
+  await Promise.all([
+    dims.init(),
+    p1listInit(),
+    maninSymbolsInit(),
+    factor.init(),
+    arith.init(),
+    integerInit(),
+    rationalInit(),
+    /*pari.init(),*/
+  ]);
 }
 init();

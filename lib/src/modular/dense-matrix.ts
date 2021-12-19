@@ -45,10 +45,6 @@ export class DenseMatrix {
     return new DenseMatrix(wasm.exports.DenseMatrix_kernel(this.handle));
   }
 
-  kernel2(): DenseMatrix {
-    return new DenseMatrix(wasm.exports.DenseMatrix_kernel2(this.handle));
-  }
-
   nrows(): number {
     return wasm.exports.DenseMatrix_nrows(this.handle);
   }
@@ -59,10 +55,6 @@ export class DenseMatrix {
 
   rank(): number {
     return wasm.exports.DenseMatrix_rank(this.handle);
-  }
-
-  rank2(): number {
-    return wasm.exports.DenseMatrix_rank2(this.handle);
   }
 
   pariString(): string {
