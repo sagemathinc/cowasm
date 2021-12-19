@@ -106,6 +106,10 @@ wasi: packages/wasi/${BUILT}
 docker:
 	docker build . -t jsage
 
+.PHONY: docker-nocache
+docker-nocache:
+	docker build . -t jsage --no-cache
+
 clean:
 	cd packages/gmp && make clean
 	cd packages/gf2x && make clean
