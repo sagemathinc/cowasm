@@ -4,9 +4,7 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 export PATH := ${CWD}/packages/zig/dist:${CWD}/packages/wasmer/dist/bin:$(PATH)
 
-all: wasmer zig packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/mpc/${BUILT} \
-	 packages/gf2x/${BUILT} packages/ntl/${BUILT} packages/flint/${BUILT} packages/pari/${BUILT} \
-	 lib/${BUILT} packages/jpython/${BUILT}
+all: lib/${BUILT} packages/jpython/${BUILT}
 
 .PHONY: zig
 zig:

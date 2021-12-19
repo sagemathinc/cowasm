@@ -34,7 +34,7 @@ PYTHON_WASM   = ${PACKAGES}/python/dist/wasm
 
 WASM_CFLAGS   = -dynamic ${OPT}
 
-NATIVE_CFLAGS_NOOPT = -I. ${PARI_NATIVE_CFLAGS}  ${GMP_NATIVE_CFLAGS}  ${FLINT_NATIVE_CFLAGS} ${MPFR_NATIVE_CFLAGS} -lc
+NATIVE_CFLAGS_NOOPT = -I. ${PARI_NATIVE_CFLAGS}  ${GMP_NATIVE_CFLAGS} -lc
 NATIVE_CFLAGS = ${NATIVE_CFLAGS_NOOPT} ${OPT}
 
 TEST = ./zig-test.sh ${NATIVE_CFLAGS_NOOPT} -I${CWD}/src/pari
@@ -47,14 +47,7 @@ all: ${DIST}/.built
 ## Interface with FLINT
 .PHONY: test-flint-nmod-mat
 test-flint-nmod-mat:
-	cd src && ${TEST} flint/nmod-mat.zig
-
-${DIST}/flint.wasm: src/flint/nmod-mat.zig
-	cd src/ && zig build-lib -target wasm32-wasi -dynamic -lc \
-	  ${GMP_WASM_CFLAGS} ${FLINT_WASM_CFLAGS} ${MPFR_WASM_CFLAGS} \
-	    ${WASM_CFLAGS} flint/interface.zig  ${ZIG_PKG}
-	mkdir -p ${DIST}
-	mv src/interface.wasm ${DIST}/flint.wasm
+	cd src && ${TEST}  ${FLINT_NATIVE_CFLAGS} ${MPFR_NATIVE_CFLAGS}  flint/nmod-mat.zig
 
 ## Interface with GMP directly:
 .PHONY: test-integer
@@ -128,18 +121,24 @@ ${DIST}/modular/dims.wasm: src/modular/dims.zig src/trial-division.zig
 	mkdir -p ${DIST}/modular
 	mv src/dims.wasm ${DIST}/modular/
 
+####################
+## Testing all the code that matters
+####################
+
 # Runs zig test on all zig files that contain the word "test" but do not
 # have interface or export in their filename (since can't test those).
 # Runs on each one individually, not all at once which doesn't work.
 # not in parallel
+# We also exclude the flint and python subdirs, since it turns out we
+# are not depending on them for the library at present.
 .PHONY: test-zig1
 test-zig1:
-	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | grep -v python | xargs -t -n 1 ${TEST}
+	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | grep -v python | grep -v flint | xargs -t -n 1 ${TEST}
 
 # in parallel
 .PHONY: test-zig
 test-zig:
-	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | grep -v python | xargs -t -P 8 -n 1 ${TEST}
+	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | grep -v python | grep -v flint | xargs -t -P 8 -n 1 ${TEST}
 
 ####################
 ## PARI interface
