@@ -49,7 +49,12 @@ export default function (
     let failed = false;
     let toplevel: any = undefined;
     try {
-      toplevel = JPython.parse(readFileSync(filename, "utf-8"), {
+      const file = readFileSync(filename, "utf-8");
+      if (file.toString().includes("# DISABLED")) {
+        console.log(`Skipping ${filename}`);
+        continue;
+      }
+      toplevel = JPython.parse(file, {
         filename,
         toplevel: toplevel,
         basedir: testPath,

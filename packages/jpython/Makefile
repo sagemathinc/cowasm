@@ -6,6 +6,7 @@ all: ${DIST}/.built
 ${DIST}/.built:
 	npm ci
 	npm run build
+	npm run test
 	touch ${DIST}/.built
 
 clean:

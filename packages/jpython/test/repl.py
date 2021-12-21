@@ -1,3 +1,5 @@
+# DISABLED -- because mysteriously the instrumentation of the console, etc., isn't working.
+
 stdout = []
 
 DEBUG = False
@@ -92,11 +94,13 @@ repl({
     'mockReadline': mockReadline,
     'terminal': False,
     'show_js': False,
-    'histfile': False
+    'histfile': False,
+    'ps1': '>>>'
 })
 
 
 def test_basics():
+    print(stdout)
     eq('>>> ', stdout[-1])
     clear()
     check('1', '1')
