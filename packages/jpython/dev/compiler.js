@@ -8908,7 +8908,7 @@ undefined;
 
         var js_new = ρσ_modules.js.js_new;
 
-        COMPILER_VERSION = "c35dd09f3b3ed57aad038ea6ff3e105026076e73";
+        COMPILER_VERSION = "0aaf6c8838bee74cf5a0aca4abf7c244e6a80197";
         PYTHON_FLAGS = {"exponent":true,"ellipses":true,"numbers":true,"annotations":false,"dict_literals":true,"overload_getitem":true,"bound_methods":true,"hash_literals":true};
         function get_compiler_version() {
             return COMPILER_VERSION;
@@ -13184,9 +13184,9 @@ undefined;
         function print_ellipses_range(self, output) {
             output.print("ρσ_range(");
             self.first.print(output);
-            output.print(",(");
+            output.print(",ρσ_operator_add(");
             self.last.print(output);
-            output.print("+1))");
+            output.print(",1))");
         };
 print_ellipses_range.__argnames__ = ["self", "output"];
 print_ellipses_range.__module__ = "output.loops";
