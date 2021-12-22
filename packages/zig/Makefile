@@ -4,7 +4,7 @@
 
 # Find the latest version at https://ziglang.org/download/
 
-VERSION = 0.9.0
+VERSION = 0.9.0-dev.1968+ff93486d0
 
 # Using sed because uname -s --> x86_64 or arm64, but need aarch64
 ARCH = $(shell uname -m | sed s/arm64/aarch64/)
