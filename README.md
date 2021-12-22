@@ -75,6 +75,12 @@ In most subdirectories `foo` of packages, this will create some subdirectories:
 - `packages/foo/dist/[native|wasm]` -- a native or WebAssembly build of the package; this has binaries, headers, and libs. These get used by other packages.
 - `packages/build/[native|wasm]` - build artifacts for the native or WebAssembly build; can be safely deleted
 
+### Extra Packages
+
+I have put a lot of work into getting various things to build, e.g., NTL, FLINT, Python, which are currently _**not**_ needed as a dependency for the core library I find myself building. Thus they are now NOT being built by default, since they aren't needed.  Really all we need so far to build what we want to build is JPython (a Python language-&gt;Javascript compiler), GMP and Pari.  It's amazing how much functionality Pari has built in, which overall is much broader (but less deep in some ways) than what's available in the C/C++ ecosystem of NTL/FLINT, etc.  For our purposes though (of something very cross platform and easy to maintain!), Pari is really ideal.
+
+That said, I put a lot of work into these other packages, and maybe they will be important at some point.  But don't expect them to just work.
+
 ### No common prefix directory
 
 Unlike SageMath, where everything is built into a single `local` directory, here we build everything in its own self-contained package. When a package like `pari` depends on another package like `gmp` , our Makefile for `pari` explicitly references the `dist` directory in the `packages/dist/gmp` . This makes it possible to uninstall packages, update them, etc., whereas using a common directory for everything can be a mess with possibly conflicting versions of files.
