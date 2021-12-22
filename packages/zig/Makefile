@@ -14,10 +14,14 @@ ARCH = $(shell uname -m | sed s/arm64/aarch64/)
 # but need      linux and macos
 OS = $(shell uname -s  | sed s/Darwin/macos/ | sed s/Linux/linux/)
 
+TARBALL = https://ziglang.org/download/${VERSION}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
+# for dev versions:
+#TARBALL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
+
 dist/${VERSION}:
 	rm -rf dist
 	mkdir -p dist build
-	curl https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz > build/zig.tar.xz
+	curl ${TARBALL} > build/zig.tar.xz
 	tar xf build/zig.tar.xz -C dist --strip-components=1
 	rm build/zig.tar.xz
 	touch dist/${VERSION}

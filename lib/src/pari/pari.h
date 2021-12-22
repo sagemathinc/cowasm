@@ -32,7 +32,43 @@ long itos(GEN x); // x must be of type t_INT,
 
 GEN matsize(GEN x);
 
+GEN cgetg(long x, long y);
+
 GEN zeromatcopy(long m, long n);
 GEN stoi(long s);
 
 GEN gmodulss(long x, long y);
+
+GEN ellinit(GEN x, GEN p, long prec);
+GEN ellap(GEN E, GEN p);
+GEN ellanalyticrank(GEN e, GEN eps, long prec);
+GEN ellanalyticrank_bitprec(GEN e, GEN eps, long bitprec);
+
+
+// These are copied from pari's headers/parigen.h, which says they are SUBJECT TO CHANGE.
+// So watch out!
+enum {
+  t_INT    =  1,
+  t_REAL   =  2,
+  t_INTMOD =  3,
+  t_FRAC   =  4,
+  t_FFELT  =  5,
+  t_COMPLEX=  6,
+  t_PADIC  =  7,
+  t_QUAD   =  8,
+  t_POLMOD =  9,
+  t_POL    =  10,
+  t_SER    =  11,
+  t_RFRAC  =  13,
+  t_QFR    =  15,
+  t_QFI    =  16,
+  t_VEC    =  17,
+  t_COL    =  18,
+  t_MAT    =  19,
+  t_LIST   =  20,
+  t_STR    =  21,
+  t_VECSMALL= 22,
+  t_CLOSURE = 23,
+  t_ERROR   = 24,
+  t_INFINITY= 25
+};

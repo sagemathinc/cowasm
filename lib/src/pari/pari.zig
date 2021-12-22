@@ -12,7 +12,7 @@ pub export fn init(parisize: clib.sizet, maxprime: clib.ulong) void {
     // We must use pari_init_opts rather than just pari_init, so we can set
     // different options (the last argument).
     const OPTIONS = 4; // this is INIT_DFTm = "initialize the defaults" -- header that has this is too hard to parse.
-    pari_init_opts(if (parisize == 0) 64 * 1000000 else parisize, maxprime, OPTIONS);
+    pari_init_opts(if (parisize == 0) 64 * 10000000 else parisize, maxprime, OPTIONS);
 }
 
 pub fn exec(s: [*:0]const u8) ![*:0]u8 {
@@ -42,6 +42,10 @@ pub fn setcoeff2(z: clib.GEN, i: usize, j: usize, x: clib.GEN) void {
 
 pub fn getcoeff2(z: clib.GEN, i: usize, j: usize) clib.GEN {
     return @ptrCast([*][*]clib.GEN, z)[j][i];
+}
+
+pub fn setcoeff1(z: clib.GEN, i: usize, x: clib.GEN) void {
+    @ptrCast([*]clib.GEN, z)[i] = x;
 }
 
 pub fn getcoeff1(z: clib.GEN, i: usize) clib.GEN {

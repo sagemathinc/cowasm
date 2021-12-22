@@ -11,10 +11,13 @@ DIST_WASM64 = ${CWD}/dist/wasm
 
 # Assembly + clang do NOT work on aarch64 for some reason involving alignment,
 # which I'm stumped fixing.
+# I've also disabled shared, because with zig-0.9.0 it started breaking building
+# on MacOS, and we don't need shared libraries for our purposes (WASM and
+# native zig testing).
 ifeq ($(shell uname -m),aarch64)
-NATIVE_CONF = --disable-assembly
+NATIVE_CONF = --disable-shared --disable-assembly
 else
-NATIVE_CONF =
+NATIVE_CONF = --disable-shared
 endif
 
 # one of WASM64 or WASM32... (also fix above)
@@ -68,7 +71,7 @@ wasm32: ${DIST_WASM32}/.built
 ## WebAssembly 64-bit ABI library
 # This is often twice as fast or more for big numbers, but might subtly break
 # everything (though I have no evidence it does).  In particular, it might mess up building FLINT
-# and NTL in various ways. 
+# and NTL in various ways.
 
 ${BUILD}/wasm64: ${BUILD}/gmp-${VERSION}.tar.bz2
 	rm -rf ${BUILD}/wasm64

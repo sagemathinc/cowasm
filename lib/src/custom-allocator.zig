@@ -23,7 +23,7 @@ pub fn checkError() bool {
     return false;
 }
 
-export fn gmp_alloc(n: usize) ?*c_void {
+export fn gmp_alloc(n: usize) ?*anyopaque {
     // std.debug.print("allocating n = {} bytes\n", .{n});
     const t = allocator.get().alloc(u8, n) catch |err|
         {
@@ -35,7 +35,7 @@ export fn gmp_alloc(n: usize) ?*c_void {
     return t.ptr;
 }
 
-export fn gmp_free(ptr: ?*c_void, n: usize) void {
+export fn gmp_free(ptr: ?*anyopaque, n: usize) void {
     //std.debug.print("free ptr={*} and {} bytes\n", .{ ptr, n });
     // This is how to turn void* from c into a **slice** of memory that
     // knows about its length!  Yes, this took me a long time to figure out.
@@ -52,7 +52,7 @@ pub fn free(slice: []u8) void {
     }
 }
 
-export fn gmp_realloc(ptr: ?*c_void, n: usize, m: usize) ?*c_void {
+export fn gmp_realloc(ptr: ?*anyopaque, n: usize, m: usize) ?*anyopaque {
     //std.debug.print("realloc n={},m={} bytes at ptr={*}\n", .{ n, m, ptr });
     const p = @ptrCast([*]u8, ptr)[0..n];
     const t = allocator.get().realloc(p, m) catch |err|

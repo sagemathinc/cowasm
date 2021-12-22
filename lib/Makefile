@@ -90,7 +90,7 @@ ${DIST}/modular/p1list.wasm: src/modular/p1list.zig src/modular/p1list-export.zi
 	mkdir -p ${DIST}/modular
 	mv src/p1list-export.wasm ${DIST}/modular/p1list.wasm
 
-${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/interface.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig src/modular/dense-vector-interface.zig src/modular/dense-matrix.zig src/modular/dense-matrix-interface.zig src/pari/pari.h src/pari/pari.zig
+${DIST}/modular/manin-symbols.wasm: src/modular/manin-symbols.zig src/modular/interface.zig src/interface/proxy.zig src/interface.zig src/interface/util.zig src/modular/dense-vector-interface.zig src/modular/dense-matrix.zig src/modular/dense-matrix-interface.zig src/modular/elliptic-curve-interface.zig src/pari/pari.h src/pari/pari.zig
 	cd src/ && zig build-lib -target wasm32-wasi ${WASM_CFLAGS}  ${GMP_WASM_CFLAGS} ${PARI_WASM_CFLAGS}  modular/interface.zig  ${ZIG_PKG} -lc
 	mkdir -p ${DIST}/modular
 	mv src/interface.wasm ${DIST}/modular/manin-symbols.wasm
@@ -102,6 +102,10 @@ test-manin-symbols:
 .PHONY: test-dense-matrix
 test-dense-matrix:
 	cd src && ${TEST} modular/dense-matrix.zig
+
+.PHONY: test-elliptic-curve
+test-elliptic-curve:
+	cd src && ${TEST} modular/elliptic-curve.zig
 
 .PHONY: test-p1list
 test-p1list:
