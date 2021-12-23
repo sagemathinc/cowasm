@@ -36,6 +36,8 @@ IN THE SOFTWARE.
 
  */
 
+export { run, wasmEnv } from "./runtime";
+
 import {
   WASI_ESUCCESS,
   WASI_EBADF,

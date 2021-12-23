@@ -30,6 +30,9 @@
     "es",
     "module"
   ],
+  "bin": {
+    "wasi-run": "./bin/run.js"
+  },
   "author": "William Stein <wstein@sagemath.com>",
   "license": "MIT",
   "bugs": {
