@@ -2,17 +2,13 @@ BUILT = dist/.built
 
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-export PATH := ${CWD}/packages/zig/dist:${CWD}/packages/wasmer/dist/bin:$(PATH)
+export PATH := ${CWD}/packages/zig/dist:$(PATH)
 
 all: lib/${BUILT} packages/jpython/${BUILT}
 
 .PHONY: zig
 zig:
 	cd packages/zig && make
-
-.PHONY: wasmer
-wasmer:
-	cd packages/wasmer && make
 
 packages/gmp/${BUILT}: zig
 	cd packages/gmp && make all
@@ -29,12 +25,12 @@ packages/mpc/${BUILT}: packages/gmp/${BUILT} packages/mpfr/${BUILT} zig
 .PHONY: mpc
 mpc: packages/mpc/${BUILT}
 
-packages/gf2x/${BUILT}: zig wasmer
+packages/gf2x/${BUILT}: zig wasi
 	cd packages/gf2x && make all
 .PHONY: gf2x
 gf2x: packages/gf2x/${BUILT}
 
-packages/ntl/${BUILT}: wasmer packages/gmp/${BUILT} packages/gf2x/${BUILT} zig
+packages/ntl/${BUILT}: wasi packages/gmp/${BUILT} packages/gf2x/${BUILT} zig
 	cd packages/ntl && make all
 .PHONY: ntl
 ntl: packages/ntl/${BUILT}
@@ -49,12 +45,12 @@ packages/wasm-posix/${BUILT}: zig
 .PHONY: wasm-posix
 wasm-posix: packages/wasm-posix/${BUILT}
 
-packages/pari/${BUILT}: wasmer packages/gmp/${BUILT} packages/wasm-posix/${BUILT} zig
+packages/pari/${BUILT}: wasi packages/gmp/${BUILT} packages/wasm-posix/${BUILT} zig
 	cd packages/pari && make all
 .PHONY: pari
 pari: packages/pari/${BUILT}
 
-packages/eclib/${BUILT}: wasmer packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/pari/${BUILT} packages/ntl/${BUILT} packages/flint/${BUILT} zig
+packages/eclib/${BUILT}: wasi packages/gmp/${BUILT} packages/mpfr/${BUILT} packages/pari/${BUILT} packages/ntl/${BUILT} packages/flint/${BUILT} zig
 	cd packages/eclib && make all
 .PHONY: eclib
 eclib: packages/eclib/${BUILT}

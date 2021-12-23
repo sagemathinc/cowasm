@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
-import subprocess, sys
+import os, subprocess, sys
 
+# this is all used at *build* time, so hardcoding the path is fine.
+RUN = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..',
+                   'packages', 'wasi', 'bin', 'run.js')
+
+SCRIPT_DIR = r"""SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"""
 
 def run(args):
     # print(' '.join(args)) -- don't enable except for debugging, since would obviously break scripts trying to parse output
@@ -22,9 +27,11 @@ def build(compiler):
     ]
     prev = None
     make_exe = False
+    wasm_file = '"${BASH_SOURCE[0]}.wasm"'
     for x in sys.argv[1:]:
         if prev == '-o' and '-c' not in sys.argv:
             args.append(x + '.wasm')
+            wasm_file = x + '.wasm'
             make_exe = x
         else:
             args.append(x)
@@ -34,11 +41,10 @@ def build(compiler):
         make_exe = "a.out"
         args.append("-o")
         args.append("a.out.wasm")
+        wasm_file = 'a.out.wasm'
     run(args)
     if make_exe:
         file = open(make_exe, 'w')
-        file.write("""#!/usr/bin/env bash
-wasmer run "${BASH_SOURCE[0]}.wasm" --dir . -- "$@"
-""")
+        file.write(f'#!/usr/bin/env bash\n{SCRIPT_DIR}\nnode {RUN} "${{SCRIPT_DIR}}/{wasm_file}" "$@"')
         file.close()
         run(["chmod", "+x", make_exe])

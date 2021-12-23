@@ -72,7 +72,7 @@ wasm: ${DIST_WASM}/.built
 
 .PHONY: run-wasm
 run-wasm: ${DIST_WASM}/.built
-	wasmer run ${DIST_WASM}/bin/gp-sta.wasm  --mapdir /:/
+	${DIST_WASM}/bin/gp
 
 
 clean:
