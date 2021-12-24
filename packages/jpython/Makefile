@@ -7,6 +7,8 @@ ${DIST}/.built:
 	npm ci
 	npm run build
 	npm run test
+	ln -sf ${CWD}/bin/jsage ${CWD}/../../bin/jsage
+	ln -sf ${CWD}/bin/jpython ${CWD}/../../bin/jpython
 	touch ${DIST}/.built
 
 clean:
