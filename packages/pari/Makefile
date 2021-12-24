@@ -35,7 +35,7 @@ ${BUILD}/native: ${BUILD}/pari-${VERSION}.tar.gz
 
 ${DIST_NATIVE}/.built: ${BUILD}/native
 	cd ${BUILD}/native && CC="zig cc" AR="zig ar" RANLIB="zig ranlib" \
-		./Configure --prefix=${DIST_NATIVE} --graphic=none  --with-gmp=${GMP}/native
+		./Configure --static --prefix=${DIST_NATIVE} --graphic=none  --with-gmp=${GMP}/native
 	cd ${BUILD}/native/O* && make AR="zig ar" RANLIB="zig ranlib" -j8 gp
 	cd ${BUILD}/native/O* && make install
 	touch ${DIST_NATIVE}/.built
@@ -55,7 +55,7 @@ ${BUILD}/wasm: ${BUILD}/pari-${VERSION}.tar.gz
 
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && CC=${ZCC} AR="zig ar" RANLIB="zig ranlib" \
-		./Configure --host=wasm-wasi --prefix=${DIST_WASM} --graphic=none --with-gmp=${GMP}/wasm
+		./Configure  --static --host=wasm-wasi --prefix=${DIST_WASM} --graphic=none --with-gmp=${GMP}/wasm
 	# Missing bits/ headers with zig:
 	cd ${BUILD}/wasm/O* && mkdir -p bits && cd bits && echo "#define __jmp_buf int"> setjmp.h && echo "" > wordsize.h
 	cd ${BUILD}/wasm/O* && make -j8 AR="zig ar" RANLIB="zig ranlib" gp
