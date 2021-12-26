@@ -95,6 +95,10 @@ wasi: packages/wasi/${BUILT}
 docker:
 	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/jsage master | awk '{print $$1}'` -t jsage .
 
+.PHONY: docker-nocache
+docker-nocache:
+	docker build --no-cache -t jsage .
+
 clean:
 	cd packages/gmp && make clean
 	cd packages/gf2x && make clean

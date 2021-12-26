@@ -45,6 +45,6 @@ def build(compiler):
     run(args)
     if make_exe:
         file = open(make_exe, 'w')
-        file.write(f'#!/usr/bin/env bash\n{SCRIPT_DIR}\nnode {RUN} "${{SCRIPT_DIR}}/{wasm_file}" "$@"')
+        file.write('#!/usr/bin/env bash\n'+SCRIPT_DIR+'\nnode '+RUN+' "${SCRIPT_DIR}/' + wasm_file + '" "$@"')
         file.close()
         run(["chmod", "+x", make_exe])

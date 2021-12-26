@@ -19,17 +19,17 @@ pub fn DenseMatrixMod(comptime T: type) type {
             return Matrix{ .modulus = modulus, .nrows = nrows, .ncols = ncols, .entries = entries };
         }
 
-        pub fn initFromPari(modulus: T, A: pari.clib.GEN, min_nrows: usize, min_ncols: usize, allocator: std.mem.Allocator) !Matrix {
-            const size = pari.clib.matsize(A);
-            const nrows = @maximum(min_nrows, @intCast(usize, pari.clib.itos(pari.getcoeff1(size, 1))));
-            const ncols = @maximum(min_ncols, @intCast(usize, pari.clib.itos(pari.getcoeff1(size, 2))));
+        pub fn initFromPari(modulus: T, A: pari.c.GEN, min_nrows: usize, min_ncols: usize, allocator: std.mem.Allocator) !Matrix {
+            const size = pari.c.matsize(A);
+            const nrows = @maximum(min_nrows, @intCast(usize, pari.c.itos(pari.getcoeff1(size, 1))));
+            const ncols = @maximum(min_ncols, @intCast(usize, pari.c.itos(pari.getcoeff1(size, 2))));
             var M = try DenseMatrixMod(T).init(@intCast(T, modulus), nrows, ncols, allocator);
             // Copy the entries over
             var i: usize = 0;
             while (i < nrows) : (i += 1) {
                 var j: usize = 0;
                 while (j < ncols) : (j += 1) {
-                    const x = @intCast(T, pari.clib.itos(pari.clib.lift(pari.getcoeff2(A, i + 1, j + 1))));
+                    const x = @intCast(T, pari.c.itos(pari.c.lift(pari.getcoeff2(A, i + 1, j + 1))));
                     M.unsafeSet(i, j, x);
                 }
             }
@@ -136,13 +136,13 @@ pub fn DenseMatrixMod(comptime T: type) type {
             }
         }
 
-        pub fn toPari(self: Matrix) pari.clib.GEN {
-            var z = pari.clib.zeromatcopy(@intCast(c_long, self.nrows), @intCast(c_long, self.ncols));
+        pub fn toPari(self: Matrix) pari.c.GEN {
+            var z = pari.c.zeromatcopy(@intCast(c_long, self.nrows), @intCast(c_long, self.ncols));
             var i: usize = 0;
             while (i < self.nrows) : (i += 1) {
                 var j: usize = 0;
                 while (j < self.ncols) : (j += 1) {
-                    const x = pari.clib.gmodulss(self.unsafeGet(i, j), self.modulus);
+                    const x = pari.c.gmodulss(self.unsafeGet(i, j), self.modulus);
                     pari.setcoeff2(z, i + 1, j + 1, x);
                 }
             }
@@ -153,7 +153,7 @@ pub fn DenseMatrixMod(comptime T: type) type {
             const context = pari.Context();
             defer context.deinit();
             var z = self.toPari();
-            var r = pari.clib.rank(z);
+            var r = pari.c.rank(z);
             return @intCast(usize, r);
         }
 
@@ -161,7 +161,7 @@ pub fn DenseMatrixMod(comptime T: type) type {
             const context = pari.Context();
             defer context.deinit();
             var z = self.toPari();
-            var K = pari.clib.ker(z);
+            var K = pari.c.ker(z);
             var m = try Matrix.initFromPari(self.modulus, K, self.ncols, 0, self.entries.allocator);
             return m;
         }

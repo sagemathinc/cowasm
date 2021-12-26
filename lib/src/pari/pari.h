@@ -4,6 +4,12 @@ use, then you have to look in the pari header files and copy
 the relevant part here.  Why?  Because directly importing
 pari/pari.h into zig **crashes the zig compiler** -- presumably that's
 a bug/shortcoming in the Zig's cImport?
+
+---
+
+We will probably need to *automate* copying this from pari header files,
+if we get serious, since things like enums, etc. could change and cause
+subtle bugs.
 */
 
 #include <sys/types.h>  // size_t
@@ -39,11 +45,14 @@ GEN stoi(long s);
 
 GEN gmodulss(long x, long y);
 
-GEN ellinit(GEN x, GEN p, long prec);
+GEN ellinit(GEN x, GEN D, long prec);
 GEN ellap(GEN E, GEN p);
+GEN ellan(GEN e, long n);
 GEN ellanalyticrank(GEN e, GEN eps, long prec);
 GEN ellanalyticrank_bitprec(GEN e, GEN eps, long bitprec);
+GEN ellQ_get_N(GEN e);
 
+enum { t_ELL_Rg = 0, t_ELL_Q, t_ELL_Qp, t_ELL_Fp, t_ELL_Fq, t_ELL_NF };
 
 // These are copied from pari's headers/parigen.h, which says they are SUBJECT TO CHANGE.
 // So watch out!
