@@ -10,11 +10,16 @@ const registry = new FinalizationRegistry((handle) => {
   wasm.exports.EllipticCurve_free(handle);
 });
 
-export class EllipticCurve {
+class EllipticCurveClass {
   private readonly handle: number;
 
-  constructor(_x: number[]) {
-    throw Error("TODO");
+  constructor(ainvs: number[]) {
+    if (ainvs.length == 2) {
+      ainvs = [0, 0, 0, ...ainvs];
+    } else if (ainvs.length != 5) {
+      throw Error("ainvs must be of length 2 or 5");
+    }
+    this.handle = wasm.exports.EllipticCurve_init(...ainvs);
   }
 
   __str__(): string {
@@ -32,6 +37,11 @@ export class EllipticCurve {
   }
 
   analyticRank(bitPrecision = 53): number {
+    console.log("warning: analyticRank doesn't work at all!");
     return wasm.exports.EllipticCurve_analyticRank(this.handle, bitPrecision);
   }
+}
+
+export function EllipticCurve(ainvs) {
+  return new EllipticCurveClass(ainvs);
 }

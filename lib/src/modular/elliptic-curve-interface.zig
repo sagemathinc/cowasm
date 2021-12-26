@@ -3,11 +3,16 @@ const interface = @import("../interface.zig");
 const errors = @import("../errors.zig");
 const elliptic_curve = @import("./elliptic-curve.zig");
 
+// This is JUST elliptic curves with i32 coefficients here.  But we will later have others...
+
 const EllipticCurveType = elliptic_curve.EllipticCurve(i32);
 var EllipticCurve_objects = interface.ProxyObjects(EllipticCurveType).init();
 
 pub export fn EllipticCurve_init(a1: i32, a2: i32, a3: i32, a4: i32, a6: i32) i32 {
-    var E = EllipticCurveType.init(a1, a2, a3, a4, a6);
+    var E = EllipticCurveType.init(a1, a2, a3, a4, a6, interface.allocator()) catch {
+        interface.throw("EllipticCurve: failed to store");
+        return 0;
+    };
     return EllipticCurve_put(E);
 }
 

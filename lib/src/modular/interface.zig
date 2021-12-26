@@ -5,8 +5,14 @@ const interface = @import("../interface.zig");
 const dense_vector_interface = @import("./dense-vector-interface.zig");
 const dense_matrix_interface = @import("./dense-matrix-interface.zig");
 const sparse_vector_interface = @import("./sparse-vector-interface.zig");
-const sparse_matrix_interface = @import("./sparse-matrix-interface.zig");
+const elliptic_curve_interface = @import("./elliptic-curve-interface.zig");
 const ManinSymbolsType = manin_symbols.ManinSymbols(i32, u32);
+
+pub export fn DUMMY12345() void {
+    // This is JUST to keep this code from not getting removed during compilation.
+    // this is never actually called by anything.
+    elliptic_curve_interface.EllipticCurve_free(0);
+}
 
 fn toSign(sign: i32) !manin_symbols.Sign {
     if (sign == -1) return manin_symbols.Sign.minus;

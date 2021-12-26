@@ -5,10 +5,18 @@ import * as dims from "./modular/dims";
 export { dims };
 import P1List, { init as p1listInit } from "./modular/p1list";
 export { P1List };
+
 import ManinSymbols, {
   init as maninSymbolsInit,
 } from "./modular/manin-symbols";
 export { ManinSymbols };
+
+import {
+  EllipticCurve,
+  init as EllipticCurveInit,
+} from "./modular/elliptic-curve";
+export { EllipticCurve };
+
 import * as factor from "./factor";
 export { factor };
 import * as arith from "./arith";
@@ -28,6 +36,7 @@ export async function init(): Promise<void> {
     dims.init(),
     p1listInit(),
     maninSymbolsInit(),
+    EllipticCurveInit(),
     factor.init(),
     arith.init(),
     integerInit(),
