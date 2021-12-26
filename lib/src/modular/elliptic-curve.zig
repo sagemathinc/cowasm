@@ -46,6 +46,8 @@ pub fn EllipticCurve(comptime T: type) type {
             return pari.c.itos(g);
         }
 
+        // compute array of a_k for k=0,1,2,...,n.
+        // where we define a_0 = 0, for simplicity.
         pub fn anlist(self: EC, n: c_long) !std.ArrayList(c_long) {
             const context = pari.Context();
             defer context.deinit();
@@ -60,6 +62,24 @@ pub fn EllipticCurve(comptime T: type) type {
             }
             return w;
         }
+
+        // compute array of a_p for p prime = 2,3,5,...,m, where
+        // m is largest prime <= n.
+        //         pub fn aplist(self: EC, n: c_long) !std.ArrayList(c_long) {
+        //             const context = pari.Context();
+        //             defer context.deinit();
+        //             var E = self.toPari(0);
+
+        //             var v = pari.c.ellan(E, n);
+        //             var w = try std.ArrayList(c_long).initCapacity(self.ainvs.allocator, @intCast(usize, n + 1));
+        //             try w.append(0);
+        //             var i: usize = 1;
+        //             while (i <= n) : (i += 1) {
+        //                 var an = pari.c.itos(pari.getcoeff1(v, i));
+        //                 try w.append(an);
+        //             }
+        //             return w;
+        //         }
 
         // mysterious *wrong*.
         pub fn analyticRank(self: EC, prec: c_long) c_long {
