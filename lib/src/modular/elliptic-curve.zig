@@ -24,34 +24,61 @@ pub fn EllipticCurve(comptime T: type) type {
             self.ainvs.deinit();
         }
 
-        pub fn toPariEll5(self: EC) pari.clib.GEN {
-            var v = pari.clib.cgetg(6, pari.clib.t_VEC);
+        pub fn toPariEll5(self: EC) pari.c.GEN {
+            var v = pari.c.cgetg(6, pari.c.t_VEC);
             var i: usize = 0;
             while (i < 5) : (i += 1) {
-                pari.setcoeff1(v, i + 1, pari.clib.stoi(self.ainvs.items[i]));
+                pari.setcoeff1(v, i + 1, pari.c.stoi(self.ainvs.items[i]));
             }
             return v;
         }
 
-        pub fn toPari(self: EC, prec: c_long) pari.clib.GEN {
+        pub fn toPari(self: EC, prec: c_long) pari.c.GEN {
             var v = self.toPariEll5();
-            return pari.clib.ellinit(v, null, prec);
+            return pari.c.ellinit(v, pari.c.stoi(pari.c.t_ELL_Q), prec);
         }
 
         pub fn ap(self: EC, p: c_long) c_long {
             const context = pari.Context();
             defer context.deinit();
-            var e = self.toPari(0);
-            var g = pari.clib.ellap(e, pari.clib.stoi(p));
-            return pari.clib.itos(g);
+            var E = self.toPari(0);
+            var g = pari.c.ellap(E, pari.c.stoi(p));
+            return pari.c.itos(g);
         }
 
-        pub fn analyticRank(self: EC, bitPrecision: c_long) c_long {
+        pub fn anlist(self: EC, n: c_long) !std.ArrayList(c_long) {
             const context = pari.Context();
             defer context.deinit();
-            var e = self.toPari(bitPrecision); // TODO -- this precision is *WRONG*
-            var g = pari.clib.ellanalyticrank_bitprec(e, null, bitPrecision);
-            return pari.clib.itos(g);
+            var E = self.toPari(0);
+            var v = pari.c.ellan(E, n);
+            var w = try std.ArrayList(c_long).initCapacity(self.ainvs.allocator, @intCast(usize, n + 1));
+            try w.append(0);
+            var i: usize = 1;
+            while (i <= n) : (i += 1) {
+                var an = pari.c.itos(pari.getcoeff1(v, i));
+                try w.append(an);
+            }
+            return w;
+        }
+
+        // mysterious *wrong*.
+        pub fn analyticRank(self: EC, prec: c_long) c_long {
+            const context = pari.Context();
+            defer context.deinit();
+            var E = self.toPari(prec);
+            var eps = pari.c.stoi(0);
+            var g = pari.c.ellanalyticrank(E, eps, prec);
+            return pari.c.itos(g);
+        }
+
+        // obviously condcutor could be too big to fit in c_long, and
+        // fortunately pari's itos below *does* throw an error.
+        pub fn conductor(self: EC) c_long {
+            const context = pari.Context();
+            defer context.deinit();
+            var E = self.toPari(0);
+            var N = pari.c.ellQ_get_N(E);
+            return pari.c.itos(N);
         }
 
         pub fn jsonStringify(
@@ -95,4 +122,31 @@ test "compute some ap for an elliptic curve" {
     try expect(E.ap(5) == -3);
     try expect(E.ap(7) == -1);
     try expect(E.ap(2019) == 719);
+}
+
+test "compute an analytic rank" {
+    var E = try EllipticCurve(i32).init(1, 2, 3, 4, 5, testing_allocator);
+    defer E.deinit();
+    try expect(E.analyticRank(10) == 0); // WRONG!! it should be 1!!
+}
+
+test "compute conductor of [1,2,3,4,5]" {
+    var E = try EllipticCurve(i32).init(1, 2, 3, 4, 5, testing_allocator);
+    defer E.deinit();
+    try expect(E.conductor() == 10351);
+}
+
+test "compute conductor of rank 4 -- [1, -1, 0, -79, 289]" {
+    var E = try EllipticCurve(i32).init(1, -1, 0, -79, 289, testing_allocator);
+    defer E.deinit();
+    try expect(E.conductor() == 234446);
+}
+
+test "compute anlist" {
+    var E = try EllipticCurve(i32).init(0, -1, 1, -10, -20, testing_allocator);
+    defer E.deinit();
+    var v = try E.anlist(10);
+    defer v.deinit();
+    std.debug.print("{any}\n", .{v.items});
+    try expect(std.mem.eql(c_long, v.items, &[_]c_long{ 0, 1, -2, -1, 2, 1, 2, -2, 0, -2, -2 }));
 }

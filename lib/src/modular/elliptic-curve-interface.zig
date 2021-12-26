@@ -2,6 +2,7 @@ const std = @import("std");
 const interface = @import("../interface.zig");
 const errors = @import("../errors.zig");
 const elliptic_curve = @import("./elliptic-curve.zig");
+extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
 
 // This is JUST elliptic curves with i32 coefficients here.  But we will later have others...
 
@@ -54,4 +55,29 @@ pub export fn EllipticCurve_analyticRank(handle: i32, bitPrecision: i32) i32 {
         return 0;
     };
     return @intCast(i32, E.analyticRank(bitPrecision));
+}
+
+pub export fn EllipticCurve_conductor(handle: i32) i32 {
+    const E = EllipticCurve_get(handle) catch {
+        return 0;
+    };
+    return @intCast(i32, E.conductor());
+}
+
+pub export fn EllipticCurve_anlist(handle: i32, n: i32) void {
+    const E = EllipticCurve_get(handle) catch {
+        return;
+    };
+    var v = E.anlist(n) catch {
+        interface.throw("EllipticCurve: failed to store");
+        return;
+    };
+    defer v.deinit();
+    var out = std.ArrayList(u8).init(EllipticCurve_objects.map.allocator);
+    defer out.deinit();
+    std.json.stringify(v.items, .{}, out.writer()) catch {
+        interface.throw("error stringifying anlist");
+        return;
+    };
+    wasmSendString(out.items.ptr, out.items.len);
 }
