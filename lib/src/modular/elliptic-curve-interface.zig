@@ -50,11 +50,11 @@ pub export fn EllipticCurve_ap(handle: i32, p: i32) i32 {
     return @intCast(i32, E.ap(p));
 }
 
-pub export fn EllipticCurve_analyticRank(handle: i32, bitPrecision: i32) i32 {
+pub export fn EllipticCurve_analyticRank(handle: i32, prec: i32) i32 {
     const E = EllipticCurve_get(handle) catch {
         return 0;
     };
-    return @intCast(i32, E.analyticRank(bitPrecision));
+    return @intCast(i32, E.analyticRank(prec, 0.0001));
 }
 
 pub export fn EllipticCurve_conductor(handle: i32) i32 {
@@ -64,11 +64,11 @@ pub export fn EllipticCurve_conductor(handle: i32) i32 {
     return @intCast(i32, E.conductor());
 }
 
-pub export fn EllipticCurve_root_number(handle: i32) i32 {
+pub export fn EllipticCurve_rootNumber(handle: i32) i32 {
     const E = EllipticCurve_get(handle) catch {
         return 0;
     };
-    return E.root_number();
+    return E.rootNumber();
 }
 
 pub export fn EllipticCurve_anlist(handle: i32, n: i32) void {

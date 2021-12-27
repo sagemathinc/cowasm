@@ -29,10 +29,18 @@ test("compute ap for a curve", () => {
   expect(EllipticCurve("389a").ap(2003) == 27);
 });
 
-
 test("root numbers of some curves", () => {
-  expect(EllipticCurve("11a").root_number() == 1);
-  expect(EllipticCurve("37a").root_number() == -1);
-  expect(EllipticCurve("389a").root_number() == 1);
-  expect(EllipticCurve("5077a").root_number() == -1);
+  expect(EllipticCurve("11a").rootNumber() == 1);
+  expect(EllipticCurve("37a").rootNumber() == -1);
+  expect(EllipticCurve("389a").rootNumber() == 1);
+  expect(EllipticCurve("5077a").rootNumber() == -1);
+  expect(EllipticCurve([1, -1, 0, -79, 289]).rootNumber() == 1);
+});
+
+test("analytic ranks of some curves", () => {
+  expect(EllipticCurve("11a").analyticRank() == 0);
+  expect(EllipticCurve("37a").analyticRank() == 1);
+  expect(EllipticCurve("389a").analyticRank() == 2);
+  expect(EllipticCurve("5077a").analyticRank() == 3);
+  expect(EllipticCurve([1, -1, 0, -79, 289]).analyticRank() == 4);
 });

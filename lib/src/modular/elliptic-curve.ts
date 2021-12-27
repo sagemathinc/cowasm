@@ -55,17 +55,16 @@ class EllipticCurveClass {
     return eval(wasm.result);
   }
 
-  analyticRank(bitPrecision = 53): number {
-    console.log("warning: analyticRank doesn't work at all!");
-    return wasm.exports.EllipticCurve_analyticRank(this.handle, bitPrecision);
+  analyticRank(prec = 10): number {
+    return wasm.exports.EllipticCurve_analyticRank(this.handle, prec);
   }
 
   conductor(): number {
     return wasm.exports.EllipticCurve_conductor(this.handle);
   }
 
-  root_number(): -1 | 1 {
-    return wasm.exports.EllipticCurve_root_number(this.handle);
+  rootNumber(): -1 | 1 {
+    return wasm.exports.EllipticCurve_rootNumber(this.handle);
   }
 }
 

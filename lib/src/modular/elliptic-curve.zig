@@ -83,18 +83,25 @@ pub fn EllipticCurve(comptime T: type) type {
             return w;
         }
 
-        // mysterious *wrong*.
-        pub fn analyticRank(self: EC, prec: c_long) c_long {
+        pub fn analyticRank(self: EC, prec: c_long, eps: f64) c_long {
             const context = pari.Context();
             defer context.deinit();
             var E = self.toPari(prec);
-            var eps = pari.c.stoi(0);
-            var g = pari.c.ellanalyticrank(E, eps, prec);
-            return pari.c.itos(g);
+            var g = pari.c.ellanalyticrank(E, pari.c.dbltor(eps), prec);
+            return pari.c.itos(pari.getcoeff1(g, 1));
+        }
+
+        // This is identical to analyticRank, except the 2 at the end!
+        pub fn leadingCoefficient(self: EC, prec: c_long, eps: f64) c_long {
+            const context = pari.Context();
+            defer context.deinit();
+            var E = self.toPari(prec);
+            var g = pari.c.ellanalyticrank(E, pari.c.dbltor(eps), prec);
+            return pari.c.itos(pari.getcoeff1(g, 2));
         }
 
         // long ellrootno_global(GEN e)
-        pub fn root_number(self: EC) i32 {
+        pub fn rootNumber(self: EC) i32 {
             const context = pari.Context();
             defer context.deinit();
             var E = self.toPari(0);
@@ -157,7 +164,7 @@ test "compute some ap for an elliptic curve" {
 test "compute an analytic rank" {
     var E = try EllipticCurve(i32).init(1, 2, 3, 4, 5, testing_allocator);
     defer E.deinit();
-    try expect(E.analyticRank(10) == 0); // WRONG!! it should be 1!!
+    try expect(E.analyticRank(15, 0.001) == 1);
 }
 
 test "compute conductor of [1,2,3,4,5]" {
@@ -193,11 +200,11 @@ test "compute aplist" {
 test "compute root numbers of 11a" {
     var E = try EllipticCurve(i32).init(0, -1, 1, -10, -20, testing_allocator);
     defer E.deinit();
-    try expect(E.root_number() == 1);
+    try expect(E.rootNumber() == 1);
 }
 
 test "compute root numbers of 5077a" {
     var E = try EllipticCurve(i32).init(0, 0, 1, -7, 6, testing_allocator);
     defer E.deinit();
-    try expect(E.root_number() == -1);
+    try expect(E.rootNumber() == -1);
 }

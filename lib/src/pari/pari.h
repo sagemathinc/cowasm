@@ -21,6 +21,7 @@ typedef long *GEN;
 extern pari_sp avma;
 
 GEN stoi(long x);
+GEN dbltor(double s);
 GEN gadd(GEN x, GEN y);
 char *GENtostr(GEN x);  // malloc'd and YOU must free it.
 GEN gp_read_str_multiline(const char *s, char *last);
