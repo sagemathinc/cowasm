@@ -93,6 +93,14 @@ pub fn EllipticCurve(comptime T: type) type {
             return pari.c.itos(g);
         }
 
+        // long ellrootno_global(GEN e)
+        pub fn root_number(self: EC) i32 {
+            const context = pari.Context();
+            defer context.deinit();
+            var E = self.toPari(0);
+            return @intCast(i32, pari.c.ellrootno_global(E));
+        }
+
         // obviously condcutor could be too big to fit in c_long, and
         // fortunately pari's itos below *does* throw an error.
         pub fn conductor(self: EC) c_long {
@@ -180,4 +188,16 @@ test "compute aplist" {
     defer v.deinit();
     std.debug.print("{any}\n", .{v.items});
     try expect(std.mem.eql(c_long, v.items, &[_]c_long{ -2, -1, 1, -2 }));
+}
+
+test "compute root numbers of 11a" {
+    var E = try EllipticCurve(i32).init(0, -1, 1, -10, -20, testing_allocator);
+    defer E.deinit();
+    try expect(E.root_number() == 1);
+}
+
+test "compute root numbers of 5077a" {
+    var E = try EllipticCurve(i32).init(0, 0, 1, -7, 6, testing_allocator);
+    defer E.deinit();
+    try expect(E.root_number() == -1);
 }

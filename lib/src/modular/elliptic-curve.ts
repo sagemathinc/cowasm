@@ -63,6 +63,10 @@ class EllipticCurveClass {
   conductor(): number {
     return wasm.exports.EllipticCurve_conductor(this.handle);
   }
+
+  root_number(): -1 | 1 {
+    return wasm.exports.EllipticCurve_root_number(this.handle);
+  }
 }
 
 export function EllipticCurve(ainvs) {

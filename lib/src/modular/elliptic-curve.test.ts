@@ -28,3 +28,11 @@ test("conductors of some curves", () => {
 test("compute ap for a curve", () => {
   expect(EllipticCurve("389a").ap(2003) == 27);
 });
+
+
+test("root numbers of some curves", () => {
+  expect(EllipticCurve("11a").root_number() == 1);
+  expect(EllipticCurve("37a").root_number() == -1);
+  expect(EllipticCurve("389a").root_number() == 1);
+  expect(EllipticCurve("5077a").root_number() == -1);
+});

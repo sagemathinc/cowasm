@@ -64,6 +64,13 @@ pub export fn EllipticCurve_conductor(handle: i32) i32 {
     return @intCast(i32, E.conductor());
 }
 
+pub export fn EllipticCurve_root_number(handle: i32) i32 {
+    const E = EllipticCurve_get(handle) catch {
+        return 0;
+    };
+    return E.root_number();
+}
+
 pub export fn EllipticCurve_anlist(handle: i32, n: i32) void {
     const E = EllipticCurve_get(handle) catch {
         return;

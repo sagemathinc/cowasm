@@ -51,6 +51,7 @@ GEN ellan(GEN e, long n);
 GEN ellanalyticrank(GEN e, GEN eps, long prec);
 GEN ellanalyticrank_bitprec(GEN e, GEN eps, long bitprec);
 GEN ellQ_get_N(GEN e);
+long ellrootno_global(GEN e);
 
 enum { t_ELL_Rg = 0, t_ELL_Q, t_ELL_Qp, t_ELL_Fp, t_ELL_Fq, t_ELL_NF };
 
