@@ -67,7 +67,7 @@ SageMath is a very large Python/Cython library that also includes a large number
 
 ### Make research level mathematical software available to the Javascript ecosystem
 
-Javascript is the most widely deployed language, but there is essentially nothing similar to any part of Sage, Pari, Gap or Singular available natively in [their ecosystem](https://www.npmjs.com/). Web applications, Node.js programs, and [sandboxed code running via Wasmer](https://blog.cloudflare.com/workers-unbound-ga/) could all benefit from such software.
+Javascript is the most widely deployed language, but there is essentially nothing similar to any part of Sage, Pari, Gap or Singular available natively in [their ecosystem](https://www.npmjs.com/). Web applications, Node.js programs, and [sandboxed code running via WebAssembly](https://blog.cloudflare.com/workers-unbound-ga/) could all benefit from such software.
 
 #### JIT: Just in time compiler
 
@@ -87,7 +87,7 @@ Making libraries like Pari, NTL, eclib, etc. available to Javascript is just a f
 
 ### Does this compete with SageMath?
 
-Unlike [Julia](https://julialang.org/) or [Oscar](https://oscar.computeralgebra.de/), this project does not attempt to directly compete with SageMath. Indeed, one of the goals is to provide a distribution of SageMath that is easier to use, and another goal is to make the components of Sage and ultimately much of the core Sage library efficiently usable in more situations (e.g., node.js, web browsers, [every language wasmer supports](https://github.com/wasmerio/wasmer#-language-integrations), etc.). This project is thus about enriching the mathematical software ecosystem and expanding it beyond Python.
+Unlike [Julia](https://julialang.org/) or [Oscar](https://oscar.computeralgebra.de/), this project does not attempt to directly compete with SageMath. Indeed, one of the goals is to provide a distribution of SageMath that is easier to use, and another goal is to make the components of Sage and ultimately much of the core Sage library efficiently usable in more situations (e.g., node.js, web browsers, etc.). This project is thus about enriching the mathematical software ecosystem and expanding it beyond Python.
 
 ## Build JSage from source
 
