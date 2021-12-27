@@ -1,6 +1,6 @@
 # JSage
 
-> _"Something like the Python based_ [SageMath](https://sagemath.org)_, but for the_ Javas_cript world."_
+> _"Something like the Python-based [SageMath](https://sagemath.org), but for the Javascript world."_
 
 ## Quick start
 
