@@ -1,6 +1,6 @@
 {
   "name": "@jsage/wasi",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Isomorphic Javascript library for interacting with WASI Modules in Node.js and the Browser.",
   "main": "dist/index.js",
   "scripts": {

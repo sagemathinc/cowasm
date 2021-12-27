@@ -1,6 +1,50 @@
 # JSage
 
-> "Something like **Sage**, but for the **J**ava**S**cript world."
+> _"Something like the Python based_ [_SageMath_](https://sagemath.org)_, but for the_ _**J**__ava__**S**__cript world."_
+
+## Quick start
+
+You should have Node version 16.x installed.  All the compiled code is WebAssembly, so it should work on any computer with Node 16.x installed and install very quickly; in particular, nothing needs to be compiled when installing.
+
+```python
+> npm install @jsage/jpython
+> npx jsage    # or npx jpython for no preparser
+Welcome to JSage.  Using Node.js v16.13.0.  
+Type dir(jsage) for available functions.
+jsage: list([2 .. 2^3])
+[2, 3, 4, 5, 6, 7, 8]
+jsage: 2/3 + 4/5
+22/15
+jsage: dir(jsage)
+['ComplexNumber', 'dims', 'P1List', 'ManinSymbols', 'EllipticCurve', 'factor', 'arith', 'Integer', 'ZZ', 'Rational', 'QQ', 'pari', 'misc', 'Number', 'init']
+jsage: dims.dimensionCuspForms(389)
+32
+jsage: E = EllipticCurve('389a'); E
+EllipticCurve([0, 1, 1, -2, 0])
+jsage: E.analyticRank()
+2
+jsage: E.conductor()
+389
+jsage: E.anlist(20)
+[0, 1, -2, -2, 2, -3, 4, -5, 0, 1, 6, -4, -4, -3, 10, 6, -4, -6, -2, 5, -6]
+jsage: M = ManinSymbols(389); P = M.presentation(1009); t = P.heckeOperator(2);
+jsage: t.fcp()
+[x + 2 2]
+[x + 439 2]
+...
+[x^4 + 298*x^3 + 873*x^2 + 507*x + 325 2]
+[x^9 + 347*x^8 + 408*x^7 + 343*x^6 + 673*x^5 + 219*x^4 + 736*x^3 + 475*x^2 + 326*x + 697 2]
+jsage: for i in range(4): print(i, 10+i)   # jsage is similar to Python...
+... 
+0 10
+1 11
+2 12
+3 13
+```
+
+As explained below, it's also pretty easy to build JSage from source.  We fully support building and developing natively using x86\_64 and aarch64 Linux, and Intel and M1 MacOS.   There's also a Docker build recipe.
+
+## OK, what is this?
 
 The name "JSage" is meant to suggest a small combination of ideas from Javascript and Sage.
 

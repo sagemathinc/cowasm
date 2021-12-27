@@ -1,6 +1,6 @@
 {
   "name": "@jsage/lib",
-  "version": "1.9.0",
+  "version": "1.11.0",
   "description": "SageJS",
   "exports": {
     ".": "./dist/index.js",
@@ -42,7 +42,7 @@
     "../packages/wasi"
   ],
   "dependencies": {
-    "@jsage/wasi": "^0.13.0",
+    "@jsage/wasi": "^0.14.0",
     "async-await-utils": "^3.0.1",
     "callable-instance": "^2.0.0",
     "callsite": "^1.0.0",
