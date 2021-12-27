@@ -112,13 +112,13 @@ export class RationalNumber {
     return wasm.result;
   }
 
-  __repr__(): string {
+  toJSON(): { type: "Rational"; hexNumerator: number; hexDenominator: number } {
     if (wasm == null) throw Error("await init() first");
     wasm.exports.Rational_stringify(this.i);
-    return wasm.result;
+    return JSON.parse(wasm.result);
   }
 
-  __str__(): string {
+  __repr__(): string {
     if (wasm == null) throw Error("await init() first");
     wasm.exports.Rational_format(this.i);
     return wasm.result;

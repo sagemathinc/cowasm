@@ -113,13 +113,13 @@ export class IntegerClass {
     return wasm.exports.Integer_wrappedIsPseudoPrime(this.i);
   }
 
-  __repr__(): string {
+  toJSON(): { type: "Integer"; hex: string } {
     if (wasm == null) throw Error("await init() first");
     wasm.exports.Integer_stringify(this.i);
-    return wasm.result;
+    return JSON.parse(wasm.result);
   }
 
-  __str__(): string {
+  __repr__(): string {
     if (wasm == null) throw Error("await init() first");
     wasm.exports.Integer_format(this.i);
     return wasm.result;

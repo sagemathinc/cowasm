@@ -18,13 +18,13 @@ export class DenseVector {
     registry.register(this, this.handle);
   }
 
-  __str__(): string {
+  __repr__(): string {
     wasm.exports.DenseVector_format(this.handle);
     return wasm.result;
   }
 
-  __repr__(): string {
+  toJSON(): object {
     wasm.exports.DenseVector_stringify(this.handle);
-    return wasm.result;
+    return JSON.parse(wasm.result);
   }
 }

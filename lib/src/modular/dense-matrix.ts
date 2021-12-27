@@ -23,14 +23,20 @@ export class DenseMatrix {
     registry.register(this, this.handle);
   }
 
-  __str__(): string {
+  __repr__(): string {
     wasm.exports.DenseMatrix_format(this.handle);
     return wasm.result;
   }
 
-  __repr__(): string {
+  toJSON(): {
+    type: "DenseMatrixMod";
+    modulus: number;
+    nrows: number;
+    ncols: number;
+    entries: number[];
+  } {
     wasm.exports.DenseMatrix_stringify(this.handle);
-    return wasm.result;
+    return JSON.parse(wasm.result);
   }
 
   getRow(i: number): DenseVector {
@@ -63,8 +69,8 @@ export class DenseMatrix {
     return wasm.exports.DenseMatrix_rank(this.handle);
   }
 
-  pariString(): string {
-    const { modulus, nrows, ncols, entries } = JSON.parse(this.__repr__());
+  toPariString(): string {
+    const { modulus, nrows, ncols, entries } = this.toJSON();
     // make it in pari
     let s: string = "[";
     for (let i = 0; i < nrows; i++) {
@@ -82,6 +88,6 @@ export class DenseMatrix {
     // NOTE: this will just fail the first time due to needing to
     // init pari...
     await pariInit();
-    console.log(pariExec(`lift(factor(charpoly(${this.pariString()})))`));
+    console.log(pariExec(`lift(factor(charpoly(${this.toPariString()})))`));
   }
 }

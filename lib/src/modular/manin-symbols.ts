@@ -113,14 +113,24 @@ class ManinSymbolsPresentation {
     return new DenseMatrix(handle);
   }
 
-  __str__(): string {
+  __repr__(): string {
     wasm.exports.Presentation_format(this.handle);
     return wasm.result;
   }
 
-  __repr__(): string {
+  toJSON(): {
+    type: "ManinSymbolsPresentation";
+    matrix: {
+      type: "DenseMatrixMod";
+      modulus: number;
+      nrows: number;
+      ncols: number;
+      entries: number[];
+    };
+    basis: number[];
+  } {
     wasm.exports.Presentation_stringify(this.handle);
-    return wasm.result;
+    return JSON.parse(wasm.result);
   }
 }
 

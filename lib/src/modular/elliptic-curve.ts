@@ -31,14 +31,14 @@ class EllipticCurveClass {
     this.handle = wasm.exports.EllipticCurve_init(...ainvs);
   }
 
-  __str__(): string {
+  __repr__(): string {
     wasm.exports.EllipticCurve_format(this.handle);
     return wasm.result;
   }
 
-  __repr__(): string {
+  toJSON(): { type: "EllipticCurve"; ainvs: [0, -1, 1, -10, -20] } {
     wasm.exports.EllipticCurve_stringify(this.handle);
-    return wasm.result;
+    return JSON.parse(wasm.result);
   }
 
   ap(p: number): number {

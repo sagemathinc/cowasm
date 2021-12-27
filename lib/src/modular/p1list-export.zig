@@ -74,3 +74,10 @@ pub export fn sparseMatrixBench(N: i32) void {
         interface.throw("failed");
     };
 }
+
+pub export fn P1List_print(handle: i32) void {
+    const P1 = p1lists32.get(handle) orelse {
+        return;
+    };
+    P1.print();
+}

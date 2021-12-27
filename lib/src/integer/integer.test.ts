@@ -32,19 +32,19 @@ test("Find the next prime year", async () => {
 
 test("converting integer to string", async () => {
   const n = Integer(-17);
-  expect(n.__str__() == "-17");
-  expect(n.__repr__() == '{"type":"Integer","hex":"-11"}');
+  expect(n.__repr__() == "-17");
+  expect(JSON.stringify(n) == '{"type":"Integer","hex":"-11"}');
 });
 
 test("converting integer to string when bound is not sharp", async () => {
   const n = Integer(567);
   expect(n.ndigitsBound() == 4);
-  const s = n.__str__();
+  const s = n.__repr__();
   expect(s == "567");
-  expect(n.__repr__() == '{"type":"Integer","hex":"237"}');
+  expect(JSON.stringify(n) == '{"type":"Integer","hex":"237"}');
 });
 
 test("using the integer ring", async () => {
-  expect(ZZ.element(-17).__str__() == "-17");
-  expect(ZZ.element("-11", 16).__str__() == "-17");
+  expect(ZZ.element(-17).__repr__() == "-17");
+  expect(ZZ.element("-11", 16).__repr__() == "-17");
 });

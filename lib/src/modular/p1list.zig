@@ -20,7 +20,7 @@ pub fn P1Element(comptime T: type) type {
         }
 
         pub fn print(self: Elt) void {
-            std.debug.print("[{} : {}]", .{ self.u, self.v });
+            std.debug.print("[{},{}]", .{ self.u, self.v });
         }
 
         pub fn reduceMod(self: Elt, N: T) !Elt {
@@ -189,14 +189,14 @@ pub fn P1List(comptime T: type) type {
 
         pub fn print(self: P1) void {
             var i: usize = 0;
-            std.debug.print("P1({}): ", .{self.N});
+            std.debug.print("P1({}): [", .{self.N});
             while (i < self.list.items.len) : (i += 1) {
                 if (i > 0) {
                     std.debug.print(", ", .{});
                 }
                 self.list.items[i].print();
             }
-            std.debug.print("\n", .{});
+            std.debug.print("]\n", .{});
         }
 
         pub fn normalize(self: P1, u: T, v: T) !Elt {

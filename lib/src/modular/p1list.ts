@@ -37,6 +37,10 @@ class P1ListClass {
   __repr__(): string {
     return `P1List(${this.N})`;
   }
+
+  print(): void {
+    wasm.exports.P1List_print(this.handle);
+  }
 }
 
 let result;
