@@ -27,6 +27,8 @@ jsage: E.conductor()
 389
 jsage: E.anlist(20)
 [0, 1, -2, -2, 2, -3, 4, -5, 0, 1, 6, -4, -4, -3, 10, 6, -4, -6, -2, 5, -6]
+jsage: %time v = E.anlist(10^5);
+Wall time: 170ms
 jsage: M = ManinSymbols(389); P = M.presentation(1009); t = P.heckeOperator(2);
 jsage: t.fcp()
 [x + 2 2]
