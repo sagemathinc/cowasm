@@ -1,6 +1,6 @@
 # JSage
 
-> _"Something like the Python based_ [_SageMath_](https://sagemath.org)_, but for the_ _**J**__ava__**S**__cript world."_
+> _"Something like the Python based_ [SageMath](https://sagemath.org)_, but for the_ Javas_cript world."_
 
 ## Quick start
 
