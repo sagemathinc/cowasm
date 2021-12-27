@@ -81,3 +81,21 @@ pub export fn EllipticCurve_anlist(handle: i32, n: i32) void {
     };
     wasmSendString(out.items.ptr, out.items.len);
 }
+
+pub export fn EllipticCurve_aplist(handle: i32, n: i32) void {
+    const E = EllipticCurve_get(handle) catch {
+        return;
+    };
+    var v = E.aplist(n) catch {
+        interface.throw("EllipticCurve: failed to store");
+        return;
+    };
+    defer v.deinit();
+    var out = std.ArrayList(u8).init(EllipticCurve_objects.map.allocator);
+    defer out.deinit();
+    std.json.stringify(v.items, .{}, out.writer()) catch {
+        interface.throw("error stringifying aplist");
+        return;
+    };
+    wasmSendString(out.items.ptr, out.items.len);
+}

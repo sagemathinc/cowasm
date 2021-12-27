@@ -65,21 +65,23 @@ pub fn EllipticCurve(comptime T: type) type {
 
         // compute array of a_p for p prime = 2,3,5,...,m, where
         // m is largest prime <= n.
-        //         pub fn aplist(self: EC, n: c_long) !std.ArrayList(c_long) {
-        //             const context = pari.Context();
-        //             defer context.deinit();
-        //             var E = self.toPari(0);
+        pub fn aplist(self: EC, n: c_long) !std.ArrayList(c_long) {
+            const context = pari.Context();
+            defer context.deinit();
+            var E = self.toPari(0);
+            _ = E;
+            //int forprime_init(forprime_t *T, GEN a, GEN b);
+            //GEN forprime_next(forprime_t *T);
 
-        //             var v = pari.c.ellan(E, n);
-        //             var w = try std.ArrayList(c_long).initCapacity(self.ainvs.allocator, @intCast(usize, n + 1));
-        //             try w.append(0);
-        //             var i: usize = 1;
-        //             while (i <= n) : (i += 1) {
-        //                 var an = pari.c.itos(pari.getcoeff1(v, i));
-        //                 try w.append(an);
-        //             }
-        //             return w;
-        //         }
+            var iter: pari.c.forprime_t = undefined;
+            _ = pari.c.forprime_init(&iter, pari.c.stoi(2), pari.c.stoi(n));
+            var p: pari.c.GEN = pari.c.forprime_next(&iter);
+            var w = std.ArrayList(c_long).init(self.ainvs.allocator);
+            while (p != null) : (p = pari.c.forprime_next(&iter)) {
+                try w.append(pari.c.itos(pari.c.ellap(E, p)));
+            }
+            return w;
+        }
 
         // mysterious *wrong*.
         pub fn analyticRank(self: EC, prec: c_long) c_long {
@@ -167,6 +169,15 @@ test "compute anlist" {
     defer E.deinit();
     var v = try E.anlist(10);
     defer v.deinit();
-    std.debug.print("{any}\n", .{v.items});
+    //std.debug.print("{any}\n", .{v.items});
     try expect(std.mem.eql(c_long, v.items, &[_]c_long{ 0, 1, -2, -1, 2, 1, 2, -2, 0, -2, -2 }));
+}
+
+test "compute aplist" {
+    var E = try EllipticCurve(i32).init(0, -1, 1, -10, -20, testing_allocator);
+    defer E.deinit();
+    var v = try E.aplist(10);
+    defer v.deinit();
+    std.debug.print("{any}\n", .{v.items});
+    try expect(std.mem.eql(c_long, v.items, &[_]c_long{ -2, -1, 1, -2 }));
 }

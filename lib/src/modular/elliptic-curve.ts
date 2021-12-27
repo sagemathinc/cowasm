@@ -50,6 +50,11 @@ class EllipticCurveClass {
     return eval(wasm.result);
   }
 
+  aplist(n: number): number[] {
+    wasm.exports.EllipticCurve_aplist(this.handle, n);
+    return eval(wasm.result);
+  }
+
   analyticRank(bitPrecision = 53): number {
     console.log("warning: analyticRank doesn't work at all!");
     return wasm.exports.EllipticCurve_analyticRank(this.handle, bitPrecision);
