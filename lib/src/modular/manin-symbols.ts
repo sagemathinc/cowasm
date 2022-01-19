@@ -86,11 +86,11 @@ class ManinSymbolsPresentation {
 
   modularSymbol(
     a_numer: number,
-    b_numer: number,
-    a_denom?: number,
+    a_denom: number,
+    b_numer?: number,
     b_denom?: number
   ): DenseVector {
-    if (a_denom == null) {
+    if (b_numer == null) {
       // {oo,a}
       [a_numer, a_denom, b_numer, b_denom] = [1, 0, a_numer, a_denom];
     }

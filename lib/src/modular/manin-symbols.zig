@@ -356,9 +356,10 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
                 return try self.reduce(0, 1);
             }
             const cf = try contfrac.convergents(T, numer, denom);
-            var sign: T = 1;
-            var x = try self.reduce(cf.q[1], cf.q[0]);
-            var k: usize = 2;
+            // std.debug.print("\ncf = {}\n", .{cf});
+            var sign: T = -1;
+            var x = try dense_vector.DenseVectorMod(T).init(self.matrix.modulus, self.matrix.ncols, self.manin_symbols.allocator);
+            var k: usize = 1;
             while (k < cf.len) : (k += 1) {
                 sign *= -1;
                 var y = try self.reduce(cf.q[k], sign * cf.q[k - 1]);
@@ -371,11 +372,12 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
         // Compute the modular symbol {a_numer/a_denom, b_numer/b_denom}
         // in terms of this presentation.  Be sure to deinit the returned value.
         pub fn modularSymbol(self: P, a_numer: T, a_denom: T, b_numer: T, b_denom: T) !dense_vector.DenseVectorMod(T) {
-            var x = try self.modularSymbol0(b_numer, b_denom);
-            var y = try self.modularSymbol0(a_numer, a_denom);
-            defer y.deinit();
-            try x.addInPlace(y, -1);
-            return x;
+            var b = try self.modularSymbol0(b_numer, b_denom); // {0, b}
+            var a = try self.modularSymbol0(a_numer, a_denom); // {0, a}
+            // We want {a,b} = {a,0} + {0,b} = {0,b} - {0,a}
+            defer a.deinit();
+            try b.addInPlace(a, -1);
+            return b;
         }
     };
 }
@@ -539,6 +541,10 @@ test "compute some modular symbols {0,n/d} for level 11" {
     var x0 = try P.modularSymbol0(1, 0);
     defer x0.deinit();
     try expect(std.mem.eql(i32, x0.entries.items, &[3]i32{ 96, 0, 0 }));
+    // {0, 1} --> (0,0,0)
+    var x0s = try P.modularSymbol0(1, 1);
+    defer x0s.deinit();
+    try expect(std.mem.eql(i32, x0s.entries.items, &[3]i32{ 0, 0, 0 }));
     // {0, 1/5} --> (0,0,1)
     var x1 = try P.modularSymbol0(1, 5);
     defer x1.deinit();
@@ -546,6 +552,7 @@ test "compute some modular symbols {0,n/d} for level 11" {
     // {0, 17/389} --> (0,1,0)
     var x2 = try P.modularSymbol0(17, 389);
     defer x2.deinit();
+    std.debug.print("\n{0,17/389} --> {}\n", .{x2});
     try expect(std.mem.eql(i32, x2.entries.items, &[3]i32{ 0, 1, 0 }));
 
     // {0, 0} --> (0,0,0)
@@ -565,4 +572,38 @@ test "compute some modular symbols {0,n/d} for level 11" {
     var z = try P.modularSymbol(1, 5, 17, 389);
     defer z.deinit();
     try expect(std.mem.eql(i32, z.entries.items, &[3]i32{ 0, 1, 96 }));
+}
+
+fn modularSymbolBenchmark(comptime T: type, N: usize, sign: Sign, B: usize) !void {
+    const time = std.time.milliTimestamp;
+    const t = time();
+    const p = 997;
+    var M = try ManinSymbols(T, u32).init(test_allocator, N, sign);
+    defer M.deinit();
+    var P = try M.presentation(T, p, false);
+    defer P.deinit();
+    var i: T = 1;
+    var j: T = 0;
+    while (i < B) : (i += 1) {
+        while (j < B) : (j += 1) {
+            var v = try P.modularSymbol(1, 0, i, j);
+            v.deinit();
+        }
+    }
+    std.debug.print("\nmodularSymbolBenchmark(N={},sign={},B={}) --> {}ms\n\n", .{ N, sign, B, time() - t });
+}
+
+const BENCHms = false;
+//const BENCHms = true;
+test "bench modularSymbol" {
+    if (BENCHms) {
+        try modularSymbolBenchmark(i32, 11, Sign.zero, 100);
+        try modularSymbolBenchmark(i32, 11, Sign.zero, 1000);
+        try modularSymbolBenchmark(i32, 11, Sign.zero, 10000);
+        try modularSymbolBenchmark(i32, 11, Sign.zero, 100000);
+        try modularSymbolBenchmark(i32, 11, Sign.plus, 1000);
+        try modularSymbolBenchmark(i32, 37, Sign.zero, 1000);
+        try modularSymbolBenchmark(i32, 389, Sign.plus, 1000);
+        try modularSymbolBenchmark(i32, 389, Sign.plus, 10000);
+    }
 }
