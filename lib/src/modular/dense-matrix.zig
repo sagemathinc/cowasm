@@ -123,6 +123,19 @@ pub fn DenseMatrixMod(comptime T: type) type {
             return v;
         }
 
+        pub fn setRow(self: *Matrix, row: usize, v: vector.DenseVectorMod(T)) !void {
+            if (v.degree != self.ncols or v.modulus != self.modulus) {
+                return errors.General.TypeError;
+            }
+            if (row >= self.nrows) {
+                return errors.General.IndexError;
+            }
+            var i: usize = 0;
+            while (i < self.ncols) : (i += 1) {
+                self.unsafeSet(row, i, v.unsafeGet(i));
+            }
+        }
+
         pub fn addToRow(self: *Matrix, row: usize, v: vector.DenseVectorMod(T)) !void {
             if (v.degree != self.ncols or v.modulus != self.modulus) {
                 return errors.General.TypeError;
@@ -220,6 +233,20 @@ test "extract a row" {
     defer v.deinit();
     try expect((try v.get(0)) == 3);
     try expect((try v.get(1)) == 5);
+}
+
+test "set a row" {
+    var nrows: usize = 2;
+    var ncols: usize = 2;
+    var m = try DenseMatrixMod(i32).init(19, nrows, ncols, testing_allocator);
+    defer m.deinit();
+    try m.set(1, 0, 3);
+    try m.set(1, 1, 5);
+    var v = try m.getRow(1);
+    defer v.deinit();
+    try m.setRow(0, v);
+    try expect((try m.get(0, 0)) == 3);
+    try expect((try m.get(0, 1)) == 5);
 }
 
 test "compute a kernel using PARI" {

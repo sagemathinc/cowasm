@@ -125,3 +125,12 @@ pub export fn Presentation_heckeOperator(handle: i32, p: i32) i32 {
     };
     return dense_matrix_interface.DenseMatrix_put(Tp);
 }
+
+pub export fn Presentation_starInvolution(handle: i32) i32 {
+    var P = Presentation_get(handle) catch return 0;
+    var S = P.starInvolution() catch |err| {
+        std.debug.print("\nPresentation_starInvolution -- {}\n", .{err});
+        return 0;
+    };
+    return dense_matrix_interface.DenseMatrix_put(S);
+}

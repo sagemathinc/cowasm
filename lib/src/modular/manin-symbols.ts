@@ -113,6 +113,14 @@ class ManinSymbolsPresentation {
     return new DenseMatrix(handle);
   }
 
+  starInvolution(): DenseMatrix {
+    const handle = wasm.exports.Presentation_starInvolution(this.handle);
+    if (handle == 0) {
+      throw Error(`error computing star involution`);
+    }
+    return new DenseMatrix(handle);
+  }
+
   __repr__(): string {
     wasm.exports.Presentation_format(this.handle);
     return wasm.result;

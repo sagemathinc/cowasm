@@ -10,6 +10,7 @@ const errors = @import("../errors.zig");
 const heilbronn = @import("./heilbronn.zig");
 const timer = @import("../timer.zig").timer;
 const contfrac = @import("./contfrac.zig");
+const Mat2x2 = @import("./mat2x2.zig").Mat2x2;
 
 pub const Sign = enum(i4) {
     minus = -1,
@@ -343,6 +344,26 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
                 }
             }
             return Tp;
+        }
+
+        // compute matrix representation of the star involution
+        pub fn starInvolution(self: P) !dense_matrix.DenseMatrixMod(T) {
+            var S = Mat2x2(T){ .a = -1, .b = 0, .c = 0, .d = 1 };
+            return try self.heilbronnOperator(S);
+        }
+
+        pub fn heilbronnOperator(self: P, m: Mat2x2(T)) !dense_matrix.DenseMatrixMod(T) {
+            const n = self.basis.items.len;
+            var A = try dense_matrix.DenseMatrixMod(T).init(self.matrix.modulus, n, n, self.manin_symbols.allocator);
+            var b: usize = 0;
+            while (b < n) : (b += 1) {
+                var uv = try self.lift(b);
+                const uv_m = uv.actionFromRight(m);
+                var v = try self.reduce(uv_m.u, uv_m.v);
+                defer v.deinit();
+                try A.setRow(b, v);
+            }
+            return A;
         }
 
         // Compute the modular symbol {0, numer/denom} in terms of this presentation.
