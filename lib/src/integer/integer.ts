@@ -27,6 +27,10 @@ export class IntegerClass {
     if (n === null && i !== undefined) {
       this.i = i;
     } else if (typeof n == "number") {
+      const m = Math.round(n);
+      if (m != n) {
+        throw Error("Attempt to coerce non-integral RealNumber to Integer");
+      }
       this.i = wasm.exports.Integer_createInt(n);
     } else {
       this.i = wasm.callWithString("Integer_createStr", `${n}`, base ?? 10);
