@@ -729,7 +729,7 @@ test "FAST/Optimized - compute full modular symbol map for 11a (scaled by 10)" {
     const t = time();
     var i: i32 = 0;
     var s: i32 = 0;
-    const B: i32 = 2000;
+    const B: i32 = 100;
     while (i < B) : (i += 1) {
         var j: i32 = 1;
         while (j < B) : (j += 1) {
@@ -737,6 +737,7 @@ test "FAST/Optimized - compute full modular symbol map for 11a (scaled by 10)" {
         }
     }
     // SAGE: for B = 1000 it is 115103; for B = 100 it is 1160.
+    try expect(s == 1160);
     //try expect(s == 115103);
     std.debug.print("\ns={}\n", .{s});
     std.debug.print("\nmodularSymbolMap11a bench 1: --> {}ms\n\n", .{time() - t});
