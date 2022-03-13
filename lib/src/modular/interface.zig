@@ -117,6 +117,17 @@ pub export fn Presentation_modularSymbol(handle: i32, numer_a: i32, denom_a: i32
     return dense_vector_interface.DenseVector_put(vec);
 }
 
+pub export fn Presentation_fastModularSymbolMap_11a(handle: i32, numer: i32, denom: i32) i32 {
+    var P = Presentation_get(handle) catch |err| {
+        std.debug.print("\nPresentation_fastModularSymbolMap_11a -- {}\n", .{err});
+        return -99999999;
+    };
+    return P.fastModularSymbolMap_11a(numer, denom) catch |err| {
+        std.debug.print("\nPresentation_fastModularSymbolMap_11a -- {}\n", .{err});
+        return -99999999;
+    };
+}
+
 pub export fn Presentation_heckeOperator(handle: i32, p: i32) i32 {
     var P = Presentation_get(handle) catch return 0;
     var Tp = P.heckeOperator(p) catch |err| {

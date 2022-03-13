@@ -37,7 +37,7 @@ WASM_CFLAGS   = -dynamic ${OPT}
 NATIVE_CFLAGS_NOOPT = -I. ${PARI_NATIVE_CFLAGS}  ${GMP_NATIVE_CFLAGS} -lc
 NATIVE_CFLAGS = ${NATIVE_CFLAGS_NOOPT} ${OPT}
 
-TEST = ./zig-test.sh ${NATIVE_CFLAGS_NOOPT} -I${CWD}/src/pari
+TEST = ./zig-test.sh ${NATIVE_CFLAGS_NOOPT} ${OPT} -I${CWD}/src/pari
 
 DIST = ${CWD}/dist
 

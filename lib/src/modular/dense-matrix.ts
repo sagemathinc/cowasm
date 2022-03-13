@@ -51,10 +51,18 @@ export class DenseMatrix {
     return new DenseMatrix(wasm.exports.DenseMatrix_kernel(this.handle));
   }
 
+  __sub__(other) {
+    return this.subtractScalar(other);
+  }
+
   subtractScalar(scalar: number): DenseMatrix {
     return new DenseMatrix(
       wasm.exports.DenseMatrix_subtractScalar(this.handle, scalar)
     );
+  }
+
+  transpose(): DenseMatrix {
+    return new DenseMatrix(wasm.exports.DenseMatrix_transpose(this.handle));
   }
 
   nrows(): number {

@@ -74,6 +74,17 @@ pub export fn DenseMatrix_subtractScalar(handle: i32, scalar: i32) i32 {
     return DenseMatrix_put(A_minus_scalar);
 }
 
+pub export fn DenseMatrix_transpose(handle: i32) i32 {
+    const A = DenseMatrix_get(handle) catch {
+        return 0;
+    };
+    var T = A.transpose() catch {
+        interface.throw("DenseMatrix: failed to transpose");
+        return 0;
+    };
+    return DenseMatrix_put(T);
+}
+
 pub export fn DenseMatrix_nrows(handle: i32) i32 {
     const A = DenseMatrix_get(handle) catch {
         return 0;

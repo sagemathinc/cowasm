@@ -93,6 +93,10 @@ export class IntegerClass {
     return !!wasm.exports.Integer_eql(this.i, m.i);
   }
 
+  __eq__(m) {
+    return this.eql(m);
+  }
+
   gcd(m): IntegerClass {
     return this._bin_op(m, "gcd");
   }

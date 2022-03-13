@@ -96,6 +96,10 @@ export class RationalNumber {
     return !!wasm.exports.Rational_eql(this.i, m.i);
   }
 
+  __eq__(m) {
+    return this.eql(m);
+  }
+
   cmp(m): number {
     m = this._coerce(m);
     return wasm?.exports.Rational_cmp(this.i, m.i);

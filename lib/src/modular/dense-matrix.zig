@@ -51,6 +51,20 @@ pub fn DenseMatrixMod(comptime T: type) type {
             return Matrix{ .modulus = self.modulus, .nrows = self.nrows, .ncols = self.ncols, .entries = entries };
         }
 
+        pub fn transpose(self: Matrix) !Matrix {
+            const nrows = self.ncols;
+            const ncols = self.nrows;
+            var M = try DenseMatrixMod(T).init(@intCast(T, self.modulus), nrows, ncols, self.entries.allocator);
+            var i: usize = 0;
+            while (i < nrows) : (i += 1) {
+                var j: usize = 0;
+                while (j < ncols) : (j += 1) {
+                    M.unsafeSet(i, j, self.unsafeGet(j, i));
+                }
+            }
+            return M;
+        }
+
         pub fn jsonStringify(
             self: Matrix,
             options: std.json.StringifyOptions,
@@ -290,4 +304,30 @@ test "subtract a scalar" {
     try expect((try n.get(1, 1)) == 16);
     try expect((try n.get(0, 1)) == 0);
     try expect((try n.get(1, 0)) == 0);
+}
+
+test "transpose a matrix" {
+    var m = try DenseMatrixMod(i32).init(19, 1, 2, testing_allocator);
+    defer m.deinit();
+    try m.set(0, 0, 1);
+    try m.set(0, 1, 2);
+    var t = try m.transpose();
+    defer t.deinit();
+    try expect((try t.get(0, 0)) == 1);
+    try expect((try t.get(1, 0)) == 2);
+    try expect(t.nrows == 2 and t.ncols == 1);
+    try expect(t.modulus == 19);
+}
+
+test "copy a matrix" {
+    var m = try DenseMatrixMod(i32).init(19, 1, 2, testing_allocator);
+    defer m.deinit();
+    try m.set(0, 0, 1);
+    try m.set(0, 1, 2);
+    var c = try m.copy();
+    defer c.deinit();
+    try expect((try c.get(0, 0)) == 1);
+    try expect((try c.get(0, 1)) == 2);
+    try expect(c.nrows == 1 and c.ncols == 2);
+    try expect(c.modulus == 19);
 }

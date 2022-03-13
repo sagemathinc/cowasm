@@ -11,6 +11,7 @@ const heilbronn = @import("./heilbronn.zig");
 const timer = @import("../timer.zig").timer;
 const contfrac = @import("./contfrac.zig");
 const Mat2x2 = @import("./mat2x2.zig").Mat2x2;
+const reduceMod = @import("../arith.zig").mod;
 
 pub const Sign = enum(i4) {
     minus = -1,
@@ -321,7 +322,8 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
         }
 
         // compute dense matrix representation of the p-th Hecke operator,
-        // where p is assumed prime (or you get nonsense),
+        // where p is assumed prime (or you get nonsense).  This is the
+        // matrix acting from the right on vectors, so v |--> v*T_p.
         pub fn heckeOperator(self: P, p: i32) !dense_matrix.DenseMatrixMod(T) {
             var h = try heilbronn.HeilbronnCremona(T).init(test_allocator, p);
             defer h.deinit();
@@ -399,6 +401,65 @@ pub fn Presentation(comptime ManinSymbolsType: type, comptime T: type, comptime 
             defer a.deinit();
             try b.addInPlace(a, -1);
             return b;
+        }
+
+        // Very special case with some things hardcoded, to see "what can we do".
+        // This returns the scaled plus modular symbol map: alpha |--> 10 * proj_+({oo, alpha}),
+        // where proj_+ means the projection onto the plus part.  The 10 means "10 times the
+        // correct normalization".  It will be correct unless the input is too large causing
+        // overflow.
+        pub fn modularSymbolMap11a(self: P, numer: T, denom: T) !i32 {
+            // {oo,alpha} = {oo,0} + {0,alpha} ---> 1/5 + {0,alpha}, so we add 10*1/5 = 2.
+            if (self.manin_symbols.N != 11) {
+                std.debug.print("N={} must be 11.\n", .{self.manin_symbols.N});
+                return errors.General.RuntimeError;
+            }
+            var v = try self.modularSymbol0(numer, denom);
+            defer v.deinit();
+            // projection after multiplying by 10 is dot with [  2, 5, 10],
+            // which I figured out using Sage...
+            var p = self.matrix.modulus;
+            var proj = 2 * v.unsafeGet(0) + 5 * v.unsafeGet(1) + 10 * v.unsafeGet(2);
+            var a = reduceMod(2 + proj, p);
+            if (a > @divFloor(p, 2)) {
+                a -= p;
+            }
+            return a;
+        }
+
+        fn fastModularSymbolMap0_11a(self: P, numer: T, denom: T) !i32 {
+            if (numer == 0) {
+                return 0;
+            }
+            if (denom == 0) {
+                const i = try self.manin_symbols.P1.index(0, 1);
+                return 2 * self.matrix.unsafeGet(i, 0) + 5 * self.matrix.unsafeGet(i, 1) + 10 * self.matrix.unsafeGet(i, 2);
+            }
+            var cf = try contfrac.convergents(T, numer, denom);
+            var sign: T = -1;
+            var s: i32 = 0;
+            var k: usize = 1;
+            while (k < cf.len) : (k += 1) {
+                sign *= -1;
+                const j = try self.manin_symbols.P1.index(cf.q[k], sign * cf.q[k - 1]);
+                s = reduceMod(s + 2 * self.matrix.unsafeGet(j, 0) + 5 * self.matrix.unsafeGet(j, 1) + 10 * self.matrix.unsafeGet(j, 2), self.matrix.modulus);
+            }
+            return s;
+        }
+
+        pub fn fastModularSymbolMap_11a(self: P, numer: T, denom: T) !i32 {
+            if (self.manin_symbols.N != 11) {
+                std.debug.print("N={} must be 11.\n", .{self.manin_symbols.N});
+                return errors.General.RuntimeError;
+            }
+            var s = try self.fastModularSymbolMap0_11a(numer, denom);
+            var p = self.matrix.modulus;
+            // {oo,alpha} = {oo,0} + {0,alpha} ---> 1/5 + {0,alpha}, so we add 10*1/5 = 2.
+            var a = reduceMod(2 + s, p);
+            if (a > @divFloor(p, 2)) {
+                a -= p;
+            }
+            return a;
         }
     };
 }
@@ -627,4 +688,56 @@ test "bench modularSymbol" {
         try modularSymbolBenchmark(i32, 389, Sign.plus, 1000);
         try modularSymbolBenchmark(i32, 389, Sign.plus, 10000);
     }
+}
+
+test "compute full modular symbol map for 11a (scaled by 10)" {
+    const p = 997;
+    var M = try ManinSymbols(i32, u32).init(test_allocator, 11, Sign.zero);
+    defer M.deinit();
+    var P = try M.presentation(i32, p, false);
+    defer P.deinit();
+    try expect((try P.modularSymbolMap11a(0, 1)) == 2);
+
+    // do a benchmark:
+    const time = std.time.milliTimestamp;
+    const t = time();
+    var i: i32 = 0;
+    var s: i32 = 0;
+    const B: i32 = 100;
+    while (i < B) : (i += 1) {
+        var j: i32 = 1;
+        while (j < B) : (j += 1) {
+            s += try P.modularSymbolMap11a(i, j);
+        }
+    }
+    // SAGE: for B = 1000 it is 115103; for B = 100 it is 1160.
+    try expect(s == 1160);
+    std.debug.print("\ns={}\n", .{s});
+    std.debug.print("\nmodularSymbolMap11a bench 1: --> {}ms\n\n", .{time() - t});
+}
+
+test "FAST/Optimized - compute full modular symbol map for 11a (scaled by 10)" {
+    const p = 997;
+    var M = try ManinSymbols(i32, u32).init(test_allocator, 11, Sign.zero);
+    defer M.deinit();
+    var P = try M.presentation(i32, p, false);
+    defer P.deinit();
+    try expect((try P.fastModularSymbolMap_11a(0, 1)) == 2);
+
+    // do a benchmark:
+    const time = std.time.milliTimestamp;
+    const t = time();
+    var i: i32 = 0;
+    var s: i32 = 0;
+    const B: i32 = 2000;
+    while (i < B) : (i += 1) {
+        var j: i32 = 1;
+        while (j < B) : (j += 1) {
+            s += try P.fastModularSymbolMap_11a(i, j);
+        }
+    }
+    // SAGE: for B = 1000 it is 115103; for B = 100 it is 1160.
+    //try expect(s == 115103);
+    std.debug.print("\ns={}\n", .{s});
+    std.debug.print("\nmodularSymbolMap11a bench 1: --> {}ms\n\n", .{time() - t});
 }

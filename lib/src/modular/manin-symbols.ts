@@ -19,7 +19,7 @@ class ManinSymbolsClass {
   private readonly handle: number;
 
   constructor(N: number, sign: Sign) {
-    if (sign) {
+    if (sign != 0) {
       console.warn(
         "ManinSymbols with sign 0 seems always right, but with sign 1 or -1 it is often very wrong."
       );
@@ -139,6 +139,14 @@ class ManinSymbolsPresentation {
   } {
     wasm.exports.Presentation_stringify(this.handle);
     return JSON.parse(wasm.result);
+  }
+
+  fastModularSymbolMap_11a(numer: number, denom: number): number {
+    return wasm.exports.Presentation_fastModularSymbolMap_11a(
+      this.handle,
+      numer,
+      denom
+    );
   }
 }
 
