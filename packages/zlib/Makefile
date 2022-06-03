@@ -1,5 +1,11 @@
 # See https://zlib.net/
-ZLIB_VERSION = 1.2.11
+# HORRIBLE FACT -- I found with version 1.2.11 that when zlib updated to version 1.2.12 they
+# just **deleted** version 1.2.11 from their download page. The result is that this Makefile
+# breaks.  They claim to have mirrors, but it's just sourceforge only, and only has older
+# versions than 1.2.12.  Anyway, expect this line below to -- at some completely random
+# moment in time -- break our build for sure, whenever they just happen to update zlib again.
+# It was five years from 1.2.11 to 1.2.12, so maybe that will be a while.
+ZLIB_VERSION = 1.2.12
 
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
 INIT_CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
