@@ -4,7 +4,12 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 export PATH := ${CWD}/packages/zig/dist:$(PATH)
 
-all: packages/python/${BUILT}
+all: lib/${BUILT}
+
+lib/${BUILT}: python wasi zig
+	cd lib && make all
+.PHONY: lib
+lib: lib/${BUILT}
 
 .PHONY: zig
 zig:
