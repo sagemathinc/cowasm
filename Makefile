@@ -6,7 +6,7 @@ export PATH := ${CWD}/packages/zig/dist:$(PATH)
 
 all: lib/${BUILT}
 
-lib/${BUILT}: python wasi zig
+lib/${BUILT}: python wasi zig wasm-posix
 	cd lib && make all
 .PHONY: lib
 lib: lib/${BUILT}
@@ -39,7 +39,7 @@ packages/python/${BUILT}: packages/zlib/${BUILT} packages/wasm-posix/${BUILT} zi
 python: packages/python/${BUILT}
 
 
-packages/wasi/${BUILT}: lib/${BUILT}
+packages/wasi/${BUILT}:
 	cd packages/wasi && make all
 .PHONY: wasi
 wasi: packages/wasi/${BUILT}
