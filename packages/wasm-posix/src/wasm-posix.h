@@ -191,6 +191,9 @@ int setrlimit(int resource, const struct rlimit* rlim);
 
 char* realpath(const char* restrict path, char* restrict resolved_path);
 
+int close_range(unsigned int first, unsigned int last,
+                       unsigned int flags);
+
 // These are not needed by Python but are needed by PARI:
 typedef void* jmp_buf;
 typedef void* sigjmp_buf;

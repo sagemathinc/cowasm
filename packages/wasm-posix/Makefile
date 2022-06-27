@@ -14,7 +14,7 @@ ${DIST}/libwasmposix.a: src/wasm-posix.h src/wasm-posix.c
 		&& zig cc -w -target wasm32-wasi wasm-posix.c -c -o ${DIST}/wasm-posix.o
 	cd ${DIST} && zig ar -crs libwasmposix.a wasm-posix.o
 	rm ${DIST}/wasm-posix.o
-	cp src/wasm-posix.h ${DIST}
+	cp src/*.h ${DIST}
 
 clean:
 	rm -rf ${DIST}

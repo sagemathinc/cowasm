@@ -1,7 +1,5 @@
-# JSage
+# Library
 
-> "Something like **Sage**, but for the **J**ava**S**cript world."
+This will be a library to make our WebAssembly modules useful from Javascript.
 
-See https://github.com/sagemathinc/JSage
-
-**WARNING:** This is NOT ready for use by anybody yet.
+It uses zig and typescript, and is an alternative to using emscripten.     There is also https://github.com/schellingb/wajic which might be another good approach to this problem.

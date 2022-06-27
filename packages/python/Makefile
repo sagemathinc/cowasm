@@ -88,10 +88,10 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# Apply all the patches to the code to make it WASM friendly.
 	# These patches initially come from pyodide.  They add a WASM cross compilation target
 	# to the config scripts (should that get upstreamed to Python?).
-	cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/*.patch | patch -p1
-	# Some legacy code assumes this setjmp.h header exists.  Not actually
-	# used at all in Python, fortunately!
-	cd ${BUILD}/wasm && mkdir -p bits && echo "#define __jmp_buf int" > bits/setjmp.h
+	## cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/*.patch | patch -p1
+	## # Some legacy code assumes this setjmp.h header exists.  Not actually
+	## # used at all in Python, fortunately!
+	## cd ${BUILD}/wasm && mkdir -p bits && echo "#define __jmp_buf int" > bits/setjmp.h
 	touch ${BUILD}/wasm/.patched
 
 ${DIST_WASM}/.built: export LD_LIBRARY_PATH:=${DIST_NATIVE}/lib:"${LD_LIBRARY_PATH}"
@@ -117,19 +117,20 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 			--disable-ipv6 \
 			--without-pymalloc \
 			--with-ensurepip=no \
+			--with-build-python=${DIST_NATIVE}/bin/python3 \
 			--host=wasm32-unknown-emscripten \
 			--build=`./config.guess`
 	# Make it so our WASM posix header file is included everywhere,
 	# since otherwise we can't even compile.  Must do this AFTER ./configure.
 	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ${WASMPOSIX}/wasm-posix.h .
-	cd ${BUILD}/wasm && make
+	cd ${BUILD}/wasm && make -j8
 	cd ${BUILD}/wasm && make install
 	# Also copy wasm-posix.h over, so it's possible to build programs against our new python.
-	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm-posix.h ${DIST_WASM}/include/python3.9/
+	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm-posix.h ${DIST_WASM}/include/python3.11/
 	# Create a modified Python binary with libwasmposix.a linked in so that it can
 	# be run via wasmer on the command line (without node.js!).  We abuse LINKFORSHARED
-	# to add our wasmposix to the build line.  TODO: hardcoding "python3.9" :-(
-	cd ${BUILD}/wasm && rm ${PYTHON_EXE} && make LINKFORSHARED=${WASMPOSIX}/libwasmposix.a ${PYTHON_EXE} && cp ${PYTHON_EXE} ${DIST_WASM}/bin/python3.9
+	# to add our wasmposix to the build line.  TODO: hardcoding "python3.11" :-(
+	cd ${BUILD}/wasm && rm ${PYTHON_EXE} && make LINKFORSHARED=${WASMPOSIX}/libwasmposix.a ${PYTHON_EXE} && cp ${PYTHON_EXE} ${DIST_WASM}/bin/python3.11
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm

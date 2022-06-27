@@ -522,12 +522,15 @@ char* bind_textdomain_codeset(const char* domainname, const char* codeset) {
   STUB("bind_textdomain_codeset")
 }
 
-char* realpath(const char* restrict path,
-               char* restrict resolved_path){STUB("realpath")}
-
-clock_t times(struct tms* buf) {
-  STUB("times")
+char* realpath(const char* restrict path, char* restrict resolved_path) {
+  STUB("realpath")
 }
+
+int close_range(unsigned int first, unsigned int last, unsigned int flags) {
+  STUB("close_range");
+}
+
+clock_t times(struct tms* buf) { STUB("times") }
 
 int raise(int sig) {
   STUB("raise");
@@ -558,12 +561,8 @@ int sigsetjmp(sigjmp_buf env, int savesigs) {
   STUB("sigsetjmp");
   return 0;
 }
-void longjmp(jmp_buf env, int val) {
-  STUB("longjmp");
-}
-void siglongjmp(sigjmp_buf env, int val) {
-  STUB("siglongjmp");
-}
+void longjmp(jmp_buf env, int val) { STUB("longjmp"); }
+void siglongjmp(sigjmp_buf env, int val) { STUB("siglongjmp"); }
 FILE* popen(const char* command, const char* type) {
   STUB("popen");
   return 0;
