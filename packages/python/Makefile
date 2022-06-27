@@ -65,7 +65,7 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 			--enable-big-digits=30 \
 			--enable-optimizations \
 			--enable-shared
-	cd ${BUILD}/native && make -j8
+	cd ${BUILD}/native && make
 	cd ${BUILD}/native && make install
 	touch ${DIST_NATIVE}/.built
 
@@ -124,7 +124,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	# Make it so our WASM posix header file is included everywhere,
 	# since otherwise we can't even compile.  Must do this AFTER ./configure.
 	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ${WASMPOSIX}/wasm-posix.h .
-	cd ${BUILD}/wasm && make -j8
+	cd ${BUILD}/wasm && make
 	cd ${BUILD}/wasm && make install
 	# Also copy wasm-posix.h over, so it's possible to build programs against our new python.
 	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm-posix.h ${DIST_WASM}/include/python3.9/
