@@ -98,19 +98,20 @@ pub fn ProxyObjects(comptime T: type) type {
     };
 }
 
-const expect = std.testing.expect;
+// const expect = std.testing.expect;
 
-test "creating an object and storing it using a handle-based interface container" {
-    const p1list = @import("../modular/p1list.zig");
-    var Proxy = ProxyObjects(p1list.P1List(i32)).init();
-    defer Proxy.deinit();
-    const P1 = try p1list.P1List(i32).init(std.testing.allocator, 11);
-    const handle = try Proxy.put(P1);
-    try expect(handle == 1);
-    const P1b = Proxy.get(handle) orelse {
-        unreachable;
-    };
-    try expect(P1b.N == 11);
-    try expect(Proxy.count() == 1);
-    Proxy.free(handle);
-}
+// test "creating an object and storing it using a handle-based interface container" {
+//     const p1list = @import("../modular/p1list.zig");
+//     var Proxy = ProxyObjects(p1list.P1List(i32)).init();
+//     defer Proxy.deinit();
+//     const P1 = try p1list.P1List(i32).init(std.testing.allocator, 11);
+//     const handle = try Proxy.put(P1);
+//     try expect(handle == 1);
+//     const P1b = Proxy.get(handle) orelse {
+//         unreachable;
+//     };
+//     try expect(P1b.N == 11);
+//     try expect(Proxy.count() == 1);
+//     Proxy.free(handle);
+// }
+
