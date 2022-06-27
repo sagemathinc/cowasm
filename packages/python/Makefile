@@ -1,8 +1,6 @@
 # See https://www.python.org/downloads/
-# Current version is 3.10.0, but many of the WASM patches fail to apply to that version,
-# so will need to be updated first.
-# In Python 3.11, which isn't out as I write this, most of those patches have been upstreamed.
-PYTHON_VERSION = 3.9.7
+PYTHON_VERSION = 3.11.0
+BETA = b3
 
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
@@ -33,7 +31,7 @@ ${CWD}/dist/.built: native wasm
 #############
 ${BUILD}/Python-${PYTHON_VERSION}.tar.xz:
 	mkdir -p ${BUILD}
-	cd ${BUILD} && curl https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz -o Python-${PYTHON_VERSION}.tar.xz
+	cd ${BUILD} && curl https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}${BETA}.tar.xz -o Python-${PYTHON_VERSION}.tar.xz
 
 .PHONY: source
 source: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
@@ -58,14 +56,14 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 		CFLAGS=-I${ZLIB}/native/include \
 		LDFLAGS=-L${ZLIB}/native/lib \
 		AR="zig ar" \
-		CXX="zig c++" \
-		CC="zig cc" \
+		CXX="zig c++ --target=x86_64-linux-gnu.2.28" \
+		CC="zig cc --target=x86_64-linux-gnu.2.28" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
 			--enable-big-digits=30 \
 			--enable-optimizations \
 			--enable-shared
-	cd ${BUILD}/native && make
+	cd ${BUILD}/native && make -j8
 	cd ${BUILD}/native && make install
 	touch ${DIST_NATIVE}/.built
 

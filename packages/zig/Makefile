@@ -4,7 +4,14 @@
 
 # Find the latest version at https://ziglang.org/download/
 
+# https://ziglang.org/builds/zig-0.10.0-dev.2751+08459ff1c.tar.xz
+
 VERSION = 0.9.1
+TARBALL = https://ziglang.org/download/${VERSION}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
+
+# for dev versions:
+#VERSION = 0.10.0-dev.2751+08459ff1c
+#TARBALL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
 # Using sed because uname -s --> x86_64 or arm64, but need aarch64
 ARCH = $(shell uname -m | sed s/arm64/aarch64/)
@@ -14,9 +21,6 @@ ARCH = $(shell uname -m | sed s/arm64/aarch64/)
 # but need      linux and macos
 OS = $(shell uname -s  | sed s/Darwin/macos/ | sed s/Linux/linux/)
 
-TARBALL = https://ziglang.org/download/${VERSION}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
-# for dev versions:
-#TARBALL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
 dist/${VERSION}:
 	rm -rf dist

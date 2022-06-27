@@ -20,7 +20,7 @@ packages/wasm-posix/${BUILT}: zig
 .PHONY: wasm-posix
 wasm-posix: packages/wasm-posix/${BUILT}
 
-# Included here since I did the work, but we're not using it.
+# Included here since I did the work, but we're not using it... yet.
 packages/openssl/${BUILT}: zig
 	cd packages/openssl && make all
 .PHONY: openssl
