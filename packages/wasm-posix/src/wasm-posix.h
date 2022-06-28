@@ -57,8 +57,8 @@ struct sigaction {
   void (*sa_restorer)(void);
 };
 
-int sigaction(int signum, const struct sigaction* restrict act,
-              struct sigaction* restrict oldact);
+int sigaction(int signum, const struct sigaction* act,
+              struct sigaction* oldact);
 
 pid_t fork(void);
 
@@ -152,16 +152,16 @@ int pause(void);
 
 int siginterrupt(int sig, int flag);
 int getitimer(int which, struct itimerval* curr_value);
-int setitimer(int which, const struct itimerval* restrict new_value,
-              struct itimerval* restrict old_value);
+int setitimer(int which, const struct itimerval* new_value,
+              struct itimerval* old_value);
 int sigismember(const sigset_t* set, int signo);
 
 int pthread_sigmask(int how, const sigset_t* set, sigset_t* oldset);
 int sigpending(sigset_t* set);
-int sigwait(const sigset_t* restrict set, int* restrict sig);
+int sigwait(const sigset_t* set, int* sig);
 int sigfillset(sigset_t* set);
 
-int sigwaitinfo(const sigset_t* restrict set, siginfo_t* restrict info);
+int sigwaitinfo(const sigset_t* set, siginfo_t* info);
 int sigtimedwait(const sigset_t* set, siginfo_t* info,
                  const struct timespec* timeout);
 int pthread_kill(pthread_t thread, int sig);
@@ -173,7 +173,7 @@ typedef struct {
   int ss_flags;   /* Flags */
   size_t ss_size; /* Number of bytes in stack */
 } stack_t;
-int sigaltstack(const stack_t* restrict ss, stack_t* restrict old_ss);
+int sigaltstack(const stack_t* ss, stack_t* old_ss);
 #define SA_NODEFER 0
 #define SA_ONSTACK 0
 #define SA_RESTART 0
@@ -189,10 +189,9 @@ struct rlimit {
 int getrlimit(int resource, struct rlimit* rlim);
 int setrlimit(int resource, const struct rlimit* rlim);
 
-char* realpath(const char* restrict path, char* restrict resolved_path);
+char* realpath(const char* path, char* resolved_path);
 
-int close_range(unsigned int first, unsigned int last,
-                       unsigned int flags);
+int close_range(unsigned int first, unsigned int last, unsigned int flags);
 
 // These are not needed by Python but are needed by PARI:
 typedef void* jmp_buf;
@@ -201,12 +200,14 @@ int setjmp(jmp_buf env);
 int sigsetjmp(sigjmp_buf env, int savesigs);
 void longjmp(jmp_buf env, int val);
 void siglongjmp(sigjmp_buf env, int val);
-struct _IO_FILE { char __x; };
+struct _IO_FILE {
+  char __x;
+};
 typedef struct _IO_FILE FILE;
 FILE* popen(const char* command, const char* type);
 int pclose(FILE* stream);
 struct passwd* getpwnam(const char* name);
 struct passwd* getpwuid(uid_t uid);
-void (*signal(int sig, void (*func)(int)))(int);
+//void (*signal(int sig, void (*func)(int)))(int);
 
 #endif

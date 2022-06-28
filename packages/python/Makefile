@@ -9,6 +9,7 @@ DIST = ${CWD}/dist
 DIST_NATIVE = ${DIST}/native
 DIST_WASM = ${DIST}/wasm
 ZLIB = ${CWD}/../zlib/dist
+LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
 # On Linux it is "python", but on MacOS it is "python.exe".
@@ -46,15 +47,16 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# We only use the 0008-setup.patch patch, which is *maybe* needed to get module building
 	# to work when compiling with zig...
 	cd ${BUILD}/native && cat ${CWD}/src/python-patches/0008-setup.patch | patch -p1
+	cd ${BUILD}/native && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
 	touch ${BUILD}/native/.patched
 
 # Possibly doesn't work due to https://stackoverflow.com/questions/63629878/dyld-library-path-environment-variable-is-not-forwarded-to-external-command-in-m
-${DIST_NATIVE}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
-${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
+${DIST_NATIVE}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${LZMA}/native/lib:${BUILD}/native
+${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${LZMA}/native/lib:${BUILD}/native
 ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
-		CFLAGS=-I${ZLIB}/native/include \
-		LDFLAGS=-L${ZLIB}/native/lib \
+		CFLAGS="-I${ZLIB}/native/include -I${LZMA}/native/include" \
+		LDFLAGS="-L${ZLIB}/native/lib -L${LZMA}/native/lib" \
 		AR="zig ar" \
 		CXX="zig c++ --target=x86_64-linux-gnu.2.28" \
 		CC="zig cc --target=x86_64-linux-gnu.2.28" \
@@ -105,8 +107,8 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 		CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
 		CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
 		AR="zig ar" \
-		LDFLAGS="-lc -L${ZLIB}/wasm/lib" \
-		CFLAGS="-I${ZLIB}/wasm/include" \
+		LDFLAGS="-lc -L${ZLIB}/wasm/lib  -L${LZMA}/wasm/lib" \
+		CFLAGS="-I${ZLIB}/wasm/include -I${LZMA}/wasm/include" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		./configure \

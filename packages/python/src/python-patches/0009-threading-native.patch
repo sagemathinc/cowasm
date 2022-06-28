@@ -1,0 +1,16 @@
+This is probably going to introduce bugs.  But for building the native version of Python
+with zig we seem to need to do this.  No clue why!  - william stein
+
+diff -u a/Lib/threading.py b/Lib/threading.py
+
+--- a/Lib/threading.py     2022-06-01 13:07:53.000000000 +0000
++++ b/Lib/threading.py     2022-06-28 04:26:58.842569168 +0000
+@@ -1402,7 +1402,7 @@
+     def __init__(self):
+         Thread.__init__(self, name="MainThread", daemon=False)
+         self._set_tstate_lock()
+-        self._started.set()
++        #self._started.set()
+         self._set_ident()
+         if _HAVE_THREAD_NATIVE_ID:
+             self._set_native_id()

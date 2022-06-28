@@ -27,13 +27,19 @@ packages/openssl/${BUILT}: zig
 openssl: packages/openssl/${BUILT}
 
 
+packages/lzma/${BUILT}: zig wasm-posix
+	cd packages/lzma && make all
+.PHONY: lzma
+lzma: packages/lzma/${BUILT}
+
+
 packages/zlib/${BUILT}: zig
 	cd packages/zlib && make all
 .PHONY: zlib
 zlib: packages/zlib/${BUILT}
 
 
-packages/python/${BUILT}: packages/zlib/${BUILT} packages/wasm-posix/${BUILT} zig
+packages/python/${BUILT}: zlib wasm-posix zig lzma
 	cd packages/python && make all
 .PHONY: python
 python: packages/python/${BUILT}
