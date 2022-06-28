@@ -31,7 +31,7 @@ ${BUILD}/wasm: ${BUILD}/lzma.tar.xz
 	cd ${BUILD} && rm -rf wasm && mkdir wasm && tar xf lzma.tar.xz -C wasm --strip-components=1
 
 ${DIST_WASM}/.built: ${BUILD}/wasm
-	cd ${BUILD}/wasm && RANLIB="zig ranlib" AR="zig ar" CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" ./configure  --build i686-pc-linux-gnu --host=none --prefix=${DIST_WASM}
+	cd ${BUILD}/wasm && RANLIB="zig ranlib" AR="zig ar" CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" ./configure  --build `./config.guess` --host=none --prefix=${DIST_WASM}
 	cd ${BUILD}/wasm && echo '#include "../../../wasm-posix/dist/wasm-posix.h"' >> config.h
 	cd ${BUILD}/wasm && make -j8
 	cd ${BUILD}/wasm && make install
