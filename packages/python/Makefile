@@ -11,6 +11,7 @@ DIST_WASM = ${DIST}/wasm
 ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
+ARCH = x86_64-pc-linux-gnux32
 
 # On Linux it is "python", but on MacOS it is "python.exe".
 UNAME_S := $(shell uname -s)
@@ -65,7 +66,7 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 			--enable-big-digits=30 \
 			--enable-optimizations \
 			--enable-shared
-	cd ${BUILD}/native && make -j8
+	cd ${BUILD}/native && make || true; make   # it breaks once due to threading.py, but second time works ?
 	cd ${BUILD}/native && make install
 	touch ${DIST_NATIVE}/.built
 
@@ -100,12 +101,15 @@ ${DIST_WASM}/.built: export LD_LIBRARY_PATH:=${DIST_NATIVE}/lib:"${LD_LIBRARY_PA
 ${DIST_WASM}/.built: export DYLD_LIBRARY_PATH:=${DIST_NATIVE}/lib:"${DYLD_LIBRARY_PATH}"
 ${DIST_WASM}/.built: export PATH:=${DIST_NATIVE}/bin:"${PATH}"
 ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
-	# Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
-	# without-pymalloc below because pymalloc uses mmap and munmap, and WASI/our libc doesn't provide them.
-	# We could try to write them ourselves (?)...
+	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
+	# - without-pymalloc below because pymalloc uses mmap and munmap, and WASI/our libc doesn't provide them.
+	#   We could try to write them ourselves (?)...
+	# - We use "zig cc -target wasm32-wasi" instead of "zig cc -target wasm32-wasi-musl" since the broken
+	#   Python configure.ac script outputs wasm32-wasi instead of wasm32-wasi-musl as the PLATFORM_TRIPLE.
+	#   This might be something to fix and upstream, but for now, just not using a triple works.
 	cd ${BUILD}/wasm && \
-		CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
-		CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
+		CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
+		CXX="zig c++ -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
 		AR="zig ar" \
 		LDFLAGS="-lc -L${ZLIB}/wasm/lib  -L${LZMA}/wasm/lib" \
 		CFLAGS="-I${ZLIB}/wasm/include -I${LZMA}/wasm/include" \
@@ -124,7 +128,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 			--build=`./config.guess`
 	# Make it so our WASM posix header file is included everywhere,
 	# since otherwise we can't even compile.  Must do this AFTER ./configure.
-	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ${WASMPOSIX}/wasm-posix.h .
+	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ${WASMPOSIX}/*.h .
 	cd ${BUILD}/wasm && make -j8
 	cd ${BUILD}/wasm && make install
 	# Also copy wasm-posix.h over, so it's possible to build programs against our new python.
