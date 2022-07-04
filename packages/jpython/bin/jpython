@@ -1,0 +1,61 @@
+#!/usr/bin/env node
+
+"use strict";
+
+function load(mod) {
+    return require('../dist/tools/' + mod);
+}
+
+var utils = load('utils');
+
+// We need ES 6 generators so relaunch with the --harmony flag
+if (!utils.generators_available()) {
+    if (process.execArgv.indexOf('--harmony') != -1) {
+        console.error('JPython needs ES 6 generators; update your version of nodejs');
+        process.exit(1);
+    }
+    var args = ['--harmony', module.filename].concat(process.argv.slice(2));
+    require('child_process').spawn(process.execPath, args, {stdio:'inherit'}).on('exit', function(code, signal) {
+        process.exit(code);
+    });
+} else {
+
+    var path = require('path');
+
+    var argv = load('cli').argv;
+
+    var base_path = path.normalize(path.join(path.dirname(module.filename), ".."));
+    var src_path = path.join(base_path, 'src');
+    var lib_path = path.join(base_path, 'dev');
+    if (!utils.pathExists(path.join(lib_path, 'compiler.js'))) lib_path = path.join(base_path, 'release');
+
+    if (argv.mode === 'self') {
+        if (argv.files.length > 0) {
+            console.error("WARN: Ignoring input files since --self was passed");
+        }
+        load('self')(base_path, src_path, lib_path, argv.complete, argv.profile);
+        if (argv.test) {
+            console.log('\nRunning test suite...\n');
+            argv.files = [];  // Ensure all tests are run
+            load('test').default(argv, base_path, src_path, path.join(base_path, 'dev'));
+        }
+        process.exit(0);
+    } else
+    if (argv.mode === 'test') {
+        load('test').default(argv, base_path, src_path, lib_path);
+    } else
+    if (argv.mode === 'lint') {
+        load('lint').cli(argv, base_path, src_path, lib_path);
+    } else
+    if (argv.mode === 'repl') {
+        load('repl').default({show_js:!argv.no_js, jsage:argv.jsage, tokens:argv.tokens});
+    } else
+    if (argv.mode === 'msgfmt') {
+        load('msgfmt').cli(argv, base_path, src_path, lib_path);
+    } else
+    if (argv.mode === 'compile') {
+        load('compile').default({argv, src_path, lib_path});
+    } else {
+       throw Error(`unknown mode "${argv.mode}"`);
+    }
+}

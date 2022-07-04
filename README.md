@@ -16,6 +16,10 @@ Create a web assembly build of Python and related packages, which runs both on t
 
 This is probably extremely difficult to pull off, since emscripten and pyodide have been at it for years, and it's a complicated project.   Our software license is compatible with there's and we hope to at least learn from their solutions to problems.
 
+### JPython
+
+One significant difference between this project and pyodide / pyscript, etc., is that we also have a self\-hosted Python interpreter that is implemented in Javascript \(a significant rewrite of [RapydScript](https://github.com/atsepkov/RapydScript)\).  This provides the Python **languages** with the extremely fast JIT and very easy interop with the full Javascript ecosystem, but a very tiny library of functionality.   Our plan is to combine this with the actual WASM Python and Python libraries, in order to provide, e.g., access to numpy from JPython.  It's a different approach than pyscript, and might be really powerful.  Or might not be; we'll see.
+
 ## Build from source
 
 ### How to build

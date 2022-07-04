@@ -4,7 +4,7 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 export PATH := ${CWD}/packages/zig/dist:$(PATH)
 
-all: lib/${BUILT}
+all: lib/${BUILT} jpython
 
 lib/${BUILT}: python wasi zig wasm-posix
 	cd lib && make all
@@ -50,6 +50,12 @@ packages/wasi/${BUILT}:
 wasi: packages/wasi/${BUILT}
 
 
+packages/jpython/${BUILT}: lib/${BUILT}
+	cd packages/jpython && make all
+.PHONY: jpython
+jpython: packages/jpython/${BUILT}
+
+
 .PHONY: docker
 docker:
 	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/wapython master | awk '{print $$1}'` -t wapython .
@@ -66,5 +72,6 @@ clean:
 	cd packages/lzma && make clean
 	cd packages/wasm-posix && make clean
 	cd packages/zig && make clean
+	cd packages/jpython && make clean
 	cd lib && make clean
 
