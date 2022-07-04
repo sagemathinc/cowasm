@@ -26,10 +26,6 @@ packages/openssl/${BUILT}: zig
 openssl: packages/openssl/${BUILT}
 
 
-# Included here since I did the work, but we're not using it... yet.
-# NOTE: even pyodide has avoided porting this! https://github.com/pyodide/pyodide/issues/1821
-# Also, the code we build in the lzma package seems incomplete.  It's very confusing
-# how and what even needs to get built, since lzma/xz/7z seems basically deprecated.
 packages/lzma/${BUILT}: zig wasm-posix
 	cd packages/lzma && make all
 .PHONY: lzma
@@ -42,7 +38,7 @@ packages/zlib/${BUILT}: zig
 zlib: packages/zlib/${BUILT}
 
 
-packages/python/${BUILT}: wasm-posix zlib zig
+packages/python/${BUILT}: wasm-posix zlib lzma zig
 	cd packages/python && make all
 .PHONY: python
 python: packages/python/${BUILT}
@@ -67,6 +63,7 @@ clean:
 	cd packages/python && make clean
 	cd packages/openssl && make clean
 	cd packages/zlib && make clean
+	cd packages/lzma && make clean
 	cd packages/wasm-posix && make clean
 	cd packages/zig && make clean
 	cd lib && make clean

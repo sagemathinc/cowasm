@@ -10,6 +10,3 @@ ac_cv_func_rtpSpawn=no
 ac_cv_func_wait3=no
 ac_cv_func_wait4=no
 
-ac_cv_header_lzma_h=no
-py_cv_module__lzma=disabled
-

@@ -9,6 +9,7 @@ DIST = ${CWD}/dist
 DIST_NATIVE = ${DIST}/native
 DIST_WASM = ${DIST}/wasm
 ZLIB = ${CWD}/../zlib/dist
+LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 ARCH = x86_64-pc-linux-gnux32
 
@@ -51,12 +52,12 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	touch ${BUILD}/native/.patched
 
 # Possibly doesn't work due to https://stackoverflow.com/questions/63629878/dyld-library-path-environment-variable-is-not-forwarded-to-external-command-in-m
-${DIST_NATIVE}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
-${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
+${DIST_NATIVE}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${LZMA}/native/lib:${BUILD}/native
+${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${LZMA}/native/lib:${BUILD}/native
 ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
-		CFLAGS="-I${ZLIB}/native/include" \
-		LDFLAGS="-L${ZLIB}/native/lib" \
+		CFLAGS="-I${ZLIB}/native/include  -I${LZMA}/native/include" \
+		LDFLAGS="-L${ZLIB}/native/lib  -L${LZMA}/native/lib" \
 		AR="zig ar" \
 		CXX="zig c++ --target=x86_64-linux-gnu.2.28" \
 		CC="zig cc --target=x86_64-linux-gnu.2.28" \
@@ -112,8 +113,8 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 		CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
 		CXX="zig c++ -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
 		AR="zig ar" \
-		LDFLAGS="-lc -L${ZLIB}/wasm/lib" \
-		CFLAGS="-I${ZLIB}/wasm/include" \
+		CFLAGS="-I${ZLIB}/wasm/include  -I${LZMA}/wasm/include" \
+		LDFLAGS="-lc -L${ZLIB}/wasm/lib -L${LZMA}/wasm/lib" \
 		DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib" \
 		LD_LIBRARY_PATH="${DIST_NATIVE}/lib" \
 		CONFIG_SITE=./config.site \
@@ -133,7 +134,6 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	# since otherwise we can't even compile.  Must do this AFTER ./configure.
 	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ${WASMPOSIX}/*.h .
 	cd ${BUILD}/wasm && echo '#undef HAVE_LINUX_VM_SOCKETS_H' >> pyconfig.h
-	cd ${BUILD}/wasm && echo '#undef HAVE_LZMA_H' >> pyconfig.h
 	cd ${BUILD}/wasm && echo '#define POLLPRI 0' >> pyconfig.h
 	cd ${BUILD}/wasm && make -j8
 	cd ${BUILD}/wasm && make install
