@@ -7,7 +7,6 @@
 #define GRND_RANDOM 0x0002
 #define GRND_INSECURE 0x0004
 
-
 ssize_t getrandom(void* buf, size_t buflen, unsigned int flags);
 int dup(int oldfd);
 
@@ -65,10 +64,10 @@ pid_t fork(void);
 
 pid_t fork1(void);
 
-ssize_t splice(int fd_in, void *off_in, int fd_out,
-                      void *off_out, size_t len, unsigned int flags);
+ssize_t splice(int fd_in, void* off_in, int fd_out, void* off_out, size_t len,
+               unsigned int flags);
 int login_tty(int fd);
- int eventfd(unsigned int initval, int flags);
+int eventfd(unsigned int initval, int flags);
 
 int sched_get_priority_max(int policy);
 int sched_get_priority_min(int policy);
@@ -185,9 +184,12 @@ int sigaltstack(const stack_t* ss, stack_t* old_ss);
 #define SA_NODEFER 0
 #define SA_ONSTACK 0
 #define SA_RESTART 0
-#define RLIMIT_CORE 0
 #define SIG_SETMASK 0
 #define SIGSTKSZ 0
+
+#define RLIMIT_CORE 0
+#define RLIM_INFINITY -1
+#define RLIM_NLIMITS 16
 
 typedef int rlim_t;
 struct rlimit {
@@ -216,6 +218,30 @@ FILE* popen(const char* command, const char* type);
 int pclose(FILE* stream);
 struct passwd* getpwnam(const char* name);
 struct passwd* getpwuid(uid_t uid);
-//void (*signal(int sig, void (*func)(int)))(int);
+// void (*signal(int sig, void (*func)(int)))(int);
+
+typedef unsigned int socklen_t;
+#define SO_ERROR 0x1007
+#define SOMAXCONN 32
+#define SOCK_SEQPACKET 5
+#define __WASI_RIFLAGS_RECV_DATA_TRUNCATED 0
+int accept(int sockfd, struct sockaddr* restrict addr, void* restrict addrlen);
+int setsockopt(int sockfd, int level, int optname, const void* optval,
+               void* optlen);
+int bind(int sockfd, const struct sockaddr* addr, socklen_t addrlen);
+int connect(int sockfd, const struct sockaddr* addr, socklen_t addrlen);
+int getsockname(int sockfd, struct sockaddr* restrict addr,
+                socklen_t* restrict addrlen);
+int getpeername(int sockfd, struct sockaddr* restrict addr,
+                socklen_t* restrict addrlen);
+int listen(int sockfd, int backlog);
+ssize_t recvfrom(int sockfd, void* buf, size_t len, int flags,
+                 struct sockaddr* src_addr, socklen_t* addrlen);
+ssize_t sendto(int sockfd, const void* buf, size_t len, int flags,
+               const struct sockaddr* dest_addr, socklen_t addrlen);
+int socket(int domain, int type, int protocol);
+int gethostname(char* name, size_t len);
+int sethostname(const char* name, size_t len);
+char* inet_ntoa();
 
 #endif
