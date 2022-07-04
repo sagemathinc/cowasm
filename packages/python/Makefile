@@ -52,12 +52,12 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	touch ${BUILD}/native/.patched
 
 # Possibly doesn't work due to https://stackoverflow.com/questions/63629878/dyld-library-path-environment-variable-is-not-forwarded-to-external-command-in-m
-${DIST_NATIVE}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${LZMA}/native/lib:${BUILD}/native
-${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${LZMA}/native/lib:${BUILD}/native
+${DIST_NATIVE}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
+${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
 ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
-		CFLAGS="-I${ZLIB}/native/include  -I${LZMA}/native/include" \
-		LDFLAGS="-L${ZLIB}/native/lib  -L${LZMA}/native/lib" \
+		CFLAGS="-I${ZLIB}/native/include" \
+		LDFLAGS="-L${ZLIB}/native/lib" \
 		AR="zig ar" \
 		CXX="zig c++ --target=x86_64-linux-gnu.2.28" \
 		CC="zig cc --target=x86_64-linux-gnu.2.28" \
@@ -65,7 +65,6 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 			--prefix=${DIST_NATIVE} \
 			--enable-big-digits=30 \
 			--enable-optimizations \
-			--without-lzma \
 			--enable-shared
 	cd ${BUILD}/native && make || true; make   # it breaks once due to threading.py, but second time works ?
 	cd ${BUILD}/native && make install

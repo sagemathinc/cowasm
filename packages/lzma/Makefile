@@ -3,22 +3,24 @@ BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 
-all: native wasm
+all: wasm
 
-## Native library
-${BUILD}/native:
-	rm -rf ${BUILD}/native
-	mkdir -p ${BUILD}
-	cd ${BUILD} && git clone https://github.com/kobolabs/liblzma.git native
+# Don't build native -- it's very likely available systemwide or we don't need it, and
+# it breaks things.
+# ## Native library
+# ${BUILD}/native:
+# 	rm -rf ${BUILD}/native
+# 	mkdir -p ${BUILD}
+# 	cd ${BUILD} && git clone https://github.com/kobolabs/liblzma.git native
 
-${DIST_NATIVE}/.built: ${BUILD}/native
-	cd ${BUILD}/native && CC="zig cc" CXX="zig c++" AR="zig ar" ./configure --prefix=${DIST_NATIVE}
-	cd ${BUILD}/native && make
-	cd ${BUILD}/native && make install
-	touch ${DIST_NATIVE}/.built
+# ${DIST_NATIVE}/.built: ${BUILD}/native
+# 	cd ${BUILD}/native && CC="zig cc" CXX="zig c++" AR="zig ar" ./configure --prefix=${DIST_NATIVE}
+# 	cd ${BUILD}/native && make
+# 	cd ${BUILD}/native && make install
+# 	touch ${DIST_NATIVE}/.built
 
-.PHONY: native
-native: ${DIST_NATIVE}/.built
+# .PHONY: native
+# native: ${DIST_NATIVE}/.built
 
 
 # WASM
