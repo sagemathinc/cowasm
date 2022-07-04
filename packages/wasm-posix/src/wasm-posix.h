@@ -7,6 +7,7 @@
 #define GRND_RANDOM 0x0002
 #define GRND_INSECURE 0x0004
 
+
 ssize_t getrandom(void* buf, size_t buflen, unsigned int flags);
 int dup(int oldfd);
 
@@ -61,6 +62,13 @@ int sigaction(int signum, const struct sigaction* act,
               struct sigaction* oldact);
 
 pid_t fork(void);
+
+pid_t fork1(void);
+
+ssize_t splice(int fd_in, void *off_in, int fd_out,
+                      void *off_out, size_t len, unsigned int flags);
+int login_tty(int fd);
+ int eventfd(unsigned int initval, int flags);
 
 int sched_get_priority_max(int policy);
 int sched_get_priority_min(int policy);

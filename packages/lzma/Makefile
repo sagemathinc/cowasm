@@ -19,6 +19,7 @@ ${DIST_NATIVE}/.built: ${BUILD}/native
 	cd ${BUILD}/native && CC="zig cc" CXX="zig c++" AR="zig ar" ./configure --prefix=${DIST_NATIVE}
 	cd ${BUILD}/native && make -j8
 	cd ${BUILD}/native && make install
+	cd ${DIST_NATIVE}/include && ln -s lzmadec.h lzma.h
 	touch ${DIST_NATIVE}/.built
 
 .PHONY: native
@@ -35,6 +36,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && echo '#include "../../../wasm-posix/dist/wasm-posix.h"' >> config.h
 	cd ${BUILD}/wasm && make -j8
 	cd ${BUILD}/wasm && make install
+	cd ${DIST_WASM}/include && ln -s lzmadec.h lzma.h
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm

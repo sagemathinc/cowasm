@@ -9,7 +9,6 @@ DIST = ${CWD}/dist
 DIST_NATIVE = ${DIST}/native
 DIST_WASM = ${DIST}/wasm
 ZLIB = ${CWD}/../zlib/dist
-LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 ARCH = x86_64-pc-linux-gnux32
 
@@ -52,12 +51,12 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	touch ${BUILD}/native/.patched
 
 # Possibly doesn't work due to https://stackoverflow.com/questions/63629878/dyld-library-path-environment-variable-is-not-forwarded-to-external-command-in-m
-${DIST_NATIVE}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${LZMA}/native/lib:${BUILD}/native
-${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${LZMA}/native/lib:${BUILD}/native
+${DIST_NATIVE}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
+${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
 ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
-		CFLAGS="-I${ZLIB}/native/include -I${LZMA}/native/include" \
-		LDFLAGS="-L${ZLIB}/native/lib -L${LZMA}/native/lib" \
+		CFLAGS="-I${ZLIB}/native/include" \
+		LDFLAGS="-L${ZLIB}/native/lib" \
 		AR="zig ar" \
 		CXX="zig c++ --target=x86_64-linux-gnu.2.28" \
 		CC="zig cc --target=x86_64-linux-gnu.2.28" \
@@ -65,6 +64,7 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 			--prefix=${DIST_NATIVE} \
 			--enable-big-digits=30 \
 			--enable-optimizations \
+			--without-lzma \
 			--enable-shared
 	cd ${BUILD}/native && make || true; make   # it breaks once due to threading.py, but second time works ?
 	cd ${BUILD}/native && make install
@@ -95,6 +95,7 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	## # Some legacy code assumes this setjmp.h header exists.  Not actually
 	## # used at all in Python, fortunately!
 	## cd ${BUILD}/wasm && mkdir -p bits && echo "#define __jmp_buf int" > bits/setjmp.h
+	cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
 	touch ${BUILD}/wasm/.patched
 
 ${DIST_WASM}/.built: export LD_LIBRARY_PATH:=${DIST_NATIVE}/lib:"${LD_LIBRARY_PATH}"
@@ -111,8 +112,10 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 		CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
 		CXX="zig c++ -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
 		AR="zig ar" \
-		LDFLAGS="-lc -L${ZLIB}/wasm/lib  -L${LZMA}/wasm/lib" \
-		CFLAGS="-I${ZLIB}/wasm/include -I${LZMA}/wasm/include" \
+		LDFLAGS="-lc -L${ZLIB}/wasm/lib" \
+		CFLAGS="-I${ZLIB}/wasm/include" \
+		DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib" \
+		LD_LIBRARY_PATH="${DIST_NATIVE}/lib" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		./configure \
@@ -124,11 +127,14 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 			--without-pymalloc \
 			--with-ensurepip=no \
 			--with-build-python=${DIST_NATIVE}/bin/python3 \
-			--host=wasm32-unknown-emscripten \
+			--host=wasm32-unknown-wasi \
 			--build=`./config.guess`
 	# Make it so our WASM posix header file is included everywhere,
 	# since otherwise we can't even compile.  Must do this AFTER ./configure.
 	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ${WASMPOSIX}/*.h .
+	cd ${BUILD}/wasm && echo '#undef HAVE_LINUX_VM_SOCKETS_H' >> pyconfig.h
+	cd ${BUILD}/wasm && echo '#undef HAVE_LZMA_H' >> pyconfig.h
+	cd ${BUILD}/wasm && echo '#define POLLPRI 0' >> pyconfig.h
 	cd ${BUILD}/wasm && make -j8
 	cd ${BUILD}/wasm && make install
 	# Also copy wasm-posix.h over, so it's possible to build programs against our new python.

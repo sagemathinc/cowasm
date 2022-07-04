@@ -1,5 +1,5 @@
 {
-  "name": "@jsage/lib",
+  "name": "@wapython/lib",
   "version": "1.11.0",
   "description": "SageJS",
   "exports": {
@@ -28,7 +28,7 @@
   "homepage": "https://github.com/sagemathinc/wapython/tree/main/lib",
   "workspaces": ["../packages/wasi"],
   "dependencies": {
-    "@jsage/wasi": "^0.14.0",
+    "@wapython/wasi": "^0.14.0",
     "async-await-utils": "^3.0.1",
     "callable-instance": "^2.0.0",
     "callsite": "^1.0.0",

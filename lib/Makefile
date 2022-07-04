@@ -8,7 +8,9 @@ PACKAGES      = ${CWD}/../packages
 
 PYTHON_NATIVE = ${PACKAGES}/python/dist/native
 PYTHON_WASM   = ${PACKAGES}/python/dist/wasm
-### (was below in NATIVE_CFLAGS) -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9 -lpython3.9
+### (was below in NATIVE_CFLAGS) -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.11 -lpython3.11
+
+POSIX_WASM   = ${PACKAGES}/wasm-posix/dist/
 
 WASM_CFLAGS   = -dynamic ${OPT}
 
@@ -43,10 +45,10 @@ test-zig:
 ####################
 
 test-python:
-	cd src && ${TEST} python/python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.9  -lpython3.9 -lc  #-O ReleaseFast
+	cd src && ${TEST} python/python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.11 -I${POSIX_WASM}  -lpython3.11 -lc  #-O ReleaseFast
 
 ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig
-	cd src && zig build-lib -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.9 ${PYTHON_WASM}/lib/libpython3.9.a ${WASM_CFLAGS} python/interface.zig  ${ZIG_PKG}
+	cd src && zig build-lib -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} ${PYTHON_WASM}/lib/libpython3.11.a ${POSIX_WASM}/libwasmposix.a ${WASM_CFLAGS} python/interface.zig  ${ZIG_PKG}
 	mkdir -p ${DIST}/python
 	mv src/interface.wasm ${DIST}/python/python.wasm
 

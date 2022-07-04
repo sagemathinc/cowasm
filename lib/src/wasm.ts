@@ -1,5 +1,5 @@
-import { WASI, wasmEnv } from "@jsage/wasi";
-import nodeBindings from "@jsage/wasi/dist/bindings/node";
+import { WASI, wasmEnv } from "@wapython/wasi";
+import nodeBindings from "@wapython/wasi/dist/bindings/node";
 
 import { reuseInFlight } from "async-await-utils/hof";
 import { readFile as readFile0 } from "fs";
@@ -17,7 +17,7 @@ function recvString(wasm, ptr, len) {
 }
 
 interface Options {
-  noWasi?: boolean; // if true, include wasi
+  noWasi?: boolean; // if false, include wasi
   env?: object; // functions to include in the environment
   dir?: string | null; // WASI pre-opened directory; default is to preopen /, i.e., full filesystem; explicitly set as null to sandbox.
   traceSyscalls?: boolean;
@@ -85,6 +85,7 @@ async function doWasmImport(
         opts.preopenDirectories = { "/": "/" };
       }
     }
+    // console.log(opts);
     wasi = new WASI(opts);
     wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
   }
@@ -92,6 +93,20 @@ async function doWasmImport(
   //console.log(`reading ${pathToWasm}`);
   const source = await readFile(pathToWasm);
   const typedArray = new Uint8Array(source);
+
+  wasmOpts.env = new Proxy(wasmOpts.env, {
+    get(target, key) {
+      if (key in target) {
+        return Reflect.get(target, key);
+      }
+      // console.log("creating stub for", key);
+      return (...args) => {
+        console.warn("calling STUB", key, args);
+      };
+    },
+  });
+
+  //console.log(wasmOpts);
   const result = await WebAssembly.instantiate(typedArray, wasmOpts);
   if (wasi != null) {
     wasi.start(result.instance);

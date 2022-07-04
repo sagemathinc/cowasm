@@ -22,7 +22,7 @@ pub fn exec(s: [*:0]const u8) !void {
         return General.RuntimeError;
     }
     // it worked.  We don't use the return value for anything.
-    python._Py_DECREF(pstr);
+    python.Py_DECREF(pstr);
 }
 
 pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
@@ -33,7 +33,7 @@ pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
         std.debug.print("eval -- PyRun_String failed\n", .{});
         return General.RuntimeError;
     }
-    defer python._Py_DECREF(pstr);
+    defer python.Py_DECREF(pstr);
 
     var rep = python.PyObject_Repr(pstr);
     if (rep == null) {
@@ -41,7 +41,7 @@ pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
         std.debug.print("eval -- PyObject_Repr failed\n", .{});
         return General.RuntimeError;
     }
-    defer python._Py_DECREF(rep);
+    defer python.Py_DECREF(rep);
     // std.debug.print("rep ptr = {*}\n", .{rep});
     const str_rep = python.PyUnicode_AsUTF8(rep);
 
@@ -73,7 +73,7 @@ pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
 //         std.debug.print("toJSON -- PyRun_String failed\n", .{});
 //         return General.RuntimeError;
 //     }
-//     defer python._Py_DECREF(pstr);
+//     defer python.Py_DECREF(pstr);
 
 //     // Convert to JSON
 

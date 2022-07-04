@@ -1,4 +1,4 @@
-# `@jsage/wasi`
+# `@wapython/wasi`
 
 Javascript library for interacting with WASI Modules in Node.js.
 
@@ -14,9 +14,9 @@ This is a fork of version 0.12.0 of @wasmer/wasi to keep it alive, since the Was
 
 ## Features
 
-`@jsage/wasi` uses the same API as the [future WASI integration in Node](https://github.com/nodejs/wasi).
+`@wapython/wasi` uses the same API as the [future WASI integration in Node](https://github.com/nodejs/wasi).
 
-However, `@jsage/wasi` is focused on:
+However, `@wapython/wasi` is focused on:
 
 - Bringing [WASI](https://github.com/webassembly/wasi) to an Isomorphic context (Node.js and the Browser)
 - Make it easy to plug in different filesystems (via [wasmfs](https://github.com/wasmerio/wasmer-js/tree/master/packages/wasmfs))
@@ -26,20 +26,20 @@ However, `@jsage/wasi` is focused on:
 
 ## Installation
 
-To install `@jsage/wasi`, run this command:
+To install `@wapython/wasi`, run this command:
 
 ```bash
-npm install @jsage/wasi
+npm install @wapython/wasi
 ```
 
 ## Quick Start
 
-**This quick start is for node.**  It's something like this.  See lib/src/wasm.ts in the JSage source code for something that uses @jsage/wasi in a real application for a better tested example.
+**This quick start is for node.**  It's something like this.  See lib/src/wasm.ts in the JSage source code for something that uses @wapython/wasi in a real application for a better tested example.
 
 ```js
-import { WASI } from "@jsage/wasi";
+import { WASI } from "@wapython/wasi";
 import fs from "fs";
-import nodeBindings from "@jsage/wasi/dist/bindings/node";
+import nodeBindings from "@wapython/wasi/dist/bindings/node";
 
 const wasi = new WASI({
   args: [],
