@@ -225,20 +225,18 @@ typedef unsigned int socklen_t;
 #define SOMAXCONN 32
 #define SOCK_SEQPACKET 5
 #define __WASI_RIFLAGS_RECV_DATA_TRUNCATED 0
-int accept(int sockfd, struct sockaddr* restrict addr, void* restrict addrlen);
+int accept(int sockfd, void* restrict addr, void* restrict addrlen);
 int setsockopt(int sockfd, int level, int optname, const void* optval,
                void* optlen);
-int bind(int sockfd, const struct sockaddr* addr, socklen_t addrlen);
-int connect(int sockfd, const struct sockaddr* addr, socklen_t addrlen);
-int getsockname(int sockfd, struct sockaddr* restrict addr,
-                socklen_t* restrict addrlen);
-int getpeername(int sockfd, struct sockaddr* restrict addr,
-                socklen_t* restrict addrlen);
+int bind(int sockfd, const void* addr, socklen_t addrlen);
+int connect(int sockfd, const void* addr, socklen_t addrlen);
+int getsockname(int sockfd, void* restrict addr, socklen_t* restrict addrlen);
+int getpeername(int sockfd, void* restrict addr, socklen_t* restrict addrlen);
 int listen(int sockfd, int backlog);
-ssize_t recvfrom(int sockfd, void* buf, size_t len, int flags,
-                 struct sockaddr* src_addr, socklen_t* addrlen);
+ssize_t recvfrom(int sockfd, void* buf, size_t len, int flags, void* src_addr,
+                 socklen_t* addrlen);
 ssize_t sendto(int sockfd, const void* buf, size_t len, int flags,
-               const struct sockaddr* dest_addr, socklen_t addrlen);
+               const void* dest_addr, socklen_t addrlen);
 int socket(int domain, int type, int protocol);
 int gethostname(char* name, size_t len);
 int sethostname(const char* name, size_t len);
