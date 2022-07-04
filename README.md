@@ -2,23 +2,25 @@
 
 > _"Web Assembly Python"_
 
+URL: https://github.com/sagemathinc/wapython 
+
+LEAD AUTHOR:  [William Stein](https://github.com/williamstein/)
+
 ## Quick start
 
-TODO
+Nothing to see yet.
 
-## OK, what is this?
+## What's the goal?
 
-TODO
+Create a web assembly build of Python and related packages, which runs both on the command line with Node.js and in web browsers \(via npm modules that you can include via webpack\).  The build system is based on Makefiles and `zig,`which provides excellent caching and cross compilation.  Most of the C/C\+\+ code in emscripten will instead be written in the zig language here, and the Javascript code will be replaced by more modern Typescript.
 
-## What's the goal? What is the good for?
-
-TODO
+This is probably extremely difficult to pull off, since emscripten and pyodide have been at it for years, and it's a complicated project.   Our software license is compatible with there's and we hope to at least learn from their solutions to problems.
 
 ## Build from source
 
 ### How to build
 
-Just type "make"
+Just type make.   \(Do **NOT** type `make -j8,` since parallel builds somehow mess up Python right now.\)
 
 ```sh
 ...$ make
@@ -33,20 +35,17 @@ In most subdirectories `foo` of packages, this will create some subdirectories:
 - `packages/foo/dist/[native|wasm]` -- a native or WebAssembly build of the package; this has binaries, headers, and libs. These get used by other packages.
 - `packages/build/[native|wasm]` - build artifacts for the native or WebAssembly build; can be safely deleted
 
-### Extra Packages
-
-I have put a lot of work into getting various things to build.
-
 ### No common prefix directory
 
-Unlike SageMath, where everything is built into a single `local` directory, here we build everything in its own self-contained package. When a package like `pari` depends on another package like `gmp` , our Makefile for `pari` explicitly references the `dist` directory in the `packages/dist/gmp` . This makes it possible to uninstall packages, update them, etc., whereas using a common directory for everything can be a mess with possibly conflicting versions of files.
+Unlike some systems, where everything is built and installed into a single `local` directory, here we build everything in its own self-contained package. When a package like `python` depends on another package like `lzma` , our Makefile for `python` explicitly references `packages/lzma/dist`. This makes it easier to uninstall packages, update them, etc., without having to track what files are in any package, whereas using a common directory for everything can be a mess with possibly conflicting versions of files, and makes versioning and dependencies very explicit.  Of course, it makes the environment variables and build commands potentially much longer.  Our goal is WebAssembly though, which ultimately links everything together in a single file, so this is fine.
 
 ### Native and Wasm
 
-The build creates directories dist/native and dist/wasm. The `dist/native` artifacts are only of value on the computer where you ran the build, since they are architecture dependent and can easily depend on libraries on your system. In contrast, the `dist/wasm` artifacts are platform independent. They can be used nearly everywhere: on servers via WASM, on ARM computers (e.g., aarch64 linux, Apple Silicon, etc.), and in any modern web browser (though many details remain, obviously).
+The build typically create directories `dist/native`and `dist/wasm.` The `dist/native` artifacts are only of value on the computer where you ran the build, since they are architecture dependent and can easily depend on libraries on your system. In contrast, the `dist/wasm` artifacts are platform independent. They can be used nearly everywhere: on servers via WASM, on ARM computers \(e.g., aarch64 linux, Apple Silicon, etc.\), and in any modern web browser \(though many details remain, obviously\).
 
 ### Contact
 
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) if you find this interesting and want to help out. **This is an open source BSD licensed project.**
 
 There is a related project https://github.com/sagemathinc/jsage that is GPL licensed, and has a goal related to https://sagemath.org.
+
