@@ -12,23 +12,6 @@ ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
-UNAME_S := $(shell uname -s)
-UNAME_P := $(shell uname -p)
-ifeq ($(UNAME_S),Linux)
-    ifeq ($(UNAME_P),arm)
-       ARCH = --target=aarch64-linux-gnu.2.28
-    else 
-       ARCH = --target=x86_64-linux-gnu.2.28
-    endif
-endif
-ifeq ($(UNAME_S),Darwin)
-    ifeq ($(UNAME_P),arm)
-       ARCH = --target=aarch64-macos-gnu
-    else 
-       ARCH = --target=x86_64-macos-gnu
-    endif
-endif
-
 # On Linux it is "python", but on MacOS it is "python.exe".
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
@@ -61,8 +44,10 @@ source: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	rm -rf ${BUILD}/native
 	cd ${BUILD} && mkdir native && tar xf Python-${PYTHON_VERSION}.tar.xz -C native --strip-components=1
-	# We only use the 0008-setup.patch patch, which is *maybe* needed to get module building
-	# to work when compiling with zig...
+	# - We use the 0008-setup.patch patch, which is *maybe* needed to get module building
+	#   to work when compiling with zig.
+	# - 0009-threading-native.patch  is just a horrible hack to sort of get around something
+	#   broken also involving building with zig (?).
 	cd ${BUILD}/native && cat ${CWD}/src/python-patches/0008-setup.patch | patch -p1
 	cd ${BUILD}/native && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
 	touch ${BUILD}/native/.patched
@@ -75,8 +60,8 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 		CFLAGS="-I${ZLIB}/native/include" \
 		LDFLAGS="-L${ZLIB}/native/lib" \
 		AR="zig ar" \
-		CXX="zig c++ ${ARCH}" \
-		CC="zig cc ${ARCH}" \
+		CXX="zig c++" \
+		CC="zig cc" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
 			--enable-big-digits=30 \
