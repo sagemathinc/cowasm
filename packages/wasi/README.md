@@ -4,7 +4,7 @@ Javascript library for interacting with WASI Modules in Node.js.
 
 (TODO: and in the Browser.)
 
-This is a fork of version 0.12.0 of @wasmer/wasi to keep it alive, since the Wasmer company decided to end it, and I would like to use it in [JSage](https://github.com/sagemathinc/JSage).
+This is a fork of version 0.12.0 of @wasmer/wasi to keep it alive, since the Wasmer company decided to end it, and I would like to use it in [wapython](https://github.com/sagemathinc/wapython).
 
 ## Table of Contents
 
@@ -44,7 +44,8 @@ import nodeBindings from "@wapython/wasi/dist/bindings/node";
 const wasi = new WASI({
   args: [],
   env: {},
-  bindings: {...nodeBindings, fs}
+  bindings: {...nodeBindings, fs},
+  traceSyscalls: true  /* logs all calls! */
 });
 
 const source = await readFile(pathToWasm);
@@ -52,3 +53,4 @@ const typedArray = new Uint8Array(source);
 const result = await WebAssembly.instantiate(typedArray, wasmOpts);
 wasi.start(result.instance);
 ```
+
