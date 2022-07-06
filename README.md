@@ -8,7 +8,7 @@ LEAD AUTHOR:  [William Stein](https://github.com/williamstein/)
 
 ## Quick start
 
-Nothing to see yet.
+**Nothing to see yet.**
 
 ## What's the goal?
 

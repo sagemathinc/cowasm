@@ -61,6 +61,25 @@ async function doWasmImport(
       wasm.result = recvString(wasm, ptr, len);
     };
   }
+  if (wasmOpts.env.getrandom == null) {
+    wasmOpts.env.getrandom = (_buf, buflen, _flags) => {
+      // NOTE: returning 0 here (our default stub behavior)
+      // would result in Python hanging on startup!
+      // TODO: definitely need to actually randomize the buffer at some point.
+      stub("getrandom", "non-random but correct output length", [
+        _buf,
+        buflen,
+        _flags,
+      ]);
+      return buflen;
+    };
+  }
+  if (wasmOpts.env.getpid == null) {
+    wasmOpts.env.getpid = () => {
+      stub("getpid", "returning 1", []);
+      return 1;
+    };
+  }
 
   let wasi: any = undefined;
   if (!options?.noWasi) {
@@ -97,11 +116,13 @@ async function doWasmImport(
   wasmOpts.env = new Proxy(wasmOpts.env, {
     get(target, key) {
       if (key in target) {
+        // console.log("using existing stub for ", key);
         return Reflect.get(target, key);
       }
       // console.log("creating stub for", key);
       return (...args) => {
-        console.warn("calling STUB", key, args);
+        stub(key, "returning 0", args);
+        return 0;
       };
     },
   });
@@ -193,4 +214,8 @@ export class WasmInstance {
 
 export function run(filename: string) {
   wasmImport(filename);
+}
+
+function stub(functionName, behavior, args) {
+  console.log(`STUB - ${functionName}: `, behavior, args);
 }
