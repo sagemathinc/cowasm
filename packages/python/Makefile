@@ -11,7 +11,23 @@ DIST_WASM = ${DIST}/wasm
 ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
-ARCH = x86_64-pc-linux-gnux32
+
+UNAME_S := $(shell uname -s)
+UNAME_P := $(shell uname -p)
+ifeq ($(UNAME_S),Linux)
+    ifeq ($(UNAME_P),arm)
+       ARCH = --target=aarch64-linux-gnu.2.28
+    else 
+       ARCH = --target=x86_64-linux-gnu.2.28
+    endif
+endif
+ifeq ($(UNAME_S),Darwin)
+    ifeq ($(UNAME_P),arm)
+       ARCH = --target=aarch64-macos-gnu
+    else 
+       ARCH = --target=x86_64-macos-gnu
+    endif
+endif
 
 # On Linux it is "python", but on MacOS it is "python.exe".
 UNAME_S := $(shell uname -s)
@@ -59,8 +75,8 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 		CFLAGS="-I${ZLIB}/native/include" \
 		LDFLAGS="-L${ZLIB}/native/lib" \
 		AR="zig ar" \
-		CXX="zig c++ --target=x86_64-linux-gnu.2.28" \
-		CC="zig cc --target=x86_64-linux-gnu.2.28" \
+		CXX="zig c++ ${ARCH}" \
+		CC="zig cc ${ARCH}" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
 			--enable-big-digits=30 \
