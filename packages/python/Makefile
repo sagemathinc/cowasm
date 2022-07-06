@@ -12,6 +12,14 @@ ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
+UNAME_S := $(shell uname -s)
+UNAME_P := $(shell uname -p)
+ifeq ($(UNAME_S),Linux)
+   # Workaround a zig bug -- the native build fails with "ld.lld: error: undefined symbol: fcntl64".
+   # See https://github.com/ziglang/zig/issues/5882 and https://github.com/ziglang/zig/issues/9485
+   ARCH = --target=$(UNAME_P)-linux-gnu.2.31
+endif
+
 # On Linux it is "python", but on MacOS it is "python.exe".
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
@@ -60,8 +68,8 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 		CFLAGS="-I${ZLIB}/native/include" \
 		LDFLAGS="-L${ZLIB}/native/lib" \
 		AR="zig ar" \
-		CXX="zig c++" \
-		CC="zig cc" \
+		CXX="zig c++ ${ARCH}" \
+		CC="zig cc ${ARCH}" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
 			--enable-big-digits=30 \
