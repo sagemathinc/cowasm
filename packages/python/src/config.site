@@ -67,3 +67,4 @@ ac_cv_header_netpacket_packet_h=no
 # We don't need this atomic stuff anyways, given that we're not actually
 # implementing threads yet.
 ac_cv_header_stdatomic_h=no
+ac_cv_builtin_atomic=no
