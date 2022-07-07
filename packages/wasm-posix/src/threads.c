@@ -1,9 +1,17 @@
-/* Inspired by https://github.com/mpdn/unthread */
+/*
+The goal of this is a very minimal version of enough of the pthread api
+to start Python, without it actually using any real threading capabilities.
+This is necessary because there is no option to build modern Python without
+pthreads (that used to be possible long ago).
+
+Inspired by https://github.com/mpdn/unthread
+*/
 
 #include <stdio.h>
 #include "threads.h"
 
-#define true 1
+#define debug printf
+//#define debug(s)
 
 #define DEFAULT_ATTR_INITIALIZER                                              \
   {                                                                           \
@@ -17,8 +25,9 @@
 
 static const union pthread_attr_t default_attr = DEFAULT_ATTR_INITIALIZER;
 
+#define MAIN_ID 1
 static struct pthread_fiber main_thread = {
-    .id = 1,
+    .id = MAIN_ID,
     .state = RUNNING,
     .attr = DEFAULT_ATTR_INITIALIZER,
     .cancel_state = PTHREAD_CANCEL_ENABLE,
@@ -28,7 +37,7 @@ static struct pthread_fiber main_thread = {
 };
 
 // Current running thread
-static pthread_t current = 1;
+static pthread_t current = MAIN_ID;
 
 static const pthread_condattr_t pthread_condattr_default = {
     .pshared = PTHREAD_PROCESS_PRIVATE,
@@ -37,7 +46,7 @@ static const pthread_condattr_t pthread_condattr_default = {
 };
 
 int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr) {
-  printf("pthread_cond_init - c implementation\n");
+  debug("pthread_cond_init - c implementation\n");
   if (attr == NULL) {
     attr = &pthread_condattr_default;
   }
@@ -49,51 +58,60 @@ int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr) {
 }
 
 int pthread_cond_signal(pthread_cond_t *cond) {
-  printf("pthread_cond_signal - c implementation\n");
+  debug("pthread_cond_signal - c implementation\n");
   // just do nothing - since we never block
   return 0;
 }
 
 int pthread_condattr_init(pthread_condattr_t *attr) {
-  printf("pthread_condattr_init - c implementation\n");
+  debug("pthread_condattr_init - c implementation\n");
   *attr = pthread_condattr_default;
   return 0;
 }
 
 int pthread_condattr_setclock(pthread_condattr_t *attr, clockid_t clock_id) {
-  printf("pthread_condattr_setclock - c implementation\n");
+  debug("pthread_condattr_setclock - c implementation\n");
   attr->clock_id = clock_id;
   return 0;
 }
 
+#define SIZE 1000
+static void *values[SIZE];
+static pthread_key_t keys[SIZE];
+static int nkeys = 0;
+
 void *pthread_getspecific(pthread_key_t key) {
-  printf("pthread_getspecific - c implementation\n");
-  if (current->tls.len == 0) {
-    return 0;
-  }
-
-  size_t mask = current->tls.cap - 1;
-  size_t index = key.id & mask;
-  size_t dist = 0;
-
-  for (;;) {
-    struct tls_entry entry = current->tls.entries[index];
-    size_t probe_distance = (index - entry.id) & mask;
-
-    if (entry.id == key.id) {
-      return entry.value;
-    } else if (entry.id == 0 || probe_distance <= dist) {
-      return NULL;
+  debug("pthread_getspecific - key=%d\n", key.id);
+  for (int i = 0; i < nkeys; i++) {
+    if (keys[i].id == key.id) {
+      debug("pthread_getspecific - return value=%d\n", values[i]);
+      return values[i];
     }
-
-    dist++;
-    index++;
-    index &= mask;
   }
+  return 0;
+}
+
+int pthread_setspecific(pthread_key_t key, const void *value) {
+  debug("pthread_setspecific - c implementation, key=%d\n", key.id);
+  for (int i = 0; i < nkeys; i++) {
+    if (keys[i].id == key.id) {
+      debug("pthread_setspecific - changing key number %d\n", i);
+      values[i] = value;
+      return 0;
+    }
+  }
+  nkeys += 1;
+  debug("pthread_setspecific; added a new key so now there are %d\n", nkeys);
+  if (nkeys >= SIZE) {
+    printf("BOOM! ran out of pthread keys!");
+  }
+  keys[nkeys - 1] = key;
+  values[nkeys - 1] = value;
+  return 0;
 }
 
 int pthread_key_create(pthread_key_t *key, void (*destructor)(void *)) {
-  printf("pthread_key_create - c implementation\n");
+  debug("pthread_key_create - c implementation\n");
   size_t id;
 
   static size_t next_key_id = 1;
@@ -122,7 +140,7 @@ static const pthread_mutexattr_t pthread_mutexattr_default = {
 
 int pthread_mutex_init(pthread_mutex_t *mutex,
                        const pthread_mutexattr_t *attr) {
-  printf("pthread_mutex_init - c implementation\n");
+  debug("pthread_mutex_init - c implementation\n");
   if (attr == NULL) {
     attr = &pthread_mutexattr_default;
   }
@@ -139,127 +157,16 @@ int pthread_mutex_init(pthread_mutex_t *mutex,
 }
 
 int pthread_mutex_lock(pthread_mutex_t *mutex) {
-  printf("pthread_mutex_lock - c implementation\n");
+  debug("pthread_mutex_lock - c implementation\n");
   return 0;
 }
 
-int pthread_mutex_unlock(pthread_mutex_t *mutex) { return 0; }
-
-pthread_t pthread_self() { return current; }
-
-// The fraction determining when hashtables should grow. Unthread uses Robin
-// Hood hashtables, so they should perform pretty well even for high load.
-static const size_t HASH_LOAD_NOM = 4;
-static const size_t HASH_LOAD_DENOM = 5;
-
-static void tls_insert_base(struct tls *tls, struct tls_entry entry) {
-  size_t mask = tls->cap - 1;
-  size_t index = entry.id & mask;
-  size_t dist = 0;
-
-  for (;;) {
-    struct tls_entry *table_entry = &tls->entries[index];
-
-    if (table_entry->id == 0) {
-      *table_entry = entry;
-      tls->len++;
-
-      break;
-    } else if (table_entry->id == entry.id) {
-      if (table_entry->value == NULL) {
-        tls->len++;
-      }
-
-      *table_entry = entry;
-      break;
-    }
-
-    size_t probe_distance = (index - table_entry->id) & mask;
-
-    if (dist > probe_distance) {
-      if (table_entry->value == NULL) {
-        *table_entry = entry;
-        tls->len++;
-      }
-
-      struct tls_entry tmp = *table_entry;
-      *table_entry = entry;
-      entry = tmp;
-      dist = probe_distance;
-    }
-
-    index = (index + 1) & mask;
-    dist++;
-  }
-}
-
-static void tls_grow(struct tls *tls) {
-  size_t new_cap = tls->cap * 2;
-
-  if (new_cap < 16) {
-    new_cap = 16;
-  }
-
-  struct tls new_tls = (struct tls){
-      .entries = calloc(new_cap, sizeof(struct tls_entry)),
-      .cap = new_cap,
-      .len = 0,
-  };
-
-  for (size_t i = 0; i < tls->cap; i++) {
-    if (tls->entries[i].id != 0) {
-      tls_insert_base(&new_tls, tls->entries[i]);
-    }
-  }
-
-  free(current->tls.entries);
-  current->tls = new_tls;
-}
-
-static void tls_remove(struct tls *tls, unsigned int id) {
-  size_t mask = tls->cap - 1;
-  size_t index = id & mask;
-  size_t dist = 0;
-
-  for (;;) {
-    struct tls_entry *table_entry = &tls->entries[index];
-
-    if (table_entry->id == 0) {
-      break;
-    } else if (table_entry->id == id) {
-      if (table_entry->value != NULL) {
-        tls->len--;
-      }
-
-      table_entry->value = NULL;
-      break;
-    }
-
-    size_t probe_distance = (index - table_entry->id) & mask;
-
-    if (dist > probe_distance) {
-      break;
-    }
-
-    index = (index + 1) & mask;
-    dist++;
-  }
-}
-
-int pthread_setspecific(pthread_key_t key, const void *value) {
-  if (current->tls.cap * HASH_LOAD_NOM <= current->tls.len * HASH_LOAD_DENOM) {
-    tls_grow(&current->tls);
-  }
-
-  if (value != NULL) {
-    tls_insert_base(&current->tls, (struct tls_entry){
-                                       .id = key.id,
-                                       .value = (void *)value,
-                                       .destructor = key.destructor,
-                                   });
-  } else {
-    tls_remove(&current->tls, key.id);
-  }
-
+int pthread_mutex_unlock(pthread_mutex_t *mutex) {
+  debug("pthread_mutex_unlock - c implementation\n");
   return 0;
+}
+
+pthread_t pthread_self() {
+  debug("pthread_mutex_unlock - c implementation\n");
+  return current;
 }

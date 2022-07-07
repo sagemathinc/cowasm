@@ -734,6 +734,8 @@ export default class WASIDefault {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_WRITE);
           let written = 0;
           getiovs(iovs, iovsLen).forEach((iov) => {
+            // useful to be absolutely sure if wasi is writing something...
+            // console.log(` (writing "${new TextDecoder().decode(iov)}")`);
             let w = 0;
             while (w < iov.byteLength) {
               const i = fs.writeSync(

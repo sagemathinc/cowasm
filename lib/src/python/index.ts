@@ -21,7 +21,7 @@ export async function init() {
   if (wasm != null) return;
   wasm = await wasmImport("python/python.wasm", {
     init: (wasm) => wasm.exports.init(),
-    traceSyscalls: true,
+    //traceSyscalls: true,
   });
 }
 

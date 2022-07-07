@@ -240,6 +240,8 @@ ssize_t sendto(int sockfd, const void* buf, size_t len, int flags,
 int socket(int domain, int type, int protocol);
 int gethostname(char* name, size_t len);
 int sethostname(const char* name, size_t len);
-char* inet_ntoa();
+
+# include <netinet/in.h>
+char* inet_ntoa(struct in_addr in);
 
 #endif

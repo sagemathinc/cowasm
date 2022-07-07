@@ -82,6 +82,11 @@ async function doWasmImport(
       return 1;
     };
   }
+  if (wasmOpts.env.main == null) {
+    wasmOpts.env.main = () => {
+      return 0;
+    };
+  }
 
   let wasi: any = undefined;
   if (!options?.noWasi) {
