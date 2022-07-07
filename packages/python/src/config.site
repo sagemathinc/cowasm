@@ -57,3 +57,13 @@ ac_cv_func_kill=no
 # Disable AF_UNIX and AF_PACKET support, see socketmodule.h.
 ac_cv_header_sys_un_h=no
 ac_cv_header_netpacket_packet_h=no
+
+
+# The zig atomic thing seems broken, perhaps due to not having pthreads.
+# I spent an entire day adding tracing to the Python core library
+# and found that in Include/internal/pycore_pystate.h the function
+# _PyRuntimeState_GetThreadState returned 0, even though the struct
+# was not zero.  Just getting rid of the atomic wrapping fixed it.
+# We don't need this atomic stuff anyways, given that we're not actually
+# implementing threads yet.
+ac_cv_header_stdatomic_h=no

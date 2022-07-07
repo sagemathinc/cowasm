@@ -84,7 +84,7 @@ void *pthread_getspecific(pthread_key_t key) {
   debug("pthread_getspecific - key=%d\n", key.id);
   for (int i = 0; i < nkeys; i++) {
     if (keys[i].id == key.id) {
-      debug("pthread_getspecific - return value=%d\n", values[i]);
+      debug("pthread_getspecific - return value=%p\n", values[i]);
       return values[i];
     }
   }
@@ -92,7 +92,7 @@ void *pthread_getspecific(pthread_key_t key) {
 }
 
 int pthread_setspecific(pthread_key_t key, const void *value) {
-  debug("pthread_setspecific - c implementation, key=%d\n", key.id);
+  debug("pthread_setspecific - c implementation, key=%d, value=%p\n", key.id, value);
   for (int i = 0; i < nkeys; i++) {
     if (keys[i].id == key.id) {
       debug("pthread_setspecific - changing key number %d\n", i);
