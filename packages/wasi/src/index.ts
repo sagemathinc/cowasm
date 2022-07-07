@@ -36,7 +36,7 @@ IN THE SOFTWARE.
 
  */
 
-export { run, wasmEnv } from "./runtime";
+export { run } from "./runtime";
 
 import {
   WASI_ESUCCESS,
@@ -161,6 +161,7 @@ const wrap =
     try {
       return f(...args);
     } catch (err) {
+      //console.log("WASI error", err);
       const e: any = err;
       // If it's an error from the fs
       if (e?.code && typeof e?.code === "string") {
@@ -177,6 +178,7 @@ const wrap =
 
 const stat = (wasi: WASI, fd: number): File => {
   const entry = wasi.FD_MAP.get(fd);
+  //console.log("stat", { fd, entry, FD_MAP: wasi.FD_MAP });
   if (!entry) {
     throw new WASIError(WASI_EBADF);
   }
@@ -671,6 +673,7 @@ export default class WASIDefault {
       ),
       fd_prestat_get: wrap((fd: number, bufPtr: number) => {
         const stats = CHECK_FD(fd, BigInt(0));
+        // console.log("fd_prestat_get", { fd, stats });
         if (!stats.path) {
           return WASI_EINVAL;
         }
@@ -1476,10 +1479,10 @@ export default class WASIDefault {
       Object.keys(this.wasiImport).forEach((key: string) => {
         const prevImport = this.wasiImport[key];
         this.wasiImport[key] = function (...args: any[]) {
-          console.log(`WASI: wasiImport called: ${key} (${args})`);
+          console.log(`wasi.${key} (${args})`);
           try {
             let result = prevImport(...args);
-            console.log(`WASI:  => ${result}`);
+            console.log(` (wasi.${key} => ${result})`);
             return result;
           } catch (e) {
             console.log(`Caught error: ${e}`);

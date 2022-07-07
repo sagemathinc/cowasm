@@ -1,5 +1,5 @@
-import { WASI, wasmEnv } from "@wapython/wasi";
-import nodeBindings from "@wapython/wasi/dist/bindings/node";
+import { WASI } from "@wapython/wasi";
+import bindings from "@wapython/wasi/dist/bindings/node";
 
 import { reuseInFlight } from "async-await-utils/hof";
 import { readFile as readFile0 } from "fs";
@@ -45,11 +45,13 @@ async function doWasmImport(
   }
   const pathToWasm = `${name}${name.endsWith(".wasm") ? "" : ".wasm"}`;
 
-  wasmEnv.reportError = (ptr, len: number) => {
-    // @ts-ignore
-    const slice = result.instance.exports.memory.buffer.slice(ptr, ptr + len);
-    const textDecoder = new TextDecoder();
-    throw Error(textDecoder.decode(slice));
+  const wasmEnv = {
+    reportError: (ptr, len: number) => {
+      // @ts-ignore
+      const slice = result.instance.exports.memory.buffer.slice(ptr, ptr + len);
+      const textDecoder = new TextDecoder();
+      throw Error(textDecoder.decode(slice));
+    },
   };
 
   const wasmOpts: any = { env: { ...wasmEnv, ...options.env } };
@@ -62,16 +64,16 @@ async function doWasmImport(
     };
   }
   if (wasmOpts.env.getrandom == null) {
-    wasmOpts.env.getrandom = (_buf, buflen, _flags) => {
+    wasmOpts.env.getrandom = (bufPtr, bufLen, _flags) => {
       // NOTE: returning 0 here (our default stub behavior)
       // would result in Python hanging on startup!
-      // TODO: definitely need to actually randomize the buffer at some point.
-      stub("getrandom", "non-random but correct output length", [
-        _buf,
-        buflen,
-        _flags,
-      ]);
-      return buflen;
+      bindings.randomFillSync(
+        // @ts-ignore
+        new Uint8Array(result.instance.exports.memory.buffer),
+        bufPtr,
+        bufLen
+      );
+      return bufLen;
     };
   }
   if (wasmOpts.env.getpid == null) {
@@ -92,7 +94,7 @@ async function doWasmImport(
       // sandbox -- don't give any fs access
     } else {
       opts.bindings = {
-        ...nodeBindings,
+        ...bindings,
         fs,
       };
       if (options.dir !== undefined) {
