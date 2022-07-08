@@ -2,7 +2,7 @@
 #set -ev
 
 export SRC="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-export PACKAGES="$SRC"/../../packages
+export PACKAGES="$SRC"/../..
 export PYTHON_NATIVE="$PACKAGES"/cpython/dist/native
 export DYLD_LIBRARY_PATH="$PYTHON_NATIVE/lib"
 export LD_LIBRARY_PATH="$PYTHON_NATIVE/lib"

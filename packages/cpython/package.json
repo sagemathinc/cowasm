@@ -1,7 +1,7 @@
 {
   "name": "@wapython/cpython",
   "version": "0.0.1",
-  "description": "Python is a programming language that lets you work quickly and integrate systems more effectively.",
+  "description": "Python is a programming language that lets you work quickly and integrate systems more effectively.  This package builds it for use via WebAssembly.",
   "files": ["dist.wasm/*", "README.md", "src/*", "Makefile", "package.json"],
   "scripts": {
     "build": "make all"
@@ -12,7 +12,7 @@
   },
   "keywords": ["python", "wasm", "emscripten"],
   "author": "William Stein",
-  "license": "PSF",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/wapython/issues"
   },

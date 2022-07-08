@@ -14,6 +14,8 @@ However, JavaScript WASI is focused on:
  * Providing multiple output targets to support both browsers and node
  * The API is adapted to the Node-WASI API: https://github.com/nodejs/wasi/blob/wasi/lib/wasi.js
 
+This is the original **MIT license** below:
+
 Copyright 2019 Gus Caplan
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

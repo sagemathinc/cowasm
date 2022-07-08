@@ -80,7 +80,7 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 			--enable-big-digits=30 \
 			--enable-optimizations \
 			--enable-shared
-	cd ${BUILD}/native && make || true; make   # it breaks once due to threading.py, but second time works ?
+	cd ${BUILD}/native && make -j8 || true; make   # it breaks once due to threading.py, but second time works ?
 	cd ${BUILD}/native && make install || true # TODO: it fails (?) and we ignore that
 	touch ${DIST_NATIVE}/.built
 

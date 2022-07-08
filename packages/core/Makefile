@@ -1,15 +1,13 @@
 OPT           = -O ReleaseFast
 CWD           = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-export PATH := ${CWD}/../packages/zig/dist:$(PATH)
+PACKAGES      = ${CWD}/..
+export PATH := ${PACKAGES}/../bin:${PACKAGES}/zig/dist:$(PATH)
 
 ZIG_PKG       = --main-pkg-path ${CWD}/src
-PACKAGES      = ${CWD}/../packages
 
 PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
 PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm
-### (was below in NATIVE_CFLAGS) -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.11 -lpython3.11
-
 POSIX_WASM   = ${PACKAGES}/wasm-posix/dist/
 
 WASM_CFLAGS   = -dynamic ${OPT}

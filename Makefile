@@ -4,12 +4,12 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
-all: lib/${BUILT} jpython
+all: core jpython
 
-lib/${BUILT}: cpython wasi zig wasm-posix
-	cd lib && make all
-.PHONY: lib
-lib: lib/${BUILT}
+packages/core/${BUILT}: cpython wasi zig wasm-posix
+	cd packages/core && make all
+.PHONY: core
+core: packages/core/${BUILT}
 
 .PHONY: zig
 zig:
@@ -50,7 +50,7 @@ packages/wasi/${BUILT}:
 wasi: packages/wasi/${BUILT}
 
 
-packages/jpython/${BUILT}: lib/${BUILT}
+packages/jpython/${BUILT}: core
 	cd packages/jpython && make all
 .PHONY: jpython
 jpython: packages/jpython/${BUILT}
@@ -73,5 +73,5 @@ clean:
 	cd packages/wasm-posix && make clean
 	cd packages/zig && make clean
 	cd packages/jpython && make clean
-	cd lib && make clean
+	cd packages/core && make clean
 
