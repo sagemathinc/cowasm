@@ -7,8 +7,8 @@ var globals: *python.PyObject = undefined;
 pub fn init() void {
     if (didInit) return;
     didInit = true;
-    std.debug.print("calling Py_InitializeEx()...\n", .{});
-    python.Py_InitializeEx(0); // no signal handlers, for now.  Simpler = better for now.
+    std.debug.print("calling Py_Initialize()...\n", .{});
+    python.Py_Initialize();
     std.debug.print("success!\n", .{});
     globals = python.PyDict_New();
 }

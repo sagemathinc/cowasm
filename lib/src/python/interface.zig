@@ -38,3 +38,11 @@ export fn eval(s: [*:0]const u8) void {
 //     const ptr: [*]const u8 = r[0..1];
 //     wasmSendString(ptr, std.mem.len(r));
 // }
+
+export fn c_malloc(n: usize) ?*anyopaque {
+    return std.c.malloc(n);
+}
+
+export fn c_free(ptr: ?*anyopaque) void {
+    return std.c.free(ptr);
+}

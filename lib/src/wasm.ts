@@ -9,6 +9,7 @@ import callsite from "callsite";
 import fs from "fs";
 
 const readFile = promisify(readFile0);
+const FIRST_STUB_ONLY = true;
 
 const textDecoder = new TextDecoder();
 function recvString(wasm, ptr, len) {
@@ -105,7 +106,7 @@ async function doWasmImport(
       };
       if (options.dir !== undefined) {
         // something explicit
-        opts.preopens= { [options.dir]: options.dir };
+        opts.preopens = { [options.dir]: options.dir };
       } else {
         // just give full access; security of fs access isn't
         // really relevant for us at this point
@@ -191,10 +192,10 @@ export class WasmInstance {
   }
 
   private stringToCharStar(str: string): number {
-    // Caller MUST free the returned char* from stringToU8 using wasm.free!
+    // Caller MUST free the returned char* from stringToU8 using wasm.c_free!
     const strAsArray = encoder.encode(str);
     const len = strAsArray.length + 1;
-    const ptr = this.exports.malloc(len);
+    const ptr = this.exports.c_malloc(len);
     const array = new Int8Array(this.exports.memory.buffer, ptr, len);
     array.set(strAsArray);
     array[len - 1] = 0;
@@ -214,7 +215,7 @@ export class WasmInstance {
       r = f(ptr, ...args);
     } finally {
       // @ts-ignore
-      this.exports.free(ptr);
+      this.exports.c_free(ptr);
     }
     return this.result ?? r;
   }
@@ -224,6 +225,11 @@ export function run(filename: string) {
   wasmImport(filename);
 }
 
+const stubUsed = new Set<string>([]);
 function stub(functionName, behavior, args) {
+  if (FIRST_STUB_ONLY) {
+    if (stubUsed.has(functionName)) return;
+    stubUsed.add(functionName);
+  }
   console.log(`WARNING STUB - ${functionName}: `, behavior, args);
 }
