@@ -1,15 +1,18 @@
 # JPython
 
-## A Python implementation in Javascript for use by JSage
+## A Python implementation in Javascript for use by WAPython
 
-**History:** This is **built from RapydScript-ng** that I'm playing around withmodifying for use by the sagejs project. Seehttps://github.com/kovidgoyal/rapydscript-ng for some helpful documentation.
+**History:** This is **built from RapydScript-ng** that I'm playing around with modifying for use by the wapython project. See https://github.com/kovidgoyal/rapydscript-ng for some helpful documentation.
 
 Some goals:
 
-- Very lightweight: this should build from source in a few seconds, rather than **a few hours** like pypy.  The architecture of jpython is similar to pypy on some level -- there is a JIT (coming from Javascript), and JPython is an implementation of "the Python language" in Python.    I put that in quotes since we are definitely not going to implement something 100% compatible with Python.
-- Math friendly: create something that feels [similar to Sage with its preparser](https://doc.sagemath.org/html/en/reference/repl/sage/repl/preparse.html), i.e., support ^ for exponent, [a..b] for making range(a,b+1), and arbitrary precision integer and floating point numerical literals.  However, instead of an adhoc preparser, we built this extra functionality into the language parser/AST/generator itself, i.e., we do it properly.  Also, each sage-like piece of functionality can be enabled via an explicit import from `__python__`, similar to how official Python enables new functionality via imports.
-- The main **purpose** of JPython is as an interactive REPL, Jupyter kernel (eventually), and language for writing small scripts and projects.  It's probably (?) not meant to be the implementation language for _low_ _level_ parts of JSage, though maybe it will be for high level things (not sure).  First and foremost, this provides a way to _use_ JSage on a random computer or in a web browser, which is much more lightweight than running Python itself via WASM.  Having a language other than Javascript is necessary because Javascript is an _absolutely terrible language_ for interactive mathematics computations, e.g., it doesn't have operator overloading, and only has single inheritance.  I love Javascript, but only for what Javascript is good for.
-- Since JPython will be used for mathematical computations, speed is very important.
+- **Very lightweight:** this should build from source in a few seconds, rather than **a few hours** like pypy.  The architecture of jpython is similar to pypy on some level \-\- there is a JIT \(coming from Javascript\), and JPython is an implementation of "the Python language" in Python.    I put that in quotes since we are definitely not going to implement something 100% compatible with Python.
+
+- **Math friendly:** create something that feels [similar to Sage with its preparser](https://doc.sagemath.org/html/en/reference/repl/sage/repl/preparse.html), i.e., support ^ for exponent, \[a..b\] for making range\(a,b\+1\), and arbitrary precision integer and floating point numerical literals.  However, instead of an adhoc preparser, we built this extra functionality into the language parser/AST/generator itself, i.e., we do it properly.  Also, each sage\-like piece of functionality can be enabled via an explicit import from `__python__`, similar to how official Python enables new functionality via imports.
+
+- The main **purpose** of JPython is as an interactive REPL, Jupyter kernel \(eventually\), and language for writing small scripts and projects.  Having a language other than Javascript is necessary because Javascript is an _not the best language_ for interactive mathematics computations, e.g., it doesn't have operator overloading, and only has single inheritance.  I love Javascript, but only for what Javascript is good for.
+
+- Since JPython will be used for mathematical computations, **speed is important**.
 
 ## Benchmarks
 
@@ -23,6 +26,8 @@ jpython: 6434 ms
 
 python3.9: 11872 ms
 
+wapython3.11: TODO
+
 ### Apple Silicon (M1 Max) MacOS native
 
 pypy3: 2902 ms
@@ -30,6 +35,8 @@ pypy3: 2902 ms
 jpython: 2960 ms
 
 python3.10: 6200ms
+
+wapython3.11: TODO
 
 It's interesting that jpython and pypy3 are exactly the same speed on M1 overall for these benchmarks.  This suggests that pypy3 is less optimized for aarch64, since pypy3 is only about twice as fast as python3.10, but is usually advertised as 4x faster.  Anyway, who knows.
 
@@ -52,57 +59,13 @@ Notice that pypy3 is _**much**_ faster under Linux than MacOS on the exact same 
 Install into a temporary node.js directory:
 
 ```bash
-$ mkdir jsage  # you can delete this later
-$ cd jsage
+$ mkdir wapython  # you can delete this later
+$ cd wapython
 $ npm init -y
-$ npm install @jsage/jpython
+$ npm install @wapython/jpython
 ```
 
-### Try out JPython
-
-Start up JPython and use some of the JSage functionality. Of course you could also
-require any module you install from https://npmjs.com. You can also create .py files
-and import them.
-
-```python
-$ npx jpython
-Welcome to JPython.  Using Node.js v16.9.0.
->>> s = range(10); s  # this is the "Python language", not Node.js
-range(0, 10)
->>> sum(s)
-45
->>> list(reversed(list(s)))
-[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
->>> list(s)[-3:]
-[7, 8, 9]
->>> d = require('@jsage/lib/modular/dims');  # WASM code written in ziglang.
->>> d.eulerPhi(100)
-40
->>> %time d.dimensionCuspForms(1234567)
-103699
-Wall time: 2ms
->>> pari = require('@jsage/lib/pari');   # WASM pari with GMP built with 'zig cc'
->>> pari.init()
-[object Promise]
->>> pari.exec('ellinit([1..5])')   # returns string
-[1, 2, 3, 4, 5, 9, 11, 29, 35, -183, -3429, -10351, 6128487/10351, Vecsmall([1]), [Vecsmall([96, -1])], [0, 0, 0, 0, 0, 0, 0, 0]]
->>> an = eval(pari.exec("ellan(ellinit([1..5]), 50)")); an
-[1, 1, 0, -1, -3, 0, -1, -3, -3, -3, -1, 0, 1, -1, 0, -1, 5, -3, 4, 3, 0, -1, -6, 0, 4, 1, 0, 1, -2, 0, 2, 5, 0, 5, 3, 3, 7, 4, 0, 9, 6, 0, 8, 1, 9, -6, 0, 0, -6, 4]
->>> an = eval(pari.exec("ellan(ellinit([1..5]), 10000)"));
->>> sum(an)/len(an)
-0.152
->>> pari.exec("factor(2021)")
-
-[43 1]
-
-[47 1]
->>> a = pari.exec("B=10^4;an=ellan(ellinit([1..5]),B);sum(i=1,B,an[i])/B"); a
-19/125
->>> eval(a)
-0.152
-```
-
-### Math extensions (like the Sage preparser)
+### Math extensions \(like the Sage preparser\)
 
 Use `jsage` and the compiler is modified with some more
 mathematics friendly syntax.
@@ -129,32 +92,3 @@ $ npx jpython a.py
 8
 ```
 
-### JSage is also available in Node.js
-
-You can also use the library functionality from node.js. However,
-playing around with mathematics tends to be a lot more comfortable with the
-Python _language_ than Javascript.
-
-```js
-$ node
-Welcome to Node.js v16.7.0.
-Type ".help" for more information.
-> d = require('@jsage/lib/modular/dims');null
-null
-> d.dimensionCuspForms(1234567)
-103699
-> pari = require('@jsage/lib/pari');pari.init(); null
-null
-> an = eval(pari.exec("ellan(ellinit([1..5]), 50)")); an
-[
-   1,  1,  0, -1, -3, 0, -1, -3, -3, -3, -1,
-   0,  1, -1,  0, -1, 5, -3,  4,  3,  0, -1,
-  -6,  0,  4,  1,  0, 1, -2,  0,  2,  5,  0,
-   5,  3,  3,  7,  4, 0,  9,  6,  0,  8,  1,
-   9, -6,  0,  0, -6, 4
-]
-> an = eval(pari.exec("ellan(ellinit([1..5]), 10000)")); an.length
-10000
-> s=0;for(a of an) {s+=a}; s/an.length
-0.152
-```
