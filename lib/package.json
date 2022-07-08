@@ -7,7 +7,13 @@
     "./*": "./dist/*.js",
     "./python": "./dist/python/index.js"
   },
-  "files": ["dist/*", "README.md", "package.json", "tsconfig.json", "Makefile"],
+  "files": [
+    "dist/*",
+    "README.md",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
   "scripts": {
     "build": "make all",
     "clean": "make clean",
@@ -19,14 +25,19 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/wapython.git"
   },
-  "keywords": ["number", "theory"],
+  "keywords": [
+    "number",
+    "theory"
+  ],
   "author": "William Stein",
   "license": "LGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/sagemathinc/wapython/issues"
   },
   "homepage": "https://github.com/sagemathinc/wapython/tree/main/lib",
-  "workspaces": ["../packages/wasi"],
+  "workspaces": [
+    "../packages/wasi"
+  ],
   "dependencies": {
     "@wapython/wasi": "^0.14.0",
     "async-await-utils": "^3.0.1",
