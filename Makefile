@@ -6,7 +6,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 all: lib/${BUILT} jpython
 
-lib/${BUILT}: python wasi zig wasm-posix
+lib/${BUILT}: cpython wasi zig wasm-posix
 	cd lib && make all
 .PHONY: lib
 lib: lib/${BUILT}
@@ -38,10 +38,10 @@ packages/zlib/${BUILT}: zig
 zlib: packages/zlib/${BUILT}
 
 
-packages/python/${BUILT}: wasm-posix zlib lzma zig
-	cd packages/python && make all
-.PHONY: python
-python: packages/python/${BUILT}
+packages/cpython/${BUILT}: wasm-posix zlib lzma zig
+	cd packages/cpython && make all
+.PHONY: cpython
+cpython: packages/cpython/${BUILT}
 
 
 packages/wasi/${BUILT}:
@@ -66,7 +66,7 @@ docker-nocache:
 
 clean:
 	cd packages/wasi && make clean
-	cd packages/python && make clean
+	cd packages/cpython && make clean
 	cd packages/openssl && make clean
 	cd packages/zlib && make clean
 	cd packages/lzma && make clean
