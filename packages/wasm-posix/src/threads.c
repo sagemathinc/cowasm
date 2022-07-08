@@ -5,13 +5,19 @@ This is necessary because there is no option to build modern Python without
 pthreads (that used to be possible long ago).
 
 Inspired by https://github.com/mpdn/unthread
+
+NOTE: I had initially carried over a minimal implementation of pthread_mutex_init,
+but that actually breaks in Python/ceval_gil.h in the function
+create_gil, where the line MUTEX_INIT(gil->switch_mutex) somehow makes
+it so the gil never gets set.    That's fine - this is not meant to work
+like actual pthreads yet!
 */
 
 #include <stdio.h>
 #include "threads.h"
 
-#define debug printf
-//#define debug(s)
+//#define debug printf
+#define debug(s)
 
 #define DEFAULT_ATTR_INITIALIZER                                              \
   {                                                                           \
@@ -47,13 +53,6 @@ static const pthread_condattr_t pthread_condattr_default = {
 
 int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr) {
   debug("pthread_cond_init - c implementation\n");
-  if (attr == NULL) {
-    attr = &pthread_condattr_default;
-  }
-  *cond = (pthread_cond_t){
-      .waiting = pthread_empty_list,
-      .initialized = true,
-  };
   return 0;
 }
 
@@ -129,30 +128,10 @@ int pthread_key_create(pthread_key_t *key, void (*destructor)(void *)) {
   return 0;
 }
 
-static const pthread_mutexattr_t pthread_mutexattr_default = {
-    .prioceiling = 0,
-    .protocol = PTHREAD_PRIO_INHERIT,
-    .pshared = PTHREAD_PROCESS_PRIVATE,
-    .type = PTHREAD_MUTEX_DEFAULT,
-    .initialized = true,
-    .robust = PTHREAD_MUTEX_STALLED,
-};
 
 int pthread_mutex_init(pthread_mutex_t *mutex,
                        const pthread_mutexattr_t *attr) {
   debug("pthread_mutex_init - c implementation\n");
-  if (attr == NULL) {
-    attr = &pthread_mutexattr_default;
-  }
-  *mutex = (pthread_mutex_t){
-      .locked_by = NULL,
-      .waiting = pthread_empty_list,
-      .initialized = true,
-      .type = attr->type == PTHREAD_MUTEX_DEFAULT ? PTHREAD_MUTEX_NORMAL
-                                                  : attr->type,
-      .rec_count = 0,
-      .robust = attr->robust,
-  };
   return 0;
 }
 
