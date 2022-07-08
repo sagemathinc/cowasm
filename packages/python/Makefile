@@ -12,6 +12,7 @@ ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
+
 UNAME_S := $(shell uname -s)
 UNAME_P := $(shell uname -p)
 ifeq ($(UNAME_S),Linux)
@@ -20,13 +21,6 @@ ifeq ($(UNAME_S),Linux)
    ARCH = --target=$(UNAME_P)-linux-gnu.2.31
 endif
 
-# On Linux it is "python", but on MacOS it is "python.exe".
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Darwin)
-PYTHON_EXE = python.exe
-else
-PYTHON_EXE = python
-endif
 
 # Default target
 .PHONY: all
@@ -64,15 +58,21 @@ ${DIST_NATIVE}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/nativ
 
 ${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
 
-# The  -I/usr/include is definitely needed.  Without that we end up finding some
-# headers e.g., for stdio.h deep in the zig include path which don't work at all.
+# NOTE: We are using the system-wide GCC instead of zig to
+# build the native version, since it actually works on more
+# platforms more robustly.  That said, it is MASSIVELY slower.
+# To switch back to zig, try replacing what is below
+# by this.  This works for me on cocalc, but not a clean docker image or aarch64 docker linux:
+# 		CFLAGS="-I${ZLIB}/native/include -I/usr/include" \
+# 		LDFLAGS="-L${ZLIB}/native/lib" \
+# 		AR="zig ar" \
+# 		CXX="zig c++ ${ARCH}" \
+# 		CC="zig cc ${ARCH}" \
+
 ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
-		CFLAGS="-I${ZLIB}/native/include -I/usr/include" \
+		CFLAGS="-I${ZLIB}/native/include" \
 		LDFLAGS="-L${ZLIB}/native/lib" \
-		AR="zig ar" \
-		CXX="zig c++ ${ARCH}" \
-		CC="zig cc ${ARCH}" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
 			--enable-big-digits=30 \
