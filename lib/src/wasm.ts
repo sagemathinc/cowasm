@@ -89,7 +89,7 @@ async function doWasmImport(
     };
   }
 
-  let wasi: any = undefined;
+  let wasi: WASI | undefined = undefined;
   if (!options?.noWasi) {
     const opts: WASIConfig = {
       bindings,
@@ -118,10 +118,6 @@ async function doWasmImport(
     wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
   }
 
-  //console.log(`reading ${pathToWasm}`);
-  const source = await readFile(pathToWasm);
-  const typedArray = new Uint8Array(source);
-
   wasmOpts.env = new Proxy(wasmOpts.env, {
     get(target, key) {
       if (key in target) {
@@ -136,8 +132,10 @@ async function doWasmImport(
     },
   });
 
-  //console.log(wasmOpts);
+  const source = await readFile(pathToWasm);
+  const typedArray = new Uint8Array(source);
   const result = await WebAssembly.instantiate(typedArray, wasmOpts);
+
   if (wasi != null) {
     wasi.start(result.instance);
   }
