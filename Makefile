@@ -2,7 +2,7 @@ BUILT = dist/.built
 
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-export PATH := ${CWD}/packages/zig/dist:$(PATH)
+export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 all: lib/${BUILT} jpython
 
