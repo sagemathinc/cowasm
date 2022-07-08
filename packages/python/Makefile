@@ -49,8 +49,8 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# - We use the 0008-setup.patch patch, which is *maybe* needed to get module building
 	#   to work when compiling with zig.
 	# - 0009-threading-native.patch  is just a horrible hack to sort of get around something
-	#   broken also involving building with zig (?).
-	cd ${BUILD}/native && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
+	#   broken also involving building with zig (?). This was only needed when using zig:
+	# cd ${BUILD}/native && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
 	touch ${BUILD}/native/.patched
 
 # Possibly doesn't work due to https://stackoverflow.com/questions/63629878/dyld-library-path-environment-variable-is-not-forwarded-to-external-command-in-m
@@ -62,7 +62,9 @@ ${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/nat
 # build the native version, since it actually works on more
 # platforms more robustly.  That said, it is MASSIVELY slower.
 # To switch back to zig, try replacing what is below
-# by this.  This works for me on cocalc, but not a clean docker image or aarch64 docker linux:
+# by this.  This works for me on cocalc, but not a clean docker
+# image or aarch64 docker linux.  Also, make sure to enable the
+# 0009-threading-native.patch patch elsewhere (in two places).
 # 		CFLAGS="-I${ZLIB}/native/include -I/usr/include" \
 # 		LDFLAGS="-L${ZLIB}/native/lib" \
 # 		AR="zig ar" \
@@ -100,7 +102,8 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# Also copy the config.site, which answers some questions needed for
 	# cross compiling, without which ./configure won't work.
 	cp src/config.site ${BUILD}/wasm
-	cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
+	# Ooly need for native build using Zig:
+	# cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
 	touch ${BUILD}/wasm/.patched
 
 ${DIST_WASM}/.built: export LD_LIBRARY_PATH:=${DIST_NATIVE}/lib:"${LD_LIBRARY_PATH}"
