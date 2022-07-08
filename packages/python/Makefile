@@ -56,16 +56,19 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	#   to work when compiling with zig.
 	# - 0009-threading-native.patch  is just a horrible hack to sort of get around something
 	#   broken also involving building with zig (?).
-	cd ${BUILD}/native && cat ${CWD}/src/python-patches/0008-setup.patch | patch -p1
 	cd ${BUILD}/native && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
 	touch ${BUILD}/native/.patched
 
 # Possibly doesn't work due to https://stackoverflow.com/questions/63629878/dyld-library-path-environment-variable-is-not-forwarded-to-external-command-in-m
 ${DIST_NATIVE}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
+
 ${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
+
+# The  -I/usr/include is definitely needed.  Without that we end up finding some
+# headers e.g., for stdio.h deep in the zig include path which don't work at all.
 ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
-		CFLAGS="-I${ZLIB}/native/include" \
+		CFLAGS="-I${ZLIB}/native/include -I/usr/include" \
 		LDFLAGS="-L${ZLIB}/native/lib" \
 		AR="zig ar" \
 		CXX="zig c++ ${ARCH}" \
@@ -76,7 +79,7 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 			--enable-optimizations \
 			--enable-shared
 	cd ${BUILD}/native && make || true; make   # it breaks once due to threading.py, but second time works ?
-	cd ${BUILD}/native && make install
+	cd ${BUILD}/native && make install || true # TODO: it fails (?) and we ignore that
 	touch ${DIST_NATIVE}/.built
 
 .PHONY: native
