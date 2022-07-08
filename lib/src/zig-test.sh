@@ -8,6 +8,6 @@ export DYLD_LIBRARY_PATH="$PYTHON_NATIVE/lib"
 export LD_LIBRARY_PATH="$PYTHON_NATIVE/lib"
 export ZIG_SYSTEM_LINKER_HACK=1
 
-#echo $DYLD_LIBRARY_PATH
-#echo $@
-zig test --main-pkg-path "$SRC" $@
+set -ev
+echo "$PYTHON_NATIVE/lib"
+zig test -I"$PYTHON_NATIVE/include/python3.11" -L"$PYTHON_NATIVE/lib" -lpython3.11 -lc   --main-pkg-path "$SRC" $@

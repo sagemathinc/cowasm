@@ -40,12 +40,10 @@ test-zig:
 
 ####################
 ## Python interface
-## It is currently completely broken on startup on Linux due to
-## packages/wasi, I think.  I never got Python to build natively on M1 mac either.
 ####################
 
 test-python:
-	cd src && ${TEST} python/python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.11 -I${POSIX_WASM}  -lpython3.11 -lc  #-O ReleaseFast
+	cd src && ${TEST} python/python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.11  -lpython3.11 -lc  #-O ReleaseFast
 
 ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig
 	cd src && zig build-lib -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} ${PYTHON_WASM}/lib/libpython3.11.a ${POSIX_WASM}/libwasmposix.a ${WASM_CFLAGS} python/interface.zig  ${ZIG_PKG}
