@@ -17,7 +17,8 @@ like actual pthreads yet!
 #include "threads.h"
 
 //#define debug printf
-#define debug(s)
+
+#define debug
 
 #define DEFAULT_ATTR_INITIALIZER                                              \
   {                                                                           \
