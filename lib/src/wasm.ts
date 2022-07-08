@@ -1,4 +1,4 @@
-import { WASI } from "@wapython/wasi";
+import { WASI, WASIConfig } from "@wapython/wasi";
 import bindings from "@wapython/wasi/dist/bindings/node";
 
 import { reuseInFlight } from "async-await-utils/hof";
@@ -90,7 +90,8 @@ async function doWasmImport(
 
   let wasi: any = undefined;
   if (!options?.noWasi) {
-    const opts: any = {
+    const opts: WASIConfig = {
+      bindings,
       args: process.argv,
       env: process.env,
       traceSyscalls: options.traceSyscalls,
@@ -104,11 +105,11 @@ async function doWasmImport(
       };
       if (options.dir !== undefined) {
         // something explicit
-        opts.preopenDirectories = { [options.dir]: options.dir };
+        opts.preopens= { [options.dir]: options.dir };
       } else {
         // just give full access; security of fs access isn't
         // really relevant for us at this point
-        opts.preopenDirectories = { "/": "/" };
+        opts.preopens = { "/": "/" };
       }
     }
     // console.log(opts);
@@ -224,5 +225,5 @@ export function run(filename: string) {
 }
 
 function stub(functionName, behavior, args) {
-  console.log(`STUB - ${functionName}: `, behavior, args);
+  console.log(`WARNING STUB - ${functionName}: `, behavior, args);
 }

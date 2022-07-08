@@ -1,4 +1,4 @@
-import { WASI } from "./index";
+import { WASI, WASIConfig } from "./index";
 import nodeBindings from "./bindings/node";
 
 import { readFile as readFile0 } from "fs";
@@ -22,8 +22,9 @@ async function wasmImport(name: string, options: Options = {}): Promise<void> {
 
   let wasi: any = undefined;
   if (!options?.noWasi) {
-    const opts: any = {
+    const opts: WASIConfig = {
       args: process.argv,
+      bindings: nodeBindings,
       env: process.env,
       traceSyscalls: options.traceSyscalls,
     };
@@ -36,7 +37,11 @@ async function wasmImport(name: string, options: Options = {}): Promise<void> {
       };
       // just give full access; security of fs access isn't
       // really relevant for us at this point
-      opts.preopenDirectories = { "/": "/" };
+      if (!options.dir) {
+        opts.preopens = { "/": "/" };
+      } else {
+        opts.preopens = { [options.dir]: options.dir };
+      }
     }
     wasi = new WASI(opts);
     wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
