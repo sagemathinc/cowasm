@@ -61,7 +61,7 @@ ${DIST}/.built: node_modules ${DIST}/python/python.wasm
 # Run all test suites: (1) the Native zig test suite; (2) the Javascript test suite.
 # This exercise zig-related code both via a native build, and then via the separate WebAssembly build.
 .PHONY: test
-test: test-zig
+test: all test-zig
 	npm run test
 
 .PHONY: clean
