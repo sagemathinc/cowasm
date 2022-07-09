@@ -75,3 +75,6 @@ clean:
 	cd packages/jpython && make clean
 	cd packages/core && make clean
 
+test: jpython core
+	cd packages/jpython && make test
+	cd packages/core && make test

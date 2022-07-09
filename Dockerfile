@@ -28,5 +28,4 @@ RUN  git clone https://github.com/sagemathinc/wapython \
 RUN echo "export PATH=/wapython/packages/zig/dist/:$PATH" >> /root/.bashrc
 
 # Run the test suite, thus increasing the CI value of this Docker image.
-RUN  cd /wapython/packages/core \
-  && make test
+RUN make test
