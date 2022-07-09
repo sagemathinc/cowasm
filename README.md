@@ -6,6 +6,8 @@ URL: https://github.com/sagemathinc/wapython
 
 AUTHOR:  [William Stein](https://github.com/williamstein/)
 
+[![Docker Image CI](https://github.com/sagemathinc/wapython/actions/workflows/docker-image.yml/badge.svg)](https://github.com/sagemathinc/wapython/actions/workflows/docker-image.yml)
+
 ## Quick start - install from npm
 
 \(This won't work yet, since the python source files aren't yet included in the bundle. Build from source below works.\)
