@@ -18,9 +18,18 @@ export function repr(str: string): string {
 // }
 
 export async function init() {
-  if (wasm != null) return;
+  if (wasm != null) {
+    // already initialized
+    return;
+  }
   wasm = await wasmImport("python/python.wasm", {
     init: (wasm) => wasm.exports.init(),
+    fs: {
+      "/home/user/wapython/packages/cpython/dist/wasm/lib/python3.11": {
+        zip: "/home/user/wapython/packages/cpython/dist/wasm/lib/dist/python311.zip",
+      },
+      /* "/": "/", */
+    },
     //traceSyscalls: true,
   });
 }

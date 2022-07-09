@@ -1,6 +1,6 @@
-# WAPython
+# WAPYTHON
 
-> _"WebAssembly Python"_
+> _"WebAssembly & Python"_
 
 URL: https://github.com/sagemathinc/wapython 
 
@@ -35,10 +35,10 @@ See below for more examples.
 
 ### Build
 
-To build everything from source, make sure your systemwide nodejs is at least version 16.x and that you have standard command line dev tools.  Then:
+To build everything from source, make sure your systemwide nodejs is at least version 16.x and that you have standard command line dev tools.  Then build, which [takes 15\-20 minutes:](https://github.com/sagemathinc/wapython/actions) 
 
 ```sh
-wstein@max % make # takes around 5-15 minutes...
+wstein@max % make
 ```
 
 I've tested this build on:
@@ -49,11 +49,22 @@ I've tested this build on:
 ### Try out your build
 
 ```sh
-# Now try out WAPython, the newly built @wapython/core module, which is a
-# WebAssembly version of Python 3.11:
+# Now try out WAPython, directly from the command line.  This runs the
+# webassembly version of Python you just built:
+wstein@max % bin/wapython  # takes a few seconds to start
+Python 3.11.0b3 (main, Jul  8 2022, 23:21:07) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 81f0e6c5b902ead84753490d on wasi
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 2+3
+5
+>>> import sys; sys.platform
+'wasi'
+
+# Try out the newly built @wapython/core module, which is our
+# WebAssembly version of Python 3.11 that you can use via a library:
 wstein@max % cd packages/core
 # Run the WAPython test suite first:
 wstein@max % make test
+
 # Now actually use the module:
 wstein@max % node
 Welcome to Node.js v16.13.0.
@@ -73,6 +84,7 @@ Welcome to JPython.  Using Node.js v16.13.0.
 # Notice that it can be much faster than wapython:
 >>> import time; t=time.time(); print(sum(range(10**7)), time.time()-t)
 49999995000000 0.06099987030029297
+
 # You can use WAPython from JPython:
 >>> wapython = require('@wapython/core').python
 >>> wapython.exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
@@ -91,11 +103,37 @@ Create a WebAssembly build of Python and related packages, which runs both on th
 
 This is probably extremely difficult to pull off, since emscripten and pyodide have been at it for years, and it's a complicated project.   Our software license \-\- _**BSD 3\-clause**_ \-\- is compatible with their's and we hope to at least learn from their solutions to problems.
 
+## Other Goodies 
+
 ### JPython
 
 This project also includes a self\-hosted Python interpreter that is implemented in Javascript \(a significant rewrite of [RapydScript](https://github.com/atsepkov/RapydScript)\).  This provides the Python **languages** with the extremely fast JIT and very easy interoperability with the full Javascript ecosystem, but a very tiny library of functionality.   Our plan is to combine this with the actual WASM Python and Python libraries, in order to provide, e.g., access to numpy from JPython.   The idea is to make writing code on the Javascript side easier for Python programmers.    
 
-## Build from source
+### Standalone WASM executables
+
+The bin directory has scripts `zcc` and `z++` that are C and C\+\+ compiler wrappers around Zig \+ Node.  They create binaries that you can run on the command line as normal.  Under the hood there's a wrapper script that calls node.js and the wasi runtime.
+
+```sh
+$ . bin/env.sh
+$ echo 'int main() { printf("hello from Web Assembly: %d\n", 2+2); }' > a.c
+$ zcc a.c
+$ ls -l
+a.c  a.out  a.out.wasm  ...
+$ ./a.out   # this actually runs nodejs + @wapython/wasm
+hello from Web Assembly: 4
+```
+
+This isn't currently used here for building wapytho, but it's an extremely powerful tool.  \(For example, I used it with JSage to get the first build of the NTL library for Web Assembly...\)
+
+### Run a script via web assembly Python from the CLI
+
+```sh
+~/wapython$ echo "import sys; print(f'hi from {sys.platform}')" > a.py
+~/wapython$ bin/wapython `pwd`/a.py
+hi from wasi
+```
+
+## Build wapython from source
 
 ### How to build
 
@@ -127,3 +165,4 @@ The build typically create directories `dist/native`and `dist/wasm.` The `dist/n
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) if you find this interesting and want to help out. **This is an open source 3\-clause BSD licensed project.**
 
 There is a related project https://github.com/sagemathinc/jsage that is GPLv3 licensed, and has a goal related to https://sagemath.org.
+

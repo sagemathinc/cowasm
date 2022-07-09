@@ -18,7 +18,36 @@ interface Options {
 async function wasmImport(name: string, options: Options = {}): Promise<void> {
   const pathToWasm = `${name}${name.endsWith(".wasm") ? "" : ".wasm"}`;
 
-  const wasmOpts: any = { env: { ...options.env } };
+  function getrandom(bufPtr, bufLen, _flags) {
+    // NOTE: returning 0 here (our default stub behavior)
+    // would result in Python hanging on startup!  So critical to do this.
+    nodeBindings.randomFillSync(
+      // @ts-ignore
+      new Uint8Array(result.instance.exports.memory.buffer),
+      bufPtr,
+      bufLen
+    );
+    return bufLen;
+  }
+
+  const wasmOpts: any = {
+    env: new Proxy(
+      { getrandom, ...options?.env },
+      {
+        get(target, key) {
+          if (key in target) {
+            return Reflect.get(target, key);
+          }
+          if (options.traceSyscalls) {
+            console.log("creating stub for", key);
+          }
+          return (..._args) => {
+            return 0;
+          };
+        },
+      }
+    ),
+  };
 
   let wasi: any = undefined;
   if (!options?.noWasi) {

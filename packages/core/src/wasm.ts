@@ -1,4 +1,5 @@
 import { WASI, WASIConfig } from "@wapython/wasi";
+import { FileSystemSpec, processFileSystemSpec } from "@wapython/wasi-fs";
 import bindings from "@wapython/wasi/dist/bindings/node";
 
 import { reuseInFlight } from "async-await-utils/hof";
@@ -20,7 +21,7 @@ function recvString(wasm, ptr, len) {
 interface Options {
   noWasi?: boolean; // if false, include wasi
   env?: object; // functions to include in the environment
-  dir?: string | null; // WASI pre-opened directory; default is to preopen /, i.e., full filesystem; explicitly set as null to sandbox.
+  fs?: FileSystemSpec[];
   traceSyscalls?: boolean;
   time?: boolean;
   init?: (wasm: WasmInstance) => void | Promise<void>; // initialization function that gets called when module first loaded.
