@@ -148,7 +148,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ${WASMPOSIX}/*.h .
 	cd ${BUILD}/wasm && echo '#undef HAVE_LINUX_VM_SOCKETS_H' >> pyconfig.h
 	cd ${BUILD}/wasm && echo '#define POLLPRI 0' >> pyconfig.h
-	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib" LD_LIBRARY_PATH="${DIST_NATIVE}/lib" make
+	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib" LD_LIBRARY_PATH="${DIST_NATIVE}/lib" make -j8
 	# These are missing, breaking the "make install".  Why? TODO!
 	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so
 	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib" LD_LIBRARY_PATH="${DIST_NATIVE}/lib" make install
@@ -156,9 +156,9 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm-posix.h ${DIST_WASM}/include/python${PYTHON_MAJOR}.${PYTHON_MINOR}/
 	# Build wasm asset bundle (the pyc files, etc.).  TODO/HACK: We make some symlinks to avoid having to patch wasm_assets.py
 	# though it would be very reasonable to contribute a change upstream to make the script not need this hack.
-	cd ${BUILD}/wasm/build/ && ln -s lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && \
-		cd lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && ln -s _sysconfigdata__wasi_wasm32-wasi.py _sysconfigdata__emscripten_wasm32-emscripten.py
-	cd ${BUILD}/wasm && ./Tools/wasm/wasm_assets.py --builddir=${BUILD}/wasm --prefix=${DIST_WASM}
+	cd ${BUILD}/wasm/build/ && ln -sf lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && \
+		cd lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && ln -sf _sysconfigdata__wasi_wasm32-wasi.py _sysconfigdata__emscripten_wasm32-emscripten.py
+	cd ${BUILD}/wasm && python3 ./Tools/wasm/wasm_assets.py --builddir=${BUILD}/wasm --prefix=${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
