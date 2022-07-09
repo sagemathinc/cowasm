@@ -1,1 +1,0 @@
-export PATH=`pwd`/bin:`pwd`/packages/zig/dist:`pwd`/packages/cpython/dist/native/bin:$PATH
