@@ -15,6 +15,9 @@ ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
+export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LZMA}/native/lib:${DYLD_LIBRARY_PATH}
+export LD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LZMA}/native/lib:${LD_LIBRARY_PATH}
+export PATH := ${DIST_NATIVE}/bin:${PATH}
 
 # Default target
 .PHONY: all
@@ -48,11 +51,6 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# cd ${BUILD}/native && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
 	touch ${BUILD}/native/.patched
 
-# Possibly doesn't work due to https://stackoverflow.com/questions/63629878/dyld-library-path-environment-variable-is-not-forwarded-to-external-command-in-m
-${DIST_NATIVE}/.built: export LD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
-
-${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/native
-
 # NOTE: We are using the system-wide GCC instead of zig to
 # build the native version, since it actually works on more
 # platforms more robustly.  That said, it is MASSIVELY slower.
@@ -78,8 +76,8 @@ ${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/nat
 
 ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
-		CFLAGS="-I${ZLIB}/native/include" \
-		LDFLAGS="-L${ZLIB}/native/lib" \
+		CFLAGS="-I${ZLIB}/native/include -I${LZMA}/native/include" \
+		LDFLAGS="-L${ZLIB}/native/lib -L${LZMA}/native/lib" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
 			--enable-big-digits=30 \
@@ -95,7 +93,7 @@ native: ${DIST_NATIVE}/.built
 # Use "make run-native" to run native python at the command line.
 .PHONY: run-native
 run-native: ${DIST_NATIVE}/.built
-	DYLD_LIBRARY_PATH=${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LZMA}/native/lib LD_LIBRARY_PATH=${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LZMA}/native/lib ${DIST_NATIVE}/bin/python3
+	${DIST_NATIVE}/bin/python3
 
 #############
 # WASM
@@ -114,9 +112,6 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
 	touch ${BUILD}/wasm/.patched
 
-${DIST_WASM}/.built: export LD_LIBRARY_PATH:=${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LZMA}/native/lib:"${LD_LIBRARY_PATH}"
-${DIST_WASM}/.built: export DYLD_LIBRARY_PATH:=${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LZMA}/native/lib:"${DYLD_LIBRARY_PATH}"
-${DIST_WASM}/.built: export PATH:=${DIST_NATIVE}/bin:"${PATH}"
 ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
 	# - without-pymalloc below because pymalloc uses mmap and munmap, and WASI/our libc doesn't provide them.
