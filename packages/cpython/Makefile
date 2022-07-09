@@ -1,6 +1,9 @@
 # See https://www.python.org/downloads/
-PYTHON_VERSION = 3.11.0
-BETA = b3
+PYTHON_MAJOR = 3
+PYTHON_MINOR = 11
+PYTHON_PATCH = 0
+PYTHON_BETA = b3
+PYTHON_VERSION = ${PYTHON_MAJOR}.${PYTHON_MINOR}.${PYTHON_PATCH}
 
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
@@ -11,15 +14,6 @@ DIST_WASM = ${DIST}/wasm
 ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
-
-
-UNAME_S := $(shell uname -s)
-UNAME_P := $(shell uname -p)
-ifeq ($(UNAME_S),Linux)
-   # Workaround a zig bug -- the native build fails with "ld.lld: error: undefined symbol: fcntl64".
-   # See https://github.com/ziglang/zig/issues/5882 and https://github.com/ziglang/zig/issues/9485
-   ARCH = --target=$(UNAME_P)-linux-gnu.2.31
-endif
 
 
 # Default target
@@ -34,13 +28,14 @@ ${CWD}/dist/.built: native wasm
 #############
 ${BUILD}/Python-${PYTHON_VERSION}.tar.xz:
 	mkdir -p ${BUILD}
-	cd ${BUILD} && curl https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}${BETA}.tar.xz -o Python-${PYTHON_VERSION}.tar.xz
+	cd ${BUILD} && curl https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz -o Python-${PYTHON_VERSION}.tar.xz
 
 .PHONY: source
 source: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 
 #############
 # NATIVE
+# Note that despite the word "patched" below, we apply NO patches to the native build.
 #############
 
 ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
@@ -65,6 +60,16 @@ ${DIST_NATIVE}/.built: export DYLD_LIBRARY_PATH:=${ZLIB}/native/lib:${BUILD}/nat
 # by this.  This works for me on cocalc, but not a clean docker
 # image or aarch64 docker linux.  Also, make sure to enable the
 # 0009-threading-native.patch patch elsewhere (in two places).
+#
+# UNAME_S := $(shell uname -s)
+# UNAME_P := $(shell uname -p)
+# ifeq ($(UNAME_S),Linux)
+#    # Workaround a zig bug -- the native build fails with "ld.lld: error: undefined symbol: fcntl64".
+#    # See https://github.com/ziglang/zig/issues/5882 and https://github.com/ziglang/zig/issues/9485
+#    ARCH = --target=$(UNAME_P)-linux-gnu.2.31
+# endif
+#
+# Below:
 # 		CFLAGS="-I${ZLIB}/native/include -I/usr/include" \
 # 		LDFLAGS="-L${ZLIB}/native/lib" \
 # 		AR="zig ar" \
@@ -80,8 +85,8 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 			--enable-big-digits=30 \
 			--enable-optimizations \
 			--enable-shared
-	cd ${BUILD}/native && make -j8 || true; make   # it breaks once due to threading.py, but second time works ?
-	cd ${BUILD}/native && make install || true # TODO: it fails (?) and we ignore that
+	cd ${BUILD}/native && make -j8     # it breaks once due to threading.py, but second time works ?
+	cd ${BUILD}/native && make install # TODO: it fails (?) and we ignore that
 	touch ${DIST_NATIVE}/.built
 
 .PHONY: native
@@ -94,6 +99,9 @@ run-native: ${DIST_NATIVE}/.built
 
 #############
 # WASM
+# Note that despite the word "patched" below, we also apply NO patches to the Python sources at that point
+# to do the WASM Build!
+# We do make a few small changes to pyconfig.h after it is generated.
 #############
 
 ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
@@ -141,11 +149,16 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	cd ${BUILD}/wasm && echo '#undef HAVE_LINUX_VM_SOCKETS_H' >> pyconfig.h
 	cd ${BUILD}/wasm && echo '#define POLLPRI 0' >> pyconfig.h
 	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib" LD_LIBRARY_PATH="${DIST_NATIVE}/lib" make
-	# These are missing, breaking the "make install":
-	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-311-wasm32-wasi.so Modules/_testmultiphase.cpython-311-wasm32-wasi.so Modules/xxlimited.cpython-311-wasm32-wasi.so Modules/xxlimited_35.cpython-311-wasm32-wasi.so
+	# These are missing, breaking the "make install".  Why? TODO!
+	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so
 	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib" LD_LIBRARY_PATH="${DIST_NATIVE}/lib" make install
 	# Also copy wasm-posix.h over, so it's possible to build programs against our new python.
-	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm-posix.h ${DIST_WASM}/include/python3.11/
+	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm-posix.h ${DIST_WASM}/include/python${PYTHON_MAJOR}.${PYTHON_MINOR}/
+	# Build wasm asset bundle (the pyc files, etc.).  TODO/HACK: We make some symlinks to avoid having to patch wasm_assets.py
+	# though it would be very reasonable to contribute a change upstream to make the script not need this hack.
+	cd ${BUILD}/wasm/build/ && ln -s lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && \
+		cd lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && ln -s _sysconfigdata__wasi_wasm32-wasi.py _sysconfigdata__emscripten_wasm32-emscripten.py
+	cd ${BUILD}/wasm && ./Tools/wasm/wasm_assets.py --builddir=${BUILD}/wasm --prefix=${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
