@@ -83,8 +83,8 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 			--enable-big-digits=30 \
 			--enable-optimizations \
 			--enable-shared
-	cd ${BUILD}/native && make -j8 || true; make # TODO: it breaks once; second time works
-	cd ${BUILD}/native && make install || true   # TODO: fails, but seems good enough for now (failure is with zipfile, but we don't pip install anything)
+	cd ${BUILD}/native && make -j8
+	cd ${BUILD}/native && make install
 	touch ${DIST_NATIVE}/.built
 
 .PHONY: native
