@@ -12,10 +12,7 @@ POSIX_WASM   = ${PACKAGES}/wasm-posix/dist/
 
 WASM_CFLAGS   = -dynamic ${OPT}
 
-NATIVE_CFLAGS_NOOPT = -I. -lc
-NATIVE_CFLAGS = ${NATIVE_CFLAGS_NOOPT} ${OPT}
-
-TEST = ./zig-test.sh ${NATIVE_CFLAGS_NOOPT}
+TEST = ./test-zig.sh
 
 DIST = ${CWD}/dist
 
@@ -24,17 +21,9 @@ all: ${DIST}/.built
 
 # Runs zig test on all zig files that contain the word "test" but do not
 # have interface or export in their filename (since can't test those).
-# Runs on each one individually, not all at once which doesn't work.
-# not in parallel
-.PHONY: test-zig1
-test-zig1:
-	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -n 1 ${TEST}
-
-# in parallel
 .PHONY: test-zig
 test-zig:
-	cd src && grep -l test *.zig */*.zig | grep -v interface |grep -v export | xargs -t -P 8 -n 1 ${TEST}
-
+	cd src && grep -l test *.zig */*.zig | grep -v interface | grep -v export | xargs -t -n 1 ${TEST}
 
 ####################
 ## Python interface
