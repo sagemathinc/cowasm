@@ -95,7 +95,7 @@ native: ${DIST_NATIVE}/.built
 # Use "make run-native" to run native python at the command line.
 .PHONY: run-native
 run-native: ${DIST_NATIVE}/.built
-	DYLD_LIBRARY_PATH=${DIST_NATIVE}/lib LD_LIBRARY_PATH=${DIST_NATIVE}/lib ${DIST_NATIVE}/bin/python3
+	DYLD_LIBRARY_PATH=${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LZMA}/native/lib LD_LIBRARY_PATH=${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LZMA}/native/lib ${DIST_NATIVE}/bin/python3
 
 #############
 # WASM
@@ -114,8 +114,8 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
 	touch ${BUILD}/wasm/.patched
 
-${DIST_WASM}/.built: export LD_LIBRARY_PATH:=${DIST_NATIVE}/lib:"${LD_LIBRARY_PATH}"
-${DIST_WASM}/.built: export DYLD_LIBRARY_PATH:=${DIST_NATIVE}/lib:"${DYLD_LIBRARY_PATH}"
+${DIST_WASM}/.built: export LD_LIBRARY_PATH:=${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LZMA}/native/lib:"${LD_LIBRARY_PATH}"
+${DIST_WASM}/.built: export DYLD_LIBRARY_PATH:=${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LZMA}/native/lib:"${DYLD_LIBRARY_PATH}"
 ${DIST_WASM}/.built: export PATH:=${DIST_NATIVE}/bin:"${PATH}"
 ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
@@ -148,17 +148,17 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ${WASMPOSIX}/*.h .
 	cd ${BUILD}/wasm && echo '#undef HAVE_LINUX_VM_SOCKETS_H' >> pyconfig.h
 	cd ${BUILD}/wasm && echo '#define POLLPRI 0' >> pyconfig.h
-	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib" LD_LIBRARY_PATH="${DIST_NATIVE}/lib" make -j8
+	cd ${BUILD}/wasm && make -j8
 	# These are missing, breaking the "make install".  Why? TODO!
 	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so
-	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib" LD_LIBRARY_PATH="${DIST_NATIVE}/lib" make install
+	cd ${BUILD}/wasm && make install
 	# Also copy wasm-posix.h over, so it's possible to build programs against our new python.
 	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm-posix.h ${DIST_WASM}/include/python${PYTHON_MAJOR}.${PYTHON_MINOR}/
 	# Build wasm asset bundle (the pyc files, etc.).  TODO/HACK: We make some symlinks to avoid having to patch wasm_assets.py
 	# though it would be very reasonable to contribute a change upstream to make the script not need this hack.
 	cd ${BUILD}/wasm/build/ && ln -sf lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && \
 		cd lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && ln -sf _sysconfigdata__wasi_wasm32-wasi.py _sysconfigdata__emscripten_wasm32-emscripten.py
-	cd ${BUILD}/wasm && python3 ./Tools/wasm/wasm_assets.py --builddir=${BUILD}/wasm --prefix=${DIST_WASM}
+	cd ${BUILD}/wasm && python3 ./Tools/wasm/wasm_assets.py && rm -rf ${DIST_WASM}/lib && mv usr/local/lib ${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
