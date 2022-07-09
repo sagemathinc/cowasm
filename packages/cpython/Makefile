@@ -140,7 +140,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ${WASMPOSIX}/*.h .
 	cd ${BUILD}/wasm && echo '#undef HAVE_LINUX_VM_SOCKETS_H' >> pyconfig.h
 	cd ${BUILD}/wasm && echo '#define POLLPRI 0' >> pyconfig.h
-	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib" LD_LIBRARY_PATH="${DIST_NATIVE}/lib" make || true
+	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib" LD_LIBRARY_PATH="${DIST_NATIVE}/lib" make
 	# These are missing, breaking the "make install":
 	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-311-wasm32-wasi.so Modules/_testmultiphase.cpython-311-wasm32-wasi.so Modules/xxlimited.cpython-311-wasm32-wasi.so Modules/xxlimited_35.cpython-311-wasm32-wasi.so
 	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib" LD_LIBRARY_PATH="${DIST_NATIVE}/lib" make install
