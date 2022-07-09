@@ -92,3 +92,37 @@ $ npx jpython a.py
 8
 ```
 
+## Running a Benchmark
+
+Here's one benchmark on a MacOS M1 max laptop, where JPython comes out ahead:
+
+```sh
+# Use WAPython via nodejs:
+~/wapython/packages/jpython/bench$ ../../../bin/wapython `pwd`/mandel.py
+--------------------
+Running... 
+mandelbrot 689 ms
+Total:  689 ms
+
+# Use systemwide native python3:
+~/wapython/packages/jpython/bench$ python3 `pwd`/mandel.py
+--------------------
+Running... 
+mandelbrot 200 ms
+Total:  200 ms
+
+# Use Jpython, which transpiles to Javascript and uses the JIT:
+~/wapython/packages/jpython/bench$ jpython `pwd`/mandel.py
+--------------------
+Running... 
+mandelbrot 70 ms
+Total:  70 ms
+
+# Use pypy (version 3.9), which is Python with a JIT:
+~/wapython/packages/jpython/bench$ /Users/wstein/bin/pypy `pwd`/mandel.py
+--------------------
+Running... 
+mandelbrot 128 ms
+Total:  128 ms
+```
+
