@@ -1,30 +1,101 @@
-# WAPYTHON
+# WAPython
 
-> _"Web Assembly Python"_
+> _"WebAssembly Python"_
 
 URL: https://github.com/sagemathinc/wapython 
 
-LEAD AUTHOR:  [William Stein](https://github.com/williamstein/)
+AUTHOR:  [William Stein](https://github.com/williamstein/)
 
-## Quick start
+## Quick start - install from npm
 
-**Nothing to see yet.**
+```sh
+wstein@max % mkdir wapython && cd wapython && npm init -y && npm install @wapython/jpython
+
+wstein@max % node  # for older node, use "node --experimental-wasm-bigint"
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> {python} = require('@wapython/core')
+> python.exec('2+2')
+4
+
+# Also, to run Jpython:
+wstein@max % npx jpython
+Welcome to JPython.  Using Node.js v16.13.0. 
+>>> 2+2
+4
+```
+
+See below for more examples.
+
+## Quick start - build from source
+
+### Build
+
+To build everything from source, make sure your systemwide nodejs is at least version 16.x and that you have standard command line dev tools.  Then:
+
+```sh
+wstein@max % make # takes around 5-15 minutes...
+```
+
+I've tested this build on:
+
+- x86\_64 and aarch64 Linux with standard dev tools installed; see [Dockerfile](./Dockerfile) 
+- MacOS \- my M1 mac with XCode CLI tools works.
+
+### Try out your build
+
+```sh
+# Now try out WAPython, the newly built @wapython/core module, which is a
+# WebAssembly version of Python 3.11:
+wstein@max % cd packages/core
+# Run the WAPython test suite first:
+wstein@max % make test
+# Now actually use the module:
+wstein@max % node
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> {python} = require('@wapython/core')
+> python.exec('2+2')
+4
+> python.exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
+49999995000000 1.0109999179840088
+
+# Next try out JPython which is a Javascript-based JIT Python interpreter:
+wstein@max % cd ../..
+wstein@max % bin/jpython
+Welcome to JPython.  Using Node.js v16.13.0.  
+>>> 2+2
+4
+# Notice that it can be much faster than wapython:
+>>> import time; t=time.time(); print(sum(range(10**7)), time.time()-t)
+49999995000000 0.06099987030029297
+# You can use WAPython from JPython:
+>>> wapython = require('@wapython/core').python
+>>> wapython.exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
+
+# One is genuine Python, whereas the other is really a Python-to-Javascript compiler,
+# so semantics are different:
+>>> 3**200
+2.6561398887587478e+95
+>>> wapython.exec('3**200')
+265613988875874769338781322035779626829233452653394495974574961739092490901302182994384699044001
+```
 
 ## What's the goal?
 
-Create a web assembly build of Python and related packages, which runs both on the command line with Node.js and in web browsers \(via npm modules that you can include via webpack\).  The build system is based on Makefiles and `zig,`which provides excellent caching and cross compilation.  Most of the C/C\+\+ code in emscripten will instead be written in the zig language here, and the Javascript code will be replaced by more modern Typescript.
+Create a WebAssembly build of Python and related packages, which runs both on the command line with Node.js and in web browsers \(via npm modules that you can include via webpack\).  The build system is based on Makefiles and [zig](https://ziglang.org/), which provides excellent caching and cross compilation.  Most of the C/C\+\+ code in emscripten will instead be written in the [zig](https://ziglang.org/) language here, and the Javascript code will be replaced by more modern Typescript.
 
-This is probably extremely difficult to pull off, since emscripten and pyodide have been at it for years, and it's a complicated project.   Our software license is compatible with there's and we hope to at least learn from their solutions to problems.
+This is probably extremely difficult to pull off, since emscripten and pyodide have been at it for years, and it's a complicated project.   Our software license \-\- _**BSD 3\-clause**_ \-\- is compatible with their's and we hope to at least learn from their solutions to problems.
 
 ### JPython
 
-One significant difference between this project and pyodide / pyscript, etc., is that we also have a self\-hosted Python interpreter that is implemented in Javascript \(a significant rewrite of [RapydScript](https://github.com/atsepkov/RapydScript)\).  This provides the Python **languages** with the extremely fast JIT and very easy interop with the full Javascript ecosystem, but a very tiny library of functionality.   Our plan is to combine this with the actual WASM Python and Python libraries, in order to provide, e.g., access to numpy from JPython.  It's a different approach than pyscript, and might be really powerful.  Or might not be; we'll see.
+This project also includes a self\-hosted Python interpreter that is implemented in Javascript \(a significant rewrite of [RapydScript](https://github.com/atsepkov/RapydScript)\).  This provides the Python **languages** with the extremely fast JIT and very easy interoperability with the full Javascript ecosystem, but a very tiny library of functionality.   Our plan is to combine this with the actual WASM Python and Python libraries, in order to provide, e.g., access to numpy from JPython.   The idea is to make writing code on the Javascript side easier for Python programmers.    
 
 ## Build from source
 
 ### How to build
 
-Just type make.   \(Do **NOT** type `make -j8,` since parallel builds somehow mess up Python right now.\)
+Just type make.   \(Do **NOT** type `make -j8;` it might not work...\)
 
 ```sh
 ...$ make
@@ -41,7 +112,7 @@ In most subdirectories `foo` of packages, this will create some subdirectories:
 
 ### No common prefix directory
 
-Unlike some systems, where everything is built and installed into a single `local` directory, here we build everything in its own self-contained package. When a package like `python` depends on another package like `lzma` , our Makefile for `python` explicitly references `packages/lzma/dist`. This makes it easier to uninstall packages, update them, etc., without having to track what files are in any package, whereas using a common directory for everything can be a mess with possibly conflicting versions of files, and makes versioning and dependencies very explicit.  Of course, it makes the environment variables and build commands potentially much longer.  Our goal is WebAssembly though, which ultimately links everything together in a single file, so this is fine.
+Unlike some systems, where everything is built and installed into a single `prefix` directory, here we build everything in its own self\-contained package. When a package like `cpython` depends on another package like `lzma` , our Makefile for `cpython` explicitly references `packages/lzma/dist`. This makes it easier to uninstall packages, update them, etc., without having to track what files are in any package, whereas using a common directory for everything can be a mess with possibly conflicting versions of files, and makes versioning and dependencies very explicit.  Of course, it makes the environment variables and build commands potentially much longer.  
 
 ### Native and Wasm
 
@@ -49,7 +120,6 @@ The build typically create directories `dist/native`and `dist/wasm.` The `dist/n
 
 ### Contact
 
-Email [wstein@cocalc.com](mailto:wstein@cocalc.com) if you find this interesting and want to help out. **This is an open source BSD licensed project.**
+Email [wstein@cocalc.com](mailto:wstein@cocalc.com) if you find this interesting and want to help out. **This is an open source 3\-clause BSD licensed project.**
 
-There is a related project https://github.com/sagemathinc/jsage that is GPL licensed, and has a goal related to https://sagemath.org.
-
+There is a related project https://github.com/sagemathinc/jsage that is GPLv3 licensed, and has a goal related to https://sagemath.org.
