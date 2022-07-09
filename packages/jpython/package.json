@@ -20,7 +20,7 @@
     "prettier": "prettier --write .",
     "yapf": "yapf -p -i --recursive src/output bench src/compiler.py src/parse.py src/utils.py  src/tokenizer.py"
   },
-  "version": "1.13.0",
+  "version": "1.13.1",
   "license": "BSD-3-Clause",
   "engines": {
     "node": ">=0.14.0"

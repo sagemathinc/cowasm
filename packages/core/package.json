@@ -1,6 +1,6 @@
 {
   "name": "@wapython/core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "wapython -- Web Assembly Python Core",
   "exports": {
     ".": "./dist/index.js",

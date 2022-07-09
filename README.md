@@ -8,6 +8,8 @@ AUTHOR:  [William Stein](https://github.com/williamstein/)
 
 ## Quick start - install from npm
 
+\(This won't work yet, since the python source files aren't yet included in the bundle. Build from source below works.\)
+
 ```sh
 wstein@max % mkdir wapython && cd wapython && npm init -y && npm install @wapython/jpython
 
