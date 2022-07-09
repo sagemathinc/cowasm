@@ -17,8 +17,8 @@ WASMPOSIX = ${CWD}/../wasm-posix/dist
 
 # We only use zlib (not lzma) for native build, since liblzma widely available natively.
 
-export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib:${DYLD_LIBRARY_PATH}
-export LD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LD_LIBRARY_PATH}
+export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
+export LD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
 export PATH := ${DIST_NATIVE}/bin:${PATH}
 
 # Default target
@@ -157,7 +157,8 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	# though it would be very reasonable to contribute a change upstream to make the script not need this hack.
 	cd ${BUILD}/wasm/build/ && ln -sf lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && \
 		cd lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && ln -sf _sysconfigdata__wasi_wasm32-wasi.py _sysconfigdata__emscripten_wasm32-emscripten.py
-	cd ${BUILD}/wasm && python3 ./Tools/wasm/wasm_assets.py && rm -rf ${DIST_WASM}/lib && mv usr/local/lib ${DIST_WASM}
+	# This DYLD_LIBRARY_PATH is needed to workaround https://developer.apple.com/forums/thread/9233
+	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" python3 ./Tools/wasm/wasm_assets.py && rm -rf ${DIST_WASM}/lib && mv usr/local/lib ${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
