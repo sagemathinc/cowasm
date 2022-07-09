@@ -15,8 +15,10 @@ ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
-export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LZMA}/native/lib:${DYLD_LIBRARY_PATH}
-export LD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LZMA}/native/lib:${LD_LIBRARY_PATH}
+# We only use zlib (not lzma) for native build, since liblzma widely available natively.
+
+export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib:${DYLD_LIBRARY_PATH}
+export LD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib:${LD_LIBRARY_PATH}
 export PATH := ${DIST_NATIVE}/bin:${PATH}
 
 # Default target
@@ -76,15 +78,17 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 
 ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
-		CFLAGS="-I${ZLIB}/native/include -I${LZMA}/native/include" \
-		LDFLAGS="-L${ZLIB}/native/lib -L${LZMA}/native/lib" \
+		CFLAGS="-I${ZLIB}/native/include" \
+		LDFLAGS="-L${ZLIB}/native/lib" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
 			--enable-big-digits=30 \
 			--enable-optimizations \
 			--enable-shared
-	cd ${BUILD}/native && make -j8 || true; make # TODO: it breaks once; second time works
-	cd ${BUILD}/native && make install || true   # TODO: fails, but seems good enough for now (failure is with zipfile, but we don't pip install anything)
+	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses zlib).  This is to workaround
+	# a security feature of MacOS (see https://developer.apple.com/forums/thread/9233). For simplicity we set this everywhere.
+	cd ${BUILD}/native && make RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}"
+	cd ${BUILD}/native && make RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}" install
 	touch ${DIST_NATIVE}/.built
 
 .PHONY: native
