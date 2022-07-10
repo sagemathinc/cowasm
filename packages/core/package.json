@@ -22,8 +22,8 @@
     "url": "git+https://github.com/sagemathinc/wapython.git"
   },
   "keywords": [
-    "number",
-    "theory"
+    "python",
+    "webassembly"
   ],
   "author": "William Stein",
   "license": "BSD-3-Clause",
