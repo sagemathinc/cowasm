@@ -40,6 +40,7 @@
   },
   "homepage": "https://github.com/sagemathinc/wapython/tree/main/packages/wasi",
   "dependencies": {
+    "@types/filesystem": "^0.0.32",
     "browser-hrtime": "^1.1.8",
     "fflate-unzip": "^0.7.0",
     "memfs": "^3.4.7",

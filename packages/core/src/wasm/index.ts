@@ -1,5 +1,5 @@
 import WASI, { createFileSystem } from "@wapython/wasi";
-import type { WASIConfig, Filesystem, FileSystemSpec } from "@wapython/wasi";
+import type { WASIConfig, FileSystemSpec } from "@wapython/wasi";
 import bindings from "@wapython/wasi/dist/bindings/node";
 import { reuseInFlight } from "async-await-utils/hof";
 import { readFile as readFile0 } from "fs";
@@ -92,7 +92,7 @@ async function doWasmImport(
   }
 
   let wasi: WASI | undefined = undefined;
-  let fs: Filesystem | undefined = undefined;
+  let fs: FileSystem | undefined = undefined;
   if (!options?.noWasi) {
     const opts: WASIConfig = {
       preopens: { "/": "/" },
@@ -102,14 +102,14 @@ async function doWasmImport(
       traceSyscalls: options.traceSyscalls,
     };
     if (options.fs != null) {
-      // explicit fs option given, so create the bindings.fs object:
-      fs = await createFileSystem(options.fs);
+      // explicit fs option given, so create the bindings.fs object, which is typically
+      // a union of several filesystems...
+      fs = await createFileSystem(options.fs, bindings);
       opts.bindings = {
         ...bindings,
         fs,
       };
     }
-    //    console.log(opts);
     wasi = new WASI(opts);
     wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
   }
@@ -172,22 +172,31 @@ export default async function wasmImport(
   name: string,
   options: Options = {}
 ): Promise<WasmInstance> {
-  const path = dirname(callsite()[1]?.getFileName() ?? "");
+  const path = dirname(join(callsite()[1]?.getFileName() ?? "", '..'));
   if (!isAbsolute(name)) {
     // it's critical to make this canonical BEFORE calling the debounced function,
     // or randomly otherwise end up with same module imported twice, which will
     // result in a "hellish nightmare" of subtle bugs.
     name = join(path, name);
   }
-  // also fix zip path, if necessary:
+  // also fix zip path, if necessary and read in any zip files (so they can be loaded into memfs).
+  const fs: FileSystemSpec[] = [];
   for (const X of options.fs ?? []) {
-    if (X.type == "zip") {
+    if (X.type == "zipfile") {
       if (!isAbsolute(X.zipfile)) {
         X.zipfile = join(path, X.zipfile);
       }
+      const Y = {
+        type: "zip",
+        data: await readFile(X.zipfile),
+        mountpoint: X.mountpoint,
+      } as FileSystemSpec;
+      fs.push(Y);
+    } else {
+      fs.push(X);
     }
   }
-  return await wasmImportDebounced(name, options);
+  return await wasmImportDebounced(name, { ...options, fs });
 }
 
 const encoder = new TextEncoder();
@@ -195,9 +204,9 @@ const encoder = new TextEncoder();
 export class WasmInstance {
   result: any = undefined;
   exports: any;
-  fs?: Filesystem;
+  fs?: FileSystem;
 
-  constructor(exports, fs?: Filesystem) {
+  constructor(exports, fs?: FileSystem) {
     this.exports = exports;
     this.fs = fs;
   }
