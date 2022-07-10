@@ -19,3 +19,8 @@ def f(n):
 `);
   expect(repr("f(100)")).toBe("5050");
 });
+
+test("sys.platform is wasi", async () => {
+  exec("import sys");
+  expect(repr("sys.platform")).toBe("'wasi'");
+});

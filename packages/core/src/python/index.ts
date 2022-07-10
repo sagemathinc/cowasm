@@ -31,7 +31,7 @@ export async function init() {
         zipfile: "python/python311.zip",
         mountpoint: "/pythonhome/lib/python3.11",
       },
-      { type: "dev" },
+      { type: "dev" },  // always include this -- it is necessary for python to start when using nodejs windows, but doesn't hurt on linux/macos.
       { type: "native" }, // provides stdout,stderr natively, for now...
     ],
     //traceSyscalls: true,

@@ -17,8 +17,10 @@ wstein@max % node  # for older node, use "node --experimental-wasm-bigint"
 Welcome to Node.js v16.13.0.
 Type ".help" for more information.
 > {python} = require('@wapython/core')
-> python.exec('2+2')
-4
+> python.exec('a=2+3; a') # outputs to stdout
+5
+> s = python.repr('a'); s # javascript string
+5
 > python.exec('import sys; sys.version')
 '3.11.0b3 (main, Jul  8 2022, 23:21:07) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 81f0e6c5b902ead84753490d'
 > python.exec('import sys; sys.platform')
