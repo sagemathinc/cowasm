@@ -1,16 +1,13 @@
-import WASI from "@wapython/wasi";
-import type { WASIConfig } from "@wapython/wasi";
+import WASI, { createFileSystem } from "@wapython/wasi";
+import type { WASIConfig, Filesystem, FileSystemSpec } from "@wapython/wasi";
 import bindings from "@wapython/wasi/dist/bindings/node";
-
 import { reuseInFlight } from "async-await-utils/hof";
 import { readFile as readFile0 } from "fs";
 import { promisify } from "util";
 import { dirname, join } from "path";
 import callsite from "callsite";
-import fs from "fs";
 
 const readFile = promisify(readFile0);
-const FIRST_STUB_ONLY = true;
 
 const textDecoder = new TextDecoder();
 function recvString(wasm, ptr, len) {
@@ -21,12 +18,12 @@ function recvString(wasm, ptr, len) {
 interface Options {
   noWasi?: boolean; // if false, include wasi
   wasmEnv?: object; // functions to include in the environment
-  env?: { [x: string]: string }; // environment variables
-  dir?: string | null; // WASI pre-opened directory; default is to preopen /, i.e., full filesystem; explicitly set as null to sandbox.
-  traceSyscalls?: boolean;
+  env?: { [name: string]: string }; // environment variables
+  fs?: FileSystemSpec[]; // if not given, code has full native access to /
   time?: boolean;
   init?: (wasm: WasmInstance) => void | Promise<void>; // initialization function that gets called when module first loaded.
-  bindings?;
+  traceSyscalls?: boolean;
+  traceStubcalls?: "first" | true;
 }
 
 const cache: { [name: string]: any } = {};
@@ -82,7 +79,9 @@ async function doWasmImport(
   }
   if (wasmOpts.env.getpid == null) {
     wasmOpts.env.getpid = () => {
-      stub("getpid", "returning 1", []);
+      if (options.traceStubcalls) {
+        stub("getpid", "returning 1", [], options.traceStubcalls == "first");
+      }
       return 1;
     };
   }
@@ -93,31 +92,24 @@ async function doWasmImport(
   }
 
   let wasi: WASI | undefined = undefined;
+  let fs: Filesystem | undefined = undefined;
   if (!options?.noWasi) {
     const opts: WASIConfig = {
+      preopens: { "/": "/" },
       bindings,
       args: process.argv,
       env: options.env,
       traceSyscalls: options.traceSyscalls,
     };
-    if (options.dir === null) {
-      // sandbox -- don't give any fs access
-    } else {
+    if (options.fs != null) {
+      // explicit fs option given, so create the bindings.fs object:
+      fs = await createFileSystem(options.fs);
       opts.bindings = {
         ...bindings,
         fs,
-        ...options.bindings,
       };
-      if (options.dir !== undefined) {
-        // something explicit
-        opts.preopens = { [options.dir]: options.dir };
-      } else {
-        // just give full access; security of fs access isn't
-        // really relevant for us at this point
-        opts.preopens = { "/": "/" };
-      }
     }
-    // console.log(opts);
+    //    console.log(opts);
     wasi = new WASI(opts);
     wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
   }
@@ -129,10 +121,15 @@ async function doWasmImport(
         return Reflect.get(target, key);
       }
       // console.log("creating stub for", key);
-      return (...args) => {
-        stub(key, "returning 0", args);
-        return 0;
-      };
+      if (options.traceStubcalls) {
+        return (...args) => {
+          stub(key, "returning 0", args, options.traceStubcalls == "first");
+          return 0;
+        };
+      } else {
+        // faster to not trace or even check, obviously.
+        return () => 0;
+      }
     },
   });
 
@@ -153,7 +150,7 @@ async function doWasmImport(
     (result.instance.exports.__wasm_call_ctors as CallableFunction)();
   }
 
-  wasm = new WasmInstance(result.instance.exports);
+  wasm = new WasmInstance(result.instance.exports, fs);
   if (options.init != null) {
     await options.init(wasm);
   }
@@ -175,11 +172,20 @@ export default async function wasmImport(
   name: string,
   options: Options = {}
 ): Promise<WasmInstance> {
+  const path = dirname(callsite()[1]?.getFileName() ?? "");
   if (!name.startsWith("/")) {
     // it's critical to make this canonical BEFORE calling the debounced function,
     // or randomly otherwise end up with same module imported twice, which will
     // result in a "hellish nightmare" of subtle bugs.
-    name = join(dirname(callsite()[1]?.getFileName() ?? ""), name);
+    name = join(path, name);
+  }
+  // also fix zip path, if necessary:
+  for (const X of options.fs ?? []) {
+    if (X.type == "zip") {
+      if (!X.zipfile.startsWith("/")) {
+        X.zipfile = join(path, X.zipfile);
+      }
+    }
   }
   return await wasmImportDebounced(name, options);
 }
@@ -189,8 +195,11 @@ const encoder = new TextEncoder();
 export class WasmInstance {
   result: any = undefined;
   exports: any;
-  constructor(exports) {
+  fs?: Filesystem;
+
+  constructor(exports, fs?: Filesystem) {
     this.exports = exports;
+    this.fs = fs;
   }
 
   private stringToCharStar(str: string): number {
@@ -228,8 +237,8 @@ export function run(filename: string) {
 }
 
 const stubUsed = new Set<string>([]);
-function stub(functionName, behavior, args) {
-  if (FIRST_STUB_ONLY) {
+function stub(functionName, behavior, args, firstOnly) {
+  if (firstOnly) {
     if (stubUsed.has(functionName)) return;
     stubUsed.add(functionName);
   }

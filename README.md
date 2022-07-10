@@ -8,12 +8,10 @@ AUTHOR:  [William Stein](https://github.com/williamstein/)
 
 [![Docker Image CI](https://github.com/sagemathinc/wapython/actions/workflows/docker-image.yml/badge.svg)](https://github.com/sagemathinc/wapython/actions/workflows/docker-image.yml)
 
-## Quick start - install from npm
-
-\(This won't work yet, since the python source files aren't yet included in the bundle. Build from source below works.\)
+## Quick start \- install from npm and use in node.js
 
 ```sh
-wstein@max % mkdir wapython && cd wapython && npm init -y && npm install @wapython/jpython
+wstein@max % mkdir wapython && cd wapython && npm init -y && npm install @wapython/core
 
 wstein@max % node  # for older node, use "node --experimental-wasm-bigint"
 Welcome to Node.js v16.13.0.
@@ -21,8 +19,13 @@ Type ".help" for more information.
 > {python} = require('@wapython/core')
 > python.exec('2+2')
 4
+> python.exec('import sys; sys.version')
+'3.11.0b3 (main, Jul  8 2022, 23:21:07) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 81f0e6c5b902ead84753490d'
+> python.exec('import sys; sys.platform')
+'wasi'
 
 # Also, to run Jpython:
+wstein@max % npm install @wapython/jpython
 wstein@max % npx jpython
 Welcome to JPython.  Using Node.js v16.13.0. 
 >>> 2+2
@@ -30,6 +33,8 @@ Welcome to JPython.  Using Node.js v16.13.0.
 ```
 
 See below for more examples.
+
+**There is no support for using wapython via webpack5 in your browser... yet.**
 
 ## Quick start - build from source
 
@@ -109,31 +114,7 @@ This is probably extremely difficult to pull off, since emscripten and pyodide h
 
 This project also includes a self\-hosted Python interpreter that is implemented in Javascript \(a significant rewrite of [RapydScript](https://github.com/atsepkov/RapydScript)\).  This provides the Python **languages** with the extremely fast JIT and very easy interoperability with the full Javascript ecosystem, but a very tiny library of functionality.   Our plan is to combine this with the actual WASM Python and Python libraries, in order to provide, e.g., access to numpy from JPython.   The idea is to make writing code on the Javascript side easier for Python programmers.    
 
-### Standalone WASM executables
-
-The bin directory has scripts `zcc` and `z++` that are C and C\+\+ compiler wrappers around Zig \+ Node.  They create binaries that you can run on the command line as normal.  Under the hood there's a wrapper script that calls node.js and the wasi runtime.
-
-```sh
-$ . bin/env.sh
-$ echo 'int main() { printf("hello from Web Assembly: %d\n", 2+2); }' > a.c
-$ zcc a.c
-$ ls -l
-a.c  a.out  a.out.wasm  ...
-$ ./a.out   # this actually runs nodejs + @wapython/wasm
-hello from Web Assembly: 4
-```
-
-This isn't currently used here for building wapytho, but it's an extremely powerful tool.  \(For example, I used it with JSage to get the first build of the NTL library for Web Assembly...\)
-
-### Run a script via web assembly Python from the CLI
-
-```sh
-~/wapython$ echo "import sys; print(f'hi from {sys.platform}')" > a.py
-~/wapython$ bin/wapython `pwd`/a.py
-hi from wasi
-```
-
-## Build wapython from source
+## More about building from source
 
 ### How to build
 
@@ -159,6 +140,30 @@ Unlike some systems, where everything is built and installed into a single `pref
 ### Native and Wasm
 
 The build typically create directories `dist/native`and `dist/wasm.` The `dist/native` artifacts are only of value on the computer where you ran the build, since they are architecture dependent and can easily depend on libraries on your system. In contrast, the `dist/wasm` artifacts are platform independent. They can be used nearly everywhere: on servers via WASM, on ARM computers \(e.g., aarch64 linux, Apple Silicon, etc.\), and in any modern web browser \(though many details remain, obviously\).
+
+### Standalone WASM executables
+
+The bin directory has scripts `zcc` and `z++` that are C and C\+\+ compiler wrappers around Zig \+ Node.  They create binaries that you can run on the command line as normal.  Under the hood there's a wrapper script that calls node.js and the wasi runtime.
+
+```sh
+$ . bin/env.sh
+$ echo 'int main() { printf("hello from Web Assembly: %d\n", 2+2); }' > a.c
+$ zcc a.c
+$ ls -l
+a.c  a.out  a.out.wasm  ...
+$ ./a.out   # this actually runs nodejs + @wapython/wasm
+hello from Web Assembly: 4
+```
+
+This isn't currently used here for building wapytho, but it's an extremely powerful tool.  \(For example, I used it with JSage to get the first build of the NTL library for Web Assembly...\)
+
+### Run a script via web assembly Python from the CLI
+
+```sh
+~/wapython$ echo "import sys; print(f'hi from {sys.platform}')" > a.py
+~/wapython$ bin/wapython `pwd`/a.py
+hi from wasi
+```
 
 ### Contact
 
