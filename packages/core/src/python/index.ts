@@ -31,7 +31,7 @@ export async function init() {
         zipfile: "python/python311.zip",
         mountpoint: "/pythonhome/lib/python3.11",
       },
-      //{ type: "dev" },
+      { type: "dev" },
       { type: "native" }, // provides stdout,stderr natively, for now...
     ],
     //traceSyscalls: true,

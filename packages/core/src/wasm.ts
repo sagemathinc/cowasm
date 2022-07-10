@@ -4,7 +4,7 @@ import bindings from "@wapython/wasi/dist/bindings/node";
 import { reuseInFlight } from "async-await-utils/hof";
 import { readFile as readFile0 } from "fs";
 import { promisify } from "util";
-import { dirname, join } from "path";
+import { dirname, isAbsolute, join } from "path";
 import callsite from "callsite";
 
 const readFile = promisify(readFile0);
@@ -41,7 +41,7 @@ async function doWasmImport(
     return cache[name];
   }
   const t = new Date().valueOf();
-  if (!name.startsWith("/")) {
+  if (!isAbsolute(name)) {
     throw Error(`name must be an absolute path -- ${name}`);
   }
   const pathToWasm = `${name}${name.endsWith(".wasm") ? "" : ".wasm"}`;
@@ -173,7 +173,7 @@ export default async function wasmImport(
   options: Options = {}
 ): Promise<WasmInstance> {
   const path = dirname(callsite()[1]?.getFileName() ?? "");
-  if (!name.startsWith("/")) {
+  if (!isAbsolute(name)) {
     // it's critical to make this canonical BEFORE calling the debounced function,
     // or randomly otherwise end up with same module imported twice, which will
     // result in a "hellish nightmare" of subtle bugs.
@@ -182,7 +182,7 @@ export default async function wasmImport(
   // also fix zip path, if necessary:
   for (const X of options.fs ?? []) {
     if (X.type == "zip") {
-      if (!X.zipfile.startsWith("/")) {
+      if (!isAbsolute(X.zipfile)) {
         X.zipfile = join(path, X.zipfile);
       }
     }
