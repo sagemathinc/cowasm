@@ -1,5 +1,6 @@
 import wasmImport, { WasmInstance } from "../wasm";
 import { zipfs } from "@wapython/wasi";
+import * as nativeFs from "fs";
 
 export let wasm: WasmInstance | undefined = undefined;
 
@@ -18,18 +19,24 @@ export function repr(str: string): string {
 //   //return JSON.parse(wasm.callWithString("toJSON", str));
 // }
 
+export let fs: any = undefined;
 export async function init() {
   if (wasm != null) {
     // already initialized
     return;
   }
-  const fs = await zipfs(
-    "/home/user/wapython/packages/cpython/dist/wasm/lib/dist/python311.zip",
-    "/home/user/wapython/packages/cpython/dist/wasm/lib/python3.11"
-  );
+  if (false) {
+    fs = await zipfs(
+      "/home/user/wapython/packages/cpython/dist/wasm/lib/dist/python311.zip",
+      "/home/user/wapython/packages/cpython/dist/wasm/lib/python3.11"
+    );
+  } else {
+    fs = nativeFs;
+  }
   wasm = await wasmImport("python/python.wasm", {
     init: (wasm) => wasm.exports.init(),
-    //bindings: { fs },
+    env: { PYTHONHOME: "/home/user/wapython/packages/cpython/dist/wasm/" },
+    bindings: { fs },
     //traceSyscalls: true,
   });
 }

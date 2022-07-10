@@ -454,7 +454,7 @@ export default class WASI {
 
     const CHECK_FD = (fd: number, rights: bigint) => {
       const stats = stat(this, fd);
-      // console.log(`CHECK_FD: stats.real: ${stats.real}, stats.path:`, stats.path);
+      //console.log(`CHECK_FD: stats.real: ${stats.real}, stats.path:`, stats.path);
       if (rights !== BigInt(0) && (stats.rights.base & rights) === BigInt(0)) {
         throw new WASIError(WASI_EPERM);
       }
@@ -1195,6 +1195,7 @@ export default class WASI {
             pathPtr,
             pathLen
           ).toString();
+          console.log("** openpath: p = ", p);
           const fullUnresolved = path.resolve(stats.path, p);
           if (path.relative(stats.path, fullUnresolved).startsWith("..")) {
             return WASI_ENOTCAPABLE;
@@ -1209,10 +1210,10 @@ export default class WASI {
             if ((e as any)?.code === "ENOENT") {
               full = fullUnresolved;
             } else {
+              console.log("** openpath FAIL: p = ", p, e);
               throw e;
             }
           }
-
           /* check if the file is a directory (unless opening for write,
            * in which case the file may not exist and should be created) */
           let isDirectory;
@@ -1227,6 +1228,7 @@ export default class WASI {
             realfd = fs.openSync(full, noflags);
           }
           const newfd = [...this.FD_MAP.keys()].reverse()[0] + 1;
+          console.log(`** openpath got fd: p='${p}', fd=${newfd}`);
           this.FD_MAP.set(newfd, {
             real: realfd,
             filetype: undefined,
@@ -1570,4 +1572,3 @@ export default class WASI {
     }
   }
 }
-

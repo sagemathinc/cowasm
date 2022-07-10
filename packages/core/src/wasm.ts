@@ -20,7 +20,8 @@ function recvString(wasm, ptr, len) {
 
 interface Options {
   noWasi?: boolean; // if false, include wasi
-  env?: object; // functions to include in the environment
+  wasmEnv?: object; // functions to include in the environment
+  env?: { [x: string]: string }; // environment variables
   dir?: string | null; // WASI pre-opened directory; default is to preopen /, i.e., full filesystem; explicitly set as null to sandbox.
   traceSyscalls?: boolean;
   time?: boolean;
@@ -57,7 +58,7 @@ async function doWasmImport(
     },
   };
 
-  const wasmOpts: any = { env: { ...wasmEnv, ...options.env } };
+  const wasmOpts: any = { env: { ...wasmEnv, ...options.wasmEnv } };
 
   let wasm;
 
@@ -96,7 +97,7 @@ async function doWasmImport(
     const opts: WASIConfig = {
       bindings,
       args: process.argv,
-      env: process.env,
+      env: options.env,
       traceSyscalls: options.traceSyscalls,
     };
     if (options.dir === null) {
