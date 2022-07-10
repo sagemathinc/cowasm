@@ -1,0 +1,33 @@
+{
+  "name": "python-wasm",
+  "version": "0.0.1",
+  "description": "WebAssembly Python",
+  "main": "dist/index.js",
+  "files": ["dist/*", "README.md", "package.json", "tsconfig.json", "Makefile"],
+  "scripts": {
+    "clean": "make clean",
+    "build": "npx tsc",
+    "tsc": "npx tsc -w",
+    "test": "jest ./dist",
+    "test-watch": "jest --watch ./dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/wapython.git"
+  },
+  "keywords": ["number", "theory"],
+  "author": "William Stein",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/wapython/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/wapython/tree/main/packages/python-wasm",
+  "workspaces": ["../wasi", "../core"],
+  "dependencies": {
+    "@wapython/wasi": "^0.15.0",
+    "@wapython/core": "^0.2.3"
+  },
+  "devDependencies": {
+    "typescript": "^4.7.4"
+  }
+}
