@@ -11,8 +11,8 @@ AUTHOR:  [William Stein](https://github.com/williamstein/)
 ## Quick start \- install from npm and use in node.js
 
 ```sh
-wstein@max % mkdir wapython && cd wapython && npm init -y && npm install @wapython/core
-
+wstein@max % mkdir wapython && cd wapython && npm init -y
+wstein@max % npm install @wapython/core
 wstein@max % node  # for older node, use "node --experimental-wasm-bigint"
 Welcome to Node.js v16.13.0.
 Type ".help" for more information.

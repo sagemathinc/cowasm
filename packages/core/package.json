@@ -1,6 +1,6 @@
 {
   "name": "@wapython/core",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "wapython -- Web Assembly Python Core",
   "main": "dist/index.js",
   "files": ["dist/*", "README.md", "package.json", "tsconfig.json", "Makefile"],
