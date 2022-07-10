@@ -2,18 +2,8 @@
   "name": "@wapython/core",
   "version": "0.0.2",
   "description": "wapython -- Web Assembly Python Core",
-  "exports": {
-    ".": "./dist/index.js",
-    "./*": "./dist/*.js",
-    "./python": "./dist/python/index.js"
-  },
-  "files": [
-    "dist/*",
-    "README.md",
-    "package.json",
-    "tsconfig.json",
-    "Makefile"
-  ],
+  "main": "dist/index.js",
+  "files": ["dist/*", "README.md", "package.json", "tsconfig.json", "Makefile"],
   "scripts": {
     "build": "make all",
     "clean": "make clean",
@@ -25,19 +15,14 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/wapython.git"
   },
-  "keywords": [
-    "number",
-    "theory"
-  ],
+  "keywords": ["number", "theory"],
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/wapython/issues"
   },
   "homepage": "https://github.com/sagemathinc/wapython/tree/main/packages/core",
-  "workspaces": [
-    "../wasi"
-  ],
+  "workspaces": ["../wasi"],
   "dependencies": {
     "@wapython/wasi": "^0.14.0",
     "async-await-utils": "^3.0.1",

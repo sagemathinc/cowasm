@@ -1,4 +1,4 @@
-import { WASI, WASIConfig } from "./index";
+import WASI, { WASIConfig } from "./wasi";
 import nodeBindings from "./bindings/node";
 
 import { readFile as readFile0 } from "fs";

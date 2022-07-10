@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/jsage.git"
+    "url": "git+https://github.com/sagemathinc/wapython.git"
   },
   "publishConfig": {
     "access": "public"
@@ -36,13 +36,16 @@
   "author": "William Stein <wstein@sagemath.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sagemathinc/jsage/issues"
+    "url": "https://github.com/sagemathinc/wapython/issues"
   },
-  "homepage": "https://github.com/sagemathinc/JSage/tree/main/packages/wasi",
+  "homepage": "https://github.com/sagemathinc/wapython/tree/main/packages/wasi",
   "dependencies": {
     "browser-hrtime": "^1.1.8",
+    "fflate-unzip": "^0.7.0",
+    "memfs": "^3.4.7",
     "path-browserify": "^1.0.0",
-    "randomfill": "^1.0.4"
+    "randomfill": "^1.0.4",
+    "unionfs": "^4.4.0"
   },
   "devDependencies": {
     "@types/node": "^16.11.12",

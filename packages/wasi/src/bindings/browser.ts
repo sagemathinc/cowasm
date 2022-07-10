@@ -3,7 +3,7 @@ import { randomFillSync } from "randomfill";
 import path from "path-browserify";
 import hrtime from "browser-hrtime";
 
-import { WASIBindings, WASIExitError, WASIKillError } from "../index";
+import { WASIBindings, WASIExitError, WASIKillError } from "../wasi";
 
 const bindings: WASIBindings = {
   hrtime: hrtime.bigint,
