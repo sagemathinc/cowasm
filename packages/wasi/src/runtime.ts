@@ -1,11 +1,8 @@
-import WASI, { WASIConfig } from "./wasi";
+import WASI from "./wasi";
+import type { WASIConfig } from "./types";
 import nodeBindings from "./bindings/node";
-
-import { readFile as readFile0 } from "fs";
-import { promisify } from "util";
 import fs from "fs";
-
-const readFile = promisify(readFile0);
+import { readFile } from "fs/promises";
 
 interface Options {
   noWasi?: boolean; // if true, include wasi

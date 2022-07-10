@@ -8,7 +8,7 @@ import unzip from "fflate-unzip";
 import { Volume, createFsFromVolume, fs as memfs, DirectoryJSON } from "memfs";
 import { Union } from "unionfs";
 import type * as FileSystem from "fs";
-import type { WASIBindings } from "./wasi";
+import type { WASIBindings } from "./types";
 
 export type { FileSystem };
 
