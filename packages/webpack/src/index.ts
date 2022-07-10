@@ -1,9 +1,17 @@
+import { python } from "@wapython/core";
+
 export {};
 
-function component() {
-  const element = document.createElement("div");
-  element.innerHTML = "Hello from webpack";
-  return element;
+async function demo() {
+  await python.init();
+  function component() {
+    const element = document.createElement("div");
+    element.innerHTML = `2 + 3 = ${python.repr("2+3")}`;
+    return element;
+  }
+
+  document.body.appendChild(component());
 }
 
-document.body.appendChild(component());
+
+demo();

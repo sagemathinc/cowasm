@@ -1,13 +1,8 @@
 import WASI, { createFileSystem } from "@wapython/wasi";
-import type { WASIConfig, FileSystemSpec } from "@wapython/wasi";
-import bindings from "@wapython/wasi/dist/bindings/node";
+import type { WASIConfig, FileSystemSpec, WASMBindings } from "@wapython/wasi";
 import { reuseInFlight } from "async-await-utils/hof";
-import { readFile as readFile0 } from "fs";
-import { promisify } from "util";
-import { dirname, isAbsolute, join } from "path";
-import callsite from "callsite";
-
-const readFile = promisify(readFile0);
+import WasmInstance from "./instance";
+import { isAbsolute } from "path";
 
 const textDecoder = new TextDecoder();
 function recvString(wasm, ptr, len) {
@@ -15,13 +10,14 @@ function recvString(wasm, ptr, len) {
   return textDecoder.decode(slice);
 }
 
-interface Options {
+export interface Options {
   noWasi?: boolean; // if false, include wasi
   wasmEnv?: object; // functions to include in the environment
   env?: { [name: string]: string }; // environment variables
   fs?: FileSystemSpec[]; // if not given, code has full native access to /
   time?: boolean;
-  init?: (wasm: WasmInstance) => void | Promise<void>; // initialization function that gets called when module first loaded.
+  // init = initialization function that gets called when module first loaded.
+  init?: (wasm: WasmInstance) => void | Promise<void>;
   traceSyscalls?: boolean;
   traceStubcalls?: "first" | true;
 }
@@ -30,11 +26,15 @@ const cache: { [name: string]: any } = {};
 
 type WasmImportFunction = (
   name: string,
+  source,
+  bindings: WASMBindings,
   options?: Options
 ) => Promise<WasmInstance>;
 
 async function doWasmImport(
   name: string,
+  source, // contents of the .wasm file
+  bindings: WASMBindings,
   options: Options = {}
 ): Promise<WasmInstance> {
   if (cache[name] != null) {
@@ -44,7 +44,6 @@ async function doWasmImport(
   if (!isAbsolute(name)) {
     throw Error(`name must be an absolute path -- ${name}`);
   }
-  const pathToWasm = `${name}${name.endsWith(".wasm") ? "" : ".wasm"}`;
 
   const wasmEnv = {
     reportError: (ptr, len: number) => {
@@ -133,7 +132,9 @@ async function doWasmImport(
     },
   });
 
-  const source = await readFile(pathToWasm);
+  if (source == null) {
+    throw Error("source must be defined for now...");
+  }
   const typedArray = new Uint8Array(source);
   const result = await WebAssembly.instantiate(typedArray, wasmOpts);
 
@@ -164,86 +165,10 @@ async function doWasmImport(
   return wasm;
 }
 
-const wasmImportDebounced: WasmImportFunction = reuseInFlight(doWasmImport, {
+const wasmImport: WasmImportFunction = reuseInFlight(doWasmImport, {
   createKey: (args) => args[0],
 });
-
-export default async function wasmImport(
-  name: string,
-  options: Options = {}
-): Promise<WasmInstance> {
-  const path = dirname(join(callsite()[1]?.getFileName() ?? "", '..'));
-  if (!isAbsolute(name)) {
-    // it's critical to make this canonical BEFORE calling the debounced function,
-    // or randomly otherwise end up with same module imported twice, which will
-    // result in a "hellish nightmare" of subtle bugs.
-    name = join(path, name);
-  }
-  // also fix zip path, if necessary and read in any zip files (so they can be loaded into memfs).
-  const fs: FileSystemSpec[] = [];
-  for (const X of options.fs ?? []) {
-    if (X.type == "zipfile") {
-      if (!isAbsolute(X.zipfile)) {
-        X.zipfile = join(path, X.zipfile);
-      }
-      const Y = {
-        type: "zip",
-        data: await readFile(X.zipfile),
-        mountpoint: X.mountpoint,
-      } as FileSystemSpec;
-      fs.push(Y);
-    } else {
-      fs.push(X);
-    }
-  }
-  return await wasmImportDebounced(name, { ...options, fs });
-}
-
-const encoder = new TextEncoder();
-
-export class WasmInstance {
-  result: any = undefined;
-  exports: any;
-  fs?: FileSystem;
-
-  constructor(exports, fs?: FileSystem) {
-    this.exports = exports;
-    this.fs = fs;
-  }
-
-  private stringToCharStar(str: string): number {
-    // Caller MUST free the returned char* from stringToU8 using wasm.c_free!
-    const strAsArray = encoder.encode(str);
-    const len = strAsArray.length + 1;
-    const ptr = this.exports.c_malloc(len);
-    const array = new Int8Array(this.exports.memory.buffer, ptr, len);
-    array.set(strAsArray);
-    array[len - 1] = 0;
-    return ptr;
-  }
-
-  public callWithString(name: string, str: string, ...args): any {
-    this.result = undefined;
-    const ptr = this.stringToCharStar(str);
-    let r;
-    try {
-      const f = this.exports[name];
-      if (f == null) {
-        throw Error(`no function ${name} defined in wasm module`);
-      }
-      // @ts-ignore
-      r = f(ptr, ...args);
-    } finally {
-      // @ts-ignore
-      this.exports.c_free(ptr);
-    }
-    return this.result ?? r;
-  }
-}
-
-export function run(filename: string) {
-  wasmImport(filename);
-}
+export default wasmImport;
 
 const stubUsed = new Set<string>([]);
 function stub(functionName, behavior, args, firstOnly) {

@@ -20,19 +20,25 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/wapython.git"
   },
-  "keywords": ["python", "webassembly"],
+  "keywords": [
+    "python",
+    "webassembly"
+  ],
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/wapython/issues"
   },
   "homepage": "https://github.com/sagemathinc/wapython/tree/main/packages/webpack",
-  "workspaces": ["../core"],
+  "workspaces": [
+    "../core"
+  ],
   "dependencies": {
     "@wapython/core": "^0.2.3"
   },
   "devDependencies": {
     "html-webpack-plugin": "^5.5.0",
+    "path-browserify": "^1.0.1",
     "ts-loader": "^9.3.1",
     "typescript": "^4.7.4",
     "webpack": "^5.73.0",
