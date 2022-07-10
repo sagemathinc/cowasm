@@ -167,7 +167,26 @@ This isn't currently used here for building wapytho, but it's an extremely power
 hi from wasi
 ```
 
-### Contact
+## Benchmarks
+
+There is a collection of cpu\-intensive benchmarks in [packages/jpython/bench](./packages/jpython/bench), which you can run under cpython, jpython, wapython, pypy, etc., by running e.g., `python `pwd`/all.py`. 
+
+On x86\_64 Linux, here are some grand total times.  The timings are pretty stable, and the parameters of the benchmarks are chosen so a single benchmark doesn't unduly impact the results \(e.g., it is trivial to game any such benchmark by adjusting parameters\).
+
+| Python  | x86_64 Linux |  MacOS M1 max | aarch64 Linux (docker on M1 max) |
+| :------------ |:---------------:|:---------------:|:---------------:|
+| PyPy 3.9.x (Python reimplemented with a JIT)   |    2997 ms     |  2127 ms |  1514 ms (ver 3.6.9) |
+| jpython (Javascript Python) |    6909 ms   |  2876 ms |  4424 ms  | 
+| Native CPython 3.8.10     | 12095 ms | 5728 ms   | 5608 ms |
+| WebAssembly CPython (wapython) | 23109 ms |   12171 ms|  12909 ms |
+
+<br/>
+
+The quick summary is that in each case pypy is twice as fast as jpython, jpython is twice as fast as cpython, and cpython is twice as fast as wapython.  However, when you study the individual benchmarks, there are some significant differences.  E.g., in `brython.py` there is a benchmark "create instance of simple class" and it typically takes 4x\-5x longer in WebAssembly versus native CPython.
+
+---
+
+## Contact
 
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) if you find this interesting and want to help out. **This is an open source 3\-clause BSD licensed project.**
 
