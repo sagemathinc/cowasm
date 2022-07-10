@@ -25,7 +25,7 @@ export async function init() {
     // already initialized
     return;
   }
-  if (false) {
+  if (true) {
     fs = await zipfs(
       "/home/user/wapython/packages/cpython/dist/wasm/lib/dist/python311.zip",
       "/home/user/wapython/packages/cpython/dist/wasm/lib/python3.11"

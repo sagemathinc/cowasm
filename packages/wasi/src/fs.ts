@@ -11,7 +11,6 @@ export async function zipfs(path: string, directory: string = "/") {
   const zip = await createZipfs(path, directory);
   (ufs as any).constants = zip.constants;
   ufs.use(zip as any);
-  ufs.use((await os_py()) as any);
   ufs.use(devices() as any);   // last one checked
   return ufs;
 }
@@ -38,15 +37,4 @@ async function createZipfs(path: string, directory: string = "/") {
   const data = await readFile(path);
   await unzip(data, { to: { fs, directory } });
   return fs;
-}
-
-async function os_py() {
-  const vol = Volume.fromJSON({
-    "/home/user/wapython/packages/cpython/dist/wasm/lib/python3.11/os.py": (
-      await readFile(
-        "/home/user/wapython/packages/cpython/dist/wasm/lib/dist/python3.11/os.py"
-      )
-    ).toString(),
-  });
-  return createFsFromVolume(vol);
 }
