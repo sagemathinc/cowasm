@@ -1,4 +1,5 @@
-import { exec, repr, init } from "./index";
+import { exec, repr } from "./index";
+import { init } from "./node";
 
 beforeEach(async () => {
   await init();

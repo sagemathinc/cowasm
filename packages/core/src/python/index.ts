@@ -1,4 +1,4 @@
-import wasmImport, { WasmInstance } from "../wasm/import-node";
+import type WasmInstance from "../wasm/instance";
 
 export let wasm: WasmInstance | undefined = undefined;
 
@@ -12,12 +12,7 @@ export function repr(str: string): string {
   return wasm.callWithString("eval", str) as string;
 }
 
-// export function toObject(str: string): object {
-//   if (wasm == null) throw Error("call init");
-//   //return JSON.parse(wasm.callWithString("toJSON", str));
-// }
-
-export async function init() {
+export async function _init(wasmImport, fs) {
   if (wasm != null) {
     // already initialized
     return;
@@ -25,18 +20,8 @@ export async function init() {
   wasm = await wasmImport("python/python.wasm", {
     init: (wasm) => wasm.exports.init(),
     env: { PYTHONHOME: "/pythonhome" },
-    fs: [
-      {
-        type: "zipfile",
-        zipfile: "python/python311.zip",
-        mountpoint: "/pythonhome/lib/python3.11",
-      },
-      { type: "dev" }, // always include this -- it is necessary for python to start when using nodejs windows, but doesn't hurt on linux/macos.
-      { type: "native" }, // provides stdout,stderr natively, for now...
-    ],
+    fs,
     //traceSyscalls: true,
     //traceStubcalls: 'first',
   });
 }
-
-init();
