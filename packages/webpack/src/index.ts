@@ -1,7 +1,6 @@
 window.process = require("process/");
 window.Buffer = require("buffer/").Buffer;
 
-//import python from "@wapython/core/browser";
 const python = require("@wapython/core");
 (window as any).python = python;
 

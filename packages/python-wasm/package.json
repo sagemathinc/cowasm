@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "make clean",
     "build": "npx tsc",
-    "tsc": "npx tsc -w",
+    "tsc": "npx tsc -w"
   },
   "repository": {
     "type": "git",
