@@ -28,6 +28,13 @@ interface ZipFsFile {
   mountpoint: string;
 }
 
+interface ZipFsUrl {
+  // has to be converted to ZipFs before passed in here.
+  type: "zipurl";
+  zipurl: string;
+  mountpoint: string;
+}
+
 interface ZipFs {
   type: "zip";
   data: Buffer;
@@ -39,7 +46,13 @@ interface MemFs {
   contents?: DirectoryJSON;
 }
 
-export type FileSystemSpec = NativeFs | ZipFs | ZipFsFile | MemFs | DevFs;
+export type FileSystemSpec =
+  | NativeFs
+  | ZipFs
+  | ZipFsFile
+  | ZipFsUrl
+  | MemFs
+  | DevFs;
 
 export async function createFileSystem(
   specs: FileSystemSpec[],
@@ -74,6 +87,8 @@ async function specToFs(
     return zipFs(spec.data, spec.mountpoint) as any;
   } else if (spec.type == "zipfile") {
     throw Error(`you must convert zipfile -- read ${spec.zipfile} into memory`);
+  } else if (spec.type == "zipurl") {
+    throw Error(`you must convert zipurl -- read ${spec.zipurl} into memory`);
   } else if (spec.type == "native") {
     // native = whatever is in bindings.
     return bindings.fs as any;

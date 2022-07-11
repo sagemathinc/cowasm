@@ -1,4 +1,3 @@
-// TODO
 import type WasmInstance from "./instance";
 export { WasmInstance };
 import wasmImport, { Options } from "./import";
@@ -12,18 +11,17 @@ export default async function wasmImportBrowser(
   // also fix zip path, if necessary and read in any zip files (so they can be loaded into memfs).
   const fs: FileSystemSpec[] = [];
   for (const X of options.fs ?? []) {
-    if (X.type == "zipfile") {
-      //       const Y = {
-      //         type: "zip",
-      //         data: await readFile(X.zipfile),
-      //         mountpoint: X.mountpoint,
-      //       } as FileSystemSpec;
-      //       fs.push(Y);
+    if (X.type == "zipurl") {
+      const Y = {
+        type: "zip",
+        data: await (await fetch(X.zipurl)).arrayBuffer(),
+        mountpoint: X.mountpoint,
+      } as FileSystemSpec;
+      fs.push(Y);
     } else {
       fs.push(X);
     }
   }
-  //const source = await readFile(name);
-  const source = "";
+  const source = await (await fetch(wasmUrl)).arrayBuffer();
   return await wasmImport(wasmUrl, source, bindings, { ...options, fs });
 }

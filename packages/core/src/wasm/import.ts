@@ -1,5 +1,5 @@
 import WASI, { createFileSystem } from "@wapython/wasi";
-import type { WASIConfig, FileSystemSpec, WASMBindings } from "@wapython/wasi";
+import type { WASIConfig, FileSystemSpec, WASIBindings } from "@wapython/wasi";
 import { reuseInFlight } from "async-await-utils/hof";
 import WasmInstance from "./instance";
 import { isAbsolute } from "path";
@@ -27,14 +27,14 @@ const cache: { [name: string]: any } = {};
 type WasmImportFunction = (
   name: string,
   source,
-  bindings: WASMBindings,
+  bindings: WASIBindings,
   options?: Options
 ) => Promise<WasmInstance>;
 
 async function doWasmImport(
   name: string,
   source, // contents of the .wasm file
-  bindings: WASMBindings,
+  bindings: WASIBindings,
   options: Options = {}
 ): Promise<WasmInstance> {
   if (cache[name] != null) {

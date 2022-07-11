@@ -13,7 +13,7 @@ const fs = [
 ] as FileSystemSpec[];
 
 export async function init() {
-  await _init(wasmImport, fs);
+  await _init("python/python.wasm", wasmImport, fs);
 }
 
 export { repr, exec, wasm };

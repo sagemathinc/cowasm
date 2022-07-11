@@ -177,12 +177,12 @@ On x86\_64 Linux, here are some grand total times.  The timings are pretty stabl
 | :------------ |:---------------:|:---------------:|:---------------:|
 | PyPy 3.9.x (Python reimplemented with a JIT)   |    2997 ms     |  2127 ms |  1514 ms (ver 3.6.9) |
 | jpython (Javascript Python) |    6909 ms   |  2876 ms |  4424 ms  | 
-| Native CPython 3.8.10     | 12095 ms | 5728 ms   | 5608 ms |
+| Native CPython 3.11     | 9284 ms | 4491 ms | 4607 ms |
 | WebAssembly CPython (wapython) | 23109 ms |   12171 ms|  12909 ms |
 
 <br/>
 
-The quick summary is that in each case pypy is twice as fast as jpython, jpython is twice as fast as cpython, and cpython is twice as fast as wapython.  However, when you study the individual benchmarks, there are some significant differences.  E.g., in `brython.py` there is a benchmark "create instance of simple class" and it typically takes 4x\-5x longer in WebAssembly versus native CPython.
+The quick summary is that in each case pypy is twice as fast as jpython, jpython is twice as fast as cpython, and _**native cpython is about 2.5x\-2.8x as fast as webassembly cpython**_.  However, when you study the individual benchmarks, there are some significant differences.  E.g., in `brython.py` there is a benchmark "create instance of simple class" and it typically takes 4x\-5x longer in WebAssembly versus native CPython.
 
 ---
 
