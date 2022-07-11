@@ -2,8 +2,13 @@
   "name": "@wapython/core",
   "version": "0.2.3",
   "description": "wapython -- Web Assembly Python Core",
+  "main-exports-comment":"Nodejs uses 'main', whereas webpack uses 'exports', which is why this works nicely.",
   "main": "./dist/python/node.js",
-  "browser": "./dist/python/browser.js",
+  "exports": {
+    ".": "./dist/python/browser.js",
+    "./python.wasm": "./dist/python/python.wasm",
+    "./python.zip": "./dist/python/python.zip"
+  },
   "files": ["dist/*", "README.md", "package.json", "tsconfig.json", "Makefile"],
   "scripts": {
     "build": "make all",

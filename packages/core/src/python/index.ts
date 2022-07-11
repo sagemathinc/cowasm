@@ -30,9 +30,9 @@ export async function _init(
   }
   wasm = await wasmImport(python_wasm, {
     init: (wasm) => wasm.exports.init(),
-    env: { PYTHONHOME: "/pythonhome" },
+    env: { PYTHONHOME: "/usr" },
     fs,
-    //traceSyscalls: true,
-    //traceStubcalls: 'first',
+    // traceSyscalls: true,
+    // traceStubcalls: 'first',
   });
 }

@@ -2,11 +2,18 @@
 This is a fairly minimal webpack config file for using wapython in a frontend
 Javascript project that uses WebPack 5 (and Typescript).
 
-The one nontrivial thing is the list resolve.fallback below, which are basically
-the node.js polyfills for the browser. This is needed to be able to use the memfs
+KEY POINTS:
+
+- The list resolve.fallback below are basically the node.js polyfills for
+the browser. This is needed to be able to use the memfs
 package, which our WASI support relies on. For your own projects, you'll need to
 merge this list in, either using false or if you need that polyfill for some
 other reason, keep your own config.
+
+- asset/resource rules are to serve the wasm and zip files.  This requires
+extra configuration, but is much more efficient than embedding these files
+in source code!
+
 */
 
 const { resolve } = require("path");
@@ -33,18 +40,26 @@ module.exports = {
         use: "ts-loader",
         exclude: /node_modules/,
       },
+      {
+        test: /\.wasm$/,
+        type: "asset/resource",
+      },
+      {
+        test: /\.zip$/,
+        type: "asset/resource",
+      },
     ],
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
     fallback: {
-      process: false,
       url: false,
       assert: false,
       stream: false,
-      util: false,
-      buffer: false,
-      events: false,
+      process: require.resolve("process/"),
+      util: require.resolve("util/"),
+      events: require.resolve("events/"),
+      buffer: require.resolve("buffer/"),
       path: require.resolve("path-browserify"),
     },
   },

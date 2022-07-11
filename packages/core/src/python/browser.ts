@@ -9,14 +9,14 @@ export async function init({
   zipUrl: string;
   wasmUrl: string;
 }) {
-  const fs = [
+  const fs : FileSystemSpec[] = [
     {
       type: "zipurl",
-      url: zipUrl,
-      mountpoint: "/pythonhome/lib/python3.11",
+      zipurl: zipUrl,
+      mountpoint: "/usr/lib/python3.11",
     },
-    { type: "dev" },
-  ] as FileSystemSpec[];
+    { type: "dev"},
+  ];
 
   await _init(wasmUrl, wasmImport, fs);
 }

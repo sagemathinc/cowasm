@@ -360,7 +360,12 @@ export default class WASI {
         const ptr = iovs + i * 8;
         const buf = this.view.getUint32(ptr, true);
         const bufLen = this.view.getUint32(ptr + 4, true);
-        return new Uint8Array(this.memory.buffer, buf, bufLen);
+        const buffer = new Uint8Array(this.memory.buffer, buf, bufLen);
+        // We set _isBuffer so that the Buffer polyfill (https://www.npmjs.com/package/buffer)
+        // sees this as a Before.  This is needed so that memfs works in the browser, and this
+        // is harmless in node.js.
+        (buffer as any)._isBuffer = true;
+        return buffer;
       });
 
       return buffers;

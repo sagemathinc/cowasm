@@ -2,7 +2,6 @@ import WASI, { createFileSystem } from "@wapython/wasi";
 import type { WASIConfig, FileSystemSpec, WASIBindings } from "@wapython/wasi";
 import { reuseInFlight } from "async-await-utils/hof";
 import WasmInstance from "./instance";
-import { isAbsolute } from "path";
 
 const textDecoder = new TextDecoder();
 function recvString(wasm, ptr, len) {
@@ -32,8 +31,8 @@ type WasmImportFunction = (
 ) => Promise<WasmInstance>;
 
 async function doWasmImport(
-  name: string,
-  source, // contents of the .wasm file
+  name: string,  // this is only used for caching and printing
+  source: Buffer | Promise<any>, // contents of the .wasm file or promise returned by fetch (in browser).
   bindings: WASIBindings,
   options: Options = {}
 ): Promise<WasmInstance> {
@@ -41,10 +40,6 @@ async function doWasmImport(
     return cache[name];
   }
   const t = new Date().valueOf();
-  if (!isAbsolute(name)) {
-    throw Error(`name must be an absolute path -- ${name}`);
-  }
-
   const wasmEnv = {
     reportError: (ptr, len: number) => {
       // @ts-ignore
@@ -135,8 +130,16 @@ async function doWasmImport(
   if (source == null) {
     throw Error("source must be defined for now...");
   }
-  const typedArray = new Uint8Array(source);
-  const result = await WebAssembly.instantiate(typedArray, wasmOpts);
+  let result;
+  if (source instanceof Promise) {
+    // This is in a web browser, which has WebAssembly.instantiateStreaming
+    // whereas node doesn't.
+    result = await WebAssembly.instantiateStreaming(source, wasmOpts);
+  } else {
+    // This is in node, or in browser without doing a streaming load.
+    const typedArray = new Uint8Array(source);
+    result = await WebAssembly.instantiate(typedArray, wasmOpts);
+  }
 
   if (wasi != null) {
     wasi.start(result.instance);
@@ -154,6 +157,15 @@ async function doWasmImport(
   wasm = new WasmInstance(result.instance.exports, fs);
   if (options.init != null) {
     await options.init(wasm);
+    // Uncomment this for low level debugging, so that the broken wasm
+    // module gets returned.
+    /*
+    try {
+      await options.init(wasm);
+    } catch (err) {
+      console.warn(`WARNING: init of ${name} failed`, err);
+    }
+    */
   }
 
   cache[name] = wasm;

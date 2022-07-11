@@ -22,6 +22,8 @@ export default async function wasmImportBrowser(
       fs.push(X);
     }
   }
-  const source = await (await fetch(wasmUrl)).arrayBuffer();
-  return await wasmImport(wasmUrl, source, bindings, { ...options, fs });
+  return await wasmImport(wasmUrl, fetch(wasmUrl), bindings, {
+    ...options,
+    fs,
+  });
 }

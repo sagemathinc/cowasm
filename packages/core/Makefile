@@ -30,13 +30,13 @@ test-zig:
 ####################
 
 test-python:
-	cd src && ${TEST} python/python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.11  -lpython3.11 -lc  #-O ReleaseFast
+	cd src && ${TEST} python/python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.11  -lpython3.11 -lc   ${OPT}
 
 ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig
 	cd src && zig build-lib -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} ${PYTHON_WASM}/lib/libpython3.11.a ${POSIX_WASM}/libwasmposix.a ${WASM_CFLAGS} python/interface.zig  ${ZIG_PKG}
 	mkdir -p ${DIST}/python
 	mv src/interface.wasm ${DIST}/python/python.wasm
-	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/
+	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
 
 .PHONEY: python
 python: ${DIST}/python/python.wasm

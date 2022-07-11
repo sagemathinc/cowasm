@@ -1,6 +1,7 @@
-# Web Python Examples
+# Webpack Python Examples
 
-- **python\-wasm:** minimal example of using WebAssembly Python 3.11 in a webpage
-- **jspython:** minimal example using the jspython Javascript\-based Python interpreter in a webpage
-- **webpack5** example showing how to embed these in your page
+This module shows how to use WebAssembly Python in a webpage.
 
+## Notes about using typescript
+
+- The `index.d.ts` is needed so you can import the wasm and zip files, as [explained here](https://stackoverflow.com/questions/43638454/webpack-typescript-image-import).
