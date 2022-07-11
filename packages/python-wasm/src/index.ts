@@ -1,1 +1,2 @@
-export { python } from "@wapython/core";
+import * as python from "@wapython/core";
+export default python;
