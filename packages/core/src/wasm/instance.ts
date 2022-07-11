@@ -1,3 +1,4 @@
+// @ts-ignore -- it thinks FileSystem isn't used, even though it is below.  Weird.
 import type { FileSystem } from "@wapython/wasi";
 
 const encoder = new TextEncoder();

@@ -12,7 +12,7 @@ wstein@max % mkdir wapython && cd wapython && npm init -y && npm install @wapyth
 wstein@max % node  # for older node, use "node --experimental-wasm-bigint"
 Welcome to Node.js v16.13.0.
 Type ".help" for more information.
-> {python} = require('@wapython/core')
+> python = require('@wapython/core')
 > python.exec('a=2+3; a')    # outputs to stdout
 5
 > s = python.repr('a'); s # javascript string

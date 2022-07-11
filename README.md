@@ -16,7 +16,7 @@ wstein@max % npm install @wapython/core
 wstein@max % node  # for older node, use "node --experimental-wasm-bigint"
 Welcome to Node.js v16.13.0.
 Type ".help" for more information.
-> {python} = require('@wapython/core')
+> python = require('@wapython/core')
 > python.exec('a=2+3; a') # outputs to stdout
 5
 > s = python.repr('a'); s # javascript string
@@ -76,7 +76,7 @@ wstein@max % make test
 wstein@max % node
 Welcome to Node.js v16.13.0.
 Type ".help" for more information.
-> {python} = require('@wapython/core')
+> python = require('@wapython/core')
 > python.exec('2+2')
 4
 > python.exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
@@ -93,10 +93,10 @@ Welcome to JPython.  Using Node.js v16.13.0.
 49999995000000 0.06099987030029297
 
 # You can use WAPython from JPython:
->>> wapython = require('@wapython/core').python
+>>> wapython = require('@wapython/core')
 >>> wapython.exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
 
-# One is genuine Python, whereas the other is really a Python-to-Javascript compiler,
+# One is genuine CPython, whereas the other is really a Python-to-Javascript compiler,
 # so semantics are different:
 >>> 3**200
 2.6561398887587478e+95

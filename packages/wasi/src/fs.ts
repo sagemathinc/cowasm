@@ -2,9 +2,14 @@
 Create a union filesystem as described by a FileSystemSpec[].
 
 This code should not depend on anything that must run in node.js.
+
+Note that this is entirely synchronous code, e.g., the unzip code,
+and that's justified because our WASM interpreter will likely get
+run in a different thread (a webworker) than the main thread, and
+this code is needed to initialize it before anything else can happen.
 */
 
-import unzip from "fflate-unzip";
+import unzip from "./unzip";
 import { Volume, createFsFromVolume, fs as memfs, DirectoryJSON } from "memfs";
 import { Union } from "unionfs";
 import type * as FileSystem from "fs";
@@ -54,10 +59,10 @@ export type FileSystemSpec =
   | MemFs
   | DevFs;
 
-export async function createFileSystem(
+export function createFileSystem(
   specs: FileSystemSpec[],
   bindings: WASIBindings
-): Promise<FileSystem> {
+): FileSystem {
   const ufs = new Union();
   (ufs as any).constants = memfs.constants;
   if (specs.length == 0) {
@@ -65,10 +70,10 @@ export async function createFileSystem(
   }
   if (specs.length == 1) {
     // don't use unionfs:
-    return await specToFs(specs[0], bindings);
+    return specToFs(specs[0], bindings);
   }
   for (const spec of specs) {
-    const fs: any = await specToFs(spec, bindings);
+    const fs: any = specToFs(spec, bindings);
     if (fs != null) {
       // e.g., native bindings may be null.
       ufs.use(fs);
@@ -77,10 +82,7 @@ export async function createFileSystem(
   return ufs as any;
 }
 
-async function specToFs(
-  spec: FileSystemSpec,
-  bindings: WASIBindings
-): Promise<FileSystem> {
+function specToFs(spec: FileSystemSpec, bindings: WASIBindings): FileSystem {
   // All these "as any" are because really nothing quite implements FileSystem yet!
   // See https://github.com/streamich/memfs/issues/735
   if (spec.type == "zip") {
@@ -117,9 +119,9 @@ function devFs() {
   return createFsFromVolume(vol);
 }
 
-async function zipFs(data: Buffer, directory: string = "/") {
+function zipFs(data: Buffer, directory: string = "/") {
   const fs = createFsFromVolume(new Volume()) as any;
-  await unzip(data, { to: { fs, directory } });
+  unzip({ data, fs, directory });
   return fs;
 }
 

@@ -1,14 +1,14 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "./dist/",
+    "outDir": "dist",
     "sourceMap": true,
+    "esModuleInterop": true,
     "module": "es6",
     "target": "es5",
+    "moduleResolution": "node",
     "jsx": "react",
-    "allowJs": true,
-    "moduleResolution": "node"
+    "allowJs": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "build", "dist"]

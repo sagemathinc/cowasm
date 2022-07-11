@@ -1,4 +1,4 @@
-import { python } from "@wapython/core";
+import python from "@wapython/core";
 
 export {};
 
@@ -12,6 +12,5 @@ async function demo() {
 
   document.body.appendChild(component());
 }
-
 
 demo();

@@ -103,7 +103,7 @@ async function doWasmImport(
     if (options.fs != null) {
       // explicit fs option given, so create the bindings.fs object, which is typically
       // a union of several filesystems...
-      fs = await createFileSystem(options.fs, bindings);
+      fs = createFileSystem(options.fs, bindings);
       opts.bindings = {
         ...bindings,
         fs,
