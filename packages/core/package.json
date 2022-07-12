@@ -3,12 +3,7 @@
   "version": "0.3.1",
   "description": "wapython -- Web Assembly Python Core",
   "main": "./dist/python/node.js",
-  "exports": {
-    ".": "./dist/python/node.js",
-    "./browser": "./dist/python/browser.js",
-    "./python.wasm": "./dist/python/python.wasm",
-    "./python.zip": "./dist/python/python.zip"
-  },
+  "browser": "./dist/python/browser.js",
   "files": ["dist/*", "README.md", "package.json", "tsconfig.json", "Makefile"],
   "scripts": {
     "build": "make all",

@@ -1,7 +1,5 @@
 # Webpack Python Examples
 
-This module shows how to use WebAssembly Python in a webpage.
+This is a simple example to show how to use WebAssembly Python in a web
+application that is built using [webpack](https://webpack.js.org/) (and Tyepscript).
 
-## Notes about using typescript
-
-- The `index.d.ts` is needed so you can import the wasm and zip files, as [explained here](https://stackoverflow.com/questions/43638454/webpack-typescript-image-import).
