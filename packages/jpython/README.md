@@ -1,5 +1,23 @@
 # JPython
 
+
+## Quickstart
+
+Try out the REPL:
+
+```sh
+$ npx jpython
+Welcome to JPython.  Using Node.js v16.13.0.  
+>>> 2 + 3
+5
+>>> sum(range(10**7))
+49999995000000
+>>> %time sum(range(10**7))
+49999995000000
+Wall time: 97ms
+```
+
+
 ## A Python implementation in Javascript for use by WAPython
 
 **History:** This is **built from RapydScript-ng** that I'm playing around with modifying for use by the wapython project. See https://github.com/kovidgoyal/rapydscript-ng for some helpful documentation.
@@ -52,19 +70,6 @@ python3.8: 6005 ms
 
 Notice that pypy3 is _**much**_ faster under Linux than MacOS on the exact same hardware.  Strangely, Jpython is significantly slower under Linux than under MacOS.  The node.js versions that are being used are identical, so this is kind of surprising.
 
-## How to try it out -- here's a little taste
-
-### Install
-
-Install into a temporary node.js directory:
-
-```bash
-$ mkdir wapython  # you can delete this later
-$ cd wapython
-$ npm init -y
-$ npm install @wapython/jpython
-```
-
 ### Math extensions \(like the Sage preparser\)
 
 The compiler can be modified with some more
@@ -86,7 +91,8 @@ $ npx jpython a.py
 
 ## Running a Benchmark
 
-Here's one benchmark on a MacOS M1 max laptop, where JPython comes out ahead:
+Here's one benchmark on a MacOS M1 max laptop, where JPython comes out ahead.
+You need to install from source to do this...
 
 ```sh
 # Use WAPython via nodejs:

@@ -27,9 +27,9 @@
     "url": "https://github.com/sagemathinc/wapython/issues"
   },
   "homepage": "https://github.com/sagemathinc/wapython/tree/main/packages/webpack",
-  "workspaces": ["../core"],
+  "workspaces": ["../python-wasm"],
   "devDependencies": {
-    "@wapython/core": "^0.3.1",
+    "python-wasm": "^0.4.0",
     "buffer": "^6.0.3",
     "events": "^3.3.0",
     "html-webpack-plugin": "^5.5.0",

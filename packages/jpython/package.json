@@ -1,7 +1,7 @@
 {
-  "name": "@wapython/jpython",
-  "version": "1.14.1",
-  "description": "A very lightweight Python implementation in Javascript with no Python dependency.",
+  "name": "jpython",
+  "version": "1.0.1",
+  "description": "A Python implementation in Javascript with no Python dependency.",
   "homepage": "https://github.com/sagemathinc/wapython/tree/main/packages/jpython",
   "keywords": ["javascript", "python", "language", "compiler"],
   "main": "tools/compiler.js",

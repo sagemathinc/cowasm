@@ -1,7 +1,8 @@
 window.process = require("process/");
 window.Buffer = require("buffer/").Buffer;
 
-import python from "@wapython/core";
+//import python from "python-wasm";
+const python = require("python-wasm");
 (window as any).python = python; // so you can play with this in your dev console.
 
 async function demo() {

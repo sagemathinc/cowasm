@@ -1,28 +1,28 @@
-# python-wasm
+# python\-wasm: WebAssembly CPython  for Node.js and the browser
 
-## Quickstart in Node.js
+See [the main repo](https://github.com/sagemathinc/wapython/blob/main/README.md) for more information. 
 
-```
-npm install python-wasm
-```
+## Using wapython from node.js
 
-Then
+The following should work with nodejs version 16.x on Linux, MacOS, and **native** Microsoft Windows.  \(NOTE: for node 14, use the `--experimental-wasm-bigint` flag.\) 
 
-```js
-$ node
-Welcome to Node.js v16.15.1.
+```sh
+wstein@max % mkdir wapython && cd wapython && npm init -y
+wstein@max % npm install python-wasm
+wstein@max % node
+Welcome to Node.js v16.13.0.
 Type ".help" for more information.
-> const python = require('python-wasm')
-> await python.init()
-> python.exec('a = 2 + 3; a')
+> python = require('pthon-wasm')
+> python.exec('a=2+3; a')    # outputs to stdout
 5
-> python.repr('a')
+> s = python.repr('a'); s # javascript string
 5
+> python.exec('import sys; sys.version')
+'3.11.0b3 (main, Jul  8 2022, 23:21:07) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 81f0e6c5b902ead84753490d'
 > python.exec('import sys; sys.platform')
 'wasi'
 ```
 
-## Webpack
+## Using python\-wasm in a web application
 
-See https://github.com/sagemathinc/wapython/tree/main/packages/webpack
-
+See https://github.com/sagemathinc/wapython/tree/main/packages/webpack for how to use Webpack5 with python\-wasm.

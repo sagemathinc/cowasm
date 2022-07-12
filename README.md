@@ -11,12 +11,14 @@ AUTHOR:  [William Stein](https://github.com/williamstein/)
 ## Quick start \- install from npm and use in node.js
 
 ```sh
-wstein@max % mkdir wapython && cd wapython && npm init -y
-wstein@max % npm install @wapython/core
+wstein@max % node --version
+v16.x   # If less then 16, install a newer version of node!
+wstein@max % mkdir test && cd test && npm init -y
+wstein@max % npm install python-wasm
 wstein@max % node  # for older node, use "node --experimental-wasm-bigint"
 Welcome to Node.js v16.13.0.
 Type ".help" for more information.
-> python = require('@wapython/core')
+> python = require('python-wasm')
 > python.exec('a=2+3; a') # outputs to stdout
 5
 > s = python.repr('a'); s # javascript string
@@ -66,9 +68,9 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> import sys; sys.platform
 'wasi'
 
-# Try out the newly built @wapython/core module, which is our
+# Try out the newly built python-wasm module, which is our
 # WebAssembly version of Python 3.11 that you can use via a library:
-wstein@max % cd packages/core
+wstein@max % cd packages/python-wasm
 # Run the WAPython test suite first:
 wstein@max % make test
 
@@ -76,32 +78,23 @@ wstein@max % make test
 wstein@max % node
 Welcome to Node.js v16.13.0.
 Type ".help" for more information.
-> python = require('@wapython/core')
+> python = require('.')
 > python.exec('2+2')
 4
 > python.exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
 49999995000000 1.0109999179840088
+```
 
-# Next try out JPython which is a Javascript-based JIT Python interpreter:
+Next try out JPython which is a Javascript-based JIT Python interpreter:
+```sh
 wstein@max % cd ../..
 wstein@max % bin/jpython
-Welcome to JPython.  Using Node.js v16.13.0.  
+Welcome to JPython.  Using Node.js v16.13.0.
 >>> 2+2
 4
-# Notice that it can be much faster than wapython:
+# Notice that it can be much faster than python-wasm:
 >>> import time; t=time.time(); print(sum(range(10**7)), time.time()-t)
 49999995000000 0.06099987030029297
-
-# You can use WAPython from JPython:
->>> wapython = require('@wapython/core')
->>> wapython.exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
-
-# One is genuine CPython, whereas the other is really a Python-to-Javascript compiler,
-# so semantics are different:
->>> 3**200
-2.6561398887587478e+95
->>> wapython.exec('3**200')
-265613988875874769338781322035779626829233452653394495974574961739092490901302182994384699044001
 ```
 
 ## What's the goal?

@@ -6,16 +6,10 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 all: python-wasm webpack
 
-
-packages/python-wasm/${BUILT}: core jpython
+packages/python-wasm/${BUILT}: cpython wasi zig wasm-posix
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 python-wasm: packages/python-wasm/${BUILT}
-
-packages/core/${BUILT}: cpython wasi zig wasm-posix
-	cd packages/core && make all
-.PHONY: core
-core: packages/core/${BUILT}
 
 .PHONY: zig
 zig:
@@ -56,13 +50,13 @@ packages/wasi/${BUILT}:
 wasi: packages/wasi/${BUILT}
 
 
-packages/jpython/${BUILT}: core
+packages/jpython/${BUILT}: python-wasm
 	cd packages/jpython && make all
 .PHONY: jpython
 jpython: packages/jpython/${BUILT}
 
 
-packages/webpack/${BUILT}: core jpython
+packages/webpack/${BUILT}: python-wasm jpython
 	cd packages/webpack && make all
 .PHONY: webpack
 webpack: packages/webpack/${BUILT}
@@ -77,18 +71,17 @@ docker-nocache:
 	docker build --no-cache -t wapython .
 
 clean:
-	cd packages/core && make clean
+	cd packages/python-wasm && make clean
 	cd packages/cpython && make clean
 	cd packages/jpython && make clean
 	cd packages/lzma && make clean
 	cd packages/openssl && make clean
-	cd packages/python-wasm && make clean
 	cd packages/wasi && make clean
 	cd packages/wasm-posix && make clean
 	cd packages/webpack && make clean
 	cd packages/zig && make clean
 	cd packages/zlib && make clean
 
-test: jpython core
+test: jpython python-wasm
 	cd packages/jpython && make test
-	cd packages/core && make test
+	cd packages/python-wasm && make test
