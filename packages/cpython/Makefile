@@ -15,6 +15,8 @@ ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
+WAPYTHON_BINARY = ${CWD}/../../bin/wapython
+
 # We only use zlib (not lzma) for native build, since liblzma widely available natively.
 
 export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
@@ -166,9 +168,18 @@ wasm: ${DIST_WASM}/.built
 
 
 # Use "make run-wasm" to run our WASM python at the command line.
+# You can also just run `wapython` in the top level bin/ directory.
 .PHONY: run-wasm
 run-wasm: ${DIST_WASM}/.built
-	wasmer run ${DIST_WASM}/bin/python3 --mapdir /:/
+	${WAPYTHON_BINARY}
+
+# Run the cpython test suite under WASM python.
+# TODO: excluding test_lzma.py right now, since it hangs forever.
+.PHONY: test-wasm
+test-wasm:
+	cd ${BUILD}/wasm/Lib/test && ls -d `pwd`/test_*.py | grep -v test_lzma.py | xargs -t -n 1 ${WAPYTHON_BINARY} 2>&1 | tee ${BUILD}/wasm/test.out && \
+	grep FAIL ${BUILD}/wasm/test.out
+	echo "See ${BUILD}/wasm/test.out"
 
 
 # Cleaning up

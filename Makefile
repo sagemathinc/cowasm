@@ -44,7 +44,7 @@ packages/zlib/${BUILT}: zig
 zlib: packages/zlib/${BUILT}
 
 
-packages/cpython/${BUILT}: wasm-posix zlib lzma zig
+packages/cpython/${BUILT}: wasm-posix zlib lzma zig wasi
 	cd packages/cpython && make all
 .PHONY: cpython
 cpython: packages/cpython/${BUILT}
