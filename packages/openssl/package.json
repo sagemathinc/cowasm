@@ -1,5 +1,5 @@
 {
-  "name": "@wapython/openssl",
+  "name": "@python-wasm/openssl",
   "version": "0.0.1",
   "description": "Python is a programming language that lets you work quickly and integrate systems more effectively.",
   "files": ["dist/*", "README.md", "src/*", "*.sh", "package.json"],
@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/wapython.git"
+    "url": "git+https://github.com/sagemathinc/python-wasm.git"
   },
   "keywords": ["python", "wasm", "emscripten"],
   "author": "William Stein",
   "bugs": {
-    "url": "https://github.com/sagemathinc/wapython/issues"
+    "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/wapython/tree/main/src/packages/openssl"
+  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/src/packages/openssl"
 }

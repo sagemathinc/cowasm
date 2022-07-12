@@ -1,21 +1,40 @@
-# WAPYTHON
+# python-wasm
 
-> _"WebAssembly & Python"_
+> _"WebAssembly Python"_
 
-URL: https://github.com/sagemathinc/wapython 
+URL: https://github.com/sagemathinc/python-wasm 
 
 AUTHOR:  [William Stein](https://github.com/williamstein/)
 
-[![Docker Image CI](https://github.com/sagemathinc/wapython/actions/workflows/docker-image.yml/badge.svg)](https://github.com/sagemathinc/wapython/actions/workflows/docker-image.yml)
+[![Docker Image CI](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml/badge.svg)](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml)
+
+## Quick Start
+
+```sh
+npm install python-wasm
+```
+
+Then from the nodejs REPL:
+
+```js
+> python = require('python-wasm')
+> await python.init()
+> python.exec('import sys; sys.version')
+'3.11.0b3 (main, Jul  8 2022, 23:21:07) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 81f0e6c5b902ead84753490d'
+> python.repr('sys.platform')
+'wasi'
+```
+
+You can also use python-wasm in your [web application via webpack](https://github.com/sagemathinc/python-wasm/tree/main/packages/webpack).
 
 ## Quick start \- install from npm and use in node.js
 
 ```sh
 wstein@max % node --version
-v16.x   # If less then 16, install a newer version of node!
+v16.x   # If less then 16, install a newer version of node or use node --experimental-wasm-bigint
 wstein@max % mkdir test && cd test && npm init -y
 wstein@max % npm install python-wasm
-wstein@max % node  # for older node, use "node --experimental-wasm-bigint"
+wstein@max % node
 Welcome to Node.js v16.13.0.
 Type ".help" for more information.
 > python = require('python-wasm')
@@ -25,55 +44,69 @@ Type ".help" for more information.
 5
 > python.exec('import sys; sys.version')
 '3.11.0b3 (main, Jul  8 2022, 23:21:07) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 81f0e6c5b902ead84753490d'
-> python.exec('import sys; sys.platform')
+> python.repr('sys.platform')
 'wasi'
+> python.exec('sum(range(10**7))')
+```
 
-# Also, to run Jpython:
-wstein@max % npm install @wapython/jpython
+This project also includes a Python-to-Javascript compiler:
+
+```sh
+npm install jpython
+```
+
+Try out the REPL:
+
+```sh
 wstein@max % npx jpython
 Welcome to JPython.  Using Node.js v16.13.0. 
 >>> 2+2
 4
+>>> sum(range(10**7))
+49999995000000
 ```
 
 See below for more examples.
-
-**There is no support for using wapython via webpack5 in your browser... yet.**
 
 ## Quick start - build from source
 
 ### Build
 
-To build everything from source, make sure your systemwide nodejs is at least version 16.x and that you have standard command line dev tools.  Then build, which [takes 15\-20 minutes:](https://github.com/sagemathinc/wapython/actions) 
+To build everything from source, make sure your system\-wide nodejs is at least version 16.x and that you have standard command line dev tools.  Then build, which [takes 15\-20 minutes:](https://github.com/sagemathinc/python-wasm/actions) 
 
 ```sh
 wstein@max % make
 ```
 
-I've tested this build on:
+This builds native CPython, installs zig, then builds a WebAssembly version of CPython, and also builds all the Typescript code.  I've tested this build on:
 
 - x86\_64 and aarch64 Linux with standard dev tools installed; see [Dockerfile](./Dockerfile) 
-- MacOS \- my M1 mac with XCode CLI tools works.
+- MacOS \- M1 mac with XCode CLI tools
 
 ### Try out your build
 
+Run some tests, which won't take long:
+
 ```sh
-# Now try out WAPython, directly from the command line.  This runs the
-# webassembly version of Python you just built:
-wstein@max % bin/wapython  # takes a few seconds to start
+make test
+```
+
+You can also use the WebAssembly repl directly on the command line:
+
+```sh
+wstein@max % ./bin/python-wasm
 Python 3.11.0b3 (main, Jul  8 2022, 23:21:07) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 81f0e6c5b902ead84753490d on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 2+3
 5
 >>> import sys; sys.platform
 'wasi'
+```
 
-# Try out the newly built python-wasm module, which is our
-# WebAssembly version of Python 3.11 that you can use via a library:
+Next use python\-wasm as a library in node.js:
+
+```sh
 wstein@max % cd packages/python-wasm
-# Run the WAPython test suite first:
-wstein@max % make test
-
 # Now actually use the module:
 wstein@max % node
 Welcome to Node.js v16.13.0.
@@ -85,7 +118,8 @@ Type ".help" for more information.
 49999995000000 1.0109999179840088
 ```
 
-Next try out JPython which is a Javascript-based JIT Python interpreter:
+Also try out JPython which is a Javascript\-based JIT Python interpreter:
+
 ```sh
 wstein@max % cd ../..
 wstein@max % bin/jpython
@@ -97,9 +131,11 @@ Welcome to JPython.  Using Node.js v16.13.0.
 49999995000000 0.06099987030029297
 ```
 
-## What's the goal?
+## What's the goal?  What about pyodide and emscripten?
 
-Create a WebAssembly build of Python and related packages, which runs both on the command line with Node.js and in web browsers \(via npm modules that you can include via webpack\).  The build system is based on Makefiles and [zig](https://ziglang.org/), which provides excellent caching and cross compilation.  Most of the C/C\+\+ code in emscripten will instead be written in the [zig](https://ziglang.org/) language here, and the Javascript code will be replaced by more modern Typescript.
+Create a WebAssembly build of Python and related packages, which runs both on the command line with Node.js and in web browsers \(via npm modules that you can include via webpack\).  The build system is based on Makefiles and [zig](https://ziglang.org/), which provides excellent caching and cross compilation.  
+
+Most of the C/C\+\+ code in emscripten will instead be written in the [zig](https://ziglang.org/) language here, and the Javascript code will be replaced by more modern Typescript.
 
 This is probably extremely difficult to pull off, since emscripten and pyodide have been at it for years, and it's a complicated project.   Our software license \-\- _**BSD 3\-clause**_ \-\- is compatible with their's and we hope to at least learn from their solutions to problems.
 
@@ -107,7 +143,7 @@ This is probably extremely difficult to pull off, since emscripten and pyodide h
 
 ### JPython
 
-This project also includes a self\-hosted Python interpreter that is implemented in Javascript \(a significant rewrite of [RapydScript](https://github.com/atsepkov/RapydScript)\).  This provides the Python **languages** with the extremely fast JIT and very easy interoperability with the full Javascript ecosystem, but a very tiny library of functionality.   Our plan is to combine this with the actual WASM Python and Python libraries, in order to provide, e.g., access to numpy from JPython.   The idea is to make writing code on the Javascript side easier for Python programmers.    
+As mentioned above, this project also includes a self\-hosted Python interpreter that is implemented in Javascript \(a significant rewrite of [RapydScript](https://github.com/atsepkov/RapydScript)\).  This provides the Python **languages** with the extremely fast JIT and very easy interoperability with the full Javascript ecosystem, but a very tiny library of functionality.   Our plan is to combine this with the actual WASM Python and Python libraries, in order to provide, e.g., access to numpy from JPython.   The idea is to make writing code on the Javascript side easier for Python programmers.
 
 ## More about building from source
 
@@ -146,7 +182,7 @@ $ echo 'int main() { printf("hello from Web Assembly: %d\n", 2+2); }' > a.c
 $ zcc a.c
 $ ls -l
 a.c  a.out  a.out.wasm  ...
-$ ./a.out   # this actually runs nodejs + @wapython/wasm
+$ ./a.out   # this actually runs nodejs + python-wasm
 hello from Web Assembly: 4
 ```
 
@@ -155,14 +191,14 @@ This isn't currently used here for building wapytho, but it's an extremely power
 ### Run a script via web assembly Python from the CLI
 
 ```sh
-~/wapython$ echo "import sys; print(f'hi from {sys.platform}')" > a.py
-~/wapython$ bin/wapython `pwd`/a.py
+~/python-wasm$ echo "import sys; print(f'hi from {sys.platform}')" > a.py
+~/python-wasm$ bin/python-wasm `pwd`/a.py
 hi from wasi
 ```
 
 ## Benchmarks
 
-There is a collection of cpu\-intensive benchmarks in [packages/jpython/bench](./packages/jpython/bench), which you can run under cpython, jpython, wapython, pypy, etc., by running e.g., `python `pwd`/all.py`. 
+There is a collection of cpu\-intensive benchmarks in [packages/jpython/bench](./packages/jpython/bench), which you can run under cpython, jpython, python-wasm, pypy, etc., by running e.g., `python `pwd`/all.py`. 
 
 On x86\_64 Linux, here are some grand total times.  The timings are pretty stable, and the parameters of the benchmarks are chosen so a single benchmark doesn't unduly impact the results \(e.g., it is trivial to game any such benchmark by adjusting parameters\).
 
@@ -171,7 +207,7 @@ On x86\_64 Linux, here are some grand total times.  The timings are pretty stabl
 | PyPy 3.9.x (Python reimplemented with a JIT)   |    2997 ms     |  2127 ms |  1514 ms (ver 3.6.9) |
 | jpython (Javascript Python) |    6909 ms   |  2876 ms |  4424 ms  | 
 | Native CPython 3.11     | 9284 ms | 4491 ms | 4607 ms |
-| WebAssembly CPython (wapython) | 23109 ms |   12171 ms|  12909 ms |
+| WebAssembly CPython (python-wasm) | 23109 ms |   12171 ms|  12909 ms |
 
 <br/>
 

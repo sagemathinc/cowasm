@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/wapython.git"
+    "url": "git+https://github.com/sagemathinc/python-wasm.git"
   },
   "publishConfig": {
     "access": "public"
@@ -36,9 +36,9 @@
   "author": "William Stein <wstein@sagemath.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sagemathinc/wapython/issues"
+    "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/wapython/tree/main/packages/wasi",
+  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/wasi",
   "dependencies": {
     "browser-hrtime": "^1.1.8",
     "fflate": "^0.7.3",

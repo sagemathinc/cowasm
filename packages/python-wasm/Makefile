@@ -68,9 +68,9 @@ test: all test-zig
 # Run the benchmark suite that's in the jpython package.
 .PHONE: bench
 bench:
-	echo "STARTING wapython benchmark suite"
-	../../bin/wapython `pwd`/../jpython/bench/all.py
-	echo "FINISHED wapython benchmark suite"
+	echo "STARTING python-wasm benchmark suite"
+	../../bin/python-wasm `pwd`/../jpython/bench/all.py
+	echo "FINISHED python-wasm benchmark suite"
 
 .PHONY: clean
 clean:

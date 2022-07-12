@@ -8,13 +8,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/wapython.git"
+    "url": "git+https://github.com/sagemathinc/python-wasm.git"
   },
   "keywords": ["python", "wasm", "emscripten"],
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/sagemathinc/wapython/issues"
+    "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/wapython/tree/main/src/packages/cpython"
+  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/src/packages/cpython"
 }

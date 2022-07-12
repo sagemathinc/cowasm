@@ -20,7 +20,7 @@ Wall time: 97ms
 
 ## A Python implementation in Javascript for use by WAPython
 
-**History:** This is **built from RapydScript-ng** that I'm playing around with modifying for use by the wapython project. See https://github.com/kovidgoyal/rapydscript-ng for some helpful documentation.
+**History:** This is **built from [RapydScript-ng](https://github.com/kovidgoyal/rapydscript-ng)** that I'm playing around with modifying for use to support the python-wasm project.
 
 Some goals:
 
@@ -44,7 +44,9 @@ jpython: 6434 ms
 
 python3.9: 11872 ms
 
-wapython3.11: TODO
+python3.11: 9284 ms
+
+python-wasm 3.11: 23109 ms
 
 ### Apple Silicon (M1 Max) MacOS native
 
@@ -54,7 +56,10 @@ jpython: 2960 ms
 
 python3.10: 6200ms
 
-wapython3.11: TODO
+python3.11: 4491 ms
+
+python-wasm 3.11: 12171 ms
+
 
 It's interesting that jpython and pypy3 are exactly the same speed on M1 overall for these benchmarks.  This suggests that pypy3 is less optimized for aarch64, since pypy3 is only about twice as fast as python3.10, but is usually advertised as 4x faster.  Anyway, who knows.
 
@@ -96,28 +101,28 @@ You need to install from source to do this...
 
 ```sh
 # Use WAPython via nodejs:
-~/wapython/packages/jpython/bench$ ../../../bin/wapython `pwd`/mandel.py
+~/python-wasm/packages/jpython/bench$ ../../../bin/python-wasm `pwd`/mandel.py
 --------------------
 Running... 
 mandelbrot 689 ms
 Total:  689 ms
 
 # Use systemwide native python3:
-~/wapython/packages/jpython/bench$ python3 `pwd`/mandel.py
+~/python-wasm/packages/jpython/bench$ python3 `pwd`/mandel.py
 --------------------
 Running... 
 mandelbrot 200 ms
 Total:  200 ms
 
 # Use Jpython, which transpiles to Javascript and uses the JIT:
-~/wapython/packages/jpython/bench$ jpython `pwd`/mandel.py
+~/python-wasm/packages/jpython/bench$ jpython `pwd`/mandel.py
 --------------------
 Running... 
 mandelbrot 70 ms
 Total:  70 ms
 
 # Use pypy (version 3.9), which is Python with a JIT:
-~/wapython/packages/jpython/bench$ /Users/wstein/bin/pypy `pwd`/mandel.py
+~/python-wasm/packages/jpython/bench$ /Users/wstein/bin/pypy `pwd`/mandel.py
 --------------------
 Running... 
 mandelbrot 128 ms

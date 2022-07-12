@@ -4,7 +4,7 @@ Javascript library for interacting with WASI Modules in Node.js.
 
 (TODO: and in the Browser.)
 
-This is a fork of version 0.12.0 of @wasmer/wasi to keep it alive, since the Wasmer company decided to end it, and I would like to use it in [wapython](https://github.com/sagemathinc/wapython).
+This is a fork of version 0.12.0 of @wasmer/wasi to keep it alive, since the Wasmer company decided to end it, and I would like to use it in [python-wasm](https://github.com/sagemathinc/python-wasm).
 
 ## Table of Contents
 

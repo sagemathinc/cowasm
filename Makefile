@@ -64,11 +64,11 @@ webpack: packages/webpack/${BUILT}
 
 .PHONY: docker
 docker:
-	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/wapython master | awk '{print $$1}'` -t wapython .
+	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/python-wasm master | awk '{print $$1}'` -t python-wasm .
 
 .PHONY: docker-nocache
 docker-nocache:
-	docker build --no-cache -t wapython .
+	docker build --no-cache -t python-wasm .
 
 clean:
 	cd packages/python-wasm && make clean

@@ -15,7 +15,7 @@ ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
-WAPYTHON_BINARY = ${CWD}/../../bin/wapython
+PYTHON_WASM_BINARY = ${CWD}/../../bin/python-wasm
 
 # We only use zlib (not lzma) for native build, since liblzma widely available natively.
 
@@ -168,10 +168,10 @@ wasm: ${DIST_WASM}/.built
 
 
 # Use "make run-wasm" to run our WASM python at the command line.
-# You can also just run `wapython` in the top level bin/ directory.
+# You can also just run `python-wasm` in the top level bin/ directory.
 .PHONY: run-wasm
 run-wasm: ${DIST_WASM}/.built
-	${WAPYTHON_BINARY}
+	${PYTHON_WASM_BINARY}
 
 # Run the cpython test suite under WASM python.
 # TODO: excluding test_lzma.py and test_queue.py right now, since they hangs forever.
@@ -179,7 +179,7 @@ run-wasm: ${DIST_WASM}/.built
 # implementing a restricted version of fork, which is possible (as we're using node.js).
 .PHONY: test-wasm
 test-wasm:
-	cd ${BUILD}/wasm/Lib/test && ls -d `pwd`/test_*.py | grep -v test_lzma.py | grep -v  test_queue.py | xargs -t -n 1 ${WAPYTHON_BINARY} 2>&1 | tee ${BUILD}/wasm/test.out && \
+	cd ${BUILD}/wasm/Lib/test && ls -d `pwd`/test_*.py | grep -v test_lzma.py | grep -v  test_queue.py | xargs -t -n 1 ${PYTHON_WASM_BINARY} 2>&1 | tee ${BUILD}/wasm/test.out && \
 	grep FAIL ${BUILD}/wasm/test.out
 	echo "See ${BUILD}/wasm/test.out"
 

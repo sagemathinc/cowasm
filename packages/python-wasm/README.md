@@ -1,13 +1,13 @@
 # python\-wasm: WebAssembly CPython  for Node.js and the browser
 
-See [the main repo](https://github.com/sagemathinc/wapython/blob/main/README.md) for more information. 
+See [the main repo](https://github.com/sagemathinc/python-wasm/blob/main/README.md) for more information. 
 
-## Using wapython from node.js
+## Using python-wasm from node.js
 
 The following should work with nodejs version 16.x on Linux, MacOS, and **native** Microsoft Windows.  \(NOTE: for node 14, use the `--experimental-wasm-bigint` flag.\) 
 
 ```sh
-wstein@max % mkdir wapython && cd wapython && npm init -y
+wstein@max % mkdir test && cd test && npm init -y
 wstein@max % npm install python-wasm
 wstein@max % node
 Welcome to Node.js v16.13.0.
@@ -25,4 +25,4 @@ Type ".help" for more information.
 
 ## Using python\-wasm in a web application
 
-See https://github.com/sagemathinc/wapython/tree/main/packages/webpack for how to use Webpack5 with python\-wasm.
+See [this repo](https://github.com/sagemathinc/python-wasm/tree/main/packages/webpack) for how to use Webpack5 with python\-wasm.

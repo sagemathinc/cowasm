@@ -18,15 +18,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/wapython.git"
+    "url": "git+https://github.com/sagemathinc/python-wasm.git"
   },
   "keywords": ["python", "webassembly"],
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/sagemathinc/wapython/issues"
+    "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/wapython/tree/main/packages/webpack",
+  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/webpack",
   "workspaces": ["../python-wasm"],
   "devDependencies": {
     "python-wasm": "^0.4.0",

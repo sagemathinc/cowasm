@@ -1,5 +1,5 @@
 /*
-This is a fairly minimal webpack config file for using wapython in a frontend
+This is a fairly minimal webpack config file for using python-wasm in a frontend
 Javascript project that uses WebPack 5 (and Typescript).
 
 KEY POINTS:
