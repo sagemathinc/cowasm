@@ -68,11 +68,11 @@ Welcome to JPython.  Using Node.js v16.13.0.
 
 See below for more examples.
 
-## Quick start - build from source
+## Build from source
 
 ### Build
 
-To build everything from source, make sure your system\-wide nodejs is at least version 16.x and that you have standard command line dev tools.  Then build, which [takes 15\-20 minutes:](https://github.com/sagemathinc/python-wasm/actions) 
+To build everything from source, make sure your systemwide nodejs is at least version 16.x and that you have standard command line dev tools.  Then build, which [takes 15\-20 minutes](https://github.com/sagemathinc/wapython/actions), and around 1GB of disk space:
 
 ```sh
 wstein@max % make
@@ -118,7 +118,11 @@ Type ".help" for more information.
 49999995000000 1.0109999179840088
 ```
 
+<<<<<<< HEAD
 Also try out JPython which is a Javascript\-based JIT Python interpreter:
+=======
+Next try out JPython which is a Javascript-based JIT Python interpreter:
+>>>>>>> 285c5e83096f2b0a1614acf7fb613940110f7914
 
 ```sh
 wstein@max % cd ../..
