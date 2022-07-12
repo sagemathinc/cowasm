@@ -174,10 +174,12 @@ run-wasm: ${DIST_WASM}/.built
 	${WAPYTHON_BINARY}
 
 # Run the cpython test suite under WASM python.
-# TODO: excluding test_lzma.py right now, since it hangs forever.
+# TODO: excluding test_lzma.py and test_queue.py right now, since they hangs forever.
+# TODO: we should really use the official python test runner stuff, but that requires
+# implementing a restricted version of fork, which is possible (as we're using node.js).
 .PHONY: test-wasm
 test-wasm:
-	cd ${BUILD}/wasm/Lib/test && ls -d `pwd`/test_*.py | grep -v test_lzma.py | xargs -t -n 1 ${WAPYTHON_BINARY} 2>&1 | tee ${BUILD}/wasm/test.out && \
+	cd ${BUILD}/wasm/Lib/test && ls -d `pwd`/test_*.py | grep -v test_lzma.py | grep -v  test_queue.py | xargs -t -n 1 ${WAPYTHON_BINARY} 2>&1 | tee ${BUILD}/wasm/test.out && \
 	grep FAIL ${BUILD}/wasm/test.out
 	echo "See ${BUILD}/wasm/test.out"
 
