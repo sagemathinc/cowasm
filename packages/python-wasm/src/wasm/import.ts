@@ -1,6 +1,6 @@
 import WASI, { createFileSystem } from "@wapython/wasi";
 import type { WASIConfig, FileSystemSpec, WASIBindings } from "@wapython/wasi";
-import { reuseInFlight } from "async-await-utils/hof";
+import reuseInFlight from "./reuseInFlight";
 import WasmInstance from "./instance";
 
 const textDecoder = new TextDecoder();

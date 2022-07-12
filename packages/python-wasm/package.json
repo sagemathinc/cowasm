@@ -1,6 +1,6 @@
 {
   "name": "python-wasm",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "python-wasm -- Web Assembly Python for Node.js and the Browser",
   "main": "./dist/python/node.js",
   "browser": "./dist/python/browser.js",
@@ -11,6 +11,9 @@
     "tsc": "npx tsc -w",
     "test": "jest ./dist",
     "test-watch": "jest --watch ./dist"
+  },
+  "bin": {
+    "python-wasm": "./bin/python-wasm.js"
   },
   "repository": {
     "type": "git",
@@ -26,7 +29,6 @@
   "workspaces": ["../wasi"],
   "dependencies": {
     "@wapython/wasi": "^0.16.0",
-    "async-await-utils": "^3.0.1",
     "callsite": "^1.0.0"
   },
   "devDependencies": {
