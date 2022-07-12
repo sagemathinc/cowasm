@@ -40,11 +40,11 @@ See below for more examples.
 
 **There is no support for using wapython via webpack5 in your browser... yet.**
 
-## Quick start - build from source
+## Build from source
 
 ### Build
 
-To build everything from source, make sure your systemwide nodejs is at least version 16.x and that you have standard command line dev tools.  Then build, which [takes 15\-20 minutes:](https://github.com/sagemathinc/wapython/actions) 
+To build everything from source, make sure your systemwide nodejs is at least version 16.x and that you have standard command line dev tools.  Then build, which [takes 15\-20 minutes](https://github.com/sagemathinc/wapython/actions), and around 1GB of disk space:
 
 ```sh
 wstein@max % make
@@ -86,6 +86,7 @@ Type ".help" for more information.
 ```
 
 Next try out JPython which is a Javascript-based JIT Python interpreter:
+
 ```sh
 wstein@max % cd ../..
 wstein@max % bin/jpython

@@ -20,12 +20,12 @@ RUN  curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
 # Get source code of wapython and build everything:
 ARG commit=HEAD
 
-RUN  git clone https://github.com/sagemathinc/wapython \
-  && cd wapython \
+RUN  git clone https://github.com/sagemathinc/python-wasm \
+  && cd python-wasm \
   && git checkout ${commit:-HEAD} \
   && make
 
 RUN echo "export PATH=/wapython/bin/:$PATH" >> /root/.bashrc
 
 # Run the test suite:
-RUN cd wapython && make test
+RUN cd python-wasm && make test
