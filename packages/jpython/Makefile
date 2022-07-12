@@ -12,5 +12,11 @@ ${DIST}/.built:
 test: ${DIST}/.built
 	npm run test
 
+.PHONY: bench
+bench:
+	echo "STARTING jpython benchmark suite"
+	npx jpython `pwd`/bench/all.py
+	echo "FINISHED jpython benchmark suite"
+
 clean:
 	rm -rf ${DIST} node_modules

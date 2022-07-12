@@ -65,6 +65,13 @@ ${DIST}/.built: node_modules ${DIST}/python/python.wasm
 test: all test-zig
 	npm run test
 
+# Run the benchmark suite that's in the jpython package.
+.PHONE: bench
+bench:
+	echo "STARTING wapython benchmark suite"
+	../../bin/wapython `pwd`/../jpython/bench/all.py
+	echo "FINISHED wapython benchmark suite"
+
 .PHONY: clean
 clean:
 	rm -rf ${DIST} node_modules tsconfig.tsbuildinfo src/zig-cache src/*/zig-cache
