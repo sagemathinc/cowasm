@@ -1,6 +1,6 @@
 {
   "name": "python-wasm",
-  "version": "0.0.1",
+  "version": "0.2.1",
   "description": "WebAssembly Python",
   "main": "dist/index.js",
   "files": ["dist/*", "README.md", "package.json", "tsconfig.json", "Makefile"],
@@ -22,7 +22,7 @@
   "homepage": "https://github.com/sagemathinc/wapython/tree/main/packages/python-wasm",
   "workspaces": ["../core"],
   "dependencies": {
-    "@wapython/core": "^0.2.3"
+    "@wapython/core": "^0.3.1"
   },
   "devDependencies": {
     "typescript": "^4.7.4"

@@ -8,14 +8,18 @@ npm install python-wasm
 
 Then
 
-```sh
+```js
 $ node
 Welcome to Node.js v16.15.1.
 Type ".help" for more information.
 > const python = require('python-wasm')
 > await python.init()
-> python.exec('2+3')
+> python.exec('a = 2 + 3; a')
 5
+> python.repr('a')
+5
+> python.exec('import sys; sys.platform')
+'wasi'
 ```
 
 ## Webpack

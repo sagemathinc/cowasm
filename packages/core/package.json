@@ -1,11 +1,11 @@
 {
   "name": "@wapython/core",
-  "version": "0.2.3",
+  "version": "0.3.1",
   "description": "wapython -- Web Assembly Python Core",
-  "main-exports-comment":"Nodejs uses 'main', whereas webpack uses 'exports', which is why this works nicely.",
   "main": "./dist/python/node.js",
   "exports": {
-    ".": "./dist/python/browser.js",
+    ".": "./dist/python/node.js",
+    "./browser": "./dist/python/browser.js",
     "./python.wasm": "./dist/python/python.wasm",
     "./python.zip": "./dist/python/python.zip"
   },
@@ -30,7 +30,7 @@
   "homepage": "https://github.com/sagemathinc/wapython/tree/main/packages/core",
   "workspaces": ["../wasi"],
   "dependencies": {
-    "@wapython/wasi": "^0.15.0",
+    "@wapython/wasi": "^0.16.0",
     "async-await-utils": "^3.0.1",
     "callsite": "^1.0.0"
   },

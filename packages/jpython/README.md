@@ -67,17 +67,9 @@ $ npm install @wapython/jpython
 
 ### Math extensions \(like the Sage preparser\)
 
-Use `jsage` and the compiler is modified with some more
-mathematics friendly syntax.
-
-```python
-$ npx jsage
->>> 2^3
-8
-```
-
-Right now only the notation [a..b] for ranges and caret for exponentiation (and
-`^^` for xor) is implemented. I might implement more, though maybe that's enough.
+The compiler can be modified with some more
+mathematics friendly syntax.  Right now only the notation `[a..b]` for ranges and caret for exponentiation \(and
+`^^` for xor\) is implemented. I might implement more, though maybe that's enough.
 
 You can get the same effect in a .py file as follows:
 

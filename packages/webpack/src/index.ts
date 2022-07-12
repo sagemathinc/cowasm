@@ -1,7 +1,7 @@
 window.process = require("process/");
 window.Buffer = require("buffer/").Buffer;
 
-const python = require("@wapython/core");
+const python = require("@wapython/core/browser");
 (window as any).python = python;
 
 import wasmUrl from "@wapython/core/python.wasm";

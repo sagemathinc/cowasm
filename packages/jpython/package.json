@@ -1,14 +1,9 @@
 {
   "name": "@wapython/jpython",
-  "version": "1.13.2",
+  "version": "1.14.1",
   "description": "A very lightweight Python implementation in Javascript with no Python dependency.",
   "homepage": "https://github.com/sagemathinc/wapython/tree/main/packages/jpython",
-  "keywords": [
-    "javascript",
-    "python",
-    "language",
-    "compiler"
-  ],
+  "keywords": ["javascript", "python", "language", "compiler"],
   "main": "tools/compiler.js",
   "scripts": {
     "test": "npx tsc && ./bin/jpython self --complete --test && cd bench && ../bin/jpython all.py",
@@ -35,19 +30,12 @@
     "type": "git",
     "url": "https://github.com/sagemathinc/wapython"
   },
-  "workspaces": [
-    "../core"
-  ],
-  "dependencies": {
-    "@wapython/core": "^0.2.0"
-  },
   "devDependencies": {
     "@types/node": "^16.7.10",
     "prettier": "^2.3.2",
     "typescript": "^4.7.4"
   },
   "bin": {
-    "jpython": "bin/jpython",
-    "jsage": "bin/jsage"
+    "jpython": "bin/jpython"
   }
 }

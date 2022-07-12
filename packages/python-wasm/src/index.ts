@@ -1,2 +1,1 @@
-import * as python from "@wapython/core";
-export default python;
+export {init, wasm, repr, exec} from "@wapython/core";
