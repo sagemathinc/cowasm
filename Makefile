@@ -4,7 +4,7 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
-all: python-wasm webpack terminal
+all: python-wasm webpack terminal python-wasm.org
 
 packages/python-wasm/${BUILT}: cpython wasi zig wasm-posix
 	cd packages/python-wasm && make all
@@ -68,6 +68,11 @@ packages/terminal/${BUILT}: python-wasm jpython
 terminal: packages/terminal/${BUILT}
 
 
+packages/python-wasm.org/${BUILT}: python-wasm jpython
+	cd packages/python-wasm.org && make all
+.PHONY: python-wasm.org
+python-wasm.org: packages/python-wasm.org/${BUILT}
+
 .PHONY: docker
 docker:
 	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/python-wasm master | awk '{print $$1}'` -t python-wasm .
@@ -86,6 +91,7 @@ clean:
 	cd packages/wasm-posix && make clean
 	cd packages/webpack && make clean
 	cd packages/terminal && make clean
+	cd packages/python-wasm.org && make clean
 	cd packages/zig && make clean
 	cd packages/zlib && make clean
 
