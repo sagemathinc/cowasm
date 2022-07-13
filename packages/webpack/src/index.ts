@@ -1,3 +1,4 @@
+window.process = require("process/");
 window.Buffer = require("buffer/").Buffer;
 
 //import python from "python-wasm";

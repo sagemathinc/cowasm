@@ -56,6 +56,7 @@ module.exports = {
       url: false,
       assert: false,
       stream: false,
+      process: require.resolve("process/"),
       util: require.resolve("util/"),
       events: require.resolve("events/"),
       buffer: require.resolve("buffer/"),
