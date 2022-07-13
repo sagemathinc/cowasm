@@ -1,10 +1,10 @@
 # python-wasm
 
-> _"WebAssembly Python"_
+> "WebAssembly CPython for Node.js and the browser"
 
 URL: https://github.com/sagemathinc/python-wasm 
 
-AUTHOR:  [William Stein](https://github.com/williamstein/)
+DEMO: https://python\-wasm.cocalc.com/
 
 [![Docker Image CI](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml/badge.svg)](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml)
 
