@@ -68,9 +68,9 @@ Welcome to JPython.  Using Node.js v16.13.0.
 
 See below for more examples.
 
-## Build from source
+## Build python\-wasm from source
 
-### Build
+### Build on Linux or MacOS
 
 To build everything from source, make sure your systemwide nodejs is at least version 16.x and that you have standard command line dev tools.  Then build, which [takes 15\-20 minutes](https://github.com/sagemathinc/wapython/actions), and around 1GB of disk space:
 
@@ -78,10 +78,12 @@ To build everything from source, make sure your systemwide nodejs is at least ve
 wstein@max % make
 ```
 
-This builds native CPython, installs zig, then builds a WebAssembly version of CPython, and also builds all the Typescript code.  I've tested this build on:
+This builds native CPython, installs zig, then builds a WebAssembly version of CPython, and also builds all the Typescript code.  Building from source is supported on four platforms:
 
-- x86\_64 and aarch64 Linux with standard dev tools installed; see [Dockerfile](./Dockerfile) 
-- MacOS \- M1 mac with XCode CLI tools
+- Linux: tested on both x86\_64 and aarch64 Ubuntu with standard dev tools installed; see [Dockerfile](./Dockerfile)
+- MacOS: tested on both x86\_64 and M1 mac with standard XCode command live dev tools installed.
+
+If you're using Windows, you'll have to use Linux via a virtual machine \(or maybe WSL\) to build python\-wasm from source.
 
 ### Try out your build
 
