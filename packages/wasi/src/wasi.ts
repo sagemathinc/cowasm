@@ -10,6 +10,8 @@ import type {
 
 import { WASIError } from "./types";
 
+import toBuffer from "typedarray-to-buffer";
+
 import {
   WASI_ESUCCESS,
   WASI_EBADF,
@@ -133,7 +135,7 @@ const wrap =
     try {
       return f(...args);
     } catch (err) {
-      //console.log("WASI error", err);
+      // console.log("WASI error", err);
       const e: any = err;
       // If it's an error from the fs
       if (e?.code && typeof e?.code === "string") {
@@ -150,7 +152,7 @@ const wrap =
 
 const stat = (wasi: WASI, fd: number): File => {
   const entry = wasi.FD_MAP.get(fd);
-  //console.log("stat", { fd, entry, FD_MAP: wasi.FD_MAP });
+  // console.log("stat", { fd, entry, FD_MAP: wasi.FD_MAP });
   if (!entry) {
     throw new WASIError(WASI_EBADF);
   }
@@ -245,11 +247,11 @@ interface Rights {
 
 interface File {
   real: number;
+  path?: string;
+  fakePath?: string;
+  rights: Rights;
   offset?: bigint;
   filetype?: WASI_FILETYPE;
-  rights: Rights;
-  path?: any;
-  fakePath?: any;
 }
 
 type Exports = {
@@ -297,7 +299,7 @@ export default class WASI {
             base: STDIN_DEFAULT_RIGHTS,
             inheriting: BigInt(0),
           },
-          path: undefined,
+          path: "/dev/stdin",
         },
       ],
       [
@@ -310,7 +312,7 @@ export default class WASI {
             base: STDOUT_DEFAULT_RIGHTS,
             inheriting: BigInt(0),
           },
-          path: undefined,
+          path: "/dev/stdout",
         },
       ],
       [
@@ -323,7 +325,7 @@ export default class WASI {
             base: STDERR_DEFAULT_RIGHTS,
             inheriting: BigInt(0),
           },
-          path: undefined,
+          path: "/dev/stderr",
         },
       ],
     ]);
@@ -361,11 +363,7 @@ export default class WASI {
         const buf = this.view.getUint32(ptr, true);
         const bufLen = this.view.getUint32(ptr + 4, true);
         const buffer = new Uint8Array(this.memory.buffer, buf, bufLen);
-        // We set _isBuffer so that the Buffer polyfill (https://www.npmjs.com/package/buffer)
-        // sees this as a Before.  This is needed so that memfs works in the browser, and this
-        // is harmless in node.js.
-        (buffer as any)._isBuffer = true;
-        return buffer;
+        return toBuffer(buffer);
       });
 
       return buffers;
@@ -602,7 +600,8 @@ export default class WASI {
         this.view.setUint8(bufPtr, WASI_PREOPENTYPE_DIR);
         this.view.setUint32(
           bufPtr + 4,
-          Buffer.byteLength(stats.fakePath),
+          // TODO: this is definitely completely wrong unless preopens=/.
+          Buffer.byteLength(stats.fakePath ?? stats.path),
           true
         );
         return WASI_ESUCCESS;
@@ -615,7 +614,7 @@ export default class WASI {
           }
           this.refreshMemory();
           Buffer.from(this.memory.buffer).write(
-            stats.fakePath,
+            stats.fakePath ?? stats.path /* TODO: wrong in general! */,
             pathPtr,
             pathLen,
             "utf8"
@@ -655,10 +654,11 @@ export default class WASI {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_WRITE);
           let written = 0;
           getiovs(iovs, iovsLen).forEach((iov) => {
-            // useful to be absolutely sure if wasi is writing something...
-            // console.log(` (writing "${new TextDecoder().decode(iov)}")`);
+            // useful to be absolutely sure if wasi is writing something:
+            // console.log(`write "${new TextDecoder().decode(iov)}" to ${fd})`);
             let w = 0;
             while (w < iov.byteLength) {
+              // console.log(`write ${iov.byteLength} bytes to fd=${stats.real}`);
               const i = fs.writeSync(
                 stats.real,
                 iov,
@@ -666,6 +666,7 @@ export default class WASI {
                 iov.byteLength - w,
                 stats.offset ? Number(stats.offset) : null
               );
+              // console.log(`just wrote i=${i} bytes`);
               if (stats.offset) stats.offset += BigInt(i);
               w += i;
             }

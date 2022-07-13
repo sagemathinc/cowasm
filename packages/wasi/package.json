@@ -45,6 +45,7 @@
     "memfs": "^3.4.7",
     "path-browserify": "^1.0.0",
     "randomfill": "^1.0.4",
+    "typedarray-to-buffer": "^4.0.0",
     "unionfs": "^4.4.0"
   },
   "devDependencies": {
