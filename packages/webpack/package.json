@@ -1,6 +1,6 @@
 {
   "name": "@wapython/webpack",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "How to use using python-wasm with webpack",
   "files": [
     "dist/*",
@@ -8,31 +8,28 @@
     "README.md",
     "package.json",
     "tsconfig.json",
+    "webpack.config.js",
     "Makefile"
   ],
   "scripts": {
     "clean": "rm -rf dist node_modules",
     "build": "webpack",
     "watch": "webpack --watch",
+    "serve": "webpack serve",
     "tsc": "npx tsc -w"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/python-wasm.git"
   },
-  "keywords": [
-    "python",
-    "webassembly"
-  ],
+  "keywords": ["python", "webassembly"],
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
   "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/webpack",
-  "workspaces": [
-    "../python-wasm"
-  ],
+  "workspaces": ["../python-wasm"],
   "devDependencies": {
     "buffer": "^6.0.3",
     "events": "^3.3.0",
