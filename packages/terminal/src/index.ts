@@ -6,24 +6,28 @@ import setTheme from "./theme";
 (window as any).python = python;
 
 async function main() {
-  await python.init();
-
   const element = document.createElement("div");
   document.body.appendChild(element);
-  document.body.style.margin = '0px';
+  document.body.style.margin = "0px";
 
-  const term = new Terminal();
+  const term = new Terminal({ rendererType: "dom" });
   term.open(element);
   // @ts-ignore
-  element.children[0].style.padding = '15px';
+  element.children[0].style.padding = "15px";
   const localEcho = new LocalEchoController(term, { historySize: 200 });
 
-  term.resize(120, 40);
+  term.resize(128, 40);
   setTheme(term, "solarized-light");
+  localEcho.print("Python ");
+  await python.init();
   python.exec("import sys");
-  localEcho.println("Python " + python.repr("sys.version").slice(1, -1));
-  localEcho.println("Type code to execute.  Currently the only thing output is whatever is explicitly assigned to _ (underscore).")
-  localEcho.println("This is because writing to a file (e.g., /dev/stdout) doesn't work yet, due to encoding issues.")
+  localEcho.println(python.repr("sys.version").slice(1, -1));
+  localEcho.println(
+    "Type code to execute.  Currently the only thing output is whatever is explicitly assigned to _ (underscore)."
+  );
+  localEcho.println(
+    "This is because writing to a file (e.g., /dev/stdout) doesn't work yet, due to encoding issues."
+  );
 
   // TODO: https://github.com/wavesoft/local-echo#addautocompletehandlercallback-args
 
