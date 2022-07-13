@@ -1,5 +1,7 @@
 # python\-wasm: WebAssembly CPython  for Node.js and the browser
 
+[Demo](https://python-wasm.cocalc.com/)
+
 See [the main repo](https://github.com/sagemathinc/python-wasm/blob/main/README.md) for more information. 
 
 ## Using from node.js
