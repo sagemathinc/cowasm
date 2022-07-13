@@ -1,23 +1,19 @@
 /*
-This is a fairly minimal webpack config file for using python-wasm in a frontend
-Javascript project that uses WebPack 5 (and Typescript).
+This is a minimal webpack config file for using python-wasm in a frontend
+Javascript project that uses WebPack 5 (and Typescript).   There are two
+small things that you must:
 
-KEY POINTS:
+- The NodePolyfillPlugin is needed because python-wasm
+  uses memfs, which requires several polyfilled libraries.
 
-- The list resolve.fallback below are basically the node.js polyfills for
-the browser. This is needed to be able to use the memfs
-package, which our WASI support relies on. For your own projects, you'll need to
-merge this list in, either using false or if you need that polyfill for some
-other reason, keep your own config.
-
-- asset/resource rules are to serve the wasm and zip files.  This requires
-extra configuration, but is much more efficient than embedding these files
-in source code!
+- The wasm and zip asset/resource rules are needed so python-wasm
+  can import the python wasm binary and zip filesystem.
 
 */
 
 const { resolve } = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = {
   mode: process.env.NODE_ENV == "production" ? "production" : "development",
@@ -29,6 +25,7 @@ module.exports = {
     clean: true,
   },
   plugins: [
+    new NodePolyfillPlugin() /* required for python-wasm */,
     new HtmlWebpackPlugin({
       title: "Web Python Examples",
     }),
@@ -36,31 +33,17 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.wasm$|\.zip$/ /* required for python-wasm */,
+        type: "asset/resource",
+      },
+      {
         test: /\.tsx?$/,
         use: "ts-loader",
         exclude: /node_modules/,
-      },
-      {
-        test: /\.wasm$/,
-        type: "asset/resource",
-      },
-      {
-        test: /\.zip$/,
-        type: "asset/resource",
       },
     ],
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
-    fallback: {
-      url: false,
-      assert: false,
-      stream: false,
-      process: require.resolve("process/"),
-      util: require.resolve("util/"),
-      events: require.resolve("events/"),
-      buffer: require.resolve("buffer/"),
-      path: require.resolve("path-browserify"),
-    },
   },
 };

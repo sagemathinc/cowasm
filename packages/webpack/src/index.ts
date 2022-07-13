@@ -1,14 +1,11 @@
-window.process = require("process/");
-window.Buffer = require("buffer/").Buffer;
-
-//import python from "python-wasm";
-const python = require("python-wasm");
-(window as any).python = python; // so you can play with this in your dev console.
+import python from "python-wasm";
 
 async function demo() {
   const t0 = new Date();
   console.log("call python init");
+
   await python.init();
+
   console.log(`Loaded python in ${new Date().valueOf() - t0.valueOf()}ms.`);
 
   const element = document.createElement("pre");

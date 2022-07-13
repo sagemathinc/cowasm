@@ -17,4 +17,5 @@ export async function init() {
   await _init(wasmUrl, wasmImport, fs);
 }
 
-export { repr, exec, wasm };
+const python = { repr, exec, wasm, init };
+export default python;
