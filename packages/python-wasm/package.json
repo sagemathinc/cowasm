@@ -1,6 +1,6 @@
 {
   "name": "python-wasm",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "python-wasm -- Web Assembly Python for Node.js and the Browser",
   "main": "./dist/python/node.js",
   "browser": "./dist/python/browser.js",
@@ -25,7 +25,7 @@
   "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/python-wasm",
   "workspaces": ["../wasi"],
   "dependencies": {
-    "@wapython/wasi": "^0.16.0",
+    "@wapython/wasi": "^0.17.0",
     "callsite": "^1.0.0"
   },
   "devDependencies": {

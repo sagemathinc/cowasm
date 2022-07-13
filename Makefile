@@ -56,7 +56,7 @@ packages/jpython/${BUILT}: python-wasm
 jpython: packages/jpython/${BUILT}
 
 
-packages/webpack/${BUILT}: python-wasm jpython
+packages/webpack/${BUILT}: python-wasm
 	cd packages/webpack && make all
 .PHONY: webpack
 webpack: packages/webpack/${BUILT}
@@ -68,7 +68,7 @@ packages/terminal/${BUILT}: python-wasm jpython
 terminal: packages/terminal/${BUILT}
 
 
-packages/python-wasm.org/${BUILT}: python-wasm jpython
+packages/python-wasm.org/${BUILT}: python-wasm
 	cd packages/python-wasm.org && make all
 .PHONY: python-wasm.org
 python-wasm.org: packages/python-wasm.org/${BUILT}
