@@ -118,11 +118,7 @@ Type ".help" for more information.
 49999995000000 1.0109999179840088
 ```
 
-<<<<<<< HEAD
-Also try out JPython which is a Javascript\-based JIT Python interpreter:
-=======
 Next try out JPython which is a Javascript-based JIT Python interpreter:
->>>>>>> 285c5e83096f2b0a1614acf7fb613940110f7914
 
 ```sh
 wstein@max % cd ../..
