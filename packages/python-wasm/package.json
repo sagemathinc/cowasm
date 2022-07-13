@@ -12,9 +12,6 @@
     "test": "jest ./dist",
     "test-watch": "jest --watch ./dist"
   },
-  "bin": {
-    "python-wasm": "./bin/python-wasm.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/python-wasm.git"
