@@ -10,3 +10,8 @@ ${DIST}/.built: src/index.ts
 
 clean:
 	rm -rf ${DIST} node_modules tsconfig.tsbuildinfo
+
+# This is only for use by person maintaining the website.
+.PHONY: publish
+publish: all
+	rsync -axvH dist/ ${HOME}/python-wasm.org/
