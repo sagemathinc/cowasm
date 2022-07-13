@@ -23,10 +23,7 @@ async function main() {
   python.exec("import sys");
   localEcho.println(python.repr("sys.version").slice(1, -1));
   localEcho.println(
-    "Type code to execute.  Currently the only thing output is whatever is explicitly assigned to _ (underscore)."
-  );
-  localEcho.println(
-    "This is because writing to a file (e.g., /dev/stdout) doesn't work yet, due to encoding issues."
+    'Type "help", "copyright", "credits" or "license" for more information.'
   );
 
   // TODO: https://github.com/wavesoft/local-echo#addautocompletehandlercallback-args
@@ -35,7 +32,15 @@ async function main() {
     try {
       const input = await localEcho.read(">>> ");
       python.exec(input);
-      localEcho.println(python.repr("_"));
+      for (const stream of ["stderr", "stdout"]) {
+        // @ts-ignore: TODO: why isn't readFileSync defined in typescript?
+        const s = python.wasm.fs.readFileSync("/dev/" + stream).toString();
+        if (s) {
+          localEcho.println(s);
+        // @ts-ignore: TODO: why isn't writeFileSync defined in typescript?
+          python.wasm.fs.writeFileSync("/dev/" + stream, "");
+        }
+      }
     } catch (err) {
       term.write(`ERROR: ${err}\r\n`);
     }
