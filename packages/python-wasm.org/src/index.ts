@@ -28,6 +28,9 @@ async function main() {
   localEcho.println(
     'Type "help", "copyright", "credits" or "license" for more information.'
   );
+  localEcho.println(
+    'You must explicitly print to see output right now!  For example, type "print(2+3)".'
+  );
 
   // TODO: https://github.com/wavesoft/local-echo#addautocompletehandlercallback-args
 
