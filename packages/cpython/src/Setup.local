@@ -1,3 +1,3 @@
 # Edit this file for local setup changes
 *static*
-readline readline.c -ledit -ltermcap -L/home/user/python-wasm/packages/termcap/dist/wasm/lib # readline
+readline readline.c $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a  $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a  # readline

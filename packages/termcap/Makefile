@@ -8,14 +8,14 @@ BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 
-all: native wasm
+all: wasm
 
 
 ${BUILD}/termcap.tar.gz:
 	mkdir -p ${BUILD}
 	cd ${BUILD} && curl https://ftp.gnu.org/gnu/termcap/termcap-${VERSION}.tar.gz -o termcap.tar.gz
 
-# NATIVE
+# NATIVE -- not used
 
 ${BUILD}/native: ${BUILD}/termcap.tar.gz
 	rm -rf ${BUILD}/native

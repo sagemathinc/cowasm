@@ -10,6 +10,7 @@
 ssize_t getrandom(void* buf, size_t buflen, unsigned int flags);
 int dup(int oldfd);
 
+typedef unsigned char sigset_t;
 int sigemptyset(sigset_t* set);
 int sigaddset(sigset_t* set, int signo);
 #include <unistd.h>
@@ -30,6 +31,18 @@ int fchown(int fd, uid_t owner, gid_t group);
 int lchown(const char* path, uid_t owner, gid_t group);
 int fchownat(int fd, const char* path, uid_t owner, gid_t group, int flag);
 int nice(int inc);
+
+struct ttyent {
+	char	*ty_name;	/* terminal device name */
+	char	*ty_getty;	/* command to execute, usually getty */
+	char	*ty_type;	/* terminal type for termcap */
+#define	TTY_ON		0x01	/* enable logins (start ty_getty program) */
+#define	TTY_SECURE	0x02	/* allow uid of 0 to login */
+	int	ty_status;	/* status flags */
+	char 	*ty_window;	/* command to start up window manager */
+	char	*ty_comment;	/* comment field */
+};
+
 
 //#include <sys/resource.h>
 int getpriority(int which, id_t who);
@@ -83,7 +96,7 @@ uid_t getuid(void);
 uid_t geteuid(void);
 int getgroups(int size, gid_t list[]);
 pid_t getpgid(pid_t pid);
-pid_t getpgrp(pid_t pid);
+pid_t getpgrp(void);
 int setpgrp(pid_t pid, pid_t pgid);
 int kill(pid_t pid, int sig);
 int killpg(int pgrp, int sig);
@@ -184,8 +197,20 @@ int sigaltstack(const stack_t* ss, stack_t* old_ss);
 #define SA_NODEFER 0
 #define SA_ONSTACK 0
 #define SA_RESTART 0
-#define SIG_SETMASK 0
 #define SIGSTKSZ 0
+#define SIG_BLOCK     0
+#define SIG_UNBLOCK   1
+#define SIG_SETMASK   2
+
+#define SI_ASYNCNL (-60)
+#define SI_TKILL (-6)
+#define SI_SIGIO (-5)
+#define SI_ASYNCIO (-4)
+#define SI_MESGQ (-3)
+#define SI_TIMER (-2)
+#define SI_QUEUE (-1)
+#define SI_USER 0
+#define SI_KERNEL 128
 
 #define RLIMIT_CORE 0
 #define RLIM_INFINITY -1

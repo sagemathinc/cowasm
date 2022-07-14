@@ -30,7 +30,11 @@ export async function _init(
   }
   wasm = await wasmImport(python_wasm, {
     init: (wasm) => wasm.exports.init(),
-    env: { PYTHONHOME: "/usr" },
+    env: {
+      PYTHONHOME: "/usr",
+      TERMCAP: "/tmp/termcap",  // work in progress.
+      TERM: "xterm-256color",
+    },
     fs,
     // traceSyscalls: true,
     // traceStubcalls: 'first',
