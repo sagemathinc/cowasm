@@ -16,7 +16,8 @@ pub fn init() void {
 pub fn exec(s: [*:0]const u8) !void {
     // std.debug.print("exec '{s}'\n", .{s});
     // Returns 0 on success or -1 if an exception was raised. If there was an error, there is no way to get the exception information.
-    var pstr = python.PyRun_String(s, python.Py_single_input, globals, globals);
+    // std.debug.print("PyRun_String: Py_file_input -- '{s}'\n", .{s});
+    var pstr = python.PyRun_String(s, python.Py_file_input, globals, globals);
     if (pstr == null) {
         python.PyErr_Clear();
         // failed - some sort of exception got raised.
@@ -87,16 +88,29 @@ const test_allocator = std.testing.allocator;
 
 test "exec" {
     init();
-    try exec("print('hello')");
+    try exec("a = 2 + 3");
+    const a = try eval(test_allocator, "a");
+    defer test_allocator.free(a);
+    try expect(eql(u8, a, "5"));
+}
+
+test "exec of longer multi-statement code" {
+    init();
+    try exec("def f(n):\n    return n*2\n\na=f(1010)");
+    const a = try eval(test_allocator, "a");
+    defer test_allocator.free(a);
+    try expect(eql(u8, a, "2020"));
 }
 
 test "eval" {
+    init();
     const a = try eval(test_allocator, "sum(range(101))");
     defer test_allocator.free(a);
     try expect(eql(u8, a, "5050"));
 }
 
 test "exec and eval" {
+    init();
     try exec("w = 10; v = range(101)");
     const a = try eval(test_allocator, "sum(v)");
     defer test_allocator.free(a);
