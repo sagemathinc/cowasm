@@ -32,7 +32,7 @@ export async function _init(
     init: (wasm) => wasm.exports.init(),
     env: {
       PYTHONHOME: "/usr",
-      TERMCAP: "/tmp/termcap",  // work in progress.
+      TERMCAP: "/usr/lib/python3.11/termcap",
       TERM: "xterm-256color",
     },
     fs,

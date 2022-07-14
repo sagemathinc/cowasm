@@ -165,6 +165,8 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 		cd lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && ln -sf _sysconfigdata__wasi_wasm32-wasi.py _sysconfigdata__emscripten_wasm32-emscripten.py
 	# This DYLD_LIBRARY_PATH is needed to workaround https://developer.apple.com/forums/thread/9233
 	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" python3 ./Tools/wasm/wasm_assets.py && rm -rf ${DIST_WASM}/lib/dist && mv usr/local/lib ${DIST_WASM}/lib/dist
+	# Add termcap for xterm to our zip asset bundle:
+	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && zip -u python311.zip termcap
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
