@@ -166,7 +166,8 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	# This DYLD_LIBRARY_PATH is needed to workaround https://developer.apple.com/forums/thread/9233
 	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" python3 ./Tools/wasm/wasm_assets.py && rm -rf ${DIST_WASM}/lib/dist && mv usr/local/lib ${DIST_WASM}/lib/dist
 	# Add termcap for xterm to our zip asset bundle:
-	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && zip -u python311.zip termcap
+	# Also add rlcompleter.pyc and  _sysconfigdata__wasi_wasm32-wasi.pyc since Python doesn't include those.
+	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && cp ../python3.11/__pycache__/rlcompleter.cpython-311.pyc rlcompleter.pyc && zip -u python311.zip termcap rlcompleter.pyc && cp ../python3.11/__pycache__/_sysconfigdata__wasi_wasm32-wasi.cpython-311.pyc _sysconfigdata__wasi_wasm32-wasi.pyc && zip -u python311.zip _sysconfigdata__wasi_wasm32-wasi.pyc
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm

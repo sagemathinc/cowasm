@@ -56,6 +56,15 @@ pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
     );
 }
 
+pub fn main() void {
+    var argv0: [*c]u8 = @ptrCast([*c]u8, std.c.malloc(1));
+    argv0[0] = 'p';
+    argv0[1] = 0;
+    std.debug.print("calling Py_BytesMain()...\n", .{});
+    const r = python.Py_BytesMain(1, &argv0);
+    std.debug.print("Py_Main exited with code {}\n", .{r});
+}
+
 // var importedJson = false;
 // var json: *python.PyObject = undefined;
 // pub fn toJSON(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {

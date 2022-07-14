@@ -14,6 +14,10 @@ export fn exec(s: [*:0]const u8) void {
     };
 }
 
+export fn pymain() void {
+    python.main();
+}
+
 extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
 export fn eval(s: [*:0]const u8) void {
     const r = python.eval(interface.allocator(), s) catch |err| {
