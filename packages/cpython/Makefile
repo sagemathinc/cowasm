@@ -13,6 +13,7 @@ DIST_NATIVE = ${DIST}/native
 DIST_WASM = ${DIST}/wasm
 ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
+LIBEDIT = ${CWD}/../libedit/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
 PYTHON_WASM_BINARY = ${CWD}/../../bin/python-wasm
@@ -114,6 +115,7 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# Also copy the config.site, which answers some questions needed for
 	# cross compiling, without which ./configure won't work.
 	cp src/config.site ${BUILD}/wasm
+	cp src/Setup.local ${BUILD}/wasm/Modules
 	# Ooly need for native build using Zig:
 	# cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
 	touch ${BUILD}/wasm/.patched
@@ -129,8 +131,8 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 		CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
 		CXX="zig c++ -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
 		AR="zig ar" \
-		CFLAGS="-I${ZLIB}/wasm/include  -I${LZMA}/wasm/include" \
-		LDFLAGS="-lc -L${ZLIB}/wasm/lib -L${LZMA}/wasm/lib" \
+		CFLAGS="-I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include" \
+		LDFLAGS="-lc -L${ZLIB}/wasm/lib -L${LZMA}/wasm/lib  -L${LIBEDIT}/wasm/lib" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		./configure \
@@ -139,9 +141,11 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 			--enable-optimizations \
 			--disable-shared \
 			--disable-ipv6 \
-			--without-pymalloc \
-			--with-ensurepip=no \
+			--with-editline \
+			--with-readline=editline \
 			--with-build-python=${DIST_NATIVE}/bin/python3 \
+			--without-pymalloc \
+			--without-ensurepip \
 			--host=wasm32-unknown-wasi \
 			--build=`./config.guess`
 	# Make it so our WASM posix header file is included everywhere,
