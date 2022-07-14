@@ -38,7 +38,19 @@ packages/zlib/${BUILT}: zig
 zlib: packages/zlib/${BUILT}
 
 
-packages/cpython/${BUILT}: wasm-posix zlib lzma zig wasi
+packages/termcap/${BUILT}: zig
+	cd packages/termcap && make all
+.PHONY: termcap
+termcap: packages/termcap/${BUILT}
+
+
+packages/libedit/${BUILT}: zig termcap
+	cd packages/libedit && make all
+.PHONY: libedit
+libedit: packages/libedit/${BUILT}
+
+
+packages/cpython/${BUILT}: wasm-posix zlib lzma libedit zig wasi
 	cd packages/cpython && make all
 .PHONY: cpython
 cpython: packages/cpython/${BUILT}
@@ -82,16 +94,18 @@ docker-nocache:
 	docker build --no-cache -t python-wasm .
 
 clean:
-	cd packages/python-wasm && make clean
 	cd packages/cpython && make clean
 	cd packages/jpython && make clean
+	cd packages/libedit && make clean
 	cd packages/lzma && make clean
 	cd packages/openssl && make clean
+	cd packages/python-wasm && make clean
+	cd packages/python-wasm.org && make clean
+	cd packages/termcap && make clean
+	cd packages/terminal && make clean
 	cd packages/wasi && make clean
 	cd packages/wasm-posix && make clean
 	cd packages/webpack && make clean
-	cd packages/terminal && make clean
-	cd packages/python-wasm.org && make clean
 	cd packages/zig && make clean
 	cd packages/zlib && make clean
 

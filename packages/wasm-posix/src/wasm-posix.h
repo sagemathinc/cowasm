@@ -95,8 +95,13 @@ gid_t getegid(void);
 uid_t getuid(void);
 uid_t geteuid(void);
 int getgroups(int size, gid_t list[]);
+// ncurses wants this:
+//    pid_t getpgrp(void); /* POSIX.1 version */
+// but cpython wants this:
+pid_t getpgrp(pid_t pid); /* BSD version */
 pid_t getpgid(pid_t pid);
-pid_t getpgrp(void);
+
+
 int setpgrp(pid_t pid, pid_t pgid);
 int kill(pid_t pid, int sig);
 int killpg(int pgrp, int sig);
