@@ -1,5 +1,5 @@
 import wasmImport from "../wasm/import-node";
-import { _init, repr, exec, wasm } from "./index";
+import { _init, repr, exec, wasm, repl } from "./index";
 import type { FileSystemSpec } from "@wapython/wasi";
 
 const fs: FileSystemSpec[] = [
@@ -16,6 +16,6 @@ export async function init() {
   await _init("python/python.wasm", wasmImport, fs);
 }
 
-export { repr, exec, wasm };
+export { repr, exec, wasm, repl };
 
 init();

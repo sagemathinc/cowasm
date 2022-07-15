@@ -14,11 +14,15 @@ export fn exec(s: [*:0]const u8) void {
     };
 }
 
-export fn pymain() void {
-    python.main();
+export fn pyrepl(argv_json: [*:0]const u8) void {
+    python.repl(interface.allocator(), argv_json) catch |err| {
+        std.debug.print("python error: '{}'\nwhen running pyrepl '{s}'", .{ err, argv_json });
+        return;
+    };
 }
 
 extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
+
 export fn eval(s: [*:0]const u8) void {
     const r = python.eval(interface.allocator(), s) catch |err| {
         //todo

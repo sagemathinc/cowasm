@@ -61,4 +61,7 @@ ac_cv_func_kill=no
 ac_cv_header_sys_un_h=no
 ac_cv_header_netpacket_packet_h=no
 
-
+# Realpath is stubbed with WASI, hence returns false answers. This
+# causes _PyPathConfig_ComputeSysPath0 to break horribly at least when
+# readline is built properly.  Yep, a day to figure this out:
+ac_cv_func_realpath=no

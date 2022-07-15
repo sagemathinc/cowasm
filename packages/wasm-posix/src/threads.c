@@ -57,6 +57,7 @@ int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr) {
   return 0;
 }
 
+// The pthread_cond_signal() call unblocks at least one of the threads that are blocked on the specified condition variable cond (if any threads are blocked on cond).
 int pthread_cond_signal(pthread_cond_t *cond) {
   debug("pthread_cond_signal - c implementation\n");
   // just do nothing - since we never block
@@ -130,23 +131,26 @@ int pthread_key_create(pthread_key_t *key, void (*destructor)(void *)) {
 }
 
 
+// The pthread_mutex_init() function initialises the mutex referenced by mutex with attributes specified by attr. If attr is NULL, the default mutex attributes are used; the effect is the same as passing the address of a default mutex attributes object. Upon successful initialisation, the state of the mutex becomes initialised and unlocked.
 int pthread_mutex_init(pthread_mutex_t *mutex,
                        const pthread_mutexattr_t *attr) {
   debug("pthread_mutex_init - c implementation\n");
   return 0;
 }
 
+// The mutex object referenced by mutex is locked by calling pthread_mutex_lock(). If the mutex is already locked, the calling thread blocks until the mutex becomes available. This operation returns with the mutex object referenced by mutex in the locked state with the calling thread as its owner.
 int pthread_mutex_lock(pthread_mutex_t *mutex) {
-  debug("pthread_mutex_lock - c implementation\n");
+  //debug("pthread_mutex_lock - c implementation\n");
   return 0;
 }
 
 int pthread_mutex_unlock(pthread_mutex_t *mutex) {
-  debug("pthread_mutex_unlock - c implementation\n");
+  //debug("pthread_mutex_unlock - c implementation\n");
   return 0;
 }
 
+// The pthread_self() function returns the thread ID of the calling thread.
 pthread_t pthread_self() {
-  debug("pthread_mutex_unlock - c implementation\n");
+  debug("pthread_self - c implementation\n");
   return current;
 }
