@@ -14,7 +14,7 @@ export function repr(str: string): string {
   return wasm.callWithString("eval", str) as string;
 }
 
-export function repl() {
+export async function main() {
   if (wasm == null) throw Error("call init");
   const argv: { [n: number]: string } = {};
   let n = 0;
@@ -22,7 +22,7 @@ export function repl() {
     argv[n] = arg;
     n += 1;
   }
-  wasm.callWithString("pyrepl", JSON.stringify(argv));
+  wasm.callWithString("pymain", JSON.stringify(argv));
 }
 
 type WASMImportFunction = (

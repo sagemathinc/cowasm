@@ -25,6 +25,22 @@ Then from the nodejs REPL:
 'wasi'
 ```
 
+There is also a readline\-based REPL that is part of python\-wasm:
+
+```sh
+> python.main()
+> Starting full python-wasm with readline support.   Type quit() to exit.
+Python 3.11.0b3 (main, Jul 14 2022, 22:22:40) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 623481199fe17f4311cbdbbf on wasi
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 2+3
+5
+>>> 1/0  # you can edit with readline!
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ZeroDivisionError: division by zero
+>>> quit()
+```
+
 You can also use python-wasm in your [web application via webpack](https://github.com/sagemathinc/python-wasm/tree/main/packages/webpack).
 
 ## Quick start \- install from npm and use in node.js

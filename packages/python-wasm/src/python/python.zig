@@ -58,10 +58,10 @@ pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
 
 // TODO: actually parse and send the argv to Py_BytesMain.  Below we
 // actually just send ['python'] and that is it.
-pub fn repl(allocator: std.mem.Allocator, argv_json: [*:0]const u8) !void {
+pub fn pymain(allocator: std.mem.Allocator, argv_json: [*:0]const u8) !void {
     _= allocator;
     _ = argv_json;
-    //     std.debug.print("repl argv_json='{s}'\n", .{argv_json});
+    //     std.debug.print("pymain argv_json='{s}'\n", .{argv_json});
     //     var p = std.json.Parser.init(allocator, false);
     //     defer p.deinit();
 

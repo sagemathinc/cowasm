@@ -30,17 +30,35 @@ Type ".help" for more information.
 'wasi'
 ```
 
+You can also start a full session with readline support \(yes, this is real!\):
+
+```sh
+$ node
+> require('python-wasm').main()
+> Starting full python-wasm with readline support.   Type quit() to exit.
+Python 3.11.0b3 (main, Jul 14 2022, 22:22:40) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 623481199fe17f4311cbdbbf on wasi
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 2+3
+5
+>>> 1/0  # you can edit with readline!
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ZeroDivisionError: division by zero
+>>> quit()
+```
+
 ## Using in a web application
 
 See [this repo](https://github.com/sagemathinc/python-wasm/tree/main/packages/webpack) for how to use Webpack5 with python\-wasm.
 
 ## API
 
-The `python-wasm` module exports four things:
+The `python-wasm` module exports:
 
 - `init` \- async function; call to ensure WASM code has been initialized
 - `exec(code:string)` \- execute code \(output goes to /dev/stdout and /dev/stderr\)
 - `repr(expr:string)` \- return representation of an expression as a string
 - `wasm` \- object that is defined after `await init()` succeeds.
   - `wasm.fs` \- the [memfs](https://www.npmjs.com/package/memfs) filesystem
+- `repl()` \- start a REPL that has full readline support.  This only works in node.js. To exit type `quit()`. 
 
