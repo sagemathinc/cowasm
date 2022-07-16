@@ -25,6 +25,11 @@ export async function main() {
   wasm.callWithString("pymain", JSON.stringify(argv));
 }
 
+export async function pyrun_interactive_one() {
+  if (wasm == null) throw Error("call init");
+  wasm.exports.pyrun_interactive_one();
+}
+
 type WASMImportFunction = (
   python_wasm: string,
   options: Options

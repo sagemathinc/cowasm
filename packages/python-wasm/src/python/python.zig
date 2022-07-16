@@ -59,7 +59,7 @@ pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
 // TODO: actually parse and send the argv to Py_BytesMain.  Below we
 // actually just send ['python'] and that is it.
 pub fn pymain(allocator: std.mem.Allocator, argv_json: [*:0]const u8) !void {
-    _= allocator;
+    _ = allocator;
     _ = argv_json;
     //     std.debug.print("pymain argv_json='{s}'\n", .{argv_json});
     //     var p = std.json.Parser.init(allocator, false);
@@ -88,6 +88,15 @@ pub fn pymain(allocator: std.mem.Allocator, argv_json: [*:0]const u8) !void {
     _ = r;
     // std.debug.print("Py_Main exited with code {}\n", .{r});
 }
+
+
+// pub fn run_interactive_one() void {
+//     std.debug.print("PyRun_InteractiveOne\n", .{});
+//     const stdin = @ptrCast([*c]anyopaque, std.c.fopen("/dev/stdin", "r"));
+//     const r = python.PyRun_InteractiveOne(stdin, "/dev/stdin");
+//     //std.c.fclose(stdin);
+//     std.debug.print("PyRun_InteractiveOne: returned = {}\n", .{r});
+// }
 
 // var importedJson = false;
 // var json: *python.PyObject = undefined;

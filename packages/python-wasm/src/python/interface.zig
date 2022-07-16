@@ -21,6 +21,12 @@ export fn pymain(argv_json: [*:0]const u8) void {
     };
 }
 
+// this is not useful in any way, etc.
+extern fn run_interactive_one() i32;
+export fn pyrun_interactive_one() i32 {
+    return run_interactive_one();
+}
+
 extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
 
 export fn eval(s: [*:0]const u8) void {
