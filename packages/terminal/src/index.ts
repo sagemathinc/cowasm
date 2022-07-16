@@ -1,9 +1,8 @@
 import "xterm/css/xterm.css";
 import { Terminal } from "xterm";
 import LocalEchoController from "local-echo";
-import python from "python-wasm";
 import setTheme from "./theme";
-(window as any).python = python;
+const python = new Worker(new URL("./python.ts", import.meta.url));
 
 async function main() {
   const element = document.createElement("div");
@@ -18,36 +17,22 @@ async function main() {
 
   term.resize(128, 40);
   setTheme(term, "solarized-light");
-  localEcho.print("Python ");
-  await python.init();
-  python.exec("import sys");
-  localEcho.println(python.repr("sys.version").slice(1, -1));
-  localEcho.println(
-    'Type "help", "copyright", "credits" or "license" for more information.'
-  );
-  localEcho.println(
-    'Only output that your explicitly print will appear, e.g., print(2+3) works.'
-  );
 
   // TODO: https://github.com/wavesoft/local-echo#addautocompletehandlercallback-args
 
-  while (true) {
-    try {
-      const input = await localEcho.read(">>> ");
-      python.exec(input);
-      for (const stream of ["stderr", "stdout"]) {
-        // @ts-ignore: TODO: why isn't readFileSync defined in typescript?
-        const s = python.wasm.fs.readFileSync("/dev/" + stream).toString();
-        if (s) {
-          localEcho.println(s);
-        // @ts-ignore: TODO: why isn't writeFileSync defined in typescript?
-          python.wasm.fs.writeFileSync("/dev/" + stream, "");
-        }
-      }
-    } catch (err) {
-      term.write(`ERROR: ${err}\r\n`);
+  const readline = async () => {
+    const input = await localEcho.read(">>> ");
+    python.postMessage({ input });
+  };
+
+  python.onmessage = ({ data: { output, prompt } }) => {
+    if (output) {
+      localEcho.println(output);
     }
-  }
+    if (prompt) {
+      readline();
+    }
+  };
 }
 
 main();
