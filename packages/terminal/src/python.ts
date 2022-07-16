@@ -6,7 +6,7 @@ const BLUE = "\x1b[0;34m";
 const NC = "\x1b[0m";
 
 self.onmessage = ({ data: { input } }) => {
-  console.log("got ", input);
+  // console.log("got ", input);
   python.exec(input);
   const fs: any = python.wasm.fs; // TODO: something wrong with FileSystem type!
   const output: { stdout?: string; stderr?: string } = {};
@@ -16,7 +16,7 @@ self.onmessage = ({ data: { input } }) => {
       if (stream == "stderr") {
         output = RED + output + NC;
       }
-      self.postMessage({ output });
+      self.postMessage({ output: output + "\n" });
       fs.writeFileSync("/dev/" + stream, "");
     }
   }
@@ -24,17 +24,18 @@ self.onmessage = ({ data: { input } }) => {
 };
 
 async function main() {
-  self.postMessage({ output: "Python " });
+  self.postMessage({ output: "Loading Python... " });
   await python.init();
+  self.postMessage({ output: "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bPython " });
   python.exec("import sys");
   self.postMessage({ output: python.repr("sys.version").slice(1, -1) });
   self.postMessage({
     output:
-      'Type "help", "copyright", "credits" or "license" for more information.',
+      'Type "help", "copyright", "credits" or "license" for more information.\n',
   });
   self.postMessage({
     output:
-      "Only output that your explicitly print will appear, e.g., print(2+3) works.",
+      "Only output that your explicitly print will appear, e.g., print(2+3) works.\n",
   });
   self.postMessage({ prompt: true });
 }
