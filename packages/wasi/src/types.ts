@@ -1,4 +1,4 @@
-export type WASIBindings = {
+export interface WASIBindings {
   // Current high-resolution real time in a bigint
   hrtime: () => bigint;
   // Process functions
@@ -17,14 +17,16 @@ export type WASIBindings = {
 };
 
 export type WASIArgs = string[];
-export type WASIEnv = { [key: string]: string | undefined };
-export type WASIPreopenedDirs = { [key: string]: string };
-export type WASIConfig = {
+export interface WASIEnv { [key: string]: string | undefined };
+export interface WASIPreopenedDirs { [key: string]: string };
+
+export interface WASIConfig {
   preopens?: WASIPreopenedDirs;
   env?: WASIEnv;
   args?: WASIArgs;
   bindings: WASIBindings;
   traceSyscalls?: boolean;
+  spinLock?: SharedArrayBuffer;
 };
 
 export class WASIError extends Error {
