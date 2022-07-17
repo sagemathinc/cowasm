@@ -405,6 +405,7 @@ export default class WASI {
         });
         return WASI_ESUCCESS;
       },
+
       args_sizes_get: (argc: number, argvBufSize: number) => {
         this.refreshMemory();
         this.view.setUint32(argc, args.length, true);
@@ -412,6 +413,7 @@ export default class WASI {
         this.view.setUint32(argvBufSize, size, true);
         return WASI_ESUCCESS;
       },
+
       environ_get: (environ: number, environBuf: number) => {
         this.refreshMemory();
         let coffset = environ;
@@ -426,6 +428,7 @@ export default class WASI {
         });
         return WASI_ESUCCESS;
       },
+
       environ_sizes_get: (environCount: number, environBufSize: number) => {
         this.refreshMemory();
         const envProcessed = Object.entries(env).map(
@@ -439,6 +442,7 @@ export default class WASI {
         this.view.setUint32(environBufSize, size, true);
         return WASI_ESUCCESS;
       },
+
       clock_res_get: (clockId: number, resolution: number) => {
         let res;
         switch (clockId) {
@@ -459,6 +463,7 @@ export default class WASI {
         this.view.setBigUint64(resolution, res);
         return WASI_ESUCCESS;
       },
+
       clock_time_get: (clockId: number, _precision: number, time: number) => {
         this.refreshMemory();
         const n = now(clockId);
@@ -468,27 +473,32 @@ export default class WASI {
         this.view.setBigUint64(time, BigInt(n), true);
         return WASI_ESUCCESS;
       },
+
       fd_advise: wrap(
         (fd: number, _offset: number, _len: number, _advice: number) => {
           CHECK_FD(fd, WASI_RIGHT_FD_ADVISE);
           return WASI_ENOSYS;
         }
       ),
+
       fd_allocate: wrap((fd: number, _offset: number, _len: number) => {
         CHECK_FD(fd, WASI_RIGHT_FD_ALLOCATE);
         return WASI_ENOSYS;
       }),
+
       fd_close: wrap((fd: number) => {
         const stats = CHECK_FD(fd, BigInt(0));
         fs.closeSync(stats.real);
         this.FD_MAP.delete(fd);
         return WASI_ESUCCESS;
       }),
+
       fd_datasync: wrap((fd: number) => {
         const stats = CHECK_FD(fd, WASI_RIGHT_FD_DATASYNC);
         fs.fdatasyncSync(stats.real);
         return WASI_ESUCCESS;
       }),
+
       fd_fdstat_get: wrap((fd: number, bufPtr: number) => {
         const stats = CHECK_FD(fd, BigInt(0));
         this.refreshMemory();
@@ -506,10 +516,12 @@ export default class WASI {
         ); // u64
         return WASI_ESUCCESS;
       }),
+
       fd_fdstat_set_flags: wrap((fd: number, _flags: number) => {
         CHECK_FD(fd, WASI_RIGHT_FD_FDSTAT_SET_FLAGS);
         return WASI_ENOSYS;
       }),
+
       fd_fdstat_set_rights: wrap(
         (fd: number, fsRightsBase: bigint, fsRightsInheriting: bigint) => {
           const stats = CHECK_FD(fd, BigInt(0));
@@ -526,6 +538,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       fd_filestat_get: wrap((fd: number, bufPtr: number) => {
         const stats = CHECK_FD(fd, WASI_RIGHT_FD_FILESTAT_GET);
         const rstats = fs.fstatSync(stats.real);
@@ -550,11 +563,13 @@ export default class WASI {
         this.view.setBigUint64(bufPtr, msToNs(rstats.ctimeMs), true);
         return WASI_ESUCCESS;
       }),
+
       fd_filestat_set_size: wrap((fd: number, stSize: number) => {
         const stats = CHECK_FD(fd, WASI_RIGHT_FD_FILESTAT_SET_SIZE);
         fs.ftruncateSync(stats.real, Number(stSize));
         return WASI_ESUCCESS;
       }),
+
       fd_filestat_set_times: wrap(
         (fd: number, stAtim: number, stMtim: number, fstflags: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_FILESTAT_SET_TIMES);
@@ -590,6 +605,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       fd_prestat_get: wrap((fd: number, bufPtr: number) => {
         const stats = CHECK_FD(fd, BigInt(0));
         // console.log("fd_prestat_get", { fd, stats });
@@ -606,6 +622,7 @@ export default class WASI {
         );
         return WASI_ESUCCESS;
       }),
+
       fd_prestat_dir_name: wrap(
         (fd: number, pathPtr: number, pathLen: number) => {
           const stats = CHECK_FD(fd, BigInt(0));
@@ -622,6 +639,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       fd_pwrite: wrap(
         (
           fd: number,
@@ -649,6 +667,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       fd_write: wrap(
         (fd: number, iovs: number, iovsLen: number, nwritten: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_WRITE);
@@ -676,6 +695,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       fd_pread: wrap(
         (
           fd: number,
@@ -710,6 +730,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       fd_read: wrap(
         (fd: number, iovs: number, iovsLen: number, nread: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_READ);
@@ -747,6 +768,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       fd_readdir: wrap(
         (
           fd: number,
@@ -824,6 +846,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       fd_renumber: wrap((from: number, to: number) => {
         CHECK_FD(from, BigInt(0));
         CHECK_FD(to, BigInt(0));
@@ -832,6 +855,7 @@ export default class WASI {
         this.FD_MAP.delete(to);
         return WASI_ESUCCESS;
       }),
+
       fd_seek: wrap(
         (
           fd: number,
@@ -861,6 +885,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       fd_tell: wrap((fd: number, offsetPtr: number) => {
         const stats = CHECK_FD(fd, WASI_RIGHT_FD_TELL);
         this.refreshMemory();
@@ -870,11 +895,13 @@ export default class WASI {
         this.view.setBigUint64(offsetPtr, stats.offset, true);
         return WASI_ESUCCESS;
       }),
+
       fd_sync: wrap((fd: number) => {
         const stats = CHECK_FD(fd, WASI_RIGHT_FD_SYNC);
         fs.fsyncSync(stats.real);
         return WASI_ESUCCESS;
       }),
+
       path_create_directory: wrap(
         (fd: number, pathPtr: number, pathLen: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_PATH_CREATE_DIRECTORY);
@@ -891,6 +918,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       path_filestat_get: wrap(
         (
           fd: number,
@@ -931,6 +959,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       path_filestat_set_times: wrap(
         (
           fd: number,
@@ -987,6 +1016,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       path_link: wrap(
         (
           oldFd: number,
@@ -1020,6 +1050,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       path_open: wrap(
         (
           dirfd: number,
@@ -1165,6 +1196,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       path_readlink: wrap(
         (
           fd: number,
@@ -1191,6 +1223,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       path_remove_directory: wrap(
         (fd: number, pathPtr: number, pathLen: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_PATH_REMOVE_DIRECTORY);
@@ -1207,6 +1240,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       path_rename: wrap(
         (
           oldFd: number,
@@ -1239,6 +1273,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       path_symlink: wrap(
         (
           oldPath: number,
@@ -1266,6 +1301,7 @@ export default class WASI {
           return WASI_ESUCCESS;
         }
       ),
+
       path_unlink_file: wrap((fd: number, pathPtr: number, pathLen: number) => {
         const stats = CHECK_FD(fd, WASI_RIGHT_PATH_UNLINK_FILE);
         if (!stats.path) {
@@ -1276,6 +1312,7 @@ export default class WASI {
         fs.unlinkSync(path.resolve(stats.path, p));
         return WASI_ESUCCESS;
       }),
+
       poll_oneoff: (
         sin: number,
         sout: number,
@@ -1360,10 +1397,12 @@ export default class WASI {
 
         return WASI_ESUCCESS;
       },
+
       proc_exit: (rval: number) => {
         bindings.exit(rval);
         return WASI_ESUCCESS;
       },
+
       proc_raise: (sig: number) => {
         if (!(sig in SIGNAL_MAP)) {
           return WASI_EINVAL;
@@ -1371,6 +1410,7 @@ export default class WASI {
         bindings.kill(SIGNAL_MAP[sig]);
         return WASI_ESUCCESS;
       },
+
       random_get: (bufPtr: number, bufLen: number) => {
         this.refreshMemory();
         bindings.randomFillSync(
@@ -1385,17 +1425,21 @@ export default class WASI {
         // hangs at py_getrandom in bootstrap_hash.c.
         return bufLen;
       },
+
       sched_yield() {
         // Single threaded environment
         // This is a no-op in JS
         return WASI_ESUCCESS;
       },
+
       sock_recv() {
         return WASI_ENOSYS;
       },
+
       sock_send() {
         return WASI_ENOSYS;
       },
+
       sock_shutdown() {
         return WASI_ENOSYS;
       },

@@ -2,9 +2,23 @@ import "xterm/css/xterm.css";
 import { Terminal } from "xterm";
 import LocalEchoController from "local-echo";
 import setTheme from "./theme";
-const python = new Worker(new URL("./python.ts", import.meta.url));
 
 export default async function terminal(element: HTMLDivElement) {
+  const python = new Worker(new URL("./python.ts", import.meta.url));
+  const sharedBuffer = new SharedArrayBuffer(4);
+  const int32 = new Int32Array(sharedBuffer);
+  const pause = () => {
+    console.log("pause");
+    Atomics.store(int32, 0, 1);
+    Atomics.notify(int32, 0);
+  };
+  const resume = () => {
+    console.log("resume");
+    Atomics.store(int32, 0, 0);
+    Atomics.notify(int32, 0);
+  };
+  python.postMessage({ init: sharedBuffer });
+
   const term = new Terminal({ rendererType: "dom" });
   term.open(element);
   // @ts-ignore
@@ -20,7 +34,11 @@ export default async function terminal(element: HTMLDivElement) {
     python.postMessage({ input });
   };
 
-  python.onmessage = ({ data: { output, prompt } }) => {
+  python.onmessage = ({ data: { output, prompt, sleep } }) => {
+    if (sleep) {
+      pause();
+      setTimeout(resume, sleep);
+    }
     if (output) {
       localEcho.print(output);
     }

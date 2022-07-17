@@ -1,24 +1,28 @@
-# Using [python-wasm](https://www.npmjs.com/package/python-wasm) with [webpack](https://webpack.js.org/)
+# Terminal Demo
+
+## Using [python\-wasm](https://www.npmjs.com/package/python-wasm) with [webpack](https://webpack.js.org/)
 
 You can use `python-wasm` with webpack5.  There are two things
 you may have to modify in your webpack configuration.
 See [webpack.config.js](./webpack.config.js), in particular:
 
+- The `NodePolyfillPlugin` is required because `python-wasm` uses `memfs`, which requires several polyfilled libraries.
 
-- The NodePolyfillPlugin is needed because python-wasm
-  uses memfs, which requires several polyfilled libraries.
-
-- The wasm and zip asset/resource rules are needed so python-wasm
+- The wasm and zip asset/resource rules are needed so python\-wasm
   can import the python wasm binary and zip filesystem.
-  
+
+- Your webserver must have these two headers set, so that SharedArrayBuffers are allowed:
+  - `Cross-Origin-Opener-Policy: same-origin`
+  - `Cross-Origin-Embedder-Policy: require-corp`
+
 Thus your `webpack.config.js` has to include this:
+
 ```js
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = {
   plugins: [
     new NodePolyfillPlugin(),
-    // ...
   ],
   module: {
     rules: [
@@ -26,15 +30,19 @@ module.exports = {
         test: /\.wasm$|\.zip$/,
         type: "asset/resource",
       },
-      //...
     ],
+  },
+  devServer: {
+    headers: {
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp",
+    },
   },
 };
 
 ```
-  
 
-Once you do that, you can just put
+<!-- Once you do that, put
 
 ```js
 const python = require("python-wasm");
@@ -47,14 +55,13 @@ import python from "python-wasm";
 ```
 
 in your code and use the `python` object, as illustrated here
-in [src/index.ts](./src/index.ts).
+in [src/index.ts](./src/index.ts). -->
 
-
-## Trying the demo in your browser
+## Trying this demo in your browser
 
 ```sh
 git clone https://github.com/sagemathinc/python-wasm
-cd python-wasm/packages/webpack
+cd python-wasm/packages/terminal
 npm ci
 npm run serve
 ```
