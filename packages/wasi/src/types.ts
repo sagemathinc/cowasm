@@ -26,7 +26,7 @@ export interface WASIConfig {
   args?: WASIArgs;
   bindings: WASIBindings;
   traceSyscalls?: boolean;
-  spinLock?: SharedArrayBuffer;
+  spinLock?: Int32Array;
 };
 
 export class WASIError extends Error {

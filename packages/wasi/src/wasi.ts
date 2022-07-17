@@ -264,8 +264,12 @@ export default class WASI {
   FD_MAP: Map<number, File>;
   wasiImport: Exports;
   bindings: WASIBindings;
+  spinLock: Int32Array | null;
 
   constructor(wasiConfig: WASIConfig) {
+    this.spinLock = wasiConfig.spinLock
+      ? new Int32Array(wasiConfig.spinLock)
+      : null;
     // Destructure our wasiConfig
     let preopens: WASIPreopenedDirs = {};
     if (wasiConfig.preopens) {
@@ -1391,8 +1395,38 @@ export default class WASI {
 
         this.view.setUint32(nevents, eventc, true);
 
-        while (bindings.hrtime() < waitEnd) {
-          // nothing
+        const remainingTime = BigInt(waitEnd) - bindings.hrtime();
+        console.log('remainingTime', remainingTime);
+        if (remainingTime > 0) {
+          if (this.spinLock != null) {
+            console.log("have spinLock, so using it");
+            // We are running in a worker thread, and have the
+            // ability to use a SharedArrayBuffer and Atomic
+            // to synchronously pause execution of this thread.
+            // Yeah!
+            // Note: we write the code below in such a way
+            // that if the main thread ignores making the lock
+            // for some reason, it still "works" (with the 100%)
+            // cpu loop fallback.
+
+            // We ask main thread to do the lock:
+            self.postMessage({ event: "sleep", ms: remainingTime });
+            // We wait a moment for that message to be processed:
+            while (this.spinLock[0] != 1 && bindings.hrtime() < waitEnd) {}
+            if (bindings.hrtime() < waitEnd) {
+              // now the lock is set, and we wait for it to get unset:
+              Atomics.wait(this.spinLock, 0, 1);
+            }
+          } else {
+            // Use **horrible** 100% block and 100% cpu
+            // wait, which might sort of work, but is obviously
+            // a wrong nightmare.  Unfortunately, this is the
+            // only possible thing to do when not running in
+            // a work thread.
+            while (bindings.hrtime() < waitEnd) {
+              // nothing
+            }
+          }
         }
 
         return WASI_ESUCCESS;

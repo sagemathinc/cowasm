@@ -4,7 +4,13 @@
   "description": "python-wasm -- Web Assembly Python for Node.js and the Browser",
   "main": "./dist/python/node.js",
   "browser": "./dist/python/browser.js",
-  "files": ["dist/*", "README.md", "package.json", "tsconfig.json", "Makefile"],
+  "files": [
+    "dist/*",
+    "README.md",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
   "scripts": {
     "build": "make all",
     "clean": "make clean",
@@ -16,16 +22,22 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/python-wasm.git"
   },
-  "keywords": ["python", "webassembly"],
+  "keywords": [
+    "python",
+    "webassembly"
+  ],
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
   "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/python-wasm",
-  "workspaces": ["../wasi"],
+  "workspaces": [
+    "../wasi"
+  ],
   "dependencies": {
     "@wapython/wasi": "^0.17.0",
+    "awaiting": "^3.0.0",
     "callsite": "^1.0.0"
   },
   "devDependencies": {

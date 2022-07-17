@@ -14,7 +14,7 @@ export async function init() {
     { type: "dev" },
   ];
 
-  await _init(wasmUrl, wasmImport, fs);
+  await _init(wasmUrl, wasmImport as any, fs); // TODO - temporary!!!
   python.wasm = wasm;
 }
 

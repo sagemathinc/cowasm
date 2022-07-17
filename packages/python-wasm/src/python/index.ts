@@ -1,4 +1,4 @@
-import type WasmInstance from "../wasm/instance";
+import type { WasmInstance } from "../wasm/types";
 import { Options } from "../wasm/import";
 import type { FileSystemSpec } from "@wapython/wasi";
 
@@ -25,10 +25,10 @@ export async function main() {
   wasm.callWithString("pymain", JSON.stringify(argv));
 }
 
-export async function pyrun_interactive_one() {
-  if (wasm == null) throw Error("call init");
-  wasm.exports.pyrun_interactive_one();
-}
+// export async function pyrun_interactive_one() {
+//   if (wasm == null) throw Error("call init");
+//   wasm.exports.pyrun_interactive_one();
+// }
 
 type WASMImportFunction = (
   python_wasm: string,
@@ -45,7 +45,6 @@ export async function _init(
     return;
   }
   wasm = await wasmImport(python_wasm, {
-    init: (wasm) => wasm.exports.init(),
     env: {
       PYTHONHOME: "/usr",
       TERMCAP: "/usr/lib/python3.11/termcap",

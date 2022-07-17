@@ -19,6 +19,7 @@ export interface Options {
   init?: (wasm: WasmInstance) => void | Promise<void>;
   traceSyscalls?: boolean;
   traceStubcalls?: "first" | true;
+  spinLockBuffer?: SharedArrayBuffer;
 }
 
 const cache: { [name: string]: any } = {};
@@ -31,7 +32,7 @@ type WasmImportFunction = (
 ) => Promise<WasmInstance>;
 
 async function doWasmImport(
-  name: string,  // this is only used for caching and printing
+  name: string, // this is only used for caching and printing
   source: Buffer | Promise<any>, // contents of the .wasm file or promise returned by fetch (in browser).
   bindings: WASIBindings,
   options: Options = {}
@@ -94,6 +95,10 @@ async function doWasmImport(
       args: process.argv,
       env: options.env,
       traceSyscalls: options.traceSyscalls,
+      spinLock:
+        options.spinLockBuffer != null
+          ? new Int32Array(options.spinLockBuffer)
+          : undefined,
     };
     if (options.fs != null) {
       // explicit fs option given, so create the bindings.fs object, which is typically
