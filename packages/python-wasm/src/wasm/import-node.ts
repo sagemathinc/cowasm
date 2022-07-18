@@ -4,6 +4,7 @@ import { EventEmitter } from "events";
 import { Worker } from "worker_threads";
 import { dirname, join } from "path";
 import callsite from "callsite";
+import reuseInFlight from "./reuseInFlight";
 
 const logToFile = (...args) => {
   require("fs").appendFile(
@@ -14,14 +15,24 @@ const logToFile = (...args) => {
 };
 
 export class WasmInstance extends EventEmitter {
-  private worker: Worker;
+  private name: string;
+  private options: Options;
+  private worker?: Worker;
   private spinLock: Int32Array;
   result: any;
   exports: any;
   waitingForStdin: boolean = false;
+  stdinListeners?: any[];
 
   constructor(name: string, options: Options) {
     super();
+    this.name = name;
+    this.options = options;
+    this.init = reuseInFlight(this.init);
+  }
+
+  private async init() {
+    if (this.worker) return;
     const log = logToFile;
     const path = join(
       dirname(callsite()[0]?.getFileName() ?? "."),
@@ -32,9 +43,9 @@ export class WasmInstance extends EventEmitter {
     const spinLockBuffer = new SharedArrayBuffer(4);
     const stdinBuffer = new SharedArrayBuffer(10000); // size = todo
     this.spinLock = new Int32Array(spinLockBuffer);
-    options = { spinLockBuffer, stdinBuffer, ...options };
+    const options = { spinLockBuffer, stdinBuffer, ...this.options };
     log("options = ", options);
-    this.worker.postMessage({ event: "init", name, options });
+    this.worker.postMessage({ event: "init", name: this.name, options });
     this.worker.on("message", async (message) => {
       log("main thread got message", message);
       switch (message.event) {
@@ -55,6 +66,11 @@ export class WasmInstance extends EventEmitter {
               });
             });
             log("got data", data.toString());
+            if (data.includes("\u0004")) {
+              // Ctrl+D
+              this.terminate();
+              return;
+            }
             data.copy(Buffer.from(stdinBuffer));
             Atomics.store(this.spinLock, 0, data.length);
             Atomics.notify(this.spinLock, 0);
@@ -67,66 +83,55 @@ export class WasmInstance extends EventEmitter {
           return;
       }
     });
+    await callback((cb) =>
+      this.once("init", (message) => {
+        cb(message.error);
+      })
+    );
+  }
+
+  terminate() {
+    if (!this.worker) return;
+    this.worker.removeAllListeners();
+    this.worker.terminate();
+    delete this.worker;
+    for (const f of this.stdinListeners ?? []) {
+      process.stdin.addListener("data", f);
+    }
+    process.stdout.write("^D\n> ");
   }
 
   private pause() {
-    // console.log("pause");
     Atomics.store(this.spinLock, 0, 0);
     Atomics.notify(this.spinLock, 0);
   }
 
   private resume() {
-    // console.log("resume");
     Atomics.store(this.spinLock, 0, 1);
     Atomics.notify(this.spinLock, 0);
   }
 
-  public callWithString(name: string, str: string, ...args): any {
+  async callWithString(name: string, str: string, ...args): Promise<any> {
+    await this.init();
+    if (!this.worker) throw Error("bug");
     console.log("STUB: callWithString ", name, str, args);
     this.worker.postMessage({ event: "callWithString", name, str, args });
   }
 
-  public pymain() {
-    const mainListener = process.stdin.listeners("data");
+  async pymain() {
+    await this.init();
+    if (!this.worker) throw Error("bug");
+    this.stdinListeners = process.stdin.listeners("data");
     this.worker.postMessage({ event: "call", name: "pymain" });
-    process.stdin.removeListener("data", mainListener[0] as any);
+    for (const f of this.stdinListeners) {
+      process.stdin.removeListener("data", f);
+    }
   }
 }
-
-/*
-export async function once(
-  obj: EventEmitter,
-  event: string,
-  timeout_ms: number = 0
-): Promise<any> {
-  if (!(obj instanceof EventEmitter)) {
-    // just in case typescript doesn't catch something:
-    throw Error("obj must be an EventEmitter");
-  }
-  if (timeout_ms > 0) {
-    // just to keep both versions more readable...
-    return once_with_timeout(obj, event, timeout_ms);
-  }
-  let val: any[] = [];
-  function wait(cb: Function): void {
-    obj.once(event, function (...args): void {
-      val = args;
-      cb();
-    });
-  }
-  await awaiting.callback(wait);
-  return val;
-}*/
 
 export default async function wasmImportNodeWorker(
   name: string,
   options: Options = {}
 ): Promise<WasmInstance> {
-  const wasm = new WasmInstance(name, options);
-  await callback((cb) => {
-    wasm.once("init", ({ error }) => {
-      cb(error);
-    });
-  });
-  return wasm;
+  return new WasmInstance(name, options);
 }
