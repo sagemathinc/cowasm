@@ -16,12 +16,13 @@ export class WasmInstance extends EventEmitter {
   private spinLock: Int32Array;
   result: any;
   exports: any;
+  waitingForStdin: boolean = false;
 
   constructor(name: string, options: Options) {
     const log = logToFile;
     super();
     this.worker = new Worker( // TODO: the path
-      "/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/python-wasm/packages/python-wasm/dist/wasm/import-node-worker.js",
+      "/home/user/python-wasm/packages/python-wasm/dist/wasm/import-node-worker.js",
       { stdin: true }
     );
     const spinLockBuffer = new SharedArrayBuffer(4);
@@ -39,18 +40,24 @@ export class WasmInstance extends EventEmitter {
           this.resume();
           return;
         case "waitForStdin":
-          this.pause();
-          log("waitForStdin");
-          const data = await callback((cb) => {
-            process.stdin.once("data", (data) => {
-              cb(undefined, data);
+          if (this.waitingForStdin) return;
+          this.waitingForStdin = true;
+          try {
+            this.pause();
+            log("waitForStdin");
+            const data = await callback((cb) => {
+              process.stdin.once("data", (data) => {
+                cb(undefined, data);
+              });
             });
-          });
-          log("got data", data.toString());
-          data.copy(Buffer.from(stdinBuffer));
-          Atomics.store(this.spinLock, 0, data.length);
-          Atomics.notify(this.spinLock, 0);
-          return;
+            log("got data", data.toString());
+            data.copy(Buffer.from(stdinBuffer));
+            Atomics.store(this.spinLock, 0, data.length);
+            Atomics.notify(this.spinLock, 0);
+            return;
+          } finally {
+            this.waitingForStdin = false;
+          }
         case "init":
           this.emit("init", message);
           return;
@@ -65,7 +72,7 @@ export class WasmInstance extends EventEmitter {
   }
 
   private resume() {
-   // console.log("resume");
+    // console.log("resume");
     Atomics.store(this.spinLock, 0, 1);
     Atomics.notify(this.spinLock, 0);
   }
