@@ -2,6 +2,8 @@ import { Options } from "./import";
 import { callback, delay } from "awaiting";
 import { EventEmitter } from "events";
 import { Worker } from "worker_threads";
+import { dirname, join } from "path";
+import callsite from "callsite";
 
 const logToFile = (...args) => {
   require("fs").appendFile(
@@ -19,12 +21,14 @@ export class WasmInstance extends EventEmitter {
   waitingForStdin: boolean = false;
 
   constructor(name: string, options: Options) {
-    const log = logToFile;
     super();
-    this.worker = new Worker( // TODO: the path
-      "/home/user/python-wasm/packages/python-wasm/dist/wasm/import-node-worker.js",
-      { stdin: true }
+    const log = logToFile;
+    const path = join(
+      dirname(callsite()[0]?.getFileName() ?? "."),
+      "import-node-worker.js"
     );
+
+    this.worker = new Worker(path, { stdin: true });
     const spinLockBuffer = new SharedArrayBuffer(4);
     const stdinBuffer = new SharedArrayBuffer(10000); // size = todo
     this.spinLock = new Int32Array(spinLockBuffer);
