@@ -258,18 +258,23 @@ type Exports = {
   [key: string]: any;
 };
 
+const logToFile = (s: string) => {
+  require("fs").appendFileSync("/tmp/wasi.log", s + "\n");
+};
+
 export default class WASI {
   memory: WebAssembly.Memory;
   view: DataView;
   FD_MAP: Map<number, File>;
   wasiImport: Exports;
   bindings: WASIBindings;
-  spinLock: Int32Array | null;
+  spinLock?: (time: number) => void;
+  waitForStdin?: () => Buffer;
+  stdinBuffer?: Buffer;
 
   constructor(wasiConfig: WASIConfig) {
-    this.spinLock = wasiConfig.spinLock
-      ? new Int32Array(wasiConfig.spinLock)
-      : null;
+    this.spinLock = wasiConfig.spinLock;
+    this.waitForStdin = wasiConfig.waitForStdin;
     // Destructure our wasiConfig
     let preopens: WASIPreopenedDirs = {};
     if (wasiConfig.preopens) {
@@ -740,6 +745,12 @@ export default class WASI {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_READ);
           const IS_STDIN = stats.real === 0;
           let read = 0;
+          logToFile(
+            `fd_read: ${IS_STDIN}, ${
+              this.stdinBuffer?.length
+            } ${this.stdinBuffer?.toString()}`
+          );
+
           outer: for (const iov of getiovs(iovs, iovsLen)) {
             let r = 0;
             while (r < iov.byteLength) {
@@ -748,25 +759,44 @@ export default class WASI {
                 IS_STDIN || stats.offset === undefined
                   ? null
                   : Number(stats.offset);
-              let rr = fs.readSync(
-                stats.real, // fd
-                iov, // buffer
-                r, // offset
-                length, // length
-                position // position
-              );
+              let rr;
+              if (IS_STDIN && this.stdinBuffer) {
+                // just got stdin after waiting for it in poll_oneoff
+                // TODO!!! Need to limit length or iov will overflow?
+                rr = this.stdinBuffer.copy(iov);
+                logToFile(
+                  `fd_read: copied ${rr} to ${iov.toString()}; ${
+                    iov.length
+                  }, ${length}`
+                );
+                if (rr == this.stdinBuffer.length) {
+                  this.stdinBuffer = undefined;
+                } else {
+                  this.stdinBuffer = this.stdinBuffer.slice(rr);
+                }
+              } else {
+                rr = fs.readSync(
+                  stats.real, // fd
+                  iov, // buffer
+                  r, // offset
+                  length, // length
+                  position // position
+                );
+              }
               if (!IS_STDIN) {
                 stats.offset =
                   (stats.offset ? stats.offset : BigInt(0)) + BigInt(rr);
               }
               r += rr;
               read += rr;
+
               // If we don't read anything, or we receive less than requested
               if (rr === 0 || rr < length) {
                 break outer;
               }
             }
           }
+
           // We should not modify the offset of stdin
           this.view.setUint32(nread, read, true);
           return WASI_ESUCCESS;
@@ -1326,11 +1356,13 @@ export default class WASI {
         let eventc = 0;
         let waitEnd = 0;
         this.refreshMemory();
+        //console.log("poll_oneoff", sin, sout, nsubscriptions, nevents);
         for (let i = 0; i < nsubscriptions; i += 1) {
           const userdata = this.view.getBigUint64(sin, true);
           sin += 8;
           const type = this.view.getUint8(sin);
           sin += 1;
+          logToFile(`type=${type}, userdata=${userdata}\n`);
           switch (type) {
             case WASI_EVENTTYPE_CLOCK: {
               sin += 7; // padding
@@ -1372,6 +1404,24 @@ export default class WASI {
             }
             case WASI_EVENTTYPE_FD_READ:
             case WASI_EVENTTYPE_FD_WRITE: {
+              /*
+              Look at
+               lib/libc/wasi/libc-bottom-half/cloudlibc/src/libc/sys/select/pselect.c
+              to see how poll_oneoff is actually used by wasi.
+              In particular, from the code:
+
+                   userdata = fd = the file descriptor
+
+              Also, from the select man page:
+              "If none of the selected descriptors are ready for the
+              requested operation, the pselect() or select() function shall
+              block until at least one of the requested operations becomes
+              ready, until the timeout occurs, or until interrupted by a signal."
+              Thus what is supposed to happen below is supposed
+              to block until the fd is ready to read from or write
+              to, etc.
+              */
+
               sin += 3; // padding
               //const fd = this.view.getUint32(sin, true);
               sin += 4;
@@ -1385,6 +1435,18 @@ export default class WASI {
               sout += 5; // padding to 8
 
               eventc += 1;
+              if (
+                userdata == BigInt(0) &&
+                WASI_EVENTTYPE_FD_READ == type &&
+                this.waitForStdin != null
+              ) {
+                if (!this.stdinBuffer) {
+                  // Don't have anything in stdin, so
+                  // block waiting for *more* stdin
+                  // TODO: should respect timeout and signals...
+                  this.stdinBuffer = this.waitForStdin();
+                }
+              }
 
               break;
             }
@@ -1396,27 +1458,13 @@ export default class WASI {
         this.view.setUint32(nevents, eventc, true);
 
         const remainingTime = BigInt(waitEnd) - bindings.hrtime();
-        console.log('remainingTime', remainingTime);
         if (remainingTime > 0) {
           if (this.spinLock != null) {
-            console.log("have spinLock, so using it");
             // We are running in a worker thread, and have the
             // ability to use a SharedArrayBuffer and Atomic
             // to synchronously pause execution of this thread.
             // Yeah!
-            // Note: we write the code below in such a way
-            // that if the main thread ignores making the lock
-            // for some reason, it still "works" (with the 100%)
-            // cpu loop fallback.
-
-            // We ask main thread to do the lock:
-            self.postMessage({ event: "sleep", ms: remainingTime });
-            // We wait a moment for that message to be processed:
-            while (this.spinLock[0] != 1 && bindings.hrtime() < waitEnd) {}
-            if (bindings.hrtime() < waitEnd) {
-              // now the lock is set, and we wait for it to get unset:
-              Atomics.wait(this.spinLock, 0, 1);
-            }
+            this.spinLock(Number(remainingTime));
           } else {
             // Use **horrible** 100% block and 100% cpu
             // wait, which might sort of work, but is obviously
@@ -1480,16 +1528,18 @@ export default class WASI {
     };
     // Wrap each of the imports to show the calls in the console
     if ((wasiConfig as WASIConfig).traceSyscalls) {
+      const log = console.log;
+      // const log = (x) => require("fs").appendFileSync("/tmp/foo389", x + "\n");
       Object.keys(this.wasiImport).forEach((key: string) => {
         const prevImport = this.wasiImport[key];
         this.wasiImport[key] = function (...args: any[]) {
-          console.log(`wasi.${key} (${args})`);
+          log(`wasi.${key} (${args})\n`);
           try {
             let result = prevImport(...args);
-            console.log(` (wasi.${key} => ${result})`);
+            log(` (wasi.${key} => ${result})`);
             return result;
           } catch (e) {
-            console.log(`Caught error: ${e}`);
+            log(`Caught error: ${e}`);
             throw e;
           }
         };

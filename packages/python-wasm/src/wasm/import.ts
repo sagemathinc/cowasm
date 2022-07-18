@@ -19,7 +19,10 @@ export interface Options {
   init?: (wasm: WasmInstance) => void | Promise<void>;
   traceSyscalls?: boolean;
   traceStubcalls?: "first" | true;
+  spinLock?: (time: number) => void;
   spinLockBuffer?: SharedArrayBuffer;
+  stdinBuffer?: SharedArrayBuffer;
+  waitForStdin?: () => Buffer;
 }
 
 const cache: { [name: string]: any } = {};
@@ -95,10 +98,8 @@ async function doWasmImport(
       args: process.argv,
       env: options.env,
       traceSyscalls: options.traceSyscalls,
-      spinLock:
-        options.spinLockBuffer != null
-          ? new Int32Array(options.spinLockBuffer)
-          : undefined,
+      spinLock: options.spinLock,
+      waitForStdin: options.waitForStdin,
     };
     if (options.fs != null) {
       // explicit fs option given, so create the bindings.fs object, which is typically

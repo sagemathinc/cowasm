@@ -14,11 +14,15 @@ export interface WASIBindings {
 
   // Path
   path: any;
-};
+}
 
 export type WASIArgs = string[];
-export interface WASIEnv { [key: string]: string | undefined };
-export interface WASIPreopenedDirs { [key: string]: string };
+export interface WASIEnv {
+  [key: string]: string | undefined;
+}
+export interface WASIPreopenedDirs {
+  [key: string]: string;
+}
 
 export interface WASIConfig {
   preopens?: WASIPreopenedDirs;
@@ -26,8 +30,9 @@ export interface WASIConfig {
   args?: WASIArgs;
   bindings: WASIBindings;
   traceSyscalls?: boolean;
-  spinLock?: Int32Array;
-};
+  spinLock?: (time: number) => void;
+  waitForStdin?: () => Buffer;
+}
 
 export class WASIError extends Error {
   errno: number;
