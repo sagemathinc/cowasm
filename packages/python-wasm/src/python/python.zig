@@ -14,6 +14,7 @@ pub fn init() void {
 }
 
 pub fn exec(s: [*:0]const u8) !void {
+    init();
     // std.debug.print("exec '{s}'\n", .{s});
     // Returns 0 on success or -1 if an exception was raised. If there was an error, there is no way to get the exception information.
     // std.debug.print("PyRun_String: Py_file_input -- '{s}'\n", .{s});
@@ -29,6 +30,7 @@ pub fn exec(s: [*:0]const u8) !void {
 }
 
 pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
+    init();
     // std.debug.print("eval '{s}'\n", .{s});
     var pstr = python.PyRun_String(s, python.Py_eval_input, globals, globals);
     if (pstr == null) {
@@ -58,10 +60,10 @@ pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
 
 // TODO: actually parse and send the argv to Py_BytesMain.  Below we
 // actually just send ['python'] and that is it.
-pub fn pymain(allocator: std.mem.Allocator, argv_json: [*:0]const u8) !void {
+pub fn terminal(allocator: std.mem.Allocator, argv_json: [*:0]const u8) !void {
     _ = allocator;
     _ = argv_json;
-    //     std.debug.print("pymain argv_json='{s}'\n", .{argv_json});
+    //     std.debug.print("terminal argv_json='{s}'\n", .{argv_json});
     //     var p = std.json.Parser.init(allocator, false);
     //     defer p.deinit();
 

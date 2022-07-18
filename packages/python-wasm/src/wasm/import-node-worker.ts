@@ -60,7 +60,7 @@ if (parentPort != null) {
           if (message.options.spinLockBuffer != null) {
             const lock = new Int32Array(message.options.spinLockBuffer);
             opts.spinLock = (time: number) => {
-              logToFile(`spinLock: ${time}`);
+              // logToFile(`spinLock: ${time}`);
               // We ask main thread to do the lock:
               parent.postMessage({ event: "sleep", time });
               // We wait a moment for that message to be processed:
@@ -69,17 +69,12 @@ if (parentPort != null) {
               Atomics.wait(lock, 0, 0);
             };
             opts.waitForStdin = () => {
-              logToFile("waitForStdin: 0");
               parent.postMessage({ event: "waitForStdin" });
-              logToFile("waitForStdin: 1");
               while (lock[0] != 0) {}
-              logToFile("waitForStdin: 2");
               Atomics.wait(lock, 0, 0);
-              logToFile("waitForStdin: 3");
               // how much was read
               const bytes = lock[0];
               const data = Buffer.from(opts.stdinBuffer.slice(0, bytes)); // not a copy
-              logToFile(`waitForStdin: 4 - "${data.toString()}"`);
               return data;
             };
           }
@@ -93,27 +88,29 @@ if (parentPort != null) {
           });
         }
         return;
+
       case "callWithString":
         if (wasm == null) {
           throw Error("wasm must be initialized");
         }
-        {
-          const output = wasm.callWithString(
+        parent.postMessage({
+          id: message.id,
+          result: wasm.callWithString(
             message.name,
             message.str,
             ...message.args
-          );
-          parent.postMessage({ id: message.id, output });
-        }
+          ),
+        });
         return;
+
       case "call":
         if (wasm == null) {
           throw Error("wasm must be initialized");
         }
-        {
-          const output = wasm.callWithString(message.name, "", []);
-          parent.postMessage({ id: message.id, output });
-        }
+        parent.postMessage({
+          id: message.id,
+          result: wasm.callWithString(message.name, "", []),
+        });
         return;
     }
   });

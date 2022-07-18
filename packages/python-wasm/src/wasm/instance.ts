@@ -24,7 +24,7 @@ export default class WasmInstance {
     return ptr;
   }
 
-  public callWithString(name: string, str: string, ...args): any {
+  callWithString(name: string, str: string, ...args): any {
     this.result = undefined;
     const ptr = this.stringToCharStar(str);
     let r;

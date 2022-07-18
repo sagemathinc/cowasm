@@ -1,5 +1,5 @@
 import wasmImport from "../wasm/import-node";
-import { _init, repr, exec, wasm, main as _main } from "./index";
+import { _init, repr, exec, wasm, terminal as _terminal } from "./index";
 import type { FileSystemSpec } from "@wapython/wasi";
 
 const fs: FileSystemSpec[] = [
@@ -16,14 +16,13 @@ export async function init() {
   await _init("python/python.wasm", wasmImport, fs);
 }
 
-async function main() {
-  await init();
-  console.log(
-    "Starting full python-wasm with readline support.   Type quit() to exit."
-  );
-  _main();
+function terminal() {
+  (async () => {
+    await init();
+    _terminal();
+  })();
 }
 
-export { repr, exec, wasm, main };
+export { repr, exec, wasm, terminal };
 
 init();

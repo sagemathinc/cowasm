@@ -14,9 +14,9 @@ export fn exec(s: [*:0]const u8) void {
     };
 }
 
-export fn pymain(argv_json: [*:0]const u8) void {
-    python.pymain(interface.allocator(), argv_json) catch |err| {
-        std.debug.print("python error: '{}'\nwhen running pymain '{s}'", .{ err, argv_json });
+export fn terminal(argv_json: [*:0]const u8) void {
+    python.terminal(interface.allocator(), argv_json) catch |err| {
+        std.debug.print("python error: '{}'\nwhen running terminal '{s}'", .{ err, argv_json });
         return;
     };
 }

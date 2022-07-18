@@ -14,15 +14,16 @@ export function repr(str: string): string {
   return wasm.callWithString("eval", str) as string;
 }
 
-export async function main() {
+export async function terminal() {
   if (wasm == null) throw Error("call init");
-  const argv: { [n: number]: string } = {};
-  let n = 0;
-  for (const arg of process.argv) {
-    argv[n] = arg;
-    n += 1;
-  }
-  wasm.callWithString("pymain", JSON.stringify(argv));
+  wasm.terminal();
+//   const argv: { [n: number]: string } = {};
+//   let n = 0;
+//   for (const arg of process.argv) {
+//     argv[n] = arg;
+//     n += 1;
+//   }
+//   wasm.callWithString("terminal", JSON.stringify(argv));
 }
 
 // export async function pyrun_interactive_one() {

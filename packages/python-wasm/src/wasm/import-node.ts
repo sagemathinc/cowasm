@@ -15,6 +15,7 @@ const logToFile = (...args) => {
 };
 
 export class WasmInstance extends EventEmitter {
+  private id: number = 0;
   private name: string;
   private options: Options;
   private worker?: Worker;
@@ -46,8 +47,14 @@ export class WasmInstance extends EventEmitter {
     const options = { spinLockBuffer, stdinBuffer, ...this.options };
     log("options = ", options);
     this.worker.postMessage({ event: "init", name: this.name, options });
+    this.worker.on("exit", () => this.terminate());
     this.worker.on("message", async (message) => {
       log("main thread got message", message);
+      if (message.id != null) {
+        // message with id handled elsewhere -- used for getting data back.
+        this.emit("id", message);
+        return;
+      }
       switch (message.event) {
         case "sleep":
           this.pause();
@@ -114,18 +121,37 @@ export class WasmInstance extends EventEmitter {
   async callWithString(name: string, str: string, ...args): Promise<any> {
     await this.init();
     if (!this.worker) throw Error("bug");
-    console.log("STUB: callWithString ", name, str, args);
-    this.worker.postMessage({ event: "callWithString", name, str, args });
+    this.id += 1;
+    this.worker.postMessage({
+      id: this.id,
+      event: "callWithString",
+      name,
+      str,
+      args,
+    });
+    return await this.waitForResponse(this.id);
   }
 
-  async pymain() {
+  private async waitForResponse(id: number): Promise<any> {
+    return (
+      await callback((cb) => {
+        this.on("id", (message) => {
+          if (message.id == id) {
+            cb(undefined, message);
+          }
+        });
+      })
+    ).result;
+  }
+
+  async terminal() {
     await this.init();
     if (!this.worker) throw Error("bug");
     this.stdinListeners = process.stdin.listeners("data");
-    this.worker.postMessage({ event: "call", name: "pymain" });
     for (const f of this.stdinListeners) {
       process.stdin.removeListener("data", f);
     }
+    this.callWithString("terminal", "");
   }
 }
 
