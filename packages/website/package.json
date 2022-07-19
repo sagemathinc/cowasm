@@ -1,7 +1,7 @@
 {
-  "name": "@wapython/terminal",
+  "name": "@wapython/website",
   "version": "0.0.1",
-  "description": "Demo of browser based Python terminal using python-wasm and xterm.js",
+  "description": "The python-wasm website.  Includes a live demo.",
   "files": [
     "dist/*",
     "src/*",
@@ -31,7 +31,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/terminal",
+  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/website",
   "workspaces": [
     "../python-wasm"
   ],
