@@ -16,11 +16,9 @@ export async function init() {
   await _init("python/python.wasm", wasmImport, fs);
 }
 
-function terminal() {
-  (async () => {
-    await init();
-    _terminal();
-  })();
+async function terminal() {
+  await init();
+  await _terminal();
 }
 
 export { repr, exec, wasm, terminal };

@@ -103,9 +103,11 @@ export class WasmInstance extends EventEmitter {
 
   terminate() {
     if (!this.worker) return;
-    this.worker.removeAllListeners();
-    this.worker.terminate();
+    const worker = this.worker;
     delete this.worker;
+    worker.emit('exit');
+    worker.terminate();
+    worker.removeAllListeners();
     for (const f of this.stdinListeners ?? []) {
       process.stdin.addListener("data", f);
     }
@@ -139,10 +141,16 @@ export class WasmInstance extends EventEmitter {
   private async waitForResponse(id: number): Promise<any> {
     return (
       await callback((cb) => {
-        this.on("id", (message) => {
+        const listener = (message) => {
           if (message.id == id) {
+            this.removeListener("id", listener);
             cb(undefined, message);
           }
+        };
+        this.on("id", listener);
+        this.worker?.on("exit", () => {
+          this.removeListener("id", listener);
+          cb("exit");
         });
       })
     ).result;
@@ -155,7 +163,11 @@ export class WasmInstance extends EventEmitter {
     for (const f of this.stdinListeners) {
       process.stdin.removeListener("data", f);
     }
-    this.callWithString("terminal", "");
+    try {
+      await this.callWithString("terminal", "");
+    } catch (_err) {
+      // expected to fail -- call doesn't get output...
+    }
   }
 }
 

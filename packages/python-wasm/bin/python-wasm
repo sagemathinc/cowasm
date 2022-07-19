@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+export SCRIPTPATH="$( cd -- "$(dirname "`readlink -f $0`")" >/dev/null 2>&1 ; pwd -P )"
+
+node -r "$SCRIPTPATH"/../dist/python/node-terminal.js

@@ -61,7 +61,7 @@ export class WasmInstance extends EventEmitter {
           try {
             log("waitForStdin...");
             this.pause();
-            log("we just set lock[0]=0", this.spinLock[0])
+            log("we just set lock[0]=0", this.spinLock[0]);
             if (!this.stdin) {
               await callback((cb) => {
                 this.once("stdin", () => {
@@ -126,11 +126,13 @@ export class WasmInstance extends EventEmitter {
   private async waitForResponse(id: number): Promise<any> {
     return (
       await callback((cb) => {
-        this.on("id", (message) => {
+        const listener = (message) => {
           if (message.id == id) {
+            this.removeListener("id", listener);
             cb(undefined, message);
           }
-        });
+        };
+        this.on("id", listener);
       })
     ).result;
   }

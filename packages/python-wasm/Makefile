@@ -16,8 +16,7 @@ TEST = ./test-zig.sh
 
 DIST = ${CWD}/dist
 
-.PHONY: all
-all: ${DIST}/.built
+all: ${DIST}/.built bin
 
 # Runs zig test on all zig files that contain the word "test" but do not
 # have interface or export in their filename (since can't test those).
@@ -50,8 +49,13 @@ test-proxy:
 	cd src && ${TEST} interface/proxy.zig
 
 ## Node modules
+.PHONY: node_modules
 node_modules:
 	npm ci
+
+.PHONY: bin
+bin:
+	ln -sf ${CWD}/bin/python-wasm ${CWD}/../../bin/python-wasm
 
 ## Put it all together
 
