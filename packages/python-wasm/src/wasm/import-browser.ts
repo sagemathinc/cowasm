@@ -28,7 +28,7 @@ export class WasmInstance extends EventEmitter {
 
   private async init() {
     if (this.worker) return;
-    const log = console.log;
+    const log = (..._args) => {}; // console.log;
     this.worker = new Worker( // @ts-ignore -- actually only consumed by webpack in calling code...
       new URL("./import-browser-worker.js", import.meta.url)
     );
@@ -56,7 +56,7 @@ export class WasmInstance extends EventEmitter {
           this.waitingForStdin = true;
           try {
             this.pause();
-            log("waitForStdin");
+            log("waitForStdin...");
             if (!this.stdin) {
               await callback((cb) => {
                 this.once("stdin", () => {
@@ -64,6 +64,7 @@ export class WasmInstance extends EventEmitter {
                 });
               });
             }
+            // console.log(`got stdin=${this.stdin}`);
             const data = Buffer.from(this.stdin);
             this.stdin = "";
             data.copy(Buffer.from(stdinBuffer));
@@ -73,6 +74,13 @@ export class WasmInstance extends EventEmitter {
           } finally {
             this.waitingForStdin = false;
           }
+        case "stdout":
+          this.emit("stdout", message.data);
+          break;
+        case "stderr":
+          this.emit("stderr", message.data);
+          break;
+
         case "init":
           this.emit("init", message);
           return;

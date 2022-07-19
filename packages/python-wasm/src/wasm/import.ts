@@ -23,6 +23,8 @@ export interface Options {
   spinLockBuffer?: SharedArrayBuffer;
   stdinBuffer?: SharedArrayBuffer;
   waitForStdin?: () => Buffer;
+  sendStdout?: (Buffer) => void;
+  sendStderr?: (Buffer) => void;
 }
 
 const cache: { [name: string]: any } = {};
@@ -100,6 +102,8 @@ async function doWasmImport(
       traceSyscalls: options.traceSyscalls,
       spinLock: options.spinLock,
       waitForStdin: options.waitForStdin,
+      sendStdout: options.sendStdout,
+      sendStderr: options.sendStderr,
     };
     if (options.fs != null) {
       // explicit fs option given, so create the bindings.fs object, which is typically

@@ -4,26 +4,26 @@ import type { FileSystemSpec } from "@wapython/wasi";
 
 export let wasm: WasmInstance | undefined = undefined;
 
-export function exec(str: string): void {
+export async function exec(str: string): Promise<void> {
   if (wasm == null) throw Error("call init");
-  wasm.callWithString("exec", str);
+  await wasm.callWithString("exec", str);
 }
 
-export function repr(str: string): string {
+export async function repr(str: string): Promise<string> {
   if (wasm == null) throw Error("call init");
-  return wasm.callWithString("eval", str) as string;
+  return (await wasm.callWithString("eval", str)) as string;
 }
 
-export async function terminal() {
+export function terminal() {
   if (wasm == null) throw Error("call init");
   wasm.terminal();
-//   const argv: { [n: number]: string } = {};
-//   let n = 0;
-//   for (const arg of process.argv) {
-//     argv[n] = arg;
-//     n += 1;
-//   }
-//   wasm.callWithString("terminal", JSON.stringify(argv));
+  //   const argv: { [n: number]: string } = {};
+  //   let n = 0;
+  //   for (const arg of process.argv) {
+  //     argv[n] = arg;
+  //     n += 1;
+  //   }
+  //   wasm.callWithString("terminal", JSON.stringify(argv));
 }
 
 // export async function pyrun_interactive_one() {

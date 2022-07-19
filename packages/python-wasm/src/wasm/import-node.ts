@@ -32,6 +32,10 @@ export class WasmInstance extends EventEmitter {
     this.init = reuseInFlight(this.init);
   }
 
+  write(_data: string): void {
+    throw Error("write not implemented");
+  }
+
   private async init() {
     if (this.worker) return;
     const log = logToFile;

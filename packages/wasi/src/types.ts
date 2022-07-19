@@ -32,6 +32,8 @@ export interface WASIConfig {
   traceSyscalls?: boolean;
   spinLock?: (time: number) => void;
   waitForStdin?: () => Buffer;
+  sendStdout?: (Buffer) => void;
+  sendStderr?: (Buffer) => void;
 }
 
 export class WASIError extends Error {

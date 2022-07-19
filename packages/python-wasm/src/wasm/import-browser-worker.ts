@@ -33,7 +33,7 @@ export default async function wasmImportBrowser(
 function initWorker() {
   let wasm: undefined | WasmInstance = undefined;
   self.onmessage = async ({ data: message }) => {
-    console.log("worker got message ", message);
+    // console.log("worker got message ", message);
     switch (message.event) {
       case "init":
         try {
@@ -59,9 +59,14 @@ function initWorker() {
               const data = Buffer.from(opts.stdinBuffer.slice(0, bytes)); // not a copy
               return data;
             };
+            opts.sendStdout = (data) => {
+              self.postMessage({ event: "stdout", data });
+            };
+            opts.sendStderr = (data) => {
+              self.postMessage({ event: "stderr", data });
+            };
           }
           wasm = await wasmImportBrowser(message.wasmUrl, opts);
-          (self as any).wasm = wasm;
           self.postMessage({ event: "init", status: "ok" });
         } catch (err) {
           self.postMessage({

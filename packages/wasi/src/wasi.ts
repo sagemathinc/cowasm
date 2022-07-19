@@ -271,10 +271,14 @@ export default class WASI {
   spinLock?: (time: number) => void;
   waitForStdin?: () => Buffer;
   stdinBuffer?: Buffer;
+  sendStdout?: (Buffer) => void;
+  sendStderr?: (Buffer) => void;
 
   constructor(wasiConfig: WASIConfig) {
     this.spinLock = wasiConfig.spinLock;
     this.waitForStdin = wasiConfig.waitForStdin;
+    this.sendStdout = wasiConfig.sendStdout;
+    this.sendStderr = wasiConfig.sendStderr;
     // Destructure our wasiConfig
     let preopens: WASIPreopenedDirs = {};
     if (wasiConfig.preopens) {
@@ -680,25 +684,41 @@ export default class WASI {
       fd_write: wrap(
         (fd: number, iovs: number, iovsLen: number, nwritten: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_WRITE);
+          const IS_STDOUT = stats.real == 1;
+          const IS_STDERR = stats.real == 2;
           let written = 0;
           getiovs(iovs, iovsLen).forEach((iov) => {
-            // useful to be absolutely sure if wasi is writing something:
-            // console.log(`write "${new TextDecoder().decode(iov)}" to ${fd})`);
-            let w = 0;
-            while (w < iov.byteLength) {
-              // console.log(`write ${iov.byteLength} bytes to fd=${stats.real}`);
-              const i = fs.writeSync(
-                stats.real,
-                iov,
-                w,
-                iov.byteLength - w,
-                stats.offset ? Number(stats.offset) : null
-              );
-              // console.log(`just wrote i=${i} bytes`);
-              if (stats.offset) stats.offset += BigInt(i);
-              w += i;
+            if (iov.byteLength == 0) return;
+            //             console.log(
+            //               `writing to fd=${fd}: `,
+            //               JSON.stringify(new TextDecoder().decode(iov)),
+            //               JSON.stringify(iov)
+            //             );
+            if (IS_STDOUT && this.sendStdout != null) {
+              this.sendStdout(iov);
+              written += iov.byteLength;
+            } else if (IS_STDERR && this.sendStderr != null) {
+              this.sendStderr(iov);
+              written += iov.byteLength;
+            } else {
+              // useful to be absolutely sure if wasi is writing something:
+              // console.log(`write "${new TextDecoder().decode(iov)}" to ${fd})`);
+              let w = 0;
+              while (w < iov.byteLength) {
+                // console.log(`write ${iov.byteLength} bytes to fd=${stats.real}`);
+                const i = fs.writeSync(
+                  stats.real,
+                  iov,
+                  w,
+                  iov.byteLength - w,
+                  stats.offset ? Number(stats.offset) : null
+                );
+                // console.log(`just wrote i=${i} bytes`);
+                if (stats.offset) stats.offset += BigInt(i);
+                w += i;
+              }
+              written += w;
             }
-            written += w;
           });
           this.view.setUint32(nwritten, written, true);
           return WASI_ESUCCESS;
@@ -745,11 +765,11 @@ export default class WASI {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_READ);
           const IS_STDIN = stats.real === 0;
           let read = 0;
-//           logToFile(
-//             `fd_read: ${IS_STDIN}, ${
-//               this.stdinBuffer?.length
-//             } ${this.stdinBuffer?.toString()}`
-//           );
+          //           logToFile(
+          //             `fd_read: ${IS_STDIN}, ${
+          //               this.stdinBuffer?.length
+          //             } ${this.stdinBuffer?.toString()}`
+          //           );
 
           outer: for (const iov of getiovs(iovs, iovsLen)) {
             let r = 0;
@@ -764,11 +784,11 @@ export default class WASI {
                 // just got stdin after waiting for it in poll_oneoff
                 // TODO!!! Need to limit length or iov will overflow?
                 rr = this.stdinBuffer.copy(iov);
-//                 logToFile(
-//                   `fd_read: copied ${rr} to ${iov.toString()}; ${
-//                     iov.length
-//                   }, ${length}`
-//                 );
+                //                 logToFile(
+                //                   `fd_read: copied ${rr} to ${iov.toString()}; ${
+                //                     iov.length
+                //                   }, ${length}`
+                //                 );
                 if (rr == this.stdinBuffer.length) {
                   this.stdinBuffer = undefined;
                 } else {
@@ -1457,7 +1477,7 @@ export default class WASI {
 
         this.view.setUint32(nevents, eventc, true);
 
-        const remainingTime = BigInt(waitEnd) - bindings.hrtime();
+        const remainingTime = BigInt(waitEnd) - BigInt(bindings.hrtime());
         if (remainingTime > 0) {
           if (this.spinLock != null) {
             // We are running in a worker thread, and have the
