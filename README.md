@@ -6,9 +6,7 @@ URL: https://github.com/sagemathinc/python-wasm
 
 DEMO: https://python-wasm.cocalc.com/
 
-[![Docker Image CI](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml/badge.svg)](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml)
-
-## Quick Start
+[<img src="https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml/badge.svg"  alt="Docker Image CI"  width="172px"  height="20px"  style="object-fit:cover"/>](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml)
 
 ```sh
 npm install python-wasm
@@ -18,30 +16,30 @@ Then from the nodejs REPL:
 
 ```js
 > python = require('python-wasm')
-> await python.init()
-> python.exec('import sys; sys.version')
-'3.11.0b3 (main, Jul  8 2022, 23:21:07) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 81f0e6c5b902ead84753490d'
-> python.repr('sys.platform')
+> await python.exec('import sys')
+undefined
+> await python.repr('sys.version')
+"'3.11.0b3 (main, Jul 14 2022, 22:22:40) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 623481199fe17f4311cbdbbf'"
+> await python.repr('sys.platform')
 'wasi'
 ```
 
 There is also a readline\-based REPL that is part of python\-wasm:
 
-```sh
-> python.main()
-> Starting full python-wasm with readline support.   Type quit() to exit.
+```py
+> python.terminal()
 Python 3.11.0b3 (main, Jul 14 2022, 22:22:40) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 623481199fe17f4311cbdbbf on wasi
 Type "help", "copyright", "credits" or "license" for more information.
->>> 2+3
+>>> 2 + 3   # you can edit using readline
 5
->>> 1/0  # you can edit with readline!
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-ZeroDivisionError: division by zero
->>> quit()
+>>> input('name? ')
+name? william  <-- I just typed "william"
+'william'
+>>> quit()  # or ctrl+d
+>
 ```
 
-You can also use python-wasm in your [web application via webpack](https://github.com/sagemathinc/python-wasm/tree/main/packages/webpack).
+You can also use python\-wasm in your [web application via webpack](https://github.com/sagemathinc/python-wasm/tree/main/packages/webpack), but your webserver must set certain headers which [github pages does not set](https://github.com/github-community/community/discussions/13309).
 
 ## Quick start \- install from npm and use in node.js
 
@@ -130,10 +128,10 @@ wstein@max % node
 Welcome to Node.js v16.13.0.
 Type ".help" for more information.
 > python = require('.')
-> python.exec('2+2')
+> await python.repr('2+2')
 4
-> python.exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
-49999995000000 1.0109999179840088
+> await python.exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
+49999995000000 1.3460001945495605
 ```
 
 Next try out JPython which is a Javascript-based JIT Python interpreter:

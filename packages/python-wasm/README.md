@@ -19,32 +19,28 @@ wstein@max % node
 Welcome to Node.js v16.13.0.
 Type ".help" for more information.
 > python = require('python-wasm')
-> await python.init()
-> python.exec('a = sum(range(101)); a')    # outputs to stdout
+> await python.exec('a = sum(range(101)); print(a)')   # outputs to stdout
 5050
-> s = python.repr('a'); s # javascript string
+> s = await python.repr('a'); s # javascript string
 5050
-> python.exec('import sys; sys.version')
+> await python.exec('import sys; print(sys.version)')
 '3.11.0b3 (main, Jul  8 2022, 23:21:07) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 81f0e6c5b902ead84753490d'
-> python.repr('sys.platform')
-'wasi'
+> await python.repr('sys.platform')
+"'wasi'"
 ```
 
 You can also start a full session with readline support \(yes, this is real!\):
 
 ```sh
 $ node
-> require('python-wasm').main()
-> Starting full python-wasm with readline support.   Type quit() to exit.
-Python 3.11.0b3 (main, Jul 14 2022, 22:22:40) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 623481199fe17f4311cbdbbf on wasi
-Type "help", "copyright", "credits" or "license" for more information.
->>> 2+3
+> require('python-wasm').terminal()
+>>> 2+3   # you can edit with readline!
 5
->>> 1/0  # you can edit with readline!
+>>> 1/0  
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 ZeroDivisionError: division by zero
->>> quit()
+>>> quit() or ctrl+d
 ```
 
 ## Using in a web application
@@ -55,10 +51,7 @@ See [this repo](https://github.com/sagemathinc/python-wasm/tree/main/packages/we
 
 The `python-wasm` module exports:
 
-- `init` \- async function; call to ensure WASM code has been initialized
 - `exec(code:string)` \- execute code \(output goes to /dev/stdout and /dev/stderr\)
 - `repr(expr:string)` \- return representation of an expression as a string
-- `wasm` \- object that is defined after `await init()` succeeds.
-  - `wasm.fs` \- the [memfs](https://www.npmjs.com/package/memfs) filesystem
-- `repl()` \- start a REPL that has full readline support.  This only works in node.js. To exit type `quit()`. 
+- `terminal` \- start interactive Python terminal that has full readline support
 

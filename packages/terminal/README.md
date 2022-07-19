@@ -11,7 +11,7 @@ See [webpack.config.js](./webpack.config.js), in particular:
 - The wasm and zip asset/resource rules are needed so python\-wasm
   can import the python wasm binary and zip filesystem.
 
-- Your webserver must have these two headers set, so that SharedArrayBuffers are allowed:
+- Your webserver must have the following two headers set, so that SharedArrayBuffers are allowed \([GitHub pages does not support this](https://github.com/github-community/community/discussions/13309)\):
   - `Cross-Origin-Opener-Policy: same-origin`
   - `Cross-Origin-Embedder-Policy: require-corp`
 
