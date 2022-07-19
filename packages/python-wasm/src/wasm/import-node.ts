@@ -40,7 +40,7 @@ export class WasmInstance extends EventEmitter {
       "import-node-worker.js"
     );
 
-    this.worker = new Worker(path, { stdin: true });
+    this.worker = new Worker(path);
     const spinLockBuffer = new SharedArrayBuffer(4);
     const stdinBuffer = new SharedArrayBuffer(10000); // size = todo
     this.spinLock = new Int32Array(spinLockBuffer);

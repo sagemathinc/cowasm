@@ -258,9 +258,9 @@ type Exports = {
   [key: string]: any;
 };
 
-const logToFile = (s: string) => {
-  require("fs").appendFileSync("/tmp/wasi.log", s + "\n");
-};
+// const logToFile = (s: string) => {
+//   require("fs").appendFileSync("/tmp/wasi.log", s + "\n");
+// };
 
 export default class WASI {
   memory: WebAssembly.Memory;
@@ -745,11 +745,11 @@ export default class WASI {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_READ);
           const IS_STDIN = stats.real === 0;
           let read = 0;
-          logToFile(
-            `fd_read: ${IS_STDIN}, ${
-              this.stdinBuffer?.length
-            } ${this.stdinBuffer?.toString()}`
-          );
+//           logToFile(
+//             `fd_read: ${IS_STDIN}, ${
+//               this.stdinBuffer?.length
+//             } ${this.stdinBuffer?.toString()}`
+//           );
 
           outer: for (const iov of getiovs(iovs, iovsLen)) {
             let r = 0;
@@ -764,11 +764,11 @@ export default class WASI {
                 // just got stdin after waiting for it in poll_oneoff
                 // TODO!!! Need to limit length or iov will overflow?
                 rr = this.stdinBuffer.copy(iov);
-                logToFile(
-                  `fd_read: copied ${rr} to ${iov.toString()}; ${
-                    iov.length
-                  }, ${length}`
-                );
+//                 logToFile(
+//                   `fd_read: copied ${rr} to ${iov.toString()}; ${
+//                     iov.length
+//                   }, ${length}`
+//                 );
                 if (rr == this.stdinBuffer.length) {
                   this.stdinBuffer = undefined;
                 } else {
@@ -1362,7 +1362,7 @@ export default class WASI {
           sin += 8;
           const type = this.view.getUint8(sin);
           sin += 1;
-          logToFile(`type=${type}, userdata=${userdata}\n`);
+          // logToFile(`type=${type}, userdata=${userdata}\n`);
           switch (type) {
             case WASI_EVENTTYPE_CLOCK: {
               sin += 7; // padding

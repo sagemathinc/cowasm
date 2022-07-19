@@ -1,7 +1,10 @@
-import terminal from "./terminal";
+import python from "python-wasm";
+(window as any).python = python;
 
-const element = document.createElement("div");
-document.body.appendChild(element);
-document.body.style.margin = "0px";
+// import terminal from "./terminal2";
 
-terminal(element);
+// const element = document.createElement("div");
+// document.body.appendChild(element);
+// document.body.style.margin = "0px";
+
+// terminal(element);
