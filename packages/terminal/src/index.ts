@@ -1,4 +1,4 @@
-import terminal from "./terminal2";
+import terminal from "./terminal";
 
 const element = document.createElement("div");
 document.body.appendChild(element);

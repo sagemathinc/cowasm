@@ -3,6 +3,9 @@ import { callback, delay } from "awaiting";
 import { EventEmitter } from "events";
 import reuseInFlight from "./reuseInFlight";
 
+const log = (..._args) => {};
+//const log = (...args) => console.log("parent:", ...args);
+
 export class WasmInstance extends EventEmitter {
   private id: number = 0;
   private wasmUrl: string;
@@ -21,14 +24,15 @@ export class WasmInstance extends EventEmitter {
     this.init = reuseInFlight(this.init);
   }
 
-  write(data: string): void {
-    this.stdin += data;
-    this.emit("stdin");
+  write(data: Buffer | string): void {
+    if (data) {
+      this.stdin += data;
+      this.emit("stdin");
+    }
   }
 
   private async init() {
     if (this.worker) return;
-    const log = (..._args) => {}; // console.log;
     this.worker = new Worker( // @ts-ignore -- actually only consumed by webpack in calling code...
       new URL("./import-browser-worker.js", import.meta.url)
     );
@@ -55,8 +59,9 @@ export class WasmInstance extends EventEmitter {
           if (this.waitingForStdin) return;
           this.waitingForStdin = true;
           try {
-            this.pause();
             log("waitForStdin...");
+            this.pause();
+            log("we just set lock[0]=0", this.spinLock[0])
             if (!this.stdin) {
               await callback((cb) => {
                 this.once("stdin", () => {
@@ -64,12 +69,10 @@ export class WasmInstance extends EventEmitter {
                 });
               });
             }
-            // console.log(`got stdin=${this.stdin}`);
             const data = Buffer.from(this.stdin);
             this.stdin = "";
             data.copy(Buffer.from(stdinBuffer));
-            Atomics.store(this.spinLock, 0, data.length);
-            Atomics.notify(this.spinLock, 0);
+            this.resume(data.length);
             return;
           } finally {
             this.waitingForStdin = false;
@@ -95,12 +98,14 @@ export class WasmInstance extends EventEmitter {
   }
 
   private pause() {
+    log("pause");
     Atomics.store(this.spinLock, 0, 0);
     Atomics.notify(this.spinLock, 0);
   }
 
-  private resume() {
-    Atomics.store(this.spinLock, 0, 1);
+  private resume(n = 1) {
+    log("resume");
+    Atomics.store(this.spinLock, 0, n ? n : -1); // must not be 0!
     Atomics.notify(this.spinLock, 0);
   }
 

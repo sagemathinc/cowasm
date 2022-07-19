@@ -31,9 +31,11 @@ export default async function wasmImportBrowser(
 // TODO: figure out how to refactor this with import-node-worker.ts.
 
 function initWorker() {
+  const log = (..._args) => {};
+  //const log = (...args) => console.log("worker:", ...args);
   let wasm: undefined | WasmInstance = undefined;
   self.onmessage = async ({ data: message }) => {
-    // console.log("worker got message ", message);
+    log("worker got message ", message);
     switch (message.event) {
       case "init":
         try {
@@ -41,18 +43,26 @@ function initWorker() {
           if (message.options.spinLockBuffer != null) {
             const lock = new Int32Array(message.options.spinLockBuffer);
             opts.spinLock = (time: number) => {
-              // logToFile(`spinLock: ${time}`);
+              log(`spinLock: ${time}`);
               // We ask parent thread to do the lock:
               self.postMessage({ event: "sleep", time });
               // We wait a moment for that message to be processed:
-              while (lock[0] != 0) {}
+              while (lock[0] != 0) {
+                Atomics.wait(lock, 0, lock[0]);
+              }
               // now the lock is set, and we wait for it to get unset:
               Atomics.wait(lock, 0, 0);
             };
             opts.waitForStdin = () => {
+              log("waitForStdin");
               self.postMessage({ event: "waitForStdin" });
-              while (lock[0] != 0) {}
+              log("starting while loop waiting for lock[0]=0...", lock[0]);
+              while (lock[0] != 0) {
+                Atomics.wait(lock, 0, lock[0]);
+              }
+              log("ok, lock[0]=0 now.  Waiting for lock[0] to be NOT 0...");
               Atomics.wait(lock, 0, 0);
+              log("ok, now lock[0]=", lock[0]);
               // how much was read
               const bytes = lock[0];
               // and what was actually read
@@ -60,9 +70,11 @@ function initWorker() {
               return data;
             };
             opts.sendStdout = (data) => {
+              log("sendStdout", data);
               self.postMessage({ event: "stdout", data });
             };
             opts.sendStderr = (data) => {
+              log("sendStderr", data);
               self.postMessage({ event: "stderr", data });
             };
           }

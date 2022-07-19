@@ -71,13 +71,17 @@ function initWorker() {
               // We ask main thread to do the lock:
               parent.postMessage({ event: "sleep", time });
               // We wait a moment for that message to be processed:
-              while (lock[0] != 0) {}
+              while (lock[0] != 0) {
+                Atomics.wait(lock, 0, lock[0]);
+              }
               // now the lock is set, and we wait for it to get unset:
               Atomics.wait(lock, 0, 0);
             };
             opts.waitForStdin = () => {
               parent.postMessage({ event: "waitForStdin" });
-              while (lock[0] != 0) {}
+              while (lock[0] != 0) {
+                Atomics.wait(lock, 0, lock[0]);
+              }
               Atomics.wait(lock, 0, 0);
               // how much was read
               const bytes = lock[0];
