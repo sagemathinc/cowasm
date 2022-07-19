@@ -40,7 +40,6 @@
     "css-loader": "^6.7.1",
     "events": "^3.3.0",
     "html-webpack-plugin": "^5.5.0",
-    "local-echo": "github:wavesoft/local-echo",
     "node-polyfill-webpack-plugin": "^2.0.0",
     "path-browserify": "^1.0.1",
     "process": "^0.11.10",
