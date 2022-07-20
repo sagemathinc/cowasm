@@ -9,7 +9,7 @@
     "build": "make all",
     "clean": "make clean",
     "tsc": "npx tsc -w",
-    "test": "jest ./dist",
+    "test": "jest --forceExit ./dist # TODO: fix this hang issue with forceExit",
     "test-watch": "jest --watch ./dist"
   },
   "bin": "./bin/python-wasm",
