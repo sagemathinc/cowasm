@@ -77,11 +77,12 @@ export class WasmInstance extends EventEmitter {
               });
             });
             log("got data", data.toString());
-            if (data.includes("\u0004")) {
-              // Ctrl+D
-              this.terminate();
-              return;
-            }
+            // See https://github.com/sagemathinc/python-wasm/issues/6
+//             if (data.includes("\u0004")) {
+//               // Ctrl+D
+//               this.terminate();
+//               return;
+//             }
             data.copy(Buffer.from(stdinBuffer));
             Atomics.store(this.spinLock, 0, data.length);
             Atomics.notify(this.spinLock, 0);
