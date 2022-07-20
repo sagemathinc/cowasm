@@ -58,39 +58,12 @@ pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
     );
 }
 
-// TODO: actually parse and send the argv to Py_BytesMain.  Below we
-// actually just send ['python'] and that is it.
-pub fn terminal(allocator: std.mem.Allocator, argv_json: [*:0]const u8) !void {
-    _ = allocator;
-    _ = argv_json;
-    //     std.debug.print("terminal argv_json='{s}'\n", .{argv_json});
-    //     var p = std.json.Parser.init(allocator, false);
-    //     defer p.deinit();
-
-    //     var obj = try p.parse(argv_json[0..std.mem.len(argv_json)]);
-    //     defer obj.deinit();
-
-    //     var obj0 = obj.root.Object.get("0").?;
-    //     std.debug.print("parsed[0]='{s}'\n", .{obj0.String});
-
-    //     var obj1 = obj.root.Object.get("1").?;
-    //     if (obj1.String.len > 0) {
-    //         std.debug.print("parsed[1]='{s}'\n", .{obj1.String});
-    //     }
-
-    //     var argv: [*c][*c]u8 = @ptrCast([*c][*c]u8, @alignCast(@alignOf([*:0]u8), std.c.malloc(1 * @sizeOf([*:0]u8))));
-    //     // cast back and forth to int to get rid of const
-    //     //argv[0] = @intToPtr([*:0]u8, @ptrToInt(obj0.String.ptr));
-
-    const s = "python";
-    var argv: [*c][*c]u8 = @ptrCast([*c][*c]u8, @alignCast(@alignOf([*:0]u8), std.c.malloc(1 * @sizeOf([*:0]u8))));
-    argv[0] = @intToPtr([*:0]u8, @ptrToInt(s));
-    // std.debug.print("calling Py_BytesMain()...\n", .{});
-    const r = python.Py_BytesMain(1, argv);
+pub fn terminal(argc: i32, argv: [*c][*c]u8) void {
+    //std.debug.print("calling Py_BytesMain()... with argv={}, argv[0]={s} argv[1]={s} inputs\n", .{argc, argv[0], argv[1]});
+    const r = python.Py_BytesMain(argc, argv);
     _ = r;
-    // std.debug.print("Py_Main exited with code {}\n", .{r});
+    //std.debug.print("Py_Main exited with code {}\n", .{r});
 }
-
 
 // pub fn run_interactive_one() void {
 //     std.debug.print("PyRun_InteractiveOne\n", .{});

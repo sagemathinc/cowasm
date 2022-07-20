@@ -11,3 +11,7 @@ int run_interactive_one(void) {
   return r;
 }
 
+// void terminal(int argc, char** argv) {
+//   printf("terminal: calling Py_BytesMain with argc=%d, argv[0]=%s\n", argc, argv[0]);
+//   Py_BytesMain(argc, argv);
+// }

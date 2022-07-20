@@ -105,7 +105,7 @@ export class WasmInstance extends EventEmitter {
     if (!this.worker) return;
     const worker = this.worker;
     delete this.worker;
-    worker.emit('exit');
+    worker.emit("exit");
     worker.terminate();
     worker.removeAllListeners();
     for (const f of this.stdinListeners ?? []) {
@@ -124,7 +124,7 @@ export class WasmInstance extends EventEmitter {
     Atomics.notify(this.spinLock, 0);
   }
 
-  async callWithString(name: string, str: string, ...args): Promise<any> {
+  async callWithString(name: string, str: string | string[], ...args): Promise<any> {
     await this.init();
     if (!this.worker) throw Error("bug");
     this.id += 1;
@@ -156,7 +156,7 @@ export class WasmInstance extends EventEmitter {
     ).result;
   }
 
-  async terminal() {
+  async terminal(argv: string[]=['command']) {
     await this.init();
     if (!this.worker) throw Error("bug");
     this.stdinListeners = process.stdin.listeners("data");
@@ -164,7 +164,7 @@ export class WasmInstance extends EventEmitter {
       process.stdin.removeListener("data", f);
     }
     try {
-      await this.callWithString("terminal", "");
+      await this.callWithString("terminal", argv);
     } catch (_err) {
       // expected to fail -- call doesn't get output...
     }
