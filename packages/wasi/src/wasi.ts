@@ -258,8 +258,11 @@ type Exports = {
   [key: string]: any;
 };
 
-// const logToFile = (s: string) => {
-//   require("fs").appendFileSync("/tmp/wasi.log", s + "\n");
+// const logToFile = (...args) => {
+//   require("fs").appendFileSync(
+//     "/tmp/wasi.log",
+//     args.map((x) => `${x}`).join(" ") + "\n"
+//   );
 // };
 
 export default class WASI {
@@ -399,7 +402,7 @@ export default class WASI {
         case WASI_CLOCK_REALTIME:
           return msToNs(Date.now());
         case WASI_CLOCK_PROCESS_CPUTIME_ID:
-        case WASI_CLOCK_THREAD_CPUTIME_ID:
+        case WASI_CLOCK_THREAD_CPUTIME_ID: // TODO -- this assumes 1 thread
           return bindings.hrtime() - CPUTIME_START;
         default:
           return null;
@@ -1374,9 +1377,12 @@ export default class WASI {
         nevents: number
       ) => {
         let eventc = 0;
-        let waitEnd = 0;
+
+        // Have to wait this long
+        let waitTimeNs = BigInt(0);
+        const startNs = bindings.hrtime();
         this.refreshMemory();
-        //console.log("poll_oneoff", sin, sout, nsubscriptions, nevents);
+        // logToFile("poll_oneoff", sin, sout, nsubscriptions, nevents);
         for (let i = 0; i < nsubscriptions; i += 1) {
           const userdata = this.view.getBigUint64(sin, true);
           sin += 8;
@@ -1385,9 +1391,12 @@ export default class WASI {
           // logToFile(`type=${type}, userdata=${userdata}\n`);
           switch (type) {
             case WASI_EVENTTYPE_CLOCK: {
+              // see packages/zig/dist/lib/libc/include/wasm-wasi-musl/wasi/api.h
+              // Also note that this code was wrong in upstream; they just sort
+              // of guessed at things incorrectly and clearly never tested it once.
+              // For me this at least works to implement sleep in Cpython when
+              // it is using select.
               sin += 7; // padding
-              //const identifier = this.view.getBigUint64(sin, true);
-              sin += 8;
               const clockid = this.view.getUint32(sin, true);
               sin += 4;
               sin += 4; // padding
@@ -1403,11 +1412,15 @@ export default class WASI {
 
               let e = WASI_ESUCCESS;
               const t = now(clockid);
+              // logToFile(t, clockid, timestamp, subclockflags, absolute);
               if (t == null) {
                 e = WASI_EINVAL;
               } else {
-                const end = absolute ? timestamp : BigInt(t) + timestamp;
-                waitEnd = end > waitEnd ? (end as unknown as number) : waitEnd;
+                const end = absolute ? timestamp : t + timestamp;
+                const waitNs = end - t;
+                if (waitNs > waitTimeNs) {
+                  waitTimeNs = waitNs;
+                }
               }
 
               this.view.setBigUint64(sout, userdata, true);
@@ -1477,22 +1490,26 @@ export default class WASI {
 
         this.view.setUint32(nevents, eventc, true);
 
-        const remainingTime = BigInt(waitEnd) - BigInt(bindings.hrtime());
-        if (remainingTime > 0) {
+        // Account for the time it took to do everything above, which
+        // can be arbitrarily long:
+        waitTimeNs -= bindings.hrtime() - startNs;
+        // logToFile("waitTimeNs", waitTimeNs);
+        if (waitTimeNs > 0) {
           if (this.spinLock != null) {
             // We are running in a worker thread, and have the
             // ability to use a SharedArrayBuffer and Atomic
             // to synchronously pause execution of this thread.
             // Yeah!
-            this.spinLock(Number(remainingTime));
+            this.spinLock(nsToMs(waitTimeNs));
           } else {
             // Use **horrible** 100% block and 100% cpu
             // wait, which might sort of work, but is obviously
             // a wrong nightmare.  Unfortunately, this is the
             // only possible thing to do when not running in
             // a work thread.
-            while (bindings.hrtime() < waitEnd) {
-              // nothing
+            const end = bindings.hrtime() + waitTimeNs;
+            while (bindings.hrtime() < end) {
+              // burn your CPU!
             }
           }
         }
