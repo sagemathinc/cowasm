@@ -782,20 +782,23 @@ export default class WASI {
                 IS_STDIN || stats.offset === undefined
                   ? null
                   : Number(stats.offset);
-              let rr;
-              if (IS_STDIN && this.stdinBuffer) {
-                // just got stdin after waiting for it in poll_oneoff
-                // TODO!!! Need to limit length or iov will overflow?
-                rr = this.stdinBuffer.copy(iov);
-                //                 logToFile(
-                //                   `fd_read: copied ${rr} to ${iov.toString()}; ${
-                //                     iov.length
-                //                   }, ${length}`
-                //                 );
-                if (rr == this.stdinBuffer.length) {
-                  this.stdinBuffer = undefined;
-                } else {
-                  this.stdinBuffer = this.stdinBuffer.slice(rr);
+              let rr = 0;
+              if (IS_STDIN && this.waitForStdin != null) {
+                if (this.stdinBuffer != null) {
+                  // just got stdin after waiting for it in poll_oneoff
+                  // TODO: Do we need to limit length or iov will overflow?
+                  //       Or will the below just work fine?  It might.
+                  // Second remark -- we do not do anything special here to try to
+                  // handle seeing EOF (ctrl+d) in the stream.  No matter what I try,
+                  // doing something here (e.g., returning 0 bytes read) doesn't
+                  // properly work with libedit.   So we leave it alone and let
+                  // our slightly patched libedit handle control+d.
+                  rr = this.stdinBuffer.copy(iov);
+                  if (rr == this.stdinBuffer.length) {
+                    this.stdinBuffer = undefined;
+                  } else {
+                    this.stdinBuffer = this.stdinBuffer.slice(rr);
+                  }
                 }
               } else {
                 rr = fs.readSync(
