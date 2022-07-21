@@ -14,4 +14,4 @@ clean:
 # This is only for use by person maintaining the website.
 .PHONY: publish
 publish: all
-	rsync -axvH dist/ ${HOME}/python-wasm.org/
+	rsync -axvH --delete dist/ ${HOME}/python-wasm.org/
