@@ -5,16 +5,17 @@ import { Worker } from "worker_threads";
 import { dirname, join } from "path";
 import callsite from "callsite";
 import reuseInFlight from "./reuseInFlight";
+import process from "node:process";
 
-// const logToFile = (...args) => {
-//   require("fs").appendFile(
-//     "/tmp/import-node.log",
-//     args.map((s) => JSON.stringify(s)).join(" ") + "\n",
-//     () => {}
-//   );
-// };
+const log = (...args) => {
+  require("fs").appendFile(
+    "/tmp/import-node.log",
+    args.map((s) => JSON.stringify(s)).join(" ") + "\n",
+    () => {}
+  );
+};
 
-const logToFile = (..._args) => {};
+//const log = (..._args) => {};
 
 export class WasmInstance extends EventEmitter {
   private id: number = 0;
@@ -40,7 +41,6 @@ export class WasmInstance extends EventEmitter {
 
   private async init() {
     if (this.worker) return;
-    const log = logToFile;
     const path = join(
       dirname(callsite()[0]?.getFileName() ?? "."),
       "import-node-worker.js"
@@ -52,6 +52,7 @@ export class WasmInstance extends EventEmitter {
     this.spinLock = new Int32Array(spinLockBuffer);
     const options = { spinLockBuffer, stdinBuffer, ...this.options };
     log("options = ", options);
+
     this.worker.postMessage({ event: "init", name: this.name, options });
     this.worker.on("exit", () => this.terminate());
     this.worker.on("message", async (message) => {
@@ -78,7 +79,7 @@ export class WasmInstance extends EventEmitter {
                 cb(undefined, data);
               });
             });
-            //log("got data", data.toString());
+            log("got data", data.toString());
             data.copy(Buffer.from(stdinBuffer));
             Atomics.store(this.spinLock, 0, data.length);
             Atomics.notify(this.spinLock, 0);
@@ -157,6 +158,10 @@ export class WasmInstance extends EventEmitter {
     ).result;
   }
 
+  private sigint() {
+    log("SIGINT!");
+  }
+
   async terminal(argv: string[] = ["command"]) {
     await this.init();
     if (!this.worker) throw Error("bug");
@@ -165,6 +170,12 @@ export class WasmInstance extends EventEmitter {
       process.stdin.removeListener("data", f);
     }
     try {
+      process.stdin.on("data", (data) => {
+        log(`stdin: ${data.toString()}`);
+        if (data.includes("\u0003")) {
+          this.sigint();
+        }
+      });
       await this.callWithString("terminal", argv);
       this.terminate();
     } catch (_err) {
