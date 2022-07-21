@@ -114,6 +114,7 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	cd ${BUILD} && mkdir wasm && tar xf Python-${PYTHON_VERSION}.tar.xz -C wasm --strip-components=1 \
 	# Also copy the config.site, which answers some questions needed for
 	# cross compiling, without which ./configure won't work.
+	cp src/rebuild ${BUILD}/wasm
 	cp src/config.site ${BUILD}/wasm
 	cp src/Setup.local ${BUILD}/wasm/Modules
 	# Ooly need for native build using Zig:

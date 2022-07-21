@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Run this inside build/wasm/ to rebuild and run python-wasm. This is very
+# useful if you want to modify the cpython source code to understand what
+# is going on.  E.g., put printf's all over the place, type ./rebuild,
+# and in a few seconds you are using python-wasm with those changes applied!
+
+echo "Rebuild and run python-wasm"
+set -ev
+make && cp libpython3.11.a ../../dist/wasm/lib/
+cd ../../../python-wasm/
+make clean
+make
+./bin/python-wasm
