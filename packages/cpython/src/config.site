@@ -65,3 +65,16 @@ ac_cv_header_netpacket_packet_h=no
 # causes _PyPathConfig_ComputeSysPath0 to break horribly at least when
 # readline is built properly.  Yep, a day to figure this out:
 ac_cv_func_realpath=no
+
+
+# The clock_nanosleep and nanosleep functions both are provided by
+# zig/musl, but they don't work at all.  The select function, which
+# is what Modules/timemodule.c falls back to, does work, due to
+# special code I wrote in our WASI layer.   Note that I think CPython
+# and pyodide try to prefer these, but then they are really fake stub
+# functions and time.sleep(...) is a no-op, which is also very bad.
+# See https://github.com/python/cpython/commit/4ed8a9a589d2eee7442e0c9417515a707e504faa#diff-4d876038a7287c1070e54aa692759f86856e97df95a9361b2f7f04d637a2bb1eL30
+ac_cv_func_clock_nanosleep=no
+ac_cv_lib_rt_clock_nanosleep=no
+ac_cv_func_nanosleep=no
+ac_cv_lib_rt_nanosleep=no

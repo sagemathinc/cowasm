@@ -40,6 +40,7 @@ ${BUILD}/wasm: ${BUILD}/libedit.tar.gz
 	mkdir -p ${BUILD}/wasm
 	cd ${BUILD} && tar xf libedit.tar.gz -C wasm --strip-components=1
 	cp -rv src/* ${BUILD}/wasm/src/
+	cd ${BUILD}/wasm/src/ && patch -p0 < readline.patch
 
 # For use of -D__STDC_ISO_10646__=201103L, see https://patchwork.ozlabs.org/project/buildroot/patch/1452127277-9538-1-git-send-email-sergio.prado@e-labworks.com/
 ${DIST_WASM}/.built: ${BUILD}/wasm

@@ -108,7 +108,7 @@ function initWorker() {
           id: message.id,
           result: wasm.callWithString(
             message.name,
-            message.str,
+            message.str, // this is a string or string[]
             ...message.args
           ),
         });

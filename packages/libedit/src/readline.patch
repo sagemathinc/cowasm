@@ -1,0 +1,19 @@
+I don't understand why, but I had to make a small change in order to get
+control+d to work properly with Python + WASI.  For some reason
+e->el_tty.t_c[TS_IO] is just all zeros, whereas e->el_tty.t_c[EX_IO] is
+interesting.  Reading all the code (!), it makes way more sense to me
+to consider e->el_tty.t_c[EX_IO] rather than e->el_tty.t_c[TS_IO].
+Maybe this is just a decades old bug in libedit, and people usually use
+readline, so they don't notice.  I don't know.
+
+--- readline-orig.c	2022-07-20 16:28:37.000000000 -0700
++++ readline.c	2022-07-20 16:49:05.000000000 -0700
+@@ -2112,7 +2112,7 @@
+ 	el_set(e, EL_UNBUFFERED, 1);
+ 	if (buf == NULL || count-- <= 0)
+ 		return;
+-	if (count == 0 && buf[0] == e->el_tty.t_c[TS_IO][C_EOF])
++	if (count == 0 && buf[0] == e->el_tty.t_c[EX_IO][C_EOF])
+ 		done = 1;
+ 	if (buf[count] == '\n' || buf[count] == '\r')
+ 		done = 2;

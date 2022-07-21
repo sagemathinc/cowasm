@@ -11,14 +11,14 @@ async function demo() {
   const element = document.createElement("pre");
 
   // Run some code in Python that defines variables n and s.
-  python.exec(
+  await python.exec(
     "from random import randint; n=randint(0,10**6); s = sum(range(n))"
   );
-  python.exec("import sys");
+  await python.exec("import sys");
   // Use python.repr to get their string representation:
-  element.innerHTML = `${python.repr(
+  element.innerHTML = `${await python.repr(
     "sys.version"
-  )}\n\n1 + 2 + 3 + ${python.repr("n")} = ${python.repr("s")}`;
+  )}\n\n1 + 2 + 3 + ${await python.repr("n")} = ${await python.repr("s")}`;
 
   document.body.appendChild(element);
 }

@@ -14,11 +14,8 @@ export fn exec(s: [*:0]const u8) void {
     };
 }
 
-export fn terminal(argv_json: [*:0]const u8) void {
-    python.terminal(interface.allocator(), argv_json) catch |err| {
-        std.debug.print("python error: '{}'\nwhen running terminal '{s}'", .{ err, argv_json });
-        return;
-    };
+export fn terminal(argc: i32, argv: [*c][*c]u8) void {
+    python.terminal(argc, argv);
 }
 
 // this is not useful in any way, etc.

@@ -109,7 +109,11 @@ export class WasmInstance extends EventEmitter {
     Atomics.notify(this.spinLock, 0);
   }
 
-  async callWithString(name: string, str: string, ...args): Promise<any> {
+  async callWithString(
+    name: string,
+    str: string | string[],
+    ...args
+  ): Promise<any> {
     await this.init();
     if (!this.worker) throw Error("bug");
     this.id += 1;
@@ -137,10 +141,10 @@ export class WasmInstance extends EventEmitter {
     ).result;
   }
 
-  async terminal() {
+  async terminal(argv: string[]=['command']) {
     await this.init();
     if (!this.worker) throw Error("bug");
-    this.callWithString("terminal", "");
+    this.callWithString("terminal", argv);
   }
 }
 
