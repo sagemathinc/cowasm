@@ -14,15 +14,22 @@ small things that you must:
 const { resolve } = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+const mode =
+  process.env.NODE_ENV == "production" ? "production" : "development";
 
 module.exports = {
-  mode: process.env.NODE_ENV == "production" ? "production" : "development",
+  mode,
   entry: "./src/index.ts",
   devtool: "inline-source-map",
   output: {
     filename: "[name].bundle.js",
     path: resolve(__dirname, "dist"),
     clean: true,
+    filename:
+      mode == "production" ? "[name]-[chunkhash].js" : "[id]-[chunkhash].js",
+    chunkFilename:
+      mode == "production" ? "[chunkhash].js" : "[id]-[chunkhash].js",
+    hashFunction: "sha256",
   },
   plugins: [
     new NodePolyfillPlugin() /* required for python-wasm */,

@@ -13,5 +13,6 @@ clean:
 
 # This is only for use by person maintaining the website.
 .PHONY: publish
-publish: all
+publish:
+	NODE_ENV="production" npm run build
 	rsync -axvH dist/ ${HOME}/python-wasm.org/
