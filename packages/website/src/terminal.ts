@@ -10,7 +10,7 @@ export default async function terminal(element: HTMLDivElement) {
   term.open(element);
   // @ts-ignore
   element.children[0].style.padding = "15px";
-  term.resize(128, 40);
+  term.resize(120, 30);
   setTheme(term, "solarized-dark");
   term.onData((data) => {
     python.wasm.write(data);

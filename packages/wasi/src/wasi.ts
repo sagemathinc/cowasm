@@ -1383,7 +1383,7 @@ export default class WASI {
 
         // Have to wait this long
         let waitTimeNs = BigInt(0);
-        const startNs = bindings.hrtime();
+        const startNs = BigInt(bindings.hrtime());
         this.refreshMemory();
         // logToFile("poll_oneoff", sin, sout, nsubscriptions, nevents);
         for (let i = 0; i < nsubscriptions; i += 1) {
@@ -1495,7 +1495,7 @@ export default class WASI {
 
         // Account for the time it took to do everything above, which
         // can be arbitrarily long:
-        waitTimeNs -= bindings.hrtime() - startNs;
+        waitTimeNs -= BigInt(bindings.hrtime()) - startNs;
         // logToFile("waitTimeNs", waitTimeNs);
         if (waitTimeNs > 0) {
           if (this.spinLock != null) {
@@ -1510,8 +1510,8 @@ export default class WASI {
             // a wrong nightmare.  Unfortunately, this is the
             // only possible thing to do when not running in
             // a work thread.
-            const end = bindings.hrtime() + waitTimeNs;
-            while (bindings.hrtime() < end) {
+            const end = BigInt(bindings.hrtime()) + waitTimeNs;
+            while (BigInt(bindings.hrtime()) < end) {
               // burn your CPU!
             }
           }
