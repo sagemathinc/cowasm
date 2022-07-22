@@ -1,6 +1,11 @@
 const std = @import("std");
 const python = @import("./python.zig");
 const interface = @import("../interface.zig");
+const signal = @import("./signal/signal.zig");
+
+export fn exported() void {
+    signal.exported();
+}
 
 export fn init() void {
     python.init();
@@ -16,12 +21,6 @@ export fn exec(s: [*:0]const u8) void {
 
 export fn terminal(argc: i32, argv: [*c][*c]u8) void {
     python.terminal(argc, argv);
-}
-
-// this is not useful in any way, etc.
-extern fn run_interactive_one() i32;
-export fn pyrun_interactive_one() i32 {
-    return run_interactive_one();
 }
 
 extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
