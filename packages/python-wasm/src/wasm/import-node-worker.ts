@@ -97,13 +97,13 @@ function initWorker() {
           if (signalBuffer == null) {
             throw Error("must define signalBuffer");
           }
-          const sigint = new Int32Array(signalBuffer);
+          const signalState = new Int32Array(signalBuffer);
           opts.wasmEnv = {
             wasmGetSignalState: () => {
-              log(`sigint = ${sigint[0]}`);
-              const signal = sigint[0];
+              log(`signalState = ${signalState[0]}`);
+              const signal = Atomics.load(signalState, 0);
               if (signal) {
-                Atomics.store(signalBuffer, 0, 0);
+                Atomics.store(signalState, 0, 0);
                 return signal;
               }
               return 0;

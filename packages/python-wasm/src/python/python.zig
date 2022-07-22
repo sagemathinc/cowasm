@@ -68,6 +68,7 @@ pub fn terminal(argc: i32, argv: [*c][*c]u8) void {
 extern fn wasmGetSignalState() i32;
 
 export fn _Py_CheckEmscriptenSignals() void {
+    //std.debug.print("_Py_CheckEmscriptenSignals\n", .{});
     const signal = wasmGetSignalState();
     if (signal != 0) {
         std.debug.print("_Py_CheckEmscriptenSignals: got a signal! {}\n", .{signal});
@@ -77,15 +78,15 @@ export fn _Py_CheckEmscriptenSignals() void {
     }
 }
 
-const SIGNAL_INTERVAL: i32 = 50;
+const SIGNAL_INTERVAL: i32 = 1;
 var signal_counter: i32 = SIGNAL_INTERVAL;
 export fn _Py_CheckEmscriptenSignalsPeriodically() void {
+    //std.debug.print("_Py_CheckEmscriptenSignalsPeriodically\n", .{});
     signal_counter -= 1;
     if (signal_counter <= 0) {
         signal_counter = SIGNAL_INTERVAL;
         _Py_CheckEmscriptenSignals();
     }
-    // std.debug.print("_Py_CheckEmscriptenSignalsPeriodically\n", .{});
 }
 
 // pub fn run_interactive_one() void {
