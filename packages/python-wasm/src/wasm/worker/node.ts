@@ -7,18 +7,18 @@ import type { FileSystemSpec } from "@wapython/wasi";
 import bindings from "@wapython/wasi/dist/bindings/node";
 import { dirname, isAbsolute, join } from "path";
 import callsite from "callsite";
-import wasmImport, { Options } from "./import";
-import type WasmInstance from "./instance";
+import wasmImport, { Options } from "../import";
+import type WasmInstance from "../instance";
 export { WasmInstance };
 import { parentPort } from "worker_threads";
-import initWorker from "./init-worker";
-import debug from "./debug";
+import initWorker from "./init";
+import debug from "../../debug";
 
 export default async function wasmImportNode(
   name: string,
   options: Options = {}
 ): Promise<WasmInstance> {
-  const path = dirname(join(callsite()[1]?.getFileName() ?? "", ".."));
+  const path = dirname(join(callsite()[1]?.getFileName() ?? "", "..", ".."));
   if (!isAbsolute(name)) {
     // it's critical to make this canonical BEFORE calling the debounced function,
     // or randomly otherwise end up with same module imported twice, which will

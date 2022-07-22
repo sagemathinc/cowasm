@@ -6,7 +6,7 @@ import { dirname, join } from "path";
 import callsite from "callsite";
 import reuseInFlight from "./reuseInFlight";
 import process from "node:process";
-import debug from "./debug";
+import debug from "../debug";
 
 const log = debug("import-node");
 
@@ -41,7 +41,7 @@ export class WasmInstance extends EventEmitter {
     if (this.worker) return;
     const path = join(
       dirname(callsite()[0]?.getFileName() ?? "."),
-      "import-node-worker.js"
+      "worker/node.js"
     );
 
     this.worker = new Worker(path);
