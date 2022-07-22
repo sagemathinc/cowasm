@@ -24,7 +24,6 @@ export interface Options {
   traceSyscalls?: boolean;
   traceStubcalls?: "first" | true;
   spinLock?: (time: number) => void;
-  spinLockBuffer?: SharedArrayBuffer;
   stdinBuffer?: SharedArrayBuffer;
   signalBuffer?: SharedArrayBuffer;
   waitForStdin?: () => Buffer;

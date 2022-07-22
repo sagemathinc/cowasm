@@ -48,21 +48,21 @@ function initWorker() {
               self.postMessage({ event: "sleep", time });
               // We wait a moment for that message to be processed:
               while (lock[0] != 0) {
-                Atomics.wait(lock, 0, lock[0]);
+                Atomics.wait(lock, 0, lock[0], time);
               }
               // now the lock is set, and we wait for it to get unset:
-              Atomics.wait(lock, 0, 0);
+              Atomics.wait(lock, 0, 0, time);
             };
             opts.waitForStdin = () => {
               log("waitForStdin");
               self.postMessage({ event: "waitForStdin" });
               log("starting while loop waiting for lock[0]=0...", lock[0]);
               while (lock[0] != 0) {
-                Atomics.wait(lock, 0, lock[0]);
+                Atomics.wait(lock, 0, lock[0], 100); // TODO: that 100 should be passed in, and just happens to be what Python maybe uses.
               }
               log("ok, lock[0]=0 now.  Waiting for lock[0] to be NOT 0...");
               Atomics.wait(lock, 0, 0);
-              log("ok, now lock[0]=", lock[0]);
+              log("ok, now lock[0]=", lock[0], 100);
               // how much was read
               const bytes = lock[0];
               // and what was actually read

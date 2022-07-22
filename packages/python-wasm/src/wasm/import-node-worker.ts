@@ -60,35 +60,43 @@ function initWorker() {
       case "init":
         try {
           const opts: Options = { ...message.options };
-          if (opts.spinLockBuffer == null) {
+          const { spinLockBuffer, stdinLockBuffer } = message.locks ?? {};
+          if (spinLockBuffer == null) {
             throw Error("must define spinLockBuffer");
           }
+          if (stdinLockBuffer == null) {
+            throw Error("must define stdinLockBuffer");
+          }
+
           if (opts.stdinBuffer == null) {
             throw Error("must define stdinBuffer");
           }
 
-          const lock = new Int32Array(message.options.spinLockBuffer);
+          const spinLock = new Int32Array(spinLockBuffer);
           opts.spinLock = (time: number) => {
             // log(`spinLock: ${time}`);
             // We ask main thread to do the lock:
             parent.postMessage({ event: "sleep", time });
             // We wait a moment for that message to be processed:
-            while (lock[0] != 0) {
-              Atomics.wait(lock, 0, lock[0]);
+            while (spinLock[0] != 1) {
+              // wait for it to change from what it is now.
+              Atomics.wait(spinLock, 0, spinLock[0], 100);
             }
             // now the lock is set, and we wait for it to get unset:
-            Atomics.wait(lock, 0, 0);
+            Atomics.wait(spinLock, 0, 1, time);
           };
 
           const stdinBuffer = opts.stdinBuffer;
+          const stdinLock = new Int32Array(stdinLockBuffer);
           opts.waitForStdin = () => {
             parent.postMessage({ event: "waitForStdin" });
-            while (lock[0] != 0) {
-              Atomics.wait(lock, 0, lock[0]);
+            while (stdinLock[0] != -1) {
+              Atomics.wait(stdinLock, 0, stdinLock[0]);
             }
-            Atomics.wait(lock, 0, 0);
+            // wait to change from -1
+            Atomics.wait(stdinLock, 0, -1);
             // how much was read
-            const bytes = lock[0];
+            const bytes = stdinLock[0];
             const data = Buffer.from(stdinBuffer.slice(0, bytes)); // not a copy
             return data;
           };

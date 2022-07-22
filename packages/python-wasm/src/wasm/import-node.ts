@@ -1,5 +1,5 @@
 import { Options } from "./import";
-import { callback, delay } from "awaiting";
+import { callback } from "awaiting";
 import { EventEmitter } from "events";
 import { Worker } from "worker_threads";
 import { dirname, join } from "path";
@@ -8,7 +8,9 @@ import reuseInFlight from "./reuseInFlight";
 import process from "node:process";
 import debug from "./debug";
 
-const log = debug('import-node');
+const log = debug("import-node");
+
+const SIGINT = 2;
 
 export class WasmInstance extends EventEmitter {
   private id: number = 0;
@@ -16,7 +18,9 @@ export class WasmInstance extends EventEmitter {
   private options: Options;
   private worker?: Worker;
   private spinLock: Int32Array;
+  private stdinLock: Int32Array;
   private signalBuf: Int32Array;
+  private sleepTimer: any;
   result: any;
   exports: any;
   waitingForStdin: boolean = false;
@@ -43,18 +47,24 @@ export class WasmInstance extends EventEmitter {
     this.worker = new Worker(path);
     const spinLockBuffer = new SharedArrayBuffer(4);
     this.spinLock = new Int32Array(spinLockBuffer);
+    const stdinLockBuffer = new SharedArrayBuffer(4);
+    this.stdinLock = new Int32Array(stdinLockBuffer);
     const signalBuffer = new SharedArrayBuffer(4);
     this.signalBuf = new Int32Array(signalBuffer);
     const stdinBuffer = new SharedArrayBuffer(10000); // size = todo
     const options = {
-      spinLockBuffer,
       stdinBuffer,
       signalBuffer,
       ...this.options,
     };
     log("options = ", options);
 
-    this.worker.postMessage({ event: "init", name: this.name, options });
+    this.worker.postMessage({
+      event: "init",
+      name: this.name,
+      options,
+      locks: { spinLockBuffer, stdinLockBuffer },
+    });
     this.worker.on("exit", () => this.terminate());
     this.worker.on("message", async (message) => {
       log("main thread got message", message);
@@ -65,29 +75,34 @@ export class WasmInstance extends EventEmitter {
       }
       switch (message.event) {
         case "sleep":
-          this.pause();
-          await delay(message.time);
-          this.resume();
+          Atomics.store(this.spinLock, 0, 1);
+          Atomics.notify(this.spinLock, 0);
+          this.sleepTimer = setTimeout(() => {
+            Atomics.store(this.spinLock, 0, 0);
+            Atomics.notify(this.spinLock, 0);
+          }, message.time);
           return;
+
         case "waitForStdin":
           if (this.waitingForStdin) return;
           this.waitingForStdin = true;
           try {
-            this.pause();
+            Atomics.store(this.stdinLock, 0, -1);
+            Atomics.notify(this.stdinLock, 0);
             log("waitForStdin");
             const data = await callback((cb) => {
               process.stdin.once("data", (data) => {
                 cb(undefined, data);
               });
             });
-            log("got data", data.toString());
+            log("got data", JSON.stringify(data));
             data.copy(Buffer.from(stdinBuffer));
-            Atomics.store(this.spinLock, 0, data.length);
-            Atomics.notify(this.spinLock, 0);
-            return;
+            Atomics.store(this.stdinLock, 0, data.length); // NOTE: length of 0 won't break this at least...
+            Atomics.notify(this.stdinLock, 0);
           } finally {
             this.waitingForStdin = false;
           }
+          return;
         case "init":
           this.emit("init", message);
           return;
@@ -111,16 +126,6 @@ export class WasmInstance extends EventEmitter {
       process.stdin.addListener("data", f);
     }
     process.stdout.write("^D\n> ");
-  }
-
-  private pause() {
-    Atomics.store(this.spinLock, 0, 0);
-    Atomics.notify(this.spinLock, 0);
-  }
-
-  private resume() {
-    Atomics.store(this.spinLock, 0, 1);
-    Atomics.notify(this.spinLock, 0);
   }
 
   async callWithString(
@@ -160,11 +165,26 @@ export class WasmInstance extends EventEmitter {
   }
 
   private sigint() {
-    log("SIGINT!");
-    Atomics.store(this.signalBuf, 0, 2);
-    log("signalBuf = ", this.signalBuf);
-    // TODO: interrupting things like sleep
-    // that we are doing here when paused.
+    if (Atomics.load(this.stdinLock, 0) == -1) {
+      // TODO: blocked on stdin lock -- not sure how to deal with this yet.
+      // Python normally would discard the input buffer and deal
+      // with signals.  For some reason our readline isn't dealing
+      // with signals.  Maybe it has to be made aware somehow.
+      // For now, best we can do is nothing.
+      return;
+    }
+
+    // tell other side about this signal.
+    Atomics.store(this.signalBuf, 0, SIGINT);
+
+    if (Atomics.load(this.spinLock, 0) == 1) {
+      // blocked on our own sleep timer spin lock...
+      // sleep timer
+      clearTimeout(this.sleepTimer);
+      // manually unblock
+      Atomics.store(this.spinLock, 0, 0);
+      Atomics.notify(this.spinLock, 0);
+    }
   }
 
   async terminal(argv: string[] = ["command"]) {
