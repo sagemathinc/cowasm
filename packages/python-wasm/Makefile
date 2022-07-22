@@ -70,10 +70,11 @@ ${DIST}/.built: node_modules ${DIST}/python/python.wasm
 # Run all test suites: (1) the Native zig test suite; (2) the Javascript test suite.
 # This exercise zig-related code both via a native build, and then via the separate WebAssembly build.
 .PHONY: test
-test: all test-zig
+test: all test-zig bench
 	npm run test
 
 # Run the benchmark suite that's in the jpython package.
+# This is also run as part of make test, since it might crash if python were messed up.
 .PHONE: bench
 bench:
 	echo "STARTING python-wasm benchmark suite"

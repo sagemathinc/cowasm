@@ -53,6 +53,6 @@ export async function _init(
     },
     fs,
     // traceSyscalls: true,
-    traceStubcalls: true, //'first',
+    // traceStubcalls: true, //'first',
   });
 }

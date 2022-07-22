@@ -5,6 +5,7 @@ const encoder = new TextEncoder();
 
 export default class WasmInstance {
   result: any = undefined;
+  resultException: boolean = false;
   exports: any;
   fs?: FileSystem;
 
@@ -26,6 +27,7 @@ export default class WasmInstance {
 
   callWithString(name: string, str: string | string[], ...args): any {
     this.result = undefined;
+    this.resultException = false;
     const f = this.exports[name];
     if (f == null) {
       throw Error(`no function ${name} defined in wasm module`);
@@ -65,6 +67,9 @@ export default class WasmInstance {
           this.exports.c_free(p);
         }
       }
+    }
+    if (this.resultException) {
+      throw Error("RuntimeError");
     }
     return this.result ?? r;
   }

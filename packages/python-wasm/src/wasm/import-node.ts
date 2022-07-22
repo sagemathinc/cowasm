@@ -149,15 +149,31 @@ export class WasmInstance extends EventEmitter {
   private async waitForResponse(id: number): Promise<any> {
     return (
       await callback((cb) => {
-        const listener = (message) => {
+        const removeListeners = () => {
+          this.removeListener("id", messageListener);
+          this.removeListener("sigint", sigintListener);
+        };
+
+        const messageListener = (message) => {
+          removeListeners();
           if (message.id == id) {
-            this.removeListener("id", listener);
-            cb(undefined, message);
+            if (message.error) {
+              cb(message.error);
+            } else {
+              cb(undefined, message);
+            }
           }
         };
-        this.on("id", listener);
+        this.on("id", messageListener);
+
+        const sigintListener = () => {
+          removeListeners();
+          cb("KeyboardInterrupt");
+        };
+        this.once("sigint", sigintListener);
+
         this.worker?.on("exit", () => {
-          this.removeListener("id", listener);
+          removeListeners();
           cb("exit");
         });
       })
@@ -176,10 +192,10 @@ export class WasmInstance extends EventEmitter {
 
     // tell other side about this signal.
     Atomics.store(this.signalBuf, 0, SIGINT);
+    Atomics.notify(this.signalBuf, 0);
 
     if (Atomics.load(this.spinLock, 0) == 1) {
-      // blocked on our own sleep timer spin lock...
-      // sleep timer
+      // Blocked on the sleep timer spin lock.
       clearTimeout(this.sleepTimer);
       // manually unblock
       Atomics.store(this.spinLock, 0, 0);

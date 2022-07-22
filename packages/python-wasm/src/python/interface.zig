@@ -11,9 +11,14 @@ export fn init() void {
     python.init();
 }
 
+// TODO: would like to say what the exception actually is. For now, at least inform
+// that it happened.
+extern fn wasmSetException() void;
+
 export fn exec(s: [*:0]const u8) void {
     python.exec(s) catch |err| {
         //todo
+        wasmSetException();
         std.debug.print("python error: '{}'\nwhen evaluating '{s}'", .{ err, s });
         return;
     };

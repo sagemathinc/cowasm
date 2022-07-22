@@ -2,10 +2,8 @@ import WASI, { createFileSystem } from "@wapython/wasi";
 import type { WASIConfig, FileSystemSpec, WASIBindings } from "@wapython/wasi";
 import reuseInFlight from "./reuseInFlight";
 import WasmInstance from "./instance";
-import debug from "./debug";
+import debug from "debug";
 const log = debug("wasm-import");
-
-log("hello world");
 
 const textDecoder = new TextDecoder();
 function recvString(wasm, ptr, len) {
@@ -73,6 +71,11 @@ async function doWasmImport(
       wasm.result = recvString(wasm, ptr, len);
     };
   }
+  if (wasmOpts.env.wasmSetException == null) {
+    wasmOpts.env.wasmSetException = () => {
+      wasm.resultException = true;
+    };
+  }
   if (wasmOpts.env.getrandom == null) {
     wasmOpts.env.getrandom = (bufPtr, bufLen, _flags) => {
       // NOTE: returning 0 here (our default stub behavior)
@@ -133,8 +136,8 @@ async function doWasmImport(
         log("using existing for ", key);
         return Reflect.get(target, key);
       }
-      log("creating stub for", key);
       if (options.traceStubcalls) {
+        log("creating stub for", key);
         return (...args) => {
           stub(key, "returning 0", args, options.traceStubcalls == "first");
           return 0;
