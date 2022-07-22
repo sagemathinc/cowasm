@@ -141,10 +141,17 @@ export class WasmInstance extends EventEmitter {
     ).result;
   }
 
-  async terminal(argv: string[]=['command']) {
+  protected configureTerminal() {}
+
+  async terminal(argv: string[] = ["command"]) {
     await this.init();
     if (!this.worker) throw Error("bug");
-    this.callWithString("terminal", argv);
+    this.configureTerminal();
+    try {
+      this.callWithString("terminal", argv);
+    } catch (_) {
+      // expected to fail -- call doesn't get output...
+    }
   }
 }
 

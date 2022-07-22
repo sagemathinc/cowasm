@@ -17,13 +17,6 @@ export async function repr(str: string): Promise<string> {
 export async function terminal(argv: string[] = ["python"]) {
   if (wasm == null) throw Error("call init");
   await wasm.terminal(argv);
-  //   const argv: { [n: number]: string } = {};
-  //   let n = 0;
-  //   for (const arg of process.argv) {
-  //     argv[n] = arg;
-  //     n += 1;
-  //   }
-  //   wasm.callWithString("terminal", JSON.stringify(argv));
 }
 
 // export async function pyrun_interactive_one() {
