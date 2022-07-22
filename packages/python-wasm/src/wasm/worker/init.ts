@@ -1,5 +1,5 @@
-import type WasmInstance from "../instance";
-import { Options } from "../import";
+import type WasmInstance from "./instance";
+import { Options } from "./import";
 
 export default function initWorker({
   wasmImport,

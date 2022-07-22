@@ -1,6 +1,6 @@
-import type WasmInstance from "./instance";
+import type WasmInstance from "./worker/instance";
 export { WasmInstance };
-import wasmImport, { Options } from "./import";
+import wasmImport, { Options } from "./worker/import";
 import type { FileSystemSpec } from "@wapython/wasi";
 import bindings from "@wapython/wasi/dist/bindings/browser";
 
