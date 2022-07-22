@@ -11,6 +11,9 @@ import wasmImport, { Options } from "./import";
 import type WasmInstance from "./instance";
 export { WasmInstance };
 import { parentPort } from "worker_threads";
+import debug from "./debug";
+
+const log = debug("import-node-worker");
 
 export default async function wasmImportNode(
   name: string,
@@ -45,13 +48,6 @@ export default async function wasmImportNode(
 }
 
 function initWorker() {
-  //   const logToFile = (...args) => {
-  //     require("fs").appendFileSync(
-  //       "/tmp/import-node-worker.log",
-  //       args.map((s) => JSON.stringify(s)).join(" ") + "\n"
-  //     );
-  //   };
-
   const parent = parentPort;
   if (parent == null) {
     throw Error("bug");
@@ -59,36 +55,61 @@ function initWorker() {
   // Being used as a worker.
   let wasm: undefined | WasmInstance = undefined;
   parent.on("message", async (message) => {
-    // logToFile("worker got message ", message);
+    log("worker got message ", message);
     switch (message.event) {
       case "init":
         try {
-          const opts: any = { ...message.options };
-          if (message.options.spinLockBuffer != null) {
-            const lock = new Int32Array(message.options.spinLockBuffer);
-            opts.spinLock = (time: number) => {
-              // logToFile(`spinLock: ${time}`);
-              // We ask main thread to do the lock:
-              parent.postMessage({ event: "sleep", time });
-              // We wait a moment for that message to be processed:
-              while (lock[0] != 0) {
-                Atomics.wait(lock, 0, lock[0]);
-              }
-              // now the lock is set, and we wait for it to get unset:
-              Atomics.wait(lock, 0, 0);
-            };
-            opts.waitForStdin = () => {
-              parent.postMessage({ event: "waitForStdin" });
-              while (lock[0] != 0) {
-                Atomics.wait(lock, 0, lock[0]);
-              }
-              Atomics.wait(lock, 0, 0);
-              // how much was read
-              const bytes = lock[0];
-              const data = Buffer.from(opts.stdinBuffer.slice(0, bytes)); // not a copy
-              return data;
-            };
+          const opts: Options = { ...message.options };
+          if (opts.spinLockBuffer == null) {
+            throw Error("must define spinLockBuffer");
           }
+          if (opts.stdinBuffer == null) {
+            throw Error("must define stdinBuffer");
+          }
+
+          const lock = new Int32Array(message.options.spinLockBuffer);
+          opts.spinLock = (time: number) => {
+            // log(`spinLock: ${time}`);
+            // We ask main thread to do the lock:
+            parent.postMessage({ event: "sleep", time });
+            // We wait a moment for that message to be processed:
+            while (lock[0] != 0) {
+              Atomics.wait(lock, 0, lock[0]);
+            }
+            // now the lock is set, and we wait for it to get unset:
+            Atomics.wait(lock, 0, 0);
+          };
+
+          const stdinBuffer = opts.stdinBuffer;
+          opts.waitForStdin = () => {
+            parent.postMessage({ event: "waitForStdin" });
+            while (lock[0] != 0) {
+              Atomics.wait(lock, 0, lock[0]);
+            }
+            Atomics.wait(lock, 0, 0);
+            // how much was read
+            const bytes = lock[0];
+            const data = Buffer.from(stdinBuffer.slice(0, bytes)); // not a copy
+            return data;
+          };
+
+          const { signalBuffer } = message.options;
+          if (signalBuffer == null) {
+            throw Error("must define signalBuffer");
+          }
+          const sigint = new Int32Array(signalBuffer);
+          opts.wasmEnv = {
+            wasmGetSignalState: () => {
+              log(`sigint = ${sigint[0]}`);
+              const signal = sigint[0];
+              if (signal) {
+                Atomics.store(signalBuffer, 0, 0);
+                return signal;
+              }
+              return 0;
+            },
+          };
+
           wasm = await wasmImportNode(message.name, opts);
           parent.postMessage({ event: "init", status: "ok" });
         } catch (err) {

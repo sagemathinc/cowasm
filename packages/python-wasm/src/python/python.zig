@@ -65,6 +65,29 @@ pub fn terminal(argc: i32, argv: [*c][*c]u8) void {
     //std.debug.print("Py_Main exited with code {}\n", .{r});
 }
 
+extern fn wasmGetSignalState() i32;
+
+export fn _Py_CheckEmscriptenSignals() void {
+    const signal = wasmGetSignalState();
+    if (signal != 0) {
+        std.debug.print("_Py_CheckEmscriptenSignals: got a signal! {}\n", .{signal});
+        if (python.PyErr_SetInterruptEx(signal) != 0) {
+            std.debug.print("_Py_CheckEmscriptenSignals: WARNING -- invalid signal = {}\n", .{signal});
+        }
+    }
+}
+
+const SIGNAL_INTERVAL: i32 = 50;
+var signal_counter: i32 = SIGNAL_INTERVAL;
+export fn _Py_CheckEmscriptenSignalsPeriodically() void {
+    signal_counter -= 1;
+    if (signal_counter <= 0) {
+        signal_counter = SIGNAL_INTERVAL;
+        _Py_CheckEmscriptenSignals();
+    }
+    // std.debug.print("_Py_CheckEmscriptenSignalsPeriodically\n", .{});
+}
+
 // pub fn run_interactive_one() void {
 //     std.debug.print("PyRun_InteractiveOne\n", .{});
 //     const stdin = @ptrCast([*c]anyopaque, std.c.fopen("/dev/stdin", "r"));

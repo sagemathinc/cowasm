@@ -117,6 +117,7 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	cp src/rebuild ${BUILD}/wasm
 	cp src/config.site ${BUILD}/wasm
 	cp src/Setup.local ${BUILD}/wasm/Modules
+	cp src/pycore_emscripten_signal.h  ${BUILD}/wasm/Include/internal
 	# Ooly need for native build using Zig:
 	# cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
 	touch ${BUILD}/wasm/.patched
@@ -154,6 +155,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ${WASMPOSIX}/*.h .
 	cd ${BUILD}/wasm && echo '#undef HAVE_LINUX_VM_SOCKETS_H' >> pyconfig.h
 	cd ${BUILD}/wasm && echo '#define POLLPRI 0' >> pyconfig.h
+	cd ${BUILD}/wasm && echo '#define __WASM__ 1' >> pyconfig.h
 	cd ${BUILD}/wasm && make -j8
 	# These are missing, breaking the "make install".  Why? TODO!
 	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so

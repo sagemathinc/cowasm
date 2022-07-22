@@ -2,6 +2,10 @@ import WASI, { createFileSystem } from "@wapython/wasi";
 import type { WASIConfig, FileSystemSpec, WASIBindings } from "@wapython/wasi";
 import reuseInFlight from "./reuseInFlight";
 import WasmInstance from "./instance";
+import debug from "./debug";
+const log = debug("wasm-import");
+
+log("hello world");
 
 const textDecoder = new TextDecoder();
 function recvString(wasm, ptr, len) {
@@ -22,6 +26,7 @@ export interface Options {
   spinLock?: (time: number) => void;
   spinLockBuffer?: SharedArrayBuffer;
   stdinBuffer?: SharedArrayBuffer;
+  signalBuffer?: SharedArrayBuffer;
   waitForStdin?: () => Buffer;
   sendStdout?: (Buffer) => void;
   sendStderr?: (Buffer) => void;
@@ -59,6 +64,11 @@ async function doWasmImport(
 
   let wasm;
 
+  if (wasmOpts.env.wasmGetSignalState == null) {
+    wasmOpts.enve.wasmGetSignalState = () => {
+      return 0;
+    };
+  }
   if (wasmOpts.env.wasmSendString == null) {
     wasmOpts.env.wasmSendString = (ptr: number, len: number) => {
       wasm.result = recvString(wasm, ptr, len);
@@ -121,10 +131,10 @@ async function doWasmImport(
   wasmOpts.env = new Proxy(wasmOpts.env, {
     get(target, key) {
       if (key in target) {
-        // console.log("using existing stub for ", key);
+        log("using existing for ", key);
         return Reflect.get(target, key);
       }
-      // console.log("creating stub for", key);
+      log("creating stub for", key);
       if (options.traceStubcalls) {
         return (...args) => {
           stub(key, "returning 0", args, options.traceStubcalls == "first");
@@ -181,7 +191,7 @@ async function doWasmImport(
   cache[name] = wasm;
 
   if (options.time) {
-    console.log(`imported ${name} in ${new Date().valueOf() - t}ms`);
+    log(`imported ${name} in ${new Date().valueOf() - t}ms`);
   }
 
   return wasm;
@@ -198,5 +208,5 @@ function stub(functionName, behavior, args, firstOnly) {
     if (stubUsed.has(functionName)) return;
     stubUsed.add(functionName);
   }
-  console.log(`WARNING STUB - ${functionName}: `, behavior, args);
+  log(`WARNING STUB - ${functionName}: `, behavior, args);
 }

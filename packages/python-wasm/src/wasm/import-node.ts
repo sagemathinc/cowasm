@@ -6,16 +6,9 @@ import { dirname, join } from "path";
 import callsite from "callsite";
 import reuseInFlight from "./reuseInFlight";
 import process from "node:process";
+import debug from "./debug";
 
-const log = (...args) => {
-  require("fs").appendFile(
-    "/tmp/import-node.log",
-    args.map((s) => JSON.stringify(s)).join(" ") + "\n",
-    () => {}
-  );
-};
-
-//const log = (..._args) => {};
+const log = debug('import-node');
 
 export class WasmInstance extends EventEmitter {
   private id: number = 0;
@@ -23,6 +16,7 @@ export class WasmInstance extends EventEmitter {
   private options: Options;
   private worker?: Worker;
   private spinLock: Int32Array;
+  private signalBuf: Int32Array;
   result: any;
   exports: any;
   waitingForStdin: boolean = false;
@@ -48,9 +42,16 @@ export class WasmInstance extends EventEmitter {
 
     this.worker = new Worker(path);
     const spinLockBuffer = new SharedArrayBuffer(4);
-    const stdinBuffer = new SharedArrayBuffer(10000); // size = todo
     this.spinLock = new Int32Array(spinLockBuffer);
-    const options = { spinLockBuffer, stdinBuffer, ...this.options };
+    const signalBuffer = new SharedArrayBuffer(4);
+    this.signalBuf = new Int32Array(signalBuffer);
+    const stdinBuffer = new SharedArrayBuffer(10000); // size = todo
+    const options = {
+      spinLockBuffer,
+      stdinBuffer,
+      signalBuffer,
+      ...this.options,
+    };
     log("options = ", options);
 
     this.worker.postMessage({ event: "init", name: this.name, options });
@@ -160,6 +161,10 @@ export class WasmInstance extends EventEmitter {
 
   private sigint() {
     log("SIGINT!");
+    Atomics.store(this.signalBuf, 0, 2);
+    log("signalBuf = ", this.signalBuf);
+    // TODO: interrupting things like sleep
+    // that we are doing here when paused.
   }
 
   async terminal(argv: string[] = ["command"]) {
