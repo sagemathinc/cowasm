@@ -117,9 +117,14 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	cp src/rebuild ${BUILD}/wasm
 	cp src/config.site ${BUILD}/wasm
 	cp src/Setup.local ${BUILD}/wasm/Modules
+	cp ${WASMPOSIX}/*.h ${BUILD}/wasm
+	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
+	# explicitly add anything that is really used from there to wasm-posix.h
+	mkdir ${BUILD}/wasm/sys && echo '#include "wasm-posix.h"' >  ${BUILD}/wasm/sys/wait.h
 	# Ooly need for native build using Zig:
 	# cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/00-threading-native.patch | patch -p1
 	cd ${BUILD}/wasm/Include/internal && cat ${CWD}/src/python-patches/01-emscripten-signal.patch | patch -p0
+	cd ${BUILD}/wasm/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
 	touch ${BUILD}/wasm/.patched
 
 ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
@@ -129,9 +134,11 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	# - We use "zig cc -target wasm32-wasi" instead of "zig cc -target wasm32-wasi-musl" since the broken
 	#   Python configure.ac script outputs wasm32-wasi instead of wasm32-wasi-musl as the PLATFORM_TRIPLE.
 	#   This might be something to fix and upstream, but for now, just not using a triple works.
+	# - We use -I (path to source) in the CC/CXX line in addition to CFLAGS so that we can override some
+	#   bad global libraries, e.g., systemwide (zig musl) sys/wait.h with a local version.
 	cd ${BUILD}/wasm && \
-		CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
-		CXX="zig c++ -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS" \
+		CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/" \
+		CXX="zig c++ -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/" \
 		AR="zig ar" \
 		CFLAGS="-I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include" \
 		LDFLAGS="-lc -L${ZLIB}/wasm/lib -L${LZMA}/wasm/lib  -L${LIBEDIT}/wasm/lib" \
@@ -152,7 +159,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 			--build=`./config.guess`
 	# Make it so our WASM posix header file is included everywhere,
 	# since otherwise we can't even compile.  Must do this AFTER ./configure.
-	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h && cp ${WASMPOSIX}/*.h .
+	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h
 	cd ${BUILD}/wasm && echo '#undef HAVE_LINUX_VM_SOCKETS_H' >> pyconfig.h
 	cd ${BUILD}/wasm && echo '#define POLLPRI 0' >> pyconfig.h
 	cd ${BUILD}/wasm && echo '#define __WASM__ 1' >> pyconfig.h

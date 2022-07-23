@@ -116,6 +116,26 @@ int setreuid(uid_t ruid, uid_t euid);
 int setregid(gid_t rgid, gid_t egid);
 int setgid(gid_t gid);
 
+
+// From packages/zig/dist/lib/libc/musl/include/sys/wait.h and needed for Python.
+typedef enum {
+	P_ALL = 0,
+	P_PID = 1,
+	P_PGID = 2,
+	P_PIDFD = 3
+} idtype_t;
+
+#define WNOHANG    1
+#define WUNTRACED  2
+#define WSTOPPED   2
+#define WEXITED    4
+#define WCONTINUED 8
+#define WNOWAIT    0x1000000
+#define __WNOTHREAD 0x20000000
+#define __WALL      0x40000000
+#define __WCLONE    0x80000000
+
+
 typedef struct {
   pid_t si_pid;
   uid_t si_uid;
@@ -124,7 +144,6 @@ typedef struct {
   int si_code;
   int si_errno;
 } siginfo_t;
-typedef int idtype_t;
 int waitid(idtype_t idtype, id_t id, siginfo_t* infop, int options);
 pid_t wait(int* status);
 pid_t waitpid(pid_t pid, int* status, int options);
@@ -273,5 +292,17 @@ int sethostname(const char* name, size_t len);
 
 # include <netinet/in.h>
 char* inet_ntoa(struct in_addr in);
+
+
+// These are needed to build parts of posixmodule in Python.  They seem harmless since they
+// are self contained and copied from packages/zig/dist/lib/libc/musl/include/stdlib.h
+// We may need to change them if we invent some notion of fork and subprocesses for our runtime!
+
+#define WEXITSTATUS(s) (((s) & 0xff00) >> 8)
+#define WTERMSIG(s) ((s) & 0x7f)
+#define WSTOPSIG(s) WEXITSTATUS(s)
+#define WIFEXITED(s) (!WTERMSIG(s))
+#define WIFSTOPPED(s) ((short)((((s)&0xffff)*0x10001)>>8) > 0x7f00)
+#define WIFSIGNALED(s) (((s)&0xffff)-1U < 0xffu)
 
 #endif
