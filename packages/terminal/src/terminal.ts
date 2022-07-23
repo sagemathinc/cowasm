@@ -4,9 +4,8 @@ import setTheme from "./theme";
 import python from "python-wasm";
 
 export default async function terminal(element: HTMLDivElement) {
-  (window as any).python = python;
   await python.init();
-  const term = new Terminal({convertEol: true});
+  const term = new Terminal({ convertEol: true });
   term.open(element);
   // @ts-ignore
   element.children[0].style.padding = "15px";

@@ -1,6 +1,6 @@
 {
   "name": "@wapython/wasi",
-  "version": "0.18.3",
+  "version": "0.19.0",
   "description": "Javascript library for interacting with WASI Modules in Node.js and the Browser.",
   "main": "dist/index.js",
   "scripts": {

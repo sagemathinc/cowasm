@@ -18,7 +18,7 @@ async function demo() {
   // Use python.repr to get their string representation:
   element.innerHTML = `${await python.repr(
     "sys.version"
-  )}\n\n1 + 2 + 3 + ${await python.repr("n")} = ${await python.repr("s")}`;
+  )}\n\n1 + 2 + 3 + ... + ${await python.repr("n")} = ${await python.repr("s")}`;
 
   document.body.appendChild(element);
 }
