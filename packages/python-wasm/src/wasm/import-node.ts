@@ -6,10 +6,8 @@ import callsite from "callsite";
 import process from "node:process";
 import debug from "../debug";
 
-const log = debug("import-node");
-
 export class WasmInstance extends WasmInstanceAbstractBaseClass {
-  protected async initWorker(): Promise<WorkerThread> {
+  protected initWorker(): WorkerThread {
     const path = join(
       dirname(callsite()[0]?.getFileName() ?? "."),
       "worker/node.js"
@@ -49,5 +47,6 @@ export default async function wasmImportNodeWorker(
   wasmSource: string,
   options: Options
 ): Promise<WasmInstance> {
+  const log = debug("import-node");
   return new WasmInstance(wasmSource, options, log);
 }

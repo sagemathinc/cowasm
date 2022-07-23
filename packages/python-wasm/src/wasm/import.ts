@@ -35,7 +35,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   }
 
   // MUST override in derived class
-  protected async initWorker(): Promise<WorkerThread> {
+  protected initWorker(): WorkerThread {
     abstract("initWorker");
     return null as any; // for typescript
   }
@@ -47,13 +47,13 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   }
 
   // Optionally this could be overwritten, if needed (e.g., for the browser version).
-  write(_data: string): void {
+  write(_data: string | Uint8Array): void {
     throw Error("write not implemented");
   }
 
   private async init() {
     if (this.worker) return;
-    this.worker = await this.initWorker();
+    this.worker = this.initWorker();
     if (!this.worker) throw Error("init - bug");
     const spinLockBuffer = new SharedArrayBuffer(4);
     this.spinLock = new Int32Array(spinLockBuffer);
@@ -115,6 +115,12 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
         case "init":
           this.emit("init", message);
           return;
+        case "stdout":
+          this.emit("stdout", message.data);
+          break;
+        case "stderr":
+          this.emit("stderr", message.data);
+          break;
       }
     });
     await callback((cb) =>

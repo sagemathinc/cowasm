@@ -1,5 +1,5 @@
 /*
-This is the webworker script when importing the wasm module in node.js.
+This is the Worker script when importing the wasm module in node.js.
 */
 
 import { readFile } from "fs/promises";
@@ -9,12 +9,11 @@ import { dirname, isAbsolute, join } from "path";
 import callsite from "callsite";
 import wasmImport, { Options } from "./import";
 import type WasmInstance from "./instance";
-export { WasmInstance };
-import { parentPort } from "worker_threads";
+import { isMainThread, parentPort } from "worker_threads";
 import initWorker from "./init";
 import debug from "../../debug";
 
-export default async function wasmImportNode(
+async function wasmImportNode(
   name: string,
   options: Options = {}
 ): Promise<WasmInstance> {
@@ -46,7 +45,9 @@ export default async function wasmImportNode(
   return await wasmImport(name, source, bindings, { ...options, fs });
 }
 
-if (parentPort != null) {
-  const log = debug("import-node-worker");
-  initWorker({ wasmImport: wasmImportNode, parent: parentPort, log });
+if (isMainThread || parentPort == null) {
+  throw Error("bug -- this should only be loaded in the worker thread");
 }
+
+const log = debug("worker:node");
+initWorker({ wasmImport: wasmImportNode, parent: parentPort, log });

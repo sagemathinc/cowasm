@@ -5,13 +5,22 @@ export default function initWorker({
   wasmImport,
   parent,
   log,
+  captureOutput,
 }: {
   wasmImport: Function;
   parent: {
+    // on events:
+    //   'message', (message) => ...
+    //   'exit'
     on: Function;
     postMessage: Function;
   };
   log?: (...args) => void;
+  // if captureOutput is true, we will send stdout and stderr events when such output is
+  // written, instead of writing to /dev/stdout and /dev/stderr.  This saves trouble having
+  // to watch and read from those filesystems.  For browser xterm.js integration, we use
+  // this, but for a nodejs terminal, we don't.
+  captureOutput?: boolean;
 }) {
   let wasm: undefined | WasmInstance = undefined;
   parent.on("message", async (message) => {
@@ -78,6 +87,18 @@ export default function initWorker({
               return 0;
             },
           };
+
+          if (captureOutput) {
+            opts.sendStdout = (data) => {
+              log?.("sendStdout", data);
+              parent.postMessage({ event: "stdout", data });
+            };
+
+            opts.sendStderr = (data) => {
+              log?.("sendStderr", data);
+              parent.postMessage({ event: "stderr", data });
+            };
+          }
 
           wasm = await wasmImport(message.name, opts);
           parent.postMessage({ event: "init", status: "ok" });
