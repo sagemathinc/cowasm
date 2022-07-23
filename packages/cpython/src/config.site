@@ -17,11 +17,7 @@ ac_cv_func_accept4=no
 # To use editline instead of readline.
 ac_cv_with_editline=true
 
-##
-## I found these in Tools/wasm/config.site-wasm32-wasi -- william
-##
-# config.site override for cross compiling to wasm32-wasi platform
-#
+## I found some of these in Tools/wasm/config.site-wasm32-wasi -- william
 # Written by Christian Heimes <christian@python.org>
 
 # cannot be detected in cross builds
@@ -53,7 +49,7 @@ ac_cv_func_mknodat=no
 # OSError: [Errno 28] Invalid argument: '.'
 ac_cv_func_fdopendir=no
 
-# WASIX stubs we don't want to use.
+# WASI stubs we don't want to use.
 ac_cv_func_kill=no
 
 # WASI sockets are limited to operations on given socket fd and inet sockets.

@@ -1,0 +1,17 @@
+We patch pycore_emscripten_signal.h in one very simple way to allow us to
+enable the __EMSCRIPTEN__ stuff with __WASM__ instead.  We will likely do
+this with several things in the codebase set off with __EMSCRIPTEN__ until
+we have done everything, and then we can get rid of all these patches and
+just set __EMSCRIPTEN__...
+
+--- pycore_emscripten_signal-orig.h	2022-07-22 17:15:15.000000000 -0700
++++ pycore_emscripten_signal.h	2022-07-22 17:14:36.000000000 -0700
+@@ -1,7 +1,7 @@
+ #ifndef Py_EMSCRIPTEN_SIGNAL_H
+ #define Py_EMSCRIPTEN_SIGNAL_H
+
+-#if defined(__EMSCRIPTEN__)
++#if defined(__EMSCRIPTEN__) || defined(__WASM__)
+
+ void
+ _Py_CheckEmscriptenSignals(void);

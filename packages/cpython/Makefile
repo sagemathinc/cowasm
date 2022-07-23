@@ -51,9 +51,9 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	cd ${BUILD} && mkdir native && tar xf Python-${PYTHON_VERSION}.tar.xz -C native --strip-components=1
 	# - We use the 0008-setup.patch patch, which is *maybe* needed to get module building
 	#   to work when compiling with zig.
-	# - 0009-threading-native.patch  is just a horrible hack to sort of get around something
+	# - 00-threading-native.patch  is just a horrible hack to sort of get around something
 	#   broken also involving building with zig (?). This was only needed when using zig:
-	# cd ${BUILD}/native && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
+	# cd ${BUILD}/native && cat ${CWD}/src/python-patches/00-threading-native.patch | patch -p1
 	touch ${BUILD}/native/.patched
 
 # NOTE: We are using the system-wide GCC instead of zig to
@@ -62,7 +62,7 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 # To switch back to zig, try replacing what is below
 # by this.  This works for me on cocalc, but not a clean docker
 # image or aarch64 docker linux.  Also, make sure to enable the
-# 0009-threading-native.patch patch elsewhere (in two places).
+# 00-threading-native.patch patch elsewhere (in two places).
 #
 # UNAME_S := $(shell uname -s)
 # UNAME_P := $(shell uname -p)
@@ -117,9 +117,9 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	cp src/rebuild ${BUILD}/wasm
 	cp src/config.site ${BUILD}/wasm
 	cp src/Setup.local ${BUILD}/wasm/Modules
-	cp src/pycore_emscripten_signal.h  ${BUILD}/wasm/Include/internal
 	# Ooly need for native build using Zig:
-	# cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/0009-threading-native.patch | patch -p1
+	# cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/00-threading-native.patch | patch -p1
+	cd ${BUILD}/wasm/Include/internal && cat ${CWD}/src/python-patches/01-emscripten-signal.patch | patch -p0
 	touch ${BUILD}/wasm/.patched
 
 ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched

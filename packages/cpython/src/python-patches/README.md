@@ -1,3 +1,2 @@
-These are initially from pyodide.
-
-0008-setup.patch - I need this to get the build to work with zig.
+Patches...  Hopefully very little, and anything here obviously we want to get rid
+of or upstream in python.

@@ -1,7 +1,8 @@
 **This is probably going to introduce bugs.**  But for building the native
 version of Python with zig we seem to need to do this.  No clue why... yet!
 This might be fine since we are only using native to bootstrap building the
-WASM version.  -- william stein
+WASM version.   We only used this when building native with zig, which we
+are NOT doing now (instead we use whatever is available systemwide).
 
 diff -u a/Lib/threading.py b/Lib/threading.py
 
