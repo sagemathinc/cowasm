@@ -10,6 +10,7 @@ document.body.style.margin = "0px";
 
 async function main() {
   while (true) {
+    element.innerHTML = '';
     await terminal(element);
   }
 }
