@@ -79,6 +79,14 @@ packages/terminal/${BUILT}: python-wasm jpython
 .PHONY: terminal
 terminal: packages/terminal/${BUILT}
 
+# this builds and you can make ncurses a dep for cpython and change src/Setup.local to get
+# the _ncurses module to build. But there are still issues to solve (probably straightforward, but tedious)
+# as mentioned in the cpython/src/Setup.local.
+packages/ncurses/${BUILT}: termcap
+	cd packages/ncurses && make all
+.PHONY: ncurses
+ncurses: packages/ncurses/${BUILT}
+
 
 packages/website/${BUILT}: python-wasm
 	cd packages/website && make all
@@ -98,6 +106,7 @@ clean:
 	cd packages/jpython && make clean
 	cd packages/libedit && make clean
 	cd packages/lzma && make clean
+	cd packages/ncurses && make clean
 	cd packages/openssl && make clean
 	cd packages/python-wasm && make clean
 	cd packages/website && make clean

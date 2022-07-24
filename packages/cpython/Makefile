@@ -16,6 +16,10 @@ LZMA = ${CWD}/../lzma/dist
 LIBEDIT = ${CWD}/../libedit/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
+NCURSES = ${CWD}/../ncurses/dist
+NCURSES_INCLUDE = -I${NCURSES}/wasm/include/ncurses -I${NCURSES}/wasm/include
+NCURSES_LIB = -L${NCURSES}/wasm/lib
+
 PYTHON_WASM_BINARY = ${CWD}/../../bin/python-wasm
 
 # We only use zlib (not lzma) for native build, since liblzma widely available natively.
@@ -140,8 +144,8 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 		CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/" \
 		CXX="zig c++ -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/" \
 		AR="zig ar" \
-		CFLAGS="-I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include" \
-		LDFLAGS="-lc -L${ZLIB}/wasm/lib -L${LZMA}/wasm/lib  -L${LIBEDIT}/wasm/lib" \
+		CFLAGS="-I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  ${NCURSES_INCLUDE}" \
+		LDFLAGS="-lc -L${ZLIB}/wasm/lib -L${LZMA}/wasm/lib  -L${LIBEDIT}/wasm/lib  ${NCURSES_LIB}" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		./configure \
@@ -150,7 +154,6 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 			--enable-optimizations \
 			--disable-shared \
 			--disable-ipv6 \
-			--with-editline \
 			--with-readline=editline \
 			--with-build-python=${DIST_NATIVE}/bin/python3 \
 			--without-pymalloc \
@@ -163,6 +166,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	cd ${BUILD}/wasm && echo '#undef HAVE_LINUX_VM_SOCKETS_H' >> pyconfig.h
 	cd ${BUILD}/wasm && echo '#define POLLPRI 0' >> pyconfig.h
 	cd ${BUILD}/wasm && echo '#define __WASM__ 1' >> pyconfig.h
+	cd ${BUILD}/wasm && echo '#undef GETPGRP_HAVE_ARG' >> pyconfig.h
 	cd ${BUILD}/wasm && make -j8
 	# These are missing, breaking the "make install".  Why? TODO!
 	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so
@@ -177,7 +181,11 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" python3 ./Tools/wasm/wasm_assets.py && rm -rf ${DIST_WASM}/lib/dist && mv usr/local/lib ${DIST_WASM}/lib/dist
 	# Add termcap for xterm to our zip asset bundle:
 	# Also add rlcompleter.pyc and  _sysconfigdata__wasi_wasm32-wasi.pyc since Python doesn't include those.
-	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && cp ../python3.11/__pycache__/rlcompleter.cpython-311.pyc rlcompleter.pyc && zip -u python311.zip termcap rlcompleter.pyc && cp ../python3.11/__pycache__/_sysconfigdata__wasi_wasm32-wasi.cpython-311.pyc _sysconfigdata__wasi_wasm32-wasi.pyc && zip -u python311.zip _sysconfigdata__wasi_wasm32-wasi.pyc
+	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && \
+		cp ../python3.11/__pycache__/rlcompleter.cpython-311.pyc rlcompleter.pyc && \
+		zip -u python311.zip termcap rlcompleter.pyc && \
+		cp ../python3.11/__pycache__/_sysconfigdata__wasi_wasm32-wasi.cpython-311.pyc _sysconfigdata__wasi_wasm32-wasi.pyc && \
+		zip -u python311.zip _sysconfigdata__wasi_wasm32-wasi.pyc
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm

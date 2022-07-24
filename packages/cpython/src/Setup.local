@@ -1,3 +1,12 @@
 # Edit this file for local setup changes
 *static*
-readline readline.c $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a  $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a  # readline
+
+readline readline.c -ledit.a  -ltermcap
+
+# Uncomment to build curses.  This works.  But the curses .py files aren't in the
+# zip bundle yet.  You can explicitly include those.  However,
+# 'import _curses; _curses.initscr()' fails right now, so there's probably
+# an issue with terminfo, etc., to sort out.
+
+#_curses _cursesmodule.c -lncurses -ltermcap
+#_curses_panel _curses_panel.c   -lncurses -ltermcap

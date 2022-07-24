@@ -1,0 +1,68 @@
+--- terminfo-orig.src	2022-07-23 17:41:03.000000000 -0700
++++ terminfo.src	2022-07-23 17:42:11.000000000 -0700
+@@ -3934,7 +3934,7 @@
+ #	TN3270, TVI910, TVI925, Wyse 50/60, and ANSI.
+ # Changes:
+ #	Added ANSI sc/rc and REP in 2019/12/17
+-#	Added TVI910/ TVI925 in 2019/11/20	
++#	Added TVI910/ TVI925 in 2019/11/20
+ #
+ # Default:
+ #	Emulate "Xterm", using "ANSI with 256color"
+@@ -3999,8 +3999,8 @@
+ #	TERM=xterm
+ #
+ # vttest:
+-#	DA1: \E[?62;1;2;6;7;8;9;15;22c (VT200 with DRCS, UDK, NRCS) 
+-#	DA2: \E[>1;10;0c 
++#	DA1: \E[?62;1;2;6;7;8;9;15;22c (VT200 with DRCS, UDK, NRCS)
++#	DA2: \E[>1;10;0c
+ #	However:
+ #	+ NRCS tests do not work
+ #	+ DECUDK test fails
+@@ -5123,11 +5123,11 @@
+ #
+ # If configured to support 88- or 256-colors (which is fairly common in 2009),
+ # xterm also recognizes the control sequences for initc -TD
+-xterm-16color|xterm with 16 colors like aixterm,
+-	ccc,
+-	initc=\E]4;%p1%d;rgb:%p2%{255}%*%{1000}%/%2.2X/%p3%{255}%*
+-	      %{1000}%/%2.2X/%p4%{255}%*%{1000}%/%2.2X\E\\,
+-	use=xterm+osc104, use=ibm+16color, use=xterm-new,
++#xterm-16color|xterm with 16 colors like aixterm,
++#	ccc,
++#	initc=\E]4;%p1%d;rgb:%p2%{255}%*%{1000}%/%2.2X/%p3%{255}%*
++#	      %{1000}%/%2.2X/%p4%{255}%*%{1000}%/%2.2X\E\\,
++#	use=xterm+osc104, use=ibm+16color, use=xterm-new,
+ 
+ # 256-colors is a compile-time feature of XFree86 xterm beginning with
+ # xterm patch #111 (1999/7/10) -TD
+@@ -5314,8 +5314,8 @@
+ 	      %{256}%/%{255}%&%d:%p1%{255}%&%d%;%;m,
+ 	setb@, setf@, use=xterm+direct,
+ 
+-xterm-direct256|xterm with direct-colors and 256 indexed colors,
+-	use=xterm+direct256, use=xterm,
++#xterm-direct256|xterm with direct-colors and 256 indexed colors,
++#	use=xterm+direct256, use=xterm,
+ 
+ #### XTERM Features
+ 
+@@ -6752,7 +6752,7 @@
+ # This article does not cover the HP 46020A keyboard that is used by the Model
+ # 217 and 237 computers.  For information on this keyboard read the article,
+ # "The Series 300 ITE as System Console" found in the manual, HP-UX Concepts
+-# and Tutorials, Vol.  7. 
++# and Tutorials, Vol.  7.
+ #
+ # Possibly:
+ # http://bitsavers.trailing-edge.com/pdf/hp/9000_hpux/1986/97089-90042_198608_HP-UX_Concepts_and_Tutorials.pdf
+@@ -7648,7 +7648,7 @@
+ #	otherwise few reports, except cursor-position and mouse and some dtterm
+ #	VT520 cursor-movement works, except for left/right margins
+ #	supports xterm/DECSCUSR, though default case in vttest does not blink
+-#		Send: <27> [ 0 <32> q 
++#		Send: <27> [ 0 <32> q
+ #		Text: The cursor should be a blinking rectangle
+ #	partial support for xterm mouse any-event mode and button-event mode:
+ #	+ does not report focus-in/focus-out
