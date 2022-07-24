@@ -12,7 +12,7 @@ USER root
 
 # Required apt dependencies -- mainly tools for compiling code.
 RUN apt-get update \
-  && apt-get install -y git make curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool vim zip
+  && apt-get install -y git make curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool tcl vim zip
 
 # Required nodejs dependency
 RUN  curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \

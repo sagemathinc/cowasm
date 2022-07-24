@@ -88,7 +88,7 @@ packages/ncurses/${BUILT}: termcap wasm-posix zig
 ncurses: packages/ncurses/${BUILT}
 
 
-packages/sqlite/${BUILT}: libedit wasm-posix zig
+packages/sqlite/${BUILT}: libedit wasm-posix zig zlib
 	cd packages/sqlite && make all
 .PHONY: sqlite
 sqlite: packages/sqlite/${BUILT}
