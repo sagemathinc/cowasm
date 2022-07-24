@@ -50,7 +50,7 @@ packages/libedit/${BUILT}: zig termcap
 libedit: packages/libedit/${BUILT}
 
 
-packages/cpython/${BUILT}: wasm-posix zlib lzma libedit zig wasi
+packages/cpython/${BUILT}: wasm-posix zlib lzma libedit zig wasi sqlite
 	cd packages/cpython && make all
 .PHONY: cpython
 cpython: packages/cpython/${BUILT}

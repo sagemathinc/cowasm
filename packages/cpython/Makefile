@@ -14,6 +14,7 @@ DIST_WASM = ${DIST}/wasm
 ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 LIBEDIT = ${CWD}/../libedit/dist
+SQLITE = ${CWD}/../sqlite/dist
 WASMPOSIX = ${CWD}/../wasm-posix/dist
 
 NCURSES = ${CWD}/../ncurses/dist
@@ -141,11 +142,11 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	# - We use -I (path to source) in the CC/CXX line in addition to CFLAGS so that we can override some
 	#   bad global libraries, e.g., systemwide (zig musl) sys/wait.h with a local version.
 	cd ${BUILD}/wasm && \
-		CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/" \
-		CXX="zig c++ -target wasm32-wasi -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/" \
+		CC="zig cc -target wasm32-wasi" \
+		CXX="zig c++ -target wasm32-wasi" \
 		AR="zig ar" \
-		CFLAGS="-I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  ${NCURSES_INCLUDE}" \
-		LDFLAGS="-lc -L${ZLIB}/wasm/lib -L${LZMA}/wasm/lib  -L${LIBEDIT}/wasm/lib  ${NCURSES_LIB}" \
+		CFLAGS="-D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
+		LDFLAGS="-lc -L${ZLIB}/wasm/lib -L${LZMA}/wasm/lib  -L${LIBEDIT}/wasm/lib -L${SQLITE}/wasm/lib ${NCURSES_LIB}" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		./configure \
