@@ -1,6 +1,6 @@
 We are not using this for anything yet.
 
-I was able to get it to build by `#include wasm-posix.h` in various places manually.
+It does build on MacOS right now, but not Linux.
 
 This may be useful later if we want to create a `vim-wasm` and is useful now to support the curses Python package:
 

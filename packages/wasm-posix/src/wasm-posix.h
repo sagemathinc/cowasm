@@ -305,4 +305,30 @@ char* inet_ntoa(struct in_addr in);
 #define WIFSTOPPED(s) ((short)((((s)&0xffff)*0x10001)>>8) > 0x7f00)
 #define WIFSIGNALED(s) (((s)&0xffff)-1U < 0xffu)
 
+
+
+// needed by sqlite; copied from packages/zig/dist/lib/libc/musl/include/fcntl.h
+// and packages/zig/dist/lib/libc/musl/arch/aarch64/bits/fcntl.h
+// Main point is if/when I implement these at the WASI level, have to use them and
+// be consistent.
+
+#define F_RDLCK 0
+#define F_WRLCK 1
+#define F_UNLCK 2
+
+#define F_DUPFD  0
+#define F_GETFD  1
+#define F_SETFD  2
+#define F_GETFL  3
+#define F_SETFL  4
+#define F_GETLK  5
+#define F_SETLK  6
+#define F_SETLKW 7
+#define F_SETOWN 8
+#define F_GETOWN 9
+#define F_SETSIG 10
+#define F_GETSIG 11
+
+
+
 #endif
