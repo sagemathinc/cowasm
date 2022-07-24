@@ -34,7 +34,6 @@ test-python:
 ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig
 	cd src && zig build-lib -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} ${PYTHON_WASM}/lib/libpython3.11.a \
 			   `pwd`/python/signal/signal.c \
-			   ${PACKAGES}/sqlite/dist/wasm/lib/libsqlite3.a \
 			   ${POSIX_WASM}/libwasmposix.a \
 			   ${PACKAGES}/libedit/dist/wasm/lib/libedit.a \
 			   ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a \

@@ -6,13 +6,21 @@
 
 readline readline.c -ledit  -ltermcap
 
-_sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microprotocols.c _sqlite/module.c _sqlite/prepare_protocol.c _sqlite/row.c _sqlite/statement.c  _sqlite/util.c -lsqlite3 -ledit -ltermcap -lz
-
 # Uncomment to build curses.  This works.  But the curses .py files aren't in the
 # zip bundle yet.  You can explicitly include those.  However,
 # 'import _curses; _curses.initscr()' fails right now, so there's probably
-# an issue with terminfo, etc., to sort out.  This might be just a matter of 
+# an issue with terminfo, etc., to sort out.  This might be just a matter of
 # adding to packages/python-wasm/Makefile.
 
 #_curses _cursesmodule.c -lncurses -ltermcap
 #_curses_panel _curses_panel.c   -lncurses -ltermcap
+
+*shared*
+# I tried building sqlite3 static, and it builds, but the interactive repl
+# libedit functionality breaks in that what you type isn't echod back.  No
+# clue how to debug that... and also we really don't want this to be in the
+# core anyways -- it should be loaded dynamically, since people will often
+# use python without sqlite.
+
+_sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microprotocols.c _sqlite/module.c _sqlite/prepare_protocol.c _sqlite/row.c _sqlite/statement.c  _sqlite/util.c -I$(abs_srcdir)/../../../sqlite/dist/wasm/include/ $(abs_srcdir)/../../../sqlite/dist/wasm/lib/libsqlite3.a -lsqlite3 -ledit -ltermcap -lz
+

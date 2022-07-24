@@ -143,6 +143,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	#   bad global libraries, e.g., systemwide (zig musl) sys/wait.h with a local version.
 	cd ${BUILD}/wasm && \
 		CC="zig cc -target wasm32-wasi" \
+		BLDSHARED="zig cc -target wasm32-wasi -shared" \
 		CXX="zig c++ -target wasm32-wasi" \
 		AR="zig ar" \
 		CFLAGS="-D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
