@@ -1,0 +1,1 @@
+Maybe someday we will properly port vim, and actually use a terminal library (unlike https://github.com/rhysd/vim.wasm).
