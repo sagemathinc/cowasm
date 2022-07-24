@@ -88,6 +88,12 @@ packages/ncurses/${BUILT}: termcap wasm-posix zig
 ncurses: packages/ncurses/${BUILT}
 
 
+packages/sqlite/${BUILT}: libedit wasm-posix zig
+	cd packages/sqlite && make all
+.PHONY: sqlite
+sqlite: packages/sqlite/${BUILT}
+
+
 packages/website/${BUILT}: python-wasm
 	cd packages/website && make all
 .PHONY: website
@@ -109,12 +115,13 @@ clean:
 	cd packages/ncurses && make clean
 	cd packages/openssl && make clean
 	cd packages/python-wasm && make clean
-	cd packages/website && make clean
+	cd packages/sqlite && make clean
 	cd packages/termcap && make clean
 	cd packages/terminal && make clean
 	cd packages/wasi && make clean
 	cd packages/wasm-posix && make clean
 	cd packages/webpack && make clean
+	cd packages/website && make clean
 	cd packages/zig && make clean
 	cd packages/zlib && make clean
 
