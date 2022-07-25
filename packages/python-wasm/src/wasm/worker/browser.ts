@@ -12,7 +12,8 @@ import { EventEmitter } from "events";
 
 async function wasmImportBrowser(
   wasmUrl: string,
-  options: Options = {}
+  options: Options = {},
+  log: (...args) => void
 ): Promise<WasmInstance> {
   // also fix zip path, if necessary and read in any zip files (so
   // they can be loaded into memfs).
@@ -32,7 +33,7 @@ async function wasmImportBrowser(
   return await wasmImport(wasmUrl, fetch(wasmUrl), bindings, {
     ...options,
     fs,
-  });
+  }, log);
 }
 
 if (self.document != null) {

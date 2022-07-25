@@ -2,11 +2,14 @@ import WASI, { createFileSystem } from "@wapython/wasi";
 import type { WASIConfig, FileSystemSpec, WASIBindings } from "@wapython/wasi";
 import reuseInFlight from "../reuseInFlight";
 import WasmInstance from "./instance";
-import debug from "debug";
-const log = debug("wasm-import");
 
 const textDecoder = new TextDecoder();
-function recvString(wasm, ptr, len) {
+function recvString(wasm, ptr: number, len?: number) {
+  if (len == null) {
+    // no len given, so assume it is a null terminated string.
+    len = wasm.exports.stringLength(ptr);
+    if (len == null) throw Error("bug - stringLength must return len");
+  }
   const slice = wasm.exports.memory.buffer.slice(ptr, ptr + len);
   return textDecoder.decode(slice);
 }
@@ -35,15 +38,18 @@ type WasmImportFunction = (
   name: string,
   source,
   bindings: WASIBindings,
-  options?: Options
+  options?: Options,
+  log?: (...args) => void
 ) => Promise<WasmInstance>;
 
 async function doWasmImport(
   name: string, // this is only used for caching and printing
   source: Buffer | Promise<any>, // contents of the .wasm file or promise returned by fetch (in browser).
   bindings: WASIBindings,
-  options: Options = {}
+  options: Options = {},
+  log?: (...args) => void
 ): Promise<WasmInstance> {
+  log?.("doWasmImport", name);
   if (cache[name] != null) {
     return cache[name];
   }
@@ -57,7 +63,20 @@ async function doWasmImport(
     },
   };
 
-  const wasmOpts: any = { env: { ...wasmEnv, ...options.wasmEnv } };
+  // By defining the table, any time we do
+  //    WebAssembly.instantiate(..., wasmOpts)
+  // with these wasmOpts after the initial time, the resulting
+  // functions get loaded into
+  // the SAME table, instead of a completely new one.  This makes
+  // dynamic loading possible, e.g., dlopen.
+  //
+  // TODO: 1000 is just made up!  Obviously, we need to grow
+  // it dynamically.
+  const table = new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
+  const wasmOpts: any = {
+    js: { table },
+    env: { ...wasmEnv, ...options.wasmEnv },
+  };
 
   let wasm;
 
@@ -92,13 +111,54 @@ async function doWasmImport(
   if (wasmOpts.env.getpid == null) {
     wasmOpts.env.getpid = () => {
       if (options.traceStubcalls) {
-        stub("getpid", "returning 1", [], options.traceStubcalls == "first");
+        stub(
+          "getpid",
+          "returning 1",
+          [],
+          options.traceStubcalls == "first",
+          log
+        );
       }
       return 1;
     };
   }
   if (wasmOpts.env.main == null) {
     wasmOpts.env.main = () => {
+      return 0;
+    };
+  }
+
+  // dlopen implementation -- will move to dlopen/ subdirectory once I figure out how this works!
+  // OK, I explained to myself how to actually fully solve all this here:
+  //    https://cocalc.com/projects/369491f1-9b8a-431c-8cd0-150dd15f7b11/files/work/2022-07-18-ws-diary.board#id=55096f05
+  // I think, and this is obviously by far my top priority now.
+  if (wasmOpts.env.dlopen == null) {
+    let dylink : any = undefined;
+    let dylink_i : number = 0;
+    wasmOpts.env.dlopen = (pathnamePtr: number, flags: number): number => {
+      if(dylink != null) return 1;
+      log?.("dlopen -- pathnamePtr = ", pathnamePtr, " flags=", flags);
+      log?.("dlopen -- table = ", table?.length);
+      const pathname = recvString(wasm, pathnamePtr);
+      log?.("dlopen -- work in progress, pathname = ", pathname);
+      const typedArray = new Uint8Array(require("fs").readFileSync(pathname));
+      //await WebAssembly.instantiate(typedArray, wasmOpts);
+      //const metadata = getDylinkMetadata(typedArray);
+      //log?.("dlopen -- metadata = ", metadata);
+      const module = new WebAssembly.Module(typedArray);
+      const exports = WebAssembly.Module.exports(module);
+      //log?.("dlopen -- exports = ", JSON.stringify(exports));
+      const instance = new WebAssembly.Instance(module, wasmOpts);
+      dylink = instance.exports;
+      return 1;
+    };
+    wasmOpts.env.dlsym = (handle: number, funcnamePtr: number): number => {
+      const funcname = recvString(wasm, funcnamePtr);
+      log?.(`dlopen - dlsym -- handle=${handle}, funcname=${funcname}`);
+      const f = dylink[funcname];
+      log?.(`dlopen - dlsym -- f = `, f);
+      table.set(dylink_i, f);
+      dylink_i += 1;
       return 0;
     };
   }
@@ -133,13 +193,19 @@ async function doWasmImport(
   wasmOpts.env = new Proxy(wasmOpts.env, {
     get(target, key) {
       if (key in target) {
-        log("using existing for ", key);
+        log?.("using existing for ", key);
         return Reflect.get(target, key);
       }
       if (options.traceStubcalls) {
-        log("creating stub for", key);
+        log?.("creating stub for", key);
         return (...args) => {
-          stub(key, "returning 0", args, options.traceStubcalls == "first");
+          stub(
+            key,
+            "returning 0",
+            args,
+            options.traceStubcalls == "first",
+            log
+          );
           return 0;
         };
       } else {
@@ -193,7 +259,7 @@ async function doWasmImport(
   cache[name] = wasm;
 
   if (options.time) {
-    log(`imported ${name} in ${new Date().valueOf() - t}ms`);
+    log?.(`imported ${name} in ${new Date().valueOf() - t}ms`);
   }
 
   return wasm;
@@ -205,10 +271,10 @@ const wasmImport: WasmImportFunction = reuseInFlight(doWasmImport, {
 export default wasmImport;
 
 const stubUsed = new Set<string>([]);
-function stub(functionName, behavior, args, firstOnly) {
+function stub(functionName, behavior, args, firstOnly, log) {
   if (firstOnly) {
     if (stubUsed.has(functionName)) return;
     stubUsed.add(functionName);
   }
-  log(`WARNING STUB - ${functionName}: `, behavior, args);
+  log?.(`WARNING STUB - ${functionName}: `, behavior, args);
 }

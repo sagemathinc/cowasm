@@ -147,7 +147,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 		CXX="zig c++ -target wasm32-wasi" \
 		AR="zig ar" \
 		CFLAGS="-D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
-		LDFLAGS="-lc -L${ZLIB}/wasm/lib -L${LZMA}/wasm/lib  -L${LIBEDIT}/wasm/lib -L${SQLITE}/wasm/lib ${NCURSES_LIB}" \
+		LDFLAGS="-L${ZLIB}/wasm/lib -L${LZMA}/wasm/lib  -L${LIBEDIT}/wasm/lib -L${SQLITE}/wasm/lib ${NCURSES_LIB}" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		./configure \

@@ -1,6 +1,6 @@
 import debug0 from "debug";
 import { join } from "path";
-import { mkdirSync, createWriteStream } from "fs";
+import { mkdirSync, appendFileSync /*createWriteStream */ } from "fs";
 import { format } from "util";
 
 const cache: { [name: string]: any } = {};
@@ -12,14 +12,22 @@ export default function debug(name: string) {
     return cache[name];
   }
   const logger = debug0(name);
+  const path = join(LOGPATH, `${name}.log`);
+  mkdirSync(LOGPATH, { recursive: true });
+
+  // A nice async approach is this, which we use in CoCalc:
   // create the file stream; using a stream ensures
   // that everything is written in the right order with
   // no corruption/collision between different logging.
-  const path = join(LOGPATH, `${name}.log`);
-  mkdirSync(LOGPATH, { recursive: true });
-  const stream = createWriteStream(path);
+  //   const stream = createWriteStream(path);
+  //   logger.log = (...args) => {
+  //     stream.write(myFormat(...args) + '\n');
+  //   };
+  // However, we can't do the above, since webassembly can block actually writing
+  // out to the stream, and sync writing to a stream is deprecated from node. So
+  // we have to do a sync append as below:
   logger.log = (...args) => {
-    stream.write(myFormat(...args) + '\n');
+    appendFileSync(path, myFormat(...args) + "\n");
   };
   cache[name] = logger;
   return logger;

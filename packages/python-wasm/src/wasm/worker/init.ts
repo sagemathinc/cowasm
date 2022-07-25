@@ -100,7 +100,7 @@ export default function initWorker({
             };
           }
 
-          wasm = await wasmImport(message.name, opts);
+          wasm = await wasmImport(message.name, opts, log);
           parent.postMessage({ event: "init", status: "ok" });
         } catch (err) {
           parent.postMessage({

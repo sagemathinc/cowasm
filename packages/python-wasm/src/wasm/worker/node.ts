@@ -15,7 +15,8 @@ import debug from "../../debug";
 
 async function wasmImportNode(
   name: string,
-  options: Options = {}
+  options: Options = {},
+  log: (...args) => void
 ): Promise<WasmInstance> {
   const path = dirname(join(callsite()[1]?.getFileName() ?? "", "..", ".."));
   if (!isAbsolute(name)) {
@@ -42,7 +43,7 @@ async function wasmImportNode(
     }
   }
   const source = await readFile(name);
-  return await wasmImport(name, source, bindings, { ...options, fs });
+  return await wasmImport(name, source, bindings, { ...options, fs }, log);
 }
 
 if (isMainThread || parentPort == null) {

@@ -61,3 +61,11 @@ export fn c_malloc(n: usize) ?*anyopaque {
 export fn c_free(ptr: ?*anyopaque) void {
     return std.c.free(ptr);
 }
+
+export fn stringLength(ptr: [*:0]const u8) u32 {
+    var i : u32 = 0;
+    while(ptr[i] != 0) {
+        i += 1;
+    }
+    return i;
+}
