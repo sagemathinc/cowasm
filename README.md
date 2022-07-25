@@ -147,13 +147,15 @@ Welcome to JPython.  Using Node.js v16.13.0.
 49999995000000 0.06099987030029297
 ```
 
-## What's the goal?  What about pyodide and emscripten?
+## What's the goal?  What about Pyodide?
 
-Create a WebAssembly build of Python and related packages, which runs both on the command line with Node.js and in web browsers \(via npm modules that you can include via webpack\).  The build system is based on Makefiles and [zig](https://ziglang.org/), which provides excellent caching and cross compilation.  
+Our **primary goal** is to create a WebAssembly build of Python and related packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\).  This will be relatively easy to _build from source_ on both Linux and MacOS.  The build system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation. 
 
-Most of the C/C\+\+ code in emscripten will instead be written in the [zig](https://ziglang.org/) language here, and the Javascript code will be replaced by more modern Typescript.
+Our main application is to make [CoCalc](https://cocalc.com) more efficient.  As such, we will also want to port all of the [SageMath packages](https://www.sagemath.org/), which goes far beyond just the scientific Python stack that's ported in Pyodide.  I'm the original founder of SageMath, hence the motivation.  This will be part of a new GPL'd project that will have this BSD\-licensed project `python-wasm` at its core; some relevant work has been done [here](https://github.com/sagemathinc/jsage).
 
-This is probably extremely difficult to pull off, since emscripten and pyodide have been at it for years, and it's a complicated project.   Our software license \-\- _**BSD 3\-clause**_ \-\- is compatible with their's and we hope to at least learn from their solutions to problems.
+Some of our code will be written in the [Zig](https://ziglang.org/) language.  However, we are mostly targeting just the parts that are used for Python, which is a small subset of the general problem.  Our software license \-\- _**BSD 3\-clause**_ \-\- is compatible with their's and we hope to at least learn from their solutions to problems.
+
+[More about how Pyodide and python\-wasm differ...](./docs/differences-from-pyodide.md) 
 
 ## Other Goodies 
 
