@@ -204,6 +204,11 @@ run-wasm: ${DIST_WASM}/.built
 # TODO: excluding test_lzma.py and test_queue.py right now, since they hangs forever.
 # TODO: we should really use the official python test runner stuff, but that requires
 # implementing a restricted version of fork, which is possible (as we're using node.js).
+# This should be run via  'python-wasm -m test -w' basically as is illustrated here
+#     https://speakerdeck.com/tiran/language-summit-2022-webassembly-python-in-the-browser-and-beyond?slide=14
+# and our goal should be to have it all pass!
+# But first we need to get all the modules to actually build, since many of the tests depend
+# on them being built.  The code below helps a little to see where we are at.
 .PHONY: test-wasm
 test-wasm:
 	cd ${BUILD}/wasm/Lib/test && ls -d `pwd`/test_*.py | grep -v test_lzma.py | grep -v  test_queue.py | xargs -t -n 1 ${PYTHON_WASM_BINARY} 2>&1 | tee ${BUILD}/wasm/test.out && \
