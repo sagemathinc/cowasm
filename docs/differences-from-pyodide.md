@@ -8,7 +8,9 @@ NOTE: There is [another python\-wasm](https://github.com/ethanhs/python-wasm/iss
 
 python\-wasm is built mainly using [Zig](https://ziglang.org/)'s [Web Assembly support](https://ziglang.org/documentation/master/#WebAssembly), whereas Pyodide is built using [emscripten.](https://emscripten.org/)   Emscripten has been around for decades, and is over 1.2million lines of code, and emulates a huge amount of POSIX functionality that goes beyond the core wasm spec.   We reuse as much as we can from zig, wasi libraries, standard npm modules, etc., instead of the code in emscripten.
 
-I chose zig over emscripten after spending a lot of time learning emscripten and realizing the codebase is very bloated and dated, and zig has made [major innovations in compiler and build tooling](https://andrewkelley.me/post/zig-cc-powerful-drop-in-replacement-gcc-clang.html).  Moreover, the zig language itself is fantastic, and we're using it some for writing new compiled WASM code \(I wrote a lot of low level pure mathematics research code for [another project](https://github.com/sagemathinc/JSage/tree/main/lib/src)\).
+I chose Zig over emscripten after spending a lot of time learning emscripten and realizing the codebase is very bloated and dated, and zig has made [major innovations in compiler and build tooling](https://andrewkelley.me/post/zig-cc-powerful-drop-in-replacement-gcc-clang.html).  Moreover, the zig language itself is fantastic, and we're using it some for writing new compiled WASM code \(I wrote a lot of low level pure mathematics research code for [another project](https://github.com/sagemathinc/JSage/tree/main/lib/src)\).
+
+Pyodide does not fully support building on MacOS: "[there are known issues that you must work around](https://github.com/pyodide/pyodide/blob/main/docs/development/building-from-sources.md)."
 
 ## Browser Security Model
 

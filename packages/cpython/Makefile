@@ -2,7 +2,7 @@
 PYTHON_MAJOR = 3
 PYTHON_MINOR = 11
 PYTHON_PATCH = 0
-PYTHON_BETA = b3
+PYTHON_BETA = b4
 PYTHON_VERSION = ${PYTHON_MAJOR}.${PYTHON_MINOR}.${PYTHON_PATCH}
 
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
@@ -130,9 +130,10 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/00-threading-native.patch | patch -p1
 	cd ${BUILD}/wasm/Include/internal && cat ${CWD}/src/python-patches/01-emscripten-signal.patch | patch -p0
 	cd ${BUILD}/wasm/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
+	cd ${BUILD}/wasm/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
 	touch ${BUILD}/wasm/.patched
 
-${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
+${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
 	# - without-pymalloc below because pymalloc uses mmap and munmap, and WASI/our libc doesn't provide them.
 	#   We could try to write them ourselves (?)...
@@ -175,23 +176,21 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	cd ${BUILD}/wasm && make install
 	# Also copy wasm-posix.h over, so it's possible to build programs against our new python.
 	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm-posix.h ${DIST_WASM}/include/python${PYTHON_MAJOR}.${PYTHON_MINOR}/
-	# Build wasm asset bundle (the pyc files, etc.).  TODO/HACK: We make some symlinks to avoid having to patch wasm_assets.py
-	# though it would be very reasonable to contribute a change upstream to make the script not need this hack.
-	cd ${BUILD}/wasm/build/ && ln -sf lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && \
-		cd lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && ln -sf _sysconfigdata__wasi_wasm32-wasi.py _sysconfigdata__emscripten_wasm32-emscripten.py
+	touch ${DIST_WASM}/.built-cpython
+
+${DIST_WASM}/lib/dist/python311.zip: ${DIST_WASM}/.built-cpython
+	# Build wasm asset bundle (the pyc files, etc.).
 	# This DYLD_LIBRARY_PATH is needed to workaround https://developer.apple.com/forums/thread/9233
-	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" python3 ./Tools/wasm/wasm_assets.py && rm -rf ${DIST_WASM}/lib/dist && mv usr/local/lib ${DIST_WASM}/lib/dist
-	# Add termcap for xterm to our zip asset bundle:
-	# Also add rlcompleter.pyc and  _sysconfigdata__wasi_wasm32-wasi.pyc since Python doesn't include those.
-	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && \
-		cp ../python3.11/__pycache__/rlcompleter.cpython-311.pyc rlcompleter.pyc && \
-		zip -u python311.zip termcap rlcompleter.pyc && \
-		cp ../python3.11/__pycache__/_sysconfigdata__wasi_wasm32-wasi.cpython-311.pyc _sysconfigdata__wasi_wasm32-wasi.pyc && \
-		zip -u python311.zip _sysconfigdata__wasi_wasm32-wasi.pyc
+	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" python3 \
+		./Tools/wasm/wasm_assets.py  && \
+		rm -rf ${DIST_WASM}/lib/dist && \
+		mv usr/local/lib ${DIST_WASM}/lib/dist
+	# Add termcap for xterm to our zip asset bundle, so readline actually works:
+	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && zip -u python311.zip termcap
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
-wasm: ${DIST_WASM}/.built
+wasm: ${DIST_WASM}/.built-cpython ${DIST_WASM}/lib/dist/python311.zip
 
 
 # Use "make run-wasm" to run our WASM python at the command line.

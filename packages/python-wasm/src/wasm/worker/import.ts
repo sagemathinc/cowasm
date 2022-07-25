@@ -141,12 +141,12 @@ async function doWasmImport(
       log?.("dlopen -- table = ", table?.length);
       const pathname = recvString(wasm, pathnamePtr);
       log?.("dlopen -- work in progress, pathname = ", pathname);
-      const typedArray = new Uint8Array(require("fs").readFileSync(pathname));
+      const typedArray = new Uint8Array(/*require("fs").readFileSync(pathname)*/);
       //await WebAssembly.instantiate(typedArray, wasmOpts);
       //const metadata = getDylinkMetadata(typedArray);
       //log?.("dlopen -- metadata = ", metadata);
       const module = new WebAssembly.Module(typedArray);
-      const exports = WebAssembly.Module.exports(module);
+      //const exports = WebAssembly.Module.exports(module);
       //log?.("dlopen -- exports = ", JSON.stringify(exports));
       const instance = new WebAssembly.Instance(module, wasmOpts);
       dylink = instance.exports;
