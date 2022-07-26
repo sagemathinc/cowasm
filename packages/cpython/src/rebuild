@@ -3,10 +3,13 @@
 # useful if you want to modify the cpython source code to understand what
 # is going on.  E.g., put printf's all over the place, type ./rebuild,
 # and in a few seconds you are using python-wasm with those changes applied!
+# **TODO** for some reason when make fails the build doesn't stop, so for
+# now you MUST carefully watch the build for errors.
 
 echo "Rebuild and run python-wasm"
 set -ev
-make && cp libpython3.11.a ../../dist/wasm/lib/
+make
+cp libpython3.11.a ../../dist/wasm/lib/
 cd ../../../python-wasm/
 make clean
 make

@@ -70,9 +70,9 @@ async function doWasmImport(
   // the SAME table, instead of a completely new one.  This makes
   // dynamic loading possible, e.g., dlopen.
   //
-  // TODO: 1000 is just made up!  Obviously, we need to grow
+  // TODO: initial size is just made up!  Obviously, we need to grow
   // it dynamically.
-  const table = new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
+  const table = new WebAssembly.Table({ initial: 25, element: "anyfunc" });
   const wasmOpts: any = {
     js: { table },
     env: { ...wasmEnv, ...options.wasmEnv },
@@ -136,16 +136,13 @@ async function doWasmImport(
     let dylink: any = undefined;
     let dylink_i: number = 0;
     wasmOpts.env.dlopen = (pathnamePtr: number, flags: number): number => {
-      if (dylink != null) return 1;
       log?.("dlopen -- pathnamePtr = ", pathnamePtr, " flags=", flags);
-      log?.("dlopen -- table = ", table?.length);
       const pathname = recvString(wasm, pathnamePtr);
       log?.("dlopen -- work in progress, pathname = ", pathname);
-      const typedArray =
-        new Uint8Array(/*require("fs").readFileSync(pathname)*/);
+      log?.("dlopen -- table.length = ", table.length);
+      if (dylink != null) return 1;
+      const typedArray = new Uint8Array(require("fs").readFileSync(pathname));
       //await WebAssembly.instantiate(typedArray, wasmOpts);
-      //const metadata = getDylinkMetadata(typedArray);
-      //log?.("dlopen -- metadata = ", metadata);
       const module = new WebAssembly.Module(typedArray);
       //const exports = WebAssembly.Module.exports(module);
       //log?.("dlopen -- exports = ", JSON.stringify(exports));
@@ -160,6 +157,10 @@ async function doWasmImport(
       log?.(`dlopen - dlsym -- f = `, f);
       table.set(dylink_i, f);
       dylink_i += 1;
+      return 0;
+    };
+    wasmOpts.env._PyCFunctionWithKeywords_TrampolineCall = () => {
+      log?.("dlopen - _PyCFunctionWithKeywords_TrampolineCall");
       return 0;
     };
   }

@@ -165,11 +165,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 			--build=`./config.guess`
 	# Make it so our WASM posix header file is included everywhere,
 	# since otherwise we can't even compile.  Must do this AFTER ./configure.
-	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h
-	cd ${BUILD}/wasm && echo '#undef HAVE_LINUX_VM_SOCKETS_H' >> pyconfig.h
-	cd ${BUILD}/wasm && echo '#define POLLPRI 0' >> pyconfig.h
-	cd ${BUILD}/wasm && echo '#define __WASM__ 1' >> pyconfig.h
-	cd ${BUILD}/wasm && echo '#undef GETPGRP_HAVE_ARG' >> pyconfig.h
+	cat src/pyconfig.h >> ${BUILD}/wasm/pyconfig.h
 	cd ${BUILD}/wasm && make -j8
 	# These are missing, breaking the "make install".  Why? TODO!
 	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so
