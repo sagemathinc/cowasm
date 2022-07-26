@@ -1,17 +1,27 @@
 // @ts-ignore -- it thinks FileSystem isn't used, even though it is below.  Weird.
 import type { FileSystem } from "@wapython/wasi";
+import { EventEmitter } from "events";
 
 const encoder = new TextEncoder();
 
-export default class WasmInstance {
+export default class WasmInstance extends EventEmitter {
   result: any = undefined;
   resultException: boolean = false;
   exports: any;
   fs?: FileSystem;
 
   constructor(exports, fs?: FileSystem) {
+    super();
     this.exports = exports;
     this.fs = fs;
+  }
+
+  async terminal(argv: string[] = ["command"]) {
+    await this.callWithString("terminal", argv);
+  }
+
+  write(_data: string): void {
+    throw Error("not implemented ");
   }
 
   private stringToCharStar(str: string): number {

@@ -81,7 +81,7 @@ async function doWasmImport(
   let wasm;
 
   if (wasmOpts.env.wasmGetSignalState == null) {
-    wasmOpts.enve.wasmGetSignalState = () => {
+    wasmOpts.env.wasmGetSignalState = () => {
       return 0;
     };
   }
@@ -133,15 +133,16 @@ async function doWasmImport(
   //    https://cocalc.com/projects/369491f1-9b8a-431c-8cd0-150dd15f7b11/files/work/2022-07-18-ws-diary.board#id=55096f05
   // I think, and this is obviously by far my top priority now.
   if (wasmOpts.env.dlopen == null) {
-    let dylink : any = undefined;
-    let dylink_i : number = 0;
+    let dylink: any = undefined;
+    let dylink_i: number = 0;
     wasmOpts.env.dlopen = (pathnamePtr: number, flags: number): number => {
-      if(dylink != null) return 1;
+      if (dylink != null) return 1;
       log?.("dlopen -- pathnamePtr = ", pathnamePtr, " flags=", flags);
       log?.("dlopen -- table = ", table?.length);
       const pathname = recvString(wasm, pathnamePtr);
       log?.("dlopen -- work in progress, pathname = ", pathname);
-      const typedArray = new Uint8Array(/*require("fs").readFileSync(pathname)*/);
+      const typedArray =
+        new Uint8Array(/*require("fs").readFileSync(pathname)*/);
       //await WebAssembly.instantiate(typedArray, wasmOpts);
       //const metadata = getDylinkMetadata(typedArray);
       //log?.("dlopen -- metadata = ", metadata);

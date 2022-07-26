@@ -1,5 +1,8 @@
 /*
-This is the Worker script when importing the wasm module in node.js.
+Initialize our WASM setup.
+
+This can be run as a Worker script when importing the wasm module in node.js
+in the mode where we use a Worker.
 */
 
 import { readFile } from "fs/promises";
@@ -8,14 +11,14 @@ import bindings from "@wapython/wasi/dist/bindings/node";
 import { dirname, isAbsolute, join } from "path";
 import callsite from "callsite";
 import wasmImport, { Options } from "./import";
-import type WasmInstance from "./instance";
+import type { WasmInstance } from "../types";
 import { isMainThread, parentPort } from "worker_threads";
 import initWorker from "./init";
 import debug from "../../debug";
 
-async function wasmImportNode(
+export default async function wasmImportNode(
   name: string,
-  options: Options = {},
+  options: Options,
   log: (...args) => void
 ): Promise<WasmInstance> {
   const path = dirname(join(callsite()[1]?.getFileName() ?? "", "..", ".."));
@@ -46,9 +49,11 @@ async function wasmImportNode(
   return await wasmImport(name, source, bindings, { ...options, fs }, log);
 }
 
-if (isMainThread || parentPort == null) {
-  throw Error("bug -- this should only be loaded in the worker thread");
+if (!isMainThread && parentPort != null) {
+  // Running as a worker thread.
+  initWorker({
+    wasmImport: wasmImportNode,
+    parent: parentPort,
+    log: debug("worker:node"),
+  });
 }
-
-const log = debug("worker:node");
-initWorker({ wasmImport: wasmImportNode, parent: parentPort, log });

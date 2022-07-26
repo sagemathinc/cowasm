@@ -1,4 +1,5 @@
 import wasmImport from "../wasm/import-node";
+import wasmImportNoWorker from "../wasm/worker/node";
 import { _init, repr, exec, wasm, terminal as _terminal } from "./index";
 import type { FileSystemSpec } from "@wapython/wasi";
 
@@ -12,15 +13,17 @@ const fs: FileSystemSpec[] = [
   { type: "native" }, // provides stdout,stderr natively, for now...
 ];
 
-export async function init() {
-  await _init("python/python.wasm", wasmImport, fs);
+export async function init({ noWorker }: { noWorker?: boolean } = {}) {
+  await _init(
+    "python/python.wasm",
+    noWorker ? wasmImportNoWorker : wasmImport,
+    fs
+  );
 }
 
-async function terminal(argv=['python']) {
+async function terminal(argv = ["python"]) {
   await init();
   await _terminal(argv);
 }
 
 export { repr, exec, wasm, terminal };
-
-init();

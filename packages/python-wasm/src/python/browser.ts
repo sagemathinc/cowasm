@@ -1,10 +1,11 @@
 import wasmImport from "../wasm/import-browser";
+import wasmImportNoWorker from "../wasm/worker/browser";
 import { _init, repr, exec, wasm } from "./index";
 import type { FileSystemSpec } from "@wapython/wasi";
 import wasmUrl from "./python.wasm";
 import zipUrl from "./python.zip";
 
-export async function init() {
+export async function init({ noWorker }: { noWorker?: boolean } = {}) {
   const fs: FileSystemSpec[] = [
     {
       type: "zipurl",
@@ -14,7 +15,7 @@ export async function init() {
     { type: "dev" },
   ];
 
-  await _init(wasmUrl, wasmImport as any, fs); // TODO - temporary!!!
+  await _init(wasmUrl, noWorker ? wasmImportNoWorker : wasmImport, fs); // TODO - temporary!!!
   python.wasm = wasm;
 }
 
