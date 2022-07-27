@@ -73,6 +73,8 @@ ${DIST_NATIVE}/.built-zig: ${BUILD}/native/.patched
 		AR="zig ar" \
 		CXX="zig c++" \
 		CC="zig cc" \
+		CFLAGS="-I${ZLIB}/native/include" \
+		LDFLAGS="-L${ZLIB}/native/lib" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
 			--enable-shared \
@@ -90,6 +92,8 @@ native-zig: ${DIST_NATIVE}/.built-zig
 
 ${DIST_NATIVE}/.built-default: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
+		CFLAGS="-I${ZLIB}/native/include" \
+		LDFLAGS="-L${ZLIB}/native/lib" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
 			--with-ensurepip=no
