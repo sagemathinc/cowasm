@@ -44,7 +44,7 @@ export class WasmInstance extends WasmInstanceAbstractBaseClass {
 }
 
 export default async function wasmImportNodeWorker(
-  wasmSource: string,
+  wasmSource: string, // name of the wasm file
   options: Options
 ): Promise<WasmInstance> {
   const log = debug("import-node");

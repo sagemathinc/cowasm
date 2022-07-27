@@ -10,11 +10,12 @@ import initWorker from "./init";
 import debug from "debug";
 import { EventEmitter } from "events";
 
-async function wasmImportBrowser(
+export default async function wasmImportBrowser(
   wasmUrl: string,
   options: Options = {},
-  log: (...args) => void
+  log?: (...args) => void
 ): Promise<WasmInstance> {
+  console.log("wasmImportBrowser");
   // also fix zip path, if necessary and read in any zip files (so
   // they can be loaded into memfs).
   const fs: FileSystemSpec[] = [];
@@ -30,30 +31,45 @@ async function wasmImportBrowser(
       fs.push(X);
     }
   }
-  return await wasmImport(wasmUrl, fetch(wasmUrl), bindings, {
-    ...options,
-    fs,
-  }, log);
+  return await wasmImport(
+    wasmUrl,
+    fetch(wasmUrl),
+    bindings,
+    {
+      ...options,
+      fs,
+    },
+    log
+  );
 }
 
-if (self.document != null) {
-  throw Error("bug -- this should only be loaded in the worker thread");
-}
+function main() {
+  // in a worker, so do worker stuff
 
-const log = debug("worker:browser");
+  const log = debug("worker:browser");
 
-class Parent extends EventEmitter {
-  public postMessage: (message: any) => void;
+  class Parent extends EventEmitter {
+    public postMessage: (message: any) => void;
 
-  constructor() {
-    super();
-    this.postMessage = self.postMessage.bind(self);
-    self.onmessage = ({ data: message }) => {
-      this.emit("message", message);
-    };
+    constructor() {
+      super();
+      this.postMessage = self.postMessage.bind(self);
+      self.onmessage = ({ data: message }) => {
+        this.emit("message", message);
+      };
+    }
   }
+
+  const parent = new Parent();
+
+  initWorker({
+    wasmImport: wasmImportBrowser,
+    parent,
+    captureOutput: true,
+    log,
+  });
 }
 
-const parent = new Parent();
-
-initWorker({ wasmImport: wasmImportBrowser, parent, captureOutput: true, log });
+if (self.document == null) {
+  main();
+}

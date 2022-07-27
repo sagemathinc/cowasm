@@ -175,11 +175,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 			--build=`./config.guess`
 	# Make it so our WASM posix header file is included everywhere,
 	# since otherwise we can't even compile.  Must do this AFTER ./configure.
-	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> pyconfig.h
-	cd ${BUILD}/wasm && echo '#undef HAVE_LINUX_VM_SOCKETS_H' >> pyconfig.h
-	cd ${BUILD}/wasm && echo '#define POLLPRI 0' >> pyconfig.h
-	cd ${BUILD}/wasm && echo '#define __WASM__ 1' >> pyconfig.h
-	cd ${BUILD}/wasm && echo '#undef GETPGRP_HAVE_ARG' >> pyconfig.h
+	cat src/pyconfig.h >> ${BUILD}/wasm/pyconfig.h
 	cd ${BUILD}/wasm && make -j8
 	# These are missing, breaking the "make install".  Why? TODO!
 	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so
@@ -192,7 +188,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 wasm: ${DIST_WASM}/.built-cpython
 
 
-${DIST_WASM}/lib/dist/python311.zip: ${DIST_NATIVE}/.built ${DIST_WASM}/.built-cpython
+${DIST_WASM}/lib/dist/python311.zip: ${DIST_WASM}/.built-cpython
 	# Build wasm asset bundle (the pyc files, etc.).
 	cd ${BUILD}/wasm && \
 		mkdir -p usr/local/lib/python3.11/lib-dynload/  && \
@@ -202,6 +198,7 @@ ${DIST_WASM}/lib/dist/python311.zip: ${DIST_NATIVE}/.built ${DIST_WASM}/.built-c
 	# Add termcap for xterm to our zip asset bundle, so readline actually works:
 	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && zip -u python311.zip termcap
 	touch ${DIST_WASM}/.built
+
 
 .PHONY: wasm-data
 wasm-data: ${DIST_WASM}/lib/dist/python311.zip

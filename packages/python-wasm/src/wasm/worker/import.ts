@@ -81,7 +81,7 @@ async function doWasmImport(
   let wasm;
 
   if (wasmOpts.env.wasmGetSignalState == null) {
-    wasmOpts.enve.wasmGetSignalState = () => {
+    wasmOpts.env.wasmGetSignalState = () => {
       return 0;
     };
   }
@@ -146,14 +146,11 @@ async function doWasmImport(
       log?.("dlopen");
       if (dylink != null) return 1;
       log?.("dlopen -- pathnamePtr = ", pathnamePtr, " flags=", flags);
-      log?.("dlopen -- table = ", table?.length);
       const pathname = recvString(wasm, pathnamePtr);
       log?.("dlopen -- work in progress, pathname = ", pathname, ' CHANGE CODE TO CONTINUE WORK');
       // TODO!!!!!
       const typedArray = new Uint8Array(0 /*require("fs").readFileSync(pathname)*/);
       //await WebAssembly.instantiate(typedArray, wasmOpts);
-      //const metadata = getDylinkMetadata(typedArray);
-      //log?.("dlopen -- metadata = ", metadata);
       const module = new WebAssembly.Module(typedArray);
       //const exports = WebAssembly.Module.exports(module);
       //log?.("dlopen -- exports = ", JSON.stringify(exports));
@@ -204,6 +201,10 @@ async function doWasmImport(
         `dlopen - _PyImport_InitFunc_TrampolineCall - called and got output ${r}`
       );
       return r;
+    };
+    wasmOpts.env._PyCFunctionWithKeywords_TrampolineCall = () => {
+      log?.("dlopen - _PyCFunctionWithKeywords_TrampolineCall");
+      return 0;
     };
   }
 

@@ -21,7 +21,8 @@ export async function terminal(argv: string[] = ["python"]) {
 
 type WASMImportFunction = (
   python_wasm: string,
-  options: Options
+  options: Options,
+  log?: (...args) => void
 ) => Promise<WasmInstance>;
 
 export async function _init(

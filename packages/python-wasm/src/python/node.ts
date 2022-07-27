@@ -1,4 +1,5 @@
 import wasmImport from "../wasm/import-node";
+import wasmImportNoWorker from "../wasm/worker/node";
 import { _init, repr, exec, wasm, terminal as _terminal } from "./index";
 import type { FileSystemSpec } from "@wapython/wasi";
 import { dirname, join } from "path";
@@ -16,7 +17,7 @@ const fs: FileSystemSpec[] = [
   { type: "native" }, // provides stdout,stderr natively, for now...
 ];
 
-export async function init() {
+export async function init({ noWorker }: { noWorker?: boolean } = {}) {
   const path = dirname(join(callsite()[1]?.getFileName() ?? "", ".."));
   let env;
   if (existsSync(join(path, DATA))) {
@@ -31,7 +32,12 @@ export async function init() {
   } else {
     env = { ...process.env };
   }
-  await _init("python/python.wasm", wasmImport, fs, env);
+  await _init(
+    "python/python.wasm",
+    noWorker ? wasmImportNoWorker : wasmImport,
+    fs,
+    env
+  );
 }
 
 async function terminal(argv = ["python"]) {
@@ -40,5 +46,3 @@ async function terminal(argv = ["python"]) {
 }
 
 export { repr, exec, wasm, terminal };
-
-init();
