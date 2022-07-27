@@ -158,10 +158,11 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 	#                                import the dynamic library, it has access to Python's memory.
 	#                                When done properly the wasm2wat versions of the so modules contain
 	#                                something like '(import "env" "memory" (memory (;0;) 2))'.
+	#              --import-table  = same but for the function table, which is needed to call function pointers.
 	cd ${BUILD}/wasm && \
 		CC="zig cc -Oz -target wasm32-wasi  " \
 		CXX="zig c++ -Oz -target wasm32-wasi " \
-		BLDSHARED="zig cc -Oz -target wasm32-wasi -shared -rdynamic -Xlinker --import-memory" \
+		BLDSHARED="zig cc -Oz -target wasm32-wasi -shared -rdynamic -Xlinker --import-memory -Xlinker --import-table" \
 		AR="zig ar" \
 		CFLAGS=" -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
 		CONFIG_SITE=./config.site \

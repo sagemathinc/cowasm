@@ -55,6 +55,7 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 		-rdynamic \
 		-target wasm32-wasi -lc \
 		--import-memory \
+		--import-table \
 		-I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} \
 		${PYTHON_WASM}/lib/libpython3.11.a \
 	   ${POSIX_WASM}/libwasmposix.a \

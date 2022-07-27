@@ -47,6 +47,7 @@ async function doWasmImport(
   const t = new Date().valueOf();
 
   const memory = new WebAssembly.Memory({ initial: 100 });
+  const table = new WebAssembly.Table({ initial: 10000, element: "anyfunc" });
 
   function recvString(ptr: number, len?: number) {
     if (len == null) {
@@ -74,7 +75,12 @@ async function doWasmImport(
   // with --import-table. I only figured this out by decompiling and reading. See
   // https://github.com/ziglang/zig/pull/10382/files#diff-e2879374d581d6e9422f4f6f09ae3c8ee5f429f7581d7b899f3863319afff4e0R648
   const wasmOpts: any = {
-    env: { ...wasmEnv, ...options.wasmEnv, memory },
+    env: {
+      ...wasmEnv,
+      ...options.wasmEnv,
+      memory,
+      __indirect_function_table: table,
+    },
   };
 
   let wasm;
@@ -138,81 +144,100 @@ async function doWasmImport(
     //         "/tmp/dlopen.log",
     //         JSON.stringify(args) + "\n"
     //       );
-    let dylink: any = undefined;
-    let dylink_i: number = 1;
-    const functionsInTable: { [key: string]: number } = {};
-    const functionIdToFunction: { [number: string]: Function } = {};
-    wasmOpts.env.dlopen = (pathnamePtr: number, flags: number): number => {
-      log?.("dlopen");
-      if (dylink != null) return 1;
+
+    interface DynamicLibrary {
+      handle: number;
+      pathname: string;
+      exports: { [functionName: string]: any };
+    }
+
+    const dynamicLibrariesByHandle: { [handle: number]: DynamicLibrary } = {};
+    const dynamicLibrariesByPathname: { [path: string]: DynamicLibrary } = {};
+    let _nextHandle = 0;
+    const getNextHandle = () => {
+      _nextHandle += 1;
+      return _nextHandle;
+    };
+    let _nextTablePtr = 1; // position 0 not used, since NULL pointer.
+    const getNextTablePtr = () => {
+      while (table.get(_nextTablePtr) != null) {
+        _nextTablePtr += 1;
+      }
+      if (table.length <= _nextTablePtr + 50) {
+        table.grow(50);
+      }
+      return _nextTablePtr;
+    };
+    const funcToPtr: { [key: string]: number } = {};
+
+    wasmOpts.env.dlopen = (pathnamePtr: number, _flags: number): number => {
       const pathname = recvString(pathnamePtr);
-      log?.(
-        "dlopen -- pathname = ",
-        pathname,
-        ", pathnamePtr = ",
-        pathnamePtr,
-        ", flags=",
-        flags
-      );
+      log?.(`dlopen -- pathname = ${pathname}`);
+      let library = dynamicLibrariesByPathname[pathname];
+      if (library != null) {
+        log?.(
+          `dlopen -- pathname = ${pathname}, already has handle=${library.handle}`
+        );
+        return library.handle;
+      }
+
       const typedArray = new Uint8Array(require("fs").readFileSync(pathname));
-      //await WebAssembly.instantiate(typedArray, wasmOpts);
       const mod = new WebAssembly.Module(typedArray);
-      //const exports = WebAssembly.Module.exports(module);
-      // make sure our dynamic library has access to the python/c api.
-      console.log(result.instance.exports["PyWeakref_GetObject"]);
-      const opts: any = {
+      const opts = {
         env: stubProxy({ ...wasmOpts.env, ...result.instance.exports }),
+        wasi_snapshot_preview1: wasmOpts.wasi_snapshot_preview1,
       };
       opts.env.memory = memory;
-      opts.wasi_snapshot_preview1 = wasmOpts.wasi_snapshot_preview1;
       const instance = new WebAssembly.Instance(mod, opts);
-      dylink = instance.exports;
-      //log?.("dlopen -- dylink = ", JSON.stringify(Object.keys(dylink)));
-      return 1;
+      const handle = getNextHandle();
+      const lib = { handle, exports: instance.exports, pathname };
+      dynamicLibrariesByPathname[pathname] = lib;
+      dynamicLibrariesByHandle[handle] = lib;
+      log?.(`dlopen -- pathname = ${pathname}, got handle = ${handle}`);
+      return handle;
     };
+
     wasmOpts.env.dlsym = (handle: number, funcnamePtr: number): number => {
       const funcname = recvString(funcnamePtr);
       const key = `${handle}-${funcname}`;
-      let f;
-      let functionId = functionsInTable[key];
-      if (functionId == null) {
-        f = dylink[funcname]; // todo: more than one library
-        if (f == null) {
-          // FAIL/TODO -- no such function!
-          log?.(`dlopen - dlsym -- ERROR: no function ${funcname}!`);
-          return 0;
-        }
-        log?.(`dlopen - dlsym -- calling ${funcname}`);
-        functionId = dylink_i;
-        functionIdToFunction[functionId] = f;
-        functionsInTable[key] = functionId;
-        dylink_i += 1;
+      let ptr = funcToPtr[key];
+      if (ptr != null) return ptr;
+      ptr = getNextTablePtr();
+      funcToPtr[key] = ptr;
+      const lib = dynamicLibrariesByHandle[handle];
+      if (lib == null) {
+        throw Error(`dlsym -- invalid handle=${handle}`);
       }
-      log?.(
-        `dlopen - dlsym -- handle=${handle}, funcname=${funcname}, f=${functionId}`
-      );
-      return functionId;
-    };
-    wasmOpts.env._PyImport_InitFunc_TrampolineCall = (
-      functionId: number
-    ): number => {
-      log?.(
-        `dlopen - _PyImport_InitFunc_TrampolineCall - functionId=${functionId}`
-      );
-      const init = functionIdToFunction[functionId];
-      if (init == null) {
-        throw Error(`invalid functionId ${functionId}`);
+      const f = lib.exports[funcname];
+      if (f == null) {
+        throw Error(`dlsym -- no function ${funcname}`);
       }
-      const r = init();
-      log?.(
-        `dlopen - _PyImport_InitFunc_TrampolineCall - called and got output ${r}`
-      );
-      return r;
+      table.set(ptr, f);
+      return ptr;
     };
-    wasmOpts.env._PyCFunctionWithKeywords_TrampolineCall = () => {
-      log?.("dlopen - _PyCFunctionWithKeywords_TrampolineCall");
-      throw Error("no implemented");
-      return 0;
+
+    const getFunction = (ptr: number) => {
+      const f = table.get(ptr);
+      if (f == null) {
+        throw Error(`no function with ptr=${ptr}`);
+      }
+      return f;
+    };
+
+    wasmOpts.env._PyImport_InitFunc_TrampolineCall = (ptr: number): number => {
+      // the address in memory of the function **is** its location in the function table, as explained here:
+      //    https://stackoverflow.com/questions/45387728/calling-a-c-style-function-pointer-in-a-webassembly-from-javascript
+      log?.(`dlopen - _PyImport_InitFunc_TrampolineCall - ptr=${ptr}`);
+      return getFunction(ptr)();
+    };
+
+    wasmOpts.env._PyCFunctionWithKeywords_TrampolineCall = (
+      ptr: number,
+      self: number,
+      args: number,
+      kwds: number
+    ) => {
+      return getFunction(ptr)(self, args, kwds);
     };
   }
 
@@ -319,6 +344,8 @@ async function doWasmImport(
   if (options.time) {
     log?.(`imported ${name} in ${new Date().valueOf() - t}ms`);
   }
+  // TODO
+  (wasm as any).table = table;
 
   return wasm;
 }
