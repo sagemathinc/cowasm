@@ -153,7 +153,6 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 		BLDSHARED="zig cc -Oz -target wasm32-wasi -shared" \
 		AR="zig ar" \
 		CFLAGS=" -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
-		LDFLAGS="-L${ZLIB}/wasm/lib -L${LZMA}/wasm/lib  -L${LIBEDIT}/wasm/lib -L${SQLITE}/wasm/lib ${NCURSES_LIB}" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		./configure \
