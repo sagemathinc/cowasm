@@ -39,6 +39,6 @@ export async function _init(
     env,
     fs,
     // traceSyscalls: true,
-    // traceStubcalls: true, //'first',
+    traceStubcalls: 'first',  // 'first' or true
   });
 }

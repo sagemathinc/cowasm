@@ -8,15 +8,17 @@ export default class WasmInstance extends EventEmitter {
   result: any = undefined;
   resultException: boolean = false;
   exports: any;
+  memory: WebAssembly.Memory;
   fs?: FileSystem;
 
-  constructor(exports, fs?: FileSystem) {
+  constructor(exports, memory: WebAssembly.Memory, fs?: FileSystem) {
     super();
     this.exports = exports;
+    this.memory = memory;
     this.fs = fs;
   }
 
-  async terminal(argv: string[] = ["command"]) : Promise<number> {
+  async terminal(argv: string[] = ["command"]): Promise<number> {
     return await this.callWithString("terminal", argv);
   }
 
@@ -29,7 +31,7 @@ export default class WasmInstance extends EventEmitter {
     const strAsArray = encoder.encode(str);
     const len = strAsArray.length + 1;
     const ptr = this.exports.c_malloc(len); // TODO: what happens when this allocation fails?
-    const array = new Int8Array(this.exports.memory.buffer, ptr, len);
+    const array = new Int8Array(this.memory.buffer, ptr, len);
     array.set(strAsArray);
     array[len - 1] = 0;
     return ptr;
@@ -61,7 +63,7 @@ export default class WasmInstance extends EventEmitter {
       }
       const len = ptrs.length;
       const ptr = this.exports.c_malloc(len * 4); // sizeof(char*) = 4 in WASM.
-      const array = new Int32Array(this.exports.memory.buffer, ptr, len);
+      const array = new Int32Array(this.memory.buffer, ptr, len);
       let i = 0;
       for (const p of ptrs) {
         array[i] = p;

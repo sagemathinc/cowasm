@@ -152,11 +152,16 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 	#   This might be something to fix and upstream, but for now, just not using a triple works.
 	# - We use -I (path to source) in the CC/CXX line in addition to CFLAGS so that we can override some
 	#   bad global libraries, e.g., systemwide (zig musl) sys/wait.h with a local version.
-	# - BLDSHARED is needed indirectly for wasm_assets.py to work (maybe).
+	# - BLDSHARED is used when building shared extension modules:
+	#     -rdynamic = prevents everything being not exported
+	#     -Xlinker --import-memory = passes the argument --import-memory to the linker, so that when we
+	#                                import the dynamic library, it has access to Python's memory.
+	#                                When done properly the wasm2wat versions of the so modules contain
+	#                                something like '(import "env" "memory" (memory (;0;) 2))'.
 	cd ${BUILD}/wasm && \
 		CC="zig cc -Oz -target wasm32-wasi  " \
 		CXX="zig c++ -Oz -target wasm32-wasi " \
-		BLDSHARED="zig cc -Oz -target wasm32-wasi -shared" \
+		BLDSHARED="zig cc -Oz -target wasm32-wasi -shared -rdynamic -Xlinker --import-memory" \
 		AR="zig ar" \
 		CFLAGS=" -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
 		CONFIG_SITE=./config.site \

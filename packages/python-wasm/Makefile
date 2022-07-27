@@ -31,14 +31,39 @@ test-zig:
 test-python:
 	cd src && ${TEST} python/python.zig -I. ${OPT}
 
+# Explanation of options to zig build-lib:
+#  - ${OPT} - at the top file can set the release type
+#  - -dynamic - put this or get a basically empty python.wasm
+#  - -rdynamic - put this so that all the functions in python.wasm are
+#    in the instance.exports, which is needed for dynamic linking of
+#    extension modules
+#  - -target wasm32-wasi - cross compile for webassembly
+#  - -lc - c library (needed due to -wasi above)
+#  - --import-memory -- so that we specify WebAssembly.Memory, which we
+#    can then share between modules (needed for dynamic linking).
+#  - -I ...  - directories to look for headers
+#  - various .a files - code that gets statically linked in; if something
+#    is neeeded but missing here, you get a nasty "Bus Error 10" or something.
+#  - ...signal.c - this was easier to write in c than zig, so must be
+#    explicitly specified.
+#  - python/interface.zig - the zig entry point -- anything this imports
+#    also gets compiled, without being explicitly listed here.
 ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig
-	cd src && zig build-lib ${OPT} -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} ${PYTHON_WASM}/lib/libpython3.11.a \
-			   `pwd`/python/signal/signal.c \
-			   ${POSIX_WASM}/libwasmposix.a \
-			   ${PACKAGES}/libedit/dist/wasm/lib/libedit.a \
-			   ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a \
-			   ${WASM_CFLAGS} ${ZIG_PKG} \
-	           python/interface.zig
+	cd src && zig build-lib \
+		${OPT} \
+		-dynamic \
+		-rdynamic \
+		-target wasm32-wasi -lc \
+		--import-memory \
+		-I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} \
+		${PYTHON_WASM}/lib/libpython3.11.a \
+	   ${POSIX_WASM}/libwasmposix.a \
+	   ${PACKAGES}/libedit/dist/wasm/lib/libedit.a \
+	   ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a \
+	   ${WASM_CFLAGS} \
+	   ${ZIG_PKG} \
+	   `pwd`/python/signal/signal.c \
+	   python/interface.zig
 	mkdir -p ${DIST}/python
 	#  This cp below is fatal for now; change back if we have a bootstrap step someday by putting
 	#    "|| true # important that this work even if there is no zip file when bootstraping cpython build."

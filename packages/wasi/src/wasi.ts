@@ -1598,18 +1598,20 @@ export default class WASI {
     this.memory = memory;
   }
 
-  start(instance: WebAssembly.Instance) {
+  start(instance: WebAssembly.Instance, memory?: WebAssembly.Memory) {
     const exports = instance.exports;
     if (exports === null || typeof exports !== "object") {
       throw new Error(
         `instance.exports must be an Object. Received ${exports}.`
       );
     }
-    const { memory } = exports;
-    if (!(memory instanceof WebAssembly.Memory)) {
-      throw new Error(
-        `instance.exports.memory must be a WebAssembly.Memory. Recceived ${memory}.`
-      );
+    if (memory == null) {
+      memory = exports.memory as any;
+      if (!(memory instanceof WebAssembly.Memory)) {
+        throw new Error(
+          `instance.exports.memory must be a WebAssembly.Memory. Recceived ${memory}.`
+        );
+      }
     }
 
     this.setMemory(memory);

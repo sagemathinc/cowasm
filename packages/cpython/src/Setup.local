@@ -17,7 +17,7 @@ readline readline.c -ledit  -ltermcap
 
 *shared*
 # I tried building sqlite3 static, and it builds, but the interactive repl
-# libedit functionality breaks in that what you type isn't echod back.  No
+# libedit functionality breaks in that what you type isn't shown back.  No
 # clue how to debug that... and also we really don't want this to be in the
 # core anyways -- it should be loaded dynamically, since people will often
 # use python without sqlite.
