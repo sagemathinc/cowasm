@@ -38,8 +38,10 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 			   ${WASM_CFLAGS} ${ZIG_PKG} \
 	           python/interface.zig
 	mkdir -p ${DIST}/python
-	mv src/interface.wasm ${DIST}/python/python311.wasm
-	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip || true # important that this work even if there is no zip file
+	mv src/interface.wasm ${DIST}/python/python.wasm
+	#  This cp below is fatal for now; change back if we have a bootstrap step someday by putting
+	#    "|| true # important that this work even if there is no zip file when bootstraping cpython build."
+	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
 
 .PHONEY: python
 python: ${DIST}/python/python.wasm

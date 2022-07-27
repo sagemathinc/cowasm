@@ -40,7 +40,8 @@ async function wasmImportNode(
         fs.push(Y);
       } catch (err) {
         // non-fatal
-        // We use this, e.g., when building the datafile itself.
+        // We *might* use this eventually when building the datafile itself, if we switch to using cpython wasm to build
+        // instead of native cpython.
         console.warn(`WARNING: Unable to read filesystem datafile '${X.zipfile}' -- falling back to filesystem.`);
       }
     } else {
