@@ -387,7 +387,7 @@ export default class WASI {
 
     const CHECK_FD = (fd: number, rights: bigint) => {
       const stats = stat(this, fd);
-      //console.log(`CHECK_FD: stats.real: ${stats.real}, stats.path:`, stats.path);
+      // logToFile(`CHECK_FD: stats.real: ${stats.real}, stats.path:`, stats.path);
       if (rights !== BigInt(0) && (stats.rights.base & rights) === BigInt(0)) {
         throw new WASIError(WASI_EPERM);
       }

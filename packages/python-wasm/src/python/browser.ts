@@ -14,7 +14,11 @@ export async function init() {
     { type: "dev" },
   ];
 
-  await _init(wasmUrl, wasmImport as any, fs); // TODO - temporary!!!
+  await _init(wasmUrl, wasmImport as any, fs, {
+    PYTHONHOME: "/usr",
+    TERMCAP: "/usr/lib/python3.11/termcap",
+    TERM: "xterm-256color",
+  });
   python.wasm = wasm;
 }
 

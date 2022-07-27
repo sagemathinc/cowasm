@@ -19,11 +19,6 @@ export async function terminal(argv: string[] = ["python"]) {
   await wasm.terminal(argv);
 }
 
-// export async function pyrun_interactive_one() {
-//   if (wasm == null) throw Error("call init");
-//   wasm.exports.pyrun_interactive_one();
-// }
-
 type WASMImportFunction = (
   python_wasm: string,
   options: Options
@@ -32,18 +27,15 @@ type WASMImportFunction = (
 export async function _init(
   python_wasm: string, // file path in node.js; a URL in browser.
   wasmImport: WASMImportFunction,
-  fs: FileSystemSpec[]
+  fs: FileSystemSpec[],
+  env: { [name: string]: string; }
 ): Promise<void> {
   if (wasm != null) {
     // already initialized
     return;
   }
   wasm = await wasmImport(python_wasm, {
-    env: {
-      PYTHONHOME: "/usr",
-      TERMCAP: "/usr/lib/python3.11/termcap",
-      TERM: "xterm-256color",
-    },
+    env,
     fs,
     // traceSyscalls: true,
     // traceStubcalls: true, //'first',

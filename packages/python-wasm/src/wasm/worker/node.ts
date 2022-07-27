@@ -31,12 +31,18 @@ async function wasmImportNode(
       if (!isAbsolute(X.zipfile)) {
         X.zipfile = join(path, X.zipfile);
       }
-      const Y = {
-        type: "zip",
-        data: await readFile(X.zipfile),
-        mountpoint: X.mountpoint,
-      } as FileSystemSpec;
-      fs.push(Y);
+      try {
+        const Y = {
+          type: "zip",
+          data: await readFile(X.zipfile),
+          mountpoint: X.mountpoint,
+        } as FileSystemSpec;
+        fs.push(Y);
+      } catch (err) {
+        // non-fatal
+        // We use this, e.g., when building the datafile itself.
+        console.warn(`WARNING: Unable to read filesystem datafile '${X.zipfile}' -- falling back to filesystem.`);
+      }
     } else {
       fs.push(X);
     }

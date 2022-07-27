@@ -38,8 +38,8 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 			   ${WASM_CFLAGS} ${ZIG_PKG} \
 	           python/interface.zig
 	mkdir -p ${DIST}/python
-	mv src/interface.wasm ${DIST}/python/python.wasm
-	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
+	mv src/interface.wasm ${DIST}/python/python311.wasm
+	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip || true # important that this work even if there is no zip file
 
 .PHONEY: python
 python: ${DIST}/python/python.wasm

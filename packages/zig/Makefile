@@ -4,10 +4,15 @@
 
 # Find the latest version at https://ziglang.org/download/
 
-# https://ziglang.org/builds/zig-0.10.0-dev.2751+08459ff1c.tar.xz
+# Example  https://ziglang.org/builds/zig-macos-aarch64-0.10.0-dev.3315+1a16b7214.tar.xz
 
-VERSION = 0.9.1
-TARBALL = https://ziglang.org/download/${VERSION}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
+# This is for pre-release
+VERSION = 0.10.0-dev.3315+1a16b7214
+TARBALL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
+
+# This is for stable releases
+#VERSION = 0.9.1
+#TARBALL = https://ziglang.org/download/${VERSION}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
 # for dev versions:
 #VERSION = 0.10.0-dev.2751+08459ff1c
