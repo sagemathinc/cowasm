@@ -1,5 +1,4 @@
 packages/*/build
-bin/jpython
 bin/python-wasm
 bin/python-wasm-debug
 lib/dist

@@ -1,5 +1,0 @@
-dev
-release
-*.json
-*.pytest_cache*
-dist

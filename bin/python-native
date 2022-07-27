@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PACKAGES="$SCRIPT_DIR"/../packages/
+
+export DYLD_LIBRARY_PATH="$PACKAGES"/cpython/dist/native/lib:"$PACKAGES"/zlib/dist/native/lib:$DYLD_LIBRARY_PATH
+export LD_LIBRARY_PATH="$PACKAGES"/cpython/dist/native/lib:"$PACKAGES"/zlib/dist/native/lib:$LD_LIBRARY_PATH
+
+$PACKAGES/cpython/dist/native/bin/python3 "$@"

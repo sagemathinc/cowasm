@@ -1,0 +1,12 @@
+{
+  "name": "bench",
+  "version": "1.0.0",
+  "description": "This is a collection of microbenchmarks to help understand where a given Python interpreter is fast and detect situations where it is 100x slower than it should be to ensure that it is usable.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "BSD-3-Clause"
+}

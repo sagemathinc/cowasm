@@ -62,22 +62,17 @@ packages/wasi/${BUILT}:
 wasi: packages/wasi/${BUILT}
 
 
-packages/jpython/${BUILT}: python-wasm
-	cd packages/jpython && make all
-.PHONY: jpython
-jpython: packages/jpython/${BUILT}
-
-
 packages/webpack/${BUILT}: python-wasm
 	cd packages/webpack && make all
 .PHONY: webpack
 webpack: packages/webpack/${BUILT}
 
 
-packages/terminal/${BUILT}: python-wasm jpython
+packages/terminal/${BUILT}: python-wasm
 	cd packages/terminal && make all
 .PHONY: terminal
 terminal: packages/terminal/${BUILT}
+
 
 # this builds and you can make ncurses a dep for cpython and change src/Setup.local to get
 # the _ncurses module to build. But there are still issues to solve (probably straightforward, but tedious)
@@ -108,8 +103,8 @@ docker-nocache:
 	docker build --no-cache -t python-wasm .
 
 clean:
+	cd packages/bench && make clean
 	cd packages/cpython && make clean
-	cd packages/jpython && make clean
 	cd packages/libedit && make clean
 	cd packages/lzma && make clean
 	cd packages/ncurses && make clean
@@ -125,6 +120,6 @@ clean:
 	cd packages/zig && make clean
 	cd packages/zlib && make clean
 
-test: jpython python-wasm
-	cd packages/jpython && make test
+test: python-wasm
+	cd packages/bench && make test
 	cd packages/python-wasm && make test
