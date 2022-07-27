@@ -34,14 +34,16 @@ test-python:
 ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig
 	cd src && zig build-lib -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} ${PYTHON_WASM}/lib/libpython3.11.a \
 			   `pwd`/python/signal/signal.c \
-			   ${POSIX_WASM}/libwasmposix.a  ${PACKAGES}/libedit/dist/wasm/lib/libedit.a ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a \
+			   ${POSIX_WASM}/libwasmposix.a \
+			   ${PACKAGES}/libedit/dist/wasm/lib/libedit.a \
+			   ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a \
 			   ${WASM_CFLAGS} ${ZIG_PKG} \
 	           python/interface.zig
 	mkdir -p ${DIST}/python
-	mv src/interface.wasm ${DIST}/python/python.wasm
 	#  This cp below is fatal for now; change back if we have a bootstrap step someday by putting
 	#    "|| true # important that this work even if there is no zip file when bootstraping cpython build."
 	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
+	mv src/interface.wasm ${DIST}/python/python.wasm
 
 .PHONEY: python
 python: ${DIST}/python/python.wasm
