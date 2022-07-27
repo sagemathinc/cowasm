@@ -1568,8 +1568,8 @@ export default class WASI {
     };
     // Wrap each of the imports to show the calls in the console
     if ((wasiConfig as WASIConfig).traceSyscalls) {
-      //const log = console.log;
-      const log = (x) => require("fs").appendFileSync("/tmp/wasi.log", x + "\n");
+      const log = console.log;
+      //const log = (x) => require("fs").appendFileSync("/tmp/wasi.log", x + "\n");
       Object.keys(this.wasiImport).forEach((key: string) => {
         const prevImport = this.wasiImport[key];
         this.wasiImport[key] = function (...args: any[]) {

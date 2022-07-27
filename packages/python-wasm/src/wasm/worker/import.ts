@@ -133,26 +133,24 @@ async function doWasmImport(
   //    https://cocalc.com/projects/369491f1-9b8a-431c-8cd0-150dd15f7b11/files/work/2022-07-18-ws-diary.board#id=55096f05
   // I think, and this is obviously by far my top priority now.
   if (wasmOpts.env.dlopen == null) {
-    const log = (...args) =>
-      require("fs").appendFileSync(
-        "/tmp/dlopen.log",
-        JSON.stringify(args) + "\n"
-      );
+    const log = console.log;
+    //     const log = (...args) =>
+    //       require("fs").appendFileSync(
+    //         "/tmp/dlopen.log",
+    //         JSON.stringify(args) + "\n"
+    //       );
     let dylink: any = undefined;
     let dylink_i: number = 1;
     const functionsInTable: { [key: string]: number } = {};
     wasmOpts.env.dlopen = (pathnamePtr: number, flags: number): number => {
-      console.log("dlopen");
+      log?.("dlopen");
       if (dylink != null) return 1;
       log?.("dlopen -- pathnamePtr = ", pathnamePtr, " flags=", flags);
       log?.("dlopen -- table = ", table?.length);
       const pathname = recvString(wasm, pathnamePtr);
-      require("fs").appendFileSync(
-        "/tmp/dlopen.log",
-        `calling dlopen with path=${pathname}`
-      );
-      log?.("dlopen -- work in progress, pathname = ", pathname);
-      const typedArray = new Uint8Array(require("fs").readFileSync(pathname));
+      log?.("dlopen -- work in progress, pathname = ", pathname, ' CHANGE CODE TO CONTINUE WORK');
+      // TODO!!!!!
+      const typedArray = new Uint8Array(0 /*require("fs").readFileSync(pathname)*/);
       //await WebAssembly.instantiate(typedArray, wasmOpts);
       //const metadata = getDylinkMetadata(typedArray);
       //log?.("dlopen -- metadata = ", metadata);
@@ -162,10 +160,10 @@ async function doWasmImport(
       wasmOpts.js.memory = result.instance.exports.memory;
       const instance = new WebAssembly.Instance(module, wasmOpts);
       dylink = instance.exports;
-      
-//       if (instance.exports.__wasm_call_ctors != null) {
-//         (instance.exports.__wasm_call_ctors as CallableFunction)();
-//       }
+
+      //       if (instance.exports.__wasm_call_ctors != null) {
+      //         (instance.exports.__wasm_call_ctors as CallableFunction)();
+      //       }
       return 1;
     };
     wasmOpts.env.dlsym = (handle: number, funcnamePtr: number): number => {
