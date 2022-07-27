@@ -221,16 +221,18 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   // Optionally override in derived class
   protected configureTerminal() {}
 
-  async terminal(argv: string[] = ["command"]) {
+  async terminal(argv: string[] = ["command"]): Promise<number> {
     await this.init();
     if (this.worker == null) throw Error("terminal: bug");
     this.configureTerminal();
+    let r = 0;
     try {
-      await this.callWithString("terminal", argv);
+      r = await this.callWithString("terminal", argv);
       this.terminate();
     } catch (_) {
       // expected to fail -- call doesn't get output...
     }
+    return r;
   }
 }
 

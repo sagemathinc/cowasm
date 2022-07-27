@@ -35,6 +35,8 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 	cd src && zig build-lib ${OPT} -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} ${PYTHON_WASM}/lib/libpython3.11.a \
 			   `pwd`/python/signal/signal.c \
 			   ${POSIX_WASM}/libwasmposix.a \
+			   ${PACKAGES}/libedit/dist/wasm/lib/libedit.a \
+			   ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a \
 			   ${WASM_CFLAGS} ${ZIG_PKG} \
 	           python/interface.zig
 	mkdir -p ${DIST}/python
@@ -62,6 +64,7 @@ node_modules:
 .PHONY: bin
 bin:
 	ln -sf ${CWD}/bin/python-wasm ${CWD}/../../bin/python-wasm
+	ln -sf ${CWD}/bin/python-wasm-debug ${CWD}/../../bin/python-wasm-debug
 
 ## Put it all together
 
@@ -80,7 +83,7 @@ test: all test-zig bench
 .PHONE: bench
 bench:
 	echo "STARTING python-wasm benchmark suite"
-	../../bin/python-wasm `pwd`/../jpython/bench/all.py
+	../../bin/python-wasm-debug `pwd`/../jpython/bench/all.py
 	echo "FINISHED python-wasm benchmark suite"
 
 .PHONY: clean

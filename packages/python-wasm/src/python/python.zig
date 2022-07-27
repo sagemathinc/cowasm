@@ -58,12 +58,12 @@ pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
     );
 }
 
-pub fn terminal(argc: i32, argv: [*c][*c]u8) void {
+pub fn terminal(argc: i32, argv: [*c][*c]u8) i32 {
     // std.debug.print("calling Py_BytesMain()... with argc={}, argv[0]={s} argv[1]={s} inputs\n", .{argc, argv[0], argv[1]});
     // std.debug.print("calling Py_BytesMain()... with argc={}, argv[0]={s}\n", .{argc, argv[0]});
     const r = python.Py_BytesMain(argc, argv);
-    _ = r;
     // std.debug.print("Py_Main exited with code {}\n", .{r});
+    return r;
 }
 
 // pub fn run_interactive_one() void {

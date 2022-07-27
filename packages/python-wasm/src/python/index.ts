@@ -14,9 +14,9 @@ export async function repr(str: string): Promise<string> {
   return (await wasm.callWithString("eval", str)) as string;
 }
 
-export async function terminal(argv: string[] = ["python"]) {
+export async function terminal(argv: string[] = ["python"]) : Promise<number> {
   if (wasm == null) throw Error("call init");
-  await wasm.terminal(argv);
+  return await wasm.terminal(argv);
 }
 
 type WASMImportFunction = (

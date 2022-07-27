@@ -24,8 +24,8 @@ export fn exec(s: [*:0]const u8) void {
     };
 }
 
-export fn terminal(argc: i32, argv: [*c][*c]u8) void {
-    python.terminal(argc, argv);
+export fn terminal(argc: i32, argv: [*c][*c]u8) i32 {
+    return python.terminal(argc, argv);
 }
 
 extern fn wasmSendString(ptr: [*]const u8, len: usize) void;

@@ -17,10 +17,13 @@ const fs: FileSystemSpec[] = [
   { type: "native" }, // provides stdout,stderr natively, for now...
 ];
 
-export async function init({ noWorker }: { noWorker?: boolean } = {}) {
+export async function init({
+  noWorker,
+  noZip,
+}: { noWorker?: boolean; noZip?: boolean } = {}) {
   const path = dirname(join(callsite()[1]?.getFileName() ?? "", ".."));
   let env;
-  if (existsSync(join(path, DATA))) {
+  if (!noZip && existsSync(join(path, DATA))) {
     env = {
       ...process.env,
       ...{
@@ -40,9 +43,9 @@ export async function init({ noWorker }: { noWorker?: boolean } = {}) {
   );
 }
 
-async function terminal(argv = ["python"]) {
+async function terminal(argv = ["python"]): Promise<number> {
   await init();
-  await _terminal(argv);
+  return await _terminal(argv);
 }
 
 export { repr, exec, wasm, terminal };

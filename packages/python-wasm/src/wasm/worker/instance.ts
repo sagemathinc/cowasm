@@ -16,8 +16,8 @@ export default class WasmInstance extends EventEmitter {
     this.fs = fs;
   }
 
-  async terminal(argv: string[] = ["command"]) {
-    await this.callWithString("terminal", argv);
+  async terminal(argv: string[] = ["command"]) : Promise<number> {
+    return await this.callWithString("terminal", argv);
   }
 
   write(_data: string): void {
