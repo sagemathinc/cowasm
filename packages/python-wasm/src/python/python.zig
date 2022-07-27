@@ -59,12 +59,11 @@ pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
 }
 
 pub fn terminal(argc: i32, argv: [*c][*c]u8) void {
-    //std.debug.print("calling Py_BytesMain()... with argv={}, argv[0]={s} argv[1]={s} inputs\n", .{argc, argv[0], argv[1]});
+    //std.debug.print("calling Py_BytesMain()... with argc={}, argv[0]={s} argv[1]={s} inputs\n", .{argc, argv[0], argv[1]});
     const r = python.Py_BytesMain(argc, argv);
     _ = r;
     //std.debug.print("Py_Main exited with code {}\n", .{r});
 }
-
 
 // pub fn run_interactive_one() void {
 //     std.debug.print("PyRun_InteractiveOne\n", .{});
@@ -99,6 +98,10 @@ pub fn terminal(argc: i32, argv: [*c][*c]u8) void {
 //     // Convert to JSON
 
 // }
+
+test "init" {
+    init();
+}
 
 const eql = std.mem.eql;
 const expect = std.testing.expect;
@@ -138,12 +141,3 @@ test "exec and eval" {
     try expect(eql(u8, b, "11"));
 }
 
-// pub fn add() void {
-//     init();
-//     _ = python.PyRun_SimpleString("print('1 + ... + 100 = ', sum(range(101)))\n");
-// }
-
-// test "do something" {
-//     _ = add();
-//     python.Py_FinalizeEx();
-// }

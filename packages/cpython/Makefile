@@ -1,8 +1,17 @@
+#
+# We build a native version of CPython and a WASM version.
+# The native version is ONLY used as part of the cross compilation build process
+# and not used for anything else.  TODO: Currently, we can't build native Python using
+# only zig on our supported architectures, so we use the native toolchain, which is
+# really annoying and makes bootstraping a build a little harder.
+#
+
+
 # See https://www.python.org/downloads/
 PYTHON_MAJOR = 3
 PYTHON_MINOR = 11
 PYTHON_PATCH = 0
-PYTHON_BETA = b3
+PYTHON_BETA = b4
 PYTHON_VERSION = ${PYTHON_MAJOR}.${PYTHON_MINOR}.${PYTHON_PATCH}
 
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
@@ -33,7 +42,7 @@ export PATH := ${DIST_NATIVE}/bin:${PATH}
 .PHONY: all
 all: ${CWD}/dist/.built
 
-${CWD}/dist/.built: native wasm
+${CWD}/dist/.built: native wasm-data
 	touch ${CWD}/dist/.built
 
 #############
@@ -54,53 +63,53 @@ source: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	rm -rf ${BUILD}/native
 	cd ${BUILD} && mkdir native && tar xf Python-${PYTHON_VERSION}.tar.xz -C native --strip-components=1
-	# - We use the 0008-setup.patch patch, which is *maybe* needed to get module building
-	#   to work when compiling with zig.
-	# - 00-threading-native.patch  is just a horrible hack to sort of get around something
-	#   broken also involving building with zig (?). This was only needed when using zig:
-	# cd ${BUILD}/native && cat ${CWD}/src/python-patches/00-threading-native.patch | patch -p1
 	touch ${BUILD}/native/.patched
 
-# NOTE: We are using the system-wide GCC instead of zig to
-# build the native version, since it actually works on more
-# platforms more robustly.  That said, it is MASSIVELY slower.
-# To switch back to zig, try replacing what is below
-# by this.  This works for me on cocalc, but not a clean docker
-# image or aarch64 docker linux.  Also, make sure to enable the
-# 00-threading-native.patch patch elsewhere (in two places).
-#
-# UNAME_S := $(shell uname -s)
-# UNAME_P := $(shell uname -p)
-# ifeq ($(UNAME_S),Linux)
-#    # Workaround a zig bug -- the native build fails with "ld.lld: error: undefined symbol: fcntl64".
-#    # See https://github.com/ziglang/zig/issues/5882 and https://github.com/ziglang/zig/issues/9485
-#    ARCH = --target=$(UNAME_P)-linux-gnu.2.31
-# endif
-#
-# Below:
-# 		CFLAGS="-I${ZLIB}/native/include -I/usr/include" \
-# 		LDFLAGS="-L${ZLIB}/native/lib" \
-# 		AR="zig ar" \
-# 		CXX="zig c++ ${ARCH}" \
-# 		CC="zig cc ${ARCH}" \
+# I would love to use the zig build of native Python, but it just doesn't work yet.
+# Instead we build with whatever native tools are installed (see below)
 
-${DIST_NATIVE}/.built: ${BUILD}/native/.patched
+${DIST_NATIVE}/.built-zig: ${BUILD}/native/.patched
+	cd ${BUILD}/native && \
+		AR="zig ar" \
+		CXX="zig c++" \
+		CC="zig cc" \
+		CFLAGS="-I${ZLIB}/native/include" \
+		LDFLAGS="-L${ZLIB}/native/lib" \
+		./configure \
+			--prefix=${DIST_NATIVE} \
+			--enable-shared \
+			--with-ensurepip=no
+	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses zlib).  This is to workaround
+	# a security feature of MacOS (see https://developer.apple.com/forums/thread/9233). For simplicity we set this everywhere.
+	cd ${BUILD}/native && make  -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}"
+	cd ${BUILD}/native && make  -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}" install
+	touch ${DIST_NATIVE}/.built
+	touch ${DIST_NATIVE}/.built-zig
+
+.PHONY: native-zig
+native-zig: ${DIST_NATIVE}/.built-zig
+
+
+${DIST_NATIVE}/.built-default: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
 		CFLAGS="-I${ZLIB}/native/include" \
 		LDFLAGS="-L${ZLIB}/native/lib" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
-			--enable-big-digits=30 \
-			--enable-optimizations \
-			--enable-shared
+			--with-ensurepip=no
 	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses zlib).  This is to workaround
 	# a security feature of MacOS (see https://developer.apple.com/forums/thread/9233). For simplicity we set this everywhere.
 	cd ${BUILD}/native && make -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}"
-	cd ${BUILD}/native && make RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}" install
+	cd ${BUILD}/native && make -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}" install
 	touch ${DIST_NATIVE}/.built
+	touch ${DIST_NATIVE}/.built-default
 
+.PHONY: native-default
+native-default: ${DIST_NATIVE}/.built-default
+
+# This doesn't use zig.
 .PHONY: native
-native: ${DIST_NATIVE}/.built
+native: ${DIST_NATIVE}/.built-default
 
 # Use "make run-native" to run native python at the command line.
 .PHONY: run-native
@@ -109,9 +118,6 @@ run-native: ${DIST_NATIVE}/.built
 
 #############
 # WASM
-# Note that despite the word "patched" below, we also apply NO patches to the Python sources at that point
-# to do the WASM Build!
-# We do make a few small changes to pyconfig.h after it is generated.
 #############
 
 ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
@@ -135,10 +141,9 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# files, which is a lot to deal with.  On the other hand, this could silently fail if the sources
 	# change too much, whereas patches are loud.
 	# cd ${BUILD}/wasm/ && sed -i '' -e 's/#if defined(__EMSCRIPTEN__) \&\& defined(PY_CALL_TRAMPOLINE)/#if defined(__WASM__)/' Include/internal/pycore_object.h Objects/descrobject.c Objects/methodobject.c Python/importdl.h Python/import.c
-
 	touch ${BUILD}/wasm/.patched
 
-${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
+${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
 	# - without-pymalloc below because pymalloc uses mmap and munmap, and WASI/our libc doesn't provide them.
 	#   We could try to write them ourselves (?)...
@@ -147,13 +152,13 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	#   This might be something to fix and upstream, but for now, just not using a triple works.
 	# - We use -I (path to source) in the CC/CXX line in addition to CFLAGS so that we can override some
 	#   bad global libraries, e.g., systemwide (zig musl) sys/wait.h with a local version.
+	# - BLDSHARED is needed indirectly for wasm_assets.py to work (maybe).
 	cd ${BUILD}/wasm && \
-		CC="zig cc -target wasm32-wasi" \
-		BLDSHARED="zig cc -target wasm32-wasi -shared" \
-		CXX="zig c++ -target wasm32-wasi" \
+		CC="zig cc -Oz -target wasm32-wasi  " \
+		CXX="zig c++ -Oz -target wasm32-wasi " \
+		BLDSHARED="zig cc -Oz -target wasm32-wasi -shared" \
 		AR="zig ar" \
-		CFLAGS="-D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
-		LDFLAGS="-L${ZLIB}/wasm/lib -L${LZMA}/wasm/lib  -L${LIBEDIT}/wasm/lib -L${SQLITE}/wasm/lib ${NCURSES_LIB}" \
+		CFLAGS=" -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		./configure \
@@ -181,24 +186,25 @@ ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
 	cd ${BUILD}/wasm && make install
 	# Also copy wasm-posix.h over, so it's possible to build programs against our new python.
 	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm-posix.h ${DIST_WASM}/include/python${PYTHON_MAJOR}.${PYTHON_MINOR}/
-	# Build wasm asset bundle (the pyc files, etc.).  TODO/HACK: We make some symlinks to avoid having to patch wasm_assets.py
-	# though it would be very reasonable to contribute a change upstream to make the script not need this hack.
-	cd ${BUILD}/wasm/build/ && ln -sf lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && \
-		cd lib.emscripten-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR} && ln -sf _sysconfigdata__wasi_wasm32-wasi.py _sysconfigdata__emscripten_wasm32-emscripten.py
-	# This DYLD_LIBRARY_PATH is needed to workaround https://developer.apple.com/forums/thread/9233
-	cd ${BUILD}/wasm && DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" python3 ./Tools/wasm/wasm_assets.py && rm -rf ${DIST_WASM}/lib/dist && mv usr/local/lib ${DIST_WASM}/lib/dist
-	# Add termcap for xterm to our zip asset bundle:
-	# Also add rlcompleter.pyc and  _sysconfigdata__wasi_wasm32-wasi.pyc since Python doesn't include those.
-	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && \
-		cp ../python3.11/__pycache__/rlcompleter.cpython-311.pyc rlcompleter.pyc && \
-		zip -u python311.zip termcap rlcompleter.pyc && \
-		cp ../python3.11/__pycache__/_sysconfigdata__wasi_wasm32-wasi.cpython-311.pyc _sysconfigdata__wasi_wasm32-wasi.pyc && \
-		zip -u python311.zip _sysconfigdata__wasi_wasm32-wasi.pyc
-	touch ${DIST_WASM}/.built
+	touch ${DIST_WASM}/.built-cpython
 
 .PHONY: wasm
-wasm: ${DIST_WASM}/.built
+wasm: ${DIST_WASM}/.built-cpython
 
+
+${DIST_WASM}/lib/dist/python311.zip: ${DIST_NATIVE}/.built ${DIST_WASM}/.built-cpython
+	# Build wasm asset bundle (the pyc files, etc.).
+	cd ${BUILD}/wasm && \
+		mkdir -p usr/local/lib/python3.11/lib-dynload/  && \
+	    DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" python3 ./Tools/wasm/wasm_assets.py && \
+		rm -rf ${DIST_WASM}/lib/dist && \
+		mv usr/local/lib ${DIST_WASM}/lib/dist
+	# Add termcap for xterm to our zip asset bundle, so readline actually works:
+	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && zip -u python311.zip termcap
+	touch ${DIST_WASM}/.built
+
+.PHONY: wasm-data
+wasm-data: ${DIST_WASM}/lib/dist/python311.zip
 
 # Use "make run-wasm" to run our WASM python at the command line.
 # You can also just run `python-wasm` in the top level bin/ directory.

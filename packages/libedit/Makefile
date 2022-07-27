@@ -24,7 +24,7 @@ ${BUILD}/native: ${BUILD}/libedit.tar.gz
 	cd ${BUILD} && tar xf libedit.tar.gz -C native --strip-components=1
 
 ${DIST_NATIVE}/.built: ${BUILD}/native
-	cd ${BUILD}/native && CFLAGS="-I${TERMCAP}/native/include -L${TERMCAP}/native/lib" CC="zig cc" AR="zig ar" ./configure --prefix=${DIST_NATIVE}
+	cd ${BUILD}/native && CFLAGS="-I${TERMCAP}/native/include -L${TERMCAP}/native/lib" CC="zig cc -Oz" AR="zig ar" ./configure --prefix=${DIST_NATIVE}
 	cd ${BUILD}/native && make -j8
 	cd ${BUILD}/native && make install
 	touch ${DIST_NATIVE}/.built
@@ -44,7 +44,7 @@ ${BUILD}/wasm: ${BUILD}/libedit.tar.gz
 
 # For use of -D__STDC_ISO_10646__=201103L, see https://patchwork.ozlabs.org/project/buildroot/patch/1452127277-9538-1-git-send-email-sergio.prado@e-labworks.com/
 ${DIST_WASM}/.built: ${BUILD}/wasm
-	cd ${BUILD}/wasm && CFLAGS="-I${TERMCAP}/wasm/include -L${TERMCAP}/wasm/lib -D__STDC_ISO_10646__=201103L"  RANLIB="zig ranlib" AR="zig ar" CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS " CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
+	cd ${BUILD}/wasm && CFLAGS="-I${TERMCAP}/wasm/include -L${TERMCAP}/wasm/lib -D__STDC_ISO_10646__=201103L"  RANLIB="zig ranlib" AR="zig ar" CC="zig cc -Oz -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS " CXX="zig c++ -Oz -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
 		./configure \
 			--host=none \
 			--prefix="${DIST_WASM}"
