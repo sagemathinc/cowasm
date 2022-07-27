@@ -8,6 +8,24 @@ DEMO: https://python-wasm.cocalc.com/
 
 [<img src="https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml/badge.svg"  alt="Docker Image CI"  width="172px"  height="20px"  style="object-fit:cover"/>](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml)
 
+## Try the python-wasm REPL under node.js
+
+```py
+wstein@max x4 % npx python-wasm
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> Python 3.11.0b4 (main, Jul 27 2022, 04:39:08) [Clang 14.0.6 (git@github.com:ziglang/zig-bootstrap.git dbc902054739800b8c1656dc on wasi
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 2 + 3
+5
+>>> import sys; sys.version
+'3.11.0b4 (main, Jul 27 2022, 04:39:08) [Clang 14.0.6 (git@github.com:ziglang/zig-bootstrap.git dbc902054739800b8c1656dc'
+>>> sys.platform
+'wasi'
+```
+
+## Install python\-wasm into your project, and try it via the library interface and the node.js terminal
+
 ```sh
 npm install python-wasm
 ```
@@ -42,31 +60,9 @@ name? william  <-- I just typed "william"
 
 You can also use python\-wasm in your [web application via webpack](https://github.com/sagemathinc/python-wasm/tree/main/packages/webpack), but your webserver must set certain headers which [github pages does not set](https://github.com/github-community/community/discussions/13309).
 
-## Quick start \- install from npm and use in node.js
+## Build python\-wasm from source on Linux or MacOS
 
-```sh
-wstein@max % node --version
-v16.x   # If less then 16, install a newer version of node or use node --experimental-wasm-bigint
-wstein@max % mkdir test && cd test && npm init -y
-wstein@max % npm install python-wasm
-wstein@max % node
-Welcome to Node.js v16.13.0.
-Type ".help" for more information.
-> python = require('python-wasm')
-> python.exec('a=2+3; a') # outputs to stdout
-5
-> s = python.repr('a'); s # javascript string
-5
-> python.exec('import sys; sys.version')
-'3.11.0b3 (main, Jul  8 2022, 23:21:07) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 81f0e6c5b902ead84753490d'
-> python.repr('sys.platform')
-'wasi'
-> python.exec('sum(range(10**7))')
-```
-
-## Build python\-wasm from source
-
-### Build on Linux or MacOS
+### Prerequisites
 
 To build everything from source, make sure your systemwide nodejs is at least version 16.x and that you have standard command line dev tools.  Then build, which [takes 15\-20 minutes](https://github.com/sagemathinc/wapython/actions), and around 1GB of disk space:
 
@@ -170,7 +166,7 @@ hello from Web Assembly: 4
 
 This isn't currently used here for building wapytho, but it's an extremely powerful tool.  \(For example, I used it with JSage to get the first build of the NTL library for Web Assembly...\)
 
-### Run a script via web assembly Python from the CLI
+### Run a script via python\-wasm from the CLI
 
 ```sh
 ~/python-wasm$ echo "import sys; print(f'hi from {sys.platform}')" > a.py
@@ -197,7 +193,7 @@ Here are some grand total times.  The timings are pretty stable, and the paramet
 
 <br/>
 
-The quick summary is that in each case pypy is twice as fast as python\-lang \(basically ndoe.js\), python\-lang is twice as fast as cpython, and _**native cpython is about 2.5x\-2.8x as fast as python\-wasm**_.  However, when you study the individual benchmarks, there are some significant differences.  E.g., in `brython.py` there is a benchmark "create instance of simple class" and it typically takes 4x\-5x longer in WebAssembly versus native CPython.
+The quick summary is that in each case pypy is twice as fast as pylang \(basically node.js\), python\-lang is twice as fast as cpython, and _**native cpython is about 2.5x\-2.8x as fast as python\-wasm**_.  However, when you study the individual benchmarks, there are some significant differences.  E.g., in `brython.py` there is a benchmark "create instance of simple class" and it typically takes 4x\-5x longer in WebAssembly versus native CPython.
 
 ---
 
