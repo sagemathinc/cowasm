@@ -6,7 +6,9 @@
 
 echo "Rebuild and run python-wasm"
 set -ev
-make && cp libpython3.11.a ../../dist/wasm/lib/
+make
+cp -v libpython3.11.a ../../dist/wasm/lib/
+cp -v build/lib.wasi-wasm32-3.11/*.so ../../dist/wasm/lib/python3.11/lib-dynload/
 cd ../../../python-wasm/
 make clean
 make

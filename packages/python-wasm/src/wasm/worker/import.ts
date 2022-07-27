@@ -70,9 +70,9 @@ async function doWasmImport(
   // the SAME table, instead of a completely new one.  This makes
   // dynamic loading possible, e.g., dlopen.
   //
-  // TODO: 1000 is just made up!  Obviously, we need to grow
+  // TODO: 25 is just made up!  Obviously, we need to grow
   // it dynamically.
-  const table = new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
+  const table = new WebAssembly.Table({ initial: 25, element: "anyfunc" });
   const wasmOpts: any = {
     js: { table },
     env: { ...wasmEnv, ...options.wasmEnv },
@@ -133,33 +133,79 @@ async function doWasmImport(
   //    https://cocalc.com/projects/369491f1-9b8a-431c-8cd0-150dd15f7b11/files/work/2022-07-18-ws-diary.board#id=55096f05
   // I think, and this is obviously by far my top priority now.
   if (wasmOpts.env.dlopen == null) {
-    let dylink : any = undefined;
-    let dylink_i : number = 0;
+    const log = (...args) =>
+      require("fs").appendFileSync(
+        "/tmp/dlopen.log",
+        JSON.stringify(args) + "\n"
+      );
+    let dylink: any = undefined;
+    let dylink_i: number = 1;
+    const functionsInTable: { [key: string]: number } = {};
     wasmOpts.env.dlopen = (pathnamePtr: number, flags: number): number => {
-      if(dylink != null) return 1;
+      console.log("dlopen");
+      if (dylink != null) return 1;
       log?.("dlopen -- pathnamePtr = ", pathnamePtr, " flags=", flags);
       log?.("dlopen -- table = ", table?.length);
       const pathname = recvString(wasm, pathnamePtr);
+      require("fs").appendFileSync(
+        "/tmp/dlopen.log",
+        `calling dlopen with path=${pathname}`
+      );
       log?.("dlopen -- work in progress, pathname = ", pathname);
       const typedArray = new Uint8Array(require("fs").readFileSync(pathname));
       //await WebAssembly.instantiate(typedArray, wasmOpts);
       //const metadata = getDylinkMetadata(typedArray);
       //log?.("dlopen -- metadata = ", metadata);
       const module = new WebAssembly.Module(typedArray);
-      const exports = WebAssembly.Module.exports(module);
+      //const exports = WebAssembly.Module.exports(module);
       //log?.("dlopen -- exports = ", JSON.stringify(exports));
+      wasmOpts.js.memory = result.instance.exports.memory;
       const instance = new WebAssembly.Instance(module, wasmOpts);
       dylink = instance.exports;
+      
+//       if (instance.exports.__wasm_call_ctors != null) {
+//         (instance.exports.__wasm_call_ctors as CallableFunction)();
+//       }
       return 1;
     };
     wasmOpts.env.dlsym = (handle: number, funcnamePtr: number): number => {
       const funcname = recvString(wasm, funcnamePtr);
-      log?.(`dlopen - dlsym -- handle=${handle}, funcname=${funcname}`);
-      const f = dylink[funcname];
-      log?.(`dlopen - dlsym -- f = `, f);
-      table.set(dylink_i, f);
-      dylink_i += 1;
-      return 0;
+      const key = `${handle}-${funcname}`;
+      let f;
+      let functionId = functionsInTable[key];
+      if (functionId == null) {
+        f = dylink[funcname]; // todo: more than one library
+        if (f == null) {
+          // FAIL/TODO -- no such function!
+          log?.(`dlopen - dlsym -- ERROR: no function ${funcname}!`);
+          return 0;
+        }
+        log?.(`dlopen - dlsym -- calling ${funcname}`);
+        functionId = dylink_i;
+        table.set(dylink_i, f);
+        functionsInTable[key] = dylink_i;
+        const get = table.get(functionId);
+        log?.(`get=${get}`);
+        const result = get();
+        log?.(`result=${result}`);
+        dylink_i += 1;
+      }
+      log?.(
+        `dlopen - dlsym -- handle=${handle}, funcname=${funcname}, f=${functionId}`
+      );
+      return functionId;
+    };
+    wasmOpts.env._PyImport_InitFunc_TrampolineCall = (
+      functionId: number
+    ): number => {
+      log?.(
+        `dlopen - _PyImport_InitFunc_TrampolineCall - functionId=${functionId}`
+      );
+      const r = table.get(functionId)();
+      log?.(
+        `dlopen - _PyImport_InitFunc_TrampolineCall - called and got output ${r}`
+      );
+      return r;
     };
   }
 

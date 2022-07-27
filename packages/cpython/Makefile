@@ -119,17 +119,23 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	cd ${BUILD} && mkdir wasm && tar xf Python-${PYTHON_VERSION}.tar.xz -C wasm --strip-components=1 \
 	# Also copy the config.site, which answers some questions needed for
 	# cross compiling, without which ./configure won't work.
-	cp src/rebuild ${BUILD}/wasm
+	ln -s ${CWD}/src/rebuild ${BUILD}/wasm/rebuild
 	cp src/config.site ${BUILD}/wasm
 	cp src/Setup.local ${BUILD}/wasm/Modules
 	cp ${WASMPOSIX}/*.h ${BUILD}/wasm
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
 	# explicitly add anything that is really used from there to wasm-posix.h
 	mkdir ${BUILD}/wasm/sys && echo '#include "wasm-posix.h"' >  ${BUILD}/wasm/sys/wait.h
-	# Ooly need for native build using Zig:
+	# Only need this for native build using Zig - disabled because scary!
 	# cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/00-threading-native.patch | patch -p1
 	cd ${BUILD}/wasm/Include/internal && cat ${CWD}/src/python-patches/01-emscripten-signal.patch | patch -p0
 	cd ${BUILD}/wasm/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
+	cd ${BUILD}/wasm/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
+	# Make it so just the trampoline functions are available to us using sed instead of a patch to 5
+	# files, which is a lot to deal with.  On the other hand, this could silently fail if the sources
+	# change too much, whereas patches are loud.
+	# cd ${BUILD}/wasm/ && sed -i '' -e 's/#if defined(__EMSCRIPTEN__) \&\& defined(PY_CALL_TRAMPOLINE)/#if defined(__WASM__)/' Include/internal/pycore_object.h Objects/descrobject.c Objects/methodobject.c Python/importdl.h Python/import.c
+
 	touch ${BUILD}/wasm/.patched
 
 ${DIST_WASM}/.built: ${BUILD}/wasm/.patched ${BUILD}/native/.patched
