@@ -1,0 +1,3 @@
+set -ev
+zig build-lib -target wasm32-freestanding -dynamic a.zig  --import-memory
+zig build-lib -target wasm32-freestanding -dynamic b.zig  --import-memory
