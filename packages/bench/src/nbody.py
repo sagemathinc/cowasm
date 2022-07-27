@@ -1,4 +1,4 @@
-# I had to modify this to work with python-lang because
+# I had to modify this to work with pylang because
 #    [a,[b,c]] = [1,[2,3]]
 # is not implemented (correctly), and also tuples aren't
 # implemented at all (so use lists).

@@ -1,6 +1,6 @@
 # Benchmark computing uuid's
 
-# Strangely, pypy is really bad on this benchmark compared to python-native and python-lang.
+# Strangely, pypy is really bad on this benchmark compared to python-native and pylang.
 
 from bench import register, all
 

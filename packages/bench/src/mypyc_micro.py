@@ -3,7 +3,7 @@
 # See https://github.com/mypyc/mypyc-benchmarks/tree/master/microbenchmarks
 # We are only doing benchmarks here that are easy to express  the
 # python language, e.g., some that involve a bunch of string methods aren't really
-# supported.  E.g., python-lang doesn't have string % tuple yet.
+# supported.  E.g., pylang doesn't have string % tuple yet.
 
 from bench import register, all
 from typing import Iterator, List
@@ -13,7 +13,7 @@ def is_close(x: float, y: float) -> bool:
     return 0.999999 <= x / y <= 1.000001
 
 
-# python-lang gets killed in this generators one:
+# pylang gets killed in this generators one:
 
 
 def generators() -> None:
@@ -254,7 +254,7 @@ def list_of_dicts():
         for i in range(j % 10):
             d[f'Foobar-{j}'] = j
             d[f'{j} str'] = i
-        # dict = so we get keys, values below in python-lang
+        # dict = so we get keys, values below in pylang
         a.append(dict(d))
     return a
 

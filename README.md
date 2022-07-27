@@ -191,7 +191,7 @@ Here are some grand total times.  The timings are pretty stable, and the paramet
 | Python  | x86_64 Linux |  MacOS M1 max | aarch64 Linux (docker on M1 max) |
 | :------------ |:---------------:|:---------------:|:---------------:|
 | PyPy 3.9.x (Python reimplemented with a JIT)   |    2997 ms     |  2127 ms |  1514 ms (ver 3.6.9) |
-| python-lang (Javascript Python -- see https://github.com/sagemathinc/python-lang) |    6909 ms   |  2876 ms |  4424 ms  | 
+| pylang (Javascript Python -- see https://github.com/sagemathinc/pylang) |    6909 ms   |  2876 ms |  4424 ms  | 
 | Native CPython 3.11     | 9284 ms | 4491 ms | 4607 ms |
 | WebAssembly CPython (python-wasm) | 23109 ms |   12171 ms|  12909 ms |
 

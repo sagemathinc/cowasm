@@ -10,9 +10,9 @@ python-native:
 	echo "Starting benchmarks with python-native"
 	../../bin/python-native `pwd`/src/all.py
 
-python-lang:
-	echo "Starting benchmarks with python-lang"
-	./node_modules/.bin/python-lang `pwd`/src/all.py
+pylang:
+	echo "Starting benchmarks with pylang"
+	npx --yes pylang `pwd`/src/all.py
 
 pypy:
 	echo "Starting benchmarks with pypy"
