@@ -1,4 +1,4 @@
-OPT           = -O ReleaseFast
+OPT           =
 CWD           = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 PACKAGES      = ${CWD}/..
@@ -29,7 +29,7 @@ test-zig:
 ####################
 
 test-python:
-	cd src && ${TEST} python/python.zig -I. -L${PYTHON_NATIVE}/lib -I${PYTHON_NATIVE}/include/python3.11  -lpython3.11 -lc   ${OPT}
+	cd src && ${TEST} python/python.zig -I. ${OPT}
 
 ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig
 	cd src && zig build-lib -dynamic -target wasm32-wasi -lc -I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} ${PYTHON_WASM}/lib/libpython3.11.a \
