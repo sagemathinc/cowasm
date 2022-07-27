@@ -1,4 +1,8 @@
-import { exec, repr } from "./node";
+import { exec, init, repr } from "./node";
+
+beforeEach(async () => {
+  await init({ noWorker: true });
+});
 
 test("add 2+3", async () => {
   await exec("a = 2+3");

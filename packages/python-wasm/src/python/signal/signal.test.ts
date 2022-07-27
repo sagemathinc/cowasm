@@ -1,5 +1,9 @@
-import { repr, exec, wasm } from "../node";
+import { exec, init, repr, wasm } from "../node";
 import { delay } from "awaiting";
+
+beforeEach(async () => {
+  await init({ noWorker: false });
+});
 
 // This really tests integration with python's sig handling infrastructure.
 test("sigint interrupts 'while True: pass' within 250ms", async () => {

@@ -16,6 +16,7 @@ Then from the nodejs REPL:
 
 ```js
 > python = require('python-wasm')
+> await python.init();
 > await python.exec('import sys')
 undefined
 > await python.repr('sys.version')
@@ -128,6 +129,7 @@ wstein@max % node
 Welcome to Node.js v16.13.0.
 Type ".help" for more information.
 > python = require('.')
+await python.init();
 > await python.repr('2+2')
 4
 > await python.exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')

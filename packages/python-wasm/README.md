@@ -19,6 +19,7 @@ wstein@max % node
 Welcome to Node.js v16.13.0.
 Type ".help" for more information.
 > python = require('python-wasm')
+> await python.init();
 > await python.exec('a = sum(range(101)); print(a)')   # outputs to stdout
 5050
 > s = await python.repr('a'); s # javascript string
