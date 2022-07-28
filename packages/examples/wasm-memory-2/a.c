@@ -2,12 +2,15 @@
 
 extern int deref_add1(const int* a);
 
-int z = 0;
+int x = 100;
+int y = 400;
+int z = 100;
+int w = 0;
 
 EXPORTED_SYMBOL
 int next(int a) {
-  z = a;
-  return deref_add1(&z);
+  w = a;
+  return deref_add1(&w);
 }
 
 EXPORTED_SYMBOL
@@ -35,4 +38,9 @@ EXPORTED_SYMBOL
 int add10(int a) {
   FUN_PTR f = pointer_to_add10();
   return (*f)(a);
+}
+
+EXPORTED_SYMBOL
+int a_xyz() {
+return x + y + z;
 }
