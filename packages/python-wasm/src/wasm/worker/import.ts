@@ -153,6 +153,7 @@ async function doWasmImport(
 
     const dynamicLibrariesByHandle: { [handle: number]: DynamicLibrary } = {};
     const dynamicLibrariesByPathname: { [path: string]: DynamicLibrary } = {};
+    global.dynamicLibrariesByPathname = dynamicLibrariesByPathname;
     let _nextHandle = 0;
     const getNextHandle = () => {
       _nextHandle += 1;
@@ -166,9 +167,13 @@ async function doWasmImport(
       if (table.length <= _nextTablePtr + 50) {
         table.grow(50);
       }
+      console.log("_nextTablePtr = ", _nextTablePtr);
       return _nextTablePtr;
     };
     const funcToPtr: { [key: string]: number } = {};
+
+    // just useful for debugging -- wastes time.
+    const ptrToFuncName: { [ptr: number]: string } = {};
 
     wasmOpts.env.dlopen = (pathnamePtr: number, _flags: number): number => {
       const pathname = recvString(pathnamePtr);
@@ -188,6 +193,22 @@ async function doWasmImport(
         wasi_snapshot_preview1: wasmOpts.wasi_snapshot_preview1,
       };
       opts.env.memory = memory;
+//       const table2 = new WebAssembly.Table({
+//         initial: 10000,
+//         element: "anyfunc",
+//       });
+      opts.env.__indirect_function_table = table;
+
+      // tableBase is in wat file and is discussed here: https://developer.mozilla.org/en-US/docs/WebAssembly/Understanding_the_text_format
+
+      // https://blog.scottlogic.com/2017/10/17/wasm-mandelbrot.html
+      // doesn't do anything, but maybe emscripten uses it?
+      // This should work: https://github.com/WebAssembly/tool-conventions/blob/main/DynamicLinking.md
+      // Maybe have to compile -fPIC everything? [ ] not tried yet.
+      // Might need an even newer version of llvm?
+      // this looks VERY relevant: https://github.com/WebAssembly/tool-conventions/blob/main/DynamicLinking.md#implementation-status
+      opts.env.__table_base = 5000;
+
       const instance = new WebAssembly.Instance(mod, opts);
       const handle = getNextHandle();
       const lib = { handle, exports: instance.exports, pathname };
@@ -199,11 +220,13 @@ async function doWasmImport(
 
     wasmOpts.env.dlsym = (handle: number, funcnamePtr: number): number => {
       const funcname = recvString(funcnamePtr);
+      log?.(`dlsym -- handle=${handle}, funcname=${funcname}`);
       const key = `${handle}-${funcname}`;
       let ptr = funcToPtr[key];
       if (ptr != null) return ptr;
       ptr = getNextTablePtr();
       funcToPtr[key] = ptr;
+      ptrToFuncName[ptr] = funcname;
       const lib = dynamicLibrariesByHandle[handle];
       if (lib == null) {
         throw Error(`dlsym -- invalid handle=${handle}`);
@@ -213,11 +236,16 @@ async function doWasmImport(
         throw Error(`dlsym -- no function ${funcname}`);
       }
       table.set(ptr, f);
+      log?.(`dlsym - returned ptr=${ptr}`);
       return ptr;
     };
 
     const getFunction = (ptr: number) => {
       const f = table.get(ptr);
+      if (ptrToFuncName[ptr]) {
+        // something dynamically loaded!
+        log?.(`getFunction(ptr=${ptr})`, f, ptrToFuncName[ptr]);
+      }
       if (f == null) {
         throw Error(`no function with ptr=${ptr}`);
       }
