@@ -149,6 +149,7 @@ async function doWasmImport(
       handle: number;
       pathname: string;
       exports: { [functionName: string]: any };
+      offset: number; // amount you have to add to function pointer
     }
 
     const dynamicLibrariesByHandle: { [handle: number]: DynamicLibrary } = {};
@@ -170,10 +171,29 @@ async function doWasmImport(
       console.log("_nextTablePtr = ", _nextTablePtr);
       return _nextTablePtr;
     };
+
+    const copyFunctionsIntoTable = (table2: WebAssembly.Table) => {
+      let offset = table.length - 1;
+      while(table.get(offset) == null) {
+        offset -= 1;
+      }
+      console.log("using offset = ", offset);
+      let i = 1;
+      while (table2.get(i) != null) {
+        if (table.length <= offset + i + 50) {
+          table.grow(50);
+        }
+        table.set(offset + i, table2.get(i));
+        i += 1;
+      }
+      return offset;
+    };
+
     const funcToPtr: { [key: string]: number } = {};
 
     // just useful for debugging -- wastes time.
     const ptrToFuncName: { [ptr: number]: string } = {};
+    const ptrToDynamicLibrary: { [ptr: number]: DynamicLibrary } = {};
 
     wasmOpts.env.dlopen = (pathnamePtr: number, _flags: number): number => {
       const pathname = recvString(pathnamePtr);
@@ -193,11 +213,11 @@ async function doWasmImport(
         wasi_snapshot_preview1: wasmOpts.wasi_snapshot_preview1,
       };
       opts.env.memory = memory;
-//       const table2 = new WebAssembly.Table({
-//         initial: 10000,
-//         element: "anyfunc",
-//       });
-      opts.env.__indirect_function_table = table;
+      const table2 = new WebAssembly.Table({
+        initial: 10000,
+        element: "anyfunc",
+      });
+      opts.env.__indirect_function_table = table2;
 
       // tableBase is in wat file and is discussed here: https://developer.mozilla.org/en-US/docs/WebAssembly/Understanding_the_text_format
 
@@ -207,13 +227,20 @@ async function doWasmImport(
       // Maybe have to compile -fPIC everything? [ ] not tried yet.
       // Might need an even newer version of llvm?
       // this looks VERY relevant: https://github.com/WebAssembly/tool-conventions/blob/main/DynamicLinking.md#implementation-status
-      opts.env.__table_base = 5000;
+      // After a lot of research, __table_base is something supported
+      // internally in clang only for the emscripten target and NOT
+      // anything else. Bummer.
+      // opts.env.__table_base = 5000;
 
       const instance = new WebAssembly.Instance(mod, opts);
       const handle = getNextHandle();
-      const lib = { handle, exports: instance.exports, pathname };
+      const offset = copyFunctionsIntoTable(table2);
+      const lib = { handle, exports: instance.exports, pathname, offset };
       dynamicLibrariesByPathname[pathname] = lib;
       dynamicLibrariesByHandle[handle] = lib;
+      // Copy over all function pointers from the new to our global table so it
+      // is possible for Python to call these functions and also to refer to them
+      // when doing trampoline calls.
       log?.(`dlopen -- pathname = ${pathname}, got handle = ${handle}`);
       return handle;
     };
@@ -231,6 +258,7 @@ async function doWasmImport(
       if (lib == null) {
         throw Error(`dlsym -- invalid handle=${handle}`);
       }
+      ptrToDynamicLibrary[ptr] = lib;
       const f = lib.exports[funcname];
       if (f == null) {
         throw Error(`dlsym -- no function ${funcname}`);
@@ -256,7 +284,34 @@ async function doWasmImport(
       // the address in memory of the function **is** its location in the function table, as explained here:
       //    https://stackoverflow.com/questions/45387728/calling-a-c-style-function-pointer-in-a-webassembly-from-javascript
       log?.(`dlopen - _PyImport_InitFunc_TrampolineCall - ptr=${ptr}`);
-      return getFunction(ptr)();
+
+      const mod = getFunction(ptr)();
+      log?.(
+        `dlopen - _PyImport_InitFunc_TrampolineCall - ptr=${ptr}; returned mod=${mod}`
+      );
+      /*
+      We now have to adjust all function pointers in the data about the module that we
+      just created to account for placing references to those function in the table
+      for the main module.   This is the trick I figured out for doing dynamic loading
+      **for Python only** without having to put complicated new code in clang for zig!
+      Instead of changing the module itself to take a __table_base, and adjust all function
+      pointers internally to use that, which is the right general solution, but seems
+      only implemented for the emscripten clang target (and not zig!), we instead just
+      do this manually in the one place it matters for Python.
+      */
+
+      // Offset all the function pointers in the mod object.
+      const lib = ptrToDynamicLibrary[ptr];
+      if (lib != null) {
+        console.log("adjust_function_pointer_offsets", mod, lib.offset);
+        // The init function in a dynamic library, so we adjust the pointers:
+        result.instance.exports.adjust_function_pointer_offsets(
+          mod,
+          lib.offset
+        );
+      }
+
+      return mod;
     };
 
     wasmOpts.env._PyCFunctionWithKeywords_TrampolineCall = (
@@ -265,6 +320,7 @@ async function doWasmImport(
       args: number,
       kwds: number
     ) => {
+      //log?.(`dlopen - _PyCFunctionWithKeywords_TrampolineCall - ptr=${ptr}`);
       return getFunction(ptr)(self, args, kwds);
     };
   }

@@ -1,23 +1,10 @@
-#define EXPORTED_SYMBOL __attribute__ ((visibility ("default")))
+#define EXPORTED_SYMBOL __attribute__((visibility("default")))
 
-extern int add1(int a);
 
-EXPORTED_SYMBOL
-int ptr_add1(const int* a) {
-  int i = 0;
-  while (i < 100000000) {
-    add1(i);
-    i += 1;
-  }
+int add10(const int a) { return a + 10; }
 
-  return add1(*a);
-}
+typedef int (*FUN_PTR)(int);
 
 EXPORTED_SYMBOL
-int add2(int a) { return a + 2; }
+FUN_PTR pointer_to_add10() { return &add10; }
 
-EXPORTED_SYMBOL
-int add2_via_function_pointer(int a) {
-  int (*fun_ptr)(int) = &add2;
-  return (*fun_ptr)(a);
-}

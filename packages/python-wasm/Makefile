@@ -48,7 +48,14 @@ test-python:
 #    explicitly specified.
 #  - python/interface.zig - the zig entry point -- anything this imports
 #    also gets compiled, without being explicitly listed here.
-${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig
+#
+# Also, the cp below is fatal for now; change back if we have a bootstrap
+# step someday by putting
+#    "|| true # important that this work even if there is no zip file
+#     when bootstraping cpython build."
+
+
+${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/dyload/dyload.c
 	cd src && zig build-lib \
 		${OPT} \
 		-dynamic \
@@ -64,10 +71,9 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
 	   `pwd`/python/signal/signal.c \
+	   `pwd`/python/dyload/dyload.c \
 	   python/interface.zig
 	mkdir -p ${DIST}/python
-	#  This cp below is fatal for now; change back if we have a bootstrap step someday by putting
-	#    "|| true # important that this work even if there is no zip file when bootstraping cpython build."
 	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
 	mv src/interface.wasm ${DIST}/python/python.wasm
 

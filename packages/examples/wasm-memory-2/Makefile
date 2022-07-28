@@ -1,4 +1,5 @@
-CC = zig cc -target wasm32-freestanding -shared -rdynamic -Xlinker --import-memory -Xlinker --import-table
+CC = zig cc -fPIC -target wasm32-freestanding -shared -rdynamic -Xlinker --import-memory -Xlinker --import-table
+EMCC = emcc -s SIDE_MODULE
 
 .PHONY: build
 build:
@@ -7,9 +8,9 @@ build:
 	node ./a.js
 
 .PHONY: build-emcc
-build:
-	emcc a.c -o a.wasm
-	emcc b.c -o b.wasm
+build-emcc:
+	${EMCC} a.c -o a.wasm
+	${EMCC} b.c -o b.wasm
 	node ./a.js
 
 

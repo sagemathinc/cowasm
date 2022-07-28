@@ -27,3 +27,12 @@ void callmany() {
     i += 1;
   }
 }
+
+typedef int (*FUN_PTR)(int);
+extern FUN_PTR pointer_to_add10();
+
+EXPORTED_SYMBOL
+int add10(int a) {
+  FUN_PTR f = pointer_to_add10();
+  return (*f)(a);
+}
