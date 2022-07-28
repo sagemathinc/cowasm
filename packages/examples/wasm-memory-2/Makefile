@@ -6,6 +6,12 @@ build:
 	${CC} b.c -o b.wasm
 	node ./a.js
 
+.PHONY: build-emcc
+build:
+	emcc a.c -o a.wasm
+	emcc b.c -o b.wasm
+	node ./a.js
+
 
 .PHONY: build
 clean:
