@@ -1,4 +1,5 @@
 import WASI, { createFileSystem } from "@wapython/wasi";
+
 import type { WASIConfig, FileSystemSpec, WASIBindings } from "@wapython/wasi";
 import reuseInFlight from "../reuseInFlight";
 import WasmInstance from "./instance";
@@ -46,7 +47,7 @@ async function doWasmImport(
   }
   const t = new Date().valueOf();
 
-  const memory = new WebAssembly.Memory({ initial: 100 });
+  const memory = new WebAssembly.Memory({ initial: 1000 });
   const table = new WebAssembly.Table({ initial: 10000, element: "anyfunc" });
 
   function recvString(ptr: number, len?: number) {
@@ -168,16 +169,14 @@ async function doWasmImport(
       if (table.length <= _nextTablePtr + 50) {
         table.grow(50);
       }
-      console.log("_nextTablePtr = ", _nextTablePtr);
       return _nextTablePtr;
     };
 
     const copyFunctionsIntoTable = (table2: WebAssembly.Table) => {
       let offset = table.length - 1;
-      while(table.get(offset) == null) {
+      while (table.get(offset) == null) {
         offset -= 1;
       }
-      console.log("using offset = ", offset);
       let i = 1;
       while (table2.get(i) != null) {
         if (table.length <= offset + i + 50) {
@@ -230,9 +229,12 @@ async function doWasmImport(
       // After a lot of research, __table_base is something supported
       // internally in clang only for the emscripten target and NOT
       // anything else. Bummer.
-      // opts.env.__table_base = 5000;
+      // // // // opts.env.__table_base = 5000;
 
       const instance = new WebAssembly.Instance(mod, opts);
+      //(instance.exports.__wasm_call_ctors as CallableFunction)();
+      (wasm as any).instance2 = instance;
+
       const handle = getNextHandle();
       const offset = copyFunctionsIntoTable(table2);
       const lib = { handle, exports: instance.exports, pathname, offset };
@@ -281,8 +283,6 @@ async function doWasmImport(
     };
 
     wasmOpts.env._PyImport_InitFunc_TrampolineCall = (ptr: number): number => {
-      // the address in memory of the function **is** its location in the function table, as explained here:
-      //    https://stackoverflow.com/questions/45387728/calling-a-c-style-function-pointer-in-a-webassembly-from-javascript
       log?.(`dlopen - _PyImport_InitFunc_TrampolineCall - ptr=${ptr}`);
 
       const mod = getFunction(ptr)();
