@@ -2,6 +2,8 @@
 # https://www.sqlite.org/src/tarball/sqlite.tar.gz?r=release
 
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+export PATH := ${CWD}/../../bin:${PATH}
+
 BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
@@ -22,14 +24,14 @@ ${BUILD}/wasm: ${BUILD}/source.tar.gz
 	cp ${WASM_POSIX}/wasm-posix.h ${BUILD}/wasm/
 
 # Notes on flags below.
-#   - Without -Oz (optimize for size rather than speed), we get 'Function addresses with offsets not supported' from LLVM during final link.
-#     I put the -Oz flag into CFLAGS upon studying what the emscripten port uses.
+#   - ?? MAYBE ?? Without -Oz (optimize for size rather than speed), we get 'Function addresses with offsets not supported' from LLVM during final link.
+#     I put the -Oz flag into CFLAGS upon studying what the emscripten port uses.  This might not be true now
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && \
-		CC="zig cc" \
+		CC="zig-emscripten cc" \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
-		CFLAGS="-Oz -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include " \
+		CFLAGS="-Oz -target wasm32-emscripten  -fvisibility=default -fPIC -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include " \
 		LDFLAGS="-lc -L${ZLIB}/wasm/lib  -L${LIBEDIT}/wasm/lib " \
 		./configure --host=none  --prefix="${DIST_WASM}" \
 			--disable-load-extension \

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# Use this if you do
+#  "zig ... -target wasm32-emscripten ..."
+# because zig has a bug where it omits numerous important options in that case.
+# TODO: report upstream and fix.
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+ZIG="$SCRIPT_DIR"/../packages/zig/dist/
+INCLUDE="$ZIG/lib/zig/libc/include"
+FLAGS="-target wasm32-emscripten  \
+    -isystem $INCLUDE/wasm-wasi-musl \
+    -isystem $INCLUDE/generic-musl \
+    -isystem $INCLUDE/wasm32-wasi-any  \
+    -isystem $INCLUDE/any-wasi-any \
+    -D__wasi__ -D__EMSCRIPTEN_major__=0 -D__EMSCRIPTEN_minor__=0 -D__EMSCRIPTEN_tiny__=0 \
+    -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_GETPID"
+
+zig "$@" $FLAGS
