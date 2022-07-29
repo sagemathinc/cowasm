@@ -1,5 +1,5 @@
 LINK = -Xlinker --import-memory -Xlinker --import-table
-ZIG = zig cc -target wasm32-freestanding
+ZIG = zig cc -target wasm32-emscripten -fvisibility=default -fPIC
 
 CLANGBIN = /Users/wstein/build/clang/clang+llvm-14.0.6-x86_64-apple-darwin/bin
 #CLANGBIN = /opt/homebrew/Cellar/llvm/14.0.6_1/bin
@@ -11,6 +11,24 @@ zig:
 	${ZIG}  b.c -c -o b.wasm.o
 	${ZIG} -shared -rdynamic a.wasm.o -o a.wasm ${LINK}
 	${ZIG} -shared -rdynamic b.wasm.o -o b.wasm -Xlinker --global-base=500000 ${LINK}
+	node ./a.js
+
+# This works!
+zig-wasm-ld:
+	zig cc -fvisibility=default -fPIC -target wasm32-emscripten -c a.c -o a.wasm-zig.o
+	wasm-ld  --experimental-pic -shared a.wasm-zig.o -o a.wasm
+	zig cc -fvisibility=default -fPIC -target wasm32-emscripten -c b.c -o b.wasm-zig.o
+	wasm-ld  --experimental-pic -shared b.wasm-zig.o -o b.wasm
+	wasm2wat a.wasm |grep GOT
+	node ./a.js
+
+# This doesn't work sufficiently:
+zig-emscripten:
+	zig cc -fvisibility=default -fPIC -target wasm32-emscripten -c a.c -o a.wasm-zig.o
+	zig cc -rdynamic -target wasm32-emscripten -shared a.wasm-zig.o -o a.wasm -Xlinker -shared -Xlinker --import-memory -Xlinker --import-table
+	zig cc -fvisibility=default -fPIC -target wasm32-emscripten -c b.c -o b.wasm-zig.o
+	zig cc -rdynamic -target wasm32-emscripten -shared b.wasm-zig.o -o b.wasm -Xlinker --import-memory -Xlinker --import-table
+	wasm2wat a.wasm |grep GOT
 	node ./a.js
 
 native:
@@ -33,10 +51,10 @@ emcc:
 # https://github.com/llvm/llvm-project/blob/main/lld/docs/WebAssembly.rst
 # --experimental-pic = supress the warning that -shared causes.
 clang:
-	${CLANGBIN}/clang ${OPT}   -fvisibility=default -fPIC -target wasm32-undefined-emscripten -c a.c -o a.wasm-em.o
-	${CLANGBIN}/wasm-ld ${OPT} --experimental-pic -shared a.wasm-em.o -o a.wasm
-	${CLANGBIN}/clang ${OPT}   -fvisibility=default -fPIC -target wasm32-undefined-emscripten -c b.c -o b.wasm-em.o
-	${CLANGBIN}/wasm-ld ${OPT} --experimental-pic -shared b.wasm-em.o -o b.wasm
+	${CLANGBIN}/clang    -fvisibility=default -fPIC -target wasm32-undefined-emscripten -c a.c -o a.wasm-em.o
+	${CLANGBIN}/wasm-ld  --experimental-pic -shared a.wasm-em.o -o a.wasm
+	${CLANGBIN}/clang    -fvisibility=default -fPIC -target wasm32-undefined-emscripten -c b.c -o b.wasm-em.o
+	${CLANGBIN}/wasm-ld  --experimental-pic -shared b.wasm-em.o -o b.wasm
 	node ./a.js
 
 
