@@ -7,7 +7,30 @@ function showTable(tbl) {
   console.log(v);
 }
 
-const memory = new WebAssembly.Memory({ initial: 6, maximum: 100 });
+const GOT = {
+  xyz: new WebAssembly.Global({
+    value: "i32",
+    mutable: true,
+  }),
+  _Py_NoneStruct: new WebAssembly.Global({
+    value: "i32",
+    mutable: true,
+  }, 389),
+};
+
+function GOTHandler(obj, symName) {
+  const rtn = GOT[symName];
+  if (!rtn) {
+    rtn = GOT[symName] = new WebAssembly.Global({
+      value: "i32",
+      mutable: true,
+    });
+  }
+  console.log("GOTHandler", { obj, symName, rtn });
+  return rtn;
+}
+
+const memory = new WebAssembly.Memory({ initial: 50, maximum: 1000 });
 const stack_pointer = new WebAssembly.Global(
   { value: "i32", mutable: true },
   65536
@@ -23,6 +46,7 @@ const opts = {
       return instance2.exports.pointer_to_add10();
     },
   },
+  "GOT.mem": new Proxy(GOT, GOTHandler),
 };
 
 const typedArray = new Uint8Array(require("fs").readFileSync("a.wasm"));
@@ -36,16 +60,27 @@ const typedArray2 = new Uint8Array(require("fs").readFileSync("b.wasm"));
 const mod2 = new WebAssembly.Module(typedArray2);
 const stack_pointer2 = new WebAssembly.Global(
   { value: "i32", mutable: true },
-  5 * 65536
+  500000
 );
+
+GOT.add10 = new WebAssembly.Global(
+  {
+    value: "i32",
+    mutable: true,
+  },
+  instance.exports.add10
+);
+
 const opts2 = {
   env: {
     memory,
     __indirect_function_table: table,
-    __memory_base: 5 * 65536,
+    __memory_base: 500000,
     __table_base: 3,
     __stack_pointer: stack_pointer2,
   },
+  "GOT.mem": new Proxy(GOT, GOTHandler),
+  "GOT.func": new Proxy(GOT, GOTHandler),
 };
 
 const instance2 = new WebAssembly.Instance(mod2, opts2);
