@@ -1,35 +1,41 @@
-CC = zig cc -fPIC -target wasm32-freestanding \
-	 -shared -rdynamic \
-	 -Xlinker --import-memory \
-	 -Xlinker --import-table
+LINK = -Xlinker --import-memory -Xlinker --import-table
+ZIG = zig cc -target wasm32-freestanding
+
+CLANGBIN = /Users/wstein/build/clang/clang+llvm-14.0.6-x86_64-apple-darwin/bin
 
 EMCC = emcc -s SIDE_MODULE
 
-.PHONY: build
-build:
-	${CC} a.c -o a.wasm
-	${CC} b.c -o b.wasm
+zig:
+	${ZIG}  a.c -c -o a.wasm.o
+	${ZIG}  b.c -c -o b.wasm.o
+	${ZIG} -shared -rdynamic a.wasm.o -o a.wasm -Xlinker --global-base=200000 ${LINK}
+	${ZIG} -shared -rdynamic b.wasm.o -o b.wasm ${LINK}
 	node ./a.js
 
-.PHONY: build-base
-build-base:
-	${CC} a.c -o a.wasm
-	${CC} b.c -o b.wasm  -Xlinker  --global-base=100000
-	node ./a.js
-
+native:
+	zig cc a.c -c -o a.native.o
+	zig cc b.c -c -o b.native.o
+	zig cc -shared -rdynamic a.native.o -o a.native.dylib
+	zig cc main.c -o main.native
+	./main.native
 
 wat:
 	wasm2wat a.wasm > a.wat
 	wasm2wat b.wasm > b.wat
 
 
-.PHONY: build-emcc
-build-emcc:
+emcc:
 	${EMCC} a.c -o a.wasm
 	${EMCC} b.c -o b.wasm
 	node ./a.js
 
+clang:
+	${CLANGBIN}/clang -fPIC -target wasm32-undefined-emscripten -c a.c -o a.wasm-em.o
+	${CLANGBIN}/wasm-ld -shared a.wasm-em.o -o a.wasm --import-memory --import-table
+	${CLANGBIN}/clang -fPIC -target wasm32-undefined-emscripten -c b.c -o b.wasm-em.o
+	${CLANGBIN}/wasm-ld -shared b.wasm-em.o -o b.wasm --import-memory --import-table
+	node ./a.js
 
 .PHONY: build
 clean:
-	rm -rf *.wasm *.wat zig-cache a.out
+	rm -rf *.o *.dylib *.wasm *.wat zig-cache a.out

@@ -1,9 +1,11 @@
 #define EXPORTED_SYMBOL __attribute__((visibility("default")))
 
-struct PyObject {
+struct PyObjectX {
   int thingy;
 };
 
-struct PyObject _Py_NoneStruct;
+typedef struct PyObjectX PyObject;
 
-#define PyNone &_Py_NoneStruct;
+PyObject _Py_NoneStruct;
+
+#define PyNone (&_Py_NoneStruct)

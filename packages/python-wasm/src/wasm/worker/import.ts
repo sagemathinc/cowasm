@@ -229,7 +229,7 @@ async function doWasmImport(
       // After a lot of research, __table_base is something supported
       // internally in clang only for the emscripten target and NOT
       // anything else. Bummer.
-      // // // // opts.env.__table_base = 5000;
+      // // // // // opts.env.__table_base = 5000;
 
       const instance = new WebAssembly.Instance(mod, opts);
       //(instance.exports.__wasm_call_ctors as CallableFunction)();
