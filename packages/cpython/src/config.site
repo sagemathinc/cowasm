@@ -74,3 +74,10 @@ ac_cv_func_clock_nanosleep=no
 ac_cv_lib_rt_clock_nanosleep=no
 ac_cv_func_nanosleep=no
 ac_cv_lib_rt_nanosleep=no
+
+
+# For some reason with wasm32-emscripten, etc., these get detected by autoconf as "yes":
+# Obviously, inline assembly language won't work!
+ac_cv_gcc_asm_for_x64=no
+ac_cv_gcc_asm_for_x87=no
+ac_cv_gcc_asm_for_mc68881=no

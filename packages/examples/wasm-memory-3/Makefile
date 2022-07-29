@@ -13,6 +13,12 @@ zig:
 	${ZIG} -shared -rdynamic b.wasm.o -o b.wasm -Xlinker --global-base=500000 ${LINK}
 	node ./a.js
 
+zig-emscripten-script:
+	zig-emscripten cc -target wasm32-wasi -fvisibility=default -fPIC a.c -c -o a.wasm.o
+	zig-emscripten cc -target wasm32-wasi -fvisibility=default -fPIC b.c -c -o b.wasm.o
+	zig-emscripten cc -shared -rdynamic a.wasm.o -o a.wasm ${LINK}
+	zig-emscripten cc -shared -rdynamic b.wasm.o -o b.wasm ${LINK}
+
 # This works!
 zig-wasm-ld:
 	zig cc -fvisibility=default -fPIC -target wasm32-emscripten -c a.c -o a.wasm-zig.o
@@ -21,6 +27,8 @@ zig-wasm-ld:
 	wasm-ld  --experimental-pic -shared b.wasm-zig.o -o b.wasm
 	wasm2wat a.wasm |grep GOT
 	node ./a.js
+
+
 
 # And this **really** works!
 zig2:

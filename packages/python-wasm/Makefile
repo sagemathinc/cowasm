@@ -8,7 +8,8 @@ ZIG_PKG       = --main-pkg-path ${CWD}/src
 
 PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
 PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm
-POSIX_WASM   = ${PACKAGES}/wasm-posix/dist/
+POSIX_WASM    = ${PACKAGES}/wasm-posix/dist/
+ZIG_INCLUDE   = ${PACKAGES}/zig/dist/lib/zig/libc/include
 
 WASM_CFLAGS   = -dynamic ${OPT}
 
@@ -60,7 +61,13 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 		${OPT} \
 		-dynamic \
 		-rdynamic \
-		-target wasm32-wasi -lc \
+		-target wasm32-emscripten \
+		-isystem ${ZIG_INCLUDE}/wasm-wasi-musl \
+    	-isystem ${ZIG_INCLUDE}/generic-musl \
+    	-isystem ${ZIG_INCLUDE}/wasm32-wasi-any  \
+    	-isystem ${ZIG_INCLUDE}/any-wasi-any \
+    	-D__wasi__ -D__EMSCRIPTEN_major__=0 -D__EMSCRIPTEN_minor__=0 -D__EMSCRIPTEN_tiny__=0 \
+		-lc \
 		--import-memory \
 		--import-table \
 		-I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} \

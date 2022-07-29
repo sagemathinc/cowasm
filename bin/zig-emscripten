@@ -8,8 +8,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ZIG="$SCRIPT_DIR"/../packages/zig/dist/
 INCLUDE="$ZIG/lib/zig/libc/include"
-FLAGS="-target wasm32-emscripten  \
-    -isystem $INCLUDE/wasm-wasi-musl \
+FLAGS="-isystem $INCLUDE/wasm-wasi-musl \
     -isystem $INCLUDE/generic-musl \
     -isystem $INCLUDE/wasm32-wasi-any  \
     -isystem $INCLUDE/any-wasi-any \
