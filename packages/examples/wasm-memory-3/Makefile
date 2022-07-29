@@ -22,6 +22,25 @@ zig-wasm-ld:
 	wasm2wat a.wasm |grep GOT
 	node ./a.js
 
+# And this **really** works!
+zig2:
+	zig cc -fvisibility=default -fPIC -target wasm32-emscripten -c a.c -o a.wasm-zig.o
+	zig wasm-ld  --experimental-pic -shared a.wasm-zig.o -o a.wasm
+	zig cc -fvisibility=default -fPIC -target wasm32-emscripten -c b.c -o b.wasm-zig.o
+	zig wasm-ld  --experimental-pic -shared b.wasm-zig.o -o b.wasm
+	wasm2wat a.wasm |grep GOT
+	node ./a.js
+
+# As does this...
+zig3:
+	zig clang    -fvisibility=default -fPIC -target wasm32-undefined-emscripten -c a.c -o a.wasm-em.o
+	zig wasm-ld  --experimental-pic -shared a.wasm-em.o -o a.wasm
+	zig clang    -fvisibility=default -fPIC -target wasm32-undefined-emscripten -c b.c -o b.wasm-em.o
+	zig wasm-ld  --experimental-pic -shared b.wasm-em.o -o b.wasm
+	node ./a.js
+
+
+
 # This doesn't work sufficiently:
 zig-emscripten:
 	zig cc -fvisibility=default -fPIC -target wasm32-emscripten -c a.c -o a.wasm-zig.o
