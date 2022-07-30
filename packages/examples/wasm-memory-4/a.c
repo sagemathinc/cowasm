@@ -23,5 +23,23 @@ extern FUN_PTR pointer_to_add10();
 EXPORTED_SYMBOL
 int add10(int a) {
   FUN_PTR f = pointer_to_add10();
-  return (*f)(a) + xyz;
+  return (*f)(a);
 }
+
+
+
+int add20(const int a) { return a + 20; }
+
+typedef int (*FUN_PTR)(int);
+
+EXPORTED_SYMBOL
+FUN_PTR pointer_to_add20() { return &add20; }
+
+extern FUN_PTR pointer_to_add389();
+
+EXPORTED_SYMBOL
+int add389(int a) {
+  FUN_PTR f = pointer_to_add389();
+  return (*f)(a);
+}
+
