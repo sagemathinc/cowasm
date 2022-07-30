@@ -6,6 +6,15 @@ import WasmInstance from "./instance";
 
 const textDecoder = new TextDecoder();
 
+export function strlen(charPtr: number, memory: WebAssembly.Memory): number {
+  const mem = new Uint8Array(memory.buffer);
+  let i = charPtr;
+  while (mem[i]) {
+    i += 1;
+  }
+  return i - charPtr;
+}
+
 export interface Options {
   noWasi?: boolean; // if false, include wasi
   wasmEnv?: object; // functions to include in the environment
@@ -53,7 +62,12 @@ async function doWasmImport(
   function recvString(ptr: number, len?: number) {
     if (len == null) {
       // no len given, so assume it is a null terminated string.
-      len = wasm.exports.stringLength(ptr);
+      if (wasm.exports.stringLength != null) {
+        // probably faster in WASM?  TODO: benchmark
+        len = wasm.exports.stringLength(ptr);
+      } else {
+        len = strlen(ptr, memory);
+      }
       if (len == null) throw Error("bug - stringLength must return len");
     }
     const slice = memory.buffer.slice(ptr, ptr + len);
@@ -205,7 +219,9 @@ async function doWasmImport(
         return library.handle;
       }
 
-      const typedArray = new Uint8Array(0 /* require("fs").readFileSync(pathname) */);
+      const typedArray = new Uint8Array(
+        0 /* require("fs").readFileSync(pathname) */
+      );
       const mod = new WebAssembly.Module(typedArray);
       const opts = {
         env: stubProxy({ ...wasmOpts.env, ...result.instance.exports }),

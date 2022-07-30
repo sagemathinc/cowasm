@@ -31,5 +31,8 @@
   "homepage": "https://github.com/sagemathinc/python-wasm#readme",
   "devDependencies": {
     "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "debug": "^4.3.4"
   }
 }
