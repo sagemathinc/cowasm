@@ -12,5 +12,6 @@ There doesn't seem to be an actual write up of how dynamic linking actually work
 - [https://github.com/emscripten\-core/emscripten/blob/main/src/library\_dylink.js](https://github.com/emscripten-core/emscripten/blob/main/src/library_dylink.js) 
 - https://lld.llvm.org/WebAssembly.html
 - [https://groups.google.com/g/llvm\-dev/c/O5cOc4VCSLI/m/o519lIR2BAAJ](https://groups.google.com/g/llvm-dev/c/O5cOc4VCSLI/m/o519lIR2BAAJ)
-- I read the section in chapter 7 of "WebAssembly: The Definitive Guide" on "Dynamic Linking in WebAssembly"  and it is only a brief and misleading regarding this particular topic.
+- There is a section in Chapter 7 of ["WebAssembly: The Definitive Guide" ](https://www.oreilly.com/library/view/webassembly-the-definitive/9781492089834/)on "Dynamic Linking in WebAssembly". Unfortunately, it is very brief regarding this particular topic, and doesn't emphasize the critical importance of `-fPIC` \(position independent code\), which is really what makes dynamic linking possible.
+- [An interesting discussion about dynamic modules and rust](https://github.com/rust-lang/rust/issues/60231)
 
