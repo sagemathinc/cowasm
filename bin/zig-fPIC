@@ -8,7 +8,18 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ZIG="$SCRIPT_DIR"/../packages/zig/dist/
 INCLUDE="$ZIG/lib/zig/libc/include"
-FLAGS="-isystem $INCLUDE/wasm-wasi-musl \
+
+# On MacOS there zig/dist/lib/zig/libc (etc), for some reason, but on Linux it is just zig/dist/lib/libc !
+if [ ! -d "$INCLUDE" ]
+then
+INCLUDE="$ZIG/lib/libc/include"
+fi
+
+
+FLAGS="-shared \
+    -target wasm32-emscripten \
+    -fvisibility=default -fPIC \
+    -isystem $INCLUDE/wasm-wasi-musl \
     -isystem $INCLUDE/generic-musl \
     -isystem $INCLUDE/wasm32-wasi-any  \
     -isystem $INCLUDE/any-wasi-any \

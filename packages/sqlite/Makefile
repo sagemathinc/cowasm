@@ -28,17 +28,18 @@ ${BUILD}/wasm: ${BUILD}/source.tar.gz
 #     I put the -Oz flag into CFLAGS upon studying what the emscripten port uses.  This might not be true now
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && \
-		CC="zig-emscripten cc" \
+		CC="zig-fPIC cc" \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
-		CFLAGS="-Oz -target wasm32-emscripten  -fvisibility=default -fPIC -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include " \
+		CFLAGS="-Oz -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include " \
 		LDFLAGS="-lc -L${ZLIB}/wasm/lib  -L${LIBEDIT}/wasm/lib " \
 		./configure --host=none  --prefix="${DIST_WASM}" \
 			--disable-load-extension \
 			--disable-threadsafe \
 			--disable-largefile \
 			--disable-libtool-lock \
-			--disable-tcl
+			--disable-tcl \
+			--disable-shared
 	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> config.h
 	cd ${BUILD}/wasm && make -j8
 	cd ${BUILD}/wasm && make install
