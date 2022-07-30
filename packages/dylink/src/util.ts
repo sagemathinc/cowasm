@@ -1,12 +1,14 @@
 //import debug from "debug";
 //const log = debug("dylink:util");
 
-export function showTable(table) {
+export function nonzeroPositions(table) {
   const v: number[] = [];
   for (let i = 0; i < table.length; i++) {
-    v.push(table.get(i) != null ? 1 : 0);
+    if (table.get(i) != null) {
+      v.push(i);
+    }
   }
-  console.log(v);
+  return v;
 }
 
 const textDecoder = new TextDecoder(); // utf-8

@@ -9,15 +9,26 @@ interface Env {
   dlsym: (handle: number, symbolPtr: number) => number;
 }
 
-export default function dylink(importObject?: { env?: Partial<Env> }): {
-  env: Env;
-} {
-  if (importObject == null) {
-    importObject = {} as { env?: Partial<Env> };
+interface Input {
+  path: string;
+  opts?: { env?: Partial<Env> };
+  importWebAssembly: (
+    path: string,
+    opts: object
+  ) => Promise<WebAssembly.Instance>;
+}
+
+export default async function dylinkInstance({
+  path,
+  opts,
+  importWebAssembly,
+}: Input): Promise<WebAssembly.Instance> {
+  if (opts == null) {
+    opts = {} as { env?: Partial<Env> };
   }
-  let { env } = importObject;
+  let { env } = opts;
   if (env == null) {
-    env = importObject.env = {};
+    env = opts.env = {};
   }
   let { memory } = env;
   if (memory == null) {
@@ -83,7 +94,6 @@ export default function dylink(importObject?: { env?: Partial<Env> }): {
     return 0;
   };
 
-  return importObject as {
-    env: Env;
-  };
+  const instance = await importWebAssembly(path, opts);
+  return instance;
 }
