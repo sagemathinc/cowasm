@@ -10,4 +10,4 @@ PyObject _Py_NoneStruct;
 
 #define PyNone (&_Py_NoneStruct)
 
-typedef int (*ADD_FUN_PTR)(int);
+typedef int (*FUN_PTR)(int);
