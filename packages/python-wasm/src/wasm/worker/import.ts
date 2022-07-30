@@ -205,7 +205,7 @@ async function doWasmImport(
         return library.handle;
       }
 
-      const typedArray = new Uint8Array(require("fs").readFileSync(pathname));
+      const typedArray = new Uint8Array(0 /* require("fs").readFileSync(pathname) */);
       const mod = new WebAssembly.Module(typedArray);
       const opts = {
         env: stubProxy({ ...wasmOpts.env, ...result.instance.exports }),
