@@ -1,7 +1,7 @@
 import { exec, init } from "../node";
 
 beforeEach(async () => {
-  await init({ noWorker: false });
+  await init({ noWorker: true });
 });
 
 // Test that it is possible to import a dynamic library

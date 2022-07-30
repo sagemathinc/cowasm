@@ -34,6 +34,6 @@ to remove those.
 +    # data_name = sysconfig._get_sysconfigdata_name()
 +    # assert "emscripten_wasm32" in data_name
 +    # filename = data_name + ".py"
-+    filename = "_sysconfigdata__wasi_wasm32-emscripten.py"
++    filename = "_sysconfigdata__wasi_wasm32-wasi.py"
      return args.builddir / filename
 

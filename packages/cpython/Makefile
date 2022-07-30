@@ -42,7 +42,7 @@ export PATH := ${CWD}/../../bin:${DIST_NATIVE}/bin:${PATH}
 .PHONY: all
 all: ${CWD}/dist/.built
 
-${CWD}/dist/.built: native wasm-data
+${CWD}/dist/.built: native wasm-data wasm-shared
 	touch ${CWD}/dist/.built
 
 #############
@@ -132,8 +132,6 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
 	# explicitly add anything that is really used from there to wasm-posix.h
 	mkdir ${BUILD}/wasm/sys && echo '#include "wasm-posix.h"' >  ${BUILD}/wasm/sys/wait.h
-	# Only need this for native build using Zig - disabled because scary!
-	# cd ${BUILD}/wasm && cat ${CWD}/src/python-patches/00-threading-native.patch | patch -p1
 	cd ${BUILD}/wasm/Include/internal && cat ${CWD}/src/python-patches/01-emscripten-signal.patch | patch -p0
 	cd ${BUILD}/wasm/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
 	cd ${BUILD}/wasm/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
@@ -147,6 +145,9 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
 	# - without-pymalloc below because pymalloc uses mmap and munmap, and WASI/our libc doesn't provide them.
 	#   We could try to write them ourselves (?)...
+	# - We use "zig cc -target wasm32-wasi" instead of "zig cc -target wasm32-wasi-musl" since the broken
+	#   Python configure.ac script outputs wasm32-wasi instead of wasm32-wasi-musl as the PLATFORM_TRIPLE.
+	#   This might be something to fix and upstream, but for now, just not using a triple works.
 	# - We use -I (path to source) in the CC/CXX line in addition to CFLAGS so that we can override some
 	#   bad global libraries, e.g., systemwide (zig musl) sys/wait.h with a local version.
 	# - BLDSHARED is used when building shared extension modules:
@@ -157,14 +158,15 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 	#                                something like '(import "env" "memory" (memory (;0;) 2))'.
 	#              --import-table  = same but for the function table, which is needed to call function pointers.
 	cd ${BUILD}/wasm && \
-		CC="zig-emscripten cc" \
-		CXX="zig-emscripten c++" \
-		BLDSHARED="zig wasm-ld --experimental-pic -shared -no-entry " \
+		CC="zig cc -Oz -target wasm32-wasi  " \
+		CXX="zig c++ -Oz -target wasm32-wasi " \
+		BLDSHARED="zig cc -Oz -target wasm32-wasi -shared -rdynamic -Xlinker --import-memory -Xlinker --import-table" \
 		AR="zig ar" \
-		CFLAGS=" -Oz -target wasm32-emscripten  -fvisibility=default -fPIC -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
+		CFLAGS=" -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		./configure \
+			--config-cache \
 			--prefix=${DIST_WASM}  \
 			--enable-big-digits=30 \
 			--enable-optimizations \
@@ -176,15 +178,11 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 			--without-ensurepip \
 			--host=wasm32-unknown-wasi \
 			--build=`./config.guess`
-	# Make it so our WASM posix header file is included everywhere,
-	# since otherwise we can't even compile.  Must do this AFTER ./configure.
 	cat src/pyconfig.h >> ${BUILD}/wasm/pyconfig.h
-	# The CONFIGURE_LDFLAGS_NODIST="-z stack-size=524288" is because CONFIGURE_LDFLAGS_NODIST has a bunch of warning options that don't work with wasm-ld.
-	# The LINKFORSHARED=-shared is needed, or we hit https://github.com/ziglang/zig/issues/11045
-	cd ${BUILD}/wasm && make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" -j8
+	cd ${BUILD}/wasm && make -j8
 	# These are missing, breaking the "make install".  Why? TODO!
 	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so
-	cd ${BUILD}/wasm && make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" install
+	cd ${BUILD}/wasm && make install
 	# Also copy wasm-posix.h over, so it's possible to build programs against our new python.
 	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm-posix.h ${DIST_WASM}/include/python${PYTHON_MAJOR}.${PYTHON_MINOR}/
 	touch ${DIST_WASM}/.built-cpython
@@ -207,6 +205,65 @@ ${DIST_WASM}/lib/dist/python311.zip: ${DIST_WASM}/.built-cpython
 
 .PHONY: wasm-data
 wasm-data: ${DIST_WASM}/lib/dist/python311.zip
+
+# Build everything again but fPIC. This is ONLY for building dynamic link libraries, e.g., sqlite.
+# TODO!! don't have all this patched stuff twice.  But maybe we can do dynamic in place so can just delete this...
+
+${BUILD}/wasm-shared/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
+	rm -rf ${BUILD}/wasm-shared
+	cd ${BUILD} && mkdir wasm-shared && tar xf Python-${PYTHON_VERSION}.tar.xz -C wasm-shared --strip-components=1 \
+	# Also copy the config.site, which answers some questions needed for
+	# cross compiling, without which ./configure won't work.
+	ln -s ${CWD}/src/rebuild ${BUILD}/wasm-shared/rebuild
+	cp src/config.site ${BUILD}/wasm-shared
+	cp src/Setup.local ${BUILD}/wasm-shared/Modules
+	cp ${WASMPOSIX}/*.h ${BUILD}/wasm-shared
+	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
+	# explicitly add anything that is really used from there to wasm-posix.h
+	mkdir ${BUILD}/wasm-shared/sys && echo '#include "wasm-posix.h"' >  ${BUILD}/wasm-shared/sys/wait.h
+	cd ${BUILD}/wasm-shared/Include/internal && cat ${CWD}/src/python-patches/01-emscripten-signal.patch | patch -p0
+	cd ${BUILD}/wasm-shared/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
+	cd ${BUILD}/wasm-shared/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
+	# Make it so just the trampoline functions are available to us using sed instead of a patch to 5
+	# files, which is a lot to deal with.  On the other hand, this could silently fail if the sources
+	# change too much, whereas patches are loud.
+	touch ${BUILD}/wasm-shared/.patched
+
+
+${DIST_WASM}/.built-cpython-shared: ${DIST_WASM}/.built-cpython ${BUILD}/wasm-shared/.patched
+	cd ${BUILD}/wasm-shared && \
+		CC="zig-emscripten cc -target wasm32-emscripten  " \
+		CXX="zig-emscripten c++ -target wasm32-emscripten " \
+		BLDSHARED="zig wasm-ld --experimental-pic -shared  " \
+		AR="zig ar" \
+		CFLAGS=" -Oz -fvisibility=default -fPIC -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
+		CONFIG_SITE=./config.site \
+		READELF=true \
+		./configure \
+			--config-cache \
+			--prefix=${DIST_WASM}-shared  \
+			--enable-big-digits=30 \
+			--enable-optimizations \
+			--disable-shared \
+			--disable-ipv6 \
+			--with-readline=editline \
+			--with-build-python=${DIST_NATIVE}/bin/python3 \
+			--without-pymalloc \
+			--without-ensurepip \
+			--host=wasm32-unknown-wasi \
+			--build=`./config.guess`
+	cat src/pyconfig.h >> ${BUILD}/wasm-shared/pyconfig.h
+	# The CONFIGURE_LDFLAGS_NODIST="" is because CONFIGURE_LDFLAGS_NODIST has a bunch of warning options that don't work with wasm-ld.
+	# The LINKFORSHARED=-shared is needed, or we hit https://github.com/ziglang/zig/issues/11045
+	cd ${BUILD}/wasm-shared && \
+		make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" -j8 && \
+		make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" install
+	touch ${DIST_WASM}/.built-cpython-shared
+
+.PHONY: wasm-shared
+wasm-shared: ${DIST_WASM}/.built-cpython-shared
+
+
 
 
 # Use "make run-wasm" to run our WASM python at the command line.
