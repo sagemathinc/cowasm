@@ -1,8 +1,8 @@
+#include "app.h"
 
 int xyz = 389;
 const char* name = "William";
 
-#include "a.h"
 int g() {
   return xyz+1;
 }

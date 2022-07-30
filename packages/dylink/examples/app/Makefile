@@ -1,16 +1,20 @@
-build-using-clang:
-	zig cc -v -target wasm32-freestanding -rdynamic -shared -fvisibility=default a.c -o a.wasm \
-		-Xlinker --import-memory -Xlinker --import-table
-	zig-fPIC cc -target wasm32-emscripten -fvisibility=default -fPIC b.c -c -o b.o
-	zig wasm-ld  --experimental-pic -shared b.o -o b.wasm
-	node app.js
+dist/app.wasm:
+	mkdir -p dist
+	zig cc -target wasm32-freestanding \
+		-rdynamic \
+		-shared \
+		-fvisibility=default \
+		app.c -o dist/app.wasm \
+		-Xlinker --import-memory \
+		-Xlinker --import-table
 
-build-using-zig:
-	zig cc -v -target wasm32-freestanding -rdynamic -shared -fvisibility=default a.c -o a.wasm \
-		-Xlinker --import-memory -Xlinker --import-table
-	zig-fPIC cc -target wasm32-emscripten -fvisibility=default -fPIC b.c -c -o b.o
-	zig wasm-ld  --experimental-pic -shared b.o -o b.wasm
+dist/dynamic-library.wasm.so:
+	mkdir -p dist
+	../../bin/zig-fPIC cc dynamic-library.c -c -o dist/dynamic-library.o
+	zig wasm-ld --experimental-pic -shared dist/dynamic-library.o -o dist/dynamic-library.wasm.so
+
+run: dist/app.wasm dist/dynamic-library.wasm.so
 	node app.js
 
 clean:
-	rm -rf *.o *.dylib *.wasm *.wat zig-cache a.out
+	rm -rf dist

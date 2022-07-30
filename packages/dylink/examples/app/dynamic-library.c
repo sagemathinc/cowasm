@@ -1,10 +1,10 @@
+#include "app.h"
 
 
 int x = -10000;
 int y = 4;
 int z = 1;
 
-#include "a.h"
 
 EXPORTED_SYMBOL
 PyObject* pynone_b() { return PyNone; }
