@@ -6,7 +6,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 all: python-wasm webpack terminal website
 
-packages/python-wasm/${BUILT}: cpython wasi zig wasm-posix
+packages/python-wasm/${BUILT}: cpython wasi zig wasm-posix dylink
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 python-wasm: packages/python-wasm/${BUILT}
@@ -24,6 +24,13 @@ packages/openssl/${BUILT}: zig
 	cd packages/openssl && make all
 .PHONY: openssl
 openssl: packages/openssl/${BUILT}
+
+
+
+packages/dylink/${BUILT}: zig wasm-posix
+	cd packages/dylink && make all
+.PHONY: dylink
+dylink: packages/dylink/${BUILT}
 
 
 packages/lzma/${BUILT}: zig wasm-posix
@@ -50,7 +57,7 @@ packages/libedit/${BUILT}: zig termcap
 libedit: packages/libedit/${BUILT}
 
 
-packages/cpython/${BUILT}: wasm-posix zlib lzma libedit zig wasi sqlite
+packages/cpython/${BUILT}: wasm-posix zlib lzma libedit zig wasi sqlite dylink
 	cd packages/cpython && make all
 .PHONY: cpython
 cpython: packages/cpython/${BUILT}
@@ -83,7 +90,7 @@ packages/ncurses/${BUILT}: termcap wasm-posix zig
 ncurses: packages/ncurses/${BUILT}
 
 
-packages/sqlite/${BUILT}: libedit wasm-posix zig zlib
+packages/sqlite/${BUILT}: libedit wasm-posix zig zlib dylink
 	cd packages/sqlite && make all
 .PHONY: sqlite
 sqlite: packages/sqlite/${BUILT}
@@ -105,6 +112,7 @@ docker-nocache:
 clean:
 	cd packages/bench && make clean
 	cd packages/cpython && make clean
+	cd packages/dylink && make clean
 	cd packages/libedit && make clean
 	cd packages/lzma && make clean
 	cd packages/ncurses && make clean
