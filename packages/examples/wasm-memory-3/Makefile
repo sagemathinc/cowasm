@@ -13,11 +13,11 @@ zig:
 	${ZIG} -shared -rdynamic b.wasm.o -o b.wasm -Xlinker --global-base=500000 ${LINK}
 	node ./a.js
 
-zig-emscripten-script:
-	zig-emscripten cc -target wasm32-wasi -fvisibility=default -fPIC a.c -c -o a.wasm.o
-	zig-emscripten cc -target wasm32-wasi -fvisibility=default -fPIC b.c -c -o b.wasm.o
-	zig-emscripten cc -shared -rdynamic a.wasm.o -o a.wasm ${LINK}
-	zig-emscripten cc -shared -rdynamic b.wasm.o -o b.wasm ${LINK}
+zig-fPIC-script:
+	zig-fPIC cc -target wasm32-wasi -fvisibility=default -fPIC a.c -c -o a.wasm.o
+	zig-fPIC cc -target wasm32-wasi -fvisibility=default -fPIC b.c -c -o b.wasm.o
+	zig-fPIC cc -shared -rdynamic a.wasm.o -o a.wasm ${LINK}
+	zig-fPIC cc -shared -rdynamic b.wasm.o -o b.wasm ${LINK}
 
 # This works!
 zig-wasm-ld:
@@ -50,7 +50,7 @@ zig3:
 
 
 # This doesn't work sufficiently:
-zig-emscripten:
+zig-fPIC:
 	zig cc -fvisibility=default -fPIC -target wasm32-emscripten -c a.c -o a.wasm-zig.o
 	zig cc -rdynamic -target wasm32-emscripten -shared a.wasm-zig.o -o a.wasm -Xlinker -shared -Xlinker --import-memory -Xlinker --import-table
 	zig cc -fvisibility=default -fPIC -target wasm32-emscripten -c b.c -o b.wasm-zig.o

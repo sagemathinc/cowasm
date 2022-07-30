@@ -232,11 +232,11 @@ ${BUILD}/wasm-shared/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 
 ${DIST_WASM}/.built-cpython-shared: ${DIST_WASM}/.built-cpython ${BUILD}/wasm-shared/.patched
 	cd ${BUILD}/wasm-shared && \
-		CC="zig-emscripten cc -target wasm32-emscripten  " \
-		CXX="zig-emscripten c++ -target wasm32-emscripten " \
+		CC="zig-fPIC cc   " \
+		CXX="zig-fPIC c++  " \
 		BLDSHARED="zig wasm-ld --experimental-pic -shared  " \
 		AR="zig ar" \
-		CFLAGS=" -Oz -fvisibility=default -fPIC -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
+		CFLAGS=" -Oz  -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		./configure \
