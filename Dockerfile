@@ -3,7 +3,7 @@
 # and results in /python-wasm having everything built with
 # the test suite passing.
 
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive LANG=C.UTF-8 LC_ALL=C.UTF-8
 LABEL maintainer="William Stein <wstein@sagemath.com>"
@@ -15,7 +15,7 @@ RUN apt-get update \
   && apt-get install -y git make curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool tcl vim zip
 
 # Required nodejs dependency
-RUN  curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
+RUN  curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
   && apt-get install -y nodejs \
   && npm install -g npm@latest
 
