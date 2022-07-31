@@ -12,7 +12,10 @@
 #
 
 ZIG_EXE=`which zig`
+ZIG_EXE=`realpath $ZIG_EXE`
 ZIG_HOME=`dirname $ZIG_EXE`
+
+#echo "ZIG_EXE=$ZIG_EXE"
 
 INCLUDE="$ZIG_HOME/lib/zig/libc/include"
 
@@ -21,8 +24,9 @@ INCLUDE="$ZIG_HOME/lib/zig/libc/include"
 
 if [ ! -d "$INCLUDE" ]
 then
-    INCLUDE="$ZIG/lib/libc/include"
+    INCLUDE="$ZIG_HOME/lib/libc/include"
 fi
+#echo "INCLUDE=$INCLUDE"
 
 # These are the flags we need to make the -target=wasm32-emscripten actually work
 # with what's provided in the zig distribution.   Note that we always set -shared,

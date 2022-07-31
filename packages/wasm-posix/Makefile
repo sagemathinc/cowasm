@@ -3,7 +3,7 @@ BUILD = ${CWD}/build
 DIST = ${CWD}/dist
 
 PACKAGES = ${CWD}/..
-export PATH := ${PACKAGES}/../bin:${PACKAGES}/zig/dist:$(PATH)
+export PATH := ${PACKAGES}/../bin:$(PATH)
 
 .PHONY: all
 all: ${DIST}/libwasmposix.a
@@ -14,9 +14,9 @@ ${DIST}/libwasmposix.a: src/wasm-posix.h src/wasm-posix.c src/threads.h src/thre
 	mkdir -p ${DIST}
 	# -w (=no warnings) since this is almost all fake/stubbed function and would generate massive warning issues:
 	cd src/ \
-		&& zig cc -Oz -w -target wasm32-wasi wasm-posix.c -c -o ${DIST}/wasm-posix.o
+		&& zig-fPIC cc -Oz -w -target wasm32-wasi wasm-posix.c -c -o ${DIST}/wasm-posix.o
 	cd src/ \
-		&& zig cc -Oz -w -target wasm32-wasi threads.c -c -o ${DIST}/threads.o
+		&& zig-fPIC cc -Oz -w -target wasm32-wasi threads.c -c -o ${DIST}/threads.o
 	cd ${DIST} && zig ar -crs libwasmposix.a wasm-posix.o threads.o
 	# rm ${DIST}/wasm-posix.o  ${DIST}/threads.o
 	cp src/*.h ${DIST}
