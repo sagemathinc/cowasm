@@ -6,6 +6,8 @@ all:
 	touch dist/.built
 
 test:
+	npm ci
+	npm run build
 	cd test/app && make test
 .PHONY: test
 

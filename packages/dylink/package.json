@@ -2,10 +2,11 @@
   "name": "dylink",
   "version": "0.2.0",
   "description": "Support for dynamic linking of WebAssembly code via Javascript built using wasm32-unknown-emscripten",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "tsc": "npx tsc -w",
-    "build": "tsc -b"
+    "build": "tsc -b",
+    "test": "make test"
   },
   "repository": {
     "type": "git",

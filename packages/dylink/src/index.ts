@@ -3,15 +3,15 @@ import debug from "debug";
 const log = debug("dylink");
 
 interface Env {
-  __indirect_function_table: WebAssembly.Table;
-  memory: WebAssembly.Memory;
-  dlopen: (pathnamePtr: number, flags: number) => number;
-  dlsym: (handle: number, symbolPtr: number) => number;
+  __indirect_function_table?: WebAssembly.Table;
+  memory?: WebAssembly.Memory;
+  dlopen?: (pathnamePtr: number, flags: number) => number;
+  dlsym?: (handle: number, symbolPtr: number) => number;
 }
 
 interface Input {
   path: string;
-  opts?: { env?: Partial<Env> };
+  opts?: { env?: Env };
   importWebAssembly?: (
     path: string,
     opts: object
@@ -19,7 +19,7 @@ interface Input {
   importWebAssemblySync: (path: string, opts: object) => WebAssembly.Instance;
 }
 
-export default async function dylinkInstance({
+export default async function importWebAssemblyDlopen({
   path,
   opts,
   importWebAssembly,
@@ -128,20 +128,27 @@ export default async function dylinkInstance({
     // @ts-ignore
     instance.exports.__wasm_call_ctors?.();
 
+    function setTable(index: number, f: Function): void {
+      if (__indirect_function_table == null) {
+        throw Error("__indirect_function_table must be defined");
+      }
+      if (__indirect_function_table.length <= index + 50) {
+        __indirect_function_table.grow(50);
+      }
+      __indirect_function_table.set(index, f);
+    }
+
     const symToPtr: { [symName: string]: number } = {};
     for (const symName in funcMap) {
       log("table[%s] = %s", funcMap[symName], symName);
-      __indirect_function_table.set(
-        funcMap[symName],
-        instance.exports[symName]
-      );
+      setTable(funcMap[symName], instance.exports[symName] as Function);
       symToPtr[symName] = funcMap[symName];
       delete funcMap[symName];
     }
     for (const name in instance.exports) {
       const val = instance.exports[name];
       if (symToPtr[name] != null || typeof val != "function") continue;
-      __indirect_function_table.set(nextTablePos, val);
+      setTable(nextTablePos, instance.exports[name] as Function);
       symToPtr[name] = nextTablePos;
       nextTablePos += 1;
     }
@@ -190,8 +197,9 @@ export default async function dylinkInstance({
     importWebAssembly != null
       ? await importWebAssembly(path, opts)
       : importWebAssemblySync(path, opts);
-  // @ts-ignore
-  mainInstance.exports.__wasm_call_ctors?.();
+  if (mainInstance.exports.__wasm_call_ctors != null) {
+    (mainInstance.exports.__wasm_call_ctors as Function)();
+  }
 
   let nextTablePos =
     Math.max(0, ...nonzeroPositions(__indirect_function_table)) + 1;
