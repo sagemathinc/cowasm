@@ -15,7 +15,7 @@ python-wasm: packages/python-wasm/${BUILT}
 zig:
 	cd packages/zig && make
 
-packages/wasm-posix/${BUILT}: zig
+packages/wasm-posix/${BUILT}: zig dylink
 	cd packages/wasm-posix && make all
 .PHONY: wasm-posix
 wasm-posix: packages/wasm-posix/${BUILT}
