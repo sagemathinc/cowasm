@@ -11,7 +11,7 @@
 # some other approach.
 #
 
-// Needed on macOS
+# Needed on macOS
 realpath() {
   OURPWD=$PWD
   cd "$(dirname "$1")"
