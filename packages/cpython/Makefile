@@ -179,7 +179,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 			--host=wasm32-unknown-wasi \
 			--build=`./config.guess`
 	cat src/pyconfig.h >> ${BUILD}/wasm/pyconfig.h
-	cd ${BUILD}/wasm && make -j8
+	cd ${BUILD}/wasm && make
 	# These are missing, breaking the "make install".  Why? TODO!
 	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so
 	cd ${BUILD}/wasm && make install
@@ -256,7 +256,7 @@ ${DIST_WASM}/.built-cpython-shared: ${DIST_WASM}/.built-cpython ${BUILD}/wasm-sh
 	# The CONFIGURE_LDFLAGS_NODIST="" is because CONFIGURE_LDFLAGS_NODIST has a bunch of warning options that don't work with wasm-ld.
 	# The LINKFORSHARED=-shared is needed, or we hit https://github.com/ziglang/zig/issues/11045
 	cd ${BUILD}/wasm-shared && \
-		make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" -j8 && \
+		make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" && \
 		make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" install
 	touch ${DIST_WASM}/.built-cpython-shared
 
