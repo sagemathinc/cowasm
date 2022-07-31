@@ -1,4 +1,6 @@
-all:
+all: dist/.built
+
+dist/.built:
 	npm ci
 	npm run build
 	cd ../../bin && ln -sf ../packages/dylink/bin/zig-fPIC .

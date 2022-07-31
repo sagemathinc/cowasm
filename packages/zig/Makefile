@@ -2,6 +2,9 @@
 # for your architecture here, so that we can use it for
 # building everything else.
 
+CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
+
 # Find the latest version at https://ziglang.org/download/
 
 # Example  https://ziglang.org/builds/zig-macos-aarch64-0.10.0-dev.3315+1a16b7214.tar.xz
@@ -33,6 +36,7 @@ dist/${VERSION}:
 	curl ${TARBALL} > build/zig.tar.xz
 	tar xf build/zig.tar.xz -C dist --strip-components=1
 	rm build/zig.tar.xz
+	ln -sf ${CWD}/dist/zig ${CWD}/../../bin/zig
 	touch dist/${VERSION}
 
 clean:

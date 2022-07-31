@@ -6,4 +6,4 @@ PACKAGES=`pwd`/packages
 # - zig
 # - some scripts in python-wasm; in particular, the super useful wabt tools such as wasm-objdump and wasm-strip.
 
-export PATH=`pwd`/bin:"$PACKAGES"/zig/dist:"$PACKAGES"/python-wasm/node_modules/.bin:$PATH
+export PATH=`pwd`/bin:$PATH

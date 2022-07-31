@@ -2,6 +2,7 @@ packages/*/build
 bin/python-wasm
 bin/python-wasm-debug
 bin/zig-fPIC
+bin/zig
 **/dist
 **/build
 **/node_modules
