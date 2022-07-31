@@ -6,7 +6,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 all: python-wasm webpack terminal website
 
-packages/python-wasm/${BUILT}: cpython wasi zig wasm-posix dylink
+packages/python-wasm/${BUILT}: cpython wasi zig posix-wasm dylink
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 python-wasm: packages/python-wasm/${BUILT}
@@ -15,10 +15,10 @@ python-wasm: packages/python-wasm/${BUILT}
 zig:
 	cd packages/zig && make
 
-packages/wasm-posix/${BUILT}: zig dylink
-	cd packages/wasm-posix && make all
-.PHONY: wasm-posix
-wasm-posix: packages/wasm-posix/${BUILT}
+packages/posix-wasm/${BUILT}: zig dylink
+	cd packages/posix-wasm && make all
+.PHONY: posix-wasm
+posix-wasm: packages/posix-wasm/${BUILT}
 
 packages/openssl/${BUILT}: zig
 	cd packages/openssl && make all
@@ -27,13 +27,13 @@ openssl: packages/openssl/${BUILT}
 
 
 
-packages/dylink/${BUILT}: zig wasm-posix
+packages/dylink/${BUILT}: zig posix-wasm
 	cd packages/dylink && make all
 .PHONY: dylink
 dylink: packages/dylink/${BUILT}
 
 
-packages/lzma/${BUILT}: zig wasm-posix
+packages/lzma/${BUILT}: zig posix-wasm
 	cd packages/lzma && make all
 .PHONY: lzma
 lzma: packages/lzma/${BUILT}
@@ -57,7 +57,7 @@ packages/libedit/${BUILT}: zig termcap
 libedit: packages/libedit/${BUILT}
 
 
-packages/cpython/${BUILT}: wasm-posix zlib lzma libedit zig wasi sqlite dylink
+packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi sqlite dylink
 	cd packages/cpython && make all
 .PHONY: cpython
 cpython: packages/cpython/${BUILT}
@@ -84,13 +84,13 @@ terminal: packages/terminal/${BUILT}
 # this builds and you can make ncurses a dep for cpython and change src/Setup.local to get
 # the _ncurses module to build. But there are still issues to solve (probably straightforward, but tedious)
 # as mentioned in the cpython/src/Setup.local.
-packages/ncurses/${BUILT}: termcap wasm-posix zig
+packages/ncurses/${BUILT}: termcap posix-wasm zig
 	cd packages/ncurses && make all
 .PHONY: ncurses
 ncurses: packages/ncurses/${BUILT}
 
 
-packages/sqlite/${BUILT}: libedit wasm-posix zig zlib dylink
+packages/sqlite/${BUILT}: libedit posix-wasm zig zlib dylink
 	cd packages/sqlite && make all
 .PHONY: sqlite
 sqlite: packages/sqlite/${BUILT}
@@ -117,12 +117,12 @@ clean:
 	cd packages/lzma && make clean
 	cd packages/ncurses && make clean
 	cd packages/openssl && make clean
+	cd packages/posix-wasm && make clean
 	cd packages/python-wasm && make clean
 	cd packages/sqlite && make clean
 	cd packages/termcap && make clean
 	cd packages/terminal && make clean
 	cd packages/wasi && make clean
-	cd packages/wasm-posix && make clean
 	cd packages/webpack && make clean
 	cd packages/website && make clean
 	cd packages/zig && make clean

@@ -2,7 +2,7 @@
 
 // file should start with a blank line.
 
-#include "wasm-posix.h"
+#include "posix-wasm.h"
 #undef HAVE_LINUX_VM_SOCKETS_H
 #define POLLPRI 0
 #define __WASM__ 1

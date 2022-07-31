@@ -7,7 +7,7 @@ export PATH := ${CWD}/../../bin:${PATH}
 BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
-WASM_POSIX = ${CWD}/../wasm-posix/dist/wasm
+POSIX_WASM = ${CWD}/../posix-wasm/dist/wasm
 ZLIB = ${CWD}/../zlib/dist
 LIBEDIT = ${CWD}/../libedit/dist
 
@@ -21,7 +21,7 @@ ${BUILD}/wasm: ${BUILD}/source.tar.gz
 	rm -rf ${BUILD}/wasm
 	mkdir -p ${BUILD}/wasm
 	cd ${BUILD} && tar xf source.tar.gz -C wasm --strip-components=1
-	cp ${WASM_POSIX}/wasm-posix.h ${BUILD}/wasm/
+	cp ${POSIX_WASM}/posix-wasm.h ${BUILD}/wasm/
 
 # Notes on flags below.
 #   - ?? MAYBE ?? Without -Oz (optimize for size rather than speed), we get 'Function addresses with offsets not supported' from LLVM during final link.
@@ -40,7 +40,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 			--disable-libtool-lock \
 			--disable-tcl \
 			--disable-shared
-	cd ${BUILD}/wasm && echo '#include "wasm-posix.h"' >> config.h
+	cd ${BUILD}/wasm && echo '#include "posix-wasm.h"' >> config.h
 	cd ${BUILD}/wasm && make -j8
 	cd ${BUILD}/wasm && make install
 	touch ${DIST_WASM}/.built

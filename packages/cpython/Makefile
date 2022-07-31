@@ -24,7 +24,7 @@ ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 LIBEDIT = ${CWD}/../libedit/dist
 SQLITE = ${CWD}/../sqlite/dist
-WASMPOSIX = ${CWD}/../wasm-posix/dist
+POSIX_WASM = ${CWD}/../posix-wasm/dist
 
 NCURSES = ${CWD}/../ncurses/dist
 NCURSES_INCLUDE = -I${NCURSES}/wasm/include/ncurses -I${NCURSES}/wasm/include
@@ -128,10 +128,10 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	ln -s ${CWD}/src/rebuild ${BUILD}/wasm/rebuild
 	cp src/config.site ${BUILD}/wasm
 	cp src/Setup.local ${BUILD}/wasm/Modules
-	cp ${WASMPOSIX}/wasm/*.h ${BUILD}/wasm
+	cp ${POSIX_WASM}/wasm/*.h ${BUILD}/wasm
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
-	# explicitly add anything that is really used from there to wasm-posix.h
-	mkdir ${BUILD}/wasm/sys && echo '#include "wasm-posix.h"' >  ${BUILD}/wasm/sys/wait.h
+	# explicitly add anything that is really used from there to posix-wasm.h
+	mkdir ${BUILD}/wasm/sys && echo '#include "posix-wasm.h"' >  ${BUILD}/wasm/sys/wait.h
 	cd ${BUILD}/wasm/Include/internal && cat ${CWD}/src/python-patches/01-emscripten-signal.patch | patch -p0
 	cd ${BUILD}/wasm/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
 	cd ${BUILD}/wasm/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
@@ -183,8 +183,8 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 	# These are missing, breaking the "make install".  Why? TODO!
 	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so
 	cd ${BUILD}/wasm && make install
-	# Also copy wasm-posix.h over, so it's possible to build programs against our new python.
-	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm/wasm-posix.h ${DIST_WASM}/include/python${PYTHON_MAJOR}.${PYTHON_MINOR}/
+	# Also copy posix-wasm.h over, so it's possible to build programs against our new python.
+	cd ${BUILD}/wasm && cp ${POSIX_WASM}/wasm/posix-wasm.h ${DIST_WASM}/include/python${PYTHON_MAJOR}.${PYTHON_MINOR}/
 	touch ${DIST_WASM}/.built-cpython
 
 .PHONY: wasm
@@ -217,10 +217,10 @@ ${BUILD}/wasm-shared/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	ln -s ${CWD}/src/rebuild ${BUILD}/wasm-shared/rebuild
 	cp src/config.site ${BUILD}/wasm-shared
 	cp src/Setup.local ${BUILD}/wasm-shared/Modules
-	cp ${WASMPOSIX}/wasm/*.h ${BUILD}/wasm-shared
+	cp ${POSIX_WASM}/wasm/*.h ${BUILD}/wasm-shared
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
-	# explicitly add anything that is really used from there to wasm-posix.h
-	mkdir ${BUILD}/wasm-shared/sys && echo '#include "wasm-posix.h"' >  ${BUILD}/wasm-shared/sys/wait.h
+	# explicitly add anything that is really used from there to posix-wasm.h
+	mkdir ${BUILD}/wasm-shared/sys && echo '#include "posix-wasm.h"' >  ${BUILD}/wasm-shared/sys/wait.h
 	cd ${BUILD}/wasm-shared/Include/internal && cat ${CWD}/src/python-patches/01-emscripten-signal.patch | patch -p0
 	cd ${BUILD}/wasm-shared/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
 	cd ${BUILD}/wasm-shared/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
