@@ -15,7 +15,7 @@ export default async function wasmImportBrowser(
   options: Options = {},
   log?: (...args) => void
 ): Promise<WasmInstance> {
-  console.log("wasmImportBrowser");
+  log?.("wasmImportBrowser");
   // also fix zip path, if necessary and read in any zip files (so
   // they can be loaded into memfs).
   const fs: FileSystemSpec[] = [];
@@ -31,16 +31,41 @@ export default async function wasmImportBrowser(
       fs.push(X);
     }
   }
-  return await wasmImport(
-    wasmUrl,
-    fetch(wasmUrl),
+
+  // Assumed to be loaded into memfs.
+  async function importWebAssemblySync(
+    path: string,
+    options: WebAssembly.Imports
+  ) {
+    if (wasm.fs == null) {
+      throw Error("memfs must be defined");
+    }
+    const binary = new Uint8Array(wasm.fs.readFileSync(path));
+    const mod = new WebAssembly.Module(binary);
+    return new WebAssembly.Instance(mod, options);
+  }
+
+  const wasm = await wasmImport({
+    source: wasmUrl,
     bindings,
-    {
+    options: {
       ...options,
       fs,
     },
-    log
+    log,
+    importWebAssembly,
+    importWebAssemblySync,
+  });
+  return wasm;
+}
+
+// Download from our server.
+async function importWebAssembly(path: string, options: WebAssembly.Imports) {
+  const { instance } = await WebAssembly.instantiateStreaming(
+    fetch(path),
+    options
   );
+  return instance;
 }
 
 function main() {

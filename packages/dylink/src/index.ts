@@ -198,7 +198,13 @@ export default async function importWebAssemblyDlopen({
       ? await importWebAssembly(path, opts)
       : importWebAssemblySync(path, opts);
   if (mainInstance.exports.__wasm_call_ctors != null) {
-    (mainInstance.exports.__wasm_call_ctors as Function)();
+    // We also **MUST** explicitly call the WASM constructors. This is
+    // a library function that is part of the zig libc code.  We have
+    // to call this because the wasm file is built using build-lib, so
+    // there is no main that does this.  This call does things like
+    // setup the filesystem mapping.    Yes, it took me **days**
+    // to figure this out, including reading a lot of assembly code. :shrug:
+    (mainInstance.exports.__wasm_call_ctors as FuncCallableFunctiontion)();
   }
 
   let nextTablePos =

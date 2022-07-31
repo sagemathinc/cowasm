@@ -3,6 +3,8 @@ import WASI, { createFileSystem } from "@wapython/wasi";
 import type { WASIConfig, FileSystemSpec, WASIBindings } from "@wapython/wasi";
 import reuseInFlight from "../reuseInFlight";
 import WasmInstance from "./instance";
+import importWebAssemblyDlopen from "dylink";
+import debug from "debug";
 
 const textDecoder = new TextDecoder();
 
@@ -35,24 +37,32 @@ export interface Options {
 
 const cache: { [name: string]: any } = {};
 
-type WasmImportFunction = (
-  name: string,
-  source,
-  bindings: WASIBindings,
-  options?: Options,
-  log?: (...args) => void
-) => Promise<WasmInstance>;
+type WasmImportFunction = typeof doWasmImport;
 
-async function doWasmImport(
-  name: string, // this is only used for caching and printing
-  source: Buffer | Promise<any>, // contents of the .wasm file or promise returned by fetch (in browser).
-  bindings: WASIBindings,
-  options: Options = {},
-  log?: (...args) => void
-): Promise<WasmInstance> {
-  log?.("doWasmImport", name);
-  if (cache[name] != null) {
-    return cache[name];
+async function doWasmImport({
+  source,
+  bindings,
+  options = {},
+  log,
+  importWebAssemblySync,
+  importWebAssembly,
+}: {
+  source: string; // path/url to the source
+  bindings: WASIBindings;
+  options: Options;
+  log?: (...args) => void;
+  importWebAssemblySync: (
+    path: string,
+    opts: WebAssembly.Imports
+  ) => WebAssembly.Instance;
+  importWebAssembly: (
+    path: string,
+    opts: WebAssembly.Imports
+  ) => Promise<WebAssembly.Instance>;
+}): Promise<WasmInstance> {
+  log?.("doWasmImport", source);
+  if (cache[source] != null) {
+    return cache[source];
   }
   const t = new Date().valueOf();
 
@@ -148,31 +158,29 @@ async function doWasmImport(
     };
   }
 
-  // dlopen implementation -- will move to dlopen/ subdirectory once I figure out how this works!
-  // OK, I explained to myself how to actually fully solve all this here:
-  //    https://cocalc.com/projects/369491f1-9b8a-431c-8cd0-150dd15f7b11/files/work/2022-07-18-ws-diary.board#id=55096f05
-  // I think, and this is obviously by far my top priority now.
-  if (wasmOpts.env.dlopen == null) {
-    const log = console.log;
+  const tlog = debug("trampoline");
+  wasmOpts.env._PyImport_InitFunc_TrampolineCall = (ptr: number): number => {
+    tlog?.(`dlopen - _PyImport_InitFunc_TrampolineCall - ptr=${ptr}`);
+    // TODO
+    throw Error("not implemented");
+    return 0;
+  };
 
-    wasmOpts.env._PyImport_InitFunc_TrampolineCall = (ptr: number): number => {
-      log?.(`dlopen - _PyImport_InitFunc_TrampolineCall - ptr=${ptr}`);
-      // TODO
-      throw Error("not implemented");
-      return 0;
-    };
-
-    wasmOpts.env._PyCFunctionWithKeywords_TrampolineCall = (
-      ptr: number,
-      self: number,
-      args: number,
-      kwds: number
-    ) => {
-      log?.(`dlopen - _PyCFunctionWithKeywords_TrampolineCall - ptr=${ptr}`, self, args, kwds);
-      throw Error("not implemented");
-      // return getFunction(ptr)(self, args, kwds);
-    };
-  }
+  wasmOpts.env._PyCFunctionWithKeywords_TrampolineCall = (
+    ptr: number,
+    self: number,
+    args: number,
+    kwds: number
+  ) => {
+    tlog?.(
+      `dlopen - _PyCFunctionWithKeywords_TrampolineCall - ptr=${ptr}`,
+      self,
+      args,
+      kwds
+    );
+    throw Error("not implemented");
+    // return getFunction(ptr)(self, args, kwds);
+  };
 
   let wasi: WASI | undefined = undefined;
   let fs: FileSystem | undefined = undefined;
@@ -233,32 +241,19 @@ async function doWasmImport(
   if (source == null) {
     throw Error("source must be defined for now...");
   }
-  let result;
-  if (source instanceof Promise) {
-    // This is in a web browser, which has WebAssembly.instantiateStreaming
-    // whereas node doesn't.
-    result = await WebAssembly.instantiateStreaming(source, wasmOpts);
-  } else {
-    // This is in node, or in browser without doing a streaming load.
-    const typedArray = new Uint8Array(source);
-    result = await WebAssembly.instantiate(typedArray, wasmOpts);
-  }
+  const instance = await importWebAssemblyDlopen({
+    path: source,
+    importWebAssemblySync,
+    importWebAssembly,
+    opts: wasmOpts,
+  });
 
   if (wasi != null) {
     // wasi assumes this:
-    wasi.start(result.instance, memory);
-  }
-  if (result.instance.exports.__wasm_call_ctors != null) {
-    // We also **MUST** explicitly call the WASM constructors. This is
-    // a library function that is part of the zig libc code.  We have
-    // to call this because the wasm file is built using build-lib, so
-    // there is no main that does this.  This call does things like
-    // setup the filesystem mapping.    Yes, it took me **days**
-    // to figure this out, including reading a lot of assembly code. :shrug:
-    (result.instance.exports.__wasm_call_ctors as CallableFunction)();
+    wasi.start(instance, memory);
   }
 
-  wasm = new WasmInstance(result.instance.exports, memory, fs);
+  wasm = new WasmInstance(instance.exports, memory, fs);
   if (options.init != null) {
     await options.init(wasm);
     // Uncomment this for low level debugging, so that the broken wasm
@@ -267,15 +262,15 @@ async function doWasmImport(
     try {
       await options.init(wasm);
     } catch (err) {
-      console.warn(`WARNING: init of ${name} failed`, err);
+      console.warn(`WARNING: init of ${source} failed`, err);
     }
     */
   }
 
-  cache[name] = wasm;
+  cache[source] = wasm;
 
   if (options.time) {
-    log?.(`imported ${name} in ${new Date().valueOf() - t}ms`);
+    log?.(`imported ${source} in ${new Date().valueOf() - t}ms`);
   }
   // TODO
   (wasm as any).table = table;

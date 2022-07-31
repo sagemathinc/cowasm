@@ -6,6 +6,7 @@ in the mode where we use a Worker.
 */
 
 import { readFile } from "fs/promises";
+import { readFileSync } from "fs";
 import type { FileSystemSpec } from "@wapython/wasi";
 import bindings from "@wapython/wasi/dist/bindings/node";
 import { dirname, isAbsolute, join } from "path";
@@ -46,14 +47,35 @@ export default async function wasmImportNode(
         // non-fatal
         // We *might* use this eventually when building the datafile itself, if we switch to using cpython wasm to build
         // instead of native cpython.
-        console.warn(`WARNING: Unable to read filesystem datafile '${X.zipfile}' -- falling back to filesystem.`);
+        console.warn(
+          `WARNING: Unable to read filesystem datafile '${X.zipfile}' -- falling back to filesystem.`
+        );
       }
     } else {
       fs.push(X);
     }
   }
-  const source = await readFile(name);
-  return await wasmImport(name, source, bindings, { ...options, fs }, log ?? debug("wasm-node"));
+
+  return await wasmImport({
+    source: name,
+    bindings,
+    options: { ...options, fs },
+    log: log ?? debug("wasm-node"),
+    importWebAssembly,
+    importWebAssemblySync,
+  });
+}
+
+function importWebAssemblySync(path: string, opts: WebAssembly.Imports) {
+  const binary = new Uint8Array(readFileSync(path));
+  const mod = new WebAssembly.Module(binary);
+  return new WebAssembly.Instance(mod, opts);
+}
+
+async function importWebAssembly(path: string, opts: WebAssembly.Imports) {
+  const binary = new Uint8Array(await readFile(path));
+  const mod = new WebAssembly.Module(binary);
+  return new WebAssembly.Instance(mod, opts);
 }
 
 if (!isMainThread && parentPort != null) {
