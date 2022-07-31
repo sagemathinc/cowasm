@@ -130,4 +130,5 @@ clean:
 
 test: python-wasm
 	cd packages/bench && make test
+	cd packages/dylink && make test
 	cd packages/python-wasm && make test
