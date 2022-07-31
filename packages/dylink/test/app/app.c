@@ -7,6 +7,9 @@ int x = 5077;
 int y = 123;
 
 EXPORTED_SYMBOL
+PyObject _Py_NoneStruct = {.thingy = 1};
+
+EXPORTED_SYMBOL
 PyObject* pynone_a() { return PyNone; }
 
 typedef PyObject* (*FUN_PY_PTR)();
@@ -52,5 +55,17 @@ int add389(int n) {
   void* handle = dlopen("./dynamic-library.so", 2);
   // Fetch a pointer to the function that adds 389 from the library.
   FUN_PTR f = (FUN_PTR)dlsym(handle, "add389");
+  return (*f)(n);
+}
+
+// This is going to get called by the dynamic library to do something.
+EXPORTED_SYMBOL
+int add5077(int n) { return n + 5077; }
+
+EXPORTED_SYMBOL
+int add5077_using_lib_using_main(int n) {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  // Fetch a pointer to the function that adds 389 from the library.
+  FUN_PTR f = (FUN_PTR)dlsym(handle, "add5077_using_func_from_main");
   return (*f)(n);
 }

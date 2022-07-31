@@ -47,28 +47,41 @@ export default async function importWebAssemblyDlopen({
       new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
   }
 
+  function dlopenEnvHandler(env, key:string) {
+    if (key in env) {
+      return Reflect.get(env, key);
+    }
+    return mainInstance.exports[key];
+  }
+
   // Global Offset Table
   const GOT = {};
-  function GOTMemHandler(GOT, symName) {
-    let rtn = GOT[symName];
+  function GOTMemHandler(GOT, key:string) {
+    if (key in GOT) {
+      return Reflect.get(GOT, key);
+    }
+    let rtn = GOT[key];
     if (!rtn) {
-      rtn = GOT[symName] = new WebAssembly.Global(
+      rtn = GOT[key] = new WebAssembly.Global(
         {
           value: "i32",
           mutable: true,
         },
-        mainInstance.exports[symName]
+        mainInstance.exports[key]
       );
     }
     return rtn;
   }
   const funcMap = {};
-  function GOTFuncHandler(GOT, symName) {
-    let rtn = GOT[symName];
+  function GOTFuncHandler(GOT, key:string) {
+    if (key in GOT) {
+      return Reflect.get(GOT, key);
+    }
+    let rtn = GOT[key];
     if (!rtn) {
       // place in the table
-      funcMap[symName] = nextTablePos;
-      rtn = GOT[symName] = new WebAssembly.Global(
+      funcMap[key] = nextTablePos;
+      rtn = GOT[key] = new WebAssembly.Global(
         {
           value: "i32",
           mutable: true,
@@ -96,25 +109,26 @@ export default async function importWebAssemblyDlopen({
     // TODO: _flags are ignored for now.
     if (memory == null) throw Error("bug"); // mainly for typescript
     const path = recvString(pathnamePtr, memory);
-    log("dlopen: path=", path);
+    log("dlopen: path='%s'", path);
     if (pathToLibrary[path] != null) {
       return pathToLibrary[path].handle;
     }
     const __memory_base = 100000; // TODO: need to use malloc (but plugable?).
+    const env = {
+      memory,
+      __indirect_function_table,
+      __memory_base,
+      __table_base: nextTablePos,
+      __stack_pointer: new WebAssembly.Global(
+        {
+          value: "i32",
+          mutable: true,
+        },
+        __memory_base
+      ),
+    };
     const libOpts = {
-      env: {
-        memory,
-        __indirect_function_table,
-        __memory_base,
-        __table_base: nextTablePos,
-        __stack_pointer: new WebAssembly.Global(
-          {
-            value: "i32",
-            mutable: true,
-          },
-          __memory_base
-        ),
-      },
+      env: new Proxy(env, { get: dlopenEnvHandler }),
       "GOT.mem": GOTmem,
       "GOT.func": GOTfunc,
     };

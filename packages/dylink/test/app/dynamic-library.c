@@ -14,3 +14,10 @@ FUN_PTR pointer_to_add10() { return &add10; }
 
 EXPORTED_SYMBOL
 int add389(const int a) { return a + x + y; }
+
+// This illustrates calling a function that is
+// defined in the main app.c.
+extern int add5077(int a);
+
+EXPORTED_SYMBOL
+int add5077_using_func_from_main(int a) { return add5077(a); }

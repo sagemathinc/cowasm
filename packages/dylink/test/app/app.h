@@ -6,12 +6,8 @@ struct PyObjectX {
 
 typedef struct PyObjectX PyObject;
 
-//extern
-//PyObject _Py_NoneStruct;
-
-
-EXPORTED_SYMBOL
-PyObject _Py_NoneStruct = {.thingy = 1};
+extern
+PyObject _Py_NoneStruct;
 
 #define PyNone (&_Py_NoneStruct)
 

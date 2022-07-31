@@ -36,6 +36,12 @@ async function main() {
   assert(instance.exports.add389(2022) == 2022 + 389);
 
   console.log(
+    "add5077_using_lib_using_main(389) = ",
+    instance.exports.add5077_using_lib_using_main(389)
+  );
+  assert(instance.exports.add5077_using_lib_using_main(389) == 389 + 5077);
+
+  console.log(
     "nonzero table entries = ",
     nonzeroPositions(opts.env.__indirect_function_table)
   );
