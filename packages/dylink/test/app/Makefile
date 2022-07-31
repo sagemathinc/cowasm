@@ -19,20 +19,21 @@ test-wasm: build/wasm/app.wasm build/wasm/dynamic-library.wasm.so
 # NOTE: We're using gcc here (which is really clang on MacOS), because
 # the above with gcc replaced by "zig cc" doesn't build properly for me
 # with zig 0.10.0-dev.3315+1a16b7214, surely due to zig bugs.
-build/native/app.native: app-native.c app.c
-	mkdir -p build/native
-	gcc app-native.c -o build/native/app.native
+# TODO: make a version of this that works on Linux.
+build/native-macos/app.native: app-native.c app.c
+	mkdir -p build/native-macos
+	gcc app-native.c -o build/native-macos/app.native -ldl
 
-build/native/dynamic-library.native.so: dynamic-library.c
-	mkdir -p build/native
-	gcc -fPIC dynamic-library.c -c -o build/native/dynamic-library.o
-	gcc -shared -undefined dynamic_lookup build/native/dynamic-library.o -o build/native/dynamic-library.so
+build/native-macos/dynamic-library.native.so: dynamic-library.c
+	mkdir -p build/native-macos
+	gcc -fPIC dynamic-library.c -c -o build/native-macos/dynamic-library.o
+	gcc -shared -undefined dynamic_lookup build/native-macos/dynamic-library.o -o build/native-macos/dynamic-library.so
 
-test-native: build/native/app.native build/native/dynamic-library.native.so
-	cd build/native && ./app.native
+test-native-macos: build/native-macos/app.native build/native-macos/dynamic-library.native.so
+	cd build/native-macos && ./app.native
 
 .PHONEY: test
-test: test-wasm test-native
+test: test-wasm
 
 clean:
 	rm -rf build
