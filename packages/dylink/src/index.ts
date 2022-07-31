@@ -204,7 +204,7 @@ export default async function importWebAssemblyDlopen({
     // there is no main that does this.  This call does things like
     // setup the filesystem mapping.    Yes, it took me **days**
     // to figure this out, including reading a lot of assembly code. :shrug:
-    (mainInstance.exports.__wasm_call_ctors as FuncCallableFunctiontion)();
+    (mainInstance.exports.__wasm_call_ctors as CallableFunction)();
   }
 
   let nextTablePos =
