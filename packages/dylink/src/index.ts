@@ -11,7 +11,7 @@ interface Env {
 
 interface Input {
   path: string;
-  opts?: { env?: Env };
+  opts?: { env?: Env; wasi_snapshot_preview1?: any };
   importWebAssembly?: (
     path: string,
     opts: object
@@ -47,16 +47,16 @@ export default async function importWebAssemblyDlopen({
       new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
   }
 
-  function dlopenEnvHandler(env, key:string) {
+  function dlopenEnvHandler(env, key: string) {
     if (key in env) {
       return Reflect.get(env, key);
     }
-    return mainInstance.exports[key];
+    return mainInstance.exports[key] ?? opts?.env?.[key];
   }
 
   // Global Offset Table
   const GOT = {};
-  function GOTMemHandler(GOT, key:string) {
+  function GOTMemHandler(GOT, key: string) {
     if (key in GOT) {
       return Reflect.get(GOT, key);
     }
@@ -73,7 +73,7 @@ export default async function importWebAssemblyDlopen({
     return rtn;
   }
   const funcMap = {};
-  function GOTFuncHandler(GOT, key:string) {
+  function GOTFuncHandler(GOT, key: string) {
     if (key in GOT) {
       return Reflect.get(GOT, key);
     }
@@ -128,6 +128,7 @@ export default async function importWebAssemblyDlopen({
       ),
     };
     const libOpts = {
+      ...opts,
       env: new Proxy(env, { get: dlopenEnvHandler }),
       "GOT.mem": GOTmem,
       "GOT.func": GOTfunc,
