@@ -1,8 +1,18 @@
-# dynlink \-\- Support for dynamic linking of WebAssembly code via Javascript built using wasm32\-unknown\-emscripten
+# dynlink - WebAssembly dynamic loader
+
+This is a WebAssembly dynamic loader for the ABI used by emscripten and the llvm backend when targeting emscripten.  It runs both on node.js and in the browser.
 
 ## Scope
 
-I care about implementing enough to support loading Python extension modules.  In particular, I'm not worried about dependencies, i.e., loading all the dynamic libraries that a given dynamic library depends on.
+I care about implementing enough of the linker spec to support loading Python extension modules.  In particular, I'm probably not worried about dependencies, i.e., automatically loading all the dynamic libraries that dynamic library depends on.
+
+## Why?
+
+There is already code [in emscripten
+itself](https://github.com/emscripten-core/emscripten/blob/main/src/library_dylink.js)
+that fully implements the dynamic loader spec. However, I would like to build
+and run WebAssembly modules using a lightweight modern toolchain built around
+Zig instead.  It is thus necessary to implement a self-contained dynamic loader.
 
 PR's welcome to implement more!
 
