@@ -150,22 +150,26 @@ export default async function importWebAssemblyDlopen({
       if (__indirect_function_table.length <= index + 50) {
         __indirect_function_table.grow(50);
       }
+      log("setTable ", index, typeof index, f, typeof f);
       __indirect_function_table.set(index, f);
     }
 
     const symToPtr: { [symName: string]: number } = {};
-    for (const symName in funcMap) {
-      log("table[%s] = %s", funcMap[symName], symName);
-      setTable(funcMap[symName], instance.exports[symName] as Function);
-      symToPtr[symName] = funcMap[symName];
-      delete funcMap[symName];
-    }
     for (const name in instance.exports) {
+      if (funcMap[name] != null) continue;
       const val = instance.exports[name];
       if (symToPtr[name] != null || typeof val != "function") continue;
-      setTable(nextTablePos, instance.exports[name] as Function);
+      setTable(nextTablePos, val as Function);
       symToPtr[name] = nextTablePos;
       nextTablePos += 1;
+    }
+    for (const symName in funcMap) {
+      const f = instance.exports[symName] ?? mainInstance.exports[symName];
+      if(f == null) continue;
+      log("table[%s] = %s", funcMap[symName], symName, f);
+      setTable(funcMap[symName], f as Function);
+      symToPtr[symName] = funcMap[symName];
+      delete funcMap[symName];
     }
 
     // Get an available handle by maxing all the int versions of the

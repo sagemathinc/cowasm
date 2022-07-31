@@ -55,7 +55,7 @@ FLAGS="\
     -isystem $INCLUDE/generic-musl \
     -isystem $INCLUDE/wasm32-wasi-any  \
     -isystem $INCLUDE/any-wasi-any \
-    -D__wasi__ -D__EMSCRIPTEN_major__=0 -D__EMSCRIPTEN_minor__=0 -D__EMSCRIPTEN_tiny__=0 \
+    -D__wasi__ -D__EMSCRIPTEN_major__=3 -D__EMSCRIPTEN_minor__=1 -D__EMSCRIPTEN_tiny__=16 \
     -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_GETPID"
 
 #echo "zig $@ $FLAGS"

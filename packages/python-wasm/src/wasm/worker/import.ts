@@ -4,7 +4,7 @@ import type { WASIConfig, FileSystemSpec, WASIBindings } from "@wapython/wasi";
 import reuseInFlight from "../reuseInFlight";
 import WasmInstance from "./instance";
 import importWebAssemblyDlopen from "dylink";
-import debug from "debug";
+import initPythonTrampolineCalls from "./trampoline";
 
 const textDecoder = new TextDecoder();
 
@@ -158,29 +158,7 @@ async function doWasmImport({
     };
   }
 
-  const tlog = debug("trampoline");
-  wasmOpts.env._PyImport_InitFunc_TrampolineCall = (ptr: number): number => {
-    tlog?.(`dlopen - _PyImport_InitFunc_TrampolineCall - ptr=${ptr}`);
-    // TODO
-    throw Error("not implemented");
-    return 0;
-  };
-
-  wasmOpts.env._PyCFunctionWithKeywords_TrampolineCall = (
-    ptr: number,
-    self: number,
-    args: number,
-    kwds: number
-  ) => {
-    tlog?.(
-      `dlopen - _PyCFunctionWithKeywords_TrampolineCall - ptr=${ptr}`,
-      self,
-      args,
-      kwds
-    );
-    throw Error("not implemented");
-    // return getFunction(ptr)(self, args, kwds);
-  };
+  initPythonTrampolineCalls(table, wasmOpts.env);
 
   let wasi: WASI | undefined = undefined;
   let fs: FileSystem | undefined = undefined;
@@ -213,11 +191,15 @@ async function doWasmImport({
     return new Proxy(env, {
       get(target, key) {
         if (key in target) {
-          if (new String(key).includes("Py")) log?.("using existing for ", key);
+          if (new String(key).includes("Py")) {
+            log?.("using existing for ", key);
+          }
           return Reflect.get(target, key);
         }
         if (options.traceStubcalls) {
-          if (new String(key).includes("Py")) log?.("creating stub for", key);
+          if (new String(key).includes("Py")) {
+            log?.("creating stub for", key);
+          }
           return (...args) => {
             stub(
               key,

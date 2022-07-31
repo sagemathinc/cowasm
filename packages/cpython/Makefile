@@ -132,7 +132,6 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
 	# explicitly add anything that is really used from there to posix-wasm.h
 	mkdir ${BUILD}/wasm/sys && echo '#include "posix-wasm.h"' >  ${BUILD}/wasm/sys/wait.h
-	cd ${BUILD}/wasm/Include/internal && cat ${CWD}/src/python-patches/01-emscripten-signal.patch | patch -p0
 	cd ${BUILD}/wasm/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
 	cd ${BUILD}/wasm/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
 	# Make it so just the trampoline functions are available to us using sed instead of a patch to 5
@@ -221,7 +220,6 @@ ${BUILD}/wasm-shared/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
 	# explicitly add anything that is really used from there to posix-wasm.h
 	mkdir ${BUILD}/wasm-shared/sys && echo '#include "posix-wasm.h"' >  ${BUILD}/wasm-shared/sys/wait.h
-	cd ${BUILD}/wasm-shared/Include/internal && cat ${CWD}/src/python-patches/01-emscripten-signal.patch | patch -p0
 	cd ${BUILD}/wasm-shared/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
 	cd ${BUILD}/wasm-shared/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
 	# Make it so just the trampoline functions are available to us using sed instead of a patch to 5
