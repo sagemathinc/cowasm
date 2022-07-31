@@ -3,6 +3,7 @@ bin/python-wasm
 bin/python-wasm-debug
 bin/zig-fPIC
 **/dist
+**/build
 **/node_modules
 *.term
 .*.term.*

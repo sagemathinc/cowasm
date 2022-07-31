@@ -12,11 +12,11 @@ function importWebAssemblySync(path, opts) {
 async function main() {
   const opts = {};
   const instance = await importWebAssemblyDlopen({
-    path: "dist/app.wasm",
+    path: "app.wasm",
     importWebAssemblySync,
     opts,
   });
-//  console.log("instance.exports = ", instance.exports);
+  //  console.log("instance.exports = ", instance.exports);
 
   // console.log("instance.exports.pynone_a()=", instance.exports.pynone_a());
 
@@ -24,12 +24,26 @@ async function main() {
   assert(instance.exports.add10(2022) == 2022 + 10);
 
   console.log(
+    "instance.exports.add10b(2022) = ",
+    instance.exports.add10b(2022)
+  );
+  assert(instance.exports.add10b(2022) == 2022 + 10);
+
+  console.log(
+    "instance.exports.add389(2022) = ",
+    instance.exports.add389(2022)
+  );
+  assert(instance.exports.add389(2022) == 2022 + 389);
+
+  console.log(
     "nonzero table entries = ",
     nonzeroPositions(opts.env.__indirect_function_table)
   );
-  
+
   exports.instance = instance;
   exports.opts = opts;
+
+  console.log("All tests passed!");
 }
 
 main();

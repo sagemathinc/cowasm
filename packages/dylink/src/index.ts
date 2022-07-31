@@ -120,9 +120,13 @@ export default async function dylinkInstance({
     };
 
     const instance = importWebAssemblySync(path, libOpts);
+    log("got exports=", instance.exports);
     if (__indirect_function_table == null) {
       throw Error("bug");
     }
+
+    instance.exports.__wasm_call_ctors?.();
+
     const symToPtr: { [symName: string]: number } = {};
     for (const symName in funcMap) {
       log("table[%s] = %s", funcMap[symName], symName);
@@ -133,6 +137,14 @@ export default async function dylinkInstance({
       symToPtr[symName] = funcMap[symName];
       delete funcMap[symName];
     }
+    for (const name in instance.exports) {
+      const val = instance.exports[name];
+      if (symToPtr[val] != null || typeof val != "function") continue;
+      __indirect_function_table.set(nextTablePos, val);
+      symToPtr[name] = nextTablePos;
+      nextTablePos += 1;
+    }
+
     // Get an available handle by maxing all the int versions of the
     // keys of the handleToLibrary map.
     const handle =
@@ -176,6 +188,7 @@ export default async function dylinkInstance({
     importWebAssembly != null
       ? await importWebAssembly(path, opts)
       : importWebAssemblySync(path, opts);
+  mainInstance.exports.__wasm_call_ctors?.();
 
   let nextTablePos =
     Math.max(0, ...nonzeroPositions(__indirect_function_table)) + 1;
