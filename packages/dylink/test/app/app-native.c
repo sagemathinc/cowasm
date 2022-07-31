@@ -15,5 +15,9 @@ int main(void) {
 
   printf("add389(2022) = %d\n", add389(2022));
   assert(add389(2022) == 2022 + 389);
+
+  //printf("pynones_match() = %d\n", pynones_match());
+  //assert(pynones_match()==1);
+
   printf("All tests passed!\n");
 }

@@ -1,12 +1,28 @@
 #include "app.h"
+
 extern void* dlopen(const char* filename, int flags);
-void* dlsym(void* handle, const char* symbol);
+extern void* dlsym(void* handle, const char* symbol);
 
 int x = 5077;
 int y = 123;
 
 EXPORTED_SYMBOL
 PyObject* pynone_a() { return PyNone; }
+
+typedef PyObject* (*FUN_PY_PTR)();
+
+EXPORTED_SYMBOL
+int pynones_match() {
+  // return 1 if PyNone same here and in so module.
+  void* handle = dlopen("./dynamic-library.so", 2);
+  // Fetch a pointer to the function that adds 10 from the library.
+  FUN_PY_PTR f = (FUN_PY_PTR)dlsym(handle, "pynone_b");
+  if (pynone_a() == (*f)()) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
 
 EXPORTED_SYMBOL
 int add10(int n) {

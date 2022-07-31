@@ -125,6 +125,7 @@ export default async function dylinkInstance({
       throw Error("bug");
     }
 
+    // @ts-ignore
     instance.exports.__wasm_call_ctors?.();
 
     const symToPtr: { [symName: string]: number } = {};
@@ -139,7 +140,7 @@ export default async function dylinkInstance({
     }
     for (const name in instance.exports) {
       const val = instance.exports[name];
-      if (symToPtr[val] != null || typeof val != "function") continue;
+      if (symToPtr[name] != null || typeof val != "function") continue;
       __indirect_function_table.set(nextTablePos, val);
       symToPtr[name] = nextTablePos;
       nextTablePos += 1;
@@ -178,7 +179,8 @@ export default async function dylinkInstance({
       // symbol is a known function pointer
       return ptr;
     }
-    // NOT sure if this is at all correct or meaningful or what to even do with non functions!
+    // NOT sure if this is at all correct or meaningful or what to even
+    // do with non functions!
     // I think Python only uses function pointers?
     // return lib.instance.exports[symName]
     throw Error(`dlsym: handle=${handle} - unknown symbol '${symName}'`);
@@ -188,6 +190,7 @@ export default async function dylinkInstance({
     importWebAssembly != null
       ? await importWebAssembly(path, opts)
       : importWebAssemblySync(path, opts);
+  // @ts-ignore
   mainInstance.exports.__wasm_call_ctors?.();
 
   let nextTablePos =

@@ -26,12 +26,13 @@ fi
 
 # These are the flags we need to make the -target=wasm32-emscripten actually work
 # with what's provided in the zig distribution.   Note that we always set -shared,
-# the target wasm32-emscripten and -fvisibility=default -fPIC, since I can't think
+# the target wasm32-emscripten and -fPIC, since I can't think
 # of any reason to be using this script when you wouldn't have those set.
 
-FLAGS="-shared \
+FLAGS="\
+    -shared \
     -target wasm32-emscripten \
-    -fvisibility=default -fPIC \
+    -fPIC \
     -isystem $INCLUDE/wasm-wasi-musl \
     -isystem $INCLUDE/generic-musl \
     -isystem $INCLUDE/wasm32-wasi-any  \
@@ -39,4 +40,5 @@ FLAGS="-shared \
     -D__wasi__ -D__EMSCRIPTEN_major__=0 -D__EMSCRIPTEN_minor__=0 -D__EMSCRIPTEN_tiny__=0 \
     -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_GETPID"
 
+#echo "zig $@ $FLAGS"
 zig "$@" $FLAGS

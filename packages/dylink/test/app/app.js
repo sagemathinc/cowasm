@@ -40,6 +40,9 @@ async function main() {
     nonzeroPositions(opts.env.__indirect_function_table)
   );
 
+  console.log("pynones_match = ", instance.exports.pynones_match());
+  assert(instance.exports.pynones_match() == 1);
+
   exports.instance = instance;
   exports.opts = opts;
 
