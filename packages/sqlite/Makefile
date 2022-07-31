@@ -7,7 +7,7 @@ export PATH := ${CWD}/../../bin:${PATH}
 BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
-WASM_POSIX = ${CWD}/../wasm-posix/dist
+WASM_POSIX = ${CWD}/../wasm-posix/dist/wasm
 ZLIB = ${CWD}/../zlib/dist
 LIBEDIT = ${CWD}/../libedit/dist
 

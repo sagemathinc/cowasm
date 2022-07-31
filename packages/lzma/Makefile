@@ -32,7 +32,7 @@ ${BUILD}/wasm:
 
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && RANLIB="zig ranlib" AR="zig ar" CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" ./configure  --build=`./build-aux/config.guess` --host=none --prefix="${DIST_WASM}"
-	cd ${BUILD}/wasm && echo '#include "../../../wasm-posix/dist/wasm-posix.h"' >> config.h
+	cd ${BUILD}/wasm && echo '#include "../../../wasm-posix/dist/wasm/wasm-posix.h"' >> config.h
 	# It fails to build some non-liblzma stuff (for xz) that we don't need, so we
 	# ignore that and just install the library.
 	cd ${BUILD}/wasm && make || true && cd src/liblzma && make install

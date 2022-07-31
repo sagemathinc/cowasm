@@ -7,7 +7,7 @@ CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
-WASM_POSIX = ${CWD}/../wasm-posix/dist
+WASM_POSIX = ${CWD}/../wasm-posix/dist/wasm
 TERMCAP = ${CWD}/../termcap/dist/wasm
 
 all:  wasm

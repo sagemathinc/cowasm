@@ -128,7 +128,7 @@ ${BUILD}/wasm/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	ln -s ${CWD}/src/rebuild ${BUILD}/wasm/rebuild
 	cp src/config.site ${BUILD}/wasm
 	cp src/Setup.local ${BUILD}/wasm/Modules
-	cp ${WASMPOSIX}/*.h ${BUILD}/wasm
+	cp ${WASMPOSIX}/wasm/*.h ${BUILD}/wasm
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
 	# explicitly add anything that is really used from there to wasm-posix.h
 	mkdir ${BUILD}/wasm/sys && echo '#include "wasm-posix.h"' >  ${BUILD}/wasm/sys/wait.h
@@ -184,7 +184,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 	cd ${BUILD}/wasm && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so
 	cd ${BUILD}/wasm && make install
 	# Also copy wasm-posix.h over, so it's possible to build programs against our new python.
-	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm-posix.h ${DIST_WASM}/include/python${PYTHON_MAJOR}.${PYTHON_MINOR}/
+	cd ${BUILD}/wasm && cp ${WASMPOSIX}/wasm/wasm-posix.h ${DIST_WASM}/include/python${PYTHON_MAJOR}.${PYTHON_MINOR}/
 	touch ${DIST_WASM}/.built-cpython
 
 .PHONY: wasm
@@ -217,7 +217,7 @@ ${BUILD}/wasm-shared/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	ln -s ${CWD}/src/rebuild ${BUILD}/wasm-shared/rebuild
 	cp src/config.site ${BUILD}/wasm-shared
 	cp src/Setup.local ${BUILD}/wasm-shared/Modules
-	cp ${WASMPOSIX}/*.h ${BUILD}/wasm-shared
+	cp ${WASMPOSIX}/wasm/*.h ${BUILD}/wasm-shared
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
 	# explicitly add anything that is really used from there to wasm-posix.h
 	mkdir ${BUILD}/wasm-shared/sys && echo '#include "wasm-posix.h"' >  ${BUILD}/wasm-shared/sys/wait.h
