@@ -113,7 +113,7 @@ export default async function importWebAssemblyDlopen({
     if (pathToLibrary[path] != null) {
       return pathToLibrary[path].handle;
     }
-    const __memory_base = 100000; // TODO: need to use malloc (but plugable?).
+    const __memory_base = 200000; // TODO: need to use malloc (but plugable?).
     const env = {
       memory,
       __indirect_function_table,

@@ -213,7 +213,7 @@ ${BUILD}/wasm-shared/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	cd ${BUILD} && mkdir wasm-shared && tar xf Python-${PYTHON_VERSION}.tar.xz -C wasm-shared --strip-components=1 \
 	# Also copy the config.site, which answers some questions needed for
 	# cross compiling, without which ./configure won't work.
-	ln -s ${CWD}/src/rebuild ${BUILD}/wasm-shared/rebuild
+	ln -s ${CWD}/src/rebuild-shared ${BUILD}/wasm-shared/rebuild
 	cp src/config.site ${BUILD}/wasm-shared
 	cp src/Setup.local ${BUILD}/wasm-shared/Modules
 	cp ${POSIX_WASM}/wasm/*.h ${BUILD}/wasm-shared
