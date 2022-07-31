@@ -14,6 +14,6 @@ test:
 .PHONY: test
 
 clean:
-	rm -rf dist
+	rm -rf dist tsconfig.tsbuildinfo
 	cd test/app && make clean
 .PHONY: clean
