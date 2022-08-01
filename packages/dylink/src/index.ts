@@ -1,6 +1,9 @@
-import { nonzeroPositions, recvString } from "./util";
+import { alignMemory, nonzeroPositions, recvString } from "./util";
+import getMetadata from "./metadata";
 import debug from "debug";
 const log = debug("dylink");
+
+const STACK_ALIGN = 16; // copied from emscripten
 
 interface Env {
   __indirect_function_table?: WebAssembly.Table;
@@ -51,7 +54,8 @@ export default async function importWebAssemblyDlopen({
     log("libc", key);
     const f = mainInstance.exports[`libc_${key}`];
     if (f == null) {
-      throw Error(`dlopen: unable to resolve symbol "${key}"`);
+      return;
+      //throw Error(`dlopen: unable to resolve symbol "${key}"`);
     }
     const ptr = (f as Function)();
     if (__indirect_function_table == null) {
@@ -64,7 +68,17 @@ export default async function importWebAssemblyDlopen({
     if (key in env) {
       return Reflect.get(env, key);
     }
-    return mainInstance.exports[key] ?? opts?.env?.[key] ?? libc(key);
+    log("dlopenEnvHandler", key);
+    const f = mainInstance.exports[key] ?? opts?.env?.[key] ?? libc(key);
+    if (f == null) {
+      log("dlopenEnvHandler got null");
+      return;
+    }
+    return (...args) => {
+      debug("dylink2")("host ", key, " called with ", args);
+      // @ts-ignore
+      return f(...args);
+    };
   }
 
   // Global Offset Table
@@ -138,20 +152,41 @@ export default async function importWebAssemblyDlopen({
     if (pathToLibrary[path] != null) {
       return pathToLibrary[path].handle;
     }
-    const __memory_base = 5000000; // TODO: need to use malloc (but plugable?).
+
+    // TODO!
+    // @ts-ignore
+    const binary = new Uint8Array(require("fs").readFileSync(path));
+    const metadata = getMetadata(binary);
+    log("metadata", metadata);
+    // alignments are powers of 2
+    let memAlign = Math.pow(2, metadata.memoryAlign ?? 0);
+    // finalize alignments and verify them
+    memAlign = Math.max(memAlign, STACK_ALIGN); // we at least need stack alignment
+    let malloc = libc("malloc") ?? mainInstance.exports["malloc"];
+    if (malloc == null) {
+      //throw Error("malloc from libc must be available in the  main instance");
+      console.log("WARNING: using fake malloc for testing.");
+      malloc = () => 500000; // TODO!!!!
+    }
+    const __memory_base = metadata.memorySize
+      ? alignMemory(malloc(metadata.memorySize + memAlign), memAlign)
+      : 0;
+    const __table_base = metadata.tableSize ? nextTablePos : 0;
+
     const env = {
       memory,
       __indirect_function_table,
       __memory_base,
-      __table_base: nextTablePos,
+      __table_base,
       __stack_pointer: new WebAssembly.Global(
         {
           value: "i32",
           mutable: true,
         },
-        __memory_base
+        __memory_base // totally wrong?  I can't tell.
       ),
     };
+    log("env =", env);
     const libOpts = {
       ...opts,
       env: new Proxy(env, { get: dlopenEnvHandler }),
@@ -209,10 +244,10 @@ export default async function importWebAssemblyDlopen({
     };
     pathToLibrary[path] = library;
     handleToLibrary[handle] = library;
-//     log(
-//       "after dlopen table looks like:",
-//       nonzeroPositions(__indirect_function_table)
-//     );
+    //     log(
+    //       "after dlopen table looks like:",
+    //       nonzeroPositions(__indirect_function_table)
+    //     );
     return handle;
   };
 

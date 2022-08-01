@@ -29,3 +29,7 @@ export function strlen(charPtr: number, memory: WebAssembly.Memory): number {
   }
   return i - charPtr;
 }
+
+export function alignMemory(size: number, alignment: number): number {
+  return Math.ceil(size / alignment) * alignment;
+}
