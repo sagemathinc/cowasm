@@ -1,10 +1,19 @@
 all: dist/.built
 
-dist/.built:
+node_modules:
 	npm ci
+
+dist/libc.js: node_modules src/libc.ts
 	npm run build
+
+dist/index.js: src/index.ts
+	npm run build
+
+dist/libc.c: dist/libc.js
+	node ./dist/libc.js > dist/libc.c
+
+dist/.built: dist/libc.c dist/index.js
 	cd ../../bin && ln -sf ../packages/dylink/bin/zig-fPIC .
-	mkdir -p dist
 	touch dist/.built
 
 test:
@@ -16,5 +25,7 @@ test:
 
 clean:
 	rm -rf dist tsconfig.tsbuildinfo
-	cd test/app && make clean
+	cd test/freestanding && make clean
+	cd test/wasi && make clean
+
 .PHONY: clean

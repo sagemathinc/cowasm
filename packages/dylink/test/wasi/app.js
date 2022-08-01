@@ -14,13 +14,20 @@ function importWebAssemblySync(path, opts) {
 async function main() {
   const memory = new WebAssembly.Memory({ initial: 100 });
   const wasi = new WASI({ bindings });
-  const opts = { wasi_snapshot_preview1: wasi.wasiImport, env: { memory } };
+  const opts = {
+    wasi_snapshot_preview1: wasi.wasiImport,
+    env: {
+      memory,
+    },
+  };
   const instance = await importWebAssemblyDlopen({
     path: "app.wasm",
     importWebAssemblySync,
     opts,
   });
   wasi.start(instance, memory);
+  exports.instance = instance;
+  exports.wasi = wasi;
 }
 
 main();

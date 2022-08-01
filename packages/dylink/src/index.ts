@@ -47,11 +47,23 @@ export default async function importWebAssemblyDlopen({
       new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
   }
 
+  function libc(key: string) {
+    const f = mainInstance.exports[`libc_${key}`];
+    if (f == null) {
+      throw Error(`dlopen: unable to resolve symbol "${key}"`);
+    }
+    const ptr = (f as Function)();
+    if (__indirect_function_table == null) {
+      throw Error("__indirect_function_table must be defined");
+    }
+    return __indirect_function_table.get(ptr);
+  }
+
   function dlopenEnvHandler(env, key: string) {
     if (key in env) {
       return Reflect.get(env, key);
     }
-    return mainInstance.exports[key] ?? opts?.env?.[key];
+    return mainInstance.exports[key] ?? opts?.env?.[key] ?? libc(key);
   }
 
   // Global Offset Table
@@ -165,7 +177,7 @@ export default async function importWebAssemblyDlopen({
     }
     for (const symName in funcMap) {
       const f = instance.exports[symName] ?? mainInstance.exports[symName];
-      if(f == null) continue;
+      if (f == null) continue;
       log("table[%s] = %s", funcMap[symName], symName, f);
       setTable(funcMap[symName], f as Function);
       symToPtr[symName] = funcMap[symName];

@@ -1,12 +1,24 @@
+all: test-wasm
+
 build/wasm/app.wasm: app.c
 	mkdir -p build/wasm
 	zig cc -target wasm32-wasi \
 		-rdynamic \
 		-shared \
 		-fvisibility=default \
-		app.c -o build/wasm/app.wasm \
+		app.c \
+		../../dist/libc.c \
+		-o build/wasm/app.wasm \
 		-Xlinker --import-memory \
 		-Xlinker --import-table
+
+build/wasm/app.o: app.c
+	mkdir -p build/wasm
+	zig cc -v -target wasm32-wasi \
+		-rdynamic \
+		-shared \
+		-fvisibility=default \
+		app.c build/wasm/libc.o -c -o build/wasm/app.o
 
 build/wasm/dynamic-library.wasm.so: dynamic-library.c
 	mkdir -p build/wasm

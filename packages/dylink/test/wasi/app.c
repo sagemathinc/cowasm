@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <assert.h>
-
 #include "app.h"
 
 extern void* dlopen(const char* filename, int flags);
@@ -73,6 +72,8 @@ int add5077_using_lib_using_main(int n) {
   return (*f)(n);
 }
 
+// int _printf(const char* restrict format, ...) { return printf(format, ...); }
+
 int main() {
   printf("add10(2022) = %d\n", add10(2022));
   assert(add10(2022) == 2022 + 10);
@@ -83,9 +84,9 @@ int main() {
   printf("add389(2022) = %d\n", add389(2022));
   assert(add389(2022) == 2022 + 389);
 
-  printf("add5077_using_lib_using_main(389) = %d\n",
-         add5077_using_lib_using_main(389));
-  assert(add5077_using_lib_using_main(389) == 5077 + 389);
+  int n = add5077_using_lib_using_main(389);
+  printf("add5077_using_lib_using_main(389) = %d\n", n);
+  assert(n == 5077 + 389);
 
   printf("pynones_match() = %d\n", pynones_match());
   assert(pynones_match() == 1);
