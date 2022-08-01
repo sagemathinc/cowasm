@@ -22,7 +22,7 @@ ${BUILD}/wasm/libwasmposix.a: src/posix-wasm.h src/posix-wasm.c src/threads.h sr
 	mkdir -p ${DIST}/wasm
 	cp ${SRC}/*.h ${BUILD}/wasm/libwasmposix.a ${DIST}/wasm/
 
-${DIST}/wasm/.built: ${BUILD}/wasm/libc.a ${BUILD}/wasm/libwasmposix.a
+${DIST}/wasm/.built: ${BUILD}/wasm/libwasmposix.a
 	touch ${DIST}/wasm/.built
 
 clean:
