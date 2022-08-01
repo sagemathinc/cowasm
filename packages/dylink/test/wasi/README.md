@@ -1,0 +1,1 @@
+Example similar to basic, but with less back and forth, but with use of WASI.

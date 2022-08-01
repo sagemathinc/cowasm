@@ -10,7 +10,8 @@ dist/.built:
 test:
 	npm ci
 	npm run build
-	cd test/app && make test
+	cd test/freestanding && make test
+	cd test/wasi && make test
 .PHONY: test
 
 clean:

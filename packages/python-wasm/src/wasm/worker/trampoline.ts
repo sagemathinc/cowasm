@@ -1,14 +1,15 @@
 /* Python Trampoline Calls */
-//import debug from "debug";
-//const log = debug("python-wasm-trampoline");
+import debug from "debug";
+const log = debug("python-wasm-trampoline");
 
 export default function initPythonTrampolineCalls(
   table: WebAssembly.Table,
   env: object
 ): void {
   env["_PyImport_InitFunc_TrampolineCall"] = (ptr: number): number => {
-    // log("_PyImport_InitFunc_TrampolineCall - ptr=", ptr);
-    return table.get(ptr)();
+    const r = table.get(ptr)();
+    log("_PyImport_InitFunc_TrampolineCall - ptr=", ptr, " r=", r);
+    return r;
   };
 
   env["_PyCFunctionWithKeywords_TrampolineCall"] = (
