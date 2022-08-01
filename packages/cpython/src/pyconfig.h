@@ -12,7 +12,9 @@
 // We only use the emscripten changes for the actual changes to the files, NOT for
 // the extra flags, etc., that are imposed on the build tools, which break things badly.
 // Thus instead of an option to ./configure, we #define these here.
-#define __EMSCRIPTEN__
+#ifndef __EMSCRIPTEN
+  #define __EMSCRIPTEN__ 1
+#endif
 #define __EMSCRIPTEN_major__ 3
 #define __EMSCRIPTEN_minor__ 1
 #define __EMSCRIPTEN_tiny__ 16

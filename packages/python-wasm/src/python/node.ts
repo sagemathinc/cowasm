@@ -20,7 +20,11 @@ const fs: FileSystemSpec[] = [
 export async function init({
   noWorker,
   noZip,
-}: { noWorker?: boolean; noZip?: boolean } = {}) {
+  debug,
+}: { noWorker?: boolean; noZip?: boolean; debug?: boolean } = {}) {
+  if (debug) {
+    noWorker = noZip = true;
+  }
   const path = dirname(join(callsite()[1]?.getFileName() ?? "", ".."));
   let env;
   if (!noZip && existsSync(join(path, DATA))) {

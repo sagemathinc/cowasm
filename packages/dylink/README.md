@@ -1,4 +1,4 @@
-# dynlink - WebAssembly dynamic loader
+# dylink - WebAssembly dynamic loader
 
 This is a WebAssembly dynamic loader for the ABI used by emscripten and the llvm backend when targeting emscripten.  It runs both on node.js and in the browser.
 

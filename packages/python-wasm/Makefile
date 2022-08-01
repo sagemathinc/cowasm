@@ -17,7 +17,7 @@ TEST = ./test-zig.sh
 
 DIST = ${CWD}/dist
 
-all: ${DIST}/.built bin
+all: ${DIST}/.built bin hello
 
 # Runs zig test on all zig files that contain the word "test" but do not
 # have interface or export in their filename (since can't test those).
@@ -77,6 +77,17 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 
 .PHONEY: python
 python: ${DIST}/python/python.wasm
+
+
+${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hello.c
+	zig-fPIC cc src/python/extension/hello.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11
+	zig wasm-ld --experimental-pic -shared ${DIST}/python/hello.o -o ${DIST}/python/hello.cpython-311-wasm32-wasi.so
+	rm ${DIST}/python/hello.o
+	echo "temporary path hack:"
+	cp  ${DIST}/python/hello.cpython-311-wasm32-wasi.so ../cpython/dist/wasm/lib/python3.11/lib-dynload/
+
+.PHONEY: hello
+hello: ${DIST}/python/hello.cpython-311-wasm32-wasi.so
 
 ##################
 ## Interface support functionality for WebAssembly.

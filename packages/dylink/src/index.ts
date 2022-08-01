@@ -48,6 +48,7 @@ export default async function importWebAssemblyDlopen({
   }
 
   function libc(key: string) {
+    log("libc", key);
     const f = mainInstance.exports[`libc_${key}`];
     if (f == null) {
       throw Error(`dlopen: unable to resolve symbol "${key}"`);
@@ -72,8 +73,18 @@ export default async function importWebAssemblyDlopen({
     if (key in GOT) {
       return Reflect.get(GOT, key);
     }
+    /*
+    The spec has the following (garbled?) statement about what this is:
+    "However since exports are static, modules connect [sic -- cannot?]
+    export the final relocated addresses (i.e. they cannot add
+    __memory_base before exporting). Thus, the exported address is
+    before relocation; the loader, which knows __memory_base, can
+    then calculate the final relocated address."
+    */
     let rtn = GOT[key];
     if (!rtn) {
+      // @ts-ignore
+      log("GOTMemHandler ", key, "-->", mainInstance.exports[key]?.value);
       rtn = GOT[key] = new WebAssembly.Global(
         {
           value: "i32",
@@ -91,7 +102,9 @@ export default async function importWebAssemblyDlopen({
     }
     let rtn = GOT[key];
     if (!rtn) {
-      // place in the table
+      log("GOTFuncHandler ", key, "-->", nextTablePos);
+      // place in the table -- we make a note of where to put it,
+      // and actually place it later below after the import is done.
       funcMap[key] = nextTablePos;
       rtn = GOT[key] = new WebAssembly.Global(
         {
@@ -125,7 +138,7 @@ export default async function importWebAssemblyDlopen({
     if (pathToLibrary[path] != null) {
       return pathToLibrary[path].handle;
     }
-    const __memory_base = 200000; // TODO: need to use malloc (but plugable?).
+    const __memory_base = 5000000; // TODO: need to use malloc (but plugable?).
     const env = {
       memory,
       __indirect_function_table,
@@ -196,10 +209,10 @@ export default async function importWebAssemblyDlopen({
     };
     pathToLibrary[path] = library;
     handleToLibrary[handle] = library;
-    log(
-      "after dlopen table looks like:",
-      nonzeroPositions(__indirect_function_table)
-    );
+//     log(
+//       "after dlopen table looks like:",
+//       nonzeroPositions(__indirect_function_table)
+//     );
     return handle;
   };
 
