@@ -5,6 +5,8 @@ echo "Rebuild and run shared library of python-wasm"
 
 export PATH=`pwd`/../../../../bin/:$PATH
 
+touch Modules/_sqlite/*.c
+
 rm -f build/lib.wasi-wasm32-3.11/_sqlite3.cpython-311-wasm32-emscripten.so
 make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared"
 cp build/lib.wasi-wasm32-3.11/_sqlite3.cpython-311-wasm32-emscripten.so /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/python-wasm/packages/cpython/dist/wasm/lib/python3.11/lib-dynload/_sqlite3.cpython-311-wasm32-wasi.so

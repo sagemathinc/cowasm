@@ -9,6 +9,7 @@ ZIG_PKG       = --main-pkg-path ${CWD}/src
 PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
 PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm
 POSIX_WASM   = ${PACKAGES}/posix-wasm/dist/wasm
+DYLINK   = ${PACKAGES}/dylink/dist
 
 WASM_CFLAGS   = -dynamic ${OPT}
 
@@ -68,6 +69,7 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 	   ${ZIG_PKG} \
 	   `pwd`/python/signal/signal.c \
 	   `pwd`/python/dyload/dyload.c \
+	   ${DYLINK}/libc.c \
 	   python/interface.zig
 	mkdir -p ${DIST}/python
 	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
