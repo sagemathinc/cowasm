@@ -2,12 +2,13 @@
 
 static PyObject *hello(PyObject *self, PyObject *args) {
   const char *name;
+  printf("in hello, self=%p, args=%p\n", self, args);
 
-  if (!PyArg_ParseTuple(args, "s", &name)) {
-    return NULL;
-  }
+//   if (!PyArg_ParseTuple(args, "s", &name)) {
+//     return NULL;
+//   }
 
-  printf("python-wasm: 'hello %s!'\n", name);
+//   printf("python-wasm: 'hello %s!'\n", name);
 
   Py_RETURN_NONE;
 }

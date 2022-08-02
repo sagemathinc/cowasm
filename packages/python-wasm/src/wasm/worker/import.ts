@@ -26,7 +26,7 @@ export interface Options {
   // init = initialization function that gets called when module first loaded.
   init?: (wasm: WasmInstance) => void | Promise<void>;
   traceSyscalls?: boolean;
-  traceStubcalls?: "first" | true;
+  traceStubcalls?: "first" | boolean;
   spinLock?: (time: number) => void;
   stdinBuffer?: SharedArrayBuffer;
   signalBuffer?: SharedArrayBuffer;

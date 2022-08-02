@@ -1,0 +1,3 @@
+# This is stubbed on WASI and causes significant slowdown.  I.e., the detection thinks
+# we have it, but we don't.
+ac_cv_func_strunvis=no

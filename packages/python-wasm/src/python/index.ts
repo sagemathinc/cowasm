@@ -38,7 +38,7 @@ export async function _init(
   wasm = await wasmImport(python_wasm, {
     env,
     fs,
-    // traceSyscalls: true,
-    // traceStubcalls: 'first',  // 'first' or true
+    traceSyscalls: false,
+    traceStubcalls: false, //'first',  // 'first' or true
   });
 }
