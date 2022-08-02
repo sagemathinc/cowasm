@@ -8,14 +8,16 @@ extern void* dlsym(void* handle, const char* symbol);
 EXPORTED_SYMBOL
 PyObject _Py_NoneStruct = {.thingy = 1};
 
+extern int trampolineCall(PyCFunction f);
 
 EXPORTED_SYMBOL
 int PyModuleDef_Init(struct PyModuleDef* module) {
   printf("PyModuleDef_Init, module = %p \n", module);
   PyCFunction f = (module->m_methods)[0].f;
-  printf("PyModuleDef_Init, f = %p \n", &f);
-  f(NULL,NULL);
-  return 0;
+  printf("PyModuleDef_Init, f = %p \n", f);
+  //return trampolineCall(f);
+  return (*f)(NULL, NULL);
+  // return 0;
 }
 
 typedef int (*INIT_FUNCTION)();

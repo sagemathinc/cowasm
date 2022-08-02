@@ -195,17 +195,28 @@ export default async function importWebAssemblyDlopen({
     };
 
     const instance = importWebAssemblySync(path, libOpts);
+
+    // account for the entries that got inserted during the import.
+    nextTablePos += metadata.tableSize ?? 0;
+
     log("got exports=", instance.exports);
     if (__indirect_function_table == null) {
       throw Error("bug");
     }
 
-    // @ts-ignore
-    instance.exports.__wasm_call_ctors?.();
+    if (instance.exports.__wasm_call_ctors != null) {
+      log("calling __wasm_call_ctors for dynamic library");
+      (instance.exports.__wasm_call_ctors as CallableFunction)();
+    }
 
     function setTable(index: number, f: Function): void {
       if (__indirect_function_table == null) {
         throw Error("__indirect_function_table must be defined");
+      }
+      if (__indirect_function_table.get(index)) {
+        throw Error(
+          `setTable: attempt to overwrite existing function! ${index}`
+        );
       }
       if (__indirect_function_table.length <= index + 50) {
         __indirect_function_table.grow(50);
