@@ -79,8 +79,8 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 python: ${DIST}/python/python.wasm
 
 
-${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hello.c
-	zig-fPIC cc src/python/extension/hello.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11
+${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
+	zig-fPIC cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11
 	zig wasm-ld --experimental-pic -shared ${DIST}/python/hello.o -o ${DIST}/python/hello.cpython-311-wasm32-wasi.so
 	rm ${DIST}/python/hello.o
 	echo "temporary path hack:"
