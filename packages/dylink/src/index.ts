@@ -55,7 +55,6 @@ export default async function importWebAssemblyDlopen({
     const f = mainInstance.exports[`libc_${key}`];
     if (f == null) {
       return;
-      //throw Error(`dlopen: unable to resolve symbol "${key}"`);
     }
     const ptr = (f as Function)();
     if (__indirect_function_table == null) {
@@ -69,13 +68,14 @@ export default async function importWebAssemblyDlopen({
       return Reflect.get(env, key);
     }
     log("dlopenEnvHandler", key);
-    const f = mainInstance.exports[key] ?? opts?.env?.[key] ?? libc(key);
+    // important to check opts.env LAST since it could be a proxy
+    // that generates stub functions:
+    const f = mainInstance.exports[key] ?? libc(key) ?? opts?.env?.[key];
     if (f == null) {
       log("dlopenEnvHandler got null");
       return;
     }
     return (...args) => {
-      debug("dylink2")("host ", key, " called with ", args);
       // @ts-ignore
       return f(...args);
     };

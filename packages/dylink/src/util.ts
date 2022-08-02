@@ -12,6 +12,7 @@ export function nonzeroPositions(table) {
 }
 
 const textDecoder = new TextDecoder(); // utf-8
+
 export function recvString(
   charPtr: number,
   memory: WebAssembly.Memory
