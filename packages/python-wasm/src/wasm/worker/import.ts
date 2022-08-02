@@ -46,6 +46,7 @@ async function doWasmImport({
   log,
   importWebAssemblySync,
   importWebAssembly,
+  readFileSync,
 }: {
   source: string; // path/url to the source
   bindings: WASIBindings;
@@ -59,6 +60,7 @@ async function doWasmImport({
     path: string,
     opts: WebAssembly.Imports
   ) => Promise<WebAssembly.Instance>;
+  readFileSync;
 }): Promise<WasmInstance> {
   log?.("doWasmImport", source);
   if (cache[source] != null) {
@@ -188,6 +190,7 @@ async function doWasmImport({
     path: source,
     importWebAssemblySync,
     importWebAssembly,
+    readFileSync,
     importObject: wasmOpts,
     stub: true,
     traceStub: options.traceStubcalls,

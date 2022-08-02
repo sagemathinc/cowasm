@@ -24,6 +24,7 @@ interface Input {
     path: string,
     importObject: object
   ) => WebAssembly.Instance;
+  readFileSync: (path: string) => any; // todo?
   stub?: boolean; // if true, automatically generate stub functions.
   traceStub?: boolean | "first";
 }
@@ -33,6 +34,7 @@ export default async function importWebAssemblyDlopen({
   importObject,
   importWebAssembly,
   importWebAssemblySync,
+  readFileSync,
   stub,
   traceStub,
 }: Input): Promise<WebAssembly.Instance> {
@@ -185,9 +187,7 @@ export default async function importWebAssemblyDlopen({
       return pathToLibrary[path].handle;
     }
 
-    // TODO!
-    // @ts-ignore
-    const binary = new Uint8Array(require("fs").readFileSync(path));
+    const binary = new Uint8Array(readFileSync(path));
     const metadata = getMetadata(binary);
     log("metadata", metadata);
     // alignments are powers of 2

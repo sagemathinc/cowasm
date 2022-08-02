@@ -63,6 +63,7 @@ export default async function wasmImportNode(
     log: log ?? debug("wasm-node"),
     importWebAssembly,
     importWebAssemblySync,
+    readFileSync,
   });
 }
 

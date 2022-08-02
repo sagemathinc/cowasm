@@ -22,6 +22,7 @@ async function main() {
     path: "app.wasm",
     importWebAssemblySync,
     importObject,
+    readFileSync
   });
   //  console.log("instance.exports = ", instance.exports);
 

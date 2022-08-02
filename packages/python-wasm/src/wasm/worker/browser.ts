@@ -55,6 +55,12 @@ export default async function wasmImportBrowser(
     log,
     importWebAssembly,
     importWebAssemblySync,
+    readFileSync: (path) => {
+      if (wasm.fs == null) {
+        throw Error("memfs must be defined");
+      }
+      return wasm.fs.readFileSync(path);
+    },
   });
   return wasm;
 }
