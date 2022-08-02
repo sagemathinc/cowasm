@@ -1,5 +1,5 @@
 #include "app.h"
-#include <stdio.h>
+ #include <stdio.h>
 
 static PyObject *hello(PyObject *self, PyObject *args) {
   printf("python-wasm: 'hello there'\n");
@@ -8,7 +8,7 @@ static PyObject *hello(PyObject *self, PyObject *args) {
 
 static struct PyMethodDef module_methods[] = {{"hello", hello}, {NULL, NULL}};
 
-struct PyModuleDef _hellomodule = {
+static struct PyModuleDef _hellomodule = {
     .m_name = "hello",
     .m_methods = module_methods,
 };

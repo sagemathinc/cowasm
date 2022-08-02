@@ -5,11 +5,16 @@
 extern void* dlopen(const char* filename, int flags);
 extern void* dlsym(void* handle, const char* symbol);
 
-// int _printf(const char* restrict format, ...) { return printf(format, ...); }
+EXPORTED_SYMBOL
+PyObject _Py_NoneStruct = {.thingy = 1};
+
 
 EXPORTED_SYMBOL
 int PyModuleDef_Init(struct PyModuleDef* module) {
   printf("PyModuleDef_Init, module = %p \n", module);
+  PyCFunction f = (module->m_methods)[0].f;
+  printf("PyModuleDef_Init, f = %p \n", &f);
+  f(NULL,NULL);
   return 0;
 }
 
@@ -18,8 +23,12 @@ typedef int (*INIT_FUNCTION)();
 int main() {
   printf("Running Tests...\n");
   void* handle = dlopen("./hello.so", 2);
+  printf("Got handle=%p\n", handle);
+  assert(handle != NULL);
   // Fetch a pointer to the init function:
   INIT_FUNCTION init = (INIT_FUNCTION)dlsym(handle, "PyInit_hello");
+  assert(init != NULL);
+  printf("Got init=%p\n", init);
   printf("PyInit_hello() = %d\n", (*init)());
   printf("All tests passed!\n");
 }

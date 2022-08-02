@@ -26,6 +26,6 @@ struct PyModuleDef {
   struct PyMethodDef* m_methods;
 };
 
-int PyModuleDef_Init(struct PyModuleDef* module);
+extern int PyModuleDef_Init(struct PyModuleDef* module);
 
 
