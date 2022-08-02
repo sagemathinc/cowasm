@@ -5,10 +5,10 @@ const { nonzeroPositions } = require("../../dist/util");
 const { readFileSync } = require("fs");
 const assert = require("assert");
 
-function importWebAssemblySync(path, opts) {
+function importWebAssemblySync(path, importObject) {
   const binary = new Uint8Array(readFileSync(path));
   const mod = new WebAssembly.Module(binary);
-  return new WebAssembly.Instance(mod, opts);
+  return new WebAssembly.Instance(mod, importObject);
 }
 
 const table = new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
@@ -17,23 +17,19 @@ exports.table = table;
 async function main() {
   const memory = new WebAssembly.Memory({ initial: 100 });
   const wasi = new WASI({ bindings });
-  const opts = {
+  const importObject = {
     wasi_snapshot_preview1: wasi.wasiImport,
     env: {
       memory,
       __indirect_function_table: table,
-      trampolineCall: (funcPtr) => {
-        console.log("trampolineCall ", funcPtr);
-        const r = table.get(funcPtr)();
-        console.log("trampolineCall got back ", r);
-        return r;
-      },
+      //time: () => new Date().valueOf();
     },
   };
   const instance = await importWebAssemblyDlopen({
     path: "app.wasm",
     importWebAssemblySync,
-    opts,
+    importObject,
+    stub: true,
   });
   wasi.start(instance, memory);
   exports.instance = instance;

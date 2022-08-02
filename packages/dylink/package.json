@@ -34,6 +34,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "await-spawn": "^4.0.2",
     "debug": "^4.3.4"
   }
 }

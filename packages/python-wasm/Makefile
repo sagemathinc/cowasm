@@ -69,7 +69,8 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 	   ${ZIG_PKG} \
 	   `pwd`/python/signal/signal.c \
 	   `pwd`/python/dyload/dyload.c \
-	   ${DYLINK}/libc.c \
+	   ${DYLINK}/pointers/libc.c \
+	   ${DYLINK}/pointers/libpython.c \
 	   python/interface.zig
 	mkdir -p ${DIST}/python
 	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip

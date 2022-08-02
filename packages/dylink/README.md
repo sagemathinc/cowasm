@@ -12,7 +12,7 @@ There is already code [in emscripten
 itself](https://github.com/emscripten-core/emscripten/blob/main/src/library_dylink.js)
 that fully implements the dynamic loader spec. However, I would like to build
 and run WebAssembly modules using a lightweight modern toolchain built around
-Zig instead.  It is thus necessary to implement a self-contained dynamic loader.
+Zig instead.  It is thus necessary to implement a self\-contained dynamic loader.
 
 PR's welcome to implement more!
 
@@ -27,4 +27,5 @@ There doesn't seem to be an actual write up of how dynamic linking actually work
 - [https://groups.google.com/g/llvm\-dev/c/O5cOc4VCSLI/m/o519lIR2BAAJ](https://groups.google.com/g/llvm-dev/c/O5cOc4VCSLI/m/o519lIR2BAAJ)
 - There is a section in Chapter 7 of ["WebAssembly: The Definitive Guide" ](https://www.oreilly.com/library/view/webassembly-the-definitive/9781492089834/)on "Dynamic Linking in WebAssembly". Unfortunately, it is very brief regarding this particular topic, and doesn't emphasize the critical importance of `-fPIC` \(position independent code\), which is really what makes dynamic linking possible.
 - [An interesting discussion about dynamic modules and rust](https://github.com/rust-lang/rust/issues/60231)
+- I wrote something on StackOverflow linking to the above [here.](https://stackoverflow.com/questions/71803962/is-it-possible-to-add-a-new-function-to-an-instantiated-webassembly-module/73212320#73212320) 
 

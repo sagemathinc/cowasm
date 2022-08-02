@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <assert.h>
 #include "app.h"
@@ -8,16 +9,20 @@ extern void* dlsym(void* handle, const char* symbol);
 EXPORTED_SYMBOL
 PyObject _Py_NoneStruct = {.thingy = 1};
 
-extern int trampolineCall(PyCFunction f);
+EXPORTED_SYMBOL
+float mysin(float n) { return sin(n + 1); }
+
+// If you comment this out, then no function pointer to mysin is generated,
+// and the call to hello will be insanely slow.
+FUNCPTR(mysin)
 
 EXPORTED_SYMBOL
 int PyModuleDef_Init(struct PyModuleDef* module) {
   printf("PyModuleDef_Init, module = %p \n", module);
+
   PyCFunction f = (module->m_methods)[0].f;
-  printf("PyModuleDef_Init, f = %p \n", f);
-  //return trampolineCall(f);
+  printf("PyModuleDef_Init, hello = %p \n", f);
   return (*f)(NULL, NULL);
-  // return 0;
 }
 
 typedef int (*INIT_FUNCTION)();

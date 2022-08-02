@@ -7,9 +7,9 @@ var globals: *python.PyObject = undefined;
 pub fn init() void {
     if (didInit) return;
     didInit = true;
-    std.debug.print("calling Py_Initialize()...\n", .{});
+    //std.debug.print("calling Py_Initialize()...\n", .{});
     python.Py_Initialize();
-    // std.debug.print("success!\n", .{});
+    // std.debug.print( "success!\n", .{});
     globals = python.PyDict_New();
 }
 
@@ -141,4 +141,3 @@ test "exec and eval" {
     defer test_allocator.free(b);
     try expect(eql(u8, b, "11"));
 }
-

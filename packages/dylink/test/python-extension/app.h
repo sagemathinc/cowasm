@@ -1,4 +1,5 @@
 #define EXPORTED_SYMBOL __attribute__((visibility("default")))
+#define FUNCPTR(x) __attribute__((visibility("default"))) void* __FUNCPTR__##x() { return &(x);}
 
 struct PyObjectX {
   int thingy;

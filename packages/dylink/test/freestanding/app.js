@@ -3,18 +3,25 @@ const { nonzeroPositions } = require("../../dist/util");
 const { readFileSync } = require("fs");
 const assert = require("assert");
 
-function importWebAssemblySync(path, opts) {
+function importWebAssemblySync(path, importObject) {
   const binary = new Uint8Array(readFileSync(path));
   const mod = new WebAssembly.Module(binary);
-  return new WebAssembly.Instance(mod, opts);
+  return new WebAssembly.Instance(mod, importObject);
 }
 
 async function main() {
-  const opts = {};
+  const importObject = {
+    env: {
+      malloc: () => {
+        console.log("TODO - WARNING: using fake malloc for testing.");
+        return 100000; // TODO!!!!
+      },
+    },
+  };
   const instance = await importWebAssemblyDlopen({
     path: "app.wasm",
     importWebAssemblySync,
-    opts,
+    importObject,
   });
   //  console.log("instance.exports = ", instance.exports);
 
@@ -43,14 +50,14 @@ async function main() {
 
   console.log(
     "nonzero table entries = ",
-    nonzeroPositions(opts.env.__indirect_function_table)
+    nonzeroPositions(importObject.env.__indirect_function_table)
   );
 
   console.log("pynones_match = ", instance.exports.pynones_match());
   assert(instance.exports.pynones_match() == 1);
 
   exports.instance = instance;
-  exports.opts = opts;
+  exports.importObject = importObject;
 
   console.log("All tests passed!");
 }

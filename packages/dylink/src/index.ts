@@ -1,5 +1,6 @@
 import { alignMemory, nonzeroPositions, recvString } from "./util";
 import getMetadata from "./metadata";
+import stubProxy from "./stub";
 import debug from "debug";
 const log = debug("dylink");
 
@@ -14,26 +15,33 @@ interface Env {
 
 interface Input {
   path: string;
-  opts?: { env?: Env; wasi_snapshot_preview1?: any };
+  importObject?: { env?: Env; wasi_snapshot_preview1?: any };
   importWebAssembly?: (
     path: string,
-    opts: object
+    importObject: object
   ) => Promise<WebAssembly.Instance>;
-  importWebAssemblySync: (path: string, opts: object) => WebAssembly.Instance;
+  importWebAssemblySync: (
+    path: string,
+    importObject: object
+  ) => WebAssembly.Instance;
+  stub?: boolean; // if true, automatically generate stub functions.
+  traceStub?: boolean | "first";
 }
 
 export default async function importWebAssemblyDlopen({
   path,
-  opts,
+  importObject,
   importWebAssembly,
   importWebAssemblySync,
+  stub,
+  traceStub,
 }: Input): Promise<WebAssembly.Instance> {
-  if (opts == null) {
-    opts = {} as { env?: Partial<Env> };
+  if (importObject == null) {
+    importObject = {} as { env?: Partial<Env> };
   }
-  let { env } = opts;
+  let { env } = importObject;
   if (env == null) {
-    env = opts.env = {};
+    env = importObject.env = {};
   }
   let { memory } = env;
   if (memory == null) {
@@ -50,12 +58,10 @@ export default async function importWebAssemblyDlopen({
       new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
   }
 
-  function libc(key: string) {
-    log("libc", key);
-    const f = mainInstance.exports[`libc_${key}`];
-    if (f == null) {
-      return;
-    }
+  function functionViaPointer(key: string) {
+    log("functionViaPointer", key);
+    const f = mainInstance.exports[`__FUNCPTR__${key}`];
+    if (f == null) return;
     const ptr = (f as Function)();
     if (__indirect_function_table == null) {
       throw Error("__indirect_function_table must be defined");
@@ -77,14 +83,23 @@ export default async function importWebAssemblyDlopen({
     __indirect_function_table.set(index, f);
   }
 
+  function getFunction(name: string): Function | undefined {
+    return (
+      ((importObject?.env?.[name] ??
+        functionViaPointer(name) ??
+        mainInstance.exports[name]) as any) ?? importObjectWithStub.env[name]
+    );
+  }
+
   function dlopenEnvHandler(env, key: string) {
     if (key in env) {
       return Reflect.get(env, key);
     }
     log("dlopenEnvHandler", key);
-    // important to check opts.env LAST since it could be a proxy
+
+    // important to check importObject.env LAST since it could be a proxy
     // that generates stub functions:
-    const f = mainInstance.exports[key] ?? libc(key) ?? opts?.env?.[key];
+    const f = getFunction(key);
     if (f == null) {
       log("dlopenEnvHandler got null");
       return;
@@ -179,14 +194,19 @@ export default async function importWebAssemblyDlopen({
     let memAlign = Math.pow(2, metadata.memoryAlign ?? 0);
     // finalize alignments and verify them
     memAlign = Math.max(memAlign, STACK_ALIGN); // we at least need stack alignment
-    let malloc = libc("malloc") ?? mainInstance.exports["malloc"];
+    let malloc = getFunction("malloc");
     if (malloc == null) {
-      //throw Error("malloc from libc must be available in the  main instance");
-      console.log("WARNING: using fake malloc for testing.");
-      malloc = () => 500000; // TODO!!!!
+      throw Error("malloc from libc must be available in the  main instance");
+    }
+    if (metadata.memorySize == null) {
+      throw Error("memorySize must be defined in the shared library");
+    }
+    const alloc = malloc(metadata.memorySize + memAlign);
+    if (alloc == 0) {
+      throw Error("you cannot use a stub for malloc");
     }
     const __memory_base = metadata.memorySize
-      ? alignMemory(malloc(metadata.memorySize + memAlign), memAlign)
+      ? alignMemory(alloc, memAlign)
       : 0;
     const __table_base = metadata.tableSize ? nextTablePos : 0;
 
@@ -204,14 +224,13 @@ export default async function importWebAssemblyDlopen({
       ),
     };
     log("env =", env);
-    const libOpts = {
-      ...opts,
+    const libImportObject = {
+      ...importObject,
       env: new Proxy(env, { get: dlopenEnvHandler }),
       "GOT.mem": GOTmem,
       "GOT.func": GOTfunc,
     };
-
-    const instance = importWebAssemblySync(path, libOpts);
+    const instance = importWebAssemblySync(path, libImportObject);
 
     // account for the entries that got inserted during the import.
     nextTablePos += metadata.tableSize ?? 0;
@@ -284,10 +303,14 @@ export default async function importWebAssemblyDlopen({
     throw Error(`dlsym: handle=${handle} - unknown symbol '${symName}'`);
   };
 
+  const importObjectWithStub = stub
+    ? { ...importObject, env: stubProxy(importObject.env, traceStub) }
+    : importObject;
   const mainInstance =
     importWebAssembly != null
-      ? await importWebAssembly(path, opts)
-      : importWebAssemblySync(path, opts);
+      ? await importWebAssembly(path, importObjectWithStub)
+      : importWebAssemblySync(path, importObjectWithStub);
+
   if (mainInstance.exports.__wasm_call_ctors != null) {
     // We also **MUST** explicitly call the WASM constructors. This is
     // a library function that is part of the zig libc code.  We have
@@ -297,7 +320,6 @@ export default async function importWebAssemblyDlopen({
     // to figure this out, including reading a lot of assembly code. :shrug:
     (mainInstance.exports.__wasm_call_ctors as CallableFunction)();
   }
-
   let nextTablePos =
     Math.max(0, ...nonzeroPositions(__indirect_function_table)) + 1;
 

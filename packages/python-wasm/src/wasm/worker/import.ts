@@ -141,13 +141,7 @@ async function doWasmImport({
   if (wasmOpts.env.getpid == null) {
     wasmOpts.env.getpid = () => {
       if (options.traceStubcalls) {
-        stub(
-          "getpid",
-          "returning 1",
-          [],
-          options.traceStubcalls == "first",
-          log
-        );
+        log?.("getpid", "returning 1");
       }
       return 1;
     };
@@ -187,39 +181,6 @@ async function doWasmImport({
     wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
   }
 
-  function stubProxy(env) {
-    return new Proxy(env, {
-      get(target, key) {
-        if (key in target) {
-          if (new String(key).includes("Py")) {
-            log?.("using existing for ", key);
-          }
-          return Reflect.get(target, key);
-        }
-        if (options.traceStubcalls) {
-          if (new String(key).includes("Py")) {
-            log?.("creating stub for", key);
-          }
-          return (...args) => {
-            stub(
-              key,
-              "returning 0",
-              args,
-              options.traceStubcalls == "first",
-              log
-            );
-            return 0;
-          };
-        } else {
-          // faster to not trace or even check, obviously.
-          return () => 0;
-        }
-      },
-    });
-  }
-
-  wasmOpts.env = stubProxy(wasmOpts.env);
-
   if (source == null) {
     throw Error("source must be defined for now...");
   }
@@ -227,7 +188,9 @@ async function doWasmImport({
     path: source,
     importWebAssemblySync,
     importWebAssembly,
-    opts: wasmOpts,
+    importObject: wasmOpts,
+    stub: true,
+    traceStub: options.traceStubcalls,
   });
 
   if (wasi != null) {
@@ -264,12 +227,3 @@ const wasmImport: WasmImportFunction = reuseInFlight(doWasmImport, {
   createKey: (args) => args[0],
 });
 export default wasmImport;
-
-const stubUsed = new Set<string>([]);
-function stub(functionName, behavior, args, firstOnly, log) {
-  if (firstOnly) {
-    if (stubUsed.has(functionName)) return;
-    stubUsed.add(functionName);
-  }
-  log?.(`WARNING STUB - ${functionName}: `, behavior, args);
-}
