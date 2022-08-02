@@ -63,6 +63,20 @@ export default async function importWebAssemblyDlopen({
     return __indirect_function_table.get(ptr);
   }
 
+  function setTable(index: number, f: Function): void {
+    if (__indirect_function_table == null) {
+      throw Error("__indirect_function_table must be defined");
+    }
+    if (__indirect_function_table.get(index)) {
+      throw Error(`setTable: attempt to overwrite existing function! ${index}`);
+    }
+    if (__indirect_function_table.length <= index + 50) {
+      __indirect_function_table.grow(50);
+    }
+    log("setTable ", index, typeof index, f, typeof f);
+    __indirect_function_table.set(index, f);
+  }
+
   function dlopenEnvHandler(env, key: string) {
     if (key in env) {
       return Reflect.get(env, key);
@@ -75,10 +89,13 @@ export default async function importWebAssemblyDlopen({
       log("dlopenEnvHandler got null");
       return;
     }
-    return (...args) => {
-      // @ts-ignore
-      return f(...args);
-    };
+    return f;
+    // FOR LOW LEVEL DEBUGGING ONLY!
+    //     return (...args) => {
+    //       console.log("env call ", key);
+    //       // @ts-ignore
+    //       return f(...args);
+    //     };
   }
 
   // Global Offset Table
@@ -207,22 +224,6 @@ export default async function importWebAssemblyDlopen({
     if (instance.exports.__wasm_call_ctors != null) {
       log("calling __wasm_call_ctors for dynamic library");
       (instance.exports.__wasm_call_ctors as CallableFunction)();
-    }
-
-    function setTable(index: number, f: Function): void {
-      if (__indirect_function_table == null) {
-        throw Error("__indirect_function_table must be defined");
-      }
-      if (__indirect_function_table.get(index)) {
-        throw Error(
-          `setTable: attempt to overwrite existing function! ${index}`
-        );
-      }
-      if (__indirect_function_table.length <= index + 50) {
-        __indirect_function_table.grow(50);
-      }
-      log("setTable ", index, typeof index, f, typeof f);
-      __indirect_function_table.set(index, f);
     }
 
     const symToPtr: { [symName: string]: number } = {};
