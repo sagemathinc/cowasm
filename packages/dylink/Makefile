@@ -2,6 +2,7 @@ all: dist/.built
 
 node_modules:
 	npm ci
+.PHONY: node_modules
 
 dist/libc.js: node_modules src/libc.ts src/func-pointers.ts
 	npm run build
@@ -20,7 +21,7 @@ dist/pointers/libpython.c: dist/libpython.js
 	mkdir -p dist/pointers/
 	node ./dist/libpython.js > dist/pointers/libpython.c
 
-dist/.built: dist/pointers/libc.c  dist/pointers/libpython.c dist/index.js
+dist/.built: dist/pointers/libc.c dist/index.js
 	cd ../../bin && ln -sf ../packages/dylink/bin/zig-fPIC .
 	touch dist/.built
 
@@ -41,7 +42,7 @@ test-native-macos:
 .PHONY: test
 
 clean:
-	rm -rf dist tsconfig.tsbuildinfo
+	rm -rf dist tsconfig.tsbuildinfo node_modules
 	cd test/freestanding && make clean
 	cd test/wasi && make clean
 	cd test/python-extension && make clean
