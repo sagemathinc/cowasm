@@ -214,11 +214,18 @@ ${BUILD}/wasm-shared/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	touch ${BUILD}/wasm-shared/.patched
 
 
+# The -s option to BLDSHARED below strips debug symbols from the shared object libraries, as explained here:
+#     https://stackoverflow.com/questions/6085491/gcc-vs-clang-symbol-stripping
+# It would be nicer to build them with the symbols in (the default), then use wasm-strip
+# later when packaging things up.  Unfortunately, wasm-strip only implements "strip everything",
+# not just debug symbols.  There's code here  https://reviews.llvm.org/D73820 for the general
+# case, but I guess it isn't merged.
+# If you are debugging extension modules, you should temporarily remove the -s option below.
 ${DIST_WASM}/.built-cpython-shared: ${DIST_WASM}/.built-cpython ${BUILD}/wasm-shared/.patched
 	cd ${BUILD}/wasm-shared && \
 		CC="zig-fPIC cc   " \
 		CXX="zig-fPIC c++  " \
-		BLDSHARED="zig wasm-ld -S --experimental-pic -shared  " \
+		BLDSHARED="zig wasm-ld -s --experimental-pic -shared  " \
 		AR="zig ar" \
 		CFLAGS=" -Oz  -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
 		CONFIG_SITE=./config.site \
@@ -250,10 +257,11 @@ ${DIST_WASM}/.built-cpython-shared: ${DIST_WASM}/.built-cpython ${BUILD}/wasm-sh
 wasm-shared: ${DIST_WASM}/.built-cpython-shared
 
 
-node_modules:
-	npm ci
+# node_modules would currently only be needed to use wasm-strip.
+# node_modules:
+# 	npm ci
 
-${DIST_WASM}/lib/dist/python311.zip: ${DIST_WASM}/.built-cpython ${DIST_WASM}/.built-cpython-shared node_modules
+${DIST_WASM}/lib/dist/python311.zip: ${DIST_WASM}/.built-cpython ${DIST_WASM}/.built-cpython-shared # node_modules
 	# Build wasm asset bundle (the pyc files, etc.).
 	cd ${BUILD}/wasm && \
 		mkdir -p usr/local/lib/python3.11/lib-dynload/  && \
