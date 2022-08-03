@@ -21,6 +21,9 @@ dist/pointers/libpython.c: dist/libpython.js
 	mkdir -p dist/pointers/
 	node ./dist/libpython.js > dist/pointers/libpython.c
 
+.PHONY: pointers
+pointers: dist/pointers/libpython.c dist/pointers/libc.c
+
 dist/.built: dist/pointers/libc.c dist/index.js
 	cd ../../bin && ln -sf ../packages/dylink/bin/zig-fPIC .
 	touch dist/.built
