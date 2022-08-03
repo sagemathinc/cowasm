@@ -36,6 +36,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 	# It fails to build some non-liblzma stuff (for xz) that we don't need, so we
 	# ignore that and just install the library.
 	cd ${BUILD}/wasm && make || true && cd src/liblzma && make install
+	zig ranlib ${DIST_WASM}/lib/liblzma.a  # needed on linux
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
