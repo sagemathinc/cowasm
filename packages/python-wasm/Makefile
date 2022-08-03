@@ -52,7 +52,7 @@ test-python:
 #
 
 
-${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/dyload/dyload.c
+${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig
 	cd src && zig build-lib \
 		${OPT} \
 		-dynamic \
@@ -68,7 +68,6 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
 	   `pwd`/python/signal/signal.c \
-	   `pwd`/python/dyload/dyload.c \
 	   ${DYLINK}/pointers/libc.c \
 	   ${DYLINK}/pointers/libpython.c \
 	   python/interface.zig
