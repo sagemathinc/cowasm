@@ -55,9 +55,8 @@ test-python:
 ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig
 	cd src && zig build-lib \
 		${OPT} \
-		-dynamic \
 		-rdynamic \
-		-target wasm32-wasi -lc \
+		-target wasm32-wasi \
 		--import-memory \
 		--import-table \
 		-I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} \
@@ -68,7 +67,7 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 	   `pwd`/python/signal/signal.c \
 	   ${DYLINK}/wasm-export/libc.c \
 	   ${DYLINK}/wasm-export/libpython.c \
-	   python/interface.zig
+	   python/interface.zig -lc
 	mkdir -p ${DIST}/python
 	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
 	mv src/interface.wasm ${DIST}/python/python.wasm

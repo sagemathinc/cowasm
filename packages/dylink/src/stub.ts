@@ -1,11 +1,20 @@
 import debug from "debug";
 const log = debug("stub");
 
-export default function stubProxy(env, traceStub: boolean | "first" = false) {
+export default function stubProxy(
+  env,
+  functionViaPointer: (ptr) => Function,
+  traceStub: boolean | "first" = false
+) {
   return new Proxy(env, {
     get(target, key) {
       if (key in target) {
         return Reflect.get(target, key);
+      }
+      const f = functionViaPointer(key);
+      if (f != null) {
+        log("using function via pointer for ", key);
+        return f;
       }
       // we ALWAYS log creating the stub.  traceStub determines if we print when using the stub.
       log("creating stub", key);
@@ -29,5 +38,5 @@ function stub(functionName, args, firstOnly) {
     if (stubUsed.has(functionName)) return;
     stubUsed.add(functionName);
   }
-  log('using stub', functionName, args);
+  log("using stub", functionName, args);
 }

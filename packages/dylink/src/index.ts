@@ -68,6 +68,7 @@ export default async function importWebAssemblyDlopen({
   }
 
   function functionViaPointer(key: string) {
+    if(mainInstance == null) return; // not yet available
     log("functionViaPointer", key);
     const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
     if (f == null) return;
@@ -143,8 +144,8 @@ export default async function importWebAssemblyDlopen({
     let rtn = GOT[key];
     if (!rtn) {
       // @ts-ignore
-      log("GOTMemHandler ", key, "-->", mainInstance.exports[key]?.value);
-      let ptr = symbolViaPointer(key) ?? (mainInstance.exports[key] as any)?.value;
+      let ptr = symbolViaPointer(key);
+      log("GOTMemHandler ", key, ptr);
       if (ptr == null) {
         throw Error(
           `to load this dynamic library, the main module must export "${key}"`
@@ -329,7 +330,7 @@ export default async function importWebAssemblyDlopen({
   };
 
   const importObjectWithStub = stub
-    ? { ...importObject, env: stubProxy(importObject.env, traceStub) }
+    ? { ...importObject, env: stubProxy(importObject.env, functionViaPointer, traceStub) }
     : importObject;
   const mainInstance =
     importWebAssembly != null
