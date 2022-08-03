@@ -34,6 +34,7 @@ test:
 	cd test/freestanding && make test
 	cd test/wasi && make test
 	cd test/python-extension && make test
+	cd test/malloc && make test
 .PHONY: test
 
 test-native-macos:
@@ -42,6 +43,7 @@ test-native-macos:
 	cd test/freestanding && make test-native-macos
 	cd test/wasi && make test-native-macos
 	cd test/python-extension && make test-native-macos
+	cd test/malloc && make test-native-macos
 .PHONY: test
 
 clean:
@@ -49,5 +51,6 @@ clean:
 	cd test/freestanding && make clean
 	cd test/wasi && make clean
 	cd test/python-extension && make clean
+	cd test/malloc && make clean
 
 .PHONY: clean

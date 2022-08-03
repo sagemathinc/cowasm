@@ -63,8 +63,6 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 		-I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} \
 		${PYTHON_WASM}/lib/libpython3.11.a \
 	   ${POSIX_WASM}/libwasmposix.a \
-	   ${PACKAGES}/libedit/dist/wasm/lib/libedit.a \
-	   ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
 	   `pwd`/python/signal/signal.c \

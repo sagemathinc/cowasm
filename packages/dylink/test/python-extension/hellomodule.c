@@ -27,32 +27,7 @@ static PyObject *hello(PyObject *self, PyObject *args) {
   return PyNone;
 }
 
-// This is super fast!
-// static PyObject *hello2(PyObject *self, PyObject *args) {
-//   float s = 0;
-//   printf("start hello2...\n");
-//   FUN_PTR f = get_mysin();
-//   for (int i = 0; i < 500000; i++) {
-//     s += (*f)(i);
-//   }
-//   printf("done hello2... s=%f\n", s);
-//   return PyNone;
-// }
-
-// This is also super fast!
-// static PyObject *hello3(PyObject *self, PyObject *args) {
-//   float s = 0;
-//   printf("start hello3...\n");
-//   for (int i = 0; i < 500000; i++) {
-//     s += sin(i);
-//   }
-//   printf("done hello3... s=%f\n", s);
-//   return PyNone;
-// }
-
-static struct PyMethodDef module_methods[] = {
-    {"hello", &hello},
-    /*{"hello2", &hello2}, {"hello3", &hello3},*/ {NULL, NULL}};
+static struct PyMethodDef module_methods[] = {{"hello", &hello}, {NULL, NULL}};
 
 struct PyModuleDef _hellomodule = {
     .m_name = "hello",
