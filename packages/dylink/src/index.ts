@@ -153,14 +153,14 @@ export default async function importWebAssemblyDlopen({
       log("GOTFuncHandler ", key, "-->", nextTablePos);
       // place in the table -- we make a note of where to put it,
       // and actually place it later below after the import is done.
-      funcMap[key] = nextTablePos;
-      rtn = GOT[key] = new WebAssembly.Global(
+      const ptr = new WebAssembly.Global(
         {
           value: "i32",
           mutable: true,
         },
         nextTablePos
       );
+      rtn = GOT[key] = funcMap[key] = ptr;
       nextTablePos += 1;
     }
     return rtn;
@@ -230,12 +230,17 @@ export default async function importWebAssemblyDlopen({
       "GOT.mem": GOTmem,
       "GOT.func": GOTfunc,
     };
-    const instance = importWebAssemblySync(path, libImportObject);
 
     // account for the entries that got inserted during the import.
+    // This must happen BEFORE the import, since that will create some
+    // new entries to get put in the table below, and the import itself
+    // will put entries from the current position up to metadata.tableSize
+    // positions forward.
     nextTablePos += metadata.tableSize ?? 0;
 
-    log("got exports=", instance.exports);
+    const instance = importWebAssemblySync(path, libImportObject);
+
+    //log("got exports=", instance.exports);
     if (__indirect_function_table == null) {
       throw Error("bug");
     }
@@ -247,6 +252,9 @@ export default async function importWebAssemblyDlopen({
 
     const symToPtr: { [symName: string]: number } = {};
     for (const name in instance.exports) {
+      // TODO: I'm worried that these might be VERY slow.
+      // It probably doesn't matter for Python, since I think it only
+      // uses this for the module init...
       if (funcMap[name] != null) continue;
       const val = instance.exports[name];
       if (symToPtr[name] != null || typeof val != "function") continue;
@@ -258,7 +266,7 @@ export default async function importWebAssemblyDlopen({
       const f = instance.exports[symName] ?? mainInstance.exports[symName];
       if (f == null) continue;
       log("table[%s] = %s", funcMap[symName], symName, f);
-      setTable(funcMap[symName], f as Function);
+      setTable(funcMap[symName].value, f as Function);
       symToPtr[symName] = funcMap[symName];
       delete funcMap[symName];
     }
