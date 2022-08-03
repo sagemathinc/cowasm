@@ -255,8 +255,9 @@ ${DIST_WASM}/.built-cpython-shared: ${DIST_WASM}/.built-cpython ${BUILD}/wasm-sh
 	# The CONFIGURE_LDFLAGS_NODIST="" is because CONFIGURE_LDFLAGS_NODIST has a bunch of warning options that don't work with wasm-ld.
 	# The LINKFORSHARED=-shared is needed, or we hit https://github.com/ziglang/zig/issues/11045
 	cd ${BUILD}/wasm-shared && \
-		make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" && \
-		make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" install
+		make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared"
+	# TODO: much more to do than just this, longterm...
+	cp ${BUILD}/build/lib.wasi-wasm32-3.11/_sqlite3.cpython-311-wasm32-emscripten.so ${DIST_WASM}/lib/python3.11/lib-dynload/_sqlite3.cpython-311-wasm32-wasi.so
 	touch ${DIST_WASM}/.built-cpython-shared
 
 .PHONY: wasm-shared
