@@ -4,27 +4,27 @@ node_modules:
 	npm ci
 .PHONY: node_modules
 
-dist/libc.js: node_modules src/libc.ts src/func-pointers.ts
+dist/libc.js: node_modules src/libc.ts src/wasm-export.ts
 	npm run build
 
-dist/libpython.js: node_modules src/libpython.ts src/func-pointers.ts
+dist/libpython.js: node_modules src/libpython.ts src/wasm-export.ts
 	npm run build
 
 dist/index.js: src/index.ts
 	npm run build
 
-dist/pointers/libc.c: dist/libc.js
-	mkdir -p dist/pointers/
-	node ./dist/libc.js > dist/pointers/libc.c
+dist/wasm-export/libc.c: dist/libc.js
+	mkdir -p dist/wasm-export/
+	node ./dist/libc.js > dist/wasm-export/libc.c
 
-dist/pointers/libpython.c: dist/libpython.js
-	mkdir -p dist/pointers/
-	node ./dist/libpython.js > dist/pointers/libpython.c
+dist/wasm-export/libpython.c: dist/libpython.js
+	mkdir -p dist/wasm-export/
+	node ./dist/libpython.js > dist/wasm-export/libpython.c
 
-.PHONY: pointers
-pointers: dist/pointers/libpython.c dist/pointers/libc.c
+.PHONY: wasm-export
+wasm-export: dist/wasm-export/libpython.c dist/wasm-export/libc.c
 
-dist/.built: dist/pointers/libc.c dist/index.js
+dist/.built: dist/wasm-export/libc.c dist/index.js
 	cd ../../bin && ln -sf ../packages/dylink/bin/zig-fPIC .
 	touch dist/.built
 

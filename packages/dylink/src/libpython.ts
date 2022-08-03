@@ -6,7 +6,7 @@ of times faster.
 */
 
 import spawnAsync from "await-spawn";
-import funcPointers from "./func-pointers";
+import wasmExport from "./wasm-export";
 
 const path = "../cpython/dist/wasm/include/python3.11";
 
@@ -35,7 +35,7 @@ async function main() {
     names.push(name);
   }
   console.log("#include <Python.h>");
-  console.log(funcPointers(names));
+  console.log(wasmExport(names));
 }
 
 main();

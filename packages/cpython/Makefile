@@ -184,7 +184,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 	cd ${BUILD}/wasm && make install
 	# Also copy posix-wasm.h over, so it's possible to build programs against our new python.
 	cd ${BUILD}/wasm && cp ${POSIX_WASM}/wasm/posix-wasm.h ${DIST_WASM}/include/python${PYTHON_MAJOR}.${PYTHON_MINOR}/
-	cd ../dylink && make dist/pointers/libpython.c   # TODO -- temporary; needed due to dylib depending on python and python on dylib.
+	cd ../dylink && make wasm-export   # TODO -- temporary; needed due to dylib depending on python and python on dylib; will fix this by moving wasm-export to a separate package.
 	touch ${DIST_WASM}/.built-cpython
 
 .PHONY: wasm

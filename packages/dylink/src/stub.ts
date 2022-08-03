@@ -1,5 +1,5 @@
 import debug from "debug";
-const log = debug("dylink:stub");
+const log = debug("stub");
 
 export default function stubProxy(env, traceStub: boolean | "first" = false) {
   return new Proxy(env, {
@@ -7,8 +7,10 @@ export default function stubProxy(env, traceStub: boolean | "first" = false) {
       if (key in target) {
         return Reflect.get(target, key);
       }
+      // we ALWAYS log creating the stub.  traceStub determines if we print when using the stub.
+      log("creating stub", key);
       if (traceStub) {
-        log("creating", key);
+        log("creating stub", key);
         return (...args) => {
           stub(key, args, traceStub == "first");
           return 0;
@@ -27,5 +29,5 @@ function stub(functionName, args, firstOnly) {
     if (stubUsed.has(functionName)) return;
     stubUsed.add(functionName);
   }
-  log(functionName, args);
+  log('using stub', functionName, args);
 }

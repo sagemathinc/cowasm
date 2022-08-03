@@ -18,10 +18,6 @@ int vecsum(int* v, int n) {
   return s;
 }
 
-// If you comment this out, then no function pointer to mysin is generated,
-// and the call to hello will be insanely slow.
-FUNCPTR(vecsum);
-
 EXPORTED_SYMBOL
 int PyModuleDef_Init(struct PyModuleDef* module) {
   printf("PyModuleDef_Init, module = %p \n", module);
@@ -34,6 +30,7 @@ int PyModuleDef_Init(struct PyModuleDef* module) {
 typedef int (*INIT_FUNCTION)();
 
 int main() {
+  printf("stdout=%d, &stdout=%p\n", stdout, &stdout);
   printf("Running Tests...\n");
   void* handle = dlopen("./hello.so", 2);
   printf("Got handle=%p\n", handle);

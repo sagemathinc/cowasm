@@ -10,10 +10,14 @@ static PyObject *hello(PyObject *self, PyObject *args) {
   int n = 101;
   int *a = malloc(sizeof(int) * n);
   printf("got memory at a=%p\n", a);
+  printf("\nNow summing up numbers placed there:\n");
   for (int i = 0; i < n; i++) {
     a[i] = i;
   }
-  printf("sum is %d\n", vecsum(a, n));
+  printf("printf: sum is %d\n", vecsum(a, n));
+  assert(stdout != 0);
+  printf("stdout=%d, &stdout=%p\n", stdout, &stdout);
+  fprintf(stdout, "fprintf to stdout: sum is %d\n", vecsum(a, n));
   return PyNone;
 }
 

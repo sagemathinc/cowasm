@@ -7,7 +7,7 @@ build/wasm/app.wasm: app.c
 		-shared \
 		-fvisibility=default \
 		app.c \
-		../../dist/pointers/libc.c \
+		../../dist/wasm-export/libc.c \
 		-o build/wasm/app.wasm \
 		-Xlinker --import-memory \
 		-Xlinker --import-table

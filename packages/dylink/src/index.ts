@@ -60,9 +60,16 @@ export default async function importWebAssemblyDlopen({
       new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
   }
 
+  function symbolViaPointer(key: string) {
+    log("functionViaPointer", key);
+    const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
+    if (f == null) return;
+    return (f as Function)();
+  }
+
   function functionViaPointer(key: string) {
     log("functionViaPointer", key);
-    const f = mainInstance.exports[`__FUNCPTR__${key}`];
+    const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
     if (f == null) return;
     const ptr = (f as Function)();
     if (__indirect_function_table == null) {
@@ -128,17 +135,27 @@ export default async function importWebAssemblyDlopen({
     __memory_base before exporting). Thus, the exported address is
     before relocation; the loader, which knows __memory_base, can
     then calculate the final relocated address."
+
+    In any case, what we need to do here is return the *memory address*
+    of the variable with name key.  For example, if key='stdin', we
+    are returning the address of the stdin file descriptor (that integer).
     */
     let rtn = GOT[key];
     if (!rtn) {
       // @ts-ignore
       log("GOTMemHandler ", key, "-->", mainInstance.exports[key]?.value);
+      let ptr = symbolViaPointer(key) ?? (mainInstance.exports[key] as any)?.value;
+      if (ptr == null) {
+        throw Error(
+          `to load this dynamic library, the main module must export "${key}"`
+        );
+      }
       rtn = GOT[key] = new WebAssembly.Global(
         {
           value: "i32",
           mutable: true,
         },
-        mainInstance.exports[key]
+        ptr
       );
     }
     return rtn;
