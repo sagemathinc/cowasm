@@ -1,6 +1,23 @@
 import debug from "debug";
 const log = debug("stub");
 
+const EXCLUDE = [
+  "pthread_",
+  "sig",
+  "tcsetattr",
+  "tcgetattr",
+  "cfgetispeed",
+  "cfgetospeed",
+  "strunvis"
+];
+
+function exclude(name): boolean {
+  for (const x of EXCLUDE) {
+    if (name.startsWith(x)) return true;
+  }
+  return false;
+}
+
 export default function stubProxy(
   env,
   functionViaPointer: (ptr) => Function,
@@ -18,10 +35,10 @@ export default function stubProxy(
       }
       // we ALWAYS log creating the stub.  traceStub determines if we print when using the stub.
       log("creating stub", key);
-      if (traceStub) {
+      if (traceStub && !exclude(key)) {
         log("creating stub", key);
         return (...args) => {
-          stub(key, args, traceStub == "first");
+          logStubUse(key, args, traceStub == "first");
           return 0;
         };
       } else {
@@ -33,7 +50,7 @@ export default function stubProxy(
 }
 
 const stubUsed = new Set<string>([]);
-function stub(functionName, args, firstOnly) {
+function logStubUse(functionName, args, firstOnly) {
   if (firstOnly) {
     if (stubUsed.has(functionName)) return;
     stubUsed.add(functionName);

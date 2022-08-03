@@ -10,6 +10,8 @@ PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
 PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm
 POSIX_WASM   = ${PACKAGES}/posix-wasm/dist/wasm
 DYLINK   = ${PACKAGES}/dylink/dist
+LZMA_WASM = ${CWD}/../lzma/dist/wasm
+ZLIB_WASM = ${CWD}/../zlib/dist/wasm
 
 WASM_CFLAGS   = -dynamic ${OPT}
 
@@ -62,12 +64,14 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 		-I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} \
 		${PYTHON_WASM}/lib/libpython3.11.a \
 	   ${POSIX_WASM}/libwasmposix.a \
+	   ${LZMA_WASM}/lib/liblzma.a \
+	   ${ZLIB_WASM}/lib/libz.a \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
 	   `pwd`/python/signal/signal.c \
 	   ${DYLINK}/wasm-export/libc.c \
 	   ${DYLINK}/wasm-export/libpython.c \
-	   python/interface.zig -lc
+	   python/interface.zig -lc -lm
 	mkdir -p ${DIST}/python
 	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
 	mv src/interface.wasm ${DIST}/python/python.wasm

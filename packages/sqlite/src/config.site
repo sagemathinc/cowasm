@@ -1,0 +1,2 @@
+ac_cv_func_strchrnul=no
+ac_cv_header_dlfcn_h=no

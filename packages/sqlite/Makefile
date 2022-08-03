@@ -5,6 +5,7 @@ CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 export PATH := ${CWD}/../../bin:${PATH}
 
 BUILD = ${CWD}/build
+SRC = ${CWD}/src
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 POSIX_WASM = ${CWD}/../posix-wasm/dist/wasm
@@ -21,6 +22,7 @@ ${BUILD}/wasm: ${BUILD}/source.tar.gz
 	rm -rf ${BUILD}/wasm
 	mkdir -p ${BUILD}/wasm
 	cd ${BUILD} && tar xf source.tar.gz -C wasm --strip-components=1
+	cp ${SRC}/config.site ${BUILD}/wasm/
 	cp ${POSIX_WASM}/posix-wasm.h ${BUILD}/wasm/
 
 # Notes on flags below.
@@ -34,6 +36,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 		CFLAGS="-Oz -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include " \
 		LDFLAGS="-lc -L${ZLIB}/wasm/lib  -L${LIBEDIT}/wasm/lib " \
 		./configure --host=none  --prefix="${DIST_WASM}" \
+			--cache-file=config.site \
 			--disable-load-extension \
 			--disable-threadsafe \
 			--disable-largefile \

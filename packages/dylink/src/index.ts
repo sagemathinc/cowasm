@@ -70,6 +70,10 @@ export default async function importWebAssemblyDlopen({
   function functionViaPointer(key: string) {
     if(mainInstance == null) return; // not yet available
     log("functionViaPointer", key);
+    if(key == 'iprintf') {
+      // TODO: more aliases?
+      key = 'printf';
+    }
     const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
     if (f == null) return;
     const ptr = (f as Function)();
