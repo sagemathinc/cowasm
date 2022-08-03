@@ -191,21 +191,6 @@ ${DIST_WASM}/.built-cpython: ${BUILD}/wasm/.patched ${DIST_NATIVE}/.built
 wasm: ${DIST_WASM}/.built-cpython
 
 
-${DIST_WASM}/lib/dist/python311.zip: ${DIST_WASM}/.built-cpython
-	# Build wasm asset bundle (the pyc files, etc.).
-	cd ${BUILD}/wasm && \
-		mkdir -p usr/local/lib/python3.11/lib-dynload/  && \
-	    DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" python3 ./Tools/wasm/wasm_assets.py && \
-		rm -rf ${DIST_WASM}/lib/dist && \
-		mv usr/local/lib ${DIST_WASM}/lib/dist
-	# Add termcap for xterm to our zip asset bundle, so readline actually works:
-	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && zip -u python311.zip termcap
-	touch ${DIST_WASM}/.built
-
-
-.PHONY: wasm-data
-wasm-data: ${DIST_WASM}/lib/dist/python311.zip
-
 # Build everything again but fPIC. This is ONLY for building dynamic link libraries, e.g., sqlite.
 # TODO!! don't have all this patched stuff twice.  But maybe we can do dynamic in place so can just delete this...
 
@@ -233,7 +218,7 @@ ${DIST_WASM}/.built-cpython-shared: ${DIST_WASM}/.built-cpython ${BUILD}/wasm-sh
 	cd ${BUILD}/wasm-shared && \
 		CC="zig-fPIC cc   " \
 		CXX="zig-fPIC c++  " \
-		BLDSHARED="zig wasm-ld --experimental-pic -shared  " \
+		BLDSHARED="zig wasm-ld -S --experimental-pic -shared  " \
 		AR="zig ar" \
 		CFLAGS=" -Oz  -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
 		CONFIG_SITE=./config.site \
@@ -257,14 +242,38 @@ ${DIST_WASM}/.built-cpython-shared: ${DIST_WASM}/.built-cpython ${BUILD}/wasm-sh
 	cd ${BUILD}/wasm-shared && \
 		make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared"
 	# TODO: much more to do than just this, longterm...
-	cp ${BUILD}/build/lib.wasi-wasm32-3.11/_sqlite3.cpython-311-wasm32-emscripten.so ${DIST_WASM}/lib/python3.11/lib-dynload/_sqlite3.cpython-311-wasm32-wasi.so
+	cp ${BUILD}/wasm-shared/build/lib.wasi-wasm32-3.11/_sqlite3.cpython-311-wasm32-emscripten.so ${DIST_WASM}/lib/python3.11/lib-dynload/_sqlite3.cpython-311-wasm32-wasi.so
+	cp ${BUILD}/wasm-shared/build/lib.wasi-wasm32-3.11/readline.cpython-311-wasm32-emscripten.so ${DIST_WASM}/lib/python3.11/lib-dynload/readline.cpython-311-wasm32-wasi.so
 	touch ${DIST_WASM}/.built-cpython-shared
 
 .PHONY: wasm-shared
 wasm-shared: ${DIST_WASM}/.built-cpython-shared
 
 
+node_modules:
+	npm ci
 
+${DIST_WASM}/lib/dist/python311.zip: ${DIST_WASM}/.built-cpython ${DIST_WASM}/.built-cpython-shared node_modules
+	# Build wasm asset bundle (the pyc files, etc.).
+	cd ${BUILD}/wasm && \
+		mkdir -p usr/local/lib/python3.11/lib-dynload/  && \
+	    LD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" \
+			python3 ./Tools/wasm/wasm_assets.py && \
+		rm -rf ${DIST_WASM}/lib/dist && \
+		mv usr/local/lib ${DIST_WASM}/lib/dist
+	# Add termcap for xterm to our zip asset bundle, so readline actually works:
+	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && zip -u python311.zip termcap
+	mkdir ${DIST_WASM}/lib/dist/lib-dynload/
+	cp ${DIST_WASM}/lib/python3.11/lib-dynload/readline.cpython-311-wasm32-wasi.so ${DIST_WASM}/lib/dist/lib-dynload/
+	cp ${DIST_WASM}/lib/python3.11/lib-dynload/_sqlite3.cpython-311-wasm32-wasi.so ${DIST_WASM}/lib/dist/lib-dynload/
+	# Unfortunately, wasm-strip removes the critical custom section tht makes the so file useful, since NotImplementedError
+	#      https://reviews.llvm.org/D73820
+	#find ${DIST_WASM}/lib/dist/lib-dynload -type f -name "*.so" | xargs -n1 ${CWD}/node_modules/.bin/wasm-strip
+	cd ${DIST_WASM}/lib/dist/; zip -u python311.zip lib-dynload/*
+	touch ${DIST_WASM}/.built
+
+.PHONY: wasm-data
+wasm-data: ${DIST_WASM}/lib/dist/python311.zip
 
 # Use "make run-wasm" to run our WASM python at the command line.
 # You can also just run `python-wasm` in the top level bin/ directory.

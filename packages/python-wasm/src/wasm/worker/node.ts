@@ -6,7 +6,7 @@ in the mode where we use a Worker.
 */
 
 import { readFile } from "fs/promises";
-import { readFileSync } from "fs";
+import { createFileSystem } from "@wapython/wasi";
 import type { FileSystemSpec } from "@wapython/wasi";
 import bindings from "@wapython/wasi/dist/bindings/node";
 import { dirname, isAbsolute, join } from "path";
@@ -30,7 +30,7 @@ export default async function wasmImportNode(
     name = join(path, name);
   }
   // also fix zip path, if necessary and read in any zip files (so they can be loaded into memfs).
-  const fs: FileSystemSpec[] = [];
+  const fsSpec: FileSystemSpec[] = [];
   for (const X of options.fs ?? []) {
     if (X.type == "zipfile") {
       if (!isAbsolute(X.zipfile)) {
@@ -42,7 +42,7 @@ export default async function wasmImportNode(
           data: await readFile(X.zipfile),
           mountpoint: X.mountpoint,
         } as FileSystemSpec;
-        fs.push(Y);
+        fsSpec.push(Y);
       } catch (err) {
         // non-fatal
         // We *might* use this eventually when building the datafile itself, if we switch to using cpython wasm to build
@@ -52,31 +52,33 @@ export default async function wasmImportNode(
         );
       }
     } else {
-      fs.push(X);
+      fsSpec.push(X);
     }
+  }
+
+  const fs = createFileSystem(fsSpec, bindings);
+
+  function importWebAssemblySync(path: string, opts: WebAssembly.Imports) {
+    const binary = new Uint8Array(fs.readFileSync(path));
+    const mod = new WebAssembly.Module(binary);
+    return new WebAssembly.Instance(mod, opts);
+  }
+
+  async function importWebAssembly(path: string, opts: WebAssembly.Imports) {
+    const binary = new Uint8Array(await readFile(path));
+    const mod = new WebAssembly.Module(binary);
+    return new WebAssembly.Instance(mod, opts);
   }
 
   return await wasmImport({
     source: name,
-    bindings,
-    options: { ...options, fs },
+    bindings: { ...bindings, fs },
+    options,
     log: log ?? debug("wasm-node"),
     importWebAssembly,
     importWebAssemblySync,
-    readFileSync,
+    readFileSync: fs.readFileSync,
   });
-}
-
-function importWebAssemblySync(path: string, opts: WebAssembly.Imports) {
-  const binary = new Uint8Array(readFileSync(path));
-  const mod = new WebAssembly.Module(binary);
-  return new WebAssembly.Instance(mod, opts);
-}
-
-async function importWebAssembly(path: string, opts: WebAssembly.Imports) {
-  const binary = new Uint8Array(await readFile(path));
-  const mod = new WebAssembly.Module(binary);
-  return new WebAssembly.Instance(mod, opts);
 }
 
 if (!isMainThread && parentPort != null) {

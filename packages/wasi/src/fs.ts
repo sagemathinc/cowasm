@@ -12,10 +12,9 @@ this code is needed to initialize it before anything else can happen.
 import unzip from "./unzip";
 import { Volume, createFsFromVolume, fs as memfs, DirectoryJSON } from "memfs";
 import { Union } from "unionfs";
-import type * as FileSystem from "fs";
 import type { WASIBindings } from "./types";
 
-export type { FileSystem };
+export type FileSystem = any; // TODO -- what exactly do we need?
 
 // The native filesystem
 interface NativeFs {

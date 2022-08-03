@@ -2,6 +2,7 @@
 This is the Worker script when importing the wasm module in a web browser.
 */
 
+import { createFileSystem } from "@wapython/wasi";
 import type { FileSystemSpec } from "@wapython/wasi";
 import bindings from "@wapython/wasi/dist/bindings/browser";
 import type WasmInstance from "./instance";
@@ -18,7 +19,7 @@ export default async function wasmImportBrowser(
   log?.("wasmImportBrowser");
   // also fix zip path, if necessary and read in any zip files (so
   // they can be loaded into memfs).
-  const fs: FileSystemSpec[] = [];
+  const fsSpec: FileSystemSpec[] = [];
   for (const X of options.fs ?? []) {
     if (X.type == "zipurl") {
       const Y = {
@@ -26,40 +27,30 @@ export default async function wasmImportBrowser(
         data: await (await fetch(X.zipurl)).arrayBuffer(),
         mountpoint: X.mountpoint,
       } as FileSystemSpec;
-      fs.push(Y);
+      fsSpec.push(Y);
     } else {
-      fs.push(X);
+      fsSpec.push(X);
     }
   }
 
+  const fs = createFileSystem(fsSpec, bindings);
+
   // Assumed to be loaded into memfs.
-  async function importWebAssemblySync(
-    path: string,
-    options: WebAssembly.Imports
-  ) {
-    if (wasm.fs == null) {
-      throw Error("memfs must be defined");
-    }
-    const binary = new Uint8Array(wasm.fs.readFileSync(path));
+  function importWebAssemblySync(path: string, options: WebAssembly.Imports) {
+    const binary = new Uint8Array(fs.readFileSync(path));
     const mod = new WebAssembly.Module(binary);
     return new WebAssembly.Instance(mod, options);
   }
 
   const wasm = await wasmImport({
     source: wasmUrl,
-    bindings,
-    options: {
-      ...options,
-      fs,
-    },
+    bindings: { ...bindings, fs },
+    options,
     log,
     importWebAssembly,
     importWebAssemblySync,
     readFileSync: (path) => {
-      if (wasm.fs == null) {
-        throw Error("memfs must be defined");
-      }
-      return wasm.fs.readFileSync(path);
+      return fs.readFileSync(path);
     },
   });
   return wasm;

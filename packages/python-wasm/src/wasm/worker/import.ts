@@ -1,6 +1,6 @@
-import WASI, { createFileSystem } from "@wapython/wasi";
+import WASI from "@wapython/wasi";
 
-import type { WASIConfig, FileSystemSpec, WASIBindings } from "@wapython/wasi";
+import type { FileSystemSpec, WASIConfig, WASIBindings } from "@wapython/wasi";
 import reuseInFlight from "../reuseInFlight";
 import WasmInstance from "./instance";
 import importWebAssemblyDlopen from "dylink";
@@ -21,7 +21,6 @@ export interface Options {
   noWasi?: boolean; // if false, include wasi
   wasmEnv?: object; // functions to include in the environment
   env?: { [name: string]: string }; // environment variables
-  fs?: FileSystemSpec[]; // if not given, code has full native access to /
   time?: boolean;
   // init = initialization function that gets called when module first loaded.
   init?: (wasm: WasmInstance) => void | Promise<void>;
@@ -33,6 +32,7 @@ export interface Options {
   waitForStdin?: () => Buffer;
   sendStdout?: (Buffer) => void;
   sendStderr?: (Buffer) => void;
+  fs?: FileSystemSpec[]; // only used in node.ts and browser.ts right now.  (TODO: this is due to refactoring)
 }
 
 const cache: { [name: string]: any } = {};
@@ -170,15 +170,6 @@ async function doWasmImport({
       sendStdout: options.sendStdout,
       sendStderr: options.sendStderr,
     };
-    if (options.fs != null) {
-      // explicit fs option given, so create the bindings.fs object, which is typically
-      // a union of several filesystems...
-      fs = createFileSystem(options.fs, bindings);
-      opts.bindings = {
-        ...bindings,
-        fs,
-      };
-    }
     wasi = new WASI(opts);
     wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
   }
