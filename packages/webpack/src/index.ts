@@ -3,8 +3,10 @@ import python from "python-wasm";
 async function demo() {
   const t0 = new Date();
   console.log("call python init");
+  (window as any).python = python;
 
   // change to noWorker:true to not use a webworker, i.e., everything in the main thread.
+  // Note that if noWorker =true, then dynamic library loading can't work.
   await python.init({ noWorker: false });
 
   console.log(`Loaded python in ${new Date().valueOf() - t0.valueOf()}ms.`);
