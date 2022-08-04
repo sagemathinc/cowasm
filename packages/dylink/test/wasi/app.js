@@ -24,7 +24,8 @@ async function main() {
     path: "app.wasm",
     importWebAssemblySync,
     importObject,
-    readFileSync
+    readFileSync,
+    stub: true,
   });
   wasi.start(instance, memory);
   exports.instance = instance;

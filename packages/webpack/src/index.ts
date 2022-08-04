@@ -1,15 +1,17 @@
 import python from "python-wasm";
+import debug from "debug";
+
+const log = debug("webpack-demo")
 
 async function demo() {
   const t0 = new Date();
-  console.log("call python init");
   (window as any).python = python;
 
   // change to noWorker:true to not use a webworker, i.e., everything in the main thread.
   // Note that if noWorker =true, then dynamic library loading can't work.
-  await python.init({ noWorker: false });
-
-  console.log(`Loaded python in ${new Date().valueOf() - t0.valueOf()}ms.`);
+  log("call python init");
+  await python.init();
+  log(`Loaded python in ${new Date().valueOf() - t0.valueOf()}ms.`);
 
   const element = document.createElement("pre");
 
@@ -24,6 +26,7 @@ async function demo() {
   )}\n\n1 + 2 + 3 + ... + ${await python.repr("n")} = ${await python.repr(
     "s"
   )}`;
+
 
   document.body.appendChild(element);
 }

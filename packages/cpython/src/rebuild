@@ -14,4 +14,3 @@ cp -v build/lib.wasi-wasm32-3.11/*.so ../../dist/wasm/lib/python3.11/lib-dynload
 cd ../../../python-wasm/
 make clean
 make
-./bin/python-wasm-debug

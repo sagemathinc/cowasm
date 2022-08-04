@@ -14,6 +14,9 @@ float mysin(float n) { return sin(n + 1); }
 
 // If you comment this out, then no function pointer to mysin is generated,
 // and the call to hello will be insanely slow.
+#ifndef WASM_EXPORT
+#define WASM_EXPORT(x) __attribute__((visibility("default"))) void* __WASM_EXPORT__##x() { return &(x);}
+#endif
 WASM_EXPORT(mysin)
 
 EXPORTED_SYMBOL

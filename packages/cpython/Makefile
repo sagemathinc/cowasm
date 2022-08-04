@@ -221,11 +221,14 @@ ${BUILD}/wasm-shared/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 # not just debug symbols.  There's code here  https://reviews.llvm.org/D73820 for the general
 # case, but I guess it isn't merged.
 # If you are debugging extension modules, you should temporarily remove the -s option below.
+
+#		BLDSHARED="zig wasm-ld -s --experimental-pic -shared  " \
+
 ${DIST_WASM}/.built-cpython-shared: ${DIST_WASM}/.built-cpython ${BUILD}/wasm-shared/.patched
 	cd ${BUILD}/wasm-shared && \
 		CC="zig-fPIC cc   " \
 		CXX="zig-fPIC c++  " \
-		BLDSHARED="zig wasm-ld -s --experimental-pic -shared  " \
+		BLDSHARED="zig wasm-ld --experimental-pic -shared  " \
 		AR="zig ar" \
 		CFLAGS=" -Oz  -I${BUILD}/wasm/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
 		CONFIG_SITE=./config.site \

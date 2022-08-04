@@ -77,6 +77,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     });
     this.worker.on("exit", () => this.terminate());
     this.worker.on("message", async (message) => {
+      if (message == null) return;
       this.log?.("main thread got message", message);
       if (message.id != null) {
         // message with id handled elsewhere -- used for getting data back.

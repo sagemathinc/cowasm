@@ -4,7 +4,11 @@ import setTheme from "./theme";
 import python from "python-wasm";
 
 export default async function terminal(element: HTMLDivElement) {
+  (window as any).python = python;
+  console.log("Calling python.init...");
+  const t = new Date();
   await python.init();
+  console.log("python.init done; time = ", new Date().valueOf() - t.valueOf());
   const term = new Terminal({ convertEol: true });
   term.open(element);
   // @ts-ignore
@@ -20,5 +24,7 @@ export default async function terminal(element: HTMLDivElement) {
   python.wasm.on("stderr", (data) => {
     term.write(data);
   });
-  await python.wasm.terminal();
+  console.log("starting terminal");
+  const r = await python.wasm.terminal();
+  console.log("terminal terminated", r);
 }

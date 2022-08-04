@@ -22,16 +22,22 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/python-wasm.git"
   },
-  "keywords": ["python", "webassembly"],
+  "keywords": [
+    "python",
+    "webassembly"
+  ],
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
   "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/webpack",
-  "workspaces": ["../python-wasm"],
+  "workspaces": [
+    "../python-wasm"
+  ],
   "devDependencies": {
     "buffer": "^6.0.3",
+    "debug": "^4.3.4",
     "events": "^3.3.0",
     "html-webpack-plugin": "^5.5.0",
     "node-polyfill-webpack-plugin": "^2.0.0",
