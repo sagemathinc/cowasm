@@ -44,6 +44,7 @@ ${BUILD}/wasm: ${BUILD}/zlib-${ZLIB_VERSION}.tar.xz
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && CHOST=none AR="zig ar" CC="zig cc -target wasm32-wasi-musl" CXX="zig c++ -target wasm32-wasi-musl" ./configure --prefix=${DIST_WASM}
 	cd ${BUILD}/wasm && make install -j8
+	zig ranlib ${DIST_WASM}/lib/libz.a  # needed on linux
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
