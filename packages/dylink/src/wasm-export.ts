@@ -12,7 +12,7 @@ where the symbols are in memory.
 
 const MACRO = `
 #ifndef WASM_EXPORT
-#define WASM_EXPORT(x) __attribute__((visibility("default"))) void* __WASM_EXPORT__##x() { return &(x);}
+#define WASM_EXPORT(x,y) __attribute__((visibility("default"))) void* __WASM_EXPORT__##x() { return &(y);}
 #endif
 `;
 
@@ -21,6 +21,10 @@ export default function wasmExport(names: string[]): string {
   return `${MACRO}\n
 ${v
   .filter((func) => func.trim())
-  .map((func) => `WASM_EXPORT(${func})`)
+  .map((func) => `WASM_EXPORT(${func},${func})`)
   .join("\n")}`;
+}
+
+export function alias(name, value) {
+  return `WASM_EXPORT(${name},${value})`;
 }

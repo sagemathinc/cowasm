@@ -8,7 +8,7 @@ pub fn init() void {
     if (didInit) return;
     didInit = true;
     std.debug.print("calling Py_Initialize()...\n", .{});
-    std.debug.print("(isatty={})\n", .{std.c.isatty(1)});
+    // std.debug.print("(isatty={})\n", .{std.c.isatty(1)});
     python.Py_Initialize();
     // std.debug.print( "success!\n", .{});
     globals = python.PyDict_New();

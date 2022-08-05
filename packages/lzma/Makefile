@@ -1,4 +1,5 @@
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+export PATH := ${CWD}/../../bin:$(PATH)
 BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
@@ -41,6 +42,26 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 
 .PHONY: wasm
 wasm: ${DIST_WASM}/.built
+
+
+
+${BUILD}/wasm-shared:
+	rm -rf ${BUILD}/wasm-shared
+	mkdir -p ${BUILD}
+	cd ${BUILD} && git clone https://github.com/kobolabs/liblzma.git wasm-shared
+
+
+${DIST_WASM}-shared/.built: ${BUILD}/wasm-shared
+	cd ${BUILD}/wasm-shared && RANLIB="zig ranlib" AR="zig ar" CC="zig-fPIC cc" CXX="zig-fPIC c++" ./configure  --build=`./build-aux/config.guess` --host=none --prefix="${DIST_WASM}-shared"
+	cd ${BUILD}/wasm-shared && echo '#include "../../../posix-wasm/dist/wasm-shared/posix-wasm.h"' >> config.h
+	# It fails to build some non-liblzma stuff (for xz) that we don't need, so we
+	# ignore that and just install the library.
+	cd ${BUILD}/wasm-shared && make || true && cd src/liblzma && make install
+	zig ranlib ${DIST_WASM}-shared/lib/liblzma.a  # needed on linux
+	touch ${DIST_WASM}-shared/.built
+
+.PHONY: wasm-shared
+wasm-shared: ${DIST_WASM}-shared/.built
 
 
 clean:

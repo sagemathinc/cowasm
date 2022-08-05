@@ -9,7 +9,7 @@ function importWebAssemblySync(path, importObject) {
   return new WebAssembly.Instance(mod, importObject);
 }
 
-const table = new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
+const table = new WebAssembly.Table({ initial: 10000, element: "anyfunc" });
 exports.table = table;
 
 async function main() {
@@ -20,6 +20,18 @@ async function main() {
     env: {
       memory,
       __indirect_function_table: table,
+      _Py_CheckEmscriptenSignals: () => {},
+      getrandom: (bufPtr, bufLen, _flags) => {
+        // NOTE: returning 0 here (our default stub behavior)
+        // would result in Python hanging on startup!
+        bindings.randomFillSync(
+          // @ts-ignore
+          new Uint8Array(memory.buffer),
+          bufPtr,
+          bufLen
+        );
+        return bufLen;
+      },
     },
   };
   const instance = await importWebAssemblyDlopen({
@@ -27,6 +39,7 @@ async function main() {
     importWebAssemblySync,
     importObject,
     stub: true,
+    traceStub: true,
     readFileSync,
   });
   wasi.start(instance, memory);

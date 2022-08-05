@@ -68,11 +68,11 @@ export default async function importWebAssemblyDlopen({
   }
 
   function functionViaPointer(key: string) {
-    if(mainInstance == null) return; // not yet available
+    if (mainInstance == null) return; // not yet available
     log("functionViaPointer", key);
-    if(key == 'iprintf') {
+    if (key == "iprintf") {
       // TODO: more aliases?
-      key = 'printf';
+      key = "printf";
     }
     const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
     if (f == null) return;
@@ -129,6 +129,7 @@ export default async function importWebAssemblyDlopen({
 
   // Global Offset Table
   const GOT = {};
+  const memMap = {};
   function GOTMemHandler(GOT, key: string) {
     if (key in GOT) {
       return Reflect.get(GOT, key);
@@ -147,21 +148,15 @@ export default async function importWebAssemblyDlopen({
     */
     let rtn = GOT[key];
     if (!rtn) {
-      // @ts-ignore
-      let ptr = symbolViaPointer(key);
-      log("GOTMemHandler ", key, ptr);
-      if (ptr == null) {
-        throw Error(
-          `to load this dynamic library, the main module must export "${key}"`
-        );
-      }
-      rtn = GOT[key] = new WebAssembly.Global(
+      const x = new WebAssembly.Global(
         {
           value: "i32",
           mutable: true,
         },
-        ptr
+        0
       );
+      memMap[key] = x;
+      rtn = GOT[key] = x;
     }
     return rtn;
   }
@@ -242,7 +237,7 @@ export default async function importWebAssemblyDlopen({
           value: "i32",
           mutable: true,
         },
-        __memory_base // totally wrong?  I can't tell.
+        __memory_base
       ),
     };
     log("env =", env);
@@ -292,6 +287,23 @@ export default async function importWebAssemblyDlopen({
       symToPtr[symName] = funcMap[symName];
       delete funcMap[symName];
     }
+    for (const symName in memMap) {
+      const x = memMap[symName];
+      delete memMap[symName];
+      const ptrBeforeOffset = (instance.exports[symName] as any)?.value;
+      if (ptrBeforeOffset == null) {
+        const ptr = symbolViaPointer(symName);
+        if (ptr == null) {
+          console.warn("UNRESOLVED SYMBOL: ", symName);
+        } else {
+          //console.log("found ", symName, " in global");
+          x.value = ptr;
+        }
+      } else {
+        x.value = ptrBeforeOffset + __memory_base;
+        //console.log("putting ", symName, " in offset");
+      }
+    }
 
     // Get an available handle by maxing all the int versions of the
     // keys of the handleToLibrary map.
@@ -334,7 +346,10 @@ export default async function importWebAssemblyDlopen({
   };
 
   const importObjectWithStub = stub
-    ? { ...importObject, env: stubProxy(importObject.env, functionViaPointer, traceStub) }
+    ? {
+        ...importObject,
+        env: stubProxy(importObject.env, functionViaPointer, traceStub),
+      }
     : importObject;
   const mainInstance =
     importWebAssembly != null
