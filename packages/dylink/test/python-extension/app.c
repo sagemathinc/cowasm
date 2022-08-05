@@ -6,17 +6,23 @@
 extern void* dlopen(const char* filename, int flags);
 extern void* dlsym(void* handle, const char* symbol);
 
+#ifndef WASM_EXPORT
+#define WASM_EXPORT(x) __attribute__((visibility("default"))) void* __WASM_EXPORT__##x() { return &(x);}
+#endif
+
 EXPORTED_SYMBOL
 PyObject _Py_NoneStruct = {.thingy = 1};
+
+WASM_EXPORT(_Py_NoneStruct)
+
+const __stack_chk_guard = 0;
+WASM_EXPORT(__stack_chk_guard)
 
 EXPORTED_SYMBOL
 float mysin(float n) { return sin(n + 1); }
 
 // If you comment this out, then no function pointer to mysin is generated,
 // and the call to hello will be insanely slow.
-#ifndef WASM_EXPORT
-#define WASM_EXPORT(x) __attribute__((visibility("default"))) void* __WASM_EXPORT__##x() { return &(x);}
-#endif
 WASM_EXPORT(mysin)
 
 EXPORTED_SYMBOL

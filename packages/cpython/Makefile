@@ -238,7 +238,7 @@ ${DIST_WASM}/.built-cpython-shared: ${DIST_WASM}/.built-cpython ${BUILD}/wasm-sh
 			--prefix=${DIST_WASM}-shared  \
 			--enable-big-digits=30 \
 			--enable-optimizations \
-			--disable-shared \
+			--enable-shared \
 			--disable-ipv6 \
 			--with-readline=editline \
 			--with-build-python=${DIST_NATIVE}/bin/python3 \

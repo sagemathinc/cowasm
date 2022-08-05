@@ -6,8 +6,16 @@
 extern void* dlopen(const char* filename, int flags);
 extern void* dlsym(void* handle, const char* symbol);
 
+#ifndef WASM_EXPORT
+#define WASM_EXPORT(x) __attribute__((visibility("default"))) void* __WASM_EXPORT__##x() { return &(x);}
+#endif
+
+
+
 EXPORTED_SYMBOL
 PyObject _Py_NoneStruct = {.thingy = 1};
+WASM_EXPORT(_Py_NoneStruct)
+
 
 EXPORTED_SYMBOL
 int vecsum(int* v, int n) {
