@@ -1,5 +1,10 @@
 /* MIT licensed.  See README.md for copyright and history information. */
 
+import debug from "debug";
+// you also have to pass traceSyscalls as an option to enable this,
+// since it replaces all the functions with less efficient log ones.
+const log = debug("wasi");
+
 import type {
   WASIBindings,
   WASIArgs,
@@ -135,7 +140,7 @@ const wrap =
     try {
       return f(...args);
     } catch (err) {
-      // console.log("WASI error", err);
+      // log("WASI error", err);
       const e: any = err;
       // If it's an error from the fs
       if (e?.code && typeof e?.code === "string") {
@@ -152,7 +157,7 @@ const wrap =
 
 const stat = (wasi: WASI, fd: number): File => {
   const entry = wasi.FD_MAP.get(fd);
-  // console.log("stat", { fd, entry, FD_MAP: wasi.FD_MAP });
+  // log("stat", { fd, entry, FD_MAP: wasi.FD_MAP });
   if (!entry) {
     throw new WASIError(WASI_EBADF);
   }
@@ -624,7 +629,7 @@ export default class WASI {
 
       fd_prestat_get: wrap((fd: number, bufPtr: number) => {
         const stats = CHECK_FD(fd, BigInt(0));
-        // console.log("fd_prestat_get", { fd, stats });
+        // log("fd_prestat_get", { fd, stats });
         if (!stats.path) {
           return WASI_EINVAL;
         }
@@ -692,7 +697,7 @@ export default class WASI {
           let written = 0;
           getiovs(iovs, iovsLen).forEach((iov) => {
             if (iov.byteLength == 0) return;
-            //             console.log(
+            //             log(
             //               `writing to fd=${fd}: `,
             //               JSON.stringify(new TextDecoder().decode(iov)),
             //               JSON.stringify(iov)
@@ -705,10 +710,10 @@ export default class WASI {
               written += iov.byteLength;
             } else {
               // useful to be absolutely sure if wasi is writing something:
-              // console.log(`write "${new TextDecoder().decode(iov)}" to ${fd})`);
+              // log(`write "${new TextDecoder().decode(iov)}" to ${fd})`);
               let w = 0;
               while (w < iov.byteLength) {
-                // console.log(`write ${iov.byteLength} bytes to fd=${stats.real}`);
+                // log(`write ${iov.byteLength} bytes to fd=${stats.real}`);
                 const i = fs.writeSync(
                   stats.real,
                   iov,
@@ -716,7 +721,7 @@ export default class WASI {
                   iov.byteLength - w,
                   stats.offset ? Number(stats.offset) : null
                 );
-                // console.log(`just wrote i=${i} bytes`);
+                // log(`just wrote i=${i} bytes`);
                 if (stats.offset) stats.offset += BigInt(i);
                 w += i;
               }
@@ -1206,7 +1211,7 @@ export default class WASI {
             pathPtr,
             pathLen
           ).toString();
-          // console.log("** openpath: p = ", p);
+          // log("** openpath: p = ", p);
           const fullUnresolved = path.resolve(stats.path, p);
           if (path.relative(stats.path, fullUnresolved).startsWith("..")) {
             return WASI_ENOTCAPABLE;
@@ -1221,7 +1226,7 @@ export default class WASI {
             if ((e as any)?.code === "ENOENT") {
               full = fullUnresolved;
             } else {
-              // console.log("** openpath FAIL: p = ", p, e);
+              // log("** openpath FAIL: p = ", p, e);
               throw e;
             }
           }
@@ -1239,7 +1244,7 @@ export default class WASI {
             realfd = fs.openSync(full, noflags);
           }
           const newfd = [...this.FD_MAP.keys()].reverse()[0] + 1;
-          // console.log(`** openpath got fd: p='${p}', fd=${newfd}`);
+          // log(`** openpath got fd: p='${p}', fd=${newfd}`);
           this.FD_MAP.set(newfd, {
             real: realfd,
             filetype: undefined,
@@ -1568,18 +1573,16 @@ export default class WASI {
     };
     // Wrap each of the imports to show the calls in the console
     if ((wasiConfig as WASIConfig).traceSyscalls) {
-      const log = console.log;
-      //const log = (x) => require("fs").appendFileSync("/tmp/wasi.log", x + "\n");
       Object.keys(this.wasiImport).forEach((key: string) => {
         const prevImport = this.wasiImport[key];
         this.wasiImport[key] = function (...args: any[]) {
-          log(`wasi.${key} (${args})\n`);
+          log(key, args);
           try {
             let result = prevImport(...args);
-            log(` (wasi.${key} => ${result})`);
+            log("result = ", result);
             return result;
           } catch (e) {
-            log(`Caught error: ${e}`);
+            log("error: ", e);
             throw e;
           }
         };

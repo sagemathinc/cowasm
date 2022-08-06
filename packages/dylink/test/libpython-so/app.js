@@ -15,7 +15,12 @@ exports.table = table;
 
 async function main() {
   const memory = new WebAssembly.Memory({ initial: 1000 });
-  const wasi = new WASI({ bindings, env: process.env, preopens: { "/": "/" } });
+  const wasi = new WASI({
+    bindings,
+    env: process.env,
+    preopens: { "/": "/" },
+    traceSyscalls: true,
+  });
   const importObject = {
     wasi_snapshot_preview1: wasi.wasiImport,
     env: {
