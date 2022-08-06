@@ -12,11 +12,7 @@ extern void* dlsym(void* handle, const char* symbol);
 
 EXPORTED_SYMBOL
 PyObject _Py_NoneStruct = {.thingy = 1};
-
 WASM_EXPORT(_Py_NoneStruct)
-
-const __stack_chk_guard = 0;
-WASM_EXPORT(__stack_chk_guard)
 
 EXPORTED_SYMBOL
 float mysin(float n) { return sin(n + 1); }

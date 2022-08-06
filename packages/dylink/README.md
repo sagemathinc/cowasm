@@ -1,6 +1,26 @@
-# dylink - WebAssembly dynamic loader
+# dylink \- WebAssembly dynamic loader for the Zig libc runtime
 
-This is a WebAssembly dynamic loader for the ABI used by emscripten and the llvm backend when targeting emscripten.  It runs both on node.js and in the browser.
+This is a WebAssembly dynamic loader for the ABI used by emscripten and the llvm backend when targeting emscripten.  It runs both on node.js and in the browser.   **It supports the libc provided by** [Zig](https://ziglang.org/)**, not emscripten.**
+
+## How to use this:
+
+When you build your code, you have to link in the static archive file `dist/wasm/libdylink.a`, and provide some flags:
+
+```sh
+zig cc -target wasm32-wasi app.c -o build/wasm/app.wasm \
+    -L path/to/dist/wasm/ -ldylink \
+    -rdynamic -shared -fvisibility=default \
+    -Xlinker --import-memory -Xlinker --import-table
+```
+
+Then the following functions will be available to use from `app.c`:
+
+```c
+extern void* dlopen(const char* filename, int flags);
+extern void* dlsym(void* handle, const char* symbol);
+```
+
+There are examples in the `tests/` subdirectories.
 
 ## Scope
 

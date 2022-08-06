@@ -69,7 +69,7 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
 	   `pwd`/python/signal/signal.c \
-	   ${DYLINK}/wasm-export/libc.c \
+	   -L ${DYLINK}/wasm/ -ldylink \
 	   ${DYLINK}/wasm-export/libpython.c \
 	   python/interface.zig -lc -lm
 	mkdir -p ${DIST}/python

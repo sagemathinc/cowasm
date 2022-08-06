@@ -4,8 +4,8 @@ all libc function.  You must include this C code with any other code
 you're compiling to build your main file if you want the dynamic
 libraries you link to have access to libc.
 
-This adds about XXXKB to the wasm file (after stripping), which isn't
-too bad.
+This adds about 650KB to the wasm file (after stripping), which sucks,
+but it is what it is.
 */
 
 import wasmExport, { alias } from "./wasm-export";

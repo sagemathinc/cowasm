@@ -8,7 +8,7 @@ build/wasm/app.wasm: app.c
 		-fvisibility=default \
 		-ferror-limit=10000 \
 		app.c \
-		../../dist/wasm-export/libc.c \
+		-L../../dist/wasm/ -ldylink \
 		-o build/wasm/app.wasm \
 		-Xlinker --import-memory \
 		-Xlinker --import-table
