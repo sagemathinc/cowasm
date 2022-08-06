@@ -9,6 +9,12 @@ extern void* dlsym(void* handle, const char* symbol);
 typedef void (*FUNCTION)();
 typedef int* (*FUNCTION2)();
 
+EXPORTED_SYMBOL
+char** environ = {'foo', NULL};
+
+EXPORTED_SYMBOL
+void* __WASM_EXPORT__environ() { return &environ;}
+
 int main() {
   printf("Loading dynamic library...\n");
   void* handle = dlopen("./hello.so", 2);
@@ -21,6 +27,6 @@ int main() {
   (*hello)();
   FUNCTION2 my_x = (FUNCTION2)dlsym(handle, "my_x");
   assert(my_x != NULL);
-  printf("my_x() = %p, x=%d\n", (*my_x)(),  *((*my_x)()));
+  printf("my_x() = %p, x=%d\n", (*my_x)(), *((*my_x)()));
   printf("\nDone\n");
 }

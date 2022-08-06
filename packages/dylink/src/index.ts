@@ -222,6 +222,7 @@ export default async function importWebAssemblyDlopen({
     if (alloc == 0) {
       throw Error("you cannot use a stub for malloc");
     }
+    log("allocating %s bytes for shared library -- at ", metadata.memorySize + memAlign, alloc);
     const __memory_base = metadata.memorySize
       ? alignMemory(alloc, memAlign)
       : 0;
@@ -262,11 +263,6 @@ export default async function importWebAssemblyDlopen({
       throw Error("bug");
     }
 
-    if (instance.exports.__wasm_call_ctors != null) {
-      log("calling __wasm_call_ctors for dynamic library");
-      (instance.exports.__wasm_call_ctors as CallableFunction)();
-    }
-
     const symToPtr: { [symName: string]: number } = {};
     for (const name in instance.exports) {
       // TODO: I'm worried that these might be VERY slow.
@@ -294,7 +290,7 @@ export default async function importWebAssemblyDlopen({
       if (ptrBeforeOffset == null) {
         const ptr = symbolViaPointer(symName);
         if (ptr == null) {
-          console.warn("UNRESOLVED SYMBOL: ", symName);
+          throw Error(`dlopen -- UNRESOLVED SYMBOL: ${symName}`);
         } else {
           //console.log("found ", symName, " in global");
           x.value = ptr;
@@ -303,6 +299,12 @@ export default async function importWebAssemblyDlopen({
         x.value = ptrBeforeOffset + __memory_base;
         //console.log("putting ", symName, " in offset");
       }
+    }
+
+    if (instance.exports.__wasm_call_ctors != null) {
+      // This **MUST** be after updating all the values above!!
+      log("calling __wasm_call_ctors for dynamic library");
+      (instance.exports.__wasm_call_ctors as CallableFunction)();
     }
 
     // Get an available handle by maxing all the int versions of the

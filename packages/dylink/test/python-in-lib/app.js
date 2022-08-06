@@ -13,7 +13,7 @@ const table = new WebAssembly.Table({ initial: 10000, element: "anyfunc" });
 exports.table = table;
 
 async function main() {
-  const memory = new WebAssembly.Memory({ initial: 100 });
+  const memory = new WebAssembly.Memory({ initial: 1000 });
   const wasi = new WASI({ bindings });
   const importObject = {
     wasi_snapshot_preview1: wasi.wasiImport,
