@@ -28,7 +28,7 @@ dist/.built: dist/wasm-export/libc.c dist/index.js
 	cd ../../bin && ln -sf ../packages/dylink/bin/zig-fPIC .
 	touch dist/.built
 
-test:
+test: wasm-export
 	npm ci
 	npm run build
 	cd test/freestanding && make test

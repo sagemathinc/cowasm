@@ -8,12 +8,6 @@ extern void* dlsym(void* handle, const char* symbol);
 
 typedef void (*FUNCTION)();
 
-EXPORTED_SYMBOL
-char** environ = {NULL};
-
-EXPORTED_SYMBOL
-void* __WASM_EXPORT__environ() { return &environ; }
-
 int main() {
   printf("Loading dynamic library...\n");
   void* handle = dlopen("./hello.so", 2);

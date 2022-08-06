@@ -1,3 +1,20 @@
-The goal here is to link the actual python library into a shared object and load it.  So python isn't in the main module \-\- instead it's entirely fPIC.
+The goal here is to build libc into a shared library.
 
-Our first goal is to use Python to print hello world.
+We have stopped for now on that goal.  It would require modifying zig/src/musl.zig to 
+
+There's no good reason for our application to make libc dynamic.
+
+Instead we should work better to automatically and properly expose all of libc statically linked into the base.
+
+I copied libc.a from the zig cache (is there a better way)?
+Then got all the symbols defined there:
+
+```sh
+nm -jgU libc.a |grep -v : | grep -v " W "|sort|uniq > all-symbols.txt
+nm -jgU libc.a |grep -v :|sort|uniq |grep -v ^_ > all-symbols.txt
+
+
+nm -gU libc.a |grep -v :|grep -v W|awk '{print $3}' |sort|uniq |grep -v ^_ > all-symbols.txt
+
+```
+
