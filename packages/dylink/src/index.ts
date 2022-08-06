@@ -220,9 +220,22 @@ export default async function importWebAssemblyDlopen({
     }
     const alloc = malloc(metadata.memorySize + memAlign);
     if (alloc == 0) {
-      throw Error("you cannot use a stub for malloc");
+      throw Error("malloc failed (you cannot use a stub for malloc)");
     }
-    log("allocating %s bytes for shared library -- at ", metadata.memorySize + memAlign, alloc);
+    // TODO: I read that the stack is 64KB by default, typically, so
+    // that's what I'm allocating.  I don't know how to confirm or
+    // ensure this with options to clang yet with 100% certainty, though
+    // obviously that's important to do.
+    const stack_alloc = malloc(65536);
+    if (stack_alloc == 0) {
+      throw Error("malloc failed for stack");
+    }
+
+    log(
+      "allocating %s bytes for shared library -- at ",
+      metadata.memorySize + memAlign,
+      alloc
+    );
     const __memory_base = metadata.memorySize
       ? alignMemory(alloc, memAlign)
       : 0;
@@ -238,7 +251,7 @@ export default async function importWebAssemblyDlopen({
           value: "i32",
           mutable: true,
         },
-        __memory_base
+        stack_alloc
       ),
     };
     log("env =", env);
