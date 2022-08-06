@@ -81,3 +81,7 @@ ac_cv_lib_rt_nanosleep=no
 ac_cv_gcc_asm_for_x64=no
 ac_cv_gcc_asm_for_x87=no
 ac_cv_gcc_asm_for_mc68881=no
+
+# memrchr is not in Zig's MUSL wasi, by the ac detection script thinks it is, hence get a stub
+# which breaks things
+ac_cv_func_memrchr=no
