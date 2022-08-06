@@ -35,6 +35,7 @@ test:
 	cd test/wasi && make test
 	cd test/python-extension && make test
 	cd test/malloc && make test
+	cd test/python-in-lib && make test
 .PHONY: test
 
 test-native-macos:

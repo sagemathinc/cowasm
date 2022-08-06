@@ -1,19 +1,18 @@
-#include <math.h>
 #include <stdio.h>
 #include <assert.h>
+#include <stdlib.h>
 #include "app.h"
 
 extern void* dlopen(const char* filename, int flags);
 extern void* dlsym(void* handle, const char* symbol);
 
 typedef void (*FUNCTION)();
-typedef int* (*FUNCTION2)();
 
 EXPORTED_SYMBOL
-char** environ = {'foo', NULL};
+char** environ = {NULL};
 
 EXPORTED_SYMBOL
-void* __WASM_EXPORT__environ() { return &environ;}
+void* __WASM_EXPORT__environ() { return &environ; }
 
 int main() {
   printf("Loading dynamic library...\n");
@@ -25,8 +24,8 @@ int main() {
   printf("Got hello=%p\n", hello);
   printf("hello():\n\n");
   (*hello)();
-  FUNCTION2 my_x = (FUNCTION2)dlsym(handle, "my_x");
-  assert(my_x != NULL);
-  printf("my_x() = %p, x=%d\n", (*my_x)(), *((*my_x)()));
   printf("\nDone\n");
+  printf("NOTE: there is a long pause while Python does something mysterious.  TODO. ");
+  // TODO: there is a long pause before the process actually terminates.
 }
+
