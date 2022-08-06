@@ -307,6 +307,12 @@ export default async function importWebAssemblyDlopen({
       (instance.exports.__wasm_call_ctors as CallableFunction)();
     }
 
+    if (instance.exports.__wasm_apply_data_relocs != null) {
+      // This **MUST** be after updating all the values above!!
+      log("calling __wasm_apply_data_relocs for dynamic library");
+      (instance.exports.__wasm_apply_data_relocs as CallableFunction)();
+    }
+
     // Get an available handle by maxing all the int versions of the
     // keys of the handleToLibrary map.
     const handle =

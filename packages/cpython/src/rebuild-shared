@@ -17,3 +17,4 @@ cp build/lib.wasi-wasm32-3.11/_sqlite3.cpython-311-wasm32-emscripten.so ../../di
 # readline
 cp build/lib.wasi-wasm32-3.11/readline.cpython-311-wasm32-emscripten.so ../../dist/wasm/lib/python3.11/lib-dynload/readline.cpython-311-wasm32-wasi.so
 
+cp libpython3.11.a ../../dist/wasm-shared/lib/
