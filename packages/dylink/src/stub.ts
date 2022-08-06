@@ -57,5 +57,5 @@ function logStubUse(functionName, args, firstOnly) {
     if (stubUsed.has(functionName)) return;
     stubUsed.add(functionName);
   }
-  log("using stub", functionName, args);
+  console.warn("WARNING: using non-whitelisted stub", functionName, args);
 }

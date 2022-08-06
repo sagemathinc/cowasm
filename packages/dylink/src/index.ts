@@ -11,6 +11,8 @@ interface Env {
   memory?: WebAssembly.Memory;
   dlopen?: (pathnamePtr: number, flags: number) => number;
   dlsym?: (handle: number, symbolPtr: number) => number;
+  dlerr?: () => number; // basically a stub right now
+  dlclose?: (handle: number) => number; // basically a stub right now
 }
 
 interface Input {
@@ -383,6 +385,29 @@ export default async function importWebAssemblyDlopen({
     // I think Python only uses function pointers?
     // return lib.instance.exports[symName]
     throw Error(`dlsym: handle=${handle} - unknown symbol '${symName}'`);
+  };
+
+  /*
+  "The function dlerror() returns a human readable string describing the most
+  recent error that occurred from dlopen(), dlsym() or dlclose() since the last
+  call to dlerror(). It returns NULL if no errors have occurred since
+  initialization or since it was last called."
+  */
+  env.dlerr = () => {
+    // TODO: need to allocate a string to implement this, and also keep track
+    // of errors.
+    return 0;
+  };
+
+  /*
+  "The function dlclose() decrements the reference count on the dynamic library
+  handle handle. If the reference count drops to zero and no other loaded
+  libraries use symbols in it, then the dynamic library is unloaded. The function
+  dlclose() returns 0 on success, and nonzero on error."
+  */
+  env.dlclose = (_handle) => {
+    // TODO: we never clean up... yet. But we could.
+    return 0;
   };
 
   const importObjectWithStub = stub

@@ -84,16 +84,35 @@ char *strchrnul(const char *, int);
 extern char *__wasilibc_cwd;
 extern char **__wasilibc_environ;
 
+
 int __stack_chk_guard;
+
+// qsort is completely missing from Zig's musl, but it is assumed
+// to be there by wasi. This breaks things.  Fortnately, zig has
+// qsort_r, and it is trivial to implement qsort in terms of qsort_r:
+
+typedef int (*qsort_compar)(const void *, const void *);
+int qsort_r_compar(const void * a, const void * b, void * compar) {
+  return (*(qsort_compar)compar)(a,b);
+}
+void qsort(void *base, size_t nmemb, size_t size,
+           int (*compar)(const void *, const void *)) {
+  qsort_r(base, nmemb, size, qsort_r_compar, compar);
+}
+
 `;
+  const extra_symbols = "qsort";
+  // void qsort_r(void *base, size_t nmemb, size_t size,
+  //           int (*compar)(const void *, const void *, void *),
+  //           void *arg);
 
   s += "\n";
-  s += wasmExport(symbols.split("\n"));
+  s += wasmExport((symbols + "\n" + extra_symbols).split("\n"));
   s += "\n\n// Aliases:\n";
   for (const name in aliases) {
     s += alias(name, aliases[name]);
   }
-  s += "WASM_EXPORT(__stack_chk_guard, __stack_chk_guard);"
+  s += "WASM_EXPORT(__stack_chk_guard, __stack_chk_guard);";
 
   console.log(s);
 }
@@ -1150,8 +1169,6 @@ __wasilibc_utimens
 
 
 `;
-
-
 
 main();
 export {};
