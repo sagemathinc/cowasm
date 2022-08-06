@@ -89,38 +89,61 @@ export default async function importWebAssemblyDlopen({
     if (__indirect_function_table.length <= index + 50) {
       __indirect_function_table.grow(50);
     }
-    log("setTable ", index, typeof index, f, typeof f);
+    // log("setTable ", index, typeof index, f, typeof f);
     __indirect_function_table.set(index, f);
   }
 
-  function getFunction(name: string): Function | undefined {
-    return (
-      ((importObject?.env?.[name] ??
-        functionViaPointer(name) ??
-        mainInstance.exports[name]) as any) ?? importObjectWithStub.env[name]
-    );
+  // See if the function we want is defined in some
+  // already imported dynamic library:
+  function functionFromOtherLibrary(name: string): Function | undefined {
+    for (const handle in handleToLibrary) {
+      const { symToPtr } = handleToLibrary[handle];
+      const ptr = symToPtr[name];
+      if (ptr != null) {
+        if (__indirect_function_table == null) {
+          throw Error("__indirect_function_table must be defined");
+        }
+        return __indirect_function_table.get(ptr);
+      }
+    }
+    return undefined;
   }
 
-  function dlopenEnvHandler(env, key: string) {
-    if (key in env) {
-      return Reflect.get(env, key);
+  function getFunction(name: string, path: string = ""): Function | undefined {
+    const f =
+      importObject?.env?.[name] ??
+      functionViaPointer(name) ??
+      mainInstance.exports[name] ??
+      functionFromOtherLibrary(name);
+    if (f != null) return f;
+    if (path) {
+      debug("stub")(name, "undefined importing", path);
     }
-    log("dlopenEnvHandler", key);
+    return importObjectWithStub.env[name];
+  }
 
-    // important to check importObject.env LAST since it could be a proxy
-    // that generates stub functions:
-    const f = getFunction(key);
-    if (f == null) {
-      log("dlopenEnvHandler got null");
-      return;
-    }
-    return f;
-    // FOR LOW LEVEL DEBUGGING ONLY!
-    //     return (...args) => {
-    //       console.log("env call ", key);
-    //       // @ts-ignore
-    //       return f(...args);
-    //     };
+  function dlopenEnvHandler(path: string) {
+    return (env, key: string) => {
+      if (key in env) {
+        return Reflect.get(env, key);
+      }
+      log("dlopenEnvHandler", key);
+
+      // important to check importObject.env LAST since it could be a proxy
+      // that generates stub functions:
+      const f = getFunction(key, path);
+      if (f == null) {
+        log("dlopenEnvHandler got null");
+        return;
+      }
+      return f;
+      // FOR LOW LEVEL DEBUGGING ONLY!
+      //     return (...args) => {
+      //       console.log("env call ", key);
+      //       // @ts-ignore
+      //       return f(...args);
+      //     };
+    };
   }
 
   // Global Offset Table
@@ -253,7 +276,7 @@ export default async function importWebAssemblyDlopen({
     log("env =", env);
     const libImportObject = {
       ...importObject,
-      env: new Proxy(env, { get: dlopenEnvHandler }),
+      env: new Proxy(env, { get: dlopenEnvHandler(path) }),
       "GOT.mem": GOTmem,
       "GOT.func": GOTfunc,
     };

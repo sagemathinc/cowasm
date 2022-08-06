@@ -1,0 +1,6 @@
+set -ev
+HERE=`pwd`
+cd /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/python-wasm/packages/cpython/build/wasm-shared
+./rebuild
+cd $HERE
+make clean && make test

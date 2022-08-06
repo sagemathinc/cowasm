@@ -9,7 +9,12 @@ extern void* dlsym(void* handle, const char* symbol);
 typedef void (*FUNCTION)();
 
 int main() {
-  printf("Loading dynamic library...\n");
+  printf("Loading python dynamic library...\n");
+  void* handlePython = dlopen("../../../../dist/wasm/libpython.so", 2);
+  printf("Got handle=%p\n", handlePython);
+  assert(handlePython != NULL);
+
+  printf("Loading hello dynamic library...\n");
   void* handle = dlopen("./hello.so", 2);
   printf("Got handle=%p\n", handle);
   assert(handle != NULL);
@@ -19,7 +24,7 @@ int main() {
   printf("hello():\n\n");
   (*hello)();
   printf("\nDone\n");
-  printf("NOTE: there is a long pause while Python does something mysterious.  TODO. \n");
+  printf("NOTE: there is a long pause while Python does something mysterious.  TODO.\n");
   // TODO: there is a long pause before the process actually terminates.
 }
 

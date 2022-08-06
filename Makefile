@@ -27,7 +27,7 @@ openssl: packages/openssl/${BUILT}
 
 
 
-packages/dylink/${BUILT}: zig posix-wasm
+packages/dylink/${BUILT}: zig posix-wasm cpython
 	cd packages/dylink && make all
 .PHONY: dylink
 dylink: packages/dylink/${BUILT}
@@ -57,7 +57,7 @@ packages/libedit/${BUILT}: zig termcap
 libedit: packages/libedit/${BUILT}
 
 
-packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi sqlite dylink
+packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi sqlite
 	cd packages/cpython && make all
 .PHONY: cpython
 cpython: packages/cpython/${BUILT}

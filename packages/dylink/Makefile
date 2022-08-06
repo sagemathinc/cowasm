@@ -1,3 +1,9 @@
+CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+PYTHON = ${CWD}/../cpython/dist/wasm-shared
+POSIX = ${CWD}/../posix-wasm/dist/wasm-shared
+LZMA = ${CWD}/../lzma/dist/wasm-shared
+
+
 all: dist/.built
 
 node_modules:
@@ -26,7 +32,7 @@ wasm-export: dist/wasm-export/libpython.c dist/wasm-export/libc.c
 
 
 # The -s below is to not include debug symbols, which makes the file
-# much smaller.  Remove it if you want some extra debug symbols.
+# much smaller.
 build/wasm/libdylink.o: dist/wasm-export/libc.c
 	mkdir -p build/wasm
 	zig cc -target wasm32-wasi \
@@ -37,8 +43,18 @@ build/wasm/libdylink.o: dist/wasm-export/libc.c
 		-s \
 		-c -o build/wasm/libdylink.o
 
-# This is a bit of a cheat -- we do not use ar to make an actual archive,
-# and instead it is just a copy of the .a file!  The reason is because
+build/wasm/libdylink.debug.o: dist/wasm-export/libc.c
+	mkdir -p build/wasm
+	zig cc -target wasm32-wasi \
+		-rdynamic \
+		-shared \
+		-fvisibility=default \
+		dist/wasm-export/libc.c \
+		-c -o build/wasm/libdylink.debug.o
+
+# The way we make dist/wasm/libdylink.a is a bit of a cheat -- we do not
+# use ar to make an actual archive, and instead what we call "libdylink.a"
+# is just a copy of the .a file!  The reason is because
 # this way the linker will make all of the __WASM_EXPORT__* functions
 # (that return pointers to contents of libc) visible and in the resulting
 # wasm file of anything that links this.   If we don't do this, and just use
@@ -49,11 +65,31 @@ dist/wasm/libdylink.a: build/wasm/libdylink.o
 	mkdir -p dist/wasm
 	cp build/wasm/libdylink.o dist/wasm/libdylink.a
 
-dist/.built: dist/wasm-export/libc.c dist/index.js dist/wasm/libdylink.a
+dist/wasm/debug/libdylink.a: build/wasm/libdylink.debug.o
+	mkdir -p dist/wasm/debug
+	cp build/wasm/libdylink.debug.o dist/wasm/debug/libdylink.a
+
+
+# Python shared object library:
+
+build/wasm/libpython.o: dist/wasm-export/libpython.c
+	./bin/zig-fPIC cc dist/wasm-export/libpython.c -c -o build/wasm/libpython.o -I ${PYTHON}/include/python3.11 -I ${POSIX}
+
+dist/wasm/libpython.so: build/wasm/libpython.o
+	mkdir -p dist/wasm
+	zig wasm-ld -s --experimental-pic -shared build/wasm/libpython.o ${PYTHON}/lib/libpython3.11.a ${POSIX}/libwasmposix.a ${LZMA}/lib/liblzma.a  ${CWD}/../cpython/build/wasm-shared/Modules/_decimal/libmpdec/libmpdec.a  -o dist/wasm/libpython.so
+
+dist/wasm/debug/libpython.so: build/wasm/libpython.o
+	mkdir -p dist/wasm/debug
+	zig wasm-ld --experimental-pic -shared build/wasm/libpython.o ${PYTHON}/lib/libpython3.11.a ${POSIX}/libwasmposix.a ${LZMA}/lib/liblzma.a  ${CWD}/../cpython/build/wasm-shared/Modules/_decimal/libmpdec/libmpdec.a  -o dist/wasm/debug/libpython.so
+
+
+
+dist/.built: dist/wasm-export/libc.c dist/index.js dist/wasm/libdylink.a dist/wasm/debug/libdylink.a dist/wasm/libpython.so dist/wasm/debug/libpython.so
 	cd ../../bin && ln -sf ../packages/dylink/bin/zig-fPIC .
 	touch dist/.built
 
-test: wasm-export dist/wasm/libdylink.a
+test: wasm-export dist/.built
 	npm ci
 	npm run build
 	cd test/freestanding && make test
@@ -62,6 +98,7 @@ test: wasm-export dist/wasm/libdylink.a
 	cd test/malloc && make test
 	cd test/python-in-lib && make test
 	cd test/libc-archive && make test
+	cd test/libpython-so && make test
 .PHONY: test
 
 test-native-macos:
@@ -80,5 +117,6 @@ clean:
 	cd test/python-extension && make clean
 	cd test/malloc && make clean
 	cd test/libc-archive && make clean
+	cd test/libpython-so && make clean
 
 .PHONY: clean
