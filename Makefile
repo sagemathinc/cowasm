@@ -15,7 +15,7 @@ python-wasm: packages/python-wasm/${BUILT}
 zig:
 	cd packages/zig && make
 
-packages/posix-wasm/${BUILT}: zig dylink
+packages/posix-wasm/${BUILT}: zig
 	cd packages/posix-wasm && make all
 .PHONY: posix-wasm
 posix-wasm: packages/posix-wasm/${BUILT}
@@ -90,7 +90,7 @@ packages/ncurses/${BUILT}: termcap posix-wasm zig
 ncurses: packages/ncurses/${BUILT}
 
 
-packages/sqlite/${BUILT}: libedit posix-wasm zig zlib dylink
+packages/sqlite/${BUILT}: libedit posix-wasm zig zlib
 	cd packages/sqlite && make all
 .PHONY: sqlite
 sqlite: packages/sqlite/${BUILT}
