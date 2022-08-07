@@ -8,7 +8,7 @@ of times faster.
 import spawnAsync from "await-spawn";
 import wasmExport from "./wasm-export";
 
-const path = "../cpython/dist/wasm/include/python3.11";
+const path = "../cpython/dist/wasm-shared/include/python3.11";
 
 // I tediously made this list.  In theory the C preprocessor should be able to do this, or maybe
 // using nm on libpython combined with the headers?
