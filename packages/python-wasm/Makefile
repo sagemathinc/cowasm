@@ -52,7 +52,7 @@ test-python:
 #
 
 
-${DIST}/python/python.wasm: src/python/python1.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/pyapi.zig
+${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/pyapi.zig
 	cd src && zig build-lib \
 		${OPT} \
 		-rdynamic \
@@ -99,7 +99,6 @@ test-proxy:
 	cd src && ${TEST} interface/proxy.zig
 
 ## Node modules
-.PHONY: node_modules
 node_modules:
 	npm ci
 
@@ -124,26 +123,6 @@ test: all test-zig
 clean:
 	rm -rf ${DIST} node_modules tsconfig.tsbuildinfo src/zig-cache src/*/zig-cache
 
-
-
-${DIST}/python/python1.wasm: src/python/python1.zig
-	cd src && zig build-lib \
-		${OPT} \
-		-rdynamic \
-		-target wasm32-wasi \
-		--import-memory \
-		--import-table \
-		-I. -I${POSIX_WASM} \
-		-I${PYTHON_WASM}/include/python3.11 \
-		-L ${DYLINK}/wasm/ -ldylink \
-	   ${WASM_CFLAGS} \
-	   ${ZIG_PKG} \
-	    -lc -lm python/python1.zig
-	mkdir -p ${DIST}/python
-	mv src/python1.wasm ${DIST}/python/python1.wasm
-
-.PHONEY: python1
-python1: ${DIST}/python/python1.wasm
 
 # Obviously this can't work without a dylink runtime setup.
 # packages/dylink/test/libpython-so/app.js could help.
