@@ -7,7 +7,7 @@ export PATH := ${PACKAGES}/../bin:${PACKAGES}/zig/dist:$(PATH)
 ZIG_PKG       = --main-pkg-path ${CWD}/src
 
 PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
-PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm
+PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm-shared
 POSIX_WASM   = ${PACKAGES}/posix-wasm/dist/wasm
 DYLINK   = ${PACKAGES}/dylink/dist
 LZMA_WASM = ${CWD}/../lzma/dist/wasm
