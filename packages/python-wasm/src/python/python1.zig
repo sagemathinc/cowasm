@@ -33,35 +33,35 @@ fn PyAPI4(name: [*:0]const u8, comptime T: type, arg0: @typeInfo(T).Fn.args[0].a
 }
 
 fn Py_Initialize() void {
-    PyAPI0("Py_Initialize", @TypeOf(python.Py_Initialize));
+    PyAPI0("Py_Initialize", @TypeOf(Py_Initialize));
 }
 
 fn PyDict_New() *PyObject {
-    return PyAPI0("PyDict_New", fn () *PyObject);
+    return PyAPI0("PyDict_New", @TypeOf(PyDict_New));
 }
 
 fn PyRun_String(str: [*:0]const u8, start: i32, globals0: *PyObject, locals: *PyObject) ?*PyObject {
-    return PyAPI4("PyRun_String", fn ([*:0]const u8, i32, *PyObject, *PyObject) ?*PyObject, str, start, globals0, locals);
+    return PyAPI4("PyRun_String", @TypeOf(PyRun_String), str, start, globals0, locals);
 }
 
 fn PyObject_Repr(pstr: *PyObject) ?*PyObject {
-    return PyAPI1("PyObject_Repr", fn (*PyObject) ?*PyObject, pstr);
+    return PyAPI1("PyObject_Repr", @TypeOf(PyObject_Repr), pstr);
 }
 
 fn Py_DECREF(obj: *PyObject) void {
-    PyAPI1("Py_DECREF", fn (*PyObject) void, obj);
+    PyAPI1("Py_DECREF", @TypeOf(Py_DECREF), obj);
 }
 
 fn PyErr_Clear() void {
-    PyAPI0("PyErr_Clear", fn () void);
+    PyAPI0("PyErr_Clear", @TypeOf(PyErr_Clear));
 }
 
 fn PyUnicode_AsUTF8(rep: *PyObject) [*:0]const u8 {
-    return PyAPI1("PyUnicode_AsUTF8", fn (*PyObject) [*:0]const u8, rep);
+    return PyAPI1("PyUnicode_AsUTF8", @TypeOf(PyUnicode_AsUTF8), rep);
 }
 
 fn Py_BytesMain(argc: i32, argv: [*c][*c]u8) i32 {
-    return PyAPI2("Py_BytesMain", fn (i32, [*c][*c]u8) i32, argc, argv);
+    return PyAPI2("Py_BytesMain", @TypeOf(Py_BytesMain), argc, argv);
 }
 
 pub fn init() void {
