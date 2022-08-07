@@ -27,7 +27,7 @@ openssl: packages/openssl/${BUILT}
 
 
 
-packages/dylink/${BUILT}: zig posix-wasm cpython
+packages/dylink/${BUILT}: zig posix-wasm cpython lzma
 	cd packages/dylink && make all
 .PHONY: dylink
 dylink: packages/dylink/${BUILT}
