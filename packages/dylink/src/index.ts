@@ -11,7 +11,7 @@ interface Env {
   memory?: WebAssembly.Memory;
   dlopen?: (pathnamePtr: number, flags: number) => number;
   dlsym?: (handle: number, symbolPtr: number) => number;
-  dlerr?: () => number; // basically a stub right now
+  dlerror?: () => number; // basically a stub right now
   dlclose?: (handle: number) => number; // basically a stub right now
 }
 
@@ -401,7 +401,7 @@ export default async function importWebAssemblyDlopen({
   call to dlerror(). It returns NULL if no errors have occurred since
   initialization or since it was last called."
   */
-  env.dlerr = () => {
+  env.dlerror = () => {
     // TODO: need to allocate a string to implement this, and also keep track
     // of errors.
     return 0;
