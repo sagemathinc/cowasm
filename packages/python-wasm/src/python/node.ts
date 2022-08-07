@@ -7,15 +7,6 @@ import { existsSync } from "fs";
 import callsite from "callsite";
 
 const DATA = join("python", "python.zip");
-const fs: FileSystemSpec[] = [
-  {
-    type: "zipfile",
-    zipfile: DATA,
-    mountpoint: "/usr/lib/python3.11",
-  },
-  { type: "dev" }, // always include this -- it is necessary for python to start when using nodejs windows, but doesn't hurt on linux/macos.
-  { type: "native" }, // provides stdout,stderr natively, for now...
-];
 
 export async function init({
   noWorker,
@@ -26,6 +17,20 @@ export async function init({
     noWorker = noZip = true;
   }
   const path = dirname(join(callsite()[1]?.getFileName() ?? "", ".."));
+  const zipfile = join(path, DATA);
+  const fs: FileSystemSpec[] = [];
+  if (existsSync(zipfile)) {
+    fs.push({
+      type: "zipfile",
+      zipfile: DATA,
+      mountpoint: "/usr/lib/python3.11",
+    });
+  }
+  // always include dev -- it is necessary for python to start when using nodejs windows, but doesn't hurt on linux/macos.
+  fs.push({ type: "dev" });
+  // native: provides stdout,stderr natively, for now...
+  fs.push({ type: "native" });
+
   let env;
   if (!noZip && existsSync(join(path, DATA))) {
     env = {

@@ -17,7 +17,8 @@ pub fn init() void {
 pub fn exec(s: [*:0]const u8) !void {
     init();
     // std.debug.print("exec '{s}'\n", .{s});
-    // Returns 0 on success or -1 if an exception was raised. If there was an error, there is no way to get the exception information.
+    // Returns 0 on success or -1 if an exception was raised. If there was an error,
+    // there is no way to get the exception information.
     // std.debug.print("PyRun_String: Py_file_input -- '{s}'\n", .{s});
     var pstr = python.PyRun_String(s, python.Py_file_input, globals, globals);
     if (pstr == null) {

@@ -24,7 +24,7 @@ int main() {
   printf("hello():\n\n");
   (*hello)();
   printf("\nDone\n");
-  printf("NOTE: there is a long pause while Python does something mysterious.  TODO.\n");
+  printf("NOTE: there is a long pause (on macOS x86_64 and aarch64 -- NOT linux) while Python does something mysterious.  TODO.\n");
   // TODO: there is a long pause before the process actually terminates.
 }
 

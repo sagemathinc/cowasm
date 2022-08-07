@@ -312,7 +312,7 @@ export default async function importWebAssemblyDlopen({
     for (const symName in funcMap) {
       const f = instance.exports[symName] ?? mainInstance.exports[symName];
       if (f == null) continue;
-      log("table[%s] = %s", funcMap[symName], symName, f);
+      //log("table[%s] = %s", funcMap[symName], symName, f);
       setTable(funcMap[symName].value, f as Function);
       symToPtr[symName] = funcMap[symName];
       delete funcMap[symName];
@@ -374,12 +374,20 @@ export default async function importWebAssemblyDlopen({
     if (lib == null) {
       throw Error(`dlsym: invalid handle ${handle}`);
     }
-    const ptr = lib.symToPtr[symName];
+    let ptr = lib.symToPtr[symName];
     log("ptr = ", ptr);
     if (ptr != null) {
       // symbol is a known function pointer
       return ptr;
     }
+
+    // sometimes its an alias:
+    ptr = (lib.instance.exports[`__WASM_EXPORT__${symName}`] as any)?.();
+    if (ptr != null) {
+      // symbol is a known function pointer
+      return ptr;
+    }
+
     // NOT sure if this is at all correct or meaningful or what to even
     // do with non functions!
     // I think Python only uses function pointers?

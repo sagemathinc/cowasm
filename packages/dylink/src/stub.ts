@@ -11,7 +11,7 @@ const log = debug("stub");
 //   "strunvis"
 // ];
 
-const EXCLUDE = ['pthread_'];
+const EXCLUDE = ["pthread_"];
 
 function exclude(name): boolean {
   for (const x of EXCLUDE) {
@@ -57,5 +57,10 @@ function logStubUse(functionName, args, firstOnly) {
     if (stubUsed.has(functionName)) return;
     stubUsed.add(functionName);
   }
-  console.warn("WARNING: using non-whitelisted stub", functionName, args);
+  console.warn(
+    "WARNING: using non-whitelisted stub",
+    functionName,
+    args,
+    firstOnly ? " (only showing warning once)" : ""
+  );
 }

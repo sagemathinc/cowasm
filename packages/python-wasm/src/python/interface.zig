@@ -1,11 +1,11 @@
 const std = @import("std");
-const python = @import("./python.zig");
+const python = @import("./python1.zig");
 const interface = @import("../interface.zig");
-const signal = @import("./signal/signal.zig");
+// const signal = @import("./signal/signal.zig");
 
-export fn exported() void {
-    signal.exported();
-}
+// export fn exported() void {
+//     signal.exported();
+// }
 
 export fn init() void {
     python.init();

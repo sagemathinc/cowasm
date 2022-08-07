@@ -8,10 +8,8 @@ ZIG_PKG       = --main-pkg-path ${CWD}/src
 
 PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
 PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm-shared
-POSIX_WASM   = ${PACKAGES}/posix-wasm/dist/wasm
+POSIX_WASM   = ${PACKAGES}/posix-wasm/dist/wasm-shared
 DYLINK   = ${PACKAGES}/dylink/dist
-LZMA_WASM = ${CWD}/../lzma/dist/wasm
-ZLIB_WASM = ${CWD}/../zlib/dist/wasm
 
 WASM_CFLAGS   = -dynamic ${OPT}
 
@@ -54,7 +52,7 @@ test-python:
 #
 
 
-${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig
+${DIST}/python/python.wasm: src/python/python1.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig
 	cd src && zig build-lib \
 		${OPT} \
 		-rdynamic \
@@ -62,15 +60,10 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 		--import-memory \
 		--import-table \
 		-I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} \
-		${PYTHON_WASM}/lib/libpython3.11.a \
-	   ${POSIX_WASM}/libwasmposix.a \
-	   ${LZMA_WASM}/lib/liblzma.a \
-	   ${ZLIB_WASM}/lib/libz.a \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
 	   `pwd`/python/signal/signal.c \
 	   -L ${DYLINK}/wasm/ -ldylink \
-	   ${DYLINK}/wasm-export/libpython.c \
 	   python/interface.zig -lc -lm
 	mkdir -p ${DIST}/python
 	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
@@ -123,3 +116,31 @@ test: all test-zig
 .PHONY: clean
 clean:
 	rm -rf ${DIST} node_modules tsconfig.tsbuildinfo src/zig-cache src/*/zig-cache
+
+
+
+${DIST}/python/python1.wasm: src/python/python1.zig
+	cd src && zig build-lib \
+		${OPT} \
+		-rdynamic \
+		-target wasm32-wasi \
+		--import-memory \
+		--import-table \
+		-I. -I${POSIX_WASM} \
+		-I${PYTHON_WASM}/include/python3.11 \
+		-L ${DYLINK}/wasm/ -ldylink \
+	   ${WASM_CFLAGS} \
+	   ${ZIG_PKG} \
+	    -lc -lm python/python1.zig
+	mkdir -p ${DIST}/python
+	mv src/python1.wasm ${DIST}/python/python1.wasm
+
+.PHONEY: python1
+python1: ${DIST}/python/python1.wasm
+
+# Obviously this can't work without a dylink runtime setup.
+# packages/dylink/test/libpython-so/app.js could help.
+test-python1:
+	cd src && ${TEST} python/python1.zig -I. ${OPT}
+
+
