@@ -4,7 +4,7 @@ BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 
-all: wasm
+all: wasm-shared
 
 # Don't build native -- it's very likely available systemwide or we don't need it, and
 # it breaks things.
