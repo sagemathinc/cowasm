@@ -85,7 +85,7 @@ ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodul
 	zig wasm-ld --experimental-pic -shared ${DIST}/python/hello.o -o ${DIST}/python/hello.cpython-311-wasm32-wasi.so
 	rm ${DIST}/python/hello.o
 	echo "TODO: temporary path hack:"
-	cp  ${DIST}/python/hello.cpython-311-wasm32-wasi.so ../cpython/dist/wasm-shared/lib/python3.11/lib-dynload/
+	cp  ${DIST}/python/hello.cpython-311-wasm32-wasi.so ${PYTHON_WASM}/lib/python3.11/lib-dynload/
 
 .PHONEY: hello
 hello: ${DIST}/python/hello.cpython-311-wasm32-wasi.so
