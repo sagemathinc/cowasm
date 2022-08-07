@@ -32,16 +32,48 @@ fn PyAPI4(name: [*:0]const u8, comptime T: type, arg0: @typeInfo(T).Fn.args[0].a
     return @ptrCast(T, std.c.dlsym(libpythonHandle, name))(arg0, arg1, arg2, arg3);
 }
 
+fn Py_Initialize() void {
+    PyAPI0("Py_Initialize", @TypeOf(python.Py_Initialize));
+}
+
+fn PyDict_New() *PyObject {
+    return PyAPI0("PyDict_New", fn () *PyObject);
+}
+
+fn PyRun_String(str: [*:0]const u8, start: i32, globals0: *PyObject, locals: *PyObject) ?*PyObject {
+    return PyAPI4("PyRun_String", fn ([*:0]const u8, i32, *PyObject, *PyObject) ?*PyObject, str, start, globals0, locals);
+}
+
+fn PyObject_Repr(pstr: *PyObject) ?*PyObject {
+    return PyAPI1("PyObject_Repr", fn (*PyObject) ?*PyObject, pstr);
+}
+
+fn Py_DECREF(obj: *PyObject) void {
+    PyAPI1("Py_DECREF", fn (*PyObject) void, obj);
+}
+
+fn PyErr_Clear() void {
+    PyAPI0("PyErr_Clear", fn () void);
+}
+
+fn PyUnicode_AsUTF8(rep: *PyObject) [*:0]const u8 {
+    return PyAPI1("PyUnicode_AsUTF8", fn (*PyObject) [*:0]const u8, rep);
+}
+
+fn Py_BytesMain(argc: i32, argv: [*c][*c]u8) i32 {
+    return PyAPI2("Py_BytesMain", fn (i32, [*c][*c]u8) i32, argc, argv);
+}
+
 pub fn init() void {
     if (didInit) return;
     didInit = true;
     std.debug.print("calling dlopen...\n", .{});
     libpythonHandle = std.c.dlopen("/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/python-wasm/packages/dylink/dist/wasm/libpython.so", 2);
     std.debug.print("got libpythonHandle={d}...\n", .{libpythonHandle});
-    std.debug.print("calling Py_Initialize()...\n", .{});
-    PyAPI0("Py_Initialize", fn () void);
+    std.debug.print("calling Py_Initialize()  {}...\n", .{python.Py_Initialize});
+    Py_Initialize();
     std.debug.print("success!\n", .{});
-    globals = PyAPI0("PyDict_New", fn () *PyObject);
+    globals = PyDict_New();
     std.debug.print("got globals at {*}\n", .{globals});
 }
 
@@ -49,37 +81,35 @@ pub fn init() void {
 pub fn exec(s: [*:0]const u8) !void {
     init();
     std.debug.print("exec '{s}'\n", .{s});
-    var pstr = PyAPI4("PyRun_String", fn ([*:0]const u8, i32, *PyObject, *PyObject) ?*PyObject, s, python.Py_file_input, globals, globals);
-    if (pstr == null) {
-        python.PyErr_Clear();
+    var pstr = PyRun_String(s, python.Py_file_input, globals, globals) orelse {
+        PyErr_Clear();
         // failed - some sort of exception got raised.
         std.debug.print("failed to run '{s}'\n", .{s});
         return General.RuntimeError;
-    }
+    };
     // it worked.  We don't use the return value for anything.
-    python.Py_DECREF(pstr);
+    Py_DECREF(pstr);
 }
 
 pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
     init();
     // std.debug.print("eval '{s}'\n", .{s});
-    var pstr0 = PyAPI4("PyRun_String", fn ([*:0]const u8, i32, *PyObject, *PyObject) ?*PyObject, s, python.Py_eval_input, globals, globals);
-    var pstr = pstr0 orelse {
-        PyAPI0("PyErr_Clear", fn () void);
+
+    var pstr = PyRun_String(s, python.Py_eval_input, globals, globals) orelse {
+        PyErr_Clear();
         std.debug.print("eval -- PyRun_String failed\n", .{});
         return General.RuntimeError;
     };
-    defer PyAPI1("Py_DECREF", fn (*PyObject) void, pstr);
+    defer Py_DECREF(pstr);
 
-    var rep0 = PyAPI1("PyObject_Repr", fn (*PyObject) ?*PyObject, pstr);
-    var rep = rep0 orelse {
-        PyAPI0("PyErr_Clear", fn () void);
+    var rep = PyObject_Repr(pstr) orelse {
+        PyErr_Clear();
         std.debug.print("eval -- PyObject_Repr failed\n", .{});
         return General.RuntimeError;
     };
-    defer PyAPI1("Py_DECREF", fn (*PyObject) void, rep);
+    defer Py_DECREF(rep);
     // std.debug.print("rep ptr = {*}\n", .{rep});
-    const str_rep = PyAPI1("PyUnicode_AsUTF8", fn (*PyObject) [*:0]const u8, rep);
+    const str_rep = PyUnicode_AsUTF8(rep);
 
     // std.debug.print("str_rep = {s}\n", .{str_rep});
     return try std.fmt.allocPrint(
