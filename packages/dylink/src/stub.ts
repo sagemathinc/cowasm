@@ -58,7 +58,7 @@ function logStubUse(functionName, args, firstOnly) {
     stubUsed.add(functionName);
   }
   console.warn(
-    "WARNING: using non-whitelisted stub",
+    "WARNING: *using* non-whitelisted stub",
     functionName,
     args,
     firstOnly ? " (only showing warning once)" : ""
