@@ -1,115 +1,62 @@
 const std = @import("std");
-const python = @cImport(@cInclude("Python.h"));
-const PyObject = python.PyObject;
+const py = @import("./pyapi.zig");
+
 pub const General = error{ OverflowError, RuntimeError };
+const PyObject = py.PyObject;
 
 var didInit = false;
 var globals: *PyObject = undefined;
-var libpythonHandle: ?*anyopaque = null; // not initialized
-
-// Call any 0 argument function in the Python C api.  You have to give the name and
-// type of the function.
-fn PyAPI0(name: [*:0]const u8, comptime T: type) @typeInfo(T).Fn.return_type.? {
-    //std.debug.print("T = {}\n", .{@typeInfo(T).Fn});
-    return @ptrCast(T, std.c.dlsym(libpythonHandle, name))();
-}
-
-fn PyAPI1(name: [*:0]const u8, comptime T: type, arg0: @typeInfo(T).Fn.args[0].arg_type.?) @typeInfo(T).Fn.return_type.? {
-    //std.debug.print("T = {}\n", .{@typeInfo(T).Fn});
-    return @ptrCast(T, std.c.dlsym(libpythonHandle, name))(arg0);
-}
-fn PyAPI2(name: [*:0]const u8, comptime T: type, arg0: @typeInfo(T).Fn.args[0].arg_type.?, arg1: @typeInfo(T).Fn.args[1].arg_type.?) @typeInfo(T).Fn.return_type.? {
-    //std.debug.print("T = {}\n", .{@typeInfo(T).Fn});
-    return @ptrCast(T, std.c.dlsym(libpythonHandle, name))(arg0, arg1);
-}
-fn PyAPI3(name: [*:0]const u8, comptime T: type, arg0: @typeInfo(T).Fn.args[0].arg_type.?, arg1: @typeInfo(T).Fn.args[1].arg_type.?, arg2: @typeInfo(T).Fn.args[2].arg_type.?) @typeInfo(T).Fn.return_type.? {
-    //std.debug.print("T = {}\n", .{@typeInfo(T).Fn});
-    return @ptrCast(T, std.c.dlsym(libpythonHandle, name))(arg0, arg1, arg2);
-}
-
-fn PyAPI4(name: [*:0]const u8, comptime T: type, arg0: @typeInfo(T).Fn.args[0].arg_type.?, arg1: @typeInfo(T).Fn.args[1].arg_type.?, arg2: @typeInfo(T).Fn.args[2].arg_type.?, arg3: @typeInfo(T).Fn.args[3].arg_type.?) @typeInfo(T).Fn.return_type.? {
-    //std.debug.print("T = {}\n", .{@typeInfo(T).Fn});
-    return @ptrCast(T, std.c.dlsym(libpythonHandle, name))(arg0, arg1, arg2, arg3);
-}
-
-fn Py_Initialize() void {
-    PyAPI0("Py_Initialize", @TypeOf(Py_Initialize));
-}
-
-fn PyDict_New() *PyObject {
-    return PyAPI0("PyDict_New", @TypeOf(PyDict_New));
-}
-
-fn PyRun_String(str: [*:0]const u8, start: i32, globals0: *PyObject, locals: *PyObject) ?*PyObject {
-    return PyAPI4("PyRun_String", @TypeOf(PyRun_String), str, start, globals0, locals);
-}
-
-fn PyObject_Repr(pstr: *PyObject) ?*PyObject {
-    return PyAPI1("PyObject_Repr", @TypeOf(PyObject_Repr), pstr);
-}
-
-fn Py_DECREF(obj: *PyObject) void {
-    PyAPI1("Py_DECREF", @TypeOf(Py_DECREF), obj);
-}
-
-fn PyErr_Clear() void {
-    PyAPI0("PyErr_Clear", @TypeOf(PyErr_Clear));
-}
-
-fn PyUnicode_AsUTF8(rep: *PyObject) [*:0]const u8 {
-    return PyAPI1("PyUnicode_AsUTF8", @TypeOf(PyUnicode_AsUTF8), rep);
-}
-
-fn Py_BytesMain(argc: i32, argv: [*c][*c]u8) i32 {
-    return PyAPI2("Py_BytesMain", @TypeOf(Py_BytesMain), argc, argv);
-}
-
-pub fn init() void {
+pub fn init(libpython_so: [*:0]const u8) !void {
     if (didInit) return;
     didInit = true;
-    std.debug.print("calling dlopen...\n", .{});
-    libpythonHandle = std.c.dlopen("/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/python-wasm/packages/dylink/dist/wasm/libpython.so", 2);
-    std.debug.print("got libpythonHandle={d}...\n", .{libpythonHandle});
-    std.debug.print("calling Py_Initialize()  {}...\n", .{python.Py_Initialize});
-    Py_Initialize();
-    std.debug.print("success!\n", .{});
-    globals = PyDict_New();
-    std.debug.print("got globals at {*}\n", .{globals});
+    try py.init(libpython_so);
+    // std.debug.print("calling Py_Initialize()...\n", .{});
+    py.Py_Initialize();
+    // std.debug.print("success!\n", .{});
+    globals = py.PyDict_New();
 }
+
+pub fn assertInit() !void {
+    if (!didInit) {
+        std.debug.print("call init() first\n", .{});
+        return General.RuntimeError;
+    }
+}
+
 
 // If there was an error, there is no way to get the exception information *yet*.
 pub fn exec(s: [*:0]const u8) !void {
-    init();
+    try assertInit();
     std.debug.print("exec '{s}'\n", .{s});
-    var pstr = PyRun_String(s, python.Py_file_input, globals, globals) orelse {
-        PyErr_Clear();
+    var pstr = py.PyRun_String(s, py.Py_file_input, globals, globals) orelse {
+        py.PyErr_Clear();
         // failed - some sort of exception got raised.
         std.debug.print("failed to run '{s}'\n", .{s});
         return General.RuntimeError;
     };
     // it worked.  We don't use the return value for anything.
-    Py_DECREF(pstr);
+    py.Py_DECREF(pstr);
 }
 
 pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
-    init();
+    try assertInit();
     // std.debug.print("eval '{s}'\n", .{s});
 
-    var pstr = PyRun_String(s, python.Py_eval_input, globals, globals) orelse {
-        PyErr_Clear();
+    var pstr = py.PyRun_String(s, py.Py_eval_input, globals, globals) orelse {
+        py.PyErr_Clear();
         std.debug.print("eval -- PyRun_String failed\n", .{});
         return General.RuntimeError;
     };
-    defer Py_DECREF(pstr);
+    defer py.Py_DECREF(pstr);
 
-    var rep = PyObject_Repr(pstr) orelse {
-        PyErr_Clear();
+    var rep = py.PyObject_Repr(pstr) orelse {
+        py.PyErr_Clear();
         std.debug.print("eval -- PyObject_Repr failed\n", .{});
         return General.RuntimeError;
     };
-    defer Py_DECREF(rep);
+    defer py.Py_DECREF(rep);
     // std.debug.print("rep ptr = {*}\n", .{rep});
-    const str_rep = PyUnicode_AsUTF8(rep);
+    const str_rep = py.PyUnicode_AsUTF8(rep);
 
     // std.debug.print("str_rep = {s}\n", .{str_rep});
     return try std.fmt.allocPrint(
@@ -119,10 +66,11 @@ pub fn eval(allocator: std.mem.Allocator, s: [*:0]const u8) ![]u8 {
     );
 }
 
-pub fn terminal(argc: i32, argv: [*c][*c]u8) i32 {
+pub fn terminal(argc: i32, argv: [*c][*c]u8) !i32 {
+    try assertInit();
     // std.debug.print("calling Py_BytesMain()... with argc={}, argv[0]={s} argv[1]={s} inputs\n", .{argc, argv[0], argv[1]});
     // std.debug.print("calling Py_BytesMain()... with argc={}, argv[0]={s}\n", .{argc, argv[0]});
-    const r = PyAPI2("Py_BytesMain", fn (i32, [*c][*c]u8) i32, argc, argv);
+    const r = py.Py_BytesMain(argc, argv);
     // std.debug.print("Py_Main exited with code {}\n", .{r});
     return r;
 }

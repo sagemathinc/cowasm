@@ -6,7 +6,9 @@ import { dirname, join } from "path";
 import { existsSync } from "fs";
 import callsite from "callsite";
 
-const DATA = join("python", "python.zip");
+const PYTHON_ZIP = "python.zip";
+const LIBPYTHON_SO = "libpython.so";
+const PYTHON_WASM = "python.wasm";
 
 export async function init({
   noWorker,
@@ -16,13 +18,13 @@ export async function init({
   if (debug) {
     noWorker = noZip = true;
   }
-  const path = dirname(join(callsite()[1]?.getFileName() ?? "", ".."));
-  const zipfile = join(path, DATA);
+  const path = dirname(join(callsite()[1]?.getFileName() ?? ""));
+  const zipfile = join(path, PYTHON_ZIP);
   const fs: FileSystemSpec[] = [];
   if (existsSync(zipfile)) {
     fs.push({
       type: "zipfile",
-      zipfile: DATA,
+      zipfile,
       mountpoint: "/usr/lib/python3.11",
     });
   }
@@ -31,8 +33,9 @@ export async function init({
   // native: provides stdout,stderr natively, for now...
   fs.push({ type: "native" });
 
-  let env;
-  if (!noZip && existsSync(join(path, DATA))) {
+  let env, libpython_so;
+  if (!noZip && existsSync(zipfile)) {
+    libpython_so = `/usr/lib/python3.11/${LIBPYTHON_SO}`;
     env = {
       ...process.env,
       ...{
@@ -42,14 +45,16 @@ export async function init({
       },
     };
   } else {
+    libpython_so = join(path, LIBPYTHON_SO);
     env = { ...process.env };
   }
-  await _init(
-    "python/python.wasm",
-    noWorker ? wasmImportNoWorker : wasmImport,
+  await _init({
+    python_wasm: join(path, PYTHON_WASM),
+    wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
     fs,
-    env
-  );
+    env,
+    libpython_so,
+  });
 }
 
 async function terminal(argv = ["python"]): Promise<number> {

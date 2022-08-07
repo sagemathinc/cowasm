@@ -142,21 +142,26 @@ ${BUILD_WASM_SHARED}/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	touch ${BUILD_WASM_SHARED}/.patched
 
 
-# The -s option to BLDSHARED below strips debug symbols from the shared object libraries, as explained here:
+# The -s option to BLDSHARED below strips debug symbols from the shared object libraries for extension modules,
+# as explained here:
 #     https://stackoverflow.com/questions/6085491/gcc-vs-clang-symbol-stripping
 # It would be nicer to build them with the symbols in (the default), then use wasm-strip
 # later when packaging things up.  Unfortunately, wasm-strip only implements "strip everything",
 # not just debug symbols.  There's code here  https://reviews.llvm.org/D73820 for the general
 # case, but I guess it isn't merged.
-# If you are debugging extension modules, you should temporarily remove the -s option below.
+# NOTE: BLDSHARED_DEBUG = build a huge libpython.so with debugging symbols
+#       BLDSHARED_PROD = remove debugging symbols.
+# The choice must be made at compile time since wasm-strip is very limited as mentioned above.
+# This doesn't impact libpython.so, which is assembled by the dylink package.
 
-#		BLDSHARED="zig wasm-ld -s --experimental-pic -shared  " \
+BLDSHARED_DEBUG = zig wasm-ld --experimental-pic -shared
+BLDSHARED_PROD = ${BLDSHARED_DEBUG}  -s
 
 ${DIST_WASM_SHARED}/.built-cpython-shared: ${BUILD_WASM_SHARED}/.patched
 	cd ${BUILD_WASM_SHARED} && \
 		CC="zig-fPIC cc   " \
 		CXX="zig-fPIC c++  " \
-		BLDSHARED="zig wasm-ld --experimental-pic -shared  " \
+		BLDSHARED=${BLDSHARED_PROD} \
 		AR="zig ar" \
 		CFLAGS=" -Oz  -I${BUILD_WASM_SHARED}/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
 		CONFIG_SITE=./config.site \

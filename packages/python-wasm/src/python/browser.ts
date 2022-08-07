@@ -15,10 +15,16 @@ export async function init({ noWorker }: { noWorker?: boolean } = {}) {
     { type: "dev" },
   ];
 
-  await _init(wasmUrl, noWorker ? wasmImportNoWorker : wasmImport, fs, {
-    PYTHONHOME: "/usr",
-    TERMCAP: "/usr/lib/python3.11/termcap",
-    TERM: "xterm-256color",
+  await _init({
+    python_wasm: wasmUrl,
+    libpython_so: "/usr/lib/python3.11/libpython.so",
+    wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
+    fs,
+    env: {
+      PYTHONHOME: "/usr",
+      TERMCAP: "/usr/lib/python3.11/termcap",
+      TERM: "xterm-256color",
+    },
   });
   python.wasm = wasm;
 }

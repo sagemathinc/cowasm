@@ -7,8 +7,12 @@ const interface = @import("../interface.zig");
 //     signal.exported();
 // }
 
-export fn init() void {
-    python.init();
+export fn init(libpython_so: [*:0]const u8) void {
+    python.init(libpython_so) catch |err| {
+        wasmSetException();
+        std.debug.print("python error: '{}'\nwhen initializing python runtime", .{err});
+        return;
+    };
 }
 
 // TODO: would like to say what the exception actually is. For now, at least inform
@@ -25,7 +29,11 @@ export fn exec(s: [*:0]const u8) void {
 }
 
 export fn terminal(argc: i32, argv: [*c][*c]u8) i32 {
-    return python.terminal(argc, argv);
+    return python.terminal(argc, argv) catch |err| {
+        wasmSetException();
+        std.debug.print("python error: '{}'\nwhen starting terminal", .{err});
+        return 1;
+    };
 }
 
 extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
@@ -63,8 +71,8 @@ export fn c_free(ptr: ?*anyopaque) void {
 }
 
 export fn stringLength(ptr: [*:0]const u8) u32 {
-    var i : u32 = 0;
-    while(ptr[i] != 0) {
+    var i: u32 = 0;
+    while (ptr[i] != 0) {
         i += 1;
     }
     return i;

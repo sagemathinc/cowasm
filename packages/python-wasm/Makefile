@@ -17,7 +17,7 @@ TEST = ./test-zig.sh
 
 DIST = ${CWD}/dist
 
-all: ${DIST}/.built bin hello
+all: ${DIST}/.built bin hello python
 
 # Runs zig test on all zig files that contain the word "test" but do not
 # have interface or export in their filename (since can't test those).
@@ -52,7 +52,7 @@ test-python:
 #
 
 
-${DIST}/python/python.wasm: src/python/python1.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig
+${DIST}/python/python.wasm: src/python/python1.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/pyapi.zig
 	cd src && zig build-lib \
 		${OPT} \
 		-rdynamic \
@@ -66,19 +66,26 @@ ${DIST}/python/python.wasm: src/python/python1.zig src/python/interface.zig src/
 	   -L ${DYLINK}/wasm/ -ldylink \
 	   python/interface.zig -lc -lm
 	mkdir -p ${DIST}/python
-	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
 	mv src/interface.wasm ${DIST}/python/python.wasm
 
 .PHONEY: python
-python: ${DIST}/python/python.wasm
+python: ${DIST}/python/python.wasm ${DIST}/python/python.zip ${DIST}/python/libpython.so
 
+${DIST}/python/python.zip: ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/libpython.so
+	# Copy over the modules files
+	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
+	# For now we also put libpython.so in the zip file:
+	cd ${DIST}/python/ && zip -u python.zip libpython.so
+
+${DIST}/python/libpython.so: ${DYLINK}/wasm/libpython.so
+	cp ${DYLINK}/wasm/libpython.so ${DIST}/python/libpython.so
 
 ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
 	zig-fPIC cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11
 	zig wasm-ld --experimental-pic -shared ${DIST}/python/hello.o -o ${DIST}/python/hello.cpython-311-wasm32-wasi.so
 	rm ${DIST}/python/hello.o
-	echo "temporary path hack:"
-	cp  ${DIST}/python/hello.cpython-311-wasm32-wasi.so ../cpython/dist/wasm/lib/python3.11/lib-dynload/
+	echo "TODO: temporary path hack:"
+	cp  ${DIST}/python/hello.cpython-311-wasm32-wasi.so ../cpython/dist/wasm-shared/lib/python3.11/lib-dynload/
 
 .PHONEY: hello
 hello: ${DIST}/python/hello.cpython-311-wasm32-wasi.so
