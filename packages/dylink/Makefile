@@ -60,7 +60,7 @@ build/wasm/libdylink.debug.o: dist/wasm-export/libc.c
 #    zig ar -crs dist/wasm/libdylink.a build/wasm/libdylink.o
 dist/wasm/libdylink.a: build/wasm/libdylink.o
 	mkdir -p dist/wasm
-	cp build/wasm/libdylink.o dist/wasm/libdylink.a
+	cp build/wasm/libdylink.o  dist/wasm/libdylink.a
 
 dist/wasm/debug/libdylink.a: build/wasm/libdylink.debug.o
 	mkdir -p dist/wasm/debug
@@ -70,12 +70,11 @@ dist/wasm/debug/libdylink.a: build/wasm/libdylink.debug.o
 # Python shared object library:
 
 build/wasm/libpython.o: dist/wasm-export/libpython.c
-	./bin/zig-fPIC cc dist/wasm-export/libpython.c -c -o build/wasm/libpython.o -I ${PYTHON}/include/python3.11 -I ${POSIX}
+	./bin/zig-fPIC cc dist/wasm-export/libpython.c -c -o build/wasm/libpython.o -I${PYTHON}/include/python3.11 -I${POSIX}
 
-# TODO: we are currently including libwasmposix.a in here, but it would be better
-# to put it in the libdylink.a library:
 BUILD_LIBPYTHON = zig wasm-ld --experimental-pic -shared build/wasm/libpython.o \
-	${PYTHON}/lib/libpython3.11.a ${POSIX}/libwasmposix.a ${LZMA}/lib/liblzma.a \
+	${PYTHON}/lib/libpython3.11.a ${LZMA}/lib/liblzma.a \
+	   /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/python-wasm/packages/posix-wasm/build/wasm-shared/threads.o \
 	${CWD}/../cpython/build/wasm-shared/Modules/_decimal/libmpdec/libmpdec.a
 
 dist/wasm/libpython.so: build/wasm/libpython.o

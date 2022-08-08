@@ -99,12 +99,16 @@ export default async function importWebAssemblyDlopen({
   // already imported dynamic library:
   function functionFromOtherLibrary(name: string): Function | undefined {
     for (const handle in handleToLibrary) {
-      const { symToPtr } = handleToLibrary[handle];
-      const ptr = symToPtr[name];
+      const { symToPtr, instance } = handleToLibrary[handle];
+      // two places that could have the pointer:
+      const ptr =
+        symToPtr[name] ??
+        (instance.exports[`__WASM_EXPORT__${name}`] as Function)?.();
       if (ptr != null) {
         if (__indirect_function_table == null) {
           throw Error("__indirect_function_table must be defined");
         }
+        log("functionFromOtherLibrary - got ", name, " from ", path);
         return __indirect_function_table.get(ptr);
       }
     }

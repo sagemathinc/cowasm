@@ -8,7 +8,7 @@ ZIG_PKG       = --main-pkg-path ${CWD}/src
 
 PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
 PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm-shared
-POSIX_WASM   = ${PACKAGES}/posix-wasm/dist/wasm-shared
+POSIX_WASM   = ${PACKAGES}/posix-wasm/dist/wasm
 DYLINK   = ${PACKAGES}/dylink/dist
 
 WASM_CFLAGS   = -dynamic ${OPT}
@@ -64,6 +64,7 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 	   ${ZIG_PKG} \
 	   `pwd`/python/signal/signal.c \
 	   -L ${DYLINK}/wasm/ -ldylink \
+	   /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/python-wasm/packages/posix-wasm/build/wasm/posix.o \
 	   python/interface.zig -lc -lm
 	mkdir -p ${DIST}/python
 	mv src/interface.wasm ${DIST}/python/python.wasm

@@ -11,7 +11,7 @@ const log = debug("stub");
 //   "strunvis"
 // ];
 
-const EXCLUDE = ["pthread_", "sig"];
+const EXCLUDE = [/*"pthread_",*/ "sig"];
 
 function exclude(name): boolean {
   for (const x of EXCLUDE) {

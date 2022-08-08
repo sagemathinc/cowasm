@@ -15,6 +15,7 @@ like actual pthreads yet!
 
 #include <stdio.h>
 #include "threads.h"
+#include "public.h"
 
 //#define debug printf
 
@@ -56,6 +57,7 @@ int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr) {
   debug("pthread_cond_init - c implementation\n");
   return 0;
 }
+PUBLIC(pthread_cond_init)
 
 // The pthread_cond_signal() call unblocks at least one of the threads that are blocked on the specified condition variable cond (if any threads are blocked on cond).
 int pthread_cond_signal(pthread_cond_t *cond) {
@@ -63,18 +65,21 @@ int pthread_cond_signal(pthread_cond_t *cond) {
   // just do nothing - since we never block
   return 0;
 }
+PUBLIC(pthread_cond_signal)
 
 int pthread_condattr_init(pthread_condattr_t *attr) {
   debug("pthread_condattr_init - c implementation\n");
   *attr = pthread_condattr_default;
   return 0;
 }
+PUBLIC(pthread_condattr_init)
 
 int pthread_condattr_setclock(pthread_condattr_t *attr, clockid_t clock_id) {
   debug("pthread_condattr_setclock - c implementation\n");
   attr->clock_id = clock_id;
   return 0;
 }
+PUBLIC(pthread_condattr_setclock)
 
 #define SIZE 1000
 static void *values[SIZE];
@@ -91,6 +96,7 @@ void *pthread_getspecific(pthread_key_t key) {
   }
   return 0;
 }
+PUBLIC(pthread_getspecific)
 
 int pthread_setspecific(pthread_key_t key, const void *value) {
   debug("pthread_setspecific - c implementation, key=%d, value=%p\n", key.id, value);
@@ -110,6 +116,7 @@ int pthread_setspecific(pthread_key_t key, const void *value) {
   values[nkeys - 1] = value;
   return 0;
 }
+PUBLIC(pthread_setspecific)
 
 int pthread_key_create(pthread_key_t *key, void (*destructor)(void *)) {
   debug("pthread_key_create - c implementation\n");
@@ -129,6 +136,7 @@ int pthread_key_create(pthread_key_t *key, void (*destructor)(void *)) {
 
   return 0;
 }
+PUBLIC(pthread_key_create)
 
 
 // The pthread_mutex_init() function initialises the mutex referenced by mutex with attributes specified by attr. If attr is NULL, the default mutex attributes are used; the effect is the same as passing the address of a default mutex attributes object. Upon successful initialisation, the state of the mutex becomes initialised and unlocked.
@@ -137,20 +145,24 @@ int pthread_mutex_init(pthread_mutex_t *mutex,
   debug("pthread_mutex_init - c implementation\n");
   return 0;
 }
+PUBLIC(pthread_mutex_init)
 
 // The mutex object referenced by mutex is locked by calling pthread_mutex_lock(). If the mutex is already locked, the calling thread blocks until the mutex becomes available. This operation returns with the mutex object referenced by mutex in the locked state with the calling thread as its owner.
 int pthread_mutex_lock(pthread_mutex_t *mutex) {
   //debug("pthread_mutex_lock - c implementation\n");
   return 0;
 }
+PUBLIC(pthread_mutex_lock)
 
 int pthread_mutex_unlock(pthread_mutex_t *mutex) {
   //debug("pthread_mutex_unlock - c implementation\n");
   return 0;
 }
+PUBLIC(pthread_mutex_unlock)
 
 // The pthread_self() function returns the thread ID of the calling thread.
 pthread_t pthread_self() {
   debug("pthread_self - c implementation\n");
   return current;
 }
+PUBLIC(pthread_self)
