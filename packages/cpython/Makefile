@@ -66,7 +66,9 @@ UNAME_P := $(shell uname -p)
 ifeq ($(UNAME_S),Linux)
 	# Workaround a zig bug -- the native build fails with "ld.lld: error: undefined symbol: fcntl64".
 	# See https://github.com/ziglang/zig/issues/5882 and https://github.com/ziglang/zig/issues/9485
-	ARCH = --target=$(UNAME_P)-linux-gnu.2.31
+	# NOTE: we use musl instead of gnu.2.31, since musl works on CoCalc (a massive messy huge Linux
+	# environment), wheras gnu.2.31 only worked on several minimal linux envs.
+	ARCH = --target=$(UNAME_P)-linux-musl
 else
 	ARCH =
 endif
