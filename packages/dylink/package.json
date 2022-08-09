@@ -21,9 +21,6 @@
     "zig",
     "clang"
   ],
-  "bin": {
-    "zig-fPIC": "./bin/fig-fPIC"
-  },
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {

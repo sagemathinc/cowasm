@@ -1,15 +1,6 @@
 import debug from "debug";
 const log = debug("stub");
 
-const EXCLUDE = [];//[ "sig"];
-
-function exclude(name): boolean {
-  for (const x of EXCLUDE) {
-    if (name.startsWith(x)) return true;
-  }
-  return false;
-}
-
 export default function stubProxy(
   env,
   functionViaPointer: (ptr) => Function,
@@ -27,7 +18,7 @@ export default function stubProxy(
       }
       // we ALWAYS log creating the stub.  traceStub determines if we print when using the stub.
       log("creating stub", key);
-      if (traceStub && !exclude(key)) {
+      if (traceStub) {
         log("creating stub", key);
         return (...args) => {
           logStubUse(key, args, traceStub == "first");
@@ -48,9 +39,9 @@ function logStubUse(functionName, args, firstOnly) {
     stubUsed.add(functionName);
   }
   console.warn(
-    "WARNING: *using* non-whitelisted stub",
+    "WARNING: using stub",
     functionName,
     args,
-    firstOnly ? " (only showing warning once)" : ""
+    firstOnly ? " -- only showing once" : ""
   );
 }

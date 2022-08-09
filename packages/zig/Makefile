@@ -29,6 +29,7 @@ ARCH = $(shell uname -m | sed s/arm64/aarch64/)
 # but need      linux and macos
 OS = $(shell uname -s  | sed s/Darwin/macos/ | sed s/Linux/linux/)
 
+all: dist/${VERSION} ../../bin/zig-fPIC ../../bin/zig
 
 dist/${VERSION}:
 	rm -rf dist
@@ -38,6 +39,12 @@ dist/${VERSION}:
 	rm build/zig.tar.xz
 	ln -sf ${CWD}/dist/zig ${CWD}/../../bin/zig
 	touch dist/${VERSION}
+
+../../bin/zig:
+	ln -sf ${CWD}/bin/zig ${CWD}/../../bin/zig
+
+../../bin/zig-fPIC:
+	ln -sf ${CWD}/bin/zig-fPIC ${CWD}/../../bin/zig-fPIC
 
 clean:
 	rm -rf build dist
