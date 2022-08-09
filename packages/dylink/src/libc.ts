@@ -120,6 +120,12 @@ funlockfile
 strsignal
 __stack_chk_fail
 secure_getenv
+strunvis
+strnvis
+cfgetispeed
+cfgetospeed
+tcgetattr
+tcsetattr
 `;
 
 // All headers from zig/dist/lib/zig/libc/include/wasm-wasi-musl except signal/thread ones.

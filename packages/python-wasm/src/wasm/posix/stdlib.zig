@@ -8,6 +8,5 @@ const expect = std.testing.expect;
 // trusted the environment."  It is equal to getenv when this isn't an issue, and for
 // webassembly it isn't.
 export fn secure_getenv(name: [*:0]const u8) ?[*:0]u8 {
-    std.debug.print("secure_getenv {s}\n", .{name});
     return std.c.getenv(name);
 }

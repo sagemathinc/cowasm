@@ -33,16 +33,15 @@ int fchownat(int fd, const char* path, uid_t owner, gid_t group, int flag);
 int nice(int inc);
 
 struct ttyent {
-	char	*ty_name;	/* terminal device name */
-	char	*ty_getty;	/* command to execute, usually getty */
-	char	*ty_type;	/* terminal type for termcap */
-#define	TTY_ON		0x01	/* enable logins (start ty_getty program) */
-#define	TTY_SECURE	0x02	/* allow uid of 0 to login */
-	int	ty_status;	/* status flags */
-	char 	*ty_window;	/* command to start up window manager */
-	char	*ty_comment;	/* comment field */
+  char* ty_name;        /* terminal device name */
+  char* ty_getty;       /* command to execute, usually getty */
+  char* ty_type;        /* terminal type for termcap */
+#define TTY_ON 0x01     /* enable logins (start ty_getty program) */
+#define TTY_SECURE 0x02 /* allow uid of 0 to login */
+  int ty_status;        /* status flags */
+  char* ty_window;      /* command to start up window manager */
+  char* ty_comment;     /* comment field */
 };
-
 
 //#include <sys/resource.h>
 int getpriority(int which, id_t who);
@@ -96,11 +95,10 @@ uid_t getuid(void);
 uid_t geteuid(void);
 int getgroups(int size, gid_t list[]);
 // ncurses wants this:
-    pid_t getpgrp(void); /* POSIX.1 version */
+pid_t getpgrp(void); /* POSIX.1 version */
 // but cpython may get confused and want this (it's configurable):
 // pid_t getpgrp(pid_t pid); /* BSD version */
 pid_t getpgid(pid_t pid);
-
 
 int setpgrp(pid_t pid, pid_t pgid);
 int kill(pid_t pid, int sig);
@@ -116,25 +114,19 @@ int setreuid(uid_t ruid, uid_t euid);
 int setregid(gid_t rgid, gid_t egid);
 int setgid(gid_t gid);
 
+// From packages/zig/dist/lib/libc/musl/include/sys/wait.h and needed for
+// Python.
+typedef enum { P_ALL = 0, P_PID = 1, P_PGID = 2, P_PIDFD = 3 } idtype_t;
 
-// From packages/zig/dist/lib/libc/musl/include/sys/wait.h and needed for Python.
-typedef enum {
-	P_ALL = 0,
-	P_PID = 1,
-	P_PGID = 2,
-	P_PIDFD = 3
-} idtype_t;
-
-#define WNOHANG    1
-#define WUNTRACED  2
-#define WSTOPPED   2
-#define WEXITED    4
+#define WNOHANG 1
+#define WUNTRACED 2
+#define WSTOPPED 2
+#define WEXITED 4
 #define WCONTINUED 8
-#define WNOWAIT    0x1000000
+#define WNOWAIT 0x1000000
 #define __WNOTHREAD 0x20000000
-#define __WALL      0x40000000
-#define __WCLONE    0x80000000
-
+#define __WALL 0x40000000
+#define __WCLONE 0x80000000
 
 typedef struct {
   pid_t si_pid;
@@ -222,9 +214,9 @@ int sigaltstack(const stack_t* ss, stack_t* old_ss);
 #define SA_ONSTACK 0
 #define SA_RESTART 0
 #define SIGSTKSZ 0
-#define SIG_BLOCK     0
-#define SIG_UNBLOCK   1
-#define SIG_SETMASK   2
+#define SIG_BLOCK 0
+#define SIG_UNBLOCK 1
+#define SIG_SETMASK 2
 
 #define SI_ASYNCNL (-60)
 #define SI_TKILL (-6)
@@ -290,55 +282,60 @@ int socket(int domain, int type, int protocol);
 int gethostname(char* name, size_t len);
 int sethostname(const char* name, size_t len);
 
-# include <netinet/in.h>
+#include <netinet/in.h>
 char* inet_ntoa(struct in_addr in);
 
+// These are needed to build parts of posixmodule in Python.  They seem harmless
+// since they are self contained and copied from
+// packages/zig/dist/lib/libc/musl/include/stdlib.h We may need to change them
+// if we invent some notion of fork and subprocesses for our runtime!
 
-// These are needed to build parts of posixmodule in Python.  They seem harmless since they
-// are self contained and copied from packages/zig/dist/lib/libc/musl/include/stdlib.h
-// We may need to change them if we invent some notion of fork and subprocesses for our runtime!
-
-#define WEXITSTATUS(s) (((s) & 0xff00) >> 8)
-#define WTERMSIG(s) ((s) & 0x7f)
+#define WEXITSTATUS(s) (((s)&0xff00) >> 8)
+#define WTERMSIG(s) ((s)&0x7f)
 #define WSTOPSIG(s) WEXITSTATUS(s)
 #define WIFEXITED(s) (!WTERMSIG(s))
-#define WIFSTOPPED(s) ((short)((((s)&0xffff)*0x10001)>>8) > 0x7f00)
-#define WIFSIGNALED(s) (((s)&0xffff)-1U < 0xffu)
-
-
+#define WIFSTOPPED(s) ((short)((((s)&0xffff) * 0x10001) >> 8) > 0x7f00)
+#define WIFSIGNALED(s) (((s)&0xffff) - 1U < 0xffu)
 
 // needed by sqlite; copied from packages/zig/dist/lib/libc/musl/include/fcntl.h
 // and packages/zig/dist/lib/libc/musl/arch/aarch64/bits/fcntl.h
-// Main point is if/when I implement these at the WASI level, have to use them and
-// be consistent.
+// Main point is if/when I implement these at the WASI level, have to use them
+// and be consistent.
 
 #define F_RDLCK 0
 #define F_WRLCK 1
 #define F_UNLCK 2
 
-#define F_DUPFD  0
-#define F_GETFD  1
-#define F_SETFD  2
-#define F_GETFL  3
-#define F_SETFL  4
-#define F_GETLK  5
-#define F_SETLK  6
+#define F_DUPFD 0
+#define F_GETFD 1
+#define F_SETFD 2
+#define F_GETFL 3
+#define F_SETFL 4
+#define F_GETLK 5
+#define F_SETLK 6
 #define F_SETLKW 7
 #define F_SETOWN 8
 #define F_GETOWN 9
 #define F_SETSIG 10
 #define F_GETSIG 11
 
+void flockfile(FILE* filehandle);
+int ftrylockfile(FILE* filehandle);
+void funlockfile(FILE* filehandle);
 
+char* strsignal(int sig);
 
+int fiprintf(FILE* restrict stream, const char* restrict format, ...);
+int siprintf(char* restrict s, const char* restrict format, ...);
 
-void flockfile(FILE *filehandle);
-int ftrylockfile(FILE *filehandle);
-void funlockfile(FILE *filehandle);
+int strunvis(char* dst, const char* src);
+int strnvis(char* dst, size_t dlen, const char* src, int flag);
 
-char *strsignal(int sig);
+#include <termios.h>
+speed_t cfgetispeed(const struct termios *termios_p);
+speed_t cfgetospeed(const struct termios *termios_p);
+int tcgetattr(int fd, struct termios *tio);
+int tcsetattr(int fd, int act, const struct termios *tio);
 
-int fiprintf(FILE *restrict stream, const char *restrict format, ...);
-int siprintf(char *restrict s, const char *restrict format, ...);
 
 #endif

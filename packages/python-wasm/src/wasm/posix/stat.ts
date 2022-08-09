@@ -14,7 +14,6 @@ export default function stats({ fs, recvString, wasi }) {
     },
 
     fchmod: (fd: number, mode: number): number => {
-      console.log("fchmod", fd, mode);
       const entry = wasi.FD_MAP.get(fd);
       if (!entry) {
         console.warn("bad file descriptor, fchmod");

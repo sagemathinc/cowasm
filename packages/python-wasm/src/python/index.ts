@@ -46,7 +46,7 @@ export async function _init({
     env,
     fs,
     traceSyscalls: false,
-    traceStubcalls: "first", // 'first' or true or false
+    traceStubcalls: true // "first", // 'first' or true or false
   });
   await wasm.callWithString("init", "");
 }

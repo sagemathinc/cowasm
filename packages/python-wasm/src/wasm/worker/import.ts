@@ -146,6 +146,12 @@ async function doWasmImport({
     };
   }
 
+  if (wasmOpts.env._Py_emscripten == null) {
+    wasmOpts.env._Py_emscripten_runtime = () => {
+      return 0;
+    };
+  }
+
   initPythonTrampolineCalls(table, wasmOpts.env);
 
   const { fs } = bindings;

@@ -15,3 +15,27 @@ export fn __stack_chk_fail() void {
     };
     std.process.exit(1);
 }
+
+//  "The strunvis() function decodes the characters pointed to by src into the
+//  buffer pointed to by dst.	The strunvis() function	simply copies src to
+//  dst, decoding any escape sequences	along the way, and returns the number
+//  of	characters placed into dst, or -1 if an	invalid	escape sequence	was
+//  detected.	The size of dst	should be equal	to the size of src (that is,
+//  no	expansion takes	place during decoding).""
+export fn strunvis(dst: [*:0]u8, src: [*:0]const u8) c_int {
+    var i: usize = 0;
+    while (src[i] != 0) : (i += 1) {
+        dst[i] = src[i];
+    }
+    return @intCast(c_int, i);
+}
+
+export fn strvis(dst: [*:0]u8, src: [*:0]const u8, flag: c_int) c_int {
+    // we ignore the flag which "alters visual representation".
+    _ = flag;
+    var i: usize = 0;
+    while (src[i] != 0) : (i += 1) {
+        dst[i] = src[i];
+    }
+    return @intCast(c_int, i);
+}

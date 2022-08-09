@@ -1,17 +1,7 @@
 import debug from "debug";
 const log = debug("stub");
 
-// const EXCLUDE = [
-//   "pthread_",
-//   "sig",
-//   "tcsetattr",
-//   "tcgetattr",
-//   "cfgetispeed",
-//   "cfgetospeed",
-//   "strunvis"
-// ];
-
-const EXCLUDE = [/*"pthread_",*/ "sig"];
+const EXCLUDE = ["pthread", "sig"];
 
 function exclude(name): boolean {
   for (const x of EXCLUDE) {
