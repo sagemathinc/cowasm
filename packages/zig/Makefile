@@ -10,7 +10,7 @@ CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 # Example  https://ziglang.org/builds/zig-macos-aarch64-0.10.0-dev.3315+1a16b7214.tar.xz
 
 # This is for pre-release
-VERSION = 0.10.0-dev.3315+1a16b7214
+VERSION = 0.10.0-dev.3475+b3d463c9e
 TARBALL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
 # This is for stable releases
