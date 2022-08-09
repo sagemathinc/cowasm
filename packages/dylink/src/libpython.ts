@@ -11,7 +11,7 @@ thousands of times faster.**
 import spawnAsync from "await-spawn";
 import wasmExport, { alias } from "./wasm-export";
 
-const path = "../cpython/dist/wasm/include/python3.11";
+const PATH = "../cpython/dist/wasm/include/python3.11";
 
 // I tediously made this list.  In theory the C preprocessor should be able to do this, or maybe
 // using nm on libpython combined with the headers?
@@ -21,19 +21,19 @@ let omit =
 omit +=
   "Py_UTF _PyInterpreterID_Type _PyNamespace_Type _PyRuntime _PyTraceMalloc_Config _Py_HasFileSystemDefaultEncodeErrors _Py_HashSecret_Initialized _Py_RefTotal _Py_UnhandledKeyboardInterrupt _inittab PyObject_AsCharBuffer PyObject_AsReadBuffer PyObject_AsWriteBuffer PySlice_GetIndicesEx  PyStructSequence_UnnamedField Py_Version _PyImport_FrozenBootstrap _PyImport_FrozenStdlib _PyImport_FrozenTest _PyLong_DigitValue _PyParser_TokenNames _Py_tracemalloc_config";
 
-const extra = "";
-
 const aliases = { Py_INCREF: "Py_IncRef", Py_DECREF: "Py_DecRef" };
 
 async function main() {
   const exclude = new Set(omit.split(" "));
-  const names: string[] = [];
+  let names: string[] = [];
   const output = (
-    await spawnAsync("grep", ["--no-filename", "PyAPI", "-r", path])
+    await spawnAsync("grep", ["--no-filename", "PyAPI", "-r", PATH])
   ).toString();
   for (let line of output.split("\n")) {
     line = line.trim();
-    if (line.includes("DEPRECATED") || line.includes("Windows")) continue;
+    if (line.includes("DEPRECATED") || line.includes("Windows")) {
+      continue;
+    }
     if (line.startsWith("PyAPI_FUNC")) {
       const k = line.lastIndexOf("PyAPI_FUNC");
       if (k == -1) continue;
@@ -57,13 +57,14 @@ async function main() {
       names.push(name);
     }
   }
-  for (let name of extra.split(" ")) {
-    name = name.trim();
-    if (name) {
-      names.push(name);
-    }
-  }
   console.log("#include <Python.h>");
+  names = names.filter((name) => {
+    if (name.startsWith("pthread_")) {
+      // python has some conflicting pthread stubs
+      return false;
+    }
+    return true;
+  });
   console.log(wasmExport(names));
   for (const name in aliases) {
     console.log(alias(name, aliases[name]));

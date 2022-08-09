@@ -11,6 +11,13 @@ but that actually breaks in Python/ceval_gil.h in the function
 create_gil, where the line MUTEX_INIT(gil->switch_mutex) somehow makes
 it so the gil never gets set.    That's fine - this is not meant to work
 like actual pthreads yet!
+
+
+NOTE: Right after I spent like two days writing this something very
+similar popped up in Python itself!   https://github.com/python/cpython/pull/95234
+ARGH, that's so annoying, but obviously also good.  Their implementation is more
+minimal, but maybe that is better.  That said, these don't build due to
+incompatibility with libc-wasm-zig, so we're sticking with our own pthreads.
 */
 
 #include <stdio.h>
