@@ -64,12 +64,10 @@ source: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	rm -rf ${BUILD}/native
 	cd ${BUILD} && mkdir native && tar xf Python-${PYTHON_VERSION}.tar.xz -C native --strip-components=1
+	cp src/Setup.local-native ${BUILD}/native/Modules/Setup.local
 	touch ${BUILD}/native/.patched
 
-# I would love to use the zig build of native Python, but it just doesn't work yet.
-# Instead we build with whatever native tools are installed (see below)
-
-${DIST_NATIVE}/.built-zig: ${BUILD}/native/.patched
+${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
 		AR="zig ar" \
 		CXX="zig c++" \
@@ -84,32 +82,10 @@ ${DIST_NATIVE}/.built-zig: ${BUILD}/native/.patched
 	cd ${BUILD}/native && make  -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}"
 	cd ${BUILD}/native && make  -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}" install
 	touch ${DIST_NATIVE}/.built
-	touch ${DIST_NATIVE}/.built-zig
 
-.PHONY: native-zig
-native-zig: ${DIST_NATIVE}/.built-zig
-
-
-${DIST_NATIVE}/.built-default: ${BUILD}/native/.patched
-	cd ${BUILD}/native && \
-		CFLAGS="-I${ZLIB}/native/include" \
-		LDFLAGS="-L${ZLIB}/native/lib" \
-		./configure \
-			--prefix=${DIST_NATIVE} \
-			--with-ensurepip=no
-	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses zlib).  This is to workaround
-	# a security feature of MacOS (see https://developer.apple.com/forums/thread/9233). For simplicity we set this everywhere.
-	cd ${BUILD}/native && make -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}"
-	cd ${BUILD}/native && make -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}" install
-	touch ${DIST_NATIVE}/.built
-	touch ${DIST_NATIVE}/.built-default
-
-.PHONY: native-default
-native-default: ${DIST_NATIVE}/.built-default
-
-# This doesn't use zig.
 .PHONY: native
-native: ${DIST_NATIVE}/.built-default
+native: ${DIST_NATIVE}/.built
+
 
 # Use "make run-native" to run native python at the command line.
 .PHONY: run-native
@@ -183,6 +159,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 			--host=wasm32-unknown-wasi \
 			--build=`./config.guess`
 	cat src/pyconfig.h >> ${BUILD_WASM}/pyconfig.h
+	# Do not do this build in parallel (-j8), as it WILL fail with "error: unable to build WASI libc CRT file: FileNotFound "
 	cd ${BUILD_WASM} && make
 	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld via the zig-fPIC script.
 	# First remove everything that needs to be built -fPIC or build will fail; add more here as we support more modules.

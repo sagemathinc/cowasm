@@ -1,0 +1,9 @@
+# This is all we need for installing the wasm cpython.  We can't build anything dynamically
+# natively due to a bug in zig: https://github.com/ziglang/zig/issues/8180
+
+*static*
+
+_struct _struct.c
+binascii binascii.c
+zlib  zlibmodule.c -lz
+
