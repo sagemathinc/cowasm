@@ -22,10 +22,16 @@ static PyMethodDef module_methods[] = {
     {"add389", _PyCFunction_CAST(add389), METH_VARARGS, "Add 389 to a C long."},
     {NULL, NULL, 0, NULL}};
 
+static int module_clear(PyObject *module) { return 0; }
+
+static void module_free(void *module) { module_clear((PyObject *)module); }
+
 struct PyModuleDef _hellomodule = {
     .m_base = PyModuleDef_HEAD_INIT,
     .m_name = "hello",
     .m_methods = module_methods,
+    .m_clear = module_clear,
+    .m_free = module_free,
 };
 
 PyMODINIT_FUNC PyInit_hello(void) {

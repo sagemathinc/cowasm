@@ -55,7 +55,7 @@ test-python:
 #
 
 
-${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/python-shared.zig ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${PACKAGES}/lzma/dist/wasm/lib/liblzma.a ${PACKAGES}/zlib/dist/wasm/lib/libz.a ${PACKAGES}/libedit/dist/wasm/lib/libedit.a  ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a ${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a
+${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/python-shared.zig ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${PACKAGES}/lzma/dist/wasm/lib/liblzma.a ${PACKAGES}/zlib/dist/wasm/lib/libz.a ${PACKAGES}/libedit/dist/wasm/lib/libedit.a  ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a  ${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a ${POSIX_WASM}/libposix.a
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
