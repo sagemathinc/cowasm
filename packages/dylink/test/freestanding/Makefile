@@ -10,7 +10,7 @@ build/wasm/app.wasm: app.c
 
 build/wasm/dynamic-library.wasm.so: dynamic-library.c
 	mkdir -p build/wasm
-	../../bin/zig-fPIC cc dynamic-library.c -c -o build/wasm/dynamic-library.o
+	zig-fPIC cc dynamic-library.c -c -o build/wasm/dynamic-library.o
 	zig wasm-ld --experimental-pic -shared build/wasm/dynamic-library.o -o build/wasm/dynamic-library.so
 
 test-wasm: build/wasm/app.wasm build/wasm/dynamic-library.wasm.so

@@ -26,7 +26,7 @@ build/wasm/app.o: app.c
 
 build/wasm/hello.so: hello.c
 	mkdir -p build/wasm
-	../../bin/zig-fPIC cc hello.c -c -o build/wasm/hello.o -I ${PYTHON}/include/python3.11 -I ${POSIX}
+	zig-fPIC cc hello.c -c -o build/wasm/hello.o -I ${PYTHON}/include/python3.11 -I ${POSIX}
 	zig wasm-ld --experimental-pic -shared build/wasm/hello.o -o build/wasm/hello.so
 
 test-wasm: build/wasm/app.wasm build/wasm/hello.so

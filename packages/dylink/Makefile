@@ -66,7 +66,7 @@ dist/wasm/libdylink.a: build/wasm/libdylink.o
 ####################
 
 build/wasm/libpython.o: dist/wasm-export/libpython.c
-	./bin/zig-fPIC cc dist/wasm-export/libpython.c -c -o build/wasm/libpython.o -I${PYTHON}/include/python3.11 -I${POSIX}
+	zig-fPIC cc dist/wasm-export/libpython.c -c -o build/wasm/libpython.o -I${PYTHON}/include/python3.11 -I${POSIX}
 
 BUILD_LIBPYTHON = zig wasm-ld --experimental-pic -shared build/wasm/libpython.o \
 	${PYTHON}/lib/libpython3.11.a ${LZMA}-shared/lib/liblzma.a ${POSIX}-shared/libposix.a  \
@@ -81,7 +81,6 @@ dist/wasm/debug/libpython.so: build/wasm/libpython.o
 	${BUILD_LIBPYTHON} -o dist/wasm/debug/libpython.so
 
 dist/.built: dist/wasm-export/libc.c dist/index.js dist/wasm/libdylink.a wasm-export
-	cd ../../bin && ln -sf ../packages/dylink/bin/zig-fPIC .
 	touch dist/.built
 
 test: wasm-export dist/.built
