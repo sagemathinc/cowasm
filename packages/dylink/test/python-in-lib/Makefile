@@ -1,3 +1,5 @@
+# DEPRECATED, since we are no longer building a shared libpython.
+
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 PYTHON = ${CWD}/../../../cpython/dist/wasm-shared
 POSIX = ${CWD}/../../../posix-wasm/dist/wasm-shared/

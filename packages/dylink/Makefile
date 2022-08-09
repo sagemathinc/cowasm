@@ -91,9 +91,7 @@ test: wasm-export dist/.built
 	cd test/wasi && make test
 	cd test/python-extension && make test
 	cd test/malloc && make test
-	cd test/python-in-lib && make test
 	cd test/libc-archive && make test
-	cd test/libpython-so && make test
 .PHONY: test
 
 test-native-macos:
