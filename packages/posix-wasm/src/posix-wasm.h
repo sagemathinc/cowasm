@@ -330,4 +330,12 @@ char* inet_ntoa(struct in_addr in);
 #define F_GETSIG 11
 
 
+
+
+void flockfile(FILE *filehandle);
+int ftrylockfile(FILE *filehandle);
+void funlockfile(FILE *filehandle);
+
+char *strsignal(int sig);
+
 #endif

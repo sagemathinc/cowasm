@@ -39,6 +39,7 @@ BUILD_DYLINK = zig cc -target wasm32-wasi \
 		-rdynamic \
 		-shared \
 		-fvisibility=default \
+		-I ${POSIX} \
 		dist/wasm-export/libc.c
 
 build/wasm/libdylink.o: dist/wasm-export/libc.c

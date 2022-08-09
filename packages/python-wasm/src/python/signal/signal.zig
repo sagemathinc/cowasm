@@ -31,7 +31,4 @@ export fn _Py_CheckEmscriptenSignalsPeriodically() void {
     }
 }
 
-pub fn exported() void {
-    _Py_CheckEmscriptenSignals();
-    _Py_CheckEmscriptenSignalsPeriodically();
-}
+pub fn keepalive() void {}

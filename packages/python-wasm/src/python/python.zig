@@ -80,9 +80,9 @@ pub fn terminal(argc: i32, argv: [*c][*c]u8) !i32 {
 // TODO: Zig unit testing requires writing a js command line loader that supports shared libraries properly.
 // Also we need to specify the path to libpython.so somehow...
 
-test "init" {
-    try init();
-}
+// test "init" {
+//     try init();
+// }
 
 // const eql = std.mem.eql;
 // const expect = std.testing.expect;

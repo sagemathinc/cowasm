@@ -140,14 +140,6 @@ async function doWasmImport({
       return bufLen;
     };
   }
-  if (wasmOpts.env.getpid == null) {
-    wasmOpts.env.getpid = () => {
-      if (options.traceStubcalls) {
-        log?.("getpid", "returning 1");
-      }
-      return 1;
-    };
-  }
   if (wasmOpts.env.main == null) {
     wasmOpts.env.main = () => {
       return 0;

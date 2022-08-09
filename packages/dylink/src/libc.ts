@@ -8,9 +8,7 @@ This adds about 650KB to the wasm file (after stripping), which sucks,
 but it is what it is.
 */
 
-import wasmExport, { alias } from "./wasm-export";
-
-const aliases = { };
+import wasmExport from "./wasm-export";
 
 function main() {
   let s = `
@@ -34,7 +32,8 @@ function main() {
   // Some (like iprintf) are just due to weak_alias.
 
   s += `
-// Undeclared symbols:
+// Undeclared things that do exist in libc-wasi-zig:
+
 char *ecvt(double, int, int *, int *);
 char *fcvt(double, int, int *, int *);
 char *gcvt(double, int, char *);
@@ -83,7 +82,6 @@ char *strchrnul(const char *, int);
 extern char *__wasilibc_cwd;
 extern char **__wasilibc_environ;
 
-
 int __stack_chk_guard;
 
 // qsort is completely missing from Zig's musl, but it is assumed
@@ -100,24 +98,32 @@ void qsort(void *base, size_t nmemb, size_t size,
 }
 
 `;
-  const extra_symbols = "qsort";
-  // void qsort_r(void *base, size_t nmemb, size_t size,
-  //           int (*compar)(const void *, const void *, void *),
-  //           void *arg);
-
   s += "\n";
-  s += wasmExport((symbols + "\n" + extra_symbols).split("\n"));
-  s += "\n\n// Aliases:\n";
-  for (const name in aliases) {
-    s += alias(name, aliases[name]);
-  }
+  s += wasmExport((symbols + "\n" + posix).split("\n"));
   s += "WASM_EXPORT(__stack_chk_guard, __stack_chk_guard);";
-
   console.log(s);
 }
 
+// Extra things we added to our posix compat layer, since they are
+// missing from wasi-zig-libc:
+const posix = `
+qsort
+getegid
+geteuid
+getgid
+getuid
+getpid
+flockfile
+ftrylockfile
+funlockfile
+strsignal
+`;
+
 // All headers from zig/dist/lib/zig/libc/include/wasm-wasi-musl except signal/thread ones.
+// Also, include our posix-wasm.h, which fills in declarations for things in posix that are
+// missing from libc-wasi-zig.
 const headers = `
+posix-wasm.h
 alloca.h
 ar.h
 arpa/telnet.h

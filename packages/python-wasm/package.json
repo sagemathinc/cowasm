@@ -17,7 +17,7 @@
     "tsc": "npx tsc -w",
     "test": "jest --forceExit ./dist # TODO: fix this hang issue with forceExit",
     "test-watch": "jest --watch ./dist",
-    "strip": "find dist/ -type f -name \"*.wasm\" | xargs -n1 wasm-strip; find dist/ -type f -name \"*.so\" | xargs -n1 wasm-strip",
+    "strip": "find dist/ -type f -name \"*.wasm\" | xargs -n1 wasm-strip",
     "prepublishOnly": "npm run strip"
   },
   "bin": "./bin/python-wasm",

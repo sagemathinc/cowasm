@@ -2,9 +2,11 @@ const std = @import("std");
 const python = @import("./python.zig");
 const interface = @import("../interface.zig");
 const signal = @import("./signal/signal.zig");
+const posix = @import("../wasm/posix.zig");
 
-export fn exported() void {
-    signal.exported();
+export fn keepalive() void {
+    signal.keepalive();
+    posix.keepalive();
 }
 
 export fn init() void {

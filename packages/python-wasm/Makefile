@@ -16,17 +16,12 @@ LIBEDIT = ${CWD}/../libedit/dist
 
 WASM_CFLAGS   = -dynamic ${OPT}
 
-TEST = ./test-zig.sh
+TEST = ./test-zig.sh ${OPT}
 
 DIST = ${CWD}/dist
 
 all: ${DIST}/.built bin hello python
 
-# Runs zig test on all zig files that contain the word "test" but do not
-# have interface or export in their filename (since can't test those).
-.PHONY: test-zig
-test-zig:
-	cd src && grep -l test *.zig */*.zig | grep -v interface | grep -v export | xargs -t -n 1 ${TEST}
 
 ####################
 ## Python interface
@@ -34,6 +29,12 @@ test-zig:
 
 test-python:
 	cd src && ${TEST} python/python.zig -I. ${OPT}
+
+test-posix:
+	cd src && \
+		${TEST} wasm/posix/unistd.zig && \
+		${TEST} wasm/posix/stdio.zig && \
+		${TEST} wasm/posix/string.zig
 
 # Explanation of options to zig build-lib:
 #  - ${OPT} - at the top file can set the release type
@@ -55,7 +56,7 @@ test-python:
 #
 
 
-${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/python-shared.zig ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${PACKAGES}/lzma/dist/wasm/lib/liblzma.a ${PACKAGES}/zlib/dist/wasm/lib/libz.a ${PACKAGES}/libedit/dist/wasm/lib/libedit.a  ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a  ${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a ${POSIX_WASM}/libposix.a
+${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/python-shared.zig ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${PACKAGES}/lzma/dist/wasm/lib/liblzma.a ${PACKAGES}/zlib/dist/wasm/lib/libz.a ${PACKAGES}/libedit/dist/wasm/lib/libedit.a  ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a  ${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a ${POSIX_WASM}/libposix.a src/wasm/posix.zig src/wasm/posix/unistd.zig src/wasm/posix/stdio.zig src/wasm/posix/string.zig
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
@@ -130,17 +131,15 @@ ${DIST}/.built: node_modules ${DIST}/python/python.wasm
 # Run all test suites: (1) the Native zig test suite; (2) the Javascript test suite.
 # This exercise zig-related code both via a native build, and then via the separate WebAssembly build.
 .PHONY: test
-test: all test-zig
+test: all test-python test-posix
 	npm run test
+
+strip: node_modules
+	npm run strip
 
 .PHONY: clean
 clean:
 	rm -rf ${DIST} node_modules tsconfig.tsbuildinfo src/zig-cache src/*/zig-cache
 
-
-# Obviously this can't work without a dylink runtime setup.
-# packages/dylink/test/libpython-so/app.js could help.
-test-python1:
-	cd src && ${TEST} python/python1.zig -I. ${OPT}
 
 
