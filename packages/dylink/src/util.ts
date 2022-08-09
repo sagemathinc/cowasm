@@ -34,3 +34,10 @@ export function strlen(charPtr: number, memory: WebAssembly.Memory): number {
 export function alignMemory(size: number, alignment: number): number {
   return Math.ceil(size / alignment) * alignment;
 }
+
+export function MBtoPages(MB): number {
+  // "Note: A WebAssembly page has a constant size of 65,536 bytes, i.e., 64KiB." from
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WebAssembly/Memory/Memory
+  // There's thus 1025/64 = 16 pages in a MB.
+  return MB * 16.
+}

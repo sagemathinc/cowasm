@@ -166,7 +166,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 			--disable-ipv6 \
 			--with-readline=editline \
 			--with-build-python=${DIST_NATIVE}/bin/python3 \
-			--without-pymalloc \
+			--with-pymalloc \
 			--without-ensurepip \
 			--host=wasm32-unknown-wasi \
 			--build=`./config.guess`

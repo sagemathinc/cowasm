@@ -9,10 +9,8 @@ document.body.appendChild(element);
 document.body.style.margin = "0px";
 
 async function main() {
-  while (true) {
-    element.innerHTML = '';
-    await terminal(element);
-  }
+  element.innerHTML = "";
+  await terminal(element);
 }
 
 main();

@@ -19,6 +19,8 @@ class WorkerThread extends EventEmitter {
 }
 
 export class WasmInstance extends WasmInstanceAbstractBaseClass {
+  private stdinBuffer: Buffer = Buffer.from("");
+
   protected initWorker(): WorkerThread {
     // @ts-ignore this import.meta.url issue -- actually only consumed by webpack in calling code...
     const worker = new Worker(new URL("./worker/browser.js", import.meta.url));
@@ -27,7 +29,12 @@ export class WasmInstance extends WasmInstanceAbstractBaseClass {
 
   write(data: string | Uint8Array): void {
     if (data) {
-      this.emit("stdin", Buffer.from(data));
+      if (this.stdinBuffer.length > 0) {
+        this.stdinBuffer = Buffer.concat([this.stdinBuffer, Buffer.from(data)]);
+      } else {
+        this.stdinBuffer = Buffer.from(data);
+      }
+      this.emit("stdin");
       if (typeof data == "string" && data.includes("\u0003")) {
         this.sigint();
       }
@@ -35,8 +42,15 @@ export class WasmInstance extends WasmInstanceAbstractBaseClass {
   }
 
   protected async getStdin() {
+    if (this.stdinBuffer.length > 0) {
+      const data = this.stdinBuffer;
+      this.stdinBuffer = Buffer.from("");
+      return data;
+    }
     return await callback((cb) => {
-      this.once("stdin", (data) => {
+      this.once("stdin", () => {
+        const data = this.stdinBuffer;
+        this.stdinBuffer = Buffer.from("");
         cb(undefined, data);
       });
     });

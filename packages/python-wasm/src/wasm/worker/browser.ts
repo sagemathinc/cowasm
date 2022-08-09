@@ -52,6 +52,7 @@ export default async function wasmImportBrowser(
     readFileSync: (path) => {
       return fs.readFileSync(path);
     },
+    maxMemoryMB: 1000,
   });
   return wasm;
 }

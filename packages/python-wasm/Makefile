@@ -14,6 +14,9 @@ LZMA_WASM = ${CWD}/../lzma/dist/wasm
 ZLIB_WASM = ${CWD}/../zlib/dist/wasm
 LIBEDIT = ${CWD}/../libedit/dist
 
+WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks \
+		-lwasi-emulated-signal
+
 WASM_CFLAGS   = -dynamic ${OPT}
 
 TEST = ./test-zig.sh ${OPT}
@@ -73,7 +76,7 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 		${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a \
 		${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a \
 	   -L ${DYLINK}/wasm/ -ldylink \
-	   -lc -lm \
+	   -lc -lm ${WASI_EMULATED} \
 	   `pwd`/python/signal/signal.c \
 	   python/interface.zig
 	mkdir -p ${DIST}/python

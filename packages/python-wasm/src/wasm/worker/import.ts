@@ -3,7 +3,7 @@ import WASI from "@wapython/wasi";
 import type { FileSystemSpec, WASIConfig, WASIBindings } from "@wapython/wasi";
 import reuseInFlight from "../reuseInFlight";
 import WasmInstance from "./instance";
-import importWebAssemblyDlopen from "dylink";
+import importWebAssemblyDlopen, { MBtoPages } from "dylink";
 import initPythonTrampolineCalls from "./trampoline";
 import posix from "../posix";
 
@@ -47,6 +47,7 @@ async function doWasmImport({
   importWebAssemblySync,
   importWebAssembly,
   readFileSync,
+  maxMemoryMB,
 }: {
   source: string; // path/url to the source
   bindings: WASIBindings;
@@ -61,6 +62,7 @@ async function doWasmImport({
     opts: WebAssembly.Imports
   ) => Promise<WebAssembly.Instance>;
   readFileSync;
+  maxMemoryMB?: number;
 }): Promise<WasmInstance> {
   log?.("doWasmImport", source);
   if (cache[source] != null) {
@@ -68,7 +70,10 @@ async function doWasmImport({
   }
   const t = new Date().valueOf();
 
-  const memory = new WebAssembly.Memory({ initial: 10000 });
+  const memory = new WebAssembly.Memory({
+    initial: MBtoPages(10),
+    ...(maxMemoryMB ? { maximum: MBtoPages(maxMemoryMB) } : {}),
+  });
   const table = new WebAssembly.Table({ initial: 10000, element: "anyfunc" });
 
   function recvString(ptr: number, len?: number) {
