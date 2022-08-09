@@ -26,5 +26,5 @@ ${v
 }
 
 export function alias(name, value) {
-  return `WASM_EXPORT(${name},${value})`;
+  return `WASM_EXPORT(${name},${value})\n`;
 }

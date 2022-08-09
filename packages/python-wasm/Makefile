@@ -8,7 +8,6 @@ ZIG_PKG       = --main-pkg-path ${CWD}/src
 
 PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
 PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm
-PYTHON_WASM_SHARED   = ${PACKAGES}/cpython/dist/wasm-shared
 POSIX_WASM   = ${PACKAGES}/posix-wasm/dist/wasm
 DYLINK   = ${PACKAGES}/dylink/dist
 LZMA_WASM = ${CWD}/../lzma/dist/wasm
@@ -56,7 +55,7 @@ test-python:
 #
 
 
-${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/python-shared.zig
+${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/python-shared.zig ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${PACKAGES}/lzma/dist/wasm/lib/liblzma.a ${PACKAGES}/zlib/dist/wasm/lib/libz.a ${PACKAGES}/libedit/dist/wasm/lib/libedit.a  ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a ${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
@@ -82,9 +81,9 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 .PHONEY: python
 python: ${DIST}/python/python.wasm ${DIST}/python/python.zip
 
-${DIST}/python/python.zip: ${PYTHON_WASM_SHARED}/lib/dist/python311.zip
+${DIST}/python/python.zip: ${PYTHON_WASM}/lib/dist/python311.zip
 	# Copy over the modules files
-	cp ${PYTHON_WASM_SHARED}/lib/dist/python311.zip ${DIST}/python/python.zip
+	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
 
 ${DIST}/python/libpython.so: ${DYLINK}/wasm/libpython.so
 	cp ${DYLINK}/wasm/libpython.so ${DIST}/python/libpython.so
@@ -93,11 +92,13 @@ ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodul
 	zig-fPIC cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM}
 	zig wasm-ld --experimental-pic -shared ${DIST}/python/hello.o -o ${DIST}/python/hello.cpython-311-wasm32-wasi.so
 	rm ${DIST}/python/hello.o
-	echo "TODO: temporary path hack:"
-	cp  ${DIST}/python/hello.cpython-311-wasm32-wasi.so ${PYTHON_WASM_SHARED}/lib/python3.11/lib-dynload/
+
+# TODO: temporary path hack:
+${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.cpython-311-wasm32-wasi.so: ${DIST}/python/hello.cpython-311-wasm32-wasi.so
+	cp  ${DIST}/python/hello.cpython-311-wasm32-wasi.so ${PYTHON_WASM}/lib/python3.11/lib-dynload/
 
 .PHONEY: hello
-hello: ${DIST}/python/hello.cpython-311-wasm32-wasi.so
+hello: ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.cpython-311-wasm32-wasi.so
 
 ##################
 ## Interface support functionality for WebAssembly.
@@ -111,10 +112,14 @@ test-proxy:
 node_modules:
 	npm ci
 
-.PHONY: bin
-bin:
+${CWD}/../../bin/python-wasm: ${CWD}/bin/python-wasm
 	ln -sf ${CWD}/bin/python-wasm ${CWD}/../../bin/python-wasm
+
+${CWD}/../../bin/python-wasm-debug: ${CWD}/bin/python-wasm-debug
 	ln -sf ${CWD}/bin/python-wasm-debug ${CWD}/../../bin/python-wasm-debug
+
+.PHONY: bin
+bin: ${CWD}/../../bin/python-wasm ${CWD}/../../bin/python-wasm-debug
 
 ## Put it all together
 

@@ -45,7 +45,6 @@ export async function init({
   } else {
     env = {
       ...process.env,
-      PYTHONHOME: join(path, "../../../cpython/dist/wasm-shared"),
     };
   }
   await _init({

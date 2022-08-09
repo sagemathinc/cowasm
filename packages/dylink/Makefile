@@ -1,7 +1,7 @@
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-PYTHON = ${CWD}/../cpython/dist/wasm-shared
-POSIX = ${CWD}/../posix-wasm/dist/wasm-shared
-LZMA = ${CWD}/../lzma/dist/wasm-shared
+PYTHON = ${CWD}/../cpython/dist/wasm
+POSIX = ${CWD}/../posix-wasm/dist/wasm
+LZMA = ${CWD}/../lzma/dist/wasm
 
 
 all: dist/.built
@@ -43,11 +43,7 @@ BUILD_DYLINK = zig cc -target wasm32-wasi \
 
 build/wasm/libdylink.o: dist/wasm-export/libc.c
 	mkdir -p build/wasm
-	${BUILD_DYLINK} -o build/wasm/libdylink.o -s # the -s strips debug symbols, which waste a lot of space
-
-build/wasm/libdylink.debug.o: dist/wasm-export/libc.c
-	mkdir -p build/wasm
-	${BUILD_DYLINK} -o build/wasm/libdylink.debug.o
+	${BUILD_DYLINK} -o build/wasm/libdylink.o
 
 # The way we make dist/wasm/libdylink.a is a bit of a cheat -- we do not
 # use ar to make an actual archive, and instead what we call "libdylink.a"
@@ -60,20 +56,19 @@ build/wasm/libdylink.debug.o: dist/wasm-export/libc.c
 #    zig ar -crs dist/wasm/libdylink.a build/wasm/libdylink.o
 dist/wasm/libdylink.a: build/wasm/libdylink.o
 	mkdir -p dist/wasm
-	cp build/wasm/libdylink.o  dist/wasm/libdylink.a
-
-dist/wasm/debug/libdylink.a: build/wasm/libdylink.debug.o
-	mkdir -p dist/wasm/debug
-	cp build/wasm/libdylink.debug.o dist/wasm/debug/libdylink.a
+	cp build/wasm/libdylink.o dist/wasm/libdylink.a
 
 
-# Python shared object library:
+####################
+# libpython.so Python shared object library
+# **NOT USED AT ALL**
+####################
 
 build/wasm/libpython.o: dist/wasm-export/libpython.c
 	./bin/zig-fPIC cc dist/wasm-export/libpython.c -c -o build/wasm/libpython.o -I${PYTHON}/include/python3.11 -I${POSIX}
 
 BUILD_LIBPYTHON = zig wasm-ld --experimental-pic -shared build/wasm/libpython.o \
-	${PYTHON}/lib/libpython3.11.a ${LZMA}/lib/liblzma.a ${POSIX}/libposix.a  \
+	${PYTHON}/lib/libpython3.11.a ${LZMA}-shared/lib/liblzma.a ${POSIX}-shared/libposix.a  \
 	${CWD}/../cpython/build/wasm-shared/Modules/_decimal/libmpdec/libmpdec.a
 
 dist/wasm/libpython.so: build/wasm/libpython.o
@@ -84,7 +79,7 @@ dist/wasm/debug/libpython.so: build/wasm/libpython.o
 	mkdir -p dist/wasm/debug
 	${BUILD_LIBPYTHON} -o dist/wasm/debug/libpython.so
 
-dist/.built: dist/wasm-export/libc.c dist/index.js dist/wasm/libdylink.a dist/wasm/debug/libdylink.a dist/wasm/libpython.so dist/wasm/debug/libpython.so
+dist/.built: dist/wasm-export/libc.c dist/index.js dist/wasm/libdylink.a wasm-export
 	cd ../../bin && ln -sf ../packages/dylink/bin/zig-fPIC .
 	touch dist/.built
 

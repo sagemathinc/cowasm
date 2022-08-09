@@ -10,7 +10,7 @@ but it is what it is.
 
 import wasmExport, { alias } from "./wasm-export";
 
-const aliases = { siprintf: "sprintf" };
+const aliases = { siprintf: "sprintf", fiprintf: "fprintf" };
 
 function main() {
   let s = `

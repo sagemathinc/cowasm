@@ -1,14 +1,17 @@
 /*
 Code that exports function pointers for everything in the Python C API.
 The resulting .c code should be included in your main wasm binary, for dynamic
-libraries that are Python extension modules.  It makes things thousands
-of times faster.
+libraries that are Python extension modules.
+
+**This is important: It makes function calls from extension modules to the Python/C API
+thousands of times faster.**
+
 */
 
 import spawnAsync from "await-spawn";
 import wasmExport, { alias } from "./wasm-export";
 
-const path = "../cpython/dist/wasm-shared/include/python3.11";
+const path = "../cpython/dist/wasm/include/python3.11";
 
 // I tediously made this list.  In theory the C preprocessor should be able to do this, or maybe
 // using nm on libpython combined with the headers?

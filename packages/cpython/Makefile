@@ -6,8 +6,7 @@
 # really annoying and makes bootstraping a build a little harder.
 #
 # We only build a *shared* -fPIC version of the WASM version by using our zig-fPIC
-# wrapper script, which is in the dylink package.  Note that the dylink package
-# actually creates libpython.so right now.
+# wrapper script, which is in the dylink package.
 #
 
 # See https://www.python.org/downloads/
@@ -24,8 +23,6 @@ DIST = ${CWD}/dist
 DIST_NATIVE = ${DIST}/native
 DIST_WASM_STATIC = ${DIST}/wasm
 BUILD_WASM_STATIC = ${BUILD}/wasm-static
-DIST_WASM_SHARED = ${DIST}/wasm-shared
-BUILD_WASM_SHARED = ${BUILD}/wasm-shared
 ZLIB = ${CWD}/../zlib/dist
 LZMA = ${CWD}/../lzma/dist
 LIBEDIT = ${CWD}/../libedit/dist
@@ -47,7 +44,7 @@ export PATH := ${CWD}/../../bin:${DIST_NATIVE}/bin:${PATH}
 .PHONY: all
 all: ${CWD}/dist/.built
 
-${CWD}/dist/.built: native wasm-static wasm-shared  wasm-data
+${CWD}/dist/.built: native wasm-static wasm-data
 	touch ${CWD}/dist/.built
 
 #############
@@ -82,7 +79,6 @@ ${DIST_NATIVE}/.built-zig: ${BUILD}/native/.patched
 		LDFLAGS="-L${ZLIB}/native/lib" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
-			--enable-shared \
 			--with-ensurepip=no
 	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses zlib).  This is to workaround
 	# a security feature of MacOS (see https://developer.apple.com/forums/thread/9233). For simplicity we set this everywhere.
@@ -136,12 +132,26 @@ ${BUILD_WASM_STATIC}/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# cross compiling, without which ./configure won't work.
 	ln -s ${CWD}/src/rebuild ${BUILD_WASM_STATIC}/rebuild
 	cp src/config.site ${BUILD_WASM_STATIC}
-	cp src/Setup.local-static ${BUILD_WASM_STATIC}/Modules/Setup.local
+	cp src/Setup.local ${BUILD_WASM_STATIC}/Modules/Setup.local
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
 	# explicitly add anything that is really used from there to posix-wasm.h
 	mkdir ${BUILD_WASM_STATIC}/sys && echo '#include "posix-wasm.h"' >  ${BUILD_WASM_STATIC}/sys/wait.h
 	cd ${BUILD_WASM_STATIC}/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
+	cd ${BUILD_WASM_STATIC}/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
 	touch ${BUILD_WASM_STATIC}/.patched
+
+# The options for the extension modules.  We cannot strip later. The -s option to BLDSHARED
+# below strips debug symbols from the shared object libraries for extension modules,
+# as explained here:
+#     https://stackoverflow.com/questions/6085491/gcc-vs-clang-symbol-stripping
+# It would be nicer to build them with the symbols in (the default), then use wasm-strip
+# later when packaging things up.  Unfortunately, wasm-strip only implements "strip everything",
+# not just debug symbols.  There's code here  https://reviews.llvm.org/D73820 for the general
+# case, but I guess it isn't merged.
+BLDSHARED_DEBUG = zig wasm-ld --experimental-pic -shared
+BLDSHARED_PROD = ${BLDSHARED_DEBUG}  -s
+# what we will use:
+BLDSHARED = ${BLDSHARED_PROD}
 
 ${DIST_WASM_STATIC}/.built-cpython: ${BUILD_WASM_STATIC}/.patched ${DIST_NATIVE}/.built
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
@@ -174,128 +184,51 @@ ${DIST_WASM_STATIC}/.built-cpython: ${BUILD_WASM_STATIC}/.patched ${DIST_NATIVE}
 			--build=`./config.guess`
 	cat src/pyconfig.h >> ${BUILD_WASM_STATIC}/pyconfig.h
 	cd ${BUILD_WASM_STATIC} && make
-	# These are missing, breaking the "make install".  Why? TODO!
-	cd ${BUILD_WASM_STATIC} && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so
+	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld via the zig-fPIC script.
+	# First remove everything that needs to be built -fPIC or build will fail; add more here as we support more modules.
+	cd ${BUILD_WASM_STATIC}/Modules && \
+		rm -f _sqlite/*.o _testimportmultiple*.o _testmultiphase*.o xxlimited*.o
+	# Do the build, but with modified compiler, etc.:
+	cd ${BUILD_WASM_STATIC} && make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" \
+							   CC="zig-fPIC cc" CXX="zig-fPIC c++" BLDSHARED="${BLDSHARED}"
+	# Install as usual.
 	cd ${BUILD_WASM_STATIC} && make install
-	# For some reason libmpdec.a isn't in libpython, so we make it easy by copying it over:
+	# For some reason libmpdec.a isn't in libpython311.a, so we make it easy to link in later by copying it over:
+	# TODO: do the same for "expat/libexpat.a" ?
 	cp ${BUILD_WASM_STATIC}/Modules/_decimal/libmpdec/libmpdec.a ${DIST_WASM_STATIC}/lib/
 	touch ${DIST_WASM_STATIC}/.built-cpython
 
 .PHONY: wasm-static
 wasm-static: ${DIST_WASM_STATIC}/.built-cpython
 
-
-#############
-# WASM SHARED
-# We build this entirely for the shared modules:
-#   - sqlite3
-# TODO: In theory it should be possible to build the so using the right fPIC stuff in some way
-# as part of the build above, rather than having to do two separate builds.    This might take
-# slightly patching the Python build system, or running make twice with different arguments.
-#############
-
-
-${BUILD_WASM_SHARED}/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
-	rm -rf ${BUILD_WASM_SHARED}
-	mkdir -p ${BUILD}
-	cd ${BUILD} && mkdir wasm-shared && tar xf Python-${PYTHON_VERSION}.tar.xz -C wasm-shared --strip-components=1 \
-	# Also copy the config.site, which answers some questions needed for
-	# cross compiling, without which ./configure won't work.
-	ln -s ${CWD}/src/rebuild-shared ${BUILD_WASM_SHARED}/rebuild
-	cp src/config.site ${BUILD_WASM_SHARED}
-	cp src/Setup.local ${BUILD_WASM_SHARED}/Modules
-	cp ${POSIX_WASM}/wasm/*.h ${BUILD_WASM_SHARED}
-	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
-	# explicitly add anything that is really used from there to posix-wasm.h
-	mkdir ${BUILD_WASM_SHARED}/sys && echo '#include "posix-wasm.h"' >  ${BUILD_WASM_SHARED}/sys/wait.h
-	cd ${BUILD_WASM_SHARED}/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
-	cd ${BUILD_WASM_SHARED}/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
-	# Make it so just the trampoline functions are available to us using sed instead of a patch to 5
-	# files, which is a lot to deal with.  On the other hand, this could silently fail if the sources
-	# change too much, whereas patches are loud.
-	touch ${BUILD_WASM_SHARED}/.patched
-
-
-# The -s option to BLDSHARED below strips debug symbols from the shared object libraries for extension modules,
-# as explained here:
-#     https://stackoverflow.com/questions/6085491/gcc-vs-clang-symbol-stripping
-# It would be nicer to build them with the symbols in (the default), then use wasm-strip
-# later when packaging things up.  Unfortunately, wasm-strip only implements "strip everything",
-# not just debug symbols.  There's code here  https://reviews.llvm.org/D73820 for the general
-# case, but I guess it isn't merged.
-# NOTE: BLDSHARED_DEBUG = build a huge libpython.so with debugging symbols
-#       BLDSHARED_PROD = remove debugging symbols.
-# The choice must be made at compile time since wasm-strip is very limited as mentioned above.
-# This doesn't impact libpython.so, which is assembled by the dylink package.
-
-BLDSHARED_DEBUG = zig wasm-ld --experimental-pic -shared
-BLDSHARED_PROD = ${BLDSHARED_DEBUG}  -s
-
-${DIST_WASM_SHARED}/.built-cpython-shared: ${BUILD_WASM_SHARED}/.patched
-	cd ${BUILD_WASM_SHARED} && \
-		CC="zig-fPIC cc" \
-		CXX="zig-fPIC c++" \
-		BLDSHARED="${BLDSHARED_PROD}" \
-		AR="zig ar" \
-		CFLAGS=" -Oz  -I${BUILD_WASM_SHARED}/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
-		CONFIG_SITE=./config.site \
-		READELF=true \
-		./configure \
-			--config-cache \
-			--prefix=${DIST_WASM_SHARED}  \
-			--enable-big-digits=30 \
-			--enable-optimizations \
-			--enable-shared \
-			--disable-ipv6 \
-			--with-readline=editline \
-			--with-build-python=${DIST_NATIVE}/bin/python3 \
-			--without-pymalloc \
-			--without-ensurepip \
-			--host=wasm32-unknown-wasi \
-			--build=`./config.guess`
-	cat src/pyconfig.h >> ${BUILD_WASM_SHARED}/pyconfig.h
-	# The CONFIGURE_LDFLAGS_NODIST="" is because CONFIGURE_LDFLAGS_NODIST has a bunch of warning options that don't work with wasm-ld.
-	# The LINKFORSHARED=-shared is needed, or we hit https://github.com/ziglang/zig/issues/11045
-	cd ${BUILD_WASM_SHARED} && \
-		make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" && \
-		make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" install
-	# TODO: much more to do than just this, longterm...
-	cp ${BUILD_WASM_SHARED}/build/lib.wasi-wasm32-3.11/_sqlite3.cpython-311-wasm32-emscripten.so ${DIST_WASM_SHARED}/lib/python3.11/lib-dynload/_sqlite3.cpython-311-wasm32-wasi.so
-	touch ${DIST_WASM_SHARED}/.built-cpython-shared
-
-.PHONY: wasm-shared
-wasm-shared: ${DIST_WASM_SHARED}/.built-cpython-shared
-
-
-# node_modules would currently only be needed to use wasm-strip.
-# node_modules:
-# 	npm ci
-
-touch ${DIST_WASM_SHARED}/.built: ${DIST_WASM_SHARED}/.built-cpython-shared
+${DIST_WASM_STATIC}/.built: ${DIST_WASM_STATIC}/.built-cpython
 	# Build wasm asset bundle (the pyc files, etc.).
-	cd ${BUILD_WASM_SHARED} && \
+	cd ${BUILD_WASM_STATIC} && \
 		mkdir -p usr/local/lib/python3.11/lib-dynload/  && \
 	    LD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" \
 			python3 ./Tools/wasm/wasm_assets.py && \
-		rm -rf ${DIST_WASM_SHARED}/lib/dist && \
-		mv usr/local/lib ${DIST_WASM_SHARED}/lib/dist
+		rm -rf ${DIST_WASM_STATIC}/lib/dist && \
+		mv usr/local/lib ${DIST_WASM_STATIC}/lib/dist
 	# Add termcap for xterm to our zip asset bundle, so readline actually works:
-	cp src/termcap ${DIST_WASM_SHARED}/lib/dist/termcap && cd ${DIST_WASM_SHARED}/lib/dist/ && zip -u python311.zip termcap
-	mkdir ${DIST_WASM_SHARED}/lib/dist/lib-dynload/
-	cp ${DIST_WASM_SHARED}/lib/python3.11/lib-dynload/_sqlite3.cpython-311-wasm32-wasi.so ${DIST_WASM_SHARED}/lib/dist/lib-dynload/
-	# Unfortunately, wasm-strip removes the critical custom section tht makes the so file useful, since NotImplementedError
+	cp src/termcap ${DIST_WASM_STATIC}/lib/dist/termcap && cd ${DIST_WASM_STATIC}/lib/dist/ && zip -u python311.zip termcap
+	# **TODO:** It is very silly for these to be in the same zip file, obviously, because that means they have to be downloaded,
+	# so we should just put them in the main binary.  We'll change that when things are working.
+	mkdir ${DIST_WASM_STATIC}/lib/dist/lib-dynload/
+	cp ${DIST_WASM_STATIC}/lib/python3.11/lib-dynload/*.so ${DIST_WASM_STATIC}/lib/dist/lib-dynload/
+	# Unfortunately, wasm-strip removes the critical custom section that makes the so file useful, since NotImplementedError
 	#      https://reviews.llvm.org/D73820
-	#find ${DIST_WASM_SHARED}/lib/dist/lib-dynload -type f -name "*.so" | xargs -n1 ${CWD}/node_modules/.bin/wasm-strip
-	cd ${DIST_WASM_SHARED}/lib/dist/; zip -u python311.zip lib-dynload/*
-	touch ${DIST_WASM_SHARED}/.built
+	#find ${DIST_WASM_STATIC}/lib/dist/lib-dynload -type f -name "*.so" | xargs -n1 ${CWD}/node_modules/.bin/wasm-strip
+	# Instead, we use the -s option to wasm-ld above.
+	cd ${DIST_WASM_STATIC}/lib/dist/; zip -u python311.zip lib-dynload/*
+	touch ${DIST_WASM_STATIC}/.built
 
 .PHONY: wasm-data
-wasm-data: ${DIST_WASM_SHARED}/.built
+wasm-data: ${DIST_WASM_STATIC}/.built
 
 # Use "make run-wasm" to run our WASM python at the command line.
 # You can also just run `python-wasm` in the top level bin/ directory.
 .PHONY: run-wasm
-run-wasm: ${DIST_WASM_SHARED}/.built
+run-wasm: ${DIST_WASM_STATIC}/.built
 	${PYTHON_WASM_BINARY}
 
 # TODO: this test below is NOT useful yet.
