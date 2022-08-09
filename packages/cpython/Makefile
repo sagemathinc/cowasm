@@ -61,6 +61,16 @@ source: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 # Note that despite the word "patched" below, we apply NO patches to the native build.
 #############
 
+UNAME_S := $(shell uname -s)
+UNAME_P := $(shell uname -p)
+ifeq ($(UNAME_S),Linux)
+	# Workaround a zig bug -- the native build fails with "ld.lld: error: undefined symbol: fcntl64".
+	# See https://github.com/ziglang/zig/issues/5882 and https://github.com/ziglang/zig/issues/9485
+	ARCH = --target=$(UNAME_P)-linux-gnu.2.31
+else
+	ARCH =
+endif
+
 ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	rm -rf ${BUILD}/native
 	cd ${BUILD} && mkdir native && tar xf Python-${PYTHON_VERSION}.tar.xz -C native --strip-components=1
@@ -70,8 +80,8 @@ ${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && \
 		AR="zig ar" \
-		CXX="zig c++" \
-		CC="zig cc" \
+		CXX="zig c++ ${ARCH} " \
+		CC="zig cc ${ARCH} " \
 		CFLAGS="-I${ZLIB}/native/include" \
 		LDFLAGS="-L${ZLIB}/native/lib" \
 		./configure \
