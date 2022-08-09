@@ -29,3 +29,4 @@ export fn funlockfile(filehandle: ?*stdio.FILE) void {
 test "funlockfile" {
     funlockfile(null);
 }
+

@@ -83,6 +83,7 @@ extern char *__wasilibc_cwd;
 extern char **__wasilibc_environ;
 
 int __stack_chk_guard;
+void __stack_chk_fail(void);
 
 // qsort is completely missing from Zig's musl, but it is assumed
 // to be there by wasi. This breaks things.  Fortnately, zig has
@@ -117,6 +118,8 @@ flockfile
 ftrylockfile
 funlockfile
 strsignal
+__stack_chk_fail
+secure_getenv
 `;
 
 // All headers from zig/dist/lib/zig/libc/include/wasm-wasi-musl except signal/thread ones.

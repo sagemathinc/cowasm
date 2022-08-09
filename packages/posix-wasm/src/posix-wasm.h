@@ -338,4 +338,7 @@ void funlockfile(FILE *filehandle);
 
 char *strsignal(int sig);
 
+int fiprintf(FILE *restrict stream, const char *restrict format, ...);
+int siprintf(char *restrict s, const char *restrict format, ...);
+
 #endif

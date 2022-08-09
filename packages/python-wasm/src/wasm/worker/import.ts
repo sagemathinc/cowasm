@@ -5,6 +5,7 @@ import reuseInFlight from "../reuseInFlight";
 import WasmInstance from "./instance";
 import importWebAssemblyDlopen from "dylink";
 import initPythonTrampolineCalls from "./trampoline";
+import posix from "../posix";
 
 const textDecoder = new TextDecoder();
 
@@ -18,7 +19,6 @@ export function strlen(charPtr: number, memory: WebAssembly.Memory): number {
 }
 
 export interface Options {
-  noWasi?: boolean; // if false, include wasi
   wasmEnv?: object; // functions to include in the environment
   env?: { [name: string]: string }; // environment variables
   time?: boolean;
@@ -148,22 +148,26 @@ async function doWasmImport({
 
   initPythonTrampolineCalls(table, wasmOpts.env);
 
-  let wasi: WASI | undefined = undefined;
-  let fs: FileSystem | undefined = undefined;
-  if (!options?.noWasi) {
-    const opts: WASIConfig = {
-      preopens: { "/": "/" },
-      bindings,
-      args: process.argv,
-      env: options.env,
-      traceSyscalls: options.traceSyscalls,
-      spinLock: options.spinLock,
-      waitForStdin: options.waitForStdin,
-      sendStdout: options.sendStdout,
-      sendStderr: options.sendStderr,
-    };
-    wasi = new WASI(opts);
-    wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
+  const { fs } = bindings;
+  const opts: WASIConfig = {
+    preopens: { "/": "/" },
+    bindings,
+    args: process.argv,
+    env: options.env,
+    traceSyscalls: options.traceSyscalls,
+    spinLock: options.spinLock,
+    waitForStdin: options.waitForStdin,
+    sendStdout: options.sendStdout,
+    sendStderr: options.sendStderr,
+  };
+  const wasi = new WASI(opts);
+  wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
+
+  const posixEnv = posix({ fs, recvString, wasi });
+  for (const name in posixEnv) {
+    if (wasmOpts.env[name] == null) {
+      wasmOpts.env[name] = posixEnv[name];
+    }
   }
 
   if (source == null) {
