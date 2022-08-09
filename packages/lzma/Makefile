@@ -4,7 +4,7 @@ BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 
-all: wasm-shared
+all: wasm
 
 # Don't build native -- it's very likely available systemwide or we don't need it, and
 # it breaks things.
@@ -23,8 +23,9 @@ all: wasm-shared
 # .PHONY: native
 # native: ${DIST_NATIVE}/.built
 
-
-# WASM
+##################
+# WASM - STATIC
+##################
 
 ${BUILD}/wasm:
 	rm -rf ${BUILD}/wasm
@@ -44,6 +45,9 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 wasm: ${DIST_WASM}/.built
 
 
+##################
+# WASM - SHARED
+##################
 
 ${BUILD}/wasm-shared:
 	rm -rf ${BUILD}/wasm-shared

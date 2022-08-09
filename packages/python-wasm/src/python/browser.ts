@@ -17,7 +17,6 @@ export async function init({ noWorker }: { noWorker?: boolean } = {}) {
 
   await _init({
     python_wasm: wasmUrl,
-    libpython_so: "/usr/lib/python3.11/libpython.so",
     wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
     fs,
     env: {

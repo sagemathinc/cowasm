@@ -27,7 +27,6 @@ type WASMImportFunction = (
 
 interface InitOpts {
   python_wasm: string; // file path in node.js; a URL in browser.
-  libpython_so: string; // *path* to libpython.so shared object library in the virtual (or real) filesystem
   wasmImport: WASMImportFunction;
   fs: FileSystemSpec[];
   env: { [name: string]: string };
@@ -35,7 +34,6 @@ interface InitOpts {
 
 export async function _init({
   python_wasm,
-  libpython_so,
   wasmImport,
   fs,
   env,
@@ -50,6 +48,5 @@ export async function _init({
     traceSyscalls: false,
     traceStubcalls: "first", // 'first' or true or false
   });
-  // This loads the libpython.so shared object library, and initializes the Python interpreter state.
-  await wasm.callWithString("init", libpython_so);
+  await wasm.callWithString("init", "");
 }

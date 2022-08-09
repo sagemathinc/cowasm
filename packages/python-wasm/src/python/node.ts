@@ -7,7 +7,6 @@ import { existsSync } from "fs";
 import callsite from "callsite";
 
 const PYTHON_ZIP = "python.zip";
-const LIBPYTHON_SO = "libpython.so";
 const PYTHON_WASM = "python.wasm";
 
 export async function init({
@@ -33,9 +32,8 @@ export async function init({
   // native: provides stdout,stderr natively, for now...
   fs.push({ type: "native" });
 
-  let env, libpython_so;
+  let env;
   if (!noZip && existsSync(zipfile)) {
-    libpython_so = `/usr/lib/python3.11/${LIBPYTHON_SO}`;
     env = {
       ...process.env,
       ...{
@@ -45,15 +43,16 @@ export async function init({
       },
     };
   } else {
-    libpython_so = join(path, LIBPYTHON_SO);
-    env = { ...process.env };
+    env = {
+      ...process.env,
+      PYTHONHOME: join(path, "../../../cpython/dist/wasm-shared"),
+    };
   }
   await _init({
     python_wasm: join(path, PYTHON_WASM),
     wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
     fs,
     env,
-    libpython_so,
   });
 }
 

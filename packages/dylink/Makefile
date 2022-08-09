@@ -73,8 +73,7 @@ build/wasm/libpython.o: dist/wasm-export/libpython.c
 	./bin/zig-fPIC cc dist/wasm-export/libpython.c -c -o build/wasm/libpython.o -I${PYTHON}/include/python3.11 -I${POSIX}
 
 BUILD_LIBPYTHON = zig wasm-ld --experimental-pic -shared build/wasm/libpython.o \
-	${PYTHON}/lib/libpython3.11.a ${LZMA}/lib/liblzma.a \
-	   /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/python-wasm/packages/posix-wasm/build/wasm-shared/threads.o \
+	${PYTHON}/lib/libpython3.11.a ${LZMA}/lib/liblzma.a ${POSIX}/libposix.a  \
 	${CWD}/../cpython/build/wasm-shared/Modules/_decimal/libmpdec/libmpdec.a
 
 dist/wasm/libpython.so: build/wasm/libpython.o

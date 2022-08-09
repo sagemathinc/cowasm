@@ -22,6 +22,8 @@ CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD = ${CWD}/build
 DIST = ${CWD}/dist
 DIST_NATIVE = ${DIST}/native
+DIST_WASM_STATIC = ${DIST}/wasm
+BUILD_WASM_STATIC = ${BUILD}/wasm-static
 DIST_WASM_SHARED = ${DIST}/wasm-shared
 BUILD_WASM_SHARED = ${BUILD}/wasm-shared
 ZLIB = ${CWD}/../zlib/dist
@@ -37,7 +39,6 @@ NCURSES_LIB = -L${NCURSES}/wasm/lib
 PYTHON_WASM_BINARY = ${CWD}/../../bin/python-wasm
 
 # We only use zlib (not lzma) for native build, since liblzma widely available natively.
-
 export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
 export LD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
 export PATH := ${CWD}/../../bin:${DIST_NATIVE}/bin:${PATH}
@@ -46,7 +47,7 @@ export PATH := ${CWD}/../../bin:${DIST_NATIVE}/bin:${PATH}
 .PHONY: all
 all: ${CWD}/dist/.built
 
-${CWD}/dist/.built: native wasm-data wasm-shared
+${CWD}/dist/.built: native wasm-static wasm-shared  wasm-data
 	touch ${CWD}/dist/.built
 
 #############
@@ -121,6 +122,79 @@ run-native: ${DIST_NATIVE}/.built
 	${DIST_NATIVE}/bin/python3
 
 
+
+
+#############
+# WASM  STATIC
+# We build this for the core CPython interpreter and runtime.
+#############
+
+${BUILD_WASM_STATIC}/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
+	rm -rf ${BUILD_WASM_STATIC} && mkdir -p ${BUILD_WASM_STATIC}
+	tar xf ${BUILD}/Python-${PYTHON_VERSION}.tar.xz -C ${BUILD_WASM_STATIC} --strip-components=1
+	# Also copy the config.site, which answers some questions needed for
+	# cross compiling, without which ./configure won't work.
+	ln -s ${CWD}/src/rebuild ${BUILD_WASM_STATIC}/rebuild
+	cp src/config.site ${BUILD_WASM_STATIC}
+	cp src/Setup.local-static ${BUILD_WASM_STATIC}/Modules/Setup.local
+	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
+	# explicitly add anything that is really used from there to posix-wasm.h
+	mkdir ${BUILD_WASM_STATIC}/sys && echo '#include "posix-wasm.h"' >  ${BUILD_WASM_STATIC}/sys/wait.h
+	cd ${BUILD_WASM_STATIC}/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
+	touch ${BUILD_WASM_STATIC}/.patched
+
+${DIST_WASM_STATIC}/.built-cpython: ${BUILD_WASM_STATIC}/.patched ${DIST_NATIVE}/.built
+	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
+	# - without-pymalloc below because pymalloc uses mmap and munmap, and WASI/our libc doesn't provide them.
+	#   We could try to write them ourselves (?)...
+	# - We use "zig cc -target wasm32-wasi" instead of "zig cc -target wasm32-wasi-musl" since the broken
+	#   Python configure.ac script outputs wasm32-wasi instead of wasm32-wasi-musl as the PLATFORM_TRIPLE.
+	#   This might be something to fix and upstream, but for now, just not using a triple works.
+	# - We use -I (path to source) in the CC/CXX line in addition to CFLAGS so that we can override some
+	#   bad global libraries, e.g., systemwide (zig musl) sys/wait.h with a local version.
+	cd ${BUILD_WASM_STATIC} && \
+		CC="zig cc -Oz -target wasm32-wasi  " \
+		CXX="zig c++ -Oz -target wasm32-wasi " \
+		AR="zig ar" \
+		CFLAGS="-D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD_WASM_STATIC} -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include ${NCURSES_INCLUDE} -I${POSIX_WASM}/wasm" \
+		CONFIG_SITE=./config.site \
+		READELF=true \
+		./configure \
+			--config-cache \
+			--prefix=${DIST_WASM_STATIC}  \
+			--enable-big-digits=30 \
+			--enable-optimizations \
+			--disable-shared \
+			--disable-ipv6 \
+			--with-readline=editline \
+			--with-build-python=${DIST_NATIVE}/bin/python3 \
+			--without-pymalloc \
+			--without-ensurepip \
+			--host=wasm32-unknown-wasi \
+			--build=`./config.guess`
+	cat src/pyconfig.h >> ${BUILD_WASM_STATIC}/pyconfig.h
+	cd ${BUILD_WASM_STATIC} && make
+	# These are missing, breaking the "make install".  Why? TODO!
+	cd ${BUILD_WASM_STATIC} && touch Modules/_testimportmultiple.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/_testmultiphase.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so Modules/xxlimited_35.cpython-${PYTHON_MAJOR}${PYTHON_MINOR}-wasm32-wasi.so
+	cd ${BUILD_WASM_STATIC} && make install
+	# For some reason libmpdec.a isn't in libpython, so we make it easy by copying it over:
+	cp ${BUILD_WASM_STATIC}/Modules/_decimal/libmpdec/libmpdec.a ${DIST_WASM_STATIC}/lib/
+	touch ${DIST_WASM_STATIC}/.built-cpython
+
+.PHONY: wasm-static
+wasm-static: ${DIST_WASM_STATIC}/.built-cpython
+
+
+#############
+# WASM SHARED
+# We build this entirely for the shared modules:
+#   - sqlite3
+# TODO: In theory it should be possible to build the so using the right fPIC stuff in some way
+# as part of the build above, rather than having to do two separate builds.    This might take
+# slightly patching the Python build system, or running make twice with different arguments.
+#############
+
+
 ${BUILD_WASM_SHARED}/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	rm -rf ${BUILD_WASM_SHARED}
 	mkdir -p ${BUILD}
@@ -159,9 +233,9 @@ BLDSHARED_PROD = ${BLDSHARED_DEBUG}  -s
 
 ${DIST_WASM_SHARED}/.built-cpython-shared: ${BUILD_WASM_SHARED}/.patched
 	cd ${BUILD_WASM_SHARED} && \
-		CC="zig-fPIC cc   " \
-		CXX="zig-fPIC c++  " \
-		BLDSHARED=${BLDSHARED_PROD} \
+		CC="zig-fPIC cc" \
+		CXX="zig-fPIC c++" \
+		BLDSHARED="${BLDSHARED_PROD}" \
 		AR="zig ar" \
 		CFLAGS=" -Oz  -I${BUILD_WASM_SHARED}/ -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include  -I${SQLITE}/wasm/include  ${NCURSES_INCLUDE}" \
 		CONFIG_SITE=./config.site \
@@ -187,8 +261,6 @@ ${DIST_WASM_SHARED}/.built-cpython-shared: ${BUILD_WASM_SHARED}/.patched
 		make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" install
 	# TODO: much more to do than just this, longterm...
 	cp ${BUILD_WASM_SHARED}/build/lib.wasi-wasm32-3.11/_sqlite3.cpython-311-wasm32-emscripten.so ${DIST_WASM_SHARED}/lib/python3.11/lib-dynload/_sqlite3.cpython-311-wasm32-wasi.so
-	cp ${BUILD_WASM_SHARED}/build/lib.wasi-wasm32-3.11/readline.cpython-311-wasm32-emscripten.so ${DIST_WASM_SHARED}/lib/python3.11/lib-dynload/readline.cpython-311-wasm32-wasi.so
-	cd ${BUILD_WASM_SHARED} && cp ${POSIX_WASM}/wasm-shared/posix-wasm.h ${DIST_WASM_SHARED}/include/python${PYTHON_MAJOR}.${PYTHON_MINOR}/
 	touch ${DIST_WASM_SHARED}/.built-cpython-shared
 
 .PHONY: wasm-shared
@@ -199,7 +271,7 @@ wasm-shared: ${DIST_WASM_SHARED}/.built-cpython-shared
 # node_modules:
 # 	npm ci
 
-${DIST_WASM_SHARED}/lib/dist/python311.zip: ${DIST_WASM_SHARED}/.built-cpython-shared
+touch ${DIST_WASM_SHARED}/.built: ${DIST_WASM_SHARED}/.built-cpython-shared
 	# Build wasm asset bundle (the pyc files, etc.).
 	cd ${BUILD_WASM_SHARED} && \
 		mkdir -p usr/local/lib/python3.11/lib-dynload/  && \
@@ -210,7 +282,6 @@ ${DIST_WASM_SHARED}/lib/dist/python311.zip: ${DIST_WASM_SHARED}/.built-cpython-s
 	# Add termcap for xterm to our zip asset bundle, so readline actually works:
 	cp src/termcap ${DIST_WASM_SHARED}/lib/dist/termcap && cd ${DIST_WASM_SHARED}/lib/dist/ && zip -u python311.zip termcap
 	mkdir ${DIST_WASM_SHARED}/lib/dist/lib-dynload/
-	cp ${DIST_WASM_SHARED}/lib/python3.11/lib-dynload/readline.cpython-311-wasm32-wasi.so ${DIST_WASM_SHARED}/lib/dist/lib-dynload/
 	cp ${DIST_WASM_SHARED}/lib/python3.11/lib-dynload/_sqlite3.cpython-311-wasm32-wasi.so ${DIST_WASM_SHARED}/lib/dist/lib-dynload/
 	# Unfortunately, wasm-strip removes the critical custom section tht makes the so file useful, since NotImplementedError
 	#      https://reviews.llvm.org/D73820
@@ -219,7 +290,7 @@ ${DIST_WASM_SHARED}/lib/dist/python311.zip: ${DIST_WASM_SHARED}/.built-cpython-s
 	touch ${DIST_WASM_SHARED}/.built
 
 .PHONY: wasm-data
-wasm-data: ${DIST_WASM_SHARED}/lib/dist/python311.zip
+wasm-data: ${DIST_WASM_SHARED}/.built
 
 # Use "make run-wasm" to run our WASM python at the command line.
 # You can also just run `python-wasm` in the top level bin/ directory.

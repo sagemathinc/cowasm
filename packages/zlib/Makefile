@@ -34,8 +34,9 @@ ${DIST_NATIVE}/.built: ${BUILD}/native
 .PHONY: native
 native: ${DIST_NATIVE}/.built
 
-
-# WASM
+##################
+# WASM - STATIC
+##################
 
 ${BUILD}/wasm: ${BUILD}/zlib-${ZLIB_VERSION}.tar.xz
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}

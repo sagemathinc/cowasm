@@ -1,21 +1,3 @@
-# When you add something here, the actual static library that needs to be linked in
-# *MUST* be added to packages/python-wasm/Makefile for the python.wasm target.  That's
-# where the important linking actually happens.
-
-*static*
-
-#readline readline.c -ledit  -ltermcap
-
-
-# Uncomment to build curses.  This works.  But the curses .py files aren't in the
-# zip bundle yet.  You can explicitly include those.  However,
-# 'import _curses; _curses.initscr()' fails right now, so there's probably
-# an issue with terminfo, etc., to sort out.  This might be just a matter of
-# adding to packages/python-wasm/Makefile.
-
-#_curses _cursesmodule.c -lncurses -ltermcap
-#_curses_panel _curses_panel.c   -lncurses -ltermcap
-
 *shared*
 # I tried building sqlite3 static, and it builds, but the interactive repl
 # libedit functionality breaks in that what you type isn't shown back.  No
@@ -25,4 +7,3 @@
 
 _sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microprotocols.c _sqlite/module.c _sqlite/prepare_protocol.c _sqlite/row.c _sqlite/statement.c  _sqlite/util.c -I$(abs_srcdir)/../../../sqlite/dist/wasm/include/ $(abs_srcdir)/../../../sqlite/dist/wasm/lib/libsqlite3.a
 
-readline readline.c -I$(abs_srcdir)/../../../libedit/dist/wasm/include $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a

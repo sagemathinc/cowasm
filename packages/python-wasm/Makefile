@@ -7,9 +7,13 @@ export PATH := ${PACKAGES}/../bin:${PACKAGES}/zig/dist:$(PATH)
 ZIG_PKG       = --main-pkg-path ${CWD}/src
 
 PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
-PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm-shared
+PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm
+PYTHON_WASM_SHARED   = ${PACKAGES}/cpython/dist/wasm-shared
 POSIX_WASM   = ${PACKAGES}/posix-wasm/dist/wasm
 DYLINK   = ${PACKAGES}/dylink/dist
+LZMA_WASM = ${CWD}/../lzma/dist/wasm
+ZLIB_WASM = ${CWD}/../zlib/dist/wasm
+LIBEDIT = ${CWD}/../libedit/dist
 
 WASM_CFLAGS   = -dynamic ${OPT}
 
@@ -52,41 +56,45 @@ test-python:
 #
 
 
-${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/pyapi.zig
+${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/python-shared.zig
 	cd src && zig build-lib \
-		${OPT} \
-		-rdynamic \
-		-target wasm32-wasi \
-		--import-memory \
-		--import-table \
-		-I. -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
-	   `pwd`/python/signal/signal.c \
+		-rdynamic \
+		-target wasm32-wasi \
+		--import-memory --import-table \
+		-I. -I${PYTHON_WASM}/include/python3.11 \
+		${PYTHON_WASM}/lib/libpython3.11.a \
+	   ${DYLINK}/wasm-export/libpython.c \
+		-I${POSIX_WASM} ${POSIX_WASM}/libposix.a \
+		${PACKAGES}/lzma/dist/wasm/lib/liblzma.a \
+		${PACKAGES}/zlib/dist/wasm/lib/libz.a \
+		${PACKAGES}/libedit/dist/wasm/lib/libedit.a \
+		${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a \
+		${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a \
 	   -L ${DYLINK}/wasm/ -ldylink \
-	   /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/python-wasm/packages/posix-wasm/build/wasm/posix.o \
-	   python/interface.zig -lc -lm
+	   -lc -lm \
+	   `pwd`/python/signal/signal.c \
+	   python/interface.zig
 	mkdir -p ${DIST}/python
 	mv src/interface.wasm ${DIST}/python/python.wasm
 
 .PHONEY: python
-python: ${DIST}/python/python.wasm ${DIST}/python/python.zip ${DIST}/python/libpython.so
+python: ${DIST}/python/python.wasm ${DIST}/python/python.zip
 
-${DIST}/python/python.zip: ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/libpython.so
+${DIST}/python/python.zip: ${PYTHON_WASM_SHARED}/lib/dist/python311.zip
 	# Copy over the modules files
-	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
-	# For now we also put libpython.so in the zip file:
-	cd ${DIST}/python/ && zip -u python.zip libpython.so
+	cp ${PYTHON_WASM_SHARED}/lib/dist/python311.zip ${DIST}/python/python.zip
 
 ${DIST}/python/libpython.so: ${DYLINK}/wasm/libpython.so
 	cp ${DYLINK}/wasm/libpython.so ${DIST}/python/libpython.so
 
 ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
-	zig-fPIC cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11
+	zig-fPIC cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM}
 	zig wasm-ld --experimental-pic -shared ${DIST}/python/hello.o -o ${DIST}/python/hello.cpython-311-wasm32-wasi.so
 	rm ${DIST}/python/hello.o
 	echo "TODO: temporary path hack:"
-	cp  ${DIST}/python/hello.cpython-311-wasm32-wasi.so ${PYTHON_WASM}/lib/python3.11/lib-dynload/
+	cp  ${DIST}/python/hello.cpython-311-wasm32-wasi.so ${PYTHON_WASM_SHARED}/lib/python3.11/lib-dynload/
 
 .PHONEY: hello
 hello: ${DIST}/python/hello.cpython-311-wasm32-wasi.so

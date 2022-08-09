@@ -1,14 +1,14 @@
 const std = @import("std");
 const python = @import("./python.zig");
 const interface = @import("../interface.zig");
-// const signal = @import("./signal/signal.zig");
+const signal = @import("./signal/signal.zig");
 
-// export fn exported() void {
-//     signal.exported();
-// }
+export fn exported() void {
+    signal.exported();
+}
 
-export fn init(libpython_so: [*:0]const u8) void {
-    python.init(libpython_so) catch |err| {
+export fn init() void {
+    python.init() catch |err| {
         wasmSetException();
         std.debug.print("python error: '{}'\nwhen initializing python runtime", .{err});
         return;

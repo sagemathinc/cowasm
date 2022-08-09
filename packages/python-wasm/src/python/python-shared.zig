@@ -1,3 +1,6 @@
+// Support using the CPython api with python a shared object library.
+// **NOT USED**
+
 const std = @import("std");
 const python = @cImport(@cInclude("Python.h"));
 

@@ -7,6 +7,7 @@ SRC = ${CWD}/src
 BUILD = ${CWD}/build
 DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
+DIST_WASM_SHARED = ${CWD}/dist/wasm-shared
 PACKAGES = ${CWD}/..
 TERMCAP = ${PACKAGES}/termcap/dist
 
@@ -34,7 +35,9 @@ ${DIST_NATIVE}/.built: ${BUILD}/native
 native: ${DIST_NATIVE}/.built
 
 
-# WASM
+##################
+# WASM - STATIC
+##################
 
 ${BUILD}/wasm: ${BUILD}/libedit.tar.gz
 	rm -rf ${BUILD}/wasm
@@ -45,7 +48,7 @@ ${BUILD}/wasm: ${BUILD}/libedit.tar.gz
 
 # For use of -D__STDC_ISO_10646__=201103L, see https://patchwork.ozlabs.org/project/buildroot/patch/1452127277-9538-1-git-send-email-sergio.prado@e-labworks.com/
 ${DIST_WASM}/.built: ${BUILD}/wasm
-	cd ${BUILD}/wasm && CONFIG_SITE=${SRC}/config.site CFLAGS="-I${TERMCAP}/wasm/include -L${TERMCAP}/wasm/lib -D__STDC_ISO_10646__=201103L"  RANLIB="zig ranlib" AR="zig ar" CC="zig-fPIC cc -Oz" CXX="zig-fPIC c++ -Oz" \
+	cd ${BUILD}/wasm && CONFIG_SITE=${SRC}/config.site CFLAGS="-I${TERMCAP}/wasm/include -L${TERMCAP}/wasm/lib -D__STDC_ISO_10646__=201103L"  RANLIB="zig ranlib" AR="zig ar" CC="zig-fPIC cc -Oz" CXX="zig c++ -Oz -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
 		./configure \
 			--host=none \
 			--prefix="${DIST_WASM}"
@@ -55,6 +58,32 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 
 .PHONY: wasm
 wasm: ${DIST_WASM}/.built
+
+
+##################
+# WASM - SHARED
+##################
+
+
+${BUILD}/wasm-shared: ${BUILD}/libedit.tar.gz
+	rm -rf ${BUILD}/wasm-shared
+	mkdir -p ${BUILD}/wasm-shared
+	cd ${BUILD} && tar xf libedit.tar.gz -C wasm-shared --strip-components=1
+	cp -rv src/* ${BUILD}/wasm-shared/src/
+	cd ${BUILD}/wasm-shared/src/ && patch -p0 < readline.patch
+
+# For use of -D__STDC_ISO_10646__=201103L, see https://patchwork.ozlabs.org/project/buildroot/patch/1452127277-9538-1-git-send-email-sergio.prado@e-labworks.com/
+${DIST_WASM_SHARED}/.built: ${BUILD}/wasm
+	cd ${BUILD}/wasm && CONFIG_SITE=${SRC}/config.site CFLAGS="-I${TERMCAP}/wasm/include -L${TERMCAP}/wasm/lib -D__STDC_ISO_10646__=201103L"  RANLIB="zig ranlib" AR="zig ar" CC="zig-fPIC cc -Oz" CXX="zig-fPIC c++ -Oz" \
+		./configure \
+			--host=none \
+			--prefix="${DIST_WASM_SHARED}"
+	cd ${BUILD}/wasm && make -j8
+	cd ${BUILD}/wasm && make install
+	touch ${DIST_WASM_SHARED}/.built
+
+.PHONY: wasm-shared
+wasm-shared: ${DIST_WASM_SHARED}/.built
 
 
 clean:
