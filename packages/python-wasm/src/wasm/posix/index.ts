@@ -11,6 +11,10 @@ interface Context {
     getuid?: () => number;
     pid?: number;
   };
+  os: {
+    getPriority?: () => number;
+    setPriority?: (number) => void;
+  };
 }
 
 export default function posix(context: Context) {

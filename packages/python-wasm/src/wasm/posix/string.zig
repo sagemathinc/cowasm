@@ -3,6 +3,7 @@ const string = @cImport(@cInclude("string.h"));
 const std = @import("std");
 const expect = std.testing.expect;
 
+// This was fun to write, but it's also built into zig via -lwasi-emulated-signal
 // export fn strsignal(sig: c_int) [*:0]const u8 {
 //     if (sig <= 0 or sig > 31) {
 //         return "SIGINVALID";

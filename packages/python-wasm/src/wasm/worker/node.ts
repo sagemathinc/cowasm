@@ -16,6 +16,7 @@ import type { WasmInstance } from "../types";
 import { isMainThread, parentPort } from "worker_threads";
 import initWorker from "./init";
 import debug from "../../debug";
+import os from "os";
 
 export default async function wasmImportNode(
   name: string,
@@ -72,7 +73,7 @@ export default async function wasmImportNode(
 
   return await wasmImport({
     source: name,
-    bindings: { ...bindings, fs },
+    bindings: { ...bindings, fs, os },
     options,
     log: log ?? debug("wasm-node"),
     importWebAssembly,

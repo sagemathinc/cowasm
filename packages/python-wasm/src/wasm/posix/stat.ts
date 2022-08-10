@@ -29,5 +29,18 @@ export default function stats({ fs, recvString, wasi }) {
         return -1;
       }
     },
+
+    lchmod: (pathPtr: number, mode: number): -1 | 0 => {
+      try {
+        const path = recvString(pathPtr);
+        fs.lchmodSync(path, mode);
+        return 0;
+      } catch (err) {
+        // On error, -1 is returned, and errno is set to indicate the error.
+        // TODO: how should we set errno?
+        console.warn(err);
+        return -1;
+      }
+    },
   };
 }
