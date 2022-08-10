@@ -1,11 +1,6 @@
 import { isAbsolute, join } from "path";
-import cDefine, { Constant } from "./c-define";
-
-function Errno(error: Constant) {
-  // TODO! need to set it at the C level, etc.
-  const errno = cDefine(error);
-  return Error(`Error ${error}  (errno=${errno}).`);
-}
+import cDefine from "./c-define";
+import Errno from "./errno";
 
 export default function stats({ fs, process, recvString, wasi }) {
   function calculateAt(

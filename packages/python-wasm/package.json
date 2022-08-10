@@ -43,6 +43,7 @@
     "@wapython/wasi": "^1.0.0",
     "awaiting": "^3.0.0",
     "callsite": "^1.0.0",
+    "date-format": "^4.0.13",
     "debug": "^4.3.4",
     "dylink": "^0.3.0"
   },

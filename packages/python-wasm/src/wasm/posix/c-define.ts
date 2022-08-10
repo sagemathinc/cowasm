@@ -1,6 +1,6 @@
-const CONSTANTS = ["AT_FDCWD", "EBADF", "ENOENT"];
+const CONSTANTS = ["AT_FDCWD", "EBADF", "ENOENT"] as const;
 
-export type Constant = "AT_FDCWD" | "EBADF" | "ENOENT";
+export type Constant = typeof CONSTANTS[number];
 
 const TABLE: { [name: string]: number } = {};
 

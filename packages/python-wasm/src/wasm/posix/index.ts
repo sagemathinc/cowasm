@@ -8,6 +8,7 @@ NOTES:
 import signal from "./signal";
 import stdlib from "./stdlib";
 import stat from "./stat";
+import time from "./time";
 import unistd from "./unistd";
 import WASI from "@wapython/wasi";
 
@@ -24,10 +25,14 @@ interface Context {
   os: {
     getPriority?: (pid?: number) => number;
     setPriority?: (pid: number, priority?: number) => void;
+    platform?: () => // we care about darwin/linux/win32 for our runtime.
+    "darwin" | "linux" | "win32" | "aix" | "freebsd" | "openbsd" | "sunos";
   };
   child_process: {
     spawnSync?: (command: string) => number;
   };
+  // The WASM memory (so we can make sense of pointers efficiently).
+  memory: WebAssembly.Memory;
 }
 
 export default function posix(context: Context) {
@@ -36,6 +41,7 @@ export default function posix(context: Context) {
     ...stat(context),
     ...stdlib(context),
     ...unistd(context),
+    ...time(context),
   };
   const Q: any = {};
   for (const name in P) {
@@ -45,7 +51,8 @@ export default function posix(context: Context) {
       } catch (err) {
         // On error, for now -1 is returned, and errno should get set to some sort of error indicator
         // TODO: how should we set errno?
-        console.log(err);
+        // @ts-ignore -- this is just temporary while we sort out setting errno...
+        context.fs.writeFileSync(2, `\n${err}\n`);
         return -1;
       }
     };
