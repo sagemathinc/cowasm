@@ -174,7 +174,7 @@ async function doWasmImport({
   const wasi = new WASI(opts);
   wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
 
-  const posixEnv = posix({ fs, recvString, wasi });
+  const posixEnv = posix({ fs, recvString, wasi, process });
   for (const name in posixEnv) {
     if (wasmOpts.env[name] == null) {
       wasmOpts.env[name] = posixEnv[name];

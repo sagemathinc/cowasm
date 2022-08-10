@@ -109,11 +109,6 @@ void qsort(void *base, size_t nmemb, size_t size,
 // missing from wasi-zig-libc:
 const posix = `
 qsort
-getegid
-geteuid
-getgid
-getuid
-getpid
 flockfile
 ftrylockfile
 funlockfile
@@ -122,6 +117,7 @@ __stack_chk_fail
 secure_getenv
 strunvis
 strnvis
+strvis
 cfgetispeed
 cfgetospeed
 tcgetattr

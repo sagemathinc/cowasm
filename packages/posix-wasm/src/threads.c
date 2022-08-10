@@ -205,3 +205,63 @@ pthread_t pthread_self() {
   return current;
 }
 PUBLIC(pthread_self)
+
+int pthread_attr_init(union pthread_attr_t *attr) {
+  debug("pthread_attr_init\n");
+  return 0;
+}
+PUBLIC(pthread_attr_init)
+
+int pthread_attr_destroy(union pthread_attr_t *attr) {
+  debug("pthread_attr_destroy\n");
+  return 0;
+}
+PUBLIC(pthread_attr_destroy)
+
+int pthread_attr_setstacksize(union pthread_attr_t *attr, size_t stacksize) {
+  debug("pthread_attr_setstacksize\n");
+  attr->data.stack_size = stacksize;
+  return 0;
+}
+PUBLIC(pthread_attr_setstacksize)
+
+int pthread_attr_getstacksize(const union pthread_attr_t *restrict attr,
+                              size_t *restrict stacksize) {
+  debug("pthread_attr_getstacksize\n");
+  *stacksize = attr->data.stack_size;
+  return 0;
+}
+PUBLIC(pthread_attr_getstacksize)
+
+int pthread_create(pthread_t *restrict thread,
+                   const union pthread_attr_t *restrict attr,
+                   void *(*start_routine)(void *), void *restrict arg) {
+  fprintf(stderr,
+          "pthread_create: creation of threads is not yet implemented.\N");
+  return -1;
+}
+PUBLIC(pthread_create)
+
+int pthread_detach(pthread_t thread) {
+  debug("pthread_detach\n");
+  return 0;
+}
+PUBLIC(pthread_detach)
+
+void pthread_exit(void *retval) { debug("pthread_exit\n"); }
+PUBLIC(pthread_exit)
+
+int pthread_cond_timedwait(pthread_cond_t *restrict cond,
+                           pthread_mutex_t *restrict mutex,
+                           const struct timespec *restrict abstime) {
+  // locking is trivial when there can be only one thread.
+  return 0;
+}
+PUBLIC(pthread_cond_timedwait)
+
+int pthread_cond_wait(pthread_cond_t *restrict cond,
+                      pthread_mutex_t *restrict mutex) {
+  // locking is trivial when there can be only one thread.
+  return 0;
+}
+PUBLIC(pthread_cond_wait)

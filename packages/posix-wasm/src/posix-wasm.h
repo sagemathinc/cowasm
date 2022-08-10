@@ -330,12 +330,12 @@ int siprintf(char* restrict s, const char* restrict format, ...);
 
 int strunvis(char* dst, const char* src);
 int strnvis(char* dst, size_t dlen, const char* src, int flag);
+int strvis(char *dst, const char *src, int flag);
 
 #include <termios.h>
-speed_t cfgetispeed(const struct termios *termios_p);
-speed_t cfgetospeed(const struct termios *termios_p);
-int tcgetattr(int fd, struct termios *tio);
-int tcsetattr(int fd, int act, const struct termios *tio);
-
+speed_t cfgetispeed(const struct termios* termios_p);
+speed_t cfgetospeed(const struct termios* termios_p);
+int tcgetattr(int fd, struct termios* tio);
+int tcsetattr(int fd, int act, const struct termios* tio);
 
 #endif
