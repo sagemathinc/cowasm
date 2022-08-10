@@ -8,8 +8,8 @@ CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 # Find the latest version at https://nodejs.org/dist/latest/:
 VERSION = 18.7.0
 
-# Using sed because uname -s --> x86_64 or arm64, but need x64 or arm64
-ARCH = $(shell uname -m | sed s/x86_64/x64/)
+# Using sed because uname -s --> x86_64 or aarch64, but need x64 or arm64
+ARCH = $(shell uname -m | sed s/x86_64/x64/ | sed s/aarch64/arm64/ )
 
 # Using sed, because
 #  uname -s --> Linux and Darwin
