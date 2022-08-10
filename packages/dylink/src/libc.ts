@@ -122,6 +122,9 @@ cfgetispeed
 cfgetospeed
 tcgetattr
 tcsetattr
+gettext
+dgettext
+dcgettext
 `;
 
 // All headers from zig/dist/lib/zig/libc/include/wasm-wasi-musl except signal/thread ones.
@@ -181,6 +184,7 @@ inttypes.h
 iso646.h
 langinfo.h
 libgen.h
+libintl.h
 limits.h
 locale.h
 malloc.h

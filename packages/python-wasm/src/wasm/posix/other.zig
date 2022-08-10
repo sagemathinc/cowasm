@@ -56,3 +56,22 @@ export fn strnvis(dst: [*:0]u8, src: [*:0]const u8, size: usize, flag: c_int) c_
     while (src[i] != 0) : (i += 1) {}
     return @intCast(c_int, i);
 }
+
+//char * gettext (const char * msgid);
+//char * dgettext (const char * domainname, const char * msgid);
+//char * dcgettext (const char * domainname, const char * msgid, int category);
+// "In the "C" locale, or if none of the used catalogs contain a translation for msgid, the gettext, dgettext and dcgettext functions return msgid."
+export fn gettext(msgid: [*:0]const u8) [*:0]const u8 {
+    return msgid;
+}
+
+export fn dgettext(domainname: [*:0]const u8, msgid: [*:0]const u8) [*:0]const u8 {
+    _ = domainname;
+    return msgid;
+}
+
+export fn dcgettext(domainname: [*:0]const u8, msgid: [*:0]const u8, category: c_int) [*:0]const u8 {
+    _ = domainname;
+    _ = category;
+    return msgid;
+}
