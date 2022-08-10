@@ -85,6 +85,5 @@ clean:
 	cd test/python-extension && make clean
 	cd test/malloc && make clean
 	cd test/libc-archive && make clean
-	cd test/libpython-so && make clean
 
 .PHONY: clean
