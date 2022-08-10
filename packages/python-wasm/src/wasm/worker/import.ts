@@ -180,6 +180,7 @@ async function doWasmImport({
     wasi,
     process,
     os: bindings.os ?? {},
+    child_process: bindings.child_process ?? {},
   });
   for (const name in posixEnv) {
     if (wasmOpts.env[name] == null) {

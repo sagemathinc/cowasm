@@ -265,3 +265,6 @@ int pthread_cond_wait(pthread_cond_t *restrict cond,
   return 0;
 }
 PUBLIC(pthread_cond_wait)
+
+int pthread_kill(pthread_t thread, int sig) { return 0; }
+PUBLIC(pthread_kill)

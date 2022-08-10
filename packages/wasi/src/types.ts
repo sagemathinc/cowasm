@@ -17,6 +17,7 @@ export interface WASIBindings {
 
   // os module -- this isn't used directly by this module yet, but is used right now in python-wasm/wasm/worker/import.ts
   os?: any;
+  child_process?: any;
 }
 
 export type WASIArgs = string[];

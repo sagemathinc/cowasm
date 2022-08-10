@@ -182,9 +182,9 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 							   CC="zig-fPIC cc" CXX="zig-fPIC c++" BLDSHARED="${BLDSHARED}"
 	# Install as usual.
 	cd ${BUILD_WASM} && make install
-	# For some reason libmpdec.a isn't in libpython311.a, so we make it easy to link in later by copying it over:
-	# TODO: do the same for "expat/libexpat.a" ?
-	cp ${BUILD_WASM}/Modules/_decimal/libmpdec/libmpdec.a ${DIST_WASM}/lib/
+	# For some reason libmpdec.a isn't in libpython311.a, so we make it easy to link in later by copying
+	# it over.  Similar for libexpat.a
+	cp ${BUILD_WASM}/Modules/_decimal/libmpdec/libmpdec.a ${BUILD_WASM}/Modules/expat/libexpat.a ${DIST_WASM}/lib/
 	touch ${DIST_WASM}/.built-cpython
 
 .PHONY: wasm

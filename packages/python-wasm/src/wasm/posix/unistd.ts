@@ -1,24 +1,25 @@
-export default function unistd({ fs, os, process, recvString }) {
+export default function unistd({ fs, os, process, recvString, wasi }) {
   return {
     chown: (pathPtr: number, uid: number, gid: number): -1 | 0 => {
-      try {
-        const path = recvString(pathPtr);
-        fs.chownSync(path, uid, gid);
-        return 0;
-      } catch (err) {
-        console.warn(err);
-        return -1;
-      }
+      const path = recvString(pathPtr);
+      fs.chownSync(path, uid, gid);
+      return 0;
     },
     lchown: (pathPtr: number, uid: number, gid: number): -1 | 0 => {
-      try {
-        const path = recvString(pathPtr);
-        fs.lchownSync(path, uid, gid);
-        return 0;
-      } catch (err) {
-        console.warn(err);
+      const path = recvString(pathPtr);
+      fs.lchownSync(path, uid, gid);
+      return 0;
+    },
+
+    // int fchown(int fd, uid_t owner, gid_t group);
+    fchown: (fd: number, uid: number, gid: number): number => {
+      const entry = wasi.FD_MAP.get(fd);
+      if (!entry) {
+        console.warn("bad file descriptor, fchown");
         return -1;
       }
+      fs.fchownSync(entry.real, uid, gid);
+      return 0;
     },
 
     getuid: () => process.getuid?.() ?? 0,
@@ -30,12 +31,66 @@ export default function unistd({ fs, os, process, recvString }) {
     nice: (incr: number) => {
       const p = os.getPriority?.();
       if (p != null) {
-        try {
-          os.setPriority?.(p + incr);
-        } catch (err) {
-          console.warn(err);
-          return -1;
-        }
+        os.setPriority?.(p + incr);
+      }
+    },
+    //     int getpriority(int which, id_t who);
+    getpriority: (which: number, who: number): number => {
+      if (os.getPriority == null) {
+        // environ with no info about processes (e.g., browser).
+        return 0;
+      }
+      if (which != 0) {
+        console.warn(
+          "getpriority can only be implemented in node.js for *process id*"
+        );
+        return 0; // minimal info.
+      }
+      return os.getPriority?.(who);
+    },
+
+    //   int setpriority(int which, id_t who, int value);
+    setpriority: (which: number, who: number, value: number): number => {
+      if (os.setPriority == null) {
+        // environ with no info about processes (e.g., browser).
+        return 0;
+      }
+      if (which != 0) {
+        console.warn(
+          "setpriority can only be implemented in node.js for *process id*"
+        );
+        return -1;
+      }
+      return os.setPriority?.(who, value);
+    },
+
+    dup: () => {
+      // Considered in 2022, but closed by node developers: https://github.com/libuv/libuv/issues/3448#issuecomment-1174786218
+      // TODO: maybe revisit via the wasi layer when want to have a deeper understanding of whether this is possible
+      // on top of that abstraction.
+      throw Error(
+        "NotImplemented -- it might not be reasonable to implement file descriptor dup"
+      );
+    },
+
+    dup2: () => {
+      throw Error(
+        "NotImplemented -- it might not be reasonable to implement file descriptor dup2"
+      );
+    },
+
+    dup3: () => {
+      throw Error(
+        "NotImplemented -- it might not be reasonable to implement file descriptor dup3"
+      );
+    },
+
+    sync: () => {
+      // nodejs doesn't expose sync, but it does expose fsync for a file descriptor, so we call it on
+      // all the open file descriptors
+      if (fs.fsyncSync == null) return;
+      for (const [_, { real }] of wasi.FD_MAP) {
+        fs.fsyncSync(real);
       }
     },
   };
