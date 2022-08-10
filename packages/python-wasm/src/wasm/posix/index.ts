@@ -19,6 +19,7 @@ interface Context {
     getpid?: () => number;
     getuid?: () => number;
     pid?: number;
+    cwd?: () => string;
   };
   os: {
     getPriority?: (pid?: number) => number;

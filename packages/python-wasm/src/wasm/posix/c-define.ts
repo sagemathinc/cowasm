@@ -15,7 +15,7 @@ export function initDefine(cDefineZig: (name: Constant) => number) {
   }
 }
 
-export function cDefine(name: Constant): number {
+export default function cDefine(name: Constant): number {
   const n = TABLE[name];
   if (n == null) {
     throw Error(

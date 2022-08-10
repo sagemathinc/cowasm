@@ -123,6 +123,8 @@ async function doWasmImport({
     };
   }
   if (wasmOpts.env.wasmSendString == null) {
+    // This sends a string from WebAssembly back to Typescript and places
+    // it in the result variable.
     wasmOpts.env.wasmSendString = (ptr: number, len: number) => {
       wasm.result = recvString(ptr, len);
     };

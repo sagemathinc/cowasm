@@ -1,4 +1,42 @@
+import { isAbsolute, join } from "path";
+import cDefine, { Constant } from "./c-define";
+
+function Errno(error: Constant) {
+  // TODO! need to set it at the C level, etc.
+  const errno = cDefine(error);
+  return Error(`Error ${error}  (errno=${errno}).`);
+}
+
 export default function stats({ fs, process, recvString, wasi }) {
+  function calculateAt(
+    dirfd: number,
+    path: string,
+    allowEmpty: boolean = false
+  ) {
+    if (isAbsolute("path")) {
+      return path;
+    }
+
+    let dir: string;
+    if (dirfd == cDefine("AT_FDCWD")) {
+      dir = process.cwd?.() ?? "/";
+    } else {
+      // it is a file descriptor
+      const entry = wasi.FD_MAP.get(dirfd);
+      if (!entry) {
+        throw Errno("EBADF");
+      }
+      dir = entry.path;
+    }
+    if (path.length == 0) {
+      if (!allowEmpty) {
+        throw Errno("ENOENT");
+      }
+      return dir;
+    }
+    return join(dir, path);
+  }
+
   return {
     chmod: (pathPtr: number, mode: number): -1 | 0 => {
       const path = recvString(pathPtr);
@@ -49,29 +87,4 @@ export default function stats({ fs, process, recvString, wasi }) {
       return process.umask?.(mask) ?? 18;
     },
   };
-}
-
-function calculateAt(_dirfd: number, path: string) {
-  return path;
-  /*
-      if (PATH.isAbs(path)) {
-        return path;
-      }
-      // relative path
-      var dir;
-      if (dirfd === {{{ cDefine('AT_FDCWD') }}}) {
-        dir = FS.cwd();
-      } else {
-        var dirstream = FS.getStream(dirfd);
-        if (!dirstream) throw new FS.ErrnoError({{{ cDefine('EBADF') }}});
-        dir = dirstream.path;
-      }
-      if (path.length == 0) {
-        if (!allowEmpty) {
-          throw new FS.ErrnoError({{{ cDefine('ENOENT') }}});;
-        }
-        return dir;
-      }
-      return PATH.join2(dir, path);
-      */
 }
