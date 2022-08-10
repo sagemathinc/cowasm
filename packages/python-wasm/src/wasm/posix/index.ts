@@ -1,3 +1,10 @@
+/*
+
+
+NOTES:
+  - emscripten/src/library_syscall.js is useful inspiration in some cases!
+*/
+
 import signal from "./signal";
 import stdlib from "./stdlib";
 import stat from "./stat";
