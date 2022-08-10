@@ -5,6 +5,13 @@ import * as cDefine from "../posix/c-define";
 
 const encoder = new TextEncoder();
 
+// Massive optimization -- when calling a WASM function via
+// callWithString (so first arg is a string), we reuse the
+// same string buffer every time as long as the string is
+// at most 8KB.  This avoids tons of mallocs, saves memory,
+// and gives an order of magnitude speedup.
+const SMALL_STRING_SIZE = 1024 * 8;
+
 export default class WasmInstance extends EventEmitter {
   result: any = undefined;
   resultException: boolean = false;
@@ -12,6 +19,7 @@ export default class WasmInstance extends EventEmitter {
   memory: WebAssembly.Memory;
   fs?: FileSystem;
   cDefine: (name: cDefine.Constant) => number;
+  smallStringPtr?: number;
 
   constructor(exports, memory: WebAssembly.Memory, fs?: FileSystem) {
     super();
@@ -31,10 +39,14 @@ export default class WasmInstance extends EventEmitter {
   }
 
   private stringToCharStar(str: string): number {
-    // Caller MUST free the returned char* from stringToU8 using this.exports.c_free, e.g., as done in callWithString here.
+    // Caller MUST free the returned char* from stringToU8
+    // using this.exports.c_free, e.g., as done in callWithString here.
     const strAsArray = encoder.encode(str);
     const len = strAsArray.length + 1;
-    const ptr = this.exports.c_malloc(len); // TODO: what happens when this allocation fails?
+    const ptr = this.exports.c_malloc(len);
+    if (ptr == 0) {
+      throw Error("MemoryError -- out of memory");
+    }
     const array = new Int8Array(this.memory.buffer, ptr, len);
     array.set(strAsArray);
     array[len - 1] = 0;
@@ -50,6 +62,10 @@ export default class WasmInstance extends EventEmitter {
     }
     let r;
     if (typeof str == "string") {
+      if (str.length < SMALL_STRING_SIZE) {
+        r = this.callWithSmallString(f, str);
+        return this.result ?? r;
+      }
       const ptr = this.stringToCharStar(str);
       try {
         // @ts-ignore
@@ -88,5 +104,21 @@ export default class WasmInstance extends EventEmitter {
       throw Error("RuntimeError");
     }
     return this.result ?? r;
+  }
+
+  private callWithSmallString(f: Function, str: string, ...args): any {
+    if (this.smallStringPtr == null) {
+      this.smallStringPtr = this.exports.c_malloc(SMALL_STRING_SIZE);
+    }
+    const ptr = this.smallStringPtr;
+    if (!ptr) {
+      throw Error("MemoryError -- out of memory");
+    }
+    const len = str.length + 1;
+    const array = new Int8Array(this.memory.buffer, ptr, len);
+    const strAsArray = encoder.encode(str);
+    array.set(strAsArray);
+    array[len - 1] = 0;
+    return f(ptr, ...args);
   }
 }
