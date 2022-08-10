@@ -3,6 +3,9 @@ bin/python-wasm
 bin/python-wasm-debug
 bin/zig-fPIC
 bin/zig
+bin/node
+bin/npm
+bin/npx
 **/dist
 **/build
 **/node_modules

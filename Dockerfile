@@ -14,11 +14,6 @@ USER root
 RUN apt-get update \
   && apt-get install -y git make curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool tcl vim zip
 
-# Required nodejs dependency
-RUN  curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-  && apt-get install -y nodejs \
-  && npm install -g npm@latest
-
 # Get source code of python-wasm and build everything:
 ARG commit=HEAD
 

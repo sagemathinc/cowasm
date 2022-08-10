@@ -6,108 +6,99 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 all: python-wasm webpack terminal website
 
-packages/python-wasm/${BUILT}: cpython wasi zig posix-wasm dylink
-	cd packages/python-wasm && make all
-.PHONY: python-wasm
-python-wasm: packages/python-wasm/${BUILT}
-
-.PHONY: zig
-zig:
-	cd packages/zig && make
-
-packages/posix-wasm/${BUILT}: zig
-	cd packages/posix-wasm && make all
-.PHONY: posix-wasm
-posix-wasm: packages/posix-wasm/${BUILT}
-
-packages/openssl/${BUILT}: zig
-	cd packages/openssl && make all
-.PHONY: openssl
-openssl: packages/openssl/${BUILT}
-
-
-
-packages/dylink/${BUILT}: zig posix-wasm cpython lzma
-	cd packages/dylink && make all
-.PHONY: dylink
-dylink: packages/dylink/${BUILT}
-
-
-packages/lzma/${BUILT}: zig posix-wasm
-	cd packages/lzma && make all
-.PHONY: lzma
-lzma: packages/lzma/${BUILT}
-
-
-packages/zlib/${BUILT}: zig
-	cd packages/zlib && make all
-.PHONY: zlib
-zlib: packages/zlib/${BUILT}
-
-
-packages/termcap/${BUILT}: zig
-	cd packages/termcap && make all
-.PHONY: termcap
-termcap: packages/termcap/${BUILT}
-
-
-packages/libedit/${BUILT}: zig termcap
-	cd packages/libedit && make all
-.PHONY: libedit
-libedit: packages/libedit/${BUILT}
-
-
+cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi sqlite
 	cd packages/cpython && make all
 .PHONY: cpython
-cpython: packages/cpython/${BUILT}
 
+docker:
+	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/python-wasm master | awk '{print $$1}'` -t python-wasm .
+.PHONY: docker
 
-packages/wasi/${BUILT}:
-	cd packages/wasi && make all
-.PHONY: wasi
-wasi: packages/wasi/${BUILT}
+docker-nocache:
+	docker build --no-cache -t python-wasm .
+.PHONY: docker-nocache
 
+dylink: packages/dylink/${BUILT}
+packages/dylink/${BUILT}: node zig posix-wasm cpython lzma
+	cd packages/dylink && make all
+.PHONY: dylink
 
-packages/webpack/${BUILT}: python-wasm
-	cd packages/webpack && make all
-.PHONY: webpack
-webpack: packages/webpack/${BUILT}
+libedit: packages/libedit/${BUILT}
+packages/libedit/${BUILT}: zig termcap
+	cd packages/libedit && make all
+.PHONY: libedit
 
-
-packages/terminal/${BUILT}: python-wasm
-	cd packages/terminal && make all
-.PHONY: terminal
-terminal: packages/terminal/${BUILT}
-
+lzma: packages/lzma/${BUILT}
+packages/lzma/${BUILT}: zig posix-wasm
+	cd packages/lzma && make all
+.PHONY: lzma
 
 # this builds and you can make ncurses a dep for cpython and change src/Setup.local to get
-# the _ncurses module to build. But there are still issues to solve (probably straightforward, but tedious)
-# as mentioned in the cpython/src/Setup.local.
+# the _ncurses module to build. But there are still issues to solve (probably
+# straightforward, but tedious) as mentioned in the cpython/src/Setup.local.
+ncurses: packages/ncurses/${BUILT}
 packages/ncurses/${BUILT}: termcap posix-wasm zig
 	cd packages/ncurses && make all
 .PHONY: ncurses
-ncurses: packages/ncurses/${BUILT}
 
+node:
+	cd packages/node && make
+.PHONY: node
+
+openssl: packages/openssl/${BUILT}
+packages/openssl/${BUILT}: zig
+	cd packages/openssl && make all
+.PHONY: openssl
+
+posix-wasm: packages/posix-wasm/${BUILT}
+packages/posix-wasm/${BUILT}: zig
+	cd packages/posix-wasm && make all
+.PHONY: posix-wasm
+
+python-wasm: packages/python-wasm/${BUILT}
+packages/python-wasm/${BUILT}: node cpython wasi zig posix-wasm dylink
+	cd packages/python-wasm && make all
+.PHONY: python-wasm
 
 packages/sqlite/${BUILT}: libedit posix-wasm zig zlib
 	cd packages/sqlite && make all
 .PHONY: sqlite
 sqlite: packages/sqlite/${BUILT}
 
+termcap: packages/termcap/${BUILT}
+packages/termcap/${BUILT}: zig
+	cd packages/termcap && make all
+.PHONY: termcap
 
-packages/website/${BUILT}: python-wasm
+terminal: packages/terminal/${BUILT}
+packages/terminal/${BUILT}: node python-wasm
+	cd packages/terminal && make all
+.PHONY: terminal
+
+wasi: packages/wasi/${BUILT}
+packages/wasi/${BUILT}: node
+	cd packages/wasi && make all
+.PHONY: wasi
+
+webpack: packages/webpack/${BUILT}
+packages/webpack/${BUILT}: node python-wasm
+	cd packages/webpack && make all
+.PHONY: webpack
+
+website: packages/website/${BUILT}
+packages/website/${BUILT}: node python-wasm
 	cd packages/website && make all
 .PHONY: website
-website: packages/website/${BUILT}
 
-.PHONY: docker
-docker:
-	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/python-wasm master | awk '{print $$1}'` -t python-wasm .
+zig:
+	cd packages/zig && make
+.PHONY: zig
 
-.PHONY: docker-nocache
-docker-nocache:
-	docker build --no-cache -t python-wasm .
+zlib: packages/zlib/${BUILT}
+packages/zlib/${BUILT}: zig
+	cd packages/zlib && make all
+.PHONY: zlib
 
 clean:
 	cd packages/bench && make clean
@@ -116,6 +107,7 @@ clean:
 	cd packages/libedit && make clean
 	cd packages/lzma && make clean
 	cd packages/ncurses && make clean
+	cd packages/node && make clean
 	cd packages/openssl && make clean
 	cd packages/posix-wasm && make clean
 	cd packages/python-wasm && make clean

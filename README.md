@@ -64,15 +64,15 @@ You can also use python\-wasm in your [web application via webpack](https://gith
 
 ### Prerequisites
 
-To build everything from source, make sure your systemwide nodejs is at least version 16.x and that you have standard command line dev tools.  Then build, which [takes 15\-20 minutes](https://github.com/sagemathinc/wapython/actions), and around 1GB of disk space:
+To build everything from source, make sure that you have standard command line dev tools installed.  Then build, which [takes 15\-20 minutes](https://github.com/sagemathinc/wapython/actions), and around 1GB of disk space:
 
 ```sh
 wstein@max % make
 ```
 
-This builds native CPython, installs zig, then builds a WebAssembly version of CPython, and also builds all the Typescript code.  Building from source is supported on four platforms:
+This installs a specific version of Zig and Nodejs, then builds native and WebAssembly versions of CPython and many dependencies, and also builds all the Typescript code.  Building from source is _**tested on Linux and MacOS with both x86\_64 and ARM \(M1\) processors**_:
 
-- Linux: tested on both x86\_64 and aarch64 Ubuntu with standard dev tools installed; see [Dockerfile](./Dockerfile)
+- Linux: tested on both x86\_64 and aarch64 Ubuntu with standard dev tools installed; see [Dockerfile](./Dockerfile) where we install `apt-get install -y git make curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool tcl vim zip` 
 - MacOS: tested on both x86\_64 and M1 mac with standard XCode command live dev tools installed.
 
 If you're using Windows, you'll have to use Linux via a virtual machine \(or maybe WSL\) to build python\-wasm from source.
@@ -100,24 +100,26 @@ Type "help", "copyright", "credits" or "license" for more information.
 Next use python\-wasm as a library in node.js:
 
 ```sh
+wstein@max % . bin/env.sh
 wstein@max % cd packages/python-wasm
 # Now actually use the module:
 wstein@max % node
-Welcome to Node.js v16.13.0.
-Type ".help" for more information.
+Welcome to Node.js v18.7.0.
 > python = require('.')
-await python.init();
-> await python.repr('2+2')
-4
+> await python.init();
+> await python.repr('31**37')
+'15148954872646847105498509334067131813327318808179940511'
 > await python.exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
-49999995000000 1.3460001945495605
+49999995000000 0.8420002460479736
 ```
 
-## What's the goal?  What about Pyodide?
+## What's the goal? 
 
-Our **primary goal** is to create a WebAssembly build of Python and related packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\).  This will be relatively easy to _build from source_ on both Linux and MacOS.  The build system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation. 
+Our **primary goal** is to create a WebAssembly build of Python and related packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\).  It should also be relatively easy to _build from source_ on both Linux and MacOS.  The build system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation.
 
-Our main application is to make [CoCalc](https://cocalc.com) more efficient.  As such, we will also want to port all of the [SageMath packages](https://www.sagemath.org/), which goes far beyond just the scientific Python stack that's ported in Pyodide.  I'm the original founder of SageMath, hence the motivation.  This will be part of a new GPL'd project that will have this BSD\-licensed project `python-wasm` at its core; some relevant work has been done [here](https://github.com/sagemathinc/jsage).
+## How does this compare to Pyodide?
+
+Our main application is to make [CoCalc](https://cocalc.com) more efficient.  As such, we will also want to port a substantial part of the [SageMath packages](https://www.sagemath.org/), which is a sort of pure math analogue of the scientific Python stack that's in Pyodide.  I'm the original founder of SageMath, hence this motivation.  This will be part of a new GPL'd project that will have this BSD\-licensed project `python-wasm` at its core; some relevant work has been done [here](https://github.com/sagemathinc/jsage).
 
 Some of our code will be written in the [Zig](https://ziglang.org/) language.  However, we are mostly targeting just the parts that are used for Python, which is a small subset of the general problem.  Our software license \-\- _**BSD 3\-clause**_ \-\- is compatible with their's and we hope to at least learn from their solutions to problems.
 
@@ -164,7 +166,7 @@ $ ./a.out   # this actually runs nodejs + python-wasm
 hello from Web Assembly: 4
 ```
 
-This isn't currently used here for building wapytho, but it's an extremely powerful tool.  \(For example, I used it with JSage to get the first build of the NTL library for Web Assembly...\)
+This isn't currently used here for building python-wasm, but it's an extremely powerful tool.  \(For example, I used it with JSage to cross compile the NTL library to Web Assembly...\)
 
 ### Run a script via python\-wasm from the CLI
 
