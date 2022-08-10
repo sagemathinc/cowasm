@@ -23,7 +23,10 @@ ${BUILD}/wasm/libposix.a: src/posix-wasm.h src/posix-wasm.c src/threads.h src/th
 	cd ${BUILD}/wasm/ && \
 		zig cc -Oz -w -target wasm32-wasi ${SRC}/posix-wasm.c -c -o posix.o && \
 		zig cc -Oz -w -target wasm32-wasi ${SRC}/threads.c -c -o threads.o && \
-		zig ar -crs libposix.a posix.o threads.o
+		zig cc -Oz -target wasm32-wasi ${SRC}/lib/builtins/muldc3.c -c -o muldc3.o && \
+		zig cc -Oz -target wasm32-wasi ${SRC}/lib/builtins/mulsc3.c -c -o mulsc3.o && \
+		zig cc -Oz -target wasm32-wasi ${SRC}/lib/builtins/multc3.c -c -o multc3.o && \
+		zig ar -crs libposix.a posix.o threads.o muldc3.o  mulsc3.o  multc3.o
 	mkdir -p ${DIST}/wasm
 	cp ${SRC}/posix-wasm.h ${SRC}/emscripten.h ${BUILD}/wasm/libposix.a ${DIST}/wasm/
 
