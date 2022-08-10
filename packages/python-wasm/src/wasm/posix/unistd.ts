@@ -93,5 +93,40 @@ export default function unistd({ fs, os, process, recvString, wasi }) {
         fs.fsyncSync(real);
       }
     },
+
+    // In nodejs these set*id function can't be done in a worker thread:
+    // https://nodejs.org/api/process.html#processsetgidid
+    // TODO: maybe we should implement these by sending a message to
+    // the main thread requesting to do them?
+    setuid: () => {
+      throw Error("setuid is not supported");
+    },
+    seteuid: () => {
+      throw Error("seteuid is not supported");
+    },
+    setgid: () => {
+      throw Error("setgid is not supported");
+    },
+    setsid: () => {
+      throw Error("setsid is not supported");
+    },
+    getsid: () => {
+      throw Error("getsid is not supported");
+    },
+    setpgid: () => {
+      throw Error("setpgid is not supported");
+    },
+    setegid: () => {
+      throw Error("setegid is not supported");
+    },
+    setreuid: () => {
+      throw Error("setreuid is not supported");
+    },
+    setregid: () => {
+      throw Error("setregid is not supported");
+    },
+    setgroups: () => {
+      throw Error("setgroups is not supported");
+    },
   };
 }

@@ -1,4 +1,4 @@
-export default function stats({ fs, recvString, wasi }) {
+export default function stats({ fs, process, recvString, wasi }) {
   return {
     chmod: (pathPtr: number, mode: number): -1 | 0 => {
       const path = recvString(pathPtr);
@@ -20,6 +20,12 @@ export default function stats({ fs, recvString, wasi }) {
       const path = recvString(pathPtr);
       fs.lchmodSync(path, mode);
       return 0;
+    },
+
+    // mode_t umask(mode_t mask);
+    umask: (mask: number) => {
+      // we return 18 when there's no process.umask function, since that's like umask 022, i.e., it's a reasonable default.
+      return process.umask?.(mask) ?? 18;
     },
   };
 }

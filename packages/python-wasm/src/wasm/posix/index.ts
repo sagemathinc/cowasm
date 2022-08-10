@@ -37,7 +37,7 @@ export default function posix(context: Context) {
       } catch (err) {
         // On error, for now -1 is returned, and errno should get set to some sort of error indicator
         // TODO: how should we set errno?
-        console.warn(err);
+        console.log(err);
         return -1;
       }
     };
