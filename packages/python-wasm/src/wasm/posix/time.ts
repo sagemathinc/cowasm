@@ -27,7 +27,7 @@ export default function time({ child_process, memory, os }) {
         case "linux":
           // date --date='@2147483647' # <-- number of seconds
           cmd = "date";
-          args = ["-f", `--date='@${tv_sec}'`];
+          args = [`--set=@${tv_sec}`];
           break;
         case "win32":
           const dateTime = new Date(1000 * tv_sec);
