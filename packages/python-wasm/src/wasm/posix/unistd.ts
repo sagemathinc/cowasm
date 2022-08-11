@@ -28,11 +28,20 @@ export default function unistd({ fs, os, process, recvString, wasi, posix }) {
     getegid: () => process.getegid?.() ?? 0,
     getpid: () => process.pid ?? 1,
 
-    getpgid: (pid: number) => {
+    getpgid: (pid: number): number => {
       if (posix.getpgid == null) {
-        return 1;
+        throw Error("getpgid is not supported on this platform");
       }
       return posix.getpgid(pid);
+    },
+
+    // int setpgid(pid_t pid, pid_t pgid);
+    setpgid: (pid: number, pgid: number): number => {
+      if (posix.setpgid == null) {
+        throw Error("setpgid is not supported on this platform");
+      }
+      posix.setpgid(pid, pgid);
+      return 0; // success
     },
 
     nice: (incr: number) => {
@@ -119,9 +128,6 @@ export default function unistd({ fs, os, process, recvString, wasi, posix }) {
     },
     getsid: () => {
       throw Error("getsid is not supported");
-    },
-    setpgid: () => {
-      throw Error("setpgid is not supported");
     },
     setegid: () => {
       throw Error("setegid is not supported");
