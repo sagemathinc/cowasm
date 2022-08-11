@@ -72,9 +72,16 @@ export default async function wasmImportNode(
     return new WebAssembly.Instance(mod, opts);
   }
 
+  let posix;
+  try {
+    posix = require("posix");
+  } catch (_err) {
+    posix = {};
+  }
+
   return await wasmImport({
     source: name,
-    bindings: { ...bindings, fs, os, child_process },
+    bindings: { ...bindings, fs, os, child_process, posix },
     options,
     log: log ?? debug("wasm-node"),
     importWebAssembly,

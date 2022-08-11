@@ -33,6 +33,11 @@ interface Context {
   };
   // The WASM memory (so we can make sense of pointers efficiently).
   memory: WebAssembly.Memory;
+  // Optional module that gets installed on Mac/Linux, but obviously not windows
+  // for which posix doesn't make sense.
+  posix: {
+    getpgid?: () => number;
+  };
 }
 
 export default function posix(context: Context) {

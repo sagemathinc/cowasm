@@ -1,4 +1,4 @@
-export default function unistd({ fs, os, process, recvString, wasi }) {
+export default function unistd({ fs, os, process, recvString, wasi, posix }) {
   return {
     chown: (pathPtr: number, uid: number, gid: number): -1 | 0 => {
       const path = recvString(pathPtr);
@@ -27,6 +27,13 @@ export default function unistd({ fs, os, process, recvString, wasi }) {
     geteuid: () => process.geteuid?.() ?? 0,
     getegid: () => process.getegid?.() ?? 0,
     getpid: () => process.pid ?? 1,
+
+    getpgid: (pid: number) => {
+      if (posix.getpgid == null) {
+        return 1;
+      }
+      return posix.getpgid(pid);
+    },
 
     nice: (incr: number) => {
       const p = os.getPriority?.();

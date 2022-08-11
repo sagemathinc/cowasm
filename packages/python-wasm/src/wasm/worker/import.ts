@@ -182,6 +182,7 @@ async function doWasmImport({
     wasi,
     process,
     os: bindings.os ?? {},
+    posix: bindings.posix ?? {},
     child_process: bindings.child_process ?? {},
     memory,
   });
