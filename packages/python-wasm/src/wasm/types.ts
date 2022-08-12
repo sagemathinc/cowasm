@@ -7,6 +7,7 @@ export class WasmInstance extends EventEmitter {
   fs?: WASIFileSystem;
   table?: WebAssembly.Table;
   wasi?: WASI;
+  posixEnv?: { [name: string]: Function };
 
   async callWithString(_name: string, _str: string, ..._args): Promise<any> {
     throw Error("not implemented");

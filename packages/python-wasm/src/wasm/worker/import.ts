@@ -233,10 +233,9 @@ async function doWasmImport({
   if (options.time) {
     log?.(`imported ${source} in ${new Date().valueOf() - t}ms`);
   }
-  // TODO
-  (wasm as any).table = table;
-  (wasm as any).wasi = wasi;
-  (wasm as any).posixEnv = posixEnv;
+  wasm.table = table;
+  wasm.wasi = wasi;
+  wasm.posixEnv = posixEnv;
 
   return wasm;
 }

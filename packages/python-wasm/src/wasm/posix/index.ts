@@ -6,6 +6,7 @@ NOTES:
 */
 
 import signal from "./signal";
+import spawn from "./spawn";
 import stdlib from "./stdlib";
 import stat from "./stat";
 import time from "./time";
@@ -53,6 +54,7 @@ export default function posix(context: Context) {
     ...unistd(context),
     ...time(context),
     ...wait(context),
+    ...spawn(context),
   };
   const Q: any = {};
   for (const name in P) {

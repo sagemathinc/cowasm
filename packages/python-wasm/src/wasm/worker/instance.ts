@@ -1,5 +1,5 @@
 // @ts-ignore -- it thinks FileSystem isn't used, even though it is below.  Weird.
-import type { FileSystem, WASI } from "@wapython/wasi";
+import type { WASMFileSystem, WASI } from "@wapython/wasi";
 import { EventEmitter } from "events";
 import { initDefine } from "../posix/c-define";
 
@@ -18,11 +18,20 @@ export default class WasmInstance extends EventEmitter {
   exports: any;
   memory: WebAssembly.Memory;
   smallStringPtr?: number;
-  
-  // these are sometimes available and useful, e.g., in testing
-  fs?: FileSystem;
+
+  // these are sometimes available and useful, e.g., in testing:
+  // fs = the virtual filesystem for wasm instance
+  fs?: WASMFileSystem;
+  // the webassembly function table for the main module; the dynamic
+  // linker exposes clib functions via basically what you'll see
+  // if you look at getFunction below, which makes things vastly faster.
   table?: WebAssembly.Table;
+  // the WASI object from the @wapython/wasi library, which manages things
+  // like the filesystem abstraction and other system calls.
   wasi?: WASI;
+  // a collection of posix functions missing from WASI that are best
+  // implemented in Javascript (to get access to the environment).
+  posixEnv?: { [name: string]: Function };
 
   constructor(
     exports,
