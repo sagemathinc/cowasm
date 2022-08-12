@@ -1,4 +1,14 @@
-export default function unistd({ fs, os, process, recvString, wasi, posix }) {
+export default function unistd({
+  fs,
+  os,
+  process,
+  recvString,
+  sendString,
+  wasi,
+  posix,
+}) {
+  let login: number | undefined = undefined;
+
   return {
     chown: (pathPtr: number, uid: number, gid: number): -1 | 0 => {
       const path = recvString(pathPtr);
@@ -113,33 +123,82 @@ export default function unistd({ fs, os, process, recvString, wasi, posix }) {
     // In nodejs these set*id function can't be done in a worker thread:
     // https://nodejs.org/api/process.html#processsetgidid
     // TODO: maybe we should implement these by sending a message to
-    // the main thread requesting to do them?
+    // the main thread requesting to do them?  For now, you'll get
+    // an error unless you run in a mode without a worker thread.
     setuid: () => {
       throw Error("setuid is not supported");
     },
-    seteuid: () => {
-      throw Error("seteuid is not supported");
+    seteuid: (uid: number) => {
+      if (posix.seteuid == null) {
+        throw Error("seteuid is not supported on this platform");
+      }
+      posix.seteuid(uid);
+      return 0;
     },
-    setgid: () => {
-      throw Error("setgid is not supported");
+    setegid: (gid: number) => {
+      if (posix.setegid == null) {
+        throw Error("setegid is not supported on this platform");
+      }
+      posix.setegid(gid);
+      return 0;
     },
-    setsid: () => {
-      throw Error("setsid is not supported");
+    setgid: (gid: number) => {
+      if (process.setgid == null) {
+        throw Error("setgid is not supported");
+      }
+      process.setgid(gid);
+      return 0;
+    },
+    setsid: (sid) => {
+      if (posix.setsid == null) {
+        throw Error("setsid is not supported on this platform");
+      }
+      return posix.setsid(sid);
     },
     getsid: () => {
       throw Error("getsid is not supported");
     },
-    setegid: () => {
-      throw Error("setegid is not supported");
+    setreuid: (uid) => {
+      if (posix.setreuid == null) {
+        throw Error("setreuid is not supported on this platform");
+      }
+      posix.setreuid(uid);
+      return 0;
     },
-    setreuid: () => {
-      throw Error("setreuid is not supported");
-    },
-    setregid: () => {
-      throw Error("setregid is not supported");
+    setregid: (gid) => {
+      if (posix.setregid == null) {
+        throw Error("setregid is not supported on this platform");
+      }
+      posix.setregid(gid);
+      return 0;
     },
     setgroups: () => {
       throw Error("setgroups is not supported");
+    },
+    setpgrp: () => {
+      throw Error("setpgrp is not supported");
+    },
+    tcgetpgrp: () => {
+      throw Error("tcgetpgrp is not supported");
+    },
+    tcsetpgrp: () => {
+      throw Error("tcsetpgrp is not supported");
+    },
+    fork: () => {
+      throw Error("fork is not supported");
+    },
+    fork1: () => {
+      throw Error("fork1 is not supported");
+    },
+
+    getlogin: (): number => {
+      if (login != null) return login;
+      // returns the username of the signed in user; if not available, e.g.,
+      // in a browser, returns "user".
+      const username = os.userInfo?.()?.username ?? "user";
+      login = sendString(username);
+      if (login == null) throw Error("bug");
+      return login;
     },
   };
 }

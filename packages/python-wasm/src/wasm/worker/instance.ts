@@ -119,4 +119,5 @@ export default class WasmInstance extends EventEmitter {
     array[len - 1] = 0;
     return f(ptr, ...args);
   }
+  
 }

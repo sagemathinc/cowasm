@@ -176,9 +176,17 @@ async function doWasmImport({
   const wasi = new WASI(opts);
   wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
 
+  // WARNING: this returns a pointer to memory that
+  // was malloced.  Depending on your use, you might
+  // want to free it.
+  function sendString(s: string): number {
+    return wasm.stringToCharStar(s);
+  }
+
   const posixEnv = posix({
     fs,
     recvString,
+    sendString,
     wasi,
     process,
     os: bindings.os ?? {},

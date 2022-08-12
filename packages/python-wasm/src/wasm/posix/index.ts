@@ -10,11 +10,13 @@ import stdlib from "./stdlib";
 import stat from "./stat";
 import time from "./time";
 import unistd from "./unistd";
+import wait from "./wait";
 import WASI from "@wapython/wasi";
 
 interface Context {
   fs: FileSystem;
   recvString: (ptr: number) => string;
+  sendString: (s: string) => number; // returns a malloc'd pointer!
   wasi: WASI;
   process: {
     getpid?: () => number;
@@ -47,6 +49,7 @@ export default function posix(context: Context) {
     ...stdlib(context),
     ...unistd(context),
     ...time(context),
+    ...wait(context),
   };
   const Q: any = {};
   for (const name in P) {
