@@ -27,7 +27,10 @@ ${BUILD}/native: ${BUILD}/zlib-${ZLIB_VERSION}.tar.xz
 	cd ${BUILD} && mkdir native && tar xf zlib-${ZLIB_VERSION}.tar.xz -C native --strip-components=1
 
 ${DIST_NATIVE}/.built: ${BUILD}/native
-	cd ${BUILD}/native && AR="zig ar" CC="zig cc" CXX="zig c++" ./configure --prefix=${DIST_NATIVE}
+	cd ${BUILD}/native && \
+		AR="zig ar" \
+		CC="zig cc" \
+		./configure --prefix=${DIST_NATIVE}
 	cd ${BUILD}/native && make install -j8
 	touch ${DIST_NATIVE}/.built
 
@@ -43,9 +46,18 @@ ${BUILD}/wasm: ${BUILD}/zlib-${ZLIB_VERSION}.tar.xz
 	cd ${BUILD} && mkdir wasm && tar xf zlib-${ZLIB_VERSION}.tar.xz -C wasm --strip-components=1
 
 ${DIST_WASM}/.built: ${BUILD}/wasm
-	cd ${BUILD}/wasm && CHOST=none AR="zig ar" CC="zig cc -target wasm32-wasi-musl" CXX="zig c++ -target wasm32-wasi-musl" ./configure --prefix=${DIST_WASM}
-	cd ${BUILD}/wasm && make install -j8
-	zig ranlib ${DIST_WASM}/lib/libz.a  # needed on linux
+	cd ${BUILD}/wasm && \
+		CHOST=none \
+		AR="zig ar" \
+		CC="zig cc -target wasm32-wasi" \
+		./configure --static --prefix=${DIST_WASM}
+	cd ${BUILD}/wasm && make -j8 install
+	# Strangely the libz.a that gets built is mangled, e.g., "nm -a libz.a" says "LLVM ERROR: malformed uleb128, extends past end"
+	# so we just rebuild the archive from scratch from all of the .o files.
+	cd ${BUILD}/wasm && \
+		rm libz.a && \
+		zig ar rc libz.a *.o && \
+		cp libz.a ${DIST_WASM}/lib
 	touch ${DIST_WASM}/.built
 
 .PHONY: wasm
