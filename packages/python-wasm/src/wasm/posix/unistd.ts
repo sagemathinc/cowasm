@@ -9,7 +9,7 @@ export default function unistd({
 }) {
   let login: number | undefined = undefined;
 
-  return {
+  const unistd = {
     chown: (pathPtr: number, uid: number, gid: number): -1 | 0 => {
       const path = recvString(pathPtr);
       fs.chownSync(path, uid, gid);
@@ -172,6 +172,13 @@ export default function unistd({
       posix.setregid(gid);
       return 0;
     },
+    getppid: () => {
+      if (posix.getppid == null) {
+        // in browser right now there is only one process id:
+        return unistd.getpid();
+      }
+      return posix.getppid();
+    },
     setgroups: () => {
       throw Error("setgroups is not supported");
     },
@@ -190,7 +197,9 @@ export default function unistd({
     fork1: () => {
       throw Error("fork1 is not supported");
     },
-
+    forkpty: () => {
+      throw Error("forkpty is not supported");
+    },
     getlogin: (): number => {
       if (login != null) return login;
       // returns the username of the signed in user; if not available, e.g.,
@@ -201,4 +210,6 @@ export default function unistd({
       return login;
     },
   };
+
+  return unistd;
 }

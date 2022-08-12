@@ -1,8 +1,6 @@
 /* MIT licensed.  See README.md for copyright and history information. */
 
 import debug from "debug";
-// you also have to pass traceSyscalls as an option to enable this,
-// since it replaces all the functions with less efficient log ones.
 const log = debug("wasi");
 
 import type {
@@ -1571,8 +1569,11 @@ export default class WASI {
         return WASI_ENOSYS;
       },
     };
-    // Wrap each of the imports to show the calls in the console
-    if ((wasiConfig as WASIConfig).traceSyscalls) {
+
+    if (log.enabled) {
+      // Wrap each of the imports to show the calls via the debug logger.
+      // We ONLY do this if the logger is enabled, since it might
+      // be expensive.
       Object.keys(this.wasiImport).forEach((key: string) => {
         const prevImport = this.wasiImport[key];
         this.wasiImport[key] = function (...args: any[]) {

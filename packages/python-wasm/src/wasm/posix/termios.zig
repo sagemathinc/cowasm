@@ -2,6 +2,25 @@ pub fn keepalive() void {}
 const termios = @cImport(@cInclude("termios.h"));
 const std = @import("std");
 const expect = std.testing.expect;
+const errno = @cImport(@cInclude("errno.h"));
+
+//int cfsetispeed(struct termios *termios_p, speed_t speed);
+//int cfsetospeed(struct termios *termios_p, speed_t speed);
+
+// ported from zig/lib/libc/wasi/libc-top-half/musl/src/termios/cfsetospeed.c
+pub export fn cfsetospeed(tio: *termios.termios, speed: termios.speed_t) c_int {
+    if ((speed & @bitCast(c_ulong, ~termios.CBAUD)) != 0) {
+        errno.errno = errno.EINVAL;
+        return -1;
+    }
+    tio.c_cflag &= @bitCast(c_ulong, ~termios.CBAUD);
+    tio.c_cflag |= speed;
+    return 0;
+}
+
+pub export fn cfsetispeed(tio: *termios.termios, speed: termios.speed_t) c_int {
+    return if (speed != 0) cfsetospeed(tio, speed) else 0;
+}
 
 export fn cfgetispeed(tio: *const termios.termios) termios.speed_t {
     return tio.c_cflag & termios.CBAUD;

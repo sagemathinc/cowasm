@@ -1,11 +1,9 @@
 import debug from "debug";
 const log = debug("stub");
+const logUse = debug("stub:use"); // log all use of the stub
+const logFirst = debug("stub:first"); // log first use of the stub
 
-export default function stubProxy(
-  env,
-  functionViaPointer: (ptr) => Function,
-  traceStub: boolean | "first" = false
-) {
+export default function stubProxy(env, functionViaPointer: (ptr) => Function) {
   return new Proxy(env, {
     get(target, key) {
       if (key in target) {
@@ -16,12 +14,10 @@ export default function stubProxy(
         log("using function via pointer for ", key);
         return f;
       }
-      // we ALWAYS log creating the stub.  traceStub determines if we print when using the stub.
       log("creating stub", key);
-      if (traceStub) {
-        log("creating stub", key);
+      if (logUse.enabled || logFirst.enabled) {
         return (...args) => {
-          logStubUse(key, args, traceStub == "first");
+          logStubUse(key, args);
           return 0;
         };
       } else {
@@ -33,15 +29,11 @@ export default function stubProxy(
 }
 
 const stubUsed = new Set<string>([]);
-function logStubUse(functionName, args, firstOnly) {
-  if (firstOnly) {
+function logStubUse(functionName, args) {
+  logUse("WARNING: using stub", functionName, args);
+  if (logFirst.enabled) {
     if (stubUsed.has(functionName)) return;
     stubUsed.add(functionName);
   }
-  console.warn(
-    "WARNING: using stub",
-    functionName,
-    args,
-    firstOnly ? " -- only showing once" : ""
-  );
+  logFirst("WARNING: first use of stub", functionName, args);
 }

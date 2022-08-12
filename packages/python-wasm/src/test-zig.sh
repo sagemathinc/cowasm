@@ -9,5 +9,8 @@ export TEST_CMD="$PACKAGES"/wasi/bin/run.js
 
 echo "$POSIX_WASM"
 
+export TARGET="$1"
+shift
+
 set -ev
-zig test -target wasm32-wasi --test-cmd "$TEST_CMD" --test-cmd-bin  -I. -I"$PYTHON_WASM/include/python3.11" -I"$POSIX_WASM" -L"$PYTHON_WASM/lib" -lpython3.11 -lc  --main-pkg-path "$SRC" `pwd`/$1
+zig test -target wasm32-wasi --test-cmd "$TEST_CMD" --test-cmd-bin  -I. -I"$PYTHON_WASM/include/python3.11" -I"$POSIX_WASM" -L"$PYTHON_WASM/lib" -lpython3.11 -lc  --main-pkg-path "$SRC" `pwd`/$TARGET "$@"

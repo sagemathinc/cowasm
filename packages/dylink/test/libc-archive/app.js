@@ -43,7 +43,6 @@ async function main() {
     importWebAssemblySync,
     importObject,
     stub: true,
-    traceStub: true,
     readFileSync,
   });
   wasi.start(instance, memory);

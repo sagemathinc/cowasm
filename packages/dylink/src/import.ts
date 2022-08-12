@@ -28,7 +28,6 @@ interface Input {
   ) => WebAssembly.Instance;
   readFileSync: (path: string) => any; // todo?
   stub?: boolean; // if true, automatically generate stub functions.
-  traceStub?: boolean | "first";
 }
 
 export default async function importWebAssemblyDlopen({
@@ -38,7 +37,6 @@ export default async function importWebAssemblyDlopen({
   importWebAssemblySync,
   readFileSync,
   stub,
-  traceStub,
 }: Input): Promise<WebAssembly.Instance> {
   if (importObject == null) {
     importObject = {} as { env?: Partial<Env> };
@@ -422,7 +420,7 @@ export default async function importWebAssemblyDlopen({
   const importObjectWithStub = stub
     ? {
         ...importObject,
-        env: stubProxy(importObject.env, functionViaPointer, traceStub),
+        env: stubProxy(importObject.env, functionViaPointer),
       }
     : importObject;
   const mainInstance =

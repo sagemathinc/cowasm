@@ -35,7 +35,6 @@ export interface WASIConfig {
   env?: WASIEnv;
   args?: WASIArgs;
   bindings: WASIBindings;
-  traceSyscalls?: boolean;
   spinLock?: (time: number) => void;
   waitForStdin?: () => Buffer;
   sendStdout?: (Buffer) => void;

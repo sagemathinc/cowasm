@@ -3,12 +3,13 @@ import type { WASIConfig } from "./types";
 import nodeBindings from "./bindings/node";
 import fs from "fs";
 import { readFile } from "fs/promises";
+import debug from "debug";
+const log = debug("wasi");
 
 interface Options {
   noWasi?: boolean; // if true, include wasi
   env?: object; // functions to include in the environment
   dir?: string | null; // WASI pre-opened directory; default is to preopen /, i.e., full filesystem; explicitly set as null to sandbox.
-  traceSyscalls?: boolean;
   time?: boolean;
 }
 
@@ -35,9 +36,7 @@ async function wasmImport(name: string, options: Options = {}): Promise<void> {
           if (key in target) {
             return Reflect.get(target, key);
           }
-          if (options.traceSyscalls) {
-            console.log("creating stub for", key);
-          }
+          log("WARNING: creating stub for", key);
           return (..._args) => {
             return 0;
           };
@@ -52,7 +51,6 @@ async function wasmImport(name: string, options: Options = {}): Promise<void> {
       args: process.argv,
       bindings: nodeBindings,
       env: process.env,
-      traceSyscalls: options.traceSyscalls,
     };
     if (options.dir === null) {
       // sandbox -- don't give any fs access

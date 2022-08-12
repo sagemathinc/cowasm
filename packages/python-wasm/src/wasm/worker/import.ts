@@ -24,8 +24,6 @@ export interface Options {
   time?: boolean;
   // init = initialization function that gets called when module first loaded.
   init?: (wasm: WasmInstance) => void | Promise<void>;
-  traceSyscalls?: boolean;
-  traceStubcalls?: "first" | boolean;
   spinLock?: (time: number) => void;
   stdinBuffer?: SharedArrayBuffer;
   signalBuffer?: SharedArrayBuffer;
@@ -167,7 +165,6 @@ async function doWasmImport({
     bindings,
     args: process.argv,
     env: options.env,
-    traceSyscalls: options.traceSyscalls,
     spinLock: options.spinLock,
     waitForStdin: options.waitForStdin,
     sendStdout: options.sendStdout,
@@ -210,7 +207,6 @@ async function doWasmImport({
     readFileSync,
     importObject: wasmOpts,
     stub: true,
-    traceStub: options.traceStubcalls,
   });
 
   if (wasi != null) {
@@ -239,6 +235,7 @@ async function doWasmImport({
   }
   // TODO
   (wasm as any).table = table;
+  (wasm as any).posixEnv = posixEnv;
 
   return wasm;
 }

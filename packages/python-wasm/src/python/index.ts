@@ -45,8 +45,6 @@ export async function _init({
   wasm = await wasmImport(python_wasm, {
     env,
     fs,
-    traceSyscalls: false,
-    traceStubcalls: "first", // 'first' or true or false
   });
   await wasm.callWithString("init", "");
 }

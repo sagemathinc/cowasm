@@ -45,7 +45,6 @@ const wasi = new WASI({
   args: [],
   env: {},
   bindings: {...nodeBindings, fs},
-  traceSyscalls: true  /* logs all calls! */
 });
 
 const source = await readFile(pathToWasm);
@@ -53,10 +52,16 @@ const typedArray = new Uint8Array(source);
 const result = await WebAssembly.instantiate(typedArray, wasmOpts);
 wasi.start(result.instance);
 ```
+
+Use `DEBUG=wasi` to see a log of all wasi system calls; this uses the [debug library.](https://www.npmjs.com/package/debug)
+
 ## History and Copyright
 
 This project is based on what the wasmer devs wrote, which itself was based on
-what Gus Caplan wrote.  Here's what the WASMER people wrote:
+what Gus Caplan wrote.  I have been using this library extensively in [python\-wasm](https://github.com/sagemathinc/python-wasm), and have found and fixed _**tricky low level bugs**_ in the implementation.  I have also added hooks for using Atomics and SharedArrayBuffers to implement blocking IO.
+
+Here's what the WASMER people wrote:
+
 ```
 This project is based from the Node implementation made by Gus Caplan
 https://github.com/devsnek/node-wasi
@@ -91,3 +96,4 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 ```
+
