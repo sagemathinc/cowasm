@@ -235,6 +235,14 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     }
     return r;
   }
+
+  getFunction(_name: string): Function | undefined {
+    throw Error("not implemented");
+  }
+  
+  stringToCharStar(_s:string) : number {
+    throw Error("not implemented");
+  }
 }
 
 function abstract(name: string) {

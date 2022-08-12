@@ -214,7 +214,7 @@ async function doWasmImport({
     wasi.start(instance, memory);
   }
 
-  wasm = new WasmInstance(instance.exports, memory, fs);
+  wasm = new WasmInstance(instance.exports, memory, fs, table);
   if (options.init != null) {
     await options.init(wasm);
     // Uncomment this for low level debugging, so that the broken wasm
@@ -235,6 +235,7 @@ async function doWasmImport({
   }
   // TODO
   (wasm as any).table = table;
+  (wasm as any).wasi = wasi;
   (wasm as any).posixEnv = posixEnv;
 
   return wasm;

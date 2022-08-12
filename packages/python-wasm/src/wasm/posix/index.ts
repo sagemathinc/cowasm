@@ -13,6 +13,9 @@ import unistd from "./unistd";
 import wait from "./wait";
 import WASI from "@wapython/wasi";
 
+//import debug from "debug";
+//const log = debug("posix");
+
 interface Context {
   fs: FileSystem;
   recvString: (ptr: number) => string;

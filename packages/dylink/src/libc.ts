@@ -98,6 +98,7 @@ void qsort(void *base, size_t nmemb, size_t size,
   qsort_r(base, nmemb, size, qsort_r_compar, compar);
 }
 
+int mkstemp(char *template);
 `;
   s += "\n";
   s += wasmExport((symbols + "\n" + posix).split("\n"));
@@ -125,6 +126,7 @@ tcsetattr
 gettext
 dgettext
 dcgettext
+mkstemp
 `;
 
 // All headers from zig/dist/lib/zig/libc/include/wasm-wasi-musl except signal/thread ones.

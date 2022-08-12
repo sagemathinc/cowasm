@@ -7,6 +7,25 @@ Note that this is entirely synchronous code, e.g., the unzip code,
 and that's justified because our WASM interpreter will likely get
 run in a different thread (a webworker) than the main thread, and
 this code is needed to initialize it before anything else can happen.
+
+A major subtle issue I hit is that unionfs combines filesystems, and
+each filesystem can define fs.constants differently! In particular,
+memfs always hardcodes constants.O_EXCL to be 128.  However, on 
+macos native filesystem it is 2048, whereas on Linux native filesystem
+it is also 128.  We combine memfs and native for running python-wasm
+under nodejs, since we want to use our Python install (that is in
+dist/python/python.zip and mounted using memfs) along with full access
+to the native filesystem.
+
+I think the only good solution to this is the following:
+- if native isn't part of the unionfs, nothing to do (since we only currently use native and memfs).
+- make fs.constants be native's constants for the final export, so we can assume all calls into the
+  filesystem are using the native constants.  Also, posix/libc code will of course assume native
+  constants, since they use the constants from header files. WAIT... web assembly actually would have
+  one specific choice cross platform! What is it?
+- in the node api, the ONLY functions that take numeric flags are open and openSync.  That's convenient!
+- somehow figure out which filesystem (native or memfs for now) that a given open will go to, and 
+  convert the flags if going to memfs.
 */
 
 import unzip from "./unzip";

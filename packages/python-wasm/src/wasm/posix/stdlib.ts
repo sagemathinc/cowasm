@@ -1,8 +1,4 @@
-/*
-mkstemp needed.  used in editline/readline.c to do history file truncation.  (Python doesn't use this since it has its own implementation.)
-*/
-
-export default function stdlib({ child_process, fs, recvString }) {
+export default function stdlib({ child_process, recvString }) {
   return {
     // int system(const char *command);
     // This below is not exactly like system because it runs until the command completes with no visible output
@@ -22,7 +18,12 @@ export default function stdlib({ child_process, fs, recvString }) {
       return status;
     },
 
-    // I had too much trouble trying to get the C code from musl to work...
+    /*
+    We need mkstemp since it used in editline/readline.c to do history file truncation. 
+    (Python doesn't use this since it has its own implementation.)
+    */
+    // Commented out since we have a C implementation in stdlib.c; this should work fine though.
+    /*
     mkstemp: (templatePtr: number): number => {
       let template = recvString(templatePtr);
       // template ends in XXXXXX
@@ -30,7 +31,7 @@ export default function stdlib({ child_process, fs, recvString }) {
         throw Error("template must end in XXXXXX");
       }
       // the algorithm in musl is to try 100 randomizations of the last 6 characters
-      let retries = 1;
+      let retries = 100;
       while (retries > 0) {
         // See https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
         template =
@@ -39,19 +40,19 @@ export default function stdlib({ child_process, fs, recvString }) {
         try {
           return fs.openSync(
             template,
-            fs.constants?.O_RDWR |
-              fs.constants?.O_CREAT |
-              fs.constants?.O_EXCL ?? 2562, // just in case an fs implementation doesn't have these.
+            fs.constants?.O_RDWR | fs.constants?.O_CREAT | fs.constants?.O_EXCL,
             0o600
           );
         } catch (err) {
-          console.warn(err);
           retries -= 1;
-          // pass
+          if (retries == 0) {
+            console.warn(err);
+          }
         }
       }
       // failed
       return -1;
     },
+    */
   };
 }

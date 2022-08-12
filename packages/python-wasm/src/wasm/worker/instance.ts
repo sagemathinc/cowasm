@@ -19,11 +19,18 @@ export default class WasmInstance extends EventEmitter {
   memory: WebAssembly.Memory;
   fs?: FileSystem;
   smallStringPtr?: number;
+  table?: WebAssembly.Table;
 
-  constructor(exports, memory: WebAssembly.Memory, fs?: FileSystem) {
+  constructor(
+    exports,
+    memory: WebAssembly.Memory,
+    fs?: FileSystem,
+    table?: WebAssembly.Table
+  ) {
     super();
     this.exports = exports;
     this.memory = memory;
+    this.table = table;
     this.fs = fs;
     initDefine((name) => this.callWithString("cDefine", name));
   }
@@ -36,7 +43,7 @@ export default class WasmInstance extends EventEmitter {
     throw Error("not implemented ");
   }
 
-  private stringToCharStar(str: string): number {
+  stringToCharStar(str: string): number {
     // Caller MUST free the returned char* from stringToU8
     // using this.exports.c_free, e.g., as done in callWithString here.
     const strAsArray = encoder.encode(str);
@@ -119,5 +126,15 @@ export default class WasmInstance extends EventEmitter {
     array[len - 1] = 0;
     return f(ptr, ...args);
   }
-  
+
+  public getFunction(name: string): Function | undefined {
+    if (this.table != null) {
+      // first try pointer:
+      const getPtr = this.exports[`__WASM_EXPORT__${name}`];
+      if (getPtr != null) {
+        return this.table.get(getPtr());
+      }
+    }
+    return this.exports[name];
+  }
 }

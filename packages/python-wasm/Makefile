@@ -37,7 +37,8 @@ test-posix:
 	cd src && \
 		${TEST} wasm/posix/unistd.zig && \
 		${TEST} wasm/posix/stdio.zig && \
-		${TEST} wasm/posix/string.zig
+		${TEST} wasm/posix/string.zig && \
+		${TEST} wasm/posix/stdlib.zig wasm/posix/stdlib.c
 
 # Explanation of options to zig build-lib:
 #  - ${OPT} - at the top file can set the release type
@@ -59,7 +60,7 @@ test-posix:
 #
 
 
-${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/python/signal/signal.zig src/python/python-shared.zig ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${PACKAGES}/lzma/dist/wasm/lib/liblzma.a ${PACKAGES}/zlib/dist/wasm/lib/libz.a ${PACKAGES}/libedit/dist/wasm/lib/libedit.a  ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a  ${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a ${PACKAGES}/cpython/dist/wasm/lib/libexpat.a ${POSIX_WASM}/libposix.a src/wasm/posix.zig src/wasm/posix/unistd.zig src/wasm/posix/stdio.zig src/wasm/posix/stdlib.zig src/wasm/posix/string.zig src/wasm/posix/termios.zig src/wasm/posix/c-define.zig src/wasm/posix/other.zig
+${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/wasm/posix/stdlib.c src/python/signal/signal.zig src/python/python-shared.zig ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${PACKAGES}/lzma/dist/wasm/lib/liblzma.a ${PACKAGES}/zlib/dist/wasm/lib/libz.a ${PACKAGES}/libedit/dist/wasm/lib/libedit.a  ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a  ${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a ${PACKAGES}/cpython/dist/wasm/lib/libexpat.a ${POSIX_WASM}/libposix.a src/wasm/posix.zig src/wasm/posix/unistd.zig src/wasm/posix/stdio.zig src/wasm/posix/stdlib.zig src/wasm/posix/string.zig src/wasm/posix/termios.zig src/wasm/posix/c-define.zig src/wasm/posix/other.zig
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
@@ -79,6 +80,7 @@ ${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/p
 	   -L ${DYLINK}/wasm/ -ldylink \
 	   -lc -lm ${WASI_EMULATED} \
 	   `pwd`/python/signal/signal.c \
+	   `pwd`/wasm/posix/stdlib.c \
 	   python/interface.zig
 	mkdir -p ${DIST}/python
 	mv src/interface.wasm ${DIST}/python/python.wasm

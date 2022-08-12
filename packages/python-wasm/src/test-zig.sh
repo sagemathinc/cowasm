@@ -12,5 +12,5 @@ echo "$POSIX_WASM"
 export TARGET="$1"
 shift
 
-set -ev
+echo zig test -target wasm32-wasi --test-cmd "$TEST_CMD" --test-cmd-bin  -I. -I"$PYTHON_WASM/include/python3.11" -I"$POSIX_WASM" -L"$PYTHON_WASM/lib" -lpython3.11 -lc  --main-pkg-path "$SRC" `pwd`/$TARGET "$@"
 zig test -target wasm32-wasi --test-cmd "$TEST_CMD" --test-cmd-bin  -I. -I"$PYTHON_WASM/include/python3.11" -I"$POSIX_WASM" -L"$PYTHON_WASM/lib" -lpython3.11 -lc  --main-pkg-path "$SRC" `pwd`/$TARGET "$@"
