@@ -1,3 +1,16 @@
+import type WASIFileSystem from "./filesystem";
+export type { WASIFileSystem };
+
+// export interface WASIFileSystem extends FileSystem {
+//   constants: { [name: string]: number };
+//   open: (
+//     path: string,
+//     flags: number | string,
+//     mode?: string
+//   ) => Promise<number>;
+//   openSync: (path: string, flags: number | string, mode?: string) => number;
+// }
+
 export interface WASIBindings {
   // Current high-resolution real time in a bigint
   hrtime: () => bigint;

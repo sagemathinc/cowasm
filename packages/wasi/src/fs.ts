@@ -7,33 +7,12 @@ Note that this is entirely synchronous code, e.g., the unzip code,
 and that's justified because our WASM interpreter will likely get
 run in a different thread (a webworker) than the main thread, and
 this code is needed to initialize it before anything else can happen.
-
-A major subtle issue I hit is that unionfs combines filesystems, and
-each filesystem can define fs.constants differently! In particular,
-memfs always hardcodes constants.O_EXCL to be 128.  However, on 
-macos native filesystem it is 2048, whereas on Linux native filesystem
-it is also 128.  We combine memfs and native for running python-wasm
-under nodejs, since we want to use our Python install (that is in
-dist/python/python.zip and mounted using memfs) along with full access
-to the native filesystem.
-
-I think the only good solution to this is the following:
-- if native isn't part of the unionfs, nothing to do (since we only currently use native and memfs).
-- make fs.constants be native's constants for the final export, so we can assume all calls into the
-  filesystem are using the native constants.  Also, posix/libc code will of course assume native
-  constants, since they use the constants from header files. WAIT... web assembly actually would have
-  one specific choice cross platform! What is it?
-- in the node api, the ONLY functions that take numeric flags are open and openSync.  That's convenient!
-- somehow figure out which filesystem (native or memfs for now) that a given open will go to, and 
-  convert the flags if going to memfs.
 */
 
 import unzip from "./unzip";
 import { Volume, createFsFromVolume, fs as memfs, DirectoryJSON } from "memfs";
 import { Union } from "unionfs";
-import type { WASIBindings } from "./types";
-
-export type FileSystem = any; // TODO -- what exactly do we need?
+import { WASIFileSystem } from "./types";
 
 // The native filesystem
 interface NativeFs {
@@ -79,28 +58,30 @@ export type FileSystemSpec =
 
 export function createFileSystem(
   specs: FileSystemSpec[],
-  bindings: WASIBindings
-): FileSystem {
-  const ufs = new Union();
-  (ufs as any).constants = memfs.constants;
+  nativeFs?: WASIFileSystem
+): WASIFileSystem {
   if (specs.length == 0) {
-    return memFs() as any; // empty memfs
+    return memFs(); // empty memfs
   }
   if (specs.length == 1) {
     // don't use unionfs:
-    return specToFs(specs[0], bindings);
+    return specToFs(specs[0], nativeFs) ?? memFs();
   }
+  const ufs = new Union();
   for (const spec of specs) {
-    const fs: any = specToFs(spec, bindings);
+    const fs = specToFs(spec, nativeFs);
     if (fs != null) {
       // e.g., native bindings may be null.
       ufs.use(fs);
     }
   }
-  return ufs as any;
+  return { ...ufs, constants: memfs.constants };
 }
 
-function specToFs(spec: FileSystemSpec, bindings: WASIBindings): FileSystem {
+function specToFs(
+  spec: FileSystemSpec,
+  nativeFs?: WASIFileSystem
+): WASIFileSystem | undefined {
   // All these "as any" are because really nothing quite implements FileSystem yet!
   // See https://github.com/streamich/memfs/issues/735
   if (spec.type == "zip") {
@@ -111,7 +92,7 @@ function specToFs(spec: FileSystemSpec, bindings: WASIBindings): FileSystem {
     throw Error(`you must convert zipurl -- read ${spec.zipurl} into memory`);
   } else if (spec.type == "native") {
     // native = whatever is in bindings.
-    return bindings.fs as any;
+    return nativeFs == null ? nativeFs : mapFlags(nativeFs);
   } else if (spec.type == "mem") {
     return memFs(spec.contents) as any;
   } else if (spec.type == "dev") {
@@ -121,7 +102,7 @@ function specToFs(spec: FileSystemSpec, bindings: WASIBindings): FileSystem {
 }
 
 // this is generic and would work in a browser:
-function devFs() {
+function devFs(): WASIFileSystem {
   const vol = Volume.fromJSON({
     "/dev/stdin": "",
     "/dev/stdout": "",
@@ -134,16 +115,69 @@ function devFs() {
   if (fdErr != 2) throw Error(`invalid handle for stderr: ${fdErr}`);
   if (fdOut != 1) throw Error(`invalid handle for stdout: ${fdOut}`);
   if (fdIn != 0) throw Error(`invalid handle for stdin: ${fdIn}`);
-  return createFsFromVolume(vol);
+  return createFsFromVolume(vol) as unknown as WASIFileSystem;
 }
 
-function zipFs(data: Buffer, directory: string = "/") {
+function zipFs(data: Buffer, directory: string = "/"): WASIFileSystem {
   const fs = createFsFromVolume(new Volume()) as any;
   unzip({ data, fs, directory });
   return fs;
 }
 
-function memFs(contents?: DirectoryJSON) {
+function memFs(contents?: DirectoryJSON): WASIFileSystem {
   const vol = contents != null ? Volume.fromJSON(contents) : new Volume();
-  return createFsFromVolume(vol);
+  return createFsFromVolume(vol) as unknown as WASIFileSystem;
 }
+
+function mapFlags(nativeFs: WASIFileSystem): WASIFileSystem {
+  function translate(flags: number): number {
+    // We have to translate the flags from WASM/memfs/musl to native for this operating system.
+    // E.g., on MacOS many flags are completely different.  See big comment below.
+    let nativeFlags = 0;
+    for (const flag in memfs.constants) {
+      // only flags starting with O_ are relevant for the open syscall.
+      if (flag.startsWith("O_") && flags & memfs.constants[flag]) {
+        nativeFlags |= nativeFs.constants[flag];
+      }
+    }
+    return nativeFlags;
+  }
+  // "any" because there's something weird involving a __promises__ namespace that I don't understand.
+  const open: any = async (path, flags, mode?) => {
+    return await nativeFs.open(path, translate(flags), mode);
+  };
+  const openSync = (path, flags, mode?) => {
+    return nativeFs.openSync(path, translate(flags), mode);
+  };
+  const promises = {
+    ...nativeFs.promises,
+    open: async (path, flags, mode?) => {
+      return await nativeFs.promises.open(path, flags, mode);
+    },
+  };
+  return { ...{ ...nativeFs, promises }, open, openSync };
+}
+
+/*
+Comment about flags:
+
+A major subtle issue I hit is that unionfs combines filesystems, and
+each filesystem can define fs.constants differently! In particular,
+memfs always hardcodes constants.O_EXCL to be 128.  However, on 
+macos native filesystem it is 2048, whereas on Linux native filesystem
+it is also 128.  We combine memfs and native for running python-wasm
+under nodejs, since we want to use our Python install (that is in
+dist/python/python.zip and mounted using memfs) along with full access
+to the native filesystem.
+
+I think the only good solution to this is the following:
+- if native isn't part of the unionfs, nothing to do (since we only currently use native and memfs).
+- fs.constants should be memfs's constants since I think they match with what WebAssembly libc (via musl)
+  provides.  
+- in the node api, the ONLY functions that take numeric flags are open and openSync.  That's convenient!
+- somehow figure out which filesystem (native or memfs for now) that a given open will go to, and 
+  convert the flags if going to memfs.
+
+Probably the easiest way to accomplish all of the above is just use a proxy around native fs's 
+open* function.
+*/

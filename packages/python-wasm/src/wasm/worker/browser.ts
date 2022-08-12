@@ -33,7 +33,7 @@ export default async function wasmImportBrowser(
     }
   }
 
-  const fs = createFileSystem(fsSpec, bindings);
+  const fs = createFileSystem(fsSpec);
 
   // Assumed to be loaded into memfs.
   function importWebAssemblySync(path: string, options: WebAssembly.Imports) {

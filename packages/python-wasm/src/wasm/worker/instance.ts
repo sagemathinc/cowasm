@@ -1,5 +1,5 @@
 // @ts-ignore -- it thinks FileSystem isn't used, even though it is below.  Weird.
-import type { FileSystem } from "@wapython/wasi";
+import type { FileSystem, WASI } from "@wapython/wasi";
 import { EventEmitter } from "events";
 import { initDefine } from "../posix/c-define";
 
@@ -17,9 +17,12 @@ export default class WasmInstance extends EventEmitter {
   resultException: boolean = false;
   exports: any;
   memory: WebAssembly.Memory;
-  fs?: FileSystem;
   smallStringPtr?: number;
+  
+  // these are sometimes available and useful, e.g., in testing
+  fs?: FileSystem;
   table?: WebAssembly.Table;
+  wasi?: WASI;
 
   constructor(
     exports,

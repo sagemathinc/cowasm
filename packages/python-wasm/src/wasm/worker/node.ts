@@ -58,7 +58,7 @@ export default async function wasmImportNode(
     }
   }
 
-  const fs = createFileSystem(fsSpec, bindings);
+  const fs = createFileSystem(fsSpec, bindings.fs);
 
   function importWebAssemblySync(path: string, opts: WebAssembly.Imports) {
     const binary = new Uint8Array(fs.readFileSync(path));

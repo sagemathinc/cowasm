@@ -42,10 +42,7 @@ int __mkostemps(char *template, int len, int flags) {
   int fd, retries = 100;
   do {
     __randname(template + l - len - 6);
-    // TODO: O_EXCL is temporarily disabled until we address a major problem with
-    // inconsistent fs.constants in packages/wasi/src/fs.ts
-    if ((fd = open(template, flags | O_RDWR | O_CREAT /*| O_EXCL*/, 0600)) >=
-        0) {
+    if ((fd = open(template, flags | O_RDWR | O_CREAT | O_EXCL, 0600)) >= 0) {
       return fd;
     }
   } while (--retries && errno == EEXIST);
