@@ -5,6 +5,7 @@ NOTES:
   - emscripten/src/library_syscall.js is useful inspiration in some cases!
 */
 
+import netdb from "./netdb";
 import signal from "./signal";
 import spawn from "./spawn";
 import stdlib from "./stdlib";
@@ -48,6 +49,7 @@ interface Context {
 
 export default function posix(context: Context) {
   const P = {
+    ...netdb(context),
     ...signal(context),
     ...stat(context),
     ...stdlib(context),

@@ -94,3 +94,13 @@ ac_cv_func_epoll_create=no
 ac_cv_func_splice=no
 ac_cv_func_fdwalk=no
 
+# We do not have this chflags or lchflags yet, but Python would expose it if we did.
+# nodejs doesn't use the chflags system call anywhere either.
+ac_cv_have_chflags=no
+ac_cv_have_lchflags=no
+
+# Do not have these, but we can't just disable them since Python tries to fall back
+# to a mysterious sock_decode_hostname, which we don't have.  So we make implement
+# something instead:
+# ac_cv_func_gethostbyname=no
+# ac_cv_func_gethostbyaddr=no
