@@ -12,7 +12,9 @@ export class WasmInstance extends WasmInstanceAbstractBaseClass {
       dirname(callsite()[0]?.getFileName() ?? "."),
       "worker/node.js"
     );
-    return new Worker(path);
+    return new Worker(path, {
+      trackUnmanagedFds: false // this seems incompatible with our use of unionfs/memfs (lots of warnings).
+    });
   }
 
   protected async getStdin() {
