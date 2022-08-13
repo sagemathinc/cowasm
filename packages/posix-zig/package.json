@@ -1,17 +1,26 @@
 {
-  "name": "zig-node-native-module",
-  "version": "1.0.0",
-  "description": "Example of a Node.js module written in Zig",
+  "name": "posix-zig",
+  "version": "0.0.1",
+  "description": "Missing Posix Functions for Node.js -- via a native module written in Zig",
   "main": "index.js",
+  "files": ["dist/*", "README.md", "package.json"],
   "scripts": {
     "build1": "mkdir -p dist && zig build-lib -target aarch64-macos -mcpu=baseline -OReleaseSmall -dynamic -lc -isystem deps/node-$(node --version)/include/node src/lib.zig -fallow-shlib-undefined -femit-bin=dist/lib-aarch64-macos.node",
     "build2": "mkdir -p dist && zig build-lib -target x86_64-macos -OReleaseSmall -dynamic -lc -isystem deps/node-$(node --version)/include/node src/lib.zig -fallow-shlib-undefined -femit-bin=dist/lib-x86_64-macos.node",
     "build3": "mkdir -p dist && zig build-lib -target x86_64-linux-gnu -OReleaseSmall -dynamic -lc -isystem deps/node-$(node --version)/include/node src/lib.zig -fallow-shlib-undefined -femit-bin=dist/lib-x86_64-linux.node",
     "build4": "mkdir -p dist && zig build-lib -target aarch64-linux-gnu -OReleaseSmall -dynamic -lc -isystem deps/node-$(node --version)/include/node src/lib.zig -fallow-shlib-undefined -femit-bin=dist/lib-aarch64-linux.node",
     "build": "npm run build1 && npm run build2 && npm run build3 && npm run build4",
-    "test": "node test.js",
     "postinstall": "./download-node-headers.sh"
   },
-  "author": "Andre 'Staltz' Medeiros <contact@staltz.com>",
-  "license": "Unlicense"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/python-wasm.git"
+  },
+  "keywords": ["posix", "zig", "node"],
+  "author": "William Stein <wstein@sagemath.com>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/python-wasm/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/posix-zig#readme"
 }

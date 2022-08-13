@@ -20,7 +20,7 @@
     "url": "git+https://github.com/sagemathinc/python-wasm.git"
   },
   "keywords": ["python", "webassembly"],
-  "author": "William Stein",
+  "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/python-wasm/issues"

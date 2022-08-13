@@ -1,27 +1,24 @@
-# Node.js Native Module written in Zig
+# Missing Posix Functions for Node.js -- via a native module written in Zig
 
-Node.js Native Modules are typically written in C++, but you can write them also in other languages like Rust ([1], [2]), too. [Zig](https://ziglang.org/) is a new low-level programming language that competes with C, integrating seemlessly with C libraries without FFI or bindings.
+**STATUS:** Nothing yet -- I'm just grabbing the package name.
 
-This project is an example Hello World for making a Node.js native module in Zig.
+Node.js native module written using Zig that provides access to Posix functions not in node that are needed to fully support WebAssembly modules. Includes precompiled binaries for [x86_64/aarch64]-[macos/linux], and falls back to empty functionality on all other platforms.  
 
-The entry point is `src/lib.zig`.
+We don't support any functionality on Windows, because it is not Posix.  Everything partially posix for Windows is already in node.js. 
 
-Test this project like this:
+## Why?
 
-1. Git clone it
-2. `npm install` (will download Node.js header files)
-3. `npm run build` (will compile the Zig project and produce `dist/lib.node`)
-4. `npm run test` (will call the `greet()` function from Zig)
+There is an [npm module called posix](https://www.npmjs.com/package/posix), which claims to provide "The missing POSIX system calls for Node.", but unfortunately actually provides a tiny subset of missing POSIX system calls. I need far more
+for [python-wasm](https://python-wasm.cocalc.com/). Also, the Zig code is likely to be much easier to maintain an extend, e.g., [posix](https://www.npmjs.com/package/posix) has a [high severity vulnerability](https://github.com/ohmu/node-posix/issues/66), but hasn't been updated in years.
 
 ## Why Zig?
 
-Writing C/C++ in 2021 is difficult, confusing, verbose, antiquated. (Disclaimer: I have written many thousands lines of code of C/C++ in my lifetime, I know what I'm talking about) But writing native Node.js modules is a superpower for achieving better performance. I've been hyped about using Rust for Node.js native modules, but [my experience in practice has been full of obstacles](https://staltz.com/rust-for-mobile-not-yet.html). Now, I'm giving Zig a try. It can produce small binaries with great performance, it builds for all targets I can imagine (out of the box), and is overall a simple and approachable language built for the year 2021. It certainly feels like a young language, but let's test it out, I guess.
+[Zig](https://ziglang.org/) is very easy to install, makes it simple to cross compile for many architectures, and provides better compile time sanity checks than C.
+
+I'm not using [node-gyp](https://github.com/nodejs/node-gyp) since I have a
+specific target list of platforms where I need this module to work, and using
+Zig I can easily build binaries for all of them. The binaries will also be tiny, since they are just lightweight wrappers around calls to libc, which is dynamically linked by the operating system. I can thus include all target binaries with the npm package.
 
 ## License and acknowledgements
 
-Code here is licensed `Unlicense`, except for `src/translate.zig` which was copied from [Tigerbeetle-node](https://github.com/coilhq/tigerbeetle-node) and is licensed Apache-2.0 by Coil Technologies, Inc.
-
-Overall I don't think I would have been able to figure out this example project alone so quickly, so huge thanks to Coil Technologies, Inc. for making an open source node.js native module written in Zig.
-
-[1]: https://github.com/neon-bindings/neon
-[2]: https://github.com/infinyon/node-bindgen
+This is licensed BSD-3 clause. The template for using Zig to build node.js native modules is https://github.com/staltz/zig-nodejs-example
