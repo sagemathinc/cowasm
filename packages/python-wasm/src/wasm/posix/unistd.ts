@@ -212,10 +212,10 @@ export default function unistd({
 
     // int gethostname(char *name, size_t len);
     gethostname: (namePtr: number, len: number): number => {
-      if (posix.gethostname == null) {
+      if (os.hostname == null) {
         throw Error("gethostname not supported on this platform");
       }
-      const name = posix.gethostname();
+      const name = os.hostname();
       sendString(name, { ptr: namePtr, len });
       return 0;
     },
