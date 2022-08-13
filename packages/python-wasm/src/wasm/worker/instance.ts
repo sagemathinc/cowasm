@@ -55,12 +55,17 @@ export default class WasmInstance extends EventEmitter {
     throw Error("not implemented ");
   }
 
-  stringToCharStar(str: string): number {
-    // Caller MUST free the returned char* from stringToU8
+  stringToCharStar(str: string, dest?: { ptr: number; len: number }): number {
+    // Caller is responsible for freeing the returned char* from stringToU8
     // using this.exports.c_free, e.g., as done in callWithString here.
+    // If dest and len are given, string is copied into memory starting
+    // at dest instead, but truncated to len (including the null byte).
+    if (dest != null) {
+      str = str.slice(0, dest.len - 1); // ensure it will fit
+    }
     const strAsArray = encoder.encode(str);
     const len = strAsArray.length + 1;
-    const ptr = this.exports.c_malloc(len);
+    const ptr = dest?.ptr ?? this.exports.c_malloc(len);
     if (ptr == 0) {
       throw Error("MemoryError -- out of memory");
     }

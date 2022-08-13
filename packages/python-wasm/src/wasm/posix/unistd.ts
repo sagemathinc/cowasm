@@ -209,6 +209,26 @@ export default function unistd({
       if (login == null) throw Error("bug");
       return login;
     },
+
+    // int gethostname(char *name, size_t len);
+    gethostname: (namePtr: number, len: number): number => {
+      if (posix.gethostname == null) {
+        throw Error("gethostname not supported on this platform");
+      }
+      const name = posix.gethostname();
+      sendString(name, { ptr: namePtr, len });
+      return 0;
+    },
+
+    // int sethostname(const char *name, size_t len);
+    sethostname: (namePtr: number, len: number): number => {
+      if (posix.sethostname == null) {
+        throw Error("sethostname not supported on this platform");
+      }
+      const name = recvString(namePtr, len);
+      posix.sethostname(name);
+      return 0;
+    },
   };
 
   return unistd;

@@ -176,8 +176,11 @@ async function doWasmImport({
   // WARNING: this returns a pointer to memory that
   // was malloced.  Depending on your use, you might
   // want to free it.
-  function sendString(s: string): number {
-    return wasm.stringToCharStar(s);
+  // If dest is given, that's a pointer to where to copy
+  // the string (null terminated), with a bound of len bytes
+  // including a terminating null byte.
+  function sendString(s: string, dest?: { ptr: number; len: number }): number {
+    return wasm.stringToCharStar(s, dest);
   }
 
   const posixEnv = posix({

@@ -92,5 +92,5 @@ ac_cv_func_epoll_create=no
 
 # Some low level fd copy functionality that isn't implemented:
 ac_cv_func_splice=no
-
+ac_cv_func_fdwalk=no
 
