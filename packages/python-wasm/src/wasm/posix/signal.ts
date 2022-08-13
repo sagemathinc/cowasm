@@ -58,6 +58,15 @@ export default function signal({ process }) {
     },
 
     // int sigfillset(sigset_t *set);
+    sigfillset: (setPtr: number): number => {
+      const set = getSignalSet(setPtr);
+      for (let sig = 1; sig <= 31; sig++) {
+        set.add(sig);
+      }
+      return 0;
+    },
+
+    // int sigfillset(sigset_t *set);
 
     // int sigaddset(sigset_t *set, int signum);
     sigaddset: (setPtr: number, signum: number): number => {
