@@ -6,6 +6,7 @@ NOTES:
 */
 
 import netdb from "./netdb";
+import sched from "./sched";
 import signal from "./signal";
 import spawn from "./spawn";
 import stdlib from "./stdlib";
@@ -50,6 +51,7 @@ interface Context {
 export default function posix(context: Context) {
   const P = {
     ...netdb(context),
+    ...sched(context),
     ...signal(context),
     ...stat(context),
     ...stdlib(context),

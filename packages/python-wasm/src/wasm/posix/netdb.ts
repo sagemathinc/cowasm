@@ -8,16 +8,11 @@ module which is what I'll likely have to do.
 import { notImplemented } from "./util";
 
 export default function netdb({}) {
-  return {
-    // struct hostent *gethostbyname(const char *name);
-    gethostbyname: notImplemented("gethostbyname"),
-    gethostbyaddr: notImplemented("gethostbyaddr"),
-    getaddrinfo: notImplemented("getaddrinfo"),
-    // struct protoent *getprotobyname(const char *name);
-    getprotobyname: notImplemented("getprotobyname"),
-    getservbyname: notImplemented("getservbyname"),
-    getservbyport: notImplemented("getservbyport"),
-    getnameinfo: notImplemented("getnameinfo"),
-    getpeername: notImplemented("getpeername"),
-  };
+  const names =
+    "gethostbyname gethostbyaddr getaddrinfo getprotobyname getservbyname getservbyport getnameinfo getpeername";
+  const netdb: any = {};
+  for (const name of names.split(" ")) {
+    netdb[name] = notImplemented(name);
+  }
+  return netdb;
 }

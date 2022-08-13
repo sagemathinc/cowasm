@@ -104,3 +104,15 @@ ac_cv_have_lchflags=no
 # something instead:
 # ac_cv_func_gethostbyname=no
 # ac_cv_func_gethostbyaddr=no
+
+# Disable all of the process scheduling functionality, which nodejs doesn't provide
+# either, and of course doesn't make sense in browser.
+# NO -- as with ac_cv_func_gethostbyname above, doing this just completely breaks
+# building Python, so instead we have functions that raise errors in our posix module
+# for now, and later we'll use a nodejs extension module.
+#ac_cv_header_sched_h=no
+#ac_cv_func_sched_get_priority_max=no
+#ac_cv_func_sched_rr_get_interval=no
+#ac_cv_func_sched_setaffinity=no
+#ac_cv_func_sched_setparam=no
+#ac_cv_func_sched_setscheduler=no
