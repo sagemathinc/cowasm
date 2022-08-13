@@ -27,6 +27,7 @@ export fn strunvis(dst: [*:0]u8, src: [*:0]const u8) c_int {
     while (src[i] != 0) : (i += 1) {
         dst[i] = src[i];
     }
+    dst[i] = 0; // null terminate string.
     // std.debug.print("strunvis src={s}, dst={s}\n", .{ src, dst });
     return @intCast(c_int, i);
 }
@@ -38,6 +39,7 @@ export fn strvis(dst: [*:0]u8, src: [*:0]const u8, flag: c_int) c_int {
     while (src[i] != 0) : (i += 1) {
         dst[i] = src[i];
     }
+    dst[i] = 0; // null terminate string.
     // std.debug.print("strvis src={s}, dst={s}\n", .{ src, dst });
     return @intCast(c_int, i);
 }
