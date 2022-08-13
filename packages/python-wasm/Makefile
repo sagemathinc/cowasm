@@ -17,7 +17,7 @@ LIBEDIT = ${CWD}/../libedit/dist
 WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks \
 		-lwasi-emulated-signal
 
-WASM_CFLAGS   = -dynamic ${OPT}
+WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL -dynamic ${OPT}
 
 TEST = ./test-zig.sh ${OPT}
 

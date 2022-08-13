@@ -2,6 +2,7 @@ pub fn keepalive() void {}
 const std = @import("std");
 const errno = @cImport(@cInclude("errno.h"));
 const fcntl = @cImport(@cInclude("fcntl.h"));
+//const signal = @cImport(@cInclude("signal.h"));
 
 // Every constant that we make available must be explicitly declared here:
 // We use the smallest c int as a sentinel to indicate a bug due to a constant
@@ -17,6 +18,21 @@ export fn cDefine(name: [*:0]const u8) c_int {
     if (eql(name, "ENOENT")) {
         return errno.ENOENT;
     }
+    if (eql(name, "SIG_BLOCK")) {
+        return 0;
+        // signal.SIG_BLOCK isn't even compiled in by zig.  TODO: upstream it.
+        // This gets used by libedit only because I modified signal.h for building libedit, so these 0,1,2 values are right.
+        //return signal.SIG_BLOCK;
+    }
+    if (eql(name, "SIG_UNBLOCK")) {
+        return 1;
+        //return signal.SIG_UNBLOCK;
+    }
+    if (eql(name, "SIG_SETMASK")) {
+        return 2;
+        //return signal.SIG_SETMASK;
+    }
+
     std.debug.print("WARNING: You must add the constant {s} to python-wasm/src/wasm/posix/c-define.zig\n", .{name});
     return -2147483648;
 }

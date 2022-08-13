@@ -1,5 +1,5 @@
 /*
-
+NOTES:
 A key fact is that zig defines sigset_t to be "unsigned char", instead of a much
 more useful larger struct. Thus we only have 8 bits, so can't really represent
 all the signals.  So instead we just use the pointer and a higher level Javascript
@@ -16,12 +16,23 @@ NOTE: below we implement more than just what's needed for Python.  This may be h
 for other libraries.
 */
 
+import cDefine from "./c-define";
+
 const signal_t: { [setPtr: number]: Set<number> } = {};
 function getSignalSet(setPtr: number): Set<number> {
   if (signal_t[setPtr] == null) {
     signal_t[setPtr] = new Set();
   }
   return signal_t[setPtr];
+}
+// The global signal mask for this process.
+const signalMask = new Set<number>();
+function setSignalSetToMask(setPtr: number): void {
+  const set = getSignalSet(setPtr);
+  set.clear();
+  for (const x of signalMask) {
+    set.add(x);
+  }
 }
 
 export default function signal({ process }) {
@@ -66,6 +77,41 @@ export default function signal({ process }) {
         return 1;
       } else {
         return 0;
+      }
+    },
+
+    // int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);
+    // "sigprocmask() is used to fetch and/or change the signal mask of
+    // the calling thread.  The signal mask is the set of signals whose
+    // delivery is currently blocked for the caller."
+    sigprocmask: (how: number, setPtr: number, oldsetPtr: number): number => {
+      try {
+        if (!setPtr) return 0;
+        const set = getSignalSet(setPtr);
+        switch (how) {
+          case cDefine("SIG_BLOCK"):
+            for (const s of set) {
+              signalMask.add(s);
+            }
+            return 0;
+          case cDefine("SIG_UNBLOCK"):
+            for (const s of set) {
+              signalMask.delete(s);
+            }
+            return 0;
+          case cDefine("SIG_SETMASK"):
+            signalMask.clear();
+            for (const s of set) {
+              signalMask.add(s);
+            }
+            return 0;
+          default:
+            throw Error(`sigprocmask - invalid how=${how}`);
+        }
+      } finally {
+        if (oldsetPtr) {
+          setSignalSetToMask(oldsetPtr);
+        }
       }
     },
   };

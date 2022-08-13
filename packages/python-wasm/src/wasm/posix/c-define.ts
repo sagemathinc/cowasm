@@ -1,4 +1,11 @@
-const CONSTANTS = ["AT_FDCWD", "EBADF", "ENOENT"] as const;
+const CONSTANTS = [
+  "AT_FDCWD",
+  "EBADF",
+  "ENOENT",
+  "SIG_BLOCK",
+  "SIG_UNBLOCK",
+  "SIG_SETMASK",
+] as const;
 
 export type Constant = typeof CONSTANTS[number];
 
