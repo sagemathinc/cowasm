@@ -127,6 +127,7 @@ gettext
 dgettext
 dcgettext
 mkstemp
+sigemptyset
 `;
 
 // All headers from zig/dist/lib/zig/libc/include/wasm-wasi-musl except signal/thread ones.

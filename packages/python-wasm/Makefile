@@ -53,7 +53,7 @@ test-posix:
 #  - -I ...  - directories to look for headers
 #  - various .a files - code that gets statically linked in; if something
 #    is neeeded but missing here, you get a nasty "Bus Error 10" or something.
-#  - ...signal.c - this was easier to write in c than zig, so must be
+#  - src/python/signal/signal.c - this was easier to write in c than zig, so must be
 #    explicitly specified.
 #  - python/interface.zig - the zig entry point -- anything this imports
 #    also gets compiled, without being explicitly listed here.
