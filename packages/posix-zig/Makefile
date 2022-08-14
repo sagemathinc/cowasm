@@ -21,7 +21,7 @@ node_modules:
 	npm ci
 
 dist/index.js: src/index.ts node_modules
-	tsc -b
+	npx tsc -b
 
 # Make an "automatic rules pattern".
 dist/%.node: build/headers $(shell find src -type f)
@@ -33,8 +33,9 @@ dist/x86_64-macos.node:
 dist/aarch64-linux-gnu.node:
 dist/x86_64-linux-gnu.node:
 
-test:
+test: all
+	npx tsc -b
 	npm run test
 
 clean:
-	rm -rf ${BUILD} ${DIST}
+	rm -rf ${BUILD} ${DIST} tsconfig.tsbuildinfo
