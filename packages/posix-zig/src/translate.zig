@@ -21,8 +21,16 @@ pub fn registerFunction(
     if (status != c.napi_ok) return RegisterError.SetError;
 }
 
+pub fn throwError(env: c.napi_env, comptime message: [:0]const u8) void {
+    var result = c.napi_throw_error(env, null, message);
+    switch (result) {
+        c.napi_ok, c.napi_pending_exception => {},
+        else => unreachable,
+    }
+}
+
 const TranslationError = error{ExceptionThrown};
-pub fn throw(env: c.napi_env, comptime message: [:0]const u8) TranslationError {
+fn throw(env: c.napi_env, comptime message: [:0]const u8) TranslationError {
     var result = c.napi_throw_error(env, null, message);
     switch (result) {
         c.napi_ok, c.napi_pending_exception => {},
@@ -261,6 +269,16 @@ pub fn u32_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]c
     return result;
 }
 
+pub fn i32_from_info(env: c.napi_env, info: c.napi_callback_info, comptime name: [:0]const u8) !i32 {
+    var argv: [2]c.napi_value = undefined;
+    var argc: usize = 1;
+    const status = c.napi_get_cb_info(env, info, &argc, &argv, null, null);
+    if (status != c.napi_ok) {
+        return throw(env, name ++ " must be a number");
+    }
+    return i32_from_value(env, argv[0], name);
+}
+
 pub fn i32_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) !i32 {
     var result: i32 = undefined;
     // TODO Check whether this will coerce signed numbers to a u32:
@@ -364,8 +382,9 @@ pub fn create_object(env: c.napi_env, comptime error_message: [:0]const u8) !c.n
 
 pub fn create_string(env: c.napi_env, value: [:0]const u8) !c.napi_value {
     var result: c.napi_value = undefined;
-    _ = c.napi_create_string_utf8(env, value, value.len, &result);
-
+    if (c.napi_create_string_utf8(env, value, value.len, &result) != c.napi_ok) {
+        return throw(env, "error creating string from pointer");
+    }
     return result;
 }
 
@@ -378,8 +397,25 @@ fn strlen(s: [*:0]const u8) usize {
 // from null-terminated pointer instead
 pub fn create_string_from_ptr(env: c.napi_env, value: [*:0]const u8) !c.napi_value {
     var result: c.napi_value = undefined;
-    _ = c.napi_create_string_utf8(env, value, strlen(value), &result);
+    if (c.napi_create_string_utf8(env, value, strlen(value), &result) != c.napi_ok) {
+        return throw(env, "error creating string from pointer");
+    }
+    return result;
+}
 
+pub fn create_u32(env: c.napi_env, value: u32) !c.napi_value {
+    var result: c.napi_value = undefined;
+    if (c.napi_create_uint32(env, value, &result) != c.napi_ok) {
+        return throw(env, "error creating u32 number");
+    }
+    return result;
+}
+
+pub fn create_i32(env: c.napi_env, value: i32) !c.napi_value {
+    var result: c.napi_value = undefined;
+    if (c.napi_create_int32(env, value, &result) != c.napi_ok) {
+        return throw(env, "error creating i32 number");
+    }
     return result;
 }
 

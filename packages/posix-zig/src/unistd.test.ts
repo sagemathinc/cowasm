@@ -12,3 +12,25 @@ test("ttyname of an invalid fd throws an error", () => {
     posix.ttyname?.(999);
   }).toThrow();
 });
+
+test("ttyname with no inputs throws an error", () => {
+  expect(() => {
+    // @ts-ignore
+    posix.ttyname?.();
+  }).toThrow();
+});
+
+test("ttyname with non-number input throws an error", () => {
+  expect(() => {
+    // @ts-ignore
+    posix.ttyname?.("xyz");
+  }).toThrow();
+});
+
+test("getppid returns a positive integer", () => {
+  expect(posix.getppid?.()).toBeGreaterThan(0);
+});
+
+test("getpgid returns a positive integer", () => {
+  expect(posix.getpgid?.(1)).toBeGreaterThan(0);
+});

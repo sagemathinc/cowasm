@@ -79,7 +79,6 @@ export default async function wasmImportNode(
   } catch (_err) {
     posix = {};
   }
-  console.log(posixZig);
   for (const f in posixZig) {
     posix[f] = posixZig[f];
   }
