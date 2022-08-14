@@ -13,6 +13,7 @@ interface Module {
   // unistd:
   getpgid: (number) => number;
   getppid: () => number;
+  setpgid: (pid: number, pgid: number) => void;
   ttyname: (fd: number) => string;
 }
 

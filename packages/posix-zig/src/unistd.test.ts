@@ -34,3 +34,14 @@ test("getppid returns a positive integer", () => {
 test("getpgid returns a positive integer", () => {
   expect(posix.getpgid?.(1)).toBeGreaterThan(0);
 });
+
+test("a special case of setpgid that should work", () => {
+  // @ts-ignore
+  expect(posix.setpgid(0, 0)).toEqual(undefined);
+});
+
+test("a use of setpgid that should fail", () => {
+  expect(() => {
+    posix.setpgid?.(1, 2);
+  }).toThrow();
+});

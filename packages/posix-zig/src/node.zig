@@ -29,6 +29,16 @@ pub fn throwError(env: c.napi_env, comptime message: [:0]const u8) void {
     }
 }
 
+pub fn getArgv(env: c.napi_env, info: c.napi_callback_info, comptime n: usize) ![n]c.napi_value {
+    var argv: [n]c.napi_value = undefined;
+    var argc: usize = n;
+    const status = c.napi_get_cb_info(env, info, &argc, &argv, null, null);
+    if (status != c.napi_ok) {
+        return throw(env, "failed to parse arguments to function");
+    }
+    return argv;
+}
+
 const TranslationError = error{ExceptionThrown};
 fn throw(env: c.napi_env, comptime message: [:0]const u8) TranslationError {
     var result = c.napi_throw_error(env, null, message);
@@ -267,16 +277,6 @@ pub fn u32_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]c
         else => unreachable,
     }
     return result;
-}
-
-pub fn i32_from_info(env: c.napi_env, info: c.napi_callback_info, comptime name: [:0]const u8) !i32 {
-    var argv: [2]c.napi_value = undefined;
-    var argc: usize = 1;
-    const status = c.napi_get_cb_info(env, info, &argc, &argv, null, null);
-    if (status != c.napi_ok) {
-        return throw(env, name ++ " must be a number");
-    }
-    return i32_from_value(env, argv[0], name);
 }
 
 pub fn i32_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) !i32 {
