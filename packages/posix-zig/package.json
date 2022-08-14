@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "files": ["dist/*", "README.md", "package.json"],
   "scripts": {
-    "build": "make all",
+    "build": "make -j4 all",
     "clean": "make clean",
     "tsc": "tsc -w",
     "test": "jest ./dist",

@@ -35,14 +35,14 @@ fn chroot(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
 fn getegid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     _ = info;
     const pid = unistd.getegid();
-    return node.create_u32(env, pid) catch return null;
+    return node.create_u32(env, pid, "pid") catch return null;
 }
 
 // uid_t geteuid(void);
 fn geteuid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     _ = info;
     const pid = unistd.geteuid();
-    return node.create_u32(env, pid) catch return null;
+    return node.create_u32(env, pid, "pid") catch return null;
 }
 
 // int gethostname(char *name, size_t namelen);
@@ -53,7 +53,7 @@ fn gethostname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
         node.throwError(env, "error in gethostname");
     }
     // cast because we know name is null terminated.
-    return node.create_string_from_ptr(env, @ptrCast([*:0]const u8, &name)) catch return null;
+    return node.createStringFromPtr(env, @ptrCast([*:0]const u8, &name), "hostname") catch return null;
 }
 
 // pid_t getpgid(pid_t pid);
@@ -65,14 +65,14 @@ fn getpgid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
         node.throwError(env, "error in getpgid");
         return null;
     }
-    return node.create_i32(env, pgid) catch return null;
+    return node.create_i32(env, pgid, "pgid") catch return null;
 }
 
 // pid_t getppid(void);
 fn getppid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     _ = info;
     const pid = unistd.getppid();
-    return node.create_i32(env, pid) catch return null;
+    return node.create_i32(env, pid, "pid") catch return null;
 }
 
 // int setegid(gid_t gid);
@@ -155,7 +155,7 @@ fn setsid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
         node.throwError(env, "error in setsid");
         return null;
     }
-    return node.create_i32(env, pid) catch return null;
+    return node.create_i32(env, pid, "pid") catch return null;
 }
 
 // char *ttyname(int fd);
@@ -167,5 +167,5 @@ fn ttyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
         node.throwError(env, "invalid file descriptor");
         return null;
     }
-    return node.create_string_from_ptr(env, name) catch return null;
+    return node.createStringFromPtr(env, name, "ttyname") catch return null;
 }

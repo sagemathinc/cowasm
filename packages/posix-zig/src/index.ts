@@ -27,7 +27,13 @@ interface PosixFunctions {
   ttyname: (fd: number) => string;
 
   // netdb:
-  gethostbyname: (host: string) => void;
+  gethostbyname: (name: string) => {
+    h_name: string;
+    h_length: 4;
+    h_addrtype: number;
+    h_addr_list: number[]; // "Network byte order (big-endian)" -- it's what the operating system returns.
+    h_aliases: string[];
+  };
 }
 
 export type Posix = Partial<PosixFunctions>;
