@@ -18,7 +18,7 @@ import initWorker from "./init";
 import debug from "../../debug";
 import os from "os";
 import child_process from "child_process";
-import posixZig from "posix-zig";
+import posix from "posix-zig";
 
 export default async function wasmImportNode(
   name: string,
@@ -71,16 +71,6 @@ export default async function wasmImportNode(
     const binary = new Uint8Array(await readFile(path));
     const mod = new WebAssembly.Module(binary);
     return new WebAssembly.Instance(mod, opts);
-  }
-
-  let posix;
-  try {
-    posix = require("posix");
-  } catch (_err) {
-    posix = {};
-  }
-  for (const f in posixZig) {
-    posix[f] = posixZig[f];
   }
 
   return await wasmImport({

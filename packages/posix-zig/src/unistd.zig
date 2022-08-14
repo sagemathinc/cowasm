@@ -12,6 +12,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "setpgid", setpgid);
     try node.registerFunction(env, exports, "setegid", setegid);
     try node.registerFunction(env, exports, "seteuid", seteuid);
+    try node.registerFunction(env, exports, "sethostname", sethostname);
     try node.registerFunction(env, exports, "setregid", setregid);
     try node.registerFunction(env, exports, "setreuid", setreuid);
     try node.registerFunction(env, exports, "setsid", setsid);
@@ -89,6 +90,18 @@ fn seteuid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     const uid = node.u32_from_value(env, argv[0], "uid") catch return null;
     if (unistd.seteuid(uid) == -1) {
         node.throwError(env, "error in seteuid");
+    }
+    return null;
+}
+
+// int sethostname(const char *name, size_t len);
+fn sethostname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    var buf: [1024]u8 = undefined;
+    node.string_from_value(env, argv[0], "name", 1024, &buf) catch return null;
+    const len = @intCast(c_int, node.strlen(@ptrCast([*:0]const u8, &buf)));
+    if (unistd.sethostname(&buf, len) == -1) {
+        node.throwError(env, "error setting host name");
     }
     return null;
 }

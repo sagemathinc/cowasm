@@ -395,7 +395,7 @@ pub fn create_string(env: c.napi_env, value: [:0]const u8) !c.napi_value {
     return result;
 }
 
-fn strlen(s: [*:0]const u8) usize {
+pub fn strlen(s: [*:0]const u8) usize {
     var i: usize = 0;
     while (s[i] != 0) : (i += 1) {}
     return i;

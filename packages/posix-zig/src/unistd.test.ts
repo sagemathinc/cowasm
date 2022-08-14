@@ -23,7 +23,8 @@ test("geteuid returns a positive number", () => {
 // gethostname
 
 test("gethostname returns a string of length at least 1", () => {
-  const hostname = posix?.gethostname();
+  const hostname = posix.gethostname?.();
+  if (hostname == null) throw Error("fail");
   expect(typeof hostname).toBe("string");
   expect(hostname.length).toBeGreaterThan(0);
 });
@@ -55,9 +56,19 @@ test("seteuid throws an error (not as root)", () => {
   expect(() => posix.setegid?.(10)).toThrow();
 });
 
+test("that the security vulnerability CVE-2022-21211 does not impact posix-zig", () => {
+  // @ts-ignore
+  expect(() => posix.setegid?.({ toString: 1 })).toThrow();
+});
+
 // seteuid
 test("seteuid throws an error (not as root)", () => {
   expect(() => posix.seteuid?.(10)).toThrow();
+});
+
+// sethostname
+test("sethostname fails since we're not root", () => {
+  expect(() => posix.sethostname?.("example.com")).toThrow();
 });
 
 // setregid

@@ -9,7 +9,7 @@ const nodeToZig = {
 
 const name = `${nodeToZig[process.arch]}-${nodeToZig[process.platform]}`;
 
-interface Module {
+interface PosixFunctions {
   // unistd:
   chroot: (path: string) => void;
   getegid: () => number;
@@ -23,10 +23,13 @@ interface Module {
   setsid: () => number;
   setegid: (gid: number) => void;
   seteuid: (uid: number) => void;
+  sethostname: (name: string) => void;
   ttyname: (fd: number) => string;
 }
 
-let mod: Partial<Module> = {};
+export type Posix = Partial<PosixFunctions>;
+
+let mod: Posix = {};
 try {
   mod = require(`./${name}.node`);
   for (const name in mod) {
