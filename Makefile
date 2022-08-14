@@ -125,8 +125,18 @@ clean:
 	cd packages/zig && make clean
 	cd packages/zlib && make clean
 
-test: python-wasm
+
+test: test-bench test-dylink test-posix-zig test-python-wasm
+.PHONY: test
+
+test-bench: python-wasm
 	cd packages/bench && make test
+
+test-dylink: dylink
 	cd packages/dylink && make test
+
+test-posix-zig: posix-zig
 	cd packages/posix-zig && make test
+
+test-python-wasm: python-wasm
 	cd packages/python-wasm && make test
