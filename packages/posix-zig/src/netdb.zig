@@ -5,6 +5,7 @@ const std = @import("std");
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "gethostbyname", gethostbyname);
+    try node.registerFunction(env, exports, "gethostbyaddr", gethostbyaddr);
 }
 
 // struct hostent *gethostbyname(const char *name);
@@ -21,6 +22,8 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
 //     unsigned int s_addr; /* Network byte order (big-endian) */
 // };
 
+const in_addr = struct { s_addr: u32 };
+
 fn gethostbyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
     var buf: [1024]u8 = undefined;
@@ -29,6 +32,10 @@ fn gethostbyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.nap
         node.throwError(env, "error in gethostbyname");
         return null;
     };
+    return createHostent(env, hostent);
+}
+
+fn createHostent(env: c.napi_env, hostent: *netdb.hostent) c.napi_value {
     var object = node.createObject(env, "") catch return null;
 
     // h_name
@@ -42,7 +49,7 @@ fn gethostbyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.nap
     // h_length
     if (hostent.h_length != 4) {
         // we are only implementing support for ipv4 (?).
-        node.throwError(env, "gethostbyname only implemented for ipv4 h_length = 4");
+        node.throwError(env, "TODO: gethostbyname only implemented for ipv4 h_length = 4");
         return null;
     }
     const h_length = node.create_i32(env, hostent.h_length, "h_length") catch return null;
@@ -54,7 +61,6 @@ fn gethostbyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.nap
     while (hostent.h_addr_list[i] != null) : (i += 1) {}
     var h_addr_list = node.createArray(env, i, "h_addr_list") catch return null;
     node.setNamedProperty(env, object, "h_addr_list", h_addr_list, "") catch return null;
-    const in_addr = struct { s_addr: u32 };
     if (i > 0) {
         i -= 1;
         while (true) : (i -= 1) {
@@ -80,4 +86,12 @@ fn gethostbyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.nap
         }
     }
     return object;
+}
+
+// struct hostent *gethostbyaddr(const void *addr, socklen_t len, int type);
+
+fn gethostbyaddr(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = env;
+    _ = info;
+    return null;
 }

@@ -9,6 +9,7 @@
     "clean": "make clean",
     "tsc": "tsc -w",
     "test": "jest ./dist",
+    "test-no-cache": "jest --no-cache ./dist",
     "test-watch": "jest --watch ./dist",
     "prepublishOnly": "npm run build"
   },

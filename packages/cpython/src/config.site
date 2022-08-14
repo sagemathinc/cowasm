@@ -99,11 +99,13 @@ ac_cv_func_fdwalk=no
 ac_cv_have_chflags=no
 ac_cv_have_lchflags=no
 
-# Do not have these, but we can't just disable them since Python tries to fall back
-# to a mysterious sock_decode_hostname, which we don't have.  So we make implement
-# something instead:
-# ac_cv_func_gethostbyname=no
-# ac_cv_func_gethostbyaddr=no
+# netdb functionality
+# ac_cv_func_gethostbyname_r is a GNU extension.  We implement
+# ac_cv_func_gethostbyname in our posix-zig package so do have it (and
+# if you disable it, then the cpython build breaks).
+ac_cv_func_gethostbyname_r=no
+ac_cv_func_gethostbyname=yes
+ac_cv_func_gethostbyaddr=yes
 
 # Disable all of the process scheduling functionality, which nodejs doesn't provide
 # either, and of course doesn't make sense in browser.

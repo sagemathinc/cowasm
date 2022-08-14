@@ -35,7 +35,9 @@ dist/x86_64-linux-gnu.node:
 
 test: all
 	npx tsc -b
-	npm run test
+	# The GitHub actions test running crashes for some reason with caching enable, so we disable it
+	# for "make test"; do "npm run test" for the 2x faster cached testing.
+	npm run test-no-cache
 
 clean:
 	rm -rf ${BUILD} ${DIST} tsconfig.tsbuildinfo
