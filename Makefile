@@ -51,13 +51,18 @@ packages/openssl/${BUILT}: zig
 	cd packages/openssl && make all
 .PHONY: openssl
 
+posix-zig: packages/posix-zig/${BUILT}
+packages/posix-zig/${BUILT}: zig node
+	cd packages/posix-zig && make all
+.PHONY: posix-zig
+
 posix-wasm: packages/posix-wasm/${BUILT}
 packages/posix-wasm/${BUILT}: zig
 	cd packages/posix-wasm && make all
 .PHONY: posix-wasm
 
 python-wasm: packages/python-wasm/${BUILT}
-packages/python-wasm/${BUILT}: node cpython wasi zig posix-wasm dylink
+packages/python-wasm/${BUILT}: node cpython wasi zig posix-wasm dylink posix-zig
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 

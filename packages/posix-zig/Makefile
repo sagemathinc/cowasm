@@ -5,7 +5,10 @@ DIST = ${CWD}/dist
 OPTS = -mcpu=baseline -OReleaseSmall
 SOURCES = src/
 
-all: dist/index.js dist/aarch64-macos.node dist/x86_64-macos.node dist/aarch64-linux-gnu.node dist/x86_64-linux-gnu.node
+all: dist/.built
+
+dist/.built: dist/index.js dist/aarch64-macos.node dist/x86_64-macos.node dist/aarch64-linux-gnu.node dist/x86_64-linux-gnu.node
+	touch dist/.built
 
 build/headers:
 	rm -rf ${BUILD}/headers
