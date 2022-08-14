@@ -17,7 +17,10 @@ build/headers:
 	cd ${BUILD} && tar xf headers.tar.gz -C headers --strip-components=1
 	rm ${BUILD}/headers.tar.gz
 
-dist/index.js: src/index.ts
+node_modules:
+	npm ci
+
+dist/index.js: src/index.ts node_modules
 	tsc -b
 
 # Make an "automatic rules pattern".
