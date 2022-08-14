@@ -47,7 +47,7 @@
     "date-format": "^4.0.13",
     "debug": "^4.3.4",
     "dylink": "^0.3.0",
-    "posix-zig": "^0.0.2"
+    "posix-zig": "^0.1.0"
   },
   "devDependencies": {
     "@types/callsite": "^1.0.31",

@@ -1,15 +1,26 @@
 # Missing Posix Functions for Node.js -- via a native module written in Zig
 
-**STATUS:** Nothing yet -- I'm just grabbing the package name.
-
 Node.js native module written using Zig that provides access to Posix functions not in node that are needed to fully support WebAssembly modules. Includes precompiled binaries for [x86_64/aarch64]-[macos/linux], and falls back to empty functionality on all other platforms.
 
-We don't support any functionality on Windows, because it is not Posix. Everything partially posix for Windows is already in node.js.
+We don't support any functionality on Windows, because it is not Posix. Everything partially posix for Windows is already in node.js. On Windows the import provides an empty collection of functions.
+
+Install it:
+```
+npm install posix-zig
+```
+
+Then
+```js
+>>> require('posix-zig').gethostname()
+'max.local'
+```
+
+
 
 ## Why?
 
-There is an [npm module called posix](https://www.npmjs.com/package/posix), which claims to provide "The missing POSIX system calls for Node.", but unfortunately actually provides a tiny subset of missing POSIX system calls. I need far more
-for [python-wasm](https://python-wasm.cocalc.com/). Also, the Zig code is likely to be much easier to maintain an extend, e.g., [posix](https://www.npmjs.com/package/posix) has a [high severity vulnerability](https://github.com/ohmu/node-posix/issues/66), but hasn't been updated in years. See note at the bottom.
+There is an [npm module called posix](https://www.npmjs.com/package/posix), which claims to provide "The missing POSIX system calls for Node.", but there are some calls that I want that are missing, at least for
+for [python-wasm](https://python-wasm.cocalc.com/). Also, this Zig code is likely to be easier to maintain and extend. Also, [posix](https://www.npmjs.com/package/posix) has a [high severity vulnerability](https://github.com/ohmu/node-posix/issues/66), but hasn't been updated in 3 years. See note at the bottom.
 
 ## Why Zig?
 
