@@ -229,6 +229,16 @@ export default function unistd({
       posix.sethostname(name);
       return 0;
     },
+
+    // char *ttyname(int fd);
+    // int ttyname_r(int fd, char *buf, size_t buflen);
+    ttyname_r: (fd: number, ptr: number, len: number): number => {
+      if (posix.ttyname == null) {
+        throw Error("ttyname_r is not supported on this platform");
+      }
+      sendString(posix.ttyname(fd), { ptr, len });
+      return 0;
+    },
   };
 
   return unistd;

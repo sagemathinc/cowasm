@@ -1,0 +1,24 @@
+// Map from nodejs to zig descriptions:
+
+const nodeToZig = {
+  arm64: "aarch64",
+  x64: "x86_64",
+  linux: "linux-gnu",
+  darwin: "macos",
+};
+
+const name = `${nodeToZig[process.arch]}-${nodeToZig[process.platform]}`;
+
+interface Module {
+  ttyname: () => string;
+}
+
+let mod: Partial<Module> = {};
+try {
+  mod = require(`./${name}.node`);
+  for (const name in mod) {
+    exports[name] = mod[name];
+  }
+} catch (_err) {}
+
+export default mod;

@@ -4,7 +4,13 @@
   "description": "python-wasm -- Web Assembly Python for Node.js and the Browser",
   "main": "./dist/python/node.js",
   "browser": "./dist/python/browser.js",
-  "files": ["dist/*", "README.md", "package.json", "tsconfig.json", "Makefile"],
+  "files": [
+    "dist/*",
+    "README.md",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
   "scripts": {
     "build": "make all",
     "clean": "make clean",
@@ -19,21 +25,29 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/python-wasm.git"
   },
-  "keywords": ["python", "webassembly"],
+  "keywords": [
+    "python",
+    "webassembly"
+  ],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
   "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/python-wasm",
-  "workspaces": ["../wasi", "../dylink"],
+  "workspaces": [
+    "../wasi",
+    "../dylink",
+    "../posix-zig"
+  ],
   "dependencies": {
     "@wapython/wasi": "^1.0.1",
     "awaiting": "^3.0.0",
     "callsite": "^1.0.0",
     "date-format": "^4.0.13",
     "debug": "^4.3.4",
-    "dylink": "^0.3.0"
+    "dylink": "^0.3.0",
+    "posix-zig": "^0.0.2"
   },
   "devDependencies": {
     "@types/callsite": "^1.0.31",

@@ -18,6 +18,7 @@ import initWorker from "./init";
 import debug from "../../debug";
 import os from "os";
 import child_process from "child_process";
+import posixZig from "posix-zig";
 
 export default async function wasmImportNode(
   name: string,
@@ -77,6 +78,10 @@ export default async function wasmImportNode(
     posix = require("posix");
   } catch (_err) {
     posix = {};
+  }
+  console.log(posixZig);
+  for (const f in posixZig) {
+    posix[f] = posixZig[f];
   }
 
   return await wasmImport({
