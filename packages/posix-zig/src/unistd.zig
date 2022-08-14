@@ -1,6 +1,7 @@
 const c = @import("c.zig");
 const node = @import("node.zig");
 const unistd = @cImport(@cInclude("unistd.h"));
+const builtin = @import("builtin");
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "chroot", chroot);
@@ -99,9 +100,16 @@ fn sethostname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
     const argv = node.getArgv(env, info, 1) catch return null;
     var buf: [1024]u8 = undefined;
     node.string_from_value(env, argv[0], "name", 1024, &buf) catch return null;
-    const len = @intCast(c_int, node.strlen(@ptrCast([*:0]const u8, &buf)));
-    if (unistd.sethostname(&buf, len) == -1) {
-        node.throwError(env, "error setting host name");
+    const len = node.strlen(@ptrCast([*:0]const u8, &buf));
+    // Interestingly the type of second argument sethostname depends on the operating system.
+    if (builtin.target.os.tag == .linux) {
+        if (unistd.sethostname(&buf, len) == -1) {
+            node.throwError(env, "error setting host name");
+        }
+    } else {
+        if (unistd.sethostname(&buf, @intCast(c_int, len)) == -1) {
+            node.throwError(env, "error setting host name");
+        }
     }
     return null;
 }
