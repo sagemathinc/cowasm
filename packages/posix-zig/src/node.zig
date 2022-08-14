@@ -292,6 +292,13 @@ pub fn i32_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]c
     return result;
 }
 
+pub fn string_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8, comptime len: usize, buf: *[len]u8) !void {
+    var result: usize = undefined;
+    if (c.napi_get_value_string_utf8(env, value, buf, len, &result) != c.napi_ok) {
+        return throw(env, name ++ " must be a string");
+    }
+}
+
 pub fn byte_slice_into_object(
     env: c.napi_env,
     object: c.napi_value,

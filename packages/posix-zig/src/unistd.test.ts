@@ -1,5 +1,75 @@
 import posix from "./index";
 
+// chroot
+test("chroot raises an error", () => {
+  // this can only work as root, which we can't test here easily
+  expect(() => {
+    posix.chroot?.("/");
+  }).toThrow();
+});
+
+// getegid
+
+test("getegid returns a positive number", () => {
+  expect(posix.getegid?.()).toBeGreaterThan(0);
+});
+
+// geteuid
+
+test("geteuid returns a positive number", () => {
+  expect(posix.geteuid?.()).toBeGreaterThan(0);
+});
+
+// gethostname
+
+test("gethostname returns a string of length at least 1", () => {
+  const hostname = posix?.gethostname();
+  expect(typeof hostname).toBe("string");
+  expect(hostname.length).toBeGreaterThan(0);
+});
+
+// getpgid
+
+test("getpgid returns a positive integer", () => {
+  expect(posix.getpgid?.(1)).toBeGreaterThan(0);
+});
+
+test("a special case of setpgid that should work", () => {
+  // @ts-ignore
+  expect(posix.setpgid(0, 0)).toEqual(undefined);
+});
+
+test("a use of setpgid that should fail", () => {
+  expect(() => {
+    posix.setpgid?.(1, 2);
+  }).toThrow();
+});
+
+// getppid
+test("getppid returns a positive integer", () => {
+  expect(posix.getppid?.()).toBeGreaterThan(0);
+});
+
+// setegid
+test("seteuid throws an error (not as root)", () => {
+  expect(() => posix.setegid?.(10)).toThrow();
+});
+
+// seteuid
+test("seteuid throws an error (not as root)", () => {
+  expect(() => posix.seteuid?.(10)).toThrow();
+});
+
+// setregid
+test("setregid throws an error (not as root)", () => {
+  expect(() => posix.setregid?.(10, 20)).toThrow();
+});
+// setsid
+test("setsid throws an error (since process is already group leader)", () => {
+  expect(() => posix.setsid?.()).toThrow();
+});
+
+// ttyname
 test("ttyname of stdin, stdout, stderr works and starts with /dev/", () => {
   for (const fd of [0, 1, 2]) {
     const ttyname = posix.ttyname?.(fd);
@@ -24,24 +94,5 @@ test("ttyname with non-number input throws an error", () => {
   expect(() => {
     // @ts-ignore
     posix.ttyname?.("xyz");
-  }).toThrow();
-});
-
-test("getppid returns a positive integer", () => {
-  expect(posix.getppid?.()).toBeGreaterThan(0);
-});
-
-test("getpgid returns a positive integer", () => {
-  expect(posix.getpgid?.(1)).toBeGreaterThan(0);
-});
-
-test("a special case of setpgid that should work", () => {
-  // @ts-ignore
-  expect(posix.setpgid(0, 0)).toEqual(undefined);
-});
-
-test("a use of setpgid that should fail", () => {
-  expect(() => {
-    posix.setpgid?.(1, 2);
   }).toThrow();
 });

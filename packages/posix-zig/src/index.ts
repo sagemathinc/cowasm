@@ -11,9 +11,18 @@ const name = `${nodeToZig[process.arch]}-${nodeToZig[process.platform]}`;
 
 interface Module {
   // unistd:
+  chroot: (path: string) => void;
+  getegid: () => number;
+  geteuid: () => number;
+  gethostname: () => string;
   getpgid: (number) => number;
   getppid: () => number;
   setpgid: (pid: number, pgid: number) => void;
+  setregid: (rgid: number, egid: number) => void;
+  setreuid: (ruid: number, euid: number) => void;
+  setsid: () => number;
+  setegid: (gid: number) => void;
+  seteuid: (uid: number) => void;
   ttyname: (fd: number) => string;
 }
 
