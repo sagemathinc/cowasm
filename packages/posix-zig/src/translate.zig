@@ -6,35 +6,37 @@ const std = @import("std");
 const assert = std.debug.assert;
 const c = @import("c.zig");
 
-pub fn register_function(
+const RegisterError = error{ CreateError, SetError };
+
+pub fn registerFunction(
     env: c.napi_env,
     exports: c.napi_value,
     comptime name: [:0]const u8,
     function: fn (env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value,
-) !void {
+) RegisterError!void {
     var napi_function: c.napi_value = undefined;
-    _ = c.napi_create_function(env, null, 0, function, null, &napi_function);
-
-    _ = c.napi_set_named_property(env, exports, name, napi_function);
+    var status = c.napi_create_function(env, null, 0, function, null, &napi_function);
+    if (status != c.napi_ok) return RegisterError.CreateError;
+    status = c.napi_set_named_property(env, exports, name, napi_function);
+    if (status != c.napi_ok) return RegisterError.SetError;
 }
 
 const TranslationError = error{ExceptionThrown};
 pub fn throw(env: c.napi_env, comptime message: [:0]const u8) TranslationError {
     var result = c.napi_throw_error(env, null, message);
     switch (result) {
-        .napi_ok, .napi_pending_exception => {},
+        c.napi_ok, c.napi_pending_exception => {},
         else => unreachable,
     }
 
     return TranslationError.ExceptionThrown;
 }
 
-pub fn capture_undefined(env: c.napi_env) !c.napi_value {
+pub fn captureUndefined(env: c.napi_env) !c.napi_value {
     var result: c.napi_value = undefined;
     if (c.napi_get_undefined(env, &result) != .napi_ok) {
         return throw(env, "Failed to capture the value of \"undefined\".");
     }
-
     return result;
 }
 
@@ -53,7 +55,6 @@ pub fn create_external(env: c.napi_env, context: *anyopaque) !c.napi_value {
     if (c.napi_create_external(env, context, null, null, &result) != .napi_ok) {
         return throw(env, "Failed to create external for client context.");
     }
-
     return result;
 }
 
@@ -66,7 +67,6 @@ pub fn value_external(
     if (c.napi_get_value_external(env, value, &result) != .napi_ok) {
         return throw(env, error_message);
     }
-
     return result;
 }
 
@@ -254,8 +254,21 @@ pub fn u32_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]c
     // In that case we need to use the appropriate napi method to do more type checking here.
     // We want to make sure this is: unsigned, and an integer.
     switch (c.napi_get_value_uint32(env, value, &result)) {
-        .napi_ok => {},
-        .napi_number_expected => return throw(env, name ++ " must be a number"),
+        c.napi_ok => {},
+        c.napi_number_expected => return throw(env, name ++ " must be a number"),
+        else => unreachable,
+    }
+    return result;
+}
+
+pub fn i32_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) !i32 {
+    var result: i32 = undefined;
+    // TODO Check whether this will coerce signed numbers to a u32:
+    // In that case we need to use the appropriate napi method to do more type checking here.
+    // We want to make sure this is: unsigned, and an integer.
+    switch (c.napi_get_value_int32(env, value, &result)) {
+        c.napi_ok => {},
+        c.napi_number_expected => return throw(env, name ++ " must be a number"),
         else => unreachable,
     }
     return result;

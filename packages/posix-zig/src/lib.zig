@@ -5,6 +5,6 @@ const translate = @import("translate.zig");
 const unistd = @import("unistd.zig");
 
 export fn napi_register_module_v1(env: c.napi_env, exports: c.napi_value) c.napi_value {
-    translate.register_function(env, exports, "ttyname", unistd.ttyname) catch return null;
+    translate.registerFunction(env, exports, "ttyname", unistd.ttyname) catch return null;
     return exports;
 }
