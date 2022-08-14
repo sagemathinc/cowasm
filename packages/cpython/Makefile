@@ -41,10 +41,10 @@ export PATH := ${CWD}/../../bin:${DIST_NATIVE}/bin:${PATH}
 
 # Default target
 .PHONY: all
-all: ${CWD}/dist/.built
+all: ${DIST}/.built
 
-${CWD}/dist/.built: native wasm wasm-data
-	touch ${CWD}/dist/.built
+{DIST}/.built: native wasm wasm-data
+	touch {DIST}/.built
 
 #############
 # Source code
@@ -95,9 +95,7 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 	cd ${BUILD}/native && make  -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}" install
 	touch ${DIST_NATIVE}/.built
 
-.PHONY: native
 native: ${DIST_NATIVE}/.built
-
 
 # Use "make run-native" to run native python at the command line.
 .PHONY: run-native
@@ -187,7 +185,6 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	cp ${BUILD_WASM}/Modules/_decimal/libmpdec/libmpdec.a ${BUILD_WASM}/Modules/expat/libexpat.a ${DIST_WASM}/lib/
 	touch ${DIST_WASM}/.built-cpython
 
-.PHONY: wasm
 wasm: ${DIST_WASM}/.built-cpython
 
 ${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
@@ -211,7 +208,6 @@ ${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
 	cd ${DIST_WASM}/lib/dist/; zip -u python311.zip lib-dynload/*
 	touch ${DIST_WASM}/.built
 
-.PHONY: wasm-data
 wasm-data: ${DIST_WASM}/.built
 
 # Use "make run-wasm" to run our WASM python at the command line.

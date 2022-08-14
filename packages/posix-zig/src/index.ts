@@ -10,7 +10,7 @@ const nodeToZig = {
 const name = `${nodeToZig[process.arch]}-${nodeToZig[process.platform]}`;
 
 interface Module {
-  ttyname: () => string;
+  ttyname: (fd:number) => string;
 }
 
 let mod: Partial<Module> = {};
