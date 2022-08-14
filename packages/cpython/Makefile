@@ -43,8 +43,8 @@ export PATH := ${CWD}/../../bin:${DIST_NATIVE}/bin:${PATH}
 .PHONY: all
 all: ${DIST}/.built
 
-{DIST}/.built: native wasm wasm-data
-	touch {DIST}/.built
+${DIST}/.built: native wasm wasm-data
+	touch ${DIST}/.built
 
 #############
 # Source code
