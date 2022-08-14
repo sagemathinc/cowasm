@@ -58,7 +58,6 @@ fn gethostbyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.nap
     if (i > 0) {
         i -= 1;
         while (true) : (i -= 1) {
-            std.debug.print("i = {}\n", .{i});
             const addr: *in_addr = @ptrCast(*in_addr, @alignCast(@alignOf(*in_addr), hostent.h_addr_list[i]));
             const ip = node.create_u32(env, addr.s_addr, "ip address") catch return null;
             node.setElement(env, h_addr_list, i, ip, "error setting ip address in h_addr_list") catch return null;
@@ -75,7 +74,6 @@ fn gethostbyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.nap
     if (i > 0) {
         i -= 1;
         while (true) : (i -= 1) {
-            std.debug.print("i = {}\n", .{i});
             const alias = node.createStringFromPtr(env, hostent.h_aliases[i], "h_aliases[i]") catch return null;
             node.setElement(env, h_aliases, i, alias, "error setting alias in h_aliases") catch return null;
             if (i == 0) break;

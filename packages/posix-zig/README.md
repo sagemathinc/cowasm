@@ -15,6 +15,7 @@ Then
 'max.local'
 ```
 
+See [src/index.ts](src/index.ts) for what is available and what the Typescript types are.
 
 
 ## Why?
