@@ -25,6 +25,9 @@ interface PosixFunctions {
   seteuid: (uid: number) => void;
   sethostname: (name: string) => void;
   ttyname: (fd: number) => string;
+
+  // netdb:
+  gethostbyname: (host: string) => void;
 }
 
 export type Posix = Partial<PosixFunctions>;
