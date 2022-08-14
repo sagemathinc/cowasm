@@ -9,6 +9,14 @@ const nodeToZig = {
 
 const name = `${nodeToZig[process.arch]}-${nodeToZig[process.platform]}`;
 
+interface Hostent {
+  h_name: string;
+  h_length: number;
+  h_addrtype: number;
+  h_addr_list: string[];
+  h_aliases: string[];
+}
+
 interface PosixFunctions {
   // unistd:
   chroot: (path: string) => void;
@@ -27,13 +35,8 @@ interface PosixFunctions {
   ttyname: (fd: number) => string;
 
   // netdb:
-  gethostbyname: (name: string) => {
-    h_name: string;
-    h_length: 4;
-    h_addrtype: number;
-    h_addr_list: number[]; // "Network byte order (big-endian)" -- it's what the operating system returns.
-    h_aliases: string[];
-  };
+  gethostbyname: (name: string) => Hostent;
+  gethostbyaddr: (addr: string) => Hostent;  // addr is ipv4 or ipv6
 }
 
 export type Posix = Partial<PosixFunctions>;

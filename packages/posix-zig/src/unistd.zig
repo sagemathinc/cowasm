@@ -24,7 +24,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
 fn chroot(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
     var buf: [1024]u8 = undefined;
-    node.string_from_value(env, argv[0], "path", 1024, &buf) catch return null;
+    node.stringFromValue(env, argv[0], "path", 1024, &buf) catch return null;
     if (unistd.chroot(&buf) == -1) {
         node.throwError(env, "chroot failed");
     }
@@ -59,7 +59,7 @@ fn gethostname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
 // pid_t getpgid(pid_t pid);
 fn getpgid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
-    const pid = node.i32_from_value(env, argv[0], "pid") catch return null;
+    const pid = node.i32FromValue(env, argv[0], "pid") catch return null;
     const pgid = unistd.getpgid(pid);
     if (pgid == -1) {
         node.throwError(env, "error in getpgid");
@@ -78,7 +78,7 @@ fn getppid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
 // int setegid(gid_t gid);
 fn setegid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
-    const gid = node.u32_from_value(env, argv[0], "gid") catch return null;
+    const gid = node.u32FromValue(env, argv[0], "gid") catch return null;
     if (unistd.setegid(gid) == -1) {
         node.throwError(env, "error in setegid");
     }
@@ -88,7 +88,7 @@ fn setegid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
 // int seteuid(uid_t uid);
 fn seteuid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
-    const uid = node.u32_from_value(env, argv[0], "uid") catch return null;
+    const uid = node.u32FromValue(env, argv[0], "uid") catch return null;
     if (unistd.seteuid(uid) == -1) {
         node.throwError(env, "error in seteuid");
     }
@@ -99,7 +99,7 @@ fn seteuid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
 fn sethostname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
     var buf: [1024]u8 = undefined;
-    node.string_from_value(env, argv[0], "name", 1024, &buf) catch return null;
+    node.stringFromValue(env, argv[0], "name", 1024, &buf) catch return null;
     const len = node.strlen(@ptrCast([*:0]const u8, &buf));
     // Interestingly the type of second argument sethostname depends on the operating system.
     if (builtin.target.os.tag == .linux) {
@@ -117,8 +117,8 @@ fn sethostname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
 // int setpgid(pid_t pid, pid_t pgid);
 fn setpgid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 2) catch return null;
-    const pid = node.i32_from_value(env, argv[0], "pid") catch return null;
-    const pgid = node.i32_from_value(env, argv[1], "pgid") catch return null;
+    const pid = node.i32FromValue(env, argv[0], "pid") catch return null;
+    const pgid = node.i32FromValue(env, argv[1], "pgid") catch return null;
     if (unistd.setpgid(pid, pgid) == -1) {
         node.throwError(env, "error in setpgid");
     }
@@ -128,8 +128,8 @@ fn setpgid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
 // int setregid(gid_t rgid, gid_t egid);
 fn setregid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 2) catch return null;
-    const rgid = node.u32_from_value(env, argv[0], "rgid") catch return null;
-    const egid = node.u32_from_value(env, argv[1], "egid") catch return null;
+    const rgid = node.u32FromValue(env, argv[0], "rgid") catch return null;
+    const egid = node.u32FromValue(env, argv[1], "egid") catch return null;
     if (unistd.setregid(rgid, egid) == -1) {
         node.throwError(env, "error in setregid");
     }
@@ -139,8 +139,8 @@ fn setregid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_val
 // int setreuid(uid_t ruid, uid_t euid);
 fn setreuid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 2) catch return null;
-    const ruid = node.u32_from_value(env, argv[0], "ruid") catch return null;
-    const euid = node.u32_from_value(env, argv[1], "euid") catch return null;
+    const ruid = node.u32FromValue(env, argv[0], "ruid") catch return null;
+    const euid = node.u32FromValue(env, argv[1], "euid") catch return null;
     if (unistd.setreuid(ruid, euid) == -1) {
         node.throwError(env, "error in setreuid");
     }
@@ -161,7 +161,7 @@ fn setsid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
 // char *ttyname(int fd);
 fn ttyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
-    const fd = node.i32_from_value(env, argv[0], "fd") catch return null;
+    const fd = node.i32FromValue(env, argv[0], "fd") catch return null;
     const name = unistd.ttyname(fd);
     if (name == null) {
         node.throwError(env, "invalid file descriptor");

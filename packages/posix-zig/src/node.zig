@@ -221,7 +221,7 @@ pub fn u32_from_object(env: c.napi_env, object: c.napi_value, comptime key: [:0]
         return throw(env, key ++ " must be defined");
     }
 
-    return u32_from_value(env, property, key);
+    return u32FromValue(env, property, key);
 }
 
 pub fn u16_from_object(env: c.napi_env, object: c.napi_value, comptime key: [:0]const u8) !u16 {
@@ -266,7 +266,7 @@ pub fn u64_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]c
     return result;
 }
 
-pub fn u32_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) !u32 {
+pub fn u32FromValue(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) !u32 {
     var result: u32 = undefined;
     // TODO Check whether this will coerce signed numbers to a u32:
     // In that case we need to use the appropriate napi method to do more type checking here.
@@ -279,7 +279,7 @@ pub fn u32_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]c
     return result;
 }
 
-pub fn i32_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) !i32 {
+pub fn i32FromValue(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) !i32 {
     var result: i32 = undefined;
     // TODO Check whether this will coerce signed numbers to a u32:
     // In that case we need to use the appropriate napi method to do more type checking here.
@@ -292,7 +292,7 @@ pub fn i32_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]c
     return result;
 }
 
-pub fn string_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8, comptime len: usize, buf: *[len]u8) !void {
+pub fn stringFromValue(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8, comptime len: usize, buf: *[len]u8) !void {
     var result: usize = undefined;
     if (c.napi_get_value_string_utf8(env, value, buf, len, &result) != c.napi_ok) {
         return throw(env, name ++ " must be a string");
