@@ -1,6 +1,6 @@
 {
   "name": "posix-zig",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Missing Posix Functions for Node.js -- via a native module written in Zig",
   "main": "dist/index.js",
   "files": ["src/*", "dist/*", "README.md", "package.json"],

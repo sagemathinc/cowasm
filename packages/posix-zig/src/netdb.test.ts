@@ -30,7 +30,8 @@ test("gethostbyaddr check - v4", () => {
 test("gethostbyaddr check - v6", () => {
   const hostent = posix.gethostbyaddr?.("2001:4860:4860::8888");
   expect(hostent?.h_addr_list[0]).toContain(":");
-  expect(hostent?.h_aliases[0]).toContain("8.8.8.8");
+  // behavior depends on OS
+  // expect(hostent?.h_aliases[0]).toContain("8.8.8.8");
 });
 
 test("getaddrinfo canonical name", () => {
