@@ -193,6 +193,16 @@ async function doWasmImport({
     posix: bindings.posix ?? {},
     child_process: bindings.child_process ?? {},
     memory,
+    malloc: (...args) => {
+      const ptr = wasm.exports.c_malloc(...args);
+      if (!ptr) {
+        throw Error("memory allocation error");
+      }
+      return ptr;
+    },
+    free: (...args) => {
+      return wasm.exports.c_free(...args);
+    },
   });
   for (const name in posixEnv) {
     if (wasmOpts.env[name] == null) {

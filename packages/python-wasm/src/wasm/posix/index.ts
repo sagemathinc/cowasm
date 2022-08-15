@@ -46,6 +46,8 @@ interface Context {
   posix: {
     getpgid?: () => number;
   };
+  malloc: (bytes: number) => number;
+  free: (ptr: number) => void;
 }
 
 export default function posix(context: Context) {

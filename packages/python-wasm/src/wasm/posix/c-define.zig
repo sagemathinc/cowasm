@@ -2,6 +2,8 @@ pub fn keepalive() void {}
 const std = @import("std");
 const errno = @cImport(@cInclude("errno.h"));
 const fcntl = @cImport(@cInclude("fcntl.h"));
+const netdb = @cImport(@cInclude("netdb.h"));
+
 //const signal = @cImport(@cInclude("signal.h"));
 
 // Every constant that we make available must be explicitly declared here:
@@ -31,6 +33,12 @@ export fn cDefine(name: [*:0]const u8) c_int {
     if (eql(name, "SIG_SETMASK")) {
         return 2;
         //return signal.SIG_SETMASK;
+    }
+    if (eql(name, "AF_INET")) {
+        return netdb.AF_INET;
+    }
+    if (eql(name, "AF_INET6")) {
+        return netdb.AF_INET6;
     }
 
     std.debug.print("WARNING: You must add the constant {s} to python-wasm/src/wasm/posix/c-define.zig\n", .{name});
