@@ -235,7 +235,8 @@ fn createAddrinfo(env: c.napi_env, addrinfo: *netdb.addrinfo) c.napi_value {
     const sa_family = node.create_u32(env, ai_addr.sa_family, "sockaddr.sa_family") catch return null;
     node.setNamedProperty(env, object, "sa_family", sa_family, "") catch return null;
 
-    const sa_data = node.createBuffer(env, ai_addr.sa_data[0 .. ai_addr.sa_len - 2], "sa_data") catch return null;
+    // "The sa_len field contains the length of the sa_data field. " -- from some official docs
+    const sa_data = node.createBuffer(env, ai_addr.sa_data[0 .. ai_addr.sa_len], "sa_data") catch return null;
     node.setNamedProperty(env, object, "sa_data", sa_data, "") catch return null;
 
     return object;
