@@ -39,3 +39,11 @@ test("getaddrinfo canonical name", () => {
   if (addrinfo == null) throw Error("fail");
   expect(addrinfo[0]?.ai_canonname).toEqual("example.com");
 });
+
+test("getaddrinfo isn't random garbled nonsense", () => {
+  const addrinfo = posix.getaddrinfo?.("example.com", "http", { flags: 2 });
+  if (addrinfo == null) throw Error("fail");
+  const addrinfo2 = posix.getaddrinfo?.("example.com", "http", { flags: 2 });
+  if (addrinfo2 == null) throw Error("fail");
+  expect(addrinfo).toEqual(addrinfo2);
+});

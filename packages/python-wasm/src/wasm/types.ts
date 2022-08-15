@@ -21,7 +21,10 @@ export class WasmInstance extends EventEmitter {
   getFunction(_name: string): Function | undefined {
     throw Error("not implemented");
   }
-  stringToCharStar(_s: string): number {
+  sendString(_s: string): number {
+    throw Error("not implemented");
+  }
+  sendBuffer(_buf: Buffer): number {
     throw Error("not implemented");
   }
 }

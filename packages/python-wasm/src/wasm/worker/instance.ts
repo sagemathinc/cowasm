@@ -55,7 +55,17 @@ export default class WasmInstance extends EventEmitter {
     throw Error("not implemented ");
   }
 
-  stringToCharStar(str: string, dest?: { ptr: number; len: number }): number {
+  sendBuffer(buf: Buffer): number {
+    const ptr = this.exports.c_malloc(buf.byteLength);
+    if (ptr == 0) {
+      throw Error("MemoryError -- out of memory");
+    }
+    const array = new Uint8Array(this.memory.buffer);
+    buf.copy(array, ptr);
+    return ptr;
+  }
+
+  sendString(str: string, dest?: { ptr: number; len: number }): number {
     // Caller is responsible for freeing the returned char* from stringToU8
     // using this.exports.c_free, e.g., as done in callWithString here.
     // If dest and len are given, string is copied into memory starting
@@ -88,7 +98,7 @@ export default class WasmInstance extends EventEmitter {
         r = this.callWithSmallString(f, str);
         return this.result ?? r;
       }
-      const ptr = this.stringToCharStar(str);
+      const ptr = this.sendString(str);
       try {
         // @ts-ignore
         r = f(ptr, ...args);
@@ -101,7 +111,7 @@ export default class WasmInstance extends EventEmitter {
       // Convert array of strings to char**
       const ptrs: number[] = [];
       for (const s of str) {
-        ptrs.push(this.stringToCharStar(s));
+        ptrs.push(this.sendString(s));
       }
       const len = ptrs.length;
       const ptr = this.exports.c_malloc(len * 4); // sizeof(char*) = 4 in WASM.

@@ -180,19 +180,23 @@ async function doWasmImport({
   // the string (null terminated), with a bound of len bytes
   // including a terminating null byte.
   function sendString(s: string, dest?: { ptr: number; len: number }): number {
-    return wasm.stringToCharStar(s, dest);
+    return wasm.sendString(s, dest);
   }
 
   const posixEnv = posix({
     fs,
     recvString,
     sendString,
+    sendBuffer: (buf: Buffer) => wasm.sendBuffer(buf),
     wasi,
     process,
     os: bindings.os ?? {},
     posix: bindings.posix ?? {},
     child_process: bindings.child_process ?? {},
     memory,
+    getFunction: (name: string): Function | undefined => {
+      return wasm.getFunction(name);
+    },
     malloc: (...args) => {
       const ptr = wasm.exports.c_malloc(...args);
       if (!ptr) {

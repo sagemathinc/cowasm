@@ -23,6 +23,7 @@ interface Context {
   fs: FileSystem;
   recvString: (ptr: number) => string;
   sendString: (s: string) => number; // returns a malloc'd pointer!
+  sendBuffer: (buf: Buffer) => number; // returns a malloc'd pointer.
   wasi: WASI;
   process: {
     getpid?: () => number;
@@ -48,6 +49,7 @@ interface Context {
   };
   malloc: (bytes: number) => number;
   free: (ptr: number) => void;
+  getFunction: (name: string) => Function | undefined;
 }
 
 export default function posix(context: Context) {

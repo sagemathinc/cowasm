@@ -11,16 +11,52 @@ import { notImplemented } from "./util";
 export default function netdb({
   memory,
   posix,
+  getFunction,
   recvString,
   sendString,
   malloc,
-  free,
 }) {
   const names =
     " getprotobyname getservbyname getservbyport getnameinfo getpeername";
   const netdb: any = {};
   for (const name of names.split(" ")) {
     netdb[name] = notImplemented(name);
+  }
+
+  // This can't properly be done using zig, since it
+  // intensenly abuses the C data types...
+  function sendSockaddr(sa_family, ai_addrlen, sa_data): number {
+    const ptr = malloc(2 + ai_addrlen);
+    const view = new DataView(memory.buffer);
+    view.setUint16(ptr, sa_family, true);
+    for (let i = 0; i < ai_addrlen; i++) {
+      view.setUint8(ptr + 2 + i, sa_data[i]);
+    }
+    return ptr;
+  }
+
+  function recvHints(hintsPtr) {
+    const view = new DataView(memory.buffer);
+    const flags = view.getUint32(hintsPtr, true);
+    hintsPtr += 4;
+    let family = view.getUint32(hintsPtr, true);
+    // TODO: massive todo here -- we need to translate the constants from WASI/libc to whatever the host OS is,
+    // and it is VERY different on every single one!
+    if (family == 1) {
+      family = 2;
+    } else if (family == 2) {
+      family = 30;
+    }
+    hintsPtr += 4;
+    const socktype = view.getUint32(hintsPtr, true);
+    hintsPtr += 4;
+    const protocol = view.getUint32(hintsPtr, true);
+    return {
+      flags,
+      family,
+      socktype,
+      protocol,
+    };
   }
 
   // struct hostent *gethostbyname(const char *name);
@@ -94,94 +130,62 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     hintsPtr: number,
     resPtr: number
   ): number => {
-    console.log("here in getaddrinfo", posix.getaddrinfo);
     if (posix.getaddrinfo == null) {
       notImplemented("getaddrinfo");
       return -1;
     }
     const node = recvString(nodePtr);
     const service = recvString(servicePtr);
-    const view = new DataView(memory.buffer);
-    const flags = view.getUint32(hintsPtr, true);
-    hintsPtr += 4;
-    let family = view.getUint32(hintsPtr, true);
-    // TODO: massive todo here -- we need to translate the constants from WASI/libc to whatever the host OS is,
-    // and it is VERY different on every single one!
-    if (family == 1) {
-      family = 2;
-    } else if (family == 2) {
-      family = 30;
+    const hints = recvHints(hintsPtr);
+    const addrinfoArray = posix.getaddrinfo(node, service, hints);
+    function mapConstants(info) {
+      // TODO!!
+      if (info.ai_family == 2) {
+        info.ai_family = info.sa_family = 1;
+      } else if (info.ai_family == 30) {
+        info.ai_framily = info.sa_family = 2;
+      }
     }
-    hintsPtr += 4;
-    const socktype = view.getUint32(hintsPtr, true);
-    hintsPtr += 4;
-    const protocol = view.getUint32(hintsPtr, true);
-    hintsPtr += 4;
-    console.log({
-      node,
-      service,
-      hints: {
-        flags,
-        family,
-        socktype,
-        protocol,
-      },
-    });
-    const addrinfoArray = posix.getaddrinfo(node, service, {
-      flags,
-      family,
-      socktype,
-      protocol,
-    });
-    console.log("got back: ", addrinfoArray);
-    // We need to allocate memory for and create a linked list of
-    // struct addrinfo objects from the array above.  This makes
-    // my head hurt -- TODO: below, doing this directly like in wasi.ts,
-    // rather than via some general function, is insane.
-    const info = addrinfoArray[0];
-    if (info.ai_family == 2) {
-      info.ai_family = info.sa_family = 1;
-    } else if (info.ai_family == 30) {
-      info.ai_framily = info.sa_family = 2;
-    }
-    console.log("info = ", info);
-    const ptrToAddrInfo = malloc(8 * 4); // 8 fields
-    view.setUint32(resPtr, ptrToAddrInfo, true);
-    let ptr = ptrToAddrInfo;
-    view.setInt32(ptr, info.ai_flags, true);
-    ptr += 4;
-    view.setInt32(ptr, info.ai_family, true);
-    ptr += 4;
-    view.setInt32(ptr, info.ai_socktype, true);
-    ptr += 4;
-    view.setInt32(ptr, info.ai_protocol, true);
-    ptr += 4;
-    view.setUint32(ptr, info.ai_addrlen, true);
-    ptr += 4;
-    const ptrToAiAddr = malloc(2 + info.ai_addrlen);
-    view.setUint16(ptrToAiAddr, info.sa_family, true);
-    for (let i = 0; i < info.ai_addrlen; i++) {
-      view.setUint8(ptrToAiAddr + 2 + i, info.sa_data[i]);
-    }
-    view.setUint32(ptr, ptrToAiAddr, true);
-    ptr += 4;
-    if (info.ai_canonname) {
-      const ai_canonname_ptr = sendString(info.ai_canonname);
-      view.setUint32(ptr, ai_canonname_ptr, true);
-    } else {
-      view.setUint32(ptr, 0, true);
-    }
-    ptr += 4;
-    // nothing next (for now):
-    view.setUint32(ptr, 0, true);
-    return 0;
-  };
 
-  netdb.freeaddrinfo = (resPtr: number): void => {
-    // tricky because has to navigate linked list and free stuff inside
-    // each entry...
-    console.log("TODO -- freeaddrinfo");
-    free(resPtr); // wrong -- need to free components
+    const sendAddrinfo = getFunction("sendAddrinfo");
+    if (sendAddrinfo == null) throw Error("bug");
+
+    let ai_next = 0;
+    let addrinfo = 0;
+    let n = addrinfoArray.length - 1;
+    while (n >= 0) {
+      const info = addrinfoArray[n];
+      mapConstants(info);
+      const ai_addr = sendSockaddr(
+        info.sa_family,
+        info.ai_addrlen,
+        info.sa_data
+      );
+      if (!ai_addr) {
+        throw Error("error creating sockaddr");
+      }
+      addrinfo = sendAddrinfo(
+        info.ai_flags,
+        info.ai_family,
+        info.ai_socktype,
+        info.ai_protocol,
+        info.ai_addrlen,
+        ai_addr,
+        info.ai_canonname != null ? sendString(info.ai_canonname) : 0,
+        ai_next
+      );
+      if (!addrinfo) {
+        throw Error("error creating addrinfo structure");
+      }
+      ai_next = addrinfo;
+      n -= 1;
+    }
+    if (!addrinfo) {
+      throw Error("error creating addrinfo structure");
+    }
+    const view = new DataView(memory.buffer);
+    view.setUint32(resPtr, addrinfo, true);
+    return 0;
   };
 
   return netdb;
