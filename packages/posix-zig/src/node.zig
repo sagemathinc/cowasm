@@ -40,7 +40,7 @@ pub fn getArgv(env: c.napi_env, info: c.napi_callback_info, comptime n: usize) !
 }
 
 const TranslationError = error{ExceptionThrown};
-fn throw(env: c.napi_env, comptime message: [:0]const u8) TranslationError {
+pub fn throw(env: c.napi_env, comptime message: [:0]const u8) TranslationError {
     var result = c.napi_throw_error(env, null, message);
     switch (result) {
         c.napi_ok, c.napi_pending_exception => {},

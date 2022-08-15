@@ -9,6 +9,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "gethostbyname", gethostbyname);
     try node.registerFunction(env, exports, "gethostbyaddr", gethostbyaddr);
     try node.registerFunction(env, exports, "getaddrinfo0", getaddrinfo);
+    try node.registerFunction(env, exports, "getConstants", getConstants);
 }
 
 // struct hostent *gethostbyname(const char *name);
@@ -236,8 +237,53 @@ fn createAddrinfo(env: c.napi_env, addrinfo: *netdb.addrinfo) c.napi_value {
     node.setNamedProperty(env, object, "sa_family", sa_family, "") catch return null;
 
     // "The sa_len field contains the length of the sa_data field. " -- from some official docs
-    const sa_data = node.createBuffer(env, ai_addr.sa_data[0 .. ai_addr.sa_len], "sa_data") catch return null;
+    const sa_data = node.createBuffer(env, ai_addr.sa_data[0..ai_addr.sa_len], "sa_data") catch return null;
     node.setNamedProperty(env, object, "sa_data", sa_data, "") catch return null;
 
     return object;
+}
+
+const socket_h = @cImport(@cInclude("socket.h"));
+
+fn setConstant(env: c.napi_env, object: c.napi_value, key: [:0]const u8, value: i32) !void {
+    var result: c.napi_value = undefined;
+    if (c.napi_create_int32(env, value, &result) != c.napi_ok) {
+        return node.throw(env, "error creating i32 constant");
+    }
+    if (c.napi_set_named_property(env, object, key, result) != c.napi_ok) {
+        return node.throw(env, "error setting constant");
+    }
+}
+
+// NOTE: *this* is a DRY way to use comptime to define a bunch of constants from headers!
+
+// Important; make sure to compile on all supported architectures to make sure these are
+// all available.
+
+const CONSTANTS = [_][:0]const u8{
+    "AF_UNSPEC", "AF_UNIX", "AF_LOCAL", "AF_INET", "AF_SNA", "AF_DECnet", "AF_APPLETALK", "AF_ROUTE", "AF_IPX", "AF_ISDN", "AF_INET6", "AF_MAX", // AF_= address format
+    "AI_PASSIVE", "AI_CANONNAME", "AI_NUMERICHOST", "AI_V4MAPPED", "AI_ALL", "AI_ADDRCONFIG", "AI_NUMERICSERV", // AI = address info
+    "EAI_BADFLAGS", "EAI_NONAME", "EAI_AGAIN", "EAI_FAIL", "EAI_FAMILY", "EAI_SOCKTYPE", "EAI_SERVICE", "EAI_MEMORY", "EAI_SYSTEM", "EAI_OVERFLOW", // errors for the getaddrinfo function
+};
+
+const VALUES = blk: {
+    var values: [CONSTANTS.len]i32 = undefined;
+    var i = 0;
+    for (CONSTANTS) |constant| {
+        values[i] = @field(netdb, constant);
+        i += 1;
+    }
+    break :blk values;
+};
+
+fn getConstants(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    var obj = node.createObject(env, "") catch return null;
+    var i: usize = 0;
+    for (CONSTANTS) |constant| {
+        setConstant(env, obj, constant, VALUES[i]) catch return null;
+        i += 1;
+    }
+
+    return obj;
 }
