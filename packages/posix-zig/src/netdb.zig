@@ -8,6 +8,7 @@ const inet = @cImport(@cInclude("arpa/inet.h"));
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "gethostbyname", gethostbyname);
     try node.registerFunction(env, exports, "gethostbyaddr", gethostbyaddr);
+    try node.registerFunction(env, exports, "getaddrinfo0", getaddrinfo);
 }
 
 // struct hostent *gethostbyname(const char *name);
@@ -95,7 +96,6 @@ fn createHostent(env: c.napi_env, hostent: *netdb.hostent) c.napi_value {
         return null;
     }
     const h_addrtype = node.create_i32(env, hostent.h_addrtype, "h_addrtype") catch return null;
-
     node.setNamedProperty(env, object, "h_addrtype", h_addrtype, "") catch return null;
 
     // h_length
@@ -139,5 +139,104 @@ fn createHostent(env: c.napi_env, hostent: *netdb.hostent) c.napi_value {
             if (i == 0) break;
         }
     }
+    return object;
+}
+
+//////////////////////////
+//       int getaddrinfo(const char *restrict node,
+//                        const char *restrict service,
+//                        const struct addrinfo *restrict hints,
+//                        struct addrinfo **restrict res);
+//      void freeaddrinfo(struct addrinfo *res);
+//
+//
+// call like this:
+//
+//      getaddrinfo0(node:string, service:string, hint_flags:number, hint_family:number, hint_socktype:number, hint_protocol:number)
+//
+// all arguments must be given, though the hints can all be 0.  In index.ts
+// we provide a nicer interface.
+fn getaddrinfo(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 6) catch return null;
+    var nodeName: [256]u8 = undefined; // domain names are limited to 253 chars
+    node.stringFromValue(env, argv[0], "node", nodeName.len, &nodeName) catch return null;
+    var service: [256]u8 = undefined; // these are really short, e.g., "ftp"
+    node.stringFromValue(env, argv[1], "service", service.len, &service) catch return null;
+    const hint_flags = node.i32FromValue(env, argv[2], "hint_flags") catch return null;
+    const hint_family = node.i32FromValue(env, argv[3], "hint_family") catch return null;
+    const hint_socktype = node.i32FromValue(env, argv[4], "hint_socktype") catch return null;
+    const hint_protocol = node.i32FromValue(env, argv[5], "hint_protocol") catch return null;
+
+    const hints = netdb.addrinfo{ .ai_flags = hint_flags, .ai_family = hint_family, .ai_socktype = hint_socktype, .ai_protocol = hint_protocol, .ai_addrlen = 0, .ai_addr = 0, .ai_canonname = 0, .ai_next = 0 };
+    var res: *netdb.addrinfo = undefined;
+    switch (netdb.getaddrinfo(&nodeName, &service, &hints, @ptrCast([*c][*c]netdb.addrinfo, &res))) {
+        0 => {},
+        else => {
+            node.throwError(env, "getaddrinfo -- error (TODO)");
+            return null;
+        },
+    }
+    const addrinfo = createAddrinfoArray(env, res);
+    netdb.freeaddrinfo(res);
+    return addrinfo;
+}
+
+// struct sockaddr {
+// 	__uint8_t       sa_len;         /* total length */
+// 	sa_family_t     sa_family;      /* [XSI] address family */
+// 	char            sa_data[14];    /* [XSI] addr value (actually larger) */
+// };
+//
+const sockaddr = struct { sa_len: u8, sa_family: u8, sa_data: [14]u8 };
+
+fn createAddrinfoArray(env: c.napi_env, addrinfo: ?*netdb.addrinfo) c.napi_value {
+    // determine the length of the linked list.
+    var len: u32 = 0;
+    var cur = addrinfo;
+    while (cur != null) : (cur = (cur orelse unreachable).ai_next) {
+        len += 1;
+    }
+    var array = node.createArray(env, len, "creating array to hold addrinfo objects") catch return null;
+    cur = addrinfo;
+    var index: u32 = 0;
+    while (cur != null) : (cur = (cur orelse unreachable).ai_next) {
+        const info = cur orelse unreachable;
+        node.setElement(env, array, index, createAddrinfo(env, info), "copying data into array of addrinfo objects") catch return null;
+        index += 1;
+    }
+    return array;
+}
+
+fn createAddrinfo(env: c.napi_env, addrinfo: *netdb.addrinfo) c.napi_value {
+    var object = node.createObject(env, "") catch return null;
+    const ai_flags = node.create_i32(env, addrinfo.ai_flags, "ai_flags") catch return null;
+    node.setNamedProperty(env, object, "ai_flags", ai_flags, "") catch return null;
+
+    const ai_family = node.create_i32(env, addrinfo.ai_family, "ai_family") catch return null;
+    node.setNamedProperty(env, object, "ai_family", ai_family, "") catch return null;
+
+    const ai_socktype = node.create_i32(env, addrinfo.ai_socktype, "ai_socktype") catch return null;
+    node.setNamedProperty(env, object, "ai_socktype", ai_socktype, "") catch return null;
+
+    const ai_protocol = node.create_i32(env, addrinfo.ai_protocol, "ai_protocol") catch return null;
+    node.setNamedProperty(env, object, "ai_protocol", ai_protocol, "") catch return null;
+
+    const ai_addrlen = node.create_u32(env, addrinfo.ai_addrlen, "ai_addrlen") catch return null;
+    node.setNamedProperty(env, object, "ai_addrlen", ai_addrlen, "") catch return null;
+
+    if (addrinfo.ai_canonname != null) {
+        const ai_canonname = node.createStringFromPtr(env, addrinfo.ai_canonname, "ai_canonname") catch return null;
+        node.setNamedProperty(env, object, "ai_canonname", ai_canonname, "") catch return null;
+    }
+
+    const ai_addr = @ptrCast(*sockaddr, addrinfo.ai_addr);
+    const sa_len = node.create_u32(env, ai_addr.sa_len, "sockaddr.sa_len") catch return null;
+    node.setNamedProperty(env, object, "sa_len", sa_len, "") catch return null;
+    const sa_family = node.create_u32(env, ai_addr.sa_family, "sockaddr.sa_family") catch return null;
+    node.setNamedProperty(env, object, "sa_family", sa_family, "") catch return null;
+
+    const sa_data = node.createBuffer(env, ai_addr.sa_data[0 .. ai_addr.sa_len - 2], "sa_data") catch return null;
+    node.setNamedProperty(env, object, "sa_data", sa_data, "") catch return null;
+
     return object;
 }

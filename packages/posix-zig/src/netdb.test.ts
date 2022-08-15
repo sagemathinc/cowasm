@@ -32,3 +32,9 @@ test("gethostbyaddr check - v6", () => {
   expect(hostent?.h_addr_list[0]).toContain(":");
   expect(hostent?.h_aliases[0]).toContain("8.8.8.8");
 });
+
+test("getaddrinfo canonical name", () => {
+  const addrinfo = posix.getaddrinfo?.("example.com", "http", { flags: 2 });
+  if (addrinfo == null) throw Error("fail");
+  expect(addrinfo[0]?.ai_canonname).toEqual("example.com");
+});

@@ -9,7 +9,7 @@ import { notImplemented } from "./util";
 
 export default function netdb({ posix }) {
   const names =
-    "gethostbyaddr getaddrinfo getprotobyname getservbyname getservbyport getnameinfo getpeername";
+    "getaddrinfo getprotobyname getservbyname getservbyport getnameinfo getpeername";
   const netdb: any = {};
   for (const name of names.split(" ")) {
     netdb[name] = notImplemented(name);
@@ -37,5 +37,16 @@ export default function netdb({ posix }) {
     console.log(hostent);
     throw Error("TODO");
   };
+
+  netdb.gethostbyaddr = (addr: string) => {
+    if (posix.gethostbyaddr == null) {
+      notImplemented("gethostbyaddr");
+      return;
+    }
+    const hostent = posix.gethostbyaddr(addr);
+    console.log(hostent);
+    throw Error("TODO");
+  };
+
   return netdb;
 }

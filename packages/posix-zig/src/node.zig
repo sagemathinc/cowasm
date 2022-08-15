@@ -407,9 +407,12 @@ pub fn strlen(s: [*:0]const u8) usize {
 }
 
 // from null-terminated pointer instead
-pub fn createStringFromPtr(env: c.napi_env, value: [*:0]const u8, comptime error_message: [:0]const u8) !c.napi_value {
+pub fn createStringFromPtr(env: c.napi_env, value: ?[*:0]const u8, comptime error_message: [:0]const u8) !c.napi_value {
+    const value1 = value orelse {
+        return throw(env, "can't create string from null pointer " ++ error_message);
+    };
     var result: c.napi_value = undefined;
-    if (c.napi_create_string_utf8(env, value, strlen(value), &result) != c.napi_ok) {
+    if (c.napi_create_string_utf8(env, value1, strlen(value1), &result) != c.napi_ok) {
         return throw(env, "error creating string from pointer " ++ error_message);
     }
     return result;
@@ -431,7 +434,7 @@ pub fn create_i32(env: c.napi_env, value: i32, comptime error_message: [:0]const
     return result;
 }
 
-fn createBuffer(
+pub fn createBuffer(
     env: c.napi_env,
     value: []const u8,
     comptime error_message: [:0]const u8,
@@ -439,7 +442,7 @@ fn createBuffer(
     var data: ?*anyopaque = undefined;
     var result: c.napi_value = undefined;
     if (c.napi_create_buffer(env, value.len, &data, &result) != c.napi_ok) {
-        return throw(env, error_message);
+        return throw(env, "error creating buffer " ++ error_message);
     }
 
     std.mem.copy(u8, @ptrCast([*]u8, data.?)[0..value.len], value[0..value.len]);
