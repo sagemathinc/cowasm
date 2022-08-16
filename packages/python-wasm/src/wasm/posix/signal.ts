@@ -16,7 +16,7 @@ NOTE: below we implement more than just what's needed for Python.  This may be h
 for other libraries.
 */
 
-import cDefine from "./c-define";
+import constant from "./constants";
 
 const signal_t: { [setPtr: number]: Set<number> } = {};
 function getSignalSet(setPtr: number): Set<number> {
@@ -98,17 +98,17 @@ export default function signal({ process }) {
         if (!setPtr) return 0;
         const set = getSignalSet(setPtr);
         switch (how) {
-          case cDefine("SIG_BLOCK"):
+          case constant("SIG_BLOCK"):
             for (const s of set) {
               signalMask.add(s);
             }
             return 0;
-          case cDefine("SIG_UNBLOCK"):
+          case constant("SIG_UNBLOCK"):
             for (const s of set) {
               signalMask.delete(s);
             }
             return 0;
-          case cDefine("SIG_SETMASK"):
+          case constant("SIG_SETMASK"):
             signalMask.clear();
             for (const s of set) {
               signalMask.add(s);

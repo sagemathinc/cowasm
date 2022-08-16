@@ -7,7 +7,7 @@ module which is what I'll likely have to do.
 
 import { notImplemented } from "./util";
 import type { Hostent } from "posix-zig";
-import cDefine from "./c-define";
+import constant from "./constants";
 
 export default function netdb({
   memory,
@@ -81,7 +81,7 @@ export default function netdb({
   }
 
   function sendHostent(hostent: Hostent): number {
-    const h_addrtype = cDefine(
+    const h_addrtype = constant(
       hostent.h_addrtype == posix.CONSTANTS.AF_INET ? "AF_INET" : "AF_INET6"
     );
     return callFunction(
@@ -192,9 +192,9 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     function mapConstants(info) {
       // TODO!!
       if (info.ai_family == 2) {
-        info.ai_family = info.sa_family = cDefine("AF_INET");
+        info.ai_family = info.sa_family = constant("AF_INET");
       } else if (info.ai_family == 30) {
-        info.ai_family = info.sa_family = cDefine("AF_INET6");
+        info.ai_family = info.sa_family = constant("AF_INET6");
       }
     }
 

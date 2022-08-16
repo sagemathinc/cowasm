@@ -1,7 +1,7 @@
 // @ts-ignore -- it thinks FileSystem isn't used, even though it is below.  Weird.
 import type { WASMFileSystem, WASI } from "@wapython/wasi";
 import { EventEmitter } from "events";
-import { initDefine } from "../posix/c-define";
+import { initConstants } from "../posix/constants";
 
 const encoder = new TextEncoder();
 
@@ -44,7 +44,7 @@ export default class WasmInstance extends EventEmitter {
     this.memory = memory;
     this.table = table;
     this.fs = fs;
-    initDefine((name) => this.callWithString("cDefine", name));
+    initConstants((name) => this.callWithString("getConstant", name));
   }
 
   async terminal(argv: string[] = ["command"]): Promise<number> {

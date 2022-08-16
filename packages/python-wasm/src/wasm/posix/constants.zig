@@ -9,8 +9,8 @@ const netdb = @cImport(@cInclude("netdb.h"));
 // Every constant that we make available must be explicitly declared here:
 // We use the smallest c int as a sentinel to indicate a bug due to a constant
 // not being here (I checked and no constants are #define'd to this in musl).
-// This sentinel is used in code in the wrapper function for this in c-define.ts
-export fn cDefine(name: [*:0]const u8) c_int {
+// This sentinel is used in code in the wrapper function for this in constants.ts
+export fn getConstant(name: [*:0]const u8) c_int {
     if (eql(name, "AT_FDCWD")) {
         return fcntl.AT_FDCWD;
     }
@@ -41,7 +41,7 @@ export fn cDefine(name: [*:0]const u8) c_int {
         return netdb.AF_INET6;
     }
 
-    std.debug.print("WARNING: You must add the constant {s} to python-wasm/src/wasm/posix/c-define.zig\n", .{name});
+    std.debug.print("WARNING: You must add the constant {s} to python-wasm/src/wasm/posix/constants.zig\n", .{name});
     return -2147483648;
 }
 
