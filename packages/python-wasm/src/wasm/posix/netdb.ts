@@ -120,9 +120,8 @@ export default function netdb({
 
   // struct hostent *gethostbyaddr(const void *addr,
   //                            socklen_t len, int type);
-  netdb.gethostbyaddr = (addrPtr: number, len: number, type: number) => {
+  netdb.gethostbyaddr = (addrPtr: number, _len: number, type: number) => {
     try {
-      console.log("gethostbyaddr", { addrPtr, len, type });
       if (posix.gethostbyaddr == null) {
         notImplemented("gethostbyaddr", 0);
       }
@@ -133,16 +132,12 @@ export default function netdb({
         return 0;
       }
       if (addrStringPtr == 0) {
-        console.log("recvAddr failed");
         return 0;
       }
       const addrString = recvString(addrStringPtr);
       free(addrStringPtr);
-      console.log("recvAddr got ", addrString);
       const hostent = posix.gethostbyaddr(addrString);
-      console.log("hostent = ", hostent);
-      const p = sendHostent(hostent);
-      console.log("got Hostent = ", p);
+      return sendHostent(hostent);
     } catch (err) {
       err.ret = 0;
       throw err;
