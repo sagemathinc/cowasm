@@ -2,32 +2,10 @@ pub fn keepalive() void {}
 const std = @import("std");
 const netdb = @cImport(@cInclude("netdb.h"));
 const inet = @cImport(@cInclude("arpa/inet.h"));
-
-fn mallocType(comptime T: type, comptime errorMesg: [:0]const u8) ?*T {
-    var ptr = std.c.malloc(@sizeOf(T)) orelse {
-        std.debug.print("failed to allocate space for object " ++ errorMesg, .{});
-        return null;
-    };
-    return @ptrCast(*T, @alignCast(std.meta.alignment(*T), ptr));
-}
-
-fn mallocArray(comptime T: type, len: usize, comptime errorMesg: [:0]const u8) ?[*]T {
-    var ptr = std.c.malloc(@sizeOf(T) * len) orelse {
-        std.debug.print("failed to allocate space for array " ++ errorMesg, .{});
-        return null;
-    };
-    return @ptrCast([*]T, @alignCast(std.meta.alignment([*]T), ptr));
-}
-
-fn mallocString(n: usize, comptime errorMesg: [:0]const u8) ?[*]u8 {
-    return @ptrCast([*]u8, std.c.malloc(n) orelse {
-        std.debug.print("failed to allocate space for string " ++ errorMesg, .{});
-        return null;
-    });
-}
+const util = @import("util.zig");
 
 export fn sendAddrinfo(ai_flags: c_int, ai_family: c_int, ai_socktype: c_int, ai_protocol: c_int, ai_addrlen: netdb.socklen_t, ai_addr: *netdb.sockaddr, ai_canonname: ?[*]u8, ai_next: ?*netdb.addrinfo) ?*netdb.addrinfo {
-    const addrinfo = mallocType(netdb.addrinfo, "sendAddrinfo") orelse return null;
+    const addrinfo = util.mallocType(netdb.addrinfo, "sendAddrinfo") orelse return null;
     addrinfo.ai_flags = ai_flags;
     addrinfo.ai_family = ai_family;
     addrinfo.ai_socktype = ai_socktype;
@@ -54,7 +32,7 @@ export fn freeaddrinfo(addrinfo: *netdb.addrinfo) void {
 }
 
 export fn recvAddr(addr: *anyopaque, addrtype: c_int) ?[*]u8 {
-    const dst = mallocString(40, "recvAddr") orelse return null;
+    const dst = util.mallocString(40, "recvAddr") orelse return null;
     if (inet.inet_ntop(addrtype, addr, dst, 40) == null) {
         std.debug.print("recvAddr -- failed to convert address to string via inet_ntop\n", .{});
         std.c.free(dst);
@@ -64,7 +42,7 @@ export fn recvAddr(addr: *anyopaque, addrtype: c_int) ?[*]u8 {
 }
 
 export fn sendHostent(h_name: [*:0]u8, h_aliases: [*c][*c]u8, h_addrtype: c_int, h_length: c_int, h_addr_list: [*c][*c]u8, h_addr_list_len: usize) ?*netdb.hostent {
-    const hostent = mallocType(netdb.hostent, "sendHostent") orelse return null;
+    const hostent = util.mallocType(netdb.hostent, "sendHostent") orelse return null;
     hostent.h_name = h_name;
     hostent.h_aliases = h_aliases;
     hostent.h_addrtype = h_addrtype;
@@ -87,10 +65,10 @@ fn convert_h_addr_list_ToBinary_v4(h_addr_list: [*c][*c]u8, len: usize) ?[*c][*c
     // Need to use
     //    int inet_pton(int af, const char *restrict src, void *restrict dst);
     // to convert the h_addr_list from text to binary form.
-    var h_addr_binary_list = mallocArray(*allowzero netdb.in_addr, len + 1, "convert_h_addr_list_ToBinary_v4") orelse return null;
+    var h_addr_binary_list = util.mallocArray(*allowzero netdb.in_addr, len + 1, "convert_h_addr_list_ToBinary_v4") orelse return null;
     var i: usize = 0;
     while (i < len) : (i += 1) {
-        var dst = mallocType(netdb.in_addr, "allocating in_addr in convert_h_addr_list_ToBinary_v4") orelse return null;
+        var dst = util.mallocType(netdb.in_addr, "allocating in_addr in convert_h_addr_list_ToBinary_v4") orelse return null;
         const ret = inet.inet_pton(netdb.AF_INET, h_addr_list[i], dst);
         if (ret != 1) {
             // TODO: slight memory leak here!
@@ -104,10 +82,10 @@ fn convert_h_addr_list_ToBinary_v4(h_addr_list: [*c][*c]u8, len: usize) ?[*c][*c
 }
 
 fn convert_h_addr_list_ToBinary_v6(h_addr_list: [*c][*c]u8, len: usize) ?[*c][*c]u8 {
-    var h_addr_binary_list = mallocArray(*allowzero netdb.in6_addr, len + 1, "convert_h_addr_list_ToBinary_v4") orelse return null;
+    var h_addr_binary_list = util.mallocArray(*allowzero netdb.in6_addr, len + 1, "convert_h_addr_list_ToBinary_v4") orelse return null;
     var i: usize = 0;
     while (i < len) : (i += 1) {
-        var dst = mallocType(netdb.in6_addr, "allocating in_addr in convert_h_addr_list_ToBinary_v4") orelse return null;
+        var dst = util.mallocType(netdb.in6_addr, "allocating in_addr in convert_h_addr_list_ToBinary_v4") orelse return null;
         const ret = inet.inet_pton(netdb.AF_INET6, h_addr_list[i], dst);
         if (ret != 1) {
             // TODO: slight memory leak here!
