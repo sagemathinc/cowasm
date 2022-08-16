@@ -109,13 +109,17 @@ export default function netdb({
   //     unsigned int s_addr; /* Network byte order (big-endian) */
   // };
   netdb.gethostbyname = (namePtr: number) => {
-    console.log("gethostbyname", namePtr);
-    if (posix.gethostbyname == null) {
-      notImplemented("gethostbyname", 0);
+    try {
+      if (posix.gethostbyname == null) {
+        notImplemented("gethostbyaddr", 0);
+      }
+      const name = recvString(namePtr);
+      const hostent = posix.gethostbyname(name);
+      return sendHostent(hostent);
+    } catch (err) {
+      err.ret = 0;
+      throw err;
     }
-    const hostent = posix.gethostbyname(recvString(namePtr));
-    console.log(hostent);
-    return 0;
   };
 
   // struct hostent *gethostbyaddr(const void *addr,
@@ -125,12 +129,7 @@ export default function netdb({
       if (posix.gethostbyaddr == null) {
         notImplemented("gethostbyaddr", 0);
       }
-      let addrStringPtr;
-      try {
-        addrStringPtr = callFunction("recvAddr", addrPtr, type);
-      } catch (_err) {
-        return 0;
-      }
+      const addrStringPtr = callFunction("recvAddr", addrPtr, type);
       if (addrStringPtr == 0) {
         return 0;
       }
@@ -213,7 +212,6 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
       if (!ai_addr) {
         throw Error("error creating sockaddr");
       }
-      console.log(info);
       addrinfo = callFunction(
         "sendAddrinfo",
         info.ai_flags,
