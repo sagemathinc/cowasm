@@ -157,6 +157,7 @@ fn createHostent(env: c.napi_env, hostent: *netdb.hostent) c.napi_value {
 //
 // all arguments must be given, though the hints can all be 0.  In index.ts
 // we provide a nicer interface.
+
 fn getaddrinfo(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 6) catch return null;
     var nodeName: [256]u8 = undefined; // domain names are limited to 253 chars
@@ -239,7 +240,8 @@ fn createAddrinfo(env: c.napi_env, addrinfo: *netdb.addrinfo) c.napi_value {
     // "The sa_len field contains the length of the sa_data field. " -- from some official docs on an IBM website that are
     // *DEFINITELY WRONG*.  I tried with both sa_len and sa_len - 2, and the latter
     // is definitely right.  There's just random extra noise otherwise.
-    const sa_data = node.createBuffer(env, ai_addr.sa_data[0 .. ai_addr.sa_len - 2], "sa_data") catch return null;
+    // Also, on Linux sa_len is not the length at all.  So I'm using addrinfo.ai_addrlen-2, which seems right everywhere.
+    const sa_data = node.createBuffer(env, ai_addr.sa_data[0 .. addrinfo.ai_addrlen - 2], "sa_data") catch return null;
     node.setNamedProperty(env, object, "sa_data", sa_data, "") catch return null;
 
     return object;
