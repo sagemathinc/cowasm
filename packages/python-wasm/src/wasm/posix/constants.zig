@@ -5,7 +5,7 @@ const signal = @import("signal.zig");
 const netdb = @import("netdb.zig");
 const util = @import("util.zig");
 
-const constants = .{ .CONSTANTS = errno.CONSTANTS ++ signal.CONSTANTS ++ netdb.CONSTANTS, .VALUES = errno.VALUES ++ signal.VALUES ++ netdb.VALUES };
+const constants = .{ .constants = errno.constants ++ signal.constants ++ netdb.constants, .values = errno.values ++ signal.values ++ netdb.values };
 
 // Caller must std.c.free the string it gets back.
 export fn getConstants() ?[*:0]u8 {

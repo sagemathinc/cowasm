@@ -31,7 +31,7 @@ export interface Addrinfo {
 
 interface PosixFunctions {
   // constants
-  CONSTANTS: { [name: string]: number };
+  constants: { [name: string]: number };
 
   // unistd:
   chroot: (path: string) => void;
@@ -82,7 +82,7 @@ try {
       hints?.protocol ?? 0
     );
   };
-  mod.CONSTANTS = mod["getConstants"]?.();
+  mod.constants = mod["getConstants"]?.();
   for (const name in mod) {
     exports[name] = mod[name];
   }

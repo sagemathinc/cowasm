@@ -1,6 +1,7 @@
 export type Constant = string;
 
-const TABLE: { [name: string]: number } = {};
+const constants: { [name: string]: number } = {};
+export default constants;
 
 // function recvUint32(memory, ptr): number {
 //   const view = new DataView(memory.buffer);
@@ -16,18 +17,8 @@ function recvJsonObject({ callFunction, recvString }, name: string) {
 }
 
 export function initConstants(context) {
-  const { CONSTANTS, VALUES } = recvJsonObject(context, "getConstants");
-  for (let i = 0; i < CONSTANTS.length; i++) {
-    TABLE[CONSTANTS[i]] = VALUES[i];
+  const { constants: names, values } = recvJsonObject(context, "getConstants");
+  for (let i = 0; i < names.length; i++) {
+    constants[names[i]] = values[i];
   }
-}
-
-export default function constant(name: Constant): number {
-  const n = TABLE[name];
-  if (n == null) {
-    throw Error(
-      `WARNING: You must add the constant ${name} to python-wasm/src/wasm/posix/constants.zig`
-    );
-  }
-  return n;
 }

@@ -2,14 +2,14 @@ const c = @cImport({
     @cInclude("posix-wasm.h");
 });
 
-pub const CONSTANTS = [_][:0]const u8{ "SIG_BLOCK", "SIG_UNBLOCK", "SIG_SETMASK" };
+pub const constants = [_][:0]const u8{ "SIG_BLOCK", "SIG_UNBLOCK", "SIG_SETMASK" };
 
-pub const VALUES = blk: {
-    var values: [CONSTANTS.len]i32 = undefined;
+pub const values = blk: {
+    var x: [constants.len]i32 = undefined;
     var i = 0;
-    for (CONSTANTS) |constant| {
-        values[i] = @field(c, constant);
+    for (constants) |constant| {
+        x[i] = @field(c, constant);
         i += 1;
     }
-    break :blk values;
+    break :blk x;
 };

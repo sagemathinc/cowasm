@@ -1,5 +1,5 @@
 import { isAbsolute, join } from "path";
-import constant from "./constants";
+import constants from "./constants";
 import Errno from "./errno";
 
 export default function stats({ fs, process, recvString, wasi }) {
@@ -13,7 +13,7 @@ export default function stats({ fs, process, recvString, wasi }) {
     }
 
     let dir: string;
-    if (dirfd == constant("AT_FDCWD")) {
+    if (dirfd == constants.AT_FDCWD) {
       dir = process.cwd?.() ?? "/";
     } else {
       // it is a file descriptor

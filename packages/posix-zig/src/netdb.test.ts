@@ -12,6 +12,8 @@ test("gethostbyname consistency checks", () => {
 });
 
 /*
+Example:
+
 > require('.').gethostbyaddr("64.233.187.99")
 {
   h_name: 'tj-in-f99.1e100.net',
@@ -25,11 +27,13 @@ test("gethostbyname consistency checks", () => {
 test("gethostbyaddr check - v4", () => {
   const hostent = posix.gethostbyaddr?.("64.233.187.99");
   expect(hostent?.h_addr_list[0]).toContain(".");
+  expect(hostent?.h_addrtype).toBe(posix.constants?.AF_INET);
 });
 
 test("gethostbyaddr check - v6", () => {
   const hostent = posix.gethostbyaddr?.("2001:4860:4860::8888");
   expect(hostent?.h_addr_list[0]).toContain(":");
+  expect(hostent?.h_addrtype).toBe(posix.constants?.AF_INET6);
   // behavior depends on OS
   // expect(hostent?.h_aliases[0]).toContain("8.8.8.8");
 });

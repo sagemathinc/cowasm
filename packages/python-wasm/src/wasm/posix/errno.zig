@@ -1,13 +1,13 @@
 const errno = @cImport(@cInclude("errno.h"));
 
-pub const CONSTANTS = [_][:0]const u8{ "EBADF", "ENOENT" };
+pub const constants = [_][:0]const u8{ "EBADF", "ENOENT" };
 
-pub const VALUES = blk: {
-    var values: [CONSTANTS.len]i32 = undefined;
+pub const values = blk: {
+    var x: [constants.len]i32 = undefined;
     var i = 0;
-    for (CONSTANTS) |constant| {
-        values[i] = @field(errno, constant);
+    for (constants) |constant| {
+        x[i] = @field(errno, constant);
         i += 1;
     }
-    break :blk values;
+    break :blk x;
 };
