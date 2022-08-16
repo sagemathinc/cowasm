@@ -148,6 +148,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	#   bad global libraries, e.g., systemwide (zig musl) sys/wait.h with a local version.
 	# - In Python source they lower the default recursion limit; however, we don't need that since our
 	#   runtime is Chromium, not wasitime and we can handle huge limits (see Include/internal/pycore_ceval.h).
+	# - enable-ipv6, since I put a lot of work into this for posix-zig!
 	cd ${BUILD_WASM} && \
 		CC="zig cc -Oz -target wasm32-wasi  " \
 		CXX="zig c++ -Oz -target wasm32-wasi " \
@@ -160,8 +161,8 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 			--prefix=${DIST_WASM}  \
 			--enable-big-digits=30 \
 			--enable-optimizations \
+			--enable-ipv6 \
 			--disable-shared \
-			--disable-ipv6 \
 			--with-readline=editline \
 			--with-build-python=${DIST_NATIVE}/bin/python3 \
 			--with-pymalloc \

@@ -193,9 +193,9 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     function mapConstants(info) {
       // TODO!!
       if (info.ai_family == 2) {
-        info.ai_family = info.sa_family = 1;
+        info.ai_family = info.sa_family = cDefine("AF_INET");
       } else if (info.ai_family == 30) {
-        info.ai_framily = info.sa_family = 2;
+        info.ai_family = info.sa_family = cDefine("AF_INET6");
       }
     }
 
@@ -213,6 +213,7 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
       if (!ai_addr) {
         throw Error("error creating sockaddr");
       }
+      console.log(info);
       addrinfo = callFunction(
         "sendAddrinfo",
         info.ai_flags,

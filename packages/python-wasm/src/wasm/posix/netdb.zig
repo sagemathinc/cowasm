@@ -69,20 +69,21 @@ export fn sendHostent(h_name: [*:0]u8, h_aliases: [*c][*c]u8, h_addrtype: c_int,
     hostent.h_aliases = h_aliases;
     hostent.h_addrtype = h_addrtype;
     hostent.h_length = h_length;
-    hostent.h_addr_list = @ptrCast([*c][*c]u8, convert_h_addr_list_ToBinary_v4(h_addr_list, h_addr_list_len) orelse return null);
+    var binary = if (h_addrtype == netdb.AF_INET) convert_h_addr_list_ToBinary_v4(h_addr_list, h_addr_list_len) else convert_h_addr_list_ToBinary_v6(h_addr_list, h_addr_list_len);
+    hostent.h_addr_list = binary orelse return null;
     freeNullTerminatedArrayOfStrings(h_addr_list);
     return hostent;
 }
 
 fn freeNullTerminatedArrayOfStrings(v: [*c][*c]u8) void {
-    var i : usize = 0;
+    var i: usize = 0;
     while (v[i] != null) : (i += 1) {
         std.c.free(v[i]);
     }
     std.c.free(@ptrCast(*anyopaque, v));
 }
 
-fn convert_h_addr_list_ToBinary_v4(h_addr_list: [*c][*c]u8, len: usize) ?[*]*allowzero netdb.in_addr {
+fn convert_h_addr_list_ToBinary_v4(h_addr_list: [*c][*c]u8, len: usize) ?[*c][*c]u8 {
     // Need to use
     //    int inet_pton(int af, const char *restrict src, void *restrict dst);
     // to convert the h_addr_list from text to binary form.
@@ -99,5 +100,22 @@ fn convert_h_addr_list_ToBinary_v4(h_addr_list: [*c][*c]u8, len: usize) ?[*]*all
         h_addr_binary_list[i] = dst;
     }
     h_addr_binary_list[len] = @intToPtr(*allowzero netdb.in_addr, 0);
-    return h_addr_binary_list;
+    return @ptrCast([*c][*c]u8, h_addr_binary_list);
+}
+
+fn convert_h_addr_list_ToBinary_v6(h_addr_list: [*c][*c]u8, len: usize) ?[*c][*c]u8 {
+    var h_addr_binary_list = mallocArray(*allowzero netdb.in6_addr, len + 1, "convert_h_addr_list_ToBinary_v4") orelse return null;
+    var i: usize = 0;
+    while (i < len) : (i += 1) {
+        var dst = mallocType(netdb.in6_addr, "allocating in_addr in convert_h_addr_list_ToBinary_v4") orelse return null;
+        const ret = inet.inet_pton(netdb.AF_INET6, h_addr_list[i], dst);
+        if (ret != 1) {
+            // TODO: slight memory leak here!
+            std.debug.print("inet_pton failed when doing convert_h_addr_list_ToBinary_v4 - h_addr_list[{d}]='{s}', ret={d}\n", .{ i, h_addr_list[i], ret });
+            return null;
+        }
+        h_addr_binary_list[i] = dst;
+    }
+    h_addr_binary_list[len] = @intToPtr(*allowzero netdb.in6_addr, 0);
+    return @ptrCast([*c][*c]u8, h_addr_binary_list);
 }
