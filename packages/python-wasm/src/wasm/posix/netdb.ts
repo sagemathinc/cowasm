@@ -41,15 +41,7 @@ export default function netdb({
     const view = new DataView(memory.buffer);
     const flags = view.getUint32(hintsPtr, true);
     hintsPtr += 4;
-    let family = view.getUint32(hintsPtr, true);
-
-    // convert from musl-wasm AF_INET to native AF_INET (are totally different, and different for each native platform!).
-    if (family == constants.AF_INET) {
-      family = posix.constants.AF_INET;
-    } else if (family == constants.AF_INET6) {
-      family = posix.constants.AF_INET6;
-    }
-
+    let family = wasmToNativeFamily(posix, view.getUint32(hintsPtr, true));
     hintsPtr += 4;
     const socktype = view.getUint32(hintsPtr, true);
     hintsPtr += 4;
@@ -83,10 +75,7 @@ export default function netdb({
 
   function sendHostent(hostent: Hostent): number {
     // Convert from native posix constant to musl-wasm constant for address type.
-    const h_addrtype =
-      hostent.h_addrtype == posix.constants.AF_INET
-        ? constants.AF_INET
-        : constants.AF_INET6;
+    const h_addrtype = nativeToWasmFamily(posix, hostent.h_addrtype);
     return callFunction(
       "sendHostent",
       sendString(hostent.h_name),
@@ -192,21 +181,16 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     const service = recvString(servicePtr);
     const hints = recvHints(hintsPtr);
     const addrinfoArray = posix.getaddrinfo(node, service, hints);
-    function mapConstants(info) {
-      // TODO!!
-      if (info.ai_family == 2) {
-        info.ai_family = info.sa_family = constants.AF_INET;
-      } else if (info.ai_family == 30) {
-        info.ai_family = info.sa_family = constants.AF_INET6;
-      }
-    }
 
     let ai_next = 0;
     let addrinfo = 0;
     let n = addrinfoArray.length - 1;
     while (n >= 0) {
       const info = addrinfoArray[n];
-      mapConstants(info);
+      info.ai_family = info.sa_family = nativeToWasmFamily(
+        posix,
+        info.ai_family
+      );
       const ai_addr = sendSockaddr(
         info.sa_family,
         info.ai_addrlen,
@@ -240,4 +224,26 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
   };
 
   return netdb;
+}
+
+function wasmToNativeFamily(posix, family: number): number {
+  // convert from musl-wasm AF_INET to native AF_INET
+  // (are totally different, and different for each native platform!).
+  if (family == constants.AF_INET) {
+    return posix.constants.AF_INET;
+  } else if (family == constants.AF_INET6) {
+    return posix.constants.AF_INET6;
+  } else {
+    throw Error("unsupported address family");
+  }
+}
+
+function nativeToWasmFamily(posix, family: number): number {
+  if (family == posix.constants.AF_INET) {
+    return constants.AF_INET;
+  } else if (family == posix.constants.AF_INET6) {
+    return constants.AF_INET6;
+  } else {
+    throw Error("unsupported address family");
+  }
 }
