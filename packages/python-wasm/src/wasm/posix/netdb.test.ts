@@ -11,9 +11,10 @@ beforeEach(async () => {
 });
 
 test("gethostbyaddr for google's v6 ip", async () => {
-  expect(await repr("socket.gethostbyaddr('2001:4860:4860::8888')")).toBe(
-    "('dns.google', ['8.8.8.8.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.6.8.4.0.6.8.4.1.0.0.2.ip6.arpa'], ['2001:4860:4860::8888'])"
-  );
+  await exec("s = socket.gethostbyaddr('2001:4860:4860::8888')");
+  expect(
+    await repr("s[0] == 'dns.google' and s[-1] == ['2001:4860:4860::8888']")
+  ).toBe("True");
 });
 
 test("gethostbyname for google (not sure how stable output is)", async () => {
