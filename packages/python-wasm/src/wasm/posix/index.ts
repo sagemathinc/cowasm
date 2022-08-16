@@ -15,6 +15,7 @@ import time from "./time";
 import unistd from "./unistd";
 import wait from "./wait";
 import WASI from "@wapython/wasi";
+import { initConstants } from "./constants";
 
 //import debug from "debug";
 //const log = debug("posix");
@@ -78,5 +79,8 @@ export default function posix(context: Context) {
       }
     };
   }
+  Q.init = () => {
+    initConstants(context);
+  };
   return Q;
 }

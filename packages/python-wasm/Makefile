@@ -59,29 +59,35 @@ test-posix:
 #    also gets compiled, without being explicitly listed here.
 #
 
+PYTHON_WASM_SOURCES = src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/wasm/posix/stdlib.c src/python/signal/signal.zig src/python/python-shared.zig ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${PACKAGES}/lzma/dist/wasm/lib/liblzma.a ${PACKAGES}/zlib/dist/wasm/lib/libz.a ${PACKAGES}/libedit/dist/wasm/lib/libedit.a  ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a  ${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a ${PACKAGES}/cpython/dist/wasm/lib/libexpat.a ${POSIX_WASM}/libposix.a src/wasm/posix.zig $(shell find src/wasm/posix/*.zig -type f)
 
-${DIST}/python/python.wasm: src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/wasm/posix/stdlib.c src/python/signal/signal.zig src/python/python-shared.zig ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${PACKAGES}/lzma/dist/wasm/lib/liblzma.a ${PACKAGES}/zlib/dist/wasm/lib/libz.a ${PACKAGES}/libedit/dist/wasm/lib/libedit.a  ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a  ${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a ${PACKAGES}/cpython/dist/wasm/lib/libexpat.a ${POSIX_WASM}/libposix.a src/wasm/posix.zig $(shell find src/wasm/posix/*.zig -type f)
-	cd src && zig build-lib \
-	   ${WASM_CFLAGS} \
-	   ${ZIG_PKG} \
-		-rdynamic \
-		-target wasm32-wasi \
-		--import-memory --import-table \
-		-I. -I${PYTHON_WASM}/include/python3.11 \
-		${PYTHON_WASM}/lib/libpython3.11.a \
-	   ${DYLINK}/wasm-export/libpython.c \
-		-I${POSIX_WASM} ${POSIX_WASM}/libposix.a \
+PYTHON_WASM_C = ${PYTHON_WASM}/lib/libpython3.11.a \
+		${DYLINK}/wasm-export/libpython.c \
+		${POSIX_WASM}/libposix.a \
 		${PACKAGES}/lzma/dist/wasm/lib/liblzma.a \
 		${PACKAGES}/zlib/dist/wasm/lib/libz.a \
 		${PACKAGES}/libedit/dist/wasm/lib/libedit.a \
 		${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a \
 		${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a \
 		${PACKAGES}/cpython/dist/wasm/lib/libexpat.a \
-	   -L ${DYLINK}/wasm/ -ldylink \
-	   -lc -lm ${WASI_EMULATED} \
-	   `pwd`/python/signal/signal.c \
-	   `pwd`/wasm/posix/stdlib.c \
-	   python/interface.zig
+		${CWD}/src/python/signal/signal.c \
+		${CWD}/src/wasm/posix/stdlib.c
+
+PYTHON_WASM_INCLUDE = -I. -I${POSIX_WASM} -I${PYTHON_WASM}/include/python3.11
+
+PYTHON_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
+
+${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES}
+	cd src && zig build-lib \
+	   ${WASM_CFLAGS} \
+	   ${ZIG_PKG} \
+		-rdynamic \
+		-target wasm32-wasi \
+		--import-memory --import-table \
+		${PYTHON_WASM_LIBS} \
+		${PYTHON_WASM_INCLUDE} \
+		${PYTHON_WASM_C} \
+		python/interface.zig
 	mkdir -p ${DIST}/python
 	mv src/interface.wasm ${DIST}/python/python.wasm
 

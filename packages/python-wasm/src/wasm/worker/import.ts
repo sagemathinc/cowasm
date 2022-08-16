@@ -248,6 +248,7 @@ async function doWasmImport({
     }
     */
   }
+  posixEnv.init(); // must be done after wasm is created.
 
   cache[source] = wasm;
 

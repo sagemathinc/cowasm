@@ -1,51 +1,36 @@
 pub fn keepalive() void {}
 const std = @import("std");
-const errno = @cImport(@cInclude("errno.h"));
-const fcntl = @cImport(@cInclude("fcntl.h"));
-const netdb = @cImport(@cInclude("netdb.h"));
+const errno = @import("errno.zig");
+const string = @cImport(@cInclude("string.h"));
+const signal = @import("signal.zig");
+const netdb = @import("netdb.zig");
+const allocator = @import("../../interface/allocator.zig");
 
-//const signal = @cImport(@cInclude("signal.h"));
+const constants = .{ .CONSTANTS = errno.CONSTANTS ++ signal.CONSTANTS ++ netdb.CONSTANTS, .VALUES = errno.VALUES ++ signal.VALUES ++ netdb.VALUES };
 
-// Every constant that we make available must be explicitly declared here:
-// We use the smallest c int as a sentinel to indicate a bug due to a constant
-// not being here (I checked and no constants are #define'd to this in musl).
-// This sentinel is used in code in the wrapper function for this in constants.ts
-export fn getConstant(name: [*:0]const u8) c_int {
-    if (eql(name, "AT_FDCWD")) {
-        return fcntl.AT_FDCWD;
-    }
-    if (eql(name, "EBADF")) {
-        return errno.EBADF;
-    }
-    if (eql(name, "ENOENT")) {
-        return errno.ENOENT;
-    }
-    if (eql(name, "SIG_BLOCK")) {
-        return 0;
-        // signal.SIG_BLOCK isn't even compiled in by zig.  TODO: upstream it.
-        // This gets used by libedit only because I modified signal.h for building libedit, so these 0,1,2 values are right.
-        //return signal.SIG_BLOCK;
-    }
-    if (eql(name, "SIG_UNBLOCK")) {
-        return 1;
-        //return signal.SIG_UNBLOCK;
-    }
-    if (eql(name, "SIG_SETMASK")) {
-        return 2;
-        //return signal.SIG_SETMASK;
-    }
-    if (eql(name, "AF_INET")) {
-        return netdb.AF_INET;
-    }
-    if (eql(name, "AF_INET6")) {
-        return netdb.AF_INET6;
-    }
+// var buf: [100]u8 = undefined;
+// var fba = std.heap.FixedBufferAllocator.init(&buf);
+// var string = std.ArrayList(u8).init(fba.allocator());
+// try std.json.stringify(x, .{}, string.writer());
 
-    std.debug.print("WARNING: You must add the constant {s} to python-wasm/src/wasm/posix/constants.zig\n", .{name});
-    return -2147483648;
+export fn getConstants() ?[*]u8 {
+    const alloc = allocator.get();
+    const s = std.json.stringifyAlloc(alloc, constants, .{}) catch {
+        return null;
+    };
+    defer alloc.free(s);
+    const p = toNullTerminatedString(s);
+    return p;
 }
 
-extern fn strcmp(s1: [*:0]const u8, s2: [*:0]const u8) c_int;
-fn eql(s1: [*:0]const u8, s2: [*:0]const u8) bool {
-    return strcmp(s1, s2) == 0;
+// extern fn strcmp(s1: [*:0]const u8, s2: [*:0]const u8) c_int;
+// fn eql(s1: [*:0]const u8, s2: [*:0]const u8) bool {
+//     return strcmp(s1, s2) == 0;
+// }
+
+fn toNullTerminatedString(s: []const u8) ?[*]u8 {
+    var m = std.c.malloc(s.len + 1) orelse return null;
+    var ptr = @ptrCast([*]u8, m);
+    _ = string.memcpy(ptr, s.ptr, s.len);
+    return ptr;
 }

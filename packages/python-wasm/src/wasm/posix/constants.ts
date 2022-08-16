@@ -1,26 +1,24 @@
-const CONSTANTS = [
-  "AT_FDCWD",
-  "EBADF",
-  "ENOENT",
-  "SIG_BLOCK",
-  "SIG_UNBLOCK",
-  "SIG_SETMASK",
-  "AF_INET",
-  "AF_INET6",
-] as const;
-
-export type Constant = typeof CONSTANTS[number];
+export type Constant = string;
 
 const TABLE: { [name: string]: number } = {};
 
-export function initConstants(getConstant: (name: Constant) => number) {
-  for (const name of CONSTANTS) {
-    TABLE[name] = getConstant(name as Constant);
-    if (TABLE[name] == -2147483648) {
-      throw Error(
-        `BUG - You must add the constant ${name} to python-wasm/src/wasm/posix/constants.zig`
-      );
-    }
+// function recvUint32(memory, ptr): number {
+//   const view = new DataView(memory.buffer);
+//   return view.getUint32(ptr, true);
+// }
+
+function recvJsonObject({ callFunction, recvString }, name: string) {
+  let ptr = callFunction(name);
+  if (ptr == 0) {
+    throw Error("unable to receive JSON object");
+  }
+  return JSON.parse(recvString(ptr));
+}
+
+export function initConstants(context) {
+  const { CONSTANTS, VALUES } = recvJsonObject(context, "getConstants");
+  for (let i = 0; i < CONSTANTS.length; i++) {
+    TABLE[CONSTANTS[i]] = VALUES[i];
   }
 }
 

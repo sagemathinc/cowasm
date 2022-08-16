@@ -119,3 +119,19 @@ fn convert_h_addr_list_ToBinary_v6(h_addr_list: [*c][*c]u8, len: usize) ?[*c][*c
     h_addr_binary_list[len] = @intToPtr(*allowzero netdb.in6_addr, 0);
     return @ptrCast([*c][*c]u8, h_addr_binary_list);
 }
+
+pub const CONSTANTS = [_][:0]const u8{
+    "AF_UNSPEC", "AF_UNIX", "AF_INET", "AF_INET6", // AF_= address format
+    "AI_PASSIVE", "AI_CANONNAME", "AI_NUMERICHOST", "AI_V4MAPPED", "AI_ALL", "AI_ADDRCONFIG", "AI_NUMERICSERV", // AI = address info
+    "EAI_BADFLAGS", "EAI_NONAME", "EAI_AGAIN", "EAI_FAIL", "EAI_FAMILY", "EAI_SOCKTYPE", "EAI_SERVICE", "EAI_MEMORY", "EAI_SYSTEM", "EAI_OVERFLOW", // errors for the getaddrinfo function
+};
+
+pub const VALUES = blk: {
+    var values: [CONSTANTS.len]i32 = undefined;
+    var i = 0;
+    for (CONSTANTS) |constant| {
+        values[i] = @field(netdb, constant);
+        i += 1;
+    }
+    break :blk values;
+};
