@@ -194,8 +194,12 @@ async function doWasmImport({
     posix: bindings.posix ?? {},
     child_process: bindings.child_process ?? {},
     memory,
-    getFunction: (name: string): Function | undefined => {
-      return wasm.getFunction(name);
+    callFunction: (name: string, ...args): number | undefined => {
+      const f = wasm.getFunction(name);
+      if (f == null) {
+        throw Error(`error - ${name} is not defined`);
+      }
+      return f(...args);
     },
     malloc: (...args) => {
       const ptr = wasm.exports.c_malloc(...args);

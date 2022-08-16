@@ -49,7 +49,7 @@ interface Context {
   };
   malloc: (bytes: number) => number;
   free: (ptr: number) => void;
-  getFunction: (name: string) => Function | undefined;
+  callFunction: (name: string, ...args) => number | undefined;
 }
 
 export default function posix(context: Context) {
@@ -74,7 +74,7 @@ export default function posix(context: Context) {
         // TODO: how should we set errno?
         // @ts-ignore -- this is just temporary while we sort out setting errno...
         context.fs.writeFileSync(2, `\n${err}\n`);
-        return -1;
+        return err.ret ?? -1;
       }
     };
   }

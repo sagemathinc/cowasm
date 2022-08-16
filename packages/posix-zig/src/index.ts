@@ -9,7 +9,7 @@ const nodeToZig = {
 
 const name = `${nodeToZig[process.arch]}-${nodeToZig[process.platform]}`;
 
-interface Hostent {
+export interface Hostent {
   h_name: string;
   h_length: number;
   h_addrtype: number;
@@ -17,7 +17,7 @@ interface Hostent {
   h_aliases: string[];
 }
 
-interface Addrinfo {
+export interface Addrinfo {
   ai_flags: number;
   ai_family: number;
   ai_socktype: number;

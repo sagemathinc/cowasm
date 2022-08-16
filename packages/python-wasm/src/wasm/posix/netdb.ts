@@ -6,15 +6,17 @@ module which is what I'll likely have to do.
 */
 
 import { notImplemented } from "./util";
-//import cDefine from "./c-define";
+import type { Hostent } from "posix-zig";
+import cDefine from "./c-define";
 
 export default function netdb({
   memory,
   posix,
-  getFunction,
+  callFunction,
   recvString,
   sendString,
   malloc,
+  free,
 }) {
   const names =
     " getprotobyname getservbyname getservbyport getnameinfo getpeername";
@@ -59,6 +61,34 @@ export default function netdb({
     };
   }
 
+  // this is null terminated.
+  function sendArrayOfStrings(v: string[]): number {
+    const ptr = malloc(v.length + 1);
+    if (ptr == 0) {
+      throw Error("out of memory");
+    }
+    for (let i = 0; i < v.length; i++) {
+      const view = new DataView(memory.buffer);
+      view.setUint32(ptr + i, sendString(v[i]));
+    }
+    ptr[v.length] = 0;
+    return ptr;
+  }
+
+  function sendHostent(hostent: Hostent): number {
+    const h_addrtype = cDefine(
+      hostent.h_addrtype == posix.CONSTANTS.AF_INET ? "AF_INET" : "AF_INET6"
+    );
+    return callFunction(
+      "sendHostent",
+      sendString(hostent.h_name),
+      sendArrayOfStrings(hostent.h_aliases),
+      h_addrtype,
+      hostent.h_length,
+      sendArrayOfStrings(hostent.h_addr_list)
+    );
+  }
+
   // struct hostent *gethostbyname(const char *name);
   // struct hostent
   // {
@@ -72,24 +102,45 @@ export default function netdb({
   // {
   //     unsigned int s_addr; /* Network byte order (big-endian) */
   // };
-  netdb.gethostbyname = (name: string) => {
+  netdb.gethostbyname = (namePtr: number) => {
+    console.log("gethostbyname", namePtr);
     if (posix.gethostbyname == null) {
-      notImplemented("gethostbyname");
-      return;
+      notImplemented("gethostbyname", 0);
     }
-    const hostent = posix.gethostbyname(name);
+    const hostent = posix.gethostbyname(recvString(namePtr));
     console.log(hostent);
-    throw Error("TODO");
+    return 0;
   };
 
-  netdb.gethostbyaddr = (addr: string) => {
-    if (posix.gethostbyaddr == null) {
-      notImplemented("gethostbyaddr");
-      return;
+  // struct hostent *gethostbyaddr(const void *addr,
+  //                            socklen_t len, int type);
+  netdb.gethostbyaddr = (addrPtr: number, len: number, type: number) => {
+    try {
+      console.log("gethostbyaddr", { addrPtr, len, type });
+      if (posix.gethostbyaddr == null) {
+        notImplemented("gethostbyaddr", 0);
+      }
+      let addrStringPtr;
+      try {
+        addrStringPtr = callFunction("recvAddr", addrPtr, type);
+      } catch (_err) {
+        return 0;
+      }
+      if (addrStringPtr == 0) {
+        console.log("recvAddr failed");
+        return 0;
+      }
+      const addrString = recvString(addrStringPtr);
+      free(addrStringPtr);
+      console.log("recvAddr got ", addrString);
+      const hostent = posix.gethostbyaddr(addrString);
+      console.log("hostent = ", hostent);
+      const p = sendHostent(hostent);
+      console.log("got Hostent = ", p);
+    } catch (err) {
+      err.ret = 0;
+      throw err;
     }
-    const hostent = posix.gethostbyaddr(addr);
-    console.log(hostent);
-    throw Error("TODO");
   };
 
   /* int getaddrinfo(const char *restrict node,
@@ -147,9 +198,6 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
       }
     }
 
-    const sendAddrinfo = getFunction("sendAddrinfo");
-    if (sendAddrinfo == null) throw Error("bug");
-
     let ai_next = 0;
     let addrinfo = 0;
     let n = addrinfoArray.length - 1;
@@ -164,7 +212,8 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
       if (!ai_addr) {
         throw Error("error creating sockaddr");
       }
-      addrinfo = sendAddrinfo(
+      addrinfo = callFunction(
+        "sendAddrinfo",
         info.ai_flags,
         info.ai_family,
         info.ai_socktype,

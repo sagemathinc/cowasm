@@ -1,5 +1,13 @@
-export function notImplemented(name: string) {
+interface ErrorWithReturn extends Error {
+  ret?: number;
+}
+
+export function notImplemented(name: string, ret?: number) {
   return () => {
-    throw Error(`${name} is not implemented yet`);
+    const err: ErrorWithReturn = Error(`${name} is not implemented yet`);
+    if (ret != null) {
+      err.ret = ret;
+    }
+    throw err;
   };
 }
