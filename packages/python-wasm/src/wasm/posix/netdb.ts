@@ -61,17 +61,22 @@ export default function netdb({
     };
   }
 
+  function sendPtr(address: number, ptr: number): void {
+    const view = new DataView(memory.buffer);
+    view.setUint32(address, ptr, true); // true = endianness
+  }
+
   // this is null terminated.
   function sendArrayOfStrings(v: string[]): number {
-    const ptr = malloc(v.length + 1);
+    const ptr = malloc(4 * (v.length + 1));
     if (ptr == 0) {
       throw Error("out of memory");
     }
     for (let i = 0; i < v.length; i++) {
-      const view = new DataView(memory.buffer);
-      view.setUint32(ptr + i, sendString(v[i]));
+      const sPtr = sendString(v[i]);
+      sendPtr(ptr + 4 * i, sPtr);
     }
-    ptr[v.length] = 0;
+    sendPtr(ptr + 4 * v.length, 0);
     return ptr;
   }
 
@@ -85,7 +90,8 @@ export default function netdb({
       sendArrayOfStrings(hostent.h_aliases),
       h_addrtype,
       hostent.h_length,
-      sendArrayOfStrings(hostent.h_addr_list)
+      sendArrayOfStrings(hostent.h_addr_list),
+      hostent.h_addr_list.length
     );
   }
 
@@ -232,8 +238,7 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     if (!addrinfo) {
       throw Error("error creating addrinfo structure");
     }
-    const view = new DataView(memory.buffer);
-    view.setUint32(resPtr, addrinfo, true);
+    sendPtr(resPtr, addrinfo);
     return 0;
   };
 

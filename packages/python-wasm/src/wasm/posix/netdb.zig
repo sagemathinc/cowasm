@@ -63,15 +63,15 @@ export fn recvAddr(addr: *anyopaque, addrtype: c_int) ?[*]u8 {
     return dst;
 }
 
-export fn sendHostent(h_name: [*:0]u8, h_aliases: [*c][*c]u8, h_addrtype: c_int, h_length: c_int, h_addr_list: [*c][*c]u8) ?*netdb.hostent {
-    std.debug.print("sendHostent {s}\n", .{h_name});
+export fn sendHostent(h_name: [*:0]u8, h_aliases: [*c][*c]u8, h_addrtype: c_int, h_length: c_int, h_addr_list: [*c][*c]u8, h_addr_list_len: usize) ?*netdb.hostent {
+    std.debug.print("h_length = {}\n", .{h_length});
     const hostent = mallocType(netdb.hostent, "sendHostent") orelse return null;
     hostent.h_name = h_name;
     hostent.h_aliases = h_aliases;
     hostent.h_addrtype = h_addrtype;
     hostent.h_length = h_length;
     //hostent.h_addr_list = (if (h_addrtype == netdb.AF_INET) convert_h_addr_list_ToBinary_v4(h_addr_list, h_length) else convert_h_addr_list_ToBinary_v6(h_addr_list, h_length)) orelse return null;
-    hostent.h_addr_list = @ptrCast([*c][*c]u8, convert_h_addr_list_ToBinary_v4(h_addr_list, @intCast(usize, h_length)) orelse return null);
+    hostent.h_addr_list = @ptrCast([*c][*c]u8, convert_h_addr_list_ToBinary_v4(h_addr_list, h_addr_list_len) orelse return null);
     // TODO: free h_addr_list.
     return hostent;
 }
@@ -87,7 +87,7 @@ fn convert_h_addr_list_ToBinary_v4(h_addr_list: [*c][*c]u8, len: usize) ?[*]*all
         const ret = inet.inet_pton(netdb.AF_INET, h_addr_list[i], dst);
         if (ret != 1) {
             // TODO: slight memory leak here!
-            std.debug.print("inet_pton failed when doing convert_h_addr_list_ToBinary_v4 - ret={d}\n", .{ret});
+            std.debug.print("inet_pton failed when doing convert_h_addr_list_ToBinary_v4 - h_addr_list[{d}]='{s}', ret={d}\n", .{ i, h_addr_list[i], ret });
             return null;
         }
         h_addr_binary_list[i] = dst;
