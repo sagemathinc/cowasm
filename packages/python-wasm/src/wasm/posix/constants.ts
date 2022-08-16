@@ -1,4 +1,19 @@
-export type Constant = string;
+// These are purely for typescript, and I can only update this (when the zig code changes)
+// by just printing out the constants at runtime.
+const CONSTANTS = [
+  "AT_FDCWD",
+  "EBADF",
+  "ENOENT",
+  "SIG_BLOCK",
+  "SIG_UNBLOCK",
+  "SIG_SETMASK",
+  "AF_INET",
+  "AF_INET6",
+] as const;
+
+export type Constant = typeof CONSTANTS[number];
+
+// export type Constant = string;
 
 const constants: { [name: string]: number } = {};
 export default constants;

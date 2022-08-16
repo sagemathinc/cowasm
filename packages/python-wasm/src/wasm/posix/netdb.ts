@@ -42,13 +42,14 @@ export default function netdb({
     const flags = view.getUint32(hintsPtr, true);
     hintsPtr += 4;
     let family = view.getUint32(hintsPtr, true);
-    // TODO: massive todo here -- we need to translate the constants from WASI/libc to whatever the host OS is,
-    // and it is VERY different on every single one!
-    if (family == 1) {
-      family = 2;
-    } else if (family == 2) {
-      family = 30;
+
+    // convert from musl-wasm AF_INET to native AF_INET (are totally different, and different for each native platform!).
+    if (family == constants.AF_INET) {
+      family = posix.constants.AF_INET;
+    } else if (family == constants.AF_INET6) {
+      family = posix.constants.AF_INET6;
     }
+
     hintsPtr += 4;
     const socktype = view.getUint32(hintsPtr, true);
     hintsPtr += 4;
@@ -81,9 +82,11 @@ export default function netdb({
   }
 
   function sendHostent(hostent: Hostent): number {
-    const h_addrtype = constants[
-      hostent.h_addrtype == posix.constants.AF_INET ? "AF_INET" : "AF_INET6"
-    ];
+    // Convert from native posix constant to musl-wasm constant for address type.
+    const h_addrtype =
+      hostent.h_addrtype == posix.constants.AF_INET
+        ? constants.AF_INET
+        : constants.AF_INET6;
     return callFunction(
       "sendHostent",
       sendString(hostent.h_name),
