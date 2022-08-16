@@ -1,6 +1,6 @@
 {
   "name": "python-wasm",
-  "version": "0.10.0",
+  "version": "0.12.0",
   "description": "python-wasm -- Web Assembly Python for Node.js and the Browser",
   "main": "./dist/python/node.js",
   "browser": "./dist/python/browser.js",
@@ -41,13 +41,13 @@
     "../posix-zig"
   ],
   "dependencies": {
-    "@wapython/wasi": "^1.0.1",
+    "@wapython/wasi": "^1.1.0",
     "awaiting": "^3.0.0",
     "callsite": "^1.0.0",
     "date-format": "^4.0.13",
     "debug": "^4.3.4",
-    "dylink": "^0.3.0",
-    "posix-zig": "^0.3.0"
+    "dylink": "^0.4.0",
+    "posix-zig": "^0.4.0"
   },
   "devDependencies": {
     "@types/callsite": "^1.0.31",

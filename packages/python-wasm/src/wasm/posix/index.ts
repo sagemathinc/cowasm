@@ -74,7 +74,7 @@ export default function posix(context: Context) {
         // On error, for now -1 is returned, and errno should get set to some sort of error indicator
         // TODO: how should we set errno?
         // @ts-ignore -- this is just temporary while we sort out setting errno...
-        context.fs.writeFileSync(2, `\n${err}\n`);
+        console.warn(err);
         return err.ret ?? -1;
       }
     };

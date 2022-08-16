@@ -7,7 +7,18 @@ import { init, repr, exec } from "../../python/node";
 
 beforeEach(async () => {
   await init({ debug: true });
-  await exec("import socket");
+  await exec("import socket; s=0"); // important to reset s as well!
+});
+
+test("gethostbyaddr for google's v4 ip -- consistency check", async () => {
+  await exec("s = socket.gethostbyaddr(socket.gethostbyname('google.com'))");
+  expect(await repr("s[0].endswith('.net')")).toBe("True");
+});
+
+test("gethostbyaddr on a domain name should also work (it does in native cpython)", async () => {
+  await exec("s = socket.gethostbyaddr('google.com')");
+  console.log(await repr('s'));
+  expect(await repr("s[0].endswith('.net')")).toBe("True");
 });
 
 test("gethostbyaddr for google's v6 ip", async () => {

@@ -227,6 +227,7 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
 }
 
 function wasmToNativeFamily(posix, family: number): number {
+  if (family == 0) return family; // default no flag given
   // convert from musl-wasm AF_INET to native AF_INET
   // (are totally different, and different for each native platform!).
   if (family == constants.AF_INET) {
@@ -234,16 +235,17 @@ function wasmToNativeFamily(posix, family: number): number {
   } else if (family == constants.AF_INET6) {
     return posix.constants.AF_INET6;
   } else {
-    throw Error("unsupported address family");
+    throw Error(`unsupported WASM address family: ${family}`);
   }
 }
 
 function nativeToWasmFamily(posix, family: number): number {
+  if (family == 0) return family; // default no flag given
   if (family == posix.constants.AF_INET) {
     return constants.AF_INET;
   } else if (family == posix.constants.AF_INET6) {
     return constants.AF_INET6;
   } else {
-    throw Error("unsupported address family");
+    throw Error(`unsupported native address family: ${family}`);
   }
 }

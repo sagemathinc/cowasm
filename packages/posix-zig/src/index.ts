@@ -1,5 +1,7 @@
-// Map from nodejs to zig descriptions:
+import debug from "debug";
+const log = debug("posix-zig");
 
+// Map from nodejs to zig descriptions:
 const nodeToZig = {
   arm64: "aarch64",
   x64: "x86_64",
@@ -67,6 +69,7 @@ interface PosixFunctions {
 export type Posix = Partial<PosixFunctions>;
 
 let mod: Posix = {};
+let mod1: Posix = {};
 try {
   mod = require(`./${name}.node`);
   // provide some better public interfaces:
@@ -82,10 +85,13 @@ try {
       hints?.protocol ?? 0
     );
   };
-  mod.constants = mod["getConstants"]?.();
   for (const name in mod) {
-    exports[name] = mod[name];
+    exports[name] = mod1[name] = (...args) => {
+      log(name, args);
+      return mod[name](...args);
+    };
   }
+  exports["constants"] = mod1.constants = mod["getConstants"]?.();
 } catch (_err) {}
 
-export default mod;
+export default mod1;
