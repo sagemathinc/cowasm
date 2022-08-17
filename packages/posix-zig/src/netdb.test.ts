@@ -51,3 +51,19 @@ test("getaddrinfo isn't random garbled nonsense", () => {
   if (addrinfo2 == null) throw Error("fail");
   expect(addrinfo).toEqual(addrinfo2);
 });
+
+test("getting error messages", () => {
+  expect(posix.gai_strerror?.(0)).toEqual("Unknown error");
+  expect(posix.gai_strerror?.(1)).toEqual(
+    "Address family for nodename not supported"
+  );
+});
+
+test("getaddrinfo error code", () => {
+  try {
+    posix.getaddrinfo?.("google.com", "x");
+  } catch (err) {
+    expect(err.code).toBe("8");
+    expect(err.message).toBe("nodename nor servname provided, or not known");
+  }
+});

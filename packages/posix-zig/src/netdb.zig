@@ -10,6 +10,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "gethostbyaddr", gethostbyaddr);
     try node.registerFunction(env, exports, "getaddrinfo0", getaddrinfo);
     try node.registerFunction(env, exports, "getConstants", getConstants);
+    try node.registerFunction(env, exports, "gai_strerror", gai_strerror);
 }
 
 // struct hostent *gethostbyname(const char *name);
@@ -171,12 +172,10 @@ fn getaddrinfo(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
 
     const hints = netdb.addrinfo{ .ai_flags = hint_flags, .ai_family = hint_family, .ai_socktype = hint_socktype, .ai_protocol = hint_protocol, .ai_addrlen = 0, .ai_addr = 0, .ai_canonname = 0, .ai_next = 0 };
     var res: *netdb.addrinfo = undefined;
-    switch (netdb.getaddrinfo(&nodeName, &service, &hints, @ptrCast([*c][*c]netdb.addrinfo, &res))) {
-        0 => {},
-        else => {
-            node.throwError(env, "getaddrinfo -- error"); // TODO: describe the error
-            return null;
-        },
+    const errcode = netdb.getaddrinfo(&nodeName, &service, &hints, @ptrCast([*c][*c]netdb.addrinfo, &res));
+    if (errcode != 0) {
+        node.throwErrorNumber(env, @ptrCast([*:0]const u8, netdb.gai_strerror(errcode)), errcode);
+        return null;
     }
     const addrinfo = createAddrinfoArray(env, res);
     netdb.freeaddrinfo(res);
@@ -290,4 +289,15 @@ fn getConstants(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi
     }
 
     return obj;
+}
+
+// const char *gai_strerror(int errcode);
+fn gai_strerror(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const errcode = node.i32FromValue(env, argv[0], "errcode") catch return null;
+    const err = netdb.gai_strerror(errcode) orelse {
+        node.throwError(env, "invalid error code");
+        return null;
+    };
+    return node.createStringFromPtr(env, err, "err") catch return null;
 }

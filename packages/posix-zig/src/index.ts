@@ -36,6 +36,7 @@ interface PosixFunctions {
   constants: { [name: string]: number };
 
   // unistd:
+  alarm: (seconds: number) => number;
   chroot: (path: string) => void;
   getegid: () => number;
   geteuid: () => number;
@@ -52,6 +53,7 @@ interface PosixFunctions {
   ttyname: (fd: number) => string;
 
   // netdb:
+  gai_strerror: (errcode: number) => string;
   gethostbyname: (name: string) => Hostent;
   gethostbyaddr: (addr: string) => Hostent; // addr is ipv4 or ipv6
   getaddrinfo: (

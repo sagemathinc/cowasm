@@ -17,7 +17,7 @@ test("gethostbyaddr for google's v4 ip -- consistency check", async () => {
 
 test("gethostbyaddr on a domain name should also work (it does in native cpython)", async () => {
   await exec("s = socket.gethostbyaddr('google.com')");
-  console.log(await repr('s'));
+  console.log(await repr("s"));
   expect(await repr("s[0].endswith('.net')")).toBe("True");
 });
 
@@ -38,4 +38,11 @@ test("gethostbyaddr on google's ip doesn't fail", async () => {
   expect(await repr("socket.gethostbyaddr(google)[-1][0] == google")).toBe(
     "True"
   );
+});
+
+test("getting an error code via a system call", async () => {
+  await exec(
+    "try: socket.getaddrinfo('google.com',-10)\nexcept Exception as e: the_error=e"
+  );
+  expect((await repr("the_error")).startsWith("gaierror(8, ")).toBe(true);
 });

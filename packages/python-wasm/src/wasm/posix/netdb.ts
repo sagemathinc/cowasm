@@ -180,7 +180,13 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     const node = recvString(nodePtr);
     const service = recvString(servicePtr);
     const hints = recvHints(hintsPtr);
-    const addrinfoArray = posix.getaddrinfo(node, service, hints);
+    let addrinfoArray;
+    try {
+      addrinfoArray = posix.getaddrinfo(node, service, hints);
+    } catch(err) {
+      // the exception has the error code, which should be returned.
+      return parseInt(err.code);
+    }
 
     let ai_next = 0;
     let addrinfo = 0;
@@ -221,6 +227,17 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     }
     sendPtr(resPtr, addrinfo);
     return 0;
+  };
+
+  // use a cache to only leak memory once per error code.
+  const gai_strerror_cache: { [errcode: number]: number } = {};
+  netdb.gai_strerror = (errcode: number): number => {
+    if (gai_strerror_cache[errcode] != null) {
+      return gai_strerror_cache[errcode];
+    }
+    const strPtr = sendString(posix.gai_strerror?.(errcode) ?? "Unknown error");
+    gai_strerror_cache[errcode] = strPtr;
+    return strPtr;
   };
 
   return netdb;

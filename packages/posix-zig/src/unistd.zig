@@ -18,6 +18,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "setreuid", setreuid);
     try node.registerFunction(env, exports, "setsid", setsid);
     try node.registerFunction(env, exports, "ttyname", ttyname);
+    try node.registerFunction(env, exports, "alarm", alarm);
 }
 
 // int chroot(const char *path);
@@ -168,4 +169,12 @@ fn ttyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
         return null;
     }
     return node.createStringFromPtr(env, name, "ttyname") catch return null;
+}
+
+// unsigned alarm(unsigned seconds);
+fn alarm(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const seconds = node.u32FromValue(env, argv[0], "seconds") catch return null;
+    const ret = unistd.alarm(seconds);
+    return node.create_u32(env, ret, "ret") catch return null;
 }

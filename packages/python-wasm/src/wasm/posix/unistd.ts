@@ -239,6 +239,13 @@ export default function unistd({
       sendString(posix.ttyname(fd), { ptr, len });
       return 0;
     },
+
+    alarm: (seconds: number): number => {
+      if (posix.alarm == null) {
+        throw Error("alarm is not supported on this platform");
+      }
+      return posix.alarm(seconds);
+    },
   };
 
   return unistd;

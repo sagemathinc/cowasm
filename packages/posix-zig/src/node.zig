@@ -5,6 +5,7 @@
 const std = @import("std");
 const assert = std.debug.assert;
 const c = @import("c.zig");
+const stdio = @cImport(@cInclude("stdio.h"));
 
 const RegisterError = error{ CreateError, SetError };
 
@@ -21,8 +22,30 @@ pub fn registerFunction(
     if (status != c.napi_ok) return RegisterError.SetError;
 }
 
-pub fn throwError(env: c.napi_env, comptime message: [:0]const u8) void {
+pub fn throwError(env: c.napi_env, message: [*:0]const u8) void {
     var result = c.napi_throw_error(env, null, message);
+    switch (result) {
+        c.napi_ok, c.napi_pending_exception => {},
+        else => unreachable,
+    }
+}
+
+// throw error with the Error(message).code specified
+pub fn throwErrorCode(env: c.napi_env, message: [*:0]const u8, code: [*:0]const u8) void {
+    var result = c.napi_throw_error(env, code, message);
+    switch (result) {
+        c.napi_ok, c.napi_pending_exception => {},
+        else => unreachable,
+    }
+}
+
+// throw error with the Error(message).code the string version of a number
+// char *itoa(int value, char *string, int radix);
+// "buf is as long as 17 bytes"
+pub fn throwErrorNumber(env: c.napi_env, message: [*:0]const u8, errcode: i32) void {
+    var buf: [17]u8 = undefined;
+    _ = stdio.sprintf(&buf, "%d", errcode);
+    const result = c.napi_throw_error(env, &buf, message);
     switch (result) {
         c.napi_ok, c.napi_pending_exception => {},
         else => unreachable,

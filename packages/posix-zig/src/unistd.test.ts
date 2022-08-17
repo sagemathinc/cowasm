@@ -111,3 +111,17 @@ test("ttyname with non-number input throws an error", () => {
     posix.ttyname?.("xyz");
   }).toThrow();
 });
+
+// I think this should work with 'jest --runInBand'
+// but it is NOT working, so commented out for now.
+/*
+test("sending ourselves an alarm signal", (cb) => {
+  console.log("isMainThread", isMainThread);
+  process.on("SIGALRM", () => {
+    console.log("got SIGALRM");
+    cb();
+    return 0;
+  });
+  posix.alarm?.(1);
+});
+*/
