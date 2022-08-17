@@ -61,14 +61,15 @@ source: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 # Note that despite the word "patched" below, we apply NO patches to the native build.
 #############
 
+
 UNAME_S := $(shell uname -s)
-UNAME_P := $(shell uname -p)
 ifeq ($(UNAME_S),Linux)
+        UNAME_M := $(shell uname -m)
 	# Workaround a zig bug -- the native build fails with "ld.lld: error: undefined symbol: fcntl64".
 	# See https://github.com/ziglang/zig/issues/5882 and https://github.com/ziglang/zig/issues/9485
 	# NOTE: we use musl instead of gnu.2.31, since musl works on CoCalc (a massive messy huge Linux
 	# environment), wheras gnu.2.31 only worked on several minimal linux envs.
-	ARCH = --target=$(UNAME_P)-linux-musl
+	ARCH = --target=$(UNAME_M)-linux-musl
 else
 	ARCH =
 endif
