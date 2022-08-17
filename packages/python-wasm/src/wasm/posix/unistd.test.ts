@@ -33,5 +33,13 @@ test("consistency check involving statvfs", async () => {
   await init({ debug: true });
   await exec("import os");
   const f_namemax = eval(await repr("os.statvfs('/').f_namemax"));
-  expect(f_namemax).toBe(posix.statvfs("/").f_namemax);
+  expect(f_namemax).toBe(posix.statvfs?.("/").f_namemax);
 });
+
+// can't do this during jest testing, though it works on the command line:
+// test("consistency check involving fstatvfs", async () => {
+//   await init({ debug: true });
+//   await exec("import os");
+//   const f_namemax = eval(await repr("os.fstatvfs(1).f_namemax"));
+//   expect(f_namemax).toBe(posix.fstatvfs?.(1).f_namemax);
+// });

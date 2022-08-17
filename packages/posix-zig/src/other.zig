@@ -9,6 +9,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
         try node.registerFunction(env, exports, "login_tty", login_tty);
     }
     try node.registerFunction(env, exports, "_statvfs", statvfs_impl);
+    try node.registerFunction(env, exports, "_fstatvfs", fstatvfs);
     try node.registerFunction(env, exports, "ctermid", ctermid);
 }
 
@@ -17,8 +18,8 @@ fn login_tty(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_va
     if (builtin.target.os.tag == .linux) {
         const utmp = @cImport(@cInclude("utmp.h"));
         const argv = node.getArgv(env, info, 1) catch return null;
-        const uid = node.i32FromValue(env, argv[0], "fd") catch return null;
-        if (utmp.login_tty(uid) == -1) {
+        const fd = node.i32FromValue(env, argv[0], "fd") catch return null;
+        if (utmp.login_tty(fd) == -1) {
             node.throwError(env, "error in login_tty");
             return null;
         }
@@ -33,7 +34,6 @@ const statvfs = @cImport({
     @cInclude("sys/statvfs.h");
 });
 // int statvfs(const char *restrict path, struct statvfs *restrict buf);
-// int fstatvfs(int fd, struct statvfs *buf);
 
 fn statvfs_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
@@ -50,6 +50,23 @@ fn statvfs_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi
     };
     defer std.c.free(s);
     return node.createStringFromPtr(env, s, "statsvfs") catch return null;
+}
+
+// int fstatvfs(int fd, struct statvfs *buf);
+fn fstatvfs(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const fd = node.i32FromValue(env, argv[0], "fd") catch return null;
+    var buf: statvfs.struct_statvfs = undefined;
+    if (statvfs.fstatvfs(fd, &buf) == -1) {
+        node.throwError(env, "fstatsvfs failed -- invalid input");
+        return null;
+    }
+    const s = util.structToNullTerminatedJsonString(statvfs.struct_statvfs, buf) catch {
+        node.throwError(env, "fstatsvfs failed -- problem converting output");
+        return null;
+    };
+    defer std.c.free(s);
+    return node.createStringFromPtr(env, s, "fstatsvfs") catch return null;
 }
 
 // stdio.h

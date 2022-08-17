@@ -1,6 +1,24 @@
 import { notImplemented } from "./util";
 
 export default function other({ callFunction, posix, recvString, sendString }) {
+  function sendStatvfs(bufPtr, x) {
+    callFunction(
+      "set_statvfs",
+      bufPtr,
+      x.f_bsize,
+      x.f_frsize,
+      BigInt(x.f_blocks),
+      BigInt(x.f_bfree),
+      BigInt(x.f_bavail),
+      BigInt(x.f_files),
+      BigInt(x.f_ffree),
+      BigInt(x.f_favail),
+      x.f_fsid,
+      x.f_flag,
+      x.f_namemax
+    );
+  }
+
   let ctermidPtr = 0;
   return {
     login_tty: (fd: number): number => {
@@ -11,35 +29,25 @@ export default function other({ callFunction, posix, recvString, sendString }) {
       return 0;
     },
 
+    // TODO: worry about virtual filesystem that WASI provides,
+    // versus this just being the straight real one?!
     // int statvfs(const char *restrict path, struct statvfs *restrict buf);
-    statvfs: (pathPtr: string, bufPtr) => {
+    statvfs: (pathPtr: string, bufPtr: number): number => {
       if (posix.statvfs == null) {
         notImplemented("statvfs");
       }
       const path = recvString(pathPtr);
-      const x = posix.statvfs(path);
-      console.log(x);
-      callFunction(
-        "set_statvfs",
-        bufPtr,
-        x.f_bsize,
-        x.f_frsize,
-        BigInt(x.f_blocks),
-        BigInt(x.f_bfree),
-        BigInt(x.f_bavail),
-        BigInt(x.f_files),
-        BigInt(x.f_ffree),
-        BigInt(x.f_favail),
-        x.f_fsid,
-        x.f_flag,
-        x.f_namemax
-      );
+      sendStatvfs(bufPtr, posix.statvfs(path));
+      return 0;
     },
 
     //       int fstatvfs(int fd, struct statvfs *buf);
-    fstatvfs: (_fd: number) => {
-      // also weird
-      notImplemented("fstatvfs");
+    fstatvfs: (fd: number, bufPtr: number): number => {
+      if (posix.fstatvfs == null) {
+        notImplemented("statvfs");
+      }
+      sendStatvfs(bufPtr, posix.fstatvfs(fd));
+      return 0;
     },
 
     ctermid: (ptr?: number): number => {

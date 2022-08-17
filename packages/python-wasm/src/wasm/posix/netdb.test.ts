@@ -17,7 +17,6 @@ test("gethostbyaddr for google's v4 ip -- consistency check", async () => {
 
 test("gethostbyaddr on a domain name should also work (it does in native cpython)", async () => {
   await exec("s = socket.gethostbyaddr('google.com')");
-  console.log(await repr("s"));
   expect(await repr("s[0].endswith('.net')")).toBe("True");
 });
 

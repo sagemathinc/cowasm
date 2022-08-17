@@ -70,6 +70,7 @@ interface PosixFunctions {
   // other
   login_tty: (fd: number) => void;
   statvfs: (path: string) => StatsVFS;
+  fstatvfs: (fd: number) => StatsVFS;
   ctermid: () => string;
 
   // netdb:
@@ -107,7 +108,9 @@ try {
       hints?.protocol ?? 0
     );
   };
+  // I could do the JSON in the extension module, but is that really better?
   mod["statvfs"] = (...args) => JSON.parse(mod["_statvfs"]?.(...args));
+  mod["fstatvfs"] = (...args) => JSON.parse(mod["_fstatvfs"]?.(...args));
 
   for (const name in mod) {
     if (name.startsWith("_")) continue;
