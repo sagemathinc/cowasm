@@ -9,6 +9,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
         try node.registerFunction(env, exports, "login_tty", login_tty);
     }
     try node.registerFunction(env, exports, "_statvfs", statvfs_impl);
+    try node.registerFunction(env, exports, "ctermid", ctermid);
 }
 
 // int login_tty(int fd);
@@ -49,4 +50,16 @@ fn statvfs_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi
     };
     defer std.c.free(s);
     return node.createStringFromPtr(env, s, "statsvfs") catch return null;
+}
+
+// stdio.h
+//    char *ctermid(char *s);
+const stdio = @cImport(@cInclude("stdio.h"));
+fn ctermid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    const s = stdio.ctermid(null) orelse {
+        node.throwError(env, "failed to get ctermid");
+        return null;
+    };
+    return node.createStringFromPtr(env, s, "ctermid") catch return null;
 }

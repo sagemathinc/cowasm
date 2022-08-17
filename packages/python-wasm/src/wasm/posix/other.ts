@@ -1,6 +1,7 @@
 import { notImplemented } from "./util";
 
-export default function other({ posix }) {
+export default function other({ posix, sendString }) {
+  let ctermidPtr = 0;
   return {
     login_tty: (fd: number): number => {
       if (posix.login_tty == null) {
@@ -19,6 +20,23 @@ export default function other({ posix }) {
     fstatvfs: (_fd: number) => {
       // also weird
       notImplemented("fstatvfs");
+    },
+
+    ctermid: (ptr?: number): number => {
+      if (posix.ctermid == null) {
+        notImplemented("ctermid");
+      }
+      if (ptr) {
+        const s = posix.ctermid();
+        sendString(s, { ptr, len: s.length+1 });
+        return ptr;
+      }
+      if (ctermidPtr) {
+        return ctermidPtr;
+      }
+      const s = posix.ctermid();
+      ctermidPtr = sendString(s);
+      return ctermidPtr;
     },
   };
 }

@@ -69,6 +69,7 @@ interface PosixFunctions {
   // other
   login_tty: (fd: number) => void;
   statvfs: (path: string) => StatsVFS;
+  ctermid: () => string;
 
   // netdb:
   gai_strerror: (errcode: number) => string;
