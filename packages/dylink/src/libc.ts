@@ -123,6 +123,7 @@ cfgetispeed
 cfgetospeed
 tcgetattr
 tcsetattr
+textdomain
 gettext
 dgettext
 dcgettext

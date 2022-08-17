@@ -59,10 +59,15 @@ export fn strnvis(dst: [*:0]u8, src: [*:0]const u8, size: usize, flag: c_int) c_
     return @intCast(c_int, i);
 }
 
+//char * textdomain (const char * domainname);
 //char * gettext (const char * msgid);
 //char * dgettext (const char * domainname, const char * msgid);
 //char * dcgettext (const char * domainname, const char * msgid, int category);
 // "In the "C" locale, or if none of the used catalogs contain a translation for msgid, the gettext, dgettext and dcgettext functions return msgid."
+export fn textdomain(domainname: [*:0]const u8) [*:0]const u8 {
+    return domainname;
+}
+
 export fn gettext(msgid: [*:0]const u8) [*:0]const u8 {
     return msgid;
 }

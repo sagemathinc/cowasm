@@ -183,9 +183,14 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     let addrinfoArray;
     try {
       addrinfoArray = posix.getaddrinfo(node, service, hints);
-    } catch(err) {
-      // the exception has the error code, which should be returned.
-      return parseInt(err.code);
+    } catch (err) {
+      if (err.code) {
+        // the exception has the error code, which should be returned.
+        return parseInt(err.code);
+      } else {
+        // just let it prop
+        throw err;
+      }
     }
 
     let ai_next = 0;

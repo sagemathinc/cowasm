@@ -28,7 +28,7 @@ fn gethostbyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.nap
     var buf: [1024]u8 = undefined;
     node.stringFromValue(env, argv[0], "name", 1024, &buf) catch return null;
     const hostent: *netdb.hostent = netdb.gethostbyname(&buf) orelse {
-        node.throwError(env, "gethostbyname system call return null pointer");
+        node.throwError(env, "gethostbyname system call returned a null pointer");
         return null;
     };
     return createHostent(env, hostent);
@@ -59,7 +59,7 @@ fn gethostbyaddr(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.nap
 fn gethostbyaddr_v4(env: c.napi_env, bufPtr: [*:0]u8) callconv(.C) c.napi_value {
     var addr = inet.inet_addr(bufPtr);
     const hostent: *netdb.hostent = netdb.gethostbyaddr(&addr, @sizeOf(@TypeOf(addr)), netdb.AF_INET) orelse {
-        node.throwError(env, "gethostbyaddr system call returned null pointer");
+        node.throwError(env, "gethostbyaddr system call returned a null pointer");
         return null;
     };
     return createHostent(env, hostent);

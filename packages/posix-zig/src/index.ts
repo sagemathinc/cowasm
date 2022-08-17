@@ -52,6 +52,9 @@ interface PosixFunctions {
   sethostname: (name: string) => void;
   ttyname: (fd: number) => string;
 
+  // other
+  login_tty: (fd: number) => void;
+
   // netdb:
   gai_strerror: (errcode: number) => string;
   gethostbyname: (name: string) => Hostent;
