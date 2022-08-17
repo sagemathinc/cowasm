@@ -43,3 +43,38 @@ test("consistency check involving statvfs", async () => {
 //   const f_namemax = eval(await repr("os.fstatvfs(1).f_namemax"));
 //   expect(f_namemax).toBe(posix.fstatvfs?.(1).f_namemax);
 // });
+
+test("using getresuid on Linux only", async () => {
+  await exec("import os");
+  if (process.platform == "linux") {
+    const resuid = eval(
+      "[" + (await repr("os.getresuid()")).slice(1, -1) + "]"
+    );
+    // should be a triple of numbers
+    expect(resuid.length).toBe(3);
+    for (const n of resuid) {
+      expect(typeof n).toBe("number");
+    }
+  }
+});
+
+test("using getresgid on Linux only", async () => {
+  await exec("import os");
+  if (process.platform == "linux") {
+    const resgid = eval(
+      "[" + (await repr("os.getresgid()")).slice(1, -1) + "]"
+    );
+    // should be a triple of numbers
+    expect(resgid.length).toBe(3);
+    for (const n of resgid) {
+      expect(typeof n).toBe("number");
+    }
+  }
+});
+
+// setresuid/setresgid can only be done as root, so we only test that they throw here
+
+// test("setresuid throws", async () => {
+//   await exec("import os");
+//   expect(repr("os.setresuid(0,0,0)")).rejects.toThrow();
+// });

@@ -10,6 +10,7 @@ import wasmImport, { Options } from "./import";
 import initWorker from "./init";
 import debug from "debug";
 import { EventEmitter } from "events";
+import posix from "./posix-browser";
 
 export default async function wasmImportBrowser(
   wasmUrl: string,
@@ -44,7 +45,7 @@ export default async function wasmImportBrowser(
 
   const wasm = await wasmImport({
     source: wasmUrl,
-    bindings: { ...bindings, fs },
+    bindings: { ...bindings, fs, posix },
     options,
     log,
     importWebAssembly,

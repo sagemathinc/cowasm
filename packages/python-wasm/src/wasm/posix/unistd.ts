@@ -1,3 +1,5 @@
+import { notImplemented } from "./util";
+
 export default function unistd({
   fs,
   os,
@@ -70,7 +72,7 @@ export default function unistd({
     // int setpgid(pid_t pid, pid_t pgid);
     setpgid: (pid: number, pgid: number): number => {
       if (posix.setpgid == null) {
-        throw Error("setpgid is not supported on this platform");
+        notImplemented("setpgid");
       }
       posix.setpgid(pid, pgid);
       return 0; // success
@@ -119,7 +121,7 @@ export default function unistd({
     dup: () => {
       // Considered in 2022, but closed by node developers: https://github.com/libuv/libuv/issues/3448#issuecomment-1174786218
       // TODO: maybe revisit via the wasi layer when want to have a deeper understanding of whether this is possible
-      // on top of that abstraction.
+      // on top of that abstraction, and of course emscripten does this (?)
       throw Error(
         "NotImplemented -- it might not be reasonable to implement file descriptor dup"
       );
@@ -156,76 +158,85 @@ export default function unistd({
     },
     seteuid: (uid: number) => {
       if (posix.seteuid == null) {
-        throw Error("seteuid is not supported on this platform");
+        notImplemented("seteuid");
       }
       posix.seteuid(uid);
       return 0;
     },
     setegid: (gid: number) => {
       if (posix.setegid == null) {
-        throw Error("setegid is not supported on this platform");
+        notImplemented("setegid");
       }
       posix.setegid(gid);
       return 0;
     },
     setgid: (gid: number) => {
       if (process.setgid == null) {
-        throw Error("setgid is not supported");
+        notImplemented("setgid");
       }
       process.setgid(gid);
       return 0;
     },
     setsid: (sid) => {
       if (posix.setsid == null) {
-        throw Error("setsid is not supported on this platform");
+        notImplemented("setsid");
       }
       return posix.setsid(sid);
     },
+    // TODO!
     getsid: () => {
-      throw Error("getsid is not supported");
+      notImplemented("getsid");
     },
+
     setreuid: (uid) => {
       if (posix.setreuid == null) {
-        throw Error("setreuid is not supported on this platform");
+        notImplemented("setreuid");
       }
       posix.setreuid(uid);
       return 0;
     },
     setregid: (gid) => {
       if (posix.setregid == null) {
-        throw Error("setregid is not supported on this platform");
+        notImplemented("setregid");
       }
       posix.setregid(gid);
       return 0;
     },
     getppid: () => {
       if (posix.getppid == null) {
-        // in browser right now there is only one process id:
+        // in browser -- only one process id:
         return unistd.getpid();
       }
       return posix.getppid();
     },
     setgroups: () => {
-      throw Error("setgroups is not supported");
+      notImplemented("setgroups");
     },
+
     setpgrp: () => {
-      throw Error("setpgrp is not supported");
+      notImplemented("setpgrp");
     },
+
     tcgetpgrp: () => {
-      throw Error("tcgetpgrp is not supported");
+      notImplemented("tcgetpgrp");
     },
+
     tcsetpgrp: () => {
-      throw Error("tcsetpgrp is not supported");
+      notImplemented("tcsetpgrp");
     },
+
     fork: () => {
-      throw Error("fork is not supported");
+      notImplemented("fork");
     },
+
     fork1: () => {
-      throw Error("fork1 is not supported");
+      notImplemented("fork1");
     },
+
     forkpty: () => {
-      throw Error("forkpty is not supported");
+      notImplemented("forkpty");
     },
+
     getlogin: (): number => {
       if (login != null) return login;
       // returns the username of the signed in user; if not available, e.g.,
@@ -271,6 +282,48 @@ export default function unistd({
         throw Error("alarm is not supported on this platform");
       }
       return posix.alarm(seconds);
+    },
+
+    // The following 4 are actually only available on a Linux host, though wasi-musl defines them,
+    // so cpython-wasm thinks they exist.
+    getresuid: (ruidPtr: number, euidPtr: number, suidPtr: number): number => {
+      if (posix.getresuid == null) {
+        notImplemented("getresuid");
+      }
+      const { ruid, euid, suid } = posix.getresuid();
+      const view = new DataView(memory.buffer);
+      view.setUint32(ruidPtr, ruid, true);
+      view.setUint32(euidPtr, euid, true);
+      view.setUint32(suidPtr, suid, true);
+      return 0;
+    },
+
+    getresgid: (rgidPtr: number, egidPtr: number, sgidPtr: number): number => {
+      if (posix.getresgid == null) {
+        notImplemented("getresgid");
+      }
+      const { rgid, egid, sgid } = posix.getresgid();
+      const view = new DataView(memory.buffer);
+      view.setUint32(rgidPtr, rgid, true);
+      view.setUint32(egidPtr, egid, true);
+      view.setUint32(sgidPtr, sgid, true);
+      return 0;
+    },
+
+    setresuid: (ruid: number, euid: number, suid: number): number => {
+      if (posix.setresuid == null) {
+        notImplemented("setresuid");
+      }
+      posix.setresuid(ruid, euid, suid);
+      return 0;
+    },
+
+    setresgid: (rgid: number, egid: number, sgid: number): number => {
+      if (posix.setresgid == null) {
+        notImplemented("setresgid");
+      }
+      posix.setresgid(rgid, egid, sgid);
+      return 0;
     },
   };
 

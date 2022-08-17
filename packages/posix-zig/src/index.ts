@@ -46,6 +46,9 @@ interface StatsVFS {
 }
 
 interface PosixFunctions {
+  // wrappers around some nodejs posix compat functions
+  getpid: () => number;
+
   // constants
   constants: { [name: string]: number };
 
@@ -66,10 +69,11 @@ interface PosixFunctions {
   seteuid: (uid: number) => void;
   sethostname: (name: string) => void;
   ttyname: (fd: number) => string;
-  getresuid: () => { ruid: number; euid: number; suid: number };
-  getresgid: () => { rgid: number; egid: number; sgid: number };
-  setresgid: (rgid: number, egid: number, sgid: number) => void;
-  setresuid: (ruid: number, euid: number, suid: number) => void;
+
+  getresuid: () => { ruid: number; euid: number; suid: number }; // linux only
+  getresgid: () => { rgid: number; egid: number; sgid: number }; // linux only
+  setresgid: (rgid: number, egid: number, sgid: number) => void; // linux only
+  setresuid: (ruid: number, euid: number, suid: number) => void; // linux only
 
   // other
   login_tty: (fd: number) => void;
@@ -99,6 +103,9 @@ let mod: Posix = {};
 let mod1: Posix = {};
 try {
   mod = require(`./${name}.node`);
+
+  mod.getpid = () => process.pid;
+
   // provide some better public interfaces:
   mod["getaddrinfo"] = (node, service, hints) => {
     const f = mod["_getaddrinfo"];
