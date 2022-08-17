@@ -66,6 +66,10 @@ interface PosixFunctions {
   seteuid: (uid: number) => void;
   sethostname: (name: string) => void;
   ttyname: (fd: number) => string;
+  getresuid: () => { ruid: number; euid: number; suid: number };
+  getresgid: () => { rgid: number; egid: number; sgid: number };
+  setresgid: (rgid: number, egid: number, sgid: number) => void;
+  setresuid: (ruid: number, euid: number, suid: number) => void;
 
   // other
   login_tty: (fd: number) => void;
