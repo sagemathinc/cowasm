@@ -8,7 +8,7 @@ const inet = @cImport(@cInclude("arpa/inet.h"));
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "gethostbyname", gethostbyname);
     try node.registerFunction(env, exports, "gethostbyaddr", gethostbyaddr);
-    try node.registerFunction(env, exports, "getaddrinfo0", getaddrinfo);
+    try node.registerFunction(env, exports, "_getaddrinfo", getaddrinfo);
     try node.registerFunction(env, exports, "getConstants", getConstants);
     try node.registerFunction(env, exports, "gai_strerror", gai_strerror);
 }

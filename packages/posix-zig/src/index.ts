@@ -31,6 +31,20 @@ export interface Addrinfo {
   sa_data: Buffer;
 }
 
+interface StatsVFS {
+  f_bsize: number;
+  f_frsize: number;
+  f_blocks: number;
+  f_bfree: number;
+  f_bavail: number;
+  f_files: number;
+  f_ffree: number;
+  f_favail: number;
+  f_fsid: number;
+  f_flag: number;
+  f_namemax: number;
+}
+
 interface PosixFunctions {
   // constants
   constants: { [name: string]: number };
@@ -54,6 +68,7 @@ interface PosixFunctions {
 
   // other
   login_tty: (fd: number) => void;
+  statvfs: (path: string) => StatsVFS;
 
   // netdb:
   gai_strerror: (errcode: number) => string;
@@ -79,7 +94,7 @@ try {
   mod = require(`./${name}.node`);
   // provide some better public interfaces:
   mod["getaddrinfo"] = (node, service, hints) => {
-    const f = mod["getaddrinfo0"];
+    const f = mod["_getaddrinfo"];
     if (f == null) throw Error("getaddrinfo is not implemented");
     return f(
       node,
@@ -90,7 +105,10 @@ try {
       hints?.protocol ?? 0
     );
   };
+  mod["statvfs"] = (...args) => JSON.parse(mod["_statvfs"]?.(...args));
+
   for (const name in mod) {
+    if (name.startsWith("_")) continue;
     exports[name] = mod1[name] = (...args) => {
       log(name, args);
       return mod[name](...args);
