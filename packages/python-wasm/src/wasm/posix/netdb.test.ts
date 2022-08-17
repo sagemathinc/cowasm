@@ -44,5 +44,5 @@ test("getting an error code via a system call", async () => {
   await exec(
     "try: socket.getaddrinfo('google.com',-10)\nexcept Exception as e: the_error=e"
   );
-  expect((await repr("the_error")).startsWith("gaierror(8, ")).toBe(true);
+  expect((await repr("the_error")).startsWith("gaierror")).toBe(true);
 });
