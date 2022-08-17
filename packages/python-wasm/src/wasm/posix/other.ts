@@ -66,5 +66,16 @@ export default function other({ callFunction, posix, recvString, sendString }) {
       ctermidPtr = sendString(s);
       return ctermidPtr;
     },
+
+    // password stuff -- low priority!
+    getpwnam_r: (): void => {
+      notImplemented("getpwnam_r");
+    },
+    getpwuid: (): void => {
+      notImplemented("getpwnam_r");
+    },
+    getpwuid_r: (): void => {
+      notImplemented("getpwnam_r");
+    },
   };
 }

@@ -268,3 +268,8 @@ PUBLIC(pthread_cond_wait)
 
 int pthread_kill(pthread_t thread, int sig) { return 0; }
 PUBLIC(pthread_kill)
+
+int pthread_getcpuclockid(pthread_t thread, clockid_t *clockid) {
+  *clockid = CLOCK_THREAD_CPUTIME_ID;
+}
+PUBLIC(pthread_getcpuclockid)

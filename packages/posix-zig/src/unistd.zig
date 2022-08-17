@@ -2,6 +2,8 @@ const c = @import("c.zig");
 const node = @import("node.zig");
 const unistd = @cImport(@cInclude("unistd.h"));
 const builtin = @import("builtin");
+const util = @import("util.zig");
+const std = @import("std");
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "chroot", chroot);
@@ -20,6 +22,8 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "setsid", setsid);
     try node.registerFunction(env, exports, "ttyname", ttyname);
     try node.registerFunction(env, exports, "alarm", alarm);
+
+    try node.registerFunction(env, exports, "execve", execve);
 }
 
 // int chroot(const char *path);
@@ -183,6 +187,34 @@ fn ttyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
 fn alarm(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
     const seconds = node.u32FromValue(env, argv[0], "seconds") catch return null;
-    const ret = unistd.alarm(seconds);
+    const ret = unistd.alarm(seconds); // doesn't return any error no matter what.
     return node.create_u32(env, ret, "ret") catch return null;
+}
+
+// int execve(const char *pathname, char *const argv[], char *const envp[]);
+//  execve: (pathname: string, argv: string[], envp: string[]) => number;
+fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const args = node.getArgv(env, info, 3) catch return null;
+
+    var pathname = node.valueToString(env, args[0], "pathname") catch return null;
+    defer std.c.free(pathname);
+
+    var argv = node.valueToArrayOfStrings(env, args[1], "argv") catch return null;
+    defer util.freeArrayOfStrings(argv);
+
+    var envp = node.valueToArrayOfStrings(env, args[2], "envp") catch return null;
+    defer util.freeArrayOfStrings(envp);
+
+    // NOTE: On success, execve() does not return (!), on error -1 is returned,
+    // and errno is set to indicate the error.
+    const ret = unistd.execve(pathname, argv, envp);
+    std.debug.print("pathname={s}, argv[0]={s}\n", .{ pathname, argv[0] orelse {
+        return null;
+    } });
+    if (ret == -1) {
+        node.throwError(env, "error in execve");
+        return null;
+    }
+    // This can't ever happen, of course.
+    return node.create_i32(env, ret, "ret") catch return null;
 }

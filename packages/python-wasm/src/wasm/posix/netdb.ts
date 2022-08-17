@@ -245,6 +245,16 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     return strPtr;
   };
 
+  const hstrerror_cache: { [errcode: number]: number } = {};
+  netdb.hstrerror = (errcode: number): number => {
+    if (hstrerror_cache[errcode] != null) {
+      return hstrerror_cache[errcode];
+    }
+    const strPtr = sendString(posix.hstrerror?.(errcode) ?? "Unknown error");
+    hstrerror_cache[errcode] = strPtr;
+    return strPtr;
+  };
+
   return netdb;
 }
 

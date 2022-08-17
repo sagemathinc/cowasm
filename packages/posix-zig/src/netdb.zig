@@ -11,6 +11,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "_getaddrinfo", getaddrinfo);
     try node.registerFunction(env, exports, "getConstants", getConstants);
     try node.registerFunction(env, exports, "gai_strerror", gai_strerror);
+    try node.registerFunction(env, exports, "hstrerror", hstrerror);
 }
 
 // struct hostent *gethostbyname(const char *name);
@@ -296,6 +297,17 @@ fn gai_strerror(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi
     const argv = node.getArgv(env, info, 1) catch return null;
     const errcode = node.i32FromValue(env, argv[0], "errcode") catch return null;
     const err = netdb.gai_strerror(errcode) orelse {
+        node.throwError(env, "invalid error code");
+        return null;
+    };
+    return node.createStringFromPtr(env, err, "err") catch return null;
+}
+
+// const char *hstrerror(int err);
+fn hstrerror(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const errcode = node.i32FromValue(env, argv[0], "errcode") catch return null;
+    const err = netdb.hstrerror(errcode) orelse {
         node.throwError(env, "invalid error code");
         return null;
     };

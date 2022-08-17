@@ -62,15 +62,26 @@ pub fn getArgv(env: c.napi_env, info: c.napi_callback_info, comptime n: usize) !
     return argv;
 }
 
-const TranslationError = error{ExceptionThrown};
-pub fn throw(env: c.napi_env, comptime message: [:0]const u8) TranslationError {
+const NodeError = error{ ExceptionThrown, MemoryError };
+
+pub fn throw(env: c.napi_env, comptime message: [:0]const u8) NodeError {
     var result = c.napi_throw_error(env, null, message);
     switch (result) {
         c.napi_ok, c.napi_pending_exception => {},
         else => unreachable,
     }
 
-    return TranslationError.ExceptionThrown;
+    return NodeError.ExceptionThrown;
+}
+
+pub fn throwMemoryError(env: c.napi_env) NodeError {
+    var result = c.napi_throw_error(env, null, "out of memory");
+    switch (result) {
+        c.napi_ok, c.napi_pending_exception => {},
+        else => unreachable,
+    }
+
+    return NodeError.MemoryError;
 }
 
 pub fn captureUndefined(env: c.napi_env) !c.napi_value {
@@ -322,6 +333,50 @@ pub fn stringFromValue(env: c.napi_env, value: c.napi_value, comptime name: [:0]
     }
 }
 
+// node value --> C char *
+// convert a node value to a null terminated C string.  caller must free this using std.c.free.
+pub fn valueToString(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) ![*:0]u8 {
+    var len: usize = undefined;
+    if (c.napi_get_value_string_utf8(env, value, null, 0, &len) != c.napi_ok) {
+        return throw(env, name ++ " must be a string");
+    }
+    var memory = std.c.malloc(len + 1) orelse {
+        return throwMemoryError(env);
+    };
+    var buf = @ptrCast([*:0]u8, memory);
+    var result: usize = undefined;
+    if (c.napi_get_value_string_utf8(env, value, buf, len+1, &result) != c.napi_ok) {
+        return throw(env, name ++ " must be a string");
+    }
+    return buf;
+}
+
+// node value --> C char *const argv[]
+// convert a node value to a null terminated array of null terminated C strings.
+// caller must free this using std.c.free; there is a function freeArrayOfStrings
+// in util.zig that does this:
+pub fn valueToArrayOfStrings(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) ![*](?[*:0]u8) {
+    var len: u32 = undefined;
+    if (c.napi_get_array_length(env, value, &len) != c.napi_ok) {
+        return throw(env, name ++ " must be array of strings (failed to get length)");
+    }
+    var memory = std.c.malloc(@sizeOf(?[*:0]u8) * (len + 1)) orelse {
+        return throwMemoryError(env);
+    };
+    var aligned = @alignCast(std.meta.alignment([*](?[*:0]u8)), memory);
+    var s: [*](?[*:0]u8) = @ptrCast([*](?[*:0]u8), aligned);
+    s[len] = null;
+    var i: u32 = 0;
+    while (i < len) : (i += 1) {
+        var result: c.napi_value = undefined;
+        if (c.napi_get_element(env, value, i, &result) != c.napi_ok) {
+            return throw(env, name ++ " must be array of strings (failed to get element)");
+        }
+        s[i] = try valueToString(env, result, name);
+    }
+    return s;
+}
+
 pub fn set_named_property_to_byte_slice(
     env: c.napi_env,
     object: c.napi_value,
@@ -527,15 +582,15 @@ pub fn delete_reference(env: c.napi_env, reference: c.napi_ref) !void {
 pub fn create_error(
     env: c.napi_env,
     comptime message: [:0]const u8,
-) TranslationError!c.napi_value {
+) NodeError!c.napi_value {
     var napi_string: c.napi_value = undefined;
     if (c.napi_create_string_utf8(env, message, std.mem.len(message), &napi_string) != c.napi_ok) {
-        return TranslationError.ExceptionThrown;
+        return NodeError.ExceptionThrown;
     }
 
     var napi_error: c.napi_value = undefined;
     if (c.napi_create_error(env, null, napi_string, &napi_error) != c.napi_ok) {
-        return TranslationError.ExceptionThrown;
+        return NodeError.ExceptionThrown;
     }
 
     return napi_error;

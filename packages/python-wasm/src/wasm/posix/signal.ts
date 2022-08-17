@@ -36,7 +36,7 @@ function setSignalSetToMask(setPtr: number): void {
 }
 
 export default function signal({ process }) {
-  return {
+  const signal = {
     // int kill(pid_t pid, int sig);
     kill: (pid: number, signal: number): number => {
       if (process.kill == null) return 0;
@@ -124,4 +124,10 @@ export default function signal({ process }) {
       }
     },
   };
+
+  // for single threaded programs, these are the same:
+  // @ts-ignore
+  signal.pthread_sigmask = signal.sigprocmask;
+
+  return signal;
 }

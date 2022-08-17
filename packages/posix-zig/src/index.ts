@@ -75,6 +75,8 @@ interface PosixFunctions {
   setresgid: (rgid: number, egid: number, sgid: number) => void; // linux only
   setresuid: (ruid: number, euid: number, suid: number) => void; // linux only
 
+  execve: (pathname: string, argv: string[], envp: string[]) => number;
+
   // other
   login_tty: (fd: number) => void;
   statvfs: (path: string) => StatsVFS;
@@ -83,6 +85,7 @@ interface PosixFunctions {
 
   // netdb:
   gai_strerror: (errcode: number) => string;
+  hstrerror: (errcode: number) => string;
   gethostbyname: (name: string) => Hostent;
   gethostbyaddr: (addr: string) => Hostent; // addr is ipv4 or ipv6
   getaddrinfo: (

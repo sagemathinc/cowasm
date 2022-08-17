@@ -29,3 +29,12 @@ pub fn structToNullTerminatedJsonString(comptime T: type, obj: T) ![*:0]u8 {
     defer alloc.free(s);
     return try zigStringToNullTerminatedString(s);
 }
+
+// here "array" and "string" are meant in the C sense, not the zig sense.
+pub fn freeArrayOfStrings(s: [*]?[*:0]u8) void {
+    var i: usize = 0;
+    while (s[i] != null) : (i += 1) {
+        std.c.free(s[i]);
+    }
+    std.c.free(s);
+}
