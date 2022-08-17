@@ -1,6 +1,6 @@
 import { notImplemented } from "./util";
 
-export default function other({ posix, sendString }) {
+export default function other({ callFunction, posix, recvString, sendString }) {
   let ctermidPtr = 0;
   return {
     login_tty: (fd: number): number => {
@@ -11,12 +11,32 @@ export default function other({ posix, sendString }) {
       return 0;
     },
 
-    statvfs: (_path: string) => {
-      // this is VERY weird, since it gets stubbed if I don't put it here,
-      // but somehow the real function is available to cpython.  This must
-      // involve some subtle issue with the wasi module.
-      notImplemented("statvfs");
+    // int statvfs(const char *restrict path, struct statvfs *restrict buf);
+    statvfs: (pathPtr: string, bufPtr) => {
+      if (posix.statvfs == null) {
+        notImplemented("statvfs");
+      }
+      const path = recvString(pathPtr);
+      const x = posix.statvfs(path);
+      console.log(x);
+      callFunction(
+        "set_statvfs",
+        bufPtr,
+        x.f_bsize,
+        x.f_frsize,
+        BigInt(x.f_blocks),
+        BigInt(x.f_bfree),
+        BigInt(x.f_bavail),
+        BigInt(x.f_files),
+        BigInt(x.f_ffree),
+        BigInt(x.f_favail),
+        x.f_fsid,
+        x.f_flag,
+        x.f_namemax
+      );
     },
+
+    //       int fstatvfs(int fd, struct statvfs *buf);
     fstatvfs: (_fd: number) => {
       // also weird
       notImplemented("fstatvfs");
@@ -28,7 +48,7 @@ export default function other({ posix, sendString }) {
       }
       if (ptr) {
         const s = posix.ctermid();
-        sendString(s, { ptr, len: s.length+1 });
+        sendString(s, { ptr, len: s.length + 1 });
         return ptr;
       }
       if (ctermidPtr) {

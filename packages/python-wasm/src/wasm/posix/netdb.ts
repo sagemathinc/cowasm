@@ -22,7 +22,7 @@ export default function netdb({
     " getprotobyname getservbyname getservbyport getnameinfo getpeername";
   const netdb: any = {};
   for (const name of names.split(" ")) {
-    netdb[name] = notImplemented(name);
+    netdb[name] = () => notImplemented(name);
   }
 
   // This can't properly be done using zig, since it

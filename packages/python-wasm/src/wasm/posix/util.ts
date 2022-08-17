@@ -3,11 +3,9 @@ interface ErrorWithReturn extends Error {
 }
 
 export function notImplemented(name: string, ret?: number) {
-  return () => {
-    const err: ErrorWithReturn = Error(`${name} is not implemented yet`);
-    if (ret != null) {
-      err.ret = ret;
-    }
-    throw err;
-  };
+  const err: ErrorWithReturn = Error(`${name} is not implemented yet`);
+  if (ret != null) {
+    err.ret = ret;
+  }
+  throw err;
 }

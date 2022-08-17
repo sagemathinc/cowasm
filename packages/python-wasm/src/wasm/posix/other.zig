@@ -82,3 +82,38 @@ export fn dcgettext(domainname: [*:0]const u8, msgid: [*:0]const u8, category: c
     _ = category;
     return msgid;
 }
+
+// Weirdly on wasm @cimport from sys/statvfs.h yields an opaque type for statvfs, so I copy pasted.
+const statvfs = @cImport(@cInclude("sys/statvfs.h"));
+const fsblkcnt_t = statvfs.fsblkcnt_t;
+const fsfilcnt_t = statvfs.fsfilcnt_t;
+
+const struct_statvfs = struct {
+    f_bsize: c_ulong,
+    f_frsize: c_ulong,
+    f_blocks: fsblkcnt_t,
+    f_bfree: fsblkcnt_t,
+    f_bavail: fsblkcnt_t,
+    f_files: fsfilcnt_t,
+    f_ffree: fsfilcnt_t,
+    f_favail: fsfilcnt_t,
+    f_fsid: c_ulong,
+    padding: u32, // 32 = 8*(2*sizeof(int)-sizeof(long)) in WASM; this is in the header file
+    f_flag: c_ulong,
+    f_namemax: c_ulong,
+    __reserved: [6]c_int,
+};
+
+export fn set_statvfs(buf: *struct_statvfs, f_bsize: c_ulong, f_frsize: c_ulong, f_blocks: fsblkcnt_t, f_bfree: fsblkcnt_t, f_bavail: fsblkcnt_t, f_files: fsfilcnt_t, f_ffree: fsfilcnt_t, f_favail: fsfilcnt_t, f_fsid: c_ulong, f_flag: c_ulong, f_namemax: c_ulong) void {
+    buf.f_bsize = f_bsize;
+    buf.f_frsize = f_frsize;
+    buf.f_blocks = f_blocks;
+    buf.f_bfree = f_bfree;
+    buf.f_bavail = f_bavail;
+    buf.f_files = f_files;
+    buf.f_ffree = f_ffree;
+    buf.f_favail = f_favail;
+    buf.f_fsid = f_fsid;
+    buf.f_flag = f_flag;
+    buf.f_namemax = f_namemax;
+}

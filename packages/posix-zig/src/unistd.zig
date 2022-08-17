@@ -10,6 +10,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "gethostname", gethostname);
     try node.registerFunction(env, exports, "getpgid", getpgid);
     try node.registerFunction(env, exports, "getppid", getppid);
+    try node.registerFunction(env, exports, "getpgrp", getpgrp);
     try node.registerFunction(env, exports, "setpgid", setpgid);
     try node.registerFunction(env, exports, "setegid", setegid);
     try node.registerFunction(env, exports, "seteuid", seteuid);
@@ -67,6 +68,13 @@ fn getpgid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
         return null;
     }
     return node.create_i32(env, pgid, "pgid") catch return null;
+}
+
+// pid_t getpgrp(void);
+fn getpgrp(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    const pid = unistd.getppid();
+    return node.create_i32(env, pid, "pid") catch return null;
 }
 
 // pid_t getppid(void);

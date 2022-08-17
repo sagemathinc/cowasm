@@ -35,6 +35,10 @@ test("getpgid returns a positive integer", () => {
   expect(posix.getpgid?.(1)).toBeGreaterThan(0);
 });
 
+test("getpgrp returns a positive integer", () => {
+  expect(posix.getpgrp?.()).toBeGreaterThan(0);
+});
+
 test("a special case of setpgid that should work", () => {
   // @ts-ignore
   expect(posix.setpgid(0, 0)).toEqual(undefined);

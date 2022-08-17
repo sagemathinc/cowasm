@@ -6,6 +6,7 @@ export default function unistd({
   sendString,
   wasi,
   posix,
+  memory,
 }) {
   let login: number | undefined = undefined;
 
@@ -36,13 +37,34 @@ export default function unistd({
     getgid: () => process.getgid?.() ?? 0,
     geteuid: () => process.geteuid?.() ?? 0,
     getegid: () => process.getegid?.() ?? 0,
+
+    // int getgroups(int gidsetsize, gid_t grouplist[]);
+    // in WASI, "typedef unsigned gid_t"
+    getgroups: (gidsetsize, grouplistPtr): number => {
+      const groups = process.getgroups?.();
+      if (groups == null) {
+        return 0; // no groups
+      }
+      if (gidsetsize == 0) {
+        // yep, we end up computing getgroups twice, since the
+        // posix api is a bit awkward...
+        return groups.length;
+      }
+      const count = Math.min(groups.length, gidsetsize);
+      if (count == 0) {
+        return 0;
+      }
+      const view = new DataView(memory.buffer);
+      for (let i = 0; i < count; i++) {
+        view.setUint32(grouplistPtr + 4 * i, groups[i], true);
+      }
+      return count;
+    },
+
     getpid: () => process.pid ?? 1,
 
     getpgid: (pid: number): number => {
-      if (posix.getpgid == null) {
-        throw Error("getpgid is not supported on this platform");
-      }
-      return posix.getpgid(pid);
+      return posix.getpgid?.(pid) ?? 1;
     },
 
     // int setpgid(pid_t pid, pid_t pgid);
@@ -52,6 +74,10 @@ export default function unistd({
       }
       posix.setpgid(pid, pgid);
       return 0; // success
+    },
+
+    getpgrp: (): number => {
+      return posix.getpgrp?.() ?? 1;
     },
 
     nice: (incr: number) => {

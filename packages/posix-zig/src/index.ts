@@ -56,6 +56,7 @@ interface PosixFunctions {
   geteuid: () => number;
   gethostname: () => string;
   getpgid: (number) => number;
+  getpgrp: () => number;
   getppid: () => number;
   setpgid: (pid: number, pgid: number) => void;
   setregid: (rgid: number, egid: number) => void;
