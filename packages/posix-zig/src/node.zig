@@ -1,5 +1,12 @@
-// SPDX-FileCopyrightText: 2021 Coil Technologies, Inc
+// Copyright, SageMath, Inc., 2022
+// I massively added to and changed this file.
 //
+// Also, I'm halfway through changing a lot of the function names, so there are some major
+// inconsistencies right now, e.g., stringFromValue vs valueToString. For this,
+// naming groups similar functions by the *start* of their name.
+//
+// ORIGINAL Copyright
+// SPDX-FileCopyrightText: 2021 Coil Technologies, Inc
 // SPDX-License-Identifier: Apache-2.0
 
 const std = @import("std");
@@ -345,7 +352,7 @@ pub fn valueToString(env: c.napi_env, value: c.napi_value, comptime name: [:0]co
     };
     var buf = @ptrCast([*:0]u8, memory);
     var result: usize = undefined;
-    if (c.napi_get_value_string_utf8(env, value, buf, len+1, &result) != c.napi_ok) {
+    if (c.napi_get_value_string_utf8(env, value, buf, len + 1, &result) != c.napi_ok) {
         return throw(env, name ++ " must be a string");
     }
     return buf;

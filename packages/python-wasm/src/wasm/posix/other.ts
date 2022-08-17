@@ -1,6 +1,6 @@
 import { notImplemented } from "./util";
 
-export default function other({ callFunction, posix, recvString, sendString }) {
+export default function other({ callFunction, posix, recvString, send }) {
   function sendStatvfs(bufPtr, x) {
     callFunction(
       "set_statvfs",
@@ -56,14 +56,14 @@ export default function other({ callFunction, posix, recvString, sendString }) {
       }
       if (ptr) {
         const s = posix.ctermid();
-        sendString(s, { ptr, len: s.length + 1 });
+        send.string(s, { ptr, len: s.length + 1 });
         return ptr;
       }
       if (ctermidPtr) {
         return ctermidPtr;
       }
       const s = posix.ctermid();
-      ctermidPtr = sendString(s);
+      ctermidPtr = send.string(s);
       return ctermidPtr;
     },
 

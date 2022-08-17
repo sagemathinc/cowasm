@@ -6,6 +6,7 @@ import WasmInstance from "./instance";
 import importWebAssemblyDlopen, { MBtoPages } from "dylink";
 import initPythonTrampolineCalls from "./trampoline";
 import posix from "../posix";
+import SendToWasm from "./send-to-wasm";
 
 const textDecoder = new TextDecoder();
 
@@ -173,21 +174,18 @@ async function doWasmImport({
   const wasi = new WASI(opts);
   wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
 
-  // WARNING: this returns a pointer to memory that
-  // was malloced.  Depending on your use, you might
-  // want to free it.
-  // If dest is given, that's a pointer to where to copy
-  // the string (null terminated), with a bound of len bytes
-  // including a terminating null byte.
-  function sendString(s: string, dest?: { ptr: number; len: number }): number {
-    return wasm.sendString(s, dest);
+  function malloc(...args) {
+    const ptr = wasm.exports.c_malloc(...args);
+    if (!ptr) {
+      throw Error("memory allocation error");
+    }
+    return ptr;
   }
 
   const posixEnv = posix({
     fs,
     recvString,
-    sendString,
-    sendBuffer: (buf: Buffer) => wasm.sendBuffer(buf),
+    send: new SendToWasm({ memory, malloc }),
     wasi,
     process,
     os: bindings.os ?? {},
@@ -201,13 +199,7 @@ async function doWasmImport({
       }
       return f(...args);
     },
-    malloc: (...args) => {
-      const ptr = wasm.exports.c_malloc(...args);
-      if (!ptr) {
-        throw Error("memory allocation error");
-      }
-      return ptr;
-    },
+    malloc,
     free: (...args) => {
       return wasm.exports.c_free(...args);
     },

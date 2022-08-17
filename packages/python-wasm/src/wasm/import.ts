@@ -2,6 +2,7 @@ import type { Options } from "./worker/import";
 import { callback } from "awaiting";
 import { EventEmitter } from "events";
 import reuseInFlight from "./reuseInFlight";
+import { SendToWasmAbstractBase } from "./worker/send-to-wasm";
 export { Options };
 
 const SIGINT = 2;
@@ -26,12 +27,15 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   protected log?: Function;
   protected worker?: WorkerThread;
 
+  public send: SendToWasmAbstractBase;
+
   constructor(wasmSource: string, options: Options, log?: Function) {
     super();
     this.wasmSource = wasmSource;
     this.options = options;
     this.log = log;
     this.init = reuseInFlight(this.init);
+    this.send = new SendToWasmAbstractBase();
   }
 
   // MUST override in derived class
@@ -237,14 +241,6 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   }
 
   getFunction(_name: string): Function | undefined {
-    throw Error("not implemented");
-  }
-
-  sendString(_s: string): number {
-    throw Error("not implemented");
-  }
-
-  sendBuffer(_buf: Buffer): number {
     throw Error("not implemented");
   }
 }

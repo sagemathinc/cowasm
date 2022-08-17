@@ -5,7 +5,7 @@ export default function unistd({
   os,
   process,
   recvString,
-  sendString,
+  send,
   wasi,
   posix,
   memory,
@@ -242,7 +242,7 @@ export default function unistd({
       // returns the username of the signed in user; if not available, e.g.,
       // in a browser, returns "user".
       const username = os.userInfo?.()?.username ?? "user";
-      login = sendString(username);
+      login = send.string(username);
       if (login == null) throw Error("bug");
       return login;
     },
@@ -253,7 +253,7 @@ export default function unistd({
         throw Error("gethostname not supported on this platform");
       }
       const name = os.hostname();
-      sendString(name, { ptr: namePtr, len });
+      send.string(name, { ptr: namePtr, len });
       return 0;
     },
 
@@ -273,7 +273,7 @@ export default function unistd({
       if (posix.ttyname == null) {
         throw Error("ttyname_r is not supported on this platform");
       }
-      sendString(posix.ttyname(fd), { ptr, len });
+      send.string(posix.ttyname(fd), { ptr, len });
       return 0;
     },
 
@@ -324,6 +324,15 @@ export default function unistd({
       }
       posix.setresgid(rgid, egid, sgid);
       return 0;
+    },
+
+    // int execve(const char *pathname, char *const argv[], char *const envp[]);
+    execve: (pathnamePtr: number, argvPtr: number, envpPtr: number): number => {
+      if (posix.execve == null) {
+        notImplemented("execve");
+      }
+      console.log("execve", pathnamePtr, argvPtr, envpPtr);
+      return -1; // TODO:
     },
   };
 

@@ -14,7 +14,7 @@ export default function netdb({
   posix,
   callFunction,
   recvString,
-  sendString,
+  send,
   malloc,
   free,
 }) {
@@ -66,7 +66,7 @@ export default function netdb({
       throw Error("out of memory");
     }
     for (let i = 0; i < v.length; i++) {
-      const sPtr = sendString(v[i]);
+      const sPtr = send.string(v[i]);
       sendPtr(ptr + 4 * i, sPtr);
     }
     sendPtr(ptr + 4 * v.length, 0);
@@ -78,7 +78,7 @@ export default function netdb({
     const h_addrtype = nativeToWasmFamily(posix, hostent.h_addrtype);
     return callFunction(
       "sendHostent",
-      sendString(hostent.h_name),
+      send.string(hostent.h_name),
       sendArrayOfStrings(hostent.h_aliases),
       h_addrtype,
       hostent.h_length,
@@ -218,7 +218,7 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
         info.ai_protocol,
         info.ai_addrlen,
         ai_addr,
-        info.ai_canonname != null ? sendString(info.ai_canonname) : 0,
+        info.ai_canonname != null ? send.string(info.ai_canonname) : 0,
         ai_next
       );
       if (!addrinfo) {
@@ -240,7 +240,7 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     if (gai_strerror_cache[errcode] != null) {
       return gai_strerror_cache[errcode];
     }
-    const strPtr = sendString(posix.gai_strerror?.(errcode) ?? "Unknown error");
+    const strPtr = send.string(posix.gai_strerror?.(errcode) ?? "Unknown error");
     gai_strerror_cache[errcode] = strPtr;
     return strPtr;
   };
@@ -250,7 +250,7 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     if (hstrerror_cache[errcode] != null) {
       return hstrerror_cache[errcode];
     }
-    const strPtr = sendString(posix.hstrerror?.(errcode) ?? "Unknown error");
+    const strPtr = send.string(posix.hstrerror?.(errcode) ?? "Unknown error");
     hstrerror_cache[errcode] = strPtr;
     return strPtr;
   };

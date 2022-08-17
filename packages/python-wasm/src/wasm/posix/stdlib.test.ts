@@ -5,7 +5,7 @@ test("mkstemp system call -- hitting memfs", async () => {
   if (wasm == null) throw Error("bug");
   const mkstemp = wasm.getFunction("mkstemp");
   if (mkstemp == null) throw Error("bug");
-  const fd = mkstemp(wasm.sendString("/usr/lib/python3.11/fooXXXXXX"));
+  const fd = mkstemp(wasm.send.string("/usr/lib/python3.11/fooXXXXXX"));
   expect(fd).toBeGreaterThan(0);
   const path = wasm.wasi?.FD_MAP.get(fd)?.path;
   expect(path?.startsWith("/usr/lib/python3.11/foo")).toBe(true);
@@ -17,7 +17,7 @@ test("mkstemp system call -- hitting native fs (this tests that fs.constants is 
   if (wasm == null) throw Error("bug");
   const mkstemp = wasm.getFunction("mkstemp");
   if (mkstemp == null) throw Error("bug");
-  const fd = mkstemp(wasm.sendString("/tmp/fooXXXXXX"));
+  const fd = mkstemp(wasm.send.string("/tmp/fooXXXXXX"));
   expect(fd).toBeGreaterThan(0);
   const path = wasm.wasi?.FD_MAP.get(fd)?.path;
   expect(path?.startsWith("/tmp/foo")).toBe(true);

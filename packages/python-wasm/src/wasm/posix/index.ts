@@ -17,6 +17,7 @@ import unistd from "./unistd";
 import wait from "./wait";
 import WASI from "@wapython/wasi";
 import { initConstants } from "./constants";
+import SendToWasm from "../worker/send-to-wasm";
 
 //import debug from "debug";
 //const log = debug("posix");
@@ -24,8 +25,7 @@ import { initConstants } from "./constants";
 interface Context {
   fs: FileSystem;
   recvString: (ptr: number) => string;
-  sendString: (s: string) => number; // returns a malloc'd pointer!
-  sendBuffer: (buf: Buffer) => number; // returns a malloc'd pointer.
+  send: SendToWasm;
   wasi: WASI;
   process: {
     getpid?: () => number;

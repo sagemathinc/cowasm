@@ -1,6 +1,7 @@
 // @ts-ignore -- it thinks FileSystem isn't used, even though it is below.  Weird.
 import type { WASMFileSystem, WASI } from "@wapython/wasi";
 import { EventEmitter } from "events";
+import SendToWasm from "./send-to-wasm";
 
 const encoder = new TextEncoder();
 
@@ -32,6 +33,8 @@ export default class WasmInstance extends EventEmitter {
   // implemented in Javascript (to get access to the environment).
   posixEnv?: { [name: string]: Function };
 
+  public send: SendToWasm;
+
   constructor(
     exports,
     memory: WebAssembly.Memory,
@@ -43,6 +46,15 @@ export default class WasmInstance extends EventEmitter {
     this.memory = memory;
     this.table = table;
     this.fs = fs;
+    function malloc(...args) {
+      const ptr = exports.c_malloc(...args);
+      if (!ptr) {
+        throw Error("memory allocation error");
+      }
+      return ptr;
+    }
+
+    this.send = new SendToWasm({ memory: this.memory, malloc });
   }
 
   async terminal(argv: string[] = ["command"]): Promise<number> {
@@ -51,36 +63,6 @@ export default class WasmInstance extends EventEmitter {
 
   write(_data: string): void {
     throw Error("not implemented ");
-  }
-
-  sendBuffer(buf: Buffer): number {
-    const ptr = this.exports.c_malloc(buf.byteLength);
-    if (ptr == 0) {
-      throw Error("MemoryError -- out of memory");
-    }
-    const array = new Uint8Array(this.memory.buffer);
-    buf.copy(array, ptr);
-    return ptr;
-  }
-
-  sendString(str: string, dest?: { ptr: number; len: number }): number {
-    // Caller is responsible for freeing the returned char* from stringToU8
-    // using this.exports.c_free, e.g., as done in callWithString here.
-    // If dest and len are given, string is copied into memory starting
-    // at dest instead, but truncated to len (including the null byte).
-    if (dest != null) {
-      str = str.slice(0, dest.len - 1); // ensure it will fit
-    }
-    const strAsArray = encoder.encode(str);
-    const len = strAsArray.length + 1;
-    const ptr = dest?.ptr ?? this.exports.c_malloc(len);
-    if (ptr == 0) {
-      throw Error("MemoryError -- out of memory");
-    }
-    const array = new Int8Array(this.memory.buffer, ptr, len);
-    array.set(strAsArray);
-    array[len - 1] = 0;
-    return ptr;
   }
 
   callWithString(name: string, str: string | string[], ...args): any {
@@ -96,7 +78,7 @@ export default class WasmInstance extends EventEmitter {
         r = this.callWithSmallString(f, str);
         return this.result ?? r;
       }
-      const ptr = this.sendString(str);
+      const ptr = this.send.string(str);
       try {
         // @ts-ignore
         r = f(ptr, ...args);
@@ -109,7 +91,7 @@ export default class WasmInstance extends EventEmitter {
       // Convert array of strings to char**
       const ptrs: number[] = [];
       for (const s of str) {
-        ptrs.push(this.sendString(s));
+        ptrs.push(this.send.string(s));
       }
       const len = ptrs.length;
       const ptr = this.exports.c_malloc(len * 4); // sizeof(char*) = 4 in WASM.
