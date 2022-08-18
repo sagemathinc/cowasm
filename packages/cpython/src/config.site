@@ -118,3 +118,17 @@ ac_cv_func_gethostbyaddr=yes
 #ac_cv_func_sched_setaffinity=no
 #ac_cv_func_sched_setparam=no
 #ac_cv_func_sched_setscheduler=no
+
+# Modules
+# In configure.ac, for the WASI and emscripten targets, they explicitly disable
+# attempting to build a long list of modules, viewing it as impossible.  Of course,
+# with posix-zig, there are probably NO MODULES that we can build and have fully
+# working via nodejs... and we can have good stubs (at the expense of a slightly
+# bigger binary).
+# NO -- doing this has no effect -- the configure.ac script doesn't respect
+# config.site for module config, unfortunately.  Instead, we will explicitly
+# add an entry to Setup.local, which is what having this as yes would result in.
+# py_cv_module__posixsubprocess=yes
+
+
+

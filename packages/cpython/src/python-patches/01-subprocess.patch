@@ -1,0 +1,17 @@
+We are implementing far more than emscripten/wasi provide, so do NOT want to disable forking.
+The right way to do this would be a new target like "wasinode" or something, which goes beyond
+just wasi.  But that's a large project.
+
+diff --git a/Lib/subprocess.py b/Lib/subprocess.py
+index 7ae8df154b..6fefa0d6e4 100644
+--- a/Lib/subprocess.py
++++ b/Lib/subprocess.py
+@@ -75,7 +75,7 @@
+     _mswindows = True
+
+ # wasm32-emscripten and wasm32-wasi do not support processes
+-_can_fork_exec = sys.platform not in {"emscripten", "wasi"}
++_can_fork_exec = sys.platform not in {"emscripten"}
+
+ if _mswindows:
+     import _winapi

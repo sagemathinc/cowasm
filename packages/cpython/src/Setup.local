@@ -1,3 +1,7 @@
+# Look in build/wasm/Modules/Setup for adding modules here.  NOTE in some cases we
+# are only adding things here because they are explicitly removed for the emscripten
+# and WASI targets in configure.ac.  A better approach might be a new target...
+
 # When you add something here, the actual static library that needs to be linked in
 # *MUST* be added to packages/python-wasm/Makefile for the python.wasm target.  That's
 # where the important linking actually happens.
@@ -5,6 +9,7 @@
 *static*
 
 readline readline.c -ledit  -ltermcap
+_posixsubprocess _posixsubprocess.c
 
 # Uncomment to build curses.  This works.  But the curses .py files aren't in the
 # zip bundle yet.  You can explicitly include those.  However,
