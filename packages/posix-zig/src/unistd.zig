@@ -24,6 +24,12 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "alarm", alarm);
 
     try node.registerFunction(env, exports, "_execve", execve);
+
+    try node.registerFunction(env, exports, "fork", fork);
+    try node.registerFunction(env, exports, "pipe", pipe);
+    if (builtin.target.os.tag == .linux) {
+        try node.registerFunction(env, exports, "pipe2", pipe2_impl);
+    }
 }
 
 // int chroot(const char *path);
@@ -236,4 +242,50 @@ fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
     }
     // This can't ever happen, of course.
     return node.create_i32(env, ret, "ret") catch return null;
+}
+
+// pid_t fork(void);
+fn fork(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    const pid = unistd.fork();
+    if (pid == -1) {
+        node.throwError(env, "error in fork");
+        return null;
+    }
+    return node.create_i32(env, pid, "pid") catch return null;
+}
+
+// int pipe(int pipefd[2]);
+fn pipe(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    var pipefd: [2]c_int = undefined;
+    if (unistd.pipe(&pipefd) == -1) {
+        node.throwError(env, "error in pipe");
+    }
+    return pipefdToObject(env, pipefd) catch return null;
+}
+
+// pipe2 is linux only
+extern fn pipe2(pipefd: [*]c_int, flags: c_int) c_int;
+fn pipe2_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    if (builtin.target.os.tag != .linux) {
+        node.throwError(env, "pipe2 is only supported on linux");
+        return null;
+    }
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const flags = node.i32FromValue(env, argv[0], "flags") catch return null;
+    var pipefd: [2]c_int = undefined;
+    if (pipe2(&pipefd, flags) == -1) {
+        node.throwError(env, "error in pipe2");
+    }
+    return pipefdToObject(env, pipefd) catch return null;
+}
+
+fn pipefdToObject(env: c.napi_env, pipefd: [2]c_int) !c.napi_value {
+    const obj = node.createObject(env, "pipefd") catch return null;
+    const readfd = node.create_i32(env, pipefd[0], "pipefd[0]") catch return null;
+    node.setNamedProperty(env, obj, "readfd", readfd, "setting readfd") catch return null;
+    const writefd = node.create_i32(env, pipefd[1], "pipefd[1]") catch return null;
+    node.setNamedProperty(env, obj, "writefd", writefd, "setting writefd") catch return null;
+    return obj;
 }

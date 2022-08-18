@@ -129,3 +129,22 @@ test("sending ourselves an alarm signal", (cb) => {
   posix.alarm?.(1);
 });
 */
+
+// create a pipe
+test("create a pipe", () => {
+  const x = posix.pipe?.();
+  if (x == null) throw Error("pipe must work");
+  const { readfd, writefd } = x;
+  expect(readfd).toBeGreaterThan(0);
+  expect(writefd).toBeGreaterThan(0);
+});
+
+test("pipe2 on linux", () => {
+  if (process.platform == "linux") {
+    const x = posix.pipe2?.(0);
+    if (x == null) throw Error("pipe2 must work on linux");
+    const { readfd, writefd } = x;
+    expect(readfd).toBeGreaterThan(0);
+    expect(writefd).toBeGreaterThan(0);
+  }
+});

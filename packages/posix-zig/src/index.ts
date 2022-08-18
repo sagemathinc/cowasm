@@ -70,6 +70,10 @@ interface PosixFunctions {
   sethostname: (name: string) => void;
   ttyname: (fd: number) => string;
 
+  fork: () => number;
+  pipe: () => { readfd: number; writefd: number };
+  pipe2: (flags: number) => { readfd: number; writefd: number };
+
   getresuid: () => { ruid: number; euid: number; suid: number }; // linux only
   getresgid: () => { rgid: number; egid: number; sgid: number }; // linux only
   setresgid: (rgid: number, egid: number, sgid: number) => void; // linux only

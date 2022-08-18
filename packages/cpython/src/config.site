@@ -37,8 +37,15 @@ ac_cv_header_sys_resource_h=no
 ac_cv_func_eventfd=no
 
 # WASI SDK 15.0 has no pipe syscall...
-# But we just implement one ourselves in posix-zig:
-## ac_cv_func_pipe=no
+# But we just implement one ourselves in posix-zig.
+# pipe2 is Linux-only (not available on macos), so
+# we explicitly set that to 2, since it'll get picked
+# up and selected via the wasi headers, and cause trouble.
+ac_cv_func_pipe=yes
+ac_cv_func_pipe2=no
+
+# We have fork, but don't have fork1 though on macOS or Linux, so disable that
+ac_cv_func_fork1=no
 
 # WASI SDK 15.0 cannot create fifos and special files.
 ac_cv_func_mkfifo=no

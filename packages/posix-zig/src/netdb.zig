@@ -247,8 +247,6 @@ fn createAddrinfo(env: c.napi_env, addrinfo: *netdb.addrinfo) c.napi_value {
     return object;
 }
 
-const socket_h = @cImport(@cInclude("socket.h"));
-
 fn setConstant(env: c.napi_env, object: c.napi_value, key: [:0]const u8, value: i32) !void {
     var result: c.napi_value = undefined;
     if (c.napi_create_int32(env, value, &result) != c.napi_ok) {

@@ -226,7 +226,10 @@ export default function unistd({
     },
 
     fork: () => {
-      notImplemented("fork");
+      if (posix.fork == null) {
+        notImplemented("fork");
+      }
+      return posix.fork();
     },
 
     fork1: () => {
