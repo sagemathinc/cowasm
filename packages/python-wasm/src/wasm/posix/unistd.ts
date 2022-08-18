@@ -331,8 +331,13 @@ export default function unistd({
       if (posix.execve == null) {
         notImplemented("execve");
       }
-      console.log("execve", pathnamePtr, argvPtr, envpPtr);
-      return -1; // TODO:
+      console.log("execve", { pathnamePtr, argvPtr, envpPtr });
+      const pathname = recv.string(pathnamePtr);
+      const argv = recv.arrayOfStrings(argvPtr);
+      const envp = recv.arrayOfStrings(envpPtr);
+      console.log("execve", { pathname, argv, envp });
+      posix.execve(pathname, argv, envp);
+      return 0; // this won't happen because execve takes over
     },
   };
 

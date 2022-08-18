@@ -27,6 +27,11 @@ export class RecvFromWasmAbstractBase {
     notImplemented();
     return "";
   }
+
+  arrayOfStrings(_ptr: number): string[] {
+    notImplemented();
+    return [];
+  }
 }
 
 export default class RecvFromWasm extends RecvFromWasmAbstractBase {
@@ -52,6 +57,14 @@ export default class RecvFromWasm extends RecvFromWasmAbstractBase {
     return i - charPtr;
   }
 
+  pointer(ptr: number): number {
+    return this.view().getUint32(ptr, true);
+  }
+
+  pointer2(ptr: number): number {
+    return new Uint32Array(this.memory.buffer)[ptr];
+  }
+
   string(ptr: number, len?: number): string {
     if (len == null) {
       // no len given, so assume it is a null terminated string:
@@ -60,5 +73,17 @@ export default class RecvFromWasm extends RecvFromWasmAbstractBase {
     }
     const slice = this.memory.buffer.slice(ptr, ptr + len);
     return textDecoder.decode(slice);
+  }
+
+  // Receive a null-terminated array of strings.
+  arrayOfStrings(ptr: number): string[] {
+    const v: string[] = [];
+    while (true) {
+      const p = this.pointer(ptr);
+      if (!p) break;
+      v.push(this.string(p));
+      ptr += 4;
+    }
+    return v;
   }
 }

@@ -205,12 +205,13 @@ fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
     var envp = node.valueToArrayOfStrings(env, args[2], "envp") catch return null;
     defer util.freeArrayOfStrings(envp);
 
+    std.debug.print("pathname={s}, argv[0]='{s}', argv[1]={*}, envp[0]={*}\n", .{ pathname, argv[0] orelse {
+        return null;
+    }, argv[1], envp[0] });
+
     // NOTE: On success, execve() does not return (!), on error -1 is returned,
     // and errno is set to indicate the error.
     const ret = unistd.execve(pathname, argv, envp);
-    std.debug.print("pathname={s}, argv[0]={s}\n", .{ pathname, argv[0] orelse {
-        return null;
-    } });
     if (ret == -1) {
         node.throwError(env, "error in execve");
         return null;
