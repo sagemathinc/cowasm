@@ -191,10 +191,27 @@ fn alarm(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
     return node.create_u32(env, ret, "ret") catch return null;
 }
 
+fn execve_test() void {
+    std.debug.print("hi\n", .{});
+
+    var newargv: [4](?[*:0]const u8) = undefined;
+    newargv[0] = "myecho";
+    newargv[1] = "hello";
+    newargv[2] = "world";
+    newargv[3] = null;
+
+    var newenviron: [1](?[*:0]const u8) = undefined;
+    newenviron[0] = null;
+
+    const x = unistd.execve("myecho", @ptrCast([*c]const [*c]u8, &newargv), @ptrCast([*c]const [*c]u8, &newenviron));
+    std.debug.print("execve return {d}\n", .{x});
+}
+
 // int execve(const char *pathname, char *const argv[], char *const envp[]);
 //  execve: (pathname: string, argv: string[], envp: string[]) => number;
 fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const args = node.getArgv(env, info, 3) catch return null;
+    execve_test();
 
     var pathname = node.valueToString(env, args[0], "pathname") catch return null;
     defer std.c.free(pathname);
@@ -211,6 +228,8 @@ fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
 
     // NOTE: On success, execve() does not return (!), on error -1 is returned,
     // and errno is set to indicate the error.
+    // **TODO: this is working but is very annoying because node isn't surrendering stdout/stdout/etc., so
+    // it silently appears to die.**  But a simple example writing to a file shows this works.
     const ret = unistd.execve(pathname, argv, envp);
     if (ret == -1) {
         node.throwError(env, "error in execve");
