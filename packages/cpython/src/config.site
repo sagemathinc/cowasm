@@ -36,8 +36,9 @@ ac_cv_header_sys_resource_h=no
 # undefined symbols / unsupported features
 ac_cv_func_eventfd=no
 
-# WASI SDK 15.0 has no pipe syscall.
-ac_cv_func_pipe=no
+# WASI SDK 15.0 has no pipe syscall...
+# But we just implement one ourselves in posix-zig:
+## ac_cv_func_pipe=no
 
 # WASI SDK 15.0 cannot create fifos and special files.
 ac_cv_func_mkfifo=no
