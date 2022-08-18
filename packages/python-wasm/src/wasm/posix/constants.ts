@@ -14,8 +14,6 @@ const CONSTANTS = [
 
 export type Constant = typeof CONSTANTS[number];
 
-// export type Constant = string;
-
 const constants: { [name: string]: number } = {};
 export default constants;
 
@@ -32,4 +30,5 @@ export function initConstants(context) {
   for (let i = 0; i < names.length; i++) {
     constants[names[i]] = values[i];
   }
+  // console.log(constants);
 }

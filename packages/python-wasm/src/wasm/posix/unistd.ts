@@ -1,4 +1,5 @@
 import { notImplemented } from "./util";
+import constants from "./constants";
 
 export default function unistd({
   fs,
@@ -360,7 +361,17 @@ export default function unistd({
       if (posix.pipe2 == null) {
         notImplemented("pipe2");
       }
-      const { readfd, writefd } = posix.pipe2(flags);
+      let nativeFlags = 0;
+      if (flags & constants.O_NONBLOCK) {
+        nativeFlags += posix.constants?.O_NONBLOCK ?? 0;
+      }
+      // NOTE: wasi defined O_CLOEXEC to be 0, which is super annoying.
+      // We thus never set it, since otherwise it would always get set.
+      /* if (flags & constants.O_CLOEXEC) {
+        nativeFlags += posix.constants?.O_CLOEXEC ?? 0;
+      }*/
+      console.log({ flags, nativeFlags });
+      const { readfd, writefd } = posix.pipe2(nativeFlags);
       // TODO: we almost certainly need to abstract these through our WASI
       // fd object!
       send.i32(pipefdPtr, readfd);

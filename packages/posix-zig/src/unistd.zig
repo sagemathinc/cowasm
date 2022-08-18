@@ -1,6 +1,7 @@
 const c = @import("c.zig");
 const node = @import("node.zig");
 const unistd = @cImport(@cInclude("unistd.h"));
+const fcntl = @cImport(@cInclude("fcntl.h"));
 const builtin = @import("builtin");
 const util = @import("util.zig");
 const std = @import("std");
@@ -31,6 +32,11 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
         try node.registerFunction(env, exports, "pipe2", pipe2_impl);
     }
 }
+
+pub const constants = .{
+    .c_import = fcntl,
+    .names = [_][:0]const u8{ "O_CLOEXEC", "O_NONBLOCK" },
+};
 
 // int chroot(const char *path);
 fn chroot(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
