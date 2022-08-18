@@ -327,16 +327,17 @@ export default function unistd({
     },
 
     // int execve(const char *pathname, char *const argv[], char *const envp[]);
+    // TODO: I think this can't be done by a worker thread, so we may have
+    // to change implementation so ask the main thread to do this (?).
     execve: (pathnamePtr: number, argvPtr: number, envpPtr: number): number => {
-      if (posix.execve == null) {
+      if (posix._execve == null) {
         notImplemented("execve");
       }
       console.log("execve", { pathnamePtr, argvPtr, envpPtr });
       const pathname = recv.string(pathnamePtr);
       const argv = recv.arrayOfStrings(argvPtr);
       const envp = recv.arrayOfStrings(envpPtr);
-      console.log("execve", { pathname, argv, envp });
-      posix.execve(pathname, argv, envp);
+      posix._execve(pathname, argv, envp);
       return 0; // this won't happen because execve takes over
     },
   };

@@ -23,7 +23,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "ttyname", ttyname);
     try node.registerFunction(env, exports, "alarm", alarm);
 
-    try node.registerFunction(env, exports, "execve", execve);
+    try node.registerFunction(env, exports, "_execve", execve);
 }
 
 // int chroot(const char *path);
@@ -191,27 +191,25 @@ fn alarm(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
     return node.create_u32(env, ret, "ret") catch return null;
 }
 
-fn execve_test() void {
-    std.debug.print("hi\n", .{});
+const UnistdError = error{Dup2Fail};
 
-    var newargv: [4](?[*:0]const u8) = undefined;
-    newargv[0] = "myecho";
-    newargv[1] = "hello";
-    newargv[2] = "world";
-    newargv[3] = null;
-
-    var newenviron: [1](?[*:0]const u8) = undefined;
-    newenviron[0] = null;
-
-    const x = unistd.execve("myecho", @ptrCast([*c]const [*c]u8, &newargv), @ptrCast([*c]const [*c]u8, &newenviron));
-    std.debug.print("execve return {d}\n", .{x});
+fn dupStream(env: c.napi_env, comptime name: [:0]const u8, number: i32) !void {
+    const stream = try node.getStreamFd(env, name);
+    if (unistd.dup2(stream, number) == -1) {
+        node.throwError(env, "dup2 failed on " ++ name);
+        return UnistdError.Dup2Fail;
+    }
+    if (unistd.close(stream) == -1) {
+        node.throwError(env, "closing fd failed " ++ name);
+        return UnistdError.Dup2Fail;
+    }
 }
 
 // int execve(const char *pathname, char *const argv[], char *const envp[]);
 //  execve: (pathname: string, argv: string[], envp: string[]) => number;
+// TODO: we should change last arg to be a map, like with python.
 fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const args = node.getArgv(env, info, 3) catch return null;
-    execve_test();
 
     var pathname = node.valueToString(env, args[0], "pathname") catch return null;
     defer std.c.free(pathname);
@@ -222,9 +220,10 @@ fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
     var envp = node.valueToArrayOfStrings(env, args[2], "envp") catch return null;
     defer util.freeArrayOfStrings(envp);
 
-    std.debug.print("pathname={s}, argv[0]='{s}', argv[1]={*}, envp[0]={*}\n", .{ pathname, argv[0] orelse {
-        return null;
-    }, argv[1], envp[0] });
+    // Critical to dup2 these are we'll see nothing after running execve:
+    dupStream(env, "stdin", 0) catch return null;
+    dupStream(env, "stdout", 1) catch return null;
+    dupStream(env, "stderr", 2) catch return null;
 
     // NOTE: On success, execve() does not return (!), on error -1 is returned,
     // and errno is set to indicate the error.

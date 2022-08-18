@@ -75,7 +75,16 @@ interface PosixFunctions {
   setresgid: (rgid: number, egid: number, sgid: number) => void; // linux only
   setresuid: (ruid: number, euid: number, suid: number) => void; // linux only
 
-  execve: (pathname: string, argv: string[], envp: string[]) => number;
+  execve: (
+    pathname: string,
+    argv: string[],
+    env: { [key: string]: string } // more reasonable format to use from node.
+  ) => number;
+  _execve: (
+    pathname: string,
+    argv: string[],
+    envp: string[] // same format at system call
+  ) => number;
 
   // other
   login_tty: (fd: number) => void;
@@ -126,8 +135,19 @@ try {
   mod["statvfs"] = (...args) => JSON.parse(mod["_statvfs"]?.(...args));
   mod["fstatvfs"] = (...args) => JSON.parse(mod["_fstatvfs"]?.(...args));
 
+  mod["execve"] = (pathname, argv, env) => {
+    const _execve = mod["_execve"];
+    if (_execve == null) {
+      throw Error("_execve must be defined");
+    }
+    const envp: string[] = [];
+    for (const key in env) {
+      envp.push(`${key}=${env[key]}`);
+    }
+    return _execve(pathname, argv, envp);
+  };
+
   for (const name in mod) {
-    if (name.startsWith("_")) continue;
     exports[name] = mod1[name] = (...args) => {
       log(name, args);
       return mod[name](...args);

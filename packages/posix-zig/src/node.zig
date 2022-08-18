@@ -641,3 +641,29 @@ pub fn reference_value(
 
     return result;
 }
+
+// get file descriptors of the streams
+//    process.stdin._handle.fd
+pub fn getStreamFd(env: c.napi_env, comptime name: [:0]const u8) !c_int {
+    var global: c.napi_value = undefined;
+    if (c.napi_get_global(env, &global) != c.napi_ok) {
+        return throw(env, "failed to get global");
+    }
+    var process: c.napi_value = undefined;
+    if (c.napi_get_named_property(env, global, "process", &process) != c.napi_ok) {
+        return throw(env, name ++ " - failed to get process");
+    }
+    var stream: c.napi_value = undefined;
+    if (c.napi_get_named_property(env, process, name, &stream) != c.napi_ok) {
+        return throw(env, name ++ " - failed to get stream");
+    }
+    var _handle: c.napi_value = undefined;
+    if (c.napi_get_named_property(env, stream, "_handle", &_handle) != c.napi_ok) {
+        return throw(env, name ++ " - failed to get _handle");
+    }
+    var fd: c.napi_value = undefined;
+    if (c.napi_get_named_property(env, _handle, "fd", &fd) != c.napi_ok) {
+        return throw(env, name ++ " - failed to get fd");
+    }
+    return try i32FromValue(env, fd, "process." ++ name ++ "._handle.fd");
+}
