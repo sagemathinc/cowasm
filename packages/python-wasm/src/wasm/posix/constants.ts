@@ -4,6 +4,7 @@ const CONSTANTS = [
   "AT_FDCWD",
   "EBADF",
   "ENOENT",
+  "ENOSYS",
   "SIG_BLOCK",
   "SIG_UNBLOCK",
   "SIG_SETMASK",

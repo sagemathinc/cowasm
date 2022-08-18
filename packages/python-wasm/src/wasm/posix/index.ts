@@ -19,9 +19,12 @@ import WASI from "@wapython/wasi";
 import { initConstants } from "./constants";
 import SendToWasm from "../worker/send-to-wasm";
 import RecvFromWasm from "../worker/recv-from-wasm";
+import constants from "./constants";
+import debug from "debug";
 
-//import debug from "debug";
-//const log = debug("posix");
+const logNotImplemented = debug("posix:not-implemented");
+const logCall = debug("posix:call");
+const logReturn = debug("posix:return");
 
 interface Context {
   fs: FileSystem;
@@ -71,12 +74,19 @@ export default function posix(context: Context) {
   for (const name in P) {
     Q[name] = (...args) => {
       try {
-        return P[name](...args);
+        logCall(name, args);
+        const ret = P[name](...args);
+        logReturn(ret);
+        return ret;
       } catch (err) {
         // On error, for now -1 is returned, and errno should get set to some sort of error indicator
         // TODO: how should we set errno?
         // @ts-ignore -- this is just temporary while we sort out setting errno...
-        console.warn(err);
+        logNotImplemented(err);
+        if (err.name == "NotImplementedError") {
+          // ENOSYS means "Function not implemented (POSIX.1-2001)."
+          context.callFunction("setErrno", constants.ENOSYS);
+        }
         return err.ret ?? -1;
       }
     };

@@ -336,12 +336,36 @@ export default function unistd({
       if (posix._execve == null) {
         notImplemented("execve");
       }
-      console.log("execve", { pathnamePtr, argvPtr, envpPtr });
       const pathname = recv.string(pathnamePtr);
       const argv = recv.arrayOfStrings(argvPtr);
       const envp = recv.arrayOfStrings(envpPtr);
       posix._execve(pathname, argv, envp);
       return 0; // this won't happen because execve takes over
+    },
+
+    //  int pipe(int pipefd[2]);
+    pipe: (pipefdPtr: number): number => {
+      if (posix.pipe == null) {
+        notImplemented("pipe");
+      }
+      const { readfd, writefd } = posix.pipe();
+      // TODO: we almost certainly need to abstract these through our WASI
+      // fd object!
+      send.i32(pipefdPtr, readfd);
+      send.i32(pipefdPtr + 4, writefd);
+      return 0;
+    },
+
+    pipe2: (pipefdPtr: number, flags: number): number => {
+      if (posix.pipe2 == null) {
+        notImplemented("pipe2");
+      }
+      const { readfd, writefd } = posix.pipe2(flags);
+      // TODO: we almost certainly need to abstract these through our WASI
+      // fd object!
+      send.i32(pipefdPtr, readfd);
+      send.i32(pipefdPtr + 4, writefd);
+      return 0;
     },
   };
 

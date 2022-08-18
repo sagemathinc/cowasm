@@ -33,6 +33,13 @@ export class SendToWasmAbstractBase {
   pointer(_address: number, _ptr: number): void {
     notImplemented();
   }
+  i32(_ptr: number, _value: number): void {
+    notImplemented();
+  }
+
+  u32(_ptr: number, _value: number): void {
+    notImplemented();
+  }
   string(_str: string, _dest?: { ptr: number; len: number }): number {
     notImplemented();
     return 0;
@@ -61,6 +68,14 @@ export default class SendToWasm extends SendToWasmAbstractBase {
 
   pointer(address: number, ptr: number): void {
     this.view().setUint32(address, ptr, true); // true = little endian!!
+  }
+
+  i32(ptr: number, value: number): void {
+    this.view().setInt32(ptr, value, true);
+  }
+
+  u32(ptr: number, value: number): void {
+    this.view().setUint32(ptr, value, true);
   }
 
   // WARNING: this returns a pointer to memory that
