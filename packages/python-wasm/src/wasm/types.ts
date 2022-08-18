@@ -2,6 +2,7 @@ import { EventEmitter } from "events";
 import type WASI from "@wapython/wasi";
 import type { WASIFileSystem } from "@wapython/wasi";
 import type { SendToWasmAbstractBase } from "./worker/send-to-wasm";
+import type { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
 
 export class WasmInstance extends EventEmitter {
   // these are sometimes available and useful, e.g., in testing
@@ -10,6 +11,7 @@ export class WasmInstance extends EventEmitter {
   wasi?: WASI;
   posixEnv?: { [name: string]: Function };
   send: SendToWasmAbstractBase;
+  recv: RecvFromWasmAbstractBase;
 
   async callWithString(_name: string, _str: string, ..._args): Promise<any> {
     throw Error("not implemented");

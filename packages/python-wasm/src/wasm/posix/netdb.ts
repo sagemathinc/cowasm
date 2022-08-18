@@ -13,9 +13,8 @@ export default function netdb({
   memory,
   posix,
   callFunction,
-  recvString,
+  recv,
   send,
-  malloc,
   free,
 }) {
   const names =
@@ -28,7 +27,7 @@ export default function netdb({
   // This can't properly be done using zig, since it
   // intensenly abuses the C data types...
   function sendSockaddr(sa_family, ai_addrlen, sa_data): number {
-    const ptr = malloc(2 + ai_addrlen);
+    const ptr = send.malloc(2 + ai_addrlen);
     const view = new DataView(memory.buffer);
     view.setUint16(ptr, sa_family, true);
     for (let i = 0; i < ai_addrlen; i++) {
@@ -61,7 +60,7 @@ export default function netdb({
 
   // this is null terminated.
   function sendArrayOfStrings(v: string[]): number {
-    const ptr = malloc(4 * (v.length + 1));
+    const ptr = send.malloc(4 * (v.length + 1));
     if (ptr == 0) {
       throw Error("out of memory");
     }
@@ -105,7 +104,7 @@ export default function netdb({
       if (posix.gethostbyname == null) {
         notImplemented("gethostbyaddr", 0);
       }
-      const name = recvString(namePtr);
+      const name = recv.string(namePtr);
       const hostent = posix.gethostbyname(name);
       return sendHostent(hostent);
     } catch (err) {
@@ -125,7 +124,7 @@ export default function netdb({
       if (addrStringPtr == 0) {
         return 0;
       }
-      const addrString = recvString(addrStringPtr);
+      const addrString = recv.string(addrStringPtr);
       free(addrStringPtr);
       const hostent = posix.gethostbyaddr(addrString);
       return sendHostent(hostent);
@@ -177,8 +176,8 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
       notImplemented("getaddrinfo");
       return -1;
     }
-    const node = recvString(nodePtr);
-    const service = recvString(servicePtr);
+    const node = recv.string(nodePtr);
+    const service = recv.string(servicePtr);
     const hints = recvHints(hintsPtr);
     let addrinfoArray;
     try {
@@ -240,7 +239,9 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     if (gai_strerror_cache[errcode] != null) {
       return gai_strerror_cache[errcode];
     }
-    const strPtr = send.string(posix.gai_strerror?.(errcode) ?? "Unknown error");
+    const strPtr = send.string(
+      posix.gai_strerror?.(errcode) ?? "Unknown error"
+    );
     gai_strerror_cache[errcode] = strPtr;
     return strPtr;
   };

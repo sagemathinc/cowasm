@@ -4,7 +4,7 @@ Functions for sending objects from Javascript to WASM.
 
 interface Options {
   memory: WebAssembly.Memory;
-  malloc: (number) => number; // NOTE: this is *assumed* to throw an error rather than return 0!
+  callFunction: (strings, ...args) => number | undefined;
 }
 
 const encoder = new TextEncoder();
@@ -15,13 +15,20 @@ function notImplemented() {
 
 export class SendToWasmAbstractBase {
   protected memory: WebAssembly.Memory;
-  protected malloc(_number): number {
-    notImplemented();
-    return 0;
-  }
+  protected callFunction: (strings, ...args) => number | undefined;
+
   protected view(): DataView {
     notImplemented();
     return 0 as any;
+  }
+
+  // malloc is public in Send since it's "sending random bytes".
+  malloc(bytes: number): number {
+    const ptr = this.callFunction("c_malloc", bytes);
+    if (!ptr) {
+      throw Error("Out of Memory");
+    }
+    return ptr;
   }
   pointer(_address: number, _ptr: number): void {
     notImplemented();
@@ -41,10 +48,10 @@ export class SendToWasmAbstractBase {
 }
 
 export default class SendToWasm extends SendToWasmAbstractBase {
-  constructor({ memory, malloc }: Options) {
+  constructor({ memory, callFunction }: Options) {
     super();
-    this.malloc = malloc;
     this.memory = memory;
+    this.callFunction = callFunction;
   }
 
   // always get the view any time after a malloc may have happened!

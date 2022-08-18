@@ -18,14 +18,15 @@ import wait from "./wait";
 import WASI from "@wapython/wasi";
 import { initConstants } from "./constants";
 import SendToWasm from "../worker/send-to-wasm";
+import RecvFromWasm from "../worker/recv-from-wasm";
 
 //import debug from "debug";
 //const log = debug("posix");
 
 interface Context {
   fs: FileSystem;
-  recvString: (ptr: number) => string;
   send: SendToWasm;
+  recv: RecvFromWasm;
   wasi: WASI;
   process: {
     getpid?: () => number;
@@ -49,7 +50,6 @@ interface Context {
   posix: {
     getpgid?: () => number;
   };
-  malloc: (bytes: number) => number;
   free: (ptr: number) => void;
   callFunction: (name: string, ...args) => number | undefined;
 }

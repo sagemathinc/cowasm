@@ -2,7 +2,7 @@ import { isAbsolute, join } from "path";
 import constants from "./constants";
 import Errno from "./errno";
 
-export default function stats({ fs, process, recvString, wasi }) {
+export default function stats({ fs, process, recv, wasi }) {
   function calculateAt(
     dirfd: number,
     path: string,
@@ -34,7 +34,7 @@ export default function stats({ fs, process, recvString, wasi }) {
 
   return {
     chmod: (pathPtr: number, mode: number): -1 | 0 => {
-      const path = recvString(pathPtr);
+      const path = recv.string(pathPtr);
       fs.chmodSync(path, mode);
       return 0;
     },
@@ -64,14 +64,14 @@ export default function stats({ fs, process, recvString, wasi }) {
       working directory of the calling process (like chmod(2)). If pathname is absolute, then dirfd
       is ignored.  This flag is not currently implemented."
      */
-      const path = recvString(pathPtr);
+      const path = recv.string(pathPtr);
       const pathAt = calculateAt(dirfd, path);
       fs.chmodSync(pathAt, mode);
       return 0;
     },
 
     lchmod: (pathPtr: number, mode: number): -1 | 0 => {
-      const path = recvString(pathPtr);
+      const path = recv.string(pathPtr);
       fs.lchmodSync(path, mode);
       return 0;
     },

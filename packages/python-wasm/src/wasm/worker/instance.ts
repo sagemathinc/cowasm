@@ -2,6 +2,7 @@
 import type { WASMFileSystem, WASI } from "@wapython/wasi";
 import { EventEmitter } from "events";
 import SendToWasm from "./send-to-wasm";
+import RecvFromWasm from "./recv-from-wasm";
 
 const encoder = new TextEncoder();
 
@@ -34,6 +35,7 @@ export default class WasmInstance extends EventEmitter {
   posixEnv?: { [name: string]: Function };
 
   public send: SendToWasm;
+  public recv: RecvFromWasm;
 
   constructor(
     exports,
@@ -46,15 +48,19 @@ export default class WasmInstance extends EventEmitter {
     this.memory = memory;
     this.table = table;
     this.fs = fs;
-    function malloc(...args) {
-      const ptr = exports.c_malloc(...args);
-      if (!ptr) {
-        throw Error("memory allocation error");
-      }
-      return ptr;
-    }
 
-    this.send = new SendToWasm({ memory: this.memory, malloc });
+    const opts = {
+      memory: this.memory,
+      callFunction: (name: string, ...args) => {
+        const f = this.getFunction(name);
+        if (f == null) {
+          throw Error(`error - ${name} is not defined`);
+        }
+        return f(...args);
+      },
+    };
+    this.send = new SendToWasm(opts);
+    this.recv = new RecvFromWasm(opts);
   }
 
   async terminal(argv: string[] = ["command"]): Promise<number> {

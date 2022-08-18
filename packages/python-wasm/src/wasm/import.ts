@@ -3,6 +3,7 @@ import { callback } from "awaiting";
 import { EventEmitter } from "events";
 import reuseInFlight from "./reuseInFlight";
 import { SendToWasmAbstractBase } from "./worker/send-to-wasm";
+import { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
 export { Options };
 
 const SIGINT = 2;
@@ -28,6 +29,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   protected worker?: WorkerThread;
 
   public send: SendToWasmAbstractBase;
+  public recv: RecvFromWasmAbstractBase;
 
   constructor(wasmSource: string, options: Options, log?: Function) {
     super();
@@ -36,6 +38,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     this.log = log;
     this.init = reuseInFlight(this.init);
     this.send = new SendToWasmAbstractBase();
+    this.recv = new RecvFromWasmAbstractBase();
   }
 
   // MUST override in derived class

@@ -7,8 +7,7 @@ import importWebAssemblyDlopen, { MBtoPages } from "dylink";
 import initPythonTrampolineCalls from "./trampoline";
 import posix from "../posix";
 import SendToWasm from "./send-to-wasm";
-
-const textDecoder = new TextDecoder();
+import RecvFromWasm from "./recv-from-wasm";
 
 export function strlen(charPtr: number, memory: WebAssembly.Memory): number {
   const mem = new Uint8Array(memory.buffer);
@@ -75,21 +74,6 @@ async function doWasmImport({
   });
   const table = new WebAssembly.Table({ initial: 10000, element: "anyfunc" });
 
-  function recvString(ptr: number, len?: number) {
-    if (len == null) {
-      // no len given, so assume it is a null terminated string.
-      if (wasm.exports.stringLength != null) {
-        // probably faster in WASM?  TODO: benchmark
-        len = wasm.exports.stringLength(ptr);
-      } else {
-        len = strlen(ptr, memory);
-      }
-      if (len == null) throw Error("bug - stringLength must return len");
-    }
-    const slice = memory.buffer.slice(ptr, ptr + len);
-    return textDecoder.decode(slice);
-  }
-
   const wasmEnv = {
     reportError: (ptr, len: number) => {
       // @ts-ignore
@@ -125,7 +109,7 @@ async function doWasmImport({
     // This sends a string from WebAssembly back to Typescript and places
     // it in the result variable.
     wasmOpts.env.wasmSendString = (ptr: number, len: number) => {
-      wasm.result = recvString(ptr, len);
+      wasm.result = wasm.recv.string(ptr, len);
     };
   }
   if (wasmOpts.env.wasmSetException == null) {
@@ -174,32 +158,25 @@ async function doWasmImport({
   const wasi = new WASI(opts);
   wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
 
-  function malloc(...args) {
-    const ptr = wasm.exports.c_malloc(...args);
-    if (!ptr) {
-      throw Error("memory allocation error");
+  function callFunction(name: string, ...args): number | undefined {
+    const f = wasm.getFunction(name);
+    if (f == null) {
+      throw Error(`error - ${name} is not defined`);
     }
-    return ptr;
+    return f(...args);
   }
 
   const posixEnv = posix({
     fs,
-    recvString,
-    send: new SendToWasm({ memory, malloc }),
+    send: new SendToWasm({ memory, callFunction }),
+    recv: new RecvFromWasm({ memory, callFunction }),
     wasi,
     process,
     os: bindings.os ?? {},
     posix: bindings.posix ?? {},
     child_process: bindings.child_process ?? {},
     memory,
-    callFunction: (name: string, ...args): number | undefined => {
-      const f = wasm.getFunction(name);
-      if (f == null) {
-        throw Error(`error - ${name} is not defined`);
-      }
-      return f(...args);
-    },
-    malloc,
+    callFunction,
     free: (...args) => {
       return wasm.exports.c_free(...args);
     },

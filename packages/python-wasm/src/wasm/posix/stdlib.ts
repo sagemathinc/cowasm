@@ -1,4 +1,4 @@
-export default function stdlib({ child_process, recvString }) {
+export default function stdlib({ child_process, recv }) {
   return {
     // int system(const char *command);
     // This below is not exactly like system because it runs until the command completes with no visible output
@@ -9,7 +9,7 @@ export default function stdlib({ child_process, recvString }) {
       if (child_process.spawnSync == null) {
         throw Error("system is not implemented yet");
       }
-      const command = recvString(commandPtr);
+      const command = recv.string(commandPtr);
       const { stdout, stderr, status } = child_process.spawnSync(command, {
         shell: true,
       });
@@ -19,13 +19,13 @@ export default function stdlib({ child_process, recvString }) {
     },
 
     /*
-    We need mkstemp since it used in editline/readline.c to do history file truncation. 
+    We need mkstemp since it used in editline/readline.c to do history file truncation.
     (Python doesn't use this since it has its own implementation.)
     */
-    // Commented out since we have a C implementation in stdlib.c; this should work fine though.
+    // Commented out since we have a C implementation in stdlib.c; the one below should work fine though...?
     /*
     mkstemp: (templatePtr: number): number => {
-      let template = recvString(templatePtr);
+      let template = recv.string(templatePtr);
       // template ends in XXXXXX
       if (template.slice(-6) != "XXXXXX") {
         throw Error("template must end in XXXXXX");

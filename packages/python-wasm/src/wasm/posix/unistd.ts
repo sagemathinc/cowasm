@@ -4,7 +4,7 @@ export default function unistd({
   fs,
   os,
   process,
-  recvString,
+  recv,
   send,
   wasi,
   posix,
@@ -14,12 +14,12 @@ export default function unistd({
 
   const unistd = {
     chown: (pathPtr: number, uid: number, gid: number): -1 | 0 => {
-      const path = recvString(pathPtr);
+      const path = recv.string(pathPtr);
       fs.chownSync(path, uid, gid);
       return 0;
     },
     lchown: (pathPtr: number, uid: number, gid: number): -1 | 0 => {
-      const path = recvString(pathPtr);
+      const path = recv.string(pathPtr);
       fs.lchownSync(path, uid, gid);
       return 0;
     },
@@ -262,7 +262,7 @@ export default function unistd({
       if (posix.sethostname == null) {
         throw Error("sethostname not supported on this platform");
       }
-      const name = recvString(namePtr, len);
+      const name = recv.string(namePtr, len);
       posix.sethostname(name);
       return 0;
     },

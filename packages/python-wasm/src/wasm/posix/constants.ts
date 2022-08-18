@@ -18,17 +18,12 @@ export type Constant = typeof CONSTANTS[number];
 const constants: { [name: string]: number } = {};
 export default constants;
 
-// function recvUint32(memory, ptr): number {
-//   const view = new DataView(memory.buffer);
-//   return view.getUint32(ptr, true);
-// }
-
-function recvJsonObject({ callFunction, recvString }, name: string) {
+function recvJsonObject({ callFunction, recv }, name: string) {
   let ptr = callFunction(name);
   if (ptr == 0) {
     throw Error("unable to receive JSON object");
   }
-  return JSON.parse(recvString(ptr));
+  return JSON.parse(recv.string(ptr));
 }
 
 export function initConstants(context) {

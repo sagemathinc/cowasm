@@ -1,6 +1,6 @@
 import { notImplemented } from "./util";
 
-export default function other({ callFunction, posix, recvString, send }) {
+export default function other({ callFunction, posix, recv, send }) {
   function sendStatvfs(bufPtr, x) {
     callFunction(
       "set_statvfs",
@@ -36,7 +36,7 @@ export default function other({ callFunction, posix, recvString, send }) {
       if (posix.statvfs == null) {
         notImplemented("statvfs");
       }
-      const path = recvString(pathPtr);
+      const path = recv.string(pathPtr);
       sendStatvfs(bufPtr, posix.statvfs(path));
       return 0;
     },
