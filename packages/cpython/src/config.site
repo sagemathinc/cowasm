@@ -38,11 +38,9 @@ ac_cv_func_eventfd=no
 
 # WASI SDK 15.0 has no pipe syscall...
 # But we just implement one ourselves in posix-zig.
-# pipe2 is Linux-only (not available on macos), but
-# we still leave it enabled, since python automatically
-# falls back to pipe when pipe2 fails.
+# pipe2 is Linux-only, so confusing to allow to get enabled.
 ac_cv_func_pipe=yes
-ac_cv_func_pipe2=yes
+ac_cv_func_pipe2=no
 
 # We have fork, but don't have fork1 though on macOS or Linux, so disable that
 ac_cv_func_fork1=no

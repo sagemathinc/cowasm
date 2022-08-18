@@ -350,10 +350,23 @@ export default function unistd({
         notImplemented("pipe");
       }
       const { readfd, writefd } = posix.pipe();
-      // TODO: we almost certainly need to abstract these through our WASI
-      // fd object!
-      send.i32(pipefdPtr, readfd);
-      send.i32(pipefdPtr + 4, writefd);
+      // readfd and writefd are genuine native file descriptors.
+      // We need to put them into the wasi layer.
+      // console.log("native ", { readfd, writefd });
+      const wasi_readfd = wasi.getUnusedFileDescriptor();
+      wasi.FD_MAP.set(wasi_readfd, {
+        real: readfd,
+        rights: wasi.FD_MAP.get(0).rights, // just use rights for stdin
+      });
+      const wasi_writefd = wasi.getUnusedFileDescriptor();
+      wasi.FD_MAP.set(wasi_writefd, {
+        real: writefd,
+        rights: wasi.FD_MAP.get(1).rights, // just use rights for stdout
+      });
+      // console.log("wasi ", { wasi_readfd, wasi_writefd });
+
+      send.i32(pipefdPtr, wasi_readfd);
+      send.i32(pipefdPtr + 4, wasi_writefd);
       return 0;
     },
 

@@ -1,5 +1,6 @@
 import type WASIFileSystem from "./filesystem";
 export type { WASIFileSystem };
+import { WASI_FILETYPE } from "./constants";
 
 // export interface WASIFileSystem extends FileSystem {
 //   constants: { [name: string]: number };
@@ -79,4 +80,18 @@ export class WASIKillError extends Error {
     this.signal = signal;
     Object.setPrototypeOf(this, WASIKillError.prototype);
   }
+}
+
+interface Rights {
+  base: bigint;
+  inheriting: bigint;
+}
+
+export interface File {
+  real: number;
+  path?: string;
+  fakePath?: string;
+  rights: Rights;
+  offset?: bigint;
+  filetype?: WASI_FILETYPE;
 }

@@ -231,7 +231,7 @@ run-wasm: ${DIST_WASM}/.built
 # on them being built.  The code below helps a little to see where we are at.
 .PHONY: test-wasm
 test-wasm:
-	cd ${BUILD_WASM}/Lib/test && ls -d `pwd`/test_*.py | grep -v test_lzma.py | grep -v  test_queue.py | xargs -t -n 1 ${PYTHON_WASM_BINARY} 2>&1 | tee ${BUILD_WASM}/test.out && \
+	cd ${BUILD_WASM}/Lib/test && ls -d `pwd`/test_*.py | grep -v test_lzma.py | grep -v  test_queue.py | xargs -t -n 1 python-wasm-debug 2>&1 | tee ${BUILD_WASM}/test.out && \
 	grep FAIL ${BUILD_WASM}/test.out
 	echo "See ${BUILD_WASM}/test.out"
 

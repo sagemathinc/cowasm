@@ -9,6 +9,7 @@ import type {
   WASIEnv,
   WASIPreopenedDirs,
   WASIConfig,
+  File,
 } from "./types";
 
 import { WASIError } from "./types";
@@ -243,20 +244,6 @@ const translateFileAttributes = (
   }
 };
 
-interface Rights {
-  base: bigint;
-  inheriting: bigint;
-}
-
-interface File {
-  real: number;
-  path?: string;
-  fakePath?: string;
-  rights: Rights;
-  offset?: bigint;
-  filetype?: WASI_FILETYPE;
-}
-
 type Exports = {
   [key: string]: any;
 };
@@ -354,7 +341,7 @@ export default class WASI {
 
     for (const [k, v] of Object.entries(preopens)) {
       const real = fs.openSync(v, fs.constants.O_RDONLY);
-      const newfd = [...this.FD_MAP.keys()].reverse()[0] + 1;
+      const newfd = this.getUnusedFileDescriptor();
       this.FD_MAP.set(newfd, {
         real,
         filetype: WASI_FILETYPE_DIRECTORY,
@@ -1241,7 +1228,7 @@ export default class WASI {
           } else {
             realfd = fs.openSync(full, noflags);
           }
-          const newfd = [...this.FD_MAP.keys()].reverse()[0] + 1;
+          const newfd = this.getUnusedFileDescriptor();
           // log(`** openpath got fd: p='${p}', fd=${newfd}`);
           this.FD_MAP.set(newfd, {
             real: realfd,
@@ -1589,6 +1576,13 @@ export default class WASI {
         };
       });
     }
+  }
+
+  getUnusedFileDescriptor() {
+    // return an unused file descriptor
+    const v = [...this.FD_MAP.keys()].sort();
+    if (v.length == 0) return 1;
+    return v[v.length - 1] + 1;
   }
 
   refreshMemory() {
