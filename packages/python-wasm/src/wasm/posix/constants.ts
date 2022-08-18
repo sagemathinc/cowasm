@@ -28,7 +28,7 @@ function recvJsonObject({ callFunction, recv }, name: string) {
 }
 
 export function initConstants(context) {
-  const { constants: names, values } = recvJsonObject(context, "getConstants");
+  const { names, values } = recvJsonObject(context, "getConstants");
   for (let i = 0; i < names.length; i++) {
     constants[names[i]] = values[i];
   }
