@@ -60,17 +60,17 @@ test("getppid returns an integer", () => {
   expect(posix.getppid?.()).toBeGreaterThanOrEqual(0);
 });
 
-// setegid
-test("seteuid throws an error (not as root)", () => {
-  expect(() => posix.setegid?.(10)).toThrow();
-});
-
 test("that the security vulnerability CVE-2022-21211 does not impact posix-zig", () => {
   // @ts-ignore
   expect(() => posix.setegid?.({ toString: 1 })).toThrow();
 });
 
 if (!isRoot) {
+  // setegid
+  test("setegid throws an error (not as root)", () => {
+    expect(() => posix.setegid?.(10)).toThrow();
+  });
+
   // seteuid
   test("seteuid throws an error (not as root)", () => {
     expect(() => posix.seteuid?.(10)).toThrow();
