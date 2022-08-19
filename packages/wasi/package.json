@@ -40,13 +40,13 @@
   },
   "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/wasi",
   "dependencies": {
+    "@wapython/unionfs": "^4.5.3",
     "debug": "^4.3.4",
     "fflate": "^0.7.3",
     "memfs": "^3.4.7",
     "path-browserify": "^1.0.0",
     "randomfill": "^1.0.4",
-    "typedarray-to-buffer": "^4.0.0",
-    "unionfs": "^4.4.0"
+    "typedarray-to-buffer": "^4.0.0"
   },
   "devDependencies": {
     "@types/filesystem": "^0.0.32",

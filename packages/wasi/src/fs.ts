@@ -11,7 +11,7 @@ this code is needed to initialize it before anything else can happen.
 
 import unzip from "./unzip";
 import { Volume, createFsFromVolume, fs as memfs, DirectoryJSON } from "memfs";
-import { Union } from "unionfs";
+import { Union } from "@wapython/unionfs";
 import { WASIFileSystem } from "./types";
 
 // The native filesystem
@@ -163,7 +163,7 @@ Comment about flags:
 
 A major subtle issue I hit is that unionfs combines filesystems, and
 each filesystem can define fs.constants differently! In particular,
-memfs always hardcodes constants.O_EXCL to be 128.  However, on 
+memfs always hardcodes constants.O_EXCL to be 128.  However, on
 macos native filesystem it is 2048, whereas on Linux native filesystem
 it is also 128.  We combine memfs and native for running python-wasm
 under nodejs, since we want to use our Python install (that is in
@@ -173,11 +173,11 @@ to the native filesystem.
 I think the only good solution to this is the following:
 - if native isn't part of the unionfs, nothing to do (since we only currently use native and memfs).
 - fs.constants should be memfs's constants since I think they match with what WebAssembly libc (via musl)
-  provides.  
+  provides.
 - in the node api, the ONLY functions that take numeric flags are open and openSync.  That's convenient!
-- somehow figure out which filesystem (native or memfs for now) that a given open will go to, and 
+- somehow figure out which filesystem (native or memfs for now) that a given open will go to, and
   convert the flags if going to memfs.
 
-Probably the easiest way to accomplish all of the above is just use a proxy around native fs's 
+Probably the easiest way to accomplish all of the above is just use a proxy around native fs's
 open* function.
 */

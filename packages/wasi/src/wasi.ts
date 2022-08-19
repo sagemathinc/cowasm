@@ -376,8 +376,9 @@ export default class WASI {
     };
 
     const CHECK_FD = (fd: number, rights: bigint) => {
+      // log("CHECK_FD", { fd, rights });
       const stats = stat(this, fd);
-      // logToFile(`CHECK_FD: stats.real: ${stats.real}, stats.path:`, stats.path);
+      // log("CHECK_FD", { stats });
       if (rights !== BigInt(0) && (stats.rights.base & rights) === BigInt(0)) {
         throw new WASIError(WASI_EPERM);
       }
@@ -828,6 +829,7 @@ export default class WASI {
           bufusedPtr: number
         ) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_READDIR);
+          // log("fd_readdir got stats = ", stats);
           this.refreshMemory();
           const entries = fs.readdirSync(stats.path, { withFileTypes: true });
           const startPtr = bufPtr;
