@@ -1,5 +1,22 @@
-export default function stdlib({ child_process, recv }) {
+export default function stdlib({ child_process, os, recv, send }) {
   return {
+    // int getloadavg(double loadavg[], int nelem);
+    getloadavg: (loadavgDoubleArrayPtr: number, nelem: number): number => {
+      const { loadavg } = os;
+      if (loadavg == null) {
+        // load average is not attainable
+        return -1;
+      }
+      const avg = loadavg();
+      send.f64(loadavgDoubleArrayPtr, avg[0]);
+      send.f64(loadavgDoubleArrayPtr + 8, avg[1]); // double = 8 bytes in WASM
+      send.f64(loadavgDoubleArrayPtr + 16, avg[2]);
+
+      // number of samples (not provided by loadavg).  In python itself if you don't get
+      // all of them (3 are requested), it just gives an error.
+      return nelem;
+    },
+
     // int system(const char *command);
     // This below is not exactly like system because it runs until the command completes with no visible output
     // until it completes.

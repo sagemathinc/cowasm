@@ -9,18 +9,9 @@ interface Options {
 
 const encoder = new TextEncoder();
 
-function notImplemented() {
-  throw Error("SendToWasmAbstractBase -- implement in derived class");
-}
-
 export class SendToWasmAbstractBase {
   protected memory: WebAssembly.Memory;
   protected callFunction: (strings, ...args) => number | undefined;
-
-  protected view(): DataView {
-    notImplemented();
-    return 0 as any;
-  }
 
   // malloc is public in Send since it's "sending random bytes".
   malloc(bytes: number): number {
@@ -29,36 +20,6 @@ export class SendToWasmAbstractBase {
       throw Error("Out of Memory");
     }
     return ptr;
-  }
-  pointer(_address: number, _ptr: number): void {
-    notImplemented();
-  }
-  i32(_ptr: number, _value: number): void {
-    notImplemented();
-  }
-
-  u32(_ptr: number, _value: number): void {
-    notImplemented();
-  }
-  string(_str: string, _dest?: { ptr: number; len: number }): number {
-    notImplemented();
-    return 0;
-  }
-  arrayOfStrings(_v: string[]): number {
-    notImplemented();
-    return 0;
-  }
-  buffer(_buf: Buffer): number {
-    notImplemented();
-    return 0;
-  }
-}
-
-export default class SendToWasm extends SendToWasmAbstractBase {
-  constructor({ memory, callFunction }: Options) {
-    super();
-    this.memory = memory;
-    this.callFunction = callFunction;
   }
 
   // always get the view any time after a malloc may have happened!
@@ -72,6 +33,14 @@ export default class SendToWasm extends SendToWasmAbstractBase {
 
   i32(ptr: number, value: number): void {
     this.view().setInt32(ptr, value, true);
+  }
+
+  f64(ptr: number, value: number): void {
+    this.view().setFloat64(ptr, value, true);
+  }
+
+  f32(ptr: number, value: number): void {
+    this.view().setFloat32(ptr, value, true);
   }
 
   u32(ptr: number, value: number): void {
@@ -118,5 +87,13 @@ export default class SendToWasm extends SendToWasmAbstractBase {
     const array = new Uint8Array(this.memory.buffer);
     buf.copy(array, ptr);
     return ptr;
+  }
+}
+
+export default class SendToWasm extends SendToWasmAbstractBase {
+  constructor({ memory, callFunction }: Options) {
+    super();
+    this.memory = memory;
+    this.callFunction = callFunction;
   }
 }

@@ -143,4 +143,30 @@ ac_cv_func_gethostbyaddr=yes
 # and python gracefully degrades; seems like the sort of thing that might
 # not be possible in wasm.
 ac_cv_func_sigaltstack=no
+ac_cv_func_sigpending=no
+ac_cv_func_sigtimedwait=no
+ac_cv_func_sigwait=no
+ac_cv_func_sigwaitinfo=no
 
+# this is something involving swap, which obviously WASM can't
+# directly deal with.
+ac_cv_func_plock=no
+# would have to be maybe in WASI; emscripten also disables this.
+ac_cv_func_preadv2=no
+ac_cv_func_pwritev2=no
+# We don't have this gettext thing; it would return a char*
+# so a 0-returning stub would cause a segfault; better to work around.
+ac_cv_func_bind_textdomain_codeset=no
+
+# We don't have this; maybe linux only?
+ac_cv_func_copy_file_range=no
+
+# An optimization on linux?
+ac_cv_func_close_range=no
+
+# Not in WASI
+ac_cv_func_memfd_create=no
+
+# Maybe should be added to wasi.ts / WASI?
+ac_cv_func_getitimer=no
+ac_cv_func_setitimer=no

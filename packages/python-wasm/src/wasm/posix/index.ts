@@ -38,6 +38,7 @@ interface Context {
     cwd?: () => string;
   };
   os: {
+    loadavg?: () => [number, number, number];
     getPriority?: (pid?: number) => number;
     setPriority?: (pid: number, priority?: number) => void;
     platform?: () => // we care about darwin/linux/win32 for our runtime.

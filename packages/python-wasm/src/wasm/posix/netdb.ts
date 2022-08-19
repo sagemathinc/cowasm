@@ -256,6 +256,27 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     return strPtr;
   };
 
+  let h_errno_ptr: number | null = null;
+  netdb.__h_errno_location = (): number => {
+    /* After reading sources, this __h_errno_location returns the memory
+   location of an i32 where an error number is stored in memory.  See:
+    int h_errno;
+    int *__h_errno_location(void) {
+	     if (!__pthread_self()->stack) return &h_errno; }
+    Elsewhere, h_errno is #defined to calling the above and deref.
+    So for now we define such an i32 and set it to 0.  This is a lot
+    better than returning 0 (the stub) and causing a segfault!
+    TODO: in the future, we could somehow mirror the error code from the
+    native side...?
+    */
+    if (h_errno_ptr == null) {
+      h_errno_ptr = send.malloc(4); // an i32
+      send.i32(h_errno_ptr, 0); // set it to 0.
+    }
+    if (h_errno_ptr == null) throw Error("bug");
+    return h_errno_ptr;
+  };
+
   return netdb;
 }
 

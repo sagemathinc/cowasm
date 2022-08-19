@@ -1,9 +1,5 @@
 const textDecoder = new TextDecoder();
 
-function notImplemented() {
-  throw Error("RecvFromWasmAbstractBase -- implement in derived class");
-}
-
 interface Options {
   memory: WebAssembly.Memory;
   callFunction: (strings, ...args) => number | undefined;
@@ -12,34 +8,6 @@ interface Options {
 export class RecvFromWasmAbstractBase {
   protected memory: WebAssembly.Memory;
   protected callFunction: (strings, ...args) => number | undefined;
-
-  protected view(): DataView {
-    notImplemented();
-    return 0 as any;
-  }
-
-  strlen(_charPtr: number): number {
-    notImplemented();
-    return -1;
-  }
-
-  string(_ptr: number, _len?: number): string {
-    notImplemented();
-    return "";
-  }
-
-  arrayOfStrings(_ptr: number): string[] {
-    notImplemented();
-    return [];
-  }
-}
-
-export default class RecvFromWasm extends RecvFromWasmAbstractBase {
-  constructor({ memory, callFunction }: Options) {
-    super();
-    this.memory = memory;
-    this.callFunction = callFunction;
-  }
 
   // always get the view any time after a malloc may have happened!
   protected view(): DataView {
@@ -86,4 +54,13 @@ export default class RecvFromWasm extends RecvFromWasmAbstractBase {
     }
     return v;
   }
+}
+
+export default class RecvFromWasm extends RecvFromWasmAbstractBase {
+  constructor({ memory, callFunction }: Options) {
+    super();
+    this.memory = memory;
+    this.callFunction = callFunction;
+  }
+
 }
