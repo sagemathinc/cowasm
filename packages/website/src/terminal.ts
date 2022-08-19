@@ -11,7 +11,6 @@ export default async function terminal(element: HTMLDivElement) {
   }
   const term = new Terminal({convertEol: true});
   term.open(element);
-  term.write("Loading...\n");
   await python.init();
   // @ts-ignore
   element.children[0].style.padding = "15px";

@@ -2,7 +2,7 @@
 
 > "WebAssembly CPython for Node.js and the browser"
 
-URL: https://github.com/sagemathinc/python-wasm 
+URL: https://github.com/sagemathinc/python-wasm
 
 DEMO: https://python-wasm.cocalc.com/
 
@@ -64,26 +64,28 @@ You can also use python\-wasm in your [web application via webpack](https://gith
 
 ### Prerequisites
 
-To build everything from source, make sure that you have standard command line dev tools installed.  Then build, which [takes 15\-20 minutes](https://github.com/sagemathinc/wapython/actions), and around 1GB of disk space:
+To build everything from source, make sure that you have standard command line dev tools installed. Then build, which [takes 15\-20 minutes](https://github.com/sagemathinc/wapython/actions), and around 1GB of disk space:
 
 ```sh
 wstein@max % make
 ```
 
-This installs a specific version of Zig and Nodejs, then builds native and WebAssembly versions of CPython and many dependencies, and also builds all the Typescript code.  Building from source is _**tested on Linux and MacOS with both x86\_64 and ARM \(M1\) processors**_:
+This installs a specific version of Zig and Nodejs, then builds native and WebAssembly versions of CPython and many dependencies, and also builds all the Typescript code. Building from source is _**tested on Linux and MacOS with both x86_64 and ARM \(M1\) processors**_:
 
-- Linux: tested on both x86\_64 and aarch64 Ubuntu with standard dev tools installed; see [Dockerfile](./Dockerfile) where we install `apt-get install -y git make curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool tcl vim zip` 
-- MacOS: tested on both x86\_64 and M1 mac with standard XCode command live dev tools installed.
+- Linux: tested on both x86_64 and aarch64 Ubuntu with standard dev tools installed; see [Dockerfile](./Dockerfile) where we install `apt-get install -y git make curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool tcl vim zip`
+- MacOS: tested on both x86_64 and M1 mac with standard XCode command live dev tools installed.
 
 If you're using Windows, you'll have to use Linux via a virtual machine \(or maybe WSL\) to build python\-wasm from source.
 
 ### Try out your build
 
-Run some tests, which won't take long:
+Run some tests, which won't take too long:
 
 ```sh
 make test
 ```
+
+Note that running `make test` at the top level of `python-wasm` does NOT run the full cpython test suite yet, since it takes quite a while and there are **still numerous failures**. Instead, it runs unit tests of individual packages in `python-wasm`.
 
 You can also use the WebAssembly repl directly on the command line:
 
@@ -113,23 +115,23 @@ Welcome to Node.js v18.7.0.
 49999995000000 0.8420002460479736
 ```
 
-## What's the goal? 
+## What's the goal?
 
-Our **primary goal** is to create a WebAssembly build of Python and related packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\).  It should also be relatively easy to _build from source_ on both Linux and MacOS.  The build system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation.
+Our **primary goal** is to create a WebAssembly build of Python and related packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\). It should also be relatively easy to _build from source_ on both Linux and MacOS. The build system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation.
 
 ## How does this compare to Pyodide?
 
-Our main application is to make [CoCalc](https://cocalc.com) more efficient.  As such, we will also want to port a substantial part of the [SageMath packages](https://www.sagemath.org/), which is a sort of pure math analogue of the scientific Python stack that's in Pyodide.  I'm the original founder of SageMath, hence this motivation.  This will be part of a new GPL'd project that will have this BSD\-licensed project `python-wasm` at its core; some relevant work has been done [here](https://github.com/sagemathinc/jsage).
+Our main application is to make [CoCalc](https://cocalc.com) more efficient. As such, we will also want to port a substantial part of the [SageMath packages](https://www.sagemath.org/), which is a sort of pure math analogue of the scientific Python stack that's in Pyodide. I'm the original founder of SageMath, hence this motivation. This will be part of a new GPL'd project that will have this BSD\-licensed project `python-wasm` at its core; some relevant work has been done [here](https://github.com/sagemathinc/jsage).
 
-Some of our code will be written in the [Zig](https://ziglang.org/) language.  However, we are mostly targeting just the parts that are used for Python, which is a small subset of the general problem.  Our software license \-\- _**BSD 3\-clause**_ \-\- is compatible with their's and we hope to at least learn from their solutions to problems.
+Some of our code will be written in the [Zig](https://ziglang.org/) language. However, we are mostly targeting just the parts that are used for Python, which is a small subset of the general problem. Our software license \-\- _**BSD 3\-clause**_ \-\- is compatible with their's and we hope to at least learn from their solutions to problems.
 
-[More about how Pyodide and python\-wasm differ...](./docs/differences-from-pyodide.md) 
+[More about how Pyodide and python\-wasm differ...](./docs/differences-from-pyodide.md)
 
 ## More about building from source
 
 ### How to build
 
-Just type make.   \(Do **NOT** type `make -j8;` it might not work...\)
+Just type make. \(Do **NOT** type `make -j8;` it might not work...\)
 
 ```sh
 ...$ make
@@ -146,7 +148,7 @@ In most subdirectories `foo` of packages, this will create some subdirectories:
 
 ### No common prefix directory
 
-Unlike some systems, where everything is built and installed into a single `prefix` directory, here we build everything in its own self\-contained package. When a package like `cpython` depends on another package like `lzma` , our Makefile for `cpython` explicitly references `packages/lzma/dist`. This makes it easier to uninstall packages, update them, etc., without having to track what files are in any package, whereas using a common directory for everything can be a mess with possibly conflicting versions of files, and makes versioning and dependencies very explicit.  Of course, it makes the environment variables and build commands potentially much longer.  
+Unlike some systems, where everything is built and installed into a single `prefix` directory, here we build everything in its own self\-contained package. When a package like `cpython` depends on another package like `lzma` , our Makefile for `cpython` explicitly references `packages/lzma/dist`. This makes it easier to uninstall packages, update them, etc., without having to track what files are in any package, whereas using a common directory for everything can be a mess with possibly conflicting versions of files, and makes versioning and dependencies very explicit. Of course, it makes the environment variables and build commands potentially much longer.
 
 ### Native and Wasm
 
@@ -154,7 +156,7 @@ The build typically create directories `dist/native`and `dist/wasm.` The `dist/n
 
 ### Standalone WASM executables
 
-The bin directory has scripts `zcc` and `z++` that are C and C\+\+ compiler wrappers around Zig \+ Node.  They create binaries that you can run on the command line as normal.  Under the hood there's a wrapper script that calls node.js and the wasi runtime.
+The bin directory has scripts `zcc` and `z++` that are C and C\+\+ compiler wrappers around Zig \+ Node. They create binaries that you can run on the command line as normal. Under the hood there's a wrapper script that calls node.js and the wasi runtime.
 
 ```sh
 $ . bin/env.sh
@@ -166,7 +168,7 @@ $ ./a.out   # this actually runs nodejs + python-wasm
 hello from Web Assembly: 4
 ```
 
-This isn't currently used here for building python-wasm, but it's an extremely powerful tool.  \(For example, I used it with JSage to cross compile the NTL library to Web Assembly...\)
+This isn't currently used here for building python-wasm, but it's an extremely powerful tool. \(For example, I used it with JSage to cross compile the NTL library to Web Assembly...\)
 
 ### Run a script via python\-wasm from the CLI
 
@@ -178,28 +180,27 @@ hi from wasi
 
 ## Benchmarks
 
-There is a collection of cpu\-intensive benchmarks in [packages/bench/src](./packages/bench/src), which you can run under  various Python interpreters by running
+There is a collection of cpu\-intensive benchmarks in [packages/bench/src](./packages/bench/src), which you can run under various Python interpreters by running
 
 ```sh
 your-python-interpreter src/all.py
 ```
 
-Here are some grand total times.  The timings are pretty stable, and the parameters of the benchmarks are chosen so a single benchmark doesn't unduly impact the results \(e.g., it is trivial to game any such benchmark by adjusting parameters\).
+Here are some grand total times. The timings are pretty stable, and the parameters of the benchmarks are chosen so a single benchmark doesn't unduly impact the results \(e.g., it is trivial to game any such benchmark by adjusting parameters\).
 
-| Python  | x86_64 Linux |  MacOS M1 max | aarch64 Linux (docker on M1 max) |
-| :------------ |:---------------:|:---------------:|:---------------:|
-| PyPy 3.9.x (Python reimplemented with a JIT)   |    2997 ms     |  2127 ms |  1514 ms (ver 3.6.9) |
-| pylang (Javascript Python -- see https://github.com/sagemathinc/pylang) |    6909 ms   |  2876 ms |  4424 ms  | 
-| Native CPython 3.11     | 9284 ms | 4491 ms | 4607 ms |
-| WebAssembly CPython (python-wasm) | 23109 ms |   12171 ms|  12909 ms |
+| Python                                                                  | x86_64 Linux | MacOS M1 max | aarch64 Linux (docker on M1 max) |
+| :---------------------------------------------------------------------- | :----------: | :----------: | :------------------------------: |
+| PyPy 3.9.x (Python reimplemented with a JIT)                            |   2997 ms    |   2127 ms    |       1514 ms (ver 3.6.9)        |
+| pylang (Javascript Python -- see https://github.com/sagemathinc/pylang) |   6909 ms    |   2876 ms    |             4424 ms              |
+| Native CPython 3.11                                                     |   9284 ms    |   4491 ms    |             4607 ms              |
+| WebAssembly CPython (python-wasm)                                       |   23109 ms   |   12171 ms   |             12909 ms             |
 
 <br/>
 
-The quick summary is that in each case pypy is twice as fast as pylang \(basically node.js\), python\-lang is twice as fast as cpython, and _**native cpython is about 2.5x\-2.8x as fast as python\-wasm**_.  However, when you study the individual benchmarks, there are some significant differences.  E.g., in `brython.py` there is a benchmark "create instance of simple class" and it typically takes 4x\-5x longer in WebAssembly versus native CPython.
+The quick summary is that in each case pypy is twice as fast as pylang \(basically node.js\), python\-lang is twice as fast as cpython, and _**native cpython is about 2.5x\-2.8x as fast as python\-wasm**_. However, when you study the individual benchmarks, there are some significant differences. E.g., in `brython.py` there is a benchmark "create instance of simple class" and it typically takes 4x\-5x longer in WebAssembly versus native CPython.
 
 ---
 
 ## Contact
 
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) if you find this interesting and want to help out. **This is an open source 3\-clause BSD licensed project.**
-
