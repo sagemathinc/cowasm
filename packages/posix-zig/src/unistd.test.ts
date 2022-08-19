@@ -1,12 +1,13 @@
 import posix from "./index";
 
 // chroot
-test("chroot raises an error", () => {
-  // this can only work as root, which we can't test here easily
-  expect(() => {
-    posix.chroot?.("/");
-  }).toThrow();
-});
+// can't assume tests not run as root:
+// test("chroot raises an error", () => {
+//   // this can only work as root, which we can't test here easily
+//   expect(() => {
+//     posix.chroot?.("/");
+//   }).toThrow();
+// });
 
 // getegid
 
@@ -56,9 +57,10 @@ test("getppid returns a positive integer", () => {
 });
 
 // setegid
-test("seteuid throws an error (not as root)", () => {
-  expect(() => posix.setegid?.(10)).toThrow();
-});
+// can't assume tests not run as root.
+// test("seteuid throws an error (not as root)", () => {
+//   expect(() => posix.setegid?.(10)).toThrow();
+// });
 
 test("that the security vulnerability CVE-2022-21211 does not impact posix-zig", () => {
   // @ts-ignore
