@@ -11,6 +11,15 @@ const nodeToZig = {
 
 const name = `${nodeToZig[process.arch]}-${nodeToZig[process.platform]}`;
 
+const LINUX_ONLY = [
+  "getresuid",
+  "getresgid",
+  "setresgid",
+  "setresuid",
+  "fexecve",
+  "_fexecve",
+];
+
 export interface Hostent {
   h_name: string;
   h_length: number;
@@ -89,6 +98,13 @@ interface PosixFunctions {
     argv: string[],
     envp: string[] // same format at system call
   ) => number;
+  fexecve: (
+    // linux only
+    fd: number,
+    argv: string[],
+    env: { [key: string]: string }
+  ) => number;
+  _fexecve: (fd: number, argv: string[], envp: string[]) => number; // linux only
 
   // other
   login_tty: (fd: number) => void;
@@ -100,7 +116,7 @@ interface PosixFunctions {
   gai_strerror: (errcode: number) => string;
   hstrerror: (errcode: number) => string;
   gethostbyname: (name: string) => Hostent;
-  gethostbyaddr: (addr: string) => Hostent; // addr is ipv4 or ipv6
+  gethostbyaddr: (addr: string) => Hostent; // addr is ipv4 or ipv6 (both are supported)
   getaddrinfo: (
     node: string,
     service: string,
@@ -119,6 +135,12 @@ let mod: Posix = {};
 let mod1: Posix = {};
 try {
   mod = require(`./${name}.node`);
+
+  if (process.platform != "linux") {
+    for (const name of LINUX_ONLY) {
+      delete mod[name];
+    }
+  }
 
   mod.getpid = () => process.pid;
 
@@ -139,17 +161,19 @@ try {
   mod["statvfs"] = (...args) => JSON.parse(mod["_statvfs"]?.(...args));
   mod["fstatvfs"] = (...args) => JSON.parse(mod["_fstatvfs"]?.(...args));
 
-  mod["execve"] = (pathname, argv, env) => {
-    const _execve = mod["_execve"];
-    if (_execve == null) {
-      throw Error("_execve must be defined");
-    }
-    const envp: string[] = [];
-    for (const key in env) {
-      envp.push(`${key}=${env[key]}`);
-    }
-    return _execve(pathname, argv, envp);
-  };
+  const _execve = mod["_execve"];
+  if (_execve != null) {
+    mod["execve"] = (pathname, argv, env) => {
+      return _execve(pathname, argv, mapToStrings(env));
+    };
+  }
+
+  const _fexecve = mod["_fexecve"];
+  if (_fexecve != null) {
+    mod["fexecve"] = (pathname, argv, env) => {
+      return _fexecve(pathname, argv, mapToStrings(env));
+    };
+  }
 
   for (const name in mod) {
     exports[name] = mod1[name] = (...args) => {
@@ -161,3 +185,11 @@ try {
 } catch (_err) {}
 
 export default mod1;
+
+function mapToStrings(obj: object): string[] {
+  const v: string[] = [];
+  for (const key in obj) {
+    v.push(`${key}=${obj[key]}`);
+  }
+  return v;
+}

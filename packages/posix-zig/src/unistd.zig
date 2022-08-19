@@ -25,6 +25,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "alarm", alarm);
 
     try node.registerFunction(env, exports, "_execve", execve);
+    try node.registerFunction(env, exports, "_fexecve", fexecve);
 
     try node.registerFunction(env, exports, "fork", fork);
     try node.registerFunction(env, exports, "pipe", pipe);
@@ -244,6 +245,37 @@ fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
     const ret = unistd.execve(pathname, argv, envp);
     if (ret == -1) {
         node.throwError(env, "error in execve");
+        return null;
+    }
+    // This can't ever happen, of course.
+    return node.create_i32(env, ret, "ret") catch return null;
+}
+
+//   int fexecve(int fd, char *const argv[], char *const envp[]);
+fn fexecve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    if (builtin.target.os.tag != .linux) {
+        node.throwError(env, "fexecve is only supported on linux");
+        return null;
+    }
+
+    const args = node.getArgv(env, info, 3) catch return null;
+
+    var fd = node.i32FromValue(env, args[0], "fd") catch return null;
+
+    var argv = node.valueToArrayOfStrings(env, args[1], "argv") catch return null;
+    defer util.freeArrayOfStrings(argv);
+
+    var envp = node.valueToArrayOfStrings(env, args[2], "envp") catch return null;
+    defer util.freeArrayOfStrings(envp);
+
+    // Critical to dup2 these are we'll see nothing after running execve:
+    dupStream(env, "stdin", 0) catch return null;
+    dupStream(env, "stdout", 1) catch return null;
+    dupStream(env, "stderr", 2) catch return null;
+
+    const ret = unistd.fexecve(fd, argv, envp);
+    if (ret == -1) {
+        node.throwError(env, "error in fexecve");
         return null;
     }
     // This can't ever happen, of course.
