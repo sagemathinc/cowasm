@@ -137,5 +137,10 @@ ac_cv_func_gethostbyaddr=yes
 # add an entry to Setup.local, which is what having this as yes would result in.
 # py_cv_module__posixsubprocess=yes
 
-
+# Signal related functions
+# We don't have sigaltstack in "-lwasi-emulated-signal", but it gets detected
+# from headers.  It's used in python to handle certain fatal exceptions,
+# and python gracefully degrades; seems like the sort of thing that might
+# not be possible in wasm.
+ac_cv_func_sigaltstack=no
 
