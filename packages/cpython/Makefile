@@ -90,7 +90,8 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 		LDFLAGS="-L${ZLIB}/native/lib -L${LIBEDIT}/native/lib" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
-			--with-ensurepip=no
+			--with-ensurepip=no \
+			--with-readline=editline \
 	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses zlib).  This is to workaround
 	# a security feature of MacOS (see https://developer.apple.com/forums/thread/9233). For simplicity we set this everywhere.
 	cd ${BUILD}/native && make  -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}"
