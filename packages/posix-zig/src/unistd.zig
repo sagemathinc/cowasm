@@ -24,6 +24,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "ttyname", ttyname);
     try node.registerFunction(env, exports, "alarm", alarm);
 
+    try node.registerFunction(env, exports, "execv", execv);
     try node.registerFunction(env, exports, "_execve", execve);
     try node.registerFunction(env, exports, "_fexecve", fexecve);
 
@@ -218,6 +219,32 @@ fn dupStream(env: c.napi_env, comptime name: [:0]const u8, number: i32) !void {
     }
 }
 
+fn dupStreams(env: c.napi_env) !void {
+    try dupStream(env, "stdin", 0);
+    try dupStream(env, "stdout", 1);
+    try dupStream(env, "stderr", 2);
+}
+
+fn execv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const args = node.getArgv(env, info, 2) catch return null;
+
+    var pathname = node.valueToString(env, args[0], "pathname") catch return null;
+    defer std.c.free(pathname);
+
+    var argv = node.valueToArrayOfStrings(env, args[1], "argv") catch return null;
+    defer util.freeArrayOfStrings(argv);
+
+    dupStreams(env) catch return null;
+
+    const ret = unistd.execv(pathname, argv);
+    if (ret == -1) {
+        node.throwError(env, "error in execv");
+        return null;
+    }
+    // This can't ever happen, of course.
+    return node.create_i32(env, ret, "ret") catch return null;
+}
+
 // int execve(const char *pathname, char *const argv[], char *const envp[]);
 //  execve: (pathname: string, argv: string[], envp: string[]) => number;
 // TODO: we should change last arg to be a map, like with python.
@@ -234,9 +261,7 @@ fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
     defer util.freeArrayOfStrings(envp);
 
     // Critical to dup2 these are we'll see nothing after running execve:
-    dupStream(env, "stdin", 0) catch return null;
-    dupStream(env, "stdout", 1) catch return null;
-    dupStream(env, "stderr", 2) catch return null;
+    dupStreams(env) catch return null;
 
     // NOTE: On success, execve() does not return (!), on error -1 is returned,
     // and errno is set to indicate the error.
@@ -269,9 +294,7 @@ fn fexecve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     defer util.freeArrayOfStrings(envp);
 
     // Critical to dup2 these are we'll see nothing after running execve:
-    dupStream(env, "stdin", 0) catch return null;
-    dupStream(env, "stdout", 1) catch return null;
-    dupStream(env, "stderr", 2) catch return null;
+    dupStreams(env) catch return null;
 
     const ret = unistd.fexecve(fd, argv, envp);
     if (ret == -1) {

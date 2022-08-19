@@ -88,6 +88,8 @@ interface PosixFunctions {
   setresgid: (rgid: number, egid: number, sgid: number) => void; // linux only
   setresuid: (ruid: number, euid: number, suid: number) => void; // linux only
 
+  execv: (pathname: string, argv: string[]) => number;
+
   execve: (
     pathname: string,
     argv: string[],

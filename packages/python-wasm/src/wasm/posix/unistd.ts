@@ -344,11 +344,28 @@ export default function unistd({
       return 0; // this won't happen because execve takes over
     },
 
+    execv: (pathnamePtr: number, argvPtr: number): number => {
+      if (posix.execv == null) {
+        notImplemented("execve");
+      }
+      const pathname = recv.string(pathnamePtr);
+      const argv = recv.arrayOfStrings(argvPtr);
+      posix.execv(pathname, argv);
+      return 0; // this won't happen because execve takes over
+    },
+
+    // execlp is so far only by libedit to launch vim to edit
+    // the history.  So it's safe to just disable.  Python doesn't
+    // use this at all.
+    execlp: () => {
+      notImplemented("execlp");
+    },
+
     /*
     I don't have automated testing for this, since it quits node.
     However, here is what works on Linux.
     >>> import os; a = os.open("/bin/ls",os.O_RDONLY | os.O_CREAT)
-    >>> os.execve(a,['-l','/'],{})                                
+    >>> os.execve(a,['-l','/'],{})
     bin   dev  home  media  opt   root  sbin  sys  usr
     boot  etc  lib   mnt    proc  run   srv   tmp  var
     */
