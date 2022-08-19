@@ -114,7 +114,11 @@ interface PosixFunctions {
   // process temporarily, which isn't a normal nodejs feature.
   pause: () => number;
 
-  if_indextoname: (ifindex:number) => string;
+  // NOTE: node.js has require('os').networkInterfaces(), but it is not
+  // equivalent to the system calls in net/if.h, e.g., because it only returns
+  // info about network interfaces that have been assigned an address.
+  if_indextoname: (ifindex: number) => string;
+  if_nametoindex: (ifname:string) => number;
 
   // other
   login_tty: (fd: number) => void;
