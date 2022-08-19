@@ -2,11 +2,12 @@ pub fn keepalive() void {}
 const errno = @import("errno.zig");
 const signal = @import("signal.zig");
 const netdb = @import("netdb.zig");
+const netif = @import("netif.zig");
 const unistd = @import("unistd.zig");
 const util = @import("util.zig");
 
-const _names = errno.constants.names ++ signal.constants.names ++ netdb.constants.names ++ unistd.constants.names;
-const _values = getValues(errno.constants) ++ getValues(signal.constants) ++ getValues(netdb.constants) ++ getValues(unistd.constants);
+const _names = errno.constants.names ++ signal.constants.names ++ netdb.constants.names ++ netif.constants.names ++ unistd.constants.names;
+const _values = getValues(errno.constants) ++ getValues(signal.constants) ++ getValues(netdb.constants) ++ getValues(netif.constants) ++ getValues(unistd.constants);
 const _constants = .{ .names = _names, .values = _values };
 
 // Caller must std.c.free the string it gets back.

@@ -114,6 +114,8 @@ interface PosixFunctions {
   // process temporarily, which isn't a normal nodejs feature.
   pause: () => number;
 
+  if_indextoname: (ifindex:number) => string;
+
   // other
   login_tty: (fd: number) => void;
   statvfs: (path: string) => StatsVFS;

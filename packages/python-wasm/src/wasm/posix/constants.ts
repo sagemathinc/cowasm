@@ -14,6 +14,7 @@ const CONSTANTS = [
   "F_LOCK",
   "F_TLOCK",
   "F_TEST",
+  "IFNAMSIZ",
 ] as const;
 
 export type Constant = typeof CONSTANTS[number];
