@@ -25,7 +25,7 @@ test("test python's os.getgroups returns a list of positive integer", async () =
   await exec("import os");
   const v = eval(await repr("os.getgroups()"));
   for (const a of v) {
-    expect(a).toBeGreaterThan(0);
+    expect(a).toBeGreaterThanOrEqual(0);
   }
 });
 
