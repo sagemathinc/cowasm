@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/wasi",
   "dependencies": {
-    "@wapython/unionfs": "^4.5.3",
+    "@wapython/unionfs": "^4.5.4",
     "debug": "^4.3.4",
     "fflate": "^0.7.3",
     "memfs": "^3.4.7",
