@@ -36,7 +36,6 @@ ac_cv_header_sys_resource_h=no
 # undefined symbols / unsupported features
 ac_cv_func_eventfd=no
 
-# WASI SDK 15.0 has no pipe syscall...
 # But we just implement one ourselves in posix-zig.
 # pipe2 is Linux-only, so confusing to allow to get enabled.
 ac_cv_func_pipe=yes
@@ -51,9 +50,11 @@ ac_cv_func_mkfifoat=no
 ac_cv_func_mknod=no
 ac_cv_func_mknodat=no
 
+# This was upstream, but I'm not sure it's a problem in zig yet,
+# so I'm allowing fdopendir for now.  We'll see.
 # fdopendir() fails on SDK 15.0,
 # OSError: [Errno 28] Invalid argument: '.'
-ac_cv_func_fdopendir=no
+# ac_cv_func_fdopendir=no
 
 # WASI sockets are limited to operations on given socket fd and inet sockets.
 # Disable AF_UNIX and AF_PACKET support, see socketmodule.h.
