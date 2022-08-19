@@ -346,9 +346,9 @@ export default function unistd({
 
     /*
     I don't have automated testing for this, since it quits node.
-    However, here is what works on Linux.
+    However, here is what works on Linux. There is no fexecve on macos.
     >>> import os; a = os.open("/bin/ls",os.O_RDONLY | os.O_CREAT)
-    >>> os.execve(a,['-l','/'],{})                                
+    >>> os.execve(a,['-l','/'],{})
     bin   dev  home  media  opt   root  sbin  sys  usr
     boot  etc  lib   mnt    proc  run   srv   tmp  var
     */
