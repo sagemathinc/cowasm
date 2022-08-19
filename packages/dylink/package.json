@@ -1,6 +1,6 @@
 {
   "name": "dylink",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Support for dynamic linking of WebAssembly code via Javascript built using wasm32-unknown-emscripten",
   "main": "dist/index.js",
   "scripts": {
