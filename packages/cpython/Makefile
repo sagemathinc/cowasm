@@ -86,8 +86,8 @@ ${DIST_NATIVE}/.built: ${BUILD}/native/.patched
 		AR="zig ar" \
 		CXX="zig c++ ${ARCH} " \
 		CC="zig cc ${ARCH} " \
-		CFLAGS="-I${ZLIB}/native/include" \
-		LDFLAGS="-L${ZLIB}/native/lib" \
+		CFLAGS="-I${ZLIB}/native/include -I${LIBEDIT}/native/include" \
+		LDFLAGS="-L${ZLIB}/native/lib -L${LIBEDIT}/native/lib" \
 		./configure \
 			--prefix=${DIST_NATIVE} \
 			--with-ensurepip=no

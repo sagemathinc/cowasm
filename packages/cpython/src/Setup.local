@@ -9,7 +9,6 @@
 *static*
 
 readline readline.c -ledit  -ltermcap
-_posixsubprocess _posixsubprocess.c
 
 # Uncomment to build curses.  This works.  But the curses .py files aren't in the
 # zip bundle yet.  You can explicitly include those.  However,

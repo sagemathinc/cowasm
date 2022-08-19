@@ -8,6 +8,7 @@
 
 *static*
 
+readline readline.c -I$(abs_srcdir)/../../../libedit/dist/native/include/ $(abs_srcdir)/../../../libedit/dist/native/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/native/lib/libtermcap.a
 _struct _struct.c
 binascii binascii.c
 zlib  zlibmodule.c -lz

@@ -10,13 +10,15 @@ DIST_WASM = ${CWD}/dist/wasm
 PACKAGES = ${CWD}/..
 TERMCAP = ${PACKAGES}/termcap/dist
 
-all:  wasm
+all:  wasm native
 
 ${BUILD}/libedit.tar.gz:
 	mkdir -p ${BUILD}
 	cd ${BUILD} && curl https://www.thrysoee.dk/editline/libedit-${VERSION}.tar.gz -o libedit.tar.gz
 
-# NATIVE - not used
+##################
+# NATIVE
+##################
 
 ${BUILD}/native: ${BUILD}/libedit.tar.gz
 	rm -rf ${BUILD}/native
