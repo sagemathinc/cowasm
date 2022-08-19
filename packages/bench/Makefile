@@ -1,22 +1,22 @@
 python-wasm-debug:
 	echo "Starting benchmarks with python-wasm-debug"
-	../../bin/python-wasm-debug `pwd`/src/all.py
+	../../bin/python-wasm-debug src/all.py
 
 python-wasm:
 	echo "Starting benchmarks with python-wasm"
-	../../bin/python-wasm `pwd`/src/all.py
+	../../bin/python-wasm src/all.py
 
 python-native:
 	echo "Starting benchmarks with python-native"
-	../../bin/python-native `pwd`/src/all.py
+	../../bin/python-native src/all.py
 
 pylang:
 	echo "Starting benchmarks with pylang"
-	npx --yes pylang `pwd`/src/all.py
+	npx --yes pylang src/all.py
 
 pypy:
 	echo "Starting benchmarks with pypy"
-	pypy3 `pwd`/src/all.py
+	pypy3 src/all.py
 
 all:
 	npm ci

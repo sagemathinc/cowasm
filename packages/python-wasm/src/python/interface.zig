@@ -9,10 +9,10 @@ export fn keepalive() void {
     posix.keepalive();
 }
 
-export fn init() void {
-    python.init() catch |err| {
+export fn init(cwd: [*:0]const u8) void {
+    python.init(cwd) catch |err| {
         wasmSetException();
-        std.debug.print("python error: '{}'\nwhen initializing python runtime", .{err});
+        std.debug.print("python error: '{}'\nwhen initializing Python runtime", .{err});
         return;
     };
 }

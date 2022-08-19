@@ -172,7 +172,7 @@ This isn't currently used here for building python-wasm, but it's an extremely p
 
 ```sh
 ~/python-wasm$ echo "import sys; print(f'hi from {sys.platform}')" > a.py
-~/python-wasm$ bin/python-wasm `pwd`/a.py
+~/python-wasm$ bin/python-wasm a.py
 hi from wasi
 ```
 
@@ -181,7 +181,7 @@ hi from wasi
 There is a collection of cpu\-intensive benchmarks in [packages/bench/src](./packages/bench/src), which you can run under  various Python interpreters by running
 
 ```sh
-your-python-interpreter `pwd`/all.py
+your-python-interpreter src/all.py
 ```
 
 Here are some grand total times.  The timings are pretty stable, and the parameters of the benchmarks are chosen so a single benchmark doesn't unduly impact the results \(e.g., it is trivial to game any such benchmark by adjusting parameters\).

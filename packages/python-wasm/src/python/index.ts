@@ -46,5 +46,5 @@ export async function _init({
     env,
     fs,
   });
-  await wasm.callWithString("init", "");
+  await wasm.callWithString("init", process.cwd());
 }
