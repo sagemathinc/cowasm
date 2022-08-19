@@ -6,7 +6,7 @@ CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 # Find the latest version at https://ziglang.org/download/
 # This is for pre-release
-VERSION = 0.10.0-dev.3475+b3d463c9e
+VERSION = 0.10.0-dev.3629+2ccaa5414
 
 # Using sed because uname -s --> x86_64 or arm64, but need aarch64
 ARCH = $(shell uname -m | sed s/arm64/aarch64/)

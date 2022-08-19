@@ -5,7 +5,7 @@
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 
-# Find the latest version at https://nodejs.org/dist/latest/:
+# Find the latest version at https://nodejs.org/dist/latest/
 VERSION = 18.7.0
 
 # Using sed because uname -s --> x86_64 or aarch64, but need x64 or arm64
