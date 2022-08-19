@@ -1,7 +1,9 @@
 const c = @import("c.zig");
 const node = @import("node.zig");
-const unistd = @cImport(@cInclude("unistd.h"));
-const fcntl = @cImport(@cInclude("fcntl.h"));
+const unistd = @cImport({
+    @cInclude("unistd.h");
+    @cInclude("fcntl.h"); // just needed for constants
+});
 const builtin = @import("builtin");
 const util = @import("util.zig");
 const std = @import("std");
@@ -33,11 +35,13 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     if (builtin.target.os.tag == .linux) {
         try node.registerFunction(env, exports, "pipe2", pipe2_impl);
     }
+
+    try node.registerFunction(env, exports, "lockf", lockf);
 }
 
 pub const constants = .{
-    .c_import = fcntl,
-    .names = [_][:0]const u8{ "O_CLOEXEC", "O_NONBLOCK" },
+    .c_import = unistd,
+    .names = [_][:0]const u8{ "O_CLOEXEC", "O_NONBLOCK", "F_ULOCK", "F_LOCK", "F_TLOCK", "F_TEST" },
 };
 
 // int chroot(const char *path);
@@ -349,4 +353,19 @@ fn pipefdToObject(env: c.napi_env, pipefd: [2]c_int) !c.napi_value {
     const writefd = node.create_i32(env, pipefd[1], "pipefd[1]") catch return null;
     node.setNamedProperty(env, obj, "writefd", writefd, "setting writefd") catch return null;
     return obj;
+}
+
+// Record locking on files:
+//   int lockf(int fd, int cmd, off_t size);
+// NOTE: off_t is i64 on wasi and macos.
+// cmd is one of the constants F_ULOCK, F_LOCK, F_TLOCK, or F_TEST.
+fn lockf(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 3) catch return null;
+    const fd = node.i32FromValue(env, argv[0], "fd") catch return null;
+    const cmd = node.i32FromValue(env, argv[1], "cmd") catch return null;
+    const size = node.i64FromBigIntValue(env, argv[2], "size") catch return null;
+    if (unistd.lockf(fd, cmd, size) == -1) {
+        node.throwError(env, "error in lockf");
+    }
+    return null;
 }
