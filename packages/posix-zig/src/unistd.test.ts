@@ -1,24 +1,28 @@
 import posix from "./index";
+import { userInfo } from "os";
 
-// chroot
-// can't assume tests not run as root:
-// test("chroot raises an error", () => {
-//   // this can only work as root, which we can't test here easily
-//   expect(() => {
-//     posix.chroot?.("/");
-//   }).toThrow();
-// });
+const isRoot = userInfo().username == "root";
+
+if (!isRoot) {
+  // chroot
+  test("chroot raises an error", () => {
+    // this can only work as root, which we can't test here easily
+    expect(() => {
+      posix.chroot?.("/");
+    }).toThrow();
+  });
+}
 
 // getegid
 
-test("getegid returns a positive number", () => {
-  expect(posix.getegid?.()).toBeGreaterThan(0);
+test("getegid returns a nonnegative number", () => {
+  expect(posix.getegid?.()).toBeGreaterThanOrEqual(0);
 });
 
 // geteuid
 
-test("geteuid returns a positive number", () => {
-  expect(posix.geteuid?.()).toBeGreaterThan(0);
+test("geteuid returns a nonnegative number", () => {
+  expect(posix.geteuid?.()).toBeGreaterThanOrEqual(0);
 });
 
 // gethostname
@@ -32,12 +36,12 @@ test("gethostname returns a string of length at least 1", () => {
 
 // getpgid
 
-test("getpgid returns a positive integer", () => {
-  expect(posix.getpgid?.(1)).toBeGreaterThan(0);
+test("getpgid returns an integer", () => {
+  expect(posix.getpgid?.(1)).toBeGreaterThanOrEqual(0);
 });
 
-test("getpgrp returns a positive integer", () => {
-  expect(posix.getpgrp?.()).toBeGreaterThan(0);
+test("getpgrp returns an integer", () => {
+  expect(posix.getpgrp?.()).toBeGreaterThanOrEqual(0);
 });
 
 test("a special case of setpgid that should work", () => {
@@ -52,39 +56,40 @@ test("a use of setpgid that should fail", () => {
 });
 
 // getppid
-test("getppid returns a positive integer", () => {
-  expect(posix.getppid?.()).toBeGreaterThan(0);
+test("getppid returns an integer", () => {
+  expect(posix.getppid?.()).toBeGreaterThanOrEqual(0);
 });
 
 // setegid
-// can't assume tests not run as root.
-// test("seteuid throws an error (not as root)", () => {
-//   expect(() => posix.setegid?.(10)).toThrow();
-// });
+test("seteuid throws an error (not as root)", () => {
+  expect(() => posix.setegid?.(10)).toThrow();
+});
 
 test("that the security vulnerability CVE-2022-21211 does not impact posix-zig", () => {
   // @ts-ignore
   expect(() => posix.setegid?.({ toString: 1 })).toThrow();
 });
 
-// seteuid
-test("seteuid throws an error (not as root)", () => {
-  expect(() => posix.seteuid?.(10)).toThrow();
-});
+if (!isRoot) {
+  // seteuid
+  test("seteuid throws an error (not as root)", () => {
+    expect(() => posix.seteuid?.(10)).toThrow();
+  });
 
-// sethostname
-test("sethostname fails since we're not root", () => {
-  expect(() => posix.sethostname?.("example.com")).toThrow();
-});
+  // sethostname
+  test("sethostname fails since we're not root", () => {
+    expect(() => posix.sethostname?.("example.com")).toThrow();
+  });
 
-// setregid
-test("setregid throws an error (not as root)", () => {
-  expect(() => posix.setregid?.(10, 20)).toThrow();
-});
-// setsid
-test("setsid throws an error (since process is already group leader)", () => {
-  expect(() => posix.setsid?.()).toThrow();
-});
+  // setregid
+  test("setregid throws an error (not as root)", () => {
+    expect(() => posix.setregid?.(10, 20)).toThrow();
+  });
+  // setsid
+  test("setsid throws an error (since process is already group leader)", () => {
+    expect(() => posix.setsid?.()).toThrow();
+  });
+}
 
 // ttyname
 test("ttyname of stdin, stdout, stderr works and starts with /dev/ -- or on some platforms, throws an error since testing", () => {
