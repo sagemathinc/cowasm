@@ -222,16 +222,20 @@ run-wasm: ${DIST_WASM}/.built
 
 # Run the full official Python test suite on the wasm build.  We can't just do
 # "make test" in build/wasm, since that only support wasmtime and emscripten.
-.PHONY: test
-test:
-	cd ${BUILD_WASM} && \
-	_PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} \
-	_PYTHON_PROJECT_BASE=${BUILD_WASM} \
+RUN_TESTS =  _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 	_PYTHON_HOST_PLATFORM=wasi-wasm32 \
 	PYTHONPATH=${BUILD_WASM}/build/lib.wasi-wasm32-3.11:./Lib \
 	_PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__wasi_wasm32-wasi \
 	${DIST_NATIVE}/bin/python3 \
 	./Tools/scripts/run_tests.py
+
+.PHONY: test
+test:
+	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS}
+
+test-using-worker:
+	cd ${BUILD_WASM} && PYTHONHOME=${DIST_WASM} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS}
+
 
 # Cleaning up
 

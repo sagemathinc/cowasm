@@ -37,7 +37,7 @@ export async function init({
     env = {
       ...process.env,
       ...{
-        PYTHONHOME: "/usr",
+        PYTHONHOME: process.env.PYTHONHOME ?? "/usr",
         TERMCAP: "/usr/lib/python3.11/termcap",
         TERM: "xterm-256color",
       },
