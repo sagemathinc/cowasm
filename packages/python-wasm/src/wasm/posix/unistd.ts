@@ -453,6 +453,15 @@ export default function unistd({
       lockf(toNativeFd(fd), cmdNative, BigInt(size));
       return 0;
     },
+
+    pause: (): number => {
+      const { pause } = posix;
+      if (pause == null) {
+        // this could be implemented in case of worker
+        notImplemented("pause");
+      }
+      return pause();
+    },
   };
 
   return unistd;

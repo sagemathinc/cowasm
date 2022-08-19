@@ -37,6 +37,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     }
 
     try node.registerFunction(env, exports, "lockf", lockf);
+    try node.registerFunction(env, exports, "pause", pause);
 }
 
 pub const constants = .{
@@ -368,4 +369,11 @@ fn lockf(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
         node.throwError(env, "error in lockf");
     }
     return null;
+}
+
+//   int pause(void);
+fn pause(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    const res = unistd.pause(); // this actually always returns -1, according to docs
+    return node.create_i32(env, res, "res") catch return null;
 }

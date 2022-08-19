@@ -170,3 +170,14 @@ ac_cv_func_memfd_create=no
 # Maybe should be added to wasi.ts / WASI?
 ac_cv_func_getitimer=no
 ac_cv_func_setitimer=no
+
+# Sendfile is parat of sockets, and we don't have it (yet):
+ac_cv_func_sendfile=no
+
+# Not in WASI?
+ac_cv_func_fchownat=no
+
+# Not yet
+ac_cv_func_openpty=no
+ac_cv_lib_util_openpty=no
+ac_cv_lib_bsd_openpty=no

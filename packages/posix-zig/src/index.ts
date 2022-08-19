@@ -110,6 +110,10 @@ interface PosixFunctions {
 
   lockf: (fd: number, cmd: number, size: BigInt) => void;
 
+  // This posix call is interesting -- it lets you suspend a node.js
+  // process temporarily, which isn't a normal nodejs feature.
+  pause: () => number;
+
   // other
   login_tty: (fd: number) => void;
   statvfs: (path: string) => StatsVFS;

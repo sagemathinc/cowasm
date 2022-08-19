@@ -83,6 +83,13 @@ export fn dcgettext(domainname: [*:0]const u8, msgid: [*:0]const u8, category: c
     return msgid;
 }
 
+// char * bindtextdomain (const char * domainname, const char * dirname);
+export fn bindtextdomain(domainname: [*:0]const u8, dirname: [*:0]const u8) [*:0]const u8 {
+    _ = domainname;
+    // this is probably enough of a "stub" for now:
+    return dirname;
+}
+
 // Weirdly on wasm @cimport from sys/statvfs.h yields an opaque type for statvfs, so I copy pasted.
 const statvfs = @cImport(@cInclude("sys/statvfs.h"));
 const fsblkcnt_t = statvfs.fsblkcnt_t;
