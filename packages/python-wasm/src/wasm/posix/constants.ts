@@ -10,6 +10,10 @@ const CONSTANTS = [
   "SIG_SETMASK",
   "AF_INET",
   "AF_INET6",
+  "F_ULOCK",
+  "F_LOCK",
+  "F_TLOCK",
+  "F_TEST",
 ] as const;
 
 export type Constant = typeof CONSTANTS[number];

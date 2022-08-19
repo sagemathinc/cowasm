@@ -88,6 +88,8 @@ interface PosixFunctions {
   setresgid: (rgid: number, egid: number, sgid: number) => void; // linux only
   setresuid: (ruid: number, euid: number, suid: number) => void; // linux only
 
+  execv: (pathname: string, argv: string[]) => number;
+
   execve: (
     pathname: string,
     argv: string[],
@@ -105,6 +107,8 @@ interface PosixFunctions {
     env: { [key: string]: string }
   ) => number;
   _fexecve: (fd: number, argv: string[], envp: string[]) => number; // linux only
+
+  lockf: (fd: number, cmd: number, size: BigInt) => void;
 
   // other
   login_tty: (fd: number) => void;

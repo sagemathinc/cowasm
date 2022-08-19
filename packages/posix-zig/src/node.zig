@@ -322,12 +322,20 @@ pub fn u32FromValue(env: c.napi_env, value: c.napi_value, comptime name: [:0]con
 
 pub fn i32FromValue(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) !i32 {
     var result: i32 = undefined;
-    // TODO Check whether this will coerce signed numbers to a u32:
-    // In that case we need to use the appropriate napi method to do more type checking here.
-    // We want to make sure this is: unsigned, and an integer.
     switch (c.napi_get_value_int32(env, value, &result)) {
         c.napi_ok => {},
         c.napi_number_expected => return throw(env, name ++ " must be a number"),
+        else => unreachable,
+    }
+    return result;
+}
+
+pub fn i64FromBigIntValue(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) !i64 {
+    var result: i64 = undefined;
+    var lossless: bool = undefined;
+    switch (c.napi_get_value_bigint_int64(env, value, &result, &lossless)) {
+        c.napi_ok => {},
+        c.napi_number_expected => return throw(env, name ++ " must be a BigInt"),
         else => unreachable,
     }
     return result;

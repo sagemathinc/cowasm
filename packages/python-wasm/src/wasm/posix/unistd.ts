@@ -13,6 +13,21 @@ export default function unistd({
 }) {
   let login: number | undefined = undefined;
 
+  // TODO: this doesn't throw an error yet if the target filesystem isn't native.
+  function toNativeFd(fd: number): number {
+    // OBVIOUSLY -- these  functions won't work if the target
+    // is in a wasi memfs, since the host posix libc knows nothing about that.
+    // We do translate file descriptors at least.
+    // Do we need to check and throw an error if target path isn't native?
+    // Of course, that will happen anyways since the syscall will immediately
+    // reject the invalid file descriptor anyways.
+    const x = wasi.FD_MAP.get(fd);
+    if (x == null) {
+      throw Error("invalid file descriptor");
+    }
+    return x.real;
+  }
+
   const unistd = {
     chown: (pathPtr: number, uid: number, gid: number): -1 | 0 => {
       const path = recv.string(pathPtr);
@@ -27,12 +42,7 @@ export default function unistd({
 
     // int fchown(int fd, uid_t owner, gid_t group);
     fchown: (fd: number, uid: number, gid: number): number => {
-      const entry = wasi.FD_MAP.get(fd);
-      if (!entry) {
-        console.warn("bad file descriptor, fchown");
-        return -1;
-      }
-      fs.fchownSync(entry.real, uid, gid);
+      fs.fchownSync(toNativeFd(fd), uid, gid);
       return 0;
     },
 
@@ -344,6 +354,23 @@ export default function unistd({
       return 0; // this won't happen because execve takes over
     },
 
+    execv: (pathnamePtr: number, argvPtr: number): number => {
+      if (posix.execv == null) {
+        notImplemented("execve");
+      }
+      const pathname = recv.string(pathnamePtr);
+      const argv = recv.arrayOfStrings(argvPtr);
+      posix.execv(pathname, argv);
+      return 0; // this won't happen because execve takes over
+    },
+
+    // execlp is so far only by libedit to launch vim to edit
+    // the history.  So it's safe to just disable.  Python doesn't
+    // use this at all.
+    execlp: () => {
+      notImplemented("execlp");
+    },
+
     /*
     I don't have automated testing for this, since it quits node.
     However, here is what works on Linux. There is no fexecve on macos.
@@ -359,11 +386,7 @@ export default function unistd({
       const argv = recv.arrayOfStrings(argvPtr);
       const envp = recv.arrayOfStrings(envpPtr);
 
-      const x = wasi.FD_MAP.get(fd);
-      if (x == null) {
-        throw Error("invalid file descriptor");
-      }
-      posix._fexecve(x.real, argv, envp);
+      posix._fexecve(toNativeFd(fd), argv, envp);
       return 0; // this won't happen because execve takes over
     },
 
@@ -374,8 +397,6 @@ export default function unistd({
       }
       const { readfd, writefd } = posix.pipe();
       // readfd and writefd are genuine native file descriptors.
-      // We need to put them into the wasi layer.
-      // console.log("native ", { readfd, writefd });
       const wasi_readfd = wasi.getUnusedFileDescriptor();
       wasi.FD_MAP.set(wasi_readfd, {
         real: readfd,
@@ -386,7 +407,6 @@ export default function unistd({
         real: writefd,
         rights: wasi.FD_MAP.get(1).rights, // just use rights for stdout
       });
-      // console.log("wasi ", { wasi_readfd, wasi_writefd });
 
       send.i32(pipefdPtr, wasi_readfd);
       send.i32(pipefdPtr + 4, wasi_writefd);
@@ -406,12 +426,31 @@ export default function unistd({
       /* if (flags & constants.O_CLOEXEC) {
         nativeFlags += posix.constants?.O_CLOEXEC ?? 0;
       }*/
-      console.log({ flags, nativeFlags });
       const { readfd, writefd } = posix.pipe2(nativeFlags);
       // TODO: we almost certainly need to abstract these through our WASI
       // fd object!
       send.i32(pipefdPtr, readfd);
       send.i32(pipefdPtr + 4, writefd);
+      return 0;
+    },
+
+    lockf: (fd: number, cmd: number, size: number): number => {
+      const { lockf } = posix;
+      if (lockf == null) {
+        notImplemented("lockf");
+      }
+
+      let cmdNative: number | undefined = undefined;
+      for (const x of ["F_ULOCK", "F_LOCK", "F_TLOCK", "F_TEST"]) {
+        if (cmd == constants[x]) {
+          cmdNative = posix.constants[x];
+          break;
+        }
+      }
+      if (cmdNative == null) {
+        throw Error(`invalid cmd ${cmd}`);
+      }
+      lockf(toNativeFd(fd), cmdNative, BigInt(size));
       return 0;
     },
   };

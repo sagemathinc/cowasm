@@ -1,7 +1,9 @@
 const c = @import("c.zig");
 const node = @import("node.zig");
-const unistd = @cImport(@cInclude("unistd.h"));
-const fcntl = @cImport(@cInclude("fcntl.h"));
+const unistd = @cImport({
+    @cInclude("unistd.h");
+    @cInclude("fcntl.h"); // just needed for constants
+});
 const builtin = @import("builtin");
 const util = @import("util.zig");
 const std = @import("std");
@@ -24,6 +26,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "ttyname", ttyname);
     try node.registerFunction(env, exports, "alarm", alarm);
 
+    try node.registerFunction(env, exports, "execv", execv);
     try node.registerFunction(env, exports, "_execve", execve);
     try node.registerFunction(env, exports, "_fexecve", fexecve);
 
@@ -32,11 +35,13 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     if (builtin.target.os.tag == .linux) {
         try node.registerFunction(env, exports, "pipe2", pipe2_impl);
     }
+
+    try node.registerFunction(env, exports, "lockf", lockf);
 }
 
 pub const constants = .{
-    .c_import = fcntl,
-    .names = [_][:0]const u8{ "O_CLOEXEC", "O_NONBLOCK" },
+    .c_import = unistd,
+    .names = [_][:0]const u8{ "O_CLOEXEC", "O_NONBLOCK", "F_ULOCK", "F_LOCK", "F_TLOCK", "F_TEST" },
 };
 
 // int chroot(const char *path);
@@ -218,6 +223,32 @@ fn dupStream(env: c.napi_env, comptime name: [:0]const u8, number: i32) !void {
     }
 }
 
+fn dupStreams(env: c.napi_env) !void {
+    try dupStream(env, "stdin", 0);
+    try dupStream(env, "stdout", 1);
+    try dupStream(env, "stderr", 2);
+}
+
+fn execv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const args = node.getArgv(env, info, 2) catch return null;
+
+    var pathname = node.valueToString(env, args[0], "pathname") catch return null;
+    defer std.c.free(pathname);
+
+    var argv = node.valueToArrayOfStrings(env, args[1], "argv") catch return null;
+    defer util.freeArrayOfStrings(argv);
+
+    dupStreams(env) catch return null;
+
+    const ret = unistd.execv(pathname, argv);
+    if (ret == -1) {
+        node.throwError(env, "error in execv");
+        return null;
+    }
+    // This can't ever happen, of course.
+    return node.create_i32(env, ret, "ret") catch return null;
+}
+
 // int execve(const char *pathname, char *const argv[], char *const envp[]);
 //  execve: (pathname: string, argv: string[], envp: string[]) => number;
 // TODO: we should change last arg to be a map, like with python.
@@ -234,9 +265,7 @@ fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
     defer util.freeArrayOfStrings(envp);
 
     // Critical to dup2 these are we'll see nothing after running execve:
-    dupStream(env, "stdin", 0) catch return null;
-    dupStream(env, "stdout", 1) catch return null;
-    dupStream(env, "stderr", 2) catch return null;
+    dupStreams(env) catch return null;
 
     // NOTE: On success, execve() does not return (!), on error -1 is returned,
     // and errno is set to indicate the error.
@@ -269,9 +298,7 @@ fn fexecve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     defer util.freeArrayOfStrings(envp);
 
     // Critical to dup2 these are we'll see nothing after running execve:
-    dupStream(env, "stdin", 0) catch return null;
-    dupStream(env, "stdout", 1) catch return null;
-    dupStream(env, "stderr", 2) catch return null;
+    dupStreams(env) catch return null;
 
     const ret = unistd.fexecve(fd, argv, envp);
     if (ret == -1) {
@@ -326,4 +353,19 @@ fn pipefdToObject(env: c.napi_env, pipefd: [2]c_int) !c.napi_value {
     const writefd = node.create_i32(env, pipefd[1], "pipefd[1]") catch return null;
     node.setNamedProperty(env, obj, "writefd", writefd, "setting writefd") catch return null;
     return obj;
+}
+
+// Record locking on files:
+//   int lockf(int fd, int cmd, off_t size);
+// NOTE: off_t is i64 on wasi and macos.
+// cmd is one of the constants F_ULOCK, F_LOCK, F_TLOCK, or F_TEST.
+fn lockf(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 3) catch return null;
+    const fd = node.i32FromValue(env, argv[0], "fd") catch return null;
+    const cmd = node.i32FromValue(env, argv[1], "cmd") catch return null;
+    const size = node.i64FromBigIntValue(env, argv[2], "size") catch return null;
+    if (unistd.lockf(fd, cmd, size) == -1) {
+        node.throwError(env, "error in lockf");
+    }
+    return null;
 }
