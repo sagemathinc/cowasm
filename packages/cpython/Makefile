@@ -32,7 +32,8 @@ NCURSES = ${CWD}/../ncurses/dist
 NCURSES_INCLUDE = -I${NCURSES}/wasm/include/ncurses -I${NCURSES}/wasm/include
 NCURSES_LIB = -L${NCURSES}/wasm/lib
 
-PYTHON_WASM_BINARY = ${CWD}/../../bin/python-wasm
+PYTHON_WASM = ${CWD}/../../bin/python-wasm
+PYTHON_WASM_DEBUG = ${CWD}/../../bin/python-wasm-debug
 
 # We only use zlib (not lzma) for native build, since liblzma widely available natively.
 export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
@@ -217,24 +218,20 @@ wasm-data: ${DIST_WASM}/.built
 # You can also just run `python-wasm` in the top level bin/ directory.
 .PHONY: run-wasm
 run-wasm: ${DIST_WASM}/.built
-	${PYTHON_WASM_BINARY}
+	${PYTHON_WASM}
 
-# TODO: this test below is NOT useful yet.
-# Run the cpython test suite under WASM python.
-# TODO: excluding test_lzma.py and test_queue.py right now, since they hangs forever.
-# TODO: we should really use the official python test runner stuff, but that requires
-# implementing a restricted version of fork, which is possible (as we're using node.js).
-# This should be run via  'python-wasm -m test -w' basically as is illustrated here
-#     https://speakerdeck.com/tiran/language-summit-2022-webassembly-python-in-the-browser-and-beyond?slide=14
-# and our goal should be to have it all pass!
-# But first we need to get all the modules to actually build, since many of the tests depend
-# on them being built.  The code below helps a little to see where we are at.
-.PHONY: test-wasm
-test-wasm:
-	cd ${BUILD_WASM}/Lib/test && ls -d `pwd`/test_*.py | grep -v test_lzma.py | grep -v  test_queue.py | xargs -t -n 1 python-wasm-debug 2>&1 | tee ${BUILD_WASM}/test.out && \
-	grep FAIL ${BUILD_WASM}/test.out
-	echo "See ${BUILD_WASM}/test.out"
-
+# Run the full official Python test suite on the wasm build.  We can't just do
+# "make test" in build/wasm, since that only support wasmtime and emscripten.
+.PHONY: test
+test:
+	cd ${BUILD_WASM} && \
+	_PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} \
+	_PYTHON_PROJECT_BASE=${BUILD_WASM} \
+	_PYTHON_HOST_PLATFORM=wasi-wasm32 \
+	PYTHONPATH=${BUILD_WASM}/build/lib.wasi-wasm32-3.11:./Lib \
+	_PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__wasi_wasm32-wasi \
+	${DIST_NATIVE}/bin/python3 \
+	./Tools/scripts/run_tests.py
 
 # Cleaning up
 
