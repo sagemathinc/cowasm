@@ -344,6 +344,29 @@ export default function unistd({
       return 0; // this won't happen because execve takes over
     },
 
+    /*
+    I don't have automated testing for this, since it quits node.
+    However, here is what works on Linux.
+    >>> import os; a = os.open("/bin/ls",os.O_RDONLY | os.O_CREAT)
+    >>> os.execve(a,['-l','/'],{})                                
+    bin   dev  home  media  opt   root  sbin  sys  usr
+    boot  etc  lib   mnt    proc  run   srv   tmp  var
+    */
+    fexecve: (fd: number, argvPtr: number, envpPtr: number): number => {
+      if (posix._fexecve == null) {
+        notImplemented("fexecve");
+      }
+      const argv = recv.arrayOfStrings(argvPtr);
+      const envp = recv.arrayOfStrings(envpPtr);
+
+      const x = wasi.FD_MAP.get(fd);
+      if (x == null) {
+        throw Error("invalid file descriptor");
+      }
+      posix._fexecve(x.real, argv, envp);
+      return 0; // this won't happen because execve takes over
+    },
+
     //  int pipe(int pipefd[2]);
     pipe: (pipefdPtr: number): number => {
       if (posix.pipe == null) {
