@@ -68,14 +68,20 @@ export default function other({ callFunction, posix, recv, send }) {
     },
 
     // password stuff -- low priority!
-    getpwnam_r: (): void => {
+    getpwnam_r: () => {
       notImplemented("getpwnam_r");
     },
-    getpwuid: (): void => {
+    getpwuid: () => {
       notImplemented("getpwnam_r");
     },
-    getpwuid_r: (): void => {
+    getpwuid_r: () => {
       notImplemented("getpwnam_r");
+    },
+
+    openpty: () => {
+      // TOOD: plan to do this inspired by https://github.com/microsoft/node-pty, either
+      // using that or just a little inspired by it to add to posix-zig.
+      notImplemented("openpty");
     },
   };
 }

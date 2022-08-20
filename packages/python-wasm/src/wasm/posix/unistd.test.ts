@@ -78,3 +78,12 @@ test("using getresgid on Linux only", async () => {
 //   await exec("import os");
 //   expect(repr("os.setresuid(0,0,0)")).rejects.toThrow();
 // });
+
+//  >>> import os, posix; os.getgrouplist(os.getlogin(),0)
+// [0, 12, 20, 61, 79, 80, 81, 98, 701, 33, 100, 204, 250, 395, 398, 399, 400]
+test("getgrouplist returns a list of numbers", async () => {
+  await exec("import os, posix");
+  const v = eval(await repr("os.getgrouplist(os.getlogin(),0)"));
+  expect(v.length).toBeGreaterThan(0);
+  expect(typeof v[0]).toBe("number");
+});
