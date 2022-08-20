@@ -177,7 +177,4 @@ ac_cv_func_sendfile=no
 # Not in WASI?
 ac_cv_func_fchownat=no
 
-# Not yet
-ac_cv_func_openpty=no
-ac_cv_lib_util_openpty=no
-ac_cv_lib_bsd_openpty=no
+
