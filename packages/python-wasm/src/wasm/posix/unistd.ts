@@ -483,12 +483,14 @@ export default function unistd({
       ngroupsPtr: number
     ): number => {
       const { getgrouplist } = posix;
-      if (getgrouplist == null) {
-        notImplemented("getgrouplist");
-      }
       const user = recv.string(userPtr);
       const ngroups = recv.i32(ngroupsPtr);
-      const v = getgrouplist(user, group);
+      let v;
+      if (getgrouplist == null) {
+        v = [group];
+      } else {
+        v = getgrouplist(user, group);
+      }
       const k = Math.min(v.length, ngroups);
       for (let i = 0; i < k; i++) {
         send.u32(groupPtr + 4 * i, v[i]);
