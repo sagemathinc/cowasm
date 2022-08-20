@@ -3,6 +3,7 @@ const node = @import("node.zig");
 const unistd = @cImport({
     @cInclude("unistd.h");
     @cInclude("fcntl.h"); // just needed for constants
+    @cInclude("grp.h"); // getgrouplist on linux
 });
 const builtin = @import("builtin");
 const util = @import("util.zig");
@@ -38,6 +39,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
 
     try node.registerFunction(env, exports, "lockf", lockf);
     try node.registerFunction(env, exports, "pause", pause);
+    try node.registerFunction(env, exports, "getgrouplist", getgrouplist);
 }
 
 pub const constants = .{
@@ -376,4 +378,57 @@ fn pause(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
     _ = info;
     const res = unistd.pause(); // this actually always returns -1, according to docs
     return node.create_i32(env, res, "res") catch return null;
+}
+
+//        int getgrouplist(const char *user, gid_t group,
+//                         gid_t *groups, int *ngroups);
+fn getgrouplist(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 2) catch return null;
+    var user: [1024]u8 = undefined;
+    node.stringFromValue(env, argv[0], "user", user.len, &user) catch return null;
+    const group =
+        if (builtin.target.os.tag == .linux)
+        node.u32FromValue(env, argv[1], "group") catch return null
+    else
+        node.i32FromValue(env, argv[1], "group") catch return null;
+
+    var ngroups: c_int = 50;
+    const ptr0 = std.c.malloc(@sizeOf(c_int) * @intCast(usize, ngroups)) orelse {
+        node.throwError(env, "error allocating memory");
+        return null;
+    };
+    defer std.c.free(ptr0);
+    var groups = if (builtin.target.os.tag == .linux)
+        @ptrCast([*]c_uint, @alignCast(std.meta.alignment([*]c_uint), ptr0))
+    else
+        @ptrCast([*]c_int, @alignCast(std.meta.alignment([*]c_int), ptr0));
+
+    const r = unistd.getgrouplist(@ptrCast([*:0]u8, &user), group, groups, &ngroups);
+    if (r == -1) {
+        const ptr = std.c.malloc(@sizeOf(c_int) * @intCast(usize, ngroups)) orelse {
+            node.throwError(env, "error allocating memory");
+            return null;
+        };
+        defer std.c.free(ptr);
+        groups = if (builtin.target.os.tag == .linux)
+            @ptrCast([*]c_uint, @alignCast(std.meta.alignment([*]c_uint), ptr))
+        else
+            @ptrCast([*]c_int, @alignCast(std.meta.alignment([*]c_int), ptr));
+
+        if (unistd.getgrouplist(@ptrCast([*:0]u8, &user), group, groups, &ngroups) == -1) {
+            node.throwError(env, "failed to get group list");
+            return null;
+        }
+    }
+    const array = node.createArray(env, @intCast(u32, ngroups), "getgrouplist output array") catch return null;
+    var i: u32 = 0;
+    while (i < ngroups) : (i += 1) {
+        const gid = if (builtin.target.os.tag == .linux)
+            node.create_u32(env, groups[i], "ith group") catch return null
+        else
+            node.create_i32(env, groups[i], "ith group") catch return null;
+
+        node.setElement(env, array, i, gid, "setting ith group") catch return null;
+    }
+    return array;
 }

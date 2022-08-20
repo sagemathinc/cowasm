@@ -29,6 +29,14 @@ export class RecvFromWasmAbstractBase {
     return this.view().getUint32(ptr, true);
   }
 
+  u32(ptr: number): number {
+    return this.view().getUint32(ptr, true);
+  }
+
+  i32(ptr: number): number {
+    return this.view().getInt32(ptr, true);
+  }
+
   pointer2(ptr: number): number {
     return new Uint32Array(this.memory.buffer)[ptr];
   }
@@ -62,5 +70,4 @@ export default class RecvFromWasm extends RecvFromWasmAbstractBase {
     this.memory = memory;
     this.callFunction = callFunction;
   }
-
 }

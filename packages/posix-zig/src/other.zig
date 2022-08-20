@@ -80,3 +80,4 @@ fn ctermid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     };
     return node.createStringFromPtr(env, s, "ctermid") catch return null;
 }
+

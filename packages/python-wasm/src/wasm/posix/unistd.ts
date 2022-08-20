@@ -462,6 +462,43 @@ export default function unistd({
       }
       return pause();
     },
+
+    // initgroups in node, so easier...
+    // int initgroups(const char *user, gid_t group);
+    initgroups: (userPtr: number, group: number): number => {
+      const { initgroups } = process;
+      if (initgroups == null) {
+        notImplemented("initgroups");
+      }
+      const user = recv.string(userPtr);
+      initgroups(user, group);
+      return 0;
+    },
+
+    // int getgrouplist(const char *user, gid_t group, gid_t *groups, int *ngroups);
+    getgrouplist: (
+      userPtr: number,
+      group: number,
+      groupPtr: number,
+      ngroupsPtr: number
+    ): number => {
+      const { getgrouplist } = posix;
+      if (getgrouplist == null) {
+        notImplemented("getgrouplist");
+      }
+      const user = recv.string(userPtr);
+      const ngroups = recv.i32(ngroupsPtr);
+      const v = getgrouplist(user, group);
+      const k = Math.min(v.length, ngroups);
+      for (let i = 0; i < k; i++) {
+        send.u32(groupPtr + 4 * i, v[i]);
+      }
+      send.i32(ngroupsPtr, v.length);
+      if (k < v.length) {
+        return -1;
+      }
+      return 0;
+    },
   };
 
   return unistd;
