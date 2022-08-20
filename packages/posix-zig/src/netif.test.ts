@@ -29,3 +29,14 @@ test("getting invalid interface names throws", () => {
     posix.if_nametoindex?.("");
   }).toThrow();
 });
+
+test("get all of the interfaces, and do a consistency check", () => {
+  const ni = posix.if_nameindex?.();
+  if (ni == null) {
+    throw Error("bug");
+  }
+  for (const x of ni) {
+    expect(posix.if_indextoname?.(x[0])).toBe(x[1]);
+    expect(posix.if_nametoindex?.(x[1])).toBe(x[0]);
+  }
+});

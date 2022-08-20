@@ -18,3 +18,12 @@ test("going back and forth between interface and name works", async () => {
   const name = eval(await repr("socket.if_indextoname(1)"));
   expect(eval(await repr(`socket.if_nametoindex('${name}')`))).toBe(1);
 });
+
+test("going back and forth for all interfaces works", async () => {
+  await exec("import json, socket");
+  const ni = JSON.parse(eval(await repr("json.dumps(socket.if_nameindex())")));
+  for (const [index, name] of ni) {
+    expect(eval(await repr(`socket.if_indextoname(${index})`))).toBe(name);
+    expect(eval(await repr(`socket.if_nametoindex("${name}")`))).toBe(index);
+  }
+});

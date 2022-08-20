@@ -118,7 +118,9 @@ interface PosixFunctions {
   // equivalent to the system calls in net/if.h, e.g., because it only returns
   // info about network interfaces that have been assigned an address.
   if_indextoname: (ifindex: number) => string;
-  if_nametoindex: (ifname:string) => number;
+  if_nametoindex: (ifname: string) => number;
+  // output is array of pairs (index, 'name')
+  if_nameindex: () => [number, string][];
 
   // other
   login_tty: (fd: number) => void;
