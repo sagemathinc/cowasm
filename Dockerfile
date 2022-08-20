@@ -3,7 +3,7 @@
 # and results in /python-wasm having everything built with
 # the test suite passing.
 
-FROM ubuntu:22.04
+FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive LANG=C.UTF-8 LC_ALL=C.UTF-8
 LABEL maintainer="William Stein <wstein@sagemath.com>"
