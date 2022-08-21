@@ -246,7 +246,10 @@ export default async function importWebAssemblyDlopen({
     // that's what I'm allocating.  I don't know how to confirm or
     // ensure this with options to clang yet with 100% certainty, though
     // obviously that's important to do.
-    const stack_alloc = malloc(65536);
+    // TODO!! This needs to be rethought -- I hit some tests errors
+    // and tried 16 * 64KB and they all got fixed, so clearly this is
+    // just completely wrong.  I think maybe a compiler option is critical.
+    const stack_alloc = malloc(65536*16);
     if (stack_alloc == 0) {
       throw Error("malloc failed for stack");
     }

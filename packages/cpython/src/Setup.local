@@ -20,11 +20,8 @@ readline readline.c -ledit  -ltermcap
 #_curses_panel _curses_panel.c   -lncurses -ltermcap
 
 *shared*
-# I tried building sqlite3 static, and it builds, but the interactive repl
-# libedit functionality breaks in that what you type isn't shown back.  No
-# clue how to debug that... and also we really don't want this to be in the
-# core anyways -- it should be loaded dynamically, since people will often
-# use python without sqlite.
+
+_bz2 _bz2module.c -I$(abs_srcdir)/../../../bzip2/dist/wasm/include/ $(abs_srcdir)/../../../bzip2/dist/wasm/lib/libbz2.a
 
 _sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microprotocols.c _sqlite/module.c _sqlite/prepare_protocol.c _sqlite/row.c _sqlite/statement.c  _sqlite/util.c -I$(abs_srcdir)/../../../sqlite/dist/wasm/include/ $(abs_srcdir)/../../../sqlite/dist/wasm/lib/libsqlite3.a
 

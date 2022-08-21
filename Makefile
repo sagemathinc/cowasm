@@ -7,7 +7,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 all: python-wasm webpack terminal website
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi sqlite
+packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi sqlite bzip2
 	cd packages/cpython && make all
 .PHONY: cpython
 
@@ -105,8 +105,14 @@ packages/zlib/${BUILT}: zig
 	cd packages/zlib && make all
 .PHONY: zlib
 
+bzip2: packages/bzip2/${BUILT}
+packages/bzip2/${BUILT}: zig
+	cd packages/bzip2 && make all
+.PHONY: bzip2
+
 clean:
 	cd packages/bench && make clean
+	cd packages/bzip2 && make clean
 	cd packages/cpython && make clean
 	cd packages/dylink && make clean
 	cd packages/libedit && make clean
