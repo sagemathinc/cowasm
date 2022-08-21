@@ -14,7 +14,7 @@ export default function stubProxy(env, functionViaPointer: (ptr) => Function | u
         log("using function via pointer for ", key);
         return f;
       }
-      console.warn(`\n\n* WARNING: using UNSAFE stub for ${String(key)}.  Please fix ASAP!\n`);
+      console.warn(`\n* WARNING: creating UNSAFE stub for ${String(key)}.  Please fix ASAP!`);
       if (logUse.enabled || logFirst.enabled) {
         return (...args) => {
           logStubUse(key, args);

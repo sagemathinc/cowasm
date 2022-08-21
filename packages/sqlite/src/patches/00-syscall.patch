@@ -1,0 +1,69 @@
+diff --git a/src/os_unix.c b/src/os_unix.c
+index b933de3..61490f2 100644
+--- a/src/os_unix.c
++++ b/src/os_unix.c
+@@ -549,6 +549,67 @@ static struct unix_syscall {
+
+ }; /* End of the overrideable system calls */
+
++// WebAssembly note: these overrideable system calls are not possible with
++// webassembly **with performance** since you'll just get the error
++// "null function or function signature mismatch" since WASM doesn't allow
++// incompatible signatures with functions.  I think emscripten/pyodide gets
++// around this by proxying the call through Javascript, rather than using
++// a direct function pointer from the WASM function pointer table.  However,
++// in my benchmarks, that can be a 100x performance penalty, so not a good option.
++// We don't need overrideable system calls anyways, so we just undo the above.
++
++#undef osOpen
++#define osOpen open
++#undef osClose
++#define osClose close
++#undef osAccess
++#define osAccess access
++#undef osGetcwd
++#define osGetcwd getcwd
++#undef osStat
++#define osStat stat
++#undef osFstat
++#define osFstat fstat
++#undef osFtruncate
++#define osFtruncate ftruncate
++#undef osFcntl
++#define osFcntl fcntl
++#undef osRead
++#define osRead read
++#undef osPread
++#define osPread pread
++#undef osPread64
++#define osPread64 pread64
++#undef osWrite
++#define osWrite write
++#undef osPwrite
++#define osPwrite pwrite
++#undef osPwrite64
++#define osPwrite64 pwrite64
++#undef osFchmod
++#define osFchmod fchmod
++#undef osFallocate
++#define osFallocate fallocate
++#undef osUnlink
++#define osUnlink unlink
++#undef osOpendirectory
++#define osOpendirectory openDirectory
++#undef osMkdir
++#define osMkdir mkdir
++#undef osRmdir
++#define osRmdir rmdir
++#undef osFchown
++#define osFchown fchown
++#undef osGeteuid
++#define osGeteuid geteuid
++#undef osReadlink
++#define osReadlink readlink
++#undef osLstat
++#define osLstat lstat
++#undef osIoctl
++#define osIoctl ioctl
++
++

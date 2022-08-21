@@ -148,8 +148,7 @@ BLDSHARED = ${BLDSHARED_PROD}
 
 ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
-	# - without-pymalloc below because pymalloc uses mmap and munmap, and WASI/our libc doesn't provide them.
-	#   We could try to write them ourselves (?)...
+	# - with-pymalloc it actually works and seems faster
 	# - We use "zig cc -target wasm32-wasi" instead of "zig cc -target wasm32-wasi-musl" since the broken
 	#   Python configure.ac script outputs wasm32-wasi instead of wasm32-wasi-musl as the PLATFORM_TRIPLE.
 	#   This might be something to fix and upstream, but for now, just not using a triple works.

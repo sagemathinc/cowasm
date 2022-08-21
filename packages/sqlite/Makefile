@@ -24,10 +24,11 @@ ${BUILD}/wasm: ${BUILD}/source.tar.gz
 	cd ${BUILD} && tar xf source.tar.gz -C wasm --strip-components=1
 	cp ${SRC}/config.site ${BUILD}/wasm/
 	cp ${POSIX_WASM}/posix-wasm.h ${BUILD}/wasm/
+	cd ${BUILD}/wasm && cat ${CWD}/src/patches/00-syscall.patch | patch -p1
 
 # Notes on flags below.
 #   - ?? MAYBE ?? Without -Oz (optimize for size rather than speed), we get 'Function addresses with offsets not supported' from LLVM during final link.
-#     I put the -Oz flag into CFLAGS upon studying what the emscripten port uses.  This might not be true now
+#     I put the -Oz flag into CFLAGS upon studying what the emscripten port uses.  This might not be true now.
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && \
 		CC="zig-fPIC cc" \
