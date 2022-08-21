@@ -153,6 +153,9 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# - In Python source they lower the default recursion limit; however, we don't need that since our
 	#   runtime is Chromium, not wasitime and we can handle huge limits (see Include/internal/pycore_ceval.h).
 	# - enable-ipv6, since I put a lot of work into this for posix-zig!
+	# --with-pkg-config=no, this is CRITICAL; otherwise, if pkg-config is installed, then python's build system
+	#   will use it and pick up system-wide libraries that are not supported by WASM, which is a huge pain
+	#   that leads to subtle bugs.  One example of this is "uuid". (TODO: bug report: should be disabled when cross compiling?)
 	cd ${BUILD_WASM} && \
 		CC="zig cc -Oz -target wasm32-wasi  " \
 		CXX="zig c++ -Oz -target wasm32-wasi " \
@@ -167,6 +170,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 			--enable-optimizations \
 			--enable-ipv6 \
 			--disable-shared \
+			--with-pkg-config=no \
 			--with-readline=editline \
 			--with-build-python=${DIST_NATIVE}/bin/python3 \
 			--with-pymalloc \
