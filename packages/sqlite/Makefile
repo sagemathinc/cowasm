@@ -1,5 +1,13 @@
 # See https://sqlite.org/src/doc/trunk/README.md
 # https://www.sqlite.org/src/tarball/sqlite.tar.gz?r=release
+# NOTE: I've got "The server load is currently too high. Please try again later." for extended periods of
+# time, so getting sqlite source from sqlite.org is NOT dependable at all. Also, they aren't versioned.
+# hence we use github instead (noting https://stackoverflow.com/questions/46060010/download-github-release-with-curl).
+#
+# See https://github.com/sqlite/sqlite/tags for versions.
+#
+VERSION = 3.39.2
+
 
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 export PATH := ${CWD}/../../bin:${PATH}
@@ -16,7 +24,7 @@ all:  wasm
 
 ${BUILD}/source.tar.gz:
 	mkdir -p ${BUILD}
-	cd ${BUILD} && curl https://www.sqlite.org/src/tarball/sqlite.tar.gz?r=release -o source.tar.gz
+	cd ${BUILD} && curl -L https://github.com/sqlite/sqlite/archive/refs/tags/version-${VERSION}.tar.gz -o source.tar.gz
 
 ${BUILD}/wasm: ${BUILD}/source.tar.gz
 	rm -rf ${BUILD}/wasm
