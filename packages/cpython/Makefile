@@ -186,8 +186,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	cd ${BUILD_WASM} && make
 	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld via the zig-fPIC script.
 	# First remove everything that needs to be built -fPIC or build will fail; add more here as we support more modules.
-	cd ${BUILD_WASM}/Modules && \
-		rm -f _sqlite/*.o _testimportmultiple*.o _testmultiphase*.o xxlimited*.o
+	cd ${BUILD_WASM}/Modules && find . -name "*.o" -type f -delete
 	# Do the build, but with modified compiler, etc.:
 	cd ${BUILD_WASM} && make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" \
 							   CC="zig-fPIC cc" CXX="zig-fPIC c++" BLDSHARED="${BLDSHARED}"
@@ -213,7 +212,7 @@ ${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
 	# **TODO:** It is very silly for these to be in the same zip file, obviously, because that means they have to be downloaded,
 	# so we should just put them in the main binary.  We'll change that when things are working.
 	mkdir ${DIST_WASM}/lib/dist/lib-dynload/
-	cp ${DIST_WASM}/lib/python3.11/lib-dynload/*.so ${DIST_WASM}/lib/dist/lib-dynload/
+	cp -v ${DIST_WASM}/lib/python3.11/lib-dynload/*.so ${DIST_WASM}/lib/dist/lib-dynload/
 	# Unfortunately, wasm-strip removes the critical custom section that makes the so file useful, since NotImplementedError
 	#      https://reviews.llvm.org/D73820
 	#find ${DIST_WASM}/lib/dist/lib-dynload -type f -name "*.so" | xargs -n1 ${CWD}/node_modules/.bin/wasm-strip

@@ -13,6 +13,14 @@ int fiprintf(FILE *restrict stream, const char *restrict format, ...) {
 }
 PUBLIC(fiprintf)
 
+int __small_fprintf(FILE *restrict stream, const char *restrict format, ...) {
+  va_list va;
+  va_start(va, format);
+  vfprintf(stream, format, va);
+  va_end(va);
+}
+PUBLIC(__small_fprintf)
+
 int siprintf(char *restrict s, const char *restrict format, ...) {
   va_list va;
   va_start(va, format);
