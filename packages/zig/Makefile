@@ -6,7 +6,18 @@ CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 # Find the latest version at https://ziglang.org/download/
 # This is for pre-release
+
 VERSION = 0.10.0-dev.3629+2ccaa5414
+
+# WARNING: when 0.10.0-dev.3659 appeared, they massively broke
+# everything with a huge merge as explained here:
+#   https://github.com/ziglang/zig/wiki/Self-Hosted-Compiler-Upgrade-Guide
+# Absolutely everything I've attempted to compile has nearly immediately
+# segfaulted with this version, even with the -fstage1 flag. Wow.
+# Hopefully it will stabilize after a while. This of course means, we
+# can't possibly upgrade our use of zig for a while.
+## VERSION = 0.10.0-dev.3659+e5e6eb983
+
 
 # Using sed because uname -s --> x86_64 or arm64, but need aarch64
 ARCH = $(shell uname -m | sed s/arm64/aarch64/)
