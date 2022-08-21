@@ -3,7 +3,7 @@ const log = debug("stub");
 const logUse = debug("stub:use"); // log all use of the stub
 const logFirst = debug("stub:first"); // log first use of the stub
 
-export default function stubProxy(env, functionViaPointer: (ptr) => Function) {
+export default function stubProxy(env, functionViaPointer: (ptr) => Function | undefined) {
   return new Proxy(env, {
     get(target, key) {
       if (key in target) {

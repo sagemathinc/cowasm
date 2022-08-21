@@ -58,7 +58,7 @@ export default async function importWebAssemblyDlopen({
   }
 
   function symbolViaPointer(key: string) {
-    log("functionViaPointer", key);
+    log("symbolViaPointer", key);
     const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
     if (f == null) return;
     return (f as Function)();
