@@ -118,6 +118,7 @@ ${BUILD_WASM}/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 	# Also copy the config.site, which answers some questions needed for
 	# cross compiling, without which ./configure won't work.
 	ln -s ${CWD}/src/rebuild ${BUILD_WASM}/rebuild
+	ln -s ${CWD}/src/rebuild-shared ${BUILD_WASM}/rebuild-shared
 	cp src/config.site ${BUILD_WASM}
 	cp src/Setup.local ${BUILD_WASM}/Modules/Setup.local
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
@@ -136,6 +137,10 @@ ${BUILD_WASM}/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 # later when packaging things up.  Unfortunately, wasm-strip only implements "strip everything",
 # not just debug symbols.  There's code here  https://reviews.llvm.org/D73820 for the general
 # case, but I guess it isn't merged.
+# NOTE: if you're debugging, do
+#    cd build/wasm
+#    ./rebuild-shared
+# to rebuild the shared modules. This always builds them with debugging symbols.
 BLDSHARED_DEBUG = zig wasm-ld --experimental-pic -shared
 BLDSHARED_PROD = ${BLDSHARED_DEBUG}  -s
 # what we will use:

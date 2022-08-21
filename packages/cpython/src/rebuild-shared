@@ -1,20 +1,16 @@
 #!/usr/bin/env bash
 
 set -ev
-echo "Rebuild and run shared library of python-wasm"
+echo "Rebuild and run shared modules of python-wasm"
 
 export PATH=`pwd`/../../../../bin/:$PATH
 
-touch Modules/readline.c
+# TODO:
 touch Modules/_sqlite/*.c
 
-rm -f build/lib.wasi-wasm32-3.11/_sqlite3.cpython-311-wasm32-emscripten.so
-make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared"
+rm -f Modules/*.so
 
-# sqlite
-cp build/lib.wasi-wasm32-3.11/_sqlite3.cpython-311-wasm32-emscripten.so ../../dist/wasm/lib/python3.11/lib-dynload/_sqlite3.cpython-311-wasm32-wasi.so
+make CC="zig-fPIC cc" CXX="zig-fPIC c++"  CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" BLDSHARED="zig wasm-ld --experimental-pic -shared"
 
-# readline
-cp build/lib.wasi-wasm32-3.11/readline.cpython-311-wasm32-emscripten.so ../../dist/wasm/lib/python3.11/lib-dynload/readline.cpython-311-wasm32-wasi.so
+cp -v Modules/*.so ../../dist/wasm/lib/python3.11/lib-dynload/
 
-cp libpython3.11.a ../../dist/wasm-shared/lib/
