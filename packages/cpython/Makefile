@@ -240,7 +240,13 @@ RUN_TESTS =  _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 
 test-all: wasm native
 	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS}
-.PHONY: test
+.PHONY: test-all
+
+TEST=test_long
+test-one: wasm native
+	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
+	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} ${TEST}
+.PHONY: test-one
 
 
 # I got this list using this on the output:
