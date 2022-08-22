@@ -239,10 +239,10 @@ RUN_TESTS =  _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 	./Tools/scripts/run_tests.py
 
 .PHONY: test
-test:
+test: wasm native
 	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS}
 
-test-using-worker:
+test-using-worker: wasm native
 	cd ${BUILD_WASM} && PYTHONHOME=${DIST_WASM} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS}
 
 
