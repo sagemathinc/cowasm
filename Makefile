@@ -132,8 +132,11 @@ clean:
 	cd packages/zlib && make clean
 
 
-test: test-bench test-dylink test-posix-zig test-python-wasm
+test: test-cpython test-bench test-dylink test-posix-zig test-python-wasm
 .PHONY: test
+
+test-cpython:
+	cd packages/cpython
 
 test-bench: python-wasm
 	cd packages/bench && make test

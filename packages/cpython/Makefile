@@ -238,13 +238,49 @@ RUN_TESTS =  _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 	${DIST_NATIVE}/bin/python3 \
 	./Tools/scripts/run_tests.py
 
-.PHONY: test
-test: wasm native
+test-all: wasm native
 	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS}
+.PHONY: test-all
 
-test-using-worker: wasm native
-	cd ${BUILD_WASM} && PYTHONHOME=${DIST_WASM} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS}
+TEST=test_long
+test-one: wasm native
+	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
+	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} ${TEST}
+.PHONY: test-one
 
+
+# I got this list using this on the output:
+#     grep passed out | awk '{print $(NF - 1)}' | tr '\n' ' '
+SUPPORTED_TEST_DESC = "all **supported** cpython test suites -- this is about 80% of the full cpython test suite."
+SUPPORTED_TESTS = test_numeric_tower test_unicode_identifiers test_typechecks test___future__ test_buffer test_getpath test_class test_sundry test_property test_datetime test_ordered_dict test_popen test_string_literals test_struct test_type_cache test_univnewlines test_unary test_gettext test_frame test_nntplib test_bdb test_email test_timeout test_index test_set test_int_literal test_getpass test_codecmaps_tw test_genericpath test_platform test_defaultdict test_iterlen test_cmd_line_script test_float test_exception_hierarchy test_codecmaps_cn test_type_annotations test_dict_version test_pyclbr test_abstract_numbers test_dataclasses test_xdrlib test_getopt test_keyword test_configparser test_mailcap test_cmd test_codecmaps_hk test_utf8_mode test_binascii test_wave test_int test_http_cookiejar test_site test_subclassinit test_bigmem test_gc test_zlib test_cgitb test_dynamic test_dis test_future test_future3 test_list test_picklebuffer test_marshal test_random test_deque test_osx_env test_cmath test_crypt test_sys test_string test_context test_doctest2 test_ucn test_urlparse test_warnings test_exception_group test_positional_only_arg test_functools test_long test_pep646_syntax test_codeop test_contains test_zipimport test_slice test_codecencodings_cn test_calendar test_syntax test_weakref test_asdl_parser test_fractions test_finalization test_tokenize test_bigaddrspace test_errno test_fnmatch test_codecencodings_hk test_sched test_trace test_codecmaps_jp test_operator test_bytes test_bufio test_iter test_unparse test_array test_sax test_strptime test_multibytecodec test_netrc test_funcattrs test_print test_with test_binop test_pickle test_http_cookies test_mimetypes test_hashlib test_patma test_cppext test_peg_generator test_named_expressions test_builtin test_contextlib test_xml_dom_minicompat test_pow test_codecencodings_kr test_decorators test__osx_support test_unpack test_difflib test_unpack_ex test_eof test_colorsys test_utf8source test_unicodedata test_secrets test_ipaddress test_htmlparser test_memoryview test_textwrap test_cgi test_copyreg test_bool test_weakset test_atexit test_html test_bisect test_code_module test_enumerate test_fileutils test_type_comments test_codeccallbacks test_genericclass test_copy test_codecencodings_jp test_super test_opcodes test_pulldom test_itertools test_file test___all__ test_future5 test_minidom test_codecencodings_tw test__locale test_stringprep test_dictcomps test_unicode test_dict test_codecmaps_kr test_robotparser test_sndhdr test_xxtestfuzz test_structmembers test_strtod test_re test_pprint test_keywordonlyarg test_collections test_types test_range test_imghdr test_ast test_metaclass test_pickletools test_math test_format test_isinstance test_tuple test_statistics test_hmac test_yield_from test_aifc test_uu test_symtable test_fstring test_exception_variations test_except_star test_shlex test_csv test_descrtut test_descr test_userstring test_crashers test_sort test_setcomps test_eintr test_graphlib test_ntpath test_augassign test_frozen test_genericalias test__opcode test_enum test_coroutines test_getargs2 test_memoryio test_extcall test_xml_etree_c test_largefile test_opcache test_compare test_pyexpat test_json test_locale test_strftime test_argparse test_baseexception test_codecencodings_iso2022 test_decimal test_grammar test_dynamicclassattribute test_generator_stop test_complex test_c_locale_coercion test_listcomps test_linecache test_abc test_optparse test_global test_timeit test_sunau test_lltrace test_pkg test_module test_structseq test_threadsignals test_genexps test_charmapcodec test_flufl test_traceback test_audioop test_hash test_quopri test_scope test_reprlib test_dictviews test_audit test_script_helper test_code test_raise test_call test_rlcompleter test_peepholer test_heapq test_future4 test_import test_longexp test_base64
+
+test: wasm native
+	echo "Running ${SUPPORTED_TEST_DESC}"
+	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j8 ${SUPPORTED_TESTS}
+	echo "Ran ${SUPPORTED_TEST_DESC}"
+.PHONY: test
+
+# One test fails here due to the fact that the PYTHONHOME is different in webworker mode (since the files are in the zip archive).
+test-worker: wasm native
+	echo "Running using webworker -- ${SUPPORTED_TEST_DESC}"
+	cd ${BUILD_WASM} && PYTHONHOME=${DIST_WASM} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} -j8 ${SUPPORTED_TESTS}
+	echo "Ran using webworker -- ${SUPPORTED_TEST_DESC}"
+
+FAILED_TEST_DESC = "all **unsuppported** and known failing cpython test suites -- this is about 20% of the full cpython test suite.  Help fix these, please!"
+FAILED_TESTS = test_bz2 test_capi test_codecs test_compile test_compileall test_cprofile test_dbm test_dbm_dumb test_distutils test_ensurepip test_exceptions test_filecmp test_fileinput test_fileio test_generators test_glob test_gzip test_imp test_importlib test_inspect test_io test_lib2to3 test_logging test_lzma test_modulefinder test_openpty test_os test_pathlib test_pipes test_pkgutil test_plistlib test_posix test_posixpath test_profile test_pstats test_py_compile test_pydoc test_readline test_richcmp test_runpy test_shelve test_shutil test_signal test_source_encoding test_sqlite3 test_stat test_support test_sys_setprofile test_sysconfig test_tabnanny test_tarfile test_tempfile test_time test_tomllib test_tracemalloc test_typing test_unicode_file test_unicode_file_functions test_unittest test_userdict test_userlist test_uuid test_xml_etree test_zipapp test_zipfile test_zoneinfo
+
+test-failed:  wasm native
+	echo "Running ${FAILED_TEST_DESC}"
+	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} ${FAILED_TESTS}
+	echo "Ran ${FAILED_TEST_DESC}"
+
+FAILED_TEST_DESC = "all **skipped** cpython test suites.  Extend what cpython wasm can do to include more of these."
+SKIPPED_TESTS = test__xxsubinterpreters test_asyncgen test_asynchat test_asyncio test_asyncore test_check_c_globals test_clinic test_cmd_line test_concurrent_futures test_contextlib_async test_ctypes test_curses test_dbm_gnu test_dbm_ndbm test_devpoll test_doctest test_docxmlrpc test_dtrace test_embed test_epoll test_faulthandler test_fcntl test_file_eintr test_fork1 test_ftplib test_gdb test_grp test_httplib test_httpservers test_idle test_imaplib test_interpreters test_ioctl test_kqueue test_launcher test_mailbox test_mmap test_msilib test_multiprocessing_fork test_multiprocessing_forkserver test_multiprocessing_main_handling test_multiprocessing_spawn test_nis test_ossaudiodev test_pdb test_poll test_poplib test_pty test_pwd test_queue test_regrtest test_repl test_resource test_select test_selectors test_smtpd test_smtplib test_smtpnet test_socket test_socketserver test_spwd test_ssl test_stable_abi_ctypes test_startfile test_subprocess test_sys_settrace test_syslog test_tcl test_telnetlib test_thread test_threadedtempfile test_threading test_threading_local test_tix test_tk test_tools test_ttk_guionly test_ttk_textonly test_turtle test_urllib test_urllib2 test_urllib2_localnet test_urllib2net test_urllib_response test_urllibnet test_venv test_wait3 test_wait4 test_webbrowser test_winconsoleio test_winreg test_winsound test_wsgiref test_xmlrpc test_xmlrpc_net test_xxlimited test_zipfile64 test_zipimport_support
+
+test-skipped:  wasm native
+	echo "Running ${SKIPPED_TEST_DESC}"
+	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} ${SKIPPED_TESTS}
+	echo "Ran ${SKIPPED_TEST_DESC}"
 
 # Cleaning up
 

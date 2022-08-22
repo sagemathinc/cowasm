@@ -9,8 +9,8 @@ find Modules -name "*.o" -type f -delete
 find Modules -name "*.so" -type f -delete
 
 # Keep this in sync with ../Makefile
-make CC="zig-fPIC cc" \
-     CXX="zig-fPIC c++" \
+make CC="zig-fPIC cc " \
+     CXX="zig-fPIC c++ " \
      CONFIGURE_LDFLAGS_NODIST="" \
      LINKFORSHARED="-shared" \
      BLDSHARED="zig wasm-ld --experimental-pic -shared"
