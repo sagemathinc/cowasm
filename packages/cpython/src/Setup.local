@@ -9,7 +9,6 @@
 *static*
 
 readline readline.c -ledit  -ltermcap
-_posixsubprocess _posixsubprocess.c
 
 
 # Uncomment to build curses.  This works.  But the curses .py files aren't in the
@@ -22,6 +21,8 @@ _posixsubprocess _posixsubprocess.c
 #_curses_panel _curses_panel.c   -lncurses -ltermcap
 
 *shared*
+
+_posixsubprocess _posixsubprocess.c
 
 _bz2 _bz2module.c -I$(abs_srcdir)/../../../bzip2/dist/wasm/include/ $(abs_srcdir)/../../../bzip2/dist/wasm/lib/libbz2.a
 
