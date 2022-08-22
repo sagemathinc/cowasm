@@ -136,7 +136,7 @@ test: test-cpython test-bench test-dylink test-posix-zig test-python-wasm
 .PHONY: test
 
 test-cpython:
-	cd packages/cpython
+	cd packages/cpython && make test
 
 test-bench: python-wasm
 	cd packages/bench && make test
