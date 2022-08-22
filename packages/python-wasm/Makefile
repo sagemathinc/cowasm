@@ -82,6 +82,7 @@ ${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C}
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
 		-rdynamic \
+		--stack 1048576 \
 		-target wasm32-wasi \
 		--import-memory --import-table \
 		${PYTHON_WASM_LIBS} \

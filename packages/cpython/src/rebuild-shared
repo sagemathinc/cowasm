@@ -5,12 +5,15 @@ echo "Rebuild and run shared modules of python-wasm"
 
 export PATH=`pwd`/../../../../bin/:$PATH
 
-# TODO:
-touch Modules/_sqlite/*.c
+find Modules -name "*.o" -type f -delete
+find Modules -name "*.so" -type f -delete
 
-rm -f Modules/*.so
-
-make CC="zig-fPIC cc" CXX="zig-fPIC c++"  CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" BLDSHARED="zig wasm-ld --experimental-pic -shared"
+# Keep this in sync with ../Makefile
+make CC="zig-fPIC cc" \
+     CXX="zig-fPIC c++" \
+     CONFIGURE_LDFLAGS_NODIST="" \
+     LINKFORSHARED="-shared" \
+     BLDSHARED="zig wasm-ld --experimental-pic -shared"
 
 cp -v Modules/*.so ../../dist/wasm/lib/python3.11/lib-dynload/
 

@@ -141,8 +141,9 @@ ${BUILD_WASM}/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 #    cd build/wasm
 #    ./rebuild-shared
 # to rebuild the shared modules. This always builds them with debugging symbols.
+# Keep this in sync with src/rebuild-shared
 BLDSHARED_DEBUG = zig wasm-ld --experimental-pic -shared
-BLDSHARED_PROD = ${BLDSHARED_DEBUG}  -s
+BLDSHARED_PROD = ${BLDSHARED_DEBUG}  -s --compress-relocations
 # what we will use:
 BLDSHARED = ${BLDSHARED_PROD}
 

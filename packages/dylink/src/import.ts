@@ -6,6 +6,49 @@ const log = debug("dylink");
 
 const STACK_ALIGN = 16; // copied from emscripten
 
+/*
+** Our approach to the stack **
+
+It took me a long time to understand __stack_pointer in WASM and with dynamic
+linking, since no docs really explained it and I sort of hit a wall with the
+emscripten sources, since the relevant code appears to be in assembly, and
+anyway I have to operate in the constraints of what zig provides. The way I
+understood __stack_pointer is by creating a bunch of sample programs and study
+the output of wasm-decompile and wasm2wat.   First some remarks:
+
+- the stack size for the main executable is controlled at compile time by zig.
+It's by default 1MB when you use "zig build-exe", but it's only 64KB
+when you use "zig build-lib".   This difference is probably a bug, but a
+rememedy is type include "--stack 1048576 " in the command line. Also, I know
+of no way to create a WebAssembly.Global that is the main __stack_pointer.
+Maybe emscripten does via assmebly code, but I can't tell.
+
+- The stack grows *DOWN*, i.e., if the stack is 1MB then __stack_pointer
+gets set by default to 1048576 (= 1MB), and at the beginning of each
+function, the VM grabs the current stack pointer, then substracts off
+how much space will be needed for running that function, then starts
+working with that (so it can go up), and then resets it to where it was.
+
+- Since I have no idea how to get the current __stack_pointer for ther main
+module, here we allocate a new chunk of memory on the heap for each dynamic
+library to use as its own stack. We then pass in __stack_pointer as a value
+at the very end of that memory.   The __stack_pointer's in each dynamic
+library and in the module are just completely different variables in different
+WASM instances that are all using the same shared memory.  Everybody has
+their own stacks and they don't overlap with each other at all. This
+seems to work well, given our constaints, and hopefully doesn't waste too
+much memory.
+
+NOTE: There arguments about what stack size to use here -- it's still 5MB in
+emscripten today, and in zig it is 1MB:
+ - https://github.com/emscripten-core/emscripten/pull/10019
+ - https://github.com/ziglang/zig/issues/3735
+*/
+
+// Stack size for imported dynamic libraries -- we use 1MB. This is
+// a runtime parameter.
+const STACK_SIZE = 1048576; // 1MB;  to use 64KB it would be 65536.
+
 interface Env {
   __indirect_function_table?: WebAssembly.Table;
   memory?: WebAssembly.Memory;
@@ -242,14 +285,8 @@ export default async function importWebAssemblyDlopen({
     if (alloc == 0) {
       throw Error("malloc failed (you cannot use a stub for malloc)");
     }
-    // TODO: I read that the stack is 64KB by default, typically, so
-    // that's what I'm allocating.  I don't know how to confirm or
-    // ensure this with options to clang yet with 100% certainty, though
-    // obviously that's important to do.
-    // TODO!! This needs to be rethought -- I hit some tests errors
-    // and tried 16 * 64KB and they all got fixed, so clearly this is
-    // just completely wrong.  I think maybe a compiler option is critical.
-    const stack_alloc = malloc(65536*16);
+
+    const stack_alloc = malloc(STACK_SIZE);
     if (stack_alloc == 0) {
       throw Error("malloc failed for stack");
     }
@@ -274,7 +311,10 @@ export default async function importWebAssemblyDlopen({
           value: "i32",
           mutable: true,
         },
-        stack_alloc
+        // This is a pointer to the top of the memory we allocated
+        // for this dynamic library's stack, since the stack grows
+        // down, in terms of memory addresses.
+        stack_alloc + STACK_SIZE
       ),
     };
     log("env =", env);
