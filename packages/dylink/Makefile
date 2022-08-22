@@ -62,7 +62,6 @@ dist/wasm/libdylink.a: build/wasm/libdylink.o
 test: wasm-export dist/.built
 	npm ci
 	npm run build
-	cd test/freestanding && make test
 	cd test/wasi && make test
 	cd test/python-extension && make test
 	cd test/malloc && make test
@@ -72,7 +71,6 @@ test: wasm-export dist/.built
 test-native-macos:
 	npm ci
 	npm run build
-	cd test/freestanding && make test-native-macos
 	cd test/wasi && make test-native-macos
 	cd test/python-extension && make test-native-macos
 	cd test/malloc && make test-native-macos
@@ -80,7 +78,6 @@ test-native-macos:
 
 clean:
 	rm -rf build dist tsconfig.tsbuildinfo node_modules
-	cd test/freestanding && make clean
 	cd test/wasi && make clean
 	cd test/python-extension && make clean
 	cd test/malloc && make clean
