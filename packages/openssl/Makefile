@@ -4,8 +4,7 @@ DIST_NATIVE = ${CWD}/dist/native
 DIST_WASM = ${CWD}/dist/wasm
 
 .PHONEY: all
-all: ${DIST_NATIVE}/.built
-
+all: wasm
 
 ${BUILD}/openssl:
 	mkdir -p ${BUILD}
@@ -25,6 +24,22 @@ ${DIST_NATIVE}/.built: ${BUILD}/native
 
 .PHONY: native
 native: ${DIST_NATIVE}/.built
+
+
+## WASM library
+
+${BUILD}/wasm: ${BUILD}/openssl
+	rm -rf ${BUILD}/wasm
+	cd ${BUILD} && git clone openssl wasm
+
+${DIST_WASM}/.built: ${BUILD}/wasm
+	cd ${BUILD}/wasm && CC="zig-fPIC cc" AR="zig ar" ./Configure --prefix=${DIST_WASM}
+	cd ${BUILD}/wasm && make -j8
+	cd ${BUILD}/wasm && make install
+	touch ${DIST_WASM}/.built
+
+.PHONY: wasm
+wasm: ${DIST_WASM}/.built
 
 clean:
 	rm -rf build dist
