@@ -25,7 +25,7 @@ async function main() {
     importWebAssemblySync,
     importObject,
     readFileSync,
-    stub: true,
+    stub: "silent",
   });
   wasi.start(instance, memory);
   exports.instance = instance;

@@ -3,7 +3,11 @@ const log = debug("stub");
 const logUse = debug("stub:use"); // log all use of the stub
 const logFirst = debug("stub:first"); // log first use of the stub
 
-export default function stubProxy(env, functionViaPointer: (ptr) => Function | undefined) {
+export default function stubProxy(
+  env,
+  functionViaPointer: (ptr) => Function | undefined,
+  type?: "silent" | "warn"
+) {
   return new Proxy(env, {
     get(target, key) {
       if (key in target) {
@@ -14,7 +18,13 @@ export default function stubProxy(env, functionViaPointer: (ptr) => Function | u
         log("using function via pointer for ", key);
         return f;
       }
-      console.warn(`\n* WARNING: creating UNSAFE stub for ${String(key)}.  Please fix ASAP!`);
+      if (type == "warn") {
+        console.warn(
+          `\n* WARNING: creating UNSAFE stub for ${String(
+            key
+          )}.  Please fix ASAP!`
+        );
+      }
       if (logUse.enabled || logFirst.enabled) {
         return (...args) => {
           logStubUse(key, args);

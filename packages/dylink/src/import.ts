@@ -70,7 +70,7 @@ interface Input {
     importObject: object
   ) => WebAssembly.Instance;
   readFileSync: (path: string) => any; // todo?
-  stub?: boolean; // if true, automatically generate stub functions.
+  stub?: "warn" | "silent"; // if warn, automatically generate stub functions but with a huge warning; if silent, just silently create stubs.
 }
 
 export default async function importWebAssemblyDlopen({
@@ -463,7 +463,7 @@ export default async function importWebAssemblyDlopen({
   const importObjectWithStub = stub
     ? {
         ...importObject,
-        env: stubProxy(importObject.env, functionViaPointer),
+        env: stubProxy(importObject.env, functionViaPointer, stub),
       }
     : importObject;
   const mainInstance =

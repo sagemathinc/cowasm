@@ -28,7 +28,7 @@ async function main() {
     path: "app.wasm",
     importWebAssemblySync,
     importObject,
-    stub: true,
+    stub: "silent",
     readFileSync
   });
   wasi.start(instance, memory);
