@@ -35,7 +35,7 @@ ${DIST_NATIVE}/.built: ${BUILD}/native
 native: ${DIST_NATIVE}/.built
 
 ##################
-# WASM - STATIC
+# WASM
 ##################
 ${BUILD}/wasm: ${BUILD}/termcap.tar.gz
 	rm -rf ${BUILD}/wasm
@@ -43,7 +43,12 @@ ${BUILD}/wasm: ${BUILD}/termcap.tar.gz
 	cd ${BUILD} && tar xf termcap.tar.gz -C wasm --strip-components=1
 
 ${DIST_WASM}/.built: ${BUILD}/wasm
-	cd ${BUILD}/wasm && RANLIB="zig ranlib" AR="zig ar" CC="zig cc -Oz -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" CXX="zig c++ -Oz -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" ./configure  --build=`./build-aux/config.guess` --host=none --prefix="${DIST_WASM}"
+	cd ${BUILD}/wasm && \
+		RANLIB="zig ranlib" \
+		AR="zig ar" \
+		CC="zig-fPIC cc -Oz" \
+		CXX="zig-fPIC c++" \
+		./configure  --build=`./build-aux/config.guess` --host=none --prefix="${DIST_WASM}"
 	cd ${BUILD}/wasm && make -j8
 	cd ${BUILD}/wasm && make -j8 install
 	touch ${DIST_WASM}/.built
@@ -51,22 +56,6 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 .PHONY: wasm
 wasm: ${DIST_WASM}/.built
 
-##################
-# WASM - SHARED
-##################
-${BUILD}/wasm-shared: ${BUILD}/termcap.tar.gz
-	rm -rf ${BUILD}/wasm-shared
-	mkdir -p ${BUILD}/wasm-shared
-	cd ${BUILD} && tar xf termcap.tar.gz -C wasm-shared --strip-components=1
-
-${DIST_WASM_SHARED}/.built: ${BUILD}/wasm-shared
-	cd ${BUILD}/wasm-shared && RANLIB="zig ranlib" AR="zig ar" CC="zig-fPIC cc -Oz" CXX="zig-fPIC c++" ./configure  --build=`./build-aux/config.guess` --host=none --prefix="${DIST_WASM_SHARED}"
-	cd ${BUILD}/wasm-shared && make -j8
-	cd ${BUILD}/wasm-shared && make -j8 install
-	touch ${DIST_WASM_SHARED}/.built
-
-.PHONY: wasm-shared
-wasm-shared: ${DIST_WASM_SHARED}/.built
 
 clean:
 	rm -rf build dist

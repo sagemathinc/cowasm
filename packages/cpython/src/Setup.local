@@ -2,13 +2,11 @@
 # are only adding things here because they are explicitly removed for the emscripten
 # and WASI targets in configure.ac.  A better approach might be a new target...
 
-# When you add something here, the actual static library that needs to be linked in
+# When you add something here to static, the actual static library that needs to be linked in
 # *MUST* be added to packages/python-wasm/Makefile for the python.wasm target.  That's
 # where the important linking actually happens.
 
 *static*
-
-readline readline.c -ledit  -ltermcap
 
 
 # Uncomment to build curses.  This works.  But the curses .py files aren't in the
@@ -21,6 +19,11 @@ readline readline.c -ledit  -ltermcap
 #_curses_panel _curses_panel.c   -lncurses -ltermcap
 
 *shared*
+
+readline readline.c -I$(abs_srcdir)/../../../libedit/dist/wasm/include $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
+
+# Using actual readline doesn't work.  Anyway, it is bigger, more complicated, GPL'd, and code is harder to read.
+#readline readline.c -I$(abs_srcdir)/../../../readline/dist/wasm/include $(abs_srcdir)/../../../readline/dist/wasm/lib/libreadline.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
 _posixsubprocess _posixsubprocess.c
 

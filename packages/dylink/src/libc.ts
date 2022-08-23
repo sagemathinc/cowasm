@@ -278,7 +278,8 @@ wctype.h
 // nm -gU libc.a |grep -v : | awk '{print $3}' |sort|uniq |grep -v ^__ |grep -v ^_IO_ |grep -v 64$  > all-symbols.txt && nm -gU libc.a |grep -v : | awk '{print $3}' |sort|uniq |grep  ^__wasi >> all-symbols.txt
 
 const symbols = `
-
+sigaction
+__ctype_get_mb_cur_max
 _CLOCK_MONOTONIC
 _CLOCK_PROCESS_CPUTIME_ID
 _CLOCK_REALTIME

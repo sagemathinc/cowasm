@@ -14,9 +14,6 @@ ac_cv_func_getrusage=no
 ac_cv_func_accept=no
 ac_cv_func_accept4=no
 
-# To use editline instead of readline.
-ac_cv_with_editline=true
-
 ## I found some of these in Tools/wasm/config.site-wasm32-wasi -- william
 # Written by Christian Heimes <christian@python.org>
 
