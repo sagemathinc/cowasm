@@ -9,6 +9,10 @@ import callsite from "callsite";
 const PYTHON_ZIP = "python.zip";
 const PYTHON_WASM = "python.wasm";
 
+// Our tiny termcap file only has one entry, which is for xterm
+// so that's all we give you, even if you have a different terminal.
+const TERM = "xterm-256color";
+
 export async function init({
   noWorker,
   noZip,
@@ -36,15 +40,15 @@ export async function init({
   if (!noZip && existsSync(zipfile)) {
     env = {
       ...process.env,
-      ...{
-        PYTHONHOME: process.env.PYTHONHOME ?? "/usr",
-        TERMCAP: "/usr/lib/python3.11/termcap",
-        TERM: "xterm-256color",
-      },
+      PYTHONHOME: process.env.PYTHONHOME ?? "/usr",
+      TERM,
+      TERMCAP: "/usr/lib/python3.11/termcap",
     };
   } else {
     env = {
       ...process.env,
+      TERM,
+      TERMCAP: join(path, "termcap"),
     };
   }
   await _init({

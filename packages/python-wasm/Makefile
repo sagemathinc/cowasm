@@ -95,11 +95,15 @@ ${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C}
 	mv src/interface.wasm ${DIST}/python/python.wasm
 
 .PHONEY: python
-python: ${DIST}/python/python.wasm ${DIST}/python/python.zip
+python: ${DIST}/python/python.wasm ${DIST}/python/python.zip ${DIST}/python/termcap
 
 ${DIST}/python/python.zip: ${PYTHON_WASM}/lib/dist/python311.zip
 	# Copy over the modules files
 	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
+
+${DIST}/python/termcap: ${PYTHON_WASM}/lib/dist/termcap
+	# Copy over the termcap file (termcap is also in python.zip, but it's useful to have outside for debug mode).
+	cp ${PYTHON_WASM}/lib/dist/termcap ${DIST}/python/termcap
 
 ${DIST}/python/libpython.so: ${DYLINK}/wasm/libpython.so
 	cp ${DYLINK}/wasm/libpython.so ${DIST}/python/libpython.so
