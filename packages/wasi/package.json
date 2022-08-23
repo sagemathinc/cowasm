@@ -13,7 +13,13 @@
     "test:watch": "jest --config jest.config.js --watch --verbose",
     "docs": "typedoc src/ --out docs --target es6 --theme minimal --mode file"
   },
-  "files": ["dist/*", "bin/*", "README.md", "package.json", "tsconfig.json"],
+  "files": [
+    "dist/*",
+    "bin/*",
+    "README.md",
+    "package.json",
+    "tsconfig.json"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/python-wasm.git"
@@ -41,7 +47,7 @@
   },
   "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/wasi",
   "dependencies": {
-    "@wapython/unionfs": "^4.5.4",
+    "@wapython/unionfs": "^4.5.5",
     "debug": "^4.3.4",
     "fflate": "^0.7.3",
     "memfs": "^3.4.7",
