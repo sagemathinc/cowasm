@@ -135,7 +135,7 @@ clean:
 test: test-cpython test-bench test-dylink test-posix-zig test-python-wasm
 .PHONY: test
 
-test-cpython:
+test-cpython: cpython python-wasm
 	cd packages/cpython && make test
 
 test-bench: python-wasm
