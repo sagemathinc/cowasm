@@ -16,6 +16,9 @@ VERSION = 0.10.0-dev.3629+2ccaa5414
 # segfaulted with this version, even with the -fstage1 flag. Wow.
 # Hopefully it will stabilize after a while. This of course means, we
 # can't possibly upgrade our use of zig for a while.
+#
+# REPORTED UPSTREAM at https://github.com/ziglang/zig/issues/12582
+#
 ## VERSION = 0.10.0-dev.3659+e5e6eb983
 
 
