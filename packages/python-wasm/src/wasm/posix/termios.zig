@@ -35,9 +35,32 @@ export fn cfgetospeed(tio: *const termios.termios) termios.speed_t {
 //   https://stackoverflow.com/questions/68778496/how-to-get-stty-echo-mode-from-xterm-js
 // Thus the following are minimal stub functions.  There are implementations below
 // in terms of ioctl, but it just errors out immediately on WASM.
+//
+// IMPORTANT! We can't do NOTHING here or, e.g., libedit will randomly not work!
+// This is because of the line
+//
+//    	if (tcgetattr(fileno(rl_instream), &t) != -1 && (t.c_lflag & ECHO) == 0)
+//
+// in packages/libedit/build/wasm/src/readline.c.   If t.c_lflag doesn't have the ECHO
+// flag, then libedit will be totally broken for interactive use.
+// We set at least that below for fd=0 and intend to do more (TODO!).
+//
+//            tcflag_t c_iflag;      /* input modes */
+//            tcflag_t c_oflag;      /* output modes */
+//            tcflag_t c_cflag;      /* control modes */
+//            tcflag_t c_lflag;      /* local modes */
+//            cc_t     c_cc[NCCS];   /* special characters */
+//
 export fn tcgetattr(fd: std.c.fd_t, tio: *termios.termios) c_int {
-    _ = fd;
-    _ = tio;
+    //    std.debug.print("tcgetattr, fd={}\n", .{ fd});
+    tio.c_iflag = 0;
+    tio.c_oflag = 0;
+    tio.c_cflag = 0;
+    tio.c_lflag = 0;
+    if(fd == 0) {
+       tio.c_lflag = termios.ECHO;
+    }
+
     return 0; // success -- got no info into tio.
     //     const TCGETS = 0x5401;
     //     std.debug.print("tcgetattr, fd={}, tio={}\n", .{ fd, tio });
