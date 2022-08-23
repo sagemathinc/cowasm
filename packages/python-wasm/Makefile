@@ -81,6 +81,7 @@ ${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C}
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
+		-fstage1 \
 		-rdynamic \
 		--stack 1048576 \
 		-target wasm32-wasi \
