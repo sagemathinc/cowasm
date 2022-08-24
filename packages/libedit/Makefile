@@ -1,59 +1,55 @@
+all:  wasm native
+
+include ../Makefile
+
 # See https://www.thrysoee.dk/editline/
 
 VERSION = 20210910-3.1
 
-CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-SRC = ${CWD}/src
-BUILD = ${CWD}/build
-DIST_NATIVE = ${CWD}/dist/native
-DIST_WASM = ${CWD}/dist/wasm
-PACKAGES = ${CWD}/..
+TARBALL = ${UPSTREAM}/libedit-${VERSION}.tar.gz
+
 TERMCAP = ${PACKAGES}/termcap/dist
 
-all:  wasm native
 
-${BUILD}/libedit.tar.gz:
-	mkdir -p ${BUILD}
-	cd ${BUILD} && curl https://www.thrysoee.dk/editline/libedit-${VERSION}.tar.gz -o libedit.tar.gz
+${TARBALL}:
+	mkdir -p ${UPSTREAM}
+	curl https://www.thrysoee.dk/editline/libedit-${VERSION}.tar.gz -o ${TARBALL}
 
 ##################
 # NATIVE
 ##################
 
-${BUILD}/native: ${BUILD}/libedit.tar.gz
-	rm -rf ${BUILD}/native
-	mkdir -p ${BUILD}/native
-	cd ${BUILD} && tar xf libedit.tar.gz -C native --strip-components=1
+${BUILD_NATIVE}: ${TARBALL}
+	rm -rf ${BUILD_NATIVE}
+	mkdir -p ${BUILD_NATIVE}
+	tar xf ${TARBALL} -C ${BUILD_NATIVE} --strip-components=1
 
-${DIST_NATIVE}/.built: ${BUILD}/native
-	cd ${BUILD}/native && \
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}
+	cd ${BUILD_NATIVE} && \
 		CFLAGS="-I${TERMCAP}/native/include -L${TERMCAP}/native/lib" \
 		CC="zig cc -Oz" \
 		AR="zig ar" \
 		./configure --prefix=${DIST_NATIVE}
-	cd ${BUILD}/native && make -j8
-	cd ${BUILD}/native && make install
+	cd  ${BUILD_NATIVE} && make -j8
+	cd  ${BUILD_NATIVE} && make install
 	touch ${DIST_NATIVE}/.built
-
-.PHONY: native
-native: ${DIST_NATIVE}/.built
 
 
 ##################
 # WASM
 ##################
 
-${BUILD}/wasm: ${BUILD}/libedit.tar.gz
-	rm -rf ${BUILD}/wasm
-	mkdir -p ${BUILD}/wasm
-	cd ${BUILD} && tar xf libedit.tar.gz -C wasm --strip-components=1
-	cp -rv src/* ${BUILD}/wasm/src/
-	cd ${BUILD}/wasm/src/ && patch -p0 < readline.patch
+${BUILD_WASM}: ${TARBALL}
+	rm -rf ${BUILD_WASM}
+	mkdir -p ${BUILD_WASM}
+	cd ${BUILD} && tar xf ${TARBALL} -C ${BUILD_WASM} --strip-components=1
+	cp -rv src/* ${BUILD_WASM}/src/
+	cd ${BUILD_WASM}/src/ && patch -p0 < readline.patch
 
 # For use of -D__STDC_ISO_10646__=201103L, see https://patchwork.ozlabs.org/project/buildroot/patch/1452127277-9538-1-git-send-email-sergio.prado@e-labworks.com/
 
-${DIST_WASM}/.built: ${BUILD}/wasm
-	cd ${BUILD}/wasm && \
+${DIST_WASM}/.built: ${BUILD_WASM}
+	cd ${BUILD_WASM} && \
 		CONFIG_SITE=${SRC}/config.site \
 		CFLAGS="-I${TERMCAP}/wasm/include -L${TERMCAP}/wasm/lib -D__STDC_ISO_10646__=201103L -D__wasilibc_unmodified_upstream_signal -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -Oz -target wasm32-wasi "  \
 		RANLIB="zig ranlib" \
@@ -63,16 +59,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 		./configure \
 			--host=none \
 			--prefix="${DIST_WASM}"
-	cd ${BUILD}/wasm && make -j8
-	cd ${BUILD}/wasm && make install
+	cd ${BUILD_WASM} && make -j8
+	cd ${BUILD_WASM} && make install
 	touch ${DIST_WASM}/.built
 
-.PHONY: wasm
-wasm: ${DIST_WASM}/.built
-
-
-
-
-
-clean:
-	rm -rf build dist

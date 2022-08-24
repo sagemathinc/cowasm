@@ -1,24 +1,27 @@
-# See https://github.com/libarchive/bzip2/tags
-VERSION=1.0.8
+# We only make the wasm version, since we don't need native for our purposes.
+all: wasm
 
 include ../Makefile
 
-all: wasm
+# See https://github.com/libarchive/bzip2/tags
+VERSION=1.0.8
+TARBALL = ${UPSTREAM}/bzip2-${VERSION}.tar.gz
 
-${UPSTREAM}/bzip2-${VERSION}.tar.gz:
+${TARBALL}:
 	mkdir -p ${UPSTREAM}
-	cd ${UPSTREAM} && curl -L https://github.com/libarchive/bzip2/archive/refs/tags/bzip2-${VERSION}.tar.gz -o bzip2-${VERSION}.tar.gz
+	curl -L https://github.com/libarchive/bzip2/archive/refs/tags/bzip2-${VERSION}.tar.gz -o ${TARBALL}
 
 ##################
 # NATIVE
 ##################
 
-${BUILD}/native: ${UPSTREAM}/bzip2-${VERSION}.tar.gz
-	rm -rf ${DIST_NATIVE} ${BUILD}/native && mkdir -p ${DIST_NATIVE} ${BUILD}/native
-	cd ${BUILD} && tar xf ${UPSTREAM}/bzip2-${VERSION}.tar.gz -C native --strip-components=1
+${BUILD_NATIVE}: ${TARBALL}
+	rm -rf ${DIST_NATIVE} ${BUILD_NATIVE}
+	mkdir -p ${DIST_NATIVE} ${BUILD_NATIVE}
+	tar xf ${UPSTREAM}/bzip2-${VERSION}.tar.gz -C ${BUILD_NATIVE} --strip-components=1
 
-${DIST_NATIVE}/.built: ${BUILD}/native
-	cd ${BUILD}/native && \
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}
+	cd ${BUILD_NATIVE} && \
 		make AR="zig ar" \
 		CC="zig cc" \
 		RANLIB="zig ranlib" \
@@ -26,29 +29,20 @@ ${DIST_NATIVE}/.built: ${BUILD}/native
 		install -j8
 	touch ${DIST_NATIVE}/.built
 
-.PHONY: native
-native: ${DIST_NATIVE}/.built
-
 ##################
 # WASM - STATIC
 ##################
 
-${BUILD}/wasm: ${UPSTREAM}/bzip2-${VERSION}.tar.gz
-	rm -rf ${DIST_WASM} ${BUILD}/wasm && mkdir -p ${DIST_WASM} ${BUILD}/wasm
-	cd ${BUILD} && tar xf ${UPSTREAM}/bzip2-${VERSION}.tar.gz -C wasm --strip-components=1
+${BUILD_WASM}: ${TARBALL}
+	rm -rf ${DIST_WASM} ${BUILD_WASM}
+	mkdir -p ${DIST_WASM} ${BUILD_WASM}
+	tar xf ${TARBALL} -C ${BUILD_WASM} --strip-components=1
 
-${DIST_WASM}/.built: ${BUILD}/wasm
-	cd ${BUILD}/wasm && \
+${DIST_WASM}/.built: ${BUILD_WASM}
+	cd ${BUILD_WASM} && \
 		make AR="zig ar" \
 		CC="zig-fPIC cc" \
 		RANLIB="zig ranlib" \
 		PREFIX="${DIST_WASM}" \
 		install -j8
 	touch ${DIST_WASM}/.built
-
-.PHONY: wasm
-wasm: ${DIST_WASM}/.built
-
-.PHONY: clean
-clean:
-	rm -rf ${BUILD} ${DIST}
