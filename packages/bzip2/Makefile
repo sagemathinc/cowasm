@@ -1,22 +1,21 @@
-# See https://sourceware.org/bzip2/downloads.html
+# See https://github.com/libarchive/bzip2/tags
+VERSION=1.0.8
 
-INIT_CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-DIST = ${INIT_CWD}/dist
-BUILD = ${INIT_CWD}/build
-DIST_NATIVE = ${DIST}/native
-DIST_WASM = ${DIST}/wasm
+include ../Makefile
 
 all: wasm
 
-${BUILD}/bzip2-latest.tar.gz:
-	mkdir -p ${BUILD}
-	cd ${BUILD} && curl https://sourceware.org/pub/bzip2/bzip2-latest.tar.gz -o bzip2-latest.tar.gz
+${UPSTREAM}/bzip2-${VERSION}.tar.gz:
+	mkdir -p ${UPSTREAM}
+	cd ${UPSTREAM} && curl -L https://github.com/libarchive/bzip2/archive/refs/tags/bzip2-${VERSION}.tar.gz -o bzip2-${VERSION}.tar.gz
 
+##################
 # NATIVE
+##################
 
-${BUILD}/native: ${BUILD}/bzip2-latest.tar.gz
-	rm -rf ${DIST_NATIVE} && mkdir -p ${DIST_NATIVE}
-	cd ${BUILD} && mkdir native && tar xf bzip2-latest.tar.gz -C native --strip-components=1
+${BUILD}/native: ${UPSTREAM}/bzip2-${VERSION}.tar.gz
+	rm -rf ${DIST_NATIVE} ${BUILD}/native && mkdir -p ${DIST_NATIVE} ${BUILD}/native
+	cd ${BUILD} && tar xf ${UPSTREAM}/bzip2-${VERSION}.tar.gz -C native --strip-components=1
 
 ${DIST_NATIVE}/.built: ${BUILD}/native
 	cd ${BUILD}/native && \
@@ -34,9 +33,9 @@ native: ${DIST_NATIVE}/.built
 # WASM - STATIC
 ##################
 
-${BUILD}/wasm: ${BUILD}/bzip2-latest.tar.gz
-	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
-	cd ${BUILD} && mkdir wasm && tar xf bzip2-latest.tar.gz -C wasm --strip-components=1
+${BUILD}/wasm: ${UPSTREAM}/bzip2-${VERSION}.tar.gz
+	rm -rf ${DIST_WASM} ${BUILD}/wasm && mkdir -p ${DIST_WASM} ${BUILD}/wasm
+	cd ${BUILD} && tar xf ${UPSTREAM}/bzip2-${VERSION}.tar.gz -C wasm --strip-components=1
 
 ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && \
