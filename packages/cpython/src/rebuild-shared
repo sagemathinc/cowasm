@@ -13,6 +13,7 @@ make CC="zig-fPIC cc " \
      CXX="zig-fPIC c++ " \
      CONFIGURE_LDFLAGS_NODIST="" \
      LINKFORSHARED="-shared" \
+     MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
      BLDSHARED="zig wasm-ld --experimental-pic -shared"
 
 cp -v Modules/*.so ../../dist/wasm/lib/python3.11/lib-dynload/

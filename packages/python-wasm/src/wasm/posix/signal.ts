@@ -44,6 +44,13 @@ export default function signal({ process }) {
       return 0;
     },
 
+    // NOTE: this is the single threaded version!
+    // int raise(int sig);
+    // according to man is same as "kill(getpid(), sig);" for single thread.
+    raise: (sig: number): number => {
+      return signal.kill(process.pid ?? 1, sig);
+    },
+
     // int killpg(int pgrp, int sig);
     killpg: (pid: number, signal: number): number => {
       if (process.kill == null) return 0;
