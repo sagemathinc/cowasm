@@ -2,25 +2,25 @@
 # involve building upstream code from source.
 
 # The directory containing the package where the makefile is run, e.g., packages/bzip2
-INIT_CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 # The directory containing all of the packages.
-PACKAGES = ${INIT_CWD}/..
+PACKAGES = ${CWD}/..
 
 # Where the upstream sources are cached
 UPSTREAM = ${PACKAGES}/../upstream/sources
 
 # Where sources, e.g., patches, customizations, new code, etc., are stored for this build.
-SRC = ${INIT_CWD}/src
+SRC = ${CWD}/src
 
 # Temporary path where we do the build.  These files can always be deleted without impacting
 # the artifact in dist.
-BUILD = ${INIT_CWD}/build
+BUILD = ${CWD}/build
 BUILD_NATIVE = ${BUILD}/native
 BUILD_WASM = ${BUILD}/wasm
 
 # Where we put the result of the build, e.g., --prefix=${DIST_WASM}
-DIST = ${INIT_CWD}/dist
+DIST = ${CWD}/dist
 DIST_NATIVE = ${DIST}/native
 DIST_WASM = ${DIST}/wasm
 
