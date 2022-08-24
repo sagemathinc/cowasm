@@ -1,6 +1,10 @@
+
+include ../src/Makefile-vars
+
 all:  wasm native
 
-include ../Makefile
+
+include ../src/Makefile-rules
 
 # See https://www.thrysoee.dk/editline/
 

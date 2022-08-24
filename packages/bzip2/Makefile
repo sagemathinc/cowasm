@@ -1,15 +1,14 @@
 # We only make the wasm version, since we don't need native for our purposes.
 all: wasm
 
-include ../Makefile
+include ../src/Makefile-vars
 
 # See https://github.com/libarchive/bzip2/tags
 VERSION=1.0.8
 TARBALL = ${UPSTREAM}/bzip2-${VERSION}.tar.gz
+URL = https://github.com/libarchive/bzip2/archive/refs/tags/bzip2-${VERSION}.tar.gz
 
-${TARBALL}:
-	mkdir -p ${UPSTREAM}
-	curl -L https://github.com/libarchive/bzip2/archive/refs/tags/bzip2-${VERSION}.tar.gz -o ${TARBALL}
+include ../src/Makefile-rules
 
 ##################
 # NATIVE
