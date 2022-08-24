@@ -41,6 +41,8 @@ pyexpat pyexpat.c
 
 unicodedata unicodedata.c
 
+_posixsubprocess _posixsubprocess.c
+
 readline readline.c -I$(abs_srcdir)/../../../libedit/dist/wasm/include $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
 # Using actual readline doesn't work.  Anyway, it is bigger, more complicated, GPL'd, and code is harder to read.
