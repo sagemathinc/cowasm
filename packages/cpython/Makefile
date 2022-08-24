@@ -187,13 +187,19 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# First remove everything that needs to be built -fPIC or build will fail; add more here as we support more modules.
 	cd ${BUILD_WASM}/Modules && find . -name "*.o" -type f -delete
 	# Do the build, but with modified compiler, etc.:
-	cd ${BUILD_WASM} && make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" \
-							   CC="zig-fPIC cc" CXX="zig-fPIC c++" BLDSHARED="${BLDSHARED}"
+	cd ${BUILD_WASM} && \
+		make \
+		CONFIGURE_LDFLAGS_NODIST="" \
+		LINKFORSHARED="-shared" \
+		MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
+		CC="zig-fPIC cc" \
+		CXX="zig-fPIC c++" \
+		BLDSHARED="${BLDSHARED}"
 	# Install as usual.
 	cd ${BUILD_WASM} && make install
-	# For some reason libmpdec.a isn't in libpython311.a, so we make it easy to link in later by copying
-	# it over.  Similar for libexpat.a
-	cp ${BUILD_WASM}/Modules/_decimal/libmpdec/libmpdec.a ${BUILD_WASM}/Modules/expat/libexpat.a ${DIST_WASM}/lib/
+	# For some reason libexpat.a isn't in libpython311.a, so we make it easy to link in later by copying
+	# it over.
+	cp ${BUILD_WASM}/Modules/expat/libexpat.a ${DIST_WASM}/lib/
 	touch ${DIST_WASM}/.built-cpython
 
 wasm: ${DIST_WASM}/.built-cpython
