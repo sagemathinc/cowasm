@@ -18,8 +18,8 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
-		CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
-		CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
+		CC="zig-fPIC cc" \
+		CXX="zig-fPIC c++" \
 		./configure \
 			--build=`./build-aux/config.guess` \
 			--host=none --prefix="${DIST_WASM}"

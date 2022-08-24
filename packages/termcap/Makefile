@@ -43,7 +43,7 @@ ${BUILD}/wasm: ${BUILD}/termcap.tar.gz
 	cd ${BUILD} && tar xf termcap.tar.gz -C wasm --strip-components=1
 
 ${DIST_WASM}/.built: ${BUILD}/wasm
-	cd ${BUILD}/wasm && RANLIB="zig ranlib" AR="zig ar" CC="zig cc -Oz -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" CXX="zig c++ -Oz -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" ./configure  --build=`./build-aux/config.guess` --host=none --prefix="${DIST_WASM}"
+	cd ${BUILD}/wasm && RANLIB="zig ranlib" AR="zig ar" CC="zig cc -O0 -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" CXX="zig c++ -Oz -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" ./configure  --build=`./build-aux/config.guess` --host=none --prefix="${DIST_WASM}"
 	cd ${BUILD}/wasm && make -j8
 	cd ${BUILD}/wasm && make -j8 install
 	touch ${DIST_WASM}/.built
