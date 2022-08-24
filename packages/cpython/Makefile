@@ -24,7 +24,6 @@ DIST_WASM = ${DIST}/wasm
 BUILD_WASM = ${BUILD}/wasm
 ZLIB = ${CWD}/../zlib/dist
 LIBEDIT = ${CWD}/../libedit/dist
-SQLITE = ${CWD}/../sqlite/dist
 POSIX_WASM = ${CWD}/../posix-wasm/dist
 
 NCURSES = ${CWD}/../ncurses/dist
