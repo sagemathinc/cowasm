@@ -25,22 +25,26 @@ _decimal _decimal/_decimal.c
 pyexpat pyexpat.c
 
 # text encodings and unicode
+
 #   these are *HUGE* and well worth moving out of the core wasm bundle!
-_codecs_cn cjkcodecs/_codecs_cn.c
-_codecs_hk cjkcodecs/_codecs_hk.c
-_codecs_iso2022 cjkcodecs/_codecs_iso2022.c
-_codecs_jp cjkcodecs/_codecs_jp.c
-_codecs_kr cjkcodecs/_codecs_kr.c
-_codecs_tw cjkcodecs/_codecs_tw.c
-_multibytecodec cjkcodecs/multibytecodec.c
+#   However, sadly the tests suddenly get 1000x slower or break with these for some reason.
+#_codecs_cn cjkcodecs/_codecs_cn.c
+#_codecs_hk cjkcodecs/_codecs_hk.c
+#_codecs_iso2022 cjkcodecs/_codecs_iso2022.c
+#_codecs_jp cjkcodecs/_codecs_jp.c
+#_codecs_kr cjkcodecs/_codecs_kr.c
+#_codecs_tw cjkcodecs/_codecs_tw.c
+
+# This one has one failing test involving os.unlink if we make it shared.
+# We will revisit this, since it's surely a sign of a subtle bug in dylink.
+#_multibytecodec cjkcodecs/multibytecodec.c
+
 unicodedata unicodedata.c
 
 readline readline.c -I$(abs_srcdir)/../../../libedit/dist/wasm/include $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
 # Using actual readline doesn't work.  Anyway, it is bigger, more complicated, GPL'd, and code is harder to read.
 #readline readline.c -I$(abs_srcdir)/../../../readline/dist/wasm/include $(abs_srcdir)/../../../readline/dist/wasm/lib/libreadline.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
-
-_posixsubprocess _posixsubprocess.c
 
 _bz2 _bz2module.c -I$(abs_srcdir)/../../../bzip2/dist/wasm/include/ $(abs_srcdir)/../../../bzip2/dist/wasm/lib/libbz2.a
 
