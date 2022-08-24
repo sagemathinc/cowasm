@@ -192,14 +192,12 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 		CONFIGURE_LDFLAGS_NODIST="" \
 		LINKFORSHARED="-shared" \
 		MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
+	 	MODULE_PYEXPAT_LDFLAGS="Modules/expat/libexpat.a" \
 		CC="zig-fPIC cc" \
 		CXX="zig-fPIC c++" \
 		BLDSHARED="${BLDSHARED}"
 	# Install as usual.
 	cd ${BUILD_WASM} && make install
-	# For some reason libexpat.a isn't in libpython311.a, so we make it easy to link in later by copying
-	# it over.
-	cp ${BUILD_WASM}/Modules/expat/libexpat.a ${DIST_WASM}/lib/
 	touch ${DIST_WASM}/.built-cpython
 
 wasm: ${DIST_WASM}/.built-cpython

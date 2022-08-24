@@ -57,13 +57,12 @@ test-posix:
 #    also gets compiled, without being explicitly listed here.
 #
 
-PYTHON_WASM_SOURCES = src/python/signal/signal.c src/wasm/posix/stdlib.c ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${PACKAGES}/zlib/dist/wasm/lib/libz.a ${PACKAGES}/cpython/dist/wasm/lib/libexpat.a ${POSIX_WASM}/libposix.a src/wasm/posix.zig $(shell find src/wasm/posix/*.zig -type f) $(shell find src/python/*.zig -type f)
+PYTHON_WASM_SOURCES = src/python/signal/signal.c src/wasm/posix/stdlib.c ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${PACKAGES}/zlib/dist/wasm/lib/libz.a ${POSIX_WASM}/libposix.a src/wasm/posix.zig $(shell find src/wasm/posix/*.zig -type f) $(shell find src/python/*.zig -type f)
 
 PYTHON_WASM_C = ${PYTHON_WASM}/lib/libpython3.11.a \
 		${DYLINK}/wasm-export/libpython.c \
 		${POSIX_WASM}/libposix.a \
 		${PACKAGES}/zlib/dist/wasm/lib/libz.a \
-		${PACKAGES}/cpython/dist/wasm/lib/libexpat.a \
 		${CWD}/src/python/signal/signal.c \
 		${CWD}/src/wasm/posix/stdlib.c
 
