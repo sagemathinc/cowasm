@@ -124,3 +124,36 @@ export fn set_statvfs(buf: *struct_statvfs, f_bsize: c_ulong, f_frsize: c_ulong,
     buf.f_flag = f_flag;
     buf.f_namemax = f_namemax;
 }
+
+
+
+//
+// Commented out since I realized that there's some emulation of this in wasi, which we will use for now.
+//
+// const errno = @import("errno.zig");
+// // #include <sys/mman.h>
+// const mman = @cImport(@cInclude("sys/mman.h"));
+// These mmap functions are not implemented at all yet.   However, at least we can make them clearly fail.
+// void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);
+//      "On success, mmap() returns a pointer to the mapped area.  On error, the value MAP_FAILED
+//      (that is, (void *) -1) is returned, and errno is set to indicate the cause of the error."
+// export fn mmap(addr: *anyopaque, length: c_long, prot: c_int, flags: c_int, fd: c_int, offset: mman.off_t) ?*anyopaque {
+//     _ = addr;
+//     _ = length;
+//     _ = prot;
+//     _ = flags;
+//     _ = fd;
+//     _ = offset;
+//     errno.setErrno(errno.errno.ENODEV);
+//     return mman.MAP_FAILED;
+// }
+
+// // int munmap(void *addr, size_t length);
+// //      "On success, munmap() returns 0.  On failure, it returns -1, and errno is set to indicate
+// //       the cause of the error (probably to EINVAL)."
+// export fn munmap(addr: *anyopaque, length: c_long) c_int {
+//     _ = addr;
+//     _ = length;
+//     errno.setErrno(errno.errno.EINVAL);
+//     return -1;
+// }

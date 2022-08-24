@@ -109,10 +109,10 @@ export default async function importWebAssemblyDlopen({
 
   function functionViaPointer(key: string) {
     if (mainInstance == null) return; // not yet available
-    log("functionViaPointer", key);
     const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
     if (f == null) return;
     const ptr = (f as Function)();
+    log("functionViaPointer", key, ptr);
     if (__indirect_function_table == null) {
       throw Error("__indirect_function_table must be defined");
     }
@@ -223,14 +223,55 @@ export default async function importWebAssemblyDlopen({
     }
     return rtn;
   }
-  const funcMap = {};
+  const funcMap: { [key: string]: number } = {};
   function GOTFuncHandler(GOT, key: string) {
     if (key in GOT) {
       return Reflect.get(GOT, key);
     }
     let rtn = GOT[key];
     if (!rtn) {
-      log("GOTFuncHandler ", key, "-->", nextTablePos);
+      // Dynamic module needs a *pointer* to the function with name "key".
+      // There are several possibilities:
+      //
+      // 1. This function is already in a our global function table, from
+      // the main module or another dynamic link library defining it. An
+      // example is the function strcmp from libc, which is often used as a pointer
+      // with qsort.  In that case, we know the pointer and immediately
+      // set the value of the function pointer to that value -- it's important
+      // to use the *same* pointer in both the main module and the dynamic library,
+      // rather than making another one just for the dynamic library (which would
+      // waste space, and completely breaks functions like qsort that take a
+      // function pointer).
+      //
+      // 2. Another likely possibility is that this is a function that will get defined
+      // as a side effect of the dynamic link module being loaded.  We don't know
+      // what address that function will get, so we in that case we create an entry
+      // in funcMap, and later below we update the pointer created here.
+      //
+      // 3. A third possibility is that the requested function isn't in the
+      // function pointer table but it's made available via the Javascript
+      // environment.  As far as I know, there is no way to make such a Javascript
+      // function available as a function pointer aside from creating a new compiled
+      // function in web assembly that calls that Javascript function, so this is
+      // a fatal error, and we have to modify libc.ts to make such a wrapper.  This
+      // happened with geteuid at one point, which comes from node.js.
+      //
+      // 4. The function might be defined in another dynamic library that hasn't
+      // been loaded yet.  We have NOT addressed this problem yet, and this must
+      // also be a fatal error.
+      //
+      let value;
+      const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
+      if (f == null) {
+        // new function
+        value = nextTablePos;
+        funcMap[key] = value; // have to do further work below to add this to table.
+        nextTablePos += 1;
+      } else {
+        // existing function perhaps from libc, e.g., "strcmp".
+        value = (f as Function)();
+      }
+      log("GOTFuncHandler ", key, "-->", value);
       // place in the table -- we make a note of where to put it,
       // and actually place it later below after the import is done.
       const ptr = new WebAssembly.Global(
@@ -238,10 +279,9 @@ export default async function importWebAssemblyDlopen({
           value: "i32",
           mutable: true,
         },
-        nextTablePos
+        value
       );
-      rtn = GOT[key] = funcMap[key] = ptr;
-      nextTablePos += 1;
+      rtn = GOT[key] = ptr;
     }
     return rtn;
   }
@@ -351,11 +391,20 @@ export default async function importWebAssemblyDlopen({
       symToPtr[name] = nextTablePos;
       nextTablePos += 1;
     }
+
+    // Set all functions in the function table that couldn't
+    // be resolved to pointers when creating the webassembly module.
     for (const symName in funcMap) {
       const f = instance.exports[symName] ?? mainInstance.exports[symName];
-      if (f == null) continue;
-      //log("table[%s] = %s", funcMap[symName], symName, f);
-      setTable(funcMap[symName].value, f as Function);
+      log("table[%s] = %s", funcMap[symName], symName, f);
+      if (f == null) {
+        // This has to be a fatal error, since the only other option would
+        // be having a pointer to random nonsense or a broke function,
+        // which is definitely going to segfault randomly later when it
+        // gets hit by running code. See comments above in GOTFuncHandler.
+        throw Error(`dlopen -- UNRESOLVED FUNCTION: ${symName}`);
+      }
+      setTable(funcMap[symName], f as Function);
       symToPtr[symName] = funcMap[symName];
       delete funcMap[symName];
     }

@@ -81,6 +81,7 @@ void qsort_r(void *base, size_t nmemb, size_t size,
 char *strchrnul(const char *, int);
 extern char *__wasilibc_cwd;
 extern char **__wasilibc_environ;
+void __qsort_r (void *, size_t, size_t, int (*)(const void *, const void *, void *), void *);
 
 int __stack_chk_guard;
 void __stack_chk_fail(void);
@@ -88,6 +89,8 @@ void __stack_chk_fail(void);
 // qsort is completely missing from Zig's musl, but it is assumed
 // to be there by wasi. This breaks things.  Fortnately, zig has
 // qsort_r, and it is trivial to implement qsort in terms of qsort_r:
+// Unfortunately, I can't get this to work from dynamically loaded
+// libraries because calling the function pointer doesn't work.
 
 typedef int (*qsort_compar)(const void *, const void *);
 int qsort_r_compar(const void * a, const void * b, void * compar) {
@@ -99,6 +102,7 @@ void qsort(void *base, size_t nmemb, size_t size,
 }
 
 int mkstemp(char *template);
+void __SIG_IGN(int);
 `;
   s += "\n";
   s += wasmExport((symbols + "\n" + posix).split("\n"));
@@ -130,6 +134,8 @@ dcgettext
 mkstemp
 sigemptyset
 bindtextdomain
+mmap
+munmap
 `;
 
 // All headers from zig/dist/lib/zig/libc/include/wasm-wasi-musl except signal/thread ones.
@@ -279,6 +285,8 @@ wctype.h
 
 const symbols = `
 sigaction
+__SIG_IGN
+__qsort_r
 __ctype_get_mb_cur_max
 _CLOCK_MONOTONIC
 _CLOCK_PROCESS_CPUTIME_ID

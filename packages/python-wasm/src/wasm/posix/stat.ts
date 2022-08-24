@@ -39,7 +39,7 @@ export default function stats({ fs, process, recv, wasi }) {
       return 0;
     },
 
-    fchmod: (fd: number, mode: number): number => {
+    _fchmod: (fd: number, mode: number): number => {
       const entry = wasi.FD_MAP.get(fd);
       if (!entry) {
         console.warn("bad file descriptor, fchmod");
