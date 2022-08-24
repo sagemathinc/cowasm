@@ -41,14 +41,14 @@ export default function unistd({
     },
 
     // int fchown(int fd, uid_t owner, gid_t group);
-    fchown: (fd: number, uid: number, gid: number): number => {
+    _fchown: (fd: number, uid: number, gid: number): number => {
       fs.fchownSync(toNativeFd(fd), uid, gid);
       return 0;
     },
 
     getuid: () => process.getuid?.() ?? 0,
     getgid: () => process.getgid?.() ?? 0,
-    geteuid: () => process.geteuid?.() ?? 0,
+    _geteuid: () => process.geteuid?.() ?? 0,
     getegid: () => process.getegid?.() ?? 0,
 
     // int getgroups(int gidsetsize, gid_t grouplist[]);
