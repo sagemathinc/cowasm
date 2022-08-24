@@ -14,11 +14,6 @@ include ../src/Makefile-rules
 # NATIVE
 ##################
 
-${BUILD_NATIVE}: ${TARBALL}
-	rm -rf ${DIST_NATIVE} ${BUILD_NATIVE}
-	mkdir -p ${DIST_NATIVE} ${BUILD_NATIVE}
-	tar xf ${UPSTREAM}/bzip2-${VERSION}.tar.gz -C ${BUILD_NATIVE} --strip-components=1
-
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}
 	cd ${BUILD_NATIVE} && \
 		make AR="zig ar" \
@@ -31,11 +26,6 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}
 ##################
 # WASM - STATIC
 ##################
-
-${BUILD_WASM}: ${TARBALL}
-	rm -rf ${DIST_WASM} ${BUILD_WASM}
-	mkdir -p ${DIST_WASM} ${BUILD_WASM}
-	tar xf ${TARBALL} -C ${BUILD_WASM} --strip-components=1
 
 ${DIST_WASM}/.built: ${BUILD_WASM}
 	cd ${BUILD_WASM} && \

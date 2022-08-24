@@ -2,26 +2,19 @@
 all: wasm native
 
 include ../src/Makefile-vars
-include ../src/Makefile-rules
 
 # See https://ftp.gnu.org/gnu/termcap/
 # Not likely to change -- it hasn't in over 20 years!
 VERSION = 1.3.1
-
 TARBALL = ${UPSTREAM}/termcap-${VERSION}.tar.gz
+URL = https://ftp.gnu.org/gnu/termcap/termcap-${VERSION}.tar.gz
 
-${TARBALL}:
-	mkdir -p ${UPSTREAM}
-	curl https://ftp.gnu.org/gnu/termcap/termcap-${VERSION}.tar.gz -o ${TARBALL}
+
+include ../src/Makefile-rules
 
 ##################
 # NATIVE
 ##################
-
-${BUILD_NATIVE}: ${TARBALL}
-	rm -rf ${BUILD_NATIVE}
-	mkdir -p ${BUILD_NATIVE}
-	cd ${BUILD} && tar xf ${TARBALL} -C ${BUILD_NATIVE} --strip-components=1
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}
 	cd ${BUILD_NATIVE} && \
@@ -34,11 +27,6 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}
 ##################
 # WASM
 ##################
-
-${BUILD_WASM}: ${TARBALL}
-	rm -rf ${BUILD_WASM}
-	mkdir -p ${BUILD_WASM}
-	tar xf ${TARBALL} -C ${BUILD_WASM} --strip-components=1
 
 ${DIST_WASM}/.built: ${BUILD_WASM}
 	cd ${BUILD_WASM} && \
