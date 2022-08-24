@@ -282,8 +282,13 @@ wctype.h
 // to all be #defined to the non-64 ones, so we exclude those.
 //
 // nm -gU libc.a |grep -v : | awk '{print $3}' |sort|uniq |grep -v ^__ |grep -v ^_IO_ |grep -v 64$  > all-symbols.txt && nm -gU libc.a |grep -v : | awk '{print $3}' |sort|uniq |grep  ^__wasi >> all-symbols.txt
+//
+// NOTE: I'm often finding that excluding symbols starting with dunder __ was a mistake,
+// since they often pop up with new dynamic libraries, presumably since they are the
+// targets of #define.
 
 const symbols = `
+__assert_fail
 sigaction
 __SIG_IGN
 __qsort_r
