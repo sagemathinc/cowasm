@@ -49,7 +49,7 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 	cd ${BUILD}/wasm && \
 		CHOST=none \
 		AR="zig ar" \
-		CC="zig cc -target wasm32-wasi" \
+		CC="zig-fPIC cc" \
 		./configure --static --prefix=${DIST_WASM}
 	cd ${BUILD}/wasm && make -j8 install
 	# Strangely the libz.a that gets built is mangled, e.g., "nm -a libz.a" says "LLVM ERROR: malformed uleb128, extends past end"

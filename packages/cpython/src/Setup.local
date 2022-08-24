@@ -31,6 +31,8 @@ _posixsubprocess _posixsubprocess.c
 
 _bz2 _bz2module.c -I$(abs_srcdir)/../../../bzip2/dist/wasm/include/ $(abs_srcdir)/../../../bzip2/dist/wasm/lib/libbz2.a
 
+zlib  zlibmodule.c -I$(abs_srcdir)/../../../zlib/dist/wasm/include $(abs_srcdir)/../../../zlib/dist/wasm/lib/libz.a
+
 _lzma _lzmamodule.c -I$(abs_srcdir)/../../../lzma/dist/wasm/include/ $(abs_srcdir)/../../../lzma/dist/wasm/lib/liblzma.a
 
 _sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microprotocols.c _sqlite/module.c _sqlite/prepare_protocol.c _sqlite/row.c _sqlite/statement.c  _sqlite/util.c -I$(abs_srcdir)/../../../sqlite/dist/wasm/include/ $(abs_srcdir)/../../../sqlite/dist/wasm/lib/libsqlite3.a
