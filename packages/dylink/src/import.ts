@@ -441,7 +441,7 @@ export default async function importWebAssemblyDlopen({
     // Get an available handle by maxing all the int versions of the
     // keys of the handleToLibrary map.
     const handle =
-      Math.max(0, ...Object.keys(handleToLibrary).map(parseInt)) + 1;
+      Math.max(0, ...Object.keys(handleToLibrary).map((n) => parseInt(n))) + 1;
     const library = {
       path,
       handle,
@@ -450,10 +450,6 @@ export default async function importWebAssemblyDlopen({
     };
     pathToLibrary[path] = library;
     handleToLibrary[handle] = library;
-    //     log(
-    //       "after dlopen table looks like:",
-    //       nonzeroPositions(__indirect_function_table)
-    //     );
     return handle;
   };
 
