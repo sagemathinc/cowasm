@@ -1,0 +1,15 @@
+
+.PHONY: native
+native: ${DIST_NATIVE}/.built
+
+.PHONY: wasm
+wasm: ${DIST_WASM}/.built
+
+.PHONY: clean
+clean:
+	rm -rf ${BUILD} ${DIST}
+
+${TARBALL}:
+	mkdir -p ${UPSTREAM}
+	curl -L ${URL} -o ${TARBALL}
+

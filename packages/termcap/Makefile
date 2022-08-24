@@ -1,7 +1,8 @@
 
 all: wasm native
 
-include ../Makefile
+include ../src/Makefile-vars
+include ../src/Makefile-rules
 
 # See https://ftp.gnu.org/gnu/termcap/
 # Not likely to change -- it hasn't in over 20 years!

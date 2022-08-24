@@ -8,7 +8,10 @@ CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 PACKAGES = ${CWD}/..
 
 # Where the upstream sources are cached
-UPSTREAM = ${PACKAGES}/../upstream/sources
+UPSTREAM = ${CWD}/../../upstream/sources
+
+# Binaries useful for building, e.g., node, zig, zig-fPIC
+BIN = ${CWD}/../../bin
 
 # Where sources, e.g., patches, customizations, new code, etc., are stored for this build.
 SRC = ${CWD}/src
@@ -23,15 +26,4 @@ BUILD_WASM = ${BUILD}/wasm
 DIST = ${CWD}/dist
 DIST_NATIVE = ${DIST}/native
 DIST_WASM = ${DIST}/wasm
-
-
-.PHONY: native
-native: ${DIST_NATIVE}/.built
-
-.PHONY: wasm
-wasm: ${DIST_WASM}/.built
-
-.PHONY: clean
-clean:
-	rm -rf ${BUILD} ${DIST}
 

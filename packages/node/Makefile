@@ -2,11 +2,12 @@
 # for your architecture here, so that we can use it for
 # building everything else.
 
-CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-
+include ../src/Makefile-vars
 
 # Find the latest version at https://nodejs.org/dist/latest/
 VERSION = 18.7.0
+
+all: ${DIST_NATIVE}/.${VERSION} ${BIN}/node ${BIN}/npm ${BIN}/npx
 
 # Using sed because uname -s --> x86_64 or aarch64, but need x64 or arm64
 ARCH = $(shell uname -m | sed s/x86_64/x64/ | sed s/aarch64/arm64/ )
@@ -16,27 +17,23 @@ ARCH = $(shell uname -m | sed s/x86_64/x64/ | sed s/aarch64/arm64/ )
 # but need      linux and darwin
 OS = $(shell uname -s  | sed s/Darwin/darwin/ | sed s/Linux/linux/)
 
-TARBALL = https://nodejs.org/dist/v${VERSION}/node-v${VERSION}-${OS}-${ARCH}.tar.xz
+TARBALL = ${UPSTREAM}/node-v${VERSION}-${OS}-${ARCH}.tar.xz
+URL =  https://nodejs.org/dist/v${VERSION}/node-v${VERSION}-${OS}-${ARCH}.tar.xz
 
-all: dist/${VERSION} ../../bin/node ../../bin/npm ../../bin/npx
+include ../src/Makefile-rules
 
-dist/${VERSION}:
-	rm -rf dist
-	mkdir -p dist build
-	curl ${TARBALL} > build/node.tar.xz
-	tar xf build/node.tar.xz -C dist --strip-components=1
-	rm build/node.tar.xz
-	touch dist/${VERSION}
+${DIST_NATIVE}/.${VERSION}: ${TARBALL}
+	rm -rf ${DIST_NATIVE}
+	mkdir -p ${DIST_NATIVE}
+	tar xf ${TARBALL} -C ${DIST_NATIVE} --strip-components=1
+	touch ${DIST_NATIVE}/.${VERSION}
 
-../../bin/node:
-	ln -sf ${CWD}/dist/bin/node ${CWD}/../../bin/node
+${BIN}/node:
+	ln -sf ${DIST_NATIVE}/bin/node ${BIN}/node
 
-../../bin/npm:
-	ln -sf ${CWD}/dist/bin/npm ${CWD}/../../bin/npm
+${BIN}/npm:
+	ln -sf ${DIST_NATIVE}/bin/npm ${BIN}/npm
 
-../../bin/npx:
-	ln -sf ${CWD}/dist/bin/npx ${CWD}/../../bin/npx
+${BIN}/npx:
+	ln -sf ${DIST_NATIVE}/bin/npx ${BIN}/npx
 
-
-clean:
-	rm -rf build dist
