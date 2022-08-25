@@ -13,7 +13,7 @@ include ../build/Makefile-rules
 
 # NATIVE -- we do not use this
 
-${DIST_NATIVE}/.built: ${BUILD_NATIVE}
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} \
 		&& CC="zig cc" AR="zig ar" ./configure --prefix=${DIST_NATIVE} \
 		&& make -j8 \
@@ -22,18 +22,19 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}
 
 # WASM.
 
-${BUILD_WASM}:: ${TARBALL}
+${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cp ${POSIX_WASM}/posix-wasm.h ${BUILD_WASM}/include/
 	# Patch terminfo.src, since there are two obscure entries (of the thousands) that prevent "make install" from working.
 	cd ${BUILD_WASM}/misc && patch -p0 < ${SRC}/00-terminfo.patch
 	# Obviously, these should be done as patches:
 	cd ${BUILD_WASM}/ncurses/tty && echo '#include "posix-wasm.h"' | cat - lib_tstp.c > tmp && mv tmp lib_tstp.c
 	cd ${BUILD_WASM}/progs && echo '#include "posix-wasm.h"' | cat - tset.c > tmp && mv tmp tset.c
+	touch ${BUILD_WASM}/.patched
 
 # The fPIC build would use CC="zig-fPIC cc" CXX="zig-fPIC c++"
 # but isn't working
 
-${DIST_WASM}/.built: ${BUILD_WASM}
+${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
 			AR="zig ar" \

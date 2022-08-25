@@ -20,7 +20,7 @@ include ../build/Makefile-rules
 
 # NATIVE
 
-${DIST_NATIVE}/.built: ${BUILD_NATIVE}
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} \
 		&&	AR="zig ar" \
 			CC="zig cc" \
@@ -30,7 +30,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}
 
 # WASM
 
-${DIST_WASM}/.built: ${BUILD_WASM}
+${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&&	CHOST=none \
 			AR="zig ar" \

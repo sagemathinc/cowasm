@@ -11,7 +11,7 @@ include ../build/Makefile-rules
 
 ## Native
 
-${DIST_NATIVE}/.built: ${BUILD_NATIVE}
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.patched
 	cd ${BUILD_NATIVE} \
 		&& 	CC="zig cc" \
 			AR="zig ar" \
@@ -25,11 +25,11 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}
 # Somebody else built openssl for webassembly once here
 #   https://github.com/DigitalArsenal/openssl.js/tree/master/packages/openssl
 
-${BUILD_WASM}:: ${TARBALL}
+${BUILD_WASM}/.patched:: ${BUILD_WASM}/.build
 	cp ${POSIX_WASM}/posix-wasm.h ${BUILD_WASM}/
 
 
-${DIST_WASM}/.built: ${BUILD_WASM}
+${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& 	CC="zig-fPIC cc" \
 			AR="zig ar" \

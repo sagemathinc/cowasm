@@ -28,13 +28,14 @@ ${TARBALL}:
 # NOTE: these double colon rules can be nicely overridden, which is where additional patching goes.
 #       See https://stackoverflow.com/questions/1644920/override-target-in-makefile-to-add-more-commands
 #
-${BUILD_NATIVE}:: ${TARBALL}
+${BUILD_NATIVE}/.build:: ${TARBALL}
 	rm -rf ${BUILD_NATIVE}
 	mkdir -p ${BUILD_NATIVE}
 	tar xf ${TARBALL} -C ${BUILD_NATIVE} --strip-components=1
+	touch ${BUILD_NATIVE}/.build
 
-${BUILD_WASM}:: ${TARBALL}
+${BUILD_WASM}/.build:: ${TARBALL}
 	rm -rf ${BUILD_WASM}
 	mkdir -p ${BUILD_WASM}
 	tar xf ${TARBALL} -C ${BUILD_WASM} --strip-components=1
-
+	touch ${BUILD_WASM}/.build

@@ -14,7 +14,7 @@ include ../build/Makefile-rules
 # NATIVE
 ##################
 
-${DIST_NATIVE}/.built: ${BUILD_NATIVE}
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} && \
 		make AR="zig ar" \
 		CC="zig cc" \
@@ -27,7 +27,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}
 # WASM - STATIC
 ##################
 
-${DIST_WASM}/.built: ${BUILD_WASM}
+${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && \
 		make AR="zig ar" \
 		CC="zig-fPIC cc" \
