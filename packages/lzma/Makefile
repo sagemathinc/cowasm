@@ -2,7 +2,6 @@ include ../src/Makefile-vars
 
 all: wasm
 
-
 # LZMA doesn't change, but I didn't want to force git clone, so I made a fork and a release myself.
 
 VERSION = 1.1
