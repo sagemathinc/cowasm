@@ -5,20 +5,29 @@ native: ${DIST_NATIVE}/.built
 .PHONY: wasm
 wasm: ${DIST_WASM}/.built
 
-.PHONY: clean
-clean:
-	rm -rf ${BUILD} ${DIST}
+.PHONY: clean-wasm
+clean-wasm:
+	rm -rf ${BUILD_WASM} ${DIST_WASM}
+
+.PHONY: clean-native
+clean-native:
+	rm -rf ${BUILD_NATIVE} ${DIST_NATIVE}
+
+clean: clean-wasm clean-native
 
 ${TARBALL}:
 	mkdir -p ${UPSTREAM}
 	curl -L ${URL} -o ${TARBALL}
 
-${BUILD_NATIVE}: ${TARBALL}
+# NOTE: these double colon rules can be nicely overridden, which is where additional patching goes.
+#       See https://stackoverflow.com/questions/1644920/override-target-in-makefile-to-add-more-commands
+#
+${BUILD_NATIVE}:: ${TARBALL}
 	rm -rf ${BUILD_NATIVE}
 	mkdir -p ${BUILD_NATIVE}
 	tar xf ${TARBALL} -C ${BUILD_NATIVE} --strip-components=1
 
-${BUILD_WASM}: ${TARBALL}
+${BUILD_WASM}:: ${TARBALL}
 	rm -rf ${BUILD_WASM}
 	mkdir -p ${BUILD_WASM}
 	tar xf ${TARBALL} -C ${BUILD_WASM} --strip-components=1
