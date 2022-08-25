@@ -371,6 +371,16 @@ export default async function importWebAssemblyDlopen({
     // will put entries from the current position up to metadata.tableSize
     // positions forward.
     nextTablePos += metadata.tableSize ?? 0;
+    // Ensure there is space in the table for the functions
+    // we are about to import
+    if (__indirect_function_table == null) {
+      throw Error("__indirect_function_table must not be null");
+    }
+    if (__indirect_function_table.length <= nextTablePos + 50) {
+      __indirect_function_table.grow(
+        50 + nextTablePos - __indirect_function_table.length
+      );
+    }
 
     const instance = importWebAssemblySync(path, libImportObject);
 
