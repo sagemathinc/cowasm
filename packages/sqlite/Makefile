@@ -21,7 +21,7 @@ all: wasm
 
 include ../build/Makefile-rules
 
-${BUILD_WASM}:: ${TARBALL}
+${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cp ${SRC}/config.site ${BUILD_WASM}
 	cp ${POSIX_WASM}/posix-wasm.h ${BUILD_WASM}
 	cd ${BUILD_WASM} && cat ${SRC}/patches/00-syscall.patch | patch -p1
@@ -30,7 +30,7 @@ ${BUILD_WASM}:: ${TARBALL}
 #   - ?? MAYBE ?? Without -Oz (optimize for size rather than speed), we get 'Function addresses
 #     with offsets not supported' from LLVM during final link.
 #     I put the -Oz flag into CFLAGS upon studying what the emscripten port uses.
-${DIST_WASM}/.built: ${BUILD_WASM}
+${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} && \
 		CC="zig-fPIC cc" \
 		RANLIB="zig ranlib" \

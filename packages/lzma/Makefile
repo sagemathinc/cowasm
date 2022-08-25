@@ -11,7 +11,7 @@ TARBALL = ${UPSTREAM}/lzma-v${VERSION}.tar.gz
 
 include ../build/Makefile-rules
 
-${DIST_WASM}/.built: ${BUILD_WASM}
+${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
