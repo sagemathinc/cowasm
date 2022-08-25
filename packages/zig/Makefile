@@ -44,7 +44,7 @@ URL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
 all: ${DIST_NATIVE}/.${VERSION} ${BIN}/zig-fPIC ${BIN}/zig
 
-include ../src/Makefile-rules
+include ../build/Makefile-rules
 
 ${DIST_NATIVE}/.${VERSION}: ${TARBALL}
 	rm -rf ${DIST_NATIVE}
