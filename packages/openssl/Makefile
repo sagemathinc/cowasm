@@ -34,8 +34,11 @@ ${DIST_WASM}/.built: ${BUILD_WASM}
 		&& 	CC="zig-fPIC cc" \
 			AR="zig ar" \
 			RANLIB="zig ranlib" \
-			./Configure --prefix=${DIST_WASM} gcc -no-tests -no-asm -static -no-sock -no-afalgeng \
+			./Configure --prefix=${DIST_WASM} gcc -no-tests -no-asm -static -no-afalgeng \
 		&&	echo '#include "posix-wasm.h"' >> e_os.h \
+		&&	echo "#undef AF_UNIX" >> e_os.h \
+		&&	echo "#define SO_KEEPALIVE 9" >> e_os.h \
+		&&	echo "#define SO_REUSEADDR    2" >> e_os.h \
 		&&	make -j8 \
 		&&	make install
 	touch ${DIST_WASM}/.built

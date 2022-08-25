@@ -177,8 +177,9 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM} ${DIST_NATIVE}/.built
 	cd ${BUILD_WASM}/Modules && find . -name "*.o" -type f -delete
 	# Do the build, but with fPIC this time.  We also have to pass some *_LDFLAGS to keep
 	# from using -lm, which isn't needed or supported by "zig wasm-ld" with the options we're using.
+	# Parallel build is fine for this, unlike above.
 	cd ${BUILD_WASM} && \
-		make \
+		make -j8 \
 		CONFIGURE_LDFLAGS_NODIST="" \
 		LINKFORSHARED="-shared" \
 		MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \

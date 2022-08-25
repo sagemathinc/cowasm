@@ -44,6 +44,13 @@ unicodedata unicodedata.c
 
 _posixsubprocess _posixsubprocess.c
 
+
+# OpenSSL bindings
+_ssl _ssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/wasm/include $(abs_srcdir)/../../../openssl/dist/wasm/lib/libssl.a $(abs_srcdir)/../../../openssl/dist/wasm/lib/libcrypto.a
+
+_hashlib _hashopenssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/wasm/include $(abs_srcdir)/../../../openssl/dist/wasm/lib/libcrypto.a
+
+
 readline readline.c -I$(abs_srcdir)/../../../libedit/dist/wasm/include $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
 # Using actual readline doesn't work.  Anyway, it is bigger, more complicated, GPL'd, and code is harder to read.
