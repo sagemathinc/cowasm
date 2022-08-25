@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PACKAGES="$SCRIPT_DIR"/../../
+
+export DYLD_LIBRARY_PATH="$SCRIPT_DIR"/../dist/native/lib:"$PACKAGES"/zlib/dist/native/lib:$DYLD_LIBRARY_PATH
+export LD_LIBRARY_PATH="$SCRIPT_DIR"/../dist/native/lib:"$PACKAGES"/zlib/dist/native/lib:$LD_LIBRARY_PATH
+
+# This is all we really put in TERMCAP, and is pretty compatible...
+export TERM=xterm-256color
+export TERMCAP="$SCRIPT_DIR"/../src/termcap
+
+"$SCRIPT_DIR"/../dist/native/bin/python3 "$@"

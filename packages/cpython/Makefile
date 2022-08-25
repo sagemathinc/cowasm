@@ -1,3 +1,5 @@
+include ../src/Makefile-vars
+
 #
 # We build a native version of CPython and a WASM version.
 # The native version is ONLY used as part of the cross compilation build process
@@ -15,51 +17,35 @@ PYTHON_PATCH = 0
 PYTHON_BETA = rc1
 PYTHON_VERSION = ${PYTHON_MAJOR}.${PYTHON_MINOR}.${PYTHON_PATCH}
 
-# https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
-CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-BUILD = ${CWD}/build
-DIST = ${CWD}/dist
-DIST_NATIVE = ${DIST}/native
-DIST_WASM = ${DIST}/wasm
-BUILD_WASM = ${BUILD}/wasm
-ZLIB = ${CWD}/../zlib/dist
-LIBEDIT = ${CWD}/../libedit/dist
-POSIX_WASM = ${CWD}/../posix-wasm/dist
+URL = https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz
+TARBALL = ${UPSTREAM}/python-${PYTHON_VERSION}.tar.xz
 
-NCURSES = ${CWD}/../ncurses/dist
+ZLIB = ${PACKAGES}/zlib/dist
+LIBEDIT = ${PACKAGES}/libedit/dist
+POSIX_WASM = ${PACKAGES}/posix-wasm/dist
+
+NCURSES = ${PACKAGES}/ncurses/dist
 NCURSES_INCLUDE = -I${NCURSES}/wasm/include/ncurses -I${NCURSES}/wasm/include
 NCURSES_LIB = -L${NCURSES}/wasm/lib
 
-PYTHON_WASM = ${CWD}/../../bin/python-wasm
-PYTHON_WASM_DEBUG = ${CWD}/../../bin/python-wasm-debug
+PYTHON_WASM = ${BIN}/python-wasm
+PYTHON_WASM_DEBUG = ${BIN}/python-wasm-debug
 
 # We only use zlib (not lzma) for native build, since liblzma widely available natively.
 export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
 export LD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
-export PATH := ${CWD}/../../bin:${DIST_NATIVE}/bin:${PATH}
+export PATH := ${DIST_NATIVE}/bin:${PATH}
 
 # Default target
-.PHONY: all
-all: ${DIST}/.built
+all: native ${BIN}/python-native wasm
 
-${DIST}/.built: native wasm wasm-data
+${DIST}/.built: native wasm
 	touch ${DIST}/.built
 
-#############
-# Source code
-#############
-${BUILD}/Python-${PYTHON_VERSION}.tar.xz:
-	mkdir -p ${BUILD}
-	cd ${BUILD} && curl https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz -o Python-${PYTHON_VERSION}.tar.xz
+include ../src/Makefile-rules
 
-.PHONY: source
-source: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 
-#############
-# NATIVE
-# Note that despite the word "patched" below, we apply NO patches to the native build.
-#############
-
+## NATIVE
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
@@ -73,55 +59,54 @@ else
 	ARCH =
 endif
 
-${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
-	rm -rf ${BUILD}/native
-	cd ${BUILD} && mkdir native && tar xf Python-${PYTHON_VERSION}.tar.xz -C native --strip-components=1
-	cp src/Setup.local-native ${BUILD}/native/Modules/Setup.local
-	touch ${BUILD}/native/.patched
+${BUILD_NATIVE}:: ${TARBALL}
+	cp src/Setup.local-native ${BUILD_NATIVE}/Modules/Setup.local
 
-${DIST_NATIVE}/.built: ${BUILD}/native/.patched
-	cd ${BUILD}/native && \
-		AR="zig ar" \
-		CXX="zig c++ ${ARCH} " \
-		CC="zig cc ${ARCH} " \
-		CFLAGS="-I${ZLIB}/native/include -I${LIBEDIT}/native/include" \
-		LDFLAGS="-L${ZLIB}/native/lib -L${LIBEDIT}/native/lib" \
-		./configure \
-			--prefix=${DIST_NATIVE} \
-			--with-ensurepip=no \
-			--with-readline=editline \
-	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses zlib).  This is to workaround
-	# a security feature of MacOS (see https://developer.apple.com/forums/thread/9233). For simplicity we set this everywhere.
-	cd ${BUILD}/native && make  -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}"
-	cd ${BUILD}/native && make  -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}" install
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}
+	cd ${BUILD_NATIVE} \
+		&& 	AR="zig ar" \
+			CXX="zig c++ ${ARCH} " \
+			CC="zig cc ${ARCH} " \
+			CFLAGS="-I${ZLIB}/native/include -I${LIBEDIT}/native/include" \
+			LDFLAGS="-L${ZLIB}/native/lib -L${LIBEDIT}/native/lib" \
+			./configure \
+				--prefix=${DIST_NATIVE} \
+				--with-ensurepip=no \
+				--with-readline=editline
+	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses
+	# zlib).  This is to workaround a security feature of MacOS (see
+	# https://developer.apple.com/forums/thread/9233). For simplicity we set this on all hosts.
+	cd ${BUILD_NATIVE} \
+		&&	make -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD_NATIVE}:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD_NATIVE}:${LD_LIBRARY_PATH}" \
+		&&	make -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD_NATIVE}:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD_NATIVE}:${LD_LIBRARY_PATH}" install
 	touch ${DIST_NATIVE}/.built
 
-native: ${DIST_NATIVE}/.built
+${BIN}/python-native: bin/python-native
+	rm -f ${BIN}/python-native
+	ln -s `pwd`/bin/python-native ${BIN}/python-native
 
 # Use "make run-native" to run native python at the command line.
 .PHONY: run-native
 run-native: ${DIST_NATIVE}/.built
-	${DIST_NATIVE}/bin/python3
+	bin/python-native
 
 
+## WASM
 
-
-#############
-# WASM
-#############
-
-${BUILD_WASM}/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
-	rm -rf ${BUILD_WASM} && mkdir -p ${BUILD_WASM}
-	tar xf ${BUILD}/Python-${PYTHON_VERSION}.tar.xz -C ${BUILD_WASM} --strip-components=1
-	# Also copy the config.site, which answers some questions needed for
-	# cross compiling, without which ./configure won't work.
+${BUILD_WASM}:: ${TARBALL}
+	# Scripts to make it easy to change CPython and rebuild iteratively
 	ln -s ${CWD}/src/rebuild ${BUILD_WASM}/rebuild
+	# Script to make it easy to change shared modules and rebuild them.
 	ln -s ${CWD}/src/rebuild-shared ${BUILD_WASM}/rebuild-shared
+	# Copy the config.site, which answers questions needed for
+	# cross compiling, without which ./configure won't work.
 	cp src/config.site ${BUILD_WASM}
+	# Configure how modules are built
 	cp src/Setup.local ${BUILD_WASM}/Modules/Setup.local
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
 	# explicitly add anything that is really used from there to posix-wasm.h
 	mkdir ${BUILD_WASM}/sys && echo '#include "posix-wasm.h"' >  ${BUILD_WASM}/sys/wait.h
+	# Apply our patches:
 	cd ${BUILD_WASM} && cat ${CWD}/src/python-patches/01-subprocess.patch | patch -p1
 	cd ${BUILD_WASM}/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
 	cd ${BUILD_WASM}/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
@@ -138,14 +123,14 @@ ${BUILD_WASM}/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 # NOTE: if you're debugging, do
 #    cd build/wasm
 #    ./rebuild-shared
-# to rebuild the shared modules. This always builds them with debugging symbols.
-# Keep this in sync with src/rebuild-shared
+# to rebuild the shared modules, which *always* builds them with debugging symbols enabled.
+# Keep the following in sync with src/rebuild-shared:
 BLDSHARED_DEBUG = zig wasm-ld --experimental-pic -shared
 BLDSHARED_PROD = ${BLDSHARED_DEBUG}  -s --compress-relocations
 # what we will use:
 BLDSHARED = ${BLDSHARED_PROD}
 
-${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
+${DIST_WASM}/.built-cpython: ${BUILD_WASM} ${DIST_NATIVE}/.built
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
 	# - with-pymalloc it actually works and seems faster
 	# - We use "zig cc -target wasm32-wasi" instead of "zig cc -target wasm32-wasi-musl" since the broken
@@ -160,8 +145,8 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	#   will use it and pick up system-wide libraries that are not supported by WASM, which is a huge pain
 	#   that leads to subtle bugs.  One example of this is "uuid". (TODO: bug report: should be disabled when cross compiling?)
 	cd ${BUILD_WASM} && \
-		CC="zig cc -Oz -target wasm32-wasi  " \
-		CXX="zig c++ -Oz -target wasm32-wasi " \
+		CC="zig cc -Oz -target wasm32-wasi" \
+		CXX="zig c++ -Oz -target wasm32-wasi" \
 		AR="zig ar" \
 		CFLAGS="-D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD_WASM} -I${POSIX_WASM}/wasm -DPy_DEFAULT_RECURSION_LIMIT=1000" \
 		CONFIG_SITE=./config.site \
@@ -175,18 +160,23 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 			--disable-shared \
 			--with-pkg-config=no \
 			--with-readline=editline \
-			--with-build-python=${DIST_NATIVE}/bin/python3 \
+			--with-build-python=${CWD}/bin/python-native \
 			--with-pymalloc \
 			--without-ensurepip \
 			--host=wasm32-unknown-wasi \
 			--build=`./config.guess`
 	cat src/pyconfig.h >> ${BUILD_WASM}/pyconfig.h
-	# Do not do this build in parallel (-j8), as it WILL fail with "error: unable to build WASI libc CRT file: FileNotFound "
+	# Do not do this build in parallel (-j8), as it WILL fail with "error: unable to build WASI
+	# libc CRT file: FileNotFound".  This is probably a bug in zig, so test periodically if/when
+	# we upgrade zig.
 	cd ${BUILD_WASM} && make
-	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld via the zig-fPIC script.
-	# First remove everything that needs to be built -fPIC or build will fail; add more here as we support more modules.
+	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld
+	# via the zig-fPIC script.  First remove everything that possibly needs to be built -fPIC or the
+	# build will not rebuild what it needs to build.  We just delete all .o files, so this takes longer
+	# since many of these are NOT shared.  But it works.
 	cd ${BUILD_WASM}/Modules && find . -name "*.o" -type f -delete
-	# Do the build, but with modified compiler, etc.:
+	# Do the build, but with fPIC this time.  We also have to pass some *_LDFLAGS to keep
+	# from using -lm, which isn't needed or supported by "zig wasm-ld" with the options we're using.
 	cd ${BUILD_WASM} && \
 		make \
 		CONFIGURE_LDFLAGS_NODIST="" \
@@ -200,7 +190,8 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	cd ${BUILD_WASM} && make install
 	touch ${DIST_WASM}/.built-cpython
 
-wasm: ${DIST_WASM}/.built-cpython
+.PHONY:
+wasm-cpython: ${DIST_WASM}/.built-cpython
 
 ${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
 	# Build wasm asset bundle (the pyc files, etc.).
@@ -223,12 +214,10 @@ ${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
 	cd ${DIST_WASM}/lib/dist/; zip -u python311.zip lib-dynload/*
 	touch ${DIST_WASM}/.built
 
-wasm-data: ${DIST_WASM}/.built
-
 # Use "make run-wasm" to run our WASM python at the command line.
 # You can also just run `python-wasm` in the top level bin/ directory.
 .PHONY: run-wasm
-run-wasm: ${DIST_WASM}/.built
+run-wasm: wasm
 	${PYTHON_WASM}
 
 # Run the full official Python test suite on the wasm build.  We can't just do
@@ -290,8 +279,3 @@ test-skipped:  wasm native
 	echo "Running ${SKIPPED_TEST_DESC}"
 	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} ${SKIPPED_TESTS}
 	echo "Ran ${SKIPPED_TEST_DESC}"
-
-# Cleaning up
-
-clean:
-	rm -rf ${BUILD} ${DIST}
