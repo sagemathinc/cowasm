@@ -26,8 +26,14 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.patched
 #   https://github.com/DigitalArsenal/openssl.js/tree/master/packages/openssl
 
 ${BUILD_WASM}/.patched:: ${BUILD_WASM}/.build
-	cp ${POSIX_WASM}/posix-wasm.h ${BUILD_WASM}/
-
+	cd ${BUILD_WASM} \
+		&&  patch --strip 1 < ${SRC}/patches/00-af-unix.patch
+		&&	echo '#include "posix-wasm.h"' >> e_os.h \
+		&&	echo "#undef AF_UNIX" >> e_os.h \
+		&&	echo "#define SO_KEEPALIVE 9" >> e_os.h \
+		&&	echo "#define SO_REUSEADDR    2" >> e_os.h \
+		&&  ln -s ${POSIX_WASM}/posix-wasm.h .
+	touch ${BUILD_WASM}/.patched
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
@@ -35,10 +41,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 			AR="zig ar" \
 			RANLIB="zig ranlib" \
 			./Configure --prefix=${DIST_WASM} gcc -no-tests -no-asm -static -no-afalgeng \
-		&&	echo '#include "posix-wasm.h"' >> e_os.h \
-		&&	echo "#undef AF_UNIX" >> e_os.h \
-		&&	echo "#define SO_KEEPALIVE 9" >> e_os.h \
-		&&	echo "#define SO_REUSEADDR    2" >> e_os.h \
 		&&	make -j8 \
 		&&	make install
 	touch ${DIST_WASM}/.built

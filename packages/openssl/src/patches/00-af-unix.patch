@@ -1,0 +1,19 @@
+This is a fix for a bug in the openssl build system.  TODO: I will submit an upstream PR.
+Everywhere else in the source they do #ifdef AF_UNIX, but they missed exactly one spot.
+
+diff --git a/apps/lib/s_socket.c b/apps/lib/s_socket.c
+index 059afe4..4b75134 100644
+--- a/apps/lib/s_socket.c
++++ b/apps/lib/s_socket.c
+@@ -179,7 +179,10 @@ int init_client(int *sock, const char *host, const char *port,
+                        BIO_ADDRINFO_family(res) == AF_INET6 ? "IPv6 " :
+ #endif
+                        BIO_ADDRINFO_family(res) == AF_INET ? "IPv4 " :
+-                       BIO_ADDRINFO_family(res) == AF_UNIX ? "unix " : "",
++#ifdef AF_UNIX
++                       BIO_ADDRINFO_family(res) == AF_UNIX ? "unix " :
++#endif
++                       "",
+                        bindhost != NULL ? bindhost : "",
+                        bindport != NULL ? ":" : "",
+                        bindport != NULL ? bindport : "");
