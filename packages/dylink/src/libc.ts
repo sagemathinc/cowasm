@@ -290,6 +290,7 @@ wctype.h
 const symbols = `
 __assert_fail
 sigaction
+signal
 __SIG_IGN
 __qsort_r
 __ctype_get_mb_cur_max
