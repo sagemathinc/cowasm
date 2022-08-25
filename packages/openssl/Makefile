@@ -27,7 +27,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.patched
 
 ${BUILD_WASM}/.patched:: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&&  patch --strip 1 < ${SRC}/patches/00-af-unix.patch
+		&&  patch --strip 1 < ${SRC}/patches/00-af-unix.patch \
 		&&	echo '#include "posix-wasm.h"' >> e_os.h \
 		&&	echo "#undef AF_UNIX" >> e_os.h \
 		&&	echo "#define SO_KEEPALIVE 9" >> e_os.h \
