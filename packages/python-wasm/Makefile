@@ -1,27 +1,19 @@
-OPT           = #-O ReleaseFast
-CWD           = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+include ../src/Makefile-vars
 
-PACKAGES      = ${CWD}/..
-export PATH := ${PACKAGES}/../bin:${PACKAGES}/zig/dist:$(PATH)
-
-ZIG_PKG       = --main-pkg-path ${CWD}/src
+OPT     = #-O ReleaseFast
+ZIG_PKG = --main-pkg-path ${SRC}
 
 PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
-PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm
-POSIX_WASM   = ${PACKAGES}/posix-wasm/dist/wasm
-DYLINK   = ${PACKAGES}/dylink/dist
+PYTHON_WASM = ${PACKAGES}/cpython/dist/wasm
+POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
+DYLINK = ${PACKAGES}/dylink/dist
 
-WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks \
-		-lwasi-emulated-signal
-
+WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
 WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic ${OPT}
 
 TEST = ./test-zig.sh ${OPT}
 
-DIST = ${CWD}/dist
-
 all: ${DIST}/.built bin hello python
-
 
 ####################
 ## Python interface
@@ -56,7 +48,13 @@ test-posix:
 #    also gets compiled, without being explicitly listed here.
 #
 
-PYTHON_WASM_SOURCES = src/python/signal/signal.c src/wasm/posix/stdlib.c ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${POSIX_WASM}/libposix.a src/wasm/posix.zig $(shell find src/wasm/posix/*.zig -type f) $(shell find src/python/*.zig -type f)
+PYTHON_WASM_SOURCES = \
+	src/python/signal/signal.c src/wasm/posix/stdlib.c \
+	${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a \
+	${PYTHON_WASM}/lib/libpython3.11.a \
+	${POSIX_WASM}/libposix.a \
+	src/wasm/posix.zig \
+	$(shell find src/wasm/posix/*.zig -type f) $(shell find src/python/*.zig -type f)
 
 PYTHON_WASM_C = ${PYTHON_WASM}/lib/libpython3.11.a \
 		${DYLINK}/wasm-export/libpython.c \
@@ -66,7 +64,7 @@ PYTHON_WASM_C = ${PYTHON_WASM}/lib/libpython3.11.a \
 
 PYTHON_WASM_INCLUDE = -I. -I${POSIX_WASM} -I${PYTHON_WASM}/include/python3.11
 
-PYTHON_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm -lwasi-emulated-mman -lwasi-emulated-process-clocks ${WASI_EMULATED}
+PYTHON_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
 
 # Regarding --stack below, I reported this upstream: https://github.com/ziglang/zig/issues/3735#issuecomment-1223574526
 ${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C}
@@ -95,9 +93,6 @@ ${DIST}/python/python.zip: ${PYTHON_WASM}/lib/dist/python311.zip
 ${DIST}/python/termcap: ${PYTHON_WASM}/lib/dist/termcap
 	# Copy over the termcap file (termcap is also in python.zip, but it's useful to have outside for debug mode).
 	cp ${PYTHON_WASM}/lib/dist/termcap ${DIST}/python/termcap
-
-${DIST}/python/libpython.so: ${DYLINK}/wasm/libpython.so
-	cp ${DYLINK}/wasm/libpython.so ${DIST}/python/libpython.so
 
 ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
 	zig-fPIC cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM}
