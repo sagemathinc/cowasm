@@ -1,14 +1,8 @@
-CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-BUILD = ${CWD}/build
-DIST = ${CWD}/dist
-SRC = ${CWD}/src
+include ../build/Makefile-vars
 
-PACKAGES = ${CWD}/..
-export PATH := ${PACKAGES}/../bin:$(PATH)
+all: wasm
 
-.PHONY: all
-all: ${DIST}/wasm/.built
-
+include ../build/Makefile-rules
 
 ##################
 # WASM - STATIC
@@ -18,22 +12,19 @@ all: ${DIST}/wasm/.built
 # than in node.js.  Also, the headers are needed in order to build at all.
 # -w (=no warnings) since this is almost all fake/stubbed function and would generate
 # massive warning issues:
-${BUILD}/wasm/libposix.a: src/posix-wasm.h src/posix-wasm.c src/threads.h src/threads.c
-	mkdir -p ${BUILD}/wasm
-	cd ${BUILD}/wasm/ && \
+${BUILD_WASM}/libposix.a: src/posix-wasm.h src/posix-wasm.c src/threads.h src/threads.c
+	mkdir -p ${BUILD_WASM}
+	cd ${BUILD_WASM}/ && \
 		zig cc -Oz -w -target wasm32-wasi ${SRC}/posix-wasm.c -c -o posix.o && \
 		zig cc -Oz -w -target wasm32-wasi ${SRC}/threads.c -c -o threads.o && \
 		zig cc -Oz -target wasm32-wasi ${SRC}/lib/builtins/muldc3.c -c -o muldc3.o && \
 		zig cc -Oz -target wasm32-wasi ${SRC}/lib/builtins/mulsc3.c -c -o mulsc3.o && \
 		zig cc -Oz -target wasm32-wasi ${SRC}/lib/builtins/multc3.c -c -o multc3.o && \
 		zig ar -crs libposix.a posix.o threads.o muldc3.o  mulsc3.o  multc3.o
-	mkdir -p ${DIST}/wasm
-	cp ${SRC}/posix-wasm.h ${SRC}/emscripten.h ${BUILD}/wasm/libposix.a ${DIST}/wasm/
 
-${DIST}/wasm/.built: ${BUILD}/wasm/libposix.a
-	touch ${DIST}/wasm/.built
-
-clean:
-	rm -rf ${DIST} ${BUILD}
+${DIST_WASM}/.built: ${BUILD_WASM}/libposix.a
+	mkdir -p ${DIST_WASM}
+	cp ${SRC}/posix-wasm.h ${SRC}/emscripten.h ${BUILD_WASM}/libposix.a ${DIST_WASM}/
+	touch ${DIST_WASM}/.built
 
 

@@ -7,6 +7,8 @@ bin/node
 bin/npm
 bin/npx
 bin/python-native
+bin/pw
+bin/pw-d
 **/dist
 **/build
 **/node_modules
