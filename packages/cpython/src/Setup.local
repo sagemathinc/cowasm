@@ -13,7 +13,8 @@
 # zip bundle yet.  You can explicitly include those.  However,
 # 'import _curses; _curses.initscr()' fails right now, so there's probably
 # an issue with terminfo, etc., to sort out.  This might be just a matter of
-# adding to packages/python-wasm/Makefile.
+# adding to packages/python-wasm/Makefile.  Also, note that I haven't got
+# ncurses to build -fPIC yet, so this has to be static:
 
 #_curses _cursesmodule.c -lncurses -ltermcap
 #_curses_panel _curses_panel.c   -lncurses -ltermcap

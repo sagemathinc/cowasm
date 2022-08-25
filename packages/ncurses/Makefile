@@ -1,60 +1,52 @@
+include ../src/Makefile-vars
+
 # See https://ftp.gnu.org/pub/gnu/ncurses/?C=M;O=D
-
-
 VERSION = 6.3
-
-CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-BUILD = ${CWD}/build
-DIST_NATIVE = ${CWD}/dist/native
-DIST_WASM = ${CWD}/dist/wasm
-POSIX_WASM = ${CWD}/../posix-wasm/dist/wasm
-TERMCAP = ${CWD}/../termcap/dist/wasm
+URL = https://ftp.gnu.org/gnu/ncurses/ncurses-${VERSION}.tar.gz
+TARBALL = ${UPSTREAM}/ncurses-${VERSION}.tar.gz
+POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
+TERMCAP = ${PACKAGES}/termcap/dist/wasm
 
 all:  wasm
 
+include ../src/Makefile-rules
 
-${BUILD}/source.tar.gz:
-	mkdir -p ${BUILD}
-	cd ${BUILD} && curl https://ftp.gnu.org/gnu/ncurses/ncurses-${VERSION}.tar.gz -o source.tar.gz
+# NATIVE -- we do not use this
 
-# NATIVE -- we do not need this or care about it.
-
-${BUILD}/native: ${BUILD}/source.tar.gz
-	rm -rf ${BUILD}/native
-	mkdir -p ${BUILD}/native
-	cd ${BUILD} && tar xf source.tar.gz -C native --strip-components=1
-
-${DIST_NATIVE}/.built: ${BUILD}/native
-	cd ${BUILD}/native && CC="zig cc" AR="zig ar" ./configure --prefix=${DIST_NATIVE}
-	cd ${BUILD}/native && make -j8
-	cd ${BUILD}/native && make install
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}
+	cd ${BUILD_NATIVE} \
+		&& CC="zig cc" AR="zig ar" ./configure --prefix=${DIST_NATIVE} \
+		&& make -j8 \
+		&& make install
 	touch ${DIST_NATIVE}/.built
 
-.PHONY: native
-native: ${DIST_NATIVE}/.built
+# WASM.
 
-
-# WASM -- this is very important.
-
-${BUILD}/wasm: ${BUILD}/source.tar.gz
-	rm -rf ${BUILD}/wasm
-	mkdir -p ${BUILD}/wasm
-	cd ${BUILD} && tar xf source.tar.gz -C wasm --strip-components=1
-	cp ${POSIX_WASM}/posix-wasm.h ${BUILD}/wasm/include/
+${BUILD_WASM}:: ${TARBALL}
+	cp ${POSIX_WASM}/posix-wasm.h ${BUILD_WASM}/include/
 	# Patch terminfo.src, since there are two obscure entries (of the thousands) that prevent "make install" from working.
-	cd ${BUILD}/wasm/misc && patch -p0 < ${CWD}/src/00-terminfo.patch
+	cd ${BUILD_WASM}/misc && patch -p0 < ${SRC}/00-terminfo.patch
+	# Obviously, these should be done as patches:
+	cd ${BUILD_WASM}/ncurses/tty && echo '#include "posix-wasm.h"' | cat - lib_tstp.c > tmp && mv tmp lib_tstp.c
+	cd ${BUILD_WASM}/progs && echo '#include "posix-wasm.h"' | cat - tset.c > tmp && mv tmp tset.c
 
-${DIST_WASM}/.built: ${BUILD}/wasm
-	cd ${BUILD}/wasm && RANLIB="zig ranlib" AR="zig ar" CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" CFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib" CXXFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib" ./configure --enable-termcap --build=`./config.guess` --host=none --prefix="${DIST_WASM}" --with-build-cc="zig cc"
-	cd ${BUILD}/wasm/ncurses/tty && echo '#include "posix-wasm.h"' | cat - lib_tstp.c > tmp && mv tmp lib_tstp.c
-	cd ${BUILD}/wasm/progs && echo '#include "posix-wasm.h"' | cat - tset.c > tmp && mv tmp tset.c
-	cd ${BUILD}/wasm && make -j8
-	cd ${BUILD}/wasm && make -j8 install
+# The fPIC build would use CC="zig-fPIC cc" CXX="zig-fPIC c++"
+# but isn't working
+
+${DIST_WASM}/.built: ${BUILD_WASM}
+	cd ${BUILD_WASM} \
+		&&	RANLIB="zig ranlib" \
+			AR="zig ar" \
+			CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
+			CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
+			CFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib" \
+			CXXFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib" \
+			./configure \
+				--enable-termcap \
+				--build=`./config.guess` \
+				--host=none \
+				--prefix="${DIST_WASM}" \
+				--with-build-cc="zig cc" \
+		&& 	make -j8 \
+		&& 	make -j8 install
 	touch ${DIST_WASM}/.built
-
-.PHONY: wasm
-wasm: ${DIST_WASM}/.built
-
-
-clean:
-	rm -rf build dist

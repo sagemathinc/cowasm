@@ -14,6 +14,7 @@ clean-native:
 	rm -rf ${BUILD_NATIVE} ${DIST_NATIVE}
 
 clean: clean-wasm clean-native
+	rm -rf ${BUILD} ${DIST}
 
 ${TARBALL}:
 	mkdir -p ${UPSTREAM}
