@@ -4,6 +4,8 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
+PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
+
 all: python-wasm webpack terminal website
 
 cpython: packages/cpython/${BUILT}
@@ -110,27 +112,12 @@ packages/bzip2/${BUILT}: zig
 	cd packages/bzip2 && make all
 .PHONY: bzip2
 
+.PHONY: clean
 clean:
-	cd packages/bench && make clean
-	cd packages/bzip2 && make clean
-	cd packages/cpython && make clean
-	cd packages/dylink && make clean
-	cd packages/libedit && make clean
-	cd packages/lzma && make clean
-	cd packages/ncurses && make clean
-	cd packages/node && make clean
-	cd packages/openssl && make clean
-	cd packages/posix-wasm && make clean
-	cd packages/python-wasm && make clean
-	cd packages/sqlite && make clean
-	cd packages/termcap && make clean
-	cd packages/terminal && make clean
-	cd packages/wasi && make clean
-	cd packages/webpack && make clean
-	cd packages/website && make clean
-	cd packages/zig && make clean
-	cd packages/zlib && make clean
+	./bin/make-all clean ${PACKAGE_DIRS}
 
+clean-build:
+	./bin/make-all clean-build ${PACKAGE_DIRS}
 
 test: test-cpython test-bench test-dylink test-posix-zig test-python-wasm
 .PHONY: test

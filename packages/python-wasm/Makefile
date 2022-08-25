@@ -15,6 +15,8 @@ TEST = ./test-zig.sh ${OPT}
 
 all: ${DIST}/.built bin hello python
 
+include ../build/Makefile-rules
+
 ####################
 ## Python interface
 ####################
@@ -141,10 +143,3 @@ test: all test-python test-posix
 
 strip: node_modules
 	npm run strip
-
-.PHONY: clean
-clean:
-	rm -rf ${DIST} node_modules tsconfig.tsbuildinfo src/zig-cache src/*/zig-cache
-
-
-

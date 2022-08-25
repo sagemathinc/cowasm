@@ -25,5 +25,8 @@ test:
 	make wasm-debug
 	make wasm
 
+.PHONY: clean
 clean:
 	rm -rf src/__pycache__
+
+clean-build: clean
