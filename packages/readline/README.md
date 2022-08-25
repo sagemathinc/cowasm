@@ -1,1 +1,0 @@
-We are not using this for anything.  We might use it, but for now we're using libedit instead due to it working better for us... and being BSD licensed instead of GPL licensed.
