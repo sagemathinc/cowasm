@@ -13,6 +13,9 @@ UPSTREAM = ${CWD}/../../upstream/sources
 # Binaries useful for building, e.g., node, zig, zig-fPIC
 BIN = ${CWD}/../../bin
 
+# Include the BIN directory at front of path.
+export PATH := ${BIN}:$(PATH)
+
 # Where sources, e.g., patches, customizations, new code, etc., are stored for this build.
 SRC = ${CWD}/src
 

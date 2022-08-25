@@ -22,3 +22,4 @@ ${BUILD_WASM}: ${TARBALL}
 	rm -rf ${BUILD_WASM}
 	mkdir -p ${BUILD_WASM}
 	tar xf ${TARBALL} -C ${BUILD_WASM} --strip-components=1
+
