@@ -1,4 +1,4 @@
-include ../src/Makefile-vars
+include ../build/Makefile-vars
 
 #
 # We build a native version of CPython and a WASM version.
@@ -42,7 +42,7 @@ all: native ${BIN}/python-native wasm
 ${DIST}/.built: native wasm
 	touch ${DIST}/.built
 
-include ../src/Makefile-rules
+include ../build/Makefile-rules
 
 
 ## NATIVE

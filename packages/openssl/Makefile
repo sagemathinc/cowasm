@@ -1,4 +1,4 @@
-include ../src/Makefile-vars
+include ../build/Makefile-vars
 
 VERSION = 3.0.5
 URL = https://github.com/openssl/openssl/archive/refs/tags/openssl-${VERSION}.tar.gz
@@ -7,7 +7,7 @@ POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 
 all: wasm
 
-include ../src/Makefile-rules
+include ../build/Makefile-rules
 
 ## Native
 

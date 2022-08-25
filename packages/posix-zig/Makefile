@@ -1,9 +1,6 @@
-CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-BUILD = ${CWD}/build
-SRC = ${CWD}/src
-DIST = ${CWD}/dist
+include ../build/Makefile-vars
+
 OPTS = -mcpu=baseline -OReleaseSmall
-SOURCES = src/
 
 all: ${DIST}/.built
 

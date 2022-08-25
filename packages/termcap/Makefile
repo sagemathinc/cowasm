@@ -1,7 +1,7 @@
 
 all: wasm native
 
-include ../src/Makefile-vars
+include ../build/Makefile-vars
 
 # See https://ftp.gnu.org/gnu/termcap/
 # Not likely to change -- it hasn't in over 20 years!
@@ -10,7 +10,7 @@ TARBALL = ${UPSTREAM}/termcap-${VERSION}.tar.gz
 URL = https://ftp.gnu.org/gnu/termcap/termcap-${VERSION}.tar.gz
 
 
-include ../src/Makefile-rules
+include ../build/Makefile-rules
 
 ##################
 # NATIVE

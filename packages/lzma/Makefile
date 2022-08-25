@@ -1,4 +1,4 @@
-include ../src/Makefile-vars
+include ../build/Makefile-vars
 
 all: wasm
 
@@ -8,7 +8,7 @@ VERSION = 1.1
 URL = https://github.com/sagemathinc/lzma/archive/refs/tags/v${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/lzma-v${VERSION}.tar.gz
 
-include ../src/Makefile-rules
+include ../build/Makefile-rules
 
 ${DIST_WASM}/.built: ${BUILD_WASM}
 	cd ${BUILD_WASM} && \

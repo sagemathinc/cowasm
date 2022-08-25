@@ -1,4 +1,4 @@
-include ../src/Makefile-vars
+include ../build/Makefile-vars
 
 # See https://ftp.gnu.org/pub/gnu/ncurses/?C=M;O=D
 VERSION = 6.3
@@ -9,7 +9,7 @@ TERMCAP = ${PACKAGES}/termcap/dist/wasm
 
 all:  wasm
 
-include ../src/Makefile-rules
+include ../build/Makefile-rules
 
 # NATIVE -- we do not use this
 

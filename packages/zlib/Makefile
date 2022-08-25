@@ -1,4 +1,4 @@
-include ../src/Makefile-vars
+include ../build/Makefile-vars
 
 # See https://zlib.net/
 # HORRIBLE FACT -- I found with version 1.2.11 that when zlib updated to version 1.2.12 they
@@ -16,7 +16,7 @@ all: native wasm
 URL = https://zlib.net/zlib-${ZLIB_VERSION}.tar.xz
 TARBALL = ${UPSTREAM}/zlib-${ZLIB_VERSION}.tar.xz
 
-include ../src/Makefile-rules
+include ../build/Makefile-rules
 
 # NATIVE
 

@@ -1,4 +1,4 @@
-include ../src/Makefile-vars
+include ../build/Makefile-vars
 
 OPT     = #-O ReleaseFast
 ZIG_PKG = --main-pkg-path ${SRC}

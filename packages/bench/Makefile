@@ -1,4 +1,4 @@
-include ../src/Makefile-vars
+include ../build/Makefile-vars
 
 wasm-debug:
 	echo "Starting benchmarks with python-wasm-debug"

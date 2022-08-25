@@ -2,7 +2,7 @@
 # for your architecture here, so that we can use it for
 # building everything else.
 
-include ../src/Makefile-vars
+include ../build/Makefile-vars
 
 # Find the latest version at https://ziglang.org/download/
 # This is for pre-release

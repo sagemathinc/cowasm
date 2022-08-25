@@ -1,4 +1,4 @@
-include ../src/Makefile-vars
+include ../build/Makefile-vars
 
 # See https://sqlite.org/src/doc/trunk/README.md
 # https://www.sqlite.org/src/tarball/sqlite.tar.gz?r=release
@@ -19,7 +19,7 @@ POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 
 all: wasm
 
-include ../src/Makefile-rules
+include ../build/Makefile-rules
 
 ${BUILD_WASM}:: ${TARBALL}
 	cp ${SRC}/config.site ${BUILD_WASM}

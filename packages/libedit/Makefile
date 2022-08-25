@@ -1,5 +1,5 @@
 
-include ../src/Makefile-vars
+include ../build/Makefile-vars
 
 all: wasm native
 
@@ -7,7 +7,7 @@ VERSION = 20210910-3.1
 TARBALL = ${UPSTREAM}/libedit-${VERSION}.tar.gz
 URL = https://www.thrysoee.dk/editline/libedit-${VERSION}.tar.gz
 
-include ../src/Makefile-rules
+include ../build/Makefile-rules
 
 # See https://www.thrysoee.dk/editline/
 
