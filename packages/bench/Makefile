@@ -1,30 +1,29 @@
-python-wasm-debug:
+include ../src/Makefile-vars
+
+wasm-debug:
 	echo "Starting benchmarks with python-wasm-debug"
-	../../bin/python-wasm-debug src/all.py
+	python-wasm-debug src/all.py
 
-python-wasm:
+wasm:
 	echo "Starting benchmarks with python-wasm"
-	../../bin/python-wasm src/all.py
+	python-wasm src/all.py
 
-python-native:
+native:
 	echo "Starting benchmarks with python-native"
-	../../bin/python-native src/all.py
+	python-native src/all.py
 
 pylang:
 	echo "Starting benchmarks with pylang"
 	npx --yes pylang src/all.py
 
-pypy:
-	echo "Starting benchmarks with pypy"
+pypy3:
+	echo "Starting benchmarks with pypy (you must install pypy3 yourself)"
 	pypy3 src/all.py
-
-all:
-	npm ci
 
 # Running all the benchmark programs tests something about python-wasm actually working.
 test:
-	make python-wasm-debug
-	make python-wasm
+	make wasm-debug
+	make wasm
 
 clean:
 	rm -rf src/__pycache__
