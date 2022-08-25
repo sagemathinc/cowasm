@@ -6,15 +6,20 @@ native: ${DIST_NATIVE}/.built
 wasm: ${DIST_WASM}/.built
 
 .PHONY: clean-wasm
-clean-wasm:
+clean-wasm::
 	rm -rf ${BUILD_WASM} ${DIST_WASM}
 
 .PHONY: clean-native
-clean-native:
+clean-native::
 	rm -rf ${BUILD_NATIVE} ${DIST_NATIVE}
 
-clean: clean-wasm clean-native
-	rm -rf ${BUILD} ${DIST}
+.PHONY: clean-build
+clean-build::
+	rm -rf ${BUILD} ${SRC}/zig-cache
+
+.PHONY: clean
+clean:: clean-wasm clean-native
+	rm -rf ${BUILD} ${DIST} tsconfig.tsbuildinfo node_modules ${SRC}/zig-cache
 
 ${TARBALL}:
 	mkdir -p ${UPSTREAM}

@@ -4,6 +4,8 @@ OPTS = -mcpu=baseline -OReleaseSmall
 
 all: ${DIST}/.built
 
+include ../build/Makefile-rules
+
 ${DIST}/.built: dist/index.js dist/aarch64-macos.node dist/x86_64-macos.node dist/aarch64-linux-gnu.node dist/x86_64-linux-gnu.node
 	touch dist/.built
 
@@ -36,5 +38,3 @@ test: all
 	# for "make test"; do "npm run test" for the 2x faster cached testing.
 	npm run test-no-cache
 
-clean:
-	rm -rf ${BUILD} ${DIST} tsconfig.tsbuildinfo

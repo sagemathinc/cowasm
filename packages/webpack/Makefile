@@ -1,12 +1,10 @@
-CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-DIST = ${CWD}/dist
+include ../build/Makefile-vars
 
 all: ${DIST}/.built
+
+include ../build/Makefile-rules
 
 ${DIST}/.built: src/index.ts
 	npm ci
 	npm run build
 	touch ${DIST}/.built
-
-clean:
-	rm -rf ${DIST} node_modules tsconfig.tsbuildinfo
