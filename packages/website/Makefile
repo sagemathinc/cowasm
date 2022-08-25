@@ -14,3 +14,7 @@ ${DIST}/.built: src/index.ts
 publish:
 	NODE_ENV="production" npm run build
 	rsync -axvH --delete dist/ ${HOME}/python-wasm.org/
+
+
+clean-build::
+	rm -rf node_modules
