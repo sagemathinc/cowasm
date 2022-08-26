@@ -998,7 +998,7 @@ export default class WASI {
             pathPtr,
             pathLen
           ).toString();
-          const rstats = fs.statSync(path.resolve(stats.path, p));
+          const rstats = fs.lstatSync(path.resolve(stats.path, p));
           this.view.setBigUint64(bufPtr, BigInt(rstats.dev), true);
           bufPtr += 8;
           this.view.setBigUint64(bufPtr, BigInt(rstats.ino), true);
@@ -1230,7 +1230,7 @@ export default class WASI {
            * in which case the file may not exist and should be created) */
           let isDirectory;
           try {
-            isDirectory = fs.statSync(full).isDirectory();
+            isDirectory = fs.lstatSync(full).isDirectory();
           } catch (e) {}
 
           let realfd;
