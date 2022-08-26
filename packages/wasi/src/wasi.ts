@@ -983,7 +983,7 @@ export default class WASI {
       path_filestat_get: wrap(
         (
           fd: number,
-          _flags: number,
+          flags: number,
           pathPtr: number,
           pathLen: number,
           bufPtr: number
@@ -998,7 +998,16 @@ export default class WASI {
             pathPtr,
             pathLen
           ).toString();
-          const rstats = fs.lstatSync(path.resolve(stats.path, p));
+          let rstats;
+          if (flags) {
+            rstats = fs.statSync(path.resolve(stats.path, p));
+          } else {
+            // there is exactly one flag implemented called "__WASI_LOOKUPFLAGS_SYMLINK_FOLLOW";
+            // it's 1 and is used to follow links, i.e.,
+            // implement lstat -- this is ignored in upstream.
+            // See zig/lib/libc/wasi/libc-bottom-half/cloudlibc/src/libc/sys/stat/fstatat.c
+            rstats = fs.lstatSync(path.resolve(stats.path, p));
+          }
           this.view.setBigUint64(bufPtr, BigInt(rstats.dev), true);
           bufPtr += 8;
           this.view.setBigUint64(bufPtr, BigInt(rstats.ino), true);
@@ -1230,7 +1239,7 @@ export default class WASI {
            * in which case the file may not exist and should be created) */
           let isDirectory;
           try {
-            isDirectory = fs.lstatSync(full).isDirectory();
+            isDirectory = fs.statSync(full).isDirectory();
           } catch (e) {}
 
           let realfd;
