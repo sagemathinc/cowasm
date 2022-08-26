@@ -144,7 +144,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# --with-pkg-config=no, this is CRITICAL; otherwise, if pkg-config is installed, then python's build system
 	#   will use it and pick up system-wide libraries that are not supported by WASM, which is a huge pain
 	#   that leads to subtle bugs.  One example of this is "uuid". (TODO: bug report: should be disabled when cross compiling?)
-	# - DPy_DEFAULT_RECURSION_LIMIT=800:
+	# - DPy_DEFAULT_RECURSION_LIMIT=700:
 	#       - with -Oz, a limit of 1000 causes test_userdict to fail when testing on
 	#         nodejs linux (it works on mac).  test_userlist is even worse.
 	#       - with -oZ, test_richcmp.py fails with a limit above 750; a limit of max of 720 works on node on linux.
@@ -171,10 +171,9 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 			--host=wasm32-unknown-wasi \
 			--build=`./config.guess`
 	cat src/pyconfig.h >> ${BUILD_WASM}/pyconfig.h
-	# Do not do this build in parallel (-j8), as it WILL fail with "error: unable to build WASI
-	# libc CRT file: FileNotFound".  This is probably a bug in zig, so test periodically if/when
-	# we upgrade zig.
-	cd ${BUILD_WASM} && make
+	# NOTE: I have seen "error: unable to build WASI libc CRT file: FileNotFound" when using "make -j8",
+	# and had it go away when removing parallel build.  It's working now.
+	cd ${BUILD_WASM} && make -j8
 	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld
 	# via the zig-fPIC script.  First remove everything that possibly needs to be built -fPIC or the
 	# build will not rebuild what it needs to build.  We just delete all .o files, so this takes longer
