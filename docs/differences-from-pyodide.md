@@ -48,7 +48,7 @@ KeyboardInterrupt
 9346028
 ```
 
-This doesn't work with Pyodide, which instead just blocks.  There's a discussion [here about how this is coming to Pyodide](https://github.com/pyodide/pyodide/issues/1504#issuecomment-827556939).   Interrupting running computations doesn't work in [Jupyterlite](https://jupyter.org/try-jupyter/lab/) either; you have to restart the kernel.
+This doesn't "trivially" just work with Pyodide, which instead just blocks.  There's a discussion [here about how this is coming to Pyodide,](https://github.com/pyodide/pyodide/issues/1504#issuecomment-827556939) and [maybe it is already supported in the same way](https://pyodide.org/en/stable/usage/keyboard-interrupts.html).   Interrupting running computations doesn't work in [Jupyterlite](https://jupyter.org/try-jupyter/lab/) yet though; you have to restart the kernel.
 
 ### control\+d \- end of file
 

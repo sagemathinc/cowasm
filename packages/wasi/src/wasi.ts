@@ -156,6 +156,7 @@ const wrap =
 
 const stat = (wasi: WASI, fd: number): File => {
   const entry = wasi.FD_MAP.get(fd);
+  // console.log("stat", { fd, entry, FD_MAP: wasi.FD_MAP });
   // log("stat", { fd, entry, FD_MAP: wasi.FD_MAP });
   if (!entry) {
     throw new WASIError(WASI_EBADF);
@@ -847,7 +848,12 @@ export default class WASI {
             if (bufPtr - startPtr > bufLen) {
               break;
             }
-            const rstats = fs.statSync(path.resolve(stats.path, entry.name));
+            // We use lstat instead of stat, since stat fails on broken links.
+            // Also, stat resolves the link giving the wrong inode!  On the other
+            // hand, lstat works fine on non-links.  This is wrong in upstream,
+            // which breaks testing test_compileall.py  in the python test suite,
+            // due to doing os.scandir on a directory that contains a broken link.
+            const rstats = fs.lstatSync(path.resolve(stats.path, entry.name));
             this.view.setBigUint64(bufPtr, BigInt(rstats.ino), true);
             bufPtr += 8;
             if (bufPtr - startPtr > bufLen) {
@@ -977,7 +983,7 @@ export default class WASI {
       path_filestat_get: wrap(
         (
           fd: number,
-          _flags: number,
+          flags: number,
           pathPtr: number,
           pathLen: number,
           bufPtr: number
@@ -992,7 +998,16 @@ export default class WASI {
             pathPtr,
             pathLen
           ).toString();
-          const rstats = fs.statSync(path.resolve(stats.path, p));
+          let rstats;
+          if (flags) {
+            rstats = fs.statSync(path.resolve(stats.path, p));
+          } else {
+            // there is exactly one flag implemented called "__WASI_LOOKUPFLAGS_SYMLINK_FOLLOW";
+            // it's 1 and is used to follow links, i.e.,
+            // implement lstat -- this is ignored in upstream.
+            // See zig/lib/libc/wasi/libc-bottom-half/cloudlibc/src/libc/sys/stat/fstatat.c
+            rstats = fs.lstatSync(path.resolve(stats.path, p));
+          }
           this.view.setBigUint64(bufPtr, BigInt(rstats.dev), true);
           bufPtr += 8;
           this.view.setBigUint64(bufPtr, BigInt(rstats.ino), true);
