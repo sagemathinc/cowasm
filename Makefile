@@ -9,7 +9,7 @@ PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 all: python-wasm webpack terminal website
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi sqlite bzip2 openssl
+packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi sqlite bzip2 # openssl
 	cd packages/cpython && make all
 .PHONY: cpython
 
