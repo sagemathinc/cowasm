@@ -848,7 +848,12 @@ export default class WASI {
             if (bufPtr - startPtr > bufLen) {
               break;
             }
-            const rstats = fs.statSync(path.resolve(stats.path, entry.name));
+            // We use lstat instead of stat, since stat fails on broken links.
+            // Also, stat resolves the link giving the wrong inode!  On the other
+            // hand, lstat works fine on non-links.  This is wrong in upstream,
+            // which breaks testing test_compileall.py  in the python test suite,
+            // due to doing os.scandir on a directory that contains a broken link.
+            const rstats = fs.lstatSync(path.resolve(stats.path, entry.name));
             this.view.setBigUint64(bufPtr, BigInt(rstats.ino), true);
             bufPtr += 8;
             if (bufPtr - startPtr > bufLen) {
