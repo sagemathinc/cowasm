@@ -764,7 +764,7 @@ export default class WASI {
           //               this.stdinBuffer?.length
           //             } ${this.stdinBuffer?.toString()}`
           //           );
-
+          // log("stat", { fd, entry, FD_MAP: wasi.FD_MAP });
           outer: for (const iov of getiovs(iovs, iovsLen)) {
             let r = 0;
             while (r < iov.byteLength) {
@@ -792,6 +792,7 @@ export default class WASI {
                   }
                 }
               } else {
+                // console.log("fs.readSync", {fd:stats.real, iov,r,length, position});
                 rr = fs.readSync(
                   stats.real, // fd
                   iov, // buffer
@@ -800,7 +801,10 @@ export default class WASI {
                   position // position
                 );
               }
-              if (!IS_STDIN) {
+              // TODO: I'm not sure which type of files should have an offset yet.
+              // E.g., obviously a regular file should and obviously stdin (a character
+              // device) and a pipe (which has type WASI_FILETYPE_SOCKET_STREAM) does not.
+              if (stats.filetype == WASI_FILETYPE_REGULAR_FILE) {
                 stats.offset =
                   (stats.offset ? stats.offset : BigInt(0)) + BigInt(rr);
               }
@@ -814,7 +818,6 @@ export default class WASI {
             }
           }
 
-          // We should not modify the offset of stdin
           this.view.setUint32(nread, read, true);
           return WASI_ESUCCESS;
         }
