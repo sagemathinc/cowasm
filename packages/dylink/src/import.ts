@@ -245,7 +245,7 @@ export default async function importWebAssemblyDlopen({
       //
       // 2. Another likely possibility is that this is a function that will get defined
       // as a side effect of the dynamic link module being loaded.  We don't know
-      // what address that function will get, so we in that case we create an entry
+      // what address that function will get, so in that case we create an entry
       // in funcMap, and later below we update the pointer created here.
       //
       // 3. A third possibility is that the requested function isn't in the
@@ -472,7 +472,7 @@ export default async function importWebAssemblyDlopen({
       throw Error(`dlsym: invalid handle ${handle}`);
     }
     let ptr = lib.symToPtr[symName];
-    log("ptr = ", ptr);
+    log("sym= ", symName, ", ptr = ", ptr);
     if (ptr != null) {
       // symbol is a known function pointer
       return ptr;
