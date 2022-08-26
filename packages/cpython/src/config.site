@@ -174,5 +174,10 @@ ac_cv_func_sendfile=no
 # Not in WASI?
 ac_cv_func_fchownat=no
 
-
-
+# Working through Python test suite
+# WASI does have openat, but it doesn't seem to work properly. The problem could
+# be with my wasi implementation.  Pyodide also doesn't support this.  With this on,
+# the test_compile.py test suite fails due to shutil.rmtree failing, so for now
+# we just disable it.  We can debug this later by enabling it, building, and
+# trying to use shutil.rmtree.
+ac_cv_func_openat=no

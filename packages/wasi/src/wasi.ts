@@ -156,6 +156,7 @@ const wrap =
 
 const stat = (wasi: WASI, fd: number): File => {
   const entry = wasi.FD_MAP.get(fd);
+  // console.log("stat", { fd, entry, FD_MAP: wasi.FD_MAP });
   // log("stat", { fd, entry, FD_MAP: wasi.FD_MAP });
   if (!entry) {
     throw new WASIError(WASI_EBADF);
