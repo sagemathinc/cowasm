@@ -174,5 +174,11 @@ ac_cv_func_sendfile=no
 # Not in WASI?
 ac_cv_func_fchownat=no
 
-
+# We do not have these YET.  There are stubs that should throw errors here:
+#     packages/python-wasm/src/wasm/posix/spawn.ts
+# but instead the functions get misdetected and result in hangs, e.g., 
+# this breaks python's test_platform.py at least on cocalc (but not on my laptop).
+# For now, disable this, and later implememnt for node.js, of course.
+ac_cv_func_posix_spawn=no
+ac_cv_func_posix_spawnp=no
 
