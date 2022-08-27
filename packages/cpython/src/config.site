@@ -184,11 +184,3 @@ ac_cv_func_fchownat=no
 # could easily try to use this function, and we want to know exactly why it is broken!
 ac_cv_func_openat=no
 
-# We do not have posix spawn implemented YET.  There are stubs that should throw errors here:
-#     packages/python-wasm/src/wasm/posix/spawn.ts
-# but instead the functions get misdetected and result in hangs, e.g., 
-# this breaks python's test_platform.py at least on cocalc (but not on my laptop).
-# For now, disable this, and later implememnt for node.js, of course.
-ac_cv_func_posix_spawn=no
-ac_cv_func_posix_spawnp=no
-
