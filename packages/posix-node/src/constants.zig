@@ -7,9 +7,10 @@ const c = @import("c.zig");
 const node = @import("node.zig");
 const netdb = @import("netdb.zig");
 const unistd = @import("unistd.zig");
+const wait = @import("wait.zig");
 
-const NAMES = netdb.constants.names ++ unistd.constants.names;
-const VALUES = getValues(netdb.constants) ++ getValues(unistd.constants);
+const NAMES = netdb.constants.names ++ unistd.constants.names ++ wait.constants.names;
+const VALUES = getValues(netdb.constants) ++ getValues(unistd.constants) ++ getValues(wait.constants);
 
 // You shouldn't have to change anything below.
 

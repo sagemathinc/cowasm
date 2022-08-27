@@ -122,6 +122,27 @@ interface PosixFunctions {
   // output is array of pairs (index, 'name')
   if_nameindex: () => [number, string][];
 
+  // spawn
+  _posixspawn: (
+    path: string,
+    fileActions,
+    attributes,
+    argv: string[],
+    envp: string[] // same format at system call
+  ) => number;
+
+  posixspawn: (
+    path: string,
+    fileActions,
+    attributes,
+    argv: string[],
+    envp: { [key: string]: string }
+  ) => number;
+
+  // wait
+  // options is an or of these: constants.WNOHANG, constants.WUNTRACED, constants.WCONTINUED
+  waitpid: (pid: number, options: number) => void;
+
   // other
   login_tty: (fd: number) => void;
   statvfs: (path: string) => StatsVFS;
@@ -177,18 +198,22 @@ try {
   mod["statvfs"] = (...args) => JSON.parse(mod["_statvfs"]?.(...args));
   mod["fstatvfs"] = (...args) => JSON.parse(mod["_fstatvfs"]?.(...args));
 
-  const _execve = mod["_execve"];
-  if (_execve != null) {
-    mod["execve"] = (pathname, argv, env) => {
-      return _execve(pathname, argv, mapToStrings(env));
-    };
+  for (const name of ["execve", "fexecve"]) {
+    const f = mod["_" + name];
+    if (f != null) {
+      mod[name] = (pathname, argv, env) => {
+        return f(pathname, argv, mapToStrings(env));
+      };
+    }
   }
 
-  const _fexecve = mod["_fexecve"];
-  if (_fexecve != null) {
-    mod["fexecve"] = (pathname, argv, env) => {
-      return _fexecve(pathname, argv, mapToStrings(env));
-    };
+  for (const name of ["posix_spawn"]) {
+    const f = mod["_" + name];
+    if (f != null) {
+      mod[name] = (path, fileActions, attributes, argv, env) => {
+        return f(path, fileActions, attributes, argv, mapToStrings(env));
+      };
+    }
   }
 
   for (const name in mod) {
