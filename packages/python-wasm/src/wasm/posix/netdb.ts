@@ -6,7 +6,7 @@ module which is what I'll likely have to do.
 */
 
 import { notImplemented } from "./util";
-import type { Hostent } from "posix-zig";
+import type { Hostent } from "posix-node";
 import constants from "./constants";
 
 export default function netdb({

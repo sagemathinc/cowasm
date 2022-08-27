@@ -140,7 +140,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	#   bad global libraries, e.g., systemwide (zig musl) sys/wait.h with a local version.
 	# - In Python source they lower the default recursion limit; however, we don't need that since our
 	#   runtime is Chromium, not wasitime and we can handle huge limits (see Include/internal/pycore_ceval.h).
-	# - enable-ipv6, since I put a lot of work into this for posix-zig!
+	# - enable-ipv6, since I put a lot of work into this for posix-node!
 	# --with-pkg-config=no, this is CRITICAL; otherwise, if pkg-config is installed, then python's build system
 	#   will use it and pick up system-wide libraries that are not supported by WASM, which is a huge pain
 	#   that leads to subtle bugs.  One example of this is "uuid". (TODO: bug report: should be disabled when cross compiling?)

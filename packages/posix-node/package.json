@@ -1,14 +1,9 @@
 {
-  "name": "posix-zig",
-  "version": "0.6.0",
-  "description": "Missing Posix Functions for Node.js -- via a native module written in Zig",
+  "name": "posix-node",
+  "version": "0.6.2",
+  "description": "Missing Posix Functions for Node.js (via a native module written in Zig)",
   "main": "dist/index.js",
-  "files": [
-    "src/*",
-    "dist/*",
-    "README.md",
-    "package.json"
-  ],
+  "files": ["src/*", "dist/*", "README.md", "package.json"],
   "scripts": {
     "build": "make -j4 all",
     "clean": "make clean",
@@ -22,17 +17,13 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/python-wasm.git"
   },
-  "keywords": [
-    "posix",
-    "zig",
-    "node"
-  ],
+  "keywords": ["posix", "zig", "node"],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/posix-zig#readme",
+  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/posix-node#readme",
   "devDependencies": {
     "@types/jest": "^28.1.6",
     "@types/node": "^18.7.3",

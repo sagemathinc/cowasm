@@ -26,7 +26,7 @@
     "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
   "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/python-wasm",
-  "workspaces": ["../wasi", "../dylink", "../posix-zig"],
+  "workspaces": ["../wasi", "../dylink", "../posix-node"],
   "dependencies": {
     "@wapython/wasi": "^1.2.1",
     "awaiting": "^3.0.0",
@@ -34,7 +34,7 @@
     "date-format": "^4.0.13",
     "debug": "^4.3.4",
     "dylink": "^0.6.0",
-    "posix-zig": "^0.6.0"
+    "posix-node": "^0.6.1"
   },
   "devDependencies": {
     "@types/callsite": "^1.0.31",

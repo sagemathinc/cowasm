@@ -1,4 +1,4 @@
-// posix-zig binaries should work across a very wide range of nodejs versions
+// posix-node binaries should work across a very wide range of nodejs versions
 // for their given architecture.
 //
 // "For an addon to remain ABI-compatible across Node.js major versions, it must use

@@ -1,6 +1,6 @@
 import { init, repr, exec } from "../../python/node";
 import { hostname, userInfo } from "os";
-import posix from "posix-zig";
+import posix from "posix-node";
 
 test("test getting the hostname via python, which calls the gethostname system call", async () => {
   await init({ debug: true });
