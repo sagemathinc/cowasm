@@ -123,7 +123,7 @@ interface PosixFunctions {
   if_nameindex: () => [number, string][];
 
   // spawn
-  _posixspawn: (
+  _posix_spawn: (
     path: string,
     fileActions,
     attributes,
@@ -131,7 +131,7 @@ interface PosixFunctions {
     envp: string[] // same format at system call
   ) => number;
 
-  posixspawn: (
+  posix_spawn: (
     path: string,
     fileActions,
     attributes,

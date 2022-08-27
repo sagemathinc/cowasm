@@ -8,7 +8,7 @@ test("test that a few spawn related posix calls throw an error (rather than gett
   expect(wasm.posixEnv["posix_spawn_file_actions_init"]()).toBe(-1);
 });
 
-test("spawn the sleep command and wait for it to finish and confirm the time", async () => {
+test("spawn /bin/sleep and wait for it to finish and confirm the time", async () => {
   await init({ noWorker: true });
   const t0 = new Date().valueOf();
   await exec(

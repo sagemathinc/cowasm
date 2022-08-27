@@ -27,5 +27,6 @@ fn waitpid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
         node.throwError(env, "error calling wait.waitpid");
         return null;
     }
+    // TODO
     return null;
 }
