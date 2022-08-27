@@ -27,6 +27,7 @@ test-python:
 test-posix:
 	cd src && \
 		${TEST} wasm/posix/unistd.zig && \
+		${TEST} wasm/posix/spawn.zig && \
 		${TEST} wasm/posix/stdio.zig && \
 		${TEST} wasm/posix/string.zig && \
 		${TEST} wasm/posix/stdlib.zig wasm/posix/stdlib.c
@@ -115,6 +116,7 @@ hello: ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.cpython-311-wasm32-wasi.s
 
 test-proxy:
 	cd src && ${TEST} interface/proxy.zig
+
 
 ## Node modules
 node_modules:

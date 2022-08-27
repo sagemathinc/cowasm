@@ -1,6 +1,5 @@
 pub fn keepalive() void {}
 const std = @import("std");
-const expect = std.testing.expect;
 const unistd = @cImport({
     @cInclude("unistd.h");
     @cInclude("fcntl.h"); // just needed for constants

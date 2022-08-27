@@ -22,3 +22,4 @@ zig-cache
 tsconfig.tsbuildinfo
 .hypothesis
 upstream/*
+scratch/*
