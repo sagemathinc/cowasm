@@ -136,6 +136,16 @@ sigemptyset
 bindtextdomain
 mmap
 munmap
+geteuid
+fchown
+posix_spawnattr_destroy
+posix_spawnattr_init
+posix_spawnattr_getflags
+posix_spawnattr_setflags
+posix_spawnattr_getpgroup
+posix_spawnattr_setpgroup
+posix_spawnattr_getsigmask
+posix_spawnattr_setsigmask
 `;
 
 // All headers from zig/dist/lib/zig/libc/include/wasm-wasi-musl except signal/thread ones.
@@ -219,6 +229,7 @@ regex.h
 sched.h
 search.h
 semaphore.h
+spawn.h
 stdalign.h
 stdbool.h
 stdc-predef.h

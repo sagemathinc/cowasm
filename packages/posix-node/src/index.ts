@@ -1,5 +1,5 @@
 import debug from "debug";
-const log = debug("posix-zig");
+const log = debug("posix-node");
 
 // Map from nodejs to zig descriptions:
 const nodeToZig = {

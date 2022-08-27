@@ -60,7 +60,7 @@ test("getppid returns an integer", () => {
   expect(posix.getppid?.()).toBeGreaterThanOrEqual(0);
 });
 
-test("that the security vulnerability CVE-2022-21211 does not impact posix-zig", () => {
+test("that the security vulnerability CVE-2022-21211 does not impact posix-node", () => {
   // @ts-ignore
   expect(() => posix.setegid?.({ toString: 1 })).toThrow();
 });

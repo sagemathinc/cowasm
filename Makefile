@@ -53,10 +53,10 @@ packages/openssl/${BUILT}: zig posix-wasm
 	cd packages/openssl && make all
 .PHONY: openssl
 
-posix-zig: packages/posix-zig/${BUILT}
-packages/posix-zig/${BUILT}: zig node
-	cd packages/posix-zig && make all
-.PHONY: posix-zig
+posix-node: packages/posix-node/${BUILT}
+packages/posix-node/${BUILT}: zig node
+	cd packages/posix-node && make -j4 all
+.PHONY: posix-node
 
 posix-wasm: packages/posix-wasm/${BUILT}
 packages/posix-wasm/${BUILT}: zig
@@ -64,7 +64,7 @@ packages/posix-wasm/${BUILT}: zig
 .PHONY: posix-wasm
 
 python-wasm: packages/python-wasm/${BUILT}
-packages/python-wasm/${BUILT}: node cpython wasi zig posix-wasm dylink posix-zig
+packages/python-wasm/${BUILT}: node cpython wasi zig posix-wasm dylink posix-node
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 
@@ -119,7 +119,7 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-cpython test-bench test-dylink test-posix-zig test-python-wasm
+test: test-cpython test-bench test-dylink test-posix-node test-python-wasm
 .PHONY: test
 
 test-cpython: cpython python-wasm
@@ -131,8 +131,8 @@ test-bench: python-wasm
 test-dylink: dylink
 	cd packages/dylink && make test
 
-test-posix-zig: posix-zig
-	cd packages/posix-zig && make test
+test-posix-node: posix-node
+	cd packages/posix-node && make test
 
 test-python-wasm: python-wasm
 	cd packages/python-wasm && make test

@@ -80,7 +80,7 @@ export default function other({ callFunction, posix, recv, send }) {
 
     openpty: () => {
       // TOOD: plan to do this inspired by https://github.com/microsoft/node-pty, either
-      // using that or just a little inspired by it to add to posix-zig.
+      // using that or just a little inspired by it to add to posix-node.
       notImplemented("openpty");
     },
 

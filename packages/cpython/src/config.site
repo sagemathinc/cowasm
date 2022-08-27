@@ -33,7 +33,7 @@ ac_cv_header_sys_resource_h=no
 # undefined symbols / unsupported features
 ac_cv_func_eventfd=no
 
-# But we just implement one ourselves in posix-zig.
+# But we just implement one ourselves in posix-node
 # pipe2 is Linux-only, so confusing to allow to get enabled.
 ac_cv_func_pipe=yes
 ac_cv_func_pipe2=no
@@ -105,7 +105,7 @@ ac_cv_have_lchflags=no
 
 # netdb functionality
 # ac_cv_func_gethostbyname_r is a GNU extension.  We implement
-# ac_cv_func_gethostbyname in our posix-zig package so do have it (and
+# ac_cv_func_gethostbyname in our posix-node package so do have it (and
 # if you disable it, then the cpython build breaks).
 ac_cv_func_gethostbyname_r=no
 ac_cv_func_gethostbyname=yes
@@ -126,7 +126,7 @@ ac_cv_func_gethostbyaddr=yes
 # Modules
 # In configure.ac, for the WASI and emscripten targets, they explicitly disable
 # attempting to build a long list of modules, viewing it as impossible.  Of course,
-# with posix-zig, there are probably NO MODULES that we can build and have fully
+# with posix-node, there are probably NO MODULES that we can build and have fully
 # working via nodejs... and we can have good stubs (at the expense of a slightly
 # bigger binary).
 # NO -- doing this has no effect -- the configure.ac script doesn't respect
@@ -183,12 +183,4 @@ ac_cv_func_fchownat=no
 # trying to use shutil.rmtree.  TODO: we want to, since other code (not python)
 # could easily try to use this function, and we want to know exactly why it is broken!
 ac_cv_func_openat=no
-
-# We do not have posix spawn implemented YET.  There are stubs that should throw errors here:
-#     packages/python-wasm/src/wasm/posix/spawn.ts
-# but instead the functions get misdetected and result in hangs, e.g., 
-# this breaks python's test_platform.py at least on cocalc (but not on my laptop).
-# For now, disable this, and later implememnt for node.js, of course.
-ac_cv_func_posix_spawn=no
-ac_cv_func_posix_spawnp=no
 

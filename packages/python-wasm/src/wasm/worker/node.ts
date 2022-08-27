@@ -18,7 +18,7 @@ import initWorker from "./init";
 import debug from "../../debug";
 import os from "os";
 import child_process from "child_process";
-import posix from "posix-zig";
+import posix from "posix-node";
 
 export default async function wasmImportNode(
   name: string,
