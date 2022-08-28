@@ -140,8 +140,20 @@ interface PosixFunctions {
   ) => number;
 
   // wait
+
+  wait: () => {
+    wstatus: number;
+    ret: number;
+  };
+
   // options is an or of these: constants.WNOHANG, constants.WUNTRACED, constants.WCONTINUED
-  waitpid: (pid: number, options: number) => void;
+  waitpid: (
+    pid: number,
+    options: number
+  ) => {
+    wstatus: number;
+    ret: number;
+  };
 
   // other
   login_tty: (fd: number) => void;

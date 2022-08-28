@@ -1,7 +1,9 @@
 const c = @import("c.zig");
 const node = @import("node.zig");
 const std = @import("std");
-const wait = @cImport(@cInclude("sys/wait.h"));
+const wait = @cImport({
+    @cInclude("sys/wait.h");
+});
 
 pub const constants = .{
     .c_import = wait,
@@ -9,12 +11,27 @@ pub const constants = .{
 };
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
+    try node.registerFunction(env, exports, "wait", wait_impl);
     try node.registerFunction(env, exports, "waitpid", waitpid);
+}
+
+fn wait_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    var wstatus: c_int = undefined;
+    const ret = wait.wait(&wstatus);
+    if (ret == -1) {
+        node.throwError(env, "error calling wait.wait");
+        return null;
+    }
+    var object = node.createObject(env, "return status and value") catch return null;
+    node.setNamedProperty(env, object, "wstatus", node.create_i32(env, wstatus, "wstatus") catch return null, "wstatus") catch return null;
+    node.setNamedProperty(env, object, "ret", node.create_i32(env, ret, "return value") catch return null, "return value") catch return null;
+    return object;
 }
 
 //  pid_t waitpid(pid_t pid, int *wstatus, int options);
 
-// waitpid(pid: number, options : number) => {status: Status, ret:number}
+// waitpid(pid: number, options : number) => {wstatus: number, ret:number}
 
 fn waitpid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 2) catch return null;
@@ -27,6 +44,10 @@ fn waitpid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
         node.throwError(env, "error calling wait.waitpid");
         return null;
     }
-    // TODO
-    return null;
+    var object = node.createObject(env, "return status and value") catch return null;
+    node.setNamedProperty(env, object, "wstatus", node.create_i32(env, wstatus, "wstatus") catch return null, "wstatus") catch return null;
+    node.setNamedProperty(env, object, "ret", node.create_i32(env, ret, "return value") catch return null, "return value") catch return null;
+    return object;
 }
+
+
