@@ -19,12 +19,18 @@ for other libraries.
 import constants from "./constants";
 
 const signal_t: { [setPtr: number]: Set<number> } = {};
-function getSignalSet(setPtr: number): Set<number> {
+
+export function getSignalSet(setPtr: number): Set<number> {
   if (signal_t[setPtr] == null) {
     signal_t[setPtr] = new Set();
   }
   return signal_t[setPtr];
 }
+
+export function setSignalSet(setPtr: number, value: Set<number>): void {
+  signal_t[setPtr] = value;
+}
+
 // The global signal mask for this process.
 const signalMask = new Set<number>();
 function setSignalSetToMask(setPtr: number): void {
