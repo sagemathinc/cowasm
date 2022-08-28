@@ -7,7 +7,6 @@ const other = @import("other.zig");
 const spawn = @import("spawn.zig");
 const unistd = @import("unistd.zig");
 const wait = @import("wait.zig");
-
 const builtin = @import("builtin");
 
 export fn napi_register_module_v1(env: c.napi_env, exports: c.napi_value) c.napi_value {

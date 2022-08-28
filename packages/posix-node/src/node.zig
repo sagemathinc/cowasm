@@ -8,6 +8,8 @@
 // I'm halfway through changing a lot of the function names, so there are some major
 // inconsistencies right now, e.g., stringFromValue vs valueToString. For this,
 // naming groups similar functions by the *start* of their name.
+// Also, many of these could take a type as input and be a
+// a single function instead of a bunch of them.
 
 // Also, it seems like this should be a big struct with the env as a parameter
 // to the constructor.  Then instead of passing the env as the first param,
@@ -269,13 +271,31 @@ pub fn u32_from_object(env: c.napi_env, object: c.napi_value, comptime key: [:0]
     return u32FromValue(env, property, key);
 }
 
+pub fn i32_from_object(env: c.napi_env, object: c.napi_value, comptime key: [:0]const u8) !i32 {
+    var property: c.napi_value = undefined;
+    if (c.napi_get_named_property(env, object, key, &property) != c.napi_ok) {
+        return throw(env, key ++ " must be defined");
+    }
+
+    return i32FromValue(env, property, key);
+}
+
 pub fn u16_from_object(env: c.napi_env, object: c.napi_value, comptime key: [:0]const u8) !u16 {
     const result = try u32_from_object(env, object, key);
-    if (result > 65535) {
+    if (result > std.math.maxInt(u16)) {
         return throw(env, key ++ " must be a u16.");
     }
 
     return @intCast(u16, result);
+}
+
+pub fn i16_from_object(env: c.napi_env, object: c.napi_value, comptime key: [:0]const u8) !i16 {
+    const result = try i32_from_object(env, object, key);
+    if (result > std.math.maxInt(i16) or result < std.math.minInt(i16)) {
+        return throw(env, key ++ " must be a i16.");
+    }
+
+    return @intCast(i16, result);
 }
 
 pub fn u128_from_value(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) !u128 {
@@ -703,4 +723,20 @@ pub fn getStreamFd(env: c.napi_env, comptime name: [:0]const u8) !c_int {
         return throw(env, name ++ " - failed to get fd");
     }
     return try i32FromValue(env, fd, "process." ++ name ++ "._handle.fd");
+}
+
+pub fn getNamedProperty(env: c.napi_env, object: c.napi_value, comptime key: [:0]const u8, comptime message: [:0]const u8) !c.napi_value {
+    var result: c.napi_value = undefined;
+    if (c.napi_get_named_property(env, object, key, &result) != c.napi_ok) {
+        return throw(env, "getNamedProperty " ++ key ++ " failed -- " ++ message);
+    }
+    return result;
+}
+
+pub fn hasNamedProperty(env: c.napi_env, object: c.napi_value, comptime key: [:0]const u8, comptime message: [:0]const u8) !bool {
+    var result: bool = undefined;
+    if (c.napi_has_named_property(env, object, key, &result) != c.napi_ok) {
+        return throw(env, "hasOwnProperty " ++ key ++ " failed -- " ++ message);
+    }
+    return result;
 }

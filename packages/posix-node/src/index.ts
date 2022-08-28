@@ -54,6 +54,21 @@ interface StatsVFS {
   f_namemax: number;
 }
 
+// Actuall possibilities:
+//   | ["addclose", number]
+//   | ["addopen", number, number, number, number]
+//   | ["adddup2", number, number];
+type PosixSpawnFileActions = any[];
+
+interface PosixSpawnAttributes {
+  sched_priority?: number;
+  schedpolicy?: number;
+  flags?: number;
+  pgroup?: number;
+  sigmask?: Set<number> | number[];
+  sigdefault?: Set<number> | number[];
+}
+
 interface PosixFunctions {
   // wrappers around some nodejs posix compat functions
   getpid: () => number;
@@ -134,15 +149,16 @@ interface PosixFunctions {
 
   posix_spawn: (
     path: string,
-    fileActions,
-    attrs,
+    fileActions: PosixSpawnFileActions | undefined | null,
+    attrs: PosixSpawnAttributes | undefined | null,
     argv: string[],
     envp: { [key: string]: string } | string[]
   ) => number;
+
   posix_spawnp: (
     path: string,
-    fileActions,
-    attrs,
+    fileActions: PosixSpawnFileActions | undefined | null,
+    attrs: PosixSpawnAttributes | undefined | null,
     argv: string[],
     envp: { [key: string]: string } | string[]
   ) => number;
@@ -230,12 +246,29 @@ try {
   const { _posix_spawn } = mod;
   if (_posix_spawn != null) {
     for (const name of ["posix_spawn", "posix_spawnp"]) {
-      mod[name] = (path, fileActions, attrs, argv, env) => {
+      mod[name] = (
+        path,
+        fileActions,
+        attrs: PosixSpawnAttributes,
+        argv,
+        env
+      ) => {
         console.log(name, " with ", { path, fileActions, attrs, argv, env });
+        if (attrs == null) {
+          attrs = {};
+        } else {
+          // from Set([...]) to [...], which is easier to work with from Zig via node api.
+          if (attrs.sigmask != null) {
+            attrs.sigmask = Array.from(attrs.sigmask);
+          }
+          if (attrs.sigdefault != null) {
+            attrs.sigdefault = Array.from(attrs.sigdefault);
+          }
+        }
         return _posix_spawn(
           path,
           fileActions ?? [],
-          attrs,
+          attrs ?? {},
           argv,
           mapToStrings(env),
           name.endsWith("spawnp")

@@ -2,8 +2,13 @@ const c = @import("c.zig");
 const node = @import("node.zig");
 const util = @import("util.zig");
 const std = @import("std");
-const spawn = @cImport(@cInclude("spawn.h"));
+const spawn = @cImport({
+    @cInclude("spawn.h");
+    @cInclude("sched.h");
+    @cInclude("signal.h");
+});
 const errno = @cImport(@cInclude("errno.h"));
+const builtin = @import("builtin");
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "_posix_spawn", posix_spawn);
@@ -30,7 +35,6 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
         return null;
     }
 
-    // TODO: init with input args
     const lenFileActions = node.arrayLength(env, args[1], "fileActions") catch return null;
     var index: u32 = 0;
     const bufsize = 1024; // also used for a path below
@@ -67,12 +71,56 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
         }
     }
 
-    var attrp: spawn.posix_spawnattr_t = undefined;
-    if (spawn.posix_spawnattr_init(&attrp) != 0) {
+    var attr: spawn.posix_spawnattr_t = undefined;
+    if (spawn.posix_spawnattr_init(&attr) != 0) {
         node.throwError(env, "error in posix_spawn calling spawn.posix_spawnattr_init");
         return null;
     }
-    // TODO: init with input args
+    if (builtin.target.os.tag == .linux) {
+        // posix_spawnattr_setschedparam and posix_spawnattr_setschedpolicy seem to not exist on macos (maybe only on linux?)
+        if (node.hasNamedProperty(env, args[2], "sched_priority", "property of spawnattr") catch return null) {
+            const sched_priority = node.i32_from_object(env, args[2], "sched_priority") catch return null;
+            var schedparam = std.mem.zeroInit(spawn.sched_param, .{});
+            schedparam.sched_priority = sched_priority;
+            if (spawn.posix_spawnattr_setschedparam(&attr, &schedparam) != 0) {
+                try node.throw(env, "call to posix_spawnattr_setpgroup failed") catch return null;
+            }
+        }
+        if (node.hasNamedProperty(env, args[2], "schedpolicy", "property of spawnattr") catch return null) {
+            const schedpolicy = node.i32_from_object(env, args[2], "schedpolicy") catch return null;
+            if (spawn.posix_spawnattr_setschedpolicy(&attr, schedpolicy) != 0) {
+                try node.throw(env, "call to posix_spawnattr_setschedpolicy failed") catch return null;
+            }
+        }
+    }
+    if (node.hasNamedProperty(env, args[2], "flags", "property of spawnattr") catch return null) {
+        const flags = node.i16_from_object(env, args[2], "flags") catch return null;
+        if (spawn.posix_spawnattr_setflags(&attr, flags) != 0) {
+            try node.throw(env, "call to posix_spawnattr_setflags failed") catch return null;
+        }
+    }
+    if (node.hasNamedProperty(env, args[2], "pgroup", "property of spawnattr") catch return null) {
+        const pgroup = node.i32_from_object(env, args[2], "pgroup") catch return null;
+        if (spawn.posix_spawnattr_setpgroup(&attr, pgroup) != 0) {
+            try node.throw(env, "call to posix_spawnattr_setpgroup failed") catch return null;
+        }
+    }
+    if (node.hasNamedProperty(env, args[2], "sigmask", "property of spawnattr") catch return null) {
+        const sigmask = node.getNamedProperty(env, args[2], "sigmask", "property of spawnattr") catch return null;
+        var sigset: spawn.sigset_t = undefined;
+        sigset_t_fromArray(env, sigmask, &sigset) catch return null;
+        if (spawn.posix_spawnattr_setsigmask(&attr, &sigset) != 0) {
+            try node.throw(env, "call to posix_spawnattr_setsigmask failed") catch return null;
+        }
+    }
+    if (node.hasNamedProperty(env, args[2], "sigdefault", "property of spawnattr") catch return null) {
+        const sigdefault = node.getNamedProperty(env, args[2], "sigdefault", "property of spawnattr") catch return null;
+        var sigset: spawn.sigset_t = undefined;
+        sigset_t_fromArray(env, sigdefault, &sigset) catch return null;
+        if (spawn.posix_spawnattr_setsigdefault(&attr, &sigset) != 0) {
+            try node.throw(env, "call to posix_spawnattr_setsigdefault failed") catch return null;
+        }
+    }
 
     var argv = node.valueToArrayOfStrings(env, args[3], "argv") catch return null;
     defer util.freeArrayOfStrings(argv);
@@ -83,11 +131,26 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
     var p = node.valueToBool(env, args[5], "p") catch return null;
 
     var pid: spawn.pid_t = undefined;
-    var ret = if (p) spawn.posix_spawnp(&pid, path, &file_actions, &attrp, argv, envp) else spawn.posix_spawn(&pid, path, &file_actions, &attrp, argv, envp);
+    var ret = if (p) spawn.posix_spawnp(&pid, path, &file_actions, &attr, argv, envp) else spawn.posix_spawn(&pid, path, &file_actions, &attr, argv, envp);
     if (ret != 0) {
         std.debug.print("errno = {}\n", .{std.c._errno().*});
         node.throwError(env, "error in posix_spawn calling spawn.posix_spawn");
         return null;
     }
     return node.create_i32(env, pid, "pid") catch return null;
+}
+
+fn sigset_t_fromArray(env: c.napi_env, array: c.napi_value, comptime message: [:0]const u8, setPtr: *spawn.sigset_t) !void {
+    if (spawn.sigemptyset(setPtr) != 0) {
+        try node.throw(env, "failed to init signal set -- " ++ message);
+    }
+    const len = try node.arrayLength(env, array, "sigset_t_fromArray");
+    var i: i32 = 0;
+    while (i < len) : (i += 1) {
+        const s = try getArrayElement(env, array, i, "getting signal from set");
+        const signum = try node.i32FromValue(env, s, "signum");
+        if (spawn.sigaddset(setPtr, signum) != 0) {
+            try node.throw(env, "failed to add a signal to the set -- " ++ message);
+        }
+    }
 }

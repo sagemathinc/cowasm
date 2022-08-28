@@ -13,12 +13,20 @@ export default function spawn({ callFunction, posix, recv, send }) {
   const fileActions: { [ptr: number]: any[] } = {};
 
   const attrs: { [ptr: number]: any } = {};
-  function getAttr(ptr: number) {
+  function getAttr(ptr: number, expand: boolean = false) {
     if (attrs[ptr] == null) {
-      attrs[ptr] = {};
+      return (attrs[ptr] = {});
     }
     const attr = attrs[ptr];
     if (attr != null) {
+      if (expand) {
+        if (attr.sigdefaultPtr != null) {
+          attr.sigdefault = getSignalSet(attr.sigdefaultPtr);
+        }
+        if (attr.sigmaskPtr != null) {
+          attr.sigmask = getSignalSet(attr.sigmaskPtr);
+        }
+      }
       return attr;
     } else {
       throw Error("bug"); // impossible
@@ -85,24 +93,30 @@ export default function spawn({ callFunction, posix, recv, send }) {
       return 0;
     },
 
-    posix_spawnattr_setpgroup: (attrPtr: number, pgrp: number): number => {
-      getAttr(attrPtr).pgrp = pgrp;
+    posix_spawnattr_setpgroup: (attrPtr: number, pgroup: number): number => {
+      getAttr(attrPtr).pgroup = pgroup;
       return 0;
     },
 
-    posix_spawnattr_getpgroup: (attrPtr: number, pgrpPtr: number): number => {
-      send.i32(pgrpPtr, getAttr(attrPtr).pgrp ?? 0);
+    posix_spawnattr_getpgroup: (attrPtr: number, pgroupPtr: number): number => {
+      send.i32(pgroupPtr, getAttr(attrPtr).pgroup ?? 0);
       return 0;
     },
 
-    posix_spawnattr_setsigmask: (attrPtr: number, maskPtr: number): number => {
-      getAttr(attrPtr).maskPtr = maskPtr;
+    posix_spawnattr_setsigmask: (
+      attrPtr: number,
+      sigmaskPtr: number
+    ): number => {
+      getAttr(attrPtr).sigmaskPtr = sigmaskPtr;
       return 0;
     },
 
-    posix_spawnattr_getsigmask: (attrPtr: number, maskPtr: number): number => {
-      const cur = getAttr(attrPtr).maskPtr;
-      setSignalSet(maskPtr, getSignalSet(cur));
+    posix_spawnattr_getsigmask: (
+      attrPtr: number,
+      sigmaskPtr: number
+    ): number => {
+      const cur = getAttr(attrPtr).sigmaskPtr;
+      setSignalSet(sigmaskPtr, getSignalSet(cur));
       return 0;
     },
 
@@ -140,7 +154,7 @@ export default function spawn({ callFunction, posix, recv, send }) {
       const pid = posix.posix_spawn(
         path,
         fileActions[fileActionsPtr],
-        getAttr(attrPtr),
+        getAttr(attrPtr, true),
         argv,
         envp
       );
@@ -165,7 +179,7 @@ export default function spawn({ callFunction, posix, recv, send }) {
       const pid = posix.posix_spawnp(
         path,
         fileActions[fileActionsPtr],
-        getAttr(attrPtr),
+        getAttr(attrPtr, true),
         argv,
         envp
       );
