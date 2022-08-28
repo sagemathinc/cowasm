@@ -19,7 +19,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
 // posix_spawn(path: string, fileActions, attributes, argv:string[], envp:string[]) : number
 
 fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
-    const args = node.getArgv(env, info, 5) catch return null;
+    const args = node.getArgv(env, info, 6) catch return null;
 
     var path = node.valueToString(env, args[0], "path") catch return null;
     defer std.c.free(path);
@@ -44,8 +44,10 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
     var envp = node.valueToArrayOfStrings(env, args[4], "envp") catch return null;
     defer util.freeArrayOfStrings(envp);
 
+    var p = node.valueToBool(env, args[5], "p") catch return null;
+
     var pid: spawn.pid_t = undefined;
-    var ret = spawn.posix_spawn(&pid, path, &file_actions, &attrp, argv, envp);
+    var ret = if (p) spawn.posix_spawnp(&pid, path, &file_actions, &attrp, argv, envp) else spawn.posix_spawn(&pid, path, &file_actions, &attrp, argv, envp);
     if (ret != 0) {
         std.debug.print("errno = {}\n", .{std.c._errno().*});
         node.throwError(env, "error in posix_spawn calling spawn.posix_spawn");

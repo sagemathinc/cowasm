@@ -330,6 +330,16 @@ pub fn i32FromValue(env: c.napi_env, value: c.napi_value, comptime name: [:0]con
     return result;
 }
 
+pub fn valueToBool(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) !bool {
+    var result: bool = undefined;
+    switch (c.napi_get_value_bool(env, value, &result)) {
+        c.napi_ok => {},
+        c.napi_boolean_expected => return throw(env, name ++ " must be bool"),
+        else => unreachable,
+    }
+    return result;
+}
+
 pub fn i64FromBigIntValue(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8) !i64 {
     var result: i64 = undefined;
     var lossless: bool = undefined;

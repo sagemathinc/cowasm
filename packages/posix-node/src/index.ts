@@ -128,10 +128,18 @@ interface PosixFunctions {
     fileActions,
     attributes,
     argv: string[],
-    envp: string[] // same format at system call
+    envp: string[], // same format at system call
+    p_version: boolean
   ) => number;
 
   posix_spawn: (
+    path: string,
+    fileActions,
+    attributes,
+    argv: string[],
+    envp: { [key: string]: string }
+  ) => number;
+  posix_spawnp: (
     path: string,
     fileActions,
     attributes,
@@ -219,12 +227,18 @@ try {
     }
   }
 
-  for (const name of ["posix_spawn"]) {
-    const f = mod["_" + name];
-    if (f != null) {
-      mod[name] = (path, fileActions, attributes, argv, env) => {
-        return f(path, fileActions, attributes, argv, mapToStrings(env));
-      };
+  const { _posix_spawn } = mod;
+  if (_posix_spawn != null) {
+    for (const name of ["posix_spawn", "posix_spawnp"]) {
+      mod[name] = (path, fileActions, attributes, argv, env) =>
+        _posix_spawn(
+          path,
+          fileActions,
+          attributes,
+          argv,
+          mapToStrings(env),
+          name.endsWith("spawnp")
+        );
     }
   }
 

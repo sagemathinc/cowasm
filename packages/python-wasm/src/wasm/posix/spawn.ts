@@ -9,7 +9,7 @@ import { notImplemented } from "./util";
 
 export default function spawn({ posix, recv, send }) {
   const names =
-    "posix_spawn_file_actions_addclose posix_spawn_file_actions_adddup2 posix_spawn_file_actions_addopen posix_spawn_file_actions_destroy posix_spawn_file_actions_init posix_spawnattr_setschedparam posix_spawnattr_setschedpolicy posix_spawnattr_setsigdefault posix_spawnp";
+    "posix_spawn_file_actions_addclose posix_spawn_file_actions_adddup2 posix_spawn_file_actions_addopen posix_spawn_file_actions_destroy posix_spawn_file_actions_init posix_spawnattr_setschedparam posix_spawnattr_setschedpolicy posix_spawnattr_setsigdefault";
   const spawn: any = {};
   for (const name of names.split(" ")) {
     spawn[name] = () => {
@@ -41,6 +41,26 @@ export default function spawn({ posix, recv, send }) {
     const envp = recv.arrayOfStrings(envpPtr);
     // TODO: second and third args!
     const pid = posix.posix_spawn(path, null, null, argv, envp);
+    send.i32(pidPtr, pid);
+    return 0;
+  };
+
+  spawn.posix_spawnp = (
+    pidPtr,
+    pathPtr,
+    _fileActionsPtr,
+    _attrpPtr,
+    argvPtr,
+    envpPtr
+  ): number => {
+    if (posix.posix_spawnp == null) {
+      notImplemented("posix_spawnp");
+    }
+    const path = recv.string(pathPtr);
+    const argv = recv.arrayOfStrings(argvPtr);
+    const envp = recv.arrayOfStrings(envpPtr);
+    // TODO: second and third args!
+    const pid = posix.posix_spawnp(path, null, null, argv, envp);
     send.i32(pidPtr, pid);
     return 0;
   };
