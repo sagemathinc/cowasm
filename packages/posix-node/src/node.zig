@@ -1,13 +1,17 @@
 // Copyright, SageMath, Inc., 2022
 // I massively added to and changed this file.
 //
-// Also, I'm halfway through changing a lot of the function names, so there are some major
-// inconsistencies right now, e.g., stringFromValue vs valueToString. For this,
-// naming groups similar functions by the *start* of their name.
-//
 // ORIGINAL Copyright
 // SPDX-FileCopyrightText: 2021 Coil Technologies, Inc
 // SPDX-License-Identifier: Apache-2.0
+
+// I'm halfway through changing a lot of the function names, so there are some major
+// inconsistencies right now, e.g., stringFromValue vs valueToString. For this,
+// naming groups similar functions by the *start* of their name.
+
+// Also, it seems like this should be a big struct with the env as a parameter
+// to the constructor.  Then instead of passing the env as the first param,
+// you call methods on the struct.
 
 const std = @import("std");
 const assert = std.debug.assert;
@@ -351,9 +355,9 @@ pub fn i64FromBigIntValue(env: c.napi_env, value: c.napi_value, comptime name: [
     return result;
 }
 
-pub fn stringFromValue(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8, comptime len: usize, buf: *[len]u8) !void {
+pub fn stringFromValue(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8, comptime bufsize: usize, buf: *[bufsize]u8) !void {
     var result: usize = undefined;
-    if (c.napi_get_value_string_utf8(env, value, buf, len, &result) != c.napi_ok) {
+    if (c.napi_get_value_string_utf8(env, value, buf, bufsize, &result) != c.napi_ok) {
         return throw(env, name ++ " must be a string");
     }
 }
@@ -509,7 +513,7 @@ pub fn strlen(s: [*:0]const u8) usize {
     return i;
 }
 
-// from null-terminated pointer instead
+// create nodejs string from null-terminated pointer
 pub fn createStringFromPtr(env: c.napi_env, value: ?[*:0]const u8, comptime error_message: [:0]const u8) !c.napi_value {
     const value1 = value orelse {
         return throw(env, "can't create string from null pointer " ++ error_message);
@@ -587,22 +591,28 @@ pub fn setElement(
     }
 }
 
-pub fn array_element(env: c.napi_env, array: c.napi_value, index: u32) !c.napi_value {
+pub fn getArrayElement(env: c.napi_env, array: c.napi_value, index: u32, comptime message: [:0]const u8) !c.napi_value {
     var element: c.napi_value = undefined;
     if (c.napi_get_element(env, array, index, &element) != c.napi_ok) {
-        return throw(env, "Failed to get array element.");
+        return throw(env, "failed to get array element " ++ message);
     }
 
     return element;
 }
 
-pub fn array_length(env: c.napi_env, array: c.napi_value) !u32 {
+pub fn arrayLength(env: c.napi_env, array: c.napi_value, comptime message: [:0]const u8) !u32 {
     var is_array: bool = undefined;
-    assert(c.napi_is_array(env, array, &is_array) == .napi_ok);
-    if (!is_array) return throw(env, "Batch must be an Array.");
+    if (c.napi_is_array(env, array, &is_array) != c.napi_ok) {
+        return throw(env, "error determining if it is an array " ++ message);
+    }
+    if (!is_array) {
+        return throw(env, "must be an array " ++ message);
+    }
 
     var length: u32 = undefined;
-    assert(c.napi_get_array_length(env, array, &length) == .napi_ok);
+    if (c.napi_get_array_length(env, array, &length) != c.napi_ok) {
+        return throw(env, "failed to get array length " ++ message);
+    }
 
     return length;
 }

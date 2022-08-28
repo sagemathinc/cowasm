@@ -137,14 +137,14 @@ interface PosixFunctions {
     fileActions,
     attrs,
     argv: string[],
-    envp: { [key: string]: string }
+    envp: { [key: string]: string } | string[]
   ) => number;
   posix_spawnp: (
     path: string,
     fileActions,
     attrs,
     argv: string[],
-    envp: { [key: string]: string }
+    envp: { [key: string]: string } | string[]
   ) => number;
 
   // wait
@@ -234,7 +234,7 @@ try {
         console.log(name, " with ", { path, fileActions, attrs, argv, env });
         return _posix_spawn(
           path,
-          fileActions,
+          fileActions ?? [],
           attrs,
           argv,
           mapToStrings(env),
@@ -255,7 +255,15 @@ try {
 
 export default mod1;
 
-function mapToStrings(obj: object): string[] {
+function is_array(obj: any): boolean {
+  return Object.prototype.toString.call(obj) === "[object Array]";
+}
+
+function mapToStrings(obj: object | string[]): string[] {
+  if (is_array(obj)) {
+    // already array of strings...
+    return obj as unknown as string[];
+  }
   const v: string[] = [];
   for (const key in obj) {
     v.push(`${key}=${obj[key]}`);
