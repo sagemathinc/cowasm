@@ -9,7 +9,7 @@ import { notImplemented } from "./util";
 
 export default function spawn({ posix, recv, send }) {
   const names =
-    "posix_spawn_file_actions_addclose posix_spawn_file_actions_adddup2 posix_spawn_file_actions_addopen posix_spawn_file_actions_destroy posix_spawn_file_actions_init posix_spawnattr_setschedparam posix_spawnattr_setschedpolicy posix_spawnattr_setsigdefault";
+    "posix_spawnattr_setschedparam posix_spawnattr_setschedpolicy posix_spawnattr_setsigdefault";
   const spawn: any = {};
   for (const name of names.split(" ")) {
     spawn[name] = () => {
@@ -62,6 +62,55 @@ export default function spawn({ posix, recv, send }) {
     // TODO: second and third args!
     const pid = posix.posix_spawnp(path, null, null, argv, envp);
     send.i32(pidPtr, pid);
+    return 0;
+  };
+
+  type Actions = any;
+  const fileActions: { [ptr: number]: Actions[] } = {};
+  spawn.posix_spawn_file_actions_init = (fileActionsPtr: number): number => {
+    fileActions[fileActionsPtr] = [];
+    return 0;
+  };
+  spawn.posix_spawn_file_actions_destroy = (fileActionsPtr: number): number => {
+    delete fileActions[fileActionsPtr];
+    return 0;
+  };
+
+  spawn.posix_spawn_file_actions_addclose = (
+    fileActionsPtr: number,
+    fd: number
+  ): number => {
+    if (fileActions[fileActionsPtr] == null) {
+      fileActions[fileActionsPtr] = [];
+    }
+    fileActions[fileActionsPtr].push(["addclose", fd]);
+    return 0;
+  };
+
+  spawn.posix_spawn_file_actions_addopen = (
+    fileActionsPtr: number,
+    fd: number,
+    pathPtr: number,
+    oflag: number,
+    mode: number
+  ): number => {
+    if (fileActions[fileActionsPtr] == null) {
+      fileActions[fileActionsPtr] = [];
+    }
+    const path = recv.string(pathPtr);
+    fileActions[fileActionsPtr].push(["addopen", fd, path, oflag, mode]);
+    return 0;
+  };
+
+  spawn.posix_spawn_file_actions_adddup2 = (
+    fileActionsPtr: number,
+    fd: number,
+    new_fd: number
+  ) => {
+    if (fileActions[fileActionsPtr] == null) {
+      fileActions[fileActionsPtr] = [];
+    }
+    fileActions[fileActionsPtr].push(["adddup2", fd, new_fd]);
     return 0;
   };
 
