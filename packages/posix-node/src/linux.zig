@@ -24,7 +24,7 @@ fn getresuid_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.na
     var euid: unistd.uid_t = undefined;
     var suid: unistd.uid_t = undefined;
     if (getresuid(&ruid, &euid, &suid) == -1) {
-        node.throwError(env, "getresuid failed");
+        node.throwErrno(env, "getresuid failed");
         return null;
     }
     var object = node.createObject(env, "") catch return null;
@@ -45,7 +45,7 @@ fn getresgid_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.na
     var egid: unistd.gid_t = undefined;
     var sgid: unistd.gid_t = undefined;
     if (getresgid(&rgid, &egid, &sgid) == -1) {
-        node.throwError(env, "getresgid failed");
+        node.throwErrno(env, "getresgid failed");
         return null;
     }
     var object = node.createObject(env, "") catch return null;
@@ -67,7 +67,7 @@ fn setresuid_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.na
     const euid = node.u32FromValue(env, argv[1], "euid") catch return null;
     const suid = node.u32FromValue(env, argv[1], "suid") catch return null;
     if (setresuid(ruid, euid, suid) == -1) {
-        node.throwError(env, "error in setresuid");
+        node.throwErrno(env, "error in setresuid");
     }
     return null;
 }
@@ -81,7 +81,7 @@ fn setresgid_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.na
     const egid = node.u32FromValue(env, argv[1], "egid") catch return null;
     const sgid = node.u32FromValue(env, argv[1], "sgid") catch return null;
     if (setresgid(rgid, egid, sgid) == -1) {
-        node.throwError(env, "error in setresgid");
+        node.throwErrno(env, "error in setresgid");
     }
     return null;
 }

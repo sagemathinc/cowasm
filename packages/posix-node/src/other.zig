@@ -20,7 +20,7 @@ fn login_tty(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_va
         const argv = node.getArgv(env, info, 1) catch return null;
         const fd = node.i32FromValue(env, argv[0], "fd") catch return null;
         if (utmp.login_tty(fd) == -1) {
-            node.throwError(env, "error in login_tty");
+            node.throwErrno(env, "error in login_tty");
             return null;
         }
         return null;
@@ -41,7 +41,7 @@ fn statvfs_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi
     node.stringFromValue(env, argv[0], "path", 1024, &path) catch return null;
     var buf: statvfs.struct_statvfs = undefined;
     if (statvfs.statvfs(&path, &buf) == -1) {
-        node.throwError(env, "statsvfs failed -- invalid input");
+        node.throwErrno(env, "statsvfs failed -- invalid input");
         return null;
     }
     const s = util.structToNullTerminatedJsonString(statvfs.struct_statvfs, buf) catch {
@@ -58,7 +58,7 @@ fn fstatvfs(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_val
     const fd = node.i32FromValue(env, argv[0], "fd") catch return null;
     var buf: statvfs.struct_statvfs = undefined;
     if (statvfs.fstatvfs(fd, &buf) == -1) {
-        node.throwError(env, "fstatsvfs failed -- invalid input");
+        node.throwErrno(env, "fstatsvfs failed -- invalid input");
         return null;
     }
     const s = util.structToNullTerminatedJsonString(statvfs.struct_statvfs, buf) catch {

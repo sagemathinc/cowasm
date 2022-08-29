@@ -30,7 +30,7 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
 
     var file_actions: spawn.posix_spawn_file_actions_t = undefined;
     if (spawn.posix_spawn_file_actions_init(&file_actions) != 0) {
-        node.throwError(env, "error in posix_spawn calling spawn.posix_spawn_file_actions_init");
+        node.throwErrno(env, "error in posix_spawn calling spawn.posix_spawn_file_actions_init");
         return null;
     }
 
@@ -69,7 +69,7 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
 
     var attr: spawn.posix_spawnattr_t = undefined;
     if (spawn.posix_spawnattr_init(&attr) != 0) {
-        node.throwError(env, "error in posix_spawn calling spawn.posix_spawnattr_init");
+        node.throwErrno(env, "error in posix_spawn calling spawn.posix_spawnattr_init");
         return null;
     }
     if (builtin.target.os.tag == .linux) {
@@ -129,7 +129,7 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
     var pid: spawn.pid_t = undefined;
     var ret = if (p) spawn.posix_spawnp(&pid, path, &file_actions, &attr, argv, envp) else spawn.posix_spawn(&pid, path, &file_actions, &attr, argv, envp);
     if (ret != 0) {
-        node.throwError(env, "error in posix_spawn calling spawn.posix_spawn");
+        node.throwErrno(env, "error in posix_spawn calling spawn.posix_spawn");
         return null;
     }
     return node.create_i32(env, pid, "pid") catch return null;

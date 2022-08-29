@@ -20,7 +20,7 @@ fn wait_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_va
     var wstatus: c_int = undefined;
     const ret = wait.wait(&wstatus);
     if (ret == -1) {
-        node.throwError(env, "error calling wait.wait");
+        node.throwErrno(env, "error calling wait.wait");
         return null;
     }
     var object = node.createObject(env, "return status and value") catch return null;
@@ -41,7 +41,7 @@ fn waitpid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     var wstatus: c_int = undefined;
     const ret = wait.waitpid(pid, &wstatus, options);
     if (ret == -1) {
-        node.throwError(env, "error calling wait.waitpid");
+        node.throwErrno(env, "error calling wait.waitpid");
         return null;
     }
     var object = node.createObject(env, "return status and value") catch return null;
