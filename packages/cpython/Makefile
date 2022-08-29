@@ -175,8 +175,8 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 			--build=`./config.guess`
 	cat src/pyconfig.h >> ${BUILD_WASM}/pyconfig.h
 	# NOTE: I have seen "error: unable to build WASI libc CRT file: FileNotFound" when using "make -j8",
-	# and had it go away when removing parallel build.  It's working now.
-	cd ${BUILD_WASM} && make -j2
+	# and had it go away when removing parallel build. 
+	cd ${BUILD_WASM} && make
 	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld
 	# via the zig-fPIC script.  First remove everything that possibly needs to be built -fPIC or the
 	# build will not rebuild what it needs to build.  We just delete all .o files, so this takes longer
