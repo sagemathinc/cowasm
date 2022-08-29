@@ -254,14 +254,14 @@ SUPPORTED_TESTS = test_inspect test_pydoc test_platform test_posixpath test_pkgu
 
 test: wasm native
 	echo "Running ${SUPPORTED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j8 --timeout=60 ${SUPPORTED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j4 --timeout=180 ${SUPPORTED_TESTS}
 	echo "Ran ${SUPPORTED_TEST_DESC}"
 .PHONY: test
 
 # One test fails here due to the fact that the PYTHONHOME is different in webworker mode (since the files are in the zip archive).
 test-worker: wasm native
 	echo "Running using webworker -- ${SUPPORTED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} PYTHONHOME=${DIST_WASM} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} -j8 --timeout=60 ${SUPPORTED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} PYTHONHOME=${DIST_WASM} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} -j4 --timeout=180 ${SUPPORTED_TESTS}
 	echo "Ran using webworker -- ${SUPPORTED_TEST_DESC}"
 
 FAILED_TEST_DESC = "All **unsuppported** and known failing cpython test suites: this is about 12% of the full cpython test suite.  We want to fix all of these."
