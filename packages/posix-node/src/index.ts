@@ -255,7 +255,6 @@ try {
         argv,
         env
       ) => {
-        console.log(name, " with ", { path, fileActions, attrs, argv, env });
         if (attrs == null) {
           attrs = {};
         } else {

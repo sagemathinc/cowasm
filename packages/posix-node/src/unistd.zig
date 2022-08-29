@@ -8,6 +8,7 @@ const unistd = @cImport({
 const builtin = @import("builtin");
 const util = @import("util.zig");
 const std = @import("std");
+const errno = @cImport(@cInclude("errno.h"));
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "chroot", chroot);
@@ -57,7 +58,7 @@ fn chroot(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
     var buf: [1024]u8 = undefined;
     node.stringFromValue(env, argv[0], "path", 1024, &buf) catch return null;
     if (unistd.chroot(&buf) == -1) {
-        node.throwError(env, "chroot failed");
+        node.throwErrno(env, "chroot failed");
     }
     return null;
 }
@@ -81,7 +82,7 @@ fn gethostname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
     _ = info;
     var name: [1024]u8 = undefined;
     if (unistd.gethostname(&name, 1024) == -1) {
-        node.throwError(env, "error in gethostname");
+        node.throwErrno(env, "error in gethostname");
         return null;
     }
     // cast because we know name is null terminated.
@@ -94,7 +95,7 @@ fn getpgid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     const pid = node.i32FromValue(env, argv[0], "pid") catch return null;
     const pgid = unistd.getpgid(pid);
     if (pgid == -1) {
-        node.throwError(env, "error in getpgid");
+        node.throwErrno(env, "error in getpgid");
         return null;
     }
     return node.create_i32(env, pgid, "pgid") catch return null;
@@ -119,7 +120,7 @@ fn setegid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     const argv = node.getArgv(env, info, 1) catch return null;
     const gid = node.u32FromValue(env, argv[0], "gid") catch return null;
     if (unistd.setegid(gid) == -1) {
-        node.throwError(env, "error in setegid");
+        node.throwErrno(env, "error in setegid");
     }
     return null;
 }
@@ -129,7 +130,7 @@ fn seteuid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     const argv = node.getArgv(env, info, 1) catch return null;
     const uid = node.u32FromValue(env, argv[0], "uid") catch return null;
     if (unistd.seteuid(uid) == -1) {
-        node.throwError(env, "error in seteuid");
+        node.throwErrno(env, "error in seteuid");
     }
     return null;
 }
@@ -143,11 +144,11 @@ fn sethostname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
     // Interestingly the type of second argument sethostname depends on the operating system.
     if (builtin.target.os.tag == .linux) {
         if (unistd.sethostname(&buf, len) == -1) {
-            node.throwError(env, "error setting host name");
+            node.throwErrno(env, "error setting host name");
         }
     } else {
         if (unistd.sethostname(&buf, @intCast(c_int, len)) == -1) {
-            node.throwError(env, "error setting host name");
+            node.throwErrno(env, "error setting host name");
         }
     }
     return null;
@@ -159,7 +160,7 @@ fn setpgid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     const pid = node.i32FromValue(env, argv[0], "pid") catch return null;
     const pgid = node.i32FromValue(env, argv[1], "pgid") catch return null;
     if (unistd.setpgid(pid, pgid) == -1) {
-        node.throwError(env, "error in setpgid");
+        node.throwErrno(env, "error in setpgid");
     }
     return null;
 }
@@ -170,7 +171,7 @@ fn setregid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_val
     const rgid = node.u32FromValue(env, argv[0], "rgid") catch return null;
     const egid = node.u32FromValue(env, argv[1], "egid") catch return null;
     if (unistd.setregid(rgid, egid) == -1) {
-        node.throwError(env, "error in setregid");
+        node.throwErrno(env, "error in setregid");
     }
     return null;
 }
@@ -181,7 +182,7 @@ fn setreuid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_val
     const ruid = node.u32FromValue(env, argv[0], "ruid") catch return null;
     const euid = node.u32FromValue(env, argv[1], "euid") catch return null;
     if (unistd.setreuid(ruid, euid) == -1) {
-        node.throwError(env, "error in setreuid");
+        node.throwErrno(env, "error in setreuid");
     }
     return null;
 }
@@ -191,7 +192,7 @@ fn setsid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
     _ = info;
     const pid = unistd.setsid();
     if (pid == -1) {
-        node.throwError(env, "error in setsid");
+        node.throwErrno(env, "error in setsid");
         return null;
     }
     return node.create_i32(env, pid, "pid") catch return null;
@@ -203,7 +204,7 @@ fn ttyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     const fd = node.i32FromValue(env, argv[0], "fd") catch return null;
     const name = unistd.ttyname(fd);
     if (name == null) {
-        node.throwError(env, "invalid file descriptor");
+        node.throwErrno(env, "invalid file descriptor");
         return null;
     }
     return node.createStringFromPtr(env, name, "ttyname") catch return null;
@@ -249,7 +250,8 @@ fn execv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
 
     const ret = unistd.execv(pathname, argv);
     if (ret == -1) {
-        node.throwError(env, "error in execv");
+        util.printErrno();
+        node.throwErrno(env, "error in execv");
         return null;
     }
     // This can't ever happen, of course.
@@ -279,7 +281,7 @@ fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
     // it silently appears to die.**  But a simple example writing to a file shows this works.
     const ret = unistd.execve(pathname, argv, envp);
     if (ret == -1) {
-        node.throwError(env, "error in execve");
+        node.throwErrno(env, "error in execve");
         return null;
     }
     // This can't ever happen, of course.
@@ -308,7 +310,7 @@ fn fexecve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
 
     const ret = unistd.fexecve(fd, argv, envp);
     if (ret == -1) {
-        node.throwError(env, "error in fexecve");
+        node.throwErrno(env, "error in fexecve");
         return null;
     }
     // This can't ever happen, of course.
@@ -320,7 +322,7 @@ fn fork(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     _ = info;
     const pid = unistd.fork();
     if (pid == -1) {
-        node.throwError(env, "error in fork");
+        node.throwErrno(env, "error in fork");
         return null;
     }
     return node.create_i32(env, pid, "pid") catch return null;
@@ -331,7 +333,7 @@ fn pipe(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     _ = info;
     var pipefd: [2]c_int = undefined;
     if (unistd.pipe(&pipefd) == -1) {
-        node.throwError(env, "error in pipe");
+        node.throwErrno(env, "error in pipe");
     }
     return pipefdToObject(env, pipefd) catch return null;
 }
@@ -347,7 +349,7 @@ fn pipe2_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_v
     const flags = node.i32FromValue(env, argv[0], "flags") catch return null;
     var pipefd: [2]c_int = undefined;
     if (pipe2(&pipefd, flags) == -1) {
-        node.throwError(env, "error in pipe2");
+        node.throwErrno(env, "error in pipe2");
     }
     return pipefdToObject(env, pipefd) catch return null;
 }
@@ -371,7 +373,7 @@ fn lockf(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
     const cmd = node.i32FromValue(env, argv[1], "cmd") catch return null;
     const size = node.i64FromBigIntValue(env, argv[2], "size") catch return null;
     if (unistd.lockf(fd, cmd, size) == -1) {
-        node.throwError(env, "error in lockf");
+        node.throwErrno(env, "error in lockf");
     }
     return null;
 }
@@ -419,7 +421,7 @@ fn getgrouplist(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi
             @ptrCast([*]c_int, @alignCast(std.meta.alignment([*]c_int), ptr));
 
         if (unistd.getgrouplist(@ptrCast([*:0]u8, &user), group, groups, &ngroups) == -1) {
-            node.throwError(env, "failed to get group list");
+            node.throwErrno(env, "failed to get group list");
             return null;
         }
     }
@@ -442,7 +444,7 @@ fn dup(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const oldfd = node.i32FromValue(env, argv[0], "oldfd") catch return null;
     const newfd = unistd.dup(oldfd);
     if (newfd == -1) {
-        node.throwError(env, "error in dup");
+        node.throwErrno(env, "error in dup");
         return null;
     }
     return node.create_i32(env, newfd, "newfd") catch return null;
@@ -455,7 +457,7 @@ fn dup2(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const newfd = node.i32FromValue(env, argv[1], "newfd") catch return null;
     const ret = unistd.dup2(oldfd, newfd);
     if (ret == -1) {
-        node.throwError(env, "error in dup2");
+        node.throwErrno(env, "error in dup2");
         return null;
     }
     return node.create_i32(env, ret, "ret") catch return null;

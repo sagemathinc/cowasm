@@ -7,7 +7,6 @@ const spawn = @cImport({
     @cInclude("sched.h");
     @cInclude("signal.h");
 });
-const errno = @cImport(@cInclude("errno.h"));
 const builtin = @import("builtin");
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
@@ -46,7 +45,6 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
         // it should be "addclose", "addopen", or "adddup2".
         if (buf[3] == "c"[0]) { // ["addclose", fd]
             const fd = node.i32FromValue(env, node.getArrayElement(env, fileAction, 1, "fd") catch return null, "fd") catch return null;
-            std.debug.print("addclose fd={}\n", .{fd});
             if (spawn.posix_spawn_file_actions_addclose(&file_actions, fd) != 0) {
                 try node.throw(env, "call to posix_spawn_file_actions_addclose failed") catch return null;
             }
@@ -55,14 +53,12 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
             node.stringFromValue(env, node.getArrayElement(env, fileAction, 2, "path") catch return null, "path", bufsize, &buf) catch return null;
             const oflag = node.i32FromValue(env, node.getArrayElement(env, fileAction, 3, "oflag") catch return null, "oflag") catch return null;
             const mode = @intCast(spawn.mode_t, node.u32FromValue(env, node.getArrayElement(env, fileAction, 4, "mode") catch return null, "mode") catch return null);
-            std.debug.print("addopen fd={}, path={s}, oflag={}, mode={}\n", .{ fd, path, oflag, mode });
             if (spawn.posix_spawn_file_actions_addopen(&file_actions, fd, &buf, oflag, mode) != 0) {
                 try node.throw(env, "call to posix_spawn_file_actions_addopen failed") catch return null;
             }
         } else if (buf[3] == "d"[0]) { // ["adddup2", fd, new_fd]
             const fd = node.i32FromValue(env, node.getArrayElement(env, fileAction, 1, "fd") catch return null, "fd") catch return null;
             const new_fd = node.i32FromValue(env, node.getArrayElement(env, fileAction, 2, "new_fd") catch return null, "new_fd") catch return null;
-            std.debug.print("adddup2 fd={}, new_fd={}\n", .{ fd, new_fd });
             if (spawn.posix_spawn_file_actions_adddup2(&file_actions, fd, new_fd) != 0) {
                 try node.throw(env, "call to posix_spawn_file_actions_adddup2 failed") catch return null;
             }
@@ -133,7 +129,6 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
     var pid: spawn.pid_t = undefined;
     var ret = if (p) spawn.posix_spawnp(&pid, path, &file_actions, &attr, argv, envp) else spawn.posix_spawn(&pid, path, &file_actions, &attr, argv, envp);
     if (ret != 0) {
-        std.debug.print("errno = {}\n", .{std.c._errno().*});
         node.throwError(env, "error in posix_spawn calling spawn.posix_spawn");
         return null;
     }

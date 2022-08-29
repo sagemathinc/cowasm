@@ -19,6 +19,7 @@ const std = @import("std");
 const assert = std.debug.assert;
 const c = @import("c.zig");
 const stdio = @cImport(@cInclude("stdio.h"));
+const util = @import("util.zig");
 
 const RegisterError = error{ CreateError, SetError };
 
@@ -58,6 +59,17 @@ pub fn throwErrorCode(env: c.napi_env, message: [*:0]const u8, code: [*:0]const 
 pub fn throwErrorNumber(env: c.napi_env, message: [*:0]const u8, errcode: i32) void {
     var buf: [17]u8 = undefined;
     _ = stdio.sprintf(&buf, "%d", errcode);
+    const result = c.napi_throw_error(env, &buf, message);
+    switch (result) {
+        c.napi_ok, c.napi_pending_exception => {},
+        else => unreachable,
+    }
+}
+
+// Throw error but with code set the errno number.
+pub fn throwErrno(env: c.napi_env, message: [*:0]const u8) void {
+    var buf: [17]u8 = undefined;
+    _ = stdio.sprintf(&buf, "%d", util.getErrno());
     const result = c.napi_throw_error(env, &buf, message);
     switch (result) {
         c.napi_ok, c.napi_pending_exception => {},
