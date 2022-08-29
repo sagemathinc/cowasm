@@ -245,11 +245,8 @@ fn execv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
     var argv = node.valueToArrayOfStrings(env, args[1], "argv") catch return null;
     defer util.freeArrayOfStrings(argv);
 
-    // dupStreams(env) catch return null;
-
     const ret = unistd.execv(pathname, argv);
     if (ret == -1) {
-        util.printErrno();
         node.throwErrno(env, "error in execv");
         return null;
     }
@@ -270,9 +267,6 @@ fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
 
     var envp = node.valueToArrayOfStrings(env, args[2], "envp") catch return null;
     defer util.freeArrayOfStrings(envp);
-
-    // Critical to dup2 these are we'll see nothing after running execve:
-    // dupStreams(env) catch return null;
 
     // NOTE: On success, execve() does not return (!), on error -1 is returned,
     // and errno is set to indicate the error.
