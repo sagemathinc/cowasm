@@ -107,9 +107,10 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# explicitly add anything that is really used from there to posix-wasm.h
 	mkdir ${BUILD_WASM}/sys && echo '#include "posix-wasm.h"' >  ${BUILD_WASM}/sys/wait.h
 	# Apply our patches:
-	cd ${BUILD_WASM} && cat ${CWD}/src/python-patches/01-subprocess.patch | patch -p1
-	cd ${BUILD_WASM}/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
-	cd ${BUILD_WASM}/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
+	cd ${BUILD_WASM} && cat ${CWD}/src/patches/01-subprocess.patch | patch -p1
+	cd ${BUILD_WASM}/Lib && cat ${CWD}/src/patches/02-pydoc.patch | patch -p0
+	cd ${BUILD_WASM}/Tools/wasm/ && cat ${CWD}/src/patches/03-wasm-assets.patch | patch -p0
+	cd ${BUILD_WASM} && cat ${CWD}/src/patches/04-enable-fork-and-subprocess-tests.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # The options for the extension modules.  We cannot strip later. The -s option to BLDSHARED
