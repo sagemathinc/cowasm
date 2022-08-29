@@ -129,25 +129,38 @@ export default function unistd({
       return os.setPriority?.(who, value);
     },
 
-    dup: () => {
+    // int dup(int oldfd);
+    dup: (oldfd: number): number => {
+      if (posix.dup == null) {
+        notImplemented("dup");
+      }
       // Considered in 2022, but closed by node developers: https://github.com/libuv/libuv/issues/3448#issuecomment-1174786218
-      // TODO: maybe revisit via the wasi layer when want to have a deeper understanding of whether this is possible
-      // on top of that abstraction, and of course emscripten does this (?)
-      throw Error(
-        "NotImplemented -- it might not be reasonable to implement file descriptor dup"
-      );
+
+      const x = wasi.FD_MAP.get(oldfd);
+      const newfd_real = posix.dup(x.real);
+      const newfd = wasi.getUnusedFileDescriptor();
+      wasi.FD_MAP.set(newfd, { ...x, real: newfd_real });
+      return newfd;
     },
 
-    dup2: () => {
-      throw Error(
-        "NotImplemented -- it might not be reasonable to implement file descriptor dup2"
-      );
+    // int dup2(int oldfd, int newfd);
+    dup2: (oldfd: number, newfd: number): number => {
+      if (posix.dup2 == null) {
+        notImplemented("dup2");
+      }
+      const x_old = wasi.FD_MAP.get(oldfd);
+      const x_new = wasi.FD_MAP.get(newfd);
+
+      const newfd_real = posix.dup2(x_old.real, x_new.real ?? newfd);
+      wasi.FD_MAP.set(newfd, { ...x_old, real: newfd_real });
+      return newfd;
     },
 
     dup3: () => {
-      throw Error(
-        "NotImplemented -- it might not be reasonable to implement file descriptor dup3"
-      );
+      // this is a linux-only variant of dup2
+      if (posix.dup3 == null) {
+        notImplemented("dup3");
+      }
     },
 
     sync: () => {
@@ -361,7 +374,7 @@ export default function unistd({
       const pathname = recv.string(pathnamePtr);
       const argv = recv.arrayOfStrings(argvPtr);
       posix.execv(pathname, argv);
-      return 0; // this won't happen because execve takes over
+      return 0; // this won't happen because execv takes over
     },
 
     // execlp is so far only by libedit to launch vim to edit
@@ -396,7 +409,7 @@ export default function unistd({
         notImplemented("pipe");
       }
       const { readfd, writefd } = posix.pipe();
-      // readfd and writefd are genuine native file descriptors.
+      // readfd and writefd are genuine native file descriptors that we just created.
       const wasi_readfd = wasi.getUnusedFileDescriptor();
       wasi.FD_MAP.set(wasi_readfd, {
         real: readfd,
@@ -427,8 +440,9 @@ export default function unistd({
         nativeFlags += posix.constants?.O_CLOEXEC ?? 0;
       }*/
       const { readfd, writefd } = posix.pipe2(nativeFlags);
-      // TODO: we almost certainly need to abstract these through our WASI
-      // fd object!
+      console.warn(
+        "pipe2 -- TODO: we almost certainly need to abstract these through our WASI fd object!"
+      );
       send.i32(pipefdPtr, readfd);
       send.i32(pipefdPtr + 4, writefd);
       return 0;

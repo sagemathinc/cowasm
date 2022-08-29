@@ -40,6 +40,10 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "lockf", lockf);
     try node.registerFunction(env, exports, "pause", pause);
     try node.registerFunction(env, exports, "getgrouplist", getgrouplist);
+
+
+    try node.registerFunction(env, exports, "dup", dup);
+    try node.registerFunction(env, exports, "dup2", dup2);
 }
 
 pub const constants = .{
@@ -78,6 +82,7 @@ fn gethostname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
     var name: [1024]u8 = undefined;
     if (unistd.gethostname(&name, 1024) == -1) {
         node.throwError(env, "error in gethostname");
+        return null;
     }
     // cast because we know name is null terminated.
     return node.createStringFromPtr(env, @ptrCast([*:0]const u8, &name), "hostname") catch return null;
@@ -212,25 +217,24 @@ fn alarm(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
     return node.create_u32(env, ret, "ret") catch return null;
 }
 
-const UnistdError = error{Dup2Fail};
+// const UnistdError = error{Dup2Fail};
+// fn dupStream(env: c.napi_env, comptime name: [:0]const u8, number: i32) !void {
+//     const stream = try node.getStreamFd(env, name);
+//     if (unistd.dup2(stream, number) == -1) {
+//         node.throwError(env, "dup2 failed on " ++ name);
+//         return UnistdError.Dup2Fail;
+//     }
+//     if (unistd.close(stream) == -1) {
+//         node.throwError(env, "closing fd failed " ++ name);
+//         return UnistdError.Dup2Fail;
+//     }
+// }
 
-fn dupStream(env: c.napi_env, comptime name: [:0]const u8, number: i32) !void {
-    const stream = try node.getStreamFd(env, name);
-    if (unistd.dup2(stream, number) == -1) {
-        node.throwError(env, "dup2 failed on " ++ name);
-        return UnistdError.Dup2Fail;
-    }
-    if (unistd.close(stream) == -1) {
-        node.throwError(env, "closing fd failed " ++ name);
-        return UnistdError.Dup2Fail;
-    }
-}
-
-fn dupStreams(env: c.napi_env) !void {
-    try dupStream(env, "stdin", 0);
-    try dupStream(env, "stdout", 1);
-    try dupStream(env, "stderr", 2);
-}
+// fn dupStreams(env: c.napi_env) !void {
+//     try dupStream(env, "stdin", 0);
+//     try dupStream(env, "stdout", 1);
+//     try dupStream(env, "stderr", 2);
+// }
 
 fn execv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const args = node.getArgv(env, info, 2) catch return null;
@@ -241,7 +245,7 @@ fn execv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
     var argv = node.valueToArrayOfStrings(env, args[1], "argv") catch return null;
     defer util.freeArrayOfStrings(argv);
 
-    dupStreams(env) catch return null;
+    // dupStreams(env) catch return null;
 
     const ret = unistd.execv(pathname, argv);
     if (ret == -1) {
@@ -254,7 +258,6 @@ fn execv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
 
 // int execve(const char *pathname, char *const argv[], char *const envp[]);
 //  execve: (pathname: string, argv: string[], envp: string[]) => number;
-// TODO: we should change last arg to be a map, like with python.
 fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const args = node.getArgv(env, info, 3) catch return null;
 
@@ -268,7 +271,7 @@ fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
     defer util.freeArrayOfStrings(envp);
 
     // Critical to dup2 these are we'll see nothing after running execve:
-    dupStreams(env) catch return null;
+    // dupStreams(env) catch return null;
 
     // NOTE: On success, execve() does not return (!), on error -1 is returned,
     // and errno is set to indicate the error.
@@ -301,7 +304,7 @@ fn fexecve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     defer util.freeArrayOfStrings(envp);
 
     // Critical to dup2 these are we'll see nothing after running execve:
-    dupStreams(env) catch return null;
+    // dupStreams(env) catch return null;
 
     const ret = unistd.fexecve(fd, argv, envp);
     if (ret == -1) {
@@ -431,4 +434,29 @@ fn getgrouplist(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi
         node.setElement(env, array, i, gid, "setting ith group") catch return null;
     }
     return array;
+}
+
+// int dup(int oldfd);
+fn dup(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const oldfd = node.i32FromValue(env, argv[0], "oldfd") catch return null;
+    const newfd = unistd.dup(oldfd);
+    if (newfd == -1) {
+        node.throwError(env, "error in dup");
+        return null;
+    }
+    return node.create_i32(env, newfd, "newfd") catch return null;
+}
+
+// int dup2(int oldfd, int newfd);
+fn dup2(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 2) catch return null;
+    const oldfd = node.i32FromValue(env, argv[0], "oldfd") catch return null;
+    const newfd = node.i32FromValue(env, argv[1], "newfd") catch return null;
+    const ret = unistd.dup2(oldfd, newfd);
+    if (ret == -1) {
+        node.throwError(env, "error in dup2");
+        return null;
+    }
+    return node.create_i32(env, ret, "ret") catch return null;
 }

@@ -93,6 +93,8 @@ interface PosixFunctions {
   seteuid: (uid: number) => void;
   sethostname: (name: string) => void;
   ttyname: (fd: number) => string;
+  dup: (oldfd: number) => number;
+  dup2: (oldfd: number, newfd: number) => number;
 
   fork: () => number;
   pipe: () => { readfd: number; writefd: number };
