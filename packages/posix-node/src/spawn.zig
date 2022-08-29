@@ -108,7 +108,7 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
     if (node.hasNamedProperty(env, args[2], "sigmask", "property of spawnattr") catch return null) {
         const sigmask = node.getNamedProperty(env, args[2], "sigmask", "property of spawnattr") catch return null;
         var sigset: spawn.sigset_t = undefined;
-        sigset_t_fromArray(env, sigmask, &sigset) catch return null;
+        sigset_t_fromArray(env, sigmask, "sigmask", &sigset) catch return null;
         if (spawn.posix_spawnattr_setsigmask(&attr, &sigset) != 0) {
             try node.throw(env, "call to posix_spawnattr_setsigmask failed") catch return null;
         }
@@ -116,7 +116,7 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
     if (node.hasNamedProperty(env, args[2], "sigdefault", "property of spawnattr") catch return null) {
         const sigdefault = node.getNamedProperty(env, args[2], "sigdefault", "property of spawnattr") catch return null;
         var sigset: spawn.sigset_t = undefined;
-        sigset_t_fromArray(env, sigdefault, &sigset) catch return null;
+        sigset_t_fromArray(env, sigdefault, "sigset", &sigset) catch return null;
         if (spawn.posix_spawnattr_setsigdefault(&attr, &sigset) != 0) {
             try node.throw(env, "call to posix_spawnattr_setsigdefault failed") catch return null;
         }
@@ -142,15 +142,15 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
 
 fn sigset_t_fromArray(env: c.napi_env, array: c.napi_value, comptime message: [:0]const u8, setPtr: *spawn.sigset_t) !void {
     if (spawn.sigemptyset(setPtr) != 0) {
-        try node.throw(env, "failed to init signal set -- " ++ message);
+        return node.throw(env, "failed to init signal set -- " ++ message);
     }
     const len = try node.arrayLength(env, array, "sigset_t_fromArray");
     var i: i32 = 0;
     while (i < len) : (i += 1) {
-        const s = try getArrayElement(env, array, i, "getting signal from set");
+        const s = try node.getArrayElement(env, array, @intCast(u32, i), "getting signal from set");
         const signum = try node.i32FromValue(env, s, "signum");
         if (spawn.sigaddset(setPtr, signum) != 0) {
-            try node.throw(env, "failed to add a signal to the set -- " ++ message);
+            return node.throw(env, "failed to add a signal to the set -- " ++ message);
         }
     }
 }
