@@ -175,7 +175,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 			--build=`./config.guess`
 	cat src/pyconfig.h >> ${BUILD_WASM}/pyconfig.h
 	# NOTE: I have seen "error: unable to build WASI libc CRT file: FileNotFound" when using "make -j8",
-	# and had it go away when removing parallel build. 
+	# and had it go away when removing parallel build.
 	cd ${BUILD_WASM} && make
 	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld
 	# via the zig-fPIC script.  First remove everything that possibly needs to be built -fPIC or the
@@ -237,8 +237,13 @@ RUN_TESTS =  _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 	${DIST_NATIVE}/bin/python3 \
 	./Tools/scripts/run_tests.py
 
+# We use a restricted PATH for running tests.  On Linux I had a lot of trouble
+# with some random binaries in random places causing hangs, and this provides
+# a cleaner environment.
+TEST_PATH=/bin:/usr/bin
+
 test-all: wasm native
-	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS}
 .PHONY: test-all
 
 
@@ -249,14 +254,14 @@ SUPPORTED_TESTS = test_posixpath test_pkgutil test_py_compile test_compileall te
 
 test: wasm native
 	echo "Running ${SUPPORTED_TEST_DESC}"
-	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j8 --timeout=60 ${SUPPORTED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j8 --timeout=60 ${SUPPORTED_TESTS}
 	echo "Ran ${SUPPORTED_TEST_DESC}"
 .PHONY: test
 
 # One test fails here due to the fact that the PYTHONHOME is different in webworker mode (since the files are in the zip archive).
 test-worker: wasm native
 	echo "Running using webworker -- ${SUPPORTED_TEST_DESC}"
-	cd ${BUILD_WASM} && PYTHONHOME=${DIST_WASM} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} -j8 --timeout=60 ${SUPPORTED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} PYTHONHOME=${DIST_WASM} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} -j8 --timeout=60 ${SUPPORTED_TESTS}
 	echo "Ran using webworker -- ${SUPPORTED_TEST_DESC}"
 
 FAILED_TEST_DESC = "all **unsuppported** and known failing cpython test suites -- this is about 17% of the full cpython test suite.  Help fix these, please!"
@@ -264,19 +269,19 @@ FAILED_TESTS = test_dbm test_bz2 test_codecs test_cprofile test_dbm_dumb test_di
 
 test-failed:  wasm native
 	echo "Running ${FAILED_TEST_DESC}"
-	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} --timeout=60 ${FAILED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} --timeout=60 ${FAILED_TESTS}
 	echo "Ran ${FAILED_TEST_DESC}"
 
 
 TEST=test_long
 test-one:   wasm native
 	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
-	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j1 --timeout=60 -v ${TEST}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j1 --timeout=60 -v ${TEST}
 .PHONY: test-one
 
 test-one-worker: wasm native
 	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
-	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} -j1 --timeout=60 -v ${TEST}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} -j1 --timeout=60 -v ${TEST}
 .PHONY: test-one
 
 
@@ -285,5 +290,5 @@ SKIPPED_TESTS = test__xxsubinterpreters test_asyncgen test_asynchat test_asyncio
 
 test-skipped:  wasm native
 	echo "Running ${SKIPPED_TEST_DESC}"
-	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} --timeout=60 ${SKIPPED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} --timeout=60 ${SKIPPED_TESTS}
 	echo "Ran ${SKIPPED_TEST_DESC}"
