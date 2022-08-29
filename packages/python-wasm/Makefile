@@ -27,7 +27,6 @@ test-python:
 test-posix:
 	cd src && \
 		${TEST} wasm/posix/unistd.zig && \
-		${TEST} wasm/posix/spawn.zig && \
 		${TEST} wasm/posix/stdio.zig && \
 		${TEST} wasm/posix/string.zig && \
 		${TEST} wasm/posix/stdlib.zig wasm/posix/stdlib.c
