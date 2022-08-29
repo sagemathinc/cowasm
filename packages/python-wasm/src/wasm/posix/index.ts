@@ -29,7 +29,7 @@ const logReturn = debug("posix:return");
 
 // For some reason this code
 //    import os; print(os.popen('ls').read())
-// hangs when run in linux under python-wasm, but not python-wasm-debub,
+// hangs when run in **linux only** under python-wasm, but not python-wasm-debug,
 // except if I set any random env variable here... and then it doesn't hang.
 // This is weird.
 process.env.__STUPID_HACK__ = "";

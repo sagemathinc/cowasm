@@ -42,7 +42,6 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "pause", pause);
     try node.registerFunction(env, exports, "getgrouplist", getgrouplist);
 
-
     try node.registerFunction(env, exports, "dup", dup);
     try node.registerFunction(env, exports, "dup2", dup2);
 }
@@ -442,6 +441,7 @@ fn getgrouplist(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi
 fn dup(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
     const oldfd = node.i32FromValue(env, argv[0], "oldfd") catch return null;
+    _ = unistd.fsync(oldfd);
     const newfd = unistd.dup(oldfd);
     if (newfd == -1) {
         node.throwErrno(env, "error in dup");
@@ -454,6 +454,7 @@ fn dup(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
 fn dup2(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 2) catch return null;
     const oldfd = node.i32FromValue(env, argv[0], "oldfd") catch return null;
+    _ = unistd.fsync(oldfd);
     const newfd = node.i32FromValue(env, argv[1], "newfd") catch return null;
     const ret = unistd.dup2(oldfd, newfd);
     if (ret == -1) {
