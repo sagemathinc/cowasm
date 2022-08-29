@@ -27,6 +27,13 @@ const logNotImplemented = debug("posix:not-implemented");
 const logCall = debug("posix:call");
 const logReturn = debug("posix:return");
 
+// For some reason this code
+//    import os; print(os.popen('ls').read())
+// hangs when run in linux under python-wasm, but not python-wasm-debub,
+// except if I set any random env variable here... and then it doesn't hang.
+// This is weird.
+process.env.__STUPID_HACK__ = "";
+
 interface Context {
   fs: FileSystem;
   send: SendToWasm;
@@ -104,7 +111,7 @@ export default function posix(context: Context) {
       try {
         logCall(name, args);
         const ret = P[name](...args);
-        logReturn(ret);
+        logReturn(name, ret);
         return ret;
       } catch (err) {
         if (err.code != null) {

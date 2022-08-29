@@ -5,6 +5,9 @@ if [ x"$1" = x"python.wasm" ]; then
     shift
 fi
 
+# See https://github.com/debug-js/debug/blob/master/README.md#usage-in-child-processes
+export DEBUG_COLORS=1
+
 export SCRIPTPATH="$( cd -- "$(dirname "`readlink -f $0`")" >/dev/null 2>&1 ; pwd -P )"
 
 # TODO/WARNING: If you pass no arguments you get the CLI with readline.

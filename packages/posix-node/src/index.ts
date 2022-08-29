@@ -281,7 +281,9 @@ try {
   for (const name in mod) {
     exports[name] = mod1[name] = (...args) => {
       log(name, args);
-      return mod[name](...args);
+      const res = mod[name](...args);
+      log(name, "returned", res);
+      return res;
     };
   }
   exports["constants"] = mod1.constants = mod["getConstants"]?.();

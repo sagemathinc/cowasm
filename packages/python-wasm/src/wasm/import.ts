@@ -93,6 +93,9 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       }
       switch (message.event) {
         case "sleep":
+          // We implement sleep using atomics. There is an alternative trick
+          // using XMLHttpRequest explained here https://jasonformat.com/javascript-sleep/
+          // that we should also investigate in cases when maybe we don't want to use atomics.
           Atomics.store(this.spinLock, 0, 1);
           Atomics.notify(this.spinLock, 0);
           this.sleepTimer = setTimeout(() => {
