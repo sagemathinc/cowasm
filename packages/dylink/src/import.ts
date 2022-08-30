@@ -3,6 +3,7 @@ import getMetadata from "./metadata";
 import stubProxy from "./stub";
 import debug from "debug";
 const log = debug("dylink");
+const logImport = debug("dylink:import");
 
 const STACK_ALIGN = 16; // copied from emscripten
 
@@ -42,7 +43,7 @@ much memory.
 NOTE: There arguments about what stack size to use here -- it's still 5MB in
 emscripten today, and in zig it is 1MB:
  - https://github.com/emscripten-core/emscripten/pull/10019
- - https://github.com/ziglang/zig/issues/3735 <-- this did get fixed upstream! 
+ - https://github.com/ziglang/zig/issues/3735 <-- this did get fixed upstream!
 */
 
 // Stack size for imported dynamic libraries -- we use 1MB. This is
@@ -396,7 +397,15 @@ export default async function importWebAssemblyDlopen({
       );
     }
 
+    let t0 = 0;
+    if (logImport.enabled) {
+      t0 = new Date().valueOf();
+      logImport("importing ", path);
+    }
     const instance = importWebAssemblySync(path, libImportObject);
+    if (logImport.enabled) {
+      logImport("imported ", path, ", time =", new Date().valueOf() - t0, "ms");
+    }
 
     //log("got exports=", instance.exports);
     if (__indirect_function_table == null) {
@@ -535,10 +544,19 @@ export default async function importWebAssemblyDlopen({
         env: stubProxy(importObject.env, functionViaPointer, stub),
       }
     : importObject;
+
+  let t0 = 0;
+  if (logImport.enabled) {
+    t0 = new Date().valueOf();
+    logImport("importing ", path);
+  }
   const mainInstance =
     importWebAssembly != null
       ? await importWebAssembly(path, importObjectWithPossibleStub)
       : importWebAssemblySync(path, importObjectWithPossibleStub);
+  if (logImport.enabled) {
+    logImport("imported ", path, ", time =", new Date().valueOf() - t0, "ms");
+  }
 
   if (mainInstance.exports.__wasm_call_ctors != null) {
     // We also **MUST** explicitly call the WASM constructors. This is

@@ -85,16 +85,21 @@ ${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C}
 	mkdir -p ${DIST}/python
 	mv src/interface.wasm ${DIST}/python/python.wasm
 
-.PHONEY: python
-python: ${DIST}/python/python.wasm ${DIST}/python/python.zip ${DIST}/python/termcap
+DATAFILES = ${DIST}/python/python-minimal.zip ${DIST}/python/python-readline.zip ${DIST}/python/python-full.zip
 
-${DIST}/python/python.zip: ${PYTHON_WASM}/lib/dist/python311.zip
+${DIST}/python/%.zip: ${PYTHON_WASM}/lib/dist/%.zip
 	# Copy over the modules files
-	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
+	cp $< $@
+
 
 ${DIST}/python/termcap: ${PYTHON_WASM}/lib/dist/termcap
 	# Copy over the termcap file (termcap is also in python.zip, but it's useful to have outside for debug mode).
 	cp ${PYTHON_WASM}/lib/dist/termcap ${DIST}/python/termcap
+
+.PHONY: python
+python: ${DIST}/python/python.wasm ${DATAFILES} ${DIST}/python/termcap
+
+
 
 ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
 	zig-fPIC cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM}

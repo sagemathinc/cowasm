@@ -7,7 +7,7 @@ fi
 
 export SCRIPTPATH="$( cd -- "$(dirname "`readlink -f $0`")" >/dev/null 2>&1 ; pwd -P )"
 
-# node-terminal-debug disables (1) workers, and (2) using the python.zip bundle.
+# node-terminal-debug disables (1) workers, and (2) using the python*.zip bundles.
 # This makes debug logging much easier.  It obviously only works if you built everything
 # from source in place and can't be used from an npm install.
 

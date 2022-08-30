@@ -6,7 +6,7 @@ import { dirname, join } from "path";
 import { existsSync } from "fs";
 import callsite from "callsite";
 
-const PYTHON_ZIP = "python.zip";
+const PYTHON_ZIP = "python-full.zip";
 const PYTHON_WASM = "python.wasm";
 
 // Our tiny termcap file only has one entry, which is for xterm

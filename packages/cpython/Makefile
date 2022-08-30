@@ -202,6 +202,16 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 .PHONY:
 wasm-cpython: ${DIST_WASM}/.built-cpython
 
+# These are the minimal data files needed to start cPython, which we found via "DEBUG=wasi:open pw-d"!
+MINIMAL_FILES = encodings/__init__.pyc encodings/aliases.pyc encodings/utf_8.pyc
+MINIMAL_READLINE = lib-dynload/readline.cpython-311-wasm32-wasi.so
+
+# Below we create three zip files:
+#
+#  ${DIST_WASM}/lib/dist/python-minimal.zip - (size=10K) -- a tiny file with the minimum needed to start python
+#  ${DIST_WASM}/lib/dist/python-readline.zip - (size=60K) -- python.zip plus enough to import readline
+#  ${DIST_WASM}/lib/dist/python-full.zip - (size= ~ 5MB) -- the full standard libary
+
 ${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
 	# Build wasm asset bundle (the pyc files, etc.).
 	cd ${BUILD_WASM} && \
@@ -220,7 +230,20 @@ ${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
 	#      https://reviews.llvm.org/D73820
 	#find ${DIST_WASM}/lib/dist/lib-dynload -type f -name "*.so" | xargs -n1 ${CWD}/node_modules/.bin/wasm-strip
 	# Instead, we use the -s option to wasm-ld above.
-	cd ${DIST_WASM}/lib/dist/; zip -u python311.zip lib-dynload/*
+	# Also mv zip to a more meaningful name.
+	cd ${DIST_WASM}/lib/dist/ \
+		&& zip -u python311.zip lib-dynload/* \
+		&& mv python311.zip python-full.zip
+
+	# Next make the MINIMAL python0.zip, which is all that's needed to start python (e.g., for a jupyter kernel or to back
+	# computations, but not a REPL). We also make a version with the readline so, so you can start a terminal, before
+	# more data needs to be loaded.
+	cd ${DIST_WASM}/lib/dist/ \
+		&& mkdir tmp && cd tmp && unzip ../python-full.zip \
+		&& zip ../python-minimal.zip ${MINIMAL_FILES} \
+		&& zip ../python-readline.zip ${MINIMAL_FILES} ${MINIMAL_READLINE} \
+		&& cd .. && rm -rf tmp
+
 	touch ${DIST_WASM}/.built
 
 # Use "make run-wasm" to run our WASM python at the command line.
