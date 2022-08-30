@@ -42,7 +42,7 @@ much memory.
 NOTE: There arguments about what stack size to use here -- it's still 5MB in
 emscripten today, and in zig it is 1MB:
  - https://github.com/emscripten-core/emscripten/pull/10019
- - https://github.com/ziglang/zig/issues/3735
+ - https://github.com/ziglang/zig/issues/3735 <-- this did get fixed upstream! 
 */
 
 // Stack size for imported dynamic libraries -- we use 1MB. This is
