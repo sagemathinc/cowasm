@@ -21,10 +21,21 @@ let omit =
 omit +=
   "Py_UTF _PyInterpreterID_Type _PyNamespace_Type _PyRuntime _PyTraceMalloc_Config _Py_HasFileSystemDefaultEncodeErrors _Py_HashSecret_Initialized _Py_RefTotal _Py_UnhandledKeyboardInterrupt _inittab PyObject_AsCharBuffer PyObject_AsReadBuffer PyObject_AsWriteBuffer PySlice_GetIndicesEx  PyStructSequence_UnnamedField Py_Version _PyImport_FrozenBootstrap _PyImport_FrozenStdlib _PyImport_FrozenTest _PyLong_DigitValue _PyParser_TokenNames _Py_tracemalloc_config";
 
+// These are critically needed, but somehow don't get detected below.  I found these
+// because extension modules were visibly slow without them, etc.
+// TODO: this is caused because in some cases PyAPI appears in a different
+// line from the function.  **MUST FIX**
+
+const extra =
+  "_PyUnicodeWriter_WriteChar _PyUnicodeWriter_Init _PyUnicodeWriter_Finish _PyUnicodeWriter_Dealloc _PyUnicodeWriter_WriteStr";
+
+// const todo =
+//   "_PyArg_ParseTupleAndKeywords_SizeT _PyArg_ParseTupleAndKeywords_SizeT  _PyArg_ParseTuple_SizeT";
+
 const aliases = { Py_INCREF: "Py_IncRef", Py_DECREF: "Py_DecRef" };
 
 async function main() {
-  const exclude = new Set(omit.split(" "));
+  const exclude = new Set(omit.split(/\s+/));
   let names: string[] = [];
   const output = (
     await spawnAsync("grep", ["--no-filename", "PyAPI", "-r", PATH])
@@ -65,6 +76,7 @@ async function main() {
     }
     return true;
   });
+  names = names.concat(extra.split(/\s+/));
   console.log(wasmExport(names));
   for (const name in aliases) {
     console.log(alias(name, aliases[name]));

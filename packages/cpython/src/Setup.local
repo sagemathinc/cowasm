@@ -34,25 +34,31 @@ pyexpat pyexpat.c
 
 # text encodings and unicode
 
-#   these are *HUGE* and well worth moving out of the core wasm bundle!
-#   However, sadly the tests suddenly get 1000x slower or break with these for some reason.
-#   We could also just not build them (that could be an option?).
-#_codecs_cn cjkcodecs/_codecs_cn.c
-#_codecs_hk cjkcodecs/_codecs_hk.c
-#_codecs_iso2022 cjkcodecs/_codecs_iso2022.c
-#_codecs_jp cjkcodecs/_codecs_jp.c
-#_codecs_kr cjkcodecs/_codecs_kr.c
-#_codecs_tw cjkcodecs/_codecs_tw.c
+# These are *HUGE* and well worth moving out of the core wasm bundle.
+_codecs_cn cjkcodecs/_codecs_cn.c
+_codecs_hk cjkcodecs/_codecs_hk.c
+_codecs_iso2022 cjkcodecs/_codecs_iso2022.c
+_codecs_jp cjkcodecs/_codecs_jp.c
+_codecs_kr cjkcodecs/_codecs_kr.c
+_codecs_tw cjkcodecs/_codecs_tw.c
 
 # This one has one failing test involving os.unlink if we make it shared.
-# We will revisit this, since it's surely a sign of a subtle bug in dylink.
+# We will revisit this, since it might be a sign of a bug in dylink.
+# That said, this module is only 22k, so shouldn't be dynamic.
 #_multibytecodec cjkcodecs/multibytecodec.c
 
 unicodedata unicodedata.c
 
+# _pickle and _datetime are each pretty big and not needed at startup,
+# so it will be very nice if they can be shared modules.  Right now
+# when we build them shared, for some reason we get issues with
+# _PyRuntime not being defined...
+#_pickle _pickle.c
+#_datetime _datetimemodule.c
+
+# Only 6kb, so do not need to build shared for size.  However, for some reason
+# I'm having trouble building this static whereas shared works well.
 _posixsubprocess _posixsubprocess.c
-
-
 
 readline readline.c -I$(abs_srcdir)/../../../libedit/dist/wasm/include $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 

@@ -196,7 +196,7 @@ async function doWasmImport({
     importWebAssembly,
     readFileSync,
     importObject: wasmOpts,
-    stub: "warn",
+    stub: false,
   });
 
   if (wasi != null) {

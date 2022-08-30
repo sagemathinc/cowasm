@@ -70,7 +70,7 @@ interface Input {
     importObject: object
   ) => WebAssembly.Instance;
   readFileSync: (path: string) => any; // todo?
-  stub?: "warn" | "silent"; // if warn, automatically generate stub functions but with a huge warning; if silent, just silently create stubs.
+  stub?: "warn" | "silent" | false; // if warn, automatically generate stub functions but with a huge warning; if silent, just silently create stubs.
 }
 
 export default async function importWebAssemblyDlopen({
@@ -154,16 +154,30 @@ export default async function importWebAssemblyDlopen({
   }
 
   function getFunction(name: string, path: string = ""): Function | undefined {
-    const f =
-      importObject?.env?.[name] ??
-      functionViaPointer(name) ??
-      mainInstance.exports[name] ??
-      functionFromOtherLibrary(name);
-    if (f != null) return f;
+    let f = importObject?.env?.[name];
+    if (f != null) {
+      log("getFunction ", name, "from env");
+      return f;
+    }
+    f = functionViaPointer(name);
+    if (f != null) {
+      log("getFunction ", name, "from function pointer");
+      return f;
+    }
+    f = mainInstance.exports[name];
+    if (f != null) {
+      log("getFunction ", name, "from mainInstance exports");
+      return f;
+    }
+    f = functionFromOtherLibrary(name);
+    if (f != null) {
+      log("getFunction ", name, "from other library");
+      return f;
+    }
     if (path) {
       debug("stub")(name, "undefined importing", path);
     }
-    return importObjectWithStub.env[name];
+    return importObjectWithPossibleStub.env[name];
   }
 
   function dlopenEnvHandler(path: string) {
@@ -515,7 +529,7 @@ export default async function importWebAssemblyDlopen({
     return 0;
   };
 
-  const importObjectWithStub = stub
+  const importObjectWithPossibleStub = stub
     ? {
         ...importObject,
         env: stubProxy(importObject.env, functionViaPointer, stub),
@@ -523,8 +537,8 @@ export default async function importWebAssemblyDlopen({
     : importObject;
   const mainInstance =
     importWebAssembly != null
-      ? await importWebAssembly(path, importObjectWithStub)
-      : importWebAssemblySync(path, importObjectWithStub);
+      ? await importWebAssembly(path, importObjectWithPossibleStub)
+      : importWebAssemblySync(path, importObjectWithPossibleStub);
 
   if (mainInstance.exports.__wasm_call_ctors != null) {
     // We also **MUST** explicitly call the WASM constructors. This is
