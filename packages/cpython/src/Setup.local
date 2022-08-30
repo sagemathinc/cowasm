@@ -49,15 +49,18 @@ _codecs_tw cjkcodecs/_codecs_tw.c
 
 unicodedata unicodedata.c
 
-# _pickle and _datetime are each pretty big and not needed at startup,
-# so it will be very nice if they can be shared modules.  Right now
-# when we build them shared, for some reason we get issues with
-# _PyRuntime not being defined...
-#_pickle _pickle.c
-#_datetime _datetimemodule.c
+# _pickle and _datetime together would save a little under 50K zipped,
+# and are not needed at startup, but they cause a break.  When we build
+# either of them shared, for some reason we get issues with
+# _PyRuntime not being defined.  It's not worth it to debug given the
+# small savings, and that cPython doesn't encourage these to be dynamic,
+# and maybe it isn't supported.
+# _datetime _datetimemodule.c
+# _pickle _pickle.c
+
 
 # Only 6kb, so do not need to build shared for size.  However, for some reason
-# I'm having trouble building this static whereas shared works well.
+# I'm having trouble building this static whereas shared works well!? Heh, it works this way.
 _posixsubprocess _posixsubprocess.c
 
 readline readline.c -I$(abs_srcdir)/../../../libedit/dist/wasm/include $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
