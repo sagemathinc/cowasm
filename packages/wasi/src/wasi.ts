@@ -2,6 +2,7 @@
 
 import debug from "debug";
 const log = debug("wasi");
+const logOpen = debug("wasi:open"); // just log opening files, which is useful
 
 import type {
   WASIBindings,
@@ -1216,7 +1217,7 @@ export default class WASI {
             pathPtr,
             pathLen
           ).toString();
-          // log("** openpath: p = ", p);
+          logOpen("path_open", p);
           const fullUnresolved = path.resolve(stats.path, p);
           if (path.relative(stats.path, fullUnresolved).startsWith("..")) {
             return WASI_ENOTCAPABLE;
