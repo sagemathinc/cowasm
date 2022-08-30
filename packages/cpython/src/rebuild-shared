@@ -9,12 +9,14 @@ find Modules -name "*.o" -type f -delete
 find Modules -name "*.so" -type f -delete
 
 # Keep this in sync with ../Makefile
-make -j8 CC="zig-fPIC cc " \
+make -j8 \
+     CC="zig-fPIC cc " \
      CXX="zig-fPIC c++ " \
      CONFIGURE_LDFLAGS_NODIST="" \
      LINKFORSHARED="-shared" \
      MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
      MODULE_PYEXPAT_LDFLAGS="Modules/expat/libexpat.a" \
+     MODULE__DATETIME_LDFLAGS="" \
      BLDSHARED="zig wasm-ld --experimental-pic -shared"
 
 cp -v Modules/*.so ../../dist/wasm/lib/python3.11/lib-dynload/

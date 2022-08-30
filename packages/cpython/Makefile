@@ -153,8 +153,8 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	#       - with -oZ, test_richcmp.py fails with a limit above 750; a limit of max of 720 works on node on linux.
 	#         Changing to -O3 makes no difference.
 	cd ${BUILD_WASM} && \
-		CC="zig cc -O3 -target wasm32-wasi" \
-		CXX="zig c++ -O3 -target wasm32-wasi" \
+		CC="zig cc -Oz -target wasm32-wasi" \
+		CXX="zig c++ -Oz -target wasm32-wasi" \
 		AR="zig ar" \
 		CFLAGS="-D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD_WASM} -I${POSIX_WASM}/wasm -DPy_DEFAULT_RECURSION_LIMIT=700" \
 		CONFIG_SITE=./config.site \
@@ -191,8 +191,9 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 		LINKFORSHARED="-shared" \
 		MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
 	 	MODULE_PYEXPAT_LDFLAGS="Modules/expat/libexpat.a" \
-		CC="zig-fPIC cc" \
-		CXX="zig-fPIC c++" \
+		MODULE__DATETIME_LDFLAGS="" \
+		CC="zig-fPIC cc -Oz" \
+		CXX="zig-fPIC c++ -Oz" \
 		BLDSHARED="${BLDSHARED}"
 	# Install as usual.
 	cd ${BUILD_WASM} && make install
