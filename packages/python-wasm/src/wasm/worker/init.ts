@@ -141,6 +141,24 @@ export default function initWorker({
           result: wasm.callWithString(message.name, "", []),
         });
         return;
+
+      case "waitUntilFsLoaded":
+        if (wasm?.fs == null) {
+          throw Error("wasm.fs must be initialized");
+        }
+        try {
+          await wasm.fs.waitUntilLoaded();
+          parent.postMessage({
+            id: message.id,
+            result: {},
+          });
+        } catch (error) {
+          parent.postMessage({
+            id: message.id,
+            error,
+          });
+        }
+        return;
     }
   });
 }

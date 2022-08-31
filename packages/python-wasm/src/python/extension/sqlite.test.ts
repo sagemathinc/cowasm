@@ -9,8 +9,10 @@ test("use the sqlite module to do something", async () => {
 import sqlite3
 con = sqlite3.connect(":memory:")
 cur = con.cursor()
-cur.execute("CREATE TABLE movie(title, year, score)")
-res = cur.execute("SELECT name FROM sqlite_master")
+cur.execute("CREATE TABLE movies(title, year, score)")
+cur.execute("INSERT INTO movies values('Red Dawn',1984,50)")
+cur.execute("INSERT INTO movies values('Red Dawn',2012,15)")
+res = cur.execute("SELECT * FROM movies")
 `);
-  expect(await repr("res.fetchone()")).toBe("('movie',)");
+  expect(await repr("list(res)")).toBe("[('Red Dawn', 1984, 50), ('Red Dawn', 2012, 15)]");
 });

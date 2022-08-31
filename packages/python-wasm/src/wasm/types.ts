@@ -25,4 +25,8 @@ export class WasmInstance extends EventEmitter {
   getFunction(_name: string): Function | undefined {
     throw Error("not implemented");
   }
+  // Wait until the filesystem is loaded enough to run user code.
+  waitUntilFsLoaded(): Promise<void> {
+    throw Error("not implemented");
+  }
 }

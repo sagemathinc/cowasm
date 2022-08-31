@@ -151,4 +151,11 @@ export default class WasmInstance extends EventEmitter {
     }
     return this.exports[name];
   }
+
+  async waitUntilFsLoaded(): Promise<void> {
+    if (this.fs == null) {
+      throw Error("fs must be defined");
+    }
+    return await this.fs.waitUntilLoaded();
+  }
 }
