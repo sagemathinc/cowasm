@@ -54,8 +54,9 @@ packages/openssl/${BUILT}: zig posix-wasm
 .PHONY: openssl
 
 posix-node: packages/posix-node/${BUILT}
+# note -- I tried doing 'make -j4' for posix-node and sometimes got segfaults on macos (bug in zig).
 packages/posix-node/${BUILT}: zig node
-	cd packages/posix-node && make -j4 all
+	cd packages/posix-node && make all
 .PHONY: posix-node
 
 posix-wasm: packages/posix-wasm/${BUILT}
