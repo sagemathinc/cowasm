@@ -23,12 +23,18 @@ export default async function wasmImportBrowser(
   const fsSpec: FileSystemSpec[] = [];
   for (const X of options.fs ?? []) {
     if (X.type == "zipurl") {
-      const Y = {
-        type: "zip",
-        data: await (await fetch(X.zipurl)).arrayBuffer(),
-        mountpoint: X.mountpoint,
-      } as FileSystemSpec;
-      fsSpec.push(Y);
+      if (!X.async) {
+        const Y = {
+          type: "zip",
+          data: await (await fetch(X.zipurl)).arrayBuffer(),
+          mountpoint: X.mountpoint,
+        } as FileSystemSpec;
+        fsSpec.push(Y);
+      } else {
+        // we asynchronously load it irregardless of whatever else is happening...
+        // TODO:
+        console.log("TODO: async load ", X.zipurl);
+      }
     } else {
       fsSpec.push(X);
     }

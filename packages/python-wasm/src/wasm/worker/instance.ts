@@ -1,5 +1,6 @@
 // @ts-ignore -- it thinks FileSystem isn't used, even though it is below.  Weird.
-import type { WASMFileSystem, WASI } from "@wapython/wasi";
+import type { WASIFileSystem } from "@wapython/wasi";
+import type WASI from "@wapython/wasi";
 import { EventEmitter } from "events";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
@@ -22,7 +23,7 @@ export default class WasmInstance extends EventEmitter {
 
   // these are sometimes available and useful, e.g., in testing:
   // fs = the virtual filesystem for wasm instance
-  fs?: WASMFileSystem;
+  fs?: WASIFileSystem;
   // the webassembly function table for the main module; the dynamic
   // linker exposes clib functions via basically what you'll see
   // if you look at getFunction below, which makes things vastly faster.

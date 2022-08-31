@@ -35,6 +35,7 @@ interface ZipFsUrl {
   type: "zipurl";
   zipurl: string;
   mountpoint: string;
+  async?: boolean;  // if true, will load asynchronously in the background.
 }
 
 interface ZipFs {
