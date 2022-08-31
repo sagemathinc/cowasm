@@ -1,9 +1,7 @@
 import python from "python-wasm";
-import debug from "debug";
-
-const log = debug("webpack-demo");
 
 async function demo() {
+  const log = console.log;
   const t0 = new Date();
   (window as any).python = python;
 
@@ -14,11 +12,12 @@ async function demo() {
   log(`Loaded python in ${new Date().valueOf() - t0.valueOf()}ms.`);
 
   const element = document.createElement("pre");
+  log(await python.repr("2+3"));
 
   // Run some code in Python that defines variables n and s.
-  await python.exec(
-    "from random import randint; n=randint(0,10**6); s = sum(range(n))"
-  );
+  await python.exec("from random import randint; n = randint(0,10**6)");
+  log("computed n = ", await python.repr("n"));
+  await python.exec("s = sum(range(n))");
   await python.exec("import sys");
   // Use python.repr to get their string representation:
   element.innerHTML = `${await python.repr(

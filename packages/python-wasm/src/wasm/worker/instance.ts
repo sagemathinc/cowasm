@@ -41,7 +41,7 @@ export default class WasmInstance extends EventEmitter {
   constructor(
     exports,
     memory: WebAssembly.Memory,
-    fs?: FileSystem,
+    fs?: WASIFileSystem,
     table?: WebAssembly.Table
   ) {
     super();
