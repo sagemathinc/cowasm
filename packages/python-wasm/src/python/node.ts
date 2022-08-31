@@ -17,7 +17,12 @@ export async function init({
   noWorker,
   noZip,
   debug,
-}: { noWorker?: boolean; noZip?: boolean; debug?: boolean } = {}) {
+}: {
+  noWorker?: boolean;
+  noZip?: boolean;
+  debug?: boolean;
+  noReadline?: boolean; // doesn't do anything for node, but is used for browser version.
+} = {}) {
   if (debug) {
     noWorker = noZip = true;
   }
