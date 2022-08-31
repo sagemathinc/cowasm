@@ -10,6 +10,7 @@ class WorkerThread extends EventEmitter {
 
   constructor(worker: Worker) {
     super();
+    this.setMaxListeners(100);
     this.postMessage = worker.postMessage.bind(worker);
     this.terminate = worker.terminate.bind(worker);
     worker.onmessage = ({ data: message }) => {

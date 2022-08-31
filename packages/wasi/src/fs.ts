@@ -28,6 +28,7 @@ interface ZipFsFile {
   type: "zipfile";
   zipfile: string;
   mountpoint: string;
+  async?: boolean; // if true, will load asynchronously in the background.
 }
 
 interface ZipFsUrl {
@@ -35,12 +36,18 @@ interface ZipFsUrl {
   type: "zipurl";
   zipurl: string;
   mountpoint: string;
-  async?: boolean;  // if true, will load asynchronously in the background.
+  async?: boolean; // if true, will load asynchronously in the background.
 }
 
 interface ZipFs {
   type: "zip";
   data: Buffer;
+  mountpoint: string;
+}
+
+interface ZipFsAsync {
+  type: "zip-async";
+  getData: () => Promise<Buffer>;
   mountpoint: string;
 }
 
@@ -52,6 +59,7 @@ interface MemFs {
 export type FileSystemSpec =
   | NativeFs
   | ZipFs
+  | ZipFsAsync
   | ZipFsFile
   | ZipFsUrl
   | MemFs
@@ -69,14 +77,23 @@ export function createFileSystem(
     return specToFs(specs[0], nativeFs) ?? memFs();
   }
   const ufs = new Union();
+  const v: Function[] = [];
   for (const spec of specs) {
     const fs = specToFs(spec, nativeFs);
     if (fs != null) {
       // e.g., native bindings may be null.
       ufs.use(fs);
+      if (fs.waitUntilLoaded != null) {
+        v.push(fs.waitUntilLoaded.bind(fs));
+      }
     }
   }
-  return { ...ufs, constants: memfs.constants };
+  const waitUntilLoaded = async () => {
+    for (const wait of v) {
+      await wait();
+    }
+  };
+  return { ...ufs, constants: memfs.constants, waitUntilLoaded };
 }
 
 function specToFs(
@@ -87,6 +104,8 @@ function specToFs(
   // See https://github.com/streamich/memfs/issues/735
   if (spec.type == "zip") {
     return zipFs(spec.data, spec.mountpoint) as any;
+  } else if (spec.type == "zip-async") {
+    return zipFsAsync(spec.getData, spec.mountpoint) as any;
   } else if (spec.type == "zipfile") {
     throw Error(`you must convert zipfile -- read ${spec.zipfile} into memory`);
   } else if (spec.type == "zipurl") {
@@ -122,6 +141,28 @@ function devFs(): WASIFileSystem {
 function zipFs(data: Buffer, directory: string = "/"): WASIFileSystem {
   const fs = createFsFromVolume(new Volume()) as any;
   unzip({ data, fs, directory });
+  return fs;
+}
+
+function zipFsAsync(
+  getData: () => Promise<Buffer>,
+  directory: string = "/"
+): WASIFileSystem {
+  const fs = createFsFromVolume(new Volume()) as any;
+  const load = async () => {
+    let data;
+    try {
+      data = await getData();
+    } catch (err) {
+      console.warn(
+        `FAILED to load async filesystem for '${directory}' - ${err}`
+      );
+      throw err;
+    }
+    unzip({ data, fs, directory });
+  };
+  const loadingPromise = load();
+  fs.waitUntilLoaded = () => loadingPromise;
   return fs;
 }
 

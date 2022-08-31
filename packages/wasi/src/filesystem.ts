@@ -79,4 +79,5 @@ export default interface WASIFileSystem extends FS {
   constants: { [name: string]: number };
   WriteStream: typeof Writable | (new (...args: any[]) => Writable);
   ReadStream: typeof Readable | (new (...args: any[]) => Readable);
+  waitUntilLoaded: () => Promise<void>; // after 'await fs.waitUntilLoaded()', then the filesystem is fully initialized.
 }

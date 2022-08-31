@@ -39,21 +39,30 @@ export default async function wasmImportNode(
       if (!isAbsolute(X.zipfile)) {
         X.zipfile = join(path, X.zipfile);
       }
-      try {
-        const Y = {
-          type: "zip",
-          data: await readFile(X.zipfile),
+      let Y;
+      if (X.async) {
+        Y = {
+          type: "zip-async",
+          getData: async () => await readFile(X.zipfile),
           mountpoint: X.mountpoint,
         } as FileSystemSpec;
-        fsSpec.push(Y);
-      } catch (err) {
-        // non-fatal
-        // We *might* use this eventually when building the datafile itself, if we switch to using cpython wasm to build
-        // instead of native cpython.
-        console.warn(
-          `WARNING: Unable to read filesystem datafile '${X.zipfile}' -- falling back to filesystem.`
-        );
+      } else {
+        try {
+          Y = {
+            type: "zip",
+            data: await readFile(X.zipfile),
+            mountpoint: X.mountpoint,
+          } as FileSystemSpec;
+        } catch (err) {
+          // non-fatal
+          // We *might* use this eventually when building the datafile itself, if we switch to using cpython wasm to build
+          // instead of native cpython.
+          console.warn(
+            `WARNING: Unable to read filesystem datafile '${X.zipfile}' -- falling back to filesystem.`
+          );
+        }
       }
+      fsSpec.push(Y);
     } else {
       fsSpec.push(X);
     }

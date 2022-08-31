@@ -8,10 +8,12 @@ async function demo() {
   // change to noWorker:true to not use a webworker, i.e., everything in the main thread.
   // Note that if noWorker =true, then dynamic library loading can't work.
   log("call python init");
-  await python.init({ noReadline: true }); // noReadline saves 400k and readline not needed since no terminal in this demo.
+  await python.init();
   log(`Loaded python in ${new Date().valueOf() - t0.valueOf()}ms.`);
 
   const element = document.createElement("pre");
+  await python.exec("import _pickle");
+  log(await python.repr("_pickle"));
   log(await python.repr("2+3"));
 
   // Run some code in Python that defines variables n and s.

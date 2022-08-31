@@ -206,6 +206,8 @@ async function doWasmImport({
 
   wasm = new WasmInstance(instance.exports, memory, fs, table);
   if (options.init != null) {
+    // For Python this does the basic initialization of the Python
+    // interpreter, which involves files like such as encodings/utf_8.pyc
     await options.init(wasm);
     // Uncomment this for low level debugging, so that the broken wasm
     // module gets returned.
@@ -227,6 +229,12 @@ async function doWasmImport({
   wasm.table = table;
   wasm.wasi = wasi;
   wasm.posixEnv = posixEnv;
+
+  // We have loaded the WASM module and started Python, but we
+  // can't actually running interesting code until the core
+  // filesystem finishes loading, since these files may be
+  // needed in order to run interesting code.
+  await fs.waitUntilLoaded();
 
   return wasm;
 }
