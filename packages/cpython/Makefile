@@ -204,7 +204,7 @@ wasm-cpython: ${DIST_WASM}/.built-cpython
 
 # These are the minimal data files needed to start cPython, which we found via "DEBUG=wasi:open pw-d"!
 MINIMAL_FILES = encodings/__init__.pyc encodings/aliases.pyc encodings/utf_8.pyc
-MINIMAL_READLINE = lib-dynload/readline.cpython-311-wasm32-wasi.so
+MINIMAL_READLINE = termcap lib-dynload/readline.cpython-311-wasm32-wasi.so  rlcompleter.pyc inspect.pyc ast.pyc contextlib.pyc collections/__init__.pyc keyword.pyc operator.pyc reprlib.pyc functools.pyc types.pyc enum.pyc dis.pyc opcode.pyc collections/abc.pyc importlib/__init__.pyc warnings.pyc linecache.pyc tokenize.pyc re/__init__.pyc re/_compiler.pyc re/_parser.pyc re/_constants.pyc re/_casefix.pyc copyreg.pyc token.pyc
 
 # Below we create three zip files:
 #
@@ -239,7 +239,7 @@ ${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
 	# computations, but not a REPL). We also make a version with the readline so, so you can start a terminal, before
 	# more data needs to be loaded.
 	cd ${DIST_WASM}/lib/dist/ \
-		&& mkdir tmp && cd tmp && unzip ../python-full.zip \
+		&& mkdir tmp && cd tmp && unzip ../python-full.zip && cp ../termcap .\
 		&& zip ../python-minimal.zip ${MINIMAL_FILES} \
 		&& zip ../python-readline.zip ${MINIMAL_FILES} ${MINIMAL_READLINE} \
 		&& cd .. && rm -rf tmp
