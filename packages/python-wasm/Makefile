@@ -85,7 +85,7 @@ ${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C}
 	mkdir -p ${DIST}/python
 	mv src/interface.wasm ${DIST}/python/python.wasm
 
-DATAFILES = ${DIST}/python/python-minimal.zip ${DIST}/python/python-stdlib.zip
+DATAFILES = ${DIST}/python/python-minimal.zip ${DIST}/python/python-readline.zip ${DIST}/python/python-stdlib.zip
 
 ${DIST}/python/%.zip: ${PYTHON_WASM}/lib/dist/%.zip
 	# Copy over the modules files

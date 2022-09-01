@@ -6,14 +6,16 @@ import type { FileSystemSpec } from "@wapython/wasi";
 import wasmUrl from "./python.wasm";
 import pythonFull from "./python-stdlib.zip";
 import pythonMinimal from "./python-minimal.zip";
+import pythonReadline from "./python-readline.zip";
 
 export async function init({
   noWorker, // run in the main thread -- useful for debugging, but very bad for production since can block UI
-}: { noWorker?: boolean } = {}) {
+  noReadline, // don't load readline support library for startup; useful if not using Python as a REPL.
+}: { noWorker?: boolean; noReadline?: boolean } = {}) {
   const fs: FileSystemSpec[] = [
     {
       type: "zipurl",
-      zipurl: pythonMinimal,
+      zipurl: noReadline ? pythonMinimal : pythonReadline,
       mountpoint: "/usr/lib/python3.11",
     },
     { type: "dev" },

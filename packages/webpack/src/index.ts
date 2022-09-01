@@ -8,7 +8,8 @@ async function demo() {
   // change to noWorker:true to not use a webworker, i.e., everything in the main thread.
   // Note that if noWorker =true, then dynamic library loading can't work.
   log("call python init");
-  await python.init();
+  // noReadline saves a tiny amount of space; no terminal here so no need for readline
+  await python.init({ noReadline: true });
   log(`Loaded python in ${new Date().valueOf() - t0.valueOf()}ms.`);
 
   const element = document.createElement("pre");
@@ -25,7 +26,7 @@ async function demo() {
   // Use python.repr to get their string representation:
   element.innerHTML = `${await python.repr(
     "sys.version"
-  )}\n\n1 + 2 + 3 + ... + ${await python.repr("n")} = ${await python.repr(
+  )}\n\nLet's do some math!\n\n1 + 2 + 3 + ... + ${await python.repr("n")} = ${await python.repr(
     "s"
   )}`;
 
@@ -40,7 +41,7 @@ cur.execute("INSERT INTO movies values('Red Dawn',2012,15)")
 res = cur.execute("SELECT * FROM movies")
 `;
   await python.exec(sql);
-  element.innerHTML += `<br/><pre>${sql}</pre><br/>${await python.repr(
+  element.innerHTML += `<br/><pre>\nHow about some SQL?\n${sql}</pre><br/>${await python.repr(
     "list(res)"
   )}`;
 

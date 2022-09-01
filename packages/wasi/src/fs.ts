@@ -159,6 +159,8 @@ function zipFsAsync(
       );
       throw err;
     }
+    // NOTE: there is an async version of this, but it runs in another
+    // webworker and costs significant overhead, so not worth it.
     unzip({ data, fs, directory });
   };
   const loadingPromise = load();

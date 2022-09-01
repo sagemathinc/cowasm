@@ -182,7 +182,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       id: this.callId,
       event: "waitUntilFsLoaded",
     });
-    return await this.waitForResponse(this.callId);
+    await this.waitForResponse(this.callId);
   }
 
   private async waitForResponse(id: number): Promise<any> {

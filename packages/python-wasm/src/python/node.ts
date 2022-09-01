@@ -7,6 +7,7 @@ import callsite from "callsite";
 
 const PYTHON_WASM = "python.wasm";
 const pythonFull = "python-stdlib.zip";
+const pythonReadline = "python-readline.zip";
 const pythonMinimal = "python-minimal.zip";
 
 // Our tiny termcap file only has one entry, which is for xterm
@@ -16,10 +17,12 @@ const TERM = "xterm-256color";
 export async function init({
   noWorker,
   noZip,
+  noReadline,
   debug,
 }: {
   noWorker?: boolean;
   noZip?: boolean;
+  noReadline?: boolean;
   debug?: boolean;
 } = {}) {
   if (debug) {
@@ -31,7 +34,7 @@ export async function init({
     // Synchronously load tiny filesystem needed for starting python interpreter.
     fs.push({
       type: "zipfile",
-      zipfile: join(path, pythonMinimal),
+      zipfile: join(path, noReadline ? pythonMinimal : pythonReadline),
       mountpoint: "/usr/lib/python3.11",
     });
     // Load full stdlib python filesystem asynchronously.  Only needed to run actual interesting code.
