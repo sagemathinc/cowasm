@@ -24,10 +24,10 @@ export interface Options {
   time?: boolean;
   // init = initialization function that gets called when module first loaded.
   init?: (wasm: WasmInstance) => void | Promise<void>;
-  spinLock?: (time: number) => void;
+  sleep?: (milliseconds: number) => void;
   stdinBuffer?: SharedArrayBuffer;
   signalBuffer?: SharedArrayBuffer;
-  waitForStdin?: () => Buffer;
+  getStdin?: () => Buffer;
   sendStdout?: (Buffer) => void;
   sendStderr?: (Buffer) => void;
   fs?: FileSystemSpec[]; // only used in node.ts and browser.ts right now.  (TODO: this is due to refactoring)
@@ -154,8 +154,8 @@ async function doWasmImport({
     bindings,
     args: process.argv,
     env: options.env,
-    spinLock: options.spinLock,
-    waitForStdin: options.waitForStdin,
+    sleep: options.sleep,
+    getStdin: options.getStdin,
     sendStdout: options.sendStdout,
     sendStderr: options.sendStderr,
   };

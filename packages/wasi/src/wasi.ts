@@ -263,15 +263,15 @@ export default class WASI {
   FD_MAP: Map<number, File>;
   wasiImport: Exports;
   bindings: WASIBindings;
-  spinLock?: (time: number) => void;
-  waitForStdin?: () => Buffer;
+  sleep?: (time: number) => void;
+  getStdin?: () => Buffer;
   stdinBuffer?: Buffer;
   sendStdout?: (Buffer) => void;
   sendStderr?: (Buffer) => void;
 
   constructor(wasiConfig: WASIConfig) {
-    this.spinLock = wasiConfig.spinLock;
-    this.waitForStdin = wasiConfig.waitForStdin;
+    this.sleep = wasiConfig.sleep;
+    this.getStdin = wasiConfig.getStdin;
     this.sendStdout = wasiConfig.sendStdout;
     this.sendStderr = wasiConfig.sendStderr;
     // Destructure our wasiConfig
@@ -776,7 +776,7 @@ export default class WASI {
                   ? null
                   : Number(stats.offset);
               let rr = 0;
-              if (IS_STDIN && this.waitForStdin != null) {
+              if (IS_STDIN && this.getStdin != null) {
                 if (this.stdinBuffer != null) {
                   // just got stdin after waiting for it in poll_oneoff
                   // TODO: Do we need to limit length or iov will overflow?
@@ -1485,13 +1485,13 @@ export default class WASI {
               if (
                 userdata == BigInt(0) &&
                 WASI_EVENTTYPE_FD_READ == type &&
-                this.waitForStdin != null
+                this.getStdin != null
               ) {
                 if (!this.stdinBuffer) {
                   // Don't have anything in stdin, so
                   // block waiting for *more* stdin
                   // TODO: should respect timeout and signals...
-                  this.stdinBuffer = this.waitForStdin();
+                  this.stdinBuffer = this.getStdin();
                 }
               }
 
@@ -1509,12 +1509,10 @@ export default class WASI {
         waitTimeNs -= BigInt(bindings.hrtime()) - startNs;
         // logToFile("waitTimeNs", waitTimeNs);
         if (waitTimeNs > 0) {
-          if (this.spinLock != null) {
-            // We are running in a worker thread, and have the
-            // ability to use a SharedArrayBuffer and Atomic
-            // to synchronously pause execution of this thread.
-            // Yeah!
-            this.spinLock(nsToMs(waitTimeNs));
+          if (this.sleep != null) {
+            // We are running in a worker thread, and have *some way*
+            // to synchronously pause execution of this thread.  Yeah!
+            this.sleep(nsToMs(waitTimeNs));
           } else {
             // Use **horrible** 100% block and 100% cpu
             // wait, which might sort of work, but is obviously

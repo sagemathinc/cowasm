@@ -12,6 +12,10 @@ interface Buffers {
   };
 }
 
+interface Options {
+  getStdinAsync: () => Promise<Buffer>;
+}
+
 export default class IOProviderUsingAtomics implements IOProvider {
   private spinLock: Int32Array;
   private stdinLock: Int32Array;
@@ -20,10 +24,10 @@ export default class IOProviderUsingAtomics implements IOProvider {
   private sleepTimer: any;
   private waitingForStdin: boolean = false;
   private buffers: Buffers;
-  private getStdin: () => Promise<Buffer>;
+  private getStdinAsync: () => Promise<Buffer>;
 
-  constructor(options: { getStdin: () => Promise<Buffer> }) {
-    this.getStdin = options.getStdin;
+  constructor(options: Options) {
+    this.getStdinAsync = options.getStdinAsync;
     const spinLockBuffer = new SharedArrayBuffer(4);
     this.spinLock = new Int32Array(spinLockBuffer);
     const stdinLockBuffer = new SharedArrayBuffer(4);
@@ -87,14 +91,14 @@ export default class IOProviderUsingAtomics implements IOProvider {
     }, milliseconds);
   }
 
-  private async _waitForStdin(): Promise<void> {
-    log("waitForStdin: waiting...");
+  private async _getStdin(): Promise<void> {
+    log("getStdin: waiting...");
     try {
       this.waitingForStdin = true;
       Atomics.store(this.stdinLock, 0, -1);
       Atomics.notify(this.stdinLock, 0);
 
-      const data = await this.getStdin();
+      const data = await this.getStdinAsync();
       log("got data", data);
 
       data.copy(Buffer.from(this.stdinSharedBuffer));
@@ -108,14 +112,14 @@ export default class IOProviderUsingAtomics implements IOProvider {
     }
   }
 
-  waitForStdin(): void {
+  getStdin(): void {
     // while this.waitingForStdin is true, stdinLock[0]
     // should be -1 unless something is very wrong.
     if (this.waitingForStdin && this.stdinLock[0] == -1) {
-      log("waitForStdin: already waiting");
+      log("getStdin: already waiting");
       return;
     }
-    this._waitForStdin();
+    this._getStdin();
   }
 
   //   isWaitingForStdin(): boolean {

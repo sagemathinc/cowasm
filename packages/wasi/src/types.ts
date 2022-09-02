@@ -49,8 +49,17 @@ export interface WASIConfig {
   env?: WASIEnv;
   args?: WASIArgs;
   bindings: WASIBindings;
-  spinLock?: (time: number) => void;
-  waitForStdin?: () => Buffer;
+
+  // sleep: should be blocking sleep for the given number of milliseconds
+  sleep?: (milliseconds: number) => void;
+
+  // blocking get something from stdin; blocks waiting for some stdin to appear
+  getStdin?: () => Buffer;
+
+  // send any stdout we receive; in particular, when the write call happens, instead
+  // of actually writing to stdout, this function is called with the data that would
+  // have been written to stdout.  This makes it easy to capture stdout and stderr
+  // at the wasi level, rather than at the filesystem level (via bindings.fs).
   sendStdout?: (Buffer) => void;
   sendStderr?: (Buffer) => void;
 }

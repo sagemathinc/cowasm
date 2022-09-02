@@ -43,7 +43,7 @@ export class WasmInstance extends WasmInstanceAbstractBaseClass {
     }
   }
 
-  protected async getStdin() {
+  protected async getStdinAsync() {
     if (this.stdinBuffer.length > 0) {
       const data = this.stdinBuffer;
       this.stdinBuffer = Buffer.from("");

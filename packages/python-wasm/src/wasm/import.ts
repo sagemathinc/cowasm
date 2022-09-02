@@ -37,7 +37,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     this.send = new SendToWasmAbstractBase();
     this.recv = new RecvFromWasmAbstractBase();
     this.ioProvider = new IOProviderUsingAtomics({
-      getStdin: this.getStdin.bind(this),
+      getStdinAsync: this.getStdinAsync.bind(this),
     });
   }
 
@@ -49,8 +49,8 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     this.ioProvider.sleep(milliseconds);
   }
 
-  waitForStdin(): void {
-    this.ioProvider.waitForStdin();
+  getStdin(): void {
+    this.ioProvider.getStdin();
   }
 
   // MUST override in derived class
@@ -60,8 +60,8 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   }
 
   // MUST override in derived class
-  protected async getStdin(): Promise<Buffer> {
-    abstract("getStdin");
+  protected async getStdinAsync(): Promise<Buffer> {
+    abstract("getStdinAsync");
     return Buffer.from(""); // for typescript
   }
 
@@ -94,11 +94,11 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       }
       switch (message.event) {
         case "sleep":
-          this.sleep(message.time);
+          this.sleep(message.milliseconds);
           return;
 
-        case "waitForStdin":
-          this.waitForStdin();
+        case "getStdin":
+          this.getStdin();
           return;
 
         case "init":

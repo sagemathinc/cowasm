@@ -28,7 +28,7 @@
   "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/python-wasm",
   "workspaces": ["../wasi", "../dylink", "../posix-node"],
   "dependencies": {
-    "@wapython/wasi": "^1.3.0",
+    "@wapython/wasi": "^1.4.0",
     "awaiting": "^3.0.0",
     "callsite": "^1.0.0",
     "date-format": "^4.0.13",

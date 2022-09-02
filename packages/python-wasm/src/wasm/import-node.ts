@@ -18,7 +18,7 @@ export class WasmInstance extends WasmInstanceAbstractBaseClass {
     });
   }
 
-  protected async getStdin() {
+  protected async getStdinAsync() {
     return await callback((cb) => {
       process.stdin.once("data", (data) => {
         cb(undefined, data);
