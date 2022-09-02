@@ -5,6 +5,7 @@ import { dirname, join } from "path";
 import callsite from "callsite";
 import process from "node:process";
 import debug from "../debug";
+import { SIGINT } from "./constants";
 
 export class WasmInstance extends WasmInstanceAbstractBaseClass {
   protected initWorker(): WorkerThread {
@@ -13,7 +14,7 @@ export class WasmInstance extends WasmInstanceAbstractBaseClass {
       "worker/node.js"
     );
     return new Worker(path, {
-      trackUnmanagedFds: false // this seems incompatible with our use of unionfs/memfs (lots of warnings).
+      trackUnmanagedFds: false, // this seems incompatible with our use of unionfs/memfs (lots of warnings).
     });
   }
 
@@ -39,7 +40,7 @@ export class WasmInstance extends WasmInstanceAbstractBaseClass {
     process.stdin.on("data", (data) => {
       this.log?.("stdin", data.toString());
       if (data.includes("\u0003")) {
-        this.sigint();
+        this.signal(SIGINT);
       }
     });
   }

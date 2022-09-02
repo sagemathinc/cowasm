@@ -35,4 +35,5 @@ export class IOProvider {
   signal: (sig: number) => void;
   sleep: (milliseconds: number) => void;
   waitForStdin: () => void;
+  getExtraOptions: () => object;
 }

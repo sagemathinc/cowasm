@@ -1,6 +1,7 @@
 import { Options, WasmInstanceAbstractBaseClass } from "./import";
 import { callback } from "awaiting";
 import { EventEmitter } from "events";
+import { SIGINT } from "./constants";
 
 import debug from "debug";
 
@@ -37,7 +38,7 @@ export class WasmInstance extends WasmInstanceAbstractBaseClass {
       }
       this.emit("stdin");
       if (typeof data == "string" && data.includes("\u0003")) {
-        this.sigint();
+        this.signal(SIGINT);
       }
     }
   }

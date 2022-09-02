@@ -1,8 +1,49 @@
 import type { IOProvider } from "./types";
+import { SIGINT } from "./constants";
+import debug from "debug";
+const log = debug("io-using-atomics");
+
+interface Buffers {
+  stdinBuffer: SharedArrayBuffer;
+  signalBuffer: SharedArrayBuffer;
+  locks: {
+    spinLockBuffer: SharedArrayBuffer;
+    stdinLockBuffer: SharedArrayBuffer;
+  };
+}
 
 export default class IOProviderUsingAtomics implements IOProvider {
-  
-  protected signal(sig: number = 2) {
+  private spinLock: Int32Array;
+  private stdinLock: Int32Array;
+  private signalInt32Array: Int32Array;
+  private stdinSharedBuffer: SharedArrayBuffer;
+  private sleepTimer: any;
+  private waitingForStdin: boolean = false;
+  private buffers: Buffers;
+  private getStdin: () => Promise<Buffer>;
+
+  constructor(options: { getStdin: () => Promise<Buffer> }) {
+    this.getStdin = options.getStdin;
+    const spinLockBuffer = new SharedArrayBuffer(4);
+    this.spinLock = new Int32Array(spinLockBuffer);
+    const stdinLockBuffer = new SharedArrayBuffer(4);
+    this.stdinLock = new Int32Array(stdinLockBuffer);
+    const signalBuffer = new SharedArrayBuffer(4);
+    this.signalInt32Array = new Int32Array(signalBuffer);
+    this.stdinSharedBuffer = new SharedArrayBuffer(10000); // TODO: size?!
+    this.buffers = {
+      stdinBuffer: this.stdinSharedBuffer,
+      signalBuffer,
+      locks: { spinLockBuffer, stdinLockBuffer },
+    };
+  }
+
+  getExtraOptions(): Buffers {
+    return this.buffers;
+  }
+
+  signal(sig: number = 2): void {
+    log("signal", sig);
     if (sig != 2) {
       throw Error("only signal 2 is supported right now");
     }
@@ -28,7 +69,8 @@ export default class IOProviderUsingAtomics implements IOProvider {
     }
   }
 
-  protected sleep(milliseconds: number) {
+  sleep(milliseconds: number): void {
+    log("sleep", milliseconds);
     /*
     We implement sleep using atomics. There is an alternative trick
     using XMLHttpRequest explained here
@@ -43,28 +85,40 @@ export default class IOProviderUsingAtomics implements IOProvider {
       Atomics.store(this.spinLock, 0, 0);
       Atomics.notify(this.spinLock, 0);
     }, milliseconds);
-    return;
   }
 
-  protected async waitForStdin(): Promise<void> {
-    // while this.waitingForStdin is true, stdinLock[0]
-    // should be -1 unless something is very wrong.
-    if (this.waitingForStdin && this.stdinLock[0] == -1) return;
+  private async _waitForStdin(): Promise<void> {
+    log("waitForStdin: waiting...");
     try {
       this.waitingForStdin = true;
       Atomics.store(this.stdinLock, 0, -1);
       Atomics.notify(this.stdinLock, 0);
 
-      this.log?.("waitForStdin");
       const data = await this.getStdin();
-      this.log?.("got data", JSON.stringify(data));
+      log("got data", data);
 
       data.copy(Buffer.from(this.stdinSharedBuffer));
       Atomics.store(this.stdinLock, 0, data.length);
       Atomics.notify(this.stdinLock, 0);
+    } catch (err) {
+      // not much to do -- no way to report problem.
+      log("failed to get data", err);
     } finally {
       this.waitingForStdin = false;
     }
   }
 
+  waitForStdin(): void {
+    // while this.waitingForStdin is true, stdinLock[0]
+    // should be -1 unless something is very wrong.
+    if (this.waitingForStdin && this.stdinLock[0] == -1) {
+      log("waitForStdin: already waiting");
+      return;
+    }
+    this._waitForStdin();
+  }
+
+  //   isWaitingForStdin(): boolean {
+  //     return this.waitingForStdin;
+  //   }
 }

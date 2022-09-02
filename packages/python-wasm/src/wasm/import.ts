@@ -5,8 +5,9 @@ import reuseInFlight from "./reuseInFlight";
 import { SendToWasmAbstractBase } from "./worker/send-to-wasm";
 import { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
 export { Options };
-
-const SIGINT = 2;
+import IOProviderUsingAtomics from "./io-using-atomics";
+import type { IOProvider } from "./types";
+import { SIGINT } from "./constants";
 
 export interface WorkerThread extends EventEmitter {
   postMessage: (message: object) => void;
@@ -16,14 +17,9 @@ export interface WorkerThread extends EventEmitter {
 export class WasmInstanceAbstractBaseClass extends EventEmitter {
   private callId: number = 0;
   private options: Options;
-  private spinLock: Int32Array;
-  private stdinLock: Int32Array;
-  private signalInt32Array: Int32Array;
-  private stdinSharedBuffer: SharedArrayBuffer;
-  private sleepTimer: any;
+  private ioProvider: IOProvider;
   result: any;
   exports: any;
-  waitingForStdin: boolean = false;
   wasmSource: string;
 
   protected log?: Function;
@@ -40,6 +36,21 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     this.init = reuseInFlight(this.init);
     this.send = new SendToWasmAbstractBase();
     this.recv = new RecvFromWasmAbstractBase();
+    this.ioProvider = new IOProviderUsingAtomics({
+      getStdin: this.getStdin.bind(this),
+    });
+  }
+
+  signal(sig: number = SIGINT): void {
+    this.ioProvider.signal(sig);
+  }
+
+  sleep(milliseconds: number): void {
+    this.ioProvider.sleep(milliseconds);
+  }
+
+  waitForStdin(): void {
+    this.ioProvider.waitForStdin();
   }
 
   // MUST override in derived class
@@ -64,7 +75,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     this.worker = this.initWorker();
     if (!this.worker) throw Error("init - bug");
 
-    const options = { ...this.extraOptions(), ...this.options };
+    const options = { ...this.ioProvider.getExtraOptions(), ...this.options };
     this.log?.("options = ", options);
 
     this.worker.postMessage({
@@ -186,22 +197,6 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
         });
       })
     ).result;
-  }
-
-  protected extraOptions() {
-    const spinLockBuffer = new SharedArrayBuffer(4);
-    this.spinLock = new Int32Array(spinLockBuffer);
-    const stdinLockBuffer = new SharedArrayBuffer(4);
-    this.stdinLock = new Int32Array(stdinLockBuffer);
-    const signalBuffer = new SharedArrayBuffer(4);
-    this.signalInt32Array = new Int32Array(signalBuffer);
-    this.stdinSharedBuffer = new SharedArrayBuffer(10000); // TODO: size?!
-
-    return {
-      stdinBuffer: this.stdinSharedBuffer,
-      signalBuffer,
-      locks: { spinLockBuffer, stdinLockBuffer },
-    };
   }
 
   // Optionally override in derived class
