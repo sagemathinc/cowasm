@@ -106,9 +106,11 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
           return;
 
         case "waitForStdin":
-          if (this.waitingForStdin) return;
-          this.waitingForStdin = true;
+          // while this.waitingForStdin is true, stdinLock[0]
+          // should be -1 unless something is very wrong.
+          if (this.waitingForStdin && this.stdinLock[0] == -1) return;
           try {
+            this.waitingForStdin = true;
             Atomics.store(this.stdinLock, 0, -1);
             Atomics.notify(this.stdinLock, 0);
 
@@ -122,14 +124,16 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
           } finally {
             this.waitingForStdin = false;
           }
-
           return;
+
         case "init":
           this.emit("init", message);
           return;
+
         case "stdout":
           this.emit("stdout", message.data);
           break;
+
         case "stderr":
           this.emit("stderr", message.data);
           break;

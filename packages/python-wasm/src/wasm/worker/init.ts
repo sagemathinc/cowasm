@@ -58,10 +58,21 @@ export default function initWorker({
 
           const stdinBuffer = opts.stdinBuffer;
           const stdinLock = new Int32Array(stdinLockBuffer);
+
           opts.waitForStdin = () => {
             parent.postMessage({ event: "waitForStdin" });
+            // wait to change to -1
             while (stdinLock[0] != -1) {
-              Atomics.wait(stdinLock, 0, stdinLock[0]);
+              // wait with a timeout of 1s
+              Atomics.wait(stdinLock, 0, stdinLock[0], 1000);
+              if (stdinLock[0] != -1) {
+                // if it didn't change to -1, maybe the message was
+                // somehow missed or discarded due to already waiting
+                // or something else.  Shouldn't happen, but I've observed
+                // deadlock here before in a browser.  So we send message
+                // again to frontend asking it to make the change.
+                parent.postMessage({ event: "waitForStdin" });
+              }
             }
             // wait to change from -1
             Atomics.wait(stdinLock, 0, -1);
