@@ -30,3 +30,9 @@ export class WasmInstance extends EventEmitter {
     throw Error("not implemented");
   }
 }
+
+export class IOProvider {
+  signal: (sig: number) => void;
+  sleep: (milliseconds: number) => void;
+  waitForStdin: () => void;
+}
