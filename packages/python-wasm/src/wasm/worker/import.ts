@@ -31,6 +31,10 @@ export interface Options {
   sendStdout?: (Buffer) => void;
   sendStderr?: (Buffer) => void;
   fs?: FileSystemSpec[]; // only used in node.ts and browser.ts right now.  (TODO: this is due to refactoring)
+  locks?: {
+    spinLockBuffer: SharedArrayBuffer;
+    stdinLockBuffer: SharedArrayBuffer;
+  };
 }
 
 const cache: { [name: string]: any } = {};

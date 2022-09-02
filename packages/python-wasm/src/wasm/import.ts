@@ -18,7 +18,8 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   private options: Options;
   private spinLock: Int32Array;
   private stdinLock: Int32Array;
-  private signalBuf: Int32Array;
+  private signalInt32Array: Int32Array;
+  private stdinSharedBuffer: SharedArrayBuffer;
   private sleepTimer: any;
   result: any;
   exports: any;
@@ -62,28 +63,17 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     if (this.worker) return;
     this.worker = this.initWorker();
     if (!this.worker) throw Error("init - bug");
-    const spinLockBuffer = new SharedArrayBuffer(4);
-    this.spinLock = new Int32Array(spinLockBuffer);
-    const stdinLockBuffer = new SharedArrayBuffer(4);
-    this.stdinLock = new Int32Array(stdinLockBuffer);
-    const signalBuffer = new SharedArrayBuffer(4);
-    this.signalBuf = new Int32Array(signalBuffer);
-    const stdinBuffer = new SharedArrayBuffer(10000); // TODO: size?!
-    const options = {
-      stdinBuffer,
-      signalBuffer,
-      ...this.options,
-    };
+
+    const options = { ...this.extraOptions(), ...this.options };
     this.log?.("options = ", options);
 
     this.worker.postMessage({
       event: "init",
       name: this.wasmSource,
       options,
-      locks: { spinLockBuffer, stdinLockBuffer },
     });
     this.worker.on("exit", () => this.terminate());
-    this.worker.on("message", async (message) => {
+    this.worker.on("message", (message) => {
       if (message == null) return;
       this.log?.("main thread got message", message);
       if (message.id != null) {
@@ -93,37 +83,11 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       }
       switch (message.event) {
         case "sleep":
-          // We implement sleep using atomics. There is an alternative trick
-          // using XMLHttpRequest explained here https://jasonformat.com/javascript-sleep/
-          // that we should also investigate in cases when maybe we don't want to use atomics.
-          // See also https://stackoverflow.com/questions/10590213/synchronously-wait-for-message-in-web-worker
-          Atomics.store(this.spinLock, 0, 1);
-          Atomics.notify(this.spinLock, 0);
-          this.sleepTimer = setTimeout(() => {
-            Atomics.store(this.spinLock, 0, 0);
-            Atomics.notify(this.spinLock, 0);
-          }, message.time);
+          this.sleep(message.time);
           return;
 
         case "waitForStdin":
-          // while this.waitingForStdin is true, stdinLock[0]
-          // should be -1 unless something is very wrong.
-          if (this.waitingForStdin && this.stdinLock[0] == -1) return;
-          try {
-            this.waitingForStdin = true;
-            Atomics.store(this.stdinLock, 0, -1);
-            Atomics.notify(this.stdinLock, 0);
-
-            this.log?.("waitForStdin");
-            const data = await this.getStdin();
-            this.log?.("got data", JSON.stringify(data));
-
-            data.copy(Buffer.from(stdinBuffer));
-            Atomics.store(this.stdinLock, 0, data.length);
-            Atomics.notify(this.stdinLock, 0);
-          } finally {
-            this.waitingForStdin = false;
-          }
+          this.waitForStdin();
           return;
 
         case "init":
@@ -139,6 +103,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
           break;
       }
     });
+
     await callback((cb) =>
       this.once("init", (message) => {
         cb(message.error);
@@ -223,6 +188,22 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     ).result;
   }
 
+  protected extraOptions() {
+    const spinLockBuffer = new SharedArrayBuffer(4);
+    this.spinLock = new Int32Array(spinLockBuffer);
+    const stdinLockBuffer = new SharedArrayBuffer(4);
+    this.stdinLock = new Int32Array(stdinLockBuffer);
+    const signalBuffer = new SharedArrayBuffer(4);
+    this.signalInt32Array = new Int32Array(signalBuffer);
+    this.stdinSharedBuffer = new SharedArrayBuffer(10000); // TODO: size?!
+
+    return {
+      stdinBuffer: this.stdinSharedBuffer,
+      signalBuffer,
+      locks: { spinLockBuffer, stdinLockBuffer },
+    };
+  }
+
   protected sigint() {
     if (Atomics.load(this.stdinLock, 0) == -1) {
       // TODO: blocked on stdin lock -- not sure how to deal with this yet.
@@ -234,8 +215,8 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     }
 
     // tell other side about this signal.
-    Atomics.store(this.signalBuf, 0, SIGINT);
-    Atomics.notify(this.signalBuf, 0);
+    Atomics.store(this.signalInt32Array, 0, SIGINT);
+    Atomics.notify(this.signalInt32Array, 0);
 
     if (Atomics.load(this.spinLock, 0) == 1) {
       // Blocked on the sleep timer spin lock.
@@ -243,6 +224,45 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       // manually unblock
       Atomics.store(this.spinLock, 0, 0);
       Atomics.notify(this.spinLock, 0);
+    }
+  }
+
+  protected sleep(time: number) {
+    /*
+    We implement sleep using atomics. There is an alternative trick
+    using XMLHttpRequest explained here
+           https://jasonformat.com/javascript-sleep/
+    that we should also investigate in cases when maybe we don't
+    want to use atomics.  See also
+       https://stackoverflow.com/questions/10590213/synchronously-wait-for-message-in-web-worker
+    */
+    Atomics.store(this.spinLock, 0, 1);
+    Atomics.notify(this.spinLock, 0);
+    this.sleepTimer = setTimeout(() => {
+      Atomics.store(this.spinLock, 0, 0);
+      Atomics.notify(this.spinLock, 0);
+    }, time);
+    return;
+  }
+
+  protected async waitForStdin(): Promise<void> {
+    // while this.waitingForStdin is true, stdinLock[0]
+    // should be -1 unless something is very wrong.
+    if (this.waitingForStdin && this.stdinLock[0] == -1) return;
+    try {
+      this.waitingForStdin = true;
+      Atomics.store(this.stdinLock, 0, -1);
+      Atomics.notify(this.stdinLock, 0);
+
+      this.log?.("waitForStdin");
+      const data = await this.getStdin();
+      this.log?.("got data", JSON.stringify(data));
+
+      data.copy(Buffer.from(this.stdinSharedBuffer));
+      Atomics.store(this.stdinLock, 0, data.length);
+      Atomics.notify(this.stdinLock, 0);
+    } finally {
+      this.waitingForStdin = false;
     }
   }
 

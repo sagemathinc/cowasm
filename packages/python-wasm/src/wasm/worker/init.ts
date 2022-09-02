@@ -29,7 +29,7 @@ export default function initWorker({
       case "init":
         try {
           const opts: Options = { ...message.options };
-          const { spinLockBuffer, stdinLockBuffer } = message.locks ?? {};
+          const { spinLockBuffer, stdinLockBuffer } = opts.locks ?? {};
           if (spinLockBuffer == null) {
             throw Error("must define spinLockBuffer");
           }
