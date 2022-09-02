@@ -48,4 +48,5 @@ There doesn't seem to be an actual write up of how dynamic linking actually work
 - There is a section in Chapter 7 of ["WebAssembly: The Definitive Guide" ](https://www.oreilly.com/library/view/webassembly-the-definitive/9781492089834/)on "Dynamic Linking in WebAssembly". Unfortunately, it is very brief regarding this particular topic, and doesn't emphasize the critical importance of `-fPIC` \(position independent code\), which is really what makes dynamic linking possible.
 - [An interesting discussion about dynamic modules and rust](https://github.com/rust-lang/rust/issues/60231)
 - I wrote something on StackOverflow linking to the above [here.](https://stackoverflow.com/questions/71803962/is-it-possible-to-add-a-new-function-to-an-instantiated-webassembly-module/73212320#73212320) 
+- This paper discusses how WASM dynamic linking works: [https://helda.helsinki.fi/bitstream/handle/10138/335259/WAsDE\_SAC2021.pdf](https://helda.helsinki.fi/bitstream/handle/10138/335259/WAsDE_SAC2021.pdf) 
 
