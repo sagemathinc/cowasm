@@ -158,4 +158,8 @@ export default class WasmInstance extends EventEmitter {
     }
     return await this.fs.waitUntilLoaded();
   }
+
+  signal(_sig?: number): void {
+    throw Error("not implemented");
+  }
 }

@@ -29,6 +29,9 @@ export class WasmInstance extends EventEmitter {
   waitUntilFsLoaded(): Promise<void> {
     throw Error("not implemented");
   }
+  signal(_sig?: number): void {
+    throw Error("not implemented");
+  }
 }
 
 export class IOProvider {
