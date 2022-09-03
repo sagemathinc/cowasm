@@ -6,6 +6,7 @@ import callsite from "callsite";
 import process from "node:process";
 import { SIGINT } from "./constants";
 import debug from "debug";
+import IOProviderUsingAtomics from "./io-using-atomics";
 
 const log = debug("wasm:import-node");
 
@@ -54,5 +55,5 @@ export default async function wasmImportNodeWorker(
   wasmSource: string, // name of the wasm file
   options: Options
 ): Promise<WasmInstance> {
-  return new WasmInstance(wasmSource, options);
+  return new WasmInstance(wasmSource, options, IOProviderUsingAtomics);
 }

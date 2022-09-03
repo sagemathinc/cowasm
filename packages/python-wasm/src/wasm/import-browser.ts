@@ -2,6 +2,8 @@ import { Options, WasmInstanceAbstractBaseClass } from "./import";
 import { callback } from "awaiting";
 import { EventEmitter } from "events";
 import { SIGINT } from "./constants";
+import IOProviderUsingAtomics from "./io-using-atomics";
+import IOProviderUsingXMLHttpRequest from "./io-using-xmlhttprequest";
 
 class WorkerThread extends EventEmitter {
   public postMessage: (message) => void;
@@ -61,6 +63,6 @@ export default async function wasmImportBrowserWorker(
   wasmSource: string,
   options: Options = {}
 ): Promise<WasmInstance> {
-  const ioProvider = crossOriginIsolated ? "atomics" : "xmlhttprequest";
-  return new WasmInstance(wasmSource, options, ioProvider);
+  const IOProvider = crossOriginIsolated ? IOProviderUsingAtomics : IOProviderUsingXMLHttpRequest;
+  return new WasmInstance(wasmSource, options, IOProvider);
 }

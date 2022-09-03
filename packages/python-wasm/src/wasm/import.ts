@@ -5,8 +5,6 @@ import reuseInFlight from "./reuseInFlight";
 import { SendToWasmAbstractBase } from "./worker/send-to-wasm";
 import { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
 export { Options };
-import IOProviderUsingAtomics from "./io-using-atomics";
-import IOProviderUsingXMLHttpRequest from "./io-using-xmlhttprequest";
 import type { IOProvider } from "./types";
 import { SIGINT } from "./constants";
 import debug from "debug";
@@ -26,18 +24,14 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   exports: any;
   wasmSource: string;
 
-  protected log?: Function;
   protected worker?: WorkerThread;
 
   public send: SendToWasmAbstractBase;
   public recv: RecvFromWasmAbstractBase;
 
-  constructor(
-    wasmSource: string,
-    options: Options,
-    ioProvider: "atomics" | "xmlhttprequest" = "atomics"
-  ) {
+  constructor(wasmSource: string, options: Options, IOProviderClass) {
     super();
+    log("constructor", options);
     this.wasmSource = wasmSource;
     this.options = options;
     this.init = reuseInFlight(this.init);
@@ -47,18 +41,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     const ioOpt = {
       getStdinAsync: this.getStdinAsync.bind(this),
     };
-    switch (ioProvider) {
-      case "xmlhttprequest":
-        this.ioProvider = new IOProviderUsingXMLHttpRequest(ioOpt);
-        break;
-      case "atomics":
-        this.ioProvider = new IOProviderUsingAtomics(ioOpt);
-        break;
-      default:
-        throw Error(
-          `ioProvider (="${ioProvider}") must be "xmlhttprequest" or "atomics"`
-        );
-    }
+    this.ioProvider = new IOProviderClass(ioOpt);
   }
 
   signal(sig: number = SIGINT): void {

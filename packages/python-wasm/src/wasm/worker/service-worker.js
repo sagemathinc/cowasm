@@ -1,5 +1,6 @@
-import debug from "debug";
-const log = debug("wasm:service-worker");
+//import debug from "debug";
+//const log = debug("wasm:service-worker");
+const log = console.log;
 
 self.addEventListener("install", (e) => {
   log("Install event:", e);
