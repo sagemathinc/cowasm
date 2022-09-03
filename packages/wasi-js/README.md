@@ -1,45 +1,37 @@
-# `@wapython/wasi`
+# wasi-js
 
-Javascript library for interacting with WASI Modules in Node.js.
-
-(TODO: and in the Browser.)
-
-This is a fork of version 0.12.0 of @wasmer/wasi to keep it alive, since the Wasmer company decided to end it, and I would like to use it in [python-wasm](https://github.com/sagemathinc/python-wasm).
-
-## Table of Contents
-
-- [Features](#features)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
+This is a Javascript library for interacting with WASI Modules in node and in the browser.
 
 ## Features
 
-`@wapython/wasi` uses the same API as the [future WASI integration in Node](https://github.com/nodejs/wasi).
+`wasi-js` uses the same API as the [WASI integration in Node](https://nodejs.org/api/wasi.html).
 
-However, `@wapython/wasi` is focused on:
+However, `wasi-js` is focused on:
 
 - Bringing [WASI](https://github.com/webassembly/wasi) to an Isomorphic context (Node.js and the Browser)
 - Make it easy to plug in different filesystems (via [wasmfs](https://github.com/wasmerio/wasmer-js/tree/master/packages/wasmfs))
-- Make it type-safe using [Typescript](http://www.typescriptlang.org/)
+- Make code safer using [Typescript](http://www.typescriptlang.org/)
 - Pure JavaScript implementation (no Native bindings needed)
 - Very small
+- Easy to plugin support for sleep, blocking read of stdout, and writing to stdout and stderr.
 
 ## Installation
 
-To install `@wapython/wasi`, run this command:
+To install `wasi-js`, run this command:
 
 ```bash
-npm install @wapython/wasi
+npm install wasi-js
 ```
 
 ## Quick Start
 
-**This quick start is for node.**  It's something like this.  See lib/src/wasm.ts in the JSage source code for something that uses @wapython/wasi in a real application for a better tested example.
+**This quick start is for node.**  It's something like this.  See [python\-wasm](https://github.com/sagemathinc/python-wasm)
+for a nontrivial application that uses wasi\-js both in node and the browser.  The usage is something like this:
 
 ```js
-import { WASI } from "@wapython/wasi";
+import { WASI } from "wasi-js";
 import fs from "fs";
-import nodeBindings from "@wapython/wasi/dist/bindings/node";
+import nodeBindings from "wasi-js/dist/bindings/node";
 
 const wasi = new WASI({
   args: [],
@@ -53,16 +45,20 @@ const result = await WebAssembly.instantiate(typedArray, wasmOpts);
 wasi.start(result.instance);
 ```
 
-Use `DEBUG=wasi` to see a log of all wasi system calls; this uses the [debug library.](https://www.npmjs.com/package/debug)
+Set the env variable `DEBUG=wasi*` to see a log of all wasi system calls; this uses the [debug library.](https://www.npmjs.com/package/debug)
 
-## History and Copyright
+## History
 
-This project is based on what the wasmer devs wrote, which itself was based on
-what Gus Caplan wrote.  I have been using this library extensively in [python\-wasm](https://github.com/sagemathinc/python-wasm), and have found and fixed _**tricky low level bugs**_ in the implementation.  I have also added hooks for using Atomics and SharedArrayBuffers to implement blocking IO.
+This started as a fork of version 0.12.0 of @wasmer/wasi to keep it alive, since the Wasmer company deleted it entirely \(replacing it with a rust rewrite with very different goals\), and I would like to use it in [python\-wasm](https://github.com/sagemathinc/python-wasm).  I added some functionality to better support blocking IO and other features needed mainly in the browser.  I also found and _**fixed some very subtle bugs**_ while trying to get the cPython test suite to work.
+
+There is no real test suite directly of this package.  That said, I have tested it quite a bit indirectly via Python test suites.
+
+As mentioned above, this is based on what the wasmer devs wrote, which itself was based on
+what Gus Caplan wrote.  I have also added hooks for implementing blocking IO.
 
 Here's what the WASMER people wrote:
 
-```
+```md
 This project is based from the Node implementation made by Gus Caplan
 https://github.com/devsnek/node-wasi
 However, JavaScript WASI is focused on:

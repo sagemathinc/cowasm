@@ -1,6 +1,6 @@
 import type { WasmInstance } from "../wasm/types";
 import { Options } from "../wasm/import";
-import type { FileSystemSpec } from "@wapython/wasi";
+import type { FileSystemSpec } from "wasi-js";
 
 export let wasm: WasmInstance | undefined = undefined;
 

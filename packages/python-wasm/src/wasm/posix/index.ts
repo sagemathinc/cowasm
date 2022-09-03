@@ -16,7 +16,7 @@ import stat from "./stat";
 import time from "./time";
 import unistd from "./unistd";
 import wait from "./wait";
-import WASI from "@wapython/wasi";
+import WASI from "wasi-js";
 import { initConstants } from "./constants";
 import SendToWasm from "../worker/send-to-wasm";
 import RecvFromWasm from "../worker/recv-from-wasm";

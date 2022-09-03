@@ -2,9 +2,9 @@
 This is the Worker script when importing the wasm module in a web browser.
 */
 
-import { createFileSystem } from "@wapython/wasi";
-import type { FileSystemSpec } from "@wapython/wasi";
-import bindings from "@wapython/wasi/dist/bindings/browser";
+import { createFileSystem } from "wasi-js";
+import type { FileSystemSpec } from "wasi-js";
+import bindings from "wasi-js/dist/bindings/browser";
 import type WasmInstance from "./instance";
 import wasmImport, { Options } from "./import";
 import initWorker from "./init";

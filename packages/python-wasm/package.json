@@ -1,6 +1,6 @@
 {
   "name": "python-wasm",
-  "version": "0.16.0",
+  "version": "0.18.0",
   "description": "python-wasm -- Web Assembly Python for Node.js and the Browser",
   "main": "./dist/python/node.js",
   "browser": "./dist/python/browser.js",
@@ -26,9 +26,9 @@
     "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
   "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/python-wasm",
-  "workspaces": ["../wasi", "../dylink", "../posix-node"],
+  "workspaces": ["../wasi-js", "../dylink", "../posix-node"],
   "dependencies": {
-    "@wapython/wasi": "^1.4.0",
+    "wasi-js": "^1.4.0",
     "awaiting": "^3.0.0",
     "callsite": "^1.0.0",
     "date-format": "^4.0.13",

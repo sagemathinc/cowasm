@@ -1,6 +1,6 @@
 // @ts-ignore -- it thinks FileSystem isn't used, even though it is below.  Weird.
-import type { WASIFileSystem } from "@wapython/wasi";
-import type WASI from "@wapython/wasi";
+import type { WASIFileSystem } from "wasi-js";
+import type WASI from "wasi-js";
 import { EventEmitter } from "events";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
@@ -28,7 +28,7 @@ export default class WasmInstance extends EventEmitter {
   // linker exposes clib functions via basically what you'll see
   // if you look at getFunction below, which makes things vastly faster.
   table?: WebAssembly.Table;
-  // the WASI object from the @wapython/wasi library, which manages things
+  // the WASI object from the wasi-js library, which manages things
   // like the filesystem abstraction and other system calls.
   wasi?: WASI;
   // a collection of posix functions missing from WASI that are best

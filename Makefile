@@ -9,7 +9,7 @@ PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 all: python-wasm webpack terminal website
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi sqlite bzip2 # openssl
+packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl
 	cd packages/cpython && make all
 .PHONY: cpython
 
@@ -65,7 +65,7 @@ packages/posix-wasm/${BUILT}: zig
 .PHONY: posix-wasm
 
 python-wasm: packages/python-wasm/${BUILT}
-packages/python-wasm/${BUILT}: node cpython wasi zig posix-wasm dylink posix-node
+packages/python-wasm/${BUILT}: node cpython wasi-js zig posix-wasm dylink posix-node
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 
@@ -84,10 +84,10 @@ packages/terminal/${BUILT}: node python-wasm
 	cd packages/terminal && make all
 .PHONY: terminal
 
-wasi: packages/wasi/${BUILT}
-packages/wasi/${BUILT}: node
-	cd packages/wasi && make all
-.PHONY: wasi
+wasi-js: packages/wasi-js/${BUILT}
+packages/wasi-js/${BUILT}: node
+	cd packages/wasi-js && make all
+.PHONY: wasi-js
 
 webpack: packages/webpack/${BUILT}
 packages/webpack/${BUILT}: node python-wasm

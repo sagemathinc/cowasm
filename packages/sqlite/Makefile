@@ -25,6 +25,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cp ${SRC}/config.site ${BUILD_WASM}
 	cp ${POSIX_WASM}/posix-wasm.h ${BUILD_WASM}
 	cd ${BUILD_WASM} && cat ${SRC}/patches/00-syscall.patch | patch -p1
+	touch ${BUILD_WASM}/.patched
 
 # Notes on flags below.
 #   - ?? MAYBE ?? Without -Oz (optimize for size rather than speed), we get 'Function addresses
