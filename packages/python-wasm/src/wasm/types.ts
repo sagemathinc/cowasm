@@ -16,19 +16,24 @@ export class WasmInstance extends EventEmitter {
   async callWithString(_name: string, _str: string, ..._args): Promise<any> {
     throw Error("not implemented");
   }
+
   async terminal(_argv: string[] = ["command"]): Promise<number> {
     throw Error("not implemented");
   }
-  write(_data: string): void {
+
+  writeToStdin(_data): void {
     throw Error("not implemented");
   }
+
   getFunction(_name: string): Function | undefined {
     throw Error("not implemented");
   }
+
   // Wait until the filesystem is loaded enough to run user code.
   waitUntilFsLoaded(): Promise<void> {
     throw Error("not implemented");
   }
+
   signal(_sig?: number): void {
     throw Error("not implemented");
   }
@@ -37,6 +42,6 @@ export class WasmInstance extends EventEmitter {
 export class IOProvider {
   signal: (sig: number) => void;
   sleep: (milliseconds: number) => void;
-  getStdin: () => void;
   getExtraOptions: () => object;
+  writeToStdin: (data: Buffer) => void;
 }

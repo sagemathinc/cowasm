@@ -19,17 +19,9 @@ import { SIGINT } from "./constants";
 import debug from "debug";
 const log = debug("wasm:io-provider");
 
-interface Options {
-  getStdinAsync: () => Promise<Buffer>;
-}
-
 export default class IOProviderUsingServiceWorker implements IOProvider {
-  private getStdinAsync: () => Promise<Buffer>;
-  private waitingForStdin: boolean = false;
-
-  constructor(options: Options) {
+  constructor() {
     log("IOProviderUsingXMLHttpRequest");
-    this.getStdinAsync = options.getStdinAsync;
     this.initServiceWorker();
   }
 
@@ -56,31 +48,7 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
     throw Error("sleep -- not implemented");
   }
 
-  private async _getStdin(): Promise<void> {
-    log("getStdin: waiting...");
-    try {
-      this.waitingForStdin = true;
-      // TODO
-
-      const data = await this.getStdinAsync();
-      log("got data", data);
-
-      // TODO
-    } catch (err) {
-      // not much to do -- no way to report problem.
-      log("failed to get data", err);
-    } finally {
-      this.waitingForStdin = false;
-    }
-  }
-
-  getStdin(): void {
-    // while this.waitingForStdin is true, stdinLock[0]
-    // should be -1 unless something is very wrong.
-    if (this.waitingForStdin) {
-      log("getStdin: already waiting");
-      return;
-    }
-    this._getStdin();
+  writeToStdin(data: Buffer): void {
+    log("writeToStdin -- NOT IMPLEMENTED", data);
   }
 }

@@ -3,27 +3,28 @@ import debug from "debug";
 const log = debug("wasm:worker:io-using-atomics");
 
 export default function ioHandler(parent, opts): IOHandler {
-  const { spinLockBuffer, stdinLockBuffer } = opts.locks ?? {};
+  log("creating ioHandler");
+  const { spinLockBuffer, stdinLengthBuffer } = opts.locks ?? {};
   if (spinLockBuffer == null) {
     throw Error("must define spinLockBuffer");
   }
-  if (stdinLockBuffer == null) {
-    throw Error("must define stdinLockBuffer");
+  if (stdinLengthBuffer == null) {
+    throw Error("must define stdinLengthBuffer");
   }
   if (opts.stdinBuffer == null) {
     throw Error("must define stdinBuffer");
   }
 
   const spinLock = new Int32Array(spinLockBuffer);
-  const stdinBuffer = opts.stdinBuffer;
-  const stdinLock = new Int32Array(stdinLockBuffer);
+  const stdinBuffer = Buffer.from(opts.stdinBuffer);
+  const stdinLength = new Int32Array(stdinLengthBuffer);
   const { signalBuffer } = opts;
   if (signalBuffer == null) {
     throw Error("must define signalBuffer");
   }
   const signalState = new Int32Array(signalBuffer);
 
-  return {
+  const handler = {
     sleep: (milliseconds: number) => {
       log("sleep starting, milliseconds=", milliseconds);
       // We ask main thread to do the lock:
@@ -39,25 +40,23 @@ export default function ioHandler(parent, opts): IOHandler {
     },
 
     getStdin: (): Buffer => {
-      parent.postMessage({ event: "getStdin" });
-      // wait to change to -1
-      while (stdinLock[0] != -1) {
-        // wait with a timeout of 1s
-        Atomics.wait(stdinLock, 0, stdinLock[0], 1000);
-        if (stdinLock[0] != -1) {
-          // if it didn't change to -1, maybe the message was
-          // somehow missed or discarded due to already waiting
-          // or something else.  Shouldn't happen, but I've observed
-          // deadlock here before in a browser.  So we send message
-          // again to frontend asking it to make the change.
-          parent.postMessage({ event: "getStdin" });
+      // wait to change to a positive value, i.e., some input to arrive
+      while (stdinLength[0] == 0) {
+        // wait with a timeout of 1s for it to change.
+        log("getStdin: waiting for some new stdin");
+        Atomics.wait(stdinLength, 0, 0, 500);
+        if (Atomics.load(signalState, 0)) {
+          return Buffer.from("");
         }
       }
-      // wait to change from -1
-      Atomics.wait(stdinLock, 0, -1);
-      // how much was read
-      const bytes = stdinLock[0];
-      const data = Buffer.from(stdinBuffer.slice(0, bytes)); // not a copy
+      // Now there is stdin waiting for us:  how much?
+      const len = stdinLength[0];
+      log("getStdin: have stdin, processing ", len, " bytes");
+      const data = Buffer.alloc(len);
+      stdinBuffer.copy(data, 0, 0, len);
+      // Reset the buffer:
+      Atomics.store(stdinLength, 0, 0);
+      Atomics.notify(stdinLength, 0);
       return data;
     },
 
@@ -71,4 +70,6 @@ export default function ioHandler(parent, opts): IOHandler {
       return 0;
     },
   };
+
+  return handler;
 }

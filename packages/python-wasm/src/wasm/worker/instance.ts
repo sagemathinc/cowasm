@@ -68,8 +68,8 @@ export default class WasmInstance extends EventEmitter {
     return await this.callWithString("terminal", argv);
   }
 
-  write(_data: string): void {
-    throw Error("not implemented ");
+  writeToStdin(_data): void {
+    throw Error("not implemented");
   }
 
   callWithString(name: string, str: string | string[], ...args): any {

@@ -18,39 +18,43 @@ interface Buffers {
   signalBuffer: SharedArrayBuffer;
   locks: {
     spinLockBuffer: SharedArrayBuffer;
-    stdinLockBuffer: SharedArrayBuffer;
+    stdinLengthBuffer: SharedArrayBuffer;
   };
-}
-
-interface Options {
-  getStdinAsync: () => Promise<Buffer>;
 }
 
 export default class IOProviderUsingAtomics implements IOProvider {
   private spinLock: Int32Array;
-  private stdinLock: Int32Array;
+  private stdinLength: Int32Array;
   private signalInt32Array: Int32Array;
-  private stdinSharedBuffer: SharedArrayBuffer;
+  private stdinUint8Array: Uint8Array;
   private sleepTimer: any;
-  private waitingForStdin: boolean = false;
   private buffers: Buffers;
-  private getStdinAsync: () => Promise<Buffer>;
 
-  constructor(options: Options) {
+  constructor() {
     log("IOProviderUsingAtomics");
-    this.getStdinAsync = options.getStdinAsync;
     const spinLockBuffer = new SharedArrayBuffer(4);
     this.spinLock = new Int32Array(spinLockBuffer);
-    const stdinLockBuffer = new SharedArrayBuffer(4);
-    this.stdinLock = new Int32Array(stdinLockBuffer);
+    const stdinLengthBuffer = new SharedArrayBuffer(4);
+    this.stdinLength = new Int32Array(stdinLengthBuffer);
     const signalBuffer = new SharedArrayBuffer(4);
     this.signalInt32Array = new Int32Array(signalBuffer);
-    this.stdinSharedBuffer = new SharedArrayBuffer(10000); // TODO: size?!
+    const stdinBuffer = new SharedArrayBuffer(10000); // TODO: size?! -- implementation right now will start dropping data at this size, I think.
+    this.stdinUint8Array = Buffer.from(stdinBuffer);
     this.buffers = {
-      stdinBuffer: this.stdinSharedBuffer,
+      stdinBuffer,
       signalBuffer,
-      locks: { spinLockBuffer, stdinLockBuffer },
+      locks: { spinLockBuffer, stdinLengthBuffer },
     };
+  }
+
+  writeToStdin(data: Buffer): void {
+    log("writeToStdin", data);
+    // place the new data in the stdinBuffer, so that the worker can receive
+    // it when it next checks for stdin.
+    data.copy(this.stdinUint8Array, this.stdinLength[0]);
+    log("setting writeToStdin input buffer size to ", data.length + this.stdinLength[0]);
+    Atomics.store(this.stdinLength, 0, data.length + this.stdinLength[0]);
+    Atomics.notify(this.stdinLength, 0);
   }
 
   getExtraOptions(): Buffers {
@@ -62,15 +66,6 @@ export default class IOProviderUsingAtomics implements IOProvider {
     if (sig != 2) {
       throw Error("only signal 2 is supported right now");
     }
-    if (Atomics.load(this.stdinLock, 0) == -1) {
-      // TODO: blocked on stdin lock -- not sure how to deal with this yet.
-      // Python normally would discard the input buffer and deal
-      // with signals.  For some reason our readline isn't dealing
-      // with signals.  Maybe it has to be made aware somehow.
-      // For now, best we can do is nothing.
-      return;
-    }
-
     // tell other side about this signal.
     Atomics.store(this.signalInt32Array, 0, SIGINT);
     Atomics.notify(this.signalInt32Array, 0);
@@ -82,7 +77,6 @@ export default class IOProviderUsingAtomics implements IOProvider {
       Atomics.store(this.spinLock, 0, 0);
       Atomics.notify(this.spinLock, 0);
     }
-
   }
 
   sleep(milliseconds: number): void {
@@ -97,39 +91,4 @@ export default class IOProviderUsingAtomics implements IOProvider {
       Atomics.notify(this.spinLock, 0);
     }, milliseconds);
   }
-
-  private async _getStdin(): Promise<void> {
-    log("getStdin: waiting...");
-    try {
-      this.waitingForStdin = true;
-      Atomics.store(this.stdinLock, 0, -1);
-      Atomics.notify(this.stdinLock, 0);
-
-      const data = await this.getStdinAsync();
-      log("got data", data);
-
-      data.copy(Buffer.from(this.stdinSharedBuffer));
-      Atomics.store(this.stdinLock, 0, data.length);
-      Atomics.notify(this.stdinLock, 0);
-    } catch (err) {
-      // not much to do -- no way to report problem.
-      log("failed to get data", err);
-    } finally {
-      this.waitingForStdin = false;
-    }
-  }
-
-  getStdin(): void {
-    // while this.waitingForStdin is true, stdinLock[0]
-    // should be -1 unless something is very wrong.
-    if (this.waitingForStdin && this.stdinLock[0] == -1) {
-      log("getStdin: already waiting");
-      return;
-    }
-    this._getStdin();
-  }
-
-  //   isWaitingForStdin(): boolean {
-  //     return this.waitingForStdin;
-  //   }
 }

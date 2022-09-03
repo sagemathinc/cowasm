@@ -17,7 +17,7 @@ export default async function terminal(element: HTMLDivElement) {
   term.resize(80, 40);
   setTheme(term, "solarized-light");
   term.onData((data) => {
-    python.wasm.write(data);
+    python.wasm.writeToStdin(data);
   });
   python.wasm.on("stdout", (data) => {
     term.write(data);

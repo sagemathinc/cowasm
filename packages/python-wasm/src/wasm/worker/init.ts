@@ -47,6 +47,7 @@ export default function initWorker({
           };
 
           if (captureOutput) {
+
             opts.sendStdout = (data) => {
               log("sendStdout", data);
               parent.postMessage({ event: "stdout", data });

@@ -37,11 +37,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     this.init = reuseInFlight(this.init);
     this.send = new SendToWasmAbstractBase();
     this.recv = new RecvFromWasmAbstractBase();
-
-    const ioOpt = {
-      getStdinAsync: this.getStdinAsync.bind(this),
-    };
-    this.ioProvider = new IOProviderClass(ioOpt);
+    this.ioProvider = new IOProviderClass();
   }
 
   signal(sig: number = SIGINT): void {
@@ -52,25 +48,18 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     this.ioProvider.sleep(milliseconds);
   }
 
-  getStdin(): void {
-    this.ioProvider.getStdin();
-  }
-
   // MUST override in derived class
   protected initWorker(): WorkerThread {
     abstract("initWorker");
     return null as any; // for typescript
   }
 
-  // MUST override in derived class
-  protected async getStdinAsync(): Promise<Buffer> {
-    abstract("getStdinAsync");
-    return Buffer.from(""); // for typescript
-  }
-
-  // Optionally this could be overwritten, if needed (e.g., for the browser version).
-  write(_data: string | Uint8Array): void {
-    throw Error("write not implemented");
+  writeToStdin(data): void {
+    log("writeToStdin", data);
+    if (typeof data == "string" && data.includes("\u0003")) {
+      this.signal(SIGINT);
+    }
+    this.ioProvider.writeToStdin(Buffer.from(data));
   }
 
   private async init() {
@@ -98,10 +87,6 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       switch (message.event) {
         case "sleep":
           this.sleep(message.milliseconds);
-          return;
-
-        case "getStdin":
-          this.getStdin();
           return;
 
         case "init":
