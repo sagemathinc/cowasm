@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
-import type WASI from "@wapython/wasi";
-import type { WASIFileSystem } from "@wapython/wasi";
+import type WASI from "wasi-js";
+import type { WASIFileSystem } from "wasi-js";
 import type { SendToWasmAbstractBase } from "./worker/send-to-wasm";
 import type { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
 

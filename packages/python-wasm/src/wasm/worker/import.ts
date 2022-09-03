@@ -1,6 +1,5 @@
-import WASI from "@wapython/wasi";
-
-import type { FileSystemSpec, WASIConfig, WASIBindings } from "@wapython/wasi";
+import WASI from "wasi-js";
+import type { FileSystemSpec, WASIConfig, WASIBindings } from "wasi-js";
 import reuseInFlight from "../reuseInFlight";
 import WasmInstance from "./instance";
 import importWebAssemblyDlopen, { MBtoPages } from "dylink";

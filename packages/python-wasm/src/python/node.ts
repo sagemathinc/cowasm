@@ -1,7 +1,7 @@
 import wasmImport from "../wasm/import-node";
 import wasmImportNoWorker from "../wasm/worker/node";
 import { _init, repr, exec, wasm, terminal as _terminal } from "./index";
-import type { FileSystemSpec } from "@wapython/wasi";
+import type { FileSystemSpec } from "wasi-js";
 import { dirname, join } from "path";
 import callsite from "callsite";
 
