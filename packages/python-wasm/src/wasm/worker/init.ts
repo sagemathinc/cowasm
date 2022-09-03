@@ -1,7 +1,6 @@
 import type WasmInstance from "./instance";
 import { Options } from "./import";
 import debug from "debug";
-import type { IOHandler } from "./types";
 
 const log = debug("wasm:worker:init");
 
@@ -17,7 +16,7 @@ export default function initWorker({
   wasmImport,
   parent,
   captureOutput,
-  ioHandler,
+  IOHandler,
 }: {
   wasmImport: Function;
   parent: Parent;
@@ -26,7 +25,7 @@ export default function initWorker({
   // to watch and read from those filesystems.  For browser xterm.js integration, we use
   // this, but for a nodejs terminal, we don't.
   captureOutput?: boolean;
-  ioHandler: (opts: object) => IOHandler;
+  IOHandler;
 }) {
   let wasm: undefined | WasmInstance = undefined;
   parent.on("message", async (message) => {
@@ -34,15 +33,15 @@ export default function initWorker({
     switch (message.event) {
       case "init":
         try {
-          const { sleep, getStdin, getSignalState } = ioHandler(
-            message.options
-          );
+          const ioHandler = new IOHandler(message.options);
 
           const opts: Options = {
             ...message.options,
-            sleep,
-            getStdin,
-            wasmEnv: { wasmGetSignalState: getSignalState },
+            sleep: ioHandler.sleep.bind(ioHandler),
+            getStdin: ioHandler.getStdin.bind(ioHandler),
+            wasmEnv: {
+              wasmGetSignalState: ioHandler.getSignalState.bind(ioHandler),
+            },
           };
 
           if (captureOutput) {

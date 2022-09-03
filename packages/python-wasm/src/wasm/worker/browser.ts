@@ -11,8 +11,8 @@ import initWorker from "./init";
 import debug from "debug";
 import { EventEmitter } from "events";
 import posix from "./posix-browser";
-import ioHandlerUsingAtomics from "./io-using-atomics";
-import ioHandlerUsingServiceWorker from "./io-using-service-worker";
+import IOHandlerUsingAtomics from "./io-using-atomics";
+import IOHandlerUsingServiceWorker from "./io-using-service-worker";
 
 const log = debug("wasm:worker");
 
@@ -102,9 +102,9 @@ function main() {
     wasmImport: wasmImportBrowser,
     parent,
     captureOutput: true,
-    ioHandler: crossOriginIsolated
-      ? ioHandlerUsingAtomics
-      : ioHandlerUsingServiceWorker,
+    IOHandler: crossOriginIsolated
+      ? IOHandlerUsingAtomics
+      : IOHandlerUsingServiceWorker,
   });
 }
 

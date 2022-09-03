@@ -19,7 +19,7 @@ import debug from "debug";
 import os from "os";
 import child_process from "child_process";
 import posix from "posix-node";
-import ioHandler from "./io-using-atomics";
+import IOHandler from "./io-using-atomics";
 
 const log = debug("wasm:worker");
 
@@ -100,7 +100,7 @@ if (!isMainThread && parentPort != null) {
   initWorker({
     wasmImport: wasmImportNode,
     parent: parentPort,
-    ioHandler,
+    IOHandler,
   });
 } else {
   log("running in the main thread (for debugging)");

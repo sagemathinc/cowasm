@@ -15,11 +15,15 @@ References:
 */
 
 import type { IOProvider } from "./types";
-import { SIGINT } from "./constants";
+import { SERVICE_WORKER_SCOPE, SIGINT } from "./constants";
 import debug from "debug";
+import { v4 as uuidv4 } from "uuid";
+
 const log = debug("wasm:io-provider");
 
 export default class IOProviderUsingServiceWorker implements IOProvider {
+  private id: string = uuidv4();
+
   constructor() {
     log("IOProviderUsingXMLHttpRequest");
     this.initServiceWorker();
@@ -30,20 +34,31 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
     // @ts-ignore this import.meta.url issue -- actually only consumed by webpack in calling code...
     const url = new URL("./worker/service-worker.js", import.meta.url);
     const registration = await navigator.serviceWorker.register(url, {
-      scope: "/python-wasm",
+      scope: SERVICE_WORKER_SCOPE,
     });
     console.log("registration = ", registration);
   }
 
   getExtraOptions() {
-    return {};
+    return { id: this.id };
   }
 
-  signal(_sig: number = SIGINT): void {
-    throw Error("signal -- not implemented");
+  private async send(target: string, body: string): Promise<void> {
+    const url = `${SERVICE_WORKER_SCOPE}/${this.id}/send/${target}`;
+    try {
+      await fetch(url, { method: "POST", body });
+    } catch (err) {
+      console.warn("failed to send to service worker", { url, body }, err);
+    }
+  }
+
+  signal(sig: number = SIGINT): void {
+    log("signal", sig);
+    this.send("signal", `${sig}`);
   }
 
   writeToStdin(data: Buffer): void {
-    log("writeToStdin -- NOT IMPLEMENTED", data);
+    log("writeToStdin", data);
+    this.send("stdin", data.toString());
   }
 }
