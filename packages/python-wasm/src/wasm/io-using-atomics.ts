@@ -1,7 +1,7 @@
 import type { IOProvider } from "./types";
 import { SIGINT } from "./constants";
 import debug from "debug";
-const log = debug("io-provider");
+const log = debug("wasm:io-provider");
 
 interface Buffers {
   stdinBuffer: SharedArrayBuffer;
@@ -72,7 +72,7 @@ export default class IOProviderUsingAtomics implements IOProvider {
       Atomics.store(this.spinLock, 0, 0);
       Atomics.notify(this.spinLock, 0);
     }
-    
+
   }
 
   sleep(milliseconds: number): void {
