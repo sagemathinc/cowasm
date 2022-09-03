@@ -44,10 +44,6 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     this.ioProvider.signal(sig);
   }
 
-  sleep(milliseconds: number): void {
-    this.ioProvider.sleep(milliseconds);
-  }
-
   // MUST override in derived class
   protected initWorker(): WorkerThread {
     abstract("initWorker");
@@ -56,10 +52,12 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
 
   writeToStdin(data): void {
     log("writeToStdin", data);
-    if (typeof data == "string" && data.includes("\u0003")) {
-      this.signal(SIGINT);
-    }
     this.ioProvider.writeToStdin(Buffer.from(data));
+    if (data.toString().includes("\u0003")) {
+      this.signal(SIGINT);
+      // This is a hack, but for some reason everything feels better with this included:
+      this.ioProvider.writeToStdin(Buffer.from("\n"));
+    }
   }
 
   private async init() {
@@ -85,10 +83,6 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
         return;
       }
       switch (message.event) {
-        case "sleep":
-          this.sleep(message.milliseconds);
-          return;
-
         case "init":
           this.emit("init", message);
           return;

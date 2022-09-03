@@ -26,7 +26,7 @@ export default function initWorker({
   // to watch and read from those filesystems.  For browser xterm.js integration, we use
   // this, but for a nodejs terminal, we don't.
   captureOutput?: boolean;
-  ioHandler: (parent: Parent, opts: object) => IOHandler;
+  ioHandler: (opts: object) => IOHandler;
 }) {
   let wasm: undefined | WasmInstance = undefined;
   parent.on("message", async (message) => {
@@ -35,7 +35,6 @@ export default function initWorker({
       case "init":
         try {
           const { sleep, getStdin, getSignalState } = ioHandler(
-            parent,
             message.options
           );
 
@@ -47,7 +46,6 @@ export default function initWorker({
           };
 
           if (captureOutput) {
-
             opts.sendStdout = (data) => {
               log("sendStdout", data);
               parent.postMessage({ event: "stdout", data });

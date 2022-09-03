@@ -2,41 +2,42 @@ import type { IOHandler } from "./types";
 import debug from "debug";
 const log = debug("wasm:worker:io-using-atomics");
 
-export default function ioHandler(parent, opts): IOHandler {
+export default function ioHandler(opts): IOHandler {
   log("creating ioHandler");
-  const { spinLockBuffer, stdinLengthBuffer } = opts.locks ?? {};
-  if (spinLockBuffer == null) {
-    throw Error("must define spinLockBuffer");
-  }
-  if (stdinLengthBuffer == null) {
+  if (opts.stdinLengthBuffer == null) {
     throw Error("must define stdinLengthBuffer");
   }
   if (opts.stdinBuffer == null) {
     throw Error("must define stdinBuffer");
   }
 
-  const spinLock = new Int32Array(spinLockBuffer);
   const stdinBuffer = Buffer.from(opts.stdinBuffer);
-  const stdinLength = new Int32Array(stdinLengthBuffer);
+  const stdinLength = new Int32Array(opts.stdinLengthBuffer);
   const { signalBuffer } = opts;
   if (signalBuffer == null) {
     throw Error("must define signalBuffer");
   }
   const signalState = new Int32Array(signalBuffer);
 
+  const sleepArray = new Int32Array(new SharedArrayBuffer(4));
+
   const handler = {
     sleep: (milliseconds: number) => {
       log("sleep starting, milliseconds=", milliseconds);
-      // We ask main thread to do the lock:
-      parent.postMessage({ event: "sleep", milliseconds });
-      // We wait a moment for that message to be processed:
-      while (spinLock[0] != 1) {
-        // wait for it to change from what it is now.
-        Atomics.wait(spinLock, 0, spinLock[0], 100);
+      // wait for sleepArray[0] to change from 0, which
+      // will never happen.  The only hitch is we need to periodically
+      // check for signals.
+
+      while (milliseconds > 0) {
+        const t = Math.min(milliseconds, 500);
+        Atomics.wait(sleepArray, 0, 0, t);
+        milliseconds -= t;
+        if (Atomics.load(signalState, 0)) {
+          // there's a signal waiting
+          // TODO: there could be signals that maybe don't interrupt sleep?
+          return;
+        }
       }
-      // now the lock is set, we wait for it to get unset:
-      Atomics.wait(spinLock, 0, 1, milliseconds);
-      log("sleep done, milliseconds=", milliseconds);
     },
 
     getStdin: (): Buffer => {
@@ -44,8 +45,10 @@ export default function ioHandler(parent, opts): IOHandler {
       while (stdinLength[0] == 0) {
         // wait with a timeout of 1s for it to change.
         log("getStdin: waiting for some new stdin");
-        Atomics.wait(stdinLength, 0, 0, 500);
+        Atomics.wait(stdinLength, 0, 0, 1000);
         if (Atomics.load(signalState, 0)) {
+          // check for any signals
+          // TODO: there could be signals that maybe don't interrupt input?
           return Buffer.from("");
         }
       }
@@ -64,7 +67,9 @@ export default function ioHandler(parent, opts): IOHandler {
       const signal = Atomics.load(signalState, 0);
       if (signal) {
         log("signalState", signalState[0]);
+        // clear signal state so we can get a new signal
         Atomics.store(signalState, 0, 0);
+        // tell C program about the signal we found.
         return signal;
       }
       return 0;

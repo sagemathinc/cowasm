@@ -41,7 +41,6 @@ export class WasmInstance extends EventEmitter {
 
 export class IOProvider {
   signal: (sig: number) => void;
-  sleep: (milliseconds: number) => void;
   getExtraOptions: () => object;
   writeToStdin: (data: Buffer) => void;
 }

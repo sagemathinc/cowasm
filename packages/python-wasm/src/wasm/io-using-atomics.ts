@@ -16,24 +16,17 @@ const log = debug("wasm:io-provider");
 interface Buffers {
   stdinBuffer: SharedArrayBuffer;
   signalBuffer: SharedArrayBuffer;
-  locks: {
-    spinLockBuffer: SharedArrayBuffer;
-    stdinLengthBuffer: SharedArrayBuffer;
-  };
+  stdinLengthBuffer: SharedArrayBuffer;
 }
 
 export default class IOProviderUsingAtomics implements IOProvider {
-  private spinLock: Int32Array;
   private stdinLength: Int32Array;
   private signalInt32Array: Int32Array;
   private stdinUint8Array: Uint8Array;
-  private sleepTimer: any;
   private buffers: Buffers;
 
   constructor() {
     log("IOProviderUsingAtomics");
-    const spinLockBuffer = new SharedArrayBuffer(4);
-    this.spinLock = new Int32Array(spinLockBuffer);
     const stdinLengthBuffer = new SharedArrayBuffer(4);
     this.stdinLength = new Int32Array(stdinLengthBuffer);
     const signalBuffer = new SharedArrayBuffer(4);
@@ -42,8 +35,8 @@ export default class IOProviderUsingAtomics implements IOProvider {
     this.stdinUint8Array = Buffer.from(stdinBuffer);
     this.buffers = {
       stdinBuffer,
+      stdinLengthBuffer,
       signalBuffer,
-      locks: { spinLockBuffer, stdinLengthBuffer },
     };
   }
 
@@ -52,7 +45,10 @@ export default class IOProviderUsingAtomics implements IOProvider {
     // place the new data in the stdinBuffer, so that the worker can receive
     // it when it next checks for stdin.
     data.copy(this.stdinUint8Array, this.stdinLength[0]);
-    log("setting writeToStdin input buffer size to ", data.length + this.stdinLength[0]);
+    log(
+      "setting writeToStdin input buffer size to ",
+      data.length + this.stdinLength[0]
+    );
     Atomics.store(this.stdinLength, 0, data.length + this.stdinLength[0]);
     Atomics.notify(this.stdinLength, 0);
   }
@@ -61,34 +57,10 @@ export default class IOProviderUsingAtomics implements IOProvider {
     return this.buffers;
   }
 
-  signal(sig: number = 2): void {
+  signal(sig: number = SIGINT): void {
     log("signal", sig);
-    if (sig != 2) {
-      throw Error("only signal 2 is supported right now");
-    }
-    // tell other side about this signal.
-    Atomics.store(this.signalInt32Array, 0, SIGINT);
+    // tell worker about this signal.
+    Atomics.store(this.signalInt32Array, 0, sig);
     Atomics.notify(this.signalInt32Array, 0);
-
-    if (Atomics.load(this.spinLock, 0) == 1) {
-      // Blocked on the sleep timer spin lock.
-      clearTimeout(this.sleepTimer);
-      // manually unblock
-      Atomics.store(this.spinLock, 0, 0);
-      Atomics.notify(this.spinLock, 0);
-    }
-  }
-
-  sleep(milliseconds: number): void {
-    log("sleep", milliseconds);
-    /*
-    We implement sleep using atomics here.
-    */
-    Atomics.store(this.spinLock, 0, 1);
-    Atomics.notify(this.spinLock, 0);
-    this.sleepTimer = setTimeout(() => {
-      Atomics.store(this.spinLock, 0, 0);
-      Atomics.notify(this.spinLock, 0);
-    }, milliseconds);
   }
 }

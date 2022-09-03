@@ -43,11 +43,6 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
     throw Error("signal -- not implemented");
   }
 
-  sleep(milliseconds: number): void {
-    log("sleep", milliseconds);
-    throw Error("sleep -- not implemented");
-  }
-
   writeToStdin(data: Buffer): void {
     log("writeToStdin -- NOT IMPLEMENTED", data);
   }

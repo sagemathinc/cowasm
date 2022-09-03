@@ -12,8 +12,8 @@ function writeToServiceWorker(id:string, message:object) {
 }
 */
 
-export default function ioHandler(parent, opts): IOHandler {
-  log(parent, opts);
+export default function ioHandler(opts): IOHandler {
+  log(opts);
 
   return {
     sleep: (milliseconds: number): void => {
@@ -23,8 +23,6 @@ export default function ioHandler(parent, opts): IOHandler {
     getStdin: (): Buffer => {
       log("getStdin - TODO");
       // Ask main thread to get any available stdin and write it to the service worker.
-      parent.postMessage({ event: "getStdin" });
-
       return Buffer.from("");
     },
 
