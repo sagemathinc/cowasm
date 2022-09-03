@@ -5,7 +5,7 @@ export PACKAGES="$SRC"/../..
 export PYTHON_WASM="$PACKAGES"/cpython/dist/wasm
 export POSIX_WASM="$PACKAGES"/posix-wasm/dist/wasm
 export ZIG_SYSTEM_LINKER_HACK=1
-export TEST_CMD="$PACKAGES"/wasi/bin/run.js
+export TEST_CMD="$PACKAGES"/wasi-js/bin/run.js
 
 echo "$POSIX_WASM"
 
