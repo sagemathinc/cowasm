@@ -11,6 +11,7 @@ import initWorker from "./init";
 import debug from "debug";
 import { EventEmitter } from "events";
 import posix from "./posix-browser";
+import ioHandler from "./io-using-atomics";
 
 const log = debug("wasm:worker");
 
@@ -100,6 +101,7 @@ function main() {
     wasmImport: wasmImportBrowser,
     parent,
     captureOutput: true,
+    ioHandler,
   });
 }
 
