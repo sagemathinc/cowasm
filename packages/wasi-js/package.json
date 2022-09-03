@@ -8,9 +8,6 @@
     "build": "tsc -b",
     "tsc": "tsc -w",
     "dev": "watch \"npm run build:dev\" src",
-    "test-precompile": "cd test/rs && make all",
-    "test": "jest --config jest.config.js --verbose",
-    "test:watch": "jest --config jest.config.js --watch --verbose",
     "docs": "typedoc src/ --out docs --target es6 --theme minimal --mode file"
   },
   "files": [
@@ -45,7 +42,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/python-wasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/wasi",
+  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/wasi-js",
   "dependencies": {
     "@wapython/unionfs": "^4.5.7",
     "debug": "^4.3.4",
