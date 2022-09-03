@@ -1,3 +1,15 @@
+/*
+Synchronous blocking IO using service workers and XMLHttpRequest,
+in cases when can't use atomics.  By "IO", we also include "IO with
+the system", e.g., signals.
+
+References:
+
+- https://jasonformat.com/javascript-sleep/
+- https://stackoverflow.com/questions/10590213/synchronously-wait-for-message-in-web-worker
+- https://github.com/pyodide/pyodide/issues/1503
+*/
+
 import type { IOProvider } from "./types";
 import { SIGINT } from "./constants";
 import debug from "debug";
@@ -90,7 +102,4 @@ export default class IOProviderUsingXMLHttpRequest implements IOProvider {
     this._getStdin();
   }
 
-  //   isWaitingForStdin(): boolean {
-  //     return this.waitingForStdin;
-  //   }
 }

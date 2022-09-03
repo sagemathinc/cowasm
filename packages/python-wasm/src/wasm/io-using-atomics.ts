@@ -1,3 +1,13 @@
+/*
+Synchronous blocking IO using Atomics and SharedArrayBuffers.
+
+This requires cross-origin isolation, so the two headers have to be set by the
+server as follows.  This is VERY restrictive, but if you can do this, it's optimal:
+
+  "Cross-Origin-Opener-Policy": "same-origin"
+  "Cross-Origin-Embedder-Policy": "require-corp"
+*/
+
 import type { IOProvider } from "./types";
 import { SIGINT } from "./constants";
 import debug from "debug";
@@ -78,12 +88,7 @@ export default class IOProviderUsingAtomics implements IOProvider {
   sleep(milliseconds: number): void {
     log("sleep", milliseconds);
     /*
-    We implement sleep using atomics. There is an alternative trick
-    using XMLHttpRequest explained here
-           https://jasonformat.com/javascript-sleep/
-    that we should also investigate in cases when maybe we don't
-    want to use atomics.  See also
-       https://stackoverflow.com/questions/10590213/synchronously-wait-for-message-in-web-worker
+    We implement sleep using atomics here.
     */
     Atomics.store(this.spinLock, 0, 1);
     Atomics.notify(this.spinLock, 0);
