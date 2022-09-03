@@ -9,6 +9,9 @@ import IOProviderUsingAtomics from "./io-using-atomics";
 import IOProviderUsingXMLHttpRequest from "./io-using-xmlhttprequest";
 import type { IOProvider } from "./types";
 import { SIGINT } from "./constants";
+import debug from "debug";
+
+const log = debug("wasm-main");
 
 export interface WorkerThread extends EventEmitter {
   postMessage: (message: object) => void;
@@ -29,11 +32,14 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   public send: SendToWasmAbstractBase;
   public recv: RecvFromWasmAbstractBase;
 
-  constructor(wasmSource: string, options: Options, log?: Function) {
+  constructor(
+    wasmSource: string,
+    options: Options,
+    ioProvider: "atomics" | "xmlhttprequest" = "atomics"
+  ) {
     super();
     this.wasmSource = wasmSource;
     this.options = options;
-    this.log = log;
     this.init = reuseInFlight(this.init);
     this.send = new SendToWasmAbstractBase();
     this.recv = new RecvFromWasmAbstractBase();
@@ -41,7 +47,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     const ioOpt = {
       getStdinAsync: this.getStdinAsync.bind(this),
     };
-    switch (options.ioProvider) {
+    switch (ioProvider) {
       case "xmlhttprequest":
         this.ioProvider = new IOProviderUsingXMLHttpRequest(ioOpt);
         break;
@@ -50,7 +56,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
         break;
       default:
         throw Error(
-          `ioProvider (="${options.ioProvider}") must be "xmlhttprequest" or "atomics"`
+          `ioProvider (="${ioProvider}") must be "xmlhttprequest" or "atomics"`
         );
     }
   }
@@ -90,7 +96,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     if (!this.worker) throw Error("init - bug");
 
     const options = { ...this.ioProvider.getExtraOptions(), ...this.options };
-    this.log?.("options = ", options);
+    log("options = ", options);
 
     this.worker.postMessage({
       event: "init",
@@ -100,7 +106,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     this.worker.on("exit", () => this.terminate());
     this.worker.on("message", (message) => {
       if (message == null) return;
-      this.log?.("main thread got message", message);
+      log("main thread got message", message);
       if (message.id != null) {
         // message with id handled elsewhere -- used for getting data back.
         this.emit("id", message);

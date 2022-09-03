@@ -15,16 +15,18 @@ import wasmImport, { Options } from "./import";
 import type { WasmInstance } from "../types";
 import { isMainThread, parentPort } from "worker_threads";
 import initWorker from "./init";
-import debug from "../../debug";
+import debug from "debug";
 import os from "os";
 import child_process from "child_process";
 import posix from "posix-node";
 
+const log = debug("wasm:worker");
+
 export default async function wasmImportNode(
   name: string,
-  options: Options,
-  log?: (...args) => void
+  options: Options
 ): Promise<WasmInstance> {
+  log("wasmImportNode");
   const path = dirname(join(callsite()[1]?.getFileName() ?? "", "..", ".."));
   if (!isAbsolute(name)) {
     // it's critical to make this canonical BEFORE calling the debounced function,
@@ -86,7 +88,6 @@ export default async function wasmImportNode(
     source: name,
     bindings: { ...bindings, fs, os, child_process, posix },
     options,
-    log: log ?? debug("wasm-node"),
     importWebAssembly,
     importWebAssemblySync,
     readFileSync: fs.readFileSync,
@@ -94,10 +95,11 @@ export default async function wasmImportNode(
 }
 
 if (!isMainThread && parentPort != null) {
-  // Running as a worker thread.
+  log("running as a worker thread.");
   initWorker({
     wasmImport: wasmImportNode,
     parent: parentPort,
-    log: debug("wasm-node"),
   });
+} else {
+  log("running in the main thread (for debugging)");
 }

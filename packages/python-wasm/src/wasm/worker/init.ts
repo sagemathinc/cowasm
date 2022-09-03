@@ -1,10 +1,12 @@
 import type WasmInstance from "./instance";
 import { Options } from "./import";
+import debug from "debug";
+
+const log = debug("wasm:worker:init");
 
 export default function initWorker({
   wasmImport,
   parent,
-  log,
   captureOutput,
 }: {
   wasmImport: Function;
@@ -15,7 +17,6 @@ export default function initWorker({
     on: Function;
     postMessage: Function;
   };
-  log?: (...args) => void;
   // if captureOutput is true, we will send stdout and stderr events when such output is
   // written, instead of writing to /dev/stdout and /dev/stderr.  This saves trouble having
   // to watch and read from those filesystems.  For browser xterm.js integration, we use
@@ -24,7 +25,7 @@ export default function initWorker({
 }) {
   let wasm: undefined | WasmInstance = undefined;
   parent.on("message", async (message) => {
-    log?.("worker got message ", message);
+    log("worker got message ", message);
     switch (message.event) {
       case "init":
         try {
@@ -43,7 +44,7 @@ export default function initWorker({
 
           const spinLock = new Int32Array(spinLockBuffer);
           opts.sleep = (milliseconds: number) => {
-            log?.("sleep starting, milliseconds=", milliseconds);
+            log("sleep starting, milliseconds=", milliseconds);
             // We ask main thread to do the lock:
             parent.postMessage({ event: "sleep", milliseconds });
             // We wait a moment for that message to be processed:
@@ -53,7 +54,7 @@ export default function initWorker({
             }
             // now the lock is set, and we wait for it to get unset:
             Atomics.wait(spinLock, 0, 1, milliseconds);
-            log?.("sleep done, milliseconds=", milliseconds);
+            log("sleep done, milliseconds=", milliseconds);
           };
 
           const stdinBuffer = opts.stdinBuffer;
@@ -91,7 +92,7 @@ export default function initWorker({
             wasmGetSignalState: () => {
               const signal = Atomics.load(signalState, 0);
               if (signal) {
-                log?.("signalState", signalState[0]);
+                log("signalState", signalState[0]);
                 Atomics.store(signalState, 0, 0);
                 return signal;
               }
@@ -101,17 +102,17 @@ export default function initWorker({
 
           if (captureOutput) {
             opts.sendStdout = (data) => {
-              log?.("sendStdout", data);
+              log("sendStdout", data);
               parent.postMessage({ event: "stdout", data });
             };
 
             opts.sendStderr = (data) => {
-              log?.("sendStderr", data);
+              log("sendStderr", data);
               parent.postMessage({ event: "stderr", data });
             };
           }
 
-          wasm = await wasmImport(message.name, opts, log);
+          wasm = await wasmImport(message.name, opts);
           parent.postMessage({ event: "init", status: "ok" });
         } catch (err) {
           parent.postMessage({

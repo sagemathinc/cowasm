@@ -3,8 +3,6 @@ import { callback } from "awaiting";
 import { EventEmitter } from "events";
 import { SIGINT } from "./constants";
 
-import debug from "debug";
-
 class WorkerThread extends EventEmitter {
   public postMessage: (message) => void;
   public terminate: () => void;
@@ -63,7 +61,6 @@ export default async function wasmImportBrowserWorker(
   wasmSource: string,
   options: Options = {}
 ): Promise<WasmInstance> {
-  const log = debug("import-browser");
   const ioProvider = crossOriginIsolated ? "atomics" : "xmlhttprequest";
-  return new WasmInstance(wasmSource, { ...options, ioProvider }, log);
+  return new WasmInstance(wasmSource, options, ioProvider);
 }

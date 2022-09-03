@@ -4,8 +4,10 @@ import { Worker } from "worker_threads";
 import { dirname, join } from "path";
 import callsite from "callsite";
 import process from "node:process";
-import debug from "../debug";
 import { SIGINT } from "./constants";
+import debug from "debug";
+
+const log = debug("wasm:import-node");
 
 export class WasmInstance extends WasmInstanceAbstractBaseClass {
   protected initWorker(): WorkerThread {
@@ -38,7 +40,9 @@ export class WasmInstance extends WasmInstanceAbstractBaseClass {
       }
     });
     process.stdin.on("data", (data) => {
-      this.log?.("stdin", data.toString());
+      if (log.enabled) {
+        log("stdin", data.toString());
+      }
       if (data.includes("\u0003")) {
         this.signal(SIGINT);
       }
@@ -50,10 +54,5 @@ export default async function wasmImportNodeWorker(
   wasmSource: string, // name of the wasm file
   options: Options
 ): Promise<WasmInstance> {
-  const log = debug("import-node");
-  return new WasmInstance(
-    wasmSource,
-    { ...options, ioProvider: "atomics" },
-    log
-  );
+  return new WasmInstance(wasmSource, options);
 }

@@ -1,5 +1,4 @@
 import WASI from "@wapython/wasi";
-
 import type { FileSystemSpec, WASIConfig, WASIBindings } from "@wapython/wasi";
 import reuseInFlight from "../reuseInFlight";
 import WasmInstance from "./instance";
@@ -8,6 +7,9 @@ import initPythonTrampolineCalls from "./trampoline";
 import posix from "../posix";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
+import debug from "debug";
+
+const log = debug("wasm-worker");
 
 export function strlen(charPtr: number, memory: WebAssembly.Memory): number {
   const mem = new Uint8Array(memory.buffer);
@@ -35,7 +37,6 @@ export interface Options {
     spinLockBuffer: SharedArrayBuffer;
     stdinLockBuffer: SharedArrayBuffer;
   };
-  ioProvider?: "atomics" | "xmlhttprequest";
 }
 
 const cache: { [name: string]: any } = {};
@@ -46,7 +47,6 @@ async function doWasmImport({
   source,
   bindings,
   options = {},
-  log,
   importWebAssemblySync,
   importWebAssembly,
   readFileSync,
@@ -55,7 +55,6 @@ async function doWasmImport({
   source: string; // path/url to the source
   bindings: WASIBindings;
   options: Options;
-  log?: (...args) => void;
   importWebAssemblySync: (
     path: string,
     opts: WebAssembly.Imports
@@ -67,7 +66,7 @@ async function doWasmImport({
   readFileSync;
   maxMemoryMB?: number;
 }): Promise<WasmInstance> {
-  log?.("doWasmImport", source);
+  log("doWasmImport", source);
   if (cache[source] != null) {
     return cache[source];
   }
@@ -226,8 +225,8 @@ async function doWasmImport({
 
   cache[source] = wasm;
 
-  if (options.time) {
-    log?.(`imported ${source} in ${new Date().valueOf() - t}ms`);
+  if (options.time && log.enabled) {
+    log(`imported ${source} in ${new Date().valueOf() - t}ms`);
   }
   wasm.table = table;
   wasm.wasi = wasi;

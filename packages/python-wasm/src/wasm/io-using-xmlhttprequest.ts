@@ -1,7 +1,7 @@
 import type { IOProvider } from "./types";
 import { SIGINT } from "./constants";
 import debug from "debug";
-const log = debug("io-using-atomics");
+const log = debug("io-provider");
 
 interface Buffers {
   stdinBuffer: SharedArrayBuffer;
@@ -16,7 +16,7 @@ interface Options {
   getStdinAsync: () => Promise<Buffer>;
 }
 
-export default class IOProviderUsingXMLHttpRequest  implements IOProvider {
+export default class IOProviderUsingXMLHttpRequest implements IOProvider {
   private spinLock: Int32Array;
   private stdinLock: Int32Array;
   private signalInt32Array: Int32Array;
@@ -27,6 +27,7 @@ export default class IOProviderUsingXMLHttpRequest  implements IOProvider {
   private getStdinAsync: () => Promise<Buffer>;
 
   constructor(options: Options) {
+    log("IOProviderUsingXMLHttpRequest");
     this.getStdinAsync = options.getStdinAsync;
     const spinLockBuffer = new SharedArrayBuffer(4);
     this.spinLock = new Int32Array(spinLockBuffer);

@@ -12,12 +12,13 @@ import debug from "debug";
 import { EventEmitter } from "events";
 import posix from "./posix-browser";
 
+const log = debug("wasm:worker");
+
 export default async function wasmImportBrowser(
   wasmUrl: string,
-  options: Options = {},
-  log?: (...args) => void
+  options: Options = {}
 ): Promise<WasmInstance> {
-  log?.("wasmImportBrowser");
+  log("wasmImportBrowser");
   // also fix zip path, if necessary and read in any zip files (so
   // they can be loaded into memfs).
   const fsSpec: FileSystemSpec[] = [];
@@ -58,7 +59,6 @@ export default async function wasmImportBrowser(
     source: wasmUrl,
     bindings: { ...bindings, fs, posix },
     options,
-    log,
     importWebAssembly,
     importWebAssemblySync,
     readFileSync: (path) => {
@@ -80,8 +80,7 @@ async function importWebAssembly(path: string, options: WebAssembly.Imports) {
 
 function main() {
   // in a worker, so do worker stuff
-
-  const log = debug("worker:browser");
+  log("initializing worker");
 
   class Parent extends EventEmitter {
     public postMessage: (message: any) => void;
@@ -101,7 +100,6 @@ function main() {
     wasmImport: wasmImportBrowser,
     parent,
     captureOutput: true,
-    log,
   });
 }
 
