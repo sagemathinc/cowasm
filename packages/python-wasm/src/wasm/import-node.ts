@@ -51,5 +51,9 @@ export default async function wasmImportNodeWorker(
   options: Options
 ): Promise<WasmInstance> {
   const log = debug("import-node");
-  return new WasmInstance(wasmSource, options, log);
+  return new WasmInstance(
+    wasmSource,
+    { ...options, ioProvider: "atomics" },
+    log
+  );
 }

@@ -6,6 +6,7 @@ import { SendToWasmAbstractBase } from "./worker/send-to-wasm";
 import { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
 export { Options };
 import IOProviderUsingAtomics from "./io-using-atomics";
+import IOProviderUsingXMLHttpRequest from "./io-using-xmlhttprequest";
 import type { IOProvider } from "./types";
 import { SIGINT } from "./constants";
 
@@ -36,9 +37,22 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     this.init = reuseInFlight(this.init);
     this.send = new SendToWasmAbstractBase();
     this.recv = new RecvFromWasmAbstractBase();
-    this.ioProvider = new IOProviderUsingAtomics({
+
+    const ioOpt = {
       getStdinAsync: this.getStdinAsync.bind(this),
-    });
+    };
+    switch (options.ioProvider) {
+      case "xmlhttprequest":
+        this.ioProvider = new IOProviderUsingXMLHttpRequest(ioOpt);
+        break;
+      case "atomics":
+        this.ioProvider = new IOProviderUsingAtomics(ioOpt);
+        break;
+      default:
+        throw Error(
+          `ioProvider (="${options.ioProvider}") must be "xmlhttprequest" or "atomics"`
+        );
+    }
   }
 
   signal(sig: number = SIGINT): void {

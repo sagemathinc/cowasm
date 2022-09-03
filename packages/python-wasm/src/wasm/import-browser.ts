@@ -64,5 +64,6 @@ export default async function wasmImportBrowserWorker(
   options: Options = {}
 ): Promise<WasmInstance> {
   const log = debug("import-browser");
-  return new WasmInstance(wasmSource, options, log);
+  const ioProvider = crossOriginIsolated ? "atomics" : "xmlhttprequest";
+  return new WasmInstance(wasmSource, { ...options, ioProvider }, log);
 }

@@ -35,6 +35,7 @@ export interface Options {
     spinLockBuffer: SharedArrayBuffer;
     stdinLockBuffer: SharedArrayBuffer;
   };
+  ioProvider?: "atomics" | "xmlhttprequest";
 }
 
 const cache: { [name: string]: any } = {};
