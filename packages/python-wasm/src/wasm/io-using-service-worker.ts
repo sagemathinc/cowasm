@@ -3,11 +3,15 @@ Synchronous blocking IO using service workers and XMLHttpRequest,
 in cases when can't use atomics.  By "IO", we also include "IO with
 the system", e.g., signals.
 
+This is inspired by the sync-message package.
+
 References:
 
+- https://github.com/alexmojaki/sync-message
 - https://jasonformat.com/javascript-sleep/
 - https://stackoverflow.com/questions/10590213/synchronously-wait-for-message-in-web-worker
 - https://github.com/pyodide/pyodide/issues/1503
+
 */
 
 import type { IOProvider } from "./types";
@@ -19,7 +23,7 @@ interface Options {
   getStdinAsync: () => Promise<Buffer>;
 }
 
-export default class IOProviderUsingXMLHttpRequest implements IOProvider {
+export default class IOProviderUsingServiceWorker implements IOProvider {
   private getStdinAsync: () => Promise<Buffer>;
   private waitingForStdin: boolean = false;
 
@@ -29,36 +33,14 @@ export default class IOProviderUsingXMLHttpRequest implements IOProvider {
     this.initServiceWorker();
   }
 
-  initServiceWorker() {
+  async initServiceWorker() {
     log("setting up service worker");
     // @ts-ignore this import.meta.url issue -- actually only consumed by webpack in calling code...
     const url = new URL("./worker/service-worker.js", import.meta.url);
-    navigator.serviceWorker
-      .register(url, {
-        scope: "./fubar",
-      })
-      .then((registration) => {
-        let serviceWorker;
-        if (registration.installing) {
-          serviceWorker = registration.installing;
-          log("installing");
-        } else if (registration.waiting) {
-          serviceWorker = registration.waiting;
-          log("waiting");
-        } else if (registration.active) {
-          serviceWorker = registration.active;
-          log("active");
-        }
-        if (serviceWorker) {
-          log(serviceWorker.state);
-          serviceWorker.addEventListener("statechange", (e) => {
-            log("statechange", e.target.state);
-          });
-        }
-      })
-      .catch((error) => {
-        log("something went wrong", error);
-      });
+    const registration = await navigator.serviceWorker.register(url, {
+      scope: "/python-wasm",
+    });
+    console.log("registration = ", registration);
   }
 
   getExtraOptions() {
@@ -101,5 +83,4 @@ export default class IOProviderUsingXMLHttpRequest implements IOProvider {
     }
     this._getStdin();
   }
-
 }

@@ -34,9 +34,16 @@ export default function initWorker({
     switch (message.event) {
       case "init":
         try {
+          const { sleep, getStdin, getSignalState } = ioHandler(
+            parent,
+            message.options
+          );
+
           const opts: Options = {
             ...message.options,
-            ...ioHandler(parent, message.options),
+            sleep,
+            getStdin,
+            wasmEnv: { wasmGetSignalState: getSignalState },
           };
 
           if (captureOutput) {
