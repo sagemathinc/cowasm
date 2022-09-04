@@ -1,10 +1,11 @@
 # Using [python-wasm](https://www.npmjs.com/package/python-wasm) with [webpack](https://webpack.js.org/)
 
+[🔗 Try the Python-Wasm Live Demo](https://python-wasm.cocalc.com/)
+
 This is an extremely minimal example. For a more complicated example, see [the terminal](../terminal/README.md).
 
 You can use `python-wasm` with webpack5.  There are **two things**
-you may have to modify in your webpack configuration.
-See [webpack.config.js](./webpack.config.js), in particular:
+you may have to modify in your [webpack configuration](./webpack.config.js):
 
 1. The `NodePolyfillPlugin` is required because `python-wasm` uses `memfs`, which requires several polyfilled libraries.
 
@@ -47,17 +48,31 @@ import python from "python-wasm";
 in your code and use the `python` object, as illustrated
 in [src/index.ts](./src/index.ts).
 
-## Trying the demo in your browser
+## Run the demo for yourself
+
+Clone the repo:
 
 ```sh
 git clone https://github.com/sagemathinc/python-wasm
 cd python-wasm/packages/webpack
-npm ci
+```
+
+Delete these three lines from package.json (which are used
+for development):
+```js
+  "workspaces": [
+    "../python-wasm"
+  ],
+```
+
+then install and start the server:
+
+```sh
+npm install
 npm run serve
 ```
 
 Then visit the URL that it outputs, which is probably http://localhost:8080
-
 
 
 ## Synchronous IO

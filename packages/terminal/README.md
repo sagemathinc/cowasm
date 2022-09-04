@@ -1,5 +1,9 @@
 # Terminal Demo
 
+[🔗 Try the Python-Wasm Live Demo](https://python-wasm.cocalc.com/)
+
+This is a demo of using [xterm.js](https://xtermjs.org/) and [webpack](https://webpack.js.org/) with python-wasm.
+
 ## Using [python\-wasm](https://www.npmjs.com/package/python-wasm) with [webpack](https://webpack.js.org/)
 
 You can use `python-wasm` with webpack5.  There are **two things**
@@ -61,12 +65,28 @@ website may break since it's a highly restrictive security policy, e.g., [GitHub
 pages does not support
 this](https://github.com/github-community/community/discussions/13309).
 
-## Trying this demo in your browser
+## Run the demo for yourself
+
+Clone the repo:
 
 ```sh
 git clone https://github.com/sagemathinc/python-wasm
 cd python-wasm/packages/terminal
-npm ci
+```
+
+Delete these three lines from package.json (which are used
+for development):
+
+```js
+  "workspaces": [
+    "../python-wasm"
+  ],
+```
+
+then install and start the server:
+
+```sh
+npm install
 npm run serve
 ```
 
@@ -87,3 +107,4 @@ Note that the service worker approach causes a page refresh the very first time 
 ### Firefox and Service Workers
 
 Unlike Safari and Chrome, Firefox doesn't allow service workers over http without setting `dom.serviceWorkers.testing.enabled,` so set that to true in `about:config` to test locally.
+
