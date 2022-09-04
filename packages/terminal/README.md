@@ -92,3 +92,4 @@ Do the following to force the fallback to service workers:
 SW=true npm run serve
 ```
 
+Note that the service worker approach causes a page refresh the very first time the page is loaded, so that the active service worker takes over proxying certain requests.

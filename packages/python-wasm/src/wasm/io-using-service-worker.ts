@@ -39,7 +39,22 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
     // @ts-ignore this import.meta.url issue -- actually only consumed by webpack
     const url = new URL("./worker/service-worker.js", import.meta.url).href;
     const reg = await navigator.serviceWorker.register(url);
-    if (!reg.active) location.reload(); // no way around this (?).
+    console.log("active = ", reg.active);
+    if (reg.active?.state != "activated") {
+      console.log("Reloading page to activate service worker.");
+      // no way around this  -- it is part of the spec
+      if (localStorage.swInstall) {
+        // use local storage to avoid DOS of server
+        setTimeout(() => {
+          location.reload();
+        }, 3000);
+      } else {
+        localStorage.swInstall = true;
+        location.reload();
+      }
+    } else {
+      delete localStorage.swInstall;
+    }
   }
 
   getExtraOptions() {

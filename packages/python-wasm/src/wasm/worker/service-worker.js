@@ -19,7 +19,9 @@ REFERENCES:
 
 */
 
-const log = (...args) => console.log("service-worker.js", ...args);
+const log = (...args) => {
+  console.log("service-worker.js - ", ...args);
+};
 
 const PREFIX = "/python-wasm-sw/";
 

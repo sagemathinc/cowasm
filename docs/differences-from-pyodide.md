@@ -18,13 +18,15 @@ Much of the different functionality below depends on using **cross\-site isolati
 
 In particular, by default our plan is to **only support** using python\-wasm in a WebWorker with cross\-site isolation, whereas in Pyodide, using a webwork is considered ["rather error prone and confusing"](https://github.com/pyodide/pyodide/issues/1504).   Basically, if we can solve a problem using that model, then we consider it done.  That said, we will also support running in other modes, including one without a webworker at all, since that can be very useful for low level debugging, and may be important for certain use cases \(e.g., pyscript takes the approach that asyncio \+ python in the same thread is fine\).
 
-## Functionality
+## Critical Usability Functionality: sleep, control\+c interrupts, and synchronous input
+
+Some deployments of Pyodide are missing some key functionality: sleep, control\+c interrupts, synchronous input.  For the browser, we implement in python\-wasm in the standard ways using WebWorkers, using **both** the SharedArrayBuffers/Atomic lock approach \(which depends on enabling cross\-origin isolation\) _**and**_ the approach using synchronous XMLHttpRequest with a ServiceWorker.  No extra configuration is needed; our library uses atomics if possible, and if not, creates a service worker and use that.  For node.js we always uses atomics, since they are fully supported there.
+
+REFERENCe: See [this Pyodide ticket](https://github.com/pyodide/pyodide/issues/1503) for a discussion of the status of these approaches in Pyodide.   
 
 ### sleeping
 
 \- `import time; time.sleep(10)` works in python\-wasm, without being fake or burning 100% cpu. Pyodide treats this as a no\-op.  This is thus [broken in pyodide.](https://github.com/pyodide/pyodide/issues/2354) 
-
-We implement this using webworkers, SharedArrayBuffers and an Atomic lock.
 
 ### control\+c / interrupt signal
 
