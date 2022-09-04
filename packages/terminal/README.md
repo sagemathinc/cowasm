@@ -104,6 +104,9 @@ SW=true npm run serve
 
 Note that the service worker approach causes a page refresh the very first time the page is loaded, so that the active service worker takes over proxying certain requests.
 
+**Supported Platforms:** I've tested the above with node v14, v16 and v18 on Linux, MacOS, and Microsoft Windows.  On Windows, you have to directly edit webpack.config.js to test out service workers.
+
+
 ### Firefox and Service Workers
 
 Unlike Safari and Chrome, Firefox doesn't allow service workers over http without setting `dom.serviceWorkers.testing.enabled,` so set that to true in `about:config` to test locally.

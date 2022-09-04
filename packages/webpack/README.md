@@ -4,7 +4,7 @@
 
 This is an extremely minimal example. For a more complicated example, see [the terminal](../terminal/README.md).
 
-You can use `python-wasm` with webpack5.  There are **two things**
+You can use `python-wasm` with webpack5. There are **two things**
 you may have to modify in your [webpack configuration](./webpack.config.js):
 
 1. The `NodePolyfillPlugin` is required because `python-wasm` uses `memfs`, which requires several polyfilled libraries.
@@ -18,9 +18,7 @@ Thus your `webpack.config.js` might include the following:
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = {
-  plugins: [
-    new NodePolyfillPlugin(),
-  ],
+  plugins: [new NodePolyfillPlugin()],
   module: {
     rules: [
       {
@@ -28,9 +26,8 @@ module.exports = {
         type: "asset/resource",
       },
     ],
-  }
+  },
 };
-
 ```
 
 Once you do that, you can just put
@@ -59,6 +56,7 @@ cd python-wasm/packages/webpack
 
 Delete these three lines from package.json (which are used
 for development):
+
 ```js
   "workspaces": [
     "../python-wasm"
@@ -74,6 +72,7 @@ npm run serve
 
 Then visit the URL that it outputs, which is probably http://localhost:8080
 
+**Supported Platforms:** I've tested the above with node v14, v16 and v18 on Linux, MacOS, and Microsoft Windows.
 
 ## Synchronous IO
 
@@ -94,7 +93,6 @@ module.exports = {
     },
   },
 };
-
 ```
 
 This is _**optional:**_ if you don't set the headers, then a service worker is
