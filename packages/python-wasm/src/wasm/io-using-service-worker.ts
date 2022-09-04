@@ -30,6 +30,12 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
   }
 
   async initServiceWorker() {
+    if (!navigator.serviceWorker) {
+      console.warn(
+        "WARNING: service worker is not available, so nothing is going to work"
+      );
+      return;
+    }
     // @ts-ignore this import.meta.url issue -- actually only consumed by webpack
     const url = new URL("./worker/service-worker.js", import.meta.url).href;
     const reg = await navigator.serviceWorker.register(url);
@@ -40,10 +46,13 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
     return { id: this.id };
   }
 
-  private async send(target: string, body: string): Promise<void> {
-    const url = `/python-wasm-sw/send?id=${this.id}&target=${target}`;
+  private async send(
+    target: "write-signal" | "write-stdin",
+    body: object
+  ): Promise<void> {
+    const url = `/python-wasm-sw/${target}`;
     try {
-      await fetch(url, { method: "POST", body });
+      await fetch(url, { method: "POST", body: JSON.stringify(body) });
     } catch (err) {
       console.warn("failed to send to service worker", { url, body }, err);
     }
@@ -51,11 +60,11 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
 
   signal(sig: number = SIGINT): void {
     log("signal", sig);
-    this.send("signal", `${sig}`);
+    this.send("write-signal", { sig });
   }
 
   writeToStdin(data: Buffer): void {
     log("writeToStdin", data);
-    this.send("stdin", data.toString());
+    this.send("write-stdin", { data: data.toString() });
   }
 }

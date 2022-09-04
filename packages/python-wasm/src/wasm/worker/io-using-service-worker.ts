@@ -8,7 +8,6 @@ const SIGNAL_CHECK_MS = 500;
 export default class IOHandler implements IOHandlerClass {
   private id: string;
   private lastSignalCheck: number = 0;
-  private counter: number = 0;
 
   constructor(opts) {
     log(opts);
@@ -18,51 +17,53 @@ export default class IOHandler implements IOHandlerClass {
     }
   }
 
-  private receive(target: string, timeout: number = 0): string | null {
-    const url = `python-wasm-sw/${this.id}/receive/${target}/${timeout}`;
+  private request(
+    url: "sleep" | "read-stdin" | "read-signal",
+    body: object = {}
+  ) {
     const request = new XMLHttpRequest();
-    // false makes the request synchronous
-    request.open("GET", url, false);
-    const { status } = request;
-    if (status == 200) {
-      return request.response;
-    } else {
-      // TODO -- how to deal with errors?
-      log("error", status);
-      return null;
+    request.open("POST", `/python-wasm-sw/${url}`, false); // false = synchronous
+    request.setRequestHeader("cache-control", "no-cache, no-store, max-age=0");
+    try {
+      request.send(JSON.stringify(body));
+    } catch (err) {
+      warnBroken(err);
     }
+    if (request.status != 200 && request.status != 304) {
+      warnBroken(`invalid status=${request.status}`);
+    }
+    return request;
   }
 
   sleep(milliseconds: number): void {
-    log("sleep ", milliseconds, " - TODO");
+    log("sleep ", milliseconds);
+    const start = new Date().valueOf();
+    while (new Date().valueOf() - start <= milliseconds) {
+      try {
+        this.request("sleep", { ms: Math.min(milliseconds, 500) });
+      } catch (err) {
+        log("sleep error", err);
+        return;
+      }
+      if (this.getSignal(false)) {
+        // TODO: there could be signals that maybe don't interrupt sleep?
+        return;
+      }
+    }
   }
 
   getStdin(): Buffer {
-    this.counter += 1;
-    if (this.counter == 10) return Buffer.from("\nDONE.");
-    if (this.counter > 10) return Buffer.from("");
-    log("getStdin - TODO");
-    const t0 = new Date().valueOf();
-    const url = `/python-wasm-sw/sleep?t=2000`;
-    const request = new XMLHttpRequest();
-    // false makes the request synchronous
-    request.open("GET", url, false);
-    request.setRequestHeader("cache-control", "no-cache, no-store, max-age=0");
     try {
-      request.send();
+      const request = this.request("read-stdin");
+      return Buffer.from(request.responseText ?? "");
     } catch (err) {
-      return Buffer.from(`ERROR: ${err}`);
+      return Buffer.from(`${err}\n`);
     }
-    return Buffer.from(
-      JSON.stringify({ status: request.status, t: new Date().valueOf() - t0 })
-    );
-    //     while (true) {
-    //       const data = this.receive("stdin", 1000);
-    //       if (data && data.length > 0) {
-    //         return Buffer.from(data);
-    //       }
-    //       // TODO: check for signals
-    //     }
+  }
+
+  private getSignal(clear: boolean): number {
+    const request = this.request("read-signal", { clear });
+    return parseInt(request.responseText) ?? 0;
   }
 
   // Python kernel will call this VERY frequently, which is fine for
@@ -73,10 +74,19 @@ export default class IOHandler implements IOHandlerClass {
       return 0;
     }
     this.lastSignalCheck = now;
-    const sig = this.receive("signal", 0);
-    if (sig) {
-      return parseInt(sig);
-    }
-    return 0;
+    return this.getSignal(true);
   }
+}
+
+function warnBroken(err, milliseconds: number = 3000) {
+  // Something strongly suggests the service worker isn't working, e.g., which would happen over
+  // non https non localhost (or even firefox incognito in all cases).
+  // If we just silently ignore this, then we'll likely DOS our server, so instead we do a CPU
+  // consuming lock for a while, since I don't know what else to do.  This burns CPU, but stops DOS.
+  console.warn(
+    "service worker not working, so burning CPU to avoid DOS'ing the server -- ",
+    err
+  );
+  const t0 = new Date().valueOf();
+  while (new Date().valueOf() - t0 <= milliseconds) {}
 }

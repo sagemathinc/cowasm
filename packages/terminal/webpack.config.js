@@ -53,13 +53,22 @@ module.exports = {
   devServer: {
     headers: {
       "Cross-Origin-Opener-Policy": "same-origin",
-      //"Cross-Origin-Embedder-Policy": "require-corp",
+      "Cross-Origin-Embedder-Policy": "require-corp",
     },
   },
 };
 
 if (process.env.PORT) {
+  console.log(
+    `PORT=${process.env.PORT}, so serving at that port instead of the default.`
+  );
   module.exports.devServer.port = parseInt(process.env.PORT);
+}
+if (process.env.SW) {
+  console.log(
+    "SW variable set, so disabling cross-origin isolation to force fallback to a service worker."
+  );
+  module.exports.devServer.headers = {};
 }
 
 // Refactor same code in terminal and webpack packages.
