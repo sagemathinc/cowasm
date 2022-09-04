@@ -53,6 +53,8 @@ export default class IOHandler implements IOHandlerClass {
   }
 
   getStdin(): Buffer {
+    // Despite blocking, this doesn't block control+c signal because
+    // we send "^C" to stdin when getting that signal.
     try {
       const request = this.request("read-stdin", { id: this.id });
       return Buffer.from(request.responseText ?? "");

@@ -20,17 +20,22 @@ REFERENCES:
 */
 
 const log = (...args) => {
-  console.log("service-worker.js - ", ...args);
+  // for debugging, uncomment this.
+  // console.log("service-worker.js - ", ...args);
 };
 
+// This MUST match what's in io-using-service-worker.ts and ../io-using-service-worker.ts
 const PREFIX = "/python-wasm-sw/";
 
+// Version is only used for some logging right now.
+const VERSION = 3;
+
 self.addEventListener("install", (e) => {
-  log("Install v3: e=", e);
+  log("install  - python-wasm service worker, version: ", VERSION, e);
 });
 
 self.addEventListener("activate", (e) => {
-  log("Activate v3: e=", e);
+  log("activate - python-wasm service worker, version: ", VERSION, e);
 });
 
 function delay(milliseconds) {
@@ -49,18 +54,25 @@ const cache = {
   sig: {},
   stdin: {},
   lastUsed: {},
+  callOnStdin: {},
 };
 
 // Ensure the cache only holds data about active sessions to avoid
-// wasting space. Data only needs to live for a few seconds.
-function touch(id: string) {
+// wasting space. Data only needs to live for a few seconds.  This
+// might be totally not needed, since cache is purely in RAM (not
+// persisted like Cache is), and probably is deleted as soon as there
+// are no open pages.
+function touch(id) {
   const now = new Date().valueOf();
   cache.lastUsed[id] = now;
   for (const i in cache.lastUsed) {
-    if (now - cache.lastUsed[i] >= 30000) {
+    if (now - cache.lastUsed[i] >= 1000 * 60) {
       delete cache.lastUsed[i];
       delete cache.sig[i];
       delete cache.stdin[i];
+      // Do *not* delete cache.callOnStdin[i], since that might need to be
+      // waiting for hours (e.g. a terminal sitting there), and removing something
+      // from it would make the eventual IO never get detected.
     }
   }
 }
@@ -90,14 +102,28 @@ async function handleWriteStdin(e) {
   } else {
     cache.stdin[id] += data;
   }
+  const v = cache.callOnStdin[id];
+  if (v != null) {
+    for (const f of v) {
+      f();
+    }
+    cache.callOnStdin[id] = [];
+  }
   return new Response(`${cache.stdin[id].length}`, { status: 200 });
 }
 
 async function handleReadStdin(e) {
   const { id } = await e.request.json();
   log("read from stdin", id);
-  while (!cache.stdin[id]) {
-    await delay(25);
+  if (!cache.stdin[id]) {
+    // wait until there is something in stdin
+    await new Promise((resolve) => {
+      if (cache.callOnStdin[id] == null) {
+        cache.callOnStdin[id] = [resolve];
+      } else {
+        cache.callOnStdin[id].push(resolve);
+      }
+    });
   }
   const data = cache.stdin[id];
   cache.stdin[id] = "";
