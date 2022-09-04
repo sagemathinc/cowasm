@@ -45,7 +45,7 @@ async function handleSleep(e) {
   return new Response({ status: 304 });
 }
 
-let sig = 0;
+let sig = {};
 async function handleWriteSignal(e) {
   const body = await e.request.json();
   sig = body?.sig ?? 0;
@@ -54,8 +54,7 @@ async function handleWriteSignal(e) {
 }
 
 async function handleReadSignal(e) {
-  const body = await e.request.json();
-  const clear = body?.clear ?? true;
+  const { clear } = await e.request.json();
   const curSig = sig;
   if (clear) {
     sig = 0;
@@ -63,22 +62,26 @@ async function handleReadSignal(e) {
   return new Response(`${curSig}`, { status: 200 });
 }
 
-let stdout = "";
+let stdin = {};
 async function handleWriteStdin(e) {
-  const body = await e.request.json();
-  const data = body?.data ?? "";
-  log("write to stdin", data);
-  stdout += data;
-  return new Response(`${stdout.length}`, { status: 200 });
+  const { data, id } = await e.request.json();
+  log("write to stdin", id, data);
+  if (stdin[id] == null) {
+    stdin[id] = data;
+  } else {
+    stdin[id] += data;
+  }
+  return new Response(`${stdin[id].length}`, { status: 200 });
 }
 
 async function handleReadStdin(e) {
-  log("read from stdin");
-  while (!stdout) {
-    await delay(100);
+  const { id } = await e.request.json();
+  log("read from stdin", id);
+  while (!stdin[id]) {
+    await delay(25);
   }
-  const data = stdout;
-  stdout = "";
+  const data = stdin[id];
+  stdin[id] = "";
   return new Response(data, { status: 200 });
 }
 

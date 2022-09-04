@@ -54,7 +54,7 @@ export default class IOHandler implements IOHandlerClass {
 
   getStdin(): Buffer {
     try {
-      const request = this.request("read-stdin");
+      const request = this.request("read-stdin", { id: this.id });
       return Buffer.from(request.responseText ?? "");
     } catch (err) {
       return Buffer.from(`${err}\n`);
@@ -62,7 +62,7 @@ export default class IOHandler implements IOHandlerClass {
   }
 
   private getSignal(clear: boolean): number {
-    const request = this.request("read-signal", { clear });
+    const request = this.request("read-signal", { clear, id: this.id });
     return parseInt(request.responseText) ?? 0;
   }
 

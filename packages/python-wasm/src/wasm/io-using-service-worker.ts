@@ -39,9 +39,8 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
     // @ts-ignore this import.meta.url issue -- actually only consumed by webpack
     const url = new URL("./worker/service-worker.js", import.meta.url).href;
     const reg = await navigator.serviceWorker.register(url);
-    console.log("active = ", reg.active);
     if (reg.active?.state != "activated") {
-      console.log("Reloading page to activate service worker.");
+      console.warn("Reloading page to activate service worker.");
       // no way around this  -- it is part of the spec
       if (localStorage.swInstall) {
         // use local storage to avoid DOS of server
@@ -75,11 +74,11 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
 
   signal(sig: number = SIGINT): void {
     log("signal", sig);
-    this.send("write-signal", { sig });
+    this.send("write-signal", { sig, id: this.id });
   }
 
   writeToStdin(data: Buffer): void {
     log("writeToStdin", data);
-    this.send("write-stdin", { data: data.toString() });
+    this.send("write-stdin", { data: data.toString(), id: this.id });
   }
 }
