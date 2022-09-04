@@ -26,11 +26,11 @@ const log = (...args) => {
 const PREFIX = "/python-wasm-sw/";
 
 self.addEventListener("install", (e) => {
-  log("Install v2: e=", e);
+  log("Install v3: e=", e);
 });
 
 self.addEventListener("activate", (e) => {
-  log("Activate v2: e=", e);
+  log("Activate v3: e=", e);
 });
 
 function delay(milliseconds) {
@@ -45,43 +45,62 @@ async function handleSleep(e) {
   return new Response({ status: 304 });
 }
 
-let sig = {};
+const cache = {
+  sig: {},
+  stdin: {},
+  lastUsed: {},
+};
+
+// Ensure the cache only holds data about active sessions to avoid
+// wasting space. Data only needs to live for a few seconds.
+function touch(id: string) {
+  const now = new Date().valueOf();
+  cache.lastUsed[id] = now;
+  for (const i in cache.lastUsed) {
+    if (now - cache.lastUsed[i] >= 30000) {
+      delete cache.lastUsed[i];
+      delete cache.sig[i];
+      delete cache.stdin[i];
+    }
+  }
+}
+
 async function handleWriteSignal(e) {
-  const body = await e.request.json();
-  sig = body?.sig ?? 0;
-  log("signal", sig);
+  const { sig, id } = await e.request.json();
+  log("signal", id, sig);
+  cache.sig[id] = sig;
   return new Response(`${sig}`, { status: 200 });
 }
 
 async function handleReadSignal(e) {
-  const { clear } = await e.request.json();
-  const curSig = sig;
+  const { clear, id } = await e.request.json();
+  const curSig = cache.sig[id] ?? 0;
   if (clear) {
-    sig = 0;
+    cache.sig[id] = 0;
   }
   return new Response(`${curSig}`, { status: 200 });
 }
 
-let stdin = {};
 async function handleWriteStdin(e) {
   const { data, id } = await e.request.json();
+  touch(id);
   log("write to stdin", id, data);
-  if (stdin[id] == null) {
-    stdin[id] = data;
+  if (cache.stdin[id] == null) {
+    cache.stdin[id] = data;
   } else {
-    stdin[id] += data;
+    cache.stdin[id] += data;
   }
-  return new Response(`${stdin[id].length}`, { status: 200 });
+  return new Response(`${cache.stdin[id].length}`, { status: 200 });
 }
 
 async function handleReadStdin(e) {
   const { id } = await e.request.json();
   log("read from stdin", id);
-  while (!stdin[id]) {
+  while (!cache.stdin[id]) {
     await delay(25);
   }
-  const data = stdin[id];
-  stdin[id] = "";
+  const data = cache.stdin[id];
+  cache.stdin[id] = "";
   return new Response(data, { status: 200 });
 }
 
