@@ -32,21 +32,6 @@ module.exports = {
 
 ```
 
-<!-- Once you do that, put
-
-```js
-const python = require("python-wasm");
-```
-
-or (for Typescript)
-
-```ts
-import python from "python-wasm";
-```
-
-in your code and use the `python` object, as illustrated here
-in [src/index.ts](./src/index.ts). -->
-
 ## Synchronous IO
 
 To use `Atomic` and `SharedArrayBuffer` for synchronous IO, your webserver must have the following two headers set:
@@ -69,7 +54,12 @@ module.exports = {
 
 ```
 
-This is _**optional:**_ if you don't set the headers, then a service worker is used instead to support synchronous IO.  No special setup is needed to use the service worker.  If you do set these, then many things may break since it's a highly restrictive security policy, e.g., [GitHub pages does not support this](https://github.com/github-community/community/discussions/13309).
+This is _**optional:**_ if you don't set the headers, then a service worker is
+used instead to support synchronous IO. No special setup is needed to use the
+service worker. If you do set these heϨaders, then other things on a complicated
+website may break since it's a highly restrictive security policy, e.g., [GitHub
+pages does not support
+this](https://github.com/github-community/community/discussions/13309).
 
 ## Trying this demo in your browser
 
