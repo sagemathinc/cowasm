@@ -1,5 +1,4 @@
 import type { IOHandlerClass } from "./types";
-import { SERVICE_WORKER_SCOPE } from "../constants";
 import debug from "debug";
 
 const log = debug("wasm:worker:io-using-atomics");
@@ -9,6 +8,7 @@ const SIGNAL_CHECK_MS = 500;
 export default class IOHandler implements IOHandlerClass {
   private id: string;
   private lastSignalCheck: number = 0;
+  private counter: number = 0;
 
   constructor(opts) {
     log(opts);
@@ -19,7 +19,7 @@ export default class IOHandler implements IOHandlerClass {
   }
 
   private receive(target: string, timeout: number = 0): string | null {
-    const url = `${SERVICE_WORKER_SCOPE}/${this.id}/receive/${target}/${timeout}`;
+    const url = `python-wasm-sw/${this.id}/receive/${target}/${timeout}`;
     const request = new XMLHttpRequest();
     // false makes the request synchronous
     request.open("GET", url, false);
@@ -38,15 +38,31 @@ export default class IOHandler implements IOHandlerClass {
   }
 
   getStdin(): Buffer {
+    this.counter += 1;
+    if (this.counter == 10) return Buffer.from("\nDONE.");
+    if (this.counter > 10) return Buffer.from("");
     log("getStdin - TODO");
-//     while (true) {
-//       const data = this.receive("stdin", 1000);
-//       if (data && data.length > 0) {
-//         return Buffer.from(data);
-//       }
-//       // TODO: check for signals
-//     }
-    return Buffer.from("");
+    const t0 = new Date().valueOf();
+    const url = `/python-wasm-sw/sleep?t=2000`;
+    const request = new XMLHttpRequest();
+    // false makes the request synchronous
+    request.open("GET", url, false);
+    request.setRequestHeader("cache-control", "no-cache, no-store, max-age=0");
+    try {
+      request.send();
+    } catch (err) {
+      return Buffer.from(`ERROR: ${err}`);
+    }
+    return Buffer.from(
+      JSON.stringify({ status: request.status, t: new Date().valueOf() - t0 })
+    );
+    //     while (true) {
+    //       const data = this.receive("stdin", 1000);
+    //       if (data && data.length > 0) {
+    //         return Buffer.from(data);
+    //       }
+    //       // TODO: check for signals
+    //     }
   }
 
   // Python kernel will call this VERY frequently, which is fine for

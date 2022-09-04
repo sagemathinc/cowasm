@@ -14,7 +14,6 @@ small things that you must:
 const { resolve } = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
-const WorkboxPlugin = require("workbox-webpack-plugin");
 
 module.exports = {
   mode: process.env.NODE_ENV == "production" ? "production" : "development",
@@ -29,11 +28,6 @@ module.exports = {
     new NodePolyfillPlugin() /* required for python-wasm */,
     new HtmlWebpackPlugin({
       title: "python-wasm Terminal",
-    }),
-    new WorkboxPlugin.GenerateSW({
-      maximumFileSizeToCacheInBytes: 30000000, // 30MB -- we have big files, e.g, python.wasm when not striped is 18MB.
-      clientsClaim: true,
-      skipWaiting: true,
     }),
   ],
   module: {
