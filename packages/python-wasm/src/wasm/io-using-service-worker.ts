@@ -30,13 +30,36 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
   }
 
   async initServiceWorker() {
-    log("setting up service worker");
-    // @ts-ignore this import.meta.url issue -- actually only consumed by webpack in calling code...
-    const url = new URL("./worker/service-worker.js", import.meta.url);
-    const registration = await navigator.serviceWorker.register(url, {
-      scope: SERVICE_WORKER_SCOPE,
-    });
-    console.log("registration = ", registration);
+    log("register service worker");
+    if (!("serviceWorker" in navigator)) return;
+    navigator.serviceWorker
+      .register("/service-worker.js")
+      .then((registration) => {
+        console.log("SW registered: ", registration);
+      })
+      .catch((registrationError) => {
+        console.log("SW registration failed: ", registrationError);
+      });
+    //     // @ts-ignore this import.meta.url issue -- actually only consumed by webpack in calling code...
+    //     const url = new URL("./worker/service-worker.js", import.meta.url).href;
+    //     //     const registration = await navigator.serviceWorker.register(url, {
+    //     //       scope: SERVICE_WORKER_SCOPE,
+    //     //     });
+    //     try {
+    //       const registration = await navigator.serviceWorker.register(url, {
+    //         scope: SERVICE_WORKER_SCOPE,
+    //       });
+    //       console.log({ registration, url });
+    //       if (registration.installing) {
+    //         console.log("Service worker installing");
+    //       } else if (registration.waiting) {
+    //         console.log("Service worker installed");
+    //       } else if (registration.active) {
+    //         console.log("Service worker active");
+    //       }
+    //     } catch (error) {
+    //       console.error(`Registration failed with ${error}`);
+    //     }
   }
 
   getExtraOptions() {

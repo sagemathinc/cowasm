@@ -39,13 +39,14 @@ export default class IOHandler implements IOHandlerClass {
 
   getStdin(): Buffer {
     log("getStdin - TODO");
-    while (true) {
-      const data = this.receive("stdin", 1000);
-      if (data && data.length > 0) {
-        return Buffer.from(data);
-      }
-      // TODO: check for signals
-    }
+//     while (true) {
+//       const data = this.receive("stdin", 1000);
+//       if (data && data.length > 0) {
+//         return Buffer.from(data);
+//       }
+//       // TODO: check for signals
+//     }
+    return Buffer.from("");
   }
 
   // Python kernel will call this VERY frequently, which is fine for

@@ -6,6 +6,8 @@
 //const log = debug("wasm:service-worker");
 const log = console.log;
 
+const SERVICE_WORKER_SCOPE = "/python-wasm";
+
 self.addEventListener("install", (e) => {
   log("Install v2: e=", e);
 });
@@ -14,10 +16,7 @@ self.addEventListener("activate", (e) => {
   log("Activate v2: e=", e);
 });
 
-//const state = {[id:string] : {signal:number; stdin:string}} = {};
-const state = {};
-
-self.addEventListener("fetch", (e) => {
+function handleFetch(e) {
   log("fetch: e=", e);
   log("state = ", state);
   const { url } = e.request;
@@ -29,9 +28,13 @@ self.addEventListener("fetch", (e) => {
   where the [milliseconds] are only specified on receive.
   */
 
-  const i = pathname.lastIndexOf("/python-wasm/");
+  const i = pathname.lastIndexOf(SERVICE_WORKER_SCOPE);
   if (i == -1) {
-    e.respondWith(new Response("invalid URL", { status: 404 }));
+    e.respondWith(
+      new Response(`url (="${url}") must start with ${SERVICE_WORKER_SCOPE}`, {
+        status: 404,
+      })
+    );
     return;
   }
   const [, , id, func, target, milliseconds] = pathname.slice(i).split("/");
@@ -43,11 +46,17 @@ self.addEventListener("fetch", (e) => {
     receive(e, id, target, parseInt(milliseconds ?? "0"));
     return;
   } else {
-    e.respondWith(new Response("invalid URL", { status: 404 }));
+    e.respondWith(
+      new Response(`func(="${func}") must be "send" or "receive"`, {
+        status: 404,
+      })
+    );
     return;
   }
-});
+}
 
+//const state = {[id:string] : {signal:number; stdin:string}} = {};
+const state = {};
 function send(e, id, target) {
   console.log(state);
   if (state[id] == null) {
@@ -59,7 +68,11 @@ function send(e, id, target) {
   } else if (target == "stdin") {
     state[id].stdin += body;
   } else {
-    e.respondWith(new Response("invalid URL", { status: 404 }));
+    e.respondWith(
+      new Response(`target(="${target}") must be "signal" or "stdin"`, {
+        status: 404,
+      })
+    );
     return;
   }
   e.respondWith(new Response("OK", { status: 200 }));
@@ -75,7 +88,7 @@ async function receive(
   target /*: "stdin|signal", */,
   milliseconds /* : number */
 ) {
-  const cur = state[id]?.[target];
+  let cur = state[id]?.[target];
   if (target == "signal") {
     e.respondWith(new Response(cur ?? "0", { status: 200 }));
     return;
@@ -93,6 +106,12 @@ async function receive(
     }
     e.respondWith(new Response(cur ?? "", { status: 200 }));
   } else {
-    e.respondWith(new Response("invalid URL", { status: 404 }));
+    e.respondWith(
+      new Response(`target(="${target}") must be "signal" or "stdin"`, {
+        status: 404,
+      })
+    );
   }
 }
+
+self.addEventListener("fetch", handleFetch);

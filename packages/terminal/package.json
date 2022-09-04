@@ -16,6 +16,7 @@
     "build": "webpack",
     "watch": "webpack --watch",
     "serve": "webpack serve",
+    "http": "http-server dist",
     "tsc": "npx tsc -w"
   },
   "repository": {
@@ -51,6 +52,10 @@
     "webpack": "^5.73.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3",
+    "workbox-webpack-plugin": "^6.5.4",
     "xterm": "^4.19.0"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
   }
 }
