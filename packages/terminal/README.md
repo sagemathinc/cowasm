@@ -93,3 +93,7 @@ SW=true npm run serve
 ```
 
 Note that the service worker approach causes a page refresh the very first time the page is loaded, so that the active service worker takes over proxying certain requests.
+
+### Firefox and Service Workers
+
+Unlike Safari and Chrome, Firefox doesn't allow service workers over http without setting `dom.serviceWorkers.testing.enabled,` so set that to true in `about:config` to test locally.

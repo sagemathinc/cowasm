@@ -8,10 +8,12 @@ const SIGNAL_CHECK_MS = 500;
 export default class IOHandler implements IOHandlerClass {
   private id: string;
   private lastSignalCheck: number = 0;
+  private serviceWorkerBroken: Function;
 
-  constructor(opts) {
+  constructor(opts, serviceWorkerBroken: Function) {
     log(opts);
     this.id = opts.id;
+    this.serviceWorkerBroken = serviceWorkerBroken;
     if (this.id == null) {
       throw Error(`${this.id} must be a v4 uuid`);
     }
@@ -27,9 +29,11 @@ export default class IOHandler implements IOHandlerClass {
     try {
       request.send(JSON.stringify(body));
     } catch (err) {
+      this.serviceWorkerBroken();
       warnBroken(err);
     }
     if (request.status != 200 && request.status != 304) {
+      this.serviceWorkerBroken();
       warnBroken(`invalid status=${request.status}`);
     }
     return request;

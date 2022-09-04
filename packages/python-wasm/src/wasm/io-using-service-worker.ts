@@ -40,19 +40,22 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
     const url = new URL("./worker/service-worker.js", import.meta.url).href;
     const reg = await navigator.serviceWorker.register(url);
     if (reg.active?.state != "activated") {
+      // Sometimes this works. But sometimes we have to force reload via a special message
+      // in ./import-browser.ts.  In any case, we do this.
       console.warn("Reloading page to activate service worker.");
       // no way around this  -- it is part of the spec
-      if (localStorage.swInstall) {
+      if (localStorage["python-wasm-service-worker-broken"]) {
         // use local storage to avoid DOS of server
         setTimeout(() => {
           location.reload();
         }, 3000);
       } else {
-        localStorage.swInstall = true;
+        localStorage["python-wasm-service-worker-broken"] = true;
         location.reload();
       }
     } else {
-      delete localStorage.swInstall;
+      // It probably worked.
+      delete localStorage["python-wasm-service-worker-broken"];
     }
   }
 

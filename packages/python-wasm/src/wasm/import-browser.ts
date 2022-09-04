@@ -13,6 +13,14 @@ class WorkerThread extends EventEmitter {
     this.postMessage = worker.postMessage.bind(worker);
     this.terminate = worker.terminate.bind(worker);
     worker.onmessage = ({ data: message }) => {
+      if (message.event == "service-worker-broken") {
+        document.body.innerHTML =
+          "<div style='margin:15px'>Refreshing page to active service worker.</div>";
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
+        return;
+      }
       this.emit("message", message);
     };
   }

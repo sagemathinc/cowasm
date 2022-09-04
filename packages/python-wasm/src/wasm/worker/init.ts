@@ -33,7 +33,9 @@ export default function initWorker({
     switch (message.event) {
       case "init":
         try {
-          const ioHandler = new IOHandler(message.options);
+          const ioHandler = new IOHandler(message.options, () => {
+            parent.postMessage({ event: "service-worker-broken" });
+          });
 
           const opts: Options = {
             ...message.options,
