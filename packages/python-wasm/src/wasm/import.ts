@@ -5,8 +5,11 @@ import reuseInFlight from "./reuseInFlight";
 import { SendToWasmAbstractBase } from "./worker/send-to-wasm";
 import { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
 export { Options };
+import type { IOProvider } from "./types";
+import { SIGINT } from "./constants";
+import debug from "debug";
 
-const SIGINT = 2;
+const log = debug("wasm-main");
 
 export interface WorkerThread extends EventEmitter {
   postMessage: (message: object) => void;
@@ -16,29 +19,29 @@ export interface WorkerThread extends EventEmitter {
 export class WasmInstanceAbstractBaseClass extends EventEmitter {
   private callId: number = 0;
   private options: Options;
-  private spinLock: Int32Array;
-  private stdinLock: Int32Array;
-  private signalBuf: Int32Array;
-  private sleepTimer: any;
+  private ioProvider: IOProvider;
   result: any;
   exports: any;
-  waitingForStdin: boolean = false;
   wasmSource: string;
 
-  protected log?: Function;
   protected worker?: WorkerThread;
 
   public send: SendToWasmAbstractBase;
   public recv: RecvFromWasmAbstractBase;
 
-  constructor(wasmSource: string, options: Options, log?: Function) {
+  constructor(wasmSource: string, options: Options, IOProviderClass) {
     super();
+    log("constructor", options);
     this.wasmSource = wasmSource;
     this.options = options;
-    this.log = log;
     this.init = reuseInFlight(this.init);
     this.send = new SendToWasmAbstractBase();
     this.recv = new RecvFromWasmAbstractBase();
+    this.ioProvider = new IOProviderClass();
+  }
+
+  signal(sig: number = SIGINT): void {
+    this.ioProvider.signal(sig);
   }
 
   // MUST override in derived class
@@ -47,90 +50,53 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     return null as any; // for typescript
   }
 
-  // MUST override in derived class
-  protected async getStdin(): Promise<Buffer> {
-    abstract("getStdin");
-    return Buffer.from(""); // for typescript
-  }
-
-  // Optionally this could be overwritten, if needed (e.g., for the browser version).
-  write(_data: string | Uint8Array): void {
-    throw Error("write not implemented");
+  writeToStdin(data): void {
+    log("writeToStdin", data);
+    this.ioProvider.writeToStdin(Buffer.from(data));
+    if (data.toString().includes("\u0003")) {
+      this.signal(SIGINT);
+      // This is a hack, but for some reason everything feels better with this included:
+      this.ioProvider.writeToStdin(Buffer.from("\n"));
+    }
   }
 
   private async init() {
     if (this.worker) return;
     this.worker = this.initWorker();
     if (!this.worker) throw Error("init - bug");
-    const spinLockBuffer = new SharedArrayBuffer(4);
-    this.spinLock = new Int32Array(spinLockBuffer);
-    const stdinLockBuffer = new SharedArrayBuffer(4);
-    this.stdinLock = new Int32Array(stdinLockBuffer);
-    const signalBuffer = new SharedArrayBuffer(4);
-    this.signalBuf = new Int32Array(signalBuffer);
-    const stdinBuffer = new SharedArrayBuffer(10000); // TODO: size?!
-    const options = {
-      stdinBuffer,
-      signalBuffer,
-      ...this.options,
-    };
-    this.log?.("options = ", options);
+
+    const options = { ...this.ioProvider.getExtraOptions(), ...this.options };
+    log("options = ", options);
 
     this.worker.postMessage({
       event: "init",
       name: this.wasmSource,
       options,
-      locks: { spinLockBuffer, stdinLockBuffer },
     });
     this.worker.on("exit", () => this.terminate());
-    this.worker.on("message", async (message) => {
+    this.worker.on("message", (message) => {
       if (message == null) return;
-      this.log?.("main thread got message", message);
+      log("main thread got message", message);
       if (message.id != null) {
         // message with id handled elsewhere -- used for getting data back.
         this.emit("id", message);
         return;
       }
       switch (message.event) {
-        case "sleep":
-          Atomics.store(this.spinLock, 0, 1);
-          Atomics.notify(this.spinLock, 0);
-          this.sleepTimer = setTimeout(() => {
-            Atomics.store(this.spinLock, 0, 0);
-            Atomics.notify(this.spinLock, 0);
-          }, message.time);
-          return;
-
-        case "waitForStdin":
-          if (this.waitingForStdin) return;
-          this.waitingForStdin = true;
-          try {
-            Atomics.store(this.stdinLock, 0, -1);
-            Atomics.notify(this.stdinLock, 0);
-
-            this.log?.("waitForStdin");
-            const data = await this.getStdin();
-            this.log?.("got data", JSON.stringify(data));
-
-            data.copy(Buffer.from(stdinBuffer));
-            Atomics.store(this.stdinLock, 0, data.length);
-            Atomics.notify(this.stdinLock, 0);
-          } finally {
-            this.waitingForStdin = false;
-          }
-
-          return;
         case "init":
           this.emit("init", message);
           return;
+
         case "stdout":
           this.emit("stdout", message.data);
           break;
+
         case "stderr":
           this.emit("stderr", message.data);
           break;
       }
     });
+
     await callback((cb) =>
       this.once("init", (message) => {
         cb(message.error);
@@ -169,6 +135,18 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     return await this.waitForResponse(this.callId);
   }
 
+  async waitUntilFsLoaded(): Promise<void> {
+    if (!this.worker) {
+      throw Error(`waitUntilFsLoaded - bug; worker must be defined`);
+    }
+    this.callId += 1;
+    this.worker.postMessage({
+      id: this.callId,
+      event: "waitUntilFsLoaded",
+    });
+    await this.waitForResponse(this.callId);
+  }
+
   private async waitForResponse(id: number): Promise<any> {
     return (
       await callback((cb) => {
@@ -201,29 +179,6 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
         });
       })
     ).result;
-  }
-
-  protected sigint() {
-    if (Atomics.load(this.stdinLock, 0) == -1) {
-      // TODO: blocked on stdin lock -- not sure how to deal with this yet.
-      // Python normally would discard the input buffer and deal
-      // with signals.  For some reason our readline isn't dealing
-      // with signals.  Maybe it has to be made aware somehow.
-      // For now, best we can do is nothing.
-      return;
-    }
-
-    // tell other side about this signal.
-    Atomics.store(this.signalBuf, 0, SIGINT);
-    Atomics.notify(this.signalBuf, 0);
-
-    if (Atomics.load(this.spinLock, 0) == 1) {
-      // Blocked on the sleep timer spin lock.
-      clearTimeout(this.sleepTimer);
-      // manually unblock
-      Atomics.store(this.spinLock, 0, 0);
-      Atomics.notify(this.spinLock, 0);
-    }
   }
 
   // Optionally override in derived class

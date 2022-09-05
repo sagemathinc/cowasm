@@ -114,10 +114,6 @@ int setreuid(uid_t ruid, uid_t euid);
 int setregid(gid_t rgid, gid_t egid);
 int setgid(gid_t gid);
 
-// From packages/zig/dist/lib/libc/musl/include/sys/wait.h and needed for
-// Python.
-typedef enum { P_ALL = 0, P_PID = 1, P_PGID = 2, P_PIDFD = 3 } idtype_t;
-
 #define WNOHANG 1
 #define WUNTRACED 2
 #define WSTOPPED 2
@@ -136,6 +132,21 @@ typedef struct {
   int si_code;
   int si_errno;
 } siginfo_t;
+
+// From packages/zig/dist/lib/libc/musl/include/sys/wait.h and needed for
+// Python.  The #ifndef is because slightly different versions of sys/wait.h
+// get included from zig for zig-fPIC versus normal zig, I think, maybe.
+#include <sys/wait.h>
+#ifndef	_SYS_WAIT_H
+typedef enum { P_ALL = 0, P_PID = 1, P_PGID = 2, P_PIDFD = 3 } idtype_t;
+#define WEXITSTATUS(s) (((s) & 0xff00) >> 8)
+#define WTERMSIG(s) ((s) & 0x7f)
+#define WSTOPSIG(s) WEXITSTATUS(s)
+#define WIFEXITED(s) (!WTERMSIG(s))
+#define WIFSTOPPED(s) ((short)((((s)&0xffff)*0x10001)>>8) > 0x7f00)
+#define WIFSIGNALED(s) (((s)&0xffff)-1U < 0xffu)
+#endif
+
 int waitid(idtype_t idtype, id_t id, siginfo_t* infop, int options);
 pid_t wait(int* status);
 pid_t waitpid(pid_t pid, int* status, int options);
@@ -290,12 +301,7 @@ char* inet_ntoa(struct in_addr in);
 // packages/zig/dist/lib/libc/musl/include/stdlib.h We may need to change them
 // if we invent some notion of fork and subprocesses for our runtime!
 
-#define WEXITSTATUS(s) (((s)&0xff00) >> 8)
-#define WTERMSIG(s) ((s)&0x7f)
 #define WSTOPSIG(s) WEXITSTATUS(s)
-#define WIFEXITED(s) (!WTERMSIG(s))
-#define WIFSTOPPED(s) ((short)((((s)&0xffff) * 0x10001) >> 8) > 0x7f00)
-#define WIFSIGNALED(s) (((s)&0xffff) - 1U < 0xffu)
 
 // needed by sqlite; copied from packages/zig/dist/lib/libc/musl/include/fcntl.h
 // and packages/zig/dist/lib/libc/musl/arch/aarch64/bits/fcntl.h

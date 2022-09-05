@@ -4,10 +4,12 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
+PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
+
 all: python-wasm webpack terminal website
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi sqlite bzip2
+packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl
 	cd packages/cpython && make all
 .PHONY: cpython
 
@@ -47,14 +49,15 @@ node:
 .PHONY: node
 
 openssl: packages/openssl/${BUILT}
-packages/openssl/${BUILT}: zig
+packages/openssl/${BUILT}: zig posix-wasm
 	cd packages/openssl && make all
 .PHONY: openssl
 
-posix-zig: packages/posix-zig/${BUILT}
-packages/posix-zig/${BUILT}: zig node
-	cd packages/posix-zig && make all
-.PHONY: posix-zig
+posix-node: packages/posix-node/${BUILT}
+# note -- I tried doing 'make -j4' for posix-node and sometimes got segfaults on macos (bug in zig).
+packages/posix-node/${BUILT}: zig node
+	cd packages/posix-node && make all
+.PHONY: posix-node
 
 posix-wasm: packages/posix-wasm/${BUILT}
 packages/posix-wasm/${BUILT}: zig
@@ -62,7 +65,7 @@ packages/posix-wasm/${BUILT}: zig
 .PHONY: posix-wasm
 
 python-wasm: packages/python-wasm/${BUILT}
-packages/python-wasm/${BUILT}: node cpython wasi zig posix-wasm dylink posix-zig
+packages/python-wasm/${BUILT}: node cpython wasi-js zig posix-wasm dylink posix-node
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 
@@ -81,10 +84,10 @@ packages/terminal/${BUILT}: node python-wasm
 	cd packages/terminal && make all
 .PHONY: terminal
 
-wasi: packages/wasi/${BUILT}
-packages/wasi/${BUILT}: node
-	cd packages/wasi && make all
-.PHONY: wasi
+wasi-js: packages/wasi-js/${BUILT}
+packages/wasi-js/${BUILT}: node
+	cd packages/wasi-js && make all
+.PHONY: wasi-js
 
 webpack: packages/webpack/${BUILT}
 packages/webpack/${BUILT}: node python-wasm
@@ -110,33 +113,18 @@ packages/bzip2/${BUILT}: zig
 	cd packages/bzip2 && make all
 .PHONY: bzip2
 
+.PHONY: clean
 clean:
-	cd packages/bench && make clean
-	cd packages/bzip2 && make clean
-	cd packages/cpython && make clean
-	cd packages/dylink && make clean
-	cd packages/libedit && make clean
-	cd packages/lzma && make clean
-	cd packages/ncurses && make clean
-	cd packages/node && make clean
-	cd packages/openssl && make clean
-	cd packages/posix-wasm && make clean
-	cd packages/python-wasm && make clean
-	cd packages/sqlite && make clean
-	cd packages/termcap && make clean
-	cd packages/terminal && make clean
-	cd packages/wasi && make clean
-	cd packages/webpack && make clean
-	cd packages/website && make clean
-	cd packages/zig && make clean
-	cd packages/zlib && make clean
+	./bin/make-all clean ${PACKAGE_DIRS}
 
+clean-build:
+	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-cpython test-bench test-dylink test-posix-zig test-python-wasm
+test: test-cpython test-bench test-dylink test-posix-node test-python-wasm
 .PHONY: test
 
-test-cpython:
-	cd packages/cpython
+test-cpython: cpython python-wasm
+	cd packages/cpython && make test
 
 test-bench: python-wasm
 	cd packages/bench && make test
@@ -144,8 +132,8 @@ test-bench: python-wasm
 test-dylink: dylink
 	cd packages/dylink && make test
 
-test-posix-zig: posix-zig
-	cd packages/posix-zig && make test
+test-posix-node: posix-node
+	cd packages/posix-node && make test
 
 test-python-wasm: python-wasm
 	cd packages/python-wasm && make test

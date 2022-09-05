@@ -1,8 +1,8 @@
-CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-PYTHON = ${CWD}/../cpython/dist/wasm
-POSIX = ${CWD}/../posix-wasm/dist/wasm
-LZMA = ${CWD}/../lzma/dist/wasm
+include ../build/Makefile-vars
 
+PYTHON = ${PACKAGES}/cpython/dist/wasm
+POSIX = ${PACKAGES}/posix-wasm/dist/wasm
+LZMA = ${PACKAGES}/lzma/dist/wasm
 
 all: dist/.built
 
@@ -76,6 +76,7 @@ test-native-macos:
 	cd test/malloc && make test-native-macos
 .PHONY: test-native-macos
 
+.PHONY: clean
 clean:
 	rm -rf build dist tsconfig.tsbuildinfo node_modules
 	cd test/wasi && make clean
@@ -83,4 +84,9 @@ clean:
 	cd test/malloc && make clean
 	cd test/libc-archive && make clean
 
-.PHONY: clean
+.PHONY: clean-build
+clean-build:
+	rm -rf build test/*/build
+
+
+

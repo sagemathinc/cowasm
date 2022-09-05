@@ -8,6 +8,7 @@ beforeEach(async () => {
 // FAILING -- disabled for now
 // This really tests integration with python's sig handling infrastructure.
 test("sigint interrupts 'while True: pass' within 250ms", async () => {
+  if (wasm == null) throw Error("wasm must not be null");
   // Ensure it is running.
   await repr("2+3");
   // Launch an infinite loop, where interrupting it won't leave
@@ -21,7 +22,7 @@ test("sigint interrupts 'while True: pass' within 250ms", async () => {
     }
   })();
   // Now send sigint, which should cause the above function to finish soon and set interrupted to true.
-  (wasm as any).sigint();
+  wasm.signal(2);
   // maybe it's really fast?
   await delay(50);
   if (interrupted) {

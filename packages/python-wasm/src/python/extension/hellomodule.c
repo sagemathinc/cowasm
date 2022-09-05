@@ -1,11 +1,13 @@
 #include <Python.h>
+#include <unistd.h>
 
 static PyObject *hello(PyObject *self, PyObject *args) {
   const char *name;
   if (!PyArg_ParseTuple(args, "s", &name)) {
     return NULL;
   }
-  printf("python-wasm: 'hello %s!'\n", name);
+  printf("python-wasm: 'hello %s!', your geteuid=%d\n", name, geteuid());
+  printf("also, &geteuid=%p\n", &geteuid);
   Py_RETURN_NONE;
 }
 

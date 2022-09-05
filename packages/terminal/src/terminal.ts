@@ -9,6 +9,8 @@ export default async function terminal(element: HTMLDivElement) {
   const t = new Date();
   await python.init();
   console.log("python.init done; time = ", new Date().valueOf() - t.valueOf());
+  await python.exec("import readline");
+  console.log('readline = ', await python.repr("readline"));
   const term = new Terminal({ convertEol: true });
   term.open(element);
   // @ts-ignore
@@ -16,7 +18,7 @@ export default async function terminal(element: HTMLDivElement) {
   term.resize(128, 40);
   setTheme(term, "solarized-light");
   term.onData((data) => {
-    python.wasm.write(data);
+    python.wasm.writeToStdin(data);
   });
   python.wasm.on("stdout", (data) => {
     term.write(data);

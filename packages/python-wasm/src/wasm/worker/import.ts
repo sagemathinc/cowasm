@@ -1,6 +1,5 @@
-import WASI from "@wapython/wasi";
-
-import type { FileSystemSpec, WASIConfig, WASIBindings } from "@wapython/wasi";
+import WASI from "wasi-js";
+import type { FileSystemSpec, WASIConfig, WASIBindings } from "wasi-js";
 import reuseInFlight from "../reuseInFlight";
 import WasmInstance from "./instance";
 import importWebAssemblyDlopen, { MBtoPages } from "dylink";
@@ -8,6 +7,9 @@ import initPythonTrampolineCalls from "./trampoline";
 import posix from "../posix";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
+import debug from "debug";
+
+const log = debug("wasm-worker");
 
 export function strlen(charPtr: number, memory: WebAssembly.Memory): number {
   const mem = new Uint8Array(memory.buffer);
@@ -24,13 +26,17 @@ export interface Options {
   time?: boolean;
   // init = initialization function that gets called when module first loaded.
   init?: (wasm: WasmInstance) => void | Promise<void>;
-  spinLock?: (time: number) => void;
+  sleep?: (milliseconds: number) => void;
   stdinBuffer?: SharedArrayBuffer;
   signalBuffer?: SharedArrayBuffer;
-  waitForStdin?: () => Buffer;
+  getStdin?: () => Buffer;
   sendStdout?: (Buffer) => void;
   sendStderr?: (Buffer) => void;
   fs?: FileSystemSpec[]; // only used in node.ts and browser.ts right now.  (TODO: this is due to refactoring)
+  locks?: {
+    spinLockBuffer: SharedArrayBuffer;
+    stdinLockBuffer: SharedArrayBuffer;
+  };
 }
 
 const cache: { [name: string]: any } = {};
@@ -41,7 +47,6 @@ async function doWasmImport({
   source,
   bindings,
   options = {},
-  log,
   importWebAssemblySync,
   importWebAssembly,
   readFileSync,
@@ -50,7 +55,6 @@ async function doWasmImport({
   source: string; // path/url to the source
   bindings: WASIBindings;
   options: Options;
-  log?: (...args) => void;
   importWebAssemblySync: (
     path: string,
     opts: WebAssembly.Imports
@@ -62,7 +66,7 @@ async function doWasmImport({
   readFileSync;
   maxMemoryMB?: number;
 }): Promise<WasmInstance> {
-  log?.("doWasmImport", source);
+  log("doWasmImport", source);
   if (cache[source] != null) {
     return cache[source];
   }
@@ -150,8 +154,8 @@ async function doWasmImport({
     bindings,
     args: process.argv,
     env: options.env,
-    spinLock: options.spinLock,
-    waitForStdin: options.waitForStdin,
+    sleep: options.sleep,
+    getStdin: options.getStdin,
     sendStdout: options.sendStdout,
     sendStderr: options.sendStderr,
   };
@@ -196,7 +200,7 @@ async function doWasmImport({
     importWebAssembly,
     readFileSync,
     importObject: wasmOpts,
-    stub: true,
+    stub: false,
   });
 
   if (wasi != null) {
@@ -221,8 +225,8 @@ async function doWasmImport({
 
   cache[source] = wasm;
 
-  if (options.time) {
-    log?.(`imported ${source} in ${new Date().valueOf() - t}ms`);
+  if (options.time && log.enabled) {
+    log(`imported ${source} in ${new Date().valueOf() - t}ms`);
   }
   wasm.table = table;
   wasm.wasi = wasi;

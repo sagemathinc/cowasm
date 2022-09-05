@@ -3,6 +3,7 @@ import getMetadata from "./metadata";
 import stubProxy from "./stub";
 import debug from "debug";
 const log = debug("dylink");
+const logImport = debug("dylink:import");
 
 const STACK_ALIGN = 16; // copied from emscripten
 
@@ -42,7 +43,7 @@ much memory.
 NOTE: There arguments about what stack size to use here -- it's still 5MB in
 emscripten today, and in zig it is 1MB:
  - https://github.com/emscripten-core/emscripten/pull/10019
- - https://github.com/ziglang/zig/issues/3735
+ - https://github.com/ziglang/zig/issues/3735 <-- this did get fixed upstream!
 */
 
 // Stack size for imported dynamic libraries -- we use 1MB. This is
@@ -70,7 +71,7 @@ interface Input {
     importObject: object
   ) => WebAssembly.Instance;
   readFileSync: (path: string) => any; // todo?
-  stub?: boolean; // if true, automatically generate stub functions.
+  stub?: "warn" | "silent" | false; // if warn, automatically generate stub functions but with a huge warning; if silent, just silently create stubs.
 }
 
 export default async function importWebAssemblyDlopen({
@@ -109,10 +110,10 @@ export default async function importWebAssemblyDlopen({
 
   function functionViaPointer(key: string) {
     if (mainInstance == null) return; // not yet available
-    log("functionViaPointer", key);
     const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
     if (f == null) return;
     const ptr = (f as Function)();
+    log("functionViaPointer", key, ptr);
     if (__indirect_function_table == null) {
       throw Error("__indirect_function_table must be defined");
     }
@@ -154,16 +155,30 @@ export default async function importWebAssemblyDlopen({
   }
 
   function getFunction(name: string, path: string = ""): Function | undefined {
-    const f =
-      importObject?.env?.[name] ??
-      functionViaPointer(name) ??
-      mainInstance.exports[name] ??
-      functionFromOtherLibrary(name);
-    if (f != null) return f;
+    let f = importObject?.env?.[name];
+    if (f != null) {
+      log("getFunction ", name, "from env");
+      return f;
+    }
+    f = functionViaPointer(name);
+    if (f != null) {
+      log("getFunction ", name, "from function pointer");
+      return f;
+    }
+    f = mainInstance.exports[name];
+    if (f != null) {
+      log("getFunction ", name, "from mainInstance exports");
+      return f;
+    }
+    f = functionFromOtherLibrary(name);
+    if (f != null) {
+      log("getFunction ", name, "from other library");
+      return f;
+    }
     if (path) {
       debug("stub")(name, "undefined importing", path);
     }
-    return importObjectWithStub.env[name];
+    return importObjectWithPossibleStub.env[name];
   }
 
   function dlopenEnvHandler(path: string) {
@@ -223,14 +238,55 @@ export default async function importWebAssemblyDlopen({
     }
     return rtn;
   }
-  const funcMap = {};
+  const funcMap: { [key: string]: number } = {};
   function GOTFuncHandler(GOT, key: string) {
     if (key in GOT) {
       return Reflect.get(GOT, key);
     }
     let rtn = GOT[key];
     if (!rtn) {
-      log("GOTFuncHandler ", key, "-->", nextTablePos);
+      // Dynamic module needs a *pointer* to the function with name "key".
+      // There are several possibilities:
+      //
+      // 1. This function is already in a our global function table, from
+      // the main module or another dynamic link library defining it. An
+      // example is the function strcmp from libc, which is often used as a pointer
+      // with qsort.  In that case, we know the pointer and immediately
+      // set the value of the function pointer to that value -- it's important
+      // to use the *same* pointer in both the main module and the dynamic library,
+      // rather than making another one just for the dynamic library (which would
+      // waste space, and completely breaks functions like qsort that take a
+      // function pointer).
+      //
+      // 2. Another likely possibility is that this is a function that will get defined
+      // as a side effect of the dynamic link module being loaded.  We don't know
+      // what address that function will get, so in that case we create an entry
+      // in funcMap, and later below we update the pointer created here.
+      //
+      // 3. A third possibility is that the requested function isn't in the
+      // function pointer table but it's made available via the Javascript
+      // environment.  As far as I know, there is no way to make such a Javascript
+      // function available as a function pointer aside from creating a new compiled
+      // function in web assembly that calls that Javascript function, so this is
+      // a fatal error, and we have to modify libc.ts to make such a wrapper.  This
+      // happened with geteuid at one point, which comes from node.js.
+      //
+      // 4. The function might be defined in another dynamic library that hasn't
+      // been loaded yet.  We have NOT addressed this problem yet, and this must
+      // also be a fatal error.
+      //
+      let value;
+      const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
+      if (f == null) {
+        // new function
+        value = nextTablePos;
+        funcMap[key] = value; // have to do further work below to add this to table.
+        nextTablePos += 1;
+      } else {
+        // existing function perhaps from libc, e.g., "strcmp".
+        value = (f as Function)();
+      }
+      log("GOTFuncHandler ", key, "-->", value);
       // place in the table -- we make a note of where to put it,
       // and actually place it later below after the import is done.
       const ptr = new WebAssembly.Global(
@@ -238,10 +294,9 @@ export default async function importWebAssemblyDlopen({
           value: "i32",
           mutable: true,
         },
-        nextTablePos
+        value
       );
-      rtn = GOT[key] = funcMap[key] = ptr;
-      nextTablePos += 1;
+      rtn = GOT[key] = ptr;
     }
     return rtn;
   }
@@ -331,8 +386,26 @@ export default async function importWebAssemblyDlopen({
     // will put entries from the current position up to metadata.tableSize
     // positions forward.
     nextTablePos += metadata.tableSize ?? 0;
+    // Ensure there is space in the table for the functions
+    // we are about to import
+    if (__indirect_function_table == null) {
+      throw Error("__indirect_function_table must not be null");
+    }
+    if (__indirect_function_table.length <= nextTablePos + 50) {
+      __indirect_function_table.grow(
+        50 + nextTablePos - __indirect_function_table.length
+      );
+    }
 
+    let t0 = 0;
+    if (logImport.enabled) {
+      t0 = new Date().valueOf();
+      logImport("importing ", path);
+    }
     const instance = importWebAssemblySync(path, libImportObject);
+    if (logImport.enabled) {
+      logImport("imported ", path, ", time =", new Date().valueOf() - t0, "ms");
+    }
 
     //log("got exports=", instance.exports);
     if (__indirect_function_table == null) {
@@ -351,11 +424,20 @@ export default async function importWebAssemblyDlopen({
       symToPtr[name] = nextTablePos;
       nextTablePos += 1;
     }
+
+    // Set all functions in the function table that couldn't
+    // be resolved to pointers when creating the webassembly module.
     for (const symName in funcMap) {
       const f = instance.exports[symName] ?? mainInstance.exports[symName];
-      if (f == null) continue;
-      //log("table[%s] = %s", funcMap[symName], symName, f);
-      setTable(funcMap[symName].value, f as Function);
+      log("table[%s] = %s", funcMap[symName], symName, f);
+      if (f == null) {
+        // This has to be a fatal error, since the only other option would
+        // be having a pointer to random nonsense or a broke function,
+        // which is definitely going to segfault randomly later when it
+        // gets hit by running code. See comments above in GOTFuncHandler.
+        throw Error(`dlopen -- UNRESOLVED FUNCTION: ${symName}`);
+      }
+      setTable(funcMap[symName], f as Function);
       symToPtr[symName] = funcMap[symName];
       delete funcMap[symName];
     }
@@ -392,7 +474,7 @@ export default async function importWebAssemblyDlopen({
     // Get an available handle by maxing all the int versions of the
     // keys of the handleToLibrary map.
     const handle =
-      Math.max(0, ...Object.keys(handleToLibrary).map(parseInt)) + 1;
+      Math.max(0, ...Object.keys(handleToLibrary).map((n) => parseInt(n))) + 1;
     const library = {
       path,
       handle,
@@ -401,10 +483,6 @@ export default async function importWebAssemblyDlopen({
     };
     pathToLibrary[path] = library;
     handleToLibrary[handle] = library;
-    //     log(
-    //       "after dlopen table looks like:",
-    //       nonzeroPositions(__indirect_function_table)
-    //     );
     return handle;
   };
 
@@ -417,7 +495,7 @@ export default async function importWebAssemblyDlopen({
       throw Error(`dlsym: invalid handle ${handle}`);
     }
     let ptr = lib.symToPtr[symName];
-    log("ptr = ", ptr);
+    log("sym= ", symName, ", ptr = ", ptr);
     if (ptr != null) {
       // symbol is a known function pointer
       return ptr;
@@ -460,16 +538,25 @@ export default async function importWebAssemblyDlopen({
     return 0;
   };
 
-  const importObjectWithStub = stub
+  const importObjectWithPossibleStub = stub
     ? {
         ...importObject,
-        env: stubProxy(importObject.env, functionViaPointer),
+        env: stubProxy(importObject.env, functionViaPointer, stub),
       }
     : importObject;
+
+  let t0 = 0;
+  if (logImport.enabled) {
+    t0 = new Date().valueOf();
+    logImport("importing ", path);
+  }
   const mainInstance =
     importWebAssembly != null
-      ? await importWebAssembly(path, importObjectWithStub)
-      : importWebAssemblySync(path, importObjectWithStub);
+      ? await importWebAssembly(path, importObjectWithPossibleStub)
+      : importWebAssemblySync(path, importObjectWithPossibleStub);
+  if (logImport.enabled) {
+    logImport("imported ", path, ", time =", new Date().valueOf() - t0, "ms");
+  }
 
   if (mainInstance.exports.__wasm_call_ctors != null) {
     // We also **MUST** explicitly call the WASM constructors. This is

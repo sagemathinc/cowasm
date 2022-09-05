@@ -14,9 +14,6 @@ ac_cv_func_getrusage=no
 ac_cv_func_accept=no
 ac_cv_func_accept4=no
 
-# To use editline instead of readline.
-ac_cv_with_editline=true
-
 ## I found some of these in Tools/wasm/config.site-wasm32-wasi -- william
 # Written by Christian Heimes <christian@python.org>
 
@@ -36,7 +33,7 @@ ac_cv_header_sys_resource_h=no
 # undefined symbols / unsupported features
 ac_cv_func_eventfd=no
 
-# But we just implement one ourselves in posix-zig.
+# But we just implement one ourselves in posix-node
 # pipe2 is Linux-only, so confusing to allow to get enabled.
 ac_cv_func_pipe=yes
 ac_cv_func_pipe2=no
@@ -108,7 +105,7 @@ ac_cv_have_lchflags=no
 
 # netdb functionality
 # ac_cv_func_gethostbyname_r is a GNU extension.  We implement
-# ac_cv_func_gethostbyname in our posix-zig package so do have it (and
+# ac_cv_func_gethostbyname in our posix-node package so do have it (and
 # if you disable it, then the cpython build breaks).
 ac_cv_func_gethostbyname_r=no
 ac_cv_func_gethostbyname=yes
@@ -129,7 +126,7 @@ ac_cv_func_gethostbyaddr=yes
 # Modules
 # In configure.ac, for the WASI and emscripten targets, they explicitly disable
 # attempting to build a long list of modules, viewing it as impossible.  Of course,
-# with posix-zig, there are probably NO MODULES that we can build and have fully
+# with posix-node, there are probably NO MODULES that we can build and have fully
 # working via nodejs... and we can have good stubs (at the expense of a slightly
 # bigger binary).
 # NO -- doing this has no effect -- the configure.ac script doesn't respect
@@ -177,5 +174,13 @@ ac_cv_func_sendfile=no
 # Not in WASI?
 ac_cv_func_fchownat=no
 
+# Working through Python test suite
 
+# WASI does have openat, but it doesn't seem to work properly. The problem could
+# be with my wasi implementation.  Pyodide also doesn't support this.  With this on,
+# the test_compile.py test suite fails due to shutil.rmtree failing, so for now
+# we just disable it.  We can debug this later by enabling it, building, and
+# trying to use shutil.rmtree.  TODO: we want to, since other code (not python)
+# could easily try to use this function, and we want to know exactly why it is broken!
+ac_cv_func_openat=no
 

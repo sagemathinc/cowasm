@@ -1,6 +1,6 @@
 import type { WasmInstance } from "../wasm/types";
 import { Options } from "../wasm/import";
-import type { FileSystemSpec } from "@wapython/wasi";
+import type { FileSystemSpec } from "wasi-js";
 
 export let wasm: WasmInstance | undefined = undefined;
 
@@ -46,5 +46,10 @@ export async function _init({
     env,
     fs,
   });
+  // This calls Py_Initialize and gets the Python interpreter initialized:
   await wasm.callWithString("init", process.cwd());
+  // Wait until the standard libary zip filesystem is loaded, if necessary,
+  // since user may want to immediately run arbitrary code right when
+  // this function returns.
+  await wasm.waitUntilFsLoaded();
 }

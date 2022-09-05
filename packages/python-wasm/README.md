@@ -1,6 +1,9 @@
 # python\-wasm: WebAssembly CPython  for Node.js and the browser
 
-[Demo](https://python-wasm.cocalc.com/)
+DEMOS:
+
+- https://python-wasm.cocalc.com (uses Atomics)
+- https://python-wasm.org (uses Service Workers)
 
 See [the main repo](https://github.com/sagemathinc/python-wasm/blob/main/README.md) for more information. 
 

@@ -6,6 +6,9 @@ bin/zig
 bin/node
 bin/npm
 bin/npx
+bin/python-native
+bin/pw
+bin/pw-d
 **/dist
 **/build
 **/node_modules
@@ -18,3 +21,5 @@ bin/npx
 zig-cache
 tsconfig.tsbuildinfo
 .hypothesis
+upstream/*
+scratch/*

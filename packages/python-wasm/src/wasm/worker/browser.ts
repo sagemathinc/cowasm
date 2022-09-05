@@ -2,32 +2,46 @@
 This is the Worker script when importing the wasm module in a web browser.
 */
 
-import { createFileSystem } from "@wapython/wasi";
-import type { FileSystemSpec } from "@wapython/wasi";
-import bindings from "@wapython/wasi/dist/bindings/browser";
+import { createFileSystem } from "wasi-js";
+import type { FileSystemSpec } from "wasi-js";
+import bindings from "wasi-js/dist/bindings/browser";
 import type WasmInstance from "./instance";
 import wasmImport, { Options } from "./import";
 import initWorker from "./init";
 import debug from "debug";
 import { EventEmitter } from "events";
 import posix from "./posix-browser";
+import IOHandlerUsingAtomics from "./io-using-atomics";
+import IOHandlerUsingServiceWorker from "./io-using-service-worker";
+
+const log = debug("wasm:worker");
 
 export default async function wasmImportBrowser(
   wasmUrl: string,
-  options: Options = {},
-  log?: (...args) => void
+  options: Options = {}
 ): Promise<WasmInstance> {
-  log?.("wasmImportBrowser");
+  log("wasmImportBrowser");
   // also fix zip path, if necessary and read in any zip files (so
   // they can be loaded into memfs).
   const fsSpec: FileSystemSpec[] = [];
   for (const X of options.fs ?? []) {
     if (X.type == "zipurl") {
-      const Y = {
-        type: "zip",
-        data: await (await fetch(X.zipurl)).arrayBuffer(),
-        mountpoint: X.mountpoint,
-      } as FileSystemSpec;
+      let Y;
+      if (!X.async) {
+        Y = {
+          type: "zip",
+          data: await (await fetch(X.zipurl)).arrayBuffer(),
+          mountpoint: X.mountpoint,
+        } as FileSystemSpec;
+      } else {
+        // we asynchronously load it irregardless of whatever else is happening...
+        // TODO:
+        Y = {
+          type: "zip-async",
+          getData: async () => await (await fetch(X.zipurl)).arrayBuffer(),
+          mountpoint: X.mountpoint,
+        } as FileSystemSpec;
+      }
       fsSpec.push(Y);
     } else {
       fsSpec.push(X);
@@ -47,7 +61,6 @@ export default async function wasmImportBrowser(
     source: wasmUrl,
     bindings: { ...bindings, fs, posix },
     options,
-    log,
     importWebAssembly,
     importWebAssemblySync,
     readFileSync: (path) => {
@@ -69,8 +82,7 @@ async function importWebAssembly(path: string, options: WebAssembly.Imports) {
 
 function main() {
   // in a worker, so do worker stuff
-
-  const log = debug("worker:browser");
+  log("initializing worker");
 
   class Parent extends EventEmitter {
     public postMessage: (message: any) => void;
@@ -90,7 +102,9 @@ function main() {
     wasmImport: wasmImportBrowser,
     parent,
     captureOutput: true,
-    log,
+    IOHandler: crossOriginIsolated
+      ? IOHandlerUsingAtomics
+      : IOHandlerUsingServiceWorker,
   });
 }
 

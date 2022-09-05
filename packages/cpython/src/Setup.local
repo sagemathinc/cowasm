@@ -2,29 +2,77 @@
 # are only adding things here because they are explicitly removed for the emscripten
 # and WASI targets in configure.ac.  A better approach might be a new target...
 
-# When you add something here, the actual static library that needs to be linked in
+# When you add something here to static, the actual static library that needs to be linked in
 # *MUST* be added to packages/python-wasm/Makefile for the python.wasm target.  That's
 # where the important linking actually happens.
 
 *static*
-
-readline readline.c -ledit  -ltermcap
 
 
 # Uncomment to build curses.  This works.  But the curses .py files aren't in the
 # zip bundle yet.  You can explicitly include those.  However,
 # 'import _curses; _curses.initscr()' fails right now, so there's probably
 # an issue with terminfo, etc., to sort out.  This might be just a matter of
-# adding to packages/python-wasm/Makefile.
+# adding to packages/python-wasm/Makefile.  Also, note that I haven't got
+# ncurses to build -fPIC yet, so this has to be static:
 
 #_curses _cursesmodule.c -lncurses -ltermcap
 #_curses_panel _curses_panel.c   -lncurses -ltermcap
 
 *shared*
 
+_decimal _decimal/_decimal.c
+
+pyexpat pyexpat.c
+
+# OpenSSL bindings
+#  These build but "import ssl, hashlib" crashes.  I think I need to build separate libssl.so and libcrypto.so that
+#  these depend on, then load those first, then this.  Otherwise, we end up with two copies of libcrypto.a, which probably can't work.
+#_ssl _ssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/wasm/include $(abs_srcdir)/../../../openssl/dist/wasm/lib/libssl.a $(abs_srcdir)/../../../openssl/dist/wasm/lib/libcrypto.a
+
+#_hashlib _hashopenssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/wasm/include $(abs_srcdir)/../../../openssl/dist/wasm/lib/libcrypto.a
+
+# text encodings and unicode
+
+# These are *HUGE* and well worth moving out of the core wasm bundle.
+_codecs_cn cjkcodecs/_codecs_cn.c
+_codecs_hk cjkcodecs/_codecs_hk.c
+_codecs_iso2022 cjkcodecs/_codecs_iso2022.c
+_codecs_jp cjkcodecs/_codecs_jp.c
+_codecs_kr cjkcodecs/_codecs_kr.c
+_codecs_tw cjkcodecs/_codecs_tw.c
+
+# This one has one failing test involving os.unlink if we make it shared.
+# We will revisit this, since it might be a sign of a bug in dylink.
+# That said, this module is only 22k, so shouldn't be dynamic.
+#_multibytecodec cjkcodecs/multibytecodec.c
+
+unicodedata unicodedata.c
+
+# _pickle and _datetime together would save a little under 50K zipped,
+# and are not needed at startup, but they cause a break.  When we build
+# either of them shared, for some reason we get issues with
+# _PyRuntime not being defined.  It's not worth it to debug given the
+# small savings, and that cPython doesn't encourage these to be dynamic,
+# and maybe it isn't supported.
+# _datetime _datetimemodule.c
+# _pickle _pickle.c
+
+
+# Only 6kb, so do not need to build shared for size.  However, for some reason
+# I'm having trouble building this static whereas shared works well!? Heh, it works this way.
 _posixsubprocess _posixsubprocess.c
 
+readline readline.c -I$(abs_srcdir)/../../../libedit/dist/wasm/include $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
+
+# Using actual readline doesn't work.  Anyway, it is bigger, more complicated, GPL'd, and code is harder to read.
+#readline readline.c -I$(abs_srcdir)/../../../readline/dist/wasm/include $(abs_srcdir)/../../../readline/dist/wasm/lib/libreadline.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
+
 _bz2 _bz2module.c -I$(abs_srcdir)/../../../bzip2/dist/wasm/include/ $(abs_srcdir)/../../../bzip2/dist/wasm/lib/libbz2.a
+
+zlib  zlibmodule.c -I$(abs_srcdir)/../../../zlib/dist/wasm/include $(abs_srcdir)/../../../zlib/dist/wasm/lib/libz.a
+
+_lzma _lzmamodule.c -I$(abs_srcdir)/../../../lzma/dist/wasm/include/ $(abs_srcdir)/../../../lzma/dist/wasm/lib/liblzma.a
 
 _sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microprotocols.c _sqlite/module.c _sqlite/prepare_protocol.c _sqlite/row.c _sqlite/statement.c  _sqlite/util.c -I$(abs_srcdir)/../../../sqlite/dist/wasm/include/ $(abs_srcdir)/../../../sqlite/dist/wasm/lib/libsqlite3.a
 

@@ -1,3 +1,5 @@
+include ../build/Makefile-vars
+
 # See https://sqlite.org/src/doc/trunk/README.md
 # https://www.sqlite.org/src/tarball/sqlite.tar.gz?r=release
 # NOTE: I've got "The server load is currently too high. Please try again later." for extended periods of
@@ -6,39 +8,31 @@
 #
 # See https://github.com/sqlite/sqlite/tags for versions.
 #
-VERSION = 3.39.2
+VERSION = 3.39.3
 
+URL = https://github.com/sqlite/sqlite/archive/refs/tags/version-${VERSION}.tar.gz
+TARBALL = ${UPSTREAM}/sqlite-${VERSION}.tar.gz
 
-CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-export PATH := ${CWD}/../../bin:${PATH}
+ZLIB = ${PACKAGES}/zlib/dist
+LIBEDIT = ${PACKAGES}/libedit/dist
+POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 
-BUILD = ${CWD}/build
-SRC = ${CWD}/src
-DIST_NATIVE = ${CWD}/dist/native
-DIST_WASM = ${CWD}/dist/wasm
-POSIX_WASM = ${CWD}/../posix-wasm/dist/wasm
-ZLIB = ${CWD}/../zlib/dist
-LIBEDIT = ${CWD}/../libedit/dist
+all: wasm
 
-all:  wasm
+include ../build/Makefile-rules
 
-${BUILD}/source.tar.gz:
-	mkdir -p ${BUILD}
-	cd ${BUILD} && curl -L https://github.com/sqlite/sqlite/archive/refs/tags/version-${VERSION}.tar.gz -o source.tar.gz
-
-${BUILD}/wasm: ${BUILD}/source.tar.gz
-	rm -rf ${BUILD}/wasm
-	mkdir -p ${BUILD}/wasm
-	cd ${BUILD} && tar xf source.tar.gz -C wasm --strip-components=1
-	cp ${SRC}/config.site ${BUILD}/wasm/
-	cp ${POSIX_WASM}/posix-wasm.h ${BUILD}/wasm/
-	cd ${BUILD}/wasm && cat ${CWD}/src/patches/00-syscall.patch | patch -p1
+${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
+	cp ${SRC}/config.site ${BUILD_WASM}
+	cp ${POSIX_WASM}/posix-wasm.h ${BUILD_WASM}
+	cd ${BUILD_WASM} && cat ${SRC}/patches/00-syscall.patch | patch -p1
+	touch ${BUILD_WASM}/.patched
 
 # Notes on flags below.
-#   - ?? MAYBE ?? Without -Oz (optimize for size rather than speed), we get 'Function addresses with offsets not supported' from LLVM during final link.
-#     I put the -Oz flag into CFLAGS upon studying what the emscripten port uses.  This might not be true now.
-${DIST_WASM}/.built: ${BUILD}/wasm
-	cd ${BUILD}/wasm && \
+#   - ?? MAYBE ?? Without -Oz (optimize for size rather than speed), we get 'Function addresses
+#     with offsets not supported' from LLVM during final link.
+#     I put the -Oz flag into CFLAGS upon studying what the emscripten port uses.
+${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+	cd ${BUILD_WASM} && \
 		CC="zig-fPIC cc" \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
@@ -51,14 +45,8 @@ ${DIST_WASM}/.built: ${BUILD}/wasm
 			--disable-largefile \
 			--disable-libtool-lock \
 			--disable-tcl \
-			--disable-shared
-	cd ${BUILD}/wasm && echo '#include "posix-wasm.h"' >> config.h
-	cd ${BUILD}/wasm && make -j8
-	cd ${BUILD}/wasm && make install
+			--disable-shared \
+	&&	echo '#include "posix-wasm.h"' >> config.h \
+	&& 	make -j8 \
+	&&	make install
 	touch ${DIST_WASM}/.built
-
-.PHONY: wasm
-wasm: ${DIST_WASM}/.built
-
-clean:
-	rm -rf build dist

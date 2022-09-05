@@ -6,25 +6,28 @@ in the mode where we use a Worker.
 */
 
 import { readFile } from "fs/promises";
-import { createFileSystem } from "@wapython/wasi";
-import type { FileSystemSpec } from "@wapython/wasi";
-import bindings from "@wapython/wasi/dist/bindings/node";
+import { createFileSystem } from "wasi-js";
+import type { FileSystemSpec } from "wasi-js";
+import bindings from "wasi-js/dist/bindings/node";
 import { dirname, isAbsolute, join } from "path";
 import callsite from "callsite";
 import wasmImport, { Options } from "./import";
 import type { WasmInstance } from "../types";
 import { isMainThread, parentPort } from "worker_threads";
 import initWorker from "./init";
-import debug from "../../debug";
+import debug from "debug";
 import os from "os";
 import child_process from "child_process";
-import posix from "posix-zig";
+import posix from "posix-node";
+import IOHandler from "./io-using-atomics";
+
+const log = debug("wasm:worker");
 
 export default async function wasmImportNode(
   name: string,
-  options: Options,
-  log?: (...args) => void
+  options: Options
 ): Promise<WasmInstance> {
+  log("wasmImportNode");
   const path = dirname(join(callsite()[1]?.getFileName() ?? "", "..", ".."));
   if (!isAbsolute(name)) {
     // it's critical to make this canonical BEFORE calling the debounced function,
@@ -39,21 +42,30 @@ export default async function wasmImportNode(
       if (!isAbsolute(X.zipfile)) {
         X.zipfile = join(path, X.zipfile);
       }
-      try {
-        const Y = {
-          type: "zip",
-          data: await readFile(X.zipfile),
+      let Y;
+      if (X.async) {
+        Y = {
+          type: "zip-async",
+          getData: async () => await readFile(X.zipfile),
           mountpoint: X.mountpoint,
         } as FileSystemSpec;
-        fsSpec.push(Y);
-      } catch (err) {
-        // non-fatal
-        // We *might* use this eventually when building the datafile itself, if we switch to using cpython wasm to build
-        // instead of native cpython.
-        console.warn(
-          `WARNING: Unable to read filesystem datafile '${X.zipfile}' -- falling back to filesystem.`
-        );
+      } else {
+        try {
+          Y = {
+            type: "zip",
+            data: await readFile(X.zipfile),
+            mountpoint: X.mountpoint,
+          } as FileSystemSpec;
+        } catch (err) {
+          // non-fatal
+          // We *might* use this eventually when building the datafile itself, if we switch to using cpython wasm to build
+          // instead of native cpython.
+          console.warn(
+            `WARNING: Unable to read filesystem datafile '${X.zipfile}' -- falling back to filesystem.`
+          );
+        }
       }
+      fsSpec.push(Y);
     } else {
       fsSpec.push(X);
     }
@@ -77,7 +89,6 @@ export default async function wasmImportNode(
     source: name,
     bindings: { ...bindings, fs, os, child_process, posix },
     options,
-    log: log ?? debug("wasm-node"),
     importWebAssembly,
     importWebAssemblySync,
     readFileSync: fs.readFileSync,
@@ -85,10 +96,12 @@ export default async function wasmImportNode(
 }
 
 if (!isMainThread && parentPort != null) {
-  // Running as a worker thread.
+  log("running as a worker thread.");
   initWorker({
     wasmImport: wasmImportNode,
     parent: parentPort,
-    log: debug("wasm-node"),
+    IOHandler,
   });
+} else {
+  log("running in the main thread (for debugging)");
 }

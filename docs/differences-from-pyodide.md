@@ -12,19 +12,23 @@ I chose Zig over emscripten after spending a lot of time learning emscripten and
 
 Pyodide does not fully support building on MacOS: "[there are known issues that you must work around](https://github.com/pyodide/pyodide/blob/main/docs/development/building-from-sources.md)."
 
-## Browser Security Model
+## Critical Usability Functionality: sleep, control\+c interrupts, and synchronous input
 
-Much of the different functionality below depends on using **cross\-site isolation**, which is recently became fully supported in Chrome, Safari, and Firefox, but which puts significant limitations on the kind of webpages that you can put python\-wasm in.  E.g., you can't combine python\-wasm with a page that also does stripe payments or uses [the Sage cell server.](https://sagecell.sagemath.org/)  They thus reflect differing design choices and priorities.
+Pyodide tends to be missing some key functionality: sleep, control\+c interrupts, synchronous input.  For the browser, we implement all of these in python\-wasm in the standard ways using WebWorkers, using **either:**
 
-In particular, by default our plan is to **only support** using python\-wasm in a WebWorker with cross\-site isolation, whereas in Pyodide, using a webwork is considered ["rather error prone and confusing"](https://github.com/pyodide/pyodide/issues/1504).   Basically, if we can solve a problem using that model, then we consider it done.  That said, we will also support running in other modes, including one without a webworker at all, since that can be very useful for low level debugging, and may be important for certain use cases \(e.g., pyscript takes the approach that asyncio \+ python in the same thread is fine\).
+- the _SharedArrayBuffers/Atomic_ lock approach, which is used automatically if your webserver has [cross\-origin isolation](https://web.dev/cross-origin-isolation-guide) enabled, or
 
-## Functionality
+- the approach using _synchronous XMLHttpRequest with a ServiceWorker_. 
+
+No extra configuration of python\-wasm is needed to use either of these.  Python\-wasm uses Atomics if possible; if not, it creates a service worker and uses that.  For node.js we always use atomics, since they are fully supported there.
+
+REFERENCE: See [this Pyodide ticket](https://github.com/pyodide/pyodide/issues/1503) for a discussion of the status of these approaches in Pyodide.
+
+More details are given below.
 
 ### sleeping
 
 \- `import time; time.sleep(10)` works in python\-wasm, without being fake or burning 100% cpu. Pyodide treats this as a no\-op.  This is thus [broken in pyodide.](https://github.com/pyodide/pyodide/issues/2354) 
-
-We implement this using webworkers, SharedArrayBuffers and an Atomic lock.
 
 ### control\+c / interrupt signal
 
@@ -48,7 +52,7 @@ KeyboardInterrupt
 9346028
 ```
 
-This doesn't work with Pyodide, which instead just blocks.  There's a discussion [here about how this is coming to Pyodide](https://github.com/pyodide/pyodide/issues/1504#issuecomment-827556939).   Interrupting running computations doesn't work in [Jupyterlite](https://jupyter.org/try-jupyter/lab/) either; you have to restart the kernel.
+This doesn't "trivially" just work with Pyodide, which instead just blocks.  There's a discussion [here about how this is coming to Pyodide,](https://github.com/pyodide/pyodide/issues/1504#issuecomment-827556939) and [maybe it is already supported in the same way](https://pyodide.org/en/stable/usage/keyboard-interrupts.html).   Interrupting running computations doesn't work in [Jupyterlite](https://jupyter.org/try-jupyter/lab/) yet though; you have to restart the kernel.
 
 ### control\+d \- end of file
 
@@ -95,19 +99,21 @@ Name: William  <--- I typed "William"
 
 Such blocking IO isn't quit supported in Pyodide yet, exactly.  There's a [nice talk here](https://youtu.be/-SggWFS15Do) about how to do synchronous input in Python \+ WebAssembly using Atomics and a SharedArrayBuffer, which I found after figuring this out myself, and also a [big discussion on the Pyodide issue tracker.](https://github.com/pyodide/pyodide/issues/1219) 
 
+For the python\-wasm REPL we have no choice but to support this "synchronous IO" functionality, since the REPL is _literally_ the Python repl with readline \(actually [editline](https://github.com/troglobit/editline) for license and size reasons\), and hence once the REPL starts, everything in the WebWorker is synchronous and under the control of the Python main loop.  This is completely different than [the pyodide repl](https://pyodide.org/en/stable/console.html) which doesn't use readline, and calls a function after composing input in Javascript.
+
 ## Performance
 
 ### Micro Benchmarks
 
-On trivial microbenchmarks, the two are basically the same.  Under the hood, they are both running CPython compiled using clang.
+On some trivial microbenchmarks, python\-wasm and Pyodide are mostly comparable.  Under the hood, they are both running CPython compiled using clang.  That said, many things are twice as fast in python\-wasm, because it uses Python 3.11, whereas Pyodide is still using Python 3.10, and there are major performance leaps in Python 3.11.  Also, in python\-wasm, we build using `--with-pymalloc` which seems to enhance performance. 
 
 ### Stack size
 
-For some reason the recursion limit I get in python\-wasm in nodejs and the browser is 99900 on the benchmark from [https://blog.pyodide.org/posts/function\-pointer\-cast\-handling/](https://blog.pyodide.org/posts/function-pointer-cast-handling/), whereas Pyodide seems to get only around 1000 still on the same browser.  Strange.  Maybe zig results in very different code.
+For some reason the recursion limit I get in python\-wasm in nodejs and the browser is 99900 on the benchmark from [https://blog.pyodide.org/posts/function\-pointer\-cast\-handling/](https://blog.pyodide.org/posts/function-pointer-cast-handling/), whereas Pyodide seems to get only around 1000 still on the same browser.  Strange.  Maybe zig results in very different code.  That said, the python\-wasm stack size is set to 700 by default, since when running the cpython test suite on node.js a couple of tests failed with a larger stack size.
 
 ## Packages
 
 - python\-wasm has the lzma module, but Pyodide doesn't, as [mentioned here](https://github.com/pyodide/pyodide/issues/1735).
-- python\-wasm has the readline module \(with our repl fully supporting it\), but Pyodide doesn't, though they are [working on adding it](https://github.com/pyodide/pyodide/pull/2887).  Note that pyodide actually builds the  GPL licensed GNU readline \(which is viral and hence questionable to use from a license point of view\), whereas we build libedit, which is BSD licensed.  Also, libedit is smaller code, so maybe faster to build and takes less space \(?\).
-- right now python\-wasm doesn't really have any modules, whereas Pyodide has a ton! That will change soon.
+- python\-wasm has the readline module \(with our repl fully supporting it\), but Pyodide doesn't, though they are [working on adding it](https://github.com/pyodide/pyodide/pull/2887).  Note that pyodide actually builds the  GPL licensed GNU readline \(which is viral and hence questionable to use from a license point of view\), whereas we build libedit, which is BSD licensed.  Also, libedit is smaller code, so maybe faster to build and takes less space.
+- right now python\-wasm doesn't really have any interesting data science modules, whereas Pyodide has a ton!  python\-wasm does have its own dynamic linker [dylink](https://www.npmjs.com/package/dylink), which is the key to supporting interesting extension modules.
 

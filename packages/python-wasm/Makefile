@@ -1,30 +1,21 @@
-OPT           = #-O ReleaseFast
-CWD           = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+include ../build/Makefile-vars
 
-PACKAGES      = ${CWD}/..
-export PATH := ${PACKAGES}/../bin:${PACKAGES}/zig/dist:$(PATH)
-
-ZIG_PKG       = --main-pkg-path ${CWD}/src
+OPT     = #-O ReleaseFast
+ZIG_PKG = --main-pkg-path ${SRC}
 
 PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
-PYTHON_WASM   = ${PACKAGES}/cpython/dist/wasm
-POSIX_WASM   = ${PACKAGES}/posix-wasm/dist/wasm
-DYLINK   = ${PACKAGES}/dylink/dist
-LZMA_WASM = ${CWD}/../lzma/dist/wasm
-ZLIB_WASM = ${CWD}/../zlib/dist/wasm
-LIBEDIT = ${CWD}/../libedit/dist
+PYTHON_WASM = ${PACKAGES}/cpython/dist/wasm
+POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
+DYLINK = ${PACKAGES}/dylink/dist
 
-WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks \
-		-lwasi-emulated-signal
-
-WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL -dynamic ${OPT}
+WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
+WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic ${OPT}
 
 TEST = ./test-zig.sh ${OPT}
 
-DIST = ${CWD}/dist
-
 all: ${DIST}/.built bin hello python
 
+include ../build/Makefile-rules
 
 ####################
 ## Python interface
@@ -59,17 +50,17 @@ test-posix:
 #    also gets compiled, without being explicitly listed here.
 #
 
-PYTHON_WASM_SOURCES = src/python/python.zig src/python/interface.zig src/python/signal/signal.c src/wasm/posix/stdlib.c src/python/signal/signal.zig src/python/python-shared.zig ${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a ${PYTHON_WASM}/lib/libpython3.11.a ${PACKAGES}/lzma/dist/wasm/lib/liblzma.a ${PACKAGES}/zlib/dist/wasm/lib/libz.a ${PACKAGES}/libedit/dist/wasm/lib/libedit.a  ${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a  ${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a ${PACKAGES}/cpython/dist/wasm/lib/libexpat.a ${POSIX_WASM}/libposix.a src/wasm/posix.zig $(shell find src/wasm/posix/*.zig -type f)
+PYTHON_WASM_SOURCES = \
+	src/python/signal/signal.c src/wasm/posix/stdlib.c \
+	${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a \
+	${PYTHON_WASM}/lib/libpython3.11.a \
+	${POSIX_WASM}/libposix.a \
+	src/wasm/posix.zig \
+	$(shell find src/wasm/posix/*.zig -type f) $(shell find src/python/*.zig -type f)
 
 PYTHON_WASM_C = ${PYTHON_WASM}/lib/libpython3.11.a \
 		${DYLINK}/wasm-export/libpython.c \
 		${POSIX_WASM}/libposix.a \
-		${PACKAGES}/lzma/dist/wasm/lib/liblzma.a \
-		${PACKAGES}/zlib/dist/wasm/lib/libz.a \
-		${PACKAGES}/libedit/dist/wasm/lib/libedit.a \
-		${PACKAGES}/termcap/dist/wasm/lib/libtermcap.a \
-		${PACKAGES}/cpython/dist/wasm/lib/libmpdec.a \
-		${PACKAGES}/cpython/dist/wasm/lib/libexpat.a \
 		${CWD}/src/python/signal/signal.c \
 		${CWD}/src/wasm/posix/stdlib.c
 
@@ -77,10 +68,12 @@ PYTHON_WASM_INCLUDE = -I. -I${POSIX_WASM} -I${PYTHON_WASM}/include/python3.11
 
 PYTHON_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
 
+# Regarding --stack below, I reported this upstream: https://github.com/ziglang/zig/issues/3735#issuecomment-1223574526
 ${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C}
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
+		-fstage1 \
 		-rdynamic \
 		--stack 1048576 \
 		-target wasm32-wasi \
@@ -92,15 +85,21 @@ ${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C}
 	mkdir -p ${DIST}/python
 	mv src/interface.wasm ${DIST}/python/python.wasm
 
-.PHONEY: python
-python: ${DIST}/python/python.wasm ${DIST}/python/python.zip
+DATAFILES = ${DIST}/python/python-minimal.zip ${DIST}/python/python-readline.zip ${DIST}/python/python-stdlib.zip
 
-${DIST}/python/python.zip: ${PYTHON_WASM}/lib/dist/python311.zip
+${DIST}/python/%.zip: ${PYTHON_WASM}/lib/dist/%.zip
 	# Copy over the modules files
-	cp ${PYTHON_WASM}/lib/dist/python311.zip ${DIST}/python/python.zip
+	cp $< $@
 
-${DIST}/python/libpython.so: ${DYLINK}/wasm/libpython.so
-	cp ${DYLINK}/wasm/libpython.so ${DIST}/python/libpython.so
+
+${DIST}/python/termcap: ${PYTHON_WASM}/lib/dist/termcap
+	# Copy over the termcap file (termcap is also in python.zip, but it's useful to have outside for debug mode).
+	cp ${PYTHON_WASM}/lib/dist/termcap ${DIST}/python/termcap
+
+.PHONY: python
+python: ${DIST}/python/python.wasm ${DATAFILES} ${DIST}/python/termcap
+
+
 
 ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
 	zig-fPIC cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM}
@@ -121,6 +120,7 @@ hello: ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.cpython-311-wasm32-wasi.s
 
 test-proxy:
 	cd src && ${TEST} interface/proxy.zig
+
 
 ## Node modules
 node_modules:
@@ -149,10 +149,3 @@ test: all test-python test-posix
 
 strip: node_modules
 	npm run strip
-
-.PHONY: clean
-clean:
-	rm -rf ${DIST} node_modules tsconfig.tsbuildinfo src/zig-cache src/*/zig-cache
-
-
-

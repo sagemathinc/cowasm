@@ -1,5 +1,6 @@
 // @ts-ignore -- it thinks FileSystem isn't used, even though it is below.  Weird.
-import type { WASMFileSystem, WASI } from "@wapython/wasi";
+import type { WASIFileSystem } from "wasi-js";
+import type WASI from "wasi-js";
 import { EventEmitter } from "events";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
@@ -22,12 +23,12 @@ export default class WasmInstance extends EventEmitter {
 
   // these are sometimes available and useful, e.g., in testing:
   // fs = the virtual filesystem for wasm instance
-  fs?: WASMFileSystem;
+  fs?: WASIFileSystem;
   // the webassembly function table for the main module; the dynamic
   // linker exposes clib functions via basically what you'll see
   // if you look at getFunction below, which makes things vastly faster.
   table?: WebAssembly.Table;
-  // the WASI object from the @wapython/wasi library, which manages things
+  // the WASI object from the wasi-js library, which manages things
   // like the filesystem abstraction and other system calls.
   wasi?: WASI;
   // a collection of posix functions missing from WASI that are best
@@ -40,7 +41,7 @@ export default class WasmInstance extends EventEmitter {
   constructor(
     exports,
     memory: WebAssembly.Memory,
-    fs?: FileSystem,
+    fs?: WASIFileSystem,
     table?: WebAssembly.Table
   ) {
     super();
@@ -67,8 +68,8 @@ export default class WasmInstance extends EventEmitter {
     return await this.callWithString("terminal", argv);
   }
 
-  write(_data: string): void {
-    throw Error("not implemented ");
+  writeToStdin(_data): void {
+    throw Error("not implemented");
   }
 
   callWithString(name: string, str: string | string[], ...args): any {
@@ -149,5 +150,16 @@ export default class WasmInstance extends EventEmitter {
       }
     }
     return this.exports[name];
+  }
+
+  async waitUntilFsLoaded(): Promise<void> {
+    if (this.fs == null) {
+      throw Error("fs must be defined");
+    }
+    return await this.fs.waitUntilLoaded();
+  }
+
+  signal(_sig?: number): void {
+    throw Error("not implemented");
   }
 }

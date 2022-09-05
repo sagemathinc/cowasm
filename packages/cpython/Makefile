@@ -1,3 +1,5 @@
+include ../build/Makefile-vars
+
 #
 # We build a native version of CPython and a WASM version.
 # The native version is ONLY used as part of the cross compilation build process
@@ -15,53 +17,35 @@ PYTHON_PATCH = 0
 PYTHON_BETA = rc1
 PYTHON_VERSION = ${PYTHON_MAJOR}.${PYTHON_MINOR}.${PYTHON_PATCH}
 
-# https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
-CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-BUILD = ${CWD}/build
-DIST = ${CWD}/dist
-DIST_NATIVE = ${DIST}/native
-DIST_WASM = ${DIST}/wasm
-BUILD_WASM = ${BUILD}/wasm
-ZLIB = ${CWD}/../zlib/dist
-LZMA = ${CWD}/../lzma/dist
-LIBEDIT = ${CWD}/../libedit/dist
-SQLITE = ${CWD}/../sqlite/dist
-POSIX_WASM = ${CWD}/../posix-wasm/dist
+URL = https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz
+TARBALL = ${UPSTREAM}/python-${PYTHON_VERSION}.tar.xz
 
-NCURSES = ${CWD}/../ncurses/dist
+ZLIB = ${PACKAGES}/zlib/dist
+LIBEDIT = ${PACKAGES}/libedit/dist
+POSIX_WASM = ${PACKAGES}/posix-wasm/dist
+
+NCURSES = ${PACKAGES}/ncurses/dist
 NCURSES_INCLUDE = -I${NCURSES}/wasm/include/ncurses -I${NCURSES}/wasm/include
 NCURSES_LIB = -L${NCURSES}/wasm/lib
 
-PYTHON_WASM = ${CWD}/../../bin/python-wasm
-PYTHON_WASM_DEBUG = ${CWD}/../../bin/python-wasm-debug
+PYTHON_WASM = ${BIN}/python-wasm
+PYTHON_WASM_DEBUG = ${BIN}/python-wasm-debug
 
 # We only use zlib (not lzma) for native build, since liblzma widely available natively.
 export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
 export LD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
-export PATH := ${CWD}/../../bin:${DIST_NATIVE}/bin:${PATH}
+export PATH := ${DIST_NATIVE}/bin:${PATH}
 
 # Default target
-.PHONY: all
-all: ${DIST}/.built
+all: native ${BIN}/python-native wasm
 
-${DIST}/.built: native wasm wasm-data
+${DIST}/.built: native wasm
 	touch ${DIST}/.built
 
-#############
-# Source code
-#############
-${BUILD}/Python-${PYTHON_VERSION}.tar.xz:
-	mkdir -p ${BUILD}
-	cd ${BUILD} && curl https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz -o Python-${PYTHON_VERSION}.tar.xz
+include ../build/Makefile-rules
 
-.PHONY: source
-source: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 
-#############
-# NATIVE
-# Note that despite the word "patched" below, we apply NO patches to the native build.
-#############
-
+## NATIVE
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
@@ -75,58 +59,60 @@ else
 	ARCH =
 endif
 
-${BUILD}/native/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
-	rm -rf ${BUILD}/native
-	cd ${BUILD} && mkdir native && tar xf Python-${PYTHON_VERSION}.tar.xz -C native --strip-components=1
-	cp src/Setup.local-native ${BUILD}/native/Modules/Setup.local
-	touch ${BUILD}/native/.patched
+${BUILD_NATIVE}/.build:: ${TARBALL}
+	cp src/Setup.local-native ${BUILD_NATIVE}/Modules/Setup.local
 
-${DIST_NATIVE}/.built: ${BUILD}/native/.patched
-	cd ${BUILD}/native && \
-		AR="zig ar" \
-		CXX="zig c++ ${ARCH} " \
-		CC="zig cc ${ARCH} " \
-		CFLAGS="-I${ZLIB}/native/include -I${LIBEDIT}/native/include" \
-		LDFLAGS="-L${ZLIB}/native/lib -L${LIBEDIT}/native/lib" \
-		./configure \
-			--prefix=${DIST_NATIVE} \
-			--with-ensurepip=no \
-			--with-readline=editline \
-	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses zlib).  This is to workaround
-	# a security feature of MacOS (see https://developer.apple.com/forums/thread/9233). For simplicity we set this everywhere.
-	cd ${BUILD}/native && make  -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}"
-	cd ${BUILD}/native && make  -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD}/native:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD}/native:${LD_LIBRARY_PATH}" install
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	cd ${BUILD_NATIVE} \
+		&& 	AR="zig ar" \
+			CXX="zig c++ ${ARCH} " \
+			CC="zig cc ${ARCH} " \
+			CFLAGS="-I${ZLIB}/native/include -I${LIBEDIT}/native/include" \
+			LDFLAGS="-L${ZLIB}/native/lib -L${LIBEDIT}/native/lib" \
+			./configure \
+				--prefix=${DIST_NATIVE} \
+				--with-ensurepip=no \
+				--with-readline=editline
+	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses
+	# zlib).  This is to workaround a security feature of MacOS (see
+	# https://developer.apple.com/forums/thread/9233). For simplicity we set this on all hosts.
+	cd ${BUILD_NATIVE} \
+		&&	make -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD_NATIVE}:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD_NATIVE}:${LD_LIBRARY_PATH}" \
+		&&	make -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD_NATIVE}:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD_NATIVE}:${LD_LIBRARY_PATH}" install
 	touch ${DIST_NATIVE}/.built
 
-native: ${DIST_NATIVE}/.built
+${BIN}/python-native: bin/python-native
+	rm -f ${BIN}/python-native
+	ln -s `pwd`/bin/python-native ${BIN}/python-native
 
 # Use "make run-native" to run native python at the command line.
 .PHONY: run-native
 run-native: ${DIST_NATIVE}/.built
-	${DIST_NATIVE}/bin/python3
+	bin/python-native
 
 
+## WASM
 
-
-#############
-# WASM
-#############
-
-${BUILD_WASM}/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
-	rm -rf ${BUILD_WASM} && mkdir -p ${BUILD_WASM}
-	tar xf ${BUILD}/Python-${PYTHON_VERSION}.tar.xz -C ${BUILD_WASM} --strip-components=1
-	# Also copy the config.site, which answers some questions needed for
-	# cross compiling, without which ./configure won't work.
+${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
+	# Scripts to make it easy to change CPython and rebuild iteratively
 	ln -s ${CWD}/src/rebuild ${BUILD_WASM}/rebuild
+	# Script to make it easy to change shared modules and rebuild them.
 	ln -s ${CWD}/src/rebuild-shared ${BUILD_WASM}/rebuild-shared
+	# Copy the config.site, which answers questions needed for
+	# cross compiling, without which ./configure won't work.
 	cp src/config.site ${BUILD_WASM}
+	# Configure how modules are built
 	cp src/Setup.local ${BUILD_WASM}/Modules/Setup.local
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
 	# explicitly add anything that is really used from there to posix-wasm.h
 	mkdir ${BUILD_WASM}/sys && echo '#include "posix-wasm.h"' >  ${BUILD_WASM}/sys/wait.h
-	cd ${BUILD_WASM} && cat ${CWD}/src/python-patches/01-subprocess.patch | patch -p1
-	cd ${BUILD_WASM}/Lib && cat ${CWD}/src/python-patches/02-pydoc.patch | patch -p0
-	cd ${BUILD_WASM}/Tools/wasm/ && cat ${CWD}/src/python-patches/03-wasm-assets.patch | patch -p0
+	# Apply our patches:
+	cd ${BUILD_WASM} && cat ${CWD}/src/patches/01-subprocess.patch | patch -p1
+	cd ${BUILD_WASM}/Lib && cat ${CWD}/src/patches/02-pydoc.patch | patch -p0
+	cd ${BUILD_WASM}/Tools/wasm/ && cat ${CWD}/src/patches/03-wasm-assets.patch | patch -p0
+	# Apply this patch when we want to take testing to the next level, and fully enable all tests that involve fork and subprocess.
+	# This doesn't work yet, but we do have this as a goal.
+	# cd ${BUILD_WASM} && cat ${CWD}/src/patches/04-enable-fork-and-subprocess-tests.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # The options for the extension modules.  We cannot strip later. The -s option to BLDSHARED
@@ -140,8 +126,8 @@ ${BUILD_WASM}/.patched: ${BUILD}/Python-${PYTHON_VERSION}.tar.xz
 # NOTE: if you're debugging, do
 #    cd build/wasm
 #    ./rebuild-shared
-# to rebuild the shared modules. This always builds them with debugging symbols.
-# Keep this in sync with src/rebuild-shared
+# to rebuild the shared modules, which *always* builds them with debugging symbols enabled.
+# Keep the following in sync with src/rebuild-shared:
 BLDSHARED_DEBUG = zig wasm-ld --experimental-pic -shared
 BLDSHARED_PROD = ${BLDSHARED_DEBUG}  -s --compress-relocations
 # what we will use:
@@ -157,15 +143,20 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	#   bad global libraries, e.g., systemwide (zig musl) sys/wait.h with a local version.
 	# - In Python source they lower the default recursion limit; however, we don't need that since our
 	#   runtime is Chromium, not wasitime and we can handle huge limits (see Include/internal/pycore_ceval.h).
-	# - enable-ipv6, since I put a lot of work into this for posix-zig!
+	# - enable-ipv6, since I put a lot of work into this for posix-node!
 	# --with-pkg-config=no, this is CRITICAL; otherwise, if pkg-config is installed, then python's build system
 	#   will use it and pick up system-wide libraries that are not supported by WASM, which is a huge pain
 	#   that leads to subtle bugs.  One example of this is "uuid". (TODO: bug report: should be disabled when cross compiling?)
+	# - DPy_DEFAULT_RECURSION_LIMIT=700:
+	#       - with -Oz, a limit of 1000 causes test_userdict to fail when testing on
+	#         nodejs linux (it works on mac).  test_userlist is even worse.
+	#       - with -oZ, test_richcmp.py fails with a limit above 750; a limit of max of 720 works on node on linux.
+	#         Changing to -O3 makes no difference.
 	cd ${BUILD_WASM} && \
-		CC="zig cc -Oz -target wasm32-wasi  " \
-		CXX="zig c++ -Oz -target wasm32-wasi " \
+		CC="zig cc -Oz -target wasm32-wasi" \
+		CXX="zig c++ -Oz -target wasm32-wasi" \
 		AR="zig ar" \
-		CFLAGS="-D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD_WASM} -I${ZLIB}/wasm/include  -I${LZMA}/wasm/include -I${LIBEDIT}/wasm/include ${NCURSES_INCLUDE} -I${POSIX_WASM}/wasm -DPy_DEFAULT_RECURSION_LIMIT=1000" \
+		CFLAGS="-D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD_WASM} -I${POSIX_WASM}/wasm -DPy_DEFAULT_RECURSION_LIMIT=700" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		./configure \
@@ -177,28 +168,48 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 			--disable-shared \
 			--with-pkg-config=no \
 			--with-readline=editline \
-			--with-build-python=${DIST_NATIVE}/bin/python3 \
+			--with-build-python=${CWD}/bin/python-native \
 			--with-pymalloc \
 			--without-ensurepip \
 			--host=wasm32-unknown-wasi \
 			--build=`./config.guess`
 	cat src/pyconfig.h >> ${BUILD_WASM}/pyconfig.h
-	# Do not do this build in parallel (-j8), as it WILL fail with "error: unable to build WASI libc CRT file: FileNotFound "
+	# NOTE: I have seen "error: unable to build WASI libc CRT file: FileNotFound" when using "make -j8",
+	# and had it go away when removing parallel build.
 	cd ${BUILD_WASM} && make
-	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld via the zig-fPIC script.
-	# First remove everything that needs to be built -fPIC or build will fail; add more here as we support more modules.
+	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld
+	# via the zig-fPIC script.  First remove everything that possibly needs to be built -fPIC or the
+	# build will not rebuild what it needs to build.  We just delete all .o files, so this takes longer
+	# since many of these are NOT shared.  But it works.
 	cd ${BUILD_WASM}/Modules && find . -name "*.o" -type f -delete
-	# Do the build, but with modified compiler, etc.:
-	cd ${BUILD_WASM} && make CONFIGURE_LDFLAGS_NODIST="" LINKFORSHARED="-shared" \
-							   CC="zig-fPIC cc" CXX="zig-fPIC c++" BLDSHARED="${BLDSHARED}"
+	# Do the build, but with fPIC this time.  We also have to pass some *_LDFLAGS to keep
+	# from using -lm, which isn't needed or supported by "zig wasm-ld" with the options we're using.
+	# Parallel build is fine for this, unlike above.
+	cd ${BUILD_WASM} && \
+		make -j8 \
+		CONFIGURE_LDFLAGS_NODIST="" \
+		LINKFORSHARED="-shared" \
+		MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
+	 	MODULE_PYEXPAT_LDFLAGS="Modules/expat/libexpat.a" \
+		MODULE__DATETIME_LDFLAGS="" \
+		CC="zig-fPIC cc -Oz" \
+		CXX="zig-fPIC c++ -Oz" \
+		BLDSHARED="${BLDSHARED}"
 	# Install as usual.
 	cd ${BUILD_WASM} && make install
-	# For some reason libmpdec.a isn't in libpython311.a, so we make it easy to link in later by copying
-	# it over.  Similar for libexpat.a
-	cp ${BUILD_WASM}/Modules/_decimal/libmpdec/libmpdec.a ${BUILD_WASM}/Modules/expat/libexpat.a ${DIST_WASM}/lib/
 	touch ${DIST_WASM}/.built-cpython
 
-wasm: ${DIST_WASM}/.built-cpython
+.PHONY:
+wasm-cpython: ${DIST_WASM}/.built-cpython
+
+# These are the minimal data files needed to start cPython, which we found via "DEBUG=wasi:open pw-d"!
+MINIMAL_FILES = encodings/__init__.pyc encodings/aliases.pyc encodings/utf_8.pyc
+MINIMAL_READLINE = termcap lib-dynload/readline.cpython-311-wasm32-wasi.so  rlcompleter.pyc inspect.pyc ast.pyc contextlib.pyc collections/__init__.pyc keyword.pyc operator.pyc reprlib.pyc functools.pyc types.pyc enum.pyc dis.pyc opcode.pyc collections/abc.pyc importlib/__init__.pyc warnings.pyc linecache.pyc tokenize.pyc re/__init__.pyc re/_compiler.pyc re/_parser.pyc re/_constants.pyc re/_casefix.pyc copyreg.pyc token.pyc
+
+# Below we create two zip files:
+#
+#  ${DIST_WASM}/lib/dist/python-minimal.zip - (size=10K) -- a tiny file with the minimum needed to start python
+#  ${DIST_WASM}/lib/dist/python-stdlib.zip - (size= ~ 5MB) -- the full standard libary
 
 ${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
 	# Build wasm asset bundle (the pyc files, etc.).
@@ -218,15 +229,26 @@ ${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
 	#      https://reviews.llvm.org/D73820
 	#find ${DIST_WASM}/lib/dist/lib-dynload -type f -name "*.so" | xargs -n1 ${CWD}/node_modules/.bin/wasm-strip
 	# Instead, we use the -s option to wasm-ld above.
-	cd ${DIST_WASM}/lib/dist/; zip -u python311.zip lib-dynload/*
-	touch ${DIST_WASM}/.built
+	# Also mv zip to a more meaningful name.
+	cd ${DIST_WASM}/lib/dist/ \
+		&& zip -u python311.zip lib-dynload/* \
+		&& mv python311.zip python-stdlib.zip
 
-wasm-data: ${DIST_WASM}/.built
+	# Next make the MINIMAL python0.zip, which is all that's needed to start python (e.g., for a jupyter kernel or to back
+	# computations, but not a REPL). We also make a version with the readline so, so you can start a terminal, before
+	# more data needs to be loaded.
+	cd ${DIST_WASM}/lib/dist/ \
+		&& mkdir tmp && cd tmp && unzip ../python-stdlib.zip && cp ../termcap .\
+		&& zip ../python-minimal.zip ${MINIMAL_FILES} \
+		&& zip ../python-readline.zip ${MINIMAL_FILES} ${MINIMAL_READLINE} \
+		&& cd .. && rm -rf tmp
+
+	touch ${DIST_WASM}/.built
 
 # Use "make run-wasm" to run our WASM python at the command line.
 # You can also just run `python-wasm` in the top level bin/ directory.
 .PHONY: run-wasm
-run-wasm: ${DIST_WASM}/.built
+run-wasm: wasm
 	${PYTHON_WASM}
 
 # Run the full official Python test suite on the wasm build.  We can't just do
@@ -238,51 +260,58 @@ RUN_TESTS =  _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 	${DIST_NATIVE}/bin/python3 \
 	./Tools/scripts/run_tests.py
 
-test-all: wasm native
-	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS}
-.PHONY: test-all
+# We use a restricted PATH for running tests.  On Linux I had a lot of trouble
+# with some random binaries in random places causing hangs, and this provides
+# a cleaner environment.
+TEST_PATH=${BIN}:/bin:/usr/bin
 
-TEST=test_long
-test-one: wasm native
-	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
-	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} ${TEST}
-.PHONY: test-one
+test-all: wasm native
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS}
+.PHONY: test-all
 
 
 # I got this list using this on the output:
 #     grep passed out | awk '{print $(NF - 1)}' | tr '\n' ' '
-SUPPORTED_TEST_DESC = "all **supported** cpython test suites -- this is about 80% of the full cpython test suite."
-SUPPORTED_TESTS = test_numeric_tower test_unicode_identifiers test_typechecks test___future__ test_buffer test_getpath test_class test_sundry test_property test_datetime test_ordered_dict test_popen test_string_literals test_struct test_type_cache test_univnewlines test_unary test_gettext test_frame test_nntplib test_bdb test_email test_timeout test_index test_set test_int_literal test_getpass test_codecmaps_tw test_genericpath test_platform test_defaultdict test_iterlen test_cmd_line_script test_float test_exception_hierarchy test_codecmaps_cn test_type_annotations test_dict_version test_pyclbr test_abstract_numbers test_dataclasses test_xdrlib test_getopt test_keyword test_configparser test_mailcap test_cmd test_codecmaps_hk test_utf8_mode test_binascii test_wave test_int test_http_cookiejar test_site test_subclassinit test_bigmem test_gc test_zlib test_cgitb test_dynamic test_dis test_future test_future3 test_list test_picklebuffer test_marshal test_random test_deque test_osx_env test_cmath test_crypt test_sys test_string test_context test_doctest2 test_ucn test_urlparse test_warnings test_exception_group test_positional_only_arg test_functools test_long test_pep646_syntax test_codeop test_contains test_zipimport test_slice test_codecencodings_cn test_calendar test_syntax test_weakref test_asdl_parser test_fractions test_finalization test_tokenize test_bigaddrspace test_errno test_fnmatch test_codecencodings_hk test_sched test_trace test_codecmaps_jp test_operator test_bytes test_bufio test_iter test_unparse test_array test_sax test_strptime test_multibytecodec test_netrc test_funcattrs test_print test_with test_binop test_pickle test_http_cookies test_mimetypes test_hashlib test_patma test_cppext test_peg_generator test_named_expressions test_builtin test_contextlib test_xml_dom_minicompat test_pow test_codecencodings_kr test_decorators test__osx_support test_unpack test_difflib test_unpack_ex test_eof test_colorsys test_utf8source test_unicodedata test_secrets test_ipaddress test_htmlparser test_memoryview test_textwrap test_cgi test_copyreg test_bool test_weakset test_atexit test_html test_bisect test_code_module test_enumerate test_fileutils test_type_comments test_codeccallbacks test_genericclass test_copy test_codecencodings_jp test_super test_opcodes test_pulldom test_itertools test_file test___all__ test_future5 test_minidom test_codecencodings_tw test__locale test_stringprep test_dictcomps test_unicode test_dict test_codecmaps_kr test_robotparser test_sndhdr test_xxtestfuzz test_structmembers test_strtod test_re test_pprint test_keywordonlyarg test_collections test_types test_range test_imghdr test_ast test_metaclass test_pickletools test_math test_format test_isinstance test_tuple test_statistics test_hmac test_yield_from test_aifc test_uu test_symtable test_fstring test_exception_variations test_except_star test_shlex test_csv test_descrtut test_descr test_userstring test_crashers test_sort test_setcomps test_eintr test_graphlib test_ntpath test_augassign test_frozen test_genericalias test__opcode test_enum test_coroutines test_getargs2 test_memoryio test_extcall test_xml_etree_c test_largefile test_opcache test_compare test_pyexpat test_json test_locale test_strftime test_argparse test_baseexception test_codecencodings_iso2022 test_decimal test_grammar test_dynamicclassattribute test_generator_stop test_complex test_c_locale_coercion test_listcomps test_linecache test_abc test_optparse test_global test_timeit test_sunau test_lltrace test_pkg test_module test_structseq test_threadsignals test_genexps test_charmapcodec test_flufl test_traceback test_audioop test_hash test_quopri test_scope test_reprlib test_dictviews test_audit test_script_helper test_code test_raise test_call test_rlcompleter test_peepholer test_heapq test_future4 test_import test_longexp test_base64
+SUPPORTED_TEST_DESC = "all **supported** cpython test suites -- this is about 88% of the full cpython test suite."
+SUPPORTED_TESTS = test_inspect test_pydoc test_posixpath test_pkgutil test_py_compile test_compileall test_compile test_richcmp test_plistlib test_runpy test_readline test_lzma test_capi test_userlist test_userdict  test_gzip test_exceptions test_numeric_tower test_unicode_identifiers test_typechecks test___future__ test_buffer test_getpath test_class test_sundry test_property test_datetime test_ordered_dict test_popen test_string_literals test_struct test_type_cache test_univnewlines test_unary test_gettext test_frame test_nntplib test_bdb test_email test_timeout test_index test_set test_int_literal test_getpass test_codecmaps_tw test_genericpath test_defaultdict test_iterlen test_cmd_line_script test_float test_exception_hierarchy test_codecmaps_cn test_type_annotations test_dict_version test_pyclbr test_abstract_numbers test_dataclasses test_xdrlib test_getopt test_keyword test_configparser test_mailcap test_cmd test_codecmaps_hk test_utf8_mode test_binascii test_wave test_int test_http_cookiejar test_site test_subclassinit test_bigmem test_gc test_zlib test_cgitb test_dynamic test_dis test_future test_future3 test_list test_picklebuffer test_marshal test_random test_deque test_osx_env test_cmath test_crypt test_sys test_string test_context test_doctest2 test_ucn test_urlparse test_warnings test_exception_group test_positional_only_arg test_functools test_long test_pep646_syntax test_codeop test_contains test_zipimport test_slice test_codecencodings_cn test_calendar test_syntax test_weakref test_asdl_parser test_fractions test_finalization test_tokenize test_bigaddrspace test_errno test_fnmatch test_codecencodings_hk test_sched test_trace test_codecmaps_jp test_operator test_bytes test_bufio test_iter test_unparse test_array test_sax test_strptime test_multibytecodec test_netrc test_funcattrs test_print test_with test_binop test_pickle test_http_cookies test_mimetypes test_hashlib test_patma test_cppext test_peg_generator test_named_expressions test_builtin test_contextlib test_xml_dom_minicompat test_pow test_codecencodings_kr test_decorators test__osx_support test_unpack test_difflib test_unpack_ex test_eof test_colorsys test_utf8source test_unicodedata test_secrets test_ipaddress test_htmlparser test_memoryview test_textwrap test_cgi test_copyreg test_bool test_weakset test_atexit test_html test_bisect test_code_module test_enumerate test_fileutils test_type_comments test_codeccallbacks test_genericclass test_copy test_codecencodings_jp test_super test_opcodes test_pulldom test_itertools test_file test___all__ test_future5 test_minidom test_codecencodings_tw test__locale test_stringprep test_dictcomps test_unicode test_dict test_codecmaps_kr test_robotparser test_sndhdr test_xxtestfuzz test_structmembers test_strtod test_re test_pprint test_keywordonlyarg test_collections test_types test_range test_imghdr test_ast test_metaclass test_pickletools test_math test_format test_isinstance test_tuple test_statistics test_hmac test_yield_from test_aifc test_uu test_symtable test_fstring test_exception_variations test_except_star test_shlex test_csv test_descrtut test_descr test_userstring test_crashers test_sort test_setcomps test_eintr test_graphlib test_ntpath test_augassign test_frozen test_genericalias test__opcode test_enum test_coroutines test_getargs2 test_memoryio test_extcall test_xml_etree_c test_largefile test_opcache test_compare test_pyexpat test_json test_locale test_strftime test_argparse test_baseexception test_codecencodings_iso2022 test_decimal test_grammar test_dynamicclassattribute test_generator_stop test_complex test_c_locale_coercion test_listcomps test_linecache test_abc test_optparse test_global test_timeit test_sunau test_lltrace test_pkg test_module test_structseq test_threadsignals test_genexps test_charmapcodec test_flufl test_traceback test_audioop test_hash test_quopri test_scope test_reprlib test_dictviews test_audit test_script_helper test_code test_raise test_call test_rlcompleter test_peepholer test_heapq test_future4 test_import test_longexp test_base64 test_modulefinder test_ensurepip test_stat test_tomllib test_zoneinfo  test_logging test_source_encoding test_filecmp
 
 test: wasm native
 	echo "Running ${SUPPORTED_TEST_DESC}"
-	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j8 ${SUPPORTED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j4 --timeout=180 ${SUPPORTED_TESTS}
 	echo "Ran ${SUPPORTED_TEST_DESC}"
 .PHONY: test
 
 # One test fails here due to the fact that the PYTHONHOME is different in webworker mode (since the files are in the zip archive).
 test-worker: wasm native
 	echo "Running using webworker -- ${SUPPORTED_TEST_DESC}"
-	cd ${BUILD_WASM} && PYTHONHOME=${DIST_WASM} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} -j8 ${SUPPORTED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} PYTHONHOME=${DIST_WASM} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} -j4 --timeout=180 ${SUPPORTED_TESTS}
 	echo "Ran using webworker -- ${SUPPORTED_TEST_DESC}"
 
-FAILED_TEST_DESC = "all **unsuppported** and known failing cpython test suites -- this is about 20% of the full cpython test suite.  Help fix these, please!"
-FAILED_TESTS = test_bz2 test_capi test_codecs test_compile test_compileall test_cprofile test_dbm test_dbm_dumb test_distutils test_ensurepip test_exceptions test_filecmp test_fileinput test_fileio test_generators test_glob test_gzip test_imp test_importlib test_inspect test_io test_lib2to3 test_logging test_lzma test_modulefinder test_openpty test_os test_pathlib test_pipes test_pkgutil test_plistlib test_posix test_posixpath test_profile test_pstats test_py_compile test_pydoc test_readline test_richcmp test_runpy test_shelve test_shutil test_signal test_source_encoding test_sqlite3 test_stat test_support test_sys_setprofile test_sysconfig test_tabnanny test_tarfile test_tempfile test_time test_tomllib test_tracemalloc test_typing test_unicode_file test_unicode_file_functions test_unittest test_userdict test_userlist test_uuid test_xml_etree test_zipapp test_zipfile test_zoneinfo
+FAILED_TEST_DESC = "All **unsuppported** and known failing cpython test suites: this is about 12% of the full cpython test suite.  We want to fix all of these."
+FAILED_TESTS = test_platform test_uuid test_dbm test_bz2 test_codecs test_cprofile test_dbm_dumb test_distutils   test_fileinput test_fileio test_generators test_glob test_imp test_importlib  test_io test_lib2to3   test_openpty test_os test_pathlib test_pipes  test_posix  test_profile test_pstats      test_shelve test_shutil test_signal  test_sqlite3  test_support test_sys_setprofile test_sysconfig test_tabnanny test_tarfile test_tempfile test_time  test_tracemalloc test_typing test_unicode_file test_unicode_file_functions test_unittest  test_xml_etree test_zipapp test_zipfile
 
 test-failed:  wasm native
 	echo "Running ${FAILED_TEST_DESC}"
-	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} ${FAILED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} --timeout=180 -j4 ${FAILED_TESTS}
 	echo "Ran ${FAILED_TEST_DESC}"
 
-FAILED_TEST_DESC = "all **skipped** cpython test suites.  Extend what cpython wasm can do to include more of these."
+
+TEST=test_long
+test-one:   wasm native
+	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j1 --timeout=60 -v ${TEST}
+.PHONY: test-one
+
+test-one-worker: wasm native
+	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} -j1 --timeout=60 -v ${TEST}
+.PHONY: test-one
+
+
+SKIPPED_TEST_DESC = "all **skipped** cpython test suites.  Extend what cpython wasm can do to include more of these."
 SKIPPED_TESTS = test__xxsubinterpreters test_asyncgen test_asynchat test_asyncio test_asyncore test_check_c_globals test_clinic test_cmd_line test_concurrent_futures test_contextlib_async test_ctypes test_curses test_dbm_gnu test_dbm_ndbm test_devpoll test_doctest test_docxmlrpc test_dtrace test_embed test_epoll test_faulthandler test_fcntl test_file_eintr test_fork1 test_ftplib test_gdb test_grp test_httplib test_httpservers test_idle test_imaplib test_interpreters test_ioctl test_kqueue test_launcher test_mailbox test_mmap test_msilib test_multiprocessing_fork test_multiprocessing_forkserver test_multiprocessing_main_handling test_multiprocessing_spawn test_nis test_ossaudiodev test_pdb test_poll test_poplib test_pty test_pwd test_queue test_regrtest test_repl test_resource test_select test_selectors test_smtpd test_smtplib test_smtpnet test_socket test_socketserver test_spwd test_ssl test_stable_abi_ctypes test_startfile test_subprocess test_sys_settrace test_syslog test_tcl test_telnetlib test_thread test_threadedtempfile test_threading test_threading_local test_tix test_tk test_tools test_ttk_guionly test_ttk_textonly test_turtle test_urllib test_urllib2 test_urllib2_localnet test_urllib2net test_urllib_response test_urllibnet test_venv test_wait3 test_wait4 test_webbrowser test_winconsoleio test_winreg test_winsound test_wsgiref test_xmlrpc test_xmlrpc_net test_xxlimited test_zipfile64 test_zipimport_support
 
 test-skipped:  wasm native
 	echo "Running ${SKIPPED_TEST_DESC}"
-	cd ${BUILD_WASM} && _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} ${SKIPPED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} --timeout=60 ${SKIPPED_TESTS}
 	echo "Ran ${SKIPPED_TEST_DESC}"
-
-# Cleaning up
-
-clean:
-	rm -rf ${BUILD} ${DIST}

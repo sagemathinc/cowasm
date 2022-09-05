@@ -58,19 +58,29 @@ module.exports = {
   },
 };
 
+if (process.env.PORT) {
+  console.log(
+    `PORT=${process.env.PORT}, so serving at that port instead of the default.`
+  );
+  module.exports.devServer.port = parseInt(process.env.PORT);
+}
+if (process.env.SW) {
+  console.log(
+    "SW variable set, so disabling cross-origin isolation to force fallback to a service worker."
+  );
+  module.exports.devServer.headers = {};
+}
+
 // Refactor same code in terminal and webpack packages.
 if (process.env.COCALC_PROJECT_ID && process.env.NODE_ENV != "production") {
-  const port = 8080;
+  const port = module.exports.devServer.port ?? 8080;
   const basePath = `/${process.env.COCALC_PROJECT_ID}/port/${port}/`;
   // Working in a cocalc project, so do a bit more to support the base path under.
   module.exports.output.publicPath = basePath;
-  module.exports.devServer.port = port;
   module.exports.devServer.allowedHosts = "all";
   module.exports.devServer.host = "0.0.0.0";
   module.exports.devServer.client = {
     webSocketURL: `auto://cocalc.com${basePath}ws`,
   };
-  console.log(
-    `https://cocalc.com${basePath}\n`
-  );
+  console.log(`https://cocalc.com${basePath}\n`);
 }

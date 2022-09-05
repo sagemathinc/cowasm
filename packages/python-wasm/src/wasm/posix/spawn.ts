@@ -7,12 +7,232 @@ an error.
 
 import { notImplemented } from "./util";
 
-export default function spawn({}) {
-  const names =
-    "posix_spawn posix_spawn_file_actions_addclose posix_spawn_file_actions_adddup2 posix_spawn_file_actions_addopen posix_spawn_file_actions_destroy posix_spawn_file_actions_init posix_spawnattr_destroy posix_spawnattr_init posix_spawnattr_setflags posix_spawnattr_setpgroup posix_spawnattr_setschedparam posix_spawnattr_setschedpolicy posix_spawnattr_setsigdefault posix_spawnattr_setsigmask posix_spawnp";
-  const spawn: any = {};
-  for (const name of names.split(" ")) {
-    spawn[name] = ()=>notImplemented(name);
+import { getSignalSet, setSignalSet } from "./signal";
+
+export default function spawn({ callFunction, posix, recv, send }) {
+  const fileActions: { [ptr: number]: any[] } = {};
+
+  const attrs: { [ptr: number]: any } = {};
+  function getAttr(ptr: number, expand: boolean = false) {
+    if (attrs[ptr] == null) {
+      return (attrs[ptr] = {});
+    }
+    const attr = attrs[ptr];
+    if (attr != null) {
+      if (expand) {
+        if (attr.sigdefaultPtr != null) {
+          attr.sigdefault = getSignalSet(attr.sigdefaultPtr);
+        }
+        if (attr.sigmaskPtr != null) {
+          attr.sigmask = getSignalSet(attr.sigmaskPtr);
+        }
+      }
+      return attr;
+    } else {
+      throw Error("bug"); // impossible
+    }
   }
-  return spawn;
+
+  return {
+    posix_spawnattr_setschedparam: (
+      attrPtr: number,
+      schedparamPtr: number
+    ): number => {
+      getAttr(attrPtr).schedparam = {
+        sched_priority: callFunction(
+          "get_posix_spawnattr_schedparam_sched_priority",
+          schedparamPtr
+        ),
+      };
+      return 0;
+    },
+
+    posix_spawnattr_getschedparam: (
+      attrPtr: number,
+      schedparamPtr: number
+    ): number => {
+      const sched_priority = getAttr(attrPtr).schedparam ?? 0;
+      callFunction(
+        "set_posix_spawnattr_schedparam_sched_priority",
+        schedparamPtr,
+        sched_priority
+      );
+      return 0;
+    },
+
+    posix_spawnattr_setschedpolicy: (attrPtr: number, schedpolicy: number) => {
+      getAttr(attrPtr).schedpolicy = schedpolicy;
+      return 0;
+    },
+
+    posix_spawnattr_getschedpolicy: (
+      attrPtr: number,
+      schedpolicyPtr: number
+    ) => {
+      send.i32(schedpolicyPtr, getAttr(attrPtr).schedpolicy ?? 0);
+      return 0;
+    },
+
+    posix_spawnattr_init: (attrPtr: number): number => {
+      attrs[attrPtr] = {};
+      return 0;
+    },
+
+    posix_spawnattr_destroy: (attrPtr: number): number => {
+      delete attrs[attrPtr];
+      return 0;
+    },
+
+    posix_spawnattr_setflags: (attrPtr: number, flags: number): number => {
+      getAttr(attrPtr).flags = flags;
+      return 0;
+    },
+
+    posix_spawnattr_getflags: (attrPtr: number, flagsPtr: number): number => {
+      send.i32(flagsPtr, getAttr(attrPtr).flags ?? 0);
+      return 0;
+    },
+
+    posix_spawnattr_setpgroup: (attrPtr: number, pgroup: number): number => {
+      getAttr(attrPtr).pgroup = pgroup;
+      return 0;
+    },
+
+    posix_spawnattr_getpgroup: (attrPtr: number, pgroupPtr: number): number => {
+      send.i32(pgroupPtr, getAttr(attrPtr).pgroup ?? 0);
+      return 0;
+    },
+
+    posix_spawnattr_setsigmask: (
+      attrPtr: number,
+      sigmaskPtr: number
+    ): number => {
+      getAttr(attrPtr).sigmaskPtr = sigmaskPtr;
+      return 0;
+    },
+
+    posix_spawnattr_getsigmask: (
+      attrPtr: number,
+      sigmaskPtr: number
+    ): number => {
+      const cur = getAttr(attrPtr).sigmaskPtr;
+      setSignalSet(sigmaskPtr, getSignalSet(cur));
+      return 0;
+    },
+
+    posix_spawnattr_setsigdefault: (
+      attrPtr: number,
+      sigdefaultPtr: number
+    ): number => {
+      getAttr(attrPtr).sigdefaultPtr = sigdefaultPtr;
+      return 0;
+    },
+
+    posix_spawnattr_getsigdefault: (
+      attrPtr: number,
+      sigdefaultPtr: number
+    ): number => {
+      const cur = getAttr(attrPtr).sigdefaultPtr;
+      setSignalSet(sigdefaultPtr, getSignalSet(cur));
+      return 0;
+    },
+
+    posix_spawn: (
+      pidPtr,
+      pathPtr,
+      fileActionsPtr,
+      attrPtr,
+      argvPtr,
+      envpPtr
+    ): number => {
+      if (posix.posix_spawn == null) {
+        notImplemented("posix_spawn");
+      }
+      const path = recv.string(pathPtr);
+      const argv = recv.arrayOfStrings(argvPtr);
+      const envp = recv.arrayOfStrings(envpPtr);
+      const pid = posix.posix_spawn(
+        path,
+        fileActions[fileActionsPtr],
+        getAttr(attrPtr, true),
+        argv,
+        envp
+      );
+      send.i32(pidPtr, pid);
+      return 0;
+    },
+
+    posix_spawnp: (
+      pidPtr,
+      pathPtr,
+      fileActionsPtr,
+      attrPtr,
+      argvPtr,
+      envpPtr
+    ): number => {
+      if (posix.posix_spawnp == null) {
+        notImplemented("posix_spawnp");
+      }
+      const path = recv.string(pathPtr);
+      const argv = recv.arrayOfStrings(argvPtr);
+      const envp = recv.arrayOfStrings(envpPtr);
+      const pid = posix.posix_spawnp(
+        path,
+        fileActions[fileActionsPtr],
+        getAttr(attrPtr, true),
+        argv,
+        envp
+      );
+      send.i32(pidPtr, pid);
+      return 0;
+    },
+
+    posix_spawn_file_actions_init: (fileActionsPtr: number): number => {
+      fileActions[fileActionsPtr] = [];
+      return 0;
+    },
+
+    posix_spawn_file_actions_destroy: (fileActionsPtr: number): number => {
+      delete fileActions[fileActionsPtr];
+      return 0;
+    },
+
+    posix_spawn_file_actions_addclose: (
+      fileActionsPtr: number,
+      fd: number
+    ): number => {
+      if (fileActions[fileActionsPtr] == null) {
+        fileActions[fileActionsPtr] = [];
+      }
+      fileActions[fileActionsPtr].push(["addclose", fd]);
+      return 0;
+    },
+
+    posix_spawn_file_actions_addopen: (
+      fileActionsPtr: number,
+      fd: number,
+      pathPtr: number,
+      oflag: number,
+      mode: number
+    ): number => {
+      if (fileActions[fileActionsPtr] == null) {
+        fileActions[fileActionsPtr] = [];
+      }
+      const path = recv.string(pathPtr);
+      fileActions[fileActionsPtr].push(["addopen", fd, path, oflag, mode]);
+      return 0;
+    },
+
+    posix_spawn_file_actions_adddup2: (
+      fileActionsPtr: number,
+      fd: number,
+      new_fd: number
+    ): number => {
+      if (fileActions[fileActionsPtr] == null) {
+        fileActions[fileActionsPtr] = [];
+      }
+      fileActions[fileActionsPtr].push(["adddup2", fd, new_fd]);
+      return 0;
+    },
+  };
 }

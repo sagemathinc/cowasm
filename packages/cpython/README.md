@@ -4,7 +4,7 @@
 
 - Pyodide [doesn't fully support using their build from node.js](https://github.com/pyodide/pyodide/issues/14), whereas we do support it here.
 
-- Using zig + clang is faster than using pyodide + emscripten.
+- Using zig as a build system is faster than using pyodide \+ emscripten.
 
 ## Build from source
 
@@ -31,3 +31,4 @@ The test suite runs on the server, "orchestrated" by our native build of cpython
 A major medium-term goal for this project is to get the entire test suite to pass.  
 
 Note that running `make test` at the top level of `python-wasm` does NOT run the large full cpython test suite yet, since there are numerous failures.
+

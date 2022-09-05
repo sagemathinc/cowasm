@@ -1,21 +1,21 @@
 # Terminal Demo
 
+[🔗 Try the Python-Wasm Live Demo](https://python-wasm.cocalc.com/)
+
+This is a demo of using [xterm.js](https://xtermjs.org/) and [webpack](https://webpack.js.org/) with python-wasm.
+
 ## Using [python\-wasm](https://www.npmjs.com/package/python-wasm) with [webpack](https://webpack.js.org/)
 
-You can use `python-wasm` with webpack5.  There are two things
+You can use `python-wasm` with webpack5.  There are **two things**
 you may have to modify in your webpack configuration.
 See [webpack.config.js](./webpack.config.js), in particular:
 
-- The `NodePolyfillPlugin` is required because `python-wasm` uses `memfs`, which requires several polyfilled libraries.
+1. The `NodePolyfillPlugin` is required because `python-wasm` uses `memfs`, which requires several polyfilled libraries.
 
-- The wasm and zip asset/resource rules are needed so python\-wasm
-  can import the python wasm binary and zip filesystem.
+2. The wasm and zip asset/resource rules are needed so python\-wasm
+   can import the python wasm binary and zip filesystem.
 
-- Your webserver must have the following two headers set, so that SharedArrayBuffers are allowed \([GitHub pages does not support this](https://github.com/github-community/community/discussions/13309)\):
-  - `Cross-Origin-Opener-Policy: same-origin`
-  - `Cross-Origin-Embedder-Policy: require-corp`
-
-Thus your `webpack.config.js` has to include this:
+Thus your `webpack.config.js` might include the following:
 
 ```js
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
@@ -31,7 +31,23 @@ module.exports = {
         type: "asset/resource",
       },
     ],
-  },
+  }
+};
+
+```
+
+## Synchronous IO
+
+To use `Atomic` and `SharedArrayBuffer` for synchronous IO, your webserver must have the following two headers set:
+
+- `Cross-Origin-Opener-Policy: same-origin`
+- `Cross-Origin-Embedder-Policy: require-corp`
+
+Your `webpack.config.js` would then include:
+
+```js
+module.exports = {
+  // ...
   devServer: {
     headers: {
       "Cross-Origin-Opener-Policy": "same-origin",
@@ -42,29 +58,56 @@ module.exports = {
 
 ```
 
-<!-- Once you do that, put
+This is _**optional:**_ if you don't set the headers, then a service worker is
+used instead to support synchronous IO. No special setup is needed to use the
+service worker. If you do set these heϨaders, then other things on a complicated
+website may break since it's a highly restrictive security policy, e.g., [GitHub
+pages does not support
+this](https://github.com/github-community/community/discussions/13309).
 
-```js
-const python = require("python-wasm");
-```
+## Run the demo for yourself
 
-or (for Typescript)
-
-```ts
-import python from "python-wasm";
-```
-
-in your code and use the `python` object, as illustrated here
-in [src/index.ts](./src/index.ts). -->
-
-## Trying this demo in your browser
+Clone the repo:
 
 ```sh
 git clone https://github.com/sagemathinc/python-wasm
 cd python-wasm/packages/terminal
-npm ci
+```
+
+Delete these three lines from package.json (which are used
+for development):
+
+```js
+  "workspaces": [
+    "../python-wasm"
+  ],
+```
+
+then install and start the server:
+
+```sh
+npm install
 npm run serve
 ```
 
-Then visit the URL that it outputs, which is probably http://localhost:8080
+Then visit the URL that it outputs, which is probably http://localhost:8080.  You can then use Python.   In addition the following should work:
+
+- control\+c to interrupt running computations
+- `input('foo')` for interactive input
+- `import time; time.sleep(3)` for sleep that doesn't just burn CPU
+
+Do the following to force the fallback to service workers:
+
+```sh
+SW=true npm run serve
+```
+
+Note that the service worker approach causes a page refresh the very first time the page is loaded, so that the active service worker takes over proxying certain requests.
+
+**Supported Platforms:** I've tested the above with node v14, v16 and v18 on Linux, MacOS, and Microsoft Windows.  On Windows, you have to directly edit webpack.config.js to test out service workers.
+
+
+### Firefox and Service Workers
+
+Unlike Safari and Chrome, Firefox doesn't allow service workers over http without setting `dom.serviceWorkers.testing.enabled,` so set that to true in `about:config` to test locally.
 

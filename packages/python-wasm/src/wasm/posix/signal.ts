@@ -19,12 +19,18 @@ for other libraries.
 import constants from "./constants";
 
 const signal_t: { [setPtr: number]: Set<number> } = {};
-function getSignalSet(setPtr: number): Set<number> {
+
+export function getSignalSet(setPtr: number): Set<number> {
   if (signal_t[setPtr] == null) {
     signal_t[setPtr] = new Set();
   }
   return signal_t[setPtr];
 }
+
+export function setSignalSet(setPtr: number, value: Set<number>): void {
+  signal_t[setPtr] = value;
+}
+
 // The global signal mask for this process.
 const signalMask = new Set<number>();
 function setSignalSetToMask(setPtr: number): void {
@@ -42,6 +48,13 @@ export default function signal({ process }) {
       if (process.kill == null) return 0;
       process.kill(pid, signal);
       return 0;
+    },
+
+    // NOTE: this is the single threaded version!
+    // int raise(int sig);
+    // according to man is same as "kill(getpid(), sig);" for single thread.
+    raise: (sig: number): number => {
+      return signal.kill(process.pid ?? 1, sig);
     },
 
     // int killpg(int pgrp, int sig);

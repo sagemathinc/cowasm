@@ -11,7 +11,7 @@ export default function sched({}) {
   const names =
     "sched_get_priority_max sched_get_priority_min sched_getparam sched_getscheduler sched_rr_get_interval sched_setparam sched_setscheduler";
   const sched: any = {};
-  for (const name of names.split(" ")) {
+  for (const name of names.split(/\s+/)) {
     sched[name] = () => notImplemented(name);
   }
   return sched;

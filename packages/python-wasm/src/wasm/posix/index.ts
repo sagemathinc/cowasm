@@ -16,7 +16,7 @@ import stat from "./stat";
 import time from "./time";
 import unistd from "./unistd";
 import wait from "./wait";
-import WASI from "@wapython/wasi";
+import WASI from "wasi-js";
 import { initConstants } from "./constants";
 import SendToWasm from "../worker/send-to-wasm";
 import RecvFromWasm from "../worker/recv-from-wasm";
@@ -26,6 +26,13 @@ import debug from "debug";
 const logNotImplemented = debug("posix:not-implemented");
 const logCall = debug("posix:call");
 const logReturn = debug("posix:return");
+
+// For some reason this code
+//    import os; print(os.popen('ls').read())
+// hangs when run in **linux only** under python-wasm, but not python-wasm-debug,
+// except if I set any random env variable here... and then it doesn't hang.
+// This is weird.
+process.env.__STUPID_HACK__ = "";
 
 interface Context {
   fs: FileSystem;
@@ -54,6 +61,8 @@ interface Context {
   // for which posix doesn't make sense.
   posix: {
     getpgid?: () => number;
+    constants?: { [code: string]: number };
+    // TODO...
   };
   free: (ptr: number) => void;
   callFunction: (name: string, ...args) => number | undefined;
@@ -74,21 +83,53 @@ export default function posix(context: Context) {
     ...spawn(context),
   };
   const Q: any = {};
+
+  let nativeErrnoToSymbol: { [code: number]: string } = {};
+  if (context.posix.constants != null) {
+    for (const symbol in context.posix.constants) {
+      nativeErrnoToSymbol[context.posix.constants[symbol]] = symbol;
+    }
+  }
+  function setErrnoFromNative(nativeErrno: number) {
+    // The error code comes from native posix, so we translate it to WASI first
+    const symbol = nativeErrnoToSymbol[nativeErrno];
+    if (symbol != null) {
+      const wasiErrno = constants[symbol];
+      if (wasiErrno != null) {
+        context.callFunction("setErrno", wasiErrno);
+        return;
+      }
+    }
+    logNotImplemented(
+      "Unable to map nativeErrno (please update code)",
+      nativeErrno
+    );
+  }
+
   for (const name in P) {
     Q[name] = (...args) => {
       try {
         logCall(name, args);
         const ret = P[name](...args);
-        logReturn(ret);
+        logReturn(name, ret);
         return ret;
       } catch (err) {
-        // On error, for now -1 is returned, and errno should get set to some sort of error indicator
-        // TODO: how should we set errno?
-        // @ts-ignore -- this is just temporary while we sort out setting errno...
-        logNotImplemented(err);
-        if (err.name == "NotImplementedError") {
-          // ENOSYS means "Function not implemented (POSIX.1-2001)."
-          context.callFunction("setErrno", constants.ENOSYS);
+        if (err.code != null) {
+          setErrnoFromNative(parseInt(err.code));
+        } else {
+          // err.code not yet set (TODO), so we log and try heuristic.
+          // On error, for now -1 is returned, and errno should get set to some sort of error indicator
+          // TODO: how should we set errno?
+          // @ts-ignore -- this is just temporary while we sort out setting errno...
+          if (err.name == "NotImplementedError") {
+            // ENOSYS means "Function not implemented (POSIX.1-2001)."
+            context.callFunction("setErrno", constants.ENOSYS);
+          } else {
+            logNotImplemented(
+              "Posix library raised exception without error code",
+              err
+            );
+          }
         }
         return err.ret ?? -1;
       }
