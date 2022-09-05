@@ -25,7 +25,7 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
   private id: string = uuidv4();
 
   constructor() {
-    log("IOProviderUsingXMLHttpRequest");
+    log("IOProviderUsingXMLHttpRequest", "id = ", this.id);
     this.initServiceWorker();
   }
 
@@ -38,6 +38,7 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
     }
     // @ts-ignore this import.meta.url issue -- actually only consumed by webpack
     const url = new URL("./worker/service-worker.js", import.meta.url).href;
+    console.log("url = ", url);
     const reg = await navigator.serviceWorker.register(url);
     if (reg.active?.state != "activated") {
       // Sometimes this works. But sometimes we have to force reload via a special message

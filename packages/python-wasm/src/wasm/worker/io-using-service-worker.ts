@@ -44,6 +44,9 @@ export default class IOHandler implements IOHandlerClass {
     const start = new Date().valueOf();
     while (new Date().valueOf() - start <= milliseconds) {
       try {
+        // We don't sleep the entire, because (1) we want to check for signals periodically,
+        // and (2) long synchronous requests CRASH the service worker!  On Safari, it will kill
+        // the worker and ban it.  So do NOT do that.
         this.request("sleep", { ms: Math.min(milliseconds, 500) });
       } catch (err) {
         log("sleep error", err);
@@ -59,11 +62,14 @@ export default class IOHandler implements IOHandlerClass {
   getStdin(): Buffer {
     // Despite blocking, this doesn't block control+c signal because
     // we send "^C" to stdin when getting that signal.
-    const request = this.request("read-stdin", { id: this.id });
+    const request = this.request("read-stdin", { id: this.id, ms: 3000 });
     if (request.status == 200) {
       return Buffer.from(request.responseText ?? "");
     } else {
-      // python will try again soon.
+      // TIMEOUT -- python will try again soon.
+      // NOTE: we try for a few seconds to get output, then fail and let Python call
+      // this again.  It **does not work** to just allow for a very long synchronous
+      // request and long response in the service worker, e.g.,
       return Buffer.from("");
     }
   }
