@@ -7,7 +7,7 @@ include ../build/Makefile-vars
 # Find the latest version at https://ziglang.org/download/
 # This is for pre-release
 
-VERSION = 0.10.0-dev.3629+2ccaa5414
+VERSION = 0.10.0-dev.3880+e2bb92b2e
 
 # WARNING: when 0.10.0-dev.3659 appeared, they massively broke
 # everything with a huge merge as explained here:

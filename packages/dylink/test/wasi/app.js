@@ -1,5 +1,5 @@
-const WASI = require("../../../wasi/dist/").default;
-const bindings = require("../../../wasi/dist/bindings/node").default;
+const WASI = require("../../../wasi-js/dist/").default;
+const bindings = require("../../../wasi-js/dist/bindings/node").default;
 const importWebAssemblyDlopen = require("../../dist").default;
 const { nonzeroPositions } = require("../../dist/util");
 const { readFileSync } = require("fs");
