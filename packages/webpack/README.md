@@ -1,6 +1,6 @@
 # Using [python-wasm](https://www.npmjs.com/package/python-wasm) with [webpack](https://webpack.js.org/)
 
-[🔗 Try the Python-Wasm Live Demo](https://python-wasm.org/)
+[🔗 Try the Python-Wasm Live Demo](https://python-wasm.cocalc.com/)
 
 This is an extremely minimal example. For a more complicated example, see [the terminal](../terminal/README.md).
 

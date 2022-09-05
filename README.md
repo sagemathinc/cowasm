@@ -4,7 +4,7 @@
 
 URL: https://github.com/sagemathinc/python-wasm
 
-DEMO: https://python-wasm.org/
+DEMO: https://python-wasm.cocalc.com/F
 
 [<img src="https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml/badge.svg"  alt="Docker Image CI"  width="172px"  height="20px"  style="object-fit:cover"/>](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml)
 

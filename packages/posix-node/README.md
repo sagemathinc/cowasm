@@ -114,7 +114,7 @@ getaddrinfo: (
 ## Why?
 
 There is an [npm module called posix](https://www.npmjs.com/package/posix), which claims to provide _"The missing POSIX system calls for Node."_, but there are many calls that I want that are missing, at least for
-my application to [python\-wasm](https://python-wasm.org/), since CPython exposes _**all**_ of Posix. Also, the Zig code here is hopefully likely to be easier to maintain and extend. The [posix npm module](https://www.npmjs.com/package/posix) also has a [high severity vulnerability](https://github.com/ohmu/node-posix/issues/66), but hasn't been updated in a while \(see note below\).
+my application to https://python-wasm.cocalc.com/, since CPython exposes _**all**_ of Posix. Also, the Zig code here is hopefully likely to be easier to maintain and extend. The [posix npm module](https://www.npmjs.com/package/posix) also has a [high severity vulnerability](https://github.com/ohmu/node-posix/issues/66), but hasn't been updated in a while \(see note below\).
 
 ## Why Zig?
 

@@ -59,11 +59,12 @@ export default class IOHandler implements IOHandlerClass {
   getStdin(): Buffer {
     // Despite blocking, this doesn't block control+c signal because
     // we send "^C" to stdin when getting that signal.
-    try {
-      const request = this.request("read-stdin", { id: this.id });
+    const request = this.request("read-stdin", { id: this.id });
+    if (request.status == 200) {
       return Buffer.from(request.responseText ?? "");
-    } catch (err) {
-      return Buffer.from(`${err}\n`);
+    } else {
+      // python will try again soon.
+      return Buffer.from("");
     }
   }
 
@@ -89,6 +90,8 @@ function warnBroken(err, milliseconds: number = 3000) {
   // non https non localhost (or even firefox incognito in all cases).
   // If we just silently ignore this, then we'll likely DOS our server, so instead we do a CPU
   // consuming lock for a while, since I don't know what else to do.  This burns CPU, but stops DOS.
+  // OK, upon experimenting, it turns out this sort of thing happens every once in a while.
+  // In some cases, it can happen constantly, e.g., Firefox over http, so we do guard against it.
   console.warn(
     "service worker not working, so burning CPU to avoid DOS'ing the server -- ",
     err
