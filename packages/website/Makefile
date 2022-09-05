@@ -19,9 +19,11 @@ publish:
 github-pages:
 	NODE_ENV="production" npm run build
 	rsync -axvH --delete dist/ ${HOME}/python-wasm.org-github/docs/
-	cd ${HOME}/python-wasm.org-github/docs/ && git checkout CNAME
-	git commit -a -m "update website"
-	#git push
+	cd ${HOME}/python-wasm.org-github/docs/ \
+		&& git checkout CNAME \
+		&& git add . \
+		&& git commit -a -m "update website" \
+		&& git push
 
 clean-build::
 	rm -rf node_modules
