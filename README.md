@@ -4,7 +4,10 @@
 
 URL: https://github.com/sagemathinc/python-wasm
 
-DEMO: https://python-wasm.cocalc.com/F
+DEMOS:
+
+- https://python-wasm.cocalc.com (uses Atomics)
+- https://python-wasm.org (uses Service Workers)
 
 [<img src="https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml/badge.svg"  alt="Docker Image CI"  width="172px"  height="20px"  style="object-fit:cover"/>](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml)
 
@@ -117,13 +120,13 @@ Welcome to Node.js v18.7.0.
 
 ## What's the goal?
 
-Our **primary goal** is to create a WebAssembly build of the core Python and dependent packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\). It should also be relatively easy to _build from source_ on both Linux and MacOS \(x86\_64 and aarch64\) and to easily run the _cpython test suite,_ with a clearly defined supported list of passing tests.  The build system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation.
+Our **primary goal** is to create a WebAssembly build of the core Python and dependent packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\). It should also be relatively easy to _build from source_ on both Linux and MacOS \(x86_64 and aarch64\) and to easily run the _cpython test suite,_ with a clearly defined supported list of passing tests. The build system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation.
 
-This package is focused on _**the cpython core**_, not the entire Python package ecosystem.  That will be the topic of another package later.
+This package is focused on _**the cpython core**_, not the entire Python package ecosystem. That will be the topic of another package later.
 
 ## How does this compare to Pyodide?
 
-This particular package is just the core cpython, not a large Python ecosystem like Pyodide provides.  However, we do plan to have other packages that depend on this one that do provide a wide range of precompiled packages.
+This particular package is just the core cpython, not a large Python ecosystem like Pyodide provides. However, we do plan to have other packages that depend on this one that do provide a wide range of precompiled packages.
 
 Our main longterm application is to make [CoCalc](https://cocalc.com) more efficient. As such, we are building a foundation here on which to support a substantial part of the scientific Python ecosystem and the [SageMath packages](https://www.sagemath.org/) \(a pure math analogue of the scientific Python stack\). I'm the original founder of SageMath, hence this motivation. This will be part of a new GPL'd project that will have this BSD\-licensed project `python-wasm` at its core; some relevant work has been done [here](https://github.com/sagemathinc/jsage).
 
@@ -208,4 +211,3 @@ The quick summary is that in each case pypy is twice as fast as pylang \(basical
 ## Contact
 
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) if you find this interesting and want to help out. **This is an open source 3\-clause BSD licensed project.**
-
