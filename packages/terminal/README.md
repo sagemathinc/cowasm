@@ -1,6 +1,6 @@
 # Terminal Demo
 
-[🔗 Try the Python-Wasm Live Demo](https://python-wasm.cocalc.com/)
+[🔗 Try the Python-Wasm Live Demo](https://python-wasm.org/)
 
 This is a demo of using [xterm.js](https://xtermjs.org/) and [webpack](https://webpack.js.org/) with python-wasm.
 

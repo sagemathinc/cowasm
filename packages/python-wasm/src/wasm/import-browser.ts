@@ -14,11 +14,15 @@ class WorkerThread extends EventEmitter {
     this.terminate = worker.terminate.bind(worker);
     worker.onmessage = ({ data: message }) => {
       if (message.event == "service-worker-broken") {
-        document.body.innerHTML =
-          "<div style='margin:15px'>Refreshing page to active service worker.</div>";
+        // This is triggered by a single issue, and refreshing doesn't make sense.
+        // I'm going to log this for a while since it's maybe interesting.
+        console.log("There might be an issue with the service worker.");
+        /* document.body.innerHTML =
+          "<div style='margin:15px'>Refreshing page to activate service worker.</div>";
         setTimeout(() => {
           location.reload();
         }, 2000);
+        */
         return;
       }
       this.emit("message", message);
