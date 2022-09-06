@@ -46,7 +46,7 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
         if (buf[3] == "c"[0]) { // ["addclose", fd]
             const fd = node.i32FromValue(env, node.getArrayElement(env, fileAction, 1, "fd") catch return null, "fd") catch return null;
             if (spawn.posix_spawn_file_actions_addclose(&file_actions, fd) != 0) {
-                try node.throw(env, "call to posix_spawn_file_actions_addclose failed") catch return null;
+                node.throw(env, "call to posix_spawn_file_actions_addclose failed") catch return null;
             }
         } else if (buf[3] == "o"[0]) { // ["addopen", fd, path, oflag, mode]
             const fd = node.i32FromValue(env, node.getArrayElement(env, fileAction, 1, "fd") catch return null, "fd") catch return null;
@@ -54,16 +54,16 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
             const oflag = node.i32FromValue(env, node.getArrayElement(env, fileAction, 3, "oflag") catch return null, "oflag") catch return null;
             const mode = @intCast(spawn.mode_t, node.u32FromValue(env, node.getArrayElement(env, fileAction, 4, "mode") catch return null, "mode") catch return null);
             if (spawn.posix_spawn_file_actions_addopen(&file_actions, fd, &buf, oflag, mode) != 0) {
-                try node.throw(env, "call to posix_spawn_file_actions_addopen failed") catch return null;
+                node.throw(env, "call to posix_spawn_file_actions_addopen failed") catch return null;
             }
         } else if (buf[3] == "d"[0]) { // ["adddup2", fd, new_fd]
             const fd = node.i32FromValue(env, node.getArrayElement(env, fileAction, 1, "fd") catch return null, "fd") catch return null;
             const new_fd = node.i32FromValue(env, node.getArrayElement(env, fileAction, 2, "new_fd") catch return null, "new_fd") catch return null;
             if (spawn.posix_spawn_file_actions_adddup2(&file_actions, fd, new_fd) != 0) {
-                try node.throw(env, "call to posix_spawn_file_actions_adddup2 failed") catch return null;
+                node.throw(env, "call to posix_spawn_file_actions_adddup2 failed") catch return null;
             }
         } else {
-            try node.throw(env, "invalid fileAction") catch return null;
+            node.throw(env, "invalid fileAction") catch return null;
         }
     }
 
@@ -79,26 +79,26 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
             var schedparam = std.mem.zeroInit(spawn.sched_param, .{});
             schedparam.sched_priority = sched_priority;
             if (spawn.posix_spawnattr_setschedparam(&attr, &schedparam) != 0) {
-                try node.throw(env, "call to posix_spawnattr_setpgroup failed") catch return null;
+                node.throw(env, "call to posix_spawnattr_setpgroup failed") catch return null;
             }
         }
         if (node.hasNamedProperty(env, args[2], "schedpolicy", "property of spawnattr") catch return null) {
             const schedpolicy = node.i32_from_object(env, args[2], "schedpolicy") catch return null;
             if (spawn.posix_spawnattr_setschedpolicy(&attr, schedpolicy) != 0) {
-                try node.throw(env, "call to posix_spawnattr_setschedpolicy failed") catch return null;
+                node.throw(env, "call to posix_spawnattr_setschedpolicy failed") catch return null;
             }
         }
     }
     if (node.hasNamedProperty(env, args[2], "flags", "property of spawnattr") catch return null) {
         const flags = node.i16_from_object(env, args[2], "flags") catch return null;
         if (spawn.posix_spawnattr_setflags(&attr, flags) != 0) {
-            try node.throw(env, "call to posix_spawnattr_setflags failed") catch return null;
+            node.throw(env, "call to posix_spawnattr_setflags failed") catch return null;
         }
     }
     if (node.hasNamedProperty(env, args[2], "pgroup", "property of spawnattr") catch return null) {
         const pgroup = node.i32_from_object(env, args[2], "pgroup") catch return null;
         if (spawn.posix_spawnattr_setpgroup(&attr, pgroup) != 0) {
-            try node.throw(env, "call to posix_spawnattr_setpgroup failed") catch return null;
+            node.throw(env, "call to posix_spawnattr_setpgroup failed") catch return null;
         }
     }
     if (node.hasNamedProperty(env, args[2], "sigmask", "property of spawnattr") catch return null) {
@@ -106,7 +106,7 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
         var sigset: spawn.sigset_t = undefined;
         sigset_t_fromArray(env, sigmask, "sigmask", &sigset) catch return null;
         if (spawn.posix_spawnattr_setsigmask(&attr, &sigset) != 0) {
-            try node.throw(env, "call to posix_spawnattr_setsigmask failed") catch return null;
+            node.throw(env, "call to posix_spawnattr_setsigmask failed") catch return null;
         }
     }
     if (node.hasNamedProperty(env, args[2], "sigdefault", "property of spawnattr") catch return null) {
@@ -114,7 +114,7 @@ fn posix_spawn(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
         var sigset: spawn.sigset_t = undefined;
         sigset_t_fromArray(env, sigdefault, "sigset", &sigset) catch return null;
         if (spawn.posix_spawnattr_setsigdefault(&attr, &sigset) != 0) {
-            try node.throw(env, "call to posix_spawnattr_setsigdefault failed") catch return null;
+            node.throw(env, "call to posix_spawnattr_setsigdefault failed") catch return null;
         }
     }
 

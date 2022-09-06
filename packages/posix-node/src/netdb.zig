@@ -1,9 +1,14 @@
 const c = @import("c.zig");
 const node = @import("node.zig");
-const netdb = @cImport(@cInclude("netdb.h"));
+const netdb = @cImport({
+    @cDefine("struct__OSUnalignedU16", "struct {}");
+    @cDefine("struct__OSUnalignedU32", "struct {}");
+    @cDefine("struct__OSUnalignedU64", "struct {}");
+    @cInclude("netdb.h");
+    @cInclude("arpa/inet.h");
+});
 const std = @import("std");
 const string = @cImport(@cInclude("string.h"));
-const inet = @cImport(@cInclude("arpa/inet.h"));
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "gethostbyname", gethostbyname);
@@ -12,7 +17,6 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "gai_strerror", gai_strerror);
     try node.registerFunction(env, exports, "hstrerror", hstrerror);
 }
-
 
 pub const constants = .{
     .c_import = netdb,
@@ -48,7 +52,7 @@ fn gethostbyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.nap
 //
 // Usage: gethostbyaddr("64.233.187.99") or gethostbyaddr("2001:4860:4860::8888")
 fn gethostbyaddr(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
-    var buf: [40]u8 = undefined;
+    comptime var buf: [40]u8 = std.mem.zeroes([40]u8);
     const argv = node.getArgv(env, info, 1) catch return null;
     node.stringFromValue(env, argv[0], "ip", buf.len, &buf) catch return null;
     var i: usize = 0;
@@ -67,7 +71,7 @@ fn gethostbyaddr(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.nap
 }
 
 fn gethostbyaddr_v4(env: c.napi_env, bufPtr: [*:0]u8) callconv(.C) c.napi_value {
-    var addr = inet.inet_addr(bufPtr);
+    var addr = netdb.inet_addr(bufPtr);
     const hostent: *netdb.hostent = netdb.gethostbyaddr(&addr, @sizeOf(@TypeOf(addr)), netdb.AF_INET) orelse {
         node.throwError(env, "gethostbyaddr system call returned a null pointer");
         return null;
@@ -76,8 +80,8 @@ fn gethostbyaddr_v4(env: c.napi_env, bufPtr: [*:0]u8) callconv(.C) c.napi_value 
 }
 
 fn gethostbyaddr_v6(env: c.napi_env, bufPtr: [*:0]u8) callconv(.C) c.napi_value {
-    var addr: inet.in6_addr = undefined;
-    switch (inet.inet_pton(netdb.AF_INET6, bufPtr, &addr)) {
+    var addr: netdb.in6_addr = undefined;
+    switch (netdb.inet_pton(netdb.AF_INET6, bufPtr, &addr)) {
         0 => {
             node.throwError(env, "gethostbyaddr_v6 -- character string does not represent a valid network address in the specified address family");
             return null;
@@ -126,7 +130,7 @@ fn createHostent(env: c.napi_env, hostent: *netdb.hostent) c.napi_value {
         while (true) : (i -= 1) {
             var ip: c.napi_value = undefined;
             var dst: [40]u8 = undefined;
-            if (inet.inet_ntop(hostent.h_addrtype, hostent.h_addr_list[i], &dst, dst.len) == null) {
+            if (netdb.inet_ntop(hostent.h_addrtype, hostent.h_addr_list[i], &dst, dst.len) == null) {
                 node.throwError(env, "error converting address to string");
                 return null;
             }
@@ -171,9 +175,9 @@ fn createHostent(env: c.napi_env, hostent: *netdb.hostent) c.napi_value {
 
 fn getaddrinfo(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 6) catch return null;
-    var nodeName: [256]u8 = undefined; // domain names are limited to 253 chars
+    comptime var nodeName: [256]u8 = undefined; // domain names are limited to 253 chars
     node.stringFromValue(env, argv[0], "node", nodeName.len, &nodeName) catch return null;
-    var service: [256]u8 = undefined; // these are really short, e.g., "ftp"
+    comptime var service: [256]u8 = undefined; // these are really short, e.g., "ftp"
     node.stringFromValue(env, argv[1], "service", service.len, &service) catch return null;
     const hint_flags = node.i32FromValue(env, argv[2], "hint_flags") catch return null;
     const hint_family = node.i32FromValue(env, argv[3], "hint_family") catch return null;

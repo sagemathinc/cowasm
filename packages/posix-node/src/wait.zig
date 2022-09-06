@@ -2,6 +2,9 @@ const c = @import("c.zig");
 const node = @import("node.zig");
 const std = @import("std");
 const wait = @cImport({
+    @cDefine("struct__OSUnalignedU16", "struct {}");
+    @cDefine("struct__OSUnalignedU32", "struct {}");
+    @cDefine("struct__OSUnalignedU64", "struct {}");
     @cInclude("sys/wait.h");
 });
 
@@ -49,5 +52,3 @@ fn waitpid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     node.setNamedProperty(env, object, "ret", node.create_i32(env, ret, "return value") catch return null, "return value") catch return null;
     return object;
 }
-
-

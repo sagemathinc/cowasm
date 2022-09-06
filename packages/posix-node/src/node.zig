@@ -27,12 +27,12 @@ pub fn registerFunction(
     env: c.napi_env,
     exports: c.napi_value,
     comptime name: [:0]const u8,
-    function: fn (env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value,
+    comptime function: fn (env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value,
 ) RegisterError!void {
     var napi_function: c.napi_value = undefined;
     var status = c.napi_create_function(env, null, 0, function, null, &napi_function);
     if (status != c.napi_ok) return RegisterError.CreateError;
-    status = c.napi_set_named_property(env, exports, name, napi_function);
+    status = c.napi_set_named_property(env, exports, @ptrCast([*c]const u8, name), napi_function);
     if (status != c.napi_ok) return RegisterError.SetError;
 }
 
@@ -90,7 +90,7 @@ pub fn getArgv(env: c.napi_env, info: c.napi_callback_info, comptime n: usize) !
 const NodeError = error{ ExceptionThrown, MemoryError };
 
 pub fn throw(env: c.napi_env, comptime message: [:0]const u8) NodeError {
-    var result = c.napi_throw_error(env, null, message);
+    var result = c.napi_throw_error(env, null, @ptrCast([*c]const u8, message));
     switch (result) {
         c.napi_ok, c.napi_pending_exception => {},
         else => unreachable,
@@ -285,7 +285,7 @@ pub fn u32_from_object(env: c.napi_env, object: c.napi_value, comptime key: [:0]
 
 pub fn i32_from_object(env: c.napi_env, object: c.napi_value, comptime key: [:0]const u8) !i32 {
     var property: c.napi_value = undefined;
-    if (c.napi_get_named_property(env, object, key, &property) != c.napi_ok) {
+    if (c.napi_get_named_property(env, object, @ptrCast([*c]const u8, key), &property) != c.napi_ok) {
         return throw(env, key ++ " must be defined");
     }
 
@@ -518,7 +518,7 @@ pub fn set_named_property_to_u32(
 }
 
 pub fn setNamedProperty(env: c.napi_env, object: c.napi_value, comptime key: [:0]const u8, value: c.napi_value, comptime error_message: [:0]const u8) !void {
-    if (c.napi_set_named_property(env, object, key, value) != c.napi_ok) {
+    if (c.napi_set_named_property(env, object, @ptrCast([*c]const u8, key), value) != c.napi_ok) {
         return throw(env, "error setting " ++ key ++ " " ++ error_message);
     }
 }
@@ -739,7 +739,7 @@ pub fn getStreamFd(env: c.napi_env, comptime name: [:0]const u8) !c_int {
 
 pub fn getNamedProperty(env: c.napi_env, object: c.napi_value, comptime key: [:0]const u8, comptime message: [:0]const u8) !c.napi_value {
     var result: c.napi_value = undefined;
-    if (c.napi_get_named_property(env, object, key, &result) != c.napi_ok) {
+    if (c.napi_get_named_property(env, object, @ptrCast([*c]const u8, key), &result) != c.napi_ok) {
         return throw(env, "getNamedProperty " ++ key ++ " failed -- " ++ message);
     }
     return result;
@@ -747,7 +747,7 @@ pub fn getNamedProperty(env: c.napi_env, object: c.napi_value, comptime key: [:0
 
 pub fn hasNamedProperty(env: c.napi_env, object: c.napi_value, comptime key: [:0]const u8, comptime message: [:0]const u8) !bool {
     var result: bool = undefined;
-    if (c.napi_has_named_property(env, object, key, &result) != c.napi_ok) {
+    if (c.napi_has_named_property(env, object, @ptrCast([*c]const u8, key), &result) != c.napi_ok) {
         return throw(env, "hasOwnProperty " ++ key ++ " failed -- " ++ message);
     }
     return result;

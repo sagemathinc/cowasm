@@ -49,7 +49,7 @@ fn setConstant(env: c.napi_env, object: c.napi_value, key: [:0]const u8, value: 
     if (c.napi_create_int32(env, value, &result) != c.napi_ok) {
         return node.throw(env, "error creating i32 constant");
     }
-    if (c.napi_set_named_property(env, object, key, result) != c.napi_ok) {
+    if (c.napi_set_named_property(env, object, @ptrCast([*c]const u8, key), result) != c.napi_ok) {
         return node.throw(env, "error setting constant");
     }
 }

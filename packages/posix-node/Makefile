@@ -25,7 +25,7 @@ dist/index.js: src/index.ts node_modules
 # Make an "automatic rules pattern".
 dist/%.node: build/headers $(shell find src/*.zig -type f)
 	mkdir -p ${DIST}
-	zig build-lib -fstage1 ${OPTS} --cache-dir ${BUILD}/zig-cache -dynamic -lc -isystem ${BUILD}/headers/include/node ${SRC}/lib.zig -fallow-shlib-undefined -target $* -femit-bin=$@
+	zig build-lib ${OPTS} --cache-dir ${BUILD}/zig-cache -dynamic -lc -isystem ${BUILD}/headers/include/node ${SRC}/lib.zig -fallow-shlib-undefined -target $* -femit-bin=$@
 
 dist/aarch64-macos.node:
 dist/x86_64-macos.node:
