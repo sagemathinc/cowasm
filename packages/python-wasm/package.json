@@ -45,7 +45,7 @@
     "date-format": "^4.0.13",
     "debug": "^4.3.4",
     "dylink": "^0.7.0",
-    "posix-node": "^0.6.3",
+    "posix-node": "^0.7.0",
     "uuid": "^8.3.2",
     "wasi-js": "^1.4.0"
   },

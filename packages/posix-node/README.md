@@ -2,6 +2,8 @@
 
 `posiz-zig` is a Node.js native module written using Zig that provides access to Posix functions not in node that are needed to fully support WebAssembly modules. It includes precompiled binaries for `[x86_64/aarch64]-[macos/linux]`, and falls back to empty functionality on all other platforms.  In particular, this doesn't support any functionality on Windows yet.  On Windows, the import provides an empty collection of functions.
 
+This builds using the new _**self\-hosted stage2**_ zig compiler.
+
 Install it:
 
 ```
@@ -19,7 +21,7 @@ See [src/index.ts](src/index.ts) for what is available and what the Typescript t
 
 ## Supported Functions
 
-See [index.ts](./src/index.ts), which includes these functions:
+See [index.ts](./src/index.ts), which includes these functions.  Check that file, since there might be more not listed here.
 
 ```ts
 getpid: () => number;
