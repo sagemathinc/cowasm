@@ -6,7 +6,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
-all: python-wasm webpack terminal website
+all: python-wasm webpack terminal website python-packages
 
 cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl
@@ -123,12 +123,23 @@ packages/bzip2/${BUILT}: zig
 	cd packages/bzip2 && make all
 .PHONY: bzip2
 
+
+python-packages: py-mpmath py-sympy
+.PHONY: python-packages
+
 py-mpmath: packages/py-mpmath/${BUILT} python-wasm
 packages/py-mpmath/${BUILT}: zig
 	cd packages/py-mpmath && make all
 .PHONY: py-mpmath
-test-py-mpmath: py-mpmath python-wasm
+test-py-mpmath: py-mpmath
 	cd packages/py-mpmath && make test
+
+py-sympy: packages/py-sympy/${BUILT} python-wasm mpmath
+packages/py-sympy/${BUILT}: zig
+	cd packages/py-sympy && make all
+.PHONY: py-sympy
+test-py-sympy: py-sympy
+	cd packages/py-sympy && make test
 
 
 .PHONY: clean
@@ -143,4 +154,10 @@ test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-
 
 test-bench: python-wasm
 	cd packages/bench && make test
+
+# Run tests suites of Python libraries that we support.  These can be VERY long, which is why
+# we can't just run them as part of "make test" above.
+test-py: test-py-mpmath test-py-sympy
+.PHONY: test
+
 

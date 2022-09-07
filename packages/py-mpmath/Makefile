@@ -12,16 +12,21 @@ include ../build/Makefile-rules
 
 # We workaround a bug where the file permissions are incorrect below.
 # We'll fix this. It's a bug somehow in the posix compat layer for python-wasm.
-${DIST_WASM}/.built: ${BUILD_WASM}/.build
+${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&& python-wasm-debug setup.py build \
-		&& python-wasm-debug setup.py install --prefix=${DIST_WASM}
-	touch ${DIST_WASM}/.built
+		&& python-wasm-debug setup.py build
+	touch ${BUILD_WASM}/.built
 
-test: ${DIST_WASM}/.built
+test: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
 		&& PYTHONPATH=`pwd` python-wasm mpmath/tests/runtests.py
 
+${DIST_WASM}/.built: ${BUILD_WASM}/.built
+	cd ${BUILD_WASM}/build/lib \
+		&& python-native ${CWD}/src/bundle.py mpmath \
+		&& mkdir -p ${DIST_WASM} \
+		&& cp mpmath.zip ${DIST_WASM}
+	touch ${DIST_WASM}/.built
 
 # Interesting to build and test native for speed comparison:
 
