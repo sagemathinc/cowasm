@@ -6,7 +6,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
-all: python-wasm webpack terminal website python-packages
+all: python-wasm webpack terminal website py
 
 cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl
@@ -124,8 +124,8 @@ packages/bzip2/${BUILT}: zig
 .PHONY: bzip2
 
 
-python-packages: py-mpmath py-sympy
-.PHONY: python-packages
+py: py-mpmath py-sympy
+.PHONY: py
 
 py-mpmath: packages/py-mpmath/${BUILT} python-wasm
 packages/py-mpmath/${BUILT}: zig
@@ -134,7 +134,7 @@ packages/py-mpmath/${BUILT}: zig
 test-py-mpmath: py-mpmath
 	cd packages/py-mpmath && make test
 
-py-sympy: packages/py-sympy/${BUILT} python-wasm mpmath
+py-sympy: packages/py-sympy/${BUILT} python-wasm py-mpmath
 packages/py-sympy/${BUILT}: zig
 	cd packages/py-sympy && make all
 .PHONY: py-sympy
