@@ -8,6 +8,7 @@
 
 *static*
 
+_lzma _lzmamodule.c -I$(abs_srcdir)/../../../lzma/dist/native/include/ $(abs_srcdir)/../../../lzma/dist/native/lib/liblzma.a $(abs_srcdir)/../../../termcap/dist/native/lib/libtermcap.a
 readline readline.c -I$(abs_srcdir)/../../../libedit/dist/native/include/ $(abs_srcdir)/../../../libedit/dist/native/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/native/lib/libtermcap.a
 _struct _struct.c
 binascii binascii.c
