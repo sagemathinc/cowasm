@@ -15,9 +15,22 @@ include ../build/Makefile-rules
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&& python-wasm-debug setup.py build \
-		&& python-wasm-debug setup.py install --prefix=${DIST_WASM}; chmod -R a+rw ${DIST_WASM}; python-wasm-debug setup.py install --prefix=${DIST_WASM}
+		&& python-wasm-debug setup.py install --prefix=${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 test: ${DIST_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
 		&& PYTHONPATH=`pwd` python-wasm mpmath/tests/runtests.py
+
+
+# Interesting to build and test native for speed comparison:
+
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	cd ${BUILD_NATIVE} \
+		&& python-native setup.py build \
+		&& python-native setup.py install --prefix=${DIST_NATIVE}
+	touch ${DIST_NATIVE}/.built
+
+test-native: ${DIST_NATIVE}/.built
+	cd ${BUILD_NATIVE}/\
+		&& PYTHONPATH=`pwd` python-native mpmath/tests/runtests.py

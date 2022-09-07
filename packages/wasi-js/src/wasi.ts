@@ -1009,6 +1009,11 @@ export default class WASI {
             // See zig/lib/libc/wasi/libc-bottom-half/cloudlibc/src/libc/sys/stat/fstatat.c
             rstats = fs.lstatSync(path.resolve(stats.path, p));
           }
+          // NOTE: the output is the filestat struct as documented here
+          // https://github.com/WebAssembly/WASI/blob/main/phases/snapshot/docs.md#-filestat-record
+          // This does NOT even have a field for that.  This is considered an open bug in WASI:
+          //   https://github.com/WebAssembly/wasi-filesystem/issues/34
+          // That said, wasi does end up setting enough of st_mode so isdir works.
           this.view.setBigUint64(bufPtr, BigInt(rstats.dev), true);
           bufPtr += 8;
           this.view.setBigUint64(bufPtr, BigInt(rstats.ino), true);

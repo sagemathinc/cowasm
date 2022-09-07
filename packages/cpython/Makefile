@@ -113,6 +113,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# Apply this patch when we want to take testing to the next level, and fully enable all tests that involve fork and subprocess.
 	# This doesn't work yet, but we do have this as a goal.
 	# cd ${BUILD_WASM} && cat ${CWD}/src/patches/04-enable-fork-and-subprocess-tests.patch | patch -p1
+	cd ${BUILD_WASM} && cat ${CWD}/src/patches/05-st_mode.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # The options for the extension modules.  We cannot strip later. The -s option to BLDSHARED
@@ -210,20 +211,24 @@ MINIMAL_READLINE = termcap lib-dynload/readline.cpython-311-wasm32-wasi.so  rlco
 #
 #  ${DIST_WASM}/lib/dist/python-minimal.zip - (size=10K) -- a tiny file with the minimum needed to start python
 #  ${DIST_WASM}/lib/dist/python-stdlib.zip - (size= ~ 5MB) -- the full standard libary
+#
+# We WANT to run wasm_assets.py under web assembly rather than use the native cpython!
+# This is just because we can and because it's a *good test*.  It does not work yet.
+# To try this, replace "		&& python-native ./Tools/wasm/wasm_assets.py " below by
+# && python-wasm-debug ./Tools/wasm/wasm_assets.py \
 
 ${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
 	# Build wasm asset bundle (the pyc files, etc.).
-	cd ${BUILD_WASM} && \
-		mkdir -p usr/local/lib/python3.11/lib-dynload/  && \
-	    LD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" DYLD_LIBRARY_PATH="${DIST_NATIVE}/lib:${ZLIB}/native/lib" \
-			python3 ./Tools/wasm/wasm_assets.py && \
-		rm -rf ${DIST_WASM}/lib/dist && \
-		mv usr/local/lib ${DIST_WASM}/lib/dist
+	cd ${BUILD_WASM} \
+		&& mkdir -p usr/local/lib/python3.11/lib-dynload/  \
+		&& python-native ./Tools/wasm/wasm_assets.py \
+		&& rm -rf ${DIST_WASM}/lib/dist \
+		&& mv usr/local/lib ${DIST_WASM}/lib/dist
 	# Add termcap for xterm to our zip asset bundle, so readline actually works:
-	cp src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && zip -u python311.zip termcap
+	cp ${CWD}/src/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && zip -u python311.zip termcap
 	# **TODO:** It is very silly for these to be in the same zip file, obviously, because that means they have to be downloaded,
 	# so we should just put them in the main binary.  We'll change that when things are working.
-	mkdir ${DIST_WASM}/lib/dist/lib-dynload/
+	mkdir -p ${DIST_WASM}/lib/dist/lib-dynload/
 	cp -v ${DIST_WASM}/lib/python3.11/lib-dynload/*.so ${DIST_WASM}/lib/dist/lib-dynload/
 	# Unfortunately, wasm-strip removes the critical custom section that makes the so file useful, since NotImplementedError
 	#      https://reviews.llvm.org/D73820

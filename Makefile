@@ -12,6 +12,9 @@ cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl
 	cd packages/cpython && make all
 .PHONY: cpython
+test-cpython: cpython python-wasm
+	cd packages/cpython && make test
+
 
 docker:
 	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/python-wasm master | awk '{print $$1}'` -t python-wasm .
@@ -25,6 +28,9 @@ dylink: packages/dylink/${BUILT}
 packages/dylink/${BUILT}: node zig posix-wasm cpython lzma
 	cd packages/dylink && make all
 .PHONY: dylink
+
+test-dylink: dylink
+	cd packages/dylink && make test
 
 libedit: packages/libedit/${BUILT}
 packages/libedit/${BUILT}: zig termcap
@@ -63,11 +69,15 @@ posix-wasm: packages/posix-wasm/${BUILT}
 packages/posix-wasm/${BUILT}: zig
 	cd packages/posix-wasm && make all
 .PHONY: posix-wasm
+test-posix-node: posix-node
+	cd packages/posix-node && make test
 
 python-wasm: packages/python-wasm/${BUILT}
 packages/python-wasm/${BUILT}: node cpython wasi-js zig posix-wasm dylink posix-node
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
+test-python-wasm: python-wasm
+	cd packages/python-wasm && make test
 
 packages/sqlite/${BUILT}: libedit posix-wasm zig zlib
 	cd packages/sqlite && make all
@@ -113,6 +123,14 @@ packages/bzip2/${BUILT}: zig
 	cd packages/bzip2 && make all
 .PHONY: bzip2
 
+py-mpmath: packages/py-mpmath/${BUILT} python-wasm
+packages/py-mpmath/${BUILT}: zig
+	cd packages/py-mpmath && make all
+.PHONY: py-mpmath
+test-py-mpmath: py-mpmath python-wasm
+	cd packages/py-mpmath && make test
+
+
 .PHONY: clean
 clean:
 	./bin/make-all clean ${PACKAGE_DIRS}
@@ -120,20 +138,9 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-cpython test-bench test-dylink test-posix-node test-python-wasm
+test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath
 .PHONY: test
-
-test-cpython: cpython python-wasm
-	cd packages/cpython && make test
 
 test-bench: python-wasm
 	cd packages/bench && make test
 
-test-dylink: dylink
-	cd packages/dylink && make test
-
-test-posix-node: posix-node
-	cd packages/posix-node && make test
-
-test-python-wasm: python-wasm
-	cd packages/python-wasm && make test
