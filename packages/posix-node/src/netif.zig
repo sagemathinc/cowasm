@@ -3,9 +3,9 @@
 const c = @import("c.zig");
 const node = @import("node.zig");
 const net_if = @cImport({
-    @cDefine("struct__OSUnalignedU16", "struct {}");
-    @cDefine("struct__OSUnalignedU32", "struct {}");
-    @cDefine("struct__OSUnalignedU64", "struct {}");
+    @cDefine("struct__OSUnalignedU16", "uint16_t");
+    @cDefine("struct__OSUnalignedU32", "uint32_t");
+    @cDefine("struct__OSUnalignedU64", "uint64_t");
     @cInclude("net/if.h");
 });
 

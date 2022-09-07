@@ -382,8 +382,8 @@ fn pause(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
 //                         gid_t *groups, int *ngroups);
 fn getgrouplist(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 2) catch return null;
-    comptime var user: [1024]u8 = undefined;
-    node.stringFromValue(env, argv[0], "user", user.len, &user) catch return null;
+    var user: [1024]u8 = undefined;
+    node.stringFromValue(env, argv[0], "user", 1024, &user) catch return null;
     const group =
         if (builtin.target.os.tag == .linux)
         node.u32FromValue(env, argv[1], "group") catch return null

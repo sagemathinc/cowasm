@@ -1,9 +1,9 @@
 const c = @import("c.zig");
 const node = @import("node.zig");
 const netdb = @cImport({
-    @cDefine("struct__OSUnalignedU16", "struct {}");
-    @cDefine("struct__OSUnalignedU32", "struct {}");
-    @cDefine("struct__OSUnalignedU64", "struct {}");
+    @cDefine("struct__OSUnalignedU16", "uint16_t");
+    @cDefine("struct__OSUnalignedU32", "uint32_t");
+    @cDefine("struct__OSUnalignedU64", "uint64_t");
     @cInclude("netdb.h");
     @cInclude("arpa/inet.h");
 });
@@ -52,9 +52,9 @@ fn gethostbyname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.nap
 //
 // Usage: gethostbyaddr("64.233.187.99") or gethostbyaddr("2001:4860:4860::8888")
 fn gethostbyaddr(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
-    comptime var buf: [40]u8 = std.mem.zeroes([40]u8);
+    var buf: [40]u8 = undefined;
     const argv = node.getArgv(env, info, 1) catch return null;
-    node.stringFromValue(env, argv[0], "ip", buf.len, &buf) catch return null;
+    node.stringFromValue(env, argv[0], "ip", 40, &buf) catch return null;
     var i: usize = 0;
     var v6: bool = false;
     while (buf[i] != 0) : (i += 1) {
@@ -175,10 +175,10 @@ fn createHostent(env: c.napi_env, hostent: *netdb.hostent) c.napi_value {
 
 fn getaddrinfo(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 6) catch return null;
-    comptime var nodeName: [256]u8 = undefined; // domain names are limited to 253 chars
-    node.stringFromValue(env, argv[0], "node", nodeName.len, &nodeName) catch return null;
-    comptime var service: [256]u8 = undefined; // these are really short, e.g., "ftp"
-    node.stringFromValue(env, argv[1], "service", service.len, &service) catch return null;
+    var nodeName: [256]u8 = undefined; // domain names are limited to 253 chars
+    node.stringFromValue(env, argv[0], "node", 256, &nodeName) catch return null;
+    var service: [256]u8 = undefined; // these are really short, e.g., "ftp"
+    node.stringFromValue(env, argv[1], "service", 256, &service) catch return null;
     const hint_flags = node.i32FromValue(env, argv[2], "hint_flags") catch return null;
     const hint_family = node.i32FromValue(env, argv[3], "hint_family") catch return null;
     const hint_socktype = node.i32FromValue(env, argv[4], "hint_socktype") catch return null;
