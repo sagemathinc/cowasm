@@ -76,3 +76,5 @@ _lzma _lzmamodule.c -I$(abs_srcdir)/../../../lzma/dist/wasm/include/ $(abs_srcdi
 
 _sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microprotocols.c _sqlite/module.c _sqlite/prepare_protocol.c _sqlite/row.c _sqlite/statement.c  _sqlite/util.c -I$(abs_srcdir)/../../../sqlite/dist/wasm/include/ $(abs_srcdir)/../../../sqlite/dist/wasm/lib/libsqlite3.a
 
+mmap mmapmodule.c
+

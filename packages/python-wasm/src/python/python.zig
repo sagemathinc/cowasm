@@ -9,7 +9,8 @@ var didInit = false;
 var globals: *PyObject = undefined;
 pub fn init(cwd: [*:0]const u8) !void {
     if (didInit) return;
-    didInit = true;
+
+    try initSysExecutable();
     // try py.init(libpython_so);
     // std.debug.print("calling Py_Initialize()...\n", .{});
 
@@ -18,13 +19,37 @@ pub fn init(cwd: [*:0]const u8) !void {
         // The zig library docs even incorrectly claim there is no concept of working directory
         // (TODO: upstream bug report) here https://ziglang.org/documentation/master/std/#root;fs.Dir.setAsCwd
         std.debug.print("WARNING: failed to set current directory to '{s}' \n", .{cwd});
-        return error{RuntimeError}.RuntimeError;
+        return General.RuntimeError;
     }
     py.Py_Initialize();
     // std.debug.print("success!\n", .{});
     globals = py.PyDict_New() orelse {
-        return error{RuntimeError}.RuntimeError;
+        return General.RuntimeError;
     };
+
+    // Success!
+    didInit = true;
+}
+
+// This is basically a translation from C to Zig of
+//    https://docs.python.org/3.11/c-api/init_config.html#c.PyConfig
+pub fn initSysExecutable() !void {
+    var config: py.PyConfig = undefined;
+    py.PyConfig_InitPythonConfig(&config);
+    defer py.PyConfig_Clear(&config);
+
+    //  Set the program name. Implicitly preinitialize Python.
+    var status = py.PyConfig_SetBytesString(&config, &config.program_name, "/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/python-wasm/packages/python-wasm/bin/python-wasm-debug");
+    if (py.PyStatus_Exception(status) != 0) {
+        std.debug.print("ERROR: failed to set config.program_name\n", .{});
+        return General.RuntimeError;
+    }
+
+    status = py.Py_InitializeFromConfig(&config);
+    if (py.PyStatus_Exception(status) != 0) {
+        std.debug.print("ERROR: failed to initialize python from configuration when setting program name\n", .{});
+        return General.RuntimeError;
+    }
 }
 
 pub fn assertInit() !void {
