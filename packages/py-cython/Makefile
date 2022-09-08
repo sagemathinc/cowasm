@@ -1,5 +1,3 @@
-# This is a work in progress.
-
 include ../build/Makefile-vars
 
 all: wasm ${BIN}/cython

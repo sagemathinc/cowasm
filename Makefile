@@ -124,8 +124,15 @@ packages/bzip2/${BUILT}: zig
 .PHONY: bzip2
 
 
-py: py-cython py-mpmath py-sympy
+py: py-cython py-mpmath py-sympy py-pip
 .PHONY: py
+
+py-pip: packages/py-pip/${BUILT} python-wasm
+packages/py-pip/${BUILT}: zig
+	cd packages/py-pip && make all
+.PHONY: py-pip
+test-py-pip: py-pip
+	cd packages/py-pip && make test
 
 py-cython: packages/py-cython/${BUILT} python-wasm
 packages/py-cython/${BUILT}: zig
@@ -149,7 +156,6 @@ packages/py-sympy/${BUILT}: zig
 test-py-sympy: py-sympy
 	cd packages/py-sympy && make test
 
-
 .PHONY: clean
 clean:
 	./bin/make-all clean ${PACKAGE_DIRS}
@@ -157,7 +163,7 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython
+test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-py-pip
 .PHONY: test
 
 test-bench: python-wasm
