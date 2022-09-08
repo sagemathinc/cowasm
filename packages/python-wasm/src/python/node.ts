@@ -46,7 +46,7 @@ export async function init({
       mountpoint: "/usr/lib/python3.11",
     });
   }
-  if (process.platform == "linux" && !noZip) {
+  if (process.platform == "linux" && noZip) {
     // noZip = use the real filesystem.
     // include dev (except in debug mode) -- it is necessary for python to start when using
     // nodejs windows, but doesn't hurt on linux/macos... except - TODO - it forces
