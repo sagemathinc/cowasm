@@ -86,7 +86,7 @@ ${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C}
 
 DATAFILES = ${DIST}/python/python-minimal.zip ${DIST}/python/python-readline.zip ${DIST}/python/python-stdlib.zip
 
-${DIST}/python/python%.zip: ${PYTHON_WASM}/lib/dist/python%.zip
+${DIST}/python/%.zip: ${PYTHON_WASM}/lib/dist/%.zip
 	# Copy over the modules files
 	cp $< $@
 
