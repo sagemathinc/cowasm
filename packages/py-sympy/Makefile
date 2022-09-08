@@ -15,7 +15,6 @@ TARBALL = ${UPSTREAM}/sympy-${VERSION}.tar.gz
 include ../build/Makefile-rules
 
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
-	echo ${PYTHONPATH}
 	cd ${BUILD_WASM} \
 		&& python-native setup.py build
 	touch ${BUILD_WASM}/.built

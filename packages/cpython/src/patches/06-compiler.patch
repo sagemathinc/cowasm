@@ -1,0 +1,31 @@
+--- native/Lib/distutils/unixccompiler.py	2022-08-05 07:45:18.000000000 -0700
++++ wasm/Lib/distutils/unixccompiler.py	2022-09-07 23:30:15.000000000 -0700
+@@ -110,6 +110,10 @@
+ 
+     def _compile(self, obj, src, ext, cc_args, extra_postargs, pp_opts):
+         compiler_so = self.compiler_so
++        # Hack to use the correct tool for building -fPIC. We need this since
++        # we build cpython core one way, and extensions a different way, but
++        # the internal config only iknows about the core config.
++        compiler_so = ['zig-fPIC', compiler_so[1]] + compiler_so[5:]
+         if sys.platform == 'darwin':
+             compiler_so = _osx_support.compiler_fixup(compiler_so,
+                                                     cc_args + extra_postargs)
+@@ -150,6 +154,7 @@
+              library_dirs=None, runtime_library_dirs=None,
+              export_symbols=None, debug=0, extra_preargs=None,
+              extra_postargs=None, build_temp=None, target_lang=None):
++        print("UNIX LINK")
+         objects, output_dir = self._fix_object_args(objects, output_dir)
+         fixed_args = self._fix_lib_args(libraries, library_dirs,
+                                         runtime_library_dirs)
+@@ -198,6 +203,9 @@
+ 
+                     linker[i+offset] = self.compiler_cxx[i]
+ 
++                # Hack to use the correct tool for linking.  We need this since
++                # we build cpython core one way, and extensions a different way.
++                linker = ["zig", "wasm-ld", '--experimental-pic', '-shared']
+                 if sys.platform == 'darwin':
+                     linker = _osx_support.compiler_fixup(linker, ld_args)
+ 

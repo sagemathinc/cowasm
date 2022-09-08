@@ -999,6 +999,7 @@ export default class WASI {
             pathPtr,
             pathLen
           ).toString();
+          // console.log("path_filestat_get", p);
           let rstats;
           if (flags) {
             rstats = fs.statSync(path.resolve(stats.path, p));
@@ -1009,6 +1010,7 @@ export default class WASI {
             // See zig/lib/libc/wasi/libc-bottom-half/cloudlibc/src/libc/sys/stat/fstatat.c
             rstats = fs.lstatSync(path.resolve(stats.path, p));
           }
+          // console.log("path_filestat_get got", rstats)
           // NOTE: the output is the filestat struct as documented here
           // https://github.com/WebAssembly/WASI/blob/main/phases/snapshot/docs.md#-filestat-record
           // This does NOT even have a field for that.  This is considered an open bug in WASI:

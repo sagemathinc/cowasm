@@ -49,11 +49,12 @@ include ../build/Makefile-rules
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
-        UNAME_M := $(shell uname -m)
+	UNAME_M := $(shell uname -m)
 	# Workaround a zig bug -- the native build fails with "ld.lld: error: undefined symbol: fcntl64".
 	# See https://github.com/ziglang/zig/issues/5882 and https://github.com/ziglang/zig/issues/9485
 	# NOTE: we use musl instead of gnu.2.31, since musl works on CoCalc (a massive messy huge Linux
-	# environment), wheras gnu.2.31 only worked on several minimal linux envs.
+	# environment), wheras gnu.2.31 only worked on several minimal linux envs.  Plus it's pretty cool
+	# that we can use musl and it works!
 	ARCH = --target=$(UNAME_M)-linux-musl
 else
 	ARCH =
@@ -61,6 +62,8 @@ endif
 
 ${BUILD_NATIVE}/.build:: ${TARBALL}
 	cp src/Setup.local-native ${BUILD_NATIVE}/Modules/Setup.local
+	# This _scproxy is needed macos *only* for pip; on Linux it breaks the build.
+	if [ `uname -s` == "Darwin" ]; then echo "_scproxy _scproxy.c" >> ${BUILD_NATIVE}/Modules/Setup.local; fi
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} \
@@ -71,7 +74,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 			LDFLAGS="-L${ZLIB}/native/lib -L${LIBEDIT}/native/lib" \
 			./configure \
 				--prefix=${DIST_NATIVE} \
-				--with-ensurepip=no \
+				--with-ensurepip \
 				--with-readline=editline
 	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses
 	# zlib).  This is to workaround a security feature of MacOS (see
@@ -114,6 +117,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# This doesn't work yet, but we do have this as a goal.
 	# cd ${BUILD_WASM} && cat ${CWD}/src/patches/04-enable-fork-and-subprocess-tests.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${CWD}/src/patches/05-st_mode.patch | patch -p1
+	# make it so directly building extension modules **entirely using webassembly + zig** actually works:
+	cd ${BUILD_WASM} && cat ${CWD}/src/patches/06-compiler.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # The options for the extension modules.  We cannot strip later. The -s option to BLDSHARED
@@ -153,6 +158,8 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	#         nodejs linux (it works on mac).  test_userlist is even worse.
 	#       - with -oZ, test_richcmp.py fails with a limit above 750; a limit of max of 720 works on node on linux.
 	#         Changing to -O3 makes no difference.
+	# - with-ensurepip: we put that since we need it, but the makefile just runs ensurepip on python-native,
+	#   so it doesn't help
 	cd ${BUILD_WASM} && \
 		CC="zig cc -Oz -target wasm32-wasi" \
 		CXX="zig c++ -Oz -target wasm32-wasi" \
@@ -171,7 +178,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 			--with-readline=editline \
 			--with-build-python=${CWD}/bin/python-native \
 			--with-pymalloc \
-			--without-ensurepip \
+			--with-ensurepip \
 			--host=wasm32-unknown-wasi \
 			--build=`./config.guess`
 	cat src/pyconfig.h >> ${BUILD_WASM}/pyconfig.h

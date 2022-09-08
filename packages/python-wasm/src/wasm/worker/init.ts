@@ -105,7 +105,8 @@ export default function initWorker({
           throw Error("wasm.fs must be initialized");
         }
         try {
-          await wasm.fs.waitUntilLoaded();
+          // it might not be defined, e.g., if not using unionfs at all
+          await wasm.fs.waitUntilLoaded?.();
           parent.postMessage({
             id: message.id,
             result: {},

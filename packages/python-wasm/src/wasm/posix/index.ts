@@ -114,7 +114,9 @@ export default function posix(context: Context) {
         logReturn(name, ret);
         return ret;
       } catch (err) {
-        if (err.code != null) {
+        if (err.wasiErrno != null) {
+          context.callFunction("setErrno", err.wasiErrno);
+        } else if (err.code != null) {
           setErrnoFromNative(parseInt(err.code));
         } else {
           // err.code not yet set (TODO), so we log and try heuristic.
