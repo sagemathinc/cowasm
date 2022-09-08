@@ -10,6 +10,9 @@ const pythonFull = "python-stdlib.zip";
 const pythonReadline = "python-readline.zip";
 const pythonMinimal = "python-minimal.zip";
 
+const py_mpmath = "mpmath.zip";
+const py_sympy = "sympy.zip";
+
 // Our tiny termcap file only has one entry, which is for xterm
 // so that's all we give you, even if you have a different terminal.
 const TERM = "xterm-256color";
@@ -66,6 +69,10 @@ export async function init({
       TERMCAP: join(path, "termcap"),
     };
   }
+  env.PYTHONPATH = `${process.env.PYTHONPATH ?? ""}:${join(
+    path,
+    py_mpmath
+  )}:${join(path, py_sympy)}`;
   await _init({
     python_wasm: join(path, PYTHON_WASM),
     wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
