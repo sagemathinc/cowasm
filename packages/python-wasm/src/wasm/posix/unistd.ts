@@ -1,5 +1,6 @@
 import { notImplemented } from "./util";
 import constants from "./constants";
+import Errno from "./errno";
 
 export default function unistd({
   fs,
@@ -12,6 +13,12 @@ export default function unistd({
   memory,
 }) {
   let login: number | undefined = undefined;
+
+  function ensureExists(path: string): void {
+    if (!fs.existsSync(path)) {
+      throw Errno("ENOENT");
+    }
+  }
 
   // TODO: this doesn't throw an error yet if the target filesystem isn't native.
   function toNativeFd(fd: number): number {
@@ -361,10 +368,11 @@ export default function unistd({
         notImplemented("execve");
       }
       const pathname = recv.string(pathnamePtr);
+      ensureExists(pathname);
       const argv = recv.arrayOfStrings(argvPtr);
       const envp = recv.arrayOfStrings(envpPtr);
       posix._execve(pathname, argv, envp);
-      return 0; // this won't happen because execve takes over
+      return 0; // this won't happen because execve takes over, or there's an error
     },
 
     execv: (pathnamePtr: number, argvPtr: number): number => {
@@ -372,6 +380,12 @@ export default function unistd({
         notImplemented("execve");
       }
       const pathname = recv.string(pathnamePtr);
+      // This should not be needed, since posix.execv should always properly error
+      // when the path doesn't exist.  Due to shortcomings in my understanding of
+      // node and how posix.execv is implemented, sometimes it hangs instead *on linux*,
+      // so for now we use ensureExists first, which throws an error if the path
+      // does not exist.
+      ensureExists(pathname);
       const argv = recv.arrayOfStrings(argvPtr);
       posix.execv(pathname, argv);
       return 0; // this won't happen because execv takes over

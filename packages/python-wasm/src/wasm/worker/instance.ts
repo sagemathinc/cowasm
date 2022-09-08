@@ -156,7 +156,8 @@ export default class WasmInstance extends EventEmitter {
     if (this.fs == null) {
       throw Error("fs must be defined");
     }
-    return await this.fs.waitUntilLoaded();
+    // it might not be defined, e.g., if not using unionfs at all
+    return await this.fs.waitUntilLoaded?.();
   }
 
   signal(_sig?: number): void {

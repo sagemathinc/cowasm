@@ -46,8 +46,15 @@ export async function init({
       mountpoint: "/usr/lib/python3.11",
     });
   }
-  // always include dev -- it is necessary for python to start when using nodejs windows, but doesn't hurt on linux/macos.
-  fs.push({ type: "dev" });
+  if (!noZip) {
+    // noZip = use the exact real filesystem as much as possible.
+    // include dev (except in debug mode) -- it is necessary for python to start when using
+    // nodejs windows, but doesn't hurt on linux/macos... except - TODO - it forces
+    // **use of unionfs and that leads to fs.existsSync hangs in unistd.ts during builds.**
+    // Hence we disable in debug mode.  For example, this happens badly when doing "make test"
+    // for the py-cython module on Linux only.
+    fs.push({ type: "dev" });
+  }
   // native: provides stdout,stderr natively, for now; and also the rest of the user's filesystem
   fs.push({ type: "native" });
 

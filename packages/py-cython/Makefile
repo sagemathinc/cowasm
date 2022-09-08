@@ -35,8 +35,6 @@ test: wasm
 	cd ${BUILD_WASM}/Demos \
 		&& export PYTHONPATH=${DIST_WASM} \
 		&& python-wasm-debug setup.py build_ext --inplace \
-		&& python-wasm run_primes.py 20 \
-		&& python-wasm run_spam.py \
-		&& python-wasm integrate_timing.py
-
-
+		&& python-wasm-debug run_primes.py 20 \
+		&& python-wasm-debug run_spam.py \
+		&& python-wasm-debug integrate_timing.py
