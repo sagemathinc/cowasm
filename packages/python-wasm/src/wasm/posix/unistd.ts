@@ -1,6 +1,9 @@
 import { notImplemented } from "./util";
 import constants from "./constants";
 import Errno from "./errno";
+import debug from "debug";
+
+const log = debug("posix:unistd");
 
 export default function unistd({
   fs,
@@ -14,8 +17,13 @@ export default function unistd({
 }) {
   let login: number | undefined = undefined;
 
-  function ensureExists(path: string): void {
-    if (!fs.existsSync(path)) {
+  function ensureIsFile(path: string): void {
+    try {
+      if (!fs.statSync(path).isFile()) {
+        throw Errno("ENOENT");
+      }
+    } catch (_err) {
+      // error if file doesn't exist:
       throw Errno("ENOENT");
     }
   }
@@ -368,9 +376,10 @@ export default function unistd({
         notImplemented("execve");
       }
       const pathname = recv.string(pathnamePtr);
-      ensureExists(pathname);
+      ensureIsFile(pathname);
       const argv = recv.arrayOfStrings(argvPtr);
       const envp = recv.arrayOfStrings(envpPtr);
+      log("execve", pathname, argv, envp);
       posix._execve(pathname, argv, envp);
       return 0; // this won't happen because execve takes over, or there's an error
     },
@@ -383,10 +392,11 @@ export default function unistd({
       // This should not be needed, since posix.execv should always properly error
       // when the path doesn't exist.  Due to shortcomings in my understanding of
       // node and how posix.execv is implemented, sometimes it hangs instead *on linux*,
-      // so for now we use ensureExists first, which throws an error if the path
+      // so for now we use ensureIsFile first, which throws an error if the path
       // does not exist.
-      ensureExists(pathname);
+      ensureIsFile(pathname);
       const argv = recv.arrayOfStrings(argvPtr);
+      log("execv", pathname, argv);
       posix.execv(pathname, argv);
       return 0; // this won't happen because execv takes over
     },
