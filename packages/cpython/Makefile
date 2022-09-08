@@ -158,6 +158,8 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	#         nodejs linux (it works on mac).  test_userlist is even worse.
 	#       - with -oZ, test_richcmp.py fails with a limit above 750; a limit of max of 720 works on node on linux.
 	#         Changing to -O3 makes no difference.
+	# - with-ensurepip: we put that since we need it, but the makefile just runs ensurepip on python-native,
+	#   so it doesn't help
 	cd ${BUILD_WASM} && \
 		CC="zig cc -Oz -target wasm32-wasi" \
 		CXX="zig c++ -Oz -target wasm32-wasi" \
@@ -176,7 +178,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 			--with-readline=editline \
 			--with-build-python=${CWD}/bin/python-native \
 			--with-pymalloc \
-			--without-ensurepip \
+			--with-ensurepip \
 			--host=wasm32-unknown-wasi \
 			--build=`./config.guess`
 	cat src/pyconfig.h >> ${BUILD_WASM}/pyconfig.h

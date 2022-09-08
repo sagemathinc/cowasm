@@ -124,8 +124,16 @@ packages/bzip2/${BUILT}: zig
 .PHONY: bzip2
 
 
-py: py-mpmath py-sympy
+py: py-cython py-mpmath py-sympy
 .PHONY: py
+
+py-cython: packages/py-cython/${BUILT} python-wasm
+packages/py-cython/${BUILT}: zig
+	cd packages/py-cython && make all
+.PHONY: py-cython
+test-py-cython: py-cython
+	cd packages/py-cython && make test
+
 
 py-mpmath: packages/py-mpmath/${BUILT} python-wasm
 packages/py-mpmath/${BUILT}: zig
@@ -149,15 +157,15 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath
+test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython
 .PHONY: test
 
 test-bench: python-wasm
 	cd packages/bench && make test
 
 # Run tests suites of Python libraries that we support.  These can be VERY long, which is why
-# we can't just run them as part of "make test" above.
-test-py: test-py-mpmath test-py-sympy
+# we can't just run them as part of "make test" above.  And they probably don't work at all yet.
+test-py-full: test-py-sympy
 .PHONY: test
 
 
