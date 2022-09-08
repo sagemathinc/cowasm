@@ -9,6 +9,7 @@ bin/npx
 bin/python-native
 bin/pw
 bin/pw-d
+bin/cython
 **/dist
 **/build
 **/node_modules
