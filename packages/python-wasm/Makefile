@@ -91,19 +91,6 @@ ${DIST}/python/%.zip: ${PYTHON_WASM}/lib/dist/%.zip
 	cp $< $@
 
 
-## THIS IS TEMPORARY!
-## PYTHON PACKAGES not in the core
-PYTHON_PACKAGES = ${DIST}/python/mpmath.zip ${DIST}/python/sympy.zip
-${DIST}/python/mpmath.zip: ${PACKAGES}/py-mpmath/dist/wasm/mpmath.zip
-	# Copy over the modules files
-	cp $< $@
-${DIST}/python/sympy.zip: ${PACKAGES}/py-sympy/dist/wasm/sympy.zip
-	# Copy over the modules files
-	cp $< $@
-
-
-
-
 ${DIST}/python/termcap: ${PYTHON_WASM}/lib/dist/termcap
 	# Copy over the termcap file (termcap is also in python.zip, but it's useful to have outside for debug mode).
 	cp ${PYTHON_WASM}/lib/dist/termcap ${DIST}/python/termcap
