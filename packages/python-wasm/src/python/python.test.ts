@@ -1,4 +1,6 @@
 import { exec, init, repr } from "./node";
+import { existsSync } from "fs";
+import { execFileSync } from "child_process";
 
 beforeEach(async () => {
   await init({ noWorker: true });
@@ -33,4 +35,32 @@ test("sleeping for a quarter of a second", async () => {
   await exec("import time; time.sleep(0.25)");
   const t = new Date().valueOf() - t0;
   expect(t >= 240 && t <= 500).toBe(true);
+});
+
+test("that sys.executable is set to something", async () => {
+  await exec("import sys");
+  const executable = eval(await repr("sys.executable"));
+  expect(executable.length).toBeGreaterThan(0);
+});
+
+test("that sys.executable is set and exists -- when running python-wasm via command line", () => {
+  // pw-d -c "import sys; print(sys.executable)"
+  const stdout = execFileSync("../../bin/python-wasm", [
+    "-c",
+    "import sys; print(sys.executable)",
+  ])
+    .toString()
+    .trim();
+  expect(existsSync(stdout)).toBe(true);
+});
+
+test("that sys.executable is set and exists -- when running python-wasm-debug via command line", () => {
+  // pw-d -c "import sys; print(sys.executable)"
+  const stdout = execFileSync("../../bin/python-wasm-debug", [
+    "-c",
+    "import sys; print(sys.executable)",
+  ])
+    .toString()
+    .trim();
+  expect(existsSync(stdout)).toBe(true);
 });

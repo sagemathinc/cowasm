@@ -28,6 +28,7 @@ export async function init({
   ];
 
   await _init({
+    programName: "/usr/bin/python-wasm", // made up name is better than blank (?)
     python_wasm: wasmUrl,
     wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
     fs,

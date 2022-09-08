@@ -17,6 +17,14 @@ export fn init(cwd: [*:0]const u8) void {
     };
 }
 
+export fn initProgramName(program_name: [*:0]const u8) void {
+    python.initProgramName(program_name) catch |err| {
+        wasmSetException();
+        std.debug.print("python error: '{}'\nwhen initializing Python program name", .{err});
+        return;
+    };
+}
+
 // TODO: would like to say what the exception actually is. For now, at least inform
 // that it happened.
 extern fn wasmSetException() void;

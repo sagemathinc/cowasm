@@ -10,7 +10,6 @@ var globals: *PyObject = undefined;
 pub fn init(cwd: [*:0]const u8) !void {
     if (didInit) return;
 
-    try initSysExecutable();
     // try py.init(libpython_so);
     // std.debug.print("calling Py_Initialize()...\n", .{});
 
@@ -32,14 +31,22 @@ pub fn init(cwd: [*:0]const u8) !void {
 }
 
 // This is basically a translation from C to Zig of
+//
 //    https://docs.python.org/3.11/c-api/init_config.html#c.PyConfig
-pub fn initSysExecutable() !void {
+//
+// Call this before init above so that python knows the correct value for
+//
+//    "import sys; sys.executable"
+//
+// Otherwise, it is '', which may be fine in some contexts (e.g., in browser without fork).
+// This mainly matter when using fork, e.g., installing packages on the command line.
+pub fn initProgramName(program_name: [*:0]const u8) !void {
     var config: py.PyConfig = undefined;
     py.PyConfig_InitPythonConfig(&config);
     defer py.PyConfig_Clear(&config);
 
     //  Set the program name. Implicitly preinitialize Python.
-    var status = py.PyConfig_SetBytesString(&config, &config.program_name, "/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/python-wasm/packages/python-wasm/bin/python-wasm-debug");
+    var status = py.PyConfig_SetBytesString(&config, &config.program_name, program_name);
     if (py.PyStatus_Exception(status) != 0) {
         std.debug.print("ERROR: failed to set config.program_name\n", .{});
         return General.RuntimeError;

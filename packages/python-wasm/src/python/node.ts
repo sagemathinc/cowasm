@@ -75,7 +75,9 @@ export async function init({
       TERMCAP: join(path, "termcap"),
     };
   }
+
   await _init({
+    programName: process.env.PROGRAM_NAME ?? "/usr/bin/python-wasm", // real name or made up name
     python_wasm: join(path, PYTHON_WASM),
     wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
     fs,

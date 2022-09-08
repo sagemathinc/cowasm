@@ -5,6 +5,9 @@ if [ x"$1" = x"python.wasm" ]; then
     shift
 fi
 
+# This is used to set the program name of python during initialization in src/python/node.ts
+export PROGRAM_NAME="`readlink -f $0`"
+
 # See https://github.com/debug-js/debug/blob/master/README.md#usage-in-child-processes
 export DEBUG_COLORS=1
 

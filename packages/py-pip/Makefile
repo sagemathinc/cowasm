@@ -12,5 +12,5 @@ ${DIST_WASM}/.built:
 	python-wasm-debug -m ensurepip
 	touch ${DIST_WASM}/.built
 
-test:
+test: ${DIST_WASM}/.built
 	python-wasm-debug -m pip |grep Usage

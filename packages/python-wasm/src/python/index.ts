@@ -27,6 +27,7 @@ type WASMImportFunction = (
 
 interface InitOpts {
   python_wasm: string; // file path in node.js; a URL in browser.
+  programName?: string; // file path to executable script, e.g., /.../python-wasm[-debug] in nodejs; fine to leave blank in browser (?).
   wasmImport: WASMImportFunction;
   fs: FileSystemSpec[];
   env: { [name: string]: string };
@@ -34,6 +35,7 @@ interface InitOpts {
 
 export async function _init({
   python_wasm,
+  programName,
   wasmImport,
   fs,
   env,
@@ -46,6 +48,9 @@ export async function _init({
     env,
     fs,
   });
+  if (programName) {
+    await wasm.callWithString("initProgramName", programName);
+  }
   // This calls Py_Initialize and gets the Python interpreter initialized:
   await wasm.callWithString("init", process.cwd());
   // Wait until the standard libary zip filesystem is loaded, if necessary,
