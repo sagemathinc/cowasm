@@ -71,7 +71,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 			LDFLAGS="-L${ZLIB}/native/lib -L${LIBEDIT}/native/lib" \
 			./configure \
 				--prefix=${DIST_NATIVE} \
-				--with-ensurepip=no \
+				--with-ensurepip \
 				--with-readline=editline
 	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses
 	# zlib).  This is to workaround a security feature of MacOS (see

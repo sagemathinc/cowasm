@@ -73,3 +73,5 @@ resource resource.c
 syslog syslogmodule.c
 termios termios.c
 
+# macOS specific module
+_scproxy _scproxy.c
