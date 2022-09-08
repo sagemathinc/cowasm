@@ -1,8 +1,6 @@
+# This is a work in progress.
+
 include ../build/Makefile-vars
-
-MPMATH = ${PACKAGES}/py-mpmath/dist/wasm/mpmath.zip
-
-export PYTHONPATH := ${MPMATH}
 
 all: wasm
 
@@ -15,14 +13,12 @@ TARBALL = ${UPSTREAM}/cython-${VERSION}.tar.gz
 include ../build/Makefile-rules
 
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
-	echo ${PYTHONPATH}
 	cd ${BUILD_WASM} \
-		&& python-native setup.py build
+		&& python-wasm-debug setup.py build_ext --inplace
 	touch ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
-	cd ${BUILD_WASM}/build/lib \
-		&& python-native ${CWD}/src/bundle.py cython \
-		&& mkdir -p ${DIST_WASM} \
-		&& cp cython.zip ${DIST_WASM}
+	rm -rf ${DIST_WASM}
+	mkdir -p ${DIST_WASM}
+	cp -rv ${BUILD_WASM}/Cython ${BUILD_WASM}/cython.py ${DIST_WASM}/
 	touch ${DIST_WASM}/.built
