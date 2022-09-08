@@ -87,7 +87,8 @@ ${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C}
 DATAFILES = ${DIST}/python/python-minimal.zip ${DIST}/python/python-readline.zip ${DIST}/python/python-stdlib.zip
 
 ${DIST}/python/%.zip: ${PYTHON_WASM}/lib/dist/%.zip
-	# Copy over the modules files
+	# Copy over the modules file
+	mkdir -p ${DIST}/python/  # without this "make -j4" breaks.
 	cp $< $@
 
 
