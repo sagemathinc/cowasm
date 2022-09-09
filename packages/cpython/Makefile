@@ -117,8 +117,6 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# This doesn't work yet, but we do have this as a goal.
 	# cd ${BUILD_WASM} && cat ${CWD}/src/patches/04-enable-fork-and-subprocess-tests.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${CWD}/src/patches/05-st_mode.patch | patch -p1
-	# make it so directly building extension modules **entirely using webassembly + zig** actually works:
-	cd ${BUILD_WASM} && cat ${CWD}/src/patches/06-compiler.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # The options for the extension modules.  We cannot strip later. The -s option to BLDSHARED
@@ -203,6 +201,19 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 		CC="zig-fPIC cc -Oz" \
 		CXX="zig-fPIC c++ -Oz" \
 		BLDSHARED="${BLDSHARED}"
+	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-3.11/_sysconfigdata__wasi_wasm32-wasi.py so it
+	# matches the configuration we just used for building shared modules.  Otherwise, distutils
+	# and setuptools, etc., will use the original options and things will be completely broken
+	# due to lack of -fPIC.  This is annoying, but we don't want to build the core python executable
+	# -fPIC, since that is slower and bigger and we don't need it.
+	# This is what based on testing actually works:
+	#      'zig cc -Oz -target wasm32-wasi' --> 'zig-fPIC cc -Oz'
+	#      'zig c++ -Oz -target wasm32-wasi' --> 'zig-fPIC c++ -Oz'
+	#      'LDSHARED': '' --> 'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'
+	cd ${BUILD_WASM}/build/lib.wasi-wasm32-3.11/ \
+		&& sed -i '' "s/zig cc -Oz -target wasm32-wasi/zig-fPIC cc -Oz/g" _sysconfigdata__wasi_wasm32-wasi.py \
+		&& sed -i '' "s/zig c++ -Oz -target wasm32-wasi/zig-fPIC c++ -Oz/g" _sysconfigdata__wasi_wasm32-wasi.py \
+		&& sed -i '' "s/'LDSHARED': ''/'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'/g" _sysconfigdata__wasi_wasm32-wasi.py
 	# Install as usual.
 	cd ${BUILD_WASM} && make install
 	# For mysterious reasons, test-tomllib isn't copied over.
