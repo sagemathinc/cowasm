@@ -48,11 +48,16 @@ export async function _init({
     env,
     fs,
   });
+  // critical to do this first, because otherwise process.cwd() gets
+  // set to '/' (the default in WASM) when any posix call happens.
+  await wasm.callWithString("chdir", process.cwd());
+
   if (programName) {
     await wasm.callWithString("initProgramName", programName);
   }
-  // This calls Py_Initialize and gets the Python interpreter initialized:
-  await wasm.callWithString("init", process.cwd());
+  // This calls Py_Initialize and gets the Python interpreter initialized.
+  await wasm.callWithString("python_init", "");
+
   // Wait until the standard libary zip filesystem is loaded, if necessary,
   // since user may want to immediately run arbitrary code right when
   // this function returns.

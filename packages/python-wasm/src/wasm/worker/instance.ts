@@ -10,16 +10,20 @@ const encoder = new TextEncoder();
 // Massive optimization -- when calling a WASM function via
 // callWithString (so first arg is a string), we reuse the
 // same string buffer every time as long as the string is
-// at most 8KB.  This avoids tons of mallocs, saves memory,
-// and gives an order of magnitude speedup.
+// at most 8KB.  This avoids tons of mallocs, frees, saves
+// memory, and gives an order of magnitude speedup.
 const SMALL_STRING_SIZE = 1024 * 8;
 
 export default class WasmInstance extends EventEmitter {
   result: any = undefined;
   resultException: boolean = false;
-  exports: any;
+  exports: { [name: string]: any };
   memory: WebAssembly.Memory;
   smallStringPtr?: number;
+  // functions never go away and getFunction is expensive if
+  // it has to use the table, and same function gets called often,
+  // so this is well worth doing.
+  _getFunctionCache: { [name: string]: Function } = {};
 
   // these are sometimes available and useful, e.g., in testing:
   // fs = the virtual filesystem for wasm instance
@@ -75,9 +79,9 @@ export default class WasmInstance extends EventEmitter {
   callWithString(name: string, str: string | string[], ...args): any {
     this.result = undefined;
     this.resultException = false;
-    const f = this.exports[name];
+    const f = this.getFunction(name);
     if (f == null) {
-      throw Error(`no function ${name} defined in wasm module`);
+      throw Error(`no function "${name}" defined in wasm module`);
     }
     let r;
     if (typeof str == "string") {
@@ -125,14 +129,20 @@ export default class WasmInstance extends EventEmitter {
     return this.result ?? r;
   }
 
-  private callWithSmallString(f: Function, str: string, ...args): any {
+  private getSmallStringPtr(): number {
     if (this.smallStringPtr == null) {
       this.smallStringPtr = this.exports.c_malloc(SMALL_STRING_SIZE);
+      if (!this.smallStringPtr) {
+        throw Error(
+          "MemoryError -- out of memory allocating small string buffer"
+        );
+      }
     }
-    const ptr = this.smallStringPtr;
-    if (!ptr) {
-      throw Error("MemoryError -- out of memory");
-    }
+    return this.smallStringPtr;
+  }
+
+  private callWithSmallString(f: Function, str: string, ...args): any {
+    const ptr = this.getSmallStringPtr();
     const len = str.length + 1;
     const array = new Int8Array(this.memory.buffer, ptr, len);
     const strAsArray = encoder.encode(str);
@@ -142,14 +152,38 @@ export default class WasmInstance extends EventEmitter {
   }
 
   public getFunction(name: string): Function | undefined {
+    const f = this._getFunctionCache[name];
+    if (f != null) return f;
     if (this.table != null) {
       // first try pointer:
       const getPtr = this.exports[`__WASM_EXPORT__${name}`];
       if (getPtr != null) {
-        return this.table.get(getPtr());
+        const f = this.table.get(getPtr());
+        if (f != null) {
+          this._getFunctionCache[name] = f;
+          return f;
+        }
       }
     }
+    // little advantage to caching this:
     return this.exports[name];
+  }
+
+  // Get the current working directory in the WASM instance.
+  // The motivation for implementing this and ensuring it is fast
+  // is that we need it when calling things like exec in our
+  // posix compat layer, since we must ensure the host runtime
+  // has the same working directory before any posix call that
+  // uses the host.
+  public getcwd(): string {
+    const getcwd = this.getFunction("getcwd");
+    if (getcwd == null) {
+      // this should be enforced by dylink and libc.
+      throw Error("C library function getcwd must be exported");
+    }
+    return this.recv.string(
+      getcwd(this.getSmallStringPtr(), SMALL_STRING_SIZE)
+    );
   }
 
   async waitUntilFsLoaded(): Promise<void> {

@@ -201,6 +201,10 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   getFunction(_name: string): Function | undefined {
     throw Error("not implemented");
   }
+
+  getcwd(): string {
+    throw Error("not implemented");
+  }
 }
 
 function abstract(name: string) {

@@ -37,6 +37,11 @@ export class WasmInstance extends EventEmitter {
   signal(_sig?: number): void {
     throw Error("not implemented");
   }
+
+  // Get the current working directory.
+  getcwd(): string {
+    throw Error("not implemented");
+  }
 }
 
 export class IOProvider {

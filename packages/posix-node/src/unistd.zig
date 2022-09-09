@@ -10,6 +10,9 @@ const util = @import("util.zig");
 const std = @import("std");
 const errno = @cImport(@cInclude("errno.h"));
 
+const BUF_SIZE = 4 * 1024;
+var BUFFER: [BUF_SIZE]u8 = undefined;
+
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "chroot", chroot);
     try node.registerFunction(env, exports, "getegid", getegid);
@@ -44,6 +47,9 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
 
     try node.registerFunction(env, exports, "dup", dup);
     try node.registerFunction(env, exports, "dup2", dup2);
+
+    try node.registerFunction(env, exports, "chdir", chdir);
+    try node.registerFunction(env, exports, "getcwd", getcwd);
 }
 
 pub const constants = .{
@@ -54,9 +60,8 @@ pub const constants = .{
 // int chroot(const char *path);
 fn chroot(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
-    var buf: [1024]u8 = undefined;
-    node.stringFromValue(env, argv[0], "path", 1024, &buf) catch return null;
-    if (unistd.chroot(&buf) == -1) {
+    node.stringFromValue(env, argv[0], "path", BUF_SIZE, &BUFFER) catch return null;
+    if (unistd.chroot(&BUFFER) == -1) {
         node.throwErrno(env, "chroot failed");
     }
     return null;
@@ -79,13 +84,12 @@ fn geteuid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
 // int gethostname(char *name, size_t namelen);
 fn gethostname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     _ = info;
-    var name: [1024]u8 = undefined;
-    if (unistd.gethostname(&name, 1024) == -1) {
+    if (unistd.gethostname(&BUFFER, BUF_SIZE) == -1) {
         node.throwErrno(env, "error in gethostname");
         return null;
     }
     // cast because we know name is null terminated.
-    return node.createStringFromPtr(env, @ptrCast([*:0]const u8, &name), "hostname") catch return null;
+    return node.createStringFromPtr(env, @ptrCast([*:0]const u8, &BUFFER), "hostname") catch return null;
 }
 
 // pid_t getpgid(pid_t pid);
@@ -137,16 +141,15 @@ fn seteuid(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
 // int sethostname(const char *name, size_t len);
 fn sethostname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
-    var buf: [1024]u8 = undefined;
-    node.stringFromValue(env, argv[0], "name", 1024, &buf) catch return null;
-    const len = node.strlen(@ptrCast([*:0]const u8, &buf));
+    node.stringFromValue(env, argv[0], "name", BUF_SIZE, &BUFFER) catch return null;
+    const len = node.strlen(@ptrCast([*:0]const u8, &BUFFER));
     // Interestingly the type of second argument sethostname depends on the operating system.
     if (builtin.target.os.tag == .linux) {
-        if (unistd.sethostname(&buf, len) == -1) {
+        if (unistd.sethostname(&BUFFER, len) == -1) {
             node.throwErrno(env, "error setting host name");
         }
     } else {
-        if (unistd.sethostname(&buf, @intCast(c_int, len)) == -1) {
+        if (unistd.sethostname(&BUFFER, @intCast(c_int, len)) == -1) {
             node.throwErrno(env, "error setting host name");
         }
     }
@@ -382,8 +385,7 @@ fn pause(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
 //                         gid_t *groups, int *ngroups);
 fn getgrouplist(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 2) catch return null;
-    var user: [1024]u8 = undefined;
-    node.stringFromValue(env, argv[0], "user", 1024, &user) catch return null;
+    node.stringFromValue(env, argv[0], "user", BUF_SIZE, &BUFFER) catch return null;
     const group =
         if (builtin.target.os.tag == .linux)
         node.u32FromValue(env, argv[1], "group") catch return null
@@ -401,7 +403,7 @@ fn getgrouplist(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi
     else
         @ptrCast([*]c_int, @alignCast(std.meta.alignment([*]c_int), ptr0));
 
-    const r = unistd.getgrouplist(@ptrCast([*:0]u8, &user), group, groups, &ngroups);
+    const r = unistd.getgrouplist(@ptrCast([*:0]u8, &BUFFER), group, groups, &ngroups);
     if (r == -1) {
         const ptr = std.c.malloc(@sizeOf(c_int) * @intCast(usize, ngroups)) orelse {
             node.throwError(env, "error allocating memory");
@@ -413,7 +415,7 @@ fn getgrouplist(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi
         else
             @ptrCast([*]c_int, @alignCast(std.meta.alignment([*]c_int), ptr));
 
-        if (unistd.getgrouplist(@ptrCast([*:0]u8, &user), group, groups, &ngroups) == -1) {
+        if (unistd.getgrouplist(@ptrCast([*:0]u8, &BUFFER), group, groups, &ngroups) == -1) {
             node.throwErrno(env, "failed to get group list");
             return null;
         }
@@ -454,4 +456,27 @@ fn dup2(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
         return null;
     }
     return node.create_i32(env, ret, "ret") catch return null;
+}
+
+// We implement this since node.js doesn't let workers chdir, but
+// we absolutely need to chdir.  Also, this is the actual working directory
+// at the C level, which is different than process.cwd().
+// int chdir(const char *path);
+fn chdir(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    node.stringFromValue(env, argv[0], "path", BUF_SIZE, &BUFFER) catch return null;
+    if (unistd.chdir(&BUFFER) == -1) {
+        node.throwErrno(env, "chdir failed");
+    }
+    return null;
+}
+
+// char* getcwd(char* buf, size_t size);
+fn getcwd(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    if (unistd.getcwd(&BUFFER, BUF_SIZE) == null) {
+        node.throwErrno(env, "unable to get current working directory");
+        return null;
+    }
+    return node.createStringFromPtr(env, @ptrCast([*:0]const u8, &BUFFER), "cwd") catch return null;
 }

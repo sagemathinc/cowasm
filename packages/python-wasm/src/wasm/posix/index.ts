@@ -62,10 +62,12 @@ interface Context {
   posix: {
     getpgid?: () => number;
     constants?: { [code: string]: number };
+    chdir?: (string) => void;
     // TODO...
   };
   free: (ptr: number) => void;
   callFunction: (name: string, ...args) => number | undefined;
+  getcwd: () => string;
 }
 
 export default function posix(context: Context) {
@@ -106,8 +108,20 @@ export default function posix(context: Context) {
     );
   }
 
+  // It's critical to ensure the directories of the host env is the same as
+  // the WASM env, if meaningful or possible.  This only matters right now
+  // under node.js, but is really critical there.  Thus we wrap all posix calls
+  // int his below.
+  let syncdir;
+  if (context.posix.chdir != null) {
+    syncdir = context.posix.chdir(context.getcwd());
+  } else {
+    syncdir = () => {};
+  }
+
   for (const name in P) {
     Q[name] = (...args) => {
+      syncdir();
       try {
         logCall(name, args);
         const ret = P[name](...args);

@@ -1,4 +1,4 @@
-import { exec, init, repr } from "./node";
+import { exec, init, repr, wasm } from "./node";
 import { existsSync } from "fs";
 import { execFileSync } from "child_process";
 
@@ -63,4 +63,24 @@ test("that sys.executable is set and exists -- when running python-wasm-debug vi
     .toString()
     .trim();
   expect(existsSync(stdout)).toBe(true);
+});
+
+test("test that getcwd works", async () => {
+  if (wasm == null) throw Error("wasm must be defined");
+  await exec("import os; os.chdir('/tmp')");
+  const cwd = eval(await repr('os.path.abspath(".")'));
+  expect(cwd).toBe("/tmp");
+  // this is the interesting call:
+  expect(wasm.getcwd()).toBe("/tmp");
+});
+
+test("test that getcwd is fast", async () => {
+  if (wasm == null) throw Error("wasm must be defined");
+  await exec("import os; os.chdir('/tmp')");
+  const t0 = new Date().valueOf();
+  for (let i = 0; i < 10 ** 5; i++) {
+    wasm.getcwd();
+  }
+  // Doing 10**6 of them takes about a second on my laptop, so 10**5 should be safe for a test.
+  expect(new Date().valueOf() - t0).toBeLessThan(1000);
 });

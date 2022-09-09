@@ -155,3 +155,14 @@ test("pipe2 on linux", () => {
     expect(writefd).toBeGreaterThan(0);
   }
 });
+
+test("chdir and getcwd", () => {
+  // they start at the same
+  const orig = process.cwd();
+  expect(orig).toEqual(posix.getcwd?.());
+  // change at the library level:
+  posix.chdir?.("/");
+  expect(posix.getcwd?.()).toEqual("/");
+  // node version didn't change:
+  expect(process.cwd()).toEqual(orig);
+});

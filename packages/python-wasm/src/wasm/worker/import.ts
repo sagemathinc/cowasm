@@ -170,6 +170,19 @@ async function doWasmImport({
     return f(...args);
   }
 
+  function getcwd(): string {
+    if (wasm.getcwd == null) {
+      throw Error(`error - ${name} is not defined`);
+    }
+    return wasm.getcwd();
+  }
+
+  function free(ptr: number): void {
+    wasm.exports.c_free(ptr);
+  }
+
+  // Note, we do things like define getcwd above rather than setting
+  // getcwd to wasm.getcwd.bind(wasm) because wasm isn't defined yet!
   const posixEnv = posix({
     fs,
     send: new SendToWasm({ memory, callFunction }),
@@ -181,9 +194,8 @@ async function doWasmImport({
     child_process: bindings.child_process ?? {},
     memory,
     callFunction,
-    free: (...args) => {
-      return wasm.exports.c_free(...args);
-    },
+    getcwd,
+    free,
   });
   for (const name in posixEnv) {
     if (wasmOpts.env[name] == null) {

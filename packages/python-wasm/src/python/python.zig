@@ -7,25 +7,14 @@ const PyObject = py.PyObject;
 
 var didInit = false;
 var globals: *PyObject = undefined;
-pub fn init(cwd: [*:0]const u8) !void {
+pub fn init() !void {
     if (didInit) return;
-
-    // try py.init(libpython_so);
-    // std.debug.print("calling Py_Initialize()...\n", .{});
-
-    if (unistd.chdir(cwd) == -1) {
-        // We must set the current working directory, since WASI doesn't.
-        // The zig library docs even incorrectly claim there is no concept of working directory
-        // (TODO: upstream bug report) here https://ziglang.org/documentation/master/std/#root;fs.Dir.setAsCwd
-        std.debug.print("WARNING: failed to set current directory to '{s}' \n", .{cwd});
-        return General.RuntimeError;
-    }
+    //std.debug.print("python.init()...\n", .{});
     py.Py_Initialize();
     // std.debug.print("success!\n", .{});
     globals = py.PyDict_New() orelse {
         return General.RuntimeError;
     };
-
     // Success!
     didInit = true;
 }

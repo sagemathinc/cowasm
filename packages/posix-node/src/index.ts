@@ -96,6 +96,11 @@ interface PosixFunctions {
   dup: (oldfd: number) => number;
   dup2: (oldfd: number, newfd: number) => number;
 
+  // Change the current directory at the C library / process level; this is not the same as process.chdir(...)!
+  chdir: (path: string) => void;
+  // Get the C library / process level cwd; in general not the same as process.cwd()!
+  getcwd: () => string;
+
   fork: () => number;
   pipe: () => { readfd: number; writefd: number };
   pipe2: (flags: number) => { readfd: number; writefd: number };
