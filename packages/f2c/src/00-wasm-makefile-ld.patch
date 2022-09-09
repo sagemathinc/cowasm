@@ -1,0 +1,11 @@
+--- native/libf2c/makefile.u	2022-09-09 09:06:24.000000000 -0700
++++ wasm/libf2c/makefile.u	2022-09-09 09:32:21.000000000 -0700
+@@ -20,7 +20,7 @@
+ # compile, then strip unnecessary symbols
+ .c.o:
+ 	$(CC) -c -DSkip_f2c_Undefs $(CFLAGS) $*.c
+-	ld -r -x -o $*.xxx $*.o
++	zig wasm-ld --experimental-pic -shared -o $*.xxx $*.o
+ 	mv $*.xxx $*.o
+ ## Under Solaris (and other systems that do not understand ld -x),
+ ## omit -x in the ld line above.

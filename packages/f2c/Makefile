@@ -12,9 +12,13 @@ URL = https://github.com/sagemathinc/f2c/archive/refs/tags/${VERSION}.tar.gz
 
 TARBALL = ${UPSTREAM}/f2c-${VERSION}.tar.gz
 
-all: native
+all: native wasm
 
 include ../build/Makefile-rules
+
+###########
+# NATIVE
+###########
 
 ${DIST_NATIVE}/.built: ${DIST_NATIVE}/bin/f2c ${DIST_NATIVE}/lib/libf2c.a ${DIST_NATIVE}/include/f2c.h
 	touch ${DIST_NATIVE}/.built
@@ -42,7 +46,7 @@ ${DIST_NATIVE}/include/f2c.h: ${DIST_NATIVE}/bin/f2c
 # These are clearly due to a bunch of bugs in zig cc that I haven't hit elsewhere.
 # Hopefully these will go away someday when we update to a newer version of zig.
 # We test with gcc below, which works.
-test:
+test-native:
 	rm -rf ${BUILD_NATIVE}/test
 	mkdir -p ${BUILD_NATIVE}/test
 	cp src/hello.f ${BUILD_NATIVE}/test
@@ -51,10 +55,25 @@ test:
 		&& gcc hello.c -w -o hello -I${DIST_NATIVE}/include -lf2c -L${DIST_NATIVE}/lib \
 		&& ./hello | grep Hello   # would fail if "Hello" not in output.
 
+###########
+# WASM
+###########
 
-# NOTES about wasm
-#   - I tried targetting wasm with zcc and that just worked to build.
-#   - But I need to make my wasm runtime env that zcc gives have full
-#     posix, etc., since there's too many stubs for this to work, or
-#     (perhaps better) patch f2c in a few place.  For now, I don't prioritize
-#     using f2c in a browser...
+${DIST_WASM}/.built: ${DIST_WASM}/lib/libf2c.a ${DIST_WASM}/include/f2c.h
+	touch ${DIST_WASM}/.built
+
+${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
+	cd ${BUILD_WASM}/libf2c && cat ${CWD}/src/00-wasm-makefile-ld.patch | patch -p2
+	touch ${BUILD_WASM}/.patched
+
+${DIST_WASM}/lib/libf2c.a: ${BUILD_WASM}/.patched
+	cd ${BUILD_WASM}/libf2c \
+		&& make CC="zcc" CFLAGS="-O2" arith.h -f makefile.u \
+		&& make CC="zig-fPIC cc" CFLAGS="-O2"  -f makefile.u -j4 \
+		&& mkdir -p ${DIST_WASM}/lib \
+		&& cp libf2c.a ${DIST_WASM}/lib
+
+${DIST_WASM}/include/f2c.h: ${DIST_WASM}/lib/libf2c.a
+	mkdir -p ${DIST_WASM}/include/
+	cp ${BUILD_WASM}/f2c/f2c.h ${DIST_WASM}/include/
+
