@@ -1225,6 +1225,12 @@ export default class WASI {
             pathLen
           ).toString();
           logOpen("path_open", p);
+          if (p.startsWith("proc/")) {
+            // Immediate error -- otherwise stuff will try to read from this,
+            // which just isn't implemented, and will hang forever.
+            // E.g., cython does.
+            throw new WASIError(WASI_EBADF);
+          }
           const fullUnresolved = path.resolve(stats.path, p);
           if (path.relative(stats.path, fullUnresolved).startsWith("..")) {
             return WASI_ENOTCAPABLE;
