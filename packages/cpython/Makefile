@@ -211,9 +211,9 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	#      'zig c++ -Oz -target wasm32-wasi' --> 'zig-fPIC c++ -Oz'
 	#      'LDSHARED': '' --> 'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'
 	cd ${BUILD_WASM}/build/lib.wasi-wasm32-3.11/ \
-		&& sed -i '' "s/zig cc -Oz -target wasm32-wasi/zig-fPIC cc -Oz/g" _sysconfigdata__wasi_wasm32-wasi.py \
-		&& sed -i '' "s/zig c++ -Oz -target wasm32-wasi/zig-fPIC c++ -Oz/g" _sysconfigdata__wasi_wasm32-wasi.py \
-		&& sed -i '' "s/'LDSHARED': ''/'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'/g" _sysconfigdata__wasi_wasm32-wasi.py
+		&& sed -i'.bak' "s/zig cc -Oz -target wasm32-wasi/zig-fPIC cc -Oz/g" _sysconfigdata__wasi_wasm32-wasi.py \
+		&& sed -i'.bak' "s/zig c++ -Oz -target wasm32-wasi/zig-fPIC c++ -Oz/g" _sysconfigdata__wasi_wasm32-wasi.py \
+		&& sed -i'.bak' "s/'LDSHARED': ''/'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'/g" _sysconfigdata__wasi_wasm32-wasi.py
 	# Install as usual.
 	cd ${BUILD_WASM} && make install
 	# For mysterious reasons, test-tomllib isn't copied over.
