@@ -75,6 +75,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 			./configure \
 				--prefix=${DIST_NATIVE} \
 				--with-ensurepip \
+				--disable-shared \
 				--with-readline=editline
 	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses
 	# zlib).  This is to workaround a security feature of MacOS (see
