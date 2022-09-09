@@ -3,7 +3,7 @@ import os, subprocess, sys
 
 # this is all used at *build* time, so hardcoding the path is fine.
 RUN = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..',
-                   'packages', 'wasi', 'bin', 'run.js')
+                   'packages', 'wasi-js', 'bin', 'run.js')
 
 SCRIPT_DIR = r"""SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"""
 
