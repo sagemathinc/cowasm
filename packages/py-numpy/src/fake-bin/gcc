@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+zig cc -target wasm32-wasi "$@"

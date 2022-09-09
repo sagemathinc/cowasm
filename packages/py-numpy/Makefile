@@ -13,9 +13,27 @@ all: wasm
 
 include ../build/Makefile-rules
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.build
+# NOTES:
+#   - we put fake-bin at the front of the PATH, since build/wasm/numpy/distutils/system_info.py
+#     explicitly tries to call gcc on the system to get info about the system, and this will hang
+#     or be very misleading.  Instead we put a fake gcc that runs the zig clang wasm32-wasi
+#     cross compiler.
+
+export PATH := ${SRC}/fake-bin:$(PATH)
+
+${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&& export PYTHONPATH=${CYTHON} \
-		&& python-wasm-debug tools/cythonize.py numpy/random/ \
-		&& python-wasm-debug setup.py build_ext --inplace
+		&& cat ${SRC}/patches/00-skip-cxx-test.patch | patch -p1 \
+		&& cat ${SRC}/patches/01-ENH-Add-support-for-platforms-with-missing-fenv-flag.patch | patch -p1
+	touch ${BUILD_WASM}/.patched
+
+${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+	cd ${BUILD_WASM} \
+		&& python-native tools/cythonize.py numpy/random/ \
+		&& python-wasm-debug setup.py build_ext
 	touch ${DIST_WASM}/.built
+
+
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	# nothing for now
+	touch ${DIST_NATIVE}/.built
