@@ -21,6 +21,7 @@ include ../build/Makefile-rules
 #   - _numpyconfig.h: copied from pyodide
 
 export PATH := ${SRC}/fake-bin:$(PATH)
+export PYTHONPATH := ${CYTHON}
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
