@@ -6,7 +6,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
-all: python-wasm webpack terminal website py
+all: python-wasm webpack terminal website py f2c
 
 cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl
@@ -124,6 +124,14 @@ packages/bzip2/${BUILT}: zig
 .PHONY: bzip2
 
 
+f2c: packages/f2c/${BUILT} wasi-js zig
+packages/f2c/${BUILT}: zig
+	cd packages/f2c && make all
+.PHONY: f2c
+test-f2c: f2c
+	cd packages/f2c && make test
+
+
 py: py-cython py-mpmath py-sympy py-pip
 .PHONY: py
 
@@ -140,7 +148,6 @@ packages/py-cython/${BUILT}: zig
 .PHONY: py-cython
 test-py-cython: py-cython
 	cd packages/py-cython && make test
-
 
 py-mpmath: packages/py-mpmath/${BUILT} python-wasm
 packages/py-mpmath/${BUILT}: zig
@@ -163,7 +170,7 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-py-pip
+test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-py-pip test-f2c
 .PHONY: test
 
 test-bench: python-wasm

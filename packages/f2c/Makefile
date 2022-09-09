@@ -46,7 +46,9 @@ ${DIST_NATIVE}/include/f2c.h: ${DIST_NATIVE}/bin/f2c
 # These are clearly due to a bunch of bugs in zig cc that I haven't hit elsewhere.
 # Hopefully these will go away someday when we update to a newer version of zig.
 # We test with gcc below, which works.
-test-native:
+# That said, this does NOT matter, since we only need to use the result of f2c
+# on WebAssembly, and there fully using zig completely works fine below.
+test-native: native
 	rm -rf ${BUILD_NATIVE}/test
 	mkdir -p ${BUILD_NATIVE}/test
 	cp src/hello.f ${BUILD_NATIVE}/test
@@ -69,7 +71,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 ${DIST_WASM}/lib/libf2c.a: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM}/libf2c \
 		&& make CC="zcc" CFLAGS="-O2" arith.h -f makefile.u \
-		&& make CC="zig-fPIC cc" CFLAGS="-O2"  -f makefile.u -j4 \
+		&& make CC="zig-fPIC cc" CFLAGS="-Oz"  -f makefile.u  -j4 \
 		&& mkdir -p ${DIST_WASM}/lib \
 		&& cp libf2c.a ${DIST_WASM}/lib
 
@@ -77,3 +79,14 @@ ${DIST_WASM}/include/f2c.h: ${DIST_WASM}/lib/libf2c.a
 	mkdir -p ${DIST_WASM}/include/
 	cp ${BUILD_WASM}/f2c/f2c.h ${DIST_WASM}/include/
 
+test-wasm: wasm native
+	rm -rf ${BUILD_WASM}/test
+	mkdir -p ${BUILD_WASM}/test
+	cp src/hello.f ${BUILD_WASM}/test
+	cd ${BUILD_WASM}/test \
+		&& ${DIST_NATIVE}/bin/f2c hello.f \
+		&& zcc hello.c -o hello -lc -I${DIST_WASM}/include -lf2c -L${DIST_WASM}/lib \
+		&& ./hello | grep "Hello, world!"   # would fail if "Hello" not in output.
+
+# only care about wasm test passing
+test: test-wasm

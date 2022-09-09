@@ -1,11 +1,23 @@
 --- native/libf2c/makefile.u	2022-09-09 09:06:24.000000000 -0700
-+++ wasm/libf2c/makefile.u	2022-09-09 09:32:21.000000000 -0700
-@@ -20,7 +20,7 @@
++++ wasm/libf2c/makefile.u	2022-09-09 10:03:35.000000000 -0700
+@@ -20,8 +20,7 @@
  # compile, then strip unnecessary symbols
  .c.o:
  	$(CC) -c -DSkip_f2c_Undefs $(CFLAGS) $*.c
 -	ld -r -x -o $*.xxx $*.o
-+	zig wasm-ld --experimental-pic -shared -o $*.xxx $*.o
- 	mv $*.xxx $*.o
+-	mv $*.xxx $*.o
++
  ## Under Solaris (and other systems that do not understand ld -x),
  ## omit -x in the ld line above.
+ ## If your system does not have the ld command, comment out
+@@ -72,8 +71,8 @@
+ all: f2c.h signal1.h sysdep1.h libf2c.a
+ 
+ libf2c.a: $(OFILES)
+-	ar r libf2c.a $?
+-	-ranlib libf2c.a
++	zig ar r libf2c.a $?
++	-zig ranlib libf2c.a
+ 
+ ## Shared-library variant: the following rule works on Linux
+ ## systems.  Details are system-dependent.  Under Linux, -fPIC
