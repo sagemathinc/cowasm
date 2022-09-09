@@ -118,6 +118,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# This doesn't work yet, but we do have this as a goal.
 	# cd ${BUILD_WASM} && cat ${CWD}/src/patches/04-enable-fork-and-subprocess-tests.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${CWD}/src/patches/05-st_mode.patch | patch -p1
+	# Implement 'import platform; platform.architecture()' for wasm.
+	cd ${BUILD_WASM} && cat ${CWD}/src/patches/06-platform.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # The options for the extension modules.  We cannot strip later. The -s option to BLDSHARED
