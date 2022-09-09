@@ -114,7 +114,9 @@ export default function posix(context: Context) {
   // int his below.
   let syncdir;
   if (context.posix.chdir != null) {
-    syncdir = context.posix.chdir(context.getcwd());
+    syncdir = () => {
+      context.posix.chdir?.(context.getcwd());
+    };
   } else {
     syncdir = () => {};
   }

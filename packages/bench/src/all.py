@@ -10,6 +10,7 @@ import lambda_
 import call
 #import mandel
 import mypyc_micro
+import parse_int
 
 from time import time
 from bench import all
