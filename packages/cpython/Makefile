@@ -269,7 +269,7 @@ run-wasm: wasm
 # "make test" in build/wasm, since that only support wasmtime and emscripten.
 RUN_TESTS =  _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 	_PYTHON_HOST_PLATFORM=wasi-wasm32 \
-	PYTHONPATH=${BUILD_WASM}/build/lib.wasi-wasm32-3.11:./Lib \
+	PYTHONPATH=${DIST_WASM}/lib/python3.11 \
 	_PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__wasi_wasm32-wasi \
 	${DIST_NATIVE}/bin/python3 \
 	./Tools/scripts/run_tests.py
