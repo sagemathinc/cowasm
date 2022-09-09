@@ -18,13 +18,17 @@ include ../build/Makefile-rules
 #     explicitly tries to call gcc on the system to get info about the system, and this will hang
 #     or be very misleading.  Instead we put a fake gcc that runs the zig clang wasm32-wasi
 #     cross compiler.
+#   - _numpyconfig.h: copied from pyodide
 
 export PATH := ${SRC}/fake-bin:$(PATH)
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&& cat ${SRC}/patches/00-skip-cxx-test.patch | patch -p1 \
-		&& cat ${SRC}/patches/01-ENH-Add-support-for-platforms-with-missing-fenv-flag.patch | patch -p1
+		&& cat ${SRC}/patches/01-ENH-Add-support-for-platforms-with-missing-fenv-flag.patch | patch -p1 \
+		&& echo "" > numpy/core/include/setjmp.h \
+		&& echo "" > numpy/core/include/execinfo.h \
+		&& cp ${SRC}/_numpyconfig.h ${BUILD_WASM}/numpy/core/include/numpy/
 	touch ${BUILD_WASM}/.patched
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched

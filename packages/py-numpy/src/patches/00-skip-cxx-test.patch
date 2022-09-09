@@ -1,13 +1,17 @@
+WRONG -- we do need c++ due to these modules that are all in cpp:
+
+core/src/npysort/*
+
 --- native/numpy/core/setup.py	2022-08-13 11:30:12.000000000 -0700
 +++ wasm/numpy/core/setup.py	2022-09-09 15:18:02.000000000 -0700
 @@ -195,7 +195,7 @@
      check_funcs(OPTIONAL_STDFUNCS)
      check_funcs(OPTIONAL_FILE_FUNCS, headers=["feature_detection_stdio.h"])
      check_funcs(OPTIONAL_MISC_FUNCS, headers=["feature_detection_misc.h"])
--    
+-
 +
- 
- 
+
+
      for h in OPTIONAL_HEADERS:
 @@ -723,6 +723,8 @@
          # but we cannot use add_installed_pkg_config here either, so we only
@@ -31,7 +35,7 @@
                  # c tested first, compiler should be here
 @@ -751,6 +757,7 @@
                      config_cmd.compiler.compiler_so.extend(NPY_CXX_FLAGS)
- 
+
              st = config_cmd.try_link(test_code, lang=lang)
 +            print(lang, test_code, note)
              if not st:
