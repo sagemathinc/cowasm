@@ -16,5 +16,6 @@ include ../build/Makefile-rules
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&& export PYTHONPATH=${CYTHON} \
+		&& python-wasm-debug tools/cythonize.py numpy/random/ \
 		&& python-wasm-debug setup.py build_ext --inplace
 	touch ${DIST_WASM}/.built
