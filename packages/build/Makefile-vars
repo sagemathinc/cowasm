@@ -30,3 +30,23 @@ DIST = ${CWD}/dist
 DIST_NATIVE = ${DIST}/native
 DIST_WASM = ${DIST}/wasm
 
+UNAME_S := $(shell uname -s)
+UNAME_M := $(shell uname -m)
+
+
+# This target below also works around a zig bug -- the native build fails
+# with "ld.lld: error: undefined symbol: fcntl64".
+# See https://github.com/ziglang/zig/issues/5882 and https://github.com/ziglang/zig/issues/9485
+# NOTE: we use musl instead of gnu.2.31, since musl works on CoCalc (a massive messy huge Linux
+# environment), wheras gnu.2.31 only worked on several minimal linux envs.  Plus it's pretty cool
+# that we can use musl and it works!
+
+ifeq ($(UNAME_S),Linux)
+    # On Linux we explicitly always build for musl
+    # See https://github.com/ziglang/zig/issues/12797
+	ZIG_NATIVE_CFLAGS="--target=$(UNAME_M)-linux-musl"
+	ZIG_NATIVE_CFLAGS_GNU="--target=$(UNAME_M)-linux-gnu.2.34"
+else
+    ZIG_NATIVE_CFLAGS=""
+    ZIG_NATIVE_CFLAGS_GNU=""
+endif

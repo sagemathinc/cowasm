@@ -15,7 +15,7 @@ include ../build/Makefile-rules
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} \
-		&& CC="zig cc" AR="zig ar" ./configure --prefix=${DIST_NATIVE} \
+		&& CC="zig cc ${ZIG_NATIVE_CFLAGS} " AR="zig ar ${ZIG_NATIVE_CFLAGS} " ./configure --prefix=${DIST_NATIVE} \
 		&& make -j8 \
 		&& make install
 	touch ${DIST_NATIVE}/.built

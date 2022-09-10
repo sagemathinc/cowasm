@@ -13,7 +13,7 @@ include ../build/Makefile-rules
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.patched
 	cd ${BUILD_NATIVE} \
-		&& 	CC="zig cc" \
+		&& 	CC="zig cc ${ZIG_NATIVE_CFLAGS} " \
 			AR="zig ar" \
 			./Configure --prefix=${DIST_NATIVE} \
 		&&	make -j8 \

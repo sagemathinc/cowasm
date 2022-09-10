@@ -20,7 +20,7 @@ TERMCAP = ${PACKAGES}/termcap/dist
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} && \
 		CFLAGS="-I${TERMCAP}/native/include -L${TERMCAP}/native/lib" \
-		CC="zig cc -Oz" \
+		CC="zig cc -Oz  ${ZIG_NATIVE_CFLAGS_GNU} " \
 		AR="zig ar" \
 		./configure --prefix=${DIST_NATIVE}
 	cd  ${BUILD_NATIVE} && make -j8

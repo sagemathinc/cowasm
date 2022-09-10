@@ -27,13 +27,13 @@ ${DIST_NATIVE}/.built: ${DIST_NATIVE}/bin/f2c ${DIST_NATIVE}/lib/libf2c.a ${DIST
 #   - The zig built f2c crashes if you use -O0, but NOT with -O2!
 ${DIST_NATIVE}/bin/f2c: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE}/f2c \
-		&& make CC="zig cc" CFLAGS="-O2" -j4 -f makefile.u \
+		&& make CC="zig cc ${ZIG_NATIVE_CFLAGS_GNU} " CFLAGS="-O2" -j4 -f makefile.u \
 		&& mkdir -p ${DIST_NATIVE}/bin \
 		&& cp f2c ${DIST_NATIVE}/bin
 
 ${DIST_NATIVE}/lib/libf2c.a: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE}/libf2c \
-		&& make CC="zig cc" CFLAGS="-O2" -j4 -f makefile.u \
+		&& make CC="zig cc ${ZIG_NATIVE_CFLAGS_GNU} " CFLAGS="-O2" -j4 -f makefile.u \
 		&& mkdir -p ${DIST_NATIVE}/lib \
 		&& cp libf2c.a ${DIST_NATIVE}/lib
 

@@ -17,7 +17,7 @@ include ../build/Makefile-rules
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} && \
 		make AR="zig ar" \
-		CC="zig cc" \
+		CC="zig cc ${ZIG_NATIVE_CFLAGS}" \
 		RANLIB="zig ranlib" \
 		PREFIX=${DIST_NATIVE} \
 		install -j8

@@ -47,19 +47,6 @@ include ../build/Makefile-rules
 
 ## NATIVE
 
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Linux)
-	UNAME_M := $(shell uname -m)
-	# Workaround a zig bug -- the native build fails with "ld.lld: error: undefined symbol: fcntl64".
-	# See https://github.com/ziglang/zig/issues/5882 and https://github.com/ziglang/zig/issues/9485
-	# NOTE: we use musl instead of gnu.2.31, since musl works on CoCalc (a massive messy huge Linux
-	# environment), wheras gnu.2.31 only worked on several minimal linux envs.  Plus it's pretty cool
-	# that we can use musl and it works!
-	ARCH = --target=$(UNAME_M)-linux-musl
-else
-	ARCH =
-endif
-
 ${BUILD_NATIVE}/.build:: ${TARBALL}
 	cp src/Setup.local-native ${BUILD_NATIVE}/Modules/Setup.local
 	# This _scproxy is needed macos *only* for pip; on Linux it breaks the build.
@@ -68,8 +55,8 @@ ${BUILD_NATIVE}/.build:: ${TARBALL}
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} \
 		&& 	AR="zig ar" \
-			CXX="zig c++ ${ARCH} " \
-			CC="zig cc ${ARCH} " \
+			CXX="zig c++ ${ZIG_NATIVE_CFLAGS}" \
+			CC="zig cc ${ZIG_NATIVE_CFLAGS}" \
 			CFLAGS="-I${ZLIB}/native/include -I${LIBEDIT}/native/include" \
 			LDFLAGS="-L${ZLIB}/native/lib -L${LIBEDIT}/native/lib" \
 			./configure \

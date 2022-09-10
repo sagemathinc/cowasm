@@ -11,6 +11,18 @@ TARBALL = ${UPSTREAM}/lzma-v${VERSION}.tar.gz
 
 include ../build/Makefile-rules
 
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	cd ${BUILD_NATIVE} && \
+		RANLIB="zig ranlib" \
+		AR="zig ar" \
+		CC="zig cc ${ZIG_NATIVE_CFLAGS}" \
+		CXX="zig c++ ${ZIG_NATIVE_CFLAGS}" \
+		./configure \
+			--build=`./build-aux/config.guess` \
+			--host=none --prefix="${DIST_NATIVE}"
+	cd ${BUILD_NATIVE} && make -j4 && make install
+	touch ${DIST_NATIVE}/.built
+
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \
@@ -26,15 +38,3 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && make -j4 || true && cd src/liblzma && make install
 	zig ranlib ${DIST_WASM}/lib/liblzma.a  # needed on linux
 	touch ${DIST_WASM}/.built
-
-${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
-	cd ${BUILD_NATIVE} && \
-		RANLIB="zig ranlib" \
-		AR="zig ar" \
-		CC="zig cc" \
-		CXX="zig c++" \
-		./configure \
-			--build=`./build-aux/config.guess` \
-			--host=none --prefix="${DIST_NATIVE}"
-	cd ${BUILD_NATIVE} && make -j4 && make install
-	touch ${DIST_NATIVE}/.built
