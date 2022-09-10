@@ -45,7 +45,7 @@ ifeq ($(UNAME_S),Linux)
     # On Linux we explicitly always build for musl
     # See https://github.com/ziglang/zig/issues/12797
 	ZIG_NATIVE_CFLAGS="--target=$(UNAME_M)-linux-musl"
-	ZIG_NATIVE_CFLAGS_GNU="--target=$(UNAME_M)-linux-gnu.2.34"
+	ZIG_NATIVE_CFLAGS_GNU="--target=$(UNAME_M)-linux-gnu.2.31"
 else
     ZIG_NATIVE_CFLAGS=""
     ZIG_NATIVE_CFLAGS_GNU=""
