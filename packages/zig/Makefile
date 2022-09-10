@@ -7,12 +7,7 @@ include ../build/Makefile-vars
 # Find the latest version at https://ziglang.org/download/
 # This is for pre-release
 
-VERSION = 0.10.0-dev.3900+ab4b26d8a
-
-# WARNING: when 0.10.0-dev.3659 appeared, they broke
-# things with a huge merge as explained here:
-#   https://github.com/ziglang/zig/wiki/Self-Hosted-Compiler-Upgrade-Guide
-
+VERSION = 0.10.0-dev.3978+4fd4c733d
 
 # Using sed because uname -s --> x86_64 or arm64, but need aarch64
 ARCH = $(shell uname -m | sed s/arm64/aarch64/)
