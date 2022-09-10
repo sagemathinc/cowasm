@@ -81,6 +81,6 @@ test("test that getcwd is fast", async () => {
   for (let i = 0; i < 10 ** 5; i++) {
     wasm.getcwd();
   }
-  // Doing 10**6 of them takes about a second on my laptop, so 10**5 should be safe for a test.
-  expect(new Date().valueOf() - t0).toBeLessThan(1000);
+  // Doing 10**6 of them takes about a second on my laptop, so 2s should be safe for a test.
+  expect(new Date().valueOf() - t0).toBeLessThan(2000);
 });
