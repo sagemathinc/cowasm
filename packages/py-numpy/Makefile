@@ -1,7 +1,7 @@
 include ../build/Makefile-vars
 
 # See https://github.com/numpy/numpy/releases
-VERSION=1.23.2
+VERSION=1.23.3
 
 URL = https://github.com/numpy/numpy/releases/download/v${VERSION}/numpy-${VERSION}.tar.gz
 
@@ -21,6 +21,7 @@ include ../build/Makefile-rules
 #   - _numpyconfig.h: copied from pyodide
 
 export PATH := ${SRC}/fake-bin:$(PATH)
+export PYTHONPATH := ${CYTHON}
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
