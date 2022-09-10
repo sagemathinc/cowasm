@@ -47,6 +47,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 			--disable-tcl \
 			--disable-shared \
 	&&	echo '#include "posix-wasm.h"' >> config.h \
-	&& 	make -j8 \
-	&&	make install
+	&& 	make BCC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" -j8 \
+	&&	make BCC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" install
 	touch ${DIST_WASM}/.built
