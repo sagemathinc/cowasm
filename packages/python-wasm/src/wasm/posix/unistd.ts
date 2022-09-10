@@ -20,9 +20,11 @@ export default function unistd({
   function ensureIsFile(path: string): void {
     try {
       if (!fs.statSync(path).isFile()) {
+        log("not calling exec for", path, " since not file");
         throw Errno("ENOENT");
       }
     } catch (_err) {
+      log("not calling exec for", path, " since does not exist");
       // error if file doesn't exist:
       throw Errno("ENOENT");
     }
