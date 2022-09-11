@@ -103,6 +103,29 @@ void qsort(void *base, size_t nmemb, size_t size,
 
 int mkstemp(char *template);
 void __SIG_IGN(int);
+double __extenddftf2(long double);
+// lib/compiler_rt/trunctfdf2.zig:pub fn __trunctfdf2(a: f128) callconv(.C) f64
+double __trunctfdf2(long double);
+// lib/compiler_rt/multf3.zig:pub fn __multf3(a: f128, b: f128) callconv(.C) f128 {
+long double __multf3(long double a, long double b);
+// lib/compiler_rt/addtf3.zig:pub fn __addtf3(a: f128, b: f128) callconv(.C) f128 {
+long double __addtf3(long double a, long double b);
+// lib/compiler_rt/getf2.zig:fn __gttf2(a: f128, b: f128) callconv(.C) i32 {
+int __gttf2(long double a, long double b);
+// lib/compiler_rt/getf2.zig:fn __getf2(a: f128, b: f128) callconv(.C) i32 {
+int __getf2(long double, long double);
+// lib/compiler_rt/divtf3.zig:pub fn __divtf3(a: f128, b: f128) callconv(.C) f128 {
+long double __divtf3(long double, long double);
+// lib/compiler_rt/cmptf2.zig:fn __lttf2(a: f128, b: f128) callconv(.C) i32 {
+int __lttf2(long double, long double);
+// lib/compiler_rt/fixtfsi.zig:pub fn __fixtfsi(a: f128) callconv(.C) i32 {
+int __fixtfsi(long double);
+// lib/compiler_rt/floatsitf.zig:pub fn __floatsitf(a: i32) callconv(.C) f128 {
+long double __floatsitf(int);
+// lib/compiler_rt/subtf3.zig:pub fn __subtf3(a: f128, b: f128) callconv(.C) f128 {
+long double __subtf3(long double, long double);
+// lib/compiler_rt/floatditf.zig:pub fn __floatditf(a: i64) callconv(.C) f128 {
+long double __floatditf(double a);
 `;
   s += "\n";
   s += wasmExport((symbols + "\n" + posix).split("\n"));
@@ -113,6 +136,18 @@ void __SIG_IGN(int);
 // Extra things we added to our posix compat layer, since they are
 // missing from wasi-zig-libc:
 const posix = `
+__floatditf
+__floatsitf
+__fixtfsi
+__lttf2
+__divtf3
+__getf2
+__gttf2
+__subtf3
+__multf3
+__addtf3
+__extenddftf2
+__trunctfdf2
 qsort
 flockfile
 ftrylockfile
@@ -291,6 +326,9 @@ wctype.h
 // targets of #define.
 
 const symbols = `
+fchmod
+cfsetispeed
+cfsetospeed
 __assert_fail
 sigaction
 signal
