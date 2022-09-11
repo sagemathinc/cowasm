@@ -27,12 +27,17 @@ omit +=
 // line from the function.  **MUST FIX**
 
 const extra =
-  "_PyUnicodeWriter_WriteChar _PyUnicodeWriter_Init _PyUnicodeWriter_Finish _PyUnicodeWriter_Dealloc _PyUnicodeWriter_WriteStr";
+  "_PyUnicodeWriter_WriteChar _PyUnicodeWriter_Init _PyUnicodeWriter_Finish _PyUnicodeWriter_Dealloc _PyUnicodeWriter_WriteStr PyCode_NewEmpty PyFrame_New _PyObject_GenericGetAttrWithDict";
 
 // const todo =
-//   "_PyArg_ParseTupleAndKeywords_SizeT _PyArg_ParseTupleAndKeywords_SizeT  _PyArg_ParseTuple_SizeT";
+//   "_PyArg_ParseTupleAndKeywords_SizeT  _PyArg_ParseTuple_SizeT";
 
-const aliases = { Py_INCREF: "Py_IncRef", Py_DECREF: "Py_DecRef" };
+const aliases = {
+  Py_INCREF: "Py_IncRef",
+  Py_DECREF: "Py_DecRef",
+  _PyArg_ParseTupleAndKeywords_SizeT: "PyArg_ParseTupleAndKeywords",
+  _PyArg_Parse_SizeT: "PyArg_Parse",
+};
 
 async function main() {
   const exclude = new Set(omit.split(/\s+/));
@@ -68,7 +73,10 @@ async function main() {
       names.push(name);
     }
   }
+  console.log("#undef Py_LIMITED_API");
   console.log("#include <Python.h>");
+  console.log("#include <pyframe.h>");
+  console.log("#include <frameobject.h>");
   names = names.filter((name) => {
     if (name.startsWith("pthread_")) {
       // python has some conflicting pthread stubs

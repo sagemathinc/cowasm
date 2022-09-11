@@ -165,11 +165,15 @@ export default async function importWebAssemblyDlopen({
       log("getFunction ", name, "from function pointer");
       return f;
     }
+    /*
+    This is a horrible disaster -- will segfault or be 1000x too slow.  Every function
+    needs to be via a pointer.
     f = mainInstance.exports[name];
     if (f != null) {
       log("getFunction ", name, "from mainInstance exports");
       return f;
     }
+    */
     f = functionFromOtherLibrary(name);
     if (f != null) {
       log("getFunction ", name, "from other library");

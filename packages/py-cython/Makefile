@@ -13,8 +13,8 @@ include ../build/Makefile-rules
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 	# TODO: The cython build of cython itself is still broken -- it silently fails to produce .c files
 	# Until we fix this, we'll just use the slow pure python version of cython.
-	#cd ${BUILD_WASM} \
-	#	&& python-wasm-debug setup.py build_ext --inplace
+	cd ${BUILD_WASM} \
+		&& python-wasm-debug setup.py build_ext --inplace
 	touch ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
