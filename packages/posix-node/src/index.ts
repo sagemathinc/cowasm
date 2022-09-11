@@ -1,5 +1,4 @@
-import debug from "debug";
-const log = debug("posix-node");
+import { log } from "./logging";
 
 // Map from nodejs to zig descriptions:
 const nodeToZig = {
@@ -285,9 +284,9 @@ try {
 
   for (const name in mod) {
     exports[name] = mod1[name] = (...args) => {
-      log(name, args);
+      if (name != "chdir") log(name, args);
       const res = mod[name](...args);
-      log(name, "returned", res);
+      if (name != "chdir") log(name, "returned", res);
       return res;
     };
   }

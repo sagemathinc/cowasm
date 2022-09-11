@@ -723,7 +723,7 @@ pub fn getStreamFd(env: c.napi_env, comptime name: [:0]const u8) !c_int {
         return throw(env, name ++ " - failed to get process");
     }
     var stream: c.napi_value = undefined;
-    if (c.napi_get_named_property(env, process, name, &stream) != c.napi_ok) {
+    if (c.napi_get_named_property(env, process, @ptrCast([*c]const u8, name), &stream) != c.napi_ok) {
         return throw(env, name ++ " - failed to get stream");
     }
     var _handle: c.napi_value = undefined;

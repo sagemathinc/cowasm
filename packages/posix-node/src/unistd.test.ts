@@ -166,3 +166,43 @@ test("chdir and getcwd", () => {
   // node version didn't change:
   expect(process.cwd()).toEqual(orig);
 });
+
+test("Use the full standard fork, dup, execv song and dance to do 'Hello world'", () => {
+  const { dup2, execv, fork, waitpid, pipe } = posix;
+  if (
+    // for typescript
+    dup2 == null ||
+    execv == null ||
+    fork == null ||
+    waitpid == null ||
+    pipe == null
+  ) {
+    throw Error("bug");
+  }
+  const { readSync } = require("fs");
+
+  //execv("/bin/ls", ["/bin/ls"]);
+
+  const stdin = pipe();
+  const stdout = pipe();
+  const pid = fork();
+
+  const HELLO = "Hello there from Posix-node!";
+  if (pid == 0) {
+    // child
+    // connect up stdin and stdout
+    dup2(stdin.readfd, 0);
+    dup2(stdout.writefd, 1);
+    // replace with echo and output hello world to the pipe
+    execv("/bin/echo", ["/bin/echo", HELLO]);
+  } else {
+    let b = Buffer.alloc(10000);
+    // read output from the child
+    readSync(stdout.readfd, b);
+    const s = b.toString("utf8", 0, HELLO.length);
+    expect(s).toEqual(HELLO);
+    const { wstatus, ret } = waitpid(pid, 0);
+    expect(wstatus).toBe(0);
+    expect(ret).toBe(pid);
+  }
+});

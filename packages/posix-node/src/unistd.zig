@@ -220,24 +220,51 @@ fn alarm(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
     return node.create_u32(env, ret, "ret") catch return null;
 }
 
-// const UnistdError = error{Dup2Fail};
-// fn dupStream(env: c.napi_env, comptime name: [:0]const u8, number: i32) !void {
-//     const stream = try node.getStreamFd(env, name);
-//     if (unistd.dup2(stream, number) == -1) {
-//         node.throwError(env, "dup2 failed on " ++ name);
-//         return UnistdError.Dup2Fail;
-//     }
-//     if (unistd.close(stream) == -1) {
-//         node.throwError(env, "closing fd failed " ++ name);
-//         return UnistdError.Dup2Fail;
-//     }
-// }
+const UnistdError = error{ Dup2Fail, FcntlFail };
+fn dupStream(env: c.napi_env, comptime name: [:0]const u8, number: i32) !void {
+    const stream = try node.getStreamFd(env, name);
+    if (unistd.dup2(stream, number) == -1) {
+        node.throwError(env, "dup2 failed on " ++ name);
+        return UnistdError.Dup2Fail;
+    }
+    if (unistd.close(stream) == -1) {
+        node.throwError(env, "closing fd failed " ++ name);
+        return UnistdError.Dup2Fail;
+    }
+}
 
-// fn dupStreams(env: c.napi_env) !void {
-//     try dupStream(env, "stdin", 0);
-//     try dupStream(env, "stdout", 1);
-//     try dupStream(env, "stderr", 2);
-// }
+fn dupStreams(env: c.napi_env) !void {
+    try dupStream(env, "stdin", 0);
+    try dupStream(env, "stdout", 1);
+    try dupStream(env, "stderr", 2);
+}
+
+fn makeNonblocking(env: c.napi_env, desc: c_int) !c_int {
+    // make  nonblocking
+    var flags = unistd.fcntl(desc, unistd.F_GETFL, @intCast(c_int, 0));
+    flags &= unistd.O_NONBLOCK;
+    var status = unistd.fcntl(desc, unistd.F_SETFL, flags);
+    if (status == -1) {
+        node.throwError(env, "O_NONBLOCK failed");
+        return UnistdError.FcntlFail;
+    }
+    return status;
+}
+
+fn clearCLOEXEC(env: c.napi_env, desc: c_int) !c_int {
+    var flags = unistd.fcntl(desc, unistd.F_GETFD, @intCast(c_int, 0));
+    if (flags < 0) {
+        return flags; // return if reading failed
+    }
+    flags &= ~unistd.FD_CLOEXEC; // clear FD_CLOEXEC bit
+    var status = unistd.fcntl(desc, unistd.F_SETFD, flags);
+    if (status == -1) {
+        node.throwError(env, "clearCLOEXEC failed");
+        return UnistdError.FcntlFail;
+    }
+
+    return status;
+}
 
 fn execv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const args = node.getArgv(env, info, 2) catch return null;
@@ -247,6 +274,14 @@ fn execv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
 
     var argv = node.valueToArrayOfStrings(env, args[1], "argv") catch return null;
     defer util.freeArrayOfStrings(argv);
+
+    // The projects linked from https://github.com/nodejs/node/issues/21664 do
+    // the following.  However, I can't understand why its needed and it
+    // doesn't seem necessary:
+    //_ = clearCLOEXEC(env, 0) catch return null;
+    //_ = clearCLOEXEC(env, 1) catch return null;
+    //_ = clearCLOEXEC(env, 2) catch return null;
+    //_ = makeNonblocking(env, 0) catch return null;
 
     const ret = unistd.execv(pathname, argv);
     if (ret == -1) {
