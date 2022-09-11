@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python-native
 import os, subprocess, sys
 
 # this is all used at *build* time, so hardcoding the path is fine.
