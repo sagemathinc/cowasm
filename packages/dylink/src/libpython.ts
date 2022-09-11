@@ -28,7 +28,7 @@ omit +=
 // line from the function.  **MUST FIX**
 
 const extra =
-  "_PyUnicodeWriter_WriteChar _PyUnicodeWriter_Init _PyUnicodeWriter_Finish _PyUnicodeWriter_Dealloc _PyUnicodeWriter_WriteStr PyCode_NewEmpty PyFrame_New _PyObject_GenericGetAttrWithDict _Py_FatalErrorFunc _PyUnicodeWriter_PrepareInternal _PyBytes_ReverseFind _PyBytes_Find";
+  "_PyUnicodeWriter_WriteChar _PyUnicodeWriter_Init _PyUnicodeWriter_Finish _PyUnicodeWriter_Dealloc _PyUnicodeWriter_WriteStr PyCode_NewEmpty PyFrame_New _PyObject_GenericGetAttrWithDict _Py_FatalErrorFunc _PyUnicodeWriter_PrepareInternal _PyBytes_ReverseFind _PyBytes_Find _Py_dup";
 
 const aliases = {
   Py_INCREF: "Py_IncRef",
