@@ -9,6 +9,13 @@
 *static*
 
 
+# This _posixsubprocess MUST be built into the core statically since it calls
+# code that we can't link into the host python.wasm since it isn't used otherwise,
+# e.g., the function _Py_closerange(int first, int last) in Python/fileutils.c,
+# which isn't otherwise in the public API.  When it tries to call that (when doing exec)
+# in share so module, we get a segfault.
+_posixsubprocess _posixsubprocess.c
+
 # Uncomment to build curses.  This works.  But the curses .py files aren't in the
 # zip bundle yet.  You can explicitly include those.  However,
 # 'import _curses; _curses.initscr()' fails right now, so there's probably
@@ -58,10 +65,6 @@ unicodedata unicodedata.c
 # _datetime _datetimemodule.c
 # _pickle _pickle.c
 
-
-# Only 6kb, so do not need to build shared for size.  However, for some reason
-# I'm having trouble building this static whereas shared works well!? Heh, it works this way.
-_posixsubprocess _posixsubprocess.c
 
 readline readline.c -I$(abs_srcdir)/../../../libedit/dist/wasm/include $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
