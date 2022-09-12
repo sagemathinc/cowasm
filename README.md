@@ -7,7 +7,7 @@ URL: https://github.com/sagemathinc/python-wasm
 DEMOS:
 
 - https://python-wasm.cocalc.com (uses Atomics)
-- https://python-wasm.org (uses Service Workers)
+- https://python-wasm.org or https://sagemathinc.github.io/python-wasm.org/ (uses Service Workers)
 
 [<img src="https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml/badge.svg"  alt="Docker Image CI"  width="172px"  height="20px"  style="object-fit:cover"/>](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml)
 
