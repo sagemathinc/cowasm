@@ -165,23 +165,29 @@ export default async function importWebAssemblyDlopen({
       log("getFunction ", name, "from function pointer");
       return f;
     }
-    /*
-    This is a horrible disaster -- will segfault or be 1000x too slow.  Every function
-    needs to be via a pointer.
-    f = mainInstance.exports[name];
-    if (f != null) {
-      log("getFunction ", name, "from mainInstance exports");
-      return f;
-    }
-    */
     f = functionFromOtherLibrary(name);
     if (f != null) {
       log("getFunction ", name, "from other library");
       return f;
     }
     if (path) {
-      debug("stub")(name, "undefined importing", path);
+      throw Error(`${name} -- undefined when importing ${path}`);
     }
+
+    /*
+    Any other way of resolving a function needed in a dynamic import that isn't a function
+    pointer is NOT going to work in general:
+    It will segfault or be 1000x too slow.  Every function
+    needs to be via a pointer. The following doesn't work in general.  In addition to
+    speed, there are of course tons of C functions that make no sense to call via WASM,
+    since they have signatures that are more complicated than WASM supports.
+
+    f = mainInstance.exports[name];
+    if (f != null) {
+      log("getFunction ", name, "from mainInstance exports");
+      return f;
+    }
+    */
     return importObjectWithPossibleStub.env[name];
   }
 
