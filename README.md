@@ -1,6 +1,6 @@
 # python-wasm
 
-> "WebAssembly CPython for Node.js and the browser"
+> Python built for WebAssembly using Zig and Clang with support for loading dynamic libraries and running on nodejs with posix support (fork, etc.) and in the browser
 
 URL: https://github.com/sagemathinc/python-wasm
 
