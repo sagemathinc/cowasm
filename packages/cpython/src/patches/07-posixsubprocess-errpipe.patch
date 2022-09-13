@@ -42,7 +42,7 @@
 +
                  # be sure the FD is closed no matter what
 -                os.close(errpipe_read)
-+                # os.close(errpipe_read)
++                pass
 
              if errpipe_data:
                  try:
