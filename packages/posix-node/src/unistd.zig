@@ -220,7 +220,7 @@ fn alarm(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
     return node.create_u32(env, ret, "ret") catch return null;
 }
 
-const UnistdError = error{ Dup2Fail, FcntlFail };
+const UnistdError = error{ Dup2Fail, FcntlFail, CloseStream };
 fn dupStream(env: c.napi_env, comptime name: [:0]const u8, number: i32) !void {
     const stream = try node.getStreamFd(env, name);
     if (unistd.dup2(stream, number) == -1) {
@@ -237,6 +237,14 @@ fn dupStreams(env: c.napi_env) !void {
     try dupStream(env, "stdin", 0);
     try dupStream(env, "stdout", 1);
     try dupStream(env, "stderr", 2);
+}
+
+fn closeStream(env: c.napi_env, comptime name: [:0]const u8) !void {
+    const stream = try node.getStreamFd(env, name);
+    if (unistd.close(stream) == -1) {
+        node.throwError(env, "closing stream failed " ++ name);
+        return UnistdError.CloseStream;
+    }
 }
 
 fn makeNonblocking(env: c.napi_env, desc: c_int) !c_int {
@@ -276,12 +284,13 @@ fn execv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
     defer util.freeArrayOfStrings(argv);
 
     // The projects linked from https://github.com/nodejs/node/issues/21664 do
-    // the following.  However, I can't understand why its needed and it
-    // doesn't seem necessary:
-    //_ = clearCLOEXEC(env, 0) catch return null;
-    //_ = clearCLOEXEC(env, 1) catch return null;
-    //_ = clearCLOEXEC(env, 2) catch return null;
-    //_ = makeNonblocking(env, 0) catch return null;
+    // the following.  It seems like node currently only sets FD_CLOEXEC for
+    // stderr (not stdin or stdout), but we unset the flag for all just
+    // in case.  We don't want these to all just get closed automatically
+    // the moment we fork since clients might not want that.
+    _ = clearCLOEXEC(env, 0) catch return null;
+    _ = clearCLOEXEC(env, 1) catch return null;
+    _ = clearCLOEXEC(env, 2) catch return null;
 
     const ret = unistd.execv(pathname, argv);
     if (ret == -1) {
@@ -305,6 +314,10 @@ fn execve(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
 
     var envp = node.valueToArrayOfStrings(env, args[2], "envp") catch return null;
     defer util.freeArrayOfStrings(envp);
+
+    _ = clearCLOEXEC(env, 0) catch return null;
+    _ = clearCLOEXEC(env, 1) catch return null;
+    _ = clearCLOEXEC(env, 2) catch return null;
 
     // NOTE: On success, execve() does not return (!), on error -1 is returned,
     // and errno is set to indicate the error.
