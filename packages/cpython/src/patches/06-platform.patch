@@ -1,5 +1,5 @@
 --- native/Lib/platform.py	2022-08-05 07:45:18.000000000 -0700
-+++ wasm/Lib/platform.py	2022-09-09 17:24:43.000000000 -0700
++++ wasm/Lib/platform.py	2022-09-12 20:53:45.000000000 -0700
 @@ -663,6 +663,9 @@
          binary defaults from _default_architecture are used.
  
@@ -10,3 +10,14 @@
      # Use the sizeof(pointer) as default number of bits if nothing
      # else is given as default.
      if not bits:
+@@ -753,6 +756,10 @@
+         """
+         Fall back to `uname -p`
+         """
++        # Special case for WASM where on nodejs we do NOT
++        # want to get the host processor.
++        return "wasm32"
++
+         try:
+             import subprocess
+         except ImportError:
