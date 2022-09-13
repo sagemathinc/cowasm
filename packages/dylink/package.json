@@ -8,7 +8,12 @@
     "build": "tsc -b",
     "test": "make test"
   },
-  "files": ["dist/*", "README.md", "package.json", "tsconfig.json"],
+  "files": [
+    "dist/*",
+    "README.md",
+    "package.json",
+    "tsconfig.json"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/python-wasm.git"
@@ -29,6 +34,7 @@
   },
   "homepage": "https://github.com/sagemathinc/python-wasm#readme",
   "devDependencies": {
+    "@types/node": "^18.7.17",
     "typescript": "^4.7.4"
   },
   "dependencies": {
