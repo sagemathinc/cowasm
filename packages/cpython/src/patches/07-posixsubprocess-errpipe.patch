@@ -20,29 +20,32 @@
      saved_errno = 0;
 
 --- native/Lib/subprocess.py	2022-08-05 07:45:18.000000000 -0700
-+++ wasm/Lib/subprocess.py	2022-09-13 12:30:12.000000000 -0700
++++ wasm/Lib/subprocess.py	2022-09-13 13:11:22.686614006 -0700
 @@ -75,7 +75,7 @@
      _mswindows = True
-
+ 
  # wasm32-emscripten and wasm32-wasi do not support processes
 -_can_fork_exec = sys.platform not in {"emscripten", "wasi"}
 +_can_fork_exec = sys.platform not in {"emscripten"}
-
+ 
  if _mswindows:
      import _winapi
-@@ -1857,8 +1857,14 @@
-                     if not part or len(errpipe_data) > 50000:
-                         break
+@@ -1859,6 +1859,18 @@
              finally:
+                 # be sure the FD is closed no matter what
+                 os.close(errpipe_read)
 +                # Change for python-wasm: we instead close errpipe_read
 +                # in _posixsubprocess.c, since otherwise we hit hangs.
-+                # It's thus critical to NOT close it again here, or things will
++                # It's thus critical to NOT *also* close it again here, or things will
 +                # randomly hang, as is clear from the python test suite, e.g.,
 +                # from test_uuid.py on Linux.
 +
-                 # be sure the FD is closed no matter what
--                os.close(errpipe_read)
-+                pass
-
++                # be sure the FD is closed no matter what
++                try:
++                    os.fstat(errpipe_read)
++                    os.close(errpipe_read)
++                except:
++                    pass
+ 
              if errpipe_data:
                  try:
