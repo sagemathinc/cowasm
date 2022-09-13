@@ -98,7 +98,6 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# explicitly add anything that is really used from there to posix-wasm.h
 	mkdir ${BUILD_WASM}/sys && echo '#include "posix-wasm.h"' >  ${BUILD_WASM}/sys/wait.h
 	# Apply our patches:
-	cd ${BUILD_WASM} && cat ${CWD}/src/patches/01-subprocess.patch | patch -p1
 	cd ${BUILD_WASM}/Lib && cat ${CWD}/src/patches/02-pydoc.patch | patch -p0
 	cd ${BUILD_WASM}/Tools/wasm/ && cat ${CWD}/src/patches/03-wasm-assets.patch | patch -p0
 	# Apply this patch when we want to take testing to the next level, and fully enable all tests that involve fork and subprocess.
