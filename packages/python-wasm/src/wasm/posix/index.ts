@@ -5,6 +5,7 @@ NOTES:
   - emscripten/src/library_syscall.js is useful inspiration in some cases!
 */
 
+import forkExec from "./fork-exec";
 import netdb from "./netdb";
 import netif from "./netif";
 import other from "./other";
@@ -72,6 +73,7 @@ interface Context {
 
 export default function posix(context: Context) {
   const P = {
+    ...forkExec(context),
     ...netdb(context),
     ...netif(context),
     ...other(context),
