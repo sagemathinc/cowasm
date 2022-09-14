@@ -1,0 +1,5 @@
+set -ev
+git pull
+make clean
+make
+make test
