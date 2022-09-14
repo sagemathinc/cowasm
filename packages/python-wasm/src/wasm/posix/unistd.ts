@@ -1,6 +1,5 @@
 import { notImplemented } from "./util";
 import constants from "./constants";
-import Errno from "./errno";
 import debug from "debug";
 
 const log = debug("posix:unistd");
@@ -16,19 +15,6 @@ export default function unistd({
   memory,
 }) {
   let login: number | undefined = undefined;
-
-  function ensureIsFile(path: string): void {
-    try {
-      if (!fs.statSync(path).isFile()) {
-        log("not calling exec for", path, " since not file");
-        throw Errno("ENOENT");
-      }
-    } catch (_err) {
-      log("not calling exec for", path, " since does not exist");
-      // error if file doesn't exist:
-      throw Errno("ENOENT");
-    }
-  }
 
   // TODO: this doesn't throw an error yet if the target filesystem isn't native.
   function toNativeFd(fd: number): number {
@@ -270,7 +256,15 @@ export default function unistd({
       if (posix.fork == null) {
         notImplemented("fork");
       }
-      return posix.fork();
+      const pid = posix.fork();
+      if(pid == 0) {
+        // we end the event loop in the child, because hopefully usually anything
+        // that is using fork is about to exec* anyways.  It seems that trying
+        // to actually use the Node.js event loop after forking tends to randomly
+        // hang, so isn't really viable.
+        posix.close_event_loop?.();
+      }
+      return pid;
     },
 
     fork1: () => {
@@ -371,14 +365,11 @@ export default function unistd({
     },
 
     // int execve(const char *pathname, char *const argv[], char *const envp[]);
-    // TODO: I think this can't be done by a worker thread, so we may have
-    // to change implementation so ask the main thread to do this (?).
     execve: (pathnamePtr: number, argvPtr: number, envpPtr: number): number => {
       if (posix._execve == null) {
         notImplemented("execve");
       }
       const pathname = recv.string(pathnamePtr);
-      ensureIsFile(pathname);
       const argv = recv.arrayOfStrings(argvPtr);
       const envp = recv.arrayOfStrings(envpPtr);
       log("execve", pathname, argv, envp);
@@ -391,12 +382,6 @@ export default function unistd({
         notImplemented("execve");
       }
       const pathname = recv.string(pathnamePtr);
-      // This should not be needed, since posix.execv should always properly error
-      // when the path doesn't exist.  Due to shortcomings in my understanding of
-      // node and how posix.execv is implemented, sometimes it hangs instead *on linux*,
-      // so for now we use ensureIsFile first, which throws an error if the path
-      // does not exist.
-      ensureIsFile(pathname);
       const argv = recv.arrayOfStrings(argvPtr);
       log("execv", pathname, argv);
       posix.execv(pathname, argv);

@@ -87,7 +87,7 @@ pub fn getArgv(env: c.napi_env, info: c.napi_callback_info, comptime n: usize) !
     return argv;
 }
 
-const NodeError = error{ ExceptionThrown, MemoryError };
+const NodeError = error{ ExceptionThrown, MemoryError, LoopError };
 
 pub fn throw(env: c.napi_env, comptime message: [:0]const u8) NodeError {
     var result = c.napi_throw_error(env, null, @ptrCast([*c]const u8, message));
@@ -751,4 +751,16 @@ pub fn hasNamedProperty(env: c.napi_env, object: c.napi_value, comptime key: [:0
         return throw(env, "hasOwnProperty " ++ key ++ " failed -- " ++ message);
     }
     return result;
+}
+
+extern fn uv_loop_close(loop: *c.uv_loop_s) void;
+pub fn closeEventLoop(env: c.napi_env) !void {
+    //std.debug.print("closeEventLoop\n", .{});
+    var loop: *c.uv_loop_s = undefined;
+    if (c.napi_get_uv_event_loop(env, @ptrCast([*c]?*c.uv_loop_s, &loop)) != c.napi_ok) {
+        std.debug.print("failed to close event loop\n", .{});
+        return throw(env, "failed to close event loop");
+    }
+    uv_loop_close(loop);
+    //c.free(loop);
 }

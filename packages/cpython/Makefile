@@ -106,8 +106,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${CWD}/src/patches/05-st_mode.patch | patch -p1
 	# Implement 'import platform; platform.architecture()' for wasm.
 	cd ${BUILD_WASM} && cat ${CWD}/src/patches/06-platform.patch | patch -p1
-	# Close the errpipe that is used to pass errors back when forking a new process in subprocess.py:
-	cd ${BUILD_WASM} && cat ${CWD}/src/patches/07-posixsubprocess-errpipe.patch | patch -p1
+	# Fork and execv on top of posix-node work, but it takes some restrictions to be robust:
+	cd ${BUILD_WASM} && cat ${CWD}/src/patches/07-subprocess.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${CWD}/src/patches/08-unicode-file-test.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 

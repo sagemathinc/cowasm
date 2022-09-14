@@ -36,6 +36,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "_fexecve", fexecve);
 
     try node.registerFunction(env, exports, "fork", fork);
+    try node.registerFunction(env, exports, "close_event_loop", close_event_loop);
     try node.registerFunction(env, exports, "pipe", pipe);
     if (builtin.target.os.tag == .linux) {
         try node.registerFunction(env, exports, "pipe2", pipe2_impl);
@@ -370,6 +371,12 @@ fn fork(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
         return null;
     }
     return node.create_i32(env, pid, "pid") catch return null;
+}
+
+fn close_event_loop(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    node.closeEventLoop(env) catch return null;
+    return null;
 }
 
 // int pipe(int pipefd[2]);

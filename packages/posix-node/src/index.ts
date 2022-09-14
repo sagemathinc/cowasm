@@ -101,6 +101,11 @@ interface PosixFunctions {
   getcwd: () => string;
 
   fork: () => number;
+
+  // Completely stopping the libuv event loop might be useful in conjunction
+  // with fork/exec*.
+  close_event_loop: () => void;
+
   pipe: () => { readfd: number; writefd: number };
   pipe2: (flags: number) => { readfd: number; writefd: number };
 
