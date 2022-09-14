@@ -5,7 +5,7 @@
 // it is possible to express these in ziglang either.
 #include <stdarg.h>
 #include <stdio.h>
-int fiprintf(FILE *restrict stream, const char *restrict format, ...) {
+int fiprintf(FILE * stream, const char * format, ...) {
   va_list va;
   va_start(va, format);
   int d = vfprintf(stream, format, va);
@@ -14,7 +14,7 @@ int fiprintf(FILE *restrict stream, const char *restrict format, ...) {
 }
 PUBLIC(fiprintf)
 
-int __small_fprintf(FILE *restrict stream, const char *restrict format, ...) {
+int __small_fprintf(FILE * stream, const char * format, ...) {
   va_list va;
   va_start(va, format);
   int d = vfprintf(stream, format, va);
@@ -23,7 +23,7 @@ int __small_fprintf(FILE *restrict stream, const char *restrict format, ...) {
 }
 PUBLIC(__small_fprintf)
 
-int siprintf(char *restrict s, const char *restrict format, ...) {
+int siprintf(char * s, const char * format, ...) {
   va_list va;
   va_start(va, format);
   int d = vsprintf(s, format, va);

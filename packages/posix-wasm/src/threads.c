@@ -225,17 +225,17 @@ int pthread_attr_setstacksize(union pthread_attr_t *attr, size_t stacksize) {
 }
 PUBLIC(pthread_attr_setstacksize)
 
-int pthread_attr_getstacksize(const union pthread_attr_t *restrict attr,
-                              size_t *restrict stacksize) {
+int pthread_attr_getstacksize(const union pthread_attr_t * attr,
+                              size_t * stacksize) {
   debug("pthread_attr_getstacksize\n");
   *stacksize = attr->data.stack_size;
   return 0;
 }
 PUBLIC(pthread_attr_getstacksize)
 
-int pthread_create(pthread_t *restrict thread,
-                   const union pthread_attr_t *restrict attr,
-                   void *(*start_routine)(void *), void *restrict arg) {
+int pthread_create(pthread_t * thread,
+                   const union pthread_attr_t * attr,
+                   void *(*start_routine)(void *), void * arg) {
   fprintf(stderr,
           "pthread_create: creation of threads is not yet implemented.\N");
   return -1;
@@ -251,16 +251,16 @@ PUBLIC(pthread_detach)
 void pthread_exit(void *retval) { debug("pthread_exit\n"); }
 PUBLIC(pthread_exit)
 
-int pthread_cond_timedwait(pthread_cond_t *restrict cond,
-                           pthread_mutex_t *restrict mutex,
-                           const struct timespec *restrict abstime) {
+int pthread_cond_timedwait(pthread_cond_t * cond,
+                           pthread_mutex_t * mutex,
+                           const struct timespec * abstime) {
   // locking is trivial when there can be only one thread.
   return 0;
 }
 PUBLIC(pthread_cond_timedwait)
 
-int pthread_cond_wait(pthread_cond_t *restrict cond,
-                      pthread_mutex_t *restrict mutex) {
+int pthread_cond_wait(pthread_cond_t * cond,
+                      pthread_mutex_t * mutex) {
   // locking is trivial when there can be only one thread.
   return 0;
 }

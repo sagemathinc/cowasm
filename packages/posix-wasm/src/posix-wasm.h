@@ -277,13 +277,13 @@ typedef unsigned int socklen_t;
 #define SOMAXCONN 32
 #define SOCK_SEQPACKET 5
 #define __WASI_RIFLAGS_RECV_DATA_TRUNCATED 0
-int accept(int sockfd, void* restrict addr, void* restrict addrlen);
+int accept(int sockfd, void*  addr, void*  addrlen);
 int setsockopt(int sockfd, int level, int optname, const void* optval,
                void* optlen);
 int bind(int sockfd, const void* addr, socklen_t addrlen);
 int connect(int sockfd, const void* addr, socklen_t addrlen);
-int getsockname(int sockfd, void* restrict addr, socklen_t* restrict addrlen);
-int getpeername(int sockfd, void* restrict addr, socklen_t* restrict addrlen);
+int getsockname(int sockfd, void*  addr, socklen_t*  addrlen);
+int getpeername(int sockfd, void*  addr, socklen_t*  addrlen);
 int listen(int sockfd, int backlog);
 ssize_t recvfrom(int sockfd, void* buf, size_t len, int flags, void* src_addr,
                  socklen_t* addrlen);
@@ -331,8 +331,8 @@ void funlockfile(FILE* filehandle);
 
 char* strsignal(int sig);
 
-int fiprintf(FILE* restrict stream, const char* restrict format, ...);
-int siprintf(char* restrict s, const char* restrict format, ...);
+int fiprintf(FILE*  stream, const char*  format, ...);
+int siprintf(char*  s, const char*  format, ...);
 
 int strunvis(char* dst, const char* src);
 int strnvis(char* dst, size_t dlen, const char* src, int flag);
