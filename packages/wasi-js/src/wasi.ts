@@ -766,7 +766,7 @@ export default class WASI {
           //               this.stdinBuffer?.length
           //             } ${this.stdinBuffer?.toString()}`
           //           );
-          // log("stat", { fd, entry, FD_MAP: wasi.FD_MAP });
+          //console.log("fd_read", { fd, stats });
           outer: for (const iov of getiovs(iovs, iovsLen)) {
             let r = 0;
             while (r < iov.byteLength) {
@@ -794,7 +794,13 @@ export default class WASI {
                   }
                 }
               } else {
-                // console.log("fs.readSync", {fd:stats.real, iov,r,length, position});
+//                 console.log("fs.readSync", {
+//                   fd: stats.real,
+//                   iov,
+//                   r,
+//                   length,
+//                   position,
+//                 });
                 rr = fs.readSync(
                   stats.real, // fd
                   iov, // buffer
