@@ -1616,11 +1616,14 @@ export default class WASI {
     }
   }
 
+  // return an unused file descriptor.  It *will* be the smallest
+  // available file descriptor.
   getUnusedFileDescriptor() {
-    // return an unused file descriptor
-    const v = [...this.FD_MAP.keys()].sort();
-    if (v.length == 0) return 1;
-    return v[v.length - 1] + 1;
+    let fd = 0
+    while (this.FD_MAP.has(fd)) {
+      fd += 1;
+    }
+    return fd;
   }
 
   refreshMemory() {

@@ -57,7 +57,6 @@ export default function fork_exec({ posix, recv, wasi }) {
     ): number => {
       log("called fork_exec");
       log("ignoring these: ", {
-        close_fds,
         restore_signals,
         call_setsid,
         pgid_to_set,
@@ -71,6 +70,17 @@ export default function fork_exec({ posix, recv, wasi }) {
         child_umask,
         child_sigmask,
         py_fds_to_keep,
+      });
+
+      log("before change", {
+        p2cread,
+        p2cwrite,
+        c2pread,
+        c2pwrite,
+        errread,
+        errwrite,
+        errpipe_read,
+        errpipe_write,
       });
 
       function real_fd(virtual_fd: number): number {
@@ -94,6 +104,7 @@ export default function fork_exec({ posix, recv, wasi }) {
         errwrite: real_fd(errwrite),
         errpipe_read: real_fd(errpipe_read),
         errpipe_write: real_fd(errpipe_write),
+        close_fds,
       };
       log("opts", opts);
 

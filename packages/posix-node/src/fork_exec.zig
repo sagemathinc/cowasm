@@ -67,6 +67,9 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
     const errpipe_read = try i32Prop(env, opts, "errpipe_read");
     const errpipe_write = try i32Prop(env, opts, "errpipe_write");
 
+    // whether or not to close file descriptors
+    const close_fds = try i32Prop(env, opts, "close_fds");
+
     // Do NOT use anything from nodejs below here!
 
     const pid = clib.fork();
@@ -88,7 +91,7 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
     // Get rid of all the other node async io and threads by closing
     // the lib-uv event loop, which would otherwise cause random hangs.
     try node.closeEventLoop(env);
-    doForkExec(exec_array_c, argv_c, envp_c, cwd_c, p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite, errpipe_read, errpipe_write) catch |err| {
+    doForkExec(exec_array_c, argv_c, envp_c, cwd_c, p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite, errpipe_read, errpipe_write, close_fds) catch |err| {
         std.debug.print("Error in doForkExec: {}\n", .{err});
         _ = clib.exit(0);
     };
@@ -136,7 +139,7 @@ fn dup2(fd: i32, new_fd: i32) !void {
     }
 }
 
-fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8), cwd: [*:0]u8, p2cread: i32, p2cwrite: i32, c2pread: i32, _c2pwrite: i32, errread: i32, _errwrite: i32, errpipe_read: i32, errpipe_write: i32) !void {
+fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8), cwd: [*:0]u8, p2cread: i32, p2cwrite: i32, c2pread: i32, _c2pwrite: i32, errread: i32, _errwrite: i32, errpipe_read: i32, errpipe_write: i32, close_fds: i32) !void {
     // TODO: bunch of stuff here regarding pipes and uid/gid. This is a direct port
     // of child_exec from cpython's Modules/_posixsubprocess.c, with some comments copied
     // to keep things anchored.
@@ -203,6 +206,9 @@ fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8
     // TODO: call_setgid
     // TODO: call_setuid
     // TODO: close_fds
+    if (close_fds != 0) {
+        closeOpenFds(3);
+    }
 
     // Try each executable in turn until one of them works.  In practice this
     // is trying every possible location in the PATH.
@@ -221,4 +227,10 @@ fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8
     return Errors.ExecError;
 }
 
-//
+fn closeOpenFds(start_fd: i32) void {
+    var fd = start_fd;
+    while (fd < 256) : (fd += 1) {
+        // ignore errors
+        _ = clib.close(fd);
+    }
+}
