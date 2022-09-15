@@ -43,11 +43,15 @@ pub fn getErrno() c_int {
     return std.c._errno().*;
 }
 
+pub fn setErrno(errnoVal: c_int) void {
+    std.c._errno().* = errnoVal;
+}
+
 pub fn printErrno() void {
     std.debug.print("errno = {}\n", .{getErrno()});
 }
 
-const errno = @cImport(@cInclude("errno.h"));
+pub const errno = @cImport(@cInclude("errno.h"));
 pub const constants = .{
     .c_import = errno,
     .names = [_][:0]const u8{ "E2BIG", "EACCES", "EBADF", "EBUSY", "ECHILD", "EDEADLK", "EEXIST", "EFAULT", "EFBIG", "EINTR", "EINVAL", "EIO", "EISDIR", "EMFILE", "EMLINK", "ENFILE", "ENODEV", "ENOENT", "ENOEXEC", "ENOMEM", "ENOSPC", "ENOTBLK", "ENOTDIR", "ENOTTY", "ENXIO", "EPERM", "EPIPE", "EROFS", "ESPIPE", "ESRCH", "ETXTBSY", "EXDEV" },

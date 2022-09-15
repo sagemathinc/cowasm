@@ -134,6 +134,25 @@ interface PosixFunctions {
   ) => number;
   _fexecve: (fd: number, argv: string[], envp: string[]) => number; // linux only
 
+  // A fork_exec implementation that is as close as possible to the one in Modules/_posixsubprocess.c in the CPython.
+  // We need this for python-wasm.  It forks, then execs each element of exec_array until one works.  It also uses
+  // the file descriptor errpipe_write to communicate failure at doing all the stuff leading up to execv, using
+  // the protocol that cPython defines for this.
+  fork_exec: (args: {
+    exec_array: string[];
+    argv: string[];
+    envp: string[];
+    cwd: string;
+    p2cread: number;
+    p2cwrite: number;
+    c2pread: number;
+    c2pwrite: number;
+    errread: number;
+    errwrite: number;
+    errpipe_read: number;
+    errpipe_write: number;
+  }) => number;
+
   lockf: (fd: number, cmd: number, size: BigInt) => void;
 
   // This posix call is interesting -- it lets you suspend a node.js

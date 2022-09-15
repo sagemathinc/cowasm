@@ -8,7 +8,6 @@ const unistd = @cImport({
 const builtin = @import("builtin");
 const util = @import("util.zig");
 const std = @import("std");
-const errno = @cImport(@cInclude("errno.h"));
 
 const BUF_SIZE = 4 * 1024;
 var BUFFER: [BUF_SIZE]u8 = undefined;
