@@ -214,7 +214,7 @@ fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8
         // If we're here, it didn't work.
         if (ret == -1) {
             // TODO: something...?
-            std.debug.print("execv {s} failed.\n", .{@ptrCast([*:0]u8, exec_array[i])});
+            // std.debug.print("execv {s} failed.\n", .{@ptrCast([*:0]u8, exec_array[i])});
         }
     }
     // all failed
