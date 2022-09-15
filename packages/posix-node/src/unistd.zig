@@ -2,7 +2,7 @@ const c = @import("c.zig");
 const node = @import("node.zig");
 const unistd = @cImport({
     @cInclude("unistd.h");
-    @cInclude("fcntl.h"); // just needed for constants
+    @cInclude("fcntl.h");
     @cInclude("grp.h"); // getgrouplist on linux
 });
 const builtin = @import("builtin");
