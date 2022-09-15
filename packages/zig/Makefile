@@ -7,6 +7,8 @@ include ../build/Makefile-vars
 # Find the latest version at https://ziglang.org/download/
 # This is for pre-release
 
+# 0.10.0-dev.4060+61aaef0b0 is unusably broken.
+# I reported this upstream at https://github.com/ziglang/zig/issues/12858
 VERSION = 0.10.0-dev.3978+4fd4c733d
 
 # Using sed because uname -s --> x86_64 or arm64, but need aarch64

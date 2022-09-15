@@ -40,7 +40,8 @@ incompatibility with libc-wasm-zig, so we're sticking with our own pthreads.
 
 static const union pthread_attr_t default_attr = DEFAULT_ATTR_INITIALIZER;
 
-#define MAIN_ID 1
+#define MAIN_ID 0
+
 static struct pthread_fiber main_thread = {
     .id = MAIN_ID,
     .state = RUNNING,
@@ -52,7 +53,7 @@ static struct pthread_fiber main_thread = {
 };
 
 // Current running thread
-static pthread_t current = MAIN_ID;
+static pthread_t current = &main_thread;
 
 static const pthread_condattr_t pthread_condattr_default = {
     .pshared = PTHREAD_PROCESS_PRIVATE,
@@ -225,19 +226,18 @@ int pthread_attr_setstacksize(union pthread_attr_t *attr, size_t stacksize) {
 }
 PUBLIC(pthread_attr_setstacksize)
 
-int pthread_attr_getstacksize(const union pthread_attr_t * attr,
-                              size_t * stacksize) {
+int pthread_attr_getstacksize(const union pthread_attr_t *attr,
+                              size_t *stacksize) {
   debug("pthread_attr_getstacksize\n");
   *stacksize = attr->data.stack_size;
   return 0;
 }
 PUBLIC(pthread_attr_getstacksize)
 
-int pthread_create(pthread_t * thread,
-                   const union pthread_attr_t * attr,
-                   void *(*start_routine)(void *), void * arg) {
+int pthread_create(pthread_t *thread, const union pthread_attr_t *attr,
+                   void *(*start_routine)(void *), void *arg) {
   fprintf(stderr,
-          "pthread_create: creation of threads is not yet implemented.\N");
+          "pthread_create: creation of threads is not yet implemented.\n");
   return -1;
 }
 PUBLIC(pthread_create)
@@ -251,16 +251,14 @@ PUBLIC(pthread_detach)
 void pthread_exit(void *retval) { debug("pthread_exit\n"); }
 PUBLIC(pthread_exit)
 
-int pthread_cond_timedwait(pthread_cond_t * cond,
-                           pthread_mutex_t * mutex,
-                           const struct timespec * abstime) {
+int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex,
+                           const struct timespec *abstime) {
   // locking is trivial when there can be only one thread.
   return 0;
 }
 PUBLIC(pthread_cond_timedwait)
 
-int pthread_cond_wait(pthread_cond_t * cond,
-                      pthread_mutex_t * mutex) {
+int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex) {
   // locking is trivial when there can be only one thread.
   return 0;
 }
