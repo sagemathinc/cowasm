@@ -85,11 +85,12 @@ export default class WasmInstance extends EventEmitter {
     }
     let r;
     if (typeof str == "string") {
-      if (str.length < SMALL_STRING_SIZE) {
-        r = this.callWithSmallString(f, str);
+      const strAsArray = encoder.encode(str);
+      if (strAsArray.length < SMALL_STRING_SIZE) {
+        r = this.callWithSmallString(f, strAsArray);
         return this.result ?? r;
       }
-      const ptr = this.send.string(str);
+      const ptr = this.send.encodedString(strAsArray);
       try {
         // @ts-ignore
         r = f(ptr, ...args);
@@ -141,11 +142,10 @@ export default class WasmInstance extends EventEmitter {
     return this.smallStringPtr;
   }
 
-  private callWithSmallString(f: Function, str: string, ...args): any {
+  private callWithSmallString(f: Function, strAsArray, ...args): any {
     const ptr = this.getSmallStringPtr();
-    const len = str.length + 1;
+    const len = strAsArray.length + 1;
     const array = new Int8Array(this.memory.buffer, ptr, len);
-    const strAsArray = encoder.encode(str);
     array.set(strAsArray);
     array[len - 1] = 0;
     return f(ptr, ...args);

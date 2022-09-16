@@ -53,15 +53,19 @@ export class SendToWasmAbstractBase {
   // If dest is given, that's a pointer to where to copy
   // the string (null terminated), with a bound of len bytes
   // including a terminating null byte.
+  // Caller is responsible for freeing the returned char* from stringToU8
+  // using this.exports.c_free, e.g., as done in callWithString here.
+  // If dest and len are given, string is copied into memory starting
+  // at dest instead, but truncated to len (including the null byte).
   string(str: string, dest?: { ptr: number; len: number }): number {
-    // Caller is responsible for freeing the returned char* from stringToU8
-    // using this.exports.c_free, e.g., as done in callWithString here.
-    // If dest and len are given, string is copied into memory starting
-    // at dest instead, but truncated to len (including the null byte).
+    return this.encodedString(encoder.encode(str), dest);
+  }
+
+  // same as string above, but input is already encoded.
+  encodedString(strAsArray, dest?: { ptr: number; len: number }): number {
     if (dest != null) {
-      str = str.slice(0, dest.len - 1); // ensure it will fit
+      strAsArray = strAsArray.slice(0, dest.len - 1); // ensure it will fit
     }
-    const strAsArray = encoder.encode(str);
     const len = strAsArray.length + 1;
     const ptr = dest?.ptr ?? this.malloc(len);
     const array = new Int8Array(this.memory.buffer, ptr, len);
