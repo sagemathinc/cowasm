@@ -214,14 +214,12 @@ fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8
     // is trying every possible location in the PATH.
     var i: usize = 0;
     while (exec_array[i] != null) : (i += 1) {
-        // TODO: what about envp?
-        _ = envp;
-        var ret = clib.execv(exec_array[i], argv);
-        // If we're here, it didn't work.
-        if (ret == -1) {
-            // TODO: something...?
-            // std.debug.print("execv {s} failed.\n", .{@ptrCast([*:0]u8, exec_array[i])});
+        if (envp[0] != null) {
+            _ = clib.execve(exec_array[i], argv, envp);
+        } else {
+            _ = clib.execv(exec_array[i], argv);
         }
+        // If we're here, it didn't work.  Will try not one.
     }
     // all failed
     return Errors.ExecError;
