@@ -84,3 +84,9 @@ test("test that getcwd is fast", async () => {
   // Doing 10**6 of them takes about a second on my laptop, so 2s should be safe for a test.
   expect(new Date().valueOf() - t0).toBeLessThan(2000);
 });
+
+test("an annoying-to-mathematicians new 'feature' of Python can be disabled", async () => {
+  // See https://discuss.python.org/t/int-str-conversions-broken-in-latest-python-bugfix-releases/18889/184
+  await exec("import sys; sys.set_int_max_str_digits(0)");
+  expect(await repr("len(str(10**5000))")).toEqual("5001");
+});
