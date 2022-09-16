@@ -85,7 +85,9 @@ export async function init({
   });
 }
 
-async function terminal(argv = ["python"]): Promise<number> {
+async function terminal(
+  argv = [process.env.PROGRAM_NAME ?? "/usr/bin/python-wasm"]
+): Promise<number> {
   await init();
   return await _terminal(argv);
 }

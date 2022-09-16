@@ -3,7 +3,11 @@ import { init, terminal } from "./node";
 
 async function main() {
   await init();
-  const r = await terminal(["python"].concat(process.argv.slice(2)));
+  const r = await terminal(
+    [process.env.PROGRAM_NAME ?? "/usr/bin/python-wasm"].concat(
+      process.argv.slice(2)
+    )
+  );
   process.exit(r);
 }
 
