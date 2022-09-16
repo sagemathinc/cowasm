@@ -303,7 +303,7 @@ test: wasm native
 .PHONY: test
 
 PASSED_WITHOUT_SUBPROCESS_DESC = "These tests all passed without subprocess support enabled, but fail with it."
-PASSED_WITHOUT_SUBPROCESS = "test_atexit test_audit test_base64 test_builtin test_bytes test_c_locale_coercion test_calendar test_capi test_cgitb test_cmd_line_script test_code test_compile test_compileall test_coroutines test_eof test_exceptions test_fstring test_gc test_graphlib test_gzip test_hash test_import test_inspect test_json test_logging test_marshal test_module test_ntpath test_platform test_popen test_posixpath test_py_compile test_pydoc test_quopri test_readline test_runpy test_script_helper test_site test_source_encoding test_struct test_sys test_tabnanny test_tarfile test_trace test_traceback test_unicode test_unicodedata test_utf8_mode test_warnings test_weakref"
+PASSED_WITHOUT_SUBPROCESS = test_atexit test_audit test_base64 test_builtin test_bytes test_c_locale_coercion test_calendar test_capi test_cgitb test_cmd_line_script test_code test_compile test_compileall test_coroutines test_eof test_exceptions test_fstring test_gc test_graphlib test_gzip test_hash test_import test_inspect test_json test_logging test_marshal test_module test_ntpath test_platform test_popen test_posixpath test_py_compile test_pydoc test_quopri test_readline test_runpy test_script_helper test_site test_source_encoding test_struct test_sys test_tabnanny test_tarfile test_trace test_traceback test_unicode test_unicodedata test_utf8_mode test_warnings test_weakref
 
 test-passed-without-subprocess: wasm native
 	echo "Running ${PASSED_WITHOUT_SUBPROCESS_DESC}"
