@@ -104,7 +104,7 @@ export default function fork_exec({ posix, recv, wasi }) {
         errpipe_read: real_fd(errpipe_read),
         errpipe_write: real_fd(errpipe_write),
         close_fds,
-        fds_to_keep: recv.arrayOfI32(py_fds_to_keep),
+        fds_to_keep: recv.arrayOfI32(py_fds_to_keep).map(real_fd),
       };
       log("opts", opts);
 

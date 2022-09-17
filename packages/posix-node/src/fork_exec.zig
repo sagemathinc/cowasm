@@ -90,7 +90,6 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
         // an error message is sent via a pipe.
         return try node.create_i32(env, pid, "pid");
     }
-
     // We're the child.
 
     // Get rid of all the other node async io and threads by closing
@@ -145,6 +144,7 @@ fn dup2(fd: i32, new_fd: i32) !void {
 }
 
 fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8), cwd: [*:0]u8, p2cread: i32, p2cwrite: i32, c2pread: i32, _c2pwrite: i32, errread: i32, _errwrite: i32, errpipe_read: i32, errpipe_write: i32, close_fds: i32, fds_to_keep: [*]i32, fds_to_keep_len: u32) !void {
+
     // TODO: bunch of stuff here regarding pipes and uid/gid. This is a direct port
     // of child_exec from cpython's Modules/_posixsubprocess.c, with some comments copied
     // to keep things anchored.
@@ -159,9 +159,7 @@ fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8
     }
 
     // Make it so errpipe_write is closed when an exec succeeds:
-    //try setInheritable(errpipe_write, false);
-    // TODO: this seems to work but not the above?!  Makes no sense.
-    try close(errpipe_write);
+    try setInheritable(errpipe_write, false);
 
     // Close parent's pipe ends:
     if (p2cwrite != -1) {
@@ -222,7 +220,7 @@ fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8
     // TODO: call_setuid
 
     if (close_fds != 0) {
-        closeOpenFds(3, fds_to_keep, fds_to_keep_len);
+        closeOpenFds(3, errpipe_write, fds_to_keep, fds_to_keep_len);
     }
 
     // Try each executable in turn until one of them works.  In practice this
@@ -234,15 +232,20 @@ fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8
         } else {
             _ = clib.execv(exec_array[i], argv);
         }
-        // If we're here, it didn't work.  Will try not one.
+        // If we're here, it didn't work.  Will try next one if possible...
     }
-    // all failed
+    // every exec failed, so we report this error over the pipe:
+    const err = "OSError:2:";
+    if (clib.write(errpipe_write, err, err.len) == -1) {
+        // very unlikely to be seen and there isn't much we can do.
+        std.debug.print("Error writing to pipe.\n", .{});
+    }
     return Errors.ExecError;
 }
 
 // stupidly inefficient since len is tiny in practice (todo?).
 fn isInList(fd: i32, v: [*]i32, len: u32) bool {
-    var j : u32 = 0;
+    var j: u32 = 0;
     while (j < len) : (j += 1) {
         if (v[j] == fd) {
             return true;
@@ -251,9 +254,10 @@ fn isInList(fd: i32, v: [*]i32, len: u32) bool {
     return false;
 }
 
-fn closeOpenFds(start_fd: i32, fds_to_keep: [*]i32, fds_to_keep_len: u32) void {
+fn closeOpenFds(start_fd: i32, errpipe_write: i32, fds_to_keep: [*]i32, fds_to_keep_len: u32) void {
     var fd = start_fd;
     while (fd < 256) : (fd += 1) {
+        if (fd == errpipe_write) continue;
         if (!isInList(fd, fds_to_keep, fds_to_keep_len)) {
             // ignore errors
             _ = clib.close(fd);
