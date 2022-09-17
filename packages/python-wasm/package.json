@@ -1,6 +1,6 @@
 {
   "name": "python-wasm",
-  "version": "0.20.1",
+  "version": "0.20.2",
   "description": "python-wasm -- Web Assembly Python for Node.js and the Browser",
   "main": "./dist/python/node.js",
   "browser": "./dist/python/browser.js",
