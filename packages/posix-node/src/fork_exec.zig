@@ -32,6 +32,7 @@ const Errors = error{ CloseError, CWDError, DupError, Dup2Error, ForkError, Exec
 //     errpipe_read: number;
 //     errpipe_write: number;
 // }
+
 fn forkExec(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const args = node.getArgv(env, info, 1) catch return null;
     const opts = args[0];
@@ -75,7 +76,9 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
     const fds_to_keep_c = try node.valueToArrayOfI32(env, fds_to_keep, "fds_to_keep", &fds_to_keep_len);
     defer std.c.free(fds_to_keep_c);
 
-    // Do NOT use anything from nodejs below here!
+    /////////////////////    /////////////////////     /////////////////////
+    // IMPORTANT!  Do NOT use anything from the nodejs runtime below this point!
+    /////////////////////    /////////////////////     /////////////////////
 
     const pid = clib.fork();
     if (pid == -1) {
@@ -97,6 +100,25 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
     try node.closeEventLoop(env);
     doForkExec(exec_array_c, argv_c, envp_c, cwd_c, p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite, errpipe_read, errpipe_write, close_fds, fds_to_keep_c, fds_to_keep_len) catch |err| {
         std.debug.print("Error in doForkExec: {}\n", .{err});
+        // every exec failed, so we report this error over the pipe:
+
+        var buffer: [128]u8 = undefined;
+        var fba = std.heap.FixedBufferAllocator.init(&buffer);
+        const allocator = fba.allocator();
+        // Data format for errpipe_write:  "exception name:hex errno:description"
+        // TODO: subtle bug still -- we need to somehow translate the error number,
+        // since the errno here is for node native and we need the wasi one...
+        const mesg = try std.fmt.allocPrint(
+            allocator,
+            "OSError:{x}:{s}",
+            .{ util.getErrno(), if (err == Errors.ExecError) "exec" else "noexec" },
+        );
+        defer allocator.free(mesg);
+        if (clib.write(errpipe_write, @ptrCast([*]u8, mesg), mesg.len) == -1) {
+            // this is very unlikely to be visible and there isn't anything we can do.
+            std.debug.print("Error writing to pipe.\n", .{});
+        }
+
         _ = clib.exit(0);
     };
     // impossible to get here...
@@ -235,12 +257,6 @@ fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8
             _ = clib.execv(exec_array[i], argv);
         }
         // If we're here, it didn't work.  Will try next one if possible...
-    }
-    // every exec failed, so we report this error over the pipe:
-    const err = "OSError:2:";
-    if (clib.write(errpipe_write, err, err.len) == -1) {
-        // very unlikely to be seen and there isn't much we can do.
-        std.debug.print("Error writing to pipe.\n", .{});
     }
     return Errors.ExecError;
 }
