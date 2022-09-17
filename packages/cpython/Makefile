@@ -320,7 +320,7 @@ test: wasm native
 .PHONY: test
 
 PASSED_WITHOUT_SUBPROCESS_DESC = "These tests all passed without subprocess support enabled, but fail with it."
-PASSED_WITHOUT_SUBPROCESS = "test_audit test_bytes test_c_locale_coercion test_cmd_line_script test_compileall test_coroutines test_exceptions test_gc test_json test_marshal test_runpy test_site  test_traceback test_unicode test_utf8_mode test_warnings"
+PASSED_WITHOUT_SUBPROCESS = test_audit test_bytes test_c_locale_coercion test_cmd_line_script test_compileall test_coroutines test_exceptions test_gc test_json test_marshal test_runpy test_site  test_traceback test_unicode test_utf8_mode test_warnings
 
 test-passed-without-subprocess: wasm native
 	echo "Running ${PASSED_WITHOUT_SUBPROCESS_DESC}"
