@@ -31,6 +31,14 @@ export default function unistd({
     return x.real;
   }
 
+  // We use the rights from stdin and stdout when making
+  // a pipe.  These can get closed after startup (e.g., in
+  // the test_subprocess.py cpython tests), so we have to
+  // make a copy here.  This also avoids having to keep a data
+  // structure in sync with wasi-js.
+  const STDIN = wasi.FD_MAP.get(0);
+  const STDOUT = wasi.FD_MAP.get(1);
+
   const unistd = {
     chown: (pathPtr: number, uid: number, gid: number): -1 | 0 => {
       const path = recv.string(pathPtr);
@@ -152,18 +160,17 @@ export default function unistd({
         notImplemented("dup2");
       }
       const x_old = wasi.FD_MAP.get(oldfd);
-      const x_new = wasi.FD_MAP.get(newfd);
+      let x_new;
+      // I'm not 100% happy with this.
+      if (wasi.FD_MAP.has(newfd)) {
+        x_new = wasi.FD_MAP.get(newfd).real ?? newfd;
+      } else {
+        x_new = newfd;
+      }
 
-      const newfd_real = posix.dup2(x_old.real, x_new.real ?? newfd);
+      const newfd_real = posix.dup2(x_old.real, x_new);
       wasi.FD_MAP.set(newfd, { ...x_old, real: newfd_real });
       return newfd;
-    },
-
-    dup3: () => {
-      // this is a linux-only variant of dup2
-      if (posix.dup3 == null) {
-        notImplemented("dup3");
-      }
     },
 
     sync: () => {
@@ -257,7 +264,7 @@ export default function unistd({
         notImplemented("fork");
       }
       const pid = posix.fork();
-      if(pid == 0) {
+      if (pid == 0) {
         // we end the event loop in the child, because hopefully usually anything
         // that is using fork is about to exec* anyways.  It seems that trying
         // to actually use the Node.js event loop after forking tends to randomly
@@ -424,12 +431,12 @@ export default function unistd({
       const wasi_readfd = wasi.getUnusedFileDescriptor();
       wasi.FD_MAP.set(wasi_readfd, {
         real: readfd,
-        rights: wasi.FD_MAP.get(0).rights, // just use rights for stdin
+        rights: STDIN.rights, // just use rights for stdin
       });
       const wasi_writefd = wasi.getUnusedFileDescriptor();
       wasi.FD_MAP.set(wasi_writefd, {
         real: writefd,
-        rights: wasi.FD_MAP.get(1).rights, // just use rights for stdout
+        rights: STDOUT.rights, // just use rights for stdout
       });
 
       send.i32(pipefdPtr, wasi_readfd);

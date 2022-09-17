@@ -1625,9 +1625,9 @@ export default class WASI {
   }
 
   // return an unused file descriptor.  It *will* be the smallest
-  // available file descriptor.
+  // available file descriptor, except we don't use 0,1,2
   getUnusedFileDescriptor() {
-    let fd = 0;
+    let fd = 3;
     while (this.FD_MAP.has(fd)) {
       fd += 1;
     }

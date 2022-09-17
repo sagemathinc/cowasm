@@ -184,3 +184,9 @@ ac_cv_func_fchownat=no
 # could easily try to use this function, and we want to know exactly why it is broken!
 ac_cv_func_openat=no
 
+# dup3 is a Linux-only function that Python easily implements instead
+# using dup3 and fcntl.  If we enable this it is a pain and slower to have to also
+# implement it ourselves in Javascript.  Let python do it.
+ac_cv_func_dup3=no
+
+
