@@ -141,7 +141,14 @@ const wrap =
       return f(...args);
     } catch (err) {
       // log("WASI error", err);
-      const e: any = err;
+      let e: any = err;
+
+      // This is to support unionfs, e.g., in fd_write if a pipe
+      // breaks, then unionfs raises "Error: EBADF: bad file descriptor, write",
+      // but the relevant error is "prev: Error: EPIPE: broken pipe, write", which it saves.
+      while (e.prev != null) {
+        e = e.prev;
+      }
       // If it's an error from the fs
       if (e?.code && typeof e?.code === "string") {
         return ERROR_MAP[e.code] || WASI_EINVAL;
@@ -713,6 +720,7 @@ export default class WASI {
                 if (stats.offset) stats.offset += BigInt(i);
                 w += i;
               }
+              //console.log("fd_write", fd, "  wrote ", w);
               written += w;
             }
           });
@@ -794,13 +802,13 @@ export default class WASI {
                   }
                 }
               } else {
-//                 console.log("fs.readSync", {
-//                   fd: stats.real,
-//                   iov,
-//                   r,
-//                   length,
-//                   position,
-//                 });
+                //                 console.log("fs.readSync", {
+                //                   fd: stats.real,
+                //                   iov,
+                //                   r,
+                //                   length,
+                //                   position,
+                //                 });
                 rr = fs.readSync(
                   stats.real, // fd
                   iov, // buffer
@@ -1619,7 +1627,7 @@ export default class WASI {
   // return an unused file descriptor.  It *will* be the smallest
   // available file descriptor.
   getUnusedFileDescriptor() {
-    let fd = 0
+    let fd = 0;
     while (this.FD_MAP.has(fd)) {
       fd += 1;
     }
