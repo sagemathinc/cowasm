@@ -14,7 +14,7 @@ DYLINK = ${PACKAGES}/dylink/dist
 WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
 WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic ${OPT}
 
-TEST = ./test-zig.sh ${OPT}
+TEST = ./test-zig.sh
 
 all: ${DIST}/.built bin hello python
 
@@ -25,14 +25,14 @@ include ../build/Makefile-rules
 ####################
 
 test-python:
-	cd src && ${TEST} python/python.zig -I. ${OPT}
+	cd src && ${TEST} python/python.zig -I.  ${OPT}
 
 test-posix:
 	cd src && \
-		${TEST} wasm/posix/unistd.zig && \
-		${TEST} wasm/posix/stdio.zig && \
-		${TEST} wasm/posix/string.zig && \
-		${TEST} wasm/posix/stdlib.zig wasm/posix/stdlib.c
+		${TEST} wasm/posix/unistd.zig   ${OPT}&& \
+		${TEST} wasm/posix/stdio.zig   ${OPT}&& \
+		${TEST} wasm/posix/string.zig   ${OPT}&& \
+		${TEST} wasm/posix/stdlib.zig wasm/posix/stdlib.c  ${OPT}
 
 # Explanation of options to zig build-lib:
 #  - ${OPT} - at the top file can set the release type
@@ -122,7 +122,7 @@ hello: ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.cpython-311-wasm32-wasi.s
 ##################
 
 test-proxy:
-	cd src && ${TEST} interface/proxy.zig
+	cd src && ${TEST} interface/proxy.zig  ${OPT}
 
 
 ## Node modules
