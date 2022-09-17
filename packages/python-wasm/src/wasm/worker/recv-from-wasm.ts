@@ -5,6 +5,9 @@ interface Options {
   callFunction: (strings, ...args) => number | undefined;
 }
 
+// size of a pointer in bytes
+const SIZEOF_POINTER = 4;
+
 export class RecvFromWasmAbstractBase {
   protected memory: WebAssembly.Memory;
   protected callFunction: (strings, ...args) => number | undefined;
@@ -58,7 +61,22 @@ export class RecvFromWasmAbstractBase {
       const p = this.pointer(ptr);
       if (!p) break;
       v.push(this.string(p));
-      ptr += 4;
+      ptr += SIZEOF_POINTER;
+    }
+    return v;
+  }
+
+  // Receive a null-terminated array of ints
+  arrayOfI32(ptr: number): number[] {
+    const v: number[] = [];
+    if (ptr == 0) {
+      return v;
+    }
+    while (true) {
+      const p = this.pointer(ptr);
+      if (!p) break;
+      v.push(this.i32(p));
+      ptr += SIZEOF_POINTER;
     }
     return v;
   }

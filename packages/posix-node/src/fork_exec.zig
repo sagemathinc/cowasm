@@ -69,6 +69,11 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
 
     // whether or not to close file descriptors
     const close_fds = try i32Prop(env, opts, "close_fds");
+    // fd's to not close
+    const fds_to_keep = try node.getNamedProperty(env, opts, "fds_to_keep", "file descriptors to key");
+    var fds_to_keep_len: u32 = undefined;
+    const fds_to_keep_c = try node.valueToArrayOfI32(env, fds_to_keep, "fds_to_keep", &fds_to_keep_len);
+    defer std.c.free(fds_to_keep_c);
 
     // Do NOT use anything from nodejs below here!
 
@@ -91,7 +96,7 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
     // Get rid of all the other node async io and threads by closing
     // the lib-uv event loop, which would otherwise cause random hangs.
     try node.closeEventLoop(env);
-    doForkExec(exec_array_c, argv_c, envp_c, cwd_c, p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite, errpipe_read, errpipe_write, close_fds) catch |err| {
+    doForkExec(exec_array_c, argv_c, envp_c, cwd_c, p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite, errpipe_read, errpipe_write, close_fds, fds_to_keep_c, fds_to_keep_len) catch |err| {
         std.debug.print("Error in doForkExec: {}\n", .{err});
         _ = clib.exit(0);
     };
@@ -139,13 +144,23 @@ fn dup2(fd: i32, new_fd: i32) !void {
     }
 }
 
-fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8), cwd: [*:0]u8, p2cread: i32, p2cwrite: i32, c2pread: i32, _c2pwrite: i32, errread: i32, _errwrite: i32, errpipe_read: i32, errpipe_write: i32, close_fds: i32) !void {
+fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8), cwd: [*:0]u8, p2cread: i32, p2cwrite: i32, c2pread: i32, _c2pwrite: i32, errread: i32, _errwrite: i32, errpipe_read: i32, errpipe_write: i32, close_fds: i32, fds_to_keep: [*]i32, fds_to_keep_len: u32) !void {
     // TODO: bunch of stuff here regarding pipes and uid/gid. This is a direct port
     // of child_exec from cpython's Modules/_posixsubprocess.c, with some comments copied
     // to keep things anchored.
 
+    if (fds_to_keep_len > 0) {
+        var i: usize = 0;
+        while (i < fds_to_keep_len) : (i += 1) {
+            if (fds_to_keep[i] != errpipe_write) {
+                try setInheritable(fds_to_keep[i], true);
+            }
+        }
+    }
+
     // Make it so errpipe_write is closed when an exec succeeds:
     //try setInheritable(errpipe_write, false);
+    // TODO: this seems to work but not the above?!  Makes no sense.
     try close(errpipe_write);
 
     // Close parent's pipe ends:
@@ -205,9 +220,9 @@ fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8
     // TODO: call_setgroups
     // TODO: call_setgid
     // TODO: call_setuid
-    // TODO: close_fds
+
     if (close_fds != 0) {
-        closeOpenFds(3);
+        closeOpenFds(3, fds_to_keep, fds_to_keep_len);
     }
 
     // Try each executable in turn until one of them works.  In practice this
@@ -225,10 +240,23 @@ fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8
     return Errors.ExecError;
 }
 
-fn closeOpenFds(start_fd: i32) void {
+// stupidly inefficient since len is tiny in practice (todo?).
+fn isInList(fd: i32, v: [*]i32, len: u32) bool {
+    var j : u32 = 0;
+    while (j < len) : (j += 1) {
+        if (v[j] == fd) {
+            return true;
+        }
+    }
+    return false;
+}
+
+fn closeOpenFds(start_fd: i32, fds_to_keep: [*]i32, fds_to_keep_len: u32) void {
     var fd = start_fd;
     while (fd < 256) : (fd += 1) {
-        // ignore errors
-        _ = clib.close(fd);
+        if (!isInList(fd, fds_to_keep, fds_to_keep_len)) {
+            // ignore errors
+            _ = clib.close(fd);
+        }
     }
 }

@@ -438,6 +438,26 @@ pub fn valueToArrayOfStrings(env: c.napi_env, value: c.napi_value, comptime name
     return s;
 }
 
+pub fn valueToArrayOfI32(env: c.napi_env, value: c.napi_value, comptime name: [:0]const u8, lenPtr: *u32) ![*]i32 {
+    if (c.napi_get_array_length(env, value, lenPtr) != c.napi_ok) {
+        return throw(env, name ++ " must be array of ints (failed to get length)");
+    }
+    var memory = std.c.malloc(@sizeOf(i32) * lenPtr.*) orelse {
+        return throwMemoryError(env);
+    };
+    var aligned = @alignCast(std.meta.alignment([*]i32), memory);
+    var s: [*]i32 = @ptrCast([*]i32, aligned);
+    var i: u32 = 0;
+    while (i < lenPtr.*) : (i += 1) {
+        var result: c.napi_value = undefined;
+        if (c.napi_get_element(env, value, i, &result) != c.napi_ok) {
+            return throw(env, name ++ " must be array of ints (failed to get element)");
+        }
+        s[i] = try i32FromValue(env, result, "element of array of ints");
+    }
+    return s;
+}
+
 pub fn set_named_property_to_byte_slice(
     env: c.napi_env,
     object: c.napi_value,

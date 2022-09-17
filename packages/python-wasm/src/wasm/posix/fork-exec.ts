@@ -69,7 +69,6 @@ export default function fork_exec({ posix, recv, wasi }) {
         uid,
         child_umask,
         child_sigmask,
-        py_fds_to_keep,
       });
 
       log("before change", {
@@ -105,6 +104,7 @@ export default function fork_exec({ posix, recv, wasi }) {
         errpipe_read: real_fd(errpipe_read),
         errpipe_write: real_fd(errpipe_write),
         close_fds,
+        fds_to_keep: recv.arrayOfI32(py_fds_to_keep),
       };
       log("opts", opts);
 

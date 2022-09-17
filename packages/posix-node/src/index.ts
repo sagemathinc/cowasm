@@ -151,7 +151,7 @@ interface PosixFunctions {
     errwrite: number;
     errpipe_read: number;
     errpipe_write: number;
-    py_fds_to_keep: number[];
+    fds_to_keep: number[];
   }) => number;
 
   lockf: (fd: number, cmd: number, size: BigInt) => void;
