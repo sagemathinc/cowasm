@@ -2,9 +2,37 @@
 // by just printing out the constants at runtime.
 const CONSTANTS = [
   "AT_FDCWD",
+  "E2BIG",
+  "EACCES",
   "EBADF",
+  "EBUSY",
+  "ECHILD",
+  "EDEADLK",
+  "EEXIST",
+  "EFAULT",
+  "EFBIG",
+  "EINTR",
+  "EINVAL",
+  "EIO",
+  "EISDIR",
+  "EMFILE",
+  "EMLINK",
+  "ENFILE",
+  "ENODEV",
   "ENOENT",
-  "ENOSYS",
+  "ENOEXEC",
+  "ENOMEM",
+  "ENOSPC",
+  "ENOTDIR",
+  "ENOTTY",
+  "ENXIO",
+  "EPERM",
+  "EPIPE",
+  "EROFS",
+  "ESPIPE",
+  "ESRCH",
+  "ETXTBSY",
+  "EXDEV",
   "SIG_BLOCK",
   "SIG_UNBLOCK",
   "SIG_SETMASK",
@@ -37,3 +65,5 @@ export function initConstants(context) {
   }
   // console.log(constants);
 }
+
+

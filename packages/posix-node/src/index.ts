@@ -152,6 +152,7 @@ interface PosixFunctions {
     errpipe_read: number;
     errpipe_write: number;
     fds_to_keep: number[];
+    err_map: number[]; // err_map[native errno] = wasm errno; needed to write correct hex code to errpipe_write.
   }) => number;
 
   lockf: (fd: number, cmd: number, size: BigInt) => void;

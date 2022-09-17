@@ -22,6 +22,8 @@ extern int python_wasm_fork_exec(
 */
 
 import debug from "debug";
+import { nativeToWasm } from "./errno";
+import constants from "./constants";
 
 const log = debug("posix:fork-exec");
 
@@ -90,6 +92,12 @@ export default function fork_exec({ posix, recv, wasi }) {
         return data.real;
       }
 
+      const err_map: number[] = [];
+      const n2w = nativeToWasm(posix);
+      for (let native_errno = 0; native_errno < 100; native_errno++) {
+        err_map[native_errno] = n2w[native_errno] ?? constants.ENOENT;
+      }
+
       const opts = {
         exec_array: recv.arrayOfStrings(exec_array_ptr),
         argv: recv.arrayOfStrings(argv_ptr),
@@ -105,6 +113,7 @@ export default function fork_exec({ posix, recv, wasi }) {
         errpipe_write: real_fd(errpipe_write),
         close_fds,
         fds_to_keep: recv.arrayOfI32(py_fds_to_keep).map(real_fd),
+        err_map,
       };
       log("opts", opts);
 

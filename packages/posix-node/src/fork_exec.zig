@@ -31,6 +31,7 @@ const Errors = error{ CloseError, CWDError, DupError, Dup2Error, ForkError, Exec
 //     errwrite: number;
 //     errpipe_read: number;
 //     errpipe_write: number;
+//     err_map: { [native: number]: number };
 // }
 
 fn forkExec(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
@@ -76,6 +77,12 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
     const fds_to_keep_c = try node.valueToArrayOfI32(env, fds_to_keep, "fds_to_keep", &fds_to_keep_len);
     defer std.c.free(fds_to_keep_c);
 
+    // err_map
+    const err_map = try node.getNamedProperty(env, opts, "err_map", "native to wasm error mapping");
+    var err_map_len: u32 = undefined;
+    const err_map_c = try node.valueToArrayOfI32(env, err_map, "err_map", &err_map_len);
+    defer std.c.free(err_map_c);
+
     /////////////////////    /////////////////////     /////////////////////
     // IMPORTANT!  Do NOT use anything from the nodejs runtime below this point!
     /////////////////////    /////////////////////     /////////////////////
@@ -105,13 +112,16 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
         var buffer: [128]u8 = undefined;
         var fba = std.heap.FixedBufferAllocator.init(&buffer);
         const allocator = fba.allocator();
+        const errno = util.getErrno();
+        const errnoWasm = if (errno >= 0 and errno < err_map_len) err_map_c[@intCast(u32, errno)] else -1;
+
         // Data format for errpipe_write:  "exception name:hex errno:description"
         // TODO: subtle bug still -- we need to somehow translate the error number,
         // since the errno here is for node native and we need the wasi one...
         const mesg = try std.fmt.allocPrint(
             allocator,
             "OSError:{x}:{s}",
-            .{ util.getErrno(), if (err == Errors.ExecError) "exec" else "noexec" },
+            .{ errnoWasm, if (err == Errors.ExecError) "exec" else "noexec" },
         );
         defer allocator.free(mesg);
         if (clib.write(errpipe_write, @ptrCast([*]u8, mesg), mesg.len) == -1) {
