@@ -31,6 +31,18 @@ NCURSES_LIB = -L${NCURSES}/wasm/lib
 PYTHON_WASM = ${BIN}/python-wasm
 PYTHON_WASM_DEBUG = ${BIN}/python-wasm-debug
 
+# Either -Oz or -O3 make sense to me...
+#   -O0 = exceeds a limit so can't even load the result with webassembly!
+# The cPython default opt is "-DNDEBUG -g -fwrapv -O3 -Wall", which is
+# coded in the generated Makefile.  I have noticed some major compiler bugs
+# with -O3, so we can revisit this later with newer LLVM/zig releases.
+# For example:
+#   https://github.com/sagemathinc/python-wasm/issues/27
+# is a bug with -O3 that goes away with -Oz. The diff in performance
+# is less than 5% with -O3 over -Oz.
+WASM_OPT=-DNDEBUG -g -fwrapv -Wall -Oz
+
+
 # We only use zlib (not lzma) for native build, since liblzma widely available natively.
 export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
 export LD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
@@ -153,8 +165,9 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# - with-ensurepip: we put that since we need it, but the makefile just runs ensurepip on python-native,
 	#   so it doesn't help.  That's fine, since we can't run python-wasm yet until building ../python-wasm anyways.
 	cd ${BUILD_WASM} && \
-		CC="zig cc -Oz -target wasm32-wasi" \
-		CXX="zig c++ -Oz -target wasm32-wasi" \
+		OPT="${WASM_OPT}" \
+		CC="zig cc -target wasm32-wasi" \
+		CXX="zig c++ -target wasm32-wasi" \
 		AR="zig ar" \
 		CFLAGS="-D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD_WASM} -I${POSIX_WASM}/wasm -DPy_DEFAULT_RECURSION_LIMIT=700" \
 		CONFIG_SITE=./config.site \
@@ -177,6 +190,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# NOTE: I have seen "error: unable to build WASI libc CRT file: FileNotFound" when using "make -j8",
 	# and had it go away when removing parallel build.
 	cd ${BUILD_WASM} && make
+
 	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld
 	# via the zig-fPIC script.  First remove everything that possibly needs to be built -fPIC or the
 	# build will not rebuild what it needs to build.  We just delete all .o files, so this takes longer
@@ -192,21 +206,21 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 		MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
 	 	MODULE_PYEXPAT_LDFLAGS="Modules/expat/libexpat.a" \
 		MODULE__DATETIME_LDFLAGS="" \
-		CC="zig-fPIC cc -Oz" \
-		CXX="zig-fPIC c++ -Oz" \
-		BLDSHARED="${BLDSHARED}"
+		CC="zig-fPIC cc ${OPT}" \
+		CXX="zig-fPIC c++ ${OPT}" \
+		BLDSHARED="${BLDSHARED}" \
 	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-3.11/_sysconfigdata__wasi_wasm32-wasi.py so it
 	# matches the configuration we just used for building shared modules.  Otherwise, distutils
 	# and setuptools, etc., will use the original options and things will be completely broken
 	# due to lack of -fPIC.  This is annoying, but we don't want to build the core python executable
 	# -fPIC, since that is slower and bigger and we don't need it.
 	# This is what based on testing actually works:
-	#      'zig cc -Oz -target wasm32-wasi' --> 'zig-fPIC cc -Oz'
-	#      'zig c++ -Oz -target wasm32-wasi' --> 'zig-fPIC c++ -Oz'
+	#      'zig cc -target wasm32-wasi' --> 'zig-fPIC cc'
+	#      'zig c++ -target wasm32-wasi' --> 'zig-fPIC c++'
 	#      'LDSHARED': '' --> 'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'
 	cd ${BUILD_WASM}/build/lib.wasi-wasm32-3.11/ \
-		&& sed -i'.bak' "s/zig cc -Oz -target wasm32-wasi/zig-fPIC cc -Oz/g" _sysconfigdata__wasi_wasm32-wasi.py \
-		&& sed -i'.bak' "s/zig c++ -Oz -target wasm32-wasi/zig-fPIC c++ -Oz/g" _sysconfigdata__wasi_wasm32-wasi.py \
+		&& sed -i'.bak' "s/zig cc -target wasm32-wasi/zig-fPIC cc/g" _sysconfigdata__wasi_wasm32-wasi.py \
+		&& sed -i'.bak' "s/zig c++ -target wasm32-wasi/zig-fPIC c++/g" _sysconfigdata__wasi_wasm32-wasi.py \
 		&& sed -i'.bak' "s/'LDSHARED': ''/'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'/g" _sysconfigdata__wasi_wasm32-wasi.py
 	# Install as usual.
 	cd ${BUILD_WASM} && make install
@@ -301,7 +315,7 @@ SUPPORTED_TESTS = test_sys test_platform test_atexit test_base64 test_builtin te
 
 test: wasm native
 	echo "Running ${SUPPORTED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j4 --timeout=180 ${SUPPORTED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j8 --timeout=180 ${SUPPORTED_TESTS}
 	echo "Ran ${SUPPORTED_TEST_DESC}"
 .PHONY: test
 
