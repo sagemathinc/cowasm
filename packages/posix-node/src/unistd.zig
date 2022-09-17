@@ -250,7 +250,7 @@ fn closeStream(env: c.napi_env, comptime name: [:0]const u8) !void {
 fn makeNonblocking(env: c.napi_env, desc: c_int) !c_int {
     // make  nonblocking
     var flags = unistd.fcntl(desc, unistd.F_GETFL, @intCast(c_int, 0));
-    flags &= unistd.O_NONBLOCK;
+    flags |= unistd.O_NONBLOCK;
     var status = unistd.fcntl(desc, unistd.F_SETFL, flags);
     if (status == -1) {
         node.throwError(env, "O_NONBLOCK failed");

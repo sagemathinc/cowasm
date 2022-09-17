@@ -99,7 +99,7 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
         std.debug.print("Error in doForkExec: {}\n", .{err});
         _ = clib.exit(0);
     };
-    // imposisble to get here...
+    // impossible to get here...
     unreachable;
 }
 
@@ -116,7 +116,7 @@ fn setInheritable(fd: i32, inheritable: bool) !void {
     if (inheritable) {
         flags &= ~clib.FD_CLOEXEC; // clear FD_CLOEXEC bit
     } else {
-        flags &= clib.FD_CLOEXEC; // set FD_CLOEXEC bit
+        flags |= clib.FD_CLOEXEC; // set FD_CLOEXEC bit
     }
     if (clib.fcntl(fd, clib.F_SETFD, flags) == -1) {
         return Errors.SetInheritableSETFD;
@@ -157,9 +157,6 @@ fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8
             }
         }
     }
-
-    // Make it so errpipe_write is closed when an exec succeeds:
-    try setInheritable(errpipe_write, false);
 
     // Close parent's pipe ends:
     if (p2cwrite != -1) {
@@ -222,6 +219,11 @@ fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8
     if (close_fds != 0) {
         closeOpenFds(3, errpipe_write, fds_to_keep, fds_to_keep_len);
     }
+
+    // Make it so errpipe_write is closed when an exec succeeds
+    // This is the default, so this line is not necessary.  But I'm
+    // keeping it to make things very clear for now.
+    try setInheritable(errpipe_write, false);
 
     // Try each executable in turn until one of them works.  In practice this
     // is trying every possible location in the PATH.
