@@ -14,6 +14,7 @@ const util = @import("util.zig");
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "fork_exec", forkExec);
+    try node.registerFunction(env, exports, "set_inheritable", set_inheritable_impl);
 }
 
 const Errors = error{ CloseError, CWDError, DupError, Dup2Error, ForkError, ExecError, SetInheritableReadFlags, SetInheritableSETFD };
@@ -72,7 +73,7 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
     // whether or not to close file descriptors
     const close_fds = try i32Prop(env, opts, "close_fds");
     // fd's to not close
-    const fds_to_keep = try node.getNamedProperty(env, opts, "fds_to_keep", "file descriptors to key");
+    const fds_to_keep = try node.getNamedProperty(env, opts, "fds_to_keep", "file descriptors to keep");
     var fds_to_keep_len: u32 = undefined;
     const fds_to_keep_c = try node.valueToArrayOfI32(env, fds_to_keep, "fds_to_keep", &fds_to_keep_len);
     defer std.c.free(fds_to_keep_c);
@@ -153,6 +154,17 @@ fn setInheritable(fd: i32, inheritable: bool) !void {
     if (clib.fcntl(fd, clib.F_SETFD, flags) == -1) {
         return Errors.SetInheritableSETFD;
     }
+}
+
+fn set_inheritable_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const args = node.getArgv(env, info, 2) catch return null;
+    const fd = node.i32FromValue(env, args[0], "fd") catch return null;
+    const inheritable = node.i32FromValue(env, args[1], "inheritable") catch return null;
+
+    setInheritable(fd, inheritable != 0) catch {
+        node.throwErrno(env, "set_inheritable call failed");
+    };
+    return null;
 }
 
 fn close(fd: i32) !void {

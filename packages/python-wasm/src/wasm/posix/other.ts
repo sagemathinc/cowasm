@@ -95,19 +95,6 @@ export default function other({ callFunction, posix, recv, send }) {
 
     mremap: () => {
       notImplemented("mremap");
-    }
-
-    // void qsort(void *base, size_t nmemb, size_t size,
-    //       int (*compar)(const void *, const void *)) {
-    //     qsort: (base, nmemb, size, compar) => {
-    //       console.log("\nqsort in javascript\n");
-    //       const qsort_r_compar = (a, b, _compar) => {
-    //         console.log("compare ", a,b);
-    //         if (a < b) {
-    //           return -1;
-    //         } else return 1;
-    //       };
-    //       callFunction("qsort_r", base, nmemb, size, qsort_r_compar, compar);
-    //     },
+    },
   };
 }

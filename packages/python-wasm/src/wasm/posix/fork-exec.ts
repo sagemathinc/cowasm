@@ -28,7 +28,35 @@ import constants from "./constants";
 const log = debug("posix:fork-exec");
 
 export default function fork_exec({ posix, recv, wasi }) {
+  function real_fd(virtual_fd: number): number {
+    const data = wasi.FD_MAP.get(virtual_fd);
+    if (data == null) {
+      return -1;
+    }
+    return data.real;
+  }
+
   return {
+    // We have to implement this since fcntl -- which python library calls -- is too
+    // much of a no-op.  This is needed for subprocess support only, of course.
+    // This can ONLY work on actual fd in the node.js process itself, e.g., pipes.
+    // When we implement this in the browser, we will also have fd's that correspond
+    // to pipes, where this works.
+    python_wasm_set_inheritable: (fd: number, inheritable: number): number => {
+      const real = real_fd(fd);
+      if (real == -1) {
+        throw Error("invalid file descriptor");
+      }
+      // This will fail if real isn't a pipe or actual native file descriptor.
+      posix.set_inheritable(real, inheritable);
+      return 0;
+    },
+
+    // Our custom implementation of the entire fork-exec process.  We can't use Python's
+    // since node.js would need to get run in the forked process to do arbitrarily complicated
+    // things, and node.js is not written in a way to support actual forking.  In practice,
+    // doing that sort of works, but **RANDOMLY CRASHES** and will drive you insane.  So
+    // we just did the hard work and wrote this.
     python_wasm_fork_exec: (
       exec_array_ptr,
       argv_ptr,
@@ -83,14 +111,6 @@ export default function fork_exec({ posix, recv, wasi }) {
         errpipe_read,
         errpipe_write,
       });
-
-      function real_fd(virtual_fd: number): number {
-        const data = wasi.FD_MAP.get(virtual_fd);
-        if (data == null) {
-          return -1;
-        }
-        return data.real;
-      }
 
       const err_map: number[] = [];
       const n2w = nativeToWasm(posix);

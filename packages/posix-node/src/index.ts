@@ -154,6 +154,8 @@ interface PosixFunctions {
     fds_to_keep: number[];
     err_map: number[]; // err_map[native errno] = wasm errno; needed to write correct hex code to errpipe_write.
   }) => number;
+  // This is useful before using fork_exec.  It calls fcntl twice.
+  set_inheritable: (fd: number, inheritable: number) => void;
 
   lockf: (fd: number, cmd: number, size: BigInt) => void;
 

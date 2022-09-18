@@ -123,6 +123,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# Fork and execv on top of posix-node work, but it takes some restrictions to be robust:
 	cd ${BUILD_WASM} && cat ${CWD}/src/patches/07-subprocess.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${CWD}/src/patches/08-unicode-file-test.patch | patch -p1
+	cd ${BUILD_WASM} && cat ${CWD}/src/patches/09-set-inheritable.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # The options for the extension modules.  We cannot strip later. The -s option to BLDSHARED
