@@ -4,6 +4,13 @@ import debug from "debug";
 const log = debug("wasi");
 const logOpen = debug("wasi:open"); // just log opening files, which is useful
 
+// See the comment in packages/cpython/src/pyconfig.h
+// In particular, until we patch cpython itself, it's really
+// only safe to set this to 256.  TODO: we plan to patch
+// everything in cpython that falls back to 256 to instead
+// use the value 32768.
+const SC_OPEN_MAX = 32768;
+
 import type {
   WASIBindings,
   WASIArgs,
@@ -1630,6 +1637,9 @@ export default class WASI {
     let fd = 3;
     while (this.FD_MAP.has(fd)) {
       fd += 1;
+    }
+    if (fd > SC_OPEN_MAX) {
+      throw Error("no available file descriptors");
     }
     return fd;
   }
