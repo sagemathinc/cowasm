@@ -1,11 +1,11 @@
---- native/python/fileutils.c	2022-09-11 12:23:30.000000000 -0700
-+++ wasm/python/fileutils.c	2022-09-18 11:58:42.000000000 -0700
+--- native/Python/fileutils.c	2022-09-11 12:23:30.000000000 -0700
++++ wasm/Python/fileutils.c	2022-09-18 11:58:42.000000000 -0700
 @@ -1323,11 +1323,25 @@
      return get_inheritable(fd, 1);
  }
- 
+
 +extern int python_wasm_set_inheritable(int fd, int inheritable);
- 
+
  /* This function MUST be kept async-signal-safe on POSIX when raise=0. */
  static int
  set_inheritable(int fd, int inheritable, int raise, int *atomic_flag_works)
