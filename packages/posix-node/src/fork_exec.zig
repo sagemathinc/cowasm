@@ -15,6 +15,7 @@ const util = @import("util.zig");
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "fork_exec", forkExec);
     try node.registerFunction(env, exports, "set_inheritable", set_inheritable_impl);
+    try node.registerFunction(env, exports, "is_inheritable", is_inheritable_impl);
 }
 
 const Errors = error{ CloseError, CWDError, DupError, Dup2Error, ForkError, ExecError, SetInheritableReadFlags, SetInheritableSETFD };
@@ -159,12 +160,32 @@ fn setInheritable(fd: i32, inheritable: bool) !void {
 fn set_inheritable_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const args = node.getArgv(env, info, 2) catch return null;
     const fd = node.i32FromValue(env, args[0], "fd") catch return null;
-    const inheritable = node.i32FromValue(env, args[1], "inheritable") catch return null;
+    const inheritable = node.valueToBool(env, args[1], "inheritable") catch return null;
 
-    setInheritable(fd, inheritable != 0) catch {
+    setInheritable(fd, inheritable) catch {
         node.throwErrno(env, "set_inheritable call failed");
     };
     return null;
+}
+
+fn isInheritable(fd: i32) !bool {
+    var flags = clib.fcntl(fd, clib.F_GETFD, @intCast(c_int, 0));
+    if (flags < 0) {
+        return Errors.SetInheritableReadFlags;
+    }
+    // inheritable means the FD_CLOEXEC bit is NOT set in flags, i.e.,
+    // do not
+    return flags & clib.FD_CLOEXEC == 0;
+}
+
+fn is_inheritable_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const args = node.getArgv(env, info, 1) catch return null;
+    const fd = node.i32FromValue(env, args[0], "fd") catch return null;
+    const status = isInheritable(fd) catch {
+        node.throwErrno(env, "is_inheritable call failed");
+        return null;
+    };
+    return node.create_bool(env, status, "inheritable status") catch return null;
 }
 
 fn close(fd: i32) !void {

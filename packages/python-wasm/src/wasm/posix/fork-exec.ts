@@ -37,8 +37,19 @@ export default function fork_exec({ posix, recv, wasi }) {
   }
 
   // map from wasi number to real fd number, for each inheritable file descriptor
-  function getInheritableDescriptorsMap(): { [wasi: number]: number } {
-    return {};
+  function getInheritableDescriptorsMap(): { [wasi_fd: number]: number } {
+    const map: { [wasi_fd: number]: number } = {};
+    for (const wasi_fd of wasi.FD_MAP.keys()) {
+      const data = wasi.FD_MAP.get(wasi_fd);
+      try {
+        if (posix.is_inheritable(data.real)) {
+          map[wasi_fd] = data.real;
+        }
+      } catch (err) {
+        log("getInheritableDescriptorsMap", data.real, err);
+      }
+    }
+    return map;
   }
 
   return {
@@ -59,7 +70,7 @@ export default function fork_exec({ posix, recv, wasi }) {
       try {
         // This will fail if real isn't a pipe or actual native file descriptor.
         // In that case, we treat as a no-op, since there is nothing we can possibly do.
-        posix.set_inheritable(real, inheritable);
+        posix.set_inheritable(real, !!inheritable);
       } catch (_) {
         return 0;
       }
@@ -151,7 +162,7 @@ export default function fork_exec({ posix, recv, wasi }) {
       };
       log("opts", opts);
 
-      console.log(getInheritableDescriptorsMap());
+      log("descriptors map = ", getInheritableDescriptorsMap());
 
       try {
         const pid = posix.fork_exec(opts);
