@@ -36,6 +36,11 @@ export default function fork_exec({ posix, recv, wasi }) {
     return data.real;
   }
 
+  // map from wasi number to real fd number, for each inheritable file descriptor
+  function getInheritableDescriptorsMap(): { [wasi: number]: number } {
+    return {};
+  }
+
   return {
     // We have to implement this since fcntl -- which python library calls -- is too
     // much of a no-op.  This is needed for subprocess support only, of course.
@@ -43,12 +48,21 @@ export default function fork_exec({ posix, recv, wasi }) {
     // When we implement this in the browser, we will also have fd's that correspond
     // to pipes, where this works.
     python_wasm_set_inheritable: (fd: number, inheritable: number): number => {
+      if (posix.set_inheritable == null) {
+        // no-op on platform where we aren't going to ever fork anyways.
+        return 0;
+      }
       const real = real_fd(fd);
       if (real == -1) {
         throw Error("invalid file descriptor");
       }
-      // This will fail if real isn't a pipe or actual native file descriptor.
-      posix.set_inheritable(real, inheritable);
+      try {
+        // This will fail if real isn't a pipe or actual native file descriptor.
+        // In that case, we treat as a no-op, since there is nothing we can possibly do.
+        posix.set_inheritable(real, inheritable);
+      } catch (_) {
+        return 0;
+      }
       return 0;
     },
 
@@ -136,6 +150,8 @@ export default function fork_exec({ posix, recv, wasi }) {
         err_map,
       };
       log("opts", opts);
+
+      console.log(getInheritableDescriptorsMap());
 
       try {
         const pid = posix.fork_exec(opts);
