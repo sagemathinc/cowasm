@@ -282,6 +282,7 @@ export default class WASI {
   stdinBuffer?: Buffer;
   sendStdout?: (Buffer) => void;
   sendStderr?: (Buffer) => void;
+  env: WASIEnv = {};
 
   constructor(wasiConfig: WASIConfig) {
     this.sleep = wasiConfig.sleep;
@@ -294,9 +295,8 @@ export default class WASI {
       preopens = wasiConfig.preopens;
     }
 
-    let env: WASIEnv = {};
     if (wasiConfig && wasiConfig.env) {
-      env = wasiConfig.env;
+      this.env = wasiConfig.env;
     }
     let args: WASIArgs = [];
     if (wasiConfig && wasiConfig.args) {
@@ -441,7 +441,7 @@ export default class WASI {
         this.refreshMemory();
         let coffset = environ;
         let offset = environBuf;
-        Object.entries(env).forEach(([key, value]) => {
+        Object.entries(this.env).forEach(([key, value]) => {
           this.view.setUint32(coffset, offset, true);
           coffset += 4;
           offset += Buffer.from(this.memory.buffer).write(
@@ -454,7 +454,7 @@ export default class WASI {
 
       environ_sizes_get: (environCount: number, environBufSize: number) => {
         this.refreshMemory();
-        const envProcessed = Object.entries(env).map(
+        const envProcessed = Object.entries(this.env).map(
           ([key, value]) => `${key}=${value}\0`
         );
         const size = envProcessed.reduce(
@@ -1716,6 +1716,47 @@ export default class WASI {
         throw new Error(
           "Can't detect a WASI namespace for the WebAssembly Module"
         );
+    }
+  }
+
+  initWasiFdInfo() {
+    // TODO: this is NOT used yet. It currently crashes.
+    if (this.env["WASI_FD_INFO"] != null) {
+      // If the environment variable WASI_FD_INFO is set to the
+      // JSON version of a map from wasi fd's to real fd's, then
+      // we also initialize FD_MAP with that, assuming these
+      // are all inheritable file descriptors for ends of pipes.
+      // This is something added for
+      // python-wasm fork/exec support.
+      const fdInfo = JSON.parse(this.env["WASI_FD_INFO"]);
+      for (const wasi_fd in fdInfo) {
+        console.log(wasi_fd);
+        const fd = parseInt(wasi_fd);
+        if (this.FD_MAP.has(fd)) {
+          continue;
+        }
+        const real = fdInfo[wasi_fd];
+        try {
+          // check the fd really exists
+          this.bindings.fs.fstatSync(real);
+        } catch (_err) {
+          console.log("discarding ", { wasi_fd, real });
+          continue;
+        }
+        const file = {
+          real,
+          filetype: WASI_FILETYPE_SOCKET_STREAM,
+          rights: {
+            base: STDIN_DEFAULT_RIGHTS, // TODO
+            inheriting: BigInt(0),
+          },
+        } as File;
+        this.FD_MAP.set(fd, file);
+      }
+      console.log("after initWasiFdInfo: ", this.FD_MAP);
+      console.log("fdInfo = ", fdInfo);
+    } else {
+      console.log("no WASI_FD_INFO");
     }
   }
 }

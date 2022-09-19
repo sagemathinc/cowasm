@@ -143,10 +143,18 @@ export default function fork_exec({ posix, recv, wasi }) {
         err_map[native_errno] = n2w[native_errno] ?? constants.ENOENT;
       }
 
+      // if envp is empty, then explicitly give WASI_FD_INFO below; otherwise,
+      // we just include WASI_FD_INFO in envp.
+      const WASI_FD_INFO = JSON.stringify(getInheritableDescriptorsMap());
+      const envp = recv.arrayOfStrings(envp_ptr);
+      if (envp.length > 0) {
+        envp.push(`WASI_FD_INFO=${WASI_FD_INFO}`);
+      }
+
       const opts = {
         exec_array: recv.arrayOfStrings(exec_array_ptr),
         argv: recv.arrayOfStrings(argv_ptr),
-        envp: recv.arrayOfStrings(envp_ptr),
+        envp,
         cwd: recv.string(cwd),
         p2cread: real_fd(p2cread),
         p2cwrite: real_fd(p2cwrite),
@@ -159,6 +167,7 @@ export default function fork_exec({ posix, recv, wasi }) {
         close_fds,
         fds_to_keep: recv.arrayOfI32(py_fds_to_keep).map(real_fd),
         err_map,
+        WASI_FD_INFO,
       };
       log("opts", opts);
 

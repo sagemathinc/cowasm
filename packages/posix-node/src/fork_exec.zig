@@ -18,7 +18,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "is_inheritable", is_inheritable_impl);
 }
 
-const Errors = error{ CloseError, CWDError, DupError, Dup2Error, ForkError, ExecError, SetInheritableReadFlags, SetInheritableSETFD };
+const Errors = error{ CloseError, CWDError, DupError, Dup2Error, ForkError, ExecError, SetInheritableReadFlags, SetInheritableSETFD, SetWasiFdError };
 
 // {
 //     exec_array: string[];
@@ -59,6 +59,10 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
     const cwd = try node.getNamedProperty(env, opts, "cwd", "cwd field (a string)");
     var cwd_c = try node.valueToString(env, cwd, "current working directory");
     defer std.c.free(cwd_c);
+
+    const WASI_FD_INFO = try node.getNamedProperty(env, opts, "WASI_FD_INFO", "WASI_FD_INFO field (a string)");
+    var WASI_FD_INFO_c = try node.valueToString(env, WASI_FD_INFO, "WASI_FD_INFO field");
+    defer std.c.free(WASI_FD_INFO_c);
 
     // stdin (=p2c = python to c), stdout (=c2p = c to python), stderr = (err):
     const p2cread = try i32Prop(env, opts, "p2cread");
@@ -107,8 +111,8 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
     // Get rid of all the other node async io and threads by closing
     // the lib-uv event loop, which would otherwise cause random hangs.
     try node.closeEventLoop(env);
-    doForkExec(exec_array_c, argv_c, envp_c, cwd_c, p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite, errpipe_read, errpipe_write, close_fds, fds_to_keep_c, fds_to_keep_len) catch |err| {
-        std.debug.print("Error in doForkExec: {}\n", .{err});
+    doExec(exec_array_c, argv_c, envp_c, cwd_c, p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite, errpipe_read, errpipe_write, close_fds, fds_to_keep_c, fds_to_keep_len, WASI_FD_INFO_c) catch |err| {
+        std.debug.print("Error in doExec: {}\n", .{err});
         // every exec failed, so we report this error over the pipe:
 
         var buffer: [128]u8 = undefined;
@@ -208,11 +212,20 @@ fn dup2(fd: i32, new_fd: i32) !void {
     }
 }
 
-fn doForkExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8), cwd: [*:0]u8, p2cread: i32, p2cwrite: i32, c2pread: i32, _c2pwrite: i32, errread: i32, _errwrite: i32, errpipe_read: i32, errpipe_write: i32, close_fds: i32, fds_to_keep: [*]i32, fds_to_keep_len: u32) !void {
+fn doExec(exec_array: [*](?[*:0]u8), argv: [*](?[*:0]u8), envp: [*](?[*:0]u8), cwd: [*:0]u8, p2cread: i32, p2cwrite: i32, c2pread: i32, _c2pwrite: i32, errread: i32, _errwrite: i32, errpipe_read: i32, errpipe_write: i32, close_fds: i32, fds_to_keep: [*]i32, fds_to_keep_len: u32, WASI_FD_INFO: [*:0]u8) !void {
 
     // TODO: bunch of stuff here regarding pipes and uid/gid. This is a direct port
-    // of child_exec from cpython's Modules/_posixsubprocess.c, with some comments copied
-    // to keep things anchored.
+    // of child_exec from cpython's Modules/_posixsubprocess.c, with some
+    // comments copied to keep things anchored.
+
+    if (envp[0] == null) {
+        // set WASI_FD_INFO to WASI_FD_INFO_c so child has access to this information
+        // and wasi-js can reconstruct correct file descriptor table.
+        // In case envp_c is nontrivial, this should have already been done.
+        if (clib.setenv("WASI_FD_INFO", WASI_FD_INFO, 1) == -1) {
+            return Errors.SetWasiFdError;
+        }
+    }
 
     if (fds_to_keep_len > 0) {
         var i: usize = 0;

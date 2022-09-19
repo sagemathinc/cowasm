@@ -153,6 +153,7 @@ interface PosixFunctions {
     errpipe_write: number;
     fds_to_keep: number[];
     err_map: number[]; // err_map[native errno] = wasm errno; needed to write correct hex code to errpipe_write.
+    WASI_FD_INFO: string; // this env variable is set after fork and before exec (ignored if envp is set); it is used by wasi-js.
   }) => number;
   // This is useful before using fork_exec.  It calls fcntl twice.
   set_inheritable: (fd: number, inheritable: boolean) => void;

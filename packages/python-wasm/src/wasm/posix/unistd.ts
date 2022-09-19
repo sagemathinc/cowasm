@@ -1,6 +1,7 @@
 import { notImplemented } from "./util";
 import constants from "./constants";
 import debug from "debug";
+import { constants as wasi_constants } from "wasi-js";
 
 const log = debug("posix:unistd");
 
@@ -432,11 +433,13 @@ export default function unistd({
       wasi.FD_MAP.set(wasi_readfd, {
         real: readfd,
         rights: STDIN.rights, // just use rights for stdin
+        filetype: wasi_constants.WASI_FILETYPE_SOCKET_STREAM,
       });
       const wasi_writefd = wasi.getUnusedFileDescriptor();
       wasi.FD_MAP.set(wasi_writefd, {
         real: writefd,
         rights: STDOUT.rights, // just use rights for stdout
+        filetype: wasi_constants.WASI_FILETYPE_SOCKET_STREAM,
       });
 
       send.i32(pipefdPtr, wasi_readfd);
