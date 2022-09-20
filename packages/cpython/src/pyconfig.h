@@ -2,7 +2,16 @@
 
 // file should start with a blank line.
 
+// This extern "C" is needed so pyconfig.h can also be included in C++ code, e.g., numpy.
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "posix-wasm.h"
+#ifdef __cplusplus
+}
+#endif
+
+
 #undef HAVE_LINUX_VM_SOCKETS_H
 #define POLLPRI 0
 #undef GETPGRP_HAVE_ARG
