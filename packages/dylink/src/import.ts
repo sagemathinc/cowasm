@@ -194,6 +194,13 @@ export default async function importWebAssemblyDlopen({
       }
     }
 
+    // **TODO: this is a temporary whitelist for some mangled C++ symbols in the numpy build**
+    if (path?.includes("numpy") && name.startsWith("_Z")) {
+      return () => {
+        console.log("WARNING: calling dangerous stub for ", name);
+      };
+    }
+
     if (path) {
       // this is a dynamic library import, so fail at this point:
       throw Error(`${name} -- undefined when importing ${path}`);
