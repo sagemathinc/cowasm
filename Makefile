@@ -17,11 +17,11 @@ test-cpython: cpython python-wasm
 
 
 docker:
-	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/python-wasm master | awk '{print $$1}'` -t python-wasm .
+	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/zython master | awk '{print $$1}'` -t zython .
 .PHONY: docker
 
 docker-nocache:
-	docker build --no-cache -t python-wasm .
+	docker build --no-cache -t zython .
 .PHONY: docker-nocache
 
 dylink: packages/dylink/${BUILT}

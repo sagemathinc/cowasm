@@ -1,20 +1,18 @@
-# Zython
+# Zython: WebAssembly Python for Servers and Browsers
 
 > WebAssembly Python for servers and browsers. Built using Zig. Supports extension modules such as numpy and posix subprocesses.  Does not use Emscripten.
 
 URL: https://github.com/sagemathinc/zython
 
-**The overall project is called "Zython", which is meant to indicate that we use Zig heavily to make Python available.**  The most important packages in the project is called `python-wasm`, since it is a build of Python for WebAssembly.
+**The overall project is called "Zython", which is meant to indicate that we use Zig heavily to make Python available.**  The most important package in the project is called `python-wasm`, which is a build of Python for WebAssembly.
 
 DEMOS:
 
 - https://zython.org (uses Service Workers)
 - https://zython.cocalc.com (uses Atomics and SharedArrayBuffers)
 
-
-
 <!--
-[<img src="https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml/badge.svg"  alt="Docker Image CI"  width="172px"  height="20px"  style="object-fit:cover"/>](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml)
+[<img src="https://github.com/sagemathinc/zython/actions/workflows/docker-image.yml/badge.svg"  alt="Docker Image CI"  width="172px"  height="20px"  style="object-fit:cover"/>](https://github.com/sagemathinc/zython/actions/workflows/docker-image.yml)
 -->
 
 ## Try the python-wasm REPL under node.js
@@ -67,7 +65,7 @@ name? william  <-- I just typed "william"
 >
 ```
 
-You can also use python\-wasm in your [web application via webpack](https://github.com/sagemathinc/python-wasm/tree/main/packages/webpack), but your webserver must set certain headers which [github pages does not set](https://github.com/github-community/community/discussions/13309).
+You can also use python\-wasm in your [web application via webpack](https://github.com/sagemathinc/zython/tree/main/packages/webpack), but your webserver must set certain headers which [github pages does not set](https://github.com/github-community/community/discussions/13309).
 
 ## Build python\-wasm from source on Linux or MacOS
 
@@ -217,3 +215,4 @@ The quick summary is that in each case pypy is twice as fast as pylang \(basical
 ## Contact
 
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) if you find this interesting and want to help out. **This is an open source 3\-clause BSD licensed project.**
+

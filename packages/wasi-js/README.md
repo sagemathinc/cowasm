@@ -25,7 +25,7 @@ npm install wasi-js
 
 ## Quick Start
 
-**This quick start is for node.**  It's something like this.  See [python\-wasm](https://github.com/sagemathinc/python-wasm)
+**This quick start is for node.**  It's something like this.  See [zython](https://github.com/sagemathinc/zython)
 for a nontrivial application that uses wasi\-js both in node and the browser.  The usage is something like this:
 
 ```js
@@ -49,7 +49,7 @@ Set the env variable `DEBUG=wasi*` to see a log of all wasi system calls; this u
 
 ## History
 
-This started as a fork of version 0.12.0 of @wasmer/wasi to keep it alive, since the Wasmer company deleted it entirely \(replacing it with a rust rewrite with very different goals\), and I would like to use it in [python\-wasm](https://github.com/sagemathinc/python-wasm).  I added some functionality to better support blocking IO and other features needed mainly in the browser.  I also found and _**fixed some very subtle bugs**_ while trying to get the cPython test suite to work.
+This started long ago as a fork of version 0.12.0 of @wasmer/wasi to keep it alive, since the Wasmer company deleted it entirely \(replacing it with a rust rewrite with very different goals\), and I would like to use it in [Zython](https://github.com/sagemathinc/zython).  I added some functionality to better support blocking IO and other features needed mainly in the browser.  I also found and _**fixed some very subtle bugs**_ while trying to get the cPython test suite to work.
 
 There is no real test suite directly of this package.  That said, I have tested it quite a bit indirectly via Python test suites.
 

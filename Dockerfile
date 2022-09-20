@@ -1,6 +1,6 @@
-# Dockerfile for building python-wasm in a predictable way.
+# Dockerfile for building Zython in a predictable way.
 # This should fully work on both x86_64 and aarch64 hosts,
-# and results in /python-wasm having everything built with
+# and results in /zython having everything built with
 # the test suite passing.
 
 FROM ubuntu:22.04
@@ -17,12 +17,12 @@ RUN apt-get update \
 # Get source code of python-wasm and build everything:
 ARG commit=HEAD
 
-RUN  git clone https://github.com/sagemathinc/python-wasm \
-  && cd python-wasm \
+RUN  git clone https://github.com/sagemathinc/zython \
+  && cd zython \
   && git checkout ${commit:-HEAD} \
   && make
 
 RUN echo "export PATH=/python-wasm/bin/:$PATH" >> /root/.bashrc
 
 # Run the test suite:
-RUN cd python-wasm && make test
+RUN cd zython && make test

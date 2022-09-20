@@ -73,8 +73,8 @@ this](https://github.com/github-community/community/discussions/13309).
 Clone the repo:
 
 ```sh
-git clone https://github.com/sagemathinc/python-wasm
-cd python-wasm/packages/terminal
+git clone https://github.com/sagemathinc/zython
+cd zython/packages/terminal
 ```
 
 Delete these three lines from package.json (which are used

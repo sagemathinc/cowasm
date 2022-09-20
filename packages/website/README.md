@@ -53,8 +53,8 @@ in [src/index.ts](./src/index.ts).
 ## Trying the demo in your browser
 
 ```sh
-git clone https://github.com/sagemathinc/python-wasm
-cd python-wasm/packages/webpack
+git clone https://github.com/sagemathinc/zython
+cd zython/packages/webpack
 npm ci
 npm run serve
 ```
