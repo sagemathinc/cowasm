@@ -132,7 +132,7 @@ test-f2c: f2c
 	cd packages/f2c && make test
 
 
-py: py-cython py-mpmath py-sympy py-pip
+py: py-cython py-mpmath py-sympy py-pip py-numpy
 .PHONY: py
 
 # Note -- this runs a target in the cpython package, which can only be run
@@ -140,26 +140,33 @@ py: py-cython py-mpmath py-sympy py-pip
 py-pip: cpython python-wasm
 	cd packages/cpython && make pip
 
-py-cython: packages/py-cython/${BUILT} python-wasm
-packages/py-cython/${BUILT}: zig
+py-cython: packages/py-cython/${BUILT}
+packages/py-cython/${BUILT}: zig python-wasm
 	cd packages/py-cython && make all
 .PHONY: py-cython
 test-py-cython: py-cython
 	cd packages/py-cython && make test
 
-py-mpmath: packages/py-mpmath/${BUILT} python-wasm
-packages/py-mpmath/${BUILT}: zig
+py-mpmath: packages/py-mpmath/${BUILT}
+packages/py-mpmath/${BUILT}: zig python-wasm
 	cd packages/py-mpmath && make all
 .PHONY: py-mpmath
 test-py-mpmath: py-mpmath
 	cd packages/py-mpmath && make test
 
-py-sympy: packages/py-sympy/${BUILT} python-wasm py-mpmath
-packages/py-sympy/${BUILT}: zig
+py-sympy: packages/py-sympy/${BUILT}
+packages/py-sympy/${BUILT}: zig python-wasm py-mpmath
 	cd packages/py-sympy && make all
 .PHONY: py-sympy
 test-py-sympy: py-sympy
 	cd packages/py-sympy && make test
+
+py-numpy: packages/py-numpy/${BUILT}
+packages/py-numpy/${BUILT}: zig python-wasm py-cython py-pip
+	cd packages/py-numpy && make all
+.PHONY: py-numpy
+test-py-numpy: py-numpy
+	cd packages/py-numpy && make test
 
 .PHONY: clean
 clean:
@@ -168,7 +175,7 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-f2c
+test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-f2c test-py-numpy
 .PHONY: test
 
 test-bench: python-wasm
