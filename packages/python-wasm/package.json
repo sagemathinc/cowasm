@@ -1,6 +1,6 @@
 {
   "name": "python-wasm",
-  "version": "0.20.2",
+  "version": "0.20.3",
   "description": "python-wasm -- Web Assembly Python for Node.js and the Browser",
   "main": "./dist/python/node.js",
   "browser": "./dist/python/browser.js",
@@ -22,7 +22,7 @@
   "bin": "./bin/python-wasm",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/python-wasm.git"
+    "url": "git+https://github.com/sagemathinc/zython.git"
   },
   "keywords": [
     "python",
@@ -31,9 +31,9 @@
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/sagemathinc/python-wasm/issues"
+    "url": "https://github.com/sagemathinc/zython/issues"
   },
-  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/python-wasm",
+  "homepage": "https://github.com/sagemathinc/zython/tree/main/packages/python-wasm",
   "workspaces": [
     "../wasi-js",
     "../dylink",

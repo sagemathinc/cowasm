@@ -13,13 +13,13 @@ ${DIST}/.built: src/index.ts
 .PHONY: publish
 publish:
 	NODE_ENV="production" npm run build
-	rsync -axvH --delete dist/ ${HOME}/python-wasm.org/
+	rsync -axvH --delete dist/ ${HOME}/zython.cocalc.com/
 
 .PHONY: github-pages
 github-pages:
 	NODE_ENV="production" npm run build
-	rsync -axvH --delete dist/ ${HOME}/python-wasm.org-github/docs/
-	cd ${HOME}/python-wasm.org-github/docs/ \
+	rsync -axvH --delete dist/ ${HOME}/zython.org/docs/
+	cd ${HOME}/zython.org/docs/ \
 		&& git checkout CNAME \
 		&& git add . \
 		&& git commit -a -m "update website" \

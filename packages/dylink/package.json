@@ -1,6 +1,6 @@
 {
   "name": "dylink",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Support for dynamic linking of WebAssembly code via Javascript built using wasm32-unknown-emscripten",
   "main": "dist/index.js",
   "scripts": {
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/python-wasm.git"
+    "url": "git+https://github.com/sagemathinc/zython.git"
   },
   "keywords": [
     "wasm",
@@ -30,9 +30,9 @@
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/sagemathinc/python-wasm/issues"
+    "url": "https://github.com/sagemathinc/zython/issues"
   },
-  "homepage": "https://github.com/sagemathinc/python-wasm#readme",
+  "homepage": "https://github.com/sagemathinc/zython#readme",
   "devDependencies": {
     "@types/node": "^18.7.17",
     "typescript": "^4.7.4"

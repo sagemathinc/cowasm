@@ -1,8 +1,11 @@
 # Terminal Demo
 
-[🔗 Try the Python-Wasm Live Demo](https://python-wasm.cocalc.com/)
+Try the Python-Wasm Live Demos:
 
-This is a demo of using [xterm.js](https://xtermjs.org/) and [webpack](https://webpack.js.org/) with python-wasm.
+- https://zython.org (uses Service Workers)
+- https://zython.cocalc.com (uses Atomics and SharedArrayBuffers)
+
+This is a demo of [xterm.js](https://xtermjs.org/) and [webpack](https://webpack.js.org/) with python-wasm.
 
 ## Using [python\-wasm](https://www.npmjs.com/package/python-wasm) with [webpack](https://webpack.js.org/)
 

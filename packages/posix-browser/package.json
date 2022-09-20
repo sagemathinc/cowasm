@@ -1,21 +1,21 @@
 {
   "name": "posix-browser",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Missing Posix Functions for the Browser",
   "main": "dist/index.js",
   "files": ["src/*", "dist/*", "README.md", "package.json"],
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/python-wasm.git"
+    "url": "git+https://github.com/sagemathinc/zython.git"
   },
   "keywords": ["posix"],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/sagemathinc/python-wasm/issues"
+    "url": "https://github.com/sagemathinc/zython/issues"
   },
-  "homepage": "https://github.com/sagemathinc/python-wasm/tree/main/packages/posix-browser#readme",
+  "homepage": "https://github.com/sagemathinc/zython/tree/main/packages/posix-browser#readme",
   "devDependencies": {
     "@types/jest": "^28.1.6",
     "@types/node": "^18.7.3",

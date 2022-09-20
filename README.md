@@ -8,8 +8,8 @@ URL: https://github.com/sagemathinc/zython
 
 DEMOS:
 
-- https://python-wasm.org (uses Service Workers)
-- https://python-wasm.cocalc.com (uses Atomics and SharedArrayBuffers)
+- https://zython.org (uses Service Workers)
+- https://zython.cocalc.com (uses Atomics and SharedArrayBuffers)
 
 
 

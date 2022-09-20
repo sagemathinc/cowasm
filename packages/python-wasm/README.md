@@ -2,8 +2,8 @@
 
 DEMOS:
 
-- https://python-wasm.cocalc.com (uses Atomics)
-- https://python-wasm.org (uses Service Workers)
+- https://zython.cocalc.com (uses Atomics)
+- https://zython.org (uses Service Workers)
 
 See [the main repo](https://github.com/sagemathinc/python-wasm/blob/main/README.md) for more information. 
 
