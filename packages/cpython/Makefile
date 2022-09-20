@@ -246,7 +246,7 @@ MINIMAL_READLINE = termcap lib-dynload/readline.cpython-311-wasm32-wasi.so  rlco
 # To try this, replace "		&& python-native ./Tools/wasm/wasm_assets.py " below by
 # && python-wasm-debug ./Tools/wasm/wasm_assets.py \
 
-${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
+${DIST_WASM}/.built-data: ${DIST_WASM}/.built-cpython
 	# Build wasm asset bundle (the pyc files, etc.).
 	cd ${BUILD_WASM} \
 		&& mkdir -p usr/local/lib/python3.11/lib-dynload/  \
@@ -277,13 +277,39 @@ ${DIST_WASM}/.built: ${DIST_WASM}/.built-cpython
 		&& zip ../python-readline.zip ${MINIMAL_FILES} ${MINIMAL_READLINE} \
 		&& cd .. && rm -rf tmp
 
+	touch ${DIST_WASM}/.built-data
+
+
+${DIST_WASM}/.built: ${DIST_WASM}/.built-data
 	touch ${DIST_WASM}/.built
+
+
 
 # Use "make run-wasm" to run our WASM python at the command line.
 # You can also just run `python-wasm` in the top level bin/ directory.
 .PHONY: run-wasm
 run-wasm: wasm python-wasm
 	${PYTHON_WASM}
+
+
+###########
+# Installing pip and setuptools
+# We can only do this after ../packages/python-wasm is built, which depends on dylink
+# (which depends on cpython) and many other things.  So this target is invoked later.
+# NOTE: If you do "make clean-wasm", then "make", be sure to also do "make pip".
+###########
+${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built: ${DIST_WASM}/.built
+	cd ${PACKAGES}/python-wasm && make
+	rm -rf ${DIST_WASM}/lib/python*/site-packages/*pip* ${DIST_WASM}/lib/python*/site-packages/*setuptools*
+	python-wasm-debug -m ensurepip
+	# We apply one patch to support building C++ extensions.  Without this, the numpy
+	# build fails pretty quickly. This is needed due to our hacky approach to -fPIC.
+	cd ${DIST_WASM} && cat ${CWD}/src/patches/10-setuptools-c++.patch | patch -p1
+	touch ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built
+
+pip: ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built
+.PHONY: pip
+
 
 # Run the full official Python test suite on the wasm build.  We can't just do
 # "make test" in build/wasm, since that only support wasmtime and emscripten.
@@ -324,7 +350,14 @@ python-wasm:
 	cd ${PACKAGES}/python-wasm && make
 .PHONY: python-wasm
 
-test: wasm native python-wasm
+test-pip: pip
+	echo "Testing PIP"
+	python-wasm-debug -m pip |grep Usage
+	echo "Success"
+.PHONY: test-pip
+
+
+test: wasm native python-wasm test-pip
 	echo "Running ${SUPPORTED_TEST_DESC}"
 	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM_DEBUG} ${RUN_TESTS} -j4 --timeout=240 ${SUPPORTED_TESTS}
 	echo "Ran ${SUPPORTED_TEST_DESC}"

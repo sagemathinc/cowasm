@@ -73,7 +73,7 @@ test-posix-node: posix-node
 	cd packages/posix-node && make test
 
 python-wasm: packages/python-wasm/${BUILT}
-packages/python-wasm/${BUILT}: node cpython wasi-js zig posix-wasm dylink posix-node
+packages/python-wasm/${BUILT}: node wasi-js zig posix-wasm dylink posix-node
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 test-python-wasm: python-wasm
@@ -135,12 +135,10 @@ test-f2c: f2c
 py: py-cython py-mpmath py-sympy py-pip
 .PHONY: py
 
-py-pip: packages/py-pip/${BUILT} python-wasm
-packages/py-pip/${BUILT}: zig
-	cd packages/py-pip && make all
-.PHONY: py-pip
-test-py-pip: py-pip
-	cd packages/py-pip && make test
+# Note -- this runs a target in the cpython package, which can only be run
+# after python-wasm is also built.
+py-pip: cpython python-wasm
+	cd packages/cpython && make pip
 
 py-cython: packages/py-cython/${BUILT} python-wasm
 packages/py-cython/${BUILT}: zig
@@ -170,7 +168,7 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-py-pip test-f2c
+test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-f2c
 .PHONY: test
 
 test-bench: python-wasm
