@@ -26,6 +26,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&& cat ${SRC}/patches/01-ENH-Add-support-for-platforms-with-missing-fenv-flag.patch | patch -p1 \
 		&& cat ${SRC}/patches/02-cxx_compiler.patch | patch -p1 \
+		&& cat ${SRC}/patches/03-disable-complex.patch | patch -p1 \
 		&& echo "" > numpy/core/include/setjmp.h \
 		&& echo "" > numpy/core/include/execinfo.h
 	touch ${BUILD_WASM}/.patched
