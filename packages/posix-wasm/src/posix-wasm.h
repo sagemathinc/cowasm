@@ -293,9 +293,6 @@ int socket(int domain, int type, int protocol);
 int gethostname(char* name, size_t len);
 int sethostname(const char* name, size_t len);
 
-#include <netinet/in.h>
-char* inet_ntoa(struct in_addr in);
-
 // These are needed to build parts of posixmodule in Python.  They seem harmless
 // since they are self contained and copied from
 // packages/zig/dist/lib/libc/musl/include/stdlib.h We may need to change them
