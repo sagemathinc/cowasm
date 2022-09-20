@@ -36,3 +36,6 @@ You can run all of the benchmarks via
 $ your-python-interpreter src/all.py
 ```
 
+---
+
+NOTE: I wonder if we can also use https://github.com/python/pyperformance, and/or contribute to that?
