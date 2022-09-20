@@ -1,5 +1,12 @@
+import { notImplemented } from "./util";
+
 export default function stdlib({ child_process, os, recv, send }) {
   return {
+    // void longjmp(jmp_buf env, int val);
+    longjmp() {
+      notImplemented("longjmp");
+    },
+
     // int getloadavg(double loadavg[], int nelem);
     getloadavg: (loadavgDoubleArrayPtr: number, nelem: number): number => {
       const { loadavg } = os;
@@ -24,7 +31,7 @@ export default function stdlib({ child_process, os, recv, send }) {
     // for the blocking version only.
     system: (commandPtr): number => {
       if (child_process.spawnSync == null) {
-        throw Error("system is not implemented yet");
+        notImplemented("system is not implemented yet");
       }
       const command = recv.string(commandPtr);
       const { stdout, stderr, status } = child_process.spawnSync(command, {

@@ -56,6 +56,7 @@ interface Env {
   dlopen?: (pathnamePtr: number, flags: number) => number;
   dlsym?: (handle: number, symbolPtr: number) => number;
   dlerror?: () => number; // basically a stub right now
+  dladdr?: () => number; // still a stub for now
   dlclose?: (handle: number) => number; // basically a stub right now
 }
 
@@ -544,6 +545,12 @@ export default async function importWebAssemblyDlopen({
   env.dlerror = () => {
     // TODO: need to allocate a string to implement this, and also keep track
     // of errors.
+    return 0;
+  };
+
+  env.dladdr = () => {
+    log("dladdr: STUB");
+    // we couldn't find "it"
     return 0;
   };
 

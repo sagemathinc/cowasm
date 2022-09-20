@@ -34,7 +34,7 @@ let omit =
 // line from the function.  **MUST FIX**
 
 const extra =
-  "_PyUnicodeWriter_WriteChar _PyUnicodeWriter_Init _PyUnicodeWriter_Finish _PyUnicodeWriter_Dealloc _PyUnicodeWriter_WriteStr PyCode_NewEmpty PyFrame_New _PyObject_GenericGetAttrWithDict _Py_FatalErrorFunc _PyUnicodeWriter_PrepareInternal _PyBytes_ReverseFind _PyBytes_Find _Py_dup";
+  "_PyUnicodeWriter_WriteChar _PyUnicodeWriter_Init _PyUnicodeWriter_Finish _PyUnicodeWriter_Dealloc _PyUnicodeWriter_WriteStr PyCode_NewEmpty PyFrame_New _PyObject_GenericGetAttrWithDict _Py_FatalErrorFunc _PyUnicodeWriter_PrepareInternal _PyBytes_ReverseFind _PyBytes_Find _Py_dup _PyArg_VaParseTupleAndKeywords_SizeT";
 
 const headers =
   "Python.h pyframe.h marshal.h frameobject.h structmember.h internal/pycore_unicodeobject.h internal/pycore_namespace.h internal/pycore_bytesobject.h internal/pycore_symtable.h token.h";

@@ -96,5 +96,11 @@ export default function other({ callFunction, posix, recv, send }) {
     mremap: () => {
       notImplemented("mremap");
     },
+
+    // numpy wants this thing that can't exist in wasm:
+    // int backtrace(void** array, int size);
+    backtrace: () => {
+      notImplemented("backgrace");
+    },
   };
 }

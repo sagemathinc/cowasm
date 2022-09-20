@@ -126,6 +126,45 @@ long double __floatsitf(int);
 long double __subtf3(long double, long double);
 // lib/compiler_rt/floatditf.zig:pub fn __floatditf(a: i64) callconv(.C) f128 {
 long double __floatditf(double a);
+// __unordtf2(a: f128, b: f128) callconv(.C) i32
+int __unordtf2(long double, long double);
+// fn __letf2(a: f128, b: f128) callconv(.C) i32
+int __letf2(long double, long double);
+// pub fn __trunctfsf2(a: f128) callconv(.C) f32
+float __trunctfsf2(long double);
+// pub fn __fixtfdi(a: f128) callconv(.C) i64
+long __fixtfdi(long double);
+// pub fn __floatunsitf(a: u32) callconv(.C) f128
+long double __floatunsitf(unsigned int);
+// pub fn __floatunditf(a: u64) callconv(.C) f128
+long double __floatunditf(unsigned long);
+// pub fn __extendsftf2(a: f32) callconv(.C) f128
+long double __extendsftf2(float);
+// fn __netf2(a: f128, b: f128) callconv(.C) i32
+int __netf2(long double, long double);
+// pub fn __fixunstfsi(a: f128) callconv(.C) u32
+unsigned int __fixunstfsi(long double);
+// pub fn __fixunstfdi(a: f128) callconv(.C) u64
+unsigned long __fixunstfdi(long double);
+// fn __eqtf2(a: f128, b: f128) callconv(.C) i32
+int __eqtf2(long double,long double);
+
+// pub fn __multi3(a: i128, b: i128) callconv(.C) i128
+long long __multi3(long long, long long);
+
+// pub fn __udivti3(a: u128, b: u128) callconv(.C) u128
+unsigned long long __udivti3(unsigned long long, unsigned long long);
+
+// fn __eqtf2(a: f128, b: f128) callconv(.C) i32
+int __eqtf2(long double, long double);
+
+// pub fn __fixunstfdi(a: f128) callconv(.C) u64
+unsigned long __fixunstfdi(long double);
+
+// pub fn __fixunstfsi(a: f128) callconv(.C) u32
+unsigned int __fixunstfsi(long double);
+
+long double strtold_l(const char *__restrict, char **__restrict, struct __locale_struct *);
 `;
   s += "\n";
   s += wasmExport((symbols + "\n" + posix).split("\n"));
@@ -136,6 +175,23 @@ long double __floatditf(double a);
 // Extra things we added to our posix compat layer, since they are
 // missing from wasi-zig-libc:
 const posix = `
+strtold_l
+__fixunstfsi
+__fixunstfdi
+__eqtf2
+__udivti3
+__multi3
+__letf2
+__trunctfsf2
+__fixtfdi
+__floatunsitf
+__floatunditf
+__extendsftf2
+__netf2
+__fixunstfsi
+__fixunstfdi
+__eqtf2
+__unordtf2
 __floatditf
 __floatsitf
 __fixtfsi
