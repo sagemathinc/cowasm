@@ -1,8 +1,8 @@
-# python-wasm
+# Zython
 
-> Python built for WebAssembly using Zig and Clang with support for loading dynamic libraries and running on nodejs with posix support (fork, etc.) and in the browser
+> WebAssembly Python for servers and browsers. Built using Zig. Supports extension modules such as numpy and posix subprocesses.  Does not use Emscripten.
 
-URL: https://github.com/sagemathinc/python-wasm
+URL: https://github.com/sagemathinc/zython
 
 DEMOS:
 
