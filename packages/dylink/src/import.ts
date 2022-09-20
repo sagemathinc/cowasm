@@ -195,8 +195,7 @@ export default async function importWebAssemblyDlopen({
 
     if (path) {
       // this is a dynamic library import, so fail at this point:
-      //throw Error(`${name} -- undefined when importing ${path}`);
-      log(`${name} -- undefined when importing ${path}`);
+      throw Error(`${name} -- undefined when importing ${path}`);
     }
 
     return importObjectWithPossibleStub.env[name];
@@ -559,7 +558,7 @@ export default async function importWebAssemblyDlopen({
     return 0;
   };
 
-  const importObjectWithPossibleStub = (stub||true)
+  const importObjectWithPossibleStub = stub
     ? {
         ...importObject,
         env: stubProxy(importObject.env, functionViaPointer, stub),
