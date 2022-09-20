@@ -33,8 +33,9 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	touch ${BUILD_WASM}/.patched
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+	mkdir -p ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&& python-wasm-debug setup.py build_ext
+		&& python-wasm-debug setup.py install --prefix=${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 
