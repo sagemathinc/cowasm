@@ -4,10 +4,14 @@
 
 URL: https://github.com/sagemathinc/zython
 
+**The overall project is called "Zython", which is meant to indicate that we use Zig heavily to make Python available.**  The most important packages in the project is called `python-wasm`, since it is a build of Python for WebAssembly.
+
 DEMOS:
 
 - https://python-wasm.org (uses Service Workers)
 - https://python-wasm.cocalc.com (uses Atomics and SharedArrayBuffers)
+
+
 
 <!--
 [<img src="https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml/badge.svg"  alt="Docker Image CI"  width="172px"  height="20px"  style="object-fit:cover"/>](https://github.com/sagemathinc/python-wasm/actions/workflows/docker-image.yml)
