@@ -1,0 +1,28 @@
+--- native/numpy/random/setup.py	2022-09-09 06:36:30.000000000 -0700
++++ wasm/numpy/random/setup.py	2022-09-19 21:32:55.000000000 -0700
+@@ -38,8 +38,11 @@
+     EXTRA_LINK_ARGS = []
+     EXTRA_LIBRARIES = ['npyrandom']
+     if os.name != 'nt':
++        # python-wasm -- because we're explicitly using "zig wasm-ld" including -lm breaks, and isn't needed anyways, due to how
++        # we load dynamic libraries.
++        pass
+         # Math lib
+-        EXTRA_LIBRARIES.append('m')
++        # EXTRA_LIBRARIES.append('m')
+     # Some bit generators exclude GCC inlining
+     EXTRA_COMPILE_ARGS = ['-U__GNUC_GNU_INLINE__']
+ 
+@@ -145,7 +148,11 @@
+                              define_macros=defs,
+                              )
+     config.add_data_files('_bounded_integers.pxd')
+-    mtrand_libs = ['m', 'npymath'] if os.name != 'nt' else ['npymath']
++    #mtrand_libs = ['m', 'npymath'] if os.name != 'nt' else ['npymath']
++
++    # python-wasm -- do not include -lm; see above comment.
++    mtrand_libs = ['npymath']
++
+     config.add_extension('mtrand',
+                          sources=['mtrand.c',
+                                   'src/legacy/legacy-distributions.c',
