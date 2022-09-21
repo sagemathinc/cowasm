@@ -11,6 +11,8 @@ export default function Errno(error: Constant) {
 // WASM error codes.  These can be *very* different
 // and have to be translated.
 export function nativeToWasm(posix) {
+  // DO **NOT** add anything more to this, e.g., ENOTSUP, since we are making
+  // a mapping back and forth usig it, and any overlaps will lead to subtle errors!
   const names = [
     "E2BIG",
     "EACCES",
@@ -43,7 +45,6 @@ export function nativeToWasm(posix) {
     "ESRCH",
     "ETXTBSY",
     "EXDEV",
-    "ENOTSUP",
   ];
   const map: { [native: number]: number } = {};
   for (const name of names) {
