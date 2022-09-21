@@ -45,3 +45,11 @@ test("getting an error code via a system call", async () => {
   );
   expect((await repr("the_error")).startsWith("gaierror")).toBe(true);
 });
+
+test("using getaddrinfo with a SOCK_STREAM", async () => {
+  expect(
+    await repr(
+      "socket.getaddrinfo('httpbin.org',80, socket.AF_INET, socket.SOCK_STREAM)"
+    )
+  ).toContain("AddressFamily.AF_INET");
+});
