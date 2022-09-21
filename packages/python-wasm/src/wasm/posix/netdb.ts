@@ -42,7 +42,7 @@ export default function netdb({
     hintsPtr += 4;
     let family = wasmToNativeFamily(posix, view.getUint32(hintsPtr, true));
     hintsPtr += 4;
-    const socktype = view.getUint32(hintsPtr, true);
+    const socktype = wasmToNativeSocktype(posix, view.getUint32(hintsPtr, true));
     hintsPtr += 4;
     const protocol = view.getUint32(hintsPtr, true);
     return {
@@ -302,4 +302,17 @@ function nativeToWasmFamily(posix, family: number): number {
   } else {
     throw Error(`unsupported native address family: ${family}`);
   }
+}
+
+function wasmToNativeSocktype(posix, socktype: number): number {
+  for (const name in constants) {
+    if (
+      name.startsWith("SOCK") &&
+      constants[name] == socktype &&
+      posix.constants[name] != null
+    ) {
+      return posix.constants[name];
+    }
+  }
+  throw Error(`unsupported socktype ${socktype}`);
 }
