@@ -11,6 +11,7 @@ import netif from "./netif";
 import other from "./other";
 import sched from "./sched";
 import signal from "./signal";
+import socket from "./socket";
 import spawn from "./spawn";
 import stdlib from "./stdlib";
 import stat from "./stat";
@@ -79,12 +80,13 @@ export default function posix(context: Context) {
     ...other(context),
     ...sched(context),
     ...signal(context),
+    ...socket(context),
+    ...spawn(context),
     ...stat(context),
     ...stdlib(context),
-    ...unistd(context),
     ...time(context),
+    ...unistd(context),
     ...wait(context),
-    ...spawn(context),
   };
   const Q: any = {};
 

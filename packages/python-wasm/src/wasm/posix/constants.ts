@@ -43,6 +43,7 @@ const CONSTANTS = [
   "F_TLOCK",
   "F_TEST",
   "IFNAMSIZ",
+  "ENOTSUP",
 ] as const;
 
 export type Constant = typeof CONSTANTS[number];
@@ -65,5 +66,3 @@ export function initConstants(context) {
   }
   // console.log(constants);
 }
-
-

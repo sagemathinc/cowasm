@@ -43,6 +43,7 @@ export function nativeToWasm(posix) {
     "ESRCH",
     "ETXTBSY",
     "EXDEV",
+    "ENOTSUP",
   ];
   const map: { [native: number]: number } = {};
   for (const name of names) {

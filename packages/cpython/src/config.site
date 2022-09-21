@@ -57,6 +57,8 @@ ac_cv_func_mknodat=no
 # Disable AF_UNIX and AF_PACKET support, see socketmodule.h.
 ac_cv_header_sys_un_h=no
 ac_cv_header_netpacket_packet_h=no
+# That said... i want sockets!
+ac_cv_func_socket=yes
 
 
 ###############################
@@ -168,7 +170,7 @@ ac_cv_func_memfd_create=no
 ac_cv_func_getitimer=no
 ac_cv_func_setitimer=no
 
-# Sendfile is parat of sockets, and we don't have it (yet):
+# Sendfile is part of sockets, and we don't have it (yet):
 ac_cv_func_sendfile=no
 
 # Not in WASI?
