@@ -236,6 +236,11 @@ interface PosixFunctions {
       protocol?: number;
     }
   ) => Addrinfo[];
+
+  // termios sort of things; this is NOT done in a general way wrapping the api,
+  // but instead implements things that node doesn't provide.
+  enableRawMode: () => void; // switch stdin into no ECHO or ICANON mode so immediately get raw input.
+
 }
 
 export type Posix = Partial<PosixFunctions>;
