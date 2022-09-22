@@ -3,6 +3,9 @@ Initialize our WASM setup.
 
 This can be run as a Worker script when importing the wasm module in node.js
 in the mode where we use a Worker.
+
+This can *ALSO* be run in the main thread under node.js to run everything
+without using a worker at all.
 */
 
 import { readFile } from "fs/promises";
@@ -85,6 +88,13 @@ export default async function wasmImportNode(
     return new WebAssembly.Instance(mod, opts);
   }
 
+  const { getChar } = posix;
+  if (getChar != null) {
+    options.getStdin = () => {
+      const c = getChar();
+      return Buffer.from(c ?? "");
+    };
+  }
   return await wasmImport({
     source: name,
     bindings: { ...bindings, fs, os, child_process, posix },
@@ -103,5 +113,5 @@ if (!isMainThread && parentPort != null) {
     IOHandler,
   });
 } else {
-  log("running in the main thread (for debugging)");
+  log("running this code in the main thread");
 }

@@ -20,9 +20,5 @@ if [ x"$VERSION" = x"v14." ]; then
     EXP_OPT="--experimental-wasm-bigint"
 fi
 
-if [ $# -eq 0 ]; then
-    node $EXP_OPT -r "$SCRIPTPATH"/../dist/python/node-terminal-dev.js
-else
-    node $EXP_OPT "$SCRIPTPATH"/../dist/python/node-terminal-dev.js "$@"
-fi
+node $EXP_OPT "$SCRIPTPATH"/../dist/python/node-terminal-dev.js "$@"
 

@@ -243,7 +243,8 @@ interface PosixFunctions {
   // you call from a script, not from the node.js REPL, where it will immediately EOF.
   // The point is this is a useful building block for creating your own terminal.
   // See demo/terminal.js
-  getChar: () => string;
+  getChar: () => string; // this is probably what you want.
+  getByte: () => string; // could also be useful, maybe...
 }
 
 export type Posix = Partial<PosixFunctions>;

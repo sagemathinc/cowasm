@@ -1,4 +1,4 @@
-import wasmImport from "../wasm/import-node";
+//import wasmImport from "../wasm/import-node";
 import wasmImportNoWorker from "../wasm/worker/node";
 import { _init, repr, exec, wasm, terminal as _terminal } from "./index";
 import type { FileSystemSpec } from "wasi-js";
@@ -79,7 +79,8 @@ export async function init({
   await _init({
     programName: process.env.PROGRAM_NAME ?? "/usr/bin/zython", // real name or made up name
     python_wasm: join(path, PYTHON_WASM),
-    wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
+    wasmImport:
+      wasmImportNoWorker /*noWorker ? wasmImportNoWorker : wasmImport*/,
     fs,
     env,
   });

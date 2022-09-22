@@ -13,6 +13,7 @@ const clib = @cImport({
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "getChar", getChar);
+    try node.registerFunction(env, exports, "getByte", getByte);
 }
 
 const Errors = error{ GetAttr, SetAttr, SetLocale };
@@ -77,3 +78,15 @@ fn getChar(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     }
     return result;
 }
+
+fn getByte(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    var buf: [2]u8 = undefined;
+    buf[1] = 0;
+    if (clib.read(clib.STDIN_FILENO, &buf[0], 1) != 1) {
+        node.throwErrno(env, "error reading a character");
+        return null;
+    }
+    return node.createStringFromPtr(env, @ptrCast([*:0]u8, &buf), "getChar character") catch return null;
+}
+
