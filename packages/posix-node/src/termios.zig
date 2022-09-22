@@ -32,8 +32,13 @@ fn enableRawMode() Errors!void {
         return Errors.SetAttr;
     }
 
-    if (clib.setlocale(clib.LC_ALL, "") == null) {
-        return Errors.SetLocale;
+    // On Linux we need C.UTF-8 but it isn't available on MacOS.  On MacOS the
+    // default "" is fine, but that doesn't work for me on Linux...
+    // This concerns me.
+    if (clib.setlocale(clib.LC_ALL, "C.UTF-8") == null) {
+        if (clib.setlocale(clib.LC_ALL, "") == null) {
+            return Errors.SetLocale;
+        }
     }
 
     enabled = true;
