@@ -1,10 +1,10 @@
 # Zython: WebAssembly Python for Servers and Browsers
 
-> WebAssembly Python for servers and browsers. Built using Zig. Supports extension modules such as numpy and posix subprocesses.  Does not use Emscripten.
+> WebAssembly Python for servers and browsers. Built using Zig. Supports extension modules such as numpy and posix subprocesses. Does not use Emscripten.
 
 URL: https://github.com/sagemathinc/zython
 
-**The overall project is called "Zython", which is meant to indicate that we use Zig heavily to make Python available.**  The most important package in the project is called `python-wasm`, which is a build of Python for WebAssembly.
+**The overall project is called "Zython", which is meant to indicate that we use Zig heavily to make Python available.** The most important package in the project is called `python-wasm`, which is a build of Python for WebAssembly.
 
 DEMOS:
 
@@ -94,10 +94,10 @@ make test
 
 Note that running `make test` at the top level of `python-wasm` does NOT run the full cpython test suite yet, since it takes quite a while and there are **still numerous failures**. Instead, it runs unit tests of individual packages in `python-wasm`.
 
-You can also use the WebAssembly repl directly on the command line:
+You can also use the WebAssembly repl directly on the command line. The script to start it is called `zython`:
 
 ```sh
-wstein@max % ./bin/python-wasm
+wstein@max % ./bin/zython
 Python 3.11.0b3 (main, Jul  8 2022, 23:21:07) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 81f0e6c5b902ead84753490d on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 2+3
@@ -124,7 +124,7 @@ Welcome to Node.js v18.7.0.
 
 ## What's the goal?
 
-Our **primary goal** is to create a WebAssembly build of the core Python and dependent packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\). It should also be relatively easy to _build from source_ on both Linux and MacOS \(x86_64 and aarch64\) and to easily run the _cpython test suite,_ with a clearly defined supported list of passing tests. The build system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation.
+Our **primary goal** is to create a WebAssembly build of the core Python and dependent packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\). It should also be relatively easy to _build from source_ on both Linux and MacOS \(x86*64 and aarch64\) and to easily run the \_cpython test suite,* with a clearly defined supported list of passing tests. The build system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation.
 
 This package is focused on _**the cpython core**_, not the entire Python package ecosystem. That will be the topic of another package later.
 
@@ -181,11 +181,11 @@ hello from Web Assembly: 4
 
 This isn't currently used here for building python-wasm, but it's an extremely powerful tool. \(For example, I used it with JSage to cross compile the NTL library to Web Assembly...\)
 
-### Run a script via python\-wasm from the CLI
+### Run a script from the terminal:
 
 ```sh
 ~/python-wasm$ echo "import sys; print(f'hi from {sys.platform}')" > a.py
-~/python-wasm$ bin/python-wasm a.py
+~/python-wasm$ bin/zython a.py
 hi from wasi
 ```
 
@@ -215,4 +215,3 @@ The quick summary is that in each case pypy is twice as fast as pylang \(basical
 ## Contact
 
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) if you find this interesting and want to help out. **This is an open source 3\-clause BSD licensed project.**
-
