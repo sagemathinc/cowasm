@@ -8,7 +8,7 @@
     "build": "make -j4 all",
     "clean": "make clean",
     "tsc": "tsc -w",
-    "test": "jest ./dist",
+    "test": "tsc && jest ./dist",
     "test-no-cache": "jest --no-cache ./dist",
     "test-watch": "jest --watch ./dist",
     "prepublishOnly": "make -j4 all && make test && rm ./dist/*.o"

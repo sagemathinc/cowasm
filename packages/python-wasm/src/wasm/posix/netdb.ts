@@ -200,6 +200,7 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     let n = addrinfoArray.length - 1;
     while (n >= 0) {
       const info = addrinfoArray[n];
+      info.ai_socktype = nativeToWasmSocktype(posix, info.ai_socktype);
       info.ai_family = info.sa_family = nativeToWasmFamily(
         posix,
         info.ai_family
@@ -283,7 +284,7 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
   return netdb;
 }
 
-function wasmToNativeFamily(posix, family: number): number {
+export function wasmToNativeFamily(posix, family: number): number {
   if (family == 0) return family; // default no flag given
   // convert from musl-wasm AF_INET to native AF_INET
   // (are totally different, and different for each native platform!).
@@ -307,16 +308,48 @@ function nativeToWasmFamily(posix, family: number): number {
   }
 }
 
-function wasmToNativeSocktype(posix, socktype: number): number {
+// multiple socktypes can be |d together.  E.g., Python does this in the socketmodule.c module
+// where they do "type | SOCK_CLOEXEC".
+export function wasmToNativeSocktype(posix, socktype: number): number {
   if (!socktype) return socktype;
+  let nativeSocktype = 0;
   for (const name in constants) {
-    if (
-      name.startsWith("SOCK") &&
-      constants[name] == socktype &&
-      posix.constants[name] != null
-    ) {
-      return posix.constants[name];
+    if (name.startsWith("SOCK") && constants[name] & socktype) {
+      if (posix.constants[name] == null) {
+        const err = `We need the constant ${name} to be defined in the posix-node module.`;
+        console.warn(err);
+        throw Error(err);
+      }
+      nativeSocktype |= posix.constants[name];
+      socktype &= ~constants[name];
     }
   }
-  throw Error(`unsupported socktype ${socktype}`);
+  if (socktype != 0) {
+    const err = `Unable to convert remainging socktype ${socktype} to native. Make sure all SOCK* constants are defined.`;
+    console.warn(err);
+    throw Error(err);
+  }
+  return nativeSocktype;
+}
+
+function nativeToWasmSocktype(posix, socktype: number): number {
+  if (!socktype) return socktype;
+  let wasmSocktype = 0;
+  for (const name in posix.constants) {
+    if (name.startsWith("SOCK") && posix.constants[name] & socktype) {
+      if (constants[name] == null) {
+        const err = `We need the constant ${name} to be defined in the posix-node module.`;
+        console.warn(err);
+        throw Error(err);
+      }
+      wasmSocktype |= constants[name];
+      socktype &= ~posix.constants[name];
+    }
+  }
+  if (socktype != 0) {
+    const err = `Unable to convert remainging socktype ${socktype} to native. Make sure all SOCK* posix.constants are defined.`;
+    console.warn(err);
+    throw Error(err);
+  }
+  return wasmSocktype;
 }

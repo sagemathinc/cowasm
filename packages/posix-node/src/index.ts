@@ -237,6 +237,10 @@ interface PosixFunctions {
     }
   ) => Addrinfo[];
 
+  // socket:
+  // Create a socket.
+  socket: (family: number, socktype: number, protocol: number) => number;
+
   // termios sort of things; this is NOT done in a general way wrapping the api,
   // but instead implements things that node doesn't provide.
   // Blocking read of a single (wide!) character from stdin.  This is something

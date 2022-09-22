@@ -632,15 +632,14 @@ export default class WASI {
       fd_prestat_get: wrap((fd: number, bufPtr: number) => {
         const stats = CHECK_FD(fd, BigInt(0));
         // log("fd_prestat_get", { fd, stats });
-        if (!stats.path) {
-          return WASI_EINVAL;
-        }
         this.refreshMemory();
         this.view.setUint8(bufPtr, WASI_PREOPENTYPE_DIR);
         this.view.setUint32(
           bufPtr + 4,
           // TODO: this is definitely completely wrong unless preopens=/.
-          Buffer.byteLength(stats.fakePath ?? stats.path),
+          // NOTE: when both paths are blank, we return "".  This is used by
+          // cPython on sockets.   It used to raise an error here.
+          Buffer.byteLength(stats.fakePath ?? stats.path ?? ""),
           true
         );
         return WASI_ESUCCESS;
@@ -649,12 +648,11 @@ export default class WASI {
       fd_prestat_dir_name: wrap(
         (fd: number, pathPtr: number, pathLen: number) => {
           const stats = CHECK_FD(fd, BigInt(0));
-          if (!stats.path) {
-            return WASI_EINVAL;
-          }
           this.refreshMemory();
+          // NOTE: when both paths are blank, we return "".  This is used by
+          // cPython on sockets.  It used to raise an error here.
           Buffer.from(this.memory.buffer).write(
-            stats.fakePath ?? stats.path /* TODO: wrong in general! */,
+            stats.fakePath ?? stats.path ?? "" /* TODO: wrong in general!? */,
             pathPtr,
             pathLen,
             "utf8"
