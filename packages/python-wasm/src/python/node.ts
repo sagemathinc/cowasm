@@ -27,6 +27,7 @@ export async function init({
 } = {}) {
   if (debug) {
     noWorker = noZip = true;
+    console.log(noWorker);
   }
   const path = dirname(join(callsite()[1]?.getFileName() ?? ""));
   const fs: FileSystemSpec[] = [];
