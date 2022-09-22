@@ -239,8 +239,11 @@ interface PosixFunctions {
 
   // termios sort of things; this is NOT done in a general way wrapping the api,
   // but instead implements things that node doesn't provide.
-  enableRawMode: () => void; // switch stdin into no ECHO or ICANON mode so immediately get raw input.
-
+  // Blocking read of a single (wide!) character from stdin.  This is something
+  // you call from a script, not from the node.js REPL, where it will immediately EOF.
+  // The point is this is a useful building block for creating your own terminal.
+  // See demo/terminal.js
+  getChar: () => string;
 }
 
 export type Posix = Partial<PosixFunctions>;
