@@ -1,12 +1,12 @@
 include ../build/Makefile-vars
 
-wasm-debug:
-	echo "Starting benchmarks with python-wasm-debug"
-	python-wasm-debug src/all.py
+zython-debug:
+	echo "Starting benchmarks with zython-debug"
+	zython-debug src/all.py
 
-wasm:
-	echo "Starting benchmarks with python-wasm"
-	python-wasm src/all.py
+zython:
+	echo "Starting benchmarks with zython"
+	zython src/all.py
 
 native:
 	echo "Starting benchmarks with python-native"
@@ -20,10 +20,10 @@ pypy3:
 	echo "Starting benchmarks with pypy (you must install pypy3 yourself)"
 	pypy3 src/all.py
 
-# Running all the benchmark programs tests something about python-wasm actually working.
+# Running all the benchmark programs tests something about zython actually working.
 test:
-	make wasm-debug
-	make wasm
+	make zython-debug
+	make zython
 
 .PHONY: clean
 clean:

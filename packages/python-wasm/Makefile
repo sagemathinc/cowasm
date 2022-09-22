@@ -29,9 +29,9 @@ test-python:
 
 test-posix:
 	cd src && \
-		${TEST} wasm/posix/unistd.zig   ${OPT}&& \
-		${TEST} wasm/posix/stdio.zig   ${OPT}&& \
-		${TEST} wasm/posix/string.zig   ${OPT}&& \
+		${TEST} wasm/posix/unistd.zig   ${OPT} && \
+		${TEST} wasm/posix/stdio.zig   ${OPT} && \
+		${TEST} wasm/posix/string.zig   ${OPT} && \
 		${TEST} wasm/posix/stdlib.zig wasm/posix/stdlib.c  ${OPT}
 
 # Explanation of options to zig build-lib:
@@ -116,27 +116,21 @@ ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.cpython-311-wasm32-wasi.so: ${DI
 .PHONEY: hello
 hello: ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.cpython-311-wasm32-wasi.so
 
-##################
-## Interface support functionality for WebAssembly.
-##   - Proxy Objects
-##################
-
-test-proxy:
-	cd src && ${TEST} interface/proxy.zig  ${OPT}
-
-
 ## Node modules
 node_modules:
 	npm ci
 
-${CWD}/../../bin/python-wasm: ${CWD}/bin/python-wasm
-	ln -sf ${CWD}/bin/python-wasm ${CWD}/../../bin/python-wasm
+${CWD}/../../bin/zython: ${CWD}/bin/zython
+	ln -sf ${CWD}/bin/zython ${CWD}/../../bin/zython
 
-${CWD}/../../bin/python-wasm-debug: ${CWD}/bin/python-wasm-debug
-	ln -sf ${CWD}/bin/python-wasm-debug ${CWD}/../../bin/python-wasm-debug
+${CWD}/../../bin/zython-debug: ${CWD}/bin/zython-debug
+	ln -sf ${CWD}/bin/zython-debug ${CWD}/../../bin/zython-debug
+
+${CWD}/../../bin/zython-dev: ${CWD}/bin/zython-dev
+	ln -sf ${CWD}/bin/zython-dev ${CWD}/../../bin/zython-dev
 
 .PHONY: bin
-bin: ${CWD}/../../bin/python-wasm ${CWD}/../../bin/python-wasm-debug
+bin: ${CWD}/../../bin/zython ${CWD}/../../bin/zython-debug ${CWD}/../../bin/zython-dev
 
 ## Put it all together
 
@@ -147,7 +141,7 @@ ${DIST}/.built: node_modules ${DIST}/python/python.wasm
 # Run all test suites: (1) the Native zig test suite; (2) the Javascript test suite.
 # This exercise zig-related code both via a native build, and then via the separate WebAssembly build.
 .PHONY: test
-test: all test-python test-posix
+test: all #test-python test-posix
 	npm run test
 
 strip: node_modules

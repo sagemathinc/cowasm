@@ -14,7 +14,7 @@ ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 	# TODO: The cython build of cython itself is still broken -- it silently fails to produce .c files
 	# Until we fix this, we'll just use the slow pure python version of cython.
 	cd ${BUILD_WASM} \
-		&& python-wasm-debug setup.py build_ext --inplace
+		&& zython-debug setup.py build_ext --inplace
 	touch ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
@@ -32,7 +32,7 @@ ${BIN}/cython: bin/cython
 test: wasm
 	cd ${BUILD_WASM}/Demos \
 		&& export PYTHONPATH=${DIST_WASM} \
-		&& python-wasm-debug setup.py build_ext --inplace \
-		&& python-wasm-debug run_primes.py 20 \
-		&& python-wasm-debug run_spam.py \
-		&& python-wasm-debug integrate_timing.py
+		&& zython-debug setup.py build_ext --inplace \
+		&& zython-debug run_primes.py 20 \
+		&& zython-debug run_spam.py \
+		&& zython-debug integrate_timing.py

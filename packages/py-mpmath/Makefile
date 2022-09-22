@@ -11,15 +11,15 @@ TARBALL = ${UPSTREAM}/mpmath-${VERSION}.tar.gz
 include ../build/Makefile-rules
 
 # We workaround a bug where the file permissions are incorrect below.
-# We'll fix this. It's a bug somehow in the posix compat layer for python-wasm.
+# We'll fix this. It's a bug somehow in the posix compat layer for zython.
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&& python-wasm-debug setup.py build
+		&& zython-debug setup.py build
 	touch ${BUILD_WASM}/.built
 
 test: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
-		&& PYTHONPATH=`pwd` python-wasm mpmath/tests/runtests.py
+		&& PYTHONPATH=`pwd` zython mpmath/tests/runtests.py
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \

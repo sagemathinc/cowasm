@@ -77,7 +77,7 @@ export async function init({
   }
 
   await _init({
-    programName: process.env.PROGRAM_NAME ?? "/usr/bin/python-wasm", // real name or made up name
+    programName: process.env.PROGRAM_NAME ?? "/usr/bin/zython", // real name or made up name
     python_wasm: join(path, PYTHON_WASM),
     wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
     fs,
@@ -86,7 +86,7 @@ export async function init({
 }
 
 async function terminal(
-  argv = [process.env.PROGRAM_NAME ?? "/usr/bin/python-wasm"]
+  argv = [process.env.PROGRAM_NAME ?? "/usr/bin/zython"]
 ): Promise<number> {
   await init();
   return await _terminal(argv);

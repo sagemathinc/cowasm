@@ -35,13 +35,13 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&& python-wasm-debug setup.py install --prefix=${DIST_WASM}
+		&& zython-debug setup.py install --prefix=${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 # Just a trivial test for now.
 test: ${DIST_WASM}/.built
 	cd ${DIST_WASM}/lib/python3.11/site-packages \
-		&& python-wasm-debug -c "import numpy; print(numpy.array([3,8,9,5,0,7,7]).sum())" | grep 39 \
+		&& zython-debug -c "import numpy; print(numpy.array([3,8,9,5,0,7,7]).sum())" | grep 39 \
 		&& echo "NUMPY TEST PASSED!"
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build

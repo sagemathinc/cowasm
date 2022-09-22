@@ -43,9 +43,9 @@ test("that sys.executable is set to something", async () => {
   expect(executable.length).toBeGreaterThan(0);
 });
 
-test("that sys.executable is set and exists -- when running python-wasm via command line", () => {
+test("that sys.executable is set and exists -- when running zython via command line", () => {
   // pw-d -c "import sys; print(sys.executable)"
-  const stdout = execFileSync("../../bin/python-wasm", [
+  const stdout = execFileSync("../../bin/zython", [
     "-c",
     "import sys; print(sys.executable)",
   ])
@@ -54,9 +54,9 @@ test("that sys.executable is set and exists -- when running python-wasm via comm
   expect(existsSync(stdout)).toBe(true);
 });
 
-test("that sys.executable is set and exists -- when running python-wasm-debug via command line", () => {
+test("that sys.executable is set and exists -- when running zython-debug via command line", () => {
   // pw-d -c "import sys; print(sys.executable)"
-  const stdout = execFileSync("../../bin/python-wasm-debug", [
+  const stdout = execFileSync("../../bin/zython-debug", [
     "-c",
     "import sys; print(sys.executable)",
   ])

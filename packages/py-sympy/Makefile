@@ -27,7 +27,7 @@ test-native: ${BUILD_WASM}/.built
 
 test: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
- 		&& PYTHONPATH=`pwd`:${PYTHONPATH} python-wasm sympy/testing/runtests.py
+ 		&& PYTHONPATH=`pwd`:${PYTHONPATH} zython sympy/testing/runtests.py
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \

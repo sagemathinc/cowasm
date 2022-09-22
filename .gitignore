@@ -1,6 +1,7 @@
 packages/*/build
-bin/python-wasm
-bin/python-wasm-debug
+bin/zython
+bin/zython-debug
+bin/zython-dev
 bin/zig-fPIC
 bin/zig
 bin/node
