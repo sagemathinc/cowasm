@@ -16,6 +16,10 @@ extern "C" {
 #define POLLPRI 0
 #undef GETPGRP_HAVE_ARG
 
+// I did implement the non-BSD version of this though, which
+// doesn't get detected by autoconf:
+#define SETPGRP_HAVE_ARG 1
+
 #define PY_CALL_TRAMPOLINE
 
 // We only use the emscripten changes for the actual changes to the files, NOT for

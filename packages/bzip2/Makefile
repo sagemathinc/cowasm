@@ -35,5 +35,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 			CC="zig-fPIC cc" \
 			RANLIB="zig ranlib" \
 			PREFIX="${DIST_WASM}" \
-			install -j8
+			install -j8 \
+		&&  cp extra_config.h ${DIST_WASM}/include/
 	touch ${DIST_WASM}/.built

@@ -191,4 +191,3 @@ ac_cv_func_openat=no
 # implement it ourselves in Javascript.  Let python do it.
 ac_cv_func_dup3=no
 
-
