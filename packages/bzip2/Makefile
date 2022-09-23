@@ -24,14 +24,16 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	touch ${DIST_NATIVE}/.built
 
 ##################
-# WASM - STATIC
+# WASM
 ##################
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
-	cd ${BUILD_WASM} && \
-		make AR="zig ar" \
-		CC="zig-fPIC cc" \
-		RANLIB="zig ranlib" \
-		PREFIX="${DIST_WASM}" \
-		install -j8
+	cp ${SRC}/extra_config.h ${BUILD_WASM}
+	cd ${BUILD_WASM} \
+		&&  echo '#include "extra_config.h"' >> bzlib.h \
+		&&	make AR="zig ar" \
+			CC="zig-fPIC cc" \
+			RANLIB="zig ranlib" \
+			PREFIX="${DIST_WASM}" \
+			install -j8
 	touch ${DIST_WASM}/.built
