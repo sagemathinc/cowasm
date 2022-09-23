@@ -35,15 +35,20 @@ pub fn initProgramName(program_name: [*:0]const u8) !void {
     defer py.PyConfig_Clear(&config);
 
     //  Set the program name. Implicitly preinitialize Python.
-    var status = py.PyConfig_SetBytesString(&config, &config.program_name, program_name);
-    if (py.PyStatus_Exception(status) != 0) {
+    // std.debug.print("program_name = '{s}'\n", .{program_name});
+    var setNameStatus = py.PyConfig_SetBytesString(&config, &config.program_name, program_name);
+    if (py.PyStatus_Exception(setNameStatus) != 0) {
         std.debug.print("ERROR: failed to set config.program_name\n", .{});
+        py.PyErr_Print();
+        py.Py_ExitStatusException(setNameStatus); // this will actually terminate the program
         return General.RuntimeError;
     }
 
-    status = py.Py_InitializeFromConfig(&config);
-    if (py.PyStatus_Exception(status) != 0) {
+    var initStatus = py.Py_InitializeFromConfig(&config);
+    if (py.PyStatus_Exception(initStatus) != 0) {
         std.debug.print("ERROR: failed to initialize python from configuration when setting program name\n", .{});
+        py.PyErr_Print();
+        py.Py_ExitStatusException(initStatus);  // this will actually terminate the program
         return General.RuntimeError;
     }
 }

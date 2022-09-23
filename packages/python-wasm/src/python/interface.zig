@@ -20,7 +20,7 @@ export fn python_init() void {
 export fn initProgramName(program_name: [*:0]const u8) void {
     python.initProgramName(program_name) catch |err| {
         wasmSetException();
-        std.debug.print("python error: '{}'\nwhen initializing Python program name", .{err});
+        std.debug.print("Python error: '{}'\nwhen initializing Python program name.\n", .{err});
         return;
     };
 }

@@ -55,6 +55,7 @@ export async function _init({
   if (programName) {
     await wasm.callWithString("initProgramName", programName);
   }
+
   // This calls Py_Initialize and gets the Python interpreter initialized.
   await wasm.callWithString("python_init", "");
 
