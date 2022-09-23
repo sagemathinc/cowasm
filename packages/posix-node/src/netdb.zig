@@ -24,7 +24,7 @@ pub const constants = .{
         "AF_UNSPEC", "AF_UNIX", "AF_LOCAL", "AF_INET", "AF_SNA", "AF_DECnet", "AF_APPLETALK", "AF_ROUTE", "AF_IPX", "AF_ISDN", "AF_INET6", "AF_MAX", // AF_= address format
         "AI_PASSIVE", "AI_CANONNAME", "AI_NUMERICHOST", "AI_V4MAPPED", "AI_ALL", "AI_ADDRCONFIG", "AI_NUMERICSERV", // AI = address info
         "EAI_BADFLAGS", "EAI_NONAME", "EAI_AGAIN", "EAI_FAIL", "EAI_FAMILY",     "EAI_SOCKTYPE", "EAI_SERVICE", "EAI_MEMORY", "EAI_SYSTEM", "EAI_OVERFLOW", // errors for the getaddrinfo function
-        "SOCK_STREAM",  "SOCK_DGRAM", "SOCK_RAW",  "SOCK_RDM", "SOCK_SEQPACKET", "SOCK_CLOEXEC",
+        "SOCK_STREAM",  "SOCK_DGRAM", "SOCK_RAW",  "SOCK_RDM", "SOCK_SEQPACKET",
     },
 };
 
