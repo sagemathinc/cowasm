@@ -24,8 +24,8 @@ export default function netdb({
     netdb[name] = () => notImplemented(name);
   }
 
-  // This can't properly be done using zig, since it
-  // intensenly abuses the C data types...
+  // This can't properly be done using zig, since struct sockaddr
+  // intensely abuses the C data types...
   function sendSockaddr(sa_family, ai_addrlen, sa_data): number {
     const ptr = send.malloc(2 + ai_addrlen);
     const view = new DataView(memory.buffer);

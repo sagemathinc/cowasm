@@ -27,16 +27,19 @@ export interface Hostent {
   h_aliases: string[];
 }
 
-export interface Addrinfo {
+export interface Sockaddr {
+  sa_len: number;
+  sa_family: number;
+  sa_data: Buffer;
+}
+
+export interface Addrinfo extends Sockaddr {
   ai_flags: number;
   ai_family: number;
   ai_socktype: number;
   ai_protocol: number;
   ai_addrlen: number;
   ai_canonname?: string;
-  sa_len: number;
-  sa_family: number;
-  sa_data: Buffer;
 }
 
 interface StatsVFS {
@@ -238,8 +241,10 @@ interface PosixFunctions {
   ) => Addrinfo[];
 
   // socket:
-  // Create a socket.
+  // Create a socket. Returns the file descriptor
   socket: (family: number, socktype: number, protocol: number) => number;
+  // Bind a socket to an address.
+  bind: (socket: number, sockaddr: Sockaddr) => void;
 
   // termios sort of things; this is NOT done in a general way wrapping the api,
   // but instead implements things that node doesn't provide.
@@ -281,6 +286,15 @@ try {
   // I could do the JSON in the extension module, but is that really better?
   mod["statvfs"] = (...args) => JSON.parse(mod["_statvfs"]?.(...args));
   mod["fstatvfs"] = (...args) => JSON.parse(mod["_fstatvfs"]?.(...args));
+
+  mod["bind"] = (socket: number, sockaddr: Sockaddr) => {
+    return mod["_bind"](
+      socket,
+      sockaddr.sa_len,
+      sockaddr.sa_family,
+      sockaddr.sa_data
+    );
+  };
 
   for (const name of ["execve", "fexecve"]) {
     const f = mod["_" + name];
