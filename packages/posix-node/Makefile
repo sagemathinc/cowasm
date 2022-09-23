@@ -1,6 +1,12 @@
 include ../build/Makefile-vars
 
-OPTS = -mcpu=baseline -OReleaseSmall
+# Notes:
+#   - using -OReleaseSmall or -OReleaseFast with zig v 0.10.0-dev.4161+dab5bb924 cause a segfault.
+#   - using -OReleaseSafe breaks some tests.
+#   - the default -ODebug works fine with all tests passing.  I'm fine with this settting, since this code
+#     is really a wrapper layer to the underlying C library between Javascript and WASM, and the
+#     Javascript overhead is orders of magnitude more.
+OPTS = -mcpu=baseline -ODebug
 
 all: ${DIST}/.built
 

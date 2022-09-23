@@ -255,7 +255,7 @@ fn createAddrinfo(env: c.napi_env, addrinfo: *netdb.addrinfo) c.napi_value {
     // *DEFINITELY WRONG*.  I tried with both sa_len and sa_len - 2, and the latter
     // is definitely right.  There's just random extra noise otherwise.
     // Also, on Linux sa_len is not the length at all.  So I'm using addrinfo.ai_addrlen-2, which seems right everywhere.
-    const sa_data = node.createBuffer(env, ai_addr.sa_data[0 .. addrinfo.ai_addrlen - 2], "sa_data") catch return null;
+    const sa_data = node.createBufferCopy(env, &ai_addr.sa_data, addrinfo.ai_addrlen - 2, "sa_data") catch return null;
     node.setNamedProperty(env, object, "sa_data", sa_data, "") catch return null;
 
     return object;
