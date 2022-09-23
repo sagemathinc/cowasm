@@ -36,6 +36,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 		AR="zig ar" \
 		CC="zig-fPIC cc -Oz -DHAVE_CONFIG_H=1 " \
 		./configure  --build=`./build-aux/config.guess` --host=none --prefix="${DIST_WASM}" && \
-		make && \
+		make -j8 && \
 		make install
 	touch ${DIST_WASM}/.built

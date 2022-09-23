@@ -39,18 +39,22 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 
 # For use of -D__STDC_ISO_10646__=201103L, see https://patchwork.ozlabs.org/project/buildroot/patch/1452127277-9538-1-git-send-email-sergio.prado@e-labworks.com/
 
+# We also modify examples/Makefile so we don't have to mess with getting them to build.
+
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
-	cd ${BUILD_WASM} && \
-		CONFIG_SITE=${SRC}/config.site \
-		CFLAGS="-I${TERMCAP}/wasm/include -L${TERMCAP}/wasm/lib -D__STDC_ISO_10646__=201103L -D__wasilibc_unmodified_upstream_signal -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -Oz -target wasm32-wasi "  \
-		RANLIB="zig ranlib" \
-		AR="zig ar" \
-		CC="zig-fPIC cc -Oz" \
-		CXX="zig-fPIC c++ -Oz" \
-		./configure \
-			--host=none \
-			--prefix="${DIST_WASM}" && \
-		make -j8 && \
-		make install
+	cd ${BUILD_WASM} \
+		&&	CONFIG_SITE=${SRC}/config.site \
+			CFLAGS="-I${TERMCAP}/wasm/include -L${TERMCAP}/wasm/lib -D__STDC_ISO_10646__=201103L -D__wasilibc_unmodified_upstream_signal -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -Oz -target wasm32-wasi "  \
+			RANLIB="zig ranlib" \
+			AR="zig ar" \
+			CC="zig-fPIC cc -Oz" \
+			./configure \
+				--host=none \
+				--prefix="${DIST_WASM}" \
+		&&	echo '#include "extra_config.h"' >> config.h \
+		&&	echo "all:" > examples/Makefile \
+		&&	echo "install:" >> examples/Makefile \
+		&&	make -j8 \
+		&&	make install
 	touch ${DIST_WASM}/.built
 
