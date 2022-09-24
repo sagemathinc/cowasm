@@ -4,7 +4,7 @@ import constants from "./constants";
 import { constants as wasi_constants } from "wasi-js";
 import { notImplemented } from "./util";
 
-export default function socket({ posix, wasi }) {
+export default function socket({ callFunction, posix, recv, wasi }) {
   return {
     socket(family: number, socktype: number, protocol: number): number {
       if (posix.socket == null) {
@@ -52,6 +52,12 @@ export default function socket({ posix, wasi }) {
     // int bind(int socket, const struct sockaddr *address, socklen_t address_len);
     bind(socket: number, sockaddrPtr: number, address_len: number): number {
       console.log("bind stub ", { socket, sockaddrPtr, address_len });
+      const sa_family = callFunction("recv_sockaddr_sa_family", sockaddrPtr);
+      const sa_data = recv.buffer(
+        callFunction("recv_sockaddr_sa_data", sockaddrPtr),
+        address_len
+      );
+      console.log({ sa_family, sa_data:sa_data.toString(), len:sa_data.length });
       notImplemented("bind");
       return -1;
     },
