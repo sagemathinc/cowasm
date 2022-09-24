@@ -17,8 +17,9 @@ include ../build/Makefile-rules
 ##################
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	cp src/config.h ${BUILD_NATIVE}
 	cd ${BUILD_NATIVE} && \
-		CC="zig cc ${ZIG_NATIVE_CFLAGS_GNU} " AR="zig ar" ./configure --prefix=${DIST_NATIVE} && \
+		CC="zig cc ${ZIG_NATIVE_CFLAGS_GNU} -DHAVE_CONFIG_H=1 " AR="zig ar" ./configure --prefix=${DIST_NATIVE} && \
 		make -j8 && \
 		make install
 	touch ${DIST_NATIVE}/.built
@@ -29,11 +30,11 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 ##################
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
+	cp src/config.h ${BUILD_WASM}
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
-		CC="zig-fPIC cc -Oz" \
-		CXX="zig-fPIC c++" \
+		CC="zig-fPIC cc -Oz -DHAVE_CONFIG_H=1 " \
 		./configure  --build=`./build-aux/config.guess` --host=none --prefix="${DIST_WASM}" && \
 		make -j8 && \
 		make install

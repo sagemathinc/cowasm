@@ -13,6 +13,7 @@
 // it could be the __randname isn't allowed in pure WASM.
 
 #include <time.h>
+extern int __clock_gettime(clockid_t, struct timespec *);
 char *__randname(char *template) {
   int i;
   struct timespec ts;

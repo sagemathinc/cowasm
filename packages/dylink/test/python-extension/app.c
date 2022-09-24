@@ -27,7 +27,8 @@ int PyModuleDef_Init(struct PyModuleDef* module) {
 
   PyCFunction f = (module->m_methods)[0].f;
   printf("PyModuleDef_Init, hello = %p \n", f);
-  return (*f)(NULL, NULL);
+  (*f)(NULL, NULL);
+  return 0;
 }
 
 typedef int (*INIT_FUNCTION)();

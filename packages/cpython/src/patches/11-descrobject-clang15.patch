@@ -1,0 +1,11 @@
+--- native/Objects/descrobject.c	2022-09-11 12:23:30.000000000 -0700
++++ wasm/Objects/descrobject.c	2022-09-23 12:19:53.471705001 -0700
+@@ -16,7 +16,7 @@
+ // see pycore_object.h
+ #if defined(__EMSCRIPTEN__) && defined(PY_CALL_TRAMPOLINE)
+ #include <emscripten.h>
+-EM_JS(PyObject*, descr_set_trampoline_call, (setter set, PyObject *obj, PyObject *value, void *closure), {
++EM_JS(int, descr_set_trampoline_call, (setter set, PyObject *obj, PyObject *value, void *closure), {
+     return wasmTable.get(set)(obj, value, closure);
+ });
+ 

@@ -47,7 +47,6 @@ void        sincosl(long double, long double*, long double*);
 double      pow10(double);
 float       pow10f(float);
 long double pow10l(long double);
-FILE *fopencookie(void *, const char *, cookie_io_functions_t);
 int getdomainname(char *, size_t);
 void *memmem(const void *, size_t, const void *, size_t);
 char *strcasestr(const char *, const char *);
@@ -85,6 +84,9 @@ void __qsort_r (void *, size_t, size_t, int (*)(const void *, const void *, void
 
 int __stack_chk_guard;
 void __stack_chk_fail(void);
+
+
+void *mempcpy(void *, const void *, size_t);
 
 // qsort is completely missing from Zig's musl, but it is assumed
 // to be there by wasi. This breaks things.  Fortnately, zig has
@@ -647,7 +649,6 @@ fmodl
 fmtmsg
 fnmatch
 fopen
-fopencookie
 fpathconf
 fprintf
 fpurge

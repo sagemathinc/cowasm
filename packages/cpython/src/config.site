@@ -195,4 +195,3 @@ ac_cv_func_dup3=no
 ac_cv_func_bind=yes
 ac_cv_func_getsockname=yes
 ac_cv_func_connect=yes
-

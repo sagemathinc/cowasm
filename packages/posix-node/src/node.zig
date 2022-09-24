@@ -618,6 +618,19 @@ pub fn createBuffer(
     return result;
 }
 
+pub fn createBufferCopy(
+    env: c.napi_env,
+    data: *anyopaque,
+    len: usize,
+    comptime error_message: [:0]const u8,
+) !c.napi_value {
+    var result: c.napi_value = undefined;
+    if (c.napi_create_buffer_copy(env, len, data, null, &result) != c.napi_ok) {
+        return throw(env, "error creating buffer " ++ error_message);
+    }
+    return result;
+}
+
 pub fn createArray(
     env: c.napi_env,
     length: u32,

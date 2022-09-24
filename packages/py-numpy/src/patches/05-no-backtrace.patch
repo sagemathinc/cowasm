@@ -1,0 +1,18 @@
+--- native/numpy/core/setup_common.py	2022-09-09 06:36:30.443449000 -0700
++++ wasm/numpy/core/setup_common.py	2022-09-23 17:24:28.115837013 -0700
+@@ -131,7 +131,14 @@
+ 
+ OPTIONAL_LOCALE_FUNCS = ["strtold_l"]
+ OPTIONAL_FILE_FUNCS = ["ftello", "fseeko", "fallocate"]
+-OPTIONAL_MISC_FUNCS = ["backtrace", "madvise"]
++
++# On WASM the feature detection for backtrace doesn't work properly,
++# and I don't know any way to disable this via a command line flag,
++# so we change code here to not even look for backtrace. This is needed
++# with clang15 just to compile, since backtrace isn't declared.  Of course,
++# WASM can't possible provide backtraces, as that violates their security
++# model, so it's best to not build C code that thinks this is available.
++OPTIONAL_MISC_FUNCS = ["madvise"] # ["backtrace", "madvise"]
+ 
+ 
+ OPTIONAL_HEADERS = [

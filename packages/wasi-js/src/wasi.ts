@@ -1581,12 +1581,16 @@ export default class WASI {
           bufPtr,
           bufLen
         );
-        // NOTE: upstream had "return WASI_ESUCCESS;" here, which is a major
-        // bug, since this is supposed to return the *number of random bytes*.
-        // This bug made it so Python hung mysteriously on startup, which tooks
+        return WASI_ESUCCESS;
+        // NOTE: upstream had "return WASI_ESUCCESS;" here, which I thought was
+        // a major bug, since getrandom returns the *number of random bytes*.
+        // However, I think instead this was a bug in musl or libc or zig or something,
+        // which got fixed in version  0.10.0-dev.4161+dab5bb924, since with that
+        // release returning anything instead of success (=0) here actually
+        // (Before returning 0 made it so Python hung mysteriously on startup, which tooks
         // me days of suffering to figure out. In particular, Python startup
-        // hangs at py_getrandom in bootstrap_hash.c.
-        return bufLen;
+        // hangs at py_getrandom in bootstrap_hash.c.)
+        // return bufLen;
       },
 
       sched_yield() {

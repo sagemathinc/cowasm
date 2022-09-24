@@ -5,7 +5,7 @@
 include ../build/Makefile-vars
 
 # Find the latest version at https://nodejs.org/dist/latest/
-VERSION = 18.9.0
+VERSION = 18.9.1
 
 all: ${DIST_NATIVE}/.${VERSION} ${BIN}/node ${BIN}/npm ${BIN}/npx
 

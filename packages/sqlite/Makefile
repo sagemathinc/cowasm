@@ -31,6 +31,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #   - ?? MAYBE ?? Without -Oz (optimize for size rather than speed), we get 'Function addresses
 #     with offsets not supported' from LLVM during final link.
 #     I put the -Oz flag into CFLAGS upon studying what the emscripten port uses.
+#   - We play some tricks with sqlite3.h below to ensure some things get defined (this is needed for clang15).
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} && \
 		CC="zig-fPIC cc" \
@@ -47,6 +48,9 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 			--disable-tcl \
 			--disable-shared \
 	&&	echo '#include "posix-wasm.h"' >> config.h \
+	&&  make sqlite3.h \
+	&&	echo '#include "posix-wasm.h"' >> sqlite3.h \
+	&&	echo 'int sqlite3_fileio_init(sqlite3 *,char **,const sqlite3_api_routines *);' >> sqlite3.h \
 	&& 	make BCC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" -j8 \
 	&&	make BCC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" install
 	touch ${DIST_WASM}/.built

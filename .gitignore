@@ -23,5 +23,6 @@ bin/cython
 zig-cache
 tsconfig.tsbuildinfo
 .hypothesis
-upstream/*
+upstream/sources/*
 scratch/*
+logs/*

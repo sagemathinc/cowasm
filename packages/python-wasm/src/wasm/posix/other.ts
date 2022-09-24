@@ -99,8 +99,10 @@ export default function other({ callFunction, posix, recv, send }) {
 
     // numpy wants this thing that can't exist in wasm:
     // int backtrace(void** array, int size);
-    backtrace: () => {
-      notImplemented("backgrace");
-    },
+    // Commenting this out and instead patching numpy to not try to use this, since we
+    // have to do that anyways to get it to build with clang15.
+    //     backtrace: () => {
+    //       notImplemented("backgrace");
+    //     },
   };
 }
