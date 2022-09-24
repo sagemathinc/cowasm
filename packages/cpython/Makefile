@@ -129,6 +129,9 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${CWD}/src/patches/11-descrobject-clang15.patch | patch -p1
 	# clang15 is more strict:
 	cd ${BUILD_WASM} && cat ${CWD}/src/patches/12-timemodule-clang15.patch | patch -p1
+	# We can't use the modified WASI socket.h headers, since they annoyingly render the
+	# data structure useless (why!?). See packages/python-wasm/src/wasm/posix/socket.zig
+	cd ${BUILD_WASM} && cat ${CWD}/src/patches/13-socket-unmodified-headers.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # The options for the extension modules.  We cannot strip later. The -s option to BLDSHARED

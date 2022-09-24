@@ -55,9 +55,13 @@ export default function socket({ callFunction, posix, recv, wasi }) {
       const sa_family = callFunction("recv_sockaddr_sa_family", sockaddrPtr);
       const sa_data = recv.buffer(
         callFunction("recv_sockaddr_sa_data", sockaddrPtr),
-        address_len
+        address_len - 2
       );
-      console.log({ sa_family, sa_data:sa_data.toString(), len:sa_data.length });
+      console.log({
+        sa_family,
+        sa_data: sa_data.toString(),
+      });
+      console.log("sa_data = ", new Uint8Array(sa_data));
       notImplemented("bind");
       return -1;
     },
