@@ -7,3 +7,5 @@ git pull
 make clean
 make > logs/out 2> logs/err
 make test > logs/test.out 2> logs/test.err
+tail logs/test.err
+tail logs/test.out
