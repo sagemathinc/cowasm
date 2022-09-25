@@ -194,3 +194,7 @@ ac_cv_func_openat=no
 # implement it ourselves in Javascript.  Let python do it.
 ac_cv_func_dup3=no
 
+# We want to fully support the socket C extension module:
+ac_cv_func_bind=yes
+ac_cv_func_getsockname=yes
+ac_cv_func_connect=yes

@@ -3,6 +3,7 @@ const errno = @import("./posix/errno.zig");
 const netdb = @import("./posix/netdb.zig");
 const other = @import("./posix/other.zig");
 const spawn = @import("./posix/spawn.zig");
+const socket = @import("./posix/socket.zig");
 const stat = @import("./posix/stat.zig");
 const stdio = @import("./posix/stdio.zig");
 const stdlib = @import("./posix/stdlib.zig");
@@ -15,6 +16,7 @@ pub fn keepalive() void {
     errno.keepalive();
     netdb.keepalive();
     other.keepalive();
+    socket.keepalive();
     spawn.keepalive();
     stdio.keepalive();
     stdlib.keepalive();

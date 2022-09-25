@@ -1,0 +1,19 @@
+--- native/Modules/socketmodule.h	2022-09-11 12:23:30.000000000 -0700
++++ wasm/Modules/socketmodule.h	2022-09-24 08:45:59.000000000 -0700
+@@ -2,6 +2,8 @@
+ 
+ /* Includes needed for the sockaddr_* symbols below */
+ #ifndef MS_WINDOWS
++
++#define __wasilibc_unmodified_upstream 1
+ #ifdef __VMS
+ #   include <socket.h>
+ # else
+@@ -9,6 +11,7 @@
+ # endif
+ # include <netinet/in.h>
+ # include <netinet/tcp.h>
++#undef __wasilibc_unmodified_upstream
+ 
+ #else /* MS_WINDOWS */
+ # include <winsock2.h>

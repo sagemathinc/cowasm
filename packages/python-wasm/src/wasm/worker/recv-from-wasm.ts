@@ -17,6 +17,7 @@ export class RecvFromWasmAbstractBase {
     return new DataView(this.memory.buffer);
   }
 
+  // Returns the number of *bytes* in a char*.
   strlen(charPtr: number): number {
     // TODO: benchmark the JS vs wasm implementation!
     // return this.callFunction("stringLength", charPtr);
@@ -44,14 +45,20 @@ export class RecvFromWasmAbstractBase {
     return new Uint32Array(this.memory.buffer)[ptr];
   }
 
-  string(ptr: number, len?: number): string {
-    if (len == null) {
-      // no len given, so assume it is a null terminated string:
-      len = this.strlen(ptr);
-      if (len == null) throw Error("bug");
+  // len is the number of bytes, not the number of utf-8 characters.
+  string(ptr: number, bytes?: number): string {
+    if (bytes == null) {
+      // no len in bytes given, so assume it is a null terminated string.
+      bytes = this.strlen(ptr);
+      if (bytes == null) throw Error("bug");
     }
-    const slice = this.memory.buffer.slice(ptr, ptr + len);
+    const slice = this.memory.buffer.slice(ptr, ptr + bytes);
     return textDecoder.decode(slice);
+  }
+
+  buffer(ptr: number, bytes: number): Buffer {
+    console.log(this.memory.buffer.slice(ptr, ptr + bytes));
+    return Buffer.from(this.memory.buffer.slice(ptr, ptr + bytes));
   }
 
   // Receive a null-terminated array of strings.

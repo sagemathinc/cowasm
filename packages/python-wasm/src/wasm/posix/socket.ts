@@ -2,8 +2,9 @@ import Errno from "./errno";
 import { wasmToNativeFamily, wasmToNativeSocktype } from "./netdb";
 import constants from "./constants";
 import { constants as wasi_constants } from "wasi-js";
+import { notImplemented } from "./util";
 
-export default function socket({ posix, wasi }) {
+export default function socket({ callFunction, posix, recv, wasi }) {
   return {
     socket(family: number, socktype: number, protocol: number): number {
       if (posix.socket == null) {
@@ -34,9 +35,9 @@ export default function socket({ posix, wasi }) {
         protocolNative
       );
 
-//       if (!inheritable) {
-//         posix.set_inheritable(real_fd, inheritable);
-//       }
+      //       if (!inheritable) {
+      //         posix.set_inheritable(real_fd, inheritable);
+      //       }
       const wasi_fd = wasi.getUnusedFileDescriptor();
       const STDIN = wasi.FD_MAP.get(0);
       wasi.FD_MAP.set(wasi_fd, {
@@ -46,6 +47,43 @@ export default function socket({ posix, wasi }) {
       });
 
       return wasi_fd;
+    },
+
+    // int bind(int socket, const struct sockaddr *address, socklen_t address_len);
+    bind(socket: number, sockaddrPtr: number, address_len: number): number {
+      console.log("bind stub ", { socket, sockaddrPtr, address_len });
+      const sa_family = callFunction("recv_sockaddr_sa_family", sockaddrPtr);
+      const sa_data = recv.buffer(
+        callFunction("recv_sockaddr_sa_data", sockaddrPtr),
+        address_len - 2
+      );
+      console.log({
+        sa_family,
+        sa_data: sa_data.toString(),
+      });
+      console.log("sa_data = ", new Uint8Array(sa_data));
+      notImplemented("bind");
+      return -1;
+    },
+
+    /*
+    int getsockname(int socket, struct sockaddr *address,
+         socklen_t *address_len);
+    */
+    getsockname(
+      socket: number,
+      sockaddrPtr: number,
+      addressLenPtr: number
+    ): number {
+      console.log("getsockname stub ", { socket, sockaddrPtr, addressLenPtr });
+      notImplemented("getsockname");
+      return -1;
+    },
+
+    connect(socket: number, sockaddrPtr: number, address_len: number): number {
+      console.log("connect stub ", { socket, sockaddrPtr, address_len });
+      notImplemented("connect");
+      return -1;
     },
   };
 }
