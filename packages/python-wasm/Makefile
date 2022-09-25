@@ -11,6 +11,7 @@ PYTHON_WASM = ${PACKAGES}/cpython/dist/wasm
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 DYLINK = ${PACKAGES}/dylink/dist
 LIBGIT2 = ${PACKAGES}/libgit2/dist/wasm
+ZLIB = ${PACKAGES}/zlib/dist/wasm
 
 WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
 WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic ${OPT}
@@ -70,10 +71,10 @@ PYTHON_WASM_C = ${PYTHON_WASM}/lib/libpython3.11.a \
 
 PYTHON_WASM_INCLUDE = -I. -I${POSIX_WASM} -I${PYTHON_WASM}/include/python3.11 -I${LIBGIT2}/include
 
-PYTHON_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED} -lgit2 -L${LIBGIT2}/lib
+PYTHON_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED} -lgit2 -L${LIBGIT2}/lib -lz -L${ZLIB}/lib
 
 # Regarding --stack below, I reported this upstream: https://github.com/ziglang/zig/issues/3735#issuecomment-1223574526
-${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C} ${LIBGIT2}/lib/libgit2.a
+${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C} ${LIBGIT2}/lib/libgit2.a ${ZLIB}/lib/libz.a
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
