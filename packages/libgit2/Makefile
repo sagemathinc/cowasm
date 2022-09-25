@@ -9,7 +9,7 @@ URL = https://github.com/libgit2/libgit2/archive/refs/tags/v${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/libgit2-${VERSION}.tar.gz
 
 # Debug is HUGE
-BUILD_TYPE = Debug
+# BUILD_TYPE = Debug
 # Release is pretty small
 BUILD_TYPE = Release
 
@@ -21,7 +21,8 @@ include ../build/Makefile-rules
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/00-fix_missing_max_align.patch | patch -p1
-	cd ${BUILD_WASM} && cat ${SRC}/patches/01-realpath-cast.c | patch -p1
+	cd ${BUILD_WASM} && cat ${SRC}/patches/01-realpath-cast.patch | patch -p1
+	cd ${BUILD_WASM} && cat ${SRC}/patches/02-validate_ownership.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # Notes on options:
@@ -37,13 +38,3 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cp -r ${BUILD_WASM}/include ${DIST_WASM}/include
 	ln -s ${SRC}/rebuild ${BUILD_WASM}
 	touch ${DIST_WASM}/.built
-
-test: ${DIST_WASM}/.built
-	rm -rf ${BUILD_WASM}/test
-	mkdir -p ${BUILD_WASM}/test
-	cp ${SRC}/test.c ${BUILD_WASM}/test
-	cd ${BUILD_WASM}/test \
-		&&	zcc -I${DIST_WASM}/include ${DIST_WASM}/lib/libgit2.a test.c -o test -lwasi-emulated-mman \
-		&&	rm -rf /tmp/__testlibgit__ \
-		&&	mkdir /tmp/__testlibgit__ \
-		&&	./test
