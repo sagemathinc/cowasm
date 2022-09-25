@@ -1,0 +1,11 @@
+set -ev
+
+make -j8
+
+zig ranlib liblibgit2package.a
+
+cp liblibgit2package.a ../../dist/wasm/lib/libgit2.a
+
+cd ../../../python-wasm 
+
+make -j4

@@ -47,7 +47,7 @@ export default function stdlib({ child_process, os, recv, send, fs }) {
       try {
         const path = recv.string(pathPtr);
         const resolvedPath = fs.realpathSync(path);
-        return send.string(resolvedPath, { ptr: resolvedPathPtr });
+        return send.string(resolvedPath, { ptr: resolvedPathPtr, len:4096 });
       } catch (err) {
         console.warn("ERROR", err);
         // return 0 to indicate error, NOT -1!

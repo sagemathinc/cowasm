@@ -64,6 +64,9 @@ export class SendToWasmAbstractBase {
   // same as string above, but input is already encoded.
   encodedString(strAsArray, dest?: { ptr: number; len: number }): number {
     if (dest != null) {
+      if (!dest.len) {
+        console.warn("send-to-wasm: encodedString -- suspicious dest.len = 0!");
+      }
       strAsArray = strAsArray.slice(0, dest.len - 1); // ensure it will fit
     }
     const len = strAsArray.length + 1;
