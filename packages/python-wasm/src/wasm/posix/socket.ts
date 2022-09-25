@@ -7,7 +7,11 @@ import { notImplemented } from "./util";
 export default function socket({ callFunction, posix, recv, wasi }) {
   return {
     socket(family: number, socktype: number, protocol: number): number {
-      if (posix.socket == null) {
+      // ** NOTE ** -- we explicitly disable socket vi the "true" below
+      // until everything is implemented.  Otherwise the test suite
+      // and installing pip and many other things break half-way through.
+      // Re-enable this when finsihing this up.
+      if (true || posix.socket == null) {
         throw Errno("ENOTSUP");
       }
 
