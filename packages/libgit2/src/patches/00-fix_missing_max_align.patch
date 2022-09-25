@@ -1,0 +1,10 @@
+--- native/src/util/git2_util.h	2022-07-13 17:06:59.000000000 -0700
++++ wasm/src/util/git2_util.h	2022-09-24 18:08:02.215458005 -0700
+@@ -93,6 +93,7 @@
+ # define st_mtim st_mtimespec
+ #endif
+ 
++typedef struct { long long __ll; long double __ld; } max_align_t;
+ # include <arpa/inet.h>
+ 
+ #endif

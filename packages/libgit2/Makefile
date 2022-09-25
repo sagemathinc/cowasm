@@ -1,0 +1,43 @@
+# This builds libgit2.  The build itself does NOT actually work yet...
+
+include ../build/Makefile-vars
+
+# See https://github.com/libgit2/libgit2/releases
+VERSION = 1.5.0
+
+URL = https://github.com/libgit2/libgit2/archive/refs/tags/v${VERSION}.tar.gz
+TARBALL = ${UPSTREAM}/libgit2-${VERSION}.tar.gz
+
+POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
+
+all: wasm
+
+include ../build/Makefile-rules
+
+${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
+	cd ${BUILD_WASM} && cat ${SRC}/patches/00-fix_missing_max_align.patch | patch -p1
+	cd ${BUILD_WASM} && cat ${SRC}/patches/01-realpath-cast.c | patch -p1
+	touch ${BUILD_WASM}/.patched
+
+# Notes on options:
+#   - -DBUILD_SHARED_LIBS=OFF is the only way to get a static library, which is what we want for our use.
+${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+	cd ${BUILD_WASM} \
+		&&	CC="zig cc -target wasm32-wasi -D_WASI_EMULATED_MMAN" cmake -DCMAKE_SIZEOF_VOID_P=4 -DCMAKE_BUILD_TYPE=Debug -DREGEX_BACKEND=regcomp -DSONAME=OFF -DUSE_HTTPS=OFF -DBUILD_TESTS=OFF  -DBUILD_CLI=OFF -DTHREADSAFE=OFF -DUSE_SSH=OFF -DBUILD_CLAR=OFF -DBUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OFF . \
+		&&	make -j8 \
+		&& zig ranlib liblibgit2package.a
+	rm -rf ${DIST_WASM}
+	mkdir -p ${DIST_WASM}/lib
+	cp ${BUILD_WASM}/liblibgit2package.a ${DIST_WASM}/lib/libgit2.a
+	cp -r ${BUILD_WASM}/include ${DIST_WASM}/include
+	touch ${DIST_WASM}/.built
+
+test: ${DIST_WASM}/.built
+	rm -rf ${BUILD_WASM}/test
+	mkdir -p ${BUILD_WASM}/test
+	cp ${SRC}/test.c ${BUILD_WASM}/test
+	cd ${BUILD_WASM}/test \
+		&&	zcc -I${DIST_WASM}/include ${DIST_WASM}/lib/libgit2.a test.c -o test -lwasi-emulated-mman \
+		&&	rm -rf /tmp/__testlibgit__ \
+		&&	mkdir /tmp/__testlibgit__ \
+		&&	./test
