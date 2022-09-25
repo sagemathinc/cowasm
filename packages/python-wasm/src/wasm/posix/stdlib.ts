@@ -44,7 +44,6 @@ export default function stdlib({ child_process, os, recv, send, fs }) {
 
     // char *realpath(const char *path, char *resolved_path);
     realpath: (pathPtr, resolvedPathPtr): number => {
-      console.log("calling our realpath", pathPtr, resolvedPathPtr);
       try {
         const path = recv.string(pathPtr);
         const resolvedPath = fs.realpathSync(path);

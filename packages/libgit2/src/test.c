@@ -1,5 +1,5 @@
 /*
-zcc -Iinclude liblibgit2package.a test.c -o test
+zcc -I${DIST_WASM}/include ${DIST_WASM}/lib/libgit2.a test.c -o test -lwasi-emulated-mman
 */
 
 #include <stdio.h>

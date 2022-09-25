@@ -87,3 +87,32 @@ export fn stringLength(ptr: [*:0]const u8) u32 {
     }
     return i;
 }
+
+const git = @cImport(@cInclude("git2.h"));
+export fn git_test() void {
+    if (git.git_libgit2_init() < 0) {
+        const e = git.git_error_last();
+        if (e != null) {
+            std.debug.print("Error {*}\n", .{e});
+        } else {
+            std.debug.print("git_error_last returned null pointer!\n", .{});
+        }
+        return;
+    }
+
+    var repo: ?*git.git_repository = null;
+
+    var status = git.git_repository_init(&repo, "/tmp/abc", 0);
+    if (status < 0) {
+        std.debug.print("git_repository_init - status {}\n", .{status});
+        const e = git.git_error_last();
+        if (e != null) {
+            std.debug.print("Error {*}\n", .{e});
+        } else {
+            std.debug.print("git_error_last returned null pointer!\n", .{});
+        }
+    }
+    if (git.git_libgit2_shutdown() < 0) {
+        std.debug.print("Error shutting down git\n", .{});
+    }
+}
