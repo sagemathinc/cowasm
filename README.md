@@ -79,7 +79,7 @@ wstein@max % make
 
 This installs a specific version of Zig and Nodejs, then builds native and WebAssembly versions of CPython and many dependencies, and also builds all the Typescript code. Building from source is _**tested on Linux and MacOS with both x86_64 and ARM \(M1\) processors**_:
 
-- Linux: tested on both x86_64 and aarch64 Ubuntu with standard dev tools installed; see [Dockerfile](./Dockerfile) where we install `apt-get install -y git make curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool tcl vim zip`
+- Linux: tested on both x86_64 and aarch64 Ubuntu with standard dev tools installed; see [Dockerfile](./Dockerfile) where we install `apt-get install -y git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool tcl vim zip`
 - MacOS: tested on both x86_64 and M1 mac with standard XCode command live dev tools installed.
 
 If you're using Windows, you'll have to use Linux via a virtual machine \(or maybe WSL\) to build python\-wasm from source.
