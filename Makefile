@@ -73,7 +73,7 @@ test-posix-node: posix-node
 	cd packages/posix-node && make test
 
 python-wasm: packages/python-wasm/${BUILT}
-packages/python-wasm/${BUILT}: node wasi-js zig posix-wasm dylink posix-node
+packages/python-wasm/${BUILT}: node wasi-js zig posix-wasm dylink posix-node libgit2
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 test-python-wasm: python-wasm
@@ -117,6 +117,11 @@ zlib: packages/zlib/${BUILT}
 packages/zlib/${BUILT}: zig
 	cd packages/zlib && make all
 .PHONY: zlib
+
+libgit2: packages/libgit2/${BUILT}
+packages/libgit2/${BUILT}: zig
+	cd packages/libgit2 && make all
+.PHONY: libgit2
 
 bzip2: packages/bzip2/${BUILT}
 packages/bzip2/${BUILT}: zig
