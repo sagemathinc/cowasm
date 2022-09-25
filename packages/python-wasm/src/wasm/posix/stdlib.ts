@@ -1,6 +1,6 @@
 import { notImplemented } from "./util";
 
-export default function stdlib({ child_process, os, recv, send }) {
+export default function stdlib({ child_process, os, recv, send, fs }) {
   return {
     // void longjmp(jmp_buf env, int val);
     longjmp() {
@@ -40,6 +40,20 @@ export default function stdlib({ child_process, os, recv, send }) {
       console.log(stdout.toString());
       console.warn(stderr.toString());
       return status;
+    },
+
+    // char *realpath(const char *path, char *resolved_path);
+    realpath: (pathPtr, resolvedPathPtr): number => {
+      console.log("calling our realpath", pathPtr, resolvedPathPtr);
+      try {
+        const path = recv.string(pathPtr);
+        const resolvedPath = fs.realpathSync(path);
+        return send.string(resolvedPath, { ptr: resolvedPathPtr });
+      } catch (err) {
+        console.warn("ERROR", err);
+        // return 0 to indicate error, NOT -1!
+        return 0;
+      }
     },
 
     /*

@@ -63,10 +63,13 @@ ac_cv_func_socket=yes
 
 ###############################
 
-# Realpath is stubbed with WASI, hence returns false answers. This
+# This seems to no longer be a problem with the newest zig.
+# Instead we actually implement realpath in our posix layer.
+# (WAS: Realpath is stubbed with WASI, hence returns false answers. This
 # causes _PyPathConfig_ComputeSysPath0 to break horribly at least when
-# readline is built properly.  Yep, a day to figure this out:
-ac_cv_func_realpath=no
+# readline is built properly.  Yep, a day to figure this out:)
+# NOTE: os.path.realpath uses readlink rather than realpath.
+# ac_cv_func_realpath=no
 
 
 # The clock_nanosleep and nanosleep functions both are provided by
