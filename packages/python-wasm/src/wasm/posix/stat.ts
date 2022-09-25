@@ -32,8 +32,12 @@ export default function stats({ fs, process, recv, wasi }) {
     return join(dir, path);
   }
 
+  // because wasi's structs don't have sufficient info to deal with permissions, we make ALL of these
+  // chmods into stubs, below, despite having implemented them!
+  // This in particular totally broke libgit2 working at all.
   return {
     chmod: (pathPtr: number, mode: number): -1 | 0 => {
+      return 0; // stubbed due to wasi shortcomings
       if (!mode) {
         // It is impossible for stat calls by wasi to return anything except 0 at present due to this bug:
         // See https://github.com/WebAssembly/wasi-filesystem/issues/34
@@ -48,6 +52,7 @@ export default function stats({ fs, process, recv, wasi }) {
     },
 
     _fchmod: (fd: number, mode: number): number => {
+      return 0; // stubbed due to wasi shortcomings
       if (!mode) {
         // see above.
         return 0;
@@ -68,6 +73,7 @@ export default function stats({ fs, process, recv, wasi }) {
       mode: number,
       _flags: number
     ): number => {
+      return 0; // stubbed due to wasi shortcomings
       if (!mode) {
         // see above.
         return 0;
@@ -87,6 +93,7 @@ export default function stats({ fs, process, recv, wasi }) {
     },
 
     lchmod: (pathPtr: number, mode: number): -1 | 0 => {
+      return 0; // stubbed due to wasi shortcomings
       if (!mode) {
         // see above.
         return 0;
@@ -98,7 +105,8 @@ export default function stats({ fs, process, recv, wasi }) {
 
     // mode_t umask(mode_t mask);
     umask: (mask: number) => {
-      // we return 18 when there's no process.umask function, since that's like umask 022, i.e., it's a reasonable default.
+      // we return 18 when there's no process.umask function, since that's
+      // like umask 022, i.e., it's a reasonable default.
       return process.umask?.(mask) ?? 18;
     },
   };
