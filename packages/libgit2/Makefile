@@ -1,4 +1,4 @@
-# This builds libgit2.  The build itself does NOT actually work yet...
+# This builds libgit2.
 
 include ../build/Makefile-vars
 

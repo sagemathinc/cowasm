@@ -1,0 +1,10 @@
+--- native/src/nodes.c.pat	2021-09-03 00:03:32.000000000 -0700
++++ wasm/src/nodes.c.pat	2022-09-26 16:45:19.000000000 -0700
+@@ -34,6 +34,7 @@
+  *	@(#)nodes.c.pat	8.2 (Berkeley) 5/4/95
+  */
+ 
++#include "posix-wasm.h"
+ #include <stdlib.h>
+ /*
+  * Routine for dealing with parsed shell commands.

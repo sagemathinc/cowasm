@@ -75,6 +75,7 @@ int sigaction(int signum, const struct sigaction* act,
 pid_t fork(void);
 
 pid_t fork1(void);
+pid_t vfork(void);
 
 ssize_t splice(int fd_in, void* off_in, int fd_out, void* off_out, size_t len,
                unsigned int flags);
@@ -137,14 +138,14 @@ typedef struct {
 // Python.  The #ifndef is because slightly different versions of sys/wait.h
 // get included from zig for zig-fPIC versus normal zig, I think, maybe.
 #include <sys/wait.h>
-#ifndef	_SYS_WAIT_H
+#ifndef _SYS_WAIT_H
 typedef enum { P_ALL = 0, P_PID = 1, P_PGID = 2, P_PIDFD = 3 } idtype_t;
-#define WEXITSTATUS(s) (((s) & 0xff00) >> 8)
-#define WTERMSIG(s) ((s) & 0x7f)
+#define WEXITSTATUS(s) (((s)&0xff00) >> 8)
+#define WTERMSIG(s) ((s)&0x7f)
 #define WSTOPSIG(s) WEXITSTATUS(s)
 #define WIFEXITED(s) (!WTERMSIG(s))
-#define WIFSTOPPED(s) ((short)((((s)&0xffff)*0x10001)>>8) > 0x7f00)
-#define WIFSIGNALED(s) (((s)&0xffff)-1U < 0xffu)
+#define WIFSTOPPED(s) ((short)((((s)&0xffff) * 0x10001) >> 8) > 0x7f00)
+#define WIFSIGNALED(s) (((s)&0xffff) - 1U < 0xffu)
 #endif
 
 int waitid(idtype_t idtype, id_t id, siginfo_t* infop, int options);
@@ -207,7 +208,8 @@ int pthread_sigmask(int how, const sigset_t* set, sigset_t* oldset);
 int sigpending(sigset_t* set);
 int sigwait(const sigset_t* set, int* sig);
 int sigfillset(sigset_t* set);
-
+int sigprocmask(int, const sigset_t* __restrict, sigset_t* __restrict);
+int sigsuspend(const sigset_t*);
 int sigwaitinfo(const sigset_t* set, siginfo_t* info);
 int sigtimedwait(const sigset_t* set, siginfo_t* info,
                  const struct timespec* timeout);
@@ -277,13 +279,13 @@ typedef unsigned int socklen_t;
 #define SOMAXCONN 32
 #define SOCK_SEQPACKET 5
 #define __WASI_RIFLAGS_RECV_DATA_TRUNCATED 0
-int accept(int sockfd, void*  addr, void*  addrlen);
+int accept(int sockfd, void* addr, void* addrlen);
 int setsockopt(int sockfd, int level, int optname, const void* optval,
                void* optlen);
 int bind(int sockfd, const void* addr, socklen_t addrlen);
 int connect(int sockfd, const void* addr, socklen_t addrlen);
-int getsockname(int sockfd, void*  addr, socklen_t*  addrlen);
-int getpeername(int sockfd, void*  addr, socklen_t*  addrlen);
+int getsockname(int sockfd, void* addr, socklen_t* addrlen);
+int getpeername(int sockfd, void* addr, socklen_t* addrlen);
 int listen(int sockfd, int backlog);
 ssize_t recvfrom(int sockfd, void* buf, size_t len, int flags, void* src_addr,
                  socklen_t* addrlen);
@@ -328,12 +330,12 @@ void funlockfile(FILE* filehandle);
 
 char* strsignal(int sig);
 
-int fiprintf(FILE*  stream, const char*  format, ...);
-int siprintf(char*  s, const char*  format, ...);
+int fiprintf(FILE* stream, const char* format, ...);
+int siprintf(char* s, const char* format, ...);
 
 int strunvis(char* dst, const char* src);
 int strnvis(char* dst, size_t dlen, const char* src, int flag);
-int strvis(char *dst, const char *src, int flag);
+int strvis(char* dst, const char* src, int flag);
 
 #include <termios.h>
 speed_t cfgetispeed(const struct termios* termios_p);
