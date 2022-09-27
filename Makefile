@@ -103,7 +103,10 @@ packages/viz/${BUILT}: termcap ncurses zig
 	cd packages/viz && make all
 .PHONY: viz
 
-
+lua: packages/lua/${BUILT}
+packages/lua/${BUILT}: zig
+	cd packages/lua && make all
+.PHONY: lua
 
 wasi-js: packages/wasi-js/${BUILT}
 packages/wasi-js/${BUILT}: node

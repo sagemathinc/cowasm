@@ -1,4 +1,6 @@
 packages/*/build
+bin/lua-native
+bin/viz-native
 bin/zython
 bin/zython-debug
 bin/zython-dev
