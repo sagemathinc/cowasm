@@ -41,6 +41,11 @@ packages/libedit/${BUILT}: zig termcap
 	cd packages/libedit && make all
 .PHONY: libedit
 
+lua: packages/lua/${BUILT}
+packages/lua/${BUILT}: zig
+	cd packages/lua && make all
+.PHONY: lua
+
 lzma: packages/lzma/${BUILT}
 packages/lzma/${BUILT}: zig posix-wasm
 	cd packages/lzma && make all
@@ -99,14 +104,9 @@ packages/terminal/${BUILT}: node python-wasm
 .PHONY: terminal
 
 viz: packages/viz/${BUILT}
-packages/viz/${BUILT}: termcap ncurses zig
+packages/viz/${BUILT}: termcap ncurses zig lua
 	cd packages/viz && make all
 .PHONY: viz
-
-lua: packages/lua/${BUILT}
-packages/lua/${BUILT}: zig
-	cd packages/lua && make all
-.PHONY: lua
 
 wasi-js: packages/wasi-js/${BUILT}
 packages/wasi-js/${BUILT}: node
@@ -200,8 +200,7 @@ test-bench: python-wasm
 	cd packages/bench && make test
 
 # test building packages that aren't actually used yet, just to make sure they build
-#   can't include viz until we have lua, since that's a requirement
-test-unused: ncurses dash #viz
+test-unused: ncurses dash lua viz
 .PHONEY: test-unused
 
 # Run tests suites of Python libraries that we support.  These can be VERY long, which is why

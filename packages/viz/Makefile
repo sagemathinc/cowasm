@@ -6,7 +6,6 @@ include ../build/Makefile-vars
 
 VERSION = 0.8.0
 
-
 URL = https://github.com/sagemathinc/viz/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/viz-${VERSION}.tar.gz
 
@@ -23,7 +22,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	rm -rf ${DIST_NATIVE}
 	cd ${BUILD_NATIVE} \
 		&&	CC="zig cc" \
-			CFLAGS="-O2" \
+			CFLAGS="-O2 -I${PACKAGES}/lua/dist/native/include -L${PACKAGES}/lua/dist/native/lib" \
 			./configure --prefix=${DIST_NATIVE} \
 		&&	make -j8 \
 		&&	make install
@@ -51,7 +50,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	CC="zig cc -target wasm32-wasi" \
-			CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${PACKAGES}/ncurses/dist/wasm/include -I${PACKAGES}/ncurses/dist/wasm/include/ncurses -L${PACKAGES}/ncurses/dist/wasm/lib" \
+			CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${PACKAGES}/ncurses/dist/wasm/include -I${PACKAGES}/ncurses/dist/wasm/include/ncurses -L${PACKAGES}/ncurses/dist/wasm/lib  -I${PACKAGES}/lua/dist/wasm/include -L${PACKAGES}/lua/dist/wasm/lib" \
 			./configure --prefix=${DIST_WASM} \
 		&&	make -j8 viz
 	mkdir -p ${DIST_WASM}/bin
