@@ -56,6 +56,8 @@ int lutimes(const char* filename, const struct timeval tv[2]);
 int execv(const char* path, char* const argv[]);
 int fexecve(int fd, char* const argv[], char* const envp[]);
 int execve(const char* pathname, char* const argv[], char* const envp[]);
+int execlp(const char *file, const char *arg, ... /* (char  *) NULL */);
+int execvp(const char *file, char *const argv[]);
 
 struct sched_param {
   int sched_priority;
@@ -132,6 +134,7 @@ typedef struct {
   int si_status;
   int si_code;
   int si_errno;
+  void* si_addr;
 } siginfo_t;
 
 // From packages/zig/dist/lib/libc/musl/include/sys/wait.h and needed for
@@ -344,4 +347,8 @@ speed_t cfgetospeed(const struct termios* termios_p);
 int tcgetattr(int fd, struct termios* tio);
 int tcsetattr(int fd, int act, const struct termios* tio);
 
+
+int fchdir(int fd);
+
+#define SA_SIGINFO   4
 #endif
