@@ -24,9 +24,12 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	touch ${BUILD_WASM}/.patched
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	./autogen.sh \
-		&&	CONFIG_SITE=${BUILD_WASM}/config.site CC="zig cc -target wasm32-wasi" CFLAGS="-L${LIBEDIT}/wasm/lib -I${LIBEDIT}/wasm/include -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -I${PACKAGES}/posix-wasm/dist/wasm" ./configure --with-libedit --prefix=${DIST_WASM} --host=none \
+		&&	CONFIG_SITE=${BUILD_WASM}/config.site CC="zig cc -target wasm32-wasi" CFLAGS="-Oz -I${LIBEDIT}/wasm/include -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -I${PACKAGES}/posix-wasm/dist/wasm" ./configure --with-libedit --prefix=${DIST_WASM} --host=none \
 		&&	make -j8 \
-		&&	make install
+		&&  zig ar -crs libdash.a src/*.o
+	mkdir -p ${DIST_WASM}/lib
+	cp ${BUILD_WASM}/libdash.a ${DIST_WASM}/lib
 	touch ${DIST_WASM}/.built
