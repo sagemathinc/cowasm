@@ -180,6 +180,7 @@ typedef long long off64_t;
 ssize_t copy_file_range(int fd_in, off64_t* off_in, int fd_out,
                         off64_t* off_out, size_t len, unsigned int flags);
 
+int mkstemp(char *template);
 int mkfifoat(int dirfd, const char* pathname, mode_t mode);
 int mkfifo(const char* pathname, mode_t mode);
 int mknodat(int dirfd, const char* pathname, mode_t mode, dev_t dev);

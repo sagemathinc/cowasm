@@ -8,6 +8,8 @@ VERSION = 0.5.11.5
 URL = https://git.kernel.org/pub/scm/utils/dash/dash.git/snapshot/dash-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/dash-${VERSION}.tar.gz
 
+LIBEDIT = ${PACKAGES}/libedit/dist
+
 all: wasm
 
 include ../build/Makefile-rules
@@ -24,7 +26,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	./autogen.sh \
-		&&	CONFIG_SITE=${BUILD_WASM}/config.site CC="zig cc -target wasm32-wasi" CFLAGS="-D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -I${PACKAGES}/posix-wasm/dist/wasm" ./configure --prefix=${DIST_WASM} --host=none \
+		&&	CONFIG_SITE=${BUILD_WASM}/config.site CC="zig cc -target wasm32-wasi" CFLAGS="-L${LIBEDIT}/wasm/lib -I${LIBEDIT}/wasm/include -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -I${PACKAGES}/posix-wasm/dist/wasm" ./configure --with-libedit --prefix=${DIST_WASM} --host=none \
 		&&	make -j8 \
 		&&	make install
 	touch ${DIST_WASM}/.built
