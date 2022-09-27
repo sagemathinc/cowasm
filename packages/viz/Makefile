@@ -2,17 +2,15 @@
 
 include ../build/Makefile-vars
 
-# See https://github.com/williamstein/vis/releases
-# I forked and made a release so we could work with a specific tarball since upstream
-# has been working on this for 2 years with lots of improvements, but without making any
-# releases.
-VERSION = 2022-09-27
+# See https://github.com/sagemathinc/viz/releases
+
+VERSION = 0.8.0
 
 
-URL = https://github.com/williamstein/vis/archive/refs/tags/${VERSION}.tar.gz
-TARBALL = ${UPSTREAM}/vis-${VERSION}.tar.gz
+URL = https://github.com/sagemathinc/viz/archive/refs/tags/${VERSION}.tar.gz
+TARBALL = ${UPSTREAM}/viz-${VERSION}.tar.gz
 
-all: wasm
+all: native wasm
 
 include ../build/Makefile-rules
 
@@ -25,8 +23,9 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	rm -rf ${DIST_NATIVE}
 	cd ${BUILD_NATIVE} \
 		&&	CC="zig cc" CFLAGS="-O2" ./configure --enable-curses --enable-lua --prefix=${DIST_NATIVE} \
-		&&	make -j8 vis \
+		&&	make -j8 \
 		&&	make install
+	ln -sf ${DIST_NATIVE}/bin/viz  ${BIN}/viz-native
 	touch ${DIST_NATIVE}/.built
 
 ###
@@ -49,8 +48,10 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&&	CC="zig cc -target wasm32-wasi" CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${PACKAGES}/ncurses/dist/wasm/include -I${PACKAGES}/ncurses/dist/wasm/include/ncurses -L${PACKAGES}/ncurses/dist/wasm/lib" ./configure --enable-curses --disable-lua --prefix=${DIST_WASM} \
-		&&	make -j8 vis
+		&&	CC="zig cc -target wasm32-wasi" \
+			CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${PACKAGES}/ncurses/dist/wasm/include -I${PACKAGES}/ncurses/dist/wasm/include/ncurses -L${PACKAGES}/ncurses/dist/wasm/lib" \
+			./configure --enable-curses --disable-lua --prefix=${DIST_WASM} \
+		&&	make -j8 viz
 	mkdir -p ${DIST_WASM}/bin
-	cp ${BUILD_WASM}/vis ${DIST_WASM}/bin/vis.wasm
+	cp ${BUILD_WASM}/viz ${DIST_WASM}/bin/viz.wasm
 	touch ${DIST_WASM}/.built

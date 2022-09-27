@@ -98,10 +98,10 @@ packages/terminal/${BUILT}: node python-wasm
 	cd packages/terminal && make all
 .PHONY: terminal
 
-vis: packages/vis/${BUILT}
-packages/vis/${BUILT}: termcap ncurses zig
-	cd packages/vis && make all
-.PHONY: vis
+viz: packages/viz/${BUILT}
+packages/viz/${BUILT}: termcap ncurses zig
+	cd packages/viz && make all
+.PHONY: viz
 
 
 
@@ -190,14 +190,14 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-unused test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-f2c test-py-numpy 
+test: test-unused test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-f2c test-py-numpy
 .PHONY: test
 
 test-bench: python-wasm
 	cd packages/bench && make test
 
 # test building packages that aren't actually used yet, just to make sure they build
-test-unused: ncurses vis dash
+test-unused: ncurses viz dash
 .PHONEY: test-unused
 
 # Run tests suites of Python libraries that we support.  These can be VERY long, which is why
