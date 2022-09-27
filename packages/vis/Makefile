@@ -6,7 +6,7 @@ include ../build/Makefile-vars
 # I forked and made a release so we could work with a specific tarball since upstream
 # has been working on this for 2 years with lots of improvements, but without making any
 # releases.
-VERSION = 2022-09-26
+VERSION = 2022-09-27
 
 
 URL = https://github.com/williamstein/vis/archive/refs/tags/${VERSION}.tar.gz
@@ -15,6 +15,23 @@ TARBALL = ${UPSTREAM}/vis-${VERSION}.tar.gz
 all: wasm
 
 include ../build/Makefile-rules
+
+###
+# NATIVE
+###
+
+
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	rm -rf ${DIST_NATIVE}
+	cd ${BUILD_NATIVE} \
+		&&	CC="zig cc" CFLAGS="-O2" ./configure --enable-curses --enable-lua --prefix=${DIST_NATIVE} \
+		&&	make -j8 vis \
+		&&	make install
+	touch ${DIST_NATIVE}/.built
+
+###
+# WASM
+###
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	mkdir -p ${BUILD_WASM}/bits/
@@ -32,7 +49,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&&	CC="zig cc -target wasm32-wasi" CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${PACKAGES}/ncurses/dist/wasm/include -L${PACKAGES}/ncurses/dist/wasm/lib" ./configure --enable-curses --prefix=${DIST_WASM} --host=none \
+		&&	CC="zig cc -target wasm32-wasi" CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${PACKAGES}/ncurses/dist/wasm/include -I${PACKAGES}/ncurses/dist/wasm/include/ncurses -L${PACKAGES}/ncurses/dist/wasm/lib" ./configure --enable-curses --prefix=${DIST_WASM} --host=none \
 		&&	make -j8 vis
 	mkdir -p ${DIST_WASM}/bin
 	cp ${BUILD_WASM}/vis ${DIST_WASM}/bin/vis.wasm
