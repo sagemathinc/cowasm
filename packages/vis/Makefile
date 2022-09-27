@@ -49,7 +49,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&&	CC="zig cc -target wasm32-wasi" CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${PACKAGES}/ncurses/dist/wasm/include -I${PACKAGES}/ncurses/dist/wasm/include/ncurses -L${PACKAGES}/ncurses/dist/wasm/lib" ./configure --enable-curses --prefix=${DIST_WASM} --host=none \
+		&&	CC="zig cc -target wasm32-wasi" CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${PACKAGES}/ncurses/dist/wasm/include -I${PACKAGES}/ncurses/dist/wasm/include/ncurses -L${PACKAGES}/ncurses/dist/wasm/lib" ./configure --enable-curses --disable-lua --prefix=${DIST_WASM} \
 		&&	make -j8 vis
 	mkdir -p ${DIST_WASM}/bin
 	cp ${BUILD_WASM}/vis ${DIST_WASM}/bin/vis.wasm
