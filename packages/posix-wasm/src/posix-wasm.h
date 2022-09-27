@@ -43,6 +43,9 @@ struct ttyent {
   char* ty_comment;     /* comment field */
 };
 
+struct ttyent* getttyent(void);
+struct ttyent* getttynam(const char* name);
+
 //#include <sys/resource.h>
 int getpriority(int which, id_t who);
 int setpriority(int which, id_t who, int prio);
@@ -56,8 +59,8 @@ int lutimes(const char* filename, const struct timeval tv[2]);
 int execv(const char* path, char* const argv[]);
 int fexecve(int fd, char* const argv[], char* const envp[]);
 int execve(const char* pathname, char* const argv[], char* const envp[]);
-int execlp(const char *file, const char *arg, ... /* (char  *) NULL */);
-int execvp(const char *file, char *const argv[]);
+int execlp(const char* file, const char* arg, ... /* (char  *) NULL */);
+int execvp(const char* file, char* const argv[]);
 
 struct sched_param {
   int sched_priority;
@@ -183,7 +186,7 @@ typedef long long off64_t;
 ssize_t copy_file_range(int fd_in, off64_t* off_in, int fd_out,
                         off64_t* off_out, size_t len, unsigned int flags);
 
-int mkstemp(char *temp);
+int mkstemp(char* temp);
 int mkfifoat(int dirfd, const char* pathname, mode_t mode);
 int mkfifo(const char* pathname, mode_t mode);
 int mknodat(int dirfd, const char* pathname, mode_t mode, dev_t dev);
@@ -347,8 +350,9 @@ speed_t cfgetospeed(const struct termios* termios_p);
 int tcgetattr(int fd, struct termios* tio);
 int tcsetattr(int fd, int act, const struct termios* tio);
 
-
 int fchdir(int fd);
 
-#define SA_SIGINFO   4
+#define SA_SIGINFO 4
+
+
 #endif

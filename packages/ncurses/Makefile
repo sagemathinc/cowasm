@@ -23,12 +23,12 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 # WASM.
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
-	cp ${POSIX_WASM}/posix-wasm.h ${BUILD_WASM}/include/
 	# Patch terminfo.src, since there are two obscure entries (of the thousands) that prevent "make install" from working.
 	cd ${BUILD_WASM}/misc && patch -p0 < ${SRC}/00-terminfo.patch
 	# Obviously, these should be done as patches:
 	cd ${BUILD_WASM}/ncurses/tty && echo '#include "posix-wasm.h"' | cat - lib_tstp.c > tmp && mv tmp lib_tstp.c
 	cd ${BUILD_WASM}/progs && echo '#include "posix-wasm.h"' | cat - tset.c > tmp && mv tmp tset.c
+	cd ${BUILD_WASM}/test && echo '#include "posix-wasm.h"' | cat - picsmap.c > tmp && mv tmp picsmap.c
 	touch ${BUILD_WASM}/.patched
 
 # The fPIC build would use CC="zig-fPIC cc" CXX="zig-fPIC c++"
@@ -40,8 +40,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 			AR="zig ar" \
 			CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
 			CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
-			CFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib" \
-			CXXFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib" \
+			CFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
+			CXXFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			./configure \
 				--enable-termcap \
 				--build=`./config.guess` \
