@@ -44,6 +44,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 			CXXFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			./configure \
 				--enable-termcap \
+				--disable-stripping \
 				--build=`./config.guess` \
 				--host=none \
 				--prefix="${DIST_WASM}" \
