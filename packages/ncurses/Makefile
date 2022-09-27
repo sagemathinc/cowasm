@@ -18,6 +18,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 		&& CC="zig cc ${ZIG_NATIVE_CFLAGS} " AR="zig ar ${ZIG_NATIVE_CFLAGS} " ./configure --prefix=${DIST_NATIVE} \
 		&& make -j8 \
 		&& make install
+	strip ${DIST_NATIVE}/bin/vis
 	touch ${DIST_NATIVE}/.built
 
 # WASM.
