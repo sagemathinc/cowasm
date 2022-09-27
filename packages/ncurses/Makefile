@@ -51,4 +51,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 				--with-build-cc="zig cc" \
 		&& 	make -j8 \
 		&& 	make -j8 install
+	# this makes it much easier to use for client libraries:
+	cd ${DIST_WASM}/include && ln -s ncurses/curses.h .
 	touch ${DIST_WASM}/.built

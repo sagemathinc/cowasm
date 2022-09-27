@@ -26,11 +26,14 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	echo '#include "posix-wasm.h"' | cat - ${BUILD_WASM}/text-io.c > ${BUILD_WASM}/tmp && mv ${BUILD_WASM}/tmp ${BUILD_WASM}/text-io.c
 	touch ${BUILD_WASM}/.patched
 
+# NOTE: you have to also build the ncurses package to get this to work below.
+# Also, ncurses makes this MUCH bigger.   I wonder what it adds to functionality?
+
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&&	CC="zig cc -target wasm32-wasi" CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm" ./configure --disable-curses --prefix=${DIST_WASM} --host=none \
+		&&	CC="zig cc -target wasm32-wasi" CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${PACKAGES}/ncurses/dist/wasm/include -L${PACKAGES}/ncurses/dist/wasm/lib" ./configure --enable-curses --prefix=${DIST_WASM} --host=none \
 		&&	make -j8 vis
 	mkdir -p ${DIST_WASM}/bin
-	cp ${BUILD_WASM}/vis ${DIST_WASM}/bin/
+	cp ${BUILD_WASM}/vis ${DIST_WASM}/bin/vis.wasm
 	touch ${DIST_WASM}/.built
