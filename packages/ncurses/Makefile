@@ -11,11 +11,18 @@ all:  wasm
 
 include ../build/Makefile-rules
 
-# NATIVE -- we do not use this
+# NATIVE -- we do not use this, since pretty much any reasonable native build host has curses already.
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} \
-		&& CC="zig cc ${ZIG_NATIVE_CFLAGS} " AR="zig ar ${ZIG_NATIVE_CFLAGS} " ./configure --prefix=${DIST_NATIVE} \
+		&&	CC="zig cc ${ZIG_NATIVE_CFLAGS} " \
+			AR="zig ar ${ZIG_NATIVE_CFLAGS} " \
+			./configure \
+				--prefix=${DIST_NATIVE} \
+				--without-ada \
+				--without-manpages \
+				--without-progs \
+				--without-tests
 		&& make -j8 \
 		&& make install
 	strip ${DIST_NATIVE}/bin/vis
@@ -44,6 +51,10 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 			CFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			CXXFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			./configure \
+				--without-ada \
+				--without-manpages \
+				--without-progs \
+				--without-tests \
 				--enable-termcap \
 				--disable-stripping \
 				--build=`./config.guess` \

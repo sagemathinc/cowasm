@@ -22,7 +22,9 @@ include ../build/Makefile-rules
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	rm -rf ${DIST_NATIVE}
 	cd ${BUILD_NATIVE} \
-		&&	CC="zig cc" CFLAGS="-O2" ./configure --enable-curses --enable-lua --prefix=${DIST_NATIVE} \
+		&&	CC="zig cc" \
+			CFLAGS="-O2" \
+			./configure --prefix=${DIST_NATIVE} \
 		&&	make -j8 \
 		&&	make install
 	ln -sf ${DIST_NATIVE}/bin/viz  ${BIN}/viz-native
@@ -50,7 +52,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	CC="zig cc -target wasm32-wasi" \
 			CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${PACKAGES}/ncurses/dist/wasm/include -I${PACKAGES}/ncurses/dist/wasm/include/ncurses -L${PACKAGES}/ncurses/dist/wasm/lib" \
-			./configure --enable-curses --disable-lua --prefix=${DIST_WASM} \
+			./configure --prefix=${DIST_WASM} \
 		&&	make -j8 viz
 	mkdir -p ${DIST_WASM}/bin
 	cp ${BUILD_WASM}/viz ${DIST_WASM}/bin/viz.wasm

@@ -16,6 +16,7 @@ export interface WorkerThread extends EventEmitter {
   terminate: () => void;
 }
 
+// TODO: typescript actually has "export abstract class" !  No need to fake it...
 export class WasmInstanceAbstractBaseClass extends EventEmitter {
   private callId: number = 0;
   private options: Options;

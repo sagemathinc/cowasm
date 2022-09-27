@@ -197,7 +197,8 @@ test-bench: python-wasm
 	cd packages/bench && make test
 
 # test building packages that aren't actually used yet, just to make sure they build
-test-unused: ncurses viz dash
+#   can't include viz until we have lua, since that's a requirement
+test-unused: ncurses dash #viz
 .PHONEY: test-unused
 
 # Run tests suites of Python libraries that we support.  These can be VERY long, which is why
