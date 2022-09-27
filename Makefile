@@ -15,6 +15,10 @@ packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2
 test-cpython: cpython python-wasm
 	cd packages/cpython && make test
 
+dash: packages/dash/${BUILT}
+packages/dash/${BUILT}: zig
+	cd packages/dash && make all
+.PHONY: dash
 
 docker:
 	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/zython master | awk '{print $$1}'` -t zython .
@@ -94,6 +98,13 @@ packages/terminal/${BUILT}: node python-wasm
 	cd packages/terminal && make all
 .PHONY: terminal
 
+vis: packages/vis/${BUILT}
+packages/vis/${BUILT}: termcap ncurses zig
+	cd packages/vis && make all
+.PHONY: vis
+
+
+
 wasi-js: packages/wasi-js/${BUILT}
 packages/wasi-js/${BUILT}: node
 	cd packages/wasi-js && make all
@@ -127,7 +138,6 @@ bzip2: packages/bzip2/${BUILT}
 packages/bzip2/${BUILT}: zig
 	cd packages/bzip2 && make all
 .PHONY: bzip2
-
 
 f2c: packages/f2c/${BUILT} wasi-js zig
 packages/f2c/${BUILT}: zig
@@ -180,15 +190,17 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-f2c test-py-numpy
+test: test-unused test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-f2c test-py-numpy 
 .PHONY: test
 
 test-bench: python-wasm
 	cd packages/bench && make test
 
+# test building packages that aren't actually used yet, just to make sure they build
+test-unused: ncurses vis dash
+.PHONEY: test-unused
+
 # Run tests suites of Python libraries that we support.  These can be VERY long, which is why
 # we can't just run them as part of "make test" above.  And they probably don't work at all yet.
 test-py-full: test-py-sympy
 .PHONY: test
-
-
