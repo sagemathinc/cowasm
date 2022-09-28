@@ -3,11 +3,7 @@
   "version": "0.9.1",
   "description": "Missing Posix Functions for Node.js (via a native module written in Zig)",
   "main": "dist/index.js",
-  "files": [
-    "dist/*",
-    "README.md",
-    "package.json"
-  ],
+  "files": ["dist/*", "README.md", "package.json"],
   "scripts": {
     "build": "make -j4 all",
     "clean": "make clean",
@@ -24,11 +20,7 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/zython.git"
   },
-  "keywords": [
-    "posix",
-    "zig",
-    "node"
-  ],
+  "keywords": ["posix", "zig", "node"],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {

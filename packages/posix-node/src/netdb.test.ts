@@ -1,4 +1,4 @@
-import posix from "./index.js";
+import { posix } from "./index.js";
 
 test("gethostbyname consistency checks", () => {
   const hostent = posix.gethostbyname?.("example.com");

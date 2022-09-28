@@ -1,4 +1,4 @@
-import posix from "./index.js";
+import { posix } from "./index.js";
 import { userInfo } from "os";
 
 const isRoot = userInfo().username == "root";

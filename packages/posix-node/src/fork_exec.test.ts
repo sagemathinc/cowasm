@@ -1,4 +1,4 @@
-import posix from "./index.js";
+import { posix } from "./index.js";
 
 test("setting and checking inheritable", () => {
   if (posix.set_inheritable == null)

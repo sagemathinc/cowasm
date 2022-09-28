@@ -257,10 +257,10 @@ interface PosixFunctions {
 
 export type Posix = Partial<PosixFunctions>;
 
-let mod: Posix = {};
-let mod1: Posix = {};
+export const posix: Posix = {};
+
 try {
-  mod = require(`./${name}.node`);
+  const mod = require(`./${name}.node`);
 
   if (process.platform != "linux") {
     for (const name of LINUX_ONLY) {
@@ -339,19 +339,17 @@ try {
   }
 
   for (const name in mod) {
-    exports[name] = mod1[name] = (...args) => {
+    posix[name] = (...args) => {
       if (name != "chdir") log(name, args);
       const res = mod[name](...args);
       if (name != "chdir") log(name, "returned", res);
       return res;
     };
   }
-  exports["constants"] = mod1.constants = mod["getConstants"]?.();
+  posix.constants = mod["getConstants"]?.();
 } catch (_err) {
   //  console.log(_err);
 }
-
-export default mod1;
 
 function is_array(obj: any): boolean {
   return Object.prototype.toString.call(obj) === "[object Array]";
@@ -368,3 +366,6 @@ function mapToStrings(obj: object | string[]): string[] {
   }
   return v;
 }
+
+export default posix;
+export const constants = posix.constants;

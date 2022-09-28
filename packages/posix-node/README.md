@@ -13,8 +13,9 @@ npm install posix-node
 Then
 
 ```js
->>> require('posix-node').gethostname()
-'max.local'
+import { posix } from "posix-node";
+posix.gethostname()
+// 'example.com'
 ```
 
 See [src/index.ts](src/index.ts) for what is available and what the Typescript types are.
@@ -140,9 +141,9 @@ This is licensed BSD-3 clause. The template for using Zig to build node.js nativ
 
 ## CVE-2022-21211 in the posix package
 
-The posix package that posix-node somewhat competes with has an unpatched vulnerability, in that some input will cause it to crash node. Here's [the
+The [posix package](https://www.npmjs.com/package/posix) mentioned above has an unpatched vulnerability, in that some input will cause it to crash node. Here's [the
 demonstration](https://security.snyk.io/vuln/SNYK-JS-POSIX-2400719), which
-does NOT crash posix-node.
+does NOT crash posix\-node.
 
 ```js
 const posix = require("posix-node"); // put "posix" with that installed to crash node
