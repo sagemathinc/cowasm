@@ -13,7 +13,7 @@ TARBALL = ${UPSTREAM}/libpng-${VERSION}.tar.gz
 
 ZLIB = ${PACKAGES}/zlib/dist
 
-all: native wasm
+all: wasm
 
 include ../build/Makefile-rules
 
@@ -48,7 +48,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 				--prefix=${DIST_WASM} \
 				--host=none \
 				--disable-shared \
-		&&	make \
-		&&	make install
+		&&	make -j8 libpng16.la
+	mkdir -p ${DIST_WASM}/lib && cp ${BUILD_WASM}/.libs/libpng16.a ${DIST_WASM}/lib/libpng.a
+	mkdir -p ${DIST_WASM}/include && cp ${BUILD_WASM}/*.h ${DIST_WASM}/include/
 	touch ${DIST_WASM}/.built
 
