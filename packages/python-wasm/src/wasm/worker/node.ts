@@ -11,15 +11,15 @@ import type { FileSystemSpec } from "wasi-js";
 import bindings from "wasi-js/bindings/server";
 import { dirname, isAbsolute, join } from "path";
 import { fileURLToPath } from "url";
-import wasmImport, { Options } from './import.js';
-import type { WasmInstance } from '../types.js';
+import wasmImport, { Options } from "./import.js";
+import type { WasmInstance } from "../types.js";
 import { isMainThread, parentPort } from "worker_threads";
-import initWorker from './init.js';
+import initWorker from "./init.js";
 import debug from "debug";
 import os from "os";
 import child_process from "child_process";
-import posix from "posix-node";
-import IOHandler from './io-using-atomics.js';
+import { posix } from "posix-node";
+import IOHandler from "./io-using-atomics.js";
 
 const log = debug("wasm:worker");
 
