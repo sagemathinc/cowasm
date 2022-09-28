@@ -4,7 +4,7 @@ include ../build/Makefile-vars
 
 # See https://github.com/sagemathinc/viz/releases
 
-VERSION = 0.8.0
+VERSION = 0.8.1
 
 URL = https://github.com/sagemathinc/viz/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/viz-${VERSION}.tar.gz
