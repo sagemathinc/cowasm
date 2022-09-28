@@ -1,4 +1,4 @@
-import { log } from "./logging";
+import { log } from "./logging.js";
 
 // Map from nodejs to zig descriptions:
 const nodeToZig = {
@@ -347,7 +347,9 @@ try {
     };
   }
   exports["constants"] = mod1.constants = mod["getConstants"]?.();
-} catch (_err) {}
+} catch (_err) {
+  //  console.log(_err);
+}
 
 export default mod1;
 

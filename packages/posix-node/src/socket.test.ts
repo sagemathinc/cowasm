@@ -1,4 +1,4 @@
-import posix from "./index";
+import posix from "./index.js";
 
 test("create a socket", () => {
   if (posix.socket == null) {

@@ -1,4 +1,4 @@
-import posix from "./index";
+import posix from "./index.js";
 
 test("posix_spawn /bin/sleep and wait for it to finish using waitpid and confirm the time", () => {
   const t0 = new Date().valueOf();

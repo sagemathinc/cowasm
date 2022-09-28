@@ -2,7 +2,7 @@
 
 `posiz-zig` is a Node.js native module written using Zig that provides access to Posix functions not in node that are needed to fully support WebAssembly modules. It includes precompiled binaries for `[x86_64/aarch64]-[macos/linux]`, and falls back to empty functionality on all other platforms.  In particular, this doesn't support any functionality on Windows yet.  On Windows, the import provides an empty collection of functions.
 
-This builds using the new _**self\-hosted stage2**_ zig compiler.
+This builds using the new _**self\-hosted stage2**_ zig compiler, i.e., the latest development version.
 
 Install it:
 
@@ -129,6 +129,10 @@ Zig I can easily build binaries for all of them.  It's also very important to bu
 ## Also posix\-browser
 
 We also plan to build a [browser analogue called posix-browser](https://www.npmjs.com/package/posix-browser) of this package with the _**same API**_, but of course a very different underlying implementation \(or implementations\), similar to how emscripten has browser functions like here that do things like making up random ip addresses \(or using a table\) to simulate netdb.  This is very useful for porting software to the browser and automated testing.
+
+## ESM Module
+
+This is built as an ESM module.  However, we have to use the [esm package](https://www.npmjs.com/package/esm) and _**not**_ `"type":"module"` in `package.json`, as explained [here](https://stackoverflow.com/questions/66378682/nodejs-loading-es-modules-and-native-addons-in-the-same-project), because this package includes _**native binary**_ `.node` files, and there seems to be no good non\-experimental way to load them at present using ESM.
 
 ## License and acknowledgements
 
