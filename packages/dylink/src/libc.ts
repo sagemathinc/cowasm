@@ -8,7 +8,7 @@ This adds about 650KB to the wasm file (after stripping), which sucks,
 but it is what it is.
 */
 
-import wasmExport from "./wasm-export";
+import wasmExport from "./wasm-export.js";
 
 function main() {
   let s = `

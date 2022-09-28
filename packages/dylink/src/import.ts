@@ -1,6 +1,6 @@
-import { alignMemory, nonzeroPositions, recvString } from "./util";
-import getMetadata from "./metadata";
-import stubProxy from "./stub";
+import { alignMemory, nonzeroPositions, recvString } from "./util.js";
+import getMetadata from "./metadata.js";
+import stubProxy from "./stub.js";
 import debug from "debug";
 const log = debug("dylink");
 const logImport = debug("dylink:import");

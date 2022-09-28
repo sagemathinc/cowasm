@@ -1,4 +1,4 @@
-import importWebAssemblyDlopen from "./import";
+import importWebAssemblyDlopen from "./import.js";
 export default importWebAssemblyDlopen;
 
-export { MBtoPages } from "./util";
+export { MBtoPages } from "./util.js";

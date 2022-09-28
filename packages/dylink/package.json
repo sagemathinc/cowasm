@@ -3,17 +3,13 @@
   "version": "0.7.2",
   "description": "Support for dynamic linking of WebAssembly code via Javascript built using wasm32-unknown-emscripten",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "tsc": "npx tsc -w",
     "build": "tsc -b",
     "test": "make test"
   },
-  "files": [
-    "dist/*",
-    "README.md",
-    "package.json",
-    "tsconfig.json"
-  ],
+  "files": ["dist/*", "README.md", "package.json", "tsconfig.json"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/zython.git"

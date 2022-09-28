@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
+    "module": "node16",
+    "moduleResolution": "node16",
+    "target": "es2017",
     "incremental": true,
-    "target": "es5",
     "lib": ["es5", "es6", "es2017", "dom"],
     "allowJs": true,
     "declaration": true,
@@ -16,5 +18,5 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strictNullChecks": true
-  },
+  }
 }

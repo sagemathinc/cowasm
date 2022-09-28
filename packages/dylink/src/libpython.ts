@@ -17,7 +17,7 @@ many cases to minimize the core python.wasm web assembly bundle.
 */
 
 import spawnAsync from "await-spawn";
-import wasmExport, { alias } from "./wasm-export";
+import wasmExport, { alias } from "./wasm-export.js";
 import { readFileSync } from "fs";
 
 const PATH = "../cpython/dist/wasm/include/python3.11";
