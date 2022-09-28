@@ -1,12 +1,12 @@
-import type { Options } from "./worker/import";
+import type { Options } from './worker/import.js';
 import { callback } from "awaiting";
 import { EventEmitter } from "events";
-import reuseInFlight from "./reuseInFlight";
-import { SendToWasmAbstractBase } from "./worker/send-to-wasm";
-import { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
+import reuseInFlight from './reuseInFlight.js';
+import { SendToWasmAbstractBase } from './worker/send-to-wasm.js';
+import { RecvFromWasmAbstractBase } from './worker/recv-from-wasm.js';
 export { Options };
-import type { IOProvider } from "./types";
-import { SIGINT } from "./constants";
+import type { IOProvider } from './types.js';
+import { SIGINT } from './constants.js';
 import debug from "debug";
 
 const log = debug("wasm-main");

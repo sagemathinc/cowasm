@@ -1,6 +1,6 @@
 // import socket; socket.if_indextoname(1)
 
-import { init, repr, exec } from "../../python/node";
+import { init, repr, exec } from '../../python/node.js';
 
 beforeEach(async () => {
   await init({ debug: true });

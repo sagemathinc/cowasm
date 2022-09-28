@@ -1,4 +1,4 @@
-import { notImplemented } from "./util";
+import { notImplemented } from './util.js';
 
 export default function wait({ posix, send }) {
   return {

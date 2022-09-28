@@ -1,5 +1,5 @@
-import type WasmInstance from "./instance";
-import { Options } from "./import";
+import type WasmInstance from './instance.js';
+import { Options } from './import.js';
 import debug from "debug";
 
 const log = debug("wasm:worker:init");

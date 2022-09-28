@@ -1,4 +1,4 @@
-import { init, exec,/* repr*/ } from "../../python/node";
+import { init, exec,/* repr*/ } from '../../python/node.js';
 
 beforeEach(async () => {
   await init({ debug: true });

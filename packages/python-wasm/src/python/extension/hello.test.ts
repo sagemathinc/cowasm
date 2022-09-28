@@ -1,4 +1,4 @@
-import { exec, repr, init } from "../node";
+import { exec, repr, init } from '../node.js';
 
 beforeEach(async () => {
   await init({ debug: true });

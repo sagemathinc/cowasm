@@ -1,4 +1,4 @@
-import { notImplemented } from "./util";
+import { notImplemented } from './util.js';
 
 export default function stdlib({ child_process, os, recv, send, fs }) {
   return {

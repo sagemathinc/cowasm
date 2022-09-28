@@ -2,9 +2,15 @@
   "name": "python-wasm",
   "version": "0.20.3",
   "description": "python-wasm -- Web Assembly Python for Node.js and the Browser",
+  "type": "module",
   "main": "./dist/python/node.js",
   "browser": "./dist/python/browser.js",
-  "files": ["dist/*", "README.md", "package.json", "tsconfig.json"],
+  "files": [
+    "dist/*",
+    "README.md",
+    "package.json",
+    "tsconfig.json"
+  ],
   "scripts": {
     "build": "make all",
     "clean": "make clean",
@@ -19,17 +25,23 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/zython.git"
   },
-  "keywords": ["python", "webassembly"],
+  "keywords": [
+    "python",
+    "webassembly"
+  ],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/zython/issues"
   },
   "homepage": "https://github.com/sagemathinc/zython/tree/main/packages/python-wasm",
-  "workspaces": ["../wasi-js", "../dylink", "../posix-node"],
+  "workspaces": [
+    "../wasi-js",
+    "../dylink",
+    "../posix-node"
+  ],
   "dependencies": {
     "awaiting": "^3.0.0",
-    "callsite": "^1.0.0",
     "date-format": "^4.0.13",
     "debug": "^4.3.4",
     "dylink": "^0.7.1",
@@ -38,7 +50,6 @@
     "wasi-js": "^1.4.1"
   },
   "devDependencies": {
-    "@types/callsite": "^1.0.31",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.7.12",
     "jest": "^27.2.1",

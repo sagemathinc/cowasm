@@ -1,17 +1,21 @@
-import { Options, WasmInstanceAbstractBaseClass, WorkerThread } from "./import";
+import {
+  Options,
+  WasmInstanceAbstractBaseClass,
+  WorkerThread,
+} from "./import.js";
 import { Worker } from "worker_threads";
 import { dirname, join } from "path";
-import callsite from "callsite";
 import process from "node:process";
 import debug from "debug";
-import IOProviderUsingAtomics from "./io-using-atomics";
+import IOProviderUsingAtomics from "./io-using-atomics.js";
+import { fileURLToPath } from "url";
 
 const log = debug("wasm:import-node");
 
 export class WasmInstance extends WasmInstanceAbstractBaseClass {
   protected initWorker(): WorkerThread {
     const path = join(
-      dirname(callsite()[0]?.getFileName() ?? "."),
+      dirname(fileURLToPath(import.meta.url)),
       "worker/node.js"
     );
     return new Worker(path, {

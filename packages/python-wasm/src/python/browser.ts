@@ -1,6 +1,6 @@
-import wasmImport from "../wasm/import-browser";
-import wasmImportNoWorker from "../wasm/worker/browser";
-import { _init, repr, exec, wasm } from "./index";
+import wasmImport from '../wasm/import-browser.js';
+import wasmImportNoWorker from '../wasm/worker/browser.js';
+import { _init, repr, exec, wasm } from './index.js';
 import type { FileSystemSpec } from "wasi-js";
 
 import wasmUrl from "./python.wasm";

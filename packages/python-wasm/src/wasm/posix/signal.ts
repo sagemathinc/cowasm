@@ -16,7 +16,7 @@ NOTE: below we implement more than just what's needed for Python.  This may be h
 for other libraries.
 */
 
-import constants from "./constants";
+import constants from './constants.js';
 
 const signal_t: { [setPtr: number]: Set<number> } = {};
 

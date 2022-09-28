@@ -5,9 +5,9 @@ These are all very hard to implement with node, without just writing a node exte
 module which is what I'll likely have to do.
 */
 
-import { notImplemented } from "./util";
+import { notImplemented } from './util.js';
 import type { Hostent } from "posix-node";
-import constants from "./constants";
+import constants from './constants.js';
 
 export default function netdb({
   memory,

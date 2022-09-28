@@ -1,6 +1,6 @@
 import { isAbsolute, join } from "path";
-import constants from "./constants";
-import Errno from "./errno";
+import constants from './constants.js';
+import Errno from './errno.js';
 
 export default function stats({ fs, process, recv, wasi }) {
   function calculateAt(

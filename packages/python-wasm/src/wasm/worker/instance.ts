@@ -2,8 +2,8 @@
 import type { WASIFileSystem } from "wasi-js";
 import type WASI from "wasi-js";
 import { EventEmitter } from "events";
-import SendToWasm from "./send-to-wasm";
-import RecvFromWasm from "./recv-from-wasm";
+import SendToWasm from './send-to-wasm.js';
+import RecvFromWasm from './recv-from-wasm.js';
 
 const encoder = new TextEncoder();
 

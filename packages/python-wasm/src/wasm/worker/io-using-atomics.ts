@@ -1,4 +1,4 @@
-import type { IOHandlerClass } from "./types";
+import type { IOHandlerClass } from './types.js';
 import debug from "debug";
 const log = debug("wasm:worker:io-using-atomics");
 

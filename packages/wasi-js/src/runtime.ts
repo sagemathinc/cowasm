@@ -1,6 +1,6 @@
 import WASI from "./wasi.js";
 import type { WASIConfig } from "./types.js";
-import nodeBindings from "./bindings/node.js";
+import serverBindings from "./bindings/server.js";
 import fs from "fs";
 import { readFile } from "fs/promises";
 import debug from "debug";
@@ -20,7 +20,7 @@ async function wasmImport(name: string, options: Options = {}): Promise<void> {
   function getrandom(bufPtr, bufLen, _flags) {
     // NOTE: returning 0 here (our default stub behavior)
     // would result in Python hanging on startup!  So critical to do this.
-    nodeBindings.randomFillSync(
+    serverBindings.randomFillSync(
       // @ts-ignore
       new Uint8Array(result.instance.exports.memory.buffer),
       bufPtr,
@@ -50,14 +50,14 @@ async function wasmImport(name: string, options: Options = {}): Promise<void> {
   if (!options?.noWasi) {
     const opts: WASIConfig = {
       args: process.argv,
-      bindings: nodeBindings,
+      bindings: serverBindings,
       env: process.env,
     };
     if (options.dir === null) {
       // sandbox -- don't give any fs access
     } else {
       opts.bindings = {
-        ...nodeBindings,
+        ...serverBindings,
         fs,
       };
       // just give full access; security of fs access isn't

@@ -8,8 +8,8 @@ networkInterface "Returns an object containing network interfaces that
 have been assigned a network address." and gif0 hasn't been.
 */
 
-import { notImplemented } from "./util";
-import constants from "./constants";
+import { notImplemented } from './util.js';
+import constants from './constants.js';
 
 export default function netif({ posix, recv, send, callFunction }) {
   return {

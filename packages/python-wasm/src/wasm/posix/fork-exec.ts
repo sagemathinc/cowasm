@@ -22,8 +22,8 @@ extern int python_wasm_fork_exec(
 */
 
 import debug from "debug";
-import { nativeToWasm } from "./errno";
-import constants from "./constants";
+import { nativeToWasm } from './errno.js';
+import constants from './constants.js';
 
 const log = debug("posix:fork-exec");
 

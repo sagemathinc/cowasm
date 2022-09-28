@@ -1,8 +1,8 @@
-import Errno from "./errno";
-import { wasmToNativeFamily, wasmToNativeSocktype } from "./netdb";
-import constants from "./constants";
+import Errno from './errno.js';
+import { wasmToNativeFamily, wasmToNativeSocktype } from './netdb.js';
+import constants from './constants.js';
 import { constants as wasi_constants } from "wasi-js";
-import { notImplemented } from "./util";
+import { notImplemented } from './util.js';
 
 export default function socket({ callFunction, posix, recv, wasi }) {
   return {

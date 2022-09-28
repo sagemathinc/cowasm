@@ -1,4 +1,4 @@
-import { notImplemented } from "./util";
+import { notImplemented } from './util.js';
 
 export default function other({ callFunction, posix, recv, send }) {
   function sendStatvfs(bufPtr, x) {

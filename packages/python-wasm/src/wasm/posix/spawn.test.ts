@@ -1,4 +1,4 @@
-import { init, wasm, exec } from "../../python/node";
+import { init, wasm, exec } from '../../python/node.js';
 
 test("test that a few spawn related posix calls throw an error (rather than getting stubbed and silently failing)", async () => {
   await init({ noWorker: true });

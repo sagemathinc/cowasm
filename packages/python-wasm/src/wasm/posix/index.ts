@@ -5,24 +5,24 @@ NOTES:
   - emscripten/src/library_syscall.js is useful inspiration in some cases!
 */
 
-import forkExec from "./fork-exec";
-import netdb from "./netdb";
-import netif from "./netif";
-import other from "./other";
-import sched from "./sched";
-import signal from "./signal";
-import socket from "./socket";
-import spawn from "./spawn";
-import stdlib from "./stdlib";
-import stat from "./stat";
-import time from "./time";
-import unistd from "./unistd";
-import wait from "./wait";
+import forkExec from './fork-exec.js';
+import netdb from './netdb.js';
+import netif from './netif.js';
+import other from './other.js';
+import sched from './sched.js';
+import signal from './signal.js';
+import socket from './socket.js';
+import spawn from './spawn.js';
+import stdlib from './stdlib.js';
+import stat from './stat.js';
+import time from './time.js';
+import unistd from './unistd.js';
+import wait from './wait.js';
 import WASI from "wasi-js";
-import { initConstants } from "./constants";
-import SendToWasm from "../worker/send-to-wasm";
-import RecvFromWasm from "../worker/recv-from-wasm";
-import constants from "./constants";
+import { initConstants } from './constants.js';
+import SendToWasm from '../worker/send-to-wasm.js';
+import RecvFromWasm from '../worker/recv-from-wasm.js';
+import constants from './constants.js';
 import debug from "debug";
 
 const logNotImplemented = debug("posix:not-implemented");

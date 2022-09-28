@@ -1,4 +1,4 @@
-import { init, wasm, exec, repr } from "../../python/node";
+import { init, wasm, exec, repr } from '../../python/node.js';
 
 test("mkstemp system call -- hitting memfs", async () => {
   await init({ noWorker: true });

@@ -1,5 +1,5 @@
 import { isMainThread } from "node:worker_threads";
-import { init, terminal } from "./node";
+import { init, terminal } from './node.js';
 
 async function main() {
   await init();

@@ -5,9 +5,9 @@ other webassembly workers for a restricted collection of "commands".  However, f
 an error.
 */
 
-import { notImplemented } from "./util";
+import { notImplemented } from './util.js';
 
-import { getSignalSet, setSignalSet } from "./signal";
+import { getSignalSet, setSignalSet } from './signal.js';
 
 export default function spawn({ callFunction, posix, recv, send }) {
   const fileActions: { [ptr: number]: any[] } = {};

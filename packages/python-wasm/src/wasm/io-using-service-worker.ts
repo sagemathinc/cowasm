@@ -14,8 +14,8 @@ References:
 
 */
 
-import type { IOProvider } from "./types";
-import { SIGINT } from "./constants";
+import type { IOProvider } from './types.js';
+import { SIGINT } from './constants.js';
 import debug from "debug";
 import { v4 as uuidv4 } from "uuid";
 

@@ -1,12 +1,12 @@
 import WASI from "wasi-js";
 import type { FileSystemSpec, WASIConfig, WASIBindings } from "wasi-js";
-import reuseInFlight from "../reuseInFlight";
-import WasmInstance from "./instance";
+import reuseInFlight from '../reuseInFlight.js';
+import WasmInstance from './instance.js';
 import importWebAssemblyDlopen, { MBtoPages } from "dylink";
-import initPythonTrampolineCalls from "./trampoline";
-import posix from "../posix";
-import SendToWasm from "./send-to-wasm";
-import RecvFromWasm from "./recv-from-wasm";
+import initPythonTrampolineCalls from './trampoline.js';
+import posix from '../posix/index.js';
+import SendToWasm from './send-to-wasm.js';
+import RecvFromWasm from './recv-from-wasm.js';
 import debug from "debug";
 
 const log = debug("wasm-worker");

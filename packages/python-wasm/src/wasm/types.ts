@@ -1,8 +1,8 @@
 import { EventEmitter } from "events";
 import type WASI from "wasi-js";
 import type { WASIFileSystem } from "wasi-js";
-import type { SendToWasmAbstractBase } from "./worker/send-to-wasm";
-import type { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
+import type { SendToWasmAbstractBase } from './worker/send-to-wasm.js';
+import type { RecvFromWasmAbstractBase } from './worker/recv-from-wasm.js';
 
 export class WasmInstance extends EventEmitter {
   // these are sometimes available and useful, e.g., in testing

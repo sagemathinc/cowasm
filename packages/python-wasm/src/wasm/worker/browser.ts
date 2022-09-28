@@ -4,15 +4,15 @@ This is the Worker script when importing the wasm module in a web browser.
 
 import { createFileSystem } from "wasi-js";
 import type { FileSystemSpec } from "wasi-js";
-import bindings from "wasi-js/dist/bindings/browser";
-import type WasmInstance from "./instance";
-import wasmImport, { Options } from "./import";
-import initWorker from "./init";
+import bindings from "wasi-js/bindings/browser";
+import type WasmInstance from './instance.js';
+import wasmImport, { Options } from './import.js';
+import initWorker from './init.js';
 import debug from "debug";
 import { EventEmitter } from "events";
-import posix from "./posix-browser";
-import IOHandlerUsingAtomics from "./io-using-atomics";
-import IOHandlerUsingServiceWorker from "./io-using-service-worker";
+import posix from './posix-browser.js';
+import IOHandlerUsingAtomics from './io-using-atomics.js';
+import IOHandlerUsingServiceWorker from './io-using-service-worker.js';
 
 const log = debug("wasm:worker");
 

@@ -4,6 +4,11 @@
   "version": "1.4.3",
   "description": "Javascript implementation of WASI for Node.js and the Browser.",
   "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./bindings/browser": "./dist/bindings/browser.js",
+    "./bindings/server": "./dist/bindings/server.js"
+  },
   "scripts": {
     "clean": "rm -rf dist",
     "build": "tsc -b",

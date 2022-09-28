@@ -1,4 +1,4 @@
-import constants, { Constant } from "./constants";
+import constants, { Constant } from './constants.js';
 
 export default function Errno(error: Constant) {
   const errno = constants[error];

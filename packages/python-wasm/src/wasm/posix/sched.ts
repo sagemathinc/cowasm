@@ -5,7 +5,7 @@ These are all very hard to implement with node, without just writing a node exte
 module which is what I'll likely have to do...
 */
 
-import { notImplemented } from "./util";
+import { notImplemented } from './util.js';
 
 export default function sched({}) {
   const names =

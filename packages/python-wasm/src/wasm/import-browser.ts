@@ -1,9 +1,9 @@
-import { Options, WasmInstanceAbstractBaseClass } from "./import";
+import { Options, WasmInstanceAbstractBaseClass } from './import.js';
 import { EventEmitter } from "events";
-import IOProviderUsingAtomics from "./io-using-atomics";
+import IOProviderUsingAtomics from './io-using-atomics.js';
 import IOProviderUsingServiceWorker, {
   fixServiceWorker,
-} from "./io-using-service-worker";
+} from './io-using-service-worker.js';
 
 class WorkerThread extends EventEmitter {
   public postMessage: (message) => void;

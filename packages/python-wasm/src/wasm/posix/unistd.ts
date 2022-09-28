@@ -1,5 +1,5 @@
-import { notImplemented } from "./util";
-import constants from "./constants";
+import { notImplemented } from './util.js';
+import constants from './constants.js';
 import debug from "debug";
 import { constants as wasi_constants } from "wasi-js";
 

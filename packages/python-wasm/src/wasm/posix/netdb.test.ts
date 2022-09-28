@@ -3,7 +3,7 @@
 ('dns.google', ['8.8.8.8.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.6.8.4.0.6.8.4.1.0.0.2.ip6.arpa'], ['2001:4860:4860::8888'])
 */
 
-import { init, repr, exec } from "../../python/node";
+import { init, repr, exec } from '../../python/node.js';
 
 beforeEach(async () => {
   await init({ debug: true });

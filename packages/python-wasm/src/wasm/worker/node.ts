@@ -8,18 +8,18 @@ in the mode where we use a Worker.
 import { readFile } from "fs/promises";
 import { createFileSystem } from "wasi-js";
 import type { FileSystemSpec } from "wasi-js";
-import bindings from "wasi-js/dist/bindings/node";
+import bindings from "wasi-js/bindings/server";
 import { dirname, isAbsolute, join } from "path";
-import callsite from "callsite";
-import wasmImport, { Options } from "./import";
-import type { WasmInstance } from "../types";
+import { fileURLToPath } from "url";
+import wasmImport, { Options } from './import.js';
+import type { WasmInstance } from '../types.js';
 import { isMainThread, parentPort } from "worker_threads";
-import initWorker from "./init";
+import initWorker from './init.js';
 import debug from "debug";
 import os from "os";
 import child_process from "child_process";
 import posix from "posix-node";
-import IOHandler from "./io-using-atomics";
+import IOHandler from './io-using-atomics.js';
 
 const log = debug("wasm:worker");
 
@@ -28,7 +28,7 @@ export default async function wasmImportNode(
   options: Options
 ): Promise<WasmInstance> {
   log("wasmImportNode");
-  const path = dirname(join(callsite()[1]?.getFileName() ?? "", "..", ".."));
+  const path = dirname(join(fileURLToPath(import.meta.url), "..", ".."));
   if (!isAbsolute(name)) {
     // it's critical to make this canonical BEFORE calling the debounced function,
     // or randomly otherwise end up with same module imported twice, which will

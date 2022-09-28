@@ -8,8 +8,8 @@ server as follows.  This is VERY restrictive, but if you can do this, it's optim
   "Cross-Origin-Embedder-Policy": "require-corp"
 */
 
-import type { IOProvider } from "./types";
-import { SIGINT } from "./constants";
+import type { IOProvider } from './types.js';
+import { SIGINT } from './constants.js';
 import debug from "debug";
 const log = debug("wasm:io-provider");
 

@@ -1,4 +1,4 @@
-import { exec, init, repr, wasm } from "./node";
+import { exec, init, repr, wasm } from './node.js';
 import { existsSync } from "fs";
 import { execFileSync } from "child_process";
 

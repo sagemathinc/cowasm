@@ -1,4 +1,4 @@
-import { exec, init, repr, wasm } from "../node";
+import { exec, init, repr, wasm } from '../node.js';
 import { delay } from "awaiting";
 
 beforeEach(async () => {

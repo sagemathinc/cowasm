@@ -1,5 +1,5 @@
-import type { WasmInstance } from "../wasm/types";
-import { Options } from "../wasm/import";
+import type { WasmInstance } from '../wasm/types.js';
+import { Options } from '../wasm/import.js';
 import type { FileSystemSpec } from "wasi-js";
 
 export let wasm: WasmInstance | undefined = undefined;
