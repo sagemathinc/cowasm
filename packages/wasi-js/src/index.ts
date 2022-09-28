@@ -1,7 +1,7 @@
-import WASI from "./wasi";
+import WASI from "./wasi.js";
 export default WASI;
-export type { WASIBindings, WASIConfig, WASIFileSystem } from "./types";
-export type { FileSystemSpec } from "./fs";
-export { createFileSystem } from "./fs";
-import * as constants from "./constants";
+export type { WASIBindings, WASIConfig, WASIFileSystem } from "./types.js";
+export type { FileSystemSpec } from "./fs.js";
+export { createFileSystem } from "./fs.js";
+import * as constants from "./constants.js";
 export { constants };

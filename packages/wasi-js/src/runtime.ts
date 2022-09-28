@@ -1,9 +1,10 @@
-import WASI from "./wasi";
-import type { WASIConfig } from "./types";
-import nodeBindings from "./bindings/node";
+import WASI from "./wasi.js";
+import type { WASIConfig } from "./types.js";
+import nodeBindings from "./bindings/node.js";
 import fs from "fs";
 import { readFile } from "fs/promises";
 import debug from "debug";
+
 const log = debug("wasi");
 
 interface Options {

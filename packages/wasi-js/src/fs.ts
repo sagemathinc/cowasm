@@ -9,10 +9,10 @@ run in a different thread (a webworker) than the main thread, and
 this code is needed to initialize it before anything else can happen.
 */
 
-import unzip from "./unzip";
+import unzip from "./unzip.js";
 import { Volume, createFsFromVolume, fs as memfs, DirectoryJSON } from "memfs";
 import { Union } from "@wapython/unionfs";
-import { WASIFileSystem } from "./types";
+import { WASIFileSystem } from "./types.js";
 
 // The native filesystem
 interface NativeFs {

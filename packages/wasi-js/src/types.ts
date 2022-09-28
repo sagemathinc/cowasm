@@ -1,6 +1,6 @@
-import type WASIFileSystem from "./filesystem";
+import type WASIFileSystem from "./filesystem.js";
 export type { WASIFileSystem };
-import { WASI_FILETYPE } from "./constants";
+import { WASI_FILETYPE } from "./constants.js";
 
 // export interface WASIFileSystem extends FileSystem {
 //   constants: { [name: string]: number };

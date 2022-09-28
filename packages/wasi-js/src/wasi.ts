@@ -1,6 +1,7 @@
 /* MIT licensed.  See README.md for copyright and history information. */
 
 import debug from "debug";
+
 const log = debug("wasi");
 const logOpen = debug("wasi:open"); // just log opening files, which is useful
 
@@ -18,9 +19,9 @@ import type {
   WASIPreopenedDirs,
   WASIConfig,
   File,
-} from "./types";
+} from "./types.js";
 
-import { WASIError } from "./types";
+import { WASIError } from "./types.js";
 
 import toBuffer from "typedarray-to-buffer";
 
@@ -108,7 +109,7 @@ import {
   WASI_WHENCE_CUR,
   WASI_WHENCE_END,
   WASI_WHENCE_SET,
-} from "./constants";
+} from "./constants.js";
 
 const STDIN_DEFAULT_RIGHTS =
   WASI_RIGHT_FD_DATASYNC |

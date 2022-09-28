@@ -1,5 +1,6 @@
 {
   "name": "wasi-js",
+  "type": "module",
   "version": "1.4.3",
   "description": "Javascript implementation of WASI for Node.js and the Browser.",
   "main": "dist/index.js",
@@ -10,13 +11,7 @@
     "dev": "watch \"npm run build:dev\" src",
     "docs": "typedoc src/ --out docs --target es6 --theme minimal --mode file"
   },
-  "files": [
-    "dist/*",
-    "bin/*",
-    "README.md",
-    "package.json",
-    "tsconfig.json"
-  ],
+  "files": ["dist/*", "bin/*", "README.md", "package.json", "tsconfig.json"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/zython.git"

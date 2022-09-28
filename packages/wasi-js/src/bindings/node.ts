@@ -3,7 +3,7 @@ import fs from "fs";
 import { isatty as isTTY } from "tty";
 import path from "path";
 
-import { WASIBindings } from "../types";
+import { WASIBindings } from "../types.js";
 
 const bindings: WASIBindings = {
   hrtime: process.hrtime.bigint,
