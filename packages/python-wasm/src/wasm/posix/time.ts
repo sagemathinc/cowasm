@@ -1,4 +1,4 @@
-const dateFormat = require("date-format");
+import dateFormat from "date-format";
 
 export default function time({ child_process, memory, os }) {
   return {

@@ -30,8 +30,8 @@ fi
 # properly exits with the correct code.
 
 if [ $# -eq 0 ]; then
-    node $EXP_OPT -r "$SCRIPTPATH"/../dist/python/node-terminal.js
+    node $EXP_OPT -r "$SCRIPTPATH"/../dist/python/node-terminal.cjs
 else
-    node $EXP_OPT "$SCRIPTPATH"/../dist/python/node-terminal.js "$@"
+    node $EXP_OPT "$SCRIPTPATH"/../dist/python/node-terminal.cjs "$@"
 fi
 

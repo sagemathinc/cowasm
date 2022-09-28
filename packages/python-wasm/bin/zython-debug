@@ -21,8 +21,8 @@ if [ x"$VERSION" = x"v14." ]; then
 fi
 
 if [ $# -eq 0 ]; then
-    node $EXP_OPT -r "$SCRIPTPATH"/../dist/python/node-terminal-debug.js
+    node $EXP_OPT -r "$SCRIPTPATH"/../dist/python/node-terminal-debug.cjs
 else
-    node $EXP_OPT "$SCRIPTPATH"/../dist/python/node-terminal-debug.js "$@"
+    node $EXP_OPT "$SCRIPTPATH"/../dist/python/node-terminal-debug.cjs "$@"
 fi
 

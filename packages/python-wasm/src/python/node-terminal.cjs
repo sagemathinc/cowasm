@@ -1,7 +1,7 @@
 import { isMainThread } from "node:worker_threads";
-import { init, terminal } from './node.js';
 
 async function main() {
+  const { init, terminal } = await import('./node.js');
   await init();
   const r = await terminal(
     [process.env.PROGRAM_NAME ?? "/usr/bin/zython"].concat(
