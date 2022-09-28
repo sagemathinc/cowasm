@@ -50,6 +50,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 				--disable-shared \
 		&&	make -j8 libpng16.la
 	mkdir -p ${DIST_WASM}/lib && cp ${BUILD_WASM}/.libs/libpng16.a ${DIST_WASM}/lib/libpng.a
-	mkdir -p ${DIST_WASM}/include && cp ${BUILD_WASM}/*.h ${DIST_WASM}/include/
+	mkdir -p ${DIST_WASM}/include && cp ${BUILD_WASM}/png.h ${BUILD_WASM}/pngconf.h  ${BUILD_WASM}/pnglibconf.h ${DIST_WASM}/include/
 	touch ${DIST_WASM}/.built
 
