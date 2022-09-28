@@ -21,7 +21,7 @@ include ../build/Makefile-rules
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	rm -rf ${DIST_NATIVE}
 	cd ${BUILD_NATIVE} \
-		&&	make CC="zig cc" CFLAGS="-O2" -j8
+		&&	make CC="zig cc" CFLAGS="-O2 -DLUA_USE_POSIX=1" -j8
 	mkdir -p ${DIST_NATIVE}/bin ${DIST_NATIVE}/lib ${DIST_NATIVE}/include
 	cp ${BUILD_NATIVE}/*.h ${DIST_NATIVE}/include
 	cp ${BUILD_NATIVE}/*.a ${DIST_NATIVE}/lib
