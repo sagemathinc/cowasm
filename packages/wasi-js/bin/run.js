@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { run } = require("../dist/runtime");
+import { run } from "../dist/runtime.js";
 if (process.argv.length <= 2) {
   throw Error("must provide path to .wasm code");
 }
