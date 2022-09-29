@@ -8,7 +8,7 @@ in the mode where we use a Worker.
 import { readFile } from "fs/promises";
 import { createFileSystem } from "wasi-js";
 import type { FileSystemSpec } from "wasi-js";
-import bindings from "wasi-js/dist/bindings/node";
+import bindings from "wasi-js/bindings/node";
 import { dirname, isAbsolute, join } from "path";
 import callsite from "callsite";
 import wasmImport, { Options } from "./import";
