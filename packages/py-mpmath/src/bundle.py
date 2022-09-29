@@ -7,8 +7,8 @@ def create_bundle(name):
         fn = os.path.basename(s)
         return (not ('/tests/' in s or fn.startswith('test_')))
 
-    # What python stdlib uses the same options as below, and it's easiest
-    # to work with this with possibly older versions of zip.
+    # Python stdlib uses the same options as below, and it's easiest
+    # to work with these params using possibly older versions of zip.
     # NOTE: compression=zipfile.ZIP_LZMA is a bit smaller, but fails on import, probably
     # due to a subtle issue with webassembly.  We will revisit this later.
 

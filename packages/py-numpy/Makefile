@@ -33,10 +33,19 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 		&& echo "" > numpy/core/include/execinfo.h
 	touch ${BUILD_WASM}/.patched
 
+# NOTES:
+#  - We have to include  numpy/core/multiarray.py in addition to the automatic
+#    numpy/core/multiarray.pyc, since numpy uses __doc__ attributes from
+#    things in  numpy/core/multiarray.py to create the docstrings on the
+#    numpy module, and that data seems to not be in the pyc file.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&& zython-debug setup.py install --prefix=${DIST_WASM}
+		&& zython-debug setup.py build
+	cd ${BUILD_WASM}/build/lib* \
+		&& python-native ${CWD}/src/zython_bundler.py numpy numpy/core/multiarray.py \
+		&& mkdir -p ${DIST_WASM} \
+		&& cp numpy.zip ${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 # Just a trivial test for now.
