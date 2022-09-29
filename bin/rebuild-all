@@ -5,7 +5,6 @@ mkdir -p logs
 
 git pull
 make clean
-make > logs/out 2> logs/err
-make test > logs/test.out 2> logs/test.err
-tail logs/test.err
-tail logs/test.out
+make > logs/out 2>&1
+make test >> logs/out 2>&1
+tail -n 20 logs/out
