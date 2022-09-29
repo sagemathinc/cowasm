@@ -26,7 +26,7 @@ class WorkerThread extends EventEmitter {
 
 export class WasmInstance extends WasmInstanceAbstractBaseClass {
   protected initWorker(): WorkerThread {
-    // @ts-ignore this import.meta.url issue -- actually only consumed by webpack in calling code...
+    console.log(import.meta.url);
     const worker = new Worker(new URL("./worker/browser.js", import.meta.url));
     return new WorkerThread(worker);
   }

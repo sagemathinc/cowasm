@@ -4,13 +4,12 @@
   "description": "python-wasm -- Web Assembly Python for Node.js and the Browser",
   "type": "module",
   "main": "./dist/python/node.js",
-  "browser": "./dist/python/browser.js",
-  "files": [
-    "dist/*",
-    "README.md",
-    "package.json",
-    "tsconfig.json"
-  ],
+  "exports": {
+    ".": "./dist/python/node.js",
+    "./browser": "./dist/python/browser.js",
+    "./server": "./dist/python/node.js"
+  },
+  "files": ["dist/*", "README.md", "package.json", "tsconfig.json"],
   "scripts": {
     "build": "make all",
     "clean": "make clean",
@@ -28,21 +27,14 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/zython.git"
   },
-  "keywords": [
-    "python",
-    "webassembly"
-  ],
+  "keywords": ["python", "webassembly"],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/zython/issues"
   },
   "homepage": "https://github.com/sagemathinc/zython/tree/main/packages/python-wasm",
-  "workspaces": [
-    "../wasi-js",
-    "../dylink",
-    "../posix-node"
-  ],
+  "workspaces": ["../wasi-js", "../dylink", "../posix-node"],
   "dependencies": {
     "awaiting": "^3.0.0",
     "date-format": "^4.0.13",

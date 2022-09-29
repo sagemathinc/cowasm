@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
+    "module": "node16",
+    "moduleResolution": "node16",
+    "esModuleInterop": true,
     "rootDir": "src",
     "outDir": "dist",
     "sourceMap": true,
-    "esModuleInterop": true,
-    "module": "es6",
-    "target": "es5",
-    "moduleResolution": "node",
+    "target": "es2017",
     "jsx": "react",
     "allowJs": true
   },

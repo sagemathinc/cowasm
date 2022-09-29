@@ -1,4 +1,5 @@
-import python from "python-wasm";
+// @ts-expect-error -- see https://github.com/microsoft/TypeScript/issues/46213#issuecomment-1212290473
+import python from "python-wasm/browser";
 
 async function demo() {
   const log = console.log;
