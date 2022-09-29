@@ -10,7 +10,6 @@ import { createFileSystem } from "wasi-js";
 import type { FileSystemSpec } from "wasi-js";
 import bindings from "wasi-js/dist/bindings/node";
 import { dirname, isAbsolute, join } from "path";
-import callsite from "callsite";
 import wasmImport, { Options } from "./import";
 import type { WasmInstance } from "../types";
 import { isMainThread, parentPort } from "worker_threads";
@@ -28,7 +27,7 @@ export default async function wasmImportNode(
   options: Options
 ): Promise<WasmInstance> {
   log("wasmImportNode");
-  const path = dirname(join(callsite()[1]?.getFileName() ?? "", "..", ".."));
+  const path = dirname(join(__filename, "..", ".."));
   if (!isAbsolute(name)) {
     // it's critical to make this canonical BEFORE calling the debounced function,
     // or randomly otherwise end up with same module imported twice, which will

@@ -2,8 +2,7 @@ import wasmImport from "../wasm/import-node";
 import wasmImportNoWorker from "../wasm/worker/node";
 import { _init, repr, exec, wasm, terminal as _terminal } from "./index";
 import type { FileSystemSpec } from "wasi-js";
-import { dirname, join } from "path";
-import callsite from "callsite";
+import { join } from "path";
 
 const PYTHON_WASM = "python.wasm";
 const pythonFull = "python-stdlib.zip";
@@ -28,7 +27,7 @@ export async function init({
   if (debug) {
     noWorker = noZip = true;
   }
-  const path = dirname(join(callsite()[1]?.getFileName() ?? ""));
+  const path = __dirname;
   const fs: FileSystemSpec[] = [];
   if (!noZip) {
     // Synchronously load tiny filesystem needed for starting python interpreter.

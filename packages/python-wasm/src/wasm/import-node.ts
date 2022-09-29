@@ -1,7 +1,6 @@
 import { Options, WasmInstanceAbstractBaseClass, WorkerThread } from "./import";
 import { Worker } from "worker_threads";
-import { dirname, join } from "path";
-import callsite from "callsite";
+import { join } from "path";
 import process from "node:process";
 import debug from "debug";
 import IOProviderUsingAtomics from "./io-using-atomics";
@@ -10,10 +9,7 @@ const log = debug("wasm:import-node");
 
 export class WasmInstance extends WasmInstanceAbstractBaseClass {
   protected initWorker(): WorkerThread {
-    const path = join(
-      dirname(callsite()[0]?.getFileName() ?? "."),
-      "worker/node.js"
-    );
+    const path = join(__dirname, 'worker', 'node.js');
     return new Worker(path, {
       trackUnmanagedFds: false, // this seems incompatible with our use of unionfs/memfs (lots of warnings).
     });
