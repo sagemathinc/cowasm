@@ -1,9 +1,9 @@
-const WASI = require("../../../wasi-js/dist/").default;
-const bindings = require("../../../wasi-js/dist/bindings/node").default;
-const importWebAssemblyDlopen = require("../../dist").default;
-const { nonzeroPositions } = require("../../dist/util");
-const { readFileSync } = require("fs");
-const assert = require("assert");
+import WASI from "../../../wasi-js/dist/index.js";
+import bindings from "../../../wasi-js/dist/bindings/server.js";
+import importWebAssemblyDlopen from "../../dist/index.js";
+import { nonzeroPositions } from "../../dist/util.js";
+import { readFileSync } from "fs";
+import assert from "assert";
 
 function importWebAssemblySync(path, importObject) {
   const binary = new Uint8Array(readFileSync(path));
@@ -12,7 +12,6 @@ function importWebAssemblySync(path, importObject) {
 }
 
 const table = new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
-exports.table = table;
 
 async function main() {
   const memory = new WebAssembly.Memory({ initial: 100 });
@@ -28,13 +27,11 @@ async function main() {
     path: "app.wasm",
     importWebAssemblySync,
     importObject,
-    stub: "silent",
+    stub: true,
     readFileSync,
     allowMainExports: true,
   });
   wasi.start(instance, memory);
-  exports.instance = instance;
-  exports.wasi = wasi;
 }
 
 main();

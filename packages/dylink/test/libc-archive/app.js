@@ -1,8 +1,10 @@
-const WASI = require("../../../wasi-js/dist/").default;
-const bindings = require("../../../wasi-js/dist/bindings/node").default;
-const importWebAssemblyDlopen = require("../../dist").default;
-const { readFileSync } = require("fs");
-const debug = require("debug");
+import WASI from "../../../wasi-js/dist/index.js";
+import bindings from "../../../wasi-js/dist/bindings/server.js";
+import importWebAssemblyDlopen from "../../dist/index.js";
+import { nonzeroPositions } from "../../dist/util.js";
+import { readFileSync } from "fs";
+import assert from "assert";
+import debug from "debug";
 
 function importWebAssemblySync(path, importObject) {
   const binary = new Uint8Array(readFileSync(path));
@@ -11,7 +13,6 @@ function importWebAssemblySync(path, importObject) {
 }
 
 const table = new WebAssembly.Table({ initial: 10000, element: "anyfunc" });
-exports.table = table;
 
 async function main() {
   const memory = new WebAssembly.Memory({ initial: 1000 });
@@ -25,15 +26,13 @@ async function main() {
       _Py_CheckEmscriptenSignalsPeriodically: () => {},
       _Py_emscripten_runtime: () => 0,
       getrandom: (bufPtr, bufLen, _flags) => {
-        // NOTE: returning 0 here (our default stub behavior)
-        // would result in Python hanging on startup!
         bindings.randomFillSync(
           // @ts-ignore
           new Uint8Array(memory.buffer),
           bufPtr,
           bufLen
         );
-        return bufLen;
+        return 0;
       },
     },
   };
@@ -46,8 +45,6 @@ async function main() {
     readFileSync,
   });
   wasi.start(instance, memory);
-  exports.instance = instance;
-  exports.wasi = wasi;
 }
 
 // copied from packages/python-wasm/src/wasm/worker/trampoline.ts
