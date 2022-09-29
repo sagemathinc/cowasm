@@ -85,6 +85,7 @@ export default async function importWebAssemblyDlopen({
   stub,
   allowMainExports,
 }: Input): Promise<WebAssembly.Instance> {
+  let mainInstance: WebAssembly.Instance | null = null;
   if (importObject == null) {
     importObject = {} as { env?: Partial<Env> };
   }
@@ -105,6 +106,7 @@ export default async function importWebAssemblyDlopen({
   }
 
   function symbolViaPointer(key: string) {
+    if (mainInstance == null) return; // not yet available
     log("symbolViaPointer", key);
     const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
     if (f == null) return;
@@ -183,7 +185,7 @@ export default async function importWebAssemblyDlopen({
       speed, there are C functions that make no sense to call via WASM,
       since they have signatures that are more complicated than WASM supports.
       */
-      f = mainInstance.exports[name];
+      f = mainInstance?.exports[name];
       if (f != null) {
         log(
           "getFunction ",
@@ -304,7 +306,7 @@ export default async function importWebAssemblyDlopen({
       // also be a fatal error.
       //
       let value;
-      const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
+      const f = mainInstance?.exports[`__WASM_EXPORT__${key}`];
       if (f == null) {
         // new function
         value = nextTablePos;
@@ -456,7 +458,7 @@ export default async function importWebAssemblyDlopen({
     // Set all functions in the function table that couldn't
     // be resolved to pointers when creating the webassembly module.
     for (const symName in funcMap) {
-      const f = instance.exports[symName] ?? mainInstance.exports[symName];
+      const f = instance.exports[symName] ?? mainInstance?.exports[symName];
       log("table[%s] = %s", funcMap[symName], symName, f);
       if (f == null) {
         // This has to be a fatal error, since the only other option would
@@ -584,7 +586,8 @@ export default async function importWebAssemblyDlopen({
     t0 = new Date().valueOf();
     logImport("importing ", path);
   }
-  const mainInstance =
+
+  mainInstance =
     importWebAssembly != null
       ? await importWebAssembly(path, importObjectWithPossibleStub)
       : importWebAssemblySync(path, importObjectWithPossibleStub);

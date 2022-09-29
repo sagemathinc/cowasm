@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "incremental": true,
-    "target": "es5",
+    "target": "es2020",
+    "module": "commonjs",
     "lib": ["es5", "es6", "es2017", "dom"],
     "allowJs": true,
     "declaration": true,
@@ -12,9 +13,9 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strictNullChecks": true
-  },
+    "strictNullChecks": true,
+    "moduleResolution": "node"
+  }
 }
