@@ -24,9 +24,9 @@ ZLIB = ${PACKAGES}/zlib/dist
 LIBEDIT = ${PACKAGES}/libedit/dist
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist
 
-NCURSES = ${PACKAGES}/ncurses/dist
-NCURSES_INCLUDE = -I${NCURSES}/wasm/include/ncurses -I${NCURSES}/wasm/include
-NCURSES_LIB = -L${NCURSES}/wasm/lib
+# NCURSES = ${PACKAGES}/ncurses/dist
+# NCURSES_INCLUDE = -I${NCURSES}/wasm/include/ncurses -I${NCURSES}/wasm/include
+# NCURSES_LIB = -L${NCURSES}/wasm/lib
 
 ZYTHON = ${BIN}/zython
 ZYTHON_DEBUG = ${BIN}/zython-debug

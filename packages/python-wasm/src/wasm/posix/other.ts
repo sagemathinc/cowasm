@@ -97,6 +97,27 @@ export default function other({ callFunction, posix, recv, send }) {
       notImplemented("mremap");
     },
 
+    // The curses cpython module wants this:
+    // FILE *tmpfile(void);
+    /* ~/test/tmpfile$ more a.c
+    #include<stdio.h>
+    int main() {
+       FILE* f = tmpfile();
+       printf("f = %p\n", f);
+    }
+    ~/test/tmpfile$ zig cc -target wasm32-wasi ./a.c
+    ./a.c:3:14: warning: 'tmpfile' is deprecated: tmpfile is not defined on WASI [-Wdeprecated-declarations]
+    */
+    tmpfile: () => {
+      notImplemented("tmpfile");
+    },
+
+    // curses also wants this:
+    // int tcflush(int fildes, int action);
+    tcflush: () => {
+      notImplemented("tcflush");
+    }
+
     // numpy wants this thing that can't exist in wasm:
     // int backtrace(void** array, int size);
     // Commenting this out and instead patching numpy to not try to use this, since we

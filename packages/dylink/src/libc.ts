@@ -177,6 +177,7 @@ long double strtold_l(const char *__restrict, char **__restrict, struct __locale
 // Extra things we added to our posix compat layer, since they are
 // missing from wasi-zig-libc:
 const posix = `
+tmpfile
 strtold_l
 __fixunstfsi
 __fixunstfdi

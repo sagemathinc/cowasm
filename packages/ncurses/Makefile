@@ -39,15 +39,12 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM}/test && echo '#include "posix-wasm.h"' | cat - picsmap.c > tmp && mv tmp picsmap.c
 	touch ${BUILD_WASM}/.patched
 
-# The fPIC build would use CC="zig-fPIC cc" CXX="zig-fPIC c++"
-# but isn't working
-
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
 			AR="zig ar" \
-			CC="zig cc -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
-			CXX="zig c++ -target wasm32-wasi-musl -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
+			CC="zig-fPIC cc  -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
+			CXX="zig-fPIC c++  -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
 			CFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			CXXFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			./configure \

@@ -96,7 +96,8 @@ def install():
 
 if __name__ == "__main__":
     install()
-    #import mpmath
-    #import sympy
-    import numpy
-    print(numpy)
+    print(sys.path)
+    import mpmath; print(mpmath)
+    import sympy; print(sympy)
+    import numpy; print(numpy)
+    print(sys.path)
