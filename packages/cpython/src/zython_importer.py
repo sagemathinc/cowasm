@@ -3,6 +3,8 @@
 import importlib
 import importlib.abc
 import sys
+import tempfile
+import zipfile
 
 zython_modules = {
     'mpmath':
@@ -10,7 +12,7 @@ zython_modules = {
     'sympy':
     '/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/py-sympy/dist/wasm/sympy.zip',
     'numpy':
-    '/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/py-sympy/dist/wasm/numpy.zip',
+    '/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/py-numpy/dist/wasm/numpy.zip',
 }
 
 
@@ -35,27 +37,55 @@ class ZythonPackageFinder(importlib.abc.MetaPathFinder):
 
 class ZythonPackageLoader(importlib.abc.Loader):
 
+    def __init__(self):
+        self._creating = set([])
+
     def provides(self, fullname):
-        return zython_modules.get(fullname.split('.')[0]) is not None
+        name = fullname.split('.')[0]
+        # important to not say we provide package *while loading it*, since
+        # during the load we switch to creating something else to provide it.
+        return name not in self._creating and \
+                zython_modules.get(name) is not None
 
     def create_module(self, spec):
         print("create_module", spec)
-        path = zython_modules.get(spec.name.split('.')[0])
-        if path is None:
-            raise ImportError
+        name = spec.name.split('.')[0]
+        path = zython_modules.get(name)
         try:
+            self._creating.add(name)
             sys.path.insert(0, path)
-            mod = importlib.import_module(spec.name)
-            return mod
+            return importlib.import_module(spec.name)
+        except:
+            return extract_zip_and_import(spec.name, zython_modules[name])
         finally:
+            self._creating.remove(name)
             del sys.path[0]
 
         # Still here?  Someday we'll implement importing dynamic libraries
         # directly from the bundle, but not today.
-        return {'fail':path}
+        return {'fail': path}
 
     def exec_module(self, module):
         pass
+
+# Benchmark -- doing it this way (extract and delete)
+# for numpy takes 0.5 seconds instead of the 0.3 seconds
+# it would likely take with zip import that supports so,
+# which we can implement at some point later.
+def extract_zip_and_import(name, zip_path):
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        zip_path = zython_modules[name]
+        from time import time; t = time()
+        zipfile.ZipFile(zip_path).extractall(tmpdirname)
+        print(time()-t, tmpdirname)
+        import os
+        print(os.listdir(tmpdirname))
+        try:
+            sys.path.insert(0, tmpdirname)
+            t=time()
+            return importlib.import_module(name)
+        finally:
+            del sys.path[0]
 
 
 def install():
@@ -66,7 +96,7 @@ def install():
 
 if __name__ == "__main__":
     install()
-    import mpmath
-    import sympy
-    #import numpy
-    print(mpmath)
+    #import mpmath
+    #import sympy
+    import numpy
+    print(numpy)
