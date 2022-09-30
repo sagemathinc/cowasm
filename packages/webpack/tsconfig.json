@@ -8,7 +8,8 @@
     "target": "es5",
     "moduleResolution": "node",
     "jsx": "react",
-    "allowJs": true
+    "allowJs": true,
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
   "include": ["src", "index.d.ts"],
   "exclude": ["node_modules", "build", "dist"]

@@ -23,7 +23,6 @@ bin/cython
 *.pyc
 *.o
 zig-cache
-tsconfig.tsbuildinfo
 .hypothesis
 upstream/sources/*
 scratch/*
