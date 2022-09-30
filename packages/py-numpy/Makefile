@@ -50,8 +50,11 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 
 # Just a trivial test for now.
 test: ${DIST_WASM}/.built
-	cd ${DIST_WASM}/lib/python3.11/site-packages \
-		&& zython-debug -c "import numpy; print(numpy.array([3,8,9,5,0,7,7]).sum())" | grep 39 \
+	rm -rf ${BUILD_WASM}/zython-test
+	mkdir -p ${BUILD_WASM}/zython-test
+	cd ${BUILD_WASM}/zython-test \
+		&& unzip -q ${DIST_WASM}/numpy.zip \
+		&& zython-dev -c "import numpy; print(numpy.array([3,8,9,5,0,7,7]).sum())" | grep 39 \
 		&& echo "NUMPY TEST PASSED!"
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
