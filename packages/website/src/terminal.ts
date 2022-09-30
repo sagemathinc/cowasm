@@ -3,8 +3,8 @@ import { Terminal } from "xterm";
 import setTheme from "./theme";
 import python from "python-wasm";
 
-export default async function terminal(element: HTMLDivElement) {
-  const term = new Terminal({convertEol: true});
+export async function terminal(element: HTMLDivElement) {
+  const term = new Terminal({ convertEol: true });
   term.open(element);
   await python.init();
   // @ts-ignore
