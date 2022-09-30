@@ -44,9 +44,8 @@ module.exports = {
         type: "asset/resource",
       },
       {
-        test: /\.tsx?$/,
-        use: "ts-loader",
-        exclude: /node_modules/,
+        test: /\.(js|jsx|ts|tsx|mjs|cjs)$/,
+        loader: "swc-loader",
       },
       {
         test: /\.css$/i,
@@ -77,7 +76,5 @@ if (process.env.COCALC_PROJECT_ID && process.env.NODE_ENV != "production") {
   module.exports.devServer.client = {
     webSocketURL: `auto://cocalc.com${basePath}ws`,
   };
-  console.log(
-    `https://cocalc.com${basePath}\n`
-  );
+  console.log(`https://cocalc.com${basePath}\n`);
 }

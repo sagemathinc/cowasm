@@ -23,14 +23,19 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/zython.git"
   },
-  "keywords": ["python", "webassembly"],
+  "keywords": [
+    "python",
+    "webassembly"
+  ],
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/zython/issues"
   },
   "homepage": "https://github.com/sagemathinc/zython/tree/main/packages/website",
-  "workspaces": ["../python-wasm"],
+  "workspaces": [
+    "../python-wasm"
+  ],
   "devDependencies": {
     "buffer": "^6.0.3",
     "css-loader": "^6.7.1",
@@ -41,7 +46,7 @@
     "process": "^0.11.10",
     "python-wasm": "^0.9.0",
     "style-loader": "^3.3.1",
-    "ts-loader": "^9.3.1",
+    "swc-loader": "^0.2.3",
     "typescript": "^4.7.4",
     "util": "^0.12.4",
     "wabt": "^1.0.29",
