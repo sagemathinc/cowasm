@@ -16,6 +16,7 @@
     "build": "webpack && npm run strip",
     "watch": "webpack --watch",
     "serve": "webpack serve",
+    "prod": "NODE_ENV='production' webpack serve",
     "tsc": "npx tsc -w",
     "strip": "find dist/ -type f -name \"*.wasm\" | xargs wasm-strip"
   },
