@@ -1,6 +1,7 @@
 import type { WasmInstance } from "../wasm/types";
 import { Options } from "../wasm/import";
 import type { FileSystemSpec } from "wasi-js";
+import initZythonImporter from "./zython-importer";
 
 export let wasm: WasmInstance | undefined = undefined;
 
@@ -59,7 +60,10 @@ export async function _init({
   // This calls Py_Initialize and gets the Python interpreter initialized.
   await wasm.callWithString("python_init", "");
 
-  //await wasm.callWithString("exec", "import zython_importer; zython_importer.install()")
+  const s = await initZythonImporter();
+  if (s) {
+    await wasm.callWithString("exec", s);
+  }
 
   // Wait until the standard libary zip filesystem is loaded, if necessary,
   // since user may want to immediately run arbitrary code right when

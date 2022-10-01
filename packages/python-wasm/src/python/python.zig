@@ -63,7 +63,7 @@ pub fn assertInit() !void {
 // If there was an error, there is no way to get the exception information *yet*.
 pub fn exec(s: [*:0]const u8) !void {
     try assertInit();
-    std.debug.print("exec '{s}'\n", .{s});
+    // std.debug.print("exec '{s}'\n", .{s});
     var pstr = py.PyRun_String(s, py.Py_file_input, globals, globals) orelse {
         py.PyErr_Clear();
         // failed - some sort of exception got raised.

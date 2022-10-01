@@ -8,30 +8,10 @@ import zipfile
 import tarfile
 from time import time
 
-# Some hardcoded values for testing right now.  These will get filled in at startup
-# by something aware of what modules are installed and where.
-# This is very stupid and will be gone soon, of course.
-for packages in sys.path:
-    if packages.endswith("python311.zip"):
-        i = packages.rfind("/cpython/")
-        packages = packages[:i]
-        break
-
-zython_modules = {
-    'mpmath': packages + '/py-mpmath/dist/wasm/mpmath.zip',
-    'sympy': packages + '/py-sympy/dist/wasm/sympy.zip',
-    'numpy': packages + '/py-numpy/dist/wasm/numpy.zip',
-    #'cython': packages + '/py-cython/dist/wasm/cython.zip'
-}
-
-zython_modules_0 = {
-    'mpmath': packages + '/py-mpmath/dist/wasm/mpmath.tar.xz',
-    'sympy': packages + '/py-sympy/dist/wasm/sympy.tar.xz',
-    'numpy': packages + '/py-numpy/dist/wasm/numpy.tar.xz',
-    'cython': packages + '/py-cython/dist/wasm/cython.tar.xz',
-}
+zython_modules = {}
 
 verbose = False
+
 
 class ZythonPackageFinder(importlib.abc.MetaPathFinder):
 
@@ -57,7 +37,7 @@ class ZythonPackageLoader(importlib.abc.Loader):
     def __init__(self):
         self._creating = set([])
 
-    def provides(self, fullname):
+    def provides(self, fullname: str):
         name = fullname.split('.')[0]
         # important to not say we provide package *while loading it*, since
         # during the load we switch to creating something else to provide it.
@@ -100,7 +80,7 @@ class ZythonPackageLoader(importlib.abc.Loader):
 # for numpy takes 0.5 seconds instead of the 0.3 seconds
 # it would likely take with zip import that supports so,
 # which we can implement at some point later. We'll see.
-def extract_archive_and_import(name, archive_path):
+def extract_archive_and_import(name: str, archive_path: str):
     with tempfile.TemporaryDirectory() as tmpdirname:
         archive_path = zython_modules[name]
         t = time()
@@ -108,9 +88,11 @@ def extract_archive_and_import(name, archive_path):
             zipfile.ZipFile(archive_path).extractall(tmpdirname)
         else:
             tarfile.open(archive_path).extractall(tmpdirname)
-        if verbose: print(time() - t, tmpdirname)
+
         import os
-        if verbose: print(os.listdir(tmpdirname))
+        if verbose:
+            print(time() - t, tmpdirname)
+
         try:
             sys.path.insert(0, tmpdirname)
             t = time()
@@ -121,19 +103,15 @@ def extract_archive_and_import(name, archive_path):
             del sys.path[0]
 
 
-def install():
+def init():
     loader = ZythonPackageLoader()
     finder = ZythonPackageFinder(loader)
     sys.meta_path.append(finder)
 
 
-if __name__ == "__main__":
-    install()
-    print(sys.path)
-    import mpmath
-    print(mpmath)
-    import sympy
-    print(sympy)
-    import numpy
-    print(numpy)
-    print(sys.path)
+init()
+
+
+def install(modules):
+    for name in modules.keys():
+        zython_modules[name] = modules[name]

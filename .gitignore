@@ -11,8 +11,8 @@ bin/npm
 bin/npx
 bin/dash-native
 bin/python-native
-bin/pw
-bin/pw-d
+bin/zd
+bin/zdb
 bin/cython
 **/dist
 **/build

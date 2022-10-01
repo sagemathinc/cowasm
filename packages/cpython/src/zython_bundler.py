@@ -109,11 +109,11 @@ def create_bundle(name, extra_files):
     # https://unix.stackexchange.com/questions/146264/is-there-a-way-to-convert-a-zip-to-a-tar-without-extracting-it-to-the-filesystem
     tar = tarfile.open(f'{name}.tar.xz', "w:xz")
     zip = zipfile.ZipFile(f'{name}.zip', "r")
-    for fname in zip.namelist():
-        if name.endswith('/'): continue
-        data = zip.read(fname)
+    for filename in zip.namelist():
+        if filename.endswith('/'): continue
+        data = zip.read(filename)
         tarinfo = tarfile.TarInfo()
-        tarinfo.name = name
+        tarinfo.name = filename
         tarinfo.size = len(data)
         tar.addfile(tarinfo, io.BytesIO(data))
 

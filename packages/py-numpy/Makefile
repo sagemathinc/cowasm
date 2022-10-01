@@ -40,6 +40,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #    numpy module, and that data seems to not be in the pyc file.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}
+	cd ${PACKAGES}/cpython && make pip
 	cd ${BUILD_WASM} \
 		&& zython-debug setup.py build
 	cd ${BUILD_WASM}/build/lib* \
