@@ -3,6 +3,7 @@ import wasmImportNoWorker from "../wasm/worker/node";
 import { _init, repr, exec, wasm, terminal as _terminal } from "./index";
 import type { FileSystemSpec } from "wasi-js";
 import { join } from "path";
+import initZythonImporter from "./zython-importer";
 
 const PYTHON_WASM = "python.wasm";
 const pythonFull = "python-stdlib.zip";
@@ -82,6 +83,13 @@ export async function init({
     fs,
     env,
   });
+
+  if (wasm != null) {
+    const s = await initZythonImporter();
+    if (s) {
+      await wasm.callWithString("exec", s);
+    }
+  }
 }
 
 async function terminal(
