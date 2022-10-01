@@ -50,7 +50,7 @@ class ZythonPackageLoader(importlib.abc.Loader):
         path = zython_modules.get(name)
         try:
             self._creating.add(name)
-            return extract_archive_and_import(spec.name, path)
+            return extract_archive_and_import(name, path)
         finally:
             self._creating.remove(name)
 
