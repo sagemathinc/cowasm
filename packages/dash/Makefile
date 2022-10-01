@@ -4,10 +4,10 @@ include ../build/Makefile-vars
 
 # See https://github.com/sagemathinc/dash/releases which is a mirror of
 # https://git.kernel.org/pub/scm/utils/dash/dash.git without the autotools dependency.
-VERSION = 0.5.11
+VERSION = 0.5.11.1
 
 URL = https://github.com/sagemathinc/dash/archive/refs/tags/${VERSION}.tar.gz
-TARBALL = ${UPSTREAM}/dash-noautotools-${VERSION}.tar.gz
+TARBALL = ${UPSTREAM}/dash-${VERSION}.tar.gz
 
 LIBEDIT = ${PACKAGES}/libedit/dist
 TERMCAP = ${PACKAGES}/termcap/dist
