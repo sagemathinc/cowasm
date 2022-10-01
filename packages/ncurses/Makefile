@@ -7,7 +7,7 @@ TARBALL = ${UPSTREAM}/ncurses-${VERSION}.tar.gz
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 TERMCAP = ${PACKAGES}/termcap/dist/wasm
 
-all:  wasm
+all:  native wasm
 
 include ../build/Makefile-rules
 
@@ -16,16 +16,21 @@ include ../build/Makefile-rules
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} \
 		&&	CC="zig cc ${ZIG_NATIVE_CFLAGS} " \
+			CXX="zig c++ ${ZIG_NATIVE_CFLAGS} " \
 			AR="zig ar ${ZIG_NATIVE_CFLAGS} " \
+			CFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
+			CXXFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			./configure \
 				--prefix=${DIST_NATIVE} \
 				--without-ada \
 				--without-manpages \
 				--without-progs \
-				--without-tests
+				--without-tests \
+				--without-ticlib \
+				--enable-termcap \
+				--disable-stripping \
 		&& make -j8 \
-		&& make install
-	strip ${DIST_NATIVE}/bin/vis
+		&& make -j8 install.libs
 	touch ${DIST_NATIVE}/.built
 
 # WASM.
@@ -45,8 +50,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 			AR="zig ar" \
 			CC="zig-fPIC cc  -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
 			CXX="zig-fPIC c++  -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
-			CFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
-			CXXFLAGS="-I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
+			CFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
+			CXXFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			./configure \
 				--without-ada \
 				--without-manpages \
@@ -59,7 +64,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 				--prefix="${DIST_WASM}" \
 				--with-build-cc="zig cc" \
 		&& 	make -j8 \
-		&& 	make -j8 install
+		&& 	make -j8 install.libs
 	# this makes it much easier to use for client libraries:
 	cd ${DIST_WASM}/include && ln -s ncurses/curses.h .
 	touch ${DIST_WASM}/.built
