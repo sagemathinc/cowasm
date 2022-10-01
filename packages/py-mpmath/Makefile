@@ -23,9 +23,9 @@ test: ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
-		&& python-native ${CWD}/src/bundle.py mpmath \
+		&& python-native -m zython_bundler mpmath \
 		&& mkdir -p ${DIST_WASM} \
-		&& cp mpmath.zip ${DIST_WASM}
+		&& cp mpmath.* ${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 # Interesting to build and test native for speed comparison:

@@ -59,6 +59,8 @@ export async function _init({
   // This calls Py_Initialize and gets the Python interpreter initialized.
   await wasm.callWithString("python_init", "");
 
+  await wasm.callWithString("exec", "import zython_importer; zython_importer.install()")
+
   // Wait until the standard libary zip filesystem is loaded, if necessary,
   // since user may want to immediately run arbitrary code right when
   // this function returns.

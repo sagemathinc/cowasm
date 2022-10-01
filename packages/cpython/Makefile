@@ -81,7 +81,8 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	# https://developer.apple.com/forums/thread/9233). For simplicity we set this on all hosts.
 	cd ${BUILD_NATIVE} \
 		&&	make -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD_NATIVE}:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD_NATIVE}:${LD_LIBRARY_PATH}" \
-		&&	make -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD_NATIVE}:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD_NATIVE}:${LD_LIBRARY_PATH}" install
+		&&	make RUNSHARED="DYLD_LIBRARY_PATH=${BUILD_NATIVE}:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD_NATIVE}:${LD_LIBRARY_PATH}" install
+	cp ${SRC}/zython_bundler.py ${DIST_NATIVE}/lib/python3.11/site-packages
 	touch ${DIST_NATIVE}/.built
 
 ${BIN}/python-native: bin/python-native
@@ -235,6 +236,10 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	cd ${BUILD_WASM} && make install
 	# For mysterious reasons, test-tomllib isn't copied over.
 	cp -rv ${BUILD_WASM}/Lib/test/test_tomllib ${DIST_WASM}/lib/python3.11/test/
+	# Copy over our small zython library with functionality for our packages.
+	cp ${SRC}/zython_importer.py ${DIST_WASM}/lib/python3.11/site-packages
+	cp ${SRC}/zython_importer.py ${DIST_WASM}/lib/dist
+	# Done!
 	touch ${DIST_WASM}/.built-cpython
 
 .PHONY:
@@ -274,6 +279,8 @@ ${DIST_WASM}/.built-data: ${DIST_WASM}/.built-cpython
 	# Also mv zip to a more meaningful name.
 	cd ${DIST_WASM}/lib/dist/ \
 		&& zip -u python311.zip lib-dynload/* \
+		&& cp ../python3.11/site-packages/zython_importer.py . \
+		&& zip -u python311.zip zython_importer.py \
 		&& mv python311.zip python-stdlib.zip
 
 	# Next make the MINIMAL python0.zip, which is all that's needed to start python (e.g., for a jupyter kernel or to back

@@ -5,16 +5,33 @@ import importlib.abc
 import sys
 import tempfile
 import zipfile
+import tarfile
+from time import time
+
+# Some hardcoded values for testing right now.  These will get filled in at startup
+# by something aware of what modules are installed and where.
+# This is very stupid and will be gone soon, of course.
+for packages in sys.path:
+    if packages.endswith("python311.zip"):
+        i = packages.rfind("/cpython/")
+        packages = packages[:i]
+        break
 
 zython_modules = {
-    'mpmath':
-    '/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/py-mpmath/dist/wasm/mpmath.zip',
-    'sympy':
-    '/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/py-sympy/dist/wasm/sympy.zip',
-    'numpy':
-    '/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/py-numpy/dist/wasm/numpy.zip',
+    'mpmath': packages + '/py-mpmath/dist/wasm/mpmath.zip',
+    'sympy': packages + '/py-sympy/dist/wasm/sympy.zip',
+    'numpy': packages + '/py-numpy/dist/wasm/numpy.zip',
+    #'cython': packages + '/py-cython/dist/wasm/cython.zip'
 }
 
+zython_modules_0 = {
+    'mpmath': packages + '/py-mpmath/dist/wasm/mpmath.tar.xz',
+    'sympy': packages + '/py-sympy/dist/wasm/sympy.tar.xz',
+    'numpy': packages + '/py-numpy/dist/wasm/numpy.tar.xz',
+    'cython': packages + '/py-cython/dist/wasm/cython.tar.xz',
+}
+
+verbose = False
 
 class ZythonPackageFinder(importlib.abc.MetaPathFinder):
 
@@ -48,18 +65,14 @@ class ZythonPackageLoader(importlib.abc.Loader):
                 zython_modules.get(name) is not None
 
     def create_module(self, spec):
-        print("create_module", spec)
+        if verbose: print("create_module", spec)
         name = spec.name.split('.')[0]
         path = zython_modules.get(name)
         try:
             self._creating.add(name)
-            sys.path.insert(0, path)
-            return importlib.import_module(spec.name)
-        except:
-            return extract_zip_and_import(spec.name, zython_modules[name])
+            return extract_archive_and_import(spec.name, path)
         finally:
             self._creating.remove(name)
-            del sys.path[0]
 
         # Still here?  Someday we'll implement importing dynamic libraries
         # directly from the bundle, but not today.
@@ -68,22 +81,42 @@ class ZythonPackageLoader(importlib.abc.Loader):
     def exec_module(self, module):
         pass
 
+
+# This works for pure python only.  We don't use it since it's
+# slower than just extracting and importing, then deleting.
+# Plus extract_archive_and_import works on almost anything.
+# def import_from_pure_python_zip(name, zip_path):
+#     # Currently for importing from a zip archive with no dynamic libraries.
+#     try:
+#         t = time()
+#         sys.path.insert(0, zip_path)
+#         return importlib.import_module(name)
+#     finally:
+#         print("time to import pure python", time()-t)
+#         del sys.path[0]
+
+
 # Benchmark -- doing it this way (extract and delete)
 # for numpy takes 0.5 seconds instead of the 0.3 seconds
 # it would likely take with zip import that supports so,
-# which we can implement at some point later.
-def extract_zip_and_import(name, zip_path):
+# which we can implement at some point later. We'll see.
+def extract_archive_and_import(name, archive_path):
     with tempfile.TemporaryDirectory() as tmpdirname:
-        zip_path = zython_modules[name]
-        from time import time; t = time()
-        zipfile.ZipFile(zip_path).extractall(tmpdirname)
-        print(time()-t, tmpdirname)
+        archive_path = zython_modules[name]
+        t = time()
+        if archive_path.endswith('.zip'):
+            zipfile.ZipFile(archive_path).extractall(tmpdirname)
+        else:
+            tarfile.open(archive_path).extractall(tmpdirname)
+        if verbose: print(time() - t, tmpdirname)
         import os
-        print(os.listdir(tmpdirname))
+        if verbose: print(os.listdir(tmpdirname))
         try:
             sys.path.insert(0, tmpdirname)
-            t=time()
-            return importlib.import_module(name)
+            t = time()
+            mod = importlib.import_module(name)
+            if verbose: print("module import time: ", time() - t)
+            return mod
         finally:
             del sys.path[0]
 
@@ -97,7 +130,10 @@ def install():
 if __name__ == "__main__":
     install()
     print(sys.path)
-    import mpmath; print(mpmath)
-    import sympy; print(sympy)
-    import numpy; print(numpy)
+    import mpmath
+    print(mpmath)
+    import sympy
+    print(sympy)
+    import numpy
+    print(numpy)
     print(sys.path)

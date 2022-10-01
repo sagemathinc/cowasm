@@ -43,9 +43,9 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& zython-debug setup.py build
 	cd ${BUILD_WASM}/build/lib* \
-		&& python-native ${CWD}/src/zython_bundler.py numpy numpy/core/multiarray.py \
+		&& python-native -m zython_bundler numpy numpy/core/multiarray.py \
 		&& mkdir -p ${DIST_WASM} \
-		&& cp numpy.zip ${DIST_WASM}
+		&& cp numpy.* ${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 # Just a trivial test for now.

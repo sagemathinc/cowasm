@@ -19,7 +19,7 @@ We will move this code to another package once it stabilizes and we use it for
 multiple modules.
 """
 
-import os, sys, zipfile
+import io, os, sys, tarfile, zipfile
 
 
 class ZythonBundle(zipfile.PyZipFile):
@@ -104,6 +104,18 @@ def create_bundle(name, extra_files):
             print(f"writing extra file {extra}")
             zp.write(extra, extra)
 
+    # Also create a tar.xz.  These are much smaller, and we also
+    # support importing them.  See
+    # https://unix.stackexchange.com/questions/146264/is-there-a-way-to-convert-a-zip-to-a-tar-without-extracting-it-to-the-filesystem
+    tar = tarfile.open(f'{name}.tar.xz', "w:xz")
+    zip = zipfile.ZipFile(f'{name}.zip', "r")
+    for fname in zip.namelist():
+        if name.endswith('/'): continue
+        data = zip.read(fname)
+        tarinfo = tarfile.TarInfo()
+        tarinfo.name = name
+        tarinfo.size = len(data)
+        tar.addfile(tarinfo, io.BytesIO(data))
 
 if __name__ == '__main__':
     create_bundle(sys.argv[1], sys.argv[2:])
