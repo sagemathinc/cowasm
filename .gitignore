@@ -9,6 +9,7 @@ bin/zig
 bin/node
 bin/npm
 bin/npx
+bin/dash-native
 bin/python-native
 bin/pw
 bin/pw-d

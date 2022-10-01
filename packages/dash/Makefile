@@ -2,17 +2,31 @@
 
 include ../build/Makefile-vars
 
-# See https://git.kernel.org/pub/scm/utils/dash/dash.git
-VERSION = 0.5.11.5
+# See https://github.com/sagemathinc/dash/releases which is a mirror of
+# https://git.kernel.org/pub/scm/utils/dash/dash.git without the autotools dependency.
+VERSION = 0.5.11
 
-URL = https://git.kernel.org/pub/scm/utils/dash/dash.git/snapshot/dash-${VERSION}.tar.gz
-TARBALL = ${UPSTREAM}/dash-${VERSION}.tar.gz
+URL = https://github.com/sagemathinc/dash/archive/refs/tags/${VERSION}.tar.gz
+TARBALL = ${UPSTREAM}/dash-noautotools-${VERSION}.tar.gz
 
 LIBEDIT = ${PACKAGES}/libedit/dist
+TERMCAP = ${PACKAGES}/termcap/dist
 
-all: wasm
+all: native wasm
 
 include ../build/Makefile-rules
+
+
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	rm -rf ${DIST_NATIVE}
+	cd ${BUILD_NATIVE} \
+		&&	CC="zig cc" CFLAGS="-Oz -I${LIBEDIT}/native/include" LDFLAGS=" -L${LIBEDIT}/native/lib -L${TERMCAP}/native/lib -ltermcap" ./configure --with-libedit --prefix=${DIST_NATIVE} \
+		&&	make -j8 \
+		&&  make install
+	ln -sf ${SRC}/dash-native ${BIN}/dash-native
+	touch ${DIST_NATIVE}/.built
+
+
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cp ${SRC}/extra.h ${BUILD_WASM}/src/setjmp.h
@@ -26,7 +40,6 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&&	./autogen.sh \
 		&&	CONFIG_SITE=${BUILD_WASM}/config.site CC="zig cc -target wasm32-wasi" CFLAGS="-Oz -I${LIBEDIT}/wasm/include -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -I${PACKAGES}/posix-wasm/dist/wasm" ./configure --with-libedit --prefix=${DIST_WASM} --host=none \
 		&&	make -j8 \
 		&&  zig ar -crs libdash.a src/*.o

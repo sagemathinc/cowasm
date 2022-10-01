@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# See python-native in the cpython packages.  Need to factor this out.
+realpath() (
+  OURPWD=$PWD
+  cd "$(dirname "$1")"
+  LINK=$(readlink "$(basename "$1")")
+  while [ "$LINK" ]; do
+    cd "$(dirname "$LINK")"
+    LINK=$(readlink "$(basename "$1")")
+  done
+  REALPATH="$PWD/$(basename "$1")"
+  cd "$OURPWD"
+  echo "$REALPATH"
+)
+
+SCRIPT=$(realpath "${BASH_SOURCE[0]}")
+SCRIPT_DIR=$( cd -- "$( dirname -- "${SCRIPT}" )" &> /dev/null && pwd )
+export TERM=xterm-256color
+export TERMCAP="$SCRIPT_DIR"/../../cpython/src/termcap
+
+# -E provides interactive libedit line editing and history  (-V is the vi version).
+
+# Dash is very minimal, but at least we can have a nice prompt!
+#   https://unix.stackexchange.com/questions/158313/create-a-dash-prompt
+
+export PS1='$(pwd | sed "s|^$HOME|~|")$ '
+"$SCRIPT_DIR"/../dist/native/bin/dash -E "$@"
