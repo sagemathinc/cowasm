@@ -10,6 +10,7 @@
     "jsx": "react",
     "allowJs": true,
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+    "incremental": true,
   },
   "include": ["src", "index.d.ts"],
   "exclude": ["node_modules", "build", "dist"]
