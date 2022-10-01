@@ -16,14 +16,18 @@ all: native wasm
 
 include ../build/Makefile-rules
 
+# Build a statically linked native binary.
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	rm -rf ${DIST_NATIVE}
 	cd ${BUILD_NATIVE} \
-		&&	CC="zig cc" CFLAGS="-Oz -I${LIBEDIT}/native/include" LDFLAGS=" -L${LIBEDIT}/native/lib -L${TERMCAP}/native/lib -ltermcap" ./configure --with-libedit --prefix=${DIST_NATIVE} \
+		&&	CC="zig cc" \
+			CFLAGS="-Oz -I${LIBEDIT}/native/include" \
+			LDFLAGS="${LIBEDIT}/native/lib/libedit.a ${TERMCAP}/native/lib/libtermcap.a" \
+			./configure --with-libedit --prefix=${DIST_NATIVE} \
 		&&	make -j8 \
 		&&  make install
-	ln -sf ${SRC}/dash-native ${BIN}/dash-native
+	ln -sf ${PWD}/bin/dash-native ${BIN}/dash-native
 	touch ${DIST_NATIVE}/.built
 
 
