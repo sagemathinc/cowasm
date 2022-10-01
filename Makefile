@@ -16,7 +16,7 @@ test-cpython: cpython python-wasm
 	cd packages/cpython && make test
 
 dash: packages/dash/${BUILT}
-packages/dash/${BUILT}: zig
+packages/dash/${BUILT}: zig libedit
 	cd packages/dash && make all
 .PHONY: dash
 

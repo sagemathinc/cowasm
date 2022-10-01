@@ -18,12 +18,14 @@ include ../build/Makefile-rules
 
 # Build a statically linked native binary.
 
+# The -L for libedit is just to make autoconf happy.
+
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	rm -rf ${DIST_NATIVE}
 	cd ${BUILD_NATIVE} \
 		&&	CC="zig cc" \
 			CFLAGS="-Oz -I${LIBEDIT}/native/include" \
-			LDFLAGS="${LIBEDIT}/native/lib/libedit.a ${TERMCAP}/native/lib/libtermcap.a" \
+			LDFLAGS="-L${LIBEDIT}/native/lib/ ${LIBEDIT}/native/lib/libedit.a ${TERMCAP}/native/lib/libtermcap.a" \
 			./configure --with-libedit --prefix=${DIST_NATIVE} \
 		&&	make -j8 \
 		&&  make install
