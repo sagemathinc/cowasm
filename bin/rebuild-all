@@ -6,5 +6,5 @@ mkdir -p logs
 git pull
 make clean
 make > logs/out 2>&1
-make test >> logs/out 2>&1 || true
+make test >> logs/out 2>&1 | true
 tail -n 20 logs/out
