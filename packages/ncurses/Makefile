@@ -7,7 +7,7 @@ TARBALL = ${UPSTREAM}/ncurses-${VERSION}.tar.gz
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 TERMCAP = ${PACKAGES}/termcap/dist/wasm
 
-all:  native wasm
+all:  wasm
 
 include ../build/Makefile-rules
 

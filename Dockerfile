@@ -12,7 +12,7 @@ USER root
 
 # Required apt dependencies -- mainly tools for compiling code.
 RUN apt-get update \
-  && apt-get install -y git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 libtool tcl zip
+  && apt-get install -y git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 libtool tcl zip libncurses-dev
 
 # Get source code of python-wasm and build everything:
 ARG commit=HEAD
