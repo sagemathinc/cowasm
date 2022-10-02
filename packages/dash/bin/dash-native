@@ -17,6 +17,10 @@ realpath() (
 SCRIPT=$(realpath "${BASH_SOURCE[0]}")
 SCRIPT_DIR=$( cd -- "$( dirname -- "${SCRIPT}" )" &> /dev/null && pwd )
 
+PACKAGES="$SCRIPT_DIR"/../../
+export DYLD_LIBRARY_PATH="$PACKAGES"/libedit/dist/native/lib:$DYLD_LIBRARY_PATH
+export LD_LIBRARY_PATH="$PACKAGES"/libedit/dist/native/lib:$LD_LIBRARY_PATH
+
 export TERM=xterm-256color
 export TERMCAP="$SCRIPT_DIR"/../../cpython/src/termcap
 
