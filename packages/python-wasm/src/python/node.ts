@@ -31,7 +31,7 @@ export async function init({
   const path = __dirname;
   const fs: FileSystemSpec[] = [];
   if (!noZip) {
-    // Synchronously load tiny filesystem needed for starting python interpreter.
+    // This will result in synchronously loading a tiny filesystem needed for starting python interpreter.
     fs.push({
       type: "zipfile",
       zipfile: join(path, noReadline ? pythonMinimal : pythonReadline),
