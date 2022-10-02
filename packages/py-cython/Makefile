@@ -12,13 +12,22 @@ include ../build/Makefile-rules
 
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&& zython-debug setup.py build_ext --inplace
+		&& zython-debug setup.py build
 	touch ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
-	cp -rv ${BUILD_WASM}/Cython ${BUILD_WASM}/cython.py ${DIST_WASM}/
+	cd ${BUILD_WASM}/build/lib* \
+		&& python-native -m zython_bundler Cython \
+		&& python-native -m zython_bundler pyximport \
+		&& cp *.tar.xz ${DIST_WASM}
+	cp ${BUILD_WASM}/cython.py ${DIST_WASM}/
+
+	# Copy over the cython package we just built.
+	# (TODO: this is just a bootstraping problem.)
+	cd ${PACKAGES}/python-wasm && make packages
+
 	touch ${DIST_WASM}/.built
 
 ${BIN}/cython: bin/cython

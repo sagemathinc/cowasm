@@ -104,12 +104,17 @@ ${DIST}/python/termcap: ${PYTHON_WASM}/lib/dist/termcap
 .PHONY: python
 python: ${DIST}/python/python.wasm ${DATAFILES} ${PYTHON_PACKAGES} ${DIST}/python/termcap
 
+# ${DIST}/python/py/%.tar.xz: ${PACKAGES}/py-%/dist/wasm/%.tar.xz
+# 	mkdir -p ${DIST}/python/py
+# 	cp -v $< ${DIST}/python/py
+
 .PHONY: packages
 packages:
 	mkdir -p ${DIST}/python/py
 	cp ${PACKAGES}/py-numpy/dist/wasm/*.tar.xz ${DIST}/python/py
 	cp ${PACKAGES}/py-sympy/dist/wasm/*.tar.xz ${DIST}/python/py
 	cp ${PACKAGES}/py-mpmath/dist/wasm/*.tar.xz ${DIST}/python/py
+	cp ${PACKAGES}/py-cython/dist/wasm/*.tar.xz ${DIST}/python/py
 
 ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
 	zig-fPIC cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM}
