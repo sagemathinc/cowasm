@@ -66,5 +66,5 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		&& 	make -j8 \
 		&& 	make -j8 install.libs
 	# this makes it much easier to use for client libraries:
-	cd ${DIST_WASM}/include && ln -s ncurses/curses.h .
+	cd ${DIST_WASM}/include && ln -sf ncurses/curses.h .
 	touch ${DIST_WASM}/.built
