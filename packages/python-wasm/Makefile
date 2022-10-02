@@ -110,11 +110,9 @@ python: ${DIST}/python/python.wasm ${DATAFILES} ${PYTHON_PACKAGES} ${DIST}/pytho
 
 .PHONY: packages
 packages:
+	rm -rf ${DIST}/python/py
 	mkdir -p ${DIST}/python/py
-	cp ${PACKAGES}/py-numpy/dist/wasm/*.tar.xz ${DIST}/python/py || true
-	cp ${PACKAGES}/py-sympy/dist/wasm/*.tar.xz ${DIST}/python/py || true
-	cp ${PACKAGES}/py-mpmath/dist/wasm/*.tar.xz ${DIST}/python/py || true
-	cp ${PACKAGES}/py-cython/dist/wasm/*.tar.xz ${DIST}/python/py || true
+	ln -sf ${PACKAGES}/py-*/dist/wasm/*.tar.xz ${DIST}/python/py
 
 ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
 	zig-fPIC cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM}

@@ -20,7 +20,6 @@ include ../build/Makefile-rules
 #     cross compiler.
 
 export PATH := ${SRC}/fake-bin:$(PATH)
-export PYTHONPATH := ${CYTHON}
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
@@ -47,6 +46,10 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		&& python-native -m zython_bundler numpy numpy/core/multiarray.py \
 		&& mkdir -p ${DIST_WASM} \
 		&& cp numpy.* ${DIST_WASM}
+
+	# TODO: temporary bootstraping to install:
+	cd ${PACKAGES}/python-wasm && make packages
+
 	touch ${DIST_WASM}/.built
 
 # Just a trivial test for now.
@@ -54,7 +57,6 @@ test: ${DIST_WASM}/.built
 	rm -rf ${BUILD_WASM}/zython-test
 	mkdir -p ${BUILD_WASM}/zython-test
 	cd ${BUILD_WASM}/zython-test \
-		&& unzip -q ${DIST_WASM}/numpy.zip \
 		&& zython-dev -c "import numpy; print(numpy.array([3,8,9,5,0,7,7]).sum())" | grep 39 \
 		&& echo "NUMPY TEST PASSED!"
 

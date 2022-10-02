@@ -18,11 +18,15 @@ temporary_directory = None
 
 def get_package_directory():
     # We try to find site-packages, and if so, use that:
-    for path in sys.path:
-        if path.endswith('site-packages'):
-            # In any dev mode using the real filesystem
-            return path
+    # I like this since efficient, but I hate that it adds an
+    # additioanl "sources of truth".
 
+    #     for path in sys.path:
+    #         if path.endswith('site-packages'):
+    #             # In any dev mode using the real filesystem
+    #             return path
+
+        # TODO:
         # This won't work and I don't understand why.  My best guess is yet
         # another subtle unionfs bug.  Try again after rewriting to not use
         # unionfs -- hopefully it's not a memfs problem.
@@ -34,7 +38,12 @@ def get_package_directory():
         #         return path
 
     # If not, we fall back to a temporary directory that gets
-    # deleted automatically when the process exits, hence the global.
+    # deleted automatically when the process exits, hence the global
+    # temporary_directoy object is important.  This approach is
+    # really bad, since every time you start python and import something
+    # the module has to get uncompressed again.  That also breaks Cython,
+    # which also puts a cython.py file in site-packages on first import.
+
     global temporary_directory
     temporary_directory = tempfile.TemporaryDirectory()
     sys.path.insert(0, temporary_directory.name)

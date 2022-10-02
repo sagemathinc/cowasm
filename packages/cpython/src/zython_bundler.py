@@ -19,7 +19,7 @@ We will move this code to another package once it stabilizes and we use it for
 multiple modules.
 """
 
-import io, os, sys, tarfile, zipfile
+import io, os, sys, tarfile, time, zipfile
 
 
 class ZythonBundle(zipfile.PyZipFile):
@@ -64,24 +64,53 @@ class ZythonBundle(zipfile.PyZipFile):
                             if self.debug:
                                 print('file %r skipped by filterfunc' % path)
                             continue
-                        arcname = self._get_so_archive_name(path, basename)
+                        arcname = self.get_archive_name(path, basename)
                         if self.debug:
                             print("Adding", arcname)
                         self.write(path, arcname)
             else:
                 pass
         elif os.path.splitext(pathname)[1] == '.so':
-            arcname = self._get_so_archive_name(pathname, basename)
+            arcname = self.get_archive_name(pathname, basename)
             if self.debug:
                 print("Adding file", arcname)
-            self.write(fname, arcname)
+            self.write(pathname, arcname)
 
-    def _get_so_archive_name(self, path, basename):
+    def write_all(self, pathname, basename=""):
+        pathname = os.fspath(pathname)
+        if os.path.isdir(pathname):
+            # This is a directory; add it
+            _, name = os.path.split(pathname)
+            if basename:
+                basename = "%s/%s" % (basename, name)
+            else:
+                basename = pathname
+            if self.debug:
+                print("Adding package in", pathname, "as", basename)
+            dirlist = sorted(os.listdir(pathname))
+            # Add everything
+            for filename in dirlist:
+                path = os.path.join(pathname, filename)
+                root, ext = os.path.splitext(filename)
+                if os.path.isdir(path):
+                    # This is a directory, recurse:
+                    self.write_all(path, basename)  # Recursive call
+                else:
+                    arcname = self.get_archive_name(path, basename)
+                    if self.debug:
+                        print("Adding", arcname)
+                    self.write(path, arcname)
+        else:
+            arcname = os.path.join(basename, pathname)
+            if self.debug:
+                print("Adding file", arcname)
+            self.write(pathname, arcname)
+
+    def get_archive_name(self, path, basename):
         arcname = os.path.split(path)[1]
         if basename:
             arcname = os.path.join(basename, arcname)
         return arcname
-
 
 def create_bundle(name, extra_files):
 
@@ -95,27 +124,35 @@ def create_bundle(name, extra_files):
     # due to a subtle issue with webassembly.  We will revisit this later.
 
     with ZythonBundle(f'{name}.zip',
-                       'w',
-                       optimize=2,
-                       compression=zipfile.ZIP_DEFLATED) as zp:
+                      'w',
+                      optimize=2,
+                      compression=zipfile.ZIP_DEFLATED) as zp:
         zp.writepy(name, filterfunc=notests)
         zp.write_so(name, filterfunc=notests)
         for extra in extra_files:
-            print(f"writing extra file {extra}")
-            zp.write(extra, extra)
+            print(f"Including extra '{extra}'")
+            zp.write_all(extra)
 
-    # Also create a tar.xz.  These are much smaller, and we also
-    # support importing them.  See
-    # https://unix.stackexchange.com/questions/146264/is-there-a-way-to-convert-a-zip-to-a-tar-without-extracting-it-to-the-filesystem
+    # Also create a tar.xz by *converting* the zip.  We do this partly since
+    # there's a lot of work into making a zip with the correct contents in it,
+    # both above and in the cpython zipfile module, and we reuse that effort.
+    #
+    # These .tar.xz are much smaller, e.g., often 50% the size, and we
+    # support importing them.  The recipe below to convert a zip into a tar
+    # is inspired by
+    #    https://unix.stackexchange.com/questions/146264/is-there-a-way-to-convert-a-zip-to-a-tar-without-extracting-it-to-the-filesystem
     tar = tarfile.open(f'{name}.tar.xz', "w:xz")
     zip = zipfile.ZipFile(f'{name}.zip', "r")
+    now = time.time()
     for filename in zip.namelist():
         if filename.endswith('/'): continue
         data = zip.read(filename)
         tarinfo = tarfile.TarInfo()
         tarinfo.name = filename
         tarinfo.size = len(data)
+        tarinfo.mtime = now
         tar.addfile(tarinfo, io.BytesIO(data))
+
 
 if __name__ == '__main__':
     create_bundle(sys.argv[1], sys.argv[2:])
