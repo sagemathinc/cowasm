@@ -43,6 +43,7 @@ def get_package_directory():
     # really bad, since every time you start python and import something
     # the module has to get uncompressed again.  That also breaks Cython,
     # which also puts a cython.py file in site-packages on first import.
+    # (We work around the cython.py thing for now.)
 
     global temporary_directory
     temporary_directory = tempfile.TemporaryDirectory()
