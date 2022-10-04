@@ -10,8 +10,10 @@ PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
 PYTHON_WASM = ${PACKAGES}/cpython/dist/wasm
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 DYLINK = ${PACKAGES}/dylink/dist
+DASH = ${PACKAGES}/dash/dist/wasm
 LIBGIT2 = ${PACKAGES}/libgit2/dist/wasm
 ZLIB = ${PACKAGES}/zlib/dist/wasm
+NCURSES = ${PACKAGES}/ncurses/dist/wasm
 
 WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
 WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic ${OPT}
@@ -55,13 +57,11 @@ test-posix:
 #    also gets compiled, without being explicitly listed here.
 #
 
-PYTHON_WASM_SOURCES = \
-	src/python/signal/signal.c src/wasm/posix/stdlib.c \
-	${DYLINK}/wasm-export/libpython.c ${DYLINK}/wasm/libdylink.a \
-	${PYTHON_WASM}/lib/libpython3.11.a \
+POSIX_SOURCES = \
 	${POSIX_WASM}/libposix.a \
 	src/wasm/posix.zig \
 	$(shell find src/wasm/posix/*.zig -type f) $(shell find src/python/*.zig -type f)
+
 
 PYTHON_WASM_C = ${PYTHON_WASM}/lib/libpython3.11.a \
 		${DYLINK}/wasm-export/libpython.c \
@@ -69,12 +69,18 @@ PYTHON_WASM_C = ${PYTHON_WASM}/lib/libpython3.11.a \
 		${CWD}/src/python/signal/signal.c \
 		${CWD}/src/wasm/posix/stdlib.c
 
+PYTHON_WASM_SOURCES = \
+	src/python/signal/signal.c src/wasm/posix/stdlib.c \
+	${DYLINK}/wasm/libdylink.a \
+	${POSIX_SOURCES} \
+	${PYTHON_WASM_C}
+
 PYTHON_WASM_INCLUDE = -I. -I${POSIX_WASM} -I${PYTHON_WASM}/include/python3.11 -I${LIBGIT2}/include
 
 PYTHON_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED} -lgit2 -L${LIBGIT2}/lib -lz -L${ZLIB}/lib
 
 # Regarding --stack below, I reported this upstream: https://github.com/ziglang/zig/issues/3735#issuecomment-1223574526
-${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${PYTHON_WASM_C} ${LIBGIT2}/lib/libgit2.a ${ZLIB}/lib/libz.a
+${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${LIBGIT2}/lib/libgit2.a ${ZLIB}/lib/libz.a
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
@@ -156,3 +162,41 @@ test: all #test-python test-posix
 
 strip: node_modules
 	npm run strip
+
+
+# This is just here to see if this is possible and how much is common before
+# refactoring the code and putting this in a completely different package.
+
+# Dash
+
+DASH_WASM_SOURCES = \
+	src/wasm/posix/stdlib.c \
+	src/wasm/posix.zig \
+	src/python/signal/signal.c  \
+	${DASH}/lib/libdash.a \
+	${POSIX_SOURCES}
+
+DASH_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
+
+DASH_WASM_INCLUDE = -I. -I${POSIX_WASM}
+
+DASH_WASM_C = ${DASH}/lib/libdash.a \
+		${POSIX_WASM}/libposix.a \
+		${CWD}/src/wasm/posix/stdlib.c \
+		${CWD}/src/python/signal/signal.c
+
+${DIST}/dash/dash.wasm: ${DASH_WASM_SOURCES}
+	cd src && zig build-lib \
+	   ${WASM_CFLAGS} \
+	   ${ZIG_PKG} \
+		-rdynamic \
+		--stack 1048576 \
+		-target wasm32-wasi \
+		--import-memory --import-table \
+		${DASH_WASM_LIBS} \
+		${DASH_WASM_INCLUDE} \
+		${DASH_WASM_C} \
+		dash/interface.zig
+	mkdir -p ${DIST}/dash
+	mv src/interface.wasm ${DIST}/dash/dash.wasm
+

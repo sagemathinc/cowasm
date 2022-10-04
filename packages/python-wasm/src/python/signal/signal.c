@@ -1,6 +1,7 @@
 /* We put code in here that is easier to write in C than zig. */
-#include "Python.h"
 #include <signal.h>
+#include <stdio.h>
+#include "posix-wasm.h"
 
 // It is important to define this function to actually do something, rather
 // than be a pure stub function, in the case we are asking for what the
