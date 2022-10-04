@@ -279,7 +279,9 @@ export default class WASI {
   FD_MAP: Map<number, File>;
   wasiImport: Exports;
   bindings: WASIBindings;
+  // This sleep is in milliseconds; it's NOT the libc sleep!
   sleep?: (milliseconds: number) => void;
+  lastStdin: number = 0;
   getStdin?: () => Buffer;
   stdinBuffer?: Buffer;
   sendStdout?: (Buffer) => void;
@@ -835,25 +837,15 @@ export default class WASI {
                         length, // length
                         position // position
                       );
-                    } catch (_err) {
-                      if (this.sleep != null) {
-                        // We have *some way* to synchronously pause execution of
-                        // this thread, so we do for 50ms to avoid burning 100% cpu.
-                        this.sleep(50);
-                      }
-                      //console.log("ERROR ", err);
-                      //throw err;
+                    } catch (_err) {}
+                    if (rr == 0) {
+                      this.shortPause();
+                    } else {
+                      this.lastStdin = new Date().valueOf();
                     }
                   }
                 }
               } else {
-                //                 console.log("fs.readSync", {
-                //                   fd: stats.real,
-                //                   iov,
-                //                   r,
-                //                   length,
-                //                   position,
-                //                 });
                 rr = fs.readSync(
                   stats.real, // fd
                   iov, // buffer
@@ -1464,7 +1456,7 @@ export default class WASI {
       ) => {
         let eventc = 0;
 
-        // Have to wait this long
+        // Have to wait this long (this gets computed below in the WASI_EVENTTYPE_CLOCK case).
         let waitTimeNs = BigInt(0);
         const startNs = BigInt(bindings.hrtime());
         this.refreshMemory();
@@ -1539,6 +1531,10 @@ export default class WASI {
               Thus what is supposed to happen below is supposed
               to block until the fd is ready to read from or write
               to, etc.
+
+              For now at least if reading from stdin then we block if getStdin
+              defined and *pause* for a moment (to avoid cpu burn) if
+              this.sleep is available.
               */
 
               sin += 3; // padding
@@ -1554,16 +1550,17 @@ export default class WASI {
               sout += 5; // padding to 8
 
               eventc += 1;
-              if (
-                userdata == BigInt(0) &&
-                WASI_EVENTTYPE_FD_READ == type &&
-                this.getStdin != null
-              ) {
-                if (!this.stdinBuffer) {
-                  // Don't have anything in stdin, so
-                  // block waiting for *more* stdin
-                  // TODO: should respect timeout and signals...
-                  this.stdinBuffer = this.getStdin();
+              if (userdata == BigInt(0) && WASI_EVENTTYPE_FD_READ == type) {
+                if (this.getStdin != null) {
+                  if (!this.stdinBuffer) {
+                    // Don't have anything in stdin, so
+                    // block waiting for *more* stdin
+                    // TODO: should respect timeout and signals...
+                    this.stdinBuffer = this.getStdin();
+                    this.lastStdin = new Date().valueOf();
+                  }
+                } else {
+                  this.shortPause();
                 }
               }
 
@@ -1578,22 +1575,31 @@ export default class WASI {
 
         // Account for the time it took to do everything above, which
         // can be arbitrarily long:
-        waitTimeNs -= BigInt(bindings.hrtime()) - startNs;
-        // logToFile("waitTimeNs", waitTimeNs);
         if (waitTimeNs > 0) {
-          if (this.sleep != null) {
-            // We are running in a worker thread, and have *some way*
-            // to synchronously pause execution of this thread.  Yeah!
-            this.sleep(nsToMs(waitTimeNs));
-          } else {
-            // Use **horrible** 100% block and 100% cpu
-            // wait, which might sort of work, but is obviously
-            // a wrong nightmare.  Unfortunately, this is the
-            // only possible thing to do when not running in
-            // a work thread.
-            const end = BigInt(bindings.hrtime()) + waitTimeNs;
-            while (BigInt(bindings.hrtime()) < end) {
-              // burn your CPU!
+          waitTimeNs -= BigInt(bindings.hrtime()) - startNs;
+          // logToFile("waitTimeNs", waitTimeNs);
+          if (waitTimeNs >= 1000000) {
+            if (this.sleep == null && !warnedAboutSleep) {
+              warnedAboutSleep = true;
+              console.log(
+                "(cpu waiting for stdin: please define a way to sleep!) "
+              );
+            }
+            if (this.sleep != null) {
+              // We are running in a worker thread, and have *some way*
+              // to synchronously pause execution of this thread.  Yeah!
+              const ms = nsToMs(waitTimeNs);
+              this.sleep(ms);
+            } else {
+              // Use **horrible** 100% block and 100% cpu
+              // wait, which might sort of work, but is obviously
+              // a wrong nightmare.  Unfortunately, this is the
+              // only possible thing to do when not running in
+              // a work thread.
+              const end = BigInt(bindings.hrtime()) + waitTimeNs;
+              while (BigInt(bindings.hrtime()) < end) {
+                // burn your CPU!
+              }
             }
           }
         }
@@ -1670,6 +1676,20 @@ export default class WASI {
           }
         };
       });
+    }
+  }
+
+  shortPause() {
+    if (this.sleep == null) return;
+    const now = new Date().valueOf();
+    if (now - this.lastStdin > 2000) {
+      // We have *some way* to synchronously pause execution of
+      // this thread, so we sleep a little to avoid burning
+      // 100% cpu.  But not right after reading input, since
+      // otherwise typing feels laggy.
+      // We can probably get rid of this entirely with a proper
+      // wgetchar...
+      this.sleep(5);
     }
   }
 

@@ -94,6 +94,11 @@ interface PosixFunctions {
   setegid: (gid: number) => void;
   seteuid: (uid: number) => void;
   sethostname: (name: string) => void;
+  // Blocking sleep.  This is sleep in *INTEGER* seconds not milliseconds.
+  sleep: (seconds: number) => number;
+  // Blocing sleep for up to 1 seconds, in microseconds; do NOT give input >= 1000000.
+  usleep: (microseconds: number) => number;
+
   ttyname: (fd: number) => string;
   dup: (oldfd: number) => number;
   dup2: (oldfd: number, newfd: number) => number;

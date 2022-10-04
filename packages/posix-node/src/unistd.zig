@@ -29,6 +29,8 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "setsid", setsid);
     try node.registerFunction(env, exports, "ttyname", ttyname);
     try node.registerFunction(env, exports, "alarm", alarm);
+    try node.registerFunction(env, exports, "sleep", sleep);
+    try node.registerFunction(env, exports, "usleep", usleep);
 
     try node.registerFunction(env, exports, "execv", execv);
     try node.registerFunction(env, exports, "_execve", execve);
@@ -218,6 +220,22 @@ fn alarm(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
     const seconds = node.u32FromValue(env, argv[0], "seconds") catch return null;
     const ret = unistd.alarm(seconds); // doesn't return any error no matter what.
     return node.create_u32(env, ret, "ret") catch return null;
+}
+
+// unsigned sleep(unsigned seconds);
+fn sleep(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const seconds = node.u32FromValue(env, argv[0], "seconds") catch return null;
+    const ret = unistd.sleep(seconds); // return value involves how much time left if returned early due to a signal.
+    return node.create_u32(env, ret, "ret") catch return null;
+}
+
+// int usleep(unsigned microseconds);
+fn usleep(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const microseconds = node.u32FromValue(env, argv[0], "microseconds") catch return null;
+    const ret = unistd.usleep(microseconds);
+    return node.create_i32(env, ret, "ret") catch return null;
 }
 
 const UnistdError = error{ Dup2Fail, FcntlFail, CloseStream };
