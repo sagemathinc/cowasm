@@ -84,6 +84,12 @@ export default async function wasmImportNode(
     return new WebAssembly.Instance(mod, opts);
   }
 
+  if (options.sleep == null && posix.sleep != null) {
+    // don't have sleep support (since single thread), and we can provide
+    // that via posix and not burn 100% cpu.
+    options.sleep = posix.sleep;
+  }
+
   return await wasmImport({
     source: name,
     bindings: { ...bindings, fs, os, child_process, posix },

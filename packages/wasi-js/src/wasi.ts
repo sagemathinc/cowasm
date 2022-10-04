@@ -271,13 +271,15 @@ type Exports = {
 //   );
 // };
 
+let warnedAboutSleep = false;
+
 export default class WASI {
   memory: WebAssembly.Memory;
   view: DataView;
   FD_MAP: Map<number, File>;
   wasiImport: Exports;
   bindings: WASIBindings;
-  sleep?: (time: number) => void;
+  sleep?: (milliseconds: number) => void;
   getStdin?: () => Buffer;
   stdinBuffer?: Buffer;
   sendStdout?: (Buffer) => void;
@@ -779,12 +781,12 @@ export default class WASI {
           //               this.stdinBuffer?.length
           //             } ${this.stdinBuffer?.toString()}`
           //           );
-//           console.log("fd_read", {
-//             fd,
-//             stats,
-//             IS_STDIN,
-//             getStdin: this.getStdin != null,
-//           });
+          //           console.log("fd_read", {
+          //             fd,
+          //             stats,
+          //             IS_STDIN,
+          //             getStdin: this.getStdin != null,
+          //           });
           outer: for (const iov of getiovs(iovs, iovsLen)) {
             let r = 0;
             while (r < iov.byteLength) {
@@ -794,21 +796,54 @@ export default class WASI {
                   ? null
                   : Number(stats.offset);
               let rr = 0;
-              if (IS_STDIN && this.getStdin != null) {
-                if (this.stdinBuffer != null) {
-                  // just got stdin after waiting for it in poll_oneoff
-                  // TODO: Do we need to limit length or iov will overflow?
-                  //       Or will the below just work fine?  It might.
-                  // Second remark -- we do not do anything special here to try to
-                  // handle seeing EOF (ctrl+d) in the stream.  No matter what I try,
-                  // doing something here (e.g., returning 0 bytes read) doesn't
-                  // properly work with libedit.   So we leave it alone and let
-                  // our slightly patched libedit handle control+d.
-                  rr = this.stdinBuffer.copy(iov);
-                  if (rr == this.stdinBuffer.length) {
-                    this.stdinBuffer = undefined;
-                  } else {
-                    this.stdinBuffer = this.stdinBuffer.slice(rr);
+              if (IS_STDIN) {
+                if (this.getStdin != null) {
+                  if (this.stdinBuffer == null) {
+                    this.stdinBuffer = this.getStdin();
+                  }
+                  if (this.stdinBuffer != null) {
+                    // just got stdin after waiting for it in poll_oneoff
+                    // TODO: Do we need to limit length or iov will overflow?
+                    //       Or will the below just work fine?  It might.
+                    // Second remark -- we do not do anything special here to try to
+                    // handle seeing EOF (ctrl+d) in the stream.  No matter what I try,
+                    // doing something here (e.g., returning 0 bytes read) doesn't
+                    // properly work with libedit.   So we leave it alone and let
+                    // our slightly patched libedit handle control+d.
+                    rr = this.stdinBuffer.copy(iov);
+                    if (rr == this.stdinBuffer.length) {
+                      this.stdinBuffer = undefined;
+                    } else {
+                      this.stdinBuffer = this.stdinBuffer.slice(rr);
+                    }
+                  }
+                } else {
+                  // WARNING: might have to do something that burns 100% cpu... :-(
+                  // though this is useful for debugging situations.
+                  if (this.sleep == null && !warnedAboutSleep) {
+                    warnedAboutSleep = true;
+                    console.log(
+                      "(cpu waiting for stdin: please define a way to sleep!) "
+                    );
+                  }
+                  while (rr == 0) {
+                    try {
+                      rr = fs.readSync(
+                        stats.real, // fd
+                        iov, // buffer
+                        r, // offset
+                        length, // length
+                        position // position
+                      );
+                    } catch (_err) {
+                      if (this.sleep != null) {
+                        // We have *some way* to synchronously pause execution of
+                        // this thread, so we do for 50ms to avoid burning 100% cpu.
+                        this.sleep(50);
+                      }
+                      //console.log("ERROR ", err);
+                      //throw err;
+                    }
                   }
                 }
               } else {
