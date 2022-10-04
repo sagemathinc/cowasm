@@ -76,6 +76,9 @@ export default class WasmInstance extends EventEmitter {
     throw Error("not implemented");
   }
 
+  // When you pass str of type str[] it calls name with (len(str), char**, ...).
+  // i.e., it's the main call signature than than null terminate char** like some
+  // C library code.
   callWithString(name: string, str: string | string[], ...args): any {
     this.result = undefined;
     this.resultException = false;

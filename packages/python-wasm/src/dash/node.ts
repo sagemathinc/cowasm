@@ -31,11 +31,4 @@ export async function init({
   });
 }
 
-async function terminal(
-  argv = [process.env.PROGRAM_NAME ?? "/usr/bin/zython"]
-): Promise<number> {
-  await init();
-  return await _terminal(argv);
-}
-
 export { repr, exec, wasm, terminal };

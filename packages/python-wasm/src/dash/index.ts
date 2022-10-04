@@ -52,7 +52,7 @@ export async function _init({
   await wasm.callWithString("chdir", process.cwd());
 
   // This calls Py_Initialize and gets the Python interpreter initialized.
-  await wasm.callWithString("dash_init", "");
+  await wasm.callWithString("dash_init", ["/bin/dash"]);
 
   // Wait until the standard libary zip filesystem is loaded, if necessary,
   // since user may want to immediately run arbitrary code right when
