@@ -13,7 +13,7 @@ export class WasmInstance extends EventEmitter {
   send: SendToWasmAbstractBase;
   recv: RecvFromWasmAbstractBase;
 
-  async callWithString(_name: string, _str: string, ..._args): Promise<any> {
+  async callWithString(_name: string, _str: string | string[], ..._args): Promise<any> {
     throw Error("not implemented");
   }
 

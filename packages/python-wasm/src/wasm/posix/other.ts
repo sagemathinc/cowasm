@@ -116,7 +116,31 @@ export default function other({ callFunction, posix, recv, send }) {
     // int tcflush(int fildes, int action);
     tcflush: () => {
       notImplemented("tcflush");
-    }
+    },
+
+    setjmp: () => {
+      notImplemented("setjmp");
+    },
+    longjmp: () => {
+      notImplemented("longjmp");
+    },
+
+    // struct passwd *getpwnam(const char *login);
+    getpwnam: () => {
+      console.log("STUB: getpwnam");
+      // return 0 indicates failure
+      return 0;
+    },
+
+    // int getrlimit(int resource, struct rlimit *rlp);
+    getrlimit: () => {
+      notImplemented("getrlimit");
+    },
+
+    //  int setrlimit(int resource, const struct rlimit *rlp);
+    setrlimit: () => {
+      notImplemented("setrlimit");
+    },
 
     // numpy wants this thing that can't exist in wasm:
     // int backtrace(void** array, int size);

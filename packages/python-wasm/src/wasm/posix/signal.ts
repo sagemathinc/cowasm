@@ -17,6 +17,7 @@ for other libraries.
 */
 
 import constants from "./constants";
+import { notImplemented } from "./util";
 
 const signal_t: { [setPtr: number]: Set<number> } = {};
 
@@ -135,6 +136,11 @@ export default function signal({ process }) {
           setSignalSetToMask(oldsetPtr);
         }
       }
+    },
+
+    // int sigsuspend(const sigset_t *sigmask);
+    sigsuspend: () => {
+      notImplemented("sigsuspend");
     },
   };
 

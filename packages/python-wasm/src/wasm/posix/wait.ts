@@ -30,5 +30,11 @@ export default function wait({ posix, send }) {
       send.i32(wstatusPtr, wstatus);
       return ret;
     },
+
+    // pid_t wait3(int *stat_loc, int options, struct rusage *rusage);
+    wait3: (): number => {
+      notImplemented("wait3");
+      return -1;
+    },
   };
 }

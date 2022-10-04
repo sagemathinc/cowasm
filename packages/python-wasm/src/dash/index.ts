@@ -4,21 +4,6 @@ import type { FileSystemSpec } from "wasi-js";
 
 export let wasm: WasmInstance | undefined = undefined;
 
-export async function exec(str: string): Promise<void> {
-  if (wasm == null) throw Error("call init");
-  await wasm.callWithString("exec", str);
-}
-
-export async function repr(str: string): Promise<string> {
-  if (wasm == null) throw Error("call init");
-  return (await wasm.callWithString("eval", str)) as string;
-}
-
-export async function terminal(argv: string[] = ["python"]): Promise<number> {
-  if (wasm == null) throw Error("call init");
-  return await wasm.terminal(argv);
-}
-
 type WASMImportFunction = (
   wasmSource: string,
   options: Options,

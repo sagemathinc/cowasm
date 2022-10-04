@@ -1,7 +1,8 @@
 import wasmImport from "../wasm/import-node";
 import wasmImportNoWorker from "../wasm/worker/node";
-import { _init, repr, exec, wasm, terminal as _terminal } from "./index";
+import { _init, wasm } from "./index";
 import { join } from "path";
+export { wasm };
 
 const DASH_WASM = "dash.wasm";
 
@@ -30,5 +31,3 @@ export async function init({
     env,
   });
 }
-
-export { repr, exec, wasm, terminal };

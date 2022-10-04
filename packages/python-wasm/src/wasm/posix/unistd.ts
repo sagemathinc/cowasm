@@ -279,6 +279,10 @@ export default function unistd({
       notImplemented("fork1");
     },
 
+    vfork: () => {
+      notImplemented("vfork");
+    },
+
     forkpty: () => {
       notImplemented("forkpty");
     },

@@ -14,6 +14,8 @@ DASH = ${PACKAGES}/dash/dist/wasm
 LIBGIT2 = ${PACKAGES}/libgit2/dist/wasm
 ZLIB = ${PACKAGES}/zlib/dist/wasm
 NCURSES = ${PACKAGES}/ncurses/dist/wasm
+LIBEDIT = ${PACKAGES}/libedit/dist/wasm
+TERMCAP = ${PACKAGES}/termcap/dist/wasm
 
 WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
 WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic ${OPT}
@@ -60,6 +62,7 @@ test-posix:
 POSIX_SOURCES = \
 	${POSIX_WASM}/libposix.a \
 	src/wasm/posix.zig \
+	src/wasm/posix/stdlib.c \
 	$(shell find src/wasm/posix/*.zig -type f) $(shell find src/python/*.zig -type f)
 
 
@@ -170,22 +173,22 @@ strip: node_modules
 # Dash
 
 DASH_WASM_SOURCES = \
-	src/wasm/posix/stdlib.c \
-	src/wasm/posix.zig \
-	src/python/signal/signal.c  \
-	${DASH}/lib/libdash.a \
-	${POSIX_SOURCES}
+	${POSIX_SOURCES} \
+	src/dash/interface.zig \
+	src/dash/dash.zig
 
-DASH_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
+DASH_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
 
 DASH_WASM_INCLUDE = -I. -I${POSIX_WASM}
 
 DASH_WASM_C = ${DASH}/lib/libdash.a \
 		${POSIX_WASM}/libposix.a \
+		${LIBEDIT}/lib/libedit.a \
+		${TERMCAP}/lib/libtermcap.a \
 		${CWD}/src/wasm/posix/stdlib.c \
 		${CWD}/src/python/signal/signal.c
 
-${DIST}/dash/dash.wasm: ${DASH_WASM_SOURCES}
+${DIST}/dash/dash.wasm: ${DASH_WASM_SOURCES} ${DASH_WASM_C}
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
@@ -193,7 +196,7 @@ ${DIST}/dash/dash.wasm: ${DASH_WASM_SOURCES}
 		--stack 1048576 \
 		-target wasm32-wasi \
 		--import-memory --import-table \
-		${DASH_WASM_LIBS} \
+		${DASH_WASM_LDFLAGS} \
 		${DASH_WASM_INCLUDE} \
 		${DASH_WASM_C} \
 		dash/interface.zig
