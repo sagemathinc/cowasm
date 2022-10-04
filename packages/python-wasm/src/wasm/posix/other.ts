@@ -1,4 +1,6 @@
 import { notImplemented } from "./util";
+//import debug from "debug";
+//const log = debug("posix:other");
 
 export default function other({ callFunction, posix, recv, send }) {
   function sendStatvfs(bufPtr, x) {
@@ -116,13 +118,6 @@ export default function other({ callFunction, posix, recv, send }) {
     // int tcflush(int fildes, int action);
     tcflush: () => {
       notImplemented("tcflush");
-    },
-
-    setjmp: () => {
-      notImplemented("setjmp");
-    },
-    longjmp: () => {
-      notImplemented("longjmp");
     },
 
     // struct passwd *getpwnam(const char *login);

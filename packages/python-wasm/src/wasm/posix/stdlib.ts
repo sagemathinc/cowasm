@@ -1,11 +1,21 @@
 import { notImplemented } from "./util";
+import debug from "debug";
+const log_jmp = debug("posix:jmp");
 
 export default function stdlib({ child_process, os, recv, send, fs }) {
   return {
-    // void longjmp(jmp_buf env, int val);
-    longjmp() {
-      notImplemented("longjmp");
+    setjmp: () => {
+      // Return 0 so it doesn't do the failure care of the setjmp.
+      log_jmp("STUB: setjmp - no op");
+      return 0;
     },
+
+    // void longjmp(jmp_buf env, int val);
+    longjmp: () => {
+      log_jmp("STUB: longjmp - no op");
+      return 0;
+    },
+
 
     // int getloadavg(double loadavg[], int nelem);
     getloadavg: (loadavgDoubleArrayPtr: number, nelem: number): number => {

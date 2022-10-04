@@ -106,12 +106,12 @@ ${DIST}/python/%.zip: ${PYTHON_WASM}/lib/dist/%.zip
 	cp $< $@
 
 
-${DIST}/python/termcap: ${PYTHON_WASM}/lib/dist/termcap
+${DIST}/termcap: ${PYTHON_WASM}/lib/dist/termcap
 	# Copy over the termcap file (termcap is also in python.zip, but it's useful to have outside for debug mode).
-	cp ${PYTHON_WASM}/lib/dist/termcap ${DIST}/python/termcap
+	cp ${PYTHON_WASM}/lib/dist/termcap ${DIST}/termcap
 
 .PHONY: python
-python: ${DIST}/python/python.wasm ${DATAFILES} ${PYTHON_PACKAGES} ${DIST}/python/termcap
+python: ${DIST}/python/python.wasm ${DATAFILES} ${PYTHON_PACKAGES} ${DIST}/termcap
 
 # ${DIST}/python/py/%.tar.xz: ${PACKAGES}/py-%/dist/wasm/%.tar.xz
 # 	mkdir -p ${DIST}/python/py

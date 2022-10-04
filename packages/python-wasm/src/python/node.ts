@@ -72,7 +72,7 @@ export async function init({
     env = {
       ...process.env,
       TERM,
-      TERMCAP: join(path, "termcap"),
+      TERMCAP: join(path, "..", "termcap"),
     };
   }
 

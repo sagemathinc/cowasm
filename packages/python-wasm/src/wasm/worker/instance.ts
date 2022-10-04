@@ -103,19 +103,21 @@ export default class WasmInstance extends EventEmitter {
       }
     } else {
       // TODO: solve problem in more generality, obviously!
-      // Convert array of strings to char**
+      // Convert array of strings to char** of null terminated
+      // strings, with a null char* at the end as well (common for clib functions)
       const ptrs: number[] = [];
       for (const s of str) {
         ptrs.push(this.send.string(s));
       }
       const len = ptrs.length;
-      const ptr = this.exports.c_malloc(len * 4); // sizeof(char*) = 4 in WASM.
-      const array = new Int32Array(this.memory.buffer, ptr, len);
+      const ptr = this.exports.c_malloc((len+1) * 4); // sizeof(char*) = 4 in WASM.
+      const array = new Int32Array(this.memory.buffer, ptr, len+1);
       let i = 0;
       for (const p of ptrs) {
         array[i] = p;
         i += 1;
       }
+      array[len] = 0; // final null pointer.
       try {
         // @ts-ignore
         r = f(len, ptr, ...args);

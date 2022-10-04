@@ -779,7 +779,12 @@ export default class WASI {
           //               this.stdinBuffer?.length
           //             } ${this.stdinBuffer?.toString()}`
           //           );
-          //console.log("fd_read", { fd, stats });
+//           console.log("fd_read", {
+//             fd,
+//             stats,
+//             IS_STDIN,
+//             getStdin: this.getStdin != null,
+//           });
           outer: for (const iov of getiovs(iovs, iovsLen)) {
             let r = 0;
             while (r < iov.byteLength) {

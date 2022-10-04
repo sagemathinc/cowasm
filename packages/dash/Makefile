@@ -45,10 +45,21 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/03-dash_main.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
+# NOTES:
+#   - -DJOBS=0 is to completely disable job control, which isn't supported for WASM yet.
+#      Right now the first place this fails is in savefd(int from, int ofd), where it uses
+#      a fcntl argument that is simply not implemented in WASI yet.  We will probably have
+#      to rewrite savefd to use a non-wasi fcntl that we implement.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&&	CONFIG_SITE=${BUILD_WASM}/config.site CC="zig cc -target wasm32-wasi" CFLAGS="-Oz -I${LIBEDIT}/wasm/include -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -I${PACKAGES}/posix-wasm/dist/wasm" ./configure --with-libedit --prefix=${DIST_WASM} --host=none \
+		&&	CONFIG_SITE=${BUILD_WASM}/config.site \
+			CC="zig cc -target wasm32-wasi" \
+			CFLAGS="-DJOBS=0 -Oz -I${LIBEDIT}/wasm/include -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -I${PACKAGES}/posix-wasm/dist/wasm" \
+			./configure \
+				--with-libedit \
+				--prefix=${DIST_WASM} \
+				--host=none \
 		&&	make -j8 \
 		&&  zig ar -crs libdash.a src/*.o src/*/*.o
 	mkdir -p ${DIST_WASM}/lib

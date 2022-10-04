@@ -1,8 +1,7 @@
 import wasmImport from "../wasm/import-node";
 import wasmImportNoWorker from "../wasm/worker/node";
-import { _init, wasm } from "./index";
+import { _init, wasm, terminal as _terminal } from "./index";
 import { join } from "path";
-export { wasm };
 
 const DASH_WASM = "dash.wasm";
 
@@ -20,8 +19,10 @@ export async function init({
   const env = {
     ...process.env,
     TERM,
-    TERMCAP: join(path, "termcap"),
+    TERMCAP: join(path, "..", "termcap"),
+    PS1: "dash$ ",
   };
+  //PS1: '$(pwd | sed "s|^$HOME|~|")$ '
 
   await _init({
     programName: process.env.PROGRAM_NAME ?? "/usr/bin/dash-wasm", // real name or made up name
@@ -31,3 +32,16 @@ export async function init({
     env,
   });
 }
+
+async function terminal({
+  argv = [process.env.PROGRAM_NAME ?? "/bin/dash", "-E"],
+  debug = false,
+}: {
+  argv?: string[];
+  debug?: boolean;
+} = {}): Promise<number> {
+  await init({ debug });
+  return await _terminal(argv);
+}
+
+export { terminal, wasm };

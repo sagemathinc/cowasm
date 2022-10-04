@@ -4,6 +4,13 @@ import type { FileSystemSpec } from "wasi-js";
 
 export let wasm: WasmInstance | undefined = undefined;
 
+export async function terminal(
+  argv: string[] = ["/bin/dash"]
+): Promise<number> {
+  if (wasm == null) throw Error("call init - wasm must be initialized");
+  return await wasm.terminal(argv);
+}
+
 type WASMImportFunction = (
   wasmSource: string,
   options: Options,
@@ -35,12 +42,4 @@ export async function _init({
   // critical to do this first, because otherwise process.cwd() gets
   // set to '/' (the default in WASM) when any posix call happens.
   await wasm.callWithString("chdir", process.cwd());
-
-  // This calls Py_Initialize and gets the Python interpreter initialized.
-  await wasm.callWithString("dash_init", ["/bin/dash"]);
-
-  // Wait until the standard libary zip filesystem is loaded, if necessary,
-  // since user may want to immediately run arbitrary code right when
-  // this function returns.
-  await wasm.waitUntilFsLoaded();
 }
