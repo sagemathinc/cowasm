@@ -783,12 +783,12 @@ export default class WASI {
           //               this.stdinBuffer?.length
           //             } ${this.stdinBuffer?.toString()}`
           //           );
-          //           console.log("fd_read", {
-          //             fd,
-          //             stats,
-          //             IS_STDIN,
-          //             getStdin: this.getStdin != null,
-          //           });
+//                     console.log("fd_read", {
+//                       fd,
+//                       stats,
+//                       IS_STDIN,
+//                       getStdin: this.getStdin != null,
+//                     });
           outer: for (const iov of getiovs(iovs, iovsLen)) {
             let r = 0;
             while (r < iov.byteLength) {
@@ -813,6 +813,7 @@ export default class WASI {
                     // properly work with libedit.   So we leave it alone and let
                     // our slightly patched libedit handle control+d.
                     rr = this.stdinBuffer.copy(iov);
+                    console.log("read ", rr, " characters ", this.stdinBuffer.toString());
                     if (rr == this.stdinBuffer.length) {
                       this.stdinBuffer = undefined;
                     } else {
