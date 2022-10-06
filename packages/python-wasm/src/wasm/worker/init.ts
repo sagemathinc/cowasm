@@ -30,6 +30,7 @@ export default function initWorker({
   let wasm: undefined | WasmInstance = undefined;
   parent.on("message", async (message) => {
     log("worker got message ", message);
+    console.log("web worker got message", message);
     switch (message.event) {
       case "init":
         try {

@@ -1,7 +1,7 @@
 import type { IOHandlerClass } from "./types";
 import debug from "debug";
 
-const log = debug("wasm:worker:io-using-atomics");
+const log = debug("wasm:worker:io-using-service-worker");
 
 const SIGNAL_CHECK_MS = 500;
 

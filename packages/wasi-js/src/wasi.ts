@@ -783,12 +783,12 @@ export default class WASI {
           //               this.stdinBuffer?.length
           //             } ${this.stdinBuffer?.toString()}`
           //           );
-          //                     console.log("fd_read", {
-          //                       fd,
-          //                       stats,
-          //                       IS_STDIN,
-          //                       getStdin: this.getStdin != null,
-          //                     });
+          //                               console.log("fd_read", {
+          //                                 fd,
+          //                                 stats,
+          //                                 IS_STDIN,
+          //                                 sleep: this.sleep != null,
+          //                               });
           outer: for (const iov of getiovs(iovs, iovsLen)) {
             let r = 0;
             while (r < iov.byteLength) {
@@ -1551,17 +1551,19 @@ export default class WASI {
 
               eventc += 1;
               if (userdata == BigInt(0) && WASI_EVENTTYPE_FD_READ == type) {
-                if (this.getStdin != null) {
-                  if (!this.stdinBuffer) {
-                    // Don't have anything in stdin, so
-                    // block waiting for *more* stdin
-                    // TODO: should respect timeout and signals...
-                    this.stdinBuffer = this.getStdin();
-                    this.lastStdin = new Date().valueOf();
-                  }
-                } else {
-                  this.shortPause();
-                }
+                console.log("poll_oneoff, stdin, pause");
+                this.shortPause();
+//                 if (this.getStdin != null) {
+//                   if (!this.stdinBuffer) {
+//                     // Don't have anything in stdin, so
+//                     // block waiting for *more* stdin
+//                     // TODO: should respect timeout and signals...
+//                     this.stdinBuffer = this.getStdin();
+//                     this.lastStdin = new Date().valueOf();
+//                   }
+//                 } else {
+//                   this.shortPause();
+//                 }
               }
 
               break;
@@ -1689,7 +1691,7 @@ export default class WASI {
       // otherwise typing feels laggy.
       // We can probably get rid of this entirely with a proper
       // wgetchar...
-      this.sleep(50);
+      this.sleep(1000);
     }
   }
 

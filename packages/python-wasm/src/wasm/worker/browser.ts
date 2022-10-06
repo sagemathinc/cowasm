@@ -12,7 +12,8 @@ import debug from "debug";
 import { EventEmitter } from "events";
 import posix from "./posix-browser";
 import IOHandlerUsingAtomics from "./io-using-atomics";
-import IOHandlerUsingServiceWorker from "./io-using-service-worker";
+//import IOHandlerUsingServiceWorker from "./io-using-service-worker";
+import IOHandlerUsingSleep from "./io-using-sleep";
 
 const log = debug("wasm:worker");
 
@@ -104,7 +105,7 @@ function main() {
     captureOutput: true,
     IOHandler: crossOriginIsolated
       ? IOHandlerUsingAtomics
-      : IOHandlerUsingServiceWorker,
+      : IOHandlerUsingSleep,
   });
 }
 
