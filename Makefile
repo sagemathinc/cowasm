@@ -196,7 +196,7 @@ clean-build:
 test: test-unused test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-f2c test-py-numpy
 .PHONY: test
 
-test-bench: python-wasm
+test-bench: python-wasm py-cython
 	cd packages/bench && make test
 
 # test building packages that aren't actually used yet, just to make sure they build

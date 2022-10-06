@@ -24,6 +24,7 @@ pypy3:
 test:
 	make zython-debug
 	make zython
+	cd src/cython && make all  # good test of cython
 
 .PHONY: clean
 clean:
