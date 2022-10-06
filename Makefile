@@ -82,7 +82,7 @@ test-posix-node: posix-node
 	cd packages/posix-node && make test
 
 python-wasm: packages/python-wasm/${BUILT}
-packages/python-wasm/${BUILT}: node wasi-js zig posix-wasm dylink posix-node libgit2
+packages/python-wasm/${BUILT}: node wasi-js zig posix-wasm dylink posix-node libgit2 dash
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 test-python-wasm: python-wasm

@@ -18,7 +18,7 @@
     "serve": "webpack serve",
     "prod": "NODE_ENV='production' webpack serve",
     "tsc": "npx tsc -w",
-    "strip": "find dist/ -type f -name \"*.wasm\" | xargs wasm-strip"
+    "strip": "find dist/ -type f -name \"*.wasm\" | xargs -n1 wasm-strip"
   },
   "repository": {
     "type": "git",

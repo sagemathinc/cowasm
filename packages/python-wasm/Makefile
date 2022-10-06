@@ -22,7 +22,7 @@ WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_
 
 TEST = ./test-zig.sh
 
-all: ${DIST}/.built bin hello python
+all: ${DIST}/.built bin hello python dash
 
 include ../build/Makefile-rules
 
@@ -203,3 +203,5 @@ ${DIST}/dash/dash.wasm: ${DASH_WASM_SOURCES} ${DASH_WASM_C}
 	mkdir -p ${DIST}/dash
 	mv src/interface.wasm ${DIST}/dash/dash.wasm
 
+.PHONY: dash
+dash: ${DIST}/dash/dash.wasm
