@@ -121,4 +121,18 @@ if (!isMainThread && parentPort != null) {
   });
 } else {
   log("running in the main thread (for debugging)");
+  // We enable raw input mode so that when wasi
+  // does fs.readSync(stdin, ...) it blocks and waits
+  // for an input character, rather than immediately
+  // giving an error or 0 characters, except when one
+  // is ready. This is much better than a loop with
+  // 100% cpu usage!
+  // NOTE
+  // - right now enableRawInput is only available on
+  //   some platforms, e.g., not on windows.
+  // - this is only NEEDED right now for dash; cPython
+  //   still works without this.
+  try {
+    posix.enableRawInput?.();
+  } catch (_err) {}
 }

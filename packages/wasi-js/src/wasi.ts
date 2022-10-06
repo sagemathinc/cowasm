@@ -828,22 +828,22 @@ export default class WASI {
                       "(cpu waiting for stdin: please define a way to sleep!) "
                     );
                   }
-                  while (rr == 0) {
-                    try {
-                      rr = fs.readSync(
-                        stats.real, // fd
-                        iov, // buffer
-                        r, // offset
-                        length, // length
-                        position // position
-                      );
-                    } catch (_err) {}
-                    if (rr == 0) {
-                      this.shortPause();
-                    } else {
-                      this.lastStdin = new Date().valueOf();
-                    }
+                  //while (rr == 0) {
+                  try {
+                    rr = fs.readSync(
+                      stats.real, // fd
+                      iov, // buffer
+                      r, // offset
+                      length, // length
+                      position // position
+                    );
+                  } catch (_err) {}
+                  if (rr == 0) {
+                    this.shortPause();
+                  } else {
+                    this.lastStdin = new Date().valueOf();
                   }
+                  //}
                 }
               } else {
                 rr = fs.readSync(

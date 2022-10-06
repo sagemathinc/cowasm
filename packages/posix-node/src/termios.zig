@@ -9,19 +9,41 @@ const clib = @cImport({
     @cInclude("unistd.h");
     @cInclude("wchar.h");
     @cInclude("locale.h");
+    @cInclude("fcntl.h");
 });
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "getChar", getChar);
+    try node.registerFunction(env, exports, "enableRawInput", enableRawInput);
 }
 
-const Errors = error{ GetAttr, SetAttr, SetLocale };
+const Errors = error{ GetAttr, GetFlags, SetFlags, SetAttr, SetLocale };
 
-// disables echo and icanon for the terminal and eenables the locale so
+fn makeStdinBlocking() Errors!void {
+    var flags = clib.fcntl(clib.STDIN_FILENO, clib.F_GETFL, @intCast(c_int, 0));
+    if (flags < 0) {
+        return Errors.GetFlags;
+    }
+    if (clib.fcntl(clib.STDIN_FILENO, clib.F_SETFL, flags & ~(clib.O_NONBLOCK)) < 0) {
+        return Errors.SetFlags;
+    }
+}
+
+fn enableRawInput(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    _enableRawInput() catch {
+        node.throwErrno(env, "enableRawInput - failed");
+    };
+    return null;
+}
+
+// disables echo and icanon for the terminal and enables the locale so
 // we can read a single wide character using getChar below.
 var enabled = false;
-fn enableRawMode() Errors!void {
+fn _enableRawInput() Errors!void {
     if (enabled) return;
+
+    try makeStdinBlocking();
 
     var raw: clib.termios = undefined;
     if (clib.tcgetattr(clib.STDIN_FILENO, &raw) != 0) {
@@ -44,12 +66,11 @@ fn enableRawMode() Errors!void {
     enabled = true;
 }
 
-// Use getChar when you do NOT have an interactive session (e.g., in a script) to
-// do a blocking read of a character.  This supports wide characters
-// (reading utf-8) in your locale.
+// Use getChar to do a blocking read of a character.  This supports wide characters
+// (reading utf-8) in your locale.  This changes properties of stdin to
+// different values than what Node.js supports!
 fn getChar(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
-    enableRawMode() catch |err| {
-        std.debug.print("Error enabling raw mode: {}\n", .{err});
+    _enableRawInput() catch {
         node.throwErrno(env, "getChar - failed to enable raw mode");
         return null;
     };

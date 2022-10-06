@@ -258,6 +258,11 @@ interface PosixFunctions {
   // The point is this is a useful building block for creating your own terminal.
   // See demo/terminal.js
   getChar: () => string;
+  // Call this and then you can do this in node, even at the interactive node.js prompt
+  // INPUT: "b = Buffer.alloc(10); a = require('fs').readSync(0, b)"
+  // YOU: type a *single character*, and then its put at the beginning of the buffer b!
+  // Of course this changes the defaults for stdin in node.js, which could cause problems.
+  enableRawInput: () => void;
 }
 
 export type Posix = Partial<PosixFunctions>;
