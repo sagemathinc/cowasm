@@ -1,7 +1,7 @@
 import "xterm/css/xterm.css";
 import { Terminal } from "xterm";
 import setTheme from "./theme";
-import {dash} from "python-wasm";
+import { dash } from "python-wasm";
 
 export default async function terminal(element: HTMLDivElement) {
   console.log("Calling dash.init...");
@@ -16,18 +16,15 @@ export default async function terminal(element: HTMLDivElement) {
   term.resize(128, 40);
   setTheme(term, "solarized-light");
   term.onData((data) => {
-    console.log("term.onData", data);
     dash.wasm.writeToStdin(data);
   });
   dash.wasm.on("stdout", (data) => {
-    console.log("got ", data);
     term.write(data);
   });
   dash.wasm.on("stderr", (data) => {
-    console.log("got ", data);
     term.write(data);
   });
   console.log("starting terminal");
-  const r = await dash.wasm.terminal();
+  const r = await dash.terminal();
   console.log("terminal terminated", r);
 }

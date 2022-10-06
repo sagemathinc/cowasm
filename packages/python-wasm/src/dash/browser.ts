@@ -17,9 +17,19 @@ export async function init({
     wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
     fs,
     env: {
-      TERMCAP: "/usr/lib/python3.11/termcap",
+      TERMCAP: "/termcap",
       TERM: "xterm-256color",
       PS1: "dash$ ",
     },
   });
+}
+
+export async function terminal({
+  argv = ["/bin/dash", "-E"], // *MUST* specify -E (emacs) or -V (vim) mode!  Or won't work at all.
+}: {
+  argv?: string[];
+} = {}): Promise<number> {
+  await init();
+  if (wasm == null) throw Error("bug");
+  return await wasm.terminal(argv);
 }
