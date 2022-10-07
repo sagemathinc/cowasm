@@ -121,7 +121,8 @@ if (!isMainThread && parentPort != null) {
   });
 } else {
   log("running in the main thread (for debugging)");
-  // We enable raw input mode so that when wasi
+  // We enable nonblocking stdin if at all possible
+  // so that when wasi
   // does fs.readSync(stdin, ...) it blocks and waits
   // for an input character, rather than immediately
   // giving an error or 0 characters, except when one
@@ -130,10 +131,17 @@ if (!isMainThread && parentPort != null) {
   // NOTE
   // - right now enableRawInput is only available on
   //   some platforms, e.g., not on windows.
-  // - this is only NEEDED right now for dash; cPython
-  //   still works without this.
   try {
-    //posix.makeStdinNonblocking?.();
-    posix.enableRawInput?.();
+    // node script [extra args]
+    // node has a really simple model for whether or not
+    // input is interactive
+    if (process.argv.length > 2) {
+      // input is NOT interactive shell; in this case we only
+      // set stdin nonblocking; this keeps buffering
+      posix.makeStdinNonblocking?.();
+    } else {
+      // input is interactive shell; we also disable buffering
+      posix.enableRawInput?.();
+    }
   } catch (_err) {}
 }
