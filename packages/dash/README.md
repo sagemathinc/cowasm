@@ -77,7 +77,19 @@ dash$
 
 ### [ ] Implement fork\+exec that is pure WASM and also works in the browser
 
-_**This is by far the most interesting and important task.**_
+_**This is by far the most interesting and important task. Plan:**_
+
+- \(done\) very basic vforkexec in nodejs only, which is easier since no io capture; no webworker
+- vforkexec from a webworker, with stdio working properly
+  - this is tricky because it needs to be proxied and just using child\_process doesn't work, since it's not directly using stdio.  
+- vforkexec in browser with 1 or 2 trivial non\-wasm in js commands
+- make vforkexec inherit environment properly
+- exec with pipes that do capture output in server
+- exec with pipes in browser 
+
+---
+
+#### further thoughts...
 
 Unwind the data structures and exactly what happens with this function
 and related ones:

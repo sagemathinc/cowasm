@@ -1,4 +1,7 @@
 /*
+TODO: refactor -- some of this code will go in a new python-wasm module and some will
+go in a dash-wasm module...
+
 extern int python_wasm_fork_exec(
              char *const exec_array[],
              char *const argv[],
@@ -24,10 +27,11 @@ extern int python_wasm_fork_exec(
 import debug from "debug";
 import { nativeToWasm } from "./errno";
 import constants from "./constants";
+import { join } from "path";
 
 const log = debug("posix:fork-exec");
 
-export default function fork_exec({ posix, recv, wasi }) {
+export default function fork_exec({ posix, recv, wasi, fs, child_process }) {
   function real_fd(virtual_fd: number): number {
     const data = wasi.FD_MAP.get(virtual_fd);
     if (data == null) {
@@ -181,6 +185,39 @@ export default function fork_exec({ posix, recv, wasi }) {
         log("error doing fork", err);
         return -1;
       }
+    },
+
+    // Similar but for dash shell:
+    // extern int zython_dash_vforkexec(char **argv, const char *path);
+    zython_dash_vforkexec: (argvPtr: number, pathPtr: number): number => {
+      if (child_process == null) {
+        console.log(
+          "ERROR: Running commands not yet implemented in this environment."
+        );
+        return 1;
+      }
+      const argv = recv.arrayOfStrings(argvPtr);
+      const path = recv.string(pathPtr);
+      const cmd = argv[0];
+//       if (cmd.includes("ls-js")) {
+//         console.log("ls-js output", fs.readdirSync("."));
+//         return 0;
+//       }
+      for (const dir of path.split(":")) {
+        const pathToCmd = join(dir, cmd);
+        if (fs.existsSync(pathToCmd)) {
+          try {
+            child_process.execFileSync(pathToCmd, argv.slice(1), {
+              stdio: "inherit",
+            });
+            return 0;
+          } catch (err) {
+            console.log(err);
+            return err.status;
+          }
+        }
+      }
+      return 1;
     },
   };
 }

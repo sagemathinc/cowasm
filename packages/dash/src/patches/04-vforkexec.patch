@@ -1,0 +1,15 @@
+--- native/src/jobs.c	2022-10-01 09:10:53.000000000 -0700
++++ wasm/src/jobs.c	2022-10-07 15:05:01.000000000 -0700
+@@ -958,8 +958,12 @@
+ 	return pid;
+ }
+ 
++extern int zython_dash_vforkexec(char **argv, const char *path);
+ struct job *vforkexec(union node *n, char **argv, const char *path, int idx)
+ {
++  exitstatus = zython_dash_vforkexec(argv, path);
++  return 0;
++
+ 	struct job *jp;
+ 	int pid;
+ 

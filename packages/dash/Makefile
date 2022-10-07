@@ -40,9 +40,11 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cp ${SRC}/extra.h ${BUILD_WASM}/src/bits/setjmp.h
 	ln -s ${SRC}/rebuild.sh ${BUILD_WASM}/rebuild.sh
 	echo "ac_cv_func_sigsetmask=no" > ${BUILD_WASM}/config.site
-	cd ${BUILD_WASM} && cat ${SRC}/patches/01-jobs-extra-include.patch | patch -p1
-	cd ${BUILD_WASM} && cat ${SRC}/patches/02-nodes-extra-include.patch | patch -p1
-	cd ${BUILD_WASM} && cat ${SRC}/patches/03-dash_main.patch | patch -p1
+	cd ${BUILD_WASM} \
+		&&	cat ${SRC}/patches/01-jobs-extra-include.patch | patch -p1 \
+		&&	cat ${SRC}/patches/02-nodes-extra-include.patch | patch -p1 \
+		&&	cat ${SRC}/patches/03-dash_main.patch | patch -p1 \
+		&&	cat ${SRC}/patches/04-vforkexec.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # NOTES:
