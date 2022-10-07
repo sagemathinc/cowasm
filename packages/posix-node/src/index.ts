@@ -263,6 +263,10 @@ interface PosixFunctions {
   // YOU: type a *single character*, and then its put at the beginning of the buffer b!
   // Of course this changes the defaults for stdin in node.js, which could cause problems.
   enableRawInput: () => void;
+  // Similar to enableRawInput but it only makes stdin non-blocking and does nothing else.
+  // This is precisely what you need when stdin is not interactive, e.g., when running
+  // a script, e.g., "zython a.py", which makes it so input('...') in python works perfectly.
+  makeStdinNonblocking: () => void;
 }
 
 export type Posix = Partial<PosixFunctions>;

@@ -1,11 +1,18 @@
-# DASH -- the Debian Almquist Shell -- for WebAssembly via Zython
+# ZASH -- a WebAssembly shell for Zython built on the Debian Almquist Shell
 
 I don't know if this will ever actually be usable, but I hope so.  We'll see.
 
+### Goal
 The goal is first to make it usable on the server via node.js, then later make a
 version that is also usable in the browser but can of course only run
 WebAssembly modules there. The latter will also naturally encourage us to port a
 suite of command line tools such as `ls` and `less`.
+
+### Why not bash or zsh
+
+The main reason to go with dash instead of bash or zsh is that the latter two are 10x more complicated. Really of course I'm tempted to just write a shell from scratch that is adapted to our unique needs here, but I think it'll be much better to _**start with dash**_ as a foundation, then build on that.  It probably has very little or no bugs, and the design and implementation is clearly very fast, due to early constraints.
+
+Another reason is that bash and zsh use readline or complicated built in terminal functionality, whereas dash uses `editline` only, which just happens to be exactly the line editing library I have got to fully work for Zython.
 
 ## Issues to fix in order to make this usable
 
@@ -110,3 +117,4 @@ dash$ Fri Oct  7 08:49:07 PDT 2022
 ### Create zash and zash-debug scripts, passing in all command line args
 
 This is easy.  Just do analogue of `zython-*` scripts.
+

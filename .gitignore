@@ -14,6 +14,7 @@ bin/python-native
 bin/zd
 bin/zdb
 bin/cython
+bin/zash*
 **/dist
 **/build
 **/node_modules

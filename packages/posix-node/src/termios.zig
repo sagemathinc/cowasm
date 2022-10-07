@@ -15,11 +15,12 @@ const clib = @cImport({
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "getChar", getChar);
     try node.registerFunction(env, exports, "enableRawInput", enableRawInput);
+    try node.registerFunction(env, exports, "makeStdinBlocking", makeStdinBlocking);
 }
 
 const Errors = error{ GetAttr, GetFlags, SetFlags, SetAttr, SetLocale };
 
-fn makeStdinBlocking() Errors!void {
+fn _makeStdinBlocking() Errors!void {
     var flags = clib.fcntl(clib.STDIN_FILENO, clib.F_GETFL, @intCast(c_int, 0));
     if (flags < 0) {
         return Errors.GetFlags;
@@ -28,6 +29,16 @@ fn makeStdinBlocking() Errors!void {
         return Errors.SetFlags;
     }
 }
+
+
+fn makeStdinBlocking(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    _makeStdinBlocking() catch {
+        node.throwErrno(env, "makeStdinBlocking - failed");
+    };
+    return null;
+}
+
 
 fn enableRawInput(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     _ = info;
@@ -43,7 +54,7 @@ var enabled = false;
 fn _enableRawInput() Errors!void {
     if (enabled) return;
 
-    try makeStdinBlocking();
+    try _makeStdinBlocking();
 
     var raw: clib.termios = undefined;
     if (clib.tcgetattr(clib.STDIN_FILENO, &raw) != 0) {

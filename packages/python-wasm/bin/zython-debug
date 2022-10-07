@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 if [ x"$1" = x"python.wasm" ]; then
     # The python wasm test suite puts "python.wasm" as the first argument, which we don't need.
@@ -20,9 +20,5 @@ if [ x"$VERSION" = x"v14." ]; then
     EXP_OPT="--experimental-wasm-bigint"
 fi
 
-if [ $# -eq 0 ]; then
-    node $EXP_OPT -r "$SCRIPTPATH"/../dist/python/node-terminal-debug.js
-else
-    node $EXP_OPT "$SCRIPTPATH"/../dist/python/node-terminal-debug.js "$@"
-fi
+node $EXP_OPT "$SCRIPTPATH"/../dist/python/node-terminal-debug.js "$@"
 

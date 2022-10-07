@@ -20,12 +20,12 @@ export async function init({
     ...process.env,
     TERM,
     TERMCAP: join(path, "..", "termcap"),
-    PS1: "dash$ ",
+    PS1: "zash$ ",
   };
-  //PS1: '$(pwd | sed "s|^$HOME|~|")$ '
+  //PS1: 'zash $(pwd | sed "s|^$HOME|~|")$ '
 
   await _init({
-    programName: process.env.PROGRAM_NAME ?? "/bin/dash-wasm", // real name or made up name
+    programName: process.env.PROGRAM_NAME ?? "/bin/zash", // real name or made up name
     wasmSource: join(path, DASH_WASM),
     wasmImport: debug ? wasmImportNoWorker : wasmImport,
     fs: [{ type: "native" }],
@@ -34,7 +34,7 @@ export async function init({
 }
 
 async function terminal({
-  argv = [process.env.PROGRAM_NAME ?? "/bin/dash", "-E"],
+  argv = [process.env.PROGRAM_NAME ?? "/bin/zash", "-V"],
   debug = false,
 }: {
   argv?: string[];

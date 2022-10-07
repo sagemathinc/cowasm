@@ -12,14 +12,14 @@ export async function init({
   const fs: FileSystemSpec[] = [{ type: "dev" }];
 
   await _init({
-    programName: "/bin/dash-wasm", // made up name is better than blank (?)
+    programName: "/bin/zash", // made up name is better than blank (?)
     wasmSource: wasmUrl,
     wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
     fs,
     env: {
       TERMCAP: "/termcap",
       TERM: "xterm-256color",
-      PS1: "dash$ ",
+      PS1: "zash$ ",
     },
   });
 }

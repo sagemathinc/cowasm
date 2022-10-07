@@ -133,6 +133,7 @@ if (!isMainThread && parentPort != null) {
   // - this is only NEEDED right now for dash; cPython
   //   still works without this.
   try {
+    //posix.makeStdinNonblocking?.();
     posix.enableRawInput?.();
   } catch (_err) {}
 }
