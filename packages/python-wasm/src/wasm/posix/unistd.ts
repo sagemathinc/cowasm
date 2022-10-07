@@ -280,7 +280,9 @@ export default function unistd({
     },
 
     vfork: () => {
-      notImplemented("vfork");
+      // "this system call behaves identically to the fork(2) system call, except without
+      // calling any handlers registered with pthread_atfork(2)."
+      return unistd.fork();
     },
 
     forkpty: () => {
