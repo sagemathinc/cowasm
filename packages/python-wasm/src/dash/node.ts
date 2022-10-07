@@ -34,7 +34,7 @@ export async function init({
 }
 
 async function terminal({
-  argv = [process.env.PROGRAM_NAME ?? "/bin/zash", "-V"],
+  argv = [process.env.PROGRAM_NAME ?? "/bin/zash", "-E"],
   debug = false,
 }: {
   argv?: string[];

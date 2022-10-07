@@ -15,6 +15,7 @@ pub const constants = .{
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "wait", wait_impl);
+    try node.registerFunction(env, exports, "wait3", wait3_impl);
     try node.registerFunction(env, exports, "waitpid", waitpid);
 }
 
@@ -27,6 +28,23 @@ fn wait_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_va
         return null;
     }
     var object = node.createObject(env, "return status and value") catch return null;
+    node.setNamedProperty(env, object, "wstatus", node.create_i32(env, wstatus, "wstatus") catch return null, "wstatus") catch return null;
+    node.setNamedProperty(env, object, "ret", node.create_i32(env, ret, "return value") catch return null, "return value") catch return null;
+    return object;
+}
+
+// wait3: (options: number) => {ret:number; wstatus: number; /* rusage not implemented yet */ }
+// pid_t wait3(int *stat_loc, int options, struct rusage *rusage);
+fn wait3_impl(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const options = node.i32FromValue(env, argv[0], "options") catch return null;
+    var wstatus: c_int = undefined;
+    const ret = wait.wait3(&wstatus, options, null);
+    if (ret == -1) {
+        node.throwErrno(env, "error calling wait.wait3");
+        return null;
+    }
+    var object = node.createObject(env, "return pid and wstatus") catch return null;
     node.setNamedProperty(env, object, "wstatus", node.create_i32(env, wstatus, "wstatus") catch return null, "wstatus") catch return null;
     node.setNamedProperty(env, object, "ret", node.create_i32(env, ret, "return value") catch return null, "return value") catch return null;
     return object;

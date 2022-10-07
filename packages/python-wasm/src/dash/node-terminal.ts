@@ -4,7 +4,7 @@ import { init, terminal } from "./node";
 async function main() {
   await init({ debug: false });
   const r = await terminal({
-    argv: [process.env.PROGRAM_NAME ?? "/bin/zash", "-V"].concat(
+    argv: [process.env.PROGRAM_NAME ?? "/bin/zash", "-E"].concat(
       process.argv.slice(2)
     ),
   });

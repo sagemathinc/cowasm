@@ -7,7 +7,7 @@ I don't know if this will ever actually be usable, but I hope so.  We'll see.
 The goal is first to make it usable on the server via node.js, then later make a
 version that is also usable in the browser but can of course only run
 WebAssembly modules there. The latter will also naturally encourage us to port a
-suite of command line tools such as `ls` and `less,` probably using [https://github.com/DiegoMagdaleno/BSDCoreUtils.](https://github.com/DiegoMagdaleno/BSDCoreUtils) 
+suite of command line tools such as `ls` and `less,` possibly using https://github.com/DiegoMagdaleno/BSDCoreUtils, but maybe using https://github.com/mirror/busybox.
 
 ### Why not bash or zsh?
 
@@ -75,7 +75,9 @@ dash$ Uncaught RuntimeError: unreachable
 dash$ 
 ```
 
-### [ ] Implement fork+exec that is pure WASM and works in the browser
+### [ ] Implement fork\+exec that is pure WASM and also works in the browser
+
+_**This is by far the most interesting and important task.**_
 
 Unwind the data structures and exactly what happens with this function
 and related ones:
@@ -87,8 +89,10 @@ struct job *vforkexec(union node *n, char **argv, const char *path, int idx)
 and make a version that doesn't call fork or exec and instead using the
 runtime to call other WebAssembly modules.
 
-NOTE: I'm aware that pure fork and pure exec are impossible. But the combination
+NOTE: I'm aware that pure fork and pure exec are impossible in a browser. But the combination
 is what is really used, and I believe that is possible.
+
+I think the key to this is implemented enough of a flakie posix\-node to help me understand what is going on in terms of input, output, etc., and what dash **expects.**  Then designing an API to do that.
 
 ### [ ] UTF-8 support
 
@@ -126,7 +130,38 @@ dash$ # immediately
 
 Here sleep appears to immediately return, but is running.
 
+### [ ] make history persist between sessions
+
+The history needs to be saved to a file and loaded...
+
+### [ ] make it possible load and run a script:
+
+```sh
+~/zython/packages/python-wasm$ echo 'echo "hello"' > a.sh
+~/zython/packages/python-wasm$ cat a.sh
+echo "hello"
+~/zython/packages/python-wasm$ zash-debug a.sh
+/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/python-wasm/bin/zash-debug: 0: 4: Invalid argument
+wasm://wasm/008ca392:1
+
+
+RuntimeError: unreachable
+...
+
+~/zython/packages/python-wasm$ zash-debug
+zash$ . a.sh
+/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/python-wasm/bin/zash-debug: 1: .: a.sh: not found
+wasm://wasm/008ca392:1
+
+
+RuntimeError: unreachable
+```
+
 ### [x] Create zash and zash-debug scripts, passing in all command line args
 
 This is easy.  Just do analogue of `zython-*` scripts.
+
+## Related projects
+
+- Something like this was attempted many years ago using busybox and emscripten: https://github.com/tbfleming/em-shell
 

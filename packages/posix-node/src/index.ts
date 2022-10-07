@@ -213,6 +213,11 @@ interface PosixFunctions {
     wstatus: number;
     ret: number;
   };
+  wait3: (options: number) => {
+    wstatus: number;
+    ret: number; // pid of child if all goes well
+    // returning rusage data is NOT implemented.
+  };
 
   // options is an or of these: constants.WNOHANG, constants.WUNTRACED, constants.WCONTINUED
   waitpid: (
