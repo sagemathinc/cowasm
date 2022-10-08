@@ -83,6 +83,7 @@ _**This is by far the most interesting and important task. Plan:**_
 - vforkexec from a webworker, with stdio working properly
   - this is tricky because it needs to be proxied and just using child\_process doesn't work, since it's not directly using stdio.  
 - vforkexec in browser with 1 or 2 trivial non\-wasm in js commands
+  - then with actual ls running via wasm!
 - make vforkexec inherit environment properly
 - exec with pipes that do capture output in server
 - exec with pipes in browser 
@@ -145,6 +146,10 @@ Here sleep appears to immediately return, but is running.
 ### [ ] make history persist between sessions
 
 The history needs to be saved to a file and loaded...
+
+Related to this, make it so typing "history" shows the history. I.e., implement a builtin.
+
+Another thing, make it so `!v` runs the last command that starts with "v", etc.
 
 ### [ ] make it possible load and run a script:
 
