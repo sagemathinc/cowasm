@@ -132,5 +132,7 @@ size_t strlcpy(char *, const char *, size_t);
 #endif
 
 #include "posix-wasm.h"
+// The following constants are all copied from grepping the musl/wasi headers.
 #define TIOCGWINSZ       0x5413
 #define S_ISTXT         S_ISVTX
+#define LINE_MAX 4096
