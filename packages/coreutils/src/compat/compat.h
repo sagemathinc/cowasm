@@ -133,3 +133,4 @@ size_t strlcpy(char *, const char *, size_t);
 
 #include "posix-wasm.h"
 #define TIOCGWINSZ       0x5413
+#define S_ISTXT         S_ISVTX
