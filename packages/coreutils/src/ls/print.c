@@ -342,9 +342,10 @@ printtype(mode_t mode)
 	case S_IFLNK:
 		(void)putchar('@');
 		return (1);
-	case S_IFSOCK:
-		(void)putchar('=');
-		return (1);
+// In WASI S_IFIFO  = S_IFSOCK!
+// 	case S_IFSOCK:
+// 		(void)putchar('=');
+// 		return (1);
 	}
 	if (mode & (S_IXUSR | S_IXGRP | S_IXOTH)) {
 		(void)putchar('*');
