@@ -15,6 +15,12 @@ packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2
 test-cpython: cpython python-wasm
 	cd packages/cpython && make test
 
+coreutils: packages/coreutils/${BUILT}
+packages/coreutils/${BUILT}: zig fts posix-wasm
+	cd packages/coreutils && make -j4
+.PHONY: coreutils
+
+
 dash: packages/dash/${BUILT}
 packages/dash/${BUILT}: zig libedit
 	cd packages/dash && make all
@@ -32,6 +38,11 @@ dylink: packages/dylink/${BUILT}
 packages/dylink/${BUILT}: node zig posix-wasm cpython lzma
 	cd packages/dylink && make all
 .PHONY: dylink
+
+fts: packages/fts/${BUILT}
+packages/fts/${BUILT}: zig posix-wasm
+	cd packages/fts && make -j4
+.PHONY: fts
 
 test-dylink: dylink
 	cd packages/dylink && make test
@@ -69,9 +80,8 @@ packages/openssl/${BUILT}: zig posix-wasm
 .PHONY: openssl
 
 posix-node: packages/posix-node/${BUILT}
-# note -- I tried doing 'make -j4' for posix-node and sometimes got segfaults on macos (bug in zig).
 packages/posix-node/${BUILT}: zig node
-	cd packages/posix-node && make all
+	cd packages/posix-node && make -j4 all
 .PHONY: posix-node
 
 posix-wasm: packages/posix-wasm/${BUILT}
@@ -200,7 +210,7 @@ test-bench: python-wasm py-cython
 	cd packages/bench && make test
 
 # test building packages that aren't actually used yet, just to make sure they build
-test-unused: ncurses dash lua viz
+test-unused: ncurses dash lua viz coreutils
 .PHONEY: test-unused
 
 # Run tests suites of Python libraries that we support.  These can be VERY long, which is why

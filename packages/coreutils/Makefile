@@ -9,23 +9,19 @@ all: wasm
 
 include ../build/Makefile-rules
 
-###
-# WASM
-###
+CC = zig cc -target wasm32-wasi
+CFLAGS = -Oz -I${POSIX_WASM} -I${SRC}/compat -I${FTS}/include -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_MMAN
+LDFLAGS = ${FTS}/lib/libfts.a -lc
 
-${BUILD_WASM}/.source:: src/*
+${BUILD_WASM}/.source:: src/**
 	rm -rf ${BUILD_WASM}
 	mkdir -p ${BUILD_WASM}
 	cp -r src/* ${BUILD_WASM}
 	touch ${BUILD_WASM}/.source
 
-CC = zig cc -target wasm32-wasi
-CFLAGS = -Oz -I${POSIX_WASM} -I${SRC}/compat -I${FTS}/include -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_MMAN
-LDFLAGS = ${FTS}/lib/libfts.a -lc
-
-${DIST_WASM}/.built: ${BUILD_WASM}/.source
-	rm -rf ${DIST_WASM}
+${DIST_WASM}/bin/%: ${SRC}/utils/%/*.c | ${BUILD_WASM}/.source
 	mkdir -p ${DIST_WASM}/bin
-	cd ${BUILD_WASM}/utils/ls && ${CC} ${CFLAGS} ${LDFLAGS} *.c -o ls && cp -v ls ${DIST_WASM}/bin/
-	cd ${BUILD_WASM}/utils/cp && ${CC} ${CFLAGS} ${LDFLAGS} *.c -o cp && cp -v cp ${DIST_WASM}/bin/
+	${CC} ${CFLAGS} ${LDFLAGS} $^ -o $@
+
+${DIST_WASM}/.built: ${DIST_WASM}/bin/ls ${DIST_WASM}/bin/cp
 	touch ${BUILD_WASM}/.source
