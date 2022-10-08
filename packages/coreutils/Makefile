@@ -23,5 +23,5 @@ ${DIST_WASM}/bin/%: ${SRC}/utils/%/*.c | ${BUILD_WASM}/.source
 	mkdir -p ${DIST_WASM}/bin
 	${CC} ${CFLAGS} ${LDFLAGS} $^ -o $@
 
-${DIST_WASM}/.built: ${DIST_WASM}/bin/ls ${DIST_WASM}/bin/cp
+${DIST_WASM}/.built: ${DIST_WASM}/bin/basename ${DIST_WASM}/bin/cat ${DIST_WASM}/bin/cp ${DIST_WASM}/bin/ls 
 	touch ${BUILD_WASM}/.source
