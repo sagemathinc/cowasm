@@ -25,5 +25,6 @@ LDFLAGS = ${FTS}/lib/libfts.a -lc
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.source
 	rm -rf ${DIST_WASM}
+	mkdir -p ${DIST_WASM}/bin
 	cd ${BUILD_WASM}/ls \
-		&&	${CC} ${CFLAGS} ${LDFLAGS} *.c -o ls
+		&&	${CC} ${CFLAGS} ${LDFLAGS} *.c -o ls && cp -v ls ${DIST_WASM}/bin/ls
