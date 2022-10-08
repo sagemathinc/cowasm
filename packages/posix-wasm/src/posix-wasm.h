@@ -354,5 +354,11 @@ int fchdir(int fd);
 
 #define SA_SIGINFO 4
 
+// WASI can't set time, but things will try so these should be
+// implemented as functions that display an error.  They are part of POSIX.
+// They could work on a server though, if you're running as root!  I did
+// implement related things in posix-node, I think.
+int settimeofday(const struct timeval *, const struct timezone *);
+int adjtime (const struct timeval *, struct timeval *);
 
 #endif
