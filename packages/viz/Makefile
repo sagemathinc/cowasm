@@ -12,6 +12,7 @@ TARBALL = ${UPSTREAM}/viz-${VERSION}.tar.gz
 NCURSES=${PACKAGES}/ncurses/dist/
 TERMCAP=${PACKAGES}/termcap/dist/
 LUA=${PACKAGES}/lua/dist/
+POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 
 all: native wasm
 
@@ -53,7 +54,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	CC="zig cc -target wasm32-wasi" \
 			CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${NCURSES}/wasm/include -I${NCURSES}/wasm/include/ncurses -I${LUA}/wasm/include" \
-			LDFLAGS="${LUA}/wasm/lib/liblua.a ${NCURSES}/wasm/lib/libncurses.a ${TERMCAP}/wasm/lib/libtermcap.a" \
+			LDFLAGS="${LUA}/wasm/lib/liblua.a ${NCURSES}/wasm/lib/libncurses.a ${TERMCAP}/wasm/lib/libtermcap.a ${POSIX_WASM}/libposix.a -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal -lc" \
 			./configure --prefix=${DIST_WASM} \
 		&&	make -j8 viz
 	mkdir -p ${DIST_WASM}/bin

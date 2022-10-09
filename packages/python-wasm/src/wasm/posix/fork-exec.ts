@@ -61,8 +61,6 @@ export default function fork_exec({
       });
       return 0;
     } catch (err) {
-      fs.writeSync(2, `${err}\n`);
-      console.log(err);
       return err.status;
     }
   }
@@ -245,7 +243,7 @@ export default function fork_exec({
         }
       }
       if (!argv[0].includes("/") || !fs.existsSync(argv[0])) {
-        fs.writeSync(2, `${argv[0]}: not found\n`);
+        console.error(`${argv[0]}: not found\n`);
         // couldn't find it
         return 127;
       }
@@ -256,7 +254,7 @@ export default function fork_exec({
         return runNative(argv);
       }
       // can't run
-      fs.writeSync(2, `${argv[0]}: cannot execute binary file\n`);
+      console.error(`${argv[0]}: cannot execute binary file\n`);
       return 127;
     },
   };

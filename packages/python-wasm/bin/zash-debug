@@ -7,11 +7,5 @@ export SCRIPTPATH="$( cd -- "$(dirname "`readlink -f $0`")" >/dev/null 2>&1 ; pw
 
 # node-terminal-debug disables workers. This makes debug logging much easier.
 
-VERSION=`node --version | cut -c 1-4`
-if [ x"$VERSION" = x"v14." ]; then
-    # node 14 needs this option; newer versions of node can't have it.
-    EXP_OPT="--experimental-wasm-bigint"
-fi
-
 node $EXP_OPT "$SCRIPTPATH"/../dist/dash/node-terminal-debug.js "$@"
 

@@ -188,17 +188,26 @@ async function doWasmImport({
       throw Error("args must have length at least 1");
     }
     //console.log("wasm run", args);
-    const _wasi = new WASI({ ...opts, args });
+    let exitcode = 0;
+    const _bindings = {
+      ...bindings,
+      exit: (_exitcode: number) => {
+        // this is a callback, but it is called *synchronously*.
+        exitcode = _exitcode;
+      },
+    };
+    const _wasi = new WASI({ ...opts, bindings: _bindings, args });
     const _wasmOpts = { ...wasmOpts };
     _wasmOpts.wasi_snapshot_preview1 = _wasi.wasiImport;
-    const instance = importWebAssemblySync(path, _wasmOpts);
-    if (instance.exports.__wasm_call_ctors != null) {
-      (instance.exports.__wasm_call_ctors as CallableFunction)();
+    let instance;
+    try {
+      instance = importWebAssemblySync(path, _wasmOpts);
+    } catch (err) {
+      console.error(err);
+      return 1;
     }
-    console.log("starting");
     _wasi.start(instance);
-    console.log("done");
-    return 0;
+    return exitcode;
   }
 
   // Note, we do things like define getcwd above rather than setting
