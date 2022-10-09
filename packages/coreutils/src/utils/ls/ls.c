@@ -118,8 +118,8 @@ ls_main(int argc, char *argv[])
 	}
 
 	termwidth = 0;
-	if ((p = getenv("COLUMNS")) != NULL)
-		termwidth = strtonum(p, 1, INT_MAX, NULL);
+  if ((p = getenv("COLUMNS")) != NULL && *p != '\0')
+		termwidth = strtoll(p, NULL, 10);
 	if (termwidth == 0 && ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) == 0 &&
 	    win.ws_col > 0)
 		termwidth = win.ws_col;

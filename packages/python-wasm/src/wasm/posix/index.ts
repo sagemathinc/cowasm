@@ -115,8 +115,9 @@ export default function posix(context: Context) {
 
   // It's critical to ensure the directories of the host env is the same as
   // the WASM env, if meaningful or possible.  This only matters right now
-  // under node.js, but is really critical there.  Thus we wrap all posix calls
-  // int his below.
+  // under node.js, but is really critical there.  Thus we wrap *all* posix calls
+  // in this syncdir below.
+  //    TODO: optimize.  This seems dangerously expensive.
   let syncdir;
   if (context.posix.chdir != null) {
     syncdir = () => {

@@ -14,6 +14,7 @@ export default function unistd({
   wasi,
   posix,
   memory,
+  callFunction,
 }) {
   let login: number | undefined = undefined;
 
@@ -541,6 +542,16 @@ export default function unistd({
         return -1;
       }
       return 0;
+    },
+
+    // just like chdir, but uses a file descriptor. WASI doesn't have it, so we
+    // have to add it.
+    fchdir: (fd: number): number => {
+      const dir = wasi.FD_MAP.get(fd)?.path;
+      if (!dir) {
+        throw Error("invalid file descriptor");
+      }
+      return callFunction("chdir", dir);
     },
   };
 

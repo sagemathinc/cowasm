@@ -11,7 +11,7 @@ include ../build/Makefile-rules
 
 CC = zig cc -target wasm32-wasi
 CFLAGS = -Oz -I${POSIX_WASM} -I${SRC}/compat -I${FTS}/include -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_MMAN
-LDFLAGS = ${FTS}/lib/libfts.a -lc
+LDFLAGS = ${FTS}/lib/libfts.a ${POSIX_WASM}/libposix.a -lc
 
 ${BUILD_WASM}/.source:: src/**
 	rm -rf ${BUILD_WASM}
@@ -21,7 +21,7 @@ ${BUILD_WASM}/.source:: src/**
 
 ${DIST_WASM}/bin/%: ${SRC}/utils/%/*.c | ${BUILD_WASM}/.source
 	mkdir -p ${DIST_WASM}/bin
-	${CC} ${CFLAGS} ${LDFLAGS} $^ -o $@
+	${CC} ${CFLAGS} ${LDFLAGS} ${SRC}/compat/*.c $^ -o $@
 
 ${DIST_WASM}/bin/chown: ${DIST_WASM}/bin/chmod
 	cd ${DIST_WASM}/bin && ln -sf chmod chown

@@ -12,12 +12,15 @@ DEPS = $(shell find src -type f \( -iname '*.h' \))
 CFLAGS = -Oz
 
 ${BUILD_WASM}/%.o: ${SRC}/%.c ${DEPS}
-	mkdir -p ${BUILD_WASM}/lib/builtins ${BUILD_WASM}/lib/legacy
+	mkdir -p `dirname $@`
 	zig-fPIC cc -c -o $@ $< ${CFLAGS}
 
 BUILTINS = ${BUILD_WASM}/lib/builtins
 LEGACY = ${BUILD_WASM}/lib/legacy
-OBJECTS = ${BUILD_WASM}/posix-wasm.o ${BUILD_WASM}/threads.o ${BUILTINS}/muldc3.o ${BUILTINS}/mulsc3.o ${BUILTINS}/multc3.o ${LEGACY}/err.o
+OBJECTS = ${BUILD_WASM}/posix-wasm.o ${BUILD_WASM}/threads.o \
+	${BUILTINS}/muldc3.o ${BUILTINS}/mulsc3.o ${BUILTINS}/multc3.o \
+	${LEGACY}/err.o \
+	${BUILD_WASM}/lib/stdlib/qsort_nr.o
 
 ${BUILD_WASM}/libposix.a: ${OBJECTS}
 	zig ar -crs ${BUILD_WASM}/libposix.a ${OBJECTS}

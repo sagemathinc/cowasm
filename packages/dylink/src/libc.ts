@@ -80,28 +80,12 @@ void qsort_r(void *base, size_t nmemb, size_t size,
 char *strchrnul(const char *, int);
 extern char *__wasilibc_cwd;
 extern char **__wasilibc_environ;
-void __qsort_r (void *, size_t, size_t, int (*)(const void *, const void *, void *), void *);
 
 int __stack_chk_guard;
 void __stack_chk_fail(void);
 
 
 void *mempcpy(void *, const void *, size_t);
-
-// qsort is completely missing from Zig's musl, but it is assumed
-// to be there by wasi. This breaks things.  Fortnately, zig has
-// qsort_r, and it is trivial to implement qsort in terms of qsort_r:
-// Unfortunately, I can't get this to work from dynamically loaded
-// libraries because calling the function pointer doesn't work.
-
-typedef int (*qsort_compar)(const void *, const void *);
-int qsort_r_compar(const void * a, const void * b, void * compar) {
-  return (*(qsort_compar)compar)(a,b);
-}
-void qsort(void *base, size_t nmemb, size_t size,
-           int (*compar)(const void *, const void *)) {
-  qsort_r(base, nmemb, size, qsort_r_compar, compar);
-}
 
 int mkstemp(char *template);
 void __SIG_IGN(int);
@@ -392,7 +376,6 @@ __assert_fail
 sigaction
 signal
 __SIG_IGN
-__qsort_r
 __ctype_get_mb_cur_max
 _CLOCK_MONOTONIC
 _CLOCK_PROCESS_CPUTIME_ID
@@ -1156,6 +1139,7 @@ vswprintf
 vswscanf
 vwprintf
 vwscanf
+warnx
 wcpcpy
 wcpncpy
 wcrtomb
