@@ -37,6 +37,9 @@ UTILS = ${DIST_WASM}/bin/basename ${DIST_WASM}/bin/cat ${DIST_WASM}/bin/chgrp ${
 ${DIST_WASM}/.built: ${UTILS}
 	touch ${BUILD_WASM}/.source
 
+format:
+	find src/ -iname *.h -o -iname *.c | xargs clang-format -i --sort-includes=0
+
 strip:
 	find  ${DIST_WASM}/bin -type f | xargs -n1 wasm-strip
 .PHONY: strip

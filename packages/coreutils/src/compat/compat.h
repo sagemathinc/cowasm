@@ -7,8 +7,8 @@
 
 /*
  * Reference from Apple's archived OS X (now macOS documentation
- * we need to import this else we are going to get a "declaration expected at line
- * 29"
+ * we need to import this else we are going to get a "declaration expected at
+ * line 29"
  *
  * including types.h allows us to fix erros in the mget declaration
  *
@@ -24,7 +24,7 @@ we need to import this else we are going to get a "declaration expected at line
 #define group_from_gid group_from_gid_orig
 #include <grp.h>
 #include <pwd.h>
-#undef  user_from_uid
+#undef user_from_uid
 #undef group_from_gid
 #else
 #include <unistd.h>
@@ -33,7 +33,6 @@ we need to import this else we are going to get a "declaration expected at line
 #include <sys/types.h>
 #include <sys/stat.h>
 #endif
-
 
 /* setmode.c */
 mode_t getmode(const void *, mode_t);
@@ -98,7 +97,6 @@ size_t strlcat(char *, const char *, size_t);
 size_t strlcpy(char *, const char *, size_t);
 #endif
 
-
 /*
  * MAXBSIZE does not exist on Linux  however, since Darwin is an OS
  * that derives from FreesBD this does exist on Darwin, so we dont
@@ -132,6 +130,6 @@ extern const char *__progname;
 
 #include "posix-wasm.h"
 // The following constants are all copied from grepping the musl/wasi headers.
-#define TIOCGWINSZ       0x5413
-#define S_ISTXT         S_ISVTX
+#define TIOCGWINSZ 0x5413
+#define S_ISTXT S_ISVTX
 #define LINE_MAX 4096

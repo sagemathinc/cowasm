@@ -23,35 +23,33 @@
 
 extern int f_nonprint;
 
-int
-mbsprint(const char *mbs, int print)
-{
-	wchar_t	  wc;
-	int	  len;  /* length in bytes of UTF-8 encoded string */
-	int	  width;  /* display width of a single Unicode char */
-	int	  total_width;  /* display width of the whole string */
+int mbsprint(const char *mbs, int print) {
+  wchar_t wc;
+  int len;         /* length in bytes of UTF-8 encoded string */
+  int width;       /* display width of a single Unicode char */
+  int total_width; /* display width of the whole string */
 
-	for (total_width = 0; *mbs != '\0'; mbs += len) {
-		if ((len = mbtowc(&wc, mbs, MB_CUR_MAX)) == -1) {
-			(void)mbtowc(NULL, NULL, MB_CUR_MAX);
-			if (print)
-				putchar(f_nonprint ? '?' : *mbs);
-			total_width++;
-			len = 1;
-		} else if ((width = wcwidth(wc)) == -1) {
-			if (print) {
-				if (f_nonprint)
-					putchar('?');
-				else
-					fwrite(mbs, 1, len, stdout);
-			}
-			total_width++;
-		} else {
-			if (print)
-				fwrite(mbs, 1, len, stdout);
-			total_width += width;
-		}
-	}
-	return total_width;
+  for (total_width = 0; *mbs != '\0'; mbs += len) {
+    if ((len = mbtowc(&wc, mbs, MB_CUR_MAX)) == -1) {
+      (void)mbtowc(NULL, NULL, MB_CUR_MAX);
+      if (print)
+        putchar(f_nonprint ? '?' : *mbs);
+      total_width++;
+      len = 1;
+    } else if ((width = wcwidth(wc)) == -1) {
+      if (print) {
+        if (f_nonprint)
+          putchar('?');
+        else
+          fwrite(mbs, 1, len, stdout);
+      }
+      total_width++;
+    } else {
+      if (print)
+        fwrite(mbs, 1, len, stdout);
+      total_width += width;
+    }
+  }
+  return total_width;
 }
 #endif

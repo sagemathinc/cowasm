@@ -8,18 +8,15 @@
 #define LIBCOMPAT_IS_PATHNAME_SEPARATOR(c) ((c) == '/')
 #endif
 
+void setprogname(const char *progname) {
+  size_t i;
 
-void
-setprogname(const char *progname)
-{
-    size_t i;
-
-    for (i = strlen(progname); i > 0; i--) {
-        if (LIBCOMPAT_IS_PATHNAME_SEPARATOR(progname[i - 1])) {
-            __progname = progname + i;
-            return;
-        }
+  for (i = strlen(progname); i > 0; i--) {
+    if (LIBCOMPAT_IS_PATHNAME_SEPARATOR(progname[i - 1])) {
+      __progname = progname + i;
+      return;
     }
+  }
 
-    __progname = progname;
+  __progname = progname;
 }

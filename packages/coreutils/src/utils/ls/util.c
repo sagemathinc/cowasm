@@ -46,25 +46,21 @@
 #include "extern.h"
 
 #ifdef SMALL
-int
-mbsprint(const char *name, int print)
-{
-	int len;
+int mbsprint(const char *name, int print) {
+  int len;
 
-	if (print == 0)
-		return strlen(name);
+  if (print == 0)
+    return strlen(name);
 
-	for (len = 0; *name; len++, name++)
-		putchar((!isprint((unsigned char)*name) && f_nonprint) ? '?' : *name);
-	return len;
+  for (len = 0; *name; len++, name++)
+    putchar((!isprint((unsigned char)*name) && f_nonprint) ? '?' : *name);
+  return len;
 }
 #endif
 
-void
-usage(void)
-{
-	(void)fprintf(stderr,
-	    "usage: %s [-1AaCcdFfgHhikLlmnopqRrSsTtux] [file ...]\n",
-	    __progname);
-	exit(1);
+void usage(void) {
+  (void)fprintf(stderr,
+                "usage: %s [-1AaCcdFfgHhikLlmnopqRrSsTtux] [file ...]\n",
+                __progname);
+  exit(1);
 }

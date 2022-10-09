@@ -39,59 +39,55 @@
 
 static void usage(void);
 
-int
-main(int argc, char *argv[])
-{
-	int ch;
-	char *p;
+int main(int argc, char *argv[]) {
+  int ch;
+  char *p;
 
-	while ((ch = getopt(argc, argv, "")) != -1) {
-		switch (ch) {
-		default:
-			usage();
-		}
-	}
-	argc -= optind;
-	argv += optind;
+  while ((ch = getopt(argc, argv, "")) != -1) {
+    switch (ch) {
+    default:
+      usage();
+    }
+  }
+  argc -= optind;
+  argv += optind;
 
-	if (argc != 1 && argc != 2)
-		usage();
+  if (argc != 1 && argc != 2)
+    usage();
 
-	if (**argv == '\0') {
-		(void)puts("");
-		return 0;
-	}
-	p = basename(*argv);
-	if (p == NULL)
-		err(1, "%s", *argv);
-	/*
-	 * If the suffix operand is present, is not identical to the
-	 * characters remaining in string, and is identical to a suffix
-	 * of the characters remaining in string, the suffix suffix
-	 * shall be removed from string.
-	 */
-	if (*++argv) {
-		size_t suffixlen, stringlen, off;
+  if (**argv == '\0') {
+    (void)puts("");
+    return 0;
+  }
+  p = basename(*argv);
+  if (p == NULL)
+    err(1, "%s", *argv);
+  /*
+   * If the suffix operand is present, is not identical to the
+   * characters remaining in string, and is identical to a suffix
+   * of the characters remaining in string, the suffix suffix
+   * shall be removed from string.
+   */
+  if (*++argv) {
+    size_t suffixlen, stringlen, off;
 
-		suffixlen = strlen(*argv);
-		stringlen = strlen(p);
+    suffixlen = strlen(*argv);
+    stringlen = strlen(p);
 
-		if (suffixlen < stringlen) {
-			off = stringlen - suffixlen;
-			if (!strcmp(p + off, *argv))
-				p[off] = '\0';
-		}
-	}
-	(void)puts(p);
-	return 0;
+    if (suffixlen < stringlen) {
+      off = stringlen - suffixlen;
+      if (!strcmp(p + off, *argv))
+        p[off] = '\0';
+    }
+  }
+  (void)puts(p);
+  return 0;
 }
 
 extern const char *__progname;
 
-static void
-usage(void)
-{
+static void usage(void) {
 
-	(void)fprintf(stderr, "usage: %s string [suffix]\n", __progname);
-	exit(1);
+  (void)fprintf(stderr, "usage: %s string [suffix]\n", __progname);
+  exit(1);
 }

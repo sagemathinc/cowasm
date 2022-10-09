@@ -35,43 +35,43 @@
  *	@(#)ls.h	8.1 (Berkeley) 5/31/93
  */
 
-#define NO_PRINT	1
+#define NO_PRINT 1
 
-extern long blocksize;		/* block size units */
+extern long blocksize; /* block size units */
 
-extern int f_accesstime;	/* use time of last access */
-extern int f_flags;		/* show flags associated with a file */
-extern int f_grouponly;		/* long listing format without owner */
-extern int f_humanval;		/* show human-readable file sizes */
-extern int f_inode;		/* print inode */
-extern int f_longform;		/* long listing format */
-extern int f_nonprint;		/* show unprintables as ? */
-extern int f_sectime;		/* print the real time for all files */
-extern int f_size;		/* list size in short listing */
-extern int f_statustime;	/* use time of last mode change */
-extern int f_type;		/* add type character for non-regular files */
-extern int f_typedir;		/* add type character for directories */
+extern int f_accesstime; /* use time of last access */
+extern int f_flags;      /* show flags associated with a file */
+extern int f_grouponly;  /* long listing format without owner */
+extern int f_humanval;   /* show human-readable file sizes */
+extern int f_inode;      /* print inode */
+extern int f_longform;   /* long listing format */
+extern int f_nonprint;   /* show unprintables as ? */
+extern int f_sectime;    /* print the real time for all files */
+extern int f_size;       /* list size in short listing */
+extern int f_statustime; /* use time of last mode change */
+extern int f_type;       /* add type character for non-regular files */
+extern int f_typedir;    /* add type character for directories */
 
 typedef struct {
-	FTSENT *list;
-	unsigned long long btotal;
-	int bcfile;
-	int entries;
-	int maxlen;
-	int s_block;
-	int s_flags;
-	int s_group;
-	int s_inode;
-	int s_nlink;
-	int s_size;
-	int s_user;
+  FTSENT *list;
+  unsigned long long btotal;
+  int bcfile;
+  int entries;
+  int maxlen;
+  int s_block;
+  int s_flags;
+  int s_group;
+  int s_inode;
+  int s_nlink;
+  int s_size;
+  int s_user;
 } DISPLAY;
 
 typedef struct {
-	char *user;
-	char *group;
-	char *flags;
-	char data[1];
+  char *user;
+  char *group;
+  char *flags;
+  char data[1];
 } NAMES;
 
-int	ls_main(int, char *[]);
+int ls_main(int, char *[]);

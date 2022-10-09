@@ -39,17 +39,17 @@
 /*
  * fparseln() specific operation flags.
  */
-#define FPARSELN_UNESCESC	0x01
-#define FPARSELN_UNESCCONT	0x02
-#define FPARSELN_UNESCCOMM	0x04
-#define FPARSELN_UNESCREST	0x08
-#define FPARSELN_UNESCALL	0x0f
+#define FPARSELN_UNESCESC 0x01
+#define FPARSELN_UNESCCONT 0x02
+#define FPARSELN_UNESCCOMM 0x04
+#define FPARSELN_UNESCREST 0x08
+#define FPARSELN_UNESCALL 0x0f
 
 /*
  * opendev() specific operation flags.
  */
-#define OPENDEV_PART	0x01		/* Try to open the raw partition. */
-#define OPENDEV_BLCK	0x04		/* Open block, not character device. */
+#define OPENDEV_PART 0x01 /* Try to open the raw partition. */
+#define OPENDEV_BLCK 0x04 /* Open block, not character device. */
 
 /*
  * uu_lock(3) specific flags.
@@ -67,7 +67,7 @@
 /*
  * fmt_scaled(3) specific flags.
  */
-#define	FMT_SCALED_STRSIZE	7	/* minus sign, 4 digits, suffix, null byte */
+#define FMT_SCALED_STRSIZE 7 /* minus sign, 4 digits, suffix, null byte */
 
 /*
  * stub struct definitions.
@@ -78,6 +78,5 @@ struct passwd;
 struct termios;
 struct utmp;
 struct winsize;
-
 
 #endif /* !_UTIL_H_ */

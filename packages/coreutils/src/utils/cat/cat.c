@@ -50,10 +50,10 @@
 #endif
 
 #ifndef USE_LIBWHEREAMI
-extern const char* __progname;
+extern const char *__progname;
 #endif
 
-#define MAXIMUM(a, b)	(((a) > (b)) ? (a) : (b))
+#define MAXIMUM(a, b) (((a) > (b)) ? (a) : (b))
 
 int bflag, eflag, nflag, sflag, tflag, vflag;
 int rval;
@@ -63,195 +63,183 @@ void cook_buf(FILE *, const char *);
 void raw_args(char *argv[]);
 void raw_cat(int, const char *);
 
-int
-main(int argc, char *argv[])
-{
-	int ch;
+int main(int argc, char *argv[]) {
+  int ch;
 
-	while ((ch = getopt(argc, argv, "benstuv")) != -1) {
-		switch (ch) {
-		case 'b':
-			bflag = nflag = 1;	/* -b implies -n */
-			break;
-		case 'e':
-			eflag = vflag = 1;	/* -e implies -v */
-			break;
-		case 'n':
-			nflag = 1;
-			break;
-		case 's':
-			sflag = 1;
-			break;
-		case 't':
-			tflag = vflag = 1;	/* -t implies -v */
-			break;
-		case 'u':
-			setvbuf(stdout, NULL, _IONBF, 0);
-			break;
-		case 'v':
-			vflag = 1;
-			break;
-		default:
-		#ifdef USE_LIBWHEREAMI
-			fprintf(stderr, "usage: %s [-benstuv] [file ...]\n",
-			    getprogname());
-		#else
-			fprintf(stderr, "usage: %s [-benstuv] [file ...]\n", __progname);
-		#endif
-			return 1;
-		}
-	}
-	argv += optind;
+  while ((ch = getopt(argc, argv, "benstuv")) != -1) {
+    switch (ch) {
+    case 'b':
+      bflag = nflag = 1; /* -b implies -n */
+      break;
+    case 'e':
+      eflag = vflag = 1; /* -e implies -v */
+      break;
+    case 'n':
+      nflag = 1;
+      break;
+    case 's':
+      sflag = 1;
+      break;
+    case 't':
+      tflag = vflag = 1; /* -t implies -v */
+      break;
+    case 'u':
+      setvbuf(stdout, NULL, _IONBF, 0);
+      break;
+    case 'v':
+      vflag = 1;
+      break;
+    default:
+#ifdef USE_LIBWHEREAMI
+      fprintf(stderr, "usage: %s [-benstuv] [file ...]\n", getprogname());
+#else
+      fprintf(stderr, "usage: %s [-benstuv] [file ...]\n", __progname);
+#endif
+      return 1;
+    }
+  }
+  argv += optind;
 
-	if (bflag || eflag || nflag || sflag || tflag || vflag)
-		cook_args(argv);
-	else
-		raw_args(argv);
-	if (fclose(stdout))
-		err(1, "stdout");
-	return rval;
+  if (bflag || eflag || nflag || sflag || tflag || vflag)
+    cook_args(argv);
+  else
+    raw_args(argv);
+  if (fclose(stdout))
+    err(1, "stdout");
+  return rval;
 }
 
-void
-cook_args(char **argv)
-{
-	FILE *fp;
+void cook_args(char **argv) {
+  FILE *fp;
 
-	if (*argv == NULL) {
-		cook_buf(stdin, "stdin");
-		return;
-	}
+  if (*argv == NULL) {
+    cook_buf(stdin, "stdin");
+    return;
+  }
 
-	for (; *argv != NULL; argv++) {
-		if (!strcmp(*argv, "-")) {
-			cook_buf(stdin, "stdin");
-			clearerr(stdin);
-			continue;
-		}
-		if ((fp = fopen(*argv, "r")) == NULL) {
-			warn("%s", *argv);
-			rval = 1;
-			continue;
-		}
-		cook_buf(fp, *argv);
-		fclose(fp);
-	}
+  for (; *argv != NULL; argv++) {
+    if (!strcmp(*argv, "-")) {
+      cook_buf(stdin, "stdin");
+      clearerr(stdin);
+      continue;
+    }
+    if ((fp = fopen(*argv, "r")) == NULL) {
+      warn("%s", *argv);
+      rval = 1;
+      continue;
+    }
+    cook_buf(fp, *argv);
+    fclose(fp);
+  }
 }
 
-void
-cook_buf(FILE *fp, const char *filename)
-{
-	unsigned long long line;
-	int ch, gobble, prev;
+void cook_buf(FILE *fp, const char *filename) {
+  unsigned long long line;
+  int ch, gobble, prev;
 
-	line = gobble = 0;
-	for (prev = '\n'; (ch = getc(fp)) != EOF; prev = ch) {
-		if (prev == '\n') {
-			if (sflag) {
-				if (ch == '\n') {
-					if (gobble)
-						continue;
-					gobble = 1;
-				} else
-					gobble = 0;
-			}
-			if (nflag) {
-				if (!bflag || ch != '\n') {
-					fprintf(stdout, "%6llu\t", ++line);
-					if (ferror(stdout))
-						break;
-				} else if (eflag) {
-					(void)fprintf(stdout, "%6s\t", "");
-					if (ferror(stdout))
-						break;
-				}
-			}
-		}
-		if (ch == '\n') {
-			if (eflag && putchar('$') == EOF)
-				break;
-		} else if (ch == '\t') {
-			if (tflag) {
-				if (putchar('^') == EOF || putchar('I') == EOF)
-					break;
-				continue;
-			}
-		} else if (vflag) {
-			if (!isascii(ch)) {
-				if (putchar('M') == EOF || putchar('-') == EOF)
-					break;
-				ch = toascii(ch);
-			}
-			if (iscntrl(ch)) {
-				if (putchar('^') == EOF ||
-				    putchar(ch == '\177' ? '?' :
-				    ch | 0100) == EOF)
-					break;
-				continue;
-			}
-		}
-		if (putchar(ch) == EOF)
-			break;
-	}
-	if (ferror(fp)) {
-		warn("%s", filename);
-		rval = 1;
-		clearerr(fp);
-	}
-	if (ferror(stdout))
-		err(1, "stdout");
+  line = gobble = 0;
+  for (prev = '\n'; (ch = getc(fp)) != EOF; prev = ch) {
+    if (prev == '\n') {
+      if (sflag) {
+        if (ch == '\n') {
+          if (gobble)
+            continue;
+          gobble = 1;
+        } else
+          gobble = 0;
+      }
+      if (nflag) {
+        if (!bflag || ch != '\n') {
+          fprintf(stdout, "%6llu\t", ++line);
+          if (ferror(stdout))
+            break;
+        } else if (eflag) {
+          (void)fprintf(stdout, "%6s\t", "");
+          if (ferror(stdout))
+            break;
+        }
+      }
+    }
+    if (ch == '\n') {
+      if (eflag && putchar('$') == EOF)
+        break;
+    } else if (ch == '\t') {
+      if (tflag) {
+        if (putchar('^') == EOF || putchar('I') == EOF)
+          break;
+        continue;
+      }
+    } else if (vflag) {
+      if (!isascii(ch)) {
+        if (putchar('M') == EOF || putchar('-') == EOF)
+          break;
+        ch = toascii(ch);
+      }
+      if (iscntrl(ch)) {
+        if (putchar('^') == EOF ||
+            putchar(ch == '\177' ? '?' : ch | 0100) == EOF)
+          break;
+        continue;
+      }
+    }
+    if (putchar(ch) == EOF)
+      break;
+  }
+  if (ferror(fp)) {
+    warn("%s", filename);
+    rval = 1;
+    clearerr(fp);
+  }
+  if (ferror(stdout))
+    err(1, "stdout");
 }
 
-void
-raw_args(char **argv)
-{
-	int fd;
+void raw_args(char **argv) {
+  int fd;
 
-	if (*argv == NULL) {
-		raw_cat(fileno(stdin), "stdin");
-		return;
-	}
+  if (*argv == NULL) {
+    raw_cat(fileno(stdin), "stdin");
+    return;
+  }
 
-	for (; *argv != NULL; argv++) {
-		if (!strcmp(*argv, "-")) {
-			raw_cat(fileno(stdin), "stdin");
-			continue;
-		}
-		if ((fd = open(*argv, O_RDONLY, 0)) == -1) {
-			warn("%s", *argv);
-			rval = 1;
-			continue;
-		}
-		raw_cat(fd, *argv);
-		close(fd);
-	}
+  for (; *argv != NULL; argv++) {
+    if (!strcmp(*argv, "-")) {
+      raw_cat(fileno(stdin), "stdin");
+      continue;
+    }
+    if ((fd = open(*argv, O_RDONLY, 0)) == -1) {
+      warn("%s", *argv);
+      rval = 1;
+      continue;
+    }
+    raw_cat(fd, *argv);
+    close(fd);
+  }
 }
 
-void
-raw_cat(int rfd, const char *filename)
-{
-	int wfd;
-	ssize_t nr, nw, off;
-	static size_t bsize;
-	static char *buf = NULL;
-	struct stat sbuf;
+void raw_cat(int rfd, const char *filename) {
+  int wfd;
+  ssize_t nr, nw, off;
+  static size_t bsize;
+  static char *buf = NULL;
+  struct stat sbuf;
 
-	wfd = fileno(stdout);
-	if (buf == NULL) {
-		if (fstat(wfd, &sbuf) == -1)
-			err(1, "stdout");
-		bsize = MAXIMUM(sbuf.st_blksize, BUFSIZ);
-		if ((buf = malloc(bsize)) == NULL)
-			err(1, NULL);
-	}
-	while ((nr = read(rfd, buf, bsize)) != -1 && nr != 0) {
-		for (off = 0; nr; nr -= nw, off += nw) {
-			if ((nw = write(wfd, buf + off, nr)) == -1 || nw == 0)
-				err(1, "stdout");
-		}
-	}
-	if (nr == -1) {
-		warn("%s", filename);
-		rval = 1;
-	}
+  wfd = fileno(stdout);
+  if (buf == NULL) {
+    if (fstat(wfd, &sbuf) == -1)
+      err(1, "stdout");
+    bsize = MAXIMUM(sbuf.st_blksize, BUFSIZ);
+    if ((buf = malloc(bsize)) == NULL)
+      err(1, NULL);
+  }
+  while ((nr = read(rfd, buf, bsize)) != -1 && nr != 0) {
+    for (off = 0; nr; nr -= nw, off += nw) {
+      if ((nw = write(wfd, buf + off, nr)) == -1 || nw == 0)
+        err(1, "stdout");
+    }
+  }
+  if (nr == -1) {
+    warn("%s", filename);
+    rval = 1;
+  }
 }

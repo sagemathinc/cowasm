@@ -33,9 +33,9 @@
  */
 
 typedef struct {
-	char *p_end;			/* pointer to NULL at end of path */
-	char *target_end;		/* pointer to end of target base */
-	char p_path[PATH_MAX];		/* pointer to the start of a path */
+  char *p_end;           /* pointer to NULL at end of path */
+  char *target_end;      /* pointer to end of target base */
+  char p_path[PATH_MAX]; /* pointer to the start of a path */
 } PATH_T;
 
 extern PATH_T to;
@@ -47,12 +47,12 @@ extern const char *__progname;
 #ifdef __cplusplus
 extern "C" {
 #endif
-int	copy_fifo(struct stat *, int);
-int	copy_file(FTSENT *, int);
-int	copy_link(FTSENT *, int);
-int	copy_special(struct stat *, int);
-int	setfile(struct stat *, int);
-void	usage(void);
+int copy_fifo(struct stat *, int);
+int copy_file(FTSENT *, int);
+int copy_link(FTSENT *, int);
+int copy_special(struct stat *, int);
+int setfile(struct stat *, int);
+void usage(void);
 #ifdef __cplusplus
 }
 #endif

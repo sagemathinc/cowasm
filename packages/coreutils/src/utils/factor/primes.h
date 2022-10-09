@@ -46,8 +46,8 @@
 #include <stdint.h>
 
 /* ubig is the type that holds a large unsigned value */
-typedef uint32_t	ubig;		/* must be 32 bit unsigned value */
-#define	BIG		0xffffffffU	/* largest value will sieve */
+typedef uint32_t ubig;  /* must be 32 bit unsigned value */
+#define BIG 0xffffffffU /* largest value will sieve */
 
 /* bytes in sieve table (must be > 3*5*7*11) */
-#define	TABSIZE		256*1024
+#define TABSIZE 256 * 1024
