@@ -181,6 +181,17 @@ async function doWasmImport({
     wasm.exports.c_free(ptr);
   }
 
+  function run(path: string): number {
+    console.log("wasm run", path);
+    const instance = importWebAssemblySync(path, wasmOpts);
+    if (instance.exports.__wasm_call_ctors != null) {
+      (instance.exports.__wasm_call_ctors as CallableFunction)();
+    }
+    wasm.run_instance = instance;
+    console.log("done running");
+    return 0;
+  }
+
   // Note, we do things like define getcwd above rather than setting
   // getcwd to wasm.getcwd.bind(wasm) because wasm isn't defined yet!
   const posixEnv = posix({
@@ -188,6 +199,7 @@ async function doWasmImport({
     send: new SendToWasm({ memory, callFunction }),
     recv: new RecvFromWasm({ memory, callFunction }),
     wasi,
+    run,
     process,
     os: bindings.os ?? {},
     posix: bindings.posix ?? {},
@@ -243,6 +255,8 @@ async function doWasmImport({
   wasm.table = table;
   wasm.wasi = wasi;
   wasm.posixEnv = posixEnv;
+
+  wasm.run = run; // DELETE
 
   return wasm;
 }

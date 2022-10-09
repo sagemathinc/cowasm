@@ -41,6 +41,7 @@ interface Context {
   send: SendToWasm;
   recv: RecvFromWasm;
   wasi: WASI;
+  run: (path: string) => number;
   process: {
     getpid?: () => number;
     getuid?: () => number;

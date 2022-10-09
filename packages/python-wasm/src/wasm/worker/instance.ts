@@ -35,6 +35,8 @@ export default class WasmInstance extends EventEmitter {
   // the WASI object from the wasi-js library, which manages things
   // like the filesystem abstraction and other system calls.
   wasi?: WASI;
+  // run a wasm module
+  run?: (path: string) => number;
   // a collection of posix functions missing from WASI that are best
   // implemented in Javascript (to get access to the environment).
   posixEnv?: { [name: string]: Function };
@@ -110,8 +112,8 @@ export default class WasmInstance extends EventEmitter {
         ptrs.push(this.send.string(s));
       }
       const len = ptrs.length;
-      const ptr = this.exports.c_malloc((len+1) * 4); // sizeof(char*) = 4 in WASM.
-      const array = new Int32Array(this.memory.buffer, ptr, len+1);
+      const ptr = this.exports.c_malloc((len + 1) * 4); // sizeof(char*) = 4 in WASM.
+      const array = new Int32Array(this.memory.buffer, ptr, len + 1);
       let i = 0;
       for (const p of ptrs) {
         array[i] = p;

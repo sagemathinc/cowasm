@@ -33,7 +33,14 @@ const log = debug("posix:fork-exec");
 
 const WASM = Buffer.from("\0asm");
 
-export default function fork_exec({ posix, recv, wasi, fs, child_process }) {
+export default function fork_exec({
+  posix,
+  recv,
+  wasi,
+  run,
+  fs,
+  child_process,
+}) {
   function isWasm(filename: string): boolean {
     const fd = fs.openSync(filename, "rb");
     const b = new Buffer(4);
@@ -43,7 +50,7 @@ export default function fork_exec({ posix, recv, wasi, fs, child_process }) {
 
   function runWasm(pathToCmd: string, args: string[]): number {
     console.log("run via WebAssembly", { pathToCmd, args });
-    return 0;
+    return run(pathToCmd);
   }
 
   function runNative(pathToCmd: string, args: string[]): number {
