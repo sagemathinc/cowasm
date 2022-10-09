@@ -31,7 +31,39 @@ import { join } from "path";
 
 const log = debug("posix:fork-exec");
 
+const WASM = Buffer.from("\0asm");
+
 export default function fork_exec({ posix, recv, wasi, fs, child_process }) {
+  function isWasm(filename: string): boolean {
+    const fd = fs.openSync(filename, "rb");
+    const b = new Buffer(4);
+    fs.readSync(fd, b, 0, 4, 0);
+    return WASM.equals(b);
+  }
+
+  function runWasm(pathToCmd: string, args: string[]): number {
+    console.log("run via WebAssembly", { pathToCmd, args });
+    return 0;
+  }
+
+  function runNative(pathToCmd: string, args: string[]): number {
+    if (child_process == null) {
+      console.log(
+        "ERROR: Running native commands not yet implemented in this environment."
+      );
+      return 1;
+    }
+    try {
+      child_process.execFileSync(pathToCmd, args, {
+        stdio: "inherit",
+      });
+      return 0;
+    } catch (err) {
+      console.log(err);
+      return err.status;
+    }
+  }
+
   function real_fd(virtual_fd: number): number {
     const data = wasi.FD_MAP.get(virtual_fd);
     if (data == null) {
@@ -190,34 +222,38 @@ export default function fork_exec({ posix, recv, wasi, fs, child_process }) {
     // Similar but for dash shell:
     // extern int zython_dash_vforkexec(char **argv, const char *path);
     zython_dash_vforkexec: (argvPtr: number, pathPtr: number): number => {
-      if (child_process == null) {
-        console.log(
-          "ERROR: Running commands not yet implemented in this environment."
-        );
-        return 1;
-      }
       const argv = recv.arrayOfStrings(argvPtr);
       const path = recv.string(pathPtr);
-      const cmd = argv[0];
-//       if (cmd.includes("ls-js")) {
-//         console.log("ls-js output", fs.readdirSync("."));
-//         return 0;
-//       }
-      for (const dir of path.split(":")) {
-        const pathToCmd = join(dir, cmd);
-        if (fs.existsSync(pathToCmd)) {
+      // console.log({ argv, path });
+      let cmd = argv[0];
+      const args = argv.slice(1);
+      if (!cmd.includes("/")) {
+        // search path
+        for (const dir of path.split(":")) {
+          const pathToCmd = join(dir, cmd);
           try {
-            child_process.execFileSync(pathToCmd, argv.slice(1), {
-              stdio: "inherit",
-            });
-            return 0;
-          } catch (err) {
-            console.log(err);
-            return err.status;
-          }
+            const stat = fs.statSync(pathToCmd);
+            if (stat.mode & fs.constants.S_IXUSR) {
+              cmd = pathToCmd;
+              break;
+            }
+          } catch (_err) {}
         }
       }
-      return 1;
+      if (!cmd.includes("/") || !fs.existsSync(cmd)) {
+        fs.writeSync(2, `${cmd}: not found\n`);
+        // couldn't find it
+        return 127;
+      }
+
+      if (isWasm(cmd)) {
+        return runWasm(cmd, args);
+      } else if (child_process != null) {
+        return runNative(cmd, args);
+      }
+      // can't run
+      fs.writeSync(2, `${cmd}: cannot execute binary file\n`);
+      return 127;
     },
   };
 }
