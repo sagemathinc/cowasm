@@ -29,7 +29,7 @@ ${DIST_WASM}/bin/chown: ${DIST_WASM}/bin/chmod
 ${DIST_WASM}/bin/chgrp: ${DIST_WASM}/bin/chmod
 	cd ${DIST_WASM}/bin && ln -sf chmod chgrp
 
-UTILS = ${DIST_WASM}/bin/basename ${DIST_WASM}/bin/cat ${DIST_WASM}/bin/chgrp ${DIST_WASM}/bin/chmod ${DIST_WASM}/bin/chown ${DIST_WASM}/bin/comm ${DIST_WASM}/bin/cp  ${DIST_WASM}/bin/csplit ${DIST_WASM}/bin/cut ${DIST_WASM}/bin/date ${DIST_WASM}/bin/ls
+UTILS = ${DIST_WASM}/bin/basename ${DIST_WASM}/bin/cat ${DIST_WASM}/bin/chgrp ${DIST_WASM}/bin/chmod ${DIST_WASM}/bin/chown ${DIST_WASM}/bin/comm ${DIST_WASM}/bin/cp  ${DIST_WASM}/bin/csplit ${DIST_WASM}/bin/cut ${DIST_WASM}/bin/date ${DIST_WASM}/bin/factor ${DIST_WASM}/bin/ls
 
 ${DIST_WASM}/.built: ${UTILS}
 	touch ${BUILD_WASM}/.source
