@@ -1,4 +1,4 @@
-# This builds the lua interpreter
+# This builds the libpng image manipulation library, which is needed for luatex.
 
 include ../build/Makefile-vars
 

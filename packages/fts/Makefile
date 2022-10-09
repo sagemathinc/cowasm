@@ -1,4 +1,6 @@
-# This builds the lua interpreter
+# This builds the fts library
+
+## TODO: probably just move this to compat in coreutils
 
 include ../build/Makefile-vars
 

@@ -22,7 +22,10 @@ export default function other({ callFunction, posix, recv, send }) {
   }
 
   let ctermidPtr = 0;
-  return {
+  // cache the pointers for speed and to reduce memory leaks
+  const user_from_uid_cache: { [uid: number]: number } = {};
+
+  const lib = {
     login_tty: (fd: number): number => {
       if (posix.login_tty == null) {
         notImplemented("login_tty");
@@ -144,5 +147,24 @@ export default function other({ callFunction, posix, recv, send }) {
     //     backtrace: () => {
     //       notImplemented("backgrace");
     //     },
+
+    // These are for coreutils, and we come up with a WebAssembly version,
+    // which is the documented fallback.
+    //     char * user_from_uid(uid_t uid, int nouser);
+    //     char * group_from_gid(gid_t gid, int nogroup);
+    // TODO: for speed this would be better at the C level.
+    user_from_uid: (uid: number, nouser: number = 0): number => {
+      if (nouser) {
+        return 0;
+      }
+      if (user_from_uid_cache[uid]) return user_from_uid_cache[uid];
+      user_from_uid_cache[uid] = send.string(`${uid}`);
+      return user_from_uid_cache[uid];
+    },
+    group_from_gid: (gid: number, nogroup: number = 0): number => {
+      return lib.user_from_uid(gid, nogroup);
+    },
   };
+
+  return lib;
 }

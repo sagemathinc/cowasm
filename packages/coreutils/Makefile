@@ -1,4 +1,4 @@
-# This builds the lua interpreter
+# This builds our WASM port of coreutils
 
 include ../build/Makefile-vars
 
@@ -18,6 +18,9 @@ ${BUILD_WASM}/.source:: src/**
 	mkdir -p ${BUILD_WASM}
 	cp -r src/* ${BUILD_WASM}
 	touch ${BUILD_WASM}/.source
+
+# TODO: This build is inefficient in that it is compiling the same compat c code every time,
+# rather than just once into an archive.
 
 ${DIST_WASM}/bin/%: ${SRC}/utils/%/*.c | ${BUILD_WASM}/.source
 	mkdir -p ${DIST_WASM}/bin

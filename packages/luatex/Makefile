@@ -1,4 +1,6 @@
-# This builds the lua interpreter
+# This builds the luatex tex compiler
+
+## TODO: doesn't work yet; this isn't a trivial port...
 
 include ../build/Makefile-vars
 
