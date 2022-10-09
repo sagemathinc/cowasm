@@ -181,14 +181,23 @@ async function doWasmImport({
     wasm.exports.c_free(ptr);
   }
 
-  function run(path: string): number {
-    console.log("wasm run", path);
-    const instance = importWebAssemblySync(path, wasmOpts);
+  // TODO: env
+  function run(args: string[]): number {
+    const path = args[0];
+    if (path == null) {
+      throw Error("args must have length at least 1");
+    }
+    //console.log("wasm run", args);
+    const _wasi = new WASI({ ...opts, args });
+    const _wasmOpts = { ...wasmOpts };
+    _wasmOpts.wasi_snapshot_preview1 = _wasi.wasiImport;
+    const instance = importWebAssemblySync(path, _wasmOpts);
     if (instance.exports.__wasm_call_ctors != null) {
       (instance.exports.__wasm_call_ctors as CallableFunction)();
     }
-    wasm.run_instance = instance;
-    console.log("done running");
+    console.log("starting");
+    _wasi.start(instance);
+    console.log("done");
     return 0;
   }
 

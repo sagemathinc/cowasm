@@ -48,12 +48,7 @@ export default function fork_exec({
     return WASM.equals(b);
   }
 
-  function runWasm(pathToCmd: string, args: string[]): number {
-    console.log("run via WebAssembly", { pathToCmd, args });
-    return run(pathToCmd);
-  }
-
-  function runNative(pathToCmd: string, args: string[]): number {
+  function runNative(argv: string[]): number {
     if (child_process == null) {
       console.log(
         "ERROR: Running native commands not yet implemented in this environment."
@@ -61,11 +56,12 @@ export default function fork_exec({
       return 1;
     }
     try {
-      child_process.execFileSync(pathToCmd, args, {
+      child_process.execFileSync(argv[0], argv.slice(1), {
         stdio: "inherit",
       });
       return 0;
     } catch (err) {
+      fs.writeSync(2, `${err}\n`);
       console.log(err);
       return err.status;
     }
@@ -232,34 +228,35 @@ export default function fork_exec({
       const argv = recv.arrayOfStrings(argvPtr);
       const path = recv.string(pathPtr);
       // console.log({ argv, path });
-      let cmd = argv[0];
-      const args = argv.slice(1);
-      if (!cmd.includes("/")) {
+      if (!argv[0]) {
+        throw Error("argv[0] must be defined");
+      }
+      if (!argv[0].includes("/")) {
         // search path
         for (const dir of path.split(":")) {
-          const pathToCmd = join(dir, cmd);
+          const pathToCmd = join(dir, argv[0]);
           try {
             const stat = fs.statSync(pathToCmd);
             if (stat.mode & fs.constants.S_IXUSR) {
-              cmd = pathToCmd;
+              argv[0] = pathToCmd;
               break;
             }
           } catch (_err) {}
         }
       }
-      if (!cmd.includes("/") || !fs.existsSync(cmd)) {
-        fs.writeSync(2, `${cmd}: not found\n`);
+      if (!argv[0].includes("/") || !fs.existsSync(argv[0])) {
+        fs.writeSync(2, `${argv[0]}: not found\n`);
         // couldn't find it
         return 127;
       }
 
-      if (isWasm(cmd)) {
-        return runWasm(cmd, args);
+      if (isWasm(argv[0])) {
+        return run(argv);
       } else if (child_process != null) {
-        return runNative(cmd, args);
+        return runNative(argv);
       }
       // can't run
-      fs.writeSync(2, `${cmd}: cannot execute binary file\n`);
+      fs.writeSync(2, `${argv[0]}: cannot execute binary file\n`);
       return 127;
     },
   };

@@ -180,5 +180,6 @@ This is easy.  Just do analogue of `zython-*` scripts.
 
 ## Related projects
 
-- Something like this was attempted many years ago using busybox and emscripten: https://github.com/tbfleming/em-shell
+- Something like this was attempted many years ago using busybox and emscripten: [https://github.com/tbfleming/em\-shell](https://github.com/tbfleming/em-shell)
+- After I mostly finished this somebody posted a dash to WAPM: https://wapm.io/sharrattj/dash   I can't make heads or tails of it.
 

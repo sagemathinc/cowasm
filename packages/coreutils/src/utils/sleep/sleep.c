@@ -30,6 +30,7 @@
  * SUCH DAMAGE.
  */
 
+#include "compat.h"
 #include <sys/time.h>
 
 #include <ctype.h>
@@ -41,14 +42,13 @@
 #include <unistd.h>
 #include <string.h>
 
-extern const char *__progname;
-
 void alarmh(int);
 void usage(void);
 
 int
 main(int argc, char *argv[])
 {
+  setprogname(argv[0]);
 	struct timespec rqtp;
 	time_t t;
 	char *cp;

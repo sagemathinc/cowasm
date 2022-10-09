@@ -11,7 +11,7 @@ include ../build/Makefile-rules
 
 CC = zig cc -target wasm32-wasi
 CFLAGS = -Oz -I${POSIX_WASM} -I${SRC}/compat -I${FTS}/include -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_MMAN
-LDFLAGS = ${FTS}/lib/libfts.a ${POSIX_WASM}/libposix.a -lc
+LDFLAGS = ${FTS}/lib/libfts.a ${POSIX_WASM}/libposix.a -lc -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
 
 ${BUILD_WASM}/.source:: src/**
 	rm -rf ${BUILD_WASM}

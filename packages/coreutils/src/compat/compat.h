@@ -126,10 +126,9 @@ size_t strlcpy(char *, const char *, size_t);
 #define _PW_BUF_LEN sysconf(_SC_GETPW_R_SIZE_MAX)
 #define _GR_BUF_LEN sysconf(_SC_GETGR_R_SIZE_MAX)
 
-/* Linux spelling differences */
-#if defined __linux__
-#define S_ISTXT S_ISVTX
-#endif
+/* Defined in progname.c */
+extern void setprogname(const char *progname);
+extern const char *__progname;
 
 #include "posix-wasm.h"
 // The following constants are all copied from grepping the musl/wasi headers.
