@@ -607,5 +607,6 @@ export default async function importWebAssemblyDlopen({
   let nextTablePos =
     Math.max(0, ...nonzeroPositions(__indirect_function_table)) + 1;
 
+  mainInstance.env = env;
   return mainInstance;
 }

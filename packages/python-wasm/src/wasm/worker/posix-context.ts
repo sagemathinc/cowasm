@@ -96,11 +96,19 @@ export default class PosixContext {
     this.wasm.exports.c_free(ptr);
   }
 
+  private run(args: string[]): number {
+    const path = args[0];
+    if (path == null) {
+      throw Error("args must have length at least 1");
+    }
+
+  }
+
   // TODO: env
   // TODO: version that uses importWebAssemblyDlopen instead. Don't always do this,
   //       since it's much more expensive. Will need it for running python.  But
   //       maybe later many applications (?).
-  private run(args: string[]): number {
+  private run0(args: string[]): number {
     const path = args[0];
     if (path == null) {
       throw Error("args must have length at least 1");

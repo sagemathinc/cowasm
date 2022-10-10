@@ -19,6 +19,7 @@ export default class WasmInstance extends EventEmitter {
   result: any = undefined;
   resultException: boolean = false;
   exports: { [name: string]: any };
+  instance: any; // todo
   memory: WebAssembly.Memory;
   smallStringPtr?: number;
   // functions never go away and getFunction is expensive if
@@ -46,13 +47,14 @@ export default class WasmInstance extends EventEmitter {
   public recv: RecvFromWasm;
 
   constructor(
-    exports,
+    instance,
     memory: WebAssembly.Memory,
     fs?: WASIFileSystem,
     table?: WebAssembly.Table
   ) {
     super();
-    this.exports = exports;
+    this.exports = instance.exports;
+    this.instance = instance;
     this.memory = memory;
     this.table = table;
     this.fs = fs;
@@ -174,7 +176,7 @@ export default class WasmInstance extends EventEmitter {
       }
     }
     // little advantage to caching this:
-    return this.exports[name];
+    return this.exports[name] ?? this.instance.env[name];
   }
 
   // Get the current working directory in the WASM instance.

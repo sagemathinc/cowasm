@@ -198,7 +198,7 @@ async function doWasmImport({
     wasi.start(instance, memory);
   }
 
-  wasm = new WasmInstance(instance.exports, memory, fs, table);
+  wasm = new WasmInstance(instance, memory, fs, table);
   posixContext.init(wasm);
 
   if (options.init != null) {
@@ -221,6 +221,7 @@ async function doWasmImport({
   wasm.table = table;
   wasm.wasi = wasi;
   wasm.posixContext = posixContext;
+  wasm.instance = instance;
 
   return wasm;
 }
