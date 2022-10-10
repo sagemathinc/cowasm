@@ -214,3 +214,26 @@ ${CWD}/../../bin/zash-debug: ${CWD}/bin/zash-debug
 
 .PHONY: bin-dash
 bin-dash: ${CWD}/../../bin/zash ${CWD}/../../bin/zash-debug
+
+
+# Core
+
+CORE_WASM_LDFLAGS = ${WASI_EMULATED} -lc -L ${DYLINK}/wasm/ -ldylink
+CORE_WASM_INCLUDE = -I. -I${POSIX_WASM}
+
+CORE_WASM_C = \
+		${POSIX_WASM}/libposix.a \
+		${CWD}/src/wasm/posix/stdlib.c \
+		${CWD}/src/python/signal/signal.c
+
+${DIST}/core/libcore.a: ${POSIX_SOURCES} ${CORE_WASM_C} ${CWD}/src/wasm/core.zig
+	cd src && zig build-lib \
+	   ${WASM_CFLAGS} \
+	   ${ZIG_PKG} \
+		-rdynamic \
+		--stack 1048576 \
+		-target wasm32-wasi \
+		${CORE_WASM_LDFLAGS} \
+		${CORE_WASM_INCLUDE} \
+		${CORE_WASM_C} \
+		${CWD}/src/wasm/core.zig

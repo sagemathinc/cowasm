@@ -71,6 +71,10 @@ export class SendToWasmAbstractBase {
     }
     const len = strAsArray.length + 1;
     const ptr = dest?.ptr ?? this.malloc(len);
+    console.log("this.memory =", this.memory);
+    console.log("length =", this.memory.buffer.byteLength);
+    console.log("strAsArray = ", strAsArray);
+    console.log({len, ptr});
     const array = new Int8Array(this.memory.buffer, ptr, len);
     array.set(strAsArray);
     array[len - 1] = 0;
