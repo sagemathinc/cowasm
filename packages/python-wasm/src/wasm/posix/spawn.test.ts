@@ -2,9 +2,10 @@ import { init, wasm, exec } from "../../python/node";
 
 test("test that a few spawn related posix calls throw an error (rather than getting stubbed and silently failing)", async () => {
   await init({ noWorker: true });
-  if (wasm?.posixEnv == null) throw Error("bug");
-  expect(wasm.posixEnv["posix_spawn"]()).toBe(-1);
-  expect(wasm.posixEnv["posix_spawnp"]()).toBe(-1);
+  const env: any = {};
+  wasm?.posixContext?.injectFunctions(env);
+  expect(env["posix_spawn"]()).toBe(-1);
+  expect(env["posix_spawnp"]()).toBe(-1);
 });
 
 test("posix_spawn /bin/sleep and wait for it to finish and confirm the time", async () => {

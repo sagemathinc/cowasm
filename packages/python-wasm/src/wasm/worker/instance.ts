@@ -4,6 +4,7 @@ import type WASI from "wasi-js";
 import { EventEmitter } from "events";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
+import type PosixContext from "./posix-context";
 
 const encoder = new TextEncoder();
 
@@ -39,7 +40,7 @@ export default class WasmInstance extends EventEmitter {
   run?: (path: string) => number;
   // a collection of posix functions missing from WASI that are best
   // implemented in Javascript (to get access to the environment).
-  posixEnv?: { [name: string]: Function };
+  posixContext?: PosixContext;
 
   public send: SendToWasm;
   public recv: RecvFromWasm;

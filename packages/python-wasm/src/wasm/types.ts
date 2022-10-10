@@ -3,13 +3,14 @@ import type WASI from "wasi-js";
 import type { WASIFileSystem } from "wasi-js";
 import type { SendToWasmAbstractBase } from "./worker/send-to-wasm";
 import type { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
+import type PosixContext from "./worker/posix-context";
 
 export class WasmInstance extends EventEmitter {
   // these are sometimes available and useful, e.g., in testing
   fs?: WASIFileSystem;
   table?: WebAssembly.Table;
   wasi?: WASI;
-  posixEnv?: { [name: string]: Function };
+  posixContext?: PosixContext;
   send: SendToWasmAbstractBase;
   recv: RecvFromWasmAbstractBase;
 

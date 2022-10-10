@@ -41,7 +41,7 @@ interface Context {
   send: SendToWasm;
   recv: RecvFromWasm;
   wasi: WASI;
-  run: (args:string[]) => number;
+  run: (args: string[]) => number;
   process: {
     getpid?: () => number;
     getuid?: () => number;
@@ -73,7 +73,11 @@ interface Context {
   getcwd: () => string;
 }
 
-export default function posix(context: Context) {
+// It might in theory be  better if we used typescript to say exactly which functions
+// are defined. That said, it's not like the WASM side cares about typescript.
+export type PosixEnv = { [name: string]: Function };
+
+export default function posix(context: Context): PosixEnv {
   const P = {
     ...forkExec(context),
     ...netdb(context),

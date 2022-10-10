@@ -4,10 +4,8 @@ import reuseInFlight from "../reuseInFlight";
 import WasmInstance from "./instance";
 import importWebAssemblyDlopen, { MBtoPages } from "dylink";
 import initPythonTrampolineCalls from "./trampoline";
-import posix from "../posix";
-import SendToWasm from "./send-to-wasm";
-import RecvFromWasm from "./recv-from-wasm";
 import debug from "debug";
+import PosixContext from "./posix-context";
 
 const log = debug("wasm-worker");
 
@@ -67,6 +65,9 @@ async function doWasmImport({
   maxMemoryMB?: number;
 }): Promise<WasmInstance> {
   log("doWasmImport", source);
+  if (source == null) {
+    throw Error("source must be defined");
+  }
   if (cache[source] != null) {
     return cache[source];
   }
@@ -162,80 +163,13 @@ async function doWasmImport({
   const wasi = new WASI(opts);
   wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
 
-  function callFunction(name: string, ...args): number | undefined {
-    const f = wasm.getFunction(name);
-    if (f == null) {
-      throw Error(`error - ${name} is not defined`);
-    }
-    return f(...args);
-  }
-
-  function getcwd(): string {
-    if (wasm.getcwd == null) {
-      throw Error(`error - ${name} is not defined`);
-    }
-    return wasm.getcwd();
-  }
-
-  function free(ptr: number): void {
-    wasm.exports.c_free(ptr);
-  }
-
-  // TODO: env
-  function run(args: string[]): number {
-    const path = args[0];
-    if (path == null) {
-      throw Error("args must have length at least 1");
-    }
-    //console.log("wasm run", args);
-    let exitcode = 0;
-    const _bindings = {
-      ...bindings,
-      exit: (_exitcode: number) => {
-        // this is a callback, but it is called *synchronously*.
-        exitcode = _exitcode;
-      },
-    };
-    const _wasi = new WASI({ ...opts, bindings: _bindings, args });
-    const _wasmOpts = { ...wasmOpts };
-    _wasmOpts.wasi_snapshot_preview1 = _wasi.wasiImport;
-    let instance;
-    try {
-      instance = importWebAssemblySync(path, _wasmOpts);
-    } catch (err) {
-      console.error(err);
-      return 1;
-    }
-    _wasi.start(instance);
-    return exitcode;
-  }
-
-  // Note, we do things like define getcwd above rather than setting
-  // getcwd to wasm.getcwd.bind(wasm) because wasm isn't defined yet!
-  const posixEnv = posix({
-    fs,
-    send: new SendToWasm({ memory, callFunction }),
-    recv: new RecvFromWasm({ memory, callFunction }),
-    wasi,
-    run,
-    process,
-    os: bindings.os ?? {},
-    posix: bindings.posix ?? {},
-    child_process: bindings.child_process ?? {},
+  const posixContext = new PosixContext({
+    bindings,
     memory,
-    callFunction,
-    getcwd,
-    free,
+    wasi,
   });
-  for (const name in posixEnv) {
-    if (wasmOpts.env[name] == null) {
-      wasmOpts.env[name] = posixEnv[name];
-    }
-  }
+  posixContext.injectFunctions(wasmOpts.env);
 
-  if (source == null) {
-    throw Error("source must be defined for now...");
-  }
   const instance = await importWebAssemblyDlopen({
     path: source,
     importWebAssemblySync,
@@ -246,11 +180,13 @@ async function doWasmImport({
   });
 
   if (wasi != null) {
-    // wasi assumes this:
+    // wasi assumes this is called.
     wasi.start(instance, memory);
   }
 
   wasm = new WasmInstance(instance.exports, memory, fs, table);
+  posixContext.init(wasm);
+
   if (options.init != null) {
     await options.init(wasm);
     // Uncomment this for low level debugging, so that the broken wasm
@@ -263,8 +199,6 @@ async function doWasmImport({
     }
     */
   }
-  posixEnv.init(); // must be done after wasm is created.
-
   cache[source] = wasm;
 
   if (options.time && log.enabled) {
@@ -272,9 +206,7 @@ async function doWasmImport({
   }
   wasm.table = table;
   wasm.wasi = wasi;
-  wasm.posixEnv = posixEnv;
-
-  wasm.run = run; // DELETE
+  wasm.posixContext = posixContext;
 
   return wasm;
 }

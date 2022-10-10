@@ -545,11 +545,12 @@ export default function unistd({
     },
 
     // just like chdir, but uses a file descriptor. WASI doesn't have it, so we
-    // have to add it.
+    // add it.
     fchdir: (fd: number): number => {
       const dir = wasi.FD_MAP.get(fd)?.path;
       if (!dir) {
-        throw Error("invalid file descriptor");
+        console.error(`fchdir: invalid file descriptor: ${fd}`);
+        return -1;
       }
       return callFunction("chdir", dir);
     },
