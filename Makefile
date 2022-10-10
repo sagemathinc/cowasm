@@ -1,3 +1,6 @@
+# Do not doing any "make -j4" for any makes in here, since they trigger
+# caching bugs in zig. You can try with newer versions of zig, of course.
+
 BUILT = dist/.built
 
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
@@ -17,7 +20,7 @@ test-cpython: cpython python-wasm
 
 coreutils: packages/coreutils/${BUILT}
 packages/coreutils/${BUILT}: zig fts posix-wasm
-	cd packages/coreutils && make -j4
+	cd packages/coreutils && make
 .PHONY: coreutils
 
 
@@ -41,7 +44,7 @@ packages/dylink/${BUILT}: node zig posix-wasm cpython lzma
 
 fts: packages/fts/${BUILT}
 packages/fts/${BUILT}: zig posix-wasm
-	cd packages/fts && make -j4
+	cd packages/fts && make
 .PHONY: fts
 
 test-dylink: dylink
@@ -81,7 +84,6 @@ packages/openssl/${BUILT}: zig posix-wasm
 
 posix-node: packages/posix-node/${BUILT}
 packages/posix-node/${BUILT}: zig node
-	# Not doing "make -j4" here, due to zig bug
 	cd packages/posix-node && make all
 .PHONY: posix-node
 
