@@ -225,7 +225,8 @@ export default function fork_exec({
     zython_dash_vforkexec: (argvPtr: number, pathPtr: number): number => {
       const argv = recv.arrayOfStrings(argvPtr);
       const path = recv.string(pathPtr);
-      // console.log({ argv, path });
+      log("zython_dash_vforkexec", argv);
+      //console.log("zython_dash_vforkexec", { argv });
       if (!argv[0]) {
         throw Error("argv[0] must be defined");
       }
@@ -246,6 +247,12 @@ export default function fork_exec({
         console.error(`${argv[0]}: not found\n`);
         // couldn't find it
         return 127;
+      }
+      const stat = fs.statSync(argv[0]);
+      if (!(stat.mode & fs.constants.S_IXUSR)) {
+        console.error(`${argv[0]}: Permission denied\n`);
+        // not executable
+        return 126;
       }
 
       if (isWasm(argv[0])) {

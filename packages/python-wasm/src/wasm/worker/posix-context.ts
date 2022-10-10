@@ -1,27 +1,45 @@
 import WASI from "wasi-js";
-import type { WASIBindings } from "wasi-js";
+import type { WASIBindings, WASIConfig } from "wasi-js";
 import type WasmInstance from "./instance";
 import posix, { PosixEnv } from "../posix";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
+// import importWebAssemblyDlopen from "dylink"
+import { MBtoPages, Options as DylinkOptions } from "dylink";
 
 interface Options {
-  bindings: WASIBindings;
+  wasiConfig: WASIConfig;
   memory: WebAssembly.Memory;
   wasi: WASI;
+  dylinkOptions: Pick<DylinkOptions, "importWebAssemblySync">;
 }
 
 export default class PosixContext {
   //private bindings: WASIBindings;
   private posixEnv: PosixEnv;
   private wasm: WasmInstance;
+  private wasiConfig: WASIConfig;
+  private dylinkOptions: Pick<DylinkOptions, "importWebAssemblySync">;
 
-  constructor({ bindings, memory, wasi }: Options) {
-    //this.bindings = bindings;
+  constructor({ wasiConfig, memory, wasi, dylinkOptions }: Options) {
+    this.wasiConfig = wasiConfig;
+    this.dylinkOptions = dylinkOptions;
+    const { bindings } = wasiConfig;
+    this.posixEnv = this.createPosixEnv({ memory, wasi, bindings });
+  }
 
+  private createPosixEnv({
+    bindings,
+    memory,
+    wasi,
+  }: {
+    bindings: WASIBindings;
+    memory: WebAssembly.Memory;
+    wasi: WASI;
+  }) {
     const callFunction = this.callFunction.bind(this);
 
-    this.posixEnv = posix({
+    return posix({
       fs: bindings.fs,
       send: new SendToWasm({ memory, callFunction }),
       recv: new RecvFromWasm({ memory, callFunction }),
@@ -73,35 +91,48 @@ export default class PosixContext {
   }
 
   // TODO: env
+  // TODO: version that uses importWebAssemblyDlopen instead. Don't always do this,
+  //       since it's much more expensive. Will need it for running python.  But
+  //       maybe later many applications (?).
   private run(args: string[]): number {
     const path = args[0];
     if (path == null) {
       throw Error("args must have length at least 1");
     }
-    console.log("need to rewrite run");
-    return 1;
-    /*
     //console.log("wasm run", args);
+
+    // Create memory, wasi, and bindings
+    const memory = new WebAssembly.Memory({
+      initial: MBtoPages(1), // maybe some heuristics here, e.g., 10mb better for python, but much less for ls?
+    });
+
     let exitcode = 0;
-    const _bindings = {
-      ...bindings,
-      exit: (_exitcode: number) => {
+    const bindings = {
+      ...this.wasiConfig.bindings,
+      exit: (code: number) => {
         // this is a callback, but it is called *synchronously*.
-        exitcode = _exitcode;
+        exitcode = code;
       },
     };
-    const _wasi = new WASI({ ...opts, bindings: _bindings, args });
-    const _wasmOpts = { ...wasmOpts };
-    _wasmOpts.wasi_snapshot_preview1 = _wasi.wasiImport;
+
+    const wasi = new WASI({ ...this.wasiConfig, bindings, args });
+
+    const wasmOpts: any = {
+      env: this.createPosixEnv({ memory, wasi, bindings }),
+      wasi_snapshot_preview1: wasi.wasiImport,
+    };
+
     let instance;
     try {
-      instance = importWebAssemblySync(path, _wasmOpts);
+      instance = this.dylinkOptions.importWebAssemblySync(path, wasmOpts);
     } catch (err) {
       console.error(err);
       return 1;
     }
-    _wasi.start(instance);
+
+    // This runs synchronously until exit gets called above, which sets exitcode.
+    wasi.start(instance);
+    // Then we are here and exit with that exitcode.
     return exitcode;
-    */
   }
 }
