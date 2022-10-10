@@ -81,7 +81,8 @@ packages/openssl/${BUILT}: zig posix-wasm
 
 posix-node: packages/posix-node/${BUILT}
 packages/posix-node/${BUILT}: zig node
-	cd packages/posix-node && make -j4 all
+	# Not doing "make -j4" here, due to zig bug
+	cd packages/posix-node && make all
 .PHONY: posix-node
 
 posix-wasm: packages/posix-wasm/${BUILT}
