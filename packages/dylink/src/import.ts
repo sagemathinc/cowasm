@@ -60,7 +60,7 @@ interface Env {
   dlclose?: (handle: number) => number; // basically a stub right now
 }
 
-interface Input {
+export interface Options {
   path: string;
   importObject?: { env?: Env; wasi_snapshot_preview1?: any };
   importWebAssembly?: (
@@ -84,7 +84,7 @@ export default async function importWebAssemblyDlopen({
   readFileSync,
   stub,
   allowMainExports,
-}: Input): Promise<WebAssembly.Instance> {
+}: Options): Promise<WebAssembly.Instance> {
   let mainInstance: WebAssembly.Instance | null = null;
   if (importObject == null) {
     importObject = {} as { env?: Partial<Env> };

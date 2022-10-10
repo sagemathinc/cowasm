@@ -84,6 +84,8 @@ This installs a specific version of Zig and Nodejs, then builds native and WebAs
 
 If you're using Windows, you'll have to use Linux via a virtual machine \(or maybe WSL\) to build python\-wasm from source.
 
+NOTE: Sometimes the build will randomly crash due to some sort of caching issue.  This is due to a bug in Zig, and just typing `make` to restart the build almost always works around it. It'll also likely just go away as zig improves (they are constantly fixing bugs, and I'm constantly upgrading).
+
 ### Try out your build
 
 Run some tests, which won't take too long:

@@ -2,7 +2,10 @@ import WASI from "wasi-js";
 import type { FileSystemSpec, WASIConfig, WASIBindings } from "wasi-js";
 import reuseInFlight from "../reuseInFlight";
 import WasmInstance from "./instance";
-import importWebAssemblyDlopen, { MBtoPages } from "dylink";
+import importWebAssemblyDlopen, {
+  MBtoPages,
+  Options as DylinkOptions,
+} from "dylink";
 import initPythonTrampolineCalls from "./trampoline";
 import debug from "debug";
 import PosixContext from "./posix-context";
@@ -123,6 +126,7 @@ async function doWasmImport({
     };
   }
   if (wasmOpts.env.getrandom == null) {
+    // TODO: didn't need to do this get fixed in newer zig?
     wasmOpts.env.getrandom = (bufPtr, bufLen, _flags) => {
       // NOTE: returning 0 here (our default stub behavior)
       // would result in Python hanging on startup!
@@ -136,12 +140,14 @@ async function doWasmImport({
     };
   }
   if (wasmOpts.env.main == null) {
+    // TODO: this seems suspect
     wasmOpts.env.main = () => {
       return 0;
     };
   }
 
   if (wasmOpts.env._Py_emscripten == null) {
+    // TODO: this seems suspect
     wasmOpts.env._Py_emscripten_runtime = () => {
       return 0;
     };
@@ -150,7 +156,7 @@ async function doWasmImport({
   initPythonTrampolineCalls(table, wasmOpts.env);
 
   const { fs } = bindings;
-  const opts: WASIConfig = {
+  const wasiConfig: WASIConfig = {
     preopens: { "/": "/" },
     bindings,
     args: process.argv,
@@ -160,24 +166,32 @@ async function doWasmImport({
     sendStdout: options.sendStdout,
     sendStderr: options.sendStderr,
   };
-  const wasi = new WASI(opts);
+  const wasi = new WASI(wasiConfig);
   wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
 
+  const dylinkOptions = {
+    importWebAssemblySync,
+    importWebAssembly,
+    readFileSync,
+    stub: false,
+  } as Pick<
+    DylinkOptions,
+    "importWebAssemblySync" | "importWebAssembly" | "readFileSync" | "stub"
+  >;
+
   const posixContext = new PosixContext({
-    bindings,
     memory,
     wasi,
+    dylinkOptions,
+    wasiConfig,
   });
   posixContext.injectFunctions(wasmOpts.env);
 
   const instance = await importWebAssemblyDlopen({
+    ...dylinkOptions,
     path: source,
-    importWebAssemblySync,
-    importWebAssembly,
-    readFileSync,
     importObject: wasmOpts,
-    stub: false,
-  });
+  } as DylinkOptions);
 
   if (wasi != null) {
     // wasi assumes this is called.
