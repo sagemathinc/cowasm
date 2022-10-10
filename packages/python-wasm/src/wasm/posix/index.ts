@@ -153,6 +153,9 @@ export default function posix(context: Context): PosixEnv {
             // ENOSYS means "Function not implemented (POSIX.1-2001)."
             context.callFunction("setErrno", constants.ENOSYS);
           } else {
+            console.trace(
+              `WARNING: Posix library raised exception without error code: ${err}`
+            );
             logNotImplemented(
               "Posix library raised exception without error code",
               err

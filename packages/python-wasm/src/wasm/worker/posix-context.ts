@@ -1,6 +1,6 @@
 import WASI from "wasi-js";
 import type { WASIBindings, WASIConfig } from "wasi-js";
-import type WasmInstance from "./instance";
+import WasmInstance from "./instance";
 import posix, { PosixEnv } from "../posix";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
@@ -25,20 +25,26 @@ export default class PosixContext {
     this.wasiConfig = wasiConfig;
     this.dylinkOptions = dylinkOptions;
     const { bindings } = wasiConfig;
-    this.posixEnv = this.createPosixEnv({ memory, wasi, bindings });
+    const callFunction = this.callFunction.bind(this);
+    this.posixEnv = this.createPosixEnv({
+      memory,
+      wasi,
+      bindings,
+      callFunction,
+    });
   }
 
   private createPosixEnv({
     bindings,
     memory,
     wasi,
+    callFunction,
   }: {
     bindings: WASIBindings;
     memory: WebAssembly.Memory;
     wasi: WASI;
+    callFunction: (name: string, ...args) => number | undefined;
   }) {
-    const callFunction = this.callFunction.bind(this);
-
     return posix({
       fs: bindings.fs,
       send: new SendToWasm({ memory, callFunction }),
@@ -116,9 +122,27 @@ export default class PosixContext {
     };
 
     const wasi = new WASI({ ...this.wasiConfig, bindings, args });
+    let wasm: WasmInstance | undefined;
 
+    const callFunction = (name: string, ...args) => {
+      console.log("callFunction", name, args);
+      const f = wasm?.getFunction(name);
+      if (f == null) {
+        console.warn(`${name} is not defined; using stub`);
+        return 0;
+        throw Error(`error - ${name} is not defined`);
+      }
+      return f(...args);
+    };
+
+    const posixEnv = this.createPosixEnv({
+      memory,
+      wasi,
+      bindings,
+      callFunction,
+    });
     const wasmOpts: any = {
-      env: this.createPosixEnv({ memory, wasi, bindings }),
+      env: posixEnv,
       wasi_snapshot_preview1: wasi.wasiImport,
     };
 
@@ -129,6 +153,14 @@ export default class PosixContext {
       console.error(err);
       return 1;
     }
+    wasm = new WasmInstance(instance.exports, memory);
+
+    // TODO: we have just hit an interesting hard problem.
+    // this relies on getConstants and some other code that I wrote in zig,
+    // and maybe there is no way to make this work without linking that code
+    // into the binary we are loading?! Ut oh.  Or maybe it can be loaded dynamically.
+    // Interesting!
+    //posixEnv.init();
 
     // This runs synchronously until exit gets called above, which sets exitcode.
     wasi.start(instance);
