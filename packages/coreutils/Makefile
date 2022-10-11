@@ -11,7 +11,9 @@ include ../build/Makefile-rules
 
 # zig-fPIC cc -c a.c -o a.o && zig wasm-ld --experimental-pic -shared a.o -o a.wasm
 #CC = zig cc -target wasm32-wasi
-CFLAGS = -I${POSIX_WASM} -I${SRC}/compat -I${SRC}/fts -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_MMAN
+CFLAGS = -I${POSIX_WASM} -I${SRC}/compat -I${SRC}/fts \
+	-D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_MMAN
+LDFLAGS = --experimental-pic -s --compress-relocations -shared
 
 ${BUILD_WASM}/.source:: src/**
 	rm -rf ${BUILD_WASM}
@@ -38,13 +40,13 @@ ${DIST_WASM}/bin/%: ${SRC}/utils/%/*.o | ${BUILD_WASM}/.source
 
 ${DIST_WASM}/bin/ls: ${SRC}/fts/fts.o ${SRC}/compat/getbsize.o ${SRC}/compat/strmode.o  ${SRC}/compat/progname.o ${SRC}/compat/fmt_scaled.o  ${SRC}/utils/ls/cmp.o ${SRC}/utils/ls/ls.o ${SRC}/utils/ls/main.o  ${SRC}/utils/ls/print.o ${SRC}/utils/ls/utf8.o ${SRC}/utils/ls/util.o | ${BUILD_WASM}/.source
 	mkdir -p ${DIST_WASM}/bin
-	zig wasm-ld --experimental-pic -s --compress-relocations  -shared ${SRC}/utils/ls/*.o ${SRC}/compat/getbsize.o ${SRC}/compat/strmode.o ${SRC}/compat/progname.o  ${SRC}/compat/fmt_scaled.o  ${SRC}/fts/fts.o  -o ${DIST_WASM}/bin/ls
+	zig wasm-ld ${LDFLAGS} ${SRC}/utils/ls/*.o ${SRC}/compat/getbsize.o ${SRC}/compat/strmode.o ${SRC}/compat/progname.o  ${SRC}/compat/fmt_scaled.o  ${SRC}/fts/fts.o  -o ${DIST_WASM}/bin/ls
 
 
 
 ${DIST_WASM}/bin/factor: ${SRC}/compat/getbsize.o ${SRC}/compat/strmode.o  ${SRC}/compat/progname.o ${SRC}/compat/fmt_scaled.o  ${SRC}/utils/factor/factor.o ${SRC}/utils/factor/pr_tbl.o ${SRC}/utils/factor/pattern.o  | ${BUILD_WASM}/.source
 	mkdir -p ${DIST_WASM}/bin
-	zig wasm-ld --experimental-pic -shared ${SRC}/utils/factor/*.o ${SRC}/compat/getbsize.o ${SRC}/compat/strmode.o ${SRC}/compat/progname.o  ${SRC}/compat/fmt_scaled.o  -o ${DIST_WASM}/bin/factor
+	zig wasm-ld ${LDFLAGS} ${SRC}/utils/factor/*.o ${SRC}/compat/getbsize.o ${SRC}/compat/strmode.o ${SRC}/compat/progname.o  ${SRC}/compat/fmt_scaled.o  -o ${DIST_WASM}/bin/factor
 
 ${DIST_WASM}/bin/chown: ${DIST_WASM}/bin/chmod
 	cd ${DIST_WASM}/bin && ln -sf chmod chown

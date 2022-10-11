@@ -85,7 +85,6 @@ static void pr_bigfact(u_int64_t);
 static u_int64_t usqrt(u_int64_t);
 static void usage(void);
 
-__attribute__((visibility("default")))
 int main(int argc, char *argv[]) {
   u_int64_t val;
   int ch;
