@@ -226,7 +226,7 @@ CORE_WASM_C = \
 		${CWD}/src/wasm/posix/stdlib.c \
 		${CWD}/src/python/signal/signal.c
 
-${DIST}/core/libcore.a: ${POSIX_SOURCES} ${CORE_WASM_C} ${CWD}/src/wasm/core.zig
+${DIST}/src/core.wasm.o: ${POSIX_SOURCES} ${CORE_WASM_C} ${CWD}/src/wasm/core.zig
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
@@ -237,3 +237,6 @@ ${DIST}/core/libcore.a: ${POSIX_SOURCES} ${CORE_WASM_C} ${CWD}/src/wasm/core.zig
 		${CORE_WASM_INCLUDE} \
 		${CORE_WASM_C} \
 		${CWD}/src/wasm/core.zig
+
+a.wasm: ${DIST}/src/core.wasm.o src/a.c
+	zig cc -target wasm32-wasi -rdynamic src/a.c src/core.wasm.o -o a.wasm ${CORE_WASM_LDFLAGS} ${CORE_WASM_INCLUDE} ${CORE_WASM_C} ${WASI_EMULATED} -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS
