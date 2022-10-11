@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+import subprocess, sys
+
+if len(sys.argv) > 1:
+    if sys.argv[1] == 'sh':
+        subprocess.run(['zash-debug'] + sys.argv[2:])
+        sys.exit(0)
+
+    if sys.argv[1] == 'python':
+        subprocess.run(['zython-debug'] + sys.argv[2:])
+        sys.exit(0)
+
+print(f"Usage: {sys.argv[0]}: [sh | python | binary.wasm]")
