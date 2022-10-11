@@ -4,8 +4,7 @@ import WasmInstance from "./instance";
 import posix, { PosixEnv } from "../posix";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
-// import importWebAssemblyDlopen from "dylink"
-import { MBtoPages, Options as DylinkOptions } from "dylink";
+import { Options as DylinkOptions } from "dylink";
 
 interface Options {
   wasiConfig: WASIConfig;
@@ -15,7 +14,6 @@ interface Options {
 }
 
 export default class PosixContext {
-  //private bindings: WASIBindings;
   private posixEnv: PosixEnv;
   private wasm: WasmInstance;
   private wasiConfig: WASIConfig;
@@ -28,7 +26,7 @@ export default class PosixContext {
     const { bindings } = wasiConfig;
     const callFunction = this.callFunction.bind(this);
     this.posixEnv = this.createPosixEnv({
-      memory,
+      getView: () => new DataView(memory.buffer),
       wasi,
       bindings,
       callFunction,
@@ -37,26 +35,26 @@ export default class PosixContext {
 
   private createPosixEnv({
     bindings,
-    memory,
+    getView,
     wasi,
     callFunction,
   }: {
     bindings: WASIBindings;
-    memory: WebAssembly.Memory;
+    getView: () => DataView;
     wasi: WASI;
     callFunction: (name: string, ...args) => number | undefined;
   }) {
     return posix({
       fs: bindings.fs,
-      send: new SendToWasm({ memory, callFunction }),
-      recv: new RecvFromWasm({ memory, callFunction }),
+      send: new SendToWasm({ getView, callFunction }),
+      recv: new RecvFromWasm({ getView, callFunction }),
       wasi,
       run: this.run.bind(this),
       process,
       os: bindings.os ?? {},
       posix: bindings.posix ?? {},
       child_process: bindings.child_process ?? {},
-      memory,
+      getView,
       callFunction,
       getcwd: this.getcwd.bind(this),
       free: this.free.bind(this),
@@ -115,12 +113,6 @@ export default class PosixContext {
       throw Error("args must have length at least 1");
     }
     //console.log("wasm run", args);
-
-    // Create memory, wasi, and bindings
-    const memory = new WebAssembly.Memory({
-      initial: MBtoPages(5), // maybe some heuristics here, e.g., 10mb better for python, but much less for ls?
-    });
-
     let exitcode = 0;
     const bindings = {
       ...this.wasiConfig.bindings,
@@ -143,19 +135,8 @@ export default class PosixContext {
       return f(...args);
     };
 
-    /*
-    TODO!!!! The problem!  If the executable is built without explicitly
-    specifying --import-memory, then we can't define the memory above
-    and know it to create posixEnv.  Instead, we can only get the memory
-    later by doing instance.exports.memory! But we must make posixEnv now
-    since it must be fully defined during the import.
-
-    Solution: rewrite posixEnv thing to let you specify the memory *later*
-    after creating the instance.
-    */
-
     const posixEnv = this.createPosixEnv({
-      memory,
+      getView: () => new DataView(instance.exports.memory.buffer),
       wasi,
       bindings,
       callFunction,
@@ -164,7 +145,6 @@ export default class PosixContext {
       env: posixEnv,
       wasi_snapshot_preview1: wasi.wasiImport,
     };
-    wasmOpts.env.memory = memory;
 
     let instance;
     try {
@@ -173,17 +153,7 @@ export default class PosixContext {
       console.error(err);
       return 1;
     }
-
-    wasm = new WasmInstance(instance.exports, memory);
-    if (instance.exports.memory.buffer.byteLength != memory.buffer.byteLength) {
-      // TODO: except I don't know how to do this with "zig cc", so we MUST just
-      // make it not necessary!
-      console.error(
-        "must build executable with --import-memory option specified"
-      );
-      return 1;
-    }
-
+    wasm = new WasmInstance(instance.exports, instance.exports.memory);
     //console.log("init", new Date() - t0); t0 = new Date();
     // This runs synchronously until exit gets called above, which sets exitcode.
     wasi.start(instance);

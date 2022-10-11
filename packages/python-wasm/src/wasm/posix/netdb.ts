@@ -10,7 +10,7 @@ import type { Hostent } from "posix-node";
 import constants from "./constants";
 
 export default function netdb({
-  memory,
+  getView,
   posix,
   callFunction,
   recv,
@@ -28,7 +28,7 @@ export default function netdb({
   // intensely abuses the C data types...
   function sendSockaddr(sa_family, ai_addrlen, sa_data): number {
     const ptr = send.malloc(2 + ai_addrlen);
-    const view = new DataView(memory.buffer);
+    const view = getView();
     view.setUint16(ptr, sa_family, true);
     for (let i = 0; i < ai_addrlen; i++) {
       view.setUint8(ptr + 2 + i, sa_data[i]);
@@ -37,7 +37,7 @@ export default function netdb({
   }
 
   function recvHints(hintsPtr) {
-    const view = new DataView(memory.buffer);
+    const view = getView();
     const flags = view.getUint32(hintsPtr, true);
     hintsPtr += 4;
     let family = wasmToNativeFamily(posix, view.getUint32(hintsPtr, true));
@@ -57,7 +57,7 @@ export default function netdb({
   }
 
   function sendPtr(address: number, ptr: number): void {
-    const view = new DataView(memory.buffer);
+    const view = getView();
     view.setUint32(address, ptr, true); // true = endianness
   }
 

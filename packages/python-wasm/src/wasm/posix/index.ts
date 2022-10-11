@@ -58,8 +58,8 @@ interface Context {
   child_process: {
     spawnSync?: (command: string) => number;
   };
-  // The WASM memory (so we can make sense of pointers efficiently).
-  memory: WebAssembly.Memory;
+  // View into the WASM memory (so we can make sense of pointers efficiently).
+  getView: () => DataView;
   // Optional module that gets installed on Mac/Linux, but obviously not windows
   // for which posix doesn't make sense.
   posix: {

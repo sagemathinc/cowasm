@@ -1,7 +1,7 @@
 const textDecoder = new TextDecoder();
 
 interface Options {
-  memory: WebAssembly.Memory;
+  getView: () => DataView;
   callFunction: (strings, ...args) => number | undefined;
 }
 
@@ -9,19 +9,14 @@ interface Options {
 const SIZEOF_POINTER = 4;
 
 export class RecvFromWasmAbstractBase {
-  protected memory: WebAssembly.Memory;
+  protected view: () => DataView;
   protected callFunction: (strings, ...args) => number | undefined;
-
-  // always get the view any time after a malloc may have happened!
-  protected view(): DataView {
-    return new DataView(this.memory.buffer);
-  }
 
   // Returns the number of *bytes* in a char*.
   strlen(charPtr: number): number {
     // TODO: benchmark the JS vs wasm implementation!
     // return this.callFunction("stringLength", charPtr);
-    const mem = new Uint8Array(this.memory.buffer);
+    const mem = new Uint8Array(this.view().buffer);
     let i = charPtr;
     while (mem[i]) {
       i += 1;
@@ -42,7 +37,7 @@ export class RecvFromWasmAbstractBase {
   }
 
   pointer2(ptr: number): number {
-    return new Uint32Array(this.memory.buffer)[ptr];
+    return new Uint32Array(this.view().buffer)[ptr];
   }
 
   // len is the number of bytes, not the number of utf-8 characters.
@@ -52,13 +47,13 @@ export class RecvFromWasmAbstractBase {
       bytes = this.strlen(ptr);
       if (bytes == null) throw Error("bug");
     }
-    const slice = this.memory.buffer.slice(ptr, ptr + bytes);
+    const slice = this.view().buffer.slice(ptr, ptr + bytes);
     return textDecoder.decode(slice);
   }
 
   buffer(ptr: number, bytes: number): Buffer {
-    console.log(this.memory.buffer.slice(ptr, ptr + bytes));
-    return Buffer.from(this.memory.buffer.slice(ptr, ptr + bytes));
+    console.log(this.view().buffer.slice(ptr, ptr + bytes));
+    return Buffer.from(this.view().buffer.slice(ptr, ptr + bytes));
   }
 
   // Receive a null-terminated array of strings.
@@ -90,9 +85,9 @@ export class RecvFromWasmAbstractBase {
 }
 
 export default class RecvFromWasm extends RecvFromWasmAbstractBase {
-  constructor({ memory, callFunction }: Options) {
+  constructor({ getView, callFunction }: Options) {
     super();
-    this.memory = memory;
+    this.view = getView;
     this.callFunction = callFunction;
   }
 }

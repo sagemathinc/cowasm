@@ -58,7 +58,7 @@ export default class WasmInstance extends EventEmitter {
     this.fs = fs;
 
     const opts = {
-      memory: this.memory,
+      getView: () => new DataView(this.memory.buffer),
       callFunction: (name: string, ...args) => {
         const f = this.getFunction(name);
         if (f == null) {

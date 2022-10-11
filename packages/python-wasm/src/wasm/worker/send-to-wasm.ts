@@ -3,14 +3,14 @@ Functions for sending objects from Javascript to WASM.
 */
 
 interface Options {
-  memory: WebAssembly.Memory;
+  getView: () => DataView;
   callFunction: (strings, ...args) => number | undefined;
 }
 
 const encoder = new TextEncoder();
 
 export class SendToWasmAbstractBase {
-  protected memory: WebAssembly.Memory;
+  protected view: () => DataView;
   protected callFunction: (strings, ...args) => number | undefined;
 
   // malloc is public in Send since it's "sending random bytes".
@@ -20,11 +20,6 @@ export class SendToWasmAbstractBase {
       throw Error("Out of Memory");
     }
     return ptr;
-  }
-
-  // always get the view any time after a malloc may have happened!
-  protected view(): DataView {
-    return new DataView(this.memory.buffer);
   }
 
   pointer(address: number, ptr: number): void {
@@ -71,11 +66,7 @@ export class SendToWasmAbstractBase {
     }
     const len = strAsArray.length + 1;
     const ptr = dest?.ptr ?? this.malloc(len);
-    console.log("this.memory =", this.memory);
-    console.log("length =", this.memory.buffer.byteLength);
-    console.log("strAsArray = ", strAsArray);
-    console.log({len, ptr});
-    const array = new Int8Array(this.memory.buffer, ptr, len);
+    const array = new Int8Array(this.view().buffer, ptr, len);
     array.set(strAsArray);
     array[len - 1] = 0;
     return ptr;
@@ -95,16 +86,16 @@ export class SendToWasmAbstractBase {
 
   buffer(buf: Buffer): number {
     const ptr = this.malloc(buf.byteLength);
-    const array = new Uint8Array(this.memory.buffer);
+    const array = new Uint8Array(this.view().buffer);
     buf.copy(array, ptr);
     return ptr;
   }
 }
 
 export default class SendToWasm extends SendToWasmAbstractBase {
-  constructor({ memory, callFunction }: Options) {
+  constructor({ getView, callFunction }: Options) {
     super();
-    this.memory = memory;
+    this.view = getView;
     this.callFunction = callFunction;
   }
 }

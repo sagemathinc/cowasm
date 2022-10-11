@@ -13,7 +13,7 @@ export default function unistd({
   send,
   wasi,
   posix,
-  memory,
+  getView,
   callFunction,
 }) {
   let login: number | undefined = undefined;
@@ -80,7 +80,7 @@ export default function unistd({
       if (count == 0) {
         return 0;
       }
-      const view = new DataView(memory.buffer);
+      const view = getView();
       for (let i = 0; i < count; i++) {
         view.setUint32(grouplistPtr + 4 * i, groups[i], true);
       }
@@ -344,7 +344,7 @@ export default function unistd({
         notImplemented("getresuid");
       }
       const { ruid, euid, suid } = posix.getresuid();
-      const view = new DataView(memory.buffer);
+      const view = getView();
       view.setUint32(ruidPtr, ruid, true);
       view.setUint32(euidPtr, euid, true);
       view.setUint32(suidPtr, suid, true);
@@ -356,7 +356,7 @@ export default function unistd({
         notImplemented("getresgid");
       }
       const { rgid, egid, sgid } = posix.getresgid();
-      const view = new DataView(memory.buffer);
+      const view = getView();
       view.setUint32(rgidPtr, rgid, true);
       view.setUint32(egidPtr, egid, true);
       view.setUint32(sgidPtr, sgid, true);

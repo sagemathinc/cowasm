@@ -1,6 +1,6 @@
 const dateFormat = require("date-format");
 
-export default function time({ child_process, memory, os }) {
+export default function time({ child_process, getView, os }) {
   return {
     // int clock_settime(clockid_t clk_id, const struct timespec *tp);
     clock_settime(_clk_id: number, timespec: number): number {
@@ -9,7 +9,7 @@ export default function time({ child_process, memory, os }) {
       }
       // NOTE: We assume the clk_id is CLOCK_REALTIME without a check.
 
-      const view = new DataView(memory.buffer);
+      const view = getView();
       const tv_sec = view.getUint32(timespec, true);
       // we ignore nanoseconds here; the date commands aren't that precise anyways.
 
