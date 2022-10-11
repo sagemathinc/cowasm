@@ -5,19 +5,9 @@ import { constants as wasi_constants } from "wasi-js";
 
 const log = debug("posix:unistd");
 
-export default function unistd({
-  fs,
-  os,
-  process,
-  recv,
-  send,
-  wasi,
-  posix,
-  memory,
-  callFunction,
-}) {
-  let login: number | undefined = undefined;
-
+export default function unistd(context) {
+  const { fs, os, process, recv, send, wasi, posix, memory, callFunction } =
+    context;
   // TODO: this doesn't throw an error yet if the target filesystem isn't native.
   function toNativeFd(fd: number): number {
     // OBVIOUSLY -- these  functions won't work if the target
@@ -291,13 +281,11 @@ export default function unistd({
     },
 
     getlogin: (): number => {
-      if (login != null) return login;
+      if (context.state.getlogin_ptr != null) return context.state.getlogin_ptr;
       // returns the username of the signed in user; if not available, e.g.,
       // in a browser, returns "user".
       const username = os.userInfo?.()?.username ?? "user";
-      login = send.string(username);
-      if (login == null) throw Error("bug");
-      return login;
+      return (context.state.getlogin_ptr = send.string(username));
     },
 
     // int gethostname(char *name, size_t len);

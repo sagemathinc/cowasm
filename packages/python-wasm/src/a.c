@@ -4,7 +4,6 @@ zig cc -target wasm32-wasi -Oz src/a.c -o a-nopie.wasm
 
 zig cc -Oz src/a.c -o a-native.exe
 
-
 zig-fPIC cc -Oz -c src/a.c -o a.o && zig wasm-ld --experimental-pic -shared  -s --compress-relocations a.o -o a-pie.wasm
 
 */
@@ -35,13 +34,11 @@ long long time0() {
 #include <sys/stat.h>
 extern char* user_from_uid(uid_t uid, int nouser);
 
-//#define main __attribute__((visibility("default"))) main
-
 int main(int argc, char** argv) {
   for (int i = 0; i < argc; i++) {
     printf("argv[%d]=%s\n", i, argv[i]);
   }
-  //printf("hi %s\n", user_from_uid(500, 0));
+  printf("hi %s\n", user_from_uid(500, 0));
   int n = 10000000;
   if (argc > 1) {
     n = atoi(argv[1]);

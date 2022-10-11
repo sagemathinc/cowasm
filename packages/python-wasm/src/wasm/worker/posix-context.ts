@@ -1,9 +1,10 @@
 import WASI from "wasi-js";
 import type { WASIBindings, WASIConfig } from "wasi-js";
 import WasmInstance from "./instance";
-import posix, { PosixEnv } from "../posix";
+import posix, { Context, PosixEnv } from "../posix";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
+import { cloneDeep } from "lodash";
 
 interface Options {
   wasiConfig: WASIConfig;
@@ -15,6 +16,7 @@ export default class PosixContext {
   private posixEnv: PosixEnv;
   private wasm: WasmInstance;
   private memory: WebAssembly.Memory;
+  private context: Context;
 
   constructor({ wasiConfig, memory, wasi }: Options) {
     this.memory = memory;
@@ -39,7 +41,8 @@ export default class PosixContext {
     wasi: WASI;
     callFunction: (name: string, ...args) => number | undefined;
   }) {
-    return posix({
+    this.context = {
+      state: {},
       fs: bindings.fs,
       send: new SendToWasm({ memory, callFunction }),
       recv: new RecvFromWasm({ memory, callFunction }),
@@ -53,7 +56,8 @@ export default class PosixContext {
       callFunction,
       getcwd: this.getcwd.bind(this),
       free: this.free.bind(this),
-    });
+    };
+    return posix(this.context);
   }
 
   init(wasm: WasmInstance) {
@@ -91,42 +95,53 @@ export default class PosixContext {
   }
 
   private run(args: string[]): number {
-
-    const state = new Uint8Array(this.memory.buffer).slice();
-
     const path = args[0];
     if (path == null) {
       throw Error("args must have length at least 1");
     }
-    const handle = this.wasm.callWithString("dlopen", args[0]);
-    const dlsym = this.wasm.getFunction("dlsym");
-    if (dlsym == null) {
-      console.error(`${args[0]}: dlsym not defined`);
-      return 1;
-    }
-    const sPtr = this.wasm.send.string("__main_argc_argv"); // TODO: memory leak
-    const mainPtr = dlsym(handle, sPtr);
-    if (!mainPtr) {
-      console.error(`${args[0]}: unable to find main pointer`);
-      return 1;
-    }
-    const main = this.wasm.table?.get(mainPtr);
-    if (!main) {
-      console.error(`${args[0]}: unable to find main function`);
-      return 1;
-    }
-    // TODO: array memory leak!
-    const ret = main(args.length, this.wasm.send.arrayOfStrings(args));
 
-    const dlclose = this.wasm.getFunction("dlclose");
-    if(dlclose == null) {
-      console.error(`${args[0]}: dlclose not defined`);
-      return 1;
+    // save memory and function caching context
+    const state = {
+      memory: new Uint8Array(this.memory.buffer).slice(),
+      context: this.context.state,
+    };
+    // I wonder if I could use immer.js instead?
+    this.context.state = cloneDeep(this.context.state);
+
+    try {
+      const handle = this.wasm.callWithString("dlopen", args[0]);
+      const dlsym = this.wasm.getFunction("dlsym");
+      if (dlsym == null) {
+        console.error(`${args[0]}: dlsym not defined`);
+        return 1;
+      }
+      // This is not a memory leak, since we reset the memory below.
+      const sPtr = this.wasm.send.string("__main_argc_argv");
+      const mainPtr = dlsym(handle, sPtr);
+      if (!mainPtr) {
+        console.error(`${args[0]}: unable to find main pointer`);
+        return 1;
+      }
+      const main = this.wasm.table?.get(mainPtr);
+      if (!main) {
+        console.error(`${args[0]}: unable to find main function`);
+        return 1;
+      }
+      const ret = main(args.length, this.wasm.send.arrayOfStrings(args));
+
+      const dlclose = this.wasm.getFunction("dlclose");
+      if (dlclose == null) {
+        console.error(`${args[0]}: dlclose not defined`);
+        return 1;
+      }
+      dlclose(handle);
+
+      return ret;
+    } finally {
+      // Restore memory to how it was before running the subprocess.
+      new Uint8Array(this.memory.buffer).set(state.memory);
+      // Restore posix context to befoe running the subprocess.
+      this.context.state = state.context;
     }
-    dlclose(handle);
-
-    new Uint8Array(this.memory.buffer).set(state);
-
-    return ret;
   }
 }

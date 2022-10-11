@@ -3,17 +3,32 @@ I do intend to implement all the spawn system calls using node.js at some point,
 able to create and use subprocesses, at least when in an insecure mode.   In the browser, it could also create
 other webassembly workers for a restricted collection of "commands".  However, for now, these shall all throw
 an error.
+
+SEE fork-exec.ts and posix-context.ts for partial solutions to the above for the fork/exec pattern!
 */
 
 import { notImplemented } from "./util";
 
 import { getSignalSet, setSignalSet } from "./signal";
 
-export default function spawn({ callFunction, posix, recv, send }) {
-  const fileActions: { [ptr: number]: any[] } = {};
+export default function spawn(context) {
+  const { callFunction, posix, recv, send } = context;
 
-  const attrs: { [ptr: number]: any } = {};
+  function getFileActions() {
+    if (context.state.fileActions == null) {
+      context.state.spawn_fileActions = {};
+    }
+    return context.state.spawn_fileActions;
+  }
+  function getAttrs() {
+    if (context.state.spawn_attrs == null) {
+      context.state.spawn_attrs = {};
+    }
+    return context.state.spawn_attrs;
+  }
+
   function getAttr(ptr: number, expand: boolean = false) {
+    const attrs = getAttrs();
     if (attrs[ptr] == null) {
       return (attrs[ptr] = {});
     }
@@ -74,11 +89,13 @@ export default function spawn({ callFunction, posix, recv, send }) {
     },
 
     posix_spawnattr_init: (attrPtr: number): number => {
+      const attrs = getAttrs();
       attrs[attrPtr] = {};
       return 0;
     },
 
     posix_spawnattr_destroy: (attrPtr: number): number => {
+      const attrs = getAttrs();
       delete attrs[attrPtr];
       return 0;
     },
@@ -151,6 +168,7 @@ export default function spawn({ callFunction, posix, recv, send }) {
       const path = recv.string(pathPtr);
       const argv = recv.arrayOfStrings(argvPtr);
       const envp = recv.arrayOfStrings(envpPtr);
+      const fileActions = getFileActions();
       const pid = posix.posix_spawn(
         path,
         fileActions[fileActionsPtr],
@@ -176,6 +194,7 @@ export default function spawn({ callFunction, posix, recv, send }) {
       const path = recv.string(pathPtr);
       const argv = recv.arrayOfStrings(argvPtr);
       const envp = recv.arrayOfStrings(envpPtr);
+      const fileActions = getFileActions();
       const pid = posix.posix_spawnp(
         path,
         fileActions[fileActionsPtr],
@@ -188,11 +207,13 @@ export default function spawn({ callFunction, posix, recv, send }) {
     },
 
     posix_spawn_file_actions_init: (fileActionsPtr: number): number => {
+      const fileActions = getFileActions();
       fileActions[fileActionsPtr] = [];
       return 0;
     },
 
     posix_spawn_file_actions_destroy: (fileActionsPtr: number): number => {
+      const fileActions = getFileActions();
       delete fileActions[fileActionsPtr];
       return 0;
     },
@@ -201,6 +222,7 @@ export default function spawn({ callFunction, posix, recv, send }) {
       fileActionsPtr: number,
       fd: number
     ): number => {
+      const fileActions = getFileActions();
       if (fileActions[fileActionsPtr] == null) {
         fileActions[fileActionsPtr] = [];
       }
@@ -215,6 +237,7 @@ export default function spawn({ callFunction, posix, recv, send }) {
       oflag: number,
       mode: number
     ): number => {
+      const fileActions = getFileActions();
       if (fileActions[fileActionsPtr] == null) {
         fileActions[fileActionsPtr] = [];
       }
@@ -228,6 +251,7 @@ export default function spawn({ callFunction, posix, recv, send }) {
       fd: number,
       new_fd: number
     ): number => {
+      const fileActions = getFileActions();
       if (fileActions[fileActionsPtr] == null) {
         fileActions[fileActionsPtr] = [];
       }

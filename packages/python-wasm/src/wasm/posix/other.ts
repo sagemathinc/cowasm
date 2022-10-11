@@ -1,8 +1,10 @@
 import { notImplemented } from "./util";
-//import debug from "debug";
-//const log = debug("posix:other");
 
-export default function other({ callFunction, posix, recv, send }) {
+export default function other(context) {
+  const { callFunction, posix, recv, send } = context;
+
+  context.state.user_from_uid_cache = {};
+
   function sendStatvfs(bufPtr, x) {
     callFunction(
       "set_statvfs",
@@ -20,10 +22,6 @@ export default function other({ callFunction, posix, recv, send }) {
       x.f_namemax
     );
   }
-
-  let ctermidPtr = 0;
-  // cache the pointers for speed and to reduce memory leaks
-  const user_from_uid_cache: { [uid: number]: number } = {};
 
   const lib = {
     login_tty: (fd: number): number => {
@@ -64,12 +62,11 @@ export default function other({ callFunction, posix, recv, send }) {
         send.string(s, { ptr, len: s.length + 1 });
         return ptr;
       }
-      if (ctermidPtr) {
-        return ctermidPtr;
+      if (context.state.ctermidPtr) {
+        return context.state.ctermidPtr;
       }
       const s = posix.ctermid();
-      ctermidPtr = send.string(s);
-      return ctermidPtr;
+      return (context.state.ctermidPtr = send.string(s));
     },
 
     // password stuff -- low priority!
@@ -157,10 +154,11 @@ export default function other({ callFunction, posix, recv, send }) {
       if (nouser) {
         return 0;
       }
-      if (user_from_uid_cache[uid]) return user_from_uid_cache[uid];
-      const ptr = send.string(`${uid}`);
-      user_from_uid_cache[uid] = ptr;
-      return ptr;
+      // cache the pointers for speed and to reduce memory leaks
+      if (context.state.user_from_uid_cache[uid]) {
+        return context.state.user_from_uid_cache[uid];
+      }
+      return (context.state.user_from_uid_cache[uid] = send.string(`${uid}`));
     },
     group_from_gid: (gid: number, nogroup: number = 0): number => {
       return lib.user_from_uid(gid, nogroup);

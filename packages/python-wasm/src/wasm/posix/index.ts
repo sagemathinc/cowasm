@@ -1,6 +1,5 @@
 /*
 
-
 NOTES:
   - emscripten/src/library_syscall.js is useful inspiration in some cases!
 */
@@ -36,7 +35,15 @@ const logReturn = debug("posix:return");
 // This is weird.
 process.env.__STUPID_HACK__ = "";
 
-interface Context {
+export interface Context {
+  // IMPORTANT: All of the functionality that implements this and has persistent state,
+  // *must* store its state in this state object in such a way that the state object can
+  // be swapped out between calls.  There's lot of code that does this by always referring
+  // to context.state and not capturing state itself directly.  Messing this up
+  // can lead to segfaults when running webassembly subprocesses.  You *can* initialize
+  // this state once at the top of the implementation though, since it is deep copied
+  // before exec, rather than reset (in posix-context.ts).
+  state: { [name: string]: any };
   fs: FileSystem;
   send: SendToWasm;
   recv: RecvFromWasm;
