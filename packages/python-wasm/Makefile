@@ -225,16 +225,19 @@ CORE_WASM_C = \
 
 ## TODO: we should probably really make things also work without --import-memory!  Or at
 ## least give clear error in run.
-${DIST}/src/core.wasm.o: ${POSIX_SOURCES} ${CORE_WASM_C} ${CWD}/src/wasm/core.zig
-	cd src && zig build-lib \
-	   ${WASM_CFLAGS} \
+${DIST}/src/core.o: ${POSIX_SOURCES} ${CORE_WASM_C} ${CWD}/src/wasm/core.zig
+	cd src && zig build-obj \
+	   -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS \
+	   -O Debug \
 	   ${ZIG_PKG} \
-		-rdynamic \
+		-lc \
 		-target wasm32-wasi \
-		${CORE_WASM_LDFLAGS} \
-		${CORE_WASM_INCLUDE} \
-		${CORE_WASM_C} \
+		-I. -I${POSIX_WASM} \
 		${CWD}/src/wasm/core.zig
+	zig ar -crs libcore.a src/core.o
 
-a.wasm: ${DIST}/src/core.wasm.o src/a.c
-	zig cc -target wasm32-wasi -rdynamic src/a.c src/core.wasm.o -o a.wasm -Oz ${CORE_WASM_LDFLAGS} ${CORE_WASM_INCLUDE} ${CORE_WASM_C} ${WASI_EMULATED} -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS
+#
+# I think this is big because of https://github.com/ziglang/zig/issues/9762
+#
+a.wasm: ${DIST}/src/core.o src/a.c
+	zig cc -target wasm32-wasi -fvisibility=hidden -rdynamic src/a.c -o a.wasm -Oz
