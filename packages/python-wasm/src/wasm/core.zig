@@ -8,7 +8,9 @@ export fn keepalive() void {
 extern fn wasmSetException() void;
 
 export fn c_malloc(n: usize) ?*anyopaque {
-    return std.c.malloc(n);
+    var ptr = std.c.malloc(n);
+    std.debug.print("doing malloc and got ptr = {*}\n",.{ptr});
+    return ptr;
 }
 
 export fn c_free(ptr: ?*anyopaque) void {

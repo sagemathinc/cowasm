@@ -82,13 +82,11 @@ PYTHON_WASM_INCLUDE = -I. -I${POSIX_WASM} -I${PYTHON_WASM}/include/python3.11 -I
 
 PYTHON_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED} -lgit2 -L${LIBGIT2}/lib -lz -L${ZLIB}/lib
 
-# Regarding --stack below, I reported this upstream: https://github.com/ziglang/zig/issues/3735#issuecomment-1223574526
 ${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${LIBGIT2}/lib/libgit2.a ${ZLIB}/lib/libz.a
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
 		-rdynamic \
-		--stack 1048576 \
 		-target wasm32-wasi \
 		--import-memory --import-table \
 		${PYTHON_WASM_LIBS} \
@@ -193,7 +191,6 @@ ${DIST}/dash/dash.wasm: ${DASH_WASM_SOURCES} ${DASH_WASM_C}
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
 		-rdynamic \
-		--stack 1048576 \
 		-target wasm32-wasi \
 		--import-memory --import-table \
 		${DASH_WASM_LDFLAGS} \
@@ -226,12 +223,13 @@ CORE_WASM_C = \
 		${CWD}/src/wasm/posix/stdlib.c \
 		${CWD}/src/python/signal/signal.c
 
+## TODO: we should probably really make things also work without --import-memory!  Or at
+## least give clear error in run.
 ${DIST}/src/core.wasm.o: ${POSIX_SOURCES} ${CORE_WASM_C} ${CWD}/src/wasm/core.zig
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
 		-rdynamic \
-		--stack 1048576 \
 		-target wasm32-wasi \
 		${CORE_WASM_LDFLAGS} \
 		${CORE_WASM_INCLUDE} \
@@ -239,4 +237,4 @@ ${DIST}/src/core.wasm.o: ${POSIX_SOURCES} ${CORE_WASM_C} ${CWD}/src/wasm/core.zi
 		${CWD}/src/wasm/core.zig
 
 a.wasm: ${DIST}/src/core.wasm.o src/a.c
-	zig cc -target wasm32-wasi -rdynamic src/a.c src/core.wasm.o -o a.wasm ${CORE_WASM_LDFLAGS} ${CORE_WASM_INCLUDE} ${CORE_WASM_C} ${WASI_EMULATED} -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS
+	zig cc -target wasm32-wasi -rdynamic src/a.c src/core.wasm.o -o a.wasm -Oz ${CORE_WASM_LDFLAGS} ${CORE_WASM_INCLUDE} ${CORE_WASM_C} ${WASI_EMULATED} -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS

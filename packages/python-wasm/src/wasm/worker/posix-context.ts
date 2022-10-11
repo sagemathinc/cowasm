@@ -20,6 +20,7 @@ export default class PosixContext {
   private wasm: WasmInstance;
   private wasiConfig: WASIConfig;
   private dylinkOptions: Pick<DylinkOptions, "importWebAssemblySync">;
+  // private runCache: any = {}; // TODO: LRU cache?
 
   constructor({ wasiConfig, memory, wasi, dylinkOptions }: Options) {
     this.wasiConfig = wasiConfig;
@@ -100,7 +101,15 @@ export default class PosixContext {
   // TODO: version that uses importWebAssemblyDlopen instead. Don't always do this,
   //       since it's much more expensive. Will need it for running python.  But
   //       maybe later many applications (?).
+  //   private run_getInstance(path:string) {
+  //     if (this.runCache[path] != null) {
+  //       return this.runCache[path];
+  //     }
+
+  //   }
+
   private run(args: string[]): number {
+    //let t0 = new Date();
     const path = args[0];
     if (path == null) {
       throw Error("args must have length at least 1");
@@ -109,7 +118,7 @@ export default class PosixContext {
 
     // Create memory, wasi, and bindings
     const memory = new WebAssembly.Memory({
-      initial: MBtoPages(1), // maybe some heuristics here, e.g., 10mb better for python, but much less for ls?
+      initial: MBtoPages(5), // maybe some heuristics here, e.g., 10mb better for python, but much less for ls?
     });
 
     let exitcode = 0;
@@ -125,7 +134,6 @@ export default class PosixContext {
     let wasm: WasmInstance | undefined;
 
     const callFunction = (name: string, ...args) => {
-      console.log("callFunction", name, args);
       const f = wasm?.getFunction(name);
       if (f == null) {
         console.warn(`${name} is not defined; using stub`);
@@ -134,6 +142,17 @@ export default class PosixContext {
       }
       return f(...args);
     };
+
+    /*
+    TODO!!!! The problem!  If the executable is built without explicitly
+    specifying --import-memory, then we can't define the memory above
+    and know it to create posixEnv.  Instead, we can only get the memory
+    later by doing instance.exports.memory! But we must make posixEnv now
+    since it must be fully defined during the import.
+
+    Solution: rewrite posixEnv thing to let you specify the memory *later*
+    after creating the instance.
+    */
 
     const posixEnv = this.createPosixEnv({
       memory,
@@ -145,6 +164,7 @@ export default class PosixContext {
       env: posixEnv,
       wasi_snapshot_preview1: wasi.wasiImport,
     };
+    wasmOpts.env.memory = memory;
 
     let instance;
     try {
@@ -153,17 +173,22 @@ export default class PosixContext {
       console.error(err);
       return 1;
     }
+
     wasm = new WasmInstance(instance.exports, memory);
+    if (instance.exports.memory.buffer.byteLength != memory.buffer.byteLength) {
+      // TODO: except I don't know how to do this with "zig cc", so we MUST just
+      // make it not necessary!
+      console.error(
+        "must build executable with --import-memory option specified"
+      );
+      return 1;
+    }
 
-    // TODO: we have just hit an interesting hard problem.
-    // this relies on getConstants and some other code that I wrote in zig,
-    // and maybe there is no way to make this work without linking that code
-    // into the binary we are loading?! Ut oh.  Or maybe it can be loaded dynamically.
-    // Interesting!
-    //posixEnv.init();
-
+    //console.log("init", new Date() - t0); t0 = new Date();
     // This runs synchronously until exit gets called above, which sets exitcode.
     wasi.start(instance);
+
+    //console.log("ran", new Date() - t0);
     // Then we are here and exit with that exitcode.
     return exitcode;
   }

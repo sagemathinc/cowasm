@@ -140,6 +140,7 @@ export default function posix(context: Context): PosixEnv {
         logReturn(name, ret);
         return ret;
       } catch (err) {
+        // console.trace(err);
         if (err.wasiErrno != null) {
           context.callFunction("setErrno", err.wasiErrno);
         } else if (err.code != null) {
