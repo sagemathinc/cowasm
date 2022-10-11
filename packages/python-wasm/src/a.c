@@ -1,10 +1,13 @@
-// zig cc -target wasm32-wasi -Oz a.c -o a.wasm
+/*
 
-// zig cc -Oz a.c -o a.exe && time ./a.exe
+zig cc -target wasm32-wasi -Oz src/a.c -o a-nopie.wasm
 
-// shared approach
+zig cc -Oz src/a.c -o a-native.exe
 
-// zig-fPIC cc -c a.c -o a.o && zig wasm-ld --experimental-pic -shared  -s --compress-relocations a.o -o a.wasm
+
+zig-fPIC cc -Oz -c src/a.c -o a.o && zig wasm-ld --experimental-pic -shared  -s --compress-relocations a.o -o a-pie.wasm
+
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,7 +41,7 @@ int main(int argc, char** argv) {
   for (int i = 0; i < argc; i++) {
     printf("argv[%d]=%s\n", i, argv[i]);
   }
-  printf("hi %s\n", user_from_uid(500, 0));
+  //printf("hi %s\n", user_from_uid(500, 0));
   int n = 10000000;
   if (argc > 1) {
     n = atoi(argv[1]);
