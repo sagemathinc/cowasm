@@ -14,8 +14,10 @@ interface Options {
 export default class PosixContext {
   private posixEnv: PosixEnv;
   private wasm: WasmInstance;
+  private memory: WebAssembly.Memory;
 
   constructor({ wasiConfig, memory, wasi }: Options) {
+    this.memory = memory;
     const { bindings } = wasiConfig;
     const callFunction = this.callFunction.bind(this);
     this.posixEnv = this.createPosixEnv({
@@ -89,6 +91,9 @@ export default class PosixContext {
   }
 
   private run(args: string[]): number {
+
+    const state = new Uint8Array(this.memory.buffer).slice();
+
     const path = args[0];
     if (path == null) {
       throw Error("args must have length at least 1");
@@ -111,6 +116,17 @@ export default class PosixContext {
       return 1;
     }
     // TODO: array memory leak!
-    return main(args.length, this.wasm.send.arrayOfStrings(args));
+    const ret = main(args.length, this.wasm.send.arrayOfStrings(args));
+
+    const dlclose = this.wasm.getFunction("dlclose");
+    if(dlclose == null) {
+      console.error(`${args[0]}: dlclose not defined`);
+      return 1;
+    }
+    dlclose(handle);
+
+    new Uint8Array(this.memory.buffer).set(state);
+
+    return ret;
   }
 }

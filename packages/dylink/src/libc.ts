@@ -552,6 +552,7 @@ erfcl
 erff
 erfl
 err
+errx
 errno
 exit
 exp

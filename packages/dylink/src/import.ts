@@ -569,8 +569,12 @@ export default async function importWebAssemblyDlopen({
   libraries use symbols in it, then the dynamic library is unloaded. The function
   dlclose() returns 0 on success, and nonzero on error."
   */
-  env.dlclose = (_handle) => {
-    // TODO: we never clean up... yet. But we could.
+  env.dlclose = (handle) => {
+    const lib = handleToLibrary[handle];
+    if (lib != null) {
+      delete handleToLibrary[handle];
+      delete pathToLibrary[lib.path];
+    }
     return 0;
   };
 
@@ -607,6 +611,7 @@ export default async function importWebAssemblyDlopen({
   let nextTablePos =
     Math.max(0, ...nonzeroPositions(__indirect_function_table)) + 1;
 
-  mainInstance.env = env;
+  // TODO
+  (mainInstance as any).env = env;
   return mainInstance;
 }

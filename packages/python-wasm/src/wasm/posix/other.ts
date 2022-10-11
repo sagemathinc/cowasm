@@ -157,9 +157,13 @@ export default function other({ callFunction, posix, recv, send }) {
       if (nouser) {
         return 0;
       }
-      if (user_from_uid_cache[uid]) return user_from_uid_cache[uid];
-      user_from_uid_cache[uid] = send.string(`${uid}`);
-      return user_from_uid_cache[uid];
+      //if (user_from_uid_cache[uid]) return user_from_uid_cache[uid];
+      const user = `${uid}`;
+      const ptr = send.string(`${uid}`);
+      console.log({ uid, user, ptr });
+      return ptr;
+      //user_from_uid_cache[uid] = ptr;
+      //return user_from_uid_cache[uid];
     },
     group_from_gid: (gid: number, nogroup: number = 0): number => {
       return lib.user_from_uid(gid, nogroup);
