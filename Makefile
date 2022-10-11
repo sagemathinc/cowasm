@@ -19,7 +19,7 @@ test-cpython: cpython python-wasm
 	cd packages/cpython && make test
 
 coreutils: packages/coreutils/${BUILT}
-packages/coreutils/${BUILT}: zig fts posix-wasm
+packages/coreutils/${BUILT}: zig posix-wasm
 	cd packages/coreutils && make
 .PHONY: coreutils
 
@@ -41,11 +41,6 @@ dylink: packages/dylink/${BUILT}
 packages/dylink/${BUILT}: node zig posix-wasm cpython lzma
 	cd packages/dylink && make all
 .PHONY: dylink
-
-fts: packages/fts/${BUILT}
-packages/fts/${BUILT}: zig posix-wasm
-	cd packages/fts && make
-.PHONY: fts
 
 test-dylink: dylink
 	cd packages/dylink && make test

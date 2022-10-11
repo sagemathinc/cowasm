@@ -182,7 +182,6 @@ async function doWasmImport({
   const posixContext = new PosixContext({
     memory,
     wasi,
-    dylinkOptions,
     wasiConfig,
   });
   posixContext.injectFunctions(wasmOpts.env);

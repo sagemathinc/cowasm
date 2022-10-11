@@ -174,6 +174,7 @@ strip: node_modules
 
 DASH_WASM_SOURCES = \
 	${POSIX_SOURCES} \
+	${DYLINK}/wasm/libdylink.a \
 	src/dash/interface.zig \
 	src/dash/dash.zig
 

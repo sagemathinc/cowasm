@@ -551,6 +551,7 @@ erfcf
 erfcl
 erff
 erfl
+err
 errno
 exit
 exp
@@ -1139,6 +1140,7 @@ vswprintf
 vswscanf
 vwprintf
 vwscanf
+warn
 warnx
 wcpcpy
 wcpncpy

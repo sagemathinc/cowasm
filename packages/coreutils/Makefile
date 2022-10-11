@@ -9,9 +9,9 @@ all: wasm
 
 include ../build/Makefile-rules
 
-CC = zig cc -target wasm32-wasi
-CFLAGS = -Oz -I${POSIX_WASM} -I${SRC}/compat -I${FTS}/include -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_MMAN
-LDFLAGS = ${FTS}/lib/libfts.a ${POSIX_WASM}/libposix.a -lc -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
+# zig-fPIC cc -c a.c -o a.o && zig wasm-ld --experimental-pic -shared a.o -o a.wasm
+#CC = zig cc -target wasm32-wasi
+CFLAGS = -I${POSIX_WASM} -I${SRC}/compat -I${SRC}/fts -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_MMAN
 
 ${BUILD_WASM}/.source:: src/**
 	rm -rf ${BUILD_WASM}
@@ -19,12 +19,23 @@ ${BUILD_WASM}/.source:: src/**
 	cp -r src/* ${BUILD_WASM}
 	touch ${BUILD_WASM}/.source
 
-# TODO: This build is inefficient in that it is compiling the same compat c code every time,
-# rather than just once into an archive.
 
-${DIST_WASM}/bin/%: ${SRC}/utils/%/*.c | ${BUILD_WASM}/.source
+${SRC}/fts/%.o: ${SRC}/fts/%.c
+	zig-fPIC cc -c $^ ${CFLAGS} -o $@
+
+${SRC}/compat/%.o: ${SRC}/compat/%.c
+	zig-fPIC cc -c $^ ${CFLAGS} -o $@
+
+${SRC}/utils/ls/%.o: ${SRC}/utils/ls/%.c
+	zig-fPIC cc -c $^ ${CFLAGS} -o $@
+
+${DIST_WASM}/bin/%: ${SRC}/utils/%/*.o | ${BUILD_WASM}/.source
 	mkdir -p ${DIST_WASM}/bin
-	${CC} ${CFLAGS} ${LDFLAGS} ${SRC}/compat/*.c $^ -o $@
+	zig wasm-ld --experimental-pic -shared $^ -o $@
+
+${DIST_WASM}/bin/ls: ${SRC}/fts/fts.o ${SRC}/compat/getbsize.o ${SRC}/compat/strmode.o  ${SRC}/compat/progname.o ${SRC}/compat/fmt_scaled.o  ${SRC}/utils/ls/cmp.o ${SRC}/utils/ls/ls.o ${SRC}/utils/ls/main.o  ${SRC}/utils/ls/print.o ${SRC}/utils/ls/utf8.o ${SRC}/utils/ls/util.o | ${BUILD_WASM}/.source
+	mkdir -p ${DIST_WASM}/bin
+	zig wasm-ld --experimental-pic -shared ${SRC}/utils/ls/*.o ${SRC}/compat/getbsize.o ${SRC}/compat/strmode.o ${SRC}/compat/progname.o  ${SRC}/compat/fmt_scaled.o  ${SRC}/fts/fts.o  -o ${DIST_WASM}/bin/ls
 
 ${DIST_WASM}/bin/chown: ${DIST_WASM}/bin/chmod
 	cd ${DIST_WASM}/bin && ln -sf chmod chown
@@ -43,3 +54,6 @@ format:
 strip:
 	find  ${DIST_WASM}/bin -type f | xargs -n1 wasm-strip
 .PHONY: strip
+
+clean-objects:
+	find . -type f -name '*.o' -delete

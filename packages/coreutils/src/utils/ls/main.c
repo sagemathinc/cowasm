@@ -6,4 +6,5 @@
 
 int ls_main(int argc, char **argv);
 
+__attribute__((visibility("default")))
 int main(int argc, char *argv[]) { return ls_main(argc, argv); }
