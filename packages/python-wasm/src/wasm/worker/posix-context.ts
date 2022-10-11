@@ -15,11 +15,13 @@ interface Options {
 export default class PosixContext {
   private posixEnv: PosixEnv;
   private wasm: WasmInstance;
+  private wasi: WASI;
   private memory: WebAssembly.Memory;
   private context: Context;
 
   constructor({ wasiConfig, memory, wasi }: Options) {
     this.memory = memory;
+    this.wasi = wasi;
     const { bindings } = wasiConfig;
     const callFunction = this.callFunction.bind(this);
     this.posixEnv = this.createPosixEnv({
@@ -104,9 +106,11 @@ export default class PosixContext {
     const state = {
       memory: new Uint8Array(this.memory.buffer).slice(),
       context: this.context.state,
+      wasi: this.wasi.getState(),
     };
-    // I wonder if I could use immer.js instead?
-    this.context.state = cloneDeep(this.context.state);
+    // I wonder if I could use immer.js instead for any of this?  It might be slower.
+    this.context.state = cloneDeep(state.context);
+    this.wasi.setState(cloneDeep(state.wasi));
 
     try {
       const handle = this.wasm.callWithString("dlopen", args[0]);
@@ -142,6 +146,7 @@ export default class PosixContext {
       new Uint8Array(this.memory.buffer).set(state.memory);
       // Restore posix context to befoe running the subprocess.
       this.context.state = state.context;
+      this.wasi.setState(state.wasi);
     }
   }
 }

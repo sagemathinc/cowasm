@@ -273,6 +273,12 @@ type Exports = {
 
 let warnedAboutSleep = false;
 
+// The js side of the wasi state.
+interface State {
+  env : WASIEnv;
+  FD_MAP: Map<number, File>;
+}
+
 export default class WASI {
   memory: WebAssembly.Memory;
   view: DataView;
@@ -287,6 +293,14 @@ export default class WASI {
   sendStdout?: (Buffer) => void;
   sendStderr?: (Buffer) => void;
   env: WASIEnv = {};
+
+  getState(): State {
+    return { env: this.env, FD_MAP: this.FD_MAP };
+  }
+  setState(state: State) {
+    this.env = state.env;
+    this.FD_MAP = state.FD_MAP;
+  }
 
   constructor(wasiConfig: WASIConfig) {
     this.sleep = wasiConfig.sleep;
