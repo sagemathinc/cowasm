@@ -22,7 +22,7 @@ WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_
 
 TEST = ./test-zig.sh
 
-all: ${DIST}/.built bin hello python dash bin-dash bin-wazee wazee
+all: ${DIST}/.built bin hello python dash bin-dash bin-waszee waszee
 
 include ../build/Makefile-rules
 
