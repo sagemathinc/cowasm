@@ -4,7 +4,6 @@ bin/viz-native
 bin/zython
 bin/zython-debug
 bin/zython-dev
-bin/zig-fPIC
 bin/zig
 bin/node
 bin/npm
@@ -15,6 +14,7 @@ bin/zd
 bin/zdb
 bin/cython
 bin/zash*
+bin/waszee*
 **/dist
 **/build
 **/node_modules

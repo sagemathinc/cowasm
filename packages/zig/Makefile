@@ -29,7 +29,7 @@ URL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 #VERSION = 0.10.0-dev.2751+08459ff1c
 #TARBALL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
-all: ${DIST_NATIVE}/.${VERSION} ${BIN}/zig-fPIC ${BIN}/zig
+all: ${DIST_NATIVE}/.${VERSION} ${BIN}/waszee-cc ${BIN}/waszee-c++ ${BIN}/zig
 
 include ../build/Makefile-rules
 
@@ -42,6 +42,9 @@ ${DIST_NATIVE}/.${VERSION}: ${TARBALL}
 ${BIN}/zig: ${DIST_NATIVE}/.${VERSION}
 	ln -sf ${DIST_NATIVE}/zig ${BIN}/zig
 
-${BIN}/zig-fPIC: ${DIST_NATIVE}/.${VERSION}
-	ln -sf ${CWD}/bin/zig-fPIC ${BIN}/zig-fPIC
+${BIN}/waszee-cc: ${DIST_NATIVE}/.${VERSION}
+	ln -sf ${CWD}/bin/fPIC.py ${BIN}/waszee-cc
+
+${BIN}/waszee-c++: ${DIST_NATIVE}/.${VERSION}
+	ln -sf ${CWD}/bin/fPIC.py ${BIN}/waszee-c++
 
