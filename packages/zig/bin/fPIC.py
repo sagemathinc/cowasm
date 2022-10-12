@@ -47,8 +47,16 @@ FLAGS = [
     '-D__EMSCRIPTEN_minor__=1', '-D__EMSCRIPTEN_tiny__=16',
     '-D_WASI_EMULATED_MMAN', '-D_WASI_EMULATED_SIGNAL',
     '-D_WASI_EMULATED_PROCESS_CLOCKS', '-D_WASI_EMULATED_GETPID',
-    '-Dmain=__attribute__((visibility("default")))main'
+
 ]
+
+# this is a horrendous hack.  It can be randomly broken, so watch out.
+# E.g., when building python there is a random header that has
+#    something.main
+# which breaks.  Fortunately, none of that code needs to expose main,
+# and all the compile lines explicitly have -fvisibility=hidden.
+if '-fvisibility=hidden' not in sys.argv:
+    FLAGS.append('-Dmain=__attribute__((visibility("default")))main')
 
 cmd = ['zig'] + sys.argv[1:] + FLAGS
 

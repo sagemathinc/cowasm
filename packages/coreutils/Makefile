@@ -9,7 +9,7 @@ all: wasm
 
 include ../build/Makefile-rules
 
-# zig-fPIC cc -c a.c -o a.o && zig wasm-ld --experimental-pic -shared a.o -o a.wasm
+# waszee-cc -c a.c -o a.o && zig wasm-ld --experimental-pic -shared a.o -o a.wasm
 #CC = zig cc -target wasm32-wasi
 CFLAGS = -I${POSIX_WASM} -I${SRC}/compat -I${SRC}/fts \
 	-D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_MMAN
@@ -23,10 +23,10 @@ ${BUILD_WASM}/.source:: src/**
 
 
 ${SRC}/fts/%.o: ${SRC}/fts/%.c
-	zig-fPIC cc -c $^ ${CFLAGS} -o $@
+	waszee-cc -c $^ ${CFLAGS} -o $@
 
 ${SRC}/compat/%.o: ${SRC}/compat/%.c
-	zig-fPIC cc -c $^ ${CFLAGS} -o $@
+	waszee-cc -c $^ ${CFLAGS} -o $@
 
 # ${DIST_WASM}/bin/%: ${SRC}/utils/%/*.o | ${BUILD_WASM}/.source
 # 	mkdir -p ${DIST_WASM}/bin
@@ -35,21 +35,21 @@ ${SRC}/compat/%.o: ${SRC}/compat/%.c
 COMMON = ${SRC}/fts/fts.o ${SRC}/compat/getbsize.o ${SRC}/compat/strmode.o ${SRC}/compat/strtonum.o  ${SRC}/compat/progname.o ${SRC}/compat/fmt_scaled.o
 
 ${SRC}/utils/ls/%.o: ${SRC}/utils/ls/%.c
-	zig-fPIC cc -c $^ ${CFLAGS} -o $@
+	waszee-cc -c $^ ${CFLAGS} -o $@
 
 ${DIST_WASM}/bin/ls: ${COMMON} ${SRC}/utils/ls/cmp.o ${SRC}/utils/ls/ls.o ${SRC}/utils/ls/main.o  ${SRC}/utils/ls/print.o ${SRC}/utils/ls/utf8.o ${SRC}/utils/ls/util.o | ${BUILD_WASM}/.source
 	mkdir -p ${DIST_WASM}/bin
 	zig wasm-ld ${LDFLAGS} ${SRC}/utils/ls/*.o ${COMMON} -o ${DIST_WASM}/bin/ls
 
 ${SRC}/utils/factor/%.o: ${SRC}/utils/factor/%.c
-	zig-fPIC cc -c $^ ${CFLAGS} -o $@
+	waszee-cc -c $^ ${CFLAGS} -o $@
 
 ${DIST_WASM}/bin/factor: ${COMMON} ${SRC}/utils/factor/factor.o ${SRC}/utils/factor/pr_tbl.o ${SRC}/utils/factor/pattern.o  | ${BUILD_WASM}/.source
 	mkdir -p ${DIST_WASM}/bin
 	zig wasm-ld ${LDFLAGS} ${SRC}/utils/factor/*.o ${COMMON} -o ${DIST_WASM}/bin/factor
 
 ${SRC}/utils/date/%.o: ${SRC}/utils/date/%.c
-	zig-fPIC cc -c $^ ${CFLAGS} -o $@
+	waszee-cc -c $^ ${CFLAGS} -o $@
 
 ${DIST_WASM}/bin/date: ${COMMON} ${SRC}/utils/date/date.o  | ${BUILD_WASM}/.source
 	mkdir -p ${DIST_WASM}/bin

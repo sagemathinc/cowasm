@@ -6,5 +6,5 @@ export SCRIPTPATH="$( cd -- "$(dirname "`readlink -f $0`")" >/dev/null 2>&1 ; pw
 
 # node-terminal-debug disables workers. This makes debug logging much easier.
 
-node $EXP_OPT "$SCRIPTPATH"/../dist/waszee/node-terminal-debug.js "$@"
+node "$SCRIPTPATH"/../dist/waszee/node-terminal-debug.js "$@"
 
