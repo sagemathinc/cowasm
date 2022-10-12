@@ -4,9 +4,9 @@
                  **kws)
          if cxx_sources:
              log.info("compiling C++ sources")
-+            # python-wasm: the crazy heuristics that numpy uses to
++            # python-wasm: the heuristics that numpy uses to
 +            # convert the c compiler to a c++ compiler don't work
-+            # for us since we use "zig-fPIC cc", so we manually
++            # for us since we use "waszee-cc", so we manually
 +            # make the change here:
 +            cxx_compiler.compiler_so[1] = 'c++'
              c_objects += cxx_compiler.compile(

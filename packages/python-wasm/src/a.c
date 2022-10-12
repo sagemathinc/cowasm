@@ -4,9 +4,7 @@ zig cc -target wasm32-wasi -Oz src/a.c -o a-nopie.wasm
 
 zig cc -Oz src/a.c -o a-native.exe
 
-zig-fPIC cc -Oz -c src/a.c -o a.o && zig wasm-ld --experimental-pic -shared  -s --compress-relocations a.o -o a.wasm
-
-waszee-cc -Oz -c src/a.c -o a.o && zig wasm-ld --experimental-pic -shared  -s --compress-relocations a.o -o a.wasm
+waszee-cc -main -Oz -c src/a.c -o a.o && zig wasm-ld --experimental-pic -shared  -s --compress-relocations a.o -o a.wasm
 
 */
 

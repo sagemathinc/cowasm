@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+#DEPRECATED
+
 # Use this to build -fPIC C or C++ code using zig.   I like doing this, since zig is a very
 # compact and efficient way to CLANG/LLVM.  Unfortunately (in mid 2022), zig doesn't directly
 # support building -fPIC code (the flag does nothing), which is of course absolutely required

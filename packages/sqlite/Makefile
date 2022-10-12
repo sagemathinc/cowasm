@@ -34,7 +34,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #   - We play some tricks with sqlite3.h below to ensure some things get defined (this is needed for clang15).
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} && \
-		CC="zig-fPIC cc" \
+		CC="waszee-cc" \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
 		CFLAGS="-Oz -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include " \

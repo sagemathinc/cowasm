@@ -13,7 +13,7 @@ CFLAGS = -Oz
 
 ${BUILD_WASM}/%.o: ${SRC}/%.c ${DEPS}
 	mkdir -p `dirname $@`
-	zig-fPIC cc -c -o $@ $< ${CFLAGS}
+	waszee-cc -c -o $@ $< ${CFLAGS}
 
 BUILTINS = ${BUILD_WASM}/lib/builtins
 LEGACY = ${BUILD_WASM}/lib/legacy

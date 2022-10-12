@@ -53,14 +53,16 @@ FLAGS = [
 # this is a horrendous hack.  It can be randomly broken, so watch out.
 # E.g., when building python there is a random header that has
 #    something.main
-# which breaks.  Fortunately, none of that code needs to expose main,
-# and all the compile lines explicitly have -fvisibility=hidden.
-if '-fvisibility=hidden' not in sys.argv:
+# which breaks. At least we make it very explicit with a "-main"
+# option.
+if '-main' in sys.argv:
     FLAGS.append('-Dmain=__attribute__((visibility("default")))main')
+    sys.argv.remove('-main')
 
 cmd = ['zig'] + sys.argv[1:] + FLAGS
 
 if '-v' in cmd:
     print(' '.join(cmd))
 
-subprocess.run(cmd)
+ret = subprocess.run(cmd)
+sys.exit(ret.returncode)

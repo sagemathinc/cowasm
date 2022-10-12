@@ -27,8 +27,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
-		CC="zig-fPIC cc" \
-		CXX="zig-fPIC c++" \
+		CC="waszee-cc" \
+		CXX="waszee-c++" \
 		./configure \
 			--build=`./build-aux/config.guess` \
 			--host=none --prefix="${DIST_WASM}"

@@ -24,7 +24,6 @@ export PATH := ${SRC}/fake-bin:$(PATH)
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&& cat ${SRC}/patches/01-ENH-Add-support-for-platforms-with-missing-fenv-flag.patch | patch -p1 \
-		&& cat ${SRC}/patches/02-cxx_compiler.patch | patch -p1 \
 		&& cat ${SRC}/patches/03-disable-complex.patch | patch -p1 \
 		&& cat ${SRC}/patches/04-random-no-lm.patch | patch -p1 \
 		&& cat ${SRC}/patches/05-no-backtrace.patch | patch -p1 \
