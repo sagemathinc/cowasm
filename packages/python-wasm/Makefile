@@ -22,7 +22,7 @@ WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_
 
 TEST = ./test-zig.sh
 
-all: ${DIST}/.built bin hello python dash bin-dash
+all: ${DIST}/.built bin hello python dash bin-dash bin-wazee wazee
 
 include ../build/Makefile-rules
 
@@ -82,13 +82,11 @@ PYTHON_WASM_INCLUDE = -I. -I${POSIX_WASM} -I${PYTHON_WASM}/include/python3.11 -I
 
 PYTHON_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED} -lgit2 -L${LIBGIT2}/lib -lz -L${ZLIB}/lib
 
-# Regarding --stack below, I reported this upstream: https://github.com/ziglang/zig/issues/3735#issuecomment-1223574526
 ${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${LIBGIT2}/lib/libgit2.a ${ZLIB}/lib/libz.a
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
 		-rdynamic \
-		--stack 1048576 \
 		-target wasm32-wasi \
 		--import-memory --import-table \
 		${PYTHON_WASM_LIBS} \
@@ -194,7 +192,6 @@ ${DIST}/dash/dash.wasm: ${DASH_WASM_SOURCES} ${DASH_WASM_C}
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
 		-rdynamic \
-		--stack 1048576 \
 		-target wasm32-wasi \
 		--import-memory --import-table \
 		${DASH_WASM_LDFLAGS} \
@@ -215,3 +212,53 @@ ${CWD}/../../bin/zash-debug: ${CWD}/bin/zash-debug
 
 .PHONY: bin-dash
 bin-dash: ${CWD}/../../bin/zash ${CWD}/../../bin/zash-debug
+
+
+
+
+
+# WasZee
+
+WASZEE_WASM_SOURCES = \
+	${POSIX_SOURCES} \
+	${DYLINK}/wasm/libdylink.a \
+	src/waszee/interface.zig \
+	src/waszee/waszee.zig
+
+WASZEE_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
+
+WASZEE_WASM_INCLUDE = -I. -I${POSIX_WASM}
+
+# TODO: I think libedit and libtermcap should probably be dynamic
+# libraries that get loaded when needed.  NOT SURE. This will always be a tradeoff.
+
+WASZEE_WASM_C = \
+		${POSIX_WASM}/libposix.a \
+		${LIBEDIT}/lib/libedit.a \
+		${TERMCAP}/lib/libtermcap.a \
+		${CWD}/src/wasm/posix/stdlib.c \
+		${CWD}/src/python/signal/signal.c
+
+${DIST}/waszee/waszee.wasm: ${WASZEE_WASM_SOURCES} ${WASZEE_WASM_C}
+	cd src && zig build-lib \
+	   ${WASM_CFLAGS} \
+	   ${ZIG_PKG} \
+		-rdynamic \
+		-target wasm32-wasi \
+		--import-memory \
+		--import-table \
+		${WASZEE_WASM_LDFLAGS} \
+		${WASZEE_WASM_INCLUDE} \
+		${WASZEE_WASM_C} \
+		waszee/interface.zig
+	mkdir -p ${DIST}/waszee
+	mv src/interface.wasm ${DIST}/waszee/waszee.wasm
+
+.PHONY: waszee
+waszee: ${DIST}/waszee/waszee.wasm
+
+${CWD}/../../bin/waszee: ${CWD}/bin/waszee
+	ln -sf ${CWD}/bin/waszee ${CWD}/../../bin/waszee
+
+bin-waszee: ${CWD}/../../bin/waszee
+.PHONY: bin-waszee

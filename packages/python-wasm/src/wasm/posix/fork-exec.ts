@@ -222,9 +222,9 @@ export default function fork_exec({
 
     // Similar but for dash shell:
     // extern int zython_dash_vforkexec(char **argv, const char *path);
-    zython_dash_vforkexec: (argvPtr: number, pathPtr: number): number => {
+    zython_dash_vforkexec: (argvPtr: number, pathPtr: number=0): number => {
       const argv = recv.arrayOfStrings(argvPtr);
-      const path = recv.string(pathPtr);
+      const path = pathPtr ? recv.string(pathPtr) : "";
       log("zython_dash_vforkexec", argv);
       //console.log("zython_dash_vforkexec", { argv });
       if (!argv[0]) {
