@@ -148,6 +148,7 @@ const wrap =
       return f(...args);
     } catch (err) {
       // log("WASI error", err);
+      // console.trace(err);
       let e: any = err;
 
       // This is to support unionfs, e.g., in fd_write if a pipe
@@ -275,7 +276,7 @@ let warnedAboutSleep = false;
 
 // The js side of the wasi state.
 interface State {
-  env : WASIEnv;
+  env: WASIEnv;
   FD_MAP: Map<number, File>;
 }
 
@@ -370,8 +371,8 @@ export default class WASI {
       ],
     ]);
 
-    let fs = this.bindings.fs;
-    let path = this.bindings.path;
+    const fs = this.bindings.fs;
+    const path = this.bindings.path;
 
     for (const [k, v] of Object.entries(preopens)) {
       const real = fs.openSync(v, fs.constants.O_RDONLY);
@@ -1311,9 +1312,11 @@ export default class WASI {
           /* check if the file is a directory (unless opening for write,
            * in which case the file may not exist and should be created) */
           let isDirectory;
-          try {
-            isDirectory = fs.statSync(full).isDirectory();
-          } catch (e) {}
+          if (write) {
+            try {
+              isDirectory = fs.statSync(full).isDirectory();
+            } catch (_err) {}
+          }
 
           let realfd;
           if (!write && isDirectory) {

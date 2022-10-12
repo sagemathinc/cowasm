@@ -199,7 +199,12 @@ function mapFlags(nativeFs: WASIFileSystem): WASIFileSystem {
       return await nativeFs.promises.open(path, flags, mode);
     },
   };
-  return { ...{ ...nativeFs, promises }, open, openSync };
+  return {
+    ...{ ...nativeFs, promises },
+    open,
+    openSync,
+    constants: memfs.constants, // critical to ALWAYS use memfs constants for any filesystem.
+  };
 }
 
 /*

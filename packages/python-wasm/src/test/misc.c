@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
   const char* path = "/tmp/temporary-file";
 
   int fd = open(path, O_RDWR | O_CREAT);
-  printf("opened '%s' with fd=%d\n", path, fd);
+  printf("opened '%s' with fd=%d usings flags=%d\n", path, fd, O_RDWR | O_CREAT);
   if (fd == -1) {
     fprintf(stderr, "file open failed!\n");
     exit(1);
