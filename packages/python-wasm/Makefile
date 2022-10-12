@@ -158,7 +158,7 @@ ${DIST}/.built: node_modules ${DIST}/python/python.wasm
 # Run all test suites: (1) the Native zig test suite; (2) the Javascript test suite.
 # This exercise zig-related code both via a native build, and then via the separate WebAssembly build.
 .PHONY: test
-test: all #test-python test-posix
+test: all test-misc #test-python test-posix
 	npm run test
 
 strip: node_modules
@@ -262,3 +262,24 @@ ${CWD}/../../bin/waszee: ${CWD}/bin/waszee
 
 bin-waszee: ${CWD}/../../bin/waszee
 .PHONY: bin-waszee
+
+
+${BUILD}/test/misc.wasm: ${SRC}/test/misc.c
+	mkdir -p ${BUILD}/test/
+	waszee-cc -main -Oz -c ${SRC}/test/misc.c -o ${BUILD}/test/misc.o
+	zig wasm-ld --experimental-pic -shared  -s --compress-relocations ${BUILD}/test/misc.o -o ${BUILD}/test/misc.wasm
+
+run-misc.wasm: ${BUILD}/test/misc.wasm
+	${CWD}/bin/waszee ${CWD}/build/test/misc.wasm
+.PHONY: run-misc.wasm
+
+${BUILD}/test/misc.exe: ${SRC}/test/misc.c
+	mkdir -p ${BUILD}/test/
+	zig cc -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.exe
+
+run-misc.exe: ${BUILD}/test/misc.exe
+	${BUILD}/test/misc.exe
+.PHONY: run-misc.exe
+
+test-misc: run-misc.wasm
+.PHONY: test-misc

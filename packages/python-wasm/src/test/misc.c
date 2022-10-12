@@ -1,10 +1,14 @@
 /*
+This is meant to illustrate and test some things involving writing a C program
+that runs on waszee.
 
-zig cc -target wasm32-wasi -Oz src/a.c -o a-nopie.wasm
+To build and run under WasZee:
 
-zig cc -Oz src/a.c -o a-native.exe
+   make run-misc.wasm
 
-waszee-cc -main -Oz -c src/a.c -o a.o && zig wasm-ld --experimental-pic -shared  -s --compress-relocations a.o -o a.wasm
+To build and run natively:
+
+   make run-misc.exe
 
 */
 
@@ -39,14 +43,28 @@ int main(int argc, char** argv) {
   for (int i = 0; i < argc; i++) {
     printf("argv[%d]=%s\n", i, argv[i]);
   }
+#ifdef WASZEE
   printf("hi %s\n", user_from_uid(500, 0));
+#endif
 
-  int fd = open("src/a.c", O_RDONLY);
-  printf("opened a file with fd=%d\n", fd);
+  const char* path = "/tmp/temporary-file";
+
+  int fd = open(path, O_RDWR | O_CREAT);
+  printf("opened '%s' with fd=%d\n", path, fd);
+  if (fd == -1) {
+    fprintf(stderr, "file open failed!\n");
+    exit(1);
+  }
+  close(fd);
+  unlink(path);
 
   int n = 10000000;
   if (argc > 1) {
     n = atoi(argv[1]);
+  }
+  if (n < 0) {
+    fprintf(stderr, "n must be nonnegative\n");
+    exit(1);
   }
   long long t0 = time0();
   unsigned long long s = sum(n);
