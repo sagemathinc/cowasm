@@ -91,14 +91,14 @@ else:
             break
     tmp = ''
     try:
-        try:
-            output_index = sys.argv.index('-o') + 1
-            sys.argv[output_index] += '.o'
-        except:
-            sys.argv.append('-o')
-            sys.argv.append('a.out.o')
-            output_index = len(sys.argv) - 1
         if needs_to_compile:
+            try:
+                output_index = sys.argv.index('-o') + 1
+                sys.argv[output_index] += '.o'
+            except:
+                sys.argv.append('-o')
+                sys.argv.append('a.out.o')
+                output_index = len(sys.argv) - 1
             sys.argv.append('-c')
             tmp = sys.argv[output_index]
             run(['zig'] + sys.argv[1:] + FLAGS)
@@ -106,11 +106,14 @@ else:
         # Next link
         # this -s below strips debug symbols; what's the right way to do this?  Maybe -Xlinker -s?
         link = ['zig', 'wasm-ld', '--experimental-pic', '-shared']
-        link += ['-o', sys.argv[output_index][:-2]]
-        if not needs_to_compile:
-            link += list(set([x for x in sys.argv if x.endswith('.o') and x != sys.argv[output_index]]))
-        else:
+        if needs_to_compile:
+            link += ['-o', sys.argv[output_index][:-2]]
             link.append(sys.argv[output_index])
+        else:
+            link += list(set([x for x in sys.argv if x.endswith('.o')]))
+            i = sys.argv.index('-o')
+            link += [sys.argv[i], sys.argv[i+1]]
+
         # Pass all the Xlinker arge too, e.g., "-Xlinker -s" is the only way to strip.
         i = 0
         while i < len(sys.argv):
