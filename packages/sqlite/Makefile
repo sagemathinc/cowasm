@@ -32,9 +32,10 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #     with offsets not supported' from LLVM during final link.
 #     I put the -Oz flag into CFLAGS upon studying what the emscripten port uses.
 #   - We play some tricks with sqlite3.h below to ensure some things get defined (this is needed for clang15).
+#   - BCC is the compiler used to build code that then gets compiled to WebAssembly.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} && \
-		CC="waszee-cc" \
+		CC="wacalc-cc" \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
 		CFLAGS="-Oz -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include " \

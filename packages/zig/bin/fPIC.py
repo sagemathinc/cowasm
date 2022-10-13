@@ -25,12 +25,14 @@ elif sys.argv[0].endswith('-c++'):
 
 verbose = '-v' in sys.argv
 
+
 def run(cmd):
     if verbose:
         print(' '.join(cmd))
     ret = subprocess.run(cmd)
     if ret.returncode:
         sys.exit(ret.returncode)
+
 
 if "-E" in sys.argv:
     # preprocessor only
@@ -56,11 +58,11 @@ if not os.path.exists(INCLUDE):
 FLAGS = [
     '-shared', '-target', 'wasm32-emscripten', '-fPIC', '-isystem',
     os.path.join(INCLUDE, 'wasm-wasi-musl'), '-isystem',
-    os.path.join(INCLUDE,
-                 'generic-musl'), '-D__wasi__', '-D__EMSCRIPTEN_major__=3',
-    '-D__EMSCRIPTEN_minor__=1', '-D__EMSCRIPTEN_tiny__=16',
-    '-D_WASI_EMULATED_MMAN', '-D_WASI_EMULATED_SIGNAL',
-    '-D_WASI_EMULATED_PROCESS_CLOCKS', '-D_WASI_EMULATED_GETPID', '-D__waszee__'
+    os.path.join(INCLUDE, 'generic-musl'), '-D__wasi__',
+    '-D__EMSCRIPTEN_major__=3', '-D__EMSCRIPTEN_minor__=1',
+    '-D__EMSCRIPTEN_tiny__=16', '-D_WASI_EMULATED_MMAN',
+    '-D_WASI_EMULATED_SIGNAL', '-D_WASI_EMULATED_PROCESS_CLOCKS',
+    '-D_WASI_EMULATED_GETPID', '-D__waszee__'
 ]
 
 # this is a horrendous hack.  It can be randomly broken, so watch out.
@@ -86,10 +88,10 @@ else:
 
     needs_to_compile = False
     for x in sys.argv:
-        if x.endswith('.c') or x.endswith('.c++'):
+        if x.endswith('.c') or x.endswith('.c++') or x.endswith('.cpp'):
             needs_to_compile = True
             break
-    tmp = ''
+    delete_me = ''
     try:
         if needs_to_compile:
             try:
@@ -100,7 +102,10 @@ else:
                 sys.argv.append('a.out.o')
                 output_index = len(sys.argv) - 1
             sys.argv.append('-c')
-            tmp = sys.argv[output_index]
+            if not os.path.exists(sys.argv[output_index]):
+                # only delete if it doesn't already exist
+                print("*** delete_me = ", delete_me, " ***")
+                delete_me = sys.argv[output_index]
             run(['zig'] + sys.argv[1:] + FLAGS)
 
         # Next link
@@ -111,8 +116,9 @@ else:
             link.append(sys.argv[output_index])
         else:
             link += list(set([x for x in sys.argv if x.endswith('.o')]))
-            i = sys.argv.index('-o')
-            link += [sys.argv[i], sys.argv[i+1]]
+            if '-o' in sys.argv:
+                i = sys.argv.index('-o')
+                link += [sys.argv[i], sys.argv[i + 1]]
 
         # Pass all the Xlinker arge too, e.g., "-Xlinker -s" is the only way to strip.
         i = 0
@@ -124,5 +130,5 @@ else:
         run(link)
 
     finally:
-        if os.path.exists(tmp):
-            os.unlink(tmp)
+        if delete_me and os.path.exists(delete_me):
+            os.unlink(delete_me)
