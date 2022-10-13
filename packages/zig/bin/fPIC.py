@@ -105,6 +105,8 @@ else:
         link += ['-o', sys.argv[output_index][:-2]]
         if not needs_to_compile:
             link += list(set([x for x in sys.argv if x.endswith('.o') and x != sys.argv[output_index]]))
+        else:
+            link.append(sys.argv[output_index])
         # Pass all the Xlinker arge too, e.g., "-Xlinker -s" is the only way to strip.
         i = 0
         while i < len(sys.argv):
