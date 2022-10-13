@@ -16,7 +16,7 @@ takes, e.g., when things are cached.  This time adds up!  Thus we certainly
 plan to rewrite this script itself in zig for speed purposes.
 """
 
-import os, shutil, subprocess, sys
+import os, shutil, subprocess, sys, tempfile
 
 if sys.argv[0].endswith('-cc'):
     sys.argv.insert(1, 'cc')
@@ -77,50 +77,52 @@ if '-fvisibility-main' in sys.argv:
 
 ret = 0
 if '-c' in sys.argv:
-    # building object files; not linking, so don't have to do that extra step
+
+    # building object files; not linking, so don't have to do the extra wasm-ld step
     run(['zig'] + sys.argv[1:] + FLAGS)
+
 else:
     # We have to create an object file then run "zig wasm-ld" explicitly,
     # since the way zig runs it is wrong for our purposes in many ways.
     # TODO: but this could definitely be fixed and upstreamed, if I can
     # ever get zig to build from source.  For now, at least, we can be sure
     # of the right behavior.
+    with tempfile.NamedTemporaryFile(suffix='.o') as tmpfile:
+        dot_o = tmpfile.name
+        do_compile = False
+        for opt in sys.argv:
+            if opt.endswith('.c') or opt.endswith('.c++') or opt.endswith('.cpp'):
+                do_compile = True
+                break
 
-    needs_to_compile = False
-    for x in sys.argv:
-        if x.endswith('.c') or x.endswith('.c++') or x.endswith('.cpp'):
-            needs_to_compile = True
-            break
-    delete_me = ''
-    try:
-        if needs_to_compile:
+        if do_compile:
             try:
                 output_index = sys.argv.index('-o') + 1
-                sys.argv[output_index] += '.o'
+                original_output = sys.argv[output_index]
+                sys.argv[output_index] = dot_o
             except:
+                original_output = 'a.out'
                 sys.argv.append('-o')
-                sys.argv.append('a.out.o')
+                sys.argv.append(dot_o)
                 output_index = len(sys.argv) - 1
+
             sys.argv.append('-c')
-            if not os.path.exists(sys.argv[output_index]):
-                # only delete if it doesn't already exist
-                print("*** delete_me = ", delete_me, " ***")
-                delete_me = sys.argv[output_index]
             run(['zig'] + sys.argv[1:] + FLAGS)
 
         # Next link
         # this -s below strips debug symbols; what's the right way to do this?  Maybe -Xlinker -s?
         link = ['zig', 'wasm-ld', '--experimental-pic', '-shared']
-        if needs_to_compile:
-            link += ['-o', sys.argv[output_index][:-2]]
-            link.append(sys.argv[output_index])
+        if do_compile:
+            link.append(dot_o)
+            link += ['-o', original_output]
         else:
             link += list(set([x for x in sys.argv if x.endswith('.o')]))
             if '-o' in sys.argv:
                 i = sys.argv.index('-o')
                 link += [sys.argv[i], sys.argv[i + 1]]
 
-        # Pass all the Xlinker arge too, e.g., "-Xlinker -s" is the only way to strip.
+        # Pass all the Xlinker args too, e.g., "-Xlinker -s" is the only way to strip
+        # since wasm-strip doesn't support fPIC yet.
         i = 0
         while i < len(sys.argv):
             if sys.argv[i] == '-Xlinker':
@@ -128,7 +130,3 @@ else:
                 link.append(sys.argv[i])
             i += 1
         run(link)
-
-    finally:
-        if delete_me and os.path.exists(delete_me):
-            os.unlink(delete_me)
