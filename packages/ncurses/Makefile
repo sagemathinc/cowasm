@@ -48,8 +48,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
 			AR="zig ar" \
-			CC="waszee-cc  -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
-			CXX="waszee-c++  -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
+			CC="wacalc-cc  -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
+			CXX="wacalc-c++  -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
 			CFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			CXXFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			./configure \

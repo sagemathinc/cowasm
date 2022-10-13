@@ -34,7 +34,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
-		CC="waszee-cc -Oz -DHAVE_CONFIG_H=1 " \
+		CC="wacalc-cc -Oz -DHAVE_CONFIG_H=1 " \
 		./configure  --build=`./build-aux/config.guess` --host=none --prefix="${DIST_WASM}" && \
 		make -j8 && \
 		make install

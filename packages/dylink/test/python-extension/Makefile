@@ -22,7 +22,7 @@ build/wasm/app.o: app.c
 
 build/wasm/hello.so: hellomodule.c
 	mkdir -p build/wasm
-	waszee-cc hellomodule.c -c -o build/wasm/hellomodule.o
+	wacalc-cc hellomodule.c -c -o build/wasm/hellomodule.o
 	zig wasm-ld --experimental-pic -shared build/wasm/hellomodule.o -o build/wasm/hello.so
 
 test-wasm: build/wasm/app.wasm build/wasm/hello.so

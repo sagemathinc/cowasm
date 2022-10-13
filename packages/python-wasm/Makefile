@@ -22,7 +22,7 @@ WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_
 
 TEST = ./test-zig.sh
 
-all: ${DIST}/.built bin hello python dash bin-dash bin-waszee waszee
+all: ${DIST}/.built bin hello python dash bin-dash bin-wacalc wacalc
 
 include ../build/Makefile-rules
 
@@ -122,7 +122,7 @@ packages:
 	ln -sf ${PACKAGES}/py-*/dist/wasm/*.tar.xz ${DIST}/python/py
 
 ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
-	waszee-cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM}
+	wacalc-cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM}
 	zig wasm-ld --experimental-pic -shared ${DIST}/python/hello.o -o ${DIST}/python/hello.cpython-311-wasm32-wasi.so
 	rm ${DIST}/python/hello.o
 
@@ -217,29 +217,29 @@ bin-dash: ${CWD}/../../bin/zash ${CWD}/../../bin/zash-debug
 
 
 
-# WasZee
+# WACalc -- the core script/runner
 
-WASZEE_WASM_SOURCES = \
+WACALC_WASM_SOURCES = \
 	${POSIX_SOURCES} \
 	${DYLINK}/wasm/libdylink.a \
-	src/waszee/interface.zig \
-	src/waszee/waszee.zig
+	src/wacalc/interface.zig \
+	src/wacalc/wacalc.zig
 
-WASZEE_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
+WACALC_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
 
-WASZEE_WASM_INCLUDE = -I. -I${POSIX_WASM}
+WACALC_WASM_INCLUDE = -I. -I${POSIX_WASM}
 
 # TODO: I think libedit and libtermcap should probably be dynamic
 # libraries that get loaded when needed.  NOT SURE. This will always be a tradeoff.
 
-WASZEE_WASM_C = \
+WACALC_WASM_C = \
 		${POSIX_WASM}/libposix.a \
 		${LIBEDIT}/lib/libedit.a \
 		${TERMCAP}/lib/libtermcap.a \
 		${CWD}/src/wasm/posix/stdlib.c \
 		${CWD}/src/python/signal/signal.c
 
-${DIST}/waszee/waszee.wasm: ${WASZEE_WASM_SOURCES} ${WASZEE_WASM_C}
+${DIST}/wacalc/wacalc.wasm: ${WACALC_WASM_SOURCES} ${WACALC_WASM_C}
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
@@ -247,29 +247,29 @@ ${DIST}/waszee/waszee.wasm: ${WASZEE_WASM_SOURCES} ${WASZEE_WASM_C}
 		-target wasm32-wasi \
 		--import-memory \
 		--import-table \
-		${WASZEE_WASM_LDFLAGS} \
-		${WASZEE_WASM_INCLUDE} \
-		${WASZEE_WASM_C} \
-		waszee/interface.zig
-	mkdir -p ${DIST}/waszee
-	mv src/interface.wasm ${DIST}/waszee/waszee.wasm
+		${WACALC_WASM_LDFLAGS} \
+		${WACALC_WASM_INCLUDE} \
+		${WACALC_WASM_C} \
+		wacalc/interface.zig
+	mkdir -p ${DIST}/wacalc
+	mv src/interface.wasm ${DIST}/wacalc/wacalc.wasm
 
-.PHONY: waszee
-waszee: ${DIST}/waszee/waszee.wasm
+.PHONY: wacalc
+wacalc: ${DIST}/wacalc/wacalc.wasm
 
-${CWD}/../../bin/waszee: ${CWD}/bin/waszee
-	ln -sf ${CWD}/bin/waszee ${CWD}/../../bin/waszee
+${CWD}/../../bin/wacalc: ${CWD}/bin/wacalc
+	ln -sf ${CWD}/bin/wacalc ${CWD}/../../bin/wacalc
 
-bin-waszee: ${CWD}/../../bin/waszee
-.PHONY: bin-waszee
+bin-wacalc: ${CWD}/../../bin/wacalc
+.PHONY: bin-wacalc
 
 
 ${BUILD}/test/misc.wasm: ${SRC}/test/misc.c
 	mkdir -p ${BUILD}/test/
-	waszee-cc -fvisibility-main -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.wasm
+	wacalc-cc -fvisibility-main -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.wasm
 
 run-misc.wasm: ${BUILD}/test/misc.wasm
-	${CWD}/bin/waszee ${CWD}/build/test/misc.wasm
+	${CWD}/bin/wacalc ${CWD}/build/test/misc.wasm
 .PHONY: run-misc.wasm
 
 ${BUILD}/test/misc.exe: ${SRC}/test/misc.c

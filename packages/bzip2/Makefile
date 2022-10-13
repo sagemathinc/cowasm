@@ -33,7 +33,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 		&&  echo '#include "extra_config.h"' >> bzlib.h \
 		&&	make \
 			AR="zig ar" \
-			CC="waszee-cc" \
+			CC="wacalc-cc" \
 			RANLIB="zig ranlib" \
 			PREFIX="${DIST_WASM}" \
 			install -j8 \

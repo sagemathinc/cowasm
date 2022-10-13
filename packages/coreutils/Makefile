@@ -5,21 +5,21 @@ include ../build/Makefile-vars
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 
 all: ${BUILD_WASM}/.source \
-	${DIST_WASM}/bin/basename \
-	${DIST_WASM}/bin/cat \
-	${DIST_WASM}/bin/chmod \
-	${DIST_WASM}/bin/comm \
-	${DIST_WASM}/bin/cp \
-	${DIST_WASM}/bin/csplit \
-	${DIST_WASM}/bin/cut \
-	${DIST_WASM}/bin/date \
-	${DIST_WASM}/bin/factor \
-	${DIST_WASM}/bin/ls \
-	${DIST_WASM}/bin/sleep
+	${DIST_WASM}/bin/basename.wasm \
+	${DIST_WASM}/bin/cat.wasm \
+	${DIST_WASM}/bin/chmod.wasm \
+	${DIST_WASM}/bin/comm.wasm \
+	${DIST_WASM}/bin/cp.wasm \
+	${DIST_WASM}/bin/csplit.wasm \
+	${DIST_WASM}/bin/cut.wasm \
+	${DIST_WASM}/bin/date.wasm \
+	${DIST_WASM}/bin/factor.wasm \
+	${DIST_WASM}/bin/ls.wasm \
+	${DIST_WASM}/bin/sleep.wasm
 
 include ../build/Makefile-rules
 
-CC = waszee-cc
+CC = wacalc-cc
 
 # comment out -Xlinker -s to get debug symbols
 CFLAGS = -fvisibility-main -fPIC -I${POSIX_WASM} -I${SRC}/compat -I${SRC}/fts -Xlinker -s
@@ -38,38 +38,38 @@ COMPAT = ${BUILD_WASM}/compat/fmt_scaled.o ${BUILD_WASM}/compat/progname.o ${BUI
 
 UTILS = ${BUILD_WASM}/utils
 
-${DIST_WASM}/bin/basename: ${COMPAT} ${UTILS}/basename/basename.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/basename
+${DIST_WASM}/bin/basename.wasm: ${COMPAT} ${UTILS}/basename/basename.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/basename.wasm
 
-${DIST_WASM}/bin/cat: ${COMPAT} ${UTILS}/cat/cat.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/cat
+${DIST_WASM}/bin/cat.wasm: ${COMPAT} ${UTILS}/cat/cat.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/cat.wasm
 
-${DIST_WASM}/bin/chmod: ${COMPAT} ${UTILS}/chmod/chmod.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/chmod
+${DIST_WASM}/bin/chmod.wasm: ${COMPAT} ${UTILS}/chmod/chmod.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/chmod.wasm
 
-${DIST_WASM}/bin/comm: ${COMPAT} ${UTILS}/comm/comm.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/comm
+${DIST_WASM}/bin/comm.wasm: ${COMPAT} ${UTILS}/comm/comm.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/comm.wasm
 
-${DIST_WASM}/bin/cp: ${COMPAT} ${UTILS}/cp/cp.o ${UTILS}/cp/utils.o ${BUILD_WASM}/fts/fts.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/cp
+${DIST_WASM}/bin/cp.wasm: ${COMPAT} ${UTILS}/cp/cp.o ${UTILS}/cp/utils.o ${BUILD_WASM}/fts/fts.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/cp.wasm
 
-${DIST_WASM}/bin/csplit: ${COMPAT} ${UTILS}/csplit/csplit.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/csplit
+${DIST_WASM}/bin/csplit.wasm: ${COMPAT} ${UTILS}/csplit/csplit.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/csplit.wasm
 
-${DIST_WASM}/bin/cut: ${COMPAT} ${UTILS}/cut/cut.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/cut
+${DIST_WASM}/bin/cut.wasm: ${COMPAT} ${UTILS}/cut/cut.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/cut.wasm
 
-${DIST_WASM}/bin/date: ${COMPAT} ${UTILS}/date/date.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/date
+${DIST_WASM}/bin/date.wasm: ${COMPAT} ${UTILS}/date/date.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/date.wasm
 
-${DIST_WASM}/bin/factor: ${COMPAT} ${UTILS}/factor/factor.o ${UTILS}/factor/pattern.o ${UTILS}/factor/pr_tbl.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/factor
+${DIST_WASM}/bin/factor.wasm: ${COMPAT} ${UTILS}/factor/factor.o ${UTILS}/factor/pattern.o ${UTILS}/factor/pr_tbl.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/factor.wasm
 
-${DIST_WASM}/bin/ls: ${COMPAT} ${BUILD_WASM}/fts/fts.o ${UTILS}/ls/cmp.o ${UTILS}/ls/ls.o ${UTILS}/ls/main.o  ${UTILS}/ls/print.o ${UTILS}/ls/utf8.o ${UTILS}/ls/util.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/ls
+${DIST_WASM}/bin/ls.wasm: ${COMPAT} ${BUILD_WASM}/fts/fts.o ${UTILS}/ls/cmp.o ${UTILS}/ls/ls.o ${UTILS}/ls/main.o  ${UTILS}/ls/print.o ${UTILS}/ls/utf8.o ${UTILS}/ls/util.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/ls.wasm
 
-${DIST_WASM}/bin/sleep: ${COMPAT} ${UTILS}/sleep/sleep.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/sleep
+${DIST_WASM}/bin/sleep.wasm: ${COMPAT} ${UTILS}/sleep/sleep.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/sleep.wasm
 
 # TODO: this doesn't match cocalc so fix.
 format:

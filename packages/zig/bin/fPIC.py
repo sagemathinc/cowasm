@@ -8,7 +8,7 @@ zig cc -target wasm32-wasi -fPIC
 but right now fPIC for wasi is not supported at all in zig.  It happens that
 wasm32-emscripten does have some support though, inherited from it being
 upstreamed in clang. It's the only way to make dynamic WASM modules, and those
-are critical to the WasZee project.
+are critical to the WaCalc project.
 
 NOTE: there is about 0.05s - 0.1s overhead just due to using Python for
 this script, and that's a lot LONGER than the zig call itself typically
@@ -62,7 +62,7 @@ FLAGS = [
     '-D__EMSCRIPTEN_major__=3', '-D__EMSCRIPTEN_minor__=1',
     '-D__EMSCRIPTEN_tiny__=16', '-D_WASI_EMULATED_MMAN',
     '-D_WASI_EMULATED_SIGNAL', '-D_WASI_EMULATED_PROCESS_CLOCKS',
-    '-D_WASI_EMULATED_GETPID', '-D__waszee__'
+    '-D_WASI_EMULATED_GETPID', '-D__wacalc__'
 ]
 
 # this is a horrendous hack.  It can be randomly broken, so watch out.

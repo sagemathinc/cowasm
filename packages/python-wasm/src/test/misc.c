@@ -1,8 +1,8 @@
 /*
 This is meant to illustrate and test some things involving writing a C program
-that runs on waszee.
+that runs using wacalc.
 
-To build and run under WasZee:
+To build and run under WaCalc:
 
    make run-misc.wasm
 
@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
   for (int i = 0; i < argc; i++) {
     printf("argv[%d]=%s\n", i, argv[i]);
   }
-#ifdef __waszee__
+#ifdef __wacalc__
   printf("hi %s\n", user_from_uid(500, 0));
 #endif
 

@@ -10,8 +10,8 @@ find Modules -name "*.so" -type f -delete
 
 # Keep this in sync with ../Makefile
 make -j8 \
-     CC="waszee-cc " \
-     CXX="waszee-c++ " \
+     CC="wacalc-cc " \
+     CXX="wacalc-c++ " \
      CONFIGURE_LDFLAGS_NODIST="" \
      LINKFORSHARED="-shared" \
      MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
