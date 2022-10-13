@@ -1,0 +1,9 @@
+
+BIN = $(shell pwd)/../../../../bin
+WACALC = ${BIN}/wacalc-cc
+NODE = ${BIN}/node
+ZIG = ${BIN}/zig
+
+clean:
+	rm -rf build
+

@@ -1,8 +1,10 @@
 all: test-wasm
 
+include ../Makefile-common
+
 build/wasm/app.wasm: app.c
 	mkdir -p build/wasm
-	zig cc -target wasm32-wasi \
+	${ZIG} cc -target wasm32-wasi \
 		-rdynamic \
 		-shared \
 		-fvisibility=default \
@@ -14,7 +16,7 @@ build/wasm/app.wasm: app.c
 
 build/wasm/app.o: app.c
 	mkdir -p build/wasm
-	zig cc -v -target wasm32-wasi \
+	${ZIG} cc -v -target wasm32-wasi \
 		-rdynamic \
 		-shared \
 		-fvisibility=default \
@@ -22,8 +24,7 @@ build/wasm/app.o: app.c
 
 build/wasm/dynamic-library.wasm.so: dynamic-library.c
 	mkdir -p build/wasm
-	wacalc-cc dynamic-library.c -c -o build/wasm/dynamic-library.o
-	zig wasm-ld --experimental-pic -shared build/wasm/dynamic-library.o -o build/wasm/dynamic-library.so
+	${WACALC} dynamic-library.c -o build/wasm/dynamic-library.so
 
 test-wasm: build/wasm/app.wasm build/wasm/dynamic-library.wasm.so
 	cd build/wasm && node ../../app.js
@@ -46,6 +47,3 @@ test-native-macos: build/native-macos/app.native build/native-macos/dynamic-libr
 
 .PHONEY: test
 test: test-wasm
-
-clean:
-	rm -rf build

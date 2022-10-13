@@ -1,8 +1,10 @@
 all: test-wasm
 
+include ../Makefile-common
+
 build/wasm/app.wasm: app.c
 	mkdir -p build/wasm
-	zig cc -target wasm32-wasi \
+	${ZIG} cc -target wasm32-wasi \
 		-rdynamic \
 		-shared \
 		-fvisibility=default \
@@ -14,7 +16,7 @@ build/wasm/app.wasm: app.c
 
 build/wasm/app.o: app.c
 	mkdir -p build/wasm
-	zig cc -v -target wasm32-wasi \
+	${ZIG} cc -v -target wasm32-wasi \
 		-rdynamic \
 		-shared \
 		-fvisibility=default \
@@ -22,8 +24,7 @@ build/wasm/app.o: app.c
 
 build/wasm/hello.so: hellomodule.c
 	mkdir -p build/wasm
-	wacalc-cc hellomodule.c -c -o build/wasm/hellomodule.o
-	zig wasm-ld --experimental-pic -shared build/wasm/hellomodule.o -o build/wasm/hello.so
+	${WACALC} hellomodule.c -o build/wasm/hello.so
 
 test-wasm: build/wasm/app.wasm build/wasm/hello.so
 	cd build/wasm && node ../../app.js

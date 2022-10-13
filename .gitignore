@@ -5,6 +5,7 @@ bin/zython
 bin/zython-debug
 bin/zython-dev
 bin/zig
+bin/zig-fPIC
 bin/node
 bin/npm
 bin/npx
