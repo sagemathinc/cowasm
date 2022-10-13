@@ -23,6 +23,20 @@ if sys.argv[0].endswith('-cc'):
 elif sys.argv[0].endswith('-c++'):
     sys.argv.insert(1, 'c++')
 
+verbose = '-v' in sys.argv
+
+def run(cmd):
+    if verbose:
+        print(' '.join(cmd))
+    ret = subprocess.run(cmd)
+    if ret.returncode:
+        sys.exit(ret.returncode)
+
+if "-E" in sys.argv:
+    # preprocessor only
+    run(['zig'] + sys.argv[1:])
+    sys.exit(0)
+
 ZIG_EXE = os.path.realpath(shutil.which("zig"))
 ZIG_HOME = os.path.dirname(ZIG_EXE)
 INCLUDE = os.path.join(ZIG_HOME, "lib", "zig", "libc", "include")
@@ -58,16 +72,6 @@ FLAGS = [
 if '-fvisibility-main' in sys.argv:
     FLAGS.append('-Dmain=__attribute__((visibility("default")))main')
     sys.argv.remove('-fvisibility-main')
-
-verbose = '-v' in sys.argv
-
-def run(cmd):
-    if verbose:
-        print(' '.join(cmd))
-    ret = subprocess.run(cmd)
-    if ret.returncode:
-        sys.exit(ret.returncode)
-
 
 ret = 0
 if '-c' in sys.argv:
