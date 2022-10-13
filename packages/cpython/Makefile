@@ -7,7 +7,7 @@ include ../build/Makefile-vars
 # only zig on our supported architectures, so we use the native toolchain, which is
 # really annoying and makes bootstraping a build a little harder.
 #
-# We only build a *shared* -fPIC version of the WASM version by using our waszee-cc
+# We only build a *shared* -fPIC version of the WASM version by using our zig-fPIC
 # wrapper script, which is in the dylink package.
 #
 # See https://www.python.org/downloads/
@@ -202,7 +202,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	cd ${BUILD_WASM} && make
 
 	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld
-	# via the waszee-cc script.  First remove everything that possibly needs to be built -fPIC or the
+	# via the zig-fPIC script.  First remove everything that possibly needs to be built -fPIC or the
 	# build will not rebuild what it needs to build.  We just delete all .o files, so this takes longer
 	# since many of these are NOT shared.  But it works.
 	cd ${BUILD_WASM}/Modules && find . -name "*.o" -type f -delete
@@ -216,8 +216,8 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 		MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
 	 	MODULE_PYEXPAT_LDFLAGS="Modules/expat/libexpat.a" \
 		MODULE__DATETIME_LDFLAGS="" \
-		CC="waszee-cc ${OPT}" \
-		CXX="waszee-c++ ${OPT}" \
+		CC="zig-fPIC cc ${OPT}" \
+		CXX="zig-fPIC c++ ${OPT}" \
 		BLDSHARED="${BLDSHARED}" \
 	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-3.11/_sysconfigdata__wasi_wasm32-wasi.py so it
 	# matches the configuration we just used for building shared modules.  Otherwise, distutils
@@ -225,12 +225,12 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# due to lack of -fPIC.  This is annoying, but we don't want to build the core python executable
 	# -fPIC, since that is slower and bigger and we don't need it.
 	# This is what based on testing actually works:
-	#      'zig cc -target wasm32-wasi' --> 'waszee-cc'
-	#      'zig c++ -target wasm32-wasi' --> 'waszee-c++'
+	#      'zig cc -target wasm32-wasi' --> 'zig-fPIC cc'
+	#      'zig c++ -target wasm32-wasi' --> 'zig-fPIC c++'
 	#      'LDSHARED': '' --> 'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'
 	cd ${BUILD_WASM}/build/lib.wasi-wasm32-3.11/ \
-		&& sed -i'.bak' "s/zig cc -target wasm32-wasi/waszee-cc/g" _sysconfigdata__wasi_wasm32-wasi.py \
-		&& sed -i'.bak' "s/zig c++ -target wasm32-wasi/waszee-c++/g" _sysconfigdata__wasi_wasm32-wasi.py \
+		&& sed -i'.bak' "s/zig cc -target wasm32-wasi/zig-fPIC cc/g" _sysconfigdata__wasi_wasm32-wasi.py \
+		&& sed -i'.bak' "s/zig c++ -target wasm32-wasi/zig-fPIC c++/g" _sysconfigdata__wasi_wasm32-wasi.py \
 		&& sed -i'.bak' "s/'LDSHARED': ''/'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'/g" _sysconfigdata__wasi_wasm32-wasi.py
 	# Install as usual.
 	cd ${BUILD_WASM} && make install
