@@ -75,8 +75,19 @@ if '-fvisibility-main' in sys.argv:
     FLAGS.append('-Dmain=__attribute__((visibility("default")))main')
     sys.argv.remove('-fvisibility-main')
 
-ret = 0
-if '-c' in sys.argv:
+
+def is_input(arg):
+    for ext in ['.c', '.cc', 'cpp', '.cxx', '.o']:  # TODO: is that it?
+        if arg.endswith(ext): return True
+    return False
+
+
+# no_input, e.g., when querying the compiler for info about the system, e.g.,
+#   wacalc-cc --print-multiarch
+
+no_input = len([arg for arg in sys.argv if is_input(arg)]) == 0
+
+if '-c' in sys.argv or no_input:
 
     # building object files; not linking, so don't have to do the extra wasm-ld step
     run(['zig'] + sys.argv[1:] + FLAGS)
@@ -91,7 +102,8 @@ else:
         dot_o = tmpfile.name
         do_compile = False
         for opt in sys.argv:
-            if opt.endswith('.c') or opt.endswith('.c++') or opt.endswith('.cpp'):
+            if opt.endswith('.c') or opt.endswith('.c++') or opt.endswith(
+                    '.cpp') or opt.endswith('.cxx'):  # TODO: is that it?
                 do_compile = True
                 break
 

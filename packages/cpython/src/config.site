@@ -71,7 +71,6 @@ ac_cv_func_socket=yes
 # NOTE: os.path.realpath uses readlink rather than realpath.
 # ac_cv_func_realpath=no
 
-
 # The clock_nanosleep and nanosleep functions both are provided by
 # zig/musl, but they don't work at all.  The select function, which
 # is what Modules/timemodule.c falls back to, does work, due to

@@ -123,7 +123,7 @@ packages:
 
 ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
 	echo ${PATH}
-	${BIN}/wacalc-cc -v -Oz -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} -shared -Xlinker -s \
+	${BIN}/wacalc-cc -Oz -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} -shared -Xlinker -s \
 		src/python/extension/hellomodule.c -o ${DIST}/python/hello.cpython-311-wasm32-wasi.so
 
 # TODO: temporary path hack:
