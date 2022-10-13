@@ -1,6 +1,10 @@
 # This is a Makefile of common definitions that is used by other packages that
 # involve building upstream code from source.
 
+# This is a trick to make setting the PATH below work even with older versions of GNU Make (e.g., on MacOS), as
+# explained here: https://stackoverflow.com/questions/8941110/how-i-could-add-dir-to-path-in-makefile
+SHELL := /bin/bash
+
 # The directory containing the package where the makefile is run, e.g., packages/bzip2
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 

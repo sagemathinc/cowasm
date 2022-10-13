@@ -122,9 +122,9 @@ packages:
 	ln -sf ${PACKAGES}/py-*/dist/wasm/*.tar.xz ${DIST}/python/py
 
 ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
-	wacalc-cc src/python/extension/hellomodule.c -c -o ${DIST}/python/hello.o -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM}
-	zig wasm-ld --experimental-pic -shared ${DIST}/python/hello.o -o ${DIST}/python/hello.cpython-311-wasm32-wasi.so
-	rm ${DIST}/python/hello.o
+	echo ${PATH}
+	${BIN}/wacalc-cc -v -Oz -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} -shared -Xlinker -s \
+		src/python/extension/hellomodule.c -o ${DIST}/python/hello.cpython-311-wasm32-wasi.so
 
 # TODO: temporary path hack:
 ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.cpython-311-wasm32-wasi.so: ${DIST}/python/hello.cpython-311-wasm32-wasi.so
