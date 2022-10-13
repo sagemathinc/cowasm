@@ -19,9 +19,9 @@ plan to rewrite this script itself in zig for speed purposes.
 import os, shutil, subprocess, sys
 
 if sys.argv[0].endswith('-cc'):
-    sys.argv.insert(1,'cc')
+    sys.argv.insert(1, 'cc')
 elif sys.argv[0].endswith('-c++'):
-    sys.argv.insert(1,'c++')
+    sys.argv.insert(1, 'c++')
 
 ZIG_EXE = os.path.realpath(shutil.which("zig"))
 ZIG_HOME = os.path.dirname(ZIG_EXE)
@@ -46,9 +46,7 @@ FLAGS = [
                  'generic-musl'), '-D__wasi__', '-D__EMSCRIPTEN_major__=3',
     '-D__EMSCRIPTEN_minor__=1', '-D__EMSCRIPTEN_tiny__=16',
     '-D_WASI_EMULATED_MMAN', '-D_WASI_EMULATED_SIGNAL',
-    '-D_WASI_EMULATED_PROCESS_CLOCKS', '-D_WASI_EMULATED_GETPID',
-    '-DWASZEE'
-
+    '-D_WASI_EMULATED_PROCESS_CLOCKS', '-D_WASI_EMULATED_GETPID', '-DWASZEE'
 ]
 
 # this is a horrendous hack.  It can be randomly broken, so watch out.
@@ -60,10 +58,42 @@ if '-main' in sys.argv:
     FLAGS.append('-Dmain=__attribute__((visibility("default")))main')
     sys.argv.remove('-main')
 
-cmd = ['zig'] + sys.argv[1:] + FLAGS
+verbose = '-v' in sys.argv
 
-if '-v' in cmd:
-    print(' '.join(cmd))
 
-ret = subprocess.run(cmd)
-sys.exit(ret.returncode)
+def run(cmd):
+    if verbose:
+        print(' '.join(cmd))
+    ret = subprocess.run(cmd)
+    if ret.returncode:
+        sys.exit(ret.returncode)
+
+
+ret = 0
+if '-c' in sys.argv:
+    # building object files; not linking, so don't have to do that extra step
+    run(['zig'] + sys.argv[1:] + FLAGS)
+else:
+    # We have to create an object file then run "zig wasm-ld" explicitly,
+    # since the way zig runs it is wrong for our purposes in many ways.
+    # TODO: but this could definitely be fixed and upstreamed, if I can
+    # ever get zig to build from source.  For now, at least, we can be sure
+    # of the right behavior.
+    sys.argv.append('-c')
+    try:
+        output_index = sys.argv.index('-o') + 1
+        sys.argv[output_index] += '.o'
+    except:
+        sys.argv.append('-o')
+        sys.argv.append('a.out.o')
+        output_index = len(sys.argv) - 1
+    run(['zig'] + sys.argv[1:] + FLAGS)
+    # now link
+    #zig wasm-ld --experimental-pic -shared  -s --compress-relocations ${BUILD}/test/misc.o -o ${BUILD}/test/misc.wasm
+    # this -s below strips debug symbols; what's the right way to do this?  Maybe -Xlinker -s?
+    # TODO: pass all the Xlinker arge too?
+    run([
+        'zig', 'wasm-ld', '--experimental-pic', '-shared', \
+            '-s', '--compress-relocations',\
+            sys.argv[output_index], '-o', sys.argv[output_index][:-2]
+    ])
