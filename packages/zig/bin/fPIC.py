@@ -46,20 +46,20 @@ FLAGS = [
                  'generic-musl'), '-D__wasi__', '-D__EMSCRIPTEN_major__=3',
     '-D__EMSCRIPTEN_minor__=1', '-D__EMSCRIPTEN_tiny__=16',
     '-D_WASI_EMULATED_MMAN', '-D_WASI_EMULATED_SIGNAL',
-    '-D_WASI_EMULATED_PROCESS_CLOCKS', '-D_WASI_EMULATED_GETPID', '-DWASZEE'
+    '-D_WASI_EMULATED_PROCESS_CLOCKS', '-D_WASI_EMULATED_GETPID', '-D__waszee__'
 ]
 
 # this is a horrendous hack.  It can be randomly broken, so watch out.
 # E.g., when building python there is a random header that has
 #    something.main
-# which breaks. At least we make it very explicit with a "-main"
-# option.
-if '-main' in sys.argv:
+# which breaks. At least we make it very explicit with a "-fvisibility-main".
+# If we can figure out a way with 'zig wasm-ld' to do this directly that would
+# be better.
+if '-fvisibility-main' in sys.argv:
     FLAGS.append('-Dmain=__attribute__((visibility("default")))main')
-    sys.argv.remove('-main')
+    sys.argv.remove('-fvisibility-main')
 
 verbose = '-v' in sys.argv
-
 
 def run(cmd):
     if verbose:
@@ -79,21 +79,41 @@ else:
     # TODO: but this could definitely be fixed and upstreamed, if I can
     # ever get zig to build from source.  For now, at least, we can be sure
     # of the right behavior.
-    sys.argv.append('-c')
+
+    needs_to_compile = False
+    for x in sys.argv:
+        if x.endswith('.c') or x.endswith('.c++'):
+            needs_to_compile = True
+            break
+    tmp = ''
     try:
-        output_index = sys.argv.index('-o') + 1
-        sys.argv[output_index] += '.o'
-    except:
-        sys.argv.append('-o')
-        sys.argv.append('a.out.o')
-        output_index = len(sys.argv) - 1
-    run(['zig'] + sys.argv[1:] + FLAGS)
-    # now link
-    #zig wasm-ld --experimental-pic -shared  -s --compress-relocations ${BUILD}/test/misc.o -o ${BUILD}/test/misc.wasm
-    # this -s below strips debug symbols; what's the right way to do this?  Maybe -Xlinker -s?
-    # TODO: pass all the Xlinker arge too?
-    run([
-        'zig', 'wasm-ld', '--experimental-pic', '-shared', \
-            '-s', '--compress-relocations',\
-            sys.argv[output_index], '-o', sys.argv[output_index][:-2]
-    ])
+        try:
+            output_index = sys.argv.index('-o') + 1
+            sys.argv[output_index] += '.o'
+        except:
+            sys.argv.append('-o')
+            sys.argv.append('a.out.o')
+            output_index = len(sys.argv) - 1
+        if needs_to_compile:
+            sys.argv.append('-c')
+            tmp = sys.argv[output_index]
+            run(['zig'] + sys.argv[1:] + FLAGS)
+
+        # Next link
+        # this -s below strips debug symbols; what's the right way to do this?  Maybe -Xlinker -s?
+        link = ['zig', 'wasm-ld', '--experimental-pic', '-shared']
+        link += ['-o', sys.argv[output_index][:-2]]
+        if not needs_to_compile:
+            link += list(set([x for x in sys.argv if x.endswith('.o') and x != sys.argv[output_index]]))
+        # Pass all the Xlinker arge too, e.g., "-Xlinker -s" is the only way to strip.
+        i = 0
+        while i < len(sys.argv):
+            if sys.argv[i] == '-Xlinker':
+                i += 1
+                link.append(sys.argv[i])
+            i += 1
+        run(link)
+
+    finally:
+        if os.path.exists(tmp):
+            os.unlink(tmp)

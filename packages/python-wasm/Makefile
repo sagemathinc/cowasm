@@ -266,7 +266,7 @@ bin-waszee: ${CWD}/../../bin/waszee
 
 ${BUILD}/test/misc.wasm: ${SRC}/test/misc.c
 	mkdir -p ${BUILD}/test/
-	waszee-cc -main -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.wasm
+	waszee-cc -fvisibility-main -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.wasm
 
 run-misc.wasm: ${BUILD}/test/misc.wasm
 	${CWD}/bin/waszee ${CWD}/build/test/misc.wasm

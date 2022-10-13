@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
   for (int i = 0; i < argc; i++) {
     printf("argv[%d]=%s\n", i, argv[i]);
   }
-#ifdef WASZEE
+#ifdef __waszee__
   printf("hi %s\n", user_from_uid(500, 0));
 #endif
 

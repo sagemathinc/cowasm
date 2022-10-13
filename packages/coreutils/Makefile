@@ -3,77 +3,74 @@
 include ../build/Makefile-vars
 
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
-FTS = ${PACKAGES}/fts/dist/wasm/
 
-all: wasm
+all: ${BUILD_WASM}/.source \
+	${DIST_WASM}/bin/basename \
+	${DIST_WASM}/bin/cat \
+	${DIST_WASM}/bin/chmod \
+	${DIST_WASM}/bin/comm \
+	${DIST_WASM}/bin/cp \
+	${DIST_WASM}/bin/csplit \
+	${DIST_WASM}/bin/cut \
+	${DIST_WASM}/bin/date \
+	${DIST_WASM}/bin/factor \
+	${DIST_WASM}/bin/ls \
+	${DIST_WASM}/bin/sleep
 
 include ../build/Makefile-rules
 
-CC = waszee-cc -main
-CFLAGS = -I${POSIX_WASM} -I${SRC}/compat -I${SRC}/fts \
-	-D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_MMAN
-LDFLAGS = --experimental-pic -s --compress-relocations -shared
+CC = waszee-cc
+
+# comment out -Xlinker -s to get debug symbols
+CFLAGS = -fvisibility-main -fPIC -I${POSIX_WASM} -I${SRC}/compat -I${SRC}/fts -Xlinker -s
 
 ${BUILD_WASM}/.source:: src/**
 	rm -rf ${BUILD_WASM}
 	mkdir -p ${BUILD_WASM}
 	cp -r src/* ${BUILD_WASM}
+	mkdir -p ${DIST_WASM}/bin
 	touch ${BUILD_WASM}/.source
 
-
-${SRC}/fts/%.o: ${SRC}/fts/%.c
+%.o: %.c
 	${CC} -c $^ ${CFLAGS} -o $@
 
-${SRC}/compat/%.o: ${SRC}/compat/%.c
-	${CC} -c $^ ${CFLAGS} -o $@
+COMPAT = ${BUILD_WASM}/compat/fmt_scaled.o ${BUILD_WASM}/compat/progname.o ${BUILD_WASM}/compat/strtonum.o ${BUILD_WASM}/compat/getbsize.o ${BUILD_WASM}/compat/strmode.o
 
-# ${DIST_WASM}/bin/%: ${SRC}/utils/%/*.o | ${BUILD_WASM}/.source
-# 	mkdir -p ${DIST_WASM}/bin
-# 	zig wasm-ld --experimental-pic -shared  $^ -o $@
+UTILS = ${BUILD_WASM}/utils
 
-COMMON = ${SRC}/fts/fts.o ${SRC}/compat/getbsize.o ${SRC}/compat/strmode.o ${SRC}/compat/strtonum.o  ${SRC}/compat/progname.o ${SRC}/compat/fmt_scaled.o
+${DIST_WASM}/bin/basename: ${COMPAT} ${UTILS}/basename/basename.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/basename
 
-${SRC}/utils/ls/%.o: ${SRC}/utils/ls/%.c
-	${CC} -c $^ ${CFLAGS} -o $@
+${DIST_WASM}/bin/cat: ${COMPAT} ${UTILS}/cat/cat.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/cat
 
-${DIST_WASM}/bin/ls: ${COMMON} ${SRC}/utils/ls/cmp.o ${SRC}/utils/ls/ls.o ${SRC}/utils/ls/main.o  ${SRC}/utils/ls/print.o ${SRC}/utils/ls/utf8.o ${SRC}/utils/ls/util.o | ${BUILD_WASM}/.source
-	mkdir -p ${DIST_WASM}/bin
-	zig wasm-ld ${LDFLAGS} ${SRC}/utils/ls/*.o ${COMMON} -o ${DIST_WASM}/bin/ls
+${DIST_WASM}/bin/chmod: ${COMPAT} ${UTILS}/chmod/chmod.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/chmod
 
-${SRC}/utils/factor/%.o: ${SRC}/utils/factor/%.c
-	${CC} -c $^ ${CFLAGS} -o $@
+${DIST_WASM}/bin/comm: ${COMPAT} ${UTILS}/comm/comm.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/comm
 
-${DIST_WASM}/bin/factor: ${COMMON} ${SRC}/utils/factor/factor.o ${SRC}/utils/factor/pr_tbl.o ${SRC}/utils/factor/pattern.o  | ${BUILD_WASM}/.source
-	mkdir -p ${DIST_WASM}/bin
-	zig wasm-ld ${LDFLAGS} ${SRC}/utils/factor/*.o ${COMMON} -o ${DIST_WASM}/bin/factor
+${DIST_WASM}/bin/cp: ${COMPAT} ${UTILS}/cp/cp.o ${UTILS}/cp/utils.o ${BUILD_WASM}/fts/fts.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/cp
 
-${SRC}/utils/date/%.o: ${SRC}/utils/date/%.c
-	${CC} -c $^ ${CFLAGS} -o $@
+${DIST_WASM}/bin/csplit: ${COMPAT} ${UTILS}/csplit/csplit.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/csplit
 
-${DIST_WASM}/bin/date: ${COMMON} ${SRC}/utils/date/date.o  | ${BUILD_WASM}/.source
-	mkdir -p ${DIST_WASM}/bin
-	zig wasm-ld ${LDFLAGS} ${SRC}/utils/date/*.o ${COMMON}  -o ${DIST_WASM}/bin/date
+${DIST_WASM}/bin/cut: ${COMPAT} ${UTILS}/cut/cut.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/cut
 
-${DIST_WASM}/bin/chown: ${DIST_WASM}/bin/chmod
-	cd ${DIST_WASM}/bin && ln -sf chmod chown
+${DIST_WASM}/bin/date: ${COMPAT} ${UTILS}/date/date.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/date
 
-${DIST_WASM}/bin/chgrp: ${DIST_WASM}/bin/chmod
-	cd ${DIST_WASM}/bin && ln -sf chmod chgrp
+${DIST_WASM}/bin/factor: ${COMPAT} ${UTILS}/factor/factor.o ${UTILS}/factor/pattern.o ${UTILS}/factor/pr_tbl.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/factor
 
-#UTILS = ${DIST_WASM}/bin/basename ${DIST_WASM}/bin/cat ${DIST_WASM}/bin/chgrp ${DIST_WASM}/bin/chmod ${DIST_WASM}/bin/chown ${DIST_WASM}/bin/comm ${DIST_WASM}/bin/cp  ${DIST_WASM}/bin/csplit ${DIST_WASM}/bin/cut ${DIST_WASM}/bin/date ${DIST_WASM}/bin/factor ${DIST_WASM}/bin/ls ${DIST_WASM}/bin/sleep
+${DIST_WASM}/bin/ls: ${COMPAT} ${BUILD_WASM}/fts/fts.o ${UTILS}/ls/cmp.o ${UTILS}/ls/ls.o ${UTILS}/ls/main.o  ${UTILS}/ls/print.o ${UTILS}/ls/utf8.o ${UTILS}/ls/util.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/ls
 
-UTILS = ${DIST_WASM}/bin/date ${DIST_WASM}/bin/factor ${DIST_WASM}/bin/ls
+${DIST_WASM}/bin/sleep: ${COMPAT} ${UTILS}/sleep/sleep.o
+	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/sleep
 
-${DIST_WASM}/.built: ${UTILS}
-	touch ${BUILD_WASM}/.source
-
+# TODO: this doesn't match cocalc so fix.
 format:
 	find src/ -iname *.h -o -iname *.c | xargs clang-format -i --sort-includes=0
-
-strip:
-	find  ${DIST_WASM}/bin -type f | xargs -n1 wasm-strip
-.PHONY: strip
-
-clean::
-	rm -rf ${BUILD_WASM}
-	find . -type f -name '*.o' -delete
