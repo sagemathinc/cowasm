@@ -210,7 +210,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# from using -lm, which isn't needed or supported by "zig wasm-ld" with the options we're using.
 	# Parallel build is fine for this, unlike above.
 	cd ${BUILD_WASM} && \
-		make \
+		make -j8 \
 		CONFIGURE_LDFLAGS_NODIST="" \
 		LINKFORSHARED="-shared" \
 		MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
