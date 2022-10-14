@@ -218,8 +218,8 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# -fPIC, since that is slower and bigger and we don't need it.
 	# This is what based on testing actually works:
 	#      'LDSHARED': '' --> 'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'
-	#cd ${BUILD_WASM}/build/lib.wasi-wasm32-3.11/ \
-	#	&& sed -i'.bak' "s/'LDSHARED': ''/'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'/g" _sysconfigdata__wasi_wasm32-wasi.py
+	cd ${BUILD_WASM}/build/lib.wasi-wasm32-3.11/ \
+		&& sed -i'.bak' "s/'LDSHARED': ''/'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'/g" _sysconfigdata__wasi_wasm32-wasi.py
 	# Install as usual.
 	cd ${BUILD_WASM} && make install
 	# For mysterious reasons, test-tomllib isn't copied over.

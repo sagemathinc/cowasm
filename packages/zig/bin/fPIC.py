@@ -14,6 +14,9 @@ NOTE: there is about 0.05s - 0.1s overhead just due to using Python for
 this script, and that's a lot LONGER than the zig call itself typically
 takes, e.g., when things are cached.  This time adds up!  Thus we certainly
 plan to rewrite this script itself in zig for speed purposes.
+
+NOTE: Often -fPIC is the *default* these days.  See the discussion here:
+https://stackoverflow.com/questions/20637310/does-one-still-need-to-use-fpic-when-compiling-with-gcc#:~:text=You%20never%20needed%20to%20generate,or%20set%20it%20by%20default.
 """
 
 import os, shutil, subprocess, sys, tempfile
@@ -34,7 +37,6 @@ def run(cmd):
     ret = subprocess.run(cmd)
     if ret.returncode:
         sys.exit(ret.returncode)
-
 
 if "-E" in sys.argv:
     # preprocessor only
