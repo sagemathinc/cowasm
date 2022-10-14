@@ -42,7 +42,7 @@ ${BUILD}/%.o: %.c
 	mkdir -p ${BUILD} ${TARGET}
 	${CC} -c $^ ${CFLAGS} -o $@
 
-COMPAT = ${BUILD}/fmt_scaled.o ${BUILD}/progname.o ${BUILD}/recallocarray.o ${BUILD}/strtonum.o ${BUILD}/getbsize.o ${BUILD}/strmode.o
+COMPAT = ${BUILD}/fmt_scaled.o ${BUILD}/recallocarray.o ${BUILD}/strtonum.o ${BUILD}/getbsize.o ${BUILD}/strmode.o
 
 # This builds any bin executable foo.wasm that depends only on foo.o and the compat files.
 

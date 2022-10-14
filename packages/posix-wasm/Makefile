@@ -9,7 +9,7 @@ include ../build/Makefile-rules
 # WASM
 
 DEPS = $(shell find src -type f \( -iname '*.h' \))
-CFLAGS = -Oz
+CFLAGS = -Oz -I${SRC}
 
 ${BUILD_WASM}/%.o: ${SRC}/%.c ${DEPS}
 	mkdir -p `dirname $@`
@@ -17,10 +17,13 @@ ${BUILD_WASM}/%.o: ${SRC}/%.c ${DEPS}
 
 BUILTINS = ${BUILD_WASM}/lib/builtins
 LEGACY = ${BUILD_WASM}/lib/legacy
+TEMP = ${BUILD_WASM}/lib/temp
+
 OBJECTS = ${BUILD_WASM}/posix-wasm.o ${BUILD_WASM}/threads.o \
 	${BUILTINS}/muldc3.o ${BUILTINS}/mulsc3.o ${BUILTINS}/multc3.o \
 	${LEGACY}/err.o \
-	${BUILD_WASM}/lib/stdlib/qsort_nr.o
+	${BUILD_WASM}/lib/stdlib/qsort_nr.o \
+	${TEMP}/mkdtemp.o ${TEMP}/mkstemps.o
 
 ${BUILD_WASM}/libposix.a: ${OBJECTS}
 	zig ar -crs ${BUILD_WASM}/libposix.a ${OBJECTS}

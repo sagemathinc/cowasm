@@ -147,7 +147,7 @@ else:
             link.append(dot_o)
             link += ['-o', original_output]
         else:
-            link += list(set([x for x in sys.argv if x.endswith('.o')]))
+            link += list(set([x for x in sys.argv if x.endswith('.o') or x.endswith('.a')]))
             if '-o' in sys.argv:
                 i = sys.argv.index('-o')
                 link += [sys.argv[i], sys.argv[i + 1]]

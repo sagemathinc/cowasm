@@ -152,6 +152,10 @@ unsigned long __fixunstfdi(long double);
 unsigned int __fixunstfsi(long double);
 
 long double strtold_l(const char *__restrict, char **__restrict, struct __locale_struct *);
+
+extern const char *__progname;
+const char *getprogname() { return __progname; }
+void setprogname(const char *progname) { __progname = progname; }
 `;
   s += "\n";
   s += wasmExport((symbols + "\n" + posix).split("\n"));
@@ -695,6 +699,9 @@ getline
 getopt
 getopt_long
 getopt_long_only
+setprogname
+getprogname
+__progname
 getsockopt
 getsubopt
 gettimeofday
