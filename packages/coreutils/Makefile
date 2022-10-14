@@ -17,6 +17,7 @@ all: \
 	${TARGET}/cut.wasm \
 	${TARGET}/date.wasm \
 	${TARGET}/factor.wasm \
+	${TARGET}/head.wasm \
 	${TARGET}/ls.wasm \
 	${TARGET}/sleep.wasm \
 	${TARGET}/tail.wasm \
@@ -98,6 +99,12 @@ test-ls: ${TARGET}/ls.wasm
 test-sleep: ${TARGET}/sleep.wasm
 	wacalc ${TARGET}/sleep.wasm 0.1
 
+test-head: ${TARGET}/head.wasm
+	echo "first line" > ${BUILD}/.test-head
+	echo "last line" >> ${BUILD}/.test-head
+	test "`wacalc ${TARGET}/head.wasm -n 1 ${BUILD}/.test-head`" = "first line"
+	rm ${BUILD}/.test-head
+
 test-tail: ${TARGET}/tail.wasm
 	echo "first line" > ${BUILD}/.test-tail
 	echo "last line" >> ${BUILD}/.test-tail
@@ -109,7 +116,7 @@ test-xargs: ${TARGET}/xargs.wasm
 
 
 # Very basic tests of some things...
-test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-ls test-sleep test-xargs
+test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls test-sleep test-tail test-xargs
 
 # Our makefile rule '${BUILD}/%.o: %.c' above assumes that .c files in
 # subdirs have **unique names**, and this checks that.
