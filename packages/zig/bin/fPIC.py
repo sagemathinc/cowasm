@@ -22,9 +22,11 @@ if sys.argv[0].endswith('-cc'):
     sys.argv.insert(1, 'cc')
 elif sys.argv[0].endswith('-c++'):
     sys.argv.insert(1, 'c++')
+sys.argv.insert(2, '-target')
+sys.argv.insert(3, 'wasm32-wasi')
+sys.argv[0] = 'zig'
 
 verbose = '-v' in sys.argv
-
 
 def run(cmd):
     if verbose:
@@ -36,8 +38,16 @@ def run(cmd):
 
 if "-E" in sys.argv:
     # preprocessor only
-    run(['zig'] + sys.argv[1:])
+    run(sys.argv)
     sys.exit(0)
+
+if '--print-multiarch' in sys.argv:
+    # checking architecture (do this before FLAGS below or it ends up with wasm32-emscripten)
+    run(sys.argv)
+    sys.exit(0)
+
+# TODO: I should probably just change to "if doesn't have -fPIC then use normal compiler".
+# This will be a lot of work, so wait until finish redoing cpython first!
 
 ZIG_EXE = os.path.realpath(shutil.which("zig"))
 ZIG_HOME = os.path.dirname(ZIG_EXE)
@@ -90,7 +100,7 @@ no_input = len([arg for arg in sys.argv if is_input(arg)]) == 0
 if '-c' in sys.argv or no_input:
 
     # building object files; not linking, so don't have to do the extra wasm-ld step
-    run(['zig'] + sys.argv[1:] + FLAGS)
+    run(sys.argv + FLAGS)
 
 else:
     # We have to create an object file then run "zig wasm-ld" explicitly,
@@ -119,7 +129,7 @@ else:
                 output_index = len(sys.argv) - 1
 
             sys.argv.append('-c')
-            run(['zig'] + sys.argv[1:] + FLAGS)
+            run( sys.argv + FLAGS)
 
         # Next link
         # this -s below strips debug symbols; what's the right way to do this?  Maybe -Xlinker -s?
