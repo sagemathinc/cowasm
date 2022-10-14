@@ -6,7 +6,7 @@ POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 
 BIN = ${DIST_WASM}/bin
 
-all: ${BUILD_WASM}/.source \
+all: \
 	${BIN}/basename.wasm \
 	${BIN}/cat.wasm \
 	${BIN}/chmod.wasm \
@@ -29,80 +29,73 @@ CC = wacalc-cc
 # comment out -Xlinker -s to get debug symbols
 CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat -I${SRC}/fts -Xlinker -s
 
-${BUILD_WASM}/.source:: src/**
-	rm -rf ${BUILD_WASM}
-	mkdir -p ${BUILD_WASM}
-	cp -r src/* ${BUILD_WASM}
-	mkdir -p ${BIN}
-	touch ${BUILD_WASM}/.source
 
-%.o: %.c
+# See https://stackoverflow.com/questions/54192234/recursive-search-in-vpath
+# and https://stackoverflow.com/questions/231229/how-to-generate-a-makefile-with-source-in-sub-directories-using-just-one-makefil
+space :=
+space +=
+VPATH := $(subst $(space),:,$(shell find ${SRC} -type d))
+
+${BUILD}/%.o: %.c
+	mkdir -p ${BUILD} ${BIN}
 	${CC} -c $^ ${CFLAGS} -o $@
 
-COMPAT = ${BUILD_WASM}/compat/fmt_scaled.o ${BUILD_WASM}/compat/progname.o ${BUILD_WASM}/compat/strtonum.o ${BUILD_WASM}/compat/getbsize.o ${BUILD_WASM}/compat/strmode.o
+COMPAT = ${BUILD}/fmt_scaled.o ${BUILD}/progname.o ${BUILD}/strtonum.o ${BUILD}/getbsize.o ${BUILD}/strmode.o
 
-UTILS = ${BUILD_WASM}/utils
-
-${BIN}/basename.wasm: ${COMPAT} ${UTILS}/basename/basename.o
+${BIN}/basename.wasm: ${COMPAT} ${BUILD}/basename.o
 	${CC} ${CFLAGS} $^ -o $@
-test-basename:
+
+${BIN}/%.wasm: ${COMPAT} ${BUILD}/%.o
+	${CC} ${CFLAGS} $^ -o $@
+
+test-basename: ${BIN}/basename.wasm
 	wacalc ${BIN}/basename.wasm foo/bar |grep -v foo | grep bar
 
-${BIN}/cat.wasm: ${COMPAT} ${UTILS}/cat/cat.o
-	${CC} ${CFLAGS} $^ -o $@
-test-cat:
+test-cat: ${BIN}/cat.wasm
 	wacalc ${BIN}/cat.wasm Makefile |grep crazy-nonsense-but-it-is-here-so-this-works
 
-${BIN}/chmod.wasm: ${COMPAT} ${UTILS}/chmod/chmod.o
+${BIN}/cp.wasm: ${COMPAT} ${BUILD}/cp.o ${BUILD}/utils.o ${BUILD}/fts.o
 	${CC} ${CFLAGS} $^ -o $@
+test-cp: ${BIN}/cp.wasm
+	rm -f ${BUILD}/x
+	wacalc ${BIN}/cp.wasm Makefile ${BUILD}/x
+	ls ${BUILD}/x
+	rm ${BUILD}/x
 
-${BIN}/comm.wasm: ${COMPAT} ${UTILS}/comm/comm.o
-	${CC} ${CFLAGS} $^ -o $@
-
-${BIN}/cp.wasm: ${COMPAT} ${UTILS}/cp/cp.o ${UTILS}/cp/utils.o ${BUILD_WASM}/fts/fts.o
-	${CC} ${CFLAGS} $^ -o $@
-test-cp:
-	wacalc ${BIN}/cp.wasm Makefile ${BUILD_WASM}/x && ls ${BUILD_WASM}/x && rm ${BUILD_WASM}/x
-
-${BIN}/csplit.wasm: ${COMPAT} ${UTILS}/csplit/csplit.o
-	${CC} ${CFLAGS} $^ -o $@
-
-${BIN}/cut.wasm: ${COMPAT} ${UTILS}/cut/cut.o
-	${CC} ${CFLAGS} $^ -o $@
-test-cut:
+test-cut: ${BIN}/cut.wasm
 	echo "hello world" | wacalc ${BIN}/cut.wasm -c 1-5 | grep -v world | grep hello
 
-${BIN}/date.wasm: ${COMPAT} ${UTILS}/date/date.o
-	${CC} ${CFLAGS} $^ -o $@
-test-date:
+test-date:  ${BIN}/date.wasm
 	wacalc ${BIN}/date.wasm | grep 20[2-9][0-9]
 
-${BIN}/factor.wasm: ${COMPAT} ${UTILS}/factor/factor.o ${UTILS}/factor/pattern.o ${UTILS}/factor/pr_tbl.o
+${BIN}/factor.wasm: ${COMPAT} ${BUILD}/factor.o ${BUILD}/pattern.o ${BUILD}/pr_tbl.o
 	${CC} ${CFLAGS} $^ -o $@
-test-factor:
+
+test-factor: ${BIN}/factor.wasm
 	wacalc ${BIN}/factor.wasm 2023 |grep 2023 |grep "7 17 17"
 
-${BIN}/ls.wasm: ${COMPAT} ${BUILD_WASM}/fts/fts.o ${UTILS}/ls/cmp.o ${UTILS}/ls/ls.o ${UTILS}/ls/main.o  ${UTILS}/ls/print.o ${UTILS}/ls/utf8.o ${UTILS}/ls/util.o
+${BIN}/ls.wasm: ${COMPAT} ${BUILD}/fts.o ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/main.o  ${BUILD}/print.o ${BUILD}/utf8.o ${BUILD}/util.o
 	${CC} ${CFLAGS} $^ -o $@
-test-ls:
+test-ls: ${BIN}/ls.wasm
 	wacalc ${BIN}/ls.wasm ${BIN} |grep ls.wasm
 
-${BIN}/sleep.wasm: ${COMPAT} ${UTILS}/sleep/sleep.o
-	${CC} ${CFLAGS} $^ -o $@
-test-sleep:
+test-sleep: ${BIN}/sleep.wasm
 	wacalc ${BIN}/sleep.wasm 0.1
 
-${BIN}/xargs.wasm: ${COMPAT} ${UTILS}/xargs/xargs.o  ${UTILS}/xargs/strnsubst.o
+${BIN}/xargs.wasm: ${COMPAT} ${BUILD}/xargs.o  ${BUILD}/strnsubst.o
 	${CC} ${CFLAGS} $^ -o $@
-test-xargs:
+
+test-xargs: ${BIN}/xargs.wasm
 	ls -1 | wacalc ${BIN}/xargs.wasm |grep Makefile |grep dist
 
 
-${BIN}/yes.wasm: ${COMPAT} ${UTILS}/yes/yes.o
-	${CC} ${CFLAGS} $^ -o $@
+# Very basic tests of some things...
+test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-ls test-sleep test-xargs
 
-# Very basic tests of everything
-test: test-basename test-cat test-cp test-cut test-date test-factor test-ls test-sleep test-xargs
+# Our makefile assumes that .c files in subdirs all have different names,
+# and this checks that.
+test-uniq-sources:
+	cd ${SRC} && ./uniq-sources.sh
 
 # TODO: this doesn't match cocalc so fix.
 format:

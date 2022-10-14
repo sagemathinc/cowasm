@@ -20,7 +20,7 @@ test-cpython: cpython python-wasm
 
 coreutils: packages/coreutils/${BUILT}
 packages/coreutils/${BUILT}: zig posix-wasm
-	cd packages/coreutils && make
+	cd packages/coreutils && make -j8
 .PHONY: coreutils
 test-coreutils: coreutils
 	cd packages/coreutils && make test
