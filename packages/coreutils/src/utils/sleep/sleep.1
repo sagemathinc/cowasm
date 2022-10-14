@@ -1,0 +1,117 @@
+.\"	$OpenBSD: sleep.1,v 1.22 2016/08/16 18:51:25 schwarze Exp $
+.\"	$NetBSD: sleep.1,v 1.9 1995/07/25 19:37:43 jtc Exp $
+.\"
+.\" Copyright (c) 1990, 1993, 1994
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" the Institute of Electrical and Electronics Engineers, Inc.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	@(#)sleep.1	8.3 (Berkeley) 4/18/94
+.\"
+.Dd $Mdocdate: August 16 2016 $
+.Dt SLEEP 1
+.Os
+.Sh NAME
+.Nm sleep
+.Nd suspend execution for an interval of time
+.Sh SYNOPSIS
+.Nm sleep
+.Ar seconds
+.Sh DESCRIPTION
+The
+.Nm
+utility
+suspends execution for a minimum of the specified number of
+.Ar seconds .
+This number must be positive and may contain a decimal fraction.
+.Nm
+is commonly used to schedule the execution of other commands (see below).
+.Sh ASYNCHRONOUS EVENTS
+.Bl -tag -width "SIGALRMXXX"
+.It Dv SIGALRM
+Terminate normally, with a zero exit status.
+.El
+.Sh EXIT STATUS
+.Ex -std sleep
+.Sh EXAMPLES
+Wait a half hour before running the script
+.Pa command_file
+(see also the
+.Xr at 1
+utility):
+.Pp
+.Dl (sleep 1800; sh command_file >& errors)&
+.Pp
+To repetitively run a command (with
+.Xr csh 1 ) :
+.Bd -literal -offset indent
+while (! -r zzz.rawdata)
+	sleep 300
+end
+foreach i (*.rawdata)
+	sleep 70
+	awk -f collapse_data $i >> results
+end
+.Ed
+.Pp
+The scenario for such a script might be: a program currently
+running is taking longer than expected to process a series of
+files, and it would be nice to have another program start
+processing the files created by the first program as soon as it is finished
+(when
+.Pa zzz.rawdata
+is created).
+The script checks every five minutes for this file.
+When it is found, processing is done in several steps
+by sleeping 70 seconds between each
+.Xr awk 1
+job.
+.Pp
+To monitor the growth of a file without consuming too many resources:
+.Bd -literal -offset indent
+while true; do
+	ls -l file
+	sleep 5
+done
+.Ed
+.Sh SEE ALSO
+.Xr at 1
+.Sh STANDARDS
+The
+.Nm
+utility is compliant with the
+.St -p1003.1-2008
+specification.
+.Pp
+The handling of fractional arguments is provided as an extension to that
+specification.
+.Sh HISTORY
+A
+.Nm
+utility appeared in
+.At v4 .
