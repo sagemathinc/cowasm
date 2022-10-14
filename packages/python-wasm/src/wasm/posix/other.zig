@@ -125,7 +125,13 @@ export fn set_statvfs(buf: *struct_statvfs, f_bsize: c_ulong, f_frsize: c_ulong,
     buf.f_namemax = f_namemax;
 }
 
-
+// This is easy, but missing from zig impl, but
+// needed by some things, e.g., coreutils:tail:
+// int getpagesize(void);
+const limits = @cImport(@cInclude("limits.h"));
+export fn getpagesize() c_int {
+    return limits.PAGE_SIZE;
+}
 
 //
 // Commented out since I realized that there's some emulation of this in wasi, which we will use for now.

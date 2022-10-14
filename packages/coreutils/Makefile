@@ -4,72 +4,124 @@ include ../build/Makefile-vars
 
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 
-all: ${BUILD_WASM}/.source \
-	${DIST_WASM}/bin/basename.wasm \
-	${DIST_WASM}/bin/cat.wasm \
-	${DIST_WASM}/bin/chmod.wasm \
-	${DIST_WASM}/bin/comm.wasm \
-	${DIST_WASM}/bin/cp.wasm \
-	${DIST_WASM}/bin/csplit.wasm \
-	${DIST_WASM}/bin/cut.wasm \
-	${DIST_WASM}/bin/date.wasm \
-	${DIST_WASM}/bin/factor.wasm \
-	${DIST_WASM}/bin/ls.wasm \
-	${DIST_WASM}/bin/sleep.wasm
+TARGET = ${DIST_WASM}/bin
+
+all: \
+	${TARGET}/basename.wasm \
+	${TARGET}/cat.wasm \
+	${TARGET}/chmod.wasm \
+	${TARGET}/comm.wasm \
+	${TARGET}/csplit.wasm \
+	${TARGET}/cp.wasm \
+	${TARGET}/csplit.wasm \
+	${TARGET}/cut.wasm \
+	${TARGET}/date.wasm \
+	${TARGET}/factor.wasm \
+	${TARGET}/head.wasm \
+	${TARGET}/ls.wasm \
+	${TARGET}/sleep.wasm \
+	${TARGET}/tail.wasm \
+	${TARGET}/xargs.wasm \
+	${TARGET}/yes.wasm
 
 include ../build/Makefile-rules
 
-CC = wacalc-cc
+CC = ${BIN}/wacalc-cc
 
 # comment out -Xlinker -s to get debug symbols
-CFLAGS = -fvisibility-main -fPIC -I${POSIX_WASM} -I${SRC}/compat -I${SRC}/fts -Xlinker -s
+CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat  -Xlinker -s
 
-${BUILD_WASM}/.source:: src/**
-	rm -rf ${BUILD_WASM}
-	mkdir -p ${BUILD_WASM}
-	cp -r src/* ${BUILD_WASM}
-	mkdir -p ${DIST_WASM}/bin
-	touch ${BUILD_WASM}/.source
 
-%.o: %.c
+# See https://stackoverflow.com/questions/54192234/recursive-search-in-vpath
+# and https://stackoverflow.com/questions/231229/how-to-generate-a-makefile-with-source-in-sub-directories-using-just-one-makefil
+space :=
+space +=
+VPATH := $(subst $(space),:,$(shell find ${SRC} -type d))
+
+${BUILD}/%.o: %.c
+	mkdir -p ${BUILD} ${TARGET}
 	${CC} -c $^ ${CFLAGS} -o $@
 
-COMPAT = ${BUILD_WASM}/compat/fmt_scaled.o ${BUILD_WASM}/compat/progname.o ${BUILD_WASM}/compat/strtonum.o ${BUILD_WASM}/compat/getbsize.o ${BUILD_WASM}/compat/strmode.o
+COMPAT = ${BUILD}/fmt_scaled.o ${BUILD}/recallocarray.o ${BUILD}/getbsize.o ${BUILD}/strmode.o
 
-UTILS = ${BUILD_WASM}/utils
+# This builds any bin executable foo.wasm that depends only on foo.o and the compat files.
 
-${DIST_WASM}/bin/basename.wasm: ${COMPAT} ${UTILS}/basename/basename.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/basename.wasm
+${TARGET}/%.wasm: ${COMPAT} ${BUILD}/%.o
+	${CC} ${CFLAGS} $^ -o $@
 
-${DIST_WASM}/bin/cat.wasm: ${COMPAT} ${UTILS}/cat/cat.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/cat.wasm
+# Explicit rules for bin executables with more complicated dependencies go here:
 
-${DIST_WASM}/bin/chmod.wasm: ${COMPAT} ${UTILS}/chmod/chmod.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/chmod.wasm
+${TARGET}/cp.wasm: ${COMPAT} ${BUILD}/cp.o ${BUILD}/utils.o
+	${CC} ${CFLAGS} $^ -o $@
+test-cp: ${TARGET}/cp.wasm
+	rm -f ${BUILD}/x
+	wacalc ${TARGET}/cp.wasm Makefile ${BUILD}/x
+	ls ${BUILD}/x
+	rm ${BUILD}/x
 
-${DIST_WASM}/bin/comm.wasm: ${COMPAT} ${UTILS}/comm/comm.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/comm.wasm
+${TARGET}/factor.wasm: ${COMPAT} ${BUILD}/factor.o ${BUILD}/pattern.o ${BUILD}/pr_tbl.o
+	${CC} ${CFLAGS} $^ -o $@
 
-${DIST_WASM}/bin/cp.wasm: ${COMPAT} ${UTILS}/cp/cp.o ${UTILS}/cp/utils.o ${BUILD_WASM}/fts/fts.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/cp.wasm
 
-${DIST_WASM}/bin/csplit.wasm: ${COMPAT} ${UTILS}/csplit/csplit.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/csplit.wasm
+${TARGET}/ls.wasm: ${COMPAT} ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/print.o ${BUILD}/utf8.o ${BUILD}/util.o
+	${CC} ${CFLAGS} $^ -o $@
 
-${DIST_WASM}/bin/cut.wasm: ${COMPAT} ${UTILS}/cut/cut.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/cut.wasm
+${TARGET}/tail.wasm: ${COMPAT} ${BUILD}/forward.o ${BUILD}/misc.o ${BUILD}/read.o ${BUILD}/reverse.o ${BUILD}/tail.o
+	${CC} ${CFLAGS} $^ -o $@
 
-${DIST_WASM}/bin/date.wasm: ${COMPAT} ${UTILS}/date/date.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/date.wasm
+${TARGET}/xargs.wasm: ${COMPAT} ${BUILD}/xargs.o  ${BUILD}/strnsubst.o
+	${CC} ${CFLAGS} $^ -o $@
 
-${DIST_WASM}/bin/factor.wasm: ${COMPAT} ${UTILS}/factor/factor.o ${UTILS}/factor/pattern.o ${UTILS}/factor/pr_tbl.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/factor.wasm
 
-${DIST_WASM}/bin/ls.wasm: ${COMPAT} ${BUILD_WASM}/fts/fts.o ${UTILS}/ls/cmp.o ${UTILS}/ls/ls.o ${UTILS}/ls/main.o  ${UTILS}/ls/print.o ${UTILS}/ls/utf8.o ${UTILS}/ls/util.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/ls.wasm
 
-${DIST_WASM}/bin/sleep.wasm: ${COMPAT} ${UTILS}/sleep/sleep.o
-	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/sleep.wasm
+# TESTS -- do something with each bin script
+# Be sure to also add these to test: below!
+
+test-basename: ${TARGET}/basename.wasm
+	test "`wacalc ${TARGET}/basename.wasm foo/bar`" = "bar"
+
+test-cat: ${TARGET}/cat.wasm
+	wacalc ${TARGET}/cat.wasm Makefile |grep crazy-nonsense-but-it-is-here-so-this-works
+
+test-cut: ${TARGET}/cut.wasm
+	test "`echo 'hello world' | wacalc ${TARGET}/cut.wasm -c 1-5`" = "hello"
+	test "`echo 'hello world' | wacalc ${TARGET}/cut.wasm -c 7-11`" = "world"
+
+test-date:  ${TARGET}/date.wasm
+	wacalc ${TARGET}/date.wasm | grep 20[2-9][0-9]
+
+test-factor: ${TARGET}/factor.wasm
+	test "`wacalc ${TARGET}/factor.wasm 2023`" = "2023: 7 17 17"
+
+test-ls: ${TARGET}/ls.wasm
+	wacalc ${TARGET}/ls.wasm ${TARGET} | grep ls.wasm
+
+test-sleep: ${TARGET}/sleep.wasm
+	wacalc ${TARGET}/sleep.wasm 0.1
+
+test-head: ${TARGET}/head.wasm
+	echo "first line" > ${BUILD}/.test-head
+	echo "last line" >> ${BUILD}/.test-head
+	test "`wacalc ${TARGET}/head.wasm -n 1 ${BUILD}/.test-head`" = "first line"
+	rm ${BUILD}/.test-head
+
+test-tail: ${TARGET}/tail.wasm
+	echo "first line" > ${BUILD}/.test-tail
+	echo "last line" >> ${BUILD}/.test-tail
+	test "`wacalc ${TARGET}/tail.wasm -n 1 ${BUILD}/.test-tail`" = "last line"
+	rm ${BUILD}/.test-tail
+
+test-xargs: ${TARGET}/xargs.wasm
+	ls -1 | wacalc ${TARGET}/xargs.wasm |grep Makefile |grep dist
+
+
+# Very basic tests of some things...
+test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls test-sleep test-tail test-xargs
+
+# Our makefile rule '${BUILD}/%.o: %.c' above assumes that .c files in
+# subdirs have **unique names**, and this checks that.
+test-uniq-sources:
+	cd ${SRC} && ./uniq-sources.sh
 
 # TODO: this doesn't match cocalc so fix.
 format:

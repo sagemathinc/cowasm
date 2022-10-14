@@ -402,7 +402,14 @@ export default class WASI {
       const buffers = Array.from({ length: iovsLen }, (_, i) => {
         const ptr = iovs + i * 8;
         const buf = this.view.getUint32(ptr, true);
-        const bufLen = this.view.getUint32(ptr + 4, true);
+        let bufLen = this.view.getUint32(ptr + 4, true);
+        // the mmap stuff in wasi tries to make this overwrite all
+        // allocated memory, so we cap it or things crash.
+        // TODO: maybe we need to allocate more memory?  I don't know!!
+        if (bufLen > this.memory.buffer.byteLength - buf) {
+          log("getiovs: warning -- truncating buffer to fit in memory");
+          bufLen = Math.min(bufLen, this.memory.buffer.byteLength - buf);
+        }
         const buffer = new Uint8Array(this.memory.buffer, buf, bufLen);
         return toBuffer(buffer);
       });

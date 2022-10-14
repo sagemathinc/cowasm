@@ -1,6 +1,7 @@
 import { isAbsolute, join } from "path";
 import constants from "./constants";
 import Errno from "./errno";
+import { notImplemented } from "./util";
 
 export default function stats({ fs, process, recv, wasi }) {
   function calculateAt(
@@ -108,6 +109,15 @@ export default function stats({ fs, process, recv, wasi }) {
       // we return 18 when there's no process.umask function, since that's
       // like umask 022, i.e., it's a reasonable default.
       return process.umask?.(mask) ?? 18;
+    },
+
+    // not in wasi and we haven't done it yet...
+    mkfifo: () => {
+      notImplemented("mkfifo");
+    },
+
+    mknod: () => {
+      notImplemented("mknod");
     },
   };
 }

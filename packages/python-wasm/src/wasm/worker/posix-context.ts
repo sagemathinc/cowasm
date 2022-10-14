@@ -22,13 +22,14 @@ export default class PosixContext {
   constructor({ wasiConfig, memory, wasi }: Options) {
     this.memory = memory;
     this.wasi = wasi;
-    const { bindings } = wasiConfig;
+    const { bindings, sleep } = wasiConfig;
     const callFunction = this.callFunction.bind(this);
     this.posixEnv = this.createPosixEnv({
       memory,
       wasi,
       bindings,
       callFunction,
+      sleep,
     });
   }
 
@@ -37,11 +38,13 @@ export default class PosixContext {
     memory,
     wasi,
     callFunction,
+    sleep,
   }: {
     bindings: WASIBindings;
     memory: WebAssembly.Memory;
     wasi: WASI;
     callFunction: (name: string, ...args) => number | undefined;
+    sleep?: (milliseconds: number) => void;
   }) {
     this.context = {
       state: {},
@@ -58,6 +61,7 @@ export default class PosixContext {
       callFunction,
       getcwd: this.getcwd.bind(this),
       free: this.free.bind(this),
+      sleep,
     };
     return posix(this.context);
   }

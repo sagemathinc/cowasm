@@ -39,7 +39,12 @@ long long time0() {
 #include <sys/stat.h>
 extern char* user_from_uid(uid_t uid, int nouser);
 
+#include <limits.h>
 int main(int argc, char** argv) {
+#ifdef __wacalc__
+  printf("PAGE_SIZE=%d\n", PAGE_SIZE);
+#endif
+
   for (int i = 0; i < argc; i++) {
     printf("argv[%d]=%s\n", i, argv[i]);
   }

@@ -187,6 +187,9 @@ ssize_t copy_file_range(int fd_in, off64_t* off_in, int fd_out,
                         off64_t* off_out, size_t len, unsigned int flags);
 
 int mkstemp(char* temp);
+int mkstemps(char* template, int suffixlen);
+char* mkdtemp(char* template);
+
 int mkfifoat(int dirfd, const char* pathname, mode_t mode);
 int mkfifo(const char* pathname, mode_t mode);
 int mknodat(int dirfd, const char* pathname, mode_t mode, dev_t dev);
@@ -196,6 +199,8 @@ int setresuid(uid_t ruid, uid_t euid, uid_t suid);
 int setresgid(gid_t rgid, gid_t egid, gid_t sgid);
 int getresuid(uid_t* ruid, uid_t* euid, uid_t* suid);
 int getresgid(gid_t* rgid, gid_t* egid, gid_t* sgid);
+
+char* strcasestr(const char*, const char*);
 
 struct itimerval {
   struct timeval it_interval; /* Interval for periodic timer */
@@ -358,7 +363,23 @@ int fchdir(int fd);
 // implemented as functions that display an error.  They are part of POSIX.
 // They could work on a server though, if you're running as root!  I did
 // implement related things in posix-node, I think.
-int settimeofday(const struct timeval *, const struct timezone *);
-int adjtime (const struct timeval *, struct timeval *);
+int settimeofday(const struct timeval*, const struct timezone*);
+int adjtime(const struct timeval*, struct timeval*);
+
+// implemented in zig in wasm/posix/other.zig
+int getpagesize(void);
+
+const char* getprogname(void);
+
+void setprogname(const char* progname);
+
+// The following constants are all copied from grepping the musl/wasi headers.
+#define TIOCGWINSZ 0x5413
+#define S_ISTXT S_ISVTX
+#define LINE_MAX 4096
+
+long long strtonum(const char *, long long, long long, const char **);
+
 
 #endif
+

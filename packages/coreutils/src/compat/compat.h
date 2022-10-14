@@ -38,9 +38,6 @@ we need to import this else we are going to get a "declaration expected at line
 mode_t getmode(const void *, mode_t);
 void *setmode(const char *);
 
-/* strtonum.c */
-long long strtonum(const char *, long long, long long, const char **);
-
 /* strmode.c */
 void strmode(int, char *);
 
@@ -129,7 +126,3 @@ extern void setprogname(const char *progname);
 extern const char *__progname;
 
 #include "posix-wasm.h"
-// The following constants are all copied from grepping the musl/wasi headers.
-#define TIOCGWINSZ 0x5413
-#define S_ISTXT S_ISVTX
-#define LINE_MAX 4096

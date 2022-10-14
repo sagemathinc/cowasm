@@ -167,6 +167,8 @@ test("chdir and getcwd", () => {
   expect(process.cwd()).toEqual(orig);
 });
 
+const { readSync } = require("fs");
+
 test("Use the full standard fork, dup, execv song and dance to do 'Hello world'", () => {
   const { dup2, execv, fork, waitpid, pipe } = posix;
   if (
@@ -179,9 +181,6 @@ test("Use the full standard fork, dup, execv song and dance to do 'Hello world'"
   ) {
     throw Error("bug");
   }
-  const { readSync } = require("fs");
-
-  //execv("/bin/ls", ["/bin/ls"]);
 
   const stdin = pipe();
   const stdout = pipe();
@@ -198,6 +197,40 @@ test("Use the full standard fork, dup, execv song and dance to do 'Hello world'"
   } else {
     let b = Buffer.alloc(10000);
     // read output from the child
+    readSync(stdout.readfd, b);
+    const s = b.toString("utf8", 0, HELLO.length);
+    expect(s).toEqual(HELLO);
+    const { wstatus, ret } = waitpid(pid, 0);
+    expect(wstatus).toBe(0);
+    expect(ret).toBe(pid);
+  }
+});
+
+
+test("Use execvp", () => {
+  const { dup2, execvp, fork, waitpid, pipe } = posix;
+  if (
+    // for typescript
+    dup2 == null ||
+    execvp == null ||
+    fork == null ||
+    waitpid == null ||
+    pipe == null
+  ) {
+    throw Error("bug");
+  }
+
+  const stdin = pipe();
+  const stdout = pipe();
+  const pid = fork();
+
+  const HELLO = "Hello there from Posix-node!";
+  if (pid == 0) {
+    dup2(stdin.readfd, 0);
+    dup2(stdout.writefd, 1);
+    execvp("echo", ["echo", HELLO]);
+  } else {
+    let b = Buffer.alloc(10000);
     readSync(stdout.readfd, b);
     const s = b.toString("utf8", 0, HELLO.length);
     expect(s).toEqual(HELLO);

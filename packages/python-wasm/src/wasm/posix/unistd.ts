@@ -382,13 +382,26 @@ export default function unistd(context) {
 
     execv: (pathnamePtr: number, argvPtr: number): number => {
       if (posix.execv == null) {
-        notImplemented("execve");
+        notImplemented("execv");
       }
       const pathname = recv.string(pathnamePtr);
       const argv = recv.arrayOfStrings(argvPtr);
       log("execv", pathname, argv);
       posix.execv(pathname, argv);
       return 0; // this won't happen because execv takes over
+    },
+
+    // execvp is like execv but takes the filename rather than the path.
+    // int execvp(const char *file, char *const argv[]);
+    execvp: (filePtr: number, argvPtr: number): number => {
+      if (posix.execvp == null) {
+        notImplemented("execvp");
+      }
+      const file = recv.string(filePtr);
+      const argv = recv.arrayOfStrings(argvPtr);
+      log("execvp", file, argv);
+      posix.execvp(file, argv);
+      return 0; // this won't happen because execvp takes over
     },
 
     // execlp is so far only by libedit to launch vim to edit

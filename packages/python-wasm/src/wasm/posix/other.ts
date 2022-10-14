@@ -24,6 +24,9 @@ export default function other(context) {
   }
 
   const lib = {
+    syslog: () => {
+      notImplemented("syslog");
+    },
     login_tty: (fd: number): number => {
       if (posix.login_tty == null) {
         notImplemented("login_tty");

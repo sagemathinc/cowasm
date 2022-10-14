@@ -88,6 +88,7 @@ void __stack_chk_fail(void);
 void *mempcpy(void *, const void *, size_t);
 
 int mkstemp(char *template);
+int mkstemps(char *template, int suffixlen);
 void __SIG_IGN(int);
 double __extenddftf2(long double);
 // lib/compiler_rt/trunctfdf2.zig:pub fn __trunctfdf2(a: f128) callconv(.C) f64
@@ -151,6 +152,10 @@ unsigned long __fixunstfdi(long double);
 unsigned int __fixunstfsi(long double);
 
 long double strtold_l(const char *__restrict, char **__restrict, struct __locale_struct *);
+
+extern const char *__progname;
+const char *getprogname() { return __progname; }
+void setprogname(const char *progname) { __progname = progname; }
 `;
   s += "\n";
   s += wasmExport((symbols + "\n" + posix).split("\n"));
@@ -209,7 +214,9 @@ textdomain
 gettext
 dgettext
 dcgettext
+getpagesize
 mkstemp
+mkstemps
 sigemptyset
 bindtextdomain
 mmap
@@ -266,6 +273,7 @@ fenv.h
 float.h
 fmtmsg.h
 fnmatch.h
+fts.h
 ftw.h
 getopt.h
 glob.h
@@ -665,6 +673,11 @@ ftell
 ftello
 ftime
 ftruncate
+fts_children
+fts_close
+fts_open
+fts_read
+fts_set
 futimens
 fwide
 fwprintf
@@ -692,6 +705,9 @@ getline
 getopt
 getopt_long
 getopt_long_only
+setprogname
+getprogname
+__progname
 getsockopt
 getsubopt
 gettimeofday
@@ -867,6 +883,7 @@ memrchr
 memset
 mkdir
 mkdirat
+mkdtemp
 mktime
 modf
 modff
@@ -1064,6 +1081,7 @@ strstr
 strtod
 strtof
 strtoimax
+strtonum
 strtok
 strtok_r
 strtol

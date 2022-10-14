@@ -1,7 +1,17 @@
 const dateFormat = require("date-format");
+import { notImplemented } from "./util";
 
 export default function time({ child_process, memory, os }) {
   return {
+    // int adjtime (const struct timeval *, struct timeval *);
+    adjtime() {
+      // TODO: similar to clock_settime below... but really maybe not necessary since
+      // wacalc should be pretty sandboxed!
+      notImplemented("TODO: implement adjtime");
+    },
+    settimeofday() {
+      notImplemented("TODO: settimeofday");
+    },
     // int clock_settime(clockid_t clk_id, const struct timespec *tp);
     clock_settime(_clk_id: number, timespec: number): number {
       if (child_process.spawnSync == null) {

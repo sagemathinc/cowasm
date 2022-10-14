@@ -33,6 +33,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "usleep", usleep);
 
     try node.registerFunction(env, exports, "execv", execv);
+    try node.registerFunction(env, exports, "execvp", execvp);
     try node.registerFunction(env, exports, "_execve", execve);
     try node.registerFunction(env, exports, "_fexecve", fexecve);
 
@@ -313,6 +314,34 @@ fn execv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value 
     const ret = unistd.execv(pathname, argv);
     if (ret == -1) {
         node.throwErrno(env, "error in execv");
+        return null;
+    }
+    // This can't ever happen, of course.
+    return node.create_i32(env, ret, "ret") catch return null;
+}
+
+// int execvp(const char *file, char *const argv[]);
+fn execvp(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const args = node.getArgv(env, info, 2) catch return null;
+
+    var file = node.valueToString(env, args[0], "file") catch return null;
+    defer std.c.free(file);
+
+    var argv = node.valueToArrayOfStrings(env, args[1], "argv") catch return null;
+    defer util.freeArrayOfStrings(argv);
+
+    // The projects linked from https://github.com/nodejs/node/issues/21664 do
+    // the following.  It seems like node currently only sets FD_CLOEXEC for
+    // stderr (not stdin or stdout), but we unset the flag for all just
+    // in case.  We don't want these to all just get closed automatically
+    // the moment we fork since clients might not want that.
+    _ = clearCLOEXEC(env, 0) catch return null;
+    _ = clearCLOEXEC(env, 1) catch return null;
+    _ = clearCLOEXEC(env, 2) catch return null;
+
+    const ret = unistd.execvp(file, argv);
+    if (ret == -1) {
+        node.throwErrno(env, "error in execvp");
         return null;
     }
     // This can't ever happen, of course.
