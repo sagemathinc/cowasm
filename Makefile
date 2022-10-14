@@ -9,7 +9,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
-all: python-wasm webpack terminal website py f2c coreutils
+all: python-wasm webpack terminal website py f2c coreutils man
 
 cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl
@@ -22,7 +22,7 @@ coreutils: packages/coreutils/${BUILT}
 packages/coreutils/${BUILT}: zig posix-wasm
 	cd packages/coreutils && make -j8
 .PHONY: coreutils
-test-coreutils: coreutils
+test-coreutils: coreutils  python-wasm
 	cd packages/coreutils && make test
 
 dash: packages/dash/${BUILT}
@@ -60,6 +60,14 @@ lzma: packages/lzma/${BUILT}
 packages/lzma/${BUILT}: zig posix-wasm
 	cd packages/lzma && make all
 .PHONY: lzma
+
+man: packages/man/${BUILT}
+packages/man/${BUILT}: zig posix-wasm
+	cd packages/man && make -j8
+.PHONY: man
+test-man: man  python-wasm
+	cd packages/man && make test
+
 
 # this builds and you can make ncurses a dep for cpython and change src/Setup.local to get
 # the _ncurses module to build. But there are still issues to solve (probably
@@ -202,7 +210,7 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-unused test-cpython test-bench test-dylink test-posix-node test-python-wasm test-coreutils test-py-mpmath test-py-cython test-f2c test-py-numpy
+test: test-unused test-cpython test-bench test-dylink test-posix-node test-python-wasm test-coreutils test-man test-py-mpmath test-py-cython test-f2c test-py-numpy
 .PHONY: test
 
 test-bench: python-wasm py-cython

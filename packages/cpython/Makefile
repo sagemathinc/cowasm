@@ -7,9 +7,6 @@ include ../build/Makefile-vars
 # only zig on our supported architectures, so we use the native toolchain, which is
 # really annoying and makes bootstraping a build a little harder.
 #
-# We only build a *shared* -fPIC version of the WASM version by using our zig-fPIC
-# wrapper script, which is in the dylink package.
-#
 # See https://www.python.org/downloads/
 PYTHON_MAJOR = 3
 PYTHON_MINOR = 11
@@ -43,7 +40,7 @@ ZYTHON_DEBUG = ${BIN}/zython-debug
 WASM_OPT=-DNDEBUG -g -fwrapv -Wall -Oz
 
 
-# We only use zlib (not lzma) for native build, since liblzma widely available natively.
+# We only use zlib (not lzma) for native build, since liblzma is widely available natively.
 export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
 export LD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
 export PATH := ${DIST_NATIVE}/bin:${PATH}
