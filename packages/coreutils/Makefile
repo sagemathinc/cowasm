@@ -42,17 +42,12 @@ ${BUILD}/%.o: %.c
 
 COMPAT = ${BUILD}/fmt_scaled.o ${BUILD}/progname.o ${BUILD}/strtonum.o ${BUILD}/getbsize.o ${BUILD}/strmode.o
 
-${BIN}/basename.wasm: ${COMPAT} ${BUILD}/basename.o
-	${CC} ${CFLAGS} $^ -o $@
+# This builds any bin executable foo.wasm that depends only on foo.o and the compat files.
 
 ${BIN}/%.wasm: ${COMPAT} ${BUILD}/%.o
 	${CC} ${CFLAGS} $^ -o $@
 
-test-basename: ${BIN}/basename.wasm
-	wacalc ${BIN}/basename.wasm foo/bar |grep -v foo | grep bar
-
-test-cat: ${BIN}/cat.wasm
-	wacalc ${BIN}/cat.wasm Makefile |grep crazy-nonsense-but-it-is-here-so-this-works
+# Explicit rules for bin executables with more complicated dependencies go here:
 
 ${BIN}/cp.wasm: ${COMPAT} ${BUILD}/cp.o ${BUILD}/utils.o ${BUILD}/fts.o
 	${CC} ${CFLAGS} $^ -o $@
@@ -62,28 +57,40 @@ test-cp: ${BIN}/cp.wasm
 	ls ${BUILD}/x
 	rm ${BUILD}/x
 
+${BIN}/ls.wasm: ${COMPAT} ${BUILD}/fts.o ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/print.o ${BUILD}/utf8.o ${BUILD}/util.o
+	${CC} ${CFLAGS} $^ -o $@
+
+${BIN}/factor.wasm: ${COMPAT} ${BUILD}/factor.o ${BUILD}/pattern.o ${BUILD}/pr_tbl.o
+	${CC} ${CFLAGS} $^ -o $@
+
+${BIN}/xargs.wasm: ${COMPAT} ${BUILD}/xargs.o  ${BUILD}/strnsubst.o
+	${CC} ${CFLAGS} $^ -o $@
+
+
+
+# TESTS -- do something with each bin script
+# Be sure to also add these to test: below!
+
+test-basename: ${BIN}/basename.wasm
+	wacalc ${BIN}/basename.wasm foo/bar |grep -v foo | grep bar
+
+test-cat: ${BIN}/cat.wasm
+	wacalc ${BIN}/cat.wasm Makefile |grep crazy-nonsense-but-it-is-here-so-this-works
+
 test-cut: ${BIN}/cut.wasm
 	echo "hello world" | wacalc ${BIN}/cut.wasm -c 1-5 | grep -v world | grep hello
 
 test-date:  ${BIN}/date.wasm
 	wacalc ${BIN}/date.wasm | grep 20[2-9][0-9]
 
-${BIN}/factor.wasm: ${COMPAT} ${BUILD}/factor.o ${BUILD}/pattern.o ${BUILD}/pr_tbl.o
-	${CC} ${CFLAGS} $^ -o $@
-
 test-factor: ${BIN}/factor.wasm
 	wacalc ${BIN}/factor.wasm 2023 |grep 2023 |grep "7 17 17"
 
-${BIN}/ls.wasm: ${COMPAT} ${BUILD}/fts.o ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/main.o  ${BUILD}/print.o ${BUILD}/utf8.o ${BUILD}/util.o
-	${CC} ${CFLAGS} $^ -o $@
 test-ls: ${BIN}/ls.wasm
 	wacalc ${BIN}/ls.wasm ${BIN} |grep ls.wasm
 
 test-sleep: ${BIN}/sleep.wasm
 	wacalc ${BIN}/sleep.wasm 0.1
-
-${BIN}/xargs.wasm: ${COMPAT} ${BUILD}/xargs.o  ${BUILD}/strnsubst.o
-	${CC} ${CFLAGS} $^ -o $@
 
 test-xargs: ${BIN}/xargs.wasm
 	ls -1 | wacalc ${BIN}/xargs.wasm |grep Makefile |grep dist
@@ -92,8 +99,8 @@ test-xargs: ${BIN}/xargs.wasm
 # Very basic tests of some things...
 test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-ls test-sleep test-xargs
 
-# Our makefile assumes that .c files in subdirs all have different names,
-# and this checks that.
+# Our makefile rule '${BUILD}/%.o: %.c' above assumes that .c files in
+# subdirs have **unique names**, and this checks that.
 test-uniq-sources:
 	cd ${SRC} && ./uniq-sources.sh
 
