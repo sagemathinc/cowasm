@@ -187,8 +187,8 @@ ssize_t copy_file_range(int fd_in, off64_t* off_in, int fd_out,
                         off64_t* off_out, size_t len, unsigned int flags);
 
 int mkstemp(char* temp);
-int mkstemps(char* template, int suffixlen);
-char* mkdtemp(char* template);
+int mkstemps(char* templ, int suffixlen);
+char* mkdtemp(char* templ);
 
 int mkfifoat(int dirfd, const char* pathname, mode_t mode);
 int mkfifo(const char* pathname, mode_t mode);
