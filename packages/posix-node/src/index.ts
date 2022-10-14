@@ -123,6 +123,7 @@ interface PosixFunctions {
   setresuid: (ruid: number, euid: number, suid: number) => void; // linux only
 
   execv: (pathname: string, argv: string[]) => number;
+  execvp: (file: string, argv: string[]) => number;
 
   execve: (
     pathname: string,
