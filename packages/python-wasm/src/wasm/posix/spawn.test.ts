@@ -15,7 +15,7 @@ test("posix_spawn /bin/sleep and wait for it to finish and confirm the time", as
     "import os; os.waitpid(os.posix_spawn('/bin/sleep', ['/bin/sleep', '0.5'], {}), 0)"
   );
   const tm = new Date().valueOf() - t0;
-  expect(tm > 400 && tm < 1000).toBe(true);
+  expect(tm > 400 && tm < 2000).toBe(true);
 });
 
 test("posix_spawnp sleep and wait for it to finish and confirm the time", async () => {
@@ -25,7 +25,7 @@ test("posix_spawnp sleep and wait for it to finish and confirm the time", async 
     "import os; os.waitpid(os.posix_spawnp('sleep', ['sleep', '0.5'], {}), 0)"
   );
   const tm = new Date().valueOf() - t0;
-  expect(tm > 400 && tm < 1000).toBe(true);
+  expect(tm > 400 && tm < 2000).toBe(true);
 });
 
 // import os; os.posix_spawnp('sleep',['sleep','3'],{},file_actions=[(os.POSIX_SPAWN_DUP2, 1, 1)])
