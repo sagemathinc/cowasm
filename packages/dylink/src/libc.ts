@@ -88,6 +88,7 @@ void __stack_chk_fail(void);
 void *mempcpy(void *, const void *, size_t);
 
 int mkstemp(char *template);
+int mkstemps(char *template, int suffixlen);
 void __SIG_IGN(int);
 double __extenddftf2(long double);
 // lib/compiler_rt/trunctfdf2.zig:pub fn __trunctfdf2(a: f128) callconv(.C) f64
@@ -211,6 +212,7 @@ dgettext
 dcgettext
 getpagesize
 mkstemp
+mkstemps
 sigemptyset
 bindtextdomain
 mmap
@@ -868,6 +870,7 @@ memrchr
 memset
 mkdir
 mkdirat
+mkdtemp
 mktime
 modf
 modff

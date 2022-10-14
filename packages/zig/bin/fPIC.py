@@ -17,6 +17,13 @@ plan to rewrite this script itself in zig for speed purposes.
 
 NOTE: Often -fPIC is the *default* these days.  See the discussion here:
 https://stackoverflow.com/questions/20637310/does-one-still-need-to-use-fpic-when-compiling-with-gcc#:~:text=You%20never%20needed%20to%20generate,or%20set%20it%20by%20default.
+
+
+TODO: maybe should change so that if -g isn't in the options, then we do
+     -Xlinker -s -Xlinker -compress-relocations(?)
+automatically?  What do compilers typically do?  What about zig?  Also, we
+could consider the -O optimization option.
+
 """
 
 import os, shutil, subprocess, sys, tempfile

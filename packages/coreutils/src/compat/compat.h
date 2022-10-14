@@ -129,7 +129,3 @@ extern void setprogname(const char *progname);
 extern const char *__progname;
 
 #include "posix-wasm.h"
-// The following constants are all copied from grepping the musl/wasi headers.
-#define TIOCGWINSZ 0x5413
-#define S_ISTXT S_ISVTX
-#define LINE_MAX 4096
