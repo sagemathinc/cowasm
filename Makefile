@@ -9,7 +9,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
-all: python-wasm webpack terminal website py f2c
+all: python-wasm webpack terminal website py f2c coreutils
 
 cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl
@@ -22,7 +22,8 @@ coreutils: packages/coreutils/${BUILT}
 packages/coreutils/${BUILT}: zig posix-wasm
 	cd packages/coreutils && make
 .PHONY: coreutils
-
+test-coreutils: coreutils
+	cd packages/coreutils && make test
 
 dash: packages/dash/${BUILT}
 packages/dash/${BUILT}: zig libedit
@@ -201,14 +202,14 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-unused test-cpython test-bench test-dylink test-posix-node test-python-wasm test-py-mpmath test-py-cython test-f2c test-py-numpy
+test: test-unused test-cpython test-bench test-dylink test-posix-node test-python-wasm test-coreutils test-py-mpmath test-py-cython test-f2c test-py-numpy
 .PHONY: test
 
 test-bench: python-wasm py-cython
 	cd packages/bench && make test
 
 # test building packages that aren't actually used yet, just to make sure they build
-test-unused: ncurses dash lua viz coreutils
+test-unused: ncurses lua viz
 .PHONEY: test-unused
 
 # Run tests suites of Python libraries that we support.  These can be VERY long, which is why
