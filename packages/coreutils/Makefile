@@ -19,6 +19,7 @@ all: \
 	${BIN}/factor.wasm \
 	${BIN}/ls.wasm \
 	${BIN}/sleep.wasm \
+	${BIN}/tail.wasm \
 	${BIN}/xargs.wasm \
 	${BIN}/yes.wasm
 
@@ -57,10 +58,14 @@ test-cp: ${BIN}/cp.wasm
 	ls ${BUILD}/x
 	rm ${BUILD}/x
 
+${BIN}/factor.wasm: ${COMPAT} ${BUILD}/factor.o ${BUILD}/pattern.o ${BUILD}/pr_tbl.o
+	${CC} ${CFLAGS} $^ -o $@
+
+
 ${BIN}/ls.wasm: ${COMPAT} ${BUILD}/fts.o ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/print.o ${BUILD}/utf8.o ${BUILD}/util.o
 	${CC} ${CFLAGS} $^ -o $@
 
-${BIN}/factor.wasm: ${COMPAT} ${BUILD}/factor.o ${BUILD}/pattern.o ${BUILD}/pr_tbl.o
+${BIN}/tail.wasm: ${COMPAT} ${BUILD}/forward.o ${BUILD}/misc.o ${BUILD}/read.o ${BUILD}/reverse.o ${BUILD}/tail.o
 	${CC} ${CFLAGS} $^ -o $@
 
 ${BIN}/xargs.wasm: ${COMPAT} ${BUILD}/xargs.o  ${BUILD}/strnsubst.o
