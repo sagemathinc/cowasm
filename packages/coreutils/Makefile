@@ -71,6 +71,19 @@ ${DIST_WASM}/bin/ls.wasm: ${COMPAT} ${BUILD_WASM}/fts/fts.o ${UTILS}/ls/cmp.o ${
 ${DIST_WASM}/bin/sleep.wasm: ${COMPAT} ${UTILS}/sleep/sleep.o
 	${CC} ${CFLAGS} $^ -o ${DIST_WASM}/bin/sleep.wasm
 
+# Very basic tests of everythig
+test:
+	wacalc ${DIST_WASM}/bin/basename.wasm foo/bar |grep -v foo | grep bar
+	wacalc ${DIST_WASM}/bin/cat.wasm Makefile |grep crazy-nonsense-but-it-is-here-so-this-works
+	# TODO: add chmod.wasm
+	# TODO: add comm.wasm
+	wacalc ${DIST_WASM}/bin/cp.wasm Makefile ${BUILD_WASM}/x && ls ${BUILD_WASM}/x && rm ${BUILD_WASM}/x
+	echo "hello world" | wacalc ${DIST_WASM}/bin/cut.wasm -c 1-5 | grep -v world | grep hello
+	wacalc ${DIST_WASM}/bin/date.wasm | grep 20[2-9][0-9]
+	wacalc ${DIST_WASM}/bin/factor.wasm 2023 |grep 2023 |grep "7 17 17"
+	wacalc ${DIST_WASM}/bin/ls.wasm ${DIST_WASM}/bin |grep ls.wasm
+	wacalc ${DIST_WASM}/bin/sleep.wasm 0.1
+
 # TODO: this doesn't match cocalc so fix.
 format:
 	find src/ -iname *.h -o -iname *.c | xargs clang-format -i --sort-includes=0
