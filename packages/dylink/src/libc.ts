@@ -209,6 +209,7 @@ textdomain
 gettext
 dgettext
 dcgettext
+getpagesize
 mkstemp
 sigemptyset
 bindtextdomain

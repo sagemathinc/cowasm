@@ -361,4 +361,7 @@ int fchdir(int fd);
 int settimeofday(const struct timeval *, const struct timezone *);
 int adjtime (const struct timeval *, struct timeval *);
 
+// implemented in zig in wasm/posix/other.zig
+int getpagesize(void);
+
 #endif
