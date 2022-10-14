@@ -36,7 +36,17 @@ sys.argv.insert(2, '-target')
 sys.argv.insert(3, 'wasm32-wasi')
 sys.argv[0] = 'zig'
 
-verbose = '-v' in sys.argv
+verbose = False # default
+# use -v for just us being verbose
+if '-v' in sys.argv:
+    verbose = True
+    sys.argv.remove('-v')
+
+# use -V for super verbose, so also zig/clang is verbose
+if '-V' in sys.argv:
+    verbose = True
+    sys.argv.remove('-V')
+    sys.argv.append('-v')
 
 def run(cmd):
     if verbose:
@@ -44,6 +54,19 @@ def run(cmd):
     ret = subprocess.run(cmd)
     if ret.returncode:
         sys.exit(ret.returncode)
+
+# This is a horrendous hack to make the main function visible without having to
+# change the source code of every program we build.  It can be randomly broken, so watch out.
+# E.g., when building python there is a random header that has
+#    something.main
+# which breaks. At least we make it very explicit with a "-fvisibility-main".
+# If we can figure out a way with 'zig wasm-ld' to do this directly that would
+# be better.
+if '-fvisibility-main' in sys.argv:
+    use_main_hack = True
+    sys.argv.remove('-fvisibility-main')
+else:
+    use_main_hack = False
 
 if "-E" in sys.argv:
     # preprocessor only
@@ -84,16 +107,8 @@ FLAGS = [
     '-D_WASI_EMULATED_GETPID', '-D__wacalc__'
 ]
 
-# this is a horrendous hack.  It can be randomly broken, so watch out.
-# E.g., when building python there is a random header that has
-#    something.main
-# which breaks. At least we make it very explicit with a "-fvisibility-main".
-# If we can figure out a way with 'zig wasm-ld' to do this directly that would
-# be better.
-if '-fvisibility-main' in sys.argv:
+if use_main_hack:
     FLAGS.append('-Dmain=__attribute__((visibility("default")))main')
-    sys.argv.remove('-fvisibility-main')
-
 
 def is_input(arg):
     for ext in ['.c', '.cc', 'cpp', '.cxx', '.o']:  # TODO: is that it?

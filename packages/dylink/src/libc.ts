@@ -1113,6 +1113,7 @@ tgamma
 tgammaf
 tgammal
 time
+times
 timegm
 timespec_get
 toascii
