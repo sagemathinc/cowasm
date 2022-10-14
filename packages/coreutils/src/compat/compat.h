@@ -38,9 +38,6 @@ we need to import this else we are going to get a "declaration expected at line
 mode_t getmode(const void *, mode_t);
 void *setmode(const char *);
 
-/* strtonum.c */
-long long strtonum(const char *, long long, long long, const char **);
-
 /* strmode.c */
 void strmode(int, char *);
 

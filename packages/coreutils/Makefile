@@ -29,7 +29,7 @@ include ../build/Makefile-rules
 CC = ${BIN}/wacalc-cc
 
 # comment out -Xlinker -s to get debug symbols
-CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat -I${SRC}/fts -Xlinker -s
+CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat  -Xlinker -s
 
 
 # See https://stackoverflow.com/questions/54192234/recursive-search-in-vpath
@@ -42,7 +42,7 @@ ${BUILD}/%.o: %.c
 	mkdir -p ${BUILD} ${TARGET}
 	${CC} -c $^ ${CFLAGS} -o $@
 
-COMPAT = ${BUILD}/fmt_scaled.o ${BUILD}/recallocarray.o ${BUILD}/strtonum.o ${BUILD}/getbsize.o ${BUILD}/strmode.o
+COMPAT = ${BUILD}/fmt_scaled.o ${BUILD}/recallocarray.o ${BUILD}/getbsize.o ${BUILD}/strmode.o
 
 # This builds any bin executable foo.wasm that depends only on foo.o and the compat files.
 
@@ -51,7 +51,7 @@ ${TARGET}/%.wasm: ${COMPAT} ${BUILD}/%.o
 
 # Explicit rules for bin executables with more complicated dependencies go here:
 
-${TARGET}/cp.wasm: ${COMPAT} ${BUILD}/cp.o ${BUILD}/utils.o ${BUILD}/fts.o
+${TARGET}/cp.wasm: ${COMPAT} ${BUILD}/cp.o ${BUILD}/utils.o
 	${CC} ${CFLAGS} $^ -o $@
 test-cp: ${TARGET}/cp.wasm
 	rm -f ${BUILD}/x
@@ -63,7 +63,7 @@ ${TARGET}/factor.wasm: ${COMPAT} ${BUILD}/factor.o ${BUILD}/pattern.o ${BUILD}/p
 	${CC} ${CFLAGS} $^ -o $@
 
 
-${TARGET}/ls.wasm: ${COMPAT} ${BUILD}/fts.o ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/print.o ${BUILD}/utf8.o ${BUILD}/util.o
+${TARGET}/ls.wasm: ${COMPAT} ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/print.o ${BUILD}/utf8.o ${BUILD}/util.o
 	${CC} ${CFLAGS} $^ -o $@
 
 ${TARGET}/tail.wasm: ${COMPAT} ${BUILD}/forward.o ${BUILD}/misc.o ${BUILD}/read.o ${BUILD}/reverse.o ${BUILD}/tail.o

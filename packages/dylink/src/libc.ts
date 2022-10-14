@@ -273,6 +273,7 @@ fenv.h
 float.h
 fmtmsg.h
 fnmatch.h
+fts.h
 ftw.h
 getopt.h
 glob.h
@@ -672,6 +673,11 @@ ftell
 ftello
 ftime
 ftruncate
+fts_children
+fts_close
+fts_open
+fts_read
+fts_set
 futimens
 fwide
 fwprintf
@@ -1075,6 +1081,7 @@ strstr
 strtod
 strtof
 strtoimax
+strtonum
 strtok
 strtok_r
 strtol

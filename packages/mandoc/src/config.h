@@ -57,5 +57,4 @@ extern	void	 *reallocarray(void *, size_t, size_t);
 extern	void	 *recallocarray(void *, size_t, size_t, size_t);
 #include "posix-wasm.h"
 #define EFTYPE EINVAL
-#undef HAVE_FTS
 #undef HAVE_STRINGLIST

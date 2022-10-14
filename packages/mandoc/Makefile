@@ -5,7 +5,7 @@ include ../build/Makefile-vars
 TARBALL = ${SRC}/mandoc-2022-10-14.tar.xz
 
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
-ZLIB = ${PACKAGES}/zlib/dist/wasm/include
+ZLIB = ${PACKAGES}/zlib/dist/wasm
 
 all: wasm
 
@@ -15,7 +15,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cp ${SRC}/config.h ${SRC}/Makefile.local ${BUILD_WASM}
 	touch ${BUILD_WASM}/.patched
 
-CFLAGS = "-fvisibility-main -I${POSIX_WASM} -I${ZLIB} -Oz"
+CFLAGS = "-fvisibility-main -I${POSIX_WASM} -I${ZLIB}/include -Oz"
+LDFLAGS = "${ZLIB}/lib/libz.a"
 # -Xlinker -s"
 
 
@@ -39,6 +40,6 @@ configure: ${BUILD_WASM}/.build
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
-		&&	make AR="zig ar" RANLIB="zig ranlib" CC="wacalc-cc" CFLAGS=${CFLAGS} PREFIX=${DIST_WASM} -j8 man
+		&&	make AR="zig ar" RANLIB="zig ranlib" CC="wacalc-cc" CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} PREFIX=${DIST_WASM} -j8 man
 	mkdir -p ${DIST_WASM}/bin
 	cp -v ${BUILD_WASM}/mandoc ${DIST_WASM}/bin/man.wasm
