@@ -210,27 +210,6 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 		BLDSHARED="${BLDSHARED}"
 
 	cd ${BUILD_WASM} && make install
-	# Done!
-	touch ${DIST_WASM}/.built-cpython
-
-# 	# Now build the shared extension modules, which requires some deep trickiery with zig/clang/wasm-ld
-# 	# via the zig-fPIC script.  First remove everything that possibly needs to be built -fPIC or the
-# 	# build will not rebuild what it needs to build.  We just delete all .o files, so this takes longer
-# 	# since many of these are NOT shared.  But it works.
-# 	cd ${BUILD_WASM}/Modules && find . -name "*.o" -type f -delete
-# 	# Do the build, but with fPIC this time.  We also have to pass some *_LDFLAGS to keep
-# 	# from using -lm, which isn't needed or supported by "zig wasm-ld" with the options we're using.
-# 	# Parallel build is fine for this, unlike above.
-# 	cd ${BUILD_WASM} && \
-# 		make  \
-# 		CONFIGURE_LDFLAGS_NODIST="" \
-# 		LINKFORSHARED="-shared" \
-# 		MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
-# 	 	MODULE_PYEXPAT_LDFLAGS="Modules/expat/libexpat.a" \
-# 		MODULE__DATETIME_LDFLAGS="" \
-# 		CC="zig-fPIC cc ${OPT}" \
-# 		CXX="zig-fPIC c++ ${OPT}" \
-# 		BLDSHARED="${BLDSHARED}" \
 
 	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-3.11/_sysconfigdata__wasi_wasm32-wasi.py so it
 	# matches the configuration we just used for building shared modules.  Otherwise, distutils
@@ -238,22 +217,18 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# due to lack of -fPIC.  This is annoying, but we don't want to build the core python executable
 	# -fPIC, since that is slower and bigger and we don't need it.
 	# This is what based on testing actually works:
-	#      'zig cc -target wasm32-wasi' --> 'zig-fPIC cc'
-	#      'zig c++ -target wasm32-wasi' --> 'zig-fPIC c++'
 	#      'LDSHARED': '' --> 'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'
-# 	cd ${BUILD_WASM}/build/lib.wasi-wasm32-3.11/ \
-# 		&& sed -i'.bak' "s/zig cc -target wasm32-wasi/zig-fPIC cc/g" _sysconfigdata__wasi_wasm32-wasi.py \
-# 		&& sed -i'.bak' "s/zig c++ -target wasm32-wasi/zig-fPIC c++/g" _sysconfigdata__wasi_wasm32-wasi.py \
-# 		&& sed -i'.bak' "s/'LDSHARED': ''/'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'/g" _sysconfigdata__wasi_wasm32-wasi.py
-# 	# Install as usual.
-# 	cd ${BUILD_WASM} && make install
-# 	# For mysterious reasons, test-tomllib isn't copied over.
-# 	cp -rv ${BUILD_WASM}/Lib/test/test_tomllib ${DIST_WASM}/lib/python3.11/test/
-# 	# Copy over our small zython library with functionality for our packages.
-# 	cp ${SRC}/zython_importer.py ${DIST_WASM}/lib/python3.11/site-packages
-# 	cp ${SRC}/zython_importer.py ${DIST_WASM}/lib/dist
-# 	# Done!
-# 	touch ${DIST_WASM}/.built-cpython
+	#cd ${BUILD_WASM}/build/lib.wasi-wasm32-3.11/ \
+	#	&& sed -i'.bak' "s/'LDSHARED': ''/'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'/g" _sysconfigdata__wasi_wasm32-wasi.py
+	# Install as usual.
+	cd ${BUILD_WASM} && make install
+	# For mysterious reasons, test-tomllib isn't copied over.
+	cp -rv ${BUILD_WASM}/Lib/test/test_tomllib ${DIST_WASM}/lib/python3.11/test/
+	# Copy over our small zython library with functionality for our packages.
+	cp ${SRC}/zython_importer.py ${DIST_WASM}/lib/python3.11/site-packages
+	cp ${SRC}/zython_importer.py ${DIST_WASM}/lib/dist
+	# Done!
+	touch ${DIST_WASM}/.built-cpython
 
 .PHONY:
 wasm-cpython: ${DIST_WASM}/.built-cpython
