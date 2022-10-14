@@ -5,6 +5,7 @@ NOTES:
 */
 
 import forkExec from "./fork-exec";
+import epoll from "./epoll";
 import netdb from "./netdb";
 import netif from "./netif";
 import other from "./other";
@@ -78,6 +79,7 @@ export interface Context {
   free: (ptr: number) => void;
   callFunction: (name: string, ...args) => number | undefined;
   getcwd: () => string;
+  sleep?: (milliseconds: number) => void;
 }
 
 // It might in theory be  better if we used typescript to say exactly which functions
@@ -86,6 +88,7 @@ export type PosixEnv = { [name: string]: Function };
 
 export default function posix(context: Context): PosixEnv {
   const P = {
+    ...epoll(context),
     ...forkExec(context),
     ...netdb(context),
     ...netif(context),
@@ -164,7 +167,7 @@ export default function posix(context: Context): PosixEnv {
               `WARNING: Posix library raised exception without error code: ${err}`
             );
             logNotImplemented(
-              "Posix library raised exception without error code",
+              `Posix call to ${name} raised exception without error code`,
               err
             );
           }

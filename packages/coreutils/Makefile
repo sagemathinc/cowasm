@@ -77,25 +77,32 @@ ${TARGET}/xargs.wasm: ${COMPAT} ${BUILD}/xargs.o  ${BUILD}/strnsubst.o
 # Be sure to also add these to test: below!
 
 test-basename: ${TARGET}/basename.wasm
-	wacalc ${TARGET}/basename.wasm foo/bar |grep -v foo | grep bar
+	test "`wacalc ${TARGET}/basename.wasm foo/bar`" = "bar"
 
 test-cat: ${TARGET}/cat.wasm
 	wacalc ${TARGET}/cat.wasm Makefile |grep crazy-nonsense-but-it-is-here-so-this-works
 
 test-cut: ${TARGET}/cut.wasm
-	echo "hello world" | wacalc ${TARGET}/cut.wasm -c 1-5 | grep -v world | grep hello
+	test "`echo 'hello world' | wacalc ${TARGET}/cut.wasm -c 1-5`" = "hello"
+	test "`echo 'hello world' | wacalc ${TARGET}/cut.wasm -c 7-11`" = "world"
 
 test-date:  ${TARGET}/date.wasm
 	wacalc ${TARGET}/date.wasm | grep 20[2-9][0-9]
 
 test-factor: ${TARGET}/factor.wasm
-	wacalc ${TARGET}/factor.wasm 2023 |grep 2023 |grep "7 17 17"
+	test "`wacalc ${TARGET}/factor.wasm 2023`" = "2023: 7 17 17"
 
 test-ls: ${TARGET}/ls.wasm
-	wacalc ${TARGET}/ls.wasm ${TARGET} |grep ls.wasm
+	wacalc ${TARGET}/ls.wasm ${TARGET} | grep ls.wasm
 
 test-sleep: ${TARGET}/sleep.wasm
 	wacalc ${TARGET}/sleep.wasm 0.1
+
+test-tail: ${TARGET}/tail.wasm
+	echo "first line" > ${BUILD}/.test-tail
+	echo "last line" >> ${BUILD}/.test-tail
+	test "`wacalc ${TARGET}/tail.wasm -n 1 ${BUILD}/.test-tail`" = "last line"
+	rm ${BUILD}/.test-tail
 
 test-xargs: ${TARGET}/xargs.wasm
 	ls -1 | wacalc ${TARGET}/xargs.wasm |grep Makefile |grep dist
