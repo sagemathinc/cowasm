@@ -43,7 +43,6 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&&	cat ${SRC}/patches/01-jobs-extra-include.patch | patch -p1 \
 		&&	cat ${SRC}/patches/02-nodes-extra-include.patch | patch -p1 \
-		&&	cat ${SRC}/patches/03-dash_main.patch | patch -p1 \
 		&&	cat ${SRC}/patches/04-vforkexec.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
@@ -52,18 +51,25 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #      Right now the first place this fails is in savefd(int from, int ofd), where it uses
 #      a fcntl argument that is simply not implemented in WASI yet.  We will probably have
 #      to rewrite savefd to use a non-wasi fcntl that we implement.
+#   - TODO: I'll probably move libedit and libtermcap to the core (OR their own shared library!)
+#     so they don't have to be included here, which will make dash much smaller.  But for now this is fine.
+#     They add about 120KB.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	CONFIG_SITE=${BUILD_WASM}/config.site \
-			CC="zig cc -target wasm32-wasi" \
-			CFLAGS="-DJOBS=0 -Oz -I${LIBEDIT}/wasm/include -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -I${PACKAGES}/posix-wasm/dist/wasm" \
+			CC="wacalc-cc" \
+			CFLAGS="-v -fvisibility-main -DJOBS=0 -Oz -I${LIBEDIT}/wasm/include -I${PACKAGES}/posix-wasm/dist/wasm -Xlinker -s" \
+			LDFLAGS="${LIBEDIT}/wasm/lib/libedit.a ${TERMCAP}/wasm/lib/libtermcap.a" \
 			./configure \
 				--with-libedit \
 				--prefix=${DIST_WASM} \
 				--host=none \
-		&&	make -j8 \
-		&&  zig ar -crs libdash.a src/*.o src/*/*.o
-	mkdir -p ${DIST_WASM}/lib
-	cp ${BUILD_WASM}/libdash.a ${DIST_WASM}/lib
+		&&	make -j8
+	mkdir -p ${DIST_WASM}/bin
+	cp ${BUILD_WASM}/src/dash ${DIST_WASM}/bin/dash.wasm
 	touch ${DIST_WASM}/.built
+
+test: wasm
+	# The $$ here is to escape the dollar sign; it's actually 'echo "$(2+3)"':
+	echo 'echo "$$((2+3))"' | wacalc ./dist/wasm/bin/dash.wasm | grep 5

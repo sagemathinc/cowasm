@@ -34,6 +34,8 @@ tab completion, which makes it basically unusable.  This might be easy to add
 at least for basic things, i.e., files in the current directory, though obviously
 not really complicated completions for subcommands.
 
+Note that dash is a sister to the /bin/sh in FreeBSD, and that shell does have completion, with the code [here](https://github.com/freebsd/freebsd-src/blob/main/bin/sh/histedit.c) so we might easily be able to port it over!
+
 ### [ ] Creating a file to redirect output to doesn't work
 
 This fails:

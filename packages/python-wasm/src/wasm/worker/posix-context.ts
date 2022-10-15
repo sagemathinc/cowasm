@@ -14,7 +14,7 @@ interface Options {
 
 export default class PosixContext {
   private posixEnv: PosixEnv;
-  private wasm: WasmInstance;
+  private wasm?: WasmInstance;
   private wasi: WASI;
   private memory: WebAssembly.Memory;
   private context: Context;
@@ -82,6 +82,9 @@ export default class PosixContext {
   }
 
   private callFunction(name: string, ...args): number | undefined {
+    if (this.wasm == null) {
+      throw Error("wasm must be define");
+    }
     const f = this.wasm.getFunction(name);
     if (f == null) {
       throw Error(`error - ${name} is not defined`);
@@ -90,6 +93,9 @@ export default class PosixContext {
   }
 
   private getcwd(): string {
+    if (this.wasm == null) {
+      throw Error("wasm must be define");
+    }
     if (this.wasm.getcwd == null) {
       throw Error(`error - getcwd is not defined`);
     }
@@ -97,10 +103,14 @@ export default class PosixContext {
   }
 
   private free(ptr: number): void {
-    this.wasm.exports.c_free(ptr);
+    this.wasm?.exports.c_free(ptr);
   }
 
   private run(args: string[]): number {
+    const { wasm } = this;
+    if (wasm == null) {
+      throw Error("wasm must be define");
+    }
     const path = args[0];
     if (path == null) {
       throw Error("args must have length at least 1");
@@ -117,27 +127,27 @@ export default class PosixContext {
     this.wasi.setState(cloneDeep(state.wasi));
 
     try {
-      const handle = this.wasm.callWithString("dlopen", args[0]);
-      const dlsym = this.wasm.getFunction("dlsym");
+      const handle = wasm.callWithString("dlopen", args[0]);
+      const dlsym = wasm.getFunction("dlsym");
       if (dlsym == null) {
         console.error(`${args[0]}: dlsym not defined`);
         return 1;
       }
       // This is not a memory leak, since we reset the memory below.
-      const sPtr = this.wasm.send.string("__main_argc_argv");
+      const sPtr = wasm.send.string("__main_argc_argv");
       const mainPtr = dlsym(handle, sPtr);
       if (!mainPtr) {
         console.error(`${args[0]}: unable to find main pointer`);
         return 1;
       }
-      const main = this.wasm.table?.get(mainPtr);
+      const main = wasm.table?.get(mainPtr);
       if (!main) {
         console.error(`${args[0]}: unable to find main function`);
         return 1;
       }
-      const ret = main(args.length, this.wasm.send.arrayOfStrings(args));
+      const ret = main(args.length, wasm.send.arrayOfStrings(args));
 
-      const dlclose = this.wasm.getFunction("dlclose");
+      const dlclose = wasm.getFunction("dlclose");
       if (dlclose == null) {
         console.error(`${args[0]}: dlclose not defined`);
         return 1;

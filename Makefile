@@ -29,6 +29,8 @@ dash: packages/dash/${BUILT}
 packages/dash/${BUILT}: zig libedit
 	cd packages/dash && make all
 .PHONY: dash
+test-dash: dash python-wasm
+	cd packages/dash && make test
 
 docker:
 	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/zython master | awk '{print $$1}'` -t zython .
@@ -210,7 +212,7 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-unused test-cpython test-bench test-dylink test-posix-node test-python-wasm test-coreutils test-man test-py-mpmath test-py-cython test-f2c test-py-numpy
+test: test-unused test-cpython test-bench test-dash test-dylink test-posix-node test-python-wasm test-coreutils test-man test-py-mpmath test-py-cython test-f2c test-py-numpy
 .PHONY: test
 
 test-bench: python-wasm py-cython

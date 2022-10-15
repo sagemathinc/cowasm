@@ -20,9 +20,9 @@ export async function init({
     ...process.env,
     TERM,
     TERMCAP: join(path, "..", "termcap"),
-    PS1: "zash$ ",
+    PS1: "cowasm$ ",
   };
-  //PS1: 'zash $(pwd | sed "s|^$HOME|~|")$ '
+  //PS1: 'cowasm $(pwd | sed "s|^$HOME|~|")$ '
 
   await _init({
     programName: process.env.PROGRAM_NAME, // real name or made up name
