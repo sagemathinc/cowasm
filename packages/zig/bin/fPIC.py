@@ -170,7 +170,8 @@ def remove_linker_args(argv):
             i += 1
             continue
         if argv[i].startswith('-L') or argv[i].startswith('-l'):
-            link.append(argv[i])
+            if argv[i] != '-lc':  # lc doesn't exist for target=wasm32-emscripten on zig!; if we add more to our core, may similarly remove here!
+                link.append(argv[i])
             i += 1
             continue
         argv0.append(argv[i])
