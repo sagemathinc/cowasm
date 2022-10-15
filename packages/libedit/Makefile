@@ -41,10 +41,13 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 
 # We also modify examples/Makefile so we don't have to mess with getting them to build.
 
+LDFLAGS = -L${TERMCAP}/wasm/lib -ltermcap
+
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	CONFIG_SITE=${SRC}/config.site \
-			CFLAGS="-I${TERMCAP}/wasm/include -L${TERMCAP}/wasm/lib -D__STDC_ISO_10646__=201103L -D__wasilibc_unmodified_upstream_signal -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -Oz -target wasm32-wasi "  \
+			CFLAGS="-Oz -I${TERMCAP}/wasm/include -D__STDC_ISO_10646__=201103L -D__wasilibc_unmodified_upstream_signal"  \
+			LDFLAGS="${LDFLAGS}" \
 			RANLIB="zig ranlib" \
 			AR="zig ar" \
 			CC="cowasm-cc -Oz" \
@@ -58,3 +61,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		&&	make install
 	touch ${DIST_WASM}/.built
 
+# Build test program
+${BUILD_WASM}/examples/tc1.wasm:  ${BUILD_WASM}/examples/tc1.c | ${DIST_WASM}/.built
+	${BIN}/cowasm-cc -v -fvisibility-main -L${DIST_WASM}/lib -ledit ${LDFLAGS} \
+		-I${BUILD_WASM}/ -I${BUILD_WASM}/src \
+		${BUILD_WASM}/examples/tc1.c -o ${BUILD_WASM}/examples/tc1.wasm
