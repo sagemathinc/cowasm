@@ -8,10 +8,6 @@ import pythonFull from "./python-stdlib.zip";
 import pythonMinimal from "./python-minimal.zip";
 import pythonReadline from "./python-readline.zip";
 
-// temporary until we refactor dash out into separate module
-import * as dash from "../dash/browser";
-export { dash };
-
 export async function init({
   noWorker, // run in the main thread -- useful for debugging, but very bad for production since can block UI
   noReadline, // don't load readline support library for startup; useful if not using Python as a REPL.
