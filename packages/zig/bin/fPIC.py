@@ -157,7 +157,18 @@ if '-c' in sys.argv or no_input:
     run(sys.argv + FLAGS)
     sys.exit(0)
 
+
 # MAYBE COMPILE, and definitely ALSO LINK (explicitly calling "zig wasm-ld")
+
+def is_unsupported_lib(arg):
+    return arg in ['-lc', '-lm'] or arg.startswith('-lwasi-emulated')
+
+def remove_unsupported_libs(argv):
+    # -lc doesn't exist for target=wasm32-emscripten on zig!.
+    # if we add more to our core, may similarly remove here!
+    # Also none of the -lwasi-emulated stuff exists either.
+    # These are all done in the core libc anyways.
+    return [arg for arg in argv if not is_unsupported_lib(arg)]
 
 def remove_linker_args(argv):
     i = 0
@@ -170,16 +181,12 @@ def remove_linker_args(argv):
             i += 1
             continue
         if argv[i].startswith('-L') or argv[i].startswith('-l'):
-            # -lc doesn't exist for target=wasm32-emscripten on zig!; if we add more to our core, may similarly remove here!
-            # Also none of the -lwasi-emulated stuff exists either.  These are all built into our "core libc" runtime, so
-            # executables don't need them, and get them dynamically. See libc.ts in the dylink package.
-            if argv[i] != '-lc' and not argv[i].startswith('-lwasi-emulated') and argv[i] != '-lm':
-                link.append(argv[i])
+            link.append(argv[i])
             i += 1
             continue
         argv0.append(argv[i])
         i += 1
-    return argv0, link
+    return argv0, remove_unsupported_libs(link)
 
 
 # We have to create an object file then run "zig wasm-ld" explicitly,
@@ -229,14 +236,5 @@ with tempfile.NamedTemporaryFile(suffix='.o') as tmpfile:
             i = sys.argv.index('-o')
             link += [sys.argv[i], sys.argv[i + 1]]
 
-    # Pass any Xlinker args too, e.g., --import-memory...
-    i = 0
-    while i < len(sys.argv):
-        if sys.argv[i] == '-Xlinker':
-            i += 1
-            link.append(sys.argv[i])
-        if sys.argv[i].startswith('-L') or sys.argv[i].startswith('-l'):
-            link.append(sys.argv[i])
-        i += 1
     run(link)
     os.system("cp %s /tmp/a.o"%dot_o)
