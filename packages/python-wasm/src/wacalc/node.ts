@@ -3,7 +3,7 @@ import wasmImportNoWorker from "../wasm/worker/node";
 import { _init, wasm, terminal as _terminal } from "./index";
 import { join } from "path";
 
-const WACALC_WASM = "wacalc.wasm";
+const COWASM_WASM = "cowasm.wasm";
 
 // Our tiny termcap file only has one entry, which is for xterm
 // so that's all we give you, even if you have a different terminal.
@@ -26,7 +26,7 @@ export async function init({
 
   await _init({
     programName: process.env.PROGRAM_NAME, // real name or made up name
-    wasmSource: join(path, WACALC_WASM),
+    wasmSource: join(path, COWASM_WASM),
     wasmImport: debug ? wasmImportNoWorker : wasmImport,
     fs: [{ type: "native" }],
     env,

@@ -22,7 +22,7 @@ WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_
 
 TEST = ./test-zig.sh
 
-all: ${DIST}/.built bin hello python bin-wacalc wacalc
+all: ${DIST}/.built bin hello python bin-cowasm cowasm
 
 include ../build/Makefile-rules
 
@@ -123,7 +123,7 @@ packages:
 
 ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
 	echo ${PATH}
-	${BIN}/wacalc-cc -Oz -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} -shared -Xlinker -s \
+	${BIN}/cowasm-cc -Oz -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} -shared -Xlinker -s \
 		src/python/extension/hellomodule.c -o ${DIST}/python/hello.cpython-311-wasm32-wasi.so
 
 # TODO: temporary path hack:
@@ -219,27 +219,27 @@ bin-dash: ${CWD}/../../bin/zash ${CWD}/../../bin/zash-debug
 
 # WACalc -- the core script/runner
 
-WACALC_WASM_SOURCES = \
+COWASM_WASM_SOURCES = \
 	${POSIX_SOURCES} \
 	${DYLINK}/wasm/libdylink.a \
-	src/wacalc/interface.zig \
-	src/wacalc/wacalc.zig
+	src/cowasm/interface.zig \
+	src/cowasm/cowasm.zig
 
-WACALC_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
+COWASM_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
 
-WACALC_WASM_INCLUDE = -I. -I${POSIX_WASM}
+COWASM_WASM_INCLUDE = -I. -I${POSIX_WASM}
 
 # TODO: I think libedit and libtermcap should probably be dynamic
 # libraries that get loaded when needed.  NOT SURE. This will always be a tradeoff.
 
-WACALC_WASM_C = \
+COWASM_WASM_C = \
 		${POSIX_WASM}/libposix.a \
 		${LIBEDIT}/lib/libedit.a \
 		${TERMCAP}/lib/libtermcap.a \
 		${CWD}/src/wasm/posix/stdlib.c \
 		${CWD}/src/python/signal/signal.c
 
-${DIST}/wacalc/wacalc.wasm: ${WACALC_WASM_SOURCES} ${WACALC_WASM_C}
+${DIST}/cowasm/cowasm.wasm: ${COWASM_WASM_SOURCES} ${COWASM_WASM_C}
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
@@ -247,29 +247,29 @@ ${DIST}/wacalc/wacalc.wasm: ${WACALC_WASM_SOURCES} ${WACALC_WASM_C}
 		-target wasm32-wasi \
 		--import-memory \
 		--import-table \
-		${WACALC_WASM_LDFLAGS} \
-		${WACALC_WASM_INCLUDE} \
-		${WACALC_WASM_C} \
-		wacalc/interface.zig
-	mkdir -p ${DIST}/wacalc
-	mv src/interface.wasm ${DIST}/wacalc/wacalc.wasm
+		${COWASM_WASM_LDFLAGS} \
+		${COWASM_WASM_INCLUDE} \
+		${COWASM_WASM_C} \
+		cowasm/interface.zig
+	mkdir -p ${DIST}/cowasm
+	mv src/interface.wasm ${DIST}/cowasm/cowasm.wasm
 
-.PHONY: wacalc
-wacalc: ${DIST}/wacalc/wacalc.wasm
+.PHONY: cowasm
+cowasm: ${DIST}/cowasm/cowasm.wasm
 
-${CWD}/../../bin/wacalc: ${CWD}/bin/wacalc
-	ln -sf ${CWD}/bin/wacalc ${CWD}/../../bin/wacalc
+${CWD}/../../bin/cowasm: ${CWD}/bin/cowasm
+	ln -sf ${CWD}/bin/cowasm ${CWD}/../../bin/cowasm
 
-bin-wacalc: ${CWD}/../../bin/wacalc
-.PHONY: bin-wacalc
+bin-cowasm: ${CWD}/../../bin/cowasm
+.PHONY: bin-cowasm
 
 
 ${BUILD}/test/misc.wasm: ${SRC}/test/misc.c
 	mkdir -p ${BUILD}/test/
-	wacalc-cc -fvisibility-main -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.wasm
+	cowasm-cc -fvisibility-main -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.wasm
 
 run-misc.wasm: ${BUILD}/test/misc.wasm
-	${CWD}/bin/wacalc ${CWD}/build/test/misc.wasm
+	${CWD}/bin/cowasm ${CWD}/build/test/misc.wasm
 .PHONY: run-misc.wasm
 
 ${BUILD}/test/misc.exe: ${SRC}/test/misc.c

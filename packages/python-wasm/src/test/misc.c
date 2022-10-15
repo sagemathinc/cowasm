@@ -1,6 +1,6 @@
 /*
 This is meant to illustrate and test some things involving writing a C program
-that runs using wacalc.
+that runs using cowasm.
 
 To build and run under WaCalc:
 
@@ -41,14 +41,14 @@ extern char* user_from_uid(uid_t uid, int nouser);
 
 #include <limits.h>
 int main(int argc, char** argv) {
-#ifdef __wacalc__
+#ifdef __cowasm__
   printf("PAGE_SIZE=%d\n", PAGE_SIZE);
 #endif
 
   for (int i = 0; i < argc; i++) {
     printf("argv[%d]=%s\n", i, argv[i]);
   }
-#ifdef __wacalc__
+#ifdef __cowasm__
   printf("hi %s\n", user_from_uid(500, 0));
 #endif
 

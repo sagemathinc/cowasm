@@ -58,7 +58,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	CONFIG_SITE=${BUILD_WASM}/config.site \
-			CC="wacalc-cc" \
+			CC="cowasm-cc" \
 			CFLAGS="-v -fvisibility-main -DJOBS=0 -Oz -I${LIBEDIT}/wasm/include -I${PACKAGES}/posix-wasm/dist/wasm -Xlinker -s" \
 			LDFLAGS="${LIBEDIT}/wasm/lib/libedit.a ${TERMCAP}/wasm/lib/libtermcap.a" \
 			./configure \
@@ -72,4 +72,4 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 
 test: wasm
 	# The $$ here is to escape the dollar sign; it's actually 'echo "$(2+3)"':
-	echo 'echo "$$((2+3))"' | wacalc ./dist/wasm/bin/dash.wasm | grep 5
+	echo 'echo "$$((2+3))"' | cowasm ./dist/wasm/bin/dash.wasm | grep 5

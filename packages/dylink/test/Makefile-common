@@ -1,6 +1,6 @@
 
 BIN = $(shell pwd)/../../../../bin
-WACALC = ${BIN}/wacalc-cc
+COWASM = ${BIN}/cowasm-cc
 NODE = ${BIN}/node
 ZIG = ${BIN}/zig
 

@@ -14,7 +14,7 @@ PACKAGES = ${CWD}/..
 # Where the upstream sources are cached
 UPSTREAM = ${CWD}/../../upstream/sources
 
-# Binaries useful for building, e.g., node, zig, wacalc
+# Binaries useful for building, e.g., node, zig, cowasm
 BIN = ${CWD}/../../bin
 
 # Include the BIN directory at front of path.

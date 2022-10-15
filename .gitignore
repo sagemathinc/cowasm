@@ -15,7 +15,7 @@ bin/zd
 bin/zdb
 bin/cython
 bin/zash*
-bin/wacalc*
+bin/cowasm*
 **/dist
 **/build
 **/node_modules

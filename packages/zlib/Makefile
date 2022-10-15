@@ -34,7 +34,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&&	CHOST=none \
 			AR="zig ar" \
-			CC="wacalc-cc" \
+			CC="cowasm-cc" \
 			./configure --static --prefix=${DIST_WASM} \
 		&&	make -j8 install
 	# Strangely the libz.a that gets built is mangled, e.g., "nm -a libz.a"

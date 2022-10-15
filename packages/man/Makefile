@@ -30,7 +30,7 @@ LDFLAGS = "${ZLIB}/lib/libz.a"
 #   make configure
 configure: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&&	./configure CC="wacalc-cc" CFLAGS=${CFLAGS} PREFIX=${DIST_WASM} \
+		&&	./configure CC="cowasm-cc" CFLAGS=${CFLAGS} PREFIX=${DIST_WASM} \
 		&&	echo '#include "posix-wasm.h"' >> config.h  \
 		&&  echo '#define EFTYPE EINVAL' >> config.h  \
 		&&  echo '#undef HAVE_FTS' >> config.h  \
@@ -39,10 +39,10 @@ configure: ${BUILD_WASM}/.build
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
-		&&	make AR="zig ar" RANLIB="zig ranlib" CC="wacalc-cc" CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} PREFIX=${DIST_WASM} -j8 man
+		&&	make AR="zig ar" RANLIB="zig ranlib" CC="cowasm-cc" CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} PREFIX=${DIST_WASM} -j8 man
 	mkdir -p ${DIST_WASM}/bin
 	cp -v ${BUILD_WASM}/mandoc ${DIST_WASM}/bin/man.wasm
 	touch ${DIST_WASM}/.built
 
 test: wasm
-	${BIN}/wacalc ${DIST_WASM}/bin/man.wasm build/wasm/man.1 | grep "display manual pages"
+	${BIN}/cowasm ${DIST_WASM}/bin/man.wasm build/wasm/man.1 | grep "display manual pages"

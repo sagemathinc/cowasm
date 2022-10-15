@@ -142,7 +142,7 @@ typedef struct {
 
 // From packages/zig/dist/lib/libc/musl/include/sys/wait.h and needed for
 // Python.  The #ifndef is because slightly different versions of sys/wait.h
-// get included from zig for wacalc-cc versus normal zig, I think, maybe. TODO!
+// get included from zig for cowasm-cc versus normal zig, I think, maybe. TODO!
 #include <sys/wait.h>
 #ifndef _SYS_WAIT_H
 typedef enum { P_ALL = 0, P_PID = 1, P_PGID = 2, P_PIDFD = 3 } idtype_t;

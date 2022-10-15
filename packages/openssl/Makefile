@@ -37,7 +37,7 @@ ${BUILD_WASM}/.patched:: ${BUILD_WASM}/.build
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
-		&& 	CC="wacalc-cc" \
+		&& 	CC="cowasm-cc" \
 			AR="zig ar" \
 			RANLIB="zig ranlib" \
 			./Configure --prefix=${DIST_WASM} gcc -no-tests -no-asm -static -no-afalgeng \

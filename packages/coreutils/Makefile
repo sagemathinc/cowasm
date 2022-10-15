@@ -26,7 +26,7 @@ all: \
 
 include ../build/Makefile-rules
 
-CC = ${BIN}/wacalc-cc
+CC = ${BIN}/cowasm-cc
 
 # comment out -Xlinker -s to get debug symbols
 CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat  -Xlinker -s
@@ -55,7 +55,7 @@ ${TARGET}/cp.wasm: ${COMPAT} ${BUILD}/cp.o ${BUILD}/utils.o
 	${CC} ${CFLAGS} $^ -o $@
 test-cp: ${TARGET}/cp.wasm
 	rm -f ${BUILD}/x
-	wacalc ${TARGET}/cp.wasm Makefile ${BUILD}/x
+	cowasm ${TARGET}/cp.wasm Makefile ${BUILD}/x
 	ls ${BUILD}/x
 	rm ${BUILD}/x
 
@@ -78,41 +78,41 @@ ${TARGET}/xargs.wasm: ${COMPAT} ${BUILD}/xargs.o  ${BUILD}/strnsubst.o
 # Be sure to also add these to test: below!
 
 test-basename: ${TARGET}/basename.wasm
-	test "`wacalc ${TARGET}/basename.wasm foo/bar`" = "bar"
+	test "`cowasm ${TARGET}/basename.wasm foo/bar`" = "bar"
 
 test-cat: ${TARGET}/cat.wasm
-	wacalc ${TARGET}/cat.wasm Makefile |grep crazy-nonsense-but-it-is-here-so-this-works
+	cowasm ${TARGET}/cat.wasm Makefile |grep crazy-nonsense-but-it-is-here-so-this-works
 
 test-cut: ${TARGET}/cut.wasm
-	test "`echo 'hello world' | wacalc ${TARGET}/cut.wasm -c 1-5`" = "hello"
-	test "`echo 'hello world' | wacalc ${TARGET}/cut.wasm -c 7-11`" = "world"
+	test "`echo 'hello world' | cowasm ${TARGET}/cut.wasm -c 1-5`" = "hello"
+	test "`echo 'hello world' | cowasm ${TARGET}/cut.wasm -c 7-11`" = "world"
 
 test-date:  ${TARGET}/date.wasm
-	wacalc ${TARGET}/date.wasm | grep 20[2-9][0-9]
+	cowasm ${TARGET}/date.wasm | grep 20[2-9][0-9]
 
 test-factor: ${TARGET}/factor.wasm
-	test "`wacalc ${TARGET}/factor.wasm 2023`" = "2023: 7 17 17"
+	test "`cowasm ${TARGET}/factor.wasm 2023`" = "2023: 7 17 17"
 
 test-ls: ${TARGET}/ls.wasm
-	wacalc ${TARGET}/ls.wasm ${TARGET} | grep ls.wasm
+	cowasm ${TARGET}/ls.wasm ${TARGET} | grep ls.wasm
 
 test-sleep: ${TARGET}/sleep.wasm
-	wacalc ${TARGET}/sleep.wasm 0.1
+	cowasm ${TARGET}/sleep.wasm 0.1
 
 test-head: ${TARGET}/head.wasm
 	echo "first line" > ${BUILD}/.test-head
 	echo "last line" >> ${BUILD}/.test-head
-	test "`wacalc ${TARGET}/head.wasm -n 1 ${BUILD}/.test-head`" = "first line"
+	test "`cowasm ${TARGET}/head.wasm -n 1 ${BUILD}/.test-head`" = "first line"
 	rm ${BUILD}/.test-head
 
 test-tail: ${TARGET}/tail.wasm
 	echo "first line" > ${BUILD}/.test-tail
 	echo "last line" >> ${BUILD}/.test-tail
-	test "`wacalc ${TARGET}/tail.wasm -n 1 ${BUILD}/.test-tail`" = "last line"
+	test "`cowasm ${TARGET}/tail.wasm -n 1 ${BUILD}/.test-tail`" = "last line"
 	rm ${BUILD}/.test-tail
 
 test-xargs: ${TARGET}/xargs.wasm
-	ls -1 | wacalc ${TARGET}/xargs.wasm |grep Makefile |grep dist
+	ls -1 | cowasm ${TARGET}/xargs.wasm |grep Makefile |grep dist
 
 
 # Very basic tests of some things...

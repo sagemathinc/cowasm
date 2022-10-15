@@ -104,7 +104,7 @@ FLAGS = [
     '-D__EMSCRIPTEN_major__=3', '-D__EMSCRIPTEN_minor__=1',
     '-D__EMSCRIPTEN_tiny__=16', '-D_WASI_EMULATED_MMAN',
     '-D_WASI_EMULATED_SIGNAL', '-D_WASI_EMULATED_PROCESS_CLOCKS',
-    '-D_WASI_EMULATED_GETPID', '-D__wacalc__'
+    '-D_WASI_EMULATED_GETPID', '-D__cowasm__'
 ]
 
 if use_main_hack:
@@ -117,7 +117,7 @@ def is_input(arg):
 
 
 # no_input, e.g., when querying the compiler for info about the system, e.g.,
-#   wacalc-cc --print-multiarch
+#   cowasm-cc --print-multiarch
 
 no_input = len([arg for arg in sys.argv if is_input(arg)]) == 0
 

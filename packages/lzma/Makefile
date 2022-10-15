@@ -27,8 +27,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
-		CC="wacalc-cc" \
-		CXX="wacalc-c++" \
+		CC="cowasm-cc" \
+		CXX="cowasm-c++" \
 		./configure \
 			--build=`./build-aux/config.guess` \
 			--host=none --prefix="${DIST_WASM}"

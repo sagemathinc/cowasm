@@ -26,7 +26,7 @@ CFLAGS = -Oz -I${SRC}
 
 ${BUILD_WASM}/%.o: ${SRC}/%.c ${DEPS}
 	mkdir -p `dirname $@`
-	wacalc-cc -c -o $@ $< ${CFLAGS}
+	cowasm-cc -c -o $@ $< ${CFLAGS}
 
 ${BUILD_WASM}/libposix.a: ${OBJECTS}
 	zig ar -crs ${BUILD_WASM}/libposix.a ${OBJECTS}

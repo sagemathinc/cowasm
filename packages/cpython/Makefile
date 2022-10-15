@@ -173,8 +173,8 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	#   so it doesn't help.  That's fine, since we can't run zython yet until building ../zython anyways.
 	cd ${BUILD_WASM} && \
 		OPT="${WASM_OPT}" \
-		CC="wacalc-cc" \
-		CXX="wacalc-c++" \
+		CC="cowasm-cc" \
+		CXX="cowasm-c++" \
 		AR="zig ar" \
 		CFLAGS="-D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I${BUILD_WASM} -I${POSIX_WASM}/wasm -DPy_DEFAULT_RECURSION_LIMIT=700" \
 		CONFIG_SITE=./config.site \
@@ -202,8 +202,8 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 		MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
 	 	MODULE_PYEXPAT_LDFLAGS="Modules/expat/libexpat.a" \
 		MODULE__DATETIME_LDFLAGS="" \
-		CC="wacalc-cc ${OPT}" \
-		CXX="wacalc-c++ ${OPT}" \
+		CC="cowasm-cc ${OPT}" \
+		CXX="cowasm-c++ ${OPT}" \
 		BLDSHARED="${BLDSHARED}"
 
 	cd ${BUILD_WASM} && make install

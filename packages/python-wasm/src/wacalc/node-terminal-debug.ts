@@ -4,7 +4,7 @@ import { init, terminal } from "./node";
 async function main() {
   await init({ debug: true });
   if (process.argv.length <= 2) {
-    console.error(`Usage: wacalc program [args ...]`);
+    console.error(`Usage: cowasm program [args ...]`);
     process.exit(1);
   }
   const program = resolve(process.argv[2]);

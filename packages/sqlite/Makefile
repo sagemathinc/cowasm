@@ -35,7 +35,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #   - BCC is the compiler used to build code that then gets compiled to WebAssembly.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} && \
-		CC="wacalc-cc" \
+		CC="cowasm-cc" \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
 		CFLAGS="-Oz -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include " \

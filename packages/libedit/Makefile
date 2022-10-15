@@ -47,7 +47,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 			CFLAGS="-I${TERMCAP}/wasm/include -L${TERMCAP}/wasm/lib -D__STDC_ISO_10646__=201103L -D__wasilibc_unmodified_upstream_signal -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -Oz -target wasm32-wasi "  \
 			RANLIB="zig ranlib" \
 			AR="zig ar" \
-			CC="wacalc-cc -Oz" \
+			CC="cowasm-cc -Oz" \
 			./configure \
 				--host=none \
 				--prefix="${DIST_WASM}" \

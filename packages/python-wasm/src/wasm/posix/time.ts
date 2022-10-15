@@ -6,7 +6,7 @@ export default function time({ child_process, memory, os }) {
     // int adjtime (const struct timeval *, struct timeval *);
     adjtime() {
       // TODO: similar to clock_settime below... but really maybe not necessary since
-      // wacalc should be pretty sandboxed!
+      // cowasm should be pretty sandboxed!
       notImplemented("TODO: implement adjtime");
     },
     settimeofday() {

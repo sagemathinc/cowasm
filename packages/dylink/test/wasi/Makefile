@@ -24,7 +24,7 @@ build/wasm/app.o: app.c
 
 build/wasm/dynamic-library.wasm.so: dynamic-library.c
 	mkdir -p build/wasm
-	${WACALC} dynamic-library.c -o build/wasm/dynamic-library.so
+	${COWASM} dynamic-library.c -o build/wasm/dynamic-library.so
 
 test-wasm: build/wasm/app.wasm build/wasm/dynamic-library.wasm.so
 	cd build/wasm && node ../../app.js

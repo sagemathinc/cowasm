@@ -29,7 +29,7 @@ URL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 #VERSION = 0.10.0-dev.2751+08459ff1c
 #TARBALL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
-all: ${DIST_NATIVE}/.${VERSION} ${BIN}/wacalc-cc ${BIN}/wacalc-c++ ${BIN}/zig
+all: ${DIST_NATIVE}/.${VERSION} ${BIN}/cowasm-cc ${BIN}/cowasm-c++ ${BIN}/zig
 
 include ../build/Makefile-rules
 
@@ -43,10 +43,10 @@ ${BIN}/zig: ${DIST_NATIVE}/.${VERSION}
 	ln -sf ${DIST_NATIVE}/zig ${BIN}/zig
 	touch ${BIN}/zig
 
-${BIN}/wacalc-cc: ${DIST_NATIVE}/.${VERSION}
-	ln -sf ${CWD}/bin/fPIC.py ${BIN}/wacalc-cc
-	touch ${BIN}/wacalc-cc
+${BIN}/cowasm-cc: ${DIST_NATIVE}/.${VERSION}
+	ln -sf ${CWD}/bin/fPIC.py ${BIN}/cowasm-cc
+	touch ${BIN}/cowasm-cc
 
-${BIN}/wacalc-c++: ${DIST_NATIVE}/.${VERSION}
-	ln -sf ${CWD}/bin/fPIC.py ${BIN}/wacalc-c++
-	touch ${BIN}/wacalc-c++
+${BIN}/cowasm-c++: ${DIST_NATIVE}/.${VERSION}
+	ln -sf ${CWD}/bin/fPIC.py ${BIN}/cowasm-c++
+	touch ${BIN}/cowasm-c++

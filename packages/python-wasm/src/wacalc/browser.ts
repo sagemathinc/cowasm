@@ -4,7 +4,7 @@ import { _init, wasm } from "./index";
 export { wasm };
 import type { FileSystemSpec } from "wasi-js";
 
-import wasmUrl from "./wacalc.wasm";
+import wasmUrl from "./cowasm.wasm";
 
 export async function init({
   noWorker, // run in the main thread -- useful for debugging, but very bad for production since can block UI

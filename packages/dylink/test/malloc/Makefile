@@ -24,7 +24,7 @@ build/wasm/app.o: app.c
 
 build/wasm/hello.so: hellomodule.c
 	mkdir -p build/wasm
-	${WACALC} hellomodule.c -o build/wasm/hello.so
+	${COWASM} hellomodule.c -o build/wasm/hello.so
 
 test-wasm: build/wasm/app.wasm build/wasm/hello.so
 	cd build/wasm && node ../../app.js
