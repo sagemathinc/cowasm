@@ -31,6 +31,20 @@ stripped in the first place.
 
 import os, shutil, subprocess, sys, tempfile
 
+verbose = False  # default
+# use -V for super verbose, so also zig/clang is verbose
+if '-V' in sys.argv:
+    print(' '.join(sys.argv))
+    verbose = True
+    sys.argv.remove('-V')
+    sys.argv.append('-v')  # this then goes to clang/zig to make it very verbose
+elif '-v' in sys.argv:
+    # use -v for just us being verbose
+    print(' '.join(sys.argv))
+    verbose = True
+    sys.argv.remove('-v')
+
+
 if sys.argv[0].endswith('-cc'):
     sys.argv.insert(1, 'cc')
 elif sys.argv[0].endswith('-c++'):
@@ -38,19 +52,6 @@ elif sys.argv[0].endswith('-c++'):
 sys.argv.insert(2, '-target')
 sys.argv.insert(3, 'wasm32-wasi')
 sys.argv[0] = 'zig'
-
-verbose = False  # default
-# use -v for just us being verbose
-if '-v' in sys.argv:
-    verbose = True
-    sys.argv.remove('-v')
-
-# use -V for super verbose, so also zig/clang is verbose
-if '-V' in sys.argv:
-    verbose = True
-    sys.argv.remove('-V')
-    sys.argv.append('-v')
-
 
 def run(cmd):
     if verbose:
@@ -202,9 +203,9 @@ with tempfile.NamedTemporaryFile(suffix='.o') as tmpfile:
             do_compile = True
             break
 
-    linker_sys_argv = []
+    sys.argv, linker_sys_argv = remove_linker_args(sys.argv)
+
     if do_compile:
-        sys.argv, linker_sys_argv = remove_linker_args(sys.argv)
         try:
             output_index = sys.argv.index('-o') + 1
             original_output = sys.argv[output_index]

@@ -60,7 +60,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 
 TESTS = ${BUILD_WASM}/tests
 
-CFLAGS = -fvisibility-main -Oz -I${DIST_WASM}/include
+CFLAGS = -v -fvisibility-main -Oz -I${DIST_WASM}/include
 LDFLAGS = -L${DIST_WASM}/lib -L${ZLIB}/lib -lgit2 -lz
 test-init: ${DIST_WASM}/.built
 	${BIN}/cowasm-cc ${CFLAGS} ${LDFLAGS} ${SRC}/test-init.c -o ${TESTS}/test-init.wasm
