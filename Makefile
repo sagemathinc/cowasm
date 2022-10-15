@@ -162,6 +162,8 @@ bzip2: packages/bzip2/${BUILT}
 packages/bzip2/${BUILT}: zig
 	cd packages/bzip2 && make all
 .PHONY: bzip2
+test-bzip2: bzip2 python-wasm
+	cd packages/bzip2 && make test
 
 f2c: packages/f2c/${BUILT} wasi-js zig
 packages/f2c/${BUILT}: zig
@@ -214,7 +216,7 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-libgit2 test-unused test-cpython test-bench test-dash test-dylink test-posix-node test-python-wasm test-coreutils test-man test-py-mpmath test-py-cython test-f2c test-py-numpy
+test: test-bzip2 test-libgit2 test-unused test-cpython test-bench test-dash test-dylink test-posix-node test-python-wasm test-coreutils test-man test-py-mpmath test-py-cython test-f2c test-py-numpy
 .PHONY: test
 
 test-bench: python-wasm py-cython
