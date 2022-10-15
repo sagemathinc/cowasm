@@ -171,8 +171,9 @@ def remove_linker_args(argv):
             continue
         if argv[i].startswith('-L') or argv[i].startswith('-l'):
             # -lc doesn't exist for target=wasm32-emscripten on zig!; if we add more to our core, may similarly remove here!
-            # Also none of the -lwasi-emulated stuff exists either.  That's all done in the core libc anyways.
-            if argv[i] != '-lc' and not argv[i].startswith('-lwasi-emulated'):
+            # Also none of the -lwasi-emulated stuff exists either.  These are all built into our "core libc" runtime, so
+            # executables don't need them, and get them dynamically. See libc.ts in the dylink package.
+            if argv[i] != '-lc' and not argv[i].startswith('-lwasi-emulated') and argv[i] != '-lm':
                 link.append(argv[i])
             i += 1
             continue
