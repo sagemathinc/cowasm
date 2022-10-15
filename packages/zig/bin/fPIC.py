@@ -177,11 +177,20 @@ def remove_linker_args(argv):
     argv0 = []
     while i < len(argv):
         if argv[i] == '-Xlinker':
+            # -Xlinker arg
+            i += 1
+            link.append(argv[i])
+            i += 1
+            continue
+        if argv[i] == '-L':
+            # -L path
+            link.append(argv[i])
             i += 1
             link.append(argv[i])
             i += 1
             continue
         if argv[i].startswith('-L') or argv[i].startswith('-l'):
+            # -Lpath or -llib
             link.append(argv[i])
             i += 1
             continue

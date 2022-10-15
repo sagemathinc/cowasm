@@ -15,8 +15,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cp ${SRC}/config.h ${SRC}/Makefile.local ${BUILD_WASM}
 	touch ${BUILD_WASM}/.patched
 
-CFLAGS = "-fvisibility-main -I${POSIX_WASM} -I${ZLIB}/include -Oz -Xlinker -s"
-LDFLAGS = "${ZLIB}/lib/libz.a"
+CFLAGS = "-fvisibility-main -I${POSIX_WASM} -I${ZLIB}/include -Oz"
+LDFLAGS = "-L ${ZLIB}/lib -lz"
 
 
 # TODO: we could move fts out of coreutils and back into a separate library and
