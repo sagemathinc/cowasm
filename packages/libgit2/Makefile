@@ -14,6 +14,7 @@ TARBALL = ${UPSTREAM}/libgit2-${VERSION}.tar.gz
 BUILD_TYPE = Release
 
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
+ZLIB = ${PACKAGES}/zlib/dist
 
 all: wasm
 
@@ -31,7 +32,24 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #   - -DBUILD_SHARED_LIBS=OFF is the only way to get a static library, which is what we want for our use.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
-		&&	CC="zig cc -Oz -target wasm32-wasi -D_WASI_EMULATED_MMAN" cmake -DCMAKE_AR="${BUILD_WASM}/ar" -DCMAKE_RANLIB="${BUILD_WASM}/ranlib" -DCMAKE_SIZEOF_VOID_P=4 -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DREGEX_BACKEND=regcomp -DSONAME=OFF -DUSE_HTTPS=OFF -DBUILD_TESTS=OFF  -DBUILD_CLI=OFF -DTHREADSAFE=OFF -DUSE_THREADS:BOOL=OFF -DUSE_SSH=OFF -DBUILD_CLAR=OFF -DBUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OFF -DGIT_QSORT_S:INTERNAL= \
+		&&	CC="cowasm-cc" \
+			CFLAGS="-Oz -I${ZLIB}/wasm/include" \
+			cmake -DCMAKE_AR="${BUILD_WASM}/ar" \
+				-DCMAKE_RANLIB="${BUILD_WASM}/ranlib" \
+				-DCMAKE_SIZEOF_VOID_P=4 \
+				-DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+				-DREGEX_BACKEND=regcomp \
+				-DSONAME=OFF \
+				-DUSE_HTTPS=OFF \
+				-DBUILD_TESTS=OFF  \
+				-DBUILD_CLI=OFF \
+				-DTHREADSAFE=OFF \
+				-DUSE_THREADS:BOOL=OFF \
+				-DUSE_SSH=OFF \
+				-DBUILD_CLAR=OFF \
+				-DBUILD_EXAMPLES=OFF \
+				-DBUILD_SHARED_LIBS=OFF \
+				-DGIT_QSORT_S:INTERNAL= \
 		&&	make -j8
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}/lib

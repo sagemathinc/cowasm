@@ -19,11 +19,14 @@ NOTE: Often -fPIC is the *default* these days.  See the discussion here:
 https://stackoverflow.com/questions/20637310/does-one-still-need-to-use-fpic-when-compiling-with-gcc#:~:text=You%20never%20needed%20to%20generate,or%20set%20it%20by%20default.
 
 
-TODO: maybe should change so that if -g isn't in the options, then we do
-     -Xlinker -s -Xlinker -compress-relocations(?)
-automatically?  What do compilers typically do?  What about zig?  Also, we
-could consider the -O optimization option.
+NOTE: Another change -- if -g isn't in the options or the optimization level isn't set (or is -O0),
+then we do the equivalent of this (but directly in the wasm-ld call):
 
+     -Xlinker --strip-all -Xlinker -compress-relocations
+
+automatically when compiling code to save space, but make things less debugabble.
+IMPORTANT: wasm-strip doesn't work with -fPIC libraries.  Thus you must build them
+stripped in the first place.
 """
 
 import os, shutil, subprocess, sys, tempfile
@@ -36,7 +39,7 @@ sys.argv.insert(2, '-target')
 sys.argv.insert(3, 'wasm32-wasi')
 sys.argv[0] = 'zig'
 
-verbose = False # default
+verbose = False  # default
 # use -v for just us being verbose
 if '-v' in sys.argv:
     verbose = True
@@ -48,12 +51,14 @@ if '-V' in sys.argv:
     sys.argv.remove('-V')
     sys.argv.append('-v')
 
+
 def run(cmd):
     if verbose:
         print(' '.join(cmd))
     ret = subprocess.run(cmd)
     if ret.returncode:
         sys.exit(ret.returncode)
+
 
 # This is a horrendous hack to make the main function visible without having to
 # change the source code of every program we build.  It can be randomly broken, so watch out.
@@ -77,6 +82,15 @@ if '--print-multiarch' in sys.argv:
     # checking architecture (do this before FLAGS below or it ends up with wasm32-emscripten)
     run(sys.argv)
     sys.exit(0)
+
+# https://retrocomputing.stackexchange.com/questions/20281/why-didnt-c-specify-filename-extensions
+SOURCE_EXTENSIONS = set(['.c', '.c++', '.cpp', '.cxx', '.cc', '.cp'])
+
+
+def is_source(filename):
+    ext = os.path.splitext(filename)[1].lower()
+    return ext in SOURCE_EXTENSIONS
+
 
 # TODO: I should probably just change to "if doesn't have -fPIC then use normal compiler".
 # This will be a lot of work, so wait until finish redoing cpython first!
@@ -110,6 +124,19 @@ FLAGS = [
 if use_main_hack:
     FLAGS.append('-Dmain=__attribute__((visibility("default")))main')
 
+
+def is_debug():
+    for flag in sys.argv:
+        # any debug flag
+        if flag.startswith('-g'):
+            return True
+    # opt flags in reverse order, since only last matters.
+    for flag in reversed(sys.argv):
+        if flag.startswith('-O'):
+            return flag == '-O0'
+    return False
+
+
 def is_input(arg):
     for ext in ['.c', '.cc', 'cpp', '.cxx', '.o']:  # TODO: is that it?
         if arg.endswith(ext): return True
@@ -121,58 +148,66 @@ def is_input(arg):
 
 no_input = len([arg for arg in sys.argv if is_input(arg)]) == 0
 
+# COMPILE ONLY?
 if '-c' in sys.argv or no_input:
 
-    # building object files; not linking, so don't have to do the extra wasm-ld step
+    # building object files from source, so don't have to do the extra wasm-ld step
+    # below, which is really complicated
     run(sys.argv + FLAGS)
+    sys.exit(0)
 
-else:
-    # We have to create an object file then run "zig wasm-ld" explicitly,
-    # since the way zig runs it is wrong for our purposes in many ways.
-    # TODO: but this could definitely be fixed and upstreamed, if I can
-    # ever get zig to build from source.  For now, at least, we can be sure
-    # of the right behavior.
-    with tempfile.NamedTemporaryFile(suffix='.o') as tmpfile:
-        dot_o = tmpfile.name
-        do_compile = False
-        for opt in sys.argv:
-            if opt.endswith('.c') or opt.endswith('.c++') or opt.endswith(
-                    '.cpp') or opt.endswith('.cxx'):  # TODO: is that it?
-                do_compile = True
-                break
+# MAYBE COMPILE, and definitely ALSO LINK (explicitly calling "zig wasm-ld"):
 
-        if do_compile:
-            try:
-                output_index = sys.argv.index('-o') + 1
-                original_output = sys.argv[output_index]
-                sys.argv[output_index] = dot_o
-            except:
-                original_output = 'a.out'
-                sys.argv.append('-o')
-                sys.argv.append(dot_o)
-                output_index = len(sys.argv) - 1
+# We have to create an object file then run "zig wasm-ld" explicitly,
+# since the way zig runs it is wrong for our purposes in many ways.
+# TODO: but this could definitely be fixed and upstreamed, if I can
+# ever get zig to build from source.  For now, at least, we can be sure
+# of the right behavior.
+with tempfile.NamedTemporaryFile(suffix='.o') as tmpfile:
+    dot_o = tmpfile.name
+    do_compile = False
+    for opt in sys.argv:
+        if is_source(opt):
+            do_compile = True
+            break
 
-            sys.argv.append('-c')
-            run( sys.argv + FLAGS)
+    if do_compile:
+        try:
+            output_index = sys.argv.index('-o') + 1
+            original_output = sys.argv[output_index]
+            sys.argv[output_index] = dot_o
+        except:
+            original_output = 'a.out'
+            sys.argv.append('-o')
+            sys.argv.append(dot_o)
+            output_index = len(sys.argv) - 1
 
-        # Next link
-        # this -s below strips debug symbols; what's the right way to do this?  Maybe -Xlinker -s?
-        link = ['zig', 'wasm-ld', '--experimental-pic', '-shared']
-        if do_compile:
-            link.append(dot_o)
-            link += ['-o', original_output]
-        else:
-            link += list(set([x for x in sys.argv if x.endswith('.o') or x.endswith('.a')]))
-            if '-o' in sys.argv:
-                i = sys.argv.index('-o')
-                link += [sys.argv[i], sys.argv[i + 1]]
+        sys.argv.append('-c')
+        run(sys.argv + FLAGS)
 
-        # Pass all the Xlinker args too, e.g., "-Xlinker -s" is the only way to strip
-        # since wasm-strip doesn't support fPIC yet.
-        i = 0
-        while i < len(sys.argv):
-            if sys.argv[i] == '-Xlinker':
-                i += 1
-                link.append(sys.argv[i])
+    # Next link
+    link = ['zig', 'wasm-ld', '--experimental-pic', '-shared']
+    if not is_debug():
+        link.append('--strip-all')
+        # Note that we have to do this '--compress-relocations' here, since it is
+        # ignored if put in Xliner args.
+        link.append('--compress-relocations')
+
+    if do_compile:
+        link.append(dot_o)
+        link += ['-o', original_output]
+    else:
+        link += list(
+            set([x for x in sys.argv if x.endswith('.o') or x.endswith('.a')]))
+        if '-o' in sys.argv:
+            i = sys.argv.index('-o')
+            link += [sys.argv[i], sys.argv[i + 1]]
+
+    # Pass any Xlinker args too, e.g., --import-memory...
+    i = 0
+    while i < len(sys.argv):
+        if sys.argv[i] == '-Xlinker':
             i += 1
-        run(link)
+            link.append(sys.argv[i])
+        i += 1
+    run(link)

@@ -28,9 +28,8 @@ include ../build/Makefile-rules
 
 CC = ${BIN}/cowasm-cc
 
-# comment out -Xlinker -s to get debug symbols
-CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat  -Xlinker -s
-
+# Put -g at the end to get debug symbols and much bigger binaries.
+CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat # -g
 
 # See https://stackoverflow.com/questions/54192234/recursive-search-in-vpath
 # and https://stackoverflow.com/questions/231229/how-to-generate-a-makefile-with-source-in-sub-directories-using-just-one-makefil
@@ -55,7 +54,7 @@ ${TARGET}/cp.wasm: ${COMPAT} ${BUILD}/cp.o ${BUILD}/utils.o
 	${CC} ${CFLAGS} $^ -o $@
 test-cp: ${TARGET}/cp.wasm
 	rm -f ${BUILD}/x
-	cowasm ${TARGET}/cp.wasm Makefile ${BUILD}/x
+	${BIN}/cowasm ${TARGET}/cp.wasm Makefile ${BUILD}/x
 	ls ${BUILD}/x
 	rm ${BUILD}/x
 
@@ -81,38 +80,38 @@ test-basename: ${TARGET}/basename.wasm
 	test "`cowasm ${TARGET}/basename.wasm foo/bar`" = "bar"
 
 test-cat: ${TARGET}/cat.wasm
-	cowasm ${TARGET}/cat.wasm Makefile |grep crazy-nonsense-but-it-is-here-so-this-works
+	${BIN}/cowasm ${TARGET}/cat.wasm Makefile |grep crazy-nonsense-but-it-is-here-so-this-works
 
 test-cut: ${TARGET}/cut.wasm
-	test "`echo 'hello world' | cowasm ${TARGET}/cut.wasm -c 1-5`" = "hello"
-	test "`echo 'hello world' | cowasm ${TARGET}/cut.wasm -c 7-11`" = "world"
+	test "`echo 'hello world' | ${BIN}/cowasm ${TARGET}/cut.wasm -c 1-5`" = "hello"
+	test "`echo 'hello world' | ${BIN}/cowasm ${TARGET}/cut.wasm -c 7-11`" = "world"
 
 test-date:  ${TARGET}/date.wasm
-	cowasm ${TARGET}/date.wasm | grep 20[2-9][0-9]
+	${BIN}/cowasm ${TARGET}/date.wasm | grep 20[2-9][0-9]
 
 test-factor: ${TARGET}/factor.wasm
-	test "`cowasm ${TARGET}/factor.wasm 2023`" = "2023: 7 17 17"
+	test "`${BIN}/cowasm ${TARGET}/factor.wasm 2023`" = "2023: 7 17 17"
 
 test-ls: ${TARGET}/ls.wasm
-	cowasm ${TARGET}/ls.wasm ${TARGET} | grep ls.wasm
+	${BIN}/cowasm ${TARGET}/ls.wasm ${TARGET} | grep ls.wasm
 
 test-sleep: ${TARGET}/sleep.wasm
-	cowasm ${TARGET}/sleep.wasm 0.1
+	${BIN}/cowasm ${TARGET}/sleep.wasm 0.1
 
 test-head: ${TARGET}/head.wasm
 	echo "first line" > ${BUILD}/.test-head
 	echo "last line" >> ${BUILD}/.test-head
-	test "`cowasm ${TARGET}/head.wasm -n 1 ${BUILD}/.test-head`" = "first line"
+	test "`${BIN}/cowasm ${TARGET}/head.wasm -n 1 ${BUILD}/.test-head`" = "first line"
 	rm ${BUILD}/.test-head
 
 test-tail: ${TARGET}/tail.wasm
 	echo "first line" > ${BUILD}/.test-tail
 	echo "last line" >> ${BUILD}/.test-tail
-	test "`cowasm ${TARGET}/tail.wasm -n 1 ${BUILD}/.test-tail`" = "last line"
+	test "`${BIN}/cowasm ${TARGET}/tail.wasm -n 1 ${BUILD}/.test-tail`" = "last line"
 	rm ${BUILD}/.test-tail
 
 test-xargs: ${TARGET}/xargs.wasm
-	ls -1 | cowasm ${TARGET}/xargs.wasm |grep Makefile |grep dist
+	ls -1 | ${BIN}/cowasm ${TARGET}/xargs.wasm |grep Makefile |grep dist
 
 
 # Very basic tests of some things...

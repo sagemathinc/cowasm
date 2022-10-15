@@ -37,7 +37,12 @@ ZYTHON_DEBUG = ${BIN}/zython-debug
 #   https://github.com/sagemathinc/zython/issues/27
 # is a bug with -O3 that goes away with -Oz. The diff in performance
 # is less than 5% with -O3 over -Oz.
-WASM_OPT=-DNDEBUG -g -fwrapv -Wall -Oz
+# NDEBUG I think disable assertions (?).
+
+# Use this instead for better debugging (?).
+# WASM_OPT_DEBUG=-DNDEBUG -g -fwrapv -Wall -O0
+
+WASM_OPT=-DNDEBUG -fwrapv -Wall -Oz
 
 
 # We only use zlib (not lzma) for native build, since liblzma is widely available natively.
