@@ -152,9 +152,11 @@ packages/zlib/${BUILT}: zig
 .PHONY: zlib
 
 libgit2: packages/libgit2/${BUILT}
-packages/libgit2/${BUILT}: zig
+packages/libgit2/${BUILT}: zig python-wasm
 	cd packages/libgit2 && make all
 .PHONY: libgit2
+test-libgit2: libgit2
+	cd packages/libgit2 && make test
 
 bzip2: packages/bzip2/${BUILT}
 packages/bzip2/${BUILT}: zig
@@ -212,7 +214,7 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-unused test-cpython test-bench test-dash test-dylink test-posix-node test-python-wasm test-coreutils test-man test-py-mpmath test-py-cython test-f2c test-py-numpy
+test: test-libgit2 test-unused test-cpython test-bench test-dash test-dylink test-posix-node test-python-wasm test-coreutils test-man test-py-mpmath test-py-cython test-f2c test-py-numpy
 .PHONY: test
 
 test-bench: python-wasm py-cython

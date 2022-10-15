@@ -156,6 +156,8 @@ long double strtold_l(const char *__restrict, char **__restrict, struct __locale
 extern const char *__progname;
 const char *getprogname() { return __progname; }
 void setprogname(const char *progname) { __progname = progname; }
+
+void freeaddrinfo(struct addrinfo *res);
 `;
   s += "\n";
   s += wasmExport((symbols + "\n" + posix).split("\n"));
@@ -200,6 +202,7 @@ qsort
 flockfile
 ftrylockfile
 funlockfile
+freeaddrinfo
 strsignal
 __stack_chk_fail
 secure_getenv

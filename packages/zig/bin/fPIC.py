@@ -134,7 +134,8 @@ def is_debug():
     for flag in reversed(sys.argv):
         if flag.startswith('-O'):
             return flag == '-O0'
-    return False
+    # No -O flag at all defaults to -O0.
+    return True
 
 
 def is_input(arg):
@@ -156,7 +157,26 @@ if '-c' in sys.argv or no_input:
     run(sys.argv + FLAGS)
     sys.exit(0)
 
-# MAYBE COMPILE, and definitely ALSO LINK (explicitly calling "zig wasm-ld"):
+# MAYBE COMPILE, and definitely ALSO LINK (explicitly calling "zig wasm-ld")
+
+def remove_linker_args(argv):
+    i = 0
+    link = []
+    argv0 = []
+    while i < len(argv):
+        if argv[i] == '-Xlinker':
+            i += 1
+            link.append(argv[i])
+            i += 1
+            continue
+        if argv[i].startswith('-L') or argv[i].startswith('-l'):
+            link.append(argv[i])
+            i += 1
+            continue
+        argv0.append(argv[i])
+        i += 1
+    return argv0, link
+
 
 # We have to create an object file then run "zig wasm-ld" explicitly,
 # since the way zig runs it is wrong for our purposes in many ways.
@@ -171,7 +191,9 @@ with tempfile.NamedTemporaryFile(suffix='.o') as tmpfile:
             do_compile = True
             break
 
+    linker_sys_argv = []
     if do_compile:
+        sys.argv, linker_sys_argv = remove_linker_args(sys.argv)
         try:
             output_index = sys.argv.index('-o') + 1
             original_output = sys.argv[output_index]
@@ -186,7 +208,7 @@ with tempfile.NamedTemporaryFile(suffix='.o') as tmpfile:
         run(sys.argv + FLAGS)
 
     # Next link
-    link = ['zig', 'wasm-ld', '--experimental-pic', '-shared']
+    link = ['zig', 'wasm-ld', '--experimental-pic', '-shared'] + linker_sys_argv
     if not is_debug():
         link.append('--strip-all')
         # Note that we have to do this '--compress-relocations' here, since it is
@@ -209,5 +231,8 @@ with tempfile.NamedTemporaryFile(suffix='.o') as tmpfile:
         if sys.argv[i] == '-Xlinker':
             i += 1
             link.append(sys.argv[i])
+        if sys.argv[i].startswith('-L') or sys.argv[i].startswith('-l'):
+            link.append(sys.argv[i])
         i += 1
     run(link)
+    os.system("cp %s /tmp/a.o"%dot_o)

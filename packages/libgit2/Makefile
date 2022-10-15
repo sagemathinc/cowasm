@@ -14,7 +14,7 @@ TARBALL = ${UPSTREAM}/libgit2-${VERSION}.tar.gz
 BUILD_TYPE = Release
 
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
-ZLIB = ${PACKAGES}/zlib/dist
+ZLIB = ${PACKAGES}/zlib/dist/wasm
 
 all: wasm
 
@@ -33,7 +33,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc" \
-			CFLAGS="-Oz -I${ZLIB}/wasm/include" \
+			CFLAGS="-Oz -I${ZLIB}/include" \
 			cmake -DCMAKE_AR="${BUILD_WASM}/ar" \
 				-DCMAKE_RANLIB="${BUILD_WASM}/ranlib" \
 				-DCMAKE_SIZEOF_VOID_P=4 \
@@ -57,3 +57,16 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cp -r ${BUILD_WASM}/include ${DIST_WASM}/include
 	ln -s ${SRC}/rebuild ${BUILD_WASM}
 	touch ${DIST_WASM}/.built
+
+TESTS = ${BUILD_WASM}/tests
+
+CFLAGS = -fvisibility-main -Oz -I${DIST_WASM}/include
+LDFLAGS = -L${DIST_WASM}/lib -L${ZLIB}/lib -lgit2 -lz
+test-init: ${DIST_WASM}/.built
+	${BIN}/cowasm-cc ${CFLAGS} ${LDFLAGS} ${SRC}/test-init.c -o ${TESTS}/test-init.wasm
+	rm -rf ${TESTS}/testrepo
+	${BIN}/cowasm ${TESTS}/test-init.wasm ${TESTS}/testrepo
+	cd ${TESTS}/testrepo && git status |grep "No commits yet"
+
+test: test-init
+
