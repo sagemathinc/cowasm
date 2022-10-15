@@ -264,9 +264,17 @@ bin-cowasm: ${CWD}/../../bin/cowasm
 .PHONY: bin-cowasm
 
 
+${BUILD}/test/cowsay.wasm: ${SRC}/test/cowsay.c
+	mkdir -p ${BUILD}/test/
+	${BIN}/cowasm-cc -fvisibility-main -Oz ${SRC}/test/cowsay.c -o ${BUILD}/test/cowsay.wasm
+run-cowsay.wasm: ${BUILD}/test/cowsay.wasm
+	${CWD}/bin/cowasm ${CWD}/build/test/cowsay.wasm "CoWASM -> CowAsm -> Cow Assembly -----> make me a cow!"
+.PHONY: run-cowsay.wasm
+
+
 ${BUILD}/test/misc.wasm: ${SRC}/test/misc.c
 	mkdir -p ${BUILD}/test/
-	cowasm-cc -fvisibility-main -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.wasm
+	${BIN}/cowasm-cc -fvisibility-main -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.wasm
 
 run-misc.wasm: ${BUILD}/test/misc.wasm
 	${CWD}/bin/cowasm ${CWD}/build/test/misc.wasm
@@ -280,5 +288,5 @@ run-misc.exe: ${BUILD}/test/misc.exe
 	${BUILD}/test/misc.exe
 .PHONY: run-misc.exe
 
-test-misc: run-misc.wasm
+test-misc: run-misc.wasm run-cowsay.wasm
 .PHONY: test-misc
