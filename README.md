@@ -1,5 +1,22 @@
 # Zython: WebAssembly Python for Servers and Browsers
 
+## Some Quick Notes about the overall plan
+
+- **The overall project is still NOT stable or usable for any purpose YET.**
+
+- We are in the process of renaming this project CoWasm, which means "collaborative Web Assembly", since it's foundational for CoCalc, and goes far beyond just Python.  It will support various technologies \(such as git and realtime sync\) that are important foundations for collaboration.
+
+- The underlying software components we are building on \(i.e., that we didn't write\) are mostly extremely stable and mature.  The only component that isn't is zig.  However, most of what we use Zig for is a convenient packaging of clang/llvm and musl\-libc, which are themselves both very mature.  Many other components, such as Python, Dash, Numpy, etc., are extremely mature.
+
+- The goal of CoWasm is overall similar to all of emscripten, [WebAssembly.sh](http://WebAssembly.sh), [wapm.io](http://wapm.io), and Pyodide in various ways.
+  - Unlike [WebAssembly.sh](http://WebAssembly.sh) and [wapm.io](http://wapm.io) \(but similar to Pyodide\), we make heavy use of dynamic libraries \(e.g., \-fPIC code\), which is only possible because of a plugin contributed by emscripten to LLVM.
+  - We use actual editline \(similar to readline\) instead of a Javascript terminal.  Moreover, unlike other webassembly shells, we just use a real command line shell \(dash = Debian Almquest Shell\).  We also have a userspace including ports of many coreutils, e.g., ls, head, tail, etc.
+  - Unlike emscripten, we use modern Typescript, our code is more modular, and we make use of existing components when possible \(e.g., the nodejs memfs project\), instead of using our own.
+  - A core design constraint is to efficiently run on a wide range of platforms, not mainly in the browser like emscripten, and not mainly on servers like wasmer.  CoWasm should run on servers, desktops \(e.g., as an electron app\), an iPad/iOS app, and in web browsers.
+  - CoWasm is extremely liberally licensed \(mostly 3\-clause BSD\).  CoCalc will extend CoWasm to provide a graphical interface and realtime collaboration, and that will be a commercial product.
+
+## More
+
 > WebAssembly Python for servers and browsers. Built using Zig. Supports extension modules such as numpy and posix subprocesses. Does not use Emscripten.
 
 URL: https://github.com/sagemathinc/zython
@@ -217,3 +234,4 @@ The quick summary is that in each case pypy is twice as fast as pylang \(basical
 ## Contact
 
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) if you find this interesting and want to help out. **This is an open source 3\-clause BSD licensed project.**
+
