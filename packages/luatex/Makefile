@@ -35,3 +35,5 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	rm -rf ${DIST_WASM}
 
 
+test:
+	echo "no tests yet"

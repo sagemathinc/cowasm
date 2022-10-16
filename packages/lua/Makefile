@@ -48,3 +48,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cp ${BUILD_WASM}/*.a ${DIST_WASM}/lib
 	cp ${BUILD_WASM}/lua ${DIST_WASM}/bin/lua
 	touch ${DIST_WASM}/.built
+
+test:
+	echo "no tests yet"

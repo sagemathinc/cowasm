@@ -60,3 +60,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}/bin
 	cp ${BUILD_WASM}/viz ${DIST_WASM}/bin/viz.wasm
 	touch ${DIST_WASM}/.built
+
+test:
+	echo "no tests yet"

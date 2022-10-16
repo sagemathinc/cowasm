@@ -68,3 +68,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	# this makes it much easier to use for client libraries:
 	cd ${DIST_WASM}/include && ln -sf ncurses/curses.h .
 	touch ${DIST_WASM}/.built
+
+test:
+	echo "no tests yet"

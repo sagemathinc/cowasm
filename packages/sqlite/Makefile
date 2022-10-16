@@ -55,3 +55,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	&& 	make BCC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" -j8 \
 	&&	make BCC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" install
 	touch ${DIST_WASM}/.built
+
+test:
+	echo "no tests yet"

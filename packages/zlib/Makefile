@@ -47,3 +47,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 		cp libz.a ${DIST_WASM}/lib
 	touch ${DIST_WASM}/.built
 
+
+test:
+	echo "no tests yet"

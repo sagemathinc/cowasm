@@ -53,3 +53,5 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}/include && cp ${BUILD_WASM}/png.h ${BUILD_WASM}/pngconf.h  ${BUILD_WASM}/pnglibconf.h ${DIST_WASM}/include/
 	touch ${DIST_WASM}/.built
 
+test:
+	echo "no tests yet"

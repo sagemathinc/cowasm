@@ -36,4 +36,5 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/libposix.a
 	cp ${SRC}/posix-wasm.h ${SRC}/emscripten.h ${SRC}/lib/fts/fts.h ${BUILD_WASM}/libposix.a ${DIST_WASM}/
 	touch ${DIST_WASM}/.built
 
-
+test:
+	echo "no tests yet"

@@ -9,28 +9,22 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
-all: python-wasm webpack terminal website py f2c coreutils man
+all: python-wasm webpack terminal website py f2c coreutils man viz
 
 cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl
 	cd packages/cpython && make all
 .PHONY: cpython
-test-cpython: cpython python-wasm
-	cd packages/cpython && make test
 
 coreutils: packages/coreutils/${BUILT}
 packages/coreutils/${BUILT}: zig posix-wasm
 	cd packages/coreutils && make -j8
 .PHONY: coreutils
-test-coreutils: coreutils  python-wasm
-	cd packages/coreutils && make test
 
 dash: packages/dash/${BUILT}
 packages/dash/${BUILT}: zig libedit
 	cd packages/dash && make all
 .PHONY: dash
-test-dash: dash python-wasm
-	cd packages/dash && make test
 
 docker:
 	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/zython master | awk '{print $$1}'` -t zython .
@@ -45,15 +39,10 @@ packages/dylink/${BUILT}: node zig posix-wasm cpython lzma
 	cd packages/dylink && make all
 .PHONY: dylink
 
-test-dylink: dylink
-	cd packages/dylink && make test
-
 libedit: packages/libedit/${BUILT}
 packages/libedit/${BUILT}: zig termcap
 	cd packages/libedit && make all
 .PHONY: libedit
-test-libedit: libedit
-	cd packages/libedit && make test
 
 lua: packages/lua/${BUILT}
 packages/lua/${BUILT}: zig
@@ -69,9 +58,6 @@ man: packages/man/${BUILT}
 packages/man/${BUILT}: zig posix-wasm
 	cd packages/man && make -j8
 .PHONY: man
-test-man: man  python-wasm
-	cd packages/man && make test
-
 
 # this builds and you can make ncurses a dep for cpython and change src/Setup.local to get
 # the _ncurses module to build. But there are still issues to solve (probably
@@ -99,15 +85,11 @@ posix-wasm: packages/posix-wasm/${BUILT}
 packages/posix-wasm/${BUILT}: zig
 	cd packages/posix-wasm && make all
 .PHONY: posix-wasm
-test-posix-node: posix-node
-	cd packages/posix-node && make test
 
 python-wasm: packages/python-wasm/${BUILT}
 packages/python-wasm/${BUILT}: node wasi-js zig posix-wasm dylink posix-node libgit2 dash
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
-test-python-wasm: python-wasm
-	cd packages/python-wasm && make test
 
 packages/sqlite/${BUILT}: libedit posix-wasm zig zlib
 	cd packages/sqlite && make all
@@ -157,23 +139,16 @@ libgit2: packages/libgit2/${BUILT}
 packages/libgit2/${BUILT}: zig python-wasm
 	cd packages/libgit2 && make all
 .PHONY: libgit2
-test-libgit2: libgit2
-	cd packages/libgit2 && make test
 
 bzip2: packages/bzip2/${BUILT}
 packages/bzip2/${BUILT}: zig
 	cd packages/bzip2 && make all
 .PHONY: bzip2
-test-bzip2: bzip2 python-wasm
-	cd packages/bzip2 && make test
 
 f2c: packages/f2c/${BUILT} wasi-js zig
 packages/f2c/${BUILT}: zig
 	cd packages/f2c && make all
 .PHONY: f2c
-test-f2c: f2c
-	cd packages/f2c && make test
-
 
 py: py-cython py-mpmath py-sympy py-pip py-numpy
 .PHONY: py
@@ -187,29 +162,21 @@ py-cython: packages/py-cython/${BUILT}
 packages/py-cython/${BUILT}: zig python-wasm
 	cd packages/py-cython && make all
 .PHONY: py-cython
-test-py-cython: py-cython
-	cd packages/py-cython && make test
 
 py-mpmath: packages/py-mpmath/${BUILT}
 packages/py-mpmath/${BUILT}: zig python-wasm
 	cd packages/py-mpmath && make all
 .PHONY: py-mpmath
-test-py-mpmath: py-mpmath
-	cd packages/py-mpmath && make test
 
 py-sympy: packages/py-sympy/${BUILT}
 packages/py-sympy/${BUILT}: zig python-wasm py-mpmath
 	cd packages/py-sympy && make all
 .PHONY: py-sympy
-test-py-sympy: py-sympy
-	cd packages/py-sympy && make test
 
 py-numpy: packages/py-numpy/${BUILT}
 packages/py-numpy/${BUILT}: zig python-wasm py-cython py-pip
 	cd packages/py-numpy && make all
 .PHONY: py-numpy
-test-py-numpy: py-numpy
-	cd packages/py-numpy && make test
 
 .PHONY: clean
 clean:
@@ -218,17 +185,7 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-libedit test-bzip2 test-libgit2 test-unused test-cpython test-bench test-dash test-dylink test-posix-node test-python-wasm test-coreutils test-man test-py-mpmath test-py-cython test-f2c test-py-numpy
 .PHONY: test
+test:
+	./bin/make-all test ${PACKAGE_DIRS}
 
-test-bench: python-wasm py-cython
-	cd packages/bench && make test
-
-# test building packages that aren't actually used yet, just to make sure they build
-test-unused: ncurses lua viz
-.PHONEY: test-unused
-
-# Run tests suites of Python libraries that we support.  These can be VERY long, which is why
-# we can't just run them as part of "make test" above.  And they probably don't work at all yet.
-test-py-full: test-py-sympy
-.PHONY: test

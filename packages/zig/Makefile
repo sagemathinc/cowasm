@@ -50,3 +50,7 @@ ${BIN}/cowasm-cc: ${DIST_NATIVE}/.${VERSION}
 ${BIN}/cowasm-c++: ${DIST_NATIVE}/.${VERSION}
 	ln -sf ${CWD}/bin/fPIC.py ${BIN}/cowasm-c++
 	touch ${BIN}/cowasm-c++
+
+test: ${DIST_NATIVE}/.${VERSION}
+	# Test that the correct version is installed. That's something at least.
+	${BIN}/zig version | grep ${VERSION}

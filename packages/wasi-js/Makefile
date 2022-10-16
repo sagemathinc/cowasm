@@ -8,3 +8,6 @@ ${DIST}/.built:
 	npm ci
 	npm run build
 	touch ${DIST}/.built
+
+test:
+	echo "no tests yet"

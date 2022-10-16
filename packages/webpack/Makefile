@@ -11,3 +11,6 @@ ${DIST}/.built: src/index.ts
 
 clean-build::
 	rm -rf node_modules
+
+test:
+	echo "no tests yet"

@@ -39,3 +39,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 		make -j8 && \
 		make install
 	touch ${DIST_WASM}/.built
+
+test:
+	echo "no tests yet"

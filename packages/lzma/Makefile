@@ -38,3 +38,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && make -j4 || true && cd src/liblzma && make install
 	zig ranlib ${DIST_WASM}/lib/liblzma.a  # needed on linux
 	touch ${DIST_WASM}/.built
+
+test:
+	echo "no tests yet"

@@ -27,3 +27,6 @@ github-pages:
 
 clean-build::
 	rm -rf node_modules
+
+test:
+	echo "no tests yet"
