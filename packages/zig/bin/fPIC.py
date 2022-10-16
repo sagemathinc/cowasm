@@ -60,7 +60,7 @@ def run(cmd):
         sys.exit(ret.returncode)
 
 
-if "-E" in sys.argv in '--print-multiarch' in sys.argv:
+if "-E" in sys.argv or '--print-multiarch' in sys.argv:
     # preprocessor only or checking architecture
     sys.argv.insert(2, '-target')
     sys.argv.insert(3, 'wasm32-wasi')
