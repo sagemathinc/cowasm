@@ -41,8 +41,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	make AR="zig ar" RANLIB="zig ranlib" CC="cowasm-cc" CFLAGS=${CFLAGS} LDFLAGS=${LDFLAGS} PREFIX=${DIST_WASM} -j8 man
 	mkdir -p ${DIST_WASM}/bin
-	cp -v ${BUILD_WASM}/mandoc ${DIST_WASM}/bin/man.wasm
+	cp -v ${BUILD_WASM}/mandoc ${DIST_WASM}/bin/man
 	touch ${DIST_WASM}/.built
 
 test: wasm
-	${BIN}/cowasm ${DIST_WASM}/bin/man.wasm build/wasm/man.1 | grep "display manual pages"
+	${BIN}/cowasm ${DIST_WASM}/bin/man build/wasm/man.1 | grep "display manual pages"

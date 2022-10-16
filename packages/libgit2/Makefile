@@ -63,9 +63,9 @@ TESTS = ${BUILD_WASM}/tests
 CFLAGS = -v -fvisibility-main -Oz -I${DIST_WASM}/include
 LDFLAGS = -L${DIST_WASM}/lib -L${ZLIB}/lib -lgit2 -lz
 test-init: ${DIST_WASM}/.built
-	${BIN}/cowasm-cc ${CFLAGS} ${LDFLAGS} ${SRC}/test-init.c -o ${TESTS}/test-init.wasm
+	${BIN}/cowasm-cc ${CFLAGS} ${LDFLAGS} ${SRC}/test-init.c -o ${TESTS}/test-init
 	rm -rf ${TESTS}/testrepo
-	${BIN}/cowasm ${TESTS}/test-init.wasm ${TESTS}/testrepo
+	${BIN}/cowasm ${TESTS}/test-init ${TESTS}/testrepo
 	cd ${TESTS}/testrepo && git status |grep "No commits yet"
 
 test: test-init

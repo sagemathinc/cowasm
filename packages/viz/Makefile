@@ -52,13 +52,13 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&&	CC="zig cc -target wasm32-wasi" \
-			CFLAGS="-Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${NCURSES}/wasm/include -I${NCURSES}/wasm/include/ncurses -I${LUA}/wasm/include" \
-			LDFLAGS="${LUA}/wasm/lib/liblua.a ${NCURSES}/wasm/lib/libncurses.a ${TERMCAP}/wasm/lib/libtermcap.a ${POSIX_WASM}/libposix.a -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal -lc" \
+		&&	CC="cowasm-cc" \
+			CFLAGS="-Oz -fvisibility-main -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${NCURSES}/wasm/include -I${NCURSES}/wasm/include/ncurses -I${LUA}/wasm/include" \
+			LDFLAGS="-L${LUA}/wasm/lib -llua -L${NCURSES}/wasm/lib -lncurses -L${TERMCAP}/wasm/lib -ltermcap -L${POSIX_WASM} -lposix" \
 			./configure --prefix=${DIST_WASM} \
 		&&	make -j8 viz
 	mkdir -p ${DIST_WASM}/bin
-	cp ${BUILD_WASM}/viz ${DIST_WASM}/bin/viz.wasm
+	cp ${BUILD_WASM}/viz ${DIST_WASM}/bin/
 	touch ${DIST_WASM}/.built
 
 test:
