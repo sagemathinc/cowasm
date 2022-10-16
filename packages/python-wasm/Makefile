@@ -10,7 +10,6 @@ PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
 PYTHON_WASM = ${PACKAGES}/cpython/dist/wasm
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 DYLINK = ${PACKAGES}/dylink/dist
-DASH = ${PACKAGES}/dash/dist/wasm
 LIBGIT2 = ${PACKAGES}/libgit2/dist/wasm
 ZLIB = ${PACKAGES}/zlib/dist/wasm
 NCURSES = ${PACKAGES}/ncurses/dist/wasm
@@ -165,59 +164,12 @@ strip: node_modules
 	npm run strip
 
 
-# This is just here to see if this is possible and how much is common before
-# refactoring the code and putting this in a completely different package.
-
-# Dash
-
-DASH_WASM_SOURCES = \
-	${POSIX_SOURCES} \
-	${DYLINK}/wasm/libdylink.a \
-	src/dash/interface.zig \
-	src/dash/dash.zig
-
-DASH_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
-
-DASH_WASM_INCLUDE = -I. -I${POSIX_WASM}
-
-DASH_WASM_C = ${DASH}/lib/libdash.a \
-		${POSIX_WASM}/libposix.a \
-		${LIBEDIT}/lib/libedit.a \
-		${TERMCAP}/lib/libtermcap.a \
-		${CWD}/src/wasm/posix/stdlib.c \
-		${CWD}/src/python/signal/signal.c
-
-${DIST}/dash/dash.wasm: ${DASH_WASM_SOURCES} ${DASH_WASM_C}
-	cd src && zig build-lib \
-	   ${WASM_CFLAGS} \
-	   ${ZIG_PKG} \
-		-rdynamic \
-		-target wasm32-wasi \
-		--import-memory --import-table \
-		${DASH_WASM_LDFLAGS} \
-		${DASH_WASM_INCLUDE} \
-		${DASH_WASM_C} \
-		dash/interface.zig
-	mkdir -p ${DIST}/dash
-	mv src/interface.wasm ${DIST}/dash/dash.wasm
-
-.PHONY: dash
-dash: ${DIST}/dash/dash.wasm
-
-${CWD}/../../bin/zash: ${CWD}/bin/zash
-	ln -sf ${CWD}/bin/zash ${CWD}/../../bin/zash
-
-${CWD}/../../bin/zash-debug: ${CWD}/bin/zash-debug
-	ln -sf ${CWD}/bin/zash-debug ${CWD}/../../bin/zash-debug
-
-.PHONY: bin-dash
-bin-dash: ${CWD}/../../bin/zash ${CWD}/../../bin/zash-debug
 
 
 
 
 
-# WACalc -- the core script/runner
+# CoWasm -- the core script/runner
 
 COWASM_WASM_SOURCES = \
 	${POSIX_SOURCES} \

@@ -11,10 +11,6 @@ const pythonReadline = "python-readline.zip";
 const pythonMinimal = "python-minimal.zip";
 
 
-// temporary until we refactor dash out into separate module
-import * as dash from "../dash/node";
-export { dash };
-
 // Our tiny termcap file only has one entry, which is for xterm
 // so that's all we give you, even if you have a different terminal.
 const TERM = "xterm-256color";

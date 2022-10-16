@@ -12,7 +12,7 @@ TARBALL = ${UPSTREAM}/dash-${VERSION}.tar.gz
 LIBEDIT = ${PACKAGES}/libedit/dist
 TERMCAP = ${PACKAGES}/termcap/dist
 
-all: native wasm
+all: native wasm ${BIN}/dash-wasm
 
 include ../build/Makefile-rules
 
@@ -29,9 +29,10 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 			./configure --with-libedit --prefix=${DIST_NATIVE} \
 		&&	make -j8 \
 		&&  make install
-	ln -sf ${PWD}/bin/dash-native ${BIN}/dash-native
 	touch ${DIST_NATIVE}/.built
 
+${BIN}/dash-native: ${DIST_NATIVE}/.built ${CWD}/bin/dash-wasm
+	ln -sf ${PWD}/bin/dash-native ${BIN}/dash-native
 
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
@@ -66,11 +67,11 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 				--with-libedit \
 				--prefix=${DIST_WASM} \
 				--host=none \
-		&&	make -j8
-	mkdir -p ${DIST_WASM}/bin
-	cp ${BUILD_WASM}/src/dash ${DIST_WASM}/bin/dash.wasm
+		&&	make -j8 install
 	touch ${DIST_WASM}/.built
 
-test: wasm
-	# The $$ here is to escape the dollar sign; it's actually 'echo "$(2+3)"':
-	echo 'echo "$$((2+3))"' | ${BIN}/cowasm ./dist/wasm/bin/dash.wasm | grep 5
+${BIN}/dash-wasm: ${DIST_WASM}/.built ${CWD}/bin/dash-wasm
+	ln -sf ${CWD}/bin/dash-wasm ${BIN}/dash-wasm
+
+test: ${BIN}/dash-wasm
+	echo "echo \$$((389*5077))" | ${BIN}/dash-wasm | grep 1974953

@@ -1,6 +1,5 @@
 /*
-TODO: refactor -- some of this code will go in a new python-wasm module and some will
-go in a dash-wasm module...
+TODO: refactor -- some of this code will go in a new python-wasm module?
 
 extern int python_wasm_fork_exec(
              char *const exec_array[],

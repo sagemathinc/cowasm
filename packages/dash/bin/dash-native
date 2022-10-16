@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # See python-native in the cpython/bin packages.  Need to factor this out.
 realpath() (
@@ -25,6 +25,7 @@ export TERM=xterm-256color
 export TERMCAP="$SCRIPT_DIR"/../../cpython/src/termcap
 
 # -E provides interactive libedit line editing and history  (-V is the vi version).
+# Dash is totally broken if one of -E or -V isn't given.  I patch the wasm version.
 
 # Dash is very minimal, but at least we can have a nice prompt!
 #   https://unix.stackexchange.com/questions/158313/create-a-dash-prompt

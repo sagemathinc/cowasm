@@ -21,9 +21,9 @@ export async function init({
     ...process.env,
     TERM,
     TERMCAP: join(path, "..", "termcap"),
-    PS1: "cowasm$ ",
+    PS1: "CoWasm> ",
   };
-  //PS1: 'cowasm $(pwd | sed "s|^$HOME|~|")$ '
+  //PS1: 'CoWasm $(pwd | sed "s|^$HOME|~|")$ '
   if (!existsSync(env.TERMCAP)) {
     console.warn(`TERMCAP=${env.TERMCAP} is missing`);
   }
