@@ -187,7 +187,7 @@ clean-build:
 
 .PHONY: test
 test:
-	time ./bin/make-all test ${PACKAGE_DIRS}
+	./bin/make-all test ${PACKAGE_DIRS}
 	#
 	#
 	##########################################################
