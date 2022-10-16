@@ -135,10 +135,10 @@ export default class PosixContext {
       }
       // These wasm.send.string's are NOT really memory leaks, since we reset the memory below.
       let mainPtr;
-      let sPtr = wasm.send.string("main");
+      let sPtr = wasm.send.string("__main_argc_argv");
       mainPtr = dlsym(handle, sPtr);
       if (!mainPtr) {
-        sPtr = wasm.send.string("__main_argc_argv");
+        sPtr = wasm.send.string("main");
         mainPtr = dlsym(handle, sPtr);
         if (!mainPtr) {
           console.error(`${args[0]}: unable to find either symbol '__main_argc_argv' or 'main' in '${path}' (compile with -fvisibility-main?)`);

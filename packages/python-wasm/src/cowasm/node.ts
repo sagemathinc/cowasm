@@ -2,6 +2,7 @@ import wasmImport from "../wasm/import-node";
 import wasmImportNoWorker from "../wasm/worker/node";
 import { _init, wasm, terminal as _terminal } from "./index";
 import { join } from "path";
+import { existsSync } from "fs";
 
 const COWASM_WASM = "cowasm.wasm";
 
@@ -23,6 +24,9 @@ export async function init({
     PS1: "cowasm$ ",
   };
   //PS1: 'cowasm $(pwd | sed "s|^$HOME|~|")$ '
+  if (!existsSync(env.TERMCAP)) {
+    console.warn(`TERMCAP=${env.TERMCAP} is missing`);
+  }
 
   await _init({
     programName: process.env.PROGRAM_NAME, // real name or made up name

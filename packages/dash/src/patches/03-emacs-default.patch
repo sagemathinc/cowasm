@@ -1,0 +1,16 @@
+--- native/src/options.c	2022-10-01 09:10:53.000000000 -0700
++++ wasm/src/options.c	2022-10-16 15:01:39.000000000 -0700
+@@ -169,6 +169,13 @@
+ 		shellparam.nparam++;
+ 		xargv++;
+ 	}
++  if(!Vflag && !Eflag) {
++    // Set emacs mode to be the default in case nothing specified.
++    // dash doesn't work at all interactively if neither emacs or
++    // vi mode are specified!  Note that Eflag is "optlist[10]".
++    Eflag =1;
++  }
++
+ 	optschanged();
+ 
+ 	return login;
