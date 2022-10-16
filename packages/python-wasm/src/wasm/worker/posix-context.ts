@@ -133,12 +133,17 @@ export default class PosixContext {
         console.error(`${args[0]}: dlsym not defined`);
         return 1;
       }
-      // This is not a memory leak, since we reset the memory below.
-      const sPtr = wasm.send.string("__main_argc_argv");
-      const mainPtr = dlsym(handle, sPtr);
+      // These wasm.send.string's are NOT really memory leaks, since we reset the memory below.
+      let mainPtr;
+      let sPtr = wasm.send.string("main");
+      mainPtr = dlsym(handle, sPtr);
       if (!mainPtr) {
-        console.error(`${args[0]}: unable to find main pointer`);
-        return 1;
+        sPtr = wasm.send.string("__main_argc_argv");
+        mainPtr = dlsym(handle, sPtr);
+        if (!mainPtr) {
+          console.error(`${args[0]}: unable to find either symbol '__main_argc_argv' or 'main' in '${path}' (compile with -fvisibility-main?)`);
+          return 1;
+        }
       }
       const main = wasm.table?.get(mainPtr);
       if (!main) {

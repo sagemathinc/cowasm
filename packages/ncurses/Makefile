@@ -48,8 +48,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
 			AR="zig ar" \
-			CC="cowasm-cc  -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
-			CXX="cowasm-c++  -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID" \
+			CC="cowasm-cc" \
+			CXX="cowasm-c++" \
 			CFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			CXXFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			./configure \
@@ -69,5 +69,24 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${DIST_WASM}/include && ln -sf ncurses/curses.h .
 	touch ${DIST_WASM}/.built
 
+${BUILD_WASM}/test/.built: ${DIST_WASM}/.built
+	cd ${BUILD_WASM}/test \
+		&& RANLIB="zig ranlib" \
+			AR="zig ar" \
+			CC="cowasm-cc" \
+			CFLAGS="-Oz -fvisibility-main  -I${TERMCAP}/include  -I${POSIX_WASM} -I${DIST_WASM}/include -L${TERMCAP}/lib  -L${DIST_WASM}/lib -lncurses" \
+			./configure \
+				--without-ada \
+				--without-manpages \
+				--without-progs \
+				--without-tests \
+				--enable-termcap \
+				--disable-stripping \
+				--build=`./config.guess` \
+				--host=none \
+				--prefix="${DIST_WASM}" \
+				--with-build-cc="zig cc" \
+		&& 	make
+	touch ${BUILD_WASM}/test/.built
 test:
 	echo "no tests yet"

@@ -37,21 +37,20 @@ if '-V' in sys.argv:
     print(' '.join(sys.argv))
     verbose = True
     sys.argv.remove('-V')
-    sys.argv.append('-v')  # this then goes to clang/zig to make it very verbose
+    sys.argv.append(
+        '-v')  # this then goes to clang/zig to make it very verbose
 elif '-v' in sys.argv:
     # use -v for just us being verbose
     print(' '.join(sys.argv))
     verbose = True
     sys.argv.remove('-v')
 
-
 if sys.argv[0].endswith('-cc'):
     sys.argv.insert(1, 'cc')
 elif sys.argv[0].endswith('-c++'):
     sys.argv.insert(1, 'c++')
-sys.argv.insert(2, '-target')
-sys.argv.insert(3, 'wasm32-wasi')
 sys.argv[0] = 'zig'
+
 
 def run(cmd):
     if verbose:
@@ -60,6 +59,13 @@ def run(cmd):
     if ret.returncode:
         sys.exit(ret.returncode)
 
+
+if "-E" in sys.argv in '--print-multiarch' in sys.argv:
+    # preprocessor only or checking architecture
+    sys.argv.insert(2, '-target')
+    sys.argv.insert(3, 'wasm32-wasi')
+    run(sys.argv)
+    sys.exit(0)
 
 # This is a horrendous hack to make the main function visible without having to
 # change the source code of every program we build.  It can be randomly broken, so watch out.
@@ -73,16 +79,6 @@ if '-fvisibility-main' in sys.argv:
     sys.argv.remove('-fvisibility-main')
 else:
     use_main_hack = False
-
-if "-E" in sys.argv:
-    # preprocessor only
-    run(sys.argv)
-    sys.exit(0)
-
-if '--print-multiarch' in sys.argv:
-    # checking architecture (do this before FLAGS below or it ends up with wasm32-emscripten)
-    run(sys.argv)
-    sys.exit(0)
 
 # https://retrocomputing.stackexchange.com/questions/20281/why-didnt-c-specify-filename-extensions
 SOURCE_EXTENSIONS = set(['.c', '.c++', '.cpp', '.cxx', '.cc', '.cp'])
@@ -158,11 +154,12 @@ if '-c' in sys.argv or no_input:
     run(sys.argv + FLAGS)
     sys.exit(0)
 
-
 # MAYBE COMPILE, and definitely ALSO LINK (explicitly calling "zig wasm-ld")
+
 
 def is_unsupported_lib(arg):
     return arg in ['-lc', '-lm'] or arg.startswith('-lwasi-emulated')
+
 
 def remove_unsupported_libs(argv):
     # -lc doesn't exist for target=wasm32-emscripten on zig!.
@@ -170,6 +167,7 @@ def remove_unsupported_libs(argv):
     # Also none of the -lwasi-emulated stuff exists either.
     # These are all done in the core libc anyways.
     return [arg for arg in argv if not is_unsupported_lib(arg)]
+
 
 def remove_linker_args(argv):
     i = 0
@@ -229,7 +227,8 @@ with tempfile.NamedTemporaryFile(suffix='.o') as tmpfile:
         run(sys.argv + FLAGS)
 
     # Next link
-    link = ['zig', 'wasm-ld', '--experimental-pic', '-shared'] + linker_sys_argv
+    link = ['zig', 'wasm-ld', '--experimental-pic', '-shared'
+            ] + linker_sys_argv
     if not is_debug():
         link.append('--strip-all')
         # Note that we have to do this '--compress-relocations' here, since it is
@@ -247,4 +246,4 @@ with tempfile.NamedTemporaryFile(suffix='.o') as tmpfile:
             link += [sys.argv[i], sys.argv[i + 1]]
 
     run(link)
-    os.system("cp %s /tmp/a.o"%dot_o)
+    os.system("cp %s /tmp/a.o" % dot_o)

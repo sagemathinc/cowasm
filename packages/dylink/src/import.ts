@@ -1,4 +1,4 @@
-import { alignMemory, nonzeroPositions, recvString } from "./util";
+import { alignMemory, nonzeroPositions, recvString, sendString } from "./util";
 import getMetadata from "./metadata";
 import stubProxy from "./stub";
 import debug from "debug";
@@ -542,7 +542,11 @@ export default async function importWebAssemblyDlopen({
     // do with non functions!
     // I think Python only uses function pointers?
     // return lib.instance.exports[symName]
-    throw Error(`dlsym: handle=${handle} - unknown symbol '${symName}'`);
+    // throw Error(`dlsym: handle=${handle} - unknown symbol '${symName}'`);
+
+    // dlsym is supposed to return a null pointer on fail, NOT throw exception
+    set_dlerror(`dlsym: handle=${handle} - unknown symbol '${symName}'`);
+    return 0;
   };
 
   /*
@@ -551,15 +555,29 @@ export default async function importWebAssemblyDlopen({
   call to dlerror(). It returns NULL if no errors have occurred since
   initialization or since it was last called."
   */
+  let dlerrorPtr = 0;
+  function set_dlerror(s: string) {
+    if (!dlerrorPtr) {
+      // allocate space for the error
+      let malloc = getFunction("malloc");
+      if (malloc == null) {
+        throw Error("malloc from libc must be available in the  main instance");
+      }
+      dlerrorPtr = malloc(1024);
+    }
+    if (memory == null) {
+      throw Error("memory must be defined");
+    }
+    sendString(s.slice(0, 1023), dlerrorPtr, memory);
+  }
   env.dlerror = () => {
-    // TODO: need to allocate a string to implement this, and also keep track
-    // of errors.
-    return 0;
+    return dlerrorPtr;
   };
 
   env.dladdr = () => {
     log("dladdr: STUB");
     // we couldn't find "it"
+    set_dlerror("dladdr is not yet implemented");
     return 0;
   };
 
