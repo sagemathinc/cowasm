@@ -62,7 +62,15 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	touch ${DIST_WASM}/.built
 
 # Build test program
-${BUILD_WASM}/examples/tc1.wasm:  ${BUILD_WASM}/examples/tc1.c | ${DIST_WASM}/.built
+${BUILD_WASM}/examples/tc1.wasm:  ${DIST_WASM}/.built
 	${BIN}/cowasm-cc -v -fvisibility-main -L${DIST_WASM}/lib -ledit ${LDFLAGS} \
 		-I${BUILD_WASM}/ -I${BUILD_WASM}/src \
 		${BUILD_WASM}/examples/tc1.c -o ${BUILD_WASM}/examples/tc1.wasm
+
+run-tc1: ${BUILD_WASM}/examples/tc1.wasm
+	${BIN}/cowasm ${BUILD_WASM}/examples/tc1.wasm
+
+test: ${BUILD_WASM}/examples/tc1.wasm
+	# This is a pretty dumb test, since not interactive, but at least it shows
+	# that the program builds and runs at all...
+	echo 'echo "hi"' | ${BIN}/cowasm ${BUILD_WASM}/examples/tc1.wasm |grep "Edit"

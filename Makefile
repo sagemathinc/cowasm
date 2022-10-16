@@ -52,6 +52,8 @@ libedit: packages/libedit/${BUILT}
 packages/libedit/${BUILT}: zig termcap
 	cd packages/libedit && make all
 .PHONY: libedit
+test-libedit: libedit
+	cd packages/libedit && make test
 
 lua: packages/lua/${BUILT}
 packages/lua/${BUILT}: zig
@@ -216,7 +218,7 @@ clean:
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}
 
-test: test-bzip2 test-libgit2 test-unused test-cpython test-bench test-dash test-dylink test-posix-node test-python-wasm test-coreutils test-man test-py-mpmath test-py-cython test-f2c test-py-numpy
+test: test-libedit test-bzip2 test-libgit2 test-unused test-cpython test-bench test-dash test-dylink test-posix-node test-python-wasm test-coreutils test-man test-py-mpmath test-py-cython test-f2c test-py-numpy
 .PHONY: test
 
 test-bench: python-wasm py-cython

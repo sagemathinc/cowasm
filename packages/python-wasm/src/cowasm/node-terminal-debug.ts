@@ -1,5 +1,6 @@
 import { resolve } from "path";
 import { init, terminal } from "./node";
+import posix from "posix-node";
 
 async function main() {
   await init({ debug: true });
@@ -9,6 +10,11 @@ async function main() {
   }
   const program = resolve(process.argv[2]);
   const argv = [program].concat(process.argv.slice(3));
+  try {
+    posix.enableRawInput?.();
+  } catch (_err) {
+    // this will fail if stdin is not interactive; that's fine.
+  }
   const r = await terminal({ argv });
   process.exit(r);
 }
