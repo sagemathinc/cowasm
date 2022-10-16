@@ -52,6 +52,21 @@ elif sys.argv[0].endswith('-c++'):
 sys.argv[0] = 'zig'
 
 
+# This is a horrendous hack to make the main function visible without having to
+# change the source code of every program we build.  It can be randomly broken, so watch out.
+# E.g., when building python there is a random header that has
+#    something.main
+# which breaks. At least we make it very explicit with a "-fvisibility-main".
+# If we can figure out a way with 'zig wasm-ld' to do this directly that would
+# be better.
+# NOTE: this check MUST be done before any use of run, since -fvisibility-main doesn't exist for clang.
+# It is just a flag I made up.
+if '-fvisibility-main' in sys.argv:
+    use_main_hack = True
+    sys.argv.remove('-fvisibility-main')
+else:
+    use_main_hack = False
+
 def run(cmd):
     if verbose:
         print(' '.join(cmd))
@@ -66,19 +81,6 @@ if "-E" in sys.argv or '--print-multiarch' in sys.argv:
     sys.argv.insert(3, 'wasm32-wasi')
     run(sys.argv)
     sys.exit(0)
-
-# This is a horrendous hack to make the main function visible without having to
-# change the source code of every program we build.  It can be randomly broken, so watch out.
-# E.g., when building python there is a random header that has
-#    something.main
-# which breaks. At least we make it very explicit with a "-fvisibility-main".
-# If we can figure out a way with 'zig wasm-ld' to do this directly that would
-# be better.
-if '-fvisibility-main' in sys.argv:
-    use_main_hack = True
-    sys.argv.remove('-fvisibility-main')
-else:
-    use_main_hack = False
 
 # https://retrocomputing.stackexchange.com/questions/20281/why-didnt-c-specify-filename-extensions
 SOURCE_EXTENSIONS = set(['.c', '.c++', '.cpp', '.cxx', '.cc', '.cp'])
