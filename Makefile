@@ -45,7 +45,7 @@ packages/libedit/${BUILT}: zig termcap
 .PHONY: libedit
 
 lua: packages/lua/${BUILT}
-packages/lua/${BUILT}: zig
+packages/lua/${BUILT}: zig libedit termcap
 	cd packages/lua && make all
 .PHONY: lua
 

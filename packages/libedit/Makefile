@@ -59,6 +59,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		&&	echo "install:" >> examples/Makefile \
 		&&	make -j8 \
 		&&	make install
+	# readline compat headers that I copied from FreeBSD!
+	cp -rv ${SRC}/readline ${DIST_WASM}/include
 	touch ${DIST_WASM}/.built
 
 # Build test program
