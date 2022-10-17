@@ -278,6 +278,7 @@ let warnedAboutSleep = false;
 interface State {
   env: WASIEnv;
   FD_MAP: Map<number, File>;
+  bindings: WASIBindings;
 }
 
 export default class WASI {
@@ -296,11 +297,13 @@ export default class WASI {
   env: WASIEnv = {};
 
   getState(): State {
-    return { env: this.env, FD_MAP: this.FD_MAP };
+    return { env: this.env, FD_MAP: this.FD_MAP, bindings: this.bindings };
   }
+
   setState(state: State) {
     this.env = state.env;
     this.FD_MAP = state.FD_MAP;
+    this.bindings = state.bindings;
   }
 
   constructor(wasiConfig: WASIConfig) {
@@ -321,13 +324,11 @@ export default class WASI {
     if (wasiConfig && wasiConfig.args) {
       args = wasiConfig.args;
     }
-    let bindings = wasiConfig.bindings;
-
     // @ts-ignore
     this.memory = undefined;
     // @ts-ignore
     this.view = undefined;
-    this.bindings = bindings;
+    this.bindings = wasiConfig.bindings;
 
     this.FD_MAP = new Map([
       [
@@ -426,17 +427,17 @@ export default class WASI {
       }
       return stats;
     };
-    const CPUTIME_START = bindings.hrtime();
+    const CPUTIME_START = this.bindings.hrtime();
 
     const now = (clockId?: number) => {
       switch (clockId) {
         case WASI_CLOCK_MONOTONIC:
-          return bindings.hrtime();
+          return this.bindings.hrtime();
         case WASI_CLOCK_REALTIME:
           return msToNs(Date.now());
         case WASI_CLOCK_PROCESS_CPUTIME_ID:
         case WASI_CLOCK_THREAD_CPUTIME_ID: // TODO -- this assumes 1 thread
-          return bindings.hrtime() - CPUTIME_START;
+          return this.bindings.hrtime() - CPUTIME_START;
         default:
           return null;
       }
@@ -1476,7 +1477,7 @@ export default class WASI {
 
         // Have to wait this long (this gets computed below in the WASI_EVENTTYPE_CLOCK case).
         let waitTimeNs = BigInt(0);
-        const startNs = BigInt(bindings.hrtime());
+        const startNs = BigInt(this.bindings.hrtime());
         this.refreshMemory();
         // logToFile("poll_oneoff", sin, sout, nsubscriptions, nevents);
         for (let i = 0; i < nsubscriptions; i += 1) {
@@ -1594,7 +1595,7 @@ export default class WASI {
         // Account for the time it took to do everything above, which
         // can be arbitrarily long:
         if (waitTimeNs > 0) {
-          waitTimeNs -= BigInt(bindings.hrtime()) - startNs;
+          waitTimeNs -= BigInt(this.bindings.hrtime()) - startNs;
           // logToFile("waitTimeNs", waitTimeNs);
           if (waitTimeNs >= 1000000) {
             if (this.sleep == null && !warnedAboutSleep) {
@@ -1614,8 +1615,8 @@ export default class WASI {
               // a wrong nightmare.  Unfortunately, this is the
               // only possible thing to do when not running in
               // a work thread.
-              const end = BigInt(bindings.hrtime()) + waitTimeNs;
-              while (BigInt(bindings.hrtime()) < end) {
+              const end = BigInt(this.bindings.hrtime()) + waitTimeNs;
+              while (BigInt(this.bindings.hrtime()) < end) {
                 // burn your CPU!
               }
             }
@@ -1626,7 +1627,7 @@ export default class WASI {
       },
 
       proc_exit: (rval: number) => {
-        bindings.exit(rval);
+        this.bindings.exit(rval);
         return WASI_ESUCCESS;
       },
 
@@ -1634,13 +1635,13 @@ export default class WASI {
         if (!(sig in SIGNAL_MAP)) {
           return WASI_EINVAL;
         }
-        bindings.kill(SIGNAL_MAP[sig]);
+        this.bindings.kill(SIGNAL_MAP[sig]);
         return WASI_ESUCCESS;
       },
 
       random_get: (bufPtr: number, bufLen: number) => {
         this.refreshMemory();
-        bindings.randomFillSync(
+        this.bindings.randomFillSync(
           new Uint8Array(this.memory.buffer),
           bufPtr,
           bufLen

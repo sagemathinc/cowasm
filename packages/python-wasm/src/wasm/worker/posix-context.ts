@@ -18,10 +18,12 @@ export default class PosixContext {
   private wasi: WASI;
   private memory: WebAssembly.Memory;
   private context: Context;
+  private wasiConfig: WASIConfig;
 
   constructor({ wasiConfig, memory, wasi }: Options) {
     this.memory = memory;
     this.wasi = wasi;
+    this.wasiConfig = wasiConfig;
     const { bindings, sleep } = wasiConfig;
     const callFunction = this.callFunction.bind(this);
     this.posixEnv = this.createPosixEnv({
@@ -121,13 +123,23 @@ export default class PosixContext {
       memory: new Uint8Array(this.memory.buffer).slice(),
       context: this.context.state,
       wasi: this.wasi.getState(),
+      exit: this.wasiConfig.bindings.exit,
     };
     // I wonder if I could use immer.js instead for any of this?  It might be slower.
     this.context.state = cloneDeep(state.context);
-    this.wasi.setState(cloneDeep(state.wasi));
+    const wasi_state = cloneDeep(state.wasi);
+    let return_code = 1; // not set ==> something went wrong
+    wasi_state.bindings.exit = (code: number) => {
+      return_code = code;
+      // after this, the main call below throws an exception
+      // then the return_code gets returned right after the
+      // finally cleansthings up.
+    };
 
+    let handle = 0;
     try {
-      const handle = wasm.callWithString("dlopen", args[0]);
+      this.wasi.setState(wasi_state);
+      handle = wasm.callWithString("dlopen", args[0]);
       const dlsym = wasm.getFunction("dlsym");
       if (dlsym == null) {
         console.error(`${args[0]}: dlsym not defined`);
@@ -141,7 +153,9 @@ export default class PosixContext {
         sPtr = wasm.send.string("main");
         mainPtr = dlsym(handle, sPtr);
         if (!mainPtr) {
-          console.error(`${args[0]}: unable to find either symbol '__main_argc_argv' or 'main' in '${path}' (compile with -fvisibility-main?)`);
+          console.error(
+            `${args[0]}: unable to find either symbol '__main_argc_argv' or 'main' in '${path}' (compile with -fvisibility-main?)`
+          );
           return 1;
         }
       }
@@ -150,20 +164,23 @@ export default class PosixContext {
         console.error(`${args[0]}: unable to find main function`);
         return 1;
       }
-      const ret = main(args.length, wasm.send.arrayOfStrings(args));
-
-      const dlclose = wasm.getFunction("dlclose");
-      if (dlclose == null) {
-        console.error(`${args[0]}: dlclose not defined`);
-        return 1;
-      }
-      dlclose(handle);
-
-      return ret;
+      try {
+        return main(args.length, wasm.send.arrayOfStrings(args));
+      } catch (_) {}
+      return return_code;
     } finally {
+      if (handle) {
+        const dlclose = wasm.getFunction("dlclose");
+        if (dlclose == null) {
+          // should definitely never happen
+          console.error(`${args[0]}: dlclose not defined`);
+          return 1;
+        }
+        dlclose(handle);
+      }
       // Restore memory to how it was before running the subprocess.
       new Uint8Array(this.memory.buffer).set(state.memory);
-      // Restore posix context to befoe running the subprocess.
+      // Restore posix context to before running the subprocess.
       this.context.state = state.context;
       this.wasi.setState(state.wasi);
     }
