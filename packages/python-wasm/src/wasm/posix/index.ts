@@ -16,6 +16,7 @@ import spawn from "./spawn";
 import stdlib from "./stdlib";
 import stdio from "./stdio";
 import stat from "./stat";
+import termios from "./termios";
 import time from "./time";
 import unistd from "./unistd";
 import wait from "./wait";
@@ -102,6 +103,7 @@ export default function posix(context: Context): PosixEnv {
     ...stdlib(context),
     ...stdio(context),
     ...time(context),
+    ...termios(context),
     ...unistd(context),
     ...wait(context),
   };

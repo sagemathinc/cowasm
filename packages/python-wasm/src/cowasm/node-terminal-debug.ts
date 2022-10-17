@@ -14,6 +14,9 @@ async function main() {
     posix.enableRawInput?.();
   } catch (_err) {
     // this will fail if stdin is not interactive; that's fine.
+    try {
+      posix.makeStdinNonblocking?.();
+    } catch (_err) {}
   }
   const r = await terminal({ argv });
   process.exit(r);

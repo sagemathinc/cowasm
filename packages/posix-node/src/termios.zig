@@ -15,6 +15,7 @@ const clib = @cImport({
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "getChar", getChar);
     try node.registerFunction(env, exports, "enableRawInput", enableRawInput);
+    try node.registerFunction(env, exports, "disableEcho", disableEcho);
     try node.registerFunction(env, exports, "makeStdinBlocking", makeStdinBlocking);
 }
 
@@ -30,7 +31,6 @@ fn _makeStdinBlocking() Errors!void {
     }
 }
 
-
 fn makeStdinBlocking(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     _ = info;
     _makeStdinBlocking() catch {
@@ -38,7 +38,6 @@ fn makeStdinBlocking(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c
     };
     return null;
 }
-
 
 fn enableRawInput(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     _ = info;
@@ -48,7 +47,7 @@ fn enableRawInput(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.na
     return null;
 }
 
-// disables echo and icanon for the terminal and enables the locale so
+// disables icanon for the terminal and enables the locale so
 // we can read a single wide character using getChar below.
 var enabled = false;
 fn _enableRawInput() Errors!void {
@@ -60,7 +59,7 @@ fn _enableRawInput() Errors!void {
     if (clib.tcgetattr(clib.STDIN_FILENO, &raw) != 0) {
         return Errors.GetAttr;
     }
-    raw.c_lflag &= ~(@intCast(@TypeOf(raw.c_lflag), clib.ECHO | clib.ICANON));
+    raw.c_lflag &= ~(@intCast(@TypeOf(raw.c_lflag), clib.ICANON));
     if (clib.tcsetattr(clib.STDIN_FILENO, clib.TCSAFLUSH, &raw) != 0) {
         return Errors.SetAttr;
     }
@@ -75,6 +74,21 @@ fn _enableRawInput() Errors!void {
     }
 
     enabled = true;
+}
+
+fn disableEcho(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    _ = info;
+    var raw: clib.termios = undefined;
+    if (clib.tcgetattr(clib.STDIN_FILENO, &raw) != 0) {
+        node.throwErrno(env, "disableEcho - tcgetattr failed");
+        return null;
+    }
+    raw.c_lflag &= ~(@intCast(@TypeOf(raw.c_lflag), clib.ECHO));
+    if (clib.tcsetattr(clib.STDIN_FILENO, clib.TCSAFLUSH, &raw) != 0) {
+        node.throwErrno(env, "disableEcho - tcsetattr failed");
+        return null;
+    }
+    return null;
 }
 
 // Use getChar to do a blocking read of a character.  This supports wide characters

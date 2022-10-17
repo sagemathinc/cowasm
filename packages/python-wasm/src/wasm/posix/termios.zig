@@ -52,15 +52,14 @@ export fn cfgetospeed(tio: *const termios.termios) termios.speed_t {
 //            cc_t     c_cc[NCCS];   /* special characters */
 //
 export fn tcgetattr(fd: std.c.fd_t, tio: *termios.termios) c_int {
-    //    std.debug.print("tcgetattr, fd={}\n", .{ fd});
+    // std.debug.print("tcgetattr, fd={}\n", .{fd});
     tio.c_iflag = 0;
     tio.c_oflag = 0;
     tio.c_cflag = 0;
     tio.c_lflag = 0;
-    if(fd == 0) {
-       tio.c_lflag = termios.ECHO;
+    if (fd == 0) {
+        tio.c_lflag = termios.ECHO;
     }
-
     return 0; // success -- got no info into tio.
     //     const TCGETS = 0x5401;
     //     std.debug.print("tcgetattr, fd={}, tio={}\n", .{ fd, tio });
@@ -72,17 +71,18 @@ export fn tcgetattr(fd: std.c.fd_t, tio: *termios.termios) c_int {
     //     return 0;
 }
 
-export fn tcsetattr(fd: std.c.fd_t, act: c_int, tio: *termios.termios) c_int {
-    _ = fd;
-    _ = act;
-    _ = tio;
-    return 0;
-    //     const TCSETS = 0x5402;
-    //     std.debug.print("tcsetattr, fd={}, act={}, tio={}\n", .{ fd, act, tio });
-    //     if (act < 0 or act > 2) {
-    //         // errno = EINVAL; // TODO
-    //         std.debug.print("tcsetattr - error EINVAL", .{});
-    //         return -1;
-    //     }
-    //     return ioctl.ioctl(fd, TCSETS + act, tio);
-}
+// export fn tcsetattr(fd: std.c.fd_t, act: c_int, tio: *termios.termios) c_int {
+//     std.debug.print("tcsetattr, fd={}, act={}, tio={}\n", .{ fd, act, tio });
+
+//     _ = fd;
+//     _ = act;
+//     _ = tio;
+//    return 0;
+//         const TCSETS = 0x5402;
+//         if (act < 0 or act > 2) {
+//             // errno = EINVAL; // TODO
+//             std.debug.print("tcsetattr - error EINVAL", .{});
+//             return -1;
+//         }
+//         return ioctl.ioctl(fd, TCSETS + act, tio);
+//}

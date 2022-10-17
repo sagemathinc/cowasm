@@ -1,4 +1,5 @@
 const posix = require("..");
+posix.disableEcho();
 console.log(
   "This is a little terminal that capitalizes whatever you type, as you type it."
 );

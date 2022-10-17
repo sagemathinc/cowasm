@@ -21,7 +21,7 @@ export async function init({
     ...process.env,
     TERM,
     TERMCAP: join(path, "..", "termcap"),
-    PS1: "CoWasm> ",
+    PS1: "(CoWasm) dash$ ",
   };
   //PS1: 'CoWasm $(pwd | sed "s|^$HOME|~|")$ '
   if (!existsSync(env.TERMCAP)) {
