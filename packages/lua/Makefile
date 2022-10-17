@@ -61,3 +61,4 @@ ${BIN}/lua-wasm: ${DIST_WASM}/.built ${CWD}/bin/lua-wasm
 
 test: ${BIN}/lua-wasm
 	echo "389*5077" | ${CWD}/bin/lua-wasm | grep 1974953
+	${CWD}/bin/lua-wasm ${SRC}/sum.lua | grep 50000005000000
