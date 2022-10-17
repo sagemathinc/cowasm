@@ -75,4 +75,4 @@ run-tc1: ${BUILD_WASM}/examples/tc1
 test: ${BUILD_WASM}/examples/tc1
 	# This is a pretty dumb test, since not interactive, but at least it shows
 	# that the program builds and runs at all...
-	echo 'echo "hi"' | ${BIN}/cowasm ${BUILD_WASM}/examples/tc1 |grep "Edit"
+	echo 'ls' | ${BIN}/cowasm ${BUILD_WASM}/examples/tc1 |grep "Makefile"
