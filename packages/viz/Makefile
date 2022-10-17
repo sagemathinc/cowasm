@@ -53,7 +53,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc" \
-			CFLAGS="-Oz -fvisibility-main -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${NCURSES}/wasm/include -I${NCURSES}/wasm/include/ncurses -I${LUA}/wasm/include" \
+			CFLAGS="-v -Oz -fvisibility-main -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${NCURSES}/wasm/include -I${NCURSES}/wasm/include/ncurses -I${LUA}/wasm/include" \
 			LDFLAGS="-L${LUA}/wasm/lib -llua -L${NCURSES}/wasm/lib -lncurses -L${TERMCAP}/wasm/lib -ltermcap -L${POSIX_WASM} -lposix" \
 			./configure --prefix=${DIST_WASM} \
 		&&	make -j8 viz

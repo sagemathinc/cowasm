@@ -51,7 +51,6 @@ elif sys.argv[0].endswith('-c++'):
     sys.argv.insert(1, 'c++')
 sys.argv[0] = 'zig'
 
-
 # This is a horrendous hack to make the main function visible without having to
 # change the source code of every program we build.  It can be randomly broken, so watch out.
 # E.g., when building python there is a random header that has
@@ -66,6 +65,7 @@ if '-fvisibility-main' in sys.argv:
     sys.argv.remove('-fvisibility-main')
 else:
     use_main_hack = False
+
 
 def run(cmd):
     if verbose:
@@ -89,6 +89,14 @@ SOURCE_EXTENSIONS = set(['.c', '.c++', '.cpp', '.cxx', '.cc', '.cp'])
 def is_source(filename):
     ext = os.path.splitext(filename)[1].lower()
     return ext in SOURCE_EXTENSIONS
+
+
+OBJECT_OR_ARCHIVE_EXTENSIONS = set(['.o', '.a'])
+
+
+def is_object_or_archive(filename):
+    ext = os.path.splitext(filename)[1].lower()
+    return ext in OBJECT_OR_ARCHIVE_EXTENSIONS
 
 
 # TODO: I should probably just change to "if doesn't have -fPIC then use normal compiler".
@@ -137,9 +145,10 @@ def is_debug():
     return True
 
 
-def is_input(arg):
-    for ext in ['.c', '.cc', 'cpp', '.cxx', '.o']:  # TODO: is that it?
-        if arg.endswith(ext): return True
+def is_input(filename):
+    ext = os.path.splitext(filename)[1].lower()
+    if ext in SOURCE_EXTENSIONS or ext == '.o':
+        return True
     return False
 
 
@@ -156,7 +165,7 @@ if '-c' in sys.argv or no_input:
     run(sys.argv + FLAGS)
     sys.exit(0)
 
-# MAYBE COMPILE, and definitely ALSO LINK (explicitly calling "zig wasm-ld")
+# COMPILE any sources, and definitely ALSO LINK (explicitly calling "zig wasm-ld")
 
 
 def is_unsupported_lib(arg):
@@ -171,7 +180,7 @@ def remove_unsupported_libs(argv):
     return [arg for arg in argv if not is_unsupported_lib(arg)]
 
 
-def remove_linker_args(argv):
+def extract_linker_args(argv):
     i = 0
     link = []
     argv0 = []
@@ -199,53 +208,74 @@ def remove_linker_args(argv):
     return argv0, remove_unsupported_libs(link)
 
 
-# We have to create an object file then run "zig wasm-ld" explicitly,
-# since the way zig runs it is wrong for our purposes in many ways.
-# TODO: but this could definitely be fixed and upstreamed, if I can
-# ever get zig to build from source.  For now, at least, we can be sure
-# of the right behavior.
-with tempfile.NamedTemporaryFile(suffix='.o') as tmpfile:
+def extract_source_files(argv):
+    i = 0
+    source_files = []
+    object_files = []
+    argv0 = []
+    while i < len(argv):
+        if is_source(argv[i]):  # .c, .cxx, etc.
+            source_files.append(argv[i])
+        elif is_object_or_archive(argv[i]):  # .a or .o
+            object_files.append(argv[i])
+        else:
+            argv0.append(argv[i])
+        i += 1
+    return argv0, source_files, object_files
+
+
+def parse_args(argv):
+    argv, linker_args = extract_linker_args(argv)
+    compiler_args, source_files, object_args = extract_source_files(argv)
+    return source_files, compiler_args, linker_args, object_args
+
+
+def get_output_name():
+    try:
+        return sys.argv[sys.argv.index('-o') + 1]
+    except:
+        return 'a.out'
+
+
+def compile_source(compiler_args, source_file):
+    # returns NamedTemporaryFile object representing the object file
+    tmpfile = tempfile.NamedTemporaryFile(suffix='.o')
     dot_o = tmpfile.name
-    do_compile = False
-    for opt in sys.argv:
-        if is_source(opt):
-            do_compile = True
-            break
+    run(compiler_args + ['-c', source_file, '-o', tmpfile.name] + FLAGS)
+    return tmpfile
 
-    sys.argv, linker_sys_argv = remove_linker_args(sys.argv)
 
-    if do_compile:
-        try:
-            output_index = sys.argv.index('-o') + 1
-            original_output = sys.argv[output_index]
-            sys.argv[output_index] = dot_o
-        except:
-            original_output = 'a.out'
-            sys.argv.append('-o')
-            sys.argv.append(dot_o)
-            output_index = len(sys.argv) - 1
+def main():
+    source_files, compiler_args, linker_args, object_args = parse_args(
+        sys.argv)
 
-        sys.argv.append('-c')
-        run(sys.argv + FLAGS)
+    # compile all the source files individually to temporary object files
+    # NOTE: keep this array in scope until done, since when it goes out of
+    # scope the temporary object files are deleted.
+    objects = [
+        compile_source(compiler_args, source_file)
+        for source_file in source_files
+    ]
 
-    # Next link
-    link = ['zig', 'wasm-ld', '--experimental-pic', '-shared'
-            ] + linker_sys_argv
+    for obj in objects:
+        object_args.append(obj.name)
+
+    # link
+    link = [
+        'zig', 'wasm-ld', \
+        '--experimental-pic', '-shared', \
+        '-o', get_output_name()
+    ] + linker_args
+
     if not is_debug():
         link.append('--strip-all')
         # Note that we have to do this '--compress-relocations' here, since it is
         # ignored if put in Xliner args.
         link.append('--compress-relocations')
 
-    if do_compile:
-        link.append(dot_o)
-        link += ['-o', original_output]
-    else:
-        link += list(
-            set([x for x in sys.argv if x.endswith('.o') or x.endswith('.a')]))
-        if '-o' in sys.argv:
-            i = sys.argv.index('-o')
-            link += [sys.argv[i], sys.argv[i + 1]]
+    link += object_args
 
     run(link)
-    os.system("cp %s /tmp/a.o" % dot_o)
+
+
+main()
