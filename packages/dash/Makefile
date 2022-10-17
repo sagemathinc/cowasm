@@ -12,7 +12,7 @@ TARBALL = ${UPSTREAM}/dash-${VERSION}.tar.gz
 LIBEDIT = ${PACKAGES}/libedit/dist
 TERMCAP = ${PACKAGES}/termcap/dist
 
-all: native wasm ${BIN}/dash-wasm
+all: native wasm ${BIN}/sh-wasm
 
 include ../build/Makefile-rules
 
@@ -31,7 +31,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 		&&  make install
 	touch ${DIST_NATIVE}/.built
 
-${BIN}/dash-native: ${DIST_NATIVE}/.built ${CWD}/bin/dash-wasm
+${BIN}/dash-native: ${DIST_NATIVE}/.built ${CWD}/bin/sh-wasm
 	ln -sf ${PWD}/bin/dash-native ${BIN}/dash-native
 
 
@@ -68,10 +68,11 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 				--prefix=${DIST_WASM} \
 				--host=none \
 		&&	make -j8 install
+	ln -sf ${DIST_WASM}/bin/dash ${DIST_WASM}/bin/sh 
 	touch ${DIST_WASM}/.built
 
-${BIN}/dash-wasm: ${DIST_WASM}/.built ${CWD}/bin/dash-wasm
-	ln -sf ${CWD}/bin/dash-wasm ${BIN}/dash-wasm
+${BIN}/sh-wasm: ${DIST_WASM}/.built ${CWD}/bin/sh-wasm
+	ln -sf ${CWD}/bin/sh-wasm ${BIN}/sh-wasm
 
-test: ${BIN}/dash-wasm
-	echo "echo \$$((389*5077))" | ${BIN}/dash-wasm | grep 1974953
+test: ${BIN}/sh-wasm
+	echo "echo \$$((389*5077))" | ${BIN}/sh-wasm | grep 1974953
