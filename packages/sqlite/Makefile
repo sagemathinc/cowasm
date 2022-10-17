@@ -25,6 +25,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cp ${SRC}/config.site ${BUILD_WASM}
 	cp ${POSIX_WASM}/posix-wasm.h ${BUILD_WASM}
 	cd ${BUILD_WASM} && cat ${SRC}/patches/00-syscall.patch | patch -p1
+	cd ${BUILD_WASM} && cat ${SRC}/patches/01-main-fiddle.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # Notes on flags below.
@@ -39,7 +40,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
 		CFLAGS="-Oz -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include " \
-		LDFLAGS="-lc -L${ZLIB}/wasm/lib  -L${LIBEDIT}/wasm/lib " \
+		LDFLAGS="-L${ZLIB}/wasm/lib -lz -L${LIBEDIT}/wasm/lib -ledit " \
 		./configure --host=none  --prefix="${DIST_WASM}" \
 			--cache-file=config.site \
 			--disable-load-extension \

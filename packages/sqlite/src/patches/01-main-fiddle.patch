@@ -1,0 +1,20 @@
+--- native/src/shell.c.in	2022-09-05 04:02:23.000000000 -0700
++++ wasm/src/shell.c.in	2022-10-17 13:57:03.000000000 -0700
+@@ -11980,7 +11980,7 @@
+ #endif
+ 
+ #ifdef SQLITE_SHELL_WASM_MODE
+-#  define main fiddle_main
++#  define main __attribute__((visibility("default")))__main_argc_argv
+ #endif
+ 
+ #if SQLITE_SHELL_IS_UTF8
+@@ -12676,7 +12676,7 @@
+     static char * argv[] = {"fiddle",
+                             "-bail",
+                             "-safe"};
+-    rc = fiddle_main((int)(sizeof(argv)/sizeof(argv[0])), argv);
++    rc = __main_argc_argv((int)(sizeof(argv)/sizeof(argv[0])), argv);
+     once = rc ? -1 : 1;
+     memset(&shellState.wasm, 0, sizeof(shellState.wasm));
+     printf(
