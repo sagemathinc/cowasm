@@ -29,7 +29,7 @@ IMPORTANT: wasm-strip doesn't work with -fPIC libraries.  Thus you must build th
 stripped in the first place.
 """
 
-import os, shutil, subprocess, sys, tempfile
+import multiprocessing, os, shutil, subprocess, sys, tempfile
 
 verbose = False  # default
 # use -V for super verbose, so also zig/clang is verbose
@@ -152,13 +152,20 @@ def is_input(filename):
     return False
 
 
+def get_output_name():
+    try:
+        return sys.argv[sys.argv.index('-o') + 1]
+    except:
+        return 'a.out'
+
+
 # no_input, e.g., when querying the compiler for info about the system, e.g.,
 #   cowasm-cc --print-multiarch
 
 no_input = len([arg for arg in sys.argv if is_input(arg)]) == 0
 
 # COMPILE ONLY?
-if '-c' in sys.argv or no_input:
+if '-c' in sys.argv or no_input or get_output_name().endswith('.o'):
 
     # building object files from source, so don't have to do the extra wasm-ld step
     # below, which is really complicated
@@ -169,7 +176,7 @@ if '-c' in sys.argv or no_input:
 
 
 def is_unsupported_lib(arg):
-    return arg in ['-lc', '-lm'] or arg.startswith('-lwasi-emulated')
+    return arg in ['-lc', '-lm', '-ldl'] or arg.startswith('-lwasi-emulated')
 
 
 def remove_unsupported_libs(argv):
@@ -230,13 +237,6 @@ def parse_args(argv):
     return source_files, compiler_args, linker_args, object_args
 
 
-def get_output_name():
-    try:
-        return sys.argv[sys.argv.index('-o') + 1]
-    except:
-        return 'a.out'
-
-
 def compile_source(compiler_args, source_file):
     # returns NamedTemporaryFile object representing the object file
     tmpfile = tempfile.NamedTemporaryFile(suffix='.o')
@@ -245,17 +245,48 @@ def compile_source(compiler_args, source_file):
     return tmpfile
 
 
+def compile_serial(compiler_args, source_files):
+    # NON-parallel version
+    return [
+        compile_source(compiler_args, source_file)
+        for source_file in source_files
+    ]
+
+
+def compile_parallel(compiler_args, source_files):
+    if len(source_files) == 0: return []
+    # See https://stackoverflow.com/questions/9786102/how-do-i-parallelize-a-simple-python-loop
+    # We can't use multiprocessing because we need the tmpfile objects to be in
+    # the same process, and asyncio is ideal for this application... except
+    # this also mysteriously hangs, so it's disabled.
+    import asyncio
+
+    def background(f):
+
+        def wrapped(*args, **kwargs):
+            return asyncio.get_event_loop().run_in_executor(
+                None, f, *args, **kwargs)
+
+        return wrapped
+
+    @background
+    def f(source_file):
+        return compile_source(compiler_args, source_file)
+
+    loop = asyncio.get_event_loop()
+    looper = asyncio.gather(*[f(source_file) for source_file in source_files])
+    return loop.run_until_complete(looper)
+
+
 def main():
     source_files, compiler_args, linker_args, object_args = parse_args(
         sys.argv)
 
     # compile all the source files individually to temporary object files
-    # NOTE: keep this array in scope until done, since when it goes out of
+    # NOTE: keep objects in scope until done, since when it goes out of
     # scope the temporary object files are deleted.
-    objects = [
-        compile_source(compiler_args, source_file)
-        for source_file in source_files
-    ]
+    objects = compile_serial(compiler_args, source_files)
+    ##objects = compile_parallel(compiler_args, source_files)  # hangs...
 
     for obj in objects:
         object_args.append(obj.name)
