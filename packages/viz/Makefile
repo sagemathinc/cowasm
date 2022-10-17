@@ -14,7 +14,7 @@ TERMCAP=${PACKAGES}/termcap/dist/
 LUA=${PACKAGES}/lua/dist/
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 
-all: native wasm
+all: native wasm ${BIN}/viz-wasm
 
 include ../build/Makefile-rules
 
@@ -60,6 +60,11 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}/bin
 	cp ${BUILD_WASM}/viz ${DIST_WASM}/bin/
 	touch ${DIST_WASM}/.built
+
+${BIN}/viz-wasm: ${DIST_WASM}/.built ${CWD}/bin/viz-wasm
+	ln -sf ${CWD}/bin/viz-wasm ${BIN}/viz-wasm
+
+
 
 test:
 	echo "no tests yet"

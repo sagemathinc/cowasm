@@ -9,7 +9,7 @@ VERSION = 5.4.4
 URL = https://github.com/lua/lua/archive/refs/tags/v${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/lua-${VERSION}.tar.gz
 
-all: native wasm
+all: native wasm ${BIN}/lua-wasm
 
 include ../build/Makefile-rules
 
@@ -42,12 +42,22 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&&	make MYLIBS="-ldl" RANLIB="zig ranlib" AR="zig ar rc" CC="zig cc -target wasm32-wasi" CFLAGS="-DL_tmpnam=32 -Oz -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_GETPID -D_WASI_EMULATED_PROCESS_CLOCKS -D_WASI_EMULATED_MMAN -I. -L${PACKAGES}/ncurses/dist/wasm/lib" -j8
+		&&	make \
+			MYLIBS="-ldl" \
+			RANLIB="zig ranlib" \
+			AR="zig ar rc" \
+			CC="cowasm-cc" \
+			CFLAGS="-fvisibility-main -Oz -DL_tmpnam=32 -I." \
+			LDFLAGS="-L${PACKAGES}/ncurses/dist/wasm/lib -lncurses" \
+			-j8
 	mkdir -p ${DIST_WASM}/bin ${DIST_WASM}/lib ${DIST_WASM}/include
 	cp ${BUILD_WASM}/*.h ${DIST_WASM}/include
 	cp ${BUILD_WASM}/*.a ${DIST_WASM}/lib
 	cp ${BUILD_WASM}/lua ${DIST_WASM}/bin/lua
 	touch ${DIST_WASM}/.built
 
-test:
-	echo "no tests yet"
+${BIN}/lua-wasm: ${DIST_WASM}/.built ${CWD}/bin/lua-wasm
+	ln -sf ${CWD}/bin/lua-wasm ${BIN}/lua-wasm
+
+test: ${BIN}/lua-wasm
+	echo "389*5077" | ${CWD}/bin/lua-wasm | grep 1974953

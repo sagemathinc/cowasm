@@ -493,6 +493,7 @@ cimagl
 clearenv
 clearerr
 clearerr_unlocked
+clock
 clock_getres
 clock_gettime
 clock_nanosleep
@@ -1119,6 +1120,7 @@ time
 times
 timegm
 timespec_get
+tmpnam
 toascii
 tolower
 tolower_l

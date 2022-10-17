@@ -14,6 +14,7 @@ import signal from "./signal";
 import socket from "./socket";
 import spawn from "./spawn";
 import stdlib from "./stdlib";
+import stdio from "./stdio";
 import stat from "./stat";
 import time from "./time";
 import unistd from "./unistd";
@@ -99,6 +100,7 @@ export default function posix(context: Context): PosixEnv {
     ...spawn(context),
     ...stat(context),
     ...stdlib(context),
+    ...stdio(context),
     ...time(context),
     ...unistd(context),
     ...wait(context),
