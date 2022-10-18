@@ -33,12 +33,15 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #     I put the -Oz flag into CFLAGS upon studying what the emscripten port uses.
 #   - We play some tricks with sqlite3.h below to ensure some things get defined (this is needed for clang15).
 #   - BCC is the compiler used to build code that then gets compiled to WebAssembly.
+#   - mmap doesn't really work with WASM, so we disable it below as explained
+#     at https://www.sqlite.org/compile.html   However, this doesn't work yet to get
+#     using a file to work yet.  .read works but not sqlite3-wasm a.sql
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} && \
 		CC="cowasm-cc" \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
-		CFLAGS="-Oz -fvisibility-main -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include -I${POSIX_WASM} " \
+		CFLAGS="-Oz -fvisibility-main -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include -I${POSIX_WASM} -DSQLITE_DEFAULT_MMAP_SIZE=0" \
 		LDFLAGS="-L${ZLIB}/wasm/lib -lz -L${LIBEDIT}/wasm/lib -ledit " \
 		./configure --host=none  --prefix="${DIST_WASM}" \
 			--cache-file=config.site \
@@ -59,5 +62,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 ${BIN}/sqlite3-wasm: ${DIST_WASM}/.built ${CWD}/bin/sqlite3-wasm
 	ln -sf ${CWD}/bin/sqlite3-wasm ${BIN}/sqlite3-wasm
 
-test:
-	echo "no tests yet"
+test: ${BIN}/sqlite3-wasm
+	# really wimpy test, and it doesn't do anything with non-interactive stdin yet.
+	echo "" | sqlite3-wasm | grep SQLite
+	# TODO: This is a better test but requires implementing in python-wasm/src/wasm/posix/termios.ts
+	# echo "SELECT 389*5077" | sqlite3-wasm | grep 1974953
