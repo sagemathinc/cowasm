@@ -1,46 +1,12 @@
 --- native/src/shell.c.in	2022-09-05 04:02:23.000000000 -0700
-+++ wasm/src/shell.c.in	2022-10-17 18:28:46.000000000 -0700
-@@ -236,6 +236,25 @@
++++ wasm/src/shell.c.in	2022-10-17 19:19:08.000000000 -0700
+@@ -234,7 +234,8 @@
+ ** WebAssembly (WASM) bundle and need to disable and rewire a few
+ ** things.
  */
- #ifdef __EMSCRIPTEN__
+-#ifdef __EMSCRIPTEN__
++// NO: for CoWasm we are disabling this *toy* sqlite shell mode.
++#ifdef __DISABLED_EMSCRIPTEN__
  #define SQLITE_SHELL_WASM_MODE
-+
-+/* CoWasm: Several functions are missing when we build
-+   sqlite3, so we stub them. */
-+int sqlite3_fileio_init(
-+  sqlite3 *db, 
-+  char **pzErrMsg, 
-+  const sqlite3_api_routines *pApi
-+){
-+  printf("STUB: sqlite3_fileio_init\n");
-+  return SQLITE_OK;
-+}
-+
-+int pclose(FILE* f) {
-+  printf("STUB: pclose\n");
-+  return 0;
-+}
-+
-+#define getrusage(A,B) memset(B,0,sizeof(*B))
-+
  #else
  #undef SQLITE_SHELL_WASM_MODE
- #endif
-@@ -11980,7 +11999,7 @@
- #endif
- 
- #ifdef SQLITE_SHELL_WASM_MODE
--#  define main fiddle_main
-+#  define main __attribute__((visibility("default")))__main_argc_argv
- #endif
- 
- #if SQLITE_SHELL_IS_UTF8
-@@ -12676,7 +12695,7 @@
-     static char * argv[] = {"fiddle",
-                             "-bail",
-                             "-safe"};
--    rc = fiddle_main((int)(sizeof(argv)/sizeof(argv[0])), argv);
-+    rc = __main_argc_argv((int)(sizeof(argv)/sizeof(argv[0])), argv);
-     once = rc ? -1 : 1;
-     memset(&shellState.wasm, 0, sizeof(shellState.wasm));
-     printf(

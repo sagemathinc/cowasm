@@ -38,7 +38,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		CC="cowasm-cc" \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
-		CFLAGS="-Oz -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include -I${POSIX_WASM} " \
+		CFLAGS="-Oz -fvisibility-main -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include -I${POSIX_WASM} " \
 		LDFLAGS="-L${ZLIB}/wasm/lib -lz -L${LIBEDIT}/wasm/lib -ledit " \
 		./configure --host=none  --prefix="${DIST_WASM}" \
 			--cache-file=config.site \

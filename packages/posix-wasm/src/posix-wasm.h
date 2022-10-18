@@ -287,6 +287,10 @@ struct passwd* getpwnam(const char* name);
 struct passwd* getpwuid(uid_t uid);
 // void (*signal(int sig, void (*func)(int)))(int);
 
+// I found this in sqlite3; it is basically just setting all rusage info to 0.
+#define getrusage(A,B) memset(B,0,sizeof(*B))
+
+
 typedef unsigned int socklen_t;
 #define SO_ERROR 0x1007
 #define SOMAXCONN 32

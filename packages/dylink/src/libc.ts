@@ -226,6 +226,8 @@ mmap
 munmap
 geteuid
 fchown
+popen
+pclose
 `;
 
 // All headers from zig/dist/lib/zig/libc/include/wasm-wasi-musl except signal/thread ones.

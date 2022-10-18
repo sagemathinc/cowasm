@@ -37,5 +37,22 @@ is returned in case of success.
       }
       return 0; // error
     },
+
+    /*
+    Stubs for popen and pclose that throw an error. I think these would be kind of impossible
+    to do in WASM (without multiple threads... hence sync'd filesystem) because they are
+    nonblocking...?
+
+    FILE* popen(const char* command, const char* type);
+    int pclose(FILE* stream);
+    */
+    popen(_commandPtr: number, _typePtr: number): number {
+      // returning 0 means it couldn't do it.
+      return 0;
+    },
+
+    pclose(_streamPtr: number): number {
+      return -1;
+    },
   };
 }
