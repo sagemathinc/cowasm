@@ -314,6 +314,7 @@ netinet/udp.h
 netpacket/packet.h
 nl_types.h
 poll.h
+pthread.h
 regex.h
 sched.h
 search.h
@@ -388,6 +389,10 @@ wctype.h
 // targets of #define.
 
 const symbols = `
+pthread_attr_init
+pthread_attr_destroy
+pthread_attr_setstacksize
+pthread_attr_getstacksize
 pthread_cond_init
 pthread_cond_destroy
 pthread_cond_signal
@@ -408,7 +413,6 @@ pthread_detach
 pthread_exit
 pthread_cond_timedwait
 pthread_cond_wait
-pthread_kill
 pthread_getcpuclockid
 fchmod
 cfsetispeed
@@ -416,6 +420,7 @@ cfsetospeed
 __assert_fail
 sigaction
 signal
+__SIG_ERR
 __SIG_IGN
 __ctype_get_mb_cur_max
 _CLOCK_MONOTONIC

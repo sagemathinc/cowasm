@@ -1,0 +1,10 @@
+--- native/Programs/python.c	2022-09-11 12:23:30.000000000 -0700
++++ wasm/Programs/python.c	2022-10-18 16:30:35.000000000 -0700
+@@ -9,6 +9,7 @@
+     return Py_Main(argc, argv);
+ }
+ #else
++__attribute__((visibility("default")))
+ int
+ main(int argc, char **argv)
+ {

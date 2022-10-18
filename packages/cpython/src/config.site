@@ -200,3 +200,13 @@ ac_cv_func_connect=yes
 
 # Needed for the curses extension module.
 ac_cv_header_term_h=yes
+
+# The less threads the better for us, given our goals.
+# These are all of the pthread related variables I get in config.log.
+ac_cv_func_pthread_kill=no
+ac_cv_func_pthread_condattr_setclock=no
+ac_cv_func_pthread_detach=no
+ac_cv_func_pthread_getcpuclockid=no
+ac_cv_func_pthread_init=no
+ac_cv_func_pthread_kill=no
+ac_cv_func_pthread_sigmask=no

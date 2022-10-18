@@ -49,3 +49,6 @@ extern "C" {
 // itself to replace its 256 default fallback with 32768 everywhere,
 // though that can wait.
 #undef _SC_OPEN_MAX
+
+// we provide our own stubs
+#undef HAVE_PTHREAD_STUBS
