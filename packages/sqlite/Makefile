@@ -8,7 +8,7 @@ include ../build/Makefile-vars
 #
 # See https://github.com/sqlite/sqlite/tags for versions.
 #
-VERSION = 3.39.3
+VERSION = 3.39.4
 
 URL = https://github.com/sqlite/sqlite/archive/refs/tags/version-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/sqlite-${VERSION}.tar.gz
