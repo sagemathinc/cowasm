@@ -188,6 +188,15 @@ export default function other(context) {
     group_from_gid: (gid: number, nogroup: number = 0): number => {
       return lib.user_from_uid(gid, nogroup);
     },
+
+    // TODO -- see how this is used in code, or maybe make it
+    // do something like "#define getrusage(A,B) memset(B,0,sizeof(*B))"
+    // to make everything 0, as a stub.
+    //  int getrusage(int who, struct rusage *r_usage);
+    getrusage: (_who: number, _r_usage_ptr: number): number => {
+      notImplemented("getrusage");
+      return 0;
+    },
   };
 
   return lib;
