@@ -77,6 +77,9 @@ wint_t putwchar_unlocked (wchar_t);
 void qsort_r(void *base, size_t nmemb, size_t size,
            int (*compar)(const void *, const void *, void *),
            void *arg);
+void __qsort_r(void *base, size_t nmemb, size_t size,
+           int (*compar)(const void *, const void *, void *),
+           void *arg);
 char *strchrnul(const char *, int);
 extern char *__wasilibc_cwd;
 extern char **__wasilibc_environ;
@@ -961,6 +964,7 @@ putwchar_unlocked
 pwrite
 pwritev
 qsort_r
+__qsort_r
 quick_exit
 rand
 rand_r

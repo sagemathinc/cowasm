@@ -16,6 +16,15 @@ export default function stdlib({ child_process, os, recv, send, fs }) {
       return 0;
     },
 
+    siglongjmp: () => {
+      log_jmp("STUB: siglongjmp - no op");
+      return 0;
+    },
+
+    sigsetjmp: () => {
+      log_jmp("STUB: sigsetjmp - no op");
+      return 0;
+    },
 
     // int getloadavg(double loadavg[], int nelem);
     getloadavg: (loadavgDoubleArrayPtr: number, nelem: number): number => {
@@ -57,7 +66,7 @@ export default function stdlib({ child_process, os, recv, send, fs }) {
       try {
         const path = recv.string(pathPtr);
         const resolvedPath = fs.realpathSync(path);
-        return send.string(resolvedPath, { ptr: resolvedPathPtr, len:4096 });
+        return send.string(resolvedPath, { ptr: resolvedPathPtr, len: 4096 });
       } catch (err) {
         console.warn("ERROR", err);
         // return 0 to indicate error, NOT -1!
