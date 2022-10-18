@@ -66,4 +66,4 @@ test: ${BIN}/sqlite3-wasm
 	# really wimpy test, and it doesn't do anything with non-interactive stdin yet.
 	echo "" | sqlite3-wasm | grep SQLite
 	# TODO: This is a better test but requires implementing in python-wasm/src/wasm/posix/termios.ts
-	# echo "SELECT 389*5077" | sqlite3-wasm | grep 1974953
+	echo "SELECT 389*5077" | sqlite3-wasm | grep 1974953

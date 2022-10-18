@@ -56,7 +56,14 @@ interface StatsVFS {
   f_namemax: number;
 }
 
-// Actuall possibilities:
+interface Termios {
+  c_iflag: number;
+  c_oflag: number;
+  c_cflag: number;
+  c_lflag: number;
+}
+
+// Actual possibilities:
 //   | ["addclose", number]
 //   | ["addopen", number, number, number, number]
 //   | ["adddup2", number, number];
@@ -274,6 +281,8 @@ interface PosixFunctions {
   // This is precisely what you need when stdin is not interactive, e.g., when running
   // a script, e.g., "zython a.py", which makes it so input('...') in python works perfectly.
   makeStdinNonblocking: () => void;
+  tcgetattr: (fd: number) => Termios;
+  tcsetattr: (fd: number, optional_actions: number, tio: Termios) => void;
 }
 
 export type Posix = Partial<PosixFunctions>;

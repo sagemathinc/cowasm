@@ -22,6 +22,10 @@ export class SendToWasmAbstractBase {
     return ptr;
   }
 
+  free(ptr: number): void {
+    this.callFunction("c_free", ptr);
+  }
+
   // always get the view any time after a malloc may have happened!
   protected view(): DataView {
     return new DataView(this.memory.buffer);

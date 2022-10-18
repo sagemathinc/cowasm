@@ -276,7 +276,7 @@ pub fn u64_from_object(env: c.napi_env, object: c.napi_value, comptime key: [:0]
 
 pub fn u32_from_object(env: c.napi_env, object: c.napi_value, comptime key: [:0]const u8) !u32 {
     var property: c.napi_value = undefined;
-    if (c.napi_get_named_property(env, object, key, &property) != c.napi_ok) {
+    if (c.napi_get_named_property(env, object, @ptrCast([*c]const u8, key), &property) != c.napi_ok) {
         return throw(env, key ++ " must be defined");
     }
 
@@ -532,7 +532,24 @@ pub fn set_named_property_to_u32(
         return throw(env, error_message);
     }
 
-    if (c.napi_set_named_property(env, object, key, result) != c.napi_ok) {
+    if (c.napi_set_named_property(env, object, @ptrCast([*c]const u8, key), result) != c.napi_ok) {
+        return throw(env, error_message);
+    }
+}
+
+pub fn set_named_property_to_i64(
+    env: c.napi_env,
+    object: c.napi_value,
+    comptime key: [:0]const u8,
+    value: i64,
+    comptime error_message: [:0]const u8,
+) !void {
+    var result: c.napi_value = undefined;
+    if (c.napi_create_int64(env, value, &result) != c.napi_ok) {
+        return throw(env, error_message);
+    }
+
+    if (c.napi_set_named_property(env, object, @ptrCast([*c]const u8, key), result) != c.napi_ok) {
         return throw(env, error_message);
     }
 }

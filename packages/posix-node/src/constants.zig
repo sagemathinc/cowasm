@@ -6,12 +6,13 @@
 const c = @import("c.zig");
 const node = @import("node.zig");
 const netdb = @import("netdb.zig");
+const termios = @import("termios.zig");
 const unistd = @import("unistd.zig");
 const util = @import("util.zig");
 const wait = @import("wait.zig");
 
-const NAMES = netdb.constants.names ++ unistd.constants.names ++ wait.constants.names ++ util.constants.names;
-const VALUES = getValues(netdb.constants) ++ getValues(unistd.constants) ++ getValues(wait.constants) ++ getValues(util.constants);
+const NAMES = netdb.constants.names ++ unistd.constants.names ++ wait.constants.names ++ termios.constants.names ++ util.constants.names;
+const VALUES = getValues(netdb.constants) ++ getValues(unistd.constants) ++ getValues(wait.constants) ++ getValues(termios.constants) ++ getValues(util.constants);
 
 // You shouldn't have to change anything below.
 
@@ -30,12 +31,12 @@ fn getConstants(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi
     return obj;
 }
 
-fn getValues(comptime constants: anytype) [constants.names.len]i32 {
+fn getValues(comptime constants: anytype) [constants.names.len]u32 {
     return _getValues(constants.c_import, constants.names.len, constants.names);
 }
 
-fn _getValues(comptime c_import: anytype, comptime len: usize, comptime names: [len][:0]const u8) [len]i32 {
-    var x: [names.len]i32 = undefined;
+fn _getValues(comptime c_import: anytype, comptime len: usize, comptime names: [len][:0]const u8) [len]u32 {
+    var x: [names.len]u32 = undefined;
     var i = 0;
     for (names) |constant| {
         x[i] = @field(c_import, constant);
@@ -44,10 +45,10 @@ fn _getValues(comptime c_import: anytype, comptime len: usize, comptime names: [
     return x;
 }
 
-fn setConstant(env: c.napi_env, object: c.napi_value, key: [:0]const u8, value: i32) !void {
+fn setConstant(env: c.napi_env, object: c.napi_value, key: [:0]const u8, value: u32) !void {
     var result: c.napi_value = undefined;
-    if (c.napi_create_int32(env, value, &result) != c.napi_ok) {
-        return node.throw(env, "error creating i32 constant");
+    if (c.napi_create_uint32(env, value, &result) != c.napi_ok) {
+        return node.throw(env, "error creating u32 constant");
     }
     if (c.napi_set_named_property(env, object, @ptrCast([*c]const u8, key), result) != c.napi_ok) {
         return node.throw(env, "error setting constant");

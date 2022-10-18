@@ -1,18 +1,242 @@
-export default function stdio({ posix }) {
+/*
+
+RANDOM NOTES
+
+MAJOR TODO:  For xterm.js entirely in browser (and MS Windows), we will still
+have to implement this stuff.  Hopefully this will be much easier, since we
+implemented everything via our posix-node and can observe what's expected
+by programs.
+
+Also, for example, one of the flags is
+
+    "ISIG   When any of the characters INTR, QUIT, SUSP, or DSUSP are received, generate the corresponding signal."
+
+and since we are implementing signals and watching characters, of course this is some
+logic that we would do.
+
+On a POSIX server, a complete and easy option is to directly call the c library via
+an extension module, translating flags back and forth between native and wasi,
+and we do exactly that here.
+
+Right now on non-POSIX, the following are minimal stub functions.
+
+IMPORTANT! We can't do NOTHING!  For example, libedit will
+randomly not work if we do nothing (which drove me crazy for days)!
+This is because of the line
+
+   	if (tcgetattr(fileno(rl_instream), &t) != -1 && (t.c_lflag & ECHO) == 0)
+
+in packages/libedit/build/wasm/src/readline.c.   If t.c_lflag doesn't have the ECHO
+flag, then libedit will be totally broken for interactive use.
+We set at least that below for fd=0 and intend to do more (TODO!).
+
+           tcflag_t c_iflag;      // input modes
+           tcflag_t c_oflag;      // output modes
+           tcflag_t c_cflag;      // control modes
+           tcflag_t c_lflag;      // local modes
+           cc_t     c_cc[NCCS];   /; special characters
+
+I think for us c_lflag is mostly what matters.
+*/
+
+import constants from "./constants";
+
+const FLAGS = {
+  c_iflag: [
+    "IGNBRK",
+    "BRKINT",
+    "IGNPAR",
+    "PARMRK",
+    "INPCK",
+    "ISTRIP",
+    "INLCR",
+    "IGNCR",
+    "ICRNL",
+    "IXON",
+    "IXANY",
+    "IXOFF",
+    "IMAXBEL",
+    "IUTF8",
+  ],
+  c_oflag: ["OPOST", "ONLCR", "OCRNL", "ONOCR", "ONLRET", "OFILL", "OFDEL"],
+  c_cflag: [
+    "CSIZE",
+    "CS5",
+    "CS6",
+    "CS7",
+    "CS8",
+    "CSTOPB",
+    "CREAD",
+    "PARENB",
+    "PARODD",
+    "HUPCL",
+    "CLOCAL",
+  ],
+  c_lflag: [
+    "ICANON",
+    "ISIG",
+    "ECHO",
+    "ECHOE",
+    "ECHOK",
+    "ECHONL",
+    "NOFLSH",
+    "TOSTOP",
+    "IEXTEN",
+  ],
+} as const;
+
+interface Termios {
+  c_iflag: number;
+  c_oflag: number;
+  c_cflag: number;
+  c_lflag: number;
+}
+
+export default function stdio({ posix, callFunction, recv, send, wasi }) {
+  // We use cowasm_termios_set/get instead of just directly setting memory
+  // in the struct to avoid subtle bugs. It's a bit more tedious but more robust
+  // and works if the struct is changed in terms of order, etc.
+  function termios_set(tioPtr: number, { c_iflag, c_oflag, c_cflag, c_lflag }) {
+    const size = 4;
+    let flagsPtr = 0;
+
+    try {
+      flagsPtr = send.malloc(4 * size); // 4 unsigned ints
+      send.u32(flagsPtr, c_iflag ?? 0);
+      send.u32(flagsPtr + size, c_oflag ?? 0);
+      send.u32(flagsPtr + 2 * size, c_cflag ?? 0);
+      send.u32(flagsPtr + 3 * size, c_lflag ?? 0);
+      callFunction("cowasm_termios_set", tioPtr, flagsPtr);
+    } finally {
+      if (flagsPtr) {
+        send.free(flagsPtr);
+      }
+    }
+  }
+
+  function termios_get(tioPtr: number): {
+    c_iflag: number;
+    c_oflag: number;
+    c_cflag: number;
+    c_lflag: number;
+  } {
+    let flagsPtr = 0;
+    try {
+      const size = 4;
+      flagsPtr = send.malloc(4 * size); // 4 unsigned ints
+      callFunction("cowasm_termios_get", tioPtr, flagsPtr);
+      return {
+        c_iflag: recv.u32(flagsPtr),
+        c_oflag: recv.u32(flagsPtr + size),
+        c_cflag: recv.u32(flagsPtr + 2 * size),
+        c_lflag: recv.u32(flagsPtr + 3 * size),
+      };
+    } finally {
+      if (flagsPtr) {
+        send.free(flagsPtr);
+      }
+    }
+  }
+
+  function native_to_wasi(tio_native: Termios): Termios {
+    // now translate the flags from native to WASI
+    const tio_wasi: Termios = {
+      c_iflag: 0,
+      c_oflag: 0,
+      c_cflag: 0,
+      c_lflag: 0,
+    };
+    for (const key in tio_native) {
+      tio_wasi[key] = 0;
+      for (const name of FLAGS[key]) {
+        if (tio_native[key] & posix.constants[name]) {
+          tio_wasi[key] |= constants[name];
+        }
+      }
+    }
+    return tio_wasi;
+  }
+
+  function wasi_to_native(tio_wasi: Termios): Termios {
+    const tio_native: Termios = {
+      c_iflag: 0,
+      c_oflag: 0,
+      c_cflag: 0,
+      c_lflag: 0,
+    };
+    for (const key in FLAGS) {
+      tio_native[key] = 0;
+      for (const name of FLAGS[key]) {
+        if (tio_wasi[key] & constants[name]) {
+          tio_native[key] |= posix.constants[name];
+        }
+      }
+    }
+    return tio_native;
+  }
+
   return {
-    // export fn tcsetattr(fd: std.c.fd_t, act: c_int, tio: *termios.termios) c_int {
-    tcsetattr(): number {
-      // NOTE/TODO: Horrendous hack!
-      // For most application, if they are calling tcsetattr, it's because they want to
-      // set the terminal to a mode suitable for editline/curses.  So we just always do
-      // that, instead of properly parsing the input.  This is obviously a TODO, and
-      // will lead to trouble.
-      // For example, run dash-wasm, then try to run lua directly and echo mode is still off...
-      // Another way in which this is obviously bad is
-      //    echo "SELECT 389*5077" | sqlite3-wasm
-      // doesn't output anything.  Once we fix this it will work and we can enable tests.
-      posix.enableRawInput?.();
-      posix.disableEcho?.();
+    /*
+    These two functions are critical to applications that use
+    the terminal.  They do a huge amount in a traditional POSIX system,
+    e.g., setting baud rates, ICANON mode, echo, etc.
+
+    I think xterm.js is orthogonal to this; it just reflects how the
+    underlying terminal behaves.
+
+     int
+     tcgetattr(int fildes, struct termios *termios_p);
+
+     int
+     tcsetattr(int fildes, int optional_actions,
+         const struct termios *termios_p);
+
+    */
+    tcgetattr(wasi_fd: number, tioPtr: number): number {
+      const fd = wasi.FD_MAP.get(wasi_fd).real;
+      let tio_wasi: Termios;
+      let tio_native: Termios;
+      if (posix.tcgetattr != null) {
+        tio_native = posix.tcgetattr(fd);
+        // now translate the flags from native to WASI
+        tio_wasi = native_to_wasi(tio_native);
+      } else {
+        tio_native = {} as any; // just for logging below
+        if (fd == 0) {
+          // stdin - do something to avoid total disaster (see comment in header)
+          tio_wasi = {
+            c_iflag: 0,
+            c_oflag: 0,
+            c_cflag: 0,
+            c_lflag: constants.ECHO,
+          };
+        } else {
+          tio_wasi = {
+            c_iflag: 0,
+            c_oflag: 0,
+            c_cflag: 0,
+            c_lflag: 0,
+          };
+        }
+      }
+      // console.log("tcgetattr", { wasi_fd, fd, tio_wasi, tio_native });
+      termios_set(tioPtr, tio_wasi);
+      return 0;
+    },
+
+    tcsetattr(
+      wasi_fd: number,
+      _optional_actions: number, // ignored (involves buffering and when change happens)
+      tioPtr: number
+    ): number {
+      const fd = wasi.FD_MAP.get(wasi_fd).real;
+      const tio_wasi = termios_get(tioPtr);
+      if (posix.tcsetattr != null) {
+        // translate the flags from WASI to native
+        const tio_native = wasi_to_native(tio_wasi);
+        // console.log("tcsetattr", { fd, tio_wasi, tio_native });
+        posix.tcsetattr(fd, posix.constants.TCSAFLUSH, tio_native);
+      }
       return 0;
     },
   };
