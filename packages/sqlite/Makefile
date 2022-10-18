@@ -17,15 +17,14 @@ ZLIB = ${PACKAGES}/zlib/dist
 LIBEDIT = ${PACKAGES}/libedit/dist
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 
-all: wasm
+all: wasm ${BIN}/sqlite3-wasm
 
 include ../build/Makefile-rules
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cp ${SRC}/config.site ${BUILD_WASM}
-	cp ${POSIX_WASM}/posix-wasm.h ${BUILD_WASM}
 	cd ${BUILD_WASM} && cat ${SRC}/patches/00-syscall.patch | patch -p1
-	cd ${BUILD_WASM} && cat ${SRC}/patches/01-main-fiddle.patch | patch -p1
+	cd ${BUILD_WASM} && cat ${SRC}/patches/01-shell.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # Notes on flags below.
@@ -39,7 +38,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		CC="cowasm-cc" \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
-		CFLAGS="-Oz -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include " \
+		CFLAGS="-Oz -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include -I${POSIX_WASM} " \
 		LDFLAGS="-L${ZLIB}/wasm/lib -lz -L${LIBEDIT}/wasm/lib -ledit " \
 		./configure --host=none  --prefix="${DIST_WASM}" \
 			--cache-file=config.site \
@@ -56,6 +55,9 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	&& 	make BCC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" -j8 \
 	&&	make BCC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" install
 	touch ${DIST_WASM}/.built
+
+${BIN}/sqlite3-wasm: ${DIST_WASM}/.built ${CWD}/bin/sqlite3-wasm
+	ln -sf ${CWD}/bin/sqlite3-wasm ${BIN}/sqlite3-wasm
 
 test:
 	echo "no tests yet"

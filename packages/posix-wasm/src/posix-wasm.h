@@ -55,6 +55,7 @@ mode_t umask(mode_t mask);
 #include <sys/time.h>
 int futimes(int fd, const struct timeval tv[2]);
 int lutimes(const char* filename, const struct timeval tv[2]);
+int utimes(const char *path, const struct timeval times[2]);
 
 int execv(const char* path, char* const argv[]);
 int fexecve(int fd, char* const argv[], char* const envp[]);

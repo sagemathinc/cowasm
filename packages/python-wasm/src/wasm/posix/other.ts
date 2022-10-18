@@ -72,15 +72,37 @@ export default function other(context) {
       return (context.state.ctermidPtr = send.string(s));
     },
 
-    // password stuff -- low priority!
-    getpwnam_r: () => {
-      notImplemented("getpwnam_r");
+    // password stuff
+    // int getpwnam_r(const char *name, struct passwd *pwd, char *buffer, size_t bufsize, struct passwd **result);
+    getpwnam_r: (
+      _namePtr: number,
+      _passwdPtr: number,
+      _bufferPtr: number,
+      _bufsize: number,
+      result_ptr_ptr: number
+    ): number => {
+      // this means "not found".
+      send.pointer(result_ptr_ptr, 0);
+      return 0;
     },
+
+    // struct passwd *getpwuid(uid_t uid);
     getpwuid: () => {
-      notImplemented("getpwnam_r");
+      // not found
+      return 0;
     },
-    getpwuid_r: () => {
-      notImplemented("getpwnam_r");
+
+    // int getpwuid_r(uid_t uid, struct passwd *pwd, char *buffer,
+    // size_t bufsize, struct passwd **result);
+    getpwuid_r: (
+      _uid: number,
+      _passwdPtr: number,
+      _bufferPtr: number,
+      _bufsize: number,
+      result_ptr_ptr: number
+    ): number => {
+      send.pointer(result_ptr_ptr, 0);
+      return 0;
     },
 
     openpty: () => {

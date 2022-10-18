@@ -52,9 +52,9 @@ void *memmem(const void *, size_t, const void *, size_t);
 char *strcasestr(const char *, const char *);
 int strverscmp (const char *, const char *);
 void tdestroy(void *, void (*)(void *));
-int utimes(const char *path, const struct timeval times[2]);
 int versionsort(const struct dirent **, const struct dirent **);
 int iprintf(const char *__restrict, ...);
+int __small_printf(const char *__restrict, ...);
 extern char **environ;
 extern char **_environ;
 char *fgets_unlocked(char *, int, FILE *);
@@ -753,6 +753,7 @@ initstate
 insque
 ioctl
 iprintf
+__small_printf
 isalnum
 isalnum_l
 isalpha

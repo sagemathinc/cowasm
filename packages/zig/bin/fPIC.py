@@ -219,16 +219,21 @@ def extract_source_files(argv):
     i = 0
     source_files = []
     object_files = []
-    argv0 = []
+    compiler_args = []
     while i < len(argv):
+        if argv[i] == '-o':
+            # discard "-o foo" option entirely from here; we still get it from sys.argv later, 
+            # but do NOT include in compiler args, since we will use our own -o there.
+            i += 2
+            continue
         if is_source(argv[i]):  # .c, .cxx, etc.
             source_files.append(argv[i])
         elif is_object_or_archive(argv[i]):  # .a or .o
             object_files.append(argv[i])
         else:
-            argv0.append(argv[i])
+            compiler_args.append(argv[i])
         i += 1
-    return argv0, source_files, object_files
+    return compiler_args, source_files, object_files
 
 
 def parse_args(argv):
