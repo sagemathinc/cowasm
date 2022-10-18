@@ -4,7 +4,7 @@ include ../build/Makefile-vars
 
 # See https://github.com/sagemathinc/dash/releases which is a mirror of
 # https://git.kernel.org/pub/scm/utils/dash/dash.git without the autotools dependency.
-VERSION = 0.5.11.1
+VERSION = 0.6.0
 
 URL = https://github.com/sagemathinc/dash/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/dash-${VERSION}.tar.gz
@@ -12,27 +12,9 @@ TARBALL = ${UPSTREAM}/dash-${VERSION}.tar.gz
 LIBEDIT = ${PACKAGES}/libedit/dist
 TERMCAP = ${PACKAGES}/termcap/dist
 
-all: native wasm ${BIN}/sh-wasm
+all: wasm ${BIN}/sh-wasm
 
 include ../build/Makefile-rules
-
-# Build a statically linked native binary.
-
-# The -L for libedit is just to make autoconf happy.
-
-${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
-	rm -rf ${DIST_NATIVE}
-	cd ${BUILD_NATIVE} \
-		&&	CC="zig cc" \
-			CFLAGS="-Oz -I${LIBEDIT}/native/include" \
-			LDFLAGS="-L${LIBEDIT}/native/lib/ ${LIBEDIT}/native/lib/libedit.a ${TERMCAP}/native/lib/libtermcap.a" \
-			./configure --with-libedit --prefix=${DIST_NATIVE} \
-		&&	make -j8 \
-		&&  make install
-	touch ${DIST_NATIVE}/.built
-
-${BIN}/dash-native: ${DIST_NATIVE}/.built ${CWD}/bin/sh-wasm
-	ln -sf ${PWD}/bin/dash-native ${BIN}/dash-native
 
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
@@ -40,6 +22,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	mkdir -p ${BUILD_WASM}/src/bits
 	cp ${SRC}/extra.h ${BUILD_WASM}/src/bits/setjmp.h
 	ln -s ${SRC}/rebuild.sh ${BUILD_WASM}/rebuild.sh
+	ln -s ${SRC}/update.sh ${BUILD_WASM}/update.sh  # for developing upstream
 	echo "ac_cv_func_sigsetmask=no" > ${BUILD_WASM}/config.site
 	cd ${BUILD_WASM} \
 		&&	cat ${SRC}/patches/01-jobs-extra-include.patch | patch -p1 \
@@ -61,18 +44,21 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	CONFIG_SITE=${BUILD_WASM}/config.site \
 			CC="cowasm-cc" \
-			CFLAGS="-fvisibility-main -DJOBS=0 -Oz -I${LIBEDIT}/wasm/include -I${PACKAGES}/posix-wasm/dist/wasm" \
+			CFLAGS="-O0 -fvisibility-main -DJOBS=0  -I${LIBEDIT}/wasm/include -I${PACKAGES}/posix-wasm/dist/wasm" \
 			LDFLAGS="-L${LIBEDIT}/wasm/lib -ledit -L${TERMCAP}/wasm/lib -ltermcap" \
 			./configure \
 				--with-libedit \
 				--prefix=${DIST_WASM} \
 				--host=none \
 		&&	make -j8 install
-	ln -sf ${DIST_WASM}/bin/dash ${DIST_WASM}/bin/sh 
+	ln -sf ${DIST_WASM}/bin/dash ${DIST_WASM}/bin/sh
 	touch ${DIST_WASM}/.built
 
 ${BIN}/sh-wasm: ${DIST_WASM}/.built ${CWD}/bin/sh-wasm
 	ln -sf ${CWD}/bin/sh-wasm ${BIN}/sh-wasm
 
 test: ${BIN}/sh-wasm
+	# test doing a little arithmetic
 	echo "echo \$$((389*5077))" | ${BIN}/sh-wasm | grep 1974953
+	# test that a syntax error doesn't terminate the shell (i.e., no longjmp exception handling)
+	echo "); echo 'I am still alive'" | sh-wasm |grep alive

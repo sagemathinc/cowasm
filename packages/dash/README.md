@@ -17,7 +17,11 @@ Another reason to use dash is that bash and zsh use readline or complicated buil
 
 ## Issues to fix in order to make this usable
 
+TODO: this should probably be moved to the upstream repo?  Or should I put the upstream code here and just hack on it a lot to do all this?  Unclear.
+
 ### [ ] Error handling uses setjmp/longjmp but WASM doesn't support them
+
+\(This is now partly done in my upstream repo.\)
 
 If any error occurs it crashes everything due to using setjmp/longjmp.  According to the TOUR (in the dash source code): 
 
