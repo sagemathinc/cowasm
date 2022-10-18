@@ -33,7 +33,7 @@ ${BUILD_WASM}/libposix.a: ${OBJECTS}
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/libposix.a
 	mkdir -p ${DIST_WASM}
-	cp ${SRC}/posix-wasm.h ${SRC}/emscripten.h ${SRC}/lib/fts/fts.h ${BUILD_WASM}/libposix.a ${DIST_WASM}/
+	cp ${SRC}/posix-wasm.h ${SRC}/emscripten.h ${SRC}/lib/fts/fts.h ${SRC}/lib/fts/fts.h ${BUILD_WASM}/libposix.a ${DIST_WASM}/
 	touch ${DIST_WASM}/.built
 
 test:

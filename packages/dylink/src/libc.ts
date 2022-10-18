@@ -18,6 +18,7 @@ function main() {
 #define _WASI_EMULATED_SIGNAL
 #define _WASI_EMULATED_PROCESS_CLOCKS
 #define _WASI_EMULATED_GETPID
+#define _GNU_SOURCE
 `;
 
   for (const header of headers.split("\n")) {
@@ -171,6 +172,7 @@ void freeaddrinfo(struct addrinfo *res);
 // Extra things we added to our posix compat layer, since they are
 // missing from wasi-zig-libc:
 const posix = `
+fopencookie
 tmpfile
 strtold_l
 __fixunstfsi
@@ -386,6 +388,28 @@ wctype.h
 // targets of #define.
 
 const symbols = `
+pthread_cond_init
+pthread_cond_destroy
+pthread_cond_signal
+pthread_condattr_init
+pthread_condattr_setclock
+pthread_getspecific
+pthread_setspecific
+pthread_key_create
+pthread_key_delete
+pthread_mutex_init
+pthread_mutex_destroy
+pthread_mutex_lock
+pthread_mutex_unlock
+pthread_mutex_trylock
+pthread_self
+pthread_create
+pthread_detach
+pthread_exit
+pthread_cond_timedwait
+pthread_cond_wait
+pthread_kill
+pthread_getcpuclockid
 fchmod
 cfsetispeed
 cfsetospeed

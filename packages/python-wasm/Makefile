@@ -188,8 +188,7 @@ COWASM_WASM_C = \
 		${POSIX_WASM}/libposix.a \
 		${LIBEDIT}/lib/libedit.a \
 		${TERMCAP}/lib/libtermcap.a \
-		${CWD}/src/wasm/posix/stdlib.c \
-		${CWD}/src/python/signal/signal.c
+		${CWD}/src/wasm/posix/stdlib.c
 
 ${DIST}/cowasm/cowasm.wasm: ${COWASM_WASM_SOURCES} ${COWASM_WASM_C}
 	cd src && zig build-lib \

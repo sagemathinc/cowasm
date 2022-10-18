@@ -1,6 +1,6 @@
 pub fn keepalive() void {}
 const errno = @import("errno.zig");
-const signal = @import("signal.zig");
+const signal = @import("./signal.zig");
 const netdb = @import("netdb.zig");
 const netif = @import("netif.zig");
 const termios = @import("termios.zig");

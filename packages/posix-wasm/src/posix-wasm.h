@@ -55,7 +55,7 @@ mode_t umask(mode_t mask);
 #include <sys/time.h>
 int futimes(int fd, const struct timeval tv[2]);
 int lutimes(const char* filename, const struct timeval tv[2]);
-int utimes(const char *path, const struct timeval times[2]);
+int utimes(const char* path, const struct timeval times[2]);
 
 int execv(const char* path, char* const argv[]);
 int fexecve(int fd, char* const argv[], char* const envp[]);
@@ -217,7 +217,6 @@ int setitimer(int which, const struct itimerval* new_value,
               struct itimerval* old_value);
 int sigismember(const sigset_t* set, int signo);
 
-int pthread_sigmask(int how, const sigset_t* set, sigset_t* oldset);
 int sigpending(sigset_t* set);
 int sigwait(const sigset_t* set, int* sig);
 int sigfillset(sigset_t* set);
@@ -226,7 +225,6 @@ int sigsuspend(const sigset_t*);
 int sigwaitinfo(const sigset_t* set, siginfo_t* info);
 int sigtimedwait(const sigset_t* set, siginfo_t* info,
                  const struct timespec* timeout);
-int pthread_kill(pthread_t thread, int sig);
 
 int clock_settime(clockid_t clk_id, const struct timespec* tp);
 
@@ -379,8 +377,52 @@ void setprogname(const char* progname);
 #define S_ISTXT S_ISVTX
 #define LINE_MAX 4096
 
-long long strtonum(const char *, long long, long long, const char **);
+long long strtonum(const char*, long long, long long, const char**);
 
+// // Threading stubs:
+union pthread_attr_t {
+  struct {
+    int initialized;
+    int detach_state;
+    size_t guard_size;
+    int inherit_sched;
+    int scope;
+    struct sched_param sched_param;
+    int sched_policy;
+    void **stack_addr;
+    size_t stack_size;
+  } data;
+};
+
+int pthread_cond_init(pthread_cond_t* cond, const pthread_condattr_t* attr);
+int pthread_cond_destroy(pthread_cond_t* cond);
+int pthread_cond_signal(pthread_cond_t* cond);
+int pthread_condattr_init(pthread_condattr_t* attr);
+int pthread_condattr_setclock(pthread_condattr_t* attr, clockid_t clock_id);
+void* pthread_getspecific(pthread_key_t key);
+int pthread_setspecific(pthread_key_t key, const void* value);
+int pthread_key_create(pthread_key_t* key, void (*destructor)(void*));
+int pthread_key_delete(pthread_key_t key);
+int pthread_mutex_init(pthread_mutex_t* mutex, const pthread_mutexattr_t* attr);
+int pthread_mutex_destroy(pthread_mutex_t* mutex);
+int pthread_mutex_lock(pthread_mutex_t* mutex);
+int pthread_mutex_unlock(pthread_mutex_t* mutex);
+int pthread_mutex_trylock(pthread_mutex_t* mutex);
+pthread_t pthread_self();
+int pthread_attr_init(union pthread_attr_t* attr);
+int pthread_attr_destroy(union pthread_attr_t* attr);
+int pthread_attr_setstacksize(union pthread_attr_t* attr, size_t stacksize);
+int pthread_attr_getstacksize(const union pthread_attr_t* attr,
+                              size_t* stacksize);
+int pthread_create(pthread_t* thread, const union pthread_attr_t* attr,
+                   void* (*start_routine)(void*), void* arg);
+int pthread_detach(pthread_t thread);
+void pthread_exit(void* retval);
+int pthread_cond_timedwait(pthread_cond_t* cond, pthread_mutex_t* mutex,
+                           const struct timespec* abstime);
+int pthread_cond_wait(pthread_cond_t* cond, pthread_mutex_t* mutex);
+int pthread_kill(pthread_t thread, int sig);
+int pthread_getcpuclockid(pthread_t thread, clockid_t* clockid);
+int pthread_sigmask(int how, const sigset_t* set, sigset_t* oldset);
 
 #endif
-

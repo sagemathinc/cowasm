@@ -22,7 +22,6 @@ incompatibility with libc-wasm-zig, so we're sticking with our own pthreads.
 
 #include <stdio.h>
 #include "threads.h"
-#include "public.h"
 
 //#define debug printf
 
@@ -65,13 +64,11 @@ int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr) {
   debug("pthread_cond_init - c implementation\n");
   return 0;
 }
-PUBLIC(pthread_cond_init)
 
 int pthread_cond_destroy(pthread_cond_t *cond) {
   debug("pthread_cond_destroy - c implementation\n");
   return 0;
 }
-PUBLIC(pthread_cond_destroy)
 
 // The pthread_cond_signal() call unblocks at least one of the threads that are
 // blocked on the specified condition variable cond (if any threads are blocked
@@ -81,21 +78,18 @@ int pthread_cond_signal(pthread_cond_t *cond) {
   // just do nothing - since we never block
   return 0;
 }
-PUBLIC(pthread_cond_signal)
 
 int pthread_condattr_init(pthread_condattr_t *attr) {
   debug("pthread_condattr_init - c implementation\n");
   *attr = pthread_condattr_default;
   return 0;
 }
-PUBLIC(pthread_condattr_init)
 
 int pthread_condattr_setclock(pthread_condattr_t *attr, clockid_t clock_id) {
   debug("pthread_condattr_setclock - c implementation\n");
   attr->clock_id = clock_id;
   return 0;
 }
-PUBLIC(pthread_condattr_setclock)
 
 #define SIZE 1000
 static void *values[SIZE];
@@ -112,7 +106,6 @@ void *pthread_getspecific(pthread_key_t key) {
   }
   return 0;
 }
-PUBLIC(pthread_getspecific)
 
 int pthread_setspecific(pthread_key_t key, const void *value) {
   debug("pthread_setspecific - c implementation, key=%d, value=%p\n", key.id,
@@ -133,7 +126,6 @@ int pthread_setspecific(pthread_key_t key, const void *value) {
   values[nkeys - 1] = value;
   return 0;
 }
-PUBLIC(pthread_setspecific)
 
 int pthread_key_create(pthread_key_t *key, void (*destructor)(void *)) {
   debug("pthread_key_create - c implementation\n");
@@ -150,14 +142,12 @@ int pthread_key_create(pthread_key_t *key, void (*destructor)(void *)) {
 
   return 0;
 }
-PUBLIC(pthread_key_create)
 
 int pthread_key_delete(pthread_key_t key) {
   debug("pthread_key_delete - c implementation\n");
   // we don't store anything, so nothing to delete...
   return 0;
 }
-PUBLIC(pthread_key_delete)
 
 // The pthread_mutex_init() function initialises the mutex referenced by mutex
 // with attributes specified by attr. If attr is NULL, the default mutex
@@ -169,13 +159,11 @@ int pthread_mutex_init(pthread_mutex_t *mutex,
   debug("pthread_mutex_init - c implementation\n");
   return 0;
 }
-PUBLIC(pthread_mutex_init)
 
 int pthread_mutex_destroy(pthread_mutex_t *mutex) {
   debug("pthread_mutex_init - c implementation\n");
   return 0;
 }
-PUBLIC(pthread_mutex_destroy)
 
 // The mutex object referenced by mutex is locked by calling
 // pthread_mutex_lock(). If the mutex is already locked, the calling thread
@@ -186,45 +174,38 @@ int pthread_mutex_lock(pthread_mutex_t *mutex) {
   // debug("pthread_mutex_lock - c implementation\n");
   return 0;
 }
-PUBLIC(pthread_mutex_lock)
 
 int pthread_mutex_unlock(pthread_mutex_t *mutex) {
   // debug("pthread_mutex_unlock - c implementation\n");
   return 0;
 }
-PUBLIC(pthread_mutex_unlock)
 
 int pthread_mutex_trylock(pthread_mutex_t *mutex) {
   // debug("pthread_mutex_unlock - c implementation\n");
   return 0;
 }
-PUBLIC(pthread_mutex_trylock)
 
 // The pthread_self() function returns the thread ID of the calling thread.
 pthread_t pthread_self() {
   debug("pthread_self - c implementation\n");
   return current;
 }
-PUBLIC(pthread_self)
 
 int pthread_attr_init(union pthread_attr_t *attr) {
   debug("pthread_attr_init\n");
   return 0;
 }
-PUBLIC(pthread_attr_init)
 
 int pthread_attr_destroy(union pthread_attr_t *attr) {
   debug("pthread_attr_destroy\n");
   return 0;
 }
-PUBLIC(pthread_attr_destroy)
 
 int pthread_attr_setstacksize(union pthread_attr_t *attr, size_t stacksize) {
   debug("pthread_attr_setstacksize\n");
   attr->data.stack_size = stacksize;
   return 0;
 }
-PUBLIC(pthread_attr_setstacksize)
 
 int pthread_attr_getstacksize(const union pthread_attr_t *attr,
                               size_t *stacksize) {
@@ -232,7 +213,6 @@ int pthread_attr_getstacksize(const union pthread_attr_t *attr,
   *stacksize = attr->data.stack_size;
   return 0;
 }
-PUBLIC(pthread_attr_getstacksize)
 
 int pthread_create(pthread_t *thread, const union pthread_attr_t *attr,
                    void *(*start_routine)(void *), void *arg) {
@@ -240,34 +220,27 @@ int pthread_create(pthread_t *thread, const union pthread_attr_t *attr,
           "pthread_create: creation of threads is not yet implemented.\n");
   return -1;
 }
-PUBLIC(pthread_create)
 
 int pthread_detach(pthread_t thread) {
   debug("pthread_detach\n");
   return 0;
 }
-PUBLIC(pthread_detach)
 
 void pthread_exit(void *retval) { debug("pthread_exit\n"); }
-PUBLIC(pthread_exit)
 
 int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex,
                            const struct timespec *abstime) {
   // locking is trivial when there can be only one thread.
   return 0;
 }
-PUBLIC(pthread_cond_timedwait)
 
 int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex) {
   // locking is trivial when there can be only one thread.
   return 0;
 }
-PUBLIC(pthread_cond_wait)
 
 int pthread_kill(pthread_t thread, int sig) { return 0; }
-PUBLIC(pthread_kill)
 
 int pthread_getcpuclockid(pthread_t thread, clockid_t *clockid) {
   *clockid = CLOCK_THREAD_CPUTIME_ID;
 }
-PUBLIC(pthread_getcpuclockid)
