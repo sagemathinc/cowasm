@@ -35,7 +35,7 @@ docker-nocache:
 .PHONY: docker-nocache
 
 dylink: packages/dylink/${BUILT}
-packages/dylink/${BUILT}: node zig posix-wasm cpython lzma
+packages/dylink/${BUILT}: node zig posix-wasm lzma  # cpython   # it really depends on cpython right now, but catch-22...
 	cd packages/dylink && make all
 .PHONY: dylink
 

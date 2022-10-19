@@ -99,6 +99,8 @@ run-native: ${DIST_NATIVE}/.built
 ## WASM
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
+	cd ${PACKAGES}/dylink && make  # tricky catch 22 since this relies on Python being extracted to analyze code!  Need to move.
+	cp ${PACKAGES}/dylink/dist/wasm-export/libpython.c ${BUILD_WASM}/Programs
 	# Scripts to make it easy to change CPython and rebuild iteratively
 	ln -s ${SRC}/rebuild ${BUILD_WASM}/rebuild
 	# Copy the config.site, which answers questions needed for
@@ -108,7 +110,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cp src/Setup.local ${BUILD_WASM}/Modules/Setup.local
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
 	# explicitly add anything that is really used from there to posix-wasm.h
-	mkdir ${BUILD_WASM}/sys && echo '#include "posix-wasm.h"' >  ${BUILD_WASM}/sys/wait.h
+	mkdir ${BUILD_WASM}/sys
+	echo '#include "posix-wasm.h"' >  ${BUILD_WASM}/sys/wait.h
 	# Apply our patches:
 	cd ${BUILD_WASM} && cat ${SRC}/patches/01-main.patch | patch -p1
 	cd ${BUILD_WASM}/Lib && cat ${SRC}/patches/02-pydoc.patch | patch -p0
@@ -290,7 +293,6 @@ python-wasm: wasm ${BIN}/python-wasm
 # NOTE: If you do "make clean-wasm", then "make", be sure to also do "make pip".
 ###########
 ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built: ${DIST_WASM}/.built
-	cd ${PACKAGES}/python-wasm && make
 	rm -rf ${DIST_WASM}/lib/python*/site-packages/*pip* ${DIST_WASM}/lib/python*/site-packages/*setuptools*
 	${CWD}/bin/python-wasm -m ensurepip
 	# We apply one patch to support building C++ extensions.  Without this, the numpy

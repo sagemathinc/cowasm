@@ -107,12 +107,27 @@ export default async function importWebAssemblyDlopen({
       new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
   }
 
-  function symbolViaPointer(key: string) {
+  function symbolViaPointer(name: string) {
     if (mainInstance == null) return; // not yet available
-    log("symbolViaPointer", key);
-    const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
-    if (f == null) return;
-    return (f as Function)();
+    log("symbolViaPointer", name);
+    let f: any = mainInstance.exports[`__WASM_EXPORT__${name}`];
+    if (f == null) {
+      // Try all the other libraries (TODO: what about order?)
+      //       for (const handle in handleToLibrary) {
+      //         const { symToPtr, instance } = handleToLibrary[handle];
+      //         // two places that could have the pointer:
+      //         console.log(name, symToPtr[name], instance.exports[`__WASM_EXPORT__${name}`]);
+      //         f = symToPtr[name] ?? (instance.exports[`__WASM_EXPORT__${name}`] as Function)?.();
+      //         if (f != null) {
+      //           return f;
+      //         }
+      //       }
+      // Failed to find it in any loaded library.
+      return null;
+    }
+    const sym = (f as Function)();
+    log("symbolViaPointer", name, "-->", sym);
+    return sym;
   }
 
   function functionViaPointer(key: string) {
@@ -131,11 +146,11 @@ export default async function importWebAssemblyDlopen({
     if (__indirect_function_table == null) {
       throw Error("__indirect_function_table must be defined");
     }
+    if (__indirect_function_table.length <= index + 50) {
+      __indirect_function_table.grow(index + 50 - __indirect_function_table.length);
+    }
     if (__indirect_function_table.get(index)) {
       throw Error(`setTable: attempt to overwrite existing function! ${index}`);
-    }
-    if (__indirect_function_table.length <= index + 50) {
-      __indirect_function_table.grow(50);
     }
     // log("setTable ", index, typeof index, f, typeof f);
     __indirect_function_table.set(index, f);
@@ -162,6 +177,7 @@ export default async function importWebAssemblyDlopen({
   }
 
   function getFunction(name: string, path: string = ""): Function | undefined {
+    log("getFunction", name);
     let f = importObject?.env?.[name];
     if (f != null) {
       log("getFunction ", name, "from env");
@@ -480,6 +496,9 @@ export default async function importWebAssemblyDlopen({
       if (ptrBeforeOffset == null) {
         const ptr = symbolViaPointer(symName);
         if (ptr == null) {
+          console.error(
+            `dlopen: FATAL ERROR - Symbol '${symName}' is not available in the cowasm kernel or any loaded library via __WASM_EXPORT__${symName} but is required by '${path}'.`
+          );
           throw Error(`dlopen -- UNRESOLVED SYMBOL: ${symName}`);
         } else {
           //console.log("found ", symName, " in global");
