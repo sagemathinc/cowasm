@@ -101,8 +101,6 @@ run-native: ${DIST_NATIVE}/.built
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# Scripts to make it easy to change CPython and rebuild iteratively
 	ln -s ${SRC}/rebuild ${BUILD_WASM}/rebuild
-	# Script to make it easy to change shared modules and rebuild them.
-	ln -s ${SRC}/rebuild-shared ${BUILD_WASM}/rebuild-shared
 	# Copy the config.site, which answers questions needed for
 	# cross compiling, without which ./configure won't work.
 	cp src/config.site ${BUILD_WASM}
@@ -133,29 +131,14 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# clang15 is more strict:
 	cd ${BUILD_WASM} && cat ${SRC}/patches/12-timemodule-clang15.patch | patch -p1
 	# We can't use the modified WASI socket.h headers, since they annoyingly render the
-	# data structure useless (why!?). See packages/python-wasm/src/wasm/posix/socket.zig
+	# data structure useless (why!? - to save a few bytes?).
+	# See packages/python-wasm/src/wasm/posix/socket.zig  (which will move soon)
 	cd ${BUILD_WASM} && cat ${SRC}/patches/13-socket-unmodified-headers.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
-# The options for the extension modules.  We cannot strip later. The -s option to BLDSHARED
-# below strips debug symbols from the shared object libraries for extension modules,
-# as explained here:
-#     https://stackoverflow.com/questions/6085491/gcc-vs-clang-symbol-stripping
-# It would be nicer to build them with the symbols in (the default), then use wasm-strip
-# later when packaging things up.  Unfortunately, wasm-strip only implements "strip everything",
-# not just debug symbols.  There's code here  https://reviews.llvm.org/D73820 for the general
-# case, but I guess it isn't merged.
-# NOTE: if you're debugging, do
-#    cd build/wasm
-#    ./rebuild-shared
-# to rebuild the shared modules, which *always* builds them with debugging symbols enabled.
-# Keep the following in sync with src/rebuild-shared:
-BLDSHARED_DEBUG = zig wasm-ld --experimental-pic -shared
-LDSTRIP_FLAGS =  --strip-all --compress-relocations
-BLDSHARED_PROD = ${BLDSHARED_DEBUG} ${LDSTRIP_FLAGS}
-# what we will use:
-#BLDSHARED = ${BLDSHARED_PROD}
-BLDSHARED = ${BLDSHARED_DEBUG}
+# DEBUG_MODE = "-g"
+DEBUG_MODE = ""
+BLDSHARED = cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
 
 ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
@@ -178,14 +161,19 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	#         Changing to -O3 makes no difference.
 	# - with-ensurepip: we put that since we need it, but the makefile just runs ensurepip on python-native,
 	#   so it doesn't help.  That's fine, since we can't run zython yet until building ../zython anyways.
+	# - explicitly specifying BLDSHARED is needed since otherwise linking shared modules doesn't work.
+	#   ALSO, note that wasm-strip for fPIC code must be done at link time and can't be done later, due to
+	#   it simply not being implemented yet.  Stripping is automatic with cowasm-cc unless you pass -g.
 	cd ${BUILD_WASM} && \
 		OPT="${WASM_OPT}" \
 		CC="cowasm-cc" \
 		CXX="cowasm-c++" \
 		AR="zig ar" \
-		CFLAGS="-I${BUILD_WASM} -I${POSIX_WASM}/wasm -DPy_DEFAULT_RECURSION_LIMIT=700" \
+		CFLAGS="${DEBUG_MODE} -I${BUILD_WASM} -I${POSIX_WASM}/wasm -DPy_DEFAULT_RECURSION_LIMIT=700" \
+		BLDSHARED="${BLDSHARED}" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
+		HOSTRUNNER= \
 		./configure \
 			--config-cache \
 			--prefix=${DIST_WASM}  \
@@ -203,39 +191,32 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	cat src/pyconfig.h >> ${BUILD_WASM}/pyconfig.h
 	# NOTE: I have seen "error: unable to build WASI libc CRT file: FileNotFound" when using "make -j8",
 	# and had it go away when removing parallel build.
-	cd ${BUILD_WASM} && make \
-		CONFIGURE_LDFLAGS_NODIST="" \
-		LINKFORSHARED="-shared" \
-		MODULE__DECIMAL_LDFLAGS="Modules/_decimal/libmpdec/libmpdec.a" \
-	 	MODULE_PYEXPAT_LDFLAGS="Modules/expat/libexpat.a" \
-		MODULE__DATETIME_LDFLAGS="" \
-		CC="cowasm-cc ${OPT}" \
-		CXX="cowasm-c++ ${OPT}" \
-		BLDSHARED="${BLDSHARED}"
+	cd ${BUILD_WASM} && make
+	mkdir -p ${DIST_WASM} && ${DIST_WASM}/.built-cpython
 
-	cd ${BUILD_WASM} && make install
-
+${DIST_WASM}/.install-cpython: ${DIST_WASM}/.built-cpython
 	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-3.11/_sysconfigdata__wasi_wasm32-wasi.py so it
-	# matches the configuration we just used for building shared modules.  Otherwise, distutils
-	# and setuptools, etc., will use the original options and things will be completely broken
-	# due to lack of -fPIC.  This is annoying, but we don't want to build the core python executable
-	# -fPIC, since that is slower and bigger and we don't need it.
+	# matches the configuration we just used.  TODO: Find a better way to fix this, e.g., by configuration or
+	# patching something earlier?   This definitely feels like a hack.
 	# This is what based on testing actually works:
-	#      'LDSHARED': '' --> 'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'
+	#      'LDSHARED': '' --> 'LDSHARED': '${BLDSHARED}'
+	# This is idempotent.
 	cd ${BUILD_WASM}/build/lib.wasi-wasm32-3.11/ \
-		&& sed -i'.bak' "s/'LDSHARED': ''/'LDSHARED': 'zig wasm-ld --experimental-pic -shared -s --compress-relocations'/g" _sysconfigdata__wasi_wasm32-wasi.py
-	# Install as usual.
-	cd ${BUILD_WASM} && make install
-	# For mysterious reasons, test-tomllib isn't copied over.
+		&& sed -i'.bak' "s/'LDSHARED': ''/'LDSHARED': '${BLDSHARED}'/g" _sysconfigdata__wasi_wasm32-wasi.py
+
+	# Install as usual.  Output is huge so we do not show it all.
+	cd ${BUILD_WASM} && make install | tail -n 10
+
+	# For some reason (upstream bug?) test-tomllib isn't copied over, but it's nice to have for testing.
 	cp -rv ${BUILD_WASM}/Lib/test/test_tomllib ${DIST_WASM}/lib/python3.11/test/
 	# Copy over our small zython library with functionality for our packages.
 	cp ${SRC}/zython_importer.py ${DIST_WASM}/lib/python3.11/site-packages
 	cp ${SRC}/zython_importer.py ${DIST_WASM}/lib/dist
 	# Done!
-	touch ${DIST_WASM}/.built-cpython
+	touch ${DIST_WASM}/.install-cpython
 
 .PHONY:
-wasm-cpython: ${DIST_WASM}/.built-cpython
+wasm-cpython: ${DIST_WASM}/.install-cpython
 
 # These are the minimal data files needed to start cPython, which we found via "DEBUG=wasi:open pw-d"!
 MINIMAL_FILES = encodings/__init__.pyc encodings/aliases.pyc encodings/utf_8.pyc
@@ -248,10 +229,12 @@ MINIMAL_READLINE = termcap lib-dynload/readline.cpython-311-wasm32-wasi.so  rlco
 #
 # We WANT to run wasm_assets.py under web assembly rather than use the native cpython!
 # This is just because we can and because it's a *good test*.  It does not work yet.
-# To try this, replace "		&& python-native ./Tools/wasm/wasm_assets.py " below by
-# && zython-debug ./Tools/wasm/wasm_assets.py \
+# To try this, replace
+#    && python-native ./Tools/wasm/wasm_assets.py
+# below by
+#    && python-wasm ./Tools/wasm/wasm_assets.py
 
-${DIST_WASM}/.built-data: ${DIST_WASM}/.built-cpython
+${DIST_WASM}/.install-data: ${DIST_WASM}/.install-cpython
 	# Build wasm asset bundle (the pyc files, etc.).
 	cd ${BUILD_WASM} \
 		&& mkdir -p usr/local/lib/python3.11/lib-dynload/  \
@@ -275,19 +258,20 @@ ${DIST_WASM}/.built-data: ${DIST_WASM}/.built-cpython
 		&& zip -u python311.zip zython_importer.py \
 		&& mv python311.zip python-stdlib.zip
 
-	# Next make the MINIMAL python0.zip, which is all that's needed to start python (e.g., for a jupyter kernel or to back
-	# computations, but not a REPL). We also make a version with the readline so, so you can start a terminal, before
-	# more data needs to be loaded.
+	# Next make the MINIMAL python0.zip, which is all that's needed to start python (e.g., for a
+	# jupyter kernel or to back
+	# computations, but not a REPL). We also make a version with the readline so, so you
+	# can start a terminal, before more data needs to be loaded.
 	cd ${DIST_WASM}/lib/dist/ \
 		&& mkdir tmp && cd tmp && unzip ../python-stdlib.zip && cp ../termcap .\
 		&& zip ../python-minimal.zip ${MINIMAL_FILES} \
 		&& zip ../python-readline.zip ${MINIMAL_FILES} ${MINIMAL_READLINE} \
 		&& cd .. && rm -rf tmp
 
-	touch ${DIST_WASM}/.built-data
+	touch ${DIST_WASM}/.install-data
 
 
-${DIST_WASM}/.built: ${DIST_WASM}/.built-data
+${DIST_WASM}/.built: ${DIST_WASM}/.install-data
 	touch ${DIST_WASM}/.built
 
 
@@ -308,7 +292,7 @@ python-wasm: wasm ${BIN}/python-wasm
 ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built: ${DIST_WASM}/.built
 	cd ${PACKAGES}/python-wasm && make
 	rm -rf ${DIST_WASM}/lib/python*/site-packages/*pip* ${DIST_WASM}/lib/python*/site-packages/*setuptools*
-	zython-debug -m ensurepip
+	${CWD}/bin/python-wasm -m ensurepip
 	# We apply one patch to support building C++ extensions.  Without this, the numpy
 	# build fails pretty quickly. This is needed due to our hacky approach to -fPIC.
 	cd ${DIST_WASM} && cat ${SRC}/patches/10-setuptools-c++.patch | patch -p1
@@ -353,7 +337,7 @@ ${BIN}/python-wasm: ${DIST_WASM}/.built ${CWD}/bin/python-wasm
 
 test-pip: pip
 	echo "Testing PIP"
-	zython-debug -m pip |grep Usage
+	${CWD}/bin/python-wasm -m pip |grep Usage
 	echo "Success"
 .PHONY: test-pip
 

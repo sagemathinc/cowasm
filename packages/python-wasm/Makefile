@@ -21,7 +21,7 @@ WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_
 
 TEST = ./test-zig.sh
 
-all: ${DIST}/.built bin hello python bin-cowasm cowasm
+all: ${DIST}/.built hello python bin-cowasm cowasm
 
 include ../build/Makefile-rules
 
@@ -135,18 +135,6 @@ hello: ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.cpython-311-wasm32-wasi.s
 ## Node modules
 node_modules:
 	npm ci
-
-${CWD}/../../bin/zython: ${CWD}/bin/zython
-	ln -sf ${CWD}/bin/zython ${CWD}/../../bin/zython
-
-${CWD}/../../bin/zython-debug: ${CWD}/bin/zython-debug
-	ln -sf ${CWD}/bin/zython-debug ${CWD}/../../bin/zython-debug
-
-${CWD}/../../bin/zython-dev: ${CWD}/bin/zython-dev
-	ln -sf ${CWD}/bin/zython-dev ${CWD}/../../bin/zython-dev
-
-.PHONY: bin
-bin: ${CWD}/../../bin/zython ${CWD}/../../bin/zython-debug ${CWD}/../../bin/zython-dev
 
 ## Put it all together
 

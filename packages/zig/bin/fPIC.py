@@ -25,8 +25,10 @@ then we do the equivalent of this (but directly in the wasm-ld call):
      -Xlinker --strip-all -Xlinker -compress-relocations
 
 automatically when compiling code to save space, but make things less debugabble.
-IMPORTANT: wasm-strip doesn't work with -fPIC libraries.  Thus you must build them
-stripped in the first place.
+
+NOTE: It is now possible to strip just debug symbols later, since https://reviews.llvm.org/D73820
+did get merged into LLVM.   There's an option "--strip-debug".  Anyway, I'm not sure about
+--strip-all versus --strip-debug above.  --strip-all seems to work right now.
 """
 
 import multiprocessing, os, shutil, subprocess, sys, tempfile

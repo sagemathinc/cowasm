@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
-# Run this inside build/wasm/ to rebuild and run python-wasm. This is very
+# Run this inside build/wasm/ to rebuild.   This is
 # useful if you want to modify the cpython source code to understand what
 # is going on.  E.g., put printf's all over the place, type ./rebuild,
 # and in a few seconds you are using python-wasm with those changes applied!
 # **TODO** for some reason when make fails the build doesn't stop, so for
 # now you MUST carefully watch the build for errors.
 
-echo "Rebuild and run python-wasm"
+echo "Rebuild"
 set -ev
-make
-cp -v libpython3.11.a ../../dist/wasm/lib/
-cp -v build/lib.wasi-wasm32-3.11/*.so ../../dist/wasm/lib/python3.11/lib-dynload/
-cd ../../../python-wasm/
-make clean
-make
+SCRIPTDIR=$(dirname $(readlink -f "$0"))
+cd ..
+rm `pwd`/dist/wasm/.install-cpython
+make `pwd`/dist/wasm/.install-cpython
+make python-wasm
