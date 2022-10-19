@@ -1,11 +1,11 @@
 """
-Creates a "Zython bundle", which is a PyZipFile (so has pyc files),
+Creates a "CoWasm bundle", which is a PyZipFile (so has pyc files),
 plus we also include .so files and possibly some other extra files
 on a case-by-case basis.  There is no version information, since that's
 going to be in the npm package.json file, and obviously no architecture
 since there is only one architecture.
 
-We are going to **attempt** to change cpython to allow importing Zython
+We are going to **attempt** to change cpython to allow importing CoWasm
 bundles, i.e., so files as part of zips.  This impossible in a traditional
 OS, but we are writing the OS and control the dynamic linker, so it should
 be possible.
@@ -22,7 +22,7 @@ multiple modules.
 import io, os, sys, tarfile, time, zipfile
 
 
-class ZythonBundle(zipfile.PyZipFile):
+class CoWasmBundle(zipfile.PyZipFile):
 
     def __init__(self, *args, **kwds):
         zipfile.PyZipFile.__init__(self, *args, **kwds)
@@ -123,7 +123,7 @@ def create_bundle(name, extra_files):
     # NOTE: compression=zipfile.ZIP_LZMA is a bit smaller, but fails on import, probably
     # due to a subtle issue with webassembly.  We will revisit this later.
 
-    with ZythonBundle(f'{name}.zip',
+    with CoWasmBundle(f'{name}.zip',
                       'w',
                       optimize=2,
                       compression=zipfile.ZIP_DEFLATED) as zp:

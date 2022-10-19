@@ -52,10 +52,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		&& python-native -m zython_bundler numpy numpy/core/multiarray.py numpy/core/include \
 		&& mkdir -p ${DIST_WASM} \
 		&& cp numpy.* ${DIST_WASM}
-
-	# TODO: temporary bootstraping to install:
-	cd ${PACKAGES}/python-wasm && make packages
-
 	touch ${DIST_WASM}/.built
 
 # Just a trivial test for now.

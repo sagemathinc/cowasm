@@ -114,11 +114,11 @@ python: ${DIST}/python/python.wasm ${DATAFILES} ${PYTHON_PACKAGES} ${DIST}/termc
 # 	mkdir -p ${DIST}/python/py
 # 	cp -v $< ${DIST}/python/py
 
-.PHONY: packages
-packages:
-	rm -rf ${DIST}/python/py
-	mkdir -p ${DIST}/python/py
-	ln -sf ${PACKAGES}/py-*/dist/wasm/*.tar.xz ${DIST}/python/py
+# .PHONY: packages
+# packages:
+# 	rm -rf ${DIST}/python/py
+# 	mkdir -p ${DIST}/python/py
+# 	ln -sf ${PACKAGES}/py-*/dist/wasm/*.tar.xz ${DIST}/python/py
 
 ${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
 	echo ${PATH}

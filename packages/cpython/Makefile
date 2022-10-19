@@ -83,7 +83,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} \
 		&&	make -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD_NATIVE}:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD_NATIVE}:${LD_LIBRARY_PATH}" \
 		&&	make RUNSHARED="DYLD_LIBRARY_PATH=${BUILD_NATIVE}:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD_NATIVE}:${LD_LIBRARY_PATH}" install
-	cp ${SRC}/zython_bundler.py ${DIST_NATIVE}/lib/python3.11/site-packages
+	cp ${SRC}/cowasm_bundler.py ${DIST_NATIVE}/lib/python3.11/site-packages
 	touch ${DIST_NATIVE}/.built
 
 ${BIN}/python-native: bin/python-native
@@ -108,6 +108,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cp src/config.site ${BUILD_WASM}
 	# Configure how modules are built
 	cp src/Setup.local ${BUILD_WASM}/Modules/Setup.local
+	# Custom code to run at startup
+	cp src/sitecustomize.py ${BUILD_WASM}/Lib
 	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
 	# explicitly add anything that is really used from there to posix-wasm.h
 	mkdir ${BUILD_WASM}/sys
@@ -213,8 +215,8 @@ ${DIST_WASM}/.install-cpython: ${DIST_WASM}/.built-cpython
 	# For some reason (upstream bug?) test-tomllib isn't copied over, but it's nice to have for testing.
 	cp -rv ${BUILD_WASM}/Lib/test/test_tomllib ${DIST_WASM}/lib/python3.11/test/
 	# Copy over our small zython library with functionality for our packages.
-	cp ${SRC}/zython_importer.py ${DIST_WASM}/lib/python3.11/site-packages
-	cp ${SRC}/zython_importer.py ${DIST_WASM}/lib/dist
+	cp ${SRC}/cowasm_importer.py ${DIST_WASM}/lib/python3.11/site-packages
+	cp ${SRC}/cowasm_importer.py ${DIST_WASM}/lib/dist
 	# Done!
 	touch ${DIST_WASM}/.install-cpython
 
@@ -257,8 +259,8 @@ ${DIST_WASM}/.install-data: ${DIST_WASM}/.install-cpython
 	# Also mv zip to a more meaningful name.
 	cd ${DIST_WASM}/lib/dist/ \
 		&& zip -u python311.zip lib-dynload/* \
-		&& cp ../python3.11/site-packages/zython_importer.py . \
-		&& zip -u python311.zip zython_importer.py \
+		&& cp ../python3.11/site-packages/cowasm_importer.py . \
+		&& zip -u python311.zip cowasm_importer.py \
 		&& mv python311.zip python-stdlib.zip
 
 	# Next make the MINIMAL python0.zip, which is all that's needed to start python (e.g., for a

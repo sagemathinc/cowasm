@@ -9,33 +9,35 @@ import zipfile
 import tarfile
 from time import time
 
-zython_modules = {}
+cowasm_modules = {}
 
-verbose = 'zython:importer' in os.environ.get("DEBUG", '')
+verbose = 'cowasm:importer' in os.environ.get("DEBUG", '')
 
 temporary_directory = None
+
+
+def site_packages_directory():
+    for path in sys.path:
+        if path.endswith('site-packages'):
+            # In dev mode using the real filesystem
+            return path
 
 
 def get_package_directory():
     # We try to find site-packages, and if so, use that:
     # I like this since efficient, but I hate that it adds an
-    # additioanl "sources of truth".
+    # additional "sources of truth".
 
-    #     for path in sys.path:
-    #         if path.endswith('site-packages'):
-    #             # In any dev mode using the real filesystem
-    #             return path
-
-        # TODO:
-        # This won't work and I don't understand why.  My best guess is yet
-        # another subtle unionfs bug.  Try again after rewriting to not use
-        # unionfs -- hopefully it's not a memfs problem.
-        #     if '/usr/lib/python3.11' in sys.path:
-        #         # Using memfs (the non-dev mode).
-        #         path = '/usr/lib/python3.11/site-packages'
-        #         os.makedirs(path, exist_ok=True)
-        #         sys.path.insert(0, path)
-        #         return path
+    # TODO:
+    # This won't work and I don't understand why.  My best guess is yet
+    # another subtle unionfs bug.  Try again after rewriting to not use
+    # unionfs -- hopefully it's not a memfs problem.
+    #     if '/usr/lib/python3.11' in sys.path:
+    #         # Using memfs (the non-dev mode).
+    #         path = '/usr/lib/python3.11/site-packages'
+    #         os.makedirs(path, exist_ok=True)
+    #         sys.path.insert(0, path)
+    #         return path
 
     # If not, we fall back to a temporary directory that gets
     # deleted automatically when the process exits, hence the global
@@ -54,7 +56,7 @@ def get_package_directory():
 package_dirname = get_package_directory()
 
 
-class ZythonPackageFinder(importlib.abc.MetaPathFinder):
+class CoWasmPackageFinder(importlib.abc.MetaPathFinder):
 
     def __init__(self, loader):
         self._loader = loader
@@ -76,14 +78,14 @@ class ZythonPackageFinder(importlib.abc.MetaPathFinder):
         return importlib.machinery.ModuleSpec(fullname, self._loader)
 
 
-class ZythonPackageLoader(importlib.abc.Loader):
+class CoWasmPackageLoader(importlib.abc.Loader):
 
     def provides(self, fullname: str):
-        return zython_modules.get(fullname) is not None
+        return cowasm_modules.get(fullname) is not None
 
     def create_module(self, spec):
         if verbose: print("create_module", spec)
-        path = zython_modules.get(spec.name)
+        path = cowasm_modules.get(spec.name)
         return extract_archive_and_import(spec.name, path)
 
     def exec_module(self, module):
@@ -91,7 +93,7 @@ class ZythonPackageLoader(importlib.abc.Loader):
 
 
 def extract_archive_and_import(name: str, archive_path: str):
-    archive_path = zython_modules[name]
+    archive_path = cowasm_modules[name]
 
     if verbose:
         t = time()
@@ -105,7 +107,7 @@ def extract_archive_and_import(name: str, archive_path: str):
     finally:
         # Once we even try to extract, make it impossible that our importer will ever
         # try again on this module -- this avoids any possibility of an infinite loop
-        del zython_modules[name]
+        del cowasm_modules[name]
 
     if verbose:
         print(time() - t, package_dirname)
@@ -121,8 +123,8 @@ def extract_archive_and_import(name: str, archive_path: str):
 
 
 def init():
-    loader = ZythonPackageLoader()
-    finder = ZythonPackageFinder(loader)
+    loader = CoWasmPackageLoader()
+    finder = CoWasmPackageFinder(loader)
     sys.meta_path.append(finder)
 
 
@@ -131,4 +133,28 @@ init()
 
 def install(modules):
     for name in modules.keys():
-        zython_modules[name] = modules[name]
+        cowasm_modules[name] = modules[name]
+
+
+"""
+TODO: This is for local dev.  Need something similar for distribution and the web.
+"""
+
+# cowasm/packages/cpython/dist/wasm/lib/python3.11/site-packages
+def init_dev():
+    pkgs = site_packages_directory()
+    i = pkgs.rfind("packages/cpython")
+    PACKAGES = pkgs[:i+len("packages")]
+
+    for path in os.listdir(os.path.join(PACKAGES)):
+        if not path.startswith('py-'): continue
+        module = path[3:]
+        if module == 'cython':
+            module = 'Cython'
+        bundle = os.path.join(PACKAGES, path, 'dist', 'wasm', module + '.tar.xz')
+        print(bundle)
+        if os.path.exists(bundle):
+            cowasm_modules[module] = bundle
+
+init_dev()
+

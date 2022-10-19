@@ -21,14 +21,10 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	# NOTE: there's a lot of files in Cython that are NOT .so, not .pyc, but do
 	# need to get included. They are also not in some special "data" location.
 	cd ${BUILD_WASM}/build/lib* \
-		&& python-native -m zython_bundler Cython cython.py Cython/Utility Cython/Includes \
-		&& python-native -m zython_bundler pyximport \
+		&& python-native -m cowasm_bundler Cython cython.py Cython/Utility Cython/Includes \
+		&& python-native -m cowasm_bundler pyximport \
 		&& cp *.tar.xz ${DIST_WASM}
 	cp ${BUILD_WASM}/cython.py ${DIST_WASM}/
-
-	# Copy over the cython package we just built.
-	# (TODO: this is just a bootstraping problem.)
-	cd ${PACKAGES}/python-wasm && make packages
 
 	# **TODO: this is very temporary until we have a notion of zython packages that are single
 	# top level file.**

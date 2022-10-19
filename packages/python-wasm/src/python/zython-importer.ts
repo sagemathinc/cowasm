@@ -11,7 +11,7 @@ export default async function initZythonImporter(): Promise<string> {
   for (const name of await readdir(modulePath)) {
     modules[name.split(".")[0]] = join(modulePath, name);
   }
-  return `import zython_importer; zython_importer.install(${JSON.stringify(
+  return `import cowasm_importer; cowasm_importer.install(${JSON.stringify(
     modules
   )})`;
 }
