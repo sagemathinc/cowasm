@@ -9,7 +9,7 @@
 echo "Rebuild"
 set -ev
 SCRIPTDIR=$(dirname $(readlink -f "$0"))
-cd ..
-rm `pwd`/dist/wasm/.install-cpython
+cd "$SCRIPTDIR"/..
+rm -f `pwd`/dist/wasm/.install-cpython
 make `pwd`/dist/wasm/.install-cpython
 make python-wasm
