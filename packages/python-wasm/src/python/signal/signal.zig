@@ -16,6 +16,7 @@ export fn _Py_CheckEmscriptenSignals() void {
     }
 }
 
+
 // Upstream uses 50 for analogue of SIGNAL_INTERVAL (see Python/emscripten_signal.c in the cpython sources).
 // However, this may or may not be called frequently, so not checking more could be a problem.  It would
 // make a lot more sense to space these out with a high performance system clock... but of course access to

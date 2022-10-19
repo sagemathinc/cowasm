@@ -39,9 +39,9 @@ PYTHON_WASM = ${BIN}/python-wasm
 # NDEBUG I think disable assertions (?).
 
 # Use this instead for better debugging (?).
-# WASM_OPT_DEBUG=-DNDEBUG -g -fwrapv -Wall -O0
 
-WASM_OPT=-DNDEBUG -fwrapv -Wall -Oz
+WASM_OPT=-DNDEBUG -fwrapv -Wall -Oz -g
+#WASM_OPT=-DNDEBUG -fwrapv -Wall -Oz
 
 
 # We only use zlib (not lzma) for native build, since liblzma is widely available natively.
@@ -154,7 +154,8 @@ BLDSHARED_DEBUG = zig wasm-ld --experimental-pic -shared
 LDSTRIP_FLAGS =  --strip-all --compress-relocations
 BLDSHARED_PROD = ${BLDSHARED_DEBUG} ${LDSTRIP_FLAGS}
 # what we will use:
-BLDSHARED = ${BLDSHARED_PROD}
+#BLDSHARED = ${BLDSHARED_PROD}
+BLDSHARED = ${BLDSHARED_DEBUG}
 
 ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.

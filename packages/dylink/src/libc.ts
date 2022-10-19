@@ -162,6 +162,8 @@ const char *getprogname() { return __progname; }
 void setprogname(const char *progname) { __progname = progname; }
 
 void freeaddrinfo(struct addrinfo *res);
+void _Py_CheckEmscriptenSignalsPeriodically();
+void _Py_CheckEmscriptenSignals();
 `;
   s += "\n";
   s += wasmExport((symbols + "\n" + posix).split("\n"));
@@ -172,6 +174,8 @@ void freeaddrinfo(struct addrinfo *res);
 // Extra things we added to our posix compat layer, since they are
 // missing from wasi-zig-libc:
 const posix = `
+_Py_CheckEmscriptenSignalsPeriodically
+_Py_CheckEmscriptenSignals
 fopencookie
 tmpfile
 strtold_l

@@ -101,6 +101,8 @@ export default async function importWebAssemblyDlopen({
   if (__indirect_function_table == null) {
     // TODO: Make the 1000 bigger if your main module has a large number of function pointers
     // Maybe we need to parse the wasm bundle in general (that's what emscripten does).
+    // Note that this is only potentially an issue for the main core WASM module, not the
+    // dynamic libraries that get loaded at runtime.
     __indirect_function_table = env.__indirect_function_table =
       new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
   }

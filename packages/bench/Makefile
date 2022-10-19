@@ -16,10 +16,9 @@ pypy3:
 	echo "Starting benchmarks with pypy (you must install pypy3 yourself)"
 	pypy3 src/all.py
 
-# Running all the benchmark programs tests something about zython actually working.
+# Running all the benchmark programs tests something about python-wasm actually working.
 test:
 	make python-wasm
-	make zython
 	cd src/cython && make all  # good test of cython
 
 .PHONY: clean

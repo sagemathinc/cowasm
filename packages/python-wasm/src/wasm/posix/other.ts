@@ -198,11 +198,6 @@ export default function other(context) {
       return 0;
     },
 
-    // TODO: very temporary!  This will go in the cpython package, I think.
-    // And this doesn't work as is.
-    _Py_CheckEmscriptenSignals: () => {},
-
-    _Py_CheckEmscriptenSignalsPeriodically: () => {},
   };
 
   return lib;

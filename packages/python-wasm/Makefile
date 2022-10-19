@@ -177,9 +177,9 @@ COWASM_WASM_SOURCES = \
 	src/cowasm/interface.zig \
 	src/cowasm/cowasm.zig
 
-COWASM_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
+COWASM_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED} -L${PYTHON_WASM}/lib -lpython3.11
 
-COWASM_WASM_INCLUDE = -I. -I${POSIX_WASM}
+COWASM_WASM_INCLUDE = -I. -I${POSIX_WASM} -I${PYTHON_WASM}/include/python3.11
 
 # TODO: I think libedit and libtermcap should probably be dynamic
 # libraries that get loaded when needed.  NOT SURE. This will always be a tradeoff.
