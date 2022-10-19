@@ -1,5 +1,5 @@
 # Run as:
-#    zython-dev setup.py build
+#    python-wasm setup.py build
 
 from distutils.core import setup
 from distutils.extension import Extension

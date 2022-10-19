@@ -27,11 +27,11 @@ packages/dash/${BUILT}: zig libedit
 .PHONY: dash
 
 docker:
-	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/zython master | awk '{print $$1}'` -t zython .
+	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/cowasm master | awk '{print $$1}'` -t cowasm .
 .PHONY: docker
 
 docker-nocache:
-	docker build --no-cache -t zython .
+	docker build --no-cache -t cowasm .
 .PHONY: docker-nocache
 
 # NOTE: there is a partial circular dep between dylink and cpython right now, so cpython actually

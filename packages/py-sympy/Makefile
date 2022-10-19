@@ -24,7 +24,7 @@ test-native: ${BUILD_WASM}/.built
 # This is a small test just that something works.  It's NOT the full very massive test suite,
 # which might be hard to get to pass anywhere, let alone in WASM.
 test: ${BUILD_WASM}/.built
-	${BIN}/zython-debug ${SRC}/test_basic.py
+	${BIN}/python-wasm ${SRC}/test_basic.py
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \

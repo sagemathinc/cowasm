@@ -1,5 +1,5 @@
 # Run as:
-#    zython-dev setup.py build
+#    python-wasm setup.py build
 
 from setuptools import Extension, setup
 from Cython.Build import cythonize

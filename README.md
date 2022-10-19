@@ -1,4 +1,4 @@
-# Zython: WebAssembly Python for Servers and Browsers
+# CoWasm: Collaborative WebAssembly for Servers and Browsers
 
 ## Some Quick Notes about the overall plan
 
@@ -19,9 +19,9 @@
 
 > WebAssembly Python for servers and browsers. Built using Zig. Supports extension modules such as numpy and posix subprocesses. Does not use Emscripten.
 
-URL: https://github.com/sagemathinc/zython
+URL: https://github.com/sagemathinc/cowasm
 
-**The overall project is called "Zython", which is meant to indicate that we use Zig heavily to make Python available.** The most important package in the project is called `python-wasm`, which is a build of Python for WebAssembly.
+**The overall project was called "Zython", which is meant to indicate that we use Zig heavily to make Python available.** The most important package in the project is called `python-wasm`, which is a build of Python for WebAssembly.
 
 DEMOS:
 

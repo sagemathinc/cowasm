@@ -33,7 +33,7 @@ PYTHON_WASM = ${BIN}/python-wasm
 # coded in the generated Makefile.  I have noticed some major compiler bugs
 # with -O3, so we can revisit this later with newer LLVM/zig releases.
 # For example:
-#   https://github.com/sagemathinc/zython/issues/27
+#   https://github.com/sagemathinc/cowasm/issues/27
 # is a bug with -O3 that goes away with -Oz. The diff in performance
 # is less than 5% with -O3 over -Oz.
 # NDEBUG I think disable assertions (?).

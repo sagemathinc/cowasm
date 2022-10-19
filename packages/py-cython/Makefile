@@ -12,7 +12,7 @@ include ../build/Makefile-rules
 
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&& zython-debug setup.py build
+		&& python-wasm setup.py build
 	touch ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
@@ -51,7 +51,7 @@ test: wasm
 	cd ${BUILD_WASM}/Demos \
 		&& rm -f *.so *.c \
 		&& touch numpy.py \
-		&& zython-debug setup.py build_ext --inplace \
-		&& zython-debug run_primes.py 20 \
-		&& zython-debug run_spam.py \
-		&& zython-debug integrate_timing.py
+		&& python-wasm setup.py build_ext --inplace \
+		&& python-wasm run_primes.py 20 \
+		&& python-wasm run_spam.py \
+		&& python-wasm integrate_timing.py

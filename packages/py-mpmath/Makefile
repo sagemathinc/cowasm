@@ -14,7 +14,7 @@ include ../build/Makefile-rules
 # We'll fix this. It's a bug somehow in the posix compat layer for zython.
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&& zython-debug setup.py build
+		&& python-wasm setup.py build
 	touch ${BUILD_WASM}/.built
 
 test: ${BUILD_WASM}/.built

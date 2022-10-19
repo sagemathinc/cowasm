@@ -54,9 +54,9 @@ test("that sys.executable is set and exists -- when running zython via command l
   expect(existsSync(stdout)).toBe(true);
 });
 
-test("that sys.executable is set and exists -- when running zython-debug via command line", () => {
+test("that sys.executable is set and exists -- when running python-wasm via command line", () => {
   // pw-d -c "import sys; print(sys.executable)"
-  const stdout = execFileSync("../../bin/zython-debug", [
+  const stdout = execFileSync("../../bin/python-wasm", [
     "-c",
     "import sys; print(sys.executable)",
   ])
