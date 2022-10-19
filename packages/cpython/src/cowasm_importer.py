@@ -139,7 +139,6 @@ def init_dev():
         # do not install or use this when running tests, as it changes
         # the path which breaks some tests.
         return
-    print("install cowasm importer!")
 
     init()
     pkgs = site_packages_directory()

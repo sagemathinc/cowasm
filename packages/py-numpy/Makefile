@@ -58,7 +58,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 test: ${DIST_WASM}/.built
 	rm -rf ${BUILD_WASM}/zython-test
 	mkdir -p ${BUILD_WASM}/zython-test
-	cd ${BUILD_WASM}/zython-test \
+	@cd ${BUILD_WASM}/zython-test \
 		&& python-wasm -c "import numpy; print(numpy.array([3,8,9,5,0,7,7]).sum())" | grep 39 \
 		&& echo "NUMPY TEST PASSED!"
 
