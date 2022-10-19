@@ -17,6 +17,7 @@ bin/cython
 bin/zash*
 bin/cowasm*
 bin/*-wasm
+bin-wasm/**
 **/dist
 **/build
 **/node_modules

@@ -178,9 +178,16 @@ packages/py-numpy/${BUILT}: zig python-wasm py-cython py-pip
 	cd packages/py-numpy && make all
 .PHONY: py-numpy
 
+bin-wasm:
+	rm -rf ${CWD}/bin-wasm
+	mkdir -p ${CWD}/bin-wasm
+	cp -v packages/*/dist/wasm/bin/* ${CWD}/bin-wasm
+.PHONY: bin-wasm
+
 .PHONY: clean
 clean:
 	./bin/make-all clean ${PACKAGE_DIRS}
+	rm -rf ${CWD}/bin-wasm
 
 clean-build:
 	./bin/make-all clean-build ${PACKAGE_DIRS}

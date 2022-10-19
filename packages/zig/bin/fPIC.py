@@ -141,8 +141,11 @@ def is_debug():
     for flag in reversed(sys.argv):
         if flag.startswith('-O'):
             return flag == '-O0'
-    # No -O flag at all defaults to -O0.
-    return True
+    # We strip by default if there are no relevant flags.  For WASM we
+    # usually want to strip, unless we're explicitly debugging.  A subtle
+    # aspect of autodetecting is that the stripping actually happens
+    # during linking, but these optimization flags are used for compilation.
+    return False
 
 
 def is_input(filename):
@@ -222,7 +225,7 @@ def extract_source_files(argv):
     compiler_args = []
     while i < len(argv):
         if argv[i] == '-o':
-            # discard "-o foo" option entirely from here; we still get it from sys.argv later, 
+            # discard "-o foo" option entirely from here; we still get it from sys.argv later,
             # but do NOT include in compiler args, since we will use our own -o there.
             i += 2
             continue
@@ -304,10 +307,13 @@ def main():
     ] + linker_args
 
     if not is_debug():
+        print("Adding strip args!")
         link.append('--strip-all')
         # Note that we have to do this '--compress-relocations' here, since it is
         # ignored if put in Xliner args.
         link.append('--compress-relocations')
+    else:
+        print("NO strip args")
 
     link += object_args
 

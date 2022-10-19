@@ -152,7 +152,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 # to rebuild the shared modules, which *always* builds them with debugging symbols enabled.
 # Keep the following in sync with src/rebuild-shared:
 BLDSHARED_DEBUG = zig wasm-ld --experimental-pic -shared
-BLDSHARED_PROD = ${BLDSHARED_DEBUG}  -s --compress-relocations
+LDSTRIP_FLAGS =  --strip-all --compress-relocations
+BLDSHARED_PROD = ${BLDSHARED_DEBUG} ${LDSTRIP_FLAGS}
 # what we will use:
 BLDSHARED = ${BLDSHARED_PROD}
 
