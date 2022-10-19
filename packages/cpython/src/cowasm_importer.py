@@ -48,12 +48,11 @@ def get_package_directory():
     # (We work around the cython.py thing for now.)
 
     global temporary_directory
-    temporary_directory = tempfile.TemporaryDirectory()
-    sys.path.insert(0, temporary_directory.name)
+    if temporary_directory is None:
+        temporary_directory = tempfile.TemporaryDirectory()
+        sys.path.insert(0, temporary_directory.name)
     return temporary_directory.name
 
-
-package_dirname = get_package_directory()
 
 
 class CoWasmPackageFinder(importlib.abc.MetaPathFinder):
@@ -94,6 +93,7 @@ class CoWasmPackageLoader(importlib.abc.Loader):
 
 def extract_archive_and_import(name: str, archive_path: str):
     archive_path = cowasm_modules[name]
+    package_dirname = get_package_directory()
 
     if verbose:
         t = time()
@@ -152,7 +152,6 @@ def init_dev():
         if module == 'cython':
             module = 'Cython'
         bundle = os.path.join(PACKAGES, path, 'dist', 'wasm', module + '.tar.xz')
-        print(bundle)
         if os.path.exists(bundle):
             cowasm_modules[module] = bundle
 
