@@ -173,7 +173,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 		BLDSHARED="${BLDSHARED}" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
-		HOSTRUNNER= \
+		HOSTRUNNER="${BIN}/cowasm" \
 		./configure \
 			--config-cache \
 			--prefix=${DIST_WASM}  \
