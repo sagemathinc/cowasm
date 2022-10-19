@@ -25,8 +25,7 @@ POSIX_WASM = ${PACKAGES}/posix-wasm/dist
 # NCURSES_INCLUDE = -I${NCURSES}/wasm/include/ncurses -I${NCURSES}/wasm/include
 # NCURSES_LIB = -L${NCURSES}/wasm/lib
 
-ZYTHON = ${BIN}/zython
-ZYTHON_DEBUG = ${BIN}/zython-debug
+PYTHON_WASM = ${BIN}/python-wasm
 
 # Either -Oz or -O3 make sense to me...
 #   -O0 = exceeds a limit so can't even load the result with webassembly!
@@ -294,9 +293,9 @@ ${DIST_WASM}/.built: ${DIST_WASM}/.built-data
 
 # Use "make run-wasm" to run our WASM python at the command line.
 # You can also just run `zython` in the top level bin/ directory.
-.PHONY: run-zython
-run-zython: wasm python-wasm
-	${ZYTHON}
+.PHONY: python-wasm
+python-wasm: wasm ${BIN}/python-wasm
+	@${BIN}/python-wasm
 
 
 ###########
@@ -338,7 +337,7 @@ RUN_TESTS =  _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 TEST_PATH=${BIN}:/bin:/usr/bin
 
 test-all: wasm native
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${ZYTHON_DEBUG} ${RUN_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS}
 .PHONY: test-all
 
 
@@ -349,7 +348,7 @@ SUPPORTED_TESTS = test_atexit test_base64 test_builtin test_calendar test_capi t
 
 
 ${BIN}/python-wasm: ${DIST_WASM}/.built ${CWD}/bin/python-wasm
-	ln -sf ${CWD}/bin/python-wasm ${BIN}/python-wasm
+	@ln -sf ${CWD}/bin/python-wasm ${BIN}/python-wasm
 
 test-pip: pip
 	echo "Testing PIP"
@@ -360,7 +359,7 @@ test-pip: pip
 
 test: wasm native python-wasm test-pip
 	echo "Running ${SUPPORTED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${ZYTHON_DEBUG} ${RUN_TESTS} -j4 --timeout=240 ${SUPPORTED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} -j4 --timeout=240 ${SUPPORTED_TESTS}
 	echo "Ran ${SUPPORTED_TEST_DESC}"
 .PHONY: test
 
@@ -369,7 +368,7 @@ PASSED_WITHOUT_SUBPROCESS = test_timeout test_stat test_robotparser test_nntplib
 
 test-passed-without-subprocess: wasm native
 	echo "Running ${PASSED_WITHOUT_SUBPROCESS_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${ZYTHON_DEBUG} ${RUN_TESTS} --timeout=180 -j4 ${PASSED_WITHOUT_SUBPROCESS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} --timeout=180 -j4 ${PASSED_WITHOUT_SUBPROCESS}
 	echo "Ran ${PASSED_WITHOUT_SUBPROCESS_DESC}"
 
 
@@ -390,14 +389,14 @@ FAILED_TESTS =  test_sys test_platform  test_getpass test_codecs   test_distutil
 
 test-failed:  wasm native
 	echo "Running ${FAILED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${ZYTHON_DEBUG} ${RUN_TESTS} --timeout=180 -j4 ${FAILED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} --timeout=180 -j4 ${FAILED_TESTS}
 	echo "Ran ${FAILED_TEST_DESC}"
 
 
 TEST=test_long
 test-one:   wasm native
 	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${ZYTHON_DEBUG} ${RUN_TESTS} --timeout=60 -v ${TEST}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} --timeout=60 -v ${TEST}
 .PHONY: test-one
 
 test-one-worker: wasm native
@@ -411,5 +410,5 @@ SKIPPED_TESTS = test_asdl_parser test__xxsubinterpreters test_asyncgen test_asyn
 
 test-skipped:  wasm native
 	echo "Running ${SKIPPED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${ZYTHON_DEBUG} ${RUN_TESTS} --timeout=60 ${SKIPPED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} --timeout=60 ${SKIPPED_TESTS}
 	echo "Ran ${SKIPPED_TEST_DESC}"
