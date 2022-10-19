@@ -192,7 +192,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# NOTE: I have seen "error: unable to build WASI libc CRT file: FileNotFound" when using "make -j8",
 	# and had it go away when removing parallel build.
 	cd ${BUILD_WASM} && make
-	mkdir -p ${DIST_WASM} && ${DIST_WASM}/.built-cpython
+	mkdir -p ${DIST_WASM} && touch ${DIST_WASM}/.built-cpython
 
 ${DIST_WASM}/.install-cpython: ${DIST_WASM}/.built-cpython
 	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-3.11/_sysconfigdata__wasi_wasm32-wasi.py so it
