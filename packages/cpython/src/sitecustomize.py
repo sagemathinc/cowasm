@@ -1,1 +1,4 @@
-import cowasm_importer
+try:
+    import cowasm_importer
+except:
+    pass

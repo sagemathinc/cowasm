@@ -128,13 +128,6 @@ def init():
     sys.meta_path.append(finder)
 
 
-init()
-
-
-def install(modules):
-    for name in modules.keys():
-        cowasm_modules[name] = modules[name]
-
 
 """
 TODO: This is for local dev.  Need something similar for distribution and the web.
@@ -142,6 +135,8 @@ TODO: This is for local dev.  Need something similar for distribution and the we
 
 # cowasm/packages/cpython/dist/wasm/lib/python3.11/site-packages
 def init_dev():
+    if '_PYTHON_RUN_TESTS' in os.environ: return;
+    init()
     pkgs = site_packages_directory()
     i = pkgs.rfind("packages/cpython")
     PACKAGES = pkgs[:i+len("packages")]
@@ -155,5 +150,7 @@ def init_dev():
         if os.path.exists(bundle):
             cowasm_modules[module] = bundle
 
+# always try this for now.
 init_dev()
+
 

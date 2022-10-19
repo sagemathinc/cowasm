@@ -313,12 +313,14 @@ pip: ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built
 #         self.ns.use_mp = 0
 # of dist/wasm/lib/python3.11/test/libregrtest/main.py then it works, but of course
 # with a single process, which is slow. So we stick with python-native.
-RUN_TESTS =  _PYTHON_PROJECT_BASE=${BUILD_WASM} \
+RUN_TESTS =  _PYTHON_RUN_TESTS=1 \
+	_PYTHON_PROJECT_BASE=${BUILD_WASM} \
 	_PYTHON_HOST_PLATFORM=wasi-wasm32 \
 	PYTHONPATH=${DIST_WASM}/lib/python3.11 \
 	_PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__wasi_wasm32-wasi \
 	${DIST_NATIVE}/bin/python3 \
-	./Tools/scripts/run_tests.py
+	./Tools/scripts/run_tests.py \
+	 --python=${PYTHON_WASM}
 
 # We use a restricted PATH for running tests.  On Linux I had a lot of trouble
 # with some random binaries in random places causing hangs, and this provides
@@ -326,7 +328,7 @@ RUN_TESTS =  _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 TEST_PATH=${BIN}:/bin:/usr/bin
 
 test-all: wasm native
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}
 .PHONY: test-all
 
 
@@ -348,7 +350,7 @@ test-pip: pip
 
 test: wasm native ${BIN}/python-wasm test-pip
 	echo "Running ${SUPPORTED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM} -j4 --timeout=240 ${SUPPORTED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}  -j4 --timeout=240 ${SUPPORTED_TESTS}
 	echo "Ran ${SUPPORTED_TEST_DESC}"
 .PHONY: test
 
@@ -357,14 +359,14 @@ PASSED_WITHOUT_SUBPROCESS = test_timeout test_stat test_robotparser test_nntplib
 
 test-passed-without-subprocess: wasm native
 	echo "Running ${PASSED_WITHOUT_SUBPROCESS_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM} --timeout=180 -j4 ${PASSED_WITHOUT_SUBPROCESS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}  --timeout=180 -j4 ${PASSED_WITHOUT_SUBPROCESS}
 	echo "Ran ${PASSED_WITHOUT_SUBPROCESS_DESC}"
 
 
 # One test fails here due to the fact that the PYTHONHOME is different in webworker mode (since the files are in the zip archive).
 test-worker: wasm native
 	echo "Running using webworker -- ${SUPPORTED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} PYTHONHOME=${DIST_WASM} ${RUN_TESTS} --python=${PYTHON_WASM} -j4 --timeout=180 ${SUPPORTED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} PYTHONHOME=${DIST_WASM} ${RUN_TESTS}  -j4 --timeout=180 ${SUPPORTED_TESTS}
 	echo "Ran using webworker -- ${SUPPORTED_TEST_DESC}"
 
 # NOTES:
@@ -378,19 +380,19 @@ FAILED_TESTS =  test_sys test_platform  test_getpass test_codecs   test_distutil
 
 test-failed:  wasm native
 	echo "Running ${FAILED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM} --timeout=180 -j4 ${FAILED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}  --timeout=180 -j4 ${FAILED_TESTS}
 	echo "Ran ${FAILED_TEST_DESC}"
 
 
 TEST=test_long
 test-one:   wasm native
 	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM} --timeout=60 -v ${TEST}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}  --timeout=60 -v ${TEST}
 .PHONY: test-one
 
 test-one-worker: wasm native
 	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM} -j1 --timeout=60 -v ${TEST}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}  -j1 --timeout=60 -v ${TEST}
 .PHONY: test-one
 
 
@@ -399,5 +401,5 @@ SKIPPED_TESTS = test_asdl_parser test__xxsubinterpreters test_asyncgen test_asyn
 
 test-skipped:  wasm native
 	echo "Running ${SKIPPED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM} --timeout=60 ${SKIPPED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}  --timeout=60 ${SKIPPED_TESTS}
 	echo "Ran ${SKIPPED_TEST_DESC}"
