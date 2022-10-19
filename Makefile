@@ -9,7 +9,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
-all: python-wasm webpack terminal website py f2c coreutils man viz
+all: cowasm-kernel webpack terminal website py f2c coreutils man viz
 
 cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl
@@ -89,10 +89,10 @@ packages/posix-wasm/${BUILT}: zig
 	cd packages/posix-wasm && make all
 .PHONY: posix-wasm
 
-python-wasm: packages/python-wasm/${BUILT}
-packages/python-wasm/${BUILT}: node wasi-js zig posix-wasm dylink posix-node libgit2 dash
-	cd packages/python-wasm && make all
-.PHONY: python-wasm
+cowasm-kernel: packages/cowasm-kernel/${BUILT}
+packages/cowasm-kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node libgit2 dash
+	cd packages/cowasm-kernel && make all
+.PHONY: cowasm-kernel
 
 packages/sqlite/${BUILT}: libedit posix-wasm zig zlib
 	cd packages/sqlite && make all
@@ -105,7 +105,7 @@ packages/termcap/${BUILT}: zig
 .PHONY: termcap
 
 terminal: packages/terminal/${BUILT}
-packages/terminal/${BUILT}: node python-wasm
+packages/terminal/${BUILT}: node cowasm-kernel
 	cd packages/terminal && make all
 .PHONY: terminal
 
@@ -120,12 +120,12 @@ packages/wasi-js/${BUILT}: node
 .PHONY: wasi-js
 
 webpack: packages/webpack/${BUILT}
-packages/webpack/${BUILT}: node python-wasm
+packages/webpack/${BUILT}: node cowasm-kernel
 	cd packages/webpack && make all
 .PHONY: webpack
 
 website: packages/website/${BUILT}
-packages/website/${BUILT}: node python-wasm
+packages/website/${BUILT}: node cowasm-kernel
 	cd packages/website && make all
 .PHONY: website
 
@@ -139,7 +139,7 @@ packages/zlib/${BUILT}: zig
 .PHONY: zlib
 
 libgit2: packages/libgit2/${BUILT}
-packages/libgit2/${BUILT}: zig python-wasm
+packages/libgit2/${BUILT}: zig cowasm-kernel
 	cd packages/libgit2 && make all
 .PHONY: libgit2
 
@@ -157,27 +157,27 @@ py: py-cython py-mpmath py-sympy py-pip py-numpy
 .PHONY: py
 
 # Note -- this runs a target in the cpython package, which can only be run
-# after python-wasm is also built.
-py-pip: cpython python-wasm
+# after cowasm-kernel is also built.
+py-pip: cpython cowasm-kernel
 	cd packages/cpython && make pip
 
 py-cython: packages/py-cython/${BUILT}
-packages/py-cython/${BUILT}: zig python-wasm
+packages/py-cython/${BUILT}: zig cowasm-kernel
 	cd packages/py-cython && make all
 .PHONY: py-cython
 
 py-mpmath: packages/py-mpmath/${BUILT}
-packages/py-mpmath/${BUILT}: zig python-wasm
+packages/py-mpmath/${BUILT}: zig cowasm-kernel
 	cd packages/py-mpmath && make all
 .PHONY: py-mpmath
 
 py-sympy: packages/py-sympy/${BUILT}
-packages/py-sympy/${BUILT}: zig python-wasm py-mpmath
+packages/py-sympy/${BUILT}: zig cowasm-kernel py-mpmath
 	cd packages/py-sympy && make all
 .PHONY: py-sympy
 
 py-numpy: packages/py-numpy/${BUILT}
-packages/py-numpy/${BUILT}: zig python-wasm py-cython py-pip
+packages/py-numpy/${BUILT}: zig cowasm-kernel py-cython py-pip
 	cd packages/py-numpy && make all
 .PHONY: py-numpy
 

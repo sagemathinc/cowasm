@@ -1,9 +1,9 @@
 {
-  "name": "python-wasm",
-  "version": "0.20.3",
-  "description": "python-wasm -- Web Assembly Python for Node.js and the Browser",
-  "main": "./dist/python/node.js",
-  "browser": "./dist/python/browser.js",
+  "name": "cowasm-kernel",
+  "version": "0.21.0",
+  "description": "cowasm-kernel -- the Kernel of CoWasm: Collaborative WebAssembly OS for Servers and Browsers",
+  "main": "./dist/cowasm/node.js",
+  "browser": "./dist/cowasm/browser.js",
   "files": [
     "dist/*",
     "README.md",
@@ -19,10 +19,10 @@
     "strip": "find dist/ -type f -name \"*.wasm\" | xargs -n1 wasm-strip",
     "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' -j4 && npm run strip"
   },
-  "bin": "./bin/zython",
+  "bin": "./bin/cowasm",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/zython.git"
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
   "keywords": [
     "python",
@@ -31,9 +31,9 @@
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/sagemathinc/zython/issues"
+    "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/zython/tree/main/packages/python-wasm",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/cowasm-kernel",
   "workspaces": [
     "../wasi-js",
     "../dylink",

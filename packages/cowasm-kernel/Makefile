@@ -207,7 +207,7 @@ ${BUILD}/test/cowsay.wasm: ${SRC}/test/cowsay.c
 	mkdir -p ${BUILD}/test/
 	${BIN}/cowasm-cc -fvisibility-main -Oz ${SRC}/test/cowsay.c -o ${BUILD}/test/cowsay.wasm
 run-cowsay.wasm: ${BUILD}/test/cowsay.wasm
-	${CWD}/bin/cowasm ${CWD}/build/test/cowsay.wasm "CoWasm -> CowAsm -> Cow Assembly -----> make me a cow!"
+	${CWD}/bin/cowasm ${CWD}/build/test/cowsay.wasm "CoWasm -> CowAsm -> Cow Assembly -----> Make a WebAssembly Cow!"
 .PHONY: run-cowsay.wasm
 
 
