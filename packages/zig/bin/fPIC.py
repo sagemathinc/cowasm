@@ -307,13 +307,10 @@ def main():
     ] + linker_args
 
     if not is_debug():
-        print("Adding strip args!")
         link.append('--strip-all')
         # Note that we have to do this '--compress-relocations' here, since it is
         # ignored if put in Xliner args.
         link.append('--compress-relocations')
-    else:
-        print("NO strip args")
 
     link += object_args
 
