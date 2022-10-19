@@ -28,7 +28,8 @@ pub fn init() !void {
 //    "import sys; sys.executable"
 //
 // Otherwise, it is '', which may be fine in some contexts (e.g., in browser without fork).
-// This mainly matter when using fork, e.g., installing packages on the command line.
+// This mainly matters when using fork, e.g., installing packages on the command line.
+// A better approach may be to set PYTHONEXECUTABLE.
 pub fn initProgramName(program_name: [*:0]const u8) !void {
     var config: py.PyConfig = undefined;
     py.PyConfig_InitPythonConfig(&config);

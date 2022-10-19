@@ -337,7 +337,7 @@ RUN_TESTS =  _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 TEST_PATH=${BIN}:/bin:/usr/bin
 
 test-all: wasm native
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM}
 .PHONY: test-all
 
 
@@ -357,9 +357,9 @@ test-pip: pip
 .PHONY: test-pip
 
 
-test: wasm native python-wasm test-pip
+test: wasm native ${BIN}/python-wasm test-pip
 	echo "Running ${SUPPORTED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} -j4 --timeout=240 ${SUPPORTED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM} -j4 --timeout=240 ${SUPPORTED_TESTS}
 	echo "Ran ${SUPPORTED_TEST_DESC}"
 .PHONY: test
 
@@ -368,14 +368,14 @@ PASSED_WITHOUT_SUBPROCESS = test_timeout test_stat test_robotparser test_nntplib
 
 test-passed-without-subprocess: wasm native
 	echo "Running ${PASSED_WITHOUT_SUBPROCESS_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} --timeout=180 -j4 ${PASSED_WITHOUT_SUBPROCESS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM} --timeout=180 -j4 ${PASSED_WITHOUT_SUBPROCESS}
 	echo "Ran ${PASSED_WITHOUT_SUBPROCESS_DESC}"
 
 
 # One test fails here due to the fact that the PYTHONHOME is different in webworker mode (since the files are in the zip archive).
 test-worker: wasm native
 	echo "Running using webworker -- ${SUPPORTED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} PYTHONHOME=${DIST_WASM} _PYTHON_HOSTRUNNER=${ZYTHON} ${RUN_TESTS} -j4 --timeout=180 ${SUPPORTED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} PYTHONHOME=${DIST_WASM} ${RUN_TESTS} --python=${PYTHON_WASM} -j4 --timeout=180 ${SUPPORTED_TESTS}
 	echo "Ran using webworker -- ${SUPPORTED_TEST_DESC}"
 
 # NOTES:
@@ -389,19 +389,19 @@ FAILED_TESTS =  test_sys test_platform  test_getpass test_codecs   test_distutil
 
 test-failed:  wasm native
 	echo "Running ${FAILED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} --timeout=180 -j4 ${FAILED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM} --timeout=180 -j4 ${FAILED_TESTS}
 	echo "Ran ${FAILED_TEST_DESC}"
 
 
 TEST=test_long
 test-one:   wasm native
 	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} --timeout=60 -v ${TEST}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM} --timeout=60 -v ${TEST}
 .PHONY: test-one
 
 test-one-worker: wasm native
 	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${ZYTHON} ${RUN_TESTS} -j1 --timeout=60 -v ${TEST}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM} -j1 --timeout=60 -v ${TEST}
 .PHONY: test-one
 
 
@@ -410,5 +410,5 @@ SKIPPED_TESTS = test_asdl_parser test__xxsubinterpreters test_asyncgen test_asyn
 
 test-skipped:  wasm native
 	echo "Running ${SKIPPED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} _PYTHON_HOSTRUNNER=${PYTHON_WASM} ${RUN_TESTS} --timeout=60 ${SKIPPED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --python=${PYTHON_WASM} --timeout=60 ${SKIPPED_TESTS}
 	echo "Ran ${SKIPPED_TEST_DESC}"
