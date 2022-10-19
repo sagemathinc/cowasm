@@ -49,7 +49,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM}/build/lib* \
 		&& rm -rf numpy/core/include \
 		&& cp -rv ../src*/numpy/core/include numpy/core/ \
-		&& python-native -m zython_bundler numpy numpy/core/multiarray.py numpy/core/include \
+		&& python-native -m cowasm_bundler numpy numpy/core/multiarray.py numpy/core/include \
 		&& mkdir -p ${DIST_WASM} \
 		&& cp numpy.* ${DIST_WASM}
 	touch ${DIST_WASM}/.built

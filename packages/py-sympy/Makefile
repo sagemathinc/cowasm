@@ -28,7 +28,7 @@ test: ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
-		&& python-native -m zython_bundler sympy \
+		&& python-native -m cowasm_bundler sympy \
 		&& mkdir -p ${DIST_WASM} \
 		&& cp sympy.* ${DIST_WASM}
 	touch ${DIST_WASM}/.built
