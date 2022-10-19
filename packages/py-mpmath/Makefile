@@ -19,7 +19,7 @@ ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 
 test: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
-		&& PYTHONPATH=`pwd` zython mpmath/tests/runtests.py
+		&& PYTHONPATH=`pwd` python-wasm mpmath/tests/runtests.py
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
