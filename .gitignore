@@ -2,7 +2,6 @@ packages/*/build
 bin/lua-native
 bin/viz-native
 bin/zig
-bin/zig-fPIC
 bin/node
 bin/npm
 bin/npx
