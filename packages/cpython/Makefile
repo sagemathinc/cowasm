@@ -313,8 +313,7 @@ pip: ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built
 #         self.ns.use_mp = 0
 # of dist/wasm/lib/python3.11/test/libregrtest/main.py then it works, but of course
 # with a single process, which is slow. So we stick with python-native.
-RUN_TESTS =  _PYTHON_RUN_TESTS=1 \
-	_PYTHON_PROJECT_BASE=${BUILD_WASM} \
+RUN_TESTS = _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 	_PYTHON_HOST_PLATFORM=wasi-wasm32 \
 	PYTHONPATH=${DIST_WASM}/lib/python3.11 \
 	_PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__wasi_wasm32-wasi \
@@ -380,19 +379,19 @@ FAILED_TESTS =  test_sys test_platform  test_getpass test_codecs   test_distutil
 
 test-failed:  wasm native
 	echo "Running ${FAILED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}  --timeout=180 -j4 ${FAILED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --timeout=180 -j4 ${FAILED_TESTS}
 	echo "Ran ${FAILED_TEST_DESC}"
 
 
 TEST=test_long
 test-one:   wasm native
 	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}  --timeout=60 -v ${TEST}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --timeout=60 -v ${TEST}
 .PHONY: test-one
 
 test-one-worker: wasm native
 	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}  -j1 --timeout=60 -v ${TEST}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} -j1 --timeout=60 -v ${TEST}
 .PHONY: test-one
 
 

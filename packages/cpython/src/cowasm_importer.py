@@ -135,7 +135,12 @@ TODO: This is for local dev.  Need something similar for distribution and the we
 
 # cowasm/packages/cpython/dist/wasm/lib/python3.11/site-packages
 def init_dev():
-    if '_PYTHON_RUN_TESTS' in os.environ: return;
+    if 'PYTHONREGRTEST_UNICODE_GUARD' in os.environ:
+        # do not install or use this when running tests, as it changes
+        # the path which breaks some tests.
+        return
+    print("install cowasm importer!")
+
     init()
     pkgs = site_packages_directory()
     i = pkgs.rfind("packages/cpython")
