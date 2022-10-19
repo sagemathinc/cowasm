@@ -34,8 +34,11 @@ docker-nocache:
 	docker build --no-cache -t zython .
 .PHONY: docker-nocache
 
+# NOTE: there is a partial circular dep between dylink and cpython right now, so cpython actually
+# builds dylink halfway through its build.  We will refactor to fix that.  The code involving cpython
+# in dylink should actually just be in the cpython package, I think.
 dylink: packages/dylink/${BUILT}
-packages/dylink/${BUILT}: node zig posix-wasm lzma  # cpython   # it really depends on cpython right now, but catch-22...
+packages/dylink/${BUILT}: node zig posix-wasm lzma cpython
 	cd packages/dylink && make all
 .PHONY: dylink
 

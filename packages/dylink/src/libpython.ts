@@ -20,7 +20,7 @@ import spawnAsync from "await-spawn";
 import wasmExport, { alias } from "./wasm-export";
 import { readFileSync } from "fs";
 
-const PATH = "../cpython/dist/wasm/include/python3.11";
+const PATH = "../cpython/build/wasm/Include";
 
 const STABLE_ABI_DATA = "../cpython/build/wasm/Doc/data/stable_abi.dat";
 
@@ -75,7 +75,7 @@ function stableABI() {
   return names;
 }
 
-async function main() {
+export async function main() {
   const exclude = new Set(omit.split(/\s+/));
   let names: string[] = [];
   const output = (
@@ -133,5 +133,3 @@ async function main() {
 }
 
 main();
-
-export {};
