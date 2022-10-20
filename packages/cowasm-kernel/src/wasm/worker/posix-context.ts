@@ -128,8 +128,10 @@ export default class PosixContext {
     // I wonder if I could use immer.js instead for any of this?  It might be slower.
     this.context.state = cloneDeep(state.context);
     const wasi_state = cloneDeep(state.wasi);
-    let return_code = 1; // not set ==> something went wrong
+    let return_code = 2; // not set ==> something went wrong since exit never called.
     wasi_state.bindings.exit = (code: number) => {
+      // uncomment this for debugging only
+      // console.trace(`exit(${code}) called`);
       return_code = code;
       // after this, the main call below throws an exception
       // then the return_code gets returned right after the
@@ -143,7 +145,7 @@ export default class PosixContext {
       const dlsym = wasm.getFunction("dlsym");
       if (dlsym == null) {
         console.error(`${args[0]}: dlsym not defined`);
-        return 1;
+        return 127;
       }
       // These wasm.send.string's are NOT really memory leaks, since we reset the memory below.
       let mainPtr;
@@ -156,17 +158,20 @@ export default class PosixContext {
           console.error(
             `${args[0]}: unable to find either symbol '__main_argc_argv' or 'main' in '${path}' (compile with -fvisibility-main?)`
           );
-          return 1;
+          return 127;
         }
       }
       const main = wasm.table?.get(mainPtr);
       if (!main) {
         console.error(`${args[0]}: unable to find main function`);
-        return 1;
+        return 127;
       }
       try {
         return main(args.length, wasm.send.arrayOfStrings(args));
-      } catch (_) {}
+      } catch (err) {
+        console.error(err);
+        return 139; // segfault return code.  Seems not bad.
+      }
       return return_code;
     } finally {
       if (handle) {
@@ -174,7 +179,7 @@ export default class PosixContext {
         if (dlclose == null) {
           // should definitely never happen
           console.error(`${args[0]}: dlclose not defined`);
-          return 1;
+          return 127;
         }
         dlclose(handle);
       }
