@@ -79,6 +79,11 @@ ${TARGET}/ls: ${COMPAT} ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/print.o ${BUILD}/u
 ${TARGET}/mv: ${COMPAT} ${BUILD}/mv.o ${BUILD}/mv-rm.o ${BUILD}/mv-cp.o
 	${CC} ${CFLAGS} $^ -o $@
 
+# This is REALLY COMPLICATED AND BROKEN. Maybe start over.
+${TARGET}/sort: ${COMPAT} ${BUILD}/bwstring.o ${BUILD}/commoncrypto.o ${BUILD}/mem.o ${BUILD}/sort.o ${BUILD}/coll.o \
+			${BUILD}/file.o ${BUILD}/radixsort.o ${BUILD}/sha2.o  ${BUILD}/vsort.o
+	${CC} ${CFLAGS} $^ -o $@
+
 ${TARGET}/tail: ${COMPAT} ${BUILD}/forward.o ${BUILD}/misc.o ${BUILD}/read.o ${BUILD}/reverse.o ${BUILD}/tail.o
 	${CC} ${CFLAGS} $^ -o $@
 
@@ -128,13 +133,13 @@ test-head: ${TARGET}/head
 	rm ${BUILD}/.test-head
 
 test-mkdir-rmdir: ${TARGET}/mkdir ${TARGET}/rmdir
-	${BIN}/cowasm dist/wasm/bin/mkdir xyz && ${BIN}/cowasm dist/wasm/bin/rmdir xyz && ${BIN}/cowasm dist/wasm/bin/test ! -d xyz
+	${BIN}/cowasm dist/wasm/bin/mkdir xyz-mkdir && ${BIN}/cowasm dist/wasm/bin/rmdir xyz-mkdir && ${BIN}/cowasm dist/wasm/bin/test ! -d xyz-mkdir
 
 test-mv: ${TARGET}/mv ${TARGET}/touch ${TARGET}/test ${TARGET}/rm
 	${BIN}/cowasm dist/wasm/bin/touch x && ${BIN}/cowasm dist/wasm/bin/mv x y && ${BIN}/cowasm dist/wasm/bin/test -f y && ${BIN}/cowasm dist/wasm/bin/rm y
 
 test-rm: ${TARGET}/rm ${TARGET}/touch
-	${BIN}/cowasm dist/wasm/bin/touch xyz && ${BIN}/cowasm dist/wasm/bin/rm xyz && ${BIN}/cowasm dist/wasm/bin/test ! -f xyz
+	${BIN}/cowasm dist/wasm/bin/touch xyz-rm && ${BIN}/cowasm dist/wasm/bin/rm xyz-rm && ${BIN}/cowasm dist/wasm/bin/test ! -f xyz-rm
 
 test-tail: ${TARGET}/tail
 	echo "first line" > ${BUILD}/.test-tail

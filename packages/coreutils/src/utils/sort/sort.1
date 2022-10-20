@@ -1,0 +1,606 @@
+.\"	$OpenBSD: sort.1,v 1.63 2020/01/16 16:46:47 schwarze Exp $
+.\"
+.\" Copyright (c) 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" the Institute of Electrical and Electronics Engineers, Inc.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)sort.1	8.1 (Berkeley) 6/6/93
+.\"
+.Dd $Mdocdate: January 16 2020 $
+.Dt SORT 1
+.Os
+.Sh NAME
+.Nm sort
+.Nd sort, merge, or sequence check text and binary files
+.Sh SYNOPSIS
+.Nm sort
+.Op Fl bCcdfgHhiMmnRrsuVz
+.Op Fl k Ar field1 Ns Op , Ns Ar field2
+.Op Fl o Ar output
+.Op Fl S Ar size
+.Op Fl T Ar dir
+.Op Fl t Ar char
+.Op Ar
+.Sh DESCRIPTION
+The
+.Nm
+utility sorts text and binary files by lines.
+A line is a record separated from the subsequent record by a
+newline (default) or NUL
+.Ql \e0
+character
+.Po
+.Fl z
+option
+.Pc .
+A record can contain any printable or unprintable characters.
+Comparisons are based on one or more sort keys extracted from
+each line of input, and are performed lexicographically,
+according to the specified command-line options
+that can tune the actual sorting behavior.
+By default, if keys are not given,
+.Nm
+uses entire lines for comparison.
+.Pp
+If no
+.Ar file
+is specified, or if
+.Ar file
+is
+.Sq - ,
+the standard input is used.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl C , Fl Fl check Ns = Ns Cm silent Ns | Ns Cm quiet
+Check that the single input file is sorted.
+If it is, exit 0; if it's not, exit 1.
+In either case, produce no output.
+.It Fl c , Fl Fl check
+Like
+.Fl C ,
+but additionally write a message to
+.Em stderr
+if the input file is not sorted.
+.It Fl m , Fl Fl merge
+Merge only; the input files are assumed to be pre-sorted.
+If they are not sorted, the output order is undefined.
+.It Fl o Ar output , Fl Fl output Ns = Ns Ar output
+Write the output to the
+.Ar output
+file instead of the standard output.
+This file can be the same as one of the input files.
+.It Fl S Ar size , Fl Fl buffer-size Ns = Ns Ar size
+Use a memory buffer no larger than
+.Ar size .
+The modifiers %, b, K, M, G, T, P, E, Z, and Y can be used.
+If no memory limit is specified,
+.Nm
+may use up to about 90% of available memory.
+If the input is too big to fit into the memory buffer,
+temporary files are used.
+.It Fl s
+Stable sort; maintains the original record order of records that have
+an equal key.
+This is a non-standard feature, but it is widely accepted and used.
+.It Fl T Ar dir , Fl Fl temporary-directory Ns = Ns Ar dir
+Store temporary files in the directory
+.Ar dir .
+The default path is the value of the environment variable
+.Ev TMPDIR
+or
+.Pa /tmp
+if
+.Ev TMPDIR
+is not defined.
+.It Fl u , Fl Fl unique
+Unique: suppress all but one in each set of lines having equal keys.
+This option implies a stable sort (see below).
+If used with
+.Fl C
+or
+.Fl c ,
+.Nm
+also checks that there are no lines with duplicate keys.
+.El
+.Pp
+The following options override the default ordering rules.
+If ordering options appear before the first
+.Fl k
+option, they apply globally to all sort keys.
+When attached to a specific key (see
+.Fl k ) ,
+the ordering options override all global ordering options for that key.
+Note that the ordering options intended to apply globally should not
+appear after
+.Fl k
+or results may be unexpected.
+.Bl -tag -width indent
+.It Fl d , Fl Fl dictionary-order
+Consider only blank spaces and alphanumeric characters in comparisons.
+.It Fl f , Fl Fl ignore-case
+Consider all lowercase characters that have uppercase
+equivalents to be the same for purposes of comparison.
+.It Fl g , Fl Fl general-numeric-sort , Fl Fl sort Ns = Ns Cm general-numeric
+Sort by general numerical value.
+As opposed to
+.Fl n ,
+this option handles general floating points.
+It has a more
+permissive format than that allowed by
+.Fl n
+but it has a significant performance drawback.
+.It Fl h , Fl Fl human-numeric-sort , Fl Fl sort Ns = Ns Cm human-numeric
+Sort by numerical value, but take into account the SI suffix,
+if present.
+Sorts first by numeric sign (negative, zero, or
+positive); then by SI suffix (either empty, or `k' or `K', or one
+of `MGTPEZY', in that order); and finally by numeric value.
+The SI suffix must immediately follow the number.
+For example, '12345K' sorts before '1M', because M is "larger" than K.
+This sort option is useful for sorting the output of a single invocation
+of 'df' command with
+.Fl h
+or
+.Fl H
+options (human-readable).
+.It Fl i , Fl Fl ignore-nonprinting
+Ignore all non-printable characters.
+.It Fl M , Fl Fl month-sort , Fl Fl sort Ns = Ns Cm month
+Sort by month abbreviations.
+Unknown strings are considered smaller than valid month names.
+.It Fl n , Fl Fl numeric-sort , Fl Fl sort Ns = Ns Cm numeric
+An initial numeric string, consisting of optional blank space, optional
+minus sign, and zero or more digits (including decimal point)
+is sorted by arithmetic value.
+Leading blank characters are ignored.
+.It Fl R , Fl Fl random-sort , Fl Fl sort Ns = Ns Cm random
+Sort lines in random order.
+This is a random permutation of the inputs with the exception that
+equal keys sort together.
+It is implemented by hashing the input keys and sorting the hash values.
+The hash function is randomized with data from
+.Xr arc4random_buf 3 ,
+or by file content if one is specified via
+.Fl Fl random-source .
+If multiple sort fields are specified,
+the same random hash function is used for all of them.
+.It Fl r , Fl Fl reverse
+Sort in reverse order.
+.It Fl V , Fl Fl version-sort
+Sort version numbers.
+The input lines are treated as file names in form
+PREFIX VERSION SUFFIX, where SUFFIX matches the regular expression
+"(\.([A-Za-z~][A-Za-z0-9~]*)?)*".
+The files are compared by their prefixes and versions (leading
+zeros are ignored in version numbers, see example below).
+If an input string does not match the pattern, then it is compared
+using the byte compare function.
+.Pp
+For example:
+.Bd -literal -offset indent
+$ ls sort* | sort -V
+sort-1.022.tgz
+sort-1.23.tgz
+sort-1.23.1.tgz
+sort-1.024.tgz
+sort-1.024.003.
+sort-1.024.003.tgz
+sort-1.024.07.tgz
+sort-1.024.009.tgz
+.Ed
+.El
+.Pp
+The treatment of field separators can be altered using these options:
+.Bl -tag -width indent
+.It Fl b , Fl Fl ignore-leading-blanks
+Ignore leading blank space when determining the start
+and end of a restricted sort key (see
+.Fl k ) .
+If
+.Fl b
+is specified before the first
+.Fl k
+option, it applies globally to all key specifications.
+Otherwise,
+.Fl b
+can be attached independently to each
+.Ar field
+argument of the key specifications.
+Note that
+.Fl b
+should not appear after
+.Fl k ,
+and that it has no effect unless key fields are specified.
+.It Xo
+.Fl k Ar field1 Ns Op , Ns Ar field2 ,
+.Fl Fl key Ns = Ns Ar field1 Ns Op , Ns Ar field2
+.Xc
+Define a restricted sort key that has the starting position
+.Ar field1 ,
+and optional ending position
+.Ar field2
+of a key field.
+The
+.Fl k
+option may be specified multiple times,
+in which case subsequent keys are compared after earlier keys compare equal.
+The
+.Fl k
+option replaces the obsolete options
+.Cm \(pl Ns Ar pos1
+and
+.Fl Ns Ar pos2 ,
+but the old notation is also supported.
+.It Fl t Ar char , Fl Fl field-separator Ns = Ns Ar char
+Use
+.Ar char
+as the field separator character.
+The initial
+.Ar char
+is not considered to be part of a field when determining key offsets.
+Each occurrence of
+.Ar char
+is significant (for example,
+.Dq Ar charchar
+delimits an empty field).
+If
+.Fl t
+is not specified, the default field separator is a sequence of
+blank-space characters, and consecutive blank spaces do
+.Em not
+delimit an empty field; further, the initial blank space
+.Em is
+considered part of a field when determining key offsets.
+To use NUL as field separator, use
+.Fl t
+\(aq\e0\(aq.
+.It Fl z , Fl Fl zero-terminated
+Use NUL as the record separator.
+By default, records in the files are expected to be separated by
+the newline characters.
+With this option, NUL
+.Pq Ql \e0
+is used as the record separator character.
+.El
+.Pp
+Other options:
+.Bl -tag -width indent
+.It Fl Fl batch-size Ns = Ns Ar num
+Specify maximum number of files that can be opened by
+.Nm
+at once.
+This option affects behavior when having many input files or using
+temporary files.
+The minimum value is 2.
+The default value is 16.
+.It Fl Fl compress-program Ns = Ns Ar program
+Use
+.Ar program
+to compress temporary files.
+When invoked with no arguments,
+.Ar program
+must compress standard input to standard output.
+When called with the
+.Fl d
+option, it must decompress standard input to standard output.
+If
+.Ar program
+fails,
+.Nm
+will exit with an error.
+The
+.Xr compress 1
+and
+.Xr gzip 1
+utilities meet these requirements.
+.It Fl Fl debug
+Print some extra information about the sorting process to the
+standard output.
+.It Fl Fl files0-from Ns = Ns Ar filename
+Take the input file list from the file
+.Ar filename .
+The file names must be separated by NUL
+(like the output produced by the command
+.Dq find ... -print0 ) .
+.It Fl Fl heapsort
+Try to use heap sort, if the sort specifications allow.
+This sort algorithm cannot be used with
+.Fl u
+and
+.Fl s .
+.It Fl Fl help
+Print the help text and exit.
+.It Fl H , Fl Fl mergesort
+Use mergesort.
+This is a universal algorithm that can always be used,
+but it is not always the fastest.
+.It Fl Fl mmap
+Try to use file memory mapping system call.
+It may increase speed in some cases.
+.It Fl Fl qsort
+Try to use quick sort, if the sort specifications allow.
+This sort algorithm cannot be used with
+.Fl u
+and
+.Fl s .
+.It Fl Fl radixsort
+Try to use radix sort, if the sort specifications allow.
+The radix sort can only be used for trivial locales (C and POSIX),
+and it cannot be used for numeric or month sort.
+Radix sort is very fast and stable.
+.It Fl Fl random-source Ns = Ns Ar filename
+For random sort, the contents of
+.Ar filename
+are used as the source of the
+.Sq seed
+data for the hash function.
+Two invocations of random sort with the same seed data will use
+produce the same result if the input is also identical.
+By default, the
+.Xr arc4random_buf 3
+function is used instead.
+.It Fl Fl version
+Print the version and exit.
+.El
+.Pp
+A field is defined as a maximal sequence of characters other than the
+field separator and record separator
+.Pq newline by default .
+Initial blank spaces are included in the field unless
+.Fl b
+has been specified;
+the first blank space of a sequence of blank spaces acts as the field
+separator and is included in the field (unless
+.Fl t
+is specified).
+For example, by default all blank spaces at the beginning of a line are
+considered to be part of the first field.
+.Pp
+Fields are specified by the
+.Fl k Ar field1 Ns Op , Ns Ar field2
+option.
+If
+.Ar field2
+is missing, the end of the key defaults to the end of the line.
+.Pp
+The arguments
+.Ar field1
+and
+.Ar field2
+have the form
+.Em m.n
+.Em (m,n > 0)
+and can be followed by one or more of the modifiers
+.Cm b , d , f , i ,
+.Cm n , g , M
+and
+.Cm r ,
+which correspond to the options discussed above.
+When
+.Cm b
+is specified it applies only to
+.Ar field1
+or
+.Ar field2
+where it is specified while the rest of the modifiers
+apply to the whole key field regardless if they are
+specified only with
+.Ar field1
+or
+.Ar field2
+or both.
+A
+.Ar field1
+position specified by
+.Em m.n
+is interpreted as the
+.Em n Ns th
+character from the beginning of the
+.Em m Ns th
+field.
+A missing
+.Em \&.n
+in
+.Ar field1
+means
+.Ql \&.1 ,
+indicating the first character of the
+.Em m Ns th
+field; if the
+.Fl b
+option is in effect,
+.Em n
+is counted from the first non-blank character in the
+.Em m Ns th
+field;
+.Em m Ns \&.1b
+refers to the first non-blank character in the
+.Em m Ns th
+field.
+.No 1\&. Ns Em n
+refers to the
+.Em n Ns th
+character from the beginning of the line;
+if
+.Em n
+is greater than the length of the line, the field is taken to be empty.
+.Pp
+.Em n Ns th
+positions are always counted from the field beginning, even if the field
+is shorter than the number of specified positions.
+Thus, the key can really start from a position in a subsequent field.
+.Pp
+A
+.Ar field2
+position specified by
+.Em m.n
+is interpreted as the
+.Em n Ns th
+character (including separators) from the beginning of the
+.Em m Ns th
+field.
+A missing
+.Em \&.n
+indicates the last character of the
+.Em m Ns th
+field;
+.Em m
+= \&0
+designates the end of a line.
+Thus the option
+.Fl k Ar v.x,w.y
+is synonymous with the obsolete option
+.Cm \(pl Ns Ar v-\&1.x-\&1
+.Fl Ns Ar w-\&1.y ;
+when
+.Em y
+is omitted,
+.Fl k Ar v.x,w
+is synonymous with
+.Cm \(pl Ns Ar v-\&1.x-\&1
+.Fl Ns Ar w\&.0 .
+The obsolete
+.Cm \(pl Ns Ar pos1
+.Fl Ns Ar pos2
+option is still supported, except for
+.Fl Ns Ar w\&.0b ,
+which has no
+.Fl k
+equivalent.
+.Sh ENVIRONMENT
+.Bl -tag -width Ds
+.It Ev TMPDIR
+Path to the directory in which temporary files will be stored.
+Note that
+.Ev TMPDIR
+may be overridden by the
+.Fl T
+option.
+.El
+.Sh FILES
+.Bl -tag -width Pa -compact
+.It Pa /tmp/.bsdsort.PID.*
+Temporary files.
+.El
+.Sh EXIT STATUS
+The
+.Nm
+utility exits with one of the following values:
+.Pp
+.Bl -tag -width Ds -offset indent -compact
+.It 0
+Successfully sorted the input files or if used with
+.Fl C
+or
+.Fl c ,
+the input file already met the sorting criteria.
+.It 1
+On disorder (or non-uniqueness) with the
+.Fl C
+or
+.Fl c
+options.
+.It 2
+An error occurred.
+.El
+.Sh SEE ALSO
+.Xr comm 1 ,
+.Xr join 1 ,
+.Xr uniq 1
+.Sh STANDARDS
+The
+.Nm
+utility is compliant with the
+.St -p1003.1-2008
+specification, except that it ignores the user's
+.Xr locale 1
+and always assumes
+.Ev LC_ALL Ns =C.
+.Pp
+The flags
+.Op Fl gHhiMRSsTVz
+are extensions to that specification.
+.Pp
+All long options are extensions to the specification.
+Some are provided for compatibility with GNU
+.Nm ,
+others are specific to this implementation.
+.Pp
+Some implementations of
+.Nm
+honor the
+.Fl b
+option even when no key fields are specified.
+This implementation follows historic practice and
+.St -p1003.1-2008
+in only honoring
+.Fl b
+when it precedes a key field.
+.Pp
+The historic practice of allowing the
+.Fl o
+option to appear after the
+.Ar file
+is supported for compatibility with older versions of
+.Nm .
+.Pp
+The historic key notations
+.Cm \(pl Ns Ar pos1
+and
+.Fl Ns Ar pos2
+are supported for compatibility with older versions of
+.Nm
+but their use is highly discouraged.
+.Sh HISTORY
+A
+.Nm
+command appeared in
+.At v1 .
+.Sh AUTHORS
+.An Gabor Kovesdan Aq Mt gabor@FreeBSD.org
+.An Oleg Moskalenko Aq Mt mom040267@gmail.com
+.Sh CAVEATS
+This implementation of
+.Nm
+has no limits on input line length (other than imposed by available
+memory) or any restrictions on bytes allowed within lines.
+.Pp
+The performance depends highly on
+efficient choice of sort keys and key complexity.
+The fastest sort is on whole lines, with option
+.Fl s .
+For the key specification, the simpler to process the
+lines the faster the search will be.
+.Pp
+When sorting by arithmetic value, using
+.Fl n
+results in much better performance than
+.Fl g
+so its use is encouraged whenever possible.
