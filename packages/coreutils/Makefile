@@ -21,6 +21,7 @@ all: \
 	${TARGET}/ls \
 	${TARGET}/sleep \
 	${TARGET}/tail \
+	${TARGET}/uniq \
 	${TARGET}/wc \
 	${TARGET}/xargs \
 	${TARGET}/yes
@@ -110,6 +111,9 @@ test-tail: ${TARGET}/tail
 	test "`${BIN}/cowasm ${TARGET}/tail -n 1 ${BUILD}/.test-tail`" = "last line"
 	rm ${BUILD}/.test-tail
 
+test-uniq: ${TARGET}/uniq
+	printf "hello\nworld\nworld\nworld\n" | cowasm dist/wasm/bin/uniq | wc -l | grep 2
+
 test-wc: ${TARGET}/wc
 	echo "hello world" | cowasm dist/wasm/bin/wc | grep "1       2      12"
 
@@ -117,7 +121,7 @@ test-xargs: ${TARGET}/xargs
 	ls -1 | ${BIN}/cowasm ${TARGET}/xargs |grep Makefile |grep dist
 
 # Very basic tests of some things...
-test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls test-sleep test-tail test-wc test-xargs
+test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls test-sleep test-tail test-uniq test-wc test-xargs
 
 # Our makefile rule '${BUILD}/%.o: %.c' above assumes that .c files in
 # subdirs have **unique names**, and this checks that.
