@@ -14,7 +14,7 @@ TERMCAP=${PACKAGES}/termcap/dist/
 LUA=${PACKAGES}/lua/dist/
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 
-all: native wasm ${BIN}/viz-wasm
+all: native ${BIN}/viz-native wasm ${BIN}/viz-wasm
 
 include ../build/Makefile-rules
 
@@ -30,10 +30,12 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 			CFLAGS="-O2 -I${LUA}/native/include " \
 			LDFLAGS="-L${LUA}/native/lib -llua " \
 			./configure --prefix=${DIST_NATIVE} \
-		&&	make -j8 \
-		&&	make install
-	ln -sf ${DIST_NATIVE}/bin/viz  ${BIN}/viz-native
+		&&	make -j8 install
 	touch ${DIST_NATIVE}/.built
+
+${BIN}/viz-native: ${DIST_NATIVE}/.built ${CWD}/bin/viz-native
+	ln -sf ${CWD}/bin/viz-native ${BIN}/viz-native
+
 
 ###
 # WASM
