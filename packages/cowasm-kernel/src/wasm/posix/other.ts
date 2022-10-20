@@ -198,6 +198,10 @@ export default function other(context) {
       return 0;
     },
 
+    emscripten_return_address: () => {
+      console.log("STUB: emscripten_return_address");
+      return 0;
+    },
   };
 
   return lib;

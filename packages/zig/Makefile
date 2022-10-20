@@ -37,6 +37,8 @@ ${DIST_NATIVE}/.${VERSION}: ${TARBALL}
 	rm -rf ${DIST_NATIVE}
 	mkdir -p ${DIST_NATIVE}
 	tar xf ${TARBALL} -C ${DIST_NATIVE} --strip-components=1
+	# Add support for -target wasm32-emscripten !
+	cd ${DIST_NATIVE} && cat ${SRC}/patches/01-emscripten.patch | patch -p2
 	touch ${DIST_NATIVE}/.${VERSION}
 
 ${BIN}/zig: ${DIST_NATIVE}/.${VERSION}
