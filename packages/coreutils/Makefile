@@ -21,6 +21,7 @@ all: \
 	${TARGET}/ls \
 	${TARGET}/sleep \
 	${TARGET}/tail \
+	${TARGET}/tr \
 	${TARGET}/uniq \
 	${TARGET}/wc \
 	${TARGET}/xargs \
@@ -69,6 +70,9 @@ ${TARGET}/ls: ${COMPAT} ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/print.o ${BUILD}/u
 ${TARGET}/tail: ${COMPAT} ${BUILD}/forward.o ${BUILD}/misc.o ${BUILD}/read.o ${BUILD}/reverse.o ${BUILD}/tail.o
 	${CC} ${CFLAGS} $^ -o $@
 
+${TARGET}/tr: ${COMPAT} ${BUILD}/tr.o ${BUILD}/tr-str.o
+	${CC} ${CFLAGS} $^ -o $@
+
 ${TARGET}/xargs: ${COMPAT} ${BUILD}/xargs.o  ${BUILD}/strnsubst.o
 	${CC} ${CFLAGS} $^ -o $@
 
@@ -111,6 +115,9 @@ test-tail: ${TARGET}/tail
 	test "`${BIN}/cowasm ${TARGET}/tail -n 1 ${BUILD}/.test-tail`" = "last line"
 	rm ${BUILD}/.test-tail
 
+test-tr: ${TARGET}/tr
+	echo "Bella" | cowasm dist/wasm/bin/tr Bl 81 |grep 8e11a
+
 test-uniq: ${TARGET}/uniq
 	printf "hello\nworld\nworld\nworld\n" | cowasm dist/wasm/bin/uniq | wc -l | grep 2
 
@@ -121,7 +128,7 @@ test-xargs: ${TARGET}/xargs
 	ls -1 | ${BIN}/cowasm ${TARGET}/xargs |grep Makefile |grep dist
 
 # Very basic tests of some things...
-test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls test-sleep test-tail test-uniq test-wc test-xargs
+test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls test-sleep test-tail test-tr test-uniq test-wc test-xargs
 
 # Our makefile rule '${BUILD}/%.o: %.c' above assumes that .c files in
 # subdirs have **unique names**, and this checks that.
