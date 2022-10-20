@@ -20,11 +20,13 @@ all: \
 	${TARGET}/head \
 	${TARGET}/ln \
 	${TARGET}/ls \
+	${TARGET}/mkdir \
 	${TARGET}/rm \
 	${TARGET}/rmdir \
 	${TARGET}/sleep \
 	${TARGET}/tail \
 	${TARGET}/tee \
+	${TARGET}/test \
 	${TARGET}/touch \
 	${TARGET}/tr \
 	${TARGET}/tty \
@@ -118,11 +120,11 @@ test-head: ${TARGET}/head
 	test "`${BIN}/cowasm ${TARGET}/head -n 1 ${BUILD}/.test-head`" = "first line"
 	rm ${BUILD}/.test-head
 
-test-rm: ${TARGET}/rm ${TARGET}/touch
-	${BIN}/cowasm dist/wasm/bin/touch xyz && ${BIN}/cowasm dist/wasm/bin/rm xyz && test ! -f xyz
+test-mkdir-rmdir: ${TARGET}/mkdir ${TARGET}/rmdir
+	${BIN}/cowasm dist/wasm/bin/mkdir xyz && ${BIN}/cowasm dist/wasm/bin/rmdir xyz && ${BIN}/cowasm dist/wasm/bin/test ! -d xyz
 
-test-rmdir: ${TARGET}/rmdir
-	mkdir xyz && ${BIN}/cowasm dist/wasm/bin/rmdir xyz && test ! -d xyz
+test-rm: ${TARGET}/rm ${TARGET}/touch
+	${BIN}/cowasm dist/wasm/bin/touch xyz && ${BIN}/cowasm dist/wasm/bin/rm xyz && ${BIN}/cowasm dist/wasm/bin/test ! -f xyz
 
 test-tail: ${TARGET}/tail
 	echo "first line" > ${BUILD}/.test-tail
@@ -153,7 +155,7 @@ test-xargs: ${TARGET}/xargs
 
 # Very basic tests of some things...
 test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls \
-	test-rm test-rmdir test-sleep test-tail test-touch test-tr test-tty test-uniq test-wc test-xargs
+	test-mkdir-rmdir test-rm test-sleep test-tail test-touch test-tr test-tty test-uniq test-wc test-xargs
 
 # Our makefile rule '${BUILD}/%.o: %.c' above assumes that .c files in
 # subdirs have **unique names**, and this checks that.

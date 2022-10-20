@@ -379,4 +379,7 @@ void setprogname(const char* progname);
 
 long long strtonum(const char*, long long, long long, const char**);
 
+mode_t getmode(const void* bbox, mode_t omode);
+void* setmode(const char* p);
+
 #endif
