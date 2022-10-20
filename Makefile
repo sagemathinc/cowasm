@@ -22,7 +22,7 @@ packages/coreutils/${BUILT}: zig posix-wasm
 .PHONY: coreutils
 
 cowasm-kernel: packages/cowasm-kernel/${BUILT}
-packages/cowasm-kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node
+packages/cowasm-kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node libgit2
 	cd packages/cowasm-kernel && make all
 .PHONY: cowasm-kernel
 
