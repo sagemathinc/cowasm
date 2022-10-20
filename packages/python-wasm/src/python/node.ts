@@ -15,3 +15,7 @@ export async function terminal(
   console.log("STUB: terminal", argv);
   return 1;
 }
+
+export async function init(config?: any) {
+  console.log("STUB: init", config);
+}

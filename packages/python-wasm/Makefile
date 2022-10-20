@@ -1,6 +1,6 @@
 include ../build/Makefile-vars
 
-all: ${DIST}/.built hello python bin-cowasm cowasm
+all: ${DIST}/.built
 
 include ../build/Makefile-rules
 
@@ -13,4 +13,5 @@ ${DIST}/.built: node_modules
 
 .PHONY: test
 test: all
-	npm run test
+	echo "no tests yet"
+	#npm run test

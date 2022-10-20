@@ -1,7 +1,7 @@
 {
-  "name": "dash-browser",
+  "name": "cowasm-sh",
   "version": "0.0.1",
-  "description": "Running Dash (Debian Almquist Shell) in the browser",
+  "description": "CoWasm Shell cowasm.sh: lightweight WebAssembly UNIX shell",
   "files": [
     "dist/*",
     "src/*",
