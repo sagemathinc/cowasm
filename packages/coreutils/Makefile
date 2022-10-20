@@ -87,9 +87,6 @@ ${TARGET}/sort: ${COMPAT} ${BUILD}/bwstring.o ${BUILD}/commoncrypto.o ${BUILD}/m
 ${TARGET}/tail: ${COMPAT} ${BUILD}/forward.o ${BUILD}/misc.o ${BUILD}/read.o ${BUILD}/reverse.o ${BUILD}/tail.o
 	${CC} ${CFLAGS} $^ -o $@
 
-${TARGET}/test: ${COMPAT} ${BUILD}/test-impl.o
-	${CC} ${CFLAGS} $^ -o $@
-
 ${TARGET}/tr: ${COMPAT} ${BUILD}/tr.o ${BUILD}/tr-str.o
 	${CC} ${CFLAGS} $^ -o $@
 
@@ -168,17 +165,19 @@ test-wc: ${TARGET}/wc
 test-xargs: ${TARGET}/xargs
 	ls -1 | ${BIN}/cowasm ${TARGET}/xargs |grep Makefile |grep dist
 
-# Very basic tests of some things...
-.PHONEY: test
-test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls \
-	test-mkdir-rmdir test-mv test-rm test-sleep test-tail test-touch test-tr test-tty test-uniq test-wc \
-	test-xargs
-
 # Our makefile rule '${BUILD}/%.o: %.c' above assumes that .c files in
 # subdirs have **unique names**, and this checks that.
 test-uniq-sources:
 	cd ${SRC} && ./uniq-sources.sh
 
 # TODO: this doesn't match cocalc so fix.
-format:
-	find src/ -iname *.h -o -iname *.c | xargs clang-format -i --sort-includes=0
+# format:
+# 	find src/ -iname *.h -o -iname *.c | xargs clang-format -i --sort-includes=0
+
+# Very basic tests of some things...
+test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls \
+	test-mkdir-rmdir test-mv test-rm test-sleep test-tail test-touch test-tr test-tty test-uniq test-wc \
+	test-xargs
+	@echo "Success -- all coreutils tests passed"
+
+
