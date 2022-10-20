@@ -28,7 +28,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} \
 		&&	CC="zig cc" \
 			CFLAGS="-O2 -I${LUA}/native/include " \
-			LDFLAGS="${LUA}/native/lib/liblua.a " \
+			LDFLAGS="-L${LUA}/native/lib -llua " \
 			./configure --prefix=${DIST_NATIVE} \
 		&&	make -j8 \
 		&&	make install
