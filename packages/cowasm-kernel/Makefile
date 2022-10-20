@@ -10,7 +10,6 @@ PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
 PYTHON_WASM = ${PACKAGES}/cpython/dist/wasm
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 DYLINK = ${PACKAGES}/dylink/dist
-LIBGIT2 = ${PACKAGES}/libgit2/dist/wasm
 ZLIB = ${PACKAGES}/zlib/dist/wasm
 NCURSES = ${PACKAGES}/ncurses/dist/wasm
 LIBEDIT = ${PACKAGES}/libedit/dist/wasm
@@ -77,11 +76,11 @@ PYTHON_WASM_SOURCES = \
 	${POSIX_SOURCES} \
 	${PYTHON_WASM_C}
 
-PYTHON_WASM_INCLUDE = -I. -I${POSIX_WASM} -I${PYTHON_WASM}/include/python3.11 -I${LIBGIT2}/include
+PYTHON_WASM_INCLUDE = -I. -I${POSIX_WASM} -I${PYTHON_WASM}/include/python3.11
 
-PYTHON_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED} -lgit2 -L${LIBGIT2}/lib -lz -L${ZLIB}/lib
+PYTHON_WASM_LIBS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}  -lz -L${ZLIB}/lib
 
-${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${LIBGIT2}/lib/libgit2.a ${ZLIB}/lib/libz.a
+${DIST}/python/python.wasm: ${PYTHON_WASM_SOURCES} ${ZLIB}/lib/libz.a
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
