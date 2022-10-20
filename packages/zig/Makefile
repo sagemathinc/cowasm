@@ -17,6 +17,14 @@ ARCH = $(shell uname -m | sed s/arm64/aarch64/)
 # but need      linux and macos
 OS = $(shell uname -s  | sed s/Darwin/macos/ | sed s/Linux/linux/)
 
+# The zig library is in a slightly different place on Linux.  We have
+# to be aware of this in order to apply patches.
+ifeq ($(OS),linux)
+	LIBZIG=${DIST_NATIVE}/lib/zig
+else
+	LIBZIG=${DIST_NATIVE}/lib
+endif
+
 # Example  https://ziglang.org/builds/zig-macos-aarch64-0.10.0-dev.3315+1a16b7214.tar.xz
 
 TARBALL = ${UPSTREAM}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
@@ -37,8 +45,8 @@ ${DIST_NATIVE}/.${VERSION}: ${TARBALL}
 	rm -rf ${DIST_NATIVE}
 	mkdir -p ${DIST_NATIVE}
 	tar xf ${TARBALL} -C ${DIST_NATIVE} --strip-components=1
-	# Add support for -target wasm32-emscripten !
-	cd ${DIST_NATIVE} && cat ${SRC}/patches/01-emscripten.patch | patch -p2
+	# Add support for -target wasm32-emscripten 
+	cd ${LIBZIG} && cat ${SRC}/patches/01-emscripten.patch | patch -p3
 	touch ${DIST_NATIVE}/.${VERSION}
 
 ${BIN}/zig: ${DIST_NATIVE}/.${VERSION}
