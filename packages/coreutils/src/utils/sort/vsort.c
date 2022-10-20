@@ -1,4 +1,6 @@
 /*-
+ * SPDX-License-Identifier: BSD-2-Clause-FreeBSD
+ *
  * Copyright (C) 2012 Oleg Moskalenko <mom040267@gmail.com>
  * Copyright (C) 2012 Gabor Kovesdan <gabor@FreeBSD.org>
  * All rights reserved.
@@ -24,6 +26,9 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
+#include "cdefs.h"
+__FBSDID("$FreeBSD$");
 
 #include <sys/types.h>
 

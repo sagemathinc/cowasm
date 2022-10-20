@@ -70,9 +70,6 @@ char *getbsize(int *, long *);
 /* devname.c */
 char *devname(dev_t, mode_t);
 
-/* merge.c */
-int mergesort(void *, size_t, size_t, int (*)(const void *, const void *));
-
 /* heapsort.c */
 int heapsort(void *, size_t, size_t, int (*)(const void *, const void *));
 

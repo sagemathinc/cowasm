@@ -25,6 +25,7 @@ all: \
 	${TARGET}/rm \
 	${TARGET}/rmdir \
 	${TARGET}/sleep \
+	${TARGET}/sort \
 	${TARGET}/tail \
 	${TARGET}/tee \
 	${TARGET}/test \
@@ -41,7 +42,7 @@ include ../build/Makefile-rules
 CC = ${BIN}/cowasm-cc
 
 # Put -g at the end to get debug symbols and much bigger binaries.
-CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat # -g
+CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat -DWITHOUT_LIBCRYPTO # -g
 
 # See https://stackoverflow.com/questions/54192234/recursive-search-in-vpath
 # and https://stackoverflow.com/questions/231229/how-to-generate-a-makefile-with-source-in-sub-directories-using-just-one-makefil
@@ -79,9 +80,8 @@ ${TARGET}/ls: ${COMPAT} ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/print.o ${BUILD}/u
 ${TARGET}/mv: ${COMPAT} ${BUILD}/mv.o ${BUILD}/mv-rm.o ${BUILD}/mv-cp.o
 	${CC} ${CFLAGS} $^ -o $@
 
-# This is REALLY COMPLICATED AND BROKEN. Maybe start over.
-${TARGET}/sort: ${COMPAT} ${BUILD}/bwstring.o ${BUILD}/commoncrypto.o ${BUILD}/mem.o ${BUILD}/sort.o ${BUILD}/coll.o \
-			${BUILD}/file.o ${BUILD}/radixsort.o ${BUILD}/sha2.o  ${BUILD}/vsort.o
+${TARGET}/sort: ${COMPAT} ${BUILD}/bwstring.o ${BUILD}/coll.o ${BUILD}/file.o \
+      ${BUILD}/mem.o ${BUILD}/radixsort.o ${BUILD}/sort.o  ${BUILD}/vsort.o
 	${CC} ${CFLAGS} $^ -o $@
 
 ${TARGET}/tail: ${COMPAT} ${BUILD}/forward.o ${BUILD}/misc.o ${BUILD}/read.o ${BUILD}/reverse.o ${BUILD}/tail.o
@@ -138,6 +138,9 @@ test-mv: ${TARGET}/mv ${TARGET}/touch ${TARGET}/test ${TARGET}/rm
 test-rm: ${TARGET}/rm ${TARGET}/touch
 	${BIN}/cowasm dist/wasm/bin/touch xyz-rm && ${BIN}/cowasm dist/wasm/bin/rm xyz-rm && ${BIN}/cowasm dist/wasm/bin/test ! -f xyz-rm
 
+test-sort: ${TARGET}/sort
+	printf "x\na\ny\nhello\n" | ${BIN}/cowasm dist/wasm/bin/sort | ${BIN}/cowasm dist/wasm/bin/tr '\n' ' ' | grep "a hello x y"
+
 test-tail: ${TARGET}/tail
 	echo "first line" > ${BUILD}/.test-tail
 	echo "last line" >> ${BUILD}/.test-tail
@@ -176,9 +179,9 @@ test-uniq-sources:
 # 	find src/ -iname *.h -o -iname *.c | xargs clang-format -i --sort-includes=0
 
 # Very basic tests of some things...
-test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls \
-	test-mkdir-rmdir test-mv test-rm test-sleep test-tail test-touch test-tr test-tty test-uniq test-wc \
-	test-xargs
+test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head \
+	test-ls test-mkdir-rmdir test-mv test-rm test-sleep test-sort test-tail test-touch test-tr \
+	test-tty test-uniq test-wc test-xargs
 	@echo "Success -- all coreutils tests passed"
 
 

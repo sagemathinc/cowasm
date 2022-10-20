@@ -1,6 +1,8 @@
-/*	$FreeBSD: head/usr.bin/sort/mem.h 264744 2014-04-21 22:52:18Z pfg $	*/
+/*	$FreeBSD$	*/
 
 /*-
+ * SPDX-License-Identifier: BSD-2-Clause-FreeBSD
+ *
  * Copyright (C) 2009 Gabor Kovesdan <gabor@FreeBSD.org>
  * Copyright (C) 2012 Oleg Moskalenko <mom040267@gmail.com>
  * All rights reserved.

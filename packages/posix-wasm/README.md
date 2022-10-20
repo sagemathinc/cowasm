@@ -1,3 +1,8 @@
-# WASM Postix Stub library
+# WASM-Posix library
 
-This is just to get things to COMPILE.  The actual implementations / stub functions are going to be mainly defined in `lib/src/wasm.ts`. 
+Note that this is not just implementing parts of POSIX.  E.g., we
+add code from musl that is missing from WASI, and we add code from
+FreeBSD (say) that is needed to build tools from that OS, etc. 
+
+It's also very much not about emulating the POSIX standard exactly,
+or one particular UNIX.

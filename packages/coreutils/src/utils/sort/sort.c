@@ -1,4 +1,6 @@
 /*-
+ * SPDX-License-Identifier: BSD-2-Clause-FreeBSD
+ *
  * Copyright (C) 2009 Gabor Kovesdan <gabor@FreeBSD.org>
  * Copyright (C) 2012 Oleg Moskalenko <mom040267@gmail.com>
  * All rights reserved.
@@ -25,22 +27,19 @@
  * SUCH DAMAGE.
  */
 
+#include "cdefs.h"
+
+__FBSDID("$FreeBSD$");
 
 #include <sys/stat.h>
-#ifdef __linux__
-#include <sys/auxv.h>
-#else
-#include <sys/sysctl.h>
-#endif
 #include <sys/types.h>
 
 #include <err.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <getopt.h>
 #include <limits.h>
-#if !defined(__APPLE__) && !defined (__linux__)
-#include <md5.h>
-#endif
+#include <locale.h>
 #include <regex.h>
 #include <signal.h>
 #include <stdbool.h>
@@ -48,40 +47,51 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#ifdef __linux__
-#include <openssl/sha.h>
-#include "compat.h"
-#include <ctype.h>
-#else
 #include <wchar.h>
-#endif
 #include <wctype.h>
 
 #include "coll.h"
 #include "file.h"
 #include "sort.h"
-#include "commoncrypto.h"
+
+#ifndef WITHOUT_LIBCRYPTO
+void MD5Init(MD5_CTX *context)
+{
+	context->mdctx = EVP_MD_CTX_new();
+	if (!context)
+		errx(1, "could not init MD5 context");
+
+	if (!EVP_DigestInit_ex(context->mdctx, EVP_md5(), NULL))
+		errx(1, "could not init MD5 digest");
+}
+
+void MD5Update(MD5_CTX *context, const void *data, unsigned int len)
+{
+	if (!EVP_DigestUpdate(context->mdctx, data, len))
+		errx(1, "could not update MD5 digest");
+}
+
+void MD5Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5_CTX *context)
+{
+	if (!EVP_DigestFinal(context->mdctx, digest, NULL))
+		errx(1, "could not finalize MD5 digest");
+}
+#endif /* WITHOUT_LIBCRYPTO */
 
 #ifndef WITHOUT_NLS
 #include <nl_types.h>
 nl_catd catalog;
 #endif
 
-#ifdef __linux__
 extern const char *__progname;
-#endif
 
 #define	OPTIONS	"bcCdfghik:Mmno:RrsS:t:T:uVz"
 
-#define DEFAULT_RANDOM_SORT_SEED_FILE ("/dev/random")
-#define MAX_DEFAULT_RANDOM_SEED_DATA_SIZE (1024)
-
+#ifndef WITHOUT_LIBCRYPTO
 static bool need_random;
-static const char *random_source = DEFAULT_RANDOM_SORT_SEED_FILE;
-static const void *random_seed;
-static size_t random_seed_size;
 
-SHA256_CTX sha256_ctx;
+MD5_CTX md5_ctx;
+#endif
 
 /*
  * Default messages to use when NLS is disabled or no catalogue
@@ -108,16 +118,17 @@ const char *nlsstr[] = { "",
       "[--parallel thread_no] "
 #endif
       "[--human-numeric-sort] "
+#ifndef WITHOUT_LIBCRYPTO
+      "[--version-sort]] "
+#else
       "[--version-sort] [--random-sort [--random-source file]] "
+#endif
       "[--compress-program program] [file ...]\n" };
 
 struct sort_opts sort_opts_vals;
 
 bool debug_sort;
 bool need_hint;
-
-int (*isblank_f)(int c) = isblank;
-int (*iswblank_f)(wint_t c) = iswblank;
 
 #if defined(SORT_THREADS)
 unsigned int ncpu = 1;
@@ -151,7 +162,9 @@ enum
 #if defined(SORT_THREADS)
 	PARALLEL_OPT,
 #endif
+#ifndef WITHOUT_LIBCRYPTO
 	RANDOMSOURCE_OPT,
+#endif
 	COMPRESSPROGRAM_OPT,
 	QSORT_OPT,
 	MERGESORT_OPT,
@@ -192,8 +205,10 @@ static struct option long_options[] = {
 #endif
 				{ "qsort", no_argument, NULL, QSORT_OPT },
 				{ "radixsort", no_argument, NULL, RADIXSORT_OPT },
+#ifndef WITHOUT_LIBCRYPTO
 				{ "random-sort", no_argument, NULL, 'R' },
 				{ "random-source", required_argument, NULL, RANDOMSOURCE_OPT },
+#endif
 				{ "reverse", no_argument, NULL, 'r' },
 				{ "sort", required_argument, NULL, SORT_OPT },
 				{ "stable", no_argument, NULL, 's' },
@@ -217,7 +232,7 @@ sort_modifier_empty(struct sort_mods *sm)
 	if (sm == NULL)
 		return (true);
 	return (!(sm->Mflag || sm->Vflag || sm->nflag || sm->gflag ||
-	    sm->rflag || sm->Rflag || sm->hflag || sm->dflag || sm->fflag || sm->iflag));
+	    sm->rflag || sm->Rflag || sm->hflag || sm->dflag || sm->fflag));
 }
 
 /*
@@ -230,11 +245,7 @@ usage(bool opt_err)
 
 	out = opt_err ? stderr : stdout;
 
-	#ifdef __linux__
 	fprintf(out, getstr(12), __progname);
-	#else
-	fprintf(out, getstr(12), getprogname());
-	#endif
 	if (opt_err)
 		exit(2);
 	exit(0);
@@ -294,13 +305,15 @@ set_hw_params(void)
 
 	pages = sysconf(_SC_PHYS_PAGES);
 	if (pages < 1) {
-		perror("sysconf pages");
+    // WASI doesn't have this so just don't use much; but pages are big so...
+		//perror("sysconf pages");
 		pages = 1;
 	}
 	psize = sysconf(_SC_PAGESIZE);
 	if (psize < 1) {
-		perror("sysconf psize");
-		psize = 4096;
+    // WASI doesn't have, but they are 64K
+		//perror("sysconf psize");
+		psize = 4096*16;
 	}
 #if defined(SORT_THREADS)
 	ncpu = (unsigned int)sysconf(_SC_NPROCESSORS_ONLN);
@@ -335,6 +348,64 @@ conv_mbtowc(wchar_t *wc, const char *c, const wchar_t def)
 	}
 }
 
+/*
+ * Set current locale symbols.
+ */
+static void
+set_locale(void)
+{
+	struct lconv *lc;
+	const char *locale;
+
+	setlocale(LC_ALL, "");
+
+	lc = localeconv();
+
+	if (lc) {
+		wchar_t sym_decimal_point;
+		wchar_t sym_thousands_sep;
+		wchar_t sym_positive_sign;
+		wchar_t sym_negative_sign;
+		/* obtain LC_NUMERIC info */
+		/* Convert to wide char form */
+		conv_mbtowc(&sym_decimal_point, lc->decimal_point,
+		    symbol_decimal_point);
+		conv_mbtowc(&sym_thousands_sep, lc->thousands_sep,
+		    symbol_thousands_sep);
+		conv_mbtowc(&sym_positive_sign, lc->positive_sign,
+		    symbol_positive_sign);
+		conv_mbtowc(&sym_negative_sign, lc->negative_sign,
+		    symbol_negative_sign);
+		symbol_decimal_point = sym_decimal_point;
+		symbol_thousands_sep = sym_thousands_sep;
+		symbol_positive_sign = sym_positive_sign;
+		symbol_negative_sign = sym_negative_sign;
+	}
+
+	if (getenv("GNUSORT_NUMERIC_COMPATIBILITY"))
+		gnusort_numeric_compatibility = true;
+
+	locale = setlocale(LC_COLLATE, NULL);
+
+	if (locale) {
+		char *tmpl;
+		const char *cclocale;
+
+		tmpl = sort_strdup(locale);
+		cclocale = setlocale(LC_COLLATE, "C");
+		if (cclocale && !strcmp(cclocale, tmpl))
+			byte_sort = true;
+		else {
+			const char *pclocale;
+
+			pclocale = setlocale(LC_COLLATE, "POSIX");
+			if (pclocale && !strcmp(pclocale, tmpl))
+				byte_sort = true;
+		}
+		setlocale(LC_COLLATE, tmpl);
+		sort_free(tmpl);
+	}
+}
 
 /*
  * Set directory temporary files.
@@ -403,12 +474,8 @@ parse_memory_buffer_value(const char *value)
 				    100;
 				break;
 			default:
-				#ifdef __linux__
 				errno = EINVAL;
 				warn("%s", optarg);
-				#else
-				warnc(EINVAL, "%s", optarg);
-				#endif
 				membuf = available_free_memory;
 			}
 		}
@@ -420,8 +487,8 @@ parse_memory_buffer_value(const char *value)
  * Signal handler that clears the temporary files.
  */
 static void
-sig_handler(int sig, siginfo_t *siginfo,
-    void *context)
+sig_handler(int sig __attribute__((unused)), siginfo_t *siginfo __attribute__((unused)),
+    void *context __attribute__((unused)))
 {
 
 	clear_tmp_files();
@@ -540,55 +607,60 @@ static bool
 set_sort_modifier(struct sort_mods *sm, int c)
 {
 
-	if (sm) {
-		switch (c){
-		case 'b':
-			sm->bflag = true;
-			break;
-		case 'd':
-			sm->dflag = true;
-			break;
-		case 'f':
-			sm->fflag = true;
-			break;
-		case 'g':
-			sm->gflag = true;
-			need_hint = true;
-			break;
-		case 'i':
-			sm->iflag = true;
-			break;
-		case 'R':
-			sm->Rflag = true;
-			need_random = true;
-			break;
-		case 'M':
-			initialise_months();
-			sm->Mflag = true;
-			need_hint = true;
-			break;
-		case 'n':
-			sm->nflag = true;
-			need_hint = true;
-			print_symbols_on_debug = true;
-			break;
-		case 'r':
-			sm->rflag = true;
-			break;
-		case 'V':
-			sm->Vflag = true;
-			break;
-		case 'h':
-			sm->hflag = true;
-			need_hint = true;
-			print_symbols_on_debug = true;
-			break;
-		default:
-			return false;
-		}
-		sort_opts_vals.complex_sort = true;
-		sm->func = get_sort_func(sm);
+	if (sm == NULL)
+		return (true);
+
+	switch (c){
+	case 'b':
+		sm->bflag = true;
+		break;
+	case 'd':
+		sm->dflag = true;
+		break;
+	case 'f':
+		sm->fflag = true;
+		break;
+	case 'g':
+		sm->gflag = true;
+		need_hint = true;
+		break;
+	case 'i':
+		sm->iflag = true;
+		break;
+#ifndef WITHOUT_LIBCRYPTO
+	case 'R':
+		sm->Rflag = true;
+		need_hint = true;
+		need_random = true;
+		break;
+#endif
+	case 'M':
+		initialise_months();
+		sm->Mflag = true;
+		need_hint = true;
+		break;
+	case 'n':
+		sm->nflag = true;
+		need_hint = true;
+		print_symbols_on_debug = true;
+		break;
+	case 'r':
+		sm->rflag = true;
+		break;
+	case 'V':
+		sm->Vflag = true;
+		break;
+	case 'h':
+		sm->hflag = true;
+		need_hint = true;
+		print_symbols_on_debug = true;
+		break;
+	default:
+		return (false);
 	}
+
+	sort_opts_vals.complex_sort = true;
+	sm->func = get_sort_func(sm);
 	return (true);
 }
 
@@ -827,7 +899,7 @@ end:
 void
 fix_obsolete_keys(int *argc, char **argv)
 {
-	char sopt[129];
+	char sopt[304];
 
 	for (int i = 1; i < *argc; i++) {
 		char *arg1;
@@ -878,61 +950,80 @@ fix_obsolete_keys(int *argc, char **argv)
 	}
 }
 
+#ifndef WITHOUT_LIBCRYPTO
 /*
- * Set random seed
+ * Seed random sort
  */
 static void
-set_random_seed(void)
+get_random_seed(const char *random_source)
 {
-	if (need_random) {
+	char randseed[32];
+	struct stat fsb, rsb;
+	ssize_t rd;
+	int rsfd;
 
-		if (strcmp(random_source, DEFAULT_RANDOM_SORT_SEED_FILE) == 0) {
-			FILE* fseed;
-			SHA256_CTX ctx;
-			char rsd[MAX_DEFAULT_RANDOM_SEED_DATA_SIZE];
-			size_t sz = 0;
+	rsfd = -1;
+	rd = sizeof(randseed);
 
-			fseed = openfile(random_source, "r");
-			while (!feof(fseed)) {
-				int cr;
-
-				cr = fgetc(fseed);
-				if (cr == EOF)
-					break;
-
-				rsd[sz++] = (char) cr;
-
-				if (sz >= MAX_DEFAULT_RANDOM_SEED_DATA_SIZE)
-					break;
-			}
-
-			closefile(fseed, random_source);
-
-			SHA256Init(&ctx);
-			SHA256Update(&ctx, rsd, sz);
-
-			random_seed = SHA256End(&ctx, NULL);
-			random_seed_size = strlen(random_seed);
-
-		} else {
-			SHA256_CTX ctx;
-			char *b;
-
-			SHA256Init(&ctx);
-			b = SHA256File(random_source, NULL);
-			if (b == NULL)
-				err(2, NULL);
-
-			random_seed = b;
-			random_seed_size = strlen(b);
-		}
-
-		SHA256Init(&sha256_ctx);
-		if(random_seed_size>0) {
-			SHA256Update(&sha256_ctx, random_seed, random_seed_size);
-		}
+	if (random_source == NULL) {
+		if (getentropy(randseed, sizeof(randseed)) < 0)
+			err(EX_SOFTWARE, "getentropy");
+		goto out;
 	}
+
+	rsfd = open(random_source, O_RDONLY | O_CLOEXEC);
+	if (rsfd < 0)
+		err(EX_NOINPUT, "open: %s", random_source);
+
+	if (fstat(rsfd, &fsb) != 0)
+		err(EX_SOFTWARE, "fstat");
+
+	if (!S_ISREG(fsb.st_mode) && !S_ISCHR(fsb.st_mode))
+		err(EX_USAGE,
+		    "random seed isn't a regular file or /dev/random");
+
+	/*
+	 * Regular files: read up to maximum seed size and explicitly
+	 * reject longer files.
+	 */
+	if (S_ISREG(fsb.st_mode)) {
+		if (fsb.st_size > (off_t)sizeof(randseed))
+			errx(EX_USAGE, "random seed is too large (%jd >"
+			    " %zu)!", (intmax_t)fsb.st_size,
+			    sizeof(randseed));
+		else if (fsb.st_size < 1)
+			errx(EX_USAGE, "random seed is too small ("
+			    "0 bytes)");
+
+		memset(randseed, 0, sizeof(randseed));
+
+		rd = read(rsfd, randseed, fsb.st_size);
+		if (rd < 0)
+			err(EX_SOFTWARE, "reading random seed file %s",
+			    random_source);
+		if (rd < (ssize_t)fsb.st_size)
+			errx(EX_SOFTWARE, "short read from %s", random_source);
+	} else if (S_ISCHR(fsb.st_mode)) {
+		if (stat("/dev/random", &rsb) < 0)
+			err(EX_SOFTWARE, "stat");
+
+		if (fsb.st_dev != rsb.st_dev ||
+		    fsb.st_ino != rsb.st_ino)
+			errx(EX_USAGE, "random seed is a character "
+			    "device other than /dev/random");
+
+		if (getentropy(randseed, sizeof(randseed)) < 0)
+			err(EX_SOFTWARE, "getentropy");
+	}
+
+out:
+	if (rsfd >= 0)
+		close(rsfd);
+
+	MD5Init(&md5_ctx);
+	MD5Update(&md5_ctx, randseed, rd);
 }
+#endif /* WITHOUT_LIBCRYPTO */
 
 /*
  * Main function.
@@ -941,6 +1032,9 @@ int
 main(int argc, char **argv)
 {
 	char *outfile, *real_outfile;
+#ifndef WITHOUT_LIBCRYPTO
+	char *random_source = NULL;
+#endif
 	int c, result;
 	bool mef_flags[NUMBER_OF_MUTUALLY_EXCLUSIVE_FLAGS] =
 	    { false, false, false, false, false, false };
@@ -949,11 +1043,6 @@ main(int argc, char **argv)
 	outfile = sort_strdup("-");
 	real_outfile = NULL;
 
-	if(getenv("GNUSORT_COMPATIBLE_BLANKS")) {
-	  isblank_f = isspace;
-	  iswblank_f = iswspace;
-	}
-
 	struct sort_mods *sm = &default_sort_mods_object;
 
 	init_tmp_files();
@@ -961,6 +1050,7 @@ main(int argc, char **argv)
 	set_signal_handler();
 
 	set_hw_params();
+	set_locale();
 	set_tmpdir();
 	set_sort_opts();
 
@@ -1001,17 +1091,11 @@ main(int argc, char **argv)
 				memset(&(keys[keys_num - 1]), 0,
 				    sizeof(struct key_specs));
 
-				#ifdef __linux__
-				if (parse_k(optarg, &(keys[keys_num++])) < 0) {
+				if (parse_k(optarg, &(keys[keys_num - 1]))
+				    < 0) {
 					errno = EINVAL;
 					err(2, "-k %s", optarg);
 				}
-				#else
-				if (parse_k(optarg, &(keys[keys_num - 1]))
-				    < 0) {
-					errc(2, EINVAL, "-k %s", optarg);
-				}
-				#endif
 
 				break;
 			}
@@ -1035,12 +1119,8 @@ main(int argc, char **argv)
 			case 't':
 				while (strlen(optarg) > 1) {
 					if (optarg[0] != '\\') {
-						#ifdef __linux__
 						errno = EINVAL;
 						err(2, "%s", optarg);
-						#else
-						errc(2, EINVAL, "%s", optarg);
-						#endif
 					}
 					optarg += 1;
 					if (*optarg == '0') {
@@ -1083,8 +1163,10 @@ main(int argc, char **argv)
 						set_sort_modifier(sm, 'n');
 					else if (!strcmp(optarg, "month"))
 						set_sort_modifier(sm, 'M');
+#ifndef WITHOUT_LIBCRYPTO
 					else if (!strcmp(optarg, "random"))
 						set_sort_modifier(sm, 'R');
+#endif
 					else
 						unknown(optarg);
 				}
@@ -1113,9 +1195,11 @@ main(int argc, char **argv)
 			case RADIXSORT_OPT:
 				sort_opts_vals.sort_method = SORT_RADIXSORT;
 				break;
+#ifndef WITHOUT_LIBCRYPTO
 			case RANDOMSOURCE_OPT:
 				random_source = strdup(optarg);
 				break;
+#endif
 			case COMPRESSPROGRAM_OPT:
 				compress_program = strdup(optarg);
 				break;
@@ -1202,6 +1286,8 @@ main(int argc, char **argv)
 		printf("Number of CPUs: %d\n",(int)ncpu);
 		nthreads = 1;
 #endif
+		printf("Using collate rules of %s locale\n",
+		    setlocale(LC_COLLATE, NULL));
 		if (byte_sort)
 			printf("Byte sort is used\n");
 		if (print_symbols_on_debug) {
@@ -1214,7 +1300,10 @@ main(int argc, char **argv)
 		}
 	}
 
-	set_random_seed();
+#ifndef WITHOUT_LIBCRYPTO
+	if (need_random)
+		get_random_seed(random_source);
+#endif
 
 	/* Case when the outfile equals one of the input files: */
 	if (strcmp(outfile, "-")) {
@@ -1287,7 +1376,11 @@ main(int argc, char **argv)
 		struct file_list fl;
 
 		file_list_init(&fl, false);
-		file_list_populate(&fl, argc, argv, true);
+		/* No file arguments remaining means "read from stdin." */
+		if (argc == 0)
+			file_list_add(&fl, "-", true);
+		else
+			file_list_populate(&fl, argc, argv, true);
 		merge_files(&fl, outfile);
 		file_list_clean(&fl);
 	}

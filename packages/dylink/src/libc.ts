@@ -174,6 +174,8 @@ void _Py_CheckEmscriptenSignals();
 // Extra things we added to our posix compat layer, since they are
 // missing from wasi-zig-libc:
 const posix = `
+heapsort
+mergesort
 setmode
 getmode
 _Py_CheckEmscriptenSignalsPeriodically
