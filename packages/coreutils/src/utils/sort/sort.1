@@ -336,11 +336,6 @@ Take the input file list from the file
 .Ar filename .
 The file names must be separated by NUL
 (like the output produced by the command "find ... -print0").
-.It Fl Fl radixsort
-Try to use radix sort, if the sort specifications allow.
-The radix sort can only be used for trivial locales (C and POSIX),
-and it cannot be used for numeric or month sort.
-Radix sort is very fast and stable.
 .It Fl Fl mergesort
 Use mergesort.
 This is a universal algorithm that can always be used,

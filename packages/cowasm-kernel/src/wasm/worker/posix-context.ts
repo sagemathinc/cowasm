@@ -128,7 +128,7 @@ export default class PosixContext {
     // I wonder if I could use immer.js instead for any of this?  It might be slower.
     this.context.state = cloneDeep(state.context);
     const wasi_state = cloneDeep(state.wasi);
-    let return_code = 2; // not set ==> something went wrong since exit never called.
+    let return_code = -1; // not set ==> something went wrong since exit never called.
     wasi_state.bindings.exit = (code: number) => {
       // uncomment this for debugging only
       // console.trace(`exit(${code}) called`);
@@ -169,8 +169,15 @@ export default class PosixContext {
       try {
         return main(args.length, wasm.send.arrayOfStrings(args));
       } catch (err) {
-        console.error(err);
-        return 139; // segfault return code.  Seems not bad.
+        if (return_code == -1) {
+          // code did not get set -- something crashed badly.
+          console.error(args[0], err);
+          return 139; // segfault return code.
+        }
+      }
+      if (return_code == -1) {
+        // code did not get set -- something bad?
+        return 139; // segfault return code.
       }
       return return_code;
     } finally {

@@ -83,7 +83,7 @@ void MD5Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5_CTX *context)
 nl_catd catalog;
 #endif
 
-extern const char *__progname;
+extern const char *__progname = "sort";
 
 #define	OPTIONS	"bcCdfghik:Mmno:RrsS:t:T:uVz"
 
@@ -112,7 +112,7 @@ const char *nlsstr[] = { "",
 /*12*/"Usage: %s [-bcCdfigMmnrsuz] [-kPOS1[,POS2] ... ] "
       "[+POS1 [-POS2]] [-S memsize] [-T tmpdir] [-t separator] "
       "[-o outfile] [--batch-size size] [--files0-from file] "
-      "[--heapsort] [--mergesort] [--radixsort] [--qsort] "
+      "[--heapsort] [--mergesort] [--qsort] "
       "[--mmap] "
 #if defined(SORT_THREADS)
       "[--parallel thread_no] "
@@ -169,7 +169,6 @@ enum
 	QSORT_OPT,
 	MERGESORT_OPT,
 	HEAPSORT_OPT,
-	RADIXSORT_OPT,
 	MMAP_OPT
 };
 
@@ -204,7 +203,6 @@ static struct option long_options[] = {
 				{ "parallel", required_argument, NULL, PARALLEL_OPT },
 #endif
 				{ "qsort", no_argument, NULL, QSORT_OPT },
-				{ "radixsort", no_argument, NULL, RADIXSORT_OPT },
 #ifndef WITHOUT_LIBCRYPTO
 				{ "random-sort", no_argument, NULL, 'R' },
 				{ "random-source", required_argument, NULL, RANDOMSOURCE_OPT },
@@ -311,8 +309,7 @@ set_hw_params(void)
 	}
 	psize = sysconf(_SC_PAGESIZE);
 	if (psize < 1) {
-    // WASI doesn't have, but they are 64K
-		//perror("sysconf psize");
+		perror("sysconf psize");
 		psize = 4096*16;
 	}
 #if defined(SORT_THREADS)
@@ -1192,9 +1189,6 @@ main(int argc, char **argv)
 			case HEAPSORT_OPT:
 				sort_opts_vals.sort_method = SORT_HEAPSORT;
 				break;
-			case RADIXSORT_OPT:
-				sort_opts_vals.sort_method = SORT_RADIXSORT;
-				break;
 #ifndef WITHOUT_LIBCRYPTO
 			case RANDOMSOURCE_OPT:
 				random_source = strdup(optarg);
@@ -1217,7 +1211,6 @@ main(int argc, char **argv)
 			}
 				break;
 			case VERSION_OPT:
-				printf("%s\n", VERSION);
 				exit(EXIT_SUCCESS);
 				/* NOTREACHED */
 				break;

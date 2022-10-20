@@ -51,7 +51,6 @@ __FBSDID("$FreeBSD$");
 
 #include "coll.h"
 #include "file.h"
-#include "radixsort.h"
 
 #include "compat.h"
 
@@ -681,8 +680,9 @@ file_reader_init(const char *fsrc)
 
 			ret->bsz = fread(ret->buffer, 1, ret->cbsz, ret->file);
 			if (ret->bsz == 0) {
-				if (ferror(ret->file))
+				if (ferror(ret->file)) {
 					err(2, NULL);
+        }
 			}
 		}
 	}
@@ -1214,8 +1214,6 @@ get_sort_method_name(int sm)
 
 	if (sm == SORT_MERGESORT)
 		return "mergesort";
-	else if (sort_opts_vals.sort_method == SORT_RADIXSORT)
-		return "radixsort";
 	else if (sort_opts_vals.sort_method == SORT_HEAPSORT)
 		return "heapsort";
 	else
@@ -1241,13 +1239,6 @@ sort_list_to_file(struct sort_list *list, const char *outfile)
 {
 	struct sort_mods *sm = &(keys[0].sm);
 
-	if (!(sm->Mflag) && !(sm->Rflag) && !(sm->Vflag) &&
-	    !(sm->gflag) && !(sm->hflag) && !(sm->nflag)) {
-		if ((sort_opts_vals.sort_method == SORT_DEFAULT) && byte_sort)
-			sort_opts_vals.sort_method = SORT_RADIXSORT;
-
-	} else if (sort_opts_vals.sort_method == SORT_RADIXSORT)
-		err(2, "%s", getstr(9));
 
 	/*
 	 * to handle stable sort and the unique cases in the
@@ -1256,8 +1247,6 @@ sort_list_to_file(struct sort_list *list, const char *outfile)
 	if (sort_opts_vals.sflag) {
 		switch (sort_opts_vals.sort_method){
 		case SORT_MERGESORT:
-			break;
-		case SORT_RADIXSORT:
 			break;
 		case SORT_DEFAULT:
 			sort_opts_vals.sort_method = SORT_MERGESORT;
@@ -1275,10 +1264,6 @@ sort_list_to_file(struct sort_list *list, const char *outfile)
 		    get_sort_method_name(sort_opts_vals.sort_method));
 
 	switch (sort_opts_vals.sort_method){
-	case SORT_RADIXSORT:
-		rxsort(list->list, list->count);
-		sort_list_dump(list, outfile);
-		break;
 	case SORT_MERGESORT:
 		mt_sort(list, mergesort, outfile);
 		break;

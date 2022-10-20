@@ -888,6 +888,7 @@ export default class WASI {
               }
             }
           }
+          // console.log("fd_read: nread=", read);
           this.view.setUint32(nread, read, true);
           return WASI_ESUCCESS;
         }

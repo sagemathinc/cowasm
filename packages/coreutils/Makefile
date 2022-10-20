@@ -81,7 +81,7 @@ ${TARGET}/mv: ${COMPAT} ${BUILD}/mv.o ${BUILD}/mv-rm.o ${BUILD}/mv-cp.o
 	${CC} ${CFLAGS} $^ -o $@
 
 ${TARGET}/sort: ${COMPAT} ${BUILD}/bwstring.o ${BUILD}/coll.o ${BUILD}/file.o \
-      ${BUILD}/mem.o ${BUILD}/radixsort.o ${BUILD}/sort.o  ${BUILD}/vsort.o
+      ${BUILD}/mem.o  ${BUILD}/sort.o  ${BUILD}/vsort.o
 	${CC} ${CFLAGS} $^ -o $@
 
 ${TARGET}/tail: ${COMPAT} ${BUILD}/forward.o ${BUILD}/misc.o ${BUILD}/read.o ${BUILD}/reverse.o ${BUILD}/tail.o
@@ -178,7 +178,9 @@ test-uniq-sources:
 # format:
 # 	find src/ -iname *.h -o -iname *.c | xargs clang-format -i --sort-includes=0
 
-# Very basic tests of some things...
+# Very basic tests of some things.
+# NOTE: "make -j8 test" seems to crash tty on linux host at least.
+
 test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head \
 	test-ls test-mkdir-rmdir test-mv test-rm test-sleep test-sort test-tail test-touch test-tr \
 	test-tty test-uniq test-wc test-xargs

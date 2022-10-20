@@ -157,10 +157,11 @@ static int olderf(const char *, const char *);
 static int equalf(const char *, const char *);
 static void syntax(const char *op, char *msg);
 
+extern const char *__progname = "test";
+
 int
 main(int argc, char *argv[])
 {
-	extern const char *__progname;
 	int	res;
 	if (__progname != NULL && strcmp(__progname, "[") == 0) {
 		if (strcmp(argv[--argc], "]"))
