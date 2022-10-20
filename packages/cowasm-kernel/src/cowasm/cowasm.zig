@@ -1,12 +1,12 @@
 const std = @import("std");
 const unistd = @cImport(@cInclude("unistd.h"));
 
-extern fn zython_dash_vforkexec(argv: [*c][*c]u8, path:[*c]u8) c_int;
+extern fn cowasm_vforkexec(argv: [*c][*c]u8, path:[*c]u8) c_int;
 
 pub fn terminal(argc: i32, argv: [*c][*c]u8) !i32 {
     _ = argc; // actually argv is assumed null terminated itself.
     // We assume argv[0] is the full absolute path.
-    var ret = zython_dash_vforkexec(argv, 0);
+    var ret = cowasm_vforkexec(argv, 0);
     return ret;
 }
 

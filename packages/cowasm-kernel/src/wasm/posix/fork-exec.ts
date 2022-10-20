@@ -219,13 +219,14 @@ export default function fork_exec({
       }
     },
 
-    // Similar but for dash shell:
-    // extern int zython_dash_vforkexec(char **argv, const char *path);
-    zython_dash_vforkexec: (argvPtr: number, pathPtr: number = 0): number => {
+    // Kind of similar to above but blocking and **supports webassembly programs**
+    // through some amazing "magic":
+    // extern int cowasm_vforkexec(char **argv, const char *path);
+    cowasm_vforkexec: (argvPtr: number, pathPtr: number = 0): number => {
       const argv = recv.arrayOfStrings(argvPtr);
       const path = pathPtr ? recv.string(pathPtr) : "";
-      log("zython_dash_vforkexec", argv);
-      //console.log("zython_dash_vforkexec", { argv });
+      log("cowasm_vforkexec", argv);
+      //console.log("cowasm_vforkexec", { argv });
       if (!argv[0]) {
         throw Error("argv[0] must be defined");
       }
