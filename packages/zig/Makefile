@@ -37,7 +37,7 @@ URL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 #VERSION = 0.10.0-dev.2751+08459ff1c
 #TARBALL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
-all: ${DIST_NATIVE}/.${VERSION} ${BIN}/cowasm-cc ${BIN}/cowasm-c++ ${BIN}/zig
+all: ${DIST_NATIVE}/.${VERSION} ${BIN}/cowasm-cc ${BIN}/cowasm-c++ ${BIN}/cowasm-zig ${BIN}/zig
 
 include ../build/Makefile-rules
 

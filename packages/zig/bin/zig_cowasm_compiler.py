@@ -34,7 +34,7 @@ did get merged into LLVM.   There's an option "--strip-debug".  Anyway, I'm not 
 --strip-all versus --strip-debug above.  --strip-all seems to work right now.
 """
 
-import multiprocessing, os, shutil, subprocess, sys, tempfile
+import multiprocessing, os, shutil, subprocess, sys, tempfile, pathlib
 
 verbose = False  # default
 # use -V for super verbose, so also zig/clang is verbose
@@ -52,10 +52,13 @@ elif '-v' in sys.argv:
 
 if sys.argv[0].endswith('-cc'):
     sys.argv.insert(1, 'cc')
+    LANG = 'cc'
 elif sys.argv[0].endswith('-c++'):
     sys.argv.insert(1, 'c++')
+    LANG = 'c++'
 elif sys.argv[0].endswith('-zig'):
     sys.argv.insert(1, 'build-obj')
+    LANG = 'zig'
 
 sys.argv[0] = 'zig'
 
@@ -69,7 +72,7 @@ sys.argv[0] = 'zig'
 # NOTE: this check MUST be done before any use of run, since -fvisibility-main doesn't exist for clang.
 # It is just a flag I made up.
 if '-fvisibility-main' in sys.argv:
-    use_main_hack = True
+    use_main_hack = LANG in ['cc', 'c++']  # zig doesn't need it but cc/c++ do.
     sys.argv.remove('-fvisibility-main')
 else:
     use_main_hack = False
@@ -91,7 +94,7 @@ if "-E" in sys.argv or '--print-multiarch' in sys.argv:
     sys.exit(0)
 
 # https://retrocomputing.stackexchange.com/questions/20281/why-didnt-c-specify-filename-extensions
-SOURCE_EXTENSIONS = set(['.c', '.c++', '.cpp', '.cxx', '.cc', '.cp'])
+SOURCE_EXTENSIONS = set(['.c', '.c++', '.cpp', '.cxx', '.cc', '.cp', '.zig'])
 
 
 def is_source(filename):
@@ -127,7 +130,8 @@ if not os.path.exists(INCLUDE):
 # The main define below makes it so the main function is always visible.
 
 FLAGS = [
-    '-shared', '-target', 'wasm32-emscripten', '-fPIC', '-isystem',
+    '-dynamic' if LANG == 'zig' else '-shared', '-target', 'wasm32-emscripten',
+    '-fPIC', '-isystem',
     os.path.join(INCLUDE, 'wasm-wasi-musl'), '-isystem',
     os.path.join(INCLUDE, 'generic-musl'), '-D__wasi__',
     '-D__EMSCRIPTEN_major__=3', '-D__EMSCRIPTEN_minor__=1',
@@ -145,10 +149,31 @@ def is_debug():
         # any debug flag
         if flag.startswith('-g'):
             return True
-    # opt flags in reverse order, since only last matters.
+
+    # opt flags in reverse order, since only last matters and the command can
+    # have numerous conflicting flags in a row with no error message.
+    last = sys.argv[-1]
     for flag in reversed(sys.argv):
         if flag.startswith('-O'):
-            return flag == '-O0'
+            # Note that "-O 0" is NOT allowed in C/C++
+            if flag == '-O0':
+                return True
+            if len(flag) == 3:
+                # Not -O0, so it's something like -O1, -Oz, or -O2 or -O3.
+                return False
+            # In Zig we have "-ODebug" and "-O Debug" and "-ORelease*"
+            # and "-O Release*", so it's more complicated...
+            if flag == '-O':
+                if last == 'Debug':
+                    return True
+                elif last.startswith('Release'):
+                    return False
+            if flag.startswith('-ODebug'):
+                return True
+            elif flag.startswith('-ORelease'):
+                return False
+        last = flag
+
     # We strip by default if there are no relevant flags.  For WASM we
     # usually want to strip, unless we're explicitly debugging.  A subtle
     # aspect of autodetecting is that the stripping actually happens
@@ -164,6 +189,16 @@ def is_input(filename):
 
 
 def get_output_name():
+    if LANG == 'zig':
+        # There should be exactly one .zig file foo.zig and the final output is then foo.wasm
+        # as we are modeling this after "zig build-exe -target wasm32-wasi a.zig", which
+        # automatically produces "a.wasm", for better or worse.
+        for arg in sys.argv:
+            if arg.endswith('.zig'):
+                return os.path.splitext(arg)[0] + '.wasm'
+        raise Error("must specify exactly one zig file")
+
+    # C/C++ is arg to -o or default of a.out
     try:
         return sys.argv[sys.argv.index('-o') + 1]
     except:
@@ -237,7 +272,7 @@ def extract_source_files(argv):
             # but do NOT include in compiler args, since we will use our own -o there.
             i += 2
             continue
-        if is_source(argv[i]):  # .c, .cxx, etc.
+        if is_source(argv[i]):  # .c, .cxx, .zig, etc.
             source_files.append(argv[i])
         elif is_object_or_archive(argv[i]):  # .a or .o
             object_files.append(argv[i])
@@ -252,8 +287,21 @@ def parse_args(argv):
     compiler_args, source_files, object_args = extract_source_files(argv)
     return source_files, compiler_args, linker_args, object_args
 
+class ZigTempFile:
+    def __init__(self, path):
+        self.path = path
+        self.name = os.path.splitext(path)[0] + '.o'
+
+    def __del__(self):
+        pathlib.Path(self.name).unlink(True)
+        # zig weirdly makes foo.o and foo.o.o from foo.zig?!
+        pathlib.Path(self.name + '.o').unlink(True)
 
 def compile_source(compiler_args, source_file):
+    if LANG == 'zig':
+        run(compiler_args + [source_file] + FLAGS)
+        return ZigTempFile(os.path.splitext(source_file)[0] + '.o')
+
     # returns NamedTemporaryFile object representing the object file
     tmpfile = tempfile.NamedTemporaryFile(suffix='.o')
     dot_o = tmpfile.name
