@@ -21,6 +21,7 @@ all: \
 	${TARGET}/ls \
 	${TARGET}/sleep \
 	${TARGET}/tail \
+	${TARGET}/tee \
 	${TARGET}/touch \
 	${TARGET}/tr \
 	${TARGET}/uniq \
@@ -116,17 +117,20 @@ test-tail: ${TARGET}/tail
 	test "`${BIN}/cowasm ${TARGET}/tail -n 1 ${BUILD}/.test-tail`" = "last line"
 	rm ${BUILD}/.test-tail
 
+test-tee: ${TARGET}/tee
+	echo "Hello" | ${BIN}/cowasm ./dist/wasm/bin/tee ${BUILD}/.greetings.txt | grep Hello;  grep Hello ${BUILD}/.greetings.txt; rm ${BUILD}/.greetings.txt
+
 test-touch: ${TARGET}/touch
 	cowasm dist/wasm/bin/touch ${BUILD}/.foobar; ls ${BUILD}/.foobar |wc -l | grep 1;  rm ${BUILD}/.foobar
 
 test-tr: ${TARGET}/tr
-	echo "Bella" | cowasm dist/wasm/bin/tr Bl 81 |grep 8e11a
+	echo "Bella" | ${BIN}/cowasm dist/wasm/bin/tr Bl 81 |grep 8e11a
 
 test-uniq: ${TARGET}/uniq
-	printf "hello\nworld\nworld\nworld\n" | cowasm dist/wasm/bin/uniq | wc -l | grep 2
+	printf "hello\nworld\nworld\nworld\n" | ${BIN}/cowasm dist/wasm/bin/uniq | wc -l | grep 2
 
 test-wc: ${TARGET}/wc
-	echo "hello world" | cowasm dist/wasm/bin/wc | grep "1       2      12"
+	echo "hello world" | ${BIN}/cowasm dist/wasm/bin/wc | grep "1       2      12"
 
 test-xargs: ${TARGET}/xargs
 	ls -1 | ${BIN}/cowasm ${TARGET}/xargs |grep Makefile |grep dist
