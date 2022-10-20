@@ -18,6 +18,7 @@ all: \
 	${TARGET}/date \
 	${TARGET}/factor \
 	${TARGET}/head \
+	${TARGET}/ln \
 	${TARGET}/ls \
 	${TARGET}/sleep \
 	${TARGET}/tail \
@@ -99,6 +100,9 @@ test-date:  ${TARGET}/date
 
 test-factor: ${TARGET}/factor
 	test "`${BIN}/cowasm ${TARGET}/factor 2023`" = "2023: 7 17 17"
+
+test-ln: ${TARGET}/ln
+	${BIN}/cowasm ./dist/wasm/bin/ln -sf README.md ${BUILD}/.xyz && ls -l ${BUILD}/.xyz |grep xyz | grep README.md ; rm ${BUILD}/.xyz
 
 test-ls: ${TARGET}/ls
 	${BIN}/cowasm ${TARGET}/ls ${TARGET} | grep ls
