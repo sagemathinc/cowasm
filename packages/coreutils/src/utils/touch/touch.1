@@ -1,0 +1,183 @@
+.\"	$OpenBSD: touch.1,v 1.35 2015/09/25 17:02:57 schwarze Exp $
+.\"	$NetBSD: touch.1,v 1.8 1995/08/31 22:10:05 jtc Exp $
+.\"
+.\" Copyright (c) 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" the Institute of Electrical and Electronics Engineers, Inc.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)touch.1	8.3 (Berkeley) 4/28/95
+.\"
+.Dd $Mdocdate: September 25 2015 $
+.Dt TOUCH 1
+.Os
+.Sh NAME
+.Nm touch
+.Nd change file access and modification times
+.Sh SYNOPSIS
+.Nm touch
+.Op Fl acm
+.Oo Fl d
+.Sm off
+.Ar ccyy No - Ar mm No - Ar dd Cm T Ar HH : MM : SS Oo \&. Ar frac Oc Op Cm Z
+.Sm on
+.Oc
+.Op Fl r Ar file
+.Op Fl t Oo Oo Ar cc Oc Ns Ar yy Oc Ns Ar mmddHHMM Ns Op Pf . Ar SS
+.Ar
+.Sh DESCRIPTION
+The
+.Nm
+utility sets the modification and access times of files to the
+current time of day.
+If the file doesn't exist, it is created with default permissions.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl a
+Change the access time of the file.
+The modification time of the file is not changed unless the
+.Fl m
+flag is also specified.
+.It Fl c
+Do not create the file if it does not exist.
+The
+.Nm
+utility does not treat this as an error.
+No error messages are displayed and the exit value is not affected.
+.It Xo Fl d
+.Sm off
+.Ar ccyy No - Ar mm No - Ar dd Cm T Ar HH : MM : SS Oo \&. Ar frac Oc Op Cm Z
+.Sm on
+.Xc
+Change the access and modification times to the specified time,
+in a format compliant with the
+.St -iso8601
+standard.
+The parts of the argument represent the following:
+.Pp
+.Bl -tag -width .frac -compact -offset indent
+.It Ar ccyy
+Year.
+.It Ar mm
+Month:
+a number from 1 to 12.
+.It Ar dd
+Day:
+a number from 1 to 31.
+.It Cm T
+Either the capital letter
+.Sq T
+or a single space.
+If a space is used, the argument should be quoted to
+prevent the shell from splitting it into multiple words.
+.It Ar HH
+Hour:
+a number from 0 to 23.
+.It Ar MM
+Minute:
+a number from 0 to 59.
+.It Ar SS
+Second:
+a number from 0 to 60
+(permitting a leap second).
+.It Ar frac
+The decimal fraction of the second,
+either a period or comma,
+followed by one or more decimal digits.
+.It Cm Z
+The timezone specifier: a capital letter
+.Sq Z
+indicating that the time is in UTC.
+If not specified, the time is in the local timezone.
+.El
+.It Fl m
+Change the modification time of the file.
+The access time of the file is not changed unless the
+.Fl a
+flag is also specified.
+.It Fl r Ar file
+Use the access and modification times from the specified file
+instead of the current time of day.
+.It Fl t Oo Oo Ar cc Oc Ns Ar yy Oc Ns Ar mmddHHMM Ns Op Pf . Ar SS
+Change the access and modification times to the specified time,
+where the parts of the argument represent the following:
+.Pp
+.Bl -tag -width Ds -compact -offset indent
+.It Ar ccyy
+Year.
+If yy is specified, but cc is not,
+a value for yy between 69 and 99 results in a cc value of 19.
+Otherwise, a cc value of 20 is used.
+.It Ar mm
+Month:
+a number from 1 to 12.
+.It Ar dd
+Day:
+a number from 1 to 31.
+.It Ar HH
+Hour:
+a number from 0 to 23.
+.It Ar MM
+Minute:
+a number from 0 to 59.
+.It Ar SS
+Second:
+a number from 0 to 60
+(permitting a leap second),
+preceded by a period.
+The default is 0.
+.El
+.El
+.Sh EXIT STATUS
+.Ex -std touch
+.Sh SEE ALSO
+.Xr date 1
+.Sh STANDARDS
+The
+.Nm
+utility is compliant with the
+.St -p1003.1-2008
+specification.
+.Pp
+The obsolescent form of
+.Nm touch ,
+where a time format is specified as the first argument, is supported.
+When no
+.Fl d , r ,
+or
+.Fl t
+option is specified, there are at least two arguments, and the first
+argument is a string of digits either eight or ten characters in length,
+the first argument is interpreted as a time specification of the form
+.Dq mmddHHMM[yy] .
+.Sh HISTORY
+A
+.Nm
+utility appeared in
+.At v7 .

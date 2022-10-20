@@ -125,4 +125,6 @@ size_t strlcpy(char *, const char *, size_t);
 extern void setprogname(const char *progname);
 extern const char *__progname;
 
+#define DEFFILEMODE (S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH)
+
 #include "posix-wasm.h"
