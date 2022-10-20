@@ -21,6 +21,11 @@ packages/coreutils/${BUILT}: zig posix-wasm
 	cd packages/coreutils && make -j8
 .PHONY: coreutils
 
+cowasm-kernel: packages/cowasm-kernel/${BUILT}
+packages/cowasm-kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node
+	cd packages/cowasm-kernel && make all
+.PHONY: cowasm-kernel
+
 dash: packages/dash/${BUILT}
 packages/dash/${BUILT}: zig libedit
 	cd packages/dash && make all
@@ -89,10 +94,10 @@ packages/posix-wasm/${BUILT}: zig
 	cd packages/posix-wasm && make all
 .PHONY: posix-wasm
 
-cowasm-kernel: packages/cowasm-kernel/${BUILT}
-packages/cowasm-kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node libgit2 dash
-	cd packages/cowasm-kernel && make all
-.PHONY: cowasm-kernel
+python-wasm: packages/python-wasm/${BUILT}
+packages/python-wasm/${BUILT}: node
+	cd packages/python-wasm && make all
+.PHONY: python-wasm
 
 packages/sqlite/${BUILT}: libedit posix-wasm zig zlib
 	cd packages/sqlite && make all
@@ -105,7 +110,7 @@ packages/termcap/${BUILT}: zig
 .PHONY: termcap
 
 terminal: packages/terminal/${BUILT}
-packages/terminal/${BUILT}: node cowasm-kernel
+packages/terminal/${BUILT}: node  python-wasm
 	cd packages/terminal && make all
 .PHONY: terminal
 
@@ -120,12 +125,12 @@ packages/wasi-js/${BUILT}: node
 .PHONY: wasi-js
 
 webpack: packages/webpack/${BUILT}
-packages/webpack/${BUILT}: node cowasm-kernel
+packages/webpack/${BUILT}: node python-wasm
 	cd packages/webpack && make all
 .PHONY: webpack
 
 website: packages/website/${BUILT}
-packages/website/${BUILT}: node cowasm-kernel
+packages/website/${BUILT}: node python-wasm
 	cd packages/website && make all
 .PHONY: website
 
