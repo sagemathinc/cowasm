@@ -9,7 +9,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
-all: cowasm-kernel webpack terminal website py f2c coreutils man viz
+all: cowasm-kernel webpack terminal website py f2c coreutils man viz dash
 
 cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl

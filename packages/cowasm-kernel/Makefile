@@ -2,8 +2,8 @@ include ../build/Makefile-vars
 
 # OPT     = -O ReleaseFast
 # OPT     = -O ReleaseSafe
-# OPT     = -O ReleaseSmall
-OPT     = -O Debug
+OPT     = -O ReleaseSmall
+# OPT     = -O Debug
 ZIG_PKG = --main-pkg-path ${SRC}
 
 PYTHON_NATIVE = ${PACKAGES}/cpython/dist/native
