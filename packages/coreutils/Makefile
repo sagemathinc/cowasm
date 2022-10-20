@@ -154,7 +154,8 @@ test-tr: ${TARGET}/tr
 	echo "Bella" | ${BIN}/cowasm dist/wasm/bin/tr Bl 81 |grep 8e11a
 
 test-tty: ${TARGET}/tty
-	${BIN}/cowasm ./dist/wasm/bin/tty | grep /dev/tty
+	# Do not be too precise with output so this works on both mac and linux...
+	${BIN}/cowasm ./dist/wasm/bin/tty | grep /dev
 
 test-uniq: ${TARGET}/uniq
 	printf "hello\nworld\nworld\nworld\n" | ${BIN}/cowasm dist/wasm/bin/uniq | wc -l | grep 2
