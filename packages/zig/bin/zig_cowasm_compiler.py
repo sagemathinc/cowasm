@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
 """
-Use this to build position independent C/C++ code (-fPIC) using zig.  Someday
-this will be a lightweight wrapper around
+Use this wrapper to build position independent Zig/C/C++ code (-fPIC) using zig.
+Someday I might be able to somehow upstream things and this might then just
+be a lightweight wrapper around
 
-zig cc -target wasm32-wasi -fPIC
+    zig cc -target wasm32-wasi -fPIC
 
-but right now fPIC for wasi is not supported at all in zig.  It happens that
-wasm32-emscripten does have some support though, inherited from it being
-upstreamed in clang. It's the only way to make dynamic WASM modules, and those
-are critical to the WaCalc project.
+Right now -fPIC for wasi is not supported at all in zig, yet Position Indendent Code
+is absolutely central to the design of CoWasm.   Fortunatley, there is one
+implementation of PIC in the WebAssembly world, and that's part of
+wasm32-emscripten, which is part of clang.   This seems to be the only way
+today to make dynamic WASM modules.
 
 NOTE: there is about 0.05s - 0.1s overhead just due to using Python for
-this script, and that's a lot LONGER than the zig call itself typically
-takes, e.g., when things are cached.  This time adds up!  Thus we certainly
-plan to rewrite this script itself in zig for speed purposes.
+this script, and that's a lot LONGER than the zig call sometimes
+takes, e.g., when things are cached.  This time can add up!  We will likely
+rewrite this script in Zig for speed purposes, but only once it completely
+stabilizes, as Python is very easy to iterate on.
 
 NOTE: Often -fPIC is the *default* these days.  See the discussion here:
 https://stackoverflow.com/questions/20637310/does-one-still-need-to-use-fpic-when-compiling-with-gcc#:~:text=You%20never%20needed%20to%20generate,or%20set%20it%20by%20default.
@@ -51,6 +54,9 @@ if sys.argv[0].endswith('-cc'):
     sys.argv.insert(1, 'cc')
 elif sys.argv[0].endswith('-c++'):
     sys.argv.insert(1, 'c++')
+elif sys.argv[0].endswith('-zig'):
+    sys.argv.insert(1, 'build-obj')
+
 sys.argv[0] = 'zig'
 
 # This is a horrendous hack to make the main function visible without having to

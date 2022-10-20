@@ -45,7 +45,7 @@ ${DIST_NATIVE}/.${VERSION}: ${TARBALL}
 	rm -rf ${DIST_NATIVE}
 	mkdir -p ${DIST_NATIVE}
 	tar xf ${TARBALL} -C ${DIST_NATIVE} --strip-components=1
-	# Add support for -target wasm32-emscripten 
+	# Add support for -target wasm32-emscripten
 	cd ${LIBZIG} && cat ${SRC}/patches/01-emscripten.patch | patch -p3
 	touch ${DIST_NATIVE}/.${VERSION}
 
@@ -54,12 +54,16 @@ ${BIN}/zig: ${DIST_NATIVE}/.${VERSION}
 	touch ${BIN}/zig
 
 ${BIN}/cowasm-cc: ${DIST_NATIVE}/.${VERSION}
-	ln -sf ${CWD}/bin/fPIC.py ${BIN}/cowasm-cc
+	ln -sf ${CWD}/bin/zig_cowasm_compiler.py ${BIN}/cowasm-cc
 	touch ${BIN}/cowasm-cc
 
 ${BIN}/cowasm-c++: ${DIST_NATIVE}/.${VERSION}
-	ln -sf ${CWD}/bin/fPIC.py ${BIN}/cowasm-c++
+	ln -sf ${CWD}/bin/zig_cowasm_compiler.py ${BIN}/cowasm-c++
 	touch ${BIN}/cowasm-c++
+
+${BIN}/cowasm-zig: ${DIST_NATIVE}/.${VERSION}
+	ln -sf ${CWD}/bin/zig_cowasm_compiler.py ${BIN}/cowasm-zig
+	touch ${BIN}/cowasm-zig
 
 test: ${DIST_NATIVE}/.${VERSION}
 	# Test that the correct version is installed. That's something at least.
