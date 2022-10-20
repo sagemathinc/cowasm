@@ -11,7 +11,7 @@ function importWebAssemblySync(path, importObject) {
   return new WebAssembly.Instance(mod, importObject);
 }
 
-const table = new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
+const table = new WebAssembly.Table({ initial: 1500, element: "anyfunc" });
 exports.table = table;
 
 async function main() {

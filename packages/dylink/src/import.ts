@@ -104,7 +104,7 @@ export default async function importWebAssemblyDlopen({
     // Note that this is only potentially an issue for the main core WASM module, not the
     // dynamic libraries that get loaded at runtime.
     __indirect_function_table = env.__indirect_function_table =
-      new WebAssembly.Table({ initial: 1000, element: "anyfunc" });
+      new WebAssembly.Table({ initial: 1500, element: "anyfunc" });
   }
 
   function symbolViaPointer(name: string) {
