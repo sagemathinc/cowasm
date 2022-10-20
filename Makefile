@@ -144,7 +144,7 @@ packages/zlib/${BUILT}: zig
 .PHONY: zlib
 
 libgit2: packages/libgit2/${BUILT}
-packages/libgit2/${BUILT}: zig
+packages/libgit2/${BUILT}: zig cowasm-kernel
 	cd packages/libgit2 && make all
 .PHONY: libgit2
 
