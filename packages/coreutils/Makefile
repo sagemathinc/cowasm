@@ -21,6 +21,7 @@ all: \
 	${TARGET}/ln \
 	${TARGET}/ls \
 	${TARGET}/mkdir \
+	${TARGET}/mv \
 	${TARGET}/rm \
 	${TARGET}/rmdir \
 	${TARGET}/sleep \
@@ -75,7 +76,13 @@ ${TARGET}/factor: ${COMPAT} ${BUILD}/factor.o ${BUILD}/pattern.o ${BUILD}/pr_tbl
 ${TARGET}/ls: ${COMPAT} ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/print.o ${BUILD}/utf8.o ${BUILD}/util.o
 	${CC} ${CFLAGS} $^ -o $@
 
+${TARGET}/mv: ${COMPAT} ${BUILD}/mv.o ${BUILD}/mv-rm.o ${BUILD}/mv-cp.o
+	${CC} ${CFLAGS} $^ -o $@
+
 ${TARGET}/tail: ${COMPAT} ${BUILD}/forward.o ${BUILD}/misc.o ${BUILD}/read.o ${BUILD}/reverse.o ${BUILD}/tail.o
+	${CC} ${CFLAGS} $^ -o $@
+
+${TARGET}/test: ${COMPAT} ${BUILD}/test-impl.o
 	${CC} ${CFLAGS} $^ -o $@
 
 ${TARGET}/tr: ${COMPAT} ${BUILD}/tr.o ${BUILD}/tr-str.o
@@ -123,6 +130,9 @@ test-head: ${TARGET}/head
 test-mkdir-rmdir: ${TARGET}/mkdir ${TARGET}/rmdir
 	${BIN}/cowasm dist/wasm/bin/mkdir xyz && ${BIN}/cowasm dist/wasm/bin/rmdir xyz && ${BIN}/cowasm dist/wasm/bin/test ! -d xyz
 
+test-mv: ${TARGET}/mv ${TARGET}/touch ${TARGET}/test ${TARGET}/rm
+	${BIN}/cowasm dist/wasm/bin/touch x && ${BIN}/cowasm dist/wasm/bin/mv x y && ${BIN}/cowasm dist/wasm/bin/test -f y && ${BIN}/cowasm dist/wasm/bin/rm y
+
 test-rm: ${TARGET}/rm ${TARGET}/touch
 	${BIN}/cowasm dist/wasm/bin/touch xyz && ${BIN}/cowasm dist/wasm/bin/rm xyz && ${BIN}/cowasm dist/wasm/bin/test ! -f xyz
 
@@ -136,7 +146,7 @@ test-tee: ${TARGET}/tee
 	echo "Hello" | ${BIN}/cowasm ./dist/wasm/bin/tee ${BUILD}/.greetings.txt | grep Hello;  grep Hello ${BUILD}/.greetings.txt; rm ${BUILD}/.greetings.txt
 
 test-touch: ${TARGET}/touch
-	cowasm dist/wasm/bin/touch ${BUILD}/.foobar; ls ${BUILD}/.foobar |wc -l | grep 1;  rm ${BUILD}/.foobar
+	${BIN}/cowasm dist/wasm/bin/touch ${BUILD}/.foobar; ls ${BUILD}/.foobar |wc -l | grep 1;  rm ${BUILD}/.foobar
 
 test-tr: ${TARGET}/tr
 	echo "Bella" | ${BIN}/cowasm dist/wasm/bin/tr Bl 81 |grep 8e11a
@@ -154,8 +164,10 @@ test-xargs: ${TARGET}/xargs
 	ls -1 | ${BIN}/cowasm ${TARGET}/xargs |grep Makefile |grep dist
 
 # Very basic tests of some things...
+.PHONEY: test
 test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls \
-	test-mkdir-rmdir test-rm test-sleep test-tail test-touch test-tr test-tty test-uniq test-wc test-xargs
+	test-mkdir-rmdir test-mv test-rm test-sleep test-tail test-touch test-tr test-tty test-uniq test-wc \
+	test-xargs
 
 # Our makefile rule '${BUILD}/%.o: %.c' above assumes that .c files in
 # subdirs have **unique names**, and this checks that.
