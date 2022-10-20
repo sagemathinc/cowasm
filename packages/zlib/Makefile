@@ -7,7 +7,8 @@ include ../build/Makefile-vars
 # versions than 1.2.12.  Anyway, expect this line below to -- at some completely random
 # moment in time -- break our build for sure, whenever they just happen to update zlib again.
 # It was five years from 1.2.11 to 1.2.12, so maybe that will be a while.
-ZLIB_VERSION = 1.2.12
+# P.S. TERRIFIC NEWS -- @williamstein was right, it's happened again, now it is 1.2.13
+ZLIB_VERSION = 1.2.13
 
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
 
