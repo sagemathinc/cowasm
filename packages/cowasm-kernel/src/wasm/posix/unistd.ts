@@ -309,6 +309,16 @@ export default function unistd(context) {
     },
 
     // char *ttyname(int fd);
+    ttyname: (fd: number): number => {
+      if (posix.ttyname == null) {
+        throw Error("ttyname_r is not supported on this platform");
+      }
+      if (context.state.ttyname_ptr != null) return context.state.ttyname_ptr;
+      const len = 128;
+      context.state.ttyname_ptr = send.malloc(len);
+      send.string(posix.ttyname(fd), { ptr: context.state.ttyname_ptr, len });
+      return context.state.ttyname_ptr;
+    },
     // int ttyname_r(int fd, char *buf, size_t buflen);
     ttyname_r: (fd: number, ptr: number, len: number): number => {
       if (posix.ttyname == null) {

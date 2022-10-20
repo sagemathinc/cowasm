@@ -24,6 +24,7 @@ all: \
 	${TARGET}/tee \
 	${TARGET}/touch \
 	${TARGET}/tr \
+	${TARGET}/tty \
 	${TARGET}/uniq \
 	${TARGET}/wc \
 	${TARGET}/xargs \
@@ -126,6 +127,9 @@ test-touch: ${TARGET}/touch
 test-tr: ${TARGET}/tr
 	echo "Bella" | ${BIN}/cowasm dist/wasm/bin/tr Bl 81 |grep 8e11a
 
+test-tty: ${TARGET}/tty
+	${BIN}/cowasm ./dist/wasm/bin/tty | grep /dev/tty
+
 test-uniq: ${TARGET}/uniq
 	printf "hello\nworld\nworld\nworld\n" | ${BIN}/cowasm dist/wasm/bin/uniq | wc -l | grep 2
 
@@ -136,7 +140,7 @@ test-xargs: ${TARGET}/xargs
 	ls -1 | ${BIN}/cowasm ${TARGET}/xargs |grep Makefile |grep dist
 
 # Very basic tests of some things...
-test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls test-sleep test-tail test-touch test-tr test-uniq test-wc test-xargs
+test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head test-ls test-sleep test-tail test-touch test-tr test-tty test-uniq test-wc test-xargs
 
 # Our makefile rule '${BUILD}/%.o: %.c' above assumes that .c files in
 # subdirs have **unique names**, and this checks that.
