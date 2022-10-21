@@ -1,7 +1,7 @@
 import type { WasmInstanceAsync, WasmInstanceSync } from "../wasm/types";
 export { WasmInstanceAsync, WasmInstanceSync };
-import wasmImportAsync from "../wasm/import-node";
-import wasmImportSync from "../wasm/worker/node";
+import wasmAsyncImport from "../wasm/import-node";
+import wasmSyncImport from "../wasm/worker/node";
 import { createSyncKernel, createAsyncKernel } from "./kernel";
 import { join } from "path";
 import { existsSync } from "fs";
@@ -13,7 +13,11 @@ const COWASM_WASM = "cowasm.wasm";
 // so that's all we give you, even if you have a different terminal.
 const TERM = "xterm-256color";
 
-function getOptions(wasmImport) {
+interface Options {
+  env?: { [name: string]: string }; // extra env vars.
+}
+
+function getOptions(wasmImport, opts?: Options) {
   const path = __dirname;
 
   const env = {
@@ -21,6 +25,7 @@ function getOptions(wasmImport) {
     TERM,
     TERMCAP: join(path, "..", "termcap"),
     PS1: "(CoWasm) sh$ ",
+    ...opts?.env,
   };
   //PS1: '(CoWasm) sh: (pwd | sed "s|^$HOME|~|")$ '
   if (!existsSync(env.TERMCAP)) {
@@ -36,10 +41,10 @@ function getOptions(wasmImport) {
   };
 }
 
-export async function syncKernel(): Promise<WasmInstanceSync> {
-  return await createSyncKernel(getOptions(wasmImportSync));
+export async function syncKernel(opts?: Options): Promise<WasmInstanceSync> {
+  return await createSyncKernel(getOptions(wasmSyncImport, opts));
 }
 
-export async function asyncKernel(): Promise<WasmInstanceAsync> {
-  return await createAsyncKernel(getOptions(wasmImportAsync));
+export async function asyncKernel(opts?: Options): Promise<WasmInstanceAsync> {
+  return await createAsyncKernel(getOptions(wasmAsyncImport, opts));
 }

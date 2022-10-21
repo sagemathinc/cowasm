@@ -25,8 +25,6 @@ export interface Options {
   wasmEnv?: object; // functions to include in the environment
   env?: { [name: string]: string }; // environment variables
   time?: boolean;
-  // init = initialization function that gets called when module first loaded.
-  init?: (wasm: WasmInstanceSync) => void | Promise<void>;
   sleep?: (milliseconds: number) => void;
   stdinBuffer?: SharedArrayBuffer;
   signalBuffer?: SharedArrayBuffer;
@@ -200,18 +198,6 @@ async function doWasmImport({
   wasm = new WasmInstanceSync(instance, memory, fs, table);
   posixContext.init(wasm);
 
-  if (options.init != null) {
-    await options.init(wasm);
-    // Uncomment this for low level debugging, so that the broken wasm
-    // module gets returned.
-    /*
-    try {
-      await options.init(wasm);
-    } catch (err) {
-      console.warn(`WARNING: init of ${source} failed`, err);
-    }
-    */
-  }
   cache[source] = wasm;
 
   if (options.time && log.enabled) {

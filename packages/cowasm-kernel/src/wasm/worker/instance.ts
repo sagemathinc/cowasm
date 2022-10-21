@@ -73,6 +73,10 @@ export default class WasmInstanceSync extends EventEmitter {
     this.recv = new RecvFromWasm(opts);
   }
 
+  terminate(): void {
+    // nothing to do, since nothing can possibly be *running* when this is called.
+  }
+
   exec(argv: string[] = ["command"]): number {
     return this.callWithString("cowasm_exec", argv);
   }

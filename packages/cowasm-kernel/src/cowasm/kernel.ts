@@ -45,3 +45,17 @@ export async function createSyncKernel({
   kernel.callWithString("chdir", process.cwd());
   return kernel;
 }
+
+// export async function createSyncKernelSync({
+//   wasmSource,
+//   wasmImportSync,
+//   fs,
+//   env,
+// }: KernelOptions): Promise<WasmInstanceSync> {
+//   const kernel = wasmImportSync(wasmSource, {
+//     env,
+//     fs,
+//   }) as WasmInstanceSync;
+//   kernel.callWithString("chdir", process.cwd());
+//   return kernel;
+// }

@@ -6,12 +6,17 @@ import type { FileSystemSpec } from "wasi-js";
 
 import wasmUrl from "./cowasm.wasm";
 
-function getOptions(wasmImport) {
+interface Options {
+  env?: { [name: string]: string }; // extra env vars.
+}
+
+function getOptions(wasmImport, opts?: Options) {
   const fs: FileSystemSpec[] = [{ type: "dev" }];
   const env = {
     TERMCAP: "/termcap",
     TERM: "xterm-256color",
     PS1: "sh$ ",
+    ...opts?.env,
   };
 
   return {
@@ -23,10 +28,10 @@ function getOptions(wasmImport) {
   };
 }
 
-export async function syncKernel(): Promise<WasmInstanceSync> {
-  return await createSyncKernel(getOptions(wasmImportSync));
+export async function syncKernel(opts?: Options): Promise<WasmInstanceSync> {
+  return await createSyncKernel(getOptions(wasmImportSync, opts));
 }
 
-export async function asyncKernel(): Promise<WasmInstanceAsync> {
-  return await createAsyncKernel(getOptions(wasmImportAsync));
+export async function asyncKernel(opts?: Options): Promise<WasmInstanceAsync> {
+  return await createAsyncKernel(getOptions(wasmImportAsync, opts));
 }

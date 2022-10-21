@@ -14,6 +14,12 @@ class WasmInstance extends EventEmitter {
   send: SendToWasmAbstractBase;
   recv: RecvFromWasmAbstractBase;
 
+  // kill and free up anything associated with this.  Any use
+  // after calling this is not defined.
+  terminate(): void {
+    throw Error("not implemented");
+  }
+
   writeToStdin(_data): void {
     throw Error("not implemented");
   }

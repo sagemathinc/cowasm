@@ -18,14 +18,14 @@ LDFLAGS = -L${CPYTHON}/lib -lpython3.11
 
 ${BUILD}/libpython.o: ${DYLINK}/wasm-export/libpython.c
 	mkdir -p ${BUILD}
-	${BIN}/cowasm-cc -v -Oz ${CFLAGS} \
+	${BIN}/cowasm-cc -Oz ${CFLAGS} \
 		-c ${DYLINK}/wasm-export/libpython.c \
 		-o ${BUILD}/libpython.o
 
 ${DIST}/python/python.wasm: src/python.zig ${BUILD}/libpython.o
 	mkdir -p ${DIST}
 	cd src/ \
-		&& ${BIN}/cowasm-zig -v \
+		&& ${BIN}/cowasm-zig \
 			${OPT} \
 			${CFLAGS} \
 			${LDFLAGS} \
@@ -43,5 +43,4 @@ ${DIST}/.built: node_modules
 
 .PHONY: test
 test: all
-	echo "no tests yet"
-	#npm run test
+	npm run test

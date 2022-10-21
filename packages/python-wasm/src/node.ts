@@ -6,10 +6,16 @@ import {
   WasmInstanceSync,
 } from "cowasm-kernel";
 import { join } from "path";
+import { bind_methods } from "./util";
 
 const log = debug("python-wasm");
 
 const PYTHON_WASM = join(__dirname, "python.wasm");
+
+// For now this is the best we can do.  TODO: cleanest solution in general would be to also include the
+// python3.wasm binary (which has main) from the cpython package, to support running python from python.
+// The following will only work in the build-from-source dev environment.
+const PYTHONEXECUTABLE = join(__dirname, "../../cpython/bin/python-wasm");
 
 // Running in main thread
 class PythonWasmSync {
@@ -17,12 +23,17 @@ class PythonWasmSync {
 
   constructor(kernel) {
     this.kernel = kernel;
+    bind_methods(this);
   }
 
   init(): void {
     log("loading python.wasm...");
     this.callWithString("cowasm_python_init");
     log("done");
+  }
+
+  terminate(): void {
+    this.kernel.terminate();
   }
 
   callWithString(name: string, str?: string | string[], ...args): any {
@@ -54,7 +65,7 @@ class PythonWasmSync {
 
 export async function syncPython() {
   log("creating sync CoWasm kernel...");
-  const kernel = await syncKernel();
+  const kernel = await syncKernel({ env: { PYTHONEXECUTABLE } });
   log("done");
   log("initializing python");
   const python = new PythonWasmSync(kernel);
@@ -63,18 +74,37 @@ export async function syncPython() {
   return python;
 }
 
+// idea for later:
+// /*syncKernelSync,*/
+//
+// export async function syncPythonsync() {
+//   log("creating sync CoWasm kernel...");
+//   const kernel = syncKernelSync();
+//   log("done");
+//   log("initializing python");
+//   const python = new PythonWasmSync(kernel);
+//   python.init();
+//   log("done");
+//   return python;
+// }
+
 // Run in a worker
 class PythonWasmAsync {
   kernel: WasmInstanceAsync;
 
   constructor(kernel) {
     this.kernel = kernel;
+    bind_methods(this);
   }
 
   async init(): Promise<void> {
     log("loading and calling cowasm_python_init");
     await this.callWithString("cowasm_python_init");
     log("done");
+  }
+
+  terminate(): void {
+    this.kernel.terminate();
   }
 
   async callWithString(
@@ -112,7 +142,7 @@ class PythonWasmAsync {
 
 export async function asyncPython() {
   log("creating async CoWasm kernel...");
-  const kernel = await asyncKernel();
+  const kernel = await asyncKernel({ env: { PYTHONEXECUTABLE } });
   log("done");
   log("initializing python");
   const python = new PythonWasmAsync(kernel);
