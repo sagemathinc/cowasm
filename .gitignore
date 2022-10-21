@@ -22,6 +22,7 @@ bin-wasm/**
 *.wat
 *.pyc
 *.o
+*.tsbuildinfo
 zig-cache
 .hypothesis
 upstream/sources/*
