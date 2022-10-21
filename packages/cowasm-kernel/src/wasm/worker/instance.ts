@@ -84,12 +84,16 @@ export default class WasmInstance extends EventEmitter {
   // When you pass str of type str[] it calls name with (len(str), char**, ...).
   // i.e., it's the main call signature than than null terminate char** like some
   // C library code.
-  callWithString(name: string, str: string | string[], ...args): any {
+  callWithString(
+    f_or_name: string | Function,
+    str: string | string[],
+    ...args
+  ): any {
     this.result = undefined;
     this.resultException = false;
-    const f = this.getFunction(name);
+    const f = typeof f_or_name == "string" ? this.getFunction(f_or_name) : f_or_name;
     if (f == null) {
-      throw Error(`no function "${name}" defined in wasm module`);
+      throw Error(`no function "${f_or_name}" defined in wasm module`);
     }
     let r;
     if (typeof str == "string") {
