@@ -1,9 +1,9 @@
 import { resolve } from "path";
-import { init, terminal } from "./node";
+import createKernel from "./node";
 import posix from "posix-node";
 
 async function main() {
-  await init({ debug: true });
+  const kernel = await createKernel();
   if (process.argv.length <= 2) {
     console.error(`Usage: cowasm program [args ...]`);
     process.exit(1);
@@ -18,7 +18,7 @@ async function main() {
       posix.makeStdinNonblocking?.();
     } catch (_err) {}
   }
-  const r = await terminal({ argv });
+  const r = await kernel.exec(argv);
   process.exit(r);
 }
 

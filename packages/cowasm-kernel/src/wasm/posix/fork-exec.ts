@@ -42,7 +42,7 @@ export default function fork_exec({
 }) {
   function isWasm(filename: string): boolean {
     const fd = fs.openSync(filename, "rb");
-    const b = new Buffer(4);
+    const b = Buffer.alloc(4);
     fs.readSync(fd, b, 0, 4, 0);
     return WASM.equals(b);
   }

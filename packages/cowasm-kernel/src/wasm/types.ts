@@ -18,7 +18,7 @@ export class WasmInstance extends EventEmitter {
     throw Error("not implemented");
   }
 
-  async terminal(_argv: string[] = ["command"]): Promise<number> {
+  async exec(_argv: string[] = ["command"]): Promise<number> {
     throw Error("not implemented");
   }
 

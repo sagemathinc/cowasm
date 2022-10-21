@@ -1,6 +1,7 @@
-import wasmImport from "../wasm/import-node";
+import type { WasmInstance } from "../wasm/types";
+import wasmImportWorker from "../wasm/import-node";
 import wasmImportNoWorker from "../wasm/worker/node";
-import { _init, wasm, terminal as _terminal } from "./index";
+import createKernel from "./kernel";
 import { join } from "path";
 import { existsSync } from "fs";
 
@@ -10,11 +11,11 @@ const COWASM_WASM = "cowasm.wasm";
 // so that's all we give you, even if you have a different terminal.
 const TERM = "xterm-256color";
 
-export async function init({
-  debug,
+export default async function kernel({
+  worker,
 }: {
-  debug?: boolean;
-} = {}) {
+  worker?: boolean;
+} = {}) : Promise<WasmInstance> {
   const path = __dirname;
 
   const env = {
@@ -28,24 +29,11 @@ export async function init({
     console.warn(`TERMCAP=${env.TERMCAP} is missing`);
   }
 
-  await _init({
+  return await createKernel({
     programName: process.env.PROGRAM_NAME, // real name or made up name
     wasmSource: join(path, COWASM_WASM),
-    wasmImport: debug ? wasmImportNoWorker : wasmImport,
+    wasmImport: worker ? wasmImportWorker : wasmImportNoWorker,
     fs: [{ type: "native" }],
     env,
   });
 }
-
-async function terminal({
-  argv,
-  debug = false,
-}: {
-  argv: string[];
-  debug?: boolean;
-}): Promise<number> {
-  await init({ debug });
-  return await _terminal(argv);
-}
-
-export { terminal, wasm };

@@ -73,8 +73,8 @@ export default class WasmInstance extends EventEmitter {
     this.recv = new RecvFromWasm(opts);
   }
 
-  async terminal(argv: string[] = ["command"]): Promise<number> {
-    return await this.callWithString("terminal", argv);
+  async exec(argv: string[] = ["command"]): Promise<number> {
+    return await this.callWithString("cowasm_exec", argv);
   }
 
   writeToStdin(_data): void {
