@@ -1,4 +1,4 @@
-import type WasmInstance from "./instance";
+import type WasmInstanceSync from "./instance";
 import { Options } from "./import";
 import debug from "debug";
 
@@ -27,7 +27,7 @@ export default function initWorker({
   captureOutput?: boolean;
   IOHandler;
 }) {
-  let wasm: undefined | WasmInstance = undefined;
+  let wasm: undefined | WasmInstanceSync = undefined;
   parent.on("message", async (message) => {
     log("worker got message ", message);
     switch (message.event) {

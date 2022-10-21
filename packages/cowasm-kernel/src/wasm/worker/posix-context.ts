@@ -1,6 +1,6 @@
 import WASI from "wasi-js";
 import type { WASIBindings, WASIConfig } from "wasi-js";
-import WasmInstance from "./instance";
+import WasmInstanceSync from "./instance";
 import posix, { Context, PosixEnv } from "../posix";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
@@ -14,7 +14,7 @@ interface Options {
 
 export default class PosixContext {
   private posixEnv: PosixEnv;
-  private wasm?: WasmInstance;
+  private wasm?: WasmInstanceSync;
   private wasi: WASI;
   private memory: WebAssembly.Memory;
   private context: Context;
@@ -68,7 +68,7 @@ export default class PosixContext {
     return posix(this.context);
   }
 
-  init(wasm: WasmInstance) {
+  init(wasm: WasmInstanceSync) {
     this.wasm = wasm;
     this.posixEnv.init();
   }

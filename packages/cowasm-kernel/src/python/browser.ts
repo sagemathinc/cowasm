@@ -30,7 +30,7 @@ export async function init({
   await _init({
     programName: "/usr/bin/zython", // made up name is better than blank (?)
     python_wasm: wasmUrl,
-    wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
+    wasmImport: (noWorker ? wasmImportNoWorker : wasmImport) as any,
     fs,
     env: {
       PYTHONHOME: "/usr",

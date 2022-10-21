@@ -11,7 +11,7 @@ import type { FileSystemSpec } from "wasi-js";
 import bindings from "wasi-js/dist/bindings/node";
 import { dirname, isAbsolute, join } from "path";
 import wasmImport, { Options } from "./import";
-import type { WasmInstance } from "../types";
+import type { WasmInstanceSync } from "../types";
 import { isMainThread, parentPort } from "worker_threads";
 import initWorker from "./init";
 import debug from "debug";
@@ -25,7 +25,7 @@ const log = debug("wasm:worker");
 export default async function wasmImportNode(
   name: string,
   options: Options
-): Promise<WasmInstance> {
+): Promise<WasmInstanceSync> {
   log("wasmImportNode");
   const path = dirname(join(__filename, "..", ".."));
   if (!isAbsolute(name)) {

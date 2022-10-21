@@ -5,7 +5,7 @@ This is the Worker script when importing the wasm module in a web browser.
 import { createFileSystem } from "wasi-js";
 import type { FileSystemSpec } from "wasi-js";
 import bindings from "wasi-js/dist/bindings/browser";
-import type WasmInstance from "./instance";
+import type WasmInstanceSync from "./instance";
 import wasmImport, { Options } from "./import";
 import initWorker from "./init";
 import debug from "debug";
@@ -19,7 +19,7 @@ const log = debug("wasm:worker");
 export default async function wasmImportBrowser(
   wasmUrl: string,
   options: Options = {}
-): Promise<WasmInstance> {
+): Promise<WasmInstanceSync> {
   log("wasmImportBrowser");
   // also fix zip path, if necessary and read in any zip files (so
   // they can be loaded into memfs).

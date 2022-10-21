@@ -1,4 +1,4 @@
-import type { WasmInstance } from "../wasm/types";
+import type { WasmInstanceAsync, WasmInstanceSync } from "../wasm/types";
 import { Options as ImportOptions } from "../wasm/import";
 import type { FileSystemSpec } from "wasi-js";
 
@@ -6,7 +6,7 @@ type WASMImportFunction = (
   wasmSource: string,
   options: ImportOptions,
   log?: (...args) => void
-) => Promise<WasmInstance>;
+) => Promise<WasmInstanceSync | WasmInstanceAsync>;
 
 interface KernelOptions {
   wasmSource: string; // file path in node.js; a URL in browser.
@@ -16,15 +16,32 @@ interface KernelOptions {
   env: { [name: string]: string };
 }
 
-export default async function createKernel({
+export async function createAsyncKernel({
   wasmSource,
   wasmImport,
   fs,
   env,
-}: KernelOptions): Promise<WasmInstance> {
-  const wasm = await wasmImport(wasmSource, { env, fs });
+}: KernelOptions): Promise<WasmInstanceAsync> {
+  const kernel = (await wasmImport(wasmSource, {
+    env,
+    fs,
+  })) as WasmInstanceAsync;
   // critical to do this first, because otherwise process.cwd() gets
   // set to '/' (the default in WASM) when any posix call happens.
-  await wasm.callWithString("chdir", process.cwd());
-  return wasm;
+  await kernel.callWithString("chdir", process.cwd());
+  return kernel;
+}
+
+export async function createSyncKernel({
+  wasmSource,
+  wasmImport,
+  fs,
+  env,
+}: KernelOptions): Promise<WasmInstanceSync> {
+  const kernel = (await wasmImport(wasmSource, {
+    env,
+    fs,
+  })) as WasmInstanceSync;
+  kernel.callWithString("chdir", process.cwd());
+  return kernel;
 }

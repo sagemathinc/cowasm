@@ -1,7 +1,7 @@
 import WASI from "wasi-js";
 import type { FileSystemSpec, WASIConfig, WASIBindings } from "wasi-js";
 import reuseInFlight from "../reuseInFlight";
-import WasmInstance from "./instance";
+import WasmInstanceSync from "./instance";
 import importWebAssemblyDlopen, {
   MBtoPages,
   Options as DylinkOptions,
@@ -26,7 +26,7 @@ export interface Options {
   env?: { [name: string]: string }; // environment variables
   time?: boolean;
   // init = initialization function that gets called when module first loaded.
-  init?: (wasm: WasmInstance) => void | Promise<void>;
+  init?: (wasm: WasmInstanceSync) => void | Promise<void>;
   sleep?: (milliseconds: number) => void;
   stdinBuffer?: SharedArrayBuffer;
   signalBuffer?: SharedArrayBuffer;
@@ -66,7 +66,7 @@ async function doWasmImport({
   ) => Promise<WebAssembly.Instance>;
   readFileSync;
   maxMemoryMB?: number;
-}): Promise<WasmInstance> {
+}): Promise<WasmInstanceSync> {
   log("doWasmImport", source);
   if (source == null) {
     throw Error("source must be defined");
@@ -197,7 +197,7 @@ async function doWasmImport({
     wasi.start(instance, memory);
   }
 
-  wasm = new WasmInstance(instance, memory, fs, table);
+  wasm = new WasmInstanceSync(instance, memory, fs, table);
   posixContext.init(wasm);
 
   if (options.init != null) {

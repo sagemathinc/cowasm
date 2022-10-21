@@ -5,7 +5,7 @@ import type { SendToWasmAbstractBase } from "./worker/send-to-wasm";
 import type { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
 import type PosixContext from "./worker/posix-context";
 
-export class WasmInstance extends EventEmitter {
+class WasmInstance extends EventEmitter {
   // these are sometimes available and useful, e.g., in testing
   fs?: WASIFileSystem;
   table?: WebAssembly.Table;
@@ -14,19 +14,7 @@ export class WasmInstance extends EventEmitter {
   send: SendToWasmAbstractBase;
   recv: RecvFromWasmAbstractBase;
 
-  async callWithString(_name: string, _str: string | string[], ..._args): Promise<any> {
-    throw Error("not implemented");
-  }
-
-  async exec(_argv: string[] = ["command"]): Promise<number> {
-    throw Error("not implemented");
-  }
-
   writeToStdin(_data): void {
-    throw Error("not implemented");
-  }
-
-  getFunction(_name: string, _dll?:string): Function | undefined {
     throw Error("not implemented");
   }
 
@@ -41,6 +29,38 @@ export class WasmInstance extends EventEmitter {
 
   // Get the current working directory.
   getcwd(): string {
+    throw Error("not implemented");
+  }
+}
+
+export class WasmInstanceSync extends WasmInstance {
+  getFunction(_name: string, _dll?: string): Function | undefined {
+    throw Error("not implemented");
+  }
+
+  callWithString(
+    _name: string | { name: string; dll: string } | Function,
+    _str?: string | string[],
+    ..._args
+  ): any {
+    throw Error("not implemented");
+  }
+
+  exec(_argv: string[] = ["command"]): number {
+    throw Error("not implemented");
+  }
+}
+
+export class WasmInstanceAsync extends WasmInstance {
+  async callWithString(
+    _name: string | { name: string; dll: string },
+    _str?: string | string[],
+    ..._args
+  ): Promise<any> {
+    throw Error("not implemented");
+  }
+
+  async exec(_argv: string[] = ["command"]): Promise<number> {
     throw Error("not implemented");
   }
 }

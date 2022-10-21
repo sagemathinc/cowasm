@@ -1,8 +1,8 @@
-import type { WasmInstance } from "../wasm/types";
+import type { WasmInstanceAsync } from "../wasm/types";
 import { Options } from "../wasm/import";
 import type { FileSystemSpec } from "wasi-js";
 
-export let wasm: WasmInstance | undefined = undefined;
+export let wasm: WasmInstanceAsync | undefined = undefined;
 
 export async function exec(str: string): Promise<void> {
   if (wasm == null) throw Error("call init");
@@ -23,7 +23,7 @@ type WASMImportFunction = (
   python_wasm: string,
   options: Options,
   log?: (...args) => void
-) => Promise<WasmInstance>;
+) => Promise<WasmInstanceAsync>;
 
 interface InitOpts {
   python_wasm: string; // file path in node.js; a URL in browser.

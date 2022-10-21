@@ -15,7 +15,7 @@ const encoder = new TextEncoder();
 // memory, and gives an order of magnitude speedup.
 const SMALL_STRING_SIZE = 1024 * 8;
 
-export default class WasmInstance extends EventEmitter {
+export default class WasmInstanceSync extends EventEmitter {
   result: any = undefined;
   resultException: boolean = false;
   exports: { [name: string]: any };
@@ -73,8 +73,8 @@ export default class WasmInstance extends EventEmitter {
     this.recv = new RecvFromWasm(opts);
   }
 
-  async exec(argv: string[] = ["command"]): Promise<number> {
-    return await this.callWithString("cowasm_exec", argv);
+  exec(argv: string[] = ["command"]): number {
+    return this.callWithString("cowasm_exec", argv);
   }
 
   writeToStdin(_data): void {
@@ -85,18 +85,29 @@ export default class WasmInstance extends EventEmitter {
   // i.e., it's the main call signature than than null terminate char** like some
   // C library code.
   callWithString(
-    f_or_name: string | Function,
-    str: string | string[],
+    func: string | { name: string; dll: string } | Function,
+    str?: string | string[],
     ...args
   ): any {
+    let f: Function | undefined = undefined;
+    if (typeof func == "string") {
+      f = this.getFunction(func);
+    } else if (typeof func == "object") {
+      f = this.getFunction(func.name, func.dll);
+    } else {
+      f = func;
+    }
+    if (f == null) {
+      throw Error(`no function "${func}" defined in wasm module`);
+    }
+
     this.result = undefined;
     this.resultException = false;
-    const f = typeof f_or_name == "string" ? this.getFunction(f_or_name) : f_or_name;
-    if (f == null) {
-      throw Error(`no function "${f_or_name}" defined in wasm module`);
-    }
     let r;
-    if (typeof str == "string") {
+    if (str == null) {
+      // just calling it.
+      r = f();
+    } else if (typeof str == "string") {
       const strAsArray = encoder.encode(str);
       if (strAsArray.length < SMALL_STRING_SIZE) {
         r = this.callWithSmallString(f, strAsArray);

@@ -4,12 +4,13 @@ import { join } from "path";
 import process from "node:process";
 import debug from "debug";
 import IOProviderUsingAtomics from "./io-using-atomics";
+import type { WasmInstanceAsync } from "./types";
 
 const log = debug("wasm:import-node");
 
 export class WasmInstance extends WasmInstanceAbstractBaseClass {
   protected initWorker(): WorkerThread {
-    const path = join(__dirname, 'worker', 'node.js');
+    const path = join(__dirname, "worker", "node.js");
     return new Worker(path, {
       trackUnmanagedFds: false, // this seems incompatible with our use of unionfs/memfs (lots of warnings).
     });
@@ -41,6 +42,6 @@ export class WasmInstance extends WasmInstanceAbstractBaseClass {
 export default async function wasmImportNodeWorker(
   wasmSource: string, // name of the wasm file
   options: Options
-): Promise<WasmInstance> {
+): Promise<WasmInstanceAsync> {
   return new WasmInstance(wasmSource, options, IOProviderUsingAtomics);
 }

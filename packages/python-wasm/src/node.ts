@@ -1,63 +1,122 @@
 import debug from "debug";
-import * as cowasm from "cowasm-kernel";
+import {
+  syncKernel,
+  asyncKernel,
+  WasmInstanceAsync,
+  WasmInstanceSync,
+} from "cowasm-kernel";
 import { join } from "path";
 
 const log = debug("python-wasm");
 
 const PYTHON_WASM = join(__dirname, "python.wasm");
 
-async function getFunction(name: string): Promise<Function> {
-  if (wasm == null) {
-    await init();
-    if (wasm == null) {
-      throw Error("bug");
+// Running in main thread
+class PythonWasmSync {
+  kernel: WasmInstanceSync;
+
+  constructor(kernel) {
+    this.kernel = kernel;
+  }
+
+  init(): void {
+    log("loading python.wasm...");
+    this.callWithString("cowasm_python_init");
+    log("done");
+  }
+
+  callWithString(name: string, str?: string | string[], ...args): any {
+    return this.kernel.callWithString({ name, dll: PYTHON_WASM }, str, ...args);
+  }
+
+  repr(code: string): string {
+    log("repr", code);
+    const s = this.callWithString("cowasm_python_repr", code);
+    log("result =", s);
+    return s;
+  }
+
+  exec(code: string): void {
+    log("exec", code);
+    const ret = this.callWithString("cowasm_python_exec", code);
+    log("ret", ret);
+    if (ret) {
+      throw Error("exec failed");
     }
   }
-  return wasm.getFunction(name, PYTHON_WASM);
-}
 
-let wasm: any = undefined;
-export { wasm };
-
-export async function repr(code: string): Promise<string> {
-  log("repr", code);
-  const python_repr = await getFunction("cowasm_python_repr");
-  const ret = wasm.callWithString(python_repr, code);
-  log("ret", ret);
-  return ret;
-}
-
-export async function exec(code: string): Promise<void> {
-  log("exec", code);
-  const python_exec = await getFunction("cowasm_python_exec");
-  const ret = wasm.callWithString(python_exec, code);
-  if (ret) {
-    throw Error("exec failed");
+  // starts the python REPL
+  terminal(argv): number {
+    console.log("STUB: terminal", argv);
+    return 1;
   }
 }
 
-export async function terminal(
-  argv = [process.env.PROGRAM_NAME ?? "/usr/bin/python"]
-): Promise<number> {
-  console.log("STUB: terminal", argv);
-  return 1;
+export async function syncPython() {
+  log("creating sync CoWasm kernel...");
+  const kernel = await syncKernel();
+  log("done");
+  log("initializing python");
+  const python = new PythonWasmSync(kernel);
+  python.init();
+  log("done");
+  return python;
 }
 
-export async function init(config = { debug: true }) {
-  log("initializing CoWasm kernel...");
-  await cowasm.init(config);
-  log("done");
-  wasm = cowasm.wasm;
-  if (wasm == null) {
-    throw Error("bug");
+// Run in a worker
+class PythonWasmAsync {
+  kernel: WasmInstanceAsync;
+
+  constructor(kernel) {
+    this.kernel = kernel;
   }
-  log("loading python.wasm...");
-  const python_init = wasm.getFunction("cowasm_python_init", PYTHON_WASM);
-  log("done");
-  log("initializing python...");
-  const ret = python_init();
-  if (ret) {
-    throw Error("failed to initialize Python");
+
+  async init(): Promise<void> {
+    log("loading and calling cowasm_python_init");
+    await this.callWithString("cowasm_python_init");
+    log("done");
   }
+
+  async callWithString(
+    name: string,
+    str?: string | string[],
+    ...args
+  ): Promise<any> {
+    return await this.kernel.callWithString(
+      { name, dll: PYTHON_WASM },
+      str,
+      ...args
+    );
+  }
+
+  async repr(code: string): Promise<string> {
+    log("repr", code);
+    const ret = await this.callWithString("cowasm_python_repr", code);
+    log("done", "ret =", ret);
+    return ret;
+  }
+
+  async exec(code: string): Promise<void> {
+    log("exec", code);
+    const ret = await this.callWithString("cowasm_python_exec", code);
+    if (ret) {
+      throw Error("exec failed");
+    }
+  }
+
+  async terminal(argv): Promise<number> {
+    console.log("STUB: terminal", argv);
+    return 1;
+  }
+}
+
+export async function asyncPython() {
+  log("creating async CoWasm kernel...");
+  const kernel = await asyncKernel();
   log("done");
+  log("initializing python");
+  const python = new PythonWasmAsync(kernel);
+  await python.init();
+  log("done");
+  return python;
 }

@@ -4,6 +4,7 @@ import IOProviderUsingAtomics from "./io-using-atomics";
 import IOProviderUsingServiceWorker, {
   fixServiceWorker,
 } from "./io-using-service-worker";
+import type { WasmInstanceAsync } from "./types";
 
 class WorkerThread extends EventEmitter {
   public postMessage: (message) => void;
@@ -35,7 +36,7 @@ export class WasmInstance extends WasmInstanceAbstractBaseClass {
 export default async function wasmImportBrowserWorker(
   wasmSource: string,
   options: Options = {}
-): Promise<WasmInstance> {
+): Promise<WasmInstanceAsync> {
   const IOProvider = crossOriginIsolated
     ? IOProviderUsingAtomics
     : IOProviderUsingServiceWorker;

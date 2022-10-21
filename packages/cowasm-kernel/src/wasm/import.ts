@@ -17,6 +17,8 @@ export interface WorkerThread extends EventEmitter {
 }
 
 // TODO: typescript actually has "export abstract class" !  No need to fake it...
+
+// This implements WasmInstanceAsync from ./
 export class WasmInstanceAbstractBaseClass extends EventEmitter {
   private callId: number = 0;
   private options: Options;
@@ -115,7 +117,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   }
 
   async callWithString(
-    name: string,
+    name: string | { name: string; dll: string },
     str: string | string[],
     ...args
   ): Promise<any> {

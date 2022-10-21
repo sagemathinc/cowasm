@@ -80,7 +80,7 @@ export async function init({
   await _init({
     programName: process.env.PROGRAM_NAME ?? "/usr/bin/zython", // real name or made up name
     python_wasm: join(path, PYTHON_WASM),
-    wasmImport: noWorker ? wasmImportNoWorker : wasmImport,
+    wasmImport: (noWorker ? wasmImportNoWorker : wasmImport) as any,
     fs,
     env,
   });
