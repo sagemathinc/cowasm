@@ -120,18 +120,6 @@ python: ${DIST}/python/python.wasm ${DATAFILES} ${PYTHON_PACKAGES} ${DIST}/termc
 # 	mkdir -p ${DIST}/python/py
 # 	ln -sf ${PACKAGES}/py-*/dist/wasm/*.tar.xz ${DIST}/python/py
 
-${DIST}/python/hello.cpython-311-wasm32-wasi.so: src/python/extension/hellomodule.c
-	echo ${PATH}
-	${BIN}/cowasm-cc -v -Oz -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} -shared  \
-		src/python/extension/hellomodule.c -o ${DIST}/python/hello.cpython-311-wasm32-wasi.so
-
-# TODO: temporary path hack:
-${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.cpython-311-wasm32-wasi.so: ${DIST}/python/hello.cpython-311-wasm32-wasi.so
-	cp  ${DIST}/python/hello.cpython-311-wasm32-wasi.so ${PYTHON_WASM}/lib/python3.11/lib-dynload/
-
-.PHONEY: hello
-hello: ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.cpython-311-wasm32-wasi.so
-
 ## Node modules
 node_modules:
 	npm ci
