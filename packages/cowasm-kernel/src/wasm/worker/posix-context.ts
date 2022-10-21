@@ -138,33 +138,20 @@ export default class PosixContext {
       // finally cleansthings up.
     };
 
-    let handle = 0;
     try {
       this.wasi.setState(wasi_state);
-      handle = wasm.callWithString("dlopen", args[0]);
-      const dlsym = wasm.getFunction("dlsym");
-      if (dlsym == null) {
-        console.error(`${args[0]}: dlsym not defined`);
-        return 127;
-      }
-      // These wasm.send.string's are NOT really memory leaks, since we reset the memory below.
-      let mainPtr;
-      let sPtr = wasm.send.string("__main_argc_argv");
-      mainPtr = dlsym(handle, sPtr);
-      if (!mainPtr) {
-        sPtr = wasm.send.string("main");
-        mainPtr = dlsym(handle, sPtr);
-        if (!mainPtr) {
+      let main;
+      try {
+        main = wasm.getFunction("__main_argc_argv", args[0]);
+      } catch (_err) {
+        try {
+          main = wasm.getFunction("main", args[0]);
+        } catch (err) {
           console.error(
-            `${args[0]}: unable to find either symbol '__main_argc_argv' or 'main' in '${path}' (compile with -fvisibility-main?)`
+            `${args[0]}: unable to find either symbol '__main_argc_argv' or 'main' in '${path}' (compile with -fvisibility-main?) - ${err}`
           );
           return 127;
         }
-      }
-      const main = wasm.table?.get(mainPtr);
-      if (!main) {
-        console.error(`${args[0]}: unable to find main function`);
-        return 127;
       }
       try {
         return main(args.length, wasm.send.arrayOfStrings(args));
@@ -181,16 +168,16 @@ export default class PosixContext {
       }
       return return_code;
     } finally {
-      if (handle) {
-        const dlclose = wasm.getFunction("dlclose");
-        if (dlclose == null) {
-          // should definitely never happen
-          console.error(`${args[0]}: dlclose not defined`);
-          return 127;
-        }
-        dlclose(handle);
+      // Free up tables allocated to the dynamic library in Javascript memory. These
+      // would persist even after resetting memory below, which would break everything.
+      try {
+        wasm.closeDynamicLibrary(args[0]);
+      } catch (err) {
+        console.error(`${args[0]}: WARNING -- ${err}`);
       }
       // Restore memory to how it was before running the subprocess.
+      // This of course safely frees up and undoes all changes made to
+      // the memory when running code.
       new Uint8Array(this.memory.buffer).set(state.memory);
       // Restore posix context to before running the subprocess.
       this.context.state = state.context;

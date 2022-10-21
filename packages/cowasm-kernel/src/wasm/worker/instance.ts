@@ -162,30 +162,26 @@ export default class WasmInstance extends EventEmitter {
   }
 
   // - If dll is not given gets a function from the main instance
-  //   or undefined if the function is not defined.
+  //   or undefined if the function is not defined. Result is cached.
   // - If dll is given, loads the given dynamic library (if it isn't
   //   already loaded), then gets the named function from there.  In the
   //   dll case throws an error explaining what went wrong if anything
   //   goes wrong, rather than undefined (since a lot can go wrong).
   //   TODO: maybe getFunction should throw instead of returning undefined
-  //   in all cases?
-  // Any successful call to getFunction is cached.
+  //   in all cases?  Result is NOT cached, since dlclose+cache = crash.
   public getFunction(name: string, dll?: string): Function | undefined {
-    const key = name + (dll ?? "");
-    const f = this._getFunctionCache[key];
-    if (f != null) return f;
     if (dll != null) {
-      const f = this.getFunctionUsingDlopen(name, dll);
-      this._getFunctionCache[key] = f;
-      return f;
+      return this.getFunctionUsingDlopen(name, dll);
     }
+    const f = this._getFunctionCache[name];
+    if (f != null) return f;
     if (this.table != null) {
       // first try pointer:
       const getPtr = this.exports[`__WASM_EXPORT__${name}`];
       if (getPtr != null) {
         const f = this.table.get(getPtr());
         if (f != null) {
-          this._getFunctionCache[key] = f;
+          this._getFunctionCache[name] = f;
           return f;
         }
       }
@@ -206,6 +202,18 @@ export default class WasmInstance extends EventEmitter {
     this.send.string(name, { ptr, len: SMALL_STRING_SIZE });
     const fPtr = dlsym(handle, ptr);
     return this.table?.get(fPtr);
+  }
+
+  closeDynamicLibrary(path: string): void {
+    const handle = this.callWithString("dlopen", path);
+    if (handle != 0) {
+      const dlclose = this.getFunction("dlclose");
+      if (dlclose == null) {
+        // should definitely never happen
+        throw Error("dlclose not defined");
+      }
+      dlclose(handle);
+    }
   }
 
   // Get the current working directory in the WASM instance.

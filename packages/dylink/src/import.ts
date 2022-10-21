@@ -611,6 +611,7 @@ export default async function importWebAssemblyDlopen({
   env.dlclose = (handle) => {
     const lib = handleToLibrary[handle];
     if (lib != null) {
+      // console.log("closing ", lib);
       delete handleToLibrary[handle];
       delete pathToLibrary[lib.path];
     }
