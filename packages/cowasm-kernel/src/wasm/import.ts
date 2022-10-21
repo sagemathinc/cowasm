@@ -199,7 +199,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     return r;
   }
 
-  getFunction(_name: string): Function | undefined {
+  getFunction(_name: string, _dll?: string): Function | undefined {
     throw Error("not implemented");
   }
 

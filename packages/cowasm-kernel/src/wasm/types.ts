@@ -26,7 +26,7 @@ export class WasmInstance extends EventEmitter {
     throw Error("not implemented");
   }
 
-  getFunction(_name: string): Function | undefined {
+  getFunction(_name: string, _dll?:string): Function | undefined {
     throw Error("not implemented");
   }
 
