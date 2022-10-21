@@ -28,7 +28,12 @@ export async function repr(code: string): Promise<string> {
 }
 
 export async function exec(code: string): Promise<void> {
-  console.log("STUB: exec", code);
+  log("exec", code);
+  const python_exec = await getFunction("cowasm_python_exec");
+  const ret = wasm.callWithString(python_exec, code);
+  if (ret) {
+    throw Error("exec failed");
+  }
 }
 
 export async function terminal(

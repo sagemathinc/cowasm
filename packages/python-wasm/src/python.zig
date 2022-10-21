@@ -29,26 +29,31 @@ pub fn assertInit() !void {
     }
 }
 
-
 /////////////////////////////////
 //
-// Implementation of eval
+// Implementation of repr
 //
 /////////////////////////////////
 
 extern fn wasmSendString(ptr: [*]const u8, len: usize) void;
 
-export fn cowasm_python_repr(s: [*:0]const u8) void {
+// TODO: would like to say what the exception actually is. For now, at least inform
+// that it happened.
+extern fn wasmSetException() void;
+
+export fn cowasm_python_repr(s: [*:0]const u8) i32 {
     const r = repr(s) catch |err| {
         //todo
+        wasmSetException();
         std.debug.print("python error: '{}'\nwhen evaluating '{s}'", .{ err, s });
-        return;
+        return 1;
     };
     defer allocator.free(r);
     // Todo: this r[0..1] is a casting hack -- I think it's harmless
     // because r itself is null terminated (?).
     const ptr: [*]const u8 = r[0..1];
     wasmSendString(ptr, std.mem.len(r));
+    return 0;
 }
 
 fn repr(s: [*:0]const u8) ![]u8 {
@@ -77,4 +82,34 @@ fn repr(s: [*:0]const u8) ![]u8 {
         "{s}",
         .{str_rep},
     );
+}
+
+/////////////////////////////////
+//
+// Implementation of exec
+//
+/////////////////////////////////
+
+// TODO: If there was an error, there is no way to get the exception information *yet*.
+fn exec(s: [*:0]const u8) !void {
+    try assertInit();
+    // std.debug.print("exec '{s}'\n", .{s});
+    var pstr = py.PyRun_String(s, py.Py_file_input, globals, globals) orelse {
+        py.PyErr_Clear();
+        // failed - some sort of exception got raised.
+        std.debug.print("failed to run '{s}'\n", .{s});
+        return General.RuntimeError;
+    };
+    // it worked.  We don't use the return value for anything.
+    py.Py_DECREF(pstr);
+}
+
+export fn cowasm_python_exec(s: [*:0]const u8) i32 {
+    exec(s) catch |err| {
+        //todo
+        wasmSetException();
+        std.debug.print("python error: '{}'\nwhen evaluating '{s}'", .{ err, s });
+        return 1;
+    };
+    return 0;
 }
