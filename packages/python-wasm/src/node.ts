@@ -4,7 +4,7 @@ import {
   asyncKernel,
   WasmInstanceAsync,
   WasmInstanceSync,
-} from "cowasm-kernel";
+} from "@cowasm/kernel";
 import { join } from "path";
 import { bind_methods } from "./util";
 

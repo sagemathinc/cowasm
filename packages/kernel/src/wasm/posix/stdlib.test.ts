@@ -3,6 +3,7 @@ import { init, wasm, exec, repr } from "../../python/node";
 test("mkstemp system call -- hitting memfs", async () => {
   await init({ noWorker: true });
   if (wasm == null) throw Error("bug");
+  // @ts-ignore
   const mkstemp = wasm.getFunction("mkstemp");
   if (mkstemp == null) throw Error("bug");
   const fd = mkstemp(wasm.send.string("/usr/lib/python3.11/fooXXXXXX"));
@@ -16,6 +17,7 @@ test("mkstemp system call -- hitting memfs", async () => {
 test("mkstemp system call -- hitting native fs (this tests that fs.constants is mapped properly on non-linux at least)", async () => {
   await init({ noWorker: true });
   if (wasm == null) throw Error("bug");
+  // @ts-ignore
   const mkstemp = wasm.getFunction("mkstemp");
   if (mkstemp == null) throw Error("bug");
   const fd = mkstemp(wasm.send.string("/tmp/fooXXXXXX"));

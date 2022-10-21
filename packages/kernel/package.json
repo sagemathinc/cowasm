@@ -1,7 +1,7 @@
 {
-  "name": "cowasm-kernel",
+  "name": "@cowasm/kernel",
   "version": "0.21.0",
-  "description": "cowasm-kernel -- the Kernel of CoWasm: Collaborative WebAssembly OS for Servers and Browsers",
+  "description": "@cowasm/kernel -- the Kernel of CoWasm: Collaborative WebAssembly for Servers and Browsers",
   "main": "./dist/cowasm/node.js",
   "browser": "./dist/cowasm/browser.js",
   "files": [
@@ -33,7 +33,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/cowasm-kernel",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/kernel",
   "workspaces": [
     "../wasi-js",
     "../dylink",

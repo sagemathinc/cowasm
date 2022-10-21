@@ -9,7 +9,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
-all: cowasm-kernel webpack terminal website py f2c coreutils man viz dash
+all: kernel webpack terminal website py f2c coreutils man viz dash
 
 cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl
@@ -21,10 +21,10 @@ packages/coreutils/${BUILT}: zig posix-wasm
 	cd packages/coreutils && make -j8
 .PHONY: coreutils
 
-cowasm-kernel: packages/cowasm-kernel/${BUILT}
-packages/cowasm-kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node libgit2
-	cd packages/cowasm-kernel && make all
-.PHONY: cowasm-kernel
+kernel: packages/kernel/${BUILT}
+packages/kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node libgit2
+	cd packages/kernel && make all
+.PHONY: kernel
 
 dash: packages/dash/${BUILT}
 packages/dash/${BUILT}: zig libedit
@@ -144,7 +144,7 @@ packages/zlib/${BUILT}: zig
 .PHONY: zlib
 
 libgit2: packages/libgit2/${BUILT}
-packages/libgit2/${BUILT}: zig cowasm-kernel
+packages/libgit2/${BUILT}: zig kernel
 	cd packages/libgit2 && make all
 .PHONY: libgit2
 
@@ -162,27 +162,27 @@ py: py-cython py-mpmath py-sympy py-pip py-numpy
 .PHONY: py
 
 # Note -- this runs a target in the cpython package, which can only be run
-# after cowasm-kernel is also built.
-py-pip: cpython cowasm-kernel
+# after kernel is also built.
+py-pip: cpython kernel
 	cd packages/cpython && make pip
 
 py-cython: packages/py-cython/${BUILT}
-packages/py-cython/${BUILT}: zig cowasm-kernel
+packages/py-cython/${BUILT}: zig kernel
 	cd packages/py-cython && make all
 .PHONY: py-cython
 
 py-mpmath: packages/py-mpmath/${BUILT}
-packages/py-mpmath/${BUILT}: zig cowasm-kernel
+packages/py-mpmath/${BUILT}: zig kernel
 	cd packages/py-mpmath && make all
 .PHONY: py-mpmath
 
 py-sympy: packages/py-sympy/${BUILT}
-packages/py-sympy/${BUILT}: zig cowasm-kernel py-mpmath
+packages/py-sympy/${BUILT}: zig kernel py-mpmath
 	cd packages/py-sympy && make all
 .PHONY: py-sympy
 
 py-numpy: packages/py-numpy/${BUILT}
-packages/py-numpy/${BUILT}: zig cowasm-kernel py-cython py-pip
+packages/py-numpy/${BUILT}: zig kernel py-cython py-pip
 	cd packages/py-numpy && make all
 .PHONY: py-numpy
 
