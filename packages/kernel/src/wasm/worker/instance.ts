@@ -5,6 +5,8 @@ import { EventEmitter } from "events";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
 import type PosixContext from "./posix-context";
+import { callback } from "awaiting";
+import { dirname } from "path";
 
 const encoder = new TextEncoder();
 
@@ -262,5 +264,22 @@ export default class WasmInstanceSync extends EventEmitter {
 
   signal(_sig?: number): void {
     throw Error("not implemented");
+  }
+
+  async fetch(url: string, path: string): Promise<void> {
+    // TODO: this can't work in older versions of node... but also we should probably only
+    // use fetch in the browser.  Could require clarification or the node-fetch module.
+    const data = await (await fetch(url)).arrayBuffer();
+    const { fs } = this;
+    if (fs == null) {
+      throw Error("fs must be defined");
+    }
+    const dir = dirname(path);
+    await callback((cb) => {
+      fs.mkdir(dir, { recursive: true }, cb);
+    });
+    await callback((cb) => {
+      fs.writeFile(path, Buffer.from(data), cb);
+    });
   }
 }

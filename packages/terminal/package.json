@@ -1,5 +1,5 @@
 {
-  "name": "@wapython/terminal",
+  "name": "@cowasm/terminal",
   "version": "0.0.1",
   "description": "Demo of browser based Python terminal using python-wasm and xterm.js",
   "files": [

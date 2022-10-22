@@ -80,6 +80,9 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     this.worker.on("message", (message) => {
       if (message == null) return;
       log("main thread got message", message);
+      if(message.event == 'stderr') {
+        console.warn(new TextDecoder().decode(message.data));
+      }
       if (message.id != null) {
         // message with id handled elsewhere -- used for getting data back.
         this.emit("id", message);
@@ -189,7 +192,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
 
   async exec(argv: string[] = ["command"]): Promise<number> {
     await this.init();
-    if (this.worker == null) throw Error("exec: bug");
+    if (this.worker == null) throw Error("exec: bug - worker must be defined");
     this.configureTerminal();
     let r = 0;
     try {
@@ -207,6 +210,18 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
 
   getcwd(): string {
     throw Error("not implemented");
+  }
+
+  async fetch(url: string, path: string): Promise<void> {
+    if (this.worker == null) throw Error("fetch: bug - worker must be defined");
+    this.callId += 1;
+    this.worker.postMessage({
+      id: this.callId,
+      event: "fetch",
+      url,
+      path,
+    });
+    return await this.waitForResponse(this.callId);
   }
 }
 

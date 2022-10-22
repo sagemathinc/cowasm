@@ -37,6 +37,11 @@ class WasmInstance extends EventEmitter {
   getcwd(): string {
     throw Error("not implemented");
   }
+
+  // fetch the data at url and save it to path.
+  async fetch(_url: string, _path: string): Promise<void> {
+    throw Error("not implemented");
+  }
 }
 
 export class WasmInstanceSync extends WasmInstance {

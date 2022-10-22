@@ -1,5 +1,5 @@
 {
-  "name": "@wapython/website",
+  "name": "@cowasm/website",
   "version": "0.0.1",
   "description": "The Zython website.  Includes a live demo of python-wasm.",
   "files": [

@@ -1,5 +1,5 @@
 {
-  "name": "@wapython/webpack",
+  "name": "@cowasm/webpack",
   "version": "1.0.1",
   "description": "How to use using python-wasm with webpack",
   "files": [

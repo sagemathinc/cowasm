@@ -28,96 +28,88 @@ export default function initWorker({
   IOHandler;
 }) {
   let wasm: undefined | WasmInstanceSync = undefined;
-  parent.on("message", async (message) => {
+
+  async function handleMessage(message) {
     log("worker got message ", message);
     switch (message.event) {
       case "init":
-        try {
-          const ioHandler = new IOHandler(message.options, () => {
-            parent.postMessage({ event: "service-worker-broken" });
-          });
+        const ioHandler = new IOHandler(message.options, () => {
+          parent.postMessage({ event: "service-worker-broken" });
+        });
 
-          const opts: Options = {
-            ...message.options,
-            sleep: ioHandler.sleep.bind(ioHandler),
-            getStdin: ioHandler.getStdin.bind(ioHandler),
-            wasmEnv: {
-              wasmGetSignalState: ioHandler.getSignalState.bind(ioHandler),
-            },
+        const opts: Options = {
+          ...message.options,
+          sleep: ioHandler.sleep.bind(ioHandler),
+          getStdin: ioHandler.getStdin.bind(ioHandler),
+          wasmEnv: {
+            wasmGetSignalState: ioHandler.getSignalState.bind(ioHandler),
+          },
+        };
+
+        if (captureOutput) {
+          opts.sendStdout = (data) => {
+            log("sendStdout", data);
+            parent.postMessage({ event: "stdout", data });
           };
 
-          if (captureOutput) {
-            opts.sendStdout = (data) => {
-              log("sendStdout", data);
-              parent.postMessage({ event: "stdout", data });
-            };
-
-            opts.sendStderr = (data) => {
-              log("sendStderr", data);
-              parent.postMessage({ event: "stderr", data });
-            };
-          }
-
-          wasm = await wasmImport(message.name, opts);
-          parent.postMessage({ event: "init", status: "ok" });
-        } catch (err) {
-          parent.postMessage({
-            event: "init",
-            status: "error",
-            error: err.toString(),
-          });
+          opts.sendStderr = (data) => {
+            log("sendStderr", data);
+            parent.postMessage({ event: "stderr", data });
+          };
         }
-        return;
+
+        wasm = await wasmImport(message.name, opts);
+        return { event: "init", status: "ok" };
 
       case "callWithString":
         if (wasm == null) {
           throw Error("wasm must be initialized");
         }
-        try {
-          parent.postMessage({
-            id: message.id,
-            result: wasm.callWithString(
-              message.name,
-              message.str, // this is a string or string[]
-              ...message.args
-            ),
-          });
-        } catch (error) {
-          parent.postMessage({
-            id: message.id,
-            error,
-          });
-        }
-        return;
+        return {
+          result: wasm.callWithString(
+            message.name,
+            message.str, // this is a string or string[]
+            ...message.args
+          ),
+        };
 
       case "call":
         if (wasm == null) {
           throw Error("wasm must be initialized");
         }
-        parent.postMessage({
-          id: message.id,
+        return {
           result: wasm.callWithString(message.name, "", []),
-        });
-        return;
+        };
 
       case "waitUntilFsLoaded":
         if (wasm?.fs == null) {
           throw Error("wasm.fs must be initialized");
         }
-        try {
-          // it might not be defined, e.g., if not using unionfs at all
-          await wasm.fs.waitUntilLoaded?.();
-          parent.postMessage({
-            id: message.id,
-            result: {},
-          });
-        } catch (error) {
-          parent.postMessage({
-            id: message.id,
-            error,
-          });
-        }
+        // it might not be defined, e.g., if not using unionfs at all
+        await wasm.fs.waitUntilLoaded?.();
         return;
+
+      case "fetch":
+        if (wasm?.fs == null) {
+          throw Error("wasm.fs must be initialized");
+        }
+        await wasm.fetch(message.url, message.path);
+        return;
+    }
+  }
+
+  parent.on("message", async (message) => {
+    try {
+      const resp = {
+        id: message.id,
+        ...(await handleMessage(message)),
+      };
+      parent.postMessage(resp);
+    } catch (error) {
+      parent.postMessage({
+        id: message.id,
+        error,
+      });
     }
   });
 }
