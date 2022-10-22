@@ -61,6 +61,7 @@ void	usage(void);
 int
 main(int argc, char *argv[])
 {
+  setprogname(argv[0]);
 	char *t1, *t2;
 	FILE *ifp = NULL, *ofp = NULL;
 	int ch;

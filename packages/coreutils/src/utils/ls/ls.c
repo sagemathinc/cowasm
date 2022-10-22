@@ -98,6 +98,7 @@ int f_typedir;      /* add type character for directories */
 int rval;
 
 int main(int argc, char *argv[]) {
+  setprogname(argv[0]);
   static char dot[] = ".", *dotav[] = {dot, NULL};
   struct winsize win;
   int ch, fts_options, notused;

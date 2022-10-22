@@ -162,6 +162,7 @@ extern const char *__progname = "test";
 int
 main(int argc, char *argv[])
 {
+  setprogname(argv[0]);
 	int	res;
 	if (__progname != NULL && strcmp(__progname, "[") == 0) {
 		if (strcmp(argv[--argc], "]"))

@@ -36,10 +36,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "compat.h"
 
 static void usage(void);
 
 int main(int argc, char *argv[]) {
+  setprogname(argv[0]);
   int ch;
   char *p;
 
@@ -83,8 +85,6 @@ int main(int argc, char *argv[]) {
   (void)puts(p);
   return 0;
 }
-
-extern const char *__progname;
 
 static void usage(void) {
 

@@ -44,14 +44,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-#ifdef USE_LIBWHEREAMI
 #include "compat.h"
-#endif
 
-#ifndef USE_LIBWHEREAMI
-extern const char *__progname;
-#endif
 
 #define MAXIMUM(a, b) (((a) > (b)) ? (a) : (b))
 
@@ -64,6 +58,7 @@ void raw_args(char *argv[]);
 void raw_cat(int, const char *);
 
 int main(int argc, char *argv[]) {
+  setprogname(argv[0]);
   int ch;
 
   while ((ch = getopt(argc, argv, "benstuv")) != -1) {
@@ -90,11 +85,7 @@ int main(int argc, char *argv[]) {
       vflag = 1;
       break;
     default:
-#ifdef USE_LIBWHEREAMI
       fprintf(stderr, "usage: %s [-benstuv] [file ...]\n", getprogname());
-#else
-      fprintf(stderr, "usage: %s [-benstuv] [file ...]\n", __progname);
-#endif
       return 1;
     }
   }

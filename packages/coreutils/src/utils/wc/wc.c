@@ -56,6 +56,7 @@ static void cnt(char *);
 int
 main(int argc, char *argv[])
 {
+  setprogname(argv[0]);
 	int ch;
 
 	setlocale(LC_CTYPE, "");

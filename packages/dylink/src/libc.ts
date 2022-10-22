@@ -157,9 +157,14 @@ unsigned int __fixunstfsi(long double);
 
 long double strtold_l(const char *__restrict, char **__restrict, struct __locale_struct *);
 
+// TODO - move to posix-wasm, obviously...
 extern const char *__progname;
 const char *getprogname() { return __progname; }
-void setprogname(const char *progname) { __progname = progname; }
+void setprogname(const char *progname) {
+  int i;
+  for(i=strlen(progname)-1;i>=0 && progname[i] != '/';i--){}
+  __progname = progname+i+1;
+}
 
 void freeaddrinfo(struct addrinfo *res);
 void _Py_CheckEmscriptenSignalsPeriodically();

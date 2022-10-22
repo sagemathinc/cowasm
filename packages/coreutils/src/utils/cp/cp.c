@@ -82,6 +82,7 @@ int copy(char *[], enum op, int);
 char *find_last_component(char *);
 
 int main(int argc, char *argv[]) {
+  setprogname(argv[0]);
   struct stat to_stat, tmp_stat;
   enum op type;
   int Hflag, Lflag, Pflag, ch, fts_options, r;

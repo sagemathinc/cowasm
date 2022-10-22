@@ -48,13 +48,13 @@
 #include "compat.h"
 
 int ischown, ischgrp, ischmod;
-extern const char *__progname;
 
 gid_t a_gid(const char *);
 uid_t a_uid(const char *, int);
 static void usage(void);
 
 int main(int argc, char *argv[]) {
+  setprogname(argv[0]);
   FTS *ftsp;
   FTSENT *p;
   void *set;

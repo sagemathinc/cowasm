@@ -1026,7 +1026,8 @@ out:
 int
 main(int argc, char **argv)
 {
-	char *outfile, *real_outfile;
+  setprogname(argv[0]);
+  char *outfile, *real_outfile;
 #ifndef WITHOUT_LIBCRYPTO
 	char *random_source = NULL;
 #endif

@@ -30,6 +30,7 @@
  * SUCH DAMAGE.
  */
 
+#include "compat.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -54,6 +55,7 @@ void	usage(void);
 int
 main(int argc, char *argv[])
 {
+  setprogname(argv[0]);
 	struct stat sb;
 	int ch, exitval;
 	char *sourcedir;

@@ -50,6 +50,7 @@ static void usage(void);
 int
 main(int argc, char *argv[])
 {
+  setprogname(argv[0]);
 	int ch, rv, exitval, pflag;
 	void *set;
 	mode_t mode, dir_mode;

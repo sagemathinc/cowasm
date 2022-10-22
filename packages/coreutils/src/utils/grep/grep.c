@@ -31,6 +31,8 @@
  * SUCH DAMAGE.
  */
 
+#define REG_STARTEND 0
+
 #include "compat.h"
 
 #include <sys/stat.h>
@@ -66,11 +68,6 @@ const char	*errstr[] = {
 
 /* Flags passed to regcomp() and regexec() */
 int		 cflags = REG_NOSUB | REG_NEWLINE;
-
-// TODO: temporary - this will cause bugs if client code isn't ported\
-// as explained here: https://www.openwall.com/lists/musl/2013/01/15/26
-#define REG_STARTEND 0
-
 
 int		 eflags = REG_STARTEND;
 
@@ -319,6 +316,7 @@ init_color(const char *d)
 int
 main(int argc, char *argv[])
 {
+  setprogname(argv[0]);
 	char **aargv, **eargv, *eopts;
 	char *ep;
 	const char *pn;

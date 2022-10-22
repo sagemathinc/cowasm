@@ -94,6 +94,7 @@ off_t truncofs;          /* Offset this file should be truncated at */
 int doclean;             /* Should cleanup() remove output? */
 
 int main(int argc, char *argv[]) {
+  setprogname(argv[0]);
   struct sigaction sa;
   long i;
   int ch;

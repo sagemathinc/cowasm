@@ -86,6 +86,7 @@ static u_int64_t usqrt(u_int64_t);
 static void usage(void);
 
 int main(int argc, char *argv[]) {
+  setprogname(argv[0]);
   u_int64_t val;
   int ch;
   char *p, buf[100]; /* > max number of digits. */
@@ -300,10 +301,6 @@ static u_int64_t usqrt(u_int64_t n) {
 }
 
 static void usage(void) {
-#ifdef USE_LIBWHEREAMI
   (void)fprintf(stderr, "usage: %s [number ...]\n", getprogname());
-#else
-  (void)fprintf(stderr, "usage: %s [number ...]\n", __progname);
-#endif
   exit(1);
 }

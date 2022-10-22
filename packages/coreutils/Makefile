@@ -45,7 +45,7 @@ include ../build/Makefile-rules
 CC = ${BIN}/cowasm-cc
 
 # Put -g at the end to get debug symbols and much bigger binaries.
-CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat -I${BZIP2}/include -I${ZLIB}/include -DWITHOUT_LIBCRYPTO -g
+CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat -I${BZIP2}/include -I${ZLIB}/include -DWITHOUT_LIBCRYPTO # -g
 LDFLAGS = -L${BZIP2}/lib -lbz2 -L${ZLIB}/lib -lz
 
 # See https://stackoverflow.com/questions/54192234/recursive-search-in-vpath
@@ -121,6 +121,10 @@ test-date:  ${TARGET}/date
 test-factor: ${TARGET}/factor
 	test "`${BIN}/cowasm ${TARGET}/factor 2023`" = "2023: 7 17 17"
 
+test-grep: ${TARGET}/grep
+	# This is a TEST-OF-GREP
+	${BIN}/cowasm ${TARGET}/grep TEST-OF-GREP Makefile | grep "TEST-OF-GREP"
+
 test-ln: ${TARGET}/ln
 	${BIN}/cowasm ./dist/wasm/bin/ln -sf README.md ${BUILD}/.xyz && ls -l ${BUILD}/.xyz |grep xyz | grep README.md ; rm ${BUILD}/.xyz
 
@@ -188,7 +192,7 @@ test-uniq-sources:
 # Very basic tests of some things.
 # NOTE: "make -j8 test" seems to crash tty on linux host at least.
 
-test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-head \
+test: test-uniq-sources test-basename test-cat test-cp test-cut test-date test-factor test-grep test-head \
 	test-ls test-mkdir-rmdir test-mv test-rm test-sleep test-sort test-tail test-touch test-tr \
 	test-tty test-uniq test-wc test-xargs
 	@echo "Success -- all coreutils tests passed"

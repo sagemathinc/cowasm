@@ -36,8 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-extern const char *__progname;
+#include "compat.h"
 
 int rm_path(char *);
 static void usage(void);
@@ -45,6 +44,7 @@ static void usage(void);
 int
 main(int argc, char *argv[])
 {
+  setprogname(argv[0]);
 	int ch, errors;
 	int pflag;
 

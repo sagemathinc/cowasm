@@ -59,6 +59,7 @@ static void badformat(void);
 static void usage(void);
 
 int main(int argc, char *argv[]) {
+  setprogname(argv[0]);
   const char *errstr;
   struct tm *tp;
   int ch, rflag;

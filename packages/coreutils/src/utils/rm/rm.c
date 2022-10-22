@@ -52,8 +52,6 @@
 
 #define MAXIMUM(a, b)	(((a) > (b)) ? (a) : (b))
 
-extern const char *__progname;
-
 int dflag, eval, fflag, iflag, Pflag, vflag, stdin_ok;
 
 int	check(char *, char *, struct stat *);
@@ -74,6 +72,7 @@ void	usage(void);
 int
 main(int argc, char *argv[])
 {
+  setprogname(argv[0]);
 	int ch, rflag;
 
 	Pflag = rflag = 0;
