@@ -50,7 +50,18 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	touch ${DIST_WASM}/.built
 
 test: ${DIST_WASM}/.built
-	rm -rf ${BUILD_WASM}/test
+	# Check that each binary runs
 	${BIN}/cowasm ${DIST_WASM}/bin/tar -h |grep "bsdtar ${VERSION}"
 	${BIN}/cowasm ${DIST_WASM}/bin/cat --version |grep "bsdcat ${VERSION}"
 	${BIN}/cowasm ${DIST_WASM}/bin/cpio --version |grep "bsdcpio ${VERSION}"
+	# Consistency check -- do a compressed archive of dist, then extract,
+	# then run tar at of that.  NOTE: this also illustrates the issue with
+	# file permissions that is caused by WASI.
+	rm -rf ${BUILD_WASM}/test
+	mkdir -p ${BUILD_WASM}/test
+	# This takes about 2 seconds, but is surprisingly competitive with native for speed.
+	${BIN}/cowasm ${DIST_WASM}/bin/tar -Jcf ${BUILD_WASM}/test/dist.tar.xz dist
+	cd ${BUILD_WASM}/test \
+		&& ${BIN}/cowasm ${DIST_WASM}/bin/tar -xf dist.tar.xz \
+		&& chmod +x dist/wasm/bin/tar \
+		&& ${BIN}/cowasm dist/wasm/bin/tar -h |grep "bsdtar ${VERSION}"
