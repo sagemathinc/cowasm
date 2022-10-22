@@ -1,0 +1,10 @@
+--- native/tar/bsdtar.c	2022-04-08 04:40:26.000000000 -0700
++++ wasm/tar/bsdtar.c	2022-10-22 13:27:09.000000000 -0700
+@@ -147,6 +147,7 @@
+   NULL
+ };
+ 
++__attribute__((visibility("default")))
+ int
+ main(int argc, char **argv)
+ {

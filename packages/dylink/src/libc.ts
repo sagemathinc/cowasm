@@ -169,6 +169,10 @@ void setprogname(const char *progname) {
 void freeaddrinfo(struct addrinfo *res);
 void _Py_CheckEmscriptenSignalsPeriodically();
 void _Py_CheckEmscriptenSignals();
+
+// NULL for these two means "no info".
+struct group  *getgrgid(gid_t) { return NULL; }
+struct group  *getgrnam(const char *) { return NULL; }
 `;
   s += "\n";
   s += wasmExport((symbols + "\n" + posix).split("\n"));
@@ -179,6 +183,8 @@ void _Py_CheckEmscriptenSignals();
 // Extra things we added to our posix compat layer, since they are
 // missing from wasi-zig-libc:
 const posix = `
+getgrgid
+getgrnam
 heapsort
 mergesort
 setmode

@@ -147,9 +147,7 @@ export default class PosixContext {
         try {
           main = wasm.getFunction("main", args[0]);
         } catch (err) {
-          console.error(
-            `${args[0]}: unable to find either symbol '__main_argc_argv' or 'main' in '${path}' (compile with -fvisibility-main?) - ${err}`
-          );
+          console.error(`${args[0]}: ${err}`);
           return 127;
         }
       }
