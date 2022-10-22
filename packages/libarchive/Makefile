@@ -51,6 +51,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		&&	echo '#undef HAVE__CTIME64_S' >> config.h \
 		&&	echo '#undef HAVE__GMTIME64_S' >> config.h \
 		&&	echo '#undef HAVE_FUTIMESAT' >> config.h \
+		&&	echo '#undef HAVE_FUTIMES' >> config.h \
 		&&	echo '#undef HAVE_READPASSPHRASE' >> config.h \
 		&&	echo '#undef HAVE_FLISTXATTR' >> config.h \
 		&&	echo '#undef ARCHIVE_XATTR_LINUX' >> config.h \

@@ -8,3 +8,23 @@
  int
  main(int argc, char **argv)
  {
+--- native/cat/bsdcat.c	2022-04-08 04:40:26.000000000 -0700
++++ wasm/cat/bsdcat.c	2022-10-22 14:15:18.000000000 -0700
+@@ -112,6 +112,7 @@
+ 	a = NULL;
+ }
+ 
++__attribute__((visibility("default")))
+ int
+ main(int argc, char **argv)
+ {
+--- native/cpio/cpio.c	2022-04-08 04:40:26.000000000 -0700
++++ wasm/cpio/cpio.c	2022-10-22 14:15:35.000000000 -0700
+@@ -127,6 +127,7 @@
+ static const char * passphrase_callback(struct archive *, void *);
+ static void	passphrase_free(char *);
+ 
++__attribute__((visibility("default")))
+ int
+ main(int argc, char *argv[])
+ {
