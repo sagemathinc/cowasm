@@ -1,4 +1,4 @@
-import { syncPython } from "./node";
+import { syncPython } from "../node";
 
 test("that creating a directory works, and can get listing on new directory", async () => {
   const { exec, repr } = await syncPython();

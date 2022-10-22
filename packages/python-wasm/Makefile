@@ -5,7 +5,7 @@ include ../build/Makefile-vars
 OPT     = -OReleaseSmall
 # OPT     = -ODebug
 
-all: ${DIST}/.built ${DIST}/python/python.wasm
+all: ${DIST}/.built ${DIST}/python/python.wasm hello
 
 include ../build/Makefile-rules
 
@@ -40,14 +40,15 @@ ${DIST}/python/python.wasm: src/python.zig ${BUILD}/libpython.o
 		&& mv python.wasm ${DIST}/python.wasm
 
 ###
-# An example minimal Python extension module, written in C
+# An example minimal Python extension module, written in C.
+# TODO: write a similar example in zig.
 ###
 
 PLATFORM = cpython-311-wasm32-wasi
 
 ${DIST}/hello.${PLATFORM}.so: src/extension/hellomodule.c
 	echo ${PATH}
-	${BIN}/cowasm-cc -v -Oz -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} -shared  \
+	${BIN}/cowasm-cc -Oz -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} -shared  \
 		src/extension/hellomodule.c -o ${DIST}/hello.${PLATFORM}.so
 
 ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.${PLATFORM}.so: ${DIST}/hello.${PLATFORM}.so

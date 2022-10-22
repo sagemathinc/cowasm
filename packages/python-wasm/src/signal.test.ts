@@ -1,14 +1,10 @@
-import { exec, init, repr, wasm } from "../node";
+import { asyncPython } from "./node";
 import { delay } from "awaiting";
 
-beforeEach(async () => {
-  await init({ noWorker: false });
-});
-
-// FAILING -- disabled for now
 // This really tests integration with python's sig handling infrastructure.
 test("sigint interrupts 'while True: pass' within 250ms", async () => {
-  if (wasm == null) throw Error("wasm must not be null");
+  const { exec, repr, kernel } = await asyncPython();
+
   // Ensure it is running.
   await repr("2+3");
   // Launch an infinite loop, where interrupting it won't leave
@@ -22,7 +18,7 @@ test("sigint interrupts 'while True: pass' within 250ms", async () => {
     }
   })();
   // Now send sigint, which should cause the above function to finish soon and set interrupted to true.
-  wasm.signal(2);
+  kernel.signal(2);
   // maybe it's really fast?
   await delay(50);
   if (interrupted) {
@@ -32,6 +28,8 @@ test("sigint interrupts 'while True: pass' within 250ms", async () => {
     await delay(200);
     //expect(interrupted).toBe(true);
   }
+
+  kernel.terminate();
 });
 
 // This checks a completely different aspect of sigint, since the sleep is in the main thread, not the worker.

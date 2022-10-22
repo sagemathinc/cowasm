@@ -37,7 +37,7 @@ struct PyModuleDef _hellomodule = {
 };
 
 PyMODINIT_FUNC PyInit_hello(void) {
-  printf("PyInit_hello\n");
+  // printf("PyInit_hello\n");
   // initialize the module:
   return PyModuleDef_Init(&_hellomodule);
 }

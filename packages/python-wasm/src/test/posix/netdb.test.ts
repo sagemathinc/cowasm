@@ -1,19 +1,16 @@
+import { syncPython } from "../../node";
+
 /*
 >>> import socket; socket.gethostbyaddr('2001:4860:4860::8888')
 ('dns.google', ['8.8.8.8.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.6.8.4.0.6.8.4.1.0.0.2.ip6.arpa'], ['2001:4860:4860::8888'])
 */
 
-import { init, repr, exec } from "../../python/node";
-
-beforeEach(async () => {
-  await init({ debug: true });
-  await exec("import socket; s=0"); // important to reset s as well!
-});
-
 test("gethostbyaddr for google's v4 ip -- consistency check", async () => {
-  await exec("s = socket.gethostbyaddr(socket.gethostbyname('google.com'))");
-  console.log(await repr("s"));
-  expect(await repr("s[0].endswith('.net')")).toBe("True");
+  const { exec, repr } = await syncPython();
+  exec("import socket");
+  exec("s = socket.gethostbyaddr(socket.gethostbyname('google.com'))");
+  // console.log(repr("s"));
+  expect(repr("s[0].endswith('.net')")).toBe("True");
 });
 
 // test("gethostbyaddr on a domain name should also work (it does in native cpython)", async () => {

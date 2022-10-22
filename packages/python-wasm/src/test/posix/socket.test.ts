@@ -1,13 +1,11 @@
-import { init, exec,/* repr*/ } from "../../python/node";
+import { syncPython } from "../../node";
 
-beforeEach(async () => {
-  await init({ debug: true });
-  await exec("import socket");
-});
+// disable until sockets are implemented more fully under node... which
+// is a ton of hard work :-(
 
-// disable until sockets are implemented fully
 test("create a socket", async () => {
-  await exec("import _socket");
+  const { exec } = await syncPython();
+  exec("import _socket");
   /*
   await exec(
     `

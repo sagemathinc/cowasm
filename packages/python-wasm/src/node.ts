@@ -4,11 +4,18 @@ import {
   asyncKernel,
   WasmInstanceAsync,
   WasmInstanceSync,
+  FileSystemSpec,
 } from "@cowasm/kernel";
 import { join } from "path";
 import { bind_methods } from "./util";
 
 const log = debug("python-wasm");
+
+type FileSystemOption = "auto" | "bundle";
+
+interface Options {
+  fs?: FileSystemOption;
+}
 
 const PYTHON_WASM = join(__dirname, "python.wasm");
 
@@ -30,10 +37,6 @@ class PythonWasmSync {
     log("loading python.wasm...");
     this.callWithString("cowasm_python_init");
     log("done");
-  }
-
-  terminate(): void {
-    this.kernel.terminate();
   }
 
   callWithString(name: string, str?: string | string[], ...args): any {
@@ -63,9 +66,12 @@ class PythonWasmSync {
   }
 }
 
-export async function syncPython() {
+export async function syncPython(opts?: Options) {
   log("creating sync CoWasm kernel...");
-  const kernel = await syncKernel({ env: { PYTHONEXECUTABLE } });
+  const kernel = await syncKernel({
+    env: { PYTHONEXECUTABLE },
+    fs: getFilesystem(opts?.fs),
+  });
   log("done");
   log("initializing python");
   const python = new PythonWasmSync(kernel);
@@ -140,13 +146,23 @@ class PythonWasmAsync {
   }
 }
 
-export async function asyncPython() {
+export async function asyncPython(opts?: Options) {
   log("creating async CoWasm kernel...");
-  const kernel = await asyncKernel({ env: { PYTHONEXECUTABLE } });
+  const kernel = await asyncKernel({
+    env: { PYTHONEXECUTABLE },
+    fs: getFilesystem(opts?.fs),
+  });
   log("done");
   log("initializing python");
   const python = new PythonWasmAsync(kernel);
   await python.init();
   log("done");
   return python;
+}
+
+function getFilesystem(fs?: FileSystemOption): FileSystemSpec[] {
+  if (fs == null) {
+    return [{ type: "native" }];
+  }
+  return [{ type: "native" }];
 }

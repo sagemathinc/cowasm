@@ -6,6 +6,7 @@ import { createSyncKernel, createAsyncKernel } from "./kernel";
 import { join } from "path";
 import { existsSync } from "fs";
 import type { FileSystemSpec } from "wasi-js";
+export { FileSystemSpec };
 
 const COWASM_WASM = "cowasm.wasm";
 
@@ -15,6 +16,7 @@ const TERM = "xterm-256color";
 
 interface Options {
   env?: { [name: string]: string }; // extra env vars.
+  fs?: FileSystemSpec[];
 }
 
 function getOptions(wasmImport, opts?: Options) {
@@ -36,7 +38,7 @@ function getOptions(wasmImport, opts?: Options) {
     programName: process.env.PROGRAM_NAME, // real name or made up name
     wasmSource: join(path, COWASM_WASM),
     wasmImport,
-    fs: [{ type: "native" }] as FileSystemSpec[],
+    fs: opts?.fs ?? ([{ type: "native" }] as FileSystemSpec[]),
     env,
   };
 }
