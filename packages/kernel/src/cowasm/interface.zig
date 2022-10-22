@@ -1,11 +1,9 @@
 const std = @import("std");
 const cowasm = @import("./cowasm.zig");
 const interface = @import("../interface.zig");
-//const signal = @import("../python/signal/signal.zig");
 const posix = @import("../wasm/posix.zig");
 
 export fn keepalive() void {
-  //  signal.keepalive();
     posix.keepalive();
 }
 

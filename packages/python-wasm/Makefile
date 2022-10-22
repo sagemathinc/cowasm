@@ -5,7 +5,7 @@ include ../build/Makefile-vars
 OPT     = -OReleaseSmall
 # OPT     = -ODebug
 
-all: ${DIST}/.built ${DIST}/python/python.wasm hello
+all: ${DIST}/.built python
 
 include ../build/Makefile-rules
 
@@ -28,7 +28,7 @@ ${BUILD}/libpython.o: ${DYLINK}/wasm-export/libpython.c
 		-c ${DYLINK}/wasm-export/libpython.c \
 		-o ${BUILD}/libpython.o
 
-${DIST}/python/python.wasm: src/python.zig ${BUILD}/libpython.o
+${DIST}/python.wasm: src/python.zig ${BUILD}/libpython.o
 	mkdir -p ${DIST}
 	cd src/ \
 		&& ${BIN}/cowasm-zig \
@@ -38,6 +38,35 @@ ${DIST}/python/python.wasm: src/python.zig ${BUILD}/libpython.o
 			python.zig \
 			${BUILD}/libpython.o \
 		&& mv python.wasm ${DIST}/python.wasm
+
+BUNDLES = ${DIST}/python-minimal.zip ${DIST}/python-readline.zip ${DIST}/python-stdlib.zip
+
+${DIST}/%.zip: ${PYTHON_WASM}/lib/dist/%.zip
+	# Copy over the modules file
+	mkdir -p ${DIST}
+	cp $< $@
+
+PYTHON_PACKAGES = ${DIST}/Cython.tar.xz ${DIST}/mpmath.tar.xz ${DIST}/numpy.tar.xz ${DIST}/sympy.tar.xz
+
+${DIST}/Cython.tar.xz: ${PACKAGES}/py-cython/dist/wasm/Cython.tar.xz
+	mkdir -p ${DIST}
+	cp $< $@
+
+${DIST}/mpmath.tar.xz: ${PACKAGES}/py-mpmath/dist/wasm/mpmath.tar.xz
+	mkdir -p ${DIST}
+	cp $< $@
+
+${DIST}/numpy.tar.xz: ${PACKAGES}/py-numpy/dist/wasm/numpy.tar.xz
+	mkdir -p ${DIST}
+	cp $< $@
+
+${DIST}/sympy.tar.xz: ${PACKAGES}/py-sympy/dist/wasm/sympy.tar.xz
+	mkdir -p ${DIST}
+	cp $< $@
+
+.PHONY: python
+python: ${DIST}/python.wasm hello ${BUNDLES} ${PYTHON_PACKAGES}
+
 
 ###
 # An example minimal Python extension module, written in C.

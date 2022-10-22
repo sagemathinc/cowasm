@@ -10,7 +10,7 @@ type WASMImportFunction = (
 
 interface KernelOptions {
   wasmSource: string; // file path in node.js; a URL in browser.
-  programName?: string; // file path to executable script, e.g., /.../python-wasm[-debug] in nodejs; fine to leave blank in browser (?).
+  programName?: string; // file path to executable script...
   wasmImport: WASMImportFunction;
   fs: FileSystemSpec[];
   env: { [name: string]: string };

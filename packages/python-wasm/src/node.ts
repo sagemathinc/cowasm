@@ -8,16 +8,21 @@ import {
 } from "@cowasm/kernel";
 import { join } from "path";
 import { bind_methods } from "./util";
+import { existsSync } from "fs";
 
 const log = debug("python-wasm");
 
-type FileSystemOption = "auto" | "bundle";
+type FileSystemOption = "native" | "bundle";
 
 interface Options {
   fs?: FileSystemOption;
+  noReadline?: boolean;
 }
 
 const PYTHON_WASM = join(__dirname, "python.wasm");
+const pythonFull = join(__dirname, "python-stdlib.zip");
+const pythonReadline = join(__dirname, "python-readline.zip");
+const pythonMinimal = join(__dirname, "python-minimal.zip");
 
 // For now this is the best we can do.  TODO: cleanest solution in general would be to also include the
 // python3.wasm binary (which has main) from the cpython package, to support running python from python.
@@ -70,7 +75,7 @@ export async function syncPython(opts?: Options) {
   log("creating sync CoWasm kernel...");
   const kernel = await syncKernel({
     env: { PYTHONEXECUTABLE },
-    fs: getFilesystem(opts?.fs),
+    fs: getFilesystem(opts),
   });
   log("done");
   log("initializing python");
@@ -150,7 +155,7 @@ export async function asyncPython(opts?: Options) {
   log("creating async CoWasm kernel...");
   const kernel = await asyncKernel({
     env: { PYTHONEXECUTABLE },
-    fs: getFilesystem(opts?.fs),
+    fs: getFilesystem(opts),
   });
   log("done");
   log("initializing python");
@@ -160,9 +165,27 @@ export async function asyncPython(opts?: Options) {
   return python;
 }
 
-function getFilesystem(fs?: FileSystemOption): FileSystemSpec[] {
-  if (fs == null) {
-    return [{ type: "native" }];
+function getFilesystem(opts?: Options): FileSystemSpec[] {
+  if (opts?.fs == "bundle" || !existsSync(PYTHONEXECUTABLE)) {
+    // explicitly requested or not dev environment.
+    return [
+      // This will result in synchronously loading a tiny filesystem needed for starting python interpreter.
+      {
+        type: "zipfile",
+        zipfile: opts?.noReadline ? pythonMinimal : pythonReadline,
+        mountpoint: "/usr/lib/python3.11",
+      },
+      // Load full stdlib python filesystem asynchronously.  Only needed to run actual interesting code.
+      // This way can load the wasm file from disk at the same time as the stdlib.
+      {
+        type: "zipfile",
+        async: true,
+        zipfile: pythonFull,
+        mountpoint: "/usr/lib/python3.11",
+      },
+      // And the rest of the native filesystem.   Sandboxing is not at all our goal here.
+      { type: "native" },
+    ];
   }
   return [{ type: "native" }];
 }

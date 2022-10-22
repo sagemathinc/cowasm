@@ -8,7 +8,7 @@ import { existsSync } from "fs";
 import type { FileSystemSpec } from "wasi-js";
 export { FileSystemSpec };
 
-const COWASM_WASM = "cowasm.wasm";
+const KERNEL_WASM = "kernel.wasm";
 
 // Our tiny termcap file only has one entry, which is for xterm
 // so that's all we give you, even if you have a different terminal.
@@ -36,7 +36,7 @@ function getOptions(wasmImport, opts?: Options) {
 
   return {
     programName: process.env.PROGRAM_NAME, // real name or made up name
-    wasmSource: join(path, COWASM_WASM),
+    wasmSource: join(path, KERNEL_WASM),
     wasmImport,
     fs: opts?.fs ?? ([{ type: "native" }] as FileSystemSpec[]),
     env,

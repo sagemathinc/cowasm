@@ -4,7 +4,7 @@ import wasmImportSync from "../wasm/worker/browser";
 import { createSyncKernel, createAsyncKernel } from "./kernel";
 import type { FileSystemSpec } from "wasi-js";
 
-import wasmUrl from "./cowasm.wasm";
+import wasmUrl from "./kernel.wasm";
 
 interface Options {
   env?: { [name: string]: string }; // extra env vars.
