@@ -7,7 +7,7 @@ include ../build/Makefile-vars
 # Find the latest version at https://ziglang.org/download/
 # This is for pre-release
 
-VERSION = 0.10.0-dev.4470+8a344fab3
+VERSION = 0.10.0-dev.4476+0f0076666
 
 # Using sed because uname -s --> x86_64 or arm64, but need aarch64
 ARCH = $(shell uname -m | sed s/arm64/aarch64/)
@@ -16,14 +16,6 @@ ARCH = $(shell uname -m | sed s/arm64/aarch64/)
 #  uname -s --> Linux and Darwin
 # but need      linux and macos
 OS = $(shell uname -s  | sed s/Darwin/macos/ | sed s/Linux/linux/)
-
-# The zig library is in a slightly different place on Linux.  We have
-# to be aware of this in order to apply patches.
-ifeq ($(OS),linux)
-	LIBZIG=${DIST_NATIVE}/lib/zig
-else
-	LIBZIG=${DIST_NATIVE}/lib
-endif
 
 # Example  https://ziglang.org/builds/zig-macos-aarch64-0.10.0-dev.3315+1a16b7214.tar.xz
 
@@ -46,7 +38,9 @@ ${DIST_NATIVE}/.${VERSION}: ${TARBALL}
 	mkdir -p ${DIST_NATIVE}
 	tar xf ${TARBALL} -C ${DIST_NATIVE} --strip-components=1
 	# Add support for -target wasm32-emscripten
-	cd ${LIBZIG} && cat ${SRC}/patches/01-emscripten.patch | patch -p3
+	# Note the funny || is because the zig binaries are laid out in
+	# inconstent way.
+	cd ${DIST_NATIVE}/lib/zig 2>/dev/null || cd ${DIST_NATIVE}/lib && cat ${SRC}/patches/01-emscripten.patch | patch -p3
 	touch ${DIST_NATIVE}/.${VERSION}
 
 ${BIN}/zig: ${DIST_NATIVE}/.${VERSION}
