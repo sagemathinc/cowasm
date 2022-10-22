@@ -49,8 +49,8 @@ strip: node_modules
 KERNEL_WASM_SOURCES = \
 	${POSIX_SOURCES} \
 	${DYLINK}/wasm/libdylink.a \
-	src/cowasm/interface.zig \
-	src/cowasm/cowasm.zig
+	src/kernel/interface.zig \
+	src/kernel/cowasm.zig
 
 KERNEL_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
 
@@ -65,7 +65,7 @@ KERNEL_WASM_C = \
 		${TERMCAP}/lib/libtermcap.a \
 		${CWD}/src/wasm/posix/stdlib.c
 
-${DIST}/cowasm/kernel.wasm: ${KERNEL_WASM_SOURCES} ${KERNEL_WASM_C}
+${DIST}/kernel/kernel.wasm: ${KERNEL_WASM_SOURCES} ${KERNEL_WASM_C}
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
@@ -76,12 +76,13 @@ ${DIST}/cowasm/kernel.wasm: ${KERNEL_WASM_SOURCES} ${KERNEL_WASM_C}
 		${KERNEL_WASM_LDFLAGS} \
 		${KERNEL_WASM_INCLUDE} \
 		${KERNEL_WASM_C} \
-		cowasm/interface.zig
+		kernel/interface.zig
 	mkdir -p ${DIST}/cowasm
-	mv src/interface.wasm ${DIST}/cowasm/kernel.wasm
+	rm -f src/interface.wasm.o
+	mv src/interface.wasm ${DIST}/kernel/kernel.wasm
 
 .PHONY: kernel
-kernel: ${DIST}/cowasm/kernel.wasm
+kernel: ${DIST}/kernel/kernel.wasm
 
 
 ###

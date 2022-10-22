@@ -2,8 +2,8 @@
   "name": "@cowasm/kernel",
   "version": "0.21.0",
   "description": "@cowasm/kernel -- the Kernel of CoWasm: Collaborative WebAssembly for Servers and Browsers",
-  "main": "./dist/cowasm/node.js",
-  "browser": "./dist/cowasm/browser.js",
+  "main": "./dist/kernel/node.js",
+  "browser": "./dist/kernel/browser.js",
   "files": [
     "dist/*",
     "README.md",
