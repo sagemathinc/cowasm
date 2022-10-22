@@ -30,7 +30,7 @@ import {
   WASI_EINVAL,
   WASI_ENOSYS,
   WASI_EPERM,
-  WASI_ENOTCAPABLE,
+  //WASI_ENOTCAPABLE,
   WASI_FILETYPE_UNKNOWN,
   WASI_FILETYPE_BLOCK_DEVICE,
   WASI_FILETYPE_CHARACTER_DEVICE,
@@ -1301,15 +1301,18 @@ export default class WASI {
             throw new WASIError(WASI_EBADF);
           }
           const fullUnresolved = path.resolve(stats.path, p);
-          if (path.relative(stats.path, fullUnresolved).startsWith("..")) {
-            return WASI_ENOTCAPABLE;
-          }
+          // I don't know why the original code blocked .., but that breaks
+          // applications (e.g., tar), and this seems like the wrong layer at which to
+          // be imposing security?
+//           if (path.relative(stats.path, fullUnresolved).startsWith("..")) {
+//             return WASI_ENOTCAPABLE;
+//           }
           let full;
           try {
             full = fs.realpathSync(fullUnresolved);
-            if (path.relative(stats.path, full).startsWith("..")) {
-              return WASI_ENOTCAPABLE;
-            }
+//             if (path.relative(stats.path, full).startsWith("..")) {
+//               return WASI_ENOTCAPABLE;
+//             }
           } catch (e) {
             if ((e as any)?.code === "ENOENT") {
               full = fullUnresolved;

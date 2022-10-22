@@ -1,7 +1,7 @@
 import { notImplemented } from "./util";
 
 export default function other(context) {
-  const { callFunction, posix, recv, send } = context;
+  const { callFunction, posix, recv, send, wasi } = context;
 
   context.state.user_from_uid_cache = {};
 
@@ -23,6 +23,14 @@ export default function other(context) {
     );
   }
 
+  function real_fd(virtual_fd: number): number {
+    const data = wasi.FD_MAP.get(virtual_fd);
+    if (data == null) {
+      return -1;
+    }
+    return data.real;
+  }
+
   const lib = {
     syslog: () => {
       notImplemented("syslog");
@@ -31,7 +39,7 @@ export default function other(context) {
       if (posix.login_tty == null) {
         notImplemented("login_tty");
       }
-      posix.login_tty(fd);
+      posix.login_tty(real_fd(fd));
       return 0;
     },
 
@@ -50,9 +58,9 @@ export default function other(context) {
     //       int fstatvfs(int fd, struct statvfs *buf);
     fstatvfs: (fd: number, bufPtr: number): number => {
       if (posix.fstatvfs == null) {
-        notImplemented("statvfs");
+        notImplemented("fstatvfs");
       }
-      sendStatvfs(bufPtr, posix.fstatvfs(fd));
+      sendStatvfs(bufPtr, posix.fstatvfs(real_fd(fd)));
       return 0;
     },
 
