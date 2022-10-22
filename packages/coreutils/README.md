@@ -1,11 +1,16 @@
-# BSD Coreutils Ported to WebAssembly
+# Some of FreeBSD Ported to WebAssembly
 
-For use in https://zython.org
+For use in https://cowasm.org.
 
-This code comes from https://github.com/coreutils/coreutils and https://github.com/DiegoMagdaleno/BSDCoreUtils, but with changes to port to Zython-Zig-WebAssembly.
-
-We aren't porting everything, e.g., `chroot` doesn't make a lot of sense in the context of WebAssembly/WASI.
+- This includes many of the coreutils in the utils directory. We aren't porting everything, e.g., `chroot` doesn't make a lot of sense in the context of WebAssembly/WASI.
 
 ## Known broken things
 
-- [ ] `tail -f` doesn't work because epoll isn't implemented. See posix/epoll.ts elsewhere.
+- [ ] `tail -f` doesn't work because epoll isn't implemented in cowasm yet. See posix/epoll.ts elsewhere.
+
+## Sources
+
+- https://github.com/freebsd/freebsd-src
+- https://github.com/coreutils/coreutils
+- https://github.com/DiegoMagdaleno/BSDCoreUtils
+

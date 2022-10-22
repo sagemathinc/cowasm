@@ -14,25 +14,15 @@
  *
  */
 
-/* Reference from Apple's archived OS X (now macOS documentation
-we need to import this else we are going to get a "declaration expected at line
-42" */
-#if defined __APPLE__
-#include "headers/simpleq.h"
-#include "headers/mthio.h"
-#define user_from_uid user_from_uid_orig
-#define group_from_gid group_from_gid_orig
-#include <grp.h>
-#include <pwd.h>
-#undef user_from_uid
-#undef group_from_gid
-#else
+#ifndef COWASM_COMPAT_H
+#define COWASM_COMPAT_H
+
+#include "posix-wasm.h"
 #include <unistd.h>
 #include <string.h>
 #include <stddef.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#endif
 
 /* setmode.c */
 mode_t getmode(const void *, mode_t);
@@ -124,4 +114,11 @@ extern const char *__progname;
 
 #define DEFFILEMODE (S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH)
 
-#include "posix-wasm.h"
+#define OFF_MAX             LLONG_MAX       /* max value for an off_t */
+#define  MAP_NOCORE       0x00020000
+#define  MAP_NOSYNC       0x0800
+
+#define __FBSDID(x)
+#define __DECONST(a, v) ((a)(v))
+
+#endif // COWASM_COMPAT_H

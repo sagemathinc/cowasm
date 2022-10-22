@@ -3,6 +3,8 @@
 include ../build/Makefile-vars
 
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
+BZIP2 = ${PACKAGES}/bzip2/dist/wasm
+ZLIB = ${PACKAGES}/zlib/dist/wasm
 
 TARGET = ${DIST_WASM}/bin
 
@@ -17,6 +19,7 @@ all: \
 	${TARGET}/cut \
 	${TARGET}/date \
 	${TARGET}/factor \
+	${TARGET}/grep \
 	${TARGET}/head \
 	${TARGET}/ln \
 	${TARGET}/ls \
@@ -42,7 +45,8 @@ include ../build/Makefile-rules
 CC = ${BIN}/cowasm-cc
 
 # Put -g at the end to get debug symbols and much bigger binaries.
-CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat -DWITHOUT_LIBCRYPTO # -g
+CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat -I${BZIP2}/include -I${ZLIB}/include -DWITHOUT_LIBCRYPTO -g
+LDFLAGS = -L${BZIP2}/lib -lbz2 -L${ZLIB}/lib -lz
 
 # See https://stackoverflow.com/questions/54192234/recursive-search-in-vpath
 # and https://stackoverflow.com/questions/231229/how-to-generate-a-makefile-with-source-in-sub-directories-using-just-one-makefil
@@ -72,6 +76,9 @@ test-cp: ${TARGET}/cp
 	rm ${BUILD}/x
 
 ${TARGET}/factor: ${COMPAT} ${BUILD}/factor.o ${BUILD}/pattern.o ${BUILD}/pr_tbl.o
+	${CC} ${CFLAGS} $^ -o $@
+
+${TARGET}/grep: ${COMPAT} ${BUILD}/grep-file.o ${BUILD}/grep-queue.o ${BUILD}/grep-util.o ${BUILD}/grep.o
 	${CC} ${CFLAGS} $^ -o $@
 
 ${TARGET}/ls: ${COMPAT} ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/print.o ${BUILD}/utf8.o ${BUILD}/util.o
