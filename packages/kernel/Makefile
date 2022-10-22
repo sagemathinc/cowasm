@@ -8,8 +8,6 @@ ZIG_PKG = --main-pkg-path ${SRC}
 
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 DYLINK = ${PACKAGES}/dylink/dist
-LIBEDIT = ${PACKAGES}/libedit/dist/wasm
-TERMCAP = ${PACKAGES}/termcap/dist/wasm
 
 WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
 WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic ${OPT}
@@ -61,8 +59,6 @@ KERNEL_WASM_INCLUDE = -I. -I${POSIX_WASM}
 
 KERNEL_WASM_C = \
 		${POSIX_WASM}/libposix.a \
-		${LIBEDIT}/lib/libedit.a \
-		${TERMCAP}/lib/libtermcap.a \
 		${CWD}/src/wasm/posix/stdlib.c
 
 ${DIST}/kernel/kernel.wasm: ${KERNEL_WASM_SOURCES} ${KERNEL_WASM_C}

@@ -1,8 +1,12 @@
-# Using [python-wasm](https://www.npmjs.com/package/python-wasm) with [webpack](https://webpack.js.org/)
+# Using [CoWasm](https://cowasm.org) in a browser
 
-[🔗 Try the Python-Wasm Live Demo](https://zython.org)
+[🔗 Try the CoWasm shell](https://cowasm.sh)
 
-This is an extremely minimal example. For a more complicated example, see [the terminal](../terminal/README.md).
+This package illustrates and tests use of CoWasm in a web browser.
+
+## Using [webpack](https://webpack.js.org/)
+
+For a more complicated example, see [the terminal](../terminal/README.md).
 
 You can use `python-wasm` with webpack5. There are **two things**
 you may have to modify in your [webpack configuration](./webpack.config.js):
@@ -104,4 +108,4 @@ this](https://github.com/github-community/community/discussions/13309).
 
 ## Firefox and Service Workers
 
-Unlike Safari and Chrome, Firefox doesn't allow service workers over http without setting dom.serviceWorkers.testing.enabled, so set that to true in about:config to test locally.
+Unlike Safari and Chrome, Firefox doesn't allow service workers over http without setting `dom.serviceWorkers.testing.enabled`, so set that to true in `about:config` to test locally. Also, [Firefox doesn't implement support for service workers in incognito mode](https://bugzilla.mozilla.org/show_bug.cgi?id=1320796).

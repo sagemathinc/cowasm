@@ -1,19 +1,22 @@
-import { asyncPython } from "python-wasm";
+import * as debug from "debug";
+const log = debug("browser:index");
 
-async function demo() {
-  const log = console.log;
-  const t0 = new Date();
+import kernel from "./kernel";
 
+async function main() {
+  log("kernel:");
+  await kernel();
+
+  /*
   log("call python init");
   // noReadline saves a tiny amount of space; no terminal here so no need for readline
   const python = await asyncPython({ noReadline: true });
   (window as any).python = python;
-  log(`Loaded python in ${new Date().valueOf() - t0.valueOf()}ms.`);
+  log("Loaded python");
   //const { exec, repr } = python;
   //log(await repr("2+3"));
 
   const element = document.createElement("pre");
-  /*
 
   // load something nontrivial (a dynamic library) from the standard library:
   exec("import sqlite3");
@@ -45,8 +48,8 @@ res = cur.execute("SELECT * FROM movies")
   element.innerHTML += `<br/><pre>\nHow about some SQL?\n${sql}</pre><br/>${await repr(
     "list(res)"
   )}`;
-*/
   document.body.appendChild(element);
+*/
 }
 
-demo();
+main();
