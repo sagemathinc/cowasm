@@ -44,20 +44,13 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 				--without-zstd \
 				--without-cng \
 				--without-lz4 \
-		&&	echo '#include "posix-wasm.h"' >> config.h \
-		&&	echo '#undef HAVE_CHROOT' >> config.h \
-		&&	echo '#undef HAVE__LOCALTIME64_S' >> config.h \
-		&&	echo '#undef HAVE_LOCALTIME_R' >> config.h \
-		&&	echo '#undef HAVE__CTIME64_S' >> config.h \
-		&&	echo '#undef HAVE__GMTIME64_S' >> config.h \
-		&&	echo '#undef HAVE_FUTIMESAT' >> config.h \
-		&&	echo '#undef HAVE_FUTIMES' >> config.h \
-		&&	echo '#undef HAVE_READPASSPHRASE' >> config.h \
-		&&	echo '#undef HAVE_FLISTXATTR' >> config.h \
-		&&	echo '#undef ARCHIVE_XATTR_LINUX' >> config.h \
-		&&	echo '#undef HAVE_GETGRGID_R' >> config.h \
-		&&	echo '#undef HAVE_GETGRNAM_R' >> config.h \
-		&&	echo '#undef HAVE_LUTIMES' >> config.h \
-		&&	make -j8 \
+		&&	cat ${SRC}/config.h >> config.h \
+		&&	make -j12 \
 		&&	make install
+	touch ${DIST_WASM}/.built
 
+test: ${DIST_WASM}/.built
+	rm -rf ${BUILD_WASM}/test
+	${BIN}/cowasm ${DIST_WASM}/bin/tar -h |grep "bsdtar ${VERSION}"
+	${BIN}/cowasm ${DIST_WASM}/bin/cat --version |grep "bsdcat ${VERSION}"
+	${BIN}/cowasm ${DIST_WASM}/bin/cpio --version |grep "bsdcpio ${VERSION}"
