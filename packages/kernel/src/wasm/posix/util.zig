@@ -1,6 +1,8 @@
 const std = @import("std");
 const string = @cImport(@cInclude("string.h"));
-const allocator = @import("../../interface/allocator.zig");
+
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+var alloc = gpa.allocator();
 
 // extern fn strcmp(s1: [*:0]const u8, s2: [*:0]const u8) c_int;
 // fn eql(s1: [*:0]const u8, s2: [*:0]const u8) bool {
@@ -17,7 +19,6 @@ pub fn zigStringToNullTerminatedString(s: []const u8) ![*:0]u8 {
     return @ptrCast([*:0]u8, ptr);
 }
 
-const alloc = allocator.get();
 pub fn structToJsonZigString(comptime T: type, obj: T) ![]const u8 {
     return std.json.stringifyAlloc(alloc, obj, .{});
 }
@@ -28,7 +29,6 @@ pub fn structToNullTerminatedJsonString(comptime T: type, obj: T) ![*:0]u8 {
     defer alloc.free(s);
     return try zigStringToNullTerminatedString(s);
 }
-
 
 pub fn mallocType(comptime T: type, comptime errorMesg: [:0]const u8) ?*T {
     var ptr = std.c.malloc(@sizeOf(T)) orelse {

@@ -1,6 +1,5 @@
 const std = @import("std");
 const cowasm = @import("./cowasm.zig");
-const interface = @import("../interface.zig");
 const posix = @import("../wasm/posix.zig");
 
 export fn keepalive() void {

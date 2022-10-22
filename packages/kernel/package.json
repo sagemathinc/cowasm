@@ -14,7 +14,7 @@
     "build": "make all",
     "clean": "make clean",
     "tsc": "tsc -w",
-    "test": "tsc && npx jest --forceExit ./dist # TODO: fix this hang issue with forceExit",
+    "test": "tsc && npx jest ./dist",
     "test-watch": "npx jest --watch ./dist",
     "strip": "find dist/ -type f -name \"*.wasm\" | xargs -n1 wasm-strip",
     "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' -j4 && npm run strip"

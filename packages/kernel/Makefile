@@ -16,15 +16,14 @@ WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_
 
 TEST = ./test-zig.sh
 
-all: ${DIST}/.built bin-cowasm kernel
+all: ${DIST}/.built bin-cowasm kernel ${DIST}/termcap
 
 include ../build/Makefile-rules
 
-# TODO: sort out termcap
-# ${DIST}/termcap: ${PYTHON_WASM}/lib/dist/termcap
-# 	# Copy over the termcap file (termcap is also in python.zip, but it's useful to have outside for debug mode).
-# 	cp ${PYTHON_WASM}/lib/dist/termcap ${DIST}/termcap
-
+${DIST}/termcap: ${PACKAGES}/cpython/src/termcap
+	# Copy over the termcap file (termcap is also in python.zip, but it's useful to have outside).
+	mkdir -p ${DIST}
+	cp $< $@
 
 ## Node modules
 node_modules:

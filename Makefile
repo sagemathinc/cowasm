@@ -21,11 +21,6 @@ packages/coreutils/${BUILT}: zig posix-wasm
 	cd packages/coreutils && make -j8
 .PHONY: coreutils
 
-kernel: packages/kernel/${BUILT}
-packages/kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node libgit2
-	cd packages/kernel && make all
-.PHONY: kernel
-
 dash: packages/dash/${BUILT}
 packages/dash/${BUILT}: zig libedit
 	cd packages/dash && make all
@@ -46,6 +41,11 @@ dylink: packages/dylink/${BUILT}
 packages/dylink/${BUILT}: node zig posix-wasm lzma cpython
 	cd packages/dylink && make all
 .PHONY: dylink
+
+kernel: packages/kernel/${BUILT}
+packages/kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node
+	cd packages/kernel && make all
+.PHONY: kernel
 
 libedit: packages/libedit/${BUILT}
 packages/libedit/${BUILT}: zig termcap
@@ -95,7 +95,7 @@ packages/posix-wasm/${BUILT}: zig
 .PHONY: posix-wasm
 
 python-wasm: packages/python-wasm/${BUILT}
-packages/python-wasm/${BUILT}: node
+packages/python-wasm/${BUILT}: kernel node zig py
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 

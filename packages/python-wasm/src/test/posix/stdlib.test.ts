@@ -3,7 +3,6 @@ import { syncPython } from "../../node";
 test("mkstemp system call -- hitting the memfs filesystem", async () => {
   const { kernel } = await syncPython({ fs: "bundle" });
   const fd = kernel.callWithString("mkstemp", "/usr/lib/python3.11/fooXXXXXX");
-  console.log("fd = ", fd);
   expect(fd).toBeGreaterThan(0);
   const path = kernel.wasi?.FD_MAP.get(fd)?.path;
   if (path == null) throw Error("bug");
