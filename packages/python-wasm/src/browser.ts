@@ -9,6 +9,10 @@ import pythonMinimal from "./python-minimal.zip";
 import pythonReadline from "./python-readline.zip";
 const PYTHONEXECUTABLE = "/usr/lib/python.wasm";
 
+import numpy from "./numpy.tar.xz";
+import mpmath from "./mpmath.tar.xz";
+import sympy from "./sympy.tar.xz";
+
 // We ONLY provide async version, since sync version isn't
 // possible anymore since dynamic module loading has to be
 // sync and browsers don't allow sync webassmbly loading.
@@ -19,7 +23,7 @@ export default async function asyncPython(
   const fs = getFilesystem(opts);
   log("fs = ", fs);
   const kernel = await asyncKernel({
-    env: { PYTHONHOME: "/usr", PYTHONEXECUTABLE },
+    env: { PYTHONHOME: "/usr", PYTHONEXECUTABLE, DEBUG: "cowasm:importer" },
     fs,
   });
   log("done");
@@ -29,6 +33,12 @@ export default async function asyncPython(
   log("initializing python");
   const python = new PythonWasmAsync(kernel, PYTHONEXECUTABLE);
   await python.init();
+
+  // don't wait on these fetches for now.
+  kernel.fetch(numpy, "/usr/lib/python3.11/numpy.tar.xz");
+  kernel.fetch(mpmath, "/usr/lib/python3.11/mpmath.tar.xz");
+  kernel.fetch(sympy, "/usr/lib/python3.11/sympy.tar.xz");
+
   log("done");
   return python;
 }

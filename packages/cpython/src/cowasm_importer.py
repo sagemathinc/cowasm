@@ -54,7 +54,6 @@ def get_package_directory():
     return temporary_directory.name
 
 
-
 class CoWasmPackageFinder(importlib.abc.MetaPathFinder):
 
     def __init__(self, loader):
@@ -128,10 +127,10 @@ def init():
     sys.meta_path.append(finder)
 
 
+"""
+TODO: This is really dumb for now!
+"""
 
-"""
-TODO: This is for local dev.  Need something similar for distribution and the web.
-"""
 
 # cowasm/packages/cpython/dist/wasm/lib/python3.11/site-packages
 def init_dev():
@@ -141,20 +140,28 @@ def init_dev():
         return
 
     init()
-    pkgs = site_packages_directory()
-    i = pkgs.rfind("packages/cpython")
-    PACKAGES = pkgs[:i+len("packages")]
 
-    for path in os.listdir(os.path.join(PACKAGES)):
-        if not path.startswith('py-'): continue
-        module = path[3:]
-        if module == 'cython':
-            module = 'Cython'
-        bundle = os.path.join(PACKAGES, path, 'dist', 'wasm', module + '.tar.xz')
-        if os.path.exists(bundle):
-            cowasm_modules[module] = bundle
+    if '/usr/lib/python3.11' in sys.path:
+        # In the browser
+        cowasm_modules['numpy'] = '/usr/lib/python3.11/numpy.tar.xz'
+        cowasm_modules['mpmath'] = '/usr/lib/python3.11/mpmath.tar.xz'
+        cowasm_modules['sympy'] = '/usr/lib/python3.11/sympy.tar.xz'
+    else:
+        # On a server
+        pkgs = site_packages_directory()
+        i = pkgs.rfind("packages/cpython")
+        PACKAGES = pkgs[:i + len("packages")]
+
+        for path in os.listdir(os.path.join(PACKAGES)):
+            if not path.startswith('py-'): continue
+            module = path[3:]
+            if module == 'cython':
+                module = 'Cython'
+            bundle = os.path.join(PACKAGES, path, 'dist', 'wasm',
+                                  module + '.tar.xz')
+            if os.path.exists(bundle):
+                cowasm_modules[module] = bundle
+
 
 # always try this for now.
 init_dev()
-
-
