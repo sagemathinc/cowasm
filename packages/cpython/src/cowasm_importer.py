@@ -1,5 +1,14 @@
 # See https://dev.to/dangerontheranger/dependency-injection-with-import-hooks-in-python-3-5hap
 
+"""
+
+When working on this, here's how to update things after a change:
+
+~/cowasm/packages/cpython$  rm dist/wasm/.install-data && cp src/cowasm_importer.py dist/wasm/lib/python3.11/site-packages/ && make && cd ../python-wasm/ && make && cd ../cpython/
+
+"""
+
+
 import importlib
 import importlib.abc
 import os
@@ -28,16 +37,13 @@ def get_package_directory():
     # I like this since efficient, but I hate that it adds an
     # additional "sources of truth".
 
-    # TODO:
-    # This won't work and I don't understand why.  My best guess is yet
-    # another subtle unionfs bug.  Try again after rewriting to not use
-    # unionfs -- hopefully it's not a memfs problem.
-    #     if '/usr/lib/python3.11' in sys.path:
-    #         # Using memfs (the non-dev mode).
-    #         path = '/usr/lib/python3.11/site-packages'
-    #         os.makedirs(path, exist_ok=True)
-    #         sys.path.insert(0, path)
-    #         return path
+    # TODO: better way to decide this
+    if '/usr/lib/python3.11' in sys.path:
+        # Using memfs in a **sandbox**
+        path = '/usr/lib/python3.11'
+        os.makedirs(path, exist_ok=True)
+        sys.path.insert(0, path)
+        return path
 
     # If not, we fall back to a temporary directory that gets
     # deleted automatically when the process exits, hence the global

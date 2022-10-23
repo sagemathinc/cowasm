@@ -139,7 +139,11 @@ export default function posix(context: Context): PosixEnv {
   let syncdir;
   if (context.posix.chdir != null) {
     syncdir = () => {
-      context.posix.chdir?.(context.getcwd());
+      // TODO: it is expected that this may fail, e.g., if we are using a sandbox filesystem
+      // deal with this in a better way.
+      try {
+        context.posix.chdir?.(context.getcwd());
+      } catch (_err) {}
     };
   } else {
     syncdir = () => {};

@@ -39,7 +39,8 @@ ${DIST}/python.wasm: src/python.zig ${BUILD}/libpython.o
 			${BUILD}/libpython.o \
 		&& mv python.wasm ${DIST}/python.wasm
 
-BUNDLES = ${DIST}/python-minimal.zip ${DIST}/python-readline.zip ${DIST}/python-stdlib.zip
+BUNDLES = ${DIST}/python-minimal.zip ${DIST}/python-readline.zip ${DIST}/python-stdlib.zip ${DIST}/python-sandbox.zip
+
 
 ${DIST}/%.zip: ${PYTHON_WASM}/lib/dist/%.zip
 	# Copy over the modules file
@@ -63,6 +64,14 @@ ${DIST}/numpy.tar.xz: ${PACKAGES}/py-numpy/dist/wasm/numpy.tar.xz
 ${DIST}/sympy.tar.xz: ${PACKAGES}/py-sympy/dist/wasm/sympy.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
+
+${DIST}/python-sandbox.zip: ${DIST}/python-stdlib.zip ${PYTHON_PACKAGES}
+	cd ${DIST} \
+		&&	cp python-stdlib.zip .python-sandbox.zip \
+		&&  zip .python-sandbox.zip *.tar.xz python.wasm \
+		&&  mv .python-sandbox.zip python-sandbox.zip
+
+
 
 .PHONY: python
 python: ${DIST}/python.wasm hello hellozig ${BUNDLES} ${PYTHON_PACKAGES}

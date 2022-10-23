@@ -326,9 +326,11 @@ export default class WASI {
     }
     // @ts-ignore
     this.memory = undefined;
+
     // @ts-ignore
     this.view = undefined;
     this.bindings = wasiConfig.bindings;
+    const fs = this.bindings.fs;
 
     this.FD_MAP = new Map([
       [
@@ -372,7 +374,6 @@ export default class WASI {
       ],
     ]);
 
-    const fs = this.bindings.fs;
     const path = this.bindings.path;
 
     for (const [k, v] of Object.entries(preopens)) {
@@ -1304,15 +1305,15 @@ export default class WASI {
           // I don't know why the original code blocked .., but that breaks
           // applications (e.g., tar), and this seems like the wrong layer at which to
           // be imposing security?
-//           if (path.relative(stats.path, fullUnresolved).startsWith("..")) {
-//             return WASI_ENOTCAPABLE;
-//           }
+          //           if (path.relative(stats.path, fullUnresolved).startsWith("..")) {
+          //             return WASI_ENOTCAPABLE;
+          //           }
           let full;
           try {
             full = fs.realpathSync(fullUnresolved);
-//             if (path.relative(stats.path, full).startsWith("..")) {
-//               return WASI_ENOTCAPABLE;
-//             }
+            //             if (path.relative(stats.path, full).startsWith("..")) {
+            //               return WASI_ENOTCAPABLE;
+            //             }
           } catch (e) {
             if ((e as any)?.code === "ENOENT") {
               full = fullUnresolved;

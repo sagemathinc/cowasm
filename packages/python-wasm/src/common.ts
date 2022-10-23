@@ -8,7 +8,7 @@ import debug from "debug";
 
 const log = debug("python-wasm");
 
-type FileSystemOption = "auto" | "bundle";
+type FileSystemOption = "auto" | "bundle" | "sandbox";
 
 export interface Options {
   fs?: FileSystemOption;
@@ -56,7 +56,7 @@ export class PythonWasmSync {
   }
 
   // starts the python REPL
-  terminal(argv: string[]): number {
+  terminal(argv: string[] = []): number {
     log("terminal", argv);
     // NOTE: when you pass a string[] it actually sends argv.length, argv over to WASM!
     const ret = this.callWithString("cowasm_python_terminal", argv);
@@ -113,7 +113,7 @@ export class PythonWasmAsync {
     }
   }
 
-  async terminal(argv: string[]): Promise<number> {
+  async terminal(argv: string[] = []): Promise<number> {
     log("terminal", argv);
     const ret = await this.callWithString(
       "cowasm_python_terminal",

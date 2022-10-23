@@ -1,28 +1,28 @@
 import { notImplemented } from "./util";
 import debug from "debug";
-const log_jmp = debug("posix:jmp");
+const log = debug("posix:stdlib");
 
 export default function stdlib({ child_process, os, recv, send, fs }) {
   return {
     setjmp: () => {
       // Return 0 so it doesn't do the failure care of the setjmp.
-      log_jmp("STUB: setjmp - no op");
+      log("STUB: setjmp - no op");
       return 0;
     },
 
     // void longjmp(jmp_buf env, int val);
     longjmp: () => {
-      log_jmp("STUB: longjmp - no op");
+      log("STUB: longjmp - no op");
       return 0;
     },
 
     siglongjmp: () => {
-      log_jmp("STUB: siglongjmp - no op");
+      log("STUB: siglongjmp - no op");
       return 0;
     },
 
     sigsetjmp: () => {
-      log_jmp("STUB: sigsetjmp - no op");
+      log("STUB: sigsetjmp - no op");
       return 0;
     },
 
@@ -65,9 +65,11 @@ export default function stdlib({ child_process, os, recv, send, fs }) {
     realpath: (pathPtr, resolvedPathPtr): number => {
       try {
         const path = recv.string(pathPtr);
+        log("realpath", { path });
         const resolvedPath = fs.realpathSync(path);
         return send.string(resolvedPath, { ptr: resolvedPathPtr, len: 4096 });
       } catch (err) {
+        log("realpath error ", err);
         console.warn("ERROR", err);
         // return 0 to indicate error, NOT -1!
         return 0;

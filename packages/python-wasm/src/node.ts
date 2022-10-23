@@ -8,6 +8,7 @@ const log = debug("python-wasm");
 import { Options, PythonWasmSync, PythonWasmAsync } from "./common";
 
 const python_wasm = join(__dirname, "python.wasm");
+const pythonSandbox = join(__dirname, "python-sandbox.zip");
 const pythonFull = join(__dirname, "python-stdlib.zip");
 const pythonReadline = join(__dirname, "python-readline.zip");
 const pythonMinimal = join(__dirname, "python-minimal.zip");
@@ -17,44 +18,55 @@ const pythonMinimal = join(__dirname, "python-minimal.zip");
 // The following will only work in the build-from-source dev environment.
 const PYTHONEXECUTABLE = join(__dirname, "../../cpython/bin/python-wasm");
 
-// Running in main thread
-
 export async function syncPython(opts?: Options): Promise<PythonWasmSync> {
-  log("creating sync CoWasm kernel...");
-  const fs = getFilesystem(opts);
-  const env: any = { PYTHONEXECUTABLE };
-  if (fs[0].type == "zipfile") {
-    env.PYTHONHOME = "/usr";
-  }
-  const kernel = await syncKernel({ env, fs });
-  log("done");
-  log("initializing python");
-  const python = new PythonWasmSync(kernel, python_wasm);
-  python.init();
-  log("done");
-  return python;
+  return (await createPython(true, opts)) as PythonWasmSync;
 }
 
 export async function asyncPython(opts?: Options): Promise<PythonWasmAsync> {
-  log("creating async CoWasm kernel...");
-  const fs = getFilesystem(opts);
-  const env: any = { PYTHONEXECUTABLE };
-  if (fs[0].type == "zipfile") {
-    env.PYTHONHOME = "/usr";
-  }
-  const kernel = await asyncKernel({ env, fs });
-  log("done");
-  log("initializing python");
-  const python = new PythonWasmAsync(kernel, python_wasm);
-  await python.init();
-  log("done");
-  return python;
+  return (await createPython(false, opts)) as PythonWasmAsync;
 }
 
 // also make this the default export for consistency with browser api.
 export default asyncPython;
 
+async function createPython(
+  sync: boolean,
+  opts?: Options
+): Promise<PythonWasmSync | PythonWasmAsync> {
+  log("creating Python with sync = ", sync, ", opts = ", opts);
+  const fs = getFilesystem(opts);
+  const env: any = { PYTHONEXECUTABLE };
+  let wasm = python_wasm;
+  if (opts?.fs == "sandbox") {
+    wasm = "/usr/lib/python3.11/python.wasm";
+  }
+  if (fs[0].type == "zipfile") {
+    env.PYTHONHOME = "/usr";
+  }
+  const kernel = sync
+    ? await syncKernel({ env, fs })
+    : await asyncKernel({ env, fs });
+  log("done");
+  log("initializing python");
+  const python = sync
+    ? new PythonWasmSync(kernel as any, wasm)
+    : new PythonWasmAsync(kernel as any, wasm);
+  await python.init();
+  log("done");
+  return python;
+}
+
 function getFilesystem(opts?: Options): FileSystemSpec[] {
+  if (opts?.fs == "sandbox") {
+    return [
+      {
+        type: "zipfile",
+        zipfile: pythonSandbox,
+        mountpoint: "/usr/lib/python3.11",
+      },
+      { type: "native" },
+    ];
+  }
   if (opts?.fs == "bundle" || !existsSync(PYTHONEXECUTABLE)) {
     // explicitly requested or not dev environment.
     return [
