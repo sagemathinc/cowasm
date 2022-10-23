@@ -70,14 +70,12 @@ python: ${DIST}/python.wasm hello ${BUNDLES} ${PYTHON_PACKAGES}
 
 ###
 # An example minimal Python extension module, written in C.
-# TODO: write a similar example in zig.
 ###
 
 PLATFORM = cpython-311-wasm32-wasi
 
 ${DIST}/hello.${PLATFORM}.so: src/extension/hellomodule.c
-	echo ${PATH}
-	${BIN}/cowasm-cc -Oz -I${PYTHON_WASM}/include/python3.11 -I${POSIX_WASM} -shared  \
+	${BIN}/cowasm-cc -Oz ${CFLAGS} -shared  \
 		src/extension/hellomodule.c -o ${DIST}/hello.${PLATFORM}.so
 
 ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.${PLATFORM}.so: ${DIST}/hello.${PLATFORM}.so
@@ -86,7 +84,17 @@ ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.${PLATFORM}.so: ${DIST}/hello.${
 .PHONEY: hello
 hello: ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.${PLATFORM}.so
 
+###
+# An example minimal Python extension module, written in Zig.
+# NOT WORKING YET!
+###
 
+${DIST}/hellozig.${PLATFORM}.so: src/extension/hellozigmodule.zig
+	${BIN}/cowasm-zig ${CFLAGS} \
+		src/extension/hellozigmodule.zig
+
+.PHONEY: hellozig
+hellozig: ${DIST}/hellozig.${PLATFORM}.so
 
 ###
 # Node related makefile wrapping...
