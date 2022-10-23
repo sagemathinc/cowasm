@@ -97,7 +97,7 @@ export default function initWorker({
           await waitUntilLoaded();
           log("waited and now file system");
         }
-        if (log.enabled()) {
+        if (log.enabled) {
           // takes effort
           log("ls / = ", wasm.fs.readdirSync("/"));
         }

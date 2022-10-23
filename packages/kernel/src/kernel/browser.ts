@@ -8,10 +8,11 @@ import wasmUrl from "./kernel.wasm";
 
 interface Options {
   env?: { [name: string]: string }; // extra env vars.
+  fs?: FileSystemSpec[];
 }
 
 function getOptions(wasmImport, opts?: Options) {
-  const fs: FileSystemSpec[] = [{ type: "dev" }];
+  const fs: FileSystemSpec[] = opts?.fs ?? [{ type: "dev" }];
   const env = {
     TERMCAP: "/termcap",
     TERM: "xterm-256color",

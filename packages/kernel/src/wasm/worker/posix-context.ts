@@ -5,6 +5,8 @@ import posix, { Context, PosixEnv } from "../posix";
 import SendToWasm from "./send-to-wasm";
 import RecvFromWasm from "./recv-from-wasm";
 import { cloneDeep } from "lodash";
+import debug from "debug";
+const log = debug("kernel:posix-context");
 
 interface Options {
   wasiConfig: WASIConfig;
@@ -109,6 +111,7 @@ export default class PosixContext {
   }
 
   private run(args: string[]): number {
+    log("run", args);
     const { wasm } = this;
     if (wasm == null) {
       throw Error("wasm must be define");

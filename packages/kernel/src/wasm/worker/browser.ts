@@ -14,7 +14,7 @@ import posix from "./posix-browser";
 import IOHandlerUsingAtomics from "./io-using-atomics";
 import IOHandlerUsingServiceWorker from "./io-using-service-worker";
 
-const log = debug("wasm:worker");
+const log = debug("wasm:worker:browser");
 
 export default async function wasmImportBrowser(
   wasmUrl: string,
@@ -23,6 +23,7 @@ export default async function wasmImportBrowser(
   log("wasmImportBrowser");
   // also fix zip path, if necessary and read in any zip files (so
   // they can be loaded into memfs).
+  log("processing fs=", options.fs);
   const fsSpec: FileSystemSpec[] = [];
   for (const X of options.fs ?? []) {
     if (X.type == "zipurl") {
@@ -47,7 +48,6 @@ export default async function wasmImportBrowser(
       fsSpec.push(X);
     }
   }
-
   const fs = createFileSystem(fsSpec);
 
   // Assumed to be loaded into memfs.

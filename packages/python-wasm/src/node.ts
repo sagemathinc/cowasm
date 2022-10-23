@@ -51,6 +51,9 @@ export async function asyncPython(opts?: Options): Promise<PythonWasmAsync> {
   return python;
 }
 
+// also make this the default export for consistency with browser api.
+export default asyncPython;
+
 function getFilesystem(opts?: Options): FileSystemSpec[] {
   if (opts?.fs == "bundle" || !existsSync(PYTHONEXECUTABLE)) {
     // explicitly requested or not dev environment.

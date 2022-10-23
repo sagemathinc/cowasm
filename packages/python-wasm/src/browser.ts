@@ -1,5 +1,5 @@
-import { syncKernel, asyncKernel, FileSystemSpec } from "@cowasm/kernel";
-import { Options, PythonWasmSync, PythonWasmAsync } from "./common";
+import { asyncKernel, FileSystemSpec } from "@cowasm/kernel";
+import { Options, PythonWasmAsync } from "./common";
 import debug from "debug";
 const log = debug("python-wasm");
 
@@ -9,31 +9,18 @@ import pythonMinimal from "./python-minimal.zip";
 import pythonReadline from "./python-readline.zip";
 const PYTHONEXECUTABLE = "/usr/lib/python.wasm";
 
-// Running in main thread
-
-export async function syncPython(opts?: Options): Promise<PythonWasmSync> {
-  log("syncPython");
-  // we create the kernel *and* fetch python.wasm in parallel.
-  const kernel = await syncKernel({
-    env: { PYTHONHOME: "/usr", PYTHONEXECUTABLE },
-    fs: getFilesystem(opts),
-  });
-  log("done");
-  await kernel.waitUntilFsLoaded();
-  log("fetching ", PYTHONEXECUTABLE);
-  await kernel.fetch(wasmUrl, PYTHONEXECUTABLE);
-  log("initializing python");
-  const python = new PythonWasmSync(kernel, PYTHONEXECUTABLE);
-  python.init();
-  log("done");
-  return python;
-}
-
-export async function asyncPython(opts?: Options): Promise<PythonWasmAsync> {
+// We ONLY provide async version, since sync version isn't
+// possible anymore since dynamic module loading has to be
+// sync and browsers don't allow sync webassmbly loading.
+export default async function asyncPython(
+  opts?: Options
+): Promise<PythonWasmAsync> {
   log("creating async CoWasm kernel...");
+  const fs = getFilesystem(opts);
+  log("fs = ", fs);
   const kernel = await asyncKernel({
     env: { PYTHONHOME: "/usr", PYTHONEXECUTABLE },
-    fs: getFilesystem(opts),
+    fs,
   });
   log("done");
   await kernel.waitUntilFsLoaded();
@@ -47,6 +34,16 @@ export async function asyncPython(opts?: Options): Promise<PythonWasmAsync> {
 }
 
 function getFilesystem(opts?: Options): FileSystemSpec[] {
+  // For ref, this is the not efficient version
+  //   return [
+  //     {
+  //       type: "zipurl",
+  //       zipurl: pythonFull,
+  //       mountpoint: "/usr/lib/python3.11",
+  //     },
+  //     { type: "dev" },
+  //   ];
+
   return [
     // This will result in synchronously loading a tiny filesystem needed for starting python interpreter.
     {
