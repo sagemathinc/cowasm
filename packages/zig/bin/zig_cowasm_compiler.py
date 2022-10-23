@@ -293,7 +293,7 @@ class ZigTempFile:
         self.name = os.path.splitext(path)[0] + '.o'
 
     def __del__(self):
-        pathlib.Path(self.name).unlink(True)
+        #pathlib.Path(self.name).unlink(True)
         # zig weirdly makes foo.o and foo.o.o from foo.zig?!
         pathlib.Path(self.name + '.o').unlink(True)
 

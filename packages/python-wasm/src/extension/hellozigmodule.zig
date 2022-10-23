@@ -1,45 +1,52 @@
-// This is a work in progress!
+// We make a WASM extension to cpython with the code written in zig here
+// and in hellozigmodule.c.
+
+// We can implement the functions in zig, but we have to do the
+// basic wiring in C still (in hellomodule.c), since Python extension
+// modules involve a bunch of macros that zig can't parse.  And we
+// shouldn't just read the code and try to untagle them, since that violates
+// the abstraction.  The best thing is to have a C layer.
 
 const std = @import("std");
 const py = @cImport(@cInclude("Python.h"));
 
-fn hello(self: *py.PyObject, args: *py.PyObject) *py.PyObject {
+export fn hello(self: *py.PyObject, args: *py.PyObject) ?*py.PyObject {
     _ = self;
-    var name: *u8 = undefined;
-    if (py.PyArg_ParseTuple(args, "s", &name) != 0) {
+    var name: [*:0]u8 = undefined;
+    if (py.PyArg_ParseTuple(args, "s", &name) == 0) {
         return null;
     }
+    std.debug.print("Hello {s}, from Zig!\n", .{name});
+    return py.Py_NewRef(py.Py_None);
 }
 
-var module_methods = [2]py.PyMethodDef{
-    py.PyMethodDef{
-        .ml_name = "hello",
-        .ml_meth = py._PyCFunction_CAST(hello),
-        .ml_flags = @as(c_int, 1),
-        .ml_doc = "Say hello to you.",
-    },
-    py.PyMethodDef{
-        .ml_name = null,
-        .ml_meth = null,
-        .ml_flags = @as(c_int, 0),
-        .ml_doc = null,
-    },
-};
-
-fn module_clear(module: *py.PyObject) c_int {
-    _ = module;
-    return 0;
+export fn add389(self: *py.PyObject, args: *py.PyObject) ?*py.PyObject {
+    _ = self;
+    var n: c_long = undefined;
+    if (py.PyArg_ParseTuple(args, "l", &n) == 0) {
+        return null;
+    }
+    return py.PyLong_FromLong(n + 389);
 }
 
-// fn module_free(module: *py.PyObject) void {
-//     module_clear(module);
-// }
+export fn gcd_impl(self: *py.PyObject, args: *py.PyObject) ?*py.PyObject {
+    _ = self;
+    var n: c_long = undefined;
+    var m: c_long = undefined;
+    if (py.PyArg_ParseTuple(args, "ll", &n, &m) == 0) {
+        return null;
+    }
+    return py.PyLong_FromLong(gcd(n, m));
+}
 
-var PyObject_HEAD_INIT = .{ 1, py._Py_NULL, py._Py_NULL, 0, py._Py_NULL };
-
-var hellozigmodule = py.PyModuleDef{ .m_base = PyObject_HEAD_INIT, .m_name = "hellozig", .m_methods = module_methods, .m_clear = module_clear };
-
-export fn PyInit_hello() *py.PyObject {
-    std.debug.print("PyInit_hello\n", .{});
-    return py.PyModuleDef_Init(&hellozigmodule);
+fn gcd(a: c_long, b: c_long) c_long {
+    var c: c_long = undefined;
+    var a0 = a;
+    var b0 = b;
+    while (b0 != 0) {
+        c = @mod(a0, b0);
+        a0 = b0;
+        b0 = c;
+    }
+    return a0;
 }

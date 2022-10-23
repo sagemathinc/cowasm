@@ -65,7 +65,7 @@ ${DIST}/sympy.tar.xz: ${PACKAGES}/py-sympy/dist/wasm/sympy.tar.xz
 	cp $< $@
 
 .PHONY: python
-python: ${DIST}/python.wasm hello ${BUNDLES} ${PYTHON_PACKAGES}
+python: ${DIST}/python.wasm hello hellozig ${BUNDLES} ${PYTHON_PACKAGES}
 
 
 ###
@@ -86,12 +86,14 @@ hello: ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.${PLATFORM}.so
 
 ###
 # An example minimal Python extension module, written in Zig.
-# NOT WORKING YET!
 ###
 
-${DIST}/hellozig.${PLATFORM}.so: src/extension/hellozigmodule.zig
-	${BIN}/cowasm-zig ${CFLAGS} \
-		src/extension/hellozigmodule.zig
+${DIST}/hellozig.${PLATFORM}.so: src/extension/hellozigmodule.zig src/extension/hellozigmodule.c
+	cd src/extension \
+	&&	${BIN}/cowasm-cc ${CFLAGS} -Oz -c hellozigmodule.c -o hellozigmodule-c.o \
+	&&	${BIN}/cowasm-zig -v ${CFLAGS} ${OPT} hellozigmodule-c.o hellozigmodule.zig \
+	&&	rm hellozigmodule-c.o \
+	&&  mv hellozigmodule.wasm ${DIST}/hellozig.${PLATFORM}.so
 
 .PHONEY: hellozig
 hellozig: ${DIST}/hellozig.${PLATFORM}.so
