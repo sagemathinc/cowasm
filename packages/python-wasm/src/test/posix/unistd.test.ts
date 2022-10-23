@@ -32,11 +32,11 @@ test("consistency check involving statvfs", async () => {
   const { exec, repr } = await syncPython();
   exec("import os");
   const f_namemax = eval(repr("os.statvfs('/').f_namemax"));
-  // it's 255 on linux and macos, so we'll just stick with that
+  // it's 255 on some linux and macos, so we'll just do a consistency check,
   // and not have to add another dependency on posix-node.
   // import posix from "posix-node";
   //expect(f_namemax).toBe(posix.statvfs?.("/").f_namemax);
-  expect(f_namemax).toBe(255);
+  expect(f_namemax >= 128 && f_namemax <= 1024).toBe(true);
 });
 
 // can't do this during jest testing, though it works on the command line:
