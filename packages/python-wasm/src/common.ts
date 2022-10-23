@@ -56,9 +56,12 @@ export class PythonWasmSync {
   }
 
   // starts the python REPL
-  terminal(argv): number {
-    console.log("STUB: terminal", argv);
-    return 1;
+  terminal(argv: string[]): number {
+    log("terminal", argv);
+    // NOTE: when you pass a string[] it actually sends argv.length, argv over to WASM!
+    const ret = this.callWithString("cowasm_python_terminal", argv);
+    log("terminal ended and returned ", ret);
+    return ret;
   }
 }
 
@@ -110,8 +113,14 @@ export class PythonWasmAsync {
     }
   }
 
-  async terminal(argv): Promise<number> {
-    console.log("STUB: terminal", argv);
-    return 1;
+  async terminal(argv: string[]): Promise<number> {
+    log("terminal", argv);
+    const ret = await this.callWithString(
+      "cowasm_python_terminal",
+      argv,
+      argv.length
+    );
+    log("terminal ended and returned ", ret);
+    return ret;
   }
 }

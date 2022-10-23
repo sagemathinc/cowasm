@@ -7,7 +7,9 @@ const log = debug("browser:python");
 export default async function main() {
   log("call python init");
   // noReadline saves a tiny amount of space; no terminal here so no need for readline
+  const t0 = new Date().valueOf();
   const python = await pythonWasm({ noReadline: true });
+  const tm = new Date().valueOf() - t0;
   log("loaded python");
   (window as any).python = python;
   console.log("set window.python");
@@ -26,7 +28,7 @@ export default async function main() {
   await exec("s = sum(range(n))");
   await exec("import sys");
   // Use repr to get their string representation:
-  element.innerHTML = `${await repr(
+  element.innerHTML = `Load/startup time: ${tm}ms\n\n${await repr(
     "sys.version"
   )}\n\nLet's do some math!\n\n1 + 2 + 3 + ... + ${await repr(
     "n"

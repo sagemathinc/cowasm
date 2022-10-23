@@ -1,10 +1,10 @@
 import "xterm/css/xterm.css";
 import { Terminal } from "xterm";
 import setTheme from "./theme";
-import { asyncPython } from "python-wasm";
+import pythonWasm from "python-wasm";
 
 export default async function terminal(element: HTMLDivElement) {
-  const python = await asyncPython();
+  const python = await pythonWasm();
   (window as any).python = python;
   console.log("Calling python.init...");
   const t = new Date();
@@ -27,6 +27,6 @@ export default async function terminal(element: HTMLDivElement) {
     term.write(data);
   });
   console.log("starting terminal");
-  const r = await python.terminal([]);
+  const r = await python.terminal(['/usr/bin/python3']);
   console.log("terminal terminated", r);
 }
