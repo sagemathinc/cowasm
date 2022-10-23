@@ -75,12 +75,15 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       event: "init",
       name: this.wasmSource,
       options,
+      // debug: this passes the debug state from the main thread to the worker thread; otherwise,
+      // we would have no way to ever see any debug logging from worker.  This is really nice!
+      debug: debug.load(),
     });
     this.worker.on("exit", () => this.terminate());
     this.worker.on("message", (message) => {
       if (message == null) return;
       log("main thread got message", message);
-      if(message.event == 'stderr') {
+      if (message.event == "stderr") {
         console.warn(new TextDecoder().decode(message.data));
       }
       if (message.id != null) {

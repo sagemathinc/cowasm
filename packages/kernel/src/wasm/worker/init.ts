@@ -36,7 +36,11 @@ export default function initWorker({
         const ioHandler = new IOHandler(message.options, () => {
           parent.postMessage({ event: "service-worker-broken" });
         });
-
+        if (message.debug) {
+          // Enable debug logging to match main thread.  Otherwise, there is no possible
+          // way to have any logging inside the WebWorker.
+          debug.enable(message.debug);
+        }
         const opts: Options = {
           ...message.options,
           sleep: ioHandler.sleep.bind(ioHandler),
@@ -86,7 +90,17 @@ export default function initWorker({
           throw Error("wasm.fs must be initialized");
         }
         // it might not be defined, e.g., if not using unionfs at all
-        await wasm.fs.waitUntilLoaded?.();
+        const { waitUntilLoaded } = wasm.fs;
+        if (waitUntilLoaded == null) {
+          log("waitUntilLoaded - no wait function defined");
+        } else {
+          await waitUntilLoaded();
+          log("waited and now file system");
+        }
+        if (log.enabled()) {
+          // takes effort
+          log("ls / = ", wasm.fs.readdirSync("/"));
+        }
         return;
 
       case "fetch":
