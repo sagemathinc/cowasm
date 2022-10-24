@@ -114,7 +114,7 @@ run-cowsay.wasm: ${BUILD}/test/cowsay.wasm
 
 ${BUILD}/test/misc.wasm: ${SRC}/test/misc.c
 	mkdir -p ${BUILD}/test/
-	${BIN}/cowasm-cc -fvisibility-main -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.wasm
+	${BIN}/cowasm-cc -v -fvisibility-main -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.wasm
 
 run-misc.wasm: ${BUILD}/test/misc.wasm
 	${CWD}/bin/cowasm ${CWD}/build/test/misc.wasm

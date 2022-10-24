@@ -91,5 +91,10 @@ ${BUILD_WASM}/test/.built: ${DIST_WASM}/.built
 		&& 	make -j8
 	touch ${BUILD_WASM}/test/.built
 
+${DIST_WASM}/bin/hello: ${DIST_WASM}/.built  ${SRC}/hello.c
+	mkdir -p ${DIST_WASM}/bin
+	${BIN}/cowasm-cc -Werror=main -v -fvisibility-main -Oz -I${DIST_WASM}/include/ncurses -I${DIST_WASM}/include -L${DIST_WASM}/lib -lncurses ${SRC}/hello.c -o ${DIST_WASM}/bin/hello
+
+
 test: ${BUILD_WASM}/test/.built
 	echo "all the (supported) ncurses test programs built successfully"

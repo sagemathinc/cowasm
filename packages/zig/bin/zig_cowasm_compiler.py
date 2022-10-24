@@ -21,7 +21,6 @@ stabilizes, as Python is very easy to iterate on.
 NOTE: Often -fPIC is the *default* these days.  See the discussion here:
 https://stackoverflow.com/questions/20637310/does-one-still-need-to-use-fpic-when-compiling-with-gcc#:~:text=You%20never%20needed%20to%20generate,or%20set%20it%20by%20default.
 
-
 NOTE: Another change -- if -g isn't in the options or the optimization level isn't set (or is -O0),
 then we do the equivalent of this (but directly in the wasm-ld call):
 
@@ -32,6 +31,22 @@ automatically when compiling code to save space, but make things less debugabble
 NOTE: It is now possible to strip just debug symbols later, since https://reviews.llvm.org/D73820
 did get merged into LLVM.   There's an option "--strip-debug".  Anyway, I'm not sure about
 --strip-all versus --strip-debug above.  --strip-all seems to work right now.
+
+TODO/NOTE: This program won't work:
+
+    int main() { ... }
+
+Instead you MUST do
+
+    int main(int argc, char* argv[]) { ... }
+
+and build with
+
+    cowasm-cc -fvisibility-main
+
+or do
+    __attribute__((visibility("default")))
+    int main(int argc, char* argv[]) { ... }
 """
 
 import multiprocessing, os, shutil, subprocess, sys, tempfile, pathlib

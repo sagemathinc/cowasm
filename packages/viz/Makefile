@@ -43,6 +43,7 @@ ${BIN}/viz-native: ${DIST_NATIVE}/.built ${CWD}/bin/viz-native
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	mkdir -p ${BUILD_WASM}/bits/
+	# Adding header at the beginning:
 	echo '#include "posix-wasm.h"' | cat - ${BUILD_WASM}/vis.c > ${BUILD_WASM}/tmp && mv ${BUILD_WASM}/tmp ${BUILD_WASM}/vis.c
 	echo '#include "posix-wasm.h"' > ${BUILD_WASM}/setjmp.h
 	echo '#define TIOCGWINSZ 0x5413' >> ${BUILD_WASM}/setjmp.h
@@ -56,7 +57,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc" \
 			CFLAGS="-v -Oz -fvisibility-main -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${NCURSES}/wasm/include -I${NCURSES}/wasm/include/ncurses -I${LUA}/wasm/include" \
-			LDFLAGS="-L${LUA}/wasm/lib -llua -L${NCURSES}/wasm/lib -lncurses -L${TERMCAP}/wasm/lib -ltermcap -L${POSIX_WASM} -lposix" \
+			LDFLAGS="-L${LUA}/wasm/lib -llua -L${NCURSES}/wasm/lib -lncurses " \
 			./configure --prefix=${DIST_WASM} \
 		&&	make -j8 viz
 	mkdir -p ${DIST_WASM}/bin
