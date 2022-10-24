@@ -70,6 +70,7 @@ export default class WasmInstanceSync extends EventEmitter {
         }
         return f(...args);
       },
+      callWithString: this.callWithString.bind(this),
     };
     this.send = new SendToWasm(opts);
     this.recv = new RecvFromWasm(opts);

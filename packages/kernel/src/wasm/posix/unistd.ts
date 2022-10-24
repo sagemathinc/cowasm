@@ -6,7 +6,7 @@ import { constants as wasi_constants } from "wasi-js";
 const log = debug("posix:unistd");
 
 export default function unistd(context) {
-  const { fs, os, process, recv, send, wasi, posix, memory, callFunction } =
+  const { fs, os, process, recv, send, wasi, posix, memory, callWithString } =
     context;
   // TODO: this doesn't throw an error yet if the target filesystem isn't native.
   function toNativeFd(fd: number): number {
@@ -563,7 +563,7 @@ export default function unistd(context) {
         console.error(`fchdir: invalid file descriptor: ${fd}`);
         return -1;
       }
-      return callFunction("chdir", dir);
+      return callWithString("chdir", dir);
     },
   };
 

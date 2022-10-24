@@ -80,6 +80,11 @@ export interface Context {
   };
   free: (ptr: number) => void;
   callFunction: (name: string, ...args) => number | undefined;
+  callWithString: (
+    func: string | { name: string; dll: string } | Function,
+    str?: string | string[],
+    ...args
+  ) => number | undefined;
   getcwd: () => string;
   sleep?: (milliseconds: number) => void;
 }

@@ -51,6 +51,7 @@ __RCSID("$NetBSD: fts.c,v 1.48 2015/01/29 15:55:21 manu Exp $");
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #if !defined(HAVE_DECL_MAX) || (HAVE_DECL_MAX == 0)
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -1140,6 +1141,7 @@ static size_t fts_maxarglen(char *const *argv) {
  * tricked by someone changing the world out from underneath us.
  * Assumes p->fts_dev and p->fts_ino are filled in.
  */
+#include<stdio.h>
 static int fts_safe_changedir(const FTS *sp, const FTSENT *p, int fd,
                               const char *path) {
   int oldfd = fd, ret = -1;
@@ -1159,6 +1161,7 @@ static int fts_safe_changedir(const FTS *sp, const FTSENT *p, int fd,
   ret = fchdir(fd);
 
 bail:
+
   if (oldfd < 0) {
     int save_errno = errno;
     (void)close(fd);

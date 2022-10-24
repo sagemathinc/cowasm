@@ -28,11 +28,13 @@ export default class PosixContext {
     this.wasiConfig = wasiConfig;
     const { bindings, sleep } = wasiConfig;
     const callFunction = this.callFunction.bind(this);
+    const callWithString = this.callWithString.bind(this);
     this.posixEnv = this.createPosixEnv({
       memory,
       wasi,
       bindings,
       callFunction,
+      callWithString,
       sleep,
     });
   }
@@ -42,12 +44,14 @@ export default class PosixContext {
     memory,
     wasi,
     callFunction,
+    callWithString,
     sleep,
   }: {
     bindings: WASIBindings;
     memory: WebAssembly.Memory;
     wasi: WASI;
     callFunction: (name: string, ...args) => number | undefined;
+    callWithString;
     sleep?: (milliseconds: number) => void;
   }) {
     this.context = {
@@ -63,6 +67,7 @@ export default class PosixContext {
       child_process: bindings.child_process ?? {},
       memory,
       callFunction,
+      callWithString,
       getcwd: this.getcwd.bind(this),
       free: this.free.bind(this),
       sleep,
@@ -83,6 +88,17 @@ export default class PosixContext {
         env[name] = this.posixEnv[name];
       }
     }
+  }
+
+  private callWithString(
+    func: string | { name: string; dll: string } | Function,
+    str?: string | string[],
+    ...args
+  ): number | undefined {
+    if (this.wasm == null) {
+      throw Error("wasm must be define");
+    }
+    return this.wasm.callWithString(func, str, ...args);
   }
 
   private callFunction(name: string, ...args): number | undefined {

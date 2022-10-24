@@ -153,7 +153,6 @@ int main(int argc, char *argv[]) {
   else
     (void)getbsize(&notused, &blocksize);
   blocksize /= 512;
-  printf("blocksize = %d\n", blocksize);
 
   if ((fts = fts_open(argv, ftsoptions, NULL)) == NULL) err(1, "fts_open");
 
