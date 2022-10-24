@@ -1,0 +1,244 @@
+.\"	$OpenBSD: du.1,v 1.38 2020/10/21 17:00:47 schwarze Exp $
+.\"	$NetBSD: du.1,v 1.6 1996/10/18 07:20:31 thorpej Exp $
+.\"
+.\" Copyright (c) 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	@(#)du.1	8.2 (Berkeley) 4/1/94
+.\"
+.Dd $Mdocdate: October 21 2020 $
+.Dt DU 1
+.Os
+.Sh NAME
+.Nm du
+.Nd display disk usage statistics
+.Sh SYNOPSIS
+.Nm du
+.Op Fl achkrsx
+.Op Fl H | L | P
+.Op Fl d Ar depth
+.Op Ar
+.Sh DESCRIPTION
+The
+.Nm
+utility displays the file system block usage for each
+.Ar file
+argument
+and for each directory in the file hierarchy rooted in each directory
+argument.
+Note that the system block usage is usually greater than
+the actual size of the file.
+If no file is specified, the block usage of the hierarchy rooted in
+the current directory is displayed.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl a
+Display entries for files in addition to entries for directories.
+.It Fl c
+Display the grand total after all the arguments have been processed.
+.It Fl d Ar depth
+Do not display entries for files and directories more than
+.Ar depth
+levels deep;
+.Fl d Cm 0
+has the same effect as
+.Fl s .
+Overrides earlier
+.Fl d
+and
+.Fl s
+options.
+.It Fl H
+Symbolic links on the command line are followed.
+Symbolic links encountered in the tree traversal are not followed.
+.It Fl h
+"Human-readable" output.
+Use unit suffixes: Byte, Kilobyte, Megabyte,
+Gigabyte, Terabyte, Petabyte, Exabyte in order to reduce the number of
+digits to four or less.
+.It Fl k
+By default, all sizes are reported in 512-byte block counts.
+The
+.Fl k
+option causes the numbers to be reported in kilobyte counts.
+.It Fl L
+All symbolic links are followed.
+.It Fl P
+No symbolic links are followed.
+.It Fl r
+Generate messages about directories that cannot be read, files
+that cannot be opened, and so on.
+This is the default.
+.It Fl s
+Display only the total for each of the specified files and directories.
+Overrides earlier
+.Fl d
+options.
+.It Fl x
+File system mount points are not traversed.
+.El
+.Pp
+It is not an error to specify more than one of
+the mutually exclusive options
+.Fl h
+and
+.Fl k .
+Where more than one of these options is specified,
+the last option given overrides the others.
+.Pp
+.Nm
+counts the storage used by symbolic links and not the files they
+reference unless the
+.Fl H
+or
+.Fl L
+option is specified.
+If either the
+.Fl H
+or
+.Fl L
+options are specified, storage used by any symbolic links which are
+followed is not counted or displayed.
+The
+.Fl H ,
+.Fl L ,
+and
+.Fl P
+options override each other and the command's actions are determined
+by the last one specified.
+.Pp
+Files having multiple hard links are counted (and displayed) a single
+time per
+.Nm
+execution.
+.Sh ENVIRONMENT
+.Bl -tag -width BLOCKSIZE
+.It Ev BLOCKSIZE
+Block counts will be displayed in units of this size block, unless the
+.Fl k
+or
+.Fl h
+option is specified.
+.El
+.Sh EXIT STATUS
+.Ex -std du
+.Sh EXAMPLES
+Display a summary of files and folders in the current directory,
+sorted by size:
+.Pp
+.Dl $ du -had 1 | sort -h
+.Sh SEE ALSO
+.Xr df 1 ,
+.Xr fts_open 3 ,
+.Xr symlink 7 ,
+.Xr quot 8
+.Sh STANDARDS
+The
+.Nm
+utility is compliant with the
+.St -p1003.1-2008
+specification.
+.Pp
+The flags
+.Op Fl cdhP ,
+as well as the
+.Ev BLOCKSIZE
+environment variable,
+are extensions to that specification.
+.Pp
+The flag
+.Op Fl r
+is accepted but ignored, for compatibility with systems implementing
+the obsolete
+.St -xcu5
+standard.
+.Sh HISTORY
+The
+.Nm
+utility and its
+.Fl a
+and
+.Fl s
+options first appeared in
+.At v1 .
+.Pp
+The
+.Fl r
+option first appeared in
+.At III
+and is available since
+.Ox 2.3 .
+The
+.Fl k
+and
+.Fl x
+options first appeared in
+.Bx 4.3 Reno
+and
+.Fl H
+in
+.Bx 4.4 .
+The
+.Fl c
+and
+.Fl L
+options first appeared in the GNU fileutils;
+.Fl L
+and
+.Fl P
+are available since
+.Bx 4.4 Lite1 ,
+.Fl c
+since
+.Ox 2.1 .
+The
+.Fl d
+option first appeared in
+.Fx 2.2
+and is available since
+.Ox 5.7 ,
+.Fl h
+first appeared in
+.Fx 4.0
+and is available since
+.Ox 2.9 .
+.Sh AUTHORS
+.An -nosplit
+This version of
+.Nm
+was written by
+.An Chris Newcomb
+for
+.Bx 4.3 Reno
+in 1989 and incorporates later contributions from
+.An Elan Amir ,
+.An Keith Bostic ,
+.An Luke Mewburn ,
+.An Matt Bing ,
+and
+.An Can Erkin Acar Aq Mt canacar@openbsd.org .

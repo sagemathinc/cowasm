@@ -183,6 +183,10 @@ struct group  *getgrnam(const char *) { return NULL; }
 // Extra things we added to our posix compat layer, since they are
 // missing from wasi-zig-libc:
 const posix = `
+cowasm_fstat
+cowasm_lstat
+cowasm_stat
+cowasm_fstatat
 getgrgid
 getgrnam
 heapsort

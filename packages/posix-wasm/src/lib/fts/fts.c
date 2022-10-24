@@ -907,16 +907,16 @@ static unsigned short fts_stat(FTS *sp, FTSENT *p, int follow) {
    * fail, set the errno from the stat call.
    */
   if (ISSET(FTS_LOGICAL) || follow) {
-    if (stat(p->fts_accpath, sbp)) {
+    if (cowasm_stat(p->fts_accpath, sbp)) {
       saved_errno = errno;
-      if (!lstat(p->fts_accpath, sbp)) {
+      if (!cowasm_lstat(p->fts_accpath, sbp)) {
         errno = 0;
         return (FTS_SLNONE);
       }
       p->fts_errno = saved_errno;
       goto err;
     }
-  } else if (lstat(p->fts_accpath, sbp)) {
+  } else if (cowasm_lstat(p->fts_accpath, sbp)) {
     p->fts_errno = errno;
   err:
     memset(sbp, 0, sizeof(*sbp));
@@ -1149,7 +1149,7 @@ static int fts_safe_changedir(const FTS *sp, const FTSENT *p, int fd,
 
   if (oldfd < 0 && (fd = open(path, O_RDONLY | O_CLOEXEC)) == -1) return -1;
 
-  if (fstat(fd, &sb) == -1) goto bail;
+  if (cowasm_fstat(fd, &sb) == -1) goto bail;
 
   if (sb.st_ino != p->fts_ino || sb.st_dev != p->fts_dev) {
     errno = ENOENT;

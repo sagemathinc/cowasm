@@ -382,7 +382,12 @@ long long strtonum(const char*, long long, long long, const char**);
 mode_t getmode(const void* bbox, mode_t omode);
 void* setmode(const char* p);
 
-int mergesort(void *, size_t, size_t, int (*)(const void *, const void *));
-int heapsort(void *, size_t, size_t, int (*)(const void *, const void *));
+int mergesort(void*, size_t, size_t, int (*)(const void*, const void*));
+int heapsort(void*, size_t, size_t, int (*)(const void*, const void*));
+
+int cowasm_fstat(int fildes, struct stat* buf);
+int cowasm_lstat(const char* restrict path, struct stat* restrict buf);
+int cowasm_stat(const char* restrict path, struct stat* restrict buf);
+int cowasm_fstatat(int fd, const char* path, struct stat* buf, int flag);
 
 #endif
