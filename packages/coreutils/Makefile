@@ -18,6 +18,7 @@ all: \
 	${TARGET}/csplit \
 	${TARGET}/cut \
 	${TARGET}/date \
+	${TARGET}/du \
 	${TARGET}/factor \
 	${TARGET}/grep \
 	${TARGET}/head \
