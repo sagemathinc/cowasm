@@ -42,6 +42,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM}/ncurses/tty && echo '#include "posix-wasm.h"' | cat - lib_tstp.c > tmp && mv tmp lib_tstp.c
 	cd ${BUILD_WASM}/progs && echo '#include "posix-wasm.h"' | cat - tset.c > tmp && mv tmp tset.c
 	cd ${BUILD_WASM}/test && echo '#include "posix-wasm.h"' | cat - picsmap.c > tmp && mv tmp picsmap.c
+	cd ${BUILD_WASM} && cat ${SRC}/patches/01-disable-ncurses-test.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
@@ -74,19 +75,21 @@ ${BUILD_WASM}/test/.built: ${DIST_WASM}/.built
 		&& RANLIB="zig ranlib" \
 			AR="zig ar" \
 			CC="cowasm-cc" \
-			CFLAGS="-Oz -fvisibility-main  -I${TERMCAP}/include  -I${POSIX_WASM} -I${DIST_WASM}/include -L${TERMCAP}/lib  -L${DIST_WASM}/lib -lncurses" \
+			CFLAGS="-Oz -fvisibility-main  -I${TERMCAP}/include  -I${POSIX_WASM} -I${DIST_WASM}/include" \
+			LDFLAGS="-L${TERMCAP}/lib  -L${DIST_WASM}/lib -lncurses" \
 			./configure \
 				--without-ada \
 				--without-manpages \
 				--without-progs \
-				--without-tests \
-				--enable-termcap \
+				--without-pthread \
 				--disable-stripping \
-				--build=`./config.guess` \
+				--build=`../config.guess` \
 				--host=none \
 				--prefix="${DIST_WASM}" \
 				--with-build-cc="zig cc" \
-		&& 	make
+		&& echo "#undef USE_PTHREADS" >> ncurses_cfg.h \
+		&& 	make -j8
 	touch ${BUILD_WASM}/test/.built
-test:
-	echo "no tests yet"
+
+test: ${BUILD_WASM}/test/.built
+	echo "all the (supported) ncurses test programs built successfully"
