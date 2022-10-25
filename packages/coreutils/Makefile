@@ -57,6 +57,8 @@ all: \
 	${TARGET}/wc \
 	${TARGET}/xargs \
 	${TARGET}/yes
+	# These don't work at all:
+	# ${TARGET}/split \
 
 include ../build/Makefile-rules
 
