@@ -40,6 +40,8 @@ all: \
 	${TARGET}/paste \
 	${TARGET}/pathchk \
 	${TARGET}/pr \
+	${TARGET}/readlink \
+	${TARGET}/realpath \
 	${TARGET}/rm \
 	${TARGET}/rmdir \
 	${TARGET}/sleep \
