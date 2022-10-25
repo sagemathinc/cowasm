@@ -31,8 +31,6 @@
  * SUCH DAMAGE.
  */
 
-#define REG_STARTEND 0
-
 #include "compat.h"
 
 #include <sys/stat.h>
@@ -69,7 +67,9 @@ const char	*errstr[] = {
 /* Flags passed to regcomp() and regexec() */
 int		 cflags = REG_NOSUB | REG_NEWLINE;
 
+#ifndef WITH_INTERNAL_NOSPEC
 int		 eflags = REG_STARTEND;
+#endif
 
 bool		 matchall;
 

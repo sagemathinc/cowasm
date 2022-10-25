@@ -49,7 +49,9 @@ extern const char		*errstr[];
 // define this to not use some non-posix extension to regular expressions
 // that is NOT available in musl/wasi.
 // #if !defined(REG_NOSPEC) && !defined(REG_LITERAL)
+
 #define WITH_INTERNAL_NOSPEC
+
 // #endif
 
 #define	BINFILE_BIN	0

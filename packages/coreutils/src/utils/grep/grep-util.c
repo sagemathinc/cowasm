@@ -482,7 +482,10 @@ procline(struct parsec *pc)
 	wchar_t wbegin, wend;
 	size_t st, nst;
 	unsigned int i;
-	int r = 0, leflags = eflags;
+	int r = 0;
+  #ifndef WITH_INTERNAL_NOSPEC
+  int leflags = eflags;
+  #endif
 	size_t startm = 0, matchidx;
 	unsigned int retry;
 	bool lastmatched, matched;
@@ -524,19 +527,24 @@ procline(struct parsec *pc)
 		lastmatched = false;
 		startm = matchidx;
 		retry = 0;
+#ifndef WITH_INTERNAL_NOSPEC
 		if (st > 0 && pc->ln.dat[st - 1] != fileeol)
 			leflags |= REG_NOTBOL;
+#endif
 		/* Loop to compare with all the patterns */
 		for (i = 0; i < patterns; i++) {
 			pmatch.rm_so = st;
 			pmatch.rm_eo = pc->ln.len;
+
 #ifdef WITH_INTERNAL_NOSPEC
-			if (grepbehave == GREP_FIXED)
+			if (grepbehave == GREP_FIXED) {
 				r = litexec(&pattern[i], pc->ln.dat, 1, &pmatch);
-			else
+      }
 #endif
+#ifndef WITH_INTERNAL_NOSPEC
 			r = regexec(&r_pattern[i], pc->ln.dat, 1, &pmatch,
 			    leflags);
+#endif
 			if (r != 0)
 				continue;
 			/* Check for full match */
