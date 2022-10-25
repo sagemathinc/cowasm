@@ -23,6 +23,7 @@ all: \
 	${TARGET}/env \
 	${TARGET}/expand \
 	${TARGET}/factor \
+	${TARGET}/fold \
 	${TARGET}/grep \
 	${TARGET}/head \
 	${TARGET}/ln \
