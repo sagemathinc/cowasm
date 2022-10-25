@@ -23,6 +23,7 @@ all: \
 	${TARGET}/env \
 	${TARGET}/expand \
 	${TARGET}/factor \
+	${TARGET}/fmt \
 	${TARGET}/fold \
 	${TARGET}/grep \
 	${TARGET}/head \
@@ -134,6 +135,9 @@ test-env: ${TARGET}/env
 test-factor: ${TARGET}/factor
 	test "`${BIN}/cowasm ${TARGET}/factor 2023`" = "2023: 7 17 17"
 
+test-fmt: ${TARGET}/fmt
+	echo "foo bar" | cowasm ./dist/wasm/bin/fmt -w 3 | wc -l | grep 2
+
 test-grep: ${TARGET}/grep
 	# This is a TEST-OF-GREP
 	${BIN}/cowasm ${TARGET}/grep TEST-OF-GREP Makefile | grep "TEST-OF-GREP"
@@ -210,7 +214,7 @@ test-uniq-sources:
 # Very basic tests of some things.
 # NOTE: "make -j8 test" seems to crash tty on linux host at least.
 
-test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-factor test-grep test-head \
+test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-factor test-fmt test-grep test-head \
 	test-join test-ls test-mkdir-rmdir test-mv test-rm test-sleep test-sort test-tail test-touch test-tr \
 	test-tty test-uniq test-wc test-xargs
 	@echo "Success -- all coreutils tests passed"
