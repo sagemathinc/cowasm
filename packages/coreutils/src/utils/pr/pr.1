@@ -1,0 +1,389 @@
+.\"	$OpenBSD: pr.1,v 1.28 2020/12/13 15:36:36 jmc Exp $
+.\"
+.\" Copyright (c) 1991 Keith Muller.
+.\" Copyright (c) 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" Keith Muller of the University of California, San Diego.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     from: @(#)pr.1	8.1 (Berkeley) 6/6/93
+.\"
+.Dd $Mdocdate: December 13 2020 $
+.Dt PR 1
+.Os
+.Sh NAME
+.Nm pr
+.Nd print files
+.Sh SYNOPSIS
+.Nm pr
+.Op Cm + Ns Ar page
+.Op Fl Ar column
+.Op Fl adFfmrt
+.Op Fl e Ns Oo Ar char Oc Ns Op Ar gap
+.Op Fl h Ar header
+.Op Fl i Ns Oo Ar char Oc Ns Op Ar gap
+.Op Fl l Ar lines
+.Op Fl n Ns Oo Ar char Oc Ns Op Ar width
+.Op Fl o Ar offset
+.Op Fl s Ns Op Ar char
+.Op Fl w Ar width
+.Op Ar
+.Sh DESCRIPTION
+The
+.Nm pr
+utility is a printing and pagination filter for text files.
+When multiple input files are specified, each is read, formatted,
+and written to standard output.
+By default, the input is separated into 66-line pages, each with
+.Bl -bullet -offset indent
+.It
+A 5-line header with the page number, date, time, and
+the pathname of the file.
+.It
+A 5-line trailer consisting of blank lines.
+.El
+.Pp
+Optionally, the trailer can be replaced by a
+.Em <form-feed>
+where this is more appropriate for the output device being used and
+.Em <tab> Ns s
+can be expanded to input relative
+.Em <spaces> Ns s
+or
+.Em <space> Ns s
+can be contracted to output relative
+.Em <tab> Ns s .
+The
+.Nm pr
+utility also interprets
+.Em <form-feed> Ns s
+in the input as the logical end of pages.
+.Pp
+When multiple column output is specified,
+text columns are of equal width.
+By default text columns are separated by at least one
+.Em <blank> .
+Input lines that do not fit into a text column are truncated, except
+in the default single columns output mode.
+.Pp
+Error messages are written to standard error during the printing
+process (if output is redirected) or after all successful
+file printing is complete (when printing to a terminal).
+If
+.Nm pr
+receives an interrupt while printing to a terminal, it
+flushes all accumulated error messages to the screen before
+terminating.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Cm + Ns Ar page
+Begin output at page number
+.Ar page
+of the formatted input.
+.It Fl Ar column
+Produce output that is
+.Ar column Ns s
+wide (default is 1) that is written vertically
+down each column in the order in which the text
+is received from the input file.
+The options
+.Fl e
+and
+.Fl i
+are assumed.
+This option should not be used with
+.Fl m .
+When used with
+.Fl t ,
+the minimum number of lines is used to display the output.
+.It Fl a
+Modify the effect of the
+.Fl Ar column
+option so that the columns are filled across the page in a round-robin order
+(e.g., when column is 2, the first input line heads column
+1, the second heads column 2, the third is the second line
+in column 1, etc.).
+This option requires the use of the
+.Fl Ar column
+option.
+.It Fl d
+Produce output that is double spaced.
+An extra
+.Em <newline>
+character is output following every
+.Em <newline>
+found in the input.
+.It Fl e Ns Oo Ar char Oc Ns Op Ar gap
+Expand each input
+.Em <tab>
+to the next greater column
+position specified by the formula
+.Ar n*gap+1 ,
+where
+.Em n
+is an integer > 0.
+If
+.Ar gap
+is zero or is omitted the default is 8.
+All
+.Em <tab>
+characters in the input are expanded into the appropriate
+number of
+.Em <space> Ns s.
+If any nondigit character,
+.Ar char ,
+is specified, it is used as the input tab character.
+.It Fl F
+Use a
+.Em <form-feed>
+character for new pages,
+instead of the default behavior that uses a
+sequence of
+.Em <newline>
+characters.
+.It Fl f
+Same as the
+.Fl F
+option.
+.It Fl h Ar header
+Use the string
+.Ar header
+to replace the
+.Ar file name
+in the header line.
+.It Fl i Ns Oo Ar char Oc Ns Op Ar gap
+In output, replace multiple
+.Em <space> Ns s
+with
+.Em <tab> Ns s
+whenever two or more
+adjacent
+.Em <space> Ns s
+reach column positions
+.Ar gap+1 ,
+.Ar 2*gap+1 ,
+etc.
+If
+.Ar gap
+is zero or omitted, default
+.Em <tab>
+settings at every eighth column position
+is used.
+If any nondigit character,
+.Ar char ,
+is specified, it is used as the output
+.Em <tab>
+character.
+.It Fl l Ar lines
+Override the 66 line default and reset the page length to
+.Ar lines .
+If
+.Ar lines
+is not greater than the sum of both the header and trailer
+depths (in lines), the
+.Nm pr
+utility suppresses output of both the header and trailer, as if the
+.Fl t
+option were in effect.
+.It Fl m
+Merge the contents of multiple files.
+One line from each file specified by a file operand is
+written side by side into text columns of equal fixed widths, in
+terms of the number of column positions.
+The number of text columns depends on the number of
+file operands successfully opened.
+The maximum number of files merged depends on page width and the
+per process open file limit.
+The options
+.Fl e
+and
+.Fl i
+are assumed.
+.It Fl n Ns Oo Ar char Oc Ns Op Ar width
+Provide
+.Ar width
+digit line numbering.
+The default for
+.Ar width ,
+if not specified, is 5.
+The number occupies the first
+.Ar width
+column positions of each text column or each line of
+.Fl m
+output.
+If
+.Ar char
+(any nondigit character) is given, it is appended to the line number to
+separate it from whatever follows.
+The default for
+.Ar char
+is a
+.Em <tab> .
+Line numbers longer than
+.Ar width
+columns are truncated.
+.It Fl o Ar offset
+Each line of output is preceded by
+.Ar offset
+.Em <spaces> Ns s.
+If the
+.Fl o
+option is not specified, the default is zero.
+The space taken is in addition to the output line width.
+.It Fl r
+Write no diagnostic reports on failure to open a file.
+.It Fl s Ns Op Ar char
+Separate text columns by the single character
+.Ar char
+instead of by the appropriate number of
+.Em <space> Ns s
+(default for
+.Ar char
+is the
+.Em <tab>
+character).
+.It Fl t
+Print neither the five-line identifying
+header nor the five-line trailer usually supplied for each page.
+Quit printing after the last line of each file without spacing to the
+end of the page.
+.It Fl w Ar width
+Set the width of the line to
+.Ar width
+column positions for multiple text-column output only.
+If the
+.Fl w
+option is not specified and the
+.Fl s
+option is not specified, the default width is 72.
+If the
+.Fl w
+option is not specified and the
+.Fl s
+option is specified, the default width is 512.
+.It Ar file
+A pathname of a file to be printed.
+If no
+.Ar file
+operands are specified, or if a
+.Ar file
+operand is
+.Sq - ,
+the standard input is used.
+The standard input is used only if no
+.Ar file
+operands are specified, or if a
+.Ar file
+operand is
+.Sq - .
+.El
+.Sh EXIT STATUS
+.Ex -std pr
+.Sh SEE ALSO
+.Xr cat 1 ,
+.Xr more 1 ,
+.Xr ascii 7
+.Sh STANDARDS
+The
+.Nm
+utility is compliant with the
+.St -p1003.1-2008
+specification,
+except that the flag
+.Op Fl p
+is unsupported.
+.Pp
+The flag
+.Op Fl f
+is marked by
+.St -p1003.1-2008
+as being an
+X/Open System Interfaces
+option.
+.Pp
+.St -p1003.1-2008
+is relatively silent concerning the
+handling of input characters beyond the behavior dictated by the
+.Nm pr
+required command
+options.
+.Sh HISTORY
+A
+.Nm
+command appeared in
+.At v1 .
+.Sh CAVEATS
+The interpretation of
+.Em <form-feed> Ns s
+in the input stream is that they are special
+.Em <newline> Ns s
+which have the side effect of causing a page break.
+While this works
+correctly for all cases, strict interpretation also implies that the
+common convention of placing a
+.Em <form-feed>
+on a line by itself is actually interpreted as a blank line, page break,
+blank line.
+.Pp
+The
+.Nm pr
+utility is intended to paginate input containing basic
+.Xr ascii 7
+text formatting and input streams containing non-printing
+.Em <control-characters> ,
+.Em <escape-sequences>
+or long lines may result in formatting errors.
+.Pp
+The
+.Nm pr
+utility does not currently understand over-printing using
+.Em <back-space>
+or
+.Em <return>
+characters, and except in the case of unmodified single-column output,
+use of these characters will cause formatting errors.
+.Sh BUGS
+The lack of a line wrapping option, and the specification that truncation
+does not apply to single-column output frequently results in formatting
+errors when input lines are longer than actual line width of the output device.
+.Pp
+The default width of 72 is archaic and non-obvious since it is normally
+ignored in the default single column mode.
+Using the
+.Fl m
+option with one column provides a way to truncate single column output but
+there's no way to wrap long lines to a fixed line width.
+.Pp
+The default of
+.Em <tab>
+for the separator for the
+.Fl n
+and
+.Fl s
+options often results in lines apparently wider than expected.

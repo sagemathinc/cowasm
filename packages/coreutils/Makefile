@@ -38,6 +38,8 @@ all: \
 	${TARGET}/mv \
 	${TARGET}/nl \
 	${TARGET}/paste \
+	${TARGET}/pathchk \
+	${TARGET}/pr \
 	${TARGET}/rm \
 	${TARGET}/rmdir \
 	${TARGET}/sleep \
@@ -99,6 +101,9 @@ ${TARGET}/ls: ${COMPAT} ${BUILD}/cmp.o ${BUILD}/ls.o ${BUILD}/print.o ${BUILD}/u
 	${CC} ${CFLAGS} $^ -o $@
 
 ${TARGET}/mv: ${COMPAT} ${BUILD}/mv.o ${BUILD}/mv-rm.o ${BUILD}/mv-cp.o
+	${CC} ${CFLAGS} $^ -o $@
+
+${TARGET}/pr: ${COMPAT} ${BUILD}/pr.o ${BUILD}/pr-egetopt.o
 	${CC} ${CFLAGS} $^ -o $@
 
 ${TARGET}/sort: ${COMPAT} ${BUILD}/bwstring.o ${BUILD}/coll.o ${BUILD}/file.o \
