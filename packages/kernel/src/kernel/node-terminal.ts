@@ -3,12 +3,12 @@ import { syncKernel } from "./node";
 import posix from "posix-node";
 
 async function main() {
-  // TODO: could get asyncKernel instead via command line option or env variable (?)
-  const kernel = await syncKernel();
   if (process.argv.length <= 2) {
     console.error(`Usage: cowasm program [args ...]`);
     process.exit(1);
   }
+  // TODO: could get asyncKernel instead via command line option or env variable (?)
+  const kernel = await syncKernel();
   const program = resolve(process.argv[2]);
   const argv = [program].concat(process.argv.slice(3));
   try {

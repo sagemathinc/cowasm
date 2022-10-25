@@ -13,6 +13,7 @@ type FileSystemOption = "auto" | "bundle" | "sandbox";
 export interface Options {
   fs?: FileSystemOption;
   noReadline?: boolean;
+  env?: object; // overrides or sets environment variables
 }
 
 export class PythonWasmSync {

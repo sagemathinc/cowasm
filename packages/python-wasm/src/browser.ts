@@ -23,7 +23,11 @@ export default async function asyncPython(
   const fs = getFilesystem(opts);
   log("fs = ", fs);
   const kernel = await asyncKernel({
-    env: { PYTHONHOME: "/usr", PYTHONEXECUTABLE, DEBUG: "cowasm:importer" },
+    env: {
+      PYTHONHOME: "/usr",
+      PYTHONEXECUTABLE,
+      ...opts?.env,
+    },
     fs,
   });
   log("done");

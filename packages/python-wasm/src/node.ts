@@ -35,13 +35,16 @@ async function createPython(
 ): Promise<PythonWasmSync | PythonWasmAsync> {
   log("creating Python with sync = ", sync, ", opts = ", opts);
   const fs = getFilesystem(opts);
-  const env: any = { PYTHONEXECUTABLE };
+  let env: any = { PYTHONEXECUTABLE };
   let wasm = python_wasm;
   if (opts?.fs == "sandbox") {
     wasm = "/usr/lib/python3.11/python.wasm";
   }
   if (fs[0].type == "zipfile") {
     env.PYTHONHOME = "/usr";
+  }
+  if (opts?.env != null) {
+    env = { ...env, ...opts.env };
   }
   const kernel = sync
     ? await syncKernel({ env, fs })

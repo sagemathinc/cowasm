@@ -37,6 +37,7 @@ ${DIST}/python.wasm: src/python.zig ${BUILD}/libpython.o
 			${LDFLAGS} \
 			python.zig \
 			${BUILD}/libpython.o \
+		&& rm python.o \
 		&& mv python.wasm ${DIST}/python.wasm
 
 BUNDLES = ${DIST}/python-minimal.zip ${DIST}/python-readline.zip ${DIST}/python-stdlib.zip ${DIST}/python-sandbox.zip
