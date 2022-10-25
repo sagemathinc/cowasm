@@ -28,7 +28,7 @@ ${BUILD}/libpython.o: ${DYLINK}/wasm-export/libpython.c
 		-c ${DYLINK}/wasm-export/libpython.c \
 		-o ${BUILD}/libpython.o
 
-${DIST}/python.wasm: src/python.zig ${BUILD}/libpython.o
+${DIST}/python.wasm: src/python.zig ${BUILD}/libpython.o ${CPYTHON}/lib/libpython3.11.a
 	mkdir -p ${DIST}
 	cd src/ \
 		&& ${BIN}/cowasm-zig \

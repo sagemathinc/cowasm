@@ -40,7 +40,7 @@ async function createPython(
   if (opts?.fs == "sandbox") {
     wasm = "/usr/lib/python3.11/python.wasm";
   }
-  if (fs[0].type == "zipfile") {
+  if (opts?.fs == "sandbox") {
     env.PYTHONHOME = "/usr";
   }
   if (opts?.env != null) {

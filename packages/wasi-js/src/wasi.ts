@@ -552,6 +552,7 @@ export default class WASI {
 
       fd_fdstat_get: wrap((fd: number, bufPtr: number) => {
         const stats = CHECK_FD(fd, BigInt(0));
+        // console.log("fd_fdstat_get", fd, stats);
         this.refreshMemory();
         if (stats.filetype == null) {
           throw Error("stats.filetype must be set");
@@ -1069,7 +1070,7 @@ export default class WASI {
             pathPtr,
             pathLen
           ).toString();
-          // console.log("path_filestat_get", p);
+          //console.log("path_filestat_get", p);
           let rstats;
           if (flags) {
             rstats = fs.statSync(path.resolve(stats.path, p));
@@ -1080,7 +1081,7 @@ export default class WASI {
             // See zig/lib/libc/wasi/libc-bottom-half/cloudlibc/src/libc/sys/stat/fstatat.c
             rstats = fs.lstatSync(path.resolve(stats.path, p));
           }
-          // console.log("path_filestat_get got", rstats)
+          //console.log("path_filestat_get got", rstats)
           // NOTE: the output is the filestat struct as documented here
           // https://github.com/WebAssembly/WASI/blob/main/phases/snapshot/docs.md#-filestat-record
           // This does NOT even have a field for that.  This is considered an open bug in WASI:
@@ -1328,13 +1329,15 @@ export default class WASI {
           if (write) {
             try {
               isDirectory = fs.statSync(full).isDirectory();
-            } catch (_err) {}
+            } catch (_err) {
+              //console.log(_err)
+            }
           }
-
           let realfd;
           if (!write && isDirectory) {
             realfd = fs.openSync(full, fs.constants.O_RDONLY);
           } else {
+            // console.log(`fs.openSync("${full}", ${noflags})`);
             realfd = fs.openSync(full, noflags);
           }
           const newfd = this.getUnusedFileDescriptor();
@@ -1351,7 +1354,6 @@ export default class WASI {
           });
           stat(this, newfd);
           this.view.setUint32(fd, newfd, true);
-
           return WASI_ESUCCESS;
         }
       ),
@@ -1689,10 +1691,14 @@ export default class WASI {
       Object.keys(this.wasiImport).forEach((key: string) => {
         const prevImport = this.wasiImport[key];
         this.wasiImport[key] = function (...args: any[]) {
-          log(key, args);
+          if (key != "fd_read" && key != "poll_oneoff") {
+            log(key, args);
+          }
           try {
             let result = prevImport(...args);
-            log("result = ", result);
+            if (key != "fd_read" && key != "poll_oneoff") {
+              log("result = ", result);
+            }
             return result;
           } catch (e) {
             log("error: ", e);
