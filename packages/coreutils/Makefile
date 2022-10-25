@@ -26,6 +26,7 @@ all: \
 	${TARGET}/fold \
 	${TARGET}/grep \
 	${TARGET}/head \
+	${TARGET}/join \
 	${TARGET}/ln \
 	${TARGET}/ls \
 	${TARGET}/mkdir \
@@ -152,6 +153,11 @@ test-head: ${TARGET}/head
 	test "`${BIN}/cowasm ${TARGET}/head -n 1 ${BUILD}/.test-head`" = "first line"
 	rm ${BUILD}/.test-head
 
+test-join: ${TARGET}/head
+	printf "1 X\n2 Y\n3 Z" > ${BUILD}/a
+	printf "1 x\n2 y\n3 z" > ${BUILD}/b
+	test "`cowasm dist/wasm/bin/join  ${BUILD}/a ${BUILD}/b`" = "`printf "1 X x\n2 Y y\n3 Z z"`"
+
 test-mkdir-rmdir: ${TARGET}/mkdir ${TARGET}/rmdir
 	${BIN}/cowasm dist/wasm/bin/mkdir xyz-mkdir && ${BIN}/cowasm dist/wasm/bin/rmdir xyz-mkdir && ${BIN}/cowasm dist/wasm/bin/test ! -d xyz-mkdir
 
@@ -205,7 +211,7 @@ test-uniq-sources:
 # NOTE: "make -j8 test" seems to crash tty on linux host at least.
 
 test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-factor test-grep test-head \
-	test-ls test-mkdir-rmdir test-mv test-rm test-sleep test-sort test-tail test-touch test-tr \
+	test-join test-ls test-mkdir-rmdir test-mv test-rm test-sleep test-sort test-tail test-touch test-tr \
 	test-tty test-uniq test-wc test-xargs
 	@echo "Success -- all coreutils tests passed"
 
