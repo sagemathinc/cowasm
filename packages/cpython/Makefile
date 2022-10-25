@@ -77,6 +77,12 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 				--with-ensurepip \
 				--disable-shared \
 				--with-readline=editline
+	# On **some** macOS systems having either HAVE_MKFIFOAT or HAVE_MKNODAT breaks
+	# the build due to I guess bugs with zig and __builtin_available.   We don't need
+	# these anywhere, since native cpython is just for bootstrapping our WASM build anyways.
+	# NOTE: I didn't hit this with 3.11.0.rc2, but did with the actual release.
+	echo "#undef HAVE_MKFIFOAT" >> ${BUILD_NATIVE}/pyconfig.h
+	echo "#undef HAVE_MKNODAT" >> ${BUILD_NATIVE}/pyconfig.h
 	# We **must** explicitly set RUNSHARED on MacOS since it's wrong there (e.g., it misses
 	# zlib).  This is to workaround a security feature of MacOS (see
 	# https://developer.apple.com/forums/thread/9233). For simplicity we set this on all hosts.
