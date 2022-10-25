@@ -8,6 +8,10 @@ For use in https://cowasm.org.
 
 - [ ] `tail -f` doesn't work because epoll isn't implemented in cowasm yet. See posix/epoll.ts elsewhere.
 
+### TODO
+
+- [ ] the `env` coreutil command calls execvp.  We should make it work with WASM targets as well.  That might just mean changing execvp though, since there is no fork \-\- it's just exec, which is maybe easier.
+
 ## Sources
 
 - https://github.com/freebsd/freebsd-src
