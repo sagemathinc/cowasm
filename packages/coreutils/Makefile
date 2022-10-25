@@ -36,6 +36,8 @@ all: \
 	${TARGET}/mkdir \
 	${TARGET}/mktemp \
 	${TARGET}/mv \
+	${TARGET}/nl \
+	${TARGET}/paste \
 	${TARGET}/rm \
 	${TARGET}/rmdir \
 	${TARGET}/sleep \
