@@ -27,8 +27,10 @@ all: \
 	${TARGET}/fold \
 	${TARGET}/grep \
 	${TARGET}/head \
+	${TARGET}/id \
 	${TARGET}/join \
 	${TARGET}/ln \
+	${TARGET}/logname \
 	${TARGET}/ls \
 	${TARGET}/mkdir \
 	${TARGET}/mv \
@@ -142,6 +144,11 @@ test-grep: ${TARGET}/grep
 	# This is a TEST-OF-GREP
 	${BIN}/cowasm ${TARGET}/grep TEST-OF-GREP Makefile | grep "TEST-OF-GREP"
 
+test-id: ${TARGET}/id
+	${BIN}/cowasm ${TARGET}/id |grep uid
+	${BIN}/cowasm ${TARGET}/id |grep gid
+	${BIN}/cowasm ${TARGET}/id |grep group
+
 test-ln: ${TARGET}/ln
 	${BIN}/cowasm ./dist/wasm/bin/ln -sf README.md ${BUILD}/.xyz && ls -l ${BUILD}/.xyz |grep xyz | grep README.md ; rm ${BUILD}/.xyz
 
@@ -214,7 +221,7 @@ test-uniq-sources:
 # Very basic tests of some things.
 # NOTE: "make -j8 test" seems to crash tty on linux host at least.
 
-test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-factor test-fmt test-grep test-head \
+test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-factor test-fmt test-grep test-head test-id \
 	test-join test-ls test-mkdir-rmdir test-mv test-rm test-sleep test-sort test-tail test-touch test-tr \
 	test-tty test-uniq test-wc test-xargs
 	@echo "Success -- all coreutils tests passed"
