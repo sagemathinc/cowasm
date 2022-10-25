@@ -89,3 +89,20 @@ test("getgrouplist returns a list of numbers", async () => {
   expect(v.length).toBeGreaterThan(0);
   expect(typeof v[0]).toBe("number");
 });
+
+// wasi doesn't have fchdir, so I implemented it and I'm testing it here via python.
+test("fchdir works", async () => {
+  // This is complicated, since e.g., on macos if you do "cd /tmp" you
+  // end up in /private/tmp", etc.  It's weird.
+  const { exec, repr } = await syncPython();
+  exec("import tempfile; td = tempfile.TemporaryDirectory()");
+  exec("import os; fd = os.open(td.name, os.O_RDONLY)");
+  exec("os.fchdir(fd)");
+  const actual = eval(repr("os.getcwd()"));
+  exec("os.mkdir('abc')");
+  exec("fd2 = os.open('abc', os.O_RDONLY)");
+  exec("os.fchdir(fd2)");
+  expect(eval(repr("os.getcwd()"))).toBe(actual + "/abc");
+  // it doesn't seem to always get removed (which is weird)
+  exec("import shutil; shutil.rmtree(td.name)");
+});

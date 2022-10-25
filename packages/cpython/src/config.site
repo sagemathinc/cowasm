@@ -210,3 +210,8 @@ ac_cv_func_pthread_getcpuclockid=no
 ac_cv_func_pthread_init=no
 ac_cv_func_pthread_kill=no
 ac_cv_func_pthread_sigmask=no
+
+
+# I implemented fchdir so we have it.  It's nice to make
+# it available, since python is really nice for testing everything.
+ac_cv_func_fchdir=yes
