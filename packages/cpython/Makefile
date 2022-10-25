@@ -11,11 +11,11 @@ include ../build/Makefile-vars
 PYTHON_MAJOR = 3
 PYTHON_MINOR = 11
 PYTHON_PATCH = 0
-PYTHON_BETA = rc2
+PYTHON_BETA =
 PYTHON_VERSION = ${PYTHON_MAJOR}.${PYTHON_MINOR}.${PYTHON_PATCH}
 
 URL = https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz
-TARBALL = ${UPSTREAM}/python-${PYTHON_VERSION}-${PYTHON_BETA}.tar.xz
+TARBALL = ${UPSTREAM}/python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz
 
 ZLIB = ${PACKAGES}/zlib/dist
 LIBEDIT = ${PACKAGES}/libedit/dist
