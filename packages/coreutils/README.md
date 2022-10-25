@@ -8,9 +8,11 @@ For use in https://cowasm.org.
 
 - [ ] `tail -f` doesn't work because epoll isn't implemented in cowasm yet. See posix/epoll.ts elsewhere.
 
+- [ ] `expand foo` doesn't work when input is a file instead of stdin. This is because the implementation uses `freopen` to make the file into stdin, which is a pretty neat trick.  The fix isn't to rewrite expand, but instead to fix `freopen`. This is extra challenging because our code for running processes then restoring state has to deal with this properly, and probably doesn't now (?).  There's also a test of freopen for wasi [here](https://github.com/nodejs/node/blob/main/test/wasi/c/freopen.c) that might be inspiring.
+
 ### TODO
 
-- [ ] the `env` coreutil command calls execvp.  We should make it work with WASM targets as well.  That might just mean changing execvp though, since there is no fork \-\- it's just exec, which is maybe easier.
+- [ ] the `env` coreutil calls execvp.  We should make it work with WASM targets as well.  That might just mean changing execvp though, since there is no fork \-\- it's just exec, which is maybe easier.
 
 ## Sources
 

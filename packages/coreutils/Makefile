@@ -21,6 +21,7 @@ all: \
 	${TARGET}/dirname \
 	${TARGET}/du \
 	${TARGET}/env \
+	${TARGET}/expand \
 	${TARGET}/factor \
 	${TARGET}/grep \
 	${TARGET}/head \
@@ -38,6 +39,7 @@ all: \
 	${TARGET}/touch \
 	${TARGET}/tr \
 	${TARGET}/tty \
+	${TARGET}/unexpand \
 	${TARGET}/uniq \
 	${TARGET}/wc \
 	${TARGET}/xargs \
