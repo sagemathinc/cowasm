@@ -623,6 +623,8 @@ erff
 erfl
 err
 errx
+verr
+verrx
 errno
 exit
 exp
@@ -1225,6 +1227,8 @@ vswprintf
 vswscanf
 vwprintf
 vwscanf
+vwarn
+vwarnx
 warn
 warnx
 wcpcpy

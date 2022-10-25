@@ -1,0 +1,261 @@
+.\"	$OpenBSD: mktemp.1,v 1.30 2019/01/25 00:19:26 millert Exp $
+.\"
+.\" Copyright (c) 1996, 2000, 2001, 2003, 2010, 2013
+.\"	Todd C. Miller <millert@openbsd.org>
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+.Dd $Mdocdate: January 25 2019 $
+.Dt MKTEMP 1
+.Os
+.Sh NAME
+.Nm mktemp
+.Nd make temporary filename (unique)
+.Sh SYNOPSIS
+.Nm mktemp
+.Op Fl dqtu
+.Op Fl p Ar directory
+.Op Ar template
+.Sh DESCRIPTION
+The
+.Nm mktemp
+utility takes the given filename
+.Ar template
+and overwrites a portion of it to create a unique filename.
+The
+.Ar template
+may be any filename with at least six
+.Ql X Ns s
+appended
+to it, for example
+.Pa /tmp/tfile.XXXXXXXXXX .
+If no
+.Ar template
+is specified a default of
+.Pa tmp.XXXXXXXXXX
+is used and the
+.Fl t
+flag is implied (see below).
+.Pp
+The trailing
+.Ql X Ns s
+are replaced with a unique digit and letter combination.
+The name chosen depends both on the number of
+.Ql X Ns s
+in the
+.Ar template
+and the number of collisions with pre-existing files.
+The number of unique filenames
+.Nm
+can return depends on the number of
+.Ql X Ns s
+provided; ten
+.Ql X Ns s
+will
+result in
+.Nm
+testing roughly 26 ** 10 combinations.
+.Pp
+If
+.Nm
+can successfully generate a unique filename, the file (or directory)
+is created with file permissions such that it is only readable and writable
+by its owner (unless the
+.Fl u
+flag is given) and the filename is printed to standard output.
+.Pp
+.Nm mktemp
+is provided to allow shell scripts to safely use temporary files.
+Traditionally, many shell scripts take the name of the program with
+the PID as a suffix and use that as a temporary filename.
+This kind of naming scheme is predictable and the race condition it creates
+is easy for an attacker to win.
+A safer, though still inferior approach
+is to make a temporary directory using the same naming scheme.
+While this does allow one to guarantee that a temporary file will not be
+subverted, it still allows a simple denial of service attack.
+For these reasons it is suggested that
+.Nm
+be used instead.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl d
+Make a directory instead of a file.
+.It Fl p Ar directory
+Use the specified
+.Ar directory
+as a prefix when generating the temporary filename.
+The
+.Ar directory
+will be overridden by the user's
+.Ev TMPDIR
+environment variable if it is set.
+This option implies the
+.Fl t
+flag (see below).
+.It Fl q
+Fail silently if an error occurs.
+This is useful if
+a script does not want error output to go to standard error.
+.It Fl t
+Generate a path rooted in a temporary directory.
+This directory is chosen as follows:
+.Bl -bullet
+.It
+If the user's
+.Ev TMPDIR
+environment variable is set, the directory contained therein is used.
+.It
+Otherwise, if the
+.Fl p
+flag was given the specified directory is used.
+.It
+If none of the above apply,
+.Pa /tmp
+is used.
+.El
+.Pp
+In this mode, the
+.Ar template
+(if specified) should be a directory component (as opposed to a full path)
+and thus should not contain any forward slashes.
+.It Fl u
+Operate in
+.Dq unsafe
+mode.
+The temp file will be unlinked before
+.Nm
+exits.
+This is slightly better than
+.Xr mktemp 3
+but still introduces a race condition.
+Use of this option is not encouraged.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width TMPDIR
+.It Ev TMPDIR
+directory in which to place the temporary file when in
+.Fl t
+mode
+.El
+.Sh EXIT STATUS
+.Ex -std mktemp
+.Sh EXAMPLES
+The following
+.Xr sh 1
+fragment illustrates a simple use of
+.Nm
+where the script should quit if it cannot get a safe
+temporary file.
+.Bd -literal -offset indent
+TMPFILE=`mktemp /tmp/example.XXXXXXXXXX` || exit 1
+echo "program output" >> $TMPFILE
+.Ed
+.Pp
+The same fragment with support for a user's
+.Ev TMPDIR
+environment variable can be written as follows.
+.Bd -literal -offset indent
+TMPFILE=`mktemp -t example.XXXXXXXXXX` || exit 1
+echo "program output" >> $TMPFILE
+.Ed
+.Pp
+This can be further simplified if we don't care about the actual name of
+the temporary file.
+In this case the
+.Fl t
+flag is implied.
+.Bd -literal -offset indent
+TMPFILE=`mktemp` || exit 1
+echo "program output" >> $TMPFILE
+.Ed
+.Pp
+In some cases, it may be desirable to use a default temporary directory
+other than
+.Pa /tmp .
+In this example the temporary file will be created in
+.Pa /extra/tmp
+unless the user's
+.Ev TMPDIR
+environment variable specifies otherwise.
+.Bd -literal -offset indent
+TMPFILE=`mktemp -p /extra/tmp example.XXXXXXXXXX` || exit 1
+echo "program output" >> $TMPFILE
+.Ed
+.Pp
+In other cases, we want the script to catch the error.
+For instance, if we attempt to create two temporary files and
+the second one fails we need to remove the first before exiting.
+.Bd -literal -offset indent
+TMP1=`mktemp -t example.1.XXXXXXXXXX` || exit 1
+TMP2=`mktemp -t example.2.XXXXXXXXXX`
+if [ $? -ne 0 ]; then
+	rm -f $TMP1
+	exit 1
+fi
+.Ed
+.Pp
+Or perhaps you don't want to exit if
+.Nm
+is unable to create the file.
+In this case you can protect that part of the script thusly.
+.Bd -literal -offset indent
+TMPFILE=`mktemp -q -t example.XXXXXXXXXX` && {
+	# Safe to use $TMPFILE in this block
+	echo data > $TMPFILE
+	...
+	rm -f $TMPFILE
+}
+.Ed
+.Sh DIAGNOSTICS
+One of the following error messages may be displayed if
+.Nm
+does not succeed and the
+.Fl q
+option was not specified:
+.Bl -tag -width indent
+.It Li "insufficient number of Xs in template"
+The specified
+.Ar template
+contained fewer than six
+.Ql X Ns s
+at the end.
+.It Li "template must not contain directory separators in -t mode"
+The
+.Ar template
+contained one or more directory components and the
+.Fl t
+option was specified.
+.It Li "cannot make temp dir"
+.Nm
+was unable to create the temporary directory for any of the reasons
+specified by
+.Xr mkdtemp 3 .
+.It Li "cannot make temp file"
+.Nm
+was unable to create the temporary file for any of the reasons
+specified by
+.Xr mkstemp 3 .
+.It Li "cannot allocate memory"
+.Nm
+was unable to allocate memory for any of the reasons specified by
+.Xr malloc 3 .
+.El
+.Sh SEE ALSO
+.Xr mktemp 3
+.Sh HISTORY
+The
+.Nm
+utility first appeared in
+.Ox 2.1 .

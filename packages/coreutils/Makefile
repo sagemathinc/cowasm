@@ -23,6 +23,7 @@ all: \
 	${TARGET}/env \
 	${TARGET}/expand \
 	${TARGET}/factor \
+	${TARGET}/false \
 	${TARGET}/fmt \
 	${TARGET}/fold \
 	${TARGET}/grep \
@@ -33,6 +34,7 @@ all: \
 	${TARGET}/logname \
 	${TARGET}/ls \
 	${TARGET}/mkdir \
+	${TARGET}/mktemp \
 	${TARGET}/mv \
 	${TARGET}/rm \
 	${TARGET}/rmdir \
@@ -155,6 +157,10 @@ test-ln: ${TARGET}/ln
 test-ls: ${TARGET}/ls
 	${BIN}/cowasm ${TARGET}/ls ${TARGET} | grep ls
 
+test-mktemp: ${TARGET}/mktemp
+	# rm would error if file didn't exist...
+	rm `${BIN}/cowasm ${TARGET}/mktemp abc.XXXXXX`
+
 test-sleep: ${TARGET}/sleep
 	${BIN}/cowasm ${TARGET}/sleep 0.1
 
@@ -222,7 +228,7 @@ test-uniq-sources:
 # NOTE: "make -j8 test" seems to crash tty on linux host at least.
 
 test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-factor test-fmt test-grep test-head test-id \
-	test-join test-ls test-mkdir-rmdir test-mv test-rm test-sleep test-sort test-tail test-touch test-tr \
+	test-join test-ls test-mktemp test-mkdir-rmdir test-mv test-rm test-sleep test-sort test-tail test-touch test-tr \
 	test-tty test-uniq test-wc test-xargs
 	@echo "Success -- all coreutils tests passed"
 
