@@ -5,7 +5,14 @@
 include ../build/Makefile-vars
 
 # Find the latest version at https://ziglang.org/download/
-# This is for pre-release
+
+#
+# NOTE: Version "0.10.0-dev.4560+828735ac0" fails to build
+# the *native* version of Python, whereas
+#    0.10.0-dev.4476+0f0076666
+# succeeds.  We can keep trying for a bit, but we'll also want
+# to report this upstream at some point if it doesn't accidently
+# get fixed.
 
 VERSION = 0.10.0-dev.4476+0f0076666
 
