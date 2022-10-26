@@ -33,7 +33,7 @@
  */
 
 static const char copyright[] =
-"@(#) Copyright (c) 1990, 1993, 1994\n\
+    "@(#) Copyright (c) 1990, 1993, 1994\n\
 	The Regents of the University of California.  All rights reserved.\n";
 
 #if 0
@@ -58,108 +58,101 @@ __FBSDID("$FreeBSD$");
 #include <unistd.h>
 
 #include "find.h"
+#include "compat.h"
 
-time_t now;			/* time find was run */
-int dotfd;			/* starting directory */
-int ftsoptions;			/* options for the ftsopen(3) call */
-int ignore_readdir_race;	/* ignore readdir race */
-int isdepth;			/* do directories on post-order visit */
-int isoutput;			/* user specified output operator */
-int issort;         		/* do hierarchies in lexicographical order */
-int isxargs;			/* don't permit xargs delimiting chars */
+time_t now;                       /* time find was run */
+int dotfd;                        /* starting directory */
+int ftsoptions;                   /* options for the ftsopen(3) call */
+int ignore_readdir_race;          /* ignore readdir race */
+int isdepth;                      /* do directories on post-order visit */
+int isoutput;                     /* user specified output operator */
+int issort;                       /* do hierarchies in lexicographical order */
+int isxargs;                      /* don't permit xargs delimiting chars */
 int mindepth = -1, maxdepth = -1; /* minimum and maximum depth */
-int regexp_flags = REG_BASIC;	/* use the "basic" regexp by default*/
+int regexp_flags = REG_BASIC;     /* use the "basic" regexp by default*/
 int exitstatus;
 
 static void usage(void);
 
-int
-main(int argc, char *argv[])
-{
-	char **p, **start;
-	int Hflag, Lflag, ch;
+int main(int argc, char *argv[]) {
+  setprogname(argv[0]);
+  char **p, **start;
+  int Hflag, Lflag, ch;
 
-	(void)setlocale(LC_ALL, "");
+  (void)setlocale(LC_ALL, "");
 
-	(void)time(&now);	/* initialize the time-of-day */
+  (void)time(&now); /* initialize the time-of-day */
 
-	p = start = argv;
-	Hflag = Lflag = 0;
-	ftsoptions = FTS_NOSTAT | FTS_PHYSICAL;
-	while ((ch = getopt(argc, argv, "EHLPXdf:sx")) != -1)
-		switch (ch) {
-		case 'E':
-			regexp_flags |= REG_EXTENDED;
-			break;
-		case 'H':
-			Hflag = 1;
-			Lflag = 0;
-			break;
-		case 'L':
-			Lflag = 1;
-			Hflag = 0;
-			break;
-		case 'P':
-			Hflag = Lflag = 0;
-			break;
-		case 'X':
-			isxargs = 1;
-			break;
-		case 'd':
-			isdepth = 1;
-			break;
-		case 'f':
-			*p++ = optarg;
-			break;
-		case 's':
-			issort = 1;
-			break;
-		case 'x':
-			ftsoptions |= FTS_XDEV;
-			break;
-		case '?':
-		default:
-			usage();
-		}
+  p = start = argv;
+  Hflag = Lflag = 0;
+  ftsoptions = FTS_NOSTAT | FTS_PHYSICAL;
+  while ((ch = getopt(argc, argv, "EHLPXdf:sx")) != -1) switch (ch) {
+      case 'E':
+        regexp_flags |= REG_EXTENDED;
+        break;
+      case 'H':
+        Hflag = 1;
+        Lflag = 0;
+        break;
+      case 'L':
+        Lflag = 1;
+        Hflag = 0;
+        break;
+      case 'P':
+        Hflag = Lflag = 0;
+        break;
+      case 'X':
+        isxargs = 1;
+        break;
+      case 'd':
+        isdepth = 1;
+        break;
+      case 'f':
+        *p++ = optarg;
+        break;
+      case 's':
+        issort = 1;
+        break;
+      case 'x':
+        ftsoptions |= FTS_XDEV;
+        break;
+      case '?':
+      default:
+        usage();
+    }
 
-	argc -= optind;
-	argv += optind;
+  argc -= optind;
+  argv += optind;
 
-	if (Hflag)
-		ftsoptions |= FTS_COMFOLLOW;
-	if (Lflag) {
-		ftsoptions &= ~FTS_PHYSICAL;
-		ftsoptions |= FTS_LOGICAL;
-	}
+  if (Hflag) ftsoptions |= FTS_COMFOLLOW;
+  if (Lflag) {
+    ftsoptions &= ~FTS_PHYSICAL;
+    ftsoptions |= FTS_LOGICAL;
+  }
 
-	/*
-	 * Find first option to delimit the file list.  The first argument
-	 * that starts with a -, or is a ! or a ( must be interpreted as a
-	 * part of the find expression, according to POSIX .2.
-	 */
-	for (; *argv != NULL; *p++ = *argv++) {
-		if (argv[0][0] == '-')
-			break;
-		if ((argv[0][0] == '!' || argv[0][0] == '(') &&
-		    argv[0][1] == '\0')
-			break;
-	}
+  /*
+   * Find first option to delimit the file list.  The first argument
+   * that starts with a -, or is a ! or a ( must be interpreted as a
+   * part of the find expression, according to POSIX .2.
+   */
+  for (; *argv != NULL; *p++ = *argv++) {
+    if (argv[0][0] == '-') break;
+    if ((argv[0][0] == '!' || argv[0][0] == '(') && argv[0][1] == '\0') break;
+  }
 
-	if (p == start)
-		usage();
-	*p = NULL;
+  if (p == start) usage();
+  *p = NULL;
 
-	if ((dotfd = open(".", O_RDONLY | O_CLOEXEC, 0)) < 0)
-		ftsoptions |= FTS_NOCHDIR;
+  if ((dotfd = open(".", O_RDONLY | O_CLOEXEC, 0)) < 0)
+    ftsoptions |= FTS_NOCHDIR;
 
-	exit(find_execute(find_formplan(argv), start));
+  exit(find_execute(find_formplan(argv), start));
 }
 
-static void
-usage(void)
-{
-	(void)fprintf(stderr, "%s\n%s\n",
-"usage: find [-H | -L | -P] [-EXdsx] [-f path] path ... [expression]",
-"       find [-H | -L | -P] [-EXdsx] -f path [path ...] [expression]");
-	exit(1);
+static void usage(void) {
+  (void)fprintf(
+      stderr, "%s\n%s\n",
+      "usage: find [-H | -L | -P] [-EXdsx] [-f path] path ... [expression]",
+      "       find [-H | -L | -P] [-EXdsx] -f path [path ...] [expression]");
+  exit(1);
 }

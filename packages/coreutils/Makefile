@@ -24,6 +24,7 @@ all: \
 	${TARGET}/expand \
 	${TARGET}/factor \
 	${TARGET}/false \
+	${TARGET}/find \
 	${TARGET}/fmt \
 	${TARGET}/fold \
 	${TARGET}/grep \
@@ -96,6 +97,9 @@ test-cp: ${TARGET}/cp
 	rm ${BUILD}/x
 
 ${TARGET}/factor: ${COMPAT} ${BUILD}/factor.o ${BUILD}/pattern.o ${BUILD}/pr_tbl.o
+	${CC} ${CFLAGS} $^ -o $@
+
+${TARGET}/find: ${COMPAT} ${BUILD}/find-function.o ${BUILD}/find-main.o ${BUILD}/find-operator.o ${BUILD}/find.o ${BUILD}/find-ls.o ${BUILD}/find-misc.o ${BUILD}/find-option.o
 	${CC} ${CFLAGS} $^ -o $@
 
 ${TARGET}/grep: ${COMPAT} ${BUILD}/grep-file.o ${BUILD}/grep-queue.o ${BUILD}/grep-util.o ${BUILD}/grep.o

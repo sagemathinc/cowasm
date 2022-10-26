@@ -58,69 +58,59 @@ __FBSDID("$FreeBSD$");
 static void printlink(char *);
 static void printtime(time_t);
 
-void
-printlong(char *name, char *accpath, struct stat *sb)
-{
-	char modep[15];
+void printlong(char *name, char *accpath, struct stat *sb) {
+  char modep[15];
 
-	(void)printf("%6ju %8"PRId64" ", (uintmax_t)sb->st_ino, sb->st_blocks);
-	(void)strmode(sb->st_mode, modep);
-	(void)printf("%s %3ju %-*s %-*s ", modep, (uintmax_t)sb->st_nlink,
-	    MAXLOGNAME - 1,
-	    user_from_uid(sb->st_uid, 0), MAXLOGNAME - 1,
-	    group_from_gid(sb->st_gid, 0));
+  (void)printf("%6ju %8" PRId64 " ", (uintmax_t)sb->st_ino, sb->st_blocks);
+  (void)strmode(sb->st_mode, modep);
+  (void)printf("%s %3ju %-*s %-*s ", modep, (uintmax_t)sb->st_nlink,
+               MAXLOGNAME - 1, user_from_uid(sb->st_uid, 0), MAXLOGNAME - 1,
+               group_from_gid(sb->st_gid, 0));
 
-	if (S_ISCHR(sb->st_mode) || S_ISBLK(sb->st_mode))
-		(void)printf("%#8jx ", (uintmax_t)sb->st_rdev);
-	else
-		(void)printf("%8"PRId64" ", sb->st_size);
-	printtime(sb->st_mtime);
-	(void)printf("%s", name);
-	if (S_ISLNK(sb->st_mode))
-		printlink(accpath);
-	(void)putchar('\n');
+  if (S_ISCHR(sb->st_mode) || S_ISBLK(sb->st_mode))
+    (void)printf("%#8jx ", (uintmax_t)sb->st_rdev);
+  else
+    (void)printf("%8" PRId64 " ", sb->st_size);
+  printtime(sb->st_mtime);
+  (void)printf("%s", name);
+  if (S_ISLNK(sb->st_mode)) printlink(accpath);
+  (void)putchar('\n');
 }
 
-static void
-printtime(time_t ftime)
-{
-	char longstring[80];
-	static time_t lnow;
-	const char *format;
-	static int d_first = -1;
-	struct tm *tm;
+static void printtime(time_t ftime) {
+  char longstring[80];
+  static time_t lnow;
+  const char *format;
+  static int d_first = -1;
+  struct tm *tm;
 
 #ifdef D_MD_ORDER
-	if (d_first < 0)
-		d_first = (*nl_langinfo(D_MD_ORDER) == 'd');
+  if (d_first < 0) d_first = (*nl_langinfo(D_MD_ORDER) == 'd');
 #endif
-	if (lnow == 0)
-		lnow = time(NULL);
+  if (lnow == 0) lnow = time(NULL);
 
-#define	SIXMONTHS	((365 / 2) * 86400)
-	if (ftime + SIXMONTHS > lnow && ftime < lnow + SIXMONTHS)
-		/* mmm dd hh:mm || dd mmm hh:mm */
-		format = d_first ? "%e %b %R " : "%b %e %R ";
-	else
-		/* mmm dd  yyyy || dd mmm  yyyy */
-		format = d_first ? "%e %b  %Y " : "%b %e  %Y ";
-	if ((tm = localtime(&ftime)) != NULL)
-		strftime(longstring, sizeof(longstring), format, tm);
-	else
-		strlcpy(longstring, "bad date val ", sizeof(longstring));
-	fputs(longstring, stdout);
+#define SIXMONTHS ((365 / 2) * 86400)
+  if (ftime + SIXMONTHS > lnow && ftime < lnow + SIXMONTHS)
+    /* mmm dd hh:mm || dd mmm hh:mm */
+    format = d_first ? "%e %b %R " : "%b %e %R ";
+  else
+    /* mmm dd  yyyy || dd mmm  yyyy */
+    format = d_first ? "%e %b  %Y " : "%b %e  %Y ";
+  if ((tm = localtime(&ftime)) != NULL)
+    strftime(longstring, sizeof(longstring), format, tm);
+  else
+    strlcpy(longstring, "bad date val ", sizeof(longstring));
+  fputs(longstring, stdout);
 }
 
-static void
-printlink(char *name)
-{
-	ssize_t lnklen;
-	char path[MAXPATHLEN];
+static void printlink(char *name) {
+  ssize_t lnklen;
+  char path[MAXPATHLEN];
 
-	if ((lnklen = readlink(name, path, MAXPATHLEN - 1)) == -1) {
-		warn("%s", name);
-		return;
-	}
-	path[lnklen] = '\0';
-	(void)printf(" -> %s", path);
+  if ((lnklen = readlink(name, path, MAXPATHLEN - 1)) == -1) {
+    warn("%s", name);
+    return;
+  }
+  path[lnklen] = '\0';
+  (void)printf(" -> %s", path);
 }
