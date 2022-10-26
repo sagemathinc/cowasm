@@ -1,5 +1,6 @@
 import { asyncKernel, FileSystemSpec } from "@cowasm/kernel";
 import { Options, PythonWasmAsync } from "./common";
+import { fetchPackages } from "./packages";
 import debug from "debug";
 const log = debug("python-wasm");
 
@@ -8,10 +9,6 @@ import pythonFull from "./python-stdlib.zip";
 import pythonMinimal from "./python-minimal.zip";
 import pythonReadline from "./python-readline.zip";
 const PYTHONEXECUTABLE = "/usr/lib/python.wasm";
-
-import numpy from "./numpy.tar.xz";
-import mpmath from "./mpmath.tar.xz";
-import sympy from "./sympy.tar.xz";
 
 // We ONLY provide async version, since sync version isn't
 // possible anymore since dynamic module loading has to be
@@ -31,17 +28,21 @@ export default async function asyncPython(
     fs,
   });
   log("done");
-  await kernel.waitUntilFsLoaded();
   log("fetching ", PYTHONEXECUTABLE);
-  await kernel.fetch(wasmUrl, PYTHONEXECUTABLE);
+  await Promise.all([
+    kernel.waitUntilFsLoaded(),
+
+    kernel.fetch(wasmUrl, PYTHONEXECUTABLE),
+
+    // TODO: we have to await since once Python starts it synchronously takes over
+    // completely and rest of the fetches just can't finish.  Longterm we'll use
+    // a completely different model for packages, of course.
+    fetchPackages(kernel),
+  ]);
+
   log("initializing python");
   const python = new PythonWasmAsync(kernel, PYTHONEXECUTABLE);
   await python.init();
-
-  // don't wait on these fetches for now.
-  kernel.fetch(numpy, "/usr/lib/python3.11/numpy.tar.xz");
-  kernel.fetch(mpmath, "/usr/lib/python3.11/mpmath.tar.xz");
-  kernel.fetch(sympy, "/usr/lib/python3.11/sympy.tar.xz");
 
   log("done");
   return python;

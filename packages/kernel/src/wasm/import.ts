@@ -166,8 +166,8 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
         };
 
         const messageListener = (message) => {
-          removeListeners();
           if (message.id == id) {
+            removeListeners();
             if (message.error) {
               cb(message.error);
             } else {
@@ -225,7 +225,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       url,
       path,
     });
-    return await this.waitForResponse(this.callId);
+    await this.waitForResponse(this.callId);
   }
 }
 

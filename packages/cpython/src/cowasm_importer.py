@@ -37,14 +37,6 @@ def get_package_directory():
     # I like this since efficient, but I hate that it adds an
     # additional "sources of truth".
 
-    # TODO: better way to decide this
-#     if '/usr/lib/python3.11' in sys.path:
-#         # Using memfs in a **sandbox**
-#         path = '/x'
-#         os.makedirs(path, exist_ok=True)
-#         sys.path.insert(0, path)
-#         return path
-
     # If not, we fall back to a temporary directory that gets
     # deleted automatically when the process exits, hence the global
     # temporary_directoy object is important.  This approach is
@@ -115,7 +107,8 @@ def extract_archive_and_import(name: str, archive_path: str):
         del cowasm_modules[name]
 
     # TODO: Updating the directory timestamp should be automatic on any OS,
-    # but *right now* it is not with memfs, so we do it manually.
+    # but *right now* it is not with memfs, so we do it manually. See
+    #      https://github.com/sagemathinc/memfs-js/issues/4
     import pathlib
     pathlib.Path(package_dirname).touch()
 
