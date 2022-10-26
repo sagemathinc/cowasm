@@ -106,12 +106,6 @@ def extract_archive_and_import(name: str, archive_path: str):
         # try again on this module -- this avoids any possibility of an infinite loop
         del cowasm_modules[name]
 
-    # TODO: Updating the directory timestamp should be automatic on any OS,
-    # but *right now* it is not with memfs, so we do it manually. See
-    #      https://github.com/sagemathinc/memfs-js/issues/4
-    import pathlib
-    pathlib.Path(package_dirname).touch()
-
     if verbose:
         print(time() - t, package_dirname)
 
