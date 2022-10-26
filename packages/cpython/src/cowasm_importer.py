@@ -38,12 +38,12 @@ def get_package_directory():
     # additional "sources of truth".
 
     # TODO: better way to decide this
-    if '/usr/lib/python3.11' in sys.path:
-        # Using memfs in a **sandbox**
-        path = '/usr/lib/python3.11'
-        os.makedirs(path, exist_ok=True)
-        sys.path.insert(0, path)
-        return path
+#     if '/usr/lib/python3.11' in sys.path:
+#         # Using memfs in a **sandbox**
+#         path = '/x'
+#         os.makedirs(path, exist_ok=True)
+#         sys.path.insert(0, path)
+#         return path
 
     # If not, we fall back to a temporary directory that gets
     # deleted automatically when the process exits, hence the global
@@ -113,6 +113,11 @@ def extract_archive_and_import(name: str, archive_path: str):
         # Once we even try to extract, make it impossible that our importer will ever
         # try again on this module -- this avoids any possibility of an infinite loop
         del cowasm_modules[name]
+
+    # TODO: Updating the directory timestamp should be automatic on any OS,
+    # but *right now* it is not with memfs, so we do it manually.
+    import pathlib
+    pathlib.Path(package_dirname).touch()
 
     if verbose:
         print(time() - t, package_dirname)
