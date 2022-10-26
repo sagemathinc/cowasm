@@ -12,9 +12,6 @@
 /* SUPPRESS 287 on yaccpar_sccsid *//* Unused static variable */
 /* SUPPRESS 288 on yyerrlab *//* Label unused */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
 #include <stdio.h>
 #include <ctype.h>
 
@@ -519,12 +516,12 @@ static TABLE const MilitaryTable[] = {
     { NULL,	0,	0 }
 };
 
-
+
 
 
 /* ARGSUSED */
 static int
-yyerror(const char *s __unused)
+yyerror(const char *s)
 {
   return 0;
 }
@@ -705,7 +702,7 @@ LookupWord(char *buff)
 	    return tp->type;
 	}
 
-    if (strcmp(buff, "dst") == 0) 
+    if (strcmp(buff, "dst") == 0)
 	return tDST;
 
     for (tp = UnitsTable; tp->name; tp++)

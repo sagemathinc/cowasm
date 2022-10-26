@@ -58,8 +58,8 @@ all: \
 	${TARGET}/wc \
 	${TARGET}/xargs \
 	${TARGET}/yes
-	# These don't work at all:
-	# ${TARGET}/split \
+	@# These don't work at all:
+	@# ${TARGET}/split \
 
 include ../build/Makefile-rules
 
@@ -99,7 +99,7 @@ test-cp: ${TARGET}/cp
 ${TARGET}/factor: ${COMPAT} ${BUILD}/factor.o ${BUILD}/pattern.o ${BUILD}/pr_tbl.o
 	${CC} ${CFLAGS} $^ -o $@
 
-${TARGET}/find: ${COMPAT} ${BUILD}/find-function.o ${BUILD}/find-main.o ${BUILD}/find-operator.o ${BUILD}/find.o ${BUILD}/find-ls.o ${BUILD}/find-misc.o ${BUILD}/find-option.o
+${TARGET}/find: ${COMPAT} ${BUILD}/find-function.o ${BUILD}/find-main.o ${BUILD}/find-operator.o ${BUILD}/find.o ${BUILD}/find-ls.o ${BUILD}/find-misc.o ${BUILD}/find-option.o ${BUILD}/find-getdate.tab.o
 	${CC} ${CFLAGS} $^ -o $@
 
 ${TARGET}/grep: ${COMPAT} ${BUILD}/grep-file.o ${BUILD}/grep-queue.o ${BUILD}/grep-util.o ${BUILD}/grep.o

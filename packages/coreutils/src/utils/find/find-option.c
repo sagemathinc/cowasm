@@ -32,13 +32,6 @@
  * SUCH DAMAGE.
  */
 
-/*
-static char sccsid[] = "@(#)option.c	8.2 (Berkeley) 4/16/94";
-*/
-
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -65,9 +58,6 @@ static OPTION const options[] = {
     {"-Btime", c_Xtime, f_Xtime, F_TIME_B},
 #endif
     {"-a", c_and, NULL, 0},
-#ifdef ACL_TYPE_NFS4
-    {"-acl", c_acl, f_acl, 0},
-#endif
     {"-amin", c_Xmin, f_Xmin, F_TIME_A},
     {"-and", c_and, NULL, 0},
     {"-anewer", c_newer, f_newer, F_TIME_A},

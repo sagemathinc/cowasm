@@ -32,13 +32,6 @@
  * SUCH DAMAGE.
  */
 
-#if 0
-static char sccsid[] = "@(#)find.c	8.5 (Berkeley) 8/5/94";
-#endif
-
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -221,6 +214,9 @@ int find_execute(PLAN *plan, char *paths[]) {
   }
   e = errno;
   finish_execplus();
-  if (e && (!ignore_readdir_race || e != ENOENT)) errc(1, e, "fts_read");
+  if (e && (!ignore_readdir_race || e != ENOENT)) {
+    errno = e;
+    err(1, "%s", "fts_read");
+  }
   return (exitstatus);
 }

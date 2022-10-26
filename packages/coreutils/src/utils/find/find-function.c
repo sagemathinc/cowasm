@@ -32,18 +32,10 @@
  * SUCH DAMAGE.
  */
 
-#if 0
-static const char sccsid[] = "@(#)function.c	8.10 (Berkeley) 5/4/95";
-#endif
-
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
+#include "posix-wasm.h"
 #include <sys/param.h>
-#include <sys/ucred.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/acl.h>
 #include <sys/wait.h>
 #include <sys/mount.h>
 
@@ -340,54 +332,6 @@ PLAN *c_mXXdepth(OPTION *option, char ***argvp) {
     mindepth = find_parsenum(new, option->name, dstr, NULL);
   return new;
 }
-
-#ifdef ACL_TYPE_NFS4
-/*
- * -acl function --
- *
- *	Show files with EXTENDED ACL attributes.
- */
-int f_acl(PLAN *plan __unused, FTSENT *entry) {
-  acl_t facl;
-  acl_type_t acl_type;
-  int acl_supported = 0, ret, trivial;
-
-  if (S_ISLNK(entry->fts_statp->st_mode)) return 0;
-  ret = pathconf(entry->fts_accpath, _PC_ACL_NFS4);
-  if (ret > 0) {
-    acl_supported = 1;
-    acl_type = ACL_TYPE_NFS4;
-  } else if (ret < 0 && errno != EINVAL) {
-    warn("%s", entry->fts_accpath);
-    return (0);
-  }
-  if (acl_supported == 0) {
-    ret = pathconf(entry->fts_accpath, _PC_ACL_EXTENDED);
-    if (ret > 0) {
-      acl_supported = 1;
-      acl_type = ACL_TYPE_ACCESS;
-    } else if (ret < 0 && errno != EINVAL) {
-      warn("%s", entry->fts_accpath);
-      return (0);
-    }
-  }
-  if (acl_supported == 0) return (0);
-
-  facl = acl_get_file(entry->fts_accpath, acl_type);
-  if (facl == NULL) {
-    warn("%s", entry->fts_accpath);
-    return (0);
-  }
-  ret = acl_is_trivial_np(facl, &trivial);
-  acl_free(facl);
-  if (ret) {
-    warn("%s", entry->fts_accpath);
-    return (0);
-  }
-  if (trivial) return (0);
-  return (1);
-}
-#endif
 
 PLAN *c_acl(OPTION *option, char ***argvp __unused) {
   ftsoptions &= ~FTS_NOSTAT;
@@ -1285,6 +1229,8 @@ int f_regex(PLAN *plan, FTSENT *entry) {
   pmatch.rm_so = 0;
   pmatch.rm_eo = len;
 
+  // TODO/NOTE: could be issues with null's.
+  #define REG_STARTEND 0
   errcode = regexec(pre, str, 1, &pmatch, REG_STARTEND);
 
   if (errcode != 0 && errcode != REG_NOMATCH) {

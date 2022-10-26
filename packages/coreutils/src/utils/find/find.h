@@ -34,11 +34,13 @@
  *	@(#)find.h	8.1 (Berkeley) 6/6/93
  *	$FreeBSD$
  */
+#include "compat.h"
 
 #include <regex.h>
 #include <sys/mount.h>
 #include <sys/stat.h>
 
+#define __unused
 /*
  * We need to build find during the bootstrap stage when building on a
  * non-FreeBSD system. Linux does not have the st_flags and st_birthtime

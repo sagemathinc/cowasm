@@ -1055,6 +1055,7 @@ rmdir
 round
 roundf
 roundl
+rpmatch
 sbrk
 scalb
 scalbf
@@ -1146,6 +1147,7 @@ strspn
 strstr
 strtod
 strtof
+strtoq
 strtoimax
 strtonum
 strtok

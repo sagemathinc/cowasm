@@ -32,13 +32,6 @@
  * SUCH DAMAGE.
  */
 
-#if 0
-static char sccsid[] = "@(#)misc.c	8.2 (Berkeley) 4/1/94";
-#endif
-
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -68,7 +61,7 @@ void brace_subst(char *orig, char **store, char *path, size_t len) {
     newlen += plen - 2;
   }
   if (newlen > len) {
-    *store = reallocf(*store, newlen);
+    *store = realloc(*store, newlen);
     if (*store == NULL) err(2, NULL);
   }
   dst = *store;

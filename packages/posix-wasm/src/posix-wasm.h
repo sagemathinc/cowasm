@@ -386,8 +386,19 @@ int mergesort(void*, size_t, size_t, int (*)(const void*, const void*));
 int heapsort(void*, size_t, size_t, int (*)(const void*, const void*));
 
 int cowasm_fstat(int fildes, struct stat* buf);
-int cowasm_lstat(const char*  path, struct stat*  buf);
-int cowasm_stat(const char*  path, struct stat*  buf);
+int cowasm_lstat(const char* path, struct stat* buf);
+int cowasm_stat(const char* path, struct stat* buf);
 int cowasm_fstatat(int fd, const char* path, struct stat* buf, int flag);
+
+quad_t strtoq(const char* str, char** endptr, int base);
+
+#define UQUAD_MAX ULLONG_MAX
+#define QUAD_MAX LLONG_MAX
+#define QUAD_MIN LLONG_MIN
+
+#define REG_BASIC 0000
+#define MAXLOGNAME 255 /* max login name length */
+
+int rpmatch(const char* response);
 
 #endif
