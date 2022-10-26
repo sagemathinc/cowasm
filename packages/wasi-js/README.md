@@ -23,6 +23,13 @@ To install `wasi-js`, run this command:
 npm install wasi-js
 ```
 
+## Testing
+
+There is currently no test suite directly in this package. However, that doesn't
+mean that it doesn't get thorough testing. Indeed, it is tested by the other
+packages of CoWasm that depend on it, including a large number of tests in the
+cpython test suite (which helped me find many bugs).
+
 ## Quick Start
 
 **This quick start is for node.**  It's something like this.  See [zython](https://github.com/sagemathinc/zython)

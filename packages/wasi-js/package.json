@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/sagemathinc/zython/tree/main/packages/wasi-js",
   "dependencies": {
-    "@cowasm/memfs": "^3.4.8",
+    "@cowasm/memfs": "^3.5.0",
     "@types/jest": "^29.2.0",
     "@wapython/unionfs": "^4.5.7",
     "debug": "^4.3.4",
