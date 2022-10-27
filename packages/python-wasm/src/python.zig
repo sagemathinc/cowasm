@@ -130,8 +130,8 @@ export fn cowasm_python_terminal(argc: i32, argv: [*c][*c]u8) i32 {
         std.debug.print("terminal: must first init python -- {}", .{err});
         return 1;
     };
-    // std.debug.print("calling Py_BytesMain()... with argc={}, argv[0]={s} argv[1]={s} inputs\n", .{argc, argv[0], argv[1]});
+    std.debug.print("calling Py_BytesMain()... with argc={}, argv[0]={s} argv[1]={s} inputs\n", .{ argc, argv[0], argv[1] });
     const r = py.Py_BytesMain(argc, argv);
-    // std.debug.print("Py_Main exited with code {}\n", .{r});
+    std.debug.print("Py_BytesMain finished returning r={}\n", .{r});
     return r;
 }
