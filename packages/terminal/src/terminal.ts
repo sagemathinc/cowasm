@@ -27,6 +27,7 @@ export default async function terminal(element: HTMLDivElement) {
     term.write(data);
   });
   console.log("starting terminal");
-  const r = await python.terminal(['/usr/bin/python3']);
+  const r = await python.terminal();
   console.log("terminal terminated", r);
+  python.kernel.terminate();
 }

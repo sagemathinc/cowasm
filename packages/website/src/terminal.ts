@@ -3,7 +3,7 @@ import { Terminal } from "xterm";
 import setTheme from "./theme";
 import pythonWasm from "python-wasm";
 
-export async function terminal(element: HTMLDivElement) {
+export default async function terminal(element: HTMLDivElement) {
   const term = new Terminal({ convertEol: true });
   term.open(element);
   const python = await pythonWasm();
@@ -20,5 +20,6 @@ export async function terminal(element: HTMLDivElement) {
   python.kernel.on("stderr", (data) => {
     term.write(data);
   });
-  await python.terminal(["/usr/bin/python3"]);
+  await python.terminal();
+  python.kernel.terminate();
 }

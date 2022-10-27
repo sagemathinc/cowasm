@@ -44,12 +44,9 @@ module.exports = {
         type: "asset/resource",
       },
       {
-        test: /\.(js|jsx|ts|tsx|mjs|cjs)$/,
-        loader: "esbuild-loader",
-        options: {
-          loader: 'tsx',
-          target: 'es2015'
-        }
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
       },
       {
         test: /\.css$/i,
