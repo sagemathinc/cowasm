@@ -45,7 +45,11 @@ module.exports = {
       },
       {
         test: /\.(js|jsx|ts|tsx|mjs|cjs)$/,
-        loader: "swc-loader",
+        loader: "esbuild-loader",
+        options: {
+          loader: 'tsx',
+          target: 'es2015'
+        }
       },
       {
         test: /\.css$/i,
