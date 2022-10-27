@@ -81,6 +81,7 @@ static char *unescape(char *);
  * be either whole, the default, or decimal numbers.
  */
 int main(int argc, char *argv[]) {
+  setprogname(argv[0]);
   const char *sep, *term;
   struct lconv *locale;
   char pad, *fmt, *cur_print, *last_print;

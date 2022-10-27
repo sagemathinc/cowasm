@@ -45,6 +45,7 @@ all: \
 	${TARGET}/realpath \
 	${TARGET}/rm \
 	${TARGET}/rmdir \
+	${TARGET}/seq \
 	${TARGET}/sleep \
 	${TARGET}/sort \
 	${TARGET}/tail \
@@ -176,6 +177,9 @@ test-mktemp: ${TARGET}/mktemp
 	# rm would error if file didn't exist...
 	rm `${BIN}/cowasm ${TARGET}/mktemp abc.XXXXXX`
 
+test-seq: ${TARGET}/seq
+	${BIN}/cowasm ${TARGET}/seq 1 3 10 | ${BIN}/cowasm dist/wasm/bin/tr '\n' ' ' |grep "1 4 7 10"
+
 test-sleep: ${TARGET}/sleep
 	${BIN}/cowasm ${TARGET}/sleep 0.1
 
@@ -243,7 +247,7 @@ test-uniq-sources:
 # NOTE: "make -j8 test" seems to crash tty on linux host at least.
 
 test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-factor test-fmt test-grep test-head test-id \
-	test-join test-ls test-mktemp test-mkdir-rmdir test-mv test-rm test-sleep test-sort test-tail test-touch test-tr \
+	test-join test-ls test-mktemp test-mkdir-rmdir test-mv test-rm test-seq test-sleep test-sort test-tail test-touch test-tr \
 	test-tty test-uniq test-wc test-xargs
 	@echo "Success -- all coreutils tests passed"
 
