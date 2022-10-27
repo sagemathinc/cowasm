@@ -832,6 +832,7 @@ export default class WASI {
                     // doing something here (e.g., returning 0 bytes read) doesn't
                     // properly work with libedit.   So we leave it alone and let
                     // our slightly patched libedit handle control+d.
+                    // In particular note to self -- **handling of control+d is done in libedit!**
                     rr = this.stdinBuffer.copy(iov);
                     if (rr == this.stdinBuffer.length) {
                       this.stdinBuffer = undefined;

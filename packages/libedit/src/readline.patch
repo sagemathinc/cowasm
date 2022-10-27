@@ -6,6 +6,10 @@ to consider e->el_tty.t_c[EX_IO] rather than e->el_tty.t_c[TS_IO].
 Maybe this is just a decades old bug in libedit, and people usually use
 readline, so they don't notice.  I don't know.
 
+I found that using e->el_tty.t_c[EX_IO][C_EOF] led to a lot of problems in
+various states as well after revamping our IO and refactoring code.  I'm
+now just hardcoding the number 4, which seems to work very well in all cases for us.
+
 --- readline-orig.c	2022-07-20 16:28:37.000000000 -0700
 +++ readline.c	2022-07-20 16:49:05.000000000 -0700
 @@ -2112,7 +2112,7 @@
@@ -13,7 +17,7 @@ readline, so they don't notice.  I don't know.
  	if (buf == NULL || count-- <= 0)
  		return;
 -	if (count == 0 && buf[0] == e->el_tty.t_c[TS_IO][C_EOF])
-+	if (count == 0 && buf[0] == e->el_tty.t_c[EX_IO][C_EOF])
++	if (count == 0 && buf[0] == 4)
  		done = 1;
  	if (buf[count] == '\n' || buf[count] == '\r')
  		done = 2;
