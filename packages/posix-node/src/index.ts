@@ -283,6 +283,14 @@ interface PosixFunctions {
   makeStdinNonblocking: () => void;
   tcgetattr: (fd: number) => Termios;
   tcsetattr: (fd: number, optional_actions: number, tio: Termios) => void;
+
+  // Call watchForSignal once to start watching for the given signal.
+  // Call getSignalState to find out whether that signal was triggered (and clear the state).
+  // ONLY SIGINT is currently implemented!
+  // This is useful because node's "process.on('SIGINT'" doesn't work when the main
+  // event loop is blocked by blocking WebAssembly code.
+  watchForSignal: (signal: number) => void;
+  getSignalState: (signal: number) => boolean;
 }
 
 export type Posix = Partial<PosixFunctions>;

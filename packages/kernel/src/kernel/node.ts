@@ -8,6 +8,7 @@ import { existsSync } from "fs";
 import type { FileSystemSpec } from "wasi-js";
 export { FileSystemSpec };
 import { SIGINT } from "../wasm/constants";
+import posix from "posix-node";
 
 const KERNEL_WASM = "kernel.wasm";
 
@@ -46,18 +47,18 @@ function getOptions(wasmImport, opts?: Options) {
   };
 }
 
-let signal_state = 0;
+// NOTE: we can't just use 'process.on("SIGINT", () => { signal_state = SIGINT; });'
+// since the WASM program is blocking events. They just don't happen.  Hence
+// we use Zig code against libc for the sync kernel.
+// NOTE: Every program needs their own way of explicitly checking for signals, and
+// this is only implemented for Python right now.  I'll add it for other things eventually.
 function wasmGetSignalState() {
-  const val = signal_state;
-  signal_state = 0;
-  return val;
+  const state = posix.getSignalState?.(SIGINT) ?? 0;
+  return state ? SIGINT : 0;
 }
 
 export async function syncKernel(opts?: Options): Promise<WasmInstanceSync> {
-  process.on("SIGINT", () => {
-    console.log("SIGINT!");
-    signal_state = SIGINT;
-  });
+  posix.watchForSignal?.(SIGINT);
   const kernel = await createSyncKernel(
     getOptions(wasmSyncImport, {
       ...opts,

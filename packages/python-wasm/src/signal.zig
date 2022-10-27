@@ -7,8 +7,8 @@ const python = @cImport(@cInclude("Python.h"));
 extern fn wasmGetSignalState() i32;
 
 export fn _Py_CheckEmscriptenSignals() void {
-    //std.debug.print("python-wasm: _Py_CheckEmscriptenSignals\n", .{});
     const signal = wasmGetSignalState();
+    // std.debug.print("python-wasm: _Py_CheckEmscriptenSignals: signal={}\n", .{signal});
     if (signal != 0) {
         // std.debug.print("_Py_CheckEmscriptenSignals: got a signal! {}\n", .{signal});
         if (python.PyErr_SetInterruptEx(signal) != 0) {

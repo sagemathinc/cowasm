@@ -610,7 +610,6 @@ pub fn create_i32(env: c.napi_env, value: i32, comptime error_message: [:0]const
     return result;
 }
 
-// this really gets the singleton; it doesn't actually create one.
 pub fn create_bool(env: c.napi_env, value: bool, comptime error_message: [:0]const u8) !c.napi_value {
     var result: c.napi_value = undefined;
     if (c.napi_get_boolean(env, value, &result) != c.napi_ok) {
