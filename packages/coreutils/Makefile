@@ -54,6 +54,7 @@ all: \
 	${TARGET}/test \
 	${TARGET}/touch \
 	${TARGET}/tr \
+	${TARGET}/tsort \
 	${TARGET}/tty \
 	${TARGET}/unexpand \
 	${TARGET}/uniq \
@@ -124,6 +125,9 @@ ${TARGET}/tail: ${COMPAT} ${BUILD}/forward.o ${BUILD}/misc.o ${BUILD}/read.o ${B
 	${CC} ${CFLAGS} $^ -o $@
 
 ${TARGET}/tr: ${COMPAT} ${BUILD}/tr.o ${BUILD}/tr-str.o
+	${CC} ${CFLAGS} $^ -o $@
+
+${TARGET}/tsort: ${COMPAT} ${BUILD}/tsort.o ${BUILD}/ohash.o
 	${CC} ${CFLAGS} $^ -o $@
 
 ${TARGET}/xargs: ${COMPAT} ${BUILD}/xargs.o  ${BUILD}/strnsubst.o
