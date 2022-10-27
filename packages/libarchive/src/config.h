@@ -13,3 +13,4 @@
 #undef HAVE_GETGRGID_R
 #undef HAVE_GETGRNAM_R
 #undef HAVE_LUTIMES
+#undef HAVE_READDIR_R
