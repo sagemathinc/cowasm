@@ -7,6 +7,7 @@ import { join } from "path";
 import { existsSync } from "fs";
 import type { FileSystemSpec } from "wasi-js";
 export { FileSystemSpec };
+import { SIGINT } from "../wasm/constants";
 
 const KERNEL_WASM = "kernel.wasm";
 
@@ -17,6 +18,7 @@ const TERM = "xterm-256color";
 interface Options {
   env?: { [name: string]: string }; // extra env vars.
   fs?: FileSystemSpec[];
+  wasmEnv?: { [name: string]: Function };
 }
 
 function getOptions(wasmImport, opts?: Options) {
@@ -40,13 +42,36 @@ function getOptions(wasmImport, opts?: Options) {
     wasmImport,
     fs: opts?.fs ?? ([{ type: "native" }] as FileSystemSpec[]),
     env,
+    wasmEnv: opts?.wasmEnv,
   };
 }
 
+let signal_state = 0;
+function wasmGetSignalState() {
+  const val = signal_state;
+  signal_state = 0;
+  return val;
+}
+
 export async function syncKernel(opts?: Options): Promise<WasmInstanceSync> {
-  return await createSyncKernel(getOptions(wasmSyncImport, opts));
+  process.on("SIGINT", () => {
+    console.log("SIGINT!");
+    signal_state = SIGINT;
+  });
+  const kernel = await createSyncKernel(
+    getOptions(wasmSyncImport, {
+      ...opts,
+      wasmEnv: { wasmGetSignalState, ...opts?.wasmEnv },
+    })
+  );
+  return kernel;
 }
 
 export async function asyncKernel(opts?: Options): Promise<WasmInstanceAsync> {
-  return await createAsyncKernel(getOptions(wasmAsyncImport, opts));
+  const kernel = await createAsyncKernel(getOptions(wasmAsyncImport, opts));
+  process.on("SIGINT", () => {
+    console.log("SIGINT!");
+    kernel.signal(SIGINT);
+  });
+  return kernel;
 }

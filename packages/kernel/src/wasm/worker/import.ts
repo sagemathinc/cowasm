@@ -22,7 +22,7 @@ export function strlen(charPtr: number, memory: WebAssembly.Memory): number {
 }
 
 export interface Options {
-  wasmEnv?: object; // functions to include in the environment
+  wasmEnv?: { [name: string]: Function }; // functions to include in the environment
   env?: { [name: string]: string }; // environment variables
   time?: boolean;
   sleep?: (milliseconds: number) => void;
@@ -107,6 +107,7 @@ async function doWasmImport({
   let wasm;
 
   if (wasmOpts.env.wasmGetSignalState == null) {
+    console.warn("wasmGetSignalState not defined; using STUB");
     wasmOpts.env.wasmGetSignalState = () => {
       return 0;
     };
