@@ -8,12 +8,13 @@ import debug from "debug";
 
 const log = debug("python-wasm");
 
-type FileSystemOption = "auto" | "bundle" | "sandbox";
+type FileSystemOption = "auto" | "bundle" | "everything";
 
 export interface Options {
   fs?: FileSystemOption;
   noReadline?: boolean;
   env?: object; // overrides or sets environment variables
+  interactive?: boolean; // for interactive async terminal or program under nodejs
 }
 
 export class PythonWasmSync {

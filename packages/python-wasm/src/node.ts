@@ -8,7 +8,7 @@ const log = debug("python-wasm");
 import { Options, PythonWasmSync, PythonWasmAsync } from "./common";
 
 const python_wasm = join(__dirname, "python.wasm");
-const pythonSandbox = join(__dirname, "python-sandbox.zip");
+const pythonEverything = join(__dirname, "python-everything.zip");
 const pythonFull = join(__dirname, "python-stdlib.zip");
 const pythonReadline = join(__dirname, "python-readline.zip");
 const pythonMinimal = join(__dirname, "python-minimal.zip");
@@ -33,14 +33,14 @@ async function createPython(
   sync: boolean,
   opts?: Options
 ): Promise<PythonWasmSync | PythonWasmAsync> {
-  log("creating Python with sync = ", sync, ", opts = ", opts);
+  log("creating Python; sync = ", sync, ", opts = ", opts);
   const fs = getFilesystem(opts);
   let env: any = { PYTHONEXECUTABLE };
   let wasm = python_wasm;
-  if (opts?.fs == "sandbox") {
+  if (opts?.fs == "everything") {
     wasm = "/usr/lib/python3.11/python.wasm";
   }
-  if (opts?.fs == "sandbox") {
+  if (opts?.fs == "everything") {
     env.PYTHONHOME = "/usr";
   }
   if (opts?.env != null) {
@@ -48,7 +48,7 @@ async function createPython(
   }
   const kernel = sync
     ? await syncKernel({ env, fs })
-    : await asyncKernel({ env, fs });
+    : await asyncKernel({ env, fs, interactive: opts?.interactive });
   log("done");
   log("initializing python");
   const python = sync
@@ -60,11 +60,11 @@ async function createPython(
 }
 
 function getFilesystem(opts?: Options): FileSystemSpec[] {
-  if (opts?.fs == "sandbox") {
+  if (opts?.fs == "everything") {
     return [
       {
         type: "zipfile",
-        zipfile: pythonSandbox,
+        zipfile: pythonEverything,
         mountpoint: "/usr/lib/python3.11",
       },
       { type: "native" },
@@ -87,7 +87,7 @@ function getFilesystem(opts?: Options): FileSystemSpec[] {
         zipfile: pythonFull,
         mountpoint: "/usr/lib/python3.11",
       },
-      // And the rest of the native filesystem.   Sandboxing is not at all our goal here.
+      // And the rest of the native filesystem.   **Sandboxing is not at all our goal here yet.**
       { type: "native" },
     ];
   } else {

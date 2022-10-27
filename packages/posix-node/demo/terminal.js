@@ -1,3 +1,12 @@
+/*
+Example of using setEcho and getChar from pour posix library.
+
+NOTE: You can accomplish basically the same thing as this demo in pure node as explained at
+
+https://stackoverflow.com/questions/5006821/nodejs-how-to-read-keystrokes-from-stdin
+
+*/
+
 const posix = require("..");
 posix.setEcho(false);
 console.log(

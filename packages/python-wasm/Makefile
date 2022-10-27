@@ -40,7 +40,7 @@ ${DIST}/python.wasm: src/python.zig src/signal.zig ${BUILD}/libpython.o ${CPYTHO
 		&& rm python.o \
 		&& mv python.wasm ${DIST}/python.wasm
 
-BUNDLES = ${DIST}/python-minimal.zip ${DIST}/python-readline.zip ${DIST}/python-stdlib.zip ${DIST}/python-sandbox.zip
+BUNDLES = ${DIST}/python-minimal.zip ${DIST}/python-readline.zip ${DIST}/python-stdlib.zip ${DIST}/python-everything.zip
 
 
 ${DIST}/%.zip: ${PYTHON_WASM}/lib/dist/%.zip
@@ -66,11 +66,11 @@ ${DIST}/sympy.tar.xz: ${PACKAGES}/py-sympy/dist/wasm/sympy.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 
-${DIST}/python-sandbox.zip: ${DIST}/python-stdlib.zip ${PYTHON_PACKAGES} ${DIST}/python.wasm
+${DIST}/python-everything.zip: ${DIST}/python-stdlib.zip ${PYTHON_PACKAGES} ${DIST}/python.wasm
 	cd ${DIST} \
-		&&	cp python-stdlib.zip .python-sandbox.zip \
-		&&  zip .python-sandbox.zip *.tar.xz python.wasm \
-		&&  mv .python-sandbox.zip python-sandbox.zip
+		&&	cp python-stdlib.zip .python-everything.zip \
+		&&  zip .python-everything.zip *.tar.xz python.wasm \
+		&&  mv .python-everything.zip python-everything.zip
 
 
 

@@ -12,7 +12,7 @@ test("sigint interrupts 'while True: pass' within 250ms", async () => {
   let interrupted = false;
   (async () => {
     try {
-      await exec("while True: pass");
+      await exec("while True: pass   # expected to fail!");
     } catch (_err) {
       interrupted = true;
     }

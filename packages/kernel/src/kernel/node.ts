@@ -20,6 +20,7 @@ interface Options {
   env?: { [name: string]: string }; // extra env vars.
   fs?: FileSystemSpec[];
   wasmEnv?: { [name: string]: Function };
+  interactive?: boolean; // enable terminal and signal handling in async mode.
 }
 
 function getOptions(wasmImport, opts?: Options) {
@@ -70,9 +71,25 @@ export async function syncKernel(opts?: Options): Promise<WasmInstanceSync> {
 
 export async function asyncKernel(opts?: Options): Promise<WasmInstanceAsync> {
   const kernel = await createAsyncKernel(getOptions(wasmAsyncImport, opts));
-  process.on("SIGINT", () => {
-    console.log("SIGINT!");
-    kernel.signal(SIGINT);
-  });
+  if (opts?.interactive) {
+    asyncIO(kernel);
+  }
   return kernel;
+}
+
+function asyncIO(kernel: WasmInstanceAsync) {
+  const keyHandler = (key) => {
+    kernel.writeToStdin(key);
+  };
+  process.stdin.on("data", keyHandler);
+
+  const sigintHandler = () => {
+    kernel.signal(SIGINT);
+  };
+  process.on("SIGINT", sigintHandler);
+
+  kernel.on("terminate", () => {
+    process.stdin.removeListener("data", keyHandler);
+    process.removeListener("SIGINT", sigintHandler);
+  });
 }

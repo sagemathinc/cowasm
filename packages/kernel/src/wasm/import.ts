@@ -121,6 +121,8 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     worker.emit("exit");
     worker.terminate();
     worker.removeAllListeners();
+    this.emit("terminate");
+    this.removeAllListeners();
   }
 
   async callWithString(
