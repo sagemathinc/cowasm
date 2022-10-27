@@ -22,6 +22,7 @@ all: \
 	${TARGET}/du \
 	${TARGET}/env \
 	${TARGET}/expand \
+	${TARGET}/expr \
 	${TARGET}/factor \
 	${TARGET}/false \
 	${TARGET}/find \
@@ -158,6 +159,9 @@ test-dirname: ${TARGET}/dirname
 test-env: ${TARGET}/env
 	test "`FOO=bar ${BIN}/cowasm dist/wasm/bin/env |grep FOO`" = "FOO=bar"
 
+test-expr: ${TARGET}/expr
+	test "`${BIN}/cowasm ${TARGET}//expr 2 + 3`" = "5"
+
 test-factor: ${TARGET}/factor
 	test "`${BIN}/cowasm ${TARGET}/factor 2023`" = "2023: 7 17 17"
 
@@ -260,7 +264,7 @@ test-uniq-sources:
 # Very basic tests of some things.
 # NOTE: "make -j8 test" seems to crash tty on linux host at least.
 
-test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-factor test-fmt test-grep test-head test-id \
+test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-expr test-factor test-fmt test-grep test-head test-id \
 	test-join test-ls test-mktemp test-mkdir-rmdir test-mv test-rm test-seq test-sleep test-sort test-stat test-tail test-touch test-tr \
 	test-tty test-uname test-uniq test-wc test-xargs
 	@echo "Success -- all coreutils tests passed"
