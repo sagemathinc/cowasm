@@ -390,6 +390,8 @@ int cowasm_lstat(const char* path, struct stat* buf);
 int cowasm_stat(const char* path, struct stat* buf);
 int cowasm_fstatat(int fd, const char* path, struct stat* buf, int flag);
 
+
+#if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 quad_t strtoq(const char* str, char** endptr, int base);
 
 #define UQUAD_MAX ULLONG_MAX
@@ -400,5 +402,8 @@ quad_t strtoq(const char* str, char** endptr, int base);
 #define MAXLOGNAME 255 /* max login name length */
 
 int rpmatch(const char* response);
+#endif // BSD_SOURCE
+
+
 
 #endif
