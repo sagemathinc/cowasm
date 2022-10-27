@@ -21,14 +21,14 @@ test-native: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM} \
 		&& python-native setup.py test
 
-# This is a small test just that something works.  It's NOT the full very massive test suite,
-# which might be hard to get to pass anywhere, let alone in WASM.
-test: ${BUILD_WASM}/.built
-	${BIN}/python-wasm ${SRC}/test_basic.py
-
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
 		&& python-native -m cowasm_bundler sympy \
 		&& mkdir -p ${DIST_WASM} \
 		&& cp sympy.* ${DIST_WASM}
 	touch ${DIST_WASM}/.built
+
+# This is a small test just that something works.  It's NOT the full very massive test suite,
+# which might be hard to get to pass anywhere, let alone in WASM.
+test: ${DIST_WASM}/.built
+	${BIN}/python-wasm ${SRC}/test_basic.py

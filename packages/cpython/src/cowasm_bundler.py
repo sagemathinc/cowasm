@@ -153,6 +153,9 @@ def create_bundle(name, extra_files):
         tarinfo.mtime = now
         tar.addfile(tarinfo, io.BytesIO(data))
 
+    # Finally, we delete the zip, since it wastes space and we are not using it.
+    os.unlink(f'{name}.zip')
+
 
 if __name__ == '__main__':
     create_bundle(sys.argv[1], sys.argv[2:])
