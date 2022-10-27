@@ -48,6 +48,7 @@ all: \
 	${TARGET}/seq \
 	${TARGET}/sleep \
 	${TARGET}/sort \
+	${TARGET}/stat \
 	${TARGET}/tail \
 	${TARGET}/tee \
 	${TARGET}/test \
@@ -192,19 +193,23 @@ test-head: ${TARGET}/head
 test-join: ${TARGET}/head
 	printf "1 X\n2 Y\n3 Z" > ${BUILD}/a
 	printf "1 x\n2 y\n3 z" > ${BUILD}/b
-	test "`cowasm dist/wasm/bin/join  ${BUILD}/a ${BUILD}/b`" = "`printf "1 X x\n2 Y y\n3 Z z"`"
+	test "`cowasm ${TARGET}/join  ${BUILD}/a ${BUILD}/b`" = "`printf "1 X x\n2 Y y\n3 Z z"`"
 
 test-mkdir-rmdir: ${TARGET}/mkdir ${TARGET}/rmdir
-	${BIN}/cowasm dist/wasm/bin/mkdir xyz-mkdir && ${BIN}/cowasm dist/wasm/bin/rmdir xyz-mkdir && ${BIN}/cowasm dist/wasm/bin/test ! -d xyz-mkdir
+	${BIN}/cowasm ${TARGET}/mkdir xyz-mkdir && ${BIN}/cowasm ${TARGET}/rmdir xyz-mkdir && ${BIN}/cowasm ${TARGET}/test ! -d xyz-mkdir
 
 test-mv: ${TARGET}/mv ${TARGET}/touch ${TARGET}/test ${TARGET}/rm
-	${BIN}/cowasm dist/wasm/bin/touch x && ${BIN}/cowasm dist/wasm/bin/mv x y && ${BIN}/cowasm dist/wasm/bin/test -f y && ${BIN}/cowasm dist/wasm/bin/rm y
+	${BIN}/cowasm ${TARGET}/touch x && ${BIN}/cowasm ${TARGET}/mv x y && ${BIN}/cowasm ${TARGET}/test -f y && ${BIN}/cowasm ${TARGET}/rm y
 
 test-rm: ${TARGET}/rm ${TARGET}/touch
-	${BIN}/cowasm dist/wasm/bin/touch xyz-rm && ${BIN}/cowasm dist/wasm/bin/rm xyz-rm && ${BIN}/cowasm dist/wasm/bin/test ! -f xyz-rm
+	${BIN}/cowasm ${TARGET}/touch xyz-rm && ${BIN}/cowasm ${TARGET}/rm xyz-rm && ${BIN}/cowasm ${TARGET}/test ! -f xyz-rm
 
 test-sort: ${TARGET}/sort
-	printf "x\na\ny\nhello\n" | ${BIN}/cowasm dist/wasm/bin/sort | ${BIN}/cowasm dist/wasm/bin/tr '\n' ' ' | grep "a hello x y"
+	printf "x\na\ny\nhello\n" | ${BIN}/cowasm ${TARGET}/sort | ${BIN}/cowasm ${TARGET}/tr '\n' ' ' | grep "a hello x y"
+
+test-stat: ${TARGET}/stat
+	${BIN}/cowasm ${TARGET}/stat ${TARGET}/stat |grep ${TARGET}/stat
+	${BIN}/cowasm ${TARGET}/stat -s ${TARGET}/stat |grep st_mtime
 
 test-tail: ${TARGET}/tail
 	echo "first line" > ${BUILD}/.test-tail
@@ -213,23 +218,23 @@ test-tail: ${TARGET}/tail
 	rm ${BUILD}/.test-tail
 
 test-tee: ${TARGET}/tee
-	echo "Hello" | ${BIN}/cowasm ./dist/wasm/bin/tee ${BUILD}/.greetings.txt | grep Hello;  grep Hello ${BUILD}/.greetings.txt; rm ${BUILD}/.greetings.txt
+	echo "Hello" | ${BIN}/cowasm ./${TARGET}/tee ${BUILD}/.greetings.txt | grep Hello;  grep Hello ${BUILD}/.greetings.txt; rm ${BUILD}/.greetings.txt
 
 test-touch: ${TARGET}/touch
-	${BIN}/cowasm dist/wasm/bin/touch ${BUILD}/.foobar; ls ${BUILD}/.foobar |wc -l | grep 1;  rm ${BUILD}/.foobar
+	${BIN}/cowasm ${TARGET}/touch ${BUILD}/.foobar; ls ${BUILD}/.foobar |wc -l | grep 1;  rm ${BUILD}/.foobar
 
 test-tr: ${TARGET}/tr
-	echo "Bella" | ${BIN}/cowasm dist/wasm/bin/tr Bl 81 |grep 8e11a
+	echo "Bella" | ${BIN}/cowasm ${TARGET}/tr Bl 81 |grep 8e11a
 
 test-tty: ${TARGET}/tty
 	# Do not be too precise with output so this works on both mac and linux...
-	${BIN}/cowasm ./dist/wasm/bin/tty | grep /dev
+	${BIN}/cowasm ./${TARGET}/tty | grep /dev
 
 test-uniq: ${TARGET}/uniq
-	printf "hello\nworld\nworld\nworld\n" | ${BIN}/cowasm dist/wasm/bin/uniq | wc -l | grep 2
+	printf "hello\nworld\nworld\nworld\n" | ${BIN}/cowasm ${TARGET}/uniq | wc -l | grep 2
 
 test-wc: ${TARGET}/wc
-	echo "hello world" | ${BIN}/cowasm dist/wasm/bin/wc | grep "1       2      12"
+	echo "hello world" | ${BIN}/cowasm ${TARGET}/wc | grep "1       2      12"
 
 test-xargs: ${TARGET}/xargs
 	ls -1 | ${BIN}/cowasm ${TARGET}/xargs |grep Makefile |grep dist
@@ -247,7 +252,7 @@ test-uniq-sources:
 # NOTE: "make -j8 test" seems to crash tty on linux host at least.
 
 test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-factor test-fmt test-grep test-head test-id \
-	test-join test-ls test-mktemp test-mkdir-rmdir test-mv test-rm test-seq test-sleep test-sort test-tail test-touch test-tr \
+	test-join test-ls test-mktemp test-mkdir-rmdir test-mv test-rm test-seq test-sleep test-sort test-stat test-tail test-touch test-tr \
 	test-tty test-uniq test-wc test-xargs
 	@echo "Success -- all coreutils tests passed"
 
