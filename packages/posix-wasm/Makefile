@@ -18,7 +18,7 @@ OBJECTS = ${BUILD_WASM}/posix-wasm.o ${BUILD_WASM}/threads.o \
 	${BUILD_WASM}/lib/stdlib/qsort_nr.o \
 	${TEMP}/mkdtemp.o ${TEMP}/mkstemps.o \
 	${FTS}/fts.o ${FTS}/cowasm_stat.o  \
-	${BSD}/strtonum.o 	${BSD}/setmode.o  ${BSD}/merge.o ${BSD}/heapsort.o
+	${BSD}/strtonum.o 	${BSD}/setmode.o  ${BSD}/merge.o ${BSD}/heapsort.o ${BSD}/strtoq.o ${BSD}/rpmatch.o
 
 DEPS = $(shell find src -type f \( -iname '*.h' \))
 CFLAGS = -Oz -I${SRC}
