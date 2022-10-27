@@ -37,6 +37,7 @@ function processArgs(argv: string[]): { dev: boolean; worker: boolean } {
   const j = argv.indexOf("--worker");
   const worker = j != -1;
   if (worker) {
+    console.warn("--worker is currently not finished");
     argv.splice(j, 1);
   }
   return { dev, worker };

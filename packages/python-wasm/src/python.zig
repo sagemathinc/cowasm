@@ -1,5 +1,10 @@
 const std = @import("std");
 const py = @cImport(@cInclude("Python.h"));
+const signal = @import("./signal.zig");
+
+export fn keepalive() void {
+    signal.keepalive();
+}
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 var allocator = gpa.allocator();

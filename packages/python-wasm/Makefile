@@ -28,7 +28,7 @@ ${BUILD}/libpython.o: ${DYLINK}/wasm-export/libpython.c
 		-c ${DYLINK}/wasm-export/libpython.c \
 		-o ${BUILD}/libpython.o
 
-${DIST}/python.wasm: src/python.zig ${BUILD}/libpython.o ${CPYTHON}/lib/libpython3.11.a
+${DIST}/python.wasm: src/python.zig src/signal.zig ${BUILD}/libpython.o ${CPYTHON}/lib/libpython3.11.a
 	mkdir -p ${DIST}
 	cd src/ \
 		&& ${BIN}/cowasm-zig \
@@ -66,7 +66,7 @@ ${DIST}/sympy.tar.xz: ${PACKAGES}/py-sympy/dist/wasm/sympy.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 
-${DIST}/python-sandbox.zip: ${DIST}/python-stdlib.zip ${PYTHON_PACKAGES}
+${DIST}/python-sandbox.zip: ${DIST}/python-stdlib.zip ${PYTHON_PACKAGES} ${DIST}/python.wasm
 	cd ${DIST} \
 		&&	cp python-stdlib.zip .python-sandbox.zip \
 		&&  zip .python-sandbox.zip *.tar.xz python.wasm \

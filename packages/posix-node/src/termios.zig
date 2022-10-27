@@ -46,7 +46,7 @@ pub const constants = .{
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "getChar", getChar);
     try node.registerFunction(env, exports, "enableRawInput", enableRawInput);
-    try node.registerFunction(env, exports, "disableEcho", disableEcho);
+    try node.registerFunction(env, exports, "setEcho", setEcho);
     try node.registerFunction(env, exports, "makeStdinBlocking", makeStdinBlocking);
     try node.registerFunction(env, exports, "tcgetattr", tcgetattr);
     try node.registerFunction(env, exports, "tcsetattr", tcsetattr);
@@ -149,16 +149,21 @@ fn _enableRawInput() Errors!void {
     enabled = true;
 }
 
-fn disableEcho(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
-    _ = info;
+fn setEcho(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const enable = node.valueToBool(env, argv[0], "missing true or false argument") catch return null;
     var raw: clib.termios = undefined;
     if (clib.tcgetattr(clib.STDIN_FILENO, &raw) != 0) {
-        node.throwErrno(env, "disableEcho - tcgetattr failed");
+        node.throwErrno(env, "setEcho - tcgetattr failed");
         return null;
     }
-    raw.c_lflag &= ~(@intCast(@TypeOf(raw.c_lflag), clib.ECHO));
+    if (enable) {
+        raw.c_lflag |= @intCast(@TypeOf(raw.c_lflag), clib.ECHO);
+    } else {
+        raw.c_lflag &= ~(@intCast(@TypeOf(raw.c_lflag), clib.ECHO));
+    }
     if (clib.tcsetattr(clib.STDIN_FILENO, clib.TCSAFLUSH, &raw) != 0) {
-        node.throwErrno(env, "disableEcho - tcsetattr failed");
+        node.throwErrno(env, "setEcho - tcsetattr failed");
         return null;
     }
     return null;

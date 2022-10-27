@@ -206,12 +206,6 @@ export default function other(context) {
       return 0;
     },
 
-    // TODO: figure out what this is... Building zig with target wasm32-emscripten
-    // makes it so this is required.  It gets called a lot.  Better to move it to the
-    // C level for speed...?
-    emscripten_return_address: () => {
-      return 0;
-    },
   };
 
   return lib;
