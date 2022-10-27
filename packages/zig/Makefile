@@ -11,10 +11,9 @@ include ../build/Makefile-vars
 # the *native* version of Python, whereas
 #    0.10.0-dev.4476+0f0076666
 # succeeds. Reported upstream -- https://github.com/ziglang/zig/issues/13303
+# This is a bug in compiler-rt.zig, which I have patched below.
 
-# VERSION = 0.10.0-dev.4562+b3cd38ea4
-
-VERSION = 0.10.0-dev.4476+0f0076666
+VERSION = 0.10.0-dev.4587+710e2e7f1
 
 # Using sed because uname -s --> x86_64 or arm64, but need aarch64
 ARCH = $(shell uname -m | sed s/arm64/aarch64/)
@@ -44,10 +43,13 @@ ${DIST_NATIVE}/.${VERSION}: ${TARBALL}
 	rm -rf ${DIST_NATIVE}
 	mkdir -p ${DIST_NATIVE}
 	tar xf ${TARBALL} -C ${DIST_NATIVE} --strip-components=1
-	# Add support for -target wasm32-emscripten
+	# 01-emscripten.patch -- Add support for -target wasm32-emscripten
+	# 02-issue-13303.patch -- Fix bug 13303. Remove once they fix upstream.  I did report it.
 	# Note the funny || is because the zig binaries are laid out in
 	# inconstent way.
-	cd ${DIST_NATIVE}/lib/zig 2>/dev/null || cd ${DIST_NATIVE}/lib && cat ${SRC}/patches/01-emscripten.patch | patch -p3
+	cd ${DIST_NATIVE}/lib/zig 2>/dev/null || cd ${DIST_NATIVE}/lib \
+		&& cat ${SRC}/patches/01-emscripten.patch | patch -p3 \
+		&& cat ${SRC}/patches/02-issue-13303.patch | patch -p4
 	touch ${DIST_NATIVE}/.${VERSION}
 
 ${BIN}/zig: ${DIST_NATIVE}/.${VERSION}
