@@ -56,6 +56,7 @@ all: \
 	${TARGET}/tr \
 	${TARGET}/tsort \
 	${TARGET}/tty \
+	${TARGET}/uname \
 	${TARGET}/unexpand \
 	${TARGET}/uniq \
 	${TARGET}/wc \
@@ -222,7 +223,7 @@ test-tail: ${TARGET}/tail
 	rm ${BUILD}/.test-tail
 
 test-tee: ${TARGET}/tee
-	echo "Hello" | ${BIN}/cowasm ./${TARGET}/tee ${BUILD}/.greetings.txt | grep Hello;  grep Hello ${BUILD}/.greetings.txt; rm ${BUILD}/.greetings.txt
+	echo "Hello" | ${BIN}/cowasm ${TARGET}/tee ${BUILD}/.greetings.txt | grep Hello;  grep Hello ${BUILD}/.greetings.txt; rm ${BUILD}/.greetings.txt
 
 test-touch: ${TARGET}/touch
 	${BIN}/cowasm ${TARGET}/touch ${BUILD}/.foobar; ls ${BUILD}/.foobar |wc -l | grep 1;  rm ${BUILD}/.foobar
@@ -232,7 +233,11 @@ test-tr: ${TARGET}/tr
 
 test-tty: ${TARGET}/tty
 	# Do not be too precise with output so this works on both mac and linux...
-	${BIN}/cowasm ./${TARGET}/tty | grep /dev
+	${BIN}/cowasm ${TARGET}/tty | grep /dev
+
+test-uname: ${TARGET}/uname
+	test "`${BIN}/cowasm ${TARGET}/uname`" = "wasi"
+	test "`${BIN}/cowasm ${TARGET}/uname -a`" = "wasi (none) 0.0.0 0.0.0 wasm32"
 
 test-uniq: ${TARGET}/uniq
 	printf "hello\nworld\nworld\nworld\n" | ${BIN}/cowasm ${TARGET}/uniq | wc -l | grep 2
@@ -257,7 +262,7 @@ test-uniq-sources:
 
 test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-factor test-fmt test-grep test-head test-id \
 	test-join test-ls test-mktemp test-mkdir-rmdir test-mv test-rm test-seq test-sleep test-sort test-stat test-tail test-touch test-tr \
-	test-tty test-uniq test-wc test-xargs
+	test-tty test-uname test-uniq test-wc test-xargs
 	@echo "Success -- all coreutils tests passed"
 
 
