@@ -11,6 +11,19 @@ ${DIST}/.built: src/index.ts
 
 # This is only for use by person maintaining the website.
 
+# This is on github pages so it is forced down to using a Service Worker.
+.PHONY: github-pages
+github-pages:
+	NODE_ENV="production" npm run build
+	rsync -axvH --delete dist/ ${HOME}/zython.org/docs/
+	cd ${HOME}/zython.org/docs/ \
+		&& git checkout CNAME \
+		&& git add . \
+		&& git commit -a -m "update website" \
+		&& git push
+
+
+# This is on cloudflare pages so it can use SharedArrayBuffers
 .PHONY: cowasm.org
 cowasm.org:
 	NODE_ENV="production" npm run build
