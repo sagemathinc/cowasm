@@ -171,7 +171,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	#       - with -oZ, test_richcmp.py fails with a limit above 750; a limit of max of 720 works on node on linux.
 	#         Changing to -O3 makes no difference.
 	# - with-ensurepip: we put that since we need it, but the makefile just runs ensurepip on python-native,
-	#   so it doesn't help.  That's fine, since we can't run zython yet until building ../zython anyways.
+	#   so it doesn't help.  That's fine for our application, since we explicitly run ensurepip later.
 	# - explicitly specifying BLDSHARED is needed since otherwise linking shared modules doesn't work.
 	#   ALSO, note that wasm-strip for fPIC code must be done at link time and can't be done later, due to
 	#   it simply not being implemented yet.  Stripping is automatic with cowasm-cc unless you pass -g.
@@ -220,7 +220,7 @@ ${DIST_WASM}/.install-cpython: ${DIST_WASM}/.built-cpython
 
 	# For some reason (upstream bug?) test-tomllib isn't copied over, but it's nice to have for testing.
 	cp -rv ${BUILD_WASM}/Lib/test/test_tomllib ${DIST_WASM}/lib/python3.11/test/
-	# Copy over our small zython library with functionality for our packages.
+	# Copy over our small cowasm-specific library with functionality for our packages.
 	cp ${SRC}/cowasm_importer.py ${DIST_WASM}/lib/python3.11/site-packages
 	cp ${SRC}/cowasm_importer.py ${DIST_WASM}/lib/dist
 	# Done!
@@ -288,7 +288,7 @@ ${DIST_WASM}/.built: ${DIST_WASM}/.install-data
 
 
 # Use "make run-wasm" to run our WASM python at the command line.
-# You can also just run `zython` in the top level bin/ directory.
+# You can also just run `python-wasm` in the top level bin/ directory.
 .PHONY: python-wasm
 python-wasm: wasm ${BIN}/python-wasm
 	@${BIN}/python-wasm
@@ -314,11 +314,12 @@ pip: ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built
 
 # Run the full official Python test suite on the wasm build.  We can't just do
 # "make test" in build/wasm, since that only support wasmtime and emscripten.
-# Also, we can't use zython to orchestrate this (yet), since the
-# test suite runner uses threads.  However, you set line 543 to
+# Also, we can't use our WASM python to orchestrate this (yet), since the
+# test suite runner uses threads (and anyways, we like the speedup from multithreading).
+# However, you set line 543 to
 #         self.ns.use_mp = 0
 # of dist/wasm/lib/python3.11/test/libregrtest/main.py then it works, but of course
-# with a single process, which is slow. So we stick with python-native.
+# with a single process, which is very slow. So we stick with python-native for testing.
 RUN_TESTS = _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 	_PYTHON_HOST_PLATFORM=wasi-wasm32 \
 	PYTHONPATH=${DIST_WASM}/lib/python3.11 \

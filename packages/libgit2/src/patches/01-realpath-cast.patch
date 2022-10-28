@@ -5,8 +5,8 @@
  {
  	char *ret;
 -	if ((ret = realpath(pathname, resolved)) == NULL)
-+  // zython - I don't know why this cast is needed since it's char* in the upstream header.
++  // cowasm - I don't know why this cast is needed since it's char* in the upstream header.
 +	if ((ret = (char*) realpath(pathname, resolved)) == NULL)
  		return NULL;
- 
+
  #ifdef __OpenBSD__

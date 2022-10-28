@@ -1,10 +1,10 @@
 --- native/src/libgit2/repository.c	2022-07-13 17:06:59.000000000 -0700
 +++ wasm/src/libgit2/repository.c	2022-09-25 00:38:49.304410012 -0700
 @@ -548,6 +548,9 @@
- 
+
  static int validate_ownership(git_repository *repo)
  {
-+  // Zython - We can't do this in WASI, due to lack of a permissions model.
++  // CoWasm - We can't do this in WASI, due to lack of a permissions model.
 +  return 0;
 +
  	const char *validation_paths[3] = { NULL }, *path;

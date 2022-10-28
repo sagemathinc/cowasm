@@ -34,7 +34,7 @@ module.exports = {
   plugins: [
     new NodePolyfillPlugin() /* required for python-wasm */,
     new HtmlWebpackPlugin({
-      title: "Zython: WebAssembly Python for servers and browsers.",
+      title: "CoWasm: Collaborative WebAssembly for Servers and Browsers",
     }),
   ],
   module: {

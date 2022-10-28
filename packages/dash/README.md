@@ -1,19 +1,16 @@
-# ZASH -- a WebAssembly shell for Zython built on the Debian Almquist Shell
-
-I don't know if this will ever actually be usable, but I hope so.  We'll see.
+# Dash-wasm -- a port to WebAssembly of the Debian Almquist Shell
 
 ### Goal
 
 The goal is first to make it usable on the server via node.js, then later make a
 version that is also usable in the browser but can of course only run
-WebAssembly modules there. The latter will also naturally encourage us to port a
-suite of command line tools such as `ls` and `less,` possibly using https://github.com/DiegoMagdaleno/BSDCoreUtils, but maybe using https://github.com/mirror/busybox.
+WebAssembly binaries.  We have ported a suite of command line tools such as `ls`, `tar`,  and `find` for this in the coreutils package of CoWasm.
 
 ### Why not bash or zsh?
 
-The main reason to go with dash instead of bash or zsh is that the latter two are at least **10x more** lines of code. Of course I'm tempted to just write a shell from scratch that is adapted to our unique needs here, but I think it'll be much better to _**start with dash**_ as a foundation, then build on that.  Dash probably has [very few bugs](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=dash;dist=unstable), and the design and implementation is clearly very fast, due to early constraints.  If you read [the dash source code TOUR](https://github.com/sagemathinc/dash/blob/main/src/TOUR) you see that there's nontrivial choice of data structure to optimize performance on early slow late 80's computers.
+The main reason to go with dash instead of bash or zsh is that the latter two are at least **10x more** lines of code. Of course I'm tempted to just write a shell from scratch that is adapted to our unique needs here, but I think it'll be much better to _**start with dash**_ as a foundation, then build on that.  Dash probably has [very few bugs](https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=dash;dist=unstable), and the design and implementation is clearly extremely fast, due to design constraints \(and many published benchmarks\).  If you read [the dash source code TOUR](https://github.com/sagemathinc/dash/blob/main/src/TOUR) you see that there's nontrivial choice of data structure to optimize performance on early slow late 80's computers.
 
-Another reason to use dash is that bash and zsh use readline or complicated built\-in terminal functionality, whereas **dash uses** **`editline`** **only,** and editline just happens to be exactly the line editing library I have got to fully work for Zython, so it makes sense to double down on it for technical reasons \(in addition to license reasons\).
+Another reason to use dash is that bash and zsh use readline or complicated built\-in terminal functionality, whereas **dash uses** **`editline`** **only,** and editline just happens to be exactly the line editing library I have got to fully work for CoWasm, so it makes sense to double down on it for technical reasons \(in addition to license reasons\).
 
 ## Issues to fix in order to make this usable
 
@@ -85,7 +82,7 @@ dash$
 
 _**This is by far the most interesting and important task. Plan:**_
 
-- \(done\) very basic vforkexec in nodejs only, which is easier since no io capture; no webworker
+- \(done\) very basic vforkexec in nodejs only, which is easier since no io capture; no webworker.  We did this already and it works very well, allowing just running any wasm binary from dash, so long as no pipes are involved.
 - vforkexec from a webworker, with stdio working properly
   - this is tricky because it needs to be proxied and just using child\_process doesn't work, since it's not directly using stdio.  
 - vforkexec in browser with 1 or 2 trivial non\-wasm in js commands
@@ -96,7 +93,7 @@ _**This is by far the most interesting and important task. Plan:**_
 
 ---
 
-#### further thoughts...
+#### Further thoughts...
 
 Unwind the data structures and exactly what happens with this function
 and related ones:
@@ -120,14 +117,11 @@ the native ones in both Ubuntu and macOS do.  Right now, utf8 works fine
 in output, but is echoed back incorrectly in the input:
 
 ```sh
-~/zython/packages/python-wasm$ node
-Welcome to Node.js v18.10.0.
-Type ".help" for more information.
-> a = require('./dist/dash/node'); await a.terminal({debug:true})
-calling dash terminal... 2, /bin/dash
-dash$ echo "You can us\U+DFC3\U+DFA9 utf-8: \U+DFF0\U+DF9F\U+DF98\U+DF80"
+~/cowasm$ ./bin/sh-wasm
+(CoWasm) sh$ echo "You can us\U+DFC3\U+DFA9 utf-8: \U+DFF0\U+DF9F\U+DF98\U+DF80"
+
 You can usé utf-8: 😀
-dash$ 
+(CoWasm) sh$ 
 ```
 
 ### [ ] Prompt appears before/during output; subprocess is returning instantly
@@ -160,32 +154,16 @@ Another thing, make it so `!v` runs the last command that starts with "v", etc.
 ### [ ] make it possible load and run a script:
 
 ```sh
-~/zython/packages/python-wasm$ echo 'echo "hello"' > a.sh
-~/zython/packages/python-wasm$ cat a.sh
+~/cowasm$ echo 'echo "hello"' > a.sh
+~/cowasm$ cat a.sh
 echo "hello"
-~/zython/packages/python-wasm$ zash-debug a.sh
-/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/python-wasm/bin/zash-debug: 0: 4: Invalid argument
-wasm://wasm/008ca392:1
-
-
-RuntimeError: unreachable
+~/cowasm$ ./bin/sh-wasm a.sh
+dash: 0: 4: Invalid argument
 ...
-
-~/zython/packages/python-wasm$ zash-debug
-zash$ . a.sh
-/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/python-wasm/bin/zash-debug: 1: .: a.sh: not found
-wasm://wasm/008ca392:1
-
-
-RuntimeError: unreachable
 ```
-
-### [x] Create zash and zash-debug scripts, passing in all command line args
-
-This is easy.  Just do analogue of `zython-*` scripts.
 
 ## Related projects
 
 - Something like this was attempted many years ago using busybox and emscripten: [https://github.com/tbfleming/em\-shell](https://github.com/tbfleming/em-shell)
-- After I mostly finished this somebody posted a dash to WAPM: https://wapm.io/sharrattj/dash   I can't make heads or tails of it.
+- After I mostly finished this somebody posted a dash to WAPM: https://wapm.io/sharrattj/dash   I can't make heads or tails of it. No source code.  It doesn't work.  Etc.
 

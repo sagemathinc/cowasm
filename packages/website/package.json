@@ -1,7 +1,7 @@
 {
   "name": "@cowasm/website",
   "version": "0.0.1",
-  "description": "The Zython website.  Includes a live demo of python-wasm.",
+  "description": "The CoWasm website.  Includes a live demo of python-wasm.",
   "files": [
     "dist/*",
     "src/*",

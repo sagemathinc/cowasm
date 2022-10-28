@@ -14,40 +14,40 @@ The goal of CoWasm is overall similar to all of emscripten, [WebAssembly.sh](htt
   - CoCalc will build on top of CoWasm to provide a graphical interface and realtime collaboration, and that will be a commercial product.
   - Products like GP/PARI SageMath will build on CoWasm to provide GPL-licensed mathematics software.
 
-## More
-
-> WebAssembly Python for servers and browsers. Built using Zig. Supports extension modules such as numpy and posix subprocesses. Does not use Emscripten.
-
 URL: https://github.com/sagemathinc/cowasm
-
-**The overall project was called "Zython", which is meant to indicate that we use Zig heavily to make Python available.** The most important package in the project is called `python-wasm`, which is a build of Python for WebAssembly.
 
 DEMOS:
 
 - https://cowasm.org (uses Atomics and SharedArrayBuffers)
 - https://sw.cowasm.org (uses Service Workers)
 
+## Python
+
+An exciting package in CoWasm is [python-wasm](https://www.npmjs.com/package/python-wasm), which is a build of Python for WebAssembly, which supports both servers and browsers.  It also supports extension modules such as numpy. 
+
 <!--
 [<img src="https://github.com/sagemathinc/cowasm/actions/workflows/docker-image.yml/badge.svg"  alt="Docker Image CI"  width="172px"  height="20px"  style="object-fit:cover"/>](https://github.com/sagemathinc/cowasm/actions/workflows/docker-image.yml)
 -->
 
-## Try the python-wasm REPL under node.js
+### Try python-wasm
+
+Try the python-wasm REPL under node.js (version at least 16):
 
 ```py
-wstein@max x4 % npx python-wasm
-Welcome to Node.js v16.13.0.
-Type ".help" for more information.
-> Python 3.11.0b4 (main, Jul 27 2022, 04:39:08) [Clang 14.0.6 (git@github.com:ziglang/zig-bootstrap.git dbc902054739800b8c1656dc on wasi
+~$ npx python-wasm
+Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 2 + 3
 5
 >>> import sys; sys.version
-'3.11.0b4 (main, Jul 27 2022, 04:39:08) [Clang 14.0.6 (git@github.com:ziglang/zig-bootstrap.git dbc902054739800b8c1656dc'
+'3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571'
 >>> sys.platform
 'wasi'
 ```
 
-## Install python\-wasm into your project, and try it via the library interface and the node.js terminal
+### Install python\-wasm
+
+Install python\-wasm into your project, and try it via the library interface and the node.js terminal.
 
 ```sh
 npm install python-wasm
@@ -56,56 +56,72 @@ npm install python-wasm
 Then from the nodejs REPL:
 
 ```js
-> python = require('python-wasm')
-> await python.init();
-> await python.exec('import sys')
+~/cowasm/packages/python-wasm$ node
+Welcome to Node.js v19.0.0.
+Type ".help" for more information.
+> {syncPython, asyncPython} = require('.')
+{
+  syncPython: [AsyncFunction: syncPython],
+  asyncPython: [AsyncFunction: asyncPython],
+  default: [AsyncFunction: asyncPython]
+}
+> python = await syncPython(); 0;
+0
+> python.exec('import sys')
 undefined
-> await python.repr('sys.version')
+> python.repr('sys.version')
 "'3.11.0b3 (main, Jul 14 2022, 22:22:40) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 623481199fe17f4311cbdbbf'"
-> await python.repr('sys.platform')
-'wasi'
+> python.exec('import numpy')
+undefined
+> python.repr('numpy.linspace(0, 10, num=5)')
+'array([ 0. ,  2.5,  5. ,  7.5, 10. ])'
 ```
 
-There is also a readline\-based REPL that is part of python\-wasm:
+There is also a Python REPL that is part of python\-wasm:
 
 ```py
 > python.terminal()
-Python 3.11.0b3 (main, Jul 14 2022, 22:22:40) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 623481199fe17f4311cbdbbf on wasi
+Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 2 + 3   # you can edit using readline
 5
->>> input('name? ')
+>>> input('name? ')*3
 name? william  <-- I just typed "william"
-'william'
->>> quit()  # or ctrl+d
->
+'williamwilliamwilliam'
+>>> import time; time.sleep(3)  # sleep works
+>>> while True: pass   # ctrl+c works, but exits this terminal
+> # back in node.
 ```
 
-You can also use python\-wasm in your [web application via webpack](https://github.com/sagemathinc/cowasm/tree/main/packages/webpack), but your webserver must set certain headers which [github pages does not set](https://github.com/github-community/community/discussions/13309).
+You can also use python\-wasm in your own [web applications via webpack](https://github.com/sagemathinc/cowasm/tree/main/packages/webpack).  In the browser, this transparently uses SharedArrayBuffers if available, and falls back to ServiceWorkers.
 
-## Build python\-wasm from source on Linux or MacOS
+## Build CoWasm from source on Linux or MacOS
 
 ### Prerequisites
 
-To build everything from source, make sure that you have standard command line dev tools installed. Then build, which [takes 15\-20 minutes](https://github.com/sagemathinc/wapython/actions), and around 1GB of disk space:
+To build everything from source, make sure that you have standard command line dev tools installed, e.g., on Ubuntu/Debian:
 
 ```sh
-wstein@max % make
+apt-get install git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 libtool tcl zip libncurses-dev
 ```
 
-This installs a specific version of Zig and Nodejs, then builds native and WebAssembly versions of CPython and many dependencies, and also builds all the Typescript code. Building from source is _**tested on Linux and MacOS with both x86_64 and ARM \(M1\) processors**_:
+The build [takes about 15\-20 minutes](https://github.com/sagemathinc/wapython/actions), and about 5GB's of disk space:
 
-- Linux: tested on both x86_64 and aarch64 Ubuntu with standard dev tools installed; see [Dockerfile](./Dockerfile) where we install `apt-get install -y git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 autotools-dev automake libtool tcl vim zip`
-- MacOS: tested on both x86_64 and M1 mac with standard XCode command live dev tools installed.
+```sh
+~/cowasm$ make
+```
 
-If you're using Windows, you'll have to use Linux via a virtual machine \(or maybe WSL\) to build python\-wasm from source.
+This installs a specific tested version of Zig and Nodejs, then builds native and WebAssembly versions of CPython and many dependencies, and also builds all the Typescript code.  It also builds many other interesting programs with ports to WebAssembly, though many are not completely finished \(e.g., there is the dash shell and ports of tar and BSD coreutils\).   Building from source is regularly _**tested on Linux and MacOS with both x86\_64 and ARM \(M1\) processors**_:
 
-NOTE: Sometimes the build will randomly crash due to some sort of caching issue. This is due to a bug in Zig, and just typing `make` to restart the build almost always works around it. It'll also likely just go away as zig improves (they are constantly fixing bugs, and I'm constantly upgrading).
+- Linux: tested on both x86\_64 and aarch64 Ubuntu
+- MacOS: tested on both x86\_64 and M1 mac with standard XCode command live dev tools installed.
 
-### Try out your build
+CoWasm _**does not**_ use the compilers on the system, and instead uses CLANG as shipped with Zig.   If you're using Windows, you'll have to use Linux via a virtual machine or Docker container currently.
 
-Run the full test suite, which runs the **supported tests** on everything
-that is installed, which is a subset of the full test suites:
+### Run the test suite
+
+The CoWasm test suite runs the **supported tests** on everything
+that is installed:
 
 ```sh
 ~/cowasm$ make test
@@ -121,9 +137,9 @@ that is installed, which is a subset of the full test suites:
 ##########################################################
 ```
 
-Note that running `make test` at the top level of `python-wasm` does NOT run the full cpython test suite yet, since it takes quite a while and there are **still some failing tests**, since I CoWasm doesn't support enough of what Python expects. It does run a big supported subset of the cpython test suite (it's the part that I got to pass so far, which is over 80%).
+Note that running `make test` at the top level of `python-wasm` does NOT run the **full** test suite of every package, since it takes quite a while and there are **still some failing tests**, since I CoWasm doesn't support enough of what Python expects. It does run a big supported subset of the cpython test suite \(it's the part that I got to pass so far, which is over 80%\).  As an example, the sympy test suite is massive, takes a very long time to run, and doesn't even work for me natively; instead, we just run a handful of small tests to ensure sympy is working at all.  Similarly, for Cython, we run all their demos, but not the full test suite.  A longer term goal of CoWasm is to support a second more thorough testing regime that runs the full test suite of each package.
 
-You can also use the WebAssembly Python REPL directly on the command line. The script to start it is called `cowasm`:
+You can also use the WebAssembly Python REPL directly on the command line. 
 
 ```sh
 ~/cowasm$ ./bin/python-wasm 
@@ -140,9 +156,9 @@ Type "help", "copyright", "credits" or "license" for more information.
 ~/cowasm$
 ```
 
-The above directly runs the python.wasm executable produced by building cPython. You can also run an enhanced version with more options in the python-wasm package:
+The above directly runs the \`python.wasm\` executable produced by building cPython. You can instead run an enhanced version \(e.g., with signal support\) with more options in the python\-wasm package:
 
-```sh
+```py
 ~/cowasm$ . bin/env.sh 
 ~/cowasm$ cd packages/python-wasm/
 ~/cowasm/packages/python-wasm$ ./bin/python-wasm 
@@ -154,9 +170,9 @@ Type "help", "copyright", "credits" or "license" for more information.
 ~/cowasm/packages/python-wasm$
 ```
 
-You can also use python\-wasm as a library in node.js. There is a synchronous api that runs in the same thread as the import, and an asynchronous api that runs in a worker thread.
+As mentioned above, you can use python\-wasm as a library in node.js. There is a synchronous api that runs in the same thread as the import, and an asynchronous api that runs in a worker thread.
 
-```sh
+```py
 ~/cowasm$ . bin/env.sh 
 ~/cowasm$ cd packages/python-wasm/
 ~/cowasm/packages/python-wasm$ node
@@ -168,25 +184,52 @@ Type ".help" for more information.
   asyncPython: [AsyncFunction: asyncPython],
   default: [AsyncFunction: asyncPython]
 }
-> const { exec, repr} = await python.syncPython();
+> const { exec, repr} = await python.asyncPython();
 undefined
-> repr('31**37')
+> await repr('31**37')
 '15148954872646847105498509334067131813327318808179940511'
-> exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
+> await exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
 49999995000000 0.8880000114440918
+```
+
+And yes you can run many async Python's in parallel in the same node.js process, with each running in its own thread:
+
+```sh
+~/cowasm/packages/python-wasm$ nodeWelcome to Node.js v19.0.0.
+Type ".help" for more information.
+> python = require('.')
+{
+  syncPython: [AsyncFunction: syncPython],
+  asyncPython: [AsyncFunction: asyncPython],
+  default: [AsyncFunction: asyncPython]
+}
+> const { exec, repr} = await python.asyncPython();
+undefined
+> await exec('import time; t=time.time(); print(sum(range(10**7)), time.time()-t)')
+49999995000000 0.8880000114440918
+undefined
+> 
+> const v = [await python.asyncPython(), await python.asyncPython(), await python.asyncPython()]; 0;
+0
+> s = 'import time; t=time.time(); print(sum(range(10**7)), time.time()-t)'
+'import time; t=time.time(); print(sum(range(10**7)), time.time()-t)'
+> d = new Date(); console.log(await Promise.all([v[0].exec(s), v[1].exec(s), v[2].exec(s)]), new Date() - d)
+49999995000000 0.8919999599456787
+49999995000000 0.8959999084472656
+49999995000000 0.8929998874664307
+[ undefined, undefined, undefined ] 905
+undefined
 ```
 
 ## What's the goal?
 
-Our **primary goal** is to create a WebAssembly build of the core Python and dependent packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\). It should also be relatively easy to _build from source_ on both Linux and MacOS \(x86*64 and aarch64\) and to easily run the \_cpython test suite,* with a clearly defined supported list of passing tests. The build system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation.
+Our **initial goal** is to create a WebAssembly build of the core Python and dependent packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\). It should also be relatively easy to _build from source_ on both Linux and MacOS \(x86_64 and aarch64\) and to easily run the cpython test suite,_ with a clearly defined supported list of passing tests. The compilation system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation, and each package is built using make.
 
-This package is focused on _**the cpython core**_, not the entire Python package ecosystem. That will be the topic of another package later.
+## How does CoWasm compare to Emscripten and Pyodide?
 
-## How does this compare to Pyodide?
+Pyodide currently provides far more packages. However, there is no reason that CoWasm couldn't eventually support as much or more than Pyodide.
 
-This particular package is just the core cpython, not a large Python ecosystem like Pyodide provides. However, we do plan to have other packages that depend on this one that do provide a wide range of precompiled packages.
-
-Our main longterm application is to make [CoCalc](https://cocalc.com) more efficient. As such, we are building a foundation here on which to support a substantial part of the scientific Python ecosystem and the [SageMath packages](https://www.sagemath.org/) \(a pure math analogue of the scientific Python stack\). I'm the original founder of SageMath, hence this motivation. This will be part of a new GPL'd project that will have this BSD\-licensed project `python-wasm` at its core; some relevant work has been done [here](https://github.com/sagemathinc/jsage).
+Our main longterm application is to make [CoCalc](https://cocalc.com) available on a much wider range of computers. As such, we are building a foundation here on which to support a substantial part of the scientific Python ecosystem and the [SageMath packages](https://www.sagemath.org/) \(a pure math analogue of the scientific Python stack\). _**I'm the founder of SageMath**_, hence this motivation \(some relevant work has been done [here\)](https://github.com/sagemathinc/jsage).
 
 Some of our code will be written in the [Zig](https://ziglang.org/) language. However, we are mostly targeting just the parts that are used for Python, which is a small subset of the general problem. Our software license \-\- _**BSD 3\-clause**_ \-\- is compatible with their's and we hope to at least learn from their solutions to problems.
 
@@ -196,28 +239,28 @@ Some of our code will be written in the [Zig](https://ziglang.org/) language. Ho
 
 ### How to build
 
-Just type make. \(Do **NOT** type `make -j8;` it might not work...\)
+Just type make. \(Do **NOT** type `make -j8;` it might not work. Patches welcome.\)
 
 ```sh
 ...$ make
 ```
 
-This runs a single top level makefile to build all the packages. The build process for all individual packages is _also_ accomplished using a Makefile. We don't use shell scripts or Python code to orchestrate building anything, since `make` is much cleaner and easier to read, maintain and debug.
+This runs a single top level Makefile that builds all the packages. The build process for each individual package is _also_ accomplished using a Makefile with two includes that impose some structure. We don't use shell scripts or Python code to orchestrate building anything, since `make` is much cleaner and easier to read, maintain and debug... and of course make contains shell scripts in it.  \(History lesson: homebrew is a lot more successful than Macports.\)
 
 ### What happens
 
-In most subdirectories `foo` of packages, this will create some subdirectories:
+In most subdirectories `foo/` of packages, this makefile creates some subdirectories:
 
-- `packages/foo/dist/[native|wasm]` -- a native or WebAssembly build of the package; this has binaries, headers, and libs. These get used by other packages.
-- `packages/build/[native|wasm]` - build artifacts for the native or WebAssembly build; can be safely deleted
+- `packages/foo/dist/[native|wasm]` \-\- a native or WebAssembly build of the package; this has binaries, headers, and libs. These get used by other packages.  We rarely build the native version.
+- `packages/build/[native|wasm]` \- build artifacts for the native or WebAssembly build; can be safely deleted
 
 ### No common prefix directory
 
-Unlike some systems, where everything is built and installed into a single `prefix` directory, here we build everything in its own self\-contained package. When a package like `cpython` depends on another package like `lzma` , our Makefile for `cpython` explicitly references `packages/lzma/dist`. This makes it easier to uninstall packages, update them, etc., without having to track what files are in any package, whereas using a common directory for everything can be a mess with possibly conflicting versions of files, and makes versioning and dependencies very explicit. Of course, it makes the environment variables and build commands potentially much longer.
+Unlike some systems, where everything is built and installed into a single `prefix` directory, here we build everything in its own self\-contained package dist directory. When a package like `cpython` depends on another package like `lzma` , our Makefile for `cpython` explicitly references `packages/lzma/dist`. This makes it easier to uninstall packages, update them, etc., without having to track what files are in any package, whereas using a common directory for everything can be a mess with possibly conflicting versions of files, and makes versioning and dependencies very explicit. Of course, it makes the environment variables and build commands potentially much longer.    In some cases, we gather together files from these dist directories in distributions, e.g., see `make bin-wasm.`
 
 ### Native and Wasm
 
-The build typically create directories `dist/native`and `dist/wasm.` The `dist/native` artifacts are only of value on the computer where you ran the build, since they are architecture dependent and can easily depend on libraries on your system. In contrast, the `dist/wasm` artifacts are platform independent. They can be used nearly everywhere: on servers via WASM, on ARM computers \(e.g., aarch64 linux, Apple Silicon, etc.\), and in any modern web browser \(though many details remain, obviously\).
+The build typically create directories `dist/native`and `dist/wasm.` The `dist/native` artifacts are only of value on the computer where you ran the build, since they are architecture dependent and can easily depend on libraries on your system. In contrast, the `dist/wasm` artifacts are platform independent. They can be used nearly everywhere: on servers via WASM, on ARM computers \(e.g., aarch64 linux, Apple Silicon, etc.\), and in  modern web browsers.
 
 ### Standalone WASM executables
 
@@ -238,9 +281,19 @@ This isn't currently used here for building python-wasm, but it's an extremely p
 ### Run a script from the terminal:
 
 ```sh
-~/python-wasm$ echo "import sys; print(f'hi from {sys.platform}')" > a.py
-~/python-wasm$ bin/zython a.py
+~/cowasm$ echo "import sys; print(f'hi from {sys.platform}')" > a.py
+~/cowasm$ bin/python-wasm a.py
 hi from wasi
+```
+
+The python-wasm package has a bin/python-wasm script that can run
+Python programs that including interactive blocking input:
+
+```sh
+~/cowasm/packages/python-wasm$ echo "name = input('name? '); print(name*3)" > a.py
+~/cowasm/packages/python-wasm$ ./bin/python-wasm --worker a.py
+name? william
+williamwilliamwilliam
 ```
 
 ## Benchmarks
@@ -269,3 +322,4 @@ The quick summary is that in each case pypy is twice as fast as pylang \(basical
 ## Contact
 
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) if you find this interesting and want to help out. **This is an open source 3\-clause BSD licensed project.**
+

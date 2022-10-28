@@ -26,8 +26,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 		&& cp *.tar.xz ${DIST_WASM}
 	cp ${BUILD_WASM}/cython.py ${DIST_WASM}/
 
-	# **TODO: this is very temporary until we have a notion of zython packages that are single
-	# top level file.**
 	cp ${DIST_WASM}/cython.py ${PACKAGES}/cpython/dist/wasm/lib/python3.11/site-packages/
 
 	touch ${DIST_WASM}/.built

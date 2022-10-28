@@ -63,7 +63,7 @@ class CoWasmPackageFinder(importlib.abc.MetaPathFinder):
         - path is set to __path__ for sub-modules/packages, or None otherwise.
         - target can be a module object, but is unused in this example.
         """
-        if os.environ.get("ZYTHON_DISABLE_IMPORTER", False):
+        if os.environ.get("COWASM_DISABLE_IMPORTER", False):
             return
         if verbose:
             print("find_spec", fullname, path, target)
