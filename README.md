@@ -1,5 +1,16 @@
 # CoWasm: Collaborative WebAssembly for Servers and Browsers
 
+
+DEMOS:
+
+- https://cowasm.org (uses Atomics and SharedArrayBuffers)
+- https://zython.org (uses Service Workers)
+
+URL: https://github.com/sagemathinc/cowasm
+
+
+## What is this?
+
 CoWasm means "collaborative Web Assembly", since it's foundational for https://CoCalc.com, and goes far beyond just Python. It will support various technologies \(such as libgit2 and realtime sync\) that are important foundations for collaboration.  This doesn't exist yet, but one goal is a WebAssembly instance serving applications built on Python on a server or browser \(\+WebRTC\) that multiple people can simultaneously use, similar to how they can collaboratively use Linux accounts via https://CoCalc.com today. 
 
 The underlying software components that CoWasm is built on \(i.e., that we didn't write\) are mostly extremely stable and mature. Zig is very new, but we mostly use Zig for its amazing cross compilation support and packaging of clang/llvm and musl\-libc, which are themselves both very mature. Many other components, such as Python, Dash, Numpy, etc., are ridiculously mature multidecade old projects. Morever, other components of CoWasm such as memfs are libraries with 10M+ downloads per week that are heavily used in production.
@@ -14,12 +25,6 @@ The goal of CoWasm is overall similar to all of emscripten, [WebAssembly.sh](htt
   - CoCalc will build on top of CoWasm to provide a graphical interface and realtime collaboration, and that will be a commercial product.
   - Products like GP/PARI SageMath will build on CoWasm to provide GPL-licensed mathematics software.
 
-URL: https://github.com/sagemathinc/cowasm
-
-DEMOS:
-
-- https://cowasm.org (uses Atomics and SharedArrayBuffers)
-- https://zython.org (uses Service Workers)
 
 ## Python
 
