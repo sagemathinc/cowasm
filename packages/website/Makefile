@@ -28,6 +28,7 @@ github-pages:
 cowasm.org:
 	NODE_ENV="production" npm run build
 	rsync -axvH --delete dist/ ${HOME}/cowasm.org/site/
+	cp ${SRC}/_headers ${HOME}/cowasm.org/site/
 	cd ${HOME}/cowasm.org/site/ \
 		&& git add . \
 		&& git commit -a -m "update cowasm.org website" \
