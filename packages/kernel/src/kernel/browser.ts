@@ -36,3 +36,7 @@ export async function syncKernel(opts?: Options): Promise<WasmInstanceSync> {
 export async function asyncKernel(opts?: Options): Promise<WasmInstanceAsync> {
   return await createAsyncKernel(getOptions(wasmImportAsync, opts));
 }
+
+export function supportsPosix(): boolean {
+  return false;
+}

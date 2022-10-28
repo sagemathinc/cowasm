@@ -1,6 +1,6 @@
 {
   "name": "@cowasm/kernel",
-  "version": "0.22.0",
+  "version": "0.22.1",
   "description": "@cowasm/kernel -- the Kernel of CoWasm: Collaborative WebAssembly for Servers and Browsers",
   "main": "./dist/kernel/node.js",
   "browser": "./dist/kernel/browser.js",
@@ -17,7 +17,7 @@
     "test": "tsc && npx jest ./dist",
     "test-watch": "npx jest --watch ./dist",
     "strip": "find dist/ -type f -name \"*.wasm\" | xargs -n1 wasm-strip",
-    "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' -j4 && npm run strip"
+    "prepublishOnly": "make clean && make OPT='-O ReleaseSmall'"
   },
   "bin": "./bin/cowasm",
   "repository": {
@@ -45,7 +45,7 @@
     "debug": "^4.3.4",
     "dylink": "^0.8.0",
     "lodash": "^4.17.21",
-    "posix-node": "^0.10.0",
+    "posix-node": "^0.10.1",
     "uuid": "^8.3.2",
     "wasi-js": "^1.5.0"
   },

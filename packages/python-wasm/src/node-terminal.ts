@@ -4,11 +4,15 @@ python-wasm [--no-bundle] [--worker] ...
 
 import { resolve } from "path";
 import { asyncPython, syncPython } from "./node";
+import { supportsPosix } from "@cowasm/kernel";
 import { Options } from "./common";
 
 async function main() {
   const PYTHONEXECUTABLE = resolve(process.argv[1]);
   const { noBundle, worker } = processArgs(process.argv);
+  if (process.platform == "win32") {
+    console.log("Press enter a few times.");
+  }
   const options: Options = { env: { PYTHONEXECUTABLE }, interactive: true };
   if (!noBundle) {
     options.fs = "everything";
@@ -43,9 +47,14 @@ function processArgs(argv: string[]): { noBundle: boolean; worker: boolean } {
     argv.splice(i, 1);
   }
   const j = argv.indexOf("--worker");
-  const worker = j != -1;
-  if (worker) {
+  if (j != -1) {
     argv.splice(j, 1);
+  }
+  let worker = false;
+  if (!supportsPosix()) {
+    worker = true;
+  } else {
+    worker = j != -1;
   }
   return { noBundle, worker };
 }

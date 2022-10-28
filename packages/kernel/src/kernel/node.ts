@@ -77,6 +77,10 @@ export async function asyncKernel(opts?: Options): Promise<WasmInstanceAsync> {
   return kernel;
 }
 
+export function supportsPosix(): boolean {
+  return posix.makeStdinBlocking != null;
+}
+
 function asyncIO(kernel: WasmInstanceAsync) {
   const keyHandler = (key) => {
     kernel.writeToStdin(key);

@@ -1,6 +1,6 @@
 {
   "name": "posix-node",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "Missing Posix Functions for Node.js (via a native module written in Zig)",
   "main": "dist/index.js",
   "files": [
@@ -15,7 +15,7 @@
     "test": "tsc && jest ./dist",
     "test-no-cache": "jest --no-cache ./dist",
     "test-watch": "jest --watch ./dist",
-    "prepublishOnly": "make -j4 all && make test && rm ./dist/*.o"
+    "prepublishOnly": "make -j4 all && make test && rm -f ./dist/*.o"
   },
   "repository": {
     "type": "git",

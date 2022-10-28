@@ -281,7 +281,7 @@ interface PosixFunctions {
   // This is precisely what you need when stdin is not interactive, e.g., when running
   // a script, e.g., "python-wasm a.py", which makes it so input('...') in python works
   // perfectly.  (Right now, you have to use python-wasm --worker for interactive input in a script.)
-  makeStdinNonblocking: () => void;
+  makeStdinBlocking: () => void;
   tcgetattr: (fd: number) => Termios;
   tcsetattr: (fd: number, optional_actions: number, tio: Termios) => void;
 

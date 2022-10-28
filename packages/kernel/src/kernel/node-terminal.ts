@@ -16,7 +16,7 @@ async function main() {
   } catch (_err) {
     // this will fail if stdin is not interactive; that's fine.
     try {
-      posix.makeStdinNonblocking?.();
+      posix.makeStdinBlocking?.();
     } catch (_err) {}
   }
   const r = kernel.exec(argv);

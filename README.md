@@ -1,13 +1,26 @@
 # CoWasm: Collaborative WebAssembly for Servers and Browsers
 
+URL: https://github.com/sagemathinc/cowasm
 
 DEMOS:
 
 - https://cowasm.org (uses Atomics and SharedArrayBuffers)
 - https://zython.org (uses Service Workers)
 
-URL: https://github.com/sagemathinc/cowasm
+Or Type this if you have nodejs at least version 16 installed:
 
+````sh
+~$ npx python-wasm@latest
+Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 2 + 3
+5
+>>> import numpy
+>>> import sympy
+...
+````
+
+NOTE: On Microsoft Windows you have to enter a few times, and there is an issue with terminal echo.  We are working on this.
 
 ## What is this?
 
@@ -25,7 +38,6 @@ The goal of CoWasm is overall similar to all of emscripten, [WebAssembly.sh](htt
   - CoCalc will build on top of CoWasm to provide a graphical interface and realtime collaboration, and that will be a commercial product.
   - Products like GP/PARI SageMath will build on CoWasm to provide GPL-licensed mathematics software.
 
-
 ## Python
 
 An exciting package in CoWasm is [python-wasm](https://www.npmjs.com/package/python-wasm), which is a build of Python for WebAssembly, which supports both servers and browsers.  It also supports extension modules such as numpy. 
@@ -39,7 +51,7 @@ An exciting package in CoWasm is [python-wasm](https://www.npmjs.com/package/pyt
 Try the python-wasm REPL under node.js (version at least 16):
 
 ```py
-~$ npx python-wasm
+~$ npx python-wasm@latest
 Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 2 + 3
@@ -296,7 +308,7 @@ Python programs that including interactive blocking input:
 
 ```sh
 ~/cowasm/packages/python-wasm$ echo "name = input('name? '); print(name*3)" > a.py
-~/cowasm/packages/python-wasm$ ./bin/python-wasm --worker a.py
+~/cowasm/packages/python-wasm$ ./bin/python-wasm a.py
 name? william
 williamwilliamwilliam
 ```

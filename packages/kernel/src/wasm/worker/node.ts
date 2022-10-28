@@ -137,8 +137,8 @@ if (!isMainThread && parentPort != null) {
     // input is interactive
     if (process.argv.length > 2) {
       // input is NOT interactive shell; in this case we only
-      // set stdin nonblocking; this keeps buffering
-      posix.makeStdinNonblocking?.();
+      // set stdin blocking; this keeps buffering
+      posix.makeStdinBlocking?.();
     } else {
       // input is interactive shell; we also disable buffering
       posix.enableRawInput?.();
