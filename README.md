@@ -19,7 +19,7 @@ URL: https://github.com/sagemathinc/cowasm
 DEMOS:
 
 - https://cowasm.org (uses Atomics and SharedArrayBuffers)
-- https://sw.cowasm.org (uses Service Workers)
+- https://zython.org (uses Service Workers)
 
 ## Python
 
