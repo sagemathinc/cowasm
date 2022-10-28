@@ -1,7 +1,3 @@
-#!/bin/sh
+#!/usr/bin/env node
 
-export PROGRAM_NAME="`readlink -f $0`"
-export SCRIPTPATH="$( cd -- "$(dirname "`readlink -f $0`")" >/dev/null 2>&1 ; pwd -P )"
-
-"$SCRIPTPATH"/../../../bin/node "$SCRIPTPATH"/../dist/node-terminal.js $0 "$@"
-
+require('../dist/node-terminal');

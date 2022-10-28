@@ -7,7 +7,7 @@ import { asyncPython, syncPython } from "./node";
 import { Options } from "./common";
 
 async function main() {
-  const PYTHONEXECUTABLE = resolve(process.argv[2]);
+  const PYTHONEXECUTABLE = resolve(process.argv[1]);
   const { noBundle, worker } = processArgs(process.argv);
   const options: Options = { env: { PYTHONEXECUTABLE }, interactive: true };
   if (!noBundle) {
@@ -15,7 +15,7 @@ async function main() {
   }
   const Python = worker ? asyncPython : syncPython;
   const python = await Python(options);
-  const argv = [PYTHONEXECUTABLE].concat(process.argv.slice(3));
+  const argv = [PYTHONEXECUTABLE].concat(process.argv.slice(2));
   let r = 0;
   try {
     // in async mode the worker thread itself just gets killed, e.g., when python runs
