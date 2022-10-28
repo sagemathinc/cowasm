@@ -3,7 +3,7 @@
 Try the Python-Wasm Live Demos:
 
 - https://cowasm.org  (uses Atomics and SharedArrayBuffers)
-- https://sw.cowasm.org (uses Service Workers)
+- https://zython.org (uses Service Workers)
 
 This is a demo of [xterm.js](https://xtermjs.org/) and [webpack](https://webpack.js.org/) with python-wasm.
 

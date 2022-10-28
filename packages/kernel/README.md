@@ -3,7 +3,7 @@
 DEMOS:
 
 - https://cowasm.org  (uses Atomics and SharedArrayBuffers)
-- https://sw.cowasm.org (uses Service Workers)
+- https://zython.org (uses Service Workers)
 
 See [the main repo](https://github.com/sagemathinc/cowasm/blob/main/README.md) for more information. 
 

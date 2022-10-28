@@ -27,11 +27,10 @@ github-pages:
 .PHONY: cowasm.org
 cowasm.org:
 	NODE_ENV="production" npm run build
-	rsync -axvH --delete dist/ ${HOME}/cowasm.org/docs/
-	cd ${HOME}/cowasm.org/docs/ \
-		&& git checkout CNAME \
+	rsync -axvH --delete dist/ ${HOME}/cowasm.org/site/
+	cd ${HOME}/cowasm.org/site/ \
 		&& git add . \
-		&& git commit -a -m "update website" \
+		&& git commit -a -m "update cowasm.org website" \
 		&& git push
 
 clean-build::
