@@ -59,5 +59,5 @@ name? william  <-- I just typed "william"
 
 You can also use python-wasm in your web applications.  See
 
-- https://github.com/sagemathinc/zython/tree/main/packages/webpack
-- https://github.com/sagemathinc/zython/tree/main/packages/terminal
+- https://github.com/sagemathinc/cowasm/tree/main/packages/browser
+- https://github.com/sagemathinc/cowasm/tree/main/packages/terminal

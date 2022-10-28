@@ -1,6 +1,6 @@
 {
   "name": "@cowasm/kernel",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "description": "@cowasm/kernel -- the Kernel of CoWasm: Collaborative WebAssembly for Servers and Browsers",
   "main": "./dist/kernel/node.js",
   "browser": "./dist/kernel/browser.js",
@@ -43,11 +43,11 @@
     "awaiting": "^3.0.0",
     "date-format": "^4.0.13",
     "debug": "^4.3.4",
-    "dylink": "^0.7.1",
+    "dylink": "^0.8.0",
     "lodash": "^4.17.21",
-    "posix-node": "^0.9.1",
+    "posix-node": "^0.10.0",
     "uuid": "^8.3.2",
-    "wasi-js": "^1.4.1"
+    "wasi-js": "^1.5.0"
   },
   "devDependencies": {
     "@types/jest": "^29.2.0",
