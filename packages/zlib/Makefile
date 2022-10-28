@@ -1,7 +1,6 @@
 include ../build/Makefile-vars
 
 # See https://github.com/sagemathinc/zlib/releases
-
 ZLIB_VERSION = 1.2.13
 
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
