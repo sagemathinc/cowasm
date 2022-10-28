@@ -2,10 +2,10 @@
 
 DEMOS:
 
-- https://zython.cocalc.com (uses Atomics)
-- https://zython.org (uses Service Workers)
+- https://cowasm.org  (uses Atomics and SharedArrayBuffers)
+- https://sw.cowasm.org (uses Service Workers)
 
-See [the main repo](https://github.com/sagemathinc/zython/blob/main/README.md) for more information. 
+See [the main repo](https://github.com/sagemathinc/cowasm/blob/main/README.md) for more information. 
 
 ## Using from node.js
 
@@ -49,7 +49,7 @@ ZeroDivisionError: division by zero
 
 ## Using in a web application
 
-See [this repo](https://github.com/sagemathinc/zython/tree/main/packages/webpack) for how to use Webpack5 with python\-wasm.
+See [this repo](https://github.com/sagemathinc/cowasm/tree/main/packages/webpack) for how to use Webpack5 with python\-wasm.
 
 ## API
 

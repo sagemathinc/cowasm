@@ -54,8 +54,8 @@ in [src/index.ts](./src/index.ts).
 Clone the repo:
 
 ```sh
-git clone https://github.com/sagemathinc/zython
-cd zython/packages/webpack
+git clone https://github.com/sagemathinc/cowasm
+cd cowasm/packages/webpack
 ```
 
 Delete these three lines from package.json (which are used

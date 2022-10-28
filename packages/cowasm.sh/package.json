@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/zython.git"
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
   "keywords": [
     "python",
@@ -30,9 +30,9 @@
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/sagemathinc/zython/issues"
+    "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/zython/tree/main/packages/terminal",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/terminal",
   "workspaces": [
     "../python-wasm"
   ],

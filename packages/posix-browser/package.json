@@ -12,7 +12,7 @@
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/zython.git"
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
   "keywords": [
     "posix"
@@ -20,9 +20,9 @@
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/sagemathinc/zython/issues"
+    "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/zython/tree/main/packages/posix-browser#readme",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/posix-browser#readme",
   "devDependencies": {
     "@types/jest": "^29.2.0",
     "@types/node": "^18.11.3",

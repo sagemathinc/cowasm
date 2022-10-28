@@ -19,7 +19,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/zython.git"
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
   "publishConfig": {
     "access": "public"
@@ -40,9 +40,9 @@
   "author": "William Stein <wstein@sagemath.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sagemathinc/zython/issues"
+    "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/zython/tree/main/packages/wasi-js",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/wasi-js",
   "dependencies": {
     "@cowasm/memfs": "^3.5.1",
     "@types/jest": "^29.2.0",

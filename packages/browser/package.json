@@ -20,15 +20,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/zython.git"
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
   "keywords": ["python", "webassembly"],
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/sagemathinc/zython/issues"
+    "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/zython/tree/main/packages/webpack",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/webpack",
   "workspaces": ["../kernel", "../python-wasm"],
   "devDependencies": {
     "@cowasm/kernel": "^0.21.0",

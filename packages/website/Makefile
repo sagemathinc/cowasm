@@ -10,16 +10,12 @@ ${DIST}/.built: src/index.ts
 	touch ${DIST}/.built
 
 # This is only for use by person maintaining the website.
-.PHONY: publish
-publish:
-	NODE_ENV="production" npm run build
-	rsync -axvH --delete dist/ ${HOME}/zython.cocalc.com/
 
-.PHONY: github-pages
-github-pages:
+.PHONY: cowasm.org
+cowasm.org:
 	NODE_ENV="production" npm run build
-	rsync -axvH --delete dist/ ${HOME}/zython.org/docs/
-	cd ${HOME}/zython.org/docs/ \
+	rsync -axvH --delete dist/ ${HOME}/cowasm.org/docs/
+	cd ${HOME}/cowasm.org/docs/ \
 		&& git checkout CNAME \
 		&& git add . \
 		&& git commit -a -m "update website" \

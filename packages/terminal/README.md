@@ -2,8 +2,8 @@
 
 Try the Python-Wasm Live Demos:
 
-- https://zython.org (uses Service Workers)
-- https://zython.cocalc.com (uses Atomics and SharedArrayBuffers)
+- https://cowasm.org  (uses Atomics and SharedArrayBuffers)
+- https://sw.cowasm.org (uses Service Workers)
 
 This is a demo of [xterm.js](https://xtermjs.org/) and [webpack](https://webpack.js.org/) with python-wasm.
 
@@ -73,8 +73,8 @@ this](https://github.com/github-community/community/discussions/13309).
 Clone the repo:
 
 ```sh
-git clone https://github.com/sagemathinc/zython
-cd zython/packages/terminal
+git clone https://github.com/sagemathinc/cowasm
+cd cowasm/packages/terminal
 ```
 
 Delete these three lines from package.json (which are used
