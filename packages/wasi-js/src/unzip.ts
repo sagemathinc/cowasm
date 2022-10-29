@@ -3,7 +3,12 @@ import { unzipSync } from "fflate";
 
 export type UnzipOptions = {
   data: ArrayBuffer | Uint8Array;
-  fs: { mkdirSync: Function; statSync: Function; writeFileSync: Function };
+  fs: {
+    mkdirSync: Function;
+    statSync: Function;
+    writeFileSync: Function;
+    chmodSync: Function;
+  };
   directory: string;
 };
 
@@ -20,6 +25,7 @@ export default function unzip({ data, fs, directory }: UnzipOptions): void {
     const outputFilename = join(directory, relativePath);
     fs.mkdirSync(dirname(outputFilename), { recursive: true });
     fs.writeFileSync(outputFilename, content);
+    fs.chmodSync(outputFilename, 0o777);
   }
   //   console.log(
   //     `extract ${data.length / 10 ** 6} MB in ${new Date().valueOf() - t0}ms`

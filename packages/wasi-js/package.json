@@ -1,6 +1,6 @@
 {
   "name": "wasi-js",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Javascript implementation of WASI for Node.js and the Browser.",
   "main": "dist/index.js",
   "scripts": {

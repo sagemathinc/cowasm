@@ -41,7 +41,7 @@ export default function fork_exec({
   child_process,
 }) {
   function isWasm(filename: string): boolean {
-    const fd = fs.openSync(filename, "rb");
+    const fd = fs.openSync(filename, "r");
     const b = Buffer.alloc(4);
     fs.readSync(fd, b, 0, 4, 0);
     return WASM.equals(b);
@@ -226,42 +226,58 @@ export default function fork_exec({
       const argv = recv.arrayOfStrings(argvPtr);
       const path = pathPtr ? recv.string(pathPtr) : "";
       log("cowasm_vforkexec", argv);
-      //console.log("cowasm_vforkexec", { argv });
       if (!argv[0]) {
+        log("cowasm_vforkexec", "no argv[0]");
         throw Error("argv[0] must be defined");
       }
-      if (!argv[0].includes("/")) {
-        // search path
-        for (const dir of path.split(":")) {
-          const pathToCmd = join(dir, argv[0]);
-          try {
-            const stat = fs.statSync(pathToCmd);
-            if (stat.mode & fs.constants.S_IXUSR) {
-              argv[0] = pathToCmd;
-              break;
-            }
-          } catch (_err) {}
+      try {
+        if (!argv[0].includes("/")) {
+          // search path
+          log("cowasm_vforkexec", "go through search path to find", argv[0]);
+          for (const dir of path.split(":")) {
+            const pathToCmd = join(dir, argv[0]);
+            try {
+              const stat = fs.statSync(pathToCmd);
+              if (stat.mode & fs.constants.S_IXUSR) {
+                argv[0] = pathToCmd;
+                break;
+              }
+            } catch (_err) {}
+          }
+          log("cowasm_vforkexec", "found", argv[0]);
         }
-      }
-      if (!argv[0].includes("/") || !fs.existsSync(argv[0])) {
-        console.error(`${argv[0]}: not found\n`);
-        // couldn't find it
-        return 127;
-      }
-      const stat = fs.statSync(argv[0]);
-      if (!(stat.mode & fs.constants.S_IXUSR)) {
-        console.error(`${argv[0]}: Permission denied\n`);
-        // not executable
-        return 126;
-      }
+        if (!argv[0].includes("/") || !fs.existsSync(argv[0])) {
+          log("cowasm_vforkexec", "could not find executable");
+          console.error(`${argv[0]}: not found\n`);
+          // couldn't find it
+          return 127;
+        }
+        const stat = fs.statSync(argv[0]);
+        if (!(stat.mode & fs.constants.S_IXUSR)) {
+          log(
+            "cowasm_vforkexec",
+            "executable has wrong permissions (missing IXUSR)"
+          );
+          console.error(`${argv[0]}: Permission denied\n`);
+          // not executable
+          return 126;
+        }
 
-      if (isWasm(argv[0])) {
-        return run(argv);
-      } else if (child_process != null) {
-        return runNative(argv);
+        const wasm = isWasm(argv[0]);
+        log("isWasm = ", wasm);
+        if (wasm) {
+          log("running wasm executable", argv[0]);
+          return run(argv);
+        } else if (child_process != null) {
+          log("running native executable", argv[0]);
+          return runNative(argv);
+        }
+        log("can't run anything");
+        console.error(`${argv[0]}: cannot execute binary file\n`);
+      } catch (err) {
+        console.trace(`${argv[0]}: ${err}`);
       }
-      // can't run
-      console.error(`${argv[0]}: cannot execute binary file\n`);
+      // anything that didn't work
       return 127;
     },
   };

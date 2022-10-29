@@ -36,6 +36,7 @@ export default function stats({ fs, process, recv, wasi }) {
   // because wasi's structs don't have sufficient info to deal with permissions, we make ALL of these
   // chmods into stubs, below, despite having implemented them!
   // This in particular totally broke libgit2 working at all.
+  // TODO: an alternative may be to always set the mode to 0777.  I'm not sure how bad that would be.
   return {
     chmod: (pathPtr: number, mode: number): -1 | 0 => {
       return 0; // stubbed due to wasi shortcomings

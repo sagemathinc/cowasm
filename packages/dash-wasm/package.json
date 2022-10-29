@@ -1,15 +1,10 @@
 {
-  "name": "python-wasm",
-  "version": "0.21.0",
-  "description": "python-wasm -- WebAssembly Python for servers and browsers with sympy, Cython, numpy, and more",
+  "name": "dash-wasm",
+  "version": "0.0.4",
+  "description": "dash-wasm -- WebAssembly dash shell for servers and browsers (broken pre-alpha version)",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",
-  "files": [
-    "dist/*",
-    "README.md",
-    "package.json",
-    "tsconfig.json"
-  ],
+  "files": ["dist/*", "README.md", "package.json", "tsconfig.json"],
   "scripts": {
     "build": "make all",
     "clean": "make clean",
@@ -18,26 +13,21 @@
     "test-watch": "npx jest --watch ./dist",
     "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' -j4"
   },
-  "bin": "./bin/python",
+  "bin": "./bin/dash-wasm",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "keywords": [
-    "python",
-    "webassembly"
-  ],
+  "keywords": ["python", "webassembly"],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/python-wasm",
-  "workspaces": [
-    "../kernel"
-  ],
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/dash-wasm",
+  "workspaces": ["../kernel"],
   "dependencies": {
-    "@cowasm/kernel": "^0.21.0",
+    "@cowasm/kernel": "^0.23.1",
     "debug": "^4.3.4"
   },
   "devDependencies": {
