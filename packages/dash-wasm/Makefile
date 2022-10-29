@@ -1,11 +1,6 @@
 include ../build/Makefile-vars
 
-# OPT     = -OReleaseFast
-# OPT     = -OReleaseSafe
-# OPT     = -OReleaseSmall
-OPT     = -ODebug
-
-all: ${DIST}/.built ${DIST}/dash.wasm bin
+all: ${DIST}/.built ${DIST}/dash.wasm ${DIST}/bin.zip
 
 include ../build/Makefile-rules
 
@@ -15,9 +10,20 @@ ${DIST}/dash.wasm: ${DASH}/bin/dash
 	mkdir -p ${DIST}
 	cp $< $@
 
-bin:
-	mkdir -p ${DIST}/bin
-	cp ${PACKAGES}/coreutils/dist/wasm/bin/* ${DIST}/bin
+${BUILD}/.bin: ${PACKAGES}/coreutils/dist/wasm/bin/ls  # more deps!
+	mkdir -p ${BUILD}/bin
+	cp -v ${PACKAGES}/coreutils/dist/wasm/bin/* ${BUILD}/bin/
+	touch ${BUILD}/.bin
+
+${DIST}/bin.zip: ${BUILD}/.bin
+	mkdir -p ${DIST}
+	cd ${BUILD}/bin && zip ${DIST}/bin.zip -r .
+
+# what I really want -- vastly better compression size.
+${DIST}/bin.tar.xz: ${BUILD}/.bin
+	mkdir -p ${DIST}
+	cd ${BUILD}/bin && tar Jcvf ${DIST}/bin.tar.xz .
+
 
 ###
 # Node related makefile wrapping...

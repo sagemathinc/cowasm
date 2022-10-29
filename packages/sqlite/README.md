@@ -21,4 +21,9 @@ wasi fd_pread [ 4, 1048536, 1, 200n, 1048532 ] +0ms
 /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/sqlite/bin/../../../bin/cowasm: line 8: 91325 Bus error: 10           node "$SCRIPTPATH"/../dist/cowasm/node-terminal-debug.js "$@"
 ```
 
-This "truncating buffer to fit in memory" suggests maybe mmap is involved. That said, I've disabled mmap and it doesn't help, so I don't yet know what the problem is.  Maybe some other stub function returns invalid data that messes something up...
+This "truncating buffer to fit in memory" suggests maybe mmap is involved. That said, I've disabled mmap and it doesn't help, so I don't yet know what the problem is.  Maybe some other stub function returns invalid data that messes something up.
+
+## References
+
+There's interesting discussion and links here https://news.ycombinator.com/item?id=33374402 
+

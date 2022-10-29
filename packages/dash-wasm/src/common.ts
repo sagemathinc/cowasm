@@ -6,34 +6,31 @@ import { WasmInstanceAsync, WasmInstanceSync } from "@cowasm/kernel";
 import { bind_methods } from "./util";
 import debug from "debug";
 
-const log = debug("python-wasm");
-
-type FileSystemOption = "auto" | "bundle";
+const log = debug("dash-wasm");
 
 export interface Options {
-  fs?: FileSystemOption;
   noReadline?: boolean;
 }
 
-export class PythonWasmSync {
+export class DashWasmSync {
   kernel: WasmInstanceSync;
-  python_wasm: string;
+  dash_wasm: string;
 
-  constructor(kernel: WasmInstanceSync, python_wasm: string) {
+  constructor(kernel: WasmInstanceSync, dash_wasm: string) {
     this.kernel = kernel;
-    this.python_wasm = python_wasm;
+    this.dash_wasm = dash_wasm;
     bind_methods(this);
   }
 
   init(): void {
-    log("loading python.wasm...");
-    this.callWithString("cowasm_python_init");
+    log("loading dash.wasm...");
+    this.callWithString("cowasm_dash_init");
     log("done");
   }
 
   callWithString(name: string, str?: string | string[], ...args): any {
     return this.kernel.callWithString(
-      { name, dll: this.python_wasm },
+      { name, dll: this.dash_wasm },
       str,
       ...args
     );
@@ -41,21 +38,21 @@ export class PythonWasmSync {
 
   repr(code: string): string {
     log("repr", code);
-    const s = this.callWithString("cowasm_python_repr", code);
+    const s = this.callWithString("cowasm_dash_repr", code);
     log("result =", s);
     return s;
   }
 
   exec(code: string): void {
     log("exec", code);
-    const ret = this.callWithString("cowasm_python_exec", code);
+    const ret = this.callWithString("cowasm_dash_exec", code);
     log("ret", ret);
     if (ret) {
       throw Error("exec failed");
     }
   }
 
-  // starts the python REPL
+  // starts the dash REPL
   terminal(argv): number {
     console.log("STUB: terminal", argv);
     return 1;
@@ -63,19 +60,19 @@ export class PythonWasmSync {
 }
 
 // Run in a worker
-export class PythonWasmAsync {
+export class DashWasmAsync {
   kernel: WasmInstanceAsync;
-  python_wasm: string;
+  dash_wasm: string;
 
-  constructor(kernel: WasmInstanceAsync, python_wasm: string) {
+  constructor(kernel: WasmInstanceAsync, dash_wasm: string) {
     this.kernel = kernel;
-    this.python_wasm = python_wasm;
+    this.dash_wasm = dash_wasm;
     bind_methods(this);
   }
 
   async init(): Promise<void> {
-    log("loading and calling cowasm_python_init");
-    await this.callWithString("cowasm_python_init");
+    log("loading and calling cowasm_dash_init");
+    await this.callWithString("cowasm_dash_init");
     log("done");
   }
 
@@ -89,25 +86,10 @@ export class PythonWasmAsync {
     ...args
   ): Promise<any> {
     return await this.kernel.callWithString(
-      { name, dll: this.python_wasm },
+      { name, dll: this.dash_wasm },
       str,
       ...args
     );
-  }
-
-  async repr(code: string): Promise<string> {
-    log("repr", code);
-    const ret = await this.callWithString("cowasm_python_repr", code);
-    log("done", "ret =", ret);
-    return ret;
-  }
-
-  async exec(code: string): Promise<void> {
-    log("exec", code);
-    const ret = await this.callWithString("cowasm_python_exec", code);
-    if (ret) {
-      throw Error("exec failed");
-    }
   }
 
   async terminal(argv): Promise<number> {

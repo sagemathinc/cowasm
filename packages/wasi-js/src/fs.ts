@@ -10,7 +10,12 @@ this code is needed to initialize it before anything else can happen.
 */
 
 import unzip from "./unzip";
-import { Volume, createFsFromVolume, fs as memfs, DirectoryJSON } from "@cowasm/memfs";
+import {
+  Volume,
+  createFsFromVolume,
+  fs as memfs,
+  DirectoryJSON,
+} from "@cowasm/memfs";
 import { Union } from "@wapython/unionfs";
 import { WASIFileSystem } from "./types";
 
@@ -140,6 +145,7 @@ function devFs(): WASIFileSystem {
 
 function zipFs(data: Buffer, directory: string = "/"): WASIFileSystem {
   const fs = createFsFromVolume(new Volume()) as any;
+  // fs.mkdirSync(directory, { recursive: true });
   unzip({ data, fs, directory });
   return fs;
 }
