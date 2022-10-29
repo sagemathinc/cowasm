@@ -19,7 +19,7 @@ ${BUILD}/.bin: ${PACKAGES}/coreutils/dist/wasm/bin/ls  ${PACKAGES}/cpython/dist/
 	cp -v ${PACKAGES}/man/dist/wasm/bin/man ${BUILD}/bin/
 	cp -v ${PACKAGES}/sqlite/dist/wasm/bin/sqlite3 ${BUILD}/bin/
 	cp -v ${PACKAGES}/libarchive/dist/wasm/bin/tar ${BUILD}/bin/
-	cp -v ${PACKAGES}/cpython/dist/wasm/bin/python3.11.wasm ${BUILD}/bin/python
+	#cp -v ${PACKAGES}/cpython/dist/wasm/bin/python3.11.wasm ${BUILD}/bin/python
 	touch ${BUILD}/.bin
 
 ${DIST}/bin.zip: ${BUILD}/.bin

@@ -1,6 +1,6 @@
 {
   "name": "dash-wasm",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "dash-wasm -- WebAssembly dash shell for servers and browsers (broken pre-alpha version)",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",

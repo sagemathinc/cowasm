@@ -5,7 +5,7 @@ nodejs program or in a web browser.
 
 NOTE: web browser use is not implemented yet. Check back tomorrow.
 
-Here is a little demo, illustrating that **Lua, Python, sqlite and tar** are all
+Here is a little demo, illustrating that **Lua, sqlite and tar** are all
 included, among other thigns. Do NOT get your hopes up and expect this to work 
 well, since there are many remaining blocker issues!
 
@@ -29,12 +29,6 @@ Lua 5.4.4  Copyright (C) 1994-2022 Lua.org, PUC-Rio
 > 2 + 3
 5
 > ^D
-(CoWasm) sh$ python
-Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
-Type "help", "copyright", "credits" or "license" for more information.
->>> 2 + 3
-5
->>> ^D
 (CoWasm) sh$ sqlite3
 SQLite version 3.39.4 2022-09-29 15:55:41
 Enter ".help" for usage hints.
