@@ -9,7 +9,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
-all: python-wasm py f2c coreutils man viz dash terminal browser website
+all: python-wasm py f2c coreutils man viz dash terminal browser website dash-wasm
 
 cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 # openssl
@@ -25,6 +25,11 @@ dash: packages/dash/${BUILT}
 packages/dash/${BUILT}: zig libedit
 	cd packages/dash && make all
 .PHONY: dash
+
+dash-wasm: packages/dash-wasm/${BUILT}
+packages/dash-wasm/${BUILT}: dash kernel coreutils bzip2 lua viz man sqlite libarchive
+	cd packages/dash-wasm && make all
+.PHONY: dash-wasm
 
 docker:
 	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/cowasm master | awk '{print $$1}'` -t cowasm .
@@ -46,6 +51,11 @@ kernel: packages/kernel/${BUILT}
 packages/kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node
 	cd packages/kernel && make all
 .PHONY: kernel
+
+libarchive: packages/libarchive/${BUILT}
+packages/libarchive/${BUILT}: zig termcap
+	cd packages/libarchive && make all
+.PHONY: libarchive
 
 libedit: packages/libedit/${BUILT}
 packages/libedit/${BUILT}: zig termcap
