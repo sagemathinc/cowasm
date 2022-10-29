@@ -47,6 +47,13 @@ and build with
 or do
     __attribute__((visibility("default")))
     int main(int argc, char* argv[]) { ... }
+
+EXTRA OPTIONS:
+
+   -fvisibility-main = makes the main function visible
+   -v = prints any zig/linker commands before running them
+   -V = -v plus also passes -v to zig, so that zig then prints llvm commands as it runs them.
+   --wasm-opt = runs 'wasm-opt -O' on the executables to shrink size and increase speed.
 """
 
 import multiprocessing, os, shutil, subprocess, sys, tempfile, pathlib
@@ -92,6 +99,11 @@ if '-fvisibility-main' in sys.argv:
 else:
     use_main_hack = False
 
+if '--wasm-opt' in sys.argv:
+    use_wasm_opt = True
+    sys.argv.remove('--wasm-opt')
+else:
+    use_wasm_opt = False
 
 def run(cmd):
     if verbose:
@@ -225,7 +237,7 @@ def get_output_name():
 
 no_input = len([arg for arg in sys.argv if is_input(arg)]) == 0
 
-# COMPILE ONLY?
+# COMPILE ONLY? NOT LINKING
 if '-c' in sys.argv or no_input or get_output_name().endswith('.o'):
 
     # building object files from source, so don't have to do the extra wasm-ld step
@@ -356,6 +368,11 @@ def compile_parallel(compiler_args, source_files):
     looper = asyncio.gather(*[f(source_file) for source_file in source_files])
     return loop.run_until_complete(looper)
 
+def wasm_opt(file_wasm):
+    # Run "wasm-opt -O" on the given file
+    file_wasm_out = file_wasm + '.out'
+    run(['wasm-opt', '-O', file_wasm, '-o', file_wasm_out])
+    shutil.move(file_wasm_out, file_wasm)
 
 def main():
     source_files, compiler_args, linker_args, object_args = parse_args(
@@ -371,21 +388,24 @@ def main():
         object_args.append(obj.name)
 
     # link
+    output_name = get_output_name()
     link = [
         'zig', 'wasm-ld', \
         '--experimental-pic', '-shared', \
-        '-o', get_output_name()
+        '-o', output_name
     ] + linker_args
 
     if not is_debug():
         link.append('--strip-all')
         # Note that we have to do this '--compress-relocations' here, since it is
-        # ignored if put in Xliner args.
+        # ignored if put in Xlinker args.
         link.append('--compress-relocations')
 
     link += object_args
-
     run(link)
+
+    if use_wasm_opt:
+        wasm_opt(output_name)
 
 
 main()
