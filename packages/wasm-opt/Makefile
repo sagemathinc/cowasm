@@ -19,7 +19,7 @@ ${DIST}/.built:
 	touch ${DIST}/.built
 
 ${BIN}/wasm-opt: ${DIST}/.built
-	ln -s `pwd`/node_modules/.bin/wasm-opt ${BIN}/wasm-opt
+	ln -sf `pwd`/node_modules/.bin/wasm-opt ${BIN}/wasm-opt
 
 ${BIN}/cowasm-opt: ${BIN}/wasm-opt ${SRC}/cowasm_opt.py
 	ln -sf ${SRC}/cowasm_opt.py ${BIN}/cowasm-opt
