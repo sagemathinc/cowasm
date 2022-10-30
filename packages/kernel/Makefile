@@ -14,7 +14,7 @@ WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_
 
 TEST = ./test-zig.sh
 
-all: ${DIST}/.built bin-cowasm kernel ${DIST}/termcap
+all: ${DIST}/.built bin-cowasm kernel opt-kernel ${DIST}/termcap
 
 include ../build/Makefile-rules
 
@@ -80,11 +80,17 @@ ${DIST}/kernel/kernel.wasm: ${KERNEL_WASM_SOURCES} ${KERNEL_WASM_C}
 .PHONY: kernel
 kernel: ${DIST}/kernel/kernel.wasm
 
-.PHONY: wasm-opt
-wasm-opt: ${DIST}/kernel/kernel.wasm
+# Using wasm-opt when I put this in shrinks:
+#  - the non-zip size of the wasm by 10%.   (715kb to 645kb)
+#  - the zip'd size by 3%.                  (339kb to 329kb)
+# Note that this could change if kernel.wasm, llvm, zig, etc., changes over
+# time, of course.
+.PHONY: opt-kernel
+opt-kernel: ${DIST}/kernel/kernel.wasm
 	mkdir -p ${BUILD}
-	wasm-opt -O ${DIST}/kernel/kernel.wasm -o ${BUILD}/kernel.wasm.opt
+	${BIN}/wasm-opt -O ${DIST}/kernel/kernel.wasm -o ${BUILD}/kernel.wasm.opt
 	mv ${BUILD}/kernel.wasm.opt ${DIST}/kernel/kernel.wasm
+	chmod a+x ${DIST}/kernel/kernel.wasm
 
 ###
 # Script for running binaries under cowasm:
@@ -117,7 +123,6 @@ ${BUILD}/test/hello.wasm: ${SRC}/test/hello.c
 run-hello.wasm: ${BUILD}/test/hello.wasm
 	${CWD}/bin/cowasm ${CWD}/build/test/hello.wasm | grep "Hello from CoWasm!"
 .PHONY: run-hello.wasm
-
 
 ${BUILD}/test/cowsay.wasm: ${SRC}/test/cowsay.c
 	mkdir -p ${BUILD}/test/

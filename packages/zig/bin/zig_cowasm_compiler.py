@@ -53,10 +53,10 @@ EXTRA OPTIONS:
    -fvisibility-main = makes the main function visible
    -v = prints any zig/linker commands before running them
    -V = -v plus also passes -v to zig, so that zig then prints llvm commands as it runs them.
-   --wasm-opt = runs 'wasm-opt -O' on the executables to shrink size and increase speed.
+   --no-wasm-opt = disable running 'wasm-opt -O', which happens automatically if there is any optimization set.
 """
 
-import multiprocessing, os, shutil, subprocess, sys, tempfile, pathlib
+import multiprocessing, os, shutil, stat, subprocess, sys, tempfile, pathlib
 
 verbose = False  # default
 # use -V for super verbose, so also zig/clang is verbose
@@ -98,12 +98,6 @@ if '-fvisibility-main' in sys.argv:
     sys.argv.remove('-fvisibility-main')
 else:
     use_main_hack = False
-
-if '--wasm-opt' in sys.argv:
-    use_wasm_opt = True
-    sys.argv.remove('--wasm-opt')
-else:
-    use_wasm_opt = False
 
 def run(cmd):
     if verbose:
@@ -206,6 +200,12 @@ def is_debug():
     # aspect of autodetecting is that the stripping actually happens
     # during linking, but these optimization flags are used for compilation.
     return False
+
+if '--no-wasm-opt' in sys.argv:
+    use_wasm_opt = False
+    sys.argv.remove('--no-wasm-opt')
+else:
+    use_wasm_opt = not is_debug()
 
 
 def is_input(filename):
@@ -371,8 +371,10 @@ def compile_parallel(compiler_args, source_files):
 def wasm_opt(file_wasm):
     # Run "wasm-opt -O" on the given file
     file_wasm_out = file_wasm + '.out'
-    run(['wasm-opt', '-O', file_wasm, '-o', file_wasm_out])
+    run(['wasm-opt', '--enable-mutable-globals', '-O', file_wasm, '-o', file_wasm_out])
     shutil.move(file_wasm_out, file_wasm)
+    st = os.stat(file_wasm)
+    os.chmod(file_wasm, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 def main():
     source_files, compiler_args, linker_args, object_args = parse_args(

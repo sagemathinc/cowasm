@@ -2,7 +2,7 @@
 This is meant to illustrate and test some things involving writing a C program
 that runs using cowasm.
 
-To build and run under WaCalc:
+To build and run under CoWasm:
 
    make run-misc.wasm
 

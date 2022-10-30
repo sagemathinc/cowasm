@@ -18,11 +18,9 @@ understood __stack_pointer is by creating a bunch of sample programs and study
 the output of wasm-decompile and wasm2wat.   First some remarks:
 
 - the stack size for the main executable is controlled at compile time by zig.
-It's by default 1MB when you use "zig build-exe", but it's only 64KB
-when you use "zig build-lib".   This difference is probably a bug, but a
-rememedy is type include "--stack 1048576 " in the command line. Also, I know
-of no way to create a WebAssembly.Global that is the main __stack_pointer.
-Maybe emscripten does via assmebly code, but I can't tell.
+It's by default 1MB.   I know of no way to create a WebAssembly.Global that
+is the main __stack_pointer.   Maybe emscripten does via assmebly code, but
+I can't tell, or maybe it just isn't allowed.
 
 - The stack grows *DOWN*, i.e., if the stack is 1MB then __stack_pointer
 gets set by default to 1048576 (= 1MB), and at the beginning of each
@@ -30,7 +28,7 @@ function, the VM grabs the current stack pointer, then substracts off
 how much space will be needed for running that function, then starts
 working with that (so it can go up), and then resets it to where it was.
 
-- Since I have no idea how to get the current __stack_pointer for ther main
+- Since I have no idea how to get the current __stack_pointer for the main
 module, here we allocate a new chunk of memory on the heap for each dynamic
 library to use as its own stack. We then pass in __stack_pointer as a value
 at the very end of that memory.   The __stack_pointer's in each dynamic
@@ -40,10 +38,12 @@ their own stacks and they don't overlap with each other at all. This
 seems to work well, given our constaints, and hopefully doesn't waste too
 much memory.
 
-NOTE: There arguments about what stack size to use here -- it's still 5MB in
-emscripten today, and in zig it is 1MB:
+- Because of this architecture 
+
+NOTE: There are arguments about what stack size to use at the links below.  I
+think it's still 5MB in emscripten today, and in zig it is 1MB:
  - https://github.com/emscripten-core/emscripten/pull/10019
- - https://github.com/ziglang/zig/issues/3735 <-- this did get fixed upstream!
+ - https://github.com/ziglang/zig/issues/3735 <-- *this issue i reported did get fixed upstream!*
 */
 
 // Stack size for imported dynamic libraries -- we use 1MB. This is

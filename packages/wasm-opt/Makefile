@@ -12,12 +12,11 @@ all: ${DIST}/.built ${BIN}/wasm-opt
 
 include ../build/Makefile-rules
 
-${CUR}/node_modules/binaryen/bin/wasm-opt
 ${DIST}/.built:
 	npm ci
 	mkdir ${DIST}
 	touch ${DIST}/.built
 
 ${BIN}/wasm-opt: ${DIST}/.built
-	ln -s `pwd`/node_modules/.bin/wasm-opt 
+	ln -s `pwd`/node_modules/.bin/wasm-opt ${BIN}/wasm-opt
 
