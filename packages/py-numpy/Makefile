@@ -41,6 +41,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #    right thing to do.  However, don't expect this to fully work yet, e.g.,
 #    there is a Demo about numpy in the Cython source and it fails
 #    due to other missing posix things (TODO).
+#  - We do NOT use cowasm-opt, since it makes the so *larger*.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}
 	cd ${PACKAGES}/cpython && make pip

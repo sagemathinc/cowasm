@@ -11,7 +11,7 @@
     "tsc": "tsc -w",
     "test": "tsc && npx jest ./dist",
     "test-watch": "npx jest --watch ./dist",
-    "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' -j4"
+    "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' -j4 && cowasm-opt ./dist && npx jest ./dist"
   },
   "bin": { "python-wasm": "./bin/python-wasm" },
   "repository": {

@@ -258,6 +258,11 @@ ${DIST_WASM}/.install-data: ${DIST_WASM}/.install-cpython
 	# so we should just put them in the main binary.  We'll change that when things are working.
 	mkdir -p ${DIST_WASM}/lib/dist/lib-dynload/
 	cp -v ${DIST_WASM}/lib/python3.11/lib-dynload/*.so ${DIST_WASM}/lib/dist/lib-dynload/
+
+	# This would run wasm-opt on the so extension modules, but it is not
+	# necessarily "worth it", since it only reduces the size by less than 3%.
+	#${BIN}/cowasm-opt ${DIST_WASM}/lib/dist/lib-dynload/
+
 	# Unfortunately, wasm-strip removes the critical custom section that makes the so file useful, since NotImplementedError
 	#      https://reviews.llvm.org/D73820
 	#find ${DIST_WASM}/lib/dist/lib-dynload -type f -name "*.so" | xargs -n1 ${CWD}/node_modules/.bin/wasm-strip

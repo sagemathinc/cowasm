@@ -11,10 +11,31 @@ USAGE:
 It will walk the path's and identify all the wasm binaries, where a file is
 considered a wasm executable if:
 
-  - it is executable, and
+  - it is executable or ends with .so (python extension module), and
   - the file contents start with b'\x00asm'
 
 In particular, we do not consider the filename extension.
+
+OBSERVATIONS:
+
+- For our static kernel, wasm-opt decreases the size by 11%.
+- For most of our dynamic libraries (e.g., python extension modules),
+  wasm-opt decreases the size by less than 3%.
+  For numpy it actually makes it larger (?).
+- For python.wasm the size decreases by 5% before compression, but
+  after compression it is only 1.3%.
+- There is no observable impact on raw compute speed, e.g., as
+  measured by our benchmarks module.
+
+Conclusion: for now let's just use this on the kernel and nothing else.
+The tradeoff is slightly increased build times and the potential of subtle
+bugs being introduced in published modules.  I don't know to what extent
+I should trust binaryen's optimizer, but I don't blindly trust optimizers.
+
+TODO: another thing to investigate is implementing setjmp/longjmp using
+asyncify, which is part of cowasm-opt.  For that I think we would asyncify
+the kernel and whatever dynamic library actually needs this, and having
+this script around will be useful.
 """
 
 import os, shutil, stat, subprocess, sys
@@ -48,9 +69,10 @@ def wasm_opt(file_wasm):
 
 
 def is_wasm_binary(target):
-    st = os.stat(target)
-    if not (st.st_mode & stat.S_IXUSR):
-        return False
+    if not target.endswith('.so'):
+        st = os.stat(target)
+        if not (st.st_mode & stat.S_IXUSR):
+            return False
     return open(target, "rb").read(4) == b'\x00asm'
 
 
