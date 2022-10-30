@@ -343,6 +343,8 @@ char* strsignal(int sig);
 
 int fiprintf(FILE* stream, const char* format, ...);
 int siprintf(char* s, const char* format, ...);
+#define __small_sprintf sprintf
+
 
 int strunvis(char* dst, const char* src);
 int strnvis(char* dst, size_t dlen, const char* src, int flag);

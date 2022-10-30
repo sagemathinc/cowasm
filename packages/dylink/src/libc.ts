@@ -812,6 +812,7 @@ insque
 ioctl
 iprintf
 __small_printf
+__small_sprintf
 isalnum
 isalnum_l
 isalpha
