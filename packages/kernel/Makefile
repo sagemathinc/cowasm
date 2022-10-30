@@ -14,7 +14,7 @@ WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_
 
 TEST = ./test-zig.sh
 
-all: ${DIST}/.built bin-cowasm kernel opt-kernel ${DIST}/termcap
+all: ${DIST}/.built bin-cowasm kernel ${DIST}/termcap
 
 include ../build/Makefile-rules
 
@@ -85,12 +85,9 @@ kernel: ${DIST}/kernel/kernel.wasm
 #  - the zip'd size by 3%.                  (339kb to 329kb)
 # Note that this could change if kernel.wasm, llvm, zig, etc., changes over
 # time, of course.
-.PHONY: opt-kernel
-opt-kernel: ${DIST}/kernel/kernel.wasm
-	mkdir -p ${BUILD}
-	${BIN}/wasm-opt -O ${DIST}/kernel/kernel.wasm -o ${BUILD}/kernel.wasm.opt
-	mv ${BUILD}/kernel.wasm.opt ${DIST}/kernel/kernel.wasm
-	chmod a+x ${DIST}/kernel/kernel.wasm
+.PHONY: opt
+opt: ${DIST}/kernel/kernel.wasm
+	${BIN}/cowasm-opt ${DIST}
 
 ###
 # Script for running binaries under cowasm:

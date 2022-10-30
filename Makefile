@@ -48,7 +48,7 @@ packages/dylink/${BUILT}: node zig posix-wasm lzma cpython
 .PHONY: dylink
 
 kernel: packages/kernel/${BUILT}
-packages/kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node
+packages/kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node wasm-opt
 	cd packages/kernel && make all
 .PHONY: kernel
 

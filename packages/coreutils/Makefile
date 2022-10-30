@@ -71,7 +71,7 @@ include ../build/Makefile-rules
 CC = ${BIN}/cowasm-cc
 
 # Put -g at the end to get debug symbols and much bigger binaries.
-CFLAGS = -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat -I${BZIP2}/include -I${ZLIB}/include -DWITHOUT_LIBCRYPTO # -g
+CFLAGS = -Oz -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat -I${BZIP2}/include -I${ZLIB}/include -DWITHOUT_LIBCRYPTO # -g
 LDFLAGS = -L${BZIP2}/lib -lbz2 -L${ZLIB}/lib -lz
 
 # See https://stackoverflow.com/questions/54192234/recursive-search-in-vpath
