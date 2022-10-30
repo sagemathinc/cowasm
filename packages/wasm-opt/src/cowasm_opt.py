@@ -6,7 +6,7 @@ reduce the size of wasm files and possibly make them faster.
 
 USAGE:
 
-   cowasm-opt [path] ...
+   cowasm-opt [-options to wasm-opt, e.g., --asyncify] [path] ...
 
 It will walk the path's and identify all the wasm binaries, where a file is
 considered a wasm executable if:
@@ -48,14 +48,12 @@ def run(cmd):
         sys.exit(ret.returncode)
 
 
-def wasm_opt(file_wasm):
+def wasm_opt(file_wasm, options):
     # Run "wasm-opt --enable-mutable-globals -O ..." on the given wasm file, "in place"
     try:
         file_wasm_out = file_wasm + '.out'
-        run([
-            'wasm-opt', '--enable-mutable-globals', '-O', file_wasm, '-o',
-            file_wasm_out
-        ])
+        run(['wasm-opt'] + options +
+            ['--enable-mutable-globals', '-O', file_wasm, '-o', file_wasm_out])
         st = os.stat(file_wasm)
         shutil.move(file_wasm_out, file_wasm)
         os.chmod(file_wasm, st.st_mode)  # set permissions back
@@ -94,12 +92,12 @@ def find_wasm_files(path):
 # make it easier to do in parallel.
 
 
-def wasm_opt_all(targets):
+def wasm_opt_all(targets, options):
     for target in targets:
-        wasm_opt(target)
+        wasm_opt(target, options)
 
 
-def wasm_opt_all_parallel(targets):
+def wasm_opt_all_parallel(targets, options):
     if len(targets) == 0:
         return
     import asyncio
@@ -114,7 +112,7 @@ def wasm_opt_all_parallel(targets):
 
     @background
     def f(target):
-        return wasm_opt(target)
+        return wasm_opt(target, options)
 
     looper = asyncio.gather(*[f(target) for target in targets])
     loop.run_until_complete(looper)
@@ -127,10 +125,14 @@ def main():
         sys.exit(1)
 
     targets = []
-    for path in sys.argv[1:]:
-        targets += find_wasm_files(path)
+    options = []
+    for x in sys.argv[1:]:
+        if x.startswith('-'):
+            options.append(x)
+        else:
+            targets += find_wasm_files(x)
     print(' '.join(targets))
-    wasm_opt_all_parallel(targets)
+    wasm_opt_all_parallel(targets, options)
 
 
 if __name__ == '__main__':
