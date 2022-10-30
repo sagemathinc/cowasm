@@ -36,10 +36,10 @@ There are _**two additional approaches**_ to this problem:
     - It makes kernel.wasm over 50% larger.
     - It takes **a very long time** to run asyncify on python.wasm, e.g.,
   with the wasm version of binaryen I gave up after 10\+ minutes. The native
-  version took 16 minutes to build successfully. The asyncified version takes 42%
-  longer to run my benchmark suite \(40.5 seconds instead of 28 seconds\). So
-  asyncify is not a realistic option for a program as complicated as Python, at
-  least not without more work.
+  version took 16 minutes to build successfully. The asyncified version takes 
+  over 40% longer to run my benchmark suite \(28 seconds instead of 15 
+  seconds\). So asyncify is not a realistic option for a program as 
+  complicated as Python, at least not without more work.
 
 For node.js by default CoWasm uses posix-node if possible, or falls back to atomics, since they are always supported in node.
 
