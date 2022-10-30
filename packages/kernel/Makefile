@@ -80,6 +80,11 @@ ${DIST}/kernel/kernel.wasm: ${KERNEL_WASM_SOURCES} ${KERNEL_WASM_C}
 .PHONY: kernel
 kernel: ${DIST}/kernel/kernel.wasm
 
+.PHONY: wasm-opt
+wasm-opt: ${DIST}/kernel/kernel.wasm
+	mkdir -p ${BUILD}
+	wasm-opt -O ${DIST}/kernel/kernel.wasm -o ${BUILD}/kernel.wasm.opt
+	mv ${BUILD}/kernel.wasm.opt ${DIST}/kernel/kernel.wasm
 
 ###
 # Script for running binaries under cowasm:
@@ -103,6 +108,16 @@ test-posix:
 		${TEST} wasm/posix/stdio.zig   ${OPT} && \
 		${TEST} wasm/posix/string.zig   ${OPT} && \
 		${TEST} wasm/posix/stdlib.zig wasm/posix/stdlib.c  ${OPT}
+
+
+${BUILD}/test/hello.wasm: ${SRC}/test/hello.c
+	mkdir -p ${BUILD}/test/
+	${BIN}/cowasm-cc -v -fvisibility-main -Oz ${SRC}/test/hello.c -o ${BUILD}/test/hello.wasm
+
+run-hello.wasm: ${BUILD}/test/hello.wasm
+	${CWD}/bin/cowasm ${CWD}/build/test/hello.wasm | grep "Hello from CoWasm!"
+.PHONY: run-hello.wasm
+
 
 ${BUILD}/test/cowsay.wasm: ${SRC}/test/cowsay.c
 	mkdir -p ${BUILD}/test/
@@ -128,5 +143,5 @@ run-misc.exe: ${BUILD}/test/misc.exe
 	${BUILD}/test/misc.exe
 .PHONY: run-misc.exe
 
-test-misc: run-misc.wasm run-cowsay.wasm
+test-misc: run-misc.wasm run-cowsay.wasm run-hello.wasm
 .PHONY: test-misc
