@@ -5,7 +5,6 @@ NOTES:
 */
 
 import forkExec from "./fork-exec";
-import emscripten from "./emscripten";
 import epoll from "./epoll";
 import netdb from "./netdb";
 import netif from "./netif";
@@ -96,7 +95,6 @@ export type PosixEnv = { [name: string]: Function };
 
 export default function posix(context: Context): PosixEnv {
   const P = {
-    ...emscripten(context),
     ...epoll(context),
     ...forkExec(context),
     ...netdb(context),

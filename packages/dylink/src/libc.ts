@@ -168,6 +168,8 @@ void setprogname(const char *progname) {
 
 void freeaddrinfo(struct addrinfo *res);
 void _Py_CheckEmscriptenSignalsPeriodically();
+void _Py_CheckEmscriptenSignals();
+int emscripten_return_address(int);
 
 // NULL for these two means "no info".
 struct group  *getgrgid(gid_t) { return NULL; }
@@ -193,6 +195,8 @@ mergesort
 setmode
 getmode
 _Py_CheckEmscriptenSignalsPeriodically
+_Py_CheckEmscriptenSignals
+emscripten_return_address
 fopencookie
 tmpfile
 strtold_l
