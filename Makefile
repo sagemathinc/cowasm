@@ -134,6 +134,11 @@ packages/wasi-js/${BUILT}: node
 	cd packages/wasi-js && make all
 .PHONY: wasi-js
 
+wasm-opt: packages/wasm-opt/${BUILT}
+packages/wasm-opt/${BUILT}: node
+	cd packages/wasm-opt && make all
+.PHONY: wasm-opt
+
 browser: packages/browser/${BUILT}
 packages/browser/${BUILT}: node python-wasm
 	cd packages/browser && make all
