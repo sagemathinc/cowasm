@@ -61,6 +61,7 @@ all: \
 	${TARGET}/unexpand \
 	${TARGET}/uniq \
 	${TARGET}/wc \
+	${TARGET}/which \
 	${TARGET}/xargs \
 	${TARGET}/yes
 	@# These don't work at all:
@@ -249,6 +250,9 @@ test-uniq: ${TARGET}/uniq
 test-wc: ${TARGET}/wc
 	echo "hello world" | ${BIN}/cowasm ${TARGET}/wc | grep "1       2      12"
 
+test-which: ${TARGET}/which
+	test "`${BIN}/cowasm ${TARGET}/which which`" = "`which which`"
+
 test-xargs: ${TARGET}/xargs
 	ls -1 | ${BIN}/cowasm ${TARGET}/xargs |grep Makefile |grep dist
 
@@ -266,7 +270,7 @@ test-uniq-sources:
 
 test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-expr test-factor test-fmt test-grep test-head test-id \
 	test-join test-ls test-mktemp test-mkdir-rmdir test-mv test-rm test-seq test-sleep test-sort test-stat test-tail test-touch test-tr \
-	test-tty test-uname test-uniq test-wc test-xargs
+	test-tty test-uname test-uniq test-wc  test-which test-xargs
 	@echo "Success -- all coreutils tests passed"
 
 
