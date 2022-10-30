@@ -25,4 +25,5 @@ ${BIN}/cowasm-opt: ${BIN}/wasm-opt ${SRC}/cowasm_opt.py
 	ln -sf ${SRC}/cowasm_opt.py ${BIN}/cowasm-opt
 	touch ${BIN}/cowasm-opt
 
-
+test:
+	${BIN}/cowasm-opt | grep Usage
