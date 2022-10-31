@@ -4,7 +4,6 @@ import wasmAsyncImport from "../wasm/import-node";
 import wasmSyncImport from "../wasm/worker/node";
 import { createSyncKernel, createAsyncKernel } from "./kernel";
 import { join } from "path";
-import { existsSync } from "fs";
 import type { FileSystemSpec } from "wasi-js";
 export { FileSystemSpec };
 import { SIGINT } from "../wasm/constants";
