@@ -7,7 +7,7 @@ TARBALL = ${UPSTREAM}/ncurses-${VERSION}.tar.gz
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 TERMCAP = ${PACKAGES}/termcap/dist/wasm
 
-all:  wasm
+all:  wasm ${BUILD_WASM}/test/.built
 
 include ../build/Makefile-rules
 
@@ -88,7 +88,7 @@ ${BUILD_WASM}/test/.built: ${DIST_WASM}/.built
 				--prefix="${DIST_WASM}" \
 				--with-build-cc="zig cc" \
 		&& echo "#undef USE_PTHREADS" >> ncurses_cfg.h \
-		&& 	make -j8
+		&& 	make -j8 install
 	touch ${BUILD_WASM}/test/.built
 
 ${DIST_WASM}/bin/hello: ${DIST_WASM}/.built  ${SRC}/hello.c

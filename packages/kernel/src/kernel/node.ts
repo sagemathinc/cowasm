@@ -34,9 +34,6 @@ function getOptions(wasmImport, opts?: Options) {
     ...opts?.env,
   };
   //PS1: '(CoWasm) sh: (pwd | sed "s|^$HOME|~|")$ '
-  if (!existsSync(env.TERMCAP)) {
-    console.warn(`TERMCAP=${env.TERMCAP} is missing`);
-  }
 
   return {
     programName: process.env.PROGRAM_NAME, // real name or made up name

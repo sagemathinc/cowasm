@@ -107,7 +107,7 @@ export default function initWorker({
         if (wasm?.fs == null) {
           throw Error("wasm.fs must be initialized");
         }
-        await wasm.fetch(message.url, message.path);
+        await wasm.fetch(message.url, message.path, message.mode);
         return;
     }
   }

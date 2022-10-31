@@ -267,7 +267,11 @@ export default class WasmInstanceSync extends EventEmitter {
     throw Error("not implemented");
   }
 
-  async fetch(url: string, path: string): Promise<void> {
+  async fetch(
+    url: string,
+    path: string,
+    mode?: number | string
+  ): Promise<void> {
     // TODO: this can't work in older versions of node... but also we should probably only
     // use fetch in the browser.  Could require clarification or the node-fetch module.
     const data = await (await fetch(url)).arrayBuffer();
@@ -282,5 +286,11 @@ export default class WasmInstanceSync extends EventEmitter {
     await callback((cb) => {
       fs.writeFile(path, Buffer.from(data), cb);
     });
+    if (mode) {
+      // set file mode, typically for executables
+      await callback((cb) => {
+        fs.chmod(path, mode, cb);
+      });
+    }
   }
 }

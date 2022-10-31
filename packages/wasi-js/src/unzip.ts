@@ -24,6 +24,10 @@ export default function unzip({ data, fs, directory }: UnzipOptions): void {
   for (const [relativePath, content] of Object.entries(z)) {
     const outputFilename = join(directory, relativePath);
     fs.mkdirSync(dirname(outputFilename), { recursive: true });
+    if(outputFilename.endsWith('/')) {
+      // it is a directory, not a file.
+      continue;
+    }
     fs.writeFileSync(outputFilename, content);
     fs.chmodSync(outputFilename, 0o777);
   }

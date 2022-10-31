@@ -145,7 +145,7 @@ function devFs(): WASIFileSystem {
 
 function zipFs(data: Buffer, directory: string = "/"): WASIFileSystem {
   const fs = createFsFromVolume(new Volume()) as any;
-  // fs.mkdirSync(directory, { recursive: true });
+  fs.mkdirSync(directory, { recursive: true });
   unzip({ data, fs, directory });
   return fs;
 }

@@ -4,9 +4,9 @@ import setTheme from "./theme";
 import pythonWasm from "python-wasm";
 
 export default async function terminal(element: HTMLDivElement) {
+  console.log("creating pythonWasm");
   const python = await pythonWasm();
   (window as any).python = python;
-  console.log("Calling python.init...");
   const t = new Date();
   console.log("python.init done; time = ", new Date().valueOf() - t.valueOf());
   await python.exec("import readline");

@@ -39,7 +39,11 @@ class WasmInstance extends EventEmitter {
   }
 
   // fetch the data at url and save it to path.
-  async fetch(_url: string, _path: string): Promise<void> {
+  async fetch(
+    _url: string,
+    _path: string,
+    _mode?: number | string
+  ): Promise<void> {
     throw Error("not implemented");
   }
 }

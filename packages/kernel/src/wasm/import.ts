@@ -218,7 +218,11 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     throw Error("not implemented");
   }
 
-  async fetch(url: string, path: string): Promise<void> {
+  async fetch(
+    url: string,
+    path: string,
+    mode?: number | string
+  ): Promise<void> {
     if (this.worker == null) throw Error("fetch: bug - worker must be defined");
     this.callId += 1;
     this.worker.postMessage({
@@ -226,6 +230,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       event: "fetch",
       url,
       path,
+      mode,
     });
     await this.waitForResponse(this.callId);
   }
