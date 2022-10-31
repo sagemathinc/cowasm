@@ -16,7 +16,7 @@ class WorkerThread extends EventEmitter {
     this.postMessage = worker.postMessage.bind(worker);
     this.terminate = worker.terminate.bind(worker);
     worker.onmessage = ({ data: message }) => {
-      if (message.event == "service-worker-broken") {
+      if (message?.event == "service-worker-broken") {
         fixServiceWorker();
         return;
       }

@@ -10,7 +10,7 @@ export interface Options {
   interactive?: boolean;
 }
 
-const ROOT = "/";
+const ROOT = "/usr";
 
 const ENV = {
   TERMCAP: join(ROOT, "share", "termcap"),
