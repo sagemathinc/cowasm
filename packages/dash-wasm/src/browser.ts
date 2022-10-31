@@ -1,14 +1,14 @@
 import { asyncKernel, FileSystemSpec } from "@cowasm/kernel";
 import { join } from "path";
 import debug from "debug";
-import { Options, DashWasmAsync, ENV, ROOT } from "./common";
+import { Options, DashWasmAsync, ENV, USR } from "./common";
 
 const log = debug("dash-wasm:browser");
 
 import dash_wasm from "./dash.wasm";
 import fs_zip from "./fs.zip";
 
-const DASH = join(ROOT, "bin", "sh");
+const DASH = join(USR, "bin", "sh");
 
 export default async function asyncDash(
   opts?: Options
@@ -28,7 +28,7 @@ function getFilesystem(_opts?: Options): FileSystemSpec[] {
     {
       type: "zipurl",
       zipurl: fs_zip,
-      mountpoint: ROOT,
+      mountpoint: USR,
     },
     // And the rest of the native filesystem.
     { type: "dev" },

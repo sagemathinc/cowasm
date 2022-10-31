@@ -4,10 +4,10 @@ import debug from "debug";
 
 const log = debug("dash-wasm:node");
 
-import { Options, DashWasmAsync, DashWasmSync, ROOT, ENV } from "./common";
+import { Options, DashWasmAsync, DashWasmSync, USR, ENV } from "./common";
 
 const fs_zip = join(__dirname, "fs.zip");
-const dash_wasm = join(ROOT, "bin", "sh");
+const dash_wasm = join(USR, "bin", "sh");
 
 export async function syncDash(opts?: Options): Promise<DashWasmSync> {
   log("creating sync CoWasm kernel...");
@@ -33,7 +33,7 @@ function getFilesystem(_opts?: Options): FileSystemSpec[] {
     {
       type: "zipfile",
       zipfile: fs_zip,
-      mountpoint: ROOT,
+      mountpoint: USR,
     },
   ];
 }

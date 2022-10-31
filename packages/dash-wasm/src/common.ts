@@ -10,15 +10,15 @@ export interface Options {
   interactive?: boolean;
 }
 
-const ROOT = "/usr";
+const USR = "/usr";
 
 const ENV = {
-  TERMCAP: join(ROOT, "share", "termcap"),
-  PYTHONHOME: ROOT,
-  PATH: join(ROOT, "bin"),
+  TERMCAP: join(USR, "share", "termcap"),
+  PYTHONHOME: USR,
+  PATH: join(USR, "bin"),
 };
 
-export { ROOT, ENV };
+export { USR, ENV };
 
 class DashWasm {
   public kernel;
