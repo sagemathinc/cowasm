@@ -1,6 +1,9 @@
 import { ITheme, Terminal } from "xterm";
 
-export default function setTheme(terminal: Terminal, themeName: keyof typeof colorThemes): void {
+export default function setTheme(
+  terminal: Terminal,
+  themeName: keyof typeof colorThemes
+): void {
   let t = colorThemes[themeName];
   if (t == null) {
     t = colorThemes["default"];
@@ -19,7 +22,7 @@ export default function setTheme(terminal: Terminal, themeName: keyof typeof col
     foreground: colors[16],
     cursor: colors[16],
     cursorAccent: colors[17],
-    selection: "rgba(128, 128, 160, 0.25)",
+    selectionBackground: "rgba(128, 128, 160, 0.25)",
     black: colors[0],
     red: colors[1],
     green: colors[2],
@@ -37,8 +40,10 @@ export default function setTheme(terminal: Terminal, themeName: keyof typeof col
     brightCyan: colors[14],
     brightWhite: colors[15],
   };
-  terminal.setOption("theme", theme);
+  terminal.options.theme = theme;
 }
+
+// TODO -- factor into another package such as "xterm-themes".  Maybe somebody else already did that?
 
 export const colorThemes = {
   "solarized-dark": {

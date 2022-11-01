@@ -1,13 +1,13 @@
 # dash-wasm -- WebAssembly dash shell for servers and browsers (pre-alpha version
 
 This provides the dash shell compiled to WebAssembly, suitable for use in a
-nodejs program or in a web browser.
+nodejs program or in a web browser.  Try this in your browser right now:
 
-NOTE: web browser use is not implemented yet. Check back tomorrow.
+LIVE DEMO:  https://cowasm.sh 
 
-Here is a little demo, illustrating that **Lua, sqlite and tar** are all
-included, among other thigns. Do NOT get your hopes up and expect this to work 
-well, since there are many remaining blocker issues!
+Here is a little demo below, illustrating that **Lua, sqlite, python3 and tar** are all
+included, among other things. Do NOT get your hopes up and expect this to work 
+well, since _**there are many remaining blocker issues!**_
 
 See https://github.com/sagemathinc/cowasm if you're interested in this project, and
 in particular [the dash package](https://github.com/sagemathinc/cowasm/tree/main/packages/dash).
@@ -69,6 +69,7 @@ bsdtar 3.6.1 - libarchive 3.6.1 zlib/1.2.13 liblzma/5.0.4 bz2lib/1.0.8
 ```
 
 You can also run native executables if you give the exact path (or add them to PATH):
+
 ```sh
 ~/cowasm/packages/dash-wasm$ ./bin/dash-wasm 
 (CoWasm) sh$ /usr/bin/python3
@@ -79,3 +80,4 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```
 
 Piping and indirection is not implemented yet.
+

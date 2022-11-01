@@ -1,7 +1,7 @@
 {
   "name": "dash-wasm",
-  "version": "0.1.0",
-  "description": "dash-wasm -- WebAssembly dash shell for servers and browsers (broken pre-alpha version)",
+  "version": "0.2.1",
+  "description": "dash-wasm -- WebAssembly dash shell for servers and browsers (early demo version)",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",
   "files": ["dist/*", "README.md", "package.json", "tsconfig.json"],
@@ -27,7 +27,7 @@
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/dash-wasm",
   "workspaces": ["../kernel"],
   "dependencies": {
-    "@cowasm/kernel": "^0.23.1",
+    "@cowasm/kernel": "^0.23.2",
     "debug": "^4.3.4"
   },
   "devDependencies": {
