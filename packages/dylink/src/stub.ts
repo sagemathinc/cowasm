@@ -5,7 +5,7 @@ const logFirst = debug("stub:first"); // log first use of the stub
 
 export default function stubProxy(
   env,
-  functionViaPointer: (ptr) => Function | undefined,
+  functionViaPointer: (ptr) => Function | undefined | null,
   type?: "silent" | "warn"
 ) {
   return new Proxy(env, {
