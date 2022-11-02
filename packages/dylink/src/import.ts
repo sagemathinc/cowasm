@@ -158,11 +158,19 @@ export default async function importWebAssemblyDlopen({
     __indirect_function_table.set(index, f);
   }
 
+  function deleteTable(index: number): void {
+    if (__indirect_function_table == null) {
+      throw Error("__indirect_function_table must be defined");
+    }
+    log("deleteTable:", index);
+    __indirect_function_table.set(index, null);
+  }
+
   // See if the function we want is defined in some
   // already imported dynamic library:
   function functionFromOtherLibrary(name: string): Function | undefined {
     for (const handle in handleToLibrary) {
-      const { symToPtr, instance } = handleToLibrary[handle];
+      const { path, symToPtr, instance } = handleToLibrary[handle];
       // two places that could have the pointer:
       const ptr =
         symToPtr[name] ??
@@ -171,7 +179,14 @@ export default async function importWebAssemblyDlopen({
         if (__indirect_function_table == null) {
           throw Error("__indirect_function_table must be defined");
         }
-        log("functionFromOtherLibrary - got ", name, " from ", path);
+        log(
+          "functionFromOtherLibrary - got ",
+          name,
+          " from ",
+          path,
+          " handle=",
+          handle
+        );
         return __indirect_function_table.get(ptr);
       }
     }
@@ -615,6 +630,10 @@ export default async function importWebAssemblyDlopen({
   env.dlclose = (handle) => {
     const lib = handleToLibrary[handle];
     if (lib != null) {
+      for (const name in lib.symToPtr) {
+        const ptr = lib.symToPtr[name];
+        deleteTable(ptr);
+      }
       let free = getFunction("free");
       if (free == null) {
         throw Error("free from libc must be available in the  main instance");
@@ -623,6 +642,7 @@ export default async function importWebAssemblyDlopen({
       // console.log("closing ", lib);
       delete handleToLibrary[handle];
       delete pathToLibrary[lib.path];
+      // need to free the allocated functions.
     }
     return 0;
   };
