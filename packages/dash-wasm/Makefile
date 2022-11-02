@@ -15,7 +15,7 @@ USR = ${BUILD}/usr
 ${BUILD}/fs-updated: ${PACKAGES}/coreutils/dist/wasm/bin/ls  \
 		${PACKAGES}/cpython/dist/wasm/lib/dist/python-stdlib.zip \
 		${PACKAGES}/cpython/dist/wasm/bin/python3.11.wasm # more deps!
-	rm -rf {USR}
+	rm -rf ${USR}
 	mkdir -p ${USR}/bin
 	# /bin directory
 	cp -v ${DIST}/dash.wasm ${USR}/bin/sh
@@ -28,6 +28,8 @@ ${BUILD}/fs-updated: ${PACKAGES}/coreutils/dist/wasm/bin/ls  \
 	cp -v ${PACKAGES}/libarchive/dist/wasm/bin/tar ${USR}/bin
 	cp -v ${PACKAGES}/ncurses/dist/wasm/bin/hanoi ${USR}/bin
 	cp -v ${PACKAGES}/cpython/dist/wasm/bin/python3.11.wasm ${USR}/bin/python3
+	# this doesn't work yet... (not supported by everything involving zip + memfs; maybe wait until tar.xz works?)
+	#cd ${USR}/bin && ln -s python3 python
 
 	# /share
 	mkdir -p ${USR}/share
@@ -42,7 +44,7 @@ ${BUILD}/fs-updated: ${PACKAGES}/coreutils/dist/wasm/bin/ls  \
 ${DIST}/fs.zip: ${BUILD}/fs-updated
 	mkdir -p ${DIST}
 	rm -f ${DIST}/fs.zip
-	cd ${USR} && zip ${DIST}/fs.zip -r .
+	cd ${USR} && zip --symlinks ${DIST}/fs.zip -r .
 
 # what I really want -- vastly better compression size.
 ${DIST}/fs.tar.xz: ${BUILD}/fs-updated
