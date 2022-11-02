@@ -105,7 +105,11 @@ export default class WasmInstanceSync extends EventEmitter {
       f = func;
     }
     if (f == null) {
-      throw Error(`no function "${func}" defined in wasm module`);
+      throw Error(
+        `no function "${
+          typeof func == "object" ? JSON.stringify(func) : func
+        }" defined in wasm module`
+      );
     }
 
     this.result = undefined;

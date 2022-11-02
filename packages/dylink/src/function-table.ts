@@ -14,7 +14,7 @@ export default class FunctionTable {
 
   // next available table position at the very end. Use this if
   // availableTableIndexes is empty.
-  private nextTablePos: number = 0;
+  public nextTablePos: number = 0;
 
   constructor(table: WebAssembly.Table) {
     log("constructor");
@@ -64,8 +64,8 @@ export default class FunctionTable {
     };
   }
 
-  set(f: Function): number {
-    const index = this.getNextAvailableIndex();
+  set(f: Function, _index?: number): number {
+    const index = _index ?? this.getNextAvailableIndex();
     if (this.table.get(index) != null) {
       throw Error("BUG: trying to set a table index that is already set");
     }
