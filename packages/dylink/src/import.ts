@@ -38,7 +38,7 @@ their own stacks and they don't overlap with each other at all. This
 seems to work well, given our constaints, and hopefully doesn't waste too
 much memory.
 
-- Because of this architecture 
+- Because of this architecture
 
 NOTE: There are arguments about what stack size to use at the links below.  I
 think it's still 5MB in emscripten today, and in zig it is 1MB:
@@ -147,7 +147,9 @@ export default async function importWebAssemblyDlopen({
       throw Error("__indirect_function_table must be defined");
     }
     if (__indirect_function_table.length <= index + 50) {
-      __indirect_function_table.grow(index + 50 - __indirect_function_table.length);
+      __indirect_function_table.grow(
+        index + 50 - __indirect_function_table.length
+      );
     }
     if (__indirect_function_table.get(index)) {
       throw Error(`setTable: attempt to overwrite existing function! ${index}`);
@@ -357,6 +359,7 @@ export default async function importWebAssemblyDlopen({
     handle: number;
     instance: WebAssembly.Instance;
     symToPtr: { [symName: string]: number };
+    stack_alloc: number;
   }
   const pathToLibrary: { [path: string]: Library } = {};
   const handleToLibrary: { [handle: number]: Library } = {};
@@ -531,6 +534,7 @@ export default async function importWebAssemblyDlopen({
       handle,
       instance,
       symToPtr,
+      stack_alloc,
     };
     pathToLibrary[path] = library;
     handleToLibrary[handle] = library;
@@ -611,6 +615,11 @@ export default async function importWebAssemblyDlopen({
   env.dlclose = (handle) => {
     const lib = handleToLibrary[handle];
     if (lib != null) {
+      let free = getFunction("free");
+      if (free == null) {
+        throw Error("free from libc must be available in the  main instance");
+      }
+      free(lib.stack_alloc);
       // console.log("closing ", lib);
       delete handleToLibrary[handle];
       delete pathToLibrary[lib.path];
