@@ -14,7 +14,7 @@ export default class FunctionTable {
 
   // next available table position at the very end. Use this if
   // availableTableIndexes is empty.
-  public nextTablePos: number = 0;
+  private nextTablePos: number = 0;
 
   constructor(table: WebAssembly.Table) {
     log("constructor");
@@ -59,7 +59,7 @@ export default class FunctionTable {
     return {
       index,
       set: (f) => {
-        this.table.set(index, f);
+        this.set(f, index);
       },
     };
   }

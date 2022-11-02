@@ -139,9 +139,6 @@ export default async function importWebAssemblyDlopen({
     if (f == null) return;
     const ptr = (f as Function)();
     log("functionViaPointer", key, ptr);
-    if (__indirect_function_table == null) {
-      throw Error("__indirect_function_table must be defined");
-    }
     return functionTable.get(ptr);
   }
 
@@ -275,7 +272,11 @@ export default async function importWebAssemblyDlopen({
     }
     return rtn;
   }
-  const funcMap: { [key: string]: number } = {};
+
+  const funcMap: {
+    [key: string]: { index: number; set: (f: Function) => void };
+  } = {};
+
   function GOTFuncHandler(GOT, key: string) {
     if (key in GOT) {
       return Reflect.get(GOT, key);
@@ -316,9 +317,9 @@ export default async function importWebAssemblyDlopen({
       const f = mainInstance?.exports[`__WASM_EXPORT__${key}`];
       if (f == null) {
         // new function
-        value = functionTable.nextTablePos;
-        funcMap[key] = value; // have to do further work below to add this to table.
-        functionTable.nextTablePos += 1;
+        // have to do further work below to add this to table.
+        funcMap[key] = functionTable.setLater();
+        value = funcMap[key].index;
       } else {
         // existing function perhaps from libc, e.g., "strcmp".
         value = (f as Function)();
@@ -392,7 +393,7 @@ export default async function importWebAssemblyDlopen({
     const __memory_base = metadata.memorySize
       ? alignMemory(alloc, memAlign)
       : 0;
-    const __table_base = metadata.tableSize ? functionTable.nextTablePos : 0;
+    const __table_base = metadata.tableSize ? functionTable.getNextTablePos() : 0;
 
     const env = {
       memory,
@@ -423,16 +424,8 @@ export default async function importWebAssemblyDlopen({
     // new entries to get put in the table below, and the import itself
     // will put entries from the current position up to metadata.tableSize
     // positions forward.
-    functionTable.nextTablePos += metadata.tableSize ?? 0;
-    // Ensure there is space in the table for the functions
-    // we are about to import
-    if (__indirect_function_table == null) {
-      throw Error("__indirect_function_table must not be null");
-    }
-    if (__indirect_function_table.length <= functionTable.nextTablePos + 50) {
-      __indirect_function_table.grow(
-        50 + functionTable.nextTablePos - __indirect_function_table.length
-      );
+    if (metadata.tableSize) {
+      functionTable.prepareForImport(metadata.tableSize);
     }
 
     let t0 = 0;
@@ -443,11 +436,6 @@ export default async function importWebAssemblyDlopen({
     const instance = importWebAssemblySync(path, libImportObject);
     if (logImport.enabled) {
       logImport("imported ", path, ", time =", new Date().valueOf() - t0, "ms");
-    }
-
-    //log("got exports=", instance.exports);
-    if (__indirect_function_table == null) {
-      throw Error("bug");
     }
 
     const symToPtr: { [symName: string]: number } = {};
@@ -462,7 +450,7 @@ export default async function importWebAssemblyDlopen({
     // be resolved to pointers when creating the webassembly module.
     for (const symName in funcMap) {
       const f = instance.exports[symName] ?? mainInstance?.exports[symName];
-      log("table[%s] = %s", funcMap[symName], symName, f);
+      log("table[%s] = %s", funcMap[symName]?.index, symName, f);
       if (f == null) {
         // This has to be a fatal error, since the only other option would
         // be having a pointer to random nonsense or a broke function,
@@ -470,8 +458,8 @@ export default async function importWebAssemblyDlopen({
         // gets hit by running code. See comments above in GOTFuncHandler.
         throw Error(`dlopen -- UNRESOLVED FUNCTION: ${symName}`);
       }
-      functionTable.set(f as Function, funcMap[symName]);
-      symToPtr[symName] = funcMap[symName];
+      funcMap[symName].set(f as Function);
+      symToPtr[symName] = funcMap[symName].index;
       delete funcMap[symName];
     }
     for (const symName in memMap) {
