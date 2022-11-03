@@ -21,13 +21,13 @@ export default async function terminal(element: HTMLDivElement) {
   term.loadAddon(new WebLinksAddon());
 
   term.write(
-    "Type 'ls /usr/bin' for a list of commands.  CoWasm shell is very new and *most* things are currently completely broken!  \n"
+    "Type 'ls /usr/bin' for a list of commands, including python (with numpy), lua, sqlite3, date, and du.\n"
   );
   term.write(
-    "You can run a subcommand once, but possibly not multiple times.  Output redirection and capture is not implemented at all.\n"
+    "This is new and *many* things are not implemented.  Output redirection and capture is not implemented.\n"
   );
   term.write(
-    "Many commands are not fully implemented.  Fork at https://github.com/sagemathinc/cowasm and help out!\n\n"
+    "Visit https://github.com/sagemathinc/cowasm and contribute.\n\n"
   );
   term.onData((data) => {
     dash.kernel.writeToStdin(data);

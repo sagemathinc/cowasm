@@ -26,9 +26,7 @@ module.exports = {
   },
   plugins: [
     new NodePolyfillPlugin() /* required for dash-wasm */,
-    new HtmlWebpackPlugin({
-      title: "Dash (Debian Almquist Shell) in the browser",
-    }),
+    new HtmlWebpackPlugin({ title: "CoWasm Shell" }),
   ],
   module: {
     rules: [

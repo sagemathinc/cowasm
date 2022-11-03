@@ -36,6 +36,7 @@ ${BUILD}/fs-updated: ${PACKAGES}/coreutils/dist/wasm/bin/ls  \
 	# /lib
 	mkdir -p ${USR}/lib/python3.11
 	cd ${USR}/lib/python3.11 && unzip ${PACKAGES}/cpython/dist/wasm/lib/dist/python-stdlib.zip
+	cp -v ${PACKAGES}/py-numpy/dist/wasm/numpy.tar.xz ${USR}/lib/python3.11
 
 	touch ${BUILD}/fs-updated
 

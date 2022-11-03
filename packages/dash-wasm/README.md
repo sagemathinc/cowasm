@@ -5,18 +5,23 @@ nodejs program or in a web browser.  Try this in your browser right now:
 
 LIVE DEMO:  https://cowasm.sh 
 
-Here is a little demo below, illustrating that **Lua, sqlite, python3 and tar** are all
-included, among other things. Do NOT get your hopes up and expect this to work 
-well, since _**there are many remaining blocker issues!**_
+Here is a little demo below, illustrating that **Lua, sqlite, tar, and Python 3.11 \(with numpy!\)** are all
+included, among other things. Do NOT get your hopes up and expect this to work well, since _**there are many remaining blocker issues!**_
 
 See https://github.com/sagemathinc/cowasm if you're interested in this project, and
 in particular [the dash package](https://github.com/sagemathinc/cowasm/tree/main/packages/dash).
 
 ```sh
 ~ $ npx dash-wasm@latest
-(CoWasm) sh$ echo $PATH
-/cowasm/bin
-(CoWasm) sh$ ls $PATH
+(CoWasm) sh$ python      
+Python 3.11.0 (main, Nov  2 2022, 12:26:39) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 85033a9aa569b41658404d0e on wasi
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import numpy
+>>> numpy.random.rand(2,2)
+array([[0.61989363, 0.33999592],
+       [0.86028145, 0.78855092]])
+>>> ^D
+(CoWasm) sh$ ls /usr/bin/
 basename cut      factor   id       mkdir    python   sort     touch    viz
 bzip2    date     false    join     mktemp   readlink sqlite3  tr       wc
 cat      dirname  find     ln       mv       realpath stat     tsort    xargs
@@ -79,5 +84,4 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> ^D
 ```
 
-Piping and indirection is not implemented yet.
-
+_**Piping and indirection is not implemented yet.**_

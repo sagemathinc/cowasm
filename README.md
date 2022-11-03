@@ -4,8 +4,9 @@ URL: https://github.com/sagemathinc/cowasm
 
 DEMOS:
 
-- https://cowasm.org (uses Atomics and SharedArrayBuffers)
-- https://zython.org (uses Service Workers)
+- https://cowasm.org \- Python using SharedArrayBuffers
+- https://zython.org \- Python using Service Workers
+- https://cowasm.sh \- Dash Shell with Python, Sqlite, Lua, etc., using SharedArrayBuffers
 
 Or Type this if you have nodejs at least version 16 installed:
 
