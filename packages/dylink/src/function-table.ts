@@ -6,7 +6,7 @@ const log = debug("dylink:function-table");
 const GROW_THRESH = 50;
 
 export default class FunctionTable {
-  private table: WebAssembly.Table;
+  public readonly table: WebAssembly.Table;
 
   // indexes into the function table that are null, but
   // maybe less than nextTablePos.

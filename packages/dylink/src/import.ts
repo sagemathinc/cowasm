@@ -1,13 +1,12 @@
-import { alignMemory, recvString, sendString } from "./util";
-import getMetadata from "./metadata";
 import stubProxy from "./stub";
 import debug from "debug";
 import FunctionTable from "./function-table";
+import DlopenManager from "./dlopen";
+import GlobalOffsetTable from "./global-offset-table";
+import { Env } from "./types";
 
 const log = debug("dylink");
 const logImport = debug("dylink:import");
-
-const STACK_ALIGN = 16; // copied from emscripten
 
 /*
 ** Our approach to the stack **
@@ -47,20 +46,6 @@ think it's still 5MB in emscripten today, and in zig it is 1MB:
  - https://github.com/emscripten-core/emscripten/pull/10019
  - https://github.com/ziglang/zig/issues/3735 <-- *this issue i reported did get fixed upstream!*
 */
-
-// Stack size for imported dynamic libraries -- we use 1MB. This is
-// a runtime parameter.
-const STACK_SIZE = 1048576; // 1MB;  to use 64KB it would be 65536.
-
-interface Env {
-  __indirect_function_table?: WebAssembly.Table;
-  memory?: WebAssembly.Memory;
-  dlopen?: (pathnamePtr: number, flags: number) => number;
-  dlsym?: (handle: number, symbolPtr: number) => number;
-  dlerror?: () => number; // basically a stub right now
-  dladdr?: () => number; // still a stub for now
-  dlclose?: (handle: number) => number; // basically a stub right now
-}
 
 export interface Options {
   path: string;
@@ -110,29 +95,6 @@ export default async function importWebAssemblyDlopen({
   }
   const functionTable = new FunctionTable(__indirect_function_table);
 
-  function symbolViaPointer(name: string) {
-    if (mainInstance == null) return; // not yet available
-    log("symbolViaPointer", name);
-    let f: any = mainInstance.exports[`__WASM_EXPORT__${name}`];
-    if (f == null) {
-      // Try all the other libraries (TODO: what about order?)
-      //       for (const handle in handleToLibrary) {
-      //         const { symToPtr, instance } = handleToLibrary[handle];
-      //         // two places that could have the pointer:
-      //         console.log(name, symToPtr[name], instance.exports[`__WASM_EXPORT__${name}`]);
-      //         f = symToPtr[name] ?? (instance.exports[`__WASM_EXPORT__${name}`] as Function)?.();
-      //         if (f != null) {
-      //           return f;
-      //         }
-      //       }
-      // Failed to find it in any loaded library.
-      return null;
-    }
-    const sym = (f as Function)();
-    log("symbolViaPointer", name, "-->", sym);
-    return sym;
-  }
-
   function functionViaPointer(key: string) {
     if (mainInstance == null) return; // not yet available
     const f = mainInstance.exports[`__WASM_EXPORT__${key}`];
@@ -140,23 +102,6 @@ export default async function importWebAssemblyDlopen({
     const ptr = (f as Function)();
     log("functionViaPointer", key, ptr);
     return functionTable.get(ptr);
-  }
-
-  // See if the function we want is defined in some
-  // already imported dynamic library:
-  function functionFromOtherLibrary(name: string): Function | null | undefined {
-    for (const handle in handleToLibrary) {
-      const { path, symToPtr, instance } = handleToLibrary[handle];
-      // two places that could have the pointer:
-      const ptr =
-        symToPtr[name] ??
-        (instance.exports[`__WASM_EXPORT__${name}`] as Function)?.();
-      if (ptr != null) {
-        log("functionFromOtherLibrary", name, path, "handle=", handle);
-        return functionTable.get(ptr);
-      }
-    }
-    return undefined;
   }
 
   function getFunction(
@@ -174,7 +119,7 @@ export default async function importWebAssemblyDlopen({
       log("getFunction ", name, "from function pointer");
       return f;
     }
-    f = functionFromOtherLibrary(name);
+    f = dlopenManager.getFunction(name);
     if (f != null) {
       log("getFunction ", name, "from other library");
       return f;
@@ -215,392 +160,29 @@ export default async function importWebAssemblyDlopen({
     return importObjectWithPossibleStub.env[name];
   }
 
-  function dlopenEnvHandler(path: string) {
-    return (env, key: string) => {
-      if (key in env) {
-        return Reflect.get(env, key);
-      }
-      log("dlopenEnvHandler", key);
-
-      // important to check importObject.env LAST since it could be a proxy
-      // that generates stub functions:
-      const f = getFunction(key, path);
-      if (f == null) {
-        log("dlopenEnvHandler got null");
-        return;
-      }
-      return f;
-      // FOR LOW LEVEL DEBUGGING ONLY!
-      //     return (...args) => {
-      //       console.log("env call ", key);
-      //       // @ts-ignore
-      //       return f(...args);
-      //     };
-    };
+  function getMainInstanceExports() {
+    if (mainInstance?.exports == null) throw Error("bug");
+    return mainInstance.exports;
   }
+  const globalOffsetTable = new GlobalOffsetTable(
+    getMainInstanceExports,
+    functionTable
+  );
 
-  // Global Offset Table
-  const GOT = {};
-  const memMap = {};
-  function GOTMemHandler(GOT, key: string) {
-    if (key in GOT) {
-      return Reflect.get(GOT, key);
-    }
-    /*
-    The spec has the following (garbled?) statement about what this is:
-    "However since exports are static, modules connect [sic -- cannot?]
-    export the final relocated addresses (i.e. they cannot add
-    __memory_base before exporting). Thus, the exported address is
-    before relocation; the loader, which knows __memory_base, can
-    then calculate the final relocated address."
+  const dlopenManager = new DlopenManager(
+    getFunction,
+    memory,
+    globalOffsetTable,
+    functionTable,
+    readFileSync,
+    importObject,
+    importWebAssemblySync,
+    getMainInstanceExports
+  );
 
-    In any case, what we need to do here is return the *memory address*
-    of the variable with name key.  For example, if key='stdin', we
-    are returning the address of the stdin file descriptor (that integer).
-    */
-    let rtn = GOT[key];
-    if (!rtn) {
-      const x = new WebAssembly.Global(
-        {
-          value: "i32",
-          mutable: true,
-        },
-        0
-      );
-      memMap[key] = x;
-      rtn = GOT[key] = x;
-    }
-    return rtn;
+  for (const dlmethod of ["dlopen", "dladdr", "dlclose", "dlerror", "dlsym"]) {
+    env[dlmethod] = dlopenManager[dlmethod].bind(dlopenManager);
   }
-
-  const funcMap: {
-    [key: string]: { index: number; set: (f: Function) => void };
-  } = {};
-
-  function GOTFuncHandler(GOT, key: string) {
-    if (key in GOT) {
-      return Reflect.get(GOT, key);
-    }
-    let rtn = GOT[key];
-    if (!rtn) {
-      // Dynamic module needs a *pointer* to the function with name "key".
-      // There are several possibilities:
-      //
-      // 1. This function is already in a our global function table, from
-      // the main module or another dynamic link library defining it. An
-      // example is the function strcmp from libc, which is often used as a pointer
-      // with qsort.  In that case, we know the pointer and immediately
-      // set the value of the function pointer to that value -- it's important
-      // to use the *same* pointer in both the main module and the dynamic library,
-      // rather than making another one just for the dynamic library (which would
-      // waste space, and completely breaks functions like qsort that take a
-      // function pointer).
-      //
-      // 2. Another likely possibility is that this is a function that will get defined
-      // as a side effect of the dynamic link module being loaded.  We don't know
-      // what address that function will get, so in that case we create an entry
-      // in funcMap, and later below we update the pointer created here.
-      //
-      // 3. A third possibility is that the requested function isn't in the
-      // function pointer table but it's made available via the Javascript
-      // environment.  As far as I know, there is no way to make such a Javascript
-      // function available as a function pointer aside from creating a new compiled
-      // function in web assembly that calls that Javascript function, so this is
-      // a fatal error, and we have to modify libc.ts to make such a wrapper.  This
-      // happened with geteuid at one point, which comes from node.js.
-      //
-      // 4. The function might be defined in another dynamic library that hasn't
-      // been loaded yet.  We have NOT addressed this problem yet, and this must
-      // also be a fatal error.
-      //
-      let value;
-      const f = mainInstance?.exports[`__WASM_EXPORT__${key}`];
-      if (f == null) {
-        // new function
-        // have to do further work below to add this to table.
-        funcMap[key] = functionTable.setLater();
-        value = funcMap[key].index;
-      } else {
-        // existing function perhaps from libc, e.g., "strcmp".
-        value = (f as Function)();
-      }
-      log("GOTFuncHandler ", key, "-->", value);
-      // place in the table -- we make a note of where to put it,
-      // and actually place it later below after the import is done.
-      const ptr = new WebAssembly.Global(
-        {
-          value: "i32",
-          mutable: true,
-        },
-        value
-      );
-      rtn = GOT[key] = ptr;
-    }
-    return rtn;
-  }
-
-  const GOTmem = new Proxy(GOT, { get: GOTMemHandler });
-  const GOTfunc = new Proxy(GOT, { get: GOTFuncHandler });
-
-  interface Library {
-    path: string;
-    handle: number;
-    instance: WebAssembly.Instance;
-    symToPtr: { [symName: string]: number };
-    stack_alloc: number;
-  }
-  const pathToLibrary: { [path: string]: Library } = {};
-  const handleToLibrary: { [handle: number]: Library } = {};
-
-  env.dlopen = (pathnamePtr: number, _flags: number): number => {
-    // TODO: _flags are ignored for now.
-    if (memory == null) throw Error("bug"); // mainly for typescript
-    const path = recvString(pathnamePtr, memory);
-    log("dlopen: path='%s'", path);
-    if (pathToLibrary[path] != null) {
-      return pathToLibrary[path].handle;
-    }
-
-    const binary = new Uint8Array(readFileSync(path));
-    const metadata = getMetadata(binary);
-    log("metadata", metadata);
-    // alignments are powers of 2
-    let memAlign = Math.pow(2, metadata.memoryAlign ?? 0);
-    // finalize alignments and verify them
-    memAlign = Math.max(memAlign, STACK_ALIGN); // we at least need stack alignment
-    let malloc = getFunction("malloc");
-    if (malloc == null) {
-      throw Error("malloc from libc must be available in the  main instance");
-    }
-    if (metadata.memorySize == null) {
-      throw Error("memorySize must be defined in the shared library");
-    }
-    const alloc = malloc(metadata.memorySize + memAlign);
-    if (alloc == 0) {
-      throw Error("malloc failed (you cannot use a stub for malloc)");
-    }
-
-    const stack_alloc = malloc(STACK_SIZE);
-    if (stack_alloc == 0) {
-      throw Error("malloc failed for stack");
-    }
-
-    log(
-      "allocating %s bytes for shared library -- at ",
-      metadata.memorySize + memAlign,
-      alloc
-    );
-    const __memory_base = metadata.memorySize
-      ? alignMemory(alloc, memAlign)
-      : 0;
-    const __table_base = metadata.tableSize ? functionTable.getNextTablePos() : 0;
-
-    const env = {
-      memory,
-      __indirect_function_table,
-      __memory_base,
-      __table_base,
-      __stack_pointer: new WebAssembly.Global(
-        {
-          value: "i32",
-          mutable: true,
-        },
-        // This is a pointer to the top of the memory we allocated
-        // for this dynamic library's stack, since the stack grows
-        // down, in terms of memory addresses.
-        stack_alloc + STACK_SIZE
-      ),
-    };
-    log("env =", env);
-    const libImportObject = {
-      ...importObject,
-      env: new Proxy(env, { get: dlopenEnvHandler(path) }),
-      "GOT.mem": GOTmem,
-      "GOT.func": GOTfunc,
-    };
-
-    // account for the entries that got inserted during the import.
-    // This must happen BEFORE the import, since that will create some
-    // new entries to get put in the table below, and the import itself
-    // will put entries from the current position up to metadata.tableSize
-    // positions forward.
-    if (metadata.tableSize) {
-      functionTable.prepareForImport(metadata.tableSize);
-    }
-
-    let t0 = 0;
-    if (logImport.enabled) {
-      t0 = new Date().valueOf();
-      logImport("importing ", path);
-    }
-    const instance = importWebAssemblySync(path, libImportObject);
-    if (logImport.enabled) {
-      logImport("imported ", path, ", time =", new Date().valueOf() - t0, "ms");
-    }
-
-    const symToPtr: { [symName: string]: number } = {};
-    for (const name in instance.exports) {
-      if (funcMap[name] != null) continue;
-      const val = instance.exports[name];
-      if (symToPtr[name] != null || typeof val != "function") continue;
-      symToPtr[name] = functionTable.set(val as Function);
-    }
-
-    // Set all functions in the function table that couldn't
-    // be resolved to pointers when creating the webassembly module.
-    for (const symName in funcMap) {
-      const f = instance.exports[symName] ?? mainInstance?.exports[symName];
-      log("table[%s] = %s", funcMap[symName]?.index, symName, f);
-      if (f == null) {
-        // This has to be a fatal error, since the only other option would
-        // be having a pointer to random nonsense or a broke function,
-        // which is definitely going to segfault randomly later when it
-        // gets hit by running code. See comments above in GOTFuncHandler.
-        throw Error(`dlopen -- UNRESOLVED FUNCTION: ${symName}`);
-      }
-      funcMap[symName].set(f as Function);
-      symToPtr[symName] = funcMap[symName].index;
-      delete funcMap[symName];
-    }
-    for (const symName in memMap) {
-      const x = memMap[symName];
-      delete memMap[symName];
-      const ptrBeforeOffset = (instance.exports[symName] as any)?.value;
-      if (ptrBeforeOffset == null) {
-        const ptr = symbolViaPointer(symName);
-        if (ptr == null) {
-          console.error(
-            `dlopen: FATAL ERROR - Symbol '${symName}' is not available in the cowasm kernel or any loaded library via __WASM_EXPORT__${symName} but is required by '${path}'.`
-          );
-          throw Error(`dlopen -- UNRESOLVED SYMBOL: ${symName}`);
-        } else {
-          //console.log("found ", symName, " in global");
-          x.value = ptr;
-        }
-      } else {
-        x.value = ptrBeforeOffset + __memory_base;
-        //console.log("putting ", symName, " in offset");
-      }
-    }
-
-    if (instance.exports.__wasm_call_ctors != null) {
-      // This **MUST** be after updating all the values above!!
-      log("calling __wasm_call_ctors for dynamic library");
-      (instance.exports.__wasm_call_ctors as CallableFunction)();
-    }
-
-    if (instance.exports.__wasm_apply_data_relocs != null) {
-      // This **MUST** be after updating all the values above!!
-      log("calling __wasm_apply_data_relocs for dynamic library");
-      (instance.exports.__wasm_apply_data_relocs as CallableFunction)();
-    }
-
-    // Get an available handle by maxing all the int versions of the
-    // keys of the handleToLibrary map.
-    const handle =
-      Math.max(0, ...Object.keys(handleToLibrary).map((n) => parseInt(n))) + 1;
-    const library = {
-      path,
-      handle,
-      instance,
-      symToPtr,
-      stack_alloc,
-    };
-    pathToLibrary[path] = library;
-    handleToLibrary[handle] = library;
-    return handle;
-  };
-
-  env.dlsym = (handle: number, symbolPtr: number): number => {
-    if (memory == null) throw Error("bug"); // mainly for typescript
-    const symName = recvString(symbolPtr, memory);
-    log("dlsym: handle=%s, symName='%s'", handle, symName);
-    const lib = handleToLibrary[handle];
-    if (lib == null) {
-      throw Error(`dlsym: invalid handle ${handle}`);
-    }
-    let ptr = lib.symToPtr[symName];
-    log("sym= ", symName, ", ptr = ", ptr);
-    if (ptr != null) {
-      // symbol is a known function pointer
-      return ptr;
-    }
-
-    // sometimes its an alias:
-    ptr = (lib.instance.exports[`__WASM_EXPORT__${symName}`] as any)?.();
-    if (ptr != null) {
-      // symbol is a known function pointer
-      return ptr;
-    }
-
-    // NOT sure if this is at all correct or meaningful or what to even
-    // do with non functions!
-    // I think Python only uses function pointers?
-    // return lib.instance.exports[symName]
-    // throw Error(`dlsym: handle=${handle} - unknown symbol '${symName}'`);
-
-    // dlsym is supposed to return a null pointer on fail, NOT throw exception
-    set_dlerror(`dlsym: handle=${handle} - unknown symbol '${symName}'`);
-    return 0;
-  };
-
-  /*
-  "The function dlerror() returns a human readable string describing the most
-  recent error that occurred from dlopen(), dlsym() or dlclose() since the last
-  call to dlerror(). It returns NULL if no errors have occurred since
-  initialization or since it was last called."
-  */
-  let dlerrorPtr = 0;
-  function set_dlerror(s: string) {
-    if (!dlerrorPtr) {
-      // allocate space for the error
-      let malloc = getFunction("malloc");
-      if (malloc == null) {
-        throw Error("malloc from libc must be available in the  main instance");
-      }
-      dlerrorPtr = malloc(1024);
-    }
-    if (memory == null) {
-      throw Error("memory must be defined");
-    }
-    sendString(s.slice(0, 1023), dlerrorPtr, memory);
-  }
-  env.dlerror = () => {
-    return dlerrorPtr;
-  };
-
-  env.dladdr = () => {
-    log("dladdr: STUB");
-    // we couldn't find "it"
-    set_dlerror("dladdr is not yet implemented");
-    return 0;
-  };
-
-  /*
-  "The function dlclose() decrements the reference count on the dynamic library
-  handle handle. If the reference count drops to zero and no other loaded
-  libraries use symbols in it, then the dynamic library is unloaded. The function
-  dlclose() returns 0 on success, and nonzero on error."
-  */
-  env.dlclose = (handle) => {
-    const lib = handleToLibrary[handle];
-    if (lib != null) {
-      for (const name in lib.symToPtr) {
-        const ptr = lib.symToPtr[name];
-        functionTable.delete(ptr);
-      }
-      let free = getFunction("free");
-      if (free == null) {
-        throw Error("free from libc must be available in the  main instance");
-      }
-      free(lib.stack_alloc);
-      // console.log("closing ", lib);
-      delete handleToLibrary[handle];
-      delete pathToLibrary[lib.path];
-      // need to free the allocated functions.
-    }
-    return 0;
-  };
 
   const importObjectWithPossibleStub = stub
     ? {
@@ -619,6 +201,7 @@ export default async function importWebAssemblyDlopen({
     importWebAssembly != null
       ? await importWebAssembly(path, importObjectWithPossibleStub)
       : importWebAssemblySync(path, importObjectWithPossibleStub);
+
   if (logImport.enabled) {
     logImport("imported ", path, ", time =", new Date().valueOf() - t0, "ms");
   }
