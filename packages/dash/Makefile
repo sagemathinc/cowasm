@@ -57,8 +57,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 ${BIN}/dash-wasm-raw: ${DIST_WASM}/.built ${CWD}/bin/dash-wasm
 	ln -sf ${CWD}/bin/dash-wasm ${BIN}/dash-wasm-raw
 
-test: ${BIN}/sh-wasm
+test: ${BIN}/dash-wasm-raw
 	# test doing a little arithmetic
-	echo "echo \$$((389*5077))" | ${BIN}/sh-wasm | grep 1974953
+	echo "echo \$$((389*5077))" | ${BIN}/dash-wasm-raw | grep 1974953
 	# test that a syntax error doesn't terminate the shell (i.e., no longjmp exception handling)
-	echo "); echo 'I am still alive'" | sh-wasm |grep alive
+	echo "); echo 'I am still alive'" | ${BIN}/dash-wasm-raw |grep alive
