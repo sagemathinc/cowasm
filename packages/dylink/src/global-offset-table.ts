@@ -26,6 +26,24 @@ export default class GlobalOffsetTable {
     this.functionTable = functionTable;
   }
 
+  getState() {
+    const state = new Set<string>();
+    for (const key in this.GOT) {
+      state.add(key);
+    }
+    return state;
+  }
+
+  setState(state: Set<string>) {
+    for (const key in this.GOT) {
+      if (!state.has(key)) {
+        delete this.GOT[key];
+        delete this.memMap[key];
+        delete this.funcMap[key];
+      }
+    }
+  }
+
   private GOTMemHandler(_, key: string) {
     if (key in this.GOT) {
       return Reflect.get(this.GOT, key);

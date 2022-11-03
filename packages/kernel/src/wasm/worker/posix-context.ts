@@ -143,6 +143,7 @@ export default class PosixContext {
       context: this.context.state,
       wasi: this.wasi.getState(),
       exit: this.wasiConfig.bindings.exit,
+      dlopen: wasm.instance.getDlopenState(),
     };
     // I wonder if I could use immer.js instead for any of this?  It might be slower.
     this.context.state = cloneDeep(state.context);
@@ -161,6 +162,7 @@ export default class PosixContext {
       this.wasi.setState(wasi_state);
       let main;
       try {
+        // this does dlopen of args[0]:
         main = wasm.getFunction("__main_argc_argv", args[0]);
       } catch (_err) {
         try {
@@ -187,11 +189,7 @@ export default class PosixContext {
     } finally {
       // Free up tables allocated to the dynamic library in Javascript memory. These
       // would persist even after resetting memory below, which would break everything.
-      try {
-        wasm.closeDynamicLibrary(args[0]);
-      } catch (err) {
-        console.error(`${args[0]}: WARNING -- ${err}`);
-      }
+      wasm.instance.setDlopenState(state.dlopen);
       // Restore memory to how it was before running the subprocess.
       // This of course safely frees up and undoes all changes made to
       // the memory when running code.

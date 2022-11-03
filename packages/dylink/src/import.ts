@@ -216,5 +216,18 @@ export default async function importWebAssemblyDlopen({
   functionTable.updateAfterImport();
   // TODO
   (mainInstance as any).env = env;
+
+  (mainInstance as any).getDlopenState = () => {
+    return {
+      dlopen: dlopenManager.getState(),
+      got: globalOffsetTable.getState(),
+    };
+  };
+
+  (mainInstance as any).setDlopenState = (state) => {
+    const { dlopen, got } = state;
+    dlopenManager.setState(dlopen);
+    globalOffsetTable.setState(got);
+  };
   return mainInstance;
 }

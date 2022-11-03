@@ -41,7 +41,7 @@ export default class FunctionTable {
   private getNextAvailableIndex(): number {
     for (const index of this.availableTableIndexes) {
       this.availableTableIndexes.delete(index);
-      log("getNextAvailableIndex: from availalbeTableIndex", index);
+      log("getNextAvailableIndex: from availableTableIndexes", index);
 
       return index;
     }

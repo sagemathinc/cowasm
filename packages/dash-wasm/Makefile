@@ -27,9 +27,7 @@ ${BUILD}/fs-updated: ${PACKAGES}/coreutils/dist/wasm/bin/ls  \
 	cp -v ${PACKAGES}/sqlite/dist/wasm/bin/sqlite3 ${USR}/bin
 	cp -v ${PACKAGES}/libarchive/dist/wasm/bin/tar ${USR}/bin
 	cp -v ${PACKAGES}/ncurses/dist/wasm/bin/hanoi ${USR}/bin
-	cp -v ${PACKAGES}/cpython/dist/wasm/bin/python3.11.wasm ${USR}/bin/python3
-	# this doesn't work yet... (not supported by everything involving zip + memfs; maybe wait until tar.xz works?)
-	#cd ${USR}/bin && ln -s python3 python
+	cp -v ${PACKAGES}/cpython/dist/wasm/bin/python3.11.wasm ${USR}/bin/python
 
 	# /share
 	mkdir -p ${USR}/share

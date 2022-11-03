@@ -5,7 +5,7 @@ import GlobalOffsetTable from "./global-offset-table";
 import debug from "debug";
 import getMetadata from "./metadata";
 
-const log = debug("dylink:dlopen-manager");
+const log = debug("dylink:dlopen");
 const STACK_ALIGN = 16; // copied from emscripten
 
 // Stack size for imported dynamic libraries -- we use 1MB. This is
@@ -65,6 +65,22 @@ export default class DlopenManger {
       "dlsym",
     ]) {
       env[dlmethod] = this[dlmethod].bind(this);
+    }
+  }
+
+  getState() {
+    const state = new Set<string>();
+    for (const handle in this.handleToLibrary) {
+      state.add(handle);
+    }
+    return state;
+  }
+
+  setState(state) {
+    for (const handle in this.handleToLibrary) {
+      if (!state.has(handle)) {
+        this.dlclose(parseInt(handle));
+      }
     }
   }
 
@@ -341,6 +357,7 @@ export default class DlopenManger {
   much NOT safe to use if you don't know that it isn't being referenced.
   */
   dlclose(handle: number): number {
+    log("dlclose", handle);
     const lib = this.handleToLibrary[handle];
     if (lib == null) {
       this.set_dlerror(`dlclose: invalid handle ${handle}`);
