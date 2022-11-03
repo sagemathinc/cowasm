@@ -6,15 +6,6 @@ include ../build/Makefile-vars
 
 # Find the latest version at https://ziglang.org/download/
 
-#
-# NOTE: Version "0.10.0-dev.4560+828735ac0" fails to build
-# the *native* version of Python, whereas
-#    0.10.0-dev.4476+0f0076666
-# succeeds. Reported upstream -- https://github.com/ziglang/zig/issues/13303
-# This is a bug in compiler-rt.zig, which I have patched below.
-
-# VERSION = 0.10.0-dev.4587+710e2e7f1
-
 # Using sed because uname -s --> x86_64 or arm64, but need aarch64
 ARCH = $(shell uname -m | sed s/arm64/aarch64/)
 
@@ -29,13 +20,12 @@ OS = $(shell uname -s  | sed s/Darwin/macos/ | sed s/Linux/linux/)
 
 # This is for stable releases
 
-VERSION = 0.10.0
-URL = https://ziglang.org/download/${VERSION}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
+#VERSION = 0.10.0
+#URL = https://ziglang.org/download/${VERSION}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
 # for dev versions:
-#VERSION = 0.10.0-dev.2751+08459ff1c
-#TARBALL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
-# URL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
+VERSION = 0.11.0-dev.38+b40fc7018
+URL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
 TARBALL = ${UPSTREAM}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
@@ -50,12 +40,10 @@ ${DIST_NATIVE}/.${VERSION}: ${TARBALL}
 	mkdir -p ${DIST_NATIVE}
 	tar xf ${TARBALL} -C ${DIST_NATIVE} --strip-components=1
 	# 01-emscripten.patch -- Add support for -target wasm32-emscripten
-	# 02-issue-13303.patch -- Fix bug 13303. Remove once they fix upstream.  I did report it.
 	# Note the funny || is because the zig binaries are laid out in
 	# inconstent way.
 	cd ${DIST_NATIVE}/lib/zig 2>/dev/null || cd ${DIST_NATIVE}/lib \
-		&& cat ${SRC}/patches/01-emscripten.patch | patch -p3 \
-		&& cat ${SRC}/patches/02-issue-13303.patch | patch -p4
+		&& cat ${SRC}/patches/01-emscripten.patch | patch -p3
 	touch ${DIST_NATIVE}/.${VERSION}
 
 ${BIN}/zig: ${DIST_NATIVE}/.${VERSION}
