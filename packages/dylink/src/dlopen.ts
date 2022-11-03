@@ -56,6 +56,18 @@ export default class DlopenManger {
     this.getMainInstanceExports = getMainInstanceExports;
   }
 
+  add_dlmethods(env: Env) {
+    for (const dlmethod of [
+      "dlopen",
+      "dladdr",
+      "dlclose",
+      "dlerror",
+      "dlsym",
+    ]) {
+      env[dlmethod] = this[dlmethod].bind(this);
+    }
+  }
+
   private malloc(bytes: number, purpose: string): number {
     if (this._malloc == null) {
       const f = this.mainGetFunction("malloc");

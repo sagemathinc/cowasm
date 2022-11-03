@@ -180,9 +180,7 @@ export default async function importWebAssemblyDlopen({
     getMainInstanceExports
   );
 
-  for (const dlmethod of ["dlopen", "dladdr", "dlclose", "dlerror", "dlsym"]) {
-    env[dlmethod] = dlopenManager[dlmethod].bind(dlopenManager);
-  }
+  dlopenManager.add_dlmethods(env);
 
   const importObjectWithPossibleStub = stub
     ? {
