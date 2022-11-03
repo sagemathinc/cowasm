@@ -1,6 +1,6 @@
 include ../build/Makefile-vars
 
-all: ${DIST}/.built ${DIST}/dash.wasm ${DIST}/fs.zip
+all: ${DIST}/.built ${DIST}/dash.wasm ${DIST}/fs.zip ${BIN}/dash-wasm
 
 include ../build/Makefile-rules
 
@@ -26,6 +26,7 @@ ${BUILD}/fs-updated: ${PACKAGES}/coreutils/dist/wasm/bin/ls  \
 	cp -v ${PACKAGES}/man/dist/wasm/bin/man ${USR}/bin
 	cp -v ${PACKAGES}/sqlite/dist/wasm/bin/sqlite3 ${USR}/bin
 	cp -v ${PACKAGES}/libarchive/dist/wasm/bin/tar ${USR}/bin
+	cp -v ${PACKAGES}/ncurses/dist/wasm/bin/clear ${USR}/bin
 	cp -v ${PACKAGES}/ncurses/dist/wasm/bin/hanoi ${USR}/bin
 	cp -v ${PACKAGES}/cpython/dist/wasm/bin/python3.11.wasm ${USR}/bin/python
 
@@ -51,6 +52,11 @@ ${DIST}/fs.tar.xz: ${BUILD}/fs-updated
 	rm -f ${DIST}/fs.tar.xz
 	cd ${USR} && tar Jcvf ${DIST}/fs.tar.xz .
 
+
+
+
+${BIN}/dash-wasm: ${CWD}/bin/dash-wasm
+	ln -sf ${CWD}/bin/dash-wasm ${BIN}/dash-wasm
 
 ###
 # Node related makefile wrapping...

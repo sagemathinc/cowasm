@@ -6,6 +6,7 @@ bin/node
 bin/npm
 bin/npx
 bin/dash-native
+bin/dash-wasm*
 bin/python-native
 bin/zd
 bin/zdb

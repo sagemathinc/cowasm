@@ -12,7 +12,7 @@ TARBALL = ${UPSTREAM}/dash-${VERSION}.tar.gz
 LIBEDIT = ${PACKAGES}/libedit/dist
 TERMCAP = ${PACKAGES}/termcap/dist
 
-all: wasm ${BIN}/sh-wasm
+all: wasm ${BIN}/dash-wasm-raw
 
 include ../build/Makefile-rules
 
@@ -54,8 +54,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	ln -sf ${DIST_WASM}/bin/dash ${DIST_WASM}/bin/sh
 	touch ${DIST_WASM}/.built
 
-${BIN}/sh-wasm: ${DIST_WASM}/.built ${CWD}/bin/sh-wasm
-	ln -sf ${CWD}/bin/sh-wasm ${BIN}/sh-wasm
+${BIN}/dash-wasm-raw: ${DIST_WASM}/.built ${CWD}/bin/dash-wasm
+	ln -sf ${CWD}/bin/dash-wasm ${BIN}/dash-wasm-raw
 
 test: ${BIN}/sh-wasm
 	# test doing a little arithmetic

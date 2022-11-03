@@ -51,12 +51,11 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 			AR="zig ar" \
 			CC="cowasm-cc" \
 			CXX="cowasm-c++" \
-			CFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
+			CFLAGS="-Oz -fvisibility-main -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			CXXFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
 			./configure \
 				--without-ada \
 				--without-manpages \
-				--without-progs \
 				--without-tests \
 				--enable-termcap \
 				--disable-stripping \
@@ -68,6 +67,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		&& 	make -j8 install.libs
 	# this makes it much easier to use for client libraries:
 	cd ${DIST_WASM}/include && ln -sf ncurses/curses.h .
+	# Clear command is pretty useful
+	cp ${BUILD_WASM}/progs/clear ${DIST_WASM}/bin/clear
 	touch ${DIST_WASM}/.built
 
 ${BUILD_WASM}/test/.built: ${DIST_WASM}/.built
