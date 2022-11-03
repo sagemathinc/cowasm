@@ -95,10 +95,10 @@ static void usage(void) {
 static int is_there(char *candidate) {
   struct stat fin;
 
-  /* XXX work around access(2) false positives for superuser */
+  // NOTE: upstream had a workaround for false positives for root; for WASM this
+  // doesn't make sense and breaks.
   if (access(candidate, X_OK) == 0 && stat(candidate, &fin) == 0 &&
-      S_ISREG(fin.st_mode) &&
-      (getuid() != 0 || (fin.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) != 0)) {
+      S_ISREG(fin.st_mode)) {
     if (!silent) printf("%s\n", candidate);
     return (1);
   }
