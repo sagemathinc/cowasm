@@ -9,7 +9,7 @@ export interface Options {
   interactive?: boolean;
 }
 
-export function getEnv(prefix: string = "") {
+export function getEnv(prefix: string = "/") {
   const USR = join(prefix, "usr");
 
   const ENV = {

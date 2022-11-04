@@ -29,6 +29,7 @@ ${BUILD}/fs-updated: ${PACKAGES}/coreutils/dist/wasm/bin/ls  \
 	cp -v ${PACKAGES}/libarchive/dist/wasm/bin/tar ${USR}/bin
 	cp -v ${PACKAGES}/ncurses/dist/wasm/bin/clear ${USR}/bin
 	cp -v ${PACKAGES}/ncurses/dist/wasm/bin/hanoi ${USR}/bin
+	cp -v ${PACKAGES}/rogue/dist/wasm/bin/rogue ${USR}/bin
 	cp -v ${PACKAGES}/cpython/dist/wasm/bin/python3.11.wasm ${USR}/bin/python
 
 	# /share

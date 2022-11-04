@@ -323,10 +323,12 @@ int sethostname(const char* name, size_t len);
 #define F_UNLCK 2
 
 #define F_DUPFD 0
+#ifndef F_GETFD
 #define F_GETFD 1
 #define F_SETFD 2
 #define F_GETFL 3
 #define F_SETFL 4
+#endif
 #define F_GETLK 5
 #define F_SETLK 6
 #define F_SETLKW 7
@@ -344,7 +346,6 @@ char* strsignal(int sig);
 int fiprintf(FILE* stream, const char* format, ...);
 int siprintf(char* s, const char* format, ...);
 #define __small_sprintf sprintf
-
 
 int strunvis(char* dst, const char* src);
 int strnvis(char* dst, size_t dlen, const char* src, int flag);
@@ -392,7 +393,6 @@ int cowasm_lstat(const char* path, struct stat* buf);
 int cowasm_stat(const char* path, struct stat* buf);
 int cowasm_fstatat(int fd, const char* path, struct stat* buf, int flag);
 
-
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 quad_t strtoq(const char* str, char** endptr, int base);
 
@@ -404,8 +404,6 @@ quad_t strtoq(const char* str, char** endptr, int base);
 #define MAXLOGNAME 255 /* max login name length */
 
 int rpmatch(const char* response);
-#endif // BSD_SOURCE
-
-
+#endif  // BSD_SOURCE
 
 #endif
