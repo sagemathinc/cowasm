@@ -335,13 +335,19 @@ export default function unistd(context) {
       return posix.alarm(seconds);
     },
 
-    // The following 4 are actually only available on a Linux host, though wasi-musl defines them,
+    // The following 4 are actually only available on a Linux host,
+    // though wasi-musl defines them,
     // so cpython-wasm thinks they exist.
+    // For CoWasm, let's just make these no-ops when not available,
+    // since they are about multiple users, which we shouldn't
+    // support in WASM.
     getresuid: (ruidPtr: number, euidPtr: number, suidPtr: number): number => {
+      let ruid, euid, suid;
       if (posix.getresuid == null) {
-        notImplemented("getresuid");
+        ruid = euid = suid = 0;
+      } else {
+        ({ ruid, euid, suid } = posix.getresuid());
       }
-      const { ruid, euid, suid } = posix.getresuid();
       const view = new DataView(memory.buffer);
       view.setUint32(ruidPtr, ruid, true);
       view.setUint32(euidPtr, euid, true);
@@ -350,10 +356,12 @@ export default function unistd(context) {
     },
 
     getresgid: (rgidPtr: number, egidPtr: number, sgidPtr: number): number => {
+      let rgid, egid, sgid;
       if (posix.getresgid == null) {
-        notImplemented("getresgid");
+        rgid = egid = sgid = 0;
+      } else {
+        ({ rgid, egid, sgid } = posix.getresgid());
       }
-      const { rgid, egid, sgid } = posix.getresgid();
       const view = new DataView(memory.buffer);
       view.setUint32(rgidPtr, rgid, true);
       view.setUint32(egidPtr, egid, true);
@@ -362,18 +370,16 @@ export default function unistd(context) {
     },
 
     setresuid: (ruid: number, euid: number, suid: number): number => {
-      if (posix.setresuid == null) {
-        notImplemented("setresuid");
+      if (posix.setresuid != null) {
+        posix.setresuid(ruid, euid, suid);
       }
-      posix.setresuid(ruid, euid, suid);
       return 0;
     },
 
     setresgid: (rgid: number, egid: number, sgid: number): number => {
-      if (posix.setresgid == null) {
-        notImplemented("setresgid");
+      if (posix.setresgid != null) {
+        posix.setresgid(rgid, egid, sgid);
       }
-      posix.setresgid(rgid, egid, sgid);
       return 0;
     },
 
