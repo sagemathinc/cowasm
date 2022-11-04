@@ -23,6 +23,7 @@ ${BUILD}/fs-updated: ${PACKAGES}/coreutils/dist/wasm/bin/ls  \
 	cp -v ${PACKAGES}/bzip2/dist/wasm/bin/bzip2 ${USR}/bin
 	cp -v ${PACKAGES}/lua/dist/wasm/bin/lua ${USR}/bin
 	cp -v ${PACKAGES}/viz/dist/wasm/bin/viz ${USR}/bin
+	cp -v ${PACKAGES}/less/dist/wasm/bin/less ${USR}/bin
 	cp -v ${PACKAGES}/man/dist/wasm/bin/man ${USR}/bin
 	cp -v ${PACKAGES}/sqlite/dist/wasm/bin/sqlite3 ${USR}/bin
 	cp -v ${PACKAGES}/libarchive/dist/wasm/bin/tar ${USR}/bin

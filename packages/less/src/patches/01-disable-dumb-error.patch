@@ -1,0 +1,11 @@
+--- build/wasm/opttbl.c	2022-11-04 10:44:26
++++ build.0/wasm/opttbl.c	2022-11-04 10:43:24
+@@ -206,7 +206,7 @@
+ 		}
+ 	},
+ 	{ 'd', &d_optname,
+-		BOOL|NO_TOGGLE, OPT_OFF, &know_dumb, NULL,
++		BOOL|NO_TOGGLE, OPT_ON, &know_dumb, NULL,
+ 		{
+ 			"Assume intelligent terminal",
+ 			"Assume dumb terminal",

@@ -27,7 +27,7 @@ packages/dash/${BUILT}: zig libedit
 .PHONY: dash
 
 dash-wasm: packages/dash-wasm/${BUILT}
-packages/dash-wasm/${BUILT}: dash kernel coreutils bzip2 lua viz man sqlite libarchive
+packages/dash-wasm/${BUILT}: dash kernel coreutils bzip2 lua viz man sqlite less libarchive
 	cd packages/dash-wasm && make all
 .PHONY: dash-wasm
 
@@ -172,6 +172,11 @@ bzip2: packages/bzip2/${BUILT}
 packages/bzip2/${BUILT}: zig
 	cd packages/bzip2 && make all
 .PHONY: bzip2
+
+less: packages/less/${BUILT}
+packages/less/${BUILT}: zig
+	cd packages/less && make all
+.PHONY: less
 
 f2c: packages/f2c/${BUILT} wasi-js zig
 packages/f2c/${BUILT}: zig

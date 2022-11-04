@@ -70,7 +70,8 @@ export default function stdlib({ child_process, os, recv, send, fs }) {
         return send.string(resolvedPath, { ptr: resolvedPathPtr, len: 4096 });
       } catch (err) {
         log("realpath error ", err);
-        console.warn("ERROR", err);
+        // It can be normal to check for a file that doesn't exist only console.warn in case of low level debugging.
+        // console.warn("ERROR", err);
         // return 0 to indicate error, NOT -1!
         return 0;
       }

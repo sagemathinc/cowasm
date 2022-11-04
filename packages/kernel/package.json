@@ -1,6 +1,6 @@
 {
   "name": "@cowasm/kernel",
-  "version": "0.24.1",
+  "version": "0.24.2",
   "description": "@cowasm/kernel -- the Kernel of CoWasm: Collaborative WebAssembly for Servers and Browsers",
   "main": "./dist/kernel/node.js",
   "browser": "./dist/kernel/browser.js",
@@ -47,7 +47,7 @@
     "lodash": "^4.17.21",
     "posix-node": "^0.10.1",
     "uuid": "^8.3.2",
-    "wasi-js": "^1.5.4"
+    "wasi-js": "^1.5.5"
   },
   "devDependencies": {
     "@types/jest": "^29.2.0",
