@@ -290,7 +290,7 @@ export default class WASI {
   // This sleep is in milliseconds; it's NOT the libc sleep!
   sleep?: (milliseconds: number) => void;
   lastStdin: number = 0;
-  getStdin?: () => Buffer;
+  getStdin?: (milliseconds?: number) => Buffer; // timeout milliseconds is never used
   stdinBuffer?: Buffer;
   sendStdout?: (Buffer) => void;
   sendStderr?: (Buffer) => void;
@@ -725,6 +725,7 @@ export default class WASI {
           const IS_STDERR = stats.real == 2;
           let written = 0;
           getiovs(iovs, iovsLen).forEach((iov) => {
+            //console.log("fd_write", `"${new TextDecoder().decode(iov)}"`);
             if (iov.byteLength == 0) return;
             //             log(
             //               `writing to fd=${fd}: `,
@@ -1559,9 +1560,9 @@ export default class WASI {
               to block until the fd is ready to read from or write
               to, etc.
 
-              For now at least if reading from stdin then we block if getStdin
-              defined and *pause* for a moment (to avoid cpu burn) if
-              this.sleep is available.
+              For now at least if reading from stdin then we block for a short amount
+              of time if getStdin defined; otherwise, we at least *pause* for a moment
+              (to avoid cpu burn) if this.sleep is available.
               */
 
               sin += 3; // padding
@@ -1577,18 +1578,23 @@ export default class WASI {
               sout += 5; // padding to 8
 
               eventc += 1;
+              /*
+              We just do something really naive, which is "pause for a little while".
+              It seems to work for every application I have so far, from Python to
+              to ncurses, etc.  This also makes it easy to have non-blocking sleep
+              in node.js at the terminal without a worker thread, which is very nice!
+
+              Before I had it block here via getStdin when available, but that does not work
+              in general; in particular, it breaks ncurses completely. In
+                 ncurses/tty/tty_update.c
+              the following call is assumed not to block, and if it does, then ncurses
+              interaction becomes totally broken:
+
+                 select(SP_PARM->_checkfd + 1, &fdset, NULL, NULL, &ktimeout)
+
+              */
               if (userdata == BigInt(0) && WASI_EVENTTYPE_FD_READ == type) {
-                if (this.getStdin != null) {
-                  if (!this.stdinBuffer) {
-                    // Don't have anything in stdin, so
-                    // block waiting for *more* stdin
-                    // TODO: should respect timeout and signals...
-                    this.stdinBuffer = this.getStdin();
-                    this.lastStdin = new Date().valueOf();
-                  }
-                } else {
-                  this.shortPause();
-                }
+                this.shortPause();
               }
 
               break;

@@ -120,7 +120,7 @@ if (!isMainThread && parentPort != null) {
     IOHandler,
   });
 } else {
-  log("running in the main thread (for debugging)");
+  log("running in the main thread");
   // We enable nonblocking stdin if at all possible
   // so that when wasi
   // does fs.readSync(stdin, ...) it blocks and waits

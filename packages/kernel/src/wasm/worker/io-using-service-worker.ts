@@ -59,17 +59,20 @@ export default class IOHandler implements IOHandlerClass {
     }
   }
 
-  getStdin(): Buffer {
-    // Despite blocking, this doesn't block control+c signal because
-    // we send "^C" to stdin when getting that signal.
-    const request = this.request("read-stdin", { id: this.id, ms: 3000 });
+  getStdin(milliseconds?: number): Buffer {
+    // Despite blocking when milliseconds is not set, this doesn't block
+    // control+c signal because we send "^C" to stdin when getting that signal.
+    const request = this.request("read-stdin", {
+      id: this.id,
+      ms: milliseconds ?? 3000,
+    });
     if (request.status == 200) {
       return Buffer.from(request.responseText ?? "");
     } else {
-      // TIMEOUT -- python will try again soon.
-      // NOTE: we try for a few seconds to get output, then fail and let Python call
+      // TIMEOUT --  will try again soon.
+      // NOTE: we try for a few seconds to get output, then fail and let client call
       // this again.  It **does not work** to just allow for a very long synchronous
-      // request and long response in the service worker, e.g.,
+      // request and long response in the service worker.
       return Buffer.from("");
     }
   }

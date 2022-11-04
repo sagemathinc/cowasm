@@ -84,9 +84,10 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       if (message == null) return;
       log("main thread got message", message);
       // This can be useful in some low-level debugging situations:
-      //       if (message.event == "stderr") {
+      //       if (message.event == "stderr" || message.event == "stdout") {
       //         console.warn(new TextDecoder().decode(message.data));
       //       }
+      // message with id handled elsewhere -- used for getting data back.
       if (message.id != null) {
         // message with id handled elsewhere -- used for getting data back.
         this.emit("id", message);

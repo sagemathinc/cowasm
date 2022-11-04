@@ -164,6 +164,7 @@ export default function stdio({ posix, callFunction, recv, send, wasi }) {
       c_cflag: 0,
       c_lflag: 0,
     };
+    //let s = "";
     for (const key in FLAGS) {
       tio_native[key] = 0;
       for (const name of FLAGS[key]) {
@@ -172,6 +173,8 @@ export default function stdio({ posix, callFunction, recv, send, wasi }) {
         }
       }
     }
+    //require("fs").appendFileSync("/tmp/log", s + "\n");
+
     return tio_native;
   }
 
@@ -202,14 +205,23 @@ export default function stdio({ posix, callFunction, recv, send, wasi }) {
         tio_wasi = native_to_wasi(tio_native);
       } else {
         tio_native = {} as any; // just for logging below
-        if (fd == 0) {
-          // stdin - do something to avoid total disaster (see comment in header)
+        if (fd == 0 || fd == 1) {
+          // I copied this from running it and observing.
+          // NO MATTER what we must c_lflag: constants.ECHO as below, though maybe
+          // having everything is better.
           tio_wasi = {
-            c_iflag: 0,
-            c_oflag: 0,
-            c_cflag: 0,
-            c_lflag: constants.ECHO,
+            c_iflag: 27906,
+            c_oflag: 5,
+            c_cflag: 1200,
+            c_lflag: 32827,
           };
+          //           // stdin - do something to avoid total disaster (see comment in header)
+          //           tio_wasi = {
+          //             c_iflag: 0,
+          //             c_oflag: 0,
+          //             c_cflag: 0,
+          //             c_lflag: constants.ECHO, // at least this is needed or nothing will work.
+          //           };
         } else {
           tio_wasi = {
             c_iflag: 0,
@@ -219,7 +231,7 @@ export default function stdio({ posix, callFunction, recv, send, wasi }) {
           };
         }
       }
-      // console.log("tcgetattr", { wasi_fd, fd, tio_wasi, tio_native });
+      //console.log("tcgetattr", { wasi_fd, fd, tio_wasi, tio_native });
       termios_set(tioPtr, tio_wasi);
       return 0;
     },
@@ -231,6 +243,10 @@ export default function stdio({ posix, callFunction, recv, send, wasi }) {
     ): number {
       const fd = wasi.FD_MAP.get(wasi_fd).real;
       const tio_wasi = termios_get(tioPtr);
+//       require("fs").appendFileSync(
+//         "/tmp/log",
+//         JSON.stringify({ f: fd, tio_wasi })
+//       );
       if (posix.tcsetattr != null) {
         // translate the flags from WASI to native
         const tio_native = wasi_to_native(tio_wasi);

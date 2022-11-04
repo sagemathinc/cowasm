@@ -205,7 +205,6 @@ export default function other(context) {
       notImplemented("getrusage");
       return 0;
     },
-
   };
 
   return lib;

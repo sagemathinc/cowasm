@@ -44,15 +44,25 @@ export default class IOHandler implements IOHandlerClass {
     }
   }
 
-  getStdin(): Buffer {
+  // NOTE: we support a milliseconds timeout, but we don't actually use it
+  // anywhere (at least when I wrote this).
+  getStdin(milliseconds?: number): Buffer {
     // wait to change to a positive value, i.e., some input to arrive
+    const start = milliseconds != null ? new Date().valueOf() : 0;
     while (this.stdinLength[0] == 0) {
       // wait with a timeout of 1s for it to change.
       log("getStdin: waiting for some new stdin");
-      Atomics.wait(this.stdinLength, 0, 0, 1000);
+      Atomics.wait(this.stdinLength, 0, 0, milliseconds ?? 1000);
       if (Atomics.load(this.signalState, 0)) {
         // check for any signals
         // TODO: there could be signals that maybe don't interrupt input?
+        return Buffer.from("");
+      }
+      if (
+        milliseconds != null &&
+        this.stdinLength[0] == 0 &&
+        new Date().valueOf() - start > milliseconds
+      ) {
         return Buffer.from("");
       }
     }

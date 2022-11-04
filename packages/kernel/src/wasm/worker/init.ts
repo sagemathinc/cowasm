@@ -52,12 +52,13 @@ export default function initWorker({
 
         if (captureOutput) {
           opts.sendStdout = (data) => {
-            log("sendStdout", data);
+            // log("sendStdout", data);
+            // log(new TextDecoder().decode(data));
             parent.postMessage({ event: "stdout", data });
           };
 
           opts.sendStderr = (data) => {
-            log("sendStderr", data);
+            // log("sendStderr", data);
             parent.postMessage({ event: "stderr", data });
           };
         }

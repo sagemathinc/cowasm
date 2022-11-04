@@ -1,5 +1,5 @@
 export interface IOHandlerClass {
   sleep: (milliseconds: number) => void;
-  getStdin: () => Buffer;
+  getStdin: (milliseconds?: number) => Buffer;
   getSignalState: () => number;
 }
