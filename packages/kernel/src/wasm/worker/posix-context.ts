@@ -164,9 +164,15 @@ export default class PosixContext {
       try {
         // this does dlopen of args[0]:
         main = wasm.getFunction("__main_argc_argv", args[0]);
+        if (main == null) {
+          throw Error("main is null");
+        }
       } catch (_err) {
         try {
           main = wasm.getFunction("main", args[0]);
+          if (main == null) {
+            throw Error("main is null");
+          }
         } catch (err) {
           console.error(`${args[0]}: ${err}`);
           return 127;
