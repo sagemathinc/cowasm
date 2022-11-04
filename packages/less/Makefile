@@ -24,8 +24,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	echo "#undef SIGWINCH" >> ${BUILD_WASM}/position.h
 	echo "#undef SIGWIND" >> ${BUILD_WASM}/position.h
 	# TODO: This sets the "-d" flag to be on by default, since the calls to ltgetstr
-	# in screen.c currently don't work, but less does work.  Remove this patch
-	# and fix this later.
+	# in screen.c currently don't work, but less does "work", though without
+	# bold/underline/etc.  Remove this patch and fix this.
 	cd ${BUILD_WASM} && cat ${SRC}/patches/01-disable-dumb-error.patch | patch -p2
 	touch ${BUILD_WASM}/.patched
 

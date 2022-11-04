@@ -2,7 +2,6 @@
 Code that is the same for both the browser and node.
 */
 
-//import debug from "debug";
 import { bind_methods } from "./util";
 import { join } from "path";
 
@@ -10,15 +9,17 @@ export interface Options {
   interactive?: boolean;
 }
 
-const USR = "/usr";
+export function getEnv(prefix: string = "") {
+  const USR = join(prefix, "usr");
 
-const ENV = {
-  TERMCAP: join(USR, "share", "termcap"),
-  PYTHONHOME: USR,
-  PATH: join(USR, "bin"),
-};
+  const ENV = {
+    TERMCAP: join(USR, "share", "termcap"),
+    PYTHONHOME: USR,
+    PATH: join(USR, "bin"),
+  };
 
-export { USR, ENV };
+  return { USR, ENV };
+}
 
 class DashWasm {
   public kernel;

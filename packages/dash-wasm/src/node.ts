@@ -4,7 +4,9 @@ import debug from "debug";
 
 const log = debug("dash-wasm:node");
 
-import { Options, DashWasmAsync, DashWasmSync, USR, ENV } from "./common";
+import { Options, DashWasmAsync, DashWasmSync, getEnv } from "./common";
+
+const { USR, ENV } = getEnv("/cowasm");
 
 const fs_zip = join(__dirname, "fs.zip");
 const dash_wasm = join(USR, "bin", "sh");

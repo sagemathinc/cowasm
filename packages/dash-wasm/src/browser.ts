@@ -1,7 +1,9 @@
 import { asyncKernel, FileSystemSpec } from "@cowasm/kernel";
 import { join } from "path";
 import debug from "debug";
-import { Options, DashWasmAsync, ENV, USR } from "./common";
+import { Options, DashWasmAsync, getEnv } from "./common";
+
+const { ENV, USR } = getEnv();
 
 const log = debug("dash-wasm:browser");
 

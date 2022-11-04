@@ -39,7 +39,7 @@
   "devDependencies": {
     "buffer": "^6.0.3",
     "css-loader": "^6.7.1",
-    "dash-wasm": "^0.1.0",
+    "dash-wasm": "^0.4.0",
     "events": "^3.3.0",
     "html-webpack-plugin": "^5.5.0",
     "node-polyfill-webpack-plugin": "^2.0.0",
