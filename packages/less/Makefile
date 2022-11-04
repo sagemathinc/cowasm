@@ -50,4 +50,4 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 
 test:
 	# Check it starts and prints some help
-	echo "" | ${BIN}/cowasm ${DIST_WASM}/bin/less --help |grep "LESS COMMANDS"
+	echo "" | ${BIN}/cowasm ${DIST_WASM}/bin/less --help |grep "Commands"
