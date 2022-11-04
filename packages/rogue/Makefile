@@ -17,7 +17,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	touch ${BUILD_WASM}/.patched
 
 #DEBUG = -g
-DEBUG = 
+DEBUG =
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
@@ -37,4 +37,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		&& make -j8 \
 		&& make -j8 install
 	touch ${DIST_WASM}/.built
+
+test:
+	echo "no test of rogue yet"
 

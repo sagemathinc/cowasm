@@ -24,14 +24,14 @@ array([[0.61989363, 0.33999592],
        [0.86028145, 0.78855092]])
 >>> ^D
 (CoWasm) sh$ ls $PATH
-basename cut      false    join     mktemp   realpath stat     tty      yes
-bzip2    date     find     less     mv       rm       tail     uname
-cat      dirname  fmt      ln       nl       rmdir    tar      unexpand
-chmod    du       fold     logname  paste    seq      tee      uniq
-clear    env      grep     ls       pathchk  sh       test     viz
-comm     expand   hanoi    lua      pr       sleep    touch    wc
-cp       expr     head     man      python   sort     tr       which
-csplit   factor   id       mkdir    readlink sqlite3  tsort    xargs
+basename cut      false    join     mktemp   realpath sqlite3  tsort    xargs
+bzip2    date     find     less     mv       rm       stat     tty      yes
+cat      dirname  fmt      ln       nl       rmdir    tail     uname
+chmod    du       fold     logname  paste    rogue    tar      unexpand
+clear    env      grep     ls       pathchk  seq      tee      uniq
+comm     expand   hanoi    lua      pr       sh       test     viz
+cp       expr     head     man      python   sleep    touch    wc
+csplit   factor   id       mkdir    readlink sort     tr       which
 (CoWasm) sh$ lua
 Lua 5.4.4  Copyright (C) 1994-2022 Lua.org, PUC-Rio
 > 2 + 3
@@ -47,6 +47,22 @@ sqlite> select 2+3;
 sqlite> ^D
 (CoWasm) sh$ echo $((2+3))
 5
+(CoWasm) sh$ rogue
+...
+You hit.  Defeated the kobold
+          -------
+          |.....+############ ---------------------
+          |.....|           # |...........*.......+
+          -----+-           ##+........]..........|
+               #              ---------------------
+               ######
+                    #
+                 ---@---
+                 |..*B.|
+                 |.....+
+                 |.....|
+                 |.....|
+                 -+-----
 (CoWasm) sh$ stat $PATH/tar
 0 62 ---------- 1 (0) (0) 0 743701 "Oct 29 17:19:15 2022" "Oct 29 17:19:15 2022" "Oct 29 17:19:15 2022" 0 0 /cowasm/bin/tar
 (CoWasm) sh$ tar --help
