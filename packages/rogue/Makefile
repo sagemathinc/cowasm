@@ -18,6 +18,12 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 
 #DEBUG = -g
 DEBUG =
+
+# Below we use "--build=arm" since there are problems with ./config.guess
+# and it doesn't matter anyways since no native code gets run as part of the
+# build.  It's just an autconf shortcoming.  Without this, build fails on
+# aarch64 linux.  With updated config.guess, build fails on aarch64-mac.
+# So simple solution.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
@@ -28,6 +34,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 			LDFLAGS="${DEBUG} -L${NCURSES}/lib -lncurses " \
 			./configure \
 				--host=none \
+				--build=arm \
 				--prefix="${DIST_WASM}" \
 		&& echo '#include "posix-wasm.h"' >> config.h \
 		&& echo '#undef HAVE_WORKING_FORK' >> config.h \
@@ -38,6 +45,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		&& make -j8 install
 	touch ${DIST_WASM}/.built
 
-test:
+test: ${DIST_WASM}/.built
 	echo "no test of rogue yet"
 
