@@ -804,11 +804,11 @@ export default class WASI {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_READ);
           const IS_STDIN = stats.real === 0;
           let read = 0;
-          //           logToFile(
-          //             `fd_read: ${IS_STDIN}, ${
-          //               this.stdinBuffer?.length
-          //             } ${this.stdinBuffer?.toString()}`
-          //           );
+//           logToFile(
+//             `fd_read: ${IS_STDIN}, ${JSON.stringify(stats, (_, value) =>
+//               typeof value === "bigint" ? value.toString() : value
+//             )}, ${this.stdinBuffer?.length} ${this.stdinBuffer?.toString()}`
+//           );
           // console.log("fd_read", fd, stats, IS_STDIN, this.getStdin != null);
           outer: for (const iov of getiovs(iovs, iovsLen)) {
             let r = 0;
@@ -1212,7 +1212,7 @@ export default class WASI {
           fsRightsBase: bigint | number,
           fsRightsInheriting: bigint | number,
           fsFlags: number,
-          fd: number
+          fdPtr: number
         ) => {
           const stats = CHECK_FD(dirfd, WASI_RIGHT_PATH_OPEN);
           fsRightsBase = BigInt(fsRightsBase);
@@ -1297,6 +1297,15 @@ export default class WASI {
             pathPtr,
             pathLen
           ).toString();
+          if (p == "dev/tty") {
+            // special case: "the terminal".
+            // This is used, e.g., in the "less" program in open_tty in ttyin.c
+            // It will work to make a new tty if using the native os, but when
+            // using a worker thread or in browser, it's much simpler to just
+            // return stdin, which works fine (I think).
+            this.view.setUint32(fdPtr, WASI_STDIN_FILENO, true);
+            return WASI_ESUCCESS;
+          }
           logOpen("path_open", p);
           if (p.startsWith("proc/")) {
             // Immediate error -- otherwise stuff will try to read from this,
@@ -1354,8 +1363,10 @@ export default class WASI {
             },
             path: full,
           });
+          // calling state here does some consistency checks
+          // and set the filetype entry in the record created above.
           stat(this, newfd);
-          this.view.setUint32(fd, newfd, true);
+          this.view.setUint32(fdPtr, newfd, true);
           return WASI_ESUCCESS;
         }
       ),
