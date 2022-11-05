@@ -52,8 +52,8 @@ export default function initWorker({
 
         if (captureOutput) {
           opts.sendStdout = (data) => {
-            // log("sendStdout", data);
-            // log(new TextDecoder().decode(data));
+            log("sendStdout", data);
+            log(new TextDecoder().decode(data));
             parent.postMessage({ event: "stdout", data });
           };
 
