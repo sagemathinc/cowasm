@@ -16,8 +16,8 @@ const log = debug("wasm:io-provider");
 interface Buffers {
   stdinBuffer: SharedArrayBuffer;
   stdinLengthBuffer: SharedArrayBuffer;
-  stdoutBuffer: SharedArrayBuffer;
-  stdoutLengthBuffer: SharedArrayBuffer;
+  outputBuffer: SharedArrayBuffer;
+  outputLengthBuffer: SharedArrayBuffer;
   signalBuffer: SharedArrayBuffer;
 }
 
@@ -25,8 +25,8 @@ export default class IOProviderUsingAtomics implements IOProvider {
   private stdinLength: Int32Array;
   private stdinUint8Array: Uint8Array;
 
-  private stdoutLength: Int32Array;
-  private stdoutUint8Array: Uint8Array;
+  private outputLength: Int32Array;
+  private outputUint8Array: Uint8Array;
 
   private signalInt32Array: Int32Array;
   private buffers: Buffers;
@@ -39,18 +39,18 @@ export default class IOProviderUsingAtomics implements IOProvider {
     const stdinBuffer = new SharedArrayBuffer(10000);
     this.stdinUint8Array = Buffer.from(stdinBuffer);
 
-    const stdoutLengthBuffer = new SharedArrayBuffer(4);
-    this.stdoutLength = new Int32Array(stdoutLengthBuffer);
-    const stdoutBuffer = new SharedArrayBuffer(10000);
-    this.stdoutUint8Array = Buffer.from(stdoutBuffer);
+    const outputLengthBuffer = new SharedArrayBuffer(4);
+    this.outputLength = new Int32Array(outputLengthBuffer);
+    const outputBuffer = new SharedArrayBuffer(10000);
+    this.outputUint8Array = Buffer.from(outputBuffer);
 
     const signalBuffer = new SharedArrayBuffer(4);
     this.signalInt32Array = new Int32Array(signalBuffer);
     this.buffers = {
       stdinBuffer,
       stdinLengthBuffer,
-      stdoutBuffer,
-      stdoutLengthBuffer,
+      outputBuffer,
+      outputLengthBuffer,
       signalBuffer,
     };
   }
@@ -68,16 +68,16 @@ export default class IOProviderUsingAtomics implements IOProvider {
     Atomics.notify(this.stdinLength, 0);
   }
 
-  readStdout(): Buffer {
-    const n = this.stdoutLength[0];
+  readOutput(): Buffer {
+    const n = this.outputLength[0];
     if (n == 0) {
       return Buffer.alloc(0);
     }
     const data = new Buffer(
-      this.stdoutUint8Array.subarray(0, this.stdoutLength[0])
+      this.outputUint8Array.subarray(0, this.outputLength[0])
     );
-    Atomics.store(this.stdoutLength, 0, 0);
-    Atomics.notify(this.stdoutLength, 0);
+    Atomics.store(this.outputLength, 0, 0);
+    Atomics.notify(this.outputLength, 0);
     return data;
   }
 

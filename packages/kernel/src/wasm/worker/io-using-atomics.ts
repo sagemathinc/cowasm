@@ -1,4 +1,4 @@
-import type { IOHandlerClass } from "./types";
+import { IOHandlerClass, Stream } from "./types";
 import debug from "debug";
 const log = debug("wasm:worker:io-using-atomics");
 
@@ -6,8 +6,8 @@ export default class IOHandler implements IOHandlerClass {
   private stdinBuffer: Buffer;
   private stdinLength: Int32Array;
 
-  private stdoutBuffer: Buffer;
-  private stdoutLength: Int32Array;
+  private outputBuffer: Buffer;
+  private outputLength: Int32Array;
 
   private signalState: Int32Array;
   private sleepArray: Int32Array;
@@ -20,11 +20,11 @@ export default class IOHandler implements IOHandlerClass {
     if (opts.stdinBuffer == null) {
       throw Error("must define stdinBuffer");
     }
-    if (opts.stdoutLengthBuffer == null) {
-      throw Error("must define stdoutLengthBuffer");
+    if (opts.outputLengthBuffer == null) {
+      throw Error("must define outputLengthBuffer");
     }
-    if (opts.stdoutBuffer == null) {
-      throw Error("must define stdoutBuffer");
+    if (opts.outputBuffer == null) {
+      throw Error("must define outputBuffer");
     }
     if (opts.signalBuffer == null) {
       throw Error("must define signalBuffer");
@@ -32,8 +32,8 @@ export default class IOHandler implements IOHandlerClass {
 
     this.stdinBuffer = Buffer.from(opts.stdinBuffer);
     this.stdinLength = new Int32Array(opts.stdinLengthBuffer);
-    this.stdoutBuffer = Buffer.from(opts.stdoutBuffer);
-    this.stdoutLength = new Int32Array(opts.stdoutLengthBuffer);
+    this.outputBuffer = Buffer.from(opts.outputBuffer);
+    this.outputLength = new Int32Array(opts.outputLengthBuffer);
     this.signalState = new Int32Array(opts.signalBuffer);
     this.sleepArray = new Int32Array(new SharedArrayBuffer(4));
   }
@@ -89,23 +89,35 @@ export default class IOHandler implements IOHandlerClass {
     return data;
   }
 
-  sendStdout(data: Buffer): void {
+  sendOutput(stream: Stream, data: Buffer): void {
     if (log.enabled) {
       log(
-        "sendStdout",
+        "sendOutput",
+        stream,
         data,
-        { len: this.stdoutLength[0] },
+        { len: this.outputLength[0] },
         new TextDecoder().decode(data)
       );
     }
-    // place the new data in the stdoutBuffer, so that the main thread can receive it
+    // place the new data in the outputBuffer, so that the main thread can receive it.
+    // The format is:
+    //   ....    [1|2]the actual data
+    // where 1 = stdout and 2 = stderr.  Putting both stdout and stderr in the same
+    // buffer means one less buffer to deal with, *and* is a very simple way to avoid
+    // any issues with mixing up the ordering of output.
     while (data.length > 0) {
-      const copied = data.copy(this.stdoutBuffer, this.stdoutLength[0]);
+      this.outputBuffer[this.outputLength[0]] = Stream.STDOUT;
+      const copied = data.copy(this.outputBuffer, this.outputLength[0] + 1);
       data = data.subarray(copied);
-      const n = copied + this.stdoutLength[0];
-      log("setting stdout buffer size to ", n);
-      Atomics.store(this.stdoutLength, 0, n);
-      Atomics.notify(this.stdoutLength, 0);
+      const n = copied + this.outputLength[0] + 1;
+      log("setting output buffer size to ", n);
+      Atomics.store(this.outputLength, 0, n);
+      Atomics.notify(this.outputLength, 0);
+      if (data.length > 0) {
+        // we have more to write but failed to write it all above (hence buffer full), so
+        // we first wait for it to all get read out of the buffer before doing anything further.
+        Atomics.wait(this.outputLength, 0, 0, 500);
+      }
     }
   }
 

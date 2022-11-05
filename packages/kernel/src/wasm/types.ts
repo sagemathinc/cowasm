@@ -4,6 +4,7 @@ import type { WASIFileSystem } from "wasi-js";
 import type { SendToWasmAbstractBase } from "./worker/send-to-wasm";
 import type { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
 import type PosixContext from "./worker/posix-context";
+export { Stream } from "./worker/types";
 
 class WasmInstance extends EventEmitter {
   // these are sometimes available and useful, e.g., in testing
@@ -84,6 +85,5 @@ export class IOProvider {
   signal: (sig: number) => void;
   getExtraOptions: () => object;
   writeToStdin: (data: Buffer) => void;
-  readStdout(): Buffer;
-  readStderr(): Buffer;
+  readOutput(): Buffer;
 }

@@ -5,7 +5,7 @@ import reuseInFlight from "./reuseInFlight";
 import { SendToWasmAbstractBase } from "./worker/send-to-wasm";
 import { RecvFromWasmAbstractBase } from "./worker/recv-from-wasm";
 export { Options };
-import type { IOProvider } from "./types";
+import { IOProvider, Stream } from "./types";
 import { SIGINT } from "./constants";
 import debug from "debug";
 
@@ -110,7 +110,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       }
     });
 
-    this.monitorStdout();
+    this.monitorOutput();
 
     await callback((cb) =>
       this.once("init", (message) => {
@@ -119,15 +119,18 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     );
   }
 
-  async monitorStdout() {
-    let d = 250;
+  async monitorOutput() {
+    let d = 50;
     while (this.worker != null) {
-      const data = this.ioProvider.readStdout();
+      const data = this.ioProvider.readOutput();
       if (data.length > 0) {
-        this.emit("stdout", data);
-        d = 5;
+        this.emit(
+          data[0] == Stream.STDOUT ? "stdout" : "stderr",
+          data.subarray(1)
+        );
+        d = 1;
       } else {
-        d = Math.min(100, d * 1.3);
+        d = Math.min(250, d * 1.3);
       }
       await delay(d);
     }

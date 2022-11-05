@@ -1,6 +1,7 @@
 import type WasmInstanceSync from "./instance";
 import { Options } from "./import";
 import debug from "debug";
+import { Stream } from "./types";
 
 const log = debug("wasm:worker:init");
 
@@ -51,11 +52,11 @@ export default function initWorker({
         };
 
         if (captureOutput) {
-          opts.sendStdout = ioHandler.sendStdout.bind(ioHandler);
-
+          opts.sendStdout = (data) => {
+            ioHandler.sendOutput(Stream.STDOUT, data);
+          };
           opts.sendStderr = (data) => {
-            log("sendStderr", data);
-            parent.postMessage({ event: "stderr", data });
+            ioHandler.sendOutput(Stream.STDERR, data);
           };
         }
 
