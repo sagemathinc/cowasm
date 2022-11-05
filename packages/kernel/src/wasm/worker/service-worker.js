@@ -145,6 +145,26 @@ async function handleReadStdin(e) {
   return new Response(data, { status: 200 });
 }
 
+async function handleWriteOutput(e) {
+  const { data, id } = await e.request.json();
+  log("write to output", { id, data });
+  if (cache.output[id] == null) {
+    cache.output[id] = data;
+  } else {
+    cache.output[id] += data;
+  }
+  return new Response("", { status: 200 });
+}
+
+// Unlike handleReadStdin, this doesn't wait for stdin to be available,
+// and instead reads what is already in the buffer.
+async function handleReadOutput(e) {
+  const { id } = await e.request.json();
+  const data = cache.output[id];
+  cache.output[id] = "";
+  return new Response(data, { status: 200 });
+}
+
 self.addEventListener("fetch", (e) => {
   const { pathname } = new URL(e.request.url);
   if (!pathname.startsWith(PREFIX)) {
@@ -154,12 +174,21 @@ self.addEventListener("fetch", (e) => {
     case "sleep":
       e.respondWith(handleSleep(e));
       return;
+
     case "write-stdin":
       e.respondWith(handleWriteStdin(e));
       return;
     case "read-stdin":
       e.respondWith(handleReadStdin(e));
       return;
+
+    case "write-output":
+      e.respondWith(handleWriteOutput(e));
+      return;
+    case "read-output":
+      e.respondWith(handleReadOutput(e));
+      return;
+
     case "write-signal":
       e.respondWith(handleWriteSignal(e));
       return;

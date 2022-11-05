@@ -1,4 +1,4 @@
-import type { IOHandlerClass } from "./types";
+import { IOHandlerClass, Stream } from "./types";
 import debug from "debug";
 
 const log = debug("wasm:worker:io-using-atomics");
@@ -80,6 +80,38 @@ export default class IOHandler implements IOHandlerClass {
   private getSignal(clear: boolean): number {
     const request = this.request("read-signal", { clear, id: this.id });
     return parseInt(request.responseText) ?? 0;
+  }
+
+  sendOutput(stream: Stream, data: Buffer): void {
+    if (log.enabled) {
+      log(
+        "sendOutput",
+        stream,
+        data,
+        { len: this.outputLength[0] },
+        new TextDecoder().decode(data)
+      );
+    }
+    // place the new data in the outputBuffer, so that the main thread can receive it.
+    // The format is:
+    //   ....    [1|2]the actual data
+    // where 1 = stdout and 2 = stderr.  Putting both stdout and stderr in the same
+    // buffer means one less buffer to deal with, *and* is a very simple way to avoid
+    // any issues with mixing up the ordering of output.
+    while (data.length > 0) {
+      this.outputBuffer[this.outputLength[0]] = Stream.STDOUT;
+      const copied = data.copy(this.outputBuffer, this.outputLength[0] + 1);
+      data = data.subarray(copied);
+      const n = copied + this.outputLength[0] + 1;
+      log("setting output buffer size to ", n);
+      Atomics.store(this.outputLength, 0, n);
+      Atomics.notify(this.outputLength, 0);
+      if (data.length > 0) {
+        // we have more to write but failed to write it all above (hence buffer full), so
+        // we first wait for it to all get read out of the buffer before doing anything further.
+        Atomics.wait(this.outputLength, 0, 0, 500);
+      }
+    }
   }
 
   // Python kernel will call this VERY frequently, which is fine for

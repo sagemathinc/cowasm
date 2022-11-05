@@ -54,6 +54,12 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
     log("writeToStdin", data);
     this.send("write-stdin", { data: data.toString(), id: this.id });
   }
+
+  readOutput() : Buffer {
+    log("readOutput");
+    
+
+  }
 }
 
 function getURL(): string {
