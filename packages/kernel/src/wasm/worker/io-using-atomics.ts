@@ -5,6 +5,10 @@ const log = debug("wasm:worker:io-using-atomics");
 export default class IOHandler implements IOHandlerClass {
   private stdinBuffer: Buffer;
   private stdinLength: Int32Array;
+
+  private stdoutBuffer: Buffer;
+  private stdoutLength: Int32Array;
+
   private signalState: Int32Array;
   private sleepArray: Int32Array;
 
@@ -16,12 +20,20 @@ export default class IOHandler implements IOHandlerClass {
     if (opts.stdinBuffer == null) {
       throw Error("must define stdinBuffer");
     }
+    if (opts.stdoutLengthBuffer == null) {
+      throw Error("must define stdoutLengthBuffer");
+    }
+    if (opts.stdoutBuffer == null) {
+      throw Error("must define stdoutBuffer");
+    }
     if (opts.signalBuffer == null) {
       throw Error("must define signalBuffer");
     }
 
     this.stdinBuffer = Buffer.from(opts.stdinBuffer);
     this.stdinLength = new Int32Array(opts.stdinLengthBuffer);
+    this.stdoutBuffer = Buffer.from(opts.stdoutBuffer);
+    this.stdoutLength = new Int32Array(opts.stdoutLengthBuffer);
     this.signalState = new Int32Array(opts.signalBuffer);
     this.sleepArray = new Int32Array(new SharedArrayBuffer(4));
   }
@@ -75,6 +87,26 @@ export default class IOHandler implements IOHandlerClass {
     Atomics.store(this.stdinLength, 0, 0);
     Atomics.notify(this.stdinLength, 0);
     return data;
+  }
+
+  sendStdout(data: Buffer): void {
+    if (log.enabled) {
+      log(
+        "sendStdout",
+        data,
+        { len: this.stdoutLength[0] },
+        new TextDecoder().decode(data)
+      );
+    }
+    // place the new data in the stdoutBuffer, so that the main thread can receive it
+    while (data.length > 0) {
+      const copied = data.copy(this.stdoutBuffer, this.stdoutLength[0]);
+      data = data.subarray(copied);
+      const n = copied + this.stdoutLength[0];
+      log("setting stdout buffer size to ", n);
+      Atomics.store(this.stdoutLength, 0, n);
+      Atomics.notify(this.stdoutLength, 0);
+    }
   }
 
   // TODO: in general there could be more than one signal at once... of course, right now we only support sigint = 2.

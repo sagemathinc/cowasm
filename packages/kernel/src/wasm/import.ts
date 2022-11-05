@@ -79,7 +79,9 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       // we would have no way to ever see any debug logging from worker.  This is really nice!
       debug: debug.load(),
     });
+
     this.worker.on("exit", () => this.terminate());
+
     this.worker.on("message", (message) => {
       if (message == null) return;
       log("main thread got message", message);
@@ -108,11 +110,27 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       }
     });
 
+    this.monitorStdout();
+
     await callback((cb) =>
       this.once("init", (message) => {
         cb(message.error);
       })
     );
+  }
+
+  async monitorStdout() {
+    let d = 250;
+    while (this.worker != null) {
+      const data = this.ioProvider.readStdout();
+      if (data.length > 0) {
+        this.emit("stdout", data);
+        d = 5;
+      } else {
+        d = Math.min(100, d * 1.3);
+      }
+      await delay(d);
+    }
   }
 
   terminate() {
@@ -239,4 +257,8 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
 
 function abstract(name: string) {
   throw Error(`${name} -- must be defined in derived class`);
+}
+
+function delay(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }

@@ -1,7 +1,6 @@
 import type WasmInstanceSync from "./instance";
 import { Options } from "./import";
 import debug from "debug";
-import bufferedOutput from "./buffered-output";
 
 const log = debug("wasm:worker:init");
 
@@ -23,7 +22,7 @@ export default function initWorker({
   parent: Parent;
   // if captureOutput is true, we will send stdout and stderr events when such output is
   // written, instead of writing to /dev/stdout and /dev/stderr.  This saves trouble having
-  // to watch and read from those filesystems.  For browser xterm.js integration, we use
+  // to watch and read from those "files".  For browser xterm.js integration, we use
   // this, but for a nodejs terminal, we don't.
   captureOutput?: boolean;
   IOHandler;
@@ -52,16 +51,12 @@ export default function initWorker({
         };
 
         if (captureOutput) {
-          opts.sendStdout = bufferedOutput((data) => {
-            // ONLY for low level debugging (since it takes time)
-            log("sendStdout", data, new TextDecoder().decode(data));
-            parent.postMessage({ event: "stdout", data });
-          });
+          opts.sendStdout = ioHandler.sendStdout.bind(ioHandler);
 
-          opts.sendStderr = bufferedOutput((data) => {
+          opts.sendStderr = (data) => {
             log("sendStderr", data);
             parent.postMessage({ event: "stderr", data });
-          });
+          };
         }
 
         wasm = await wasmImport(message.name, opts);

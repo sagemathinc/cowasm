@@ -84,4 +84,6 @@ export class IOProvider {
   signal: (sig: number) => void;
   getExtraOptions: () => object;
   writeToStdin: (data: Buffer) => void;
+  readStdout(): Buffer;
+  readStderr(): Buffer;
 }
