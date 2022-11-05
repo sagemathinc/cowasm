@@ -101,23 +101,36 @@ export default class IOHandler implements IOHandlerClass {
     }
     // place the new data in the outputBuffer, so that the main thread can receive it.
     // The format is:
-    //   ....    [1|2]the actual data
+    //   [1|2][all of the actual data]
     // where 1 = stdout and 2 = stderr.  Putting both stdout and stderr in the same
     // buffer means one less buffer to deal with, *and* is a very simple way to avoid
     // any issues with mixing up the ordering of output.
+    // That said, if there is stdout in the buffer and you write stderr, we must first
+    // wait until the main thread empties the buffer first, since our data structure
+    // is so simple that we can't store both stdout and stderr in the buffer at the
+    // same time.
     while (data.length > 0) {
-      this.outputBuffer[this.outputLength[0]] = Stream.STDOUT;
-      const copied = data.copy(this.outputBuffer, this.outputLength[0] + 1);
+      while (
+        (this.outputLength[0] > 0 && this.outputBuffer[0] != stream) ||
+        this.outputLength[0] == this.outputBuffer.length
+      ) {
+        // wait for main thread to read, because our buffer only holds one
+        // type of stream at a time, for simplicity.
+        // Or, we have no more space.
+        Atomics.wait(this.outputLength, 0, this.outputLength[0]);
+      }
+      if (this.outputLength[0] == 0) {
+        // initialize stream type field.
+        this.outputBuffer[0] = stream;
+        this.outputLength[0] = 1;
+      }
+      // copy as much data as we can.
+      const copied = data.copy(this.outputBuffer, this.outputLength[0]);
       data = data.subarray(copied);
-      const n = copied + this.outputLength[0] + 1;
+      const n = copied + this.outputLength[0];
       log("setting output buffer size to ", n);
       Atomics.store(this.outputLength, 0, n);
       Atomics.notify(this.outputLength, 0);
-      if (data.length > 0) {
-        // we have more to write but failed to write it all above (hence buffer full), so
-        // we first wait for it to all get read out of the buffer before doing anything further.
-        Atomics.wait(this.outputLength, 0, 0, 500);
-      }
     }
   }
 
