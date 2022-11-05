@@ -804,11 +804,11 @@ export default class WASI {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_READ);
           const IS_STDIN = stats.real === 0;
           let read = 0;
-//           logToFile(
-//             `fd_read: ${IS_STDIN}, ${JSON.stringify(stats, (_, value) =>
-//               typeof value === "bigint" ? value.toString() : value
-//             )}, ${this.stdinBuffer?.length} ${this.stdinBuffer?.toString()}`
-//           );
+          //           logToFile(
+          //             `fd_read: ${IS_STDIN}, ${JSON.stringify(stats, (_, value) =>
+          //               typeof value === "bigint" ? value.toString() : value
+          //             )}, ${this.stdinBuffer?.length} ${this.stdinBuffer?.toString()}`
+          //           );
           // console.log("fd_read", fd, stats, IS_STDIN, this.getStdin != null);
           outer: for (const iov of getiovs(iovs, iovsLen)) {
             let r = 0;
@@ -839,6 +839,10 @@ export default class WASI {
                       this.stdinBuffer = undefined;
                     } else {
                       this.stdinBuffer = this.stdinBuffer.slice(rr);
+                    }
+                    if (rr > 0) {
+                      // we read from stdin.
+                      this.lastStdin = new Date().valueOf();
                     }
                   }
                 } else {
@@ -1626,7 +1630,7 @@ export default class WASI {
             if (this.sleep == null && !warnedAboutSleep) {
               warnedAboutSleep = true;
               console.log(
-                "(cpu waiting for stdin: please define a way to sleep!) "
+                "(100% cpu burning waiting for stdin: please define a way to sleep!) "
               );
             }
             if (this.sleep != null) {
