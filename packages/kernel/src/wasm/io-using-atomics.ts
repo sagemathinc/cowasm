@@ -68,7 +68,8 @@ export default class IOProviderUsingAtomics implements IOProvider {
     Atomics.notify(this.stdinLength, 0);
   }
 
-  readOutput(): Buffer {
+  // not really async, but we do this for consistent api with service worker.
+  async readOutput(): Promise<Buffer> {
     const n = this.outputLength[0];
     if (n == 0) {
       return Buffer.alloc(0);

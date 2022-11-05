@@ -122,7 +122,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   async monitorOutput() {
     let d = 50;
     while (this.worker != null) {
-      const data = this.ioProvider.readOutput();
+      const data = await this.ioProvider.readOutput();
       if (data.length > 0) {
         this.emit(
           data[0] == Stream.STDOUT ? "stdout" : "stderr",

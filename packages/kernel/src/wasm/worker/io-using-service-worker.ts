@@ -5,6 +5,8 @@ const log = debug("wasm:worker:io-using-atomics");
 
 const SIGNAL_CHECK_MS = 500;
 
+const decoder = new TextDecoder();
+
 export default class IOHandler implements IOHandlerClass {
   private id: string;
   private lastSignalCheck: number = 0;
@@ -20,7 +22,7 @@ export default class IOHandler implements IOHandlerClass {
   }
 
   private request(
-    url: "sleep" | "read-stdin" | "read-signal",
+    url: "sleep" | "read-stdin" | "read-signal" | "write-output",
     body: object = {}
   ) {
     const request = new XMLHttpRequest();
@@ -83,35 +85,20 @@ export default class IOHandler implements IOHandlerClass {
   }
 
   sendOutput(stream: Stream, data: Buffer): void {
-    if (log.enabled) {
-      log(
-        "sendOutput",
-        stream,
-        data,
-        { len: this.outputLength[0] },
-        new TextDecoder().decode(data)
-      );
+    let str;
+    try {
+      str = decoder.decode(data);
+    } catch (_err) {
+      // discard data we can't decode. Won't be able to display anyways.
+      return;
     }
-    // place the new data in the outputBuffer, so that the main thread can receive it.
-    // The format is:
-    //   ....    [1|2]the actual data
-    // where 1 = stdout and 2 = stderr.  Putting both stdout and stderr in the same
-    // buffer means one less buffer to deal with, *and* is a very simple way to avoid
-    // any issues with mixing up the ordering of output.
-    while (data.length > 0) {
-      this.outputBuffer[this.outputLength[0]] = Stream.STDOUT;
-      const copied = data.copy(this.outputBuffer, this.outputLength[0] + 1);
-      data = data.subarray(copied);
-      const n = copied + this.outputLength[0] + 1;
-      log("setting output buffer size to ", n);
-      Atomics.store(this.outputLength, 0, n);
-      Atomics.notify(this.outputLength, 0);
-      if (data.length > 0) {
-        // we have more to write but failed to write it all above (hence buffer full), so
-        // we first wait for it to all get read out of the buffer before doing anything further.
-        Atomics.wait(this.outputLength, 0, 0, 500);
-      }
-    }
+    log("sendOutput", str);
+    // send new data to the service worker, so that the main thread can receive it.
+    this.request("write-output", {
+      id: this.id,
+      stream: `${stream}`,
+      data: str,
+    });
   }
 
   // Python kernel will call this VERY frequently, which is fine for

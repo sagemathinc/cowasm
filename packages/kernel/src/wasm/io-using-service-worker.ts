@@ -34,12 +34,12 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
   }
 
   private async send(
-    target: "write-signal" | "write-stdin",
+    target: "write-signal" | "write-stdin" | "read-output",
     body: object
-  ): Promise<void> {
+  ): Promise<any> {
     const url = `/python-wasm-sw/${target}`;
     try {
-      await fetch(url, { method: "POST", body: JSON.stringify(body) });
+      return await fetch(url, { method: "POST", body: JSON.stringify(body) });
     } catch (err) {
       console.warn("failed to send to service worker", { url, body }, err);
     }
@@ -55,10 +55,9 @@ export default class IOProviderUsingServiceWorker implements IOProvider {
     this.send("write-stdin", { data: data.toString(), id: this.id });
   }
 
-  readOutput() : Buffer {
-    log("readOutput");
-    
-
+  async readOutput(): Promise<Buffer> {
+    const output = await this.send("read-output", { id: this.id });
+    return Buffer.from(await output.text());
   }
 }
 

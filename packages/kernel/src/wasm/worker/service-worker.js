@@ -62,6 +62,7 @@ const cache = {
   sig: {},
   stdin: {},
   callOnStdin: {},
+  output: {},
 };
 
 async function handleWriteSignal(e) {
@@ -146,13 +147,27 @@ async function handleReadStdin(e) {
 }
 
 async function handleWriteOutput(e) {
-  const { data, id } = await e.request.json();
-  log("write to output", { id, data });
-  if (cache.output[id] == null) {
-    cache.output[id] = data;
-  } else {
-    cache.output[id] += data;
+  let { stream, data, id } = await e.request.json();
+  log("write to output", { id, stream, data });
+  if (!cache.output[id]) {
+    cache.output[id] = stream;
+  } else if (cache.output[id][0] != stream) {
+    const start = new Date().valueOf();
+    let d = 1;
+    while (cache.output[id] && cache.output[id][0] != stream) {
+      if (new Date().valueOf() - start > 3000) {
+        // give up -- shouldn't happen since frontend should handle
+        // all IO within a fraction of a second.
+        return new Response("", { status: 200 });
+      }
+      await delay(d);
+      d = Math.min(d * 1.3, 200);
+    }
+    if (!cache.output[id]) {
+      cache.output[id] = stream;
+    }
   }
+  cache.output[id] += data;
   return new Response("", { status: 200 });
 }
 
