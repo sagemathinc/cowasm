@@ -1,6 +1,7 @@
 import type WasmInstanceSync from "./instance";
 import { Options } from "./import";
 import debug from "debug";
+import bufferedOutput from "./buffered-output";
 
 const log = debug("wasm:worker:init");
 
@@ -51,16 +52,16 @@ export default function initWorker({
         };
 
         if (captureOutput) {
-          opts.sendStdout = (data) => {
-            log("sendStdout", data);
-            log(new TextDecoder().decode(data));
+          opts.sendStdout = bufferedOutput((data) => {
+            // ONLY for low level debugging (since it takes time)
+            log("sendStdout", data, new TextDecoder().decode(data));
             parent.postMessage({ event: "stdout", data });
-          };
+          });
 
-          opts.sendStderr = (data) => {
-            // log("sendStderr", data);
+          opts.sendStderr = bufferedOutput((data) => {
+            log("sendStderr", data);
             parent.postMessage({ event: "stderr", data });
-          };
+          });
         }
 
         wasm = await wasmImport(message.name, opts);
