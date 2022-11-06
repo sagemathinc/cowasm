@@ -59,18 +59,13 @@ unicodedata unicodedata.c
 readline readline.c -I$(abs_srcdir)/../../../libedit/dist/wasm/include $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
 
-# Just uncomment the two lines below to build the curses shared module.
-# Curses builds, but the curses .py files aren't in the
-# zip bundle yet.  You can explicitly include those.  However,
-# 'import _curses; _curses.initscr()' fails right now, so there's
-# an issue with terminfo, etc., to sort out.  Build with debugging
-# of modules enabled to find out what is going wrong...
+# Curses
 
-#_curses _cursesmodule.c -I$(abs_srcdir)/../../../ncurses/dist/wasm/include -I$(abs_srcdir)/../../../ncurses/dist/wasm/include/ncurses $(abs_srcdir)/../../../ncurses/dist/wasm/lib/libncurses.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
-#_curses_panel _curses_panel.c  -I$(abs_srcdir)/../../../ncurses/dist/wasm/include -I$(abs_srcdir)/../../../ncurses/dist/wasm/include/ncurses  $(abs_srcdir)/../../../ncurses/dist/wasm/lib/libncurses.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
+_curses _cursesmodule.c -I$(abs_srcdir)/../../../ncurses/dist/wasm/include -I$(abs_srcdir)/../../../ncurses/dist/wasm/include/ncurses $(abs_srcdir)/../../../ncurses/dist/wasm/lib/libncurses.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
+_curses_panel _curses_panel.c  -I$(abs_srcdir)/../../../ncurses/dist/wasm/include -I$(abs_srcdir)/../../../ncurses/dist/wasm/include/ncurses  $(abs_srcdir)/../../../ncurses/dist/wasm/lib/libncurses.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
 
-# Using actual readline doesn't work.  Anyway, it is bigger, more complicated, GPL'd, and code is harder to read.
+# Using GNU readline doesn't work.  Anyway, it is bigger, more complicated, GPL'd, and **the code is harder to read**.
 #readline readline.c -I$(abs_srcdir)/../../../readline/dist/wasm/include $(abs_srcdir)/../../../readline/dist/wasm/lib/libreadline.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
 _bz2 _bz2module.c -I$(abs_srcdir)/../../../bzip2/dist/wasm/include/ $(abs_srcdir)/../../../bzip2/dist/wasm/lib/libbz2.a
