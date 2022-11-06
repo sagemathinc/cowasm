@@ -121,27 +121,20 @@ if (!isMainThread && parentPort != null) {
   });
 } else {
   log("running in the main thread");
-  // We enable nonblocking stdin if at all possible
-  // so that when wasi
-  // does fs.readSync(stdin, ...) it blocks and waits
+  // We enable blocking stdin if at all possible
+  // so that when wasi does
+  // fs.readSync(stdin, ...)
+  // it blocks and waits
   // for an input character, rather than immediately
   // giving an error or 0 characters, except when one
   // is ready. This is much better than a loop with
   // 100% cpu usage!
   // NOTE
   // - right now enableRawInput is only available on
-  //   some platforms, e.g., not on windows.
+  //   macos and linux platforms, e.g., not on windows.
   try {
-    // node script [extra args]
-    // node has a really simple model for whether or not
-    // input is interactive
-    if (process.argv.length > 2) {
-      // input is NOT interactive shell; in this case we only
-      // set stdin blocking; this keeps buffering
-      posix.makeStdinBlocking?.();
-    } else {
-      // input is interactive shell; we also disable buffering
-      posix.enableRawInput?.();
-    }
-  } catch (_err) {}
+    posix.makeStdinBlocking?.();
+  } catch (_err) {
+    console.warn("POSIX blocking stdin not available. Try using --worker.");
+  }
 }

@@ -29,10 +29,10 @@ function getOptions(wasmImport, opts?: Options) {
     ...process.env,
     TERM,
     TERMCAP: join(path, "..", "termcap"),
-    PS1: "(CoWasm) sh$ ",
+    PS1: "cowasm$ ",
     ...opts?.env,
   };
-  //PS1: '(CoWasm) sh: (pwd | sed "s|^$HOME|~|")$ '
+  //PS1: 'cowasm: (pwd | sed "s|^$HOME|~|")$ '
 
   return {
     programName: process.env.PROGRAM_NAME, // real name or made up name

@@ -2,7 +2,7 @@
 
 RANDOM NOTES
 
-MAJOR TODO:  For xterm.js entirely in browser (and MS Windows), we will still
+MAJOR TODO:  For xterm.js entirely in browser (and MS Windows), we may still
 have to implement this stuff.  Hopefully this will be much easier, since we
 implemented everything via our posix-node and can observe what's expected
 by programs.
@@ -18,7 +18,7 @@ On a POSIX server, a complete and easy option is to directly call the c library 
 an extension module, translating flags back and forth between native and wasi,
 and we do exactly that here.
 
-Right now on non-POSIX, the following are minimal stub functions.
+Right now on non-POSIX, the following are partially stub functions, but not minimal.
 
 IMPORTANT! We can't do NOTHING!  For example, libedit will
 randomly not work if we do nothing (which drove me crazy for days)!
@@ -37,9 +37,17 @@ We set at least that below for fd=0 and intend to do more (TODO!).
            cc_t     c_cc[NCCS];   /; special characters
 
 I think for us c_lflag is mostly what matters.
+
+Another key point that is subtle, is we can't just worry about a subset of "official
+posix flags" and forget about the rest.  We have to see what was changed at the
+wasi level, then modify exactly what is true natively to match that.   This makes
+the code below a bit odd.
 */
 
+import debug from "debug";
 import constants from "./constants";
+
+const log = debug("posix:termios");
 
 const FLAGS = {
   c_iflag: [
@@ -73,8 +81,8 @@ const FLAGS = {
     "CLOCAL",
   ],
   c_lflag: [
-    "ICANON",
     "ISIG",
+    "ICANON",
     "ECHO",
     "ECHOE",
     "ECHOK",
@@ -146,17 +154,27 @@ export default function stdio({ posix, callFunction, recv, send, wasi }) {
       c_cflag: 0,
       c_lflag: 0,
     };
+    let s: string[] = [];
     for (const key in tio_native) {
       tio_wasi[key] = 0;
       for (const name of FLAGS[key]) {
         if (tio_native[key] & posix.constants[name]) {
           tio_wasi[key] |= constants[name];
+          if (log.enabled) {
+            s.push(name);
+          }
         }
       }
+    }
+    if (log.enabled) {
+      s.sort();
+      log("NATIVE: ", s.join(" "));
     }
     return tio_wasi;
   }
 
+  /*
+  // this doesn't end up getting used, so commented out.
   function wasi_to_native(tio_wasi: Termios): Termios {
     const tio_native: Termios = {
       c_iflag: 0,
@@ -164,19 +182,23 @@ export default function stdio({ posix, callFunction, recv, send, wasi }) {
       c_cflag: 0,
       c_lflag: 0,
     };
-    //let s = "";
+    // let s: string[] = [];
     for (const key in FLAGS) {
       tio_native[key] = 0;
       for (const name of FLAGS[key]) {
         if (tio_wasi[key] & constants[name]) {
           tio_native[key] |= posix.constants[name];
+          // s.push(name);
         }
       }
     }
+    // s.sort();
+    //console.log(s.join(" "));
     //require("fs").appendFileSync("/tmp/log", s + "\n");
 
     return tio_native;
   }
+  */
 
   return {
     /*
@@ -232,6 +254,8 @@ export default function stdio({ posix, callFunction, recv, send, wasi }) {
         }
       }
       //console.log("tcgetattr", { wasi_fd, fd, tio_wasi, tio_native });
+      //console.log("GET");
+      //wasi_to_native(tio_wasi);
       termios_set(tioPtr, tio_wasi);
       return 0;
     },
@@ -243,16 +267,40 @@ export default function stdio({ posix, callFunction, recv, send, wasi }) {
     ): number {
       const fd = wasi.FD_MAP.get(wasi_fd).real;
       const tio_wasi = termios_get(tioPtr);
-//       require("fs").appendFileSync(
-//         "/tmp/log",
-//         JSON.stringify({ f: fd, tio_wasi })
-//       );
-      if (posix.tcsetattr != null) {
-        // translate the flags from WASI to native
-        const tio_native = wasi_to_native(tio_wasi);
-        // console.log("tcsetattr", { fd, tio_wasi, tio_native });
-        posix.tcsetattr(fd, posix.constants.TCSAFLUSH, tio_native);
+      if (posix.tcsetattr == null || posix.tcgetattr == null) {
+        return 0;
       }
+      const tio_native = posix.tcgetattr(fd);
+      const tio_native_orig = { ...tio_native };
+      const tio_wasi_current = native_to_wasi(tio_native);
+
+      // We change in native **exactly** what they changed, leaving everything
+      // else the same.
+      let somethingChanged = false;
+      for (const key in FLAGS) {
+        for (const name of FLAGS[key]) {
+          if (
+            (tio_wasi[key] & constants[name]) !=
+            (tio_wasi_current[key] & constants[name])
+          ) {
+            // name was changed
+            somethingChanged = true;
+            if (tio_wasi[key] & constants[name]) {
+              // set it
+              tio_native[key] |= posix.constants[name];
+            } else {
+              // unset it
+              tio_native[key] &= ~posix.constants[name];
+            }
+          }
+        }
+      }
+      if (!somethingChanged) {
+        log("tcsetattr: nothing changed");
+        return 0;
+      }
+      log("tcsetattr", { fd, tio_native, tio_native_orig });
+      posix.tcsetattr(fd, posix.constants.TCSANOW, tio_native);
       return 0;
     },
   };
