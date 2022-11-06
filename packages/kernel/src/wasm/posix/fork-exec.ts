@@ -26,7 +26,7 @@ extern int python_wasm_fork_exec(
 import debug from "debug";
 import { nativeToWasm } from "./errno";
 import constants from "./constants";
-import { join } from "path";
+import { join, resolve } from "path";
 
 const log = debug("posix:fork-exec");
 
@@ -235,7 +235,7 @@ export default function fork_exec({
           // search path
           log("cowasm_vforkexec", "go through search path to find", argv[0]);
           for (const dir of path.split(":")) {
-            const pathToCmd = join(dir, argv[0]);
+            const pathToCmd = join(resolve(dir), argv[0]);
             try {
               const stat = fs.statSync(pathToCmd);
               if (stat.mode & fs.constants.S_IXUSR) {
