@@ -78,3 +78,5 @@ _sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microproto
 
 mmap mmapmodule.c
 
+termios termios.c
+

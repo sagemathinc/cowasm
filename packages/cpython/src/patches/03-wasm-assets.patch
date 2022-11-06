@@ -1,14 +1,22 @@
-We patch the wasm_assets.py script to: (1) include extra modules that we support
-(but emscripten doesn't), and (2) NOT explicitly check for "emscripten" in the
-sysconfigdata name, since we are building for host=wasm32-unknown-wasi, and a
-lot goes wrong if we were to try host=wasm32-unknown-emscripten; in particular,
-there's lot of incorrect -s build flags that go to emscripten, and we would have
-to remove those.
-
-
---- wasm_assets.orig.py	2022-07-25 15:28:43.000000000 -0700
-+++ wasm_assets.py	2022-07-25 16:05:53.000000000 -0700
-@@ -101,8 +101,8 @@
+--- native/Tools/wasm/wasm_assets.py	2022-10-24 10:35:39
++++ wasm/Tools/wasm/wasm_assets.py	2022-11-06 06:58:43
+@@ -89,11 +89,14 @@
+     "wsgiref/",
+ )
+ 
++# The module detection code isn't robust, so I manually comment out
++# some of these from the list, which causes the corresponding py files
++# to NOT be excluded.
+ OMIT_MODULE_FILES = {
+     "_asyncio": ["asyncio/"],
+     "audioop": ["aifc.py", "sunau.py", "wave.py"],
+     "_crypt": ["crypt.py"],
+-    "_curses": ["curses/"],
++    #"_curses": ["curses/"],
+     "_ctypes": ["ctypes/"],
+     "_decimal": ["decimal.py"],
+     "_dbm": ["dbm/ndbm.py"],
+@@ -101,8 +104,8 @@
      "_json": ["json/"],
      "_multiprocessing": ["concurrent/", "multiprocessing/"],
      "pyexpat": ["xml/", "xmlrpc/"],
@@ -18,8 +26,8 @@ to remove those.
 +    #"_sqlite3": ["sqlite3/"],
      "_ssl": ["ssl.py"],
      "_tkinter": ["idlelib/", "tkinter/", "turtle.py", "turtledemo/"],
-
-@@ -127,9 +127,15 @@
+ 
+@@ -127,9 +130,15 @@
  def get_sysconfigdata(args: argparse.Namespace) -> pathlib.Path:
      """Get path to sysconfigdata relative to build root
      """
@@ -30,10 +38,11 @@ to remove those.
 +    # we simply can't run our python.wasm under wasmtime (say), since too
 +    # much is missing, but that's what is done in the Makefile.  So
 +    # we comment this out, and explicitly put the path back in, like
-+    # was done in 3.11.beta4.
++    # was done in 3.11.beta4.  Also, wasmtime is not a dependency of CoWasm.
 +    # data_name = sysconfig._get_sysconfigdata_name()
 +    # assert "emscripten_wasm32" in data_name
 +    # filename = data_name + ".py"
 +    filename = "_sysconfigdata__wasi_wasm32-wasi.py"
      return args.builddir / filename
-
+ 
+ 
