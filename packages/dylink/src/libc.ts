@@ -1176,6 +1176,10 @@ tanh
 tanhf
 tanhl
 tanl
+tcdrain
+tcflow
+tcflush
+tcsendbreak
 tdelete
 tdestroy
 telldir

@@ -303,5 +303,28 @@ export default function stdio({ posix, callFunction, recv, send, wasi }) {
       posix.tcsetattr(fd, posix.constants.TCSANOW, tio_native);
       return 0;
     },
+
+    // These are stubs for now:
+
+    // int tcdrain(int fildes);
+    tcdrain(): number {
+      log("tcdrain - STUB");
+      return 0;
+    },
+    // int tcflow(int fildes, int action);
+    tcflow(): number {
+      log("tcflow - STUB");
+      return 0;
+    },
+    // int tcflush(int fildes, int action);
+    tcflush(): number {
+      log("tcflush - STUB");
+      return 0;
+    },
+    // int tcsendbreak(int fildes, int duration);
+    tcsendbreak(): number {
+      log("tcsendbreak - STUB");
+      return 0;
+    },
   };
 }

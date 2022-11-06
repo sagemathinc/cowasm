@@ -1,10 +1,6 @@
-We patch the pager to use ttypage and input for get char, since the autodected use
-of a subprocess doesn't play well with WASI. But also, using plainpager isn't as good
-as using ttypager, since we do have good blocking input support (unlike pyodide).
-
---- pydoc-orig.py	2022-07-23 06:40:24.000000000 -0700
-+++ pydoc.py	2022-07-23 06:39:38.000000000 -0700
-@@ -1569,6 +1569,8 @@
+--- native/Lib/pydoc.py	2022-10-24 10:35:39
++++ wasm/Lib/pydoc.py	2022-11-06 07:29:57
+@@ -1565,6 +1565,8 @@
          return plainpager
      if sys.platform == "emscripten":
          return plainpager
@@ -13,13 +9,3 @@ as using ttypager, since we do have good blocking input support (unlike pyodide)
      use_pager = os.environ.get('MANPAGER') or os.environ.get('PAGER')
      if use_pager:
          if sys.platform == 'win32': # pipes completely broken in Windows
-@@ -1653,6 +1655,9 @@
-         tty = None
-         getchar = lambda: sys.stdin.readline()[:-1][:1]
-
-+    # TODO: sys.stdin.read(1) doesn't work yet in my WASI implementation, but Python input *does*:
-+    getchar = input
-+
-     try:
-         try:
-             h = int(os.environ.get('LINES', 0))

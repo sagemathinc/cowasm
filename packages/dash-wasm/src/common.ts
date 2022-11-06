@@ -15,7 +15,7 @@ export function getEnv(prefix: string = "/") {
   const ENV = {
     TERMCAP: join(USR, "share", "termcap"),
     PYTHONHOME: USR,
-    PATH: join(USR, "bin"),
+    PATH: join(USR, "bin") + ":.",
   };
 
   return { USR, ENV };

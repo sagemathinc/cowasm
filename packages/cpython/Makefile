@@ -122,7 +122,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	echo '#include "posix-wasm.h"' >  ${BUILD_WASM}/sys/wait.h
 	# Apply our patches:
 	cd ${BUILD_WASM} && cat ${SRC}/patches/01-main.patch | patch -p1
-	cd ${BUILD_WASM}/Lib && cat ${SRC}/patches/02-pydoc.patch | patch -p0
+	cd ${BUILD_WASM} && cat ${SRC}/patches/02-pydoc.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${SRC}/patches/03-wasm-assets.patch | patch -p1
 	# Apply this patch when we want to take testing to the next level, and fully enable all
 	# tests that involve subprocess support.  Our goal is to support subprocesses fully, but
