@@ -12,7 +12,7 @@ PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 all: python-wasm py f2c coreutils man viz dash terminal browser website dash-wasm cowasm.sh
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2
+packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 ncurses
 	cd packages/cpython && make all
 .PHONY: cpython
 
@@ -77,9 +77,6 @@ packages/man/${BUILT}: zig posix-wasm
 	cd packages/man && make -j8
 .PHONY: man
 
-# this builds and you can make ncurses a dep for cpython and change src/Setup.local to get
-# the _ncurses module to build. But there are still issues to solve (probably
-# straightforward, but tedious) as mentioned in the cpython/src/Setup.local.
 ncurses: packages/ncurses/${BUILT}
 packages/ncurses/${BUILT}: termcap posix-wasm zig
 	cd packages/ncurses && make all
