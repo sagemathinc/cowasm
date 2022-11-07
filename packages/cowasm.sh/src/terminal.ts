@@ -4,6 +4,9 @@ import { WebLinksAddon } from "xterm-addon-web-links";
 import setTheme from "./theme";
 import dashWasm from "dash-wasm";
 
+
+// https://patorjk.com/software/taag/#p=display&f=Ogre&t=CoCalc%0ACoWasm
+
 export default async function terminal(element: HTMLDivElement) {
   console.log("creating dashWasm");
   const dash = await dashWasm();
@@ -26,9 +29,14 @@ export default async function terminal(element: HTMLDivElement) {
   term.write(
     "This is new and *many* things are not implemented.  Output redirection and capture is not implemented.\n"
   );
-  term.write(
-    "Visit https://github.com/sagemathinc/cowasm and contribute.\n\n"
-  );
+  term.write("Visit https://github.com/sagemathinc/cowasm and contribute.\n\n");
+  term.write(`   ___     __    __
+  / __\\___/ / /\\ \\ \\__ _ ___ _ __ ___
+ / /  / _ \\ \\/  \\/ / _\` / __| '_ \` _ \\
+/ /__| (_) \\  /\\  / (_| \\__ \\ | | | | |
+\\____/\\___/ \\/  \\/ \\__,_|___/_| |_| |_|
+
+`);
   term.onData((data) => {
     dash.kernel.writeToStdin(data);
   });
