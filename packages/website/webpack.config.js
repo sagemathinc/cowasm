@@ -40,7 +40,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.wasm$|\.zip$|\.tar.xz$/ /* required for python-wasm */,
+        test: /\.wasm$|\.zip$|\.tar.xz$|\.ico$/ /* required for python-wasm */,
         type: "asset/resource",
       },
       {
