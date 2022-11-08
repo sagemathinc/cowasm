@@ -70,6 +70,10 @@ export default class IOProviderUsingAtomics implements IOProvider {
 
   // not really async, but we do this for consistent api with service worker.
   async readOutput(): Promise<Buffer> {
+    if (this.outputUint8Array[0] == 0) {
+      // locked -- in the process of modifying in the worker thread.
+      return Buffer.alloc(0);
+    }
     const n = this.outputLength[0];
     if (n == 0) {
       return Buffer.alloc(0);

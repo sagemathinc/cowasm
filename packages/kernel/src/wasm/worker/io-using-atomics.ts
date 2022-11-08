@@ -102,7 +102,9 @@ export default class IOHandler implements IOHandlerClass {
     // place the new data in the outputBuffer, so that the main thread can receive it.
     // The format is:
     //   [1|2][all of the actual data]
-    // where 1 = stdout and 2 = stderr.  Putting both stdout and stderr in the same
+    // where 1 = stdout and 2 = stderr.
+    // Also we use 0 as a temporary lock.
+    // Putting both stdout and stderr in the same
     // buffer means one less buffer to deal with, *and* is a very simple way to avoid
     // any issues with mixing up the ordering of output.
     // That said, if there is stdout in the buffer and you write stderr, we must first
@@ -119,9 +121,9 @@ export default class IOHandler implements IOHandlerClass {
         // Or, we have no more space.
         Atomics.wait(this.outputLength, 0, this.outputLength[0]);
       }
+      this.outputBuffer[0] = 0; // lock it so main thread doesn't try to read while we are copying and setting length
       if (this.outputLength[0] == 0) {
         // initialize stream type field.
-        this.outputBuffer[0] = stream;
         this.outputLength[0] = 1;
       }
       // copy as much data as we can.
@@ -130,6 +132,7 @@ export default class IOHandler implements IOHandlerClass {
       const n = copied + this.outputLength[0];
       log("setting output buffer size to ", n);
       Atomics.store(this.outputLength, 0, n);
+      this.outputBuffer[0] = stream;
       Atomics.notify(this.outputLength, 0);
     }
   }
