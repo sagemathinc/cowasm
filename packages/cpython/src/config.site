@@ -215,3 +215,7 @@ ac_cv_func_pthread_sigmask=no
 # I implemented fchdir so we have it.  It's nice to make
 # it available, since python is really nice for testing everything.
 ac_cv_func_fchdir=yes
+
+# We have not implemented openpty yet:
+ac_cv_func_openpty=no
+ac_cv_func__getpty=no
