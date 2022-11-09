@@ -407,7 +407,15 @@ int rpmatch(const char* response);
 #endif  // BSD_SOURCE
 
 
+// Some py-numpy cython code fails without this
+// include to ensure that max_align_t is defined in
+// the right place:
+#include "__stddef_max_align_t.h"
+
+// This is needed by openssl.
 #include "netdb.h"
-char * inet_ntoa(struct in_addr in);
+char* inet_ntoa(struct in_addr in);
+
+
 
 #endif
