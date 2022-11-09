@@ -78,8 +78,5 @@ _sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microproto
 
 mmap mmapmodule.c
 
-# This builds but causes some test suite stuff to be enabled and fail for test_readline
-# or does something weird with changing tests for test_builtins.  So disabled for now, since
-# I don't think we need it, let's just not build it.
-# termios termios.c
+termios termios.c
 
