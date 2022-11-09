@@ -6,7 +6,7 @@ URL = https://github.com/openssl/openssl/archive/refs/tags/openssl-${VERSION}.ta
 TARBALL = ${UPSTREAM}/openssl-${VERSION}.tar.gz
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 
-all: native wasm
+all: wasm
 
 include ../build/Makefile-rules
 
