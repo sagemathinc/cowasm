@@ -1,6 +1,7 @@
 include ../build/Makefile-vars
 
-VERSION = 3.0.5
+# See https://github.com/openssl/openssl/tags
+VERSION = 3.0.7
 URL = https://github.com/openssl/openssl/archive/refs/tags/openssl-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/openssl-${VERSION}.tar.gz
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
@@ -11,11 +12,12 @@ include ../build/Makefile-rules
 
 ## Native
 
-${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.patched
+${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} \
 		&& 	CC="zig cc ${ZIG_NATIVE_CFLAGS} " \
 			AR="zig ar" \
-			./Configure --prefix=${DIST_NATIVE} \
+			LDFLAGS="-shared" \
+			./Configure --prefix=${DIST_NATIVE} no-tests \
 		&&	make -j8 \
 		&&	make install
 	touch ${DIST_NATIVE}/.built
