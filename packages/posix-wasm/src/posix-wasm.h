@@ -407,8 +407,7 @@ int rpmatch(const char* response);
 #endif  // BSD_SOURCE
 
 
-
-#include <arpa/inet.h>
+#include "netdb.h"
 char * inet_ntoa(struct in_addr in);
 
 #endif
