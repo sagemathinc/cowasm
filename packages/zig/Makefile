@@ -29,6 +29,7 @@ OS = $(shell uname -s  | sed s/Darwin/macos/ | sed s/Linux/linux/)
 # I am definitely not looking forward to having to build zig from source
 # for all my supported platforms, but that might be unavoidable.
 # I guess we are stuck with b40fc7018 for a while :-(.
+# I also added a comment here: https://github.com/ziglang/zig/issues/13303#issuecomment-1309181780
 
 # for dev versions:
 VERSION = 0.11.0-dev.38+b40fc7018
