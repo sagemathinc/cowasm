@@ -1,6 +1,6 @@
 --- native/Tools/wasm/wasm_assets.py	2022-10-24 10:35:39
-+++ wasm/Tools/wasm/wasm_assets.py	2022-11-06 06:58:43
-@@ -89,11 +89,14 @@
++++ wasm/Tools/wasm/wasm_assets.py	2022-11-09 13:17:41
+@@ -89,21 +89,24 @@
      "wsgiref/",
  )
  
@@ -14,19 +14,23 @@
 -    "_curses": ["curses/"],
 +    #"_curses": ["curses/"],
      "_ctypes": ["ctypes/"],
-     "_decimal": ["decimal.py"],
+-    "_decimal": ["decimal.py"],
++    #"_decimal": ["decimal.py"],
      "_dbm": ["dbm/ndbm.py"],
-@@ -101,8 +104,8 @@
-     "_json": ["json/"],
+     "_gdbm": ["dbm/gnu.py"],
+-    "_json": ["json/"],
++    #"_json": ["json/"],
      "_multiprocessing": ["concurrent/", "multiprocessing/"],
      "pyexpat": ["xml/", "xmlrpc/"],
 -    "readline": ["rlcompleter.py"],
 -    "_sqlite3": ["sqlite3/"],
+-    "_ssl": ["ssl.py"],
 +    #"readline": ["rlcompleter.py"],
 +    #"_sqlite3": ["sqlite3/"],
-     "_ssl": ["ssl.py"],
++    #"_ssl": ["ssl.py"],
      "_tkinter": ["idlelib/", "tkinter/", "turtle.py", "turtledemo/"],
  
+     "_zoneinfo": ["zoneinfo/"],
 @@ -127,9 +130,15 @@
  def get_sysconfigdata(args: argparse.Namespace) -> pathlib.Path:
      """Get path to sysconfigdata relative to build root

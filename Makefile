@@ -12,7 +12,7 @@ PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 all: python-wasm py f2c coreutils man viz dash terminal browser website dash-wasm cowasm.sh
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 ncurses
+packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2 ncurses openssl
 	cd packages/cpython && make all
 .PHONY: cpython
 

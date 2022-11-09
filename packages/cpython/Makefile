@@ -20,6 +20,7 @@ TARBALL = ${UPSTREAM}/python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz
 ZLIB = ${PACKAGES}/zlib/dist
 LIBEDIT = ${PACKAGES}/libedit/dist
 POSIX_WASM = ${PACKAGES}/posix-wasm/dist
+OPENSSL = ${PACKAGES}/openssl/dist
 
 # NCURSES = ${PACKAGES}/ncurses/dist
 # NCURSES_INCLUDE = -I${NCURSES}/wasm/include/ncurses -I${NCURSES}/wasm/include
@@ -71,7 +72,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 			CXX="zig c++ ${ZIG_NATIVE_CFLAGS}" \
 			CC="zig cc ${ZIG_NATIVE_CFLAGS}" \
 			CFLAGS="-I${ZLIB}/native/include -I${LIBEDIT}/native/include" \
-			LDFLAGS="-L${ZLIB}/native/lib -L${LIBEDIT}/native/lib" \
+			LDFLAGS="-L${ZLIB}/native/lib -L${LIBEDIT}/native" \
 			./configure \
 				--prefix=${DIST_NATIVE} \
 				--with-ensurepip \

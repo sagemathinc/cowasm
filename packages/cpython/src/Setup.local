@@ -23,9 +23,7 @@ _decimal _decimal/_decimal.c
 pyexpat pyexpat.c
 
 # OpenSSL bindings
-#  These build but "import ssl, hashlib" crashes.  I think I need to build separate libssl.so and libcrypto.so that
-#  these depend on, then load those first, then this.  Otherwise, we end up with two copies of libcrypto.a, which probably can't work.
-#_ssl _ssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/wasm/include $(abs_srcdir)/../../../openssl/dist/wasm/lib/libssl.a $(abs_srcdir)/../../../openssl/dist/wasm/lib/libcrypto.a
+_ssl _ssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/wasm/include $(abs_srcdir)/../../../openssl/dist/wasm/lib/libssl.a $(abs_srcdir)/../../../openssl/dist/wasm/lib/libcrypto.a
 
 #_hashlib _hashopenssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/wasm/include $(abs_srcdir)/../../../openssl/dist/wasm/lib/libcrypto.a
 
@@ -79,4 +77,6 @@ _sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microproto
 mmap mmapmodule.c
 
 termios termios.c
+
+_json _json.c
 

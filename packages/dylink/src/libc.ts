@@ -101,6 +101,8 @@ double __trunctfdf2(long double);
 long double __multf3(long double a, long double b);
 // lib/compiler_rt/addtf3.zig:pub fn __addtf3(a: f128, b: f128) callconv(.C) f128 {
 long double __addtf3(long double a, long double b);
+// lib/compiler_rt/shift.zig
+long double __ashlti3(long double, int);
 // lib/compiler_rt/getf2.zig:fn __gttf2(a: f128, b: f128) callconv(.C) i32 {
 int __gttf2(long double a, long double b);
 // lib/compiler_rt/getf2.zig:fn __getf2(a: f128, b: f128) callconv(.C) i32 {
@@ -200,6 +202,7 @@ emscripten_return_address
 fopencookie
 tmpfile
 strtold_l
+__ashlti3
 __fixunstfsi
 __fixunstfdi
 __eqtf2

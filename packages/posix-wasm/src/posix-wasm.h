@@ -292,7 +292,7 @@ typedef unsigned int socklen_t;
 #define __WASI_RIFLAGS_RECV_DATA_TRUNCATED 0
 int accept(int sockfd, void* addr, void* addrlen);
 int setsockopt(int sockfd, int level, int optname, const void* optval,
-               void* optlen);
+               socklen_t optlen);
 int bind(int sockfd, const void* addr, socklen_t addrlen);
 int connect(int sockfd, const void* addr, socklen_t addrlen);
 int getsockname(int sockfd, void* addr, socklen_t* addrlen);
@@ -405,5 +405,10 @@ quad_t strtoq(const char* str, char** endptr, int base);
 
 int rpmatch(const char* response);
 #endif  // BSD_SOURCE
+
+
+
+#include <arpa/inet.h>
+char * inet_ntoa(struct in_addr in);
 
 #endif

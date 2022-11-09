@@ -73,3 +73,10 @@ grp grpmodule.c
 resource resource.c
 syslog syslogmodule.c
 termios termios.c
+
+# OpenSSL bindings.  Just statically link them for simplicity since we will never distribution our python-native.
+# This is not *used*, but is likely going to be useful for development since we can see precisely how python-native
+# does something, to make implementing it in python-wasm easier.
+_ssl _ssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/native/include $(abs_srcdir)/../../../openssl/dist/native/lib/libssl.a $(abs_srcdir)/../../../openssl/dist/native/lib/libcrypto.a
+
+
