@@ -23,6 +23,13 @@ OS = $(shell uname -s  | sed s/Darwin/macos/ | sed s/Linux/linux/)
 #VERSION = 0.10.0
 #URL = https://ziglang.org/download/${VERSION}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
+
+# UGH -- suddenly there are no more binaries of master for at least one
+# of my supported platforms.  I complained here: https://ziggit.dev/t/zig-binaries/454
+# I am definitely not looking forward to having to build zig from source
+# for all my supported platforms, but that might be unavoidable.
+# I guess we are stuck with b40fc7018 for a while :-(.
+
 # for dev versions:
 VERSION = 0.11.0-dev.38+b40fc7018
 URL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
