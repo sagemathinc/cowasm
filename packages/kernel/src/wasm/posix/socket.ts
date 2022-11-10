@@ -15,7 +15,7 @@ const log = debug("posix:socket");
 // until everything is implemented.  Otherwise the test suite
 // and installing pip and many other things break half-way through.
 // Re-enable this when finishing.
-const TEMPORARILY_DISABLED = false;
+const TEMPORARILY_DISABLED = true;
 
 export default function socket({
   callFunction,
