@@ -171,7 +171,10 @@ test-fmt: ${TARGET}/fmt
 
 test-grep: ${TARGET}/grep
 	# This is a TEST-OF-GREP
+	# MATCHES
 	${BIN}/cowasm ${TARGET}/grep TEST-OF-GREP Makefile | grep "TEST-OF-GREP"
+	# Does not match:
+	test x"`${BIN}/cowasm ${TARGET}/grep TEST-OF-GREP README.md`" = "x"
 
 test-id: ${TARGET}/id
 	${BIN}/cowasm ${TARGET}/id |grep uid

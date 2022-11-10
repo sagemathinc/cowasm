@@ -71,6 +71,8 @@ int cflags = REG_NOSUB | REG_NEWLINE;
 
 #ifndef WITH_INTERNAL_NOSPEC
 int eflags = REG_STARTEND;
+#else
+int eflags = 0;
 #endif
 
 bool matchall;
