@@ -22,7 +22,7 @@ pub const constants = .{ .c_import = c, .names = [_][:0]const u8{ "EADDRINUSE", 
 // sockaddr is this:   struct { sa_family: u16, sa_data: [14]u8 };
 
 export fn recv_sockaddr_sa_family(sockaddr: *c.sockaddr) u16 {
-    std.debug.print("sockaddr = {}\n", .{sockaddr});
+    //  std.debug.print("sockaddr = {}\n", .{sockaddr});
     return sockaddr.sa_family;
 }
 

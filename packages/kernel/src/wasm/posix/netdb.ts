@@ -17,23 +17,10 @@ export default function netdb({
   send,
   free,
 }) {
-  const names =
-    " getprotobyname getservbyname getservbyport getnameinfo getpeername";
+  const names = " getprotobyname getservbyname getservbyport getnameinfo";
   const netdb: any = {};
   for (const name of names.split(/\s+/)) {
     netdb[name] = () => notImplemented(name);
-  }
-
-  // This can't properly be done using zig, since struct sockaddr
-  // intensely abuses the C data types...
-  function sendSockaddr(sa_family, ai_addrlen, sa_data): number {
-    const ptr = send.malloc(2 + ai_addrlen);
-    const view = new DataView(memory.buffer);
-    view.setUint16(ptr, sa_family, true);
-    for (let i = 0; i < ai_addrlen; i++) {
-      view.setUint8(ptr + 2 + i, sa_data[i]);
-    }
-    return ptr;
   }
 
   function recvHints(hintsPtr) {
@@ -56,11 +43,6 @@ export default function netdb({
     };
   }
 
-  function sendPtr(address: number, ptr: number): void {
-    const view = new DataView(memory.buffer);
-    view.setUint32(address, ptr, true); // true = endianness
-  }
-
   // this is null terminated.
   function sendArrayOfStrings(v: string[]): number {
     const ptr = send.malloc(4 * (v.length + 1));
@@ -69,9 +51,9 @@ export default function netdb({
     }
     for (let i = 0; i < v.length; i++) {
       const sPtr = send.string(v[i]);
-      sendPtr(ptr + 4 * i, sPtr);
+      send.pointer(ptr + 4 * i, sPtr);
     }
-    sendPtr(ptr + 4 * v.length, 0);
+    send.pointer(ptr + 4 * v.length, 0);
     return ptr;
   }
 
@@ -206,6 +188,9 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
         info.ai_family
       );
       const ai_addr = sendSockaddr(
+        send,
+        memory,
+        null,
         info.sa_family,
         info.ai_addrlen,
         info.sa_data
@@ -233,7 +218,7 @@ That "char sa_data[0]" is scary but OK, since just a pointer; think of it as a c
     if (!addrinfo) {
       throw Error("error creating addrinfo structure");
     }
-    sendPtr(resPtr, addrinfo);
+    send.pointer(resPtr, addrinfo);
     return 0;
   };
 
@@ -297,7 +282,7 @@ export function wasmToNativeFamily(posix, family: number): number {
   }
 }
 
-function nativeToWasmFamily(posix, family: number): number {
+export function nativeToWasmFamily(posix, family: number): number {
   if (family == 0) return family; // default no flag given
   if (family == posix.constants.AF_INET) {
     return constants.AF_INET;
@@ -352,4 +337,25 @@ function nativeToWasmSocktype(posix, socktype: number): number {
     throw Error(err);
   }
   return wasmSocktype;
+}
+
+// This can't properly be done using zig, since struct sockaddr
+// intensely abuses the C data types...
+export function sendSockaddr(
+  send,
+  memory,
+  ptr,
+  sa_family,
+  ai_addrlen,
+  sa_data
+): number {
+  if (ptr == null) {
+    ptr = send.malloc(2 + ai_addrlen);
+  }
+  const view = new DataView(memory.buffer);
+  view.setUint16(ptr, sa_family, true);
+  for (let i = 0; i < ai_addrlen; i++) {
+    view.setUint8(ptr + 2 + i, sa_data[i]);
+  }
+  return ptr;
 }

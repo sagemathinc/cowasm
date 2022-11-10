@@ -1,16 +1,30 @@
 import Errno from "./errno";
-import { wasmToNativeFamily, wasmToNativeSocktype } from "./netdb";
+import {
+  nativeToWasmFamily,
+  wasmToNativeFamily,
+  wasmToNativeSocktype,
+  sendSockaddr,
+} from "./netdb";
 import constants from "./constants";
 import { constants as wasi_constants } from "wasi-js";
-import { notImplemented } from "./util";
+import debug from "debug";
+
+const log = debug("posix:socket");
 
 // ** NOTE ** -- we explicitly disable socket via the "true" below
 // until everything is implemented.  Otherwise the test suite
 // and installing pip and many other things break half-way through.
 // Re-enable this when finishing.
-const TEMPORARILY_DISABLED = true;
+const TEMPORARILY_DISABLED = false;
 
-export default function socket({ callFunction, posix, recv, wasi }) {
+export default function socket({
+  callFunction,
+  posix,
+  recv,
+  wasi,
+  send,
+  memory,
+}) {
   if (TEMPORARILY_DISABLED) {
     posix = {};
   }
@@ -23,10 +37,9 @@ export default function socket({ callFunction, posix, recv, wasi }) {
     const sa_len = address_len - 2;
     const sa_data = recv.buffer(
       callFunction("recv_sockaddr_sa_data", sockaddrPtr),
-      14
+      sa_len
     );
-    console.log("sa_len = ", sa_len);
-    for (let i = sa_len; i < 14; i++) {
+    for (let i = sa_len; i < sa_len; i++) {
       sa_data[i] = 0;
     }
     return { sa_family, sa_len, sa_data };
@@ -45,6 +58,7 @@ export default function socket({ callFunction, posix, recv, wasi }) {
       if (posix.socket == null) {
         throw Errno("ENOTSUP");
       }
+      log("socket", { family, socktype, protocol });
 
       const familyNative = wasmToNativeFamily(posix, family);
 
@@ -57,7 +71,6 @@ export default function socket({ callFunction, posix, recv, wasi }) {
       } else {
         inheritable = true;
       }
-      console.log(inheritable);
 
       const socktypeNative = wasmToNativeSocktype(posix, socktype);
 
@@ -70,9 +83,9 @@ export default function socket({ callFunction, posix, recv, wasi }) {
         protocolNative
       );
 
-      //       if (!inheritable) {
-      //         posix.set_inheritable(real_fd, inheritable);
-      //       }
+      if (!inheritable) {
+        posix.set_inheritable(real_fd, inheritable);
+      }
       const wasi_fd = wasi.getUnusedFileDescriptor();
       const STDIN = wasi.FD_MAP.get(0);
       wasi.FD_MAP.set(wasi_fd, {
@@ -86,44 +99,73 @@ export default function socket({ callFunction, posix, recv, wasi }) {
 
     // int bind(int socket, const struct sockaddr *address, socklen_t address_len);
     bind(socket: number, sockaddrPtr: number, address_len: number): number {
-      console.log("bind stub ", { socket, sockaddrPtr, address_len });
+      log("bind", socket);
+      if (posix.bind == null) {
+        throw Errno("ENOTSUP");
+      }
       const sockaddr = getSockaddr(sockaddrPtr, address_len);
-      console.log("bind", sockaddr);
-      console.log("sa_data.toString() = ", sockaddr.sa_data.toString());
-      //console.log("sa_data = ", new Uint8Array(sa_data));
+      log("bind: address", sockaddr);
       posix.bind(real_fd(socket), sockaddr);
+
       return 0;
     },
 
     connect(socket: number, sockaddrPtr: number, address_len: number): number {
-      const sockaddr = getSockaddr(sockaddrPtr, address_len);
-      console.log("connect", sockaddr, "address_len", address_len);
-      console.log(
-        "sa_data as uint32array = ",
-        new Uint32Array(sockaddr.sa_data)
-      );
-      //console.log("sa_data = ", new Uint8Array(sa_data));
-      try {
-        posix.connect(real_fd(socket), sockaddr);
-      } catch (err) {
-        console.log("FAIL", err);
-        throw err;
+      if (posix.connect == null) {
+        throw Errno("ENOTSUP");
       }
+      const sockaddr = getSockaddr(sockaddrPtr, address_len);
+      log("connect", { socket, sockaddr, address_len });
+      posix.connect(real_fd(socket), sockaddr);
       return 0;
     },
 
     /*
-    int getsockname(int socket, struct sockaddr *address,
-         socklen_t *address_len);
+    int getsockname(int sockfd, struct sockaddr* addr, socklen_t* addrlen);
     */
     getsockname(
       socket: number,
       sockaddrPtr: number,
       addressLenPtr: number
     ): number {
-      console.log("getsockname stub ", { socket, sockaddrPtr, addressLenPtr });
-      notImplemented("getsockname");
-      return -1;
+      if (posix.getsockname == null) {
+        throw Errno("ENOTSUP");
+      }
+      log("getsockname", socket);
+      const sockaddr = posix.getsockname(real_fd(socket));
+      sendSockaddr(
+        send,
+        memory,
+        sockaddrPtr,
+        nativeToWasmFamily(posix, sockaddr.sa_family),
+        sockaddr.sa_len,
+        sockaddr.sa_data
+      );
+      send.u32(addressLenPtr, sockaddr.sa_len);
+      return 0;
+    },
+
+    /*
+    int getpeername(int sockfd, struct sockaddr* addr, socklen_t* addrlen);
+
+    */
+    getpeername(
+      socket: number,
+      sockaddrPtr: number,
+      addressLenPtr: number
+    ): number {
+      log("getpeername", socket);
+      const sockaddr = posix.getpeername(real_fd(socket));
+      sendSockaddr(
+        send,
+        memory,
+        sockaddrPtr,
+        nativeToWasmFamily(posix, sockaddr.sa_family),
+        sockaddr.sa_len,
+        sockaddr.sa_data
+      );
+      send.u32(addressLenPtr, sockaddr.sa_len);
+      return 0;
     },
   };
 }

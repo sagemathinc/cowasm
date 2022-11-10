@@ -48,7 +48,8 @@ KERNEL_WASM_SOURCES = \
 	${POSIX_SOURCES} \
 	${DYLINK}/wasm/libdylink.a \
 	src/kernel/interface.zig \
-	src/kernel/cowasm.zig
+	src/kernel/cowasm.zig \
+	$(shell find src/wasm/posix/*.zig -type f)
 
 KERNEL_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
 

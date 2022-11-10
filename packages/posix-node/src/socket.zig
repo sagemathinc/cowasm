@@ -23,6 +23,8 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "socket", socket);
     try node.registerFunction(env, exports, "_bind", bind);
     try node.registerFunction(env, exports, "_connect", connect);
+    try node.registerFunction(env, exports, "getsockname", getsockname);
+    try node.registerFunction(env, exports, "getpeername", getpeername);
 }
 
 fn socket(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
@@ -62,7 +64,7 @@ fn bind(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     }
     sockaddr.sa_family = @intCast(u8, sa_family);
 
-    std.debug.print("calling bind(socket_fd={}, sockaddr={}, sa_length={})\n", .{ socket_fd, sockaddr, @sizeOf(clib.sockaddr) });
+    // std.debug.print("calling bind(socket_fd={}, sockaddr={}, sa_length={})\n", .{ socket_fd, sockaddr, @sizeOf(clib.sockaddr) });
     const fd = clib.bind(socket_fd, &sockaddr, @sizeOf(clib.sockaddr));
     if (fd == -1) {
         node.throwErrno(env, "error calling bind");
@@ -84,6 +86,7 @@ fn connect(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
         return null;
     }
 
+    std.debug.print("dummy = {}\n", .{dummy});
     var sockaddr: clib.sockaddr = undefined;
     sockaddr.sa_data = sa_data[0..14].*; // TODO: I'm dubious!  Maybe just for ipv4?
     if (builtin.target.os.tag != .linux) {
@@ -91,7 +94,7 @@ fn connect(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     }
     sockaddr.sa_family = @intCast(u8, sa_family);
 
-    std.debug.print("calling connect(socket_fd={}, sockaddr={}, sa_length={})\n", .{ socket_fd, sockaddr, @sizeOf(clib.sockaddr) });
+    // std.debug.print("calling connect(socket_fd={}, sockaddr={}, sa_length={})\n", .{ socket_fd, sockaddr, @sizeOf(clib.sockaddr) });
     const fd = clib.connect(socket_fd, &sockaddr, @sizeOf(clib.sockaddr));
     if (fd == -1) {
         node.throwErrno(env, "error calling connect");
@@ -99,6 +102,8 @@ fn connect(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
     }
     return null;
 }
+
+// I found this useful during debugging and development, just to see what's in these structs on a native system:
 
 // fn testit() void {
 //     var hints: clib.addrinfo = clib.addrinfo{ .ai_flags = 0, .ai_family = clib.AF_UNSPEC, .ai_socktype = clib.SOCK_STREAM, .ai_protocol = 0, .ai_addrlen = 0, .ai_addr = 0, .ai_canonname = 0, .ai_next = 0 };
@@ -113,3 +118,52 @@ fn connect(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
 //         }
 //     }
 // }
+
+// int getsockname(int sockfd, void* addr, socklen_t* addrlen);
+
+fn getsockname(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const socket_fd = node.i32FromValue(env, argv[0], "socket") catch return null;
+
+    var sockaddr: clib.sockaddr = undefined;
+    var addrlen: clib.socklen_t = @sizeOf(clib.sockaddr);
+    const r = clib.getsockname(socket_fd, &sockaddr, &addrlen);
+    if (r != 0) {
+        node.throwErrno(env, "error calling getsockname");
+        return null;
+    }
+    // std.debug.print("getsockname: sockaddr = {}, addrlen = {}\n", .{ sockaddr, addrlen });
+    return createSockaddr(env, &sockaddr, addrlen);
+}
+
+// Extract everything out of sockaddr and addrlen to make a Sockaddr Javascript object
+fn createSockaddr(env: c.napi_env, sockaddr: *clib.sockaddr, addrlen: clib.socklen_t) c.napi_value {
+    var object = node.createObject(env, "") catch return null;
+    // sa_len
+    const sa_len = node.create_u32(env, addrlen, "sa_len") catch return null;
+    node.setNamedProperty(env, object, "sa_len", sa_len, "setting sa_len") catch return null;
+
+    const sa_family = node.create_i32(env, sockaddr.sa_family, "sa_family") catch return null;
+    node.setNamedProperty(env, object, "sa_family", sa_family, "setting sa_family") catch return null;
+
+    const sa_data = node.createBufferCopy(env, &sockaddr.sa_data, addrlen - 2, "sa_data") catch return null;
+    node.setNamedProperty(env, object, "sa_data", sa_data, "setting sa_data") catch return null;
+    return object;
+}
+
+// int getpeername(int sockfd, void* addr, socklen_t* addrlen);
+
+fn getpeername(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const socket_fd = node.i32FromValue(env, argv[0], "socket") catch return null;
+
+    var sockaddr: clib.sockaddr = undefined;
+    var addrlen: clib.socklen_t = @sizeOf(clib.sockaddr);
+    const r = clib.getpeername(socket_fd, &sockaddr, &addrlen);
+    if (r != 0) {
+        node.throwErrno(env, "error calling getpeername");
+        return null;
+    }
+    // std.debug.print("getpeername: sockaddr = {}, addrlen = {}\n", .{ sockaddr, addrlen });
+    return createSockaddr(env, &sockaddr, addrlen);
+}

@@ -263,6 +263,9 @@ interface PosixFunctions {
   socket: (family: number, socktype: number, protocol: number) => number;
   // Bind a socket to an address.
   bind: (socket: number, sockaddr: Sockaddr) => void;
+  connect: (socket: number, sockaddr: Sockaddr) => void;
+  getsockname: (socket: number) => Sockaddr;
+  getpeername: (socket: number) => Sockaddr;
 
   // termios sort of things; this is NOT done in a general way wrapping the api,
   // but instead implements things that node doesn't provide.
