@@ -3,7 +3,7 @@ import { syncPython } from "../../node";
 test("test that a few spawn related posix calls throw an error (rather than getting stubbed and silently failing)", async () => {
   const { kernel } = await syncPython();
   const env: any = {};
-  kernel.posixContext?.injectFunctions(env);
+  kernel.posixContext?.injectFunctions({ env, wasi_snapshot_preview1: {} });
   expect(env["posix_spawn"]()).toBe(-1);
   expect(env["posix_spawnp"]()).toBe(-1);
 });

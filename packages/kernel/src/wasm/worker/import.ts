@@ -183,7 +183,9 @@ async function doWasmImport({
     wasi,
     wasiConfig,
   });
-  posixContext.injectFunctions(wasmOpts.env);
+  // This adds the posix functions into env *and* also adds socket
+  // functionality to wasi_snapshot_preview1.
+  posixContext.injectFunctions(wasmOpts);
 
   const instance = await importWebAssemblyDlopen({
     ...dylinkOptions,

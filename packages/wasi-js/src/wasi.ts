@@ -1693,6 +1693,9 @@ export default class WASI {
         return WASI_ESUCCESS;
       },
 
+      // The client could overwrite these sock_*; that's what
+      // CoWasm does in injectFunctions in
+      //    packages/kernel/src/wasm/worker/posix-context.ts
       sock_recv() {
         return WASI_ENOSYS;
       },

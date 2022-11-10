@@ -81,11 +81,29 @@ export default class PosixContext {
   }
 
   // set all the posix functions in env, but do NOT overwrite
-  // anything that is already set.
-  injectFunctions(env: { [name: string]: Function }) {
+  // anything that is already set.  Also, add socket functionality
+  // to wasi.
+  injectFunctions({
+    env,
+    wasi_snapshot_preview1,
+  }: {
+    env: { [name: string]: Function };
+    wasi_snapshot_preview1: { [name: string]: Function };
+  }) {
     for (const name in this.posixEnv) {
       if (env[name] == null) {
         env[name] = this.posixEnv[name];
+      }
+    }
+
+    // Add socket functionality to WASI.  This just works around
+    // that there is a tiny amount in wasi v0 itself and we have
+    // to replace it.  Someday wasi may have more that we have
+    // to replace or implement.  See
+    //    https://github.com/WebAssembly/wasi-sockets/
+    for (const name of ["recv", "send", "shutdown"]) {
+      if (this.posixEnv[name] != null) {
+        wasi_snapshot_preview1[`sock_${name}`] = this.posixEnv[name];
       }
     }
   }

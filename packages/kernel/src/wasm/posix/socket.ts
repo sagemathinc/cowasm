@@ -147,7 +147,6 @@ export default function socket({
 
     /*
     int getpeername(int sockfd, struct sockaddr* addr, socklen_t* addrlen);
-
     */
     getpeername(
       socket: number,
@@ -166,6 +165,43 @@ export default function socket({
       );
       send.u32(addressLenPtr, sockaddr.sa_len);
       return 0;
+    },
+
+    /*
+     ssize_t recv(int socket, void *buffer, size_t length, int flags);
+    */
+    recv(
+      socket: number,
+      bufPtr: number,
+      length: number,
+      flags: number
+    ): number {
+      log("recv", { socket, bufPtr, length, flags });
+      console.log("socket recv not implemented yet");
+      return -1;
+    },
+
+    /*
+     ssize_t send(int socket, const void *buffer, size_t length, int flags);
+    */
+    send(
+      socket: number,
+      bufPtr: number,
+      length: number,
+      flags: number
+    ): number {
+      log("send", { socket, bufPtr, length, flags });
+      console.log("socket send not implemented yet");
+      return -1;
+    },
+
+    /*
+    int shutdown(int socket, int how);
+    */
+    shutdown(socket: number, how: number): number {
+      log("shutdown", { socket, how });
+      console.log("socket shutdown not implemented yet");
+      return -1;
     },
   };
 }
