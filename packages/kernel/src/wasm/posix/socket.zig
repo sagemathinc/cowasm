@@ -14,7 +14,10 @@ const util = @import("util.zig");
 const c = @cImport({
     @cDefine("__wasilibc_unmodified_upstream", "1");
     @cInclude("sys/socket.h");
+    @cInclude("errno.h");
 });
+
+pub const constants = .{ .c_import = c, .names = [_][:0]const u8{ "EADDRINUSE", "EADDRNOTAVAIL", "EAFNOSUPPORT", "EALREADY", "ECONNREFUSED", "EFAULT", "EHOSTUNREACH", "EINPROGRESS", "EISCONN", "ENETDOWN", "ENETUNREACH", "ENOBUFS", "ENOTSOCK", "EOPNOTSUPP", "EPROTOTYPE", "ETIMEDOUT", "ECONNRESET", "ELOOP", "ENAMETOOLONG" } };
 
 // sockaddr is this:   struct { sa_family: u16, sa_data: [14]u8 };
 

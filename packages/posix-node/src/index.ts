@@ -335,6 +335,15 @@ try {
     );
   };
 
+  mod["connect"] = (socket: number, sockaddr: Sockaddr) => {
+    return mod["_connect"](
+      socket,
+      sockaddr.sa_len,
+      sockaddr.sa_family,
+      sockaddr.sa_data
+    );
+  };
+
   for (const name of ["execve", "fexecve"]) {
     const f = mod["_" + name];
     if (f != null) {
