@@ -26,6 +26,7 @@ github-pages:
 # This is on cloudflare pages so it can use SharedArrayBuffers
 .PHONY: cowasm.org
 cowasm.org:
+	cd ${HOME}/cowasm.org/ && git pull
 	NODE_ENV="production" npm run build
 	rsync -axvH --delete dist/ ${HOME}/cowasm.org/site/
 	cp ${SRC}/_headers ${HOME}/cowasm.org/site/
