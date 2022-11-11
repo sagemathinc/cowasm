@@ -44,7 +44,7 @@ const log = debug("posix:socket");
 // until everything is implemented.  Otherwise the test suite
 // and installing pip and many other things break half-way through.
 // Re-enable this when finishing.
-const TEMPORARILY_DISABLED = true;
+const TEMPORARILY_DISABLED = false;
 
 export default function socket({
   callFunction,
@@ -91,6 +91,23 @@ export default function socket({
       return -1;
     }
     return data.real;
+  }
+
+  // Convert flags from wasi to native.  (Right now it looks
+  // like only MSG_WAITALL is different.)
+  function native_flags(wasi_flags: number): number {
+    let flags = 0;
+    for (const name of [
+      "MSG_OOB",
+      "MSG_PEEK",
+      "MSG_WAITALL",
+      "MSG_DONTROUTE",
+    ]) {
+      if (wasi_flags & constants[name]) {
+        flags |= posix.constants[name];
+      }
+    }
+    return flags;
   }
 
   function create_wasi_fd(native_fd: number): number {
@@ -215,7 +232,11 @@ export default function socket({
         throw Errno("ENOTSUP");
       }
       const buffer = Buffer.alloc(length);
-      const bytesReceived = posix.recv(native_fd(socket), buffer, flags);
+      const bytesReceived = posix.recv(
+        native_fd(socket),
+        buffer,
+        native_flags(flags)
+      );
       //log("recv got ", { buffer, bytesReceived });
       send.buffer(buffer, bufPtr);
       return bytesReceived;
@@ -250,7 +271,7 @@ export default function socket({
       const { bytesReceived, sockaddr } = posix.recvfrom(
         native_fd(socket),
         buffer,
-        flags
+        native_flags(flags)
       );
       log("recvfrom got ", { buffer, bytesReceived, sockaddr });
       send.buffer(buffer, bufPtr);
@@ -273,7 +294,7 @@ export default function socket({
         throw Errno("ENOTSUP");
       }
       const buffer = recv.buffer(bufPtr, length);
-      return posix.send(native_fd(socket), buffer, flags);
+      return posix.send(native_fd(socket), buffer, native_flags(flags));
     },
 
     /*
@@ -307,7 +328,7 @@ export default function socket({
       const bytesSent = posix.sendto(
         native_fd(socket),
         buffer,
-        flags,
+        native_flags(flags),
         destination
       );
 
