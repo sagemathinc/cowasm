@@ -267,6 +267,8 @@ interface PosixFunctions {
   getsockname: (socket: number) => Sockaddr;
   getpeername: (socket: number) => Sockaddr;
   recv: (socket: number, length: number, flags: number) => Buffer;
+  // how is constants.SHUT_RD, constants.SHUT_WR, or constants.SHUT_RDWR
+  shutdown: (socket: number, how: number) => void;
 
   // termios sort of things; this is NOT done in a general way wrapping the api,
   // but instead implements things that node doesn't provide.

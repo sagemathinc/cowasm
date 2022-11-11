@@ -212,8 +212,18 @@ export default function socket({
       if (posix.shutdown == null) {
         throw Errno("ENOTSUP");
       }
-      console.log("socket shutdown not implemented yet");
-      return -1;
+      let real_how = -1;
+      for (const name of ["SHUT_RD", "SHUT_WR", "SHUT_RDWR"]) {
+        if (how == constants[name]) {
+          real_how = posix.constants[name];
+          break;
+        }
+      }
+      if (real_how == -1) {
+        throw Errno("EINVAL");
+      }
+      posix.shutdown(real_fd(socket), real_how);
+      return 0;
     },
   };
 }

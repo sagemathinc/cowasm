@@ -10,13 +10,7 @@ const builtin = @import("builtin");
 
 pub const constants = .{
     .c_import = clib,
-    .names = [_][:0]const u8{
-        "EADDRINUSE",   "EADDRNOTAVAIL", "EAFNOSUPPORT", "EALREADY",
-        "ECONNREFUSED", "EFAULT",        "EHOSTUNREACH", "EINPROGRESS",
-        "EISCONN",      "ENETDOWN",      "ENETUNREACH",  "ENOBUFS",
-        "ENOTSOCK",     "EOPNOTSUPP",    "EPROTOTYPE",   "ETIMEDOUT",
-        "ECONNRESET",   "ELOOP",         "ENAMETOOLONG",
-    },
+    .names = [_][:0]const u8{ "EADDRINUSE", "EADDRNOTAVAIL", "EAFNOSUPPORT", "EALREADY", "ECONNREFUSED", "EFAULT", "EHOSTUNREACH", "EINPROGRESS", "EISCONN", "ENETDOWN", "ENETUNREACH", "ENOBUFS", "ENOTSOCK", "EOPNOTSUPP", "EPROTOTYPE", "ETIMEDOUT", "ECONNRESET", "ELOOP", "ENAMETOOLONG", "SHUT_RD", "SHUT_WR", "SHUT_RDWR" },
 };
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
@@ -26,6 +20,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "getsockname", getsockname);
     try node.registerFunction(env, exports, "getpeername", getpeername);
     try node.registerFunction(env, exports, "recv", recv);
+    try node.registerFunction(env, exports, "shutdown", shutdown);
 }
 
 fn socket(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
@@ -176,6 +171,7 @@ fn getpeername(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
 // TODO: This whole approach of allocating a buffer for every recv, copying, etc., is
 // obvioously inefficient.  I just want to get this working before optimizing things!
 
+// ssize_t recv(int socket, void *buffer, size_t length, int flags);
 fn recv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 3) catch return null;
     const socket_fd = node.i32FromValue(env, argv[0], "socket_fd") catch return null;
@@ -190,7 +186,7 @@ fn recv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     };
     defer std.c.free(buffer);
     // Receive the data.
-    std.debug.print("socket_fd={}, buffer={*}, length={}, flags={}\n", .{ socket_fd, buffer, length, flags });
+    // std.debug.print("socket_fd={}, buffer={*}, length={}, flags={}\n", .{ socket_fd, buffer, length, flags });
     const mesg_length = clib.recv(socket_fd, buffer, length, flags);
     if (mesg_length < 0) {
         node.throwErrno(env, "error receiving data from socket");
@@ -198,4 +194,16 @@ fn recv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     }
     // Package it up for Javascript.
     return node.createBufferCopy(env, buffer, @intCast(usize, mesg_length), "creating nodejs Buffer from socket recv data") catch return null;
+}
+
+// int shutdown(int socket, int how);
+fn shutdown(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 2) catch return null;
+    const socket_fd = node.i32FromValue(env, argv[0], "socket_fd") catch return null;
+    const how = node.i32FromValue(env, argv[1], "how") catch return null;
+    const r = clib.shutdown(socket_fd, how);
+    if (r != 0) {
+        node.throwErrno(env, "error calling shutdown on network socket");
+    }
+    return null;
 }

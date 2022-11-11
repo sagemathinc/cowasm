@@ -8,3 +8,5 @@ print("conn =", conn)
 print("*" * 80)
 
 print(conn.recv(6))
+conn.shutdown(socket.SHUT_RD)
+print(conn.recv(6))
