@@ -1,3 +1,32 @@
+/*
+This is an implementation of POSIX Sockets.
+
+Of course, much of the code for this is written in zig in the posix-node package
+in  this file packages/posix-node/src/socket.zig
+
+
+RELATED WORK:  I wrote most of this, then searched and found it is solving
+a similar problem to emscripten's "Full POSIX Sockets over WebSocket Proxy Server":
+
+  - https://emscripten.org/docs/porting/networking.html#full-posix-sockets-over-websocket-proxy-server
+  - https://github.com/emscripten-core/emscripten/tree/main/tools/websocket_to_posix_proxy
+
+
+Of course, the architecture of the CoWasm solution is massively different.
+It looks like Emscripten's is a full multithreaded standalone C++ program
+for proxying many network connections from (presumably) many clients.
+In contrast, CoWasm's solution is partly written in zig as a node extension
+and integrated with Javascript.  It can be used standalone with other Javascript
+projects having nothing to do with cowasm, by using the posix-node package,
+so there is potential for more community feedback and development.
+We would likely have to have one Javascript worker/thread per client, but
+this could be integrated with accessing other resources on the server.
+It's also nice that CoWasm also can operate with exactly the same code
+in a mode that doesn't involving proxying to a backend server, with
+everything in the same process (which is all that is implemented here
+right now!), since that should be fast and good for automated testing.
+*/
+
 import Errno from "./errno";
 import {
   nativeToWasmFamily,
@@ -181,6 +210,7 @@ export default function socket({
         throw Errno("ENOTSUP");
       }
       log("recv, receiving...");
+      // TODO: can we do this without any copying?
       const buf = posix.recv(real_fd(socket), length, flags);
       log("recv got", buf);
       send.buffer(buf, bufPtr);
@@ -200,8 +230,9 @@ export default function socket({
       if (posix.send == null) {
         throw Errno("ENOTSUP");
       }
-      console.log("socket send not implemented yet");
-      return -1;
+      // TODO: can we do this without any copying?
+      const buffer = recv.buffer(bufPtr, length);
+      return posix.send(real_fd(socket), buffer, flags);
     },
 
     /*

@@ -267,6 +267,7 @@ interface PosixFunctions {
   getsockname: (socket: number) => Sockaddr;
   getpeername: (socket: number) => Sockaddr;
   recv: (socket: number, length: number, flags: number) => Buffer;
+  send: (socket: number, buffer: Buffer, flags: number) => number;
   // how is constants.SHUT_RD, constants.SHUT_WR, or constants.SHUT_RDWR
   shutdown: (socket: number, how: number) => void;
 

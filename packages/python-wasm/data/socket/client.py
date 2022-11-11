@@ -8,5 +8,6 @@ print("conn =", conn)
 print("*" * 80)
 
 print(conn.recv(6))
+print(conn.send(b"CoWasm"))
+
 conn.shutdown(socket.SHUT_RD)
-print(conn.recv(6))

@@ -10,5 +10,5 @@ while True:
     conn, addr = s.accept()
     print(conn, addr)
     conn.send(b"Hello\n")
-    conn.send(b"Hello\n")
+    print(conn.recv(6))
     conn.close()

@@ -65,6 +65,10 @@ const CONSTANTS = [
   "ENOTSUP",
   "WNOHANG",
   "WUNTRACED",
+  "MSG_OOB",
+  "MSG_PEEK",
+  "MSG_WAITALL",
+  "MSG_DONTROUTE",
 ] as const;
 
 export type Constant = typeof CONSTANTS[number];
