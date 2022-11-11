@@ -25,6 +25,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "_connect", connect);
     try node.registerFunction(env, exports, "getsockname", getsockname);
     try node.registerFunction(env, exports, "getpeername", getpeername);
+    try node.registerFunction(env, exports, "recv", recv);
 }
 
 fn socket(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
@@ -86,9 +87,13 @@ fn connect(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_valu
         return null;
     }
 
-    std.debug.print("dummy = {}\n", .{dummy});
+    // std.debug.print("dummy = {}\n", .{dummy});
     var sockaddr: clib.sockaddr = undefined;
-    sockaddr.sa_data = sa_data[0..14].*; // TODO: I'm dubious!  Maybe just for ipv4?
+    // TODO: This is only for ipv4.  I haven't been able to do this properly for ipv6, where
+    // dummy is 30 instead, because it violates what the C header says, and zig really doesn't
+    // like this.  ipv6 painfully abuses C in a way that zig doesn't agree with.  I may
+    // need some separate C code for this or maybe a #define in cInclude?
+    sockaddr.sa_data = sa_data[0..14].*;
     if (builtin.target.os.tag != .linux) {
         sockaddr.sa_len = @intCast(u8, sa_len);
     }
@@ -166,4 +171,31 @@ fn getpeername(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
     }
     // std.debug.print("getpeername: sockaddr = {}, addrlen = {}\n", .{ sockaddr, addrlen });
     return createSockaddr(env, &sockaddr, addrlen);
+}
+
+// TODO: This whole approach of allocating a buffer for every recv, copying, etc., is
+// obvioously inefficient.  I just want to get this working before optimizing things!
+
+fn recv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 3) catch return null;
+    const socket_fd = node.i32FromValue(env, argv[0], "socket_fd") catch return null;
+    const length = node.u32FromValue(env, argv[1], "length") catch return null;
+    const flags = node.i32FromValue(env, argv[2], "flags") catch return null;
+
+    // Allocate memory to receive up to length bytes of data from the socket.
+    var buffer = std.c.malloc(length) orelse {
+        std.debug.print("socket_fd = {}, buffer size = {}\n", .{ socket_fd, length });
+        node.throwError(env, "out of memory allocating buffer to recv from socket");
+        return null;
+    };
+    defer std.c.free(buffer);
+    // Receive the data.
+    std.debug.print("socket_fd={}, buffer={*}, length={}, flags={}\n", .{ socket_fd, buffer, length, flags });
+    const mesg_length = clib.recv(socket_fd, buffer, length, flags);
+    if (mesg_length < 0) {
+        node.throwErrno(env, "error receiving data from socket");
+        return null;
+    }
+    // Package it up for Javascript.
+    return node.createBufferCopy(env, buffer, @intCast(usize, mesg_length), "creating nodejs Buffer from socket recv data") catch return null;
 }

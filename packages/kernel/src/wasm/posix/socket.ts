@@ -15,7 +15,7 @@ const log = debug("posix:socket");
 // until everything is implemented.  Otherwise the test suite
 // and installing pip and many other things break half-way through.
 // Re-enable this when finishing.
-const TEMPORARILY_DISABLED = true;
+const TEMPORARILY_DISABLED = false;
 
 export default function socket({
   callFunction,
@@ -177,8 +177,14 @@ export default function socket({
       flags: number
     ): number {
       log("recv", { socket, bufPtr, length, flags });
-      console.log("socket recv not implemented yet");
-      return -1;
+      if (posix.recv == null) {
+        throw Errno("ENOTSUP");
+      }
+      log("recv, receiving...");
+      const buf = posix.recv(real_fd(socket), length, flags);
+      log("recv got", buf);
+      send.buffer(buf, bufPtr);
+      return buf.length;
     },
 
     /*
@@ -191,6 +197,9 @@ export default function socket({
       flags: number
     ): number {
       log("send", { socket, bufPtr, length, flags });
+      if (posix.send == null) {
+        throw Errno("ENOTSUP");
+      }
       console.log("socket send not implemented yet");
       return -1;
     },
@@ -200,6 +209,9 @@ export default function socket({
     */
     shutdown(socket: number, how: number): number {
       log("shutdown", { socket, how });
+      if (posix.shutdown == null) {
+        throw Errno("ENOTSUP");
+      }
       console.log("socket shutdown not implemented yet");
       return -1;
     },

@@ -93,8 +93,10 @@ export class SendToWasmAbstractBase {
     return ptr;
   }
 
-  buffer(buf: Buffer): number {
-    const ptr = this.malloc(buf.byteLength);
+  buffer(buf: Buffer, ptr?: number): number {
+    if (ptr == null) {
+      ptr = this.malloc(buf.byteLength);
+    }
     const array = new Uint8Array(this.memory.buffer);
     buf.copy(array, ptr);
     return ptr;

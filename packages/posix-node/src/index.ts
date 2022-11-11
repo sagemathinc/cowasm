@@ -266,6 +266,7 @@ interface PosixFunctions {
   connect: (socket: number, sockaddr: Sockaddr) => void;
   getsockname: (socket: number) => Sockaddr;
   getpeername: (socket: number) => Sockaddr;
+  recv: (socket: number, length: number, flags: number) => Buffer;
 
   // termios sort of things; this is NOT done in a general way wrapping the api,
   // but instead implements things that node doesn't provide.
