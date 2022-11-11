@@ -14,14 +14,16 @@ pub const constants = .{
 };
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
-    try node.registerFunction(env, exports, "socket", socket);
+    try node.registerFunction(env, exports, "accept", accept);
     try node.registerFunction(env, exports, "_bind", bind);
     try node.registerFunction(env, exports, "_connect", connect);
     try node.registerFunction(env, exports, "getsockname", getsockname);
     try node.registerFunction(env, exports, "getpeername", getpeername);
+    try node.registerFunction(env, exports, "listen", listen);
     try node.registerFunction(env, exports, "recv", recv);
     try node.registerFunction(env, exports, "send", send);
     try node.registerFunction(env, exports, "shutdown", shutdown);
+    try node.registerFunction(env, exports, "socket", socket);
 }
 
 fn socket(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
@@ -228,4 +230,40 @@ fn shutdown(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_val
         node.throwErrno(env, "error calling shutdown on network socket");
     }
     return null;
+}
+
+// int listen(int socket, int backlog);
+fn listen(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 2) catch return null;
+    const socket_fd = node.i32FromValue(env, argv[0], "socket_fd") catch return null;
+    const backlog = node.i32FromValue(env, argv[1], "backlog") catch return null;
+    const r = clib.listen(socket_fd, backlog);
+    if (r != 0) {
+        node.throwErrno(env, "error calling listen on network socket");
+    }
+    return null;
+}
+
+// int accept(int socket, struct sockaddr *address, socklen_t *address_len);
+// accept: (socket: number) => { fd: number; sockaddr: Sockaddr };
+fn accept(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const socket_fd = node.i32FromValue(env, argv[0], "socket_fd") catch return null;
+
+    var sockaddr: clib.sockaddr = undefined;
+    var addrlen: clib.socklen_t = undefined;
+    const fd = clib.accept(socket_fd, &sockaddr, &addrlen);
+    if (fd == -1) {
+        node.throwErrno(env, "error calling accept on network socket");
+        return null;
+    }
+
+    var object = node.createObject(env, "") catch return null;
+
+    const sockaddrObj = createSockaddr(env, &sockaddr, addrlen);
+    if (sockaddrObj == null) return null;
+    node.setNamedProperty(env, object, "sockaddr", sockaddrObj, "setting sockaddr") catch return null;
+    const new_fd = node.create_i32(env, fd, "fd") catch return null;
+    node.setNamedProperty(env, object, "fd", new_fd, "setting fd") catch return null;
+    return object;
 }

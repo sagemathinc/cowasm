@@ -1,15 +1,24 @@
 import socket
 
+# TODO: ipv6 not fully supported yet in posix-node/src/socket.zig for
+# address.
 #s = socket.create_server(("", 2000), family=socket.AF_INET6)
-s = socket.create_server(("", 2000))
+
+# TODO: when I try "" then "wildcard resolved to multiple address"
+# is hit in socketmodule.c, perhaps due to some option not being
+# supported properly in getaddrinfo.
+#s = socket.create_server(("", 2000), family=socket.AF_INET)
+
+s = socket.create_server(("127.0.0.1", 2000))
 s.listen(1)
 
 print("listening on port 2000")
 
 SEND = b"Hello\n"
 while True:
+    print("Waiting for connection...")
     conn, addr = s.accept()
-    print(conn, addr)
+    print("Accepted connection", conn, addr)
     print("Sending ", SEND)
     conn.send(SEND)
     print("Receiving...")

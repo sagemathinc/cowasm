@@ -196,7 +196,11 @@ ac_cv_func_dup3=no
 # We want to fully support the socket C extension module:
 ac_cv_func_bind=yes
 ac_cv_func_getsockname=yes
+ac_cv_func_listen=yes
+ac_cv_func_recvfrom=yes
 ac_cv_func_connect=yes
+ac_cv_func_sendto=yes
+ac_cv_func_accept=yes
 
 # Needed for the curses extension module.
 ac_cv_header_term_h=yes

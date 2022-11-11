@@ -258,14 +258,15 @@ interface PosixFunctions {
     }
   ) => Addrinfo[];
 
-  // socket:
-  // Create a socket. Returns the file descriptor
-  socket: (family: number, socktype: number, protocol: number) => number;
-  // Bind a socket to an address.
+  // Synchronous Posix network stack.  This is very useful since it isn't available in
+  // node.js and is impossible to efficiently due without writing an extension module.
+  // Bind a socket to an address.  Compare with https://github.com/JacobFischer/netlinkwrapper
+  accept: (socket: number) => { fd: number; sockaddr: Sockaddr };
   bind: (socket: number, sockaddr: Sockaddr) => void;
   connect: (socket: number, sockaddr: Sockaddr) => void;
   getsockname: (socket: number) => Sockaddr;
   getpeername: (socket: number) => Sockaddr;
+  listen: (socket: number, backlog: number) => void;
   // Receives from network into the buffer and returns how many
   // bytes were read.  This mutates the buffer.
   recv: (socket: number, buffer: Buffer, flags: number) => number;
@@ -273,6 +274,8 @@ interface PosixFunctions {
   send: (socket: number, buffer: Buffer, flags: number) => number;
   // how is constants.SHUT_RD, constants.SHUT_WR, or constants.SHUT_RDWR
   shutdown: (socket: number, how: number) => void;
+  // Create a socket. Returns the file descriptor
+  socket: (family: number, socktype: number, protocol: number) => number;
 
   // termios sort of things; this is NOT done in a general way wrapping the api,
   // but instead implements things that node doesn't provide.

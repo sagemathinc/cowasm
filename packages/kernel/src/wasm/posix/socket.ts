@@ -44,7 +44,7 @@ const log = debug("posix:socket");
 // until everything is implemented.  Otherwise the test suite
 // and installing pip and many other things break half-way through.
 // Re-enable this when finishing.
-const TEMPORARILY_DISABLED = false;
+const TEMPORARILY_DISABLED = true;
 
 export default function socket({
   callFunction,
@@ -56,6 +56,17 @@ export default function socket({
 }) {
   if (TEMPORARILY_DISABLED) {
     posix = {};
+  }
+
+  function sendNativeSockaddr(sockaddr, ptr: number) {
+    sendSockaddr(
+      send,
+      memory,
+      ptr,
+      nativeToWasmFamily(posix, sockaddr.sa_family),
+      sockaddr.sa_len,
+      sockaddr.sa_data
+    );
   }
 
   function getSockaddr(sockaddrPtr: number, address_len: number) {
@@ -74,12 +85,23 @@ export default function socket({
     return { sa_family, sa_len, sa_data };
   }
 
-  function real_fd(virtual_fd: number): number {
+  function native_fd(virtual_fd: number): number {
     const data = wasi.FD_MAP.get(virtual_fd);
     if (data == null) {
       return -1;
     }
     return data.real;
+  }
+
+  function create_wasi_fd(native_fd: number): number {
+    const wasi_fd = wasi.getUnusedFileDescriptor();
+    const STDIN = wasi.FD_MAP.get(0);
+    wasi.FD_MAP.set(wasi_fd, {
+      real: native_fd,
+      rights: STDIN.rights, // TODO: just use rights for stdin???
+      filetype: wasi_constants.WASI_FILETYPE_SOCKET_STREAM,
+    });
+    return wasi_fd;
   }
 
   return {
@@ -106,24 +128,16 @@ export default function socket({
       // TODO? I don't know how to translate this or if it is necessary.
       const protocolNative = protocol;
 
-      const real_fd = posix.socket(
+      const native_fd = posix.socket(
         familyNative,
         socktypeNative,
         protocolNative
       );
 
       if (!inheritable) {
-        posix.set_inheritable(real_fd, inheritable);
+        posix.set_inheritable(native_fd, inheritable);
       }
-      const wasi_fd = wasi.getUnusedFileDescriptor();
-      const STDIN = wasi.FD_MAP.get(0);
-      wasi.FD_MAP.set(wasi_fd, {
-        real: real_fd,
-        rights: STDIN.rights, // TODO: just use rights for stdin???
-        filetype: wasi_constants.WASI_FILETYPE_SOCKET_STREAM,
-      });
-
-      return wasi_fd;
+      return create_wasi_fd(native_fd);
     },
 
     // int bind(int socket, const struct sockaddr *address, socklen_t address_len);
@@ -134,7 +148,7 @@ export default function socket({
       }
       const sockaddr = getSockaddr(sockaddrPtr, address_len);
       log("bind: address", sockaddr);
-      posix.bind(real_fd(socket), sockaddr);
+      posix.bind(native_fd(socket), sockaddr);
 
       return 0;
     },
@@ -145,7 +159,7 @@ export default function socket({
       }
       const sockaddr = getSockaddr(sockaddrPtr, address_len);
       log("connect", { socket, sockaddr, address_len });
-      posix.connect(real_fd(socket), sockaddr);
+      posix.connect(native_fd(socket), sockaddr);
       return 0;
     },
 
@@ -161,15 +175,8 @@ export default function socket({
         throw Errno("ENOTSUP");
       }
       log("getsockname", socket);
-      const sockaddr = posix.getsockname(real_fd(socket));
-      sendSockaddr(
-        send,
-        memory,
-        sockaddrPtr,
-        nativeToWasmFamily(posix, sockaddr.sa_family),
-        sockaddr.sa_len,
-        sockaddr.sa_data
-      );
+      const sockaddr = posix.getsockname(native_fd(socket));
+      sendNativeSockaddr(sockaddr, sockaddrPtr);
       send.u32(addressLenPtr, sockaddr.sa_len);
       return 0;
     },
@@ -183,15 +190,8 @@ export default function socket({
       addressLenPtr: number
     ): number {
       log("getpeername", socket);
-      const sockaddr = posix.getpeername(real_fd(socket));
-      sendSockaddr(
-        send,
-        memory,
-        sockaddrPtr,
-        nativeToWasmFamily(posix, sockaddr.sa_family),
-        sockaddr.sa_len,
-        sockaddr.sa_data
-      );
+      const sockaddr = posix.getpeername(native_fd(socket));
+      sendNativeSockaddr(sockaddr, sockaddrPtr);
       send.u32(addressLenPtr, sockaddr.sa_len);
       return 0;
     },
@@ -215,10 +215,48 @@ export default function socket({
         throw Errno("ENOTSUP");
       }
       const buffer = Buffer.alloc(length);
-      const bytes_received = posix.recv(real_fd(socket), buffer, flags);
-      //log("recv got ", { buffer, bytes_received });
+      const bytesReceived = posix.recv(native_fd(socket), buffer, flags);
+      //log("recv got ", { buffer, bytesReceived });
       send.buffer(buffer, bufPtr);
-      return bytes_received;
+      return bytesReceived;
+    },
+
+    /*
+    TODO:
+    ssize_t
+    recvfrom(int socket, void *buffer, size_t length, int flags,
+             struct sockaddr *address, socklen_t *address_len);
+    */
+    recvfrom(
+      socket: number,
+      bufPtr: number,
+      length: number,
+      flags: number,
+      sockaddrPtr: number,
+      sockaddrLenPtr: number
+    ): number {
+      log("recvfrom", {
+        socket,
+        bufPtr,
+        length,
+        flags,
+        sockaddrPtr,
+        sockaddrLenPtr,
+      });
+      if (posix.recvfrom == null) {
+        throw Errno("ENOTSUP");
+      }
+      const buffer = Buffer.alloc(length);
+      const { bytesReceived, sockaddr } = posix.recvfrom(
+        native_fd(socket),
+        buffer,
+        flags
+      );
+      log("recvfrom got ", { buffer, bytesReceived, sockaddr });
+      send.buffer(buffer, bufPtr);
+      sendNativeSockaddr(sockaddr, sockaddrPtr);
+      send.u32(sockaddrLenPtr, sockaddr.sa_len);
+      return bytesReceived;
     },
 
     /*
@@ -235,7 +273,46 @@ export default function socket({
         throw Errno("ENOTSUP");
       }
       const buffer = recv.buffer(bufPtr, length);
-      return posix.send(real_fd(socket), buffer, flags);
+      return posix.send(native_fd(socket), buffer, flags);
+    },
+
+    /*
+     TODO:
+
+     ssize_t
+     sendto(int socket, const void *buffer, size_t length, int flags,
+         const struct sockaddr *dest_addr, socklen_t dest_len);
+    */
+    sendto(
+      socket: number,
+      bufPtr: number,
+      length: number,
+      flags: number,
+      addressPtr: number,
+      addressLen: number
+    ): number {
+      log("sendto", {
+        socket,
+        bufPtr,
+        length,
+        flags,
+        addressPtr,
+        addressLen,
+      });
+      if (posix.sendto == null) {
+        throw Errno("ENOTSUP");
+      }
+      const buffer = Buffer.alloc(length);
+      const destination = getSockaddr(addressPtr, addressLen);
+      const bytesSent = posix.sendto(
+        native_fd(socket),
+        buffer,
+        flags,
+        destination
+      );
+
+      log("sendto sent ", bytesSent);
+      return bytesSent;
     },
 
     /*
@@ -256,8 +333,37 @@ export default function socket({
       if (real_how == -1) {
         throw Errno("EINVAL");
       }
-      posix.shutdown(real_fd(socket), real_how);
+      posix.shutdown(native_fd(socket), real_how);
       return 0;
+    },
+
+    /*
+    listen – listen for connections on a socket
+
+    int listen(int socket, int backlog);
+    */
+    listen(socket: number, backlog: number): number {
+      log("listen", { socket, backlog });
+      if (posix.listen == null) {
+        throw Errno("ENOTSUP");
+      }
+      return posix.listen(native_fd(socket), backlog);
+    },
+
+    /*
+    accept – accept a connection on a socket
+    int accept(int socket, struct sockaddr *address, socklen_t *address_len);
+    */
+    accept(socket: number, sockaddrPtr: number, socklenPtr: number): number {
+      log("accept", { socket });
+      if (posix.accept == null) {
+        throw Errno("ENOTSUP");
+      }
+      const { fd, sockaddr } = posix.accept(native_fd(socket));
+      sendNativeSockaddr(sockaddr, sockaddrPtr);
+      send.u32(socklenPtr, sockaddr.sa_len);
+      log("accept got back ", { fd, sockaddr });
+      return create_wasi_fd(fd);
     },
   };
 }

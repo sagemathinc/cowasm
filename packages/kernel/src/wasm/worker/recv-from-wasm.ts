@@ -58,6 +58,7 @@ export class RecvFromWasmAbstractBase {
 
   buffer(ptr: number, bytes: number): Buffer {
     // console.log(this.memory.buffer.slice(ptr, ptr + bytes));
+    // this.memory.buffer.slice makes a copy of the memory.
     return Buffer.from(this.memory.buffer.slice(ptr, ptr + bytes));
   }
 
