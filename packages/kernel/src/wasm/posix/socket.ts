@@ -198,6 +198,11 @@ export default function socket({
 
     /*
      ssize_t recv(int socket, void *buffer, size_t length, int flags);
+
+     NOTE: send and recv are less efficient than they might otherwise
+     be due to a lot of extra copying of data to/from dynamically allocated
+     Buffers.  Probably the cost of calling to Javascript at all exceeds
+     this though.
     */
     recv(
       socket: number,
@@ -209,12 +214,11 @@ export default function socket({
       if (posix.recv == null) {
         throw Errno("ENOTSUP");
       }
-      log("recv, receiving...");
-      // TODO: can we do this without any copying?
-      const buf = posix.recv(real_fd(socket), length, flags);
-      log("recv got", buf);
-      send.buffer(buf, bufPtr);
-      return buf.length;
+      const buffer = Buffer.alloc(length);
+      const bytes_received = posix.recv(real_fd(socket), buffer, flags);
+      //log("recv got ", { buffer, bytes_received });
+      send.buffer(buffer, bufPtr);
+      return bytes_received;
     },
 
     /*
@@ -230,7 +234,6 @@ export default function socket({
       if (posix.send == null) {
         throw Errno("ENOTSUP");
       }
-      // TODO: can we do this without any copying?
       const buffer = recv.buffer(bufPtr, length);
       return posix.send(real_fd(socket), buffer, flags);
     },

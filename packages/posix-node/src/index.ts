@@ -266,7 +266,10 @@ interface PosixFunctions {
   connect: (socket: number, sockaddr: Sockaddr) => void;
   getsockname: (socket: number) => Sockaddr;
   getpeername: (socket: number) => Sockaddr;
-  recv: (socket: number, length: number, flags: number) => Buffer;
+  // Receives from network into the buffer and returns how many
+  // bytes were read.  This mutates the buffer.
+  recv: (socket: number, buffer: Buffer, flags: number) => number;
+  // Writes to the network everything that is in the buffer.
   send: (socket: number, buffer: Buffer, flags: number) => number;
   // how is constants.SHUT_RD, constants.SHUT_WR, or constants.SHUT_RDWR
   shutdown: (socket: number, how: number) => void;

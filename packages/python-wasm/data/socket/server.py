@@ -6,9 +6,12 @@ s.listen(1)
 
 print("listening on port 2000")
 
+SEND = b"Hello\n"
 while True:
     conn, addr = s.accept()
     print(conn, addr)
-    conn.send(b"Hello\n")
+    print("Sending ", SEND)
+    conn.send(SEND)
+    print("Receiving...")
     print(conn.recv(6))
     conn.close()

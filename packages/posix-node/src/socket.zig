@@ -169,37 +169,30 @@ fn getpeername(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_
     return createSockaddr(env, &sockaddr, addrlen);
 }
 
-// TODO: send/recv: this whole approach of allocating a buffer for every recv, copying, etc.,
-// is obviously somewhat inefficient, instead of maybe having a 1-time allocation.  I
-// want to get this all working and tested before optimizing things at all.
-// Actually if we just change the api of recv to
-//   recv: (socket: number, buffer:Buffer, flags: number) => void;
-// and have the buffer get written to directly, then the client can
+// NOTE: for recv, the buffer get writtens to directly, so the client can
 // make things efficient (or not) however they want, and we don't malloc or free.
 
 // ssize_t recv(int socket, void *buffer, size_t length, int flags);
+//   recv: (socket: number, buffer:Buffer, flags: number) => void;
 fn recv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 3) catch return null;
     const socket_fd = node.i32FromValue(env, argv[0], "socket_fd") catch return null;
-    const length = node.u32FromValue(env, argv[1], "length") catch return null;
     const flags = node.i32FromValue(env, argv[2], "flags") catch return null;
 
-    // Allocate memory to receive up to length bytes of data from the socket.
-    var buffer = std.c.malloc(length) orelse {
-        std.debug.print("socket_fd = {}, buffer size = {}\n", .{ socket_fd, length });
-        node.throwError(env, "out of memory allocating buffer to recv from socket");
+    var buffer: [*]u8 = undefined;
+    var length: usize = undefined;
+    if (c.napi_get_buffer_info(env, argv[1], @ptrCast([*c]?*anyopaque, &buffer), &length) != c.napi_ok) {
+        node.throwErrno(env, "error reading buffer");
         return null;
-    };
-    defer std.c.free(buffer);
+    }
     // Receive the data.
-    // std.debug.print("socket_fd={}, buffer={*}, length={}, flags={}\n", .{ socket_fd, buffer, length, flags });
-    const mesg_length = clib.recv(socket_fd, buffer, length, flags);
-    if (mesg_length < 0) {
+    std.debug.print("socket_fd={}, buffer={*}, length={}, flags={}\n", .{ socket_fd, buffer, length, flags });
+    const bytes_received = clib.recv(socket_fd, buffer, length, flags);
+    if (bytes_received < 0) {
         node.throwErrno(env, "error receiving data from socket");
         return null;
     }
-    // Package it up for Javascript.
-    return node.createBufferCopy(env, buffer, @intCast(usize, mesg_length), "creating nodejs Buffer from socket recv data") catch return null;
+    return node.create_i32(env, @intCast(i32, bytes_received), "bytes received") catch return null;
 }
 
 // ssize_t send(int socket, void *buffer, size_t length, int flags);
