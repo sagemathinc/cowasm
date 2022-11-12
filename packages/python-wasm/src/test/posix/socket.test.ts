@@ -1,5 +1,8 @@
 import { asyncPython } from "../../node";
 
+// See also packages/python-wasm/data/socket for some python scripts
+// you can run directly.
+
 test("create a client and a server and have them send/recv strings", async () => {
   // It is really cool how easily wwe can do this test due to the
   // architecture of python-wasm!
@@ -28,7 +31,7 @@ conn.close()
   `);
   // Make the client connect to the server.
   await client.exec(
-    `import socket; conn = socket.create_connection(("", ${port}))`
+    `import socket; conn = socket.create_connection(("localhost", ${port}))`
   );
   // Get Hello and confirm it worked.
   expect(await client.repr("conn.recv(5)")).toBe("b'Hello'");
