@@ -31,18 +31,31 @@ PYTHON_WASM = ${BIN}/python-wasm
 # Either -Oz or -O3 make sense to me...
 #   -O0 = exceeds a limit so can't even load the result with webassembly!
 # The cPython default opt is "-DNDEBUG -g -fwrapv -O3 -Wall", which is
-# coded in the generated Makefile.  I have noticed some major compiler bugs
-# with -O3, so we can revisit this later with newer LLVM/zig releases.
+# coded in the generated Makefile.  I have noticed some **major compiler bugs
+# with -O3**, so we can revisit this later with newer LLVM/zig releases.
 # For example:
 #   https://github.com/sagemathinc/cowasm/issues/27
 # is a bug with -O3 that goes away with -Oz. The diff in performance
 # is less than 5% with -O3 over -Oz.
 # NDEBUG I think disable assertions (?).
 
-# Use this instead for better debugging (?).
+# Use DEBUG_WASM_CPYTHON for better debugging the core CPython and
+# use DEBUG_WASM_EXTENSIONS for debugging extension modules.  You may
+# also need to build those with -g.
 
-WASM_OPT=-DNDEBUG -fwrapv -Wall -Oz -g
-#WASM_OPT=-DNDEBUG -fwrapv -Wall -Oz
+DEBUG_WASM_CPYTHON = ""
+# comment out to strip debug symbols:
+#DEBUG_WASM_CPYTHON = "-g"
+
+DEBUG_WASM_EXTENSIONS = ""
+# comment out to strip debug symbols:
+#DEBUG_WASM_EXTENSIONS = "-g"
+
+# NOTE: -Oz seems to always be the way to go for WebAssembly.  Higher levels such
+# as -O3 lead to weird bugs, and lower levels like -O1 make the binary too big to load.
+
+WASM_OPT = -DNDEBUG -fwrapv -Wall -Oz ${DEBUG_WASM_CPYTHON}
+WASM_BLDSHARED = cowasm-cc --experimental-pic -shared ${DEBUG_WASM_EXTENSIONS}
 
 
 # We only use zlib (not lzma) for native build, since liblzma is widely available natively.
@@ -148,10 +161,6 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/13-socket-unmodified-headers.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
-# DEBUG_MODE = "-g"
-DEBUG_MODE = ""
-BLDSHARED = cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
-
 ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
 	# - with-pymalloc it actually works and seems faster
@@ -182,7 +191,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 		CXX="cowasm-c++" \
 		AR="zig ar" \
 		CFLAGS="${DEBUG_MODE} -I${BUILD_WASM} -I${POSIX_WASM}/wasm -DPy_DEFAULT_RECURSION_LIMIT=700" \
-		BLDSHARED="${BLDSHARED}" \
+		BLDSHARED="${WASM_BLDSHARED}" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		HOSTRUNNER="${BIN}/cowasm" \
