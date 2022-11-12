@@ -204,7 +204,7 @@ def is_debug():
 
 def is_input(filename):
     ext = os.path.splitext(filename)[1].lower()
-    if ext in SOURCE_EXTENSIONS or ext == '.o':
+    if ext in SOURCE_EXTENSIONS or ext == '.o' or ext == '.a':
         return True
     return False
 
@@ -396,5 +396,8 @@ def main():
     link += object_args
     run(link)
 
+# TODO/WARNING! there are two cases above where main isn't called and
+# we do not even get this far in the file.
 
-main()
+if __name__ == "__main__":
+    main()
