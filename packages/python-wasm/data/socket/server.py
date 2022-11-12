@@ -19,8 +19,11 @@ while True:
     print("Waiting for connection...")
     conn, addr = s.accept()
     print("Accepted connection", conn, addr)
-    print("Sending ", SEND)
-    conn.send(SEND)
-    print("Receiving...")
-    print(conn.recv(6))
-    conn.close()
+    try:
+        print("Sending ", SEND)
+        conn.send(SEND)
+        print("Receiving...")
+        print(conn.recv(6))
+        conn.close()
+    except Exception as e:
+        print(e)
