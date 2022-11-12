@@ -276,6 +276,18 @@ interface PosixFunctions {
   shutdown: (socket: number, how: number) => void;
   // Create a socket. Returns the file descriptor
   socket: (family: number, socktype: number, protocol: number) => number;
+  getsockopt: (
+    socket: number,
+    level: number,
+    option_name: number,
+    max_len: number
+  ) => Buffer;
+  setsockopt: (
+    socket: number,
+    level: number,
+    option_name: number,
+    option_value: Buffer
+  ) => void;
 
   // termios sort of things; this is NOT done in a general way wrapping the api,
   // but instead implements things that node doesn't provide.

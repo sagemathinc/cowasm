@@ -10,7 +10,7 @@ const builtin = @import("builtin");
 
 pub const constants = .{
     .c_import = clib,
-    .names = [_][:0]const u8{ "EADDRINUSE", "EADDRNOTAVAIL", "EAFNOSUPPORT", "EALREADY", "ECONNREFUSED", "EFAULT", "EHOSTUNREACH", "EINPROGRESS", "EISCONN", "ENETDOWN", "ENETUNREACH", "ENOBUFS", "ENOTSOCK", "EOPNOTSUPP", "EPROTOTYPE", "ETIMEDOUT", "ECONNRESET", "ELOOP", "ENAMETOOLONG", "SHUT_RD", "SHUT_WR", "SHUT_RDWR", "MSG_OOB", "MSG_PEEK", "MSG_WAITALL", "MSG_DONTROUTE" },
+    .names = [_][:0]const u8{ "EADDRINUSE", "EADDRNOTAVAIL", "EAFNOSUPPORT", "EALREADY", "ECONNREFUSED", "EFAULT", "EHOSTUNREACH", "EINPROGRESS", "EISCONN", "ENETDOWN", "ENETUNREACH", "ENOBUFS", "ENOTSOCK", "ENOPROTOOPT", "EOPNOTSUPP", "EPROTOTYPE", "ETIMEDOUT", "ECONNRESET", "ELOOP", "ENAMETOOLONG", "SHUT_RD", "SHUT_WR", "SHUT_RDWR", "MSG_OOB", "MSG_PEEK", "MSG_WAITALL", "MSG_DONTROUTE", "SO_ACCEPTCONN", "SO_BROADCAST", "SO_DEBUG", "SO_DONTROUTE", "SO_ERROR", "SO_KEEPALIVE", "SO_LINGER", "SO_OOBINLINE", "SO_RCVBUF", "SO_RCVLOWAT", "SO_RCVTIMEO", "SO_REUSEADDR", "SO_REUSEPORT", "SO_SNDBUF", "SO_SNDLOWAT", "SO_SNDTIMEO", "SO_TIMESTAMP", "SO_TYPE", "SOL_SOCKET" },
 };
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
@@ -24,6 +24,8 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "send", send);
     try node.registerFunction(env, exports, "shutdown", shutdown);
     try node.registerFunction(env, exports, "socket", socket);
+    try node.registerFunction(env, exports, "getsockopt", getsockopt);
+    try node.registerFunction(env, exports, "setsockopt", setsockopt);
 }
 
 fn socket(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
@@ -270,4 +272,65 @@ fn accept(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
     const new_fd = node.create_i32(env, fd, "fd") catch return null;
     node.setNamedProperty(env, object, "fd", new_fd, "setting fd") catch return null;
     return object;
+}
+
+//   getsockopt: (
+//     socket: number,
+//     level: number,
+//     option_name: number,
+//     max_len: number
+//   ) => Buffer;
+//
+//     int getsockopt(int socket, int level, int option_name, void *option_value,
+//         socklen_t *option_len);
+
+fn getsockopt(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 4) catch return null;
+    const socket_fd = node.i32FromValue(env, argv[0], "socket_fd") catch return null;
+    const level = node.i32FromValue(env, argv[1], "option_name") catch return null;
+    const option_name = node.i32FromValue(env, argv[2], "option_name") catch return null;
+    var option_len = @intCast(c_uint, node.u32FromValue(env, argv[3], "option_len") catch return null);
+
+    const option_value = std.c.malloc(option_len) orelse {
+        node.throwError(env, "error allocating memory");
+        return null;
+    };
+    defer std.c.free(option_value);
+
+    const r = clib.getsockopt(socket_fd, level, option_name, option_value, &option_len);
+    if (r == -1) {
+        node.throwErrno(env, "error calling getsockopt on network socket");
+        return null;
+    }
+    const buf = node.createBufferCopy(env, option_value, option_len, "return option Buffer") catch return null;
+    return buf;
+}
+
+//   setsockopt: (
+//     socket: number,
+//     level: number,
+//     option_name: number,
+//     option_value: Buffer
+//   ) => void;
+//
+//   int setsockopt(int socket, int level, int option_name, const void *option_value,
+//       socklen_t option_len);
+fn setsockopt(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 4) catch return null;
+    const socket_fd = node.i32FromValue(env, argv[0], "socket_fd") catch return null;
+    const level = node.i32FromValue(env, argv[1], "option_name") catch return null;
+    const option_name = node.i32FromValue(env, argv[2], "option_name") catch return null;
+
+    var option_value: [*]u8 = undefined;
+    var option_len: usize = undefined;
+    if (c.napi_get_buffer_info(env, argv[3], @ptrCast([*c]?*anyopaque, &option_value), &option_len) != c.napi_ok) {
+        node.throwErrno(env, "error reading buffer");
+        return null;
+    }
+    const r = clib.setsockopt(socket_fd, level, option_name, option_value, @intCast(c_uint, option_len));
+    if (r == -1) {
+        node.throwErrno(env, "error calling setsockopt on network socket");
+        return null;
+    }
+    return null;
 }
