@@ -38,13 +38,20 @@ ${BUILD_WASM}/.patched:: ${BUILD_WASM}/.build
 		&&  ln -s ${POSIX_WASM}/posix-wasm.h .
 	touch ${BUILD_WASM}/.patched
 
+
+DEBUG = ""
+# Uncomment for debugging symbols:
+# DEBUG="-g"
+
+
 # make -j12, since openssl is structured as huge number of tiny files.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& 	CC="cowasm-cc" \
+			CFLAGS="-Oz ${DEBUG}" \
 			AR="zig ar" \
 			RANLIB="zig ranlib" \
-			./Configure --prefix=${DIST_WASM} gcc -no-threads -no-tests -no-asm -static -no-afalgeng \
+			./Configure --prefix=${DIST_WASM} gcc -no-threads -no-tests -no-asm -no-afalgeng \
 		&&	make -j12 build_sw \
 		&&	make -j12 install_sw
 	touch ${DIST_WASM}/.built
