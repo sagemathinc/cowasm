@@ -10,6 +10,7 @@ a similar problem to emscripten's "Full POSIX Sockets over WebSocket Proxy Serve
 
   - https://emscripten.org/docs/porting/networking.html#full-posix-sockets-over-websocket-proxy-server
   - https://github.com/emscripten-core/emscripten/tree/main/tools/websocket_to_posix_proxy
+  - https://github.com/emscripten-core/emscripten/pull/7670  (interesting discussion)
 
 
 Of course, the architecture of the CoWasm solution is massively different.
@@ -403,7 +404,7 @@ export default function socket({
       option_value_ptr: number,
       option_len_ptr: number
     ): number {
-      log("getsockopt", {
+      log("getsockopt !STUB!", {
         socket,
         level,
         option_name,
@@ -423,7 +424,7 @@ export default function socket({
       option_value_ptr: number,
       option_len: number
     ): number {
-      log("setsockopt", {
+      log("setsockopt !STUB!", {
         socket,
         level,
         option_name,
