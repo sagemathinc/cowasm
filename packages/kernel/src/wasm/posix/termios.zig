@@ -30,8 +30,6 @@ pub const constants = .{
     },
 };
 
-//int cfsetispeed(struct termios *termios_p, speed_t speed);
-//int cfsetospeed(struct termios *termios_p, speed_t speed);
 
 // ported from zig/lib/libc/wasi/libc-top-half/musl/src/termios/cfsetospeed.c
 // basically just some pointless implementations that of course don't really matter.
@@ -45,6 +43,7 @@ pub export fn cfsetospeed(tio: *termios.termios, speed: termios.speed_t) c_int {
     return 0;
 }
 
+//int cfsetispeed(struct termios *termios_p, speed_t speed);
 pub export fn cfsetispeed(tio: *termios.termios, speed: termios.speed_t) c_int {
     return if (speed != 0) cfsetospeed(tio, speed) else 0;
 }
@@ -53,20 +52,7 @@ export fn cfgetispeed(tio: *const termios.termios) termios.speed_t {
     return tio.c_cflag & termios.CBAUD;
 }
 
+//int cfsetospeed(struct termios *termios_p, speed_t speed);
 export fn cfgetospeed(tio: *const termios.termios) termios.speed_t {
     return cfgetispeed(tio);
-}
-
-export fn cowasm_termios_get(tio: *const termios.termios, v: [*]termios.tcflag_t) void {
-    v[0] = tio.c_iflag;
-    v[1] = tio.c_oflag;
-    v[2] = tio.c_cflag;
-    v[3] = tio.c_lflag;
-}
-
-export fn cowasm_termios_set(tio: *termios.termios, v: [*]const termios.tcflag_t) void {
-    tio.c_iflag = v[0];
-    tio.c_oflag = v[1];
-    tio.c_cflag = v[2];
-    tio.c_lflag = v[3];
 }

@@ -100,26 +100,13 @@ interface Termios {
   c_lflag: number;
 }
 
-export default function stdio({ posix, callFunction, recv, send, wasi }) {
-  // We use cowasm_termios_set/get instead of just directly setting memory
-  // in the struct to avoid subtle bugs. It's a bit more tedious but more robust
-  // and works if the struct is changed in terms of order, etc.
+export default function stdio({ posix, recv, send, wasi }) {
   function termios_set(tioPtr: number, { c_iflag, c_oflag, c_cflag, c_lflag }) {
     const size = 4;
-    let flagsPtr = 0;
-
-    try {
-      flagsPtr = send.malloc(4 * size); // 4 unsigned ints
-      send.u32(flagsPtr, c_iflag ?? 0);
-      send.u32(flagsPtr + size, c_oflag ?? 0);
-      send.u32(flagsPtr + 2 * size, c_cflag ?? 0);
-      send.u32(flagsPtr + 3 * size, c_lflag ?? 0);
-      callFunction("cowasm_termios_set", tioPtr, flagsPtr);
-    } finally {
-      if (flagsPtr) {
-        send.free(flagsPtr);
-      }
-    }
+    send.u32(tioPtr, c_iflag ?? 0);
+    send.u32(tioPtr + size, c_oflag ?? 0);
+    send.u32(tioPtr + 2 * size, c_cflag ?? 0);
+    send.u32(tioPtr + 3 * size, c_lflag ?? 0);
   }
 
   function termios_get(tioPtr: number): {
@@ -128,22 +115,13 @@ export default function stdio({ posix, callFunction, recv, send, wasi }) {
     c_cflag: number;
     c_lflag: number;
   } {
-    let flagsPtr = 0;
-    try {
-      const size = 4;
-      flagsPtr = send.malloc(4 * size); // 4 unsigned ints
-      callFunction("cowasm_termios_get", tioPtr, flagsPtr);
-      return {
-        c_iflag: recv.u32(flagsPtr),
-        c_oflag: recv.u32(flagsPtr + size),
-        c_cflag: recv.u32(flagsPtr + 2 * size),
-        c_lflag: recv.u32(flagsPtr + 3 * size),
-      };
-    } finally {
-      if (flagsPtr) {
-        send.free(flagsPtr);
-      }
-    }
+    const size = 4;
+    return {
+      c_iflag: recv.u32(tioPtr),
+      c_oflag: recv.u32(tioPtr + size),
+      c_cflag: recv.u32(tioPtr + 2 * size),
+      c_lflag: recv.u32(tioPtr + 3 * size),
+    };
   }
 
   function native_to_wasi(tio_native: Termios): Termios {
