@@ -177,7 +177,7 @@ export default function posix(context: Context): PosixEnv {
             context.callFunction("setErrno", constants.ENOSYS);
           } else {
             console.trace(
-              `WARNING: Posix library raised exception without error code: ${err}`
+              `WARNING: Posix library call to ${name} raised exception without error code: ${err}`
             );
             logNotImplemented(
               `Posix call to ${name} raised exception without error code`,
