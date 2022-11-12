@@ -199,21 +199,24 @@ export default class WasmInstanceSync extends EventEmitter {
     if (dll != null) {
       return this.getFunctionUsingDlopen(name, dll);
     }
-    const f = this._getFunctionCache[name];
-    if (f != null) return f;
+    let f = this._getFunctionCache[name];
+    if (f != null) {
+      return f;
+    }
     if (this.table != null) {
       // first try pointer:
       const getPtr = this.exports[`__WASM_EXPORT__${name}`];
       if (getPtr != null) {
-        const f = this.table.get(getPtr());
+        f = this.table.get(getPtr());
         if (f != null) {
           this._getFunctionCache[name] = f;
           return f;
         }
       }
     }
-    // little advantage to caching this:
-    return this.exports[name] ?? this.instance.env[name];
+    f = this.exports[name] ?? this.instance.env[name];
+    this._getFunctionCache[name] = f;
+    return f;
   }
 
   // Opens dynamic library if not already open, then gets the function.
