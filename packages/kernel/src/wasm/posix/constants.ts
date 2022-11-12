@@ -133,6 +133,7 @@ const CONSTANTS = [
   "SO_TYPE",
   "SO_WIFI_STATUS",
   "SO_ZEROCOPY",
+  "SOL_SOCKET",
 ] as const;
 
 export type Constant = typeof CONSTANTS[number];

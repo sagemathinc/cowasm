@@ -387,15 +387,8 @@ export default function socket({
     },
 
     /*
-    getsockopt, setsockopt – get and set options on sockets
-
-    int
-    getsockopt(int socket, int level, int option_name, void *option_value,
+    int getsockopt(int socket, int level, int option_name, void *option_value,
          socklen_t *option_len);
-
-    int
-    setsockopt(int socket, int level, int option_name, const void *option_value,
-         socklen_t option_len);
     */
     getsockopt(
       socket: number,
@@ -414,9 +407,21 @@ export default function socket({
       if (posix.getsockopt == null) {
         throw Errno("ENOTSUP");
       }
+      const option = posix.getsockopt(
+        native_fd(socket),
+        native_level(level),
+        native_option_name(option_name),
+        recv.i32(option_len_ptr)
+      );
+      send.buffer(option, option_value_ptr);
+      send.i32(option_len_ptr, option.length);
       return 0;
     },
 
+    /*
+    int setsockopt(int socket, int level, int option_name, const void *option_value,
+         socklen_t option_len);
+    */
     setsockopt(
       socket: number,
       level: number,
@@ -434,6 +439,14 @@ export default function socket({
       if (posix.setsockopt == null) {
         throw Errno("ENOTSUP");
       }
+
+      const option = recv.buffer(option_value_ptr, option_len);
+      posix.setsockopt(
+        native_fd(socket),
+        native_level(level),
+        native_option_name(option_name),
+        option
+      );
       return 0;
     },
   };
