@@ -101,6 +101,28 @@ export default function socket({
     return flags;
   }
 
+  function native_level(level: number): number {
+    if (level == constants.SOL_SOCKET) {
+      return posix.constants.SOL_SOCKET;
+    }
+    return level;
+  }
+
+  function native_option_name(option_name: number): number {
+    for (const name in constants) {
+      if (name.startsWith("SO_") && option_name == constants[name]) {
+        const x = posix.constants[name];
+        if (x == null) {
+          throw Error(
+            `unsupported option name "${name}" -- defined in WebAssembly but not natively`
+          );
+        }
+        return x;
+      }
+    }
+    throw Error(`unknown option name ${option_name}`);
+  }
+
   function createWasiFd(native_fd: number): number {
     // TODO: I'm starting the socket fd's at 1024 entirely because
     // if wstart at the default smallest possible when doing
