@@ -9,7 +9,7 @@ import socket
 # supported properly in getaddrinfo.
 #s = socket.create_server(("", 2000), family=socket.AF_INET)
 
-s = socket.create_server(("127.0.0.1", 2000))
+s = socket.create_server(("localhost", 2000))
 s.listen(1)
 
 print("listening on port 2000")

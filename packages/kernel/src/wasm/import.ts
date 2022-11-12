@@ -155,7 +155,9 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     await this.init();
     if (!this.worker) {
       throw Error(
-        `callWithString - bug; name=${name}, str=${JSON.stringify(str)}`
+        `callWithString (name=${JSON.stringify(name)}, str='${JSON.stringify(
+          str
+        )}') - worker is not running`
       );
     }
     this.callId += 1;
