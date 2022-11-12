@@ -190,7 +190,7 @@ fn recv(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
         return null;
     }
     // Receive the data.
-    std.debug.print("socket_fd={}, buffer={*}, length={}, flags={}\n", .{ socket_fd, buffer, length, flags });
+    // std.debug.print("socket_fd={}, buffer={*}, length={}, flags={}\n", .{ socket_fd, buffer, length, flags });
     const bytes_received = clib.recv(socket_fd, buffer, length, flags);
     if (bytes_received < 0) {
         node.throwErrno(env, "error receiving data from socket");
@@ -253,9 +253,13 @@ fn accept(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value
     const socket_fd = node.i32FromValue(env, argv[0], "socket_fd") catch return null;
 
     var sockaddr: clib.sockaddr = undefined;
-    var addrlen: clib.socklen_t = undefined;
+    // NOTE: On linux it's required that addrlen be initialized with
+    // the size of sockaddr, but on macOS it isn't.
+    var addrlen: clib.socklen_t = @sizeOf(clib.sockaddr);
+    // std.debug.print("accept(socket_fd={}, sockaddr={*}, addrlen={*})\n", .{ socket_fd, &sockaddr, &addrlen });
     const fd = clib.accept(socket_fd, &sockaddr, &addrlen);
     if (fd == -1) {
+        // std.debug.print("calling accept on socket_fd failed -- errno={}\n", .{@import("util.zig").getErrno()});
         node.throwErrno(env, "error calling accept on network socket");
         return null;
     }

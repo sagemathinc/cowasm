@@ -1,11 +1,23 @@
+"""
+
+Run this via
+
+    python-wasm server.py
+
+NOTE: I haven't implemented checking for signals when blocking on
+posix-node yet, so you have to hit control+Z then kill the job,
+rather than control+C.
+
+"""
+
 import socket
 
-# TODO: ipv6 not fully supported yet in posix-node/src/socket.zig for
-# address.
-#s = socket.create_server(("", 2000), family=socket.AF_INET6)
+# TODO: ipv6 is not supported yet in posix-node/src/socket.zig.
+# See comments there and use this code to test it:
+#s = socket.create_server(("localhost", 2000), family=socket.AF_INET6)
 
-# TODO: when I try "" then "wildcard resolved to multiple address"
-# is hit in socketmodule.c, perhaps due to some option not being
+# TODO: when I try "" for the address then "wildcard resolved to multiple address"
+# is hit in socketmodule.c, probably due to some option not being
 # supported properly in getaddrinfo.
 #s = socket.create_server(("", 2000), family=socket.AF_INET)
 
