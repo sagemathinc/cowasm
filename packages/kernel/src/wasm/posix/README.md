@@ -9,3 +9,6 @@ because that is what motivated writing this, and it's easiest to write tests in 
 
 There will be similar remarks about other components of CoWasm, probably.
 
+In particular, lots of tests that you would expect to be here are in
+
+    packages/python-wasm/src/test/posix/

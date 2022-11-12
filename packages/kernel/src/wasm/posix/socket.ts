@@ -40,12 +40,6 @@ import debug from "debug";
 
 const log = debug("posix:socket");
 
-// ** NOTE ** -- we explicitly disable socket via the "true" below
-// until everything is implemented.  Otherwise the test suite
-// and installing pip and many other things break half-way through.
-// Re-enable this when finishing.
-const TEMPORARILY_DISABLED = false;
-
 export default function socket({
   callFunction,
   posix,
@@ -54,10 +48,6 @@ export default function socket({
   send,
   memory,
 }) {
-  if (TEMPORARILY_DISABLED) {
-    posix = {};
-  }
-
   function sendNativeSockaddr(sockaddr, ptr: number) {
     sendSockaddr(
       send,
@@ -110,8 +100,16 @@ export default function socket({
     return flags;
   }
 
-  function create_wasi_fd(native_fd: number): number {
-    const wasi_fd = wasi.getUnusedFileDescriptor();
+  function createWasiFd(native_fd: number): number {
+    // TODO: I'm starting the socket fd's at 1024 entirely because
+    // if wstart at the default smallest possible when doing
+    // "python-wasm -m pip" it crashes, since the fd=4 gets assigned
+    // to some socket for a moment, then freed and then 4 gets used
+    // for a directory (maybe at the same time), and this somehow
+    // confuses things.  Maybe there is a bug somewhere in WASI or Python.
+    // For now we just workaround it by putting the socket fd's
+    // way out of reach of the normal file fd's.
+    const wasi_fd = wasi.getUnusedFileDescriptor(1024);
     const STDIN = wasi.FD_MAP.get(0);
     wasi.FD_MAP.set(wasi_fd, {
       real: native_fd,
@@ -154,7 +152,7 @@ export default function socket({
       if (!inheritable) {
         posix.set_inheritable(native_fd, inheritable);
       }
-      return create_wasi_fd(native_fd);
+      return createWasiFd(native_fd);
     },
 
     // int bind(int socket, const struct sockaddr *address, socklen_t address_len);
@@ -384,7 +382,58 @@ export default function socket({
       sendNativeSockaddr(sockaddr, sockaddrPtr);
       send.u32(socklenPtr, sockaddr.sa_len);
       log("accept got back ", { fd, sockaddr });
-      return create_wasi_fd(fd);
+      return createWasiFd(fd);
+    },
+
+    /*
+    getsockopt, setsockopt – get and set options on sockets
+
+    int
+    getsockopt(int socket, int level, int option_name, void *option_value,
+         socklen_t *option_len);
+
+    int
+    setsockopt(int socket, int level, int option_name, const void *option_value,
+         socklen_t option_len);
+    */
+    getsockopt(
+      socket: number,
+      level: number,
+      option_name: number,
+      option_value_ptr: number,
+      option_len_ptr: number
+    ): number {
+      log("getsockopt", {
+        socket,
+        level,
+        option_name,
+        option_value_ptr,
+        option_len_ptr,
+      });
+      if (posix.getsockopt == null) {
+        throw Errno("ENOTSUP");
+      }
+      return 0;
+    },
+
+    setsockopt(
+      socket: number,
+      level: number,
+      option_name: number,
+      option_value_ptr: number,
+      option_len: number
+    ): number {
+      log("setsockopt", {
+        socket,
+        level,
+        option_name,
+        option_value_ptr,
+        option_len,
+      });
+      if (posix.setsockopt == null) {
+        throw Errno("ENOTSUP");
+      }
+      return 0;
     },
   };
 }

@@ -201,6 +201,7 @@ ac_cv_func_recvfrom=yes
 ac_cv_func_connect=yes
 ac_cv_func_sendto=yes
 ac_cv_func_accept=yes
+ac_cv_func_setsockopt=yes
 
 # Needed for the curses extension module.
 ac_cv_header_term_h=yes
