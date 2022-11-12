@@ -25,7 +25,8 @@ pyexpat pyexpat.c
 # OpenSSL bindings
 _ssl _ssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/wasm/include $(abs_srcdir)/../../../openssl/dist/wasm/lib/libssl.a $(abs_srcdir)/../../../openssl/dist/wasm/lib/libcrypto.a
 
-_hashlib _hashopenssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/wasm/include $(abs_srcdir)/../../../openssl/dist/wasm/lib/libcrypto.a
+# Causes trouble...
+# _hashlib _hashopenssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/wasm/include $(abs_srcdir)/../../../openssl/dist/wasm/lib/libcrypto.a
 
 # text encodings and unicode
 
