@@ -573,8 +573,12 @@ export default function unistd(context) {
     },
 
     // This is not a system call exactly.  It's used by WASI.
+    // It is supposed to "Adjust the flags associated with a file descriptor."
+    // and it doesn't acctually just set them because WASI doesn't
+    // have a way to get.  So what we do is change the three things
+    // that can be changed and leave everything else alone!
     fcntlSetFlags: (fd: number, flags: number): number => {
-      if (posix.fcntlSetFlags == null) {
+      if (posix.fcntlSetFlags == null || posix.fcntlGetFlags == null) {
         notImplemented("fcntlSetFlags");
         return 0;
       }
@@ -583,23 +587,24 @@ export default function unistd(context) {
         throw Error("invalid file descriptor");
       }
 
-      let native_flags = 0;
-      const flags0 = flags;
-      for (const name of ["O_CLOEXEC", "O_NONBLOCK"]) {
+      let current_native_flags = posix.fcntlGetFlags(real_fd);
+      let new_native_flags = current_native_flags;
+      for (const name of ["O_NONBLOCK", "O_APPEND", "O_ASYNC"]) {
         if (flags & constants[name]) {
-          native_flags |= posix.constants[name];
-          flags &= ~constants[name];
+          // do want name
+          new_native_flags |= posix.constants[name];
+        } else {
+          // do not want name
+          new_native_flags &= ~posix.constants[name];
         }
       }
-      if (flags != 0) {
-        // some flags we don't know about
-        throw Error(
-          `fcntlSetFlags: input flags=${flags0} contains unsupported flags`
-        );
+
+      if (current_native_flags == new_native_flags) {
+        log("fcntlSetFlags - unchanged");
+      } else {
+        log("fcntlSetFlags ", current_native_flags, " to", new_native_flags);
+        posix.fcntlSetFlags(real_fd, new_native_flags);
       }
-      log("fcntlSetFlags", { real_fd, native_flags }, { fd, flags0 });
-      posix.fcntlSetFlags(real_fd, native_flags);
-      log("set flags to ", posix.fcntlGetFlags(real_fd));
       return 0;
     },
   };

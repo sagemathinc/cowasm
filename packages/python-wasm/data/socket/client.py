@@ -15,7 +15,7 @@ import socket
 def f():
     conn = socket.create_connection(("localhost", 2000))
     print("connected to port 2000")
-    conn.settimeout(1)
+    conn.settimeout(2)
 
     print("*" * 80)
     print("conn =", conn)

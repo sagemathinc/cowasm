@@ -124,7 +124,7 @@ fn fcntlSetFlags(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.nap
 fn fcntlGetFlags(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
     const argv = node.getArgv(env, info, 1) catch return null;
     const fd = node.i32FromValue(env, argv[0], "fd") catch return null;
-    var flags = clib.fcntl(fd, clib.F_GETFL, @intCast(c_int, 0));
+    const flags = clib.fcntl(fd, clib.F_GETFL, @intCast(c_int, 0));
     if (flags < 0) {
         node.throwErrno(env, "fcntlGetFlags - failed");
         return null;
