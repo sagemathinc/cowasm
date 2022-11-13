@@ -19,18 +19,12 @@ export interface WASIBindings {
   // Path
   path: any;
 
-  // The following modules arne't used directly by this module yet, but are used
+  // TODO: The following modules aren't used directly by this module yet, but are used
   // right now in python-wasm/wasm/worker/import.ts
+  // They almost certainly should not be here!
   os?: any;
   child_process?: any;
-
-  // This is the object exported from the posix-node module, which optionally
-  // provides misc posix functionality in some circumstances (e.g., nodes
-  // on mac/linux).  When defined, additional functionality may be enabled.
   posix?: any;
-
-  // set flags of a file descriptor, e.g., via fcntl(fd, F_SETFL, flags) in posix.
-  fcntlSet?: (fd: number, flags: number) => void;
 }
 
 export type WASIArgs = string[];

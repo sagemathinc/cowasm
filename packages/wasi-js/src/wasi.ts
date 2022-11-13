@@ -602,10 +602,8 @@ export default class WASI {
         // Are we allowed to set flags.  This more means: "is it implemented?".
         // Right now we only set this flag for sockets (that's done in the
         // external kernel module in src/wasm/posix/socket.ts).
-        const stats = CHECK_FD(fd, WASI_RIGHT_FD_FDSTAT_SET_FLAGS);
-        const { posix } = this.bindings;
-        if (posix?.fcntlSetFlags != null) {
-          posix.fcntlSetFlags(stats.real, flags);
+        CHECK_FD(fd, WASI_RIGHT_FD_FDSTAT_SET_FLAGS);
+        if (this.wasiImport.sock_fcntlSetFlags(fd, flags) == 0) {
           return WASI_ESUCCESS;
         }
         return WASI_ENOSYS;
@@ -1742,6 +1740,10 @@ export default class WASI {
       },
 
       sock_shutdown() {
+        return WASI_ENOSYS;
+      },
+
+      sock_fcntlSetFlags(_fd: number, _flags: number) {
         return WASI_ENOSYS;
       },
     };

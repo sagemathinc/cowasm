@@ -571,6 +571,37 @@ export default function unistd(context) {
       }
       return callWithString("chdir", dir);
     },
+
+    // This is not a system call exactly.  It's used by WASI.
+    fcntlSetFlags: (fd: number, flags: number): number => {
+      if (posix.fcntlSetFlags == null) {
+        notImplemented("fcntlSetFlags");
+        return 0;
+      }
+      const real_fd = wasi.FD_MAP.get(fd)?.real;
+      if (real_fd == null) {
+        throw Error("invalid file descriptor");
+      }
+
+      let native_flags = 0;
+      const flags0 = flags;
+      for (const name of ["O_CLOEXEC", "O_NONBLOCK"]) {
+        if (flags & constants[name]) {
+          native_flags |= posix.constants[name];
+          flags &= ~constants[name];
+        }
+      }
+      if (flags != 0) {
+        // some flags we don't know about
+        throw Error(
+          `fcntlSetFlags: input flags=${flags0} contains unsupported flags`
+        );
+      }
+      log("fcntlSetFlags", { real_fd, native_flags }, { fd, flags0 });
+      posix.fcntlSetFlags(real_fd, native_flags);
+      log("set flags to ", posix.fcntlGetFlags(real_fd));
+      return 0;
+    },
   };
 
   return unistd;
