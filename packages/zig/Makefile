@@ -32,7 +32,7 @@ OS = $(shell uname -s  | sed s/Darwin/macos/ | sed s/Linux/linux/)
 # I also added a comment here: https://github.com/ziglang/zig/issues/13303#issuecomment-1309181780
 
 # for dev versions:
-VERSION = 0.11.0-dev.38+b40fc7018
+VERSION = 0.11.0-dev.152+8a5818535
 URL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
 TARBALL = ${UPSTREAM}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
