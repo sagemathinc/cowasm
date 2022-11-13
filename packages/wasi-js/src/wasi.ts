@@ -126,6 +126,17 @@ const STDOUT_DEFAULT_RIGHTS =
   WASI_RIGHT_POLL_FD_READWRITE;
 const STDERR_DEFAULT_RIGHTS = STDOUT_DEFAULT_RIGHTS;
 
+// I don't know what this *should* be, but I'm
+// adding things as they are expected/implemented.
+export const SOCKET_DEFAULT_RIGHTS =
+  WASI_RIGHT_FD_DATASYNC |
+  WASI_RIGHT_FD_READ |
+  WASI_RIGHT_FD_WRITE |
+  WASI_RIGHT_FD_ADVISE |
+  WASI_RIGHT_FD_FILESTAT_GET |
+  WASI_RIGHT_POLL_FD_READWRITE |
+  WASI_RIGHT_FD_FDSTAT_SET_FLAGS;
+
 const msToNs = (ms: number) => {
   const msInt = Math.trunc(ms);
   const decimal = BigInt(Math.round((ms - msInt) * 1000000));
@@ -569,8 +580,34 @@ export default class WASI {
         return WASI_ESUCCESS;
       }),
 
-      fd_fdstat_set_flags: wrap((fd: number, _flags: number) => {
-        CHECK_FD(fd, WASI_RIGHT_FD_FDSTAT_SET_FLAGS);
+      /*
+      fd_fdstat_set_flags
+
+      Docs From upstream:
+      Adjust the flags associated with a file descriptor.
+      Note: This is similar to `fcntl(fd, F_SETFL, flags)` in POSIX.
+
+      This could be supported via posix-node in general (when available)
+      for sockets and stdin/stdout/stderr and genuine files (but not
+      for memfs, obviously).  It's typically used by C programs for
+      locking files, but most importantly for us, for setting whether
+      reading from a fd is nonblocking (very important for stdin)
+      or should time out after a certain amount of time (e.g., very
+      important for a network socket).
+
+      For now we implement this in a very small number of cases
+      and return "Function not implemented" otherwise.
+      */
+      fd_fdstat_set_flags: wrap((fd: number, flags: number) => {
+        // Are we allowed to set flags.  This more means: "is it implemented?".
+        // Right now we only set this flag for sockets (that's done in the
+        // external kernel module in src/wasm/posix/socket.ts).
+        const stats = CHECK_FD(fd, WASI_RIGHT_FD_FDSTAT_SET_FLAGS);
+        const { posix } = this.bindings;
+        if (posix?.fcntlSetFlags != null) {
+          posix.fcntlSetFlags(stats.real, flags);
+          return WASI_ESUCCESS;
+        }
         return WASI_ENOSYS;
       }),
 
@@ -1750,7 +1787,7 @@ export default class WASI {
 
   // return an unused file descriptor.  It *will* be the smallest
   // available file descriptor, except we don't use 0,1,2
-  getUnusedFileDescriptor(start=3) {
+  getUnusedFileDescriptor(start = 3) {
     let fd = start;
     while (this.FD_MAP.has(fd)) {
       fd += 1;

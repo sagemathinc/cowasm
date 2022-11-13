@@ -2,16 +2,6 @@ import type WASIFileSystem from "./filesystem";
 export type { WASIFileSystem };
 import { WASI_FILETYPE } from "./constants";
 
-// export interface WASIFileSystem extends FileSystem {
-//   constants: { [name: string]: number };
-//   open: (
-//     path: string,
-//     flags: number | string,
-//     mode?: string
-//   ) => Promise<number>;
-//   openSync: (path: string, flags: number | string, mode?: string) => number;
-// }
-
 export interface WASIBindings {
   // Current high-resolution real time in a bigint
   hrtime: () => bigint;
@@ -29,11 +19,18 @@ export interface WASIBindings {
   // Path
   path: any;
 
-  // The following modules arne't used directly by this module yet, but is used
+  // The following modules arne't used directly by this module yet, but are used
   // right now in python-wasm/wasm/worker/import.ts
   os?: any;
   child_process?: any;
+
+  // This is the object exported from the posix-node module, which optionally
+  // provides misc posix functionality in some circumstances (e.g., nodes
+  // on mac/linux).  When defined, additional functionality may be enabled.
   posix?: any;
+
+  // set flags of a file descriptor, e.g., via fcntl(fd, F_SETFL, flags) in posix.
+  fcntlSet?: (fd: number, flags: number) => void;
 }
 
 export type WASIArgs = string[];

@@ -32,6 +32,7 @@ while True:
     conn, addr = s.accept()
     print("Accepted connection", conn, addr)
     try:
+        import time; time.sleep(2)
         print("Sending ", SEND)
         conn.send(SEND)
         print("Receiving...")

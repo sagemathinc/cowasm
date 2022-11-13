@@ -36,7 +36,7 @@ import {
   sendSockaddr,
 } from "./netdb";
 import constants from "./constants";
-import { constants as wasi_constants } from "wasi-js";
+import { constants as wasi_constants, SOCKET_DEFAULT_RIGHTS } from "wasi-js";
 import debug from "debug";
 
 const log = debug("posix:socket");
@@ -133,10 +133,12 @@ export default function socket({
     // For now we just workaround it by putting the socket fd's
     // way out of reach of the normal file fd's.
     const wasi_fd = wasi.getUnusedFileDescriptor(1024);
-    const STDIN = wasi.FD_MAP.get(0);
     wasi.FD_MAP.set(wasi_fd, {
       real: native_fd,
-      rights: STDIN.rights, // TODO: just use rights for stdin???
+      rights: {
+        base: SOCKET_DEFAULT_RIGHTS,
+        inheriting: BigInt(0),
+      },
       filetype: wasi_constants.WASI_FILETYPE_SOCKET_STREAM,
     });
     return wasi_fd;

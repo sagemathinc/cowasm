@@ -1,5 +1,8 @@
 import { asyncPython } from "../../node";
 
+const CREATE_SERVER =
+  "import socket; s = socket.create_server(('localhost', 0)); s.listen(1)";
+
 // See also packages/python-wasm/data/socket for some python scripts
 // you can run directly.
 
@@ -14,9 +17,7 @@ test("create a client and a server and have them send/recv strings", async () =>
   const server = await asyncPython();
 
   // We let Python assign an available port.
-  await server.exec(
-    "import socket; s = socket.create_server(('localhost', 0)); s.listen(1)"
-  );
+  await server.exec(CREATE_SERVER);
   // Get the port that Python assigned:
   const port = eval(await server.repr("s.getsockname()[1]"));
   expect(port).toBeGreaterThan(0);
@@ -40,6 +41,29 @@ conn.close()
   // Confirm that the server received CoWasm
   expect(await server.repr("received")).toBe("b'CoWasm'");
 
+  client.kernel.terminate();
+  server.kernel.terminate();
+});
+
+// socket.settimeout is very commonly used on sockets and uses fd_fdstat_set_flags in WASI
+// so we better test that it doesn't crash.
+test("settimeout on a socket", async () => {
+  const client = await asyncPython();
+  const server = await asyncPython();
+
+  await server.exec(CREATE_SERVER);
+  const port = eval(await server.repr("s.getsockname()[1]"));
+  await client.exec(
+    `import socket; conn = socket.create_connection(("localhost", ${port}));`
+  );
+  // TODO: this now doesn't fail due to fd_fdstat_set_flags being implemented.
+  // However it also doesn't actually work, i.e., no timeout is actually
+  // enforced.  This may be due to further missing wasi functionality or
+  // something just not being implemented correctly.
+  // TODO: add a test that fails properly due to the timeout and also get it to
+  // work correctly in general.  Not important for today though.
+  await client.exec("conn.settimeout(1)");
+  // that the above didn't crash is success.
   client.kernel.terminate();
   server.kernel.terminate();
 });
