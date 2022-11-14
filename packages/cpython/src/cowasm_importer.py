@@ -1,5 +1,4 @@
 # See https://dev.to/dangerontheranger/dependency-injection-with-import-hooks-in-python-3-5hap
-
 """
 
 When working on this, here's how to update things after a change:
@@ -7,7 +6,6 @@ When working on this, here's how to update things after a change:
 ~/cowasm/packages/cpython$  rm dist/wasm/.install-data && cp src/cowasm_importer.py dist/wasm/lib/python3.11/site-packages/ && make && cd ../python-wasm/ && make && cd ../cpython/
 
 """
-
 
 import importlib
 import importlib.abc
@@ -27,9 +25,14 @@ temporary_directory = None
 
 def site_packages_directory():
     for path in sys.path:
-        if path.endswith('site-packages'):
+        if path.endswith('/site-packages'):
             # In dev mode using the real filesystem
             return path
+    # didn't find it so try again with different heuristic
+    for path in sys.path:
+        if path.endswith('/lib-dynload'):
+            # this is typically inside site-packages
+            return os.path.dirname(path)
 
 
 def get_package_directory():
@@ -132,11 +135,6 @@ def init():
     sys.meta_path.append(finder)
 
 
-"""
-TODO: This is really dumb for now!
-"""
-
-
 # cowasm/packages/cpython/dist/wasm/lib/python3.11/site-packages
 def init_dev():
     if 'PYTHONREGRTEST_UNICODE_GUARD' in os.environ:
@@ -146,11 +144,19 @@ def init_dev():
 
     init()
 
+    # TODO: the following is hardcoded and VERY simple for now.  We'll
+    # make something much more general once we have pip working.
+
     if '/usr/lib/python3.11' in sys.path:
         # In the browser
         cowasm_modules['numpy'] = '/usr/lib/python3.11/numpy.tar.xz'
         cowasm_modules['mpmath'] = '/usr/lib/python3.11/mpmath.tar.xz'
         cowasm_modules['sympy'] = '/usr/lib/python3.11/sympy.tar.xz'
+    elif '/cowasm/usr/lib/python3.11' in sys.path:
+        # In the browser
+        cowasm_modules['numpy'] = '/cowasm/usr/lib/python3.11/numpy.tar.xz'
+        cowasm_modules['mpmath'] = '/cowasm/usr/lib/python3.11/mpmath.tar.xz'
+        cowasm_modules['sympy'] = '/cowasm/usr/lib/python3.11/sympy.tar.xz'
     else:
         # On a server
         pkgs = site_packages_directory()

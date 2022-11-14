@@ -29,7 +29,7 @@ function getOptions(wasmImport, opts?: Options) {
     ...process.env,
     TERM,
     TERMCAP: join(path, "..", "termcap"),
-    PS1: "cowasm$ ",
+    PS1: "(cowasm)$ ",
     ...opts?.env,
   };
   //PS1: 'cowasm: (pwd | sed "s|^$HOME|~|")$ '
