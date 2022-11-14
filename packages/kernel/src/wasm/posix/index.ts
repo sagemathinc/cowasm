@@ -121,7 +121,7 @@ export default function posix(context: Context): PosixEnv {
       nativeErrnoToSymbol[context.posix.constants[symbol]] = symbol;
     }
   }
-  function setErrnoFromNative(nativeErrno: number, name: string): void {
+  function setErrnoFromNative(nativeErrno: number, name: string, args): void {
     if (nativeErrno == 0) {
       // TODO: could put a log or something in that name raised error with no code.
       context.callFunction("setErrno", nativeErrno);
@@ -133,7 +133,7 @@ export default function posix(context: Context): PosixEnv {
       const wasiErrno = constants[symbol];
       if (wasiErrno != null) {
         if (logError.enabled) {
-          logError({ name, nativeErrno, wasiErrno, symbol });
+          logError({ name, nativeErrno, wasiErrno, symbol, args });
         }
         context.callFunction("setErrno", wasiErrno);
         return;
@@ -178,7 +178,7 @@ export default function posix(context: Context): PosixEnv {
         if (err.wasiErrno != null) {
           context.callFunction("setErrno", err.wasiErrno);
         } else if (err.code != null) {
-          setErrnoFromNative(parseInt(err.code), name);
+          setErrnoFromNative(parseInt(err.code), name, args);
         } else {
           // err.code not yet set (TODO), so we log and try heuristic.
           // On error, for now -1 is returned, and errno should get set to some sort of error indicator
