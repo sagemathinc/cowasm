@@ -589,7 +589,7 @@ export default function unistd(context) {
 
       let current_native_flags = posix.fcntlGetFlags(real_fd);
       let new_native_flags = current_native_flags;
-      for (const name of ["O_NONBLOCK", "O_APPEND", "O_ASYNC"]) {
+      for (const name of ["O_NONBLOCK", "O_APPEND"]) {
         if (flags & constants[name]) {
           // do want name
           new_native_flags |= posix.constants[name];
