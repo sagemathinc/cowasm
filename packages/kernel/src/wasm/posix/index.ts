@@ -120,7 +120,7 @@ export default function posix(context: Context): PosixEnv {
       nativeErrnoToSymbol[context.posix.constants[symbol]] = symbol;
     }
   }
-  function setErrnoFromNative(nativeErrno: number) {
+  function setErrnoFromNative(nativeErrno: number, name: string): void {
     // The error code comes from native posix, so we translate it to WASI first
     const symbol = nativeErrnoToSymbol[nativeErrno];
     if (symbol != null) {
@@ -130,10 +130,13 @@ export default function posix(context: Context): PosixEnv {
         return;
       }
     }
-    logNotImplemented(
-      "Unable to map nativeErrno (please update code)",
-      nativeErrno
-    );
+
+    const mesg =
+      symbol != null
+        ? `WARNING in posix '${name}': Unable to map nativeErrno ${nativeErrno}: add ${symbol} to WASM posix constants in @cowasm/kernel`
+        : `WARNING in posix '${name}': Unable to map nativeErrno ${nativeErrno}: add native symbol corresponding to errno=${nativeErrno} to the posix-node package`;
+    console.warn(mesg);
+    logNotImplemented(mesg);
   }
 
   // It's critical to ensure the directories of the host env is the same as
@@ -166,7 +169,7 @@ export default function posix(context: Context): PosixEnv {
         if (err.wasiErrno != null) {
           context.callFunction("setErrno", err.wasiErrno);
         } else if (err.code != null) {
-          setErrnoFromNative(parseInt(err.code));
+          setErrnoFromNative(parseInt(err.code), name);
         } else {
           // err.code not yet set (TODO), so we log and try heuristic.
           // On error, for now -1 is returned, and errno should get set to some sort of error indicator

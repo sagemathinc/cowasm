@@ -4,6 +4,7 @@ const CONSTANTS = [
   "AT_FDCWD",
   "E2BIG",
   "EACCES",
+  "EAGAIN",
   "EBADF",
   "EBUSY",
   "ECHILD",
