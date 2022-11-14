@@ -13,9 +13,13 @@ import socket, time
 
 
 def f():
-    conn = socket.create_connection(("localhost", 2000))
+    # TODO: This currently "hangs for 5 seconds" even
+    # though the other side is ready. The problem
+    # is that poll_oneoff or pollSocket (in posix-node)
+    # need to be improved.
+    conn = socket.create_connection(("localhost", 2000), timeout=5)
     print("connected to port 2000")
-    conn.settimeout(1)
+    #conn.settimeout(1)
 
     print("*" * 80)
     print("conn =", conn)
@@ -29,7 +33,7 @@ def f():
     print(conn.send(b"CoWasm"))
     print("time = ", time.time() - t)
 
-    conn.shutdown(socket.SHUT_RD)
+    #conn.shutdown(socket.SHUT_RD)
 
 
 f()
