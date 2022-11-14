@@ -122,6 +122,11 @@ export default function posix(context: Context): PosixEnv {
     }
   }
   function setErrnoFromNative(nativeErrno: number, name: string): void {
+    if (nativeErrno == 0) {
+      // TODO: could put a log or something in that name raised error with no code.
+      context.callFunction("setErrno", nativeErrno);
+      return;
+    }
     // The error code comes from native posix, so we translate it to WASI first
     const symbol = nativeErrnoToSymbol[nativeErrno];
     if (symbol != null) {
@@ -184,7 +189,7 @@ export default function posix(context: Context): PosixEnv {
             context.callFunction("setErrno", constants.ENOSYS);
           } else {
             console.trace(
-              `WARNING: Posix library call to ${name} raised exception without error code: ${err}`
+              `WARNING: Posix library call to ${name} raised exception without error code.  The raised error is '${err}'`
             );
             logNotImplemented(
               `Posix call to ${name} raised exception without error code`,

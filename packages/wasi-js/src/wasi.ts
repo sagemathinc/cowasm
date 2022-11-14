@@ -1526,9 +1526,16 @@ export default class WASI {
         return WASI_ESUCCESS;
       }),
 
-      // TODO: this is NOT implemented properly yet.  It does read all the data from sin, etc.
-      // correctly now, but it doesn't actually work correctly when there are multiple subscriptions.
-      // Of course that's much harder, since it requires socket stuff.
+      // poll_oneoff: Concurrently poll for the occurrence of a set of events.
+      //
+      // TODO: this is NOT implemented properly yet in general.
+      // It does read all the data from sin, etc.
+      // correctly now, but it doesn't actually work correctly
+      // when there are multiple subscriptions.
+      // It works for:
+      //     - one timer
+      //     - one file descriptor corresponding to a socket and one timer,
+      //       which is what poll with 1 fd and a timeout create.
       poll_oneoff: (
         sin: number,
         sout: number,
@@ -1539,7 +1546,13 @@ export default class WASI {
         let name = "";
 
         // May have to wait this long (this gets computed below in the WASI_EVENTTYPE_CLOCK case).
+
         let waitTimeNs = BigInt(0);
+
+        let fd = -1;
+        let fd_type: "read" | "write" = "read";
+        let fd_timeout_ms = 0;
+
         const startNs = BigInt(this.bindings.hrtime());
         this.refreshMemory();
         let last_sin = sin;
@@ -1579,6 +1592,9 @@ export default class WASI {
               const absolute = subclockflags === 1;
               if (log.enabled) {
                 log(name, { clockid, timeout, absolute });
+              }
+              if (!absolute) {
+                fd_timeout_ms = Number(timeout / BigInt(1000000));
               }
 
               let e = WASI_ESUCCESS;
@@ -1627,7 +1643,8 @@ export default class WASI {
               of time if getStdin defined; otherwise, we at least *pause* for a moment
               (to avoid cpu burn) if this.sleep is available.
               */
-              const fd = this.view.getUint32(sin, true);
+              fd = this.view.getUint32(sin, true);
+              fd_type = type == WASI_EVENTTYPE_FD_READ ? "read" : "write";
               sin += 4;
               log(name, "fd =", fd);
               sin += 28;
@@ -1642,6 +1659,8 @@ export default class WASI {
 
               nevents += 1;
               /*
+              TODO: for now for stdin we are just doing a dumb hack.
+
               We just do something really naive, which is "pause for a little while".
               It seems to work for every application I have so far, from Python to
               to ncurses, etc.  This also makes it easy to have non-blocking sleep
@@ -1680,6 +1699,15 @@ export default class WASI {
         }
 
         this.view.setUint32(neventsPtr, nevents, true);
+
+        if (nevents == 2 && fd >= 0) {
+          const r = this.wasiImport.sock_pollSocket(fd, fd_type, fd_timeout_ms);
+          if (r != WASI_ENOSYS) {
+            // special implementation from outside
+            return r;
+          }
+          // fall back to below
+        }
 
         // Account for the time it took to do everything above, which
         // can be arbitrarily long:
@@ -1769,6 +1797,14 @@ export default class WASI {
       },
 
       sock_fcntlSetFlags(_fd: number, _flags: number) {
+        return WASI_ENOSYS;
+      },
+
+      sock_pollSocket(
+        _fd: number,
+        _eventtype: "read" | "write",
+        _timeout_ms: number
+      ) {
         return WASI_ENOSYS;
       },
     };

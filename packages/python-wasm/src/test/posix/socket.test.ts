@@ -50,20 +50,42 @@ conn.close()
 test("settimeout on a socket", async () => {
   const client = await asyncPython();
   const server = await asyncPython();
-
   await server.exec(CREATE_SERVER);
   const port = eval(await server.repr("s.getsockname()[1]"));
+  expect(port).toBeGreaterThan(0);
+
+  (async () => {
+    try {
+      // We wrap this since it is supposed to throw when we terminate the server.
+      await server.exec(`
+conn, addr = s.accept()
+import time; time.sleep(0.25)
+conn.send(b"Hello")
+# never close conn and never send anything.
+time.sleep(9999)
+  `);
+    } catch (err) {}
+  })();
   await client.exec(
-    `import socket; conn = socket.create_connection(("localhost", ${port}));`
+    `import socket; conn = socket.create_connection(("localhost", ${port}))`
   );
-  // TODO: this now doesn't fail due to fd_fdstat_set_flags being implemented.
-  // However it also doesn't actually work, i.e., no timeout is actually
-  // enforced.  This may be due to further missing wasi functionality or
-  // something just not being implemented correctly.
-  // TODO: add a test that fails properly due to the timeout and also get it to
-  // work correctly in general.  Not important for today though.
-  await client.exec("conn.settimeout(1)");
-  // that the above didn't crash is success.
+  // Set a timeout and see that reading still happens quickly.
+  await client.exec("conn.settimeout(1000)");
+  // Get Hello and confirm it worked.
+  expect(await client.repr("conn.recv(5)")).toBe("b'Hello'");
+
+  // Make timeout short:
+  await client.exec("conn.settimeout(0.5)");
+  // Try to get more and confirm it stopped trying
+  // quickly a bit after the timeout, showing the timeout
+  // actually works.
+  const start = new Date().valueOf();
+  try {
+    await client.repr("conn.recv(6)");
+  } catch (err) {}
+  expect(new Date().valueOf() - start).toBeLessThan(1000); // less than 1 second.
+  expect(new Date().valueOf() - start).toBeGreaterThan(400);
+
   client.kernel.terminate();
   server.kernel.terminate();
 });

@@ -331,6 +331,8 @@ interface PosixFunctions {
   // event loop is blocked by blocking WebAssembly code.
   watchForSignal: (signal: number) => void;
   getSignalState: (signal: number) => boolean;
+
+  pollSocket: (fd: number, events: number, timeout_ms: number) => void;
 }
 
 export type Posix = Partial<PosixFunctions>;

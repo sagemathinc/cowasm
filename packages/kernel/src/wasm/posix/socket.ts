@@ -473,5 +473,22 @@ export default function socket({
       );
       return 0;
     },
+
+    pollSocket(
+      socket: number,
+      type: "read" | "write",
+      timeout_ms: number
+    ): number {
+      log("pollForSocket", { socket, type, timeout_ms });
+      if (posix.pollSocket == null) {
+        return wasi_constants.WASI_ENOSYS;
+      }
+      posix.pollSocket(
+        native_fd(socket),
+        type == "read" ? constants.POLLIN : constants.POLLOUT,
+        timeout_ms
+      );
+      return 0;
+    },
   };
 }

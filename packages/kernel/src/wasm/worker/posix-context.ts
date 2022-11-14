@@ -101,7 +101,7 @@ export default class PosixContext {
     // to replace it.  Someday wasi may have more that we have
     // to replace or implement.  See
     //    https://github.com/WebAssembly/wasi-sockets/
-    for (const name of ["recv", "send", "shutdown", "fcntlSetFlags"]) {
+    for (const name of ["recv", "send", "shutdown", "fcntlSetFlags", "pollSocket"]) {
       if (this.posixEnv[name] != null) {
         wasi_snapshot_preview1[`sock_${name}`] = this.posixEnv[name];
       }
