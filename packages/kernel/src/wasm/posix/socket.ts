@@ -124,7 +124,7 @@ export default function socket({
   }
 
   function createWasiFd(native_fd: number): number {
-    // TODO: I'm starting the socket fd's at 1024 entirely because
+    // TODO: I'm starting the socket fd's at value over 1000 entirely because
     // if wstart at the default smallest possible when doing
     // "python-wasm -m pip" it crashes, since the fd=4 gets assigned
     // to some socket for a moment, then freed and then 4 gets used
@@ -132,7 +132,7 @@ export default function socket({
     // confuses things.  Maybe there is a bug somewhere in WASI or Python.
     // For now we just workaround it by putting the socket fd's
     // way out of reach of the normal file fd's.
-    const wasi_fd = wasi.getUnusedFileDescriptor(1024);
+    const wasi_fd = wasi.getUnusedFileDescriptor(1000);
     wasi.FD_MAP.set(wasi_fd, {
       real: native_fd,
       rights: {

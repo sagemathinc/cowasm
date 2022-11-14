@@ -1526,37 +1526,49 @@ export default class WASI {
         return WASI_ESUCCESS;
       }),
 
+      // TODO: this is NOT implemented properly yet.  It does read all the data from sin, etc.
+      // correctly now, but it doesn't actually work correctly when there are multiple subscriptions.
+      // Of course that's much harder, since it requires socket stuff.
       poll_oneoff: (
         sin: number,
         sout: number,
         nsubscriptions: number,
-        nevents: number
+        neventsPtr: number
       ) => {
-        let eventc = 0;
+        let nevents = 0;
+        let name = "";
 
-        // Have to wait this long (this gets computed below in the WASI_EVENTTYPE_CLOCK case).
+        // May have to wait this long (this gets computed below in the WASI_EVENTTYPE_CLOCK case).
         let waitTimeNs = BigInt(0);
         const startNs = BigInt(this.bindings.hrtime());
         this.refreshMemory();
-        // logToFile("poll_oneoff", sin, sout, nsubscriptions, nevents);
+        let last_sin = sin;
         for (let i = 0; i < nsubscriptions; i += 1) {
           const userdata = this.view.getBigUint64(sin, true);
           sin += 8;
           const type = this.view.getUint8(sin);
           sin += 1;
-          // logToFile(`type=${type}, userdata=${userdata}\n`);
+          sin += 7; // padding
+          if (log.enabled) {
+            if (type == WASI_EVENTTYPE_CLOCK) {
+              name = "poll_oneoff (type=WASI_EVENTTYPE_CLOCK): ";
+            } else if (type == WASI_EVENTTYPE_FD_READ) {
+              name = "poll_oneoff (type=WASI_EVENTTYPE_FD_READ): ";
+            } else {
+              name = "poll_oneoff (type=WASI_EVENTTYPE_FD_WRITE): ";
+            }
+            log(name);
+          }
           switch (type) {
             case WASI_EVENTTYPE_CLOCK: {
               // see packages/zig/dist/lib/libc/include/wasm-wasi-musl/wasi/api.h
-              // Also note that this code was wrong in upstream; they just sort
-              // of guessed at things incorrectly and clearly never tested it once.
-              // For me this at least works to implement sleep in Cpython when
-              // it is using select.
-              sin += 7; // padding
+              // for exactly how these values are encoded.  I carefully looked
+              // at that header and **this is definitely right**.  Same with the fd
+              // in the other case below.
               const clockid = this.view.getUint32(sin, true);
               sin += 4;
               sin += 4; // padding
-              const timestamp = this.view.getBigUint64(sin, true);
+              const timeout = this.view.getBigUint64(sin, true);
               sin += 8;
               //const precision = this.view.getBigUint64(sin, true);
               sin += 8;
@@ -1565,14 +1577,17 @@ export default class WASI {
               sin += 6; // padding
 
               const absolute = subclockflags === 1;
+              if (log.enabled) {
+                log(name, { clockid, timeout, absolute });
+              }
 
               let e = WASI_ESUCCESS;
               const t = now(clockid);
-              // logToFile(t, clockid, timestamp, subclockflags, absolute);
+              // logToFile(t, clockid, timeout, subclockflags, absolute);
               if (t == null) {
                 e = WASI_EINVAL;
               } else {
-                const end = absolute ? timestamp : t + timestamp;
+                const end = absolute ? timeout : t + timeout;
                 const waitNs = end - t;
                 if (waitNs > waitTimeNs) {
                   waitTimeNs = waitNs;
@@ -1584,10 +1599,10 @@ export default class WASI {
               this.view.setUint16(sout, e, true); // error
               sout += 2; // pad offset 2
               this.view.setUint8(sout, WASI_EVENTTYPE_CLOCK);
-              sout += 1; // pad offset 3
+              sout += 1; // pad offset 1
               sout += 5; // padding to 8
 
-              eventc += 1;
+              nevents += 1;
 
               break;
             }
@@ -1596,12 +1611,10 @@ export default class WASI {
               /*
               Look at
                lib/libc/wasi/libc-bottom-half/cloudlibc/src/libc/sys/select/pselect.c
-              to see how poll_oneoff is actually used by wasi.
-              In particular, from the code:
+              to see how poll_oneoff is actually used by wasi to implement pselect.
+              It's also used in
+               lib/libc/wasi/libc-bottom-half/cloudlibc/src/libc/poll/poll.c
 
-                   userdata = fd = the file descriptor
-
-              Also, from the select man page:
               "If none of the selected descriptors are ready for the
               requested operation, the pselect() or select() function shall
               block until at least one of the requested operations becomes
@@ -1614,10 +1627,10 @@ export default class WASI {
               of time if getStdin defined; otherwise, we at least *pause* for a moment
               (to avoid cpu burn) if this.sleep is available.
               */
-
-              sin += 3; // padding
-              //const fd = this.view.getUint32(sin, true);
+              const fd = this.view.getUint32(sin, true);
               sin += 4;
+              log(name, "fd =", fd);
+              sin += 28;
 
               this.view.setBigUint64(sout, userdata, true);
               sout += 8;
@@ -1627,7 +1640,7 @@ export default class WASI {
               sout += 1; // pad offset 3
               sout += 5; // padding to 8
 
-              eventc += 1;
+              nevents += 1;
               /*
               We just do something really naive, which is "pause for a little while".
               It seems to work for every application I have so far, from Python to
@@ -1643,7 +1656,7 @@ export default class WASI {
                  select(SP_PARM->_checkfd + 1, &fdset, NULL, NULL, &ktimeout)
 
               */
-              if (userdata == BigInt(0) && WASI_EVENTTYPE_FD_READ == type) {
+              if (fd == WASI_STDIN_FILENO && WASI_EVENTTYPE_FD_READ == type) {
                 this.shortPause();
               }
 
@@ -1652,9 +1665,21 @@ export default class WASI {
             default:
               return WASI_EINVAL;
           }
+
+          // Consistency check that we consumed exactly the right amount
+          // of the __wasi_subscription_t. See zig/lib/libc/include/wasm-wasi-musl/wasi/api.h
+          if (sin - last_sin != 48) {
+            console.warn("*** BUG in wasi-js in poll_oneoff ", {
+              i,
+              sin,
+              last_sin,
+              diff: sin - last_sin,
+            });
+          }
+          last_sin = sin;
         }
 
-        this.view.setUint32(nevents, eventc, true);
+        this.view.setUint32(neventsPtr, nevents, true);
 
         // Account for the time it took to do everything above, which
         // can be arbitrarily long:
@@ -1755,14 +1780,10 @@ export default class WASI {
       Object.keys(this.wasiImport).forEach((key: string) => {
         const prevImport = this.wasiImport[key];
         this.wasiImport[key] = function (...args: any[]) {
-          if (key != "fd_read" && key != "poll_oneoff") {
-            log(key, args);
-          }
+          log(key, args);
           try {
             let result = prevImport(...args);
-            if (key != "fd_read" && key != "poll_oneoff") {
-              log("result = ", result);
-            }
+            log("result", result);
             return result;
           } catch (e) {
             log("error: ", e);

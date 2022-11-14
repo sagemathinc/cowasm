@@ -30,6 +30,7 @@ import debug from "debug";
 const logNotImplemented = debug("posix:not-implemented");
 const logCall = debug("posix:call");
 const logReturn = debug("posix:return");
+const logError = debug("posix:error");
 
 // For some reason this code
 //    import os; print(os.popen('ls').read())
@@ -126,6 +127,9 @@ export default function posix(context: Context): PosixEnv {
     if (symbol != null) {
       const wasiErrno = constants[symbol];
       if (wasiErrno != null) {
+        if (logError.enabled) {
+          logError({ name, nativeErrno, wasiErrno, symbol });
+        }
         context.callFunction("setErrno", wasiErrno);
         return;
       }
