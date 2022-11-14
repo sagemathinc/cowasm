@@ -194,6 +194,7 @@ export default function socket({
     },
 
     connect(socket: number, sockaddrPtr: number, address_len: number): number {
+      console.log("posix wasm EINPROGRESS", constants.EINPROGRESS);
       if (posix.connect == null) {
         throw Errno("ENOTSUP");
       }
