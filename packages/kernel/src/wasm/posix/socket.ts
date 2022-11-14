@@ -194,7 +194,6 @@ export default function socket({
     },
 
     connect(socket: number, sockaddrPtr: number, address_len: number): number {
-      console.log("posix wasm EINPROGRESS", constants.EINPROGRESS);
       if (posix.connect == null) {
         throw Errno("ENOTSUP");
       }
@@ -422,7 +421,7 @@ export default function socket({
       option_value_ptr: number,
       option_len_ptr: number
     ): number {
-      log("getsockopt !STUB!", {
+      log("getsockopt", {
         socket,
         level,
         option_name,
@@ -454,7 +453,7 @@ export default function socket({
       option_value_ptr: number,
       option_len: number
     ): number {
-      log("setsockopt !STUB!", {
+      log("setsockopt", {
         socket,
         level,
         option_name,

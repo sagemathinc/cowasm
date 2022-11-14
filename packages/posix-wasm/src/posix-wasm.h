@@ -286,8 +286,8 @@ struct passwd* getpwuid(uid_t uid);
 // void (*signal(int sig, void (*func)(int)))(int);
 
 typedef unsigned int socklen_t;
-#define SO_ERROR 0x1007
-#define SOMAXCONN 32
+#define SO_ERROR 4
+#define SOMAXCONN 128
 #define SOCK_SEQPACKET 5
 #define __WASI_RIFLAGS_RECV_DATA_TRUNCATED 0
 int accept(int sockfd, void* addr, void* addrlen);
