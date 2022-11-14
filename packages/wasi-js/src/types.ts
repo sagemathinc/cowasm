@@ -94,4 +94,5 @@ export interface File {
   rights: Rights;
   offset?: bigint;
   filetype?: WASI_FILETYPE;
+  socktype?: number;   // type of socket = SOCK_STREAM=6 and SOCK_DGRAM=5
 }

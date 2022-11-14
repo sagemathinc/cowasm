@@ -79,9 +79,17 @@ export default function socket({
   function native_fd(virtual_fd: number): number {
     const data = wasi.FD_MAP.get(virtual_fd);
     if (data == null) {
-      return -1;
+      throw Error(`invalid fd=${virtual_fd}`);
     }
     return data.real;
+  }
+
+  function getSocktype(virtual_fd: number): number {
+    const data = wasi.FD_MAP.get(virtual_fd);
+    if (data == null) {
+      throw Error(`unknown sock type for fd=${virtual_fd}`);
+    }
+    return data.socktype;
   }
 
   // Convert flags from wasi to native.  (Right now it looks
@@ -123,7 +131,7 @@ export default function socket({
     throw Error(`unknown option name ${option_name}`);
   }
 
-  function createWasiFd(native_fd: number): number {
+  function createWasiFd(native_fd: number, socktype: number): number {
     // TODO: I'm starting the socket fd's at value over 1000 entirely because
     // if wstart at the default smallest possible when doing
     // "python-wasm -m pip" it crashes, since the fd=4 gets assigned
@@ -140,6 +148,7 @@ export default function socket({
         inheriting: BigInt(0),
       },
       filetype: wasi_constants.WASI_FILETYPE_SOCKET_STREAM,
+      socktype, // constants.SOCK_STREAM (tcp) or constants.SOCK_DGRAM (udp)
     });
     return wasi_fd;
   }
@@ -177,7 +186,7 @@ export default function socket({
       if (!inheritable) {
         posix.set_inheritable(native_fd, inheritable);
       }
-      return createWasiFd(native_fd);
+      return createWasiFd(native_fd, socktype);
     },
 
     // int bind(int socket, const struct sockaddr *address, socklen_t address_len);
@@ -407,12 +416,16 @@ export default function socket({
       sendNativeSockaddr(sockaddr, sockaddrPtr);
       send.u32(socklenPtr, sockaddr.sa_len);
       log("accept got back ", { fd, sockaddr });
-      return createWasiFd(fd);
+      return createWasiFd(fd, getSocktype(socket));
     },
 
     /*
     int getsockopt(int socket, int level, int option_name, void *option_value,
          socklen_t *option_len);
+
+    TODO: This is of very limited value right now since the result
+    native, hence just wrong, and it's so opaque I don't know how to convert
+    it back in general.   That said, I did socktype as a special case properly.
     */
     getsockopt(
       socket: number,
@@ -428,6 +441,19 @@ export default function socket({
         option_value_ptr,
         option_len_ptr,
       });
+
+      if (level == constants.SOL_SOCKET && option_name == constants.SO_TYPE) {
+        // special case we can handle easily -- getting the type of a socket.
+        const socktype = getSocktype(socket);
+        const ab = new ArrayBuffer(4);
+        const dv = new DataView(ab);
+        dv.setUint32(0, socktype, true);
+        const option = Buffer.from(ab);
+        send.buffer(option, option_value_ptr);
+        send.i32(option_len_ptr, option.length);
+        return 0;
+      }
+
       if (posix.getsockopt == null) {
         throw Errno("ENOTSUP");
       }
@@ -463,7 +489,6 @@ export default function socket({
       if (posix.setsockopt == null) {
         throw Errno("ENOTSUP");
       }
-
       const option = recv.buffer(option_value_ptr, option_len);
       posix.setsockopt(
         native_fd(socket),
