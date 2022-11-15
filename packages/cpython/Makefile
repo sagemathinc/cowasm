@@ -146,6 +146,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# data structure useless (why!? - to save a few bytes?).
 	# See packages/python-wasm/src/wasm/posix/socket.zig  (which will move soon)
 	cd ${BUILD_WASM} && cat ${SRC}/patches/13-socket-unmodified-headers.patch | patch -p1
+	# Warn instead of error on attempt to start a thread.
+	cd ${BUILD_WASM} && cat ${SRC}/patches/14-threading-warning.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 DEBUG_MODE = ""
