@@ -147,7 +147,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# See packages/python-wasm/src/wasm/posix/socket.zig  (which will move soon)
 	cd ${BUILD_WASM} && cat ${SRC}/patches/13-socket-unmodified-headers.patch | patch -p1
 	# Warn instead of error on attempt to start a thread.
-	cd ${BUILD_WASM} && cat ${SRC}/patches/14-threading-warning.patch | patch -p1
+	# cd ${BUILD_WASM} && cat ${SRC}/patches/14-threading-warning.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 DEBUG_MODE = ""
@@ -205,7 +205,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	cat src/pyconfig.h >> ${BUILD_WASM}/pyconfig.h
 	# NOTE: I have seen "error: unable to build WASI libc CRT file: FileNotFound" when using "make -j8",
 	# and had it go away when removing parallel build.
-	cd ${BUILD_WASM} && make
+	cd ${BUILD_WASM} && make -j8
 	mkdir -p ${DIST_WASM} && touch ${DIST_WASM}/.built-cpython
 
 ${DIST_WASM}/.install-cpython: ${DIST_WASM}/.built-cpython

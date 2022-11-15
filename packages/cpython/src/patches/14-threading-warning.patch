@@ -1,5 +1,5 @@
 --- native/Lib/threading.py	2022-10-24 10:35:39
-+++ wasm/Lib/threading.py	2022-11-15 09:21:08
++++ wasm/Lib/threading.py	2022-11-15 09:41:01
 @@ -945,6 +945,13 @@
          same thread object.
  
@@ -14,3 +14,12 @@
          if not self._initialized:
              raise RuntimeError("thread.__init__() not called")
  
+@@ -1101,6 +1108,8 @@
+         exception.
+ 
+         """
++        # CoWasm: we're making the thread a no-op, so it's done.
++        return
+         if not self._initialized:
+             raise RuntimeError("Thread.__init__() not called")
+         if not self._started.is_set():

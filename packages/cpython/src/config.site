@@ -224,3 +224,8 @@ ac_cv_func_fchdir=yes
 # We have not implemented openpty yet:
 ac_cv_func_openpty=no
 ac_cv_func__getpty=no
+
+
+# We have mmap in zig's WASI but it's not properly implemented.
+ac_cv_func_mmap=no
+

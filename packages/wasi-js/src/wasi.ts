@@ -420,6 +420,11 @@ export default class WASI {
         // allocated memory, so we cap it or things crash.
         // TODO: maybe we need to allocate more memory?  I don't know!!
         if (bufLen > this.memory.buffer.byteLength - buf) {
+          console.log({
+            buf,
+            bufLen,
+            total_memory: this.memory.buffer.byteLength,
+          });
           log("getiovs: warning -- truncating buffer to fit in memory");
           bufLen = Math.min(bufLen, this.memory.buffer.byteLength - buf);
         }
