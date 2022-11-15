@@ -34,7 +34,7 @@ ${BUILD_WASM}/.patched:: ${BUILD_WASM}/.build
 		&&	echo '#include "posix-wasm.h"' >> e_os.h \
 		&&	echo '#include "posix-wasm.h"' >> include/openssl/crypto.h \
 		&&	echo "#undef AF_UNIX" >> e_os.h \
-		&&	echo "#undef AF_UNIX" >> include/internal/thread_once.h \
+		&&	echo "#undef AF_UNIX" >> include/internal/thread_once.h
 	touch ${BUILD_WASM}/.patched
 
 
