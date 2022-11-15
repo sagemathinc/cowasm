@@ -285,11 +285,17 @@ struct passwd* getpwnam(const char* name);
 struct passwd* getpwuid(uid_t uid);
 // void (*signal(int sig, void (*func)(int)))(int);
 
-typedef unsigned int socklen_t;
+// These #defines *must* be consistent with what is in kernel!  See that via
+//    "DEBUG=posix:constants python-wasm":
+
 #define SO_ERROR 4
+#define SO_REUSEADDR 2
+#define SO_KEEPALIVE 9
 #define SOMAXCONN 128
 #define SOCK_SEQPACKET 5
 #define __WASI_RIFLAGS_RECV_DATA_TRUNCATED 0
+
+typedef unsigned int socklen_t;
 int accept(int sockfd, void* addr, void* addrlen);
 int setsockopt(int sockfd, int level, int optname, const void* optval,
                socklen_t optlen);

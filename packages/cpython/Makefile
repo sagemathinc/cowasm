@@ -148,8 +148,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/13-socket-unmodified-headers.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
-# DEBUG_MODE = "-g"
 DEBUG_MODE = ""
+# DEBUG_MODE = "-g"
 BLDSHARED = cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
 
 ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built

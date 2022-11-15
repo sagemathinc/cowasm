@@ -31,11 +31,9 @@ ${BUILD_WASM}/.patched:: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&&  patch --strip 1 < ${SRC}/patches/00-af-unix.patch \
 		&&	echo '#include "posix-wasm.h"' >> e_os.h \
+		&&	echo '#include "posix-wasm.h"' >> include/openssl/crypto.h \
 		&&	echo "#undef AF_UNIX" >> e_os.h \
 		&&	echo "#undef AF_UNIX" >> include/internal/thread_once.h \
-		&&	echo "#define SO_KEEPALIVE 9" >> e_os.h \
-		&&	echo "#define SO_REUSEADDR 2" >> e_os.h \
-		&&  ln -s ${POSIX_WASM}/posix-wasm.h .
 	touch ${BUILD_WASM}/.patched
 
 
@@ -48,7 +46,7 @@ DEBUG = ""
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& 	CC="cowasm-cc" \
-			CFLAGS="-Oz ${DEBUG} -fvisibility-main" \
+			CFLAGS="-Oz ${DEBUG} -fvisibility-main -I${POSIX_WASM}" \
 			AR="zig ar" \
 			RANLIB="zig ranlib" \
 			./Configure --prefix=${DIST_WASM} gcc no-async no-threads no-shared no-tests no-asm no-afalgeng \

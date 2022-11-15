@@ -1,3 +1,6 @@
+import debug from "debug";
+const log = debug("posix:constants");
+
 // These are purely for typescript, and I can only update this (when the zig code changes)
 // by just printing out the constants at runtime.
 const CONSTANTS = [
@@ -161,5 +164,5 @@ export function initConstants(context) {
   for (let i = 0; i < names.length; i++) {
     constants[names[i]] = values[i];
   }
-  // console.log(constants);
+  log(constants);
 }
