@@ -29,13 +29,15 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 		AR="zig ar" \
 		CC="cowasm-cc" \
 		CXX="cowasm-c++" \
+		CFLAGS="-I${PACKAGES}/posix-wasm/dist/wasm" \
 		./configure \
 			--build=`./build-aux/config.guess` \
-			--host=none --prefix="${DIST_WASM}"
-	cd ${BUILD_WASM} && echo '#include "../../../posix-wasm/dist/wasm/posix-wasm.h"' >> config.h
+			--host=none \
+			--prefix="${DIST_WASM}"
+	echo '#include "posix-wasm.h"' >> ${BUILD_WASM}/config.h
 	# It fails to build some non-liblzma stuff (for xz) that we don't need, so we
 	# ignore that and just install the library.
-	cd ${BUILD_WASM} && make -j4 || true && cd src/liblzma && make install
+	cd ${BUILD_WASM} && make -j8 || true && cd src/liblzma && make install
 	zig ranlib ${DIST_WASM}/lib/liblzma.a  # needed on linux
 	touch ${DIST_WASM}/.built
 
