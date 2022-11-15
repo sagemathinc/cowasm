@@ -426,10 +426,23 @@ export default class WASI {
             total_memory: this.memory.buffer.byteLength,
           });
           log("getiovs: warning -- truncating buffer to fit in memory");
-          bufLen = Math.min(bufLen, this.memory.buffer.byteLength - buf);
+          bufLen = Math.min(
+            bufLen,
+            Math.max(0, this.memory.buffer.byteLength - buf)
+          );
         }
-        const buffer = new Uint8Array(this.memory.buffer, buf, bufLen);
-        return toBuffer(buffer);
+        try {
+          const buffer = new Uint8Array(this.memory.buffer, buf, bufLen);
+          return toBuffer(buffer);
+        } catch (err) {
+          // don't hide this
+          console.warn("WASI.getiovs -- invalid buffer", err);
+          // but at least make it so we don't totally kill WASM, so we
+          // get a traceback in the calling program (say python).
+          // TODO: Right now this sort of thing happens with aggressive use of mmap,
+          // but I plan to replace how mmap works with something that is viable.
+          throw new WASIError(WASI_EINVAL);
+        }
       });
 
       return buffers;
