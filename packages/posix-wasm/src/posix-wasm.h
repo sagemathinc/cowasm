@@ -268,9 +268,11 @@ char* realpath(const char* path, char* resolved_path);
 
 int close_range(unsigned int first, unsigned int last, unsigned int flags);
 
-// These are not needed by Python but are needed by PARI:
-typedef void* jmp_buf;
-typedef void* sigjmp_buf;
+// These are not needed by Python but are needed by PARI (which isn't
+// even part of CoWasm!?):
+#include <setjmp.h>
+//typedef void* jmp_buf;
+//typedef void* sigjmp_buf;
 int setjmp(jmp_buf env);
 int sigsetjmp(sigjmp_buf env, int savesigs);
 void longjmp(jmp_buf env, int val);
@@ -278,6 +280,7 @@ void siglongjmp(sigjmp_buf env, int val);
 struct _IO_FILE {
   char __x;
 };
+
 typedef struct _IO_FILE FILE;
 FILE* popen(const char* command, const char* type);
 int pclose(FILE* stream);
