@@ -1,0 +1,14 @@
+--- native/crypto/init.c	2022-11-01 07:14:36
++++ wasm/crypto/init.c	2022-11-15 00:21:33
+@@ -343,6 +343,11 @@
+ 
+ void OPENSSL_cleanup(void)
+ {
++  // Hack on WebAssembly for now.  I think there's an issue involving confusion and threads...
++  // Without this, when using the python ssl module, it frequently fails with "unknown error",
++  // basically since for some reason openssl is shut down and done.
++  return;
++
+     OPENSSL_INIT_STOP *currhandler, *lasthandler;
+ 
+     /*

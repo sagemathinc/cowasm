@@ -30,6 +30,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 ${BUILD_WASM}/.patched:: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&&  patch --strip 1 < ${SRC}/patches/00-af-unix.patch \
+		&&  patch --strip 1 < ${SRC}/patches/01-cleanup-hack.patch \
 		&&	echo '#include "posix-wasm.h"' >> e_os.h \
 		&&	echo '#include "posix-wasm.h"' >> include/openssl/crypto.h \
 		&&	echo "#undef AF_UNIX" >> e_os.h \

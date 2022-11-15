@@ -12,4 +12,5 @@ SCRIPTDIR=$(dirname $(readlink -f "$0"))
 cd "$SCRIPTDIR"/..
 rm -f `pwd`/dist/wasm/.install-cpython
 make `pwd`/dist/wasm/.install-cpython
-make python-wasm
+#make python-wasm
+make wasm
