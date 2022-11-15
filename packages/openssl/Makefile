@@ -48,7 +48,7 @@ DEBUG = ""
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& 	CC="cowasm-cc" \
-			CFLAGS="-Oz ${DEBUG}" \
+			CFLAGS="-Oz ${DEBUG} -fvisibility-main" \
 			AR="zig ar" \
 			RANLIB="zig ranlib" \
 			./Configure --prefix=${DIST_WASM} gcc no-async no-threads no-shared no-tests no-asm no-afalgeng \

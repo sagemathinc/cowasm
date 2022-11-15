@@ -981,6 +981,7 @@ nrand48
 ntohl
 ntohs
 open
+openlog
 open_memstream
 open_wmemstream
 openat

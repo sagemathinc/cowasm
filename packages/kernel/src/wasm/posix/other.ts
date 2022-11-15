@@ -147,6 +147,10 @@ export default function other(context) {
       notImplemented("tmpfile");
     },
 
+    openlog: () => {
+      notImplemented("openlog");
+    },
+
     // curses also wants this:
     // int tcflush(int fildes, int action);
     tcflush: () => {

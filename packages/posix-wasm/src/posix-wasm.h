@@ -418,6 +418,7 @@ int rpmatch(const char* response);
 #include "netdb.h"
 char* inet_ntoa(struct in_addr in);
 
+void openlog (const char *, int, int);
 
 
 #endif
