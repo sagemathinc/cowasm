@@ -7,7 +7,7 @@ const CREATE_SERVER =
 // you can run directly.
 
 test("create a client and a server and have them send/recv strings", async () => {
-  // It is really cool how easily wwe can do this test due to the
+  // It is really cool how easily we can do this test due to the
   // architecture of python-wasm!
   // We just run two completely separate copies of Python
   // at the same time in memory, one as the client and one as the server. Each
@@ -62,7 +62,7 @@ conn, addr = s.accept()
 import time; time.sleep(0.25)
 conn.send(b"Hello")
 # never close conn and never send anything.
-time.sleep(9999)
+time.sleep(1)
   `);
     } catch (err) {}
   })();
