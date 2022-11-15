@@ -505,6 +505,9 @@ export default function socket({
       timeout_ms: number
     ): number {
       log("pollForSocket", { socket, type, timeout_ms });
+      return 0;
+      // TODO: The code below doesn't work properly -- it ALWAYS waits for the full timeout_ms,
+      // which is very annoying in practice, e.g., making pip hang 15s before each operation.
       if (posix.pollSocket == null) {
         return wasi_constants.WASI_ENOSYS;
       }
