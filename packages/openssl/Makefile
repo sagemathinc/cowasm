@@ -51,7 +51,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 			CFLAGS="-Oz ${DEBUG}" \
 			AR="zig ar" \
 			RANLIB="zig ranlib" \
-			./Configure --prefix=${DIST_WASM} gcc -no-threads -no-tests -no-asm -no-afalgeng \
+			./Configure --prefix=${DIST_WASM} gcc no-async no-threads no-shared no-tests no-asm no-afalgeng \
 		&&	make -j12 build_sw \
 		&&	make -j12 install_sw
 	touch ${DIST_WASM}/.built
