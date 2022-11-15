@@ -209,6 +209,32 @@ export default function other(context) {
       notImplemented("getrusage");
       return 0;
     },
+
+    // C++ stuff we don't support:
+    _Znwm: () => {
+      // operator new
+      notImplemented("_Znwm");
+    },
+    _ZdlPv: () => {
+      // operator delete
+      notImplemented("_ZdlPv");
+    },
+    __cxa_throw: () => {
+      notImplemented("__cxa_throw");
+    },
+    // exception
+    __cxa_allocate_exception: () => {
+      notImplemented("__cxa_allocate_exception");
+    },
+    _ZNSt20bad_array_new_lengthC1Ev: () => {
+      notImplemented("_ZNSt20bad_array_new_lengthC1Ev");
+    },
+    _ZNSt20bad_array_new_lengthD1Ev: () => {
+      notImplemented("_ZNSt20bad_array_new_lengthD1Ev");
+    },
+    _ZTISt20bad_array_new_length: () => {
+      notImplemented("_ZTISt20bad_array_new_length");
+    },
   };
 
   return lib;

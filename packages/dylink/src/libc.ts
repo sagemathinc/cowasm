@@ -176,6 +176,16 @@ int emscripten_return_address(int);
 // NULL for these two means "no info".
 struct group  *getgrgid(gid_t) { return NULL; }
 struct group  *getgrnam(const char *) { return NULL; }
+
+// _Znwm is operator new.
+// _ZdlPv is operator delete.
+void _ZdlPv();
+void _Znwm();
+void __cxa_allocate_exception();
+void _ZNSt20bad_array_new_lengthC1Ev();
+void _ZNSt20bad_array_new_lengthD1Ev();
+void _ZTISt20bad_array_new_length();
+void __cxa_throw();
 `;
   s += "\n";
   s += wasmExport((symbols + "\n" + posix).split("\n"));
@@ -186,6 +196,13 @@ struct group  *getgrnam(const char *) { return NULL; }
 // Extra things we added to our posix compat layer, since they are
 // missing from wasi-zig-libc:
 const posix = `
+_Znwm
+_ZdlPv
+__cxa_allocate_exception
+_ZNSt20bad_array_new_lengthC1Ev
+_ZNSt20bad_array_new_lengthD1Ev
+_ZTISt20bad_array_new_length
+__cxa_throw
 cowasm_fstat
 cowasm_lstat
 cowasm_stat

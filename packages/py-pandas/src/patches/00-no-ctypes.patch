@@ -1,0 +1,21 @@
+--- native/pandas/errors/__init__.py	2022-10-18 02:44:54
++++ wasm/pandas/errors/__init__.py	2022-11-15 12:58:07
+@@ -3,7 +3,7 @@
+ """
+ from __future__ import annotations
+ 
+-import ctypes
++#import ctypes
+ 
+ from pandas._config.config import OptionError
+ 
+--- native/pandas/core/interchange/from_dataframe.py	2022-10-18 02:44:54
++++ wasm/pandas/core/interchange/from_dataframe.py	2022-11-15 12:58:09
+@@ -1,6 +1,6 @@
+ from __future__ import annotations
+ 
+-import ctypes
++#import ctypes
+ import re
+ from typing import Any
+ 
