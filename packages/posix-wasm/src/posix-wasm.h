@@ -270,6 +270,9 @@ int close_range(unsigned int first, unsigned int last, unsigned int flags);
 
 // These are not needed by Python but are needed by PARI (which isn't
 // even part of CoWasm!?):
+// This #define is to ensure that only one setjmp defs get defined.
+#ifndef _SETJMP_H
+#define _SETJMP_H
 typedef void* __jmp_buf;
 typedef struct __jmp_buf_tag {
 	__jmp_buf __jb;
@@ -277,19 +280,23 @@ typedef struct __jmp_buf_tag {
 	unsigned long __ss[128/sizeof(long)];
 } jmp_buf[1];
 typedef jmp_buf sigjmp_buf;
-//typedef void* jmp_buf;
-//typedef void* sigjmp_buf;
 int setjmp(jmp_buf env);
 int sigsetjmp(sigjmp_buf env, int savesigs);
 void longjmp(jmp_buf env, int val);
 void siglongjmp(sigjmp_buf env, int val);
+#endif // _SETJMP_H
+
+#ifndef FILE
 struct _IO_FILE {
   char __x;
 };
-
 typedef struct _IO_FILE FILE;
+#endif
+
 FILE* popen(const char* command, const char* type);
 int pclose(FILE* stream);
+
+
 struct passwd* getpwnam(const char* name);
 struct passwd* getpwuid(uid_t uid);
 // void (*signal(int sig, void (*func)(int)))(int);
