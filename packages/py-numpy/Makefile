@@ -42,11 +42,14 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #    there is a Demo about numpy in the Cython source and it fails
 #    due to other missing posix things (TODO).
 #  - We do NOT use cowasm-opt, since it makes the so *larger*.
+#  - We "python setup.py install" (and not just build) because dependencies
+#    such as pandas expect a full install in place (with all headers) in
+#    order to compile themselves.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}
 	cd ${PACKAGES}/cpython && make pip
 	cd ${BUILD_WASM} \
-		&& python-wasm setup.py build
+		&& python-wasm setup.py install
 	cd ${BUILD_WASM}/build/lib* \
 		&& rm -rf numpy/core/include \
 		&& cp -rv ../src*/numpy/core/include numpy/core/ \

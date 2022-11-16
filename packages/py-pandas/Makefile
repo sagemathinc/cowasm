@@ -18,12 +18,18 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 		&& cat ${SRC}/patches/00-no-ctypes.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
-# TODO...
+# TODO: this is a horrible hack right now, but it works (?).
+#  - first do the install with setup.py install, but ignore the error
+#  - then install deps by doing "pip install pandas", which installs the
+#    deps because pandas is already installed.
+# This would break if pypi pandas is updated, but we haven't updated our
+# package here yet, etc.  Not ideal.  This is just a first step.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}
 	cd ${PACKAGES}/cpython && make pip
 	cd ${BUILD_WASM} \
-		&& python-wasm setup.py install
+		&& python-wasm setup.py install || true \
+		&& python-wasm -m pip install pandas
 	touch ${DIST_WASM}/.built
 
 # Just a trivial test for now.
