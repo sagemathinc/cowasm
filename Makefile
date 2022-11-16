@@ -185,7 +185,7 @@ packages/f2c/${BUILT}: zig
 	cd packages/f2c && make all
 .PHONY: f2c
 
-py: py-cython py-mpmath py-sympy py-pip py-numpy
+py: py-cython py-mpmath py-sympy py-pip py-numpy py-pandas
 .PHONY: py
 
 # Note -- this runs a target in the cpython package, which can only be run
