@@ -46,7 +46,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	touch ${DIST_WASM}/.built
 
 TEST = ${BUILD_WASM}/TEST
-test:
+test: ${DIST_WASM}/.built
 	rm -rf ${TEST}
 	mkdir -p ${TEST}
 	# Compress and decompress the Makefile using xz
