@@ -213,6 +213,11 @@ packages/py-numpy/${BUILT}: zig kernel py-cython py-pip
 	cd packages/py-numpy && make all
 .PHONY: py-numpy
 
+py-pandas: packages/py-pandas/${BUILT}
+packages/py-pandas/${BUILT}: zig kernel py-cython py-pip py-numpy
+	cd packages/py-pandas && make all
+.PHONY: py-pandas
+
 bin-wasm:
 	rm -rf ${CWD}/bin-wasm
 	mkdir -p ${CWD}/bin-wasm
