@@ -194,17 +194,17 @@ py-pip: cpython kernel
 	cd packages/cpython && make pip
 
 py-cython: packages/py-cython/${BUILT}
-packages/py-cython/${BUILT}: zig kernel
+packages/py-cython/${BUILT}: zig kernel py-pip
 	cd packages/py-cython && make all
 .PHONY: py-cython
 
 py-mpmath: packages/py-mpmath/${BUILT}
-packages/py-mpmath/${BUILT}: zig kernel
+packages/py-mpmath/${BUILT}: zig kernel py-pip
 	cd packages/py-mpmath && make all
 .PHONY: py-mpmath
 
 py-sympy: packages/py-sympy/${BUILT}
-packages/py-sympy/${BUILT}: zig kernel py-mpmath
+packages/py-sympy/${BUILT}: zig kernel py-mpmath py-pip
 	cd packages/py-sympy && make all
 .PHONY: py-sympy
 
