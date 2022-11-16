@@ -45,6 +45,12 @@ export default function unistd(context) {
 
     // int fchown(int fd, uid_t owner, gid_t group);
     _fchown: (fd: number, uid: number, gid: number): number => {
+      if (uid == 0 || gid == 0) {
+        // if either is 0 = root, we just do nothing.
+        // TODO: We really need to get rid of anything that involves uid/gid, which
+        // just doesn't make sense for the model of WASM.
+        return 0;
+      }
       fs.fchownSync(toNativeFd(fd), uid, gid);
       return 0;
     },

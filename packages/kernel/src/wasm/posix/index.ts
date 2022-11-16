@@ -122,7 +122,7 @@ export default function posix(context: Context): PosixEnv {
     }
   }
   function setErrnoFromNative(nativeErrno: number, name: string, args): void {
-    if (nativeErrno == 0) {
+    if (nativeErrno == 0 || isNaN(nativeErrno)) {
       // TODO: could put a log or something in that name raised error with no code.
       context.callFunction("setErrno", nativeErrno);
       return;
@@ -175,6 +175,7 @@ export default function posix(context: Context): PosixEnv {
         logReturn(name, ret);
         return ret;
       } catch (err) {
+        logError(name, err);
         if (err.wasiErrno != null) {
           context.callFunction("setErrno", err.wasiErrno);
         } else if (err.code != null) {

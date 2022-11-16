@@ -196,6 +196,9 @@ void __cxa_throw();
 // Extra things we added to our posix compat layer, since they are
 // missing from wasi-zig-libc:
 const posix = `
+ngettext
+dngettext
+dcngettext
 _Znwm
 _ZdlPv
 __cxa_allocate_exception

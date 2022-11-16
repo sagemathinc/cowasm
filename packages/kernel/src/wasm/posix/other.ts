@@ -235,6 +235,16 @@ export default function other(context) {
     _ZTISt20bad_array_new_length: () => {
       notImplemented("_ZTISt20bad_array_new_length");
     },
+
+    ngettext: () => {
+      notImplemented("ngettext");
+    },
+    dngettext: () => {
+      notImplemented("dngettext");
+    },
+    dcngettext: () => {
+      notImplemented("dcngettext");
+    },
   };
 
   return lib;
