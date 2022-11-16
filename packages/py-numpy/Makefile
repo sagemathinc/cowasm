@@ -45,11 +45,14 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #  - We "python setup.py install" (and not just build) because dependencies
 #    such as pandas expect a full install in place (with all headers) in
 #    order to compile themselves.
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${BUILD_WASM}/.install: ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}
 	cd ${PACKAGES}/cpython && make pip
 	cd ${BUILD_WASM} \
 		&& python-wasm setup.py install
+	touch ${BUILD_WASM}/.install
+
+${DIST_WASM}/.built: ${BUILD_WASM}/.install
 	cd ${BUILD_WASM}/build/lib* \
 		&& rm -rf numpy/core/include \
 		&& python-native -m cowasm_bundler numpy numpy/core/multiarray.py  \

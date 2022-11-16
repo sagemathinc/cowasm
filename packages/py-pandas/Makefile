@@ -24,12 +24,24 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #    deps because pandas is already installed.
 # This would break if pypi pandas is updated, but we haven't updated our
 # package here yet, etc.  Not ideal.  This is just a first step.
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${BUILD_WASM}/.install: ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}
 	cd ${PACKAGES}/cpython && make pip
 	cd ${BUILD_WASM} \
 		&& python-wasm setup.py install || true \
 		&& python-wasm -m pip install pandas
+	touch ${BUILD_WASM}/.install
+
+${DIST_WASM}/.built: ${BUILD_WASM}/.install
+	cd ${BUILD_WASM}/build/lib* \
+		&& rm -rf pandas/tests \
+		&& python-native -m cowasm_bundler pandas \
+		&& mkdir -p ${DIST_WASM} \
+		&& cp pandas.tar.xz ${DIST_WASM}
+	cd ${PACKAGES}/cpython/dist/wasm/lib/python3.11/site-packages \
+		&& python-native -m cowasm_bundler pytz pytz/zoneinfo && cp pytz.tar.xz ${DIST_WASM} \
+		&& python-native -m cowasm_bundler dateutil && cp dateutil.tar.xz ${DIST_WASM} \
+		&& mkdir -p six && cp six.py six/__init__.py && python-native -m cowasm_bundler six && cp six.tar.xz ${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 # Just a trivial test for now.

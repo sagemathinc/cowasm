@@ -135,6 +135,15 @@ def init():
     sys.meta_path.append(finder)
 
 
+def add_packages(path):
+    for bundle in os.listdir(path):
+        if not bundle.endswith('.tar.xz'): continue
+        module = bundle[:-len('.tar.xz')]
+        if module == 'cython':  # weird special case...
+            module = 'Cython'
+        cowasm_modules[module] = os.path.join(path, bundle)
+
+
 # cowasm/packages/cpython/dist/wasm/lib/python3.11/site-packages
 def init_dev():
     if 'PYTHONREGRTEST_UNICODE_GUARD' in os.environ:
@@ -149,29 +158,20 @@ def init_dev():
 
     if '/usr/lib/python3.11' in sys.path:
         # In the browser
-        cowasm_modules['numpy'] = '/usr/lib/python3.11/numpy.tar.xz'
-        cowasm_modules['mpmath'] = '/usr/lib/python3.11/mpmath.tar.xz'
-        cowasm_modules['sympy'] = '/usr/lib/python3.11/sympy.tar.xz'
+        add_packages('/usr/lib/python3.11')
     elif '/cowasm/usr/lib/python3.11' in sys.path:
-        # In the browser
-        cowasm_modules['numpy'] = '/cowasm/usr/lib/python3.11/numpy.tar.xz'
-        cowasm_modules['mpmath'] = '/cowasm/usr/lib/python3.11/mpmath.tar.xz'
-        cowasm_modules['sympy'] = '/cowasm/usr/lib/python3.11/sympy.tar.xz'
+        # In node.js
+        add_packages('/cowasm/usr/lib/python3.11')
     else:
-        # On a server
+        # via node.js on a server in development mode built from source.
         pkgs = site_packages_directory()
         i = pkgs.rfind("packages/cpython")
         PACKAGES = pkgs[:i + len("packages")]
 
         for path in os.listdir(os.path.join(PACKAGES)):
             if not path.startswith('py-'): continue
-            module = path[3:]
-            if module == 'cython':
-                module = 'Cython'
-            bundle = os.path.join(PACKAGES, path, 'dist', 'wasm',
-                                  module + '.tar.xz')
-            if os.path.exists(bundle):
-                cowasm_modules[module] = bundle
+            dist = os.path.join(PACKAGES, path, 'dist', 'wasm')
+            add_packages(dist)
 
 
 # always try this for now.
