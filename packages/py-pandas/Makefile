@@ -40,7 +40,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.install
 		&& cp pandas.tar.xz ${DIST_WASM}
 	cd ${PACKAGES}/cpython/dist/wasm/lib/python3.11/site-packages \
 		&& python-native -m cowasm_bundler pytz pytz/zoneinfo && cp pytz.tar.xz ${DIST_WASM} \
-		&& python-native -m cowasm_bundler dateutil && cp dateutil.tar.xz ${DIST_WASM} \
+		&& python-native -m cowasm_bundler dateutil dateutil/zoneinfo && cp dateutil.tar.xz ${DIST_WASM} \
 		&& mkdir -p six && cp six.py six/__init__.py && python-native -m cowasm_bundler six && cp six.tar.xz ${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
