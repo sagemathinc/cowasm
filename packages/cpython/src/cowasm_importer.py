@@ -136,6 +136,9 @@ def init():
 
 
 def add_packages(path):
+    if not os.path.exists(path) or not os.path.isdir(path):
+        # definitely nothing to add
+        return
     for bundle in os.listdir(path):
         if not bundle.endswith('.tar.xz'): continue
         module = bundle[:-len('.tar.xz')]
