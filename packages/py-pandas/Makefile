@@ -38,5 +38,5 @@ test: ${DIST_WASM}/.built
 	mkdir -p ${BUILD_WASM}/cowasm-test
 	@cd ${BUILD_WASM}/cowasm-test \
 		&& python-wasm -c "import pandas" \
-		&& echo "NUMPY TEST PASSED!"
+		&& echo "Trivial PANDAS TEST PASSED!"
 
