@@ -25,7 +25,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
 		&& python-native -m cowasm_bundler sympy \
 		&& mkdir -p ${DIST_WASM} \
-		&& cp sympy.* ${DIST_WASM}
+		&& cp sympy.tar.xz ${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 # This is a small test just that something works.  It's NOT the full very massive test suite,

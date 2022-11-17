@@ -1,6 +1,7 @@
 # Install our custom import hook, which imports tar.xz bundles with so in them.
 try:
     import cowasm_importer
+    cowasm_importer.init()
 except ModuleNotFoundError:
     # python-wasm sometimes is started during the build process before cowasm_importer
     # is installed.  That's the one case where this is safe to silently ignore.

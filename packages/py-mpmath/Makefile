@@ -12,7 +12,7 @@ include ../build/Makefile-rules
 
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&& python-wasm setup.py build
+		&& python-wasm setup.py install
 	touch ${BUILD_WASM}/.built
 
 test: ${BUILD_WASM}/.built
