@@ -21,7 +21,11 @@ test-native: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM} \
 		&& python-native setup.py test
 
+
+
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
+	cd ${BUILD_WASM} \
+		&& python-wasm setup.py install
 	cd ${BUILD_WASM}/build/lib \
 		&& python-native -m cowasm_bundler sympy \
 		&& mkdir -p ${DIST_WASM} \
