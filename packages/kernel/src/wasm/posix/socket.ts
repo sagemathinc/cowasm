@@ -504,17 +504,19 @@ export default function socket({
       type: "read" | "write",
       timeout_ms: number
     ): number {
-      log("pollForSocket", { socket, type, timeout_ms });
-      return 0;
+      //log("pollForSocket", { socket, type, timeout_ms });
+      //return 0;
       // TODO: The code below doesn't work properly -- it ALWAYS waits for the full timeout_ms,
       // which is very annoying in practice, e.g., making pip hang 15s before each operation.
+      // Thus we replace the timeout with the min of the timeout and 250ms for now.
       if (posix.pollSocket == null) {
-        return wasi_constants.WASI_ENOSYS;
+        return 0; // stub
+        // return wasi_constants.WASI_ENOSYS;
       }
       posix.pollSocket(
         native_fd(socket),
         type == "read" ? constants.POLLIN : constants.POLLOUT,
-        timeout_ms
+        Math.min(250, timeout_ms)
       );
       return 0;
     },
