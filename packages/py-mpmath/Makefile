@@ -2,10 +2,10 @@ include ../build/Makefile-vars
 
 all: wasm
 
-# See https://github.com/fredrik-johansson/mpmath/releases
+# See https://github.com/mpmath/mpmath/releases
 VERSION = 1.0.0
 
-URL = https://github.com/fredrik-johansson/mpmath/archive/refs/tags/${VERSION}.tar.gz
+URL = https://github.com/mpmath/mpmath/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/mpmath-${VERSION}.tar.gz
 
 include ../build/Makefile-rules
