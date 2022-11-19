@@ -1,4 +1,5 @@
 import { asyncPython } from "../../node";
+const opts = {};
 
 const CREATE_SERVER =
   "import socket; s = socket.create_server(('localhost', 0)); s.listen(1)";
@@ -13,8 +14,8 @@ test("create a client and a server and have them send/recv strings", async () =>
   // at the same time in memory, one as the client and one as the server. Each
   // gets their own independent thread and separate WebAssembly memory, but this
   // is actually all happening inside one single operating system process.
-  const client = await asyncPython();
-  const server = await asyncPython();
+  const client = await asyncPython(opts);
+  const server = await asyncPython(opts);
 
   // We let Python assign an available port.
   await server.exec(CREATE_SERVER);
@@ -48,8 +49,8 @@ conn.close()
 // socket.settimeout is very commonly used on sockets and uses fd_fdstat_set_flags in WASI
 // so we better test that it doesn't crash.
 test("settimeout on a socket", async () => {
-  const client = await asyncPython();
-  const server = await asyncPython();
+  const client = await asyncPython(opts);
+  const server = await asyncPython(opts);
   await server.exec(CREATE_SERVER);
   const port = eval(await server.repr("s.getsockname()[1]"));
   expect(port).toBeGreaterThan(0);

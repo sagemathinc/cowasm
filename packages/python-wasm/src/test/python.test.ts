@@ -1,4 +1,4 @@
-import { syncPython } from "../node";
+import { testPython as syncPython } from "../node";
 
 test("add 2+3", async () => {
   const { exec, repr } = await syncPython();

@@ -1,4 +1,4 @@
-import { syncPython } from "../../node";
+import { testPython as syncPython } from "../../node";
 
 /*
 >>> import socket; socket.gethostbyaddr('2001:4860:4860::8888')

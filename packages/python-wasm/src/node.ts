@@ -18,11 +18,19 @@ const pythonMinimal = join(__dirname, "python-minimal.zip");
 // The following will only work in the build-from-source dev environment.
 const PYTHONEXECUTABLE = join(__dirname, "../../cpython/bin/python-wasm");
 
-export async function syncPython(opts?: Options): Promise<PythonWasmSync> {
+export async function testPython() {
+  return (await createPython(true, {})) as PythonWasmSync;
+}
+
+export async function syncPython(
+  opts: Options = { fs: "everything" }
+): Promise<PythonWasmSync> {
   return (await createPython(true, opts)) as PythonWasmSync;
 }
 
-export async function asyncPython(opts?: Options): Promise<PythonWasmAsync> {
+export async function asyncPython(
+  opts: Options = { fs: "everything" }
+): Promise<PythonWasmAsync> {
   return (await createPython(false, opts)) as PythonWasmAsync;
 }
 
@@ -31,7 +39,7 @@ export default asyncPython;
 
 async function createPython(
   sync: boolean,
-  opts?: Options
+  opts: Options
 ): Promise<PythonWasmSync | PythonWasmAsync> {
   log("creating Python; sync = ", sync, ", opts = ", opts);
   const fs = getFilesystem(opts);
@@ -91,6 +99,7 @@ function getFilesystem(opts?: Options): FileSystemSpec[] {
       { type: "native" },
     ];
   } else {
+    // native
     return [{ type: "native" }];
   }
 }
