@@ -189,7 +189,7 @@ const stat = (wasi: WASI, fd: number): File => {
     throw new WASIError(WASI_EBADF);
   }
   if (entry.filetype === undefined) {
-    const stats = wasi.bindings.fs.fstatSync(entry.real);
+    const stats = wasi.fstatSync(entry.real);
     const { filetype, rightsBase, rightsInheriting } = translateFileAttributes(
       wasi,
       fd,
@@ -317,6 +317,10 @@ export default class WASI {
     this.bindings = state.bindings;
   }
 
+  fstatSync(real_fd : number) {
+    return this.bindings.fs.fstatSync(real_fd);
+  }
+
   constructor(wasiConfig: WASIConfig) {
     this.sleep = wasiConfig.sleep;
     this.getStdin = wasiConfig.getStdin;
@@ -342,7 +346,6 @@ export default class WASI {
     this.view = undefined;
     this.bindings = wasiConfig.bindings;
     const fs = this.bindings.fs;
-
     this.FD_MAP = new Map([
       [
         WASI_STDIN_FILENO,
@@ -646,7 +649,7 @@ export default class WASI {
 
       fd_filestat_get: wrap((fd: number, bufPtr: number) => {
         const stats = CHECK_FD(fd, WASI_RIGHT_FD_FILESTAT_GET);
-        const rstats = fs.fstatSync(stats.real);
+        const rstats = this.fstatSync(stats.real);
         this.refreshMemory();
         this.view.setBigUint64(bufPtr, BigInt(rstats.dev), true);
         bufPtr += 8;
@@ -678,7 +681,7 @@ export default class WASI {
       fd_filestat_set_times: wrap(
         (fd: number, stAtim: number, stMtim: number, fstflags: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_FILESTAT_SET_TIMES);
-          const rstats = fs.fstatSync(stats.real);
+          const rstats = this.fstatSync(stats.real);
           let atim = rstats.atime;
           let mtim = rstats.mtime;
           const n = nsToMs(now(WASI_CLOCK_REALTIME)!);
@@ -1063,7 +1066,7 @@ export default class WASI {
                 (stats.offset ? stats.offset : BigInt(0)) + BigInt(offset);
               break;
             case WASI_WHENCE_END:
-              const { size } = fs.fstatSync(stats.real);
+              const { size } = this.fstatSync(stats.real);
               stats.offset = BigInt(size) + BigInt(offset);
               break;
             case WASI_WHENCE_SET:
@@ -1183,7 +1186,7 @@ export default class WASI {
             return WASI_EINVAL;
           }
           this.refreshMemory();
-          const rstats = fs.fstatSync(stats.real);
+          const rstats = this.fstatSync(stats.real);
           let atim = rstats.atime;
           let mtim = rstats.mtime;
           const n = nsToMs(now(WASI_CLOCK_REALTIME)!);
@@ -1969,7 +1972,7 @@ export default class WASI {
         const real = fdInfo[wasi_fd];
         try {
           // check the fd really exists
-          this.bindings.fs.fstatSync(real);
+          this.fstatSync(real);
         } catch (_err) {
           console.log("discarding ", { wasi_fd, real });
           continue;
