@@ -317,7 +317,38 @@ export default class WASI {
     this.bindings = state.bindings;
   }
 
-  fstatSync(real_fd : number) {
+  fstatSync(real_fd: number) {
+    if (real_fd == 0) {
+      // In special case of stdin in some environments (e.g., windows under electron)
+      // there is no valid stdin fd.  We thus fake it, since we are virtualizing
+      // one in our code anyways.
+      try {
+        return this.bindings.fs.fstatSync(real_fd);
+      } catch (_) {
+        const now = new Date();
+        return {
+          dev: 0,
+          mode: 8592,
+          nlink: 1,
+          uid: 0,
+          gid: 0,
+          rdev: 0,
+          blksize: 65536,
+          ino: 0,
+          size: 0,
+          blocks: 0,
+          atimeMs: now.valueOf(),
+          mtimeMs: now.valueOf(),
+          ctimeMs: now.valueOf(),
+          birthtimeMs: 0,
+          atime: new Date(),
+          mtime: new Date(),
+          ctime: new Date(),
+          birthtime: new Date(0),
+        };
+      }
+    }
+    // general case
     return this.bindings.fs.fstatSync(real_fd);
   }
 
