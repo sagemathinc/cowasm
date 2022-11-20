@@ -10,6 +10,8 @@ import pythonMinimal from "./python-minimal.zip";
 import pythonReadline from "./python-readline.zip";
 const PYTHONEXECUTABLE = "/usr/lib/python.wasm";
 
+export { PythonWasmAsync };
+
 // We ONLY provide async version, since sync version isn't
 // possible anymore since dynamic module loading has to be
 // sync and browsers don't allow sync webassmbly loading.

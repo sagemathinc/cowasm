@@ -774,8 +774,8 @@ export default class WASI {
       fd_write: wrap(
         (fd: number, iovs: number, iovsLen: number, nwritten: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_WRITE);
-          const IS_STDOUT = stats.real == 1;
-          const IS_STDERR = stats.real == 2;
+          const IS_STDOUT = fd == WASI_STDOUT_FILENO;
+          const IS_STDERR = fd == WASI_STDERR_FILENO;
           let written = 0;
           getiovs(iovs, iovsLen).forEach((iov) => {
             //console.log("fd_write", `"${new TextDecoder().decode(iov)}"`);
@@ -855,7 +855,7 @@ export default class WASI {
       fd_read: wrap(
         (fd: number, iovs: number, iovsLen: number, nread: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_READ);
-          const IS_STDIN = stats.real === 0;
+          const IS_STDIN = fd == WASI_STDIN_FILENO;
           let read = 0;
           //           logToFile(
           //             `fd_read: ${IS_STDIN}, ${JSON.stringify(stats, (_, value) =>
