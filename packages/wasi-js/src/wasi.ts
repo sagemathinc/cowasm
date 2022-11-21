@@ -318,13 +318,14 @@ export default class WASI {
   }
 
   fstatSync(real_fd: number) {
-    if (real_fd == 0) {
-      // In special case of stdin in some environments (e.g., windows under electron)
-      // there is no valid stdin fd.  We thus fake it, since we are virtualizing
-      // one in our code anyways.
+    if (real_fd <= 2) {
       try {
         return this.bindings.fs.fstatSync(real_fd);
       } catch (_) {
+        // In special case of stdin/stdout/stderr in some environments
+        // (e.g., windows under electron) some of the actual file descriptors
+        // aren't defined in the node process.  We thus fake it, since we
+        // are virtualizing these in our code anyways.
         const now = new Date();
         return {
           dev: 0,
