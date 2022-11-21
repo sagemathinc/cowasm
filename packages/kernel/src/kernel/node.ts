@@ -20,6 +20,7 @@ interface Options {
   fs?: FileSystemSpec[];
   wasmEnv?: { [name: string]: Function };
   interactive?: boolean; // enable terminal and signal handling in async mode.
+  noStdio?: boolean; // for nodejs -- do NOT use process.stdin, process.stdout, and process.stderr.  Instead, use the same programatic control of IO as in the browser, i.e., a writeToStdin function and 'stdout' and 'stderr' events.   ONLY for async mode.
 }
 
 function getOptions(wasmImport, opts?: Options) {
@@ -41,6 +42,7 @@ function getOptions(wasmImport, opts?: Options) {
     fs: opts?.fs ?? ([{ type: "native" }] as FileSystemSpec[]),
     env,
     wasmEnv: opts?.wasmEnv,
+    noStdio: opts?.noStdio,
   };
 }
 

@@ -7,6 +7,8 @@ const log = debug("python-wasm");
 
 import { Options, PythonWasmSync, PythonWasmAsync } from "./common";
 
+export type { Options, PythonWasmSync, PythonWasmAsync };
+
 const python_wasm = join(__dirname, "python.wasm");
 const pythonEverything = join(__dirname, "python-everything.zip");
 const pythonFull = join(__dirname, "python-stdlib.zip");
@@ -56,7 +58,12 @@ async function createPython(
   }
   const kernel = sync
     ? await syncKernel({ env, fs })
-    : await asyncKernel({ env, fs, interactive: opts?.interactive });
+    : await asyncKernel({
+        env,
+        fs,
+        interactive: opts?.interactive,
+        noStdio: opts?.noStdio,
+      });
   log("done");
   log("initializing python");
   const python = sync

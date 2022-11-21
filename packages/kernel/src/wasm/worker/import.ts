@@ -36,6 +36,7 @@ export interface Options {
     spinLockBuffer: SharedArrayBuffer;
     stdinLockBuffer: SharedArrayBuffer;
   };
+  noStdio?: boolean;
 }
 
 const cache: { [name: string]: any } = {};
