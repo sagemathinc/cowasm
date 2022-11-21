@@ -1,6 +1,6 @@
 {
   "name": "python-wasm",
-  "version": "0.25.2",
+  "version": "0.25.3",
   "description": "python-wasm -- WebAssembly Python for servers and browsers with sympy, Cython, numpy, and more",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",
@@ -27,7 +27,7 @@
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/python-wasm",
   "workspaces": ["../kernel"],
   "dependencies": {
-    "@cowasm/kernel": "^0.26.1",
+    "@cowasm/kernel": "^0.26.2",
     "debug": "^4.3.4"
   },
   "devDependencies": {
