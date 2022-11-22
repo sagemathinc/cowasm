@@ -69,7 +69,7 @@ export async function syncKernel(opts?: Options): Promise<WasmInstanceSync> {
 
 export async function asyncKernel(opts?: Options): Promise<WasmInstanceAsync> {
   const kernel = await createAsyncKernel(getOptions(wasmAsyncImport, opts));
-  if (opts?.interactive) {
+  if (opts?.interactive && !opts?.noStdio) {
     asyncIO(kernel);
   }
   return kernel;
