@@ -113,33 +113,57 @@ name? william  <-- I just typed "william"
 
 You can also use python\-wasm in your own [web applications via webpack](https://github.com/sagemathinc/cowasm/tree/main/packages/webpack).  In the browser, this transparently uses SharedArrayBuffers if available, and falls back to ServiceWorkers.
 
-## Build CoWasm from source on Linux or MacOS
+## Build from Source
+
+We support and regularly test building CoWasm from source on the following platforms:
+
+- x86 macOS and aarch64 macOS (Apple Silicon M1)
+- x86 and aarch64 Linux
 
 ### Prerequisites
 
-To build everything from source, make sure that you have standard command line dev tools installed, e.g., on Ubuntu/Debian:
+You do NOT need to install Zig or Node.js. A tested version of each will be
+downloaded as part of the build process. Currently, this is the latest released
+version of Zig and the latest released version of Node. It doesn't matter if
+you have random versions of Node or Zig on your system already.
+
+- On MacOS, install the [XCode command line tools.](https://developer.apple.com/xcode/resources/) 
+
+- On Linux apt\-based system, e.g., on Ubuntu 22.04:
 
 ```sh
 apt-get install git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 libtool tcl zip libncurses-dev
 ```
 
-The build [takes about 15\-20 minutes](https://github.com/sagemathinc/wapython/actions), and about 5GB's of disk space:
+- On Linux RPM based system, e.g., Fedora 37:
+
+```sh
+dnf install git make cmake curl dpkg-dev m4 yasm texinfo libtool tcl zip ncurses-devel perl
+```
+
+- Currently, the only way to build CoWasm from source on MS Windows is to use a Docker container running Linux.  Using WSL2 (maybe) works but is too slow.
+
+### Build
+
+To build you just type `make` at the top level.  This will run make in each 
+subdirectory in the correct order.
 
 ```sh
 ~/cowasm$ make
 ```
 
-This installs a specific tested version of Zig and Nodejs, then builds native and WebAssembly versions of CPython and many dependencies, and also builds all the Typescript code.  It also builds many other interesting programs with ports to WebAssembly, though many are not completely finished \(e.g., there is the dash shell and ports of tar and BSD coreutils\).   Building from source is regularly _**tested on Linux and MacOS with both x86\_64 and ARM \(M1\) processors**_:
+Depending on your computer, the build should take less than 30 minutes, and about 6GB's of disk space.
+
+This installs a specific tested version of Zig and Nodejs, then builds native and WebAssembly versions of CPython and many dependencies, and also builds all the Typescript code.  It also builds many other interesting programs with ports to WebAssembly, though many are not completely finished \(e.g., there is the dash shell and ports of tar and BSD coreutils\).   As mentioned, building from source is regularly _**tested on Linux and MacOS with both x86\_64 and ARM \(M1\) processors**_:
 
 - Linux: tested on both x86\_64 and aarch64 Ubuntu
 - MacOS: tested on both x86\_64 and M1 mac with standard XCode command live dev tools installed.
 
-CoWasm _**does not**_ use the compilers on the system, and instead uses CLANG as shipped with Zig.   If you're using Windows, you'll have to use Linux via a virtual machine or Docker container currently.
+CoWasm _**does not**_ use the compilers on the system, and instead uses clang/llvm as shipped with Zig.   If you're using Windows, you'll have to use Linux via a virtual machine or Docker.
 
-### Run the test suite
+### Test
 
-The CoWasm test suite runs the **supported tests** on everything
-that is installed:
+To test everything run `make test` from the top level directory.  The CoWasm test suite runs the **supported tests** on everything that is installed:
 
 ```sh
 ~/cowasm$ make test
@@ -150,14 +174,28 @@ that is installed:
 #
 #   Fri Oct 28 12:32:19 AM UTC 2022
 #   Linux aarch64
-#   Git Branch: dev
+#   Git Branch: main
 #                                                        #
 ##########################################################
 ```
 
-Note that running `make test` at the top level of `python-wasm` does NOT run the **full** test suite of every package, since it takes quite a while and there are **still some failing tests**, since I CoWasm doesn't support enough of what Python expects. It does run a big supported subset of the cpython test suite \(it's the part that I got to pass so far, which is over 80%\).  As an example, the sympy test suite is massive, takes a very long time to run, and doesn't even work for me natively; instead, we just run a handful of small tests to ensure sympy is working at all.  Similarly, for Cython, we run all their demos, but not the full test suite.  A longer term goal of CoWasm is to support a second more thorough testing regime that runs the full test suite of each package.
+### Pull latest code, build and test
 
-You can also use the WebAssembly Python REPL directly on the command line. 
+At the top level run `./bin/rebuild-all` :
+
+```sh
+~/cowasm$ ./bin/rebuild-all 
+```
+
+This does `make clean,` pulls the latest code, builds it, then runs the full test suite.  This is currently the only safe way to update your dev environment to a new version, since just running `make` after doing a `git pull` might not properly detect all changes \(since things can be very subtle\).  Fortunately, `zig` caches a lot of build artificats, so subsequent builds are faster.    
+
+**NOTE/WARNING:** Zig's cache is in `~/.cache/zig` and it can get HUGE.   As far as I can tell, I think it just grows and grows without bound \(it's not an LRU cache\), and I think there are no tools to "manage" it besides just `rm -rf` it periodically.
+
+#### What is tested?
+
+Note that running `make test` at the top level of `python-wasm` does NOT run the **full** test suite of every package, since it takes quite a while and there are **still some failing tests**, since CoWasm doesn't support enough of what Python expects. It does run a large supported subset of the cpython test suite \(it's the part that I got to pass so far, which is over 80%\).  As an example, the sympy test suite is massive, takes a very long time to run, and doesn't even work for me natively; instead, we just run a handful of small tests to ensure sympy is working at all.  Similarly, for Cython, we run all their demos, but not the full test suite.  A longer term goal of CoWasm is to support a second more thorough testing regime that runs the full test suite of each package.  There will likely always be issues due to WASM not being a multiuser POSIX system, but it's good to know what those issues are!
+
+You can also use the WebAssembly Python REPL directly on the command line.
 
 ```sh
 ~/cowasm$ ./bin/python-wasm 
