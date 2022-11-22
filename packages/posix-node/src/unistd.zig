@@ -57,7 +57,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
 
 pub const constants = .{
     .c_import = unistd,
-    .names = [_][:0]const u8{ "O_CLOEXEC", "O_NONBLOCK", "F_ULOCK", "F_LOCK", "F_TLOCK", "F_TEST" },
+    .names = [_][:0]const u8{ "O_CLOEXEC", "O_NONBLOCK", "O_APPEND", "O_ASYNC", "F_ULOCK", "F_LOCK", "F_TLOCK", "F_TEST" },
 };
 
 // int chroot(const char *path);

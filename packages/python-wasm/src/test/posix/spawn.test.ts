@@ -1,4 +1,4 @@
-import { syncPython } from "../../node";
+import { testPython as syncPython } from "../../node";
 
 test("test that a few spawn related posix calls throw an error (rather than getting stubbed and silently failing)", async () => {
   const { kernel } = await syncPython();

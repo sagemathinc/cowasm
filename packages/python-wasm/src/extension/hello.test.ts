@@ -1,4 +1,4 @@
-import { syncPython } from "../node";
+import { testPython as syncPython } from "../node";
 
 // Test that it is possible to import a dynamic library
 test("hello extension module loads and works", async () => {

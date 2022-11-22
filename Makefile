@@ -185,7 +185,7 @@ packages/f2c/${BUILT}: zig
 	cd packages/f2c && make all
 .PHONY: f2c
 
-py: py-cython py-mpmath py-sympy py-pip py-numpy
+py: py-cython py-mpmath py-sympy py-pip py-numpy py-pandas
 .PHONY: py
 
 # Note -- this runs a target in the cpython package, which can only be run
@@ -194,17 +194,17 @@ py-pip: cpython kernel
 	cd packages/cpython && make pip
 
 py-cython: packages/py-cython/${BUILT}
-packages/py-cython/${BUILT}: zig kernel
+packages/py-cython/${BUILT}: zig kernel py-pip
 	cd packages/py-cython && make all
 .PHONY: py-cython
 
 py-mpmath: packages/py-mpmath/${BUILT}
-packages/py-mpmath/${BUILT}: zig kernel
+packages/py-mpmath/${BUILT}: zig kernel py-pip
 	cd packages/py-mpmath && make all
 .PHONY: py-mpmath
 
 py-sympy: packages/py-sympy/${BUILT}
-packages/py-sympy/${BUILT}: zig kernel py-mpmath
+packages/py-sympy/${BUILT}: zig kernel py-mpmath py-pip
 	cd packages/py-sympy && make all
 .PHONY: py-sympy
 
@@ -212,6 +212,11 @@ py-numpy: packages/py-numpy/${BUILT}
 packages/py-numpy/${BUILT}: zig kernel py-cython py-pip
 	cd packages/py-numpy && make all
 .PHONY: py-numpy
+
+py-pandas: packages/py-pandas/${BUILT}
+packages/py-pandas/${BUILT}: zig kernel py-cython py-pip py-numpy
+	cd packages/py-pandas && make all
+.PHONY: py-pandas
 
 bin-wasm:
 	rm -rf ${CWD}/bin-wasm

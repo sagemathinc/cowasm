@@ -14,10 +14,10 @@ export default async function terminal(element: HTMLDivElement) {
   element.children[0].style.padding = "15px";
   term.resize(80, 40);
   term.write(
-    "This is a demo of https://www.npmjs.com/package/python-wasm\nIt includes numpy and sympy. "
+    "This is a demo of https://www.npmjs.com/package/python-wasm\nIt includes numpy, sympy and pandas. "
   );
   term.write(
-    "Try 'import numpy' and 'import sympy' below.\nControl+c to interrupt and time.sleep to pause are also supported.\n\n"
+    "Try 'import pandas' below.\nControl+c to interrupt and time.sleep to pause are also supported.\n\n"
   );
   setTheme(term, "solarized-light");
   term.onData((data) => {

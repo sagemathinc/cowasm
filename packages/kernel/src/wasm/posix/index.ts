@@ -30,6 +30,7 @@ import debug from "debug";
 const logNotImplemented = debug("posix:not-implemented");
 const logCall = debug("posix:call");
 const logReturn = debug("posix:return");
+const logError = debug("posix:error");
 
 // For some reason this code
 //    import os; print(os.popen('ls').read())
@@ -120,20 +121,31 @@ export default function posix(context: Context): PosixEnv {
       nativeErrnoToSymbol[context.posix.constants[symbol]] = symbol;
     }
   }
-  function setErrnoFromNative(nativeErrno: number) {
+  function setErrnoFromNative(nativeErrno: number, name: string, args): void {
+    if (nativeErrno == 0 || isNaN(nativeErrno)) {
+      // TODO: could put a log or something in that name raised error with no code.
+      context.callFunction("setErrno", nativeErrno);
+      return;
+    }
     // The error code comes from native posix, so we translate it to WASI first
     const symbol = nativeErrnoToSymbol[nativeErrno];
     if (symbol != null) {
       const wasiErrno = constants[symbol];
       if (wasiErrno != null) {
+        if (logError.enabled) {
+          logError({ name, nativeErrno, wasiErrno, symbol, args });
+        }
         context.callFunction("setErrno", wasiErrno);
         return;
       }
     }
-    logNotImplemented(
-      "Unable to map nativeErrno (please update code)",
-      nativeErrno
-    );
+
+    const mesg =
+      symbol != null
+        ? `WARNING in posix '${name}': Unable to map nativeErrno ${nativeErrno}: add ${symbol} to WASM posix constants in @cowasm/kernel`
+        : `WARNING in posix '${name}': Unable to map nativeErrno ${nativeErrno}: add native symbol corresponding to errno=${nativeErrno} to the posix-node package`;
+    console.warn(mesg);
+    logNotImplemented(mesg);
   }
 
   // It's critical to ensure the directories of the host env is the same as
@@ -163,10 +175,11 @@ export default function posix(context: Context): PosixEnv {
         logReturn(name, ret);
         return ret;
       } catch (err) {
+        logError(name, err);
         if (err.wasiErrno != null) {
           context.callFunction("setErrno", err.wasiErrno);
         } else if (err.code != null) {
-          setErrnoFromNative(parseInt(err.code));
+          setErrnoFromNative(parseInt(err.code), name, args);
         } else {
           // err.code not yet set (TODO), so we log and try heuristic.
           // On error, for now -1 is returned, and errno should get set to some sort of error indicator
@@ -177,7 +190,7 @@ export default function posix(context: Context): PosixEnv {
             context.callFunction("setErrno", constants.ENOSYS);
           } else {
             console.trace(
-              `WARNING: Posix library call to ${name} raised exception without error code: ${err}`
+              `WARNING: Posix library call to ${name} raised exception without error code.  The raised error is '${err}'`
             );
             logNotImplemented(
               `Posix call to ${name} raised exception without error code`,

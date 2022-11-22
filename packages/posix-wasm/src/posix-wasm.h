@@ -268,28 +268,50 @@ char* realpath(const char* path, char* resolved_path);
 
 int close_range(unsigned int first, unsigned int last, unsigned int flags);
 
-// These are not needed by Python but are needed by PARI:
-typedef void* jmp_buf;
-typedef void* sigjmp_buf;
+// These are not needed by Python but are needed by PARI (which isn't
+// even part of CoWasm!?):
+// This #define is to ensure that only one setjmp defs get defined.
+#ifndef _SETJMP_H
+#define _SETJMP_H
+typedef void* __jmp_buf;
+typedef struct __jmp_buf_tag {
+	__jmp_buf __jb;
+	unsigned long __fl;
+	unsigned long __ss[128/sizeof(long)];
+} jmp_buf[1];
+typedef jmp_buf sigjmp_buf;
 int setjmp(jmp_buf env);
 int sigsetjmp(sigjmp_buf env, int savesigs);
 void longjmp(jmp_buf env, int val);
 void siglongjmp(sigjmp_buf env, int val);
+#endif // _SETJMP_H
+
+#ifndef FILE
 struct _IO_FILE {
   char __x;
 };
 typedef struct _IO_FILE FILE;
+#endif
+
 FILE* popen(const char* command, const char* type);
 int pclose(FILE* stream);
+
+
 struct passwd* getpwnam(const char* name);
 struct passwd* getpwuid(uid_t uid);
 // void (*signal(int sig, void (*func)(int)))(int);
 
-typedef unsigned int socklen_t;
-#define SO_ERROR 0x1007
-#define SOMAXCONN 32
+// These #defines *must* be consistent with what is in kernel!  See that via
+//    "DEBUG=posix:constants python-wasm":
+
+#define SO_ERROR 4
+#define SO_REUSEADDR 2
+#define SO_KEEPALIVE 9
+#define SOMAXCONN 128
 #define SOCK_SEQPACKET 5
 #define __WASI_RIFLAGS_RECV_DATA_TRUNCATED 0
+
+typedef unsigned int socklen_t;
 int accept(int sockfd, void* addr, void* addrlen);
 int setsockopt(int sockfd, int level, int optname, const void* optval,
                socklen_t optlen);
@@ -418,6 +440,7 @@ int rpmatch(const char* response);
 #include "netdb.h"
 char* inet_ntoa(struct in_addr in);
 
+void openlog (const char *, int, int);
 
 
 #endif

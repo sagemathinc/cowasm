@@ -126,6 +126,17 @@ const STDOUT_DEFAULT_RIGHTS =
   WASI_RIGHT_POLL_FD_READWRITE;
 const STDERR_DEFAULT_RIGHTS = STDOUT_DEFAULT_RIGHTS;
 
+// I don't know what this *should* be, but I'm
+// adding things as they are expected/implemented.
+export const SOCKET_DEFAULT_RIGHTS =
+  WASI_RIGHT_FD_DATASYNC |
+  WASI_RIGHT_FD_READ |
+  WASI_RIGHT_FD_WRITE |
+  WASI_RIGHT_FD_ADVISE |
+  WASI_RIGHT_FD_FILESTAT_GET |
+  WASI_RIGHT_POLL_FD_READWRITE |
+  WASI_RIGHT_FD_FDSTAT_SET_FLAGS;
+
 const msToNs = (ms: number) => {
   const msInt = Math.trunc(ms);
   const decimal = BigInt(Math.round((ms - msInt) * 1000000));
@@ -178,7 +189,7 @@ const stat = (wasi: WASI, fd: number): File => {
     throw new WASIError(WASI_EBADF);
   }
   if (entry.filetype === undefined) {
-    const stats = wasi.bindings.fs.fstatSync(entry.real);
+    const stats = wasi.fstatSync(entry.real);
     const { filetype, rightsBase, rightsInheriting } = translateFileAttributes(
       wasi,
       fd,
@@ -306,6 +317,42 @@ export default class WASI {
     this.bindings = state.bindings;
   }
 
+  fstatSync(real_fd: number) {
+    if (real_fd <= 2) {
+      try {
+        return this.bindings.fs.fstatSync(real_fd);
+      } catch (_) {
+        // In special case of stdin/stdout/stderr in some environments
+        // (e.g., windows under electron) some of the actual file descriptors
+        // aren't defined in the node process.  We thus fake it, since we
+        // are virtualizing these in our code anyways.
+        const now = new Date();
+        return {
+          dev: 0,
+          mode: 8592,
+          nlink: 1,
+          uid: 0,
+          gid: 0,
+          rdev: 0,
+          blksize: 65536,
+          ino: 0,
+          size: 0,
+          blocks: 0,
+          atimeMs: now.valueOf(),
+          mtimeMs: now.valueOf(),
+          ctimeMs: now.valueOf(),
+          birthtimeMs: 0,
+          atime: new Date(),
+          mtime: new Date(),
+          ctime: new Date(),
+          birthtime: new Date(0),
+        };
+      }
+    }
+    // general case
+    return this.bindings.fs.fstatSync(real_fd);
+  }
+
   constructor(wasiConfig: WASIConfig) {
     this.sleep = wasiConfig.sleep;
     this.getStdin = wasiConfig.getStdin;
@@ -331,7 +378,6 @@ export default class WASI {
     this.view = undefined;
     this.bindings = wasiConfig.bindings;
     const fs = this.bindings.fs;
-
     this.FD_MAP = new Map([
       [
         WASI_STDIN_FILENO,
@@ -409,11 +455,29 @@ export default class WASI {
         // allocated memory, so we cap it or things crash.
         // TODO: maybe we need to allocate more memory?  I don't know!!
         if (bufLen > this.memory.buffer.byteLength - buf) {
+          console.log({
+            buf,
+            bufLen,
+            total_memory: this.memory.buffer.byteLength,
+          });
           log("getiovs: warning -- truncating buffer to fit in memory");
-          bufLen = Math.min(bufLen, this.memory.buffer.byteLength - buf);
+          bufLen = Math.min(
+            bufLen,
+            Math.max(0, this.memory.buffer.byteLength - buf)
+          );
         }
-        const buffer = new Uint8Array(this.memory.buffer, buf, bufLen);
-        return toBuffer(buffer);
+        try {
+          const buffer = new Uint8Array(this.memory.buffer, buf, bufLen);
+          return toBuffer(buffer);
+        } catch (err) {
+          // don't hide this
+          console.warn("WASI.getiovs -- invalid buffer", err);
+          // but at least make it so we don't totally kill WASM, so we
+          // get a traceback in the calling program (say python).
+          // TODO: Right now this sort of thing happens with aggressive use of mmap,
+          // but I plan to replace how mmap works with something that is viable.
+          throw new WASIError(WASI_EINVAL);
+        }
       });
 
       return buffers;
@@ -569,8 +633,32 @@ export default class WASI {
         return WASI_ESUCCESS;
       }),
 
-      fd_fdstat_set_flags: wrap((fd: number, _flags: number) => {
+      /*
+      fd_fdstat_set_flags
+
+      Docs From upstream:
+      Adjust the flags associated with a file descriptor.
+      Note: This is similar to `fcntl(fd, F_SETFL, flags)` in POSIX.
+
+      This could be supported via posix-node in general (when available)
+      for sockets and stdin/stdout/stderr and genuine files (but not
+      for memfs, obviously).  It's typically used by C programs for
+      locking files, but most importantly for us, for setting whether
+      reading from a fd is nonblocking (very important for stdin)
+      or should time out after a certain amount of time (e.g., very
+      important for a network socket).
+
+      For now we implement this in a very small number of cases
+      and return "Function not implemented" otherwise.
+      */
+      fd_fdstat_set_flags: wrap((fd: number, flags: number) => {
+        // Are we allowed to set flags.  This more means: "is it implemented?".
+        // Right now we only set this flag for sockets (that's done in the
+        // external kernel module in src/wasm/posix/socket.ts).
         CHECK_FD(fd, WASI_RIGHT_FD_FDSTAT_SET_FLAGS);
+        if (this.wasiImport.sock_fcntlSetFlags(fd, flags) == 0) {
+          return WASI_ESUCCESS;
+        }
         return WASI_ENOSYS;
       }),
 
@@ -593,7 +681,7 @@ export default class WASI {
 
       fd_filestat_get: wrap((fd: number, bufPtr: number) => {
         const stats = CHECK_FD(fd, WASI_RIGHT_FD_FILESTAT_GET);
-        const rstats = fs.fstatSync(stats.real);
+        const rstats = this.fstatSync(stats.real);
         this.refreshMemory();
         this.view.setBigUint64(bufPtr, BigInt(rstats.dev), true);
         bufPtr += 8;
@@ -625,7 +713,7 @@ export default class WASI {
       fd_filestat_set_times: wrap(
         (fd: number, stAtim: number, stMtim: number, fstflags: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_FILESTAT_SET_TIMES);
-          const rstats = fs.fstatSync(stats.real);
+          const rstats = this.fstatSync(stats.real);
           let atim = rstats.atime;
           let mtim = rstats.mtime;
           const n = nsToMs(now(WASI_CLOCK_REALTIME)!);
@@ -721,8 +809,8 @@ export default class WASI {
       fd_write: wrap(
         (fd: number, iovs: number, iovsLen: number, nwritten: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_WRITE);
-          const IS_STDOUT = stats.real == 1;
-          const IS_STDERR = stats.real == 2;
+          const IS_STDOUT = fd == WASI_STDOUT_FILENO;
+          const IS_STDERR = fd == WASI_STDERR_FILENO;
           let written = 0;
           getiovs(iovs, iovsLen).forEach((iov) => {
             //console.log("fd_write", `"${new TextDecoder().decode(iov)}"`);
@@ -802,7 +890,7 @@ export default class WASI {
       fd_read: wrap(
         (fd: number, iovs: number, iovsLen: number, nread: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_READ);
-          const IS_STDIN = stats.real === 0;
+          const IS_STDIN = fd == WASI_STDIN_FILENO;
           let read = 0;
           //           logToFile(
           //             `fd_read: ${IS_STDIN}, ${JSON.stringify(stats, (_, value) =>
@@ -1010,7 +1098,7 @@ export default class WASI {
                 (stats.offset ? stats.offset : BigInt(0)) + BigInt(offset);
               break;
             case WASI_WHENCE_END:
-              const { size } = fs.fstatSync(stats.real);
+              const { size } = this.fstatSync(stats.real);
               stats.offset = BigInt(size) + BigInt(offset);
               break;
             case WASI_WHENCE_SET:
@@ -1130,7 +1218,7 @@ export default class WASI {
             return WASI_EINVAL;
           }
           this.refreshMemory();
-          const rstats = fs.fstatSync(stats.real);
+          const rstats = this.fstatSync(stats.real);
           let atim = rstats.atime;
           let mtim = rstats.mtime;
           const n = nsToMs(now(WASI_CLOCK_REALTIME)!);
@@ -1491,37 +1579,62 @@ export default class WASI {
         return WASI_ESUCCESS;
       }),
 
+      // poll_oneoff: Concurrently poll for the occurrence of a set of events.
+      //
+      // TODO: this is NOT implemented properly yet in general.
+      // It does read all the data from sin, etc.
+      // correctly now, but it doesn't actually work correctly
+      // when there are multiple subscriptions.
+      // It works for:
+      //     - one timer
+      //     - one file descriptor corresponding to a socket and one timer,
+      //       which is what poll with 1 fd and a timeout create.
       poll_oneoff: (
         sin: number,
         sout: number,
         nsubscriptions: number,
-        nevents: number
+        neventsPtr: number
       ) => {
-        let eventc = 0;
+        let nevents = 0;
+        let name = "";
 
-        // Have to wait this long (this gets computed below in the WASI_EVENTTYPE_CLOCK case).
+        // May have to wait this long (this gets computed below in the WASI_EVENTTYPE_CLOCK case).
+
         let waitTimeNs = BigInt(0);
+
+        let fd = -1;
+        let fd_type: "read" | "write" = "read";
+        let fd_timeout_ms = 0;
+
         const startNs = BigInt(this.bindings.hrtime());
         this.refreshMemory();
-        // logToFile("poll_oneoff", sin, sout, nsubscriptions, nevents);
+        let last_sin = sin;
         for (let i = 0; i < nsubscriptions; i += 1) {
           const userdata = this.view.getBigUint64(sin, true);
           sin += 8;
           const type = this.view.getUint8(sin);
           sin += 1;
-          // logToFile(`type=${type}, userdata=${userdata}\n`);
+          sin += 7; // padding
+          if (log.enabled) {
+            if (type == WASI_EVENTTYPE_CLOCK) {
+              name = "poll_oneoff (type=WASI_EVENTTYPE_CLOCK): ";
+            } else if (type == WASI_EVENTTYPE_FD_READ) {
+              name = "poll_oneoff (type=WASI_EVENTTYPE_FD_READ): ";
+            } else {
+              name = "poll_oneoff (type=WASI_EVENTTYPE_FD_WRITE): ";
+            }
+            log(name);
+          }
           switch (type) {
             case WASI_EVENTTYPE_CLOCK: {
               // see packages/zig/dist/lib/libc/include/wasm-wasi-musl/wasi/api.h
-              // Also note that this code was wrong in upstream; they just sort
-              // of guessed at things incorrectly and clearly never tested it once.
-              // For me this at least works to implement sleep in Cpython when
-              // it is using select.
-              sin += 7; // padding
+              // for exactly how these values are encoded.  I carefully looked
+              // at that header and **this is definitely right**.  Same with the fd
+              // in the other case below.
               const clockid = this.view.getUint32(sin, true);
               sin += 4;
               sin += 4; // padding
-              const timestamp = this.view.getBigUint64(sin, true);
+              const timeout = this.view.getBigUint64(sin, true);
               sin += 8;
               //const precision = this.view.getBigUint64(sin, true);
               sin += 8;
@@ -1530,14 +1643,20 @@ export default class WASI {
               sin += 6; // padding
 
               const absolute = subclockflags === 1;
+              if (log.enabled) {
+                log(name, { clockid, timeout, absolute });
+              }
+              if (!absolute) {
+                fd_timeout_ms = Number(timeout / BigInt(1000000));
+              }
 
               let e = WASI_ESUCCESS;
               const t = now(clockid);
-              // logToFile(t, clockid, timestamp, subclockflags, absolute);
+              // logToFile(t, clockid, timeout, subclockflags, absolute);
               if (t == null) {
                 e = WASI_EINVAL;
               } else {
-                const end = absolute ? timestamp : t + timestamp;
+                const end = absolute ? timeout : t + timeout;
                 const waitNs = end - t;
                 if (waitNs > waitTimeNs) {
                   waitTimeNs = waitNs;
@@ -1549,10 +1668,10 @@ export default class WASI {
               this.view.setUint16(sout, e, true); // error
               sout += 2; // pad offset 2
               this.view.setUint8(sout, WASI_EVENTTYPE_CLOCK);
-              sout += 1; // pad offset 3
+              sout += 1; // pad offset 1
               sout += 5; // padding to 8
 
-              eventc += 1;
+              nevents += 1;
 
               break;
             }
@@ -1561,12 +1680,10 @@ export default class WASI {
               /*
               Look at
                lib/libc/wasi/libc-bottom-half/cloudlibc/src/libc/sys/select/pselect.c
-              to see how poll_oneoff is actually used by wasi.
-              In particular, from the code:
+              to see how poll_oneoff is actually used by wasi to implement pselect.
+              It's also used in
+               lib/libc/wasi/libc-bottom-half/cloudlibc/src/libc/poll/poll.c
 
-                   userdata = fd = the file descriptor
-
-              Also, from the select man page:
               "If none of the selected descriptors are ready for the
               requested operation, the pselect() or select() function shall
               block until at least one of the requested operations becomes
@@ -1579,10 +1696,11 @@ export default class WASI {
               of time if getStdin defined; otherwise, we at least *pause* for a moment
               (to avoid cpu burn) if this.sleep is available.
               */
-
-              sin += 3; // padding
-              //const fd = this.view.getUint32(sin, true);
+              fd = this.view.getUint32(sin, true);
+              fd_type = type == WASI_EVENTTYPE_FD_READ ? "read" : "write";
               sin += 4;
+              log(name, "fd =", fd);
+              sin += 28;
 
               this.view.setBigUint64(sout, userdata, true);
               sout += 8;
@@ -1592,8 +1710,10 @@ export default class WASI {
               sout += 1; // pad offset 3
               sout += 5; // padding to 8
 
-              eventc += 1;
+              nevents += 1;
               /*
+              TODO: for now for stdin we are just doing a dumb hack.
+
               We just do something really naive, which is "pause for a little while".
               It seems to work for every application I have so far, from Python to
               to ncurses, etc.  This also makes it easy to have non-blocking sleep
@@ -1608,7 +1728,7 @@ export default class WASI {
                  select(SP_PARM->_checkfd + 1, &fdset, NULL, NULL, &ktimeout)
 
               */
-              if (userdata == BigInt(0) && WASI_EVENTTYPE_FD_READ == type) {
+              if (fd == WASI_STDIN_FILENO && WASI_EVENTTYPE_FD_READ == type) {
                 this.shortPause();
               }
 
@@ -1617,9 +1737,30 @@ export default class WASI {
             default:
               return WASI_EINVAL;
           }
+
+          // Consistency check that we consumed exactly the right amount
+          // of the __wasi_subscription_t. See zig/lib/libc/include/wasm-wasi-musl/wasi/api.h
+          if (sin - last_sin != 48) {
+            console.warn("*** BUG in wasi-js in poll_oneoff ", {
+              i,
+              sin,
+              last_sin,
+              diff: sin - last_sin,
+            });
+          }
+          last_sin = sin;
         }
 
-        this.view.setUint32(nevents, eventc, true);
+        this.view.setUint32(neventsPtr, nevents, true);
+
+        if (nevents == 2 && fd >= 0) {
+          const r = this.wasiImport.sock_pollSocket(fd, fd_type, fd_timeout_ms);
+          if (r != WASI_ENOSYS) {
+            // special implementation from outside
+            return r;
+          }
+          // fall back to below
+        }
 
         // Account for the time it took to do everything above, which
         // can be arbitrarily long:
@@ -1707,6 +1848,18 @@ export default class WASI {
       sock_shutdown() {
         return WASI_ENOSYS;
       },
+
+      sock_fcntlSetFlags(_fd: number, _flags: number) {
+        return WASI_ENOSYS;
+      },
+
+      sock_pollSocket(
+        _fd: number,
+        _eventtype: "read" | "write",
+        _timeout_ms: number
+      ) {
+        return WASI_ENOSYS;
+      },
     };
 
     if (log.enabled) {
@@ -1716,14 +1869,10 @@ export default class WASI {
       Object.keys(this.wasiImport).forEach((key: string) => {
         const prevImport = this.wasiImport[key];
         this.wasiImport[key] = function (...args: any[]) {
-          if (key != "fd_read" && key != "poll_oneoff") {
-            log(key, args);
-          }
+          log(key, args);
           try {
             let result = prevImport(...args);
-            if (key != "fd_read" && key != "poll_oneoff") {
-              log("result = ", result);
-            }
+            log("result", result);
             return result;
           } catch (e) {
             log("error: ", e);
@@ -1750,7 +1899,7 @@ export default class WASI {
 
   // return an unused file descriptor.  It *will* be the smallest
   // available file descriptor, except we don't use 0,1,2
-  getUnusedFileDescriptor(start=3) {
+  getUnusedFileDescriptor(start = 3) {
     let fd = start;
     while (this.FD_MAP.has(fd)) {
       fd += 1;
@@ -1855,7 +2004,7 @@ export default class WASI {
         const real = fdInfo[wasi_fd];
         try {
           // check the fd really exists
-          this.bindings.fs.fstatSync(real);
+          this.fstatSync(real);
         } catch (_err) {
           console.log("discarding ", { wasi_fd, real });
           continue;

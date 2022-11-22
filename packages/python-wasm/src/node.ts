@@ -7,6 +7,8 @@ const log = debug("python-wasm");
 
 import { Options, PythonWasmSync, PythonWasmAsync } from "./common";
 
+export type { Options, PythonWasmSync, PythonWasmAsync };
+
 const python_wasm = join(__dirname, "python.wasm");
 const pythonEverything = join(__dirname, "python-everything.zip");
 const pythonFull = join(__dirname, "python-stdlib.zip");
@@ -18,11 +20,19 @@ const pythonMinimal = join(__dirname, "python-minimal.zip");
 // The following will only work in the build-from-source dev environment.
 const PYTHONEXECUTABLE = join(__dirname, "../../cpython/bin/python-wasm");
 
-export async function syncPython(opts?: Options): Promise<PythonWasmSync> {
+export async function testPython() {
+  return (await createPython(true, {})) as PythonWasmSync;
+}
+
+export async function syncPython(
+  opts: Options = { fs: "everything" }
+): Promise<PythonWasmSync> {
   return (await createPython(true, opts)) as PythonWasmSync;
 }
 
-export async function asyncPython(opts?: Options): Promise<PythonWasmAsync> {
+export async function asyncPython(
+  opts: Options = { fs: "everything" }
+): Promise<PythonWasmAsync> {
   return (await createPython(false, opts)) as PythonWasmAsync;
 }
 
@@ -31,7 +41,7 @@ export default asyncPython;
 
 async function createPython(
   sync: boolean,
-  opts?: Options
+  opts: Options
 ): Promise<PythonWasmSync | PythonWasmAsync> {
   log("creating Python; sync = ", sync, ", opts = ", opts);
   const fs = getFilesystem(opts);
@@ -48,7 +58,12 @@ async function createPython(
   }
   const kernel = sync
     ? await syncKernel({ env, fs })
-    : await asyncKernel({ env, fs, interactive: opts?.interactive });
+    : await asyncKernel({
+        env,
+        fs,
+        interactive: opts?.interactive,
+        noStdio: opts?.noStdio,
+      });
   log("done");
   log("initializing python");
   const python = sync
@@ -91,6 +106,7 @@ function getFilesystem(opts?: Options): FileSystemSpec[] {
       { type: "native" },
     ];
   } else {
+    // native
     return [{ type: "native" }];
   }
 }

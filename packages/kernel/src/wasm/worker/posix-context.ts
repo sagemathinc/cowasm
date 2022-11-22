@@ -101,7 +101,13 @@ export default class PosixContext {
     // to replace it.  Someday wasi may have more that we have
     // to replace or implement.  See
     //    https://github.com/WebAssembly/wasi-sockets/
-    for (const name of ["recv", "send", "shutdown"]) {
+    for (const name of [
+      "recv",
+      "send",
+      "shutdown",
+      "fcntlSetFlags",
+      "pollSocket",
+    ]) {
       if (this.posixEnv[name] != null) {
         wasi_snapshot_preview1[`sock_${name}`] = this.posixEnv[name];
       }
@@ -183,13 +189,13 @@ export default class PosixContext {
         // this does dlopen of args[0]:
         main = wasm.getFunction("__main_argc_argv", args[0]);
         if (main == null) {
-          throw Error("main is null");
+          throw Error("__main_argc_argv is null");
         }
       } catch (_err) {
         try {
           main = wasm.getFunction("main", args[0]);
           if (main == null) {
-            throw Error("main is null");
+            throw Error("main and __main_argc_argv are both null");
           }
         } catch (err) {
           console.error(`${args[0]}: ${err}`);

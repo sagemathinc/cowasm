@@ -15,8 +15,9 @@ interface KernelOptions {
   fs: FileSystemSpec[];
   env: { [name: string]: string };
   // wasmEnv = extra functions to include in the WebAssembly environment. This ONLY makes sense for
-  // createSyncKernel, since for createAsyncKernel the WASM runs in a completely different thread.
+  // createSyncKernel, since for createAsyncKernel the WASM runs in a worker.
   wasmEnv?: { [name: string]: Function };
+  noStdio?: boolean;  // only for async kernel
 }
 
 export async function createAsyncKernel({
@@ -24,10 +25,12 @@ export async function createAsyncKernel({
   wasmImport,
   fs,
   env,
+  noStdio,
 }: KernelOptions): Promise<WasmInstanceAsync> {
   const kernel = (await wasmImport(wasmSource, {
     env,
     fs,
+    noStdio,
   })) as WasmInstanceAsync;
   // critical to do this first, because otherwise process.cwd() gets
   // set to '/' (the default in WASM) when any posix call happens.

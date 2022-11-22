@@ -50,6 +50,8 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "makeStdinBlocking", makeStdinBlocking);
     try node.registerFunction(env, exports, "tcgetattr", tcgetattr);
     try node.registerFunction(env, exports, "tcsetattr", tcsetattr);
+    try node.registerFunction(env, exports, "fcntlSetFlags", fcntlSetFlags);
+    try node.registerFunction(env, exports, "fcntlGetFlags", fcntlGetFlags);
 }
 
 const Errors = error{ GetAttr, GetFlags, SetFlags, SetAttr, SetLocale };
@@ -102,6 +104,32 @@ fn _makeStdinBlocking() Errors!void {
     if (clib.fcntl(clib.STDIN_FILENO, clib.F_SETFL, flags & ~(clib.O_NONBLOCK)) < 0) {
         return Errors.SetFlags;
     }
+}
+
+// fcntlSetFlags: (fd: number, flags: number) => number;
+// fcntl(clib.STDIN_FILENO, clib.F_SETFL, flags & ~(clib.O_NONBLOCK))
+fn fcntlSetFlags(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 2) catch return null;
+    const fd = node.i32FromValue(env, argv[0], "fd") catch return null;
+    const flags = node.i32FromValue(env, argv[1], "flags") catch return null;
+    if (clib.fcntl(fd, clib.F_SETFL, flags) < 0) {
+        node.throwErrno(env, "fcntlSetFlags - failed");
+        return null;
+    }
+    return null;
+}
+
+// fcntlGetFlags: (fd: number) => number;
+// fcntl(clib.STDIN_FILENO, clib.F_GETFL, 0)
+fn fcntlGetFlags(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 1) catch return null;
+    const fd = node.i32FromValue(env, argv[0], "fd") catch return null;
+    const flags = clib.fcntl(fd, clib.F_GETFL, @intCast(c_int, 0));
+    if (flags < 0) {
+        node.throwErrno(env, "fcntlGetFlags - failed");
+        return null;
+    }
+    return node.create_i32(env, flags, "flags") catch return null;
 }
 
 fn makeStdinBlocking(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {

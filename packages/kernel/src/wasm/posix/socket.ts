@@ -36,7 +36,7 @@ import {
   sendSockaddr,
 } from "./netdb";
 import constants from "./constants";
-import { constants as wasi_constants } from "wasi-js";
+import { constants as wasi_constants, SOCKET_DEFAULT_RIGHTS } from "wasi-js";
 import debug from "debug";
 
 const log = debug("posix:socket");
@@ -79,9 +79,17 @@ export default function socket({
   function native_fd(virtual_fd: number): number {
     const data = wasi.FD_MAP.get(virtual_fd);
     if (data == null) {
-      return -1;
+      throw Error(`invalid fd=${virtual_fd}`);
     }
     return data.real;
+  }
+
+  function getSocktype(virtual_fd: number): number {
+    const data = wasi.FD_MAP.get(virtual_fd);
+    if (data == null) {
+      throw Error(`unknown sock type for fd=${virtual_fd}`);
+    }
+    return data.socktype;
   }
 
   // Convert flags from wasi to native.  (Right now it looks
@@ -123,8 +131,8 @@ export default function socket({
     throw Error(`unknown option name ${option_name}`);
   }
 
-  function createWasiFd(native_fd: number): number {
-    // TODO: I'm starting the socket fd's at 1024 entirely because
+  function createWasiFd(native_fd: number, socktype: number): number {
+    // TODO: I'm starting the socket fd's at value over 1000 entirely because
     // if wstart at the default smallest possible when doing
     // "python-wasm -m pip" it crashes, since the fd=4 gets assigned
     // to some socket for a moment, then freed and then 4 gets used
@@ -132,12 +140,15 @@ export default function socket({
     // confuses things.  Maybe there is a bug somewhere in WASI or Python.
     // For now we just workaround it by putting the socket fd's
     // way out of reach of the normal file fd's.
-    const wasi_fd = wasi.getUnusedFileDescriptor(1024);
-    const STDIN = wasi.FD_MAP.get(0);
+    const wasi_fd = wasi.getUnusedFileDescriptor(1000);
     wasi.FD_MAP.set(wasi_fd, {
       real: native_fd,
-      rights: STDIN.rights, // TODO: just use rights for stdin???
+      rights: {
+        base: SOCKET_DEFAULT_RIGHTS,
+        inheriting: BigInt(0),
+      },
       filetype: wasi_constants.WASI_FILETYPE_SOCKET_STREAM,
+      socktype, // constants.SOCK_STREAM (tcp) or constants.SOCK_DGRAM (udp)
     });
     return wasi_fd;
   }
@@ -175,7 +186,7 @@ export default function socket({
       if (!inheritable) {
         posix.set_inheritable(native_fd, inheritable);
       }
-      return createWasiFd(native_fd);
+      return createWasiFd(native_fd, socktype);
     },
 
     // int bind(int socket, const struct sockaddr *address, socklen_t address_len);
@@ -405,12 +416,16 @@ export default function socket({
       sendNativeSockaddr(sockaddr, sockaddrPtr);
       send.u32(socklenPtr, sockaddr.sa_len);
       log("accept got back ", { fd, sockaddr });
-      return createWasiFd(fd);
+      return createWasiFd(fd, getSocktype(socket));
     },
 
     /*
     int getsockopt(int socket, int level, int option_name, void *option_value,
          socklen_t *option_len);
+
+    TODO: This is of very limited value right now since the result
+    native, hence just wrong, and it's so opaque I don't know how to convert
+    it back in general.   That said, I did socktype as a special case properly.
     */
     getsockopt(
       socket: number,
@@ -419,13 +434,26 @@ export default function socket({
       option_value_ptr: number,
       option_len_ptr: number
     ): number {
-      log("getsockopt !STUB!", {
+      log("getsockopt", {
         socket,
         level,
         option_name,
         option_value_ptr,
         option_len_ptr,
       });
+
+      if (level == constants.SOL_SOCKET && option_name == constants.SO_TYPE) {
+        // special case we can handle easily -- getting the type of a socket.
+        const socktype = getSocktype(socket);
+        const ab = new ArrayBuffer(4);
+        const dv = new DataView(ab);
+        dv.setUint32(0, socktype, true);
+        const option = Buffer.from(ab);
+        send.buffer(option, option_value_ptr);
+        send.i32(option_len_ptr, option.length);
+        return 0;
+      }
+
       if (posix.getsockopt == null) {
         throw Errno("ENOTSUP");
       }
@@ -451,7 +479,7 @@ export default function socket({
       option_value_ptr: number,
       option_len: number
     ): number {
-      log("setsockopt !STUB!", {
+      log("setsockopt", {
         socket,
         level,
         option_name,
@@ -461,13 +489,34 @@ export default function socket({
       if (posix.setsockopt == null) {
         throw Errno("ENOTSUP");
       }
-
       const option = recv.buffer(option_value_ptr, option_len);
       posix.setsockopt(
         native_fd(socket),
         native_level(level),
         native_option_name(option_name),
         option
+      );
+      return 0;
+    },
+
+    pollSocket(
+      socket: number,
+      type: "read" | "write",
+      timeout_ms: number
+    ): number {
+      //log("pollForSocket", { socket, type, timeout_ms });
+      //return 0;
+      // TODO: The code below doesn't work properly -- it ALWAYS waits for the full timeout_ms,
+      // which is very annoying in practice, e.g., making pip hang 15s before each operation.
+      // Thus we replace the timeout with the min of the timeout and 250ms for now.
+      if (posix.pollSocket == null) {
+        return 0; // stub
+        // return wasi_constants.WASI_ENOSYS;
+      }
+      posix.pollSocket(
+        native_fd(socket),
+        type == "read" ? constants.POLLIN : constants.POLLOUT,
+        Math.min(250, timeout_ms)
       );
       return 0;
     },

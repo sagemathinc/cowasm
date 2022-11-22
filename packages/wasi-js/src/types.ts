@@ -2,16 +2,6 @@ import type WASIFileSystem from "./filesystem";
 export type { WASIFileSystem };
 import { WASI_FILETYPE } from "./constants";
 
-// export interface WASIFileSystem extends FileSystem {
-//   constants: { [name: string]: number };
-//   open: (
-//     path: string,
-//     flags: number | string,
-//     mode?: string
-//   ) => Promise<number>;
-//   openSync: (path: string, flags: number | string, mode?: string) => number;
-// }
-
 export interface WASIBindings {
   // Current high-resolution real time in a bigint
   hrtime: () => bigint;
@@ -29,8 +19,9 @@ export interface WASIBindings {
   // Path
   path: any;
 
-  // The following modules arne't used directly by this module yet, but is used
+  // TODO: The following modules aren't used directly by this module yet, but are used
   // right now in python-wasm/wasm/worker/import.ts
+  // They almost certainly should not be here!
   os?: any;
   child_process?: any;
   posix?: any;
@@ -103,4 +94,5 @@ export interface File {
   rights: Rights;
   offset?: bigint;
   filetype?: WASI_FILETYPE;
+  socktype?: number;   // type of socket = SOCK_STREAM=6 and SOCK_DGRAM=5
 }

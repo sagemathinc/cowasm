@@ -1,9 +1,13 @@
+import debug from "debug";
+const log = debug("posix:constants");
+
 // These are purely for typescript, and I can only update this (when the zig code changes)
 // by just printing out the constants at runtime.
 const CONSTANTS = [
   "AT_FDCWD",
   "E2BIG",
   "EACCES",
+  "EAGAIN",
   "EBADF",
   "EBUSY",
   "ECHILD",
@@ -33,6 +37,7 @@ const CONSTANTS = [
   "ESRCH",
   "ETXTBSY",
   "EXDEV",
+  "ENOTCONN",
   "EADDRINUSE",
   "EADDRNOTAVAIL",
   "EAFNOSUPPORT",
@@ -70,6 +75,9 @@ const CONSTANTS = [
   "MSG_PEEK",
   "MSG_WAITALL",
   "MSG_DONTROUTE",
+  "O_CLOEXEC",
+  "O_NONBLOCK",
+  "O_APPEND",
   "SO_ACCEPTCONN",
   "SO_ATTACH_BPF",
   "SO_ATTACH_FILTER",
@@ -134,6 +142,8 @@ const CONSTANTS = [
   "SO_WIFI_STATUS",
   "SO_ZEROCOPY",
   "SOL_SOCKET",
+  "POLLIN",
+  "POLLOUT",
 ] as const;
 
 export type Constant = typeof CONSTANTS[number];
@@ -154,5 +164,5 @@ export function initConstants(context) {
   for (let i = 0; i < names.length; i++) {
     constants[names[i]] = values[i];
   }
-  // console.log(constants);
+  log(constants);
 }

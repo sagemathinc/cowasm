@@ -45,6 +45,12 @@ export default function unistd(context) {
 
     // int fchown(int fd, uid_t owner, gid_t group);
     _fchown: (fd: number, uid: number, gid: number): number => {
+      if (uid == 0 || gid == 0) {
+        // if either is 0 = root, we just do nothing.
+        // TODO: We really need to get rid of anything that involves uid/gid, which
+        // just doesn't make sense for the model of WASM.
+        return 0;
+      }
       fs.fchownSync(toNativeFd(fd), uid, gid);
       return 0;
     },
@@ -570,6 +576,42 @@ export default function unistd(context) {
         return -1;
       }
       return callWithString("chdir", dir);
+    },
+
+    // This is not a system call exactly.  It's used by WASI.
+    // It is supposed to "Adjust the flags associated with a file descriptor."
+    // and it doesn't acctually just set them because WASI doesn't
+    // have a way to get.  So what we do is change the three things
+    // that can be changed and leave everything else alone!
+    fcntlSetFlags: (fd: number, flags: number): number => {
+      if (posix.fcntlSetFlags == null || posix.fcntlGetFlags == null) {
+        notImplemented("fcntlSetFlags");
+        return 0;
+      }
+      const real_fd = wasi.FD_MAP.get(fd)?.real;
+      if (real_fd == null) {
+        throw Error("invalid file descriptor");
+      }
+
+      let current_native_flags = posix.fcntlGetFlags(real_fd);
+      let new_native_flags = current_native_flags;
+      for (const name of ["O_NONBLOCK", "O_APPEND"]) {
+        if (flags & constants[name]) {
+          // do want name
+          new_native_flags |= posix.constants[name];
+        } else {
+          // do not want name
+          new_native_flags &= ~posix.constants[name];
+        }
+      }
+
+      if (current_native_flags == new_native_flags) {
+        log("fcntlSetFlags - unchanged");
+      } else {
+        log("fcntlSetFlags ", current_native_flags, " to", new_native_flags);
+        posix.fcntlSetFlags(real_fd, new_native_flags);
+      }
+      return 0;
     },
   };
 

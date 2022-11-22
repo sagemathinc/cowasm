@@ -15,6 +15,7 @@ export interface Options {
   noReadline?: boolean;
   env?: object; // overrides or sets environment variables
   interactive?: boolean; // for interactive async terminal or program under nodejs
+  noStdio?: boolean; // for nodejs -- do NOT use process.stdin, process.stdout, and process.stderr.  Instead, use the same programatic control of IO as in the browser, i.e., the .kernel has a writeToStdin function and 'stdout' and 'stderr' events.   ONLY for async mode.
 }
 
 export class PythonWasmSync {

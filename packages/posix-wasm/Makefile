@@ -21,7 +21,9 @@ OBJECTS = ${BUILD_WASM}/posix-wasm.o ${BUILD_WASM}/threads.o \
 	${BSD}/strtonum.o 	${BSD}/setmode.o  ${BSD}/merge.o ${BSD}/heapsort.o ${BSD}/strtoq.o ${BSD}/rpmatch.o
 
 DEPS = $(shell find src -type f \( -iname '*.h' \))
-CFLAGS = -Oz -I${SRC}
+DEBUG =
+#DEBUG = "-g"
+CFLAGS = ${DEBUG} -Oz -I${SRC}
 
 ${BUILD_WASM}/%.o: ${SRC}/%.c ${DEPS}
 	mkdir -p `dirname $@`
@@ -32,7 +34,7 @@ ${BUILD_WASM}/libposix.a: ${OBJECTS}
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/libposix.a
 	mkdir -p ${DIST_WASM}
-	cp ${SRC}/posix-wasm.h ${SRC}/emscripten.h ${SRC}/lib/fts/fts.h ${SRC}/lib/fts/fts.h ${BUILD_WASM}/libposix.a ${DIST_WASM}/
+	cp -rv ${SRC}/bits ${SRC}/posix-wasm.h ${SRC}/emscripten.h ${SRC}/lib/fts/fts.h ${SRC}/lib/fts/fts.h ${BUILD_WASM}/libposix.a ${DIST_WASM}/
 	touch ${DIST_WASM}/.built
 
 test:

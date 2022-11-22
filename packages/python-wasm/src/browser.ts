@@ -1,5 +1,7 @@
 import { asyncKernel, FileSystemSpec } from "@cowasm/kernel";
 import { Options, PythonWasmAsync } from "./common";
+export type { Options, PythonWasmAsync };
+
 import { fetchPackages } from "./packages";
 import debug from "debug";
 const log = debug("python-wasm");

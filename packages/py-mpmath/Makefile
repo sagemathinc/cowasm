@@ -2,17 +2,17 @@ include ../build/Makefile-vars
 
 all: wasm
 
-# See https://github.com/fredrik-johansson/mpmath/releases
+# See https://github.com/mpmath/mpmath/releases
 VERSION = 1.0.0
 
-URL = https://github.com/fredrik-johansson/mpmath/archive/refs/tags/${VERSION}.tar.gz
+URL = https://github.com/mpmath/mpmath/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/mpmath-${VERSION}.tar.gz
 
 include ../build/Makefile-rules
 
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&& python-wasm setup.py build
+		&& python-wasm setup.py install
 	touch ${BUILD_WASM}/.built
 
 test: ${BUILD_WASM}/.built

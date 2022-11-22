@@ -22,7 +22,11 @@ export async function syncDash(opts?: Options): Promise<DashWasmSync> {
 export async function asyncDash(opts?: Options): Promise<DashWasmAsync> {
   log("creating async CoWasm kernel...");
   const fs = getFilesystem(opts);
-  const kernel = await asyncKernel({ env: ENV, fs });
+  const kernel = await asyncKernel({
+    env: ENV,
+    fs,
+    noStdio: opts?.noStdio,
+  });
   log("done");
   return new DashWasmAsync(kernel, dash_wasm);
 }

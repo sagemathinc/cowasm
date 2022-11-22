@@ -146,10 +146,12 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# data structure useless (why!? - to save a few bytes?).
 	# See packages/python-wasm/src/wasm/posix/socket.zig  (which will move soon)
 	cd ${BUILD_WASM} && cat ${SRC}/patches/13-socket-unmodified-headers.patch | patch -p1
+	# Warn instead of error on attempt to start a thread.
+	# cd ${BUILD_WASM} && cat ${SRC}/patches/14-threading-warning.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
-# DEBUG_MODE = "-g"
 DEBUG_MODE = ""
+# DEBUG_MODE = "-g"
 BLDSHARED = cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
 
 ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
@@ -203,7 +205,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	cat src/pyconfig.h >> ${BUILD_WASM}/pyconfig.h
 	# NOTE: I have seen "error: unable to build WASI libc CRT file: FileNotFound" when using "make -j8",
 	# and had it go away when removing parallel build.
-	cd ${BUILD_WASM} && make
+	cd ${BUILD_WASM} && make -j8
 	mkdir -p ${DIST_WASM} && touch ${DIST_WASM}/.built-cpython
 
 ${DIST_WASM}/.install-cpython: ${DIST_WASM}/.built-cpython
@@ -312,6 +314,11 @@ ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built: ${DIST_WASM}/.built
 	# We apply one patch to support building C++ extensions.  Without this, the numpy
 	# build fails pretty quickly. This is needed due to our hacky approach to -fPIC.
 	cd ${DIST_WASM} && cat ${SRC}/patches/10-setuptools-c++.patch | patch -p1
+	# It would be much nicer to implement a better mmap.  But for now, let's just patch it out:
+	cd ${DIST_WASM} && cat ${SRC}/patches/15-pip-no-mmap.patch | patch -p1
+	# It would be better to have a better fallback for threads that works in some cases so we
+	# don't need this. But for now, just remove it:
+	cd ${DIST_WASM} && cat ${SRC}/patches/16-pip-no-auto-refresh-progress.patch  | patch -p1
 	touch ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built
 
 pip: ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built

@@ -5,12 +5,13 @@ const clib = @cImport({
     @cInclude("sys/socket.h");
     @cInclude("errno.h");
     @cInclude("netdb.h");
+    @cInclude("poll.h");
 });
 const builtin = @import("builtin");
 
 pub const constants = .{
     .c_import = clib,
-    .names = [_][:0]const u8{ "EADDRINUSE", "EADDRNOTAVAIL", "EAFNOSUPPORT", "EALREADY", "ECONNREFUSED", "EFAULT", "EHOSTUNREACH", "EINPROGRESS", "EISCONN", "ENETDOWN", "ENETUNREACH", "ENOBUFS", "ENOTSOCK", "ENOPROTOOPT", "EOPNOTSUPP", "EPROTOTYPE", "ETIMEDOUT", "ECONNRESET", "ELOOP", "ENAMETOOLONG", "SHUT_RD", "SHUT_WR", "SHUT_RDWR", "MSG_OOB", "MSG_PEEK", "MSG_WAITALL", "MSG_DONTROUTE", "SO_ACCEPTCONN", "SO_BROADCAST", "SO_DEBUG", "SO_DONTROUTE", "SO_ERROR", "SO_KEEPALIVE", "SO_LINGER", "SO_OOBINLINE", "SO_RCVBUF", "SO_RCVLOWAT", "SO_RCVTIMEO", "SO_REUSEADDR", "SO_REUSEPORT", "SO_SNDBUF", "SO_SNDLOWAT", "SO_SNDTIMEO", "SO_TIMESTAMP", "SO_TYPE", "SOL_SOCKET" },
+    .names = [_][:0]const u8{ "EADDRINUSE", "EADDRNOTAVAIL", "EAFNOSUPPORT", "EAGAIN", "EALREADY", "ECONNREFUSED", "EFAULT", "EHOSTUNREACH", "EINPROGRESS", "EISCONN", "ENETDOWN", "ENETUNREACH", "ENOBUFS", "ENOTSOCK", "ENOPROTOOPT", "EOPNOTSUPP", "EPROTOTYPE", "ETIMEDOUT", "ECONNRESET", "ELOOP", "ENAMETOOLONG", "SHUT_RD", "SHUT_WR", "SHUT_RDWR", "MSG_OOB", "MSG_PEEK", "MSG_WAITALL", "MSG_DONTROUTE", "SO_ACCEPTCONN", "SO_BROADCAST", "SO_DEBUG", "SO_DONTROUTE", "SO_ERROR", "SO_KEEPALIVE", "SO_LINGER", "SO_OOBINLINE", "SO_RCVBUF", "SO_RCVLOWAT", "SO_RCVTIMEO", "SO_REUSEADDR", "SO_REUSEPORT", "SO_SNDBUF", "SO_SNDLOWAT", "SO_SNDTIMEO", "SO_TIMESTAMP", "SO_TYPE", "SOL_SOCKET", "ENOTCONN" },
 };
 
 pub fn register(env: c.napi_env, exports: c.napi_value) !void {
@@ -26,6 +27,7 @@ pub fn register(env: c.napi_env, exports: c.napi_value) !void {
     try node.registerFunction(env, exports, "socket", socket);
     try node.registerFunction(env, exports, "getsockopt", getsockopt);
     try node.registerFunction(env, exports, "setsockopt", setsockopt);
+    try node.registerFunction(env, exports, "pollSocket", pollSocket);
 }
 
 fn socket(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
@@ -330,6 +332,27 @@ fn setsockopt(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_v
     const r = clib.setsockopt(socket_fd, level, option_name, option_value, @intCast(c_uint, option_len));
     if (r == -1) {
         node.throwErrno(env, "error calling setsockopt on network socket");
+        return null;
+    }
+    return null;
+}
+
+//   pollSocket: (fd: number, events: number, timeout_ms: number) => void;
+fn pollSocket(env: c.napi_env, info: c.napi_callback_info) callconv(.C) c.napi_value {
+    const argv = node.getArgv(env, info, 3) catch return null;
+    const socket_fd = node.i32FromValue(env, argv[0], "socket_fd") catch return null;
+    const events = node.i32FromValue(env, argv[1], "events") catch return null;
+    const timeout_ms = node.i32FromValue(env, argv[2], "timeout_ms") catch return null;
+
+    var fds: [1]clib.pollfd = undefined;
+    fds[0].fd = socket_fd;
+    fds[0].events = @intCast(c_short, events);
+    fds[0].revents = 0;
+    // std.debug.print("waiting {}ms for fd={}\n", .{ timeout_ms, fds[0].fd });
+    const r = clib.poll(&fds, 1, timeout_ms);
+    // std.debug.print("done waiting; r={}\n", .{r});
+    if (r == -1) {
+        node.throwErrno(env, "error polling for a socket");
         return null;
     }
     return null;

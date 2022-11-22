@@ -25,6 +25,8 @@ export default function initWorker({
   // written, instead of writing to /dev/stdout and /dev/stderr.  This saves trouble having
   // to watch and read from those "files".  For browser xterm.js integration, we use
   // this, but for a nodejs terminal, we don't.
+  // ALSO, if options.noStdio is true, we automatically set captureOutput to true as well,
+  // ignoring any value it has.
   captureOutput?: boolean;
   IOHandler;
 }) {
@@ -51,7 +53,7 @@ export default function initWorker({
           },
         };
 
-        if (captureOutput) {
+        if (captureOutput || message.options.noStdio) {
           opts.sendStdout = (data) => {
             ioHandler.sendOutput(Stream.STDOUT, data);
           };

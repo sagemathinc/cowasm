@@ -48,7 +48,7 @@ ${DIST}/%.zip: ${PYTHON_WASM}/lib/dist/%.zip
 	mkdir -p ${DIST}
 	cp $< $@
 
-PYTHON_PACKAGES = ${DIST}/Cython.tar.xz ${DIST}/mpmath.tar.xz ${DIST}/numpy.tar.xz ${DIST}/sympy.tar.xz
+PYTHON_PACKAGES = ${DIST}/Cython.tar.xz ${DIST}/mpmath.tar.xz ${DIST}/numpy.tar.xz ${DIST}/sympy.tar.xz ${DIST}/pandas.tar.xz ${DIST}/pytz.tar.xz ${DIST}/dateutil.tar.xz ${DIST}/six.tar.xz
 
 ${DIST}/Cython.tar.xz: ${PACKAGES}/py-cython/dist/wasm/Cython.tar.xz
 	mkdir -p ${DIST}
@@ -59,6 +59,22 @@ ${DIST}/mpmath.tar.xz: ${PACKAGES}/py-mpmath/dist/wasm/mpmath.tar.xz
 	cp $< $@
 
 ${DIST}/numpy.tar.xz: ${PACKAGES}/py-numpy/dist/wasm/numpy.tar.xz
+	mkdir -p ${DIST}
+	cp $< $@
+
+${DIST}/pandas.tar.xz: ${PACKAGES}/py-pandas/dist/wasm/pandas.tar.xz
+	mkdir -p ${DIST}
+	cp $< $@
+
+${DIST}/pytz.tar.xz: ${PACKAGES}/py-pandas/dist/wasm/pytz.tar.xz
+	mkdir -p ${DIST}
+	cp $< $@
+
+${DIST}/dateutil.tar.xz: ${PACKAGES}/py-pandas/dist/wasm/dateutil.tar.xz
+	mkdir -p ${DIST}
+	cp $< $@
+
+${DIST}/six.tar.xz: ${PACKAGES}/py-pandas/dist/wasm/six.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 

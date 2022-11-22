@@ -1,4 +1,4 @@
-import { syncPython } from "../../node";
+import { testPython  as syncPython} from "../../node";
 
 test("getting the first network interface works", async () => {
   const { exec, repr } = await syncPython();

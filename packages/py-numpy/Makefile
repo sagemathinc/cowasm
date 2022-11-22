@@ -37,22 +37,27 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #    numpy/core/multiarray.pyc, since numpy uses __doc__ attributes from
 #    things in  numpy/core/multiarray.py to create the docstrings on the
 #    numpy module, and that data seems to not be in the pyc file.
-#  - We are careful to include the numpy C headers below, which is the
-#    right thing to do.  However, don't expect this to fully work yet, e.g.,
-#    there is a Demo about numpy in the Cython source and it fails
-#    due to other missing posix things (TODO).
+#  - We do not include numpy headers.  They are needed for building other packages, e.g.,
+#    pandas or a Demo about numpy in the Cython source.  Instead, for *building* packages
+#    we also use `python-wasm setup.py install` to install numpy to site-packages in the cpython package.
+#    Basically a full build-from source dev setup is needed for building packages from source.
 #  - We do NOT use cowasm-opt, since it makes the so *larger*.
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+#  - We "python setup.py install" (and not just build) because dependencies
+#    such as pandas expect a full install in place (with all headers) in
+#    order to compile themselves.
+${BUILD_WASM}/.install: ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}
 	cd ${PACKAGES}/cpython && make pip
 	cd ${BUILD_WASM} \
-		&& python-wasm setup.py build
+		&& python-wasm setup.py install
+	touch ${BUILD_WASM}/.install
+
+${DIST_WASM}/.built: ${BUILD_WASM}/.install
 	cd ${BUILD_WASM}/build/lib* \
 		&& rm -rf numpy/core/include \
-		&& cp -rv ../src*/numpy/core/include numpy/core/ \
-		&& python-native -m cowasm_bundler numpy numpy/core/multiarray.py numpy/core/include \
+		&& python-native -m cowasm_bundler numpy numpy/core/multiarray.py  \
 		&& mkdir -p ${DIST_WASM} \
-		&& cp numpy.* ${DIST_WASM}
+		&& cp numpy.tar.xz ${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 # Just a trivial test for now.

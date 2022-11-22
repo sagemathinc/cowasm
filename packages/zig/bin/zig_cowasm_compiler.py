@@ -71,9 +71,39 @@ elif '-v' in sys.argv:
     verbose = True
     sys.argv.remove('-v')
 
+    # https://retrocomputing.stackexchange.com/questions/20281/why-didnt-c-specify-filename-extensions
+SOURCE_EXTENSIONS_CPP = set(['.c++', '.cpp', '.cxx', '.cc', '.cp'])
+SOURCE_EXTENSIONS_C = set(['.c'])
+SOURCE_EXTENSIONS_ZIG = set(['.zig'])
+SOURCE_EXTENSIONS = SOURCE_EXTENSIONS_CPP.union(SOURCE_EXTENSIONS_C).union(
+    SOURCE_EXTENSIONS_ZIG)
+
+
+def is_source(filename):
+    ext = os.path.splitext(filename)[1].lower()
+    return ext in SOURCE_EXTENSIONS
+
+
+def is_cpp_source(filename):
+    ext = os.path.splitext(filename)[1].lower()
+    return ext in SOURCE_EXTENSIONS_CPP
+
+
+def have_any_cpp_sources():
+    for path in sys.argv:
+        if is_cpp_source(path):
+            return True
+    return False
+
+
 if sys.argv[0].endswith('-cc'):
-    sys.argv.insert(1, 'cc')
-    LANG = 'cc'
+    if have_any_cpp_sources():
+        # A lot of build script will get this wrong, so we adjust here.
+        sys.argv.insert(1, 'c++')
+        LANG = "c++"
+    else:
+        sys.argv.insert(1, 'cc')
+        LANG = 'cc'
 elif sys.argv[0].endswith('-c++'):
     sys.argv.insert(1, 'c++')
     LANG = 'c++'
@@ -113,15 +143,6 @@ if "-E" in sys.argv or '--print-multiarch' in sys.argv:
     sys.argv.insert(3, 'wasm32-wasi')
     run(sys.argv)
     sys.exit(0)
-
-# https://retrocomputing.stackexchange.com/questions/20281/why-didnt-c-specify-filename-extensions
-SOURCE_EXTENSIONS = set(['.c', '.c++', '.cpp', '.cxx', '.cc', '.cp', '.zig'])
-
-
-def is_source(filename):
-    ext = os.path.splitext(filename)[1].lower()
-    return ext in SOURCE_EXTENSIONS
-
 
 OBJECT_OR_ARCHIVE_EXTENSIONS = set(['.o', '.a'])
 
@@ -395,6 +416,7 @@ def main():
 
     link += object_args
     run(link)
+
 
 # TODO/WARNING! there are two cases above where main isn't called and
 # we do not even get this far in the file.

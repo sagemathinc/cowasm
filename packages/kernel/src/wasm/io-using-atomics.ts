@@ -78,7 +78,7 @@ export default class IOProviderUsingAtomics implements IOProvider {
     if (n == 0) {
       return Buffer.alloc(0);
     }
-    const data = new Buffer(
+    const data = Buffer.from(
       this.outputUint8Array.subarray(0, this.outputLength[0])
     );
     Atomics.store(this.outputLength, 0, 0);

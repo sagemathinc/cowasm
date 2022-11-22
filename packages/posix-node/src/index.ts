@@ -129,6 +129,20 @@ interface PosixFunctions {
   setresgid: (rgid: number, egid: number, sgid: number) => void; // linux only
   setresuid: (ruid: number, euid: number, suid: number) => void; // linux only
 
+  // The following are useful, e.eg., for setting a fd to be nonblocking; this
+  // might be done with stdin or a socket.  We use the first to implement the WASI
+  // function fd_fdstat_set_flags:
+
+  // Special case fcntl(fd, F_GETFL, int flags)
+  fcntlSetFlags: (fd: number, flags: number) => void;
+  // Special case fcntl(fd, F_SETFL, int flags)
+  fcntlGetFlags: (fd: number) => number;
+
+  // I might implement this at some point; a good way to test
+  // it would be via building and using the fnctlmodule.c Module
+  // of cpython:
+  // fnctl: (fd: number, cmd: number, buf: Buffer) => number;
+
   execv: (pathname: string, argv: string[]) => number;
   execvp: (file: string, argv: string[]) => number;
 
@@ -317,6 +331,8 @@ interface PosixFunctions {
   // event loop is blocked by blocking WebAssembly code.
   watchForSignal: (signal: number) => void;
   getSignalState: (signal: number) => boolean;
+
+  pollSocket: (fd: number, events: number, timeout_ms: number) => void;
 }
 
 export type Posix = Partial<PosixFunctions>;

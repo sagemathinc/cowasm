@@ -147,6 +147,10 @@ export default function other(context) {
       notImplemented("tmpfile");
     },
 
+    openlog: () => {
+      notImplemented("openlog");
+    },
+
     // curses also wants this:
     // int tcflush(int fildes, int action);
     tcflush: () => {
@@ -204,6 +208,42 @@ export default function other(context) {
     getrusage: (_who: number, _r_usage_ptr: number): number => {
       notImplemented("getrusage");
       return 0;
+    },
+
+    // C++ stuff we don't support:
+    _Znwm: () => {
+      // operator new
+      notImplemented("_Znwm");
+    },
+    _ZdlPv: () => {
+      // operator delete
+      notImplemented("_ZdlPv");
+    },
+    __cxa_throw: () => {
+      notImplemented("__cxa_throw");
+    },
+    // exception
+    __cxa_allocate_exception: () => {
+      notImplemented("__cxa_allocate_exception");
+    },
+    _ZNSt20bad_array_new_lengthC1Ev: () => {
+      notImplemented("_ZNSt20bad_array_new_lengthC1Ev");
+    },
+    _ZNSt20bad_array_new_lengthD1Ev: () => {
+      notImplemented("_ZNSt20bad_array_new_lengthD1Ev");
+    },
+    _ZTISt20bad_array_new_length: () => {
+      notImplemented("_ZTISt20bad_array_new_length");
+    },
+
+    ngettext: () => {
+      notImplemented("ngettext");
+    },
+    dngettext: () => {
+      notImplemented("dngettext");
+    },
+    dcngettext: () => {
+      notImplemented("dcngettext");
     },
   };
 

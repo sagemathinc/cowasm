@@ -21,6 +21,7 @@ ${BUILD}/fs-updated: ${PACKAGES}/coreutils/dist/wasm/bin/ls  \
 	cp -v ${DIST}/dash.wasm ${USR}/bin/sh
 	cp -v ${PACKAGES}/coreutils/dist/wasm/bin/* ${USR}/bin
 	cp -v ${PACKAGES}/bzip2/dist/wasm/bin/bzip2 ${USR}/bin
+	cp -v ${PACKAGES}/lzma/dist/wasm/bin/xz ${USR}/bin
 	cp -v ${PACKAGES}/lua/dist/wasm/bin/lua ${USR}/bin
 	cp -v ${PACKAGES}/viz/dist/wasm/bin/viz ${USR}/bin
 	cp -v ${PACKAGES}/less/dist/wasm/bin/less ${USR}/bin

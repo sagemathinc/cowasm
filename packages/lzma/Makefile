@@ -23,21 +23,35 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} && make -j4 && make install
 	touch ${DIST_NATIVE}/.built
 
+DEBUG = ""
+# DEBUG = "-g"
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
 		CC="cowasm-cc" \
 		CXX="cowasm-c++" \
+		CFLAGS="${DEBUG} -Oz -fvisibility-main -I${PACKAGES}/posix-wasm/dist/wasm" \
 		./configure \
 			--build=`./build-aux/config.guess` \
-			--host=none --prefix="${DIST_WASM}"
-	cd ${BUILD_WASM} && echo '#include "../../../posix-wasm/dist/wasm/posix-wasm.h"' >> config.h
-	# It fails to build some non-liblzma stuff (for xz) that we don't need, so we
-	# ignore that and just install the library.
-	cd ${BUILD_WASM} && make -j4 || true && cd src/liblzma && make install
+			--host=none \
+			--prefix="${DIST_WASM}" \
+			--without-libiconv-prefix  \
+			--without-libintl-prefix \
+			--disable-threads \
+			--disable-assembler
+	echo '#include "posix-wasm.h"' >> ${BUILD_WASM}/config.h
+	cd ${BUILD_WASM} && make -j8 && make install
 	zig ranlib ${DIST_WASM}/lib/liblzma.a  # needed on linux
 	touch ${DIST_WASM}/.built
 
-test:
-	echo "no tests yet"
+TEST = ${BUILD_WASM}/TEST
+test: ${DIST_WASM}/.built
+	rm -rf ${TEST}
+	mkdir -p ${TEST}
+	# Compress and decompress the Makefile using xz
+	cp Makefile ${TEST}/Makefile
+	${BIN}/cowasm ${DIST_WASM}/bin/xz -z ${TEST}/Makefile
+	${BIN}/cowasm ${DIST_WASM}/bin/xz -d ${TEST}/Makefile.xz
+	cmp Makefile ${TEST}/Makefile
+	rm ${TEST}/Makefile

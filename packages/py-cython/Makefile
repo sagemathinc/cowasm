@@ -12,7 +12,7 @@ include ../build/Makefile-rules
 
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&& python-wasm setup.py build
+		&& python-wasm -m pip install .
 	touch ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
@@ -25,8 +25,6 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 		&& python-native -m cowasm_bundler pyximport \
 		&& cp *.tar.xz ${DIST_WASM}
 	cp ${BUILD_WASM}/cython.py ${DIST_WASM}/
-
-	cp ${DIST_WASM}/cython.py ${PACKAGES}/cpython/dist/wasm/lib/python3.11/site-packages/
 
 	touch ${DIST_WASM}/.built
 
