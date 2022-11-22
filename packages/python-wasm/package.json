@@ -1,6 +1,6 @@
 {
   "name": "python-wasm",
-  "version": "0.25.3",
+  "version": "0.26.0",
   "description": "python-wasm -- WebAssembly Python for servers and browsers with sympy, Cython, numpy, and more",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",
@@ -9,9 +9,9 @@
     "build": "make all",
     "clean": "make clean",
     "tsc": "tsc -w",
-    "test": "tsc && npx jest --runInBand ./dist",
+    "test": "tsc && npx jest --no-watchman --runInBand ./dist",
     "test-watch": "npx jest --watch ./dist",
-    "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' -j4 && cowasm-opt ./dist && npx jest ./dist"
+    "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' -j4 && cowasm-opt ./dist && npx jest --no-watchman --runInBand  ./dist"
   },
   "bin": { "python-wasm": "./bin/python-wasm" },
   "repository": {
@@ -27,7 +27,7 @@
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/python-wasm",
   "workspaces": ["../kernel"],
   "dependencies": {
-    "@cowasm/kernel": "^0.26.2",
+    "@cowasm/kernel": "^0.27.0",
     "debug": "^4.3.4"
   },
   "devDependencies": {

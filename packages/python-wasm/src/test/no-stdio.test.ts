@@ -31,6 +31,10 @@ test("use noStdio", async () => {
       await python.terminal();
     } catch (_) {}
   })();
+  const t = new Date().valueOf();
+  while (new Date().valueOf() - t < 5000 && !stdout.includes(">>>")) {
+    await delay(50);
+  }
 
   // send 389 + 5077
   await python.kernel.writeToStdin("389 + 5077\n");

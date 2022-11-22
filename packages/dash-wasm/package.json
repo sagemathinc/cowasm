@@ -1,15 +1,20 @@
 {
   "name": "dash-wasm",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "dash-wasm -- WebAssembly dash shell for servers and browsers (early demo version)",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",
-  "files": ["dist/*", "README.md", "package.json", "tsconfig.json"],
+  "files": [
+    "dist/*",
+    "README.md",
+    "package.json",
+    "tsconfig.json"
+  ],
   "scripts": {
     "build": "make all",
     "clean": "make clean",
     "tsc": "tsc -w",
-    "test": "tsc && npx jest ./dist",
+    "test": "tsc && npx jest --runInBand ./dist",
     "test-watch": "npx jest --watch ./dist",
     "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' -j4"
   },
@@ -18,16 +23,21 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "keywords": ["python", "webassembly"],
+  "keywords": [
+    "python",
+    "webassembly"
+  ],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/dash-wasm",
-  "workspaces": ["../kernel"],
+  "workspaces": [
+    "../kernel"
+  ],
   "dependencies": {
-    "@cowasm/kernel": "^0.26.2",
+    "@cowasm/kernel": "^0.27.0",
     "debug": "^4.3.4"
   },
   "devDependencies": {
