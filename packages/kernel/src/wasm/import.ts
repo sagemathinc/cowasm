@@ -9,6 +9,8 @@ import { IOProvider, Stream } from "./types";
 import { SIGINT } from "./constants";
 import debug from "debug";
 
+const MAX_OUTPUT_DELAY_MS = 250;
+
 const log = debug("wasm-main");
 
 export interface WorkerThread extends EventEmitter {
@@ -23,6 +25,7 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   private callId: number = 0;
   private options: Options;
   private ioProvider: IOProvider;
+  private outputMonitorDelay: number = MAX_OUTPUT_DELAY_MS;
   result: any;
   exports: any;
   wasmSource: string;
@@ -61,6 +64,9 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
       // This is a hack, but for some reason everything feels better with this included:
       this.ioProvider.writeToStdin(Buffer.from("\n"));
     }
+    setTimeout(() => {
+      this.readOutput();
+    }, 1);
   }
 
   private async init() {
@@ -119,20 +125,28 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     );
   }
 
+  private async readOutput(): Promise<number> {
+    if (this.worker == null) return 0;
+    const data = await this.ioProvider.readOutput();
+    if (data.length > 0) {
+      this.outputMonitorDelay = 1;
+      this.emit(
+        data[0] == Stream.STDOUT ? "stdout" : "stderr",
+        data.subarray(1)
+      );
+    } else {
+      this.outputMonitorDelay = Math.min(
+        MAX_OUTPUT_DELAY_MS,
+        this.outputMonitorDelay * 1.3
+      );
+    }
+    return data.length;
+  }
+
   async monitorOutput() {
-    let d = 50;
     while (this.worker != null) {
-      const data = await this.ioProvider.readOutput();
-      if (data.length > 0) {
-        this.emit(
-          data[0] == Stream.STDOUT ? "stdout" : "stderr",
-          data.subarray(1)
-        );
-        d = 1;
-      } else {
-        d = Math.min(250, d * 1.3);
-      }
-      await delay(d);
+      await this.readOutput();
+      await delay(this.outputMonitorDelay);
     }
   }
 
