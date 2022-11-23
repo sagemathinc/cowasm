@@ -100,7 +100,7 @@ interface Termios {
   c_lflag: number;
 }
 
-export default function stdio({ posix, recv, send, wasi }) {
+export default function termios({ posix, recv, send, wasi, noStdio }) {
   function termios_set(tioPtr: number, { c_iflag, c_oflag, c_cflag, c_lflag }) {
     const size = 4;
     send.u32(tioPtr, c_iflag ?? 0);
@@ -199,7 +199,7 @@ export default function stdio({ posix, recv, send, wasi }) {
       const fd = wasi.FD_MAP.get(wasi_fd).real;
       let tio_wasi: Termios;
       let tio_native: Termios;
-      if (posix.tcgetattr != null) {
+      if (!noStdio && posix.tcgetattr != null) {
         tio_native = posix.tcgetattr(fd);
         // now translate the flags from native to WASI
         tio_wasi = native_to_wasi(tio_native);
@@ -245,7 +245,7 @@ export default function stdio({ posix, recv, send, wasi }) {
     ): number {
       const fd = wasi.FD_MAP.get(wasi_fd).real;
       const tio_wasi = termios_get(tioPtr);
-      if (posix.tcsetattr == null || posix.tcgetattr == null) {
+      if (noStdio || posix.tcsetattr == null || posix.tcgetattr == null) {
         return 0;
       }
       const tio_native = posix.tcgetattr(fd);

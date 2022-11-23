@@ -1,6 +1,6 @@
 {
   "name": "@cowasm/kernel",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "description": "@cowasm/kernel -- the Kernel of CoWasm: Collaborative WebAssembly for Servers and Browsers",
   "main": "./dist/kernel/node.js",
   "browser": "./dist/kernel/browser.js",

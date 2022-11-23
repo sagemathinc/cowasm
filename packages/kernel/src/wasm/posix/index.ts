@@ -88,6 +88,7 @@ export interface Context {
   ) => number | undefined;
   getcwd: () => string;
   sleep?: (milliseconds: number) => void;
+  noStdio: boolean;
 }
 
 // It might in theory be  better if we used typescript to say exactly which functions

@@ -183,6 +183,7 @@ async function doWasmImport({
     memory,
     wasi,
     wasiConfig,
+    noStdio: !!options.noStdio,
   });
   // This adds the posix functions into env *and* also adds socket
   // functionality to wasi_snapshot_preview1.

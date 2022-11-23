@@ -12,6 +12,7 @@ interface Options {
   wasiConfig: WASIConfig;
   memory: WebAssembly.Memory;
   wasi: WASI;
+  noStdio: boolean;
 }
 
 export default class PosixContext {
@@ -22,7 +23,8 @@ export default class PosixContext {
   private context: Context;
   private wasiConfig: WASIConfig;
 
-  constructor({ wasiConfig, memory, wasi }: Options) {
+  constructor({ wasiConfig, memory, wasi, noStdio }: Options) {
+    log("noStdio", noStdio);
     this.memory = memory;
     this.wasi = wasi;
     this.wasiConfig = wasiConfig;
@@ -36,6 +38,7 @@ export default class PosixContext {
       callFunction,
       callWithString,
       sleep,
+      noStdio,
     });
   }
 
@@ -46,6 +49,7 @@ export default class PosixContext {
     callFunction,
     callWithString,
     sleep,
+    noStdio,
   }: {
     bindings: WASIBindings;
     memory: WebAssembly.Memory;
@@ -53,6 +57,7 @@ export default class PosixContext {
     callFunction: (name: string, ...args) => number | undefined;
     callWithString;
     sleep?: (milliseconds: number) => void;
+    noStdio: boolean;
   }) {
     this.context = {
       state: {},
@@ -71,6 +76,7 @@ export default class PosixContext {
       getcwd: this.getcwd.bind(this),
       free: this.free.bind(this),
       sleep,
+      noStdio,
     };
     return posix(this.context);
   }

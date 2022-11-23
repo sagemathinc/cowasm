@@ -223,7 +223,9 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   async exec(argv: string[] = ["command"]): Promise<number> {
     await this.init();
     if (this.worker == null) throw Error("exec: bug - worker must be defined");
-    this.configureTerminal();
+    if (!this.options.noStdio) {
+      this.configureTerminal();
+    }
     let r = 0;
     try {
       r = await this.callWithString("cowasm_exec", argv);

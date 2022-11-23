@@ -1,6 +1,6 @@
 {
   "name": "dash-wasm",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "dash-wasm -- WebAssembly dash shell for servers and browsers (early demo version)",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",
@@ -37,7 +37,7 @@
     "../kernel"
   ],
   "dependencies": {
-    "@cowasm/kernel": "^0.27.0",
+    "@cowasm/kernel": "^0.27.1",
     "debug": "^4.3.4"
   },
   "devDependencies": {

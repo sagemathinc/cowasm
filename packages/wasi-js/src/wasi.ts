@@ -1,4 +1,13 @@
-/* MIT licensed.  See README.md for copyright and history information. */
+/* MIT licensed.  See README.md for copyright and history information.
+
+For API docs about what these functions below are supposed to be, see
+
+https://github.com/WebAssembly/WASI/blob/main/phases/snapshot/docs.md
+
+and a TODO is copy/paste most of that as comments below.
+*/
+
+
 
 import debug from "debug";
 const log = debug("wasi");
