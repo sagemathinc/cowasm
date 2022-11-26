@@ -111,7 +111,7 @@ packages/python-wasm/${BUILT}: kernel node zig py
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 
-packages/sqlite/${BUILT}: libedit zig zlib
+packages/sqlite/${BUILT}: libedit zig
 	cd packages/sqlite && make all
 .PHONY: sqlite
 sqlite: packages/sqlite/${BUILT}

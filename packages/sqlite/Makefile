@@ -13,9 +13,9 @@ VERSION = 3.39.4
 URL = https://github.com/sqlite/sqlite/archive/refs/tags/version-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/sqlite-${VERSION}.tar.gz
 
-ZLIB = ${PACKAGES}/zlib/dist
 LIBEDIT = ${PACKAGES}/libedit/dist
-POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+ZLIB = $(shell cowasm-package-path @cowasm/zlib)
 
 all: wasm ${BIN}/sqlite3-wasm
 
@@ -36,13 +36,13 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #   - mmap doesn't really work with WASM, so we disable it below as explained
 #     at https://www.sqlite.org/compile.html   However, this doesn't work yet to get
 #     using a file to work yet.  .read works but not sqlite3-wasm a.sql
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} && \
 		CC="cowasm-cc" \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
-		CFLAGS="-Oz -fvisibility-main -I${ZLIB}/wasm/include -I${LIBEDIT}/wasm/include -I${POSIX_WASM} -DSQLITE_DEFAULT_MMAP_SIZE=0" \
-		LDFLAGS="-L${ZLIB}/wasm/lib -lz -L${LIBEDIT}/wasm/lib -ledit " \
+		CFLAGS="-Oz -fvisibility-main -I${ZLIB}/include -I${LIBEDIT}/wasm/include -I${POSIX_WASM} -DSQLITE_DEFAULT_MMAP_SIZE=0" \
+		LDFLAGS="-L${ZLIB}/lib -lz -L${LIBEDIT}/wasm/lib -ledit " \
 		./configure --host=none  --prefix="${DIST_WASM}" \
 			--cache-file=config.site \
 			--disable-load-extension \
