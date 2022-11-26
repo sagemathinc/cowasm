@@ -12,7 +12,7 @@ PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 all: python-wasm py f2c coreutils man viz dash terminal browser website dash-wasm cowasm.sh
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}:  zig wasi-js lzma-native zlib-native libedit ncurses
+packages/cpython/${BUILT}:  zig wasi-js lzma-native zlib-native libedit-native ncurses
 	cd packages/cpython && make all
 .PHONY: cpython
 
@@ -22,7 +22,7 @@ packages/coreutils/${BUILT}: zig
 .PHONY: coreutils
 
 dash: packages/dash/${BUILT}
-packages/dash/${BUILT}: zig libedit
+packages/dash/${BUILT}: zig
 	cd packages/dash && make all
 .PHONY: dash
 
@@ -62,13 +62,18 @@ packages/libedit/${BUILT}: zig termcap
 	cd packages/libedit && make all
 .PHONY: libedit
 
+libedit-native: packages/libedit/${BUILT}
+packages/libedit/dist/native/${BUILT}: zig termcap
+	cd packages/libedit && make native
+.PHONY: libedit-native
+
 lua: packages/lua/${BUILT}
 packages/lua/${BUILT}: zig libedit termcap
 	cd packages/lua && make all
 .PHONY: lua
 
 lzma-native: packages/lzma/${BUILT}
-packages/lzma/${BUILT}: zig
+packages/lzma/dist/native/${BUILT}: zig
 	cd packages/lzma && make native
 .PHONY: lzma-native
 
@@ -111,7 +116,7 @@ packages/python-wasm/${BUILT}: kernel node zig py
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 
-packages/sqlite/${BUILT}: libedit zig
+packages/sqlite/${BUILT}: zig
 	cd packages/sqlite && make all
 .PHONY: sqlite
 sqlite: packages/sqlite/${BUILT}
@@ -166,7 +171,7 @@ packages/zlib/${BUILT}: zig
 .PHONY: zlib
 
 zlib-native: packages/zlib/${BUILT}
-packages/zlib/${BUILT}: zig
+packages/zlib/dist/native/${BUILT}: zig
 	cd packages/zlib && make native
 .PHONY: zlib-native
 

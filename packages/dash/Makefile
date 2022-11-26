@@ -9,7 +9,7 @@ VERSION = 0.6.0
 URL = https://github.com/sagemathinc/dash/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/dash-${VERSION}.tar.gz
 
-LIBEDIT = ${PACKAGES}/libedit/dist
+LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)
 TERMCAP = ${PACKAGES}/termcap/dist
 
 all: wasm ${BIN}/dash-wasm-raw
@@ -39,13 +39,13 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #   - TODO: I'll probably move libedit and libtermcap to the core (OR their own shared library!)
 #     so they don't have to be included here, which will make dash much smaller.  But for now this is fine.
 #     They add about 120KB.
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	CONFIG_SITE=${BUILD_WASM}/config.site \
 			CC="cowasm-cc" \
-			CFLAGS="-O0 -fvisibility-main -DJOBS=0  -I${LIBEDIT}/wasm/include -I${PACKAGES}/posix-wasm/dist/wasm" \
-			LDFLAGS="-L${LIBEDIT}/wasm/lib -ledit -L${TERMCAP}/wasm/lib -ltermcap" \
+			CFLAGS="-O0 -fvisibility-main -DJOBS=0  -I${LIBEDIT_WASM}/include -I${PACKAGES}/posix-wasm/dist/wasm" \
+			LDFLAGS="-L${LIBEDIT_WASM}/lib -ledit -L${TERMCAP}/wasm/lib -ltermcap" \
 			./configure \
 				--with-libedit \
 				--prefix=${DIST_WASM} \

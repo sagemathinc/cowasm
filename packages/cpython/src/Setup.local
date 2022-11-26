@@ -57,7 +57,7 @@ unicodedata unicodedata.c
 # _pickle _pickle.c
 
 
-readline readline.c -I$(abs_srcdir)/../../../libedit/dist/wasm/include $(abs_srcdir)/../../../libedit/dist/wasm/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
+readline readline.c -I$(LIBEDIT_WASM)/include $(LIBEDIT_WASM)/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
 
 # Curses

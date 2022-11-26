@@ -1,7 +1,7 @@
 {
-  "name": "@cowasm/sqlite",
+  "name": "@cowasm/dash",
   "version": "1.0.0",
-  "description": "WebAssembly build of sqlite",
+  "description": "WebAssembly build of the dash Posix shell",
   "main": "index.js",
   "files": [
     "dist/wasm/**",
@@ -27,10 +27,8 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/sqlite",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/dash",
   "devDependencies": {
-    "@cowasm/libedit": "^1.0.0",
-    "@cowasm/posix-wasm": "^1.0.3",
-    "@cowasm/zlib": "^1.0.0"
+    "@cowasm/libedit": "^1.0.0"
   }
 }

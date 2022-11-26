@@ -36,6 +36,7 @@
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/cpython",
   "devDependencies": {
     "@cowasm/bzip2": "^1.0.1",
+    "@cowasm/libedit": "^1.0.0",
     "@cowasm/lzma": "^1.0.3",
     "@cowasm/openssl": "^1.0.1",
     "@cowasm/posix-wasm": "^1.0.3",
