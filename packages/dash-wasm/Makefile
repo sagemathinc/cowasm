@@ -27,7 +27,7 @@ ${BUILD}/fs-updated: ${PACKAGES}/coreutils/dist/wasm/bin/ls  \
 	cp -v ${PACKAGES}/less/dist/wasm/bin/less ${USR}/bin
 	cp -v ${PACKAGES}/man/dist/wasm/bin/man ${USR}/bin
 	cp -v ${PACKAGES}/sqlite/dist/wasm/bin/sqlite3 ${USR}/bin
-	cp -v ${PACKAGES}/libarchive/dist/wasm/bin/tar ${USR}/bin
+	cp -v ${PACKAGES}/tar/dist/wasm/bin/tar ${USR}/bin
 	cp -v ${PACKAGES}/ncurses/dist/wasm/bin/clear ${USR}/bin
 	cp -v ${PACKAGES}/ncurses/dist/wasm/bin/hanoi ${USR}/bin
 	cp -v ${PACKAGES}/rogue/dist/wasm/bin/rogue ${USR}/bin

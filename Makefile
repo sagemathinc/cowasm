@@ -27,7 +27,7 @@ packages/dash/${BUILT}: zig libedit
 .PHONY: dash
 
 dash-wasm: packages/dash-wasm/${BUILT}
-packages/dash-wasm/${BUILT}: dash kernel coreutils bzip2 lua viz man sqlite less libarchive rogue
+packages/dash-wasm/${BUILT}: dash kernel coreutils bzip2 lua viz man sqlite less tar rogue
 	cd packages/dash-wasm && make all
 .PHONY: dash-wasm
 
@@ -43,7 +43,7 @@ docker-nocache:
 # builds dylink halfway through its build.  We will refactor to fix that.  The code involving cpython
 # in dylink should actually just be in the cpython package, I think.
 dylink: packages/dylink/${BUILT}
-packages/dylink/${BUILT}: node zig lzma cpython
+packages/dylink/${BUILT}: node zig cpython
 	cd packages/dylink && make all
 .PHONY: dylink
 
@@ -52,10 +52,10 @@ packages/kernel/${BUILT}: node wasi-js zig posix-wasm dylink posix-node wasm-opt
 	cd packages/kernel && make all
 .PHONY: kernel
 
-libarchive: packages/libarchive/${BUILT}
-packages/libarchive/${BUILT}: zig termcap
-	cd packages/libarchive && make all
-.PHONY: libarchive
+tar: packages/tar/${BUILT}
+packages/tar/${BUILT}: zig termcap
+	cd packages/tar && make all
+.PHONY: tar
 
 libedit: packages/libedit/${BUILT}
 packages/libedit/${BUILT}: zig termcap

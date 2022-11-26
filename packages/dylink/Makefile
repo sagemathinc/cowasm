@@ -2,7 +2,6 @@ include ../build/Makefile-vars
 
 PYTHON = ${PACKAGES}/cpython/dist/wasm
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
-LZMA = ${PACKAGES}/lzma/dist/wasm
 
 all: dist/.built
 

@@ -1,4 +1,4 @@
-# This builds libarchive.
+# This builds libarchive -- i.e., the tar command.
 
 include ../build/Makefile-vars
 
