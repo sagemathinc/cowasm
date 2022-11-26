@@ -83,7 +83,7 @@ packages/man/${BUILT}: zig zlib
 .PHONY: man
 
 ncurses: packages/ncurses/${BUILT}
-packages/ncurses/${BUILT}: termcap posix-wasm zig
+packages/ncurses/${BUILT}: termcap zig
 	cd packages/ncurses && make all
 .PHONY: ncurses
 

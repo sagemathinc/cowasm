@@ -4,8 +4,10 @@ include ../build/Makefile-vars
 VERSION = 6.3
 URL = https://ftp.gnu.org/gnu/ncurses/ncurses-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/ncurses-${VERSION}.tar.gz
-POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
 TERMCAP = ${PACKAGES}/termcap/dist/wasm
+
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+
 
 all:  wasm ${BUILD_WASM}/test/.built
 
@@ -45,7 +47,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/01-disable-ncurses-test.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
 			AR="zig ar" \
@@ -71,7 +73,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cp ${BUILD_WASM}/progs/clear ${DIST_WASM}/bin/clear
 	touch ${DIST_WASM}/.built
 
-${BUILD_WASM}/test/.built: ${DIST_WASM}/.built
+${BUILD_WASM}/test/.built: node_modules ${DIST_WASM}/.built
 	cd ${BUILD_WASM}/test \
 		&& RANLIB="zig ranlib" \
 			AR="zig ar" \
