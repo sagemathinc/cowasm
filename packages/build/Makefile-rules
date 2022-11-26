@@ -17,9 +17,12 @@ clean-native::
 clean-build::
 	rm -rf ${BUILD} ${SRC}/zig-cache
 
+clean-node_modules::
+	rm -rf node_modules
+
 .PHONY: clean
-clean:: clean-wasm clean-native
-	rm -rf ${BUILD} ${DIST} tsconfig.tsbuildinfo node_modules ${SRC}/zig-cache
+clean:: clean-wasm clean-native clean-node_modules
+	rm -rf ${BUILD} ${DIST} tsconfig.tsbuildinfo ${SRC}/zig-cache
 
 ${TARBALL}:
 	mkdir -p ${UPSTREAM}

@@ -1,6 +1,6 @@
 {
   "name": "@cowasm/openssl",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "WebAssembly build of the openssl library",
   "main": "index.js",
   "files": [

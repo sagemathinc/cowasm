@@ -23,12 +23,12 @@ _decimal _decimal/_decimal.c
 pyexpat pyexpat.c
 
 # OpenSSL bindings
-_ssl _ssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/wasm/include $(abs_srcdir)/../../../openssl/dist/wasm/lib/libssl.a $(abs_srcdir)/../../../openssl/dist/wasm/lib/libcrypto.a
+_ssl _ssl.c -DOPENSSL_THREADS -I$(OPENSSL_WASM)/include $(OPENSSL_WASM)/lib/libssl.a $(OPENSSL_WASM)/lib/libcrypto.a
 
 # TODO: _hashlib causes trouble and so far not needed.  Python has its own smaller version and this is huge.
 # More importantly, having it breaks things.  In particular "import hashlib, ssl" then exit
 # and get WebAssembly crash.
-# _hashlib _hashopenssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl/dist/wasm/include $(abs_srcdir)/../../../openssl/dist/wasm/lib/libcrypto.a
+# _hashlib _hashopenssl.c -DOPENSSL_THREADS -I$(OPENSSL_WASM)/include $(OPENSSL_WASM)/lib/libcrypto.a
 
 # text encodings and unicode
 
