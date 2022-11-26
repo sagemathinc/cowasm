@@ -12,7 +12,7 @@ PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 all: python-wasm py f2c coreutils man viz dash terminal browser website dash-wasm cowasm.sh
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}:  zig wasi-js lzma-native zlib-native libedit-native ncurses
+packages/cpython/${BUILT}:  zig wasi-js lzma-native zlib-native libedit-native
 	cd packages/cpython && make all
 .PHONY: cpython
 
@@ -63,7 +63,7 @@ packages/libedit/${BUILT}: zig termcap
 .PHONY: libedit
 
 libedit-native: packages/libedit/${BUILT}
-packages/libedit/dist/native/${BUILT}: zig termcap
+packages/libedit/dist/native/.built: zig termcap
 	cd packages/libedit && make native
 .PHONY: libedit-native
 
@@ -73,7 +73,7 @@ packages/lua/${BUILT}: zig libedit termcap
 .PHONY: lua
 
 lzma-native: packages/lzma/${BUILT}
-packages/lzma/dist/native/${BUILT}: zig
+packages/lzma/dist/native/.built: zig
 	cd packages/lzma && make native
 .PHONY: lzma-native
 
@@ -132,7 +132,7 @@ packages/terminal/${BUILT}: node  python-wasm
 .PHONY: terminal
 
 viz: packages/viz/${BUILT}
-packages/viz/${BUILT}: termcap ncurses zig lua
+packages/viz/${BUILT}: termcap zig lua
 	cd packages/viz && make all
 .PHONY: viz
 
@@ -171,7 +171,7 @@ packages/zlib/${BUILT}: zig
 .PHONY: zlib
 
 zlib-native: packages/zlib/${BUILT}
-packages/zlib/dist/native/${BUILT}: zig
+packages/zlib/dist/native/.built: zig
 	cd packages/zlib && make native
 .PHONY: zlib-native
 

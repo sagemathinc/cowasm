@@ -9,10 +9,10 @@ VERSION = 0.8.4
 URL = https://github.com/sagemathinc/viz/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/viz-${VERSION}.tar.gz
 
-NCURSES=${PACKAGES}/ncurses/dist/
-TERMCAP=${PACKAGES}/termcap/dist/
-LUA=${PACKAGES}/lua/dist/
-POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
+NCURSES_WASM = $(shell cowasm-package-path @cowasm/ncurses)
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+
+LUA = ${PACKAGES}/lua/dist/
 
 all: native ${BIN}/viz-native wasm ${BIN}/viz-wasm
 
@@ -52,12 +52,12 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	echo '#include "posix-wasm.h"' | cat - ${BUILD_WASM}/text-io.c > ${BUILD_WASM}/tmp && mv ${BUILD_WASM}/tmp ${BUILD_WASM}/text-io.c
 	touch ${BUILD_WASM}/.patched
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc" \
-			CFLAGS="-v -Oz -fvisibility-main -I. -I${PACKAGES}/posix-wasm/dist/wasm -I${NCURSES}/wasm/include -I${NCURSES}/wasm/include/ncurses -I${LUA}/wasm/include" \
-			LDFLAGS="-L${LUA}/wasm/lib -llua -L${NCURSES}/wasm/lib -lncurses " \
+			CFLAGS="-v -Oz -fvisibility-main -I. -I${POSIX_WASM} -I${NCURSES_WASM}/include -I${NCURSES_WASM}/include/ncurses -I${LUA}/wasm/include" \
+			LDFLAGS="-L${LUA}/wasm/lib -llua -L${NCURSES_WASM}/lib -lncurses " \
 			./configure --prefix=${DIST_WASM} \
 		&&	make -j8 viz
 	mkdir -p ${DIST_WASM}/bin
