@@ -92,7 +92,7 @@ node:
 .PHONY: node
 
 openssl: packages/openssl/${BUILT}
-packages/openssl/${BUILT}: zig posix-wasm
+packages/openssl/${BUILT}: zig
 	cd packages/openssl && make all
 .PHONY: openssl
 

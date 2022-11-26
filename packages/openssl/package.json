@@ -1,7 +1,7 @@
 {
-  "name": "@cowasm/tar",
-  "version": "1.0.1",
-  "description": "WebAssembly build of the tar command (libarchive)",
+  "name": "@cowasm/openssl",
+  "version": "1.0.0",
+  "description": "WebAssembly build of the openssl library",
   "main": "index.js",
   "files": [
     "dist/wasm/**",
@@ -27,9 +27,8 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/tar",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/openssl",
   "devDependencies": {
-    "@cowasm/lzma": "^1.0.3",
     "@cowasm/posix-wasm": "^1.0.3"
   }
 }

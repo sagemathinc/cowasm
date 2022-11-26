@@ -4,7 +4,9 @@ include ../build/Makefile-vars
 VERSION = 3.0.7
 URL = https://github.com/openssl/openssl/archive/refs/tags/openssl-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/openssl-${VERSION}.tar.gz
-POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
+
+
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 
 all: wasm
 
@@ -44,7 +46,7 @@ DEBUG = ""
 
 
 # make -j12, since openssl is structured as huge number of tiny files.
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& 	CC="cowasm-cc" \
 			CFLAGS="-Oz ${DEBUG} -fvisibility-main -I${POSIX_WASM}" \
@@ -55,6 +57,5 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 		&&	make -j12 install_sw
 	touch ${DIST_WASM}/.built
 
-# maybe doesn't even build yet...
-test:
-	echo "no tests yet"
+test: ${DIST_WASM}/.built
+	test x"`echo "foo" | ${BIN}/cowasm dist/wasm/bin/openssl md5`" = x"MD5(stdin)= d3b07384d113edec49eaa6238ad5ff00"
