@@ -10,7 +10,7 @@
     "index.js"
   ],
   "scripts": {
-    "build": "npm install && make wasm",
+    "build": "make wasm",
     "prepublishOnly": "npm run build && make test",
     "test": "make test"
   },

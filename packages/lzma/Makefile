@@ -28,7 +28,10 @@ POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 DEBUG = ""
 # DEBUG = "-g"
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.build
+node_modules:
+	npm install
+
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \

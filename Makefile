@@ -43,7 +43,7 @@ docker-nocache:
 # builds dylink halfway through its build.  We will refactor to fix that.  The code involving cpython
 # in dylink should actually just be in the cpython package, I think.
 dylink: packages/dylink/${BUILT}
-packages/dylink/${BUILT}: node zig posix-wasm lzma cpython
+packages/dylink/${BUILT}: node zig lzma cpython
 	cd packages/dylink && make all
 .PHONY: dylink
 
@@ -69,7 +69,7 @@ packages/lua/${BUILT}: zig libedit termcap
 
 lzma: packages/lzma/${BUILT}
 packages/lzma/${BUILT}: zig
-	cd packages/lzma && npm install && make all
+	cd packages/lzma && make all
 .PHONY: lzma
 
 man: packages/man/${BUILT}

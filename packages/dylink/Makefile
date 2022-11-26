@@ -1,7 +1,7 @@
 include ../build/Makefile-vars
 
 PYTHON = ${PACKAGES}/cpython/dist/wasm
-POSIX = ${PACKAGES}/posix-wasm/dist/wasm
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 LZMA = ${PACKAGES}/lzma/dist/wasm
 
 all: dist/.built
@@ -10,7 +10,7 @@ dist/.built: dist/index.js dist/wasm/libdylink.a wasm-export node_modules
 	touch dist/.built
 
 node_modules:
-	npm ci
+	npm install
 
 dist/libc.js: node_modules src/libc.ts src/wasm-export.ts
 	npm run build
@@ -42,7 +42,7 @@ build/wasm/libdylink.o: dist/wasm-export/libc.c
 		-rdynamic \
 		-shared \
 		-fvisibility=default \
-		-I ${POSIX} \
+		-I ${POSIX_WASM} \
 		dist/wasm-export/libc.c \
 		-o build/wasm/libdylink.o
 
