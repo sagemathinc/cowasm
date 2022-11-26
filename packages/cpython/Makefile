@@ -19,7 +19,8 @@ TARBALL = ${UPSTREAM}/python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz
 
 ZLIB = ${PACKAGES}/zlib/dist
 LIBEDIT = ${PACKAGES}/libedit/dist
-POSIX_WASM = ${PACKAGES}/posix-wasm/dist
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+LZMA_WASM = $(shell cowasm-package-path @cowasm/lzma)
 OPENSSL = ${PACKAGES}/openssl/dist
 
 # NCURSES = ${PACKAGES}/ncurses/dist
@@ -154,7 +155,7 @@ DEBUG_MODE = ""
 # DEBUG_MODE = "-g"
 BLDSHARED = cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
 
-${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
+${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
 	# - with-pymalloc it actually works and seems faster
 	# - We use "zig cc -target wasm32-wasi" instead of "zig cc -target wasm32-wasi-musl" since the broken
@@ -183,7 +184,7 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 		CC="cowasm-cc" \
 		CXX="cowasm-c++" \
 		AR="zig ar" \
-		CFLAGS="${DEBUG_MODE} -I${BUILD_WASM} -I${POSIX_WASM}/wasm -DPy_DEFAULT_RECURSION_LIMIT=700" \
+		CFLAGS="${DEBUG_MODE} -I${BUILD_WASM} -I${POSIX_WASM} -DPy_DEFAULT_RECURSION_LIMIT=700" \
 		BLDSHARED="${BLDSHARED}" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
@@ -205,10 +206,10 @@ ${DIST_WASM}/.built-cpython: ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built
 	cat src/pyconfig.h >> ${BUILD_WASM}/pyconfig.h
 	# NOTE: I have seen "error: unable to build WASI libc CRT file: FileNotFound" when using "make -j8",
 	# and had it go away when removing parallel build.
-	cd ${BUILD_WASM} && make -j8
+	cd ${BUILD_WASM} && LZMA_WASM="${LZMA_WASM}" make -j8
 	mkdir -p ${DIST_WASM} && touch ${DIST_WASM}/.built-cpython
 
-${DIST_WASM}/.install-cpython: ${DIST_WASM}/.built-cpython
+${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
 	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-3.11/_sysconfigdata__wasi_wasm32-wasi.py so it
 	# matches the configuration we just used.  TODO: Find a better way to fix this, e.g., by configuration or
 	# patching something earlier?   This definitely feels like a hack.
@@ -219,7 +220,7 @@ ${DIST_WASM}/.install-cpython: ${DIST_WASM}/.built-cpython
 		&& sed -i'.bak' "s/'LDSHARED': ''/'LDSHARED': '${BLDSHARED}'/g" _sysconfigdata__wasi_wasm32-wasi.py
 
 	# Install as usual.  Output is huge so we do not show it all.
-	cd ${BUILD_WASM} && make install | tail -n 10
+	cd ${BUILD_WASM} && LZMA_WASM="${LZMA_WASM}" make install | tail -n 10
 
 	# For some reason (upstream bug?) test-tomllib isn't copied over, but it's nice to have for testing.
 	cp -rv ${BUILD_WASM}/Lib/test/test_tomllib ${DIST_WASM}/lib/python3.11/test/
