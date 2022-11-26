@@ -23,15 +23,18 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} && make -j4 && make install
 	touch ${DIST_NATIVE}/.built
 
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+
 DEBUG = ""
 # DEBUG = "-g"
+
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
 		CC="cowasm-cc" \
 		CXX="cowasm-c++" \
-		CFLAGS="${DEBUG} -Oz -fvisibility-main -I${PACKAGES}/posix-wasm/dist/wasm" \
+		CFLAGS="${DEBUG} -Oz -fvisibility-main -I${POSIX_WASM}" \
 		./configure \
 			--build=`./build-aux/config.guess` \
 			--host=none \

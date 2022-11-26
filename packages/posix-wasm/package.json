@@ -1,0 +1,21 @@
+{
+  "name": "@cowasm/posix-wasm",
+  "version": "1.0.3",
+  "description": "C headers and a lib archive to fill in some things missing from \"posix\"",
+  "main": "index.js",
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
+  "scripts": {
+    "test": "echo \"Error: no tests yet\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sagemathinc/cowasm.git"
+  },
+  "keywords": ["WebAssembly", "wasm"],
+  "author": "William Stein <wstein@sagemath.com>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/posix-wasm"
+}

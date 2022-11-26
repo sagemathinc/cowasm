@@ -68,8 +68,8 @@ packages/lua/${BUILT}: zig libedit termcap
 .PHONY: lua
 
 lzma: packages/lzma/${BUILT}
-packages/lzma/${BUILT}: zig posix-wasm
-	cd packages/lzma && make all
+packages/lzma/${BUILT}: zig
+	cd packages/lzma && npm install && make all
 .PHONY: lzma
 
 man: packages/man/${BUILT}
