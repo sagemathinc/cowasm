@@ -1,2 +1,2 @@
 const { join } = require("path");
-exports.default = join(__dirname, "dist", "wasm");
+exports.path = join(__dirname, "dist", "wasm");

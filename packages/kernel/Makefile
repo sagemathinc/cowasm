@@ -6,7 +6,7 @@ OPT     = -O ReleaseSmall
 # OPT     = -O Debug
 ZIG_PKG = --main-pkg-path ${SRC}
 
-POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 DYLINK = ${PACKAGES}/dylink/dist
 
 WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
@@ -53,16 +53,10 @@ KERNEL_WASM_SOURCES = \
 
 KERNEL_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
 
-KERNEL_WASM_INCLUDE = -I. -I${POSIX_WASM}
-
 # TODO: I think libedit and libtermcap should probably be dynamic
 # libraries that get loaded when needed.
 
-KERNEL_WASM_C = \
-		${POSIX_WASM}/libposix.a \
-		${CWD}/src/wasm/posix/stdlib.c
-
-${DIST}/kernel/kernel.wasm: ${KERNEL_WASM_SOURCES} ${KERNEL_WASM_C}
+${DIST}/kernel/kernel.wasm: node_modules ${KERNEL_WASM_SOURCES} ${CWD}/src/wasm/posix/stdlib.c
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
@@ -71,8 +65,8 @@ ${DIST}/kernel/kernel.wasm: ${KERNEL_WASM_SOURCES} ${KERNEL_WASM_C}
 		--import-memory \
 		--import-table \
 		${KERNEL_WASM_LDFLAGS} \
-		${KERNEL_WASM_INCLUDE} \
-		${KERNEL_WASM_C} \
+		-I. -I${POSIX_WASM} \
+		${POSIX_WASM}/libposix.a ${CWD}/src/wasm/posix/stdlib.c \
 		kernel/interface.zig
 	mkdir -p ${DIST}/cowasm
 	rm -f src/interface.wasm.o
@@ -95,7 +89,7 @@ opt: ${DIST}/kernel/kernel.wasm
 ###
 
 ${CWD}/../../bin/cowasm: ${CWD}/bin/cowasm
-	ln -sf ${CWD}/bin/cowasm ${CWD}/../../bin/cowasm
+	ln -sf ${CWD}/bin/cowasm-dev ${CWD}/../../bin/cowasm
 
 bin-cowasm: ${CWD}/../../bin/cowasm
 .PHONY: bin-cowasm

@@ -1,7 +1,7 @@
 {
-  "name": "@cowasm/lzma",
-  "version": "1.0.3",
-  "description": "WebAssembly build of the lzma compression library",
+  "name": "@cowasm/tar",
+  "version": "1.0.0",
+  "description": "WebAssembly build of the tar command (libarchive)",
   "main": "index.js",
   "files": [
     "dist/wasm/**",
@@ -27,8 +27,9 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/lzma",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/tar",
   "devDependencies": {
+    "@cowasm/lzma": "^1.0.3",
     "@cowasm/posix-wasm": "^1.0.3"
   }
 }

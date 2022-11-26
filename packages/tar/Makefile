@@ -8,9 +8,10 @@ VERSION = 3.6.1
 URL = https://github.com/libarchive/libarchive/releases/download/v${VERSION}/libarchive-${VERSION}.tar.xz
 TARBALL = ${UPSTREAM}/libarchive-${VERSION}.tar.gz
 
-POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+LZMA = $(shell cowasm-package-path @cowasm/lzma)
+
 ZLIB = ${PACKAGES}/zlib/dist/wasm
-LZMA = ${PACKAGES}/lzma/dist/wasm
 BZ2 = ${PACKAGES}/bzip2/dist/wasm
 
 CFLAGS = -Oz -I${POSIX_WASM} -I${LZMA}/include -I${ZLIB}/include -I${BZ2}/include
@@ -20,11 +21,14 @@ all: wasm
 
 include ../build/Makefile-rules
 
+node_modules:
+	npm install
+
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/01-main-visibility.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc" \
 			CFLAGS="${CFLAGS}" \
