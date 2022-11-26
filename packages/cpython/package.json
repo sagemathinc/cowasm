@@ -1,0 +1,38 @@
+{
+  "name": "@cowasm/cpython",
+  "version": "1.0.1",
+  "description": "WebAssembly port of CPython interpeter",
+  "main": "index.js",
+  "files": [
+    "dist/wasm/bin/**",
+    "dist/wasm/include/**",
+    "dist/wasm/share/**",
+    "dist/wasm/lib/dist/**",
+    "dist/wasm/lib/pkgconfig/**",
+    "dist/wasm/lib/libpython*",
+    "dist/wasm/lib/python*/**",
+    "README.md",
+    "package.json",
+    "index.js"
+  ],
+  "scripts": {
+    "build": "make wasm && make pip",
+    "prepublishOnly": "make clean-wasm && make wasm && make pip && make test && rm -rf dist/wasm/lib/python*/test/",
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sagemathinc/cowasm.git"
+  },
+  "keywords": ["WebAssembly", "wasm"],
+  "author": "William Stein <wstein@sagemath.com>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/cpython",
+  "devDependencies": {
+    "@cowasm/lzma": "^1.0.3",
+    "@cowasm/posix-wasm": "^1.0.3"
+  }
+}
