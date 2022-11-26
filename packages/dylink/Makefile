@@ -5,6 +5,9 @@ POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 
 all: dist/.built
 
+node_modules:
+	npm install
+
 dist/.built: dist/index.js dist/wasm/libdylink.a wasm-export node_modules
 	touch dist/.built
 
