@@ -39,3 +39,7 @@ ${BUILD_WASM}/.build:: ${TARBALL}
 	mkdir -p ${BUILD_WASM}
 	tar xf ${TARBALL} -C ${BUILD_WASM} --strip-components=1
 	touch ${BUILD_WASM}/.build
+
+node_modules:
+	npm install
+

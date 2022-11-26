@@ -8,9 +8,6 @@ all: dist/.built
 dist/.built: dist/index.js dist/wasm/libdylink.a wasm-export node_modules
 	touch dist/.built
 
-node_modules:
-	npm install
-
 dist/libc.js: node_modules src/libc.ts src/wasm-export.ts
 	npm run build
 	touch dist/libc.js

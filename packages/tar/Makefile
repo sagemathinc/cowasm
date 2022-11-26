@@ -21,9 +21,6 @@ all: wasm
 
 include ../build/Makefile-rules
 
-node_modules:
-	npm install
-
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/01-main-visibility.patch | patch -p1
 	touch ${BUILD_WASM}/.patched

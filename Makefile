@@ -73,7 +73,7 @@ packages/lzma/${BUILT}: zig
 .PHONY: lzma
 
 man: packages/man/${BUILT}
-packages/man/${BUILT}: zig posix-wasm
+packages/man/${BUILT}: zig zlib
 	cd packages/man && make -j8
 .PHONY: man
 
