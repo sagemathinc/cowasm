@@ -1,14 +1,9 @@
 {
-  "name": "@cowasm/man",
+  "name": "@cowasm/bzip2",
   "version": "1.0.1",
-  "description": "WebAssembly build of the man command (shows man pages)",
+  "description": "WebAssembly build of the bzip2 command (libarchive)",
   "main": "index.js",
-  "files": [
-    "dist/wasm/**",
-    "README.md",
-    "package.json",
-    "index.js"
-  ],
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
   "scripts": {
     "build": "make wasm",
     "prepublishOnly": "npm run build && make test",
@@ -18,17 +13,11 @@
     "type": "git",
     "url": "git+ssh://git@github.com/sagemathinc/cowasm.git"
   },
-  "keywords": [
-    "WebAssembly",
-    "wasm"
-  ],
+  "keywords": ["WebAssembly", "wasm"],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/man",
-  "devDependencies": {
-    "@cowasm/posix-wasm": "^1.0.3"
-  }
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/bzip2"
 }

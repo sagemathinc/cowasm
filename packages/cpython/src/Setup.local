@@ -69,13 +69,13 @@ _curses_panel _curses_panel.c  -I$(abs_srcdir)/../../../ncurses/dist/wasm/includ
 # Using GNU readline doesn't work.  Anyway, it is bigger, more complicated, GPL'd, and **the code is harder to read**.
 #readline readline.c -I$(abs_srcdir)/../../../readline/dist/wasm/include $(abs_srcdir)/../../../readline/dist/wasm/lib/libreadline.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
-_bz2 _bz2module.c -I$(abs_srcdir)/../../../bzip2/dist/wasm/include/ $(abs_srcdir)/../../../bzip2/dist/wasm/lib/libbz2.a
+_bz2 _bz2module.c -I$(BZIP2_WASM)/include/ $(BZIP2_WASM)/lib/libbz2.a
 
 zlib  zlibmodule.c -I$(abs_srcdir)/../../../zlib/dist/wasm/include $(abs_srcdir)/../../../zlib/dist/wasm/lib/libz.a
 
 _lzma _lzmamodule.c -I$(LZMA_WASM)/include/ $(LZMA_WASM)/lib/liblzma.a
 
-_sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microprotocols.c _sqlite/module.c _sqlite/prepare_protocol.c _sqlite/row.c _sqlite/statement.c  _sqlite/util.c -I$(abs_srcdir)/../../../sqlite/dist/wasm/include/ $(abs_srcdir)/../../../sqlite/dist/wasm/lib/libsqlite3.a
+_sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microprotocols.c _sqlite/module.c _sqlite/prepare_protocol.c _sqlite/row.c _sqlite/statement.c  _sqlite/util.c -I$(SQLITE_WASM)/include/ $(SQLITE_WASM)/lib/libsqlite3.a
 
 mmap mmapmodule.c
 

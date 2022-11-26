@@ -1,7 +1,7 @@
 {
-  "name": "@cowasm/man",
-  "version": "1.0.1",
-  "description": "WebAssembly build of the man command (shows man pages)",
+  "name": "@cowasm/sqlite",
+  "version": "1.0.0",
+  "description": "WebAssembly build of sqlite",
   "main": "index.js",
   "files": [
     "dist/wasm/**",
@@ -27,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/man",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/sqlite",
   "devDependencies": {
     "@cowasm/posix-wasm": "^1.0.3"
   }

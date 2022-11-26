@@ -1,4 +1,11 @@
-# Sqlite3-Wasm
+# @cowasm/sqlite: WebAssembly build of sqlite
+
+## Status
+
+This is used as a library dependency when building cpython's sqlite3 module and that all
+works fine, except for the big problem mentioned below.
+
+## Big problem: files don't work
 
 The main problem right now is that sqlite3\-wasm only works with an in memory database.  So this breaks:
 
@@ -10,18 +17,15 @@ create table foo(bar integer);
 Now try to open it in sqlite3\-wasm \-\- BOOM!
 
 ```sh
-$ DEBUG=* sqlite3-wasm a.sql
-...
-wasi fd_pread [ 4, 1048536, 1, 200n, 1048532 ] +0ms
-  wasi getiovs: warning -- truncating buffer to fit in memory +0ms
-  wasi result =  0 +0ms
-  wasi fd_pread [ 4, 1048536, 1, 8192n, 1048532 ] +0ms
-  wasi getiovs: warning -- truncating buffer to fit in memory +0ms
-  wasi result =  0 +0ms
-/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/sqlite/bin/../../../bin/cowasm: line 8: 91325 Bus error: 10           node "$SCRIPTPATH"/../dist/cowasm/node-terminal-debug.js "$@"
+$ cowasm dist/wasm/bin/sqlite3 a.sql
+SQLite version 3.39.4 2022-09-29 15:55:41
+Enter ".help" for usage hints.
+sqlite> create table foo(title);
+Parse error: disk I/O error (10)
+sqlite> ^D
 ```
 
-This "truncating buffer to fit in memory" suggests maybe mmap is involved. That said, I've disabled mmap and it doesn't help, so I don't yet know what the problem is.  Maybe some other stub function returns invalid data that messes something up.
+I think issues with mmap are involved. That said, I've disabled mmap and it doesn't help, so I don't yet know what the problem is.  Maybe some other stub function returns invalid data that messes something up.
 
 ## References
 

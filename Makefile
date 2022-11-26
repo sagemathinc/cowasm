@@ -12,12 +12,12 @@ PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 all: python-wasm py f2c coreutils man viz dash terminal browser website dash-wasm cowasm.sh
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}: zlib libedit zig wasi-js sqlite bzip2 ncurses lzma-native
+packages/cpython/${BUILT}: zlib libedit zig wasi-js ncurses lzma-native
 	cd packages/cpython && make all
 .PHONY: cpython
 
 coreutils: packages/coreutils/${BUILT}
-packages/coreutils/${BUILT}: zig bzip2 zlib
+packages/coreutils/${BUILT}: zig zlib
 	cd packages/coreutils && make -j8
 .PHONY: coreutils
 
@@ -27,7 +27,7 @@ packages/dash/${BUILT}: zig libedit
 .PHONY: dash
 
 dash-wasm: packages/dash-wasm/${BUILT}
-packages/dash-wasm/${BUILT}: dash kernel coreutils bzip2 lua viz man sqlite less tar rogue
+packages/dash-wasm/${BUILT}: dash lua viz less rogue
 	cd packages/dash-wasm && make all
 .PHONY: dash-wasm
 
@@ -111,7 +111,7 @@ packages/python-wasm/${BUILT}: kernel node zig py
 	cd packages/python-wasm && make all
 .PHONY: python-wasm
 
-packages/sqlite/${BUILT}: libedit posix-wasm zig zlib
+packages/sqlite/${BUILT}: libedit zig zlib
 	cd packages/sqlite && make all
 .PHONY: sqlite
 sqlite: packages/sqlite/${BUILT}

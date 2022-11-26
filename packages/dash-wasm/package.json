@@ -1,11 +1,11 @@
 {
   "name": "dash-wasm",
-  "version": "0.7.1",
+  "version": "0.7.3",
   "description": "dash-wasm -- WebAssembly dash shell for servers and browsers (early demo version)",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",
   "files": [
-    "dist/*",
+    "dist/**",
     "README.md",
     "package.json",
     "tsconfig.json"
@@ -16,7 +16,7 @@
     "tsc": "tsc -w",
     "test": "tsc && npx jest --runInBand ./dist",
     "test-watch": "npx jest --watch ./dist",
-    "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' -j4"
+    "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' -j4 && make test"
   },
   "bin": "./bin/dash-wasm",
   "repository": {
@@ -33,14 +33,19 @@
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/dash-wasm",
-  "workspaces": [
-    "../kernel"
-  ],
   "dependencies": {
     "@cowasm/kernel": "^0.27.1",
     "debug": "^4.3.4"
   },
   "devDependencies": {
+    "@cowasm/bzip2": "^1.0.1",
+    "@cowasm/coreutils": "^1.0.1",
+    "@cowasm/cpython": "^1.0.2",
+    "@cowasm/lzma": "^1.0.3",
+    "@cowasm/man": "^1.0.1",
+    "@cowasm/ncurses": "^1.0.0",
+    "@cowasm/sqlite": "^1.0.0",
+    "@cowasm/tar": "^1.0.1",
     "@types/jest": "^29.2.0",
     "@types/node": "^18.11.3",
     "awaiting": "^3.0.0",

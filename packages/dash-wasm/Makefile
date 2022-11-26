@@ -12,26 +12,27 @@ ${DIST}/dash.wasm: ${DASH}/bin/dash
 
 USR = ${BUILD}/usr
 
-${BUILD}/fs-updated: ${PACKAGES}/coreutils/dist/wasm/bin/ls  \
-		${PACKAGES}/cpython/dist/wasm/lib/dist/python-stdlib.zip \
-		${PACKAGES}/cpython/dist/wasm/bin/python3.11.wasm # more deps!
+NCURSES = $(shell cowasm-package-path @cowasm/ncurses)
+CPYTHON = $(shell cowasm-package-path @cowasm/cpython)
+
+${BUILD}/fs-updated: node_modules ${PACKAGES}/coreutils/dist/wasm/bin/ls
 	rm -rf ${USR}
 	mkdir -p ${USR}/bin
 	# /bin directory
 	cp -v ${DIST}/dash.wasm ${USR}/bin/sh
-	cp -v ${PACKAGES}/coreutils/dist/wasm/bin/* ${USR}/bin
-	cp -v ${PACKAGES}/bzip2/dist/wasm/bin/bzip2 ${USR}/bin
-	cp -v ${PACKAGES}/lzma/dist/wasm/bin/xz ${USR}/bin
+	cp -v $(shell cowasm-package-path @cowasm/coreutils)/bin/* ${USR}/bin
+	cp -v $(shell cowasm-package-path @cowasm/bzip2)/bin/bzip2 ${USR}/bin
+	cp -v $(shell cowasm-package-path @cowasm/lzma)/bin/xz ${USR}/bin
 	cp -v ${PACKAGES}/lua/dist/wasm/bin/lua ${USR}/bin
 	cp -v ${PACKAGES}/viz/dist/wasm/bin/viz ${USR}/bin
 	cp -v ${PACKAGES}/less/dist/wasm/bin/less ${USR}/bin
-	cp -v ${PACKAGES}/man/dist/wasm/bin/man ${USR}/bin
-	cp -v ${PACKAGES}/sqlite/dist/wasm/bin/sqlite3 ${USR}/bin
-	cp -v ${PACKAGES}/tar/dist/wasm/bin/tar ${USR}/bin
-	cp -v ${PACKAGES}/ncurses/dist/wasm/bin/clear ${USR}/bin
-	cp -v ${PACKAGES}/ncurses/dist/wasm/bin/hanoi ${USR}/bin
+	cp -v $(shell cowasm-package-path @cowasm/man)/bin/man ${USR}/bin
+	cp -v $(shell cowasm-package-path @cowasm/sqlite)/bin/sqlite3 ${USR}/bin
+	cp -v $(shell cowasm-package-path @cowasm/tar)/bin/tar ${USR}/bin
+	cp -v ${NCURSES}/bin/clear ${USR}/bin
+	cp -v ${NCURSES}/bin/hanoi ${USR}/bin
 	cp -v ${PACKAGES}/rogue/dist/wasm/bin/rogue ${USR}/bin
-	cp -v ${PACKAGES}/cpython/dist/wasm/bin/python3.11.wasm ${USR}/bin/python
+	cp -v ${CPYTHON}/bin/python3.11.wasm ${USR}/bin/python
 
 	# /share
 	mkdir -p ${USR}/share
@@ -39,7 +40,7 @@ ${BUILD}/fs-updated: ${PACKAGES}/coreutils/dist/wasm/bin/ls  \
 
 	# /lib
 	mkdir -p ${USR}/lib/python3.11
-	cd ${USR}/lib/python3.11 && unzip ${PACKAGES}/cpython/dist/wasm/lib/dist/python-stdlib.zip
+	cd ${USR}/lib/python3.11 && unzip ${CPYTHON}/lib/dist/python-stdlib.zip
 	cp -v ${PACKAGES}/py-numpy/dist/wasm/numpy.tar.xz ${USR}/lib/python3.11
 
 	touch ${BUILD}/fs-updated
@@ -55,18 +56,12 @@ ${DIST}/fs.tar.xz: ${BUILD}/fs-updated
 	rm -f ${DIST}/fs.tar.xz
 	cd ${USR} && tar Jcvf ${DIST}/fs.tar.xz .
 
-
-
-
 ${BIN}/dash-wasm: ${CWD}/bin/dash-wasm
 	ln -sf ${CWD}/bin/dash-wasm ${BIN}/dash-wasm
 
 ###
 # Node related makefile wrapping...
 ###
-
-node_modules:
-	npm ci
 
 ${DIST}/.built: node_modules
 	mkdir -p ${DIST}
@@ -80,5 +75,4 @@ ${DIST}/.built: node_modules
 
 .PHONY: test
 test: all
-	echo "no tests yet"
-	#npm run test
+	npm run test

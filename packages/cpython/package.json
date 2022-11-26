@@ -1,6 +1,6 @@
 {
   "name": "@cowasm/cpython",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "WebAssembly port of CPython interpeter",
   "main": "index.js",
   "files": [
@@ -35,8 +35,10 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/cpython",
   "devDependencies": {
+    "@cowasm/bzip2": "^1.0.1",
     "@cowasm/lzma": "^1.0.3",
     "@cowasm/openssl": "^1.0.1",
-    "@cowasm/posix-wasm": "^1.0.3"
+    "@cowasm/posix-wasm": "^1.0.3",
+    "@cowasm/sqlite": "^1.0.0"
   }
 }
