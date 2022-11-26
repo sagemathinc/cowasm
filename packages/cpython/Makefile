@@ -17,13 +17,16 @@ PYTHON_VERSION = ${PYTHON_MAJOR}.${PYTHON_MINOR}.${PYTHON_PATCH}
 URL = https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz
 TARBALL = ${UPSTREAM}/python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz
 
-ZLIB = ${PACKAGES}/zlib/dist
+ZLIB_NATIVE = ${PACKAGES}/zlib/dist/native
+
 LIBEDIT = ${PACKAGES}/libedit/dist
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 LZMA_WASM = $(shell cowasm-package-path @cowasm/lzma)
 OPENSSL_WASM = $(shell cowasm-package-path @cowasm/openssl)
 SQLITE_WASM = $(shell cowasm-package-path @cowasm/sqlite)
 BZIP2_WASM = $(shell cowasm-package-path @cowasm/bzip2)
+ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
+
 
 # NCURSES = ${PACKAGES}/ncurses/dist
 # NCURSES_INCLUDE = -I${NCURSES}/wasm/include/ncurses -I${NCURSES}/wasm/include
@@ -49,8 +52,8 @@ WASM_OPT=-DNDEBUG -fwrapv -Wall -Oz -g
 
 
 # We only use zlib (not lzma) for native build, since liblzma is widely available natively.
-export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
-export LD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB}/native/lib
+export DYLD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB_NATIVE}/lib
+export LD_LIBRARY_PATH := ${DIST_NATIVE}/lib:${ZLIB_NATIVE}/lib
 export PATH := ${DIST_NATIVE}/bin:${PATH}
 
 # Default target
@@ -74,8 +77,8 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 		&& 	AR="zig ar" \
 			CXX="zig c++ ${ZIG_NATIVE_CFLAGS}" \
 			CC="zig cc ${ZIG_NATIVE_CFLAGS}" \
-			CFLAGS="-I${ZLIB}/native/include -I${LIBEDIT}/native/include" \
-			LDFLAGS="-L${ZLIB}/native/lib -L${LIBEDIT}/native" \
+			CFLAGS="-I${ZLIB_NATIVE}/include -I${LIBEDIT}/native/include" \
+			LDFLAGS="-L${ZLIB_NATIVE}/lib -L${LIBEDIT}/native" \
 			./configure \
 				--prefix=${DIST_NATIVE} \
 				--with-ensurepip \

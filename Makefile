@@ -12,12 +12,12 @@ PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 all: python-wasm py f2c coreutils man viz dash terminal browser website dash-wasm cowasm.sh
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}: zlib libedit zig wasi-js ncurses lzma-native
+packages/cpython/${BUILT}:  zig wasi-js lzma-native zlib-native libedit ncurses
 	cd packages/cpython && make all
 .PHONY: cpython
 
 coreutils: packages/coreutils/${BUILT}
-packages/coreutils/${BUILT}: zig zlib
+packages/coreutils/${BUILT}: zig
 	cd packages/coreutils && make -j8
 .PHONY: coreutils
 
@@ -164,6 +164,11 @@ zlib: packages/zlib/${BUILT}
 packages/zlib/${BUILT}: zig
 	cd packages/zlib && make all
 .PHONY: zlib
+
+zlib-native: packages/zlib/${BUILT}
+packages/zlib/${BUILT}: zig
+	cd packages/zlib && make native
+.PHONY: zlib-native
 
 libgit2: packages/libgit2/${BUILT}
 packages/libgit2/${BUILT}: zig kernel

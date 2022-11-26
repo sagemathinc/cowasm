@@ -71,7 +71,7 @@ _curses_panel _curses_panel.c  -I$(abs_srcdir)/../../../ncurses/dist/wasm/includ
 
 _bz2 _bz2module.c -I$(BZIP2_WASM)/include/ $(BZIP2_WASM)/lib/libbz2.a
 
-zlib  zlibmodule.c -I$(abs_srcdir)/../../../zlib/dist/wasm/include $(abs_srcdir)/../../../zlib/dist/wasm/lib/libz.a
+zlib  zlibmodule.c -I$(ZLIB_WASM)/include $(ZLIB_WASM)/lib/libz.a
 
 _lzma _lzmamodule.c -I$(LZMA_WASM)/include/ $(LZMA_WASM)/lib/liblzma.a
 

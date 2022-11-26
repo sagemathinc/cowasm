@@ -30,6 +30,7 @@
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/coreutils",
   "devDependencies": {
     "@cowasm/bzip2": "^1.0.1",
-    "@cowasm/posix-wasm": "^1.0.3"
+    "@cowasm/posix-wasm": "^1.0.3",
+    "@cowasm/zlib": "^1.0.0"
   }
 }

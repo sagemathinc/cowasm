@@ -6,7 +6,7 @@ include ../build/Makefile-vars
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 BZIP2 = $(shell cowasm-package-path @cowasm/bzip2)
-ZLIB = ${PACKAGES}/zlib/dist/wasm
+ZLIB = $(shell cowasm-package-path @cowasm/zlib)
 
 TARGET = ${DIST_WASM}/bin
 
