@@ -23,10 +23,6 @@ ${DIST}/termcap: ${PACKAGES}/cpython/src/termcap
 	mkdir -p ${DIST}
 	cp $< $@
 
-## Node modules
-node_modules:
-	npm ci
-
 ${DIST}/.built: node_modules
 	npx tsc
 	touch ${DIST}/.built

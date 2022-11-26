@@ -17,7 +17,7 @@ packages/cpython/${BUILT}: posix-wasm zlib lzma libedit zig wasi-js sqlite bzip2
 .PHONY: cpython
 
 coreutils: packages/coreutils/${BUILT}
-packages/coreutils/${BUILT}: zig posix-wasm
+packages/coreutils/${BUILT}: zig bzip2 zlib
 	cd packages/coreutils && make -j8
 .PHONY: coreutils
 

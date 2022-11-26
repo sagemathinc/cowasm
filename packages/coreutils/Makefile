@@ -1,8 +1,10 @@
 # This builds our WASM port of coreutils
 
+-include dummy
+
 include ../build/Makefile-vars
 
-POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 BZIP2 = ${PACKAGES}/bzip2/dist/wasm
 ZLIB = ${PACKAGES}/zlib/dist/wasm
 
@@ -68,6 +70,13 @@ all: \
 	@# ${TARGET}/split \
 
 include ../build/Makefile-rules
+
+
+# ensure that node_modules exists before anything else happens.
+# This is easier than making node_modules a dep for everything.
+.PHONY: dummy
+dummy:
+	npm install
 
 CC = ${BIN}/cowasm-cc
 

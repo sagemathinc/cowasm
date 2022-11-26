@@ -1,0 +1,26 @@
+{
+  "name": "@cowasm/coreutils",
+  "version": "1.0.0",
+  "description": "WebAssembly port of FreeBSD coreutils (and more!)",
+  "main": "index.js",
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
+  "scripts": {
+    "build": "make -j8 all",
+    "prepublishOnly": "npm run build && make test",
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sagemathinc/cowasm.git"
+  },
+  "keywords": ["WebAssembly", "wasm"],
+  "author": "William Stein <wstein@sagemath.com>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/coreutils",
+  "devDependencies": {
+    "@cowasm/posix-wasm": "^1.0.3"
+  }
+}
