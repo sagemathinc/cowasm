@@ -8,13 +8,14 @@ USR = ${BUILD}/usr
 
 CPYTHON = $(shell cowasm-package-path @cowasm/cpython)
 
-${BUILD}/fs-updated: node_modules ${PACKAGES}/coreutils/dist/wasm/bin/ls
+${BUILD}/fs-updated: node_modules
 	rm -rf ${USR}
 	mkdir -p ${USR}/bin
 	# /bin directory
 	cp -v $(shell cowasm-package-path @cowasm/coreutils)/bin/* ${USR}/bin
 	cp -v $(shell cowasm-package-path @cowasm/dash)/bin/dash ${USR}/bin/sh
 	cp -v $(shell cowasm-package-path @cowasm/bzip2)/bin/bzip2 ${USR}/bin
+	cp -v $(shell cowasm-package-path @cowasm/less)/bin/less ${USR}/bin
 	cp -v $(shell cowasm-package-path @cowasm/lua)/bin/lua ${USR}/bin
 	cp -v $(shell cowasm-package-path @cowasm/lzma)/bin/xz ${USR}/bin
 	cp -v $(shell cowasm-package-path @cowasm/viz)/bin/viz ${USR}/bin
@@ -24,7 +25,6 @@ ${BUILD}/fs-updated: node_modules ${PACKAGES}/coreutils/dist/wasm/bin/ls
 	cp -v $(shell cowasm-package-path @cowasm/rogue)/bin/rogue ${USR}/bin
 	cp -v $(shell cowasm-package-path @cowasm/sqlite)/bin/sqlite3 ${USR}/bin
 	cp -v $(shell cowasm-package-path @cowasm/tar)/bin/tar ${USR}/bin
-	cp -v ${PACKAGES}/less/dist/wasm/bin/less ${USR}/bin
 	cp -v ${CPYTHON}/bin/python3.11.wasm ${USR}/bin/python
 
 	# /share

@@ -27,7 +27,7 @@ packages/dash/${BUILT}: zig
 .PHONY: dash
 
 dash-wasm: packages/dash-wasm/${BUILT}
-packages/dash-wasm/${BUILT}: node zig less
+packages/dash-wasm/${BUILT}: node zig
 	cd packages/dash-wasm && make all
 .PHONY: dash-wasm
 

@@ -5,9 +5,9 @@ VERSION = 608
 URL = http://greenwoodsoftware.com/less/less-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/less-${VERSION}.tar.gz
 
-POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
-TERMCAP = ${PACKAGES}/termcap/dist/wasm
-NCURSES = ${PACKAGES}/ncurses/dist/wasm
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
+NCURSES_WASM = $(shell cowasm-package-path @cowasm/ncurses)
 
 all:  wasm
 
@@ -29,14 +29,14 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/01-disable-dumb-error.patch | patch -p2
 	touch ${BUILD_WASM}/.patched
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
 			AR="zig ar" \
 			CC="cowasm-cc" \
 			CXX="cowasm-c++" \
-			CFLAGS="-fvisibility-main -Oz -Wno-deprecated-non-prototype -I${TERMCAP}/include -I${NCURSES}/include  -I${POSIX_WASM}" \
-			LDFLAGS="-L${TERMCAP}/lib -ltermcap -L${NCURSES}/lib -lncurses" \
+			CFLAGS="-fvisibility-main -Oz -Wno-deprecated-non-prototype -I${TERMCAP_WASM}/include -I${NCURSES_WASM}/include  -I${POSIX_WASM}" \
+			LDFLAGS="-L${TERMCAP_WASM}/lib -ltermcap -L${NCURSES_WASM}/lib -lncurses" \
 			./configure \
 				--host=none \
 				--prefix="${DIST_WASM}" \
