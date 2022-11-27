@@ -40,16 +40,18 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	echo "typedef int __jmp_buf;" > ${BUILD_WASM}/bits/setjmp.h
 	touch ${BUILD_WASM}/.patched
 
+TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
+LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	make \
-			MYLIBS="-ldl -ledit -L${PACKAGES}/libedit/dist/wasm/lib -ltermcap -L${PACKAGES}/termcap/dist/wasm/lib" \
+			MYLIBS="-ldl -ledit -L${LIBEDIT_WASM}/lib -ltermcap -L${TERMCAP_WASM}/lib" \
 			RANLIB="zig ranlib" \
 			AR="zig ar rc" \
 			CC="cowasm-cc" \
-			CFLAGS="-fvisibility-main -Oz -DL_tmpnam=32 -DLUA_USE_READLINE -I. -I${PACKAGES}/libedit/dist/wasm/include" \
+			CFLAGS="-fvisibility-main -Oz -DL_tmpnam=32 -DLUA_USE_READLINE -I. -I${LIBEDIT_WASM}/include" \
 			-j8
 	mkdir -p ${DIST_WASM}/bin ${DIST_WASM}/lib ${DIST_WASM}/include
 	cp ${BUILD_WASM}/*.h ${DIST_WASM}/include

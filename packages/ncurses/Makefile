@@ -4,10 +4,9 @@ include ../build/Makefile-vars
 VERSION = 6.3
 URL = https://ftp.gnu.org/gnu/ncurses/ncurses-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/ncurses-${VERSION}.tar.gz
-TERMCAP = ${PACKAGES}/termcap/dist/wasm
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
-
+TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
 
 all:  wasm ${BUILD_WASM}/test/.built
 
@@ -20,8 +19,8 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 		&&	CC="zig cc ${ZIG_NATIVE_CFLAGS} " \
 			CXX="zig c++ ${ZIG_NATIVE_CFLAGS} " \
 			AR="zig ar ${ZIG_NATIVE_CFLAGS} " \
-			CFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
-			CXXFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
+			CFLAGS="-Oz -I${POSIX_WASM}" \
+			CXXFLAGS="-Oz -I${POSIX_WASM}" \
 			./configure \
 				--prefix=${DIST_NATIVE} \
 				--without-ada \
@@ -53,8 +52,8 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 			AR="zig ar" \
 			CC="cowasm-cc" \
 			CXX="cowasm-c++" \
-			CFLAGS="-Oz -fvisibility-main -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
-			CXXFLAGS="-Oz -I${TERMCAP}/include -L${TERMCAP}/lib -I${POSIX_WASM}" \
+			CFLAGS="-Oz -fvisibility-main -I${TERMCAP_WASM}/include -L${TERMCAP_WASM}/lib -I${POSIX_WASM}" \
+			CXXFLAGS="-Oz -I${TERMCAP_WASM}/include -L${TERMCAP_WASM}/lib -I${POSIX_WASM}" \
 			./configure \
 				--without-ada \
 				--without-manpages \
@@ -78,8 +77,8 @@ ${BUILD_WASM}/test/.built: node_modules ${DIST_WASM}/.built
 		&& RANLIB="zig ranlib" \
 			AR="zig ar" \
 			CC="cowasm-cc" \
-			CFLAGS="-Oz -fvisibility-main  -I${TERMCAP}/include  -I${POSIX_WASM} -I${DIST_WASM}/include" \
-			LDFLAGS="-L${TERMCAP}/lib  -L${DIST_WASM}/lib -lncurses" \
+			CFLAGS="-Oz -fvisibility-main  -I${TERMCAP_WASM}/include  -I${POSIX_WASM} -I${DIST_WASM}/include" \
+			LDFLAGS="-L${TERMCAP_WASM}/lib  -L${DIST_WASM}/lib -lncurses" \
 			./configure \
 				--without-ada \
 				--without-manpages \

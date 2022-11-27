@@ -1,7 +1,7 @@
 {
-  "name": "@cowasm/ncurses",
+  "name": "@cowasm/lua",
   "version": "1.0.0",
-  "description": "WebAssembly build of the ncurses library (and many demo programs)",
+  "description": "WebAssembly build of the Lua interpreter",
   "main": "index.js",
   "files": [
     "dist/wasm/**",
@@ -27,9 +27,9 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/ncurses",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/lua",
   "devDependencies": {
-    "@cowasm/posix-wasm": "^1.0.3",
+    "@cowasm/libedit": "^1.0.0",
     "@cowasm/termcap": "^1.0.0"
   }
 }

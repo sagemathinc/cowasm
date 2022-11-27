@@ -11,7 +11,7 @@ include ../build/Makefile-rules
 
 # See https://www.thrysoee.dk/editline/
 
-TERMCAP = ${PACKAGES}/termcap/dist
+TERMCAP_NATIVE = ${PACKAGES}/termcap/dist/native
 
 ##################
 # NATIVE
@@ -19,7 +19,7 @@ TERMCAP = ${PACKAGES}/termcap/dist
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} && \
-		CFLAGS="-I${TERMCAP}/native/include -L${TERMCAP}/native/lib" \
+		CFLAGS="-I${TERMCAP_NATIVE}/include -L${TERMCAP_NATIVE}/lib" \
 		CC="zig cc -Oz  ${ZIG_NATIVE_CFLAGS_GNU} " \
 		AR="zig ar" \
 		./configure --prefix=${DIST_NATIVE}
@@ -41,13 +41,14 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 
 # We also modify examples/Makefile so we don't have to mess with getting them to build.
 
-LDFLAGS = -L${TERMCAP}/wasm/lib -ltermcap
+CFLAGS_WASM = -Oz -I$(shell cowasm-package-path @cowasm/termcap)/include -D__STDC_ISO_10646__=201103L -D__wasilibc_unmodified_upstream_signal
+LDFLAGS_WASM = -L$(shell cowasm-package-path @cowasm/termcap)/lib -ltermcap
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	CONFIG_SITE=${SRC}/config.site \
-			CFLAGS="-Oz -I${TERMCAP}/wasm/include -D__STDC_ISO_10646__=201103L -D__wasilibc_unmodified_upstream_signal"  \
-			LDFLAGS="${LDFLAGS}" \
+			CFLAGS="${CFLAGS_WASM}"  \
+			LDFLAGS="${LDFLAGS_WASM}" \
 			RANLIB="zig ranlib" \
 			AR="zig ar" \
 			CC="cowasm-cc -Oz" \
@@ -65,7 +66,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 
 # Build test program
 ${BUILD_WASM}/examples/tc1:  ${DIST_WASM}/.built
-	${BIN}/cowasm-cc -v -fvisibility-main -L${DIST_WASM}/lib -ledit ${LDFLAGS} \
+	${BIN}/cowasm-cc -v -fvisibility-main -L${DIST_WASM}/lib -ledit \
+		${LDFLAGS_WASM} ${CFLAGS_WASM} \
 		-I${BUILD_WASM}/ -I${BUILD_WASM}/src \
 		${BUILD_WASM}/examples/tc1.c -o ${BUILD_WASM}/examples/tc1
 

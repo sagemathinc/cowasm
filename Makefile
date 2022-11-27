@@ -53,22 +53,22 @@ packages/kernel/${BUILT}: node wasi-js zig dylink posix-node wasm-opt
 .PHONY: kernel
 
 tar: packages/tar/${BUILT}
-packages/tar/${BUILT}: zig termcap
+packages/tar/${BUILT}: zig
 	cd packages/tar && make all
 .PHONY: tar
 
 libedit: packages/libedit/${BUILT}
-packages/libedit/${BUILT}: zig termcap
+packages/libedit/${BUILT}: zig termcap-native
 	cd packages/libedit && make all
 .PHONY: libedit
 
 libedit-native: packages/libedit/dist/native/.built
-packages/libedit/dist/native/.built: zig termcap
+packages/libedit/dist/native/.built: zig termcap-native
 	cd packages/libedit && make native
 .PHONY: libedit-native
 
 lua: packages/lua/${BUILT}
-packages/lua/${BUILT}: zig libedit termcap
+packages/lua/${BUILT}: zig
 	cd packages/lua && make all
 .PHONY: lua
 
@@ -93,7 +93,7 @@ packages/man/${BUILT}: zig zlib
 .PHONY: man
 
 ncurses: packages/ncurses/${BUILT}
-packages/ncurses/${BUILT}: termcap zig
+packages/ncurses/${BUILT}: zig
 	cd packages/ncurses && make all
 .PHONY: ncurses
 
@@ -131,13 +131,18 @@ packages/termcap/${BUILT}: zig
 	cd packages/termcap && make all
 .PHONY: termcap
 
+termcap-native: packages/termcap/dist/native/.built
+packages/termcap/dist/native/.built: zig
+	cd packages/termcap && make native
+.PHONY: termcap-native
+
 terminal: packages/terminal/${BUILT}
 packages/terminal/${BUILT}: node  python-wasm
 	cd packages/terminal && make all
 .PHONY: terminal
 
 viz: packages/viz/${BUILT}
-packages/viz/${BUILT}: termcap zig lua-native
+packages/viz/${BUILT}: zig lua-native
 	cd packages/viz && make all
 .PHONY: viz
 
