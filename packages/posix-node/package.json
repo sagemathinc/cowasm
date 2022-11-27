@@ -4,7 +4,7 @@
   "description": "Missing Posix Functions for Node.js (via a native module written in Zig)",
   "main": "dist/index.js",
   "files": [
-    "dist/*",
+    "dist/**",
     "README.md",
     "package.json"
   ],

@@ -14,7 +14,7 @@ WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_
 
 TEST = ./test-zig.sh
 
-all: ${DIST}/.built bin-cowasm kernel ${DIST}/termcap
+all: node_modules ${DIST}/.built bin-cowasm kernel ${DIST}/termcap
 
 include ../build/Makefile-rules
 

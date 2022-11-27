@@ -4,7 +4,12 @@
   "description": "@cowasm/kernel -- the Kernel of CoWasm: Collaborative WebAssembly for Servers and Browsers",
   "main": "./dist/kernel/node.js",
   "browser": "./dist/kernel/browser.js",
-  "files": ["dist/**", "README.md", "package.json", "tsconfig.json"],
+  "files": [
+    "dist/**",
+    "README.md",
+    "package.json",
+    "tsconfig.json"
+  ],
   "scripts": {
     "build": "make all",
     "clean": "make clean",
@@ -19,7 +24,10 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "keywords": ["python", "webassembly"],
+  "keywords": [
+    "python",
+    "webassembly"
+  ],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
