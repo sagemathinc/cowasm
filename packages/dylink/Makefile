@@ -29,7 +29,11 @@ dist/wasm-export/libc.c: dist/libc.js
 	node ./dist/libc.js > dist/wasm-export/libc.c
 
 dist/wasm-export/libpython.c: dist/libpython.js
+	# ensure python source code is available, which libpython.js greps through:
+	cd ../cpython && make `pwd`/build/wasm/.patched
+	# this is where the generated C code goes:
 	mkdir -p dist/wasm-export/
+	# get the exports by inspecting source code
 	node ./dist/libpython.js > dist/wasm-export/libpython.c
 
 wasm-export: dist/wasm-export/libpython.c dist/wasm-export/libc.c

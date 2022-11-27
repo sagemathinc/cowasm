@@ -42,12 +42,9 @@ strip: node_modules
 
 KERNEL_WASM_SOURCES = \
 	${POSIX_SOURCES} \
-	${DYLINK_WASM}/libdylink.a \
 	src/kernel/interface.zig \
 	src/kernel/cowasm.zig \
 	$(shell find src/wasm/posix/*.zig -type f)
-
-KERNEL_WASM_LDFLAGS = -L ${DYLINK_WASM}/ -ldylink -lc -lm ${WASI_EMULATED}
 
 # TODO: I think libedit and libtermcap should probably be dynamic
 # libraries that get loaded when needed.
@@ -60,7 +57,7 @@ ${DIST}/kernel/kernel.wasm: node_modules ${KERNEL_WASM_SOURCES} ${CWD}/src/wasm/
 		-target wasm32-wasi \
 		--import-memory \
 		--import-table \
-		${KERNEL_WASM_LDFLAGS} \
+		-L${DYLINK_WASM}/ -ldylink -lc -lm ${WASI_EMULATED} \
 		-I. -I${POSIX_WASM} \
 		${POSIX_WASM}/libposix.a ${CWD}/src/wasm/posix/stdlib.c \
 		kernel/interface.zig

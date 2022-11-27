@@ -282,6 +282,10 @@ fchown
 popen
 pclose
 getrusage
+longjmp
+setjmp
+siglongjmp
+sigsetjmp
 `;
 
 // All headers from zig/dist/lib/zig/libc/include/wasm-wasi-musl except signal/thread ones.

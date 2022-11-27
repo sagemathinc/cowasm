@@ -1,6 +1,6 @@
 {
   "name": "@cowasm/kernel",
-  "version": "0.27.8",
+  "version": "0.27.9",
   "description": "@cowasm/kernel -- the Kernel of CoWasm: Collaborative WebAssembly for Servers and Browsers",
   "main": "./dist/kernel/node.js",
   "browser": "./dist/kernel/browser.js",
@@ -38,7 +38,7 @@
     "awaiting": "^3.0.0",
     "date-format": "^4.0.13",
     "debug": "^4.3.4",
-    "dylink": "^0.11.1",
+    "dylink": "^0.11.2",
     "lodash": "^4.17.21",
     "posix-node": "^0.12.0",
     "uuid": "^8.3.2",

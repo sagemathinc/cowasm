@@ -11,7 +11,6 @@ URL = https://github.com/glennrp/libpng/archive/refs/tags/v${VERSION}.tar.gz
 
 TARBALL = ${UPSTREAM}/libpng-${VERSION}.tar.gz
 
-ZLIB = ${PACKAGES}/zlib/dist
 
 all: wasm
 
@@ -21,13 +20,15 @@ include ../build/Makefile-rules
 # NATIVE
 ###
 
+ZLIB_NATIVE = ${PACKAGES}/zlib/dist/native
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	cd ../zlib && make native
 	rm -rf ${DIST_NATIVE}
 	cd ${BUILD_NATIVE} \
-		&&	CC="zig cc -I${ZLIB}/native/include -L${ZLIB}/native/lib" \
+		&&	CC="zig cc -I${ZLIB_NATIVE}/include -L${ZLIB_NATIVE}/lib" \
 			./configure --prefix=${DIST_NATIVE} \
-		&&	make \
+		&&	make -j8 \
 		&&	make install
 	touch ${DIST_NATIVE}/.built
 
@@ -40,18 +41,26 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	echo "typedef int __jmp_buf;" > ${BUILD_WASM}/bits/setjmp.h
 	touch ${BUILD_WASM}/.patched
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+
+
+# the __COVERITY__ below makes it not use tmpfile, which we haven't implemented yet.
+
+ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
+
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&&	CC="zig cc -target wasm32-wasi -I${ZLIB}/wasm/include -L${ZLIB}/wasm/lib -D_WASI_EMULATED_SIGNAL " \
+		&&	CC="cowasm-cc -fvisibility-main -I${ZLIB_WASM}/include -L${ZLIB_WASM}/lib -D__COVERITY__" \
+			AR="zig ar" \
+			RANLIB="zig ranlib" \
 			./configure \
 				--prefix=${DIST_WASM} \
 				--host=none \
 				--disable-shared \
-		&&	make -j8 libpng16.la
+		&& make -j8 libpng16.la timepng
 	mkdir -p ${DIST_WASM}/lib && cp ${BUILD_WASM}/.libs/libpng16.a ${DIST_WASM}/lib/libpng.a
 	mkdir -p ${DIST_WASM}/include && cp ${BUILD_WASM}/png.h ${BUILD_WASM}/pngconf.h  ${BUILD_WASM}/pnglibconf.h ${DIST_WASM}/include/
 	touch ${DIST_WASM}/.built
 
-test:
-	echo "no tests yet"
+test: node_modules ${DIST_WASM}/.built
+	npx @cowasm/kernel ${BUILD_WASM}/timepng  ${BUILD_WASM}/pngnow.png

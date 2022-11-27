@@ -119,8 +119,6 @@ run-native: ${DIST_NATIVE}/.built
 ## WASM
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
-	cd ${PACKAGES}/dylink && make  # tricky catch 22 since this relies on Python being extracted to analyze code!  Need to move.
-	cp ${PACKAGES}/dylink/dist/wasm-export/libpython.c ${BUILD_WASM}/Programs
 	# Scripts to make it easy to change CPython and rebuild iteratively
 	ln -s ${SRC}/rebuild ${BUILD_WASM}/rebuild
 	# Copy the config.site, which answers questions needed for
