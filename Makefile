@@ -27,7 +27,7 @@ packages/dash/${BUILT}: zig
 .PHONY: dash
 
 dash-wasm: packages/dash-wasm/${BUILT}
-packages/dash-wasm/${BUILT}: node zig dash lua less rogue
+packages/dash-wasm/${BUILT}: node zig less
 	cd packages/dash-wasm && make all
 .PHONY: dash-wasm
 
@@ -201,7 +201,7 @@ packages/less/${BUILT}: zig
 .PHONY: less
 
 rogue: packages/rogue/${BUILT}
-packages/rogue/${BUILT}: zig
+packages/rogue/${BUILT}: node zig
 	cd packages/rogue && make all
 .PHONY: rogue
 

@@ -5,9 +5,9 @@ VERSION = v5.4.1
 URL = https://github.com/sagemathinc/rogue/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/rogue-${VERSION}.tar.gz
 
-POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
-TERMCAP = ${PACKAGES}/termcap/dist/wasm
-NCURSES = ${PACKAGES}/ncurses/dist/wasm
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
+NCURSES_WASM = $(shell cowasm-package-path @cowasm/ncurses)
 
 all:  wasm
 
@@ -24,14 +24,14 @@ DEBUG =
 # build.  It's just an autconf shortcoming.  Without this, build fails on
 # aarch64 linux.  With updated config.guess, build fails on aarch64-mac.
 # So simple solution.
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
 			AR="zig ar" \
 			CC="cowasm-cc" \
 			CXX="cowasm-c++" \
-			CFLAGS="-Wall -fvisibility-main ${DEBUG} -Oz -Wno-deprecated-non-prototype -I${TERMCAP}/include -I${NCURSES}/include  -I${POSIX_WASM}" \
-			LDFLAGS="${DEBUG} -L${NCURSES}/lib -lncurses " \
+			CFLAGS="-Wall -fvisibility-main ${DEBUG} -Oz -Wno-deprecated-non-prototype -I${TERMCAP_WASM}/include -I${NCURSES_WASM}/include -I${NCURSES_WASM}/include/ncurses  -I${POSIX_WASM}" \
+			LDFLAGS="${DEBUG} -L${NCURSES_WASM}/lib -lncurses " \
 			./configure \
 				--host=none \
 				--build=arm \
