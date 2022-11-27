@@ -9,7 +9,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
-all: python-wasm dash-wasm
+all: viz-native cpython py python-wasm dash-wasm
 
 cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}:  node zig lzma-native zlib-native libedit-native
@@ -144,6 +144,11 @@ packages/terminal/${BUILT}: node
 viz: packages/viz/${BUILT}
 packages/viz/${BUILT}: node zig lua-native
 	cd packages/viz && make all
+.PHONY: viz
+
+viz-native: packages/viz/dist/native/.built
+packages/viz/dist/native/.built: node zig lua-native
+	cd packages/viz && make native
 .PHONY: viz
 
 wasi-js: packages/wasi-js/${BUILT}
