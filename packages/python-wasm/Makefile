@@ -53,7 +53,7 @@ ${DIST}/Cython.tar.xz: ${PACKAGES}/py-cython/dist/wasm/Cython.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 
-${DIST}/mpmath.tar.xz: ${PACKAGES}/py-mpmath/dist/wasm/mpmath.tar.xz
+${DIST}/mpmath.tar.xz: $(shell cowasm-package-path @cowasm/mpmath)/mpmath.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 
@@ -77,7 +77,7 @@ ${DIST}/six.tar.xz: ${PACKAGES}/py-pandas/dist/wasm/six.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 
-${DIST}/sympy.tar.xz: ${PACKAGES}/py-sympy/dist/wasm/sympy.tar.xz
+${DIST}/sympy.tar.xz: $(shell cowasm-package-path @cowasm/sympy)/sympy.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 
