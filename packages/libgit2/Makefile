@@ -13,8 +13,7 @@ TARBALL = ${UPSTREAM}/libgit2-${VERSION}.tar.gz
 # Release is pretty small
 BUILD_TYPE = Release
 
-POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
-ZLIB = ${PACKAGES}/zlib/dist/wasm
+ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
 
 all: wasm
 
@@ -30,10 +29,10 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 
 # Notes on options:
 #   - -DBUILD_SHARED_LIBS=OFF is the only way to get a static library, which is what we want for our use.
-${DIST_WASM}/.built: ${BUILD_WASM}/.patched
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc" \
-			CFLAGS="-Oz -I${ZLIB}/include" \
+			CFLAGS="-Oz -I${ZLIB_WASM}/include" \
 			cmake -DCMAKE_AR="${BUILD_WASM}/ar" \
 				-DCMAKE_RANLIB="${BUILD_WASM}/ranlib" \
 				-DCMAKE_SIZEOF_VOID_P=4 \
@@ -59,11 +58,11 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	touch ${DIST_WASM}/.built
 
 TESTS = ${BUILD_WASM}/tests
-
-CFLAGS = -v -fvisibility-main -Oz -I${DIST_WASM}/include
-LDFLAGS = -L${DIST_WASM}/lib -L${ZLIB}/lib -lgit2 -lz
-test-init: ${DIST_WASM}/.built
-	${BIN}/cowasm-cc ${CFLAGS} ${LDFLAGS} ${SRC}/test-init.c -o ${TESTS}/test-init
+test-init: node_modules ${DIST_WASM}/.built
+	${BIN}/cowasm-cc \
+		-v -fvisibility-main -Oz -I${DIST_WASM}/include \
+		-L${DIST_WASM}/lib -L${ZLIB_WASM}/lib -lgit2 -lz \
+		${SRC}/test-init.c -o ${TESTS}/test-init
 	rm -rf ${TESTS}/testrepo
 	${BIN}/cowasm ${TESTS}/test-init ${TESTS}/testrepo
 	cd ${TESTS}/testrepo && git status |grep "No commits yet"

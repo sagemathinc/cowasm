@@ -12,17 +12,17 @@ PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 all: python-wasm dash-wasm
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}:  zig lzma-native zlib-native libedit-native
+packages/cpython/${BUILT}:  node zig lzma-native zlib-native libedit-native
 	cd packages/cpython && make all
 .PHONY: cpython
 
 coreutils: packages/coreutils/${BUILT}
-packages/coreutils/${BUILT}: zig
+packages/coreutils/${BUILT}: node zig
 	cd packages/coreutils && make -j8
 .PHONY: coreutils
 
 dash: packages/dash/${BUILT}
-packages/dash/${BUILT}: zig
+packages/dash/${BUILT}: node zig
 	cd packages/dash && make all
 .PHONY: dash
 
@@ -53,22 +53,22 @@ packages/kernel/${BUILT}: node zig wasm-opt
 .PHONY: kernel
 
 tar: packages/tar/${BUILT}
-packages/tar/${BUILT}: zig
+packages/tar/${BUILT}: node zig
 	cd packages/tar && make all
 .PHONY: tar
 
 libedit: packages/libedit/${BUILT}
-packages/libedit/${BUILT}: zig termcap-native
+packages/libedit/${BUILT}: node zig termcap-native
 	cd packages/libedit && make all
 .PHONY: libedit
 
 libedit-native: packages/libedit/dist/native/.built
-packages/libedit/dist/native/.built: zig termcap-native
+packages/libedit/dist/native/.built: node zig termcap-native
 	cd packages/libedit && make native
 .PHONY: libedit-native
 
 lua: packages/lua/${BUILT}
-packages/lua/${BUILT}: zig
+packages/lua/${BUILT}: node zig
 	cd packages/lua && make all
 .PHONY: lua
 
@@ -83,17 +83,17 @@ packages/lzma/dist/native/.built: zig
 .PHONY: lzma-native
 
 lzma: packages/lzma/${BUILT}
-packages/lzma/${BUILT}: zig
+packages/lzma/${BUILT}: node zig
 	cd packages/lzma && make all
 .PHONY: lzma
 
 man: packages/man/${BUILT}
-packages/man/${BUILT}: zig zlib
+packages/man/${BUILT}: node zig
 	cd packages/man && make -j8
 .PHONY: man
 
 ncurses: packages/ncurses/${BUILT}
-packages/ncurses/${BUILT}: zig
+packages/ncurses/${BUILT}: node zig
 	cd packages/ncurses && make all
 .PHONY: ncurses
 
@@ -102,7 +102,7 @@ node:
 .PHONY: node
 
 openssl: packages/openssl/${BUILT}
-packages/openssl/${BUILT}: zig
+packages/openssl/${BUILT}: node zig
 	cd packages/openssl && make all
 .PHONY: openssl
 
@@ -112,7 +112,7 @@ packages/posix-node/${BUILT}: zig node
 .PHONY: posix-node
 
 posix-wasm: packages/posix-wasm/${BUILT}
-packages/posix-wasm/${BUILT}: zig
+packages/posix-wasm/${BUILT}: node zig
 	cd packages/posix-wasm && make all
 .PHONY: posix-wasm
 
@@ -121,13 +121,13 @@ packages/python-wasm/${BUILT}: node zig py
 	cd packages/python-wasm && npm run build
 .PHONY: python-wasm
 
-packages/sqlite/${BUILT}: zig
+sqlite: packages/sqlite/${BUILT}
+packages/sqlite/${BUILT}: node zig
 	cd packages/sqlite && make all
 .PHONY: sqlite
-sqlite: packages/sqlite/${BUILT}
 
 termcap: packages/termcap/${BUILT}
-packages/termcap/${BUILT}: zig
+packages/termcap/${BUILT}: node zig
 	cd packages/termcap && make all
 .PHONY: termcap
 
@@ -137,12 +137,12 @@ packages/termcap/dist/native/.built: zig
 .PHONY: termcap-native
 
 terminal: packages/terminal/${BUILT}
-packages/terminal/${BUILT}: node  python-wasm
+packages/terminal/${BUILT}: node
 	cd packages/terminal && make all
 .PHONY: terminal
 
 viz: packages/viz/${BUILT}
-packages/viz/${BUILT}: zig lua-native
+packages/viz/${BUILT}: node zig lua-native
 	cd packages/viz && make all
 .PHONY: viz
 
@@ -157,17 +157,17 @@ packages/wasm-opt/${BUILT}: node
 .PHONY: wasm-opt
 
 browser: packages/browser/${BUILT}
-packages/browser/${BUILT}: node python-wasm
+packages/browser/${BUILT}: node
 	cd packages/browser && make all
 .PHONY: browser
 
 website: packages/website/${BUILT}
-packages/website/${BUILT}: node python-wasm
+packages/website/${BUILT}: node
 	cd packages/website && make all
 .PHONY: website
 
 cowasm.sh: packages/cowasm.sh/${BUILT}
-packages/cowasm.sh/${BUILT}: node dash-wasm
+packages/cowasm.sh/${BUILT}: node
 	cd packages/cowasm.sh && make all
 .PHONY: cowasm.sh
 
@@ -176,7 +176,7 @@ zig:
 .PHONY: zig
 
 zlib: packages/zlib/${BUILT}
-packages/zlib/${BUILT}: zig
+packages/zlib/${BUILT}: node zig
 	cd packages/zlib && make all
 .PHONY: zlib
 
@@ -186,7 +186,7 @@ packages/zlib/dist/native/.built: zig
 .PHONY: zlib-native
 
 libgit2: packages/libgit2/${BUILT}
-packages/libgit2/${BUILT}: zig kernel
+packages/libgit2/${BUILT}: zig
 	cd packages/libgit2 && make all
 .PHONY: libgit2
 
