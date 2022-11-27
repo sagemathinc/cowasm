@@ -7,7 +7,7 @@ OPT     = -O ReleaseSmall
 ZIG_PKG = --main-pkg-path ${SRC}
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
-DYLINK = ${PACKAGES}/dylink/dist
+DYLINK_WASM = $(shell cowasm-package-path dylink)/wasm
 
 WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
 WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic ${OPT}
@@ -42,12 +42,12 @@ strip: node_modules
 
 KERNEL_WASM_SOURCES = \
 	${POSIX_SOURCES} \
-	${DYLINK}/wasm/libdylink.a \
+	${DYLINK_WASM}/libdylink.a \
 	src/kernel/interface.zig \
 	src/kernel/cowasm.zig \
 	$(shell find src/wasm/posix/*.zig -type f)
 
-KERNEL_WASM_LDFLAGS = -L ${DYLINK}/wasm/ -ldylink -lc -lm ${WASI_EMULATED}
+KERNEL_WASM_LDFLAGS = -L ${DYLINK_WASM}/ -ldylink -lc -lm ${WASI_EMULATED}
 
 # TODO: I think libedit and libtermcap should probably be dynamic
 # libraries that get loaded when needed.
