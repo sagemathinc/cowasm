@@ -46,6 +46,7 @@
     "@cowasm/ncurses": "^1.0.0",
     "@cowasm/sqlite": "^1.0.0",
     "@cowasm/tar": "^1.0.1",
+    "@cowasm/viz": "^1.0.0",
     "@types/jest": "^29.2.0",
     "@types/node": "^18.11.3",
     "awaiting": "^3.0.0",

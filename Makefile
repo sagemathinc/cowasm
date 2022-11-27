@@ -9,7 +9,7 @@ export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
-all: python-wasm py f2c coreutils man viz dash terminal browser website dash-wasm cowasm.sh
+all: python-wasm dash-wasm
 
 cpython: packages/cpython/${BUILT}
 packages/cpython/${BUILT}:  zig wasi-js lzma-native zlib-native libedit-native
@@ -27,7 +27,7 @@ packages/dash/${BUILT}: zig
 .PHONY: dash
 
 dash-wasm: packages/dash-wasm/${BUILT}
-packages/dash-wasm/${BUILT}: dash lua viz less rogue
+packages/dash-wasm/${BUILT}: dash lua less rogue
 	cd packages/dash-wasm && make all
 .PHONY: dash-wasm
 
