@@ -56,18 +56,15 @@ unicodedata unicodedata.c
 # _datetime _datetimemodule.c
 # _pickle _pickle.c
 
-
+# Readline via libedit:
 readline readline.c -I$(LIBEDIT_WASM)/include $(LIBEDIT_WASM)/lib/libedit.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
 
 # Curses
+_curses _cursesmodule.c -I$(NCURSES_WASM)/include -I$(NCURSES_WASM)/include/ncurses $(NCURSES_WASM)/lib/libncurses.a $(TERMCAP_WASM)/lib/libtermcap.a
+_curses_panel _curses_panel.c -I$(NCURSES_WASM)/include -I$(NCURSES_WASM)/include/ncurses $(NCURSES_WASM)/lib/libncurses.a $(TERMCAP_WASM)/lib/libtermcap.a
 
-_curses _cursesmodule.c -I$(abs_srcdir)/../../../ncurses/dist/wasm/include -I$(abs_srcdir)/../../../ncurses/dist/wasm/include/ncurses $(abs_srcdir)/../../../ncurses/dist/wasm/lib/libncurses.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
-_curses_panel _curses_panel.c  -I$(abs_srcdir)/../../../ncurses/dist/wasm/include -I$(abs_srcdir)/../../../ncurses/dist/wasm/include/ncurses  $(abs_srcdir)/../../../ncurses/dist/wasm/lib/libncurses.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
-
-# Using GNU readline doesn't work.  Anyway, it is bigger, more complicated, GPL'd, and **the code is harder to read**.
-#readline readline.c -I$(abs_srcdir)/../../../readline/dist/wasm/include $(abs_srcdir)/../../../readline/dist/wasm/lib/libreadline.a $(abs_srcdir)/../../../termcap/dist/wasm/lib/libtermcap.a
 
 _bz2 _bz2module.c -I$(BZIP2_WASM)/include/ $(BZIP2_WASM)/lib/libbz2.a
 
