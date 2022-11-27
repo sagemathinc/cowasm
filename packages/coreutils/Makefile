@@ -212,12 +212,12 @@ test-head: ${TARGET}/head
 	test "`${BIN}/cowasm ${TARGET}/head -n 1 ${BUILD}/.test-head`" = "first line"
 	rm ${BUILD}/.test-head
 
-test-join: ${TARGET}/head
+test-join: ${TARGET}/join
 	printf "1 X\n2 Y\n3 Z" > ${BUILD}/a
 	printf "1 x\n2 y\n3 z" > ${BUILD}/b
 	test "`cowasm ${TARGET}/join  ${BUILD}/a ${BUILD}/b`" = "`printf "1 X x\n2 Y y\n3 Z z"`"
 
-test-mkdir-rmdir: ${TARGET}/mkdir ${TARGET}/rmdir
+test-mkdir-rmdir: ${TARGET}/mkdir ${TARGET}/rmdir ${TARGET}/test
 	${BIN}/cowasm ${TARGET}/mkdir xyz-mkdir && ${BIN}/cowasm ${TARGET}/rmdir xyz-mkdir && ${BIN}/cowasm ${TARGET}/test ! -d xyz-mkdir
 
 test-mv: ${TARGET}/mv ${TARGET}/touch ${TARGET}/test ${TARGET}/rm
