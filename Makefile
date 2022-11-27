@@ -12,7 +12,7 @@ PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 all: viz-native cpython py python-wasm dash-wasm
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}:  node zig lzma-native zlib-native libedit-native
+packages/cpython/${BUILT}:
 	cd packages/cpython && make all
 .PHONY: cpython
 

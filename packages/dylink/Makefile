@@ -6,6 +6,7 @@ POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 all: dist/.built
 
 node_modules:
+	cd ../node && make
 	npm install
 
 dist/.built: dist/index.js dist/wasm/libdylink.a wasm-export node_modules
@@ -34,6 +35,7 @@ dist/wasm-export/libpython.c: dist/libpython.js
 wasm-export: dist/wasm-export/libpython.c dist/wasm-export/libc.c
 
 build/wasm/libdylink.o: dist/wasm-export/libc.c
+	cd ../zig && make
 	mkdir -p build/wasm
 	zig cc -target wasm32-wasi \
 		-w \

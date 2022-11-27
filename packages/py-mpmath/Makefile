@@ -11,24 +11,35 @@ TARBALL = ${UPSTREAM}/mpmath-${VERSION}.tar.gz
 include ../build/Makefile-rules
 
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
+	cd ../cpython && make pip # TODO: would be much nicer if npm package of python-wasm supported pip/distutils
 	cd ${BUILD_WASM} \
-		&& python-wasm setup.py install
+		&& python-wasm setup.py build
 	touch ${BUILD_WASM}/.built
 
 test: ${BUILD_WASM}/.built
+	# Test that importing from the bundle works:
+	PYTHONPATH=${DIST_WASM} python-wasm -c 'import mpmath'
+	# Run actual test suite
 	cd ${BUILD_WASM}/build/lib \
 		&& PYTHONPATH=`pwd` python-wasm mpmath/tests/runtests.py
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
+	cd ../cpython && make native  # TODO: python-wasm doesn't work with cowasm_bundler *yet*.
 	cd ${BUILD_WASM}/build/lib \
 		&& python-native -m cowasm_bundler mpmath \
 		&& mkdir -p ${DIST_WASM} \
 		&& cp mpmath.* ${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
+
+
+
+
+
 # Interesting to build and test native for speed comparison:
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	cd ../cpython && make native
 	cd ${BUILD_NATIVE} \
 		&& python-native setup.py build \
 		&& python-native setup.py install --prefix=${DIST_NATIVE}

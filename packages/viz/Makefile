@@ -24,6 +24,8 @@ include ../build/Makefile-rules
 
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	cd ../zig && make
+	cd ../lua && make native
 	rm -rf ${DIST_NATIVE}
 	cd ${BUILD_NATIVE} \
 		&&	CC="zig cc" \
@@ -53,6 +55,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	touch ${BUILD_WASM}/.patched
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
+	cd ../node && make
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc" \
