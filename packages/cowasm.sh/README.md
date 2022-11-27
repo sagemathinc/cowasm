@@ -4,4 +4,11 @@ This is a demo of [xterm.js](https://xtermjs.org/) and [webpack](https://webpack
 
 Everything is very similar to the terminal package. See that.
 
-I actually recently bought cowasm.sh, which is where this will be hosted.
+You can try this live at https://cowasm.sh or
+
+```sh
+git clone https://github.com/sagemathinc/cowasm
+cd cowasm/packages/cowasm.sh
+npm install
+npm run serve
+```

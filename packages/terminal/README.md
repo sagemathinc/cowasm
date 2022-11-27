@@ -75,20 +75,6 @@ Clone the repo:
 ```sh
 git clone https://github.com/sagemathinc/cowasm
 cd cowasm/packages/terminal
-```
-
-Delete these three lines from package.json (which are used
-for development):
-
-```js
-  "workspaces": [
-    "../python-wasm"
-  ],
-```
-
-then install and start the server:
-
-```sh
 npm install
 npm run serve
 ```
@@ -108,7 +94,6 @@ SW=true npm run serve
 Note that the service worker approach causes a page refresh the very first time the page is loaded, so that the active service worker takes over proxying certain requests.
 
 **Supported Platforms:** I've tested the above with node v14, v16 and v18 on Linux, MacOS, and Microsoft Windows.  On Windows, you have to directly edit webpack.config.js to test out service workers.
-
 
 ### Firefox and Service Workers
 

@@ -55,19 +55,10 @@ Clone the repo:
 
 ```sh
 git clone https://github.com/sagemathinc/cowasm
-cd cowasm/packages/webpack
+cd cowasm/packages/browser
 ```
 
-Delete these three lines from package.json (which are used
-for development):
-
-```js
-  "workspaces": [
-    "../python-wasm"
-  ],
-```
-
-then install and start the server:
+Install and start the server:
 
 ```sh
 npm install
@@ -76,7 +67,7 @@ npm run serve
 
 Then visit the URL that it outputs, which is probably http://localhost:8080
 
-**Supported Platforms:** I've tested the above with node v14, v16 and v18 on Linux, MacOS, and Microsoft Windows.
+**Supported Platforms:** I've tested the above with node v16 and v18 on Linux, MacOS, and Microsoft Windows.
 
 ## Synchronous IO
 
@@ -109,3 +100,4 @@ this](https://github.com/github-community/community/discussions/13309).
 ## Firefox and Service Workers
 
 Unlike Safari and Chrome, Firefox doesn't allow service workers over http without setting `dom.serviceWorkers.testing.enabled`, so set that to true in `about:config` to test locally. Also, [Firefox doesn't implement support for service workers in incognito mode](https://bugzilla.mozilla.org/show_bug.cgi?id=1320796).
+

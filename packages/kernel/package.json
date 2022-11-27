@@ -4,12 +4,7 @@
   "description": "@cowasm/kernel -- the Kernel of CoWasm: Collaborative WebAssembly for Servers and Browsers",
   "main": "./dist/kernel/node.js",
   "browser": "./dist/kernel/browser.js",
-  "files": [
-    "dist/**",
-    "README.md",
-    "package.json",
-    "tsconfig.json"
-  ],
+  "files": ["dist/**", "README.md", "package.json", "tsconfig.json"],
   "scripts": {
     "build": "make all",
     "clean": "make clean",
@@ -24,26 +19,18 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "keywords": [
-    "python",
-    "webassembly"
-  ],
+  "keywords": ["python", "webassembly"],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/kernel",
-  "workspaces": [
-    "../wasi-js",
-    "../dylink",
-    "../posix-node"
-  ],
   "dependencies": {
     "awaiting": "^3.0.0",
     "date-format": "^4.0.13",
     "debug": "^4.3.4",
-    "dylink": "^0.11.0",
+    "dylink": "^0.11.1",
     "lodash": "^4.17.21",
     "posix-node": "^0.12.0",
     "uuid": "^8.3.2",

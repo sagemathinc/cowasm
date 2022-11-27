@@ -23,19 +23,13 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "keywords": [
-    "python",
-    "webassembly"
-  ],
+  "keywords": ["python", "webassembly"],
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/website",
-  "workspaces": [
-    "../python-wasm"
-  ],
   "devDependencies": {
     "buffer": "^6.0.3",
     "css-loader": "^6.7.1",
@@ -44,19 +38,15 @@
     "node-polyfill-webpack-plugin": "^2.0.0",
     "path-browserify": "^1.0.1",
     "process": "^0.11.10",
-    "python-wasm": "^0.22.0",
+    "python-wasm": "^0.26.2",
     "style-loader": "^3.3.1",
     "typescript": "^4.8.4",
     "util": "^0.12.4",
     "webpack": "^5.73.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3",
-    "xterm": "^5.0.0"
-  },
-  "dependencies": {
-    "@types/jest": "^29.2.0",
+    "xterm": "^5.0.0",
     "@types/node": "^18.11.3",
-    "jest": "^29.2.1",
     "ts-loader": "^9.4.1",
     "xterm-addon-web-links": "^0.7.0"
   }

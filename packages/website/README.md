@@ -54,8 +54,8 @@ in [src/index.ts](./src/index.ts).
 
 ```sh
 git clone https://github.com/sagemathinc/cowasm
-cd cowasm/packages/webpack
-npm ci
+cd cowasm/packages/website
+npm install
 npm run serve
 ```
 

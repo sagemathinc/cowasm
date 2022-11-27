@@ -12,7 +12,7 @@ PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 all: python-wasm dash-wasm
 
 cpython: packages/cpython/${BUILT}
-packages/cpython/${BUILT}:  zig wasi-js lzma-native zlib-native libedit-native
+packages/cpython/${BUILT}:  zig lzma-native zlib-native libedit-native
 	cd packages/cpython && make all
 .PHONY: cpython
 
@@ -27,7 +27,7 @@ packages/dash/${BUILT}: zig
 .PHONY: dash
 
 dash-wasm: packages/dash-wasm/${BUILT}
-packages/dash-wasm/${BUILT}: dash lua less rogue
+packages/dash-wasm/${BUILT}: node zig dash lua less rogue
 	cd packages/dash-wasm && make all
 .PHONY: dash-wasm
 
@@ -48,7 +48,7 @@ packages/dylink/${BUILT}: node zig cpython
 .PHONY: dylink
 
 kernel: packages/kernel/${BUILT}
-packages/kernel/${BUILT}: node wasi-js zig dylink posix-node wasm-opt
+packages/kernel/${BUILT}: node zig wasm-opt
 	cd packages/kernel && make all
 .PHONY: kernel
 
