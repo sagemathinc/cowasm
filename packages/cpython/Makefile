@@ -78,8 +78,8 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ../zig && make
 	cd ../lzma && make native
 	cd ../zlib && make native
-	cd ../libedit && make native
 	cd ../termcap && make native
+	cd ../libedit && make native
 	cd ${BUILD_NATIVE} \
 		&& 	AR="zig ar" \
 			CXX="zig c++ ${ZIG_NATIVE_CFLAGS}" \
@@ -118,9 +118,12 @@ run-native: ${DIST_NATIVE}/.built
 
 ## WASM
 
-${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
+${BUILD_WASM}/.patched: node_modules ${BUILD_WASM}/.build
+	# Copy over declarations that make everything extension modules need
+	# accessible from outside our "python.wasm as a shared library".
+	cp $(shell cowasm-package-path dylink)/wasm-export/libpython.c ${BUILD_WASM}/Programs
 	# Scripts to make it easy to change CPython and rebuild iteratively
-	ln -s ${SRC}/rebuild ${BUILD_WASM}/rebuild
+	ln -sf ${SRC}/rebuild ${BUILD_WASM}/rebuild
 	# Copy the config.site, which answers questions needed for
 	# cross compiling, without which ./configure won't work.
 	cp src/config.site ${BUILD_WASM}

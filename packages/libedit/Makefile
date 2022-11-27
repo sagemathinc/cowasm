@@ -18,6 +18,7 @@ TERMCAP_NATIVE = ${PACKAGES}/termcap/dist/native
 ##################
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	cd ../termcap && make native
 	cd ${BUILD_NATIVE} && \
 		CFLAGS="-I${TERMCAP_NATIVE}/include -L${TERMCAP_NATIVE}/lib" \
 		CC="zig cc -Oz  ${ZIG_NATIVE_CFLAGS_GNU} " \

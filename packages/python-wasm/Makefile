@@ -49,7 +49,7 @@ ${DIST}/%.zip: ${CPYTHON}/lib/dist/%.zip
 
 PYTHON_PACKAGES = ${DIST}/Cython.tar.xz ${DIST}/mpmath.tar.xz ${DIST}/numpy.tar.xz ${DIST}/sympy.tar.xz ${DIST}/pandas.tar.xz ${DIST}/pytz.tar.xz ${DIST}/dateutil.tar.xz ${DIST}/six.tar.xz
 
-${DIST}/Cython.tar.xz: ${PACKAGES}/py-cython/dist/wasm/Cython.tar.xz
+${DIST}/Cython.tar.xz: $(shell cowasm-package-path @cowasm/cython)/Cython.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 
@@ -57,7 +57,7 @@ ${DIST}/mpmath.tar.xz: $(shell cowasm-package-path @cowasm/mpmath)/mpmath.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 
-${DIST}/numpy.tar.xz: ${PACKAGES}/py-numpy/dist/wasm/numpy.tar.xz
+${DIST}/numpy.tar.xz: $(shell cowasm-package-path @cowasm/numpy)/numpy.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 

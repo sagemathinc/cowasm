@@ -11,11 +11,13 @@ TARBALL = ${UPSTREAM}/cython-${VERSION}.tar.gz
 include ../build/Makefile-rules
 
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
+	cd ../cpython && make pip  # TODO
 	cd ${BUILD_WASM} \
-		&& python-wasm -m pip install .
+		&& python-wasm setup.py build
 	touch ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
+	cd ../cpython && make native  # TODO: python-wasm doesn't work with cowasm_bundler *yet*.
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
 	# NOTE: there's a lot of files in Cython that are NOT .so, not .pyc, but do
@@ -40,6 +42,7 @@ ${BIN}/cython: bin/cython
 # we need to do regarding disabling setjmp, etc., to get this stuff to build.
 
 test: wasm
+	cd ../cpython && make pip  # TODO
 	cd ${BUILD_WASM}/Demos \
 		&& rm -f *.so *.c \
 		&& touch numpy.py \

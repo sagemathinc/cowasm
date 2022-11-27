@@ -45,17 +45,21 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #  - We "python setup.py install" (and not just build) because dependencies
 #    such as pandas expect a full install in place (with all headers) in
 #    order to compile themselves.
-${BUILD_WASM}/.install: ${BUILD_WASM}/.patched
+
+CYTHON = $(shell cowasm-package-path @cowasm/cython)
+
+${BUILD_WASM}/.install: node_modules ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}
-	cd ${PACKAGES}/cpython && make pip
+	cd ../cpython && make pip  # TODO
 	cd ${BUILD_WASM} \
-		&& python-wasm setup.py install
+		&& PYTHONPATH=${CYTHON} python-wasm setup.py build
 	touch ${BUILD_WASM}/.install
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.install
 	cd ${BUILD_WASM}/build/lib* \
 		&& rm -rf numpy/core/include \
-		&& python-native -m cowasm_bundler numpy numpy/core/multiarray.py  \
+		&& cp -rv ../src*/numpy/core/include numpy/core/ \
+		&& python-native -m cowasm_bundler numpy numpy/core/multiarray.py numpy/core/include \
 		&& mkdir -p ${DIST_WASM} \
 		&& cp numpy.tar.xz ${DIST_WASM}
 	touch ${DIST_WASM}/.built
@@ -65,7 +69,7 @@ test: ${DIST_WASM}/.built
 	rm -rf ${BUILD_WASM}/cowasm-test
 	mkdir -p ${BUILD_WASM}/cowasm-test
 	@cd ${BUILD_WASM}/cowasm-test \
-		&& python-wasm -c "import numpy; print(numpy.array([3,8,9,5,0,7,7]).sum())" | grep 39 \
+		&& PYTHONPATH=${DIST_WASM} python-wasm -c "import numpy; print(numpy.array([3,8,9,5,0,7,7]).sum())" | grep 39 \
 		&& echo "NUMPY TEST PASSED!"
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build

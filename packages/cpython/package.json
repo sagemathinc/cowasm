@@ -43,6 +43,7 @@
     "@cowasm/posix-wasm": "^1.0.3",
     "@cowasm/sqlite": "^1.0.0",
     "@cowasm/termcap": "^1.0.0",
-    "@cowasm/zlib": "^1.0.0"
+    "@cowasm/zlib": "^1.0.0",
+    "dylink": "^0.11.2"
   }
 }
