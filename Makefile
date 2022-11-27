@@ -62,7 +62,7 @@ packages/libedit/${BUILT}: zig termcap
 	cd packages/libedit && make all
 .PHONY: libedit
 
-libedit-native: packages/libedit/${BUILT}
+libedit-native: packages/libedit/dist/native/.built
 packages/libedit/dist/native/.built: zig termcap
 	cd packages/libedit && make native
 .PHONY: libedit-native
@@ -72,7 +72,12 @@ packages/lua/${BUILT}: zig libedit termcap
 	cd packages/lua && make all
 .PHONY: lua
 
-lzma-native: packages/lzma/${BUILT}
+lua-native: packages/lua/dist/native/.built
+packages/lua/dist/native/.built: zig
+	cd packages/lua && make native
+.PHONY: lua-native
+
+lzma-native: packages/lzma/dist/native/.built
 packages/lzma/dist/native/.built: zig
 	cd packages/lzma && make native
 .PHONY: lzma-native
@@ -132,7 +137,7 @@ packages/terminal/${BUILT}: node  python-wasm
 .PHONY: terminal
 
 viz: packages/viz/${BUILT}
-packages/viz/${BUILT}: termcap zig lua
+packages/viz/${BUILT}: termcap zig lua-native
 	cd packages/viz && make all
 .PHONY: viz
 
@@ -170,7 +175,7 @@ packages/zlib/${BUILT}: zig
 	cd packages/zlib && make all
 .PHONY: zlib
 
-zlib-native: packages/zlib/${BUILT}
+zlib-native: packages/zlib/dist/native/.built
 packages/zlib/dist/native/.built: zig
 	cd packages/zlib && make native
 .PHONY: zlib-native
