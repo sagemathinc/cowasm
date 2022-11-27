@@ -205,8 +205,8 @@ packages/rogue/${BUILT}: node zig
 	cd packages/rogue && make all
 .PHONY: rogue
 
-f2c: packages/f2c/${BUILT} wasi-js zig
-packages/f2c/${BUILT}: zig
+f2c: packages/f2c/${BUILT} zig
+packages/f2c/${BUILT}: node zig
 	cd packages/f2c && make all
 .PHONY: f2c
 
