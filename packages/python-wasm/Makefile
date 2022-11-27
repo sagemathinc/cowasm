@@ -5,14 +5,13 @@ include ../build/Makefile-vars
 OPT     = -OReleaseSmall
 # OPT     = -ODebug
 
-all: ${DIST}/.built python
+all: node_modules ${DIST}/.built python
 
 include ../build/Makefile-rules
 
-PYTHON_WASM = ${PACKAGES}/cpython/dist/wasm
-POSIX_WASM = ${PACKAGES}/posix-wasm/dist/wasm
-CPYTHON = ${PACKAGES}/cpython/dist/wasm
-DYLINK = ${PACKAGES}/dylink/dist
+CPYTHON = $(shell cowasm-package-path @cowasm/cpython)
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+DYLINK = $(shell cowasm-package-path dylink)
 
 CFLAGS = -I${CPYTHON}/include/python3.11 -I${POSIX_WASM}
 LDFLAGS = -L${CPYTHON}/lib -lpython3.11
@@ -43,7 +42,7 @@ ${DIST}/python.wasm: src/python.zig src/signal.zig ${BUILD}/libpython.o ${CPYTHO
 BUNDLES = ${DIST}/python-minimal.zip ${DIST}/python-readline.zip ${DIST}/python-stdlib.zip ${DIST}/python-everything.zip
 
 
-${DIST}/%.zip: ${PYTHON_WASM}/lib/dist/%.zip
+${DIST}/%.zip: ${CPYTHON}/lib/dist/%.zip
 	# Copy over the modules file
 	mkdir -p ${DIST}
 	cp $< $@
@@ -104,11 +103,8 @@ ${DIST}/hello.${PLATFORM}.so: src/extension/hellomodule.c
 	${BIN}/cowasm-cc -Oz ${CFLAGS} -shared  \
 		src/extension/hellomodule.c -o ${DIST}/hello.${PLATFORM}.so
 
-${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.${PLATFORM}.so: ${DIST}/hello.${PLATFORM}.so
-	cp  ${DIST}/hello.${PLATFORM}.so ${PYTHON_WASM}/lib/python3.11/lib-dynload/
-
 .PHONEY: hello
-hello: ${PYTHON_WASM}/lib/python3.11/lib-dynload/hello.${PLATFORM}.so
+hello: ${DIST}/hello.${PLATFORM}.so
 
 ###
 # An example minimal Python extension module, written in Zig.
@@ -127,9 +123,6 @@ hellozig: ${DIST}/hellozig.${PLATFORM}.so
 ###
 # Node related makefile wrapping...
 ###
-
-node_modules:
-	npm ci
 
 ${DIST}/.built: node_modules
 	mkdir -p ${DIST}

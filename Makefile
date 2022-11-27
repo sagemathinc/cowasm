@@ -112,8 +112,8 @@ packages/posix-wasm/${BUILT}: zig
 .PHONY: posix-wasm
 
 python-wasm: packages/python-wasm/${BUILT}
-packages/python-wasm/${BUILT}: kernel node zig py
-	cd packages/python-wasm && make all
+packages/python-wasm/${BUILT}: node zig py
+	cd packages/python-wasm && npm run build
 .PHONY: python-wasm
 
 packages/sqlite/${BUILT}: zig
