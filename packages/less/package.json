@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/less",
   "devDependencies": {
+    "@cowasm/kernel": "^0.27.9",
     "@cowasm/ncurses": "^1.0.0",
     "@cowasm/posix-wasm": "^1.0.3",
     "@cowasm/termcap": "^1.0.0"

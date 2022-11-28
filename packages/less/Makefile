@@ -30,6 +30,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	touch ${BUILD_WASM}/.patched
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
+	cd ../zig && make
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
 			AR="zig ar" \
@@ -48,6 +49,6 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 		&& 	make -j8 install
 	touch ${DIST_WASM}/.built
 
-test:
+test: ${DIST_WASM}/.built
 	# Check it starts and prints some help
-	echo "" | ${BIN}/cowasm ${DIST_WASM}/bin/less --help |grep "Commands"
+	echo "" | npx @cowasm/kernel ${DIST_WASM}/bin/less --help |grep "Commands"
