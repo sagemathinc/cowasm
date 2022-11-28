@@ -9,6 +9,9 @@ import { Options, PythonWasmSync, PythonWasmAsync } from "./common";
 
 export type { Options, PythonWasmSync, PythonWasmAsync };
 
+// This is used for build testing (all packages have a path).
+export const path = __dirname;
+
 const python_wasm = join(__dirname, "python.wasm");
 const pythonEverything = join(__dirname, "python-everything.zip");
 const pythonFull = join(__dirname, "python-stdlib.zip");

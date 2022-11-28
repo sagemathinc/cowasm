@@ -45,6 +45,7 @@
     "wasi-js": "^1.7.2"
   },
   "devDependencies": {
+    "@cowasm/cpython": "^1.0.2",
     "@cowasm/posix-wasm": "^1.0.3",
     "@types/jest": "^29.2.0",
     "@types/node": "^18.11.3",

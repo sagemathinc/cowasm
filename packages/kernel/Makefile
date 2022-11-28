@@ -12,8 +12,6 @@ DYLINK_WASM = $(shell cowasm-package-path dylink)/wasm
 WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
 WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic ${OPT}
 
-TEST = ./test-zig.sh
-
 all: node_modules ${DIST}/.built bin-cowasm kernel ${DIST}/termcap
 
 include ../build/Makefile-rules
@@ -50,6 +48,7 @@ KERNEL_WASM_SOURCES = \
 # libraries that get loaded when needed.
 
 ${DIST}/kernel/kernel.wasm: node_modules ${KERNEL_WASM_SOURCES} ${CWD}/src/wasm/posix/stdlib.c
+	cd ../zig && make
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
@@ -93,6 +92,9 @@ bin-cowasm: ${CWD}/../../bin/cowasm
 ###
 
 # There isn't much using zig testing yet, but should be.
+
+TEST = POSIX_WASM="$(shell cowasm-package-path @cowasm/posix-wasm)" CPYTHON_WASM="$(shell cowasm-package-path @cowasm/cpython)" ./test-zig.sh
+
 test-posix:
 	cd src && \
 		${TEST} wasm/posix/unistd.zig   ${OPT} && \
@@ -126,6 +128,7 @@ run-misc.wasm: ${BUILD}/test/misc.wasm
 .PHONY: run-misc.wasm
 
 ${BUILD}/test/misc.exe: ${SRC}/test/misc.c
+	cd ../zig && make
 	mkdir -p ${BUILD}/test/
 	zig cc -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.exe
 

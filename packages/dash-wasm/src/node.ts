@@ -11,6 +11,9 @@ const { USR, ENV } = getEnv("/cowasm");
 const fs_zip = join(__dirname, "fs.zip");
 const dash_wasm = join(USR, "bin", "sh");
 
+// This is used for build testing (all packages have a path).
+export const path = __dirname;
+
 export async function syncDash(opts?: Options): Promise<DashWasmSync> {
   log("creating sync CoWasm kernel...");
   const fs = getFilesystem(opts);
