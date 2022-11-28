@@ -20,7 +20,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 PYTHONPATH = $(shell cowasm-package-path @cowasm/cython):$(shell cowasm-package-path @cowasm/numpy)
 
 # TODO: this is a horrible hack right now, but it **works somewhat.**
-#  - first do the install with setup.py install, but ignore the error
+#  - first do the install with setup.py install
 #  - then install deps by doing "pip install pandas", which installs the
 #    deps because pandas is already installed.
 # This would break if pypi pandas is updated, but we haven't updated our
@@ -31,8 +31,11 @@ ${BUILD_WASM}/.install: node_modules ${BUILD_WASM}/.patched
 	cd ../cpython && make pip
 	# TODO: This is a hack right now so that pip install pandas doesn't try to build numpy
 	cd ../py-numpy && make
+	# TODO: Now install pandas first via setup.py, then using pip to install
+	# just the remaining dependencies.
 	cd ${BUILD_WASM} \
 		&& PYTHONPATH="${PYTHONPATH}" python-wasm setup.py install \
+		&& python-wasm -m pip install pandas || true \
 		&& python-wasm -m pip install pandas
 	touch ${BUILD_WASM}/.install
 
