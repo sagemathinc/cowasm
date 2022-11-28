@@ -25,6 +25,7 @@ DEBUG =
 # aarch64 linux.  With updated config.guess, build fails on aarch64-mac.
 # So simple solution.
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
+	cd ../zig && make
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
 			AR="zig ar" \
