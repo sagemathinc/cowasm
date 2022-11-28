@@ -44,6 +44,7 @@
     "@cowasm/cython": "^1.0.0",
     "@cowasm/mpmath": "^1.0.0",
     "@cowasm/numpy": "^1.0.0",
+    "@cowasm/pandas": "^1.0.0",
     "@cowasm/posix-wasm": "^1.0.3",
     "@cowasm/sympy": "^1.0.0",
     "@types/jest": "^29.2.0",

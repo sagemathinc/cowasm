@@ -19,7 +19,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 
 PYTHONPATH = $(shell cowasm-package-path @cowasm/cython):$(shell cowasm-package-path @cowasm/numpy)
 
-# TODO: this is a horrible hack right now, but it works somewhat.
+# TODO: this is a horrible hack right now, but it **works somewhat.**
 #  - first do the install with setup.py install, but ignore the error
 #  - then install deps by doing "pip install pandas", which installs the
 #    deps because pandas is already installed.
@@ -33,7 +33,7 @@ ${BUILD_WASM}/.install: node_modules ${BUILD_WASM}/.patched
 	cd ../py-numpy && make
 	cd ${BUILD_WASM} \
 		&& PYTHONPATH="${PYTHONPATH}" python-wasm setup.py install \
-		&& PYTHONPATH="${PYTHONPATH}" python-wasm -m pip install pandas
+		&& python-wasm -m pip install pandas
 	touch ${BUILD_WASM}/.install
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.install
@@ -42,11 +42,11 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.install
 		&& rm -rf pandas/tests \
 		&& python-native -m cowasm_bundler pandas \
 		&& mkdir -p ${DIST_WASM} \
-		&& cp pandas.tar.xz ${DIST_WASM}
+		&& mv pandas.tar.xz ${DIST_WASM}
 	cd ${PACKAGES}/cpython/dist/wasm/lib/python3.11/site-packages \
-		&& python-native -m cowasm_bundler pytz pytz/zoneinfo && cp pytz.tar.xz ${DIST_WASM} \
-		&& python-native -m cowasm_bundler dateutil dateutil/zoneinfo && cp dateutil.tar.xz ${DIST_WASM} \
-		&& mkdir -p six && cp six.py six/__init__.py && python-native -m cowasm_bundler six && cp six.tar.xz ${DIST_WASM}
+		&& python-native -m cowasm_bundler pytz pytz/zoneinfo && mv pytz.tar.xz ${DIST_WASM} \
+		&& python-native -m cowasm_bundler dateutil dateutil/zoneinfo && mv dateutil.tar.xz ${DIST_WASM} \
+		&& mkdir -p six && cp six.py six/__init__.py && python-native -m cowasm_bundler six && mv six.tar.xz ${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
 # Just a trivial test for now.
