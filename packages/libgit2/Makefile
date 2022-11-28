@@ -30,6 +30,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 # Notes on options:
 #   - -DBUILD_SHARED_LIBS=OFF is the only way to get a static library, which is what we want for our use.
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
+	cd ../zig && make
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc" \
 			CFLAGS="-Oz -I${ZLIB_WASM}/include" \
@@ -59,12 +60,13 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 
 TESTS = ${BUILD_WASM}/tests
 test-init: node_modules ${DIST_WASM}/.built
+	cd ../zig && make
 	${BIN}/cowasm-cc \
 		-v -fvisibility-main -Oz -I${DIST_WASM}/include \
 		-L${DIST_WASM}/lib -L${ZLIB_WASM}/lib -lgit2 -lz \
 		${SRC}/test-init.c -o ${TESTS}/test-init
 	rm -rf ${TESTS}/testrepo
-	${BIN}/cowasm ${TESTS}/test-init ${TESTS}/testrepo
+	npx @cowasm/kernel ${TESTS}/test-init ${TESTS}/testrepo
 	cd ${TESTS}/testrepo && git status |grep "No commits yet"
 
 test: test-init
