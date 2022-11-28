@@ -61,19 +61,19 @@ ${DIST}/numpy.tar.xz: $(shell cowasm-package-path @cowasm/numpy)/numpy.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 
-${DIST}/pandas.tar.xz: ${PACKAGES}/py-pandas/dist/wasm/pandas.tar.xz
+${DIST}/pandas.tar.xz: $(shell cowasm-package-path @cowasm/pandas)/pandas.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 
-${DIST}/pytz.tar.xz: ${PACKAGES}/py-pandas/dist/wasm/pytz.tar.xz
+${DIST}/pytz.tar.xz: $(shell cowasm-package-path @cowasm/pandas)/pytz.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 
-${DIST}/dateutil.tar.xz: ${PACKAGES}/py-pandas/dist/wasm/dateutil.tar.xz
+${DIST}/dateutil.tar.xz: $(shell cowasm-package-path @cowasm/pandas)/dateutil.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 
-${DIST}/six.tar.xz: ${PACKAGES}/py-pandas/dist/wasm/six.tar.xz
+${DIST}/six.tar.xz: $(shell cowasm-package-path @cowasm/pandas)/six.tar.xz
 	mkdir -p ${DIST}
 	cp $< $@
 

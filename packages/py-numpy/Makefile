@@ -51,11 +51,14 @@ CYTHON = $(shell cowasm-package-path @cowasm/cython)
 ${BUILD_WASM}/.install: node_modules ${BUILD_WASM}/.patched
 	mkdir -p ${DIST_WASM}
 	cd ../cpython && make pip  # TODO
+	# TODO: We install rather than just build *solely* so that
+	# pip install with pandas doesn't try to install numpy later.
 	cd ${BUILD_WASM} \
-		&& PYTHONPATH=${CYTHON} python-wasm setup.py build
+		&& PYTHONPATH=${CYTHON} python-wasm setup.py install
 	touch ${BUILD_WASM}/.install
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.install
+	cd ../cpython && make native  # TODO: python-wasm doesn't work with cowasm_bundler *yet*.
 	cd ${BUILD_WASM}/build/lib* \
 		&& rm -rf numpy/core/include \
 		&& cp -rv ../src*/numpy/core/include numpy/core/ \
