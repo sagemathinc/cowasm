@@ -29,6 +29,9 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/dash",
   "devDependencies": {
-    "@cowasm/libedit": "^1.0.0"
+    "@cowasm/kernel": "^0.27.9",
+    "@cowasm/libedit": "^1.0.0",
+    "@cowasm/posix-wasm": "^1.0.3",
+    "@cowasm/termcap": "^1.0.0"
   }
 }

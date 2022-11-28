@@ -10,7 +10,8 @@ URL = https://github.com/sagemathinc/dash/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/dash-${VERSION}.tar.gz
 
 LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)
-TERMCAP = ${PACKAGES}/termcap/dist
+TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 
 all: wasm ${BIN}/dash-wasm-raw
 
@@ -40,12 +41,13 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #     so they don't have to be included here, which will make dash much smaller.  But for now this is fine.
 #     They add about 120KB.
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
+	cd ../zig && make
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	CONFIG_SITE=${BUILD_WASM}/config.site \
 			CC="cowasm-cc" \
-			CFLAGS="-O0 -fvisibility-main -DJOBS=0  -I${LIBEDIT_WASM}/include -I${PACKAGES}/posix-wasm/dist/wasm" \
-			LDFLAGS="-L${LIBEDIT_WASM}/lib -ledit -L${TERMCAP}/wasm/lib -ltermcap" \
+			CFLAGS="-O0 -fvisibility-main -DJOBS=0  -I${LIBEDIT_WASM}/include -I${POSIX_WASM}" \
+			LDFLAGS="-L${LIBEDIT_WASM}/lib -ledit -L${TERMCAP_WASM}/lib -ltermcap" \
 			./configure \
 				--with-libedit \
 				--prefix=${DIST_WASM} \
@@ -57,8 +59,8 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 ${BIN}/dash-wasm-raw: ${DIST_WASM}/.built ${CWD}/bin/dash-wasm
 	ln -sf ${CWD}/bin/dash-wasm ${BIN}/dash-wasm-raw
 
-test: ${BIN}/dash-wasm-raw
+test: node_modules ${DIST_WASM}/.built
 	# test doing a little arithmetic
-	echo "echo \$$((389*5077))" | ${BIN}/dash-wasm-raw | grep 1974953
+	echo "echo \$$((389*5077))" | npx @cowasm/kernel ${DIST_WASM}/bin/dash | grep 1974953
 	# test that a syntax error doesn't terminate the shell (i.e., no longjmp exception handling)
-	echo "); echo 'I am still alive'" | ${BIN}/dash-wasm-raw |grep alive
+	echo "); echo 'I am still alive'" | npx @cowasm/kernel ${DIST_WASM}/bin/dash | grep alive
