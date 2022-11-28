@@ -1,11 +1,10 @@
 #!/usr/bin/env python-native
 import os, subprocess, sys
 
-# this is all used at *build* time, so hardcoding the path is fine.
-RUN = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..',
-                   'packages', 'wasi-js', 'bin', 'run.js')
+RUN = "npx wasi-js"
 
 SCRIPT_DIR = r"""SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"""
+
 
 def run(args):
     # print(' '.join(args)) -- don't enable except for debugging, since would obviously break scripts trying to parse output
@@ -45,6 +44,7 @@ def build(compiler):
     run(args)
     if make_exe:
         file = open(make_exe, 'w')
-        file.write('#!/usr/bin/env bash\n'+SCRIPT_DIR+'\nnode '+RUN+' "${SCRIPT_DIR}/' + wasm_file + '" "$@"')
+        file.write('#!/usr/bin/env bash\n' + SCRIPT_DIR + '\n' + RUN +
+                   ' "${SCRIPT_DIR}/' + wasm_file + '" "$@"')
         file.close()
         run(["chmod", "+x", make_exe])
