@@ -46,6 +46,7 @@ CFLAGS_WASM = -Oz -I$(shell cowasm-package-path @cowasm/termcap)/include -D__STD
 LDFLAGS_WASM = -L$(shell cowasm-package-path @cowasm/termcap)/lib -ltermcap
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
+	cd ../zig && make
 	cd ${BUILD_WASM} \
 		&&	CONFIG_SITE=${SRC}/config.site \
 			CFLAGS="${CFLAGS_WASM}"  \
@@ -66,7 +67,8 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	touch ${DIST_WASM}/.built
 
 # Build test program
-${BUILD_WASM}/examples/tc1:  ${DIST_WASM}/.built
+${BUILD_WASM}/examples/tc1: node_modules ${DIST_WASM}/.built
+	cd ../zig && make
 	${BIN}/cowasm-cc -v -fvisibility-main -L${DIST_WASM}/lib -ledit \
 		${LDFLAGS_WASM} ${CFLAGS_WASM} \
 		-I${BUILD_WASM}/ -I${BUILD_WASM}/src \
@@ -78,4 +80,4 @@ run-tc1: ${BUILD_WASM}/examples/tc1
 test: ${BUILD_WASM}/examples/tc1
 	# This is a pretty dumb test, since not interactive, but at least it shows
 	# that the program builds and runs at all...
-	echo 'ls' | ${BIN}/cowasm ${BUILD_WASM}/examples/tc1 |grep "Makefile"
+	echo 'ls' | npx @cowasm/kernel ${BUILD_WASM}/examples/tc1 |grep "Makefile"
