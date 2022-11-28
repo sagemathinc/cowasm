@@ -200,7 +200,7 @@ test-mktemp: ${TARGET}/mktemp
 	# rm would error if file didn't exist...
 	rm `${BIN}/cowasm ${TARGET}/mktemp abc.XXXXXX`
 
-test-seq: ${TARGET}/seq
+test-seq: ${TARGET}/seq ${TARGET}/tr
 	${BIN}/cowasm ${TARGET}/seq 1 3 10 | ${BIN}/cowasm dist/wasm/bin/tr '\n' ' ' |grep "1 4 7 10"
 
 test-sleep: ${TARGET}/sleep

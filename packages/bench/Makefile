@@ -1,10 +1,13 @@
 include ../build/Makefile-vars
 
 python-wasm:
+	cd ../cpython && make wasm
+	cd ../kernel && make
 	echo "Starting benchmarks with python-wasm"
 	${BIN}/python-wasm src/all.py
 
 native:
+	cd ../cpython && make native
 	echo "Starting benchmarks with python-native"
 	${BIN}/python-native src/all.py
 
@@ -19,7 +22,7 @@ pypy3:
 # Running all the benchmark programs tests something about python-wasm actually working.
 test:
 	make python-wasm
-	cd src/cython && make all  # good test of cython
+	##cd src/cython && make all  # good test of cython
 
 .PHONY: clean
 clean:
