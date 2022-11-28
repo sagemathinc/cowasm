@@ -24,6 +24,7 @@ ZLIB_NATIVE = ${PACKAGES}/zlib/dist/native
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ../zlib && make native
+	cd ../zig && make
 	rm -rf ${DIST_NATIVE}
 	cd ${BUILD_NATIVE} \
 		&&	CC="zig cc -I${ZLIB_NATIVE}/include -L${ZLIB_NATIVE}/lib" \
@@ -49,6 +50,7 @@ ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	rm -rf ${DIST_WASM}
+	cd ../zig && make
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc -fvisibility-main -I${ZLIB_WASM}/include -L${ZLIB_WASM}/lib -D__COVERITY__" \
 			AR="zig ar" \

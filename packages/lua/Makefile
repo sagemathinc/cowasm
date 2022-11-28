@@ -19,6 +19,7 @@ include ../build/Makefile-rules
 
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	cd ../zig && make
 	rm -rf ${DIST_NATIVE}
 	cd ${BUILD_NATIVE} \
 		&&	make MYLIBS="-ldl" CC="zig cc" CFLAGS="-O2 -DLUA_USE_POSIX=1" -j8
@@ -44,6 +45,7 @@ TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
 LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
+	cd ../zig && make
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	make \
@@ -62,6 +64,6 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 ${BIN}/lua-wasm: ${DIST_WASM}/.built ${CWD}/bin/lua-wasm
 	ln -sf ${CWD}/bin/lua-wasm ${BIN}/lua-wasm
 
-test: ${BIN}/lua-wasm
+test: node_modules ${DIST_WASM}/.built
 	# echo "389*5077" | ${CWD}/bin/lua-wasm | grep 1974953  # this broke when I got editline working.
-	${CWD}/bin/lua-wasm ${SRC}/sum.lua | grep 50000005000000
+	npx @cowasm/kernel ${DIST_WASM}/bin/lua ${SRC}/sum.lua | grep 50000005000000
