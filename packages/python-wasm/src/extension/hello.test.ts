@@ -1,4 +1,4 @@
-import { testPython as syncPython } from "../node";
+import { syncPython } from "../node";
 import { join } from "path";
 
 // Test that it is possible to import a dynamic library

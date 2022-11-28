@@ -14,7 +14,7 @@ export const path = __dirname;
 
 const python_wasm = join(__dirname, "python.wasm");
 const pythonEverything = join(__dirname, "python-everything.zip");
-const pythonFull = join(__dirname, "python-stdlib.zip");
+const pythonStdlib = join(__dirname, "python-stdlib.zip");
 const pythonReadline = join(__dirname, "python-readline.zip");
 const pythonMinimal = join(__dirname, "python-minimal.zip");
 
@@ -22,10 +22,6 @@ const pythonMinimal = join(__dirname, "python-minimal.zip");
 // python3.wasm binary (which has main) from the cpython package, to support running python from python.
 // The following will only work in the build-from-source dev environment.
 const PYTHONEXECUTABLE = join(__dirname, "../../cpython/bin/python-wasm");
-
-export async function testPython() {
-  return (await createPython(true, {})) as PythonWasmSync;
-}
 
 export async function syncPython(
   opts: Options = { fs: "everything" }
@@ -46,6 +42,7 @@ async function createPython(
   sync: boolean,
   opts: Options
 ): Promise<PythonWasmSync | PythonWasmAsync> {
+  opts = { fs: "everything", ...opts }; // default fs is everything
   log("creating Python; sync = ", sync, ", opts = ", opts);
   const fs = getFilesystem(opts);
   let env: any = { PYTHONEXECUTABLE };
@@ -88,6 +85,16 @@ function getFilesystem(opts?: Options): FileSystemSpec[] {
       { type: "native" },
     ];
   }
+  if (opts?.fs == "stdlib") {
+    return [
+      {
+        type: "zipfile",
+        zipfile: pythonStdlib,
+        mountpoint: "/usr/lib/python3.11",
+      },
+      { type: "native" },
+    ];
+  }
   if (opts?.fs == "bundle" || !existsSync(PYTHONEXECUTABLE)) {
     // explicitly requested or not dev environment.
     return [
@@ -102,7 +109,7 @@ function getFilesystem(opts?: Options): FileSystemSpec[] {
       {
         type: "zipfile",
         async: true,
-        zipfile: pythonFull,
+        zipfile: pythonStdlib,
         mountpoint: "/usr/lib/python3.11",
       },
       // And the rest of the native filesystem.   **Sandboxing is not at all our goal here yet.**

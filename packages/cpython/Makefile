@@ -264,7 +264,7 @@ MINIMAL_READLINE = termcap lib-dynload/readline.cpython-311-wasm32-wasi.so  rlco
 # below by
 #    && python-wasm ./Tools/wasm/wasm_assets.py
 
-${DIST_WASM}/.install-data: ${DIST_WASM}/.install-cpython
+${DIST_WASM}/.install-data: ${DIST_WASM}/.install-cpython native
 	# Build wasm asset bundle (the pyc files, etc.).
 	cd ${BUILD_WASM} \
 		&& mkdir -p usr/local/lib/python3.11/lib-dynload/  \

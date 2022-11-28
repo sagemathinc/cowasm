@@ -8,7 +8,7 @@ import debug from "debug";
 
 const log = debug("python-wasm");
 
-type FileSystemOption = "auto" | "bundle" | "everything";
+type FileSystemOption = "auto" | "bundle" | "everything" | "stdlib";
 
 export interface Options {
   fs?: FileSystemOption;

@@ -27,6 +27,8 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 # This is a small test just that something works.  It's NOT the full very massive test suite,
 # which might be hard to get to pass anywhere, let alone in WASM.
 test: ${DIST_WASM}/.built node_modules
+	cd ../cpython && make wasm  # TODO
+
 	# Test that importing from the bundle works:
 	PYTHONPATH=${DIST_WASM}:$(shell cowasm-package-path @cowasm/mpmath) python-wasm -c 'import sympy'
 

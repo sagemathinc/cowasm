@@ -1,4 +1,4 @@
-import { testPython as syncPython } from "../node";
+import { syncPython } from "../node";
 
 test("add 2+3", async () => {
   const { exec, repr } = await syncPython();
@@ -47,7 +47,7 @@ test("that sys.executable is set to something", async () => {
 import { execFileSync } from "child_process";
 import { existsSync } from "fs";
 test("that sys.executable is set and exists -- when running python-wasm via command line", () => {
-  const stdout = execFileSync("../../bin/python-wasm", [
+  const stdout = execFileSync("./bin/python-wasm", [
     "-c",
     "import sys; print(sys.executable)",
   ])

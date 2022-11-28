@@ -151,7 +151,7 @@ To build any package in the `src/packages` directory, cd into that directory, th
 make
 ```
 
-That's it, usually. For the python\-wasm package you have to type `npm install` first.   You do not have to run build at the top level and you can start with building any specific package \-\- it will automatically cause any required dependencies to get built.
+That's it, usually.  You do not have to run build at the top level and you can start with building any specific package \-\- it will automatically cause any required dependencies to get installed or built.
 
 You can also force building of every single package and running its test suite if you want:
 

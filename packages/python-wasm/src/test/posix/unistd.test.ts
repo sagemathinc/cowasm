@@ -1,4 +1,4 @@
-import { testPython as syncPython } from "../../node";
+import { syncPython } from "../../node";
 import { hostname, userInfo } from "os";
 
 test("test getting the hostname via python, which calls the gethostname system call", async () => {
