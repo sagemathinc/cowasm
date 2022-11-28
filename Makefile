@@ -4,6 +4,8 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
 
+export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
+
 .PHONY: test
 test:
 	./bin/make-all test ${PACKAGE_DIRS}
