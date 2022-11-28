@@ -15,6 +15,7 @@ include ../build/Makefile-rules
 ## Native
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	cd ../zig && make
 	cd ${BUILD_NATIVE} \
 		&& 	CC="zig cc ${ZIG_NATIVE_CFLAGS} " \
 			AR="zig ar" \
@@ -47,6 +48,7 @@ DEBUG = ""
 
 # make -j12, since openssl is structured as huge number of tiny files.
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
+	cd ../zig && make
 	cd ${BUILD_WASM} \
 		&& 	CC="cowasm-cc" \
 			CFLAGS="-Oz ${DEBUG} -fvisibility-main -I${POSIX_WASM}" \
@@ -57,5 +59,5 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 		&&	make -j12 install_sw
 	touch ${DIST_WASM}/.built
 
-test: ${DIST_WASM}/.built
-	test x"`echo "foo" | ${BIN}/cowasm dist/wasm/bin/openssl md5`" = x"MD5(stdin)= d3b07384d113edec49eaa6238ad5ff00"
+test: node_modules ${DIST_WASM}/.built
+	test x"`echo "foo" | npx @cowasm/kernel dist/wasm/bin/openssl md5`" = x"MD5(stdin)= d3b07384d113edec49eaa6238ad5ff00"

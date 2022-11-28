@@ -12,6 +12,7 @@ TARBALL = ${UPSTREAM}/lzma-v${VERSION}.tar.gz
 include ../build/Makefile-rules
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	cd ../zig && make
 	cd ${BUILD_NATIVE} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
@@ -29,6 +30,7 @@ DEBUG = ""
 # DEBUG = "-g"
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.build
+	cd ../zig && make
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
@@ -49,12 +51,12 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.build
 	touch ${DIST_WASM}/.built
 
 TEST = ${BUILD_WASM}/TEST
-test: ${DIST_WASM}/.built
+test: node_modules ${DIST_WASM}/.built
 	rm -rf ${TEST}
 	mkdir -p ${TEST}
 	# Compress and decompress the Makefile using xz
 	cp Makefile ${TEST}/Makefile
-	${BIN}/cowasm ${DIST_WASM}/bin/xz -z ${TEST}/Makefile
-	${BIN}/cowasm ${DIST_WASM}/bin/xz -d ${TEST}/Makefile.xz
+	npx @cowasm/kernel ${DIST_WASM}/bin/xz -z ${TEST}/Makefile
+	npx @cowasm/kernel ${DIST_WASM}/bin/xz -d ${TEST}/Makefile.xz
 	cmp Makefile ${TEST}/Makefile
 	rm ${TEST}/Makefile

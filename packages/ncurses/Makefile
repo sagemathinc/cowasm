@@ -13,6 +13,7 @@ all:  wasm ${BUILD_WASM}/test/.built
 include ../build/Makefile-rules
 
 # NATIVE -- we do not use this, since pretty much any reasonable native build host has curses already.
+# Also, we barely use the native python build...
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} \
@@ -47,6 +48,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	touch ${BUILD_WASM}/.patched
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
+	cd ../zig && make
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
 			AR="zig ar" \
@@ -73,6 +75,7 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	touch ${DIST_WASM}/.built
 
 ${BUILD_WASM}/test/.built: node_modules ${DIST_WASM}/.built
+	cd ../zig && make
 	cd ${BUILD_WASM}/test \
 		&& RANLIB="zig ranlib" \
 			AR="zig ar" \

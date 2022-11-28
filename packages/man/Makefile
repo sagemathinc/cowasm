@@ -5,7 +5,7 @@ include ../build/Makefile-vars
 TARBALL = ${SRC}/mandoc-2022-10-14.tar.xz
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
-ZLIB = $(shell cowasm-package-path @cowasm/zlib)
+ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
 
 all: wasm
 
@@ -28,7 +28,7 @@ configure: node_modules ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&&	./configure \
 				CC="cowasm-cc" \
-				CFLAGS="-fvisibility-main -I${POSIX_WASM} -I${ZLIB}/include -Oz" \
+				CFLAGS="-fvisibility-main -I${POSIX_WASM} -I${ZLIB_WASM}/include -Oz" \
 				PREFIX=${DIST_WASM} \
 		&&	echo '#include "posix-wasm.h"' >> config.h  \
 		&&  echo '#define EFTYPE EINVAL' >> config.h  \
@@ -37,18 +37,19 @@ configure: node_modules ${BUILD_WASM}/.build
 
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
+	cd ../zig && make
 	cd ${BUILD_WASM} \
 		&&	make -j8  \
 			AR="zig ar" \
 			RANLIB="zig ranlib" \
 			CC="cowasm-cc" \
-			CFLAGS="-fvisibility-main -I${POSIX_WASM} -I${ZLIB}/include -Oz" \
-			LDFLAGS="-L ${ZLIB}/lib -lz" \
+			CFLAGS="-fvisibility-main -I${POSIX_WASM} -I${ZLIB_WASM}/include -Oz" \
+			LDFLAGS="-L ${ZLIB_WASM}/lib -lz" \
 			PREFIX=${DIST_WASM} \
 			man
 	mkdir -p ${DIST_WASM}/bin
 	cp -v ${BUILD_WASM}/mandoc ${DIST_WASM}/bin/man
 	touch ${DIST_WASM}/.built
 
-test: wasm
-	${BIN}/cowasm ${DIST_WASM}/bin/man build/wasm/man.1 | grep "display manual pages"
+test: node_modules wasm
+	npx @cowasm/kernel ${DIST_WASM}/bin/man build/wasm/man.1 | grep "display manual pages"
