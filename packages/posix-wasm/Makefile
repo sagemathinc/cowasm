@@ -26,10 +26,12 @@ DEBUG =
 CFLAGS = ${DEBUG} -Oz -I${SRC}
 
 ${BUILD_WASM}/%.o: ${SRC}/%.c ${DEPS}
+	cd ../zig && make
 	mkdir -p `dirname $@`
 	cowasm-cc -c -o $@ $< ${CFLAGS}
 
 ${BUILD_WASM}/libposix.a: ${OBJECTS}
+	cd ../zig && make
 	zig ar -crs ${BUILD_WASM}/libposix.a ${OBJECTS}
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/libposix.a
@@ -37,5 +39,5 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/libposix.a
 	cp -rv ${SRC}/bits ${SRC}/posix-wasm.h ${SRC}/emscripten.h ${SRC}/lib/fts/fts.h ${SRC}/lib/fts/fts.h ${BUILD_WASM}/libposix.a ${DIST_WASM}/
 	touch ${DIST_WASM}/.built
 
-test:
-	echo "no tests yet"
+test: ${DIST_WASM}/.built
+	echo "no tests yet (beyond 'it builds')"

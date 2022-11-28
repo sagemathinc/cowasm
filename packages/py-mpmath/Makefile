@@ -16,13 +16,6 @@ ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 		&& python-wasm setup.py build
 	touch ${BUILD_WASM}/.built
 
-test: ${BUILD_WASM}/.built
-	# Test that importing from the bundle works:
-	PYTHONPATH=${DIST_WASM} python-wasm -c 'import mpmath'
-	# Run actual test suite
-	cd ${BUILD_WASM}/build/lib \
-		&& PYTHONPATH=`pwd` python-wasm mpmath/tests/runtests.py
-
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	cd ../cpython && make native  # TODO: python-wasm doesn't work with cowasm_bundler *yet*.
 	cd ${BUILD_WASM}/build/lib \
@@ -31,7 +24,13 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 		&& cp mpmath.* ${DIST_WASM}
 	touch ${DIST_WASM}/.built
 
-
+test: ${DIST_WASM}/.built
+	cd ../cpython && make pip  # TODO
+	# Test that importing from the bundle works:
+	PYTHONPATH=${DIST_WASM} python-wasm -c 'import mpmath'
+	# Run actual test suite
+	cd ${BUILD_WASM}/build/lib \
+		&& PYTHONPATH=`pwd` python-wasm mpmath/tests/runtests.py
 
 
 
