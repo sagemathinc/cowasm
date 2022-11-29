@@ -41,7 +41,7 @@ The goal of CoWasm is overall similar to all of emscripten, [WebAssembly.sh](htt
 
 ## Python
 
-An exciting package in CoWasm is [python-wasm](https://www.npmjs.com/package/python-wasm), which is a build of Python for WebAssembly, which supports both servers and browsers.  It also supports extension modules such as numpy. 
+An exciting package in CoWasm is [python\-wasm](https://www.npmjs.com/package/python-wasm), which is a build of Python for WebAssembly, which supports both servers and browsers.  It also supports extension modules such as numpy. See [https://github.com/sagemathinc/cowasm\-python](https://github.com/sagemathinc/cowasm-python) 
 
 <!--
 [<img src="https://github.com/sagemathinc/cowasm/actions/workflows/docker-image.yml/badge.svg"  alt="Docker Image CI"  width="172px"  height="20px"  style="object-fit:cover"/>](https://github.com/sagemathinc/cowasm/actions/workflows/docker-image.yml)
@@ -350,27 +350,6 @@ Python programs that including interactive blocking input:
 name? william
 williamwilliamwilliam
 ```
-
-## Benchmarks
-
-There is a collection of cpu\-intensive benchmarks in [packages/bench/src](./packages/bench/src), which you can run under various Python interpreters by running
-
-```sh
-your-python-interpreter src/all.py
-```
-
-Here are some grand total times. The timings are pretty stable, and the parameters of the benchmarks are chosen so a single benchmark doesn't unduly impact the results \(e.g., it is trivial to game any such benchmark by adjusting parameters\).
-
-| Python                                                                  | x86_64 Linux | MacOS M1 max | aarch64 Linux (docker on M1 max) |
-| :---------------------------------------------------------------------- | :----------: | :----------: | :------------------------------: |
-| PyPy 3.9.x (Python reimplemented with a JIT)                            |   2997 ms    |   2127 ms    |       1514 ms (ver 3.6.9)        |
-| pylang (Javascript Python -- see https://github.com/sagemathinc/pylang) |   6909 ms    |   2876 ms    |             4424 ms              |
-| Native CPython 3.11                                                     |   9284 ms    |   4491 ms    |             4607 ms              |
-| WebAssembly CPython (python-wasm)                                       |   23109 ms   |   12171 ms   |             12909 ms             |
-
-<br/>
-
-The quick summary is that in each case pypy is twice as fast as pylang \(basically node.js\), python\-lang is twice as fast as cpython, and _**native cpython is about 2.5x\-2.8x as fast as python\-wasm**_. However, when you study the individual benchmarks, there are some significant differences. E.g., in `brython.py` there is a benchmark "create instance of simple class" and it typically takes 4x\-5x longer in WebAssembly versus native CPython.
 
 ---
 

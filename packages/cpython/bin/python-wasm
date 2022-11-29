@@ -1,5 +1,0 @@
-#!/bin/sh
-
-export PYTHONEXECUTABLE=$(readlink -f "$0")
-SCRIPTDIR=$(dirname "$PYTHONEXECUTABLE")
-"$SCRIPTDIR"/../../../bin/cowasm "$SCRIPTDIR"/../dist/wasm/bin/python3.wasm "$@"
