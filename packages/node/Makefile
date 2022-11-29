@@ -37,5 +37,5 @@ ${BIN}/npm:
 ${BIN}/npx:
 	ln -sf ${DIST_NATIVE}/bin/npx ${BIN}/npx
 
-test: ${BIN}/node
+test: all
 	test `echo "console.log(2+3)" | ${BIN}/node` = "5"
