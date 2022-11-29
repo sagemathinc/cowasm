@@ -74,6 +74,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 # which is why we run make twice below.
 ${DIST_WASM}/lib/libf2c.a: ${BUILD_WASM}/.patched
 	cd ../zig && make
+	cd ../node && make
 	cd ${BUILD_WASM}/libf2c \
 		&& make CC="zcc" CFLAGS="-Oz" arith.h -f makefile.u \
 		&& make CC="cowasm-cc" CFLAGS="-Oz"  -f makefile.u  -j8 \
@@ -88,6 +89,8 @@ ${DIST_WASM}/include/f2c.h: ${DIST_WASM}/lib/libf2c.a
 	echo '#define main_ main' >>  ${DIST_WASM}/include/f2c.h
 
 test-wasm: wasm native node_modules
+	cd ../zig && make
+	cd ../node && make
 	rm -rf ${BUILD_WASM}/test
 	mkdir -p ${BUILD_WASM}/test
 	cp src/hello.f ${BUILD_WASM}/test
