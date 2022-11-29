@@ -8,6 +8,10 @@ DEMOS:
 - https://zython.org \- Python using Service Workers
 - https://cowasm.sh \- Dash Shell with Python, Sqlite, Lua, etc., using SharedArrayBuffers
 
+TEST STATUS:
+
+- [![make test CI](https://github.com/sagemathinc/cowasm/actions/workflows/make-test.yml/badge.svg)](https://github.com/sagemathinc/cowasm/actions/workflows/make-test.yml)
+
 Or Type this if you have nodejs at least version 16 installed:
 
 ````sh
