@@ -15,8 +15,8 @@ TARBALL = ${UPSTREAM}/sqlite-${VERSION}.tar.gz
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)
-ZLIB = $(shell cowasm-package-path @cowasm/zlib)
-TERMCAP_WASM = ${PACKAGES}/termcap/dist/wasm
+ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
+TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
 
 all: wasm ${BIN}/sqlite3-wasm
 
@@ -42,8 +42,8 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 		CC="cowasm-cc" \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
-		CFLAGS="-Oz -fvisibility-main -I${ZLIB}/include -I${LIBEDIT_WASM}/include -I${POSIX_WASM} -DSQLITE_DEFAULT_MMAP_SIZE=0" \
-		LDFLAGS="-L${ZLIB}/lib -lz -L${LIBEDIT_WASM}/lib -ledit -L${TERMCAP_WASM}/lib -ltermcap" \
+		CFLAGS="-Oz -fvisibility-main -I${ZLIB_WASM}/include -I${LIBEDIT_WASM}/include -I${POSIX_WASM} -DSQLITE_DEFAULT_MMAP_SIZE=0" \
+		LDFLAGS="-L${ZLIB_WASM}/lib -lz -L${LIBEDIT_WASM}/lib -ledit -L${TERMCAP_WASM}/lib -ltermcap" \
 		./configure --host=none  --prefix="${DIST_WASM}" \
 			--cache-file=config.site \
 			--disable-load-extension \
