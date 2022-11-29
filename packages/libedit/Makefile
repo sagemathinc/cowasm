@@ -1,7 +1,7 @@
 
 include ../build/Makefile-vars
 
-all: wasm native
+all: wasm
 
 VERSION = 20210910-3.1
 TARBALL = ${UPSTREAM}/libedit-${VERSION}.tar.gz

@@ -1,5 +1,5 @@
 
-all: wasm native
+all: wasm
 
 include ../build/Makefile-vars
 

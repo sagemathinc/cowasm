@@ -22,6 +22,10 @@ test:
 	##########################################################
 
 
+.PHONY: test-clean
+test-clean:
+	./bin/make-all-clean test ${PACKAGE_DIRS}
+
 
 .PHONY: clean
 clean:
