@@ -9,9 +9,6 @@ VERSION = 0.8.4
 URL = https://github.com/sagemathinc/viz/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/viz-${VERSION}.tar.gz
 
-NCURSES_WASM = $(shell cowasm-package-path @cowasm/ncurses)
-POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
-
 LUA = ${PACKAGES}/lua/dist/
 
 all: native ${BIN}/viz-native wasm ${BIN}/viz-wasm
@@ -37,11 +34,13 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 
 ${BIN}/viz-native: ${DIST_NATIVE}/.built ${CWD}/bin/viz-native
 	ln -sf ${CWD}/bin/viz-native ${BIN}/viz-native
+	touch ${BIN}/viz-native
 
 
 ###
 # WASM
 ###
+
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	mkdir -p ${BUILD_WASM}/bits/
@@ -54,13 +53,18 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	echo '#include "posix-wasm.h"' | cat - ${BUILD_WASM}/text-io.c > ${BUILD_WASM}/tmp && mv ${BUILD_WASM}/tmp ${BUILD_WASM}/text-io.c
 	touch ${BUILD_WASM}/.patched
 
+
+NCURSES_WASM = $(shell cowasm-package-path @cowasm/ncurses)
+LUA_WASM = $(shell cowasm-package-path @cowasm/lua)
+POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
-	cd ../node && make
+	cd ../zig && make
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc" \
-			CFLAGS="-v -Oz -fvisibility-main -I. -I${POSIX_WASM} -I${NCURSES_WASM}/include -I${NCURSES_WASM}/include/ncurses -I${LUA}/wasm/include" \
-			LDFLAGS="-L${LUA}/wasm/lib -llua -L${NCURSES_WASM}/lib -lncurses " \
+			CFLAGS="-v -Oz -fvisibility-main -I. -I${POSIX_WASM} -I${NCURSES_WASM}/include -I${NCURSES_WASM}/include/ncurses -I${LUA_WASM}/include" \
+			LDFLAGS="-L${LUA_WASM}/lib -llua -L${NCURSES_WASM}/lib -lncurses " \
 			./configure --prefix=${DIST_WASM} \
 		&&	make -j8 viz
 	mkdir -p ${DIST_WASM}/bin
@@ -69,8 +73,7 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 
 ${BIN}/viz-wasm: ${DIST_WASM}/.built ${CWD}/bin/viz-wasm
 	ln -sf ${CWD}/bin/viz-wasm ${BIN}/viz-wasm
+	touch ${BIN}/viz-wasm
 
-
-
-test: ${BIN}/viz-native ${BIN}/viz-wasm
-	echo "no tests yet (except that they build)"
+test: all
+	echo "it built!"

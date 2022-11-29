@@ -25,7 +25,18 @@ test:
 .PHONY: test-clean
 test-clean:
 	./bin/make-all-clean test ${PACKAGE_DIRS}
-
+	#
+	#
+	##########################################################
+	#                                                        #
+	#   CONGRATULATIONS -- FULL COWASM TEST SUITE PASSED!
+	#   WITH EACH PACKAGE TESTED IN ISOLATION (AFTER MAKE CLEAN)!!
+	#
+	@echo "#   `date`"
+	@echo "#   `uname -s -m`"
+	@echo "#   Git Branch: `git rev-parse --abbrev-ref HEAD`"
+	#                                                        #
+	##########################################################
 
 .PHONY: clean
 clean:

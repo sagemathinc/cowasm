@@ -30,6 +30,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 ##################
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
+	cd ../zig && make
 	cp src/config.h ${BUILD_WASM}
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \

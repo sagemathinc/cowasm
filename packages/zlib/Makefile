@@ -15,6 +15,7 @@ include ../build/Makefile-rules
 # NATIVE
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
+	cd ../zig && make
 	cd ${BUILD_NATIVE} \
 		&&	AR="zig ar" \
 			CC="zig cc ${ZIG_NATIVE_CFLAGS_GNU} " \
@@ -25,6 +26,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 # WASM
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
+	cd ../zig && make
 	cd ${BUILD_WASM} \
 		&&	CHOST=none \
 			AR="zig ar" \
