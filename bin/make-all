@@ -9,5 +9,5 @@ for PACKAGE in $*
 do
     cd "$ROOTDIR/$PACKAGE"
     echo $PACKAGE
-    make $TARGET
+    make -j4 $TARGET
 done

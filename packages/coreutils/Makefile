@@ -1,12 +1,6 @@
 # This builds our WASM port of coreutils
 
--include dummy
-
 include ../build/Makefile-vars
-
-POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
-BZIP2 = $(shell cowasm-package-path @cowasm/bzip2)
-ZLIB = $(shell cowasm-package-path @cowasm/zlib)
 
 TARGET = ${DIST_WASM}/bin
 
@@ -71,18 +65,19 @@ all: \
 
 include ../build/Makefile-rules
 
-
 # ensure that node_modules exists before anything else happens.
 # This is easier than making node_modules a dep for everything.
+-include dummy
+
+
 .PHONY: dummy
-dummy:
-	npm install
+dummy: node_modules
 
 CC = ${BIN}/cowasm-cc
 
 # Put -g at the end to get debug symbols and much bigger binaries.
-CFLAGS = -Oz -fvisibility-main -I${POSIX_WASM} -I${SRC}/compat -I${BZIP2}/include -I${ZLIB}/include -DWITHOUT_LIBCRYPTO # -g
-LDFLAGS = -L${BZIP2}/lib -lbz2 -L${ZLIB}/lib -lz
+CFLAGS = -Oz -fvisibility-main -I$(shell cowasm-package-path @cowasm/posix-wasm) -I${SRC}/compat -I$(shell cowasm-package-path @cowasm/bzip2)/include -I$(shell cowasm-package-path @cowasm/zlib)/include -DWITHOUT_LIBCRYPTO # -g
+LDFLAGS = -L$(shell cowasm-package-path @cowasm/bzip2)/lib -lbz2 -L$(shell cowasm-package-path @cowasm/zlib)/lib -lz
 
 # See https://stackoverflow.com/questions/54192234/recursive-search-in-vpath
 # and https://stackoverflow.com/questions/231229/how-to-generate-a-makefile-with-source-in-sub-directories-using-just-one-makefil
@@ -106,6 +101,7 @@ ${TARGET}/%: ${COMPAT} ${BUILD}/%.o
 
 ${TARGET}/cp: ${COMPAT} ${BUILD}/cp.o ${BUILD}/utils.o
 	${CC} ${CFLAGS} $^ -o $@
+
 test-cp: ${TARGET}/cp
 	rm -f ${BUILD}/x
 	${BIN}/cowasm ${TARGET}/cp Makefile ${BUILD}/x

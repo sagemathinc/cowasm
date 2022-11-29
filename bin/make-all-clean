@@ -8,8 +8,8 @@ ROOTDIR=`pwd`
 for PACKAGE in $*
 do
     cd "$ROOTDIR/"
-    make clean
+    make -j4 clean
     cd "$ROOTDIR/$PACKAGE"
     echo $PACKAGE
-    make $TARGET
+    make -j4 $TARGET
 done

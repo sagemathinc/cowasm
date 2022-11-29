@@ -1,10 +1,6 @@
 # This is a Makefile of common definitions that is used by other packages that
 # involve building upstream code from source.
 
-# This is a trick to make setting the PATH below work even with older versions of GNU Make (e.g., on MacOS), as
-# explained here: https://stackoverflow.com/questions/8941110/how-i-could-add-dir-to-path-in-makefile
-SHELL := /bin/bash
-
 # The directory containing the package where the makefile is run, e.g., packages/bzip2
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
@@ -17,8 +13,12 @@ UPSTREAM = ${CWD}/../../upstream/sources
 # Binaries useful for building, e.g., node, zig, cowasm
 BIN = ${CWD}/../../bin
 
+
+
 # Include the BIN directory at front of path.
-export PATH := ${BIN}:$(PATH)
+# See https://stackoverflow.com/questions/8941110/how-i-could-add-dir-to-path-in-makefile
+export PATH := $(BIN):$(PATH)
+export SHELL := env PATH='$(PATH)' /bin/bash
 
 # Where sources, e.g., patches, customizations, new code, etc., are stored for this build.
 SRC = ${CWD}/src
