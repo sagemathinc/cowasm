@@ -12,12 +12,11 @@ DYLINK_WASM = $(shell cowasm-package-path dylink)/wasm
 WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
 WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic ${OPT}
 
-all: node_modules ${DIST}/.built bin-cowasm kernel ${DIST}/termcap
+all: node_modules ${DIST}/.built kernel ${DIST}/termcap
 
 include ../build/Makefile-rules
 
-${DIST}/termcap: ${PACKAGES}/cpython/src/termcap
-	# Copy over the termcap file (termcap is also in python.zip, but it's useful to have outside).
+${DIST}/termcap: ${SRC}/termcap
 	mkdir -p ${DIST}
 	cp $< $@
 
@@ -75,16 +74,6 @@ kernel: ${DIST}/kernel/kernel.wasm
 .PHONY: opt
 opt: ${DIST}/kernel/kernel.wasm
 	${BIN}/cowasm-opt ${DIST}
-
-###
-# Script for running binaries under cowasm:
-###
-
-${CWD}/../../bin/cowasm: ${CWD}/bin/cowasm
-	ln -sf ${CWD}/bin/cowasm-dev ${CWD}/../../bin/cowasm
-
-bin-cowasm: ${CWD}/../../bin/cowasm
-.PHONY: bin-cowasm
 
 
 ###

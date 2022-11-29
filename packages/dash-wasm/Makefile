@@ -29,7 +29,7 @@ ${BUILD}/fs-updated: node_modules
 
 	# /share
 	mkdir -p ${USR}/share
-	cp -v ${PACKAGES}/cpython/src/termcap ${USR}/share
+	cp -v ${SRC}/termcap ${USR}/share
 
 	# /lib
 	mkdir -p ${USR}/lib/python3.11

@@ -28,6 +28,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 ##################
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
+	cd ../zig && make
 	cp ${SRC}/extra_config.h ${BUILD_WASM}
 	cd ${BUILD_WASM} \
 		&&  echo '#include "extra_config.h"' >> bzlib.h \
@@ -42,6 +43,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	touch ${DIST_WASM}/.built
 
 test: ${DIST_WASM}/.built
+	cd ../node && make
 	# compress and decompress a file using the bzip2 and bunzip2 WASM executables.
 	echo "coWasm" > ${BUILD_WASM}/testfile.txt
 	${BIN}/cowasm ${DIST_WASM}/bin/bzip2 ${BUILD_WASM}/testfile.txt
