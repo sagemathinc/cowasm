@@ -13,7 +13,6 @@ bin/zdb
 bin/cython
 bin/cowasm*
 bin/*-wasm
-bin/wasm-opt
 bin-wasm/**
 **/dist
 **/build

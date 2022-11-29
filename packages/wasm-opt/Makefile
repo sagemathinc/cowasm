@@ -14,16 +14,17 @@ all: ${DIST}/.built ${BIN}/wasm-opt ${BIN}/cowasm-opt
 include ../build/Makefile-rules
 
 ${DIST}/.built:
-	npm ci
+	npm install
 	mkdir ${DIST}
 	touch ${DIST}/.built
 
 ${BIN}/wasm-opt: ${DIST}/.built
 	ln -sf `pwd`/node_modules/.bin/wasm-opt ${BIN}/wasm-opt
+	touch ${BIN}/wasm-opt
 
 ${BIN}/cowasm-opt: ${BIN}/wasm-opt ${SRC}/cowasm_opt.py
 	ln -sf ${SRC}/cowasm_opt.py ${BIN}/cowasm-opt
 	touch ${BIN}/cowasm-opt
 
-test:
+test: ${BIN}/wasm-opt ${BIN}/cowasm-opt
 	${BIN}/cowasm-opt | grep Usage
