@@ -72,5 +72,5 @@ ${BIN}/viz-wasm: ${DIST_WASM}/.built ${CWD}/bin/viz-wasm
 
 
 
-test:
-	echo "no tests yet"
+test: ${BIN}/viz-native ${BIN}/viz-wasm
+	echo "no tests yet (except that they build)"

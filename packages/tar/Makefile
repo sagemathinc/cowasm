@@ -9,13 +9,9 @@ URL = https://github.com/libarchive/libarchive/releases/download/v${VERSION}/lib
 TARBALL = ${UPSTREAM}/libarchive-${VERSION}.tar.gz
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
-LZMA = $(shell cowasm-package-path @cowasm/lzma)
-
-ZLIB = ${PACKAGES}/zlib/dist/wasm
-BZ2 = ${PACKAGES}/bzip2/dist/wasm
-
-CFLAGS = -Oz -I${POSIX_WASM} -I${LZMA}/include -I${ZLIB}/include -I${BZ2}/include
-LDFLAGS = -L${LZMA}/lib -llzma -L${ZLIB}/lib -lz -L${BZ2}/lib -lbz2
+LZMA_WASM = $(shell cowasm-package-path @cowasm/lzma)
+ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
+BZIP2_WASM = $(shell cowasm-package-path @cowasm/bzip2)
 
 all: wasm
 
@@ -28,8 +24,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc" \
-			CFLAGS="${CFLAGS}" \
-			LDFLAGS="${LDFLAGS}" \
+			CFLAGS="-Oz -I${POSIX_WASM} -I${LZMA_WASM}/include -I${ZLIB_WASM}/include -I${BZIP2_WASM}/include" \
+			LDFLAGS="-L${LZMA_WASM}/lib -llzma -L${ZLIB_WASM}/lib -lz -L${BZIP2_WASM}/lib -lbz2" \
 			AR="zig ar" \
 			RANLIB="zig ranlib" \
 			./configure \

@@ -40,5 +40,5 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 		make install
 	touch ${DIST_WASM}/.built
 
-test:
+test: ${DIST_WASM}/.built
 	echo "no tests yet"

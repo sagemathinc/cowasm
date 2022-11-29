@@ -29,7 +29,9 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/tar",
   "devDependencies": {
+    "@cowasm/bzip2": "^1.0.1",
     "@cowasm/lzma": "^1.0.3",
-    "@cowasm/posix-wasm": "^1.0.3"
+    "@cowasm/posix-wasm": "^1.0.3",
+    "@cowasm/zlib": "^1.0.0"
   }
 }
