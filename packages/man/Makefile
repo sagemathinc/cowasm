@@ -37,7 +37,7 @@ configure: node_modules ${BUILD_WASM}/.build
 
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
-	cd ../zig && make
+	cd ../build && make zig
 	cd ${BUILD_WASM} \
 		&&	make -j8  \
 			AR="zig ar" \

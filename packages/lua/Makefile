@@ -19,7 +19,7 @@ include ../build/Makefile-rules
 
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
-	cd ../zig && make
+	cd ../build && make zig
 	rm -rf ${DIST_NATIVE}
 	cd ${BUILD_NATIVE} \
 		&&	make MYLIBS="-ldl" CC="zig cc" CFLAGS="-O2 -DLUA_USE_POSIX=1" -j8
@@ -45,7 +45,7 @@ TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
 LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
-	cd ../zig && make
+	cd ../build && make zig
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	make \

@@ -26,12 +26,12 @@ DEBUG =
 CFLAGS = ${DEBUG} -Oz -I${SRC}
 
 ${BUILD_WASM}/%.o: ${SRC}/%.c ${DEPS}
-	cd ../zig && make
+	cd ../build && make zig
 	mkdir -p `dirname $@`
 	cowasm-cc -c -o $@ $< ${CFLAGS}
 
 ${BUILD_WASM}/libposix.a: ${OBJECTS}
-	cd ../zig && make
+	cd ../build && make zig
 	zig ar -crs ${BUILD_WASM}/libposix.a ${OBJECTS}
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/libposix.a

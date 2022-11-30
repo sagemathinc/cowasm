@@ -43,7 +43,7 @@ dist/wasm-export/libpython.c: dist/libpython.js
 wasm-export: dist/wasm-export/libpython.c dist/wasm-export/libc.c
 
 build/wasm/libdylink.o: dist/wasm-export/libc.c
-	cd ../zig && make
+	cd ../build && make zig
 	mkdir -p build/wasm
 	zig cc -target wasm32-wasi \
 		-w \

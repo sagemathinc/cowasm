@@ -12,7 +12,7 @@ TARBALL = ${UPSTREAM}/lzma-v${VERSION}.tar.gz
 include ../build/Makefile-rules
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
-	cd ../zig && make
+	cd ../build && make zig
 	cd ${BUILD_NATIVE} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
@@ -30,7 +30,7 @@ DEBUG = ""
 # DEBUG = "-g"
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.build
-	cd ../zig && make
+	cd ../build && make zig
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \

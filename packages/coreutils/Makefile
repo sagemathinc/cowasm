@@ -86,7 +86,7 @@ space +=
 VPATH := $(subst $(space),:,$(shell find ${SRC} -type d))
 
 ${BUILD}/%.o: %.c
-	cd ../zig && make
+	cd ../build && make zig
 	mkdir -p ${BUILD} ${TARGET}
 	${CC} -c $^ ${CFLAGS} -o $@
 

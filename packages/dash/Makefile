@@ -41,7 +41,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #     so they don't have to be included here, which will make dash much smaller.  But for now this is fine.
 #     They add about 120KB.
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
-	cd ../zig && make
+	cd ../build && make zig
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&&	CONFIG_SITE=${BUILD_WASM}/config.site \

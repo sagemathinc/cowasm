@@ -22,7 +22,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	touch ${BUILD_WASM}/.patched
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
-	cd ../zig && make
+	cd ../build && make zig
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc" \
 			CFLAGS="-Oz -I${POSIX_WASM} -I${LZMA_WASM}/include -I${ZLIB_WASM}/include -I${BZIP2_WASM}/include" \

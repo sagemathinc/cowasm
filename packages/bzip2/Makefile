@@ -28,7 +28,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 ##################
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
-	cd ../zig && make
+	cd ../build && make zig
 	cp ${SRC}/extra_config.h ${BUILD_WASM}
 	cd ${BUILD_WASM} \
 		&&  echo '#include "extra_config.h"' >> bzlib.h \

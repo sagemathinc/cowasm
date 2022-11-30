@@ -38,7 +38,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #     at https://www.sqlite.org/compile.html   However, this doesn't work yet to get
 #     using a file to work yet.  .read works but not sqlite3-wasm a.sql
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
-	cd ../zig && make
+	cd ../build && make zig
 	cd ${BUILD_WASM} && \
 		CC="cowasm-cc" \
 		RANLIB="zig ranlib" \

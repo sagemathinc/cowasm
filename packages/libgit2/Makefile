@@ -30,7 +30,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 # Notes on options:
 #   - -DBUILD_SHARED_LIBS=OFF is the only way to get a static library, which is what we want for our use.
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
-	cd ../zig && make
+	cd ../build && make zig
 	cd ${BUILD_WASM} \
 		&&	CC="cowasm-cc" \
 			CFLAGS="-Oz -I${ZLIB_WASM}/include" \
@@ -60,7 +60,7 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 
 TESTS = ${BUILD_WASM}/tests
 test-init: node_modules ${DIST_WASM}/.built
-	cd ../zig && make
+	cd ../build && make zig
 	${BIN}/cowasm-cc \
 		-v -fvisibility-main -Oz -I${DIST_WASM}/include \
 		-L${DIST_WASM}/lib -L${ZLIB_WASM}/lib -lgit2 -lz \

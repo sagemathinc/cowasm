@@ -15,7 +15,7 @@ include ../build/Makefile-rules
 ## Native
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
-	cd ../zig && make
+	cd ../build && make zig
 	cd ${BUILD_NATIVE} \
 		&& 	CC="zig cc ${ZIG_NATIVE_CFLAGS} " \
 			AR="zig ar" \
@@ -48,7 +48,7 @@ DEBUG = ""
 
 # make -j12, since openssl is structured as huge number of tiny files.
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
-	cd ../zig && make
+	cd ../build && make zig
 	cd ${BUILD_WASM} \
 		&& 	CC="cowasm-cc" \
 			CFLAGS="-Oz ${DEBUG} -fvisibility-main -I${POSIX_WASM}" \

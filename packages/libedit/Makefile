@@ -46,7 +46,7 @@ CFLAGS_WASM = -Oz -I$(shell cowasm-package-path @cowasm/termcap)/include -D__STD
 LDFLAGS_WASM = -L$(shell cowasm-package-path @cowasm/termcap)/lib -ltermcap
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
-	cd ../zig && make
+	cd ../build && make zig
 	cd ${BUILD_WASM} \
 		&&	CONFIG_SITE=${SRC}/config.site \
 			CFLAGS="${CFLAGS_WASM}"  \
@@ -68,7 +68,7 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 
 # Build test program
 ${BUILD_WASM}/examples/tc1: node_modules ${DIST_WASM}/.built
-	cd ../zig && make
+	cd ../build && make zig
 	${BIN}/cowasm-cc -v -fvisibility-main -L${DIST_WASM}/lib -ledit \
 		${LDFLAGS_WASM} ${CFLAGS_WASM} \
 		-I${BUILD_WASM}/ -I${BUILD_WASM}/src \

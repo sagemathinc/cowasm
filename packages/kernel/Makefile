@@ -47,7 +47,7 @@ KERNEL_WASM_SOURCES = \
 # libraries that get loaded when needed.
 
 ${DIST}/kernel/kernel.wasm: node_modules ${KERNEL_WASM_SOURCES} ${CWD}/src/wasm/posix/stdlib.c
-	cd ../zig && make
+	cd ../build && make zig
 	cd src && zig build-lib \
 	   ${WASM_CFLAGS} \
 	   ${ZIG_PKG} \
@@ -117,7 +117,7 @@ run-misc.wasm: ${BUILD}/test/misc.wasm
 .PHONY: run-misc.wasm
 
 ${BUILD}/test/misc.exe: ${SRC}/test/misc.c
-	cd ../zig && make
+	cd ../build && make zig
 	mkdir -p ${BUILD}/test/
 	zig cc -Oz ${SRC}/test/misc.c -o ${BUILD}/test/misc.exe
 

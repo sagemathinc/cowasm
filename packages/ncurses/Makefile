@@ -48,7 +48,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	touch ${BUILD_WASM}/.patched
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
-	cd ../zig && make
+	cd ../build && make zig
 	cd ${BUILD_WASM} \
 		&&	RANLIB="zig ranlib" \
 			AR="zig ar" \
@@ -75,7 +75,7 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	touch ${DIST_WASM}/.built
 
 ${BUILD_WASM}/test/.built: node_modules ${DIST_WASM}/.built
-	cd ../zig && make
+	cd ../build && make zig
 	cd ${BUILD_WASM}/test \
 		&& RANLIB="zig ranlib" \
 			AR="zig ar" \
