@@ -1,3 +1,0 @@
-#!/bin/sh
-
-node -e "console.log(require('$1').path ?? Error('path must be defined'))"
