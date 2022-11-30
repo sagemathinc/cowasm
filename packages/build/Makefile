@@ -10,7 +10,7 @@ BUILD = ${CWD}/build
 BIN = ${CWD}/../../bin
 TARBALL = ${UPSTREAM}/build-${VERSION}.tar.gz
 
-all: ${BIN}/node ${BIN}/zig ${BIN}/.bin-${VERSION}
+all: ${BIN}/node ${BIN}/zig
 
 ${TARBALL}:
 	mkdir -p ${UPSTREAM}
