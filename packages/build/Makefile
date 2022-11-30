@@ -1,5 +1,5 @@
 
-VERSION = 1.1.0
+VERSION = 1.2.0
 
 URL = https://github.com/sagemathinc/cowasm-build/archive/refs/tags/${VERSION}.tar.gz
 
@@ -10,7 +10,7 @@ BUILD = ${CWD}/build
 BIN = ${CWD}/../../bin
 TARBALL = ${UPSTREAM}/build-${VERSION}.tar.gz
 
-all: ${BIN}/node ${BIN}/zig
+all: ${BIN}/node ${BIN}/zig ${BIN}/.bin-${VERSION}
 
 ${TARBALL}:
 	mkdir -p ${UPSTREAM}
@@ -24,10 +24,9 @@ ${BUILD}/.build: ${TARBALL}
 
 ${BIN}/node: ${BUILD}/.build
 	cd ${BUILD}/node && make
-	touch ${BIN}/node
 
 .PHONEY: node
-node: ${BIN}/node
+node: ${BIN}/node ${BIN}/npx ${BIN}/npm ${BIN}/cowasm-package-path
 
 ${BIN}/zig: ${BUILD}/.build
 	cd ${BUILD}/zig && make
@@ -36,7 +35,7 @@ ${BIN}/zig: ${BUILD}/.build
 .PHONEY: zig
 zig: ${BIN}/zig
 
-test: node zig
+test: all
 	echo "It installed."
 
 clean:
