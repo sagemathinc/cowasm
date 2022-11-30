@@ -41,5 +41,5 @@ test-clean:
 .PHONY: clean
 clean:
 	./bin/make-all clean ${PACKAGE_DIRS}
-	rm -rf bin/python* bin/node bin/npm bin/npx bin/cowasm* bin/zig
+	rm -rf bin/python* bin/node bin/npm bin/npx bin/cowasm-* bin/zig
 
