@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
 Code that exports function pointers for everything in the Python C API.
 The resulting .c code should be included in your main wasm binary so that
@@ -16,13 +18,10 @@ many cases to minimize the core python.wasm web assembly bundle.
 
 */
 
+import { join } from "path";
 import spawnAsync from "await-spawn";
 import wasmExport, { alias } from "./wasm-export";
-import { readFileSync } from "fs";
-
-const PATH = "../cpython/build/wasm/Include";
-
-const STABLE_ABI_DATA = "../cpython/build/wasm/Doc/data/stable_abi.dat";
+import { readFileSync, statSync } from "fs";
 
 // I tediously made this list.
 let omit =
@@ -62,12 +61,18 @@ function,PyArg_ValidateKeywordArguments,3.2,,
 var,PyBaseObject_Type,3.2,,
 ...
 */
-function stableABI() {
+function stableABI(pathToPythonSource: string) {
   const names: string[] = [];
+  const STABLE_ABI_DATA = join(pathToPythonSource, "Doc/data/stable_abi.dat");
   for (const v of readFileSync(STABLE_ABI_DATA).toString().split("\n")) {
     const w = v.split(",");
     if (w.length > 0) {
-      if (w[0] == "function" && w[3] != "on Windows" && w[3] != "on platforms with native thread IDs" && w[3] != "on platforms with USE_STACKCHECK") {
+      if (
+        w[0] == "function" &&
+        w[3] != "on Windows" &&
+        w[3] != "on platforms with native thread IDs" &&
+        w[3] != "on platforms with USE_STACKCHECK"
+      ) {
         names.push(w[1]);
       }
     }
@@ -75,11 +80,21 @@ function stableABI() {
   return names;
 }
 
-export async function main() {
+export async function main(pathToPythonSource: string) {
+  if (!statSync(pathToPythonSource).isDirectory()) {
+    throw Error(
+      `${pathToPythonSource} must be the path to the Python source code`
+    );
+  }
   const exclude = new Set(omit.split(/\s+/));
   let names: string[] = [];
   const output = (
-    await spawnAsync("grep", ["--no-filename", "PyAPI", "-r", PATH])
+    await spawnAsync("grep", [
+      "--no-filename",
+      "PyAPI",
+      "-r",
+      join(pathToPythonSource, "Include"),
+    ])
   ).toString();
   for (let line of output.split("\n")) {
     line = line.trim();
@@ -125,11 +140,30 @@ export async function main() {
   names = names.concat(extra.split(/\s+/));
   // In addition to the above "heuristics", it's critical that we
   // include the entire stable abi, which we get below:
-  names = names.concat(stableABI());
+  names = names.concat(stableABI(pathToPythonSource));
   console.log(wasmExport(names));
   for (const name in aliases) {
     console.log(alias(name, aliases[name]));
   }
 }
 
-main();
+function usage() {
+  process.stderr.write(
+    `Usage: ${process.argv[0]} <path to python source code>\n`
+  );
+}
+
+(async () => {
+  if (process.argv.length <= 2) {
+    usage();
+    process.exit(1);
+  } else {
+    try {
+      await main(process.argv[2]);
+    } catch (err) {
+      usage();
+      process.stderr.write(`Error: ${err.message}\n`);
+      process.exit(1);
+    }
+  }
+})();

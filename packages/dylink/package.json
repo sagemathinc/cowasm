@@ -1,19 +1,18 @@
 {
   "name": "dylink",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "description": "Support for dynamic linking of WebAssembly code via Javascript built using wasm32-unknown-emscripten",
   "main": "dist/index.js",
   "scripts": {
     "tsc": "npx tsc -w",
     "build": "tsc -b",
-    "test": "make test"
+    "test": "make test",
+    "prepublishOnly": "npm run build && make test"
   },
-  "files": [
-    "dist/*",
-    "README.md",
-    "package.json",
-    "tsconfig.json"
-  ],
+  "bin": {
+    "dylink-libpython": "dist/libpython.js"
+  },
+  "files": ["dist/*", "README.md", "package.json", "tsconfig.json"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"

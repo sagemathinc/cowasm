@@ -51,25 +51,18 @@ or do
 EXTRA OPTIONS:
 
    -fvisibility-main = makes the main function visible
-   -v = prints any zig/linker commands before running them
-   -V = -v plus also passes -v to zig, so that zig then prints llvm commands as it runs them.
+   -cowasm-verbose = prints any zig/linker commands before running them
 """
 
 import os, shutil, subprocess, sys, tempfile, pathlib
 
 verbose = False  # default
-# use -V for super verbose, so also zig/clang is verbose
-if '-V' in sys.argv:
+
+if '-cowasm-verbose' in sys.argv:
+    # use -cowasm-verbose for just us being verbose
     print(' '.join(sys.argv))
     verbose = True
-    sys.argv.remove('-V')
-    sys.argv.append(
-        '-v')  # this then goes to clang/zig to make it very verbose
-elif '-v' in sys.argv:
-    # use -v for just us being verbose
-    print(' '.join(sys.argv))
-    verbose = True
-    sys.argv.remove('-v')
+    sys.argv.remove('-cowasm-verbose')
 
     # https://retrocomputing.stackexchange.com/questions/20281/why-didnt-c-specify-filename-extensions
 SOURCE_EXTENSIONS_CPP = set(['.c++', '.cpp', '.cxx', '.cc', '.cp'])
