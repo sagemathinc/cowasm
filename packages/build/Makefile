@@ -36,5 +36,8 @@ ${BIN}/zig: ${BUILD}/.build
 .PHONEY: zig
 zig: ${BIN}/zig
 
+test: node zig
+	echo "It installed."
+
 clean:
 	rm -rf build
