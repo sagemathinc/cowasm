@@ -43,7 +43,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	touch ${DIST_WASM}/.built
 
 test: ${DIST_WASM}/.built
-	cd ../node && make
+	cd ../build && make node
 	# compress and decompress a file using the bzip2 and bunzip2 WASM executables.
 	echo "coWasm" > ${BUILD_WASM}/testfile.txt
 	${BIN}/cowasm ${DIST_WASM}/bin/bzip2 ${BUILD_WASM}/testfile.txt

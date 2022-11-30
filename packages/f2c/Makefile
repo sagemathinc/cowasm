@@ -26,7 +26,7 @@ ${DIST_NATIVE}/.built: ${DIST_NATIVE}/bin/f2c ${DIST_NATIVE}/lib/libf2c.a ${DIST
 # NOTES:
 #   - The zig built f2c crashes if you use -O0, but NOT with -O2!
 ${DIST_NATIVE}/bin/f2c: ${BUILD_NATIVE}/.build
-	cd ../zig && make
+	cd ../build && make zig
 	cd ${BUILD_NATIVE}/f2c \
 		&& make CC="zig cc ${ZIG_NATIVE_CFLAGS_GNU} " CFLAGS="-O2" -j8 -f makefile.u \
 		&& mkdir -p ${DIST_NATIVE}/bin \
@@ -73,8 +73,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 # It works if we build it directly using zcc, but NOT using cowasm-cc (our -fPIC variant),
 # which is why we run make twice below.
 ${DIST_WASM}/lib/libf2c.a: ${BUILD_WASM}/.patched
-	cd ../zig && make
-	cd ../node && make
+	cd ../build && make zig node
 	cd ${BUILD_WASM}/libf2c \
 		&& make CC="zcc" CFLAGS="-Oz" arith.h -f makefile.u \
 		&& make CC="cowasm-cc" CFLAGS="-Oz"  -f makefile.u  -j8 \
@@ -89,8 +88,7 @@ ${DIST_WASM}/include/f2c.h: ${DIST_WASM}/lib/libf2c.a
 	echo '#define main_ main' >>  ${DIST_WASM}/include/f2c.h
 
 test-wasm: wasm native node_modules
-	cd ../zig && make
-	cd ../node && make
+	cd ../build && make zig node
 	rm -rf ${BUILD_WASM}/test
 	mkdir -p ${BUILD_WASM}/test
 	cp src/hello.f ${BUILD_WASM}/test

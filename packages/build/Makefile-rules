@@ -44,6 +44,6 @@ ${BUILD_WASM}/.build:: ${TARBALL}
 	touch ${BUILD_WASM}/.build
 
 node_modules:
-	cd ../node && make
+	cd ../build && make node
 	npm install
 
