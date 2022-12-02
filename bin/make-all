@@ -9,5 +9,9 @@ for PACKAGE in $*
 do
     cd "$ROOTDIR/$PACKAGE"
     echo $PACKAGE
-    make $TARGET
+    if [ $TARGET = "all" ]; then
+        make
+    else
+        make $TARGET
+    fi
 done
