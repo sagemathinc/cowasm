@@ -1,5 +1,5 @@
 
-VERSION = 1.2.2
+VERSION = 1.2.4
 
 URL = https://github.com/sagemathinc/cowasm-build/archive/refs/tags/${VERSION}.tar.gz
 
