@@ -4,10 +4,12 @@ include ../build/Makefile-vars
 
 all: wasm
 
-# See https://github.com/libffi/libffi/releases
+# See https://github.com/sagemathinc/libffi/releases
+# where we have a fork of libffi with autogen.sh run.
+
 VERSION = 3.4.4
-URL = https://github.com/libffi/libffi/releases/download/v${VERSION}/libffi-${VERSION}.tar.gz
-TARBALL = ${UPSTREAM}/libffi-v${VERSION}.tar.gz
+URL = https://github.com/sagemathinc/libffi/archive/refs/tags/${VERSION}.tar.gz
+TARBALL = ${UPSTREAM}/libffi-${VERSION}.tar.gz
 
 include ../build/Makefile-rules
 
@@ -22,7 +24,6 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ../build && make zig
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
-	cd ${BUILD_WASM} && ./autogen.sh
 	cd ${BUILD_WASM} && \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \

@@ -1,6 +1,6 @@
 {
   "name": "@cowasm/libffi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "WebAssembly build of the libffi library",
   "main": "index.js",
   "files": [
