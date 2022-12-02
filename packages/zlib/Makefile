@@ -46,6 +46,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 
 
 test: ${DIST_WASM}/.built
+	cd ../build && make node
 	cd ${BUILD_WASM} \
 		&& make example \
 		&& ${BIN}/cowasm ./example
