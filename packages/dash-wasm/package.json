@@ -35,6 +35,7 @@
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/dash-wasm",
   "dependencies": {
     "@cowasm/kernel": "^0.27.1",
+    "@cowasm/py-numpy": "^1.0.2",
     "debug": "^4.3.4"
   },
   "devDependencies": {
@@ -47,7 +48,6 @@
     "@cowasm/lzma": "^1.0.3",
     "@cowasm/man": "^1.0.1",
     "@cowasm/ncurses": "^1.0.0",
-    "@cowasm/numpy": "^1.0.0",
     "@cowasm/rogue": "^1.0.0",
     "@cowasm/sqlite": "^1.0.0",
     "@cowasm/tar": "^1.0.1",

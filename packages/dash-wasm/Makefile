@@ -34,7 +34,7 @@ ${BUILD}/fs-updated: node_modules
 	# /lib
 	mkdir -p ${USR}/lib/python3.11
 	cd ${USR}/lib/python3.11 && unzip ${CPYTHON}/lib/dist/python-stdlib.zip
-	cp -v $(shell cowasm-package-path @cowasm/numpy)/numpy.tar.xz ${USR}/lib/python3.11
+	cd $(shell cowasm-package-path @cowasm/py-numpy) && tar -Jcf ${USR}/lib/python3.11/numpy.tar.xz numpy
 
 	touch ${BUILD}/fs-updated
 
