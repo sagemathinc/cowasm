@@ -1,5 +1,5 @@
 import { alignMemory, recvString, sendString } from "./util";
-import { Env, Library } from "./types";
+import { Env, Library, NonMainLibrary } from "./types";
 import FunctionTable from "./function-table";
 import GlobalOffsetTable from "./global-offset-table";
 import debug from "debug";
@@ -32,6 +32,7 @@ export default class DlopenManger {
     importObject: object
   ) => WebAssembly.Instance;
   private getMainInstanceExports: () => { [key: string]: any };
+  private getMainInstance: () => WebAssembly.Instance;
 
   constructor(
     getFunction: (name: string, path?: string) => Function | null | undefined,
@@ -44,7 +45,8 @@ export default class DlopenManger {
       path: string,
       importObject: object
     ) => WebAssembly.Instance,
-    getMainInstanceExports: () => { [key: string]: any }
+    getMainInstanceExports: () => { [key: string]: any },
+    getMainInstance: () => WebAssembly.Instance
   ) {
     this.mainGetFunction = getFunction;
     this.memory = memory;
@@ -54,6 +56,7 @@ export default class DlopenManger {
     this.importObject = importObject;
     this.importWebAssemblySync = importWebAssemblySync;
     this.getMainInstanceExports = getMainInstanceExports;
+    this.getMainInstance = getMainInstance;
   }
 
   add_dlmethods(env: Env) {
@@ -153,10 +156,21 @@ export default class DlopenManger {
   dlopen(pathnamePtr: number, _flags: number): number {
     // TODO: _flags are ignored for now.
     if (this.memory == null) throw Error("bug"); // mainly for typescript
-    const path = recvString(pathnamePtr, this.memory);
+
+    // pathnamePtr = null *is* valid and means "the main program", i.e.,
+    // "If filename is NULL, then the returned handle is for the main program."
+    // For example, this null is used by ctypes (in cpython) in the
+    // __init__.py in the line "pythonapi = PyDLL(None)".  In all our
+    // code we treat the null pointer the same as path="", for simplicity
+    // of data types (easy in Javascript).
+
+    const path = !pathnamePtr ? "" : recvString(pathnamePtr, this.memory);
     log("dlopen: path='%s'", path);
     if (this.pathToLibrary[path] != null) {
       return this.pathToLibrary[path].handle;
+    }
+    if (!path) {
+      return this.createLibrary({ path, instance: this.getMainInstance() });
     }
 
     const binary = new Uint8Array(this.readFileSync(path));
@@ -283,7 +297,7 @@ export default class DlopenManger {
     }
 
     if (instance.exports.__wasm_call_ctors != null) {
-      // This **MUST** be after updating all the values above!!
+      // This **MUST** be after updating all the va1
       log("calling __wasm_call_ctors for dynamic library");
       (instance.exports.__wasm_call_ctors as CallableFunction)();
     }
@@ -294,32 +308,50 @@ export default class DlopenManger {
       (instance.exports.__wasm_apply_data_relocs as CallableFunction)();
     }
 
-    // Get an available handle by maxing all the int versions of the
-    // keys of the handleToLibrary map.
-    const handle =
-      Math.max(
-        0,
-        ...Object.keys(this.handleToLibrary).map((n) => parseInt(n))
-      ) + 1;
-    const library = {
+    return this.createLibrary({
       path,
-      handle,
       instance,
       symToPtr,
       stack_alloc,
-    };
-    this.pathToLibrary[path] = library;
-    this.handleToLibrary[handle] = library;
-    return handle;
+    });
   }
 
   dlsym(handle: number, symbolPtr: number): number {
     const symName = recvString(symbolPtr, this.memory);
-    log("dlsym: handle=%s, symName='%s'", handle, symName);
-    const lib = this.handleToLibrary[handle];
-    if (lib == null) {
+    return this._dlsym(handle, symName);
+  }
+
+  private _dlsym(handle: number, symName: string): number {
+    log("_dlsym: handle=%s, symName='%s'", handle, symName);
+    const lib0 = this.handleToLibrary[handle];
+    if (lib0 == null) {
       throw Error(`dlsym: invalid handle ${handle}`);
     }
+
+    if (!lib0.path) {
+      // special case -- the the main instance and because of how we run programs, every other library
+      const ptr = (
+        lib0.instance.exports[`__WASM_EXPORT__${symName}`] as any
+      )?.();
+      if (ptr != null) {
+        return ptr;
+      }
+      // now try the others
+      for (const h in this.handleToLibrary) {
+        const handle2 = parseInt(h);
+        if (handle != handle2) {
+          try {
+            return this._dlsym(handle2, symName);
+          } catch (_) {}
+        }
+      }
+
+      // didn't find it
+      this.set_dlerror(`dlsym: handle=${handle} - unknown symbol '${symName}'`);
+      return 0;
+    }
+
+    const lib = lib0 as NonMainLibrary;
     let ptr = lib.symToPtr[symName];
     log("sym= ", symName, ", ptr = ", ptr);
     if (ptr != null) {
@@ -358,11 +390,16 @@ export default class DlopenManger {
   */
   dlclose(handle: number): number {
     log("dlclose", handle);
-    const lib = this.handleToLibrary[handle];
-    if (lib == null) {
+    const lib0 = this.handleToLibrary[handle];
+    if (lib0 == null) {
       this.set_dlerror(`dlclose: invalid handle ${handle}`);
       return 1;
     }
+    if (!lib0.path) {
+      // it's the main library
+      return 0;
+    }
+    const lib = lib0 as NonMainLibrary;
     if (lib != null) {
       for (const name in lib.symToPtr) {
         const ptr = lib.symToPtr[name];
@@ -401,7 +438,7 @@ export default class DlopenManger {
       const { path, symToPtr, instance } = this.handleToLibrary[handle];
       // two places that could have the pointer:
       const ptr =
-        symToPtr[name] ??
+        symToPtr?.[name] ??
         (instance.exports[`__WASM_EXPORT__${name}`] as Function)?.();
       if (ptr != null) {
         log("getFunction", name, path, "handle=", handle);
@@ -410,4 +447,27 @@ export default class DlopenManger {
     }
     return undefined;
   }
+
+  createLibrary({
+    path,
+    instance,
+    symToPtr,
+    stack_alloc,
+  }: PartialBy<Library, 'handle'>): number {
+    // Get an available handle by maxing all the int versions of the
+    // keys of the handleToLibrary map.
+    const handle =
+      Math.max(
+        0,
+        ...Object.keys(this.handleToLibrary).map((n) => parseInt(n))
+      ) + 1;
+
+    const library = { path, handle, instance, symToPtr, stack_alloc };
+    this.pathToLibrary[path] = library;
+    this.handleToLibrary[handle] = library;
+    return handle;
+  }
 }
+// https://stackoverflow.com/questions/43159887/make-a-single-property-optional-in-typescript
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
