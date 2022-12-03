@@ -22,9 +22,6 @@ build/headers:
 	cd ${BUILD} && tar xf headers.tar.gz -C headers --strip-components=1
 	rm ${BUILD}/headers.tar.gz
 
-node_modules:
-	npm ci
-
 dist/index.js: src/index.ts node_modules
 	npx tsc -b
 
