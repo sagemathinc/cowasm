@@ -160,6 +160,10 @@ export default async function importWebAssemblyDlopen({
     return importObjectWithPossibleStub.env[name];
   }
 
+  function getMainInstance() {
+    if (mainInstance == null) throw Error("bug");
+    return mainInstance;
+  }
   function getMainInstanceExports() {
     if (mainInstance?.exports == null) throw Error("bug");
     return mainInstance.exports;
@@ -177,7 +181,8 @@ export default async function importWebAssemblyDlopen({
     readFileSync,
     importObject,
     importWebAssemblySync,
-    getMainInstanceExports
+    getMainInstanceExports,
+    getMainInstance
   );
 
   dlopenManager.add_dlmethods(env);

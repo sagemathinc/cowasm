@@ -2,6 +2,15 @@ export interface Library {
   path: string;
   handle: number;
   instance: WebAssembly.Instance;
+  symToPtr?: { [symName: string]: number };
+  stack_alloc?: number;
+}
+
+// Library but with path nonempty.
+export interface NonMainLibrary {
+  path: string;
+  handle: number;
+  instance: WebAssembly.Instance;
   symToPtr: { [symName: string]: number };
   stack_alloc: number;
 }
