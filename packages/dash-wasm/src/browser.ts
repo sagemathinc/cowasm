@@ -7,7 +7,6 @@ const { ENV, USR } = getEnv();
 
 const log = debug("dash-wasm:browser");
 
-import dash_wasm from "./dash.wasm";
 import fs_zip from "./fs.zip";
 
 const DASH = join(USR, "bin", "sh");
@@ -21,7 +20,6 @@ export default async function asyncDash(
     env: ENV,
     fs,
   });
-  await kernel.fetch(dash_wasm, DASH, 0o777);
   return new DashWasmAsync(kernel, DASH);
 }
 

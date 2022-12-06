@@ -1,6 +1,6 @@
 {
   "name": "dash-wasm",
-  "version": "0.7.3",
+  "version": "0.7.5",
   "description": "dash-wasm -- WebAssembly dash shell for servers and browsers (early demo version)",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",
@@ -34,20 +34,20 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/dash-wasm",
   "dependencies": {
-    "@cowasm/kernel": "^0.27.1",
-    "@cowasm/py-numpy": "^1.0.2",
+    "@cowasm/kernel": "^0.28.0",
     "debug": "^4.3.4"
   },
   "devDependencies": {
     "@cowasm/bzip2": "^1.0.1",
     "@cowasm/coreutils": "^1.0.1",
-    "@cowasm/cpython": "^1.0.2",
+    "@cowasm/cpython": "^1.6.0",
     "@cowasm/dash": "^1.0.0",
     "@cowasm/less": "^1.0.0",
     "@cowasm/lua": "^1.0.0",
     "@cowasm/lzma": "^1.0.3",
     "@cowasm/man": "^1.0.1",
     "@cowasm/ncurses": "^1.0.0",
+    "@cowasm/py-numpy": "^1.0.2",
     "@cowasm/rogue": "^1.0.0",
     "@cowasm/sqlite": "^1.0.0",
     "@cowasm/tar": "^1.0.1",

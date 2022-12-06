@@ -23,7 +23,10 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "keywords": ["python", "webassembly"],
+  "keywords": [
+    "python",
+    "webassembly"
+  ],
   "author": "William Stein",
   "license": "BSD-3-Clause",
   "bugs": {
@@ -31,11 +34,13 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/terminal",
   "devDependencies": {
+    "@types/node": "^18.11.3",
     "buffer": "^6.0.3",
     "css-loader": "^6.7.1",
-    "dash-wasm": "^0.7.3",
+    "dash-wasm": "^0.7.5",
     "events": "^3.3.0",
     "html-webpack-plugin": "^5.5.0",
+    "http-server": "^14.1.1",
     "node-polyfill-webpack-plugin": "^2.0.0",
     "path-browserify": "^1.0.1",
     "process": "^0.11.10",
@@ -47,8 +52,6 @@
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3",
     "xterm": "^5.0.0",
-    "xterm-addon-web-links": "^0.7.0",
-    "@types/node": "^18.11.3",
-    "http-server": "^14.1.1"
+    "xterm-addon-web-links": "^0.7.0"
   }
 }
