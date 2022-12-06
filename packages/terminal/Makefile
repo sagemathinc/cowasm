@@ -4,7 +4,7 @@ all: ${DIST}/.built
 
 include ../build/Makefile-rules
 
-${DIST}/.built: src/index.ts
+${DIST}/.built: node_modules src/index.ts
 	npm install
 	npm run build
 	touch ${DIST}/.built
@@ -12,6 +12,6 @@ ${DIST}/.built: src/index.ts
 clean-build::
 	rm -rf node_modules
 
-test: ${DIST}/.built
+test: node_modules ${DIST}/.built
 	npx tsc
 	echo "it built!"
