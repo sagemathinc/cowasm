@@ -4,7 +4,7 @@ all: ${DIST}/.built
 
 include ../build/Makefile-rules
 
-${DIST}/.built:
+${DIST}/.built: node_modules
 	npm install
 	npm run build
 	touch ${DIST}/.built

@@ -13,7 +13,7 @@ all: ${DIST}/.built ${BIN}/wasm-opt ${BIN}/cowasm-opt
 
 include ../build/Makefile-rules
 
-${DIST}/.built:
+${DIST}/.built: node_modules
 	npm install
 	mkdir ${DIST}
 	touch ${DIST}/.built
