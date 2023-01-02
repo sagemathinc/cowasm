@@ -12,7 +12,12 @@
   "bin": {
     "dylink-libpython": "dist/libpython.js"
   },
-  "files": ["dist/*", "README.md", "package.json", "tsconfig.json"],
+  "files": [
+    "dist/*",
+    "README.md",
+    "package.json",
+    "tsconfig.json"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
@@ -33,7 +38,7 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm#readme",
   "devDependencies": {
-    "@cowasm/posix-wasm": "^1.0.3",
+    "@cowasm/posix-wasm": "^1.1.1",
     "@types/jest": "^29.2.0",
     "@types/node": "^18.11.3",
     "jest": "^29.2.1",

@@ -1,6 +1,6 @@
 {
   "name": "@cowasm/dash",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "WebAssembly build of the dash Posix shell",
   "main": "index.js",
   "files": [
@@ -31,7 +31,7 @@
   "devDependencies": {
     "@cowasm/kernel": "^0.27.9",
     "@cowasm/libedit": "^1.0.0",
-    "@cowasm/posix-wasm": "^1.0.3",
+    "@cowasm/posix-wasm": "^1.1.0",
     "@cowasm/termcap": "^1.0.0"
   }
 }

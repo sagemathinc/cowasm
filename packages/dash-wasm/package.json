@@ -1,6 +1,6 @@
 {
   "name": "dash-wasm",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "dash-wasm -- WebAssembly dash shell for servers and browsers (early demo version)",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",
@@ -41,7 +41,7 @@
     "@cowasm/bzip2": "^1.0.1",
     "@cowasm/coreutils": "^1.0.1",
     "@cowasm/cpython": "^1.6.0",
-    "@cowasm/dash": "^1.0.0",
+    "@cowasm/dash": "^1.1.0",
     "@cowasm/less": "^1.0.0",
     "@cowasm/lua": "^1.0.0",
     "@cowasm/lzma": "^1.0.3",

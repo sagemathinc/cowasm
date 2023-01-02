@@ -1,6 +1,6 @@
 {
   "name": "@cowasm/posix-wasm",
-  "version": "1.0.3",
+  "version": "1.1.1",
   "description": "C headers and a lib archive to fill in some things missing from \"posix\"",
   "main": "index.js",
   "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],

@@ -312,7 +312,6 @@ struct passwd* getpwuid(uid_t uid);
 #define __WASI_RIFLAGS_RECV_DATA_TRUNCATED 0
 
 typedef unsigned int socklen_t;
-int accept(int sockfd, void* addr, void* addrlen);
 int setsockopt(int sockfd, int level, int optname, const void* optval,
                socklen_t optlen);
 

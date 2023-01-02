@@ -4,6 +4,8 @@
 #include <time.h>
 #include <stdbool.h>
 
+#define CLOCK_THREAD_CPUTIME_ID  3
+
 #define SCHED_OTHER 0
 #define PTHREAD_CANCEL_ASYNCHRONOUS 1
 #define PTHREAD_CANCEL_ENABLE 2

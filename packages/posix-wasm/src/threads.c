@@ -242,5 +242,6 @@ int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex) {
 int pthread_kill(pthread_t thread, int sig) { return 0; }
 
 int pthread_getcpuclockid(pthread_t thread, clockid_t *clockid) {
-  *clockid = CLOCK_THREAD_CPUTIME_ID;
+  *clockid = (clockid_t) CLOCK_THREAD_CPUTIME_ID;
+  return 0;
 }

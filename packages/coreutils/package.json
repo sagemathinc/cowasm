@@ -1,6 +1,6 @@
 {
   "name": "@cowasm/coreutils",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "WebAssembly port of FreeBSD coreutils (and more!)",
   "main": "index.js",
   "files": [
@@ -30,7 +30,7 @@
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/coreutils",
   "devDependencies": {
     "@cowasm/bzip2": "^1.0.1",
-    "@cowasm/posix-wasm": "^1.0.3",
+    "@cowasm/posix-wasm": "^1.1.1",
     "@cowasm/zlib": "^1.0.0"
   }
 }

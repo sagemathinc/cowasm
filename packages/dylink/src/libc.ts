@@ -85,7 +85,7 @@ char *strchrnul(const char *, int);
 extern char *__wasilibc_cwd;
 extern char **__wasilibc_environ;
 
-int __stack_chk_guard;
+extern int __stack_chk_guard;
 void __stack_chk_fail(void);
 
 
@@ -476,9 +476,7 @@ __SIG_ERR
 __SIG_IGN
 __ctype_get_mb_cur_max
 _CLOCK_MONOTONIC
-_CLOCK_PROCESS_CPUTIME_ID
 _CLOCK_REALTIME
-_CLOCK_THREAD_CPUTIME_ID
 _Exit
 _environ
 _exit
