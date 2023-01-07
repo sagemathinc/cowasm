@@ -11,6 +11,7 @@
     "tsconfig.json"
   ],
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "build": "make all",
     "clean": "make clean",
     "tsc": "tsc -w",

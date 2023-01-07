@@ -7,7 +7,7 @@ all: dist/.built
 
 node_modules:
 	cd ../build && make node
-	npm install
+	pnpm install
 
 dist/.built: dist/index.js dist/wasm/libdylink.a wasm-export node_modules
 	touch dist/.built
@@ -69,8 +69,8 @@ dist/wasm/libdylink.a: build/wasm/libdylink.o
 	cp build/wasm/libdylink.o dist/wasm/libdylink.a
 
 test: wasm-export dist/.built
-	npm ci
-	npm run build
+	pnpm install
+	pnpm run build
 	cd test/wasi && make test
 	cd test/python-extension && make test
 	cd test/malloc && make test
@@ -78,8 +78,8 @@ test: wasm-export dist/.built
 .PHONY: test
 
 test-native-macos:
-	npm ci
-	npm run build
+	pnpm install
+	pnpm run build
 	cd test/wasi && make test-native-macos
 	cd test/python-extension && make test-native-macos
 	cd test/malloc && make test-native-macos

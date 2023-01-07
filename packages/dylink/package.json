@@ -4,20 +4,16 @@
   "description": "Support for dynamic linking of WebAssembly code via Javascript built using wasm32-unknown-emscripten",
   "main": "dist/index.js",
   "scripts": {
-    "tsc": "npx tsc -w",
+    "preinstall": "npx only-allow pnpm",
+    "tsc": "pnpm exec tsc -w",
     "build": "tsc -b",
     "test": "make test",
-    "prepublishOnly": "npm run build && make test"
+    "prepublishOnly": "pnpm run build && make test"
   },
   "bin": {
     "dylink-libpython": "dist/libpython.js"
   },
-  "files": [
-    "dist/*",
-    "README.md",
-    "package.json",
-    "tsconfig.json"
-  ],
+  "files": ["dist/*", "README.md", "package.json", "tsconfig.json"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"

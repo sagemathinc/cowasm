@@ -68,4 +68,4 @@ ${DIST}/.built: node_modules
 
 .PHONY: test
 test: all
-	npm run test
+	pnpm run test

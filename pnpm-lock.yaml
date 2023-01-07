@@ -291,9 +291,6 @@ importers:
       '@cowasm/kernel': link:../kernel
       '@cowasm/zlib': link:../zlib
 
-  packages/libgit2/build/wasm:
-    specifiers: {}
-
   packages/libpng:
     specifiers:
       '@cowasm/kernel': ^0.27.9

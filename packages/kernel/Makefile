@@ -27,10 +27,10 @@ ${DIST}/.built: node_modules
 .PHONY: test
 test: all test-misc test-posix
 	# no jest tests yet
-	#npm run test
+	#pnpm run test
 
 strip: node_modules
-	npm run strip
+	pnpm run strip
 
 
 ###
