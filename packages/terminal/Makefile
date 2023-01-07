@@ -5,13 +5,13 @@ all: ${DIST}/.built
 include ../build/Makefile-rules
 
 ${DIST}/.built: node_modules src/index.ts
-	npm install
-	npm run build
+	pnpm install
+	pnpm run build
 	touch ${DIST}/.built
 
 clean-build::
 	rm -rf node_modules
 
 test: node_modules ${DIST}/.built
-	npx tsc
+	pnpm exec tsc
 	echo "it built!"

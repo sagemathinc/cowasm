@@ -5,8 +5,8 @@ all: ${DIST}/.built
 include ../build/Makefile-rules
 
 ${DIST}/.built: node_modules
-	npm install
-	npm run build
+	pnpm install
+	pnpm run build
 	touch ${DIST}/.built
 
 # There's a lot of testing of this in cowasm-python right now...

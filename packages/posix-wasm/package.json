@@ -5,6 +5,7 @@
   "main": "index.js",
   "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "test": "echo \"Error: no tests yet\""
   },
   "repository": {

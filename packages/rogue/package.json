@@ -5,8 +5,9 @@
   "main": "index.js",
   "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "build": "make wasm",
-    "prepublishOnly": "npm run build && make test",
+    "prepublishOnly": "pnpm run build && make test",
     "test": "make test"
   },
   "bin": "bin/rogue",

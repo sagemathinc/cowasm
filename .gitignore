@@ -31,3 +31,4 @@ upstream/sources/*
 scratch/*
 logs/*
 packages/bench/src/cython/*.c
+packages/rogue/warrior-rogue.scr

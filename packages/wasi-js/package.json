@@ -4,10 +4,11 @@
   "description": "Javascript implementation of WASI for Node.js and the Browser.",
   "main": "dist/index.js",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "clean": "rm -rf dist",
     "build": "tsc -b",
     "tsc": "tsc -w",
-    "dev": "watch \"npm run build:dev\" src",
+    "dev": "watch \"pnpm run build:dev\" src",
     "docs": "typedoc src/ --out docs --target es6 --theme minimal --mode file"
   },
   "files": ["dist/*", "bin/*", "README.md", "package.json", "tsconfig.json"],

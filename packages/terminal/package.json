@@ -12,12 +12,13 @@
     "Makefile"
   ],
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "clean": "rm -rf dist node_modules",
     "build": "webpack",
     "watch": "webpack --watch",
     "serve": "webpack serve",
     "http": "http-server dist",
-    "tsc": "npx tsc -w"
+    "tsc": "pnpm exec tsc -w"
   },
   "repository": {
     "type": "git",
