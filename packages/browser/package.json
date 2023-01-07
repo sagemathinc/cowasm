@@ -12,6 +12,7 @@
     "Makefile"
   ],
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "clean": "rm -rf dist node_modules",
     "build": "webpack",
     "watch": "webpack --watch",
