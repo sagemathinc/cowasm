@@ -3,20 +3,15 @@
   "version": "0.1.1",
   "description": "Missing Posix Functions for the Browser",
   "main": "dist/index.js",
-  "files": [
-    "src/*",
-    "dist/*",
-    "README.md",
-    "package.json"
-  ],
-  "scripts": {},
+  "files": ["src/*", "dist/*", "README.md", "package.json"],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "keywords": [
-    "posix"
-  ],
+  "keywords": ["posix"],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {

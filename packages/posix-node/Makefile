@@ -41,6 +41,6 @@ test: all
 	@# We are not using GitHub actions right now...
 	@# The GitHub actions test running crashes for some reason with caching enable, so we disable it
 	@# for "make test"; do "npm run test" for the 2x faster cached testing.
-	@# npm run test-no-cache
-	npm run test
+	@# pnpm run test-no-cache
+	pnpm run test
 

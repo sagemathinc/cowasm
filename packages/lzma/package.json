@@ -3,25 +3,18 @@
   "version": "1.0.3",
   "description": "WebAssembly build of the lzma compression library",
   "main": "index.js",
-  "files": [
-    "dist/wasm/**",
-    "README.md",
-    "package.json",
-    "index.js"
-  ],
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "build": "make wasm",
-    "prepublishOnly": "npm run build && make test",
+    "prepublishOnly": "pnpm run build && make test",
     "test": "make test"
   },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/sagemathinc/cowasm.git"
   },
-  "keywords": [
-    "WebAssembly",
-    "wasm"
-  ],
+  "keywords": ["WebAssembly", "wasm"],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
