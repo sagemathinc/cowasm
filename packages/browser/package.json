@@ -17,7 +17,7 @@
     "build": "webpack",
     "watch": "webpack --watch",
     "serve": "webpack serve",
-    "tsc": "npx tsc -w"
+    "tsc": "pnpm exec tsc -w"
   },
   "repository": {
     "type": "git",

@@ -58,7 +58,7 @@ ${BIN}/dash-wasm: ${CWD}/bin/dash-wasm
 
 ${DIST}/.built: node_modules
 	mkdir -p ${DIST}
-	npx tsc
+	pnpm exec tsc
 	touch ${DIST}/.built
 
 

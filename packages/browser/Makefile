@@ -5,8 +5,8 @@ all: ${DIST}/.built
 include ../build/Makefile-rules
 
 ${DIST}/.built: src/index.ts
-	npm ci
-	npm run build
+	pnpm install
+	pnpm run build
 	touch ${DIST}/.built
 
 clean-build::

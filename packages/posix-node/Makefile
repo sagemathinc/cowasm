@@ -23,7 +23,7 @@ build/headers:
 	rm ${BUILD}/headers.tar.gz
 
 dist/index.js: src/index.ts node_modules
-	npx tsc -b
+	pnpm exec tsc -b
 
 # Make an "automatic rules pattern".
 dist/%.node: build/headers $(shell find src/*.zig -type f)
@@ -37,7 +37,7 @@ dist/aarch64-linux-gnu.node:
 dist/x86_64-linux-gnu.node:
 
 test: all
-	npx tsc -b
+	pnpm exec tsc -b
 	@# We are not using GitHub actions right now...
 	@# The GitHub actions test running crashes for some reason with caching enable, so we disable it
 	@# for "make test"; do "npm run test" for the 2x faster cached testing.
