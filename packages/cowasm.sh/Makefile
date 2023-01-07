@@ -5,15 +5,15 @@ all: ${DIST}/.built
 include ../build/Makefile-rules
 
 ${DIST}/.built: src/index.ts
-	npm ci
-	npm run build
+	pnpm install
+	pnpm run build
 	touch ${DIST}/.built
 
 # This is on cloudflare pages so it can use SharedArrayBuffers...
 .PHONY: cowasm.sh
 cowasm.sh:
 	cd ${HOME}/cowasm.sh/ && git pull
-	NODE_ENV="production" npm run build
+	NODE_ENV="production" pnpm run build
 	rsync -axvH --delete dist/ ${HOME}/cowasm.sh/site/
 	cp ${SRC}/_headers ${HOME}/cowasm.sh/site/
 	cd ${HOME}/cowasm.sh/site/ \

@@ -10,6 +10,7 @@
     "index.js"
   ],
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "build": "make wasm",
     "prepublishOnly": "npm run build && make test",
     "test": "make test"

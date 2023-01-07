@@ -5,8 +5,8 @@ all: ${DIST}/.built
 include ../build/Makefile-rules
 
 ${DIST}/.built: src/index.ts
-	npm ci
-	npm run build
+	pnpm install
+	pnpm run build
 	touch ${DIST}/.built
 
 # This is only for use by person maintaining the website.
@@ -14,7 +14,7 @@ ${DIST}/.built: src/index.ts
 # This is on github pages so it is forced down to using a Service Worker.
 .PHONY: github-pages
 github-pages:
-	NODE_ENV="production" npm run build
+	NODE_ENV="production" pnpm run build
 	rsync -axvH --delete dist/ ${HOME}/zython.org/docs/
 	cd ${HOME}/zython.org/docs/ \
 		&& git checkout CNAME \
@@ -27,7 +27,7 @@ github-pages:
 .PHONY: cowasm.org
 cowasm.org:
 	cd ${HOME}/cowasm.org/ && git pull
-	NODE_ENV="production" npm run build
+	NODE_ENV="production" pnpm run build
 	rsync -axvH --delete dist/ ${HOME}/cowasm.org/site/
 	cp ${SRC}/_headers ${HOME}/cowasm.org/site/
 	cd ${HOME}/cowasm.org/site/ \

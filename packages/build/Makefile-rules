@@ -45,5 +45,5 @@ ${BUILD_WASM}/.build:: ${TARBALL}
 
 node_modules:
 	cd ../build && make node
-	npm install
+	pnpm install
 
