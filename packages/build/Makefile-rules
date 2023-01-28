@@ -7,7 +7,7 @@ wasm: deps ${DIST_WASM}/.built
 
 .PHONY: deps
 deps: node_modules
-	node ../build/make-dependencies.js
+	@[[ -f ${DIST_WASM}/.built ]] || node ../build/make-dependencies.js
 
 .PHONY: clean-wasm
 clean-wasm::

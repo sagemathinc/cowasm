@@ -275,16 +275,16 @@ int close_range(unsigned int first, unsigned int last, unsigned int flags);
 #define _SETJMP_H
 typedef void* __jmp_buf;
 typedef struct __jmp_buf_tag {
-	__jmp_buf __jb;
-	unsigned long __fl;
-	unsigned long __ss[128/sizeof(long)];
+  __jmp_buf __jb;
+  unsigned long __fl;
+  unsigned long __ss[128 / sizeof(long)];
 } jmp_buf[1];
 typedef jmp_buf sigjmp_buf;
 int setjmp(jmp_buf env);
 int sigsetjmp(sigjmp_buf env, int savesigs);
 void longjmp(jmp_buf env, int val);
 void siglongjmp(sigjmp_buf env, int val);
-#endif // _SETJMP_H
+#endif  // _SETJMP_H
 
 #ifndef FILE
 struct _IO_FILE {
@@ -295,7 +295,6 @@ typedef struct _IO_FILE FILE;
 
 FILE* popen(const char* command, const char* type);
 int pclose(FILE* stream);
-
 
 struct passwd* getpwnam(const char* name);
 struct passwd* getpwuid(uid_t uid);
@@ -429,7 +428,6 @@ quad_t strtoq(const char* str, char** endptr, int base);
 int rpmatch(const char* response);
 #endif  // BSD_SOURCE
 
-
 // Some py-numpy cython code fails without this
 // include to ensure that max_align_t is defined in
 // the right place:
@@ -439,7 +437,6 @@ int rpmatch(const char* response);
 #include "netdb.h"
 char* inet_ntoa(struct in_addr in);
 
-void openlog (const char *, int, int);
-
+void openlog(const char*, int, int);
 
 #endif

@@ -477,6 +477,8 @@ __SIG_IGN
 __ctype_get_mb_cur_max
 _CLOCK_MONOTONIC
 _CLOCK_REALTIME
+_CLOCK_PROCESS_CPUTIME_ID
+_CLOCK_THREAD_CPUTIME_ID
 _Exit
 _environ
 _exit

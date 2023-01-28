@@ -154,7 +154,7 @@ importers:
       '@cowasm/coreutils': workspace:*
       '@cowasm/cpython': ^1.6.0
       '@cowasm/dash': workspace:*
-      '@cowasm/kernel': ^0.28.0
+      '@cowasm/kernel': workspace:*
       '@cowasm/less': workspace:*
       '@cowasm/lua': workspace:*
       '@cowasm/lzma': workspace:*
@@ -172,7 +172,7 @@ importers:
       jest: ^29.2.1
       typescript: ^4.8.4
     dependencies:
-      '@cowasm/kernel': 0.28.0
+      '@cowasm/kernel': link:../kernel
       debug: 4.3.4
     devDependencies:
       '@cowasm/bzip2': link:../bzip2
@@ -882,6 +882,7 @@ packages:
       wasi-js: 1.7.2
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /@cowasm/memfs/3.5.1:
     resolution: {integrity: sha512-TSz00K+BdLxAYFQvwHmKgM/eAK6h9OYSQhPTcv/9XSyOF0Q90EtMkJvtwirwAXunfTsZw8R9YMu1UU213ooVKw==}
@@ -2520,6 +2521,7 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /ee-first/1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
@@ -4502,6 +4504,7 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /postcss-modules-extract-imports/3.0.0_postcss@8.4.21:
     resolution: {integrity: sha512-bdHleFnP3kZ4NYDhuGlVK+CMrQ/pqUm8bx/oGL93K6gVwiclvX5x0n76fYMKuIGKzlABOy13zsvqjb0f92TEXw==}
@@ -5469,6 +5472,7 @@ packages:
       typedarray-to-buffer: 4.0.0
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /watchpack/2.4.0:
     resolution: {integrity: sha512-Lcvm7MGST/4fup+ifyKi2hjyIAwcdI4HRgtvTpIUxBRhB+RFtUh8XtDOxUfctVCnhVi+QQj49i91OyvzkJl6cg==}

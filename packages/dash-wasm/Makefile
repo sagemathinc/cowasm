@@ -1,6 +1,6 @@
 include ../build/Makefile-vars
 
-all: ${DIST}/.built ${DIST}/fs.zip ${BIN}/dash-wasm
+all: deps ${DIST}/.built ${DIST}/fs.zip ${BIN}/dash-wasm
 
 include ../build/Makefile-rules
 

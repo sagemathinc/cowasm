@@ -12,7 +12,7 @@ DYLINK_WASM = $(shell cowasm-package-path dylink)/wasm
 WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
 WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic ${OPT}
 
-all: node_modules ${DIST}/.built kernel ${DIST}/termcap
+all: node_modules deps ${DIST}/.built kernel ${DIST}/termcap
 
 include ../build/Makefile-rules
 

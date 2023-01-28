@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/dash-wasm",
   "dependencies": {
-    "@cowasm/kernel": "^0.28.0",
+    "@cowasm/kernel": "workspace:*",
     "debug": "^4.3.4"
   },
   "devDependencies": {
