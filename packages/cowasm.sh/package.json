@@ -35,10 +35,10 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/terminal",
   "devDependencies": {
+    "dash-wasm": "workspace:*",
     "@types/node": "^18.11.3",
     "buffer": "^6.0.3",
     "css-loader": "^6.7.1",
-    "dash-wasm": "^0.7.5",
     "events": "^3.3.0",
     "html-webpack-plugin": "^5.5.0",
     "http-server": "^14.1.1",

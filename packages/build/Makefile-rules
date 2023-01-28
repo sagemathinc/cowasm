@@ -3,7 +3,11 @@
 native: ${DIST_NATIVE}/.built
 
 .PHONY: wasm
-wasm: ${DIST_WASM}/.built
+wasm: deps ${DIST_WASM}/.built
+
+.PHONY: deps
+deps: node_modules
+	node ../build/make-dependencies.js
 
 .PHONY: clean-wasm
 clean-wasm::

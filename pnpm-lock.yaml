@@ -4,7 +4,7 @@ importers:
 
   packages/browser:
     specifiers:
-      '@cowasm/kernel': ^0.27.8
+      '@cowasm/kernel': workspace:*
       '@types/node': ^18.11.3
       buffer: ^6.0.3
       debug: ^4.3.4
@@ -46,9 +46,9 @@ importers:
 
   packages/coreutils:
     specifiers:
-      '@cowasm/bzip2': ^1.0.1
-      '@cowasm/posix-wasm': ^1.1.1
-      '@cowasm/zlib': ^1.0.0
+      '@cowasm/bzip2': workspace:*
+      '@cowasm/posix-wasm': workspace:*
+      '@cowasm/zlib': workspace:*
     devDependencies:
       '@cowasm/bzip2': link:../bzip2
       '@cowasm/posix-wasm': link:../posix-wasm
@@ -99,7 +99,7 @@ importers:
       '@types/node': ^18.11.3
       buffer: ^6.0.3
       css-loader: ^6.7.1
-      dash-wasm: ^0.7.5
+      dash-wasm: workspace:*
       events: ^3.3.0
       html-webpack-plugin: ^5.5.0
       http-server: ^14.1.1
@@ -138,10 +138,10 @@ importers:
 
   packages/dash:
     specifiers:
-      '@cowasm/kernel': ^0.27.9
-      '@cowasm/libedit': ^1.0.0
-      '@cowasm/posix-wasm': ^1.1.0
-      '@cowasm/termcap': ^1.0.0
+      '@cowasm/kernel': workspace:*
+      '@cowasm/libedit': workspace:*
+      '@cowasm/posix-wasm': workspace:*
+      '@cowasm/termcap': workspace:*
     devDependencies:
       '@cowasm/kernel': link:../kernel
       '@cowasm/libedit': link:../libedit
@@ -150,21 +150,21 @@ importers:
 
   packages/dash-wasm:
     specifiers:
-      '@cowasm/bzip2': ^1.0.1
-      '@cowasm/coreutils': ^1.0.1
+      '@cowasm/bzip2': workspace:*
+      '@cowasm/coreutils': workspace:*
       '@cowasm/cpython': ^1.6.0
-      '@cowasm/dash': ^1.1.0
+      '@cowasm/dash': workspace:*
       '@cowasm/kernel': ^0.28.0
-      '@cowasm/less': ^1.0.0
-      '@cowasm/lua': ^1.0.0
-      '@cowasm/lzma': ^1.0.3
-      '@cowasm/man': ^1.0.1
-      '@cowasm/ncurses': ^1.0.0
+      '@cowasm/less': workspace:*
+      '@cowasm/lua': workspace:*
+      '@cowasm/lzma': workspace:*
+      '@cowasm/man': workspace:*
+      '@cowasm/ncurses': workspace:*
       '@cowasm/py-numpy': ^1.0.2
-      '@cowasm/rogue': ^1.0.0
-      '@cowasm/sqlite': ^1.0.0
-      '@cowasm/tar': ^1.0.1
-      '@cowasm/viz': ^1.0.0
+      '@cowasm/rogue': workspace:*
+      '@cowasm/sqlite': workspace:*
+      '@cowasm/tar': workspace:*
+      '@cowasm/viz': workspace:*
       '@types/jest': ^29.2.0
       '@types/node': ^18.11.3
       awaiting: ^3.0.0
@@ -197,14 +197,14 @@ importers:
 
   packages/dylink:
     specifiers:
-      '@cowasm/posix-wasm': ^1.1.1
+      '@cowasm/posix-wasm': workspace:*
       '@types/jest': ^29.2.0
       '@types/node': ^18.11.3
       await-spawn: ^4.0.2
       debug: ^4.3.4
       jest: ^29.2.1
       typescript: ^4.8.4
-      wasi-js: ^1.7.2
+      wasi-js: workspace:*
     dependencies:
       await-spawn: 4.0.2
       debug: 4.3.4
@@ -218,38 +218,36 @@ importers:
 
   packages/f2c:
     specifiers:
-      wasi-js: ^1.7.2
+      wasi-js: workspace:*
     devDependencies:
       wasi-js: link:../wasi-js
 
   packages/kernel:
     specifiers:
-      '@cowasm/cpython': ^1.0.2
-      '@cowasm/posix-wasm': ^1.0.3
+      '@cowasm/posix-wasm': workspace:*
       '@types/jest': ^29.2.0
       '@types/node': ^18.11.3
       awaiting: ^3.0.0
       date-format: ^4.0.13
       debug: ^4.3.4
-      dylink: ^0.11.2
+      dylink: workspace:*
       jest: ^29.2.1
       lodash: ^4.17.21
-      posix-node: ^0.12.0
+      posix-node: workspace:*
       typescript: ^4.8.4
       uuid: ^8.3.2
       wabt: ^1.0.29
-      wasi-js: ^1.7.2
+      wasi-js: workspace:*
     dependencies:
       awaiting: 3.0.0
       date-format: 4.0.13
       debug: 4.3.4
-      dylink: 0.11.2
+      dylink: link:../dylink
       lodash: 4.17.21
       posix-node: link:../posix-node
       uuid: 8.3.2
       wasi-js: link:../wasi-js
     devDependencies:
-      '@cowasm/cpython': 1.6.1
       '@cowasm/posix-wasm': link:../posix-wasm
       '@types/jest': 29.2.0
       '@types/node': 18.11.3
@@ -259,10 +257,10 @@ importers:
 
   packages/less:
     specifiers:
-      '@cowasm/kernel': ^0.27.9
-      '@cowasm/ncurses': ^1.0.0
-      '@cowasm/posix-wasm': ^1.0.3
-      '@cowasm/termcap': ^1.0.0
+      '@cowasm/kernel': workspace:*
+      '@cowasm/ncurses': workspace:*
+      '@cowasm/posix-wasm': workspace:*
+      '@cowasm/termcap': workspace:*
     devDependencies:
       '@cowasm/kernel': link:../kernel
       '@cowasm/ncurses': link:../ncurses
@@ -271,30 +269,30 @@ importers:
 
   packages/libedit:
     specifiers:
-      '@cowasm/kernel': ^0.27.9
-      '@cowasm/termcap': ^1.0.0
+      '@cowasm/kernel': workspace:*
+      '@cowasm/termcap': workspace:*
     devDependencies:
       '@cowasm/kernel': link:../kernel
       '@cowasm/termcap': link:../termcap
 
   packages/libffi:
     specifiers:
-      '@cowasm/kernel': ^0.27.9
+      '@cowasm/kernel': workspace:*
     devDependencies:
       '@cowasm/kernel': link:../kernel
 
   packages/libgit2:
     specifiers:
-      '@cowasm/kernel': ^0.27.9
-      '@cowasm/zlib': ^1.0.0
+      '@cowasm/kernel': workspace:*
+      '@cowasm/zlib': workspace:*
     devDependencies:
       '@cowasm/kernel': link:../kernel
       '@cowasm/zlib': link:../zlib
 
   packages/libpng:
     specifiers:
-      '@cowasm/kernel': ^0.27.9
-      '@cowasm/zlib': ^1.0.0
+      '@cowasm/kernel': workspace:*
+      '@cowasm/zlib': workspace:*
     devDependencies:
       '@cowasm/kernel': link:../kernel
       '@cowasm/zlib': link:../zlib
@@ -311,8 +309,8 @@ importers:
 
   packages/lzma:
     specifiers:
-      '@cowasm/kernel': ^0.27.9
-      '@cowasm/posix-wasm': ^1.0.3
+      '@cowasm/kernel': workspace:*
+      '@cowasm/posix-wasm': workspace:*
     devDependencies:
       '@cowasm/kernel': link:../kernel
       '@cowasm/posix-wasm': link:../posix-wasm
@@ -2512,6 +2510,7 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /dylink/0.13.0:
     resolution: {integrity: sha512-/nRtWRbEMiCWOxjBw0rI3pKDHkgaSvS7HjarEJD/yYpCybuWvM8BsF/83Sbf10OV5Mn6fASisj1YxVlyV4HFtA==}

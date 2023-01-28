@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/libgit2",
   "devDependencies": {
-    "@cowasm/kernel": "^0.27.9",
-    "@cowasm/zlib": "^1.0.0"
+    "@cowasm/kernel": "workspace:*",
+    "@cowasm/zlib": "workspace:*"
   }
 }

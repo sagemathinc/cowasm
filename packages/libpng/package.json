@@ -4,12 +4,7 @@
   "version": "1.0.0",
   "description": "WebAssembly build of the ligpng library",
   "main": "index.js",
-  "files": [
-    "dist/wasm/**",
-    "README.md",
-    "package.json",
-    "index.js"
-  ],
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "make wasm",
@@ -20,10 +15,7 @@
     "type": "git",
     "url": "git+ssh://git@github.com/sagemathinc/cowasm.git"
   },
-  "keywords": [
-    "WebAssembly",
-    "wasm"
-  ],
+  "keywords": ["WebAssembly", "wasm"],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
@@ -31,7 +23,7 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/ligpng",
   "devDependencies": {
-    "@cowasm/kernel": "^0.27.9",
-    "@cowasm/zlib": "^1.0.0"
+    "@cowasm/kernel": "workspace:*",
+    "@cowasm/zlib": "workspace:*"
   }
 }

@@ -71,7 +71,7 @@ include ../build/Makefile-rules
 
 
 .PHONY: dummy
-dummy: node_modules
+dummy: node_modules deps
 
 CC = ${BIN}/cowasm-cc
 

@@ -13,7 +13,7 @@ LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)
 TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 
-all: wasm ${BIN}/dash-wasm-raw
+all: deps wasm ${BIN}/dash-wasm-raw
 
 include ../build/Makefile-rules
 

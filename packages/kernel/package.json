@@ -4,12 +4,7 @@
   "description": "@cowasm/kernel -- the Kernel of CoWasm: Collaborative WebAssembly for Servers and Browsers",
   "main": "./dist/kernel/node.js",
   "browser": "./dist/kernel/browser.js",
-  "files": [
-    "dist/**",
-    "README.md",
-    "package.json",
-    "tsconfig.json"
-  ],
+  "files": ["dist/**", "README.md", "package.json", "tsconfig.json"],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "make all",
@@ -25,10 +20,7 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "keywords": [
-    "python",
-    "webassembly"
-  ],
+  "keywords": ["python", "webassembly"],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
@@ -36,18 +28,17 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/kernel",
   "dependencies": {
+    "dylink": "workspace:*",
+    "posix-node": "workspace:*",
+    "wasi-js": "workspace:*",
     "awaiting": "^3.0.0",
     "date-format": "^4.0.13",
     "debug": "^4.3.4",
-    "dylink": "^0.11.2",
     "lodash": "^4.17.21",
-    "posix-node": "^0.12.0",
-    "uuid": "^8.3.2",
-    "wasi-js": "^1.7.2"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@cowasm/cpython": "^1.0.2",
-    "@cowasm/posix-wasm": "^1.0.3",
+    "@cowasm/posix-wasm": "workspace:*",
     "@types/jest": "^29.2.0",
     "@types/node": "^18.11.3",
     "jest": "^29.2.1",
