@@ -1,9 +1,10 @@
 include ../build/Makefile-vars
-include ../build/Makefile-rules
 
 # TODO
 all:
 	echo "Nothing  yet -- could be install later."
+
+include ../build/Makefile-rules
 
 python-wasm: deps
 	echo "Starting benchmarks with python-wasm"
