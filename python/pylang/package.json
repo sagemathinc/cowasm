@@ -10,7 +10,7 @@
     "preinstall": "npx only-allow pnpm",
     "test": "pnpm exec tsc && ./bin/pylang self --complete --test . ",
     "start": "node bin/pylang",
-    "build": "pnpm exec tsc && pnpx pylang@1.1.3 self --complete --base-path .",
+    "build": "pnpm exec tsc && pnpm dlx pylang@1.1.3 self --complete --base-path .",
     "tsc": "pnpm exec tsc -w",
     "clean": "rm -rf dist",
     "format": "pnpm run yapf && pnpm run prettier",

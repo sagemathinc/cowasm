@@ -6,11 +6,11 @@ all:
 
 python-wasm:
 	echo "Starting benchmarks with python-wasm"
-	pnpx python-wasm@latest src/all.py
+	pnpm dlx python-wasm@latest src/all.py
 
 pylang:
 	echo "Starting benchmarks with pylang"
-	pnpx pylang@latest src/all.py
+	pnpm dlx pylang@latest src/all.py
 
 native:
 	cd ../cpython && make native

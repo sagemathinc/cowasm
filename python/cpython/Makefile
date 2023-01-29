@@ -112,7 +112,7 @@ run-native: ${DIST_NATIVE}/.built ${BIN}/python-native
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# Create declarations that make everything extension modules need
 	# accessible from outside our "python.wasm as a shared library".
-	pnpx dylink-libpython ${BUILD_WASM} > ${BUILD_WASM}/Programs/libpython.c
+	pnpm dlx dylink ${BUILD_WASM} > ${BUILD_WASM}/Programs/libpython.c
 	# Scripts to make it easy to change CPython and rebuild iteratively
 	ln -sf ${SRC}/rebuild ${BUILD_WASM}/rebuild
 	# Copy the config.site, which answers questions needed for
