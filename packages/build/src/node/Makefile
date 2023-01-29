@@ -33,15 +33,16 @@ ${BIN}/node: ${DIST_NATIVE}/bin/node
 	touch ${BIN}/node
 
 ${BIN}/pnpm: ${DIST_NATIVE}/bin/npm
-	npm init -y
-	npm install pnpm
-	ln -s `pwd`/node_modules/.bin/pnpm ${BIN}/pnpm
+	${DIST_NATIVE}/bin/npm init -y
+	${DIST_NATIVE}/bin/npm install pnpm
+	# Now switch it to be a pnpm install.  Yes this is weird.
+	./node_modules/.bin/pnpm install
+	./fix-pnpm.sh
+	cp `pwd`/node_modules/.bin/pnpm ${BIN}/pnpm
 	touch ${BIN}/pnpm
 
-${BIN}/pnpx: ${DIST_NATIVE}/bin/npm
-	npm init -y
-	npm install pnpm
-	ln -s `pwd`/node_modules/.bin/pnpx ${BIN}/pnpx
+${BIN}/pnpx: ${BIN}/pnpm
+	cp `pwd`/node_modules/.bin/pnpx ${BIN}/pnpx
 	touch ${BIN}/pnpx
 
 ${BIN}/cowasm-package-path: ${CWD}/cowasm-package-path

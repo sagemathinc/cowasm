@@ -1,1 +1,4 @@
-- 'packages/*'
+- "packages/*"
+
+# exclude packages that are inside build (e.g., our pnpm package itself installed by npm)
+- "!/packages/build/**"
