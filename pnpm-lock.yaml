@@ -31,7 +31,7 @@ importers:
     specifiers:
       '@cowasm/bzip2': workspace:*
       '@cowasm/coreutils': workspace:*
-      '@cowasm/cpython': ^1.6.0
+      '@cowasm/cpython': workspace:*
       '@cowasm/dash': workspace:*
       '@cowasm/kernel': workspace:*
       '@cowasm/less': workspace:*
@@ -39,7 +39,7 @@ importers:
       '@cowasm/lzma': workspace:*
       '@cowasm/man': workspace:*
       '@cowasm/ncurses': workspace:*
-      '@cowasm/py-numpy': ^1.0.2
+      '@cowasm/py-numpy': workspace:*
       '@cowasm/rogue': workspace:*
       '@cowasm/sqlite': workspace:*
       '@cowasm/tar': workspace:*
@@ -56,7 +56,7 @@ importers:
     devDependencies:
       '@cowasm/bzip2': link:../bzip2
       '@cowasm/coreutils': link:../coreutils
-      '@cowasm/cpython': 1.6.1
+      '@cowasm/cpython': link:../../python/cpython
       '@cowasm/dash': link:../dash
       '@cowasm/less': link:../less
       '@cowasm/lua': link:../lua
@@ -1026,15 +1026,6 @@ packages:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
 
-  /@cowasm/cpython/1.6.1:
-    resolution: {integrity: sha512-z0KpN262pHpEcSzj0xQQkU5BUPDeKs7U4L+gpb1FDFVNIOCitYAaUUfMoVkzQheEmOyGilMF723c4XH8eMREwg==}
-    hasBin: true
-    dependencies:
-      '@cowasm/kernel': 0.28.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /@cowasm/kernel/0.27.9:
     resolution: {integrity: sha512-KyDBifQ1dZGir5NAJ6I3QIxN8hX6FV/j/k30o7iJIiN5qxOy6WU9cm4RpqoyW20Nsi/cTX8VWXS3ulJaORaaZw==}
     hasBin: true
@@ -1043,22 +1034,6 @@ packages:
       date-format: 4.0.13
       debug: 4.3.4
       dylink: 0.11.2
-      lodash: 4.17.21
-      posix-node: 0.12.0
-      uuid: 8.3.2
-      wasi-js: 1.7.2
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /@cowasm/kernel/0.28.0:
-    resolution: {integrity: sha512-/Vub33WoIeXXkabPj+SoFWB8zl22LYngxY7DpJuWz75SP7vdRhfPkhfIm4uaODn0mBt3NL03JsKLYioJb0XpFQ==}
-    hasBin: true
-    dependencies:
-      awaiting: 3.0.0
-      date-format: 4.0.13
-      debug: 4.3.4
-      dylink: 0.13.0
       lodash: 4.17.21
       posix-node: 0.12.0
       uuid: 8.3.2
@@ -2685,16 +2660,6 @@ packages:
 
   /dylink/0.11.2:
     resolution: {integrity: sha512-8yz79W7kZ2gk2fa3pYIgHa7hDDOEDKcPvbP6KjzYnBbWvVxCoeuczNKDkDI7wBzCEmrVT+Ttaxr2G1hcMWIi6Q==}
-    dependencies:
-      await-spawn: 4.0.2
-      debug: 4.3.4
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /dylink/0.13.0:
-    resolution: {integrity: sha512-/nRtWRbEMiCWOxjBw0rI3pKDHkgaSvS7HjarEJD/yYpCybuWvM8BsF/83Sbf10OV5Mn6fASisj1YxVlyV4HFtA==}
-    hasBin: true
     dependencies:
       await-spawn: 4.0.2
       debug: 4.3.4
