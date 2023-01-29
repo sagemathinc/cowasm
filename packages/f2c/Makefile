@@ -73,7 +73,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 # It works if we build it directly using zcc, but NOT using cowasm-cc (our -fPIC variant),
 # which is why we run make twice below.
 ${DIST_WASM}/lib/libf2c.a: ${BUILD_WASM}/.patched
-	cd ../build && make zig node
+	cd ../build && make zig
 	cd ${BUILD_WASM}/libf2c \
 		&& make CC="zcc" CFLAGS="-Oz" arith.h -f makefile.u \
 		&& make CC="cowasm-cc" CFLAGS="-Oz"  -f makefile.u  -j8 \
@@ -88,7 +88,7 @@ ${DIST_WASM}/include/f2c.h: ${DIST_WASM}/lib/libf2c.a
 	echo '#define main_ main' >>  ${DIST_WASM}/include/f2c.h
 
 test-wasm: wasm native node_modules
-	cd ../build && make zig node
+	cd ../build && make zig
 	rm -rf ${BUILD_WASM}/test
 	mkdir -p ${BUILD_WASM}/test
 	cp src/hello.f ${BUILD_WASM}/test

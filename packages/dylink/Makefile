@@ -5,9 +5,7 @@ POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 
 all: dist/.built
 
-node_modules:
-	cd ../build && make node
-	pnpm install
+include ../build/Makefile-rules
 
 dist/.built: dist/index.js dist/wasm/libdylink.a wasm-export node_modules
 	touch dist/.built
@@ -86,7 +84,7 @@ test-native-macos:
 .PHONY: test-native-macos
 
 .PHONY: clean
-clean:
+clean::
 	rm -rf build dist tsconfig.tsbuildinfo node_modules
 	cd test/wasi && make clean
 	cd test/python-extension && make clean
@@ -94,7 +92,7 @@ clean:
 	cd test/libc-archive && make clean
 
 .PHONY: clean-build
-clean-build:
+clean-build::
 	rm -rf build test/*/build
 
 

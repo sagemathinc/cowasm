@@ -4,8 +4,7 @@ all: ${DIST}/.built
 
 include ../build/Makefile-rules
 
-${DIST}/.built: src/index.ts
-	pnpm install
+${DIST}/.built: deps node_modules src/index.ts
 	pnpm run build
 	touch ${DIST}/.built
 

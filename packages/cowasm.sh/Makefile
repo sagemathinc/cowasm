@@ -1,6 +1,6 @@
 include ../build/Makefile-vars
 
-all: ${DIST}/.built
+all: deps ${DIST}/.built
 
 include ../build/Makefile-rules
 
@@ -10,7 +10,7 @@ ${DIST}/.built: src/index.ts node_modules
 
 # This is on cloudflare pages so it can use SharedArrayBuffers...
 .PHONY: cowasm.sh
-cowasm.sh:
+cowasm.sh: deps
 	cd ${HOME}/cowasm.sh/ && git pull
 	NODE_ENV="production" pnpm run build
 	rsync -axvH --delete dist/ ${HOME}/cowasm.sh/site/

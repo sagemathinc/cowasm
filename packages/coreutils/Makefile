@@ -4,7 +4,7 @@ include ../build/Makefile-vars
 
 TARGET = ${DIST_WASM}/bin
 
-all: \
+all: deps \
 	${TARGET}/basename \
 	${TARGET}/cat \
 	${TARGET}/chmod \
@@ -64,14 +64,6 @@ all: \
 	@# ${TARGET}/split \
 
 include ../build/Makefile-rules
-
-# ensure that node_modules exists before anything else happens.
-# This is easier than making node_modules a dep for everything.
--include dummy
-
-
-.PHONY: dummy
-dummy: node_modules deps
 
 CC = ${BIN}/cowasm-cc
 
@@ -281,7 +273,7 @@ test-uniq-sources:
 # this wasm error on GitHub Actions:
 #    /home/runner/work/cowasm/cowasm/packages/coreutils/dist/wasm/bin/tty RuntimeError: memory access out of bounds
 
-test: test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-expr test-factor test-fmt test-grep test-head test-id \
+test: deps test-uniq-sources test-basename test-cat test-dirname test-cp test-cut test-date test-env test-expr test-factor test-fmt test-grep test-head test-id \
 	test-join test-ls test-mktemp test-mkdir-rmdir test-mv test-rm test-seq test-sleep test-sort test-stat test-tail test-touch test-tr \
 	test-uname test-uniq test-wc  test-which test-xargs
 	@echo "Success -- all coreutils tests passed"

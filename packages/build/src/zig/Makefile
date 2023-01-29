@@ -20,13 +20,13 @@ OS = $(shell uname -s  | sed s/Darwin/macos/ | sed s/Linux/linux/)
 
 # This is for stable releases
 
-#VERSION = 0.10.0
-#URL = https://ziglang.org/download/${VERSION}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
+VERSION = 0.10.0
+URL = https://ziglang.org/download/${VERSION}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
 
 # for dev versions:
-VERSION = 0.11.0-dev.1025+aadd1b252
-URL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
+#VERSION = 0.11.0-dev.1025+aadd1b252
+#URL = https://ziglang.org/builds/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
 TARBALL = ${UPSTREAM}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 

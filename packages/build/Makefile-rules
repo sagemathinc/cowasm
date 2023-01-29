@@ -48,6 +48,5 @@ ${BUILD_WASM}/.build:: ${TARBALL}
 	touch ${BUILD_WASM}/.build
 
 node_modules:
-	cd ../build && make node
 	pnpm install
 

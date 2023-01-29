@@ -126,10 +126,7 @@ We support and regularly test building CoWasm from source on the following platf
 
 ### Prerequisites
 
-You do NOT need to install Zig or Node.js, and different packages have different requirements. A tested version of each will be
-downloaded as part of the build process. Currently, this is the latest released
-version of Zig and the latest released version of Node. It doesn't matter if
-you have random versions of Node or Zig on your system already.  The dependency you need for every possible package are as follows:
+You need Node.js version at least 16.x, pnpm and several standard dev tools listed below.     The dependency you need for every possible package are as follows:
 
 - On MacOS, install the [XCode command line tools.](https://developer.apple.com/xcode/resources/) 
 
@@ -145,8 +142,14 @@ apt-get install git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 l
 dnf install git make cmake curl dpkg-dev m4 yasm texinfo libtool tcl zip ncurses-devel perl
 ```
 
-- Currently, the only way to build CoWasm from source on MS Windows is to use a Docker container running Linux.  Using WSL2 \(maybe\) works but is too slow.
-- Also [you must currently install pnpm yourself somehow.](https://pnpm.io/installation) 
+- Currently, the only way to build CoWasm from source on MS Windows is to use a Docker container running Linux.  Using WSL2 (maybe) works but is too slow.
+
+In addition you need to [install Node.js version at least 16.x](https://nodejs.org/en/download/) and [install the pnpm package manager](https://pnpm.io/installation).
+
+#### Notes about Zig
+
+_**You do NOT need to install Zig,**_ and it doesn't matter if
+you have a random version of Zig on your system already.   A zig binary is download automatically.   We use zig \(instead of any system\-wide clang, etc. compilers\) for building all compiled code and write some code in the zig language.  Since zig is fairly unstable it is critical to use the exact version that we provide.  
 
 ### Build
 
@@ -191,7 +194,7 @@ At the top level run `./bin/rebuild-all` :
 ~/cowasm$ ./bin/rebuild-all 
 ```
 
-This does `make clean,` pulls the latest code, then runs the full build and test suite.  Fortunately, `zig` caches a lot of build artificats, so subsequent builds are faster.
+This does `make clean,` pulls the latest code, then runs the full build and test suite.  Fortunately, `zig` caches a lot of build artifacts, so subsequent builds are faster.
 
 **NOTE/WARNING:** Zig's cache is in `~/.cache/zig` and it can get HUGE.   As far as I can tell, I think it just grows and grows without bound \(it's not an LRU cache\), and I think there are no tools to "manage" it besides just `rm -rf` it periodically.
 
