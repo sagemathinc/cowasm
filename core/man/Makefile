@@ -7,7 +7,7 @@ TARBALL = ${SRC}/mandoc-2022-10-14.tar.xz
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
 
-all: wasm
+all: deps wasm
 
 include ../build/Makefile-rules
 

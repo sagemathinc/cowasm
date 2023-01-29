@@ -5,7 +5,7 @@ ZLIB_VERSION = 1.2.13
 
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
 
-all: wasm
+all: deps wasm
 
 URL = https://github.com/sagemathinc/zlib/archive/refs/tags/${ZLIB_VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/zlib-${ZLIB_VERSION}.tar.xz

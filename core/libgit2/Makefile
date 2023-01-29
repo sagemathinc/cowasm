@@ -15,7 +15,7 @@ BUILD_TYPE = Release
 
 ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
 
-all: wasm
+all: deps wasm
 
 include ../build/Makefile-rules
 

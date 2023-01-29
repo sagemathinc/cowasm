@@ -18,7 +18,7 @@ LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)
 ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
 TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
 
-all: wasm ${BIN}/sqlite3-wasm
+all: deps wasm ${BIN}/sqlite3-wasm
 
 include ../build/Makefile-rules
 

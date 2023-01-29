@@ -8,7 +8,7 @@ TARBALL = ${UPSTREAM}/openssl-${VERSION}.tar.gz
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 
-all: wasm
+all: deps wasm
 
 include ../build/Makefile-rules
 

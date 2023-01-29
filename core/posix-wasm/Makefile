@@ -2,7 +2,7 @@
 
 include ../build/Makefile-vars
 
-all: wasm
+all: deps wasm
 
 include ../build/Makefile-rules
 

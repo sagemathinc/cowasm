@@ -12,7 +12,7 @@ URL = https://github.com/glennrp/libpng/archive/refs/tags/v${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/libpng-${VERSION}.tar.gz
 
 
-all: wasm
+all: deps wasm
 
 include ../build/Makefile-rules
 

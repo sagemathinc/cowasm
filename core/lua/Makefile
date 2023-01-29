@@ -9,7 +9,7 @@ VERSION = 5.4.4
 URL = https://github.com/lua/lua/archive/refs/tags/v${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/lua-${VERSION}.tar.gz
 
-all: wasm ${BIN}/lua-wasm
+all: deps wasm ${BIN}/lua-wasm
 
 include ../build/Makefile-rules
 

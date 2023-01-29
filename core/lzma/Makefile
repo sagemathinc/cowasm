@@ -1,6 +1,6 @@
 include ../build/Makefile-vars
 
-all: wasm
+all: deps wasm
 
 # LZMA doesn't change, but I didn't want to force git clone, so I made
 # a fork and a release myself.

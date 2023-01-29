@@ -13,7 +13,7 @@ LZMA_WASM = $(shell cowasm-package-path @cowasm/lzma)
 ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
 BZIP2_WASM = $(shell cowasm-package-path @cowasm/bzip2)
 
-all: wasm
+all: deps wasm
 
 include ../build/Makefile-rules
 

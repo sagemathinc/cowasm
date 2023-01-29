@@ -1,5 +1,5 @@
 
-all: wasm
+all: deps wasm
 
 include ../build/Makefile-vars
 
@@ -41,5 +41,5 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 		make install
 	touch ${DIST_WASM}/.built
 
-test: ${DIST_WASM}/.built
+test:
 	echo "no tests yet"

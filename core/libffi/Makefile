@@ -2,7 +2,7 @@
 
 include ../build/Makefile-vars
 
-all: wasm
+all: deps wasm
 
 # See https://github.com/sagemathinc/libffi/releases
 # where we have a fork of libffi with autogen.sh run.
