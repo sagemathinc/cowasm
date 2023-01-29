@@ -13,7 +13,9 @@ URL = https://github.com/TeX-Live/luatex/archive/refs/heads/trunk.zip
 #URL = https://github.com/TeX-Live/luatex/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/luatex-head.tar.gz
 
-all: wasm
+
+all:
+#all: wasm
 
 include ../build/Makefile-rules
 
