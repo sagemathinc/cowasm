@@ -1,0 +1,71 @@
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+]0;~/zython/packages/bench/src/zig[01;34m~/zython/packages/bench/src/zig[00m$ [K]0;~/zython/packages/bench/src/zig[01;34m~/zython/packages/bench/src/zig[00m$ zython-dev setup.py build
+Compiling nt.pyx because it changed.
+[1/1] Cythonizing nt.pyx
+Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/bench/src/zig/nt.pyx
+
+Error compiling Cython file:
+------------------------------------------------------------
+...
+
+extern int gcd_impl(int a, int b);
+      ^
+------------------------------------------------------------
+
+nt.pyx:2:7: Syntax error in simple statement list
+Traceback (most recent call last):
+  File "/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/bench/src/zig/setup.py", line 13, in <module>
+    ext_modules=cythonize(extensions),
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "Cython/Build/Dependencies.py", line 1127, in cythonize
+  File "Cython/Build/Dependencies.py", line 1250, in cythonize_one
+Cython.Compiler.Errors.CompileError: nt.pyx
+]0;~/zython/packages/bench/src/zig[01;34m~/zython/packages/bench/src/zig[00m$ zython-dev setup.py build
+Compiling nt.pyx because it changed.
+[1/1] Cythonizing nt.pyx
+Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/bench/src/zig/nt.pyx
+
+Error compiling Cython file:
+------------------------------------------------------------
+...
+
+cdef int gcd_impl(int a, int b);
+                ^
+------------------------------------------------------------
+
+nt.pyx:2:17: Non-extern C function 'gcd_impl' declared but not defined
+Traceback (most recent call last):
+  File "/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/bench/src/zig/setup.py", line 13, in <module>
+    ext_modules=cythonize(extensions),
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "Cython/Build/Dependencies.py", line 1127, in cythonize
+  File "Cython/Build/Dependencies.py", line 1250, in cythonize_one
+Cython.Compiler.Errors.CompileError: nt.pyx
+]0;~/zython/packages/bench/src/zig[01;34m~/zython/packages/bench/src/zig[00m$ zython-dev setup.py build
+Compiling nt.pyx because it changed.
+[1/1] Cythonizing nt.pyx
+Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/bench/src/zig/nt.pyx
+running build
+running build_ext
+building 'nt' extension
+creating build
+creating build/temp.wasi-0.0.0-wasm32-cpython-311
+zig-fPIC cc -Wsign-compare -Wunreachable-code -DNDEBUG -DNDEBUG -g -fwrapv -Wall -Oz -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_SIGNAL -D_WASI_EMULATED_PROCESS_CLOCKS -I/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/cpython/build/wasm -I/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/cpython/../posix-wasm/dist/wasm -DPy_DEFAULT_RECURSION_LIMIT=700 -I/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/cpython/dist/wasm/include/python3.11 -c nt.c -o build/temp.wasi-0.0.0-wasm32-cpython-311/nt.o
+creating build/lib.wasi-0.0.0-wasm32-cpython-311
+zig wasm-ld --experimental-pic -shared -s --compress-relocations build/temp.wasi-0.0.0-wasm32-cpython-311/nt.o -L. -lnt.wasm.o -o build/lib.wasi-0.0.0-wasm32-cpython-311/nt.cpython-311-wasm32-wasi.so
+error: command '/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/bin/zig' failed with exit code 1
+]0;~/zython/packages/bench/src/zig[01;34m~/zython/packages/bench/src/zig[00m$ zython-dev setup.py build
+Traceback (most recent call last):
+  File "/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/zython/packages/bench/src/zig/setup.py", line 8, in <module>
+    Extension("nt", ["nt.pyx"], sources=["nt.wasm.o"], library_dirs=["."]),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Extension.__init__() got multiple values for argument 'sources'
+]0;~/zython/packages/bench/src/zig[01;34m~/zython/packages/bench/src/zig[00m$ zython-dev setup.py build
+running build
+running build_ext
+building 'nt' extension
+error: unknown file type '.o' (from 'nt.wasm.o')
+]0;~/zython/packages/bench/src/zig[01;34m~/zython/packages/bench/src/zig[00m$ 

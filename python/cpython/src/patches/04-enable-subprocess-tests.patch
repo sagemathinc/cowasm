@@ -1,0 +1,31 @@
+Due to our new posix-node package, python-wasm does have subprocess support when
+run on node.js.  We want to test it fully, since we are using this to do
+better builds form source, and we will also bring this to the browser.
+Also, subprocess support itself is critical to enable a large amount of
+the test suite itself, e.g., test/test_code.py *uses* subprocess support in
+order to do all kinds of subtle tests of Python itself.  Thus without subprocess
+support, we can't really test our Python build properly.   In contrast, fork
+is nice but it's impossible to implement in a browser properly, sinc there's
+no access to the WASM runtime stack, for security reasons.  Also, it can't be
+done efficiently in windows.   Python *uses* for to implement subprocess support,
+but that is just an implementation detail we get around.
+
+--- native/Lib/test/support/__init__.py	2022-08-05 07:45:18.000000000 -0700
++++ wasm/Lib/test/support/__init__.py	2022-09-15 17:10:12.000000000 -0700
+@@ -524,6 +524,8 @@
+
+ has_subprocess_support = not is_emscripten and not is_wasi
+
++has_subprocess_support = True
++
+ def requires_subprocess():
+     """Used for subprocess, os.spawn calls, fd inheritance"""
+     return unittest.skipUnless(has_subprocess_support, "requires subprocess support")
+@@ -531,6 +533,7 @@
+ # Emscripten's socket emulation and WASI sockets have limitations.
+ has_socket_support = not is_emscripten and not is_wasi
+
++
+ def requires_working_socket(*, module=False):
+     """Skip tests or modules that require working sockets
+

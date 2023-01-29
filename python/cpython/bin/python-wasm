@@ -1,0 +1,7 @@
+#!/bin/sh
+
+export PYTHONEXECUTABLE=$(readlink -f "$0")
+SCRIPTDIR=$(dirname "$PYTHONEXECUTABLE")
+# Must adapt to where it happens to be installed:
+export PYTHONHOME="$SCRIPTDIR"/../dist/wasm/
+npx --yes @cowasm/kernel "$SCRIPTDIR"/../dist/wasm/bin/python3.11.wasm "$@"

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# See https://stackoverflow.com/questions/3572030/bash-script-absolute-path-with-os-x
+realpath() (
+  OURPWD=$PWD
+  cd "$(dirname "$1")"
+  LINK=$(readlink "$(basename "$1")")
+  while [ "$LINK" ]; do
+    cd "$(dirname "$LINK")"
+    LINK=$(readlink "$(basename "$1")")
+  done
+  REALPATH="$PWD/$(basename "$1")"
+  cd "$OURPWD"
+  echo "$REALPATH"
+)
+
+SCRIPT=$(realpath "${BASH_SOURCE[0]}")
+SCRIPT_DIR=$( cd -- "$( dirname -- "${SCRIPT}" )" &> /dev/null && pwd )
+
+PACKAGES="$SCRIPT_DIR"/../../
+export DYLD_LIBRARY_PATH="$SCRIPT_DIR"/../dist/native/lib:"$PACKAGES"/zlib/dist/native/lib:$DYLD_LIBRARY_PATH
+export LD_LIBRARY_PATH="$SCRIPT_DIR"/../dist/native/lib:"$PACKAGES"/zlib/dist/native/lib:$LD_LIBRARY_PATH
+
+# This is all we really put in TERMCAP, and is pretty compatible...
+export TERM=xterm-256color
+export TERMCAP="$SCRIPT_DIR"/../src/termcap
+
+"$SCRIPT_DIR"/../dist/native/bin/python3 "$@"

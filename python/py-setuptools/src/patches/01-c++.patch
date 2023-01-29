@@ -1,0 +1,14 @@
+--- native/setuptools/_distutils/unixccompiler.py	2022-11-30 22:02:14
++++ wasm/setuptools/_distutils/unixccompiler.py	2022-11-30 22:02:54
+@@ -253,7 +253,10 @@
+                 building_exe = target_desc == CCompiler.EXECUTABLE
+                 linker = (self.linker_exe if building_exe else self.linker_so)[:]
+ 
+-                if target_lang == "c++" and self.compiler_cxx:
++                # For python-wasm the following completely messes up our
++                # use of wasm-ld; just using "zig cc" turns out to work fine
++                # with C++ code.
++                if False and target_lang == "c++" and self.compiler_cxx:
+                     env, linker_ne = _split_env(linker)
+                     aix, linker_na = _split_aix(linker_ne)
+                     _, compiler_cxx_ne = _split_env(self.compiler_cxx)

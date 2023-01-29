@@ -41,6 +41,10 @@ test-core:
 	#                                                        #
 	##########################################################
 
+.PHONY: clean-core
+clean-core:
+	./bin/make-all clean ${CORE_DIRS}
+
 .PHONY: python
 python: core
 	./bin/make-all all ${PYTHON_DIRS}
@@ -55,6 +59,10 @@ python: core
 	@echo "#   Git Branch: `git rev-parse --abbrev-ref HEAD`"
 	#                                                        #
 	##########################################################
+
+.PHONY: clean-python
+clean-python:
+	./bin/make-all clean ${PYTHON_DIRS}
 
 .PHONY: test
 test:
@@ -93,3 +101,7 @@ clean:
 	./bin/make-all clean ${ALL_DIRS}
 	rm -rf bin/python* bin/cowasm-* bin/zig
 
+
+docker:
+	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/cowasm master | awk '{print $$1}'` -t cowasm .
+.PHONY: docker

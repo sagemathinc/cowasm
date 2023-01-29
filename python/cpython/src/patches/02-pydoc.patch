@@ -1,0 +1,28 @@
+--- native/Lib/pydoc.py	2022-10-24 10:35:39.000000000 -0700
++++ wasm/Lib/pydoc.py	2022-11-07 07:18:02.261615004 -0800
+@@ -1565,6 +1565,8 @@
+         return plainpager
+     if sys.platform == "emscripten":
+         return plainpager
++    if sys.platform == "wasi":
++        return ttypager
+     use_pager = os.environ.get('MANPAGER') or os.environ.get('PAGER')
+     if use_pager:
+         if sys.platform == 'win32': # pipes completely broken in Windows
+@@ -1639,13 +1641,15 @@
+ def ttypager(text):
+     """Page through text on a text terminal."""
+     lines = plain(_escape_stdout(text)).split('\n')
++    import termios
+     try:
+         import tty
+         fd = sys.stdin.fileno()
+         old = tty.tcgetattr(fd)
+         tty.setcbreak(fd)
+         getchar = lambda: sys.stdin.read(1)
+-    except (ImportError, AttributeError, io.UnsupportedOperation):
++    # In some cases we get a "termios.error: not a tty" error in CoWasm, e.g,. when running pydoc test suite.
++    except (termios.error, ImportError, AttributeError, io.UnsupportedOperation):
+         tty = None
+         getchar = lambda: sys.stdin.readline()[:-1][:1]
+ 

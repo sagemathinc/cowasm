@@ -1,0 +1,35 @@
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+]0;~/zython/packages/cpython/src[01;34m~/zython/packages/cpython/src[00m$ [K]0;~/zython/packages/cpython/src[01;34m~/zython/packages/cpython/src[00m$ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	[31mmodified:   zython_importer.py[m
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	[31m../../../bin/zd[m
+	[31m../../../bin/zdb[m
+	[31m../../luatex/[m
+	[31m../../pdftex/[m
+
+no changes added to commit (use "git add" and/or "git commit -a")
+]0;~/zython/packages/cpython/src[01;34m~/zython/packages/cpython/src[00m$ git commit -av
+hint: Waiting for your editor to close the file... [?1h=(B)0[?1049h[1;25r[m[4l[39;49m[?1h=[?25l[39;49m[m[H[J[1B# Please enter the commit message for your changes. Lin[3;1Hes starting[1B# with '#' will be ignored, and an empty message aborts[5;2Hthe commit.[1B#[1B# On branch main[1B# Your branch is up to date with 'origin/main'.[1B#[1B# Changes to be committed:[1B#[7Cmodified:   zython_importer.py[1B#[1B# Untracked files:[1B#[7C../../../bin/zd[1B#[7C../../../bin/zdb[1B#[7C../../luatex/[1B#[7C../../pdftex/[1B#[1B# ------------------------ >8 ------------------------[1B# Do not modify or remove the line above.[1B# Everything below it will be ignored.[1Bdiff --git a/packages/cpython/src/zython_importer.py b/[23;1Hpackages/cpython/src/zython_importer.py[1Bindex a24b817..d71f835 100644[25;55H[H[0;7m [24B .git/COMMIT_EDITMSG                         0% « 1, 1 [1@1[m[H[0;7m[33m [3;17H[0m[41m [2B [23;17H/[2B[49m[0;1;7m .git/COMMIT_EDITMSG                         0% « 1, 1 [1@1[m[C[0;1;7mINSERT » .git/COMMIT_EDITMSG[25C[m[Hg[0;7m[33m [25;31H[39m[0;1;7m[+][25;46H1[7C2[m[Hgo[0;7m[33m [25;54H[39m[0;1;7m3[m[Hgot[0;7m[33m [25;54H[39m[0;1;7m4[m[Hgot [0;7m[33m [25;54H[39m[0;1;7m5[m[Hgot b[0;7m[33m [25;54H[39m[0;1;7m6[m[1;6Ha[0;7m[33m [25;54H[39m[0;1;7m7[m[1;7Hs[0;7m[33m [25;54H[39m[0;1;7m8[m[1;8Hi[0;7m[33m [25;54H[39m[0;1;7m9[m[1;9Hc[0;7m[33m [25;45H[39m[0;1;7m1% « 1, 10[m[1;10H [0;7m[33m [25;54H[39m[0;1;7m1[m[1;11Hz[0;7m[33m [25;54H[39m[0;1;7m2[m[1;12Hy[0;7m[33m [25;54H[39m[0;1;7m3[m[1;13Ht[0;7m[33m [25;54H[39m[0;1;7m4[m[1;14Hh[0;7m[33m [25;54H[39m[0;1;7m5[m[1;15Ho[0;7m[33m [25;54H[39m[0;1;7m6[m[1;16Hn[0;7m[33m [25;54H[39m[0;1;7m7[m[1;17H [0;7m[33m [25;54H[39m[0;1;7m8[m[1;18Hi[0;7m[33m [25;54H[39m[0;1;7m9[m[1;19Hm[0;7m[33m [25;53H[39m[0;1;7m20[m[1;20Hp[0;7m[33m [25;54H[39m[0;1;7m1[m[1;21Ho[0;7m[33m [25;54H[39m[0;1;7m2[m[1;22Hr[0;7m[33m [25;54H[39m[0;1;7m3[m[1;23Ht[0;7m[33m [25;54H[39m[0;1;7m4[m[1;24He[0;7m[33m [25;54H[39m[0;1;7m5[m[1;25Hr[0;7m[33m [25;54H[39m[0;1;7m6[m[1;26H [0;7m[33m [25;54H[39m[0;1;7m7[m[1;27Hw[0;7m[33m [25;54H[39m[0;1;7m8[m[1;28Ho[0;7m[33m [25;54H[39m[0;1;7m9[m[1;29Hr[0;7m[33m [25;53H[39m[0;1;7m30[m[1;30Hk[0;7m[33m [25;54H[39m[0;1;7m1[m[1;31Hi[0;7m[33m [25;54H[39m[0;1;7m2[m[1;32Hn[0;7m[33m [25;54H[39m[0;1;7m3[m[1;33Hg[0;7m[33m [25;54H[39m[0;1;7m4[m[1;34H [0;7m[33m [25;54H[39m[0;1;7m5[m[1;34H[0;7m[33m [39m[m[K[25;54H[0;1;7m4[m[1;34H [0;7m[33m [25;54H[39m[0;1;7m5[m[1;35Hw[0;7m[33m [25;54H[39m[0;1;7m6[m[1;36Hi[0;7m[33m [25;54H[39m[0;1;7m7[m[1;36H[0;7m[33m [39m[m[K[25;54H[0;1;7m6[m[1;35H[0;7m[33m [39m[m[K[25;54H[0;1;7m5[m[1;34H[0;7m[33m [39m[m[K[25;54H[0;1;7m4[m[C[0;1;7m.git/COMMIT_EDITMSG [+]         [21C[m[25;41H[0;1;7mZ «[11C[m[JM[0;1;7m .git/COMMIT_EDITMSG [+]       :wq<Enter> « 1% « 1, 34 [25;55H[m[25;1H[34h[?25h[?1049l[?1l>[?1l>[K[main 8bedecc] got basic zython importer working
+ 1 file changed, 42 insertions(+), 12 deletions(-)
+]0;~/zython/packages/cpython/src[01;34m~/zython/packages/cpython/src[00m$ git push
+Enumerating objects: 11, done.
+Counting objects:   9% (1/11)Counting objects:  18% (2/11)Counting objects:  27% (3/11)Counting objects:  36% (4/11)Counting objects:  45% (5/11)Counting objects:  54% (6/11)Counting objects:  63% (7/11)Counting objects:  72% (8/11)Counting objects:  81% (9/11)Counting objects:  90% (10/11)Counting objects: 100% (11/11)Counting objects: 100% (11/11), done.
+Delta compression using up to 10 threads
+Compressing objects:  16% (1/6)Compressing objects:  33% (2/6)Compressing objects:  50% (3/6)Compressing objects:  66% (4/6)Compressing objects:  83% (5/6)Compressing objects: 100% (6/6)Compressing objects: 100% (6/6), done.
+Writing objects:  16% (1/6)Writing objects:  33% (2/6)Writing objects:  50% (3/6)Writing objects:  66% (4/6)Writing objects:  83% (5/6)Writing objects: 100% (6/6)Writing objects: 100% (6/6), 1.11 KiB | 1.11 MiB/s, done.
+Total 6 (delta 5), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas:   0% (0/5)[Kremote: Resolving deltas:  20% (1/5)[Kremote: Resolving deltas:  40% (2/5)[Kremote: Resolving deltas:  60% (3/5)[Kremote: Resolving deltas:  80% (4/5)[Kremote: Resolving deltas: 100% (5/5)[Kremote: Resolving deltas: 100% (5/5), completed with 5 local objects.[K
+To github.com:sagemathinc/zython.git
+   22f178f..8bedecc  main -> main
+]0;~/zython/packages/cpython/src[01;34m~/zython/packages/cpython/src[00m$ 

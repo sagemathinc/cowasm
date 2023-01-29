@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Run this inside build/wasm/ to rebuild.   This is
+# useful if you want to modify the cpython source code to understand what
+# is going on.  E.g., put printf's all over the place, type ./rebuild,
+# and in a few seconds you are using python-wasm with those changes applied!
+# **TODO** for some reason when make fails the build doesn't stop, so for
+# now you MUST carefully watch the build for errors.
+
+echo "Rebuild"
+set -ev
+SCRIPTDIR=$(dirname $(readlink -f "$0"))
+cd "$SCRIPTDIR"/..
+rm -f `pwd`/dist/wasm/.install-cpython
+make `pwd`/dist/wasm/.install-cpython
+#make python-wasm
+make wasm

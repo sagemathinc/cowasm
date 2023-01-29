@@ -1,0 +1,12 @@
+--- native/src/pip/_vendor/rich/live.py	2022-11-30 22:08:59
++++ wasm/src/pip/_vendor/rich/live.py	2022-11-30 22:11:29
+@@ -127,7 +127,8 @@
+                     # let this be displayed in the terminal).
+                     self.stop()
+                     raise
+-            if self.auto_refresh:
++            # COWASM: We hard disable this since threads are not supported yet and it used pthreads.
++            if False and self.auto_refresh:
+                 self._refresh_thread = _RefreshThread(self, self.refresh_per_second)
+                 self._refresh_thread.start()
+ 

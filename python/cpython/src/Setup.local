@@ -1,0 +1,90 @@
+# Look in build/wasm/Modules/Setup for adding modules here.  NOTE in some cases we
+# are only adding things here because they are explicitly removed for the emscripten
+# and WASI targets in configure.ac.  A better approach might be a new target...
+
+# When you add something here to static, the actual static library that needs to be linked in
+# *MUST* be added to packages/python-wasm/Makefile for the python.wasm target.  That's
+# where the important linking actually happens.
+
+*static*
+
+
+# This _posixsubprocess MUST be built into the core statically since it calls
+# code that we can't link into the host python.wasm since it isn't used otherwise,
+# e.g., the function _Py_closerange(int first, int last) in Python/fileutils.c,
+# which isn't otherwise in the public API.  When it tries to call that (when doing exec)
+# in share so module, we get a segfault.
+_posixsubprocess _posixsubprocess.c
+
+*shared*
+
+_decimal _decimal/_decimal.c
+
+pyexpat pyexpat.c
+
+# OpenSSL bindings
+_ssl _ssl.c -DOPENSSL_THREADS -I$(OPENSSL_WASM)/include $(OPENSSL_WASM)/lib/libssl.a $(OPENSSL_WASM)/lib/libcrypto.a
+
+# Ctypes / libffi
+
+_ctypes _ctypes/_ctypes.c _ctypes/callbacks.c _ctypes/callproc.c _ctypes/stgdict.c _ctypes/cfield.c -DHAVE_FFI_PREP_CIF_VAR -DHAVE_FFI_PREP_CLOSURE_LOC -DHAVE_FFI_CLOSURE_ALLOC -I$(LIBFFI_WASM)/include -L$(LIBFFI_WASM)/lib -lffi
+
+
+
+
+# TODO: _hashlib causes trouble and so far not needed.  Python has its own smaller version and this
+# C version is huge.
+# More importantly, having it breaks things.  In particular "import hashlib, ssl" then exit
+# and get WebAssembly crash.
+# _hashlib _hashopenssl.c -DOPENSSL_THREADS -I$(OPENSSL_WASM)/include $(OPENSSL_WASM)/lib/libcrypto.a
+
+# text encodings and unicode
+
+# These are *HUGE* and well worth moving out of the core wasm bundle.
+_codecs_cn cjkcodecs/_codecs_cn.c
+_codecs_hk cjkcodecs/_codecs_hk.c
+_codecs_iso2022 cjkcodecs/_codecs_iso2022.c
+_codecs_jp cjkcodecs/_codecs_jp.c
+_codecs_kr cjkcodecs/_codecs_kr.c
+_codecs_tw cjkcodecs/_codecs_tw.c
+
+# This one has one failing test involving os.unlink if we make it shared.
+# We will revisit this, since it might be a sign of a bug in dylink.
+# That said, this module is only 22k, so shouldn't be dynamic.
+#_multibytecodec cjkcodecs/multibytecodec.c
+
+unicodedata unicodedata.c
+
+# _pickle and _datetime together would save a little under 50K zipped,
+# and are not needed at startup, but they cause a break.  When we build
+# either of them shared, for some reason we get issues with
+# _PyRuntime not being defined.  It's not worth it to debug given the
+# small savings, and that cPython doesn't encourage these to be dynamic,
+# and maybe it isn't supported.
+# _datetime _datetimemodule.c
+# _pickle _pickle.c
+
+# Readline via libedit:
+readline readline.c -I$(LIBEDIT_WASM)/include $(LIBEDIT_WASM)/lib/libedit.a $(TERMCAP_WASM)/lib/libtermcap.a
+
+
+# Curses
+_curses _cursesmodule.c -I$(NCURSES_WASM)/include -I$(NCURSES_WASM)/include/ncurses $(NCURSES_WASM)/lib/libncurses.a $(TERMCAP_WASM)/lib/libtermcap.a
+_curses_panel _curses_panel.c -I$(NCURSES_WASM)/include -I$(NCURSES_WASM)/include/ncurses $(NCURSES_WASM)/lib/libncurses.a $(TERMCAP_WASM)/lib/libtermcap.a
+
+
+
+_bz2 _bz2module.c -I$(BZIP2_WASM)/include/ $(BZIP2_WASM)/lib/libbz2.a
+
+zlib  zlibmodule.c -I$(ZLIB_WASM)/include $(ZLIB_WASM)/lib/libz.a
+
+_lzma _lzmamodule.c -I$(LZMA_WASM)/include/ $(LZMA_WASM)/lib/liblzma.a
+
+_sqlite3 _sqlite/blob.c _sqlite/connection.c _sqlite/cursor.c _sqlite/microprotocols.c _sqlite/module.c _sqlite/prepare_protocol.c _sqlite/row.c _sqlite/statement.c  _sqlite/util.c -I$(SQLITE_WASM)/include/ $(SQLITE_WASM)/lib/libsqlite3.a
+
+mmap mmapmodule.c
+
+termios termios.c
+
+_json _json.c
+

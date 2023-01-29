@@ -1,0 +1,13 @@
+--- native/src/pip/_vendor/cachecontrol/filewrapper.py	2022-11-30 22:08:59
++++ wasm/src/pip/_vendor/cachecontrol/filewrapper.py	2022-11-30 22:10:05
+@@ -69,6 +69,10 @@
+                 # relying on Python's buffer API and mmap(). mmap() just gives
+                 # a view directly into the filesystem's memory cache, so it
+                 # doesn't result in duplicate memory use.
++
++                # CoWasm: Temporary hack to avoid using mmap.
++                return self.__buf.read()
++
+                 self.__buf.seek(0, 0)
+                 result = memoryview(
+                     mmap.mmap(self.__buf.fileno(), 0, access=mmap.ACCESS_READ)
