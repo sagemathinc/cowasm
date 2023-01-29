@@ -5,6 +5,8 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CORE_DIRS = $(dir $(shell ls core/*/Makefile))
 PYTHON_DIRS = $(dir $(shell ls python/*/Makefile))
 
+ALL_DIRS = ${CORE_DIRS} ${PYTHON_DIRS}
+
 export PATH := ${CWD}/bin:${CWD}/core/zig/dist:$(PATH)
 
 all: core
@@ -24,8 +26,23 @@ core:
 	#                                                        #
 	##########################################################
 
+.PHONY: test-core
+test-core:
+	./bin/make-all test ${CORE_DIRS}
+	#
+	#
+	##########################################################
+	#                                                        #
+	#   CONGRATULATIONS -- COWASM CORE TEST SUITE PASSED!    #
+	#
+	@echo "#   `date`"
+	@echo "#   `uname -s -m`"
+	@echo "#   Git Branch: `git rev-parse --abbrev-ref HEAD`"
+	#                                                        #
+	##########################################################
+
 .PHONY: python
-python:
+python: core
 	./bin/make-all all ${PYTHON_DIRS}
 	#
 	#
@@ -41,7 +58,7 @@ python:
 
 .PHONY: test
 test:
-	./bin/make-all test ${CORE_DIRS}
+	./bin/make-all test ${ALL_DIRS}
 	#
 	#
 	##########################################################
@@ -57,7 +74,7 @@ test:
 
 .PHONY: test-clean
 test-clean:
-	./bin/make-all-clean test ${CORE_DIRS}
+	./bin/make-all-clean test ${ALL_DIRS}
 	#
 	#
 	##########################################################
@@ -73,6 +90,6 @@ test-clean:
 
 .PHONY: clean
 clean:
-	./bin/make-all clean ${CORE_DIRS} ${PYTHON_DIRS}
+	./bin/make-all clean ${ALL_DIRS}
 	rm -rf bin/python* bin/cowasm-* bin/zig
 

@@ -14,6 +14,12 @@ USER root
 RUN apt-get update \
   && apt-get install -y git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 libtool tcl zip libncurses-dev
 
+# Install nodejs and pnpm
+RUN \
+  && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
+  && apt-get install -y nodejs \
+  && npm install -g npm pnpm
+
 # Get source code of python-wasm and build everything:
 ARG commit=HEAD
 
