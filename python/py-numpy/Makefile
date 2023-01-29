@@ -53,14 +53,14 @@ ${BUILD_WASM}/.lib: deps ${BUILD_WASM}/.patched
 	# TODO: We install rather than just build *solely* so that
 	# pip install with pandas doesn't try to install numpy later.
 	cd ${BUILD_WASM} \
-		&& PYTHONPATH=${PYTHONPATH} npx @cowasm/cpython setup.py build
+		&& PYTHONPATH=${PYTHONPATH} pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.lib
 
 ${DIST_WASM}/.built: deps ${BUILD_WASM}/.lib
 	cd ${BUILD_WASM}/build/lib* \
 		&& rm -rf numpy/core/include \
 		&& cp -rv ../src*/numpy/core/include numpy/core/ \
-		&& npx @cowasm/cpython -m cowasm_bundler numpy numpy/core/multiarray.py numpy/core/include
+		&& pnpm-exec cpython -m cowasm_bundler numpy numpy/core/multiarray.py numpy/core/include
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
 	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib*/numpy.tar.xz
 	# The include files are needed to building anything that depends on numpy, and they aren't
@@ -74,5 +74,5 @@ test: ${DIST_WASM}/.built
 	rm -rf ${BUILD_WASM}/cowasm-test
 	mkdir -p ${BUILD_WASM}/cowasm-test
 	@cd ${BUILD_WASM}/cowasm-test \
-		&& PYTHONPATH=${DIST_WASM} npx @cowasm/cpython -c "import numpy; print(numpy.array([3,8,9,5,0,7,7]).sum())" | grep 39 \
+		&& PYTHONPATH=${DIST_WASM} pnpm-exec cpython -c "import numpy; print(numpy.array([3,8,9,5,0,7,7]).sum())" | grep 39 \
 		&& echo "NUMPY TEST PASSED!"

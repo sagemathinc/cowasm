@@ -12,12 +12,12 @@ include ../build/Makefile-rules
 
 ${BUILD_WASM}/.built: deps ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&& PYTHONPATH=${PIP} npx @cowasm/cpython setup.py build
+		&& PYTHONPATH=${PIP} pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
-		&& npx @cowasm/cpython -m cowasm_bundler mpmath
+		&& pnpm-exec cpython -m cowasm_bundler mpmath
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
 	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib/mpmath.tar.xz
@@ -25,10 +25,10 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.built
 
 test: ${DIST_WASM}/.built
 	# Test that importing from the bundle works:
-	PYTHONPATH=${DIST_WASM} npx @cowasm/cpython -c 'import mpmath'
+	PYTHONPATH=${DIST_WASM} pnpm-exec cpython -c 'import mpmath'
 	# Run the full test suite
 	cd ${BUILD_WASM}/build/lib \
-		&& PYTHONPATH=${DIST_WASM}:`pwd` npx @cowasm/cpython mpmath/tests/runtests.py
+		&& PYTHONPATH=${DIST_WASM}:`pwd` pnpm-exec cpython mpmath/tests/runtests.py
 
 
 

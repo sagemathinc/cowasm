@@ -12,12 +12,12 @@ include ../build/Makefile-rules
 
 ${BUILD_WASM}/.built: deps ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
-		&& PYTHONPATH=$(shell cowasm-package-path @cowasm/py-setuptools):$(shell cowasm-package-path @cowasm/py-mpmath) npx @cowasm/cpython setup.py build
+		&& PYTHONPATH=$(shell cowasm-package-path @cowasm/py-setuptools):$(shell cowasm-package-path @cowasm/py-mpmath) pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
-		&& npx @cowasm/cpython -m cowasm_bundler sympy
+		&& pnpm-exec cpython -m cowasm_bundler sympy
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
 	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib/sympy.tar.xz
 	touch ${DIST_WASM}/.built
@@ -26,10 +26,10 @@ ${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
 # which might be hard to get to pass anywhere, let alone in WASM.
 test: ${DIST_WASM}/.built deps
 	# Test that importing from the bundle works:
-	PYTHONPATH=${DIST_WASM}:$(shell cowasm-package-path @cowasm/py-mpmath) npx @cowasm/cpython -c 'import sympy'
+	PYTHONPATH=${DIST_WASM}:$(shell cowasm-package-path @cowasm/py-mpmath) pnpm-exec cpython -c 'import sympy'
 
 	# A little test of functionality
-	PYTHONPATH=${DIST_WASM}:$(shell cowasm-package-path @cowasm/py-mpmath) npx @cowasm/cpython ${SRC}/test_basic.py
+	PYTHONPATH=${DIST_WASM}:$(shell cowasm-package-path @cowasm/py-mpmath) pnpm-exec cpython ${SRC}/test_basic.py
 
 
 

@@ -22,7 +22,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 
 ${BUILD_WASM}/.install: deps ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
-		&& PYTHONPATH=${PIP} npx @cowasm/cpython setup.py build
+		&& PYTHONPATH=${PIP} pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.install
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.install

@@ -1,0 +1,11 @@
+#!/bin/sh
+`pnpm root`/.bin/$1 "${@:2}"
+
+
+# This script works around a weird and surprising behavior of pnpm exec, which
+# may also be valid (not sure).  See https://github.com/pnpm/pnpm/issues/5068
+# Namely, if you do `pnpm exec cpython` say, then it'll run the relevant
+# node_modules/.bin/cpython script, but with the current working directory
+# as the directory containing node_modules.  I can definitely understand how
+# in many settings that would be useful, but for CoWasm's build system it is
+# really bad.  Hence this script.

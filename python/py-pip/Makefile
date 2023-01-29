@@ -23,7 +23,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 
 ${BUILD_WASM}/.built: deps ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
-		&& PYTHONPATH=${SETUPTOOLS} npx @cowasm/cpython setup.py build
+		&& PYTHONPATH=${SETUPTOOLS} pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.built
 
 # Trying to use a bundle (e.g., only pyc, etc.,) leads to endless problems, since
@@ -37,11 +37,11 @@ ${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
 	# the directory setuptools-65.6.3.dist-info exists.  Basically, we used our own setuptools package
 	# just for bootstrapping.  Probably this is very similar to what ensurepip does?
 	# We do NOT just pip install pip because of the patches above...
-	PYTHONPATH=${SETUPTOOLS}:${DIST_WASM} npx @cowasm/cpython -m pip install setuptools --target=${BUILD_WASM}/site-packages
+	PYTHONPATH=${SETUPTOOLS}:${DIST_WASM} pnpm-exec cpython -m pip install setuptools --target=${BUILD_WASM}/site-packages
 	cp -r ${BUILD_WASM}/site-packages/* ${DIST_WASM}
 
 test: ${DIST_WASM}/.built
 	# Importing from the bundle works:
-	PYTHONPATH=${DIST_WASM} npx @cowasm/cpython -c 'import pip'
+	PYTHONPATH=${DIST_WASM} pnpm-exec cpython -c 'import pip'
 	# The command line script works.
-	PYTHONPATH=${DIST_WASM} npx @cowasm/cpython -m pip > /dev/null
+	PYTHONPATH=${DIST_WASM} pnpm-exec cpython -m pip > /dev/null

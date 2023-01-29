@@ -27,19 +27,19 @@ ${BUILD_WASM}/.install: deps ${BUILD_WASM}/.build
 	# TODO: Now install pandas first via setup.py, then using pip to install
 	# just the remaining dependencies.
 	cd ${BUILD_WASM} \
-		&& PYTHONPATH="${PYTHONPATH}" npx @cowasm/cpython setup.py build
-	PYTHONPATH="${PYTHONPATH}" npx @cowasm/cpython -m pip install --target ${BUILD_WASM}/site-packages python-dateutil pytz
+		&& PYTHONPATH="${PYTHONPATH}" pnpm-exec cpython setup.py build
+	PYTHONPATH="${PYTHONPATH}" pnpm-exec cpython -m pip install --target ${BUILD_WASM}/site-packages python-dateutil pytz
 	touch ${BUILD_WASM}/.install
 
 
 ${DIST_WASM}/.built: deps ${BUILD_WASM}/.install
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
 	cd ${BUILD_WASM} \
-		&& npx @cowasm/cpython -m cowasm_bundler pandas
+		&& pnpm-exec cpython -m cowasm_bundler pandas
 	cd ${BUILD_WASM}/site-packages \
-		&& npx @cowasm/cpython -m cowasm_bundler pytz pytz/zoneinfo \
-		&& npx @cowasm/cpython -m cowasm_bundler dateutil dateutil/zoneinfo \
-		&& mkdir -p six && cp six.py six/__init__.py && npx @cowasm/cpython -m cowasm_bundler six
+		&& pnpm-exec cpython -m cowasm_bundler pytz pytz/zoneinfo \
+		&& pnpm-exec cpython -m cowasm_bundler dateutil dateutil/zoneinfo \
+		&& mkdir -p six && cp six.py six/__init__.py && pnpm-exec cpython -m cowasm_bundler six
 
 	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/pandas.tar.xz
 	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/site-packages/pytz.tar.xz
@@ -49,5 +49,5 @@ ${DIST_WASM}/.built: deps ${BUILD_WASM}/.install
 
 # Just a trivial test for now.
 test: ${DIST_WASM}/.built deps
-	@PYTHONPATH="${DIST_WASM}:${PYTHONPATH}" npx @cowasm/cpython -c "import pandas" && echo "Trivial PANDAS TEST PASSED!"
+	@PYTHONPATH="${DIST_WASM}:${PYTHONPATH}" pnpm-exec cpython -c "import pandas" && echo "Trivial PANDAS TEST PASSED!"
 

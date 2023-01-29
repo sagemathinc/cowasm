@@ -18,7 +18,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 
 ${BUILD_WASM}/.built: deps ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
-		&& npx @cowasm/cpython setup.py build
+		&& pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
@@ -30,9 +30,9 @@ ${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
 	echo '__version__="${VERSION}"' > ${BUILD_WASM}/build/lib/setuptools/version.py
 	# create bundles
 	cd ${BUILD_WASM}/build/lib \
-		&& npx @cowasm/cpython -m cowasm_bundler setuptools \
-		&& npx @cowasm/cpython -m cowasm_bundler _distutils_hack \
-		&& npx @cowasm/cpython -m cowasm_bundler pkg_resources
+		&& pnpm-exec cpython -m cowasm_bundler setuptools \
+		&& pnpm-exec cpython -m cowasm_bundler _distutils_hack \
+		&& pnpm-exec cpython -m cowasm_bundler pkg_resources
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
 	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib/setuptools.tar.xz
@@ -42,4 +42,4 @@ ${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
 
 test: deps ${DIST_WASM}/.built
 	# Test that importing from the bundle works:
-	PYTHONPATH=${DIST_WASM} npx @cowasm/cpython  -c 'import setuptools'
+	PYTHONPATH=${DIST_WASM} pnpm-exec cpython  -c 'import setuptools'
