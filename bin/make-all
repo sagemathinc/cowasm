@@ -18,10 +18,10 @@ done
 
 set +v
 
-echo $*
 echo "##########################################################"
 echo "#                                                        #"
 echo "#   CONGRATULATIONS -- $TARGET WORKED"
+echo "#   PACKAGES: $*"
 echo "#                                                        #"
 echo "#   `date`"
 echo "#   `uname -s -m`"
