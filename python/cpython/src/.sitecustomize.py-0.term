@@ -1,94 +1,0 @@
-
-The default interactive shell is now zsh.
-To update your account to use zsh, please run `chsh -s /bin/zsh`.
-For more details, please visit https://support.apple.com/kb/HT208050.
-]0;~/cowasm/packages/cpython/src[01;34m~/cowasm/packages/cpython/src[00m$ [K]0;~/cowasm/packages/cpython/src[01;34m~/cowasm/packages/cpython/src[00m$ python-wasm
-Python 3.11.0 (main, Nov 11 2022, 15:59:52) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
-Type "help", "copyright", "credits" or "license" for more information.
->>> import sys; sys.path.insert.>>> import sys; sys.path.insert ('.',>>> import sys; sys.path.insert('.' >>> import sys; sys.path.insert('. >>> import sys; sys.path.insert(' >>> import sys; sys.path.insert( 0,'.')
->>> import sitecusotmize>>> import sitecusotmiz >>> import sitecusotmi >>> import sitecusotm >>> import sitecusot >>> import sitecuso >>> import sitecus tomzie>>> import sitecustomzi >>> import sitecustomz >>> import sitecustom ize
->>> ^D
-]0;~/cowasm/packages/cpython/src[01;34m~/cowasm/packages/cpython/src[00m$ gi [Kt commit -v sitecustomize.py 
-hint: Waiting for your editor to close the file... [?1h=(B)0[?1049h[1;47r[m[4l[39;49m[?1h=[?25l[39;49m[m[H[J[1B# Please enter the commit message for your changes. Lines starting[1B# with '#' will be ignored, and an empty message aborts the commit.[1B#[1B# On branch dev[1B# Your branch is up to date with 'origin/dev'.[1B#[1B# Changes to be committed:[1B#[7Cmodified:   sitecustomize.py[1B#[1B# Changes not staged for commit:[1B#[7Cmodified:   ../../dash-wasm/package.json[1B#[7Cmodified:   ../../dylink/package.json[1B#[7Cmodified:   ../../kernel/package.json[1B#[7Cmodified:   ../../posix-node/package.json[1B#[7Cmodified:   ../../python-wasm/data/socket/client.py[1B#[7Cmodified:   ../../python-wasm/data/socket/server.py[1B#[7Cmodified:   ../../python-wasm/package.json[1B#[7Cmodified:   ../../wasi-js/package.json[1B#[1B# Untracked files:[1B#[7C../a.py[1B#[7C../warrior-rogue.scr[1B#[7C../../dash-wasm/a.py[1B#[7C../../kernel/src/wasm/posix/a.py[1B#[7C../../posix-node/demo/read.js[1B#[7C../../python-wasm/data/pip/[1B#[7C../../python-wasm/data/socket/warrior-rogue.scr[1B#[7C../../python-wasm/data/ssl/[1B#[1B# ------------------------ >8 ------------------------[1B# Do not modify or remove the line above.[1B# Everything below it will be ignored.[1Bdiff --git a/packages/cpython/src/sitecustomize.py b/packages/cpython/src/sitecustomize.[35;1Hpy[1Bindex cb15fcf..c743f2e 100644[1B--- a/packages/cpython/src/sitecustomize.py[1B+++ b/packages/cpython/src/sitecustomize.py[1B@@ -1,11 +1,16 @@[1B # Install our custom import hook, which imports tar.xz bundles with so in them.[1B-import cowasm_importer[1B+try:[1B+    import cowasm_importer[1B+except ModuleNotFoundError:[1B+    # python-wasm sometimes is started during the build process before cowasm_importer[1B+    # is installed.  That's the one case where this is safe to silently ignore.[47;88H[H[0;7m [46B .git/COMMIT_EDITMSG                                                          0% « 1, 1 [1@1[m[H[0;7m[33m [1;72H[0m[41m [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1Br[2B [1B[0;1m[34m--- a/packages/cpython/src/sitecustomize.py [37;72H[0m[41m [1B[0;1m[34m+++ b/packages/cpython/src/sitecustomize.py [38;72H[0m[41m [1B[0;1m[31m@@ -1,11 +1,16 @@ [39;72H[0m[41m [1B [1B[49m[31m-import cowasm_importer [41;72H[39m[41m [1B[49m[32m+try: [42;72H[39m[41m [1B[49m[32m+    import cowasm_importer [43;72H[39m[41m [1B[49m[32m+except ModuleNotFoundError: [44;72H[39m[41m [1B[49m[32m+    # python-wasm sometimes is started during the build process before[32m[41m [39;49m[32mcowasm_importer [46;1H+    # is installed.  That's the one case where this is safe to silentl[32m[41my[39;49m[32m ignore. [1B[39m[0;1;7m .git/COMMIT_EDITMSG                                                          0% « 1, 1 [1@1[m[C[0;1;7mINSERT » .git/COMMIT_EDITMSG[58C[m[Ho[0;7m[33m [47;31H[39m[0;1;7m[+][47;79H1[7C2[m[Hon[0;7m[33m [47;87H[39m[0;1;7m3[m[Hone[0;7m[33m [47;87H[39m[0;1;7m4[m[Hone [0;7m[33m [47;87H[39m[0;1;7m5[m[Hone c[0;7m[33m [47;87H[39m[0;1;7m6[m[1;6Ha[0;7m[33m [47;87H[39m[0;1;7m7[m[1;7Hs[0;7m[33m [47;87H[39m[0;1;7m8[m[1;8He[0;7m[33m [47;87H[39m[0;1;7m9[m[1;9H [0;7m[33m [47;78H[39m[0;1;7m1% « 1, 10[m[1;10Hw[0;7m[33m [47;87H[39m[0;1;7m1[m[1;11Hh[0;7m[33m [47;87H[39m[0;1;7m2[m[1;12He[0;7m[33m [47;87H[39m[0;1;7m3[m[1;13Hn[0;7m[33m [47;87H[39m[0;1;7m4[m[1;14H [0;7m[33m [47;87H[39m[0;1;7m5[m[1;15Hi[0;7m[33m [47;87H[39m[0;1;7m6[m[1;16Hg[0;7m[33m [47;87H[39m[0;1;7m7[m[1;17Hn[0;7m[33m [47;87H[39m[0;1;7m8[m[1;18Ho[0;7m[33m [47;87H[39m[0;1;7m9[m[1;19Hr[0;7m[33m [47;86H[39m[0;1;7m20[m[1;20Hi[0;7m[33m [47;87H[39m[0;1;7m1[m[1;21Hn[0;7m[33m [47;78H[39m[0;1;7m2[8C2[m[1;22Hg[0;7m[33m [47;87H[39m[0;1;7m3[m[1;23H [0;7m[33m [47;87H[39m[0;1;7m4[m[1;24Hw[0;7m[33m [47;87H[39m[0;1;7m5[m[1;24H[0;7m[33m [39m[m [47;87H[0;1;7m4[m[1;24Hc[0;7m[33m [47;87H[39m[0;1;7m5[m[1;25Ho[0;7m[33m [47;87H[39m[0;1;7m6[m[1;26Hw[0;7m[33m [47;87H[39m[0;1;7m7[m[1;27Ha[0;7m[33m [47;87H[39m[0;1;7m8[m[1;28Hs[0;7m[33m [47;87H[39m[0;1;7m9[m[1;29Hm[0;7m[33m [47;86H[39m[0;1;7m30[m[1;30H_[0;7m[33m [47;87H[39m[0;1;7m1[m[1;31Hi[0;7m[33m [47;87H[39m[0;1;7m2[m[1;32Hm[0;7m[33m [47;87H[39m[0;1;7m3[m[1;33Hp[0;7m[33m [47;87H[39m[0;1;7m4[m[1;34Ho[0;7m[33m [47;87H[39m[0;1;7m5[m[1;35Hr[0;7m[33m [47;87H[39m[0;1;7m6[m[1;36Ht[0;7m[33m [47;87H[39m[0;1;7m7[m[1;37He[0;7m[33m [47;87H[39m[0;1;7m8[m[1;38Hr[0;7m[33m [47;87H[39m[0;1;7m9[m[1;39H [0;7m[33m [47;86H[39m[0;1;7m40[m[1;40Hi[0;7m[33m [47;87H[39m[0;1;7m1[m[1;41Hm[0;7m[33m [47;87H[39m[0;1;7m2[m[1;42Hp[0;7m[33m [47;78H[39m[0;1;7m3[8C3[m[1;43Ho[0;7m[33m [47;87H[39m[0;1;7m4[m[1;44Hr[0;7m[33m [47;87H[39m[0;1;7m5[m[1;45Ht[0;7m[33m [47;87H[39m[0;1;7m6[m[1;46H [0;7m[33m [47;87H[39m[0;1;7m7[m[1;47He[0;7m[33m [47;87H[39m[0;1;7m8[m[1;48Hr[0;7m[33m [47;87H[39m[0;1;7m9[m[1;49Hr[0;7m[33m [47;86H[39m[0;1;7m50[m[1;50Ho[0;7m[33m [47;87H[39m[0;1;7m1[m[1;51Hr[0;7m[33m [47;87H[39m[0;1;7m2[m[1;52H [0;7m[33m [47;87H[39m[0;1;7m3[m[1;53Hi[0;7m[33m [47;87H[39m[0;1;7m4[m[1;54Hs[0;7m[33m [47;87H[39m[0;1;7m5[m[1;55H [0;7m[33m [47;87H[39m[0;1;7m6[m[1;56HO[0;7m[33m [47;87H[39m[0;1;7m7[m[1;57HK[0;7m[33m [47;87H[39m[0;1;7m8[m[C[0;1;7m.git/COMMIT_EDITMSG [+]         [54C[m[47;74H[0;1;7mZ «[11C[m[JM[0;1;7m .git/COMMIT_EDITMSG [+]                                        :wq<Enter> « 3% « 1, 58 [47;88H[m[47;1H[34h[?25h[?1049l[?1l>[?1l>[K[dev 5fbaba6] one case when ignoring cowasm_importer import error is OK
- 1 file changed, 7 insertions(+), 2 deletions(-)
-]0;~/cowasm/packages/cpython/src[01;34m~/cowasm/packages/cpython/src[00m$ git push
-Enumerating objects: 11, done.
-Counting objects:   9% (1/11)Counting objects:  18% (2/11)Counting objects:  27% (3/11)Counting objects:  36% (4/11)Counting objects:  45% (5/11)Counting objects:  54% (6/11)Counting objects:  63% (7/11)Counting objects:  72% (8/11)Counting objects:  81% (9/11)Counting objects:  90% (10/11)Counting objects: 100% (11/11)Counting objects: 100% (11/11), done.
-Delta compression using up to 10 threads
-Compressing objects:  16% (1/6)Compressing objects:  33% (2/6)Compressing objects:  50% (3/6)Compressing objects:  66% (4/6)Compressing objects:  83% (5/6)Compressing objects: 100% (6/6)Compressing objects: 100% (6/6), done.
-Writing objects:  16% (1/6)Writing objects:  33% (2/6)Writing objects:  50% (3/6)Writing objects:  66% (4/6)Writing objects:  83% (5/6)Writing objects: 100% (6/6)Writing objects: 100% (6/6), 686 bytes | 686.00 KiB/s, done.
-Total 6 (delta 5), reused 0 (delta 0), pack-reused 0
-remote: Resolving deltas:   0% (0/5)[Kremote: Resolving deltas:  20% (1/5)[Kremote: Resolving deltas:  40% (2/5)[Kremote: Resolving deltas:  60% (3/5)[Kremote: Resolving deltas:  80% (4/5)[Kremote: Resolving deltas: 100% (5/5)[Kremote: Resolving deltas: 100% (5/5), completed with 5 local objects.[K
-giTo github.com:sagemathinc/cowasm.git
-   60a5662..5fbaba6  dev -> dev
-]0;~/cowasm/packages/cpython/src[01;34m~/cowasm/packages/cpython/src[00m$ git status
-On branch dev
-Your branch is up to date with 'origin/dev'.
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-	[31mmodified:   ../../dash-wasm/package.json[m
-	[31mmodified:   ../../dylink/package.json[m
-	[31mmodified:   ../../kernel/package.json[m
-	[31mmodified:   ../../posix-node/package.json[m
-	[31mmodified:   ../../python-wasm/data/socket/client.py[m
-	[31mmodified:   ../../python-wasm/data/socket/server.py[m
-	[31mmodified:   ../../python-wasm/package.json[m
-	[31mmodified:   ../../wasi-js/package.json[m
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-	[31m../a.py[m
-	[31m../warrior-rogue.scr[m
-	[31m../../dash-wasm/a.py[m
-	[31m../../kernel/src/wasm/posix/a.py[m
-	[31m../../posix-node/demo/read.js[m
-	[31m../../python-wasm/data/pip/[m
-	[31m../../python-wasm/data/socket/warrior-rogue.scr[m
-	[31m../../python-wasm/data/ssl/[m
-
-no changes added to commit (use "git add" and/or "git commit -a")
-]0;~/cowasm/packages/cpython/src[01;34m~/cowasm/packages/cpython/src[00m$ git commit [Kcd ../..
-]0;~/cowasm/packages[01;34m~/cowasm/packages[00m$ git status
-On branch dev
-Your branch is up to date with 'origin/dev'.
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-	[31mmodified:   dash-wasm/package.json[m
-	[31mmodified:   dylink/package.json[m
-	[31mmodified:   kernel/package.json[m
-	[31mmodified:   posix-node/package.json[m
-	[31mmodified:   python-wasm/data/socket/client.py[m
-	[31mmodified:   python-wasm/data/socket/server.py[m
-	[31mmodified:   python-wasm/package.json[m
-	[31mmodified:   wasi-js/package.json[m
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-	[31mcpython/a.py[m
-	[31mcpython/warrior-rogue.scr[m
-	[31mdash-wasm/a.py[m
-	[31mkernel/src/wasm/posix/a.py[m
-	[31mposix-node/demo/read.js[m
-	[31mpython-wasm/data/pip/[m
-	[31mpython-wasm/data/socket/warrior-rogue.scr[m
-	[31mpython-wasm/data/ssl/[m
-
-no changes added to commit (use "git add" and/or "git commit -a")
-]0;~/cowasm/packages[01;34m~/cowasm/packages[00m$ git commit -v */package.json
-hint: Waiting for your editor to close the file... [?1h=(B)0[?1049h[1;47r[m[4l[39;49m[?1h=[?25l[39;49m[m[H[J[1B# Please enter the commit message for your changes. Lines starting[1B# with '#' will be ignored, and an empty message aborts the commit.[1B#[1B# On branch dev[1B# Your branch is up to date with 'origin/dev'.[1B#[1B# Changes to be committed:[1B#[7Cmodified:   dash-wasm/package.json[1B#[7Cmodified:   dylink/package.json[1B#[7Cmodified:   kernel/package.json[1B#[7Cmodified:   posix-node/package.json[1B#[7Cmodified:   python-wasm/package.json[1B#[7Cmodified:   wasi-js/package.json[1B#[1B# Changes not staged for commit:[1B#[7Cmodified:   python-wasm/data/socket/client.py[1B#[7Cmodified:   python-wasm/data/socket/server.py[1B#[1B# Untracked files:[1B#[7Ccpython/a.py[1B#[7Ccpython/warrior-rogue.scr[1B#[7Cdash-wasm/a.py[1B#[7Ckernel/src/wasm/posix/a.py[1B#[7Cposix-node/demo/read.js[1B#[7Cpython-wasm/data/pip/[1B#[7Cpython-wasm/data/socket/warrior-rogue.scr[1B#[7Cpython-wasm/data/ssl/[1B#[1B# ------------------------ >8 ------------------------[1B# Do not modify or remove the line above.[1B# Everything below it will be ignored.[1Bdiff --git a/packages/dash-wasm/package.json b/packages/dash-wasm/package.json[1Bindex 6c462a3..ff535f8 100644[1B--- a/packages/dash-wasm/package.json[1B+++ b/packages/dash-wasm/package.json[1B@@ -1,6 +1,6 @@[1B {[1B "name": "dash-wasm",[1B-  "version": "0.4.2",[1B+  "version": "0.5.0",[42;4H"description": "dash-wasm -- WebAssembly dash shell for servers and browsers (early d[43;1Hemo version)",[44;4H"main": "./dist/node.js",[45;4H"browser": "./dist/browser.js",[1B@@ -27,7 +27,7 @@[47;88H[H[0;7m [46B .git/COMMIT_EDITMSG                                                          0% « 1, 1 [1@1[m[H[0;7m[33m [1;72H[0m[41m [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1B [1Bg[1B [1B[0;1m[34m--- a/packages/dash-wasm/package.json [35;72H[0m[41m [1B[0;1m[34m+++ b/packages/dash-wasm/package.json [36;72H[0m[41m [1B[0;1m[31m@@ -1,6 +1,6 @@ [37;72H[0m[41m [1B [1B [1B[49m[31m-  "version": "0.4.2", [40;72H[39m[41m [1B[49m[32m+  "version": "0.5.0", [41;72H[39m[41m [1Bb[2B [1B [1B[0;1m[31m@@ -27,7 +27,7 @@ [46;72H[0m[41m [1B[49m[0;1;7m .git/COMMIT_EDITMSG                                                          0% « 1, 1 [1@1[m[C[0;1;7mINSERT » .git/COMMIT_EDITMSG[58C[m[Hu[0;7m[33m [47;31H[39m[0;1;7m[+][47;79H1[7C2[m[H[0;7m[33m [39m[m [47;79H[0;1;7m0[7C1[m[Hp[0;7m[33m [47;79H[39m[0;1;7m1[7C2[m[Hpu[0;7m[33m [47;87H[39m[0;1;7m3[m[Hpub[0;7m[33m [47;87H[39m[0;1;7m4[m[Hpubl[0;7m[33m [47;87H[39m[0;1;7m5[m[Hpubli[0;7m[33m [47;87H[39m[0;1;7m6[m[1;6Hs[0;7m[33m [47;87H[39m[0;1;7m7[m[1;7Hh[0;7m[33m [47;87H[39m[0;1;7m8[m[1;8H [0;7m[33m [47;87H[39m[0;1;7m9[m[1;9Hp[0;7m[33m [47;78H[39m[0;1;7m1% « 1, 10[m[1;10Ha[0;7m[33m [47;87H[39m[0;1;7m1[m[1;11Hc[0;7m[33m [47;87H[39m[0;1;7m2[m[1;12Hk[0;7m[33m [47;87H[39m[0;1;7m3[m[1;13Ha[0;7m[33m [47;87H[39m[0;1;7m4[m[1;14Hg[0;7m[33m [47;87H[39m[0;1;7m5[m[1;15He[0;7m[33m [47;87H[39m[0;1;7m6[m[1;16Hs[0;7m[33m [47;87H[39m[0;1;7m7[m[1;17H [0;7m[33m [47;87H[39m[0;1;7m8[m[1;18Ht[0;7m[33m [47;87H[39m[0;1;7m9[m[1;19Ho[0;7m[33m [47;86H[39m[0;1;7m20[m[1;20H [0;7m[33m [47;87H[39m[0;1;7m1[m[1;21Hn[0;7m[33m [47;87H[39m[0;1;7m2[m[1;22Hp[0;7m[33m [47;87H[39m[0;1;7m3[m[1;23Hm[0;7m[33m [47;87H[39m[0;1;7m4[m[C[0;1;7m.git/COMMIT_EDITMSG [+]         [54C[m[47;74H[0;1;7mZ «[11C[m[JM[0;1;7m .git/COMMIT_EDITMSG [+]                                        :wq<Enter> « 1% « 1, 24 [47;88H[m[47;1H[34h[?25h[?1049l[?1l>[?1l>[K[dev 2d8645a] publish packages to npm
- 6 files changed, 11 insertions(+), 11 deletions(-)
-]0;~/cowasm/packages[01;34m~/cowasm/packages[00m$ git push
-Enumerating objects: 26, done.
-Counting objects:   3% (1/26)Counting objects:   7% (2/26)Counting objects:  11% (3/26)Counting objects:  15% (4/26)Counting objects:  19% (5/26)Counting objects:  23% (6/26)Counting objects:  26% (7/26)Counting objects:  30% (8/26)Counting objects:  34% (9/26)Counting objects:  38% (10/26)Counting objects:  42% (11/26)Counting objects:  46% (12/26)Counting objects:  50% (13/26)Counting objects:  53% (14/26)Counting objects:  57% (15/26)Counting objects:  61% (16/26)Counting objects:  65% (17/26)Counting objects:  69% (18/26)Counting objects:  73% (19/26)Counting objects:  76% (20/26)Counting objects:  80% (21/26)Counting objects:  84% (22/26)Counting objects:  88% (23/26)Counting objects:  92% (24/26)Counting objects:  96% (25/26)Counting objects: 100% (26/26)Counting objects: 100% (26/26), done.
-Delta compression using up to 10 threads
-Compressing objects:   6% (1/15)Compressing objects:  13% (2/15)Compressing objects:  20% (3/15)Compressing objects:  26% (4/15)Compressing objects:  33% (5/15)Compressing objects:  40% (6/15)Compressing objects:  46% (7/15)Compressing objects:  53% (8/15)Compressing objects:  60% (9/15)Compressing objects:  66% (10/15)Compressing objects:  73% (11/15)Compressing objects:  80% (12/15)Compressing objects:  86% (13/15)Compressing objects:  93% (14/15)Compressing objects: 100% (15/15)Compressing objects: 100% (15/15), done.
-Writing objects:   6% (1/15)Writing objects:  13% (2/15)Writing objects:  20% (3/15)Writing objects:  26% (4/15)Writing objects:  33% (5/15)Writing objects:  40% (6/15)Writing objects:  46% (7/15)Writing objects:  53% (8/15)Writing objects:  60% (9/15)Writing objects:  66% (10/15)Writing objects:  73% (11/15)Writing objects:  80% (12/15)Writing objects:  86% (13/15)Writing objects:  93% (14/15)Writing objects: 100% (15/15)Writing objects: 100% (15/15), 2.50 KiB | 2.50 MiB/s, done.
-Total 15 (delta 12), reused 0 (delta 0), pack-reused 0
-remote: Resolving deltas:   0% (0/12)[Kremote: Resolving deltas:   8% (1/12)[Kremote: Resolving deltas:  16% (2/12)[Kremote: Resolving deltas:  25% (3/12)[Kremote: Resolving deltas:  33% (4/12)[Kremote: Resolving deltas:  41% (5/12)[Kremote: Resolving deltas:  50% (6/12)[Kremote: Resolving deltas:  58% (7/12)[Kremote: Resolving deltas:  66% (8/12)[Kremote: Resolving deltas:  75% (9/12)[Kremote: Resolving deltas:  83% (10/12)[Kremote: Resolving deltas:  91% (11/12)[Kremote: Resolving deltas: 100% (12/12)[Kremote: Resolving deltas: 100% (12/12), completed with 11 local objects.[K
-To github.com:sagemathinc/cowasm.git
-   5fbaba6..2d8645a  dev -> dev
-]0;~/cowasm/packages[01;34m~/cowasm/packages[00m$ 

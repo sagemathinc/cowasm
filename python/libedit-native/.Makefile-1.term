@@ -1,46 +1,0 @@
-
-The default interactive shell is now zsh.
-To update your account to use zsh, please run `chsh -s /bin/zsh`.
-For more details, please visit https://support.apple.com/kb/HT208050.
-]0;~/cowasm/packages/libedit[01;34m~/cowasm/packages/libedit[00m$ [K]0;~/cowasm/packages/libedit[01;34m~/cowasm/packages/libedit[00m$ cd ..
-]0;~/cowasm/packages[01;34m~/cowasm/packages[00m$ cd python-wasm/
-]0;~/cowasm/packages/python-wasm[01;34m~/cowasm/packages/python-wasm[00m$ ls
-Makefile		bin			index.d.ts		package.json
-README.md		build			node_modules		src
-TODO.md			dist			package-lock.json	tsconfig.json
-]0;~/cowasm/packages/python-wasm[01;34m~/cowasm/packages/python-wasm[00m$ cd src/wasm/[Kopen src/wq[Kasm/worker/node.ts 
-]49;{"event":"open","paths":[{"file":"cowasm/packages/python-wasm/src/wasm/worker/node.ts"}]}
-]0;~/cowasm/packages/python-wasm[01;34m~/cowasm/packages/python-wasm[00m$ [K]0;~/cowasm/packages/python-wasm[01;34m~/cowasm/packages/python-wasm[00m$ make
-cd src && zig build-lib \
-	   -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic -O Debug \
-	   --main-pkg-path /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/python-wasm/src \
-		-rdynamic \
-		-target wasm32-wasi \
-		--import-memory \
-		--import-table \
-		-L /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/python-wasm/../dylink/dist/wasm/ -ldylink -lc -lm -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal \
-		-I. -I/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/python-wasm/../posix-wasm/dist/wasm \
-		/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/python-wasm/../posix-wasm/dist/wasm/libposix.a /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/python-wasm/../libedit/dist/wasm/lib/libedit.a /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/python-wasm/../termcap/dist/wasm/lib/libtermcap.a /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/python-wasm/src/wasm/posix/stdlib.c /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/python-wasm/src/python/signal/signal.c \
-		cowasm/interface.zig
-LLVM Emit Object... [20D[0KLLD Link... [12D[0Kmkdir -p /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/python-wasm/dist/cowasm
-mv src/interface.wasm /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/python-wasm/dist/cowasm/cowasm.wasm
-]0;~/cowasm/packages/python-wasm[01;34m~/cowasm/packages/python-wasm[00m$ npm u[Krun tsc
-
-> python-wasm@0.20.3 tsc
-> tsc -w
-
-c[[90m12:32:01 PM[0m] Starting compilation in watch mode...
-
-[[90m12:32:02 PM[0m] Found 0 errors. Watching for file changes.
-
-^C
-]0;~/cowasm/packages/python-wasm[01;34m~/cowasm/packages/python-wasm[00m$ [K]0;~/cowasm/packages/python-wasm[01;34m~/cowasm/packages/python-wasm[00m$ c
-The default interactive shell is now zsh.
-To update your account to use zsh, please run `chsh -s /bin/zsh`.
-For more details, please visit https://support.apple.com/kb/HT208050.
-]0;~/cowasm/packages/libedit[01;34m~/cowasm/packages/libedit[00m$ cd ../dash
-]0;~/cowasm/packages/dash[01;34m~/cowasm/packages/dash[00m$ cowasm ./dist/wasm/bin/dash.wasm 
-cowasm$ 
-]0;~/cowasm/packages/dash[01;34m~/cowasm/packages/dash[00m$ cowasm ./dist/wasm/bin/dash.wasm [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Kcowasm ./dist/wasm/bin/dash.wasm 
-cowasm$ > > > > 
-]0;~/cowasm/packages/dash[01;34m~/cowasm/packages/dash[00m$ [K]0;~/cowasm/packages/dash[01;34m~/cowasm/packages/dash[00m$ [K]0;~/cowasm/packages/dash[01;34m~/cowasm/packages/dash[00m$ [K]0;~/cowasm/packages/dash[01;34m~/cowasm/packages/dash[00m$ [K]0;~/cowasm/packages/dash[01;34m~/cowasm/packages/dash[00m$ [K]0;~/cowasm/packages/dash[01;34m~/cowasm/packages/dash[00m$ [K]0;~/cowasm/packages/dash[01;34m~/cowasm/packages/dash[00m$ [K]0;~/cowasm/packages/dash[01;34m~/cowasm/packages/dash[00m$ [K]0;~/cowasm/packages/dash[01;34m~/cowasm/packages/dash[00m$ 

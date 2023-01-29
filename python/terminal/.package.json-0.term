@@ -1,96 +1,0 @@
-
-The default interactive shell is now zsh.
-To update your account to use zsh, please run `chsh -s /bin/zsh`.
-For more details, please visit https://support.apple.com/kb/HT208050.
-]0;~/cowasm/packages/terminal[01;34m~/cowasm/packages/terminal[00m$ [K]0;~/cowasm/packages/terminal[01;34m~/cowasm/packages/terminal[00m$ npm s python-wasm
-NAME                      | DESCRIPTION          | AUTHOR          | DATE       | VERSIO
-[31mpython-wasm[0m               | [31mpython-wasm[0m --…      | =wstein         | 2022-11-23 | 0.26.2[31m[0m
-dash-wasm                 | dash-wasm --…        | =wstein         | 2022-11-26 | 0.7.3 [31m[0m
-@sagemath/python          | Python is a…         | =wstein         | 2021-07-23 | 1.0.3 [31m[0m
-[?25l([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠦ : [7msill[0m [35mlogfile[0m done cleaning log files[0m[K[K[?25hrpython                   | WASM compatible…     | =rafi16jan      | 2020-09-21 | 1.0.2 [31m[0m
-@plasticity/coldbrew      | Coldbrew is Python…  | =plasticity     | 2019-10-08 | 0.0.74[31m[0m
-@wapython/webpack         | How to use using…    | =wstein         | 2022-07-13 | 1.0.1 [31m[0m
-micropython               | A WASM module built… | =rafi16jan      | 2019-07-05 | 1.1.8 [31m[0m
-tpython                   | WASM compatible…     | =rafi16jan      | 2022-07-25 | 1.0.0 [31m[0m
-@yeliulee/micropython-was | MicroPython for…     | =yeliulee       | 2021-12-22 | 1.0.0 
-m                         |                      |                 |            |       [31m[0m
-rustpython_wasm           | A Python-3 (CPython… | =coolreader18   | 2019-04-21 | 0.1.0-[31m[0m
-@sagemath/sympow          | SYMPOW is a…         | =wstein         | 2021-07-23 | 1.0.0 [31m[0m
-cjval_wasm                | 1. install…          | =feenster       | 2022-11-01 | 0.2.4 [31m[0m
-@run-wasm/python          | <p align="center">…  | =slip_hq        | 2021-10-28 | 0.0.3 [31m[0m
-coding-problem-pyodide    | Save and run Python… | =zaid24         | 2020-03-23 | 0.1.1 [31m[0m
-]0;~/cowasm/packages/terminal[01;34m~/cowasm/packages/terminal[00m$ [K]0;~/cowasm/packages/terminal[01;34m~/cowasm/packages/terminal[00m$ [K]0;~/cowasm/packages/terminal[01;34m~/cowasm/packages/terminal[00m$ npm s python-wasm
-NAME                      | DESCRIPTION          | AUTHOR          | DATE       | VERSION  | KEYWORDS    
-[31mpython-wasm[0m               | [31mpython-wasm[0m --…      | =wstein         | 2022-11-23 | 0.26.2   | python webas[31m[0m
-dash-wasm                 | dash-wasm --…        | =wstein         | 2022-11-26 | 0.7.3    | python webas[31m[0m
-@sagemath/python          | Python is a…         | =wstein         | 2021-07-23 | 1.0.3    | python wasm [31m[0m
-rpython                   | WASM compatible…     | =rafi16jan      | 2020-09-21 | 1.0.2    | python rpyth[31m[0m
-@plasticity/coldbrew      | Coldbrew is Python…  | =plasticity     | 2019-10-08 | 0.0.74   | python cpyth[31m[0m
-@wapython/webpack         | How to use using…    | =wstein         | 2022-07-13 | 1.0.1    | python webas[31m[0m
-micropython               | A WASM module built… | =rafi16jan      | 2019-07-05 | 1.1.8    | python micro[31m[0m
-tpython                   | WASM compatible…     | =rafi16jan      | 2022-07-25 | 1.0.0    | python tpyth[31m[0m
-@yeliulee/micropython-was | MicroPython for…     | =yeliulee       | 2021-12-22 | 1.0.0    | micropython 
-m                         |                      |                 |            |          |             [31m[0m
-rustpython_wasm           | A Python-3 (CPython… | =coolreader18   | 2019-04-21 | 0.1.0-p… | [31m[0m
-@sagemath/sympow          | SYMPOW is a…         | =wstein         | 2021-07-23 | 1.0.0    | python wasm [31m[0m
-cjval_wasm                | 1. install…          | =feenster       | 2022-11-01 | 0.2.4    | [31m[0m
-@run-wasm/python          | <p align="center">…  | =slip_hq        | 2021-10-28 | 0.0.3    | [31m[0m
-coding-problem-pyodide    | Save and run Python… | =zaid24         | 2020-03-23 | 0.1.1    | [31m[0m
-]0;~/cowasm/packages/terminal[01;34m~/cowasm/packages/terminal[00m$ make clean
-rm -rf /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/terminal/build/wasm /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/terminal/dist/wasm
-rm -rf /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/terminal/build/native /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/terminal/dist/native
-rm -rf node_modules
-m rm -rf /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/terminal/build /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/terminal/dist tsconfig.tsbuildinfo /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/terminal/src/zig-cache
-]0;~/cowasm/packages/terminal[01;34m~/cowasm/packages/terminal[00m$ npm install
-[?25l([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ reify: [32;40mtiming[0m [35marborist:ctor[0m Completed in 0ms[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠦ idealTree: [7msill[0m [35mlogfile[0m done cleaning log files[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ idealTree:terminal: [7msill[0m [35midealTree[0m buildDeps[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ idealTree:terminal: [7msill[0m [35midealTree[0m buildDeps[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ idealTree:terminal: [7msill[0m [35midealTree[0m buildDeps[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ idealTree:terminal: [7msill[0m [35midealTree[0m buildDeps[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ idealTree:terminal: [7msill[0m [35midealTree[0m buildDeps[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠙ idealTree: [32;40mtiming[0m [35midealTree[0m Completed in 672ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ reify:@discoveryjs/json-ext: [7msill[0m [35maudit[0m bulk request {[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ reify:@discoveryjs/json-ext: [7msill[0m [35maudit[0m bulk request {[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ reify:@discoveryjs/json-ext: [7msill[0m [35maudit[0m bulk request {[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠏ reify:@discoveryjs/json-ext: [7msill[0m [35maudit[0m bulk request {[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠏ reify:@discoveryjs/json-ext: [7msill[0m [35maudit[0m bulk request {[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠹ reify:debug: [32;40mtiming[0m [35mreifyNode:node_modules/posix-node/node_modules/debug[0m Complete[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠹ reify:debug: [32;40mtiming[0m [35mreifyNode:node_modules/posix-node/node_modules/debug[0m Complete[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠸ reify:@wapython/unionfs: [32;40mtiming[0m [35mreifyNode:node_modules/dylink/node_modules/debug[0m[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠦ reify:buffer: [32;40mtiming[0m [35mreifyNode:node_modules/@wapython/unionfs[0m Completed in 626ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠧ reify:buffer: [32;40mtiming[0m [35mreifyNode:node_modules/@wapython/unionfs[0m Completed in 626ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠦ reify:bl: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/ajv 980ms (cache hit)[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠏ reify:ms: [32;40mtiming[0m [35mreifyNode:node_modules/portfinder/node_modules/ms[0m Completed in 1[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠴ reify:debug: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/union 1213ms (cache re[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠇ reify:buffer: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/nanoid 1266ms (cache[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ reify:buffer: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/nanoid 1266ms (cache[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ reify:buffer: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/nanoid 1266ms (cache[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠙ reify:buffer: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/nanoid 1266ms (cache[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠦ reify:buffer: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/nanoid 1266ms (cache[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ reify:readable-stream: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/html-encodin[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠴ reify:readable-stream: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/html-encodin[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠴ reify:readable-stream: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/html-encodin[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠇ reify:@cowasm/memfs: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/mkdirp/-/mkdir[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠇ reify:@cowasm/memfs: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/mkdirp/-/mkdir[0m[K([107;97m##############[0m[100;90m⠂⠂⠂⠂[0m) ⠙ reify:functions-have-names: [32;40mtiming[0m [35mreifyNode:node_modules/fast-deep-equal[0m Complet[0m[K([107;97m################[0m[100;90m⠂⠂[0m) ⠧ reify:sockjs: [32;40mtiming[0m [35mreifyNode:node_modules/@webassemblyjs/wasm-parser[0m Completed[0m[K([107;97m#################[0m[100;90m⠂[0m) ⠦ reify:dylink: [32;40mtiming[0m [35mreifyNode:node_modules/html-encoding-sniffer[0m Completed in 24[0m[K([107;97m#################[0m[100;90m⠂[0m) ⠙ reify:ts-loader: [32;40mtiming[0m [35mreifyNode:node_modules/whatwg-encoding/node_modules/iconv[0m[K([107;97m##################[0m) ⠼ reify:neo-async: [32;40mtiming[0m [35mreifyNode:node_modules/renderkid[0m Completed in 2576ms[0m[K([107;97m##################[0m) ⠸ reify:resolve: [32;40mtiming[0m [35mreifyNode:node_modules/@cowasm/kernel[0m Completed in 2628ms[0m[K([107;97m##################[0m) ⠸ reify:resolve: [32;40mtiming[0m [35mreifyNode:node_modules/@cowasm/kernel[0m Completed in 2628ms[0m[K([107;97m##################[0m) ⠼ reify:@types/node: [32;40mtiming[0m [35mreifyNode:node_modules/resolve[0m Completed in 2628ms[0m[K([107;97m##################[0m) ⠴ reify:xterm: [32;40mtiming[0m [35mreifyNode:node_modules/@types/node[0m Completed in 2713ms[0m[K([107;97m##################[0m) ⠦ reify:posix-node: [32;40mtiming[0m [35mreifyNode:node_modules/xterm[0m Completed in 2736ms[0m[K([107;97m##################[0m) ⠏ reify:ajv: [32;40mtiming[0m [35mreifyNode:node_modules/ajv-formats/node_modules/ajv[0m Completed i[0m[K([107;97m##################[0m) ⠏ reify:ajv: [32;40mtiming[0m [35mreifyNode:node_modules/ajv-formats/node_modules/ajv[0m Completed i[0m[K([107;97m##################[0m) ⠹ reify:webpack: [32;40mtiming[0m [35mreifyNode:node_modules/lodash[0m Completed in 2967ms[0m[K([107;97m##################[0m) ⠸ reify:es-abstract: [32;40mtiming[0m [35mreifyNode:node_modules/webpack[0m Completed in 2977ms[0m[K([107;97m##################[0m) ⠼ reify:python-wasm: [32;40mtiming[0m [35mreifyNode:node_modules/es-abstract[0m Completed in 2991ms[0m[K([107;97m##################[0m) ⠼ reify:typescript: [32;40mtiming[0m [35mreifyNode:node_modules/python-wasm[0m Completed in 3051ms[0m[K[K[?25h
-added 511 packages, and audited 512 packages in 4s
-
-92 packages are looking for funding
-  run `npm fund` for details
-
-found [32m[1m0[22m[39m vulnerabilities
-]0;~/cowasm/packages/terminal[01;34m~/cowasm/packages/terminal[00m$ npm run serve
-
-> @cowasm/terminal@0.0.1 serve
-> webpack serve
-
-<i> [1m[32m[webpack-dev-server] Project is running at:[39m[22m
-<i> [1m[32m[webpack-dev-server] Loopback: [36mhttp://localhost:8080/[39m[39m[22m
-<i> [1m[32m[webpack-dev-server] On Your Network (IPv4): [36mhttp://192.168.4.48:8080/[39m[39m[22m
-<i> [1m[32m[webpack-dev-server] On Your Network (IPv6): [36mhttp://[fe80::1]:8080/[39m[39m[22m
-<i> [1m[32m[webpack-dev-server] Content not from webpack is served from '[36m/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/terminal/public[39m' directory[39m[22m
-<i> [1m[32m[webpack-dev-middleware] wait until bundle finished: /[39m[22m
-assets by info 21.4 MiB [1m[32m[immutable][39m[22m
-  assets by path [1m[32m*.xz[39m[22m 10.7 MiB
-    asset [1m[32m7a3f9fa4409dcb5f0cf2.xz[39m[22m 5.04 MiB [1m[32m[emitted][39m[22m [1m[32m[immutable][39m[22m [from: node_modules/python-wasm/dist/sympy.tar.xz] (auxiliary name: main)
-    + 6 assets
-  assets by path [1m[32m*.zip[39m[22m 5.72 MiB
-    asset [1m[32m61fe453e1df3b8161e94.zip[39m[22m 5.33 MiB [1m[32m[emitted][39m[22m [1m[32m[immutable][39m[22m [from: node_modules/python-wasm/dist/python-stdlib.zip] (auxiliary name: main)
-    + 2 assets
-  assets by path [1m[32m*.wasm[39m[22m 4.93 MiB
-    asset [1m[32me890f5fedb00faabdb0a.wasm[39m[22m 4.29 MiB [1m[32m[emitted][39m[22m [1m[32m[immutable][39m[22m [from: node_modules/python-wasm/dist/python.wasm] (auxiliary name: main)
-    asset [1m[32m04f80006bfa37b82bdf6.wasm[39m[22m 649 KiB [1m[32m[emitted][39m[22m [1m[32m[immutable][39m[22m [from: node_modules/@cowasm/kernel/dist/kernel/kernel.wasm] (auxiliary name: main)
-  asset [1m[32m6cdc27de4488075196aa.js[39m[22m 6.63 KiB [1m[32m[emitted][39m[22m [1m[32m[immutable][39m[22m [from: node_modules/@cowasm/kernel/dist/wasm/worker/service-worker.js] (auxiliary name: main)
-asset [1m[32mmain.bundle.js[39m[22m 5.8 MiB [1m[32m[emitted][39m[22m (name: main)
-asset [1m[32mvendors-node_modules_cowasm_kernel_dist_wasm_worker_browser_js.bundle.js[39m[22m 4.05 MiB [1m[32m[emitted][39m[22m (id hint: vendors)
-asset [1m[32m_3e83-_19e6.bundle.js[39m[22m 94.2 KiB [1m[32m[emitted][39m[22m
-asset [1m[32mindex.html[39m[22m 247 bytes [1m[32m[emitted][39m[22m
-runtime modules 54.2 KiB 28 modules
-javascript modules 2.11 MiB
-  modules by path [1m./node_modules/[39m[22m 2.1 MiB 216 modules
-  modules by path [1m./src/*.ts[39m[22m 13.1 KiB
-    [1m./src/index.ts[39m[22m 3.08 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-    + 2 modules
-  [1mutil (ignored)[39m[22m 15 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-  [1mutil (ignored)[39m[22m 15 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-asset modules 546 bytes (javascript) 21.4 MiB (asset)
-  modules by path [1m./node_modules/python-wasm/dist/[39m[22m 462 bytes (javascript) 20.7 MiB (asset) 11 modules
-  modules by path [1m./node_modules/@cowasm/kernel/dist/[39m[22m 84 bytes (javascript) 655 KiB (asset)
-    [1m./node_modules/@cowasm/kernel/dist/kernel/kernel.wasm[39m[22m 42 bytes (javascript) 649 KiB (asset) [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-    [1m./node_modules/@cowasm/kernel/dist/wasm/worker/service-worker.js[39m[22m 42 bytes (javascript) 6.63 KiB (asset) [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-webpack 5.73.0 compiled [1m[32msuccessfully[39m[22m in 1574 ms
-
-
-
-^C<i> [1m[32m[webpack-dev-server] Gracefully shutting down. To force exit, press ^C again. Please wait...[39m[22m
-]0;~/cowasm/packages/terminal[01;34m~/cowasm/packages/terminal[00m$ 

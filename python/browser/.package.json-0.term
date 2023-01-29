@@ -1,281 +1,0 @@
-
-The default interactive shell is now zsh.
-To update your account to use zsh, please run `chsh -s /bin/zsh`.
-For more details, please visit https://support.apple.com/kb/HT208050.
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ [K]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ npm search -h
-Search for packages
-
-Usage:
-npm search [search terms ...]
-
-Options:
-[-l|--long] [--json] [--color|--no-color|--color always] [-p|--parseable]
-[--no-description] [--searchopts <searchopts>] [--searchexclude <searchexclude>]
-[--registry <registry>] [--prefer-online] [--prefer-offline] [--offline]
-
-aliases: find, s, se
-
-Run "npm help search" for more info
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ npm search -h[K[K[K[K[K[K[K[K[Ks kernel
-NAME                      | DESCRIPTION          | AUTHOR          | DATE       | VERSIO
-[31mkernel[0m                    | A simple async…      | =creationix…    | 2012-10-16 | 0.1.4 [31m[0m
-union                     | A hybrid buffered /… | =dscape…        | 2018-12-03 | 0.5.0 [31m[0m
-[?25l([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠦ : [7msill[0m [35mlogfile[0m done cleaning log files[0m[K[K[?25h@kurtharriger/ijavascript | IJavascript is a…    | =kurtharriger   | 2016-10-06 | 5.1.2-[31m[0m
-pdfast                    | Fast [31mkernel[0m density… | =gyosh          | 2016-09-01 | 0.2.0 [31m[0m
-jupyter-[31mkernel[0m-watch      | watch a jupyter…     | =karissa        | 2015-06-18 | 2.0.2 [31m[0m
-@stdlib/math-base-special | Compute the sine of… | =stdlib-bot…    | 2022-02-16 | 0.0.7 
--[31mkernel[0m-sin               |                      |                 |            |       [31m[0m
-@stdlib/math-base-special | Compute the cosine…  | =stdlib-bot…    | 2022-02-16 | 0.0.7 
--[31mkernel[0m-cos               |                      |                 |            |       [31m[0m
-@oesteve/app-[31mkernel[0m       | The frame framework  | =oesteve        | 2022-10-15 | 1.0.0 [31m[0m
-ghost-[31mkernel[0m-default-plug | ikagaka ghost…       | =narazaka       | 2016-08-11 | 1.6.0 
-ins                       |                      |                 |            |       [31m[0m
-gaussiansmoothing         | Implements gaussian… | =rauljordan     | 2015-07-10 | 1.0.0 [31m[0m
-@aureooms/js-cg           | computational…       | =aureooms       | 2017-02-16 | 2.0.1 [31m[0m
-@stdlib/math-base-special | Compute the tangent… | =stdlib-bot…    | 2022-02-16 | 0.0.6 
--[31mkernel[0m-tan               |                      |                 |            |       [31m[0m
-promise-[31mkernel[0m            | simple…              | =jongleberry    | 2014-07-24 | 0.0.0 [31m[0m
-etherpad-require-[31mkernel[0m   | A reference…         | =johnyma22…     | 2021-08-09 | 1.0.15[31m[0m
-lively.lang               | JavaScript utils…    | =mroeder…       | 2019-05-15 | 1.0.25[31m[0m
-shinx                     | Package for…         | =captainsafia   | 2016-01-19 | 1.0.0 [31m[0m
-@web3os-core/[31mkernel[0m       | The OS for the next… | =mathiscode     | 2022-09-20 | 0.7.2 [31m[0m
-grind-cli                 | CLI provider for…    | =shnhrrsn       | 2020-09-22 | 0.8.0 [31m[0m
-@stdlib/math-base-special | Incomplete beta…     | =stdlib-bot…    | 2022-02-16 | 0.0.6 
--[31mkernel[0m-betainc           |                      |                 |            |       [31m[0m
-@stdlib/math-base-special | Inverse incomplete…  | =stdlib-bot…    | 2022-02-16 | 0.0.6 
--[31mkernel[0m-betaincinv        |                      |                 |            |       [31m[0m
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ npm s kernel[K[K[K[K[K[K@cowasm/k[K[Kkerne[K[K[K[K[Kkerne[K[K[K[K[K/kenre[K[K[Krnel
-NAME                      | DESCRIPTION          | AUTHOR          | DATE       | VERSIO
-[31m@cowasm/kernel[0m            | [31m@cowasm/kernel[0m --…   | =wstein         | 2022-11-26 | 0.27.8[31m[0m
-[?25l([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠦ : [7msill[0m [35mlogfile[0m done cleaning log files[0m[K[K[?25h]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ [K]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ [K]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ npm s @cowasm/kernel[K[K[K[K[K[K[K[K[K[K[K[K[K[Kpython-wasm
-NAME                      | DESCRIPTION          | AUTHOR          | DATE       | VERSION  | KEYWORDS    
-[31mpython-wasm[0m               | [31mpython-wasm[0m --…      | =wstein         | 2022-11-23 | 0.26.2   | python webas[31m[0m
-dash-wasm                 | dash-wasm --…        | =wstein         | 2022-11-26 | 0.7.3    | python webas[31m[0m
-@sagemath/python          | Python is a…         | =wstein         | 2021-07-23 | 1.0.3    | python wasm [31m[0m
-rpython                   | WASM compatible…     | =rafi16jan      | 2020-09-21 | 1.0.2    | python rpyth[31m[0m
-@plasticity/coldbrew      | Coldbrew is Python…  | =plasticity     | 2019-10-08 | 0.0.74   | python cpyth[31m[0m
-@wapython/webpack         | How to use using…    | =wstein         | 2022-07-13 | 1.0.1    | python webas[31m[0m
-micropython               | A WASM module built… | =rafi16jan      | 2019-07-05 | 1.1.8    | python micro[31m[0m
-tpython                   | WASM compatible…     | =rafi16jan      | 2022-07-25 | 1.0.0    | python tpyth[31m[0m
-@yeliulee/micropython-was | MicroPython for…     | =yeliulee       | 2021-12-22 | 1.0.0    | micropython 
-m                         |                      |                 |            |          |             [31m[0m
-rustpython_wasm           | A Python-3 (CPython… | =coolreader18   | 2019-04-21 | 0.1.0-p… | [31m[0m
-@sagemath/sympow          | SYMPOW is a…         | =wstein         | 2021-07-23 | 1.0.0    | python wasm [31m[0m
-cjval_wasm                | 1. install…          | =feenster       | 2022-11-01 | 0.2.4    | [31m[0m
-@run-wasm/python          | <p align="center">…  | =slip_hq        | 2021-10-28 | 0.0.3    | [31m[0m
-coding-problem-pyodide    | Save and run Python… | =zaid24         | 2020-03-23 | 0.1.1    | [31m[0m
-[?25l([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠦ : [7msill[0m [35mlogfile[0m done cleaning log files[0m[K[K[?25h]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ npm ub[K[Kpublish --access=public[Kls
-Makefile		node_modules		src			webpack.config.js
-README.md		package-lock.json	tsconfig.json
-dist			package.json		webpack-min.config.js
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ make clean
-rm -rf /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/browser/build/wasm /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/browser/dist/wasm
-rm -rf /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/browser/build/native /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/browser/dist/native
-rm -rf node_modules
-l rm -rf /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/browser/build /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/browser/dist tsconfig.tsbuildinfo /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/browser/src/zig-cache
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ ls
-Makefile		package-lock.json	src			webpack-min.config.js
-README.md		package.json		tsconfig.json		webpack.config.js
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ npm install
-[?25l([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ reify: [32;40mtiming[0m [35marborist:ctor[0m Completed in 0ms[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠦ idealTree: [7msill[0m [35mlogfile[0m start cleaning logs, removing 1 files[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ idealTree:browser: [7msill[0m [35midealTree[0m buildDeps[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ idealTree:browser: [7msill[0m [35midealTree[0m buildDeps[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ idealTree:browser: [7msill[0m [35midealTree[0m buildDeps[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ idealTree:browser: [7msill[0m [35midealTree[0m buildDeps[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ idealTree:browser: [7msill[0m [35midealTree[0m buildDeps[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ idealTree:browser: [7msill[0m [35midealTree[0m buildDeps[0m[K[K[?25h[37;40mnpm[0m [0m[31;40mERR![0m[35m[0m Cannot set properties of null (setting 'peer')
-[0m
-[37;40mnpm[0m [0m[31;40mERR![0m[35m[0m A complete log of this run can be found in:
-[0m[37;40mnpm[0m [0m[31;40mERR![0m[35m[0m     /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/.npm/_logs/2022-11-27T17_35_09_496Z-debug-0.log
-[0m]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ ls
-Makefile		package-lock.json	src			webpack-min.config.js
-README.md		package.json		tsconfig.json		webpack.config.js
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ vi .[K~/.npm/_logs/2022-11-27T17_35_09_496Z-debug-0.log 
-[?1h=(B)0[?1049h[1;52r[m[4l[39;49m[?1h=[?25l[39;49m[m[H[J0 verbose cli /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/pa[2;1Hckages/node/dist/native/bin/node /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a[3;1H965514c95/cowasm/bin/npm[1B1 info using npm@8.19.3[1B2 info using node@v19.1.0[1B3 timing npm:load:whichnode Completed in 0ms[1B4 timing config:load:defaults Completed in 1ms[1B5 timing config:load:file:/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c[9;1H95/cowasm/packages/node/dist/native/lib/node_modules/npm/npmrc Completed in 1ms[1B6 timing config:load:builtin Completed in 1ms[1B7 timing config:load:cli Completed in 1ms[1B8 timing config:load:env Completed in 0ms[1B9 timing config:load:file:/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c[14;1H95/cowasm/packages/browser/.npmrc Completed in 0ms[1B10 timing config:load:project Completed in 3ms[1B11 timing config:load:file:/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514[17;1Hc95/.npmrc Completed in 1ms[1B12 timing config:load:user Completed in 1ms[1B13 timing config:load:file:/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514[20;1Hc95/cowasm/packages/node/dist/native/etc/npmrc Completed in 0ms[1B14 timing config:load:global Completed in 0ms[1B15 timing config:load:validate Completed in 0ms[1B16 timing config:load:credentials Completed in 1ms[1B17 timing config:load:setEnvs Completed in 0ms[1B18 timing config:load Completed in 8ms[1B19 timing npm:load:configload Completed in 8ms[1B20 timing npm:load:mkdirpcache Completed in 1ms[1B21 timing npm:load:mkdirplogs Completed in 0ms[1B22 verbose title npm install[1B23 verbose argv "install"[1B24 timing npm:load:setTitle Completed in 5ms[1B25 timing config:load:flatten Completed in 1ms[1B26 timing npm:load:display Completed in 2ms[1B27 verbose logfile logs-max:10 dir:/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-6[35;1H8a965514c95/.npm/_logs[1B28 verbose logfile /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/.npm[37;1H/_logs/2022-11-27T17_35_09_496Z-debug-0.log[1B29 timing npm:load:logFile Completed in 2ms[1B30 timing npm:load:timers Completed in 0ms[1B31 timing npm:load:configScope Completed in 0ms[1B32 timing npm:load Completed in 18ms[1B33 timing arborist:ctor Completed in 0ms[1B34 silly logfile start cleaning logs, removing 1 files[1B35 silly logfile done cleaning log files[1B36 timing idealTree:init Completed in 304ms[1B37 timing idealTree:userRequests Completed in 0ms[1B38 silly idealTree buildDeps[1B39 silly fetch manifest python-wasm@^0.26.2[1B40 http fetch GET 200 https://registry.npmjs.org/python-wasm 302ms (cache miss)[1B41 silly placeDep ROOT python-wasm@0.26.2 REPLACE for: @cowasm/browser@0.3.0 want: ^0.26.2[1B42 timing idealTree:#root Completed in 444ms[52;105H[H[0;7m0[51B /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/.npm/_logs/2022-11-27T[1@7[m[H[0;7m[33m0[51B[39m[0;1;7m /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/.npm/_logs/2022-11-27T[1@7[m[JM[0;1;7m /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/.npm/_logs/2022-11-27T[52;105H[m[H[48;5;103m0[51B[49m[m/[0;7;5m [102C[m/p[0;7;5m [101C[m/pe[0;7;5m [100C[m/pee[0;7;5m [99C[m[100Dr[0;7;5m [98C[m[H23 verbose argv "install"[K[1B24 timing npm:load:setTitle Completed in 5ms[K[1B25 timing config:load:flatten Completed in 1ms[1B26 timing npm:load:display Completed in 2ms[1B27 verbose logfile logs-max:10 dir:/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-6[6;1H8a965514c95/.npm/_logs[K[1B28 verbose logfile /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/.npm[8;1H/_logs/2022-11-27T17_35_09_496Z-debug-0.log[K[1B29 timing npm:load:logFile Completed in 2ms[K[1B30 timing npm:load:timers Completed in 0ms[K[1B31 timing npm:load:configScope Completed in 0ms[1B32 timing npm:load Completed in 18ms[K[1B33 timing arborist:ctor Completed in 0ms[K[1B34 silly logfile start cleaning logs, removing 1 files[1B35 silly logfile done cleaning log files[K[1B36[16;11HidealTree:init Completed in 304ms[K[1B37 timing idealTree:userRequests Completed in 0ms[1B38 silly idealTree buildDeps[K[1B39 silly fetch manifest python-wasm@^0.26.2[K[1B40 http fetch GET 200 https://registry.npmjs.org/python-wasm 302ms (cache miss)[1B41 silly placeDep ROOT python-wasm@0.26.2 REPLACE for: @cowasm/browser@0.3.0 want: ^0.26.2[1B42[22;11HidealTree:#root Completed in 444ms[K[1B43[23;11HidealTree:node_modules/python-wasm Completed in 0ms[1B44[24;11HidealTree:buildDep[24;44H444ms[1B45[25;11HidealTree Completed in 749[1B46[26;11Hcommand:install Completed in 755ms[K[1B47 verbose stack TypeError: Cannot set properties of null (setting '[0;7m[33mp[39m[meer')[1B47 verbose stack     at visit (/Users/wstein/build/cocalc/src/data/projects/npm_***/cowasm/packages/node/[29;1Hdist/native/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/calc-dep-flags.js:104:54)[1B47[30;12Hstack     at visitNode (/Users/wstein/build/cocalc/src/data/projects/npm_***/cowasm/packages/n[31;1Hode/dist/native/lib/node_modules/npm/node_modules/treeverse/lib/depth-descent.js:58:25)[1B47 verbose stack     at next (/Users/wstein/build/cocalc/src/data/projects/npm_***/cowasm/packages/node/d[33;1Hist/native/lib/node_modules/npm/node_modules/treeverse/lib/depth-descent.js:44:19)[1B4[34;12Hstack     at depth (/Users/wstein/build/cocalc/src/data/projects/npm_***/cowasm/packages/node/[35;1Hdist/native/lib/node_modules/npm/node_modules/treeverse/lib/depth-descent.js:83:10)[1B47[36;12Hstack     at depth (/Users/wstein/build/cocalc/src/data/projects/npm_***/cowasm/packages/node/[37;1Hdist/native/lib/node_modules/npm/node_modules/treeverse/lib/depth.js:27:12)[1B47 verbose stack     at unsetFlag (/Users/wstein/build/cocalc/src/data/projects/npm_***/cowasm/packages/n[39;1Hode/dist/native/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/calc-dep-flags.js:99:5)[1B47 verbose stack     at /Users/wstein/build/cocalc/src/data/projects/npm_***/cowasm/packages/node/dist/na[41;1Htive/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/calc-dep-flags.js:65:7[1B47 verbose stack     at Map.forEach (<anonymous>)[1B47 verbose stack     at calcDepFlagsStep (/Users/wstein/build/cocalc/src/data/projects/npm_***/cowasm/pac[44;1Hkages/node/dist/native/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/calc-dep-flags.js:41:17)[1B47 verbose stack     at visit (/Users/wstein/build/cocalc/src/data/projects/npm_***/cowasm/packages/node/[46;1Hdist/native/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/calc-dep-flags.js:12:20)[1B48 verbose cwd /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/p[48;1Hackages/browser[K[1B49 verbose Darwin 22.1.0[K[1B50 verbose node v19.1.0[K[1B51 verbose npm  v8.19.3[K[1B[0;1;7m /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/.npm/_logs/2022-11-27T[1@7[m[1;51r[1;1H[24M[1;52r[3;69Hp[25B52 error Cannot set properties of null (setting 'peer')[1B53 verbose exit 1[1B54 timing npm Completed in 825ms[1B55 verbose unfinished npm timer reify 1669570509569[1B56 verbose unfinished npm timer reify:loadTrees 1669570509572[1B57 verbose unfinished npm timer idealTree:fixDepFlags 1669570510322[1B58 verbose code 1[1B59 error A complete log of this run can be found in:[1B[0;7m[33m5[39m[m9 error     /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/.npm/_logs[37;1H/2022-11-27T17_35_09_496Z-debug-0.log[1B~[1B~[1B~[1B~[1B~[1B~[1B~[1B~[1B~[1B~[1B~[1B~[1B~[1B~[52;105H[17A[0;7m[33m5[1B[39m[m5[52;105H[17A5[1B[0;7m[33m5[52;105H[39m[m[17A[0;7m[33m5[1B[39m[m5[52;105H[18A[0;7m[33m5[1B[39m[m5[52;105H[19A[0;7m[33m5[1B[39m[m5[52;105H[20A[0;7m[33m5[1B[39m[m5[52;105H[21A[0;7m[33m5[1B[39m[m5[52;105H[22A[0;7m[33m5[1B[39m[m5[52;105H[23A[0;7m[33m5[1B[39m[m5[52;105H[24A[0;7m[33m5[1B[39m[m5[52;105H[25A[0;7m[33m5[1B[39m[m5[52;105H[26A[0;7m[33m5[1B[39m[m5[52;105H[27A[0;7m[33m4[1B[39m[m5[52;105H[29A[0;7m[33m4[2B[39m[m4[52;105H[31A[0;7m[33m4[2B[39m[m4[52;105H[33A[0;7m[33m4[2B[39m[m4[52;105H[34A[0;7m[33m4[1B[39m[m4[52;105H[36A[0;7m[33m4[2B[39m[m4[52;105H[38A[0;7m[33m4[2B[39m[m4[52;105H[40A[0;7m[33m4[2B[39m[m4[52;105H[42A[0;7m[33m4[2B[39m[m4[52;105H[44A[0;7m[33m4[2B[39m[m4[52;105H[46A[0;7m[33m4[2B[39m[m4[52;105H[48A[0;7m[33m4[2B[39m[m4[52;105H[49A[0;7m[33m4[1B[39m[m4[52;105H[50A[0;7m[33m4[1B[39m[m4[52;105H[H[0;7m[33m4[1B[39m[m4[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m4[39m[m4 timing idealTree:buildDeps Completed in 444ms[1B4[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m4[39m[m3 timing idealTree:node_modules/python-wasm Completed in 0ms[1B4[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m4[39m[m2 timing idealTree:#root Completed in 444ms[1B4[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m4[39m[m1 silly placeDep ROOT python-wasm@0.26.2 REPLACE for: @cowasm/browser@0.3.0 want: ^0.26.2[1B4[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m4[39m[m0 http fetch GET 200 https://registry.npmjs.org/python-wasm 302ms (cache miss)[1B4[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m3[39m[m9 silly fetch manifest python-wasm@^0.26.2[1B4[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m3[39m[m8 silly idealTree buildDeps[1B3[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m3[39m[m7 timing idealTree:userRequests Completed in 0ms[1B3[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m3[39m[m6 timing idealTree:init Completed in 304ms[1B3[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m3[39m[m5 silly logfile done cleaning log files[1B3[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m3[39m[m4 silly logfile start cleaning logs, removing 1 files[1B3[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m3[39m[m3 timing arborist:ctor Completed in 0ms[1B3[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m3[39m[m2 timing npm:load Completed in 18ms[1B3[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m3[39m[m1 timing npm:load:configScope Completed in 0ms[1B3[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m3[39m[m0 timing npm:load:timers Completed in 0ms[1B3[52;105H[1;51r[1;1HM[1;52r[1;1H[0;7m[33m2[39m[m9 timing npm:load:logFile Completed in 2ms[1B3[52;105H[1;51r[1;1H[26L[1;52r[1;1H8 timing config:load:env Completed in 0ms[1B9 timing config:load:file:/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c[3;1H95/cowasm/packages/browser/.npmrc Completed in 0ms[1B10 timing config:load:project Completed in 3ms[1B11 timing config:load:file:/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514[6;1Hc95/.npmrc Completed in 1ms[1B12 timing config:load:user Completed in 1ms[1B13 timing config:load:file:/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514[9;1Hc95/cowasm/packages/node/dist/native/etc/npmrc Completed in 0ms[1B14 timing config:load:global Completed in 0ms[1B15 timing config:load:validate Completed in 0ms[1B16 timing config:load:credentials Completed in 1ms[1B17 timing config:load:setEnvs Completed in 0ms[1B18 timing config:load Completed in 8ms[1B19 timing npm:load:configload Completed in 8ms[1B20 timing npm:load:mkdirpcache Completed in 1ms[1B21 timing npm:load:mkdirplogs Completed in 0ms[1B22 verbose title npm install[1B23 verbose argv "install"[1B24 timing npm:load:setTitle Completed in 5ms[1B25 timing config:load:flatten Completed in 1ms[1B26 timing npm:load:display Completed in 2ms[1B27 verbose logfile logs-max:10 dir:/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-6[24;1H8a965514c95/.npm/_logs[1B28 verbose logfile /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/.npm[26;1H[0;7m[33m/[39m[m_logs/2022-11-27T17_35_09_496Z-debug-0.log[1B2[52;105H[1;51r[1;1H[11L[1;52r[1;1H0 verbose cli /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/pa[2;1Hckages/node/dist/native/bin/node /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a[3;1H965514c95/cowasm/bin/npm[1B1 info using npm@8.19.3[1B2 info using node@v19.1.0[1B3 timing npm:load:whichnode Completed in 0ms[1B4 timing config:load:defaults Completed in 1ms[1B5 timing config:load:file:/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c[9;1H95/cowasm/packages/node/dist/native/lib/node_modules/npm/npmrc Completed in 1ms[1B6 timing config:load:builtin Completed in 1ms[1B[0;7m[33m7[39m[m timing config:load:cli Completed in 1ms[26B/[52;105H[H[0;7m[33m0[10B[39m[m7[52;105H[JM[0;1;7m /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/.npm/_logs/2022-11-27T[52;105H[m[52;1H[34h[?25h[?1049l[?1l>[?1l>]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ npm instal[Knpm --help
-npm <command>
-
-Usage:
-
-npm install        install all the dependencies in your project
-npm install <foo>  add the <foo> dependency to your project
-npm test           run this project's tests
-npm run <foo>      run the script named <foo>
-npm <command> -h   quick help on <command>
-npm -l             display usage info for all commands
-npm help <term>    search for help on <term>
-npm help npm       more involved overview
-
-All commands:
-
-    access, adduser, audit, bin, bugs, cache, ci, completion,
-    config, dedupe, deprecate, diff, dist-tag, docs, doctor,
-    edit, exec, explain, explore, find-dupes, fund, get, help,
-    hook, init, install, install-ci-test, install-test, link,
-    ll, login, logout, ls, org, outdated, owner, pack, ping,
-    pkg, prefix, profile, prune, publish, query, rebuild, repo,
-    restart, root, run-script, search, set, set-script,
-    shrinkwrap, star, stars, start, stop, team, test, token,
-    uninstall, unpublish, unstar, update, version, view, whoami
-
-Specify configs in the ini-formatted file:
-    /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/.npmrc
-or on the command line via: npm <command> --key=value
-
-More configuration info: npm help config
-Configuration fields: npm help 7 config
-
-npm@8.19.3 /Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/node/dist/native/lib/node_modules/npm
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ ls
-Makefile		package-lock.json	src			webpack-min.config.js
-README.md		package.json		tsconfig.json		webpack.config.js
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ more Makefile 
-[?1h=include ../build/Makefile-vars
-
-all: ${DIST}/.built
-
-include ../build/Makefile-rules
-
-${DIST}/.built: src/index.ts
-        npm ci
-        npm run build
-        touch ${DIST}/.built
-
-clean-build::
-        rm -rf node_modules
-
-test:
-        echo "no tests yet"
-[3mMakefile (END)[23m[K[K[K[?1l>]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ 
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ npm uninstallje[K[K jest @types/jest
-[?25l([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠦ idealTree: [7msill[0m [35mlogfile[0m start cleaning logs, removing 2 files[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠧ idealTree: [32;40mtiming[0m [35midealTree[0m Completed in 311ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ reify:@discoveryjs/json-ext: [7msill[0m [35maudit[0m bulk request {[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠹ reify:@cowasm/kernel: [32;40mtiming[0m [35mreifyNode:node_modules/python-wasm[0m Completed in 97ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠹ reify:@cowasm/kernel: [32;40mtiming[0m [35mreifyNode:node_modules/python-wasm[0m Completed in 97ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠸ reify:debug: [32;40mtiming[0m [35mreifyNode:node_modules/@cowasm/kernel[0m Completed in 98ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠸ reify:debug: [32;40mtiming[0m [35mreifyNode:node_modules/@cowasm/kernel[0m Completed in 98ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠏ reify:debug: [32;40mtiming[0m [35mreifyNode:node_modules/@cowasm/kernel[0m Completed in 98ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠏ reify:webpack-dev-server: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/webpack-d[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠇ reify:which-boxed-primitive: [32;40mtiming[0m [35mreifyNode:node_modules/update-browserslist-db[0m[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠹ reify:wbuf: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/timers-browserify 499ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠦ reify:unpipe: [32;40mtiming[0m [35mreifyNode:node_modules/util[0m Completed in 677ms[0m[K([107;97m##########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠏ reify:webpack-dev-middleware: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/to-re[0m[K([107;97m##########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠧ reify:string.prototype.trimstart: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/s[0m[K([107;97m##########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠸ reify:webpack-bundle-analyzer: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/sheb[0m[K([107;97m##########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠙ reify:safer-buffer: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/renderkid 767ms[0m[K([107;97m###########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂[0m) ⠙ reify:raw-body: [32;40mtiming[0m [35mreifyNode:node_modules/rechoir[0m Completed in 914ms[0m[K([107;97m###########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂[0m) ⠋ reify:randomfill: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/open 864ms (cache[0m[K([107;97m###########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ reify:path-parse: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/node-releases 906[0m[K([107;97m###########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ reify:normalize-path: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/object-inspec[0m[K([107;97m############[0m[100;90m⠂⠂⠂⠂⠂⠂[0m) ⠸ reify:object-is: [32;40mtiming[0m [35mreifyNode:node_modules/os-browserify[0m Completed in 1125ms[0m[K([107;97m############[0m[100;90m⠂⠂⠂⠂⠂⠂[0m) ⠋ reify:pako: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/minimalistic-crypto-uti[0m[K([107;97m############[0m[100;90m⠂⠂⠂⠂⠂⠂[0m) ⠧ reify:lower-case: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/is-weakref/-/is-w[0m[K([107;97m############[0m[100;90m⠂⠂⠂⠂⠂⠂[0m) ⠋ reify:is-symbol: [32;40mtiming[0m [35mreifyNode:node_modules/is-string[0m Completed in 1284ms[0m[K([107;97m#############[0m[100;90m⠂⠂⠂⠂⠂[0m) ⠹ reify:is-stream: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/http-errors 1200ms[0m[K([107;97m#############[0m[100;90m⠂⠂⠂⠂⠂[0m) ⠋ reify:internal-slot: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/https-browseri[0m[K([107;97m#############[0m[100;90m⠂⠂⠂⠂⠂[0m) ⠋ reify:hmac-drbg: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/glob 1290ms (cache[0m[K([107;97m#############[0m[100;90m⠂⠂⠂⠂⠂[0m) ⠏ reify:has-bigints: [32;40mtiming[0m [35mreifyNode:node_modules/iconv-lite[0m Completed in 1484ms[0m[K([107;97m#############[0m[100;90m⠂⠂⠂⠂⠂[0m) ⠸ reify:htmlparser2: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/event-target-shi[0m[K([107;97m##############[0m[100;90m⠂⠂⠂⠂[0m) ⠧ reify:function.prototype.name: [32;40mtiming[0m [35mreifyNode:node_modules/fastest-levenshtein[0m[0m[K([107;97m##############[0m[100;90m⠂⠂⠂⠂[0m) ⠇ reify:function-bind: [32;40mtiming[0m [35mreifyNode:node_modules/fast-deep-equal[0m Completed in 1[0m[K([107;97m##############[0m[100;90m⠂⠂⠂⠂[0m) ⠸ reify:fill-range: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/domhandler/-/domh[0m[K([107;97m##############[0m[100;90m⠂⠂⠂⠂[0m) ⠏ reify:etag: [32;40mtiming[0m [35mreifyNode:node_modules/domhandler[0m Completed in 1734ms[0m[K([107;97m###############[0m[100;90m⠂⠂⠂[0m) ⠙ reify:dom-serializer: [32;40mtiming[0m [35mreifyNode:node_modules/envinfo[0m Completed in 1783ms[0m[K([107;97m###############[0m[100;90m⠂⠂⠂[0m) ⠇ reify:color-name: [32;40mtiming[0m [35mreifyNode:node_modules/concat-map[0m Completed in 1837ms[0m[K([107;97m###############[0m[100;90m⠂⠂⠂[0m) ⠇ reify:call-bind: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/browserify-rsa/-/b[0m[K([107;97m###############[0m[100;90m⠂⠂⠂[0m) ⠧ reify:brorand: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/ajv/-/ajv-6.12.6.tgz[0m[K([107;97m################[0m[100;90m⠂⠂[0m) ⠇ reify:acorn-import-assertions: [32;40mtiming[0m [35mreifyNode:node_modules/accepts[0m Completed in[0m[K([107;97m################[0m[100;90m⠂⠂[0m) ⠙ reify:abort-controller: [32;40mtiming[0m [35mreifyNode:node_modules/ajv-formats[0m Completed in 20[0m[K([107;97m################[0m[100;90m⠂⠂[0m) ⠦ reify:@webassemblyjs/wasm-parser: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/@[0m[K([107;97m################[0m[100;90m⠂⠂[0m) ⠏ reify:@types/ws: [32;40mtiming[0m [35mreifyNode:node_modules/ansi-regex[0m Completed in 2325ms[0m[K([107;97m################[0m[100;90m⠂⠂[0m) ⠹ reify:@types/express-serve-static-core: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs[0m[K([107;97m################[0m[100;90m⠂⠂[0m) ⠋ reify:@types/eslint-scope: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/@discove[0m[K([107;97m#################[0m[100;90m⠂[0m) ⠹ reify:@webassemblyjs/utf8: [32;40mhttp[0m [35mfetch[0m GET 200 https://registry.npmjs.org/depd/-/d[0m[K([107;97m#################[0m[100;90m⠂[0m) ⠇ reify:@jridgewell/source-map: [32;40mtiming[0m [35mreifyNode:node_modules/miller-rabin/node_mod[0m[K([107;97m#################[0m[100;90m⠂[0m) ⠇ reify:array-flatten: [32;40mtiming[0m [35mreifyNode:node_modules/compression/node_modules/safe-[0m[K([107;97m##################[0m) ⠼ reify:ajv: [32;40mtiming[0m [35mreifyNode:node_modules/clean-css[0m Completed in 2640ms[0m[K([107;97m##################[0m) ⠼ reify:ajv: [32;40mtiming[0m [35mreifyNode:node_modules/clean-css[0m Completed in 2640ms[0m[K([107;97m##################[0m) ⠦ reify:ajv-keywords: [32;40mtiming[0m [35mreifyNode:node_modules/webpack-dev-server/node_modules[0m[K([107;97m##################[0m) ⠧ reify:@types/node: [32;40mtiming[0m [35mreifyNode:node_modules/webpack-dev-middleware/node_modu[0m[K([107;97m##################[0m) ⠇ reify:webpack: [32;40mtiming[0m [35mreifyNode:node_modules/@types/node[0m Completed in 2789ms[0m[K([107;97m##################[0m) ⠇ reify:webpack: [32;40mtiming[0m [35mreifyNode:node_modules/@types/node[0m Completed in 2789ms[0m[K([107;97m##################[0m) ⠸ reify:caniuse-lite: [32;40mtiming[0m [35mreifyNode:node_modules/lodash[0m Completed in 2952ms[0m[K([107;97m##################[0m) ⠼ reify:es-abstract: [32;40mtiming[0m [35mreifyNode:node_modules/caniuse-lite[0m Completed in 2954ms[0m[K([107;97m##################[0m) ⠼ reify:es-abstract: [32;40mtiming[0m [35mreifyNode:node_modules/caniuse-lite[0m Completed in 2954ms[0m[K([107;97m##################[0m) ⠸ reify:typescript: [32;40mtiming[0m [35mreifyNode:node_modules/es-abstract[0m Completed in 2985ms[0m[K[K[?25h
-added 472 packages, and audited 1887 packages in 4s
-
-102 packages are looking for funding
-  run `npm fund` for details
-
-found [32m[1m0[22m[39m vulnerabilities
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ npm [Kls
-Makefile		package-lock.json	tsconfig.json
-README.md		package.json		webpack-min.config.js
-node_modules		src			webpack.config.js
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ npm install
-[?25l([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠦ idealTree: [7msill[0m [35mlogfile[0m start cleaning logs, removing 1 files[0m[K([100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠧ idealTree: [7msill[0m [35mlogfile[0m start cleaning logs, removing 1 files[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ idealTree: [32;40mtiming[0m [35midealTree[0m Completed in 301ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ idealTree: [32;40mtiming[0m [35midealTree[0m Completed in 301ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ idealTree: [32;40mtiming[0m [35midealTree[0m Completed in 301ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ idealTree: [32;40mtiming[0m [35midealTree[0m Completed in 301ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ idealTree: [32;40mtiming[0m [35midealTree[0m Completed in 301ms[0m[K([107;97m#########[0m[100;90m⠂⠂⠂⠂⠂⠂⠂⠂⠂[0m) ⠼ idealTree: [32;40mtiming[0m [35midealTree[0m Completed in 301ms[0m[K([107;97m##################[0m) ⠴ reify:python-wasm: [7msill[0m [35maudit[0m bulk request {[0m[K([107;97m##################[0m) ⠦ reify:python-wasm: [7msill[0m [35maudit[0m bulk request {[0m[K([107;97m##################[0m) ⠦ reify:python-wasm: [7msill[0m [35maudit[0m bulk request {[0m[K([107;97m##################[0m) ⠦ reify:python-wasm: [7msill[0m [35maudit[0m bulk request {[0m[K([107;97m##################[0m) ⠦ reify:python-wasm: [7msill[0m [35maudit[0m bulk request {[0m[K[K[?25h
-changed 1 package, and audited 1887 packages in 1s
-
-102 packages are looking for funding
-  run `npm fund` for details
-
-found [32m[1m0[22m[39m vulnerabilities
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ npm serve
-Unknown command: "serve"
-
-Did you mean this?
-    npm run serve # run the "serve" package script
-
-To see a list of supported npm commands, run:
-  npm help
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ npm serve[C[C[C[Crserveuservenserve serve
-
-> @cowasm/browser@0.3.0 serve
-> webpack serve
-
-<i> [1m[32m[webpack-dev-server] Project is running at:[39m[22m
-<i> [1m[32m[webpack-dev-server] Loopback: [36mhttp://localhost:8080/[39m[39m[22m
-<i> [1m[32m[webpack-dev-server] On Your Network (IPv4): [36mhttp://192.168.4.48:8080/[39m[39m[22m
-<i> [1m[32m[webpack-dev-server] On Your Network (IPv6): [36mhttp://[fe80::1]:8080/[39m[39m[22m
-<i> [1m[32m[webpack-dev-server] Content not from webpack is served from '[36m/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/browser/public[39m' directory[39m[22m
-assets by info 21.7 MiB [1m[32m[immutable][39m[22m
-  assets by path [1m[32m*.xz[39m[22m 10.7 MiB
-    asset [1m[32m03a1373289d6727a1338.xz[39m[22m 5.03 MiB [1m[32m[emitted][39m[22m [1m[32m[immutable][39m[22m [from: ../python-wasm/dist/sympy.tar.xz] (auxiliary name: main)
-    + 6 assets
-  assets by path [1m[32m*.zip[39m[22m 5.72 MiB
-    asset [1m[32m7b6071bf922d70930eb1.zip[39m[22m 5.33 MiB [1m[32m[emitted][39m[22m [1m[32m[immutable][39m[22m [from: ../python-wasm/dist/python-stdlib.zip] (auxiliary name: main)
-    + 2 assets
-  assets by path [1m[32m*.wasm[39m[22m 5.22 MiB
-    asset [1m[32m73f0695957ebe2ec58a4.wasm[39m[22m 4.52 MiB [1m[32m[emitted][39m[22m [1m[32m[immutable][39m[22m [from: ../python-wasm/dist/python.wasm] (auxiliary name: main)
-    asset [1m[32m1b14fd481628083c3874.wasm[39m[22m 719 KiB [1m[32m[emitted][39m[22m [1m[32m[immutable][39m[22m [from: ../kernel/dist/kernel/kernel.wasm] (auxiliary name: main)
-  asset [1m[32m6cdc27de4488075196aa.js[39m[22m 6.63 KiB [1m[32m[emitted][39m[22m [1m[32m[immutable][39m[22m [from: ../kernel/dist/wasm/worker/service-worker.js] (auxiliary name: main)
-asset [1m[32mmain.bundle.js[39m[22m 5 MiB [1m[32m[emitted][39m[22m (name: main)
-asset [1m[32mvendors-dylink_node_modules_debug_src_browser_js-kernel_node_modules_awaiting_dist_awaiting_c-745a50.bundle.js[39m[22m 3.39 MiB [1m[32m[emitted][39m[22m (id hint: vendors)
-asset [1m[32mkernel_dist_wasm_worker_browser_js.bundle.js[39m[22m 950 KiB [1m[32m[emitted][39m[22m
-asset [1m[32mindex.html[39m[22m 246 bytes [1m[32m[emitted][39m[22m
-runtime modules 54.2 KiB 27 modules
-javascript modules 1.8 MiB
-  modules by path [1m../[39m[22m 1.26 MiB 119 modules
-  modules by path [1m./[39m[22m 556 KiB
-    modules by path [1m./node_modules/[39m[22m 547 KiB 94 modules
-    modules by path [1m./src/*.ts[39m[22m 9.31 KiB 2 modules
-  [1mutil (ignored)[39m[22m 15 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-  [1mutil (ignored)[39m[22m 15 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-asset modules 546 bytes (javascript) 21.7 MiB (asset)
-  modules by path [1m../python-wasm/dist/[39m[22m 462 bytes (javascript) 21 MiB (asset) 11 modules
-  modules by path [1m../kernel/dist/[39m[22m 84 bytes (javascript) 726 KiB (asset)
-    [1m../kernel/dist/kernel/kernel.wasm[39m[22m 42 bytes (javascript) 719 KiB (asset) [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-    [1m../kernel/dist/wasm/worker/service-worker.js[39m[22m 42 bytes (javascript) 6.63 KiB (asset) [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-webpack 5.73.0 compiled [1m[32msuccessfully[39m[22m in 1355 ms
-^C<i> [1m[32m[webpack-dev-server] Gracefully shutting down. To force exit, press ^C again. Please wait...[39m[22m
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ ls
-Makefile		package-lock.json	tsconfig.json
-README.md		package.json		webpack-min.config.js
-node_modules		src			webpack.config.js
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ git diff
-[?1h=[1mdiff --git a/Makefile b/Makefile[m[m
-[1mindex b552fa6e..6e1b233e 100644[m[m
-[1m--- a/Makefile[m[m
-[1m+++ b/Makefile[m[m
-[36m@@ -12,7 +12,7 @@[m [mPACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))[m[m
- all: python-wasm dash-wasm[m[m
- [m[m
- cpython: packages/cpython/${BUILT}[m[m
-[31m-packages/cpython/${BUILT}:  zig wasi-js lzma-native zlib-native libedit-native[m[m
-[32m+[m[32mpackages/cpython/${BUILT}:  zig lzma-native zlib-native libedit-native[m[m
-        cd packages/cpython && make all[m[m
- .PHONY: cpython[m[m
- [m[m
-[36m@@ -27,7 +27,7 @@[m [mpackages/dash/${BUILT}: zig[m[m
- .PHONY: dash[m[m
- [m[m
- dash-wasm: packages/dash-wasm/${BUILT}[m[m
-[31m-packages/dash-wasm/${BUILT}: dash lua less rogue[m[m
-[32m+[m[32mpackages/dash-wasm/${BUILT}: node zig dash lua less rogue[m[m
-        cd packages/dash-wasm && make all[m[m
- .PHONY: dash-wasm[m[m
- [m[m
-[36m@@ -48,7 +48,7 @@[m [mpackages/dylink/${BUILT}: node zig cpython[m[m
- .PHONY: dylink[m[m
- [m[m
- kernel: packages/kernel/${BUILT}[m[m
-[31m-packages/kernel/${BUILT}: node wasi-js zig dylink posix-node wasm-opt[m[m
-[32m+[m[32mpackages/kernel/${BUILT}: node zig wasm-opt[m[m
-        cd packages/kernel && make all[m[m
- .PHONY: kernel[m[m
- [m[m
-[1mdiff --git a/packages/browser/README.md b/packages/browser/README.md[m[m
-[1mindex 4d455400..71be6cd0 100644[m[m
-[1m--- a/packages/browser/README.md[m[m
-[1m+++ b/packages/browser/README.md[m[m
-[36m@@ -55,19 +55,10 @@[m [mClone the repo:[m[m
- [m[m
- ```sh[m[m
- git clone https://github.com/sagemathinc/cowasm[m[m
-[31m-cd cowasm/packages/webpack[m[m
-[32m+[m[32mcd cowasm/packages/browser[m[m
- ```[m[m
- [m[m
-[31m-Delete these three lines from package.json (which are used[m[m
-[31m-for development):[m[m
-[31m-[m[m
-[31m-```js[m[m
-[31m-  "workspaces": [[m[m
-[31m-    "../python-wasm"[m[m
-[31m-  ],[m[m
-[31m-```[m[m
-:[K[K[?1l>]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ git status
-On branch dev
-Your branch is up to date with 'origin/dev'.
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-	[31mmodified:   ../../Makefile[m
-	[31mmodified:   README.md[m
-	[31mmodified:   package-lock.json[m
-	[31mmodified:   package.json[m
-	[31mmodified:   ../kernel/package.json[m
-
-no changes added to commit (use "git add" and/or "git commit -a")
-]0;~/cowasm/packages/browser[01;34m~/cowasm/packages/browser[00m$ 

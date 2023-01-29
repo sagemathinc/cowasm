@@ -1,29 +1,0 @@
-
-The default interactive shell is now zsh.
-To update your account to use zsh, please run `chsh -s /bin/zsh`.
-For more details, please visit https://support.apple.com/kb/HT208050.
-]0;~/cowasm/packages/cpython/src[01;34m~/cowasm/packages/cpython/src[00m$ [K]0;~/cowasm/packages/cpython/src[01;34m~/cowasm/packages/cpython/src[00m$ cd ..
-]0;~/cowasm/packages/cpython[01;34m~/cowasm/packages/cpython[00m$ grep listen build/wasm/m[Kpyconfig.h
-/* Define if you have the 'listen' function. */
-]0;~/cowasm/packages/cpython[01;34m~/cowasm/packages/cpython[00m$ grep listen build/wasm/pyconfig.h[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
-/* Define if you have the 'listen' function. */
-]0;~/cowasm/packages/cpython[01;34m~/cowasm/packages/cpython[00m$ grep listen build/wasm/pyconfig.h[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1@-[1@i[1@ 
-/* Define if you have the 'listen' function. */
-#define HAVE_LISTEN 1
-]0;~/cowasm/packages/cpython[01;34m~/cowasm/packages/cpython[00m$ grep -i listen build/wasm/pyconfig.h[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.hc build/wasm/pyconfig.ho build/wasm/pyconfig.hn build/wasm/pyconfig.hn build/wasm/pyconfig.he build/wasm/pyconfig.hc build/wasm/pyconfig.ht build/wasm/pyconfig.h
-/* Define if you have the 'connect' function. */
-#define HAVE_CONNECT 1
-]0;~/cowasm/packages/cpython[01;34m~/cowasm/packages/cpython[00m$ grep -i connect build/wasm/pyconfig.h[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.hr build/wasm/pyconfig.he build/wasm/pyconfig.hc build/wasm/pyconfig.hv build/wasm/pyconfig.hf build/wasm/pyconfig.hr build/wasm/pyconfig.ho build/wasm/pyconfig.hm build/wasm/pyconfig.h
-/* Define if you have the 'recvfrom' function. */
-#define HAVE_RECVFROM 1
-]0;~/cowasm/packages/cpython[01;34m~/cowasm/packages/cpython[00m$ grep -i recvfrom build/wasm/pyconfig.h[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.hs build/wasm/pyconfig.he build/wasm/pyconfig.hn build/wasm/pyconfig.hd build/wasm/pyconfig.ht build/wasm/pyconfig.ho build/wasm/pyconfig.h
-/* Define if you have the 'sendto' function. */
-#define HAVE_SENDTO 1
-]0;~/cowasm/packages/cpython[01;34m~/cowasm/packages/cpython[00m$ grep -i sendto build/wasm/pyconfig.h[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.h[1P build/wasm/pyconfig.hb build/wasm/pyconfig.hi build/wasm/pyconfig.hn build/wasm/pyconfig.hd build/wasm/pyconfig.h
-/* Define if you have the 'bind' function. */
-#define HAVE_BIND 1
-/* Define to 1 if you have the `bind_textdomain_codeset' function. */
-/* #undef HAVE_BIND_TEXTDOMAIN_CODESET */
-/* Define to 1 if you have the declaration of `RTLD_DEEPBIND', and to 0 if you
-#define HAVE_DECL_RTLD_DEEPBIND 0
-]0;~/cowasm/packages/cpython[01;34m~/cowasm/packages/cpython[00m$ [K]0;~/cowasm/packages/cpython[01;34m~/cowasm/packages/cpython[00m$ [K]0;~/cowasm/packages/cpython[01;34m~/cowasm/packages/cpython[00m$ 

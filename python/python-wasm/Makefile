@@ -5,7 +5,7 @@ include ../build/Makefile-vars
 OPT     = -OReleaseSmall
 # OPT     = -ODebug
 
-all: node_modules ${DIST}/.built python
+all: deps ${DIST}/.built python
 
 include ../build/Makefile-rules
 
