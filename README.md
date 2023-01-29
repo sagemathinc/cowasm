@@ -128,15 +128,23 @@ We support and regularly test building CoWasm from source on the following platf
 
 You need Node.js version at least 16.x, pnpm and several standard dev tools listed below.     The dependency you need for every possible package are as follows:
 
-- On MacOS, install the [XCode command line tools.](https://developer.apple.com/xcode/resources/) 
+- On **MacOS**, install the [XCode command line tools.](https://developer.apple.com/xcode/resources/) 
 
-- On Linux apt\-based system, e.g., on Ubuntu 22.04:
+- On **Linux apt\-based system, e.g., on Ubuntu 22.04**:
 
 ```sh
-apt-get install git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 libtool tcl zip libncurses-dev
+sudo apt-get install git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 libtool tcl zip libncurses-dev
 ```
 
-- On Linux RPM based system, e.g., Fedora 37:
+If you also want to install node v18 and pnpm on Ubuntu, you could do:
+
+```sh
+     sudo curl -sL https://deb.nodesource.com/setup_18.x | bash - \
+  && sudo apt-get install -y nodejs \
+  && sudo npm install -g npm pnpm
+```
+
+- On **Linux RPM based system, e.g., Fedora 37:**
 
 ```sh
 dnf install git make cmake curl dpkg-dev m4 yasm texinfo libtool tcl zip ncurses-devel perl
