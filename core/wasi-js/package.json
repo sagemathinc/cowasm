@@ -37,7 +37,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/wasi-js",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/wasi-js",
   "dependencies": {
     "@cowasm/memfs": "^3.5.1",
     "@wapython/unionfs": "^4.5.7",

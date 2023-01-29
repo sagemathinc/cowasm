@@ -10,7 +10,7 @@ ALL = ${CORE} ${PYTHON} ${WEB}
 
 export PATH := ${CWD}/bin:${CWD}/core/zig/dist:$(PATH)
 
-all: core
+all: core python web
 
 .PHONY: core
 core:

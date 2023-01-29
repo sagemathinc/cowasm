@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/less",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/less",
   "devDependencies": {
     "@cowasm/kernel": "workspace:*",
     "@cowasm/ncurses": "workspace:*",

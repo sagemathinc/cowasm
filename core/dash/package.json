@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/dash",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/dash",
   "devDependencies": {
     "@cowasm/kernel": "workspace:*",
     "@cowasm/libedit": "workspace:*",

@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/sagemathinc/cowasm-python.git"
+    "url": "git+ssh://git@github.com/sagemathinc/cowasm.git"
   },
   "keywords": [
     "WebAssembly",
@@ -26,9 +26,9 @@
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/sagemathinc/cowasm-python/issues"
+    "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm-python/tree/main/packages/py-matplotlib",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/python/py-matplotlib",
   "devDependencies": {
     "@cowasm/cpython": "workspace:*",
     "@cowasm/py-pip": "workspace:*"

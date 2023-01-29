@@ -20,5 +20,5 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/bzip2"
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/bzip2"
 }

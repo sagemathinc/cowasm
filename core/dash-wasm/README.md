@@ -9,7 +9,7 @@ Here is a little demo below, illustrating that **Lua, sqlite, tar, and Python 3.
 included, among other things. Do NOT get your hopes up and expect this to work well, since _**there are many remaining issues!**_
 
 See https://github.com/sagemathinc/cowasm if you're interested in this project, and
-in particular [the dash package](https://github.com/sagemathinc/cowasm/tree/main/packages/dash).
+in particular [the dash package](https://github.com/sagemathinc/cowasm/tree/main/core/dash).
 
 ```sh
 ~ $ npx dash-wasm@latest

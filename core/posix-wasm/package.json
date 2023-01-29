@@ -18,5 +18,5 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/posix-wasm"
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/posix-wasm"
 }

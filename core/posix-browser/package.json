@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/posix-browser#readme",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/posix-browser#readme",
   "devDependencies": {
     "@types/jest": "^29.2.0",
     "@types/node": "^18.11.3",

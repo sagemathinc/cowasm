@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/tar",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/tar",
   "devDependencies": {
     "@cowasm/bzip2": "workspace:*",
     "@cowasm/lzma": "workspace:*",

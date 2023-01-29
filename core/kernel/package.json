@@ -26,7 +26,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/kernel",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/kernel",
   "dependencies": {
     "dylink": "workspace:*",
     "posix-node": "workspace:*",

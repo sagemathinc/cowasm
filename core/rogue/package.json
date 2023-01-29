@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/rogue",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/rogue",
   "devDependencies": {
     "@cowasm/ncurses": "workspace:*",
     "@cowasm/posix-wasm": "workspace:*",

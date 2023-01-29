@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/ligpng",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/ligpng",
   "devDependencies": {
     "@cowasm/kernel": "workspace:*",
     "@cowasm/zlib": "workspace:*"

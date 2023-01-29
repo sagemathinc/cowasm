@@ -25,7 +25,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/dash-wasm",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/dash-wasm",
   "dependencies": {
     "@cowasm/kernel": "workspace:*",
     "debug": "^4.3.4"

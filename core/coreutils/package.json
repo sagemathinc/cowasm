@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/coreutils",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/coreutils",
   "devDependencies": {
     "@cowasm/bzip2": "workspace:*",
     "@cowasm/posix-wasm": "workspace:*",

@@ -30,7 +30,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/terminal",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/terminal",
   "devDependencies": {
     "buffer": "^6.0.3",
     "css-loader": "^6.7.1",

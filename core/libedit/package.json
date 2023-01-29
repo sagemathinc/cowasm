@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/libedit",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/libedit",
   "devDependencies": {
     "@cowasm/kernel": "workspace:*",
     "@cowasm/termcap": "workspace:*"

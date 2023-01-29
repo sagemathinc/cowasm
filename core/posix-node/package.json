@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/posix-node#readme",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/posix-node#readme",
   "devDependencies": {
     "@types/jest": "^29.2.0",
     "@types/node": "^18.11.3",

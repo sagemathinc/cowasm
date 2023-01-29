@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/sqlite",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/sqlite",
   "devDependencies": {
     "@cowasm/libedit": "workspace:*",
     "@cowasm/posix-wasm": "workspace:*",

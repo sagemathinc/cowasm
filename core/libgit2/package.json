@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/libgit2",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/libgit2",
   "devDependencies": {
     "@cowasm/kernel": "workspace:*",
     "@cowasm/zlib": "workspace:*"

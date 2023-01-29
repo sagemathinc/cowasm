@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/viz",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/viz",
   "devDependencies": {
     "@cowasm/lua": "workspace:*",
     "@cowasm/ncurses": "workspace:*",

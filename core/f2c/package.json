@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/f2c",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/f2c",
   "devDependencies": {
     "wasi-js": "workspace:*"
   }

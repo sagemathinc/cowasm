@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/lua",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/lua",
   "devDependencies": {
     "@cowasm/kernel": "^0.27.9",
     "@cowasm/libedit": "^1.0.0",
