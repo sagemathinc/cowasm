@@ -1,7 +1,4 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: make test CI
+name: make core CI
 
 on:
   push:
@@ -16,4 +13,4 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - run: npm install -g pnpm && make test
+    - run: npm install -g pnpm && make core
