@@ -33,7 +33,7 @@ ${BUILD}/libpython.o:
 		-c ${CPYTHON_WASM}/lib/libpython.c \
 		-o ${BUILD}/libpython.o
 
-${DIST}/python.wasm: node_modules src/python.zig src/signal.zig ${BUILD}/libpython.o ${BUILD}/libpython3.11.a
+${DIST}/python.wasm: deps src/python.zig src/signal.zig ${BUILD}/libpython.o ${BUILD}/libpython3.11.a
 	cd ../build && make zig
 	mkdir -p ${DIST}
 	cd src/ \
@@ -50,49 +50,49 @@ ${DIST}/python.wasm: node_modules src/python.zig src/signal.zig ${BUILD}/libpyth
 BUNDLES = ${DIST}/python-minimal.zip ${DIST}/python-readline.zip ${DIST}/python-stdlib.zip ${DIST}/python-everything.zip
 
 
-${DIST}/python-minimal.zip: node_modules
+${DIST}/python-minimal.zip: deps
 	mkdir -p ${DIST}
 	cp ${CPYTHON_WASM}/lib/dist/python-minimal.zip ${DIST}
 
-${DIST}/python-readline.zip: node_modules
+${DIST}/python-readline.zip: deps
 	mkdir -p ${DIST}
 	cp ${CPYTHON_WASM}/lib/dist/python-readline.zip ${DIST}
 
-${DIST}/python-stdlib.zip: node_modules
+${DIST}/python-stdlib.zip: deps
 	mkdir -p ${DIST}
 	cp ${CPYTHON_WASM}/lib/dist/python-stdlib.zip ${DIST}
 
 PYTHON_PACKAGES = ${DIST}/Cython.tar.xz ${DIST}/mpmath.tar.xz ${DIST}/numpy.tar.xz ${DIST}/sympy.tar.xz ${DIST}/pandas.tar.xz ${DIST}/pytz.tar.xz ${DIST}/dateutil.tar.xz ${DIST}/six.tar.xz
 
-${DIST}/Cython.tar.xz: node_modules
+${DIST}/Cython.tar.xz: deps
 	mkdir -p ${DIST}
 	cd $(shell cowasm-package-path @cowasm/py-cython) && tar -Jcf ${DIST}/Cython.tar.xz Cython
 
-${DIST}/mpmath.tar.xz: node_modules
+${DIST}/mpmath.tar.xz: deps
 	mkdir -p ${DIST}
 	cd $(shell cowasm-package-path @cowasm/py-mpmath) && tar -Jcf ${DIST}/mpmath.tar.xz mpmath
 
-${DIST}/numpy.tar.xz: node_modules
+${DIST}/numpy.tar.xz: deps
 	mkdir -p ${DIST}
 	cd $(shell cowasm-package-path @cowasm/py-numpy) && tar -Jcf ${DIST}/numpy.tar.xz numpy
 
-${DIST}/pandas.tar.xz: node_modules
+${DIST}/pandas.tar.xz: deps
 	mkdir -p ${DIST}
 	cd $(shell cowasm-package-path @cowasm/py-pandas) && tar -Jcf ${DIST}/pandas.tar.xz pandas
 
-${DIST}/pytz.tar.xz: node_modules
+${DIST}/pytz.tar.xz: deps
 	mkdir -p ${DIST}
 	cd $(shell cowasm-package-path @cowasm/py-pandas) && tar -Jcf ${DIST}/pytz.tar.xz pytz
 
-${DIST}/dateutil.tar.xz: node_modules
+${DIST}/dateutil.tar.xz: deps
 	mkdir -p ${DIST}
 	cd $(shell cowasm-package-path @cowasm/py-pandas) && tar -Jcf ${DIST}/dateutil.tar.xz dateutil
 
-${DIST}/six.tar.xz: node_modules
+${DIST}/six.tar.xz: deps
 	mkdir -p ${DIST}
 	cd $(shell cowasm-package-path @cowasm/py-pandas) && tar -Jcf ${DIST}/six.tar.xz six
 
-${DIST}/sympy.tar.xz: node_modules
+${DIST}/sympy.tar.xz: deps
 	mkdir -p ${DIST}
 	cd $(shell cowasm-package-path @cowasm/py-sympy) && tar -Jcf ${DIST}/sympy.tar.xz sympy
 
@@ -141,7 +141,7 @@ hellozig: ${DIST}/hellozig.${PLATFORM}.so
 # Node related makefile wrapping...
 ###
 
-${DIST}/.built: node_modules
+${DIST}/.built: deps
 	mkdir -p ${DIST}
 	npx tsc
 	touch ${DIST}/.built

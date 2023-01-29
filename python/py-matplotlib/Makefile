@@ -20,7 +20,7 @@ include ../build/Makefile-rules
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	touch ${BUILD_WASM}/.patched
 
-${BUILD_WASM}/.install: node_modules ${BUILD_WASM}/.patched
+${BUILD_WASM}/.install: deps ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& PYTHONPATH=${PIP} npx @cowasm/cpython setup.py build
 	touch ${BUILD_WASM}/.install

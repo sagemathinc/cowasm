@@ -1,6 +1,6 @@
 include ../build/Makefile-vars
 
-all: ${DIST}/.built
+all: deps ${DIST}/.built
 
 include ../build/Makefile-rules
 

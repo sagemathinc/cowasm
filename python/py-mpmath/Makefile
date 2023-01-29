@@ -10,7 +10,7 @@ TARBALL = ${UPSTREAM}/mpmath-${VERSION}.tar.gz
 
 include ../build/Makefile-rules
 
-${BUILD_WASM}/.built: node_modules ${BUILD_WASM}/.build
+${BUILD_WASM}/.built: deps ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&& PYTHONPATH=${PIP} npx @cowasm/cpython setup.py build
 	touch ${BUILD_WASM}/.built

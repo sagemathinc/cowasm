@@ -21,14 +21,14 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/02-pip-no-auto-refresh-progress.patch  | patch -p1
 	touch ${BUILD_WASM}/.patched
 
-${BUILD_WASM}/.built: node_modules ${BUILD_WASM}/.patched
+${BUILD_WASM}/.built: deps ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& PYTHONPATH=${SETUPTOOLS} npx @cowasm/cpython setup.py build
 	touch ${BUILD_WASM}/.built
 
 # Trying to use a bundle (e.g., only pyc, etc.,) leads to endless problems, since
 # many scripts and components that use pip assume the .py files are there.
-${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.built
+${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
 	cp -r ${BUILD_WASM}/build/lib/pip ${DIST_WASM}/

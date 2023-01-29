@@ -16,12 +16,12 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/01-c++.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
-${BUILD_WASM}/.built: node_modules ${BUILD_WASM}/.patched
+${BUILD_WASM}/.built: deps ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& npx @cowasm/cpython setup.py build
 	touch ${BUILD_WASM}/.built
 
-${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.built
+${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
 	# Hack: since we are not "properly" installing using "ensurepip", we replace
 	# the code in version.py that calls pkg_resources (and looks at data in site-packages),
 	# and instead just hardcode the version, which we know of course.
@@ -40,6 +40,6 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.built
 	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib/pkg_resources.tar.xz
 	touch ${DIST_WASM}/.built
 
-test: node_modules ${DIST_WASM}/.built
+test: deps ${DIST_WASM}/.built
 	# Test that importing from the bundle works:
 	PYTHONPATH=${DIST_WASM} npx @cowasm/cpython  -c 'import setuptools'

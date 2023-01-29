@@ -327,7 +327,7 @@ ssize_t sendto(int sockfd, const void* buf, size_t len, int flags,
 int socket(int domain, int type, int protocol);
 int gethostname(char* name, size_t len);
 int sethostname(const char* name, size_t len);
-int accept(int socket, struct sockaddr *address, socklen_t *address_len);
+int accept(int socket, void *addr, socklen_t *address_len);
 
 // These are needed to build parts of posixmodule in Python.  They seem harmless
 // since they are self contained and copied from
