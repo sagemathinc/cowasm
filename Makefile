@@ -119,7 +119,7 @@ test-clean:
 .PHONY: clean
 clean:
 	./bin/make-all clean ${ALL}
-	rm -rf bin/python* bin/cowasm-* bin/zig
+	rm -f bin/zig
 
 
 docker:
