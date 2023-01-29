@@ -23,6 +23,7 @@
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/python/py-pip",
   "devDependencies": {
     "@cowasm/cpython": "workspace:*",
+    "@cowasm/kernel": "workspace:*",
     "@cowasm/py-setuptools": "workspace:*"
   }
 }

@@ -24,6 +24,7 @@
   "devDependencies": {
     "@cowasm/cpython": "workspace:*",
     "@cowasm/py-cython": "workspace:*",
-    "@cowasm/py-pip": "workspace:*"
+    "@cowasm/py-pip": "workspace:*",
+    "@cowasm/kernel": "workspace:*"
   }
 }

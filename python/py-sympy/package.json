@@ -23,9 +23,8 @@
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/python/py-sympy",
   "devDependencies": {
     "@cowasm/cpython": "workspace:*",
-    "@cowasm/py-mpmath": "workspace:*"
-  },
-  "dependencies": {
+    "@cowasm/py-mpmath": "workspace:*",
+    "@cowasm/kernel": "workspace:*",
     "@cowasm/py-setuptools": "workspace:*"
   }
 }

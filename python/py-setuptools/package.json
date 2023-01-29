@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/python/py-setuptools",
   "devDependencies": {
+    "@cowasm/kernel": "workspace:*",
     "@cowasm/cpython": "workspace:*"
   }
 }
