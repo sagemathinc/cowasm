@@ -2,10 +2,11 @@ BUILT = dist/.built
 
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-CORE_DIRS = $(dir $(shell ls core/*/Makefile))
-PYTHON_DIRS = $(dir $(shell ls python/*/Makefile))
+CORE = $(dir $(shell ls core/*/Makefile))
+PYTHON = $(dir $(shell ls python/*/Makefile))
+WEB = $(dir $(shell ls web/*/Makefile))
 
-ALL_DIRS = ${CORE_DIRS} ${PYTHON_DIRS}
+ALL = ${CORE} ${PYTHON} ${WEB}
 
 export PATH := ${CWD}/bin:${CWD}/core/zig/dist:$(PATH)
 
@@ -13,7 +14,7 @@ all: core
 
 .PHONY: core
 core:
-	./bin/make-all all ${CORE_DIRS}
+	./bin/make-all all ${CORE}
 	#
 	#
 	##########################################################
@@ -28,7 +29,7 @@ core:
 
 .PHONY: test-core
 test-core:
-	./bin/make-all test ${CORE_DIRS}
+	./bin/make-all test ${CORE}
 	#
 	#
 	##########################################################
@@ -43,11 +44,11 @@ test-core:
 
 .PHONY: clean-core
 clean-core:
-	./bin/make-all clean ${CORE_DIRS}
+	./bin/make-all clean ${CORE}
 
 .PHONY: python
-python: core
-	./bin/make-all all ${PYTHON_DIRS}
+python:
+	./bin/make-all all ${PYTHON}
 	#
 	#
 	##########################################################
@@ -62,11 +63,30 @@ python: core
 
 .PHONY: clean-python
 clean-python:
-	./bin/make-all clean ${PYTHON_DIRS}
+	./bin/make-all clean ${PYTHON}
+
+.PHONY: web
+web:
+	./bin/make-all all ${WEB}
+	#
+	#
+	##########################################################
+	#                                                        #
+	#   CONGRATULATIONS -- BUILT COWASM WEB!                 #
+	#
+	@echo "#   `date`"
+	@echo "#   `uname -s -m`"
+	@echo "#   Git Branch: `git rev-parse --abbrev-ref HEAD`"
+	#                                                        #
+	##########################################################
+
+.PHONY: clean-web
+clean-web:
+	./bin/make-all clean ${WEB}
 
 .PHONY: test
 test:
-	./bin/make-all test ${ALL_DIRS}
+	./bin/make-all test ${ALL}
 	#
 	#
 	##########################################################
@@ -82,7 +102,7 @@ test:
 
 .PHONY: test-clean
 test-clean:
-	./bin/make-all-clean test ${ALL_DIRS}
+	./bin/make-all-clean test ${ALL}
 	#
 	#
 	##########################################################
@@ -98,7 +118,7 @@ test-clean:
 
 .PHONY: clean
 clean:
-	./bin/make-all clean ${ALL_DIRS}
+	./bin/make-all clean ${ALL}
 	rm -rf bin/python* bin/cowasm-* bin/zig
 
 

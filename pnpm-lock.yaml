@@ -2,45 +2,6 @@ lockfileVersion: 5.4
 
 importers:
 
-  core/browser:
-    specifiers:
-      '@cowasm/kernel': workspace:*
-      '@types/node': ^18.11.3
-      buffer: ^6.0.3
-      debug: ^4.3.4
-      events: ^3.3.0
-      html-webpack-plugin: ^5.5.0
-      node-polyfill-webpack-plugin: ^2.0.0
-      path-browserify: ^1.0.1
-      process: ^0.11.10
-      python-wasm: ^0.26.2
-      ts-loader: ^9.3.1
-      typescript: ^4.8.4
-      util: ^0.12.4
-      webpack: ^5.73.0
-      webpack-bundle-analyzer: ^4.6.1
-      webpack-cli: ^4.10.0
-      webpack-dev-server: ^4.9.3
-    dependencies:
-      debug: 4.3.4
-    devDependencies:
-      '@cowasm/kernel': link:../kernel
-      '@types/node': 18.11.3
-      buffer: 6.0.3
-      events: 3.3.0
-      html-webpack-plugin: 5.5.0_webpack@5.73.0
-      node-polyfill-webpack-plugin: 2.0.0_webpack@5.73.0
-      path-browserify: 1.0.1
-      process: 0.11.10
-      python-wasm: 0.26.3
-      ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
-      typescript: 4.8.4
-      util: 0.12.4
-      webpack: 5.73.0_webpack-cli@4.10.0
-      webpack-bundle-analyzer: 4.6.1
-      webpack-cli: 4.10.0_jzhzd72e75bnja33cjjj6sveb4
-      webpack-dev-server: 4.9.3_36vmkgurloznc5fouel6xkjyma
-
   core/bzip2:
     specifiers: {}
 
@@ -53,88 +14,6 @@ importers:
       '@cowasm/bzip2': link:../bzip2
       '@cowasm/posix-wasm': link:../posix-wasm
       '@cowasm/zlib': link:../zlib
-
-  core/cowasm.org:
-    specifiers:
-      '@types/node': ^18.11.3
-      buffer: ^6.0.3
-      css-loader: ^6.7.1
-      events: ^3.3.0
-      html-webpack-plugin: ^5.5.0
-      node-polyfill-webpack-plugin: ^2.0.0
-      path-browserify: ^1.0.1
-      process: ^0.11.10
-      python-wasm: ^0.27.0
-      style-loader: ^3.3.1
-      ts-loader: ^9.4.1
-      typescript: ^4.8.4
-      util: ^0.12.4
-      webpack: ^5.73.0
-      webpack-cli: ^4.10.0
-      webpack-dev-server: ^4.9.3
-      xterm: ^5.0.0
-      xterm-addon-web-links: ^0.7.0
-    devDependencies:
-      '@types/node': 18.11.3
-      buffer: 6.0.3
-      css-loader: 6.7.3_webpack@5.73.0
-      events: 3.3.0
-      html-webpack-plugin: 5.5.0_webpack@5.73.0
-      node-polyfill-webpack-plugin: 2.0.0_webpack@5.73.0
-      path-browserify: 1.0.1
-      process: 0.11.10
-      python-wasm: link:../../python/python-wasm
-      style-loader: 3.3.1_webpack@5.73.0
-      ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
-      typescript: 4.8.4
-      util: 0.12.4
-      webpack: 5.73.0_webpack-cli@4.10.0
-      webpack-cli: 4.10.0_6rc575xxn4hngez2jk2zkyfdoi
-      webpack-dev-server: 4.9.3_77l47gmqkrqiei5z7sbwz5iaj4
-      xterm: 5.1.0
-      xterm-addon-web-links: 0.7.0_xterm@5.1.0
-
-  core/cowasm.sh:
-    specifiers:
-      '@types/node': ^18.11.3
-      buffer: ^6.0.3
-      css-loader: ^6.7.1
-      dash-wasm: workspace:*
-      events: ^3.3.0
-      html-webpack-plugin: ^5.5.0
-      http-server: ^14.1.1
-      node-polyfill-webpack-plugin: ^2.0.0
-      path-browserify: ^1.0.1
-      process: ^0.11.10
-      style-loader: ^3.3.1
-      ts-loader: ^9.3.1
-      typescript: ^4.8.4
-      util: ^0.12.4
-      webpack: ^5.73.0
-      webpack-cli: ^4.10.0
-      webpack-dev-server: ^4.9.3
-      xterm: ^5.0.0
-      xterm-addon-web-links: ^0.7.0
-    devDependencies:
-      '@types/node': 18.11.3
-      buffer: 6.0.3
-      css-loader: 6.7.3_webpack@5.73.0
-      dash-wasm: link:../dash-wasm
-      events: 3.3.0
-      html-webpack-plugin: 5.5.0_webpack@5.73.0
-      http-server: 14.1.1
-      node-polyfill-webpack-plugin: 2.0.0_webpack@5.73.0
-      path-browserify: 1.0.1
-      process: 0.11.10
-      style-loader: 3.3.1_webpack@5.73.0
-      ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
-      typescript: 4.8.4
-      util: 0.12.4
-      webpack: 5.73.0_webpack-cli@4.10.0
-      webpack-cli: 4.10.0_6rc575xxn4hngez2jk2zkyfdoi
-      webpack-dev-server: 4.9.3_77l47gmqkrqiei5z7sbwz5iaj4
-      xterm: 5.1.0
-      xterm-addon-web-links: 0.7.0_xterm@5.1.0
 
   core/dash:
     specifiers:
@@ -288,9 +167,6 @@ importers:
     devDependencies:
       '@cowasm/kernel': link:../kernel
       '@cowasm/zlib': link:../zlib
-
-  core/libgit2/build/wasm:
-    specifiers: {}
 
   core/libpng:
     specifiers:
@@ -505,44 +381,8 @@ importers:
   core/zlib:
     specifiers: {}
 
-  python/browser:
-    specifiers:
-      '@cowasm/kernel': workspace:*
-      '@types/node': ^18.11.3
-      buffer: ^6.0.3
-      debug: ^4.3.4
-      events: ^3.3.0
-      html-webpack-plugin: ^5.5.0
-      node-polyfill-webpack-plugin: ^2.0.0
-      path-browserify: ^1.0.1
-      process: ^0.11.10
-      python-wasm: workspace:*
-      ts-loader: ^9.3.1
-      typescript: ^4.8.4
-      util: ^0.12.4
-      webpack: ^5.73.0
-      webpack-bundle-analyzer: ^4.6.1
-      webpack-cli: ^4.10.0
-      webpack-dev-server: ^4.9.3
-    dependencies:
-      debug: 4.3.4
-    devDependencies:
-      '@cowasm/kernel': link:../../core/kernel
-      '@types/node': 18.11.3
-      buffer: 6.0.3
-      events: 3.3.0
-      html-webpack-plugin: 5.5.0_webpack@5.73.0
-      node-polyfill-webpack-plugin: 2.0.0_webpack@5.73.0
-      path-browserify: 1.0.1
-      process: 0.11.10
-      python-wasm: link:../python-wasm
-      ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
-      typescript: 4.8.4
-      util: 0.12.4
-      webpack: 5.73.0_webpack-cli@4.10.0
-      webpack-bundle-analyzer: 4.6.1
-      webpack-cli: 4.10.0_jzhzd72e75bnja33cjjj6sveb4
-      webpack-dev-server: 4.9.3_36vmkgurloznc5fouel6xkjyma
+  packages/libgit2/build/wasm:
+    specifiers: {}
 
   python/cpython:
     specifiers:
@@ -726,6 +566,127 @@ importers:
       webpack-cli: 4.10.0_6rc575xxn4hngez2jk2zkyfdoi
       webpack-dev-server: 4.9.3_77l47gmqkrqiei5z7sbwz5iaj4
       xterm: 4.19.0
+
+  web/browser:
+    specifiers:
+      '@cowasm/kernel': workspace:*
+      '@types/node': ^18.11.3
+      buffer: ^6.0.3
+      debug: ^4.3.4
+      events: ^3.3.0
+      html-webpack-plugin: ^5.5.0
+      node-polyfill-webpack-plugin: ^2.0.0
+      path-browserify: ^1.0.1
+      process: ^0.11.10
+      python-wasm: ^0.26.2
+      ts-loader: ^9.3.1
+      typescript: ^4.8.4
+      util: ^0.12.4
+      webpack: ^5.73.0
+      webpack-bundle-analyzer: ^4.6.1
+      webpack-cli: ^4.10.0
+      webpack-dev-server: ^4.9.3
+    dependencies:
+      debug: 4.3.4
+    devDependencies:
+      '@cowasm/kernel': link:../../core/kernel
+      '@types/node': 18.11.3
+      buffer: 6.0.3
+      events: 3.3.0
+      html-webpack-plugin: 5.5.0_webpack@5.73.0
+      node-polyfill-webpack-plugin: 2.0.0_webpack@5.73.0
+      path-browserify: 1.0.1
+      process: 0.11.10
+      python-wasm: 0.26.3
+      ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
+      typescript: 4.8.4
+      util: 0.12.4
+      webpack: 5.73.0_webpack-cli@4.10.0
+      webpack-bundle-analyzer: 4.6.1
+      webpack-cli: 4.10.0_jzhzd72e75bnja33cjjj6sveb4
+      webpack-dev-server: 4.9.3_36vmkgurloznc5fouel6xkjyma
+
+  web/cowasm.org:
+    specifiers:
+      '@types/node': ^18.11.3
+      buffer: ^6.0.3
+      css-loader: ^6.7.1
+      events: ^3.3.0
+      html-webpack-plugin: ^5.5.0
+      node-polyfill-webpack-plugin: ^2.0.0
+      path-browserify: ^1.0.1
+      process: ^0.11.10
+      python-wasm: ^0.27.0
+      style-loader: ^3.3.1
+      ts-loader: ^9.4.1
+      typescript: ^4.8.4
+      util: ^0.12.4
+      webpack: ^5.73.0
+      webpack-cli: ^4.10.0
+      webpack-dev-server: ^4.9.3
+      xterm: ^5.0.0
+      xterm-addon-web-links: ^0.7.0
+    devDependencies:
+      '@types/node': 18.11.3
+      buffer: 6.0.3
+      css-loader: 6.7.3_webpack@5.73.0
+      events: 3.3.0
+      html-webpack-plugin: 5.5.0_webpack@5.73.0
+      node-polyfill-webpack-plugin: 2.0.0_webpack@5.73.0
+      path-browserify: 1.0.1
+      process: 0.11.10
+      python-wasm: link:../../python/python-wasm
+      style-loader: 3.3.1_webpack@5.73.0
+      ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
+      typescript: 4.8.4
+      util: 0.12.4
+      webpack: 5.73.0_webpack-cli@4.10.0
+      webpack-cli: 4.10.0_6rc575xxn4hngez2jk2zkyfdoi
+      webpack-dev-server: 4.9.3_77l47gmqkrqiei5z7sbwz5iaj4
+      xterm: 5.1.0
+      xterm-addon-web-links: 0.7.0_xterm@5.1.0
+
+  web/cowasm.sh:
+    specifiers:
+      '@types/node': ^18.11.3
+      buffer: ^6.0.3
+      css-loader: ^6.7.1
+      dash-wasm: workspace:*
+      events: ^3.3.0
+      html-webpack-plugin: ^5.5.0
+      http-server: ^14.1.1
+      node-polyfill-webpack-plugin: ^2.0.0
+      path-browserify: ^1.0.1
+      process: ^0.11.10
+      style-loader: ^3.3.1
+      ts-loader: ^9.3.1
+      typescript: ^4.8.4
+      util: ^0.12.4
+      webpack: ^5.73.0
+      webpack-cli: ^4.10.0
+      webpack-dev-server: ^4.9.3
+      xterm: ^5.0.0
+      xterm-addon-web-links: ^0.7.0
+    devDependencies:
+      '@types/node': 18.11.3
+      buffer: 6.0.3
+      css-loader: 6.7.3_webpack@5.73.0
+      dash-wasm: link:../../core/dash-wasm
+      events: 3.3.0
+      html-webpack-plugin: 5.5.0_webpack@5.73.0
+      http-server: 14.1.1
+      node-polyfill-webpack-plugin: 2.0.0_webpack@5.73.0
+      path-browserify: 1.0.1
+      process: 0.11.10
+      style-loader: 3.3.1_webpack@5.73.0
+      ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
+      typescript: 4.8.4
+      util: 0.12.4
+      webpack: 5.73.0_webpack-cli@4.10.0
+      webpack-cli: 4.10.0_6rc575xxn4hngez2jk2zkyfdoi
+      webpack-dev-server: 4.9.3_77l47gmqkrqiei5z7sbwz5iaj4
+      xterm: 5.1.0
+      xterm-addon-web-links: 0.7.0_xterm@5.1.0
 
 packages:
 
@@ -1746,7 +1707,7 @@ packages:
       webpack-cli: 4.x.x
     dependencies:
       webpack: 5.73.0_webpack-cli@4.10.0
-      webpack-cli: 4.10.0_jzhzd72e75bnja33cjjj6sveb4
+      webpack-cli: 4.10.0_6rc575xxn4hngez2jk2zkyfdoi
     dev: true
 
   /@webpack-cli/info/1.5.0_webpack-cli@4.10.0:
@@ -1755,7 +1716,7 @@ packages:
       webpack-cli: 4.x.x
     dependencies:
       envinfo: 7.8.1
-      webpack-cli: 4.10.0_jzhzd72e75bnja33cjjj6sveb4
+      webpack-cli: 4.10.0_6rc575xxn4hngez2jk2zkyfdoi
     dev: true
 
   /@webpack-cli/serve/1.7.0_jrmoy2z4ppm6sherzyq2k2csya:
@@ -1767,8 +1728,8 @@ packages:
       webpack-dev-server:
         optional: true
     dependencies:
-      webpack-cli: 4.10.0_jzhzd72e75bnja33cjjj6sveb4
-      webpack-dev-server: 4.9.3_36vmkgurloznc5fouel6xkjyma
+      webpack-cli: 4.10.0_6rc575xxn4hngez2jk2zkyfdoi
+      webpack-dev-server: 4.9.3_77l47gmqkrqiei5z7sbwz5iaj4
     dev: true
 
   /@xtuc/ieee754/1.2.0:
@@ -5940,7 +5901,7 @@ packages:
       tapable: 2.2.1
       terser-webpack-plugin: 5.3.3_webpack@5.73.0
       watchpack: 2.4.0
-      webpack-cli: 4.10.0_jzhzd72e75bnja33cjjj6sveb4
+      webpack-cli: 4.10.0_6rc575xxn4hngez2jk2zkyfdoi
       webpack-sources: 3.2.3
     transitivePeerDependencies:
       - '@swc/core'
