@@ -196,24 +196,24 @@ importers:
 
   core/man:
     specifiers:
-      '@cowasm/posix-wasm': ^1.0.3
-      '@cowasm/zlib': ^1.0.0
+      '@cowasm/posix-wasm': workspace:*
+      '@cowasm/zlib': workspace:*
     devDependencies:
       '@cowasm/posix-wasm': link:../posix-wasm
       '@cowasm/zlib': link:../zlib
 
   core/ncurses:
     specifiers:
-      '@cowasm/posix-wasm': ^1.0.3
-      '@cowasm/termcap': ^1.0.0
+      '@cowasm/posix-wasm': workspace:*
+      '@cowasm/termcap': workspace:*
     devDependencies:
       '@cowasm/posix-wasm': link:../posix-wasm
       '@cowasm/termcap': link:../termcap
 
   core/openssl:
     specifiers:
-      '@cowasm/kernel': ^0.27.9
-      '@cowasm/posix-wasm': ^1.0.3
+      '@cowasm/kernel': workspace:*
+      '@cowasm/posix-wasm': workspace:*
     devDependencies:
       '@cowasm/kernel': link:../kernel
       '@cowasm/posix-wasm': link:../posix-wasm
@@ -253,10 +253,10 @@ importers:
 
   core/rogue:
     specifiers:
-      '@cowasm/kernel': ^0.27.9
-      '@cowasm/ncurses': ^1.0.0
-      '@cowasm/posix-wasm': ^1.0.3
-      '@cowasm/termcap': ^1.0.0
+      '@cowasm/kernel': workspace:*
+      '@cowasm/ncurses': workspace:*
+      '@cowasm/posix-wasm': workspace:*
+      '@cowasm/termcap': workspace:*
     dependencies:
       '@cowasm/kernel': link:../kernel
     devDependencies:
@@ -266,10 +266,10 @@ importers:
 
   core/sqlite:
     specifiers:
-      '@cowasm/libedit': ^1.0.0
-      '@cowasm/posix-wasm': ^1.0.3
-      '@cowasm/termcap': ^1.0.0
-      '@cowasm/zlib': ^1.0.0
+      '@cowasm/libedit': workspace:*
+      '@cowasm/posix-wasm': workspace:*
+      '@cowasm/termcap': workspace:*
+      '@cowasm/zlib': workspace:*
     devDependencies:
       '@cowasm/libedit': link:../libedit
       '@cowasm/posix-wasm': link:../posix-wasm
@@ -278,10 +278,10 @@ importers:
 
   core/tar:
     specifiers:
-      '@cowasm/bzip2': ^1.0.1
-      '@cowasm/lzma': ^1.0.3
-      '@cowasm/posix-wasm': ^1.0.3
-      '@cowasm/zlib': ^1.0.0
+      '@cowasm/bzip2': workspace:*
+      '@cowasm/lzma': workspace:*
+      '@cowasm/posix-wasm': workspace:*
+      '@cowasm/zlib': workspace:*
     devDependencies:
       '@cowasm/bzip2': link:../bzip2
       '@cowasm/lzma': link:../lzma
@@ -333,9 +333,9 @@ importers:
 
   core/viz:
     specifiers:
-      '@cowasm/lua': ^1.0.0
-      '@cowasm/ncurses': ^1.0.0
-      '@cowasm/posix-wasm': ^1.0.3
+      '@cowasm/lua': workspace:*
+      '@cowasm/ncurses': workspace:*
+      '@cowasm/posix-wasm': workspace:*
     devDependencies:
       '@cowasm/lua': link:../lua
       '@cowasm/ncurses': link:../ncurses
