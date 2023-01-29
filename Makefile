@@ -10,7 +10,22 @@ ALL = ${CORE} ${PYTHON} ${WEB}
 
 export PATH := ${CWD}/bin:${CWD}/core/zig/dist:$(PATH)
 
-all: core python web
+all: packages
+
+# All
+
+.PHONY: packages
+packages:
+	./bin/make-all all ${ALL}
+
+.PHONY: test-packages
+test-packages: packages
+	./bin/make-all test ${ALL}
+
+.PHONY: clean-packages
+clean-packages:
+	./bin/make-all clean ${ALL}
+
 
 # Core
 
