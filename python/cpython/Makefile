@@ -349,7 +349,8 @@ RUN_TESTS = _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 # We use a restricted PATH for running tests.  On Linux I had a lot of trouble
 # with some random binaries in random places causing hangs, and this provides
 # a cleaner environment.
-TEST_PATH=${BIN}:/bin:/usr/bin
+PNPM = $(shell which pnpm)
+TEST_PATH=${BIN}:/bin:/usr/bin:$(shell dirname ${PNPM})
 
 test-all: wasm native
 	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}
