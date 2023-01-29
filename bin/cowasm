@@ -1,1 +1,1 @@
-npx --yes @cowasm/kernel "$@"
+pnpm -s dlx @cowasm/kernel "$@"

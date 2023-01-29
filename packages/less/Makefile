@@ -51,4 +51,4 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 
 test: ${DIST_WASM}/.built
 	# Check it starts and prints some help
-	echo "" | npx @cowasm/kernel ${DIST_WASM}/bin/less --help |grep "Commands"
+	echo "" | pnpm -s dlx @cowasm/kernel ${DIST_WASM}/bin/less --help |grep "Commands"

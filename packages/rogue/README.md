@@ -3,6 +3,12 @@
 Try it from node.js (on Mac/Linux so curses is supported):
 
 ```sh
+pnpm dlx @cowasm/rogue
+```
+
+or
+
+```sh
 npx @cowasm/rogue
 ```
 
