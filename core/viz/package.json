@@ -22,8 +22,8 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/viz",
   "devDependencies": {
-    "@cowasm/lua": "^1.0.0",
-    "@cowasm/ncurses": "^1.0.0",
-    "@cowasm/posix-wasm": "^1.0.3"
+    "@cowasm/lua": "workspace:*",
+    "@cowasm/ncurses": "workspace:*",
+    "@cowasm/posix-wasm": "workspace:*"
   }
 }

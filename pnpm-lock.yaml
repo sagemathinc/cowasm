@@ -381,9 +381,6 @@ importers:
   core/zlib:
     specifiers: {}
 
-  packages/libgit2/build/wasm:
-    specifiers: {}
-
   python/cpython:
     specifiers:
       '@cowasm/bzip2': workspace:*

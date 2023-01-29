@@ -22,9 +22,9 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/sqlite",
   "devDependencies": {
-    "@cowasm/libedit": "^1.0.0",
-    "@cowasm/posix-wasm": "^1.0.3",
-    "@cowasm/termcap": "^1.0.0",
-    "@cowasm/zlib": "^1.0.0"
+    "@cowasm/libedit": "workspace:*",
+    "@cowasm/posix-wasm": "workspace:*",
+    "@cowasm/termcap": "workspace:*",
+    "@cowasm/zlib": "workspace:*"
   }
 }

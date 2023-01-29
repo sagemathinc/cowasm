@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/man",
   "devDependencies": {
-    "@cowasm/posix-wasm": "^1.0.3",
-    "@cowasm/zlib": "^1.0.0"
+    "@cowasm/posix-wasm": "workspace:*",
+    "@cowasm/zlib": "workspace:*"
   }
 }

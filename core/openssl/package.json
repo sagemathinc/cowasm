@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/openssl",
   "devDependencies": {
-    "@cowasm/kernel": "^0.27.9",
-    "@cowasm/posix-wasm": "^1.0.3"
+    "@cowasm/kernel": "workspace:*",
+    "@cowasm/posix-wasm": "workspace:*"
   }
 }
