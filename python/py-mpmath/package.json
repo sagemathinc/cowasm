@@ -10,8 +10,9 @@
     "index.js"
   ],
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "build": "make wasm",
-    "prepublishOnly": "npm run build && make test",
+    "prepublishOnly": "pnpm run build && make test",
     "test": "make test"
   },
   "repository": {
@@ -29,7 +30,7 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm-python/tree/main/packages/py-mpmath",
   "devDependencies": {
-    "@cowasm/cpython": "^1.4.0",
-    "@cowasm/py-pip": "^1.1.4"
+    "@cowasm/cpython": "workspace:*",
+    "@cowasm/py-pip": "workspace:*"
   }
 }

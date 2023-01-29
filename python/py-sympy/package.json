@@ -3,25 +3,18 @@
   "version": "1.0.0",
   "description": "WebAssembly build of the SymPy python library",
   "main": "index.js",
-  "files": [
-    "dist/wasm/**",
-    "README.md",
-    "package.json",
-    "index.js"
-  ],
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "build": "make wasm",
-    "prepublishOnly": "npm run build && make test",
+    "prepublishOnly": "pnpm run build && make test",
     "test": "make test"
   },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/sagemathinc/cowasm-python.git"
   },
-  "keywords": [
-    "WebAssembly",
-    "wasm"
-  ],
+  "keywords": ["WebAssembly", "wasm"],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {
@@ -29,10 +22,10 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm-python/tree/main/packages/py-sympy",
   "devDependencies": {
-    "@cowasm/cpython": "^1.3.0",
-    "@cowasm/py-mpmath": "^1.0.0"
+    "@cowasm/cpython": "workspace:*",
+    "@cowasm/py-mpmath": "workspace:*"
   },
   "dependencies": {
-    "@cowasm/py-setuptools": "^1.2.2"
+    "@cowasm/py-setuptools": "workspace:*"
   }
 }

@@ -83,7 +83,7 @@ importers:
       node-polyfill-webpack-plugin: 2.0.0_webpack@5.73.0
       path-browserify: 1.0.1
       process: 0.11.10
-      python-wasm: 0.27.0
+      python-wasm: link:../../python/python-wasm
       style-loader: 3.3.1_webpack@5.73.0
       ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
       typescript: 4.8.4
@@ -184,7 +184,7 @@ importers:
       '@cowasm/lzma': link:../lzma
       '@cowasm/man': link:../man
       '@cowasm/ncurses': link:../ncurses
-      '@cowasm/py-numpy': 1.0.2
+      '@cowasm/py-numpy': link:../../python/py-numpy
       '@cowasm/rogue': link:../rogue
       '@cowasm/sqlite': link:../sqlite
       '@cowasm/tar': link:../tar
@@ -288,6 +288,9 @@ importers:
     devDependencies:
       '@cowasm/kernel': link:../kernel
       '@cowasm/zlib': link:../zlib
+
+  core/libgit2/build/wasm:
+    specifiers: {}
 
   core/libpng:
     specifiers:
@@ -501,6 +504,228 @@ importers:
 
   core/zlib:
     specifiers: {}
+
+  python/browser:
+    specifiers:
+      '@cowasm/kernel': workspace:*
+      '@types/node': ^18.11.3
+      buffer: ^6.0.3
+      debug: ^4.3.4
+      events: ^3.3.0
+      html-webpack-plugin: ^5.5.0
+      node-polyfill-webpack-plugin: ^2.0.0
+      path-browserify: ^1.0.1
+      process: ^0.11.10
+      python-wasm: workspace:*
+      ts-loader: ^9.3.1
+      typescript: ^4.8.4
+      util: ^0.12.4
+      webpack: ^5.73.0
+      webpack-bundle-analyzer: ^4.6.1
+      webpack-cli: ^4.10.0
+      webpack-dev-server: ^4.9.3
+    dependencies:
+      debug: 4.3.4
+    devDependencies:
+      '@cowasm/kernel': link:../../core/kernel
+      '@types/node': 18.11.3
+      buffer: 6.0.3
+      events: 3.3.0
+      html-webpack-plugin: 5.5.0_webpack@5.73.0
+      node-polyfill-webpack-plugin: 2.0.0_webpack@5.73.0
+      path-browserify: 1.0.1
+      process: 0.11.10
+      python-wasm: link:../python-wasm
+      ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
+      typescript: 4.8.4
+      util: 0.12.4
+      webpack: 5.73.0_webpack-cli@4.10.0
+      webpack-bundle-analyzer: 4.6.1
+      webpack-cli: 4.10.0_jzhzd72e75bnja33cjjj6sveb4
+      webpack-dev-server: 4.9.3_36vmkgurloznc5fouel6xkjyma
+
+  python/cpython:
+    specifiers:
+      '@cowasm/bzip2': workspace:*
+      '@cowasm/kernel': workspace:*
+      '@cowasm/libedit': workspace:*
+      '@cowasm/libffi': workspace:*
+      '@cowasm/lzma': workspace:*
+      '@cowasm/ncurses': workspace:*
+      '@cowasm/openssl': workspace:*
+      '@cowasm/posix-wasm': workspace:*
+      '@cowasm/sqlite': workspace:*
+      '@cowasm/termcap': workspace:*
+      '@cowasm/zlib': workspace:*
+      dylink: workspace:*
+    dependencies:
+      '@cowasm/kernel': link:../../core/kernel
+    devDependencies:
+      '@cowasm/bzip2': link:../../core/bzip2
+      '@cowasm/libedit': link:../../core/libedit
+      '@cowasm/libffi': link:../../core/libffi
+      '@cowasm/lzma': link:../../core/lzma
+      '@cowasm/ncurses': link:../../core/ncurses
+      '@cowasm/openssl': link:../../core/openssl
+      '@cowasm/posix-wasm': link:../../core/posix-wasm
+      '@cowasm/sqlite': link:../../core/sqlite
+      '@cowasm/termcap': link:../../core/termcap
+      '@cowasm/zlib': link:../../core/zlib
+      dylink: link:../../core/dylink
+
+  python/py-cython:
+    specifiers:
+      '@cowasm/cpython': workspace:*
+      '@cowasm/py-pip': workspace:*
+    devDependencies:
+      '@cowasm/cpython': link:../cpython
+      '@cowasm/py-pip': link:../py-pip
+
+  python/py-matplotlib:
+    specifiers:
+      '@cowasm/cpython': workspace:*
+      '@cowasm/py-pip': workspace:*
+    devDependencies:
+      '@cowasm/cpython': link:../cpython
+      '@cowasm/py-pip': link:../py-pip
+
+  python/py-mpmath:
+    specifiers:
+      '@cowasm/cpython': workspace:*
+      '@cowasm/py-pip': workspace:*
+    devDependencies:
+      '@cowasm/cpython': link:../cpython
+      '@cowasm/py-pip': link:../py-pip
+
+  python/py-numpy:
+    specifiers:
+      '@cowasm/cpython': workspace:*
+      '@cowasm/py-cython': workspace:*
+      '@cowasm/py-pip': workspace:*
+    devDependencies:
+      '@cowasm/cpython': link:../cpython
+      '@cowasm/py-cython': link:../py-cython
+      '@cowasm/py-pip': link:../py-pip
+
+  python/py-pandas:
+    specifiers:
+      '@cowasm/cpython': workspace:*
+      '@cowasm/py-cython': workspace:*
+      '@cowasm/py-numpy': workspace:*
+      '@cowasm/py-pip': workspace:*
+    devDependencies:
+      '@cowasm/cpython': link:../cpython
+      '@cowasm/py-cython': link:../py-cython
+      '@cowasm/py-numpy': link:../py-numpy
+      '@cowasm/py-pip': link:../py-pip
+
+  python/py-pip:
+    specifiers:
+      '@cowasm/cpython': workspace:*
+      '@cowasm/py-setuptools': workspace:*
+    devDependencies:
+      '@cowasm/cpython': link:../cpython
+      '@cowasm/py-setuptools': link:../py-setuptools
+
+  python/py-setuptools:
+    specifiers:
+      '@cowasm/cpython': workspace:*
+    devDependencies:
+      '@cowasm/cpython': link:../cpython
+
+  python/py-sympy:
+    specifiers:
+      '@cowasm/cpython': workspace:*
+      '@cowasm/py-mpmath': workspace:*
+      '@cowasm/py-setuptools': workspace:*
+    dependencies:
+      '@cowasm/py-setuptools': link:../py-setuptools
+    devDependencies:
+      '@cowasm/cpython': link:../cpython
+      '@cowasm/py-mpmath': link:../py-mpmath
+
+  python/pylang:
+    specifiers:
+      '@types/node': ^18.6.1
+      prettier: ^2.7.1
+      typescript: ^4.7.4
+    devDependencies:
+      '@types/node': 18.11.3
+      prettier: 2.8.3
+      typescript: 4.8.4
+
+  python/python-wasm:
+    specifiers:
+      '@cowasm/cpython': workspace:*
+      '@cowasm/kernel': workspace:*
+      '@cowasm/posix-wasm': workspace:*
+      '@cowasm/py-cython': workspace:*
+      '@cowasm/py-mpmath': workspace:*
+      '@cowasm/py-numpy': workspace:*
+      '@cowasm/py-pandas': workspace:*
+      '@cowasm/py-sympy': workspace:*
+      '@types/jest': ^29.2.0
+      '@types/node': ^18.11.3
+      awaiting: ^3.0.0
+      debug: ^4.3.4
+      jest: ^29.2.1
+      typescript: ^4.8.4
+    dependencies:
+      '@cowasm/kernel': link:../../core/kernel
+      debug: 4.3.4
+    devDependencies:
+      '@cowasm/cpython': link:../cpython
+      '@cowasm/posix-wasm': link:../../core/posix-wasm
+      '@cowasm/py-cython': link:../py-cython
+      '@cowasm/py-mpmath': link:../py-mpmath
+      '@cowasm/py-numpy': link:../py-numpy
+      '@cowasm/py-pandas': link:../py-pandas
+      '@cowasm/py-sympy': link:../py-sympy
+      '@types/jest': 29.2.0
+      '@types/node': 18.11.3
+      awaiting: 3.0.0
+      jest: 29.2.1_@types+node@18.11.3
+      typescript: 4.8.4
+
+  python/terminal:
+    specifiers:
+      '@types/node': ^18.11.3
+      buffer: ^6.0.3
+      css-loader: ^6.7.1
+      events: ^3.3.0
+      html-webpack-plugin: ^5.5.0
+      http-server: ^14.1.1
+      node-polyfill-webpack-plugin: ^2.0.0
+      path-browserify: ^1.0.1
+      process: ^0.11.10
+      python-wasm: workspace:*
+      style-loader: ^3.3.1
+      ts-loader: ^9.3.1
+      typescript: ^4.8.4
+      util: ^0.12.4
+      webpack: ^5.73.0
+      webpack-cli: ^4.10.0
+      webpack-dev-server: ^4.9.3
+      xterm: ^4.19.0
+    devDependencies:
+      '@types/node': 18.11.3
+      buffer: 6.0.3
+      css-loader: 6.7.3_webpack@5.73.0
+      events: 3.3.0
+      html-webpack-plugin: 5.5.0_webpack@5.73.0
+      http-server: 14.1.1
+      node-polyfill-webpack-plugin: 2.0.0_webpack@5.73.0
+      path-browserify: 1.0.1
+      process: 0.11.10
+      python-wasm: link:../python-wasm
+      style-loader: 3.3.1_webpack@5.73.0
+      ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
+      typescript: 4.8.4
+      util: 0.12.4
+      webpack: 5.73.0_webpack-cli@4.10.0
+      webpack-cli: 4.10.0_6rc575xxn4hngez2jk2zkyfdoi
+      webpack-dev-server: 4.9.3_77l47gmqkrqiei5z7sbwz5iaj4
+      xterm: 4.19.0
 
 packages:
 
@@ -889,10 +1114,6 @@ packages:
     engines: {node: '>= 4.0.0'}
     dependencies:
       fs-monkey: 1.0.3
-
-  /@cowasm/py-numpy/1.0.2:
-    resolution: {integrity: sha512-N/V1ptnmASnJoCypgwFE4M6RgvbTDChiBmfwVoqJksZJ1/3ZhWhrp9W2UC5Ly+db7Kc1lFefWRiQbrpI845J8w==}
-    dev: true
 
   /@discoveryjs/json-ext/0.5.7:
     resolution: {integrity: sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==}
@@ -4568,6 +4789,12 @@ packages:
       source-map-js: 1.0.2
     dev: true
 
+  /prettier/2.8.3:
+    resolution: {integrity: sha512-tJ/oJ4amDihPoufT5sM0Z1SKEuKay8LfVAMlbbhnnkvt6BUserZylqo2PN+p9KeljLr0OHa2rXHU1T8reeoTrw==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    dev: true
+
   /pretty-error/4.0.0:
     resolution: {integrity: sha512-AoJ5YMAcXKYxKhuJGdcvse+Voc6v1RgnsR3nWcYU7q4t6z0Q6T86sv5Zq8VIRbOWWFpvdGE83LtdSMNd+6Y0xw==}
     dependencies:
@@ -4634,16 +4861,6 @@ packages:
     hasBin: true
     dependencies:
       '@cowasm/kernel': 0.27.9
-      debug: 4.3.4
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /python-wasm/0.27.0:
-    resolution: {integrity: sha512-eMB/7sQcOcBg76KsEKkNVHu4n2Eb44L4PZW4WyL9oMpb/B8Mh80ai9DSFKq9VR5wbeONg2Ft/8NLPILeB1YzQA==}
-    hasBin: true
-    dependencies:
-      '@cowasm/kernel': 0.28.0
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color

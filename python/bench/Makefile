@@ -1,13 +1,16 @@
 include ../build/Makefile-vars
 
+# TODO
+all:
+	echo "Nothing  yet -- could be install later."
+
 python-wasm:
-	cd ../build && make node
 	echo "Starting benchmarks with python-wasm"
-	npx --yes python-wasm@latest src/all.py
+	pnpx python-wasm@latest src/all.py
 
 pylang:
 	echo "Starting benchmarks with pylang"
-	npx --yes pylang@latest src/all.py
+	pnpx pylang@latest src/all.py
 
 native:
 	cd ../cpython && make native

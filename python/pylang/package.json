@@ -7,16 +7,17 @@
   "main": "tools/compiler.js",
   "files": ["README.md", "package.json", "dist", "bin", "src"],
   "scripts": {
-    "test": "npx tsc && ./bin/pylang self --complete --test . ",
+    "preinstall": "npx only-allow pnpm",
+    "test": "pnpm exec tsc && ./bin/pylang self --complete --test . ",
     "start": "node bin/pylang",
-    "build": "npx tsc && npx --yes pylang@1.1.3 self --complete --base-path .",
-    "tsc": "npx tsc -w",
+    "build": "pnpm exec tsc && pnpx pylang@1.1.3 self --complete --base-path .",
+    "tsc": "pnpm exec tsc -w",
     "clean": "rm -rf dist",
-    "format": "npm run yapf && npm run prettier",
+    "format": "pnpm run yapf && pnpm run prettier",
     "mypy": "git grep -l '^# mypy' | xargs mypy",
     "prettier": "prettier --write .",
     "yapf": "yapf -p -i --recursive src/output bench src/compiler.py src/parse.py src/utils.py  src/tokenizer.py",
-    "prepublishOnly": "npm run clean && npm run build && npm run test"
+    "prepublishOnly": "pnpm run clean && pnpm run build && pnpm run test"
   },
   "license": "BSD-3-Clause",
   "engines": {

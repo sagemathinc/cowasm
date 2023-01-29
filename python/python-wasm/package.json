@@ -1,0 +1,49 @@
+{
+  "name": "python-wasm",
+  "version": "0.27.0",
+  "description": "python-wasm -- WebAssembly Python for servers and browsers with sympy, Cython, numpy, and more",
+  "main": "./dist/node.js",
+  "browser": "./dist/browser.js",
+  "files": ["dist/*", "README.md", "package.json", "tsconfig.json"],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make all",
+    "clean": "make clean",
+    "tsc": "pnpm exec tsc -w",
+    "test": "pnpm exec tsc && pnpm exec jest --no-watchman --runInBand ./dist",
+    "test-watch": "pnpm exec jest --watch ./dist",
+    "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' all && pnpm exec jest --no-watchman --runInBand  ./dist"
+  },
+  "bin": {
+    "python-wasm": "./bin/python-wasm"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm-python.git"
+  },
+  "keywords": ["python", "webassembly"],
+  "author": "William Stein <wstein@sagemath.com>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm-python/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm-python/tree/main/packages/python-wasm",
+  "dependencies": {
+    "@cowasm/kernel": "workspace:*",
+    "debug": "^4.3.4"
+  },
+  "devDependencies": {
+    "@cowasm/cpython": "workspace:*",
+    "@cowasm/posix-wasm": "workspace:*",
+    "@cowasm/py-cython": "workspace:*",
+    "@cowasm/py-mpmath": "workspace:*",
+    "@cowasm/py-numpy": "workspace:*",
+    "@cowasm/py-pandas": "workspace:*",
+    "@cowasm/py-sympy": "workspace:*",
+    "@types/jest": "^29.2.0",
+    "@types/node": "^18.11.3",
+    "awaiting": "^3.0.0",
+    "jest": "^29.2.1",
+    "typescript": "^4.8.4"
+  }
+}

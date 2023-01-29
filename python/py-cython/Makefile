@@ -13,7 +13,7 @@ include ../build/Makefile-rules
 ${BUILD_WASM}/.built: node_modules ${BUILD_WASM}/.build
 	cd ../build && make zig
 	cd ${BUILD_WASM} \
-		&& PYTHONPATH=${PIP} npx @cowasm/cpython setup.py build
+		&& PYTHONPATH=${PIP} pnpx @cowasm/cpython setup.py build
 	touch ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.built
@@ -21,8 +21,8 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.built
 	# NOTE: there's a lot of files in Cython that are NOT .so, not .pyc, but do
 	# need to get included. They are also not in some special "data" location.
 	cd ${BUILD_WASM}/build/lib* \
-		&& npx @cowasm/cpython -m cowasm_bundler Cython cython.py Cython/Utility Cython/Includes \
-		&& npx @cowasm/cpython -m cowasm_bundler pyximport
+		&& pnpx @cowasm/cpython -m cowasm_bundler Cython cython.py Cython/Utility Cython/Includes \
+		&& pnpx @cowasm/cpython -m cowasm_bundler pyximport
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
 	cp ${BUILD_WASM}/cython.py ${DIST_WASM}/
@@ -43,12 +43,12 @@ ${BIN}/cython: bin/cython
 
 test: wasm
 	# Test that importing from the bundle works:
-	PYTHONPATH=${DIST_WASM} npx @cowasm/cpython -c 'import Cython'
+	PYTHONPATH=${DIST_WASM} pnpx @cowasm/cpython -c 'import Cython'
 	# Run an actual demo test suite
 	cd ${BUILD_WASM}/Demos \
 		&& rm -f *.so *.c \
 		&& touch numpy.py \
-		&& npx @cowasm/cpython setup.py build_ext --inplace \
-		&& npx @cowasm/cpython run_primes.py 20 \
-		&& npx @cowasm/cpython run_spam.py \
-		&& npx @cowasm/cpython integrate_timing.py
+		&& pnpx @cowasm/cpython setup.py build_ext --inplace \
+		&& pnpx @cowasm/cpython run_primes.py 20 \
+		&& pnpx @cowasm/cpython run_spam.py \
+		&& pnpx @cowasm/cpython integrate_timing.py

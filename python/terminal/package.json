@@ -12,12 +12,13 @@
     "Makefile"
   ],
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "clean": "rm -rf dist node_modules",
     "build": "webpack",
     "watch": "webpack --watch",
     "serve": "webpack serve",
     "http": "http-server dist",
-    "tsc": "npx tsc -w"
+    "tsc": "pnpm exec tsc -w"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
   },
   "homepage": "https://github.com/sagemathinc/cowasm-python/tree/main/packages/terminal",
   "devDependencies": {
+    "python-wasm": "workspace:*",
     "buffer": "^6.0.3",
     "css-loader": "^6.7.1",
     "events": "^3.3.0",
@@ -38,7 +40,6 @@
     "node-polyfill-webpack-plugin": "^2.0.0",
     "path-browserify": "^1.0.1",
     "process": "^0.11.10",
-    "python-wasm": "^0.26.2",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.3.1",
     "typescript": "^4.8.4",
