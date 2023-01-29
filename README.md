@@ -145,7 +145,8 @@ apt-get install git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 l
 dnf install git make cmake curl dpkg-dev m4 yasm texinfo libtool tcl zip ncurses-devel perl
 ```
 
-- Currently, the only way to build CoWasm from source on MS Windows is to use a Docker container running Linux.  Using WSL2 (maybe) works but is too slow.
+- Currently, the only way to build CoWasm from source on MS Windows is to use a Docker container running Linux.  Using WSL2 \(maybe\) works but is too slow.
+- Also [you must currently install pnpm yourself somehow.](https://pnpm.io/installation) 
 
 ### Build
 

@@ -14,7 +14,7 @@ ${BIN}/node: ${BUILD}/.build
 	cd ${BUILD}/node && make
 
 .PHONEY: node
-node: ${BIN}/node ${BIN}/npx ${BIN}/npm ${BIN}/cowasm-package-path
+node: ${BIN}/node ${BIN}/cowasm-package-path
 
 ${BIN}/zig: ${BUILD}/.build
 	cd ${BUILD}/zig && make

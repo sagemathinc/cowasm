@@ -41,12 +41,6 @@ importers:
       webpack-cli: 4.10.0_jzhzd72e75bnja33cjjj6sveb4
       webpack-dev-server: 4.9.3_36vmkgurloznc5fouel6xkjyma
 
-  packages/build/build/node:
-    specifiers:
-      pnpm: ^7.26.1
-    dependencies:
-      pnpm: 7.26.1
-
   packages/bzip2:
     specifiers: {}
 
@@ -4492,12 +4486,6 @@ packages:
     dependencies:
       find-up: 4.1.0
     dev: true
-
-  /pnpm/7.26.1:
-    resolution: {integrity: sha512-l86ZNy8RZmG2aDxZVk6+vt9c8aV0tMZICQxPksRQOL5r2n92kgaIauYSFUZ+LNmPJFsbSGKpsvgOF41oiS7JWw==}
-    engines: {node: '>=14.6'}
-    hasBin: true
-    dev: false
 
   /portfinder/1.0.32:
     resolution: {integrity: sha512-on2ZJVVDXRADWE6jnQaX0ioEylzgBpQk8r55NE4wjXW1ZxO+BgDlY6DXwj20i0V8eB4SenDQ00WEaxfiIQPcxg==}

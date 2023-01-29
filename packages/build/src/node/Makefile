@@ -7,7 +7,7 @@ include ../Makefile-vars-build
 # Find the latest version at https://nodejs.org/dist/latest/
 VERSION = 19.5.0
 
-all: ${DIST_NATIVE}/.${VERSION} ${BIN}/node ${BIN}/pnpm ${BIN}/pnpx ${BIN}/cowasm-package-path
+all: ${DIST_NATIVE}/.${VERSION} ${BIN}/node ${BIN}/cowasm-package-path # ${BIN}/pnpm ${BIN}/pnpx 
 
 # Using sed because uname -s --> x86_64 or aarch64, but need x64 or arm64
 ARCH = $(shell uname -m | sed s/x86_64/x64/ | sed s/aarch64/arm64/ )
@@ -32,18 +32,19 @@ ${BIN}/node: ${DIST_NATIVE}/bin/node
 	ln -sf ${DIST_NATIVE}/bin/node ${BIN}/node
 	touch ${BIN}/node
 
-${BIN}/pnpm: ${DIST_NATIVE}/bin/npm
-	${DIST_NATIVE}/bin/npm init -y
-	${DIST_NATIVE}/bin/npm install pnpm
-	# Now switch it to be a pnpm install.  Yes this is weird.
-	./node_modules/.bin/pnpm install
-	./fix-pnpm.sh
-	cp `pwd`/node_modules/.bin/pnpm ${BIN}/pnpm
-	touch ${BIN}/pnpm
-
-${BIN}/pnpx: ${BIN}/pnpm
-	cp `pwd`/node_modules/.bin/pnpx ${BIN}/pnpx
-	touch ${BIN}/pnpx
+#${BIN}/pnpm: ${DIST_NATIVE}/bin/npm
+#	echo "YOU MUST INSTALL PNPM YOURSELF for now."
+#	${DIST_NATIVE}/bin/npm init -y
+#	${DIST_NATIVE}/bin/npm install pnpm
+#	# Now switch it to be a pnpm install.  Yes this is weird.
+#	./node_modules/.bin/pnpm install
+#	./fix-pnpm.sh
+#	cp `pwd`/node_modules/.bin/pnpm ${BIN}/pnpm
+#	touch ${BIN}/pnpm
+#
+#${BIN}/pnpx: ${BIN}/pnpm
+#	cp `pwd`/node_modules/.bin/pnpx ${BIN}/pnpx
+#	touch ${BIN}/pnpx
 
 ${BIN}/cowasm-package-path: ${CWD}/cowasm-package-path
 	ln -sf ${CWD}/cowasm-package-path ${BIN}/cowasm-package-path
