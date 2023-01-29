@@ -29,7 +29,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/webpack",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/webpack",
   "devDependencies": {
     "@cowasm/kernel": "workspace:*",
     "python-wasm": "^0.26.2",

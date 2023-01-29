@@ -2,17 +2,36 @@ BUILT = dist/.built
 
 CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-PACKAGE_DIRS = $(dir $(shell ls packages/*/Makefile))
+CORE_DIRS = $(dir $(shell ls core/*/Makefile))
+PYTHON_DIRS = $(dir $(shell ls python/*/Makefile))
 
-export PATH := ${CWD}/bin:${CWD}/packages/zig/dist:$(PATH)
+export PATH := ${CWD}/bin:${CWD}/core/zig/dist:$(PATH)
 
-all:
-	./bin/make-all all ${PACKAGE_DIRS}
+all: core
+
+.PHONY: core
+core:
+	./bin/make-all all ${CORE_DIRS}
 	#
 	#
 	##########################################################
 	#                                                        #
-	#   CONGRATULATIONS -- FULL COWASM BUILD WORKED!         #
+	#   CONGRATULATIONS -- BUILT COWASM CORE!                #
+	#
+	@echo "#   `date`"
+	@echo "#   `uname -s -m`"
+	@echo "#   Git Branch: `git rev-parse --abbrev-ref HEAD`"
+	#                                                        #
+	##########################################################
+
+.PHONY: python
+python:
+	./bin/make-all all ${PYTHON_DIRS}
+	#
+	#
+	##########################################################
+	#                                                        #
+	#   CONGRATULATIONS -- BUILT COWASM PYTHON!              #
 	#
 	@echo "#   `date`"
 	@echo "#   `uname -s -m`"
@@ -22,7 +41,7 @@ all:
 
 .PHONY: test
 test:
-	./bin/make-all test ${PACKAGE_DIRS}
+	./bin/make-all test ${CORE_DIRS}
 	#
 	#
 	##########################################################
@@ -38,7 +57,7 @@ test:
 
 .PHONY: test-clean
 test-clean:
-	./bin/make-all-clean test ${PACKAGE_DIRS}
+	./bin/make-all-clean test ${CORE_DIRS}
 	#
 	#
 	##########################################################
@@ -54,6 +73,6 @@ test-clean:
 
 .PHONY: clean
 clean:
-	./bin/make-all clean ${PACKAGE_DIRS}
-	rm -rf bin/python* bin/node bin/*npm bin/*npx bin/cowasm-* bin/zig
+	./bin/make-all clean ${CORE_DIRS} ${PYTHON_DIRS}
+	rm -rf bin/python* bin/cowasm-* bin/zig
 

@@ -1,7 +1,7 @@
 # This is a Makefile of common definitions that is used by other packages that
 # involve building upstream code from source.
 
-# The directory containing the package where the makefile is run, e.g., packages/bzip2
+# The directory containing the package where the makefile is run, e.g., core/bzip2
 CWD:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 # The directory containing all of the packages.

@@ -78,7 +78,7 @@ npm install python-wasm
 Then from the nodejs REPL:
 
 ```js
-~/cowasm/packages/python-wasm$ node
+~/cowasm/core/python-wasm$ node
 Welcome to Node.js v19.0.0.
 Type ".help" for more information.
 > {syncPython, asyncPython} = require('.')
@@ -115,7 +115,7 @@ name? william  <-- I just typed "william"
 > # back in node.
 ```
 
-You can also use python\-wasm in your own [web applications via webpack](https://github.com/sagemathinc/cowasm/tree/main/packages/webpack).  In the browser, this transparently uses SharedArrayBuffers if available, and falls back to ServiceWorkers.
+You can also use python\-wasm in your own [web applications via webpack](https://github.com/sagemathinc/cowasm/tree/main/core/webpack).  In the browser, this transparently uses SharedArrayBuffers if available, and falls back to ServiceWorkers.
 
 ## Build from Source
 
@@ -214,7 +214,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> sys.platform
 'wasi'
 >>> sys.executable
-'/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/packages/cpython/bin/python-wasm'
+'/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/core/cpython/bin/python-wasm'
 >>> ^D
 ~/cowasm$
 ```
@@ -223,22 +223,22 @@ The above directly runs the \`python.wasm\` executable produced by building cPyt
 
 ```py
 ~/cowasm$ . bin/env.sh 
-~/cowasm$ cd packages/python-wasm/
-~/cowasm/packages/python-wasm$ ./bin/python-wasm 
+~/cowasm$ cd core/python-wasm/
+~/cowasm/core/python-wasm$ ./bin/python-wasm 
 Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import time; t=time.time(); print(sum(range(10**7)), time.time()-t)
 49999995000000 0.8989999294281006
 >>> ^D
-~/cowasm/packages/python-wasm$
+~/cowasm/core/python-wasm$
 ```
 
 As mentioned above, you can use python\-wasm as a library in node.js. There is a synchronous api that runs in the same thread as the import, and an asynchronous api that runs in a worker thread.
 
 ```py
 ~/cowasm$ . bin/env.sh 
-~/cowasm$ cd packages/python-wasm/
-~/cowasm/packages/python-wasm$ node
+~/cowasm$ cd core/python-wasm/
+~/cowasm/core/python-wasm$ node
 Welcome to Node.js v19.0.0.
 Type ".help" for more information.
 > python = require('.')
@@ -258,7 +258,7 @@ undefined
 And yes you can run many async Python's in parallel in the same node.js process, with each running in its own thread:
 
 ```sh
-~/cowasm/packages/python-wasm$ nodeWelcome to Node.js v19.0.0.
+~/cowasm/core/python-wasm$ nodeWelcome to Node.js v19.0.0.
 Type ".help" for more information.
 > python = require('.')
 {
@@ -312,10 +312,10 @@ This runs a single top level Makefile that builds all the packages. The build pr
 
 ### What happens
 
-In most subdirectories `foo/` of packages, this makefile creates some subdirectories:
+In most subdirectories `foo/` of `core`, this makefile creates some subdirectories:
 
-- `packages/foo/dist/[native|wasm]` \-\- a native or WebAssembly build of the package; this has binaries, headers, and libs. These get used by other packages.  We rarely build the native version.
-- `packages/build/[native|wasm]` \- build artifacts for the native or WebAssembly build; can be safely deleted
+- `core/foo/dist/[native|wasm]` \-\- a native or WebAssembly build of the package; this has binaries, headers, and libs. These get used by other packages.  We rarely build the native version.
+- `core/build/[native|wasm]` \- build artifacts for the native or WebAssembly build; can be safely deleted
 
 ### No common prefix directory
 
@@ -353,8 +353,8 @@ The python-wasm package has a bin/python-wasm script that can run
 Python programs that including interactive blocking input:
 
 ```sh
-~/cowasm/packages/python-wasm$ echo "name = input('name? '); print(name*3)" > a.py
-~/cowasm/packages/python-wasm$ ./bin/python-wasm a.py
+~/cowasm/core/python-wasm$ echo "name = input('name? '); print(name*3)" > a.py
+~/cowasm/core/python-wasm$ ./bin/python-wasm a.py
 name? william
 williamwilliamwilliam
 ```

@@ -2,7 +2,7 @@ lockfileVersion: 5.4
 
 importers:
 
-  packages/browser:
+  core/browser:
     specifiers:
       '@cowasm/kernel': workspace:*
       '@types/node': ^18.11.3
@@ -33,7 +33,7 @@ importers:
       path-browserify: 1.0.1
       process: 0.11.10
       python-wasm: 0.26.3
-      ts-loader: 9.3.1_pfhymta45wkqia6xzv764wgtky
+      ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
       typescript: 4.8.4
       util: 0.12.4
       webpack: 5.73.0_webpack-cli@4.10.0
@@ -41,10 +41,10 @@ importers:
       webpack-cli: 4.10.0_jzhzd72e75bnja33cjjj6sveb4
       webpack-dev-server: 4.9.3_36vmkgurloznc5fouel6xkjyma
 
-  packages/bzip2:
+  core/bzip2:
     specifiers: {}
 
-  packages/coreutils:
+  core/coreutils:
     specifiers:
       '@cowasm/bzip2': workspace:*
       '@cowasm/posix-wasm': workspace:*
@@ -54,7 +54,7 @@ importers:
       '@cowasm/posix-wasm': link:../posix-wasm
       '@cowasm/zlib': link:../zlib
 
-  packages/cowasm.org:
+  core/cowasm.org:
     specifiers:
       '@types/node': ^18.11.3
       buffer: ^6.0.3
@@ -94,7 +94,7 @@ importers:
       xterm: 5.1.0
       xterm-addon-web-links: 0.7.0_xterm@5.1.0
 
-  packages/cowasm.sh:
+  core/cowasm.sh:
     specifiers:
       '@types/node': ^18.11.3
       buffer: ^6.0.3
@@ -127,7 +127,7 @@ importers:
       path-browserify: 1.0.1
       process: 0.11.10
       style-loader: 3.3.1_webpack@5.73.0
-      ts-loader: 9.3.1_pfhymta45wkqia6xzv764wgtky
+      ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
       typescript: 4.8.4
       util: 0.12.4
       webpack: 5.73.0_webpack-cli@4.10.0
@@ -136,7 +136,7 @@ importers:
       xterm: 5.1.0
       xterm-addon-web-links: 0.7.0_xterm@5.1.0
 
-  packages/dash:
+  core/dash:
     specifiers:
       '@cowasm/kernel': workspace:*
       '@cowasm/libedit': workspace:*
@@ -148,7 +148,7 @@ importers:
       '@cowasm/posix-wasm': link:../posix-wasm
       '@cowasm/termcap': link:../termcap
 
-  packages/dash-wasm:
+  core/dash-wasm:
     specifiers:
       '@cowasm/bzip2': workspace:*
       '@cowasm/coreutils': workspace:*
@@ -195,7 +195,7 @@ importers:
       jest: 29.2.1_@types+node@18.11.3
       typescript: 4.8.4
 
-  packages/dylink:
+  core/dylink:
     specifiers:
       '@cowasm/posix-wasm': workspace:*
       '@types/jest': ^29.2.0
@@ -216,13 +216,13 @@ importers:
       typescript: 4.8.4
       wasi-js: link:../wasi-js
 
-  packages/f2c:
+  core/f2c:
     specifiers:
       wasi-js: workspace:*
     devDependencies:
       wasi-js: link:../wasi-js
 
-  packages/kernel:
+  core/kernel:
     specifiers:
       '@cowasm/posix-wasm': workspace:*
       '@types/jest': ^29.2.0
@@ -255,7 +255,7 @@ importers:
       typescript: 4.8.4
       wabt: 1.0.29
 
-  packages/less:
+  core/less:
     specifiers:
       '@cowasm/kernel': workspace:*
       '@cowasm/ncurses': workspace:*
@@ -267,7 +267,7 @@ importers:
       '@cowasm/posix-wasm': link:../posix-wasm
       '@cowasm/termcap': link:../termcap
 
-  packages/libedit:
+  core/libedit:
     specifiers:
       '@cowasm/kernel': workspace:*
       '@cowasm/termcap': workspace:*
@@ -275,21 +275,13 @@ importers:
       '@cowasm/kernel': link:../kernel
       '@cowasm/termcap': link:../termcap
 
-  packages/libffi:
+  core/libffi:
     specifiers:
       '@cowasm/kernel': workspace:*
     devDependencies:
       '@cowasm/kernel': link:../kernel
 
-  packages/libgit2:
-    specifiers:
-      '@cowasm/kernel': workspace:*
-      '@cowasm/zlib': workspace:*
-    devDependencies:
-      '@cowasm/kernel': link:../kernel
-      '@cowasm/zlib': link:../zlib
-
-  packages/libpng:
+  core/libgit2:
     specifiers:
       '@cowasm/kernel': workspace:*
       '@cowasm/zlib': workspace:*
@@ -297,7 +289,15 @@ importers:
       '@cowasm/kernel': link:../kernel
       '@cowasm/zlib': link:../zlib
 
-  packages/lua:
+  core/libpng:
+    specifiers:
+      '@cowasm/kernel': workspace:*
+      '@cowasm/zlib': workspace:*
+    devDependencies:
+      '@cowasm/kernel': link:../kernel
+      '@cowasm/zlib': link:../zlib
+
+  core/lua:
     specifiers:
       '@cowasm/kernel': ^0.27.9
       '@cowasm/libedit': ^1.0.0
@@ -307,7 +307,7 @@ importers:
       '@cowasm/libedit': link:../libedit
       '@cowasm/termcap': link:../termcap
 
-  packages/lzma:
+  core/lzma:
     specifiers:
       '@cowasm/kernel': workspace:*
       '@cowasm/posix-wasm': workspace:*
@@ -315,7 +315,7 @@ importers:
       '@cowasm/kernel': link:../kernel
       '@cowasm/posix-wasm': link:../posix-wasm
 
-  packages/man:
+  core/man:
     specifiers:
       '@cowasm/posix-wasm': ^1.0.3
       '@cowasm/zlib': ^1.0.0
@@ -323,7 +323,7 @@ importers:
       '@cowasm/posix-wasm': link:../posix-wasm
       '@cowasm/zlib': link:../zlib
 
-  packages/ncurses:
+  core/ncurses:
     specifiers:
       '@cowasm/posix-wasm': ^1.0.3
       '@cowasm/termcap': ^1.0.0
@@ -331,7 +331,7 @@ importers:
       '@cowasm/posix-wasm': link:../posix-wasm
       '@cowasm/termcap': link:../termcap
 
-  packages/openssl:
+  core/openssl:
     specifiers:
       '@cowasm/kernel': ^0.27.9
       '@cowasm/posix-wasm': ^1.0.3
@@ -339,7 +339,7 @@ importers:
       '@cowasm/kernel': link:../kernel
       '@cowasm/posix-wasm': link:../posix-wasm
 
-  packages/posix-browser:
+  core/posix-browser:
     specifiers:
       '@types/jest': ^29.2.0
       '@types/node': ^18.11.3
@@ -354,7 +354,7 @@ importers:
       jest: 29.2.1_@types+node@18.11.3
       typescript: 4.8.4
 
-  packages/posix-node:
+  core/posix-node:
     specifiers:
       '@types/jest': ^29.2.0
       '@types/node': ^18.11.3
@@ -369,10 +369,10 @@ importers:
       jest: 29.2.1_@types+node@18.11.3
       typescript: 4.8.4
 
-  packages/posix-wasm:
+  core/posix-wasm:
     specifiers: {}
 
-  packages/rogue:
+  core/rogue:
     specifiers:
       '@cowasm/kernel': ^0.27.9
       '@cowasm/ncurses': ^1.0.0
@@ -385,7 +385,7 @@ importers:
       '@cowasm/posix-wasm': link:../posix-wasm
       '@cowasm/termcap': link:../termcap
 
-  packages/sqlite:
+  core/sqlite:
     specifiers:
       '@cowasm/libedit': ^1.0.0
       '@cowasm/posix-wasm': ^1.0.3
@@ -397,7 +397,7 @@ importers:
       '@cowasm/termcap': link:../termcap
       '@cowasm/zlib': link:../zlib
 
-  packages/tar:
+  core/tar:
     specifiers:
       '@cowasm/bzip2': ^1.0.1
       '@cowasm/lzma': ^1.0.3
@@ -409,10 +409,10 @@ importers:
       '@cowasm/posix-wasm': link:../posix-wasm
       '@cowasm/zlib': link:../zlib
 
-  packages/termcap:
+  core/termcap:
     specifiers: {}
 
-  packages/terminal:
+  core/terminal:
     specifiers:
       '@types/node': ^18.11.3
       buffer: ^6.0.3
@@ -444,7 +444,7 @@ importers:
       process: 0.11.10
       python-wasm: 0.26.3
       style-loader: 3.3.1_webpack@5.73.0
-      ts-loader: 9.3.1_pfhymta45wkqia6xzv764wgtky
+      ts-loader: 9.4.2_pfhymta45wkqia6xzv764wgtky
       typescript: 4.8.4
       util: 0.12.4
       webpack: 5.73.0_webpack-cli@4.10.0
@@ -452,7 +452,7 @@ importers:
       webpack-dev-server: 4.9.3_77l47gmqkrqiei5z7sbwz5iaj4
       xterm: 4.19.0
 
-  packages/viz:
+  core/viz:
     specifiers:
       '@cowasm/lua': ^1.0.0
       '@cowasm/ncurses': ^1.0.0
@@ -462,7 +462,7 @@ importers:
       '@cowasm/ncurses': link:../ncurses
       '@cowasm/posix-wasm': link:../posix-wasm
 
-  packages/wasi-js:
+  core/wasi-js:
     specifiers:
       '@cowasm/memfs': ^3.5.1
       '@types/filesystem': ^0.0.32
@@ -493,13 +493,13 @@ importers:
       jest: 29.2.1_@types+node@18.11.3
       typescript: 4.8.4
 
-  packages/wasm-opt:
+  core/wasm-opt:
     specifiers:
       binaryen: ^110.0.0
     dependencies:
       binaryen: 110.0.0
 
-  packages/zlib:
+  core/zlib:
     specifiers: {}
 
 packages:
@@ -5282,21 +5282,6 @@ packages:
   /totalist/1.1.0:
     resolution: {integrity: sha512-gduQwd1rOdDMGxFG1gEvhV88Oirdo2p+KjoYFU7k2g+i7n6AFFbDQ5kMPUsW0pNbfQsB/cwXvT1i4Bue0s9g5g==}
     engines: {node: '>=6'}
-    dev: true
-
-  /ts-loader/9.3.1_pfhymta45wkqia6xzv764wgtky:
-    resolution: {integrity: sha512-OkyShkcZTsTwyS3Kt7a4rsT/t2qvEVQuKCTg4LJmpj9fhFR7ukGdZwV6Qq3tRUkqcXtfGpPR7+hFKHCG/0d3Lw==}
-    engines: {node: '>=12.0.0'}
-    peerDependencies:
-      typescript: '*'
-      webpack: ^5.0.0
-    dependencies:
-      chalk: 4.1.2
-      enhanced-resolve: 5.10.0
-      micromatch: 4.0.5
-      semver: 7.3.8
-      typescript: 4.8.4
-      webpack: 5.73.0_webpack-cli@4.10.0
     dev: true
 
   /ts-loader/9.4.2_pfhymta45wkqia6xzv764wgtky:

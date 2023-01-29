@@ -55,7 +55,7 @@ Clone the repo:
 
 ```sh
 git clone https://github.com/sagemathinc/cowasm
-cd cowasm/packages/browser
+cd cowasm/core/browser
 ```
 
 Install and start the server:
