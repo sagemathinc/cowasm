@@ -50,7 +50,7 @@ WASM_OPT=-DNDEBUG -fwrapv -Wall -Oz -g
 #WASM_OPT=-DNDEBUG -fwrapv -Wall -Oz
 
 # Default target
-all: native ${BIN}/python-native wasm ${BIN}/python-wasm
+all: deps native ${BIN}/python-native wasm ${BIN}/python-wasm
 
 ${DIST}/.built: native wasm
 	touch ${DIST}/.built
@@ -257,7 +257,7 @@ MINIMAL_READLINE = termcap lib-dynload/readline.cpython-311-wasm32-wasi.so  rlco
 # below by
 #    && python-wasm ./Tools/wasm/wasm_assets.py
 
-${DIST_WASM}/.built: deps node_modules ${DIST_WASM}/.install-cpython ${BIN}/python-native
+${DIST_WASM}/.built:  node_modules ${DIST_WASM}/.install-cpython ${BIN}/python-native
 	# Build wasm asset bundle (the pyc files, etc.).
 	cd ${BUILD_WASM} \
 		&& mkdir -p usr/local/lib/python3.11/lib-dynload/  \

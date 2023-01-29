@@ -1,15 +1,15 @@
 include ../build/Makefile-vars
 
-all: ${DIST}/.built
+all: deps ${DIST}/.built
 
 include ../build/Makefile-rules
 
-${DIST}/.built: deps src/index.ts
+${DIST}/.built:  src/index.ts
 	npm run build
 	touch ${DIST}/.built
 
 clean-build::
 	rm -rf node_modules
 
-test: ${DIST}/.built
+test: deps ${DIST}/.built
 	echo "it built"

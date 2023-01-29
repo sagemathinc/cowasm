@@ -12,7 +12,7 @@ URL = https://github.com/matplotlib/matplotlib/archive/refs/tags/v${VERSION}.tar
 
 TARBALL = ${UPSTREAM}/matplotlib-${VERSION}.tar.gz
 
-#all: wasm
+#all: deps wasm
 all:
 
 include ../build/Makefile-rules
@@ -20,7 +20,7 @@ include ../build/Makefile-rules
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	touch ${BUILD_WASM}/.patched
 
-${BUILD_WASM}/.install: deps ${BUILD_WASM}/.patched
+${BUILD_WASM}/.install:  ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& PYTHONPATH=${PIP} pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.install

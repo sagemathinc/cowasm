@@ -1,6 +1,6 @@
 include ../build/Makefile-vars
 
-all: wasm
+all: deps wasm
 
 # See https://github.com/sympy/sympy/releases
 
@@ -10,12 +10,12 @@ TARBALL = ${UPSTREAM}/sympy-${VERSION}.tar.gz
 
 include ../build/Makefile-rules
 
-${BUILD_WASM}/.built: deps ${BUILD_WASM}/.build
+${BUILD_WASM}/.built:  ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&& PYTHONPATH=$(shell cowasm-package-path @cowasm/py-setuptools):$(shell cowasm-package-path @cowasm/py-mpmath) pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.built
 
-${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
+${DIST_WASM}/.built:  ${BUILD_WASM}/.built
 	cd ${BUILD_WASM}/build/lib \
 		&& pnpm-exec cpython -m cowasm_bundler sympy
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
@@ -24,7 +24,7 @@ ${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
 
 # This is a small test just that something works.  It's NOT the full very massive test suite,
 # which might be hard to get to pass anywhere, let alone in WASM.
-test: ${DIST_WASM}/.built deps
+test: deps ${DIST_WASM}/.built
 	# Test that importing from the bundle works:
 	PYTHONPATH=${DIST_WASM}:$(shell cowasm-package-path @cowasm/py-mpmath) pnpm-exec cpython -c 'import sympy'
 

@@ -1,6 +1,6 @@
 include ../build/Makefile-vars
 
-all: wasm ${BIN}/cython
+all: deps wasm ${BIN}/cython
 
 # See https://github.com/cython/cython/releases
 
@@ -10,13 +10,13 @@ TARBALL = ${UPSTREAM}/cython-${VERSION}.tar.gz
 
 include ../build/Makefile-rules
 
-${BUILD_WASM}/.built: deps ${BUILD_WASM}/.build
+${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 	cd ../build && make zig
 	cd ${BUILD_WASM} \
 		&& PYTHONPATH=${PIP} pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.built
 
-${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
+${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
 	# NOTE: there's a lot of files in Cython that are NOT .so, not .pyc, but do
 	# need to get included. They are also not in some special "data" location.

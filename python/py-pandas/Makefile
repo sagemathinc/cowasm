@@ -7,7 +7,7 @@ URL = https://github.com/pandas-dev/pandas/releases/download/v${VERSION}/pandas-
 
 TARBALL = ${UPSTREAM}/pandas-${VERSION}.tar.gz
 
-all: wasm
+all: deps wasm
 
 include ../build/Makefile-rules
 
@@ -22,7 +22,7 @@ PYTHONPATH = $(shell cowasm-package-path @cowasm/py-cython):$(shell cowasm-packa
 #    deps because pandas is already installed.
 # This would break if pypi pandas is updated, but we haven't updated our
 # package here yet, etc.  Not ideal.  This is just a first step.
-${BUILD_WASM}/.install: deps ${BUILD_WASM}/.build
+${BUILD_WASM}/.install:  ${BUILD_WASM}/.build
 	cd ../build && make zig
 	# TODO: Now install pandas first via setup.py, then using pip to install
 	# just the remaining dependencies.
@@ -32,7 +32,7 @@ ${BUILD_WASM}/.install: deps ${BUILD_WASM}/.build
 	touch ${BUILD_WASM}/.install
 
 
-${DIST_WASM}/.built: deps ${BUILD_WASM}/.install
+${DIST_WASM}/.built:  ${BUILD_WASM}/.install
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
 	cd ${BUILD_WASM} \
 		&& pnpm-exec cpython -m cowasm_bundler pandas
@@ -48,6 +48,6 @@ ${DIST_WASM}/.built: deps ${BUILD_WASM}/.install
 	touch ${DIST_WASM}/.built
 
 # Just a trivial test for now.
-test: ${DIST_WASM}/.built deps
+test: deps ${DIST_WASM}/.built
 	@PYTHONPATH="${DIST_WASM}:${PYTHONPATH}" pnpm-exec cpython -c "import pandas" && echo "Trivial PANDAS TEST PASSED!"
 

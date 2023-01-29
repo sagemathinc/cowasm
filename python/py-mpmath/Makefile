@@ -1,6 +1,6 @@
 include ../build/Makefile-vars
 
-all: wasm
+all: deps wasm
 
 # See https://github.com/mpmath/mpmath/releases
 VERSION = 1.0.0
@@ -10,7 +10,7 @@ TARBALL = ${UPSTREAM}/mpmath-${VERSION}.tar.gz
 
 include ../build/Makefile-rules
 
-${BUILD_WASM}/.built: deps ${BUILD_WASM}/.build
+${BUILD_WASM}/.built:  ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} \
 		&& PYTHONPATH=${PIP} pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.built

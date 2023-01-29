@@ -9,7 +9,7 @@ TARBALL = ${UPSTREAM}/numpy-${VERSION}.tar.gz
 
 CYTHON = ${PACKAGES}/py-cython/dist/wasm
 
-all: wasm
+all: deps wasm
 
 include ../build/Makefile-rules
 
@@ -48,7 +48,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 
 PYTHONPATH = $(shell cowasm-package-path @cowasm/py-pip):$(shell cowasm-package-path @cowasm/py-cython)
 
-${BUILD_WASM}/.lib: deps ${BUILD_WASM}/.patched
+${BUILD_WASM}/.lib:  ${BUILD_WASM}/.patched
 	cd ../build && make zig
 	# TODO: We install rather than just build *solely* so that
 	# pip install with pandas doesn't try to install numpy later.
@@ -56,7 +56,7 @@ ${BUILD_WASM}/.lib: deps ${BUILD_WASM}/.patched
 		&& PYTHONPATH=${PYTHONPATH} pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.lib
 
-${DIST_WASM}/.built: deps ${BUILD_WASM}/.lib
+${DIST_WASM}/.built:  ${BUILD_WASM}/.lib
 	cd ${BUILD_WASM}/build/lib* \
 		&& rm -rf numpy/core/include \
 		&& cp -rv ../src*/numpy/core/include numpy/core/ \

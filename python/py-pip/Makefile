@@ -1,6 +1,6 @@
 include ../build/Makefile-vars
 
-all: wasm
+all: deps wasm
 
 # See https://github.com/pypa/pip/tags
 #
@@ -21,14 +21,14 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/02-pip-no-auto-refresh-progress.patch  | patch -p1
 	touch ${BUILD_WASM}/.patched
 
-${BUILD_WASM}/.built: deps ${BUILD_WASM}/.patched
+${BUILD_WASM}/.built:  ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& PYTHONPATH=${SETUPTOOLS} pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.built
 
 # Trying to use a bundle (e.g., only pyc, etc.,) leads to endless problems, since
 # many scripts and components that use pip assume the .py files are there.
-${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
+${DIST_WASM}/.built:  ${BUILD_WASM}/.built
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
 	cp -r ${BUILD_WASM}/build/lib/pip ${DIST_WASM}/
@@ -40,7 +40,7 @@ ${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
 	PYTHONPATH=${SETUPTOOLS}:${DIST_WASM} pnpm-exec cpython -m pip install setuptools --target=${BUILD_WASM}/site-packages
 	cp -r ${BUILD_WASM}/site-packages/* ${DIST_WASM}
 
-test: ${DIST_WASM}/.built
+test: deps ${DIST_WASM}/.built
 	# Importing from the bundle works:
 	PYTHONPATH=${DIST_WASM} pnpm-exec cpython -c 'import pip'
 	# The command line script works.
