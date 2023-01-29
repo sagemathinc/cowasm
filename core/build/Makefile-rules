@@ -49,4 +49,6 @@ ${BUILD_WASM}/.build:: ${TARBALL}
 
 node_modules:
 	pnpm install
+	# make the node_modules folder, in case nothing actually installed
+	mkdir -p node_modules
 

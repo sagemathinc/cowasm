@@ -15,3 +15,16 @@ do
         make $TARGET
     fi
 done
+
+set +v
+
+echo $*
+echo "##########################################################"
+echo "#                                                        #"
+echo "#   CONGRATULATIONS -- $TARGET WORKED"
+echo "#                                                        #"
+echo "#   `date`"
+echo "#   `uname -s -m`"
+echo "#   Git Branch: `git rev-parse --abbrev-ref HEAD`"
+echo "#                                                        #"
+echo "##########################################################"

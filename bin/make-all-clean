@@ -11,5 +11,6 @@ do
     make -j4 clean
     cd "$ROOTDIR/$PACKAGE"
     echo $PACKAGE
+    make all
     make $TARGET
 done
