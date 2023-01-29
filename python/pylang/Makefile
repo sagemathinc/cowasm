@@ -5,12 +5,12 @@ all: build
 
 .PHONY: build
 build:
-	npm install
-	npm run build
+	pnpm install
+	pnpm run build
 
 .PHONY: test
 test: build
-	npm run test
+	pnpm run test
 
 clean:
 	rm -rf ${DIST} node_modules

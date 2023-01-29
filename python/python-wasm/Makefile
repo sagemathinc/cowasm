@@ -20,11 +20,15 @@ LDFLAGS = -L${BUILD} -lpython3.11
 # needed be usable.
 ###
 
-# this is needed because we store libpython3.11.a compressed in the @cowasm/cpython package,
+# This is a little complicated because we *might* have the
+# libpython3.11.a compressed in the @cowasm/cpython package,
 # since it is 25MB and so rarely needed, except here.
+# It's compressed when uploaded to npmjs.com, but not compressed
+# when used via the workspace.
 ${BUILD}/libpython3.11.a:
-	cp ${CPYTHON_WASM}/lib/libpython3.11.a.xz ${BUILD}/libpython3.11.a.xz
-	xz -d ${BUILD}/libpython3.11.a.xz
+	cp ${CPYTHON_WASM}/lib/libpython3.11.a* ${BUILD}
+	@[[ -f ${BUILD}/libpython3.11.a ]] || xz -d ${BUILD}/libpython3.11.a.xz
+
 
 ${BUILD}/libpython.o:
 	mkdir -p ${BUILD}

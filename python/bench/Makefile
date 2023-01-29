@@ -1,16 +1,17 @@
 include ../build/Makefile-vars
+include ../build/Makefile-rules
 
 # TODO
 all:
 	echo "Nothing  yet -- could be install later."
 
-python-wasm:
+python-wasm: deps
 	echo "Starting benchmarks with python-wasm"
-	pnpm dlx python-wasm@latest src/all.py
+	pnpm dlx python-wasm src/all.py
 
-pylang:
+pylang: deps
 	echo "Starting benchmarks with pylang"
-	pnpm dlx pylang@latest src/all.py
+	pnpm dlx pylang src/all.py
 
 native:
 	cd ../cpython && make native
@@ -27,7 +28,7 @@ test:
 	##cd src/cython && make all  # good test of cython
 
 .PHONY: clean
-clean:
+clean::
 	rm -rf src/__pycache__
 
-clean-build: clean
+clean-build:: clean
