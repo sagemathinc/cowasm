@@ -1,8 +1,9 @@
-packages/*/build
 bin/lua-native
 bin/viz-native
 bin/zig
 bin/node
+bin/pnpm
+bin/pnpx
 bin/npm
 bin/npx
 bin/dash-native

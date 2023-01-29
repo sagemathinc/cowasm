@@ -1,25 +1,13 @@
 
-VERSION = 1.2.4
-
-URL = https://github.com/sagemathinc/cowasm-build/archive/refs/tags/${VERSION}.tar.gz
-
-
 CWD := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-UPSTREAM = ${CWD}/../../upstream/sources
 BUILD = ${CWD}/build
 BIN = ${CWD}/../../bin
-TARBALL = ${UPSTREAM}/build-${VERSION}.tar.gz
 
 all: ${BIN}/node ${BIN}/zig
 
-${TARBALL}:
-	mkdir -p ${UPSTREAM}
-	curl -L ${URL} -o ${TARBALL}
-
 ${BUILD}/.build: ${TARBALL}
 	rm -rf ${BUILD}
-	mkdir -p ${BUILD}
-	tar xf ${TARBALL} -C ${BUILD} --strip-components=1
+	cp -rv src ${BUILD}
 	touch ${BUILD}/.build
 
 ${BIN}/node: ${BUILD}/.build

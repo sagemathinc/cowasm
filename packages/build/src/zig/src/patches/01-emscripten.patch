@@ -1,0 +1,37 @@
+--- build/native/lib/std/os.zig	2022-10-19 06:34:47.000000000 -0700
++++ dist/native/lib/std/os.zig	2022-10-20 12:18:28.000000000 -0700
+@@ -68,6 +68,7 @@
+ else switch (builtin.os.tag) {
+     .linux => linux,
+     .wasi => wasi,
++    .emscripten => wasi,
+     .uefi => uefi,
+     else => struct {},
+ };
+@@ -496,7 +497,7 @@
+     if (builtin.os.tag == .uefi) {
+         exit(0); // TODO choose appropriate exit code
+     }
+-    if (builtin.os.tag == .wasi) {
++    if (builtin.os.tag == .wasi or builtin.os.tag == .emscripten) {
+         @breakpoint();
+         exit(1);
+     }
+@@ -560,7 +561,7 @@
+     if (builtin.os.tag == .windows) {
+         windows.kernel32.ExitProcess(status);
+     }
+-    if (builtin.os.tag == .wasi) {
++    if (builtin.os.tag == .wasi or builtin.os.tag == .emscripten) {
+         wasi.proc_exit(status);
+     }
+     if (builtin.os.tag == .linux and !builtin.single_threaded) {
+@@ -997,7 +998,7 @@
+         return windows.WriteFile(fd, bytes, null, std.io.default_mode);
+     }
+ 
+-    if (builtin.os.tag == .wasi and !builtin.link_libc) {
++    if ((builtin.os.tag == .wasi or builtin.os.tag == .emscripten) and !builtin.link_libc) {
+         const ciovs = [_]iovec_const{iovec_const{
+             .iov_base = bytes.ptr,
+             .iov_len = bytes.len,
