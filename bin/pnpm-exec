@@ -1,5 +1,7 @@
 #!/bin/sh
-`pnpm root`/.bin/$1 "${@:2}"
+first_arg="$1"
+shift
+`pnpm root`/.bin/"$first_arg" "$@"
 
 
 # This script works around a weird and surprising behavior of pnpm exec, which

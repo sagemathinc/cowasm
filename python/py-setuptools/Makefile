@@ -1,6 +1,6 @@
 include ../build/Makefile-vars
 
-all: wasm
+all: deps wasm
 
 # See https://github.com/pypa/setuptools/releases
 VERSION = 65.6.3
@@ -16,12 +16,12 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/01-c++.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
-${BUILD_WASM}/.built: deps ${BUILD_WASM}/.patched
+${BUILD_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.built
 
-${DIST_WASM}/.built: deps ${BUILD_WASM}/.built
+${DIST_WASM}/.built: ${BUILD_WASM}/.built
 	# Hack: since we are not "properly" installing using "ensurepip", we replace
 	# the code in version.py that calls pkg_resources (and looks at data in site-packages),
 	# and instead just hardcode the version, which we know of course.
