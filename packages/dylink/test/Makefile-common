@@ -1,7 +1,6 @@
 
 BIN = $(shell pwd)/../../../../bin
 COWASM = ${BIN}/cowasm-cc
-NODE = ${BIN}/node
 ZIG = ${BIN}/zig
 
 clean:

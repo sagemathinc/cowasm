@@ -17,7 +17,7 @@ build/wasm/hello.so: hello.c
 	${COWASM} hello.c -o build/wasm/hello.so
 
 test-wasm: build/wasm/app.wasm build/wasm/hello.so
-	cd build/wasm && ${NODE} ../../app.js
+	cd build/wasm && node ../../app.js
 
 .PHONEY: test
 test: test-wasm
