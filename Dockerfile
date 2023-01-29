@@ -16,7 +16,7 @@ RUN apt-get update \
 
 # Install nodejs and pnpm
 RUN \
-  && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
+     curl -sL https://deb.nodesource.com/setup_18.x | bash - \
   && apt-get install -y nodejs \
   && npm install -g npm pnpm
 
