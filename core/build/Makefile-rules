@@ -3,7 +3,7 @@
 native: ${DIST_NATIVE}/.built
 
 .PHONY: wasm
-wasm: deps ${DIST_WASM}/.built
+wasm: ${DIST_WASM}/.built
 
 .PHONY: deps
 deps: node_modules

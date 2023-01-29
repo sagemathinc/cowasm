@@ -11,7 +11,7 @@ TARBALL = ${UPSTREAM}/viz-${VERSION}.tar.gz
 
 LUA = ${PACKAGES}/lua/dist/
 
-all: native ${BIN}/viz-native wasm ${BIN}/viz-wasm
+all: deps native ${BIN}/viz-native wasm ${BIN}/viz-wasm
 
 include ../build/Makefile-rules
 
@@ -58,7 +58,7 @@ NCURSES_WASM = $(shell cowasm-package-path @cowasm/ncurses)
 LUA_WASM = $(shell cowasm-package-path @cowasm/lua)
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 
-${DIST_WASM}/.built: deps ${BUILD_WASM}/.patched
+${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 	cd ../build && make zig
 	rm -rf ${DIST_WASM}
 	cd ${BUILD_WASM} \

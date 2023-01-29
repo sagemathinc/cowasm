@@ -1,5 +1,5 @@
 # We only make the wasm version, since we don't need native for our purposes.
-all: wasm
+all:  wasm
 
 include ../build/Makefile-vars
 

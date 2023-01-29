@@ -39,6 +39,7 @@ ${DIST_WASM}/.built:  ${BUILD_WASM}/.built
 	# We do NOT just pip install pip because of the patches above...
 	PYTHONPATH=${SETUPTOOLS}:${DIST_WASM} pnpm-exec cpython -m pip install setuptools --target=${BUILD_WASM}/site-packages
 	cp -r ${BUILD_WASM}/site-packages/* ${DIST_WASM}
+	touch ${DIST_WASM}/.built
 
 test: deps ${DIST_WASM}/.built
 	# Importing from the bundle works:
