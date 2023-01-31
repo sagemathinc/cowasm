@@ -12,7 +12,7 @@ if (existsSync("package.json")) {
   for (const key of ["devDependencies", "dependencies"]) {
     for (const name in package[key] ?? {}) {
       if (package[key][name].startsWith("workspace:")) {
-        if (MAKE_DEP_EXCLUDE.includes(`:${name}`)) {
+        if (MAKE_DEP_EXCLUDE.includes(`:${name}:`)) {
           // Avoid possibility of infinite recursion in case of circular dep.
           // I don't think I have any, but sometime it's going to happen.
           throw Error(
@@ -33,7 +33,7 @@ if (existsSync("package.json")) {
           cwd,
           env: {
             ...process.env,
-            MAKE_DEP_EXCLUDE: MAKE_DEP_EXCLUDE + ":" + name,
+            MAKE_DEP_EXCLUDE: MAKE_DEP_EXCLUDE + ":" + name + ":",
           },
         });
         console.log(`DEPENDENCY: ${name} successfully built\n`);
