@@ -17,7 +17,7 @@ RUN apt-get update \
 # Install nodejs and pnpm
 RUN \
      curl -sL https://deb.nodesource.com/setup_18.x | bash - \
-  && apt-get install -y nodejs \
+  && apt-get install -y nodejs npm \
   && npm install -g npm pnpm
 
 # Get source code of python-wasm and build everything:
