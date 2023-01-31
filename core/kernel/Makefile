@@ -82,7 +82,7 @@ opt: ${DIST}/kernel/kernel.wasm
 
 # There isn't much using zig testing yet, but should be.
 
-TEST = POSIX_WASM="$(shell cowasm-package-path @cowasm/posix-wasm)" CPYTHON_WASM="$(shell cowasm-package-path @cowasm/cpython)" ./test-zig.sh
+TEST = POSIX_WASM="$(shell cowasm-package-path @cowasm/posix-wasm)" ./test-zig.sh
 
 test-posix:
 	cd src && \
