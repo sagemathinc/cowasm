@@ -73,8 +73,27 @@ clean-web:
 # Test
 
 .PHONY: test
-test:
+test: all test-bin
 	./bin/make-all test ${ALL}
+
+test-bin: all
+	# Some tests of the top level scripts
+	# That wasm python runs
+	./bin/python-wasm -c "print('hi')" | grep hi
+	# That native python runs
+	./bin/python-native -c "print('hi')" | grep hi
+	# That the cowasm script can run a wasm binary
+	./bin/cowasm core/coreutils/dist/wasm/bin/factor 2023 | grep "7 17 17"
+	# That cython script starts
+	./bin/cython --version
+	# That dash-wasm runs
+	echo "factor 2023" | ./bin/dash-wasm  |grep "7 17 17"
+	# Wasm version of lua works:
+	./bin/lua-wasm -e 'print(7*17*17)' |grep 2023
+	# Native version of lua works:
+	./bin/lua-native -e 'print(7*17*17)' |grep 2023
+	# That sqlite3-wasm does something:
+	./bin/sqlite3-wasm  --version
 
 # clean up everything after each test, to prove can build and test everything
 # in isolation.

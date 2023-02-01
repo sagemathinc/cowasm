@@ -4,4 +4,4 @@ export PYTHONEXECUTABLE=$(readlink -f "$0")
 SCRIPTDIR=$(dirname "$PYTHONEXECUTABLE")
 # Must adapt to where it happens to be installed:
 export PYTHONHOME="$SCRIPTDIR"/../dist/wasm/
-pnpm-exec kernel "$SCRIPTDIR"/../dist/wasm/bin/python3.11.wasm "$@"
+"$SCRIPTDIR"/../node_modules/.bin/kernel "$SCRIPTDIR"/../dist/wasm/bin/python3.11.wasm "$@"

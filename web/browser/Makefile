@@ -1,10 +1,10 @@
 include ../build/Makefile-vars
 
-all: ${DIST}/.built
+all: deps ${DIST}/.built
 
 include ../build/Makefile-rules
 
-${DIST}/.built: deps node_modules src/index.ts
+${DIST}/.built: node_modules src/index.ts
 	pnpm run build
 	touch ${DIST}/.built
 
