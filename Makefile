@@ -91,5 +91,5 @@ clean:
 
 
 docker:
-	docker build --build-arg commit=`git ls-remote -h https://github.com/sagemathinc/cowasm master | awk '{print $$1}'` -t cowasm .
+	docker build --build-arg commit=`git rev-parse HEAD` -t cowasm .
 .PHONY: docker
