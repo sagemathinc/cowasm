@@ -159,7 +159,14 @@ If you also want to install node v18 and pnpm on Ubuntu, you could do:
 dnf install git make cmake curl dpkg-dev m4 yasm texinfo libtool tcl zip ncurses-devel perl
 ```
 
-- Currently, the only way to build CoWasm from source on MS Windows is to use a Docker container running Linux.  Using WSL2 (maybe) works but is too slow.
+- On **ArchLinux**:
+
+```sh
+pacman -Sy binutils git nodejs npm cmake curl m4 yasm texinfo python libtool tcl zip patch binutils
+```
+(Arch Linux is not yet fully supported.  See https://github.com/sagemathinc/cowasm/issues/53)
+
+- Currently, the only way to build CoWasm from source on MS Windows is to use a Docker container running Linux.  Using WSL2 \(maybe\) works but is too slow.
 
 In addition you need to [install Node.js version at least 16.x](https://nodejs.org/en/download/) and [install the pnpm package manager](https://pnpm.io/installation).
 

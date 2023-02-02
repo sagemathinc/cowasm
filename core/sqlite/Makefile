@@ -41,6 +41,7 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ../build && make zig
 	cd ${BUILD_WASM} && \
 		CC="cowasm-cc" \
+		BCC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" \
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
 		CFLAGS="-Oz -fvisibility-main -I${ZLIB_WASM}/include -I${LIBEDIT_WASM}/include -I${POSIX_WASM} -DSQLITE_DEFAULT_MMAP_SIZE=0" \
@@ -54,7 +55,7 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 			--disable-tcl \
 			--disable-shared \
 	&&	echo '#include "posix-wasm.h"' >> config.h \
-	&&  make sqlite3.h \
+	&&  make BCC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" sqlite3.h \
 	&&	echo '#include "posix-wasm.h"' >> sqlite3.h \
 	&&	echo 'int sqlite3_fileio_init(sqlite3 *,char **,const sqlite3_api_routines *);' >> sqlite3.h \
 	&& 	make BCC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" -j8 \
