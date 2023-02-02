@@ -10,7 +10,7 @@ include ../build/Makefile-vars
 # See https://www.python.org/downloads/
 PYTHON_MAJOR = 3
 PYTHON_MINOR = 11
-PYTHON_PATCH = 0
+PYTHON_PATCH = 1
 PYTHON_BETA =
 PYTHON_VERSION = ${PYTHON_MAJOR}.${PYTHON_MINOR}.${PYTHON_PATCH}
 
@@ -143,11 +143,8 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/06-platform.patch | patch -p1
 	# Fork and execv on top of posix-node work, but it takes some restrictions to be robust:
 	cd ${BUILD_WASM} && cat ${SRC}/patches/07-subprocess.patch | patch -p1
-	cd ${BUILD_WASM} && cat ${SRC}/patches/08-unicode-file-test.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${SRC}/patches/09-set-inheritable.patch | patch -p1
 	# Patch 10-setuptools-c++.patch is used, but only *AFTER* ensurepip happens!
-	# This patch 11 is needed for clang15, which detects a bug in a declaration added for wasm support.
-	cd ${BUILD_WASM} && cat ${SRC}/patches/11-descrobject-clang15.patch | patch -p1
 	# clang15 is more strict:
 	cd ${BUILD_WASM} && cat ${SRC}/patches/12-timemodule-clang15.patch | patch -p1
 	# We can't use the modified WASI socket.h headers, since they annoyingly render the

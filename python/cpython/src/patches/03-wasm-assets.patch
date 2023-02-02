@@ -1,10 +1,10 @@
---- native/Tools/wasm/wasm_assets.py	2022-10-24 10:35:39
-+++ wasm/Tools/wasm/wasm_assets.py	2022-12-05 13:46:30
-@@ -89,21 +89,24 @@
+--- native/Tools/wasm/wasm_assets.py	2022-12-06 11:05:27
++++ wasm/Tools/wasm/wasm_assets.py	2023-02-02 06:59:19
+@@ -91,21 +91,24 @@
      "wsgiref/",
  )
  
-+# The module detection code isn't robust, so I manually comment out
++# The module detection code doesn't work, so I manually comment out
 +# some of these from the list, which causes the corresponding py files
 +# to NOT be excluded.
  OMIT_MODULE_FILES = {
@@ -21,7 +21,7 @@
      "_gdbm": ["dbm/gnu.py"],
 -    "_json": ["json/"],
 +    #"_json": ["json/"],
-     "_multiprocessing": ["concurrent/", "multiprocessing/"],
+     "_multiprocessing": ["concurrent/futures/process.py", "multiprocessing/"],
      "pyexpat": ["xml/", "xmlrpc/"],
 -    "readline": ["rlcompleter.py"],
 -    "_sqlite3": ["sqlite3/"],
@@ -30,15 +30,25 @@
 +    #"_sqlite3": ["sqlite3/"],
 +    #"_ssl": ["ssl.py"],
      "_tkinter": ["idlelib/", "tkinter/", "turtle.py", "turtledemo/"],
- 
      "_zoneinfo": ["zoneinfo/"],
-@@ -127,9 +130,15 @@
+ }
+@@ -134,12 +137,23 @@
+ 
  def get_sysconfigdata(args: argparse.Namespace) -> pathlib.Path:
-     """Get path to sysconfigdata relative to build root
-     """
+     """Get path to sysconfigdata relative to build root"""
 -    data_name = sysconfig._get_sysconfigdata_name()
--    assert "emscripten_wasm32" in data_name
+-    if not data_name.startswith(SYSCONFIG_NAMES):
+-        raise ValueError(
+-            f"Invalid sysconfig data name '{data_name}'.", SYSCONFIG_NAMES
+-        )
 -    filename = data_name + ".py"
++#     data_name = sysconfig._get_sysconfigdata_name()
++#     if not data_name.startswith(SYSCONFIG_NAMES):
++#         raise ValueError(
++#             f"Invalid sysconfig data name '{data_name}'.", SYSCONFIG_NAMES
++#         )
++#     filename = data_name + ".py"
++
 +    # python-wasm: Using sysconfig does NOT work for us, because
 +    # we simply can't run our python.wasm under wasmtime (say), since too
 +    # much is missing, but that's what is done in the Makefile.  So
@@ -48,6 +58,7 @@
 +    # assert "emscripten_wasm32" in data_name
 +    # filename = data_name + ".py"
 +    filename = "_sysconfigdata__wasi_wasm32-wasi.py"
++
      return args.builddir / filename
  
  
