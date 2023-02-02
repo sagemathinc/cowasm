@@ -66,7 +66,7 @@ test-init: node_modules ${DIST_WASM}/.built
 		-L${DIST_WASM}/lib -L${ZLIB_WASM}/lib -lgit2 -lz \
 		${SRC}/test-init.c -o ${TESTS}/test-init
 	rm -rf ${TESTS}/testrepo
-	pnpm -s dlx @cowasm/kernel ${TESTS}/test-init ${TESTS}/testrepo
+	cowasm ${TESTS}/test-init ${TESTS}/testrepo
 	cd ${TESTS}/testrepo && git status |grep "No commits yet"
 
 test: test-init

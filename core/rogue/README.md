@@ -3,13 +3,13 @@
 Try it from node.js (on Mac/Linux so curses is supported):
 
 ```sh
-pnpm dlx @cowasm/rogue
+npx @cowasm/rogue
 ```
 
 or
 
 ```sh
-npx @cowasm/rogue
+pnpm dlx @cowasm/rogue
 ```
 
 You can also type `rogue` at https://cowasm.sh in your browser.

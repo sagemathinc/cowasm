@@ -80,4 +80,4 @@ run-tc1: ${BUILD_WASM}/examples/tc1
 test: ${BUILD_WASM}/examples/tc1
 	# This is a pretty dumb test, since not interactive, but at least it shows
 	# that the program builds and runs at all...
-	echo 'ls' | pnpm -s dlx @cowasm/kernel ${BUILD_WASM}/examples/tc1 |grep "Makefile"
+	echo 'ls' | cowasm ${BUILD_WASM}/examples/tc1 |grep "Makefile"

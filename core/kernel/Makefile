@@ -12,7 +12,7 @@ DYLINK_WASM = $(shell cowasm-package-path dylink)/wasm
 WASI_EMULATED = -lwasi-emulated-mman -lwasi-emulated-process-clocks -lwasi-emulated-signal
 WASM_CFLAGS   = -D_WASI_EMULATED_SIGNAL  -D_WASI_EMULATED_MMAN -D_WASI_EMULATED_PROCESS_CLOCKS -dynamic ${OPT}
 
-all: node_modules deps ${DIST}/.built kernel ${DIST}/termcap
+all: node_modules deps ${DIST}/.built kernel ${DIST}/termcap ${BIN}/cowasm
 
 include ../build/Makefile-rules
 
@@ -65,6 +65,10 @@ ${DIST}/kernel/kernel.wasm: node_modules ${KERNEL_WASM_SOURCES} ${CWD}/src/wasm/
 
 .PHONY: kernel
 kernel: ${DIST}/kernel/kernel.wasm
+
+${BIN}/cowasm:
+	ln -sf `pwd`/bin/cowasm ${BIN}/cowasm
+	touch ${BIN}/cowasm
 
 # Using wasm-opt when I put this in shrinks:
 #  - the non-zip size of the wasm by 10%.   (715kb to 645kb)
