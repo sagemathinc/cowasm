@@ -371,5 +371,6 @@ williamwilliamwilliam
 
 ## Contact
 
-Email [wstein@cocalc.com](mailto:wstein@cocalc.com) if you find this interesting and want to help out. **This is an open source 3\-clause BSD licensed project.**
+Email [wstein@cocalc.com](mailto:wstein@cocalc.com) or [@wstein389](https://twitter.com/wstein389) if find this interesting and want to help out. 
 
+**CoWasm is an open source 3\-clause BSD licensed project.  It includes components and dependencies that may be licensed in other ways, but nothing is GPL licensed.**
