@@ -20,7 +20,7 @@ OS = $(shell uname -s  | sed s/Darwin/macos/ | sed s/Linux/linux/)
 
 # This is for stable releases
 
-VERSION = 0.10.0
+VERSION = 0.10.1
 URL = https://ziglang.org/download/${VERSION}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
 

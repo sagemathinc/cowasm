@@ -36,7 +36,7 @@ pub fn freeArrayOfStrings(s: [*]?[*:0]u8) void {
     while (s[i] != null) : (i += 1) {
         std.c.free(s[i]);
     }
-    std.c.free(s);
+    std.c.free(@ptrCast(*anyopaque, s));
 }
 
 pub fn getErrno() c_int {
