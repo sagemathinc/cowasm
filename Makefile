@@ -5,8 +5,9 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CORE = $(dir $(shell ls core/*/Makefile))
 PYTHON = $(dir $(shell ls python/*/Makefile))
 WEB = $(dir $(shell ls web/*/Makefile))
+DESKTOP = $(dir $(shell ls desktop/*/Makefile))
 
-ALL = ${CORE} ${PYTHON} ${WEB}
+ALL = ${CORE} ${PYTHON} ${WEB} ${DESKTOP}
 
 export PATH := ${CWD}/bin:${CWD}/core/zig/dist:$(PATH)
 
@@ -69,6 +70,21 @@ test-web: web
 .PHONY: clean-web
 clean-web:
 	./bin/make-all clean ${WEB}
+
+# Desktop
+
+.PHONY: desktop
+desktop:
+	./bin/make-all all ${DESKTOP}
+
+.PHONY: test-desktop
+test-desktop: desktop
+	./bin/make-all test ${DESKTOP}
+
+.PHONY: clean-desktop
+clean-desktop:
+	./bin/make-all clean ${DESKTOP}
+
 
 # Test
 

@@ -1,0 +1,60 @@
+{
+  "name": "cowasm-desktop",
+  "productName": "CoWasm Desktop",
+  "version": "1.0.0",
+  "description": "CoWasm Electron Desktop App",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "pnpm exec tsc && pnpm exec webpack",
+    "clean": "rm -rf dist node_modules out",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\"",
+    "tsc": "pnpm exec tsc --watch",
+    "webpack": "pnpm exec webpack --watch"
+  },
+  "frontend": {
+    "config": {
+      "applicationName": "CoWasm Desktop"
+    }
+  },
+  "keywords": ["python", "electronjs", "desktop"],
+  "author": {
+    "name": "William Stein",
+    "email": "wstein@sagemath.com"
+  },
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm-desktop.git"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm-desktop",
+  "dependencies": {
+    "dash-wasm": "workspace:*",
+    "python-wasm": "workspace:*",
+    "@types/debug": "^4.1.7",
+    "debug": "^4.3.4",
+    "electron-squirrel-startup": "^1.0.0",
+    "xterm": "^5.0.0",
+    "xterm-addon-web-links": "^0.7.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.3",
+    "@electron-forge/maker-deb": "^6.0.3",
+    "@electron-forge/maker-rpm": "^6.0.3",
+    "@electron-forge/maker-squirrel": "^6.0.3",
+    "@electron-forge/maker-zip": "^6.0.3",
+    "css-loader": "^6.7.2",
+    "electron": "21.3.0",
+    "html-webpack-plugin": "^5.5.0",
+    "node-polyfill-webpack-plugin": "^2.0.1",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.4.1",
+    "typescript": "^4.9.3",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0"
+  }
+}

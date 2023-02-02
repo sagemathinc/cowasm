@@ -27,25 +27,34 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 NOTE: On Microsoft Windows you have to enter a few times, and there is an issue with terminal echo.  We are working on this.
 
+## Packages
+
+There are four subdirectories that each contain packages:
+
+- **core** \- core functionality, including dynamic linking, a WASI implementation, openssl, and nontrivial posix extensions to node.js written in Zig.  \(This is analogous to [emscripten.org.](https://emscripten.org/)\)
+- **python** \- a WebAssembly build of Python, along with some nontrivial scientific libraries \(This is analogous to [pyodide.org.\)](http://pyodide.org) 
+- **web** \- examples of how to use the other packages in web applications; this includes building https://cowasm.org.
+- **desktop** \- a native Electron app that provides a sandboxed WebAssembly Python terminal running on your native filesystem.
+
 ## What is this?
 
-CoWasm means "collaborative Web Assembly", since it's foundational for https://CoCalc.com, and goes far beyond just Python. It will support various technologies \(such as libgit2 and realtime sync\) that are important foundations for collaboration.  This doesn't exist yet, but one goal is a WebAssembly instance serving applications built on Python on a server or browser \(\+WebRTC\) that multiple people can simultaneously use, similar to how they can collaboratively use Linux accounts via https://CoCalc.com today. 
+CoWasm means "collaborative WebAssembly", and goes far beyond just Python. The collaboration aspects will be part of https://cocalc.com at some point in the future.  CoWasm will support various technologies \(such as libgit2 and realtime sync\) that are important foundations for collaboration.
 
-The underlying software components that CoWasm is built on \(i.e., that we didn't write\) are mostly extremely stable and mature. Zig is very new, but we mostly use Zig for its amazing cross compilation support and packaging of clang/llvm and musl\-libc, which are themselves both very mature. Many other components, such as Python, Dash, Numpy, etc., are ridiculously mature multidecade old projects. Morever, other components of CoWasm such as memfs are libraries with 10M+ downloads per week that are heavily used in production.
+The underlying software components that CoWasm is built on \(i.e., that we didn't write\) are mostly extremely stable and mature. Zig is less stable, but we mostly use Zig for its amazing cross compilation support and packaging of clang/llvm and musl\-libc, which are themselves both very mature. Many other components, such as Python, Dash, Numpy, etc., are ridiculously mature multidecade old projects. Morever, other components of CoWasm such as memfs are libraries with 10M\+ downloads per week that are heavily used in production.
 
-The goal of CoWasm is overall similar to all of emscripten, [WebAssembly.sh](http://WebAssembly.sh), [wapm.io](http://wapm.io), and [Pyodide](https://pyodide.org/en/stable/) in various ways.
+The goal of CoWasm is overall somewhat similar to all of emscripten, [WebAssembly.sh](http://WebAssembly.sh), [wapm.io](http://wapm.io), and [Pyodide](https://pyodide.org/en/stable/) combined, in various ways.
 
-- Unlike [WebAssembly.sh](http://WebAssembly.sh) and [wapm.io](http://wapm.io) \(but similar to [Pyodide](https://pyodide.org/en/stable/)\), we make heavy use of shared _dynamic libraries_ \(e.g., `-fPIC` code\), which is only possible because of a plugin contributed from emscripten to LLVM. The "Co" in CoWasm suggestion "collaboration" or "sharing", which also reflects how the binaries in this project are structured.
+- Unlike [WebAssembly.sh](http://WebAssembly.sh) and [wapm.io](http://wapm.io) \(but similar to [Pyodide](https://pyodide.org/en/stable/)\), we make _**VERY heavy use of shared dynamic libraries**_ \(e.g., `-fPIC` code\), which is only possible because of a plugin contributed from emscripten to LLVM. The "Co" in CoWasm suggestion "collaboration" or "sharing", which also reflects how the binaries in this project are structured.
 - We use actual editline \(similar to readline\) instead of a Javascript terminal. Moreover, unlike other webassembly shells, we just use a real command line shell \(dash = Debian Almquest Shell\). We also have a userspace including ports of many coreutils, e.g., ls, head, tail, etc.
 - Unlike emscripten, we use modern Typescript, our code is more modular, and we make use of existing components when possible \(e.g., the nodejs memfs project\), instead of using our own.
 - A core design constraint is to efficiently run on a wide range of platforms, not mainly in the browser like emscripten, and not mainly on servers like wasmer. CoWasm should run on servers, desktops \(e.g., as an electron app\), an iPad/iOS app, and in web browsers.
-- **There is no business unfriendly GPL code in CoWasm.**  CoWasm itself is extremely liberally licensed and business friendly. The license of all new code and most components is 3-clause BSD.  CoWasm will serve as a foundation for other projects with more restrictive licenses:
+- **There is no business unfriendly GPL code in CoWasm.**  CoWasm itself is extremely liberally licensed and business friendly. The license of all new code and most components is 3\-clause BSD.  CoWasm will serve as a foundation for other projects with more restrictive licenses:
   - CoCalc will build on top of CoWasm to provide a graphical interface and realtime collaboration, and that will be a commercial product.
-  - Products like GP/PARI SageMath will build on CoWasm to provide GPL-licensed mathematics software.
+  - Products like GP/PARI SageMath will build on CoWasm to provide GPL\-licensed mathematics software.
 
 ## Python
 
-An exciting package in CoWasm is [python\-wasm](https://www.npmjs.com/package/python-wasm), which is a build of Python for WebAssembly, which supports both servers and browsers.  It also supports extension modules such as numpy. See [https://github.com/sagemathinc/cowasm\-python](https://github.com/sagemathinc/cowasm-python) 
+An exciting package in CoWasm is [python\-wasm](https://www.npmjs.com/package/python-wasm), which is a build of Python for WebAssembly, which supports both servers and browsers.  It also supports extension modules such as numpy. See [python/README.md](python/README.md) for more details.
 
 <!--
 [<img src="https://github.com/sagemathinc/cowasm/actions/workflows/docker-image.yml/badge.svg"  alt="Docker Image CI"  width="172px"  height="20px"  style="object-fit:cover"/>](https://github.com/sagemathinc/cowasm/actions/workflows/docker-image.yml)
@@ -294,7 +303,7 @@ undefined
 
 ## What's the goal?
 
-Our **initial goal** is to create a WebAssembly build of the core Python and dependent packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\). It should also be relatively easy to _build from source_ on both Linux and MacOS \(x86_64 and aarch64\) and to easily run the cpython test suite,_ with a clearly defined supported list of passing tests. The compilation system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation, and each package is built using make.
+Our **initial goal** is to create a WebAssembly build of the core Python and dependent packages, which runs both on the command line with Node.js and in the major web browsers \(via npm modules that you can include via webpack\). This is done.  It should also be relatively easy to _build from source_ on both Linux and MacOS \(x86\_64 and aarch64\) and to easily run the cpython test suite,\_ with a clearly defined supported list of passing tests. The compilation system is based on [Zig](https://ziglang.org/), which provides excellent caching and cross compilation, and each package is built using make.
 
 ## How does CoWasm compare to Emscripten and Pyodide?
 
@@ -310,7 +319,7 @@ Some of our code will be written in the [Zig](https://ziglang.org/) language. Ho
 
 ### How to build
 
-Just type make. \(Do **NOT** type `make -j8;` it might not work. Patches welcome.\)
+Just type make. \(Do **NOT** type `make -j8;` it probably won't work.\)
 
 ```sh
 ...$ make
@@ -374,3 +383,4 @@ williamwilliamwilliam
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) or [@wstein389](https://twitter.com/wstein389) if find this interesting and want to help out. 
 
 **CoWasm is an open source 3\-clause BSD licensed project.  It includes components and dependencies that may be licensed in other ways, but nothing is GPL licensed.**
+
