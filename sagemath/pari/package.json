@@ -1,7 +1,7 @@
 {
-  "name": "@cowasm/gmp",
+  "name": "@cowasm/pari",
   "version": "1.0.0",
-  "description": "GNU Multiprecision Arithmetic",
+  "description": "PARI: computer algebra system designed for fast computations in number theory",
   "exports": { "./*": "./dist/js/*.js" },
   "type": "module",
   "files": [
@@ -21,14 +21,14 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/gmp",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/pari",
   "keywords": ["number", "theory"],
   "author": "William Stein",
   "license": "LGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/gmp",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/pari",
   "dependencies": {},
   "devDependencies": {}
 }

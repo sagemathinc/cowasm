@@ -1,10 +1,15 @@
 {
   "name": "dash-wasm",
-  "version": "0.7.6",
+  "version": "0.7.7",
   "description": "dash-wasm -- WebAssembly dash shell for servers and browsers (early demo version)",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",
-  "files": ["dist/**", "README.md", "package.json", "tsconfig.json"],
+  "files": [
+    "dist/**",
+    "README.md",
+    "package.json",
+    "tsconfig.json"
+  ],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "make all",
@@ -19,7 +24,10 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "keywords": ["python", "webassembly"],
+  "keywords": [
+    "python",
+    "webassembly"
+  ],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {

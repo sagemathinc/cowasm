@@ -571,6 +571,9 @@ importers:
       jest: 29.2.1_@types+node@18.11.3
       typescript: 4.8.4
 
+  sagemath/gmp:
+    specifiers: {}
+
   web/browser:
     specifiers:
       '@cowasm/kernel': workspace:*
@@ -4856,7 +4859,7 @@ packages:
     dependencies:
       async: 3.2.4
       grunt: 1.6.1
-      rimraf: 2.7.1
+      rimraf: 2.6.3
     dev: true
 
   /grunt-known-options/2.0.0:
@@ -7969,14 +7972,6 @@ packages:
 
   /rimraf/2.6.3:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
-    hasBin: true
-    dependencies:
-      glob: 7.2.3
-    dev: true
-    optional: true
-
-  /rimraf/2.7.1:
-    resolution: {integrity: sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==}
     hasBin: true
     dependencies:
       glob: 7.2.3

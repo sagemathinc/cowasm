@@ -29,9 +29,9 @@
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sagemathinc/cowasm-desktop.git"
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm-desktop",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/desktop/electron",
   "dependencies": {
     "dash-wasm": "workspace:*",
     "python-wasm": "workspace:*",
