@@ -46,6 +46,7 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&&	CONFIG_SITE=${BUILD_WASM}/config.site \
 			CC="cowasm-cc" \
+			CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" \
 			CFLAGS="-O0 -fvisibility-main -DJOBS=0  -I${LIBEDIT_WASM}/include -I${POSIX_WASM}" \
 			LDFLAGS="-L${LIBEDIT_WASM}/lib -ledit -L${TERMCAP_WASM}/lib -ltermcap" \
 			./configure \

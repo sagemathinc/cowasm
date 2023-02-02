@@ -162,8 +162,9 @@ dnf install git make cmake curl dpkg-dev m4 yasm texinfo libtool tcl zip ncurses
 - On **ArchLinux**:
 
 ```sh
-pacman -Sy binutils git nodejs npm cmake curl m4 yasm texinfo python libtool tcl zip patch binutils
+pacman -Sy binutils git nodejs npm cmake curl m4 yasm texinfo python libtool tcl zip unzip patch binutils
 ```
+
 (Arch Linux is not yet fully supported.  See https://github.com/sagemathinc/cowasm/issues/53)
 
 - Currently, the only way to build CoWasm from source on MS Windows is to use a Docker container running Linux.  Using WSL2 \(maybe\) works but is too slow.
