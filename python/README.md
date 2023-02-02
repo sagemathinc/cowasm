@@ -128,4 +128,4 @@ The quick summary is that in each case pypy is twice as fast as pylang \(basical
 
 Email [wstein@cocalc.com](mailto:wstein@cocalc.com) or [@wstein389](https://twitter.com/wstein389) if find this interesting and want to help out. 
 
-**CoWasm is an open source 3\-clause BSD licensed project.  It includes components and dependencies that may be licensed in other ways, but nothing is GPL licensed.**
+**CoWasm is an open source 3\-clause BSD licensed project. It includes components and dependencies that may be licensed in other ways, but nothing is GPL licensed,** _**except**_ **some code in the sagemath subdirectory \(which nothing else depends on\).**

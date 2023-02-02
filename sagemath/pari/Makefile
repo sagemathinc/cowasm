@@ -13,7 +13,12 @@ include ../build/Makefile-rules
 #GMP_WASM = $(shell cowasm-package-path @cowasm/gmp)
 #POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 
-${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.build
+${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
+	cd ${BUILD_WASM} && \
+		cat ${SRC}/patches/01-pipes.patch | patch -p1
+	touch ${BUILD_WASM}/.patched
+
+${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} && \
 		CC="zcc" \
 		AR="zig ar" \
@@ -30,4 +35,8 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.build
 		make -j8 AR="zig ar" RANLIB="zig ranlib" gp
 	cd ${BUILD_WASM}/O* && \
 		make AR="zig ar" RANLIB="zig ranlib" install
+	cp ${BUILD_WASM}/O*/gp-sta.wasm ${DIST_WASM}/bin
+	touch ${DIST_WASM}/.built
 
+test: ${DIST_WASM}/.built
+	echo "7*17*17" | ./dist/wasm/bin/gp |grep 2023

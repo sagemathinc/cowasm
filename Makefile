@@ -6,8 +6,9 @@ CORE = $(dir $(shell ls core/*/Makefile))
 PYTHON = $(dir $(shell ls python/*/Makefile))
 WEB = $(dir $(shell ls web/*/Makefile))
 DESKTOP = $(dir $(shell ls desktop/*/Makefile))
+SAGEMATH = $(dir $(shell ls sagemath/*/Makefile))
 
-ALL = ${CORE} ${PYTHON} ${WEB} ${DESKTOP}
+ALL = ${CORE} ${PYTHON} ${WEB} ${DESKTOP} ${SAGEMATH}
 
 export PATH := ${CWD}/bin:${CWD}/core/zig/dist:$(PATH)
 
@@ -84,6 +85,21 @@ test-desktop: desktop
 .PHONY: clean-desktop
 clean-desktop:
 	./bin/make-all clean ${DESKTOP}
+
+
+# SageMath
+
+.PHONY: sagemath
+sagemath:
+	./bin/make-all all ${SAGEMATH}
+
+.PHONY: test-sagemath
+test-sagemath: sagemath
+	./bin/make-all test ${SAGEMATH}
+
+.PHONY: clean-sagemath
+clean-sagemath:
+	./bin/make-all clean ${SAGEMATH}
 
 
 # Test
