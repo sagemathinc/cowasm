@@ -2,7 +2,7 @@
 
 [https://github.com/sagemathinc/cowasm\-desktop](https://github.com/sagemathinc/cowasm-desktop)
 
-LICENSE: BSD-3-Clause. See [LICENSE](../LICENSE).
+LICENSE: BSD-3-Clause. See [LICENSE](../../LICENSE).
 
 This is a simple Electron.js \(electron\-forge\)
 app that runs [Python via ﻿WebAssembly](https://cowasm.org) in a worker in node.js and does some computations and
