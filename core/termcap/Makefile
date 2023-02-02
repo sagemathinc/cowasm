@@ -16,11 +16,13 @@ include ../build/Makefile-rules
 # NATIVE
 ##################
 
+# Having to do AR="zig ar" as argument to make is working around a bug in their use of autoconf.
+
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cp src/config.h ${BUILD_NATIVE}
 	cd ${BUILD_NATIVE} && \
 		CC="zig cc ${ZIG_NATIVE_CFLAGS_GNU} -DHAVE_CONFIG_H=1 " AR="zig ar" ./configure --prefix=${DIST_NATIVE} && \
-		make -j8 && \
+		make AR="zig ar" -j8 && \
 		make install
 	touch ${DIST_NATIVE}/.built
 
@@ -37,7 +39,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 		AR="zig ar" \
 		CC="cowasm-cc -Oz -DHAVE_CONFIG_H=1 " \
 		./configure  --build=`./build-aux/config.guess` --host=none --prefix="${DIST_WASM}" && \
-		make -j8 && \
+		make AR="zig ar" -j8 && \
 		make install
 	touch ${DIST_WASM}/.built
 
