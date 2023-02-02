@@ -6,6 +6,7 @@ bin/dash-wasm*
 bin/python-native
 bin/zd
 bin/zdb
+bin/wasi-js
 bin/cython
 bin/cowasm*
 bin/*-wasm

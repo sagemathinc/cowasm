@@ -15,7 +15,7 @@ include ../build/Makefile-rules
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && \
-		CC="cowasm-cc" \
+		CC="zcc" \
 		AR="zig ar" \
 		RANLIB="zig ranlib" \
 		./Configure  \
