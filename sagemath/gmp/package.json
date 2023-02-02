@@ -1,0 +1,33 @@
+{
+  "name": "@sagemath/gmp",
+  "version": "1.0.0",
+  "description": "GNU Multiprecision Arithmetic",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
+  "files": [
+    "dist/js/*",
+    "README.md",
+    "src/*",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make",
+    "clean": "make clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/jsage.git"
+  },
+  "keywords": ["number", "theory"],
+  "author": "William Stein",
+  "license": "LGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/jsage/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/jsage/tree/main/packages/gmp",
+  "dependencies": {},
+  "devDependencies": {}
+}
