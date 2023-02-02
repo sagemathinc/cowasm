@@ -162,7 +162,7 @@ dnf install git make cmake curl dpkg-dev m4 yasm texinfo libtool tcl zip ncurses
 - On **ArchLinux**:
 
 ```sh
-pacman -Sy binutils git nodejs npm cmake curl m4 yasm texinfo python libtool tcl zip unzip patch binutils
+pacman -Sy binutils git nodejs npm cmake curl m4 yasm texinfo python libtool tcl zip unzip patch binutils diffutils
 ```
 
 (Arch Linux is not yet fully supported.  See https://github.com/sagemathinc/cowasm/issues/53)
