@@ -1,7 +1,7 @@
 include ../build/Makefile-vars
 
 # See https://github.com/numpy/numpy/releases
-VERSION=1.23.4
+VERSION=1.24.1
 
 URL = https://github.com/numpy/numpy/releases/download/v${VERSION}/numpy-${VERSION}.tar.gz
 

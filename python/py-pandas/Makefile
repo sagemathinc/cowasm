@@ -1,7 +1,7 @@
 include ../build/Makefile-vars
 
 # https://github.com/pandas-dev/pandas/releases
-VERSION=1.5.2
+VERSION=1.5.3
 
 URL = https://github.com/pandas-dev/pandas/releases/download/v${VERSION}/pandas-${VERSION}.tar.gz
 

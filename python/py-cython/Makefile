@@ -4,7 +4,7 @@ all: deps wasm ${BIN}/cython
 
 # See https://github.com/cython/cython/releases
 
-VERSION = 0.29.32
+VERSION = 0.29.33
 URL = https://github.com/cython/cython/releases/download/${VERSION}/Cython-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/cython-${VERSION}.tar.gz
 
