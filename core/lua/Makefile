@@ -66,4 +66,4 @@ ${BIN}/lua-wasm: ${DIST_WASM}/.built ${CWD}/bin/lua-wasm
 
 test: node_modules ${DIST_WASM}/.built
 	# echo "389*5077" | ${CWD}/bin/lua-wasm | grep 1974953  # this broke when I got editline working.
-	pnpm -s dlx @cowasm/kernel ${DIST_WASM}/bin/lua ${SRC}/sum.lua | grep 50000005000000
+	cowasm ${DIST_WASM}/bin/lua ${SRC}/sum.lua | grep 50000005000000

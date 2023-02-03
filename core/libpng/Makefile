@@ -65,4 +65,4 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	touch ${DIST_WASM}/.built
 
 test: node_modules ${DIST_WASM}/.built
-	pnpm -s dlx @cowasm/kernel ${BUILD_WASM}/timepng  ${BUILD_WASM}/pngnow.png
+	cowasm ${BUILD_WASM}/timepng  ${BUILD_WASM}/pngnow.png

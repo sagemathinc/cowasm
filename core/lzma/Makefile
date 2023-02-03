@@ -56,7 +56,7 @@ test: node_modules ${DIST_WASM}/.built
 	mkdir -p ${TEST}
 	# Compress and decompress the Makefile using xz
 	cp Makefile ${TEST}/Makefile
-	pnpm -s dlx @cowasm/kernel ${DIST_WASM}/bin/xz -z ${TEST}/Makefile
-	pnpm -s dlx @cowasm/kernel ${DIST_WASM}/bin/xz -d ${TEST}/Makefile.xz
+	cowasm ${DIST_WASM}/bin/xz -z ${TEST}/Makefile
+	cowasm ${DIST_WASM}/bin/xz -d ${TEST}/Makefile.xz
 	cmp Makefile ${TEST}/Makefile
 	rm ${TEST}/Makefile

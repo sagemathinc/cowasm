@@ -62,6 +62,6 @@ ${BIN}/dash-wasm-raw: ${DIST_WASM}/.built ${CWD}/bin/dash-wasm
 
 test: node_modules ${DIST_WASM}/.built
 	# test doing a little arithmetic
-	echo "echo \$$((389*5077))" | pnpm -s dlx @cowasm/kernel ${DIST_WASM}/bin/dash | grep 1974953
+	echo "echo \$$((389*5077))" | cowasm ${DIST_WASM}/bin/dash | grep 1974953
 	# test that a syntax error doesn't terminate the shell (i.e., no longjmp exception handling)
-	echo "); echo 'I am still alive'" | pnpm -s dlx  @cowasm/kernel ${DIST_WASM}/bin/dash | grep alive
+	echo "); echo 'I am still alive'" | cowasm ${DIST_WASM}/bin/dash | grep alive

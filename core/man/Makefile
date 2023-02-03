@@ -52,4 +52,4 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	touch ${DIST_WASM}/.built
 
 test: node_modules wasm
-	echo "" | pnpm -s dlx @cowasm/kernel ${DIST_WASM}/bin/man build/wasm/man.1 | grep "display manual pages"
+	echo "" | cowasm ${DIST_WASM}/bin/man build/wasm/man.1 | grep "display manual pages"

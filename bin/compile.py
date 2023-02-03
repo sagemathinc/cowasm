@@ -1,7 +1,7 @@
 #!/usr/bin/env python-native
 import os, subprocess, sys
 
-RUN = "npx --yes wasi-js"
+RUN = "wasi-js"
 
 SCRIPT_DIR = r"""SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"""
 

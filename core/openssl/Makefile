@@ -60,4 +60,4 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	touch ${DIST_WASM}/.built
 
 test: node_modules ${DIST_WASM}/.built
-	test x"`echo "foo" | pnpm -s dlx @cowasm/kernel dist/wasm/bin/openssl md5`" = x"MD5(stdin)= d3b07384d113edec49eaa6238ad5ff00"
+	test x"`echo "foo" | cowasm dist/wasm/bin/openssl md5`" = x"MD5(stdin)= d3b07384d113edec49eaa6238ad5ff00"

@@ -1,1 +1,0 @@
-pnpm -s dlx @cowasm/kernel "$@"

@@ -1,10 +1,15 @@
 {
   "name": "python-wasm",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "description": "python-wasm -- WebAssembly Python for servers and browsers with sympy, Cython, numpy, and more",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",
-  "files": ["dist/*", "README.md", "package.json", "tsconfig.json"],
+  "files": [
+    "dist/*",
+    "README.md",
+    "package.json",
+    "tsconfig.json"
+  ],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "make all",
@@ -21,7 +26,10 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "keywords": ["python", "webassembly"],
+  "keywords": [
+    "python",
+    "webassembly"
+  ],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {

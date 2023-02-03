@@ -1,0 +1,27 @@
+WASM doesn't have popen or pipes, since you can't even create other processes.
+So #ifdef UNIX is obviously not enough.
+We just patch the use of this to disable
+it explicitly.  Also the fallback code
+returns NULL instead of 0, so we fix that.
+
+
+--- native/src/language/es.c	2022-10-30 09:07:08
++++ wasm/src/language/es.c	2023-02-02 13:59:56
+@@ -3315,6 +3315,8 @@
+ #  define O_RDONLY 0
+ #endif
+
++#undef HAVE_PIPES
++
+ pariFILE *
+ newfile(FILE *f, const char *name, int type)
+ {
+@@ -4990,7 +4992,7 @@
+ {
+ #ifndef HAVE_PIPES
+   pari_err(e_ARCH,"pipes");
+-  return NULL;/*LCOV_EXCL_LINE*/
++  return 0; //NULL;/*LCOV_EXCL_LINE*/
+ #else
+   FILE *f;
+   check_secure(s);

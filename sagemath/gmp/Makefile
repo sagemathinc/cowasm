@@ -27,3 +27,5 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && make -j4 install
 	touch ${DIST_WASM}/.built
 
+test:
+	echo "No GMP tests yet"
