@@ -1,14 +1,17 @@
---- native/setup.py	2022-11-30 22:29:08
-+++ wasm/setup.py	2022-11-30 22:29:56
-@@ -22,6 +22,11 @@
-     python -c 'import numpy; numpy.test()'
- 
+--- native/setup.py	2022-12-25 19:52:53
++++ wasm/setup.py	2023-02-03 08:21:35
+@@ -1,8 +1,13 @@
+ #!/usr/bin/env python3
  """
+-Numpy build options can be modified with a site.cfg file. 
++Numpy build options can be modified with a site.cfg file.
+ See site.cfg.example for a template and more information.
+ """
++
 +# COWASM -- we explicitly import setuptools first before anything else.  There's
 +# a huge warning at startup if we don't do this, and then distutils gets messed up
-+# with weird C++ compiler issues, etc.
++# with weird C++ compiler issues, etc.  This conflicts with the comments below... but works?
 +import setuptools
-+
- DOCLINES = (__doc__ or '').split("\n")
  
  import os
+ from pathlib import Path
