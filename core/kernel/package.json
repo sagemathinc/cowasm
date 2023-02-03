@@ -1,10 +1,15 @@
 {
   "name": "@cowasm/kernel",
-  "version": "0.27.9",
+  "version": "0.28.0",
   "description": "@cowasm/kernel -- the Kernel of CoWasm: Collaborative WebAssembly for Servers and Browsers",
   "main": "./dist/kernel/node.js",
   "browser": "./dist/kernel/browser.js",
-  "files": ["dist/**", "README.md", "package.json", "tsconfig.json"],
+  "files": [
+    "dist/**",
+    "README.md",
+    "package.json",
+    "tsconfig.json"
+  ],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "make all",
@@ -13,14 +18,17 @@
     "test": "tsc && npx jest ./dist",
     "test-watch": "npx jest --watch ./dist",
     "strip": "find dist/ -type f -name \"*.wasm\" | xargs -n1 wasm-strip",
-    "prepublishOnly": "make clean && make OPT='-O ReleaseSmall' && make opt"
+    "prepublishOnly": "make clean && make OPT='-O ReleaseSmall'"
   },
   "bin": "./bin/cowasm",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "keywords": ["python", "webassembly"],
+  "keywords": [
+    "python",
+    "webassembly"
+  ],
   "author": "William Stein <wstein@sagemath.com>",
   "license": "BSD-3-Clause",
   "bugs": {

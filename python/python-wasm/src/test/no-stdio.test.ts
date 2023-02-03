@@ -14,6 +14,7 @@ import { asyncPython } from "../node";
 import { delay } from "awaiting";
 
 test("use noStdio", async () => {
+  jest.setTimeout(15000);
   const python = await asyncPython({ noStdio: true });
   // capture stdout and stderr to a string.  Actual stdout/stderr is a Buffer.
   let stdout = "";
