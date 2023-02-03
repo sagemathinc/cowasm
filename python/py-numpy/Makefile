@@ -53,7 +53,7 @@ ${BUILD_WASM}/.lib:  ${BUILD_WASM}/.patched
 	# TODO: We install rather than just build *solely* so that
 	# pip install with pandas doesn't try to install numpy later.
 	cd ${BUILD_WASM} \
-		&& PYTHONPATH=${PYTHONPATH} pnpm-exec cpython setup.py build
+		&& PYTHONPATH=${PYTHONPATH} NPY_BLAS_ORDER= NPY_LAPACK_ORDER= BLAS=None LAPACK=None ATLAS=None pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.lib
 
 ${DIST_WASM}/.built:  ${BUILD_WASM}/.lib
