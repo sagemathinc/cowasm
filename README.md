@@ -166,7 +166,7 @@ dnf install git make cmake curl dpkg-dev m4 yasm texinfo libtool tcl zip ncurses
 pacman -Sy binutils git nodejs npm cmake curl m4 yasm texinfo python libtool tcl zip unzip patch binutils diffutils
 ```
 
-(Arch Linux is not yet fully supported. See https://github.com/sagemathinc/cowasm/issues/53)
+NOTE: `pnpm` is not in the Arch Linux official package sets. You may want to install it from Arch User Repository (AUR) [AUR (en) - pnpm](https://aur.archlinux.org/packages/pnpm).
 
 - Currently, the only way to build CoWasm from source on MS Windows is to use a Docker container running Linux. Using WSL2 \(maybe\) works but is too slow.
 
