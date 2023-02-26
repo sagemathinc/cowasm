@@ -10,7 +10,7 @@ include ../build/Makefile-vars
 # See https://www.python.org/downloads/
 PYTHON_MAJOR = 3
 PYTHON_MINOR = 11
-PYTHON_PATCH = 1
+PYTHON_PATCH = 2
 PYTHON_BETA =
 PYTHON_VERSION = ${PYTHON_MAJOR}.${PYTHON_MINOR}.${PYTHON_PATCH}
 
