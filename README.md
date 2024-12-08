@@ -143,7 +143,7 @@ You need Node.js version at least 16.x, pnpm and several standard dev tools list
 - On **Linux apt\-based system, e.g., on Ubuntu 22.04**:
 
 ```sh
-sudo apt-get install git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 libtool tcl zip libncurses-dev
+sudo apt-get update && sudo apt-get install git make cmake curl dpkg-dev m4 yasm texinfo python-is-python3 libtool tcl zip libncurses-dev
 ```
 
 If you also want to install node v18 and pnpm on Ubuntu, you could do:
@@ -151,7 +151,7 @@ If you also want to install node v18 and pnpm on Ubuntu, you could do:
 ```sh
      sudo curl -sL https://deb.nodesource.com/setup_18.x | bash - \
   && sudo apt-get install -y nodejs \
-  && sudo npm install -g npm pnpm
+  && curl -fsSL https://get.pnpm.io/install.sh | sh -
 ```
 
 - On **Linux RPM based system, e.g., Fedora 37:**

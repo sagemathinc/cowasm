@@ -1,4 +1,5 @@
-- "core/*"
-- "python/*"
-- "web/*"
-- "desktop/*"
+packages:
+  - "core/*"
+  - "python/*"
+  - "web/*"
+  - "desktop/*"
