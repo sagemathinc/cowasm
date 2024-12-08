@@ -9,7 +9,7 @@ This also doesn't define any global variables.
 const _perfomancePolyfill = () => {
   // based on https://gist.github.com/paulirish/5438650 copyright Paul Irish 2015.
   if (!("performance" in self)) {
-    (self.performance as any) = {};
+    (self as any).performance = {};
   }
 
   Date.now =
