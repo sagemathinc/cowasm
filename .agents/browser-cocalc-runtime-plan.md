@@ -64,6 +64,16 @@ Goal: make `dash-wasm` a reliable browser-terminal artifact.
 - Record bundle contents and sizes so regressions are visible.
 - Verify control-C behavior in the terminal bundle, not only in isolated Python.
 
+Current status as of 2026-06-05:
+
+- `dash-wasm` can run bundled WASM executables from the shell via the CoWasm `execve` path.
+- Smoke coverage includes Python, sqlite3, tar, less, core file commands, redirection, and basic pipelines.
+- Basic pipelines are implemented with a CoWasm-only sequential temp-file fallback because native `fork()` is not viable in the browser runtime.
+- Command substitution remains open.  Two approaches were tested and rejected:
+  - evaluating the backquoted AST in the current shell corrupts dash's expansion state;
+  - rendering the command and recursively running `/cowasm/usr/bin/sh -c ...` hangs when re-entering the same dash WASM module through `PosixContext.run`.
+- The likely durable fix is to run command substitution in an isolated runtime instance or to add a narrow non-recursive command runner for simple commands.  Do not revive the in-process AST shortcut without also isolating dash's parser/expansion globals.
+
 ## Phase 3: Runtime Contract Tests
 
 Goal: define the behavior CoCalc needs before adding more packages.
