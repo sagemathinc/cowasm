@@ -11,5 +11,5 @@ ${DIST}/.built: node_modules src/index.ts
 clean-build::
 	rm -rf node_modules
 
-test:
-	echo "no tests yet"
+test: deps
+	pnpm run test

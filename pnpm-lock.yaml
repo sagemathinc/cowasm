@@ -739,8 +739,8 @@ importers:
         specifier: ^0.11.10
         version: 0.11.10
       python-wasm:
-        specifier: ^0.26.2
-        version: 0.26.3
+        specifier: workspace:*
+        version: link:../../python/python-wasm
       ts-loader:
         specifier: ^9.3.1
         version: 9.5.1(typescript@4.9.5)(webpack@5.97.1)
@@ -3936,10 +3936,6 @@ packages:
 
   pure-rand@6.1.0:
     resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
-
-  python-wasm@0.26.3:
-    resolution: {integrity: sha512-fIRJbeSPy/WEBbksgSSzww/b9javyuLy8e7vbOivTFYweVwQcbBATjWSV9eJXXLs0VDapgYDBQchWjGlTwEvfQ==}
-    hasBin: true
 
   python-wasm@0.27.1:
     resolution: {integrity: sha512-HSUX5le82/NwWPv13+dHS2fcyQ276RQqgfvl3DMQUDLVbXjNzmheJsEsigzLIQtyq+DGSNsxIasUmumu9pgLGQ==}
@@ -8644,13 +8640,6 @@ snapshots:
   punycode@2.3.1: {}
 
   pure-rand@6.1.0: {}
-
-  python-wasm@0.26.3:
-    dependencies:
-      '@cowasm/kernel': 0.27.9
-      debug: 4.4.0
-    transitivePeerDependencies:
-      - supports-color
 
   python-wasm@0.27.1:
     dependencies:

@@ -15,6 +15,7 @@
     "preinstall": "npx only-allow pnpm",
     "clean": "rm -rf dist node_modules",
     "build": "webpack",
+    "test": "node test/smoke.js",
     "watch": "webpack --watch",
     "serve": "webpack serve",
     "tsc": "pnpm exec tsc -w"
@@ -32,7 +33,7 @@
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/webpack",
   "devDependencies": {
     "@cowasm/kernel": "workspace:*",
-    "python-wasm": "^0.26.2",
+    "python-wasm": "workspace:*",
     "@types/node": "^18.11.3",
     "buffer": "^6.0.3",
     "events": "^3.3.0",

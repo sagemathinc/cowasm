@@ -17,7 +17,10 @@ const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = {
   mode: process.env.NODE_ENV == "production" ? "production" : "development",
-  entry: "./src/index.ts",
+  entry:
+    process.env.COWASM_BROWSER_SMOKE == "1"
+      ? "./src/smoke.ts"
+      : "./src/index.ts",
   devtool: "inline-source-map",
   output: {
     filename: "[name].bundle.js",
@@ -55,7 +58,11 @@ module.exports = {
 };
 
 // Refactor same code in terminal and webpack packages.
-if (process.env.COCALC_PROJECT_ID && process.env.NODE_ENV != "production") {
+if (
+  process.env.COCALC_PROJECT_ID &&
+  process.env.NODE_ENV != "production" &&
+  process.env.COWASM_BROWSER_SMOKE != "1"
+) {
   const port = 8080;
   const basePath = `/${process.env.COCALC_PROJECT_ID}/port/${port}/`;
   // Working in a cocalc project, so do a bit more to support the base path under.

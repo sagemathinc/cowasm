@@ -116,9 +116,20 @@ Current status as of 2026-06-05:
 
 Goal: prove that the runtime works in the environment that matters for CoCalc-ai.
 
-- Create a minimal browser-worker test harness that runs in CI or Playwright.
+Current status as of 2026-06-05:
+
+- `web/browser` now uses the workspace `python-wasm` package instead of the published npm package, so browser tests exercise the repo under development.
+- `make -C web/browser test` runs a headless Chromium smoke test:
+  - prepares the local `python-wasm` browser assets needed by webpack;
+  - builds a dedicated smoke bundle with `COWASM_BROWSER_SMOKE=1`;
+  - serves the bundle with COOP/COEP headers for `SharedArrayBuffer`;
+  - starts Chromium and polls the page through the Chrome DevTools Protocol;
+  - initializes Python in the browser worker path, creates `/tmp`, writes and reads a file, and checks a Python result.
+- This is intentionally not a UI test.  It is the first product-gate proof that the browser worker runtime can start Python and perform filesystem IO in a real browser.
+
+- Create a minimal browser-worker test harness that runs in CI or Playwright: covered for headless Chromium without adding Playwright.
 - Load the terminal bundle and execute a few commands against an in-memory or synced filesystem.
-- Test Python startup, file IO, stdout/stderr streaming, and interrupt.
+- Test Python startup, file IO, stdout/stderr streaming, and interrupt: Python startup and file IO are covered; stdout/stderr streaming and browser interrupt remain open.
 - Explicitly mark which Node runtime behaviors do not exist in the browser and what replaces them.
 - Avoid building a polished UI here; this phase is about runtime correctness.
 
