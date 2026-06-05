@@ -1,0 +1,22 @@
+--- orig/src/redir.c
++++ mod/src/redir.c
+@@ -446,8 +446,19 @@
+ 	int newfd;
+ 	int err;
+ 
++#ifdef __cowasm__
++	/*
++	 * CoWasm does not implement fcntl(F_DUPFD). A plain dup is enough
++	 * for dash's redirection save/restore path and avoids mixing virtual
++	 * WASI fd numbers with native fd numbers while closing temporaries.
++	 */
++	newfd = dup(from);
++	err = newfd < 0 ? errno : 0;
++#else
++
+ 	newfd = fcntl(from, F_DUPFD, 10);
+ 	err = newfd < 0 ? errno : 0;
++#endif
+ 	if (err != EBADF) {
+ 		close(ofd);
+ 		if (err)

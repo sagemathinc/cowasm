@@ -146,8 +146,15 @@ export default function unistd(context) {
       // Considered in 2022, but closed by node developers: https://github.com/libuv/libuv/issues/3448#issuecomment-1174786218
 
       const x = wasi.FD_MAP.get(oldfd);
-      const newfd_real = posix.dup(x.real);
       const newfd = wasi.getUnusedFileDescriptor();
+      let newfd_real = x.real;
+      try {
+        newfd_real = posix.dup(x.real);
+      } catch (err) {
+        // Union and browser filesystems may use non-native descriptor numbers.
+        // In that case the WASI fd table can still alias the same open file.
+        log("virtual dup", { oldfd, oldReal: x.real, newfd, err });
+      }
       wasi.FD_MAP.set(newfd, { ...x, real: newfd_real });
       return newfd;
     },
@@ -156,6 +163,9 @@ export default function unistd(context) {
     dup2: (oldfd: number, newfd: number): number => {
       if (posix.dup2 == null) {
         notImplemented("dup2");
+      }
+      if (oldfd == newfd) {
+        return newfd;
       }
       const x_old = wasi.FD_MAP.get(oldfd);
       let x_new;
@@ -166,7 +176,14 @@ export default function unistd(context) {
         x_new = newfd;
       }
 
-      const newfd_real = posix.dup2(x_old.real, x_new);
+      let newfd_real = x_old.real;
+      try {
+        newfd_real = posix.dup2(x_old.real, x_new);
+      } catch (err) {
+        // See dup above: virtual filesystem descriptors cannot be handed to
+        // native dup2, but WASI-level descriptor aliasing is still valid.
+        log("virtual dup2", { oldfd, oldReal: x_old?.real, newfd, x_new, err });
+      }
       wasi.FD_MAP.set(newfd, { ...x_old, real: newfd_real });
       return newfd;
     },

@@ -104,6 +104,22 @@ test("bundled shell can execute less in non-interactive version mode", () => {
   expect(runDash("less --version")).toContain("less 608");
 });
 
-test.todo("bundled shell supports redirection without hanging");
+test("bundled shell supports file redirection", () => {
+  expect(
+    runDash(
+      "mkdir -p /tmp/cowasm-redir && " +
+        "echo alpha > /tmp/cowasm-redir/output.txt && " +
+        "cat /tmp/cowasm-redir/output.txt"
+    )
+  ).toBe("alpha\n");
+
+  const setup =
+    "mkdir -p /tmp/cowasm-redir && " +
+    "python -c 'open(\"/tmp/cowasm-redir/input.txt\", \"w\").write(\"beta\\n\")'";
+  expect(runDash(`${setup} && cat < /tmp/cowasm-redir/input.txt`)).toBe(
+    "beta\n"
+  );
+});
+
 test.todo("bundled shell supports pipes without trapping");
 test.todo("bundled shell supports command substitution without trapping");

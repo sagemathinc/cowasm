@@ -362,6 +362,31 @@ export default class WASI {
     return this.bindings.fs.fstatSync(real_fd);
   }
 
+  private closeRealFdIfLastReference(fd: number, real: number) {
+    for (const [otherFd, file] of this.FD_MAP) {
+      if (otherFd != fd && file.real == real) {
+        return;
+      }
+    }
+    this.bindings.fs.closeSync(real);
+  }
+
+  private isCapturedStdout(fd: number, stats: File) {
+    return (
+      fd == WASI_STDOUT_FILENO &&
+      this.sendStdout != null &&
+      stats.path == "/dev/stdout"
+    );
+  }
+
+  private isCapturedStderr(fd: number, stats: File) {
+    return (
+      fd == WASI_STDERR_FILENO &&
+      this.sendStderr != null &&
+      stats.path == "/dev/stderr"
+    );
+  }
+
   constructor(wasiConfig: WASIConfig) {
     this.sleep = wasiConfig.sleep;
     this.getStdin = wasiConfig.getStdin;
@@ -612,7 +637,7 @@ export default class WASI {
 
       fd_close: wrap((fd: number) => {
         const stats = CHECK_FD(fd, BigInt(0));
-        fs.closeSync(stats.real);
+        this.closeRealFdIfLastReference(fd, stats.real);
         this.FD_MAP.delete(fd);
         return WASI_ESUCCESS;
       }),
@@ -818,8 +843,8 @@ export default class WASI {
       fd_write: wrap(
         (fd: number, iovs: number, iovsLen: number, nwritten: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_WRITE);
-          const IS_STDOUT = fd == WASI_STDOUT_FILENO;
-          const IS_STDERR = fd == WASI_STDERR_FILENO;
+          const IS_STDOUT = this.isCapturedStdout(fd, stats);
+          const IS_STDERR = this.isCapturedStderr(fd, stats);
           let written = 0;
           getiovs(iovs, iovsLen).forEach((iov) => {
             //console.log("fd_write", `"${new TextDecoder().decode(iov)}"`);
@@ -1086,7 +1111,10 @@ export default class WASI {
       fd_renumber: wrap((from: number, to: number) => {
         CHECK_FD(from, BigInt(0));
         CHECK_FD(to, BigInt(0));
-        fs.closeSync((this.FD_MAP.get(from) as File).real);
+        this.closeRealFdIfLastReference(
+          from,
+          (this.FD_MAP.get(from) as File).real
+        );
         this.FD_MAP.set(from, this.FD_MAP.get(to) as File);
         this.FD_MAP.delete(to);
         return WASI_ESUCCESS;
