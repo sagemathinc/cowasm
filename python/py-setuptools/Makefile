@@ -7,6 +7,7 @@ VERSION = 65.6.3
 
 URL = https://github.com/pypa/setuptools/archive/refs/tags/v65.6.3.tar.gz
 TARBALL = ${UPSTREAM}/setuptools-${VERSION}.tar.gz
+TARBALL_SHA256 = d8402d8d0c0fc5a2d93285fc267658ab49cfc6d3fbd7a7539eb3119eb52ffb0e
 
 include ../build/Makefile-rules
 

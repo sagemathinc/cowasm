@@ -9,6 +9,7 @@ all: native
 
 URL = https://github.com/sagemathinc/zlib/archive/refs/tags/${ZLIB_VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/zlib-${ZLIB_VERSION}.tar.xz
+TARBALL_SHA256 = db0ff0d477b336bfce16483238c91242519ecea456ecb299a94851613598f9d5
 
 include ../build/Makefile-rules
 

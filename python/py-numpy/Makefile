@@ -6,6 +6,7 @@ VERSION=1.24.2
 URL = https://github.com/numpy/numpy/releases/download/v${VERSION}/numpy-${VERSION}.tar.gz
 
 TARBALL = ${UPSTREAM}/numpy-${VERSION}.tar.gz
+TARBALL_SHA256 = 003a9f530e880cb2cd177cba1af7220b9aa42def9c4afc2a2fc3ee6be7eb2b22
 
 CYTHON = ${PACKAGES}/py-cython/dist/wasm
 

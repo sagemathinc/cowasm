@@ -4,6 +4,7 @@ include ../build/Makefile-vars
 VERSION = 3.0.7
 URL = https://github.com/openssl/openssl/archive/refs/tags/openssl-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/openssl-${VERSION}.tar.gz
+TARBALL_SHA256 = e8f73590815846db286d215950fdef9b882bb6b886d50acb431c0285782fe35b
 
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)

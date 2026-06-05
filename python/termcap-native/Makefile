@@ -9,6 +9,7 @@ include ../build/Makefile-vars
 VERSION = 1.3.1
 TARBALL = ${UPSTREAM}/termcap-${VERSION}.tar.gz
 URL = https://ftp.gnu.org/gnu/termcap/termcap-${VERSION}.tar.gz
+TARBALL_SHA256 = 91a0e22e5387ca4467b5bcb18edf1c51b930262fd466d5fda396dd9d26719100
 
 
 include ../build/Makefile-rules

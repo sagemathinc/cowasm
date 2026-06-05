@@ -16,6 +16,7 @@ PYTHON_VERSION = ${PYTHON_MAJOR}.${PYTHON_MINOR}.${PYTHON_PATCH}
 
 URL = https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz
 TARBALL = ${UPSTREAM}/python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz
+TARBALL_SHA256 = 29e4b8f5f1658542a8c13e2dd277358c9c48f2b2f7318652ef1675e402b9d2af
 
 ZLIB_NATIVE = ${PACKAGES}/zlib-native/dist/native
 LIBEDIT_NATIVE = ${PACKAGES}/libedit-native/dist/native

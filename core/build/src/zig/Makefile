@@ -30,6 +30,10 @@ URL = https://ziglang.org/download/${VERSION}/zig-${OS}-${ARCH}-${VERSION}.tar.x
 
 TARBALL = ${UPSTREAM}/zig-${OS}-${ARCH}-${VERSION}.tar.xz
 
+ifeq (${OS}-${ARCH},linux-x86_64)
+TARBALL_SHA256 = 6699f0e7293081b42428f32c9d9c983854094bd15fee5489f12c4cf4518cc380
+endif
+
 
 
 all: ${DIST_NATIVE}/.${VERSION} ${BIN}/cowasm-cc ${BIN}/cowasm-c++ ${BIN}/cowasm-zig ${BIN}/zig

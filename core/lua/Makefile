@@ -8,6 +8,7 @@ VERSION = 5.4.4
 
 URL = https://github.com/lua/lua/archive/refs/tags/v${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/lua-${VERSION}.tar.gz
+TARBALL_SHA256 = 2ff89bbea22a7c8b910d6b006f5ba4559edcf468a25537cedf9988ed90f6b450
 
 all: deps wasm ${BIN}/lua-wasm
 

@@ -4,6 +4,7 @@ include ../build/Makefile-vars
 VERSION = v5.4.1
 URL = https://github.com/sagemathinc/rogue/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/rogue-${VERSION}.tar.gz
+TARBALL_SHA256 = c98e94b388b5976c5bf3e843621fde8a4156675e0ca7cb837e79094391b9ac59
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
@@ -48,4 +49,3 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 
 test: ${DIST_WASM}/.built
 	echo "no test of rogue yet"
-

@@ -8,6 +8,7 @@ all: deps wasm
 VERSION = 1.1
 URL = https://github.com/sagemathinc/lzma/archive/refs/tags/v${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/lzma-v${VERSION}.tar.gz
+TARBALL_SHA256 = c6e54740d375646d0fdd4b560b1cc0feec6c3aca498004d171900e0043f35eba
 
 include ../build/Makefile-rules
 

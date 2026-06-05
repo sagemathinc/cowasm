@@ -8,6 +8,7 @@ VERSION = 22.3.1
 
 URL = https://github.com/pypa/pip/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/pip-${VERSION}.tar.gz
+TARBALL_SHA256 = 8d9f7cd8ad0d6f0c70e71704fd3f0f6538d70930454f1f21bbc2f8e94f6964ee
 
 include ../build/Makefile-rules
 

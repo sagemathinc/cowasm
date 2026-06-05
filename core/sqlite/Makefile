@@ -12,6 +12,7 @@ VERSION = 3.39.4
 
 URL = https://github.com/sqlite/sqlite/archive/refs/tags/version-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/sqlite-${VERSION}.tar.gz
+TARBALL_SHA256 = 32bba6d607cd33b014efa47bce93a5711c8c5cde55229307e1da514cc1e57f7c
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)

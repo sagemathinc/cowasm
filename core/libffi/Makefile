@@ -10,6 +10,7 @@ all: deps wasm
 VERSION = 3.4.4
 URL = https://github.com/sagemathinc/libffi/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/libffi-${VERSION}.tar.gz
+TARBALL_SHA256 = 2bdbf3fce7e9c05f3e3384b10146b0be6ad08df89af95c8b0b3c7f30f6562a40
 
 include ../build/Makefile-rules
 

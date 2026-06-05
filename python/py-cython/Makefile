@@ -7,6 +7,7 @@ all: deps wasm ${BIN}/cython
 VERSION = 0.29.33
 URL = https://github.com/cython/cython/releases/download/${VERSION}/Cython-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/cython-${VERSION}.tar.gz
+TARBALL_SHA256 = 5040764c4a4d2ce964a395da24f0d1ae58144995dab92c6b96f44c3f4d72286a
 
 include ../build/Makefile-rules
 

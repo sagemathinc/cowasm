@@ -8,6 +8,7 @@ VERSION = 0.6.0
 
 URL = https://github.com/sagemathinc/dash/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/dash-${VERSION}.tar.gz
+TARBALL_SHA256 = 145447c4514524384bdd7a0ad0c16d7d1b72b51e3022a70b848ff6986317565c
 
 LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)
 TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)

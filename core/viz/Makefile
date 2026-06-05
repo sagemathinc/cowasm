@@ -8,6 +8,7 @@ VERSION = 0.8.4
 
 URL = https://github.com/sagemathinc/viz/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/viz-${VERSION}.tar.gz
+TARBALL_SHA256 = 41d39d563e0ba3cfb39bca1d671fd776b942d7009c0848bd51ace05ebf9a0b8a
 
 LUA = ${PACKAGES}/lua/dist/
 

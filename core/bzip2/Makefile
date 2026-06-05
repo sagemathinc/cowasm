@@ -7,6 +7,7 @@ include ../build/Makefile-vars
 VERSION=1.0.8
 TARBALL = ${UPSTREAM}/bzip2-${VERSION}.tar.gz
 URL = https://github.com/libarchive/bzip2/archive/refs/tags/bzip2-${VERSION}.tar.gz
+TARBALL_SHA256 = db106b740252669664fd8f3a1c69fe7f689d5cd4b132f82ba82b9afba27627df
 
 include ../build/Makefile-rules
 
@@ -49,4 +50,3 @@ test: ${DIST_WASM}/.built
 	${BIN}/cowasm ${DIST_WASM}/bin/bunzip2 ${BUILD_WASM}/testfile.txt.bz2
 	cat  ${BUILD_WASM}/testfile.txt |grep coWasm
 	rm ${BUILD_WASM}/testfile.txt
-

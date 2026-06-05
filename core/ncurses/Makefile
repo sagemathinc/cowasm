@@ -4,6 +4,7 @@ include ../build/Makefile-vars
 VERSION = 6.3
 URL = https://ftp.gnu.org/gnu/ncurses/ncurses-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/ncurses-${VERSION}.tar.gz
+TARBALL_SHA256 = 97fc51ac2b085d4cde31ef4d2c3122c21abc217e9090a43a30fc5ec21684e059
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)

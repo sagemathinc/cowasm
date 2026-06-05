@@ -6,6 +6,7 @@ all: deps wasm
 VERSION = 20210910-3.1
 TARBALL = ${UPSTREAM}/libedit-${VERSION}.tar.gz
 URL = https://www.thrysoee.dk/editline/libedit-${VERSION}.tar.gz
+TARBALL_SHA256 = 6792a6a992050762edcca28ff3318cdb7de37dccf7bc30db59fcd7017eed13c5
 
 include ../build/Makefile-rules
 

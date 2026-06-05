@@ -7,6 +7,7 @@ VERSION = 3.6.1
 
 URL = https://github.com/libarchive/libarchive/releases/download/v${VERSION}/libarchive-${VERSION}.tar.xz
 TARBALL = ${UPSTREAM}/libarchive-${VERSION}.tar.gz
+TARBALL_SHA256 = 5a411aceb978f43e626f0c2d1812ddd8807b645ed892453acabd532376c148e6
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 LZMA_WASM = $(shell cowasm-package-path @cowasm/lzma)
