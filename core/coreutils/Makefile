@@ -97,7 +97,7 @@ ${TARGET}/cp: ${COMPAT} ${BUILD}/cp.o ${BUILD}/utils.o
 test-cp: ${TARGET}/cp
 	rm -f ${BUILD}/x
 	${BIN}/cowasm ${TARGET}/cp Makefile ${BUILD}/x
-	ls ${BUILD}/x
+	cmp Makefile ${BUILD}/x
 	rm ${BUILD}/x
 
 ${TARGET}/factor: ${COMPAT} ${BUILD}/factor.o ${BUILD}/pattern.o ${BUILD}/pr_tbl.o
@@ -210,7 +210,11 @@ test-mkdir-rmdir: ${TARGET}/mkdir ${TARGET}/rmdir ${TARGET}/test
 	${BIN}/cowasm ${TARGET}/mkdir xyz-mkdir && ${BIN}/cowasm ${TARGET}/rmdir xyz-mkdir && ${BIN}/cowasm ${TARGET}/test ! -d xyz-mkdir
 
 test-mv: ${TARGET}/mv ${TARGET}/touch ${TARGET}/test ${TARGET}/rm
-	${BIN}/cowasm ${TARGET}/touch x && ${BIN}/cowasm ${TARGET}/mv x y && ${BIN}/cowasm ${TARGET}/test -f y && ${BIN}/cowasm ${TARGET}/rm y
+	printf "alpha\nbeta\n" > ${BUILD}/x
+	${BIN}/cowasm ${TARGET}/mv ${BUILD}/x ${BUILD}/y
+	test ! -e ${BUILD}/x
+	printf "alpha\nbeta\n" | cmp - ${BUILD}/y
+	rm ${BUILD}/y
 
 test-rm: ${TARGET}/rm ${TARGET}/touch
 	${BIN}/cowasm ${TARGET}/touch xyz-rm && ${BIN}/cowasm ${TARGET}/rm xyz-rm && ${BIN}/cowasm ${TARGET}/test ! -f xyz-rm
@@ -277,5 +281,4 @@ test: deps test-uniq-sources test-basename test-cat test-dirname test-cp test-cu
 	test-join test-ls test-mktemp test-mkdir-rmdir test-mv test-rm test-seq test-sleep test-sort test-stat test-tail test-touch test-tr \
 	test-uname test-uniq test-wc  test-which test-xargs
 	@echo "Success -- all coreutils tests passed"
-
 

@@ -49,6 +49,10 @@
 
 #include "extern.h"
 
+#ifdef __cowasm__
+#undef VM_AND_BUFFER_CACHE_SYNCHRONIZED
+#endif
+
 int copy_overwrite(void);
 
 int copy_file(FTSENT *entp, int exists) {
@@ -138,9 +142,11 @@ int copy_file(FTSENT *entp, int exists) {
 #endif
   {
     int skipholes = 0;
+#ifndef __cowasm__
     struct stat tosb;
     if (!fstat(to_fd, &tosb) && S_ISREG(tosb.st_mode))
       skipholes = 1;
+#endif
     while ((rcount = read(from_fd, buf, MAXBSIZE)) > 0) {
       if (skipholes && memcmp(buf, zeroes, rcount) == 0)
         wcount = lseek(to_fd, rcount, SEEK_CUR) == -1 ? -1 : rcount;

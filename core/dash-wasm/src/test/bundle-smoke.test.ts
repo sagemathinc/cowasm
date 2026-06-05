@@ -32,6 +32,7 @@ test("filesystem bundle contains expected terminal commands", () => {
     "bin/less",
     "bin/ls",
     "bin/mkdir",
+    "bin/mv",
     "bin/python",
     "bin/rm",
     "bin/sort",
@@ -78,6 +79,17 @@ test("bundled shell can execute basic file commands", () => {
     "mkdir -p /tmp/cowasm-tools && " +
     "python -c 'open(\"/tmp/cowasm-tools/input.txt\", \"w\").write(\"b\\na\\n\")'";
   expect(runDash(`${setup} && cat /tmp/cowasm-tools/input.txt`)).toBe("b\na\n");
+  const copyAndCat =
+    `${setup} && ` +
+    "cp /tmp/cowasm-tools/input.txt /tmp/cowasm-tools/copy.txt && " +
+    "cat /tmp/cowasm-tools/copy.txt";
+  expect(runDash(copyAndCat)).toBe("b\na\n");
+  const moveAndCat =
+    `${setup} && ` +
+    "mv /tmp/cowasm-tools/input.txt /tmp/cowasm-tools/moved.txt && " +
+    "cat /tmp/cowasm-tools/moved.txt && " +
+    "test ! -e /tmp/cowasm-tools/input.txt";
+  expect(runDash(moveAndCat)).toBe("b\na\n");
   expect(runDash(`${setup} && sort /tmp/cowasm-tools/input.txt`)).toBe("a\nb\n");
   expect(runDash(`${setup} && grep a /tmp/cowasm-tools/input.txt`)).toBe("a\n");
   expect(runDash(`${setup} && wc -l /tmp/cowasm-tools/input.txt`)).toContain(
@@ -92,7 +104,6 @@ test("bundled shell can execute less in non-interactive version mode", () => {
   expect(runDash("less --version")).toContain("less 608");
 });
 
-test.todo("bundled cp preserves file contents");
 test.todo("bundled shell supports redirection without hanging");
 test.todo("bundled shell supports pipes without trapping");
 test.todo("bundled shell supports command substitution without trapping");
