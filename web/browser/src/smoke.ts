@@ -12,11 +12,38 @@ function setStatus(status: string, details?: string) {
   document.body.textContent = details ?? status;
 }
 
+function decodeOutput(data: any): string {
+  if (typeof data == "string") return data;
+  return new TextDecoder().decode(data);
+}
+
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitUntil(predicate: () => boolean, timeoutMs = 5000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    if (predicate()) return;
+    await delay(50);
+  }
+  throw Error("timed out waiting for browser smoke condition");
+}
+
 async function main() {
   setStatus("running");
   try {
     const python = await pythonWasm({ noReadline: true });
     const { exec, repr, kernel } = python;
+    let stdout = "";
+    let stderr = "";
+    kernel.on("stdout", (data) => {
+      stdout += decodeOutput(data);
+    });
+    kernel.on("stderr", (data) => {
+      stderr += decodeOutput(data);
+    });
+
     let stage = "import sys";
     try {
       await exec("import sys");
@@ -26,6 +53,24 @@ async function main() {
       await exec("open('/tmp/cowasm-browser-smoke.txt', 'w').write('browser')");
       stage = "read file";
       await exec("value = open('/tmp/cowasm-browser-smoke.txt').read()");
+      stage = "stream stdout and stderr";
+      await exec(
+        "print('cowasm-browser-stdout'); sys.stderr.write('cowasm-browser-stderr\\n'); sys.stderr.flush()"
+      );
+      await waitUntil(
+        () =>
+          stdout.includes("cowasm-browser-stdout") &&
+          stderr.includes("cowasm-browser-stderr")
+      );
+      stage = "interrupt long-running exec";
+      let interrupted = false;
+      const running = exec("while True: pass").catch(() => {
+        interrupted = true;
+      });
+      await delay(100);
+      kernel.signal(2);
+      await waitUntil(() => interrupted, 5000);
+      await running;
     } catch (err) {
       throw Error(
         `${stage} failed: ${err instanceof Error ? err.message : `${err}`}`

@@ -124,12 +124,12 @@ Current status as of 2026-06-05:
   - builds a dedicated smoke bundle with `COWASM_BROWSER_SMOKE=1`;
   - serves the bundle with COOP/COEP headers for `SharedArrayBuffer`;
   - starts Chromium and polls the page through the Chrome DevTools Protocol;
-  - initializes Python in the browser worker path, creates `/tmp`, writes and reads a file, and checks a Python result.
+  - initializes Python in the browser worker path, creates `/tmp`, writes and reads a file, checks stdout/stderr event streaming, interrupts `while True: pass` with SIGINT, and checks a Python result.
 - This is intentionally not a UI test.  It is the first product-gate proof that the browser worker runtime can start Python and perform filesystem IO in a real browser.
 
 - Create a minimal browser-worker test harness that runs in CI or Playwright: covered for headless Chromium without adding Playwright.
 - Load the terminal bundle and execute a few commands against an in-memory or synced filesystem.
-- Test Python startup, file IO, stdout/stderr streaming, and interrupt: Python startup and file IO are covered; stdout/stderr streaming and browser interrupt remain open.
+- Test Python startup, file IO, stdout/stderr streaming, and interrupt: covered for Python in the browser worker smoke test.
 - Explicitly mark which Node runtime behaviors do not exist in the browser and what replaces them.
 - Avoid building a polished UI here; this phase is about runtime correctness.
 
