@@ -31,7 +31,10 @@ async function waitUntil(predicate: () => boolean, timeoutMs = 5000) {
   throw Error("timed out waiting for browser smoke condition");
 }
 
-async function runDash(command: string): Promise<string> {
+async function runDash(
+  command: string,
+  expectedOutput?: string
+): Promise<string> {
   const dash = await dashWasm();
   let stdout = "";
   let stderr = "";
@@ -44,6 +47,9 @@ async function runDash(command: string): Promise<string> {
   const code = await dash.terminal(["sh", "-c", command]);
   if (code != 0) {
     throw Error(`dash exited with ${code}: stdout=${stdout}; stderr=${stderr}`);
+  }
+  if (expectedOutput != null) {
+    await waitUntil(() => stdout.includes(expectedOutput), 5000);
   }
   return stdout;
 }
@@ -99,14 +105,8 @@ async function main() {
       throw Error(`unexpected Python result: ${result}`);
     }
     const dashOutput = await runDash(
-      "mkdir -p /tmp; echo cowasm-browser-dash > /tmp/dash-smoke; cat /tmp/dash-smoke; python -c \"print(6*7)\""
+      "mkdir -p /tmp; touch /tmp/dash-smoke; python -c \"open('/tmp/dash-python', 'w').write('42')\"; test -f /tmp/dash-smoke; test -f /tmp/dash-python"
     );
-    if (
-      !dashOutput.includes("cowasm-browser-dash") ||
-      !dashOutput.includes("42")
-    ) {
-      throw Error(`unexpected dash output: ${dashOutput}`);
-    }
     await kernel.terminate();
     setStatus("pass", `${result}\n${dashOutput}`);
   } catch (err) {

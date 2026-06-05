@@ -46,7 +46,11 @@ export class DashWasmSync extends DashWasm {
 export class DashWasmAsync extends DashWasm {
   async terminal(argv: string[] = []) {
     try {
-      return await this.kernel.exec([this.dash_wasm].concat(argv.slice(1)));
+      const code = await this.kernel.exec(
+        [this.dash_wasm].concat(argv.slice(1))
+      );
+      await this.kernel.flushOutput?.();
+      return code;
     } finally {
       this.kernel.terminate();
     }

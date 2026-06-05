@@ -79,6 +79,10 @@ export class WasmInstanceAsync extends WasmInstance {
   async exec(_argv: string[] = ["command"]): Promise<number> {
     throw Error("not implemented");
   }
+
+  async flushOutput(_timeoutMs?: number): Promise<void> {
+    throw Error("not implemented");
+  }
 }
 
 export class IOProvider {

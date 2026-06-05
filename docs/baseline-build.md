@@ -85,3 +85,11 @@ After the baseline build succeeds, these quick commands exercise the generated b
 ./bin/python-wasm -c "import sys, ssl, sqlite3, zlib, lzma, bz2, readline; print(sys.version); print(ssl.OPENSSL_VERSION)"
 ./bin/python-wasm -c "import os, sys; raise SystemExit(os.spawnl(os.P_WAIT, sys.executable, sys.executable, '-c', 'print(123)'))"
 ```
+
+The browser-side product smoke test requires a local Chromium executable, defaulting to `/usr/bin/chromium`:
+
+```sh
+make -C web/browser test
+```
+
+See [browser-runtime-contracts.md](browser-runtime-contracts.md) for the current browser runtime contract and Node-vs-browser differences.

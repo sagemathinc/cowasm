@@ -126,15 +126,15 @@ Current status as of 2026-06-05:
   - serves the bundle with COOP/COEP headers for `SharedArrayBuffer`;
   - starts Chromium and polls the page through the Chrome DevTools Protocol;
   - initializes Python in the browser worker path, creates `/tmp`, writes and reads a file, checks stdout/stderr event streaming, interrupts `while True: pass` with SIGINT, and checks a Python result.
-  - initializes the dash terminal bundle in the browser worker path, runs `sh -c`, creates a file through shell redirection, reads it with `cat`, captures shell stdout, and launches bundled Python from the shell.
+  - initializes the dash terminal bundle in the browser worker path, runs `sh -c`, creates files with bundled shell and Python commands, and verifies them through shell exit status.
 - This is intentionally not a UI test.  It is the first product-gate proof that the browser worker runtime can start Python and perform filesystem IO in a real browser.
 - `wasi-js` now implements `fd_renumber(from, to)` in the correct direction, moving `from` onto `to` and closing the old `to`.  This fixes a real WASI fd-table semantics bug found while investigating browser dash redirection.
-- Browser dash redirection in Chromium now passes after allowing virtual `dup`/`dup2` in the browser posix layer and fixing `fd_renumber`.
+- Browser dash stdout and redirection output are not yet stable enough for the product gate.  `echo ... > /tmp/dash-smoke; cat /tmp/dash-smoke` can pass after allowing virtual `dup`/`dup2` and fixing `fd_renumber`, but repeated smoke runs still show missing output.  Keep captured terminal output as a focused follow-up.
 
 - Create a minimal browser-worker test harness that runs in CI or Playwright: covered for headless Chromium without adding Playwright.
-- Load the terminal bundle and execute a few commands against an in-memory or synced filesystem: covered for shell redirection, `cat`, shell stdout, and bundled Python execution.
+- Load the terminal bundle and execute a few commands against an in-memory or synced filesystem: covered for shell command execution, basic file commands, and bundled Python execution; browser dash captured output remains open.
 - Test Python startup, file IO, stdout/stderr streaming, and interrupt: covered for Python in the browser worker smoke test.
-- Explicitly mark which Node runtime behaviors do not exist in the browser and what replaces them.
+- Explicitly mark which Node runtime behaviors do not exist in the browser and what replaces them: covered in `docs/browser-runtime-contracts.md`.
 - Avoid building a polished UI here; this phase is about runtime correctness.
 
 ## Phase 5: CoCalc-ai Integration Spike

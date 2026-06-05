@@ -150,6 +150,20 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
     }
   }
 
+  async flushOutput(timeoutMs = 1000): Promise<void> {
+    const start = Date.now();
+    let emptyReads = 0;
+    while (Date.now() - start < timeoutMs && emptyReads < 3) {
+      const n = await this.readOutput();
+      if (n == 0) {
+        emptyReads += 1;
+        await delay(25);
+      } else {
+        emptyReads = 0;
+      }
+    }
+  }
+
   terminate() {
     if (this.worker == null) return;
     const worker = this.worker;
