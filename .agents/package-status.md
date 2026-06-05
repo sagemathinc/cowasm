@@ -11,7 +11,7 @@ Last updated: 2026-06-05.
 | `core/kernel` | pass | pass | 2026-06-05 | `make -C core/kernel test` passed. |
 | `core/dash` | pass | pass | 2026-06-05 | Raw WASM dash builds and passes package tests. |
 | `core/less` | pass | pass | 2026-06-05 | Uses GNU mirror for `less-608.tar.gz` with SHA256 verification. |
-| `core/dash-wasm` | pass | pass | 2026-06-05 | `make -C core/dash-wasm test` passed; generated `dist/fs.zip` is 13M and Jest checks that expected terminal commands are bundled. Runtime TODOs remain for external command execution, redirection, pipes, and command substitution. |
+| `core/dash-wasm` | pass | pass | 2026-06-05 | `make -C core/dash-wasm test` passed; generated `dist/fs.zip` is 13M and Jest checks the bundle size envelope plus expected terminal commands. Runtime TODOs remain for external command execution, redirection, pipes, and command substitution. |
 | `python/cpython` | pass | pass | 2026-06-05 | `pip`, runtime contracts, and supported CPython suite pass; CPython reports all 279 supported tests OK. |
 | `python/py-mpmath` | unknown | unknown | n/a | Not checked in the current revival pass. |
 | `python/py-sympy` | unknown | unknown | n/a | Not checked in the current revival pass. |
