@@ -17,7 +17,7 @@ Last updated: 2026-06-05.
 | `python/py-sympy` | pass | pass | 2026-06-05 | `make -C python/py-sympy clean-wasm test` passed; this is the package's small import/basic functionality test, not the full SymPy suite. |
 | `python/py-numpy` | pass | pass | 2026-06-05 | `make -C python/py-numpy test` passed after setuptools/distutils compatibility patches. |
 | `python/py-pandas` | pass | pass | 2026-06-05 | `make -C python/py-pandas test` passed after setting CPython WASM `LDCXXSHARED` for C++ extension modules; this is the package's trivial import test. |
-| `python/py-matplotlib` | unknown | unknown | n/a | Not checked in the current revival pass. |
+| `python/py-matplotlib` | disabled | disabled | 2026-06-05 | Makefile says this package does not work yet; `all` is a no-op and `test` now fails explicitly instead of reporting a false pass. |
 
 ## Baseline Commands
 

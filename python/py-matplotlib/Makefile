@@ -35,3 +35,4 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.install
 
 test:
 	echo "matplotlib not done at all"
+	false
