@@ -7,6 +7,7 @@ const { spawn } = require("child_process");
 const root = resolve(__dirname, "..");
 const dist = join(root, "dist");
 const pythonWasmRoot = resolve(root, "../../python/python-wasm");
+const dashWasmRoot = resolve(root, "../../core/dash-wasm");
 const port = Number(process.env.COWASM_BROWSER_SMOKE_PORT ?? 8765);
 const debugPort = Number(process.env.COWASM_BROWSER_DEBUG_PORT ?? port + 1);
 const chromium = process.env.CHROMIUM ?? "/usr/bin/chromium";
@@ -174,6 +175,7 @@ async function main() {
   }
 
   const pythonWasmDist = join(pythonWasmRoot, "dist");
+  const dashWasmDist = join(dashWasmRoot, "dist");
   await run(
     "make",
     [
@@ -191,6 +193,11 @@ async function main() {
       join(pythonWasmDist, "six.tar.xz"),
     ],
     { cwd: pythonWasmRoot, stdio: "inherit" }
+  );
+  await run(
+    "make",
+    [join(dashWasmDist, ".built"), join(dashWasmDist, "fs.zip")],
+    { cwd: dashWasmRoot, stdio: "inherit" }
   );
 
   await run("pnpm", ["exec", "webpack"], {

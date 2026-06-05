@@ -33,6 +33,7 @@
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/webpack",
   "devDependencies": {
     "@cowasm/kernel": "workspace:*",
+    "dash-wasm": "workspace:*",
     "python-wasm": "workspace:*",
     "@types/node": "^18.11.3",
     "buffer": "^6.0.3",

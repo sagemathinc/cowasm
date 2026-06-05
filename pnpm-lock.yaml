@@ -723,6 +723,9 @@ importers:
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
+      dash-wasm:
+        specifier: workspace:*
+        version: link:../../core/dash-wasm
       events:
         specifier: ^3.3.0
         version: 3.3.0

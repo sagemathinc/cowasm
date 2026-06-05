@@ -1,4 +1,5 @@
 import pythonWasm from "python-wasm";
+import dashWasm from "dash-wasm";
 
 declare global {
   interface Window {
@@ -28,6 +29,23 @@ async function waitUntil(predicate: () => boolean, timeoutMs = 5000) {
     await delay(50);
   }
   throw Error("timed out waiting for browser smoke condition");
+}
+
+async function runDash(command: string): Promise<string> {
+  const dash = await dashWasm();
+  let stdout = "";
+  let stderr = "";
+  dash.kernel.on("stdout", (data) => {
+    stdout += decodeOutput(data);
+  });
+  dash.kernel.on("stderr", (data) => {
+    stderr += decodeOutput(data);
+  });
+  const code = await dash.terminal(["sh", "-c", command]);
+  if (code != 0) {
+    throw Error(`dash exited with ${code}: ${stderr}`);
+  }
+  return stdout;
 }
 
 async function main() {
@@ -80,8 +98,17 @@ async function main() {
     if (!result.includes("browser") || !result.includes("42")) {
       throw Error(`unexpected Python result: ${result}`);
     }
+    const dashOutput = await runDash(
+      "echo cowasm-browser-dash; python -c \"print(6*7)\""
+    );
+    if (
+      !dashOutput.includes("cowasm-browser-dash") ||
+      !dashOutput.includes("42")
+    ) {
+      throw Error(`unexpected dash output: ${dashOutput}`);
+    }
     await kernel.terminate();
-    setStatus("pass", result);
+    setStatus("pass", `${result}\n${dashOutput}`);
   } catch (err) {
     setStatus("fail", err instanceof Error ? err.stack ?? err.message : `${err}`);
   }
