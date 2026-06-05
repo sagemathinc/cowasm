@@ -1,0 +1,68 @@
+--- orig/src/eval.c
++++ mod/src/eval.c
+@@ -36,6 +36,9 @@
+ #include <signal.h>
+ #include <unistd.h>
+ #include <sys/types.h>
++#ifdef __cowasm__
++#include <fcntl.h>
++#endif
+ 
+ /*
+  * Evaluate a command.
+@@ -563,6 +566,55 @@
+ 	pipelen = 0;
+ 	for (lp = n->npipe.cmdlist ; lp ; lp = lp->next)
+ 		pipelen++;
++#ifdef __cowasm__
++	{
++		char inpath[] = "/tmp/cowasm-pipe-in-XXXXXX";
++		char outpath[] = "/tmp/cowasm-pipe-out-XXXXXX";
++		char *prevpath = NULL;
++		char *nextpath = outpath;
++		int save0 = -1, save1 = -1;
++		int infd = -1, outfd = -1;
++
++		for (lp = n->npipe.cmdlist ; lp ; lp = lp->next) {
++			if (prevpath) {
++				infd = open(prevpath, O_RDONLY);
++				if (infd < 0)
++					sh_error("Pipe input open failed");
++				save0 = savefd(0, 0);
++				dup2(infd, 0);
++				close(infd);
++			}
++			if (lp->next) {
++				outfd = mkstemp(nextpath);
++				if (outfd < 0)
++					sh_error("Pipe output open failed");
++				save1 = savefd(1, 1);
++				dup2(outfd, 1);
++				close(outfd);
++			}
++
++			status = evaltree(lp->n, flags & EV_TESTED);
++
++			if (lp->next) {
++				dup2(save1, 1);
++				close(save1);
++				save1 = -1;
++			}
++			if (prevpath) {
++				dup2(save0, 0);
++				close(save0);
++				unlink(prevpath);
++				save0 = -1;
++			}
++
++			prevpath = lp->next ? nextpath : NULL;
++			nextpath = nextpath == outpath ? inpath : outpath;
++		}
++		if (prevpath)
++			unlink(prevpath);
++		return status;
++	}
++#endif
+ 	flags |= EV_EXIT;
+ 	INTOFF;
+ 	jp = makejob(n, pipelen);

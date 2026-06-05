@@ -121,5 +121,10 @@ test("bundled shell supports file redirection", () => {
   );
 });
 
-test.todo("bundled shell supports pipes without trapping");
+test("bundled shell supports pipes without trapping", () => {
+  expect(runDash("echo gamma | cat")).toBe("gamma\n");
+  expect(runDash("printf 'b\\na\\n' | sort")).toBe("a\nb\n");
+  expect(runDash("python -c 'print(\"delta\")' | grep delta")).toBe("delta\n");
+});
+
 test.todo("bundled shell supports command substitution without trapping");

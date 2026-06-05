@@ -1,0 +1,11 @@
+--- orig/src/jobs.c
++++ mod/src/jobs.c
+@@ -799,7 +799,7 @@
+ 	jq = jobtab;
+ 	jp = ckrealloc(jq, len + 4 * sizeof(*jp));
+ 
+-	offset = (char *)jp - (char *)jq;
++	offset = jq ? (char *)jp - (char *)jq : 0;
+ 	if (offset) {
+ 		/* Relocate pointers */
+ 		size_t l = len;

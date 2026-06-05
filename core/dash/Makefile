@@ -31,7 +31,9 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 		&&	cat ${SRC}/patches/02-nodes-extra-include.patch | patch -p1 \
 		&&	cat ${SRC}/patches/03-emacs-default.patch | patch -p1 \
 		&&	cat ${SRC}/patches/04-vforkexec.patch | patch -p1 \
-		&&	cat ${SRC}/patches/05-savefd-without-fcntl.patch | patch -p1
+		&&	cat ${SRC}/patches/05-savefd-without-fcntl.patch | patch -p1 \
+		&&	cat ${SRC}/patches/06-growjobtab-initial-null.patch | patch -p1 \
+		&&	cat ${SRC}/patches/07-pipeline-without-fork.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 # NOTES:
