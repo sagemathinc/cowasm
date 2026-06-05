@@ -48,6 +48,7 @@ make -C core/build zig
 make -C core/zlib test
 make -C core/kernel test
 make -C python/cpython pip
+make -C python/cpython test-runtime-contracts
 make -C python/cpython test
 ```
 
@@ -67,6 +68,7 @@ This baseline verifies:
 - zlib as a small package-level sanity check;
 - CPython `3.11.2` for WASM;
 - Python `pip`/`ensurepip`;
+- focused Python runtime contracts for subprocess, pipes, spawn, and exit status;
 - the supported CPython test subset.
 
 This baseline does not claim that every package in the repo builds or tests successfully.  `core/dash-wasm` is now separately verified, but it is intentionally outside the conservative baseline CI until the broader terminal bundle dependencies are better documented.

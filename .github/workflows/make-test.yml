@@ -69,6 +69,12 @@ jobs:
         mkdir -p logs
         make -C python/cpython pip 2>&1 | tee logs/python-cpython-pip.log
 
+    - name: Test CPython runtime contracts
+      run: |
+        set -o pipefail
+        mkdir -p logs
+        make -C python/cpython test-runtime-contracts 2>&1 | tee logs/python-cpython-runtime-contracts.log
+
     - name: Test CPython supported suite
       run: |
         set -o pipefail

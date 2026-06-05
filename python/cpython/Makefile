@@ -374,6 +374,10 @@ test-pip: pip
 	echo "Success"
 .PHONY: test-pip
 
+test-runtime-contracts: wasm ${BIN}/python-wasm
+	${CWD}/bin/python-wasm ${SRC}/runtime_contract_tests.py
+.PHONY: test-runtime-contracts
+
 
 # Some tests can be pretty slow, e.g., test_tarfile takes about a minute or more on a FAST computer,
 # and doing 4 in parallel on a slow computer.
