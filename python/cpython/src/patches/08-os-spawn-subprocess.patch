@@ -1,0 +1,21 @@
+--- native/Lib/os.py	2023-02-07 10:16:31.000000000 -0800
++++ wasm/Lib/os.py	2026-06-05 00:00:00.000000000 -0700
+@@ -849,6 +849,19 @@
+         if not args or not args[0]:
+             raise ValueError('argv first element cannot be empty')
++        if sys.platform == "wasi":
++            import subprocess
++            if mode not in (P_WAIT, P_NOWAIT):
++                raise ValueError('invalid mode')
++            kwargs = {}
++            if env is not None:
++                kwargs["env"] = env
++            if func not in (execvp, execvpe):
++                kwargs["executable"] = file
++            proc = subprocess.Popen(args, **kwargs)
++            if mode == P_NOWAIT:
++                return proc.pid
++            return proc.wait()
+         pid = fork()
+         if not pid:
+             # Child

@@ -108,9 +108,10 @@ fn forkExec1(env: c.napi_env, opts: c.napi_value) !c.napi_value {
     }
     // We're the child.
 
-    // Get rid of all the other node async io and threads by closing
-    // the lib-uv event loop, which would otherwise cause random hangs.
-    try node.closeEventLoop(env);
+    // Do not touch the inherited libuv loop in the child.  On newer Node/libuv
+    // versions, calling uv_loop_close after fork can segfault before exec.
+    // The child immediately execs below, so descriptor cleanup handles the
+    // important inherited state.
     doExec(exec_array_c, argv_c, envp_c, cwd_c, p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite, errpipe_read, errpipe_write, close_fds, fds_to_keep_c, fds_to_keep_len, WASI_FD_INFO_c) catch |err| {
         std.debug.print("Error in doExec: {}\n", .{err});
         // every exec failed, so we report this error over the pipe:

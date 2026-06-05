@@ -143,6 +143,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/06-platform.patch | patch -p1
 	# Fork and execv on top of posix-node work, but it takes some restrictions to be robust:
 	cd ${BUILD_WASM} && cat ${SRC}/patches/07-subprocess.patch | patch -p1
+	cd ${BUILD_WASM} && cat ${SRC}/patches/08-os-spawn-subprocess.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${SRC}/patches/09-set-inheritable.patch | patch -p1
 	# Patch 10-setuptools-c++.patch is used, but only *AFTER* ensurepip happens!
 	# clang15 is more strict:

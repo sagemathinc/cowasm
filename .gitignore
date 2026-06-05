@@ -29,3 +29,4 @@ scratch/*
 logs/*
 core/bench/src/cython/*.c
 core/rogue/warrior-rogue.scr
+*.chat
