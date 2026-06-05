@@ -56,7 +56,9 @@ already modeled by `ETAG_MISMATCH` and `PATCH_FAILED`.
 
 - Add a browser-side project filesystem adapter around the current in-memory
   filesystem.  It should support `loadFiles(files)`, `snapshot()`, and
-  `changedFiles(before, after)`.
+  `changedFiles(before, after)`.  The first narrow version is
+  `web/browser/src/project-files.ts`, which loads selected files into a Python
+  worker mount and exports changed files with base hashes.
 - Keep path mapping explicit.  Project paths stay sandbox-relative on the
   CoCalc side and map to runtime paths under one mount point such as
   `/project`.
@@ -97,11 +99,12 @@ api.browserRuntime.run({
 
 First validation should stay entirely inside CoWasm:
 
-- import two text files into `/project`: covered by `web/browser/src/smoke.ts`;
+- import two text files into `/project`: covered by
+  `web/browser/src/project-files.ts` and `web/browser/src/smoke.ts`;
 - run Python in the browser worker: covered by the existing browser smoke path;
 - create or update one output file: covered by the `/project/out.txt` fixture;
-- export the changed file list with base hashes: covered inside the fixture by
-  comparing `/project` contents to the imported base hashes;
+- export the changed file list with base hashes: covered by
+  `PythonProjectFiles.changedFiles()`;
 - assert stdout/stderr/exit status and file diff metadata: stdout/stderr and
   browser worker status are covered by the broader smoke test, and changed-file
   metadata is asserted by the fixture.

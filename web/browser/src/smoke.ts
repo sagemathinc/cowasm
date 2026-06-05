@@ -1,5 +1,6 @@
 import pythonWasm from "python-wasm";
 import dashWasm from "dash-wasm";
+import { PythonExec, PythonProjectFiles, PythonRepr } from "./project-files";
 
 declare global {
   interface Window {
@@ -21,9 +22,6 @@ function decodeOutput(data: any): string {
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
-type PythonExec = (code: string) => Promise<void>;
-type PythonRepr = (code: string) => Promise<string>;
 
 async function waitUntil(predicate: () => boolean, timeoutMs = 5000) {
   const start = Date.now();
@@ -58,74 +56,31 @@ async function runDash(
 }
 
 async function runProjectSubsetSmoke(exec: PythonExec, repr: PythonRepr) {
-  await exec(String.raw`
-import hashlib, json, os, pathlib, runpy
-
-root = pathlib.Path("/project")
-root.mkdir(exist_ok=True)
-project_files = {
-    "input.txt": "alpha\nbeta\nalpha\n",
-    "script.py": """
+  const project = new PythonProjectFiles({ exec, repr });
+  await project.loadFiles([
+    { path: "input.txt", content: "alpha\nbeta\nalpha\n" },
+    {
+      path: "script.py",
+      content: String.raw`
 import pathlib
 
 root = pathlib.Path("/project")
 text = (root / "input.txt").read_text()
 lines = [line for line in text.splitlines() if line == "alpha"]
-(root / "out.txt").write_text(f"alpha-count={len(lines)}\\n")
+(root / "out.txt").write_text(f"alpha-count={len(lines)}\n")
 print(f"wrote {len(lines)} matching lines")
-""".lstrip(),
-}
-
-for name, content in project_files.items():
-    path = root / name
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content)
-
-def digest(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-base_hashes = {
-    path.name: digest(path)
-    for path in root.iterdir()
-    if path.is_file()
-}
-
-runpy.run_path(str(root / "script.py"), run_name="__main__")
-
-changed_files = {}
-for path in root.iterdir():
-    if not path.is_file():
-        continue
-    current_hash = digest(path)
-    base_hash = base_hashes.get(path.name)
-    if base_hash != current_hash:
-        changed_files[path.name] = {
-            "base": base_hash,
-            "sha256": current_hash,
-            "text": path.read_text(),
-        }
-
-assert changed_files == {
-    "out.txt": {
-        "base": None,
-        "sha256": changed_files["out.txt"]["sha256"],
-        "text": "alpha-count=2\n",
-    }
-}
-project_subset_summary = json.dumps({
-    "mount": str(root),
-    "imported": sorted(project_files),
-    "changed": sorted(changed_files),
-    "out": changed_files["out.txt"]["text"],
-})
-`);
-  const summary = await repr("project_subset_summary");
+`.replace(/^\n/, ""),
+    },
+  ]);
+  await exec("import runpy; runpy.run_path('/project/script.py', run_name='__main__')");
+  const changes = await project.changedFiles();
   if (
-    !summary.includes("/project") ||
-    !summary.includes("out.txt") ||
-    !summary.includes("alpha-count=2")
+    changes.length != 1 ||
+    changes[0].path != "out.txt" ||
+    changes[0].baseSha256 != null ||
+    changes[0].text != "alpha-count=2\n"
   ) {
-    throw Error(`unexpected project subset summary: ${summary}`);
+    throw Error(`unexpected project changes: ${JSON.stringify(changes)}`);
   }
 }
 

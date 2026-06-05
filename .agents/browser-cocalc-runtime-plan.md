@@ -165,6 +165,10 @@ Current status as of 2026-06-05:
 - `web/browser/src/smoke.ts` now includes an in-CoWasm `/project` fixture that
   imports text files, runs a Python script, detects changed files by comparing
   hashes to the base snapshot, and verifies the output file.
+- `web/browser/src/project-files.ts` is the first reusable project-subset
+  adapter.  It loads selected files into a Python worker mount and exports
+  changed files with base hashes, sha256 hashes, base64 bytes, and UTF-8 text
+  when available.
 - Full recursive sync, project-host terminal parity, browser Jupyter kernels,
   and scientific package expansion are intentionally out of scope for this
   spike.
