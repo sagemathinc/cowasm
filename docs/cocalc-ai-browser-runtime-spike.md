@@ -101,10 +101,13 @@ First validation should stay entirely inside CoWasm:
 
 - import two text files into `/project`: covered by
   `web/browser/src/project-files.ts` and `web/browser/src/smoke.ts`;
+- import nested binary files and reject unsafe paths: covered by
+  `web/browser/src/smoke.ts`;
 - run Python in the browser worker: covered by the existing browser smoke path;
 - create or update one output file: covered by the `/project/out.txt` fixture;
 - export the changed file list with base hashes: covered by
-  `PythonProjectFiles.changedFiles()`;
+  `PythonProjectFiles.changedFiles()`, including binary outputs exported as
+  base64 with `text: null` when UTF-8 decoding fails;
 - assert stdout/stderr/exit status and file diff metadata: stdout/stderr and
   browser worker status are covered by the broader smoke test, and changed-file
   metadata is asserted by the fixture.

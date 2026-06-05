@@ -57,8 +57,19 @@ async function runDash(
 
 async function runProjectSubsetSmoke(exec: PythonExec, repr: PythonRepr) {
   const project = new PythonProjectFiles({ exec, repr });
+  let rejectedUnsafePath = false;
+  try {
+    await project.loadFiles([{ path: "../escape.txt", content: "nope" }]);
+  } catch (_) {
+    rejectedUnsafePath = true;
+  }
+  if (!rejectedUnsafePath) {
+    throw Error("project adapter accepted an unsafe path");
+  }
+
   await project.loadFiles([
     { path: "input.txt", content: "alpha\nbeta\nalpha\n" },
+    { path: "data/blob.bin", content: new Uint8Array([0, 1, 65]) },
     {
       path: "script.py",
       content: String.raw`
@@ -68,17 +79,26 @@ root = pathlib.Path("/project")
 text = (root / "input.txt").read_text()
 lines = [line for line in text.splitlines() if line == "alpha"]
 (root / "out.txt").write_text(f"alpha-count={len(lines)}\n")
+blob = (root / "data" / "blob.bin").read_bytes()
+(root / "bin").mkdir(exist_ok=True)
+(root / "bin" / "out.bin").write_bytes(bytes([blob[0], 255, blob[-1]]))
 print(f"wrote {len(lines)} matching lines")
 `.replace(/^\n/, ""),
     },
   ]);
   await exec("import runpy; runpy.run_path('/project/script.py', run_name='__main__')");
   const changes = await project.changedFiles();
+  const byPath: { [path: string]: (typeof changes)[number] } = {};
+  for (const change of changes) {
+    byPath[change.path] = change;
+  }
   if (
-    changes.length != 1 ||
-    changes[0].path != "out.txt" ||
-    changes[0].baseSha256 != null ||
-    changes[0].text != "alpha-count=2\n"
+    changes.length != 2 ||
+    byPath["out.txt"]?.baseSha256 != null ||
+    byPath["out.txt"]?.text != "alpha-count=2\n" ||
+    byPath["bin/out.bin"]?.baseSha256 != null ||
+    byPath["bin/out.bin"]?.base64 != "AP9B" ||
+    byPath["bin/out.bin"]?.text !== null
   ) {
     throw Error(`unexpected project changes: ${JSON.stringify(changes)}`);
   }

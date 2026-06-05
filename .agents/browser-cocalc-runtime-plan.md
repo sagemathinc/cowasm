@@ -169,6 +169,8 @@ Current status as of 2026-06-05:
   adapter.  It loads selected files into a Python worker mount and exports
   changed files with base hashes, sha256 hashes, base64 bytes, and UTF-8 text
   when available.
+- The browser smoke covers nested binary import/export and rejects unsafe
+  project paths such as `../escape.txt` before they reach the runtime mount.
 - Full recursive sync, project-host terminal parity, browser Jupyter kernels,
   and scientific package expansion are intentionally out of scope for this
   spike.
