@@ -173,8 +173,10 @@ Current status as of 2026-06-05:
   project paths such as `../escape.txt` before they reach the runtime mount.
 - `PythonProjectFiles` enforces initial project-subset quotas for file count,
   single-file bytes, total import bytes, changed-file count, and changed export
-  bytes.  The browser smoke covers import and export quota rejection.  Command
-  runtime and stdout/stderr byte limits are still open.
+  bytes.  The browser smoke covers import and export quota rejection.
+- `web/browser/src/project-runner.ts` adds `PythonCommandRunner`, which scopes
+  stdout/stderr listeners per command and enforces command runtime plus combined
+  stdout/stderr byte limits using SIGINT for cancellation.
 - Full recursive sync, project-host terminal parity, browser Jupyter kernels,
   and scientific package expansion are intentionally out of scope for this
   spike.

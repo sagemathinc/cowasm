@@ -1,6 +1,7 @@
 import pythonWasm from "python-wasm";
 import dashWasm from "dash-wasm";
 import { PythonExec, PythonProjectFiles, PythonRepr } from "./project-files";
+import { PythonCommandRunner } from "./project-runner";
 
 declare global {
   interface Window {
@@ -55,8 +56,13 @@ async function runDash(
   return stdout;
 }
 
-async function runProjectSubsetSmoke(exec: PythonExec, repr: PythonRepr) {
+async function runProjectSubsetSmoke(exec: PythonExec, repr: PythonRepr, kernel) {
   const project = new PythonProjectFiles({ exec, repr });
+  const runner = new PythonCommandRunner({
+    exec,
+    kernel,
+    limits: { maxRuntimeMs: 5000, maxOutputBytes: 1024 },
+  });
   let rejectedUnsafePath = false;
   try {
     await project.loadFiles([{ path: "../escape.txt", content: "nope" }]);
@@ -104,7 +110,40 @@ print(f"wrote {len(lines)} matching lines")
 `.replace(/^\n/, ""),
     },
   ]);
-  await exec("import runpy; runpy.run_path('/project/script.py', run_name='__main__')");
+  let rejectedOutputQuota = false;
+  try {
+    await new PythonCommandRunner({
+      exec,
+      kernel,
+      limits: { maxRuntimeMs: 5000, maxOutputBytes: 8 },
+    }).run("print('x' * 1000)");
+  } catch (_) {
+    rejectedOutputQuota = true;
+  }
+  if (!rejectedOutputQuota) {
+    throw Error("project command runner accepted over-quota output");
+  }
+
+  let rejectedRuntimeLimit = false;
+  try {
+    await new PythonCommandRunner({
+      exec,
+      kernel,
+      limits: { maxRuntimeMs: 100, maxOutputBytes: 1024 },
+    }).run("while True: pass");
+  } catch (_) {
+    rejectedRuntimeLimit = true;
+  }
+  if (!rejectedRuntimeLimit) {
+    throw Error("project command runner accepted over-time command");
+  }
+
+  const run = await runner.run(
+    "import runpy; runpy.run_path('/project/script.py', run_name='__main__')"
+  );
+  if (!run.stdout.includes("wrote 2 matching lines")) {
+    throw Error(`unexpected project command stdout: ${run.stdout}`);
+  }
   const exportQuotaProject = new PythonProjectFiles({
     exec,
     repr,
@@ -181,7 +220,7 @@ async function main() {
       await waitUntil(() => interrupted, 5000);
       await running;
       stage = "project subset fixture";
-      await runProjectSubsetSmoke(exec, repr);
+      await runProjectSubsetSmoke(exec, repr, kernel);
     } catch (err) {
       throw Error(
         `${stage} failed: ${err instanceof Error ? err.message : `${err}`}`
