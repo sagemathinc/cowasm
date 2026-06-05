@@ -177,6 +177,9 @@ Current status as of 2026-06-05:
 - `web/browser/src/project-runner.ts` adds `PythonCommandRunner`, which scopes
   stdout/stderr listeners per command and enforces command runtime plus combined
   stdout/stderr byte limits using SIGINT for cancellation.
+- `runPythonProjectWorkflow` is the current reusable Python-only MVP entry
+  point: load selected files, run bounded Python code, and return changed-file
+  exports.
 - Full recursive sync, project-host terminal parity, browser Jupyter kernels,
   and scientific package expansion are intentionally out of scope for this
   spike.

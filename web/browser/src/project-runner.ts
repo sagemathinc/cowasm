@@ -1,4 +1,11 @@
-import { PythonExec } from "./project-files";
+import {
+  ProjectFileChange,
+  ProjectFileInput,
+  ProjectFileLimits,
+  PythonExec,
+  PythonProjectFiles,
+  PythonRepr,
+} from "./project-files";
 
 export interface PythonKernelIO {
   on(event: "stdout" | "stderr", listener: (data: any) => void): void;
@@ -16,6 +23,22 @@ export interface PythonCommandResult {
   stdout: string;
   stderr: string;
   durationMs: number;
+}
+
+export interface PythonProjectWorkflowOptions {
+  exec: PythonExec;
+  repr: PythonRepr;
+  kernel: PythonKernelIO;
+  files: ProjectFileInput[];
+  code: string;
+  mount?: string;
+  fileLimits?: ProjectFileLimits;
+  commandLimits?: PythonCommandLimits;
+}
+
+export interface PythonProjectWorkflowResult {
+  command: PythonCommandResult;
+  changes: ProjectFileChange[];
 }
 
 const DEFAULT_LIMITS: Required<PythonCommandLimits> = {
@@ -103,6 +126,32 @@ export class PythonCommandRunner {
     }
     return { stdout, stderr, durationMs: Date.now() - start };
   }
+}
+
+export async function runPythonProjectWorkflow({
+  exec,
+  repr,
+  kernel,
+  files,
+  code,
+  mount = "/project",
+  fileLimits,
+  commandLimits,
+}: PythonProjectWorkflowOptions): Promise<PythonProjectWorkflowResult> {
+  const project = new PythonProjectFiles({
+    exec,
+    repr,
+    mount,
+    limits: fileLimits,
+  });
+  await project.loadFiles(files);
+  const command = await new PythonCommandRunner({
+    exec,
+    kernel,
+    limits: commandLimits,
+  }).run(code);
+  const changes = await project.changedFiles();
+  return { command, changes };
 }
 
 function decodeOutput(data: any): string {

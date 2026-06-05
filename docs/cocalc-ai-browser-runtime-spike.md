@@ -95,6 +95,11 @@ api.browserRuntime.run({
 });
 ```
 
+The current CoWasm-side equivalent is `runPythonProjectWorkflow`, which accepts
+selected files plus Python code and returns bounded command output plus changed
+files.  It is intentionally Python-only until the shell output contract is more
+stable.
+
 - Add a browser automation test in CoCalc AI only after CoWasm has an in-memory
   project subset smoke test.
 
@@ -111,6 +116,8 @@ First validation should stay entirely inside CoWasm:
 - run Python in the browser worker: covered by the existing browser smoke path;
 - enforce command runtime and stdout/stderr byte limits: covered by
   `PythonCommandRunner` in `web/browser/src/project-runner.ts`;
+- run the selected-file workflow through a reusable entry point: covered by
+  `runPythonProjectWorkflow`;
 - create or update one output file: covered by the `/project/out.txt` fixture;
 - export the changed file list with base hashes: covered by
   `PythonProjectFiles.changedFiles()`, including binary outputs exported as

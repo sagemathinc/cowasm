@@ -1,7 +1,7 @@
 import pythonWasm from "python-wasm";
 import dashWasm from "dash-wasm";
 import { PythonExec, PythonProjectFiles, PythonRepr } from "./project-files";
-import { PythonCommandRunner } from "./project-runner";
+import { PythonCommandRunner, runPythonProjectWorkflow } from "./project-runner";
 
 declare global {
   interface Window {
@@ -58,11 +58,6 @@ async function runDash(
 
 async function runProjectSubsetSmoke(exec: PythonExec, repr: PythonRepr, kernel) {
   const project = new PythonProjectFiles({ exec, repr });
-  const runner = new PythonCommandRunner({
-    exec,
-    kernel,
-    limits: { maxRuntimeMs: 5000, maxOutputBytes: 1024 },
-  });
   let rejectedUnsafePath = false;
   try {
     await project.loadFiles([{ path: "../escape.txt", content: "nope" }]);
@@ -91,7 +86,7 @@ async function runProjectSubsetSmoke(exec: PythonExec, repr: PythonRepr, kernel)
     throw Error("project adapter accepted an over-quota import");
   }
 
-  await project.loadFiles([
+  const files = [
     { path: "input.txt", content: "alpha\nbeta\nalpha\n" },
     { path: "data/blob.bin", content: new Uint8Array([0, 1, 65]) },
     {
@@ -109,7 +104,8 @@ blob = (root / "data" / "blob.bin").read_bytes()
 print(f"wrote {len(lines)} matching lines")
 `.replace(/^\n/, ""),
     },
-  ]);
+  ];
+  await project.loadFiles(files);
   let rejectedOutputQuota = false;
   try {
     await new PythonCommandRunner({
@@ -138,11 +134,16 @@ print(f"wrote {len(lines)} matching lines")
     throw Error("project command runner accepted over-time command");
   }
 
-  const run = await runner.run(
-    "import runpy; runpy.run_path('/project/script.py', run_name='__main__')"
-  );
-  if (!run.stdout.includes("wrote 2 matching lines")) {
-    throw Error(`unexpected project command stdout: ${run.stdout}`);
+  const result = await runPythonProjectWorkflow({
+    exec,
+    repr,
+    kernel,
+    files,
+    code: "import runpy; runpy.run_path('/project/script.py', run_name='__main__')",
+    commandLimits: { maxRuntimeMs: 5000, maxOutputBytes: 1024 },
+  });
+  if (!result.command.stdout.includes("wrote 2 matching lines")) {
+    throw Error(`unexpected project command stdout: ${result.command.stdout}`);
   }
   const exportQuotaProject = new PythonProjectFiles({
     exec,
@@ -159,7 +160,7 @@ print(f"wrote {len(lines)} matching lines")
     throw Error("project adapter accepted an over-quota export");
   }
 
-  const changes = await project.changedFiles();
+  const changes = result.changes;
   const byPath: { [path: string]: (typeof changes)[number] } = {};
   for (const change of changes) {
     byPath[change.path] = change;
