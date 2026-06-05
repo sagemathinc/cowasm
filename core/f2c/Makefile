@@ -11,6 +11,7 @@ VERSION=2022-09-09
 URL = https://github.com/sagemathinc/f2c/archive/refs/tags/${VERSION}.tar.gz
 
 TARBALL = ${UPSTREAM}/f2c-${VERSION}.tar.gz
+TARBALL_SHA256 = 881ae23331283c9461ca54b445487fa30adc41a2868592f1fba9c10a0ddcbbd2
 
 all: native wasm
 

@@ -7,6 +7,7 @@ include ../build/Makefile-vars
 # See https://github.com/TeX-Live/luatex/releases
 
 VERSION = 1.13.0-svn7420
+SOURCE_AUDIT_IGNORE = disabled package with stale upstream branch archive
 
 URL = https://github.com/TeX-Live/luatex/archive/refs/heads/trunk.zip
 

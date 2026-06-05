@@ -7,6 +7,7 @@ VERSION = 1.5.0
 
 URL = https://github.com/libgit2/libgit2/archive/refs/tags/v${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/libgit2-${VERSION}.tar.gz
+TARBALL_SHA256 = 8de872a0f201b33d9522b817c92e14edb4efad18dae95cf156cf240b2efff93e
 
 # Debug is HUGE
 # BUILD_TYPE = Debug
@@ -70,4 +71,3 @@ test-init: node_modules ${DIST_WASM}/.built
 	cd ${TESTS}/testrepo && git status |grep "No commits yet"
 
 test: test-init
-

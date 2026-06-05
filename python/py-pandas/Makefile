@@ -6,6 +6,7 @@ VERSION=1.5.3
 URL = https://github.com/pandas-dev/pandas/releases/download/v${VERSION}/pandas-${VERSION}.tar.gz
 
 TARBALL = ${UPSTREAM}/pandas-${VERSION}.tar.gz
+TARBALL_SHA256 = 74a3fd7e5a7ec052f183273dc7b0acd3a863edf7520f5d3a1765c04ffdb3b0b1
 
 all: deps wasm
 
@@ -50,4 +51,3 @@ ${DIST_WASM}/.built:  ${BUILD_WASM}/.install
 # Just a trivial test for now.
 test: deps ${DIST_WASM}/.built
 	@PYTHONPATH="${DIST_WASM}:${PYTHONPATH}" pnpm-exec cpython -c "import pandas" && echo "Trivial PANDAS TEST PASSED!"
-

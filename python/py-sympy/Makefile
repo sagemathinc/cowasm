@@ -7,6 +7,7 @@ all: deps wasm
 VERSION = 1.11.1
 URL = https://github.com/sympy/sympy/releases/download/sympy-${VERSION}/sympy-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/sympy-${VERSION}.tar.gz
+TARBALL_SHA256 = e32380dce63cb7c0108ed525570092fd45168bdae2faa17e528221ef72e88658
 
 include ../build/Makefile-rules
 
@@ -39,4 +40,3 @@ test: deps ${DIST_WASM}/.built
 test-native: ${BUILD_WASM}/.built
 	cd ${BUILD_WASM} \
 		&& python-native setup.py test
-

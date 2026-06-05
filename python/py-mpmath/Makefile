@@ -7,6 +7,7 @@ VERSION = 1.0.0
 
 URL = https://github.com/mpmath/mpmath/archive/refs/tags/${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/mpmath-${VERSION}.tar.gz
+TARBALL_SHA256 = f4edfddb63c0f87d8ae637290d2fd1743d47aec5452453e50d8d9c3c3fdf57e0
 
 include ../build/Makefile-rules
 

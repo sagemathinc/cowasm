@@ -6,6 +6,9 @@ missing=0
 
 while IFS= read -r rel; do
     makefile="$root/$rel"
+    if grep -Eq '^[[:space:]]*SOURCE_AUDIT_IGNORE[[:space:]]*=' "$makefile"; then
+        continue
+    fi
     if grep -Eq '^[[:space:]]*URL[[:space:]]*=' "$makefile" \
         && grep -Eq '^[[:space:]]*TARBALL[[:space:]]*=' "$makefile" \
         && ! grep -Eq '^[[:space:]]*TARBALL_SHA256[[:space:]]*=' "$makefile"; then

@@ -11,6 +11,7 @@ VERSION=3.6.2
 URL = https://github.com/matplotlib/matplotlib/archive/refs/tags/v${VERSION}.tar.gz
 
 TARBALL = ${UPSTREAM}/matplotlib-${VERSION}.tar.gz
+TARBALL_SHA256 = 5ac5ca25e6ecd1e7711e1f859b4b6f74f290ef517387d1502bf8012bf2b1647e
 
 #all: deps wasm
 all:

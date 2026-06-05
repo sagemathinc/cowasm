@@ -10,6 +10,7 @@ VERSION = 1.6.35
 URL = https://github.com/glennrp/libpng/archive/refs/tags/v${VERSION}.tar.gz
 
 TARBALL = ${UPSTREAM}/libpng-${VERSION}.tar.gz
+TARBALL_SHA256 = 6d59d6a154ccbb772ec11772cb8f8beb0d382b61e7ccc62435bf7311c9f4b210
 
 
 all: deps wasm

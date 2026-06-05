@@ -35,7 +35,7 @@ Goal: make the revived build reproducible on a clean Linux runner.
 
 Goal: no build should fail because a small upstream tarball disappeared, blocked HTTP, or changed contents silently.
 
-Current audit command: `make audit-sources`.  It intentionally fails until every tracked package Makefile that defines `URL` and `TARBALL` also defines `TARBALL_SHA256`.  As of 2026-06-05 it reports 8 missing checksum entries; use that as the phase 1 worklist.
+Current audit command: `make audit-sources`.  It fails if a tracked package Makefile defines `URL` and `TARBALL` without `TARBALL_SHA256`, unless that Makefile has an explicit `SOURCE_AUDIT_IGNORE` marker.  As of 2026-06-05, all active tracked package downloads have checksums; `core/luatex` is ignored because the package is disabled and its old branch archive URL is stale.
 
 - Add a `make fetch` style target that downloads all upstream tarballs without building.
 - Add checksums for every upstream tarball.
