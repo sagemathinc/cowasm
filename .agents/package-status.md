@@ -30,6 +30,8 @@ Observed on 2026-06-05:
 
 - `make python` passed for all Python packages.
 - `make test-python` passed through `python/cpython` and `python/py-cython`, then stopped at `python/py-matplotlib` because that package intentionally fails its test target.
+- `make test-python-supported` passed.  It excludes `python/py-matplotlib` and
+  is the supported-stack green target.
 - After the aggregate stop, focused tests passed for `python/py-mpmath`, `python/py-numpy`, `python/py-pandas`, `python/py-sympy`, and `python/python-wasm`.
 
 ## Baseline Commands

@@ -4,6 +4,8 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 CORE = $(dir $(shell ls core/*/Makefile))
 PYTHON = $(dir $(shell ls python/*/Makefile))
+PYTHON_DISABLED = python/py-matplotlib/
+PYTHON_SUPPORTED = $(filter-out ${PYTHON_DISABLED},${PYTHON})
 WEB = $(dir $(shell ls web/*/Makefile))
 DESKTOP = $(dir $(shell ls desktop/*/Makefile))
 SAGEMATH = $(dir $(shell ls sagemath/*/Makefile))
@@ -60,6 +62,14 @@ python:
 .PHONY: test-python
 test-python: python
 	./bin/make-all test ${PYTHON}
+
+.PHONY: python-supported
+python-supported:
+	./bin/make-all all ${PYTHON_SUPPORTED}
+
+.PHONY: test-python-supported
+test-python-supported: python-supported
+	./bin/make-all test ${PYTHON_SUPPORTED}
 
 .PHONY: clean-python
 clean-python:

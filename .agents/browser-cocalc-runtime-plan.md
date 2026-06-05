@@ -210,6 +210,8 @@ Current status as of 2026-06-05:
   skipped.
 - `make test-python` currently stops at `python/py-matplotlib`, whose Makefile
   intentionally fails because matplotlib is not implemented.
+- `make test-python-supported` passed.  It excludes `python/py-matplotlib` and
+  should be used as the green supported-stack validation target.
 - `make -C web/browser test` now verifies browser-worker imports and basic
   functionality for `mpmath`, `sympy`, `numpy`, and `pandas`.  The 2026-06-05
   local smoke printed: Python init 776ms, `mpmath` 183ms, `sympy` 2480ms,
