@@ -1,4 +1,4 @@
-name: make core CI
+name: baseline CI
 
 on:
   push:
@@ -7,10 +7,77 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  baseline:
 
     runs-on: ubuntu-latest
+    timeout-minutes: 90
 
     steps:
-    - uses: actions/checkout@v3
-    - run: npm install -g pnpm && make core
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "26"
+
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          autoconf \
+          automake \
+          ca-certificates \
+          cmake \
+          curl \
+          diffutils \
+          dpkg-dev \
+          git \
+          libncurses-dev \
+          libtool \
+          m4 \
+          make \
+          patch \
+          pkg-config \
+          python-is-python3 \
+          tcl \
+          texinfo \
+          xz-utils \
+          yasm \
+          zip
+        npm install -g pnpm
+
+    - name: Bootstrap pinned Zig
+      run: |
+        set -o pipefail
+        mkdir -p logs
+        make -C core/build zig 2>&1 | tee logs/core-build-zig.log
+
+    - name: Test zlib package
+      run: |
+        set -o pipefail
+        mkdir -p logs
+        make -C core/zlib test 2>&1 | tee logs/core-zlib-test.log
+
+    - name: Test kernel package
+      run: |
+        set -o pipefail
+        mkdir -p logs
+        make -C core/kernel test 2>&1 | tee logs/core-kernel-test.log
+
+    - name: Test CPython pip
+      run: |
+        set -o pipefail
+        mkdir -p logs
+        make -C python/cpython pip 2>&1 | tee logs/python-cpython-pip.log
+
+    - name: Test CPython supported suite
+      run: |
+        set -o pipefail
+        mkdir -p logs
+        make -C python/cpython test 2>&1 | tee logs/python-cpython-test.log
+
+    - name: Upload build logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: baseline-logs
+        path: logs/
