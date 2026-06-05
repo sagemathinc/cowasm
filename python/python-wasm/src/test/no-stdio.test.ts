@@ -13,9 +13,17 @@ testing.
 import { asyncPython } from "../node";
 import { delay } from "awaiting";
 
+jest.setTimeout(20000);
+
+async function waitUntil(predicate: () => boolean, timeoutMs = 5000) {
+  const t = new Date().valueOf();
+  while (new Date().valueOf() - t < timeoutMs && !predicate()) {
+    await delay(50);
+  }
+}
+
 test("use noStdio", async () => {
-  jest.setTimeout(15000);
-  const python = await asyncPython({ noStdio: true });
+  const python = await asyncPython({ fs: "bundle", noStdio: true });
   // capture stdout and stderr to a string.  Actual stdout/stderr is a Buffer.
   let stdout = "";
   python.kernel.on("stdout", (data) => {
@@ -61,4 +69,54 @@ test("use noStdio", async () => {
   expect(stderr).toContain("cowasm");
 
   await python.kernel.terminate();
+});
+
+test("noStdio terminal supports multiline input and ctrl-c interrupt", async () => {
+  const python = await asyncPython({ fs: "bundle", noStdio: true });
+  let stdout = "";
+  python.kernel.on("stdout", (data) => {
+    stdout += data.toString();
+  });
+  let stderr = "";
+  python.kernel.on("stderr", (data) => {
+    stderr += data.toString();
+  });
+
+  try {
+    (async () => {
+      try {
+        await python.terminal();
+      } catch (_) {}
+    })();
+
+    await waitUntil(() => stdout.includes(">>>"));
+    expect(stdout).toContain(">>>");
+
+    let stdoutOffset = stdout.length;
+    await python.kernel.writeToStdin("def cowasm_contract(x):\n");
+    await waitUntil(() => stdout.slice(stdoutOffset).includes("..."));
+    expect(stdout.slice(stdoutOffset)).toContain("...");
+
+    stdoutOffset = stdout.length;
+    await python.kernel.writeToStdin("    return x + 41\n\n");
+    await waitUntil(() => stdout.slice(stdoutOffset).includes(">>>"));
+
+    stdoutOffset = stdout.length;
+    await python.kernel.writeToStdin("cowasm_contract(1)\n");
+    await waitUntil(() => stdout.slice(stdoutOffset).includes("42"));
+    expect(stdout.slice(stdoutOffset)).toContain("42");
+
+    stdoutOffset = stdout.length;
+    await python.kernel.writeToStdin("while True: pass\n");
+    await waitUntil(() => stdout.slice(stdoutOffset).includes("..."));
+    const stderrOffset = stderr.length;
+    await python.kernel.writeToStdin("\u0003");
+    await waitUntil(
+      () => stderr.slice(stderrOffset).includes("KeyboardInterrupt"),
+      7500
+    );
+    expect(stderr.slice(stderrOffset)).toContain("KeyboardInterrupt");
+  } finally {
+    await python.kernel.terminate();
+  }
 });

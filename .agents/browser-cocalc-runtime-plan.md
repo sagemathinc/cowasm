@@ -87,6 +87,12 @@ Current status as of 2026-06-05:
   - explicit `subprocess(pass_fds=...)` inheritance and close-on-exec behavior for inherited fds when `close_fds=True`;
   - filesystem create/read/write/delete, recursive copy/remove, stat size/mode, and symlinks.
 - `subprocess(pass_fds=...)` now passes.  The fix passes CPython's keep-fd list into the CoWasm fork/exec bridge, includes those fds in `WASI_FD_INFO`, initializes inherited fds in `wasi-js`, and prevents inherited non-directory fds from being misreported as WASI preopens.
+- `python/python-wasm/src/test/no-stdio.test.ts` covers the in-memory Python terminal path with `noStdio: true` and `fs: "bundle"`:
+  - stdout/stderr event capture from the REPL;
+  - multiline REPL input with continuation prompts;
+  - Ctrl-C delivered through `kernel.writeToStdin("\u0003")`, interrupting `while True: pass` and surfacing `KeyboardInterrupt`.
+- Focused validation passes with `pnpm exec tsc && pnpm exec jest --no-watchman --runInBand ./dist/test/no-stdio.test.js` after building `python/python-wasm/dist/python.wasm`, `python-readline.zip`, and `python-stdlib.zip`.
+- The full `python-wasm` Jest suite passes with `pnpm exec tsc && pnpm exec jest --no-watchman --runInBand ./dist` after generating `python-everything.zip` and the `hello` extension artifact from existing package outputs.
 
 - Add focused tests for process behavior:
   - `subprocess.run`
@@ -100,10 +106,10 @@ Current status as of 2026-06-05:
   - symlinks if supported
   - permissions and stat fields where meaningful in WASM
 - Add terminal tests:
-  - interactive stdin
+  - interactive stdin: covered for Python `noStdio`
   - resize events if applicable
-  - readline basics
-  - interrupting a long-running command
+  - readline basics: covered for Python multiline REPL continuation
+  - interrupting a long-running command: covered for Python terminal Ctrl-C via `writeToStdin`
 - Keep these tests small and independent of the full CPython test suite.
 
 ## Phase 4: Browser Worker Proof
