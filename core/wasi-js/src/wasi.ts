@@ -471,6 +471,7 @@ export default class WASI {
         path: v,
       });
     }
+    this.initWasiFdInfo();
 
     const getiovs = (iovs: number, iovsLen: number) => {
       // iovs* -> [iov, iov, ...]
@@ -782,15 +783,18 @@ export default class WASI {
 
       fd_prestat_get: wrap((fd: number, bufPtr: number) => {
         const stats = CHECK_FD(fd, BigInt(0));
+        if (
+          stats.filetype != WASI_FILETYPE_DIRECTORY ||
+          stats.fakePath === undefined
+        ) {
+          throw new WASIError(WASI_EBADF);
+        }
         // log("fd_prestat_get", { fd, stats });
         this.refreshMemory();
         this.view.setUint8(bufPtr, WASI_PREOPENTYPE_DIR);
         this.view.setUint32(
           bufPtr + 4,
-          // TODO: this is definitely completely wrong unless preopens=/.
-          // NOTE: when both paths are blank, we return "".  This is used by
-          // cPython on sockets.   It used to raise an error here.
-          Buffer.byteLength(stats.fakePath ?? stats.path ?? ""),
+          Buffer.byteLength(stats.fakePath),
           true
         );
         return WASI_ESUCCESS;
@@ -799,11 +803,15 @@ export default class WASI {
       fd_prestat_dir_name: wrap(
         (fd: number, pathPtr: number, pathLen: number) => {
           const stats = CHECK_FD(fd, BigInt(0));
+          if (
+            stats.filetype != WASI_FILETYPE_DIRECTORY ||
+            stats.fakePath === undefined
+          ) {
+            throw new WASIError(WASI_EBADF);
+          }
           this.refreshMemory();
-          // NOTE: when both paths are blank, we return "".  This is used by
-          // cPython on sockets.  It used to raise an error here.
           Buffer.from(this.memory.buffer).write(
-            stats.fakePath ?? stats.path ?? "" /* TODO: wrong in general!? */,
+            stats.fakePath,
             pathPtr,
             pathLen,
             "utf8"
@@ -2023,43 +2031,37 @@ export default class WASI {
   }
 
   initWasiFdInfo() {
-    // TODO: this is NOT used yet. It currently crashes.
     if (this.env["WASI_FD_INFO"] != null) {
       // If the environment variable WASI_FD_INFO is set to the
       // JSON version of a map from wasi fd's to real fd's, then
       // we also initialize FD_MAP with that, assuming these
-      // are all inheritable file descriptors for ends of pipes.
+      // are all inheritable file descriptors.
       // This is something added for
       // python-wasm fork/exec support.
       const fdInfo = JSON.parse(this.env["WASI_FD_INFO"]);
       for (const wasi_fd in fdInfo) {
-        console.log(wasi_fd);
         const fd = parseInt(wasi_fd);
         if (this.FD_MAP.has(fd)) {
           continue;
         }
         const real = fdInfo[wasi_fd];
+        let attrs;
         try {
           // check the fd really exists
-          this.fstatSync(real);
+          attrs = translateFileAttributes(this, real, this.fstatSync(real));
         } catch (_err) {
-          console.log("discarding ", { wasi_fd, real });
           continue;
         }
         const file = {
           real,
-          filetype: WASI_FILETYPE_SOCKET_STREAM,
+          filetype: attrs.filetype,
           rights: {
-            base: STDIN_DEFAULT_RIGHTS, // TODO
-            inheriting: BigInt(0),
+            base: attrs.rightsBase,
+            inheriting: attrs.rightsInheriting,
           },
         } as File;
         this.FD_MAP.set(fd, file);
       }
-      console.log("after initWasiFdInfo: ", this.FD_MAP);
-      console.log("fdInfo = ", fdInfo);
-    } else {
-      console.log("no WASI_FD_INFO");
     }
   }
 }

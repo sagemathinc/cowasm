@@ -30,8 +30,30 @@
 +             int call_setgroups, size_t groups_size, const gid_t *groups,
 +             int call_setuid, uid_t uid, int child_umask,
 +             const void *child_sigmask,
-+             int *py_fds_to_keep // null or a null terminated int[]
++             int *py_fds_to_keep // null or a -1 terminated int[]
 +             );
++
++static int *
++cowasm_fds_to_keep_array(PyObject *py_fds_to_keep)
++{
++    Py_ssize_t len = PyTuple_GET_SIZE(py_fds_to_keep);
++    int *fds_to_keep = PyMem_RawMalloc((len + 1) * sizeof(int));
++    if (fds_to_keep == NULL) {
++        errno = ENOMEM;
++        return NULL;
++    }
++    for (Py_ssize_t i = 0; i < len; i++) {
++        PyObject *fdobj = PyTuple_GET_ITEM(py_fds_to_keep, i);
++        fds_to_keep[i] = (int)PyLong_AsLong(fdobj);
++        if (PyErr_Occurred()) {
++            PyMem_RawFree(fds_to_keep);
++            errno = EINVAL;
++            return NULL;
++        }
++    }
++    fds_to_keep[len] = -1;
++    return fds_to_keep;
++}
 
  /* The main purpose of this wrapper function is to isolate vfork() from both
   * subprocess_fork_exec() and child_exec(). A child process created via
@@ -50,18 +72,24 @@
 +  // to some custom webassembly runtime of our own like wasmtime,
 +  // doing this sort of thing generally via system calls can't
 +  // be supported.
-+  return python_wasm_fork_exec(exec_array,
-+                               argv,envp,cwd,p2cread,  p2cwrite,
-+                               c2pread,  c2pwrite,
-+                               errread,  errwrite,
-+                               errpipe_read,  errpipe_write,
-+                               close_fds, restore_signals,
-+                               call_setsid, pgid_to_set,
-+                               call_setgid, gid,
-+                               call_setgroups, groups_size, groups,
-+                               call_setuid, uid, child_umask,
-+                               child_sigmask,
-+                               NULL);
++  int *fds_to_keep = cowasm_fds_to_keep_array(py_fds_to_keep);
++  if (fds_to_keep == NULL) {
++      return -1;
++  }
++  pid_t cowasm_pid = python_wasm_fork_exec(exec_array,
++                                           argv,envp,cwd,p2cread,  p2cwrite,
++                                           c2pread,  c2pwrite,
++                                           errread,  errwrite,
++                                           errpipe_read,  errpipe_write,
++                                           close_fds, restore_signals,
++                                           call_setsid, pgid_to_set,
++                                           call_setgid, gid,
++                                           call_setgroups, groups_size, groups,
++                                           call_setuid, uid, child_umask,
++                                           child_sigmask,
++                                           fds_to_keep);
++  PyMem_RawFree(fds_to_keep);
++  return cowasm_pid;
 +
      pid_t pid;
 

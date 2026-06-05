@@ -74,16 +74,16 @@ export class RecvFromWasmAbstractBase {
     return v;
   }
 
-  // Receive a null-terminated array of ints
+  // Receive a -1-terminated array of ints.
   arrayOfI32(ptr: number): number[] {
     const v: number[] = [];
     if (ptr == 0) {
       return v;
     }
     while (true) {
-      const p = this.pointer(ptr);
-      if (!p) break;
-      v.push(this.i32(p));
+      const value = this.i32(ptr);
+      if (value == -1) break;
+      v.push(value);
       ptr += SIZEOF_POINTER;
     }
     return v;

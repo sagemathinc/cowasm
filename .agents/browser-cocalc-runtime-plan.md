@@ -84,9 +84,9 @@ Current status as of 2026-06-05:
 - `make -C python/cpython test-runtime-contracts` covers:
   - `subprocess.run` stdout/stderr capture, stdin pipes, regular-file redirection, cwd/env propagation, and nonzero exit status;
   - `os.spawnl` successful file-writing children and nonzero exit status;
-  - close-on-exec behavior for inherited fds when `close_fds=True`;
+  - explicit `subprocess(pass_fds=...)` inheritance and close-on-exec behavior for inherited fds when `close_fds=True`;
   - filesystem create/read/write/delete, recursive copy/remove, stat size/mode, and symlinks.
-- `subprocess(pass_fds=...)` is now captured as an expected failure.  It currently reaches the child with the requested fd number but the nested `python-wasm` runtime reports `EBADF`.  A partial fix showed the next layer is fd reconstruction across the shell-wrapper `python-wasm` to actual WASM-module launch path, not merely CPython argument parsing.
+- `subprocess(pass_fds=...)` now passes.  The fix passes CPython's keep-fd list into the CoWasm fork/exec bridge, includes those fds in `WASI_FD_INFO`, initializes inherited fds in `wasi-js`, and prevents inherited non-directory fds from being misreported as WASI preopens.
 
 - Add focused tests for process behavior:
   - `subprocess.run`

@@ -72,8 +72,11 @@ export default function fork_exec({
     return data.real;
   }
 
-  // map from wasi number to real fd number, for each inheritable file descriptor
-  function getInheritableDescriptorsMap(): { [wasi_fd: number]: number } {
+  // map from wasi number to real fd number for inheritable descriptors plus
+  // descriptors explicitly requested by subprocess pass_fds
+  function getInheritableDescriptorsMap(
+    fdsToKeep: number[] = []
+  ): { [wasi_fd: number]: number } {
     const map: { [wasi_fd: number]: number } = {};
     for (const wasi_fd of wasi.FD_MAP.keys()) {
       const data = wasi.FD_MAP.get(wasi_fd);
@@ -83,6 +86,12 @@ export default function fork_exec({
         }
       } catch (err) {
         log("getInheritableDescriptorsMap", data.real, err);
+      }
+    }
+    for (const wasi_fd of fdsToKeep) {
+      const real = real_fd(wasi_fd);
+      if (real != -1) {
+        map[wasi_fd] = real;
       }
     }
     return map;
@@ -179,9 +188,16 @@ export default function fork_exec({
         err_map[native_errno] = n2w[native_errno] ?? constants.ENOENT;
       }
 
+      const fdsToKeep = recv.arrayOfI32(py_fds_to_keep);
+      const realFdsToKeep = fdsToKeep
+        .map(real_fd)
+        .filter((fd) => fd != -1);
+
       // if envp is empty, then explicitly give WASI_FD_INFO below; otherwise,
       // we just include WASI_FD_INFO in envp.
-      const WASI_FD_INFO = JSON.stringify(getInheritableDescriptorsMap());
+      const WASI_FD_INFO = JSON.stringify(
+        getInheritableDescriptorsMap(fdsToKeep)
+      );
       const envp = recv.arrayOfStrings(envp_ptr);
       if (envp.length > 0) {
         envp.push(`WASI_FD_INFO=${WASI_FD_INFO}`);
@@ -201,13 +217,13 @@ export default function fork_exec({
         errpipe_read: real_fd(errpipe_read),
         errpipe_write: real_fd(errpipe_write),
         close_fds,
-        fds_to_keep: recv.arrayOfI32(py_fds_to_keep).map(real_fd),
+        fds_to_keep: realFdsToKeep,
         err_map,
         WASI_FD_INFO,
       };
       log("opts", opts);
 
-      log("descriptors map = ", getInheritableDescriptorsMap());
+      log("descriptors map = ", getInheritableDescriptorsMap(fdsToKeep));
 
       try {
         const pid = posix.fork_exec(opts);

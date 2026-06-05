@@ -81,11 +81,7 @@ class RuntimeContractTests(unittest.TestCase):
             self.assertEqual(stdout_path.read_text(), "FILE-STDIN\n")
             self.assertEqual(stderr_path.read_text(), "file-stderr\n")
 
-    @unittest.expectedFailure
     def test_subprocess_pass_fds_inherits_requested_fd(self):
-        # Currently fails with EBADF in the child.  The subprocess shim drops
-        # py_fds_to_keep before the nested python-wasm runtime reconstructs its
-        # WASI fd table.
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "fd-output.txt"
             fd = os.open(output, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
