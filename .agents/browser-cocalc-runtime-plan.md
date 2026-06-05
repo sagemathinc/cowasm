@@ -171,6 +171,10 @@ Current status as of 2026-06-05:
   when available.
 - The browser smoke covers nested binary import/export and rejects unsafe
   project paths such as `../escape.txt` before they reach the runtime mount.
+- `PythonProjectFiles` enforces initial project-subset quotas for file count,
+  single-file bytes, total import bytes, changed-file count, and changed export
+  bytes.  The browser smoke covers import and export quota rejection.  Command
+  runtime and stdout/stderr byte limits are still open.
 - Full recursive sync, project-host terminal parity, browser Jupyter kernels,
   and scientific package expansion are intentionally out of scope for this
   spike.

@@ -64,7 +64,10 @@ already modeled by `ETAG_MISMATCH` and `PATCH_FAILED`.
   `/project`.
 - Add quotas before connecting to real projects:
   max files, max total bytes, max single-file bytes, max command runtime, max
-  stdout/stderr bytes, and max exported bytes.
+  stdout/stderr bytes, and max exported bytes.  `PythonProjectFiles` now
+  enforces file count, single-file bytes, total import bytes, changed-file
+  count, and changed export bytes.  Command runtime and stdout/stderr byte
+  limits remain separate runtime concerns.
 - Make export policy explicit:
   include-only changed files under `/project`, never runtime internals, cache
   directories, secrets, or hidden project metadata unless the caller requested
@@ -103,11 +106,16 @@ First validation should stay entirely inside CoWasm:
   `web/browser/src/project-files.ts` and `web/browser/src/smoke.ts`;
 - import nested binary files and reject unsafe paths: covered by
   `web/browser/src/smoke.ts`;
+- enforce import quotas before writing to the worker mount: covered by
+  `web/browser/src/smoke.ts`;
 - run Python in the browser worker: covered by the existing browser smoke path;
 - create or update one output file: covered by the `/project/out.txt` fixture;
 - export the changed file list with base hashes: covered by
   `PythonProjectFiles.changedFiles()`, including binary outputs exported as
-  base64 with `text: null` when UTF-8 decoding fails;
+  base64 with `text: null` when UTF-8 decoding fails and size metadata for
+  quota checks;
+- enforce changed-file export quotas before returning changed data to the
+  caller: covered by `web/browser/src/smoke.ts`;
 - assert stdout/stderr/exit status and file diff metadata: stdout/stderr and
   browser worker status are covered by the broader smoke test, and changed-file
   metadata is asserted by the fixture.

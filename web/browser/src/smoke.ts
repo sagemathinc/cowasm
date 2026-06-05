@@ -67,6 +67,24 @@ async function runProjectSubsetSmoke(exec: PythonExec, repr: PythonRepr) {
     throw Error("project adapter accepted an unsafe path");
   }
 
+  const quotaProject = new PythonProjectFiles({
+    exec,
+    repr,
+    limits: { maxFiles: 1, maxFileBytes: 4, maxTotalBytes: 4 },
+  });
+  let rejectedQuota = false;
+  try {
+    await quotaProject.loadFiles([
+      { path: "a.txt", content: "1234" },
+      { path: "b.txt", content: "x" },
+    ]);
+  } catch (_) {
+    rejectedQuota = true;
+  }
+  if (!rejectedQuota) {
+    throw Error("project adapter accepted an over-quota import");
+  }
+
   await project.loadFiles([
     { path: "input.txt", content: "alpha\nbeta\nalpha\n" },
     { path: "data/blob.bin", content: new Uint8Array([0, 1, 65]) },
@@ -87,6 +105,21 @@ print(f"wrote {len(lines)} matching lines")
     },
   ]);
   await exec("import runpy; runpy.run_path('/project/script.py', run_name='__main__')");
+  const exportQuotaProject = new PythonProjectFiles({
+    exec,
+    repr,
+    limits: { maxChangedBytes: 2 },
+  });
+  let rejectedExportQuota = false;
+  try {
+    await exportQuotaProject.changedFiles();
+  } catch (_) {
+    rejectedExportQuota = true;
+  }
+  if (!rejectedExportQuota) {
+    throw Error("project adapter accepted an over-quota export");
+  }
+
   const changes = await project.changedFiles();
   const byPath: { [path: string]: (typeof changes)[number] } = {};
   for (const change of changes) {
@@ -95,8 +128,10 @@ print(f"wrote {len(lines)} matching lines")
   if (
     changes.length != 2 ||
     byPath["out.txt"]?.baseSha256 != null ||
+    byPath["out.txt"]?.size != "alpha-count=2\n".length ||
     byPath["out.txt"]?.text != "alpha-count=2\n" ||
     byPath["bin/out.bin"]?.baseSha256 != null ||
+    byPath["bin/out.bin"]?.size != 3 ||
     byPath["bin/out.bin"]?.base64 != "AP9B" ||
     byPath["bin/out.bin"]?.text !== null
   ) {

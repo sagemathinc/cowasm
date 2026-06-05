@@ -8,38 +8,78 @@ export interface ProjectFileInput {
 
 export interface ProjectFileChange {
   path: string;
+  size: number;
   baseSha256: string | null;
   sha256: string;
   base64: string;
   text: string | null;
 }
 
+export interface ProjectFileLimits {
+  maxFiles?: number;
+  maxFileBytes?: number;
+  maxTotalBytes?: number;
+  maxChangedFiles?: number;
+  maxChangedBytes?: number;
+}
+
+const DEFAULT_LIMITS: Required<ProjectFileLimits> = {
+  maxFiles: 100,
+  maxFileBytes: 5 * 1024 * 1024,
+  maxTotalBytes: 20 * 1024 * 1024,
+  maxChangedFiles: 100,
+  maxChangedBytes: 20 * 1024 * 1024,
+};
+
 export class PythonProjectFiles {
   private exec: PythonExec;
   private repr: PythonRepr;
   private mount: string;
+  private limits: Required<ProjectFileLimits>;
 
   constructor({
     exec,
     repr,
     mount = "/project",
+    limits = {},
   }: {
     exec: PythonExec;
     repr: PythonRepr;
     mount?: string;
+    limits?: ProjectFileLimits;
   }) {
     this.exec = exec;
     this.repr = repr;
     this.mount = mount;
+    this.limits = { ...DEFAULT_LIMITS, ...limits };
   }
 
   async loadFiles(files: ProjectFileInput[]): Promise<void> {
-    const payload = files.map(({ path, content }) => ({
-      path: normalizeProjectPath(path),
-      base64: bytesToBase64(
-        typeof content == "string" ? new TextEncoder().encode(content) : content
-      ),
-    }));
+    if (files.length > this.limits.maxFiles) {
+      throw Error(
+        `project file count ${files.length} exceeds limit ${this.limits.maxFiles}`
+      );
+    }
+    let totalBytes = 0;
+    const payload = files.map(({ path, content }) => {
+      const bytes =
+        typeof content == "string" ? new TextEncoder().encode(content) : content;
+      if (bytes.length > this.limits.maxFileBytes) {
+        throw Error(
+          `project file ${path} has ${bytes.length} bytes, exceeding limit ${this.limits.maxFileBytes}`
+        );
+      }
+      totalBytes += bytes.length;
+      if (totalBytes > this.limits.maxTotalBytes) {
+        throw Error(
+          `project import has ${totalBytes} bytes, exceeding limit ${this.limits.maxTotalBytes}`
+        );
+      }
+      return {
+        path: normalizeProjectPath(path),
+        base64: bytesToBase64(bytes),
+      };
+    });
     await this.exec(String.raw`
 import base64, hashlib, json, pathlib, shutil
 
@@ -81,6 +121,7 @@ for path in sorted(__cowasm_project_mount.rglob("*")):
         text = None
     __cowasm_project_changes.append({
         "path": rel,
+        "size": len(data),
         "baseSha256": base_sha256,
         "sha256": sha256,
         "base64": base64.b64encode(data).decode("ascii"),
@@ -91,7 +132,22 @@ __cowasm_project_changes_json = json.dumps(__cowasm_project_changes)
     const hex = parsePythonHexString(
       await this.repr("__cowasm_project_changes_json.encode('utf-8').hex()")
     );
-    return JSON.parse(hexToString(hex));
+    const changes = JSON.parse(hexToString(hex));
+    if (changes.length > this.limits.maxChangedFiles) {
+      throw Error(
+        `project changed file count ${changes.length} exceeds limit ${this.limits.maxChangedFiles}`
+      );
+    }
+    let changedBytes = 0;
+    for (const change of changes) {
+      changedBytes += change.size;
+      if (changedBytes > this.limits.maxChangedBytes) {
+        throw Error(
+          `project changed files have ${changedBytes} bytes, exceeding limit ${this.limits.maxChangedBytes}`
+        );
+      }
+    }
+    return changes;
   }
 }
 
