@@ -162,6 +162,9 @@ Current status as of 2026-06-05:
   `/project` mount, run one Python or shell command in the browser worker,
   diff changed files, then export selected outputs with base-aware conflict
   handling.
+- `web/browser/src/smoke.ts` now includes an in-CoWasm `/project` fixture that
+  imports text files, runs a Python script, detects changed files by comparing
+  hashes to the base snapshot, and verifies the output file.
 - Full recursive sync, project-host terminal parity, browser Jupyter kernels,
   and scientific package expansion are intentionally out of scope for this
   spike.

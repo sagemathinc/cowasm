@@ -97,11 +97,14 @@ api.browserRuntime.run({
 
 First validation should stay entirely inside CoWasm:
 
-- import two text files into `/project`;
-- run Python in the browser worker;
-- create or update one output file;
-- export the changed file list with base hashes;
-- assert stdout/stderr/exit status and file diff metadata.
+- import two text files into `/project`: covered by `web/browser/src/smoke.ts`;
+- run Python in the browser worker: covered by the existing browser smoke path;
+- create or update one output file: covered by the `/project/out.txt` fixture;
+- export the changed file list with base hashes: covered inside the fixture by
+  comparing `/project` contents to the imported base hashes;
+- assert stdout/stderr/exit status and file diff metadata: stdout/stderr and
+  browser worker status are covered by the broader smoke test, and changed-file
+  metadata is asserted by the fixture.
 
 Second validation should use CoCalc AI browser automation:
 
