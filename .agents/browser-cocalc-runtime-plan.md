@@ -141,7 +141,9 @@ Current status as of 2026-06-05:
 
 Goal: run one useful CoCalc workflow in the browser without starting a project backend.
 
-- Use `/home/user/cocalc-ai` as the integration reference when developing locally.
+- Use `/home/user/cocalc-ai` as the integration reference when developing locally:
+  initial findings and the first spike shape are documented in
+  `docs/cocalc-ai-browser-runtime-spike.md`.
 - Start with a small read/write filesystem subset, not full project sync.
 - Evaluate `reflect-sync` for synchronizing selected files into the browser runtime.
 - Prototype:
@@ -150,6 +152,19 @@ Goal: run one useful CoCalc workflow in the browser without starting a project b
   - write a result file,
   - sync the result back.
 - Only after that, prototype a browser-side Jupyter kernel.
+
+Current status as of 2026-06-05:
+
+- The relevant CoCalc AI integration surfaces are Conat filesystem RPCs
+  (`readFile`, `writeFile`, `writeFileDelta`, `watch`, `syncFsWatch`) and the
+  SyncDoc/Patchflow live document layer.
+- The first MVP should import an explicit project file subset into a CoWasm
+  `/project` mount, run one Python or shell command in the browser worker,
+  diff changed files, then export selected outputs with base-aware conflict
+  handling.
+- Full recursive sync, project-host terminal parity, browser Jupyter kernels,
+  and scientific package expansion are intentionally out of scope for this
+  spike.
 
 ## Phase 6: Scientific Stack
 
