@@ -160,6 +160,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 DEBUG_MODE = ""
 # DEBUG_MODE = "-g"
 BLDSHARED = cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
+BLDCXXSHARED = cowasm-c++ --experimental-pic -shared ${DEBUG_MODE}
 
 ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
@@ -192,6 +193,7 @@ ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/
 		AR="zig ar" \
 		CFLAGS="${DEBUG_MODE} -I${BUILD_WASM} -I${POSIX_WASM} -DPy_DEFAULT_RECURSION_LIMIT=700" \
 		BLDSHARED="${BLDSHARED}" \
+		LDCXXSHARED="${BLDCXXSHARED}" \
 		CONFIG_SITE=./config.site \
 		READELF=true \
 		HOSTRUNNER="${BIN}/cowasm" \
@@ -222,9 +224,13 @@ ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
 	# patching something earlier?   This definitely feels like a hack.
 	# This is what based on testing actually works:
 	#      'LDSHARED': '' --> 'LDSHARED': '${BLDSHARED}'
+	#      'LDCXXSHARED': '' --> 'LDCXXSHARED': '${BLDCXXSHARED}'
 	# This is idempotent.
 	cd ${BUILD_WASM}/build/lib.wasi-wasm32-3.11/ \
-		&& sed -i'.bak' "s/'LDSHARED': ''/'LDSHARED': '${BLDSHARED}'/g" _sysconfigdata__wasi_wasm32-wasi.py
+		&& sed -i'.bak' \
+			-e "s/'LDSHARED': ''/'LDSHARED': '${BLDSHARED}'/g" \
+			-e "s/'LDCXXSHARED': ''/'LDCXXSHARED': '${BLDCXXSHARED}'/g" \
+			_sysconfigdata__wasi_wasm32-wasi.py
 
 	# Install as usual.  Output is huge so we do not show it all.
 	cd ${BUILD_WASM} && \

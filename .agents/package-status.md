@@ -16,7 +16,7 @@ Last updated: 2026-06-05.
 | `python/py-mpmath` | pass | pass | 2026-06-05 | `make -C python/py-mpmath clean-wasm test` passed after patching a Python 3.11 generator `StopIteration` issue; the test target now fails if the upstream runner prints `TEST FAILED`. |
 | `python/py-sympy` | pass | pass | 2026-06-05 | `make -C python/py-sympy clean-wasm test` passed; this is the package's small import/basic functionality test, not the full SymPy suite. |
 | `python/py-numpy` | pass | pass | 2026-06-05 | `make -C python/py-numpy test` passed after setuptools/distutils compatibility patches. |
-| `python/py-pandas` | unknown | unknown | n/a | Not checked in the current revival pass. |
+| `python/py-pandas` | pass | pass | 2026-06-05 | `make -C python/py-pandas test` passed after setting CPython WASM `LDCXXSHARED` for C++ extension modules; this is the package's trivial import test. |
 | `python/py-matplotlib` | unknown | unknown | n/a | Not checked in the current revival pass. |
 
 ## Baseline Commands
