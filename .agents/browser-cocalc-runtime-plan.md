@@ -216,6 +216,11 @@ Current status as of 2026-06-05:
   functionality for `mpmath`, `sympy`, `numpy`, and `pandas`.  The 2026-06-05
   local smoke printed: Python init 776ms, `mpmath` 183ms, `sympy` 2480ms,
   `numpy` 843ms, and `pandas` 1966ms.
+- Matplotlib reconnaissance is documented in `docs/matplotlib-recon.md`.
+  The first real blocker is that `python/py-matplotlib` builds with an empty
+  `PYTHONPATH`, so setuptools tries to build `numpy>=1.19` from PyPI inside
+  wasm instead of using the existing CoWasm numpy output.  The recommended
+  first target is non-interactive `Agg`/SVG `savefig`, not browser WebAgg.
 
 ## Toolchain Upgrade Strategy
 
