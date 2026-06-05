@@ -14,7 +14,7 @@ Last updated: 2026-06-05.
 | `core/dash-wasm` | pass | pass | 2026-06-05 | `make -C core/dash-wasm test` passed; generated `dist/fs.zip` is 13M and Jest checks the bundle size envelope plus expected terminal commands. Runtime TODOs remain for external command execution, redirection, pipes, and command substitution. |
 | `python/cpython` | pass | pass | 2026-06-05 | `pip`, runtime contracts, and supported CPython suite pass; CPython reports all 279 supported tests OK. |
 | `python/py-mpmath` | pass | pass | 2026-06-05 | `make -C python/py-mpmath clean-wasm test` passed after patching a Python 3.11 generator `StopIteration` issue; the test target now fails if the upstream runner prints `TEST FAILED`. |
-| `python/py-sympy` | unknown | unknown | n/a | Not checked in the current revival pass. |
+| `python/py-sympy` | pass | pass | 2026-06-05 | `make -C python/py-sympy clean-wasm test` passed; this is the package's small import/basic functionality test, not the full SymPy suite. |
 | `python/py-numpy` | pass | pass | 2026-06-05 | `make -C python/py-numpy test` passed after setuptools/distutils compatibility patches. |
 | `python/py-pandas` | unknown | unknown | n/a | Not checked in the current revival pass. |
 | `python/py-matplotlib` | unknown | unknown | n/a | Not checked in the current revival pass. |
