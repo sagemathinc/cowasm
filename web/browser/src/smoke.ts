@@ -179,13 +179,67 @@ print(f"wrote {len(lines)} matching lines")
   }
 }
 
+async function timedExec(
+  label: string,
+  exec: PythonExec,
+  code: string,
+  timings: { [label: string]: number }
+) {
+  const start = performance.now();
+  await exec(code);
+  timings[label] = Math.round(performance.now() - start);
+}
+
+async function runScientificStackSmoke(exec: PythonExec, repr: PythonRepr) {
+  const timings: { [label: string]: number } = {};
+  await timedExec(
+    "mpmath",
+    exec,
+    "import mpmath as mp; mp.mp.dps = 50; scientific_mpmath = str(mp.sqrt(2))[:12]",
+    timings
+  );
+  await timedExec(
+    "sympy",
+    exec,
+    "import sympy as sp; x = sp.symbols('x'); scientific_sympy = str(sp.factor(x**2 - 1))",
+    timings
+  );
+  await timedExec(
+    "numpy",
+    exec,
+    "import numpy as np; scientific_numpy = int(np.array([1, 2, 3], dtype=np.int64).sum())",
+    timings
+  );
+  await timedExec(
+    "pandas",
+    exec,
+    "import pandas as pd; df = pd.DataFrame({'g': ['a', 'a', 'b'], 'x': [2, 3, 5]}); scientific_pandas = int(df.groupby('g')['x'].sum()['a'])",
+    timings
+  );
+  const result = await repr(
+    "(scientific_mpmath, scientific_sympy, scientific_numpy, scientific_pandas)"
+  );
+  if (
+    !result.includes("1.4142135623") ||
+    !result.includes("(x - 1)*(x + 1)") ||
+    !result.includes("6") ||
+    !result.includes("5")
+  ) {
+    throw Error(`unexpected scientific stack result: ${result}`);
+  }
+  return timings;
+}
+
 async function main() {
   setStatus("running");
   try {
+    const pythonStart = performance.now();
     const python = await pythonWasm({ noReadline: true });
+    const pythonInitMs = Math.round(performance.now() - pythonStart);
     const { exec, repr, kernel } = python;
     let stdout = "";
     let stderr = "";
+    let scientificTimings: { [label: string]: number } = {};
     kernel.on("stdout", (data) => {
       stdout += decodeOutput(data);
     });
@@ -222,6 +276,8 @@ async function main() {
       await running;
       stage = "project subset fixture";
       await runProjectSubsetSmoke(exec, repr, kernel);
+      stage = "scientific stack imports";
+      scientificTimings = await runScientificStackSmoke(exec, repr);
     } catch (err) {
       throw Error(
         `${stage} failed: ${err instanceof Error ? err.message : `${err}`}`
@@ -235,7 +291,12 @@ async function main() {
       "mkdir -p /tmp; touch /tmp/dash-smoke; python -c \"open('/tmp/dash-python', 'w').write('42')\"; test -f /tmp/dash-smoke; test -f /tmp/dash-python"
     );
     await kernel.terminate();
-    setStatus("pass", `${result}\n${dashOutput}`);
+    setStatus(
+      "pass",
+      `${result}\npython init ${pythonInitMs}ms\nscientific ${JSON.stringify(
+        scientificTimings
+      )}\n${dashOutput}`
+    );
   } catch (err) {
     setStatus("fail", err instanceof Error ? err.stack ?? err.message : `${err}`);
   }

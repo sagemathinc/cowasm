@@ -154,7 +154,14 @@ async function waitForSmokeResult() {
         continue;
       }
       const value = status.result?.value;
-      if (value == "pass") return;
+      if (value == "pass") {
+        const details = await devtools.send("Runtime.evaluate", {
+          expression: "document.body.textContent",
+          returnByValue: true,
+        });
+        console.log(details.result?.value);
+        return;
+      }
       if (value == "fail") {
         const details = await devtools.send("Runtime.evaluate", {
           expression: "document.body.textContent",

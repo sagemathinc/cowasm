@@ -18,8 +18,38 @@ The smoke currently verifies:
 
 - Python starts in a browser worker.
 - Browser Python can create `/tmp`, write and read a file, stream stdout/stderr events, and handle SIGINT for a long-running `exec`.
+- Browser Python can import and use the scientific package bundles for
+  `mpmath`, `sympy`, `numpy`, and `pandas`.
+- Browser Python can run a bounded selected-file `/project` workflow, export
+  changed files, reject unsafe paths, and enforce import/export/runtime/output
+  quotas.
 - The dash terminal bundle loads in a browser worker.
 - Browser dash can run `sh -c`, create files with bundled shell and Python commands, and verify them through shell exit status.
+
+## Current Browser Measurements
+
+Observed locally on 2026-06-05 with `make -C web/browser test`:
+
+| Artifact or Step | Size or Time |
+| --- | ---: |
+| `python.wasm` | 4.6M |
+| `python-minimal.zip` | 10K |
+| `python-readline.zip` | 383K |
+| `python-stdlib.zip` | 6.4M |
+| `python-everything.zip` | 22M |
+| `mpmath.tar.xz` | 523K |
+| `sympy.tar.xz` | 6.1M |
+| `numpy.tar.xz` | 2.3M |
+| `pandas.tar.xz` | 3.7M |
+| `Cython.tar.xz` | 1.5M |
+| `pytz.tar.xz` | 125K |
+| `dateutil.tar.xz` | 248K |
+| `six.tar.xz` | 16K |
+| Browser Python init | 776ms |
+| Browser `mpmath` smoke | 183ms |
+| Browser `sympy` smoke | 2480ms |
+| Browser `numpy` smoke | 843ms |
+| Browser `pandas` smoke | 1966ms |
 
 ## Runtime Differences
 

@@ -126,6 +126,7 @@ Current status as of 2026-06-05:
   - serves the bundle with COOP/COEP headers for `SharedArrayBuffer`;
   - starts Chromium and polls the page through the Chrome DevTools Protocol;
   - initializes Python in the browser worker path, creates `/tmp`, writes and reads a file, checks stdout/stderr event streaming, interrupts `while True: pass` with SIGINT, and checks a Python result.
+  - imports and uses `mpmath`, `sympy`, `numpy`, and `pandas` in the browser worker path, and prints timing details.
   - initializes the dash terminal bundle in the browser worker path, runs `sh -c`, creates files with bundled shell and Python commands, and verifies them through shell exit status.
 - This is intentionally not a UI test.  It is the first product-gate proof that the browser worker runtime can start Python and perform filesystem IO in a real browser.
 - `wasi-js` now implements `fd_renumber(from, to)` in the correct direction, moving `from` onto `to` and closing the old `to`.  This fixes a real WASI fd-table semantics bug found while investigating browser dash redirection.
@@ -209,6 +210,10 @@ Current status as of 2026-06-05:
   skipped.
 - `make test-python` currently stops at `python/py-matplotlib`, whose Makefile
   intentionally fails because matplotlib is not implemented.
+- `make -C web/browser test` now verifies browser-worker imports and basic
+  functionality for `mpmath`, `sympy`, `numpy`, and `pandas`.  The 2026-06-05
+  local smoke printed: Python init 776ms, `mpmath` 183ms, `sympy` 2480ms,
+  `numpy` 843ms, and `pandas` 1966ms.
 
 ## Toolchain Upgrade Strategy
 
