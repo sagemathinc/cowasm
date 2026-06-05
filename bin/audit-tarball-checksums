@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="${1:-$(pwd)}"
+missing=0
+
+while IFS= read -r rel; do
+    makefile="$root/$rel"
+    if grep -Eq '^[[:space:]]*URL[[:space:]]*=' "$makefile" \
+        && grep -Eq '^[[:space:]]*TARBALL[[:space:]]*=' "$makefile" \
+        && ! grep -Eq '^[[:space:]]*TARBALL_SHA256[[:space:]]*=' "$makefile"; then
+        url="$(grep -E '^[[:space:]]*URL[[:space:]]*=' "$makefile" | head -n 1 | sed -E 's/^[[:space:]]*URL[[:space:]]*=[[:space:]]*//')"
+        tarball="$(grep -E '^[[:space:]]*TARBALL[[:space:]]*=' "$makefile" | head -n 1 | sed -E 's/^[[:space:]]*TARBALL[[:space:]]*=[[:space:]]*//')"
+        printf '%s\n  URL=%s\n  TARBALL=%s\n' "$rel" "$url" "$tarball"
+        missing=$((missing + 1))
+    fi
+done < <(git -C "$root" ls-files 'core/**/Makefile' 'python/**/Makefile' | sort)
+
+if [ "$missing" -ne 0 ]; then
+    printf '\n%s package Makefiles define URL/TARBALL without TARBALL_SHA256.\n' "$missing"
+    exit 1
+fi
+
+printf 'All package Makefiles with URL/TARBALL define TARBALL_SHA256.\n'

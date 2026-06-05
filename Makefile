@@ -14,6 +14,10 @@ export PATH := ${CWD}/bin:${CWD}/core/zig/dist:$(PATH)
 
 all: packages
 
+.PHONY: audit-sources
+audit-sources:
+	./bin/audit-tarball-checksums ${CWD}
+
 # All
 
 .PHONY: packages
