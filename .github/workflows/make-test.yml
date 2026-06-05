@@ -45,6 +45,12 @@ jobs:
           zip
         npm install -g pnpm
 
+    - name: Fetch and verify upstream sources
+      run: |
+        set -o pipefail
+        mkdir -p logs
+        make fetch-sources 2>&1 | tee logs/fetch-sources.log
+
     - name: Bootstrap pinned Zig
       run: |
         set -o pipefail

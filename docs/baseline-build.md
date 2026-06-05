@@ -44,6 +44,8 @@ npm install -g pnpm
 Run from the repository root:
 
 ```sh
+make audit-sources
+make fetch-sources
 make -C core/build zig
 make -C core/zlib test
 make -C core/kernel test
@@ -63,6 +65,7 @@ All 279 tests OK.
 
 This baseline verifies:
 
+- active upstream source URLs and checksums;
 - pinned Zig `0.10.1` bootstrap;
 - the core CoWasm kernel runner and basic POSIX tests;
 - zlib as a small package-level sanity check;
