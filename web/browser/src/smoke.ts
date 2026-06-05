@@ -99,7 +99,7 @@ async function main() {
       throw Error(`unexpected Python result: ${result}`);
     }
     const dashOutput = await runDash(
-      "mkdir -p /tmp; touch /tmp/dash-smoke; echo cowasm-browser-dash; python -c \"print(6*7)\""
+      "mkdir -p /tmp; echo cowasm-browser-dash > /tmp/dash-smoke; cat /tmp/dash-smoke; python -c \"print(6*7)\""
     );
     if (
       !dashOutput.includes("cowasm-browser-dash") ||

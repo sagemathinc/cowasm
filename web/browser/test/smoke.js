@@ -143,10 +143,16 @@ async function waitForSmokeResult() {
   try {
     const start = Date.now();
     while (Date.now() - start < 60000) {
-      const status = await devtools.send("Runtime.evaluate", {
-        expression: "document.body.dataset.cowasmSmoke || ''",
-        returnByValue: true,
-      });
+      let status;
+      try {
+        status = await devtools.send("Runtime.evaluate", {
+          expression: "document.body.dataset.cowasmSmoke || ''",
+          returnByValue: true,
+        });
+      } catch (err) {
+        await delay(250);
+        continue;
+      }
       const value = status.result?.value;
       if (value == "pass") return;
       if (value == "fail") {
