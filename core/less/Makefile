@@ -2,8 +2,9 @@ include ../build/Makefile-vars
 
 # See http://greenwoodsoftware.com/less/download.html
 VERSION = 608
-URL = http://greenwoodsoftware.com/less/less-${VERSION}.tar.gz
+URL = https://ftp.gnu.org/gnu/less/less-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/less-${VERSION}.tar.gz
+TARBALL_SHA256 = a69abe2e0a126777e021d3b73aa3222e1b261f10e64624d41ec079685a6ac209
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)

@@ -1,0 +1,62 @@
+--- native/numpy/distutils/mingw32ccompiler.py	2023-02-05 12:29:55
++++ wasm/numpy/distutils/mingw32ccompiler.py	2026-06-05 01:50:00
+@@ -25,7 +25,12 @@
+ 
+ import distutils.cygwinccompiler
+ from distutils.unixccompiler import UnixCCompiler
+-from distutils.msvccompiler import get_build_version as get_build_msvc_version
++try:
++    from distutils.msvccompiler import get_build_version as get_build_msvc_version
++except ModuleNotFoundError:
++    def get_build_msvc_version():
++        return None
++
+ from distutils.errors import UnknownFileError
+ from numpy.distutils.misc_util import (msvc_runtime_library,
+                                       msvc_runtime_version,
+--- native/numpy/distutils/msvccompiler.py	2023-02-05 12:29:55
++++ wasm/numpy/distutils/msvccompiler.py	2026-06-05 01:55:00
+@@ -1,5 +1,10 @@
+ import os
+-from distutils.msvccompiler import MSVCCompiler as _MSVCCompiler
++try:
++    from distutils.msvccompiler import MSVCCompiler as _MSVCCompiler
++except ModuleNotFoundError:
++    class _MSVCCompiler:
++        def __init__(self, *args, **kwds):
++            raise RuntimeError("MSVC compiler is not available")
+ 
+ from .system_info import platform_bits
+ 
+--- native/numpy/distutils/ccompiler.py	2023-02-05 12:29:55
++++ wasm/numpy/distutils/ccompiler.py	2026-06-05 02:00:00
+@@ -779,7 +779,11 @@
+     except KeyError:
+         raise DistutilsModuleError(("can't compile C/C++ code: unable to find class '%s' " +
+                "in module '%s'") % (class_name, module_name))
+-    compiler = klass(None, dry_run, force)
++    try:
++        compiler = klass(None, dry_run, force)
++    except TypeError:
++        compiler = klass(verbose=verbose, force=force)
++        compiler.dry_run = dry_run
+     compiler.verbose = verbose
+     log.debug('new_compiler returns %s' % (klass))
+     return compiler
+--- native/numpy/distutils/fcompiler/__init__.py	2023-02-05 12:29:55
++++ wasm/numpy/distutils/fcompiler/__init__.py	2026-06-05 02:05:00
+@@ -212,7 +212,13 @@
+     extra_f90_compile_args = []
+ 
+     def __init__(self, *args, **kw):
+-        CCompiler.__init__(self, *args, **kw)
++        dry_run = kw.get('dry_run')
++        try:
++            CCompiler.__init__(self, *args, **kw)
++        except TypeError:
++            kw.pop('dry_run', None)
++            CCompiler.__init__(self, *args, **kw)
++            self.dry_run = dry_run
+         self.distutils_vars = self.distutils_vars.clone(self._environment_hook)
+         self.command_vars = self.command_vars.clone(self._environment_hook)
+         self.flag_vars = self.flag_vars.clone(self._environment_hook)

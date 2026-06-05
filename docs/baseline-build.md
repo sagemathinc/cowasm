@@ -69,7 +69,7 @@ This baseline verifies:
 - Python `pip`/`ensurepip`;
 - the supported CPython test subset.
 
-This baseline does not claim that every package in the repo builds or tests successfully.  In particular, `core/dash-wasm` is currently blocked by `core/less` source acquisition because the historical `less-608.tar.gz` URL now returns a 403 HTML page.
+This baseline does not claim that every package in the repo builds or tests successfully.  `core/dash-wasm` is now separately verified, but it is intentionally outside the conservative baseline CI until the broader terminal bundle dependencies are better documented.
 
 ## Useful Smoke Tests
 

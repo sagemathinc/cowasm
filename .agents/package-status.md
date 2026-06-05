@@ -10,16 +10,15 @@ Last updated: 2026-06-05.
 | `core/zlib` | pass | pass | 2026-06-04 | `make -C core/zlib test` passed. |
 | `core/kernel` | pass | pass | 2026-06-05 | `make -C core/kernel test` passed. |
 | `core/dash` | pass | pass | 2026-06-05 | Raw WASM dash builds and passes package tests. |
-| `core/less` | fail | blocked | 2026-06-05 | Historical upstream URL for `less-608.tar.gz` returns 403 HTML. |
-| `core/dash-wasm` | blocked | blocked | 2026-06-05 | Blocked by `core/less` source acquisition. |
+| `core/less` | pass | pass | 2026-06-05 | Uses GNU mirror for `less-608.tar.gz` with SHA256 verification. |
+| `core/dash-wasm` | pass | pass | 2026-06-05 | `make -C core/dash-wasm test` passed; generated `dist/fs.zip` is 13M. |
 | `python/cpython` | pass | pass | 2026-06-05 | `make -C python/cpython pip` and `make -C python/cpython test` pass; CPython reports all 279 supported tests OK. |
 | `python/py-mpmath` | unknown | unknown | n/a | Not checked in the current revival pass. |
 | `python/py-sympy` | unknown | unknown | n/a | Not checked in the current revival pass. |
-| `python/py-numpy` | unknown | unknown | n/a | Not checked in the current revival pass. |
+| `python/py-numpy` | pass | pass | 2026-06-05 | `make -C python/py-numpy test` passed after setuptools/distutils compatibility patches. |
 | `python/py-pandas` | unknown | unknown | n/a | Not checked in the current revival pass. |
 | `python/py-matplotlib` | unknown | unknown | n/a | Not checked in the current revival pass. |
 
 ## Baseline Commands
 
 The currently preserved baseline is documented in [docs/baseline-build.md](../docs/baseline-build.md).
-

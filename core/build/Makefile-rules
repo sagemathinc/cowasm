@@ -31,6 +31,13 @@ clean:: clean-wasm clean-native clean-node_modules
 ${TARBALL}:
 	mkdir -p ${UPSTREAM}
 	curl -L ${URL} -o ${TARBALL}
+	@if [ -n "${TARBALL_SHA256}" ]; then \
+		if command -v sha256sum >/dev/null; then \
+			echo "${TARBALL_SHA256}  ${TARBALL}" | sha256sum -c -; \
+		else \
+			echo "${TARBALL_SHA256}  ${TARBALL}" | shasum -a 256 -c -; \
+		fi || { rm -f ${TARBALL}; exit 1; }; \
+	fi
 
 # NOTE: these double colon rules can be nicely overridden, which is where additional patching goes.
 #       See https://stackoverflow.com/questions/1644920/override-target-in-makefile-to-add-more-commands
@@ -51,4 +58,3 @@ node_modules:
 	pnpm install
 	# make the node_modules folder, in case nothing actually installed
 	mkdir -p node_modules
-

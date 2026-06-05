@@ -28,6 +28,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 		&& cat ${SRC}/patches/04-random-no-lm.patch | patch -p1 \
 		&& cat ${SRC}/patches/05-no-backtrace.patch | patch -p1 \
 		&& cat ${SRC}/patches/06-setup-setuptools.patch | patch -p1 \
+		&& cat ${SRC}/patches/07-no-msvccompiler.patch | patch -p1 \
 		&& echo "" > numpy/core/include/setjmp.h \
 		&& echo "" > numpy/core/include/execinfo.h
 	touch ${BUILD_WASM}/.patched
