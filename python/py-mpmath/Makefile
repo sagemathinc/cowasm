@@ -11,7 +11,12 @@ TARBALL_SHA256 = f4edfddb63c0f87d8ae637290d2fd1743d47aec5452453e50d8d9c3c3fdf57e
 
 include ../build/Makefile-rules
 
-${BUILD_WASM}/.built:  ${BUILD_WASM}/.build
+${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
+	cd ${BUILD_WASM} \
+		&& cat ${SRC}/patches/01-qfunctions-pep479.patch | patch -p1
+	touch ${BUILD_WASM}/.patched
+
+${BUILD_WASM}/.built:  ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& PYTHONPATH=${PIP} pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.built
@@ -29,7 +34,8 @@ test: ${DIST_WASM}/.built
 	PYTHONPATH=${DIST_WASM} pnpm-exec cpython -c 'import mpmath'
 	# Run the full test suite
 	cd ${BUILD_WASM}/build/lib \
-		&& PYTHONPATH=${DIST_WASM}:`pwd` pnpm-exec cpython mpmath/tests/runtests.py
+		&& PYTHONPATH=${DIST_WASM}:`pwd` pnpm-exec cpython mpmath/tests/runtests.py 2>&1 | tee ${BUILD_WASM}/mpmath-tests.log
+	! grep -q "TEST FAILED!" ${BUILD_WASM}/mpmath-tests.log
 
 
 

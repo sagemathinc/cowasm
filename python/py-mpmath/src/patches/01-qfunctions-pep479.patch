@@ -1,0 +1,12 @@
+diff --git a/mpmath/functions/qfunctions.py b/mpmath/functions/qfunctions.py
+--- a/mpmath/functions/qfunctions.py
++++ b/mpmath/functions/qfunctions.py
+@@ -123,7 +123,7 @@
+             r *= q
+             k += 1
+             if k >= n:
+-                raise StopIteration
++                return
+             if k > maxterms:
+                 raise ctx.NoConvergence
+     return ctx.mul_accurately(factors)
