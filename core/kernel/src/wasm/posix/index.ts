@@ -176,6 +176,9 @@ export default function posix(context: Context): PosixEnv {
         logReturn(name, ret);
         return ret;
       } catch (err) {
+        if (err?.cowasmProcessExit) {
+          throw err;
+        }
         logError(name, err);
         if (err.wasiErrno != null) {
           context.callFunction("setErrno", err.wasiErrno);

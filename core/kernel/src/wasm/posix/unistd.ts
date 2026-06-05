@@ -6,7 +6,7 @@ import { constants as wasi_constants } from "wasi-js";
 const log = debug("posix:unistd");
 
 export default function unistd(context) {
-  const { fs, os, process, recv, send, wasi, posix, memory, callWithString } =
+  const { fs, os, process, recv, send, wasi, posix, memory, callWithString, run } =
     context;
   // TODO: this doesn't throw an error yet if the target filesystem isn't native.
   function toNativeFd(fd: number): number {
@@ -391,13 +391,18 @@ export default function unistd(context) {
 
     // int execve(const char *pathname, char *const argv[], char *const envp[]);
     execve: (pathnamePtr: number, argvPtr: number, envpPtr: number): number => {
-      if (posix._execve == null) {
-        notImplemented("execve");
-      }
       const pathname = recv.string(pathnamePtr);
       const argv = recv.arrayOfStrings(argvPtr);
       const envp = recv.arrayOfStrings(envpPtr);
       log("execve", pathname, argv, envp);
+      if (fs.existsSync(pathname)) {
+        const status = run([pathname].concat(argv.slice(1)));
+        wasi.bindings.exit(status);
+        throw { cowasmProcessExit: true };
+      }
+      if (posix._execve == null) {
+        notImplemented("execve");
+      }
       posix._execve(pathname, argv, envp);
       return 0; // this won't happen because execve takes over, or there's an error
     },

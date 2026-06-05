@@ -1,7 +1,9 @@
 import { readFileSync, statSync } from "fs";
+import { execFileSync } from "child_process";
 import { join } from "path";
 
 const fsZipPath = join(__dirname, "..", "fs.zip");
+const dashWasm = join(__dirname, "..", "..", "bin", "dash-wasm");
 
 function fsZipContents(): string {
   return readFileSync(fsZipPath).toString("latin1");
@@ -37,8 +39,20 @@ test("filesystem bundle contains expected terminal commands", () => {
   }
 });
 
-test.todo("bundled shell can execute coreutils commands such as factor");
-test.todo("bundled shell can execute Python from /usr/bin/python");
+test("bundled shell can execute coreutils commands such as factor", () => {
+  const output = execFileSync(dashWasm, ["-c", "factor 2023"], {
+    encoding: "utf8",
+  });
+  expect(output.trim()).toBe("2023: 7 17 17");
+});
+
+test("bundled shell can execute Python from /usr/bin/python", () => {
+  const output = execFileSync(dashWasm, ["-c", "python -c 'print(6*7)'"], {
+    encoding: "utf8",
+  });
+  expect(output.trim()).toBe("42");
+});
+
 test.todo("bundled shell can execute sqlite3");
 test.todo("bundled shell can execute tar");
 test.todo("bundled shell supports redirection without hanging");
