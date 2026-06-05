@@ -28,9 +28,7 @@ clean-node_modules::
 clean:: clean-wasm clean-native clean-node_modules
 	rm -rf ${BUILD} ${DIST} tsconfig.tsbuildinfo ${SRC}/zig-cache
 
-${TARBALL}:
-	mkdir -p ${UPSTREAM}
-	curl -L ${URL} -o ${TARBALL}
+define verify_tarball_sha256
 	@if [ -n "${TARBALL_SHA256}" ]; then \
 		if command -v sha256sum >/dev/null; then \
 			echo "${TARBALL_SHA256}  ${TARBALL}" | sha256sum -c -; \
@@ -38,6 +36,16 @@ ${TARBALL}:
 			echo "${TARBALL_SHA256}  ${TARBALL}" | shasum -a 256 -c -; \
 		fi || { rm -f ${TARBALL}; exit 1; }; \
 	fi
+endef
+
+${TARBALL}:
+	mkdir -p ${UPSTREAM}
+	curl -L ${URL} -o ${TARBALL}
+	$(verify_tarball_sha256)
+
+.PHONY: fetch-source
+fetch-source: ${TARBALL}
+	$(verify_tarball_sha256)
 
 # NOTE: these double colon rules can be nicely overridden, which is where additional patching goes.
 #       See https://stackoverflow.com/questions/1644920/override-target-in-makefile-to-add-more-commands

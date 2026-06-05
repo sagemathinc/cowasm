@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="${1:-$(pwd)}"
+
+"$root/bin/audit-tarball-checksums" "$root"
+
+while IFS= read -r rel; do
+    makefile="$root/$rel"
+    if grep -Eq '^[[:space:]]*SOURCE_AUDIT_IGNORE[[:space:]]*=' "$makefile"; then
+        continue
+    fi
+    if grep -Eq '^[[:space:]]*URL[[:space:]]*=' "$makefile" \
+        && grep -Eq '^[[:space:]]*TARBALL[[:space:]]*=' "$makefile"; then
+        make -C "$root/$(dirname "$rel")" fetch-source
+    fi
+done < <(git -C "$root" ls-files 'core/**/Makefile' 'python/**/Makefile' | sort)

@@ -18,6 +18,10 @@ all: packages
 audit-sources:
 	./bin/audit-tarball-checksums ${CWD}
 
+.PHONY: fetch-sources
+fetch-sources:
+	./bin/fetch-sources ${CWD}
+
 # All
 
 .PHONY: packages
