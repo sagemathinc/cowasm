@@ -43,7 +43,7 @@ async function runDash(command: string): Promise<string> {
   });
   const code = await dash.terminal(["sh", "-c", command]);
   if (code != 0) {
-    throw Error(`dash exited with ${code}: ${stderr}`);
+    throw Error(`dash exited with ${code}: stdout=${stdout}; stderr=${stderr}`);
   }
   return stdout;
 }
@@ -99,7 +99,7 @@ async function main() {
       throw Error(`unexpected Python result: ${result}`);
     }
     const dashOutput = await runDash(
-      "echo cowasm-browser-dash; python -c \"print(6*7)\""
+      "mkdir -p /tmp; touch /tmp/dash-smoke; echo cowasm-browser-dash; python -c \"print(6*7)\""
     );
     if (
       !dashOutput.includes("cowasm-browser-dash") ||

@@ -1117,14 +1117,15 @@ export default class WASI {
       ),
 
       fd_renumber: wrap((from: number, to: number) => {
-        CHECK_FD(from, BigInt(0));
-        CHECK_FD(to, BigInt(0));
-        this.closeRealFdIfLastReference(
-          from,
-          (this.FD_MAP.get(from) as File).real
-        );
-        this.FD_MAP.set(from, this.FD_MAP.get(to) as File);
-        this.FD_MAP.delete(to);
+        if (from == to) {
+          CHECK_FD(from, BigInt(0));
+          return WASI_ESUCCESS;
+        }
+        const fromFile = CHECK_FD(from, BigInt(0));
+        const toFile = CHECK_FD(to, BigInt(0));
+        this.closeRealFdIfLastReference(to, toFile.real);
+        this.FD_MAP.set(to, fromFile);
+        this.FD_MAP.delete(from);
         return WASI_ESUCCESS;
       }),
 
