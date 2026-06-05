@@ -196,6 +196,20 @@ Goal: move toward useful Python package coverage after the runtime is stable.
 - Treat `scipy`, `pandas`, and `matplotlib` as later milestones because they can consume a lot of build-system time.
 - Keep Sagelite-in-WASM as a long-term target, not an early gate.
 
+Current status as of 2026-06-05:
+
+- `make python` passes for the aggregate Python package set.
+- `python/cpython` passes the supported 279-test CPython suite.
+- `python/py-mpmath` passes its full upstream test suite.
+- `python/py-sympy`, `python/py-numpy`, and `python/py-pandas` pass their
+  current package smoke/basic tests.
+- `python/py-cython` passes its import check plus demo extension builds/runs,
+  which is important for NumPy and future compiled Python packages.
+- `python/python-wasm` passes its Jest suite: 14 suites passed, 2 intentionally
+  skipped.
+- `make test-python` currently stops at `python/py-matplotlib`, whose Makefile
+  intentionally fails because matplotlib is not implemented.
+
 ## Toolchain Upgrade Strategy
 
 Upgrade one axis at a time.
