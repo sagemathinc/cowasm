@@ -69,6 +69,7 @@ async function runInteractiveDash(
 
   try {
     const output = () => stdout + stderr;
+    await dash.kernel.callWithString("chdir", "/home/user");
     dash.terminal();
     await waitUntil(() => output().includes("(cowasm)$ "));
     if (!output().includes("(cowasm)$ ")) {
@@ -121,6 +122,12 @@ async function main() {
   setStatus("running");
   try {
     await runInteractiveDash("cd; pwd", "/home/user");
+    await runInteractiveDash(
+      "rm -f /home/user/cwd-test; cd /home/user; " +
+        "python -c 'open(\"cwd-test\", \"w\").write(\"ok\")'; " +
+        "test -f /home/user/cwd-test && echo cwd-ok",
+      "cwd-ok"
+    );
     await runInteractiveDash('echo "hi" | wc -l', "1");
     await runDash(
       "rm -f /tmp/cowasm-sh-plot.png; " +

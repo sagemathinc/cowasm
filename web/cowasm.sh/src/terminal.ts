@@ -67,7 +67,11 @@ export default async function terminal(element: HTMLDivElement) {
       !event.metaKey
     ) {
       if (term.hasSelection()) {
-        return true;
+        const text = term.getSelection();
+        navigator.clipboard?.writeText(text).catch(() => {
+          document.execCommand("copy");
+        });
+        return false;
       }
       dash.kernel.writeToStdin("\x03");
       return false;
@@ -99,8 +103,8 @@ export default async function terminal(element: HTMLDivElement) {
     term.write(data);
   });
   console.log("starting terminal");
+  await dash.kernel.callWithString("chdir", "/home/user");
   const terminalPromise = dash.terminal();
-  await dash.kernel.writeToStdin("mkdir -p /home/user && cd /home/user\n");
   const r = await terminalPromise;
   console.log("terminal terminated", r);
   dash.kernel.terminate();
