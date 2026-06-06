@@ -14,13 +14,14 @@ small things that you must:
 const { resolve } = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+const production = process.env.NODE_ENV == "production";
 
 module.exports = {
-  mode: process.env.NODE_ENV == "production" ? "production" : "development",
+  mode: production ? "production" : "development",
   entry: process.env.COWASM_SH_SMOKE ? "./src/smoke.ts" : "./src/index.ts",
   devtool: "inline-source-map",
   output: {
-    filename: "[name].bundle.js",
+    filename: production ? "[name].[contenthash].bundle.js" : "[name].bundle.js",
     path: resolve(__dirname, "dist"),
     clean: true,
   },
