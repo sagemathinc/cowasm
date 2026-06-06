@@ -155,3 +155,39 @@ events.
 - Should the first image smoke require PNG bytes, or is SVG enough?  SVG is
   useful but does not prove the Agg renderer and freetype path.  The better
   first supported target is both SVG and PNG.
+
+## Progress Update: C++ Runtime Pass
+
+Date: 2026-06-05
+
+The first porting pass now builds much further than the initial reconnaissance
+state:
+
+- `core/libcxx` provides a CoWasm C++ side-module runtime built from
+  Emscripten `libc++`, `libc++abi`, `libunwind`, and compiler-rt archives.
+- The dylink loader recursively loads declared side-module dependencies and
+  resolves imports from a module's declared dependencies before falling back to
+  already-loaded global libraries.
+- `python/py-cppy` and `python/py-kiwisolver` build and pass their wasm smoke
+  tests.
+- `python/py-matplotlib` now builds `3.6.2` against CoWasm `numpy`,
+  `kiwisolver`, `freetype`, `qhull`, `zlib`, and the new `libcxx.so` runtime.
+  It bundles `matplotlib`, `mpl_toolkits`, `mpl-data`, and `libcxx.so`.
+- Matplotlib import, `pyplot` import, figure creation, and `plt.plot(...)`
+  work under the Agg backend.
+- Direct `FT2Font` loading of the bundled DejaVu font works after fixing
+  Matplotlib's FreeType stream callback for `count == 0` seek probes.
+
+Current remaining blocker:
+
+- `fig.canvas.draw()` traps with `RuntimeError: unreachable` when drawing a
+  line through Agg.  `RendererAgg` construction succeeds, and drawing a raw
+  image with `fig.figimage(...)` succeeds, so the remaining failure appears to
+  be in the line/path rendering path rather than Python import, font discovery,
+  or PNG serialization.
+
+The C++ exception path is still incomplete: the temporary runtime shim exports
+`__cxa_throw` and `__resumeException` as aborting functions.  A thrown C++
+exception from Agg or one of its dependencies will therefore appear as an
+unreachable trap until CoWasm has real side-module C++ exception handling or a
+better diagnostic bridge.

@@ -22,6 +22,7 @@ import { join } from "path";
 import spawnAsync from "await-spawn";
 import wasmExport, { alias } from "./wasm-export";
 import { readFileSync, statSync } from "fs";
+import { cxxRuntimeExportCode } from "./libc";
 
 // I tediously made this list.
 let omit =
@@ -124,6 +125,7 @@ export async function main(pathToPythonSource: string) {
       names.push(name);
     }
   }
+  console.log(cxxRuntimeExportCode());
   console.log("#define Py_BUILD_CORE");
   console.log("#define PY_SSIZE_T_CLEAN");
   console.log("#undef Py_LIMITED_API");

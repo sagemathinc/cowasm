@@ -73,6 +73,7 @@ test: wasm-export dist/.built
 	cd test/python-extension && make test
 	cd test/malloc && make test
 	cd test/libc-archive && make test
+	cd test/cxx-runtime && make test
 .PHONY: test
 
 test-native-macos:
@@ -90,10 +91,10 @@ clean::
 	cd test/python-extension && make clean
 	cd test/malloc && make clean
 	cd test/libc-archive && make clean
+	cd test/cxx-runtime && make clean
 
 .PHONY: clean-build
 clean-build::
 	rm -rf build test/*/build
-
 
 

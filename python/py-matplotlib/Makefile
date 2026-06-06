@@ -22,21 +22,21 @@ include ../build/Makefile-rules
 FREETYPE_WASM = $(shell cowasm-package-path @cowasm/freetype)
 QHULL_WASM = $(shell cowasm-package-path @cowasm/qhull)
 ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
+LIBCXX_WASM = $(shell cowasm-package-path @cowasm/libcxx)
 PKG_CONFIG_PATH_WASM = ${FREETYPE_WASM}/lib/pkgconfig:${ZLIB_WASM}/lib/pkgconfig
-EMSCRIPTEN_CXX_LIB = /usr/share/emscripten/cache/sysroot/lib/wasm32-emscripten/pic
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && python3 ${SRC}/patch-setup.py
 	touch ${BUILD_WASM}/.patched
 
-PYTHONPATH = ${PACKAGES}/py-pip/dist/wasm:${PACKAGES}/py-numpy/dist/wasm:${PACKAGES}/py-packaging/dist/wasm:${PACKAGES}/py-pyparsing/dist/wasm:${PACKAGES}/py-cycler/dist/wasm:${PACKAGES}/py-fonttools/dist/wasm:${PACKAGES}/py-dateutil/dist/wasm:${PACKAGES}/py-pytz/dist/wasm:${PACKAGES}/py-six/dist/wasm
+PYTHONPATH = ${PACKAGES}/py-pip/dist/wasm:${PACKAGES}/py-numpy/dist/wasm:${PACKAGES}/py-packaging/dist/wasm:${PACKAGES}/py-pyparsing/dist/wasm:${PACKAGES}/py-cycler/dist/wasm:${PACKAGES}/py-fonttools/dist/wasm:${PACKAGES}/py-dateutil/dist/wasm:${PACKAGES}/py-pytz/dist/wasm:${PACKAGES}/py-six/dist/wasm:${PACKAGES}/py-kiwisolver/dist/wasm
 
 ${BUILD_WASM}/.install: deps ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
 		&& CFLAGS="-I${FREETYPE_WASM}/include -I${FREETYPE_WASM}/include/freetype2 -I${QHULL_WASM}/include -I${ZLIB_WASM}/include" \
 			CPPFLAGS="-I${FREETYPE_WASM}/include -I${FREETYPE_WASM}/include/freetype2 -I${QHULL_WASM}/include -I${ZLIB_WASM}/include" \
 			CXXFLAGS="-I${FREETYPE_WASM}/include -I${FREETYPE_WASM}/include/freetype2 -I${QHULL_WASM}/include -I${ZLIB_WASM}/include" \
-			LDFLAGS="-L${FREETYPE_WASM}/lib -L${QHULL_WASM}/lib -L${ZLIB_WASM}/lib -Xlinker --whole-archive ${EMSCRIPTEN_CXX_LIB}/libc++.a ${EMSCRIPTEN_CXX_LIB}/libc++abi.a ${EMSCRIPTEN_CXX_LIB}/libunwind.a" \
+			LDFLAGS="-L${FREETYPE_WASM}/lib -L${QHULL_WASM}/lib -L${ZLIB_WASM}/lib ${LIBCXX_WASM}/libcxx.so" \
 			PKG_CONFIG_PATH="${PKG_CONFIG_PATH_WASM}" \
 			SETUPTOOLS_SCM_PRETEND_VERSION=${VERSION} \
 			PYTHONPATH=${PYTHONPATH} \
@@ -46,8 +46,11 @@ ${BUILD_WASM}/.install: deps ${BUILD_WASM}/.patched
 ${DIST_WASM}/.built: ${BUILD_WASM}/.install
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
 	cd ${BUILD_WASM}/build/lib* \
-		&& pnpm-exec cpython -m cowasm_bundler matplotlib pylab.py
+		&& pnpm-exec cpython -m cowasm_bundler matplotlib mpl_toolkits pylab.py
 	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib*/matplotlib.tar.xz
+	cp -R ${BUILD_WASM}/lib/matplotlib/mpl-data ${DIST_WASM}/matplotlib/mpl-data
+	cp ${LIBCXX_WASM}/libcxx.so ${DIST_WASM}/matplotlib/libcxx.so
+	cp ${LIBCXX_WASM}/libcxx.so ${DIST_WASM}/matplotlib/backends/libcxx.so
 	touch ${DIST_WASM}/.built
 
 PYTHONPATH_TEST = ${DIST_WASM}:${PYTHONPATH}

@@ -14,6 +14,7 @@ const STACK_SIZE = 1048576; // 1MB;  to use 64KB it would be 65536.
 
 export default class DlopenManger {
   private dlerrorPtr: number = 0;
+  private errnoPtr: number = 0;
   private _malloc?: (number) => number;
   private _free?: (number) => void;
   private memory: WebAssembly.Memory;
@@ -111,9 +112,9 @@ export default class DlopenManger {
       if (f == null) {
         throw Error("free from libc must be available in the  main instance");
       }
-      this.free = f as (number) => number;
+      this._free = f as (number) => void;
     }
-    this.free(ptr);
+    this._free(ptr);
   }
 
   dlopenEnvHandler(path: string) {
@@ -153,6 +154,90 @@ export default class DlopenManger {
     return sym;
   }
 
+  private pathForNeededDynlib(path: string, needed: string): string {
+    if (needed.startsWith("/") || needed.startsWith("./")) {
+      return needed;
+    }
+    const i = path.lastIndexOf("/");
+    if (i == -1) {
+      return `./${needed}`;
+    }
+    return `${path.slice(0, i + 1)}${needed}`;
+  }
+
+  private emscriptenCxxRuntimeImport(name: string): Function | undefined {
+    if (name == "strtod_l" || name == "strtof_l") {
+      return (nptr: number, endptr: number) => {
+        const text = recvString(nptr, this.memory);
+        const value = parseFloat(text);
+        if (endptr) {
+          const match = text.match(/^[\t\n\v\f\r ]*[+-]?(?:inf(?:inity)?|nan|(?:(?:\d+\.?\d*)|(?:\.\d+))(?:[eE][+-]?\d+)?)/i);
+          const consumed = match?.[0]?.length ?? 0;
+          new DataView(this.memory.buffer).setInt32(endptr, nptr + consumed, true);
+        }
+        return Number.isNaN(value) ? 0 : value;
+      };
+    }
+    if (name == "strtol_l" || name == "strtoul_l") {
+      return (nptr: number, endptr: number, base: number) => {
+        const text = recvString(nptr, this.memory);
+        const value = parseInt(text, base || 10);
+        if (endptr) {
+          const match = text.match(/^[\t\n\v\f\r ]*[+-]?(?:0[xX][0-9a-fA-F]+|[0-9a-fA-F]+)/);
+          const consumed = match?.[0]?.length ?? 0;
+          new DataView(this.memory.buffer).setInt32(endptr, nptr + consumed, true);
+        }
+        return Number.isNaN(value) ? 0 : value;
+      };
+    }
+    if (name == "strtoll_l" || name == "strtoull_l") {
+      return (nptr: number, endptr: number, base: number) => {
+        const text = recvString(nptr, this.memory);
+        const value = parseInt(text, base || 10);
+        if (endptr) {
+          const match = text.match(/^[\t\n\v\f\r ]*[+-]?(?:0[xX][0-9a-fA-F]+|[0-9a-fA-F]+)/);
+          const consumed = match?.[0]?.length ?? 0;
+          new DataView(this.memory.buffer).setInt32(endptr, nptr + consumed, true);
+        }
+        return BigInt(Number.isNaN(value) ? 0 : value);
+      };
+    }
+    if (name == "__errno_location") {
+      return () => {
+        if (!this.errnoPtr) {
+          this.errnoPtr = this.malloc(4, "errno");
+          new DataView(this.memory.buffer).setInt32(this.errnoPtr, 0, true);
+        }
+        return this.errnoPtr;
+      };
+    }
+    if (name == "__cxa_atexit") {
+      return () => 0;
+    }
+    if (name == "mprotect") {
+      return () => 0;
+    }
+    if (name == "_emscripten_throw_longjmp") {
+      return () => {
+        throw Error("longjmp is not supported by the CoWasm C++ runtime");
+      };
+    }
+    if (
+      name.startsWith("pthread_mutex") ||
+      name.startsWith("pthread_cond") ||
+      name == "pthread_key_create" ||
+      name == "pthread_once" ||
+      name == "pthread_setspecific" ||
+      name == "pthread_getspecific" ||
+      name == "pthread_self" ||
+      name == "pthread_detach" ||
+      name == "pthread_join"
+    ) {
+      return () => 0;
+    }
+    return undefined;
+  }
+
   dlopen(pathnamePtr: number, _flags: number): number {
     // TODO: _flags are ignored for now.
     if (this.memory == null) throw Error("bug"); // mainly for typescript
@@ -176,6 +261,28 @@ export default class DlopenManger {
     const binary = new Uint8Array(this.readFileSync(path));
     const metadata = getMetadata(binary);
     log("metadata", metadata);
+
+    const neededPaths: string[] = [];
+    for (const needed of metadata.neededDynlibs) {
+      const neededPath = this.pathForNeededDynlib(path, needed);
+      neededPaths.push(neededPath);
+      const neededPathPtr = this.malloc(
+        neededPath.length + 1,
+        "path for " + neededPath
+      );
+      sendString(neededPath, neededPathPtr, this.memory);
+      this.dlopen(neededPathPtr, _flags);
+      this.free(neededPathPtr);
+    }
+
+    const module = new WebAssembly.Module(binary);
+    const selfFunctionExports = new Set(
+      WebAssembly.Module.exports(module)
+        .filter(({ kind }) => kind == "function")
+        .map(({ name }) => name)
+    );
+    let instance: WebAssembly.Instance | undefined = undefined;
+
     // alignments are powers of 2
     let memAlign = Math.pow(2, metadata.memoryAlign ?? 0);
     // finalize alignments and verify them
@@ -218,9 +325,79 @@ export default class DlopenManger {
       ),
     };
     log("env =", env);
+    const envHandler = (env, key: string) => {
+      if (key in env) {
+        return Reflect.get(env, key);
+      }
+      log("dlopenEnvHandler", key);
+
+      if (selfFunctionExports.has(key)) {
+        return (...args: any[]) => {
+          const f = instance?.exports[key];
+          if (typeof f != "function") {
+            throw Error(
+              `dlopen -- self import '${key}' was called before '${path}' finished loading`
+            );
+          }
+          return (f as CallableFunction)(...args);
+        };
+      }
+
+      let f: Function | null | undefined = this.getFunctionFromPaths(
+        key,
+        neededPaths
+      );
+      if (f != null) {
+        return f;
+      }
+
+      f = this.getFunction(key);
+      if (f != null) {
+        return f;
+      }
+
+      // Prefer wasm exports from the main module. JS functions can satisfy
+      // normal env imports, but they cannot be stored in a wasm funcref table.
+      try {
+        f = this.mainGetFunction(key, path);
+      } catch (_) {
+        f = undefined;
+      }
+      if (f != null) {
+        return f;
+      }
+
+      f = this.emscriptenCxxRuntimeImport(key);
+      if (f != null) {
+        return f;
+      }
+
+      if (key.startsWith("invoke_")) {
+        return (fPtr: number, ...args: any[]) => {
+          if (!fPtr) {
+            const resultType = key.slice("invoke_".length, "invoke_".length + 1);
+            if (resultType == "v") {
+              return;
+            }
+            if (resultType == "j") {
+              return BigInt(0);
+            }
+            return 0;
+          }
+          const f = this.functionTable.get(fPtr);
+          if (typeof f != "function") {
+            throw Error(`dlopen -- invoke import '${key}' got invalid function pointer ${fPtr}`);
+          }
+          return (f as CallableFunction)(...args);
+        };
+      }
+
+      log("dlopenEnvHandler got null");
+      return;
+    };
     const libImportObject = {
       ...this.importObject,
-      env: new Proxy(env, { get: this.dlopenEnvHandler(path) }),
+      env: new Proxy(env, { get: envHandler }),
       "GOT.mem": this.globalOffsetTable.mem,
       "GOT.func": this.globalOffsetTable.func,
     };
@@ -239,7 +416,7 @@ export default class DlopenManger {
       t0 = new Date().valueOf();
       log("importing ", path);
     }
-    const instance = this.importWebAssemblySync(path, libImportObject);
+    instance = this.importWebAssemblySync(path, libImportObject);
     if (log.enabled) {
       log("imported ", path, ", time =", new Date().valueOf() - t0, "ms");
     }
@@ -255,8 +432,21 @@ export default class DlopenManger {
     // Set all functions in the function table that couldn't
     // be resolved to pointers when creating the webassembly module.
     for (const symName in this.globalOffsetTable.funcMap) {
+      let libraryFunction: Function | null | undefined =
+        this.getFunctionFromPaths(symName, neededPaths) ??
+        this.getFunction(symName);
+      let mainFunction: Function | null | undefined;
+      try {
+        mainFunction = this.mainGetFunction(symName, path);
+      } catch (_) {
+        mainFunction = undefined;
+      }
       const f =
-        instance.exports[symName] ?? this.getMainInstanceExports()[symName];
+        instance.exports[symName] ??
+        libraryFunction ??
+        mainFunction ??
+        this.emscriptenCxxRuntimeImport(symName) ??
+        this.getMainInstanceExports()[symName];
       log(
         "table[%s] = %s",
         this.globalOffsetTable.funcMap[symName]?.index,
@@ -296,7 +486,12 @@ export default class DlopenManger {
       }
     }
 
-    if (instance.exports.__wasm_call_ctors != null) {
+    if (
+      instance.exports.__wasm_call_ctors != null &&
+      !path.endsWith("/libcxx.so") &&
+      path != "libcxx.so" &&
+      path != "./libcxx.so"
+    ) {
       // This **MUST** be after updating all the va1
       log("calling __wasm_call_ctors for dynamic library");
       (instance.exports.__wasm_call_ctors as CallableFunction)();
@@ -431,18 +626,45 @@ export default class DlopenManger {
     return this.dlerrorPtr;
   }
 
+  private getFunctionFromLibrary(
+    name: string,
+    library: Library
+  ): Function | null | undefined {
+    // Two places that could have the pointer:
+    const ptr =
+      library.symToPtr?.[name] ??
+      (library.instance.exports[`__WASM_EXPORT__${name}`] as Function)?.();
+    if (ptr != null) {
+      return this.functionTable.get(ptr);
+    }
+    return undefined;
+  }
+
+  private getFunctionFromPaths(
+    name: string,
+    paths: string[]
+  ): Function | null | undefined {
+    for (const path of paths) {
+      const library = this.pathToLibrary[path];
+      if (library == null) continue;
+      const f = this.getFunctionFromLibrary(name, library);
+      if (f != null) {
+        log("getFunctionFromPaths", name, path, "handle=", library.handle);
+        return f;
+      }
+    }
+    return undefined;
+  }
+
   // See if the function we want is defined in some
   // already imported dynamic library:
   getFunction(name: string): Function | null | undefined {
     for (const handle in this.handleToLibrary) {
-      const { path, symToPtr, instance } = this.handleToLibrary[handle];
-      // two places that could have the pointer:
-      const ptr =
-        symToPtr?.[name] ??
-        (instance.exports[`__WASM_EXPORT__${name}`] as Function)?.();
-      if (ptr != null) {
-        log("getFunction", name, path, "handle=", handle);
-        return this.functionTable.get(ptr);
+      const library = this.handleToLibrary[handle];
+      const f = this.getFunctionFromLibrary(name, library);
+      if (f != null) {
+        log("getFunction", name, library.path, "handle=", handle);
+        return f;
       }
     }
     return undefined;

@@ -155,7 +155,7 @@ if "-E" in sys.argv or '--print-multiarch' in sys.argv:
     run(sys.argv)
     sys.exit(0)
 
-OBJECT_OR_ARCHIVE_EXTENSIONS = set(['.o', '.a'])
+OBJECT_OR_ARCHIVE_EXTENSIONS = set(['.o', '.a', '.so'])
 
 
 def is_object_or_archive(filename):
@@ -169,6 +169,9 @@ def is_object_or_archive(filename):
 ZIG_EXE = os.path.realpath(shutil.which("zig"))
 ZIG_HOME = os.path.dirname(ZIG_EXE)
 INCLUDE = os.path.join(ZIG_HOME, "lib", "zig", "libc", "include")
+EMSCRIPTEN_SYSROOT = os.environ.get(
+    "EMSCRIPTEN_SYSROOT", "/usr/share/emscripten/cache/sysroot")
+CXX_INCLUDE = os.path.join(EMSCRIPTEN_SYSROOT, "include", "c++", "v1")
 
 if not os.path.exists(INCLUDE):
     # On MacOS the includes are in $ZIG_HOME/lib/zig/libc (etc), for some reason
@@ -184,14 +187,26 @@ if not os.path.exists(INCLUDE):
 
 FLAGS = [
     '-dynamic' if LANG == 'zig' else '-shared', '-target', 'wasm32-emscripten',
-    '-fPIC', '-isystem',
-    os.path.join(INCLUDE, 'wasm-wasi-musl'), '-isystem',
+    '-fPIC'
+]
+
+if LANG == 'c++':
+    FLAGS += ['-nostdinc++', '-I', CXX_INCLUDE]
+
+FLAGS += [
+    '-isystem', os.path.join(INCLUDE, 'wasm-wasi-musl'), '-isystem',
     os.path.join(INCLUDE, 'generic-musl'), '-D__wasi__',
     '-D__EMSCRIPTEN_major__=3', '-D__EMSCRIPTEN_minor__=1',
     '-D__EMSCRIPTEN_tiny__=16', '-D_WASI_EMULATED_MMAN',
     '-D_WASI_EMULATED_SIGNAL', '-D_WASI_EMULATED_PROCESS_CLOCKS',
     '-D_WASI_EMULATED_GETPID', '-D__cowasm__'
 ]
+
+if LANG == 'c++':
+    FLAGS += [
+        '-U_LIBCPP_ABI_VERSION', '-U_LIBCPP_ABI_NAMESPACE',
+        '-D_LIBCPP_ABI_VERSION=2', '-D_LIBCPP_ABI_NAMESPACE=__2'
+    ]
 
 if use_main_hack:
     FLAGS.append('-Dmain=__attribute__((visibility("default")))main')

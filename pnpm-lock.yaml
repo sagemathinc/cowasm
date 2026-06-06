@@ -206,6 +206,8 @@ importers:
         specifier: workspace:*
         version: link:../termcap
 
+  core/libcxx: {}
+
   core/libedit:
     devDependencies:
       '@cowasm/kernel':
@@ -560,6 +562,15 @@ importers:
         specifier: workspace:*
         version: link:../../core/dylink
 
+  python/py-cppy:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
   python/py-cycler:
     devDependencies:
       '@cowasm/cpython':
@@ -605,6 +616,24 @@ importers:
         specifier: workspace:*
         version: link:../../core/kernel
 
+  python/py-kiwisolver:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+      '@cowasm/libcxx':
+        specifier: workspace:*
+        version: link:../../core/libcxx
+      '@cowasm/py-cppy':
+        specifier: workspace:*
+        version: link:../py-cppy
+      '@cowasm/py-pip':
+        specifier: workspace:*
+        version: link:../py-pip
+
   python/py-matplotlib:
     devDependencies:
       '@cowasm/cpython':
@@ -616,6 +645,9 @@ importers:
       '@cowasm/kernel':
         specifier: workspace:*
         version: link:../../core/kernel
+      '@cowasm/libcxx':
+        specifier: workspace:*
+        version: link:../../core/libcxx
       '@cowasm/py-cycler':
         specifier: workspace:*
         version: link:../py-cycler
@@ -625,6 +657,9 @@ importers:
       '@cowasm/py-fonttools':
         specifier: workspace:*
         version: link:../py-fonttools
+      '@cowasm/py-kiwisolver':
+        specifier: workspace:*
+        version: link:../py-kiwisolver
       '@cowasm/py-numpy':
         specifier: workspace:*
         version: link:../py-numpy

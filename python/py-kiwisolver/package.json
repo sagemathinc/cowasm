@@ -1,0 +1,31 @@
+{
+  "name": "@cowasm/py-kiwisolver",
+  "version": "1.0.0",
+  "description": "WebAssembly build of the kiwisolver Python library",
+  "main": "index.js",
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make wasm",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sagemathinc/cowasm.git"
+  },
+  "keywords": ["WebAssembly", "wasm"],
+  "author": "William Stein <wstein@sagemath.com>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/python/py-kiwisolver",
+  "devDependencies": {
+    "@cowasm/cpython": "workspace:*",
+    "@cowasm/kernel": "workspace:*",
+    "@cowasm/libcxx": "workspace:*",
+    "@cowasm/py-cppy": "workspace:*",
+    "@cowasm/py-pip": "workspace:*"
+  }
+}
