@@ -8,6 +8,8 @@
 +// the declaration that make everything extension modules need
 +// accessible from outside our "python.wasm as a shared library".
 +#include "libpython.c"
++// Standalone CPython needs real interrupt handling when run under dash-wasm.
++#include "cowasm_signal.c"
 +
  #ifdef MS_WINDOWS
  int

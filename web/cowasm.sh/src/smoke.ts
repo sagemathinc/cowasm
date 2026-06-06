@@ -17,6 +17,17 @@ function decodeOutput(data: any): string {
   return new TextDecoder().decode(data);
 }
 
+async function delay(ms: number): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitUntil(f: () => boolean, timeout = 10000): Promise<void> {
+  const start = Date.now();
+  while (Date.now() - start < timeout && !f()) {
+    await delay(50);
+  }
+}
+
 async function runDash(command: string, expectedOutput?: string): Promise<string> {
   const dash = await dashWasm();
   let stdout = "";
@@ -41,10 +52,43 @@ async function runDash(command: string, expectedOutput?: string): Promise<string
   }
 }
 
+async function runPythonInterruptSmoke(): Promise<void> {
+  const dash = await dashWasm();
+  let stdout = "";
+  let stderr = "";
+  dash.kernel.on("stdout", (data) => {
+    stdout += decodeOutput(data);
+  });
+  dash.kernel.on("stderr", (data) => {
+    stderr += decodeOutput(data);
+  });
+
+  try {
+    dash.terminal();
+    await dash.kernel.writeToStdin("python\n");
+    await waitUntil(() => stdout.includes(">>> "));
+    if (!stdout.includes(">>> ")) {
+      throw Error(`python prompt did not appear: stdout=${stdout}; stderr=${stderr}`);
+    }
+
+    await dash.kernel.writeToStdin("while True:\n    pass\n\n");
+    await delay(500);
+    await dash.kernel.writeToStdin("\u0003");
+    await waitUntil(
+      () => stderr.includes("KeyboardInterrupt") && stdout.endsWith(">>> ")
+    );
+    if (!stderr.includes("KeyboardInterrupt") || !stdout.endsWith(">>> ")) {
+      throw Error(`python did not interrupt: stdout=${stdout}; stderr=${stderr}`);
+    }
+  } finally {
+    dash.kernel.terminate();
+  }
+}
+
 async function main() {
   setStatus("running");
   try {
-    const output = await runDash(
+    await runDash(
       "rm -f /tmp/cowasm-sh-plot.png; " +
         "python -c \"import matplotlib; matplotlib.use('Agg'); " +
         "import matplotlib.pyplot as plt; " +
@@ -53,7 +97,8 @@ async function main() {
         "test -s /tmp/cowasm-sh-plot.png; " +
         "python -c \"import sys; sys.exit(0 if open('/tmp/cowasm-sh-plot.png', 'rb').read(8) == b'\\\\x89PNG\\\\r\\\\n\\\\x1a\\\\n' else 1)\""
     );
-    setStatus("pass", output || "matplotlib savefig ok");
+    await runPythonInterruptSmoke();
+    setStatus("pass", "matplotlib savefig and python interrupt ok");
   } catch (err) {
     setStatus("fail", err instanceof Error ? err.stack ?? err.message : `${err}`);
   }
