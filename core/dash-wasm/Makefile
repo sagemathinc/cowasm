@@ -7,6 +7,7 @@ include ../build/Makefile-rules
 USR = ${BUILD}/usr
 
 CPYTHON = $(shell cowasm-package-path @cowasm/cpython)
+PY_NUMPY = $(shell cowasm-package-path @cowasm/py-numpy)
 PY_PACKAGING = $(shell cowasm-package-path @cowasm/py-packaging)
 PY_PYPARSING = $(shell cowasm-package-path @cowasm/py-pyparsing)
 PY_CYCLER = $(shell cowasm-package-path @cowasm/py-cycler)
@@ -17,7 +18,21 @@ PY_SIX = $(shell cowasm-package-path @cowasm/py-six)
 PY_KIWISOLVER = $(shell cowasm-package-path @cowasm/py-kiwisolver)
 PY_MATPLOTLIB = $(shell cowasm-package-path @cowasm/py-matplotlib)
 
-${BUILD}/fs-updated: node_modules
+PYTHON_BUNDLE_INPUTS = \
+	${CPYTHON}/bin/python3.11.wasm \
+	${CPYTHON}/lib/dist/python-stdlib.zip \
+	${PY_NUMPY}/.built \
+	${PY_PACKAGING}/.built \
+	${PY_PYPARSING}/.built \
+	${PY_CYCLER}/.built \
+	${PY_FONTTOOLS}/.built \
+	${PY_DATEUTIL}/.built \
+	${PY_PYTZ}/.built \
+	${PY_SIX}/.built \
+	${PY_KIWISOLVER}/.built \
+	${PY_MATPLOTLIB}/.built
+
+${BUILD}/fs-updated: node_modules ${PYTHON_BUNDLE_INPUTS}
 	rm -rf ${USR}
 	mkdir -p ${USR}/bin
 	# /bin directory
@@ -43,7 +58,7 @@ ${BUILD}/fs-updated: node_modules
 	# /lib
 	mkdir -p ${USR}/lib/python3.11
 	cd ${USR}/lib/python3.11 && unzip ${CPYTHON}/lib/dist/python-stdlib.zip
-	cd $(shell cowasm-package-path @cowasm/py-numpy) && tar -Jcf ${USR}/lib/python3.11/numpy.tar.xz numpy
+	cd ${PY_NUMPY} && tar -Jcf ${USR}/lib/python3.11/numpy.tar.xz numpy
 	cd ${PY_PACKAGING} && tar -Jcf ${USR}/lib/python3.11/packaging.tar.xz packaging
 	cd ${PY_PYPARSING} && tar -Jcf ${USR}/lib/python3.11/pyparsing.tar.xz pyparsing
 	cd ${PY_CYCLER} && tar -Jcf ${USR}/lib/python3.11/cycler.tar.xz cycler

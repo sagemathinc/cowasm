@@ -75,6 +75,20 @@ test("bundled shell can import matplotlib and construct a plot", () => {
   expect(output).toContain("plot ok\n");
 });
 
+test("bundled shell can save matplotlib PNG output", () => {
+  const output = runDash(
+    "rm -f /tmp/cowasm-plot.png && " +
+      "python -c 'import matplotlib; matplotlib.use(\"Agg\"); " +
+      "import matplotlib.pyplot as plt; " +
+      "plt.plot([1, 2, 3], [1, 4, 9]); " +
+      "plt.savefig(\"/tmp/cowasm-plot.png\")' && " +
+      "test -s /tmp/cowasm-plot.png && " +
+      "python -c 'print(open(\"/tmp/cowasm-plot.png\", \"rb\").read(8) " +
+      "== b\"\\x89PNG\\r\\n\\x1a\\n\")'"
+  );
+  expect(output.trim()).toBe("True");
+});
+
 test("bundled shell can import matplotlib in successive Python processes", () => {
   const output = runDash(
     "python -c 'import matplotlib; print(\"first\")' && " +
