@@ -75,6 +75,14 @@ test("bundled shell can import matplotlib and construct a plot", () => {
   expect(output).toContain("plot ok\n");
 });
 
+test("bundled shell can import matplotlib in successive Python processes", () => {
+  const output = runDash(
+    "python -c 'import matplotlib; print(\"first\")' && " +
+      "python -c 'import matplotlib; print(\"second\")'"
+  );
+  expect(output).toBe("first\nsecond\n");
+});
+
 test("bundled shell can execute sqlite3", () => {
   const output = runDash("sqlite3 --version");
   expect(output).toMatch(/^3\./);

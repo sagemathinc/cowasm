@@ -83,6 +83,12 @@ export default class DlopenManger {
   setState(state) {
     for (const handle in this.handleToLibrary) {
       if (!state.has(handle)) {
+        const lib = this.handleToLibrary[handle];
+        if (lib != null && !lib.path) {
+          delete this.handleToLibrary[handle];
+          delete this.pathToLibrary[lib.path];
+          continue;
+        }
         this.dlclose(parseInt(handle));
       }
     }
