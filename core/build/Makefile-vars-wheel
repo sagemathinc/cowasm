@@ -1,0 +1,50 @@
+# Common rules for pure Python wheel packages.
+
+.PHONY: wasm
+wasm: ${DIST_WASM}/.built
+
+.PHONY: deps
+deps: node_modules
+
+.PHONY: fetch-source
+fetch-source: ${TARBALL}
+	$(verify_tarball_sha256)
+
+${TARBALL}:
+	mkdir -p ${UPSTREAM}
+	curl -L ${URL} -o ${TARBALL}
+	$(verify_tarball_sha256)
+
+${BUILD_WASM}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASM}
+	mkdir -p ${BUILD_WASM}
+	python3 -m zipfile -e ${TARBALL} ${BUILD_WASM}
+	touch ${BUILD_WASM}/.build
+
+PRE_BUNDLE ?= true
+
+${DIST_WASM}/.built: ${BUILD_WASM}/.build
+	rm -rf ${DIST_WASM}
+	mkdir -p ${DIST_WASM}
+	cd ${BUILD_WASM} && ${PRE_BUNDLE} && PYTHONPATH=${PYTHONPATH} pnpm-exec cpython -m cowasm_bundler ${TOP_LEVEL}
+	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/${TOP_LEVEL}.tar.xz
+	touch ${DIST_WASM}/.built
+
+node_modules:
+	pnpm install
+	mkdir -p node_modules
+
+.PHONY: clean-wasm
+clean-wasm::
+	rm -rf ${BUILD_WASM} ${DIST_WASM}
+
+.PHONY: clean-native
+clean-native::
+	rm -rf ${BUILD_NATIVE} ${DIST_NATIVE}
+
+clean-node_modules::
+	rm -rf node_modules
+
+.PHONY: clean
+clean:: clean-wasm clean-native clean-node_modules
+	rm -rf ${BUILD} ${DIST}

@@ -31,7 +31,18 @@
   "homepage": "https://github.com/sagemathinc/cowasm/tree/main/python/py-matplotlib",
   "devDependencies": {
     "@cowasm/cpython": "workspace:*",
+    "@cowasm/freetype": "workspace:*",
     "@cowasm/kernel": "workspace:*",
-    "@cowasm/py-pip": "workspace:*"
+    "@cowasm/py-cycler": "workspace:*",
+    "@cowasm/py-dateutil": "workspace:*",
+    "@cowasm/py-fonttools": "workspace:*",
+    "@cowasm/py-numpy": "workspace:*",
+    "@cowasm/py-packaging": "workspace:*",
+    "@cowasm/py-pip": "workspace:*",
+    "@cowasm/py-pyparsing": "workspace:*",
+    "@cowasm/py-pytz": "workspace:*",
+    "@cowasm/py-six": "workspace:*",
+    "@cowasm/qhull": "workspace:*",
+    "@cowasm/zlib": "workspace:*"
   }
 }

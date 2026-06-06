@@ -136,6 +136,15 @@ importers:
         specifier: workspace:*
         version: link:../wasi-js
 
+  core/freetype:
+    devDependencies:
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../kernel
+      '@cowasm/zlib':
+        specifier: workspace:*
+        version: link:../zlib
+
   core/kernel:
     dependencies:
       awaiting:
@@ -317,6 +326,12 @@ importers:
         version: 4.9.5
 
   core/posix-wasm: {}
+
+  core/qhull:
+    devDependencies:
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../kernel
 
   core/rogue:
     dependencies:
@@ -545,6 +560,18 @@ importers:
         specifier: workspace:*
         version: link:../../core/dylink
 
+  python/py-cycler:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+      '@cowasm/py-six':
+        specifier: workspace:*
+        version: link:../py-six
+
   python/py-cython:
     devDependencies:
       '@cowasm/cpython':
@@ -557,7 +584,7 @@ importers:
         specifier: workspace:*
         version: link:../py-pip
 
-  python/py-matplotlib:
+  python/py-dateutil:
     devDependencies:
       '@cowasm/cpython':
         specifier: workspace:*
@@ -565,9 +592,63 @@ importers:
       '@cowasm/kernel':
         specifier: workspace:*
         version: link:../../core/kernel
+      '@cowasm/py-six':
+        specifier: workspace:*
+        version: link:../py-six
+
+  python/py-fonttools:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
+  python/py-matplotlib:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../cpython
+      '@cowasm/freetype':
+        specifier: workspace:*
+        version: link:../../core/freetype
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+      '@cowasm/py-cycler':
+        specifier: workspace:*
+        version: link:../py-cycler
+      '@cowasm/py-dateutil':
+        specifier: workspace:*
+        version: link:../py-dateutil
+      '@cowasm/py-fonttools':
+        specifier: workspace:*
+        version: link:../py-fonttools
+      '@cowasm/py-numpy':
+        specifier: workspace:*
+        version: link:../py-numpy
+      '@cowasm/py-packaging':
+        specifier: workspace:*
+        version: link:../py-packaging
       '@cowasm/py-pip':
         specifier: workspace:*
         version: link:../py-pip
+      '@cowasm/py-pyparsing':
+        specifier: workspace:*
+        version: link:../py-pyparsing
+      '@cowasm/py-pytz':
+        specifier: workspace:*
+        version: link:../py-pytz
+      '@cowasm/py-six':
+        specifier: workspace:*
+        version: link:../py-six
+      '@cowasm/qhull':
+        specifier: workspace:*
+        version: link:../../core/qhull
+      '@cowasm/zlib':
+        specifier: workspace:*
+        version: link:../../core/zlib
 
   python/py-mpmath:
     devDependencies:
@@ -595,6 +676,15 @@ importers:
       '@cowasm/py-pip':
         specifier: workspace:*
         version: link:../py-pip
+
+  python/py-packaging:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
 
   python/py-pandas:
     devDependencies:
@@ -626,7 +716,34 @@ importers:
         specifier: workspace:*
         version: link:../py-setuptools
 
+  python/py-pyparsing:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
+  python/py-pytz:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
   python/py-setuptools:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
+  python/py-six:
     devDependencies:
       '@cowasm/cpython':
         specifier: workspace:*
@@ -2723,7 +2840,7 @@ packages:
   glob@8.1.0:
     resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
     engines: {node: '>=12'}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   global-agent@3.0.0:
     resolution: {integrity: sha512-PT6XReJ+D07JvGoxQMkT6qji/jVNfX/h364XHZOWeRzy64sSFr+xJ5OX7LI3b4MPQzdL4H8Y8M0xzPpsVMwA8Q==}

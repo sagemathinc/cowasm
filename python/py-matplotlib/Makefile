@@ -13,26 +13,48 @@ URL = https://github.com/matplotlib/matplotlib/archive/refs/tags/v${VERSION}.tar
 TARBALL = ${UPSTREAM}/matplotlib-${VERSION}.tar.gz
 TARBALL_SHA256 = 5ac5ca25e6ecd1e7711e1f859b4b6f74f290ef517387d1502bf8012bf2b1647e
 
-#all: deps wasm
-all:
+# Keep this package disabled from the top-level supported set until the
+# headless Agg/SVG smoke tests pass, but make direct package builds real.
+all: deps wasm
 
 include ../build/Makefile-rules
 
+FREETYPE_WASM = $(shell cowasm-package-path @cowasm/freetype)
+QHULL_WASM = $(shell cowasm-package-path @cowasm/qhull)
+ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
+PKG_CONFIG_PATH_WASM = ${FREETYPE_WASM}/lib/pkgconfig:${ZLIB_WASM}/lib/pkgconfig
+EMSCRIPTEN_CXX_LIB = /usr/share/emscripten/cache/sysroot/lib/wasm32-emscripten/pic
+
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
+	cd ${BUILD_WASM} && python3 ${SRC}/patch-setup.py
 	touch ${BUILD_WASM}/.patched
 
-${BUILD_WASM}/.install:  ${BUILD_WASM}/.patched
+PYTHONPATH = ${PACKAGES}/py-pip/dist/wasm:${PACKAGES}/py-numpy/dist/wasm:${PACKAGES}/py-packaging/dist/wasm:${PACKAGES}/py-pyparsing/dist/wasm:${PACKAGES}/py-cycler/dist/wasm:${PACKAGES}/py-fonttools/dist/wasm:${PACKAGES}/py-dateutil/dist/wasm:${PACKAGES}/py-pytz/dist/wasm:${PACKAGES}/py-six/dist/wasm
+
+${BUILD_WASM}/.install: deps ${BUILD_WASM}/.patched
 	cd ${BUILD_WASM} \
-		&& PYTHONPATH=${PIP} pnpm-exec cpython setup.py build
+		&& CFLAGS="-I${FREETYPE_WASM}/include -I${FREETYPE_WASM}/include/freetype2 -I${QHULL_WASM}/include -I${ZLIB_WASM}/include" \
+			CPPFLAGS="-I${FREETYPE_WASM}/include -I${FREETYPE_WASM}/include/freetype2 -I${QHULL_WASM}/include -I${ZLIB_WASM}/include" \
+			CXXFLAGS="-I${FREETYPE_WASM}/include -I${FREETYPE_WASM}/include/freetype2 -I${QHULL_WASM}/include -I${ZLIB_WASM}/include" \
+			LDFLAGS="-L${FREETYPE_WASM}/lib -L${QHULL_WASM}/lib -L${ZLIB_WASM}/lib -Xlinker --whole-archive ${EMSCRIPTEN_CXX_LIB}/libc++.a ${EMSCRIPTEN_CXX_LIB}/libc++abi.a ${EMSCRIPTEN_CXX_LIB}/libunwind.a" \
+			PKG_CONFIG_PATH="${PKG_CONFIG_PATH_WASM}" \
+			SETUPTOOLS_SCM_PRETEND_VERSION=${VERSION} \
+			PYTHONPATH=${PYTHONPATH} \
+			pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.install
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.install
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
+	cd ${BUILD_WASM}/build/lib* \
+		&& pnpm-exec cpython -m cowasm_bundler matplotlib pylab.py
+	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib*/matplotlib.tar.xz
 	touch ${DIST_WASM}/.built
 
-#test: ${DIST_WASM}/.built
-#	echo "It built!"
+PYTHONPATH_TEST = ${DIST_WASM}:${PYTHONPATH}
 
-test:
-	echo "matplotlib not done at all"
-	false
+test: deps ${DIST_WASM}/.built
+	rm -rf ${BUILD_WASM}/cowasm-test
+	mkdir -p ${BUILD_WASM}/cowasm-test
+	cd ${BUILD_WASM}/cowasm-test \
+		&& MPLCONFIGDIR=. PYTHONPATH=${PYTHONPATH_TEST} pnpm-exec cpython -c 'import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt; plt.plot([1, 2, 3], [1, 4, 9]); plt.savefig("plot.png")'
+	test -s ${BUILD_WASM}/cowasm-test/plot.png
