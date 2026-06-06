@@ -35,6 +35,13 @@ function showLoading(element: HTMLDivElement): () => void {
   };
 }
 
+function dataToString(data: any): string {
+  if (typeof data == "string") {
+    return data;
+  }
+  return new TextDecoder().decode(data);
+}
+
 export default async function terminal(element: HTMLDivElement) {
   console.log("creating dashWasm");
   const finishLoading = showLoading(element);
@@ -58,6 +65,17 @@ export default async function terminal(element: HTMLDivElement) {
 
   term.options.allowProposedApi = true;
   term.loadAddon(new WebLinksAddon());
+  let suppressTerminalInputUntil = 0;
+  let shellAtPrompt = false;
+
+  const pasteFromClipboard = async () => {
+    const text = await navigator.clipboard?.readText().catch(() => "");
+    if (!text) {
+      return;
+    }
+    dash.kernel.writeToStdin(text);
+  };
+
   term.attachCustomKeyEventHandler((event) => {
     if (
       event.type == "keydown" &&
@@ -73,7 +91,21 @@ export default async function terminal(element: HTMLDivElement) {
         });
         return false;
       }
+      if (shellAtPrompt) {
+        return false;
+      }
       dash.kernel.writeToStdin("\x03");
+      return false;
+    }
+    if (
+      event.type == "keydown" &&
+      event.key.toLowerCase() == "v" &&
+      event.ctrlKey &&
+      !event.altKey &&
+      !event.metaKey
+    ) {
+      suppressTerminalInputUntil = Date.now() + 250;
+      pasteFromClipboard();
       return false;
     }
     return true;
@@ -94,12 +126,24 @@ export default async function terminal(element: HTMLDivElement) {
 
 `);
   term.onData((data) => {
+    if (Date.now() < suppressTerminalInputUntil) {
+      return;
+    }
+    if (data.includes("\r") || data.includes("\n")) {
+      shellAtPrompt = false;
+    }
     dash.kernel.writeToStdin(data);
   });
   dash.kernel.on("stdout", (data) => {
+    if (dataToString(data).includes("(cowasm)$ ")) {
+      shellAtPrompt = true;
+    }
     term.write(data);
   });
   dash.kernel.on("stderr", (data) => {
+    if (dataToString(data).includes("(cowasm)$ ")) {
+      shellAtPrompt = true;
+    }
     term.write(data);
   });
   console.log("starting terminal");
