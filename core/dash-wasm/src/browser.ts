@@ -24,19 +24,29 @@ export default async function asyncDash(
 }
 
 function getFilesystem(_opts?: Options): FileSystemSpec[] {
-  return [
+  const fs: FileSystemSpec[] = [
     {
       type: "mem",
       contents: {
         "/home/user/.profile": "",
       },
     },
+  ];
+  if (_opts?.homeDirectoryZip != null) {
+    fs.push({
+      type: "zip",
+      data: _opts.homeDirectoryZip as any,
+      mountpoint: "/home/user",
+    });
+  }
+  fs.push(
     {
       type: "zipurl",
       zipurl: fs_zip,
       mountpoint: USR,
     },
     // And the rest of the native filesystem.
-    { type: "dev" },
-  ];
+    { type: "dev" }
+  );
+  return fs;
 }

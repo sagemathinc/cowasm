@@ -1,10 +1,17 @@
 import terminal from "./terminal";
+import { clearHomeSnapshot } from "./persistence";
 
 declare global {
   interface Window {
     __cowasmShSmoke?: { status: string; details?: string };
     dash?: any;
     term?: any;
+    cowasmPersistence?: {
+      save: () => Promise<unknown>;
+      restore: () => Promise<void>;
+      clear: () => Promise<void>;
+      ready: Promise<void>;
+    };
   }
 }
 
@@ -70,6 +77,10 @@ async function pasteToTerminal(data: string): Promise<void> {
 
 async function main() {
   setStatus("running", "terminal setup");
+  const phase = sessionStorage.getItem("cowasm-sh-smoke-phase") ?? "initial";
+  if (phase == "initial") {
+    await clearHomeSnapshot();
+  }
   Object.defineProperty(navigator, "clipboard", {
     configurable: true,
     value: {
@@ -85,8 +96,27 @@ async function main() {
     document.body.appendChild(element);
     document.body.style.margin = "0px";
     void terminal(element);
+    await waitUntil(() => window.cowasmPersistence != null);
+    if (!window.cowasmPersistence) {
+      throw Error("persistence API did not initialize");
+    }
+    await window.cowasmPersistence.ready;
     await waitForPrompt();
     textarea().focus();
+
+    if (phase == "reloaded") {
+      setStatus("running", "terminal persistence reload");
+      await writeToTerminal("cat /home/user/persisted.txt\n");
+      await waitUntil(() => terminalText().includes("persisted across reload"));
+      if (!terminalText().includes("persisted across reload")) {
+        throw Error(`persisted file did not restore: ${terminalText()}`);
+      }
+      sessionStorage.removeItem("cowasm-sh-smoke-phase");
+      setStatus("pass", "terminal persistence reload ok");
+      return;
+    }
+
+    await window.cowasmPersistence?.clear();
 
     setStatus("running", "terminal paste");
     clipboardText = "printf x >> /home/user/paste-count\n";
@@ -128,9 +158,19 @@ async function main() {
     if (!terminalText().includes("KeyboardInterrupt")) {
       throw Error(`Python did not interrupt through terminal UI: ${terminalText()}`);
     }
+    await writeToTerminal("\x04");
+    await delay(500);
 
-    setStatus("pass", "terminal paste, copy and ctrl-c ok");
+    setStatus("running", "terminal persistence save");
+    await pasteToTerminal(
+      "printf 'persisted across reload' > /home/user/persisted.txt; echo persistence-written\n"
+    );
+    await waitUntil(() => terminalText().includes("persistence-written"));
+    await window.cowasmPersistence?.save();
+    sessionStorage.setItem("cowasm-sh-smoke-phase", "reloaded");
+    location.reload();
   } catch (err) {
+    sessionStorage.removeItem("cowasm-sh-smoke-phase");
     setStatus("fail", err instanceof Error ? err.stack ?? err.message : `${err}`);
   }
 }

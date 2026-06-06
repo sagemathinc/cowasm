@@ -3,6 +3,12 @@ import { Terminal } from "xterm";
 import { WebLinksAddon } from "xterm-addon-web-links";
 import setTheme from "./theme";
 import dashWasm from "dash-wasm";
+import {
+  clearHomeSnapshot,
+  loadHomeSnapshot,
+  saveHomeSnapshot,
+  type Snapshot,
+} from "./persistence";
 
 
 // https://patorjk.com/software/taag/#p=display&f=Ogre&t=CoCalc%0ACoWasm
@@ -42,9 +48,43 @@ function dataToString(data: any): string {
   return new TextDecoder().decode(data);
 }
 
+const SNAPSHOT_BEGIN = "__COWASM_HOME_SNAPSHOT_BEGIN__";
+const SNAPSHOT_END = "__COWASM_HOME_SNAPSHOT_END__";
+
+function saveCommand(): string {
+  return `cd /home/user && python -c 'import base64,io,os,sys,zipfile; b=io.BytesIO(); z=zipfile.ZipFile(b,"w",zipfile.ZIP_STORED); [z.write(os.path.join(d,n), os.path.relpath(os.path.join(d,n),".")) for d,_,fs in os.walk(".") for n in fs]; z.close(); print("__COWASM_HOME_"+"SNAPSHOT_BEGIN__"); print(base64.b64encode(b.getvalue()).decode("ascii")); print("__COWASM_HOME_"+"SNAPSHOT_END__")'\n`;
+}
+
+function decodeBase64(data: string): Uint8Array {
+  const binary = atob(data);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
 export default async function terminal(element: HTMLDivElement) {
   console.log("creating dashWasm");
   const finishLoading = showLoading(element);
+  const startupSnapshot = await loadHomeSnapshot();
+  const toolbar = document.createElement("div");
+  toolbar.style.cssText =
+    "display:flex;align-items:center;gap:8px;padding:8px 15px;font:13px system-ui,sans-serif;color:#444";
+  const saveButton = document.createElement("button");
+  saveButton.textContent = "Save /home/user";
+  const restoreButton = document.createElement("button");
+  restoreButton.textContent = "Restore";
+  const clearButton = document.createElement("button");
+  clearButton.textContent = "Clear saved";
+  const status = document.createElement("span");
+  status.style.marginLeft = "8px";
+  for (const button of [saveButton, restoreButton, clearButton]) {
+    button.style.cssText =
+      "font:13px system-ui,sans-serif;padding:4px 8px;border:1px solid #bbb;background:#fff;border-radius:4px;cursor:pointer";
+  }
+  toolbar.append(saveButton, restoreButton, clearButton, status);
+  element.appendChild(toolbar);
   const term = new Terminal({ convertEol: true });
   term.open(element);
   const terminalElement = element.querySelector(".terminal") as HTMLDivElement;
@@ -56,6 +96,8 @@ export default async function terminal(element: HTMLDivElement) {
       LINES: `${term.rows}`,
       HOME: "/home/user",
     },
+    homeDirectoryZip:
+      startupSnapshot == null ? undefined : decodeBase64(startupSnapshot.data),
   });
   finishLoading();
   (window as any).dash = dash;
@@ -68,6 +110,31 @@ export default async function terminal(element: HTMLDivElement) {
   term.loadAddon(new WebLinksAddon());
   let suppressTerminalInputUntil = 0;
   let shellAtPrompt = false;
+  let capturingSnapshot = false;
+  let snapshotBuffer = "";
+  let outputLookbehind = "";
+  let pendingSave:
+    | {
+        resolve: (snapshot: Snapshot) => void;
+        reject: (err: Error) => void;
+      }
+    | undefined;
+  let persistenceReadyDone = false;
+  let persistenceReadyResolve: () => void;
+  const persistenceReady = new Promise<void>((resolve) => {
+    persistenceReadyResolve = resolve;
+  });
+  const markPersistenceReady = () => {
+    if (!persistenceReadyDone) {
+      persistenceReadyDone = true;
+      persistenceReadyResolve();
+    }
+  };
+
+  const setPersistenceStatus = (message: string) => {
+    console.log(`cowasm.sh persistence: ${message}`);
+    status.textContent = message;
+  };
 
   const pasteFromClipboard = async () => {
     const text = await navigator.clipboard?.readText().catch(() => "");
@@ -115,6 +182,118 @@ export default async function terminal(element: HTMLDivElement) {
     return true;
   });
 
+  const saveHome = async (): Promise<Snapshot> => {
+    if (pendingSave) {
+      throw Error("A CoWasm save is already running.");
+    }
+    if (!shellAtPrompt) {
+      throw Error("Wait for the shell prompt before saving.");
+    }
+    setPersistenceStatus("saving /home/user");
+    shellAtPrompt = false;
+    return await new Promise<Snapshot>((resolve, reject) => {
+      pendingSave = { resolve, reject };
+      dash.kernel.writeToStdin(saveCommand());
+    });
+  };
+
+  const restoreHome = async (): Promise<void> => {
+    const snapshot = await loadHomeSnapshot();
+    if (!snapshot) {
+      return;
+    }
+    setPersistenceStatus("reloading to restore /home/user");
+    location.reload();
+  };
+
+  const clearHome = async (): Promise<void> => {
+    await clearHomeSnapshot();
+    setPersistenceStatus("cleared /home/user snapshot");
+  };
+
+  saveButton.onclick = () => {
+    void saveHome().catch((err) =>
+      setPersistenceStatus(err instanceof Error ? err.message : `${err}`)
+    );
+  };
+  restoreButton.onclick = () => {
+    void restoreHome().catch((err) =>
+      setPersistenceStatus(err instanceof Error ? err.message : `${err}`)
+    );
+  };
+  clearButton.onclick = () => {
+    void clearHome().catch((err) =>
+      setPersistenceStatus(err instanceof Error ? err.message : `${err}`)
+    );
+  };
+
+  (window as any).cowasmPersistence = {
+    save: saveHome,
+    restore: restoreHome,
+    clear: clearHome,
+    load: loadHomeSnapshot,
+    ready: persistenceReady,
+  };
+
+  const processOutput = (text: string): string => {
+    if (!pendingSave && !capturingSnapshot && !outputLookbehind) {
+      return text;
+    }
+    let remaining = outputLookbehind + text;
+    outputLookbehind = "";
+    let display = "";
+    const markerKeep = Math.max(SNAPSHOT_BEGIN.length, SNAPSHOT_END.length) - 1;
+    while (remaining.length > 0) {
+      if (capturingSnapshot) {
+        const end = remaining.indexOf(SNAPSHOT_END);
+        if (end == -1) {
+          if (remaining.length > markerKeep) {
+            snapshotBuffer += remaining.slice(0, -markerKeep);
+            outputLookbehind = remaining.slice(-markerKeep);
+          } else {
+            outputLookbehind = remaining;
+          }
+          return display;
+        }
+        snapshotBuffer += remaining.slice(0, end);
+        remaining = remaining.slice(end + SNAPSHOT_END.length);
+        capturingSnapshot = false;
+        const data = snapshotBuffer.replace(/[\r\n]/g, "");
+        snapshotBuffer = "";
+        void saveHomeSnapshot(data)
+          .then((snapshot) => {
+            setPersistenceStatus(`saved /home/user at ${snapshot.savedAt}`);
+            pendingSave?.resolve(snapshot);
+            pendingSave = undefined;
+          })
+          .catch((err) => {
+            pendingSave?.reject(err instanceof Error ? err : Error(`${err}`));
+            pendingSave = undefined;
+          });
+        continue;
+      }
+      const begin = remaining.indexOf(SNAPSHOT_BEGIN);
+      const next = begin >= 0 ? begin : undefined;
+      if (next == null) {
+        if (!pendingSave) {
+          display += remaining;
+        } else if (remaining.length > markerKeep) {
+          display += remaining.slice(0, -markerKeep);
+          outputLookbehind = remaining.slice(-markerKeep);
+        } else {
+          outputLookbehind = remaining;
+        }
+        return display;
+      }
+      display += remaining.slice(0, next);
+      if (begin == next) {
+        remaining = remaining.slice(begin + SNAPSHOT_BEGIN.length);
+        capturingSnapshot = true;
+      }
+    }
+    return display;
+  };
+
   term.write(
     "Type 'ls /usr/bin' for a list of commands, including python (with numpy), lua, sqlite3, date, and du.\n"
   );
@@ -139,18 +318,38 @@ export default async function terminal(element: HTMLDivElement) {
     dash.kernel.writeToStdin(data);
   });
   dash.kernel.on("stdout", (data) => {
-    if (dataToString(data).includes("(cowasm)$ ")) {
+    const text = dataToString(data);
+    const hasPrompt = text.includes("(cowasm)$ ");
+    if (hasPrompt) {
       shellAtPrompt = true;
     }
-    term.write(data);
+    const display = processOutput(text);
+    if (display) {
+      term.write(display);
+    }
+    if (hasPrompt) {
+      markPersistenceReady();
+    }
   });
   dash.kernel.on("stderr", (data) => {
-    if (dataToString(data).includes("(cowasm)$ ")) {
+    const text = dataToString(data);
+    const hasPrompt = text.includes("(cowasm)$ ");
+    if (hasPrompt) {
       shellAtPrompt = true;
     }
-    term.write(data);
+    const display = processOutput(text);
+    if (display) {
+      term.write(display);
+    }
+    if (hasPrompt) {
+      markPersistenceReady();
+    }
   });
   console.log("starting terminal");
+  if (startupSnapshot) {
+    setPersistenceStatus(`restored /home/user from ${startupSnapshot.savedAt}`);
+  }
+  markPersistenceReady();
   const terminalPromise = dash.terminal();
   await dash.kernel.writeToStdin("mkdir -p /home/user && cd /home/user\n");
   const r = await terminalPromise;
