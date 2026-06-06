@@ -139,6 +139,89 @@ elif new not in text:
     raise SystemExit("expected image.py imsave block not found")
 image.write_text(text)
 
+backend_agg = Path("lib/matplotlib/backends/backend_agg.py")
+text = backend_agg.read_text()
+old = """from contextlib import nullcontext
+from math import radians, cos, sin
+import threading
+"""
+new = """from contextlib import nullcontext
+from math import radians, cos, sin
+import struct
+import threading
+import zlib
+"""
+if old in text:
+    text = text.replace(old, new)
+elif new not in text:
+    raise SystemExit("expected backend_agg.py import block not found")
+
+old = """    def _print_pil(self, filename_or_obj, fmt, pil_kwargs, metadata=None):
+        \"\"\"
+        Draw the canvas, then save it using `.image.imsave` (to which
+        *pil_kwargs* and *metadata* are forwarded).
+        \"\"\"
+        FigureCanvasAgg.draw(self)
+        mpl.image.imsave(
+            filename_or_obj, self.buffer_rgba(), format=fmt, origin=\"upper\",
+            dpi=self.figure.dpi, metadata=metadata, pil_kwargs=pil_kwargs)
+"""
+new = """    def _print_pil(self, filename_or_obj, fmt, pil_kwargs, metadata=None):
+        \"\"\"
+        Draw the canvas, then save it using `.image.imsave` (to which
+        *pil_kwargs* and *metadata* are forwarded).
+        \"\"\"
+        FigureCanvasAgg.draw(self)
+        mpl.image.imsave(
+            filename_or_obj, self.buffer_rgba(), format=fmt, origin=\"upper\",
+            dpi=self.figure.dpi, metadata=metadata, pil_kwargs=pil_kwargs)
+
+    def _print_png_without_pil(self, filename_or_obj):
+        rgba = self.buffer_rgba()
+        height, width = rgba.shape[:2]
+        data = bytes(rgba)
+        stride = width * 4
+        raw = b\"\".join(
+            b\"\\x00\" + data[y * stride:(y + 1) * stride]
+            for y in range(height))
+
+        def chunk(kind, payload):
+            return (
+                struct.pack(\">I\", len(payload)) + kind + payload +
+                struct.pack(\">I\", zlib.crc32(kind + payload) & 0xffffffff))
+
+        png = (
+            b\"\\x89PNG\\r\\n\\x1a\\n\" +
+            chunk(b\"IHDR\", struct.pack(\">IIBBBBB\",
+                                       width, height, 8, 6, 0, 0, 0)) +
+            chunk(b\"IDAT\", zlib.compress(raw)) +
+            chunk(b\"IEND\", b\"\"))
+        with cbook.open_file_cm(filename_or_obj, \"wb\") as fh:
+            fh.write(png)
+"""
+if old in text:
+    text = text.replace(old, new)
+elif new not in text:
+    raise SystemExit("expected backend_agg.py _print_pil block not found")
+
+old = """        self._print_pil(filename_or_obj, \"png\", pil_kwargs, metadata)
+"""
+new = """        try:
+            self._print_pil(filename_or_obj, \"png\", pil_kwargs, metadata)
+        except ImportError as err:
+            if \"Pillow is required\" not in str(err):
+                raise
+            if pil_kwargs:
+                raise
+            FigureCanvasAgg.draw(self)
+            self._print_png_without_pil(filename_or_obj)
+"""
+if old in text:
+    text = text.replace(old, new)
+elif new not in text:
+    raise SystemExit("expected backend_agg.py print_png block not found")
+backend_agg.write_text(text)
+
 font_manager = Path("lib/matplotlib/font_manager.py")
 text = font_manager.read_text()
 old = """        # Delay the warning by 5s.
@@ -248,6 +331,68 @@ if old in text:
     ft2font_wrapper.write_text(text.replace(old, new))
 elif new not in text:
     raise SystemExit("expected ft2font_wrapper.py read callback block not found")
+
+backend_agg_h = Path("src/_backend_agg.h")
+text = backend_agg_h.read_text()
+old = """        stroke_t stroke(marker_path_curve);
+        stroke.width(points_to_pixels(gc.linewidth));
+        stroke.line_cap(gc.cap);
+        stroke.line_join(gc.join);
+        stroke.miter_limit(points_to_pixels(gc.linewidth));
+        theRasterizer.reset();
+        theRasterizer.add_path(stroke);
+        agg::render_scanlines(theRasterizer, slineP8, scanlines);
+        unsigned strokeSize = scanlines.byte_size();
+"""
+new = """        stroke_t stroke(marker_path_curve);
+        stroke.width(points_to_pixels(gc.linewidth));
+        stroke.line_cap(gc.cap);
+        stroke.line_join(gc.join);
+        stroke.miter_limit(points_to_pixels(gc.linewidth));
+        theRasterizer.reset();
+        theRasterizer.clip_box(0, 0, MARKER_CACHE_SIZE, MARKER_CACHE_SIZE);
+        theRasterizer.add_path(stroke);
+        theRasterizer.auto_close(false);
+        agg::render_scanlines(theRasterizer, slineP8, scanlines);
+        theRasterizer.auto_close(true);
+        theRasterizer.reset_clipping();
+        unsigned strokeSize = scanlines.byte_size();
+"""
+if old in text:
+    text = text.replace(old, new)
+elif new not in text:
+    raise SystemExit("expected _backend_agg.h marker stroke block not found")
+backend_agg_h.write_text(text)
+
+vcgen_stroke = Path("extern/agg24-svn/src/agg_vcgen_stroke.cpp")
+text = vcgen_stroke.read_text()
+old = """            case end_poly2:
+                m_status = m_prev_status;
+                return path_cmd_end_poly | path_flags_close | path_flags_cw;
+"""
+new = """            case end_poly2:
+                m_status = m_prev_status;
+                return path_cmd_stop;
+"""
+if old in text:
+    text = text.replace(old, new)
+elif new not in text:
+    raise SystemExit("expected agg_vcgen_stroke.cpp end_poly2 block not found")
+vcgen_stroke.write_text(text)
+
+for rasterizer_path in [
+    Path("extern/agg24-svn/include/agg_rasterizer_scanline_aa.h"),
+    Path("extern/agg24-svn/include/agg_rasterizer_scanline_aa_nogamma.h"),
+    Path("extern/agg24-svn/include/agg_rasterizer_compound_aa.h"),
+]:
+    text = rasterizer_path.read_text()
+    old = "cover << (poly_subpixel_shift + 1)"
+    new = "cover * (1 << (poly_subpixel_shift + 1))"
+    if old in text:
+        text = text.replace(old, new)
+    elif new not in text:
+        raise SystemExit(f"expected AGG cover shift in {rasterizer_path}")
+    rasterizer_path.write_text(text)
 
 Path("lib/matplotlib/_version.py").write_text(f"version = '{VERSION}'\n")
 
