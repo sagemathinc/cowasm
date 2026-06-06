@@ -214,6 +214,37 @@ export default class DlopenManger {
     if (name == "__cxa_atexit") {
       return () => 0;
     }
+    if (name == "__cxa_begin_catch") {
+      return (ptr: number) => ptr;
+    }
+    if (name == "__cxa_find_matching_catch_2") {
+      return () => 0;
+    }
+    if (name == "__cxa_find_matching_catch_3") {
+      return (ptr: number) => ptr;
+    }
+    if (name == "__cxa_current_primary_exception") {
+      return () => 0;
+    }
+    if (name == "__cxa_uncaught_exceptions") {
+      return () => 0;
+    }
+    if (name == "__cxa_end_catch") {
+      return () => {};
+    }
+    if (
+      name == "__cxa_rethrow" ||
+      name == "__cxa_rethrow_primary_exception" ||
+      name == "__cxa_throw" ||
+      name == "__resumeException"
+    ) {
+      return () => {
+        throw Error(`${name} is not supported by the CoWasm C++ runtime`);
+      };
+    }
+    if (name == "getTempRet0") {
+      return () => 0;
+    }
     if (name == "mprotect") {
       return () => 0;
     }

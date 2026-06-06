@@ -7,6 +7,15 @@ include ../build/Makefile-rules
 USR = ${BUILD}/usr
 
 CPYTHON = $(shell cowasm-package-path @cowasm/cpython)
+PY_PACKAGING = $(shell cowasm-package-path @cowasm/py-packaging)
+PY_PYPARSING = $(shell cowasm-package-path @cowasm/py-pyparsing)
+PY_CYCLER = $(shell cowasm-package-path @cowasm/py-cycler)
+PY_FONTTOOLS = $(shell cowasm-package-path @cowasm/py-fonttools)
+PY_DATEUTIL = $(shell cowasm-package-path @cowasm/py-dateutil)
+PY_PYTZ = $(shell cowasm-package-path @cowasm/py-pytz)
+PY_SIX = $(shell cowasm-package-path @cowasm/py-six)
+PY_KIWISOLVER = $(shell cowasm-package-path @cowasm/py-kiwisolver)
+PY_MATPLOTLIB = $(shell cowasm-package-path @cowasm/py-matplotlib)
 
 ${BUILD}/fs-updated: node_modules
 	rm -rf ${USR}
@@ -35,6 +44,15 @@ ${BUILD}/fs-updated: node_modules
 	mkdir -p ${USR}/lib/python3.11
 	cd ${USR}/lib/python3.11 && unzip ${CPYTHON}/lib/dist/python-stdlib.zip
 	cd $(shell cowasm-package-path @cowasm/py-numpy) && tar -Jcf ${USR}/lib/python3.11/numpy.tar.xz numpy
+	cd ${PY_PACKAGING} && tar -Jcf ${USR}/lib/python3.11/packaging.tar.xz packaging
+	cd ${PY_PYPARSING} && tar -Jcf ${USR}/lib/python3.11/pyparsing.tar.xz pyparsing
+	cd ${PY_CYCLER} && tar -Jcf ${USR}/lib/python3.11/cycler.tar.xz cycler
+	cd ${PY_FONTTOOLS} && tar -Jcf ${USR}/lib/python3.11/fontTools.tar.xz fontTools
+	cd ${PY_DATEUTIL} && tar -Jcf ${USR}/lib/python3.11/dateutil.tar.xz dateutil
+	cd ${PY_PYTZ} && tar -Jcf ${USR}/lib/python3.11/pytz.tar.xz pytz
+	cd ${PY_SIX} && tar -Jcf ${USR}/lib/python3.11/six.tar.xz six
+	cd ${PY_KIWISOLVER} && tar -Jcf ${USR}/lib/python3.11/kiwisolver.tar.xz kiwisolver
+	cd ${PY_MATPLOTLIB} && tar -Jcf ${USR}/lib/python3.11/matplotlib.tar.xz matplotlib mpl_toolkits pylab.py
 
 	touch ${BUILD}/fs-updated
 

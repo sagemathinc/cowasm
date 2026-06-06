@@ -59,6 +59,9 @@ importers:
       '@cowasm/less':
         specifier: workspace:*
         version: link:../less
+      '@cowasm/libcxx':
+        specifier: workspace:*
+        version: link:../libcxx
       '@cowasm/lua':
         specifier: workspace:*
         version: link:../lua
@@ -71,9 +74,36 @@ importers:
       '@cowasm/ncurses':
         specifier: workspace:*
         version: link:../ncurses
+      '@cowasm/py-cycler':
+        specifier: workspace:*
+        version: link:../../python/py-cycler
+      '@cowasm/py-dateutil':
+        specifier: workspace:*
+        version: link:../../python/py-dateutil
+      '@cowasm/py-fonttools':
+        specifier: workspace:*
+        version: link:../../python/py-fonttools
+      '@cowasm/py-kiwisolver':
+        specifier: workspace:*
+        version: link:../../python/py-kiwisolver
+      '@cowasm/py-matplotlib':
+        specifier: workspace:*
+        version: link:../../python/py-matplotlib
       '@cowasm/py-numpy':
         specifier: workspace:*
         version: link:../../python/py-numpy
+      '@cowasm/py-packaging':
+        specifier: workspace:*
+        version: link:../../python/py-packaging
+      '@cowasm/py-pyparsing':
+        specifier: workspace:*
+        version: link:../../python/py-pyparsing
+      '@cowasm/py-pytz':
+        specifier: workspace:*
+        version: link:../../python/py-pytz
+      '@cowasm/py-six':
+        specifier: workspace:*
+        version: link:../../python/py-six
       '@cowasm/rogue':
         specifier: workspace:*
         version: link:../rogue

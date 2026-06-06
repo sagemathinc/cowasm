@@ -17,8 +17,8 @@ function runDash(command: string): string {
 
 test("filesystem bundle size stays in the expected range", () => {
   const size = statSync(fsZipPath).size;
-  expect(size).toBeGreaterThan(10 * 1024 * 1024);
-  expect(size).toBeLessThan(16 * 1024 * 1024);
+  expect(size).toBeGreaterThan(20 * 1024 * 1024);
+  expect(size).toBeLessThan(32 * 1024 * 1024);
 });
 
 test("filesystem bundle contains expected terminal commands", () => {
@@ -40,7 +40,16 @@ test("filesystem bundle contains expected terminal commands", () => {
     "bin/tar",
     "bin/wc",
     "bin/xz",
+    "lib/python3.11/cycler.tar.xz",
+    "lib/python3.11/dateutil.tar.xz",
+    "lib/python3.11/fontTools.tar.xz",
+    "lib/python3.11/kiwisolver.tar.xz",
+    "lib/python3.11/matplotlib.tar.xz",
     "lib/python3.11/numpy.tar.xz",
+    "lib/python3.11/packaging.tar.xz",
+    "lib/python3.11/pyparsing.tar.xz",
+    "lib/python3.11/pytz.tar.xz",
+    "lib/python3.11/six.tar.xz",
   ]) {
     expect(fsZip).toContain(path);
   }
@@ -54,6 +63,16 @@ test("bundled shell can execute coreutils commands such as factor", () => {
 test("bundled shell can execute Python from /usr/bin/python", () => {
   const output = runDash("python -c 'print(6*7)'");
   expect(output.trim()).toBe("42");
+});
+
+test("bundled shell can import matplotlib and construct a plot", () => {
+  const output = runDash(
+    "python -c 'import matplotlib; matplotlib.use(\"Agg\"); " +
+      "import matplotlib.pyplot as plt; print(matplotlib.__version__); " +
+      "plt.plot([1, 2, 3], [1, 4, 9]); print(\"plot ok\")'"
+  );
+  expect(output).toContain("3.6.2\n");
+  expect(output).toContain("plot ok\n");
 });
 
 test("bundled shell can execute sqlite3", () => {
