@@ -55,6 +55,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	perl -0pi -e 's/\n\tlibtermkey\/driver-ti\.c \\\n/\n/' ${BUILD_WASM}/Makefile
 	perl -0pi -e 's/(static struct TermKeyDriver \*drivers\[\] = \{\n)  &termkey_driver_ti,\n/$${1}#if CONFIG_CURSES\n  \&termkey_driver_ti,\n#endif\n/' ${BUILD_WASM}/libtermkey/termkey.c
 	perl -0pi -e 's/#define UI_TERMKEY_FLAGS TERMKEY_FLAG_UTF8/#define UI_TERMKEY_FLAGS (TERMKEY_FLAG_UTF8|TERMKEY_FLAG_NOTERMIOS)/' ${BUILD_WASM}/ui-terminal-vt100.c
+	perl -0pi -e 's/(for \(int y = 0; y < h; y\+\+\) \{\n)/$${1}\t\tbuffer_appendf(buf, "\\x1b[%d;1H", y + 1);\n/' ${BUILD_WASM}/ui-terminal-vt100.c
 	touch ${BUILD_WASM}/.patched
 
 
