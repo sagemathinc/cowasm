@@ -14,6 +14,8 @@ export function getEnv(prefix: string = "/") {
   const USR = join(prefix, "usr");
 
   const ENV = {
+    HOME: "/tmp",
+    MPLCONFIGDIR: "/tmp/matplotlib",
     TERMCAP: join(USR, "share", "termcap"),
     PYTHONHOME: USR,
     PATH: join(USR, "bin") + ":.",

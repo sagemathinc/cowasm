@@ -89,7 +89,7 @@ ${BIN}/dash-wasm: ${CWD}/bin/dash-wasm
 # Node related makefile wrapping...
 ###
 
-${DIST}/.built: node_modules
+${DIST}/.built: node_modules package.json tsconfig.json src/*.ts src/test/*.ts
 	mkdir -p ${DIST}
 	pnpm exec tsc
 	touch ${DIST}/.built

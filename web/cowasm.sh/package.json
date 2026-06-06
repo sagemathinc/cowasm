@@ -15,6 +15,7 @@
     "preinstall": "npx only-allow pnpm",
     "clean": "rm -rf dist node_modules",
     "build": "webpack",
+    "test": "node test/smoke.js",
     "watch": "webpack --watch",
     "serve": "webpack serve",
     "http": "http-server dist",
