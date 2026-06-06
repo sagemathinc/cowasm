@@ -52,6 +52,9 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	echo '#include "posix-wasm.h"' > ${BUILD_WASM}/bits/setjmp.h
 	echo '#include "posix-wasm.h"' | cat - ${BUILD_WASM}/vis.h > ${BUILD_WASM}/tmp && mv ${BUILD_WASM}/tmp ${BUILD_WASM}/vis.h
 	echo '#include "posix-wasm.h"' | cat - ${BUILD_WASM}/text-io.c > ${BUILD_WASM}/tmp && mv ${BUILD_WASM}/tmp ${BUILD_WASM}/text-io.c
+	perl -0pi -e 's/\n\tlibtermkey\/driver-ti\.c \\\n/\n/' ${BUILD_WASM}/Makefile
+	perl -0pi -e 's/(static struct TermKeyDriver \*drivers\[\] = \{\n)  &termkey_driver_ti,\n/$${1}#if CONFIG_CURSES\n  \&termkey_driver_ti,\n#endif\n/' ${BUILD_WASM}/libtermkey/termkey.c
+	perl -0pi -e 's/#define UI_TERMKEY_FLAGS TERMKEY_FLAG_UTF8/#define UI_TERMKEY_FLAGS (TERMKEY_FLAG_UTF8|TERMKEY_FLAG_NOTERMIOS)/' ${BUILD_WASM}/ui-terminal-vt100.c
 	touch ${BUILD_WASM}/.patched
 
 
@@ -67,7 +70,17 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.patched
 			CFLAGS="-v -Oz -fvisibility-main -I. -I${POSIX_WASM} -I${NCURSES_WASM}/include -I${NCURSES_WASM}/include/ncurses -I${LUA_WASM}/include" \
 			LDFLAGS="-L${LUA_WASM}/lib -llua -L${NCURSES_WASM}/lib -lncurses " \
 			./configure --prefix=${DIST_WASM} \
-		&&	make -j8 viz
+		&&	make -j8 viz \
+			CONFIG_CURSES=0 \
+			CONFIG_LUA=0 \
+			CONFIG_LPEG=0 \
+			CFLAGS_CURSES= \
+			LDFLAGS_CURSES= \
+			CFLAGS_LIBC=-DHAVE_MEMRCHR=1 \
+			CFLAGS_LUA= \
+			LDFLAGS_LUA= \
+			CFLAGS_LPEG= \
+			LDFLAGS_LPEG=
 	mkdir -p ${DIST_WASM}/bin
 	cp ${BUILD_WASM}/viz ${DIST_WASM}/bin/
 	touch ${DIST_WASM}/.built
