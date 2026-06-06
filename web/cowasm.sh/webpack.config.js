@@ -15,10 +15,15 @@ const { resolve } = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const production = process.env.NODE_ENV == "production";
+const entry = process.env.COWASM_SH_TERMINAL_SMOKE
+  ? "./src/terminal-smoke.ts"
+  : process.env.COWASM_SH_SMOKE
+    ? "./src/smoke.ts"
+    : "./src/index.ts";
 
 module.exports = {
   mode: production ? "production" : "development",
-  entry: process.env.COWASM_SH_SMOKE ? "./src/smoke.ts" : "./src/index.ts",
+  entry,
   devtool: "inline-source-map",
   output: {
     filename: production ? "[name].[contenthash].bundle.js" : "[name].bundle.js",

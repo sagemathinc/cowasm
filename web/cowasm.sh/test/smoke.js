@@ -131,8 +131,10 @@ function connectDevtools(webSocketDebuggerUrl) {
   return { send, close: () => ws.close() };
 }
 
-async function waitForSmokeResult() {
-  const targets = await waitForJson(`http://127.0.0.1:${debugPort}/json/list`);
+async function waitForSmokeResult(smokeDebugPort) {
+  const targets = await waitForJson(
+    `http://127.0.0.1:${smokeDebugPort}/json/list`
+  );
   const page = targets.find((target) => target.type == "page");
   if (!page?.webSocketDebuggerUrl) {
     throw Error(`no Chromium page target found: ${JSON.stringify(targets)}`);
@@ -155,7 +157,8 @@ async function waitForSmokeResult() {
       const value = status.result?.value;
       if (value == "pass") {
         const details = await devtools.send("Runtime.evaluate", {
-          expression: "document.body.textContent",
+          expression:
+            "document.body.dataset.cowasmSmokeDetails || document.body.textContent",
           returnByValue: true,
         });
         console.log(details.result?.value);
@@ -163,7 +166,8 @@ async function waitForSmokeResult() {
       }
       if (value == "fail") {
         const details = await devtools.send("Runtime.evaluate", {
-          expression: "document.body.textContent",
+          expression:
+            "document.body.dataset.cowasmSmokeDetails || document.body.textContent",
           returnByValue: true,
         });
         throw Error(`cowasm.sh smoke test failed: ${details.result?.value}`);
@@ -181,19 +185,10 @@ async function waitForSmokeResult() {
   }
 }
 
-async function main() {
-  if (!existsSync(chromium)) {
-    throw Error(`Chromium executable not found: ${chromium}`);
-  }
-
-  const dashWasmDist = join(dashWasmRoot, "dist");
-  await run(
-    "make",
-    [join(dashWasmDist, ".built"), join(dashWasmDist, "fs.zip")],
-    { cwd: dashWasmRoot, stdio: "inherit" }
-  );
-
-  const webpackEnv = { ...process.env, COWASM_SH_SMOKE: "1" };
+async function runSmoke(name, smokeEnv, debugPortOffset = 0) {
+  console.log(`running ${name} smoke`);
+  const smokeDebugPort = debugPort + debugPortOffset;
+  const webpackEnv = { ...process.env, ...smokeEnv };
   delete webpackEnv.COCALC_PROJECT_ID;
   delete webpackEnv.COCALC_BROWSER_ID;
   await run("pnpm", ["exec", "webpack"], {
@@ -208,7 +203,7 @@ async function main() {
     "--no-sandbox",
     "--disable-gpu",
     "--disable-dev-shm-usage",
-    `--remote-debugging-port=${debugPort}`,
+    `--remote-debugging-port=${smokeDebugPort}`,
     `--user-data-dir=${userDataDir}`,
     `http://127.0.0.1:${port}/`,
   ]);
@@ -216,7 +211,7 @@ async function main() {
     browser.on("close", resolve);
   });
   try {
-    await waitForSmokeResult();
+    await waitForSmokeResult(smokeDebugPort);
   } finally {
     browser.kill();
     await Promise.race([browserClosed, delay(2000)]);
@@ -228,6 +223,22 @@ async function main() {
       retryDelay: 100,
     });
   }
+}
+
+async function main() {
+  if (!existsSync(chromium)) {
+    throw Error(`Chromium executable not found: ${chromium}`);
+  }
+
+  const dashWasmDist = join(dashWasmRoot, "dist");
+  await run(
+    "make",
+    [join(dashWasmDist, ".built"), join(dashWasmDist, "fs.zip")],
+    { cwd: dashWasmRoot, stdio: "inherit" }
+  );
+
+  await runSmoke("runtime", { COWASM_SH_SMOKE: "1" });
+  await runSmoke("terminal", { COWASM_SH_TERMINAL_SMOKE: "1" }, 1);
 }
 
 main().catch((err) => {

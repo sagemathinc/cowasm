@@ -59,6 +59,7 @@ export default async function terminal(element: HTMLDivElement) {
   });
   finishLoading();
   (window as any).dash = dash;
+  (window as any).term = term;
   const t = new Date();
   console.log("dash.init done; time = ", new Date().valueOf() - t.valueOf());
   setTheme(term, "solarized-light");
@@ -72,6 +73,9 @@ export default async function terminal(element: HTMLDivElement) {
     const text = await navigator.clipboard?.readText().catch(() => "");
     if (!text) {
       return;
+    }
+    if (text.includes("\r") || text.includes("\n")) {
+      shellAtPrompt = false;
     }
     dash.kernel.writeToStdin(text);
   };
