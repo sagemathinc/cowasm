@@ -8,6 +8,7 @@ import { join } from "path";
 export interface Options {
   interactive?: boolean;
   noStdio?: boolean;
+  env?: { [name: string]: string };
 }
 
 export function getEnv(prefix: string = "/") {

@@ -17,7 +17,7 @@ export const path = __dirname;
 export async function syncDash(opts?: Options): Promise<DashWasmSync> {
   log("creating sync CoWasm kernel...");
   const fs = getFilesystem(opts);
-  const kernel = await syncKernel({ env: ENV, fs });
+  const kernel = await syncKernel({ env: { ...ENV, ...opts?.env }, fs });
   log("done");
   return new DashWasmSync(kernel, dash_wasm);
 }
@@ -26,7 +26,7 @@ export async function asyncDash(opts?: Options): Promise<DashWasmAsync> {
   log("creating async CoWasm kernel...");
   const fs = getFilesystem(opts);
   const kernel = await asyncKernel({
-    env: ENV,
+    env: { ...ENV, ...opts?.env },
     fs,
     noStdio: opts?.noStdio,
   });

@@ -9,15 +9,20 @@ import dashWasm from "dash-wasm";
 
 export default async function terminal(element: HTMLDivElement) {
   console.log("creating dashWasm");
-  const dash = await dashWasm();
-  (window as any).dash = dash;
-  const t = new Date();
-  console.log("dash.init done; time = ", new Date().valueOf() - t.valueOf());
   const term = new Terminal({ convertEol: true });
   term.open(element);
   // @ts-ignore
   element.children[0].style.padding = "15px";
   term.resize(128, 40);
+  const dash = await dashWasm({
+    env: {
+      COLUMNS: `${term.cols}`,
+      LINES: `${term.rows}`,
+    },
+  });
+  (window as any).dash = dash;
+  const t = new Date();
+  console.log("dash.init done; time = ", new Date().valueOf() - t.valueOf());
   setTheme(term, "solarized-light");
 
   term.options.allowProposedApi = true;

@@ -17,7 +17,7 @@ export default async function asyncDash(
   log("creating async CoWasm kernel...");
   const fs = getFilesystem(opts);
   const kernel = await asyncKernel({
-    env: ENV,
+    env: { ...ENV, ...opts?.env },
     fs,
   });
   return new DashWasmAsync(kernel, DASH);
