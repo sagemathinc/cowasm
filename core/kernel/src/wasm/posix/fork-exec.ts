@@ -39,6 +39,7 @@ export default function fork_exec({
   run,
   fs,
   child_process,
+  getcwd,
 }) {
   function isWasm(filename: string): boolean {
     const fd = fs.openSync(filename, "r");
@@ -62,6 +63,29 @@ export default function fork_exec({
     } catch (err) {
       return err.status;
     }
+  }
+
+  function resolveVizFilenames(argv: string[]): string[] {
+    const command = argv[0]?.split("/").pop();
+    if (command != "vi" && command != "viz") {
+      return argv;
+    }
+    let cwd = "/";
+    try {
+      cwd = getcwd?.() ?? cwd;
+    } catch (_) {}
+    return argv.map((arg, i) => {
+      if (
+        i == 0 ||
+        arg == "--" ||
+        arg.startsWith("/") ||
+        arg.startsWith("-") ||
+        arg.startsWith("+")
+      ) {
+        return arg;
+      }
+      return resolve(cwd, arg);
+    });
   }
 
   function real_fd(virtual_fd: number): number {
@@ -239,7 +263,7 @@ export default function fork_exec({
     // through some amazing "magic":
     // extern int cowasm_vforkexec(char **argv, const char *path);
     cowasm_vforkexec: (argvPtr: number, pathPtr: number = 0): number => {
-      const argv = recv.arrayOfStrings(argvPtr);
+      let argv = recv.arrayOfStrings(argvPtr);
       const path = pathPtr ? recv.string(pathPtr) : "";
       log("cowasm_vforkexec", argv);
       if (!argv[0]) {
@@ -282,6 +306,7 @@ export default function fork_exec({
         const wasm = isWasm(argv[0]);
         log("isWasm = ", wasm);
         if (wasm) {
+          argv = resolveVizFilenames(argv);
           log("running wasm executable", argv[0]);
           return run(argv);
         } else if (child_process != null) {

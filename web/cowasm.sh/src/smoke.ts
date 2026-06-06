@@ -69,7 +69,6 @@ async function runInteractiveDash(
 
   try {
     const output = () => stdout + stderr;
-    await dash.kernel.callWithString("chdir", "/home/user");
     dash.terminal();
     await waitUntil(() => output().includes("(cowasm)$ "));
     if (!output().includes("(cowasm)$ ")) {
@@ -121,14 +120,18 @@ async function runPythonInterruptSmoke(): Promise<void> {
 async function main() {
   setStatus("running");
   try {
+    setStatus("running", "home");
     await runInteractiveDash("cd; pwd", "/home/user");
+    setStatus("running", "child cwd");
     await runInteractiveDash(
       "rm -f /home/user/cwd-test; cd /home/user; " +
         "python -c 'open(\"cwd-test\", \"w\").write(\"ok\")'; " +
         "test -f /home/user/cwd-test && echo cwd-ok",
       "cwd-ok"
     );
+    setStatus("running", "pipe");
     await runInteractiveDash('echo "hi" | wc -l', "1");
+    setStatus("running", "matplotlib");
     await runDash(
       "rm -f /tmp/cowasm-sh-plot.png; " +
         "python -c \"import matplotlib; matplotlib.use('Agg'); " +
@@ -138,6 +141,7 @@ async function main() {
         "test -s /tmp/cowasm-sh-plot.png; " +
         "python -c \"import sys; sys.exit(0 if open('/tmp/cowasm-sh-plot.png', 'rb').read(8) == b'\\\\x89PNG\\\\r\\\\n\\\\x1a\\\\n' else 1)\""
     );
+    setStatus("running", "interrupt");
     await runPythonInterruptSmoke();
     setStatus("pass", "pipe, matplotlib savefig and python interrupt ok");
   } catch (err) {

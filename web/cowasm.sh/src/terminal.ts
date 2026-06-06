@@ -76,6 +76,23 @@ export default async function terminal(element: HTMLDivElement) {
       dash.kernel.writeToStdin("\x03");
       return false;
     }
+    if (
+      event.type == "keydown" &&
+      event.key.toLowerCase() == "v" &&
+      event.ctrlKey &&
+      !event.altKey &&
+      !event.metaKey
+    ) {
+      navigator.clipboard
+        ?.readText()
+        .then((text) => {
+          if (text) {
+            dash.kernel.writeToStdin(text);
+          }
+        })
+        .catch(() => undefined);
+      return false;
+    }
     return true;
   });
 
@@ -103,8 +120,8 @@ export default async function terminal(element: HTMLDivElement) {
     term.write(data);
   });
   console.log("starting terminal");
-  await dash.kernel.callWithString("chdir", "/home/user");
   const terminalPromise = dash.terminal();
+  await dash.kernel.writeToStdin("mkdir -p /home/user && cd /home/user\n");
   const r = await terminalPromise;
   console.log("terminal terminated", r);
   dash.kernel.terminate();

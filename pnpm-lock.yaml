@@ -1059,11 +1059,11 @@ importers:
         specifier: ^4.9.3
         version: 4.15.2(webpack-cli@4.10.0)(webpack@5.97.1)
       xterm:
-        specifier: ^5.0.0
-        version: 5.3.0
+        specifier: npm:@cocalc/xterm@5.5.0-cocalc.2
+        version: '@cocalc/xterm@5.5.0-cocalc.2'
       xterm-addon-web-links:
         specifier: ^0.7.0
-        version: 0.7.0(xterm@5.3.0)
+        version: 0.7.0(@cocalc/xterm@5.5.0-cocalc.2)
 
   web/terminal:
     devDependencies:
@@ -1288,6 +1288,9 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
+
+  '@cocalc/xterm@5.5.0-cocalc.2':
+    resolution: {integrity: sha512-FXvj56tDYJb5et2lgyk9dIT/05SjY/N/DwFgPPVw28OfuNwIhRmcvraUaYUot7mrFKGt028QAQI8JK0YBsEiKA==}
 
   '@cowasm/kernel@0.27.9':
     resolution: {integrity: sha512-KyDBifQ1dZGir5NAJ6I3QIxN8hX6FV/j/k30o7iJIiN5qxOy6WU9cm4RpqoyW20Nsi/cTX8VWXS3ulJaORaaZw==}
@@ -5211,6 +5214,8 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
+  '@cocalc/xterm@5.5.0-cocalc.2': {}
+
   '@cowasm/kernel@0.27.9':
     dependencies:
       awaiting: 3.0.0
@@ -6093,7 +6098,7 @@ snapshots:
   '@webpack-cli/configtest@1.2.0(webpack-cli@4.10.0)(webpack@5.97.1)':
     dependencies:
       webpack: 5.97.1(webpack-cli@4.10.0)
-      webpack-cli: 4.10.0(webpack-bundle-analyzer@4.10.2)(webpack-dev-server@4.15.2)(webpack@5.97.1)
+      webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.97.1)
 
   '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4)(webpack@5.97.1)':
     dependencies:
@@ -6103,7 +6108,7 @@ snapshots:
   '@webpack-cli/info@1.5.0(webpack-cli@4.10.0)':
     dependencies:
       envinfo: 7.14.0
-      webpack-cli: 4.10.0(webpack-bundle-analyzer@4.10.2)(webpack-dev-server@4.15.2)(webpack@5.97.1)
+      webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.97.1)
 
   '@webpack-cli/info@2.0.2(webpack-cli@5.1.4)(webpack@5.97.1)':
     dependencies:
@@ -6112,9 +6117,9 @@ snapshots:
 
   '@webpack-cli/serve@1.7.0(webpack-cli@4.10.0)(webpack-dev-server@4.15.2)':
     dependencies:
-      webpack-cli: 4.10.0(webpack-bundle-analyzer@4.10.2)(webpack-dev-server@4.15.2)(webpack@5.97.1)
+      webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.97.1)
     optionalDependencies:
-      webpack-dev-server: 4.15.2(debug@4.4.0)(webpack-cli@4.10.0)(webpack@5.97.1)
+      webpack-dev-server: 4.15.2(webpack-cli@4.10.0)(webpack@5.97.1)
 
   '@webpack-cli/serve@2.0.5(webpack-cli@5.1.4)(webpack@5.97.1)':
     dependencies:
@@ -6766,7 +6771,7 @@ snapshots:
       postcss-value-parser: 4.2.0
       semver: 7.6.3
     optionalDependencies:
-      webpack: 5.97.1(webpack-cli@5.1.4)
+      webpack: 5.97.1(webpack-cli@4.10.0)
 
   css-select@4.3.0:
     dependencies:
@@ -7271,6 +7276,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  follow-redirects@1.15.9: {}
+
   follow-redirects@1.15.9(debug@4.4.0):
     optionalDependencies:
       debug: 4.4.0
@@ -7561,7 +7568,7 @@ snapshots:
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
-      webpack: 5.97.1(webpack-cli@5.1.4)
+      webpack: 5.97.1(webpack-cli@4.10.0)
 
   htmlparser2@6.1.0:
     dependencies:
@@ -7599,6 +7606,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  http-proxy-middleware@2.0.7(@types/express@4.17.21):
+    dependencies:
+      '@types/http-proxy': 1.17.15
+      http-proxy: 1.18.1
+      is-glob: 4.0.3
+      is-plain-obj: 3.0.0
+      micromatch: 4.0.8
+    optionalDependencies:
+      '@types/express': 4.17.21
+    transitivePeerDependencies:
+      - debug
+
   http-proxy-middleware@2.0.7(@types/express@4.17.21)(debug@4.4.0):
     dependencies:
       '@types/http-proxy': 1.17.15
@@ -7608,6 +7627,14 @@ snapshots:
       micromatch: 4.0.8
     optionalDependencies:
       '@types/express': 4.17.21
+    transitivePeerDependencies:
+      - debug
+
+  http-proxy@1.18.1:
+    dependencies:
+      eventemitter3: 4.0.7
+      follow-redirects: 1.15.9
+      requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
 
@@ -7626,7 +7653,7 @@ snapshots:
       corser: 2.0.1
       he: 1.2.0
       html-encoding-sniffer: 3.0.0
-      http-proxy: 1.18.1(debug@4.4.0)
+      http-proxy: 1.18.1
       mime: 1.6.0
       minimist: 1.2.8
       opener: 1.5.2
@@ -8477,7 +8504,7 @@ snapshots:
       url: 0.11.4
       util: 0.12.5
       vm-browserify: 1.1.2
-      webpack: 5.97.1(webpack-cli@5.1.4)
+      webpack: 5.97.1(webpack-cli@4.10.0)
 
   node-releases@2.0.18: {}
 
@@ -9311,7 +9338,7 @@ snapshots:
 
   style-loader@3.3.4(webpack@5.97.1):
     dependencies:
-      webpack: 5.97.1(webpack-cli@5.1.4)
+      webpack: 5.97.1(webpack-cli@4.10.0)
 
   sudo-prompt@9.2.1: {}
 
@@ -9355,7 +9382,7 @@ snapshots:
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.37.0
-      webpack: 5.97.1(webpack-cli@5.1.4)
+      webpack: 5.97.1(webpack-cli@4.10.0)
 
   terser@5.37.0:
     dependencies:
@@ -9415,7 +9442,7 @@ snapshots:
       semver: 7.6.3
       source-map: 0.7.4
       typescript: 4.9.5
-      webpack: 5.97.1(webpack-cli@5.1.4)
+      webpack: 5.97.1(webpack-cli@4.10.0)
 
   tslib@2.8.1: {}
 
@@ -9693,7 +9720,7 @@ snapshots:
       express: 4.21.2
       graceful-fs: 4.2.11
       html-entities: 2.5.2
-      http-proxy-middleware: 2.0.7(@types/express@4.17.21)(debug@4.4.0)
+      http-proxy-middleware: 2.0.7(@types/express@4.17.21)
       ipaddr.js: 2.2.0
       launch-editor: 2.9.1
       open: 8.4.2
@@ -9749,7 +9776,7 @@ snapshots:
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     optionalDependencies:
-      webpack-cli: 4.10.0(webpack-bundle-analyzer@4.10.2)(webpack-dev-server@4.15.2)(webpack@5.97.1)
+      webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.97.1)
     transitivePeerDependencies:
       - '@swc/core'
       - esbuild
@@ -9851,6 +9878,10 @@ snapshots:
   xmlbuilder@15.1.1: {}
 
   xtend@4.0.2: {}
+
+  xterm-addon-web-links@0.7.0(@cocalc/xterm@5.5.0-cocalc.2):
+    dependencies:
+      xterm: '@cocalc/xterm@5.5.0-cocalc.2'
 
   xterm-addon-web-links@0.7.0(xterm@5.3.0):
     dependencies:
