@@ -26,6 +26,12 @@ export default async function asyncDash(
 function getFilesystem(_opts?: Options): FileSystemSpec[] {
   return [
     {
+      type: "mem",
+      contents: {
+        "/home/user/.profile": "",
+      },
+    },
+    {
       type: "zipurl",
       zipurl: fs_zip,
       mountpoint: USR,

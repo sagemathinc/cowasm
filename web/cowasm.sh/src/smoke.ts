@@ -57,7 +57,7 @@ async function runInteractiveDash(
   command: string,
   expectedOutput: string
 ): Promise<void> {
-  const dash = await dashWasm();
+  const dash = await dashWasm({ env: { HOME: "/home/user" } });
   let stdout = "";
   let stderr = "";
   dash.kernel.on("stdout", (data) => {
@@ -120,6 +120,7 @@ async function runPythonInterruptSmoke(): Promise<void> {
 async function main() {
   setStatus("running");
   try {
+    await runInteractiveDash("cd; pwd", "/home/user");
     await runInteractiveDash('echo "hi" | wc -l', "1");
     await runDash(
       "rm -f /tmp/cowasm-sh-plot.png; " +
