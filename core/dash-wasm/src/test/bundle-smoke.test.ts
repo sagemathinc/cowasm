@@ -38,6 +38,8 @@ test("filesystem bundle contains expected terminal commands", () => {
     "bin/sort",
     "bin/sqlite3",
     "bin/tar",
+    "bin/vi",
+    "bin/viz",
     "bin/wc",
     "bin/xz",
     "lib/python3.11/cycler.tar.xz",
@@ -143,6 +145,14 @@ test("bundled shell can execute basic file commands", () => {
 
 test("bundled shell can execute less in non-interactive version mode", () => {
   expect(runDash("less --version")).toContain("less 608");
+});
+
+test("bundled shell provides vi as a viz alias", () => {
+  const viPath = runDash("command -v vi").trim();
+  expect(viPath).toMatch(/\/bin\/vi$/);
+  expect(runDash(`python -c 'import os; print(os.path.getsize("${viPath}") > 100000)'`)).toBe(
+    "True\n"
+  );
 });
 
 test("bundled shell supports file redirection", () => {

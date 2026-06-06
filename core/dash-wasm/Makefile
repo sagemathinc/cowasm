@@ -43,6 +43,7 @@ ${BUILD}/fs-updated: node_modules ${PYTHON_BUNDLE_INPUTS}
 	cp -v $(shell cowasm-package-path @cowasm/lua)/bin/lua ${USR}/bin
 	cp -v $(shell cowasm-package-path @cowasm/lzma)/bin/xz ${USR}/bin
 	cp -v $(shell cowasm-package-path @cowasm/viz)/bin/viz ${USR}/bin
+	cp -v ${USR}/bin/viz ${USR}/bin/vi
 	cp -v $(shell cowasm-package-path @cowasm/man)/bin/man ${USR}/bin
 	cp -v $(shell cowasm-package-path @cowasm/ncurses)/bin/clear ${USR}/bin
 	cp -v $(shell cowasm-package-path @cowasm/ncurses)/bin/hanoi ${USR}/bin
