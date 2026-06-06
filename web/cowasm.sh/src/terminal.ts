@@ -76,23 +76,6 @@ export default async function terminal(element: HTMLDivElement) {
       dash.kernel.writeToStdin("\x03");
       return false;
     }
-    if (
-      event.type == "keydown" &&
-      event.key.toLowerCase() == "v" &&
-      event.ctrlKey &&
-      !event.altKey &&
-      !event.metaKey
-    ) {
-      navigator.clipboard
-        ?.readText()
-        .then((text) => {
-          if (text) {
-            dash.kernel.writeToStdin(text);
-          }
-        })
-        .catch(() => undefined);
-      return false;
-    }
     return true;
   });
 
