@@ -932,7 +932,7 @@ export default class WASI {
       fd_read: wrap(
         (fd: number, iovs: number, iovsLen: number, nread: number) => {
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_READ);
-          const IS_STDIN = fd == WASI_STDIN_FILENO;
+          const IS_STDIN = fd == WASI_STDIN_FILENO && stats.path == "/dev/stdin";
           let read = 0;
           //           logToFile(
           //             `fd_read: ${IS_STDIN}, ${JSON.stringify(stats, (_, value) =>

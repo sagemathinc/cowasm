@@ -1,16 +1,19 @@
 --- orig/src/eval.c
 +++ mod/src/eval.c
-@@ -36,6 +36,9 @@
+@@ -36,6 +36,12 @@
  #include <signal.h>
  #include <unistd.h>
  #include <sys/types.h>
 +#ifdef __cowasm__
++#include <errno.h>
 +#include <fcntl.h>
++#include <sys/stat.h>
++#include <string.h>
 +#endif
  
  /*
   * Evaluate a command.
-@@ -563,6 +566,55 @@
+@@ -563,6 +569,58 @@
  	pipelen = 0;
  	for (lp = n->npipe.cmdlist ; lp ; lp = lp->next)
  		pipelen++;
@@ -23,25 +26,28 @@
 +		int save0 = -1, save1 = -1;
 +		int infd = -1, outfd = -1;
 +
++		mkdir("/tmp", 0777);
++
 +		for (lp = n->npipe.cmdlist ; lp ; lp = lp->next) {
 +			if (prevpath) {
 +				infd = open(prevpath, O_RDONLY);
 +				if (infd < 0)
-+					sh_error("Pipe input open failed");
++					sh_error("Pipe input open failed: %s", strerror(errno));
 +				save0 = savefd(0, 0);
 +				dup2(infd, 0);
 +				close(infd);
 +			}
 +			if (lp->next) {
-+				outfd = mkstemp(nextpath);
++				outfd = open(nextpath, O_CREAT | O_TRUNC | O_RDWR, 0600);
 +				if (outfd < 0)
-+					sh_error("Pipe output open failed");
++					sh_error("Pipe output open failed: %s", strerror(errno));
 +				save1 = savefd(1, 1);
 +				dup2(outfd, 1);
 +				close(outfd);
 +			}
 +
 +			status = evaltree(lp->n, flags & EV_TESTED);
++			flushall();
 +
 +			if (lp->next) {
 +				dup2(save1, 1);
