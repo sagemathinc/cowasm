@@ -28,6 +28,7 @@ module.exports = {
   output: {
     filename: production ? "[name].[contenthash].bundle.js" : "[name].bundle.js",
     path: resolve(__dirname, "dist"),
+    publicPath: "auto",
     clean: true,
   },
   plugins: [
@@ -79,8 +80,9 @@ if (process.env.SW) {
 if (process.env.COCALC_PROJECT_ID && process.env.NODE_ENV != "production") {
   const port = module.exports.devServer.port ?? 8080;
   const basePath = `/${process.env.COCALC_PROJECT_ID}/port/${port}/`;
-  // Working in a cocalc project, so do a bit more to support the base path under.
-  module.exports.output.publicPath = basePath;
+  // Working in a cocalc project, so do a bit more to support the dev-server
+  // websocket through the proxy. Runtime assets still use publicPath="auto",
+  // which also works for a static http-server at 127.0.0.1.
   module.exports.devServer.allowedHosts = "all";
   module.exports.devServer.host = "0.0.0.0";
   module.exports.devServer.client = {
