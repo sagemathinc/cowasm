@@ -64,8 +64,42 @@ function decodeBase64(data: string): Uint8Array {
   return bytes;
 }
 
+function disableBrowserInputRestore(element: HTMLElement): void {
+  const textarea = element.querySelector(
+    ".xterm-helper-textarea"
+  ) as HTMLTextAreaElement | null;
+  if (!textarea) {
+    return;
+  }
+  textarea.value = "";
+  textarea.name = `cowasm-terminal-input-${Date.now()}-${Math.random()}`;
+  textarea.autocomplete = "off";
+  textarea.autocapitalize = "off";
+  textarea.spellcheck = false;
+  textarea.setAttribute("autocorrect", "off");
+  window.addEventListener("pagehide", () => {
+    textarea.value = "";
+  });
+}
+
+async function removeStaleServiceWorkerFallback(): Promise<void> {
+  if (!crossOriginIsolated || !navigator.serviceWorker) {
+    return;
+  }
+  delete localStorage["python-wasm-service-worker-broken"];
+  const registrations = await navigator.serviceWorker.getRegistrations();
+  await Promise.all(
+    registrations
+      .filter((registration) =>
+        registration.active?.scriptURL.includes("service-worker.js")
+      )
+      .map((registration) => registration.unregister())
+  );
+}
+
 export default async function terminal(element: HTMLDivElement) {
   console.log("creating dashWasm");
+  await removeStaleServiceWorkerFallback();
   const finishLoading = showLoading(element);
   const toolbar = document.createElement("div");
   toolbar.style.cssText =
@@ -86,6 +120,7 @@ export default async function terminal(element: HTMLDivElement) {
   element.appendChild(toolbar);
   const term = new Terminal({ convertEol: true });
   term.open(element);
+  disableBrowserInputRestore(element);
   term.focus();
   const terminalElement = element.querySelector(".terminal") as HTMLDivElement;
   terminalElement.style.padding = "15px";
