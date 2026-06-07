@@ -111,6 +111,11 @@ async function main() {
       if (!terminalText().includes("persisted across reload")) {
         throw Error(`persisted file did not restore: ${terminalText()}`);
       }
+      await pasteToTerminal("echo reload-ui-alive\n");
+      await waitUntil(() => terminalText().includes("reload-ui-alive"));
+      if (!terminalText().includes("reload-ui-alive")) {
+        throw Error(`terminal input did not work after restore: ${terminalText()}`);
+      }
       sessionStorage.removeItem("cowasm-sh-smoke-phase");
       setStatus("pass", "terminal persistence reload ok");
       return;

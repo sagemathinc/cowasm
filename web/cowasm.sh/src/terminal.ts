@@ -67,7 +67,6 @@ function decodeBase64(data: string): Uint8Array {
 export default async function terminal(element: HTMLDivElement) {
   console.log("creating dashWasm");
   const finishLoading = showLoading(element);
-  const startupSnapshot = await loadHomeSnapshot();
   const toolbar = document.createElement("div");
   toolbar.style.cssText =
     "display:flex;align-items:center;gap:8px;padding:8px 15px;font:13px system-ui,sans-serif;color:#444";
@@ -87,18 +86,63 @@ export default async function terminal(element: HTMLDivElement) {
   element.appendChild(toolbar);
   const term = new Terminal({ convertEol: true });
   term.open(element);
+  term.focus();
   const terminalElement = element.querySelector(".terminal") as HTMLDivElement;
   terminalElement.style.padding = "15px";
   term.resize(128, 40);
-  const dash = await dashWasm({
-    env: {
-      COLUMNS: `${term.cols}`,
-      LINES: `${term.rows}`,
-      HOME: "/home/user",
-    },
-    homeDirectoryZip:
-      startupSnapshot == null ? undefined : decodeBase64(startupSnapshot.data),
-  });
+  const setPersistenceStatus = (message: string) => {
+    console.log(`cowasm.sh persistence: ${message}`);
+    status.textContent = message;
+  };
+
+  let startupSnapshot: Snapshot | undefined;
+  try {
+    startupSnapshot = await loadHomeSnapshot();
+  } catch (err) {
+    setPersistenceStatus(
+      `could not load saved /home/user: ${err instanceof Error ? err.message : err}`
+    );
+  }
+
+  let homeDirectoryZip: Uint8Array | undefined;
+  if (startupSnapshot) {
+    try {
+      homeDirectoryZip = decodeBase64(startupSnapshot.data);
+    } catch (err) {
+      await clearHomeSnapshot();
+      startupSnapshot = undefined;
+      setPersistenceStatus(
+        `cleared unreadable /home/user snapshot: ${
+          err instanceof Error ? err.message : err
+        }`
+      );
+    }
+  }
+
+  const env = {
+    COLUMNS: `${term.cols}`,
+    LINES: `${term.rows}`,
+    HOME: "/home/user",
+  };
+  let dash;
+  try {
+    dash = await dashWasm({ env, homeDirectoryZip });
+  } catch (err) {
+    if (!startupSnapshot) {
+      finishLoading();
+      term.write(
+        `\r\nCoWasm failed to start: ${
+          err instanceof Error ? err.stack ?? err.message : err
+        }\r\n`
+      );
+      throw err;
+    }
+    console.warn("failed to start with saved /home/user; clearing snapshot", err);
+    await clearHomeSnapshot();
+    startupSnapshot = undefined;
+    setPersistenceStatus("cleared incompatible /home/user snapshot; restarted");
+    dash = await dashWasm({ env });
+  }
   finishLoading();
   (window as any).dash = dash;
   (window as any).term = term;
@@ -110,6 +154,7 @@ export default async function terminal(element: HTMLDivElement) {
   term.loadAddon(new WebLinksAddon());
   let suppressTerminalInputUntil = 0;
   let shellAtPrompt = false;
+  let shellExited = false;
   let capturingSnapshot = false;
   let snapshotBuffer = "";
   let outputLookbehind = "";
@@ -129,11 +174,6 @@ export default async function terminal(element: HTMLDivElement) {
       persistenceReadyDone = true;
       persistenceReadyResolve();
     }
-  };
-
-  const setPersistenceStatus = (message: string) => {
-    console.log(`cowasm.sh persistence: ${message}`);
-    status.textContent = message;
   };
 
   const pasteFromClipboard = async () => {
@@ -309,6 +349,9 @@ export default async function terminal(element: HTMLDivElement) {
 
 `);
   term.onData((data) => {
+    if (shellExited) {
+      return;
+    }
     if (Date.now() < suppressTerminalInputUntil) {
       return;
     }
@@ -345,6 +388,10 @@ export default async function terminal(element: HTMLDivElement) {
       markPersistenceReady();
     }
   });
+  dash.kernel.on("terminate", () => {
+    shellExited = true;
+    term.write("\r\n[CoWasm shell exited; reload the page to start a new shell.]\r\n");
+  });
   console.log("starting terminal");
   if (startupSnapshot) {
     setPersistenceStatus(`restored /home/user from ${startupSnapshot.savedAt}`);
@@ -352,6 +399,7 @@ export default async function terminal(element: HTMLDivElement) {
   markPersistenceReady();
   const terminalPromise = dash.terminal();
   await dash.kernel.writeToStdin("mkdir -p /home/user && cd /home/user\n");
+  term.focus();
   const r = await terminalPromise;
   console.log("terminal terminated", r);
   dash.kernel.terminate();
