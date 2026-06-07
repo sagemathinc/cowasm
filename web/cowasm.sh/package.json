@@ -4,6 +4,7 @@
   "description": "CoWasm Shell cowasm.sh: lightweight WebAssembly UNIX shell",
   "files": [
     "dist/*",
+    "scripts/*",
     "src/*",
     "README.md",
     "package.json",
@@ -18,7 +19,7 @@
     "test": "node test/smoke.js",
     "watch": "webpack --watch",
     "serve": "webpack serve",
-    "http": "http-server dist",
+    "http": "node scripts/serve-dist.js",
     "tsc": "pnpm exec tsc -w"
   },
   "repository": {
