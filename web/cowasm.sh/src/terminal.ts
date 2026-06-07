@@ -155,6 +155,7 @@ export default async function terminal(element: HTMLDivElement) {
   let suppressTerminalInputUntil = 0;
   let shellAtPrompt = false;
   let shellExited = false;
+  let shellExitCode: number | undefined;
   let capturingSnapshot = false;
   let snapshotBuffer = "";
   let outputLookbehind = "";
@@ -390,17 +391,31 @@ export default async function terminal(element: HTMLDivElement) {
   });
   dash.kernel.on("terminate", () => {
     shellExited = true;
-    term.write("\r\n[CoWasm shell exited; reload the page to start a new shell.]\r\n");
+    term.write(
+      `\r\n[CoWasm shell exited${
+        shellExitCode == null ? "" : ` with code ${shellExitCode}`
+      }; reload the page to start a new shell.]\r\n`
+    );
   });
   console.log("starting terminal");
   if (startupSnapshot) {
     setPersistenceStatus(`restored /home/user from ${startupSnapshot.savedAt}`);
   }
   markPersistenceReady();
+  const shellStart = Date.now();
   const terminalPromise = dash.terminal();
   await dash.kernel.writeToStdin("mkdir -p /home/user && cd /home/user\n");
   term.focus();
   const r = await terminalPromise;
+  shellExitCode = r;
   console.log("terminal terminated", r);
+  if (startupSnapshot && r != 0 && Date.now() - shellStart < 10000) {
+    await clearHomeSnapshot();
+    setPersistenceStatus(
+      `cleared saved /home/user after shell exited with ${r}; reloading`
+    );
+    location.reload();
+    return;
+  }
   dash.kernel.terminate();
 }
