@@ -1,19 +1,18 @@
-diff --git a/Python/ceval.c b/Python/ceval.c
 --- a/Python/ceval.c
 +++ b/Python/ceval.c
 @@ -380,7 +380,7 @@
  #  define Py_C_STACK_SIZE 4000000
  #endif
- 
+
 -#if defined(__EMSCRIPTEN__)
 +#if defined(__EMSCRIPTEN__) && !defined(__wasi__)
- 
-// Temporary workaround to make `pthread_getattr_np` work on Emscripten.
-// Emscripten 4.0.6 will contain a fix:
-diff --git a/Include/internal/pycore_emscripten_signal.h b/Include/internal/pycore_emscripten_signal.h
+
+ // Temporary workaround to make `pthread_getattr_np` work on Emscripten.
+ // Emscripten 4.0.6 will contain a fix:
 --- a/Include/internal/pycore_emscripten_signal.h
 +++ b/Include/internal/pycore_emscripten_signal.h
 @@ -17,8 +17,8 @@
+
  #define _Py_CHECK_EMSCRIPTEN_SIGNALS_PERIODICALLY() _Py_CheckEmscriptenSignalsPeriodically()
  
 -extern int Py_EMSCRIPTEN_SIGNAL_HANDLING;
@@ -23,7 +22,6 @@ diff --git a/Include/internal/pycore_emscripten_signal.h b/Include/internal/pyco
  
  #else
  
-diff --git a/Python/emscripten_signal.c b/Python/emscripten_signal.c
 --- a/Python/emscripten_signal.c
 +++ b/Python/emscripten_signal.c
 @@ -24,7 +24,7 @@
@@ -44,3 +42,34 @@ diff --git a/Python/emscripten_signal.c b/Python/emscripten_signal.c
  
  void
  _Py_CheckEmscriptenSignalsPeriodically(void)
+--- a/configure.ac
++++ b/configure.ac
+@@ -5182,6 +5182,10 @@
+ AS_CASE([$ac_sys_system],
+   [Emscripten], [
+-    AS_VAR_APPEND([PLATFORM_OBJS], [' Python/emscripten_signal.o Python/emscripten_trampoline.o Python/emscripten_trampoline_wasm.o Python/emscripten_syscalls.o'])
++    AS_VAR_APPEND([PLATFORM_OBJS], [' Python/emscripten_signal.o Python/emscripten_trampoline.o Python/emscripten_trampoline_wasm.o'])
++    AS_CASE([$host],
++      [wasm32-unknown-wasi], [],
++      [AS_VAR_APPEND([PLATFORM_OBJS], [' Python/emscripten_syscalls.o'])]
++    )
+     AS_VAR_APPEND([PLATFORM_HEADERS], [' $(srcdir)/Include/internal/pycore_emscripten_signal.h $(srcdir)/Include/internal/pycore_emscripten_trampoline.h'])
+   ],
+ )
+--- a/configure
++++ b/configure
+@@ -19203,6 +19203,13 @@
+ case $ac_sys_system in #(
+   Emscripten) :
+-    as_fn_append PLATFORM_OBJS ' Python/emscripten_signal.o Python/emscripten_trampoline.o Python/emscripten_trampoline_wasm.o Python/emscripten_syscalls.o'
++    as_fn_append PLATFORM_OBJS ' Python/emscripten_signal.o Python/emscripten_trampoline.o Python/emscripten_trampoline_wasm.o'
++    case $host in #(
++  wasm32-unknown-wasi) :
++     ;; #(
++  *) :
++    as_fn_append PLATFORM_OBJS ' Python/emscripten_syscalls.o'
++     ;;
++esac
+     as_fn_append PLATFORM_HEADERS ' $(srcdir)/Include/internal/pycore_emscripten_signal.h $(srcdir)/Include/internal/pycore_emscripten_trampoline.h'
+    ;; #(
+   *) :

@@ -1,0 +1,12 @@
+--- a/Parser/tokenizer/file_tokenizer.c
++++ b/Parser/tokenizer/file_tokenizer.c
+@@ -404,7 +404,7 @@
+     return tok;
+ }
+-#if defined(__wasi__) || (defined(__EMSCRIPTEN__) && (__EMSCRIPTEN_major__ >= 3))
+-// fdopen() with borrowed fd. WASI does not provide dup() and Emscripten's
++#if defined(__EMSCRIPTEN__) && (__EMSCRIPTEN_major__ >= 3)
++// fdopen() with borrowed fd. Emscripten's
+ // dup() emulation with open() is slow.
+ typedef union {
+     void *cookie;

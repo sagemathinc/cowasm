@@ -1,0 +1,18 @@
+--- a/Include/internal/pycore_object.h
++++ b/Include/internal/pycore_object.h
+@@ -108,5 +108,8 @@
+ #define _Py_FatalRefcountError(message) \
+     _Py_FatalRefcountErrorFunc(__func__, (message))
++#ifdef __wasi__
++#  define _PyReftracerTrack(obj, operation) do { } while(0)
++#else
+ #define _PyReftracerTrack(obj, operation) \
+     do { \
+         struct _reftracer_runtime_state *tracer = &_PyRuntime.ref_tracer; \
+@@ -116,5 +119,6 @@
+             tracer->tracer_func((obj), (operation), data); \
+         } \
+     } while(0)
++#endif
+ #ifdef Py_REF_DEBUG
+ /* The symbol is only exposed in the API for the sake of extensions

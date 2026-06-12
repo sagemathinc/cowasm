@@ -156,6 +156,10 @@ ac_cv_func_sigwaitinfo=no
 # this is something involving swap, which obviously WASM can't
 # directly deal with.
 ac_cv_func_plock=no
+# The CoWasm runtime's write path is reliable, but Python 3.14's configured
+# writev path currently triggers invalid iovecs during startup under WASI.
+ac_cv_func_writev=no
+ac_cv_func_pwritev=no
 # would have to be maybe in WASI; emscripten also disables this.
 ac_cv_func_preadv2=no
 ac_cv_func_pwritev2=no

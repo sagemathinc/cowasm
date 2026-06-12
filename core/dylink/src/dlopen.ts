@@ -514,30 +514,10 @@ export default class DlopenManger {
           );
           throw Error(`dlopen -- UNRESOLVED SYMBOL: ${symName}`);
         } else {
-          if (
-            symName == "stdin" ||
-            symName == "stdout" ||
-            symName == "stderr"
-          ) {
-            const value = new DataView(this.memory.buffer).getUint32(ptr, true);
-            if (process.env.COWASM_TRACE_STDIO_GOT) {
-              console.error(`GOT.mem.${symName}: main ptr=${ptr} value=${value}`);
-            }
-            x.value = value;
-            continue;
-          }
           //console.log("found ", symName, " in global");
           x.value = ptr;
         }
       } else {
-        if (
-          process.env.COWASM_TRACE_STDIO_GOT &&
-          (symName == "stdin" || symName == "stdout" || symName == "stderr")
-        ) {
-          console.error(
-            `GOT.mem.${symName}: instance ptr=${ptrBeforeOffset} base=${__memory_base}`
-          );
-        }
         x.value = ptrBeforeOffset + __memory_base;
         //console.log("putting ", symName, " in offset");
       }

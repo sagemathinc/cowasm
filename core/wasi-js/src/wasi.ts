@@ -486,20 +486,17 @@ export default class WASI {
         const ptr = iovs + i * 8;
         const buf = this.view.getUint32(ptr, true);
         let bufLen = this.view.getUint32(ptr + 4, true);
-        // the mmap stuff in wasi tries to make this overwrite all
-        // allocated memory, so we cap it or things crash.
-        // TODO: maybe we need to allocate more memory?  I don't know!!
         if (bufLen > this.memory.buffer.byteLength - buf) {
-//           console.log({
-//             buf,
-//             bufLen,
-//             total_memory: this.memory.buffer.byteLength,
-//           });
-          log("getiovs: warning -- truncating buffer to fit in memory");
-          bufLen = Math.min(
+          log(
+            "getiovs: invalid buffer ptr=%d len=%d memory=%d iovs=%d iovsLen=%d index=%d",
+            buf,
             bufLen,
-            Math.max(0, this.memory.buffer.byteLength - buf)
+            this.memory.buffer.byteLength,
+            iovs,
+            iovsLen,
+            i
           );
+          throw new WASIError(WASI_EINVAL);
         }
         try {
           const buffer = new Uint8Array(this.memory.buffer, buf, bufLen);
@@ -854,51 +851,9 @@ export default class WASI {
           const IS_STDOUT = this.isCapturedStdout(fd, stats);
           const IS_STDERR = this.isCapturedStderr(fd, stats);
           let written = 0;
-          const traceFdWrite =
-            typeof process != "undefined" &&
-            process.env?.COWASM_TRACE_FD_WRITE;
-          if (
-            typeof process != "undefined" &&
-            process.env?.COWASM_INVALID_FD_WRITE_EINVAL
-          ) {
-            for (let i = 0; i < iovsLen; i++) {
-              const ptr = iovs + i * 8;
-              const buf = this.view.getUint32(ptr, true);
-              const bufLen = this.view.getUint32(ptr + 4, true);
-              if (bufLen > this.memory.buffer.byteLength - buf) {
-                return WASI_EINVAL;
-              }
-            }
-          }
-          let traceCount = 0;
           getiovs(iovs, iovsLen).forEach((iov) => {
             //console.log("fd_write", `"${new TextDecoder().decode(iov)}"`);
             if (iov.byteLength == 0) return;
-            const ptr = iovs + traceCount * 8;
-            const buf = this.view.getUint32(ptr, true);
-            const bufLen = this.view.getUint32(ptr + 4, true);
-            if (traceFdWrite && traceCount < 20) {
-              console.error(
-                `fd_write fd=${fd} iovs=${iovs} iovsLen=${iovsLen} ` +
-                  `iov=${traceCount} buf=${buf} len=${bufLen} ` +
-                  `head=${Buffer.from(iov.subarray(0, 16)).toString("hex")}`
-              );
-              if (
-                process.env?.COWASM_TRACE_FD_WRITE_THROW &&
-                bufLen > this.memory.buffer.byteLength - buf
-              ) {
-                throw Error("invalid fd_write iovec");
-              }
-              traceCount += 1;
-            }
-            if (
-              typeof process != "undefined" &&
-              process.env?.COWASM_SKIP_INVALID_FD_WRITE &&
-              bufLen > this.memory.buffer.byteLength - buf
-            ) {
-              traceCount += 1;
-              return;
-            }
             //             log(
             //               `writing to fd=${fd}: `,
             //               JSON.stringify(new TextDecoder().decode(iov)),

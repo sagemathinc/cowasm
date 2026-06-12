@@ -189,64 +189,89 @@ async function doWasmImport({
       bindings.fs.writeSync(stats?.real ?? fd, data, 0, data.byteLength, null);
     }
   };
+
+  const streamFd = (stream: number): 0 | 1 | 2 => {
+    const getStream = (name: "stdin" | "stdout" | "stderr") => {
+      const ptr = wasm?.exports?.[`__WASM_EXPORT__${name}`]?.();
+      const value =
+        ptr != null && ptr > 0 && ptr + 4 <= memory.buffer.byteLength
+          ? new DataView(memory.buffer).getUint32(ptr, true)
+          : undefined;
+      return { ptr, value };
+    };
+    const stdout = getStream("stdout");
+    if (stream === stdout.ptr || stream === stdout.value) {
+      return 1;
+    }
+    const stdin = getStream("stdin");
+    if (stream === stdin.ptr || stream === stdin.value) {
+      return 0;
+    }
+    return 2;
+  };
+  const outputStreamFd = (stream: number): 1 | 2 => {
+    return streamFd(stream) == 1 ? 1 : 2;
+  };
+
   if (wasmOpts.env.fwrite == null) {
     wasmOpts.env.fwrite = (
       ptr: number,
       size: number,
       nmemb: number,
-      _stream: number
+      stream: number
     ) => {
-      writeImportedStdio(2, ptr, size * nmemb);
+      writeImportedStdio(outputStreamFd(stream), ptr, size * nmemb);
       return nmemb;
     };
   }
-  if (wasmOpts.env.fiprintf == null) {
-    wasmOpts.env.fiprintf = (_stream: number, formatPtr: number) => {
-      writeImportedStdio(2, formatPtr, strlen(formatPtr, memory));
-      return 0;
-    };
-  }
-  if (wasmOpts.env.fprintf == null) {
-    wasmOpts.env.fprintf = (_stream: number, formatPtr: number) => {
-      writeImportedStdio(2, formatPtr, strlen(formatPtr, memory));
-      return 0;
-    };
-  }
-  if (wasmOpts.env.vfprintf == null) {
-    wasmOpts.env.vfprintf = (_stream: number, formatPtr: number) => {
-      writeImportedStdio(2, formatPtr, strlen(formatPtr, memory));
-      return 0;
-    };
-  }
-  if (wasmOpts.env.iprintf == null) {
-    wasmOpts.env.iprintf = (formatPtr: number) => {
-      writeImportedStdio(2, formatPtr, strlen(formatPtr, memory));
-      return 0;
+  if (wasmOpts.env.fputc == null) {
+    wasmOpts.env.fputc = (c: number, stream: number) => {
+      const data = Buffer.from([c & 0xff]);
+      const fd = streamFd(stream);
+      if (fd == 1 && options.sendStdout != null) {
+        options.sendStdout(data);
+      } else if (fd == 2 && options.sendStderr != null) {
+        options.sendStderr(data);
+      } else {
+        const stats = wasi.FD_MAP.get(fd);
+        bindings.fs.writeSync(stats?.real ?? fd, data, 0, 1, null);
+      }
+      return c;
     };
   }
   if (wasmOpts.env.fputs == null) {
-    wasmOpts.env.fputs = (ptr: number, _stream: number) => {
-      writeImportedStdio(2, ptr, strlen(ptr, memory));
+    wasmOpts.env.fputs = (ptr: number, stream: number) => {
+      writeImportedStdio(outputStreamFd(stream), ptr, strlen(ptr, memory));
       return 0;
     };
   }
-  if (wasmOpts.env.fputc == null) {
-    wasmOpts.env.fputc = (c: number, _stream: number) => {
-      const data = Buffer.from([c & 0xff]);
-      if (options.sendStderr != null) {
-        options.sendStderr(data);
-      } else {
-        const stats = wasi.FD_MAP.get(2);
-        bindings.fs.writeSync(stats?.real ?? 2, data, 0, 1, null);
-      }
+  if (wasmOpts.env.putchar == null) {
+    wasmOpts.env.putchar = (c: number) => {
+      wasmOpts.env.fputc(c, wasm?.exports?.__WASM_EXPORT__stdout?.() ?? 0);
       return c;
+    };
+  }
+  if (wasmOpts.env.puts == null) {
+    wasmOpts.env.puts = (ptr: number) => {
+      writeImportedStdio(1, ptr, strlen(ptr, memory));
+      const data = Buffer.from("\n");
+      if (options.sendStdout != null) {
+        options.sendStdout(data);
+      } else {
+        const stats = wasi.FD_MAP.get(1);
+        bindings.fs.writeSync(stats?.real ?? 1, data, 0, 1, null);
+      }
+      return 0;
     };
   }
   if (wasmOpts.env.fflush == null) {
     wasmOpts.env.fflush = () => 0;
   }
-  if (wasmOpts.env.fclose == null) {
-    wasmOpts.env.fclose = () => 0;
+  if (wasmOpts.env.fileno == null) {
+    wasmOpts.env.fileno = (stream: number) => streamFd(stream);
+  }
+  if (wasmOpts.env.fileno_unlocked == null) {
+    wasmOpts.env.fileno_unlocked = wasmOpts.env.fileno;
   }
   if (wasmOpts.env.ferror == null) {
     wasmOpts.env.ferror = () => 0;
@@ -262,34 +287,6 @@ async function doWasmImport({
   }
   if (wasmOpts.env.funlockfile == null) {
     wasmOpts.env.funlockfile = () => {};
-  }
-  if (wasmOpts.env.putchar == null) {
-    wasmOpts.env.putchar = (c: number) => {
-      const data = Buffer.from([c & 0xff]);
-      if (options.sendStdout != null) {
-        options.sendStdout(data);
-      } else {
-        const stats = wasi.FD_MAP.get(1);
-        bindings.fs.writeSync(stats?.real ?? 1, data, 0, 1, null);
-      }
-      return c;
-    };
-  }
-  if (wasmOpts.env.puts == null) {
-    wasmOpts.env.puts = (ptr: number) => {
-      writeImportedStdio(1, ptr, strlen(ptr, memory));
-      wasmOpts.env.putchar("\n".charCodeAt(0));
-      return 0;
-    };
-  }
-  if (wasmOpts.env.perror == null) {
-    wasmOpts.env.perror = (ptr: number) => {
-      if (ptr) {
-        writeImportedStdio(2, ptr, strlen(ptr, memory));
-        writeImportedStdio(2, ": ".charCodeAt(0), 0);
-      }
-      return 0;
-    };
   }
 
   const dylinkOptions = {

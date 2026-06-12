@@ -37,6 +37,20 @@ LIBFFI_WASM = $(shell cowasm-package-path @cowasm/libffi)
 
 PYTHON_WASM = ${BIN}/python-wasm
 
+PYTHON_WASM_ALLOCATOR ?= pymalloc-mimalloc
+
+ifeq (${PYTHON_WASM_ALLOCATOR},pymalloc-mimalloc)
+PYTHON_WASM_ALLOCATOR_CONFIGURE = --with-pymalloc --with-mimalloc
+else ifeq (${PYTHON_WASM_ALLOCATOR},pymalloc)
+PYTHON_WASM_ALLOCATOR_CONFIGURE = --with-pymalloc --without-mimalloc
+else ifeq (${PYTHON_WASM_ALLOCATOR},mimalloc)
+PYTHON_WASM_ALLOCATOR_CONFIGURE = --without-pymalloc --with-mimalloc
+else ifeq (${PYTHON_WASM_ALLOCATOR},malloc)
+PYTHON_WASM_ALLOCATOR_CONFIGURE = --without-pymalloc --without-mimalloc
+else
+$(error unknown PYTHON_WASM_ALLOCATOR '${PYTHON_WASM_ALLOCATOR}')
+endif
+
 # Either -Oz or -O3 make sense to me...
 #   -O0 = exceeds a limit so can't even load the result with webassembly!
 # The cPython default opt is "-DNDEBUG -g -fwrapv -O3 -Wall", which is
@@ -187,7 +201,8 @@ BLDCXXSHARED = cowasm-c++ --experimental-pic -shared ${DEBUG_MODE}
 
 ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
-	# - with-pymalloc it actually works and seems faster
+	# - PYTHON_WASM_ALLOCATOR lets us test Python's allocator combinations without
+	#   hand-editing ignored build files.
 	# - We use "zig cc -target wasm32-wasi" instead of "zig cc -target wasm32-wasi-musl" since the broken
 	#   Python configure.ac script outputs wasm32-wasi instead of wasm32-wasi-musl as the PLATFORM_TRIPLE.
 	#   This might be something to fix and upstream, but for now, just not using a triple works.
@@ -229,7 +244,7 @@ ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/
 			--with-pkg-config=no \
 			--with-readline=editline \
 			--with-build-python=${BIN}/python-native \
-			--with-pymalloc \
+			${PYTHON_WASM_ALLOCATOR_CONFIGURE} \
 			--with-ensurepip \
 			--host=wasm32-unknown-wasi \
 			--build=`./config.guess`
@@ -280,15 +295,15 @@ MINIMAL_READLINE = termcap lib-dynload/readline.${PYTHON_PLATFORM}.so  rlcomplet
 # We WANT to run wasm_assets.py under web assembly rather than use the native cpython!
 # This is just because we can and because it's a *good test*.  It does not work yet.
 # To try this, replace
-#    && python-native ./Tools/wasm/wasm_assets.py
+#    && python-native ./Platforms/emscripten/wasm_assets.py
 # below by
-#    && python-wasm ./Tools/wasm/wasm_assets.py
+#    && python-wasm ./Platforms/emscripten/wasm_assets.py
 
 ${DIST_WASM}/.built:  node_modules ${DIST_WASM}/.install-cpython ${BIN}/python-native
 	# Build wasm asset bundle (the pyc files, etc.).
 	cd ${BUILD_WASM} \
 		&& mkdir -p usr/local/lib/${PYTHON_LIB}/lib-dynload/  \
-		&& ${BIN}/python-native ./Tools/wasm/wasm_assets.py \
+		&& ${BIN}/python-native ./Platforms/emscripten/wasm_assets.py -o usr/local/lib/python${PYTHON_ABI}.zip \
 		&& rm -rf ${DIST_WASM}/lib/dist \
 		&& mv usr/local/lib ${DIST_WASM}/lib/dist
 	# Add termcap for xterm to our zip asset bundle, so readline actually works:
