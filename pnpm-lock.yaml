@@ -762,15 +762,27 @@ importers:
       '@cowasm/kernel':
         specifier: workspace:*
         version: link:../../core/kernel
+      '@cowasm/libcxx':
+        specifier: workspace:*
+        version: link:../../core/libcxx
       '@cowasm/py-cython':
         specifier: workspace:*
         version: link:../py-cython
+      '@cowasm/py-dateutil':
+        specifier: workspace:*
+        version: link:../py-dateutil
       '@cowasm/py-numpy':
         specifier: workspace:*
         version: link:../py-numpy
       '@cowasm/py-pip':
         specifier: workspace:*
         version: link:../py-pip
+      '@cowasm/py-pytz':
+        specifier: workspace:*
+        version: link:../py-pytz
+      '@cowasm/py-six':
+        specifier: workspace:*
+        version: link:../py-six
 
   python/py-pip:
     devDependencies:

@@ -155,6 +155,12 @@ async function doWasmImport({
   if (wasmOpts.env.memmove == null) {
     wasmOpts.env.memmove = wasmOpts.env.memcpy;
   }
+  if (wasmOpts.env.backtrace == null) {
+    wasmOpts.env.backtrace = () => 0;
+  }
+  if (wasmOpts.env.backtrace_symbols_fd == null) {
+    wasmOpts.env.backtrace_symbols_fd = () => {};
+  }
   const cstringLength = (ptr: number, maxLen?: number) => {
     const mem = new Uint8Array(memory.buffer);
     let len = 0;

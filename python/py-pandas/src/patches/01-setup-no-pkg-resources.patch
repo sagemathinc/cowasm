@@ -1,0 +1,69 @@
+--- a/setup.py
++++ b/setup.py
+@@ -16,7 +16,7 @@ import sys
+ from sysconfig import get_config_vars
+ 
+ import numpy
+-from pkg_resources import parse_version
++from setuptools._vendor.packaging.version import parse as parse_version
+ from setuptools import (
+     Command,
+     Extension,
+@@ -417,9 +417,10 @@ def maybe_cythonize(extensions, *args, **kwargs):
+     # reuse any parallel arguments provided for compilation to cythonize
+     parser = argparse.ArgumentParser()
+     parser.add_argument("--parallel", "-j", type=int, default=1)
+     parsed, _ = parser.parse_known_args()
+ 
+-    kwargs["nthreads"] = parsed.parallel
++    if parsed.parallel > 1:
++        kwargs["nthreads"] = parsed.parallel
+     build_ext.render_templates(_pxifiles)
+     return cythonize(extensions, *args, **kwargs)
+ 
+--- a/pandas/_libs/tslibs/strptime.pyx
++++ b/pandas/_libs/tslibs/strptime.pyx
+@@ -235,7 +235,7 @@ cdef tzinfo _parse_with_format(
+                 s = found_dict['f']
+                 # Pad to always return nanoseconds
+                 s += "0" * (9 - len(s))
+-                us = long(s)
++                us = int(s)
+                 ns = us % 1000
+                 us = us // 1000
+             elif parse_code == 11:
+--- a/pandas/_libs/tslibs/timedeltas.pyx
++++ b/pandas/_libs/tslibs/timedeltas.pyx
+@@ -608,11 +608,11 @@ cdef inline int64_t parse_timedelta_string(str ts) except? -1:
+             raise ValueError("no units specified")
+ 
+         if len(frac) > 0 and len(frac) <= 3:
+-            m = 10**(3 -len(frac)) * 1000 * 1000
++            m = <int64_t>10**(3 -len(frac)) * 1000 * 1000
+         elif len(frac) > 3 and len(frac) <= 6:
+-            m = 10**(6 -len(frac)) * 1000
++            m = <int64_t>10**(6 -len(frac)) * 1000
+         elif len(frac) > 6 and len(frac) <= 9:
+-            m = 10**(9 -len(frac))
++            m = <int64_t>10**(9 -len(frac))
+         else:
+             m = 1
+             frac = frac[:9]
+--- a/pandas/_libs/window/aggregations.pyx
++++ b/pandas/_libs/window/aggregations.pyx
+@@ -3,6 +3,7 @@
+ cimport cython
+ from libc.math cimport (
++    pow,
+     round,
+     signbit,
+     sqrt,
+@@ -1792,7 +1793,7 @@ def ewm(
+                     if is_observation or not ignore_na:
+                         if normalize:
+                             if use_deltas:
+-                                old_wt *= old_wt_factor ** sub_deltas[i - 1]
++                                old_wt *= pow(old_wt_factor, sub_deltas[i - 1])
+                             else:
+                                 old_wt *= old_wt_factor
+                         else:

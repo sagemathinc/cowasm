@@ -19,6 +19,8 @@ ${DIST_WASM}/libcxx.so: ${LIBCXX_ARCHIVES} ${COMPILER_RT}
 		--experimental-pic \
 		-shared \
 		--export-all \
+		-u __divdc3 \
+		-u __muldc3 \
 		--whole-archive ${LIBCXX_ARCHIVES} --no-whole-archive ${COMPILER_RT} \
 		-o ${DIST_WASM}/libcxx.so
 

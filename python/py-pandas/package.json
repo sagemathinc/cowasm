@@ -32,8 +32,12 @@
   "devDependencies": {
     "@cowasm/cpython": "workspace:*",
     "@cowasm/kernel": "workspace:*",
+    "@cowasm/libcxx": "workspace:*",
     "@cowasm/py-cython": "workspace:*",
+    "@cowasm/py-dateutil": "workspace:*",
     "@cowasm/py-numpy": "workspace:*",
-    "@cowasm/py-pip": "workspace:*"
+    "@cowasm/py-pip": "workspace:*",
+    "@cowasm/py-pytz": "workspace:*",
+    "@cowasm/py-six": "workspace:*"
   }
 }

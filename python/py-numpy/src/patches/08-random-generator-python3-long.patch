@@ -1,0 +1,103 @@
+--- a/numpy/random/_generator.pyx
++++ b/numpy/random/_generator.pyx
+@@ -3677,7 +3677,7 @@ cdef class Generator:
+ 
+         if size is None:
+             shape = []
+-        elif isinstance(size, (int, long, np.integer)):
++        elif isinstance(size, (int, np.integer)):
+             shape = [size]
+         else:
+             shape = size
+--- a/numpy/random/_mt19937.pyx
++++ b/numpy/random/_mt19937.pyx
+@@ -28,16 +28,16 @@ cdef extern from "src/mt19937/mt19937.h":
+     enum:
+         RK_STATE_LEN
+ 
+-cdef uint64_t mt19937_uint64(void *st) nogil:
++cdef uint64_t mt19937_uint64(void *st) noexcept nogil:
+     return mt19937_next64(<mt19937_state *> st)
+ 
+-cdef uint32_t mt19937_uint32(void *st) nogil:
++cdef uint32_t mt19937_uint32(void *st) noexcept nogil:
+     return mt19937_next32(<mt19937_state *> st)
+ 
+-cdef double mt19937_double(void *st) nogil:
++cdef double mt19937_double(void *st) noexcept nogil:
+     return mt19937_next_double(<mt19937_state *> st)
+ 
+-cdef uint64_t mt19937_raw(void *st) nogil:
++cdef uint64_t mt19937_raw(void *st) noexcept nogil:
+     return <uint64_t>mt19937_next32(<mt19937_state *> st)
+ 
+ cdef class MT19937(BitGenerator):
+--- a/numpy/random/_pcg64.pyx
++++ b/numpy/random/_pcg64.pyx
+@@ -30,22 +30,22 @@ cdef extern from "src/pcg64/pcg64.h":
+     uint32_t pcg64_cm_next32(pcg64_state *state)  nogil
+     void pcg64_cm_advance(pcg64_state *state, uint64_t *step)
+ 
+-cdef uint64_t pcg64_uint64(void* st) nogil:
++cdef uint64_t pcg64_uint64(void* st) noexcept nogil:
+     return pcg64_next64(<pcg64_state *>st)
+ 
+-cdef uint32_t pcg64_uint32(void *st) nogil:
++cdef uint32_t pcg64_uint32(void *st) noexcept nogil:
+     return pcg64_next32(<pcg64_state *> st)
+ 
+-cdef double pcg64_double(void* st) nogil:
++cdef double pcg64_double(void* st) noexcept nogil:
+     return uint64_to_double(pcg64_next64(<pcg64_state *>st))
+ 
+-cdef uint64_t pcg64_cm_uint64(void* st) nogil:
++cdef uint64_t pcg64_cm_uint64(void* st) noexcept nogil:
+     return pcg64_cm_next64(<pcg64_state *>st)
+ 
+-cdef uint32_t pcg64_cm_uint32(void *st) nogil:
++cdef uint32_t pcg64_cm_uint32(void *st) noexcept nogil:
+     return pcg64_cm_next32(<pcg64_state *> st)
+ 
+-cdef double pcg64_cm_double(void* st) nogil:
++cdef double pcg64_cm_double(void* st) noexcept nogil:
+     return uint64_to_double(pcg64_cm_next64(<pcg64_state *>st))
+ 
+ cdef class PCG64(BitGenerator):
+--- a/numpy/random/_philox.pyx
++++ b/numpy/random/_philox.pyx
+@@ -42,13 +42,13 @@ cdef extern from 'src/philox/philox.h':
+     void philox_jump(philox_state *state)
+     void philox_advance(uint64_t *step, philox_state *state)
+ 
+-cdef uint64_t philox_uint64(void*st) nogil:
++cdef uint64_t philox_uint64(void*st) noexcept nogil:
+     return philox_next64(<philox_state *> st)
+ 
+-cdef uint32_t philox_uint32(void *st) nogil:
++cdef uint32_t philox_uint32(void *st) noexcept nogil:
+     return philox_next32(<philox_state *> st)
+ 
+-cdef double philox_double(void*st) nogil:
++cdef double philox_double(void*st) noexcept nogil:
+     return uint64_to_double(philox_next64(<philox_state *> st))
+ 
+ cdef class Philox(BitGenerator):
+--- a/numpy/random/_sfc64.pyx
++++ b/numpy/random/_sfc64.pyx
+@@ -21,13 +21,13 @@ cdef extern from "src/sfc64/sfc64.h":
+     void sfc64_get_state(sfc64_state *state, uint64_t *state_arr, int *has_uint32, uint32_t *uinteger)
+     void sfc64_set_state(sfc64_state *state, uint64_t *state_arr, int has_uint32, uint32_t uinteger)
+ 
+-cdef uint64_t sfc64_uint64(void* st) nogil:
++cdef uint64_t sfc64_uint64(void* st) noexcept nogil:
+     return sfc64_next64(<sfc64_state *>st)
+ 
+-cdef uint32_t sfc64_uint32(void *st) nogil:
++cdef uint32_t sfc64_uint32(void *st) noexcept nogil:
+     return sfc64_next32(<sfc64_state *> st)
+ 
+-cdef double sfc64_double(void* st) nogil:
++cdef double sfc64_double(void* st) noexcept nogil:
+     return uint64_to_double(sfc64_next64(<sfc64_state *>st))
+ 
+ 

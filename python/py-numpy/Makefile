@@ -30,6 +30,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 		&& cat ${SRC}/patches/05-no-backtrace.patch | patch -p1 \
 		&& cat ${SRC}/patches/06-setup-setuptools.patch | patch -p1 \
 		&& cat ${SRC}/patches/07-no-msvccompiler.patch | patch -p1 \
+		&& cat ${SRC}/patches/08-random-generator-python3-long.patch | patch -p1 \
 		&& echo "" > numpy/core/include/setjmp.h \
 		&& echo "" > numpy/core/include/execinfo.h
 	touch ${BUILD_WASM}/.patched
@@ -65,6 +66,10 @@ ${DIST_WASM}/.built:  ${BUILD_WASM}/.lib
 		&& pnpm-exec cpython -m cowasm_bundler numpy numpy/core/multiarray.py numpy/core/include
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
 	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib*/numpy.tar.xz
+	cd ${BUILD_WASM} \
+		&& find numpy -type f \( -name '*.pxd' -o -name '*.pxi' \) -print \
+		| tar cf - -T - \
+		| tar xf - -C ${DIST_WASM}
 	# The include files are needed to building anything that depends on numpy, and they aren't
 	# in the bundle.  These are in addition to the numpy/core/include files in the build,
 	# which we get above.
