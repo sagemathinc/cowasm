@@ -11,6 +11,7 @@ TARBALL_SHA256 = 7ca132b6ef6187384738804bd3a453d4eab7e3274df6dcd35e5d92aae340471
 include ../build/Makefile-vars-wheel
 
 TOP_LEVEL = cppy
+SETUPTOOLS = $(shell cowasm-package-path @cowasm/py-setuptools)
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	rm -rf ${DIST_WASM}
@@ -21,4 +22,4 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	touch ${DIST_WASM}/.built
 
 test: deps ${DIST_WASM}/.built
-	PYTHONPATH=${DIST_WASM} pnpm-exec cpython -c 'import cppy; assert cppy.__version__ == "1.3.1"'
+	PYTHONPATH=${DIST_WASM}:${SETUPTOOLS} pnpm-exec cpython -c 'import cppy; assert cppy.__version__ == "1.3.1"'

@@ -600,6 +600,9 @@ importers:
       '@cowasm/kernel':
         specifier: workspace:*
         version: link:../../core/kernel
+      '@cowasm/py-setuptools':
+        specifier: workspace:*
+        version: link:../py-setuptools
 
   python/py-cycler:
     devDependencies:

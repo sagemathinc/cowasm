@@ -4,46 +4,31 @@ all: deps wasm
 
 # See https://github.com/pypa/pip/tags
 #
-VERSION = 22.3.1
+VERSION = 26.1.2
 
-URL = https://github.com/pypa/pip/archive/refs/tags/${VERSION}.tar.gz
-TARBALL = ${UPSTREAM}/pip-${VERSION}.tar.gz
-TARBALL_SHA256 = 8d9f7cd8ad0d6f0c70e71704fd3f0f6538d70930454f1f21bbc2f8e94f6964ee
+WHEEL = pip-${VERSION}-py3-none-any.whl
+URL = https://files.pythonhosted.org/packages/py3/p/pip/${WHEEL}
+TARBALL = ${UPSTREAM}/${WHEEL}
+TARBALL_SHA256 = 382ff9f685ee3bc25864f820aa50505825f10f5458ffff07e30a6d96e5715cab
 
-include ../build/Makefile-rules
+include ../build/Makefile-vars-wheel
 
 SETUPTOOLS = $(shell cowasm-package-path @cowasm/py-setuptools)
 
-${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
-	# It would be much nicer to implement a better mmap.  But for now, let's just patch it out:
-	cd ${BUILD_WASM} && cat ${SRC}/patches/01-pip-no-mmap.patch | patch -p1
-	# It would be better to have a better fallback for threads that works in some cases so we
-	# don't need this. But for now, just remove it:
-	cd ${BUILD_WASM} && cat ${SRC}/patches/02-pip-no-auto-refresh-progress.patch  | patch -p1
-	touch ${BUILD_WASM}/.patched
-
-${BUILD_WASM}/.built:  ${BUILD_WASM}/.patched
-	cd ${BUILD_WASM} \
-		&& PYTHONPATH=${SETUPTOOLS} pnpm-exec cpython setup.py build
-	touch ${BUILD_WASM}/.built
-
 # Trying to use a bundle (e.g., only pyc, etc.,) leads to endless problems, since
 # many scripts and components that use pip assume the .py files are there.
-${DIST_WASM}/.built:  ${BUILD_WASM}/.built
+${DIST_WASM}/.built:  ${BUILD_WASM}/.build
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
-	cp -r ${BUILD_WASM}/build/lib/pip ${DIST_WASM}/
-	# Build tools (e.g., for pandas, etc.) absolute require that setuptools actually be pip installed.
-	# So we pip install it into site-packages, then copy everything over dist_wasm, so that
-	# the directory setuptools-65.6.3.dist-info exists.  Basically, we used our own setuptools package
-	# just for bootstrapping.  Probably this is very similar to what ensurepip does?
-	# We do NOT just pip install pip because of the patches above...
-	PYTHONPATH=${SETUPTOOLS}:${DIST_WASM} pnpm-exec cpython -m pip install setuptools --target=${BUILD_WASM}/site-packages
-	cp -r ${BUILD_WASM}/site-packages/* ${DIST_WASM}
+	cp -r ${BUILD_WASM}/pip ${DIST_WASM}/
+	cp -r ${BUILD_WASM}/pip-${VERSION}.dist-info ${DIST_WASM}/
+	# Build tools need setuptools metadata available alongside pip.
+	cp -r ${SETUPTOOLS}/* ${DIST_WASM}/
+	find ${DIST_WASM} -type d -name __pycache__ -prune -exec rm -rf {} +
 	touch ${DIST_WASM}/.built
 
 test: deps ${DIST_WASM}/.built
 	# Importing from the bundle works:
-	PYTHONPATH=${DIST_WASM} pnpm-exec cpython -c 'import pip'
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=${DIST_WASM} pnpm-exec cpython -c 'import pip'
 	# The command line script works.
-	PYTHONPATH=${DIST_WASM} pnpm-exec cpython -m pip > /dev/null
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=${DIST_WASM} pnpm-exec cpython -m pip > /dev/null

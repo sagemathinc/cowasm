@@ -4,17 +4,19 @@ all: deps wasm ${BIN}/cython
 
 # See https://github.com/cython/cython/releases
 
-VERSION = 0.29.33
+VERSION = 3.2.5
 URL = https://github.com/cython/cython/releases/download/${VERSION}/Cython-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/cython-${VERSION}.tar.gz
-TARBALL_SHA256 = 5040764c4a4d2ce964a395da24f0d1ae58144995dab92c6b96f44c3f4d72286a
+TARBALL_SHA256 = 3dd42e4cf36ad15f265bdfec2337cc00c688c8eb6d374ffd13bb19437c27bba1
 
 include ../build/Makefile-rules
+
+PYTHONPATH = ${PACKAGES}/py-pip/dist/wasm
 
 ${BUILD_WASM}/.built: ${BUILD_WASM}/.build
 	cd ../build && make zig
 	cd ${BUILD_WASM} \
-		&& PYTHONPATH=${PIP} pnpm-exec cpython setup.py build
+		&& PYTHONPATH=${PYTHONPATH} pnpm-exec cpython -c 'import runpy, sys; sys.argv = ["setup.py", "build"]; runpy.run_path("setup.py", run_name="__main__")'
 	touch ${BUILD_WASM}/.built
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.built
@@ -42,14 +44,14 @@ ${BIN}/cython: bin/cython
 # That test fails since there's a bunch
 # we need to do regarding disabling setjmp, etc., to get this stuff to build.
 
-test: wasm
+test: deps wasm
 	# Test that importing from the bundle works:
 	PYTHONPATH=${DIST_WASM} pnpm-exec cpython -c 'import Cython'
 	# Run an actual demo test suite
 	cd ${BUILD_WASM}/Demos \
 		&& rm -f *.so *.c \
 		&& touch numpy.py \
-		&& pnpm-exec cpython setup.py build_ext --inplace \
-		&& pnpm-exec cpython run_primes.py 20 \
-		&& pnpm-exec cpython run_spam.py \
-		&& pnpm-exec cpython integrate_timing.py
+		&& PYTHONPATH=${DIST_WASM}:${PYTHONPATH} pnpm-exec cpython -c 'import setuptools, runpy, sys; sys.argv = ["setup.py", "build_ext", "--inplace"]; runpy.run_path("setup.py", run_name="__main__")' \
+		&& PYTHONPATH=${DIST_WASM} pnpm-exec cpython run_primes.py 20 \
+		&& PYTHONPATH=${DIST_WASM} pnpm-exec cpython run_spam.py \
+		&& PYTHONPATH=${DIST_WASM} pnpm-exec cpython integrate_timing.py

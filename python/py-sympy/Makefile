@@ -4,23 +4,18 @@ all: deps wasm
 
 # See https://github.com/sympy/sympy/releases
 
-VERSION = 1.11.1
-URL = https://github.com/sympy/sympy/releases/download/sympy-${VERSION}/sympy-${VERSION}.tar.gz
-TARBALL = ${UPSTREAM}/sympy-${VERSION}.tar.gz
-TARBALL_SHA256 = e32380dce63cb7c0108ed525570092fd45168bdae2faa17e528221ef72e88658
+VERSION = 1.14.0
+WHEEL = sympy-${VERSION}-py3-none-any.whl
+URL = https://files.pythonhosted.org/packages/py3/s/sympy/${WHEEL}
+TARBALL = ${UPSTREAM}/${WHEEL}
+TARBALL_SHA256 = e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5
 
-include ../build/Makefile-rules
+include ../build/Makefile-vars-wheel
 
-${BUILD_WASM}/.built:  ${BUILD_WASM}/.build
-	cd ${BUILD_WASM} \
-		&& PYTHONPATH=$(shell cowasm-package-path @cowasm/py-setuptools):$(shell cowasm-package-path @cowasm/py-mpmath) pnpm-exec cpython setup.py build
-	touch ${BUILD_WASM}/.built
-
-${DIST_WASM}/.built:  ${BUILD_WASM}/.built
-	cd ${BUILD_WASM}/build/lib \
-		&& pnpm-exec cpython -m cowasm_bundler sympy
+${DIST_WASM}/.built:  ${BUILD_WASM}/.build
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
-	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib/sympy.tar.xz
+	cp -r ${BUILD_WASM}/sympy ${DIST_WASM}/
+	cp -r ${BUILD_WASM}/sympy-${VERSION}.dist-info ${DIST_WASM}/
 	touch ${DIST_WASM}/.built
 
 # This is a small test just that something works.  It's NOT the full very massive test suite,

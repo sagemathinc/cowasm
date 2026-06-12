@@ -48,14 +48,14 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 #    such as pandas expect a full install in place (with all headers) in
 #    order to compile themselves.
 
-PYTHONPATH = $(shell cowasm-package-path @cowasm/py-pip):$(shell cowasm-package-path @cowasm/py-cython)
+PYTHONPATH = ${PACKAGES}/py-pip/dist/wasm:${PACKAGES}/py-cython/dist/wasm
 
 ${BUILD_WASM}/.lib:  ${BUILD_WASM}/.patched
 	cd ../build && make zig
 	# TODO: We install rather than just build *solely* so that
 	# pip install with pandas doesn't try to install numpy later.
 	cd ${BUILD_WASM} \
-		&& PYTHONPATH=${PYTHONPATH} NPY_BLAS_ORDER= NPY_LAPACK_ORDER= BLAS=None LAPACK=None ATLAS=None pnpm-exec cpython setup.py build
+		&& PYTHONPATH=${PYTHONPATH} NPY_BLAS_ORDER= NPY_LAPACK_ORDER= BLAS=None LAPACK=None ATLAS=None pnpm-exec cpython -c 'import setuptools, runpy, sys; sys.argv = ["setup.py", "build"]; runpy.run_path("setup.py", run_name="__main__")'
 	touch ${BUILD_WASM}/.lib
 
 ${DIST_WASM}/.built:  ${BUILD_WASM}/.lib
@@ -72,7 +72,7 @@ ${DIST_WASM}/.built:  ${BUILD_WASM}/.lib
 	touch ${DIST_WASM}/.built
 
 # Just a trivial test for now.
-test: ${DIST_WASM}/.built
+test: deps ${DIST_WASM}/.built
 	rm -rf ${BUILD_WASM}/cowasm-test
 	mkdir -p ${BUILD_WASM}/cowasm-test
 	@cd ${BUILD_WASM}/cowasm-test \

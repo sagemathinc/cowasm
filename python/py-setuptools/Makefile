@@ -3,44 +3,26 @@ include ../build/Makefile-vars
 all: deps wasm
 
 # See https://github.com/pypa/setuptools/releases
-VERSION = 65.6.3
+VERSION = 82.0.1
 
-URL = https://github.com/pypa/setuptools/archive/refs/tags/v65.6.3.tar.gz
-TARBALL = ${UPSTREAM}/setuptools-${VERSION}.tar.gz
-TARBALL_SHA256 = d8402d8d0c0fc5a2d93285fc267658ab49cfc6d3fbd7a7539eb3119eb52ffb0e
+WHEEL = setuptools-${VERSION}-py3-none-any.whl
+URL = https://files.pythonhosted.org/packages/py3/s/setuptools/${WHEEL}
+TARBALL = ${UPSTREAM}/${WHEEL}
+TARBALL_SHA256 = a59e362652f08dcd477c78bb6e7bd9d80a7995bc73ce773050228a348ce2e5bb
 
-include ../build/Makefile-rules
+include ../build/Makefile-vars-wheel
 
-${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
-	# We apply one patch to support building C++ extensions.  Without this, the numpy
-	# build fails pretty quickly. This is needed due to our hacky approach to -fPIC.
-	cd ${BUILD_WASM} && cat ${SRC}/patches/01-c++.patch | patch -p1
-	touch ${BUILD_WASM}/.patched
+TOP_LEVEL = setuptools
 
-${BUILD_WASM}/.built: ${BUILD_WASM}/.patched
-	cd ${BUILD_WASM} \
-		&& pnpm-exec cpython setup.py build
-	touch ${BUILD_WASM}/.built
-
-${DIST_WASM}/.built: ${BUILD_WASM}/.built
-	# Hack: since we are not "properly" installing using "ensurepip", we replace
-	# the code in version.py that calls pkg_resources (and looks at data in site-packages),
-	# and instead just hardcode the version, which we know of course.
-	# Note that we only use setuptools to bootstrap installing pip, then replace
-	# setuptools with the one from pip.
-	echo '__version__="${VERSION}"' > ${BUILD_WASM}/build/lib/setuptools/version.py
-	# create bundles
-	cd ${BUILD_WASM}/build/lib \
-		&& pnpm-exec cpython -m cowasm_bundler setuptools \
-		&& pnpm-exec cpython -m cowasm_bundler _distutils_hack \
-		&& pnpm-exec cpython -m cowasm_bundler pkg_resources
+${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
-	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib/setuptools.tar.xz
-	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib/_distutils_hack.tar.xz
-	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib/pkg_resources.tar.xz
+	cp -r ${BUILD_WASM}/setuptools ${DIST_WASM}/
+	cp -r ${BUILD_WASM}/_distutils_hack ${DIST_WASM}/
+	cp -r ${BUILD_WASM}/setuptools-${VERSION}.dist-info ${DIST_WASM}/
+	cp ${BUILD_WASM}/distutils-precedence.pth ${DIST_WASM}/
 	touch ${DIST_WASM}/.built
 
 test: deps ${DIST_WASM}/.built
 	# Test that importing from the bundle works:
-	PYTHONPATH=${DIST_WASM} pnpm-exec cpython  -c 'import setuptools'
+	PYTHONPATH=${DIST_WASM} pnpm-exec cpython -c 'import setuptools; import setuptools.version'
