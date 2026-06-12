@@ -77,6 +77,7 @@ async function pasteToTerminal(data: string): Promise<void> {
 
 async function main() {
   setStatus("running", "terminal setup");
+  localStorage["cowasm-sh-enable-persistence"] = "1";
   const phase = sessionStorage.getItem("cowasm-sh-smoke-phase") ?? "initial";
   if (phase == "initial") {
     await clearHomeSnapshot();

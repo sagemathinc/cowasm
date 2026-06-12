@@ -50,6 +50,12 @@ function dataToString(data: any): string {
 
 const SNAPSHOT_BEGIN = "__COWASM_HOME_SNAPSHOT_BEGIN__";
 const SNAPSHOT_END = "__COWASM_HOME_SNAPSHOT_END__";
+const PERSISTENCE_FLAG = "cowasm-sh-enable-persistence";
+
+function isPersistenceEnabled(): boolean {
+  const params = new URLSearchParams(location.search);
+  return params.has("persistence") || localStorage[PERSISTENCE_FLAG] == "1";
+}
 
 function saveCommand(): string {
   return `cd /home/user && python -c 'import base64,io,os,sys,zipfile; b=io.BytesIO(); z=zipfile.ZipFile(b,"w",zipfile.ZIP_STORED); [z.write(os.path.join(d,n), os.path.relpath(os.path.join(d,n),".")) for d,_,fs in os.walk(".") for n in fs]; z.close(); print("__COWASM_HOME_"+"SNAPSHOT_BEGIN__"); print(base64.b64encode(b.getvalue()).decode("ascii")); print("__COWASM_HOME_"+"SNAPSHOT_END__")'\n`;
@@ -101,6 +107,7 @@ export default async function terminal(element: HTMLDivElement) {
   console.log("creating dashWasm");
   await removeStaleServiceWorkerFallback();
   const finishLoading = showLoading(element);
+  const persistenceEnabled = isPersistenceEnabled();
   const toolbar = document.createElement("div");
   toolbar.style.cssText =
     "display:flex;align-items:center;gap:8px;padding:8px 15px;font:13px system-ui,sans-serif;color:#444";
@@ -116,8 +123,10 @@ export default async function terminal(element: HTMLDivElement) {
     button.style.cssText =
       "font:13px system-ui,sans-serif;padding:4px 8px;border:1px solid #bbb;background:#fff;border-radius:4px;cursor:pointer";
   }
-  toolbar.append(saveButton, restoreButton, clearButton, status);
-  element.appendChild(toolbar);
+  if (persistenceEnabled) {
+    toolbar.append(saveButton, restoreButton, clearButton, status);
+    element.appendChild(toolbar);
+  }
   const term = new Terminal({ convertEol: true });
   term.open(element);
   disableBrowserInputRestore(element);
@@ -131,26 +140,28 @@ export default async function terminal(element: HTMLDivElement) {
   };
 
   let startupSnapshot: Snapshot | undefined;
-  try {
-    startupSnapshot = await loadHomeSnapshot();
-  } catch (err) {
-    setPersistenceStatus(
-      `could not load saved /home/user: ${err instanceof Error ? err.message : err}`
-    );
-  }
-
   let homeDirectoryZip: Uint8Array | undefined;
-  if (startupSnapshot) {
+  if (persistenceEnabled) {
     try {
-      homeDirectoryZip = decodeBase64(startupSnapshot.data);
+      startupSnapshot = await loadHomeSnapshot();
     } catch (err) {
-      await clearHomeSnapshot();
-      startupSnapshot = undefined;
       setPersistenceStatus(
-        `cleared unreadable /home/user snapshot: ${
-          err instanceof Error ? err.message : err
-        }`
+        `could not load saved /home/user: ${err instanceof Error ? err.message : err}`
       );
+    }
+
+    if (startupSnapshot) {
+      try {
+        homeDirectoryZip = decodeBase64(startupSnapshot.data);
+      } catch (err) {
+        await clearHomeSnapshot();
+        startupSnapshot = undefined;
+        setPersistenceStatus(
+          `cleared unreadable /home/user snapshot: ${
+            err instanceof Error ? err.message : err
+          }`
+        );
+      }
     }
   }
 
@@ -287,29 +298,33 @@ export default async function terminal(element: HTMLDivElement) {
     setPersistenceStatus("cleared /home/user snapshot");
   };
 
-  saveButton.onclick = () => {
-    void saveHome().catch((err) =>
-      setPersistenceStatus(err instanceof Error ? err.message : `${err}`)
-    );
-  };
-  restoreButton.onclick = () => {
-    void restoreHome().catch((err) =>
-      setPersistenceStatus(err instanceof Error ? err.message : `${err}`)
-    );
-  };
-  clearButton.onclick = () => {
-    void clearHome().catch((err) =>
-      setPersistenceStatus(err instanceof Error ? err.message : `${err}`)
-    );
-  };
+  if (persistenceEnabled) {
+    saveButton.onclick = () => {
+      void saveHome().catch((err) =>
+        setPersistenceStatus(err instanceof Error ? err.message : `${err}`)
+      );
+    };
+    restoreButton.onclick = () => {
+      void restoreHome().catch((err) =>
+        setPersistenceStatus(err instanceof Error ? err.message : `${err}`)
+      );
+    };
+    clearButton.onclick = () => {
+      void clearHome().catch((err) =>
+        setPersistenceStatus(err instanceof Error ? err.message : `${err}`)
+      );
+    };
 
-  (window as any).cowasmPersistence = {
-    save: saveHome,
-    restore: restoreHome,
-    clear: clearHome,
-    load: loadHomeSnapshot,
-    ready: persistenceReady,
-  };
+    (window as any).cowasmPersistence = {
+      save: saveHome,
+      restore: restoreHome,
+      clear: clearHome,
+      load: loadHomeSnapshot,
+      ready: persistenceReady,
+    };
+  } else {
+    delete (window as any).cowasmPersistence;
+  }
 
   const processOutput = (text: string): string => {
     if (!pendingSave && !capturingSnapshot && !outputLookbehind) {
@@ -444,7 +459,12 @@ export default async function terminal(element: HTMLDivElement) {
   const r = await terminalPromise;
   shellExitCode = r;
   console.log("terminal terminated", r);
-  if (startupSnapshot && r != 0 && Date.now() - shellStart < 10000) {
+  if (
+    persistenceEnabled &&
+    startupSnapshot &&
+    r != 0 &&
+    Date.now() - shellStart < 10000
+  ) {
     await clearHomeSnapshot();
     setPersistenceStatus(
       `cleared saved /home/user after shell exited with ${r}; reloading`
