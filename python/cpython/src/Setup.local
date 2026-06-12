@@ -65,12 +65,12 @@ unicodedata unicodedata.c
 # _pickle _pickle.c
 
 # Readline via libedit:
-readline readline.c -I$(LIBEDIT_WASM)/include $(LIBEDIT_WASM)/lib/libedit.a $(TERMCAP_WASM)/lib/libtermcap.a
+readline readline.c -DWITH_EDITLINE -I$(LIBEDIT_WASM)/include $(LIBEDIT_WASM)/lib/libedit.a $(TERMCAP_WASM)/lib/libtermcap.a
 
 
 # Curses
-_curses _cursesmodule.c -I$(NCURSES_WASM)/include -I$(NCURSES_WASM)/include/ncurses $(NCURSES_WASM)/lib/libncurses.a $(TERMCAP_WASM)/lib/libtermcap.a
-_curses_panel _curses_panel.c -I$(NCURSES_WASM)/include -I$(NCURSES_WASM)/include/ncurses $(NCURSES_WASM)/lib/libncurses.a $(TERMCAP_WASM)/lib/libtermcap.a
+_curses _cursesmodule.c -DHAVE_NCURSES_CURSES_H -I$(NCURSES_WASM)/include -I$(NCURSES_WASM)/include/ncurses $(NCURSES_WASM)/lib/libncurses.a $(TERMCAP_WASM)/lib/libtermcap.a
+_curses_panel _curses_panel.c -DHAVE_NCURSES_CURSES_H -DHAVE_NCURSES_PANEL_H -I$(NCURSES_WASM)/include -I$(NCURSES_WASM)/include/ncurses $(NCURSES_WASM)/lib/libpanel.a $(NCURSES_WASM)/lib/libncurses.a $(TERMCAP_WASM)/lib/libtermcap.a
 
 
 
@@ -87,4 +87,3 @@ mmap mmapmodule.c
 termios termios.c
 
 _json _json.c
-

@@ -114,6 +114,10 @@ ac_cv_have_lchflags=no
 ac_cv_func_gethostbyname_r=no
 ac_cv_func_gethostbyname=yes
 ac_cv_func_gethostbyaddr=yes
+ac_cv_func_getlogin=no
+ac_cv_func_getlogin_r=no
+ac_cv_header_sys_timerfd_h=no
+ac_cv_func_timerfd_create=no
 
 # Disable all of the process scheduling functionality, which nodejs doesn't provide
 # either, and of course doesn't make sense in browser.
@@ -155,6 +159,13 @@ ac_cv_func_plock=no
 # would have to be maybe in WASI; emscripten also disables this.
 ac_cv_func_preadv2=no
 ac_cv_func_pwritev2=no
+ac_cv_func_grantpt=no
+ac_cv_func_posix_openpt=no
+ac_cv_func_ptsname=no
+ac_cv_func_ptsname_r=no
+ac_cv_func_setns=no
+ac_cv_func_unlockpt=no
+ac_cv_func_unshare=no
 # We don't have this gettext thing; it would return a char*
 # so a 0-returning stub would cause a segfault; better to work around.
 ac_cv_func_bind_textdomain_codeset=no
@@ -164,6 +175,17 @@ ac_cv_func_copy_file_range=no
 
 # An optimization on linux?
 ac_cv_func_close_range=no
+ac_cv_func_closefrom=no
+ac_cv_func_posix_spawn_file_actions_addclosefrom_np=no
+
+# CoWasm has a minimal pthread shim, not the platform-specific pthread
+# convenience APIs that CPython may detect from host headers while cross
+# compiling.
+ac_cv_func_pthread_getattr_np=no
+ac_cv_func_pthread_get_name_np=no
+ac_cv_func_pthread_getname_np=no
+ac_cv_func_pthread_set_name_np=no
+ac_cv_func_pthread_setname_np=no
 
 # Not in WASI
 ac_cv_func_memfd_create=no
@@ -209,6 +231,7 @@ ac_cv_header_term_h=yes
 # The less threads the better for us, given our goals.
 # These are all of the pthread related variables I get in config.log.
 ac_cv_func_pthread_kill=no
+ac_cv_func_pthread_cond_timedwait_relative_np=no
 ac_cv_func_pthread_condattr_setclock=no
 ac_cv_func_pthread_detach=no
 ac_cv_func_pthread_getcpuclockid=no
@@ -228,4 +251,3 @@ ac_cv_func__getpty=no
 
 # We have mmap in zig's WASI but it's not properly implemented.
 ac_cv_func_mmap=no
-

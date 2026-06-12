@@ -11,9 +11,14 @@ include ../build/Makefile-rules
 
 CPYTHON_WASM = $(shell cowasm-package-path @cowasm/cpython)
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+PYTHON_MAJOR = 3
+PYTHON_MINOR = 14
+PYTHON_LIB = python${PYTHON_MAJOR}.${PYTHON_MINOR}
+PYTHON_ABI = ${PYTHON_MAJOR}${PYTHON_MINOR}
+PYTHON_PLATFORM = cpython-${PYTHON_ABI}-wasm32-wasi
 
-CFLAGS = -I$(shell cowasm-package-path @cowasm/cpython)/include/python3.11 -I$(shell cowasm-package-path @cowasm/posix-wasm)
-LDFLAGS = -L${BUILD} -lpython3.11
+CFLAGS = -I$(shell cowasm-package-path @cowasm/cpython)/include/${PYTHON_LIB} -I$(shell cowasm-package-path @cowasm/posix-wasm)
+LDFLAGS = -L${BUILD} -l${PYTHON_LIB}
 
 ###
 # Python as a web assembly library with a few extras compiled in
@@ -21,13 +26,13 @@ LDFLAGS = -L${BUILD} -lpython3.11
 ###
 
 # This is a little complicated because we *might* have the
-# libpython3.11.a compressed in the @cowasm/cpython package,
+# lib${PYTHON_LIB}.a compressed in the @cowasm/cpython package,
 # since it is 25MB and so rarely needed, except here.
 # It's compressed when uploaded to npmjs.com, but not compressed
 # when used via the workspace.
-${BUILD}/libpython3.11.a:
-	cp ${CPYTHON_WASM}/lib/libpython3.11.a* ${BUILD}
-	@[[ -f ${BUILD}/libpython3.11.a ]] || xz -d ${BUILD}/libpython3.11.a.xz
+${BUILD}/lib${PYTHON_LIB}.a:
+	cp ${CPYTHON_WASM}/lib/lib${PYTHON_LIB}.a* ${BUILD}
+	@[[ -f ${BUILD}/lib${PYTHON_LIB}.a ]] || xz -d ${BUILD}/lib${PYTHON_LIB}.a.xz
 
 
 ${BUILD}/libpython.o:
@@ -37,7 +42,7 @@ ${BUILD}/libpython.o:
 		-c ${CPYTHON_WASM}/lib/libpython.c \
 		-o ${BUILD}/libpython.o
 
-${DIST}/python.wasm: src/python.zig src/signal.zig ${BUILD}/libpython.o ${BUILD}/libpython3.11.a
+${DIST}/python.wasm: src/python.zig src/signal.zig ${BUILD}/libpython.o ${BUILD}/lib${PYTHON_LIB}.a
 	cd ../build && make zig
 	mkdir -p ${DIST}
 	cd src/ \
@@ -116,7 +121,7 @@ python: ${DIST}/python.wasm hello hellozig ${BUNDLES} ${PYTHON_PACKAGES}
 # An example minimal Python extension module, written in C.
 ###
 
-PLATFORM = cpython-311-wasm32-wasi
+PLATFORM = ${PYTHON_PLATFORM}
 
 ${DIST}/hello.${PLATFORM}.so: src/extension/hellomodule.c
 	cd ../build && make zig

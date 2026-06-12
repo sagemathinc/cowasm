@@ -1,21 +1,20 @@
---- native/Lib/subprocess.py	2022-08-05 07:45:18.000000000 -0700
-+++ wasm/Lib/subprocess.py	2022-09-13 22:02:10.921551009 -0700
+--- native/Lib/subprocess.py
++++ wasm/Lib/subprocess.py
 @@ -75,7 +75,7 @@
      _mswindows = True
-
- # wasm32-emscripten and wasm32-wasi do not support processes
--_can_fork_exec = sys.platform not in {"emscripten", "wasi"}
-+_can_fork_exec = sys.platform not in {"emscripten"}
-
+ 
+ # some platforms do not support subprocesses
+-_can_fork_exec = sys.platform not in {"emscripten", "wasi", "ios", "tvos", "watchos"}
++_can_fork_exec = sys.platform not in {"emscripten", "ios", "tvos", "watchos"}
+ 
  if _mswindows:
      import _winapi
-
---- native/Modules/_posixsubprocess.c	2022-08-05 07:45:18.000000000 -0700
-+++ wasm/Modules/_posixsubprocess.c	2022-09-14 10:40:07.000000000 -0700
-@@ -702,6 +702,22 @@
-     }
- }
-
+--- native/Modules/_posixsubprocess.c
++++ wasm/Modules/_posixsubprocess.c
+@@ -102,6 +102,23 @@
+ 
+ #include "clinic/_posixsubprocess.c.h"
+ 
 +extern int python_wasm_fork_exec(char *const exec_array[],
 +             char *const argv[],
 +             char *const envp[],
@@ -28,69 +27,44 @@
 +             int call_setsid, pid_t pgid_to_set,
 +             int call_setgid, gid_t gid,
 +             int call_setgroups, size_t groups_size, const gid_t *groups,
-+             int call_setuid, uid_t uid, int child_umask,
++             int call_setuid, uid_t uid,
++             int child_umask,
 +             const void *child_sigmask,
-+             int *py_fds_to_keep // null or a -1 terminated int[]
-+             );
++             int *py_fds_to_keep);
 +
-+static int *
-+cowasm_fds_to_keep_array(PyObject *py_fds_to_keep)
-+{
-+    Py_ssize_t len = PyTuple_GET_SIZE(py_fds_to_keep);
-+    int *fds_to_keep = PyMem_RawMalloc((len + 1) * sizeof(int));
-+    if (fds_to_keep == NULL) {
-+        errno = ENOMEM;
-+        return NULL;
+ /* Convert ASCII to a positive int, no libc call. no overflow. -1 on error. */
+ static int
+ _pos_int_from_ascii(const char *name)
+@@ -1222,6 +1239,32 @@
+         goto cleanup;
+     }
+ 
++    int *cowasm_fds_to_keep = PyMem_Malloc((fds_to_keep_len + 1) * sizeof(int));
++    if (cowasm_fds_to_keep == NULL) {
++        PyErr_SetString(PyExc_MemoryError, "failed to malloc cowasm_fds_to_keep");
++        goto cleanup;
 +    }
-+    for (Py_ssize_t i = 0; i < len; i++) {
-+        PyObject *fdobj = PyTuple_GET_ITEM(py_fds_to_keep, i);
-+        fds_to_keep[i] = (int)PyLong_AsLong(fdobj);
-+        if (PyErr_Occurred()) {
-+            PyMem_RawFree(fds_to_keep);
-+            errno = EINVAL;
-+            return NULL;
-+        }
++    for (Py_ssize_t i = 0; i < fds_to_keep_len; i++) {
++        cowasm_fds_to_keep[i] = c_fds_to_keep[i];
 +    }
-+    fds_to_keep[len] = -1;
-+    return fds_to_keep;
-+}
-
- /* The main purpose of this wrapper function is to isolate vfork() from both
-  * subprocess_fork_exec() and child_exec(). A child process created via
-@@ -731,6 +747,30 @@
-              PyObject *preexec_fn_args_tuple)
- {
-
-+  // For python-wasm we MUST take care of the entire
-+  //   fork --> do stuff --> exec
-+  // ourselves at the node.js / zig layer, since once
-+  // fork happens you can't robustly run any javascript
-+  // code, but all the setup requires arbitrarily much
-+  // such code to be run.  Also, doing this externally
-+  // provides a clear API to implement and provide a
-+  // browser version as well.  Unless we switch from node
-+  // to some custom webassembly runtime of our own like wasmtime,
-+  // doing this sort of thing generally via system calls can't
-+  // be supported.
-+  int *fds_to_keep = cowasm_fds_to_keep_array(py_fds_to_keep);
-+  if (fds_to_keep == NULL) {
-+      return -1;
-+  }
-+  pid_t cowasm_pid = python_wasm_fork_exec(exec_array,
-+                                           argv,envp,cwd,p2cread,  p2cwrite,
-+                                           c2pread,  c2pwrite,
-+                                           errread,  errwrite,
-+                                           errpipe_read,  errpipe_write,
-+                                           close_fds, restore_signals,
-+                                           call_setsid, pgid_to_set,
-+                                           call_setgid, gid,
-+                                           call_setgroups, groups_size, groups,
-+                                           call_setuid, uid, child_umask,
-+                                           child_sigmask,
-+                                           fds_to_keep);
-+  PyMem_RawFree(fds_to_keep);
-+  return cowasm_pid;
++    cowasm_fds_to_keep[fds_to_keep_len] = -1;
 +
-     pid_t pid;
-
- #ifdef VFORK_USABLE
++    pid = python_wasm_fork_exec(exec_array, argv, envp, cwd,
++                                p2cread, p2cwrite, c2pread, c2pwrite,
++                                errread, errwrite, errpipe_read, errpipe_write,
++                                close_fds, restore_signals, call_setsid, pgid_to_set,
++                                gid != (gid_t)-1, gid,
++                                extra_group_size >= 0,
++                                extra_group_size < 0 ? 0 : (size_t)extra_group_size,
++                                extra_groups,
++                                uid != (uid_t)-1, uid, child_umask,
++                                NULL, cowasm_fds_to_keep);
++    PyMem_Free(cowasm_fds_to_keep);
++    if (pid == (pid_t)-1) {
++        saved_errno = errno;
++    }
++    goto cleanup;
++
+     /* This must be the last thing done before fork() because we do not
+      * want to call PyOS_BeforeFork() if there is any chance of another
+      * error leading to the cleanup: code without calling fork(). */

@@ -2,11 +2,11 @@ import { syncPython } from "../../node";
 
 test("mkstemp system call -- hitting the memfs filesystem", async () => {
   const { kernel } = await syncPython({ fs: "everything" });
-  const fd = kernel.callWithString("mkstemp", "/usr/lib/python3.11/fooXXXXXX");
+  const fd = kernel.callWithString("mkstemp", "/usr/lib/python3.14/fooXXXXXX");
   expect(fd).toBeGreaterThan(0);
   const path = kernel.wasi?.FD_MAP.get(fd)?.path;
   if (path == null) throw Error("bug");
-  expect(path.startsWith("/usr/lib/python3.11/foo")).toBe(true);
+  expect(path.startsWith("/usr/lib/python3.14/foo")).toBe(true);
   kernel.fs?.unlinkSync(path);
 });
 

@@ -1,6 +1,6 @@
 --- native/Programs/python.c	2022-09-11 12:23:30.000000000 -0700
 +++ wasm/Programs/python.c	2022-10-19 10:26:04.000000000 -0700
-@@ -2,6 +2,11 @@
+@@ -2,6 +2,13 @@
  
  #include "Python.h"
  
@@ -14,7 +14,7 @@
  #ifdef MS_WINDOWS
  int
  wmain(int argc, wchar_t **argv)
-@@ -9,6 +14,11 @@
+@@ -9,6 +16,11 @@
      return Py_Main(argc, argv);
  }
  #else

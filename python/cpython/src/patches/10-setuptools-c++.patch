@@ -1,5 +1,5 @@
---- native/lib/python3.11/site-packages/setuptools/_distutils/unixccompiler.py	2022-09-17 12:18:23.000000000 -0700
-+++ wasm/lib/python3.11/site-packages/setuptools/_distutils/unixccompiler.py	2022-09-19 16:52:33.000000000 -0700
+--- native/lib/python3.14/site-packages/setuptools/_distutils/unixccompiler.py	2022-09-17 12:18:23.000000000 -0700
++++ wasm/lib/python3.14/site-packages/setuptools/_distutils/unixccompiler.py	2022-09-19 16:52:33.000000000 -0700
 @@ -245,7 +245,10 @@
                  building_exe = target_desc == CCompiler.EXECUTABLE
                  linker = (self.linker_exe if building_exe else self.linker_so)[:]

@@ -1,7 +1,7 @@
 # This is all we need for installing the wasm cpython.  We can't build anything dynamically
 # natively due to bugs in zig...
 # Right now all the modules fail to compile, but if you do:
-#   make BLDSHARED="zig cc -shared -bundle -undefined dynamic_lookup -lpython3.11 -lz"
+#   make BLDSHARED="zig cc -shared -bundle -undefined dynamic_lookup -lpython3.14 -lz"
 # then they compile, but then zig segfaults. This is something to keep trying as
 # zig matures, I guess.
 
@@ -9,14 +9,13 @@
 *static*
 
 _lzma _lzmamodule.c -I$(abs_srcdir)/../../../lzma-native/dist/native/include/ $(abs_srcdir)/../../../lzma-native/dist/native/lib/liblzma.a $(abs_srcdir)/../../../termcap-native/dist/native/lib/libtermcap.a
-readline readline.c -I$(abs_srcdir)/../../../libedit-native/dist/native/include/ $(abs_srcdir)/../../../libedit-native/dist/native/lib/libedit.a $(abs_srcdir)/../../../termcap-native/dist/native/lib/libtermcap.a
+readline readline.c -DWITH_EDITLINE -I$(abs_srcdir)/../../../libedit-native/dist/native/include/ $(abs_srcdir)/../../../libedit-native/dist/native/lib/libedit.a $(abs_srcdir)/../../../termcap-native/dist/native/lib/libtermcap.a
 _struct _struct.c
 binascii binascii.c
 zlib  zlibmodule.c -lz
 _posixsubprocess _posixsubprocess.c
 _asyncio _asynciomodule.c
 _bisect _bisectmodule.c
-_contextvars _contextvarsmodule.c
 _csv _csv.c
 _datetime _datetimemodule.c
 _decimal _decimal/_decimal.c
@@ -34,7 +33,6 @@ _struct _struct.c
 _typing _typingmodule.c
 _zoneinfo _zoneinfo.c
 array arraymodule.c
-audioop audioop.c
 binascii binascii.c
 cmath cmathmodule.c
 math mathmodule.c
@@ -44,14 +42,6 @@ select selectmodule.c
 # XML
 _elementtree _elementtree.c
 pyexpat pyexpat.c
-
-# hashing builtins
-_blake2 _blake2/blake2module.c _blake2/blake2b_impl.c _blake2/blake2s_impl.c
-_md5 md5module.c
-_sha1 sha1module.c
-_sha256 sha256module.c
-_sha512 sha512module.c
-_sha3 _sha3/sha3module.c
 
 # text encodings and unicode
 _codecs_cn cjkcodecs/_codecs_cn.c
@@ -79,5 +69,3 @@ termios termios.c
 # does something, to make implementing it in python-wasm easier.
 # _ssl _ssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl-native/dist/native/include $(abs_srcdir)/../../../openssl-native/dist/native/lib/libssl.a $(abs_srcdir)/../../../openssl-native/dist/native/lib/libcrypto.a
 # _hashlib _hashopenssl.c -DOPENSSL_THREADS -I$(abs_srcdir)/../../../openssl-native/dist/native/include $(abs_srcdir)/../../../openssl-native/dist/native/lib/libcrypto.a
-
-

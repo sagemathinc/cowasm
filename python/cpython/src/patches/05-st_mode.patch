@@ -1,17 +1,16 @@
---- native/Modules/posixmodule.c	2022-08-05 07:45:18.000000000 -0700
-+++ wasm/Modules/posixmodule.c	2022-09-07 09:53:36.000000000 -0700
-@@ -2391,8 +2391,12 @@
-     PyObject *v = PyStructSequence_New((PyTypeObject *)StatResultType);
-     if (v == NULL)
-         return NULL;
--
--    PyStructSequence_SET_ITEM(v, 0, PyLong_FromLong((long)st->st_mode));
+--- native/Modules/posixmodule.c	2026-06-11 00:00:00.000000000 -0700
++++ wasm/Modules/posixmodule.c	2026-06-11 00:00:00.000000000 -0700
+@@ -2702,7 +2702,12 @@
+         PyStructSequence_SET_ITEM(v, (pos), obj); \
+     } while (0)
+ 
+-    SET_ITEM(0, PyLong_FromLong((long)st->st_mode));
 +    // On WASM we modify st_mode to include u+rwx, since WASI provides nothing
 +    // but "is it a directory or not" in st_mode, and this breaks a lot of things
 +    // horribly, e.g., the entire zipfile module.  For now the best solution is
 +    // this patch.  This will change -- see
 +    //      https://github.com/WebAssembly/wasi-filesystem/issues/34
-+    PyStructSequence_SET_ITEM(v, 0, PyLong_FromLong((long)st->st_mode | 448));
-     static_assert(sizeof(unsigned long long) >= sizeof(st->st_ino),
-                   "stat.st_ino is larger than unsigned long long");
-     PyStructSequence_SET_ITEM(v, 1, PyLong_FromUnsignedLongLong(st->st_ino));
++    SET_ITEM(0, PyLong_FromLong((long)st->st_mode | 448));
+ #ifdef MS_WINDOWS
+     SET_ITEM(1, _pystat_l128_from_l64_l64(st->st_ino, st->st_ino_high));
+     SET_ITEM(2, PyLong_FromUnsignedLongLong(st->st_dev));

@@ -85,6 +85,40 @@ export default function unistd(context) {
 
     getpid: () => process.pid ?? 1,
 
+    // ssize_t write(int fd, const void *buf, size_t count);
+    write: (fd: number, bufPtr: number, count: number): number => {
+      const tmpPtr = send.malloc(12);
+      try {
+        send.u32(tmpPtr, bufPtr);
+        send.u32(tmpPtr + 4, count);
+        send.u32(tmpPtr + 8, 0);
+        const err = wasi.wasiImport.fd_write(fd, tmpPtr, 1, tmpPtr + 8);
+        if (err) {
+          context.callFunction("setErrno", err);
+          return -1;
+        }
+        return recv.u32(tmpPtr + 8);
+      } finally {
+        send.free(tmpPtr);
+      }
+    },
+
+    // ssize_t writev(int fd, const struct iovec *iov, int iovcnt);
+    writev: (fd: number, iovPtr: number, iovcnt: number): number => {
+      const nwrittenPtr = send.malloc(4);
+      try {
+        send.u32(nwrittenPtr, 0);
+        const err = wasi.wasiImport.fd_write(fd, iovPtr, iovcnt, nwrittenPtr);
+        if (err) {
+          context.callFunction("setErrno", err);
+          return -1;
+        }
+        return recv.u32(nwrittenPtr);
+      } finally {
+        send.free(nwrittenPtr);
+      }
+    },
+
     getpgid: (pid: number): number => {
       return posix.getpgid?.(pid) ?? 1;
     },

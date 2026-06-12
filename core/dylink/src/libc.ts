@@ -331,7 +331,7 @@ void _ZTISt20bad_array_new_length();
 `;
   s += "\n";
   s += cxxRuntimeExportCode();
-  const excluded = new Set(["__SIG_ERR", "signal"]);
+  const excluded = new Set(["__SIG_ERR", "signal", "fwrite", "write", "writev"]);
   s += wasmExport(
     (symbols + "\n" + posix).split("\n").filter((name) => !excluded.has(name))
   );

@@ -17,6 +17,7 @@ const pythonEverything = join(__dirname, "python-everything.zip");
 const pythonStdlib = join(__dirname, "python-stdlib.zip");
 const pythonReadline = join(__dirname, "python-readline.zip");
 const pythonMinimal = join(__dirname, "python-minimal.zip");
+const PYTHON_LIB = "/usr/lib/python3.14";
 
 // For now this is the best we can do.  TODO: cleanest solution in general would be to also include the
 // python3.wasm binary (which has main) from the cpython package, to support running python from python.
@@ -48,7 +49,7 @@ async function createPython(
   let env: any = { PYTHONEXECUTABLE };
   let wasm = python_wasm;
   if (opts?.fs == "everything") {
-    wasm = "/usr/lib/python3.11/python.wasm";
+    wasm = `${PYTHON_LIB}/python.wasm`;
   }
   if (opts?.fs == "everything") {
     env.PYTHONHOME = "/usr";
@@ -80,7 +81,7 @@ function getFilesystem(opts?: Options): FileSystemSpec[] {
       {
         type: "zipfile",
         zipfile: pythonEverything,
-        mountpoint: "/usr/lib/python3.11",
+        mountpoint: PYTHON_LIB,
       },
       { type: "native" },
     ];
@@ -90,7 +91,7 @@ function getFilesystem(opts?: Options): FileSystemSpec[] {
       {
         type: "zipfile",
         zipfile: pythonStdlib,
-        mountpoint: "/usr/lib/python3.11",
+        mountpoint: PYTHON_LIB,
       },
       { type: "native" },
     ];
@@ -102,7 +103,7 @@ function getFilesystem(opts?: Options): FileSystemSpec[] {
       {
         type: "zipfile",
         zipfile: opts?.noReadline ? pythonMinimal : pythonReadline,
-        mountpoint: "/usr/lib/python3.11",
+        mountpoint: PYTHON_LIB,
       },
       // Load full stdlib python filesystem asynchronously.  Only needed to run actual interesting code.
       // This way can load the wasm file from disk at the same time as the stdlib.
@@ -110,7 +111,7 @@ function getFilesystem(opts?: Options): FileSystemSpec[] {
         type: "zipfile",
         async: true,
         zipfile: pythonStdlib,
-        mountpoint: "/usr/lib/python3.11",
+        mountpoint: PYTHON_LIB,
       },
       // And the rest of the native filesystem.   **Sandboxing is not at all our goal here yet.**
       { type: "native" },

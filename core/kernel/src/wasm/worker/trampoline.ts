@@ -22,6 +22,17 @@ export default function initPythonTrampolineCalls(
     return table.get(ptr)(self, args, kwds);
   };
 
+  env["_PyEM_TrampolineCall"] = (
+    ptr: number,
+    arg1: number,
+    arg2: number,
+    arg3: number
+  ) => {
+    // Python 3.14 routes the older CPython trampoline macros through this
+    // generic Emscripten entry point.
+    return table.get(ptr)(arg1, arg2, arg3);
+  };
+
   env["descr_set_trampoline_call"] = (
     set: number,
     obj: number,

@@ -25,7 +25,7 @@ NOTES:
 
 - When working on this, here's how to update things after a change:
 
-~/cowasm/packages/cpython$  rm dist/wasm/.install-data && cp src/cowasm_importer.py dist/wasm/lib/python3.11/site-packages/ && make && cd ../python-wasm/ && make && cd ../cpython/
+~/cowasm/packages/cpython$  rm dist/wasm/.install-data && cp src/cowasm_importer.py dist/wasm/lib/python3.14/site-packages/ && make && cd ../python-wasm/ && make && cd ../cpython/
 
 """
 

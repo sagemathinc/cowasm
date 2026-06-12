@@ -19,7 +19,7 @@ PY_KIWISOLVER = $(shell cowasm-package-path @cowasm/py-kiwisolver)
 PY_MATPLOTLIB = $(shell cowasm-package-path @cowasm/py-matplotlib)
 
 PYTHON_BUNDLE_INPUTS = \
-	${CPYTHON}/bin/python3.11.wasm \
+	${CPYTHON}/bin/python3.14.wasm \
 	${CPYTHON}/lib/dist/python-stdlib.zip \
 	${PY_NUMPY}/.built \
 	${PY_PACKAGING}/.built \
@@ -50,25 +50,25 @@ ${BUILD}/fs-updated: node_modules ${PYTHON_BUNDLE_INPUTS}
 	cp -v $(shell cowasm-package-path @cowasm/rogue)/bin/rogue ${USR}/bin
 	cp -v $(shell cowasm-package-path @cowasm/sqlite)/bin/sqlite3 ${USR}/bin
 	cp -v $(shell cowasm-package-path @cowasm/tar)/bin/tar ${USR}/bin
-	cp -v ${CPYTHON}/bin/python3.11.wasm ${USR}/bin/python
+	cp -v ${CPYTHON}/bin/python3.14.wasm ${USR}/bin/python
 
 	# /share
 	mkdir -p ${USR}/share
 	cp -v ${SRC}/termcap ${USR}/share
 
 	# /lib
-	mkdir -p ${USR}/lib/python3.11
-	cd ${USR}/lib/python3.11 && unzip ${CPYTHON}/lib/dist/python-stdlib.zip
-	cd ${PY_NUMPY} && tar -Jcf ${USR}/lib/python3.11/numpy.tar.xz numpy
-	cd ${PY_PACKAGING} && tar -Jcf ${USR}/lib/python3.11/packaging.tar.xz packaging
-	cd ${PY_PYPARSING} && tar -Jcf ${USR}/lib/python3.11/pyparsing.tar.xz pyparsing
-	cd ${PY_CYCLER} && tar -Jcf ${USR}/lib/python3.11/cycler.tar.xz cycler
-	cd ${PY_FONTTOOLS} && tar -Jcf ${USR}/lib/python3.11/fontTools.tar.xz fontTools
-	cd ${PY_DATEUTIL} && tar -Jcf ${USR}/lib/python3.11/dateutil.tar.xz dateutil
-	cd ${PY_PYTZ} && tar -Jcf ${USR}/lib/python3.11/pytz.tar.xz pytz
-	cd ${PY_SIX} && tar -Jcf ${USR}/lib/python3.11/six.tar.xz six
-	cd ${PY_KIWISOLVER} && tar -Jcf ${USR}/lib/python3.11/kiwisolver.tar.xz kiwisolver
-	cd ${PY_MATPLOTLIB} && tar -Jcf ${USR}/lib/python3.11/matplotlib.tar.xz matplotlib mpl_toolkits pylab.py
+	mkdir -p ${USR}/lib/python3.14
+	cd ${USR}/lib/python3.14 && unzip ${CPYTHON}/lib/dist/python-stdlib.zip
+	cd ${PY_NUMPY} && tar -Jcf ${USR}/lib/python3.14/numpy.tar.xz numpy
+	cd ${PY_PACKAGING} && tar -Jcf ${USR}/lib/python3.14/packaging.tar.xz packaging
+	cd ${PY_PYPARSING} && tar -Jcf ${USR}/lib/python3.14/pyparsing.tar.xz pyparsing
+	cd ${PY_CYCLER} && tar -Jcf ${USR}/lib/python3.14/cycler.tar.xz cycler
+	cd ${PY_FONTTOOLS} && tar -Jcf ${USR}/lib/python3.14/fontTools.tar.xz fontTools
+	cd ${PY_DATEUTIL} && tar -Jcf ${USR}/lib/python3.14/dateutil.tar.xz dateutil
+	cd ${PY_PYTZ} && tar -Jcf ${USR}/lib/python3.14/pytz.tar.xz pytz
+	cd ${PY_SIX} && tar -Jcf ${USR}/lib/python3.14/six.tar.xz six
+	cd ${PY_KIWISOLVER} && tar -Jcf ${USR}/lib/python3.14/kiwisolver.tar.xz kiwisolver
+	cd ${PY_MATPLOTLIB} && tar -Jcf ${USR}/lib/python3.14/matplotlib.tar.xz matplotlib mpl_toolkits pylab.py
 
 	touch ${BUILD}/fs-updated
 

@@ -52,3 +52,19 @@ extern "C" {
 
 // we provide our own stubs
 #undef HAVE_PTHREAD_STUBS
+
+// CoWasm does not implement these platform-specific pthread convenience APIs.
+// Python should fall back to behavior that does not import them.
+#undef HAVE_PTHREAD_GETATTR_NP
+#undef HAVE_PTHREAD_GET_NAME_NP
+#undef HAVE_PTHREAD_GETNAME_NP
+#undef HAVE_PTHREAD_SET_NAME_NP
+#undef HAVE_PTHREAD_SETNAME_NP
+
+// CoWasm does not have a login session database.
+#undef HAVE_GETLOGIN
+#undef HAVE_GETLOGIN_R
+
+// Linux timerfd is not available in CoWasm.
+#undef HAVE_SYS_TIMERFD_H
+#undef HAVE_TIMERFD_CREATE

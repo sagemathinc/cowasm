@@ -1,5 +1,5 @@
---- native/lib/python3.11/site-packages/pip/_vendor/cachecontrol/filewrapper.py	2022-11-15 00:45:19
-+++ wasm/lib/python3.11/site-packages/pip/_vendor/cachecontrol/filewrapper.py	2022-11-15 13:11:56
+--- native/lib/python3.14/site-packages/pip/_vendor/cachecontrol/filewrapper.py	2022-11-15 00:45:19
++++ wasm/lib/python3.14/site-packages/pip/_vendor/cachecontrol/filewrapper.py	2022-11-15 13:11:56
 @@ -70,6 +70,7 @@
                  # a view directly into the filesystem's memory cache, so it
                  # doesn't result in duplicate memory use.

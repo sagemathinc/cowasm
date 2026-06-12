@@ -1,7 +1,7 @@
 import sys
 
 sys.path.insert(0, ".")
-sys.path.insert(0, "build/lib.wasi-0.0.0-wasm32-cpython-311/")
+sys.path.insert(0, "build/lib.wasi-0.0.0-wasm32-cpython-314/")
 
 import fib
 import numbers

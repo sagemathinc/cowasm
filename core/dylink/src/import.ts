@@ -200,6 +200,17 @@ export default async function importWebAssemblyDlopen({
     logImport("importing ", path);
   }
 
+  if (process.env.COWASM_TRACE_IMPORTS) {
+    for (const name of ["write", "writev", "fwrite"]) {
+      const f = importObjectWithPossibleStub.env?.[name];
+      console.error(
+        `import env.${name}: ${typeof f} ${
+          f ? String(f).slice(0, 160).replace(/\s+/g, " ") : ""
+        }`
+      );
+    }
+  }
+
   mainInstance =
     importWebAssembly != null
       ? await importWebAssembly(path, importObjectWithPossibleStub)

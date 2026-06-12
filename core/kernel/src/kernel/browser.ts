@@ -14,7 +14,7 @@ interface Options {
 function getOptions(wasmImport, opts?: Options) {
   const fs: FileSystemSpec[] = opts?.fs ?? [{ type: "dev" }];
   const env = {
-    TERMCAP: "/usr/lib/python3.11/termcap",
+    TERMCAP: "/usr/lib/python3.14/termcap",
     TERM: "xterm-256color",
     PS1: "(cowasm)$ ",
     ...opts?.env,

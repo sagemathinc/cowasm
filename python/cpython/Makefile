@@ -9,14 +9,17 @@ include ../build/Makefile-vars
 #
 # See https://www.python.org/downloads/
 PYTHON_MAJOR = 3
-PYTHON_MINOR = 11
-PYTHON_PATCH = 2
+PYTHON_MINOR = 14
+PYTHON_PATCH = 6
 PYTHON_BETA =
 PYTHON_VERSION = ${PYTHON_MAJOR}.${PYTHON_MINOR}.${PYTHON_PATCH}
+PYTHON_LIB = python${PYTHON_MAJOR}.${PYTHON_MINOR}
+PYTHON_ABI = ${PYTHON_MAJOR}${PYTHON_MINOR}
+PYTHON_PLATFORM = cpython-${PYTHON_ABI}-wasm32-wasi
 
 URL = https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz
 TARBALL = ${UPSTREAM}/python-${PYTHON_VERSION}${PYTHON_BETA}.tar.xz
-TARBALL_SHA256 = 29e4b8f5f1658542a8c13e2dd277358c9c48f2b2f7318652ef1675e402b9d2af
+TARBALL_SHA256 = 143b1dddefaec3bd2e21e3b839b34a2b7fb9842272883c576420d605e9f30c63
 
 ZLIB_NATIVE = ${PACKAGES}/zlib-native/dist/native
 LIBEDIT_NATIVE = ${PACKAGES}/libedit-native/dist/native
@@ -77,11 +80,29 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 			CC="zig cc ${ZIG_NATIVE_CFLAGS}" \
 			CFLAGS="-I${ZLIB_NATIVE}/include -I${LIBEDIT_NATIVE}/include" \
 			LDFLAGS="-L${ZLIB_NATIVE}/lib -L${LIBEDIT_NATIVE}" \
+			MODULE_BUILDTYPE=static \
 			./configure \
 				--prefix=${DIST_NATIVE} \
 				--with-ensurepip \
 				--disable-shared \
 				--with-readline=editline
+	# Python 3.14 detects some optional native modules as buildable with zig-musl,
+	# but their headers are not available in this bootstrap environment.  The native
+	# Python is only used to build the WASM Python, which has its own dependency tree.
+	sed -i \
+		-e 's/^_bz2 /#_bz2 /' \
+		-e 's/^_ctypes /#_ctypes /' \
+		-e 's/^_ctypes_test /#_ctypes_test /' \
+		-e 's/^_test/#_test/' \
+		-e 's/^_xxtestfuzz /#_xxtestfuzz /' \
+		-e 's/^xxlimited /#xxlimited /' \
+		-e 's/^xxlimited_35 /#xxlimited_35 /' \
+		-e 's/^xxsubtype /#xxsubtype /' \
+		${BUILD_NATIVE}/Modules/Setup.stdlib
+	cd ${BUILD_NATIVE} \
+		&& sh Modules/makesetup -c Modules/config.c.in -s Modules \
+			Modules/Setup.local Modules/Setup.stdlib Modules/Setup.bootstrap Modules/Setup \
+		&& mv config.c Modules
 	# On **some** macOS systems having either HAVE_MKFIFOAT or HAVE_MKNODAT breaks
 	# the build due to I guess bugs with zig and __builtin_available.   We don't need
 	# these anywhere, since native cpython is just for bootstrapping our WASM build anyways.
@@ -94,7 +115,7 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ${BUILD_NATIVE} \
 		&&	make -j8 RUNSHARED="DYLD_LIBRARY_PATH=${BUILD_NATIVE}:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD_NATIVE}:${LD_LIBRARY_PATH}" \
 		&&	make RUNSHARED="DYLD_LIBRARY_PATH=${BUILD_NATIVE}:${DYLD_LIBRARY_PATH} LD_LIBRARY_PATH=${BUILD_NATIVE}:${LD_LIBRARY_PATH}" install
-	cp ${SRC}/cowasm_bundler.py ${DIST_NATIVE}/lib/python3.11/site-packages
+	cp ${SRC}/cowasm_bundler.py ${DIST_NATIVE}/lib/${PYTHON_LIB}/site-packages
 	touch ${DIST_NATIVE}/.built
 
 ${BIN}/python-native: bin/python-native ${DIST_NATIVE}/.built
@@ -148,6 +169,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/08-os-spawn-subprocess.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${SRC}/patches/09-set-inheritable.patch | patch -p1
 	# Patch 10-setuptools-c++.patch is used, but only *AFTER* ensurepip happens!
+	cd ${BUILD_WASM} && cat ${SRC}/patches/11-ceval-wasi-emscripten.patch | patch -p1
 	# clang15 is more strict:
 	cd ${BUILD_WASM} && cat ${SRC}/patches/12-timemodule-clang15.patch | patch -p1
 	# We can't use the modified WASI socket.h headers, since they annoyingly render the
@@ -202,8 +224,7 @@ ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/
 			--config-cache \
 			--prefix=${DIST_WASM}  \
 			--enable-big-digits=30 \
-			--enable-optimizations \
-			--enable-ipv6 \
+		--enable-ipv6 \
 			--disable-shared \
 			--with-pkg-config=no \
 			--with-readline=editline \
@@ -220,14 +241,14 @@ ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/
 	mkdir -p ${DIST_WASM} && touch ${DIST_WASM}/.built-cpython
 
 ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
-	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-3.11/_sysconfigdata__wasi_wasm32-wasi.py so it
+	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR}/_sysconfigdata__wasi_wasm32-wasi.py so it
 	# matches the configuration we just used.  TODO: Find a better way to fix this, e.g., by configuration or
 	# patching something earlier?   This definitely feels like a hack.
 	# This is what based on testing actually works:
 	#      'LDSHARED': '' --> 'LDSHARED': '${BLDSHARED}'
 	#      'LDCXXSHARED': '' --> 'LDCXXSHARED': '${BLDCXXSHARED}'
 	# This is idempotent.
-	cd ${BUILD_WASM}/build/lib.wasi-wasm32-3.11/ \
+	cd ${BUILD_WASM}/build/lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR}/ \
 		&& sed -i'.bak' \
 			-e "s/'LDSHARED': ''/'LDSHARED': '${BLDSHARED}'/g" \
 			-e "s/'LDCXXSHARED': ''/'LDCXXSHARED': '${BLDCXXSHARED}'/g" \
@@ -238,7 +259,7 @@ ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
 		LZMA_WASM="${LZMA_WASM}" LIBEDIT_WASM="${LIBEDIT_WASM}" NCURSES_WASM="${NCURSES_WASM}" TERMCAP_WASM="${TERMCAP_WASM}" OPENSSL_WASM="${OPENSSL_WASM}"  SQLITE_WASM="${SQLITE_WASM}" BZIP2_WASM="${BZIP2_WASM}" LIBFFI_WASM="${LIBFFI_WASM}" ZLIB_WASM="${ZLIB_WASM}" make install | tail -n 10
 
 	# For some reason (upstream bug?) test-tomllib isn't copied over, but it's nice to have for testing.
-	cp -rv ${BUILD_WASM}/Lib/test/test_tomllib ${DIST_WASM}/lib/python3.11/test/
+	cp -rv ${BUILD_WASM}/Lib/test/test_tomllib ${DIST_WASM}/lib/${PYTHON_LIB}/test/
 	# Used for extension modules to efficiently access what Python exports.
 	cp ${BUILD_WASM}/Programs/libpython.c ${DIST_WASM}/lib
 	# Done!
@@ -249,7 +270,7 @@ wasm-cpython: ${DIST_WASM}/.install-cpython
 
 # These are the minimal data files needed to start cPython, which we found via "DEBUG=wasi:open pw-d"!
 MINIMAL_FILES = encodings/__init__.pyc encodings/aliases.pyc encodings/utf_8.pyc
-MINIMAL_READLINE = termcap lib-dynload/readline.cpython-311-wasm32-wasi.so  rlcompleter.pyc inspect.pyc ast.pyc contextlib.pyc collections/__init__.pyc keyword.pyc operator.pyc reprlib.pyc functools.pyc types.pyc enum.pyc dis.pyc opcode.pyc collections/abc.pyc importlib/__init__.pyc warnings.pyc linecache.pyc tokenize.pyc re/__init__.pyc re/_compiler.pyc re/_parser.pyc re/_constants.pyc re/_casefix.pyc copyreg.pyc token.pyc
+MINIMAL_READLINE = termcap lib-dynload/readline.${PYTHON_PLATFORM}.so  rlcompleter.pyc inspect.pyc ast.pyc contextlib.pyc collections/__init__.pyc keyword.pyc operator.pyc reprlib.pyc functools.pyc types.pyc enum.pyc dis.pyc opcode.pyc collections/abc.pyc importlib/__init__.pyc warnings.pyc linecache.pyc tokenize.pyc re/__init__.pyc re/_compiler.pyc re/_parser.pyc re/_constants.pyc re/_casefix.pyc copyreg.pyc token.pyc
 
 # Below we create two zip files:
 #
@@ -266,16 +287,16 @@ MINIMAL_READLINE = termcap lib-dynload/readline.cpython-311-wasm32-wasi.so  rlco
 ${DIST_WASM}/.built:  node_modules ${DIST_WASM}/.install-cpython ${BIN}/python-native
 	# Build wasm asset bundle (the pyc files, etc.).
 	cd ${BUILD_WASM} \
-		&& mkdir -p usr/local/lib/python3.11/lib-dynload/  \
+		&& mkdir -p usr/local/lib/${PYTHON_LIB}/lib-dynload/  \
 		&& ${BIN}/python-native ./Tools/wasm/wasm_assets.py \
 		&& rm -rf ${DIST_WASM}/lib/dist \
 		&& mv usr/local/lib ${DIST_WASM}/lib/dist
 	# Add termcap for xterm to our zip asset bundle, so readline actually works:
-	cp ${SRC}/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && zip -u python311.zip termcap
+	cp ${SRC}/termcap ${DIST_WASM}/lib/dist/termcap && cd ${DIST_WASM}/lib/dist/ && zip -u python${PYTHON_ABI}.zip termcap
 	# **TODO:** It is very silly for these to be in the same zip file, obviously, because that means they have to be downloaded,
 	# so we should just put them in the main binary.  We'll change that when things are working.
 	mkdir -p ${DIST_WASM}/lib/dist/lib-dynload/
-	cp -v ${DIST_WASM}/lib/python3.11/lib-dynload/*.so ${DIST_WASM}/lib/dist/lib-dynload/
+	cp -v ${DIST_WASM}/lib/${PYTHON_LIB}/lib-dynload/*.so ${DIST_WASM}/lib/dist/lib-dynload/
 
 	# This would run wasm-opt on the so extension modules, but it is not
 	# necessarily "worth it", since it only reduces the size by less than 3%.
@@ -287,8 +308,8 @@ ${DIST_WASM}/.built:  node_modules ${DIST_WASM}/.install-cpython ${BIN}/python-n
 	# Instead, we use the -s option to wasm-ld above.
 	# Also mv zip to a more meaningful name.
 	cd ${DIST_WASM}/lib/dist/ \
-		&& zip -u python311.zip lib-dynload/* \
-		&& mv python311.zip python-stdlib.zip
+		&& zip -u python${PYTHON_ABI}.zip lib-dynload/* \
+		&& mv python${PYTHON_ABI}.zip python-stdlib.zip
 
 	# Next make the MINIMAL python0.zip, which is all that's needed to start python (e.g., for a
 	# jupyter kernel or to back
@@ -304,11 +325,11 @@ ${DIST_WASM}/.built:  node_modules ${DIST_WASM}/.install-cpython ${BIN}/python-n
 	# it's possible to use setuptools and build C extensions.  I don't understand why python doesn't
 	# already do this -- maybe there is some subtle edge case that makes it impossible to do
 	# in general?  Or maybe people don't relocate python installs then build.  I don't know.
-	cat ${SRC}/patches/17-fix-sysconfigdata.py >> ${DIST_WASM}/lib/python3.11/_sysconfigdata__wasi_wasm32-wasi.py
+	cat ${SRC}/patches/17-fix-sysconfigdata.py >> ${DIST_WASM}/lib/${PYTHON_LIB}/_sysconfigdata__wasi_wasm32-wasi.py
 
 	# We also copy the posix-wasm.h that was used for the build, so that building C extensions isn't
 	# complicated by trying to find this.
-	cp -v ${POSIX_WASM}/*.h ${DIST_WASM}/include/python3.11/
+	cp -v ${POSIX_WASM}/*.h ${DIST_WASM}/include/${PYTHON_LIB}/
 
 	touch ${DIST_WASM}/.built
 
@@ -319,7 +340,7 @@ ${DIST_WASM}/.built:  node_modules ${DIST_WASM}/.install-cpython ${BIN}/python-n
 # (which depends on cpython) and many other things.  So this target is invoked later.
 # NOTE: If you do "make clean-wasm", then "make", be sure to also do "make pip".
 ###########
-${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built: ${DIST_WASM}/.built
+${DIST_WASM}/lib/${PYTHON_LIB}/site-packages/setuptools/.built: ${DIST_WASM}/.built
 	rm -rf ${DIST_WASM}/lib/python*/site-packages/*pip* ${DIST_WASM}/lib/python*/site-packages/*setuptools*
 	${CWD}/bin/python-wasm -m ensurepip
 	# We apply one patch to support building C++ extensions.  Without this, the numpy
@@ -330,9 +351,9 @@ ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built: ${DIST_WASM}/.built
 	# It would be better to have a better fallback for threads that works in some cases so we
 	# don't need this. But for now, just remove it:
 	cd ${DIST_WASM} && cat ${SRC}/patches/16-pip-no-auto-refresh-progress.patch  | patch -p1
-	touch ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built
+	touch ${DIST_WASM}/lib/${PYTHON_LIB}/site-packages/setuptools/.built
 
-pip: ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built
+pip: ${DIST_WASM}/lib/${PYTHON_LIB}/site-packages/setuptools/.built
 .PHONY: pip
 
 
@@ -342,11 +363,11 @@ pip: ${DIST_WASM}/lib/python3.11/site-packages/setuptools/.built
 # test suite runner uses threads (and anyways, we like the speedup from multithreading).
 # However, you set line 543 to
 #         self.ns.use_mp = 0
-# of dist/wasm/lib/python3.11/test/libregrtest/main.py then it works, but of course
+# of dist/wasm/lib/${PYTHON_LIB}/test/libregrtest/main.py then it works, but of course
 # with a single process, which is very slow. So we stick with python-native for testing.
 RUN_TESTS = _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 	_PYTHON_HOST_PLATFORM=wasi-wasm32 \
-	PYTHONPATH=${DIST_WASM}/lib/python3.11 \
+	PYTHONPATH=${DIST_WASM}/lib/${PYTHON_LIB} \
 	_PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__wasi_wasm32-wasi \
 	${DIST_NATIVE}/bin/python3 \
 	./Tools/scripts/run_tests.py \
@@ -451,32 +472,32 @@ test-skipped:  wasm native
 # much more useful (but less small).
 ${DIST_WASM}/.publishable: wasm
 	# Do not need the tests in the published version -- they're huge
-	rm -rf ${DIST_WASM}/lib/python3.11/test
+	rm -rf ${DIST_WASM}/lib/${PYTHON_LIB}/test
 
 	# Graphics -- Remove idle which we are nowhere near supporting (and is big):
-	rm -rf ${DIST_WASM}/lib/python3.11/idlelib
-	rm -rf ${DIST_WASM}/lib/python3.11/*tkinter
-	rm -rf ${DIST_WASM}/lib/python3.11/turtle*
+	rm -rf ${DIST_WASM}/lib/${PYTHON_LIB}/idlelib
+	rm -rf ${DIST_WASM}/lib/${PYTHON_LIB}/*tkinter
+	rm -rf ${DIST_WASM}/lib/${PYTHON_LIB}/turtle*
 
 	# Temporarily make it into a package so that we can bundle it
-	touch ${DIST_WASM}/lib/python3.11/__init__.py
+	touch ${DIST_WASM}/lib/${PYTHON_LIB}/__init__.py
 	# Bundle it -- using python-native since it's more compressed:
-	cd ${DIST_WASM}/lib/ && ${CWD}/bin/python-wasm -m cowasm_bundler python3.11
+	cd ${DIST_WASM}/lib/ && ${CWD}/bin/python-wasm -m cowasm_bundler ${PYTHON_LIB}
 	# Move it out of the way
-	mv ${DIST_WASM}/lib/python3.11 ${DIST_WASM}/lib/python3.11.orig
+	mv ${DIST_WASM}/lib/${PYTHON_LIB} ${DIST_WASM}/lib/${PYTHON_LIB}.orig
 	# Extract bundle
-	cd ${DIST_WASM}/lib/ && tar xf python3.11.tar.xz
+	cd ${DIST_WASM}/lib/ && tar xf ${PYTHON_LIB}.tar.xz
 	# Remove __init__.pyc
-	rm -f ${DIST_WASM}/lib/python3.11/__init__.pyc
+	rm -f ${DIST_WASM}/lib/${PYTHON_LIB}/__init__.pyc
 	# Also site-packages
-	mkdir ${DIST_WASM}/lib/python3.11/site-packages
+	mkdir ${DIST_WASM}/lib/${PYTHON_LIB}/site-packages
 	# Move compiled so files over
-	mv ${DIST_WASM}/lib/python3.11.orig/lib-dynload ${DIST_WASM}/lib/python3.11/
-	# Compress libpython3.11 to save 20MB decompressed.  Note that this obviously
+	mv ${DIST_WASM}/lib/${PYTHON_LIB}.orig/lib-dynload ${DIST_WASM}/lib/${PYTHON_LIB}/
+	# Compress lib${PYTHON_LIB} to save 20MB decompressed.  Note that this obviously
 	# complicates the python-wasm package which has to explicitly copy this out and decompress it.
-	xz ${DIST_WASM}/lib/libpython3.11.a
+	xz ${DIST_WASM}/lib/lib${PYTHON_LIB}.a
 	# Remove stuff
-	rm -rf ${DIST_WASM}/lib/python3.11.tar.xz ${DIST_WASM}/lib/python3.11.orig
+	rm -rf ${DIST_WASM}/lib/${PYTHON_LIB}.tar.xz ${DIST_WASM}/lib/${PYTHON_LIB}.orig
 	touch ${DIST_WASM}/.publishable
 
 .PHONY: publishable

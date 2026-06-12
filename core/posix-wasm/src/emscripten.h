@@ -17,3 +17,5 @@ e.g., Python.
   _EM_JS(ret, name, name, params, #__VA_ARGS__)
 
 #define EMSCRIPTEN_KEEPALIVE
+
+#define emscripten_debugger() ((void)0)
