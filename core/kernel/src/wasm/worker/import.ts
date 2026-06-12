@@ -139,6 +139,204 @@ async function doWasmImport({
       return bufLen;
     };
   }
+  if (wasmOpts.env.memset == null) {
+    wasmOpts.env.memset = (ptr: number, value: number, len: number) => {
+      new Uint8Array(memory.buffer).fill(value & 0xff, ptr, ptr + len);
+      return ptr;
+    };
+  }
+  if (wasmOpts.env.memcpy == null) {
+    wasmOpts.env.memcpy = (dest: number, src: number, len: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      mem.set(mem.slice(src, src + len), dest);
+      return dest;
+    };
+  }
+  if (wasmOpts.env.memmove == null) {
+    wasmOpts.env.memmove = wasmOpts.env.memcpy;
+  }
+  const cstringLength = (ptr: number, maxLen?: number) => {
+    const mem = new Uint8Array(memory.buffer);
+    let len = 0;
+    while (ptr + len < mem.byteLength && mem[ptr + len] != 0) {
+      len += 1;
+      if (maxLen != null && len >= maxLen) break;
+    }
+    return len;
+  };
+  const compareBytes = (left: number, right: number, maxLen?: number) => {
+    const mem = new Uint8Array(memory.buffer);
+    let i = 0;
+    while (maxLen == null || i < maxLen) {
+      const a = mem[left + i] ?? 0;
+      const b = mem[right + i] ?? 0;
+      if (a != b) return a - b;
+      if (a == 0) return 0;
+      i += 1;
+    }
+    return 0;
+  };
+  if (wasmOpts.env.strlen == null) {
+    wasmOpts.env.strlen = (ptr: number) => cstringLength(ptr);
+  }
+  if (wasmOpts.env.memcmp == null) {
+    wasmOpts.env.memcmp = (left: number, right: number, len: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      for (let i = 0; i < len; i++) {
+        const a = mem[left + i] ?? 0;
+        const b = mem[right + i] ?? 0;
+        if (a != b) return a - b;
+      }
+      return 0;
+    };
+  }
+  if (wasmOpts.env.memchr == null) {
+    wasmOpts.env.memchr = (ptr: number, value: number, len: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      const byte = value & 0xff;
+      for (let i = 0; i < len; i++) {
+        if (mem[ptr + i] == byte) return ptr + i;
+      }
+      return 0;
+    };
+  }
+  if (wasmOpts.env.strcmp == null) {
+    wasmOpts.env.strcmp = (left: number, right: number) =>
+      compareBytes(left, right);
+  }
+  if (wasmOpts.env.strncmp == null) {
+    wasmOpts.env.strncmp = (left: number, right: number, len: number) =>
+      compareBytes(left, right, len);
+  }
+  if (wasmOpts.env.strcasecmp == null) {
+    wasmOpts.env.strcasecmp = (left: number, right: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      let i = 0;
+      while (true) {
+        let a = mem[left + i] ?? 0;
+        let b = mem[right + i] ?? 0;
+        if (a >= 65 && a <= 90) a += 32;
+        if (b >= 65 && b <= 90) b += 32;
+        if (a != b) return a - b;
+        if (a == 0) return 0;
+        i += 1;
+      }
+    };
+  }
+  if (wasmOpts.env.strcpy == null) {
+    wasmOpts.env.strcpy = (dest: number, src: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      const len = cstringLength(src);
+      mem.set(mem.slice(src, src + len + 1), dest);
+      return dest;
+    };
+  }
+  if (wasmOpts.env.strcat == null) {
+    wasmOpts.env.strcat = (dest: number, src: number) => {
+      wasmOpts.env.strcpy(dest + cstringLength(dest), src);
+      return dest;
+    };
+  }
+  if (wasmOpts.env.strncpy == null) {
+    wasmOpts.env.strncpy = (dest: number, src: number, len: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      const copyLen = Math.min(cstringLength(src), len);
+      mem.set(mem.slice(src, src + copyLen), dest);
+      mem.fill(0, dest + copyLen, dest + len);
+      return dest;
+    };
+  }
+  if (wasmOpts.env.strncat == null) {
+    wasmOpts.env.strncat = (dest: number, src: number, len: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      const destLen = cstringLength(dest);
+      const copyLen = Math.min(cstringLength(src), len);
+      mem.set(mem.slice(src, src + copyLen), dest + destLen);
+      mem[dest + destLen + copyLen] = 0;
+      return dest;
+    };
+  }
+  if (wasmOpts.env.strchr == null) {
+    wasmOpts.env.strchr = (ptr: number, value: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      const byte = value & 0xff;
+      let i = 0;
+      while (ptr + i < mem.byteLength) {
+        const c = mem[ptr + i];
+        if (c == byte) return ptr + i;
+        if (c == 0) return 0;
+        i += 1;
+      }
+      return 0;
+    };
+  }
+  if (wasmOpts.env.strrchr == null) {
+    wasmOpts.env.strrchr = (ptr: number, value: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      const byte = value & 0xff;
+      let last = 0;
+      let i = 0;
+      while (ptr + i < mem.byteLength) {
+        const c = mem[ptr + i];
+        if (c == byte) last = ptr + i;
+        if (c == 0) return byte == 0 ? ptr + i : last;
+        i += 1;
+      }
+      return last;
+    };
+  }
+  if (wasmOpts.env.strcspn == null) {
+    wasmOpts.env.strcspn = (ptr: number, reject: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      const rejected = new Set<number>();
+      for (let i = 0; mem[reject + i] != 0; i++) rejected.add(mem[reject + i]);
+      let len = 0;
+      while (mem[ptr + len] != 0 && !rejected.has(mem[ptr + len])) len += 1;
+      return len;
+    };
+  }
+  if (wasmOpts.env.strspn == null) {
+    wasmOpts.env.strspn = (ptr: number, accept: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      const accepted = new Set<number>();
+      for (let i = 0; mem[accept + i] != 0; i++) accepted.add(mem[accept + i]);
+      let len = 0;
+      while (mem[ptr + len] != 0 && accepted.has(mem[ptr + len])) len += 1;
+      return len;
+    };
+  }
+  if (wasmOpts.env.strpbrk == null) {
+    wasmOpts.env.strpbrk = (ptr: number, accept: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      const accepted = new Set<number>();
+      for (let i = 0; mem[accept + i] != 0; i++) accepted.add(mem[accept + i]);
+      let i = 0;
+      while (mem[ptr + i] != 0) {
+        if (accepted.has(mem[ptr + i])) return ptr + i;
+        i += 1;
+      }
+      return 0;
+    };
+  }
+  if (wasmOpts.env.strstr == null) {
+    wasmOpts.env.strstr = (haystack: number, needle: number) => {
+      const mem = new Uint8Array(memory.buffer);
+      const needleLen = cstringLength(needle);
+      if (needleLen == 0) return haystack;
+      const haystackLen = cstringLength(haystack);
+      for (let i = 0; i + needleLen <= haystackLen; i++) {
+        let found = true;
+        for (let j = 0; j < needleLen; j++) {
+          if (mem[haystack + i + j] != mem[needle + j]) {
+            found = false;
+            break;
+          }
+        }
+        if (found) return haystack + i;
+      }
+      return 0;
+    };
+  }
   if (wasmOpts.env.main == null) {
     // TODO: this seems suspect
     wasmOpts.env.main = () => {
@@ -192,7 +390,12 @@ async function doWasmImport({
 
   const streamFd = (stream: number): 0 | 1 | 2 => {
     const getStream = (name: "stdin" | "stdout" | "stderr") => {
-      const ptr = wasm?.exports?.[`__WASM_EXPORT__${name}`]?.();
+      let ptr: number | undefined;
+      try {
+        ptr = wasm?.exports?.[`__WASM_EXPORT__${name}`]?.();
+      } catch (_err) {
+        ptr = undefined;
+      }
       const value =
         ptr != null && ptr > 0 && ptr + 4 <= memory.buffer.byteLength
           ? new DataView(memory.buffer).getUint32(ptr, true)

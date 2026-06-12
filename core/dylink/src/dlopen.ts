@@ -523,21 +523,20 @@ export default class DlopenManger {
       }
     }
 
+    if (instance.exports.__wasm_apply_data_relocs != null) {
+      // This must run after GOT values are updated and before constructors.
+      log("calling __wasm_apply_data_relocs for dynamic library");
+      (instance.exports.__wasm_apply_data_relocs as CallableFunction)();
+    }
+
     if (
       instance.exports.__wasm_call_ctors != null &&
       !path.endsWith("/libcxx.so") &&
       path != "libcxx.so" &&
       path != "./libcxx.so"
     ) {
-      // This **MUST** be after updating all the va1
       log("calling __wasm_call_ctors for dynamic library");
       (instance.exports.__wasm_call_ctors as CallableFunction)();
-    }
-
-    if (instance.exports.__wasm_apply_data_relocs != null) {
-      // This **MUST** be after updating all the values above!!
-      log("calling __wasm_apply_data_relocs for dynamic library");
-      (instance.exports.__wasm_apply_data_relocs as CallableFunction)();
     }
 
     return this.createLibrary({

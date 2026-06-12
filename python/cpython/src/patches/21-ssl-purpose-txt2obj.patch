@@ -1,0 +1,37 @@
+--- a/Modules/_ssl.c
++++ b/Modules/_ssl.c
+@@ -5931,6 +5931,34 @@ _ssl_txt2obj_impl(PyObject *module, const char *txt, int name)
+ {
+     PyObject *result = NULL;
+     ASN1_OBJECT *obj;
++    int purpose_nid = NID_undef;
++
++    /*
++     * CoWasm currently traps in OpenSSL's OBJ_txt2obj under wasm for these
++     * import-time constants.  nid2obj works, so handle the two Purpose values
++     * that Python's ssl module creates while importing.
++     */
++    if (name) {
++        if (strcmp(txt, SN_server_auth) == 0 ||
++                strcmp(txt, LN_server_auth) == 0) {
++            purpose_nid = NID_server_auth;
++        }
++        else if (strcmp(txt, SN_client_auth) == 0 ||
++                strcmp(txt, LN_client_auth) == 0) {
++            purpose_nid = NID_client_auth;
++        }
++    }
++    else {
++        if (strcmp(txt, "1.3.6.1.5.5.7.3.1") == 0) {
++            purpose_nid = NID_server_auth;
++        }
++        else if (strcmp(txt, "1.3.6.1.5.5.7.3.2") == 0) {
++            purpose_nid = NID_client_auth;
++        }
++    }
++    if (purpose_nid != NID_undef) {
++        return _ssl_nid2obj_impl(module, purpose_nid);
++    }
+ 
+     obj = OBJ_txt2obj(txt, name ? 0 : 1);
+     if (obj == NULL) {

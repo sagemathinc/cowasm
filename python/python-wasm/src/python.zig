@@ -6,6 +6,17 @@ export fn keepalive() void {
     signal.keepalive();
 }
 
+extern fn malloc(n: usize) ?*anyopaque;
+extern fn free(ptr: ?*anyopaque) void;
+
+export fn c_malloc(n: usize) ?*anyopaque {
+    return malloc(n);
+}
+
+export fn c_free(ptr: ?*anyopaque) void {
+    free(ptr);
+}
+
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 var allocator = gpa.allocator();
 
@@ -126,10 +137,6 @@ export fn cowasm_python_exec(s: [*:0]const u8) i32 {
 /////////////////////////////////
 
 export fn cowasm_python_terminal(argc: i32, argv: [*c][*c]u8) i32 {
-    assertInit() catch |err| {
-        std.debug.print("terminal: must first init python -- {}", .{err});
-        return 1;
-    };
     // std.debug.print("calling Py_BytesMain()... with argc={}, argv[0]={s} argv[1]={s} inputs\n", .{ argc, argv[0], argv[1] });
     const r = py.Py_BytesMain(argc, argv);
     // std.debug.print("Py_BytesMain finished returning r={}\n", .{r});

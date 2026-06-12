@@ -1,0 +1,22 @@
+--- wasm/Modules/main.c
++++ wasm/Modules/main.c
+@@ -93,6 +93,9 @@ static inline int config_run_code(const PyConfig *config)
+ static int
+ stdin_is_interactive(const PyConfig *config)
+ {
++    if (_Py_GetEnv(config->use_environment, "COWASM_STDIN_NONINTERACTIVE")) {
++        return 0;
++    }
+     return (isatty(fileno(stdin)) || config->interactive);
+ }
+ 
+@@ -210,6 +213,9 @@ pymain_import_readline(const PyConfig *config)
+     if (!config->inspect && config_run_code(config)) {
+         return;
+     }
++    if (_Py_GetEnv(config->use_environment, "COWASM_STDIN_NONINTERACTIVE")) {
++        return;
++    }
+     if (!isatty(fileno(stdin))) {
+         return;
+     }

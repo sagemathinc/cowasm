@@ -34,6 +34,18 @@ strtoull_l
 __THREW__
 __threwValue
 __errno_location
+__extenddftf2
+__trunctfdf2
+__multf3
+__addtf3
+__gttf2
+__getf2
+__divtf3
+__lttf2
+__fixtfsi
+__floatsitf
+__subtf3
+__floatditf
 `;
 
 export function cxxRuntimeExportCode() {
@@ -47,8 +59,33 @@ export function cxxRuntimeExportCode() {
 
 struct __locale_struct;
 
+double __extenddftf2(long double);
+double __trunctfdf2(long double);
+long double __multf3(long double a, long double b);
+long double __addtf3(long double a, long double b);
+int __gttf2(long double a, long double b);
+int __getf2(long double a, long double b);
+long double __divtf3(long double a, long double b);
+int __lttf2(long double a, long double b);
+int __fixtfsi(long double a);
+long double __floatsitf(int a);
+long double __subtf3(long double a, long double b);
+long double __floatditf(long long a);
+
+__attribute__((visibility("default"))) void *c_malloc(size_t n) {
+  return malloc(n);
+}
+
+__attribute__((visibility("default"))) void c_free(void *ptr) {
+  free(ptr);
+}
+
 static int cowasm_errno = 0;
 int *__errno_location(void) { return &cowasm_errno; }
+
+__attribute__((visibility("default"))) void setErrno(int error_number) {
+  cowasm_errno = error_number;
+}
 
 static unsigned short cowasm_ctype_b[384];
 static int cowasm_ctype_lower[384];

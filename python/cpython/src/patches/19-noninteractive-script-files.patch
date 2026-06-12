@@ -1,0 +1,19 @@
+--- wasm/Python/pylifecycle.c
++++ wasm/Python/pylifecycle.c
+@@ -3549,6 +3549,18 @@ _Py_FdIsInteractive(FILE *fp, PyObject *filename)
+ {
++    if (getenv("COWASM_STDIN_NONINTERACTIVE") != NULL
++        && filename != NULL
++        && PyUnicode_CompareWithASCIIString(filename, "<stdin>") == 0) {
++        return 0;
++    }
++
++    if (filename != NULL
++        && PyUnicode_CompareWithASCIIString(filename, "<stdin>") != 0
++        && PyUnicode_CompareWithASCIIString(filename, "???") != 0) {
++        return 0;
++    }
++
+     if (isatty(fileno(fp))) {
+         return 1;
+     }

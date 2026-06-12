@@ -70,8 +70,10 @@ async function createPython(
   const python = sync
     ? new PythonWasmSync(kernel as any, wasm)
     : new PythonWasmAsync(kernel as any, wasm);
-  await python.init();
-  log("done");
+  if (!opts.noInit) {
+    await python.init();
+    log("done");
+  }
   return python;
 }
 

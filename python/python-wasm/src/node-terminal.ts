@@ -13,7 +13,11 @@ async function main() {
   if (process.platform == "win32") {
     console.log("Press enter a few times.");
   }
-  const options: Options = { env: { PYTHONEXECUTABLE }, interactive: true };
+  const options: Options = {
+    env: { PYTHONEXECUTABLE },
+    interactive: true,
+    noInit: true,
+  };
   if (!noBundle) {
     options.fs = "everything";
   }

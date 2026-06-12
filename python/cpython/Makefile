@@ -192,6 +192,12 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/13-socket-unmodified-headers.patch | patch -p1
 	# Warn instead of error on attempt to start a thread.
 	# cd ${BUILD_WASM} && cat ${SRC}/patches/14-threading-warning.patch | patch -p1
+	# Do not let script files fall into interactive parsing mode.
+	cd ${BUILD_WASM} && cat ${SRC}/patches/19-noninteractive-script-files.patch | patch -p1
+	# Respect the launcher's noninteractive stdin marker despite WASI tty shims.
+	cd ${BUILD_WASM} && cat ${SRC}/patches/20-noninteractive-stdin-main.patch | patch -p1
+	# Avoid OpenSSL OBJ_txt2obj in the ssl module's import-time purpose constants.
+	cd ${BUILD_WASM} && cat ${SRC}/patches/21-ssl-purpose-txt2obj.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 DEBUG_MODE = ""
