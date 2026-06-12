@@ -24,3 +24,10 @@ EOF
 
 - `git commit -m` is only for subject-only commits with no body.
 - Prefer follow-up commits over amending or rewriting history unless the user explicitly asks for that.
+
+## Project Direction
+
+- Treat CoWasm as a browser-native Unix/Python runtime for serious mathematics, with Sagelite and SageMath as the long-term defining applications.
+- Do not steer the project toward being only a Pyodide clone. Pyodide is the reference point for browser scientific Python; CoWasm should differentiate through an interruptible terminal/runtime, filesystem semantics, dynamic C/C++ packages, and pure-math/SageMath capability.
+- Use Sagelite as the practical bridge toward SageMath-in-WebAssembly. Full SageMath is a long-term north star; near-term work should keep the runtime reliable and port high-value mathematical dependencies incrementally.
+- Preserve the current pinned Zig-based build as the known-good baseline while making the underlying clang/lld/WASI contract more explicit. Prefer incremental toolchain-backend work over a broad rewrite.

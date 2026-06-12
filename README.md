@@ -6,6 +6,19 @@ URL: https://github.com/sagemathinc/cowasm
 
 CoWasm, or "Collaborative WebAssembly," goes far beyond just Python. The collaboration aspects will be part of [CoCalc](https://cocalc.com) at some point in the future. CoWasm will support various technologies (such as libgit2 and realtime sync) that are important foundations for collaboration.
 
+## North Star
+
+CoWasm is a browser-native Unix/Python runtime for serious mathematics, with [Sagelite](https://github.com/sagemathinc/sagelite) and SageMath as the defining long-term applications.
+
+Pyodide is the main reference point for browser scientific Python. CoWasm should instead focus on the parts of mathematical computing that need a terminal-shaped, filesystem-shaped, interruptible runtime: exact algebra, number theory, symbolic computation, mathematical package dependencies, and eventually a useful subset of SageMath in the browser without a full Linux emulator.
+
+The long-term differentiator is:
+
+- **Pyodide:** scientific Python in the browser.
+- **CoWasm:** pure mathematics and SageMath-style computation in the browser.
+
+This is intentionally ambitious. Full SageMath is a long-term target, not a short-term build step. Practical milestones include keeping the shell/Python/runtime green, using Sagelite as a packaging bridge, and porting high-value mathematical dependencies such as PARI/GP, FLINT/Arb, eclib, Singular, and eventually GAP when the runtime is ready for it.
+
 The underlying software components that CoWasm is built on (i.e., those we didn't write) are mostly extremely stable and mature. Zig is less stable, but we mostly use Zig for its amazing cross-compilation support and packaging of clang/llvm and musl-libc, which are themselves both very mature. Many other components, such as Python, Dash, and Numpy, are extremely mature, multi-decade-old projects. Moreover, other components of CoWasm, such as memfs, are libraries with 10M+ downloads per week that are heavily used in production.
 
 The goal of CoWasm is overall somewhat similar to emscripten, [WebAssembly.sh](http://WebAssembly.sh), [wapm.io](http://wapm.io), and [Pyodide](https://pyodide.org/en/stable/) combined, in various ways:
@@ -30,7 +43,7 @@ There are several subdirectories that each contain packages:
 - **python** – A WebAssembly build of Python, along with some nontrivial scientific libraries. (This is analogous to [pyodide.org](https://pyodide.org).)
 - **web** – Examples of how to use the other packages in web applications; this includes building https://cowasm.org.
 - **desktop** – A native Electron app that provides a sandboxed WebAssembly Python terminal running on your native filesystem.
-- **sagemath** – The beginning of a port of https://sagemath.org to WebAssembly. Vast amounts of work remain.
+- **sagemath** – The beginning of a port of https://sagemath.org to WebAssembly. Vast amounts of work remain; this is the long-term north star rather than a near-term promise.
 
 
 
@@ -91,6 +104,8 @@ In addition you need to [install Node.js version at least 16.x](https://nodejs.o
 
 _**You do NOT need to install Zig,**_ and it doesn't matter if
 you have a random version of Zig on your system already. A zig binary is download automatically. We use zig \(instead of any system\-wide clang, etc. compilers\) for building all compiled code and write some code in the zig language. Since zig is fairly unstable it is critical to use the exact version that we provide.
+
+Zig is currently part of the known-good build baseline, especially through `zig cc`. Long term, CoWasm should make its WASI/sysroot/dynamic-linking contract explicit enough that Zig is only one possible backend. A direct clang/lld backend should be introduced iteratively and validated package-by-package before replacing the pinned Zig path.
 
 ### Build
 
@@ -317,4 +332,3 @@ Email [wstein@cocalc.com](mailto:wstein@cocalc.com) or [@wstein389](https://twit
 
 
 **CoWasm is an open source 3\-clause BSD licensed project. It includes components and dependencies that may be licensed in other ways, but nothing is GPL licensed, *except* some code in the sagemath subdirectory (which nothing else depends on).**
-
