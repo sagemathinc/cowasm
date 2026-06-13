@@ -135,7 +135,7 @@ ${DIST}/hello.${PLATFORM}.so: src/extension/hellomodule.c
 	${BIN}/cowasm-cc -Oz ${CFLAGS} -shared  \
 		src/extension/hellomodule.c -o ${DIST}/hello.${PLATFORM}.so
 
-.PHONEY: hello
+.PHONY: hello
 hello: ${DIST}/hello.${PLATFORM}.so
 
 ###
@@ -150,7 +150,7 @@ ${DIST}/hellozig.${PLATFORM}.so: src/extension/hellozigmodule.zig src/extension/
 		&&	rm hellozigmodule-c.o \
 		&&  mv hellozigmodule.wasm ${DIST}/hellozig.${PLATFORM}.so
 
-.PHONEY: hellozig
+.PHONY: hellozig
 hellozig: ${DIST}/hellozig.${PLATFORM}.so
 
 ###

@@ -45,5 +45,5 @@ build/native-macos/hello.so: hellomodule.c
 test-native-macos: build/native-macos/app.native build/native-macos/hello.so
 	cd build/native-macos && ./app.native
 
-.PHONEY: test
+.PHONY: test
 test: test-wasm

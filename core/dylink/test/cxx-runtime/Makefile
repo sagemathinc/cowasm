@@ -37,5 +37,5 @@ build/wasm/libcxx.so: ${LIBCXX_WASM}/libcxx.so
 test-wasm: build/wasm/app.wasm build/wasm/lib.so build/wasm/libcxx.so
 	cd build/wasm && node ../../app.js
 
-.PHONEY: test
+.PHONY: test
 test: test-wasm

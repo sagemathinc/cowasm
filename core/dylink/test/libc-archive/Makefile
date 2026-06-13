@@ -19,5 +19,5 @@ build/wasm/hello.so: hello.c
 test-wasm: build/wasm/app.wasm build/wasm/hello.so
 	cd build/wasm && node ../../app.js
 
-.PHONEY: test
+.PHONY: test
 test: test-wasm

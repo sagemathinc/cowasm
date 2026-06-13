@@ -45,5 +45,5 @@ build/native-macos/dynamic-library.native.so: dynamic-library.c
 test-native-macos: build/native-macos/app.native build/native-macos/dynamic-library.native.so
 	cd build/native-macos && ./app.native
 
-.PHONEY: test
+.PHONY: test
 test: test-wasm
