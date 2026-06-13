@@ -207,8 +207,9 @@ before linking, matching the Zig backend's unsupported-library handling. The
 standalone clang backend appends the sysroot `-lc` itself.
 
 The current clang backend rejects shared/PIC flags such as `-shared`,
-`-fPIC`, `-fpic`, `--experimental-pic`, and `-dynamic`. It also rejects
-`cowasm-zig` and C++ mode. Those are later phases of the toolchain migration.
+`-fPIC`, `-fpic`, `--experimental-pic`, and `-dynamic`, including when those
+flags are forwarded through `-Wl,`. It also rejects `cowasm-zig` and C++ mode.
+Those are later phases of the toolchain migration.
 
 ## Archive Tools
 

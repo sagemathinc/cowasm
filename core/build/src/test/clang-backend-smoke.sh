@@ -95,6 +95,22 @@ expect_missing_arg "-Xlinker" "$tmp/hello.c" -Xlinker
 expect_missing_arg "-L" "$tmp/hello.c" -L
 expect_missing_arg "-o" "$tmp/hello.c" -o
 
+expect_unsupported_flag() {
+  local option="$1"
+  shift
+  local err="$tmp/unsupported-${option//[^A-Za-z0-9]/_}.err"
+  if "$wrapper" "$@" >"$err" 2>&1; then
+    cat "$err"
+    echo "expected $option to fail" >&2
+    exit 1
+  fi
+  grep -F -- "unsupported flag '$option'" "$err"
+  ! grep -F -- "Traceback" "$err"
+}
+
+expect_unsupported_flag "--experimental-pic" "$tmp/hello.c" -Wl,--experimental-pic
+expect_unsupported_flag "-shared" "$tmp/hello.c" -Wl,-shared
+
 "$wrapper" -Oz -fvisibility-main -Wl,--import-memory,--import-table -lm -ldl -lwasi-emulated-signal -lc "$tmp/hello.c" -o "$tmp/hello.wasm"
 test -f "$tmp/hello.wasm"
 

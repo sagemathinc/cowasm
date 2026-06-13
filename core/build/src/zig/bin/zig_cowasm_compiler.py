@@ -299,10 +299,15 @@ def reject_unsupported_clang_args(args):
         '-shared', '-fPIC', '-fpic', '--experimental-pic', '-dynamic'
     }
     for arg in args:
-        if arg in unsupported:
+        forwarded_args = split_wl_arg(arg) if arg.startswith('-Wl,') else [arg]
+        for forwarded_arg in forwarded_args:
+            if forwarded_arg not in unsupported:
+                continue
+            detail = f" from {arg!r}" if forwarded_arg != arg else ""
             fail(
                 "cowasm: COWASM_TOOLCHAIN=clang currently supports only "
-                f"non-PIC standalone C programs; unsupported flag {arg!r}"
+                "non-PIC standalone C programs; unsupported flag "
+                f"{forwarded_arg!r}{detail}"
             )
 
 
