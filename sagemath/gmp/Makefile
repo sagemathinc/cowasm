@@ -4,6 +4,7 @@ include ../build/Makefile-vars
 VERSION = 6.2.1
 URL = https://gmplib.org/download/gmp/gmp-${VERSION}.tar.bz2
 TARBALL = ${UPSTREAM}/gmp-${VERSION}.tar.bz2
+TARBALL_SHA256 = eae9326beb4158c386e39a356818031bd28f3124cf915f8c5b1dc4c7a36b4d7c
 
 all: wasm
 
