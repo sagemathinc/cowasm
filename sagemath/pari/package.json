@@ -15,7 +15,9 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "make",
-    "clean": "make clean"
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test"
   },
   "repository": {
     "type": "git",
