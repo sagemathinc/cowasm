@@ -48,12 +48,18 @@ __subtf3
 __floatditf
 `;
 
-export function cxxRuntimeExportCode(includeAllocators = true) {
-  const helperSymbols = cxxRuntimeHelperSymbols
+function cxxRuntimeHelperNames(includeAllocators = true) {
+  return cxxRuntimeHelperSymbols
     .split("\n")
+    .map((name) => name.trim())
     .filter(
-      (name) => includeAllocators || (name != "c_malloc" && name != "c_free")
+      (name) =>
+        name && (includeAllocators || (name != "c_malloc" && name != "c_free"))
     );
+}
+
+export function cxxRuntimeExportCode(includeAllocators = true) {
+  const helperSymbols = cxxRuntimeHelperNames(includeAllocators);
   const allocatorCode = includeAllocators
     ? `
 __attribute__((visibility("default"))) void *c_malloc(size_t n) {
@@ -75,7 +81,7 @@ __attribute__((visibility("default"))) void c_free(void *ptr) {
 
 struct __locale_struct;
 
-double __extenddftf2(long double);
+long double __extenddftf2(double);
 double __trunctfdf2(long double);
 long double __multf3(long double a, long double b);
 long double __addtf3(long double a, long double b);
@@ -272,7 +278,7 @@ void *mempcpy(void *, const void *, size_t);
 int mkstemp(char *template);
 int mkstemps(char *template, int suffixlen);
 void __SIG_IGN(int);
-double __extenddftf2(long double);
+long double __extenddftf2(double);
 // lib/compiler_rt/trunctfdf2.zig:pub fn __trunctfdf2(a: f128) callconv(.C) f64
 double __trunctfdf2(long double);
 // lib/compiler_rt/multf3.zig:pub fn __multf3(a: f128, b: f128) callconv(.C) f128 {
@@ -296,7 +302,7 @@ long double __floatsitf(int);
 // lib/compiler_rt/subtf3.zig:pub fn __subtf3(a: f128, b: f128) callconv(.C) f128 {
 long double __subtf3(long double, long double);
 // lib/compiler_rt/floatditf.zig:pub fn __floatditf(a: i64) callconv(.C) f128 {
-long double __floatditf(double a);
+long double __floatditf(long long);
 // __unordtf2(a: f128, b: f128) callconv(.C) i32
 int __unordtf2(long double, long double);
 // fn __letf2(a: f128, b: f128) callconv(.C) i32
@@ -304,11 +310,11 @@ int __letf2(long double, long double);
 // pub fn __trunctfsf2(a: f128) callconv(.C) f32
 float __trunctfsf2(long double);
 // pub fn __fixtfdi(a: f128) callconv(.C) i64
-long __fixtfdi(long double);
+long long __fixtfdi(long double);
 // pub fn __floatunsitf(a: u32) callconv(.C) f128
 long double __floatunsitf(unsigned int);
 // pub fn __floatunditf(a: u64) callconv(.C) f128
-long double __floatunditf(unsigned long);
+long double __floatunditf(unsigned long long);
 // pub fn __extendsftf2(a: f32) callconv(.C) f128
 long double __extendsftf2(float);
 // fn __netf2(a: f128, b: f128) callconv(.C) i32
@@ -316,7 +322,7 @@ int __netf2(long double, long double);
 // pub fn __fixunstfsi(a: f128) callconv(.C) u32
 unsigned int __fixunstfsi(long double);
 // pub fn __fixunstfdi(a: f128) callconv(.C) u64
-unsigned long __fixunstfdi(long double);
+unsigned long long __fixunstfdi(long double);
 // fn __eqtf2(a: f128, b: f128) callconv(.C) i32
 int __eqtf2(long double,long double);
 
@@ -330,7 +336,7 @@ unsigned long long __udivti3(unsigned long long, unsigned long long);
 int __eqtf2(long double, long double);
 
 // pub fn __fixunstfdi(a: f128) callconv(.C) u64
-unsigned long __fixunstfdi(long double);
+unsigned long long __fixunstfdi(long double);
 
 // pub fn __fixunstfsi(a: f128) callconv(.C) u32
 unsigned int __fixunstfsi(long double);
@@ -378,7 +384,11 @@ void _ZTISt20bad_array_new_length();
 `;
   s += "\n";
   s += cxxRuntimeExportCode();
-  const excluded = new Set(["__SIG_ERR", "signal"]);
+  const excluded = new Set([
+    "__SIG_ERR",
+    "signal",
+    ...cxxRuntimeHelperNames(),
+  ]);
   s += wasmExport(
     (symbols + "\n" + posix).split("\n").filter((name) => !excluded.has(name))
   );
