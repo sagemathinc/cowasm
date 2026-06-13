@@ -1,9 +1,34 @@
 #!/usr/bin/env python-native
-import os, subprocess, sys
+import os, pathlib, shutil, subprocess, sys
 
 RUN = "wasi-js"
+SUPPORTED_TOOLCHAINS = {"zig"}
 
 SCRIPT_DIR = r"""SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"""
+
+
+def selected_toolchain():
+    toolchain = os.environ.get("COWASM_TOOLCHAIN", "zig").strip().lower()
+    if toolchain == "":
+        return "zig"
+    return toolchain
+
+
+def find_zig():
+    zig = shutil.which("zig")
+    if zig:
+        return os.path.realpath(zig)
+
+    sibling = pathlib.Path(__file__).resolve().parent / "zig"
+    if sibling.is_file() and os.access(sibling, os.X_OK):
+        return os.path.realpath(sibling)
+
+    print(
+        "cowasm: could not find 'zig'; run make -C core/build zig or add "
+        "the CoWasm bin directory to PATH",
+        file=sys.stderr,
+    )
+    sys.exit(2)
 
 
 def run(args):
@@ -16,8 +41,17 @@ def run(args):
 
 
 def build(compiler):
+    toolchain = selected_toolchain()
+    if toolchain not in SUPPORTED_TOOLCHAINS:
+        print(
+            f"cowasm: unsupported COWASM_TOOLCHAIN={toolchain!r}; "
+            "only 'zig' is implemented. The direct clang/lld backend is not ready yet.",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+
     args = [
-        "zig",
+        find_zig(),
         compiler,
         "-target",
         "wasm32-wasi",

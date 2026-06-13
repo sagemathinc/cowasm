@@ -46,6 +46,30 @@ test: all
 	fi; \
 	grep "only 'zig' is implemented" "$$tmp"; \
 	rm -f "$$tmp"
+	tmp="$$(mktemp)"; \
+	if ! PATH="/usr/bin:/bin" COWASM_TOOLCHAIN= ${BIN}/zcc --print-multiarch >"$$tmp" 2>&1; then \
+		cat "$$tmp"; \
+		rm -f "$$tmp"; \
+		exit 1; \
+	fi; \
+	grep '^wasm32-wasi$$' "$$tmp"; \
+	rm -f "$$tmp"
+	tmp="$$(mktemp)"; \
+	if ! PATH="/usr/bin:/bin" COWASM_TOOLCHAIN= ${BIN}/z++ --print-multiarch >"$$tmp" 2>&1; then \
+		cat "$$tmp"; \
+		rm -f "$$tmp"; \
+		exit 1; \
+	fi; \
+	grep '^wasm32-wasi$$' "$$tmp"; \
+	rm -f "$$tmp"
+	tmp="$$(mktemp)"; \
+	if PATH="${BIN}:$$PATH" COWASM_TOOLCHAIN=clang ${BIN}/zcc --print-multiarch >"$$tmp" 2>&1; then \
+		cat "$$tmp"; \
+		rm -f "$$tmp"; \
+		exit 1; \
+	fi; \
+	grep "only 'zig' is implemented" "$$tmp"; \
+	rm -f "$$tmp"
 
 clean:
 	rm -rf build

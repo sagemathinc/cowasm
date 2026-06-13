@@ -38,6 +38,12 @@ The repository also has lightweight compatibility wrappers:
   writes a shell launcher next to linked executables.
 - `bin/z++`: same wrapper for `zig c++`.
 
+These compatibility wrappers honor the same `COWASM_TOOLCHAIN` selector as the
+main `cowasm-cc` wrapper. They default to the pinned Zig backend, reject
+unsupported selector values before invoking compiler tools, and fall back to the
+sibling `bin/zig` when called directly without the CoWasm `bin` directory on
+`PATH`.
+
 Most package Makefiles use `cowasm-cc`/`cowasm-c++` for WebAssembly builds and
 plain `zig cc`/`zig c++` for native helper builds.
 
