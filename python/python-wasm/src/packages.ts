@@ -10,17 +10,18 @@ import pandas from "./pandas.tar.xz";
 import six from "./six.tar.xz";
 import pytz from "./pytz.tar.xz";
 import dateutil from "./dateutil.tar.xz";
+import { pythonLibPath } from "./constants";
 
 export async function fetchPackages(kernel) {
   log("fetching demo packages in parallel: numpy, mpmath, sympy");
   await Promise.all([
-    kernel.fetch(numpy, "/usr/lib/python3.14/numpy.tar.xz"),
-    kernel.fetch(mpmath, "/usr/lib/python3.14/mpmath.tar.xz"),
-    kernel.fetch(sympy, "/usr/lib/python3.14/sympy.tar.xz"),
-    kernel.fetch(pandas, "/usr/lib/python3.14/pandas.tar.xz"),
-    kernel.fetch(six, "/usr/lib/python3.14/six.tar.xz"),
-    kernel.fetch(pytz, "/usr/lib/python3.14/pytz.tar.xz"),
-    kernel.fetch(dateutil, "/usr/lib/python3.14/dateutil.tar.xz"),
+    kernel.fetch(numpy, pythonLibPath("numpy.tar.xz")),
+    kernel.fetch(mpmath, pythonLibPath("mpmath.tar.xz")),
+    kernel.fetch(sympy, pythonLibPath("sympy.tar.xz")),
+    kernel.fetch(pandas, pythonLibPath("pandas.tar.xz")),
+    kernel.fetch(six, pythonLibPath("six.tar.xz")),
+    kernel.fetch(pytz, pythonLibPath("pytz.tar.xz")),
+    kernel.fetch(dateutil, pythonLibPath("dateutil.tar.xz")),
   ]);
   log("fetched packages");
 }

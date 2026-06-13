@@ -1,12 +1,13 @@
 import { syncPython } from "../../node";
+import { pythonLibPath } from "../../constants";
 
 test("mkstemp system call -- hitting the memfs filesystem", async () => {
   const { kernel } = await syncPython({ fs: "everything" });
-  const fd = kernel.callWithString("mkstemp", "/usr/lib/python3.14/fooXXXXXX");
+  const fd = kernel.callWithString("mkstemp", pythonLibPath("fooXXXXXX"));
   expect(fd).toBeGreaterThan(0);
   const path = kernel.wasi?.FD_MAP.get(fd)?.path;
   if (path == null) throw Error("bug");
-  expect(path.startsWith("/usr/lib/python3.14/foo")).toBe(true);
+  expect(path.startsWith(pythonLibPath("foo"))).toBe(true);
   kernel.fs?.unlinkSync(path);
 });
 

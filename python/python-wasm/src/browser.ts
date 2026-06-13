@@ -10,8 +10,7 @@ import wasmUrl from "./python.wasm";
 import pythonFull from "./python-stdlib.zip";
 import pythonMinimal from "./python-minimal.zip";
 import pythonReadline from "./python-readline.zip";
-const PYTHONEXECUTABLE = "/usr/lib/python.wasm";
-const PYTHON_LIB = "/usr/lib/python3.14";
+import { PYTHONEXECUTABLE, PYTHON_LIB } from "./constants";
 
 // We ONLY provide async version, since sync version isn't
 // possible anymore since dynamic module loading has to be

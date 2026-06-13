@@ -6,6 +6,7 @@ import debug from "debug";
 const log = debug("python-wasm");
 
 import { Options, PythonWasmSync, PythonWasmAsync } from "./common";
+import { PYTHON_LIB } from "./constants";
 
 export type { Options, PythonWasmSync, PythonWasmAsync };
 
@@ -17,7 +18,6 @@ const pythonEverything = join(__dirname, "python-everything.zip");
 const pythonStdlib = join(__dirname, "python-stdlib.zip");
 const pythonReadline = join(__dirname, "python-readline.zip");
 const pythonMinimal = join(__dirname, "python-minimal.zip");
-const PYTHON_LIB = "/usr/lib/python3.14";
 
 // For now this is the best we can do.  TODO: cleanest solution in general would be to also include the
 // python3.wasm binary (which has main) from the cpython package, to support running python from python.
