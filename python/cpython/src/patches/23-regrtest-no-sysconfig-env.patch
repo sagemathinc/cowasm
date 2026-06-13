@@ -1,0 +1,11 @@
+--- native/Lib/test/libregrtest/save_env.py
++++ wasm/Lib/test/libregrtest/save_env.py
+@@ -67,7 +67,6 @@
+                  'sys.warnoptions',
+                  # multiprocessing.process._cleanup() may release ref
+                  # to a thread, so check processes first.
+                  'multiprocessing.process._dangling', 'threading._dangling',
+-                 'sysconfig._CONFIG_VARS', 'sysconfig._INSTALL_SCHEMES',
+                  'files', 'locale', 'warnings.showwarning',
+                  'shutil_archive_formats', 'shutil_unpack_formats',
+                  'asyncio.events._event_loop_policy',

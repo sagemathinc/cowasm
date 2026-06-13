@@ -1,0 +1,29 @@
+--- native/Lib/test/libregrtest/save_env.py
++++ wasm/Lib/test/libregrtest/save_env.py
+@@ -304,16 +304,24 @@
+         termios = self.try_get_module('termios')
+         if not os.isatty(fd := sys.__stdin__.fileno()):
+             return None
+-        attrs = termios.tcgetattr(fd)
++        try:
++            attrs = termios.tcgetattr(fd)
++        except termios.error:
++            return None
+         lflags = attrs[3]
+         return bool(lflags & termios.ECHO)
+     def restore_stty_echo(self, echo):
++        if echo is None:
++            return
+         termios = self.get_module('termios')
+-        attrs = termios.tcgetattr(fd := sys.__stdin__.fileno())
++        try:
++            attrs = termios.tcgetattr(fd := sys.__stdin__.fileno())
++        except termios.error:
++            return
+         if echo:
+             # Turn echo on.
+             attrs[3] |= termios.ECHO
+         else:
+             # Turn echo off.
+             attrs[3] &= ~termios.ECHO
+         termios.tcsetattr(fd, termios.TCSADRAIN, attrs)

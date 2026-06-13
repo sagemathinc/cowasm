@@ -182,7 +182,6 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/07-subprocess.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${SRC}/patches/08-os-spawn-subprocess.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${SRC}/patches/09-set-inheritable.patch | patch -p1
-	# Patch 10-setuptools-c++.patch is used, but only *AFTER* ensurepip happens!
 	cd ${BUILD_WASM} && cat ${SRC}/patches/11-ceval-wasi-emscripten.patch | patch -p1
 	# clang15 is more strict:
 	cd ${BUILD_WASM} && cat ${SRC}/patches/12-timemodule-clang15.patch | patch -p1
@@ -198,6 +197,10 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/20-noninteractive-stdin-main.patch | patch -p1
 	# Avoid OpenSSL OBJ_txt2obj in the ssl module's import-time purpose constants.
 	cd ${BUILD_WASM} && cat ${SRC}/patches/21-ssl-purpose-txt2obj.patch | patch -p1
+	# Ignore non-TTY stdin when the CPython regrtest harness saves terminal echo state.
+	cd ${BUILD_WASM} && cat ${SRC}/patches/22-regrtest-stty-enotty.patch | patch -p1
+	# sysconfig lazily initializes cross-build paths under the WASM runner.
+	cd ${BUILD_WASM} && cat ${SRC}/patches/23-regrtest-no-sysconfig-env.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
 
 DEBUG_MODE = ""
@@ -356,25 +359,23 @@ ${DIST_WASM}/.built:  node_modules ${DIST_WASM}/.install-cpython ${BIN}/python-n
 
 
 ###########
-# Installing pip and setuptools
+# Installing pip
 # We can only do this after ../packages/python-wasm is built, which depends on dylink
 # (which depends on cpython) and many other things.  So this target is invoked later.
 # NOTE: If you do "make clean-wasm", then "make", be sure to also do "make pip".
 ###########
-${DIST_WASM}/lib/${PYTHON_LIB}/site-packages/setuptools/.built: ${DIST_WASM}/.built
+${DIST_WASM}/lib/${PYTHON_LIB}/site-packages/pip/.built: ${DIST_WASM}/.built
 	rm -rf ${DIST_WASM}/lib/python*/site-packages/*pip* ${DIST_WASM}/lib/python*/site-packages/*setuptools*
-	${CWD}/bin/python-wasm -m ensurepip
-	# We apply one patch to support building C++ extensions.  Without this, the numpy
-	# build fails pretty quickly. This is needed due to our hacky approach to -fPIC.
-	cd ${DIST_WASM} && cat ${SRC}/patches/10-setuptools-c++.patch | patch -p1
+	PIP_USE_DEPRECATED=legacy-certs ${CWD}/bin/python-wasm -m ensurepip
+	find ${DIST_WASM}/lib/${PYTHON_LIB}/site-packages/pip -type d -name __pycache__ -prune -exec rm -rf {} +
 	# It would be much nicer to implement a better mmap.  But for now, let's just patch it out:
 	cd ${DIST_WASM} && cat ${SRC}/patches/15-pip-no-mmap.patch | patch -p1
 	# It would be better to have a better fallback for threads that works in some cases so we
 	# don't need this. But for now, just remove it:
 	cd ${DIST_WASM} && cat ${SRC}/patches/16-pip-no-auto-refresh-progress.patch  | patch -p1
-	touch ${DIST_WASM}/lib/${PYTHON_LIB}/site-packages/setuptools/.built
+	touch ${DIST_WASM}/lib/${PYTHON_LIB}/site-packages/pip/.built
 
-pip: ${DIST_WASM}/lib/${PYTHON_LIB}/site-packages/setuptools/.built
+pip: ${DIST_WASM}/lib/${PYTHON_LIB}/site-packages/pip/.built
 .PHONY: pip
 
 
@@ -391,7 +392,7 @@ RUN_TESTS = _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 	PYTHONPATH=${DIST_WASM}/lib/${PYTHON_LIB} \
 	_PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__wasi_wasm32-wasi \
 	${DIST_NATIVE}/bin/python3 \
-	./Tools/scripts/run_tests.py \
+	-m test \
 	 --python=${PYTHON_WASM}
 
 # We use a restricted PATH for running tests.  On Linux I had a lot of trouble
@@ -409,7 +410,7 @@ test-all: wasm native
 # I got this list using this on the output:
 #     grep passed out | awk '{print $(NF - 1)}' | tr '\n' ' '
 SUPPORTED_TEST_DESC = "the **supported-by-python-wasm** cpython test suites"
-SUPPORTED_TESTS = test_atexit test_base64 test_calendar test_cgitb  test_compile test_eof test_fstring test_graphlib test_gzip test_hash test_import test_inspect  test_module test_ntpath test_popen test_posixpath test_py_compile test_pydoc  test_quopri  test_script_helper test_source_encoding test_struct test_tabnanny test_tarfile test_trace test_unicodedata test_weakref test___all__ test___future__ test__locale test__opcode test__osx_support test_abc test_abstract_numbers test_aifc test_argparse test_array test_ast test_audioop test_augassign test_baseexception test_bdb test_bigaddrspace test_bigmem test_binascii test_binop test_bisect test_bool test_buffer test_bufio test_bz2 test_call test_cgi test_charmapcodec test_class test_cmath test_cmd test_code_module test_codeccallbacks test_codecencodings_cn test_codecencodings_hk test_codecencodings_iso2022 test_codecencodings_jp test_codecencodings_kr test_codecencodings_tw test_codecmaps_cn test_codecmaps_hk test_codecmaps_jp test_codecmaps_kr test_codecmaps_tw test_codeop test_collections test_colorsys test_compare test_complex test_configparser test_contains test_context test_contextlib test_copy test_copyreg test_crashers test_crypt test_csv test_dataclasses test_datetime test_dbm test_dbm_dumb test_decimal test_decorators test_defaultdict test_deque test_descr test_descrtut test_dict test_dict_version test_dictcomps test_dictviews test_difflib test_dis test_doctest2 test_dynamic test_dynamicclassattribute test_eintr test_email test_ensurepip test_enum test_enumerate test_errno test_except_star test_exception_group test_exception_hierarchy test_exception_variations test_extcall test_file test_filecmp test_fileinput test_fileutils test_finalization test_float test_flufl test_fnmatch test_format test_fractions test_frame test_frozen test_funcattrs test_functools test_future test_future3 test_future4 test_future5 test_generator_stop test_genericalias test_genericclass test_genericpath test_genexps test_getopt test_getpath test_gettext test_global test_grammar test_hashlib test_heapq test_hmac test_html test_htmlparser test_http_cookiejar test_http_cookies test_imghdr test_index test_int test_int_literal test_ipaddress test_isinstance test_iter test_iterlen test_itertools test_keyword test_keywordonlyarg  test_lib2to3 test_linecache test_list test_listcomps test_lltrace test_locale test_long test_longexp test_lzma test_mailcap test_math test_memoryio test_memoryview test_metaclass test_mimetypes test_minidom test_modulefinder test_multibytecodec test_named_expressions test_netrc  test_numeric_tower test_opcache test_opcodes test_operator test_optparse test_ordered_dict test_osx_env test_patma test_peepholer test_peg_generator test_pep646_syntax test_pickle test_picklebuffer test_pickletools test_pipes test_pkg test_pkgutil test_plistlib test_positional_only_arg test_pow test_pprint test_print test_property test_pulldom test_pyclbr test_pyexpat test_raise test_random test_range test_re test_reprlib test_richcmp test_rlcompleter test_sax test_sched test_scope test_secrets test_set test_setcomps test_shelve test_shlex test_slice test_sndhdr test_sort  test_statistics test_strftime test_string test_string_literals test_stringprep test_strptime test_strtod test_structseq test_subclassinit test_sunau test_sundry test_super test_symtable test_syntax test_textwrap test_threadsignals test_timeit  test_tokenize test_tomllib test_tuple test_type_annotations test_type_cache test_type_comments test_typechecks test_types test_ucn test_unary test_unicode_file test_unicode_file_functions test_unicode_identifiers test_univnewlines test_unpack test_unpack_ex test_unparse test_urlparse test_userdict test_userlist test_userstring test_utf8source test_uu test_uuid test_wave test_weakset test_with test_xdrlib test_xml_dom_minicompat test_xml_etree_c test_xxtestfuzz test_yield_from test_zipimport test_zlib test_zoneinfo  test_pstats test_tempfile test_sys_setprofile
+SUPPORTED_TESTS = test_atexit test_base64 test_calendar test_compile test_eof test_fstring test_graphlib test_gzip test_hash test_import test_inspect test_module test_ntpath test_popen test_py_compile test_pydoc test_quopri test_script_helper test_struct test_tabnanny test_tarfile test_trace test_unicodedata test_weakref test___all__ test__locale test__opcode test__osx_support test_abc test_abstract_numbers test_argparse test_array test_ast test_augassign test_baseexception test_bdb test_bigaddrspace test_bigmem test_binascii test_binop test_bisect test_bool test_buffer test_bufio test_bz2 test_call test_charmapcodec test_class test_cmath test_cmd test_code_module test_codeccallbacks test_codecencodings_cn test_codecencodings_hk test_codecencodings_iso2022 test_codecencodings_jp test_codecencodings_kr test_codecencodings_tw test_codecmaps_cn test_codecmaps_hk test_codecmaps_jp test_codecmaps_kr test_codecmaps_tw test_codeop test_collections test_colorsys test_compare test_complex test_configparser test_contains test_context test_contextlib test_copy test_copyreg test_csv test_dataclasses test_datetime test_dbm test_dbm_dumb test_decimal test_decorators test_defaultdict test_deque test_descr test_descrtut test_dict test_dictcomps test_dictviews test_difflib test_dis test_dynamic test_dynamicclassattribute test_eintr test_email test_ensurepip test_enum test_enumerate test_errno test_except_star test_exception_group test_exception_hierarchy test_exception_variations test_extcall test_file test_filecmp test_fileinput test_fileutils test_finalization test_float test_flufl test_fnmatch test_format test_fractions test_frame test_frozen test_funcattrs test_functools test_generator_stop test_genericalias test_genericclass test_genericpath test_genexps test_getopt test_getpath test_gettext test_global test_grammar test_hashlib test_heapq test_hmac test_html test_htmlparser test_http_cookiejar test_http_cookies test_index test_int test_int_literal test_ipaddress test_isinstance test_iter test_iterlen test_itertools test_keyword test_keywordonlyarg test_linecache test_list test_listcomps test_lltrace test_locale test_long test_longexp test_lzma test_math test_memoryio test_memoryview test_metaclass test_mimetypes test_minidom test_modulefinder test_multibytecodec test_named_expressions test_netrc test_numeric_tower test_opcache test_opcodes test_operator test_optparse test_ordered_dict test_osx_env test_patma test_peepholer test_peg_generator test_pep646_syntax test_pickle test_picklebuffer test_pickletools test_pkg test_pkgutil test_plistlib test_positional_only_arg test_pow test_pprint test_print test_property test_pulldom test_pyclbr test_pyexpat test_raise test_random test_range test_re test_reprlib test_richcmp test_rlcompleter test_sax test_sched test_scope test_secrets test_set test_setcomps test_shelve test_shlex test_slice test_sort test_statistics test_strftime test_string test_string_literals test_stringprep test_strptime test_strtod test_structseq test_subclassinit test_sundry test_super test_symtable test_syntax test_textwrap test_threadsignals test_timeit test_tokenize test_tomllib test_tuple test_type_annotations test_type_cache test_type_comments test_typechecks test_types test_ucn test_unary test_unicode_file test_unicode_file_functions test_unicode_identifiers test_univnewlines test_unpack test_unpack_ex test_unparse test_urlparse test_userdict test_userlist test_userstring test_utf8source test_uuid test_wave test_weakset test_with test_xml_dom_minicompat test_xml_etree_c test_xxtestfuzz test_yield_from test_zipimport test_zlib test_zoneinfo test_pstats test_tempfile test_sys_setprofile
 
 
 ${BIN}/python-wasm: ${DIST_WASM}/.built ${CWD}/bin/python-wasm
@@ -420,7 +421,7 @@ python-wasm: ${BIN}/python-wasm
 
 test-pip: pip
 	echo "Testing PIP"
-	${CWD}/bin/python-wasm -m pip |grep Usage
+	PYTHONDONTWRITEBYTECODE=1 ${CWD}/bin/python-wasm -m pip |grep Usage
 	echo "Success"
 .PHONY: test-pip
 

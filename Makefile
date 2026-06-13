@@ -4,7 +4,7 @@ CWD = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 CORE = $(dir $(shell ls core/*/Makefile))
 PYTHON = $(dir $(shell ls python/*/Makefile))
-PYTHON_DISABLED = python/py-matplotlib/
+PYTHON_DISABLED =
 PYTHON_SUPPORTED = $(filter-out ${PYTHON_DISABLED},${PYTHON})
 WEB = $(dir $(shell ls web/*/Makefile))
 DESKTOP = $(dir $(shell ls desktop/*/Makefile))
