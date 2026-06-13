@@ -15,8 +15,9 @@ The compiler wrappers accept `COWASM_TOOLCHAIN` as the explicit backend
 selector. The current recognized values are:
 
 - unset or `zig`: use the pinned Zig backend described below.
-- `clang`: reserved for the future direct clang/lld backend. The wrapper fails
-  early with a diagnostic instead of silently falling back to Zig.
+- `clang`: use an experimental direct clang/lld backend for tiny non-PIC C
+  programs. This path is intentionally narrow and does not silently fall back
+  to Zig.
 
 Any other selector value is rejected before invoking compiler or linker tools.
 
@@ -39,10 +40,10 @@ The repository also has lightweight compatibility wrappers:
 - `bin/z++`: same wrapper for `zig c++`.
 
 These compatibility wrappers honor the same `COWASM_TOOLCHAIN` selector as the
-main `cowasm-cc` wrapper. They default to the pinned Zig backend, reject
-unsupported selector values before invoking compiler tools, and fall back to the
-sibling `bin/zig` when called directly without the CoWasm `bin` directory on
-`PATH`.
+main `cowasm-cc` wrapper, but they still only implement the Zig backend. They
+default to the pinned Zig backend, reject unsupported selector values before
+invoking compiler tools, and fall back to the sibling `bin/zig` when called
+directly without the CoWasm `bin` directory on `PATH`.
 
 Most package Makefiles use `cowasm-cc`/`cowasm-c++` for WebAssembly builds and
 plain `zig cc`/`zig c++` for native helper builds.
@@ -155,6 +156,55 @@ By default, linked outputs are stripped with:
 ```
 
 Any `-g*` debug option disables the automatic strip/compress step.
+
+## Experimental Direct Clang Backend
+
+`COWASM_TOOLCHAIN=clang` is currently implemented only by
+`cowasm-cc`/`cowasm-c++`'s shared wrapper, and only the C mode is supported.
+It is meant to validate the explicit standalone WASI executable contract before
+shared libraries and C++ runtime details are introduced.
+
+Tool discovery is explicit:
+
+```sh
+COWASM_CLANG=/path/to/clang
+COWASM_WASM_LD=/path/to/wasm-ld
+COWASM_WASI_SYSROOT=/path/to/wasi-sysroot
+COWASM_COMPILER_RT=/path/to/libclang_rt.builtins-wasm32.a
+```
+
+`COWASM_CLANG`, `COWASM_WASM_LD`, and `COWASM_COMPILER_RT` are optional when
+the corresponding tools or runtime can be found through `PATH` or clang's
+`-print-libgcc-file-name`. `COWASM_WASI_SYSROOT` can also be omitted when a
+standard wasi-sdk sysroot exists at `/opt/wasi-sdk/share/wasi-sysroot`,
+`/usr/local/share/wasi-sysroot`, or `/usr/share/wasi-sysroot`.
+
+The compile-side defaults are:
+
+```sh
+clang --target=wasm32-wasi --sysroot <wasi-sysroot>
+```
+
+The backend also defines:
+
+```c
+#define __wasi__
+#define __cowasm__
+#define _WASI_EMULATED_SIGNAL
+#define _WASI_EMULATED_PROCESS_CLOCKS
+```
+
+For executable links, the wrapper compiles source files to temporary objects
+and then invokes `wasm-ld` directly with:
+
+```sh
+wasm-ld -o <output> <sysroot>/lib/wasm32-wasi/crt1.o ... \
+  -L <sysroot>/lib/wasm32-wasi -lc <compiler-rt>
+```
+
+The current clang backend rejects shared/PIC flags such as `-shared`,
+`-fPIC`, `-fpic`, `--experimental-pic`, and `-dynamic`. It also rejects
+`cowasm-zig` and C++ mode. Those are later phases of the toolchain migration.
 
 ## Archive Tools
 

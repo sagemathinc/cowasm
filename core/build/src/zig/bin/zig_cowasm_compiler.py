@@ -58,8 +58,10 @@ BACKEND SELECTION:
 
    COWASM_TOOLCHAIN=zig   = use the current pinned Zig backend. This is the
                             default when COWASM_TOOLCHAIN is unset.
-   COWASM_TOOLCHAIN=clang = reserved for the future direct clang/lld backend.
-                            It currently fails early with a diagnostic.
+   COWASM_TOOLCHAIN=clang = use an experimental direct clang/lld backend for
+                            tiny non-PIC C programs. Set COWASM_CLANG,
+                            COWASM_WASM_LD, and COWASM_WASI_SYSROOT when the
+                            tools are not discoverable on PATH.
 
 EXTRA OPTIONS:
 
@@ -70,8 +72,13 @@ EXTRA OPTIONS:
 import os, shutil, subprocess, sys, tempfile, pathlib
 
 verbose = False  # default
-SUPPORTED_TOOLCHAINS = {"zig"}
+SUPPORTED_TOOLCHAINS = {"zig", "clang"}
 ORIGINAL_ARGV0 = sys.argv[0]
+
+
+def fail(message, exit_code=2):
+    print(message, file=sys.stderr)
+    sys.exit(exit_code)
 
 
 def selected_toolchain():
@@ -86,7 +93,7 @@ TOOLCHAIN = selected_toolchain()
 if TOOLCHAIN not in SUPPORTED_TOOLCHAINS:
     print(
         f"cowasm: unsupported COWASM_TOOLCHAIN={TOOLCHAIN!r}; "
-        "only 'zig' is implemented. The direct clang/lld backend is not ready yet.",
+        "supported values are 'zig' and 'clang'.",
         file=sys.stderr,
     )
     sys.exit(2)
@@ -149,6 +156,8 @@ elif sys.argv[0].endswith('-c++'):
 elif sys.argv[0].endswith('-zig'):
     sys.argv.insert(1, 'build-obj')
     LANG = 'zig'
+else:
+    fail(f"cowasm: cannot infer compiler mode from {sys.argv[0]!r}")
 
 
 def find_zig():
@@ -163,17 +172,22 @@ def find_zig():
     if sibling.is_file() and os.access(sibling, os.X_OK):
         return os.path.realpath(sibling)
 
-    print(
+    fail(
         "cowasm: could not find 'zig'; run make -C core/build zig or add "
-        "the CoWasm bin directory to PATH",
-        file=sys.stderr,
+        "the CoWasm bin directory to PATH"
     )
-    sys.exit(2)
 
 
-ZIG_EXE = find_zig()
-ZIG_HOME = os.path.dirname(ZIG_EXE)
-sys.argv[0] = ZIG_EXE
+ZIG_EXE = None
+ZIG_HOME = None
+
+
+def ensure_zig():
+    global ZIG_EXE, ZIG_HOME
+    if ZIG_EXE is None:
+        ZIG_EXE = find_zig()
+        ZIG_HOME = os.path.dirname(ZIG_EXE)
+        sys.argv[0] = ZIG_EXE
 
 # This is a horrendous hack to make the main function visible without having to
 # change the source code of every program we build.  It can be randomly broken, so watch out.
@@ -198,6 +212,207 @@ def run(cmd):
     if ret.returncode:
         sys.exit(ret.returncode)
 
+
+def find_required_program(env_name, program):
+    override = os.environ.get(env_name)
+    if override:
+        path = pathlib.Path(override)
+        if path.is_file() and os.access(path, os.X_OK):
+            return str(path)
+        fail(f"cowasm: {env_name}={override!r} is not an executable file")
+
+    found = shutil.which(program)
+    if found:
+        return os.path.realpath(found)
+
+    fail(
+        f"cowasm: COWASM_TOOLCHAIN=clang requires '{program}'; "
+        f"install it or set {env_name}=/path/to/{program}"
+    )
+
+
+def find_wasi_sysroot():
+    for env_name in ["COWASM_WASI_SYSROOT", "WASI_SYSROOT"]:
+        value = os.environ.get(env_name)
+        if value:
+            path = pathlib.Path(value)
+            if path.is_dir():
+                return str(path)
+            fail(f"cowasm: {env_name}={value!r} is not a directory")
+
+    for candidate in [
+            "/opt/wasi-sdk/share/wasi-sysroot",
+            "/usr/local/share/wasi-sysroot",
+            "/usr/share/wasi-sysroot",
+    ]:
+        if pathlib.Path(candidate).is_dir():
+            return candidate
+
+    fail(
+        "cowasm: COWASM_TOOLCHAIN=clang requires a WASI sysroot; "
+        "set COWASM_WASI_SYSROOT=/path/to/wasi-sysroot"
+    )
+
+
+def clang_output_name(args):
+    try:
+        return args[args.index('-o') + 1]
+    except:
+        return 'a.out'
+
+
+def clang_is_object_or_archive(filename):
+    ext = os.path.splitext(filename)[1].lower()
+    return ext in {'.o', '.a', '.so'}
+
+
+def clang_has_input(args):
+    return any(is_source(arg) or clang_is_object_or_archive(arg) for arg in args)
+
+
+def clang_is_debug(args):
+    for flag in args:
+        if flag.startswith('-g') or flag == '-O0':
+            return True
+    return False
+
+
+def clang_base_flags(sysroot):
+    flags = [
+        '--target=wasm32-wasi', '--sysroot', sysroot, '-D__wasi__',
+        '-D__cowasm__', '-D_WASI_EMULATED_SIGNAL',
+        '-D_WASI_EMULATED_PROCESS_CLOCKS'
+    ]
+    if use_main_hack:
+        flags.append('-Dmain=__attribute__((visibility("default")))main')
+    return flags
+
+
+def reject_unsupported_clang_args(args):
+    unsupported = {
+        '-shared', '-fPIC', '-fpic', '--experimental-pic', '-dynamic'
+    }
+    for arg in args:
+        if arg in unsupported:
+            fail(
+                "cowasm: COWASM_TOOLCHAIN=clang currently supports only "
+                f"non-PIC standalone C programs; unsupported flag {arg!r}"
+            )
+
+
+def clang_parse_link_args(args):
+    i = 0
+    source_files = []
+    object_args = []
+    compiler_args = []
+    linker_args = []
+    while i < len(args):
+        arg = args[i]
+        if arg == '-o':
+            i += 2
+            continue
+        if arg == '-Xlinker':
+            i += 1
+            linker_args.append(args[i])
+            i += 1
+            continue
+        if arg == '-L':
+            linker_args += [arg, args[i + 1]]
+            i += 2
+            continue
+        if arg.startswith('-L') or arg.startswith('-l'):
+            linker_args.append(arg)
+        elif is_source(arg):
+            source_files.append(arg)
+        elif clang_is_object_or_archive(arg):
+            object_args.append(arg)
+        else:
+            compiler_args.append(arg)
+        i += 1
+    return source_files, compiler_args, linker_args, object_args
+
+
+def clang_builtin_runtime(clang, base_flags):
+    override = os.environ.get("COWASM_COMPILER_RT")
+    if override:
+        path = pathlib.Path(override)
+        if path.is_file():
+            return str(path)
+        fail(f"cowasm: COWASM_COMPILER_RT={override!r} is not a file")
+
+    ret = subprocess.run(
+        [clang] + base_flags + ['-print-libgcc-file-name'],
+        capture_output=True,
+        text=True,
+    )
+    if ret.returncode:
+        sys.stderr.write(ret.stderr)
+        sys.exit(ret.returncode)
+    path = ret.stdout.strip()
+    if not path or not pathlib.Path(path).is_file():
+        fail(
+            "cowasm: clang did not report a usable compiler runtime; "
+            "set COWASM_COMPILER_RT=/path/to/libclang_rt.builtins-wasm32.a"
+        )
+    return path
+
+
+def clang_backend():
+    if LANG == 'zig':
+        fail("cowasm: COWASM_TOOLCHAIN=clang does not support cowasm-zig")
+    if LANG == 'c++':
+        fail("cowasm: COWASM_TOOLCHAIN=clang does not support C++ yet")
+
+    args = sys.argv[2:]
+    if '--print-multiarch' in args:
+        print('wasm32-wasi')
+        return
+
+    reject_unsupported_clang_args(args)
+    clang = find_required_program("COWASM_CLANG", "clang")
+    sysroot = find_wasi_sysroot()
+    base_flags = clang_base_flags(sysroot)
+
+    if "-E" in args or not clang_has_input(args):
+        run([clang] + base_flags + args)
+        return
+
+    if '-c' in args or clang_output_name(args).endswith('.o'):
+        run([clang] + base_flags + args)
+        return
+
+    wasm_ld = find_required_program("COWASM_WASM_LD", "wasm-ld")
+    source_files, compiler_args, linker_args, object_args = clang_parse_link_args(
+        args)
+
+    objects = []
+    for source_file in source_files:
+        tmpfile = tempfile.NamedTemporaryFile(suffix='.o')
+        run([clang] + base_flags + compiler_args +
+            ['-c', source_file, '-o', tmpfile.name])
+        objects.append(tmpfile)
+
+    output_name = clang_output_name(args)
+    sysroot_lib = os.path.join(sysroot, "lib", "wasm32-wasi")
+    crt1 = os.path.join(sysroot_lib, "crt1.o")
+    if not pathlib.Path(crt1).is_file():
+        fail(f"cowasm: WASI startup object not found: {crt1}")
+
+    link = [wasm_ld, '-o', output_name]
+    if not clang_is_debug(args):
+        link.append('--strip-all')
+    link += [crt1] + object_args + [obj.name for obj in objects]
+    link += linker_args + ['-L', sysroot_lib, '-lc',
+                           clang_builtin_runtime(clang, base_flags)]
+    run(link)
+
+
+if TOOLCHAIN == 'clang':
+    clang_backend()
+    sys.exit(0)
+
+
+ensure_zig()
 
 if "-E" in sys.argv or '--print-multiarch' in sys.argv:
     # preprocessor only or checking architecture

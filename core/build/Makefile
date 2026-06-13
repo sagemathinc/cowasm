@@ -39,13 +39,14 @@ test: all
 	grep '^wasm32-wasi$$' "$$tmp"; \
 	rm -f "$$tmp"
 	tmp="$$(mktemp)"; \
-	if PATH="${BIN}:$$PATH" COWASM_TOOLCHAIN=clang ${BIN}/cowasm-cc --print-multiarch >"$$tmp" 2>&1; then \
+	if ! PATH="${BIN}:$$PATH" COWASM_TOOLCHAIN=clang ${BIN}/cowasm-cc --print-multiarch >"$$tmp" 2>&1; then \
 		cat "$$tmp"; \
 		rm -f "$$tmp"; \
 		exit 1; \
 	fi; \
-	grep "only 'zig' is implemented" "$$tmp"; \
+	grep '^wasm32-wasi$$' "$$tmp"; \
 	rm -f "$$tmp"
+	PATH="${BIN}:$$PATH" ${SRC}/test/clang-backend-smoke.sh ${BIN}/cowasm-cc
 	tmp="$$(mktemp)"; \
 	if ! PATH="/usr/bin:/bin" COWASM_TOOLCHAIN= ${BIN}/zcc --print-multiarch >"$$tmp" 2>&1; then \
 		cat "$$tmp"; \
