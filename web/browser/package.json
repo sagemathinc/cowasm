@@ -30,7 +30,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/webpack",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/web/browser",
   "devDependencies": {
     "@cowasm/kernel": "workspace:*",
     "dash-wasm": "workspace:*",

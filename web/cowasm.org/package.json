@@ -33,7 +33,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/packages/website",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/web/cowasm.org",
   "devDependencies": {
     "python-wasm": "^0.27.0",
     "@types/node": "^18.11.3",

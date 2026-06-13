@@ -30,7 +30,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/python/terminal",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/web/terminal",
   "devDependencies": {
     "python-wasm": "workspace:*",
     "buffer": "^6.0.3",

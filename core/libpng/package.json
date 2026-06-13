@@ -2,7 +2,7 @@
   "name": "@cowasm/ligpng",
   "upstream_version": "1.6.35",
   "version": "1.0.0",
-  "description": "WebAssembly build of the ligpng library",
+  "description": "WebAssembly build of the libpng library",
   "main": "index.js",
   "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
   "scripts": {
@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/ligpng",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/core/libpng",
   "devDependencies": {
     "@cowasm/kernel": "workspace:*",
     "@cowasm/zlib": "workspace:*"

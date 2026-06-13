@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/python/py-setuptools",
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/python/bench",
   "devDependencies": {
     "python-wasm": "workspace:*",
     "pylang": "workspace:*"
