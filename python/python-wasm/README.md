@@ -31,7 +31,7 @@ Type ".help" for more information.
 > python.exec('import sys')
 undefined
 > python.repr('sys.version')
-"'3.11.0b3 (main, Jul 14 2022, 22:22:40) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 623481199fe17f4311cbdbbf'"
+"'3.14.6 ... [Clang 15.0.7 ...'"
 > python.exec('import numpy')
 undefined
 > python.repr('numpy.linspace(0, 10, num=5)')
@@ -42,11 +42,11 @@ There is also a Python REPL that is part of python\-wasm:
 
 ```py
 ~/cowasm $ npx python-wasm
-Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
+Python 3.14.6 ... [Clang 15.0.7 ...] on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 2 + 3   # you can edit using readline
 5
->>> input numpy as np
+>>> import numpy as np
 >>> np.linspace(0, 10, num=5)
 array([ 0. ,  2.5,  5. ,  7.5, 10. ])
 >>> import sympy

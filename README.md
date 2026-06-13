@@ -162,7 +162,7 @@ You can also use the WebAssembly Python REPL directly on the command line.
 
 ```sh
 ~/cowasm$ ./bin/python-wasm 
-Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
+Python 3.14.6 ... [Clang 15.0.7 ...] on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 2 + 3
 5
@@ -170,7 +170,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> sys.platform
 'wasi'
 >>> sys.executable
-'/Users/wstein/build/cocalc/src/data/projects/2c9318d1-4f8b-4910-8da7-68a965514c95/cowasm/core/cpython/bin/python-wasm'
+'/home/user/cowasm/python/cpython/bin/python-wasm'
 >>> ^D
 ~/cowasm$
 ```
@@ -179,22 +179,22 @@ The above directly runs the \`python.wasm\` executable produced by building cPyt
 
 ```py
 ~/cowasm$ . bin/env.sh 
-~/cowasm$ cd core/python-wasm/
-~/cowasm/core/python-wasm$ ./bin/python-wasm 
-Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
+~/cowasm$ cd python/python-wasm/
+~/cowasm/python/python-wasm$ ./bin/python-wasm
+Python 3.14.6 ... [Clang 15.0.7 ...] on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import time; t=time.time(); print(sum(range(10**7)), time.time()-t)
 49999995000000 0.8989999294281006
 >>> ^D
-~/cowasm/core/python-wasm$
+~/cowasm/python/python-wasm$
 ```
 
 As mentioned above, you can use python\-wasm as a library in node.js. There is a synchronous api that runs in the same thread as the import, and an asynchronous api that runs in a worker thread.
 
 ```py
 ~/cowasm$ . bin/env.sh 
-~/cowasm$ cd core/python-wasm/
-~/cowasm/core/python-wasm$ node
+~/cowasm$ cd python/python-wasm/
+~/cowasm/python/python-wasm$ node
 Welcome to Node.js v19.0.0.
 Type ".help" for more information.
 > python = require('.')
@@ -214,7 +214,8 @@ undefined
 And yes you can run many async Python's in parallel in the same node.js process, with each running in its own thread:
 
 ```sh
-~/cowasm/core/python-wasm$ nodeWelcome to Node.js v19.0.0.
+~/cowasm/python/python-wasm$ node
+Welcome to Node.js v19.0.0.
 Type ".help" for more information.
 > python = require('.')
 {
@@ -306,11 +307,11 @@ hi from wasi
 ```
 
 The python-wasm package has a bin/python-wasm script that can run
-Python programs that including interactive blocking input:
+Python programs, including interactive blocking input:
 
 ```sh
-~/cowasm/core/python-wasm$ echo "name = input('name? '); print(name*3)" > a.py
-~/cowasm/core/python-wasm$ ./bin/python-wasm a.py
+~/cowasm/python/python-wasm$ echo "name = input('name? '); print(name*3)" > a.py
+~/cowasm/python/python-wasm$ ./bin/python-wasm a.py
 name? william
 williamwilliamwilliam
 ```

@@ -12,7 +12,7 @@ Or Type this if you have nodejs at least version 16 installed:
 
 ```sh
 ~$ npx python-wasm@latest
-Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
+Python 3.14.6 ... [Clang 15.0.7 ...] on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 2 + 3
 5
@@ -29,12 +29,12 @@ Try the python-wasm REPL under node.js (version at least 16):
 
 ```py
 ~$ npx python-wasm@latest
-Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
+Python 3.14.6 ... [Clang 15.0.7 ...] on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 2 + 3
 5
 >>> import sys; sys.version
-'3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571'
+'3.14.6 ... [Clang 15.0.7 ...'
 >>> sys.platform
 'wasi'
 ```
@@ -50,7 +50,7 @@ npm install python-wasm
 Then from the nodejs REPL:
 
 ```js
-~/cowasm/core/python-wasm$ node
+~/cowasm/python/python-wasm$ node
 Welcome to Node.js v19.0.0.
 Type ".help" for more information.
 > {syncPython, asyncPython} = require('.')
@@ -64,7 +64,7 @@ Type ".help" for more information.
 > python.exec('import sys')
 undefined
 > python.repr('sys.version')
-"'3.11.0b3 (main, Jul 14 2022, 22:22:40) [Clang 13.0.1 (git@github.com:ziglang/zig-bootstrap.git 623481199fe17f4311cbdbbf'"
+"'3.14.6 ... [Clang 15.0.7 ...'"
 > python.exec('import numpy')
 undefined
 > python.repr('numpy.linspace(0, 10, num=5)')
@@ -75,7 +75,7 @@ There is also a Python REPL that is part of python\-wasm:
 
 ```py
 > python.terminal()
-Python 3.11.0 (main, Oct 27 2022, 10:03:11) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 0ce789d0f7a4d89fdc4d9571 on wasi
+Python 3.14.6 ... [Clang 15.0.7 ...] on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 2 + 3   # you can edit using readline
 5
@@ -88,4 +88,3 @@ name? william  <-- I just typed "william"
 ```
 
 You can also use python\-wasm in your own [web applications via webpack](https://github.com/sagemathinc/cowasm/tree/main/core/webpack). In the browser, this transparently uses SharedArrayBuffers if available, and falls back to ServiceWorkers.
-

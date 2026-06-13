@@ -5,7 +5,7 @@ nodejs program or in a web browser.  Try this in your browser right now:
 
 LIVE DEMO:  https://cowasm.sh 
 
-Here is a little demo below, illustrating that **Lua, sqlite, tar, and Python 3.11 \(with numpy!\)** are all
+Here is a little demo below, illustrating that **Lua, sqlite, tar, and Python 3.14 \(with numpy!\)** are all
 included, among other things. Do NOT get your hopes up and expect this to work well, since _**there are many remaining issues!**_
 
 See https://github.com/sagemathinc/cowasm if you're interested in this project, and
@@ -16,7 +16,7 @@ in particular [the dash package](https://github.com/sagemathinc/cowasm/tree/main
 (CoWasm) sh$ echo $PATH
 /cowasm/usr/bin
 (CoWasm) sh$ python      
-Python 3.11.0 (main, Nov  2 2022, 12:26:39) [Clang 15.0.3 (git@github.com:ziglang/zig-bootstrap.git 85033a9aa569b41658404d0e on wasi
+Python 3.14.6 ... [Clang 15.0.7 ...] on wasi
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import numpy
 >>> numpy.random.rand(2,2)
@@ -104,4 +104,3 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```
 
 _**Piping and indirection is not implemented yet.**_
-
