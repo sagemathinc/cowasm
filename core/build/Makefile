@@ -15,7 +15,7 @@ ${BIN}/zig: ${BUILD}/.build
 	cd ${BUILD}/zig && make
 	touch ${BIN}/zig
 
-.PHONEY: zig
+.PHONY: zig
 zig: ${BIN}/zig
 
 test: all
