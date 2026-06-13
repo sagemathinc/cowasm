@@ -48,6 +48,25 @@ function dataToString(data: any): string {
   return new TextDecoder().decode(data);
 }
 
+function kernelInput(data: string): string {
+  return data.replace(/\r/g, "\n");
+}
+
+function echoInput(term: Terminal, data: string): void {
+  if (data.startsWith("\x1b")) {
+    return;
+  }
+  for (const char of data) {
+    if (char == "\r" || char == "\n") {
+      term.write("\r\n");
+    } else if (char == "\x7f" || char == "\b") {
+      term.write("\b \b");
+    } else if (char >= " ") {
+      term.write(char);
+    }
+  }
+}
+
 const SNAPSHOT_BEGIN = "__COWASM_HOME_SNAPSHOT_BEGIN__";
 const SNAPSHOT_END = "__COWASM_HOME_SNAPSHOT_END__";
 const PERSISTENCE_FLAG = "cowasm-sh-enable-persistence";
@@ -231,7 +250,8 @@ export default async function terminal(element: HTMLDivElement) {
     if (text.includes("\r") || text.includes("\n")) {
       shellAtPrompt = false;
     }
-    dash.kernel.writeToStdin(text);
+    echoInput(term, text);
+    dash.kernel.writeToStdin(kernelInput(text));
   };
 
   term.attachCustomKeyEventHandler((event) => {
@@ -409,7 +429,8 @@ export default async function terminal(element: HTMLDivElement) {
     if (data.includes("\r") || data.includes("\n")) {
       shellAtPrompt = false;
     }
-    dash.kernel.writeToStdin(data);
+    echoInput(term, data);
+    dash.kernel.writeToStdin(kernelInput(data));
   });
   dash.kernel.on("stdout", (data) => {
     const text = dataToString(data);

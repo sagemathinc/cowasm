@@ -131,6 +131,81 @@ function connectDevtools(webSocketDebuggerUrl) {
   return { send, close: () => ws.close() };
 }
 
+async function evaluate(devtools, expression) {
+  const result = await devtools.send("Runtime.evaluate", {
+    expression,
+    returnByValue: true,
+    awaitPromise: true,
+  });
+  if (result.exceptionDetails) {
+    throw Error(JSON.stringify(result.exceptionDetails));
+  }
+  return result.result?.value;
+}
+
+async function waitForExpression(devtools, expression, timeoutMs = 60000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    if (await evaluate(devtools, expression)) {
+      return;
+    }
+    await delay(250);
+  }
+  const html = await evaluate(devtools, "document.body.outerHTML");
+  throw Error(`timed out waiting for ${expression}: ${html}`);
+}
+
+function keyEventParams(char) {
+  if (char == "\n") {
+    return {
+      key: "Enter",
+      code: "Enter",
+      text: "\r",
+      unmodifiedText: "\r",
+      windowsVirtualKeyCode: 13,
+      nativeVirtualKeyCode: 13,
+    };
+  }
+  if (char == " ") {
+    return {
+      key: " ",
+      code: "Space",
+      text: " ",
+      unmodifiedText: " ",
+      windowsVirtualKeyCode: 32,
+      nativeVirtualKeyCode: 32,
+    };
+  }
+  const upper = char.toUpperCase();
+  const keyCode = upper.charCodeAt(0);
+  return {
+    key: char,
+    code: /[a-z]/i.test(char) ? `Key${upper}` : undefined,
+    text: char,
+    unmodifiedText: char,
+    windowsVirtualKeyCode: keyCode,
+    nativeVirtualKeyCode: keyCode,
+  };
+}
+
+async function typeText(devtools, text) {
+  for (const char of text) {
+    const params = keyEventParams(char);
+    await devtools.send("Input.dispatchKeyEvent", {
+      type: "rawKeyDown",
+      ...params,
+    });
+    await devtools.send("Input.dispatchKeyEvent", {
+      type: "char",
+      ...params,
+    });
+    await devtools.send("Input.dispatchKeyEvent", {
+      type: "keyUp",
+      ...params,
+    });
+  }
+}
+
 async function waitForSmokeResult(smokeDebugPort) {
   const targets = await waitForJson(
     `http://127.0.0.1:${smokeDebugPort}/json/list`
@@ -182,6 +257,76 @@ async function waitForSmokeResult(smokeDebugPort) {
     throw Error(`cowasm.sh smoke test timed out: ${details.result?.value}`);
   } finally {
     devtools.close();
+  }
+}
+
+async function runKeyboardSmoke() {
+  console.log("running real app keyboard smoke");
+  const keyboardDebugPort = debugPort + 2;
+  const webpackEnv = { ...process.env };
+  delete webpackEnv.COCALC_PROJECT_ID;
+  delete webpackEnv.COCALC_BROWSER_ID;
+  delete webpackEnv.COWASM_SH_SMOKE;
+  delete webpackEnv.COWASM_SH_TERMINAL_SMOKE;
+  await run("pnpm", ["exec", "webpack"], {
+    env: webpackEnv,
+    stdio: "inherit",
+  });
+
+  const server = await startServer();
+  const userDataDir = mkdtempSync(join(tmpdir(), "cowasm-sh-keyboard-"));
+  const browser = spawn(chromium, [
+    "--headless=new",
+    "--no-sandbox",
+    "--disable-gpu",
+    "--disable-dev-shm-usage",
+    `--remote-debugging-port=${keyboardDebugPort}`,
+    `--user-data-dir=${userDataDir}`,
+    `http://127.0.0.1:${port}/`,
+  ]);
+  const browserClosed = new Promise((resolve) => {
+    browser.on("close", resolve);
+  });
+  try {
+    const targets = await waitForJson(
+      `http://127.0.0.1:${keyboardDebugPort}/json/list`
+    );
+    const page = targets.find((target) => target.type == "page");
+    if (!page?.webSocketDebuggerUrl) {
+      throw Error(`no Chromium page target found: ${JSON.stringify(targets)}`);
+    }
+
+    const devtools = connectDevtools(page.webSocketDebuggerUrl);
+    try {
+      await devtools.send("Runtime.enable");
+      await devtools.send("Page.enable");
+      await waitForExpression(
+        devtools,
+        "document.querySelector('.xterm-rows')?.textContent.includes('(cowasm)$ ')"
+      );
+      await evaluate(
+        devtools,
+        "window.term?.focus(); document.querySelector('.xterm-helper-textarea')?.focus(); true"
+      );
+      await typeText(devtools, "echo keyboardok\n");
+      await waitForExpression(
+        devtools,
+        "document.querySelector('.xterm-rows')?.textContent.includes('keyboardok')"
+      );
+      console.log("keyboard input ok");
+    } finally {
+      devtools.close();
+    }
+  } finally {
+    browser.kill();
+    await Promise.race([browserClosed, delay(2000)]);
+    server.close();
+    rmSync(userDataDir, {
+      recursive: true,
+      force: true,
+      maxRetries: 5,
+      retryDelay: 100,
+    });
   }
 }
 
@@ -239,6 +384,7 @@ async function main() {
 
   await runSmoke("runtime", { COWASM_SH_SMOKE: "1" });
   await runSmoke("terminal", { COWASM_SH_TERMINAL_SMOKE: "1" }, 1);
+  await runKeyboardSmoke();
 }
 
 main().catch((err) => {
