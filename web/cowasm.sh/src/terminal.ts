@@ -52,24 +52,36 @@ function kernelInput(data: string): string {
   return data.replace(/\r/g, "\n");
 }
 
-function echoInput(term: Terminal, data: string): void {
-  if (data.startsWith("\x1b")) {
-    return;
-  }
-  for (const char of data) {
-    if (char == "\r" || char == "\n") {
-      term.write("\r\n");
-    } else if (char == "\x7f" || char == "\b") {
-      term.write("\b \b");
-    } else if (char >= " ") {
-      term.write(char);
-    }
-  }
+function isNewline(char: string): boolean {
+  return char == "\r" || char == "\n";
 }
 
-function echoShellInput(term: Terminal, data: string): void {
-  const newline = data.search(/[\r\n]/);
-  echoInput(term, newline == -1 ? data : data.slice(0, newline + 1));
+class ShellLineEditor {
+  private buffer = "";
+
+  input(term: Terminal, data: string): string | undefined {
+    let completed = "";
+    for (const char of data) {
+      if (isNewline(char)) {
+        term.write("\r\n");
+        completed += `${this.buffer}\n`;
+        this.buffer = "";
+      } else if (char == "\x7f" || char == "\b") {
+        if (this.buffer.length > 0) {
+          this.buffer = this.buffer.slice(0, -1);
+          term.write("\b \b");
+        }
+      } else if (char >= " ") {
+        this.buffer += char;
+        term.write(char);
+      }
+    }
+    return completed || undefined;
+  }
+
+  clear(): void {
+    this.buffer = "";
+  }
 }
 
 const SNAPSHOT_BEGIN = "__COWASM_HOME_SNAPSHOT_BEGIN__";
@@ -224,6 +236,7 @@ export default async function terminal(element: HTMLDivElement) {
   term.loadAddon(new WebLinksAddon());
   let suppressTerminalInputUntil = 0;
   let shellAtPrompt = false;
+  const shellLineEditor = new ShellLineEditor();
   let shellExited = false;
   let shellExitCode: number | undefined;
   let capturingSnapshot = false;
@@ -252,12 +265,13 @@ export default async function terminal(element: HTMLDivElement) {
     if (!text) {
       return;
     }
-    const echo = shellAtPrompt;
-    if (text.includes("\r") || text.includes("\n")) {
-      shellAtPrompt = false;
-    }
-    if (echo) {
-      echoShellInput(term, text);
+    if (shellAtPrompt) {
+      const edited = shellLineEditor.input(term, text);
+      if (edited != null) {
+        shellAtPrompt = false;
+        dash.kernel.writeToStdin(edited);
+      }
+      return;
     }
     dash.kernel.writeToStdin(kernelInput(text));
   };
@@ -434,12 +448,13 @@ export default async function terminal(element: HTMLDivElement) {
     if (Date.now() < suppressTerminalInputUntil) {
       return;
     }
-    const echo = shellAtPrompt;
-    if (data.includes("\r") || data.includes("\n")) {
-      shellAtPrompt = false;
-    }
-    if (echo) {
-      echoShellInput(term, data);
+    if (shellAtPrompt) {
+      const edited = shellLineEditor.input(term, data);
+      if (edited != null) {
+        shellAtPrompt = false;
+        dash.kernel.writeToStdin(edited);
+      }
+      return;
     }
     dash.kernel.writeToStdin(kernelInput(data));
   });
@@ -448,6 +463,7 @@ export default async function terminal(element: HTMLDivElement) {
     const hasPrompt = text.includes("(cowasm)$ ");
     if (hasPrompt) {
       shellAtPrompt = true;
+      shellLineEditor.clear();
     }
     const display = processOutput(text);
     if (display) {
@@ -462,6 +478,7 @@ export default async function terminal(element: HTMLDivElement) {
     const hasPrompt = text.includes("(cowasm)$ ");
     if (hasPrompt) {
       shellAtPrompt = true;
+      shellLineEditor.clear();
     }
     const display = processOutput(text);
     if (display) {

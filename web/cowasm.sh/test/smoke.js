@@ -156,6 +156,14 @@ async function waitForExpression(devtools, expression, timeoutMs = 60000) {
 }
 
 function keyEventParams(char) {
+  if (char == "\b") {
+    return {
+      key: "Backspace",
+      code: "Backspace",
+      windowsVirtualKeyCode: 8,
+      nativeVirtualKeyCode: 8,
+    };
+  }
   if (char == "\n") {
     return {
       key: "Enter",
@@ -195,10 +203,12 @@ async function typeText(devtools, text) {
       type: "rawKeyDown",
       ...params,
     });
-    await devtools.send("Input.dispatchKeyEvent", {
-      type: "char",
-      ...params,
-    });
+    if (params.text != null) {
+      await devtools.send("Input.dispatchKeyEvent", {
+        type: "char",
+        ...params,
+      });
+    }
     await devtools.send("Input.dispatchKeyEvent", {
       type: "keyUp",
       ...params,
@@ -324,6 +334,18 @@ async function runKeyboardSmoke() {
         devtools,
         "document.querySelector('.xterm-rows')?.textContent.includes('keyboardok')"
       );
+      await typeText(devtools, "echo hi\b\bxx\n");
+      await waitForExpression(
+        devtools,
+        "document.querySelector('.xterm-rows')?.textContent.includes('xx(cowasm)$ ')"
+      );
+      const shellText = await evaluate(
+        devtools,
+        "document.querySelector('.xterm-rows')?.textContent"
+      );
+      if (shellText.includes("hixx")) {
+        throw Error(`Backspace did not edit shell input: ${shellText}`);
+      }
       await typeText(devtools, "python\n");
       await waitForExpression(
         devtools,
