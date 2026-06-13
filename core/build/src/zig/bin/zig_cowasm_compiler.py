@@ -54,6 +54,13 @@ or do
     __attribute__((visibility("default")))
     int main(int argc, char* argv[]) { ... }
 
+BACKEND SELECTION:
+
+   COWASM_TOOLCHAIN=zig   = use the current pinned Zig backend. This is the
+                            default when COWASM_TOOLCHAIN is unset.
+   COWASM_TOOLCHAIN=clang = reserved for the future direct clang/lld backend.
+                            It currently fails early with a diagnostic.
+
 EXTRA OPTIONS:
 
    -fvisibility-main = makes the main function visible
@@ -63,10 +70,30 @@ EXTRA OPTIONS:
 import os, shutil, subprocess, sys, tempfile, pathlib
 
 verbose = False  # default
+SUPPORTED_TOOLCHAINS = {"zig"}
+
+
+def selected_toolchain():
+    toolchain = os.environ.get("COWASM_TOOLCHAIN", "zig").strip().lower()
+    if toolchain == "":
+        return "zig"
+    return toolchain
+
+
+TOOLCHAIN = selected_toolchain()
+
+if TOOLCHAIN not in SUPPORTED_TOOLCHAINS:
+    print(
+        f"cowasm: unsupported COWASM_TOOLCHAIN={TOOLCHAIN!r}; "
+        "only 'zig' is implemented. The direct clang/lld backend is not ready yet.",
+        file=sys.stderr,
+    )
+    sys.exit(2)
 
 if '-cowasm-verbose' in sys.argv:
     # use -cowasm-verbose for just us being verbose
     print(' '.join(sys.argv))
+    print(f"COWASM_TOOLCHAIN={TOOLCHAIN}")
     verbose = True
     sys.argv.remove('-cowasm-verbose')
 

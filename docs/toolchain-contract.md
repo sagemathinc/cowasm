@@ -11,6 +11,15 @@ The default toolchain is the pinned Zig distribution installed by
 `core/build/dist/native` and exposed through symlinks in the top-level `bin`
 directory.
 
+The compiler wrappers accept `COWASM_TOOLCHAIN` as the explicit backend
+selector. The current recognized values are:
+
+- unset or `zig`: use the pinned Zig backend described below.
+- `clang`: reserved for the future direct clang/lld backend. The wrapper fails
+  early with a diagnostic instead of silently falling back to Zig.
+
+Any other selector value is rejected before invoking compiler or linker tools.
+
 The important generated entry points are:
 
 - `bin/zig`: the pinned Zig executable.
