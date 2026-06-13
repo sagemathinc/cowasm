@@ -119,11 +119,9 @@ def strip_isys():
     i = len(sys.argv) - 1
     while i >= 0:
         if sys.argv[i] == '-isystem' or sys.argv[i] == '-isysroot':
-            del sys.argv[i+1]
-            del sys.argv[i]
+            require_option_value(sys.argv, i)
+            del sys.argv[i:i + 2]
         i -= 1
-
-strip_isys()
 
 def is_source(filename):
     ext = os.path.splitext(filename)[1].lower()
@@ -213,6 +211,15 @@ def run(cmd):
         sys.exit(ret.returncode)
 
 
+def require_option_value(argv, index):
+    if index + 1 >= len(argv):
+        fail(f"cowasm: option {argv[index]!r} requires an argument")
+    return argv[index + 1]
+
+
+strip_isys()
+
+
 def find_required_program(env_name, program):
     override = os.environ.get(env_name)
     if override:
@@ -255,10 +262,9 @@ def find_wasi_sysroot():
 
 
 def clang_output_name(args):
-    try:
-        return args[args.index('-o') + 1]
-    except:
-        return 'a.out'
+    if '-o' in args:
+        return require_option_value(args, args.index('-o'))
+    return 'a.out'
 
 
 def clang_is_object_or_archive(filename):
@@ -323,15 +329,15 @@ def clang_parse_link_args(args):
     while i < len(args):
         arg = args[i]
         if arg == '-o':
+            require_option_value(args, i)
             i += 2
             continue
         if arg == '-Xlinker':
-            i += 1
-            linker_args.append(args[i])
-            i += 1
+            linker_args.append(require_option_value(args, i))
+            i += 2
             continue
         if arg == '-L':
-            linker_args += [arg, args[i + 1]]
+            linker_args += [arg, require_option_value(args, i)]
             i += 2
             continue
         if arg.startswith('-L') or arg.startswith('-l'):
@@ -547,10 +553,9 @@ def get_output_name():
         raise Error("must specify exactly one zig file")
 
     # C/C++ is arg to -o or default of a.out
-    try:
-        return sys.argv[sys.argv.index('-o') + 1]
-    except:
-        return 'a.out'
+    if '-o' in sys.argv:
+        return require_option_value(sys.argv, sys.argv.index('-o'))
+    return 'a.out'
 
 
 # no_input, e.g., when querying the compiler for info about the system, e.g.,
@@ -579,16 +584,14 @@ def extract_linker_args(argv):
     while i < len(argv):
         if argv[i] == '-Xlinker':
             # -Xlinker arg
-            i += 1
-            link.append(argv[i])
-            i += 1
+            link.append(require_option_value(argv, i))
+            i += 2
             continue
         if argv[i] == '-L':
             # -L path
             link.append(argv[i])
-            i += 1
-            link.append(argv[i])
-            i += 1
+            link.append(require_option_value(argv, i))
+            i += 2
             continue
         if argv[i].startswith('-L') or argv[i].startswith('-l'):
             # -Lpath or -llib
@@ -613,6 +616,7 @@ def extract_source_files(argv):
         if argv[i] == '-o':
             # discard "-o foo" option entirely from here; we still get it from sys.argv later,
             # but do NOT include in compiler args, since we will use our own -o there.
+            require_option_value(argv, i)
             i += 2
             continue
         if is_source(argv[i]):  # .c, .cxx, .zig, etc.

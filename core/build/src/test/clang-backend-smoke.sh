@@ -78,6 +78,23 @@ export COWASM_COMPILER_RT="$tmp/libclang_rt.builtins-wasm32.a"
 export COWASM_FAKE_BUILTINS="$tmp/libclang_rt.builtins-wasm32.a"
 export COWASM_TEST_LOG="$tmp/tool.log"
 
+expect_missing_arg() {
+  local option="$1"
+  shift
+  local err="$tmp/missing-${option//[^A-Za-z0-9]/_}.err"
+  if "$wrapper" "$@" >"$err" 2>&1; then
+    cat "$err"
+    echo "expected $option to fail" >&2
+    exit 1
+  fi
+  grep -F -- "cowasm: option '$option' requires an argument" "$err"
+  ! grep -F -- "Traceback" "$err"
+}
+
+expect_missing_arg "-Xlinker" "$tmp/hello.c" -Xlinker
+expect_missing_arg "-L" "$tmp/hello.c" -L
+expect_missing_arg "-o" "$tmp/hello.c" -o
+
 "$wrapper" -Oz -fvisibility-main -Wl,--import-memory,--import-table -lm -ldl -lwasi-emulated-signal -lc "$tmp/hello.c" -o "$tmp/hello.wasm"
 test -f "$tmp/hello.wasm"
 
