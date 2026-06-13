@@ -155,6 +155,13 @@ async function waitForExpression(devtools, expression, timeoutMs = 60000) {
   throw Error(`timed out waiting for ${expression}: ${html}`);
 }
 
+async function waitForPromptCount(devtools, count) {
+  await waitForExpression(
+    devtools,
+    `(document.querySelector('.xterm-rows')?.textContent.match(/\\(cowasm\\)\\$ /g) || []).length >= ${count}`
+  );
+}
+
 function keyEventParams(char) {
   if (char == "\b") {
     return {
@@ -334,7 +341,9 @@ async function runKeyboardSmoke() {
         devtools,
         "document.querySelector('.xterm-rows')?.textContent.includes('keyboardok')"
       );
+      await waitForPromptCount(devtools, 2);
       await typeText(devtools, "echo hi\b\bxx\n");
+      await waitForPromptCount(devtools, 3);
       await waitForExpression(
         devtools,
         "document.querySelector('.xterm-rows')?.textContent.includes('xx(cowasm)$ ')"
@@ -345,6 +354,22 @@ async function runKeyboardSmoke() {
       );
       if (shellText.includes("hixx")) {
         throw Error(`Backspace did not edit shell input: ${shellText}`);
+      }
+      await evaluate(
+        devtools,
+        "window.dash.kernel.writeToStdin('mkdir -p /tmp/pipeline; cd /tmp/pipeline; rm -f x y z; touch x y z; find . |wc -l\\n')"
+      );
+      await waitForPromptCount(devtools, 4);
+      await waitForExpression(
+        devtools,
+        "document.querySelector('.xterm-rows')?.textContent.includes('4(cowasm)$ ')"
+      );
+      const pipeText = await evaluate(
+        devtools,
+        "document.querySelector('.xterm-rows')?.textContent"
+      );
+      if (pipeText.includes("./x") || pipeText.includes("./y")) {
+        throw Error(`Pipeline stdout leaked before wc consumed it: ${pipeText}`);
       }
       await typeText(devtools, "python\n");
       await waitForExpression(

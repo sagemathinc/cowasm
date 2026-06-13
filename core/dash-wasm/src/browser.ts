@@ -29,6 +29,7 @@ function getFilesystem(_opts?: Options): FileSystemSpec[] {
       type: "mem",
       contents: {
         "/home/user/.profile": "",
+        "/tmp/.keep": "",
       },
     },
   ];

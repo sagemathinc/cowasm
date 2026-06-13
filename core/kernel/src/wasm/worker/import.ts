@@ -381,17 +381,32 @@ async function doWasmImport({
   const wasi = new WASI(wasiConfig);
   wasmOpts.wasi_snapshot_preview1 = wasi.wasiImport;
 
+  const writeImportedFd = (fd: 1 | 2, data: Buffer) => {
+    if (data.byteLength == 0) return;
+    const stats = wasi.FD_MAP.get(fd);
+    if (
+      fd == 1 &&
+      options.sendStdout != null &&
+      stats?.path == "/dev/stdout"
+    ) {
+      options.sendStdout(data);
+      return;
+    }
+    if (
+      fd == 2 &&
+      options.sendStderr != null &&
+      stats?.path == "/dev/stderr"
+    ) {
+      options.sendStderr(data);
+      return;
+    }
+    bindings.fs.writeSync(stats?.real ?? fd, data, 0, data.byteLength, null);
+  };
+
   const writeImportedStdio = (fd: 1 | 2, ptr: number, len: number) => {
     if (len <= 0) return;
     const data = Buffer.from(memory.buffer.slice(ptr, ptr + len));
-    if (fd == 1 && options.sendStdout != null) {
-      options.sendStdout(data);
-    } else if (fd == 2 && options.sendStderr != null) {
-      options.sendStderr(data);
-    } else {
-      const stats = wasi.FD_MAP.get(fd);
-      bindings.fs.writeSync(stats?.real ?? fd, data, 0, data.byteLength, null);
-    }
+    writeImportedFd(fd, data);
   };
 
   const streamFd = (stream: number): 0 | 1 | 2 => {
@@ -436,15 +451,7 @@ async function doWasmImport({
   if (wasmOpts.env.fputc == null) {
     wasmOpts.env.fputc = (c: number, stream: number) => {
       const data = Buffer.from([c & 0xff]);
-      const fd = streamFd(stream);
-      if (fd == 1 && options.sendStdout != null) {
-        options.sendStdout(data);
-      } else if (fd == 2 && options.sendStderr != null) {
-        options.sendStderr(data);
-      } else {
-        const stats = wasi.FD_MAP.get(fd);
-        bindings.fs.writeSync(stats?.real ?? fd, data, 0, 1, null);
-      }
+      writeImportedFd(outputStreamFd(stream), data);
       return c;
     };
   }
@@ -464,12 +471,7 @@ async function doWasmImport({
     wasmOpts.env.puts = (ptr: number) => {
       writeImportedStdio(1, ptr, strlen(ptr, memory));
       const data = Buffer.from("\n");
-      if (options.sendStdout != null) {
-        options.sendStdout(data);
-      } else {
-        const stats = wasi.FD_MAP.get(1);
-        bindings.fs.writeSync(stats?.real ?? 1, data, 0, 1, null);
-      }
+      writeImportedFd(1, data);
       return 0;
     };
   }
