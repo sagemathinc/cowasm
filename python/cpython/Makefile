@@ -290,7 +290,7 @@ ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
 	# Done!
 	touch ${DIST_WASM}/.install-cpython
 
-.PHONY:
+.PHONY: wasm-cpython
 wasm-cpython: ${DIST_WASM}/.install-cpython
 
 # These are the minimal data files needed to start cPython, which we found via "DEBUG=wasi:open pw-d"!
