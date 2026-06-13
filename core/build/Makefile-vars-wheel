@@ -23,11 +23,15 @@ ${BUILD_WASM}/.build: ${TARBALL}
 
 PRE_BUNDLE ?= true
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.build
+define WHEEL_BUILD
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
 	cd ${BUILD_WASM} && ${PRE_BUNDLE} && PYTHONPATH=${PYTHONPATH} pnpm-exec cpython -m cowasm_bundler ${TOP_LEVEL}
 	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/${TOP_LEVEL}.tar.xz
+endef
+
+${DIST_WASM}/.built: ${BUILD_WASM}/.build
+	$(WHEEL_BUILD)
 	touch ${DIST_WASM}/.built
 
 node_modules:

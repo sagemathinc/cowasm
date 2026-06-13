@@ -14,14 +14,14 @@ include ../build/Makefile-vars-wheel
 
 TOP_LEVEL = setuptools
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.build
+define WHEEL_BUILD
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
 	cp -r ${BUILD_WASM}/setuptools ${DIST_WASM}/
 	cp -r ${BUILD_WASM}/_distutils_hack ${DIST_WASM}/
 	cp -r ${BUILD_WASM}/setuptools-${VERSION}.dist-info ${DIST_WASM}/
 	cp ${BUILD_WASM}/distutils-precedence.pth ${DIST_WASM}/
-	touch ${DIST_WASM}/.built
+endef
 
 test: deps ${DIST_WASM}/.built
 	# Test that importing from the bundle works:

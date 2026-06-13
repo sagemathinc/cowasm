@@ -12,12 +12,12 @@ TARBALL_SHA256 = a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2
 
 include ../build/Makefile-vars-wheel
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.build
+define WHEEL_BUILD
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
 	cp -r ${BUILD_WASM}/mpmath ${DIST_WASM}/
 	cp -r ${BUILD_WASM}/mpmath-${VERSION}.dist-info ${DIST_WASM}/
-	touch ${DIST_WASM}/.built
+endef
 
 test: deps ${DIST_WASM}/.built
 	# Test that importing from the bundle works:

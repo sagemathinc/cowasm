@@ -17,7 +17,7 @@ SETUPTOOLS = $(shell cowasm-package-path @cowasm/py-setuptools)
 
 # Trying to use a bundle (e.g., only pyc, etc.,) leads to endless problems, since
 # many scripts and components that use pip assume the .py files are there.
-${DIST_WASM}/.built:  ${BUILD_WASM}/.build
+define WHEEL_BUILD
 	rm -rf ${DIST_WASM}
 	mkdir -p ${DIST_WASM}
 	cp -r ${BUILD_WASM}/pip ${DIST_WASM}/
@@ -25,7 +25,7 @@ ${DIST_WASM}/.built:  ${BUILD_WASM}/.build
 	# Build tools need setuptools metadata available alongside pip.
 	cp -r ${SETUPTOOLS}/* ${DIST_WASM}/
 	find ${DIST_WASM} -type d -name __pycache__ -prune -exec rm -rf {} +
-	touch ${DIST_WASM}/.built
+endef
 
 test: deps ${DIST_WASM}/.built
 	find ${DIST_WASM} -type d -name __pycache__ -prune -exec rm -rf {} +

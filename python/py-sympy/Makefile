@@ -12,11 +12,11 @@ TARBALL_SHA256 = e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f
 
 include ../build/Makefile-vars-wheel
 
-${DIST_WASM}/.built:  ${BUILD_WASM}/.build
+define WHEEL_BUILD
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
 	cp -r ${BUILD_WASM}/sympy ${DIST_WASM}/
 	cp -r ${BUILD_WASM}/sympy-${VERSION}.dist-info ${DIST_WASM}/
-	touch ${DIST_WASM}/.built
+endef
 
 # This is a small test just that something works.  It's NOT the full very massive test suite,
 # which might be hard to get to pass anywhere, let alone in WASM.
