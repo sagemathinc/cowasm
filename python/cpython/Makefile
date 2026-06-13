@@ -395,6 +395,8 @@ RUN_TESTS = _PYTHON_PROJECT_BASE=${BUILD_WASM} \
 	${DIST_NATIVE}/bin/python3 \
 	-m test \
 	 --python=${PYTHON_WASM}
+# Python 3.14 requires -j whenever --python is used to select the host
+# interpreter for test subprocesses.
 
 # We use a restricted PATH for running tests.  On Linux I had a lot of trouble
 # with some random binaries in random places causing hangs, and this provides
@@ -404,7 +406,7 @@ NODE = $(shell which node)
 TEST_PATH=${BIN}:/bin:/usr/bin:$(shell dirname ${PNPM}):$(shell dirname ${NODE})
 
 test-all: wasm native
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} -j1
 .PHONY: test-all
 
 
@@ -473,13 +475,13 @@ test-failed:  wasm native
 TEST=test_long
 test-one:   wasm native
 	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} --timeout=60 -v ${TEST}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} -j1 --timeout=60 -v ${TEST}
 .PHONY: test-one
 
 test-one-worker: wasm native
 	echo "Use 'make TEST=test_long test-one' to run a specific test, e.g., test_long in this case."
 	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS} -j1 --timeout=60 -v ${TEST}
-.PHONY: test-one
+.PHONY: test-one-worker
 
 
 SKIPPED_TEST_DESC = "all **skipped** cpython test suites.  Extend what cpython wasm can do to include more of these."
@@ -487,7 +489,7 @@ SKIPPED_TESTS = test_asdl_parser test__xxsubinterpreters test_asyncgen test_asyn
 
 test-skipped:  wasm native
 	echo "Running ${SKIPPED_TEST_DESC}"
-	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}  --timeout=60 ${SKIPPED_TESTS}
+	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}  -j1 --timeout=60 ${SKIPPED_TESTS}
 	echo "Ran ${SKIPPED_TEST_DESC}"
 
 
