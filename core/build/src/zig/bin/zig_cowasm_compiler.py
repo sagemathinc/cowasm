@@ -71,6 +71,7 @@ import os, shutil, subprocess, sys, tempfile, pathlib
 
 verbose = False  # default
 SUPPORTED_TOOLCHAINS = {"zig"}
+ORIGINAL_ARGV0 = sys.argv[0]
 
 
 def selected_toolchain():
@@ -149,7 +150,30 @@ elif sys.argv[0].endswith('-zig'):
     sys.argv.insert(1, 'build-obj')
     LANG = 'zig'
 
-sys.argv[0] = 'zig'
+
+def find_zig():
+    zig = shutil.which("zig")
+    if zig:
+        return os.path.realpath(zig)
+
+    # Direct invocations such as ./bin/cowasm-cc should work even when the
+    # caller has not put this repository's bin directory on PATH.
+    invocation_dir = pathlib.Path(ORIGINAL_ARGV0).parent
+    sibling = invocation_dir / "zig"
+    if sibling.is_file() and os.access(sibling, os.X_OK):
+        return os.path.realpath(sibling)
+
+    print(
+        "cowasm: could not find 'zig'; run make -C core/build zig or add "
+        "the CoWasm bin directory to PATH",
+        file=sys.stderr,
+    )
+    sys.exit(2)
+
+
+ZIG_EXE = find_zig()
+ZIG_HOME = os.path.dirname(ZIG_EXE)
+sys.argv[0] = ZIG_EXE
 
 # This is a horrendous hack to make the main function visible without having to
 # change the source code of every program we build.  It can be randomly broken, so watch out.
@@ -193,8 +217,6 @@ def is_object_or_archive(filename):
 # TODO: I should probably just change to "if doesn't have -fPIC then use normal compiler".
 # This will be a lot of work, so wait until finish redoing cpython first!
 
-ZIG_EXE = os.path.realpath(shutil.which("zig"))
-ZIG_HOME = os.path.dirname(ZIG_EXE)
 INCLUDE = os.path.join(ZIG_HOME, "lib", "zig", "libc", "include")
 EMSCRIPTEN_SYSROOT = os.environ.get(
     "EMSCRIPTEN_SYSROOT", "/usr/share/emscripten/cache/sysroot")
@@ -459,7 +481,7 @@ def main():
     # link
     output_name = get_output_name()
     link = [
-        'zig', 'wasm-ld', \
+        ZIG_EXE, 'wasm-ld', \
         '--experimental-pic', '-shared', \
         '-o', output_name
     ] + linker_args
