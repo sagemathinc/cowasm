@@ -17,7 +17,7 @@ while IFS= read -r rel; do
         printf '%s\n  URL=%s\n  TARBALL=%s\n' "$rel" "$url" "$tarball"
         missing=$((missing + 1))
     fi
-done < <(git -C "$root" ls-files 'core/**/Makefile' 'python/**/Makefile' | sort)
+done < <(git -C "$root" ls-files 'core/**/Makefile' 'python/**/Makefile' 'sagemath/**/Makefile' | sort)
 
 if [ "$missing" -ne 0 ]; then
     printf '\n%s package Makefiles define URL/TARBALL without TARBALL_SHA256.\n' "$missing"

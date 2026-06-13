@@ -14,4 +14,4 @@ while IFS= read -r rel; do
         && grep -Eq '^[[:space:]]*TARBALL[[:space:]]*=' "$makefile"; then
         make -C "$root/$(dirname "$rel")" fetch-source
     fi
-done < <(git -C "$root" ls-files 'core/**/Makefile' 'python/**/Makefile' | sort)
+done < <(git -C "$root" ls-files 'core/**/Makefile' 'python/**/Makefile' 'sagemath/**/Makefile' | sort)
