@@ -40,6 +40,27 @@ elif new not in text:
     raise SystemExit("expected colors.py _repr_png_ block not found")
 colors.write_text(text)
 
+path = Path("lib/matplotlib/path.py")
+text = path.read_text()
+old = """        # Deepcopying arrays (vertices, codes) strips the writeable=False flag.
+        p = copy.deepcopy(super(), memo)
+        p._readonly = False
+        return p
+"""
+new = """        # Deepcopying arrays (vertices, codes) strips the writeable=False flag.
+        p = type(self)._fast_from_codes_and_verts(
+            copy.deepcopy(self._vertices, memo),
+            copy.deepcopy(self._codes, memo),
+            self)
+        p._readonly = False
+        return p
+"""
+if old in text:
+    text = text.replace(old, new)
+elif new not in text:
+    raise SystemExit("expected path.py __deepcopy__ block not found")
+path.write_text(text)
+
 image = Path("lib/matplotlib/image.py")
 text = image.read_text()
 old = """import numpy as np

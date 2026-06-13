@@ -43,11 +43,14 @@ ${BUILD_WASM}/.install: deps ${BUILD_WASM}/.patched
 			pnpm-exec cpython setup.py build
 	touch ${BUILD_WASM}/.install
 
+# CPython 3.14's WASM py_compile currently writes an unusable pyc for
+# matplotlib/_mathtext.py, so ship that module as source.
 ${DIST_WASM}/.built: ${BUILD_WASM}/.install
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
 	cd ${BUILD_WASM}/build/lib* \
-		&& pnpm-exec cpython -m cowasm_bundler matplotlib mpl_toolkits pylab.py
+		&& pnpm-exec cpython -m cowasm_bundler matplotlib matplotlib/_mathtext.py mpl_toolkits pylab.py
 	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib*/matplotlib.tar.xz
+	rm -f ${DIST_WASM}/matplotlib/_mathtext.pyc
 	cp -R ${BUILD_WASM}/lib/matplotlib/mpl-data ${DIST_WASM}/matplotlib/mpl-data
 	cp ${LIBCXX_WASM}/libcxx.so ${DIST_WASM}/matplotlib/libcxx.so
 	cp ${LIBCXX_WASM}/libcxx.so ${DIST_WASM}/matplotlib/backends/libcxx.so
@@ -59,5 +62,5 @@ test: deps ${DIST_WASM}/.built
 	rm -rf ${BUILD_WASM}/cowasm-test
 	mkdir -p ${BUILD_WASM}/cowasm-test
 	cd ${BUILD_WASM}/cowasm-test \
-		&& MPLCONFIGDIR=. PYTHONPATH=${PYTHONPATH_TEST} pnpm-exec cpython -c 'import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt; plt.plot([1, 2, 3], [1, 4, 9]); plt.savefig("plot.png")'
+		&& MPLCONFIGDIR=. PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=${PYTHONPATH_TEST} pnpm-exec cpython -c 'import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt; plt.plot([1, 2, 3], [1, 4, 9]); plt.savefig("plot.png")'
 	test -s ${BUILD_WASM}/cowasm-test/plot.png
