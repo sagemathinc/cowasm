@@ -4,6 +4,7 @@ import { join } from "path";
 
 const fsZipPath = join(__dirname, "..", "fs.zip");
 const dashWasm = join(__dirname, "..", "..", "bin", "dash-wasm");
+const pythonLib = "python3.14";
 
 function fsZipContents(): string {
   return readFileSync(fsZipPath).toString("latin1");
@@ -42,16 +43,16 @@ test("filesystem bundle contains expected terminal commands", () => {
     "bin/viz",
     "bin/wc",
     "bin/xz",
-    "lib/python3.14/cycler.tar.xz",
-    "lib/python3.14/dateutil.tar.xz",
-    "lib/python3.14/fontTools.tar.xz",
-    "lib/python3.14/kiwisolver.tar.xz",
-    "lib/python3.14/matplotlib.tar.xz",
-    "lib/python3.14/numpy.tar.xz",
-    "lib/python3.14/packaging.tar.xz",
-    "lib/python3.14/pyparsing.tar.xz",
-    "lib/python3.14/pytz.tar.xz",
-    "lib/python3.14/six.tar.xz",
+    `lib/${pythonLib}/cycler.tar.xz`,
+    `lib/${pythonLib}/dateutil.tar.xz`,
+    `lib/${pythonLib}/fontTools.tar.xz`,
+    `lib/${pythonLib}/kiwisolver.tar.xz`,
+    `lib/${pythonLib}/matplotlib.tar.xz`,
+    `lib/${pythonLib}/numpy.tar.xz`,
+    `lib/${pythonLib}/packaging.tar.xz`,
+    `lib/${pythonLib}/pyparsing.tar.xz`,
+    `lib/${pythonLib}/pytz.tar.xz`,
+    `lib/${pythonLib}/six.tar.xz`,
   ]) {
     expect(fsZip).toContain(path);
   }
