@@ -300,6 +300,16 @@ def reject_unsupported_clang_args(args):
             )
 
 
+def is_unsupported_lib(arg):
+    return arg in ['-lc', '-lm', '-ldl'] or arg.startswith('-lwasi-emulated')
+
+
+def remove_unsupported_libs(argv):
+    # These are either supplied by the current CoWasm core runtime or appended
+    # explicitly by the standalone clang backend below.
+    return [arg for arg in argv if not is_unsupported_lib(arg)]
+
+
 def split_wl_arg(arg):
     return arg[len('-Wl,'):].split(',')
 
@@ -335,7 +345,7 @@ def clang_parse_link_args(args):
         else:
             compiler_args.append(arg)
         i += 1
-    return source_files, compiler_args, linker_args, object_args
+    return source_files, compiler_args, remove_unsupported_libs(linker_args), object_args
 
 
 def clang_builtin_runtime(clang, base_flags):
@@ -560,18 +570,6 @@ if '-c' in sys.argv or no_input or get_output_name().endswith('.o'):
     sys.exit(0)
 
 # COMPILE any sources, and definitely ALSO LINK (explicitly calling "zig wasm-ld")
-
-
-def is_unsupported_lib(arg):
-    return arg in ['-lc', '-lm', '-ldl'] or arg.startswith('-lwasi-emulated')
-
-
-def remove_unsupported_libs(argv):
-    # -lc doesn't exist for target=wasm32-emscripten on zig!.
-    # if we add more to our core, may similarly remove here!
-    # Also none of the -lwasi-emulated stuff exists either.
-    # These are all done in the core libc anyways.
-    return [arg for arg in argv if not is_unsupported_lib(arg)]
 
 
 def extract_linker_args(argv):

@@ -78,7 +78,7 @@ export COWASM_COMPILER_RT="$tmp/libclang_rt.builtins-wasm32.a"
 export COWASM_FAKE_BUILTINS="$tmp/libclang_rt.builtins-wasm32.a"
 export COWASM_TEST_LOG="$tmp/tool.log"
 
-"$wrapper" -Oz -fvisibility-main -Wl,--import-memory,--import-table "$tmp/hello.c" -o "$tmp/hello.wasm"
+"$wrapper" -Oz -fvisibility-main -Wl,--import-memory,--import-table -lm -ldl -lwasi-emulated-signal -lc "$tmp/hello.c" -o "$tmp/hello.wasm"
 test -f "$tmp/hello.wasm"
 
 grep -F -- "--target=wasm32-wasi" "$COWASM_TEST_LOG"
@@ -90,3 +90,7 @@ grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--import-memory"
 grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--import-table"
 grep -F -- "$tmp/sysroot/lib/wasm32-wasi/crt1.o" "$COWASM_TEST_LOG"
 grep -F -- "$tmp/libclang_rt.builtins-wasm32.a" "$COWASM_TEST_LOG"
+! grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -E -- ' -lm( |$)'
+! grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -E -- ' -ldl( |$)'
+! grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -E -- ' -lwasi-emulated-signal( |$)'
+test "$(grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -E -o -- ' -lc( |$)' | wc -l)" -eq 1

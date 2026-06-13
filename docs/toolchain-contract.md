@@ -202,6 +202,10 @@ wasm-ld -o <output> <sysroot>/lib/wasm32-wasi/crt1.o ... \
   -L <sysroot>/lib/wasm32-wasi -lc <compiler-rt>
 ```
 
+User-supplied `-lc`, `-lm`, `-ldl`, and `-lwasi-emulated-*` flags are filtered
+before linking, matching the Zig backend's unsupported-library handling. The
+standalone clang backend appends the sysroot `-lc` itself.
+
 The current clang backend rejects shared/PIC flags such as `-shared`,
 `-fPIC`, `-fpic`, `--experimental-pic`, and `-dynamic`. It also rejects
 `cowasm-zig` and C++ mode. Those are later phases of the toolchain migration.
