@@ -1,0 +1,272 @@
+# CoWasm Toolchain Contract
+
+This document records the current known-good compiler and linker contract for
+CoWasm packages. It is a baseline for introducing an explicit non-Zig backend;
+it does not change the build behavior.
+
+## Current Backend
+
+The default toolchain is the pinned Zig distribution installed by
+`make -C core/build zig`. The active pin is Zig `0.10.1`, installed under
+`core/build/dist/native` and exposed through symlinks in the top-level `bin`
+directory.
+
+The important generated entry points are:
+
+- `bin/zig`: the pinned Zig executable.
+- `bin/cowasm-cc`: symlink to `core/build/src/zig/bin/zig_cowasm_compiler.py`.
+- `bin/cowasm-c++`: same wrapper, selecting the C++ mode.
+- `bin/cowasm-zig`: same wrapper, selecting Zig object builds.
+
+The repository also has lightweight compatibility wrappers:
+
+- `bin/zcc`: calls `zig cc -target wasm32-wasi` through `bin/compile.py`, then
+  writes a shell launcher next to linked executables.
+- `bin/z++`: same wrapper for `zig c++`.
+
+Most package Makefiles use `cowasm-cc`/`cowasm-c++` for WebAssembly builds and
+plain `zig cc`/`zig c++` for native helper builds.
+
+## Shared Compiler Wrapper
+
+`cowasm-cc` and `cowasm-c++` are implemented by
+`core/build/src/zig/bin/zig_cowasm_compiler.py`. The wrapper treats Zig's clang
+and wasm linker as the reference backend, but it does not invoke `zig cc
+-target wasm32-wasi` for the full PIC path. Instead, it uses the emscripten PIC
+code-generation mode and then links explicitly.
+
+The compile-side defaults are:
+
+```sh
+zig cc|c++ -shared -target wasm32-emscripten -fPIC
+```
+
+For `cowasm-zig`, the wrapper uses:
+
+```sh
+zig build-obj -dynamic -target wasm32-emscripten -fPIC
+```
+
+The wrapper adds the Zig-provided WASI libc include directories explicitly:
+
+- `lib/zig/libc/include/wasm-wasi-musl`, or `lib/libc/include/wasm-wasi-musl`
+  depending on the Zig archive layout.
+- `lib/zig/libc/include/generic-musl`, or `lib/libc/include/generic-musl`.
+
+It also adds the emscripten libc++ include path for C++:
+
+```sh
+${EMSCRIPTEN_SYSROOT:-/usr/share/emscripten/cache/sysroot}/include/c++/v1
+```
+
+The default preprocessor contract is:
+
+```c
+#define __wasi__
+#define __EMSCRIPTEN_major__ 3
+#define __EMSCRIPTEN_minor__ 1
+#define __EMSCRIPTEN_tiny__ 16
+#define _WASI_EMULATED_MMAN
+#define _WASI_EMULATED_SIGNAL
+#define _WASI_EMULATED_PROCESS_CLOCKS
+#define _WASI_EMULATED_GETPID
+#define __cowasm__
+```
+
+For C++, the wrapper also forces the libc++ ABI namespace used by the current
+emscripten runtime archives:
+
+```c
+#define _LIBCPP_ABI_VERSION 2
+#define _LIBCPP_ABI_NAMESPACE __2
+```
+
+The wrapper strips `-isystem` and `-isysroot` arguments supplied by build
+systems because they frequently point at host paths that are invalid for the
+WebAssembly target.
+
+## Main Function Visibility
+
+Executable-style C and C++ programs usually need `main` exported. CoWasm uses a
+wrapper-specific option for this:
+
+```sh
+cowasm-cc -fvisibility-main ...
+```
+
+The wrapper removes that flag before invoking clang and applies:
+
+```c
+#define main __attribute__((visibility("default")))main
+```
+
+This is a compatibility hack for upstream packages and tests. It is part of the
+current contract because several package tests rely on it.
+
+## Link Contract
+
+When the command is compile-only or targets an object output, the wrapper passes
+through to Zig with the compile flags above. Preprocessor-only commands and
+`--print-multiarch` queries use `-target wasm32-wasi`. Commands with no input
+files are passed through without adding the PIC flags so build systems can query
+the compiler.
+
+When linking is required, the wrapper:
+
+1. Compiles each source file to a temporary object with the compile flags.
+2. Extracts `-L`, `-l`, and `-Xlinker` arguments for the linker.
+3. Removes unsupported libraries that are already supplied by the CoWasm core
+   runtime:
+
+   ```sh
+   -lc -lm -ldl -lwasi-emulated-*
+   ```
+
+4. Links with:
+
+   ```sh
+   zig wasm-ld --experimental-pic -shared -o <output> ...
+   ```
+
+By default, linked outputs are stripped with:
+
+```sh
+--strip-all --compress-relocations
+```
+
+Any `-g*` debug option disables the automatic strip/compress step.
+
+## Archive Tools
+
+Package builds use Zig archive tools directly:
+
+- `zig ar`
+- `zig ranlib`
+
+Some packages need explicit workarounds. For example, `core/zlib` rebuilds the
+generated `libz.a` from object files using `zig ar rc` because the upstream
+archive produced during the WebAssembly configure build is malformed.
+
+## Native Helper Contract
+
+Native helper binaries are generally built with the same pinned Zig executable.
+`core/build/Makefile-vars` sets:
+
+```make
+ZIG_NATIVE_CFLAGS="--target=$(UNAME_M)-linux-musl"
+ZIG_NATIVE_CFLAGS_GNU="--target=$(UNAME_M)-linux-gnu.2.31"
+```
+
+on Linux. On macOS, both values are empty. Packages choose between the musl and
+GNU targets depending on upstream build-system needs.
+
+Representative native helper usage:
+
+- `core/zlib`: `CC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}"`, `AR="zig ar"`.
+- `python/cpython`: `CC="zig cc ${ZIG_NATIVE_CFLAGS}"`,
+  `CXX="zig c++ ${ZIG_NATIVE_CFLAGS}"`, `AR="zig ar"`.
+- `core/sqlite`: `BCC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}"` for build tools.
+
+## Representative WebAssembly Invocations
+
+Small C library:
+
+```make
+# core/zlib
+AR="zig ar" \
+CC="cowasm-cc" \
+CFLAGS="-Oz -fvisibility-main" \
+./configure --static --prefix=${DIST_WASM}
+```
+
+Kernel test executable:
+
+```make
+# core/kernel
+${BIN}/cowasm-cc -v -fvisibility-main -Oz src/test/hello.c -o build/test/hello.wasm
+```
+
+CPython shared extension modules:
+
+```make
+BLDSHARED = cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
+BLDCXXSHARED = cowasm-c++ --experimental-pic -shared ${DEBUG_MODE}
+```
+
+CPython configure:
+
+```make
+CC="cowasm-cc" \
+CXX="cowasm-c++" \
+AR="zig ar" \
+HOSTRUNNER="${BIN}/cowasm" \
+./configure --host=wasm32-unknown-wasi --build=`./config.guess`
+```
+
+Low-level generated dylink support:
+
+```make
+# core/dylink
+zig cc -target wasm32-wasi -w -c -rdynamic -shared -fvisibility=default \
+  -I ${POSIX_WASM} dist/wasm-export/libc.c -o build/wasm/libdylink.o
+```
+
+C++ runtime shared object:
+
+```make
+# core/libcxx
+${BIN}/zig wasm-ld --experimental-pic -shared --export-all \
+  --whole-archive ${LIBCXX_ARCHIVES} --no-whole-archive ${COMPILER_RT} \
+  -o ${DIST_WASM}/libcxx.so
+```
+
+PARI smoke-test wrapper:
+
+```make
+# sagemath/pari
+CC="zcc" AR="zig ar" ./Configure ...
+```
+
+`zcc` is used there because it produces a runnable shell launcher for a linked
+WASM executable, which matches PARI's build-time expectations.
+
+## Zig-Provided Pieces
+
+The current baseline depends on Zig for:
+
+- The pinned clang and clang++ frontend exposed as `zig cc` and `zig c++`.
+- `wasm-ld`, invoked as `zig wasm-ld`.
+- WASI libc and musl-compatible include trees.
+- Native cross-compilation for build helper programs.
+- `zig ar` and `zig ranlib`.
+- Zig-language builds in packages such as `core/kernel` and native Node/POSIX
+  packages.
+
+The PIC C++ runtime is not fully supplied by Zig. `core/libcxx` currently links
+the emscripten PIC archives from:
+
+```sh
+/usr/share/emscripten/cache/sysroot/lib/wasm32-emscripten/pic
+```
+
+or `EMSCRIPTEN_CXX_LIB` when overridden.
+
+## Backend Selector Implications
+
+A future `COWASM_TOOLCHAIN=clang` backend must preserve the visible contract
+above before replacing package Makefile usage broadly. In particular, it must
+provide:
+
+- equivalent `cowasm-cc`, `cowasm-c++`, and archive-tool behavior;
+- explicit WASI libc include and library paths;
+- PIC WebAssembly code generation compatible with CoWasm dynamic linking;
+- the CoWasm preprocessor defines and C++ ABI namespace;
+- `-fvisibility-main`;
+- the same unsupported-library filtering during link;
+- automatic strip/compress behavior for non-debug linked outputs;
+- a replacement for `zig wasm-ld --experimental-pic -shared`;
+- a deliberate source for libc++, libc++abi, libunwind, and compiler-rt;
+- a way to keep native helper builds reproducible.
+
+The first backend-selector implementation should keep Zig as the default and
+make clang diagnostics easy to compare against the commands documented here.

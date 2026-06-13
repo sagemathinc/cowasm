@@ -38,7 +38,8 @@ The current Zig-based path is valuable because it is the known-good baseline. Do
   - libc++
   - target defaults
 
-Deliverable: `docs/toolchain-contract.md`.
+Deliverable: `docs/toolchain-contract.md`. The initial inventory is recorded in
+[`docs/toolchain-contract.md`](../docs/toolchain-contract.md).
 
 ## Phase 1: Add A Backend Selector
 
