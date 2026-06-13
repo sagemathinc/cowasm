@@ -29,6 +29,16 @@ export fn cowasm_python_init() c_int {
     if (didInit) return 0;
     // std.debug.print("python.init()...\n", .{});
     py.Py_Initialize();
+    if (py.PyRun_SimpleString(
+        \\try:
+        \\    import cowasm_importer
+        \\    cowasm_importer.init()
+        \\except ModuleNotFoundError as err:
+        \\    if err.name != "cowasm_importer":
+        \\        raise
+    ) != 0) {
+        return 1;
+    }
     // std.debug.print("success!\n", .{});
     globals = py.PyDict_New() orelse {
         return 1;

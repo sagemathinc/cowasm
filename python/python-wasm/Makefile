@@ -19,6 +19,12 @@ PYTHON_PLATFORM = cpython-${PYTHON_ABI}-wasm32-wasi
 
 CFLAGS = -I$(shell cowasm-package-path @cowasm/cpython)/include/${PYTHON_LIB} -I$(shell cowasm-package-path @cowasm/posix-wasm)
 LDFLAGS = -L${BUILD} -l${PYTHON_LIB}
+HACL_LIBS = ${CPYTHON_WASM}/lib/libHacl_Hash_MD5.a \
+	${CPYTHON_WASM}/lib/libHacl_Hash_SHA1.a \
+	${CPYTHON_WASM}/lib/libHacl_Hash_SHA2.a \
+	${CPYTHON_WASM}/lib/libHacl_Hash_SHA3.a \
+	${CPYTHON_WASM}/lib/libHacl_Hash_BLAKE2.a \
+	${CPYTHON_WASM}/lib/libHacl_HMAC.a
 
 ###
 # Python as a web assembly library with a few extras compiled in
@@ -42,7 +48,7 @@ ${BUILD}/libpython.o:
 		-c ${CPYTHON_WASM}/lib/libpython.c \
 		-o ${BUILD}/libpython.o
 
-${DIST}/python.wasm: src/python.zig src/signal.zig ${BUILD}/libpython.o ${BUILD}/lib${PYTHON_LIB}.a
+${DIST}/python.wasm: src/python.zig src/signal.zig ${BUILD}/libpython.o ${BUILD}/lib${PYTHON_LIB}.a ${HACL_LIBS}
 	cd ../build && make zig
 	mkdir -p ${DIST}
 	cd src/ \
@@ -53,6 +59,7 @@ ${DIST}/python.wasm: src/python.zig src/signal.zig ${BUILD}/libpython.o ${BUILD}
 			${LDFLAGS} \
 			python.zig \
 			${BUILD}/libpython.o \
+			${HACL_LIBS} \
 		&& rm python.o \
 		&& mv python.wasm ${DIST}/python.wasm
 
@@ -91,15 +98,15 @@ ${DIST}/pandas.tar.xz:
 
 ${DIST}/pytz.tar.xz:
 	mkdir -p ${DIST}
-	cd $(shell cowasm-package-path @cowasm/py-pandas) && tar -Jcf ${DIST}/pytz.tar.xz pytz
+	cd ${PACKAGES}/py-pytz/dist/wasm && tar -Jcf ${DIST}/pytz.tar.xz pytz
 
 ${DIST}/dateutil.tar.xz:
 	mkdir -p ${DIST}
-	cd $(shell cowasm-package-path @cowasm/py-pandas) && tar -Jcf ${DIST}/dateutil.tar.xz dateutil
+	cd ${PACKAGES}/py-dateutil/dist/wasm && tar -Jcf ${DIST}/dateutil.tar.xz dateutil
 
 ${DIST}/six.tar.xz:
 	mkdir -p ${DIST}
-	cd $(shell cowasm-package-path @cowasm/py-pandas) && tar -Jcf ${DIST}/six.tar.xz six
+	cd ${PACKAGES}/py-six/dist/wasm && tar -Jcf ${DIST}/six.tar.xz six
 
 ${DIST}/sympy.tar.xz:
 	mkdir -p ${DIST}

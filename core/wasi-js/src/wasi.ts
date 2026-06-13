@@ -847,11 +847,16 @@ export default class WASI {
 
       fd_write: wrap(
         (fd: number, iovs: number, iovsLen: number, nwritten: number) => {
+          const buffers = getiovs(iovs, iovsLen);
+          if (buffers.every((iov) => iov.byteLength == 0)) {
+            this.view.setUint32(nwritten, 0, true);
+            return WASI_ESUCCESS;
+          }
           const stats = CHECK_FD(fd, WASI_RIGHT_FD_WRITE);
           const IS_STDOUT = this.isCapturedStdout(fd, stats);
           const IS_STDERR = this.isCapturedStderr(fd, stats);
           let written = 0;
-          getiovs(iovs, iovsLen).forEach((iov) => {
+          buffers.forEach((iov) => {
             //console.log("fd_write", `"${new TextDecoder().decode(iov)}"`);
             if (iov.byteLength == 0) return;
             //             log(

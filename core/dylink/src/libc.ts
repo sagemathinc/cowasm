@@ -48,7 +48,23 @@ __subtf3
 __floatditf
 `;
 
-export function cxxRuntimeExportCode() {
+export function cxxRuntimeExportCode(includeAllocators = true) {
+  const helperSymbols = cxxRuntimeHelperSymbols
+    .split("\n")
+    .filter(
+      (name) => includeAllocators || (name != "c_malloc" && name != "c_free")
+    );
+  const allocatorCode = includeAllocators
+    ? `
+__attribute__((visibility("default"))) void *c_malloc(size_t n) {
+  return malloc(n);
+}
+
+__attribute__((visibility("default"))) void c_free(void *ptr) {
+  free(ptr);
+}
+`
+    : "";
   return `
 /* C++ dylink runtime helpers exported by the main module. */
 
@@ -72,13 +88,7 @@ long double __floatsitf(int a);
 long double __subtf3(long double a, long double b);
 long double __floatditf(long long a);
 
-__attribute__((visibility("default"))) void *c_malloc(size_t n) {
-  return malloc(n);
-}
-
-__attribute__((visibility("default"))) void c_free(void *ptr) {
-  free(ptr);
-}
+${allocatorCode}
 
 static int cowasm_errno = 0;
 int *__errno_location(void) { return &cowasm_errno; }
@@ -174,7 +184,7 @@ int getTempRet0(void) { return 0; }
 int __THREW__ = 0;
 int __threwValue = 0;
 
-${wasmExport(cxxRuntimeHelperSymbols.split("\n"))}
+${wasmExport(helperSymbols)}
 `;
 }
 

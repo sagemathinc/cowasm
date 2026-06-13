@@ -28,6 +28,7 @@ ${DIST_WASM}/.built:  ${BUILD_WASM}/.build
 	touch ${DIST_WASM}/.built
 
 test: deps ${DIST_WASM}/.built
+	find ${DIST_WASM} -type d -name __pycache__ -prune -exec rm -rf {} +
 	# Importing from the bundle works:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=${DIST_WASM} pnpm-exec cpython -c 'import pip'
 	# The command line script works.

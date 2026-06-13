@@ -61,8 +61,8 @@ extern "C" {
 #undef HAVE_PTHREAD_SET_NAME_NP
 #undef HAVE_PTHREAD_SETNAME_NP
 
-// CoWasm does not have a login session database.
-#undef HAVE_GETLOGIN
+// CoWasm provides getlogin() via the runtime user fallback, but not getlogin_r().
+#define HAVE_GETLOGIN 1
 #undef HAVE_GETLOGIN_R
 
 // Linux timerfd is not available in CoWasm.

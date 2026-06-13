@@ -38,7 +38,7 @@ let omit =
 // save valuable space.
 
 const extra =
-  "_PyUnicodeWriter_WriteChar _PyUnicodeWriter_Init _PyUnicodeWriter_Finish _PyUnicodeWriter_Dealloc _PyUnicodeWriter_WriteStr PyCode_NewEmpty PyFrame_New _PyObject_GenericGetAttrWithDict _PyObject_LookupSpecial _Py_FatalErrorFunc _PyUnicodeWriter_PrepareInternal _PyBytes_ReverseFind _PyBytes_Find _Py_dup Py_EMSCRIPTEN_SIGNAL_HANDLING _Py_emscripten_signal_clock";
+  "_PyUnicodeWriter_WriteChar _PyUnicodeWriter_Init _PyUnicodeWriter_Finish _PyUnicodeWriter_Dealloc _PyUnicodeWriter_WriteStr PyCode_New PyCode_NewWithPosOnlyArgs PyCode_NewEmpty PyFrame_New _PyObject_GenericGetAttrWithDict _PyObject_LookupSpecial _Py_FatalErrorFunc _PyUnicodeWriter_PrepareInternal _PyBytes_ReverseFind _PyBytes_Find _Py_dup Py_EMSCRIPTEN_SIGNAL_HANDLING _Py_emscripten_signal_clock";
 //_PyArg_VaParseTupleAndKeywords_SizeT _PyArg_ParseStack_SizeT";
 
 const headers =
@@ -164,7 +164,7 @@ export async function main(pathToPythonSource: string) {
       names.push(name);
     }
   }
-  console.log(cxxRuntimeExportCode());
+  console.log(cxxRuntimeExportCode(false));
   console.log("#define Py_BUILD_CORE");
   console.log("#define PY_SSIZE_T_CLEAN");
   console.log("#undef Py_LIMITED_API");
