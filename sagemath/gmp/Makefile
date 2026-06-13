@@ -28,5 +28,13 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && make -j4 install
 	touch ${DIST_WASM}/.built
 
-test:
-	echo "No GMP tests yet"
+test: ${DIST_WASM}/.built
+	${BIN}/cowasm-cc \
+		-fvisibility-main \
+		-Oz \
+		-I${DIST_WASM}/include \
+		-L${DIST_WASM}/lib \
+		${SRC}/test-gmp.c \
+		-lgmp \
+		-o ${BUILD_WASM}/test-gmp
+	${BIN}/cowasm ${BUILD_WASM}/test-gmp | grep 1606938044258990275541962092341162602522202993782792835301376
