@@ -12,6 +12,10 @@ all: deps wasm
 
 include ../build/Makefile-rules
 
+PYTHON_MAJOR = 3
+PYTHON_MINOR = 14
+PYTHON_ABI = ${PYTHON_MAJOR}${PYTHON_MINOR}
+PYTHON_PLATFORM = cpython-${PYTHON_ABI}-wasm32-wasi
 
 PY_DATEUTIL = ${PACKAGES}/py-dateutil/dist/wasm
 PY_PYTZ = ${PACKAGES}/py-pytz/dist/wasm
@@ -47,7 +51,7 @@ ${BUILD_WASM}/.install:  ${BUILD_WASM}/.patched
 
 ${DIST_WASM}/.built:  ${BUILD_WASM}/.install
 	rm -rf ${DIST_WASM} && mkdir -p ${DIST_WASM}
-	find ${BUILD_WASM}/pandas -name '*cpython-311-wasm32-wasi.so' -delete
+	find ${BUILD_WASM}/pandas -name '*.cpython-*-wasm32-wasi.so' ! -name '*.${PYTHON_PLATFORM}.so' -delete
 	cd ${BUILD_WASM} \
 		&& pnpm-exec cpython -m cowasm_bundler pandas
 	cd ${BUILD_WASM}/site-packages \
