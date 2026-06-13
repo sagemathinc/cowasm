@@ -3,7 +3,8 @@ include ../build/Makefile-vars
 
 # https://pari.math.u-bordeaux.fr/download.html
 VERSION = 2.15.2
-URL = https://pari.math.u-bordeaux.fr/pub/pari/unix/pari-${VERSION}.tar.gz
+SERIES = 2.15
+URL = https://pari.math.u-bordeaux.fr/pub/pari/OLD/${SERIES}/pari-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/pari-${VERSION}.tar.gz
 
 all: deps wasm
