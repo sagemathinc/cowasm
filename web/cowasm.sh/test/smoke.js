@@ -304,6 +304,17 @@ async function runKeyboardSmoke() {
         devtools,
         "document.querySelector('.xterm-rows')?.textContent.includes('(cowasm)$ ')"
       );
+      const promptCount = await evaluate(
+        devtools,
+        "(document.querySelector('.xterm-rows')?.textContent.match(/\\(cowasm\\)\\$ /g) || []).length"
+      );
+      if (promptCount != 1) {
+        const text = await evaluate(
+          devtools,
+          "document.querySelector('.xterm-rows')?.textContent"
+        );
+        throw Error(`expected one startup prompt, saw ${promptCount}: ${text}`);
+      }
       await evaluate(
         devtools,
         "window.term?.focus(); document.querySelector('.xterm-helper-textarea')?.focus(); true"
@@ -313,7 +324,24 @@ async function runKeyboardSmoke() {
         devtools,
         "document.querySelector('.xterm-rows')?.textContent.includes('keyboardok')"
       );
-      console.log("keyboard input ok");
+      await typeText(devtools, "python\n");
+      await waitForExpression(
+        devtools,
+        "document.querySelector('.xterm-rows')?.textContent.includes('>>> ')"
+      );
+      await typeText(devtools, "987+654\n");
+      await waitForExpression(
+        devtools,
+        "document.querySelector('.xterm-rows')?.textContent.includes('1641')"
+      );
+      const text = await evaluate(
+        devtools,
+        "document.querySelector('.xterm-rows')?.textContent"
+      );
+      if (text.includes("998877++665544")) {
+        throw Error(`Python input was visually doubled: ${text}`);
+      }
+      console.log("keyboard input and Python echo ok");
     } finally {
       devtools.close();
     }

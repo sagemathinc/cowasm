@@ -67,6 +67,11 @@ function echoInput(term: Terminal, data: string): void {
   }
 }
 
+function echoShellInput(term: Terminal, data: string): void {
+  const newline = data.search(/[\r\n]/);
+  echoInput(term, newline == -1 ? data : data.slice(0, newline + 1));
+}
+
 const SNAPSHOT_BEGIN = "__COWASM_HOME_SNAPSHOT_BEGIN__";
 const SNAPSHOT_END = "__COWASM_HOME_SNAPSHOT_END__";
 const PERSISTENCE_FLAG = "cowasm-sh-enable-persistence";
@@ -247,10 +252,13 @@ export default async function terminal(element: HTMLDivElement) {
     if (!text) {
       return;
     }
+    const echo = shellAtPrompt;
     if (text.includes("\r") || text.includes("\n")) {
       shellAtPrompt = false;
     }
-    echoInput(term, text);
+    if (echo) {
+      echoShellInput(term, text);
+    }
     dash.kernel.writeToStdin(kernelInput(text));
   };
 
@@ -426,10 +434,13 @@ export default async function terminal(element: HTMLDivElement) {
     if (Date.now() < suppressTerminalInputUntil) {
       return;
     }
+    const echo = shellAtPrompt;
     if (data.includes("\r") || data.includes("\n")) {
       shellAtPrompt = false;
     }
-    echoInput(term, data);
+    if (echo) {
+      echoShellInput(term, data);
+    }
     dash.kernel.writeToStdin(kernelInput(data));
   });
   dash.kernel.on("stdout", (data) => {
@@ -474,8 +485,8 @@ export default async function terminal(element: HTMLDivElement) {
   }
   markPersistenceReady();
   const shellStart = Date.now();
+  await dash.kernel.callWithString("chdir", "/home/user");
   const terminalPromise = dash.terminal();
-  await dash.kernel.writeToStdin("mkdir -p /home/user && cd /home/user\n");
   term.focus();
   const r = await terminalPromise;
   shellExitCode = r;
