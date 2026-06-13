@@ -30,7 +30,6 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/pari",
   "dependencies": {},
   "devDependencies": {}
 }
