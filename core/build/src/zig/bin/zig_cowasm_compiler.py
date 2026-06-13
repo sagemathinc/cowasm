@@ -300,6 +300,10 @@ def reject_unsupported_clang_args(args):
             )
 
 
+def split_wl_arg(arg):
+    return arg[len('-Wl,'):].split(',')
+
+
 def clang_parse_link_args(args):
     i = 0
     source_files = []
@@ -322,6 +326,8 @@ def clang_parse_link_args(args):
             continue
         if arg.startswith('-L') or arg.startswith('-l'):
             linker_args.append(arg)
+        elif arg.startswith('-Wl,'):
+            linker_args += split_wl_arg(arg)
         elif is_source(arg):
             source_files.append(arg)
         elif clang_is_object_or_archive(arg):
@@ -589,6 +595,10 @@ def extract_linker_args(argv):
         if argv[i].startswith('-L') or argv[i].startswith('-l'):
             # -Lpath or -llib
             link.append(argv[i])
+            i += 1
+            continue
+        if argv[i].startswith('-Wl,'):
+            link += split_wl_arg(argv[i])
             i += 1
             continue
         argv0.append(argv[i])

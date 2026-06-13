@@ -135,7 +135,7 @@ the compiler.
 When linking is required, the wrapper:
 
 1. Compiles each source file to a temporary object with the compile flags.
-2. Extracts `-L`, `-l`, and `-Xlinker` arguments for the linker.
+2. Extracts `-L`, `-l`, `-Xlinker`, and `-Wl,` arguments for the linker.
 3. Removes unsupported libraries that are already supplied by the CoWasm core
    runtime:
 
