@@ -385,6 +385,18 @@ installs a static archive, then links and runs the package's existing
 multi-precision arithmetic probe through the CoWasm launcher. It leaves the
 default Zig-backed GMP build as the known-good SageMath dependency path.
 
+`core/qhull` has an opt-in CMake static-library smoke target:
+
+```sh
+make -C core/qhull test-clang-standalone
+```
+
+The target builds Qhull's reentrant static library with the direct clang
+backend, installs the library and headers under `dist/clang`, then links and
+runs a minimal `qh_zero`/`qh_freeqhull` initialization probe through the CoWasm
+launcher. It keeps the clang build tree separate from the default Zig-backed
+Qhull build used by Python package dependencies.
+
 ## Archive Tools
 
 Package builds use Zig archive tools directly:
