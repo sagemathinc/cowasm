@@ -229,6 +229,12 @@ test -f "$tmp/second.wasm"
 ! test -f "$tmp/first.wasm"
 
 : >"$COWASM_TEST_LOG"
+"$wrapper" "$tmp/hello.c" -o"$tmp/joined.wasm"
+test -f "$tmp/joined.wasm"
+grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "$tmp/joined.wasm"
+! grep -F -- "-o$tmp/joined.wasm" "$COWASM_TEST_LOG"
+
+: >"$COWASM_TEST_LOG"
 "$wrapper" -O0 -Oz "$tmp/hello.c" -o "$tmp/optimized.wasm"
 grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--strip-all"
 

@@ -223,7 +223,8 @@ still routing `-Xlinker`, `-Wl,`, object files, and libraries to the direct
 `wasm-ld` invocation.
 
 When multiple `-o` options are present, the direct clang backend uses the last
-one, matching normal compiler-driver precedence.
+one, matching normal compiler-driver precedence. It accepts both `-o output`
+and joined `-ooutput` spellings.
 
 Compile-only (`-c`), assembly-only (`-S`), preprocessing (`-E`), and
 dependency-only (`-M`/`-MM`) commands run clang directly and do not invoke

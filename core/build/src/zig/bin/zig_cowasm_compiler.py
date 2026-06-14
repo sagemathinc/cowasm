@@ -277,6 +277,8 @@ def clang_output_name(args):
     for i in range(len(args) - 1, -1, -1):
         if args[i] == '-o':
             return require_option_value(args, i)
+        if args[i].startswith('-o') and args[i] != '-o':
+            return args[i][len('-o'):]
     return 'a.out'
 
 
@@ -393,6 +395,9 @@ def clang_parse_link_args(args):
         if arg == '-o':
             require_option_value(args, i)
             i += 2
+            continue
+        if arg.startswith('-o') and arg != '-o':
+            i += 1
             continue
         if arg == '-Xlinker':
             linker_args.append(require_option_value(args, i))
