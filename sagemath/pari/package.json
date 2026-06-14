@@ -17,7 +17,8 @@
     "build": "make",
     "clean": "make clean",
     "prepublishOnly": "pnpm run build && make test",
-    "test": "make test"
+    "test": "make test",
+    "test:clang-standalone": "make test-clang-standalone"
   },
   "repository": {
     "type": "git",
