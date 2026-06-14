@@ -2,16 +2,21 @@
 
 ## Strategic Note
 
-This plan captures the direct clang/lld investigation path. A later strategic
-investigation found that modern Zig changes the tradeoff: Zig 0.16 can produce
-`wasm32-wasi -fPIC -shared` dylink modules that CoWasm's loader accepts, though
-CoWasm still needs an explicit final `zig wasm-ld` step for unresolved dynamic
-symbols. The current preferred direction is therefore to investigate embracing a
-modern pinned Zig toolchain while keeping this clang/lld path as ABI
-documentation and fallback leverage.
+This plan captures the original direct clang/lld investigation path. Later
+strategic investigations found that both modern Zig and `wasi-sdk` can produce
+CoWasm-compatible `wasm32-wasi` / `wasm32-wasip1 -fPIC -shared` dylink side
+modules. The `wasi-sdk` result is the better long-term fit because it is the
+canonical Clang/lld/wasi-libc distribution and accepts the unresolved-symbol
+linker flags CoWasm needs.
 
-See [`embrace-modern-zig-plan.md`](./embrace-modern-zig-plan.md) for that
-companion strategy.
+The current preferred direction is therefore Zig 0.10.1 to pinned `wasi-sdk`,
+with CoWasm-owned Zig implementation code translated to C. This direct
+clang/lld plan remains useful as ABI documentation and fallback leverage.
+
+See [`wasi-sdk-modernization-plan.md`](./wasi-sdk-modernization-plan.md) for the
+current canonical strategy. The older
+[`embrace-modern-zig-plan.md`](./embrace-modern-zig-plan.md) is now a
+superseded comparison note.
 
 ## Goal
 
