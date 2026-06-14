@@ -388,6 +388,18 @@ links and runs a small `ffi_prep_cif` ABI probe through the CoWasm launcher.
 It deliberately avoids `ffi_call`, which is still a stub in the standalone C
 path for this port.
 
+`core/openssl` has an opt-in executable smoke target:
+
+```sh
+make -C core/openssl test-clang-standalone
+```
+
+The target builds OpenSSL with the direct clang backend, selector-aware archive
+tools, and the existing `posix-wasm` headers/runtime archive. It disables
+socket BIO support, supplies temporary compatibility headers for split WASI
+sysroots, links small ENOSYS stubs for OpenSSL app paths outside the MD5 smoke,
+and verifies `openssl md5` through the CoWasm WASI runner.
+
 `core/tar` has an opt-in dependent-executable smoke target:
 
 ```sh
