@@ -335,7 +335,10 @@ make -C core/libedit test-clang-standalone
 The target first rebuilds termcap with its standalone clang smoke target, then
 builds libedit against that clang-built termcap install using `cowasm-cc`,
 `cowasm-ar`, and `cowasm-ranlib`. It links and runs a minimal history and
-tokenizer program through the CoWasm launcher.
+tokenizer program through the CoWasm launcher. The standalone build supplies
+local compatibility headers for split WASI sysroots and for interactive
+terminal, password-database, wait, and setjmp paths outside the smoke's
+noninteractive scope.
 
 `core/ncurses` has an opt-in dependent-library smoke target:
 

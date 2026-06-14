@@ -27,7 +27,7 @@ mkdir -p "$dist_dir"
 
 cd "$build_dir"
 
-CFLAGS="-Oz -I$termcap_dist_dir/include -D__STDC_ISO_10646__=201103L -D__wasilibc_unmodified_upstream_signal" \
+CFLAGS="-Oz -I$build_dir/src -I$termcap_dist_dir/include -D__STDC_ISO_10646__=201103L -D__wasilibc_unmodified_upstream_signal" \
 LDFLAGS="-L$termcap_dist_dir/lib -ltermcap" \
 CONFIG_SITE="$script_dir/config.site" \
 RANLIB="$bin_dir/cowasm-ranlib" \

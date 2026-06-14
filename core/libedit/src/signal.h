@@ -8,7 +8,9 @@ compile with -D_WASI_EMULATED_SIGNAL and link with -lwasi-emulated-signal"
 extern "C" {
 #endif
 
+#ifndef __wasilibc_unmodified_upstream_signal
 #define __wasilibc_unmodified_upstream_signal
+#endif
 #include <features.h>
 
 #if defined(_POSIX_SOURCE) || defined(_POSIX_C_SOURCE) \
