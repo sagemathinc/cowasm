@@ -3,6 +3,8 @@
 include ../build/Makefile-vars
 
 TARGET = ${DIST_WASM}/bin
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 all: deps \
 	${TARGET}/basename \
@@ -64,6 +66,19 @@ all: deps \
 	@# ${TARGET}/split \
 
 include ../build/Makefile-rules
+
+.PHONY: test-clang-standalone
+test-clang-standalone:
+	@status=0; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${SRC} || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
 
 CC = ${BIN}/cowasm-cc
 
@@ -281,4 +296,3 @@ test: deps test-uniq-sources test-basename test-cat test-dirname test-cp test-cu
 	test-join test-ls test-mktemp test-mkdir-rmdir test-mv test-rm test-seq test-sleep test-sort test-stat test-tail test-touch test-tr \
 	test-uname test-uniq test-wc  test-which test-xargs
 	@echo "Success -- all coreutils tests passed"
-

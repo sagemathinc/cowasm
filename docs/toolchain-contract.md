@@ -436,6 +436,18 @@ executables against those clang-built dependencies. It checks the command
 versions and runs a small archive/extract round trip through the CoWasm
 launcher.
 
+`core/coreutils` has an opt-in focused executable smoke target:
+
+```sh
+make -C core/coreutils test-clang-standalone
+```
+
+The target builds the `basename` utility with the direct clang backend and a
+small standalone compatibility shim for the BSD program-name and error helpers
+that are normally supplied by CoWasm's broader runtime layer. It installs the
+binary under `dist/clang/bin` and verifies a path reduction through the CoWasm
+WASI runner.
+
 `sagemath/gmp` has an opt-in static-library smoke target:
 
 ```sh
