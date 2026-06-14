@@ -160,7 +160,19 @@ grep -F -- "clang" "$COWASM_TEST_LOG"
 expect_no_wasm_ld
 
 : >"$COWASM_TEST_LOG"
+"$wrapper" -E "$tmp/hello.c" -o "$tmp/hello.i"
+test -f "$tmp/hello.i"
+grep -F -- "clang" "$COWASM_TEST_LOG"
+expect_no_wasm_ld
+
+: >"$COWASM_TEST_LOG"
 "$wrapper" -M "$tmp/hello.c" >"$tmp/deps.out"
+grep -F -- "clang" "$COWASM_TEST_LOG"
+expect_no_wasm_ld
+
+: >"$COWASM_TEST_LOG"
+"$wrapper" "$tmp/hello.c" -o "$tmp/hello.o"
+test -f "$tmp/hello.o"
 grep -F -- "clang" "$COWASM_TEST_LOG"
 expect_no_wasm_ld
 
