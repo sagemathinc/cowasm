@@ -13,6 +13,8 @@ VERSION = 3.39.4
 URL = https://github.com/sqlite/sqlite/archive/refs/tags/version-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/sqlite-${VERSION}.tar.gz
 TARBALL_SHA256 = 32bba6d607cd33b014efa47bce93a5711c8c5cde55229307e1da514cc1e57f7c
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)
@@ -28,6 +30,32 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/00-syscall.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${SRC}/patches/01-shell.patch | patch -p1
 	touch ${BUILD_WASM}/.patched
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+${BUILD_CLANG}/.patched: ${BUILD_CLANG}/.build
+	cp ${SRC}/config.site ${BUILD_CLANG}
+	cd ${BUILD_CLANG} && cat ${SRC}/patches/00-syscall.patch | patch -p1
+	cd ${BUILD_CLANG} && cat ${SRC}/patches/01-shell.patch | patch -p1
+	touch ${BUILD_CLANG}/.patched
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.patched
+	@status=0; \
+	NATIVE_CC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" \
+		${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
 
 # Notes on flags below.
 #   - ?? MAYBE ?? Without -Oz (optimize for size rather than speed), we get 'Function addresses

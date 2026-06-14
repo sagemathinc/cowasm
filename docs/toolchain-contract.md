@@ -294,6 +294,17 @@ The target first rebuilds zlib with its standalone clang smoke target, then
 builds FreeType against that clang-built zlib install. It links and runs a
 minimal `FT_Init_FreeType` program through the CoWasm launcher.
 
+`core/sqlite` has an opt-in library smoke target:
+
+```sh
+make -C core/sqlite test-clang-standalone
+```
+
+The target applies the same SQLite patches as the regular WebAssembly build,
+uses native helper tools only for generated source files, then compiles
+`sqlite3.c` into a static archive with the direct clang backend. It links and
+runs a minimal in-memory query program through the CoWasm launcher.
+
 ## Archive Tools
 
 Package builds use Zig archive tools directly:
