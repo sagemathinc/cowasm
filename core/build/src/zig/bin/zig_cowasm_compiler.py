@@ -276,6 +276,18 @@ def clang_has_input(args):
     return any(is_source(arg) or clang_is_object_or_archive(arg) for arg in args)
 
 
+def is_compile_only_mode(args):
+    i = 0
+    while i < len(args):
+        if args[i] == '-Xlinker':
+            i += 2
+            continue
+        if args[i] in {'-c', '-S', '-E', '-M', '-MM'}:
+            return True
+        i += 1
+    return False
+
+
 def clang_is_debug(args):
     for flag in args:
         if flag.startswith('-g') or flag == '-O0':
@@ -400,11 +412,11 @@ def clang_backend():
     sysroot = find_wasi_sysroot()
     base_flags = clang_base_flags(sysroot)
 
-    if "-E" in args or not clang_has_input(args):
+    if is_compile_only_mode(args) or not clang_has_input(args):
         run([clang] + base_flags + args)
         return
 
-    if '-c' in args or clang_output_name(args).endswith('.o'):
+    if clang_output_name(args).endswith('.o'):
         run([clang] + base_flags + args)
         return
 
@@ -569,7 +581,7 @@ def get_output_name():
 no_input = len([arg for arg in sys.argv if is_input(arg)]) == 0
 
 # COMPILE ONLY? NOT LINKING
-if '-c' in sys.argv or no_input or get_output_name().endswith('.o'):
+if is_compile_only_mode(sys.argv) or no_input or get_output_name().endswith('.o'):
 
     # building object files from source, so don't have to do the extra wasm-ld step
     # below, which is really complicated

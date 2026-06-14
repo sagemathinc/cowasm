@@ -126,11 +126,11 @@ current contract because several package tests rely on it.
 
 ## Link Contract
 
-When the command is compile-only or targets an object output, the wrapper passes
-through to Zig with the compile flags above. Preprocessor-only commands and
-`--print-multiarch` queries use `-target wasm32-wasi`. Commands with no input
-files are passed through without adding the PIC flags so build systems can query
-the compiler.
+When the command is compile-only, assembly-only, dependency-only, or targets an
+object output, the wrapper passes through to Zig with the compile flags above.
+Preprocessor-only commands and `--print-multiarch` queries use `-target
+wasm32-wasi`. Commands with no input files are passed through without adding
+the PIC flags so build systems can query the compiler.
 
 When linking is required, the wrapper:
 
@@ -205,6 +205,11 @@ wasm-ld -o <output> <sysroot>/lib/wasm32-wasi/crt1.o ... \
 User-supplied `-lc`, `-lm`, `-ldl`, and `-lwasi-emulated-*` flags are filtered
 before linking, matching the Zig backend's unsupported-library handling. The
 standalone clang backend appends the sysroot `-lc` itself.
+
+Compile-only (`-c`), assembly-only (`-S`), preprocessing (`-E`), and
+dependency-only (`-M`/`-MM`) commands run clang directly and do not invoke
+`wasm-ld`. Linker arguments forwarded with `-Xlinker`, including linker map
+flags such as `-Xlinker -M`, remain link arguments.
 
 The current clang backend rejects shared/PIC flags such as `-shared`,
 `-fPIC`, `-fpic`, `--experimental-pic`, and `-dynamic`, including when those

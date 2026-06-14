@@ -78,6 +78,21 @@ export COWASM_COMPILER_RT="$tmp/libclang_rt.builtins-wasm32.a"
 export COWASM_FAKE_BUILTINS="$tmp/libclang_rt.builtins-wasm32.a"
 export COWASM_TEST_LOG="$tmp/tool.log"
 
+expect_no_wasm_ld() {
+  if grep -F -- "wasm-ld" "$COWASM_TEST_LOG"; then
+    echo "unexpected wasm-ld invocation" >&2
+    exit 1
+  fi
+}
+
+expect_no_linker_match() {
+  local pattern="$1"
+  if grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -E -- "$pattern"; then
+    echo "unexpected linker argument matching $pattern" >&2
+    exit 1
+  fi
+}
+
 expect_missing_arg() {
   local option="$1"
   shift
@@ -111,6 +126,23 @@ expect_unsupported_flag() {
 expect_unsupported_flag "--experimental-pic" "$tmp/hello.c" -Wl,--experimental-pic
 expect_unsupported_flag "-shared" "$tmp/hello.c" -Wl,-shared
 
+: >"$COWASM_TEST_LOG"
+"$wrapper" -S "$tmp/hello.c" -o "$tmp/hello.s"
+test -f "$tmp/hello.s"
+grep -F -- "clang" "$COWASM_TEST_LOG"
+expect_no_wasm_ld
+
+: >"$COWASM_TEST_LOG"
+"$wrapper" -M "$tmp/hello.c" >"$tmp/deps.out"
+grep -F -- "clang" "$COWASM_TEST_LOG"
+expect_no_wasm_ld
+
+: >"$COWASM_TEST_LOG"
+"$wrapper" "$tmp/hello.c" -Xlinker -M -o "$tmp/map.wasm"
+test -f "$tmp/map.wasm"
+grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- " -M "
+
+: >"$COWASM_TEST_LOG"
 "$wrapper" -Oz -fvisibility-main -Wl,--import-memory,--import-table -lm -ldl -lwasi-emulated-signal -lc "$tmp/hello.c" -o "$tmp/hello.wasm"
 test -f "$tmp/hello.wasm"
 
@@ -123,7 +155,7 @@ grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--import-memory"
 grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--import-table"
 grep -F -- "$tmp/sysroot/lib/wasm32-wasi/crt1.o" "$COWASM_TEST_LOG"
 grep -F -- "$tmp/libclang_rt.builtins-wasm32.a" "$COWASM_TEST_LOG"
-! grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -E -- ' -lm( |$)'
-! grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -E -- ' -ldl( |$)'
-! grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -E -- ' -lwasi-emulated-signal( |$)'
+expect_no_linker_match ' -lm( |$)'
+expect_no_linker_match ' -ldl( |$)'
+expect_no_linker_match ' -lwasi-emulated-signal( |$)'
 test "$(grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -E -o -- ' -lc( |$)' | wc -l)" -eq 1
