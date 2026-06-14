@@ -1,5 +1,8 @@
 include ../build/Makefile-vars
 
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
+
 all: deps wasm
 
 # LZMA doesn't change, but I didn't want to force git clone, so I made
@@ -11,6 +14,26 @@ TARBALL = ${UPSTREAM}/lzma-v${VERSION}.tar.gz
 TARBALL_SHA256 = c6e54740d375646d0fdd4b560b1cc0feec6c3aca498004d171900e0043f35eba
 
 include ../build/Makefile-rules
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.build
+	$(MAKE) -C ../posix-wasm wasm
+	@status=0; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${CWD}/../posix-wasm/dist/wasm || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ../build && make zig

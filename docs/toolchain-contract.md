@@ -261,6 +261,17 @@ selector-aware archive tools, then starts `bzip2` and `bunzip2` through the
 CoWasm launcher. It uses a standalone WASI shim for metadata-preservation calls
 that are not meaningful in the browser runtime.
 
+`core/lzma` also has an opt-in standalone target:
+
+```sh
+make -C core/lzma test-clang-standalone
+```
+
+The target rebuilds xz/lzma with the direct clang backend, uses
+`cowasm-ar`/`cowasm-ranlib`, and runs an `xz` compress/decompress round trip
+through the CoWasm launcher. Like the other package smoke targets, it reports a
+clear skip when the direct clang/lld WASI toolchain is not configured.
+
 ## Archive Tools
 
 Package builds use Zig archive tools directly:
