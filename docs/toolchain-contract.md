@@ -326,6 +326,18 @@ builds libedit against that clang-built termcap install using `cowasm-cc`,
 `cowasm-ar`, and `cowasm-ranlib`. It links and runs a minimal history and
 tokenizer program through the CoWasm launcher.
 
+`core/tar` has an opt-in dependent-executable smoke target:
+
+```sh
+make -C core/tar test-clang-standalone
+```
+
+The target first rebuilds zlib, bzip2, and lzma with their standalone clang
+smoke targets, then builds libarchive and the `tar`, `cat`, and `cpio`
+executables against those clang-built dependencies. It checks the command
+versions and runs a small archive/extract round trip through the CoWasm
+launcher.
+
 ## Archive Tools
 
 Package builds use Zig archive tools directly:
