@@ -1,5 +1,18 @@
 # Iterative Plan To Reduce Zig Reliance
 
+## Strategic Note
+
+This plan captures the direct clang/lld investigation path. A later strategic
+investigation found that modern Zig changes the tradeoff: Zig 0.16 can produce
+`wasm32-wasi -fPIC -shared` dylink modules that CoWasm's loader accepts, though
+CoWasm still needs an explicit final `zig wasm-ld` step for unresolved dynamic
+symbols. The current preferred direction is therefore to investigate embracing a
+modern pinned Zig toolchain while keeping this clang/lld path as ABI
+documentation and fallback leverage.
+
+See [`embrace-modern-zig-plan.md`](./embrace-modern-zig-plan.md) for that
+companion strategy.
+
 ## Goal
 
 Make CoWasm's toolchain contract explicit enough that Zig becomes an optional backend instead of the conceptual foundation of the build.
