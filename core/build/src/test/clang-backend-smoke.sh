@@ -223,6 +223,23 @@ expect_no_wasm_ld
 test -f "$tmp/map.wasm"
 grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- " -M "
 
+: >"$COWASM_TEST_LOG"
+"$wrapper" "$tmp/hello.c" -o "$tmp/first.wasm" -o "$tmp/second.wasm"
+test -f "$tmp/second.wasm"
+! test -f "$tmp/first.wasm"
+
+: >"$COWASM_TEST_LOG"
+"$wrapper" -O0 -Oz "$tmp/hello.c" -o "$tmp/optimized.wasm"
+grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--strip-all"
+
+: >"$COWASM_TEST_LOG"
+"$wrapper" -Oz -O0 "$tmp/hello.c" -o "$tmp/debug-opt.wasm"
+! grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--strip-all"
+
+: >"$COWASM_TEST_LOG"
+"$wrapper" -g -Oz "$tmp/hello.c" -o "$tmp/debug-info.wasm"
+! grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--strip-all"
+
 cat >"$tmp/link.rsp" <<EOF
 -DRESPONSE_FLAG
 -isystem "$tmp/host-include"

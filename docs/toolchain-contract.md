@@ -157,7 +157,9 @@ By default, linked outputs are stripped with:
 --strip-all --compress-relocations
 ```
 
-Any `-g*` debug option disables the automatic strip/compress step.
+Any `-g*` debug option disables the automatic strip/compress step. A final
+`-O0` optimization flag is also treated as debug-like; earlier `-O0` flags do
+not override later optimized `-O*` flags.
 
 ## Experimental Direct Clang Backend
 
@@ -219,6 +221,9 @@ cannot override the selected WASI sysroot with host include paths. This lets
 build systems pass mixed compile/link arguments through a response file while
 still routing `-Xlinker`, `-Wl,`, object files, and libraries to the direct
 `wasm-ld` invocation.
+
+When multiple `-o` options are present, the direct clang backend uses the last
+one, matching normal compiler-driver precedence.
 
 Compile-only (`-c`), assembly-only (`-S`), preprocessing (`-E`), and
 dependency-only (`-M`/`-MM`) commands run clang directly and do not invoke

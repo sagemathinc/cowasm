@@ -274,8 +274,9 @@ def find_wasi_sysroot():
 
 
 def clang_output_name(args):
-    if '-o' in args:
-        return require_option_value(args, args.index('-o'))
+    for i in range(len(args) - 1, -1, -1):
+        if args[i] == '-o':
+            return require_option_value(args, i)
     return 'a.out'
 
 
@@ -302,8 +303,15 @@ def is_compile_only_mode(args):
 
 def clang_is_debug(args):
     for flag in args:
-        if flag.startswith('-g') or flag == '-O0':
+        if flag.startswith('-g'):
             return True
+
+    # Match clang's normal option precedence: the last optimization flag wins.
+    # Keep -O0 unstripped for debugging, but do not let an earlier -O0 suppress
+    # stripping after a later optimized build flag.
+    for flag in reversed(args):
+        if flag.startswith('-O'):
+            return flag == '-O0'
     return False
 
 
