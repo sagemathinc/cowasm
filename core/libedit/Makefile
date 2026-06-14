@@ -7,12 +7,39 @@ VERSION = 20210910-3.1
 TARBALL = ${UPSTREAM}/libedit-${VERSION}.tar.gz
 URL = https://www.thrysoee.dk/editline/libedit-${VERSION}.tar.gz
 TARBALL_SHA256 = 6792a6a992050762edcca28ff3318cdb7de37dccf7bc30db59fcd7017eed13c5
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 include ../build/Makefile-rules
 
 # See https://www.thrysoee.dk/editline/
 
 TERMCAP_NATIVE = ${PACKAGES}/termcap/dist/native
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+${BUILD_CLANG}/.patched: ${BUILD_CLANG}/.build
+	cp -rv src/* ${BUILD_CLANG}/src/
+	cd ${BUILD_CLANG}/src/ && patch -p0 < readline.patch
+	touch ${BUILD_CLANG}/.patched
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.patched
+	$(MAKE) -C ../termcap test-clang-standalone
+	@status=0; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${CWD}/../termcap/dist/clang || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
 
 ##################
 # NATIVE

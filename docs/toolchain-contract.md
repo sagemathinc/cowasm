@@ -315,6 +315,17 @@ The target builds `libtermcap.a` with the direct clang backend and
 selector-aware archive tools, then links and runs a minimal termcap lookup and
 cursor-formatting program through the CoWasm launcher.
 
+`core/libedit` has an opt-in dependent-library smoke target:
+
+```sh
+make -C core/libedit test-clang-standalone
+```
+
+The target first rebuilds termcap with its standalone clang smoke target, then
+builds libedit against that clang-built termcap install using `cowasm-cc`,
+`cowasm-ar`, and `cowasm-ranlib`. It links and runs a minimal history and
+tokenizer program through the CoWasm launcher.
+
 ## Archive Tools
 
 Package builds use Zig archive tools directly:
