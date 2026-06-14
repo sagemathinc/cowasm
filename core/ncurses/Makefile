@@ -2,6 +2,8 @@ include ../build/Makefile-vars
 
 # See https://ftp.gnu.org/pub/gnu/ncurses/?C=M;O=D
 VERSION = 6.3
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 URL = https://ftp.gnu.org/gnu/ncurses/ncurses-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/ncurses-${VERSION}.tar.gz
 TARBALL_SHA256 = 97fc51ac2b085d4cde31ef4d2c3122c21abc217e9090a43a30fc5ec21684e059
@@ -12,6 +14,29 @@ TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
 all:  wasm ${BUILD_WASM}/test/.built
 
 include ../build/Makefile-rules
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.build
+	@status=0; \
+	$(MAKE) -C ../termcap test-clang-standalone || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	if [ "$$status" -ne 0 ]; then exit "$$status"; fi
+	@status=0; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${CWD}/../termcap/dist/clang ${CWD}/../posix-wasm/dist/wasm || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
 
 # NATIVE -- we do not use this, since pretty much any reasonable native build host has curses already.
 # Also, we barely use the native python build...
