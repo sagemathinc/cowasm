@@ -2,6 +2,8 @@ include ../build/Makefile-vars
 
 # This is the Qhull 2020.2 release used by matplotlib 3.6.2.
 VERSION = 8.0.2
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 URL = https://github.com/qhull/qhull/archive/refs/tags/v${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/qhull-${VERSION}.tar.gz
@@ -12,6 +14,25 @@ all: deps wasm
 include ../build/Makefile-rules
 
 CMAKE_BUILD = ${BUILD_WASM}/cowasm-build
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.build
+	@status=0; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.build
 	cd ../build && make zig
