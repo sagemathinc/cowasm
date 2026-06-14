@@ -456,8 +456,11 @@ make -C sagemath/gmp test-clang-standalone
 
 The target builds GMP with the direct clang backend in `ABI=standard` mode,
 installs a static archive, then links and runs the package's existing
-multi-precision arithmetic probe through the CoWasm launcher. It leaves the
-default Zig-backed GMP build as the known-good SageMath dependency path.
+multi-precision arithmetic probe through the CoWasm launcher. It links
+`libwasi-emulated-signal` during configure and in the final probe so GMP uses
+WASI libc's `raise` shim instead of compiling its fallback `kill(getpid(), ...)`
+path. It leaves the default Zig-backed GMP build as the known-good SageMath
+dependency path.
 
 `core/qhull` has an opt-in CMake static-library smoke target:
 

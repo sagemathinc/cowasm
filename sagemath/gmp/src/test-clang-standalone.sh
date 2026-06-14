@@ -23,6 +23,10 @@ cowasm_clang_standalone_probe "gmp" "$bin_dir" "$probe_dir"
 rm -rf "$dist_dir"
 mkdir -p "$dist_dir"
 
+standalone_ldlibs=(
+  -lwasi-emulated-signal
+)
+
 cd "$build_dir"
 ABI=standard \
 AR="$bin_dir/cowasm-ar" \
@@ -30,6 +34,7 @@ RANLIB="$bin_dir/cowasm-ranlib" \
 CC="$bin_dir/cowasm-cc" \
 CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS:-}" \
 CFLAGS="-Oz -fvisibility-main" \
+LDFLAGS="${standalone_ldlibs[*]}" \
 COWASM_TOOLCHAIN=clang \
   ./configure \
     --build=i686-pc-linux-gnu \
@@ -49,6 +54,7 @@ COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
   -L"$dist_dir/lib" \
   "$src_dir/test-gmp.c" \
   -lgmp \
+  "${standalone_ldlibs[@]}" \
   -o "$probe_dir/test-gmp"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/test-gmp" |
