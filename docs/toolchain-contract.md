@@ -102,9 +102,9 @@ emscripten runtime archives:
 #define _LIBCPP_ABI_NAMESPACE __2
 ```
 
-The wrapper strips `-isystem` and `-isysroot` arguments supplied by build
-systems because they frequently point at host paths that are invalid for the
-WebAssembly target.
+The wrapper strips `-isystem`, `-isysroot`, and `--sysroot` arguments supplied
+by build systems because they frequently point at host paths that are invalid
+for the WebAssembly target.
 
 ## Main Function Visibility
 
@@ -207,12 +207,12 @@ before linking, matching the Zig backend's unsupported-library handling. The
 standalone clang backend appends the sysroot `-lc` itself.
 
 The clang backend expands response files written as `@file` before classifying
-compiler and linker arguments. It applies the same host `-isystem` and
-`-isysroot` stripping after expansion, so response files cannot override the
-selected WASI sysroot with host include paths. This lets build systems pass
-mixed compile/link arguments through a response file while still routing
-`-Xlinker`, `-Wl,`, object files, and libraries to the direct `wasm-ld`
-invocation.
+compiler and linker arguments. It applies the same host `-isystem`,
+`-isysroot`, and `--sysroot` stripping after expansion, so response files
+cannot override the selected WASI sysroot with host include paths. This lets
+build systems pass mixed compile/link arguments through a response file while
+still routing `-Xlinker`, `-Wl,`, object files, and libraries to the direct
+`wasm-ld` invocation.
 
 Compile-only (`-c`), assembly-only (`-S`), preprocessing (`-E`), and
 dependency-only (`-M`/`-MM`) commands run clang directly and do not invoke
