@@ -308,7 +308,8 @@ def clang_base_flags(sysroot):
 
 def reject_unsupported_clang_args(args):
     unsupported = {
-        '-shared', '-fPIC', '-fpic', '--experimental-pic', '-dynamic'
+        '-shared', '--shared', '-fPIC', '-fpic', '-fPIE', '-fpie',
+        '--experimental-pic', '-dynamic', '-pie', '--pie'
     }
     for arg in args:
         forwarded_args = split_wl_arg(arg) if arg.startswith('-Wl,') else [arg]

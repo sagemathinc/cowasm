@@ -125,6 +125,10 @@ expect_unsupported_flag() {
 
 expect_unsupported_flag "--experimental-pic" "$tmp/hello.c" -Wl,--experimental-pic
 expect_unsupported_flag "-shared" "$tmp/hello.c" -Wl,-shared
+expect_unsupported_flag "--shared" "$tmp/hello.c" -Wl,--shared
+expect_unsupported_flag "-fPIE" "$tmp/hello.c" -fPIE
+expect_unsupported_flag "-pie" "$tmp/hello.c" -pie
+expect_unsupported_flag "--pie" "$tmp/hello.c" -Wl,--pie
 
 : >"$COWASM_TEST_LOG"
 "$wrapper" -S "$tmp/hello.c" -o "$tmp/hello.s"

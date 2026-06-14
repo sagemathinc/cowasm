@@ -211,8 +211,9 @@ dependency-only (`-M`/`-MM`) commands run clang directly and do not invoke
 `wasm-ld`. Linker arguments forwarded with `-Xlinker`, including linker map
 flags such as `-Xlinker -M`, remain link arguments.
 
-The current clang backend rejects shared/PIC flags such as `-shared`,
-`-fPIC`, `-fpic`, `--experimental-pic`, and `-dynamic`, including when those
+The current clang backend rejects shared, PIC, and PIE flags such as
+`-shared`, `--shared`, `-fPIC`, `-fpic`, `-fPIE`, `-fpie`,
+`--experimental-pic`, `-dynamic`, `-pie`, and `--pie`, including when those
 flags are forwarded through `-Wl,`. It also rejects `cowasm-zig` and C++ mode.
 Those are later phases of the toolchain migration.
 
