@@ -3,6 +3,7 @@ CWD := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD = ${CWD}/build
 BIN = ${CWD}/../../bin
 SRC = ${CWD}/src
+WASI_SDK_BOOTSTRAP_FILES = $(shell find ${SRC}/wasi-sdk -type f 2>/dev/null)
 
 all: ${BIN}/zig
 
@@ -17,6 +18,18 @@ ${BIN}/zig: ${BUILD}/.build
 
 .PHONY: zig
 zig: ${BIN}/zig
+
+${BUILD}/wasi-sdk/Makefile: ${BUILD}/.build ${WASI_SDK_BOOTSTRAP_FILES}
+	rm -rf ${BUILD}/wasi-sdk
+	cp -a ${SRC}/wasi-sdk ${BUILD}/wasi-sdk
+
+.PHONY: wasi-sdk-next
+wasi-sdk-next: ${BUILD}/wasi-sdk/Makefile
+	cd ${BUILD}/wasi-sdk && make
+
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: ${BUILD}/wasi-sdk/Makefile
+	cd ${BUILD}/wasi-sdk && make test
 
 .PHONY: test
 test: all

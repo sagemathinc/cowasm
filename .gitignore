@@ -11,6 +11,7 @@ bin/cython
 bin/cowasm*
 bin/*-wasm
 bin/wasm-opt
+bin/wasi-sdk-*-next
 bin-wasm/**
 **/dist
 **/build
