@@ -326,6 +326,18 @@ builds libedit against that clang-built termcap install using `cowasm-cc`,
 `cowasm-ar`, and `cowasm-ranlib`. It links and runs a minimal history and
 tokenizer program through the CoWasm launcher.
 
+`core/man` has an opt-in dependent-executable smoke target:
+
+```sh
+make -C core/man test-clang-standalone
+```
+
+The target first rebuilds zlib with its standalone clang smoke target, then
+builds mandoc's `man` executable against that clang-built zlib install using
+the direct clang backend and selector-aware archive tools. It runs the bundled
+manual page through the CoWasm launcher and keeps the clang build tree separate
+from the default Zig-backed man package.
+
 `core/lua` has an opt-in standalone executable smoke target:
 
 ```sh

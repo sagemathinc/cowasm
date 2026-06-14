@@ -3,6 +3,8 @@
 include ../build/Makefile-vars
 
 TARBALL = ${SRC}/mandoc-2022-10-14.tar.xz
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
@@ -53,3 +55,34 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 
 test: node_modules wasm
 	echo "" | cowasm ${DIST_WASM}/bin/man build/wasm/man.1 | grep "display manual pages"
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.build
+	@status=0; \
+	$(MAKE) -C ../zlib test-clang-standalone || status=$$?; \
+		if [ "$${status}" = 77 ]; then \
+			exit 0; \
+		elif [ "$${status}" != 0 ]; then \
+			exit $${status}; \
+		fi; \
+		if [ ! -d "${CWD}/../zlib/dist/clang" ]; then \
+			echo "Skipping man clang standalone smoke: zlib clang standalone artifact is not available."; \
+			exit 0; \
+		fi; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${POSIX_WASM} ${CWD}/../zlib/dist/clang ${SRC} || status=$$?; \
+		if [ "$${status}" = 77 ]; then \
+			exit 0; \
+		fi; \
+		exit $${status}
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
