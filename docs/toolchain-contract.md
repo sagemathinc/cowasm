@@ -27,6 +27,8 @@ The important generated entry points are:
 - `bin/cowasm-cc`: symlink to `core/build/src/zig/bin/zig_cowasm_compiler.py`.
 - `bin/cowasm-c++`: same wrapper, selecting the C++ mode.
 - `bin/cowasm-zig`: same wrapper, selecting Zig object builds.
+- `bin/cowasm-ar`: archive wrapper for the selected backend.
+- `bin/cowasm-ranlib`: archive index wrapper for the selected backend.
 
 The compiler wrapper resolves `zig` from `PATH` first. If `zig` is not on
 `PATH`, direct invocations through `bin/cowasm-cc`, `bin/cowasm-c++`, or
@@ -231,6 +233,13 @@ Package builds use Zig archive tools directly:
 
 - `zig ar`
 - `zig ranlib`
+
+`bin/cowasm-ar` and `bin/cowasm-ranlib` expose the same `COWASM_TOOLCHAIN`
+selector for packages that are ready to stop naming Zig directly. With the
+default Zig backend they invoke the pinned `zig ar` and `zig ranlib`, resolving
+`zig` the same way as the compiler wrappers. With `COWASM_TOOLCHAIN=clang`,
+they invoke `llvm-ar` and `llvm-ranlib`; `COWASM_AR` and `COWASM_RANLIB` can
+override those tool paths.
 
 Some packages need explicit workarounds. For example, `core/zlib` rebuilds the
 generated `libz.a` from object files using `zig ar rc` because the upstream

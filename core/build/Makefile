@@ -47,6 +47,7 @@ test: all
 	grep '^wasm32-wasi$$' "$$tmp"; \
 	rm -f "$$tmp"
 	PATH="${BIN}:$$PATH" ${SRC}/test/clang-backend-smoke.sh ${BIN}/cowasm-cc
+	PATH="${BIN}:$$PATH" ${SRC}/test/archive-wrapper-smoke.sh ${BIN}/cowasm-ar ${BIN}/cowasm-ranlib
 	tmp="$$(mktemp)"; \
 	if ! PATH="/usr/bin:/bin" COWASM_TOOLCHAIN= ${BIN}/zcc --print-multiarch >"$$tmp" 2>&1; then \
 		cat "$$tmp"; \

@@ -36,7 +36,7 @@ endif
 
 
 
-all: ${DIST_NATIVE}/.${VERSION} ${BIN}/cowasm-cc ${BIN}/cowasm-c++ ${BIN}/cowasm-zig ${BIN}/zig
+all: ${DIST_NATIVE}/.${VERSION} ${BIN}/cowasm-cc ${BIN}/cowasm-c++ ${BIN}/cowasm-zig ${BIN}/cowasm-ar ${BIN}/cowasm-ranlib ${BIN}/zig
 
 include ../../Makefile-rules
 
@@ -66,6 +66,14 @@ ${BIN}/cowasm-c++: ${DIST_NATIVE}/.${VERSION}
 ${BIN}/cowasm-zig: ${DIST_NATIVE}/.${VERSION}
 	ln -sf ${CWD}/bin/zig_cowasm_compiler.py ${BIN}/cowasm-zig
 	touch ${BIN}/cowasm-zig
+
+${BIN}/cowasm-ar: ${DIST_NATIVE}/.${VERSION}
+	ln -sf ${CWD}/bin/cowasm_archive_tool.py ${BIN}/cowasm-ar
+	touch ${BIN}/cowasm-ar
+
+${BIN}/cowasm-ranlib: ${DIST_NATIVE}/.${VERSION}
+	ln -sf ${CWD}/bin/cowasm_archive_tool.py ${BIN}/cowasm-ranlib
+	touch ${BIN}/cowasm-ranlib
 
 test: ${DIST_NATIVE}/.${VERSION}
 	# Test that the correct version is installed. That's something at least.
