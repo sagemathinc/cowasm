@@ -350,6 +350,18 @@ probe program with clang and running it through the CoWasm launcher, then uses
 the native f2c helper to translate a tiny Fortran program and links the result
 against the clang-built runtime.
 
+`core/libffi` has an opt-in static-library smoke target:
+
+```sh
+make -C core/libffi test-clang-standalone
+```
+
+The target builds the wasm32 libffi backend with the direct clang backend and
+selector-aware archive tools, installs the static archive and headers, then
+links and runs a small `ffi_prep_cif` ABI probe through the CoWasm launcher.
+It deliberately avoids `ffi_call`, which is still a stub in the standalone C
+path for this port.
+
 `core/tar` has an opt-in dependent-executable smoke target:
 
 ```sh
