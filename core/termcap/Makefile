@@ -9,9 +9,29 @@ VERSION = 1.3.1
 TARBALL = ${UPSTREAM}/termcap-${VERSION}.tar.gz
 URL = https://ftp.gnu.org/gnu/termcap/termcap-${VERSION}.tar.gz
 TARBALL_SHA256 = 91a0e22e5387ca4467b5bcb18edf1c51b930262fd466d5fda396dd9d26719100
-
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 include ../build/Makefile-rules
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.build
+	@status=0; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${SRC} || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
 
 ##################
 # NATIVE

@@ -305,6 +305,16 @@ uses native helper tools only for generated source files, then compiles
 `sqlite3.c` into a static archive with the direct clang backend. It links and
 runs a minimal in-memory query program through the CoWasm launcher.
 
+`core/termcap` has an opt-in static-library smoke target:
+
+```sh
+make -C core/termcap test-clang-standalone
+```
+
+The target builds `libtermcap.a` with the direct clang backend and
+selector-aware archive tools, then links and runs a minimal termcap lookup and
+cursor-formatting program through the CoWasm launcher.
+
 ## Archive Tools
 
 Package builds use Zig archive tools directly:
