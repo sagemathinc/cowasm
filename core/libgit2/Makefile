@@ -4,6 +4,8 @@ include ../build/Makefile-vars
 
 # See https://github.com/libgit2/libgit2/releases
 VERSION = 1.5.0
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 URL = https://github.com/libgit2/libgit2/archive/refs/tags/v${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/libgit2-${VERSION}.tar.gz
@@ -71,3 +73,30 @@ test-init: node_modules ${DIST_WASM}/.built
 	cd ${TESTS}/testrepo && git status |grep "No commits yet"
 
 test: test-init
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.build
+	$(MAKE) -C ../zlib test-clang-standalone || status=$$?; \
+		if [ "$${status:-0}" = 77 ]; then \
+			exit 0; \
+		fi; \
+		if [ "$${status:-0}" != 0 ]; then \
+			exit $${status}; \
+		fi; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${CWD}/../zlib/dist/clang ${SRC} || status=$$?; \
+		if [ "$${status:-0}" = 77 ]; then \
+			exit 0; \
+		fi; \
+		exit $${status:-0}
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
