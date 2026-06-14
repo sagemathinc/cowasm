@@ -837,7 +837,7 @@ implementation code.
 - Should the backend selector use `COWASM_TOOLCHAIN=wasi-sdk`,
   `COWASM_TOOLCHAIN=clang`, or both?
 - Should `zig_cowasm_compiler.py` be renamed once Zig is no longer the primary
-  provider?
+  provider? (yes)
 - Should CoWasm side modules always use `-nostdlib`, or should some package
   classes eventually load SDK shared libraries?
 - How much work is required to rebuild `core/dylink` runtime objects as PIC?
@@ -883,3 +883,4 @@ The modernization is successful when:
 
 The desired end state is a pinned `wasi-sdk` CoWasm toolchain with C runtime
 glue and a visible, testable WASI/dylink contract.
+
