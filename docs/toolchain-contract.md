@@ -272,6 +272,18 @@ The target rebuilds xz/lzma with the direct clang backend, uses
 through the CoWasm launcher. Like the other package smoke targets, it reports a
 clear skip when the direct clang/lld WASI toolchain is not configured.
 
+`core/libpng` has an opt-in standalone target that exercises a dependent
+library build:
+
+```sh
+make -C core/libpng test-clang-standalone
+```
+
+The target first rebuilds zlib with its standalone clang smoke target, then
+builds libpng against that clang-built zlib install using `cowasm-cc`,
+`cowasm-ar`, and `cowasm-ranlib`. It runs libpng's `timepng` test program
+through the CoWasm launcher.
+
 ## Archive Tools
 
 Package builds use Zig archive tools directly:
