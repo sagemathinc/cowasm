@@ -252,6 +252,8 @@ cat >"$tmp/link.rsp" <<EOF
 -isysroot "$tmp/host-sysroot"
 --sysroot "$tmp/host-sysroot-split"
 --sysroot="$tmp/host-sysroot-equals"
+-isystem$tmp/host-include-joined
+-isysroot$tmp/host-sysroot-joined
 "$tmp/hello.c"
 "$tmp/extra.o"
 -Xlinker --import-memory
@@ -270,6 +272,8 @@ grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--import-table"
 ! grep -F -- "$tmp/host-sysroot" "$COWASM_TEST_LOG"
 ! grep -F -- "$tmp/host-sysroot-split" "$COWASM_TEST_LOG"
 ! grep -F -- "$tmp/host-sysroot-equals" "$COWASM_TEST_LOG"
+! grep -F -- "$tmp/host-include-joined" "$COWASM_TEST_LOG"
+! grep -F -- "$tmp/host-sysroot-joined" "$COWASM_TEST_LOG"
 
 : >"$COWASM_TEST_LOG"
 "$wrapper" -Oz -fvisibility-main -Wl,--import-memory,--import-table -lm -ldl -lwasi-emulated-signal -lc "$tmp/hello.c" -o "$tmp/hello.wasm"

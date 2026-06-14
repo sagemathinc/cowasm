@@ -106,7 +106,9 @@ emscripten runtime archives:
 
 The wrapper strips `-isystem`, `-isysroot`, and `--sysroot` arguments supplied
 by build systems because they frequently point at host paths that are invalid
-for the WebAssembly target.
+for the WebAssembly target. It accepts both split path forms such as
+`-isystem /host/include` and joined path forms such as `-isystem/host/include`;
+`--sysroot=/host/sysroot` is stripped as well.
 
 ## Main Function Visibility
 
@@ -216,11 +218,11 @@ standalone clang backend appends the sysroot `-lc` itself.
 
 The clang backend expands response files written as `@file` before classifying
 compiler and linker arguments. It applies the same host `-isystem`,
-`-isysroot`, and `--sysroot` stripping after expansion, so response files
-cannot override the selected WASI sysroot with host include paths. This lets
-build systems pass mixed compile/link arguments through a response file while
-still routing `-Xlinker`, `-Wl,`, object files, and libraries to the direct
-`wasm-ld` invocation.
+`-isysroot`, and `--sysroot` stripping after expansion, including joined path
+forms, so response files cannot override the selected WASI sysroot with host
+include paths. This lets build systems pass mixed compile/link arguments
+through a response file while still routing `-Xlinker`, `-Wl,`, object files,
+and libraries to the direct `wasm-ld` invocation.
 
 When multiple `-o` options are present, the direct clang backend uses the last
 one, matching normal compiler-driver precedence. It accepts both `-o output`

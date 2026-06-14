@@ -124,12 +124,21 @@ def strip_host_system_path_args(args):
             require_option_value(args, i)
             i += 2
             continue
+        if is_joined_host_path_arg(args[i], '-isystem') or is_joined_host_path_arg(
+                args[i], '-isysroot'):
+            i += 1
+            continue
         if args[i].startswith('--sysroot='):
             i += 1
             continue
         stripped.append(args[i])
         i += 1
     return stripped
+
+
+def is_joined_host_path_arg(arg, option):
+    suffix = arg[len(option):]
+    return arg.startswith(option) and suffix != "" and not suffix.startswith('-')
 
 
 def strip_isys():
