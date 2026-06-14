@@ -34,6 +34,12 @@ cat >clang_standalone_config.h <<'EOF'
 #ifdef __wasi__
 #define fchmod(fd, mode) (0)
 #define fchown(fd, owner, gid) (0)
+typedef void (*cowasm_signal_handler_t)(int);
+static inline cowasm_signal_handler_t cowasm_signal(int sig, cowasm_signal_handler_t func) {
+  (void)sig;
+  return func;
+}
+#define signal(sig, func) cowasm_signal((sig), (func))
 #endif
 
 #endif
@@ -55,3 +61,11 @@ cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/bunzip2" --help \
   >"$probe_dir/bunzip2-help.out" 2>"$probe_dir/bunzip2-help.err"
 grep -F "Version 1.0.8" "$probe_dir/bzip2-help.err"
 grep -F "Version 1.0.8" "$probe_dir/bunzip2-help.err"
+
+test_dir="$probe_dir/bzip2-roundtrip"
+mkdir -p "$test_dir"
+printf 'coWasm clang bzip2 smoke\n' >"$test_dir/message.txt"
+cp "$test_dir/message.txt" "$test_dir/original.txt"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/bzip2" "$test_dir/message.txt"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/bunzip2" "$test_dir/message.txt.bz2"
+cmp "$test_dir/original.txt" "$test_dir/message.txt"
