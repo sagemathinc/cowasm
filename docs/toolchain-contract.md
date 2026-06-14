@@ -338,6 +338,18 @@ runs the package's existing summation script through the CoWasm launcher. The
 standalone build omits readline/libedit so it exercises Lua itself without
 pulling in the interactive terminal dependency chain.
 
+`core/f2c` has an opt-in translated-program smoke target:
+
+```sh
+make -C core/f2c test-clang-standalone
+```
+
+The target builds `libf2c.a` with the direct clang backend and selector-aware
+archive tools. It generates f2c's target-specific `arith.h` by compiling the
+probe program with clang and running it through the CoWasm launcher, then uses
+the native f2c helper to translate a tiny Fortran program and links the result
+against the clang-built runtime.
+
 `core/tar` has an opt-in dependent-executable smoke target:
 
 ```sh
