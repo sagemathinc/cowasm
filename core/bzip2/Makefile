@@ -5,6 +5,8 @@ include ../build/Makefile-vars
 
 # See https://github.com/libarchive/bzip2/tags
 VERSION=1.0.8
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 TARBALL = ${UPSTREAM}/bzip2-${VERSION}.tar.gz
 URL = https://github.com/libarchive/bzip2/archive/refs/tags/bzip2-${VERSION}.tar.gz
 TARBALL_SHA256 = db106b740252669664fd8f3a1c69fe7f689d5cd4b132f82ba82b9afba27627df
@@ -50,3 +52,24 @@ test: ${DIST_WASM}/.built
 	${BIN}/cowasm ${DIST_WASM}/bin/bunzip2 ${BUILD_WASM}/testfile.txt.bz2
 	cat  ${BUILD_WASM}/testfile.txt |grep coWasm
 	rm ${BUILD_WASM}/testfile.txt
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.build
+	@status=0; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${SRC} || status=$$?; \
+		if [ "$${status}" = 77 ]; then \
+			exit 0; \
+		fi; \
+		exit $${status}
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang

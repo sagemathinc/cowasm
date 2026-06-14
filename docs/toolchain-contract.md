@@ -242,6 +242,17 @@ and runs zlib's upstream `example` program. It reports a clear skip when the
 direct clang/lld WASI toolchain is not configured, so it can live alongside the
 default Zig-backed package test without weakening the known-good baseline.
 
+`core/bzip2` has the same opt-in shape:
+
+```sh
+make -C core/bzip2 test-clang-standalone
+```
+
+The target rebuilds bzip2 from source with the direct clang backend and the
+selector-aware archive tools, then starts `bzip2` and `bunzip2` through the
+CoWasm launcher. It uses a standalone WASI shim for metadata-preservation calls
+that are not meaningful in the browser runtime.
+
 ## Archive Tools
 
 Package builds use Zig archive tools directly:
