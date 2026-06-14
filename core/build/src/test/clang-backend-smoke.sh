@@ -290,5 +290,5 @@ grep -F -- "$tmp/sysroot/lib/wasm32-wasi/crt1.o" "$COWASM_TEST_LOG"
 grep -F -- "$tmp/libclang_rt.builtins-wasm32.a" "$COWASM_TEST_LOG"
 expect_no_linker_match ' -lm( |$)'
 expect_no_linker_match ' -ldl( |$)'
-expect_no_linker_match ' -lwasi-emulated-signal( |$)'
+grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "-lwasi-emulated-signal"
 test "$(grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -E -o -- ' -lc( |$)' | wc -l)" -eq 1

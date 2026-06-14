@@ -57,7 +57,9 @@ def find_required_program(env_name, program):
 
     found = shutil.which(program)
     if found:
-        return os.path.realpath(found)
+        # Preserve the driver name.  LLVM archive tools can be symlinked
+        # through generic binaries whose behavior depends on argv[0].
+        return found
 
     fail(
         f"cowasm: COWASM_TOOLCHAIN=clang requires '{program}'; "

@@ -251,7 +251,9 @@ def find_required_program(env_name, program):
 
     found = shutil.which(program)
     if found:
-        return os.path.realpath(found)
+        # Preserve the driver name.  Some LLVM tools, notably wasm-ld, are
+        # symlinks to a generic binary that selects behavior from argv[0].
+        return found
 
     fail(
         f"cowasm: COWASM_TOOLCHAIN=clang requires '{program}'; "
@@ -356,7 +358,7 @@ def reject_unsupported_clang_args(args):
 
 
 def is_unsupported_lib(arg):
-    return arg in ['-lc', '-lm', '-ldl'] or arg.startswith('-lwasi-emulated')
+    return arg in ['-lc', '-lm', '-ldl']
 
 
 def remove_unsupported_libs(argv):
@@ -500,8 +502,8 @@ def clang_backend():
     if not clang_is_debug(args):
         link.append('--strip-all')
     link += [crt1] + object_args + [obj.name for obj in objects]
-    link += linker_args + ['-L', sysroot_lib, '-lc',
-                           clang_builtin_runtime(clang, base_flags)]
+    link += ['-L', sysroot_lib] + linker_args
+    link += ['-lc', clang_builtin_runtime(clang, base_flags)]
     run(link)
 
 

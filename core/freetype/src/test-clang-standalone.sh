@@ -74,4 +74,4 @@ COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
   -lfreetype -lz \
   -o "$probe_dir/freetype-test"
 
-"$bin_dir/cowasm" "$probe_dir/freetype-test"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/freetype-test"

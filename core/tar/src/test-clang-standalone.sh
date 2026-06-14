@@ -57,14 +57,14 @@ cat "$src_dir/config.h" >>config.h
 COWASM_TOOLCHAIN=clang make -j"$jobs"
 COWASM_TOOLCHAIN=clang make install
 
-"$bin_dir/cowasm" "$dist_dir/bin/tar" -h | grep "bsdtar 3.6.1"
-"$bin_dir/cowasm" "$dist_dir/bin/cat" --version | grep "bsdcat 3.6.1"
-"$bin_dir/cowasm" "$dist_dir/bin/cpio" --version | grep "bsdcpio 3.6.1"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/tar" -h | grep "bsdtar 3.6.1"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/cat" --version | grep "bsdcat 3.6.1"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/cpio" --version | grep "bsdcpio 3.6.1"
 
 test_dir="$probe_dir/tar-roundtrip"
 mkdir -p "$test_dir/input"
 printf 'coWasm clang tar smoke\n' >"$test_dir/input/message.txt"
-"$bin_dir/cowasm" "$dist_dir/bin/tar" -cf "$test_dir/archive.tar" -C "$test_dir" input
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/tar" -cf "$test_dir/archive.tar" -C "$test_dir" input
 mkdir "$test_dir/output"
-"$bin_dir/cowasm" "$dist_dir/bin/tar" -xf "$test_dir/archive.tar" -C "$test_dir/output"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/tar" -xf "$test_dir/archive.tar" -C "$test_dir/output"
 cmp "$test_dir/input/message.txt" "$test_dir/output/input/message.txt"

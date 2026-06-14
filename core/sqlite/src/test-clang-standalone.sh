@@ -102,4 +102,4 @@ COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
   -lsqlite3 \
   -o "$probe_dir/sqlite-test"
 
-"$bin_dir/cowasm" "$probe_dir/sqlite-test"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/sqlite-test"

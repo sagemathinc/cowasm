@@ -69,4 +69,4 @@ COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
   -lqhull_r \
   -o "$probe_dir/qhull-test"
 
-"$bin_dir/cowasm" "$probe_dir/qhull-test"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/qhull-test"

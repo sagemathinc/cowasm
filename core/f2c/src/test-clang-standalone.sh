@@ -33,7 +33,7 @@ sed -i.bak \
 
 env COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
   -Oz -DNO_FPINIT arithchk.c -lm -o arithchk
-"$bin_dir/cowasm" ./arithchk >arith.h
+cowasm_clang_standalone_run_wasi "$bin_dir" ./arithchk >arith.h
 rm -f arithchk
 
 COWASM_TOOLCHAIN=clang make -j"$jobs" \
@@ -53,4 +53,4 @@ cd "$dist_dir/test"
 env COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
   -Oz -fvisibility-main hello.c -o hello \
   -I"$dist_dir/include" -L"$dist_dir/lib" -lf2c
-"$bin_dir/cowasm" ./hello | grep "Hello, world!"
+cowasm_clang_standalone_run_wasi "$bin_dir" ./hello | grep "Hello, world!"

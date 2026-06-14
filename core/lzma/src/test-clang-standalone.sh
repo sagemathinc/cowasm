@@ -47,6 +47,6 @@ COWASM_TOOLCHAIN=clang make install
 test_dir="$probe_dir/lzma-roundtrip"
 mkdir -p "$test_dir"
 cp Makefile "$test_dir/Makefile"
-"$bin_dir/cowasm" "$dist_dir/bin/xz" -z "$test_dir/Makefile"
-"$bin_dir/cowasm" "$dist_dir/bin/xz" -d "$test_dir/Makefile.xz"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/xz" -z "$test_dir/Makefile"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/xz" -d "$test_dir/Makefile.xz"
 cmp Makefile "$test_dir/Makefile"

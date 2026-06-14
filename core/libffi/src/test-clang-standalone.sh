@@ -70,4 +70,4 @@ COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
   -lffi \
   -o "$probe_dir/libffi-test"
 
-"$bin_dir/cowasm" "$probe_dir/libffi-test"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/libffi-test"

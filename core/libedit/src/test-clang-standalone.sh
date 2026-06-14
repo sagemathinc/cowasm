@@ -105,4 +105,4 @@ COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
   -ltermcap \
   -o "$probe_dir/libedit-test"
 
-"$bin_dir/cowasm" "$probe_dir/libedit-test"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/libedit-test"

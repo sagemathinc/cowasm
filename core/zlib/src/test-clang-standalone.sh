@@ -40,4 +40,4 @@ COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-ar" rc libz.a *.o
 cp libz.a "$dist_dir/lib"
 
 COWASM_TOOLCHAIN=clang make example
-"$bin_dir/cowasm" ./example
+cowasm_clang_standalone_run_wasi "$bin_dir" ./example

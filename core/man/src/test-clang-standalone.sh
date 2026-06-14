@@ -38,4 +38,4 @@ COWASM_TOOLCHAIN=clang make -j"$jobs" \
 
 cp mandoc "$dist_dir/bin/man"
 
-"$bin_dir/cowasm" "$dist_dir/bin/man" man.1 | grep "display manual pages"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/man" man.1 | grep "display manual pages"

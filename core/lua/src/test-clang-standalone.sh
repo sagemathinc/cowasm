@@ -38,5 +38,5 @@ cp lua "$dist_dir/bin/lua"
 cp liblua.a "$dist_dir/lib/liblua.a"
 cp lua.h luaconf.h lualib.h lauxlib.h "$dist_dir/include/"
 
-"$bin_dir/cowasm" "$dist_dir/bin/lua" "$src_dir/sum.lua" |
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/lua" "$src_dir/sum.lua" |
   grep 50000005000000

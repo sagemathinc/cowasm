@@ -49,9 +49,9 @@ COWASM_TOOLCHAIN=clang make -j"$jobs" \
   PREFIX="$dist_dir" \
   install
 
-"$bin_dir/cowasm" "$dist_dir/bin/bzip2" --help \
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/bzip2" --help \
   >"$probe_dir/bzip2-help.out" 2>"$probe_dir/bzip2-help.err"
-"$bin_dir/cowasm" "$dist_dir/bin/bunzip2" --help \
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/bunzip2" --help \
   >"$probe_dir/bunzip2-help.out" 2>"$probe_dir/bunzip2-help.err"
 grep -F "Version 1.0.8" "$probe_dir/bzip2-help.err"
 grep -F "Version 1.0.8" "$probe_dir/bunzip2-help.err"

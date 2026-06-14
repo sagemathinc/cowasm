@@ -69,3 +69,47 @@ EOF
     env COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-ranlib" \
       "$probe_dir/libprobe.a"
 }
+
+cowasm_clang_standalone_wasi_runner() {
+  local bin_dir
+  bin_dir="$(cd "$1" && pwd)"
+
+  if [ -n "${COWASM_WASI_RUN:-}" ]; then
+    if [ -x "$COWASM_WASI_RUN" ]; then
+      printf '%s\n' "$COWASM_WASI_RUN"
+      return 0
+    fi
+    echo "cowasm: COWASM_WASI_RUN='$COWASM_WASI_RUN' is not executable" >&2
+    return 1
+  fi
+
+  for candidate in \
+    "$bin_dir/../core/kernel/node_modules/.bin/wasi-run" \
+    "$bin_dir/../core/dylink/node_modules/.bin/wasi-run" \
+    "$bin_dir/../node_modules/.pnpm/node_modules/.bin/wasi-run"; do
+    if [ -x "$candidate" ]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+
+  echo "cowasm: could not find wasi-run; set COWASM_WASI_RUN=/path/to/wasi-run" >&2
+  return 1
+}
+
+cowasm_clang_standalone_run_wasi() {
+  local bin_dir="$1"
+  shift
+
+  local runner
+  runner="$(cowasm_clang_standalone_wasi_runner "$bin_dir")"
+
+  local program="$1"
+  shift
+  if [ "${program%.wasm}" = "$program" ] && [ -f "$program" ]; then
+    ln -sf "$program" "$program.wasm"
+    program="$program.wasm"
+  fi
+
+  "$runner" "$program" "$@"
+}

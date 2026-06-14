@@ -51,5 +51,5 @@ COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
   -lgmp \
   -o "$probe_dir/test-gmp"
 
-"$bin_dir/cowasm" "$probe_dir/test-gmp" |
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/test-gmp" |
   grep 1606938044258990275541962092341162602522202993782792835301376

@@ -95,4 +95,4 @@ COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
   -ltermcap \
   -o "$probe_dir/ncurses-test"
 
-"$bin_dir/cowasm" "$probe_dir/ncurses-test"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/ncurses-test"

@@ -43,4 +43,4 @@ mkdir -p "$dist_dir/lib" "$dist_dir/include"
 cp .libs/libpng16.a "$dist_dir/lib/libpng.a"
 cp png.h pngconf.h pnglibconf.h "$dist_dir/include/"
 
-"$bin_dir/cowasm" ./timepng pngnow.png
+cowasm_clang_standalone_run_wasi "$bin_dir" ./timepng pngnow.png

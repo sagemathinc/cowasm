@@ -189,6 +189,16 @@ must point at directories. Standalone executable links require
 `<sysroot>/lib/wasm32-wasi/crt1.o`; the wrapper fails before invoking
 `wasm-ld` when that startup object is missing.
 
+On Ubuntu/Debian-style systems, `wasi-libc` may install headers under
+`/usr/include/wasm32-wasi` and libraries under `/usr/lib/wasm32-wasi` instead
+of shipping a single `/usr/share/wasi-sysroot` directory. The current local
+container exposes that split install through compatibility symlinks:
+
+```sh
+/usr/share/wasi-sysroot/include -> /usr/include/wasm32-wasi
+/usr/share/wasi-sysroot/lib/wasm32-wasi -> /usr/lib/wasm32-wasi
+```
+
 The compile-side defaults are:
 
 ```sh
@@ -212,9 +222,10 @@ wasm-ld -o <output> <sysroot>/lib/wasm32-wasi/crt1.o ... \
   -L <sysroot>/lib/wasm32-wasi -lc <compiler-rt>
 ```
 
-User-supplied `-lc`, `-lm`, `-ldl`, and `-lwasi-emulated-*` flags are filtered
-before linking, matching the Zig backend's unsupported-library handling. The
-standalone clang backend appends the sysroot `-lc` itself.
+User-supplied `-lc`, `-lm`, and `-ldl` flags are filtered before linking. The
+standalone clang backend appends the sysroot `-lc` itself. User-supplied
+`-lwasi-emulated-*` flags are preserved so package builds can opt into WASI
+libc emulation archives such as `libwasi-emulated-mman.a`.
 
 The clang backend expands response files written as `@file` before classifying
 compiler and linker arguments. It applies the same host `-isystem`,
@@ -336,7 +347,10 @@ The target first rebuilds zlib with its standalone clang smoke target, then
 builds mandoc's `man` executable against that clang-built zlib install using
 the direct clang backend and selector-aware archive tools. It runs the bundled
 manual page through the CoWasm launcher and keeps the clang build tree separate
-from the default Zig-backed man package.
+from the default Zig-backed man package. With the Ubuntu packaged WASI sysroot,
+this target currently exposes remaining POSIX header and mmap/socket contract
+work in the direct clang path and should be treated as a follow-up gate rather
+than a green package.
 
 `core/lua` has an opt-in standalone executable smoke target:
 
