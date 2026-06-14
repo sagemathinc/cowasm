@@ -465,6 +465,21 @@ WASI libc's `raise` shim instead of compiling its fallback `kill(getpid(), ...)`
 path. It leaves the default Zig-backed GMP build as the known-good SageMath
 dependency path.
 
+`sagemath/pari` has an opt-in static executable smoke target:
+
+```sh
+make -C sagemath/pari test-clang-standalone
+```
+
+The target first ensures the GMP clang standalone archive is available, then
+probes direct clang/lld WASI `setjmp`/`longjmp` support before configuring
+PARI/GP. PARI uses real `setjmp`/`longjmp` for error handling, so the smoke
+currently skips when the direct clang backend cannot provide the required
+`__wasm_setjmp`/`__wasm_longjmp` runtime symbols. Once that runtime support is
+available, the target configures PARI against `sagemath/gmp/dist/clang`, builds
+the static `gp` executable without PIC flags, and checks both the GMP kernel
+banner and a small arithmetic expression through the CoWasm WASI runner.
+
 `core/qhull` has an opt-in CMake static-library smoke target:
 
 ```sh
@@ -588,7 +603,9 @@ CC="zcc" AR="zig ar" ./Configure ...
 ```
 
 `zcc` is used there because it produces a runnable shell launcher for a linked
-WASM executable, which matches PARI's build-time expectations.
+WASM executable, which matches PARI's build-time expectations. A direct clang
+PARI build also needs explicit WASI `setjmp`/`longjmp` runtime support because
+PARI's error-handling path uses those APIs directly.
 
 ## Zig-Provided Pieces
 

@@ -6,16 +6,46 @@ VERSION = 2.17.3
 URL = https://pari.math.u-bordeaux.fr/pub/pari/unix/pari-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/pari-${VERSION}.tar.gz
 TARBALL_SHA256 = 8d9c4fcd584c468d27e0f23c36836587284452094c4b1c404c20c4b810462dcb
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 all: deps wasm
 
 include ../build/Makefile-rules
 
 GMP_WASM = ${PACKAGES}/gmp/dist/wasm
+GMP_CLANG = ${PACKAGES}/gmp/dist/clang
 #POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 
 ${GMP_WASM}/.built:
 	make -C ${PACKAGES}/gmp
+
+${GMP_CLANG}/lib/libgmp.a:
+	$(MAKE) -C ${PACKAGES}/gmp test-clang-standalone
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+${BUILD_CLANG}/.patched: ${BUILD_CLANG}/.build
+	cd ${BUILD_CLANG} && \
+		cat ${SRC}/patches/01-pipes.patch | patch -p1
+	touch ${BUILD_CLANG}/.patched
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${GMP_CLANG}/lib/libgmp.a ${BUILD_CLANG}/.patched
+	@status=0; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${GMP_CLANG} || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && \
