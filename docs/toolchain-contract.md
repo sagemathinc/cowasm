@@ -338,6 +338,17 @@ executables against those clang-built dependencies. It checks the command
 versions and runs a small archive/extract round trip through the CoWasm
 launcher.
 
+`sagemath/gmp` has an opt-in static-library smoke target:
+
+```sh
+make -C sagemath/gmp test-clang-standalone
+```
+
+The target builds GMP with the direct clang backend in `ABI=standard` mode,
+installs a static archive, then links and runs the package's existing
+multi-precision arithmetic probe through the CoWasm launcher. It leaves the
+default Zig-backed GMP build as the known-good SageMath dependency path.
+
 ## Archive Tools
 
 Package builds use Zig archive tools directly:

@@ -5,10 +5,32 @@ VERSION = 6.2.1
 URL = https://gmplib.org/download/gmp/gmp-${VERSION}.tar.bz2
 TARBALL = ${UPSTREAM}/gmp-${VERSION}.tar.bz2
 TARBALL_SHA256 = eae9326beb4158c386e39a356818031bd28f3124cf915f8c5b1dc4c7a36b4d7c
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 all: wasm
 
 include ../build/Makefile-rules
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.build
+	@status=0; \
+	ZIG_NATIVE_CFLAGS=${ZIG_NATIVE_CFLAGS} \
+		${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${SRC} || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
 
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
