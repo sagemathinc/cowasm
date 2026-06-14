@@ -69,7 +69,7 @@ EXTRA OPTIONS:
    -cowasm-verbose = prints any zig/linker commands before running them
 """
 
-import os, shutil, subprocess, sys, tempfile, pathlib
+import os, shlex, shutil, subprocess, sys, tempfile, pathlib
 
 verbose = False  # default
 SUPPORTED_TOOLCHAINS = {"zig", "clang"}
@@ -338,6 +338,30 @@ def split_wl_arg(arg):
     return arg[len('-Wl,'):].split(',')
 
 
+def expand_response_args(args, seen=None):
+    if seen is None:
+        seen = set()
+
+    expanded = []
+    for arg in args:
+        if not arg.startswith('@') or arg == '@':
+            expanded.append(arg)
+            continue
+
+        response_file = pathlib.Path(arg[1:])
+        resolved = response_file.resolve()
+        if resolved in seen:
+            fail(f"cowasm: recursive response file {str(response_file)!r}")
+        if not response_file.is_file():
+            fail(f"cowasm: response file {str(response_file)!r} does not exist")
+
+        seen.add(resolved)
+        expanded += expand_response_args(
+            shlex.split(response_file.read_text(), comments=False), seen)
+        seen.remove(resolved)
+    return expanded
+
+
 def clang_parse_link_args(args):
     i = 0
     source_files = []
@@ -403,7 +427,7 @@ def clang_backend():
     if LANG == 'c++':
         fail("cowasm: COWASM_TOOLCHAIN=clang does not support C++ yet")
 
-    args = sys.argv[2:]
+    args = expand_response_args(sys.argv[2:])
     if '--print-multiarch' in args:
         print('wasm32-wasi')
         return

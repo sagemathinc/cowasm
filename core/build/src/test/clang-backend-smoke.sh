@@ -69,6 +69,7 @@ int main(int argc, char **argv) {
   return argv[0] == 0;
 }
 EOF
+touch "$tmp/extra.o"
 
 export COWASM_TOOLCHAIN=clang
 export COWASM_CLANG="$tmp/clang"
@@ -130,6 +131,25 @@ expect_unsupported_flag "-fPIE" "$tmp/hello.c" -fPIE
 expect_unsupported_flag "-pie" "$tmp/hello.c" -pie
 expect_unsupported_flag "--pie" "$tmp/hello.c" -Wl,--pie
 
+err="$tmp/missing-response.err"
+if "$wrapper" @"$tmp/missing.rsp" >"$err" 2>&1; then
+  cat "$err"
+  echo "expected missing response file to fail" >&2
+  exit 1
+fi
+grep -F -- "cowasm: response file '$tmp/missing.rsp' does not exist" "$err"
+! grep -F -- "Traceback" "$err"
+
+echo @"$tmp/recursive.rsp" >"$tmp/recursive.rsp"
+err="$tmp/recursive-response.err"
+if "$wrapper" @"$tmp/recursive.rsp" >"$err" 2>&1; then
+  cat "$err"
+  echo "expected recursive response file to fail" >&2
+  exit 1
+fi
+grep -F -- "cowasm: recursive response file '$tmp/recursive.rsp'" "$err"
+! grep -F -- "Traceback" "$err"
+
 : >"$COWASM_TEST_LOG"
 "$wrapper" -S "$tmp/hello.c" -o "$tmp/hello.s"
 test -f "$tmp/hello.s"
@@ -145,6 +165,23 @@ expect_no_wasm_ld
 "$wrapper" "$tmp/hello.c" -Xlinker -M -o "$tmp/map.wasm"
 test -f "$tmp/map.wasm"
 grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- " -M "
+
+cat >"$tmp/link.rsp" <<EOF
+-DRESPONSE_FLAG
+"$tmp/hello.c"
+"$tmp/extra.o"
+-Xlinker --import-memory
+-Wl,--import-table
+EOF
+
+: >"$COWASM_TEST_LOG"
+"$wrapper" @"$tmp/link.rsp" -o "$tmp/response.wasm"
+test -f "$tmp/response.wasm"
+grep -F -- "clang" "$COWASM_TEST_LOG" | grep -F -- "-DRESPONSE_FLAG"
+grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "$tmp/extra.o"
+grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--import-memory"
+grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--import-table"
+! grep -F -- "@$tmp/link.rsp" "$COWASM_TEST_LOG"
 
 : >"$COWASM_TEST_LOG"
 "$wrapper" -Oz -fvisibility-main -Wl,--import-memory,--import-table -lm -ldl -lwasi-emulated-signal -lc "$tmp/hello.c" -o "$tmp/hello.wasm"
