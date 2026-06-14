@@ -368,13 +368,13 @@ make -C core/man test-clang-standalone
 ```
 
 The target first rebuilds zlib with its standalone clang smoke target, then
-builds mandoc's `man` executable against that clang-built zlib install using
-the direct clang backend and selector-aware archive tools. It runs the bundled
-manual page through the CoWasm launcher and keeps the clang build tree separate
-from the default Zig-backed man package. With the Ubuntu packaged WASI sysroot,
-this target currently exposes remaining POSIX header and mmap/socket contract
-work in the direct clang path and should be treated as a follow-up gate rather
-than a green package.
+builds mandoc against that clang-built zlib install using the direct clang
+backend and selector-aware archive tools. It supplies focused compatibility
+headers for split WASI sysroots plus noninteractive process-control stubs for
+pager and tag-file paths that the smoke does not exercise. It installs both
+`man` and `mandoc` names, then renders the bundled `man.1` page through the
+`mandoc` entry point with the CoWasm launcher while keeping the clang build
+tree separate from the default Zig-backed man package.
 
 `core/lua` has an opt-in standalone executable smoke target:
 
