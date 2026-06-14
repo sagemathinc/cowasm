@@ -2,11 +2,10 @@
 include ../build/Makefile-vars
 
 # https://pari.math.u-bordeaux.fr/download.html
-VERSION = 2.15.2
-SERIES = 2.15
-URL = https://pari.math.u-bordeaux.fr/pub/pari/OLD/${SERIES}/pari-${VERSION}.tar.gz
+VERSION = 2.17.3
+URL = https://pari.math.u-bordeaux.fr/pub/pari/unix/pari-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/pari-${VERSION}.tar.gz
-TARBALL_SHA256 = b04628111ee22876519a4b1cdafb32febaa34eafa24f9e81f58f8d057fbee0dd
+TARBALL_SHA256 = 8d9c4fcd584c468d27e0f23c36836587284452094c4b1c404c20c4b810462dcb
 
 all: deps wasm
 

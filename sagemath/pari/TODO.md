@@ -1,7 +1,8 @@
 This is just a very minimal first proof of concept build. It does work though, if you type
 
 ```sh
-./dist/wasm/bin/gp
+cd sagemath/pari
+PATH=../../bin:$PATH ./dist/wasm/bin/gp
 ```
 
 ## [ ] Build dynamically linked
