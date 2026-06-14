@@ -207,9 +207,12 @@ before linking, matching the Zig backend's unsupported-library handling. The
 standalone clang backend appends the sysroot `-lc` itself.
 
 The clang backend expands response files written as `@file` before classifying
-compiler and linker arguments. This lets build systems pass mixed compile/link
-arguments through a response file while still routing `-Xlinker`, `-Wl,`,
-object files, and libraries to the direct `wasm-ld` invocation.
+compiler and linker arguments. It applies the same host `-isystem` and
+`-isysroot` stripping after expansion, so response files cannot override the
+selected WASI sysroot with host include paths. This lets build systems pass
+mixed compile/link arguments through a response file while still routing
+`-Xlinker`, `-Wl,`, object files, and libraries to the direct `wasm-ld`
+invocation.
 
 Compile-only (`-c`), assembly-only (`-S`), preprocessing (`-E`), and
 dependency-only (`-M`/`-MM`) commands run clang directly and do not invoke

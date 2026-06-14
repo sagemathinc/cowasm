@@ -110,6 +110,8 @@ expect_missing_arg() {
 expect_missing_arg "-Xlinker" "$tmp/hello.c" -Xlinker
 expect_missing_arg "-L" "$tmp/hello.c" -L
 expect_missing_arg "-o" "$tmp/hello.c" -o
+echo "-isystem" >"$tmp/missing-isystem.rsp"
+expect_missing_arg "-isystem" @"$tmp/missing-isystem.rsp"
 
 expect_unsupported_flag() {
   local option="$1"
@@ -168,6 +170,8 @@ grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- " -M "
 
 cat >"$tmp/link.rsp" <<EOF
 -DRESPONSE_FLAG
+-isystem "$tmp/host-include"
+-isysroot "$tmp/host-sysroot"
 "$tmp/hello.c"
 "$tmp/extra.o"
 -Xlinker --import-memory
@@ -182,6 +186,8 @@ grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "$tmp/extra.o"
 grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--import-memory"
 grep -F -- "wasm-ld" "$COWASM_TEST_LOG" | grep -F -- "--import-table"
 ! grep -F -- "@$tmp/link.rsp" "$COWASM_TEST_LOG"
+! grep -F -- "$tmp/host-include" "$COWASM_TEST_LOG"
+! grep -F -- "$tmp/host-sysroot" "$COWASM_TEST_LOG"
 
 : >"$COWASM_TEST_LOG"
 "$wrapper" -Oz -fvisibility-main -Wl,--import-memory,--import-table -lm -ldl -lwasi-emulated-signal -lc "$tmp/hello.c" -o "$tmp/hello.wasm"

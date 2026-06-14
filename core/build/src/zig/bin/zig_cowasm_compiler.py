@@ -113,15 +113,23 @@ SOURCE_EXTENSIONS = SOURCE_EXTENSIONS_CPP.union(SOURCE_EXTENSIONS_C).union(
     SOURCE_EXTENSIONS_ZIG)
 
 
-def strip_isys():
+def strip_isys_args(args):
     # Some build systems, e.g., cmake will sometimes try to be too clever and add -isystem and -isysroot,
     # which messed up building using WebAssembly.  We strip them.
-    i = len(sys.argv) - 1
-    while i >= 0:
-        if sys.argv[i] == '-isystem' or sys.argv[i] == '-isysroot':
-            require_option_value(sys.argv, i)
-            del sys.argv[i:i + 2]
-        i -= 1
+    stripped = []
+    i = 0
+    while i < len(args):
+        if args[i] == '-isystem' or args[i] == '-isysroot':
+            require_option_value(args, i)
+            i += 2
+            continue
+        stripped.append(args[i])
+        i += 1
+    return stripped
+
+
+def strip_isys():
+    sys.argv[:] = strip_isys_args(sys.argv)
 
 def is_source(filename):
     ext = os.path.splitext(filename)[1].lower()
@@ -427,7 +435,7 @@ def clang_backend():
     if LANG == 'c++':
         fail("cowasm: COWASM_TOOLCHAIN=clang does not support C++ yet")
 
-    args = expand_response_args(sys.argv[2:])
+    args = strip_isys_args(expand_response_args(sys.argv[2:]))
     if '--print-multiarch' in args:
         print('wasm32-wasi')
         return
