@@ -2,6 +2,8 @@ include ../build/Makefile-vars
 
 # See https://github.com/freetype/freetype/releases
 VERSION = 2.13.3
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 URL = https://download.savannah.gnu.org/releases/freetype/freetype-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/freetype-${VERSION}.tar.gz
@@ -12,6 +14,26 @@ all: deps wasm
 include ../build/Makefile-rules
 
 ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.build
+	$(MAKE) -C ../zlib test-clang-standalone
+	@status=0; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${CWD}/../zlib/dist/clang || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	mkdir ${BUILD_WASM}/bits

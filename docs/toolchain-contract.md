@@ -284,6 +284,16 @@ builds libpng against that clang-built zlib install using `cowasm-cc`,
 `cowasm-ar`, and `cowasm-ranlib`. It runs libpng's `timepng` test program
 through the CoWasm launcher.
 
+`core/freetype` has a similar dependent-library smoke target:
+
+```sh
+make -C core/freetype test-clang-standalone
+```
+
+The target first rebuilds zlib with its standalone clang smoke target, then
+builds FreeType against that clang-built zlib install. It links and runs a
+minimal `FT_Init_FreeType` program through the CoWasm launcher.
+
 ## Archive Tools
 
 Package builds use Zig archive tools directly:
