@@ -11,54 +11,14 @@ dist_dir="$2"
 bin_dir="$(cd "$3" && pwd)"
 src_dir="$(cd "$4" && pwd)"
 jobs="${JOBS:-8}"
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "$script_dir/../../build/src/test/clang-standalone-common.sh"
 
 probe_dir="$(mktemp -d)"
 trap 'rm -rf "$probe_dir"' EXIT
 
-skip_pattern="requires '(clang|wasm-ld|llvm-ar|llvm-ranlib)'|requires a WASI sysroot|not an executable file|not a directory|not a file|WASI startup object not found"
-
-skip_if_toolchain_unconfigured() {
-  local log="$1"
-  if grep -E "$skip_pattern" "$log" >/dev/null; then
-    echo "Skipping bzip2 clang standalone smoke: direct clang/lld WASI toolchain is not configured."
-    cat "$log"
-    exit 77
-  fi
-}
-
-cat >"$probe_dir/probe.c" <<'EOF'
-int main(int argc, char **argv) {
-  return argc == 0 || argv == 0;
-}
-EOF
-
-probe_log="$probe_dir/probe.log"
-if ! COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
-  "$probe_dir/probe.c" -o "$probe_dir/probe.wasm" >"$probe_log" 2>&1; then
-  skip_if_toolchain_unconfigured "$probe_log"
-  cat "$probe_log"
-  exit 1
-fi
-
-archive_log="$probe_dir/archive.log"
-COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
-  -c "$probe_dir/probe.c" -o "$probe_dir/probe.o" >"$archive_log" 2>&1 || {
-  skip_if_toolchain_unconfigured "$archive_log"
-  cat "$archive_log"
-  exit 1
-}
-COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-ar" \
-  rc "$probe_dir/libprobe.a" "$probe_dir/probe.o" >>"$archive_log" 2>&1 || {
-  skip_if_toolchain_unconfigured "$archive_log"
-  cat "$archive_log"
-  exit 1
-}
-COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-ranlib" \
-  "$probe_dir/libprobe.a" >>"$archive_log" 2>&1 || {
-  skip_if_toolchain_unconfigured "$archive_log"
-  cat "$archive_log"
-  exit 1
-}
+cowasm_clang_standalone_probe "bzip2" "$bin_dir" "$probe_dir"
 
 rm -rf "$dist_dir"
 mkdir -p "$dist_dir"
