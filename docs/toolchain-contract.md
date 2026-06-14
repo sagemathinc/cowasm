@@ -337,6 +337,30 @@ builds libedit against that clang-built termcap install using `cowasm-cc`,
 `cowasm-ar`, and `cowasm-ranlib`. It links and runs a minimal history and
 tokenizer program through the CoWasm launcher.
 
+`core/ncurses` has an opt-in dependent-library smoke target:
+
+```sh
+make -C core/ncurses test-clang-standalone
+```
+
+The target first rebuilds termcap with its standalone clang smoke target, then
+builds ncurses libraries against that clang-built termcap install using
+`cowasm-cc`, `cowasm-c++`, `cowasm-ar`, and `cowasm-ranlib`. It installs the
+library headers under `dist/clang` and links a minimal `curses_version` probe
+through the CoWasm launcher.
+
+`core/less` has an opt-in dependent-executable smoke target:
+
+```sh
+make -C core/less test-clang-standalone
+```
+
+The target first rebuilds termcap and ncurses with their standalone clang smoke
+targets, then builds the `less` executable against those clang-built
+dependencies. It applies the same standalone compatibility shims as the
+package-specific script and verifies that `less --help` starts through the
+CoWasm launcher.
+
 `core/man` has an opt-in dependent-executable smoke target:
 
 ```sh
@@ -434,6 +458,18 @@ backend, installs the library and headers under `dist/clang`, then links and
 runs a minimal `qh_zero`/`qh_freeqhull` initialization probe through the CoWasm
 launcher. It keeps the clang build tree separate from the default Zig-backed
 Qhull build used by Python package dependencies.
+
+`core/libgit2` has an opt-in CMake static-library smoke target:
+
+```sh
+make -C core/libgit2 test-clang-standalone
+```
+
+The target first rebuilds zlib with its standalone clang smoke target, then
+builds libgit2's static package target against that clang-built zlib install.
+It uses focused standalone compatibility shims for user, process, and network
+lookups that are outside the smoke's scope, then links and runs the existing
+repository-initialization probe through the CoWasm launcher.
 
 ## Archive Tools
 

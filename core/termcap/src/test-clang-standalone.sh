@@ -26,12 +26,23 @@ mkdir -p "$dist_dir"
 cd "$build_dir"
 cp "$src_dir/config.h" .
 
+build_triple="${COWASM_BUILD_TRIPLE:-}"
+if [ -z "$build_triple" ]; then
+  if [ -x ./build-aux/config.guess ]; then
+    build_triple="$(./build-aux/config.guess)"
+  elif command -v cc >/dev/null 2>&1; then
+    build_triple="$(cc -dumpmachine)"
+  else
+    build_triple="x86_64-pc-linux-gnu"
+  fi
+fi
+
 RANLIB="$bin_dir/cowasm-ranlib" \
 AR="$bin_dir/cowasm-ar" \
 CC="$bin_dir/cowasm-cc -Oz -DHAVE_CONFIG_H=1" \
 COWASM_TOOLCHAIN=clang \
   ./configure \
-    --build="$(./build-aux/config.guess)" \
+    --build="$build_triple" \
     --host=none \
     --prefix="$dist_dir"
 

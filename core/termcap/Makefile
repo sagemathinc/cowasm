@@ -11,6 +11,7 @@ URL = https://ftp.gnu.org/gnu/termcap/termcap-${VERSION}.tar.gz
 TARBALL_SHA256 = 91a0e22e5387ca4467b5bcb18edf1c51b930262fd466d5fda396dd9d26719100
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_TRIPLE = $(shell cc -dumpmachine 2>/dev/null || echo x86_64-pc-linux-gnu)
 
 include ../build/Makefile-rules
 
@@ -59,7 +60,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 		RANLIB="zig ranlib" \
 		AR="zig ar" \
 		CC="cowasm-cc -Oz -DHAVE_CONFIG_H=1 " \
-		./configure  --build=`./build-aux/config.guess` --host=none --prefix="${DIST_WASM}" && \
+		./configure  --build=${BUILD_TRIPLE} --host=none --prefix="${DIST_WASM}" && \
 		make AR="zig ar" -j8 && \
 		make install
 	touch ${DIST_WASM}/.built
