@@ -442,11 +442,11 @@ launcher.
 make -C core/coreutils test-clang-standalone
 ```
 
-The target builds the `basename` utility with the direct clang backend and a
-small standalone compatibility shim for the BSD program-name and error helpers
-that are normally supplied by CoWasm's broader runtime layer. It installs the
-binary under `dist/clang/bin` and verifies a path reduction through the CoWasm
-WASI runner.
+The target builds the `basename` and `dirname` utilities with the direct clang
+backend and a small standalone compatibility shim for the BSD program-name and
+error helpers that are normally supplied by CoWasm's broader runtime layer. It
+installs the binaries under `dist/clang/bin` and verifies path reductions
+through the CoWasm WASI runner.
 
 `sagemath/gmp` has an opt-in static-library smoke target:
 

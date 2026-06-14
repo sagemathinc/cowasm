@@ -69,20 +69,29 @@ cflags=(
 
 COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
   "${cflags[@]}" \
-  -fvisibility-main \
-  -c "$src_dir/utils/basename/basename.c" \
-  -o "$build_dir/basename.o"
-
-COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
-  "${cflags[@]}" \
   -c "$build_dir/compat/compat.c" \
   -o "$build_dir/compat.o"
 
-COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
-  -Oz \
-  -fvisibility-main \
-  "$build_dir/basename.o" \
-  "$build_dir/compat.o" \
-  -o "$dist_dir/bin/basename"
+build_utility() {
+  local utility="$1"
 
-test "$(cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/basename" foo/bar)" = "bar"
+  COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
+    "${cflags[@]}" \
+    -fvisibility-main \
+    -c "$src_dir/utils/$utility/$utility.c" \
+    -o "$build_dir/$utility.o"
+
+  COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
+    -Oz \
+    -fvisibility-main \
+    "$build_dir/$utility.o" \
+    "$build_dir/compat.o" \
+    -o "$dist_dir/bin/$utility"
+}
+
+build_utility basename
+build_utility dirname
+
+test "$(cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/basename" foo/bar.txt .txt)" = "bar"
+test "$(cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/dirname" foo/bar.txt)" = "foo"
+test "$(cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/dirname" /)" = "/"
