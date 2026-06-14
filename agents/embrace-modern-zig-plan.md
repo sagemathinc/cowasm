@@ -1,15 +1,60 @@
-# Embrace Modern Zig Plan
+# Embrace Modern Zig As A Toolchain Plan
 
 ## Goal
 
-Move CoWasm from the old pinned Zig 0.10.1 baseline to a modern pinned Zig
-toolchain, while keeping the current known-good build green and preserving an
-explicit clang/lld audit path.
+Move CoWasm toward a modern pinned Zig distribution for LLVM/Clang/lld/WASI
+toolchain delivery, while removing CoWasm's own Zig implementation code.
 
-The target is not "depend on whatever Zig is installed system-wide." The target
-is a newer hermetic Zig baseline that provides modern LLVM/Clang/lld, better
-WASI/WebAssembly support, fewer CoWasm-specific toolchain hacks, and a clearer
-route toward serious browser-native Python and mathematics.
+The strategy is not "write more Zig" and it is not "depend on whatever Zig is
+installed system-wide." The target is:
+
+```text
+Zig distribution: yes, pinned and hermetic
+Zig implementation language in CoWasm: no, translate to C
+WASI/dylink ABI contract: explicit, tested, and also auditable through clang/lld
+```
+
+This keeps the practical value of Zig's bundled compiler stack without making
+CoWasm depend on Zig language churn for its runtime glue.
+
+## Strategic Decision
+
+Use modern Zig primarily as the easy-to-distribute source of:
+
+- Clang;
+- lld / `wasm-ld`;
+- WASI libc headers and libraries;
+- C/C++ cross-compilation defaults;
+- consistent host binaries across Linux and macOS.
+
+Do not preserve or expand CoWasm's Zig source layer. The roughly 4k lines of
+Zig in `core/kernel/src` and `core/posix-node/src` are mostly C ABI glue,
+POSIX shims, N-API wrappers, constants, and syscall-style adapters. They are
+good candidates for C because their primary job is to expose stable C-shaped
+interfaces, not to use Zig-specific abstractions.
+
+## Order Of Work
+
+Do a small modern-Zig probe first, but translate the CoWasm Zig source to C
+before flipping the default compiler path.
+
+Recommended order:
+
+1. Preserve the current Zig 0.10.1 baseline.
+2. Add a side-by-side modern Zig install as `zig-next` and probe C/C++ dylink
+   behavior only.
+3. Translate CoWasm's own Zig runtime glue to C while the known-good baseline
+   remains available.
+4. Remove `zig build-lib` and `.zig` source dependencies from core runtime
+   builds.
+5. Move `cowasm-cc` / `cowasm-c++` to a modern-Zig-backed C/C++ toolchain path.
+6. Port packages in dependency order.
+7. Flip the default only after core, CPython, and Sage-relevant tests pass.
+
+This order avoids porting old Zig syntax to new Zig syntax just to delete it
+later. The early `zig-next` probe is still important because it tells us what
+C flags, linker flags, object shapes, and WASI assumptions the C translation
+should target.
 
 ## Current Baseline
 
@@ -21,13 +66,18 @@ route toward serious browser-native Python and mathematics.
   `wasm32-emscripten -fPIC` plus manually supplied WASI/musl include paths.
 - CoWasm carries a local patch, `01-emscripten.patch`, that teaches old Zig's
   standard library to treat emscripten similarly to WASI in a few places.
-- CoWasm has roughly 4k lines of Zig source in `core/kernel/src` and
-  `core/posix-node/src`; these use 0.10-era Zig syntax and command-line
-  assumptions.
+- CoWasm has 35 Zig files and 4086 lines of Zig source in:
+  - `core/kernel/src`;
+  - `core/posix-node/src`.
+- The main Zig build entry points are:
+  - `core/kernel/Makefile`, which builds `src/kernel/interface.zig`;
+  - `core/posix-node/Makefile`, which builds `src/lib.zig`;
+  - `core/build/src/zig/bin/zig_cowasm_compiler.py`, which still accepts `.zig`
+    sources.
 
-## Key Finding
+## Key Modern-Zig Finding
 
-Zig 0.16.0 materially changes the tradeoff.
+Zig 0.16.0 materially changes the toolchain tradeoff.
 
 Local probes with the stable 0.16.0 binary showed that this works:
 
@@ -38,11 +88,11 @@ zig cc -target wasm32-wasi -Oz -fPIC -shared add.c -o add.wasm
 The output is a real `dylink.0` WebAssembly shared module importing the dynamic
 linking state CoWasm expects:
 
-- `env.memory`
-- `env.__memory_base`
-- `env.__table_base`
-- `env.__stack_pointer`, when stack is needed
-- `env.__indirect_function_table`, when table is needed
+- `env.memory`;
+- `env.__memory_base`;
+- `env.__table_base`;
+- `env.__stack_pointer`, when stack is needed;
+- `env.__indirect_function_table`, when table is needed.
 
 With `-nostdlib`, a trivial exported function compiled to a tiny dylink module
 instead of requiring the older emscripten-target workaround.
@@ -67,58 +117,167 @@ some unresolved-symbol linker flags that CoWasm needs:
 error: unsupported linker arg: --allow-undefined
 ```
 
-So modern Zig can eliminate much of the old wrapper logic, but the wrapper still
-needs to own the final `zig wasm-ld` step for CoWasm-style dynamic modules that
+So modern Zig can simplify the compile step, but the CoWasm wrapper should
+continue to own the final `zig wasm-ld` step for dynamic modules that
 intentionally resolve symbols at load time.
 
-## Strategy
+## Zig Source Inventory
 
-Make modern Zig the next primary path, but do it as a parallel, gated migration.
-Do not replace `bin/zig` in one broad commit.
+The existing Zig code falls into two different migration buckets.
 
-The working posture should be:
+### Wasm Kernel Glue
+
+Files:
+
+- `core/kernel/src/kernel/cowasm.zig`;
+- `core/kernel/src/kernel/interface.zig`;
+- `core/kernel/src/wasm/posix.zig`;
+- `core/kernel/src/wasm/posix/*.zig`.
+
+Role:
+
+- expose kernel entry points;
+- provide wasm-side POSIX constants and stubs;
+- adapt imported JavaScript/runtime services to C-shaped wasm exports;
+- provide small implementations for `stdio`, `stdlib`, `string`, `termios`,
+  `socket`, `netdb`, and related shims.
+
+Risk profile:
+
+- low to medium;
+- mostly direct C translation;
+- must preserve exact export names, import names, pointer widths, errno values,
+  and struct layouts;
+- good first target because it is small and has existing wasm tests.
+
+### Native Node POSIX Addon
+
+Files:
+
+- `core/posix-node/src/lib.zig`;
+- `core/posix-node/src/node.zig`;
+- `core/posix-node/src/unistd.zig`;
+- `core/posix-node/src/socket.zig`;
+- `core/posix-node/src/fork_exec.zig`;
+- `core/posix-node/src/termios.zig`;
+- `core/posix-node/src/netdb.zig`;
+- `core/posix-node/src/netif.zig`;
+- `core/posix-node/src/*.zig`.
+
+Role:
+
+- implement a native Node N-API module;
+- expose host POSIX functionality to the CoWasm JavaScript runtime;
+- perform argument conversion, errno mapping, buffer/string handling, struct
+  packing, file descriptor calls, process spawning, sockets, termios, and
+  network lookup.
+
+Risk profile:
+
+- medium to high;
+- not hard because it is Zig, but because it crosses Node N-API, libc, errno,
+  process, terminal, and socket boundaries;
+- `node.zig`, `unistd.zig`, `socket.zig`, `termios.zig`, and `fork_exec.zig`
+  should be translated deliberately with parity tests.
+
+## Translation Design
+
+### C Runtime Shape
+
+Use C, not C++, for the replacement runtime glue.
+
+Reasons:
+
+- the exposed interfaces are already C-like;
+- raw N-API is a C API;
+- C avoids pulling C++ ABI/runtime questions into the native addon migration;
+- C keeps the direct clang/lld fallback straightforward;
+- C makes Zig's role visibly limited to compiler distribution.
+
+Expected layout:
 
 ```text
-current default: pinned Zig 0.10.1
-next path:       pinned modern Zig, initially exposed as zig-next
-audit path:      direct clang/lld smoke tests
-future default:  modern pinned Zig after parity
+core/kernel/src/kernel/*.c
+core/kernel/src/wasm/posix/*.c
+core/kernel/src/wasm/posix/*.h
+core/posix-node/src/*.c
+core/posix-node/src/*.h
 ```
 
-This gives CoWasm the practical benefits of Zig's bundled LLVM/WASI tooling
-without hiding the ABI contract or losing the ability to pivot to direct
-clang/lld later.
+Do not make this a broad architecture rewrite. Keep module names and exported
+functions close to the current Zig files so review can compare old and new
+behavior mechanically.
 
-## Principles
+### Kernel C Rules
 
-- Preserve Zig 0.10.1 as the known-good baseline until modern Zig passes the
-  same package and runtime checks.
-- Treat modern Zig as a toolchain distribution plus Zig compiler, not as an
-  excuse to hide ABI details.
-- Prefer `wasm32-wasi -fPIC -shared` over the old `wasm32-emscripten` dynamic
-  module workaround.
-- Keep the final linker step explicit where CoWasm needs `--allow-undefined`,
-  `--experimental-pic`, custom exports, or loader-specific semantics.
-- Migrate dependency layers in increasing order of complexity.
-- Keep clang standalone smoke tests because they document the actual ABI
-  contract and provide leverage if Zig regresses.
-- Do not start with CPython, NumPy, Matplotlib, or SageMath; use small C and
-  C++ dynamic-linking tests first.
+- Preserve exported wasm symbol names exactly.
+- Preserve imported runtime symbol names exactly.
+- Keep pointer arithmetic explicit with `uintptr_t`.
+- Keep struct layout checks near the C definitions.
+- Keep errno values and POSIX constants generated or asserted, not hand-copied
+  across multiple files.
+- Keep the final wasm link command explicit enough to inspect imports, exports,
+  memory/table behavior, and custom sections.
+
+### Native Node C Rules
+
+- Use raw N-API.
+- Build a small local helper layer to replace the useful parts of `node.zig`:
+  - argument count/type checks;
+  - integer and boolean conversion;
+  - UTF-8 string extraction;
+  - buffer pointer/length extraction;
+  - object property reads and writes;
+  - errno-to-exception helpers;
+  - method registration helpers;
+  - cleanup for allocated strings and arrays.
+- Keep helper functions boring and local. The point is to reduce repeated N-API
+  boilerplate without inventing a framework.
+- Use `goto cleanup` in functions with multiple allocations.
+- Keep the translated module boundary close to the current Zig modules:
+  `unistd`, `socket`, `termios`, `netdb`, `spawn`, `wait`, `signal`, `netif`,
+  and `other`.
+
+### Constants Strategy
+
+Replace Zig comptime constants extraction with an explicit generated artifact.
+
+Good options:
+
+1. Build and run a tiny native C program that prints JSON or TypeScript source.
+2. Compile a native C object and use preprocessor output for selected constants.
+3. Maintain a checked-in generated TypeScript file plus a validation target that
+   compares it to a native generator.
+
+Recommended path:
+
+- use a native C generator for host constants used by `core/posix-node`;
+- use a separate WASI-targeted header or generated C include for wasm constants;
+- keep the generated TypeScript API shape stable for existing consumers;
+- add validation that catches changed constants on the host platform.
+
+The constants migration should happen before translating the largest native
+modules because it removes one of the main places Zig currently provides real
+convenience.
 
 ## Phase 0: Freeze The Baseline
 
-Before introducing modern Zig, capture the current build contract and test
-state.
+Before changing implementation language or toolchain, capture current behavior.
 
 Actions:
 
 - Record `bin/zig version` and `bin/zig env`.
-- Record the current `cowasm-cc -cowasm-verbose` output for:
+- Record `cowasm-cc -cowasm-verbose` output for:
   - a trivial C shared module;
   - a module with global data;
-  - a module with unresolved symbols resolved by the loader;
+  - a module with unresolved function symbols;
+  - a module with unresolved data symbols;
   - a small C++ module.
 - Save `wasm-objdump -x` summaries for those outputs.
+- Record current core Zig-source builds:
+  - `make -C core/kernel test`;
+  - `make -C core/posix-node test`, or the closest available native addon
+    smoke target.
 - Keep the existing scheduled baseline green:
   - `make -C core/build test`;
   - `make -C core/kernel test`;
@@ -128,12 +287,12 @@ Actions:
   - `make -C sagemath/gmp test`;
   - `make -C sagemath/pari test`.
 
-Deliverable: a repeatable baseline log directory or doc section that captures
-the Zig 0.10.1 behavior being replaced.
+Deliverable: baseline logs and object-shape notes that define the behavior the
+C translation and modern toolchain must preserve.
 
-## Phase 1: Add A Side-By-Side Modern Zig Bootstrap
+## Phase 1: Add Side-By-Side Modern Zig Probe
 
-Add a new bootstrap target without disturbing `bin/zig`.
+Add modern Zig without changing the default build.
 
 Actions:
 
@@ -150,10 +309,166 @@ Actions:
   - `bin/zig-next cc -target wasm32-wasi -Oz -fPIC -shared add.c`;
   - `bin/zig-next wasm-ld --version`.
 
-Deliverable: modern Zig can be installed and probed without changing any
-package builds.
+Non-goals in this phase:
 
-## Phase 2: Create A Modern Zig Wrapper Mode
+- do not point `bin/zig` at the new version;
+- do not port `.zig` source to modern syntax;
+- do not change package builds;
+- do not remove the old emscripten workaround yet.
+
+Deliverable: modern Zig is available as a C/C++ toolchain probe, not as the
+default.
+
+## Phase 2: Build C Scaffolding And Parity Harnesses
+
+Create the C infrastructure before translating large files.
+
+Actions:
+
+- Add shared C headers for wasm kernel imports/exports and POSIX structs.
+- Add native C helper files for N-API conversion and errno handling.
+- Add layout/assertion helpers:
+  - `sizeof`;
+  - `offsetof`;
+  - selected enum and constant values;
+  - pointer-size expectations.
+- Add small tests that call helpers directly where possible.
+- Add build rules that can compile one C replacement file next to the existing
+  Zig implementation without switching all modules at once.
+
+Deliverable: the repository has a C-shaped place for the translated code to
+land, with focused tests before the large migration starts.
+
+## Phase 3: Translate Wasm Kernel Glue To C
+
+Translate the smaller wasm-side Zig layer first.
+
+Suggested order:
+
+1. `core/kernel/src/kernel/cowasm.zig`
+2. `core/kernel/src/wasm/posix/errno.zig`
+3. `core/kernel/src/wasm/posix/signal.zig`
+4. `core/kernel/src/wasm/posix/wait.zig`
+5. `core/kernel/src/wasm/posix/stdio.zig`
+6. `core/kernel/src/wasm/posix/string.zig`
+7. `core/kernel/src/wasm/posix/stdlib.zig`
+8. `core/kernel/src/wasm/posix/unistd.zig`
+9. `core/kernel/src/wasm/posix/stat.zig`
+10. `core/kernel/src/wasm/posix/termios.zig`
+11. `core/kernel/src/wasm/posix/netif.zig`
+12. `core/kernel/src/wasm/posix/netdb.zig`
+13. `core/kernel/src/wasm/posix/socket.zig`
+14. `core/kernel/src/wasm/posix/other.zig`
+15. `core/kernel/src/wasm/posix.zig`
+16. `core/kernel/src/kernel/interface.zig`
+
+Validation after each cluster:
+
+- run the current Zig tests until replaced;
+- run the equivalent C tests;
+- run `make -C core/kernel test`;
+- inspect wasm imports/exports for changed names;
+- inspect artifact size changes when meaningful.
+
+Deliverable: `core/kernel` no longer requires Zig source to build.
+
+## Phase 4: Replace Constants Generation
+
+Remove the Zig comptime constants dependency.
+
+Actions:
+
+- Replace `core/kernel/src/wasm/posix/constants.zig` with C/header generation
+  or checked constants plus assertions.
+- Replace `core/posix-node/src/constants.zig` with a native C generator.
+- Preserve the TypeScript constants API consumed by:
+  - `core/kernel/src/wasm/posix/constants.ts`;
+  - `core/posix-node/src/index.ts`;
+  - any runtime consumers found by `rg`.
+- Add a validation target that fails when generated constants differ from the
+  checked-in output.
+
+Deliverable: constants no longer require Zig, and drift is testable.
+
+## Phase 5: Translate Native N-API Foundation
+
+Translate `core/posix-node/src/node.zig` before translating most POSIX modules.
+
+Actions:
+
+- Implement `node.c` / `node.h` helper functions for raw N-API.
+- Translate module initialization from `lib.zig` to C.
+- Register one or two tiny functions through the new C module path.
+- Preserve exception messages where they are relied on by tests.
+- Preserve errno propagation behavior.
+- Keep the old Zig module path available until feature parity is reached.
+
+Validation:
+
+- build the native addon for the current host;
+- import it from Node;
+- call trivial methods;
+- run any existing `core/posix-node` smoke tests.
+
+Deliverable: a C N-API module skeleton can replace the Zig module skeleton.
+
+## Phase 6: Translate Native POSIX Modules
+
+Translate native addon modules from least risky to most risky.
+
+Suggested order:
+
+1. `wait.zig`
+2. `signal.zig`
+3. `other.zig`
+4. `netif.zig`
+5. `netdb.zig`
+6. `termios.zig`
+7. `unistd.zig`
+8. `socket.zig`
+9. `spawn.zig`
+10. `fork_exec.zig`
+
+Reasoning:
+
+- simple modules prove the C helper layer;
+- network and terminal modules exercise struct packing and platform constants;
+- `unistd` is broad and should come after helpers stabilize;
+- sockets need careful sockaddr and buffer behavior;
+- `fork_exec` is last because process setup, file descriptor handling, pipes,
+  environment, and cleanup paths are where parity mistakes are most expensive.
+
+Validation for each module:
+
+- run focused JS tests for the exported functions;
+- compare representative successful calls and errno failures against the Zig
+  implementation;
+- test invalid argument behavior;
+- run the runtime paths that consume the module;
+- run under Linux first, then macOS once Linux is stable.
+
+Deliverable: `core/posix-node` no longer requires Zig source to build.
+
+## Phase 7: Remove Core Zig Build Dependencies
+
+After the C translations pass parity, remove the old source-language path.
+
+Actions:
+
+- Remove `zig build-lib` invocations for CoWasm-owned source.
+- Remove `.zig` source discovery from `core/kernel/Makefile`.
+- Remove `.zig` source discovery from `core/posix-node/Makefile`.
+- Decide whether `zig_cowasm_compiler.py` should still accept `.zig` inputs:
+  - likely remove CoWasm's dependency on it;
+  - optionally keep passthrough support only if third-party use needs it.
+- Remove stale comments that describe Zig source requirements.
+- Keep `bin/zig` as the old compiler distribution until the modern toolchain
+  migration is ready.
+
+Deliverable: CoWasm core runtime is C/C++/TypeScript from the implementation
+language perspective, even if old Zig still provides the compiler.
+
+## Phase 8: Create Modern-Zig Toolchain Wrapper Mode
 
 Teach the CoWasm compiler wrapper to use modern Zig explicitly.
 
@@ -185,23 +500,23 @@ Actions:
 Deliverable: `COWASM_TOOLCHAIN=zig-next cowasm-cc` builds tiny dylink modules
 matching the current loader's expectations.
 
-## Phase 3: Focused Dylink Compatibility Tests
+## Phase 9: Focused Dylink Compatibility Tests
 
 Before touching packages, expand the small dynamic-linking tests.
 
 Test cases:
 
-- Exported function with no globals.
-- Exported function with mutable global data.
-- Data relocation via `__memory_base`.
-- Function-pointer export and `dlsym`.
-- Undefined function resolved from the main module.
-- Undefined data symbol resolved from the main module.
-- Calls into libc-like symbols supplied by the main runtime, such as `printf`,
-  `malloc`, and `free`.
-- Optional `__wasm_apply_data_relocs` and `__wasm_call_ctors` behavior.
-- Repeated `dlopen` and `dlsym`.
-- A tiny C++ shared module that exercises `std::string`.
+- exported function with no globals;
+- exported function with mutable global data;
+- data relocation via `__memory_base`;
+- function-pointer export and `dlsym`;
+- undefined function resolved from the main module;
+- undefined data symbol resolved from the main module;
+- calls into libc-like symbols supplied by the main runtime, such as `printf`,
+  `malloc`, and `free`;
+- optional `__wasm_apply_data_relocs` and `__wasm_call_ctors` behavior;
+- repeated `dlopen` and `dlsym`;
+- a tiny C++ shared module that exercises `std::string`.
 
 Expected object shape:
 
@@ -214,52 +529,7 @@ Expected object shape:
 
 Deliverable: `core/dylink` tests pass with modern-Zig-built side modules.
 
-## Phase 4: Port CoWasm Zig Source To Modern Syntax
-
-Modernizing package C builds is not enough; CoWasm also contains Zig source.
-
-Likely updates:
-
-- Replace old builtin forms such as:
-  - `@ptrCast(T, value)`;
-  - `@intCast(T, value)`;
-  - `@bitCast(T, value)`;
-  - `@intToPtr`;
-  - `@ptrToInt`.
-- Replace deprecated stdlib APIs such as `std.mem.copy`.
-- Update alignment handling around `@alignCast`.
-- Replace `--main-pkg-path` command-line usage.
-- Evaluate whether `zig build-lib` invocations should become real `build.zig`
-  files.
-
-Candidate order:
-
-1. `core/kernel/src/wasm/posix` unit tests.
-2. `core/kernel` wasm library build.
-3. `core/posix-node` native Node module build.
-4. TypeScript bindings generated from Zig constants.
-
-Deliverable: core Zig code compiles and tests with `bin/zig-next`, while
-`bin/zig` remains untouched.
-
-## Phase 5: Remove The Old Emscripten Workaround From The Next Path
-
-Once the modern-Zig wrapper works for tiny dynamic modules, isolate or remove
-the old emscripten-specific logic from the `zig-next` path.
-
-Actions:
-
-- Stop applying `01-emscripten.patch` to modern Zig.
-- Stop selecting `wasm32-emscripten` for dynamic CoWasm modules in `zig-next`
-  mode.
-- Stop adding emscripten libc++ include paths by default.
-- Use `wasm32-wasi -fPIC -shared` as the standard modern dynamic-module target.
-- Keep compatibility shims only where package tests require them.
-
-Deliverable: `zig-next` dynamic modules build as WASI dylink modules, not as
-emscripten-target modules with WASI defines layered on top.
-
-## Phase 6: Port Simple Packages
+## Phase 10: Port Simple Packages
 
 Start with packages that have small build systems and clear smoke tests.
 
@@ -282,7 +552,7 @@ For each package:
 
 Deliverable: a first dependency layer builds and tests with modern Zig.
 
-## Phase 7: Port Runtime-Adjacent Packages
+## Phase 11: Port Runtime-Adjacent Packages
 
 Move to packages that stress headers, termios, filesystem behavior, and
 dynamic-linking details.
@@ -305,7 +575,7 @@ Validation:
 
 Deliverable: terminal/runtime package layer works with modern Zig.
 
-## Phase 8: C++ Runtime And Python Extension Surface
+## Phase 12: C++ Runtime And Python Extension Surface
 
 Do not attempt CPython before C++ runtime behavior is clear.
 
@@ -324,7 +594,7 @@ Actions:
 Deliverable: C++ and Python-extension dynamic module rules are explicit and
 tested under modern Zig.
 
-## Phase 9: CPython
+## Phase 13: CPython
 
 Only after the prior phases are green:
 
@@ -345,7 +615,7 @@ Pay special attention to:
 
 Deliverable: CPython's supported CoWasm suite passes with modern Zig.
 
-## Phase 10: Sage-Relevant Math Packages
+## Phase 14: Sage-Relevant Math Packages
 
 After CPython and basic extension behavior:
 
@@ -358,7 +628,7 @@ Each package should have mathematical smoke tests, not just build tests.
 Deliverable: one Sage-relevant math dependency layer works with modern Zig and
 keeps the long-term SageMath-in-WebAssembly direction viable.
 
-## Phase 11: Flip The Default
+## Phase 15: Flip The Default
 
 Only flip `bin/zig` or default wrapper behavior after parity.
 
@@ -366,6 +636,7 @@ Minimum gate:
 
 - `core/build test`
 - `core/kernel test`
+- `core/posix-node` native addon smoke tests
 - `core/dylink` focused tests
 - `core/zlib test`
 - `python/cpython pip`
@@ -382,9 +653,9 @@ Recommended gate:
 - documentation updated;
 - old Zig fallback retained for one transition window.
 
-Deliverable: modern Zig becomes the default pinned toolchain.
+Deliverable: modern Zig becomes the default pinned toolchain distribution.
 
-## Phase 12: Retire Old Zig Path
+## Phase 16: Retire Old Zig Path
 
 After the modern Zig path has been default for long enough to shake out
 regressions:
@@ -396,14 +667,63 @@ regressions:
 - keep direct clang/lld smoke tests as ABI documentation, not as the primary
   build path.
 
-Deliverable: CoWasm has a modern Zig baseline and a smaller, clearer wrapper.
+Deliverable: CoWasm has a modern Zig-distributed toolchain and no CoWasm-owned
+Zig implementation code.
+
+## Pros
+
+- Avoids spending effort porting 0.10-era Zig code to modern Zig syntax.
+- Makes future Zig upgrades mostly toolchain upgrades, not source-language
+  upgrades.
+- Keeps CoWasm's runtime glue in the language that matches its ABI surface.
+- Makes a direct clang/lld fallback more realistic because the source is C.
+- Lowers contributor friction; more people can review C POSIX/N-API glue than
+  Zig-specific glue.
+- Preserves the main thing Zig is very good at here: convenient hermetic
+  compiler distribution.
+- Reduces local Zig patch pressure over time.
+
+## Cons
+
+- C loses Zig conveniences such as `defer`, `try`, checked casts, `@cImport`,
+  and comptime constants.
+- Raw N-API C code is verbose without a careful helper layer.
+- Constants generation becomes an explicit build artifact instead of a Zig
+  comptime convenience.
+- The translation will temporarily increase churn in sensitive runtime code.
+- Process, socket, and terminal behavior can regress if tests do not cover
+  both success and failure paths.
+- The final toolchain still depends on Zig release quality and Zig's bundled
+  LLVM/lld choices, even if CoWasm no longer contains Zig source.
+
+## Effort Estimate
+
+This is not a huge source tree, but it touches runtime boundaries where small
+mistakes matter.
+
+Rough implementation scale:
+
+- wasm kernel C translation: 3-6 focused commits;
+- constants replacement: 1-3 focused commits;
+- native N-API helper layer: 2-4 focused commits;
+- native POSIX module translation: 8-15 focused commits;
+- build-system cleanup: 2-4 focused commits;
+- modern-Zig wrapper path: 3-6 focused commits;
+- package migration and parity work: open-ended, likely many package-specific
+  commits.
+
+The first major milestone should be "no CoWasm-owned Zig source in core
+runtime builds." The second major milestone should be "modern Zig is the
+default compiler distribution."
 
 ## Open Questions
 
-- Which stable Zig version should be the first target: 0.16.x or the next
-  stable after 0.16?
+- Which stable Zig version should be the first modern toolchain target:
+  0.16.x or the next stable after 0.16?
 - Should `zig-next` be exposed through `COWASM_TOOLCHAIN=zig-next`, a separate
   `COWASM_ZIG` override, or both?
+- Should `zig_cowasm_compiler.py` continue to support `.zig` inputs after
+  CoWasm stops using Zig source internally?
 - Can Zig upstream be changed to allow forwarding `--allow-undefined` through
   `zig cc -shared` for wasm?
 - Does modern Zig's WASI libc provide enough missing libc fragments to delete
@@ -413,12 +733,16 @@ Deliverable: CoWasm has a modern Zig baseline and a smaller, clearer wrapper.
   symbols, function-table symbols, and weak imports?
 - What is the artifact-size impact for real packages at `-Oz`?
 - Does modern Zig make wasm64 a realistic later branch for memory-heavy math?
+- How much macOS-specific behavior exists in the native POSIX addon that Linux
+  tests will not catch?
 
 ## Risks
 
-- Zig language syntax churn may make the 4k-line source port noisy.
-- The modern driver may still reject linker flags CoWasm needs, requiring
-  wrapper-owned final linking.
+- Translating the native addon can accidentally change errno, exception, or
+  cleanup behavior.
+- Socket address packing and termios behavior are easy to get subtly wrong.
+- `fork_exec` has enough file descriptor and process-state complexity that it
+  deserves isolated tests before replacement.
 - Package configure scripts may detect different features with newer libc
   headers and change behavior.
 - Modern LLVM may expose latent undefined behavior in old C packages.
@@ -430,15 +754,18 @@ Deliverable: CoWasm has a modern Zig baseline and a smaller, clearer wrapper.
 
 The modernization is successful when:
 
-- CoWasm builds from a pinned modern Zig without local Zig stdlib patches.
+- CoWasm core runtime builds do not depend on CoWasm-owned Zig source files.
+- CoWasm builds from a pinned modern Zig distribution without local Zig stdlib
+  patches.
 - Dynamic modules use `wasm32-wasi -fPIC -shared` rather than the old
   emscripten-target workaround.
 - `cowasm-cc` and `cowasm-c++` are simpler and more explicit.
 - Core dylink tests pass with modern-Zig-built side modules.
+- Native POSIX addon tests pass through the C implementation.
 - CPython's supported suite passes.
 - GMP and PARI pass.
 - The direct clang/lld smoke tests still pass, documenting the ABI contract.
 
 The desired end state is not blind dependence on Zig. It is a modern,
-hermetic Zig-backed CoWasm toolchain with the real WASI/dylink contract visible
-and testable.
+hermetic Zig-distributed CoWasm toolchain with C runtime glue and a visible,
+testable WASI/dylink contract.
