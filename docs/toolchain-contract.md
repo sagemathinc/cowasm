@@ -326,6 +326,18 @@ builds libedit against that clang-built termcap install using `cowasm-cc`,
 `cowasm-ar`, and `cowasm-ranlib`. It links and runs a minimal history and
 tokenizer program through the CoWasm launcher.
 
+`core/lua` has an opt-in standalone executable smoke target:
+
+```sh
+make -C core/lua test-clang-standalone
+```
+
+The target rebuilds Lua with the direct clang backend and selector-aware
+archive tools, installs the Lua CLI and static archive under `dist/clang`, and
+runs the package's existing summation script through the CoWasm launcher. The
+standalone build omits readline/libedit so it exercises Lua itself without
+pulling in the interactive terminal dependency chain.
+
 `core/tar` has an opt-in dependent-executable smoke target:
 
 ```sh

@@ -9,6 +9,8 @@ VERSION = 5.4.4
 URL = https://github.com/lua/lua/archive/refs/tags/v${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/lua-${VERSION}.tar.gz
 TARBALL_SHA256 = 2ff89bbea22a7c8b910d6b006f5ba4559edcf468a25537cedf9988ed90f6b450
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 all: deps wasm ${BIN}/lua-wasm
 
@@ -68,3 +70,24 @@ ${BIN}/lua-wasm: ${DIST_WASM}/.built ${CWD}/bin/lua-wasm
 test: node_modules ${DIST_WASM}/.built
 	# echo "389*5077" | ${CWD}/bin/lua-wasm | grep 1974953  # this broke when I got editline working.
 	cowasm ${DIST_WASM}/bin/lua ${SRC}/sum.lua | grep 50000005000000
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.build
+	@status=0; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${SRC} || status=$$?; \
+		if [ "$${status}" = 77 ]; then \
+			exit 0; \
+		fi; \
+		exit $${status}
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
