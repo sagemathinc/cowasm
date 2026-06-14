@@ -180,6 +180,10 @@ the corresponding tools or runtime can be found through `PATH` or clang's
 `-print-libgcc-file-name`. `COWASM_WASI_SYSROOT` can also be omitted when a
 standard wasi-sdk sysroot exists at `/opt/wasi-sdk/share/wasi-sysroot`,
 `/usr/local/share/wasi-sysroot`, or `/usr/share/wasi-sysroot`.
+Executable overrides must point at executable files, and sysroot overrides
+must point at directories. Standalone executable links require
+`<sysroot>/lib/wasm32-wasi/crt1.o`; the wrapper fails before invoking
+`wasm-ld` when that startup object is missing.
 
 The compile-side defaults are:
 

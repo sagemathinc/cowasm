@@ -134,6 +134,48 @@ expect_unsupported_flag "-fPIE" "$tmp/hello.c" -fPIE
 expect_unsupported_flag "-pie" "$tmp/hello.c" -pie
 expect_unsupported_flag "--pie" "$tmp/hello.c" -Wl,--pie
 
+expect_failure() {
+  local name="$1"
+  local expected="$2"
+  shift 2
+  local err="$tmp/${name//[^A-Za-z0-9]/_}.err"
+  if "$@" >"$err" 2>&1; then
+    cat "$err"
+    echo "expected $name to fail" >&2
+    exit 1
+  fi
+  grep -F -- "$expected" "$err"
+  ! grep -F -- "Traceback" "$err"
+}
+
+touch "$tmp/not-executable"
+expect_failure \
+  "bad-clang-override" \
+  "cowasm: COWASM_CLANG='$tmp/not-executable' is not an executable file" \
+  env COWASM_CLANG="$tmp/not-executable" "$wrapper" --version
+
+expect_failure \
+  "bad-wasm-ld-override" \
+  "cowasm: COWASM_WASM_LD='$tmp/not-executable' is not an executable file" \
+  env COWASM_WASM_LD="$tmp/not-executable" "$wrapper" "$tmp/hello.c" -o "$tmp/bad-ld.wasm"
+
+expect_failure \
+  "bad-sysroot-override" \
+  "cowasm: COWASM_WASI_SYSROOT='$tmp/missing-sysroot' is not a directory" \
+  env COWASM_WASI_SYSROOT="$tmp/missing-sysroot" "$wrapper" --version
+
+expect_failure \
+  "bad-compiler-rt-override" \
+  "cowasm: COWASM_COMPILER_RT='$tmp/missing-builtins.a' is not a file" \
+  env COWASM_COMPILER_RT="$tmp/missing-builtins.a" "$wrapper" "$tmp/hello.c" -o "$tmp/bad-builtins.wasm"
+
+mkdir -p "$tmp/no-crt-sysroot/lib/wasm32-wasi"
+touch "$tmp/no-crt-sysroot/lib/wasm32-wasi/libc.a"
+expect_failure \
+  "missing-crt1" \
+  "cowasm: WASI startup object not found: $tmp/no-crt-sysroot/lib/wasm32-wasi/crt1.o" \
+  env COWASM_WASI_SYSROOT="$tmp/no-crt-sysroot" "$wrapper" "$tmp/hello.c" -o "$tmp/no-crt.wasm"
+
 err="$tmp/missing-response.err"
 if "$wrapper" @"$tmp/missing.rsp" >"$err" 2>&1; then
   cat "$err"
