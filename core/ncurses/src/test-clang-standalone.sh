@@ -23,6 +23,88 @@ cowasm_clang_standalone_probe "ncurses" "$bin_dir" "$probe_dir"
 
 termcap_dist_dir="$(cd "$termcap_dist_dir" && pwd)"
 posix_wasm_dir="$(cd "$posix_wasm_dir" && pwd)"
+compat_dir="$probe_dir/compat"
+mkdir -p "$compat_dir"
+cat >"$compat_dir/sgtty.h" <<'EOF'
+#ifndef COWASM_CLANG_COMPAT_SGTTY_H
+#define COWASM_CLANG_COMPAT_SGTTY_H
+
+struct sgttyb {
+  char sg_ispeed;
+  char sg_ospeed;
+  char sg_erase;
+  char sg_kill;
+  int sg_flags;
+};
+
+#ifndef ECHO
+#define ECHO 0x0008
+#endif
+#ifndef RAW
+#define RAW 0x0020
+#endif
+#ifndef CBREAK
+#define CBREAK 0x0002
+#endif
+#ifndef CRMOD
+#define CRMOD 0x0010
+#endif
+#ifndef LCASE
+#define LCASE 0x0004
+#endif
+#ifndef TANDEM
+#define TANDEM 0x0001
+#endif
+#ifndef EVENP
+#define EVENP 0x0080
+#endif
+#ifndef ODDP
+#define ODDP 0x0040
+#endif
+#ifndef LLITOUT
+#define LLITOUT 0x4000
+#endif
+#ifndef XTABS
+#define XTABS 0x0006000
+#endif
+#ifndef TIOCFLUSH
+#define TIOCFLUSH 0x541B
+#endif
+
+#define B0 0
+#define B50 50
+#define B75 75
+#define B110 110
+#define B134 134
+#define B150 150
+#define B200 200
+#define B300 300
+#define B600 600
+#define B1200 1200
+#define B1800 1800
+#define B2400 2400
+#define B4800 4800
+#define B9600 9600
+#define B19200 19200
+#define B28800 28800
+#define B38400 38400
+#define B57600 57600
+#define B115200 115200
+
+static inline int gtty(int fd, struct sgttyb *buf) {
+  (void)fd;
+  (void)buf;
+  return -1;
+}
+
+static inline int stty(int fd, const struct sgttyb *buf) {
+  (void)fd;
+  (void)buf;
+  return -1;
+}
+
+#endif
+EOF
 
 rm -rf "$dist_dir"
 mkdir -p "$dist_dir"
@@ -35,34 +117,33 @@ if ! grep -q '^#xterm-16color' misc/terminfo.src; then
   cd ..
 fi
 
-if ! head -n 1 ncurses/tty/lib_tstp.c | grep -q 'posix-wasm.h'; then
-  printf '#include "posix-wasm.h"\n' | cat - ncurses/tty/lib_tstp.c >ncurses/tty/lib_tstp.c.tmp
-  mv ncurses/tty/lib_tstp.c.tmp ncurses/tty/lib_tstp.c
-fi
-if ! head -n 1 progs/tset.c | grep -q 'posix-wasm.h'; then
-  printf '#include "posix-wasm.h"\n' | cat - progs/tset.c >progs/tset.c.tmp
-  mv progs/tset.c.tmp progs/tset.c
-fi
+for source_file in ncurses/tty/lib_tstp.c progs/tset.c; do
+  if head -n 1 "$source_file" | grep -q 'posix-wasm.h'; then
+    tail -n +2 "$source_file" >"$source_file.tmp"
+    mv "$source_file.tmp" "$source_file"
+  fi
+done
 
 RANLIB="$bin_dir/cowasm-ranlib" \
 AR="$bin_dir/cowasm-ar" \
 CC="$bin_dir/cowasm-cc" \
 CXX="$bin_dir/cowasm-c++" \
-CFLAGS="-Oz -fvisibility-main -I$termcap_dist_dir/include -L$termcap_dist_dir/lib -I$posix_wasm_dir" \
-CXXFLAGS="-Oz -I$termcap_dist_dir/include -L$termcap_dist_dir/lib -I$posix_wasm_dir" \
+CFLAGS="-Oz -fvisibility-main -I$compat_dir -I$termcap_dist_dir/include -L$termcap_dist_dir/lib -I$posix_wasm_dir" \
+CXXFLAGS="-Oz -I$compat_dir -I$termcap_dist_dir/include -L$termcap_dist_dir/lib -I$posix_wasm_dir" \
 COWASM_TOOLCHAIN=clang \
   ./configure \
     --without-ada \
     --without-manpages \
     --without-tests \
     --enable-termcap \
+    --without-debug \
     --disable-stripping \
     --build="$(./config.guess)" \
     --host=none \
     --prefix="$dist_dir" \
     --with-build-cc="zig cc"
 
-COWASM_TOOLCHAIN=clang make -j"$jobs"
+COWASM_TOOLCHAIN=clang make -j"$jobs" libs
 COWASM_TOOLCHAIN=clang make install.libs
 
 cd "$dist_dir/include"

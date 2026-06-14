@@ -5,6 +5,8 @@ VERSION = 608
 URL = https://ftp.gnu.org/gnu/less/less-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/less-${VERSION}.tar.gz
 TARBALL_SHA256 = a69abe2e0a126777e021d3b73aa3222e1b261f10e64624d41ec079685a6ac209
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
@@ -13,6 +15,12 @@ NCURSES_WASM = $(shell cowasm-package-path @cowasm/ncurses)
 all:  wasm
 
 include ../build/Makefile-rules
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	mkdir ${BUILD_WASM}/bits/
@@ -53,3 +61,24 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 test: ${DIST_WASM}/.built
 	# Check it starts and prints some help
 	echo "" | cowasm ${DIST_WASM}/bin/less --help |grep "Commands"
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.build
+	@status=0; \
+	$(MAKE) -C ../termcap test-clang-standalone || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	if [ "$$status" -ne 0 ]; then exit "$$status"; fi
+	@status=0; \
+	$(MAKE) -C ../ncurses test-clang-standalone || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	if [ "$$status" -ne 0 ]; then exit "$$status"; fi
+	@status=0; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} ${CWD}/../termcap/dist/clang ${CWD}/../ncurses/dist/clang ${CWD}/../posix-wasm/dist/wasm ${SRC} || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
