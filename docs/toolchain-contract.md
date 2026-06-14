@@ -231,6 +231,17 @@ The current clang backend rejects shared, PIC, and PIE flags such as
 flags are forwarded through `-Wl,`. It also rejects `cowasm-zig` and C++ mode.
 Those are later phases of the toolchain migration.
 
+`core/zlib` has an opt-in package smoke target for this backend:
+
+```sh
+make -C core/zlib test-clang-standalone
+```
+
+The target rebuilds zlib from source with `COWASM_TOOLCHAIN=clang`, then builds
+and runs zlib's upstream `example` program. It reports a clear skip when the
+direct clang/lld WASI toolchain is not configured, so it can live alongside the
+default Zig-backed package test without weakening the known-good baseline.
+
 ## Archive Tools
 
 Package builds use Zig archive tools directly:

@@ -2,6 +2,8 @@ include ../build/Makefile-vars
 
 # See https://github.com/sagemathinc/zlib/releases
 ZLIB_VERSION = 1.2.13
+BUILD_CLANG = ${BUILD}/clang
+DIST_CLANG = ${DIST}/clang
 
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
 
@@ -50,3 +52,24 @@ test: ${DIST_WASM}/.built
 	cd ${BUILD_WASM} \
 		&& make example \
 		&& ${BIN}/cowasm ./example
+
+${BUILD_CLANG}/.build: ${TARBALL}
+	rm -rf ${BUILD_CLANG}
+	mkdir -p ${BUILD_CLANG}
+	tar xf ${TARBALL} -C ${BUILD_CLANG} --strip-components=1
+	touch ${BUILD_CLANG}/.build
+
+.PHONY: test-clang-standalone
+test-clang-standalone: ${BUILD_CLANG}/.build
+	@status=0; \
+	${SRC}/test-clang-standalone.sh ${BUILD_CLANG} ${DIST_CLANG} ${BIN} || status=$$?; \
+		if [ "$${status}" = 77 ]; then \
+			exit 0; \
+		fi; \
+		exit $${status}
+
+.PHONY: clean-clang
+clean-clang:
+	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
+
+clean:: clean-clang
