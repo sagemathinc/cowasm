@@ -1,3 +1,4 @@
+import bz2
 import json
 import sysconfig
 import unittest
@@ -35,6 +36,21 @@ class WasiSdkExtensionImportTests(unittest.TestCase):
         self.assertLess(len(compressed), len(payload))
         self.assertEqual(zlib.decompress(compressed), payload)
         self.assertEqual(zlib.crc32(b"cowasm"), 2888577577)
+
+    def test_bz2_extension_imports_from_lib_dynload(self):
+        import _bz2
+
+        suffix = sysconfig.get_config_var("EXT_SUFFIX")
+        self.assertTrue(
+            _bz2.__file__.endswith(f"/lib-dynload/_bz2{suffix}"),
+            _bz2.__file__,
+        )
+
+    def test_bz2_extension_roundtrip(self):
+        payload = b"cowasm-bz2-extension" * 4
+        compressed = bz2.compress(payload)
+        self.assertLess(len(compressed), len(payload))
+        self.assertEqual(bz2.decompress(compressed), payload)
 
 
 if __name__ == "__main__":

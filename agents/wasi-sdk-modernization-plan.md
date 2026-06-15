@@ -628,9 +628,27 @@ for `zlib`:
 - it imports `zlib` under `python-wasi-sdk` and checks compression,
   decompression, and CRC behavior.
 
-This clears the first dependency-backed extension boundary. Remaining Phase 14
-extension work can now move to `pyexpat`, `_bz2`, `_lzma`, `_sqlite3`, and
-other package-backed modules before pip/ensurepip behavior.
+This clears the first dependency-backed extension boundary and sets up the next
+package-backed extension probes before pip/ensurepip behavior.
+
+The second dependency-backed SDK CPython extension import probe is also landed
+for `_bz2`:
+
+- the SDK `core/bzip2` package probe now rebuilds `libbz2.a` with `-fPIC` and
+  rejects the absolute memory relocations that prevent shared-module linking;
+- the SDK `core/bzip2` package probe now installs the generated compatibility
+  headers referenced by the installed `bzlib.h`;
+- `make -C python/cpython test-wasi-sdk-extension-imports` also builds
+  `Modules/_bz2.cpython-314-wasm32-wasi.so` against the SDK bzip2 archive;
+- the target applies the same shared-module guardrails as `_json` and `zlib`:
+  no main-module memory flags, `env.memory` initial size of one page,
+  `dylink.0`, expected `PyInit__bz2`, and no `needed_dynlibs`;
+- it installs `_bz2` into `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports `_bz2`/`bz2` under `python-wasi-sdk` and checks compression and
+  decompression behavior.
+
+Remaining Phase 14 extension work can now move to `pyexpat`, `_lzma`,
+`_sqlite3`, and other package-backed modules before pip/ensurepip behavior.
 
 ## Order Of Work
 
@@ -1290,8 +1308,8 @@ Current runtime status:
 
 Remaining Phase 14 work:
 
-- expand SDK CPython shared-extension install/import coverage beyond `_json`
-  and `zlib` to the remaining dependency-backed extensions;
+- expand SDK CPython shared-extension install/import coverage beyond `_json`,
+  `zlib`, and `_bz2` to the remaining dependency-backed extensions;
 - add SDK pip/ensurepip behavior after dependency-backed extension imports are
   proven;
 - only then expand toward the supported CPython test suite.

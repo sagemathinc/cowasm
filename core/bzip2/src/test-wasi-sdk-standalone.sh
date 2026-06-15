@@ -47,13 +47,19 @@ EOF
 grep -Fq 'wasi_sdk_standalone_config.h' bzlib.h || \
   echo '#include "wasi_sdk_standalone_config.h"' >> bzlib.h
 
+make clean
 COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs" \
   AR="$bin_dir/cowasm-ar" \
   CC="$bin_dir/cowasm-cc" \
-  CFLAGS="-Oz -fvisibility-main" \
+  CFLAGS="-Oz -fPIC -fvisibility-main" \
   RANLIB="$bin_dir/cowasm-ranlib" \
   PREFIX="$dist_dir" \
   install
+cp extra_config.h wasi_sdk_standalone_config.h "$dist_dir/include/"
+if "$bin_dir/wasi-sdk-llvm-objdump-next" -r "$dist_dir/lib/libbz2.a" | grep -E 'R_WASM_MEMORY_ADDR_(LEB|SLEB)\b'; then
+  echo "unexpected absolute memory relocations in wasi-sdk libbz2.a" >&2
+  exit 1
+fi
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/bzip2" --help \
   >"$probe_dir/bzip2-help.out" 2>"$probe_dir/bzip2-help.err"
