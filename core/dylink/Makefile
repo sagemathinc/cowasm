@@ -79,6 +79,7 @@ test: wasm-export dist/.built
 test-wasi-sdk-next: dist/.built
 	cd ../build && make wasi-sdk-next
 	cd test/wasi && make test-wasi-sdk-next
+	cd test/cxx-runtime && make test-wasi-sdk-next
 .PHONY: test-wasi-sdk-next
 
 test-native-macos:
@@ -101,4 +102,3 @@ clean::
 .PHONY: clean-build
 clean-build::
 	rm -rf build test/*/build
-
