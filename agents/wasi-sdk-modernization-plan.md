@@ -32,12 +32,17 @@ Status as of June 15, 2026:
 - CPython builds, links, installs, starts, imports representative stdlib and
   dynamic-extension modules, bootstraps pip, and passes the supported CoWasm
   CPython suite under the SDK path.
-- The plan is now a completed modernization roadmap plus migration-status
-  record. The remaining engineering work is not to add more discovery probes;
-  it is to finish the separate source-language and policy transitions:
+- The plan is now a completed SDK probe roadmap plus migration-status record.
+  No additional discovery probe is required before treating `wasi-sdk` as the
+  active pre-flip gate.
+- The remaining engineering work belongs to separate transition tracks:
   translate CoWasm-owned Zig runtime glue to C, flip the default toolchain only
   after the preserved baseline gates are reviewed, and retire the old Zig path
   after a transition window.
+- Socket-enabled `_ssl` and full `_ctypes` foreign-call support are useful
+  follow-on features, but they are not blockers for closing this roadmap. The
+  current SDK gate intentionally covers `_hashlib`, pip/ensurepip, `_ctypes`
+  import/layout behavior, and the supported CPython suite.
 
 ## Strategic Decision
 
@@ -273,10 +278,9 @@ The focused `core/dylink` Phase 10 test expansion is also landed:
 This status changes the immediate work: do not re-implement the bootstrap, the
 basic wrapper selector, the Phase 9 archive probe, or the Phase 10 focused
 dylink compatibility tests. The Phase 11, Phase 12, Phase 13, and Phase 14
-CPython gates are also covered. The remaining decisions are narrower: whether
-socket-enabled `_ssl` should become a required SDK gate before default wrapper
-behavior changes, and whether `_ctypes` should graduate from the current
-import/layout gate to full foreign-call support.
+CPython gates are also covered. Socket-enabled `_ssl` and full `_ctypes`
+foreign-call support should be tracked as post-roadmap feature work, not as
+unfinished discovery probes.
 
 The first Phase 11 package probe is landed for `core/zlib`:
 
@@ -877,10 +881,10 @@ The SDK CPython supported-suite gate is also landed:
 - the current run passes all 234 supported CPython test files under the SDK
   path.
 
-Remaining Phase 14 extension work can now focus on whether socket-enabled
-`_ssl` should become a required gate before default wrapper behavior changes,
-and whether `_ctypes` should graduate from the current import/layout gate to
-full foreign-call support.
+Remaining Phase 14 extension work is optional feature work: socket-enabled
+`_ssl` can become a future networking/security gate, and `_ctypes` can graduate
+from the current import/layout gate when real wasm libffi call/closure support
+exists.
 
 ## Order Of Work
 
@@ -1578,12 +1582,12 @@ Current runtime status:
   supported-by-python-wasm CPython suite against `python-wasi-sdk`; the current
   SDK path passes all 234 supported test files.
 
-Optional Phase 14 follow-up:
+Post-roadmap Phase 14 follow-up:
 
-- decide whether socket-enabled `_ssl` should become a required SDK gate before
-  default wrapper behavior changes;
-- decide whether `_ctypes` should graduate from the current import/layout gate
-  to full foreign-call support.
+- add a socket-enabled `_ssl` gate if CoWasm enables the OpenSSL socket surface
+  and wants TLS socket behavior in the default SDK acceptance set;
+- graduate `_ctypes` from import/layout coverage to full foreign-call support
+  after the wasm32 libffi backend supports the required call and closure paths.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 
@@ -1624,6 +1628,11 @@ Current pre-flip gate:
   `test-wasi-sdk-bootstrap`, `test-wasi-sdk-dylink`,
   `test-wasi-sdk-packages`, `test-wasi-sdk-python`, and
   `test-wasi-sdk-math`.
+
+This roadmap's default-flip deliverable is the preserved gate definition above,
+not the policy decision to change the default in this commit stream. The flip
+should happen in a separate change after reviewing the Zig baseline and the
+SDK aggregate gate side by side.
 
 Minimum gate:
 
@@ -1709,7 +1718,7 @@ implementation code.
   resolving them against CoWasm main-runtime pthread exports with a different
   ABI.
 
-## Open Questions
+## Post-Roadmap Questions
 
 - Should `zig_cowasm_compiler.py` be renamed once Zig is no longer the primary
   provider? (yes)
@@ -1729,8 +1738,8 @@ implementation code.
   tests will not catch?
 - When, if ever, should CoWasm start investigating `wasm32-wasip2` component
   artifacts?
-- Which heavier CPython extension or behavior should be the next SDK gate:
-  socket-enabled `_ssl` or full `_ctypes` foreign-call support?
+- Should socket-enabled `_ssl` or full `_ctypes` foreign-call support become a
+  future product gate after the current SDK pre-flip gate is reviewed?
 
 ## Risks
 
@@ -1748,7 +1757,20 @@ implementation code.
 
 ## Success Criteria
 
-The modernization is successful when:
+This completed roadmap is successful now because:
+
+- a pinned `wasi-sdk` bootstrap exists and is checksum-validated;
+- `COWASM_TOOLCHAIN=wasi-sdk` builds CoWasm-compatible standalone programs,
+  side modules, archives, CPython, and CPython extension side modules;
+- `make test-wasi-sdk` aggregates the SDK bootstrap, dylink, package, CPython,
+  GMP, and PARI capability gates;
+- CPython starts, passes runtime contracts, imports representative stdlib
+  modules and package-backed dynamic extensions, bootstraps pip, and passes
+  the supported suite;
+- Sage-relevant GMP passes with a mathematical smoke, while PARI has an
+  explicit setjmp/longjmp capability gate instead of a silent failure.
+
+The full modernization remains successful only when:
 
 - CoWasm core runtime builds do not depend on CoWasm-owned Zig source files.
 - CoWasm builds from a pinned `wasi-sdk` without local Zig stdlib patches.
