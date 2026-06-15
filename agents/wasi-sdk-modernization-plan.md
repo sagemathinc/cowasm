@@ -238,9 +238,23 @@ The `core/dylink` Phase 9 blocker is also landed:
   SDK-built archive-backed main module, and the tiny C++ side-module runtime
   smoke.
 
+The focused `core/dylink` Phase 10 test expansion is also landed:
+
+- the WASI dylink fixture covers repeated `dlopen`/`dlsym` on the same side
+  module;
+- the side module includes a constructor and exports the synthesized
+  `__wasm_call_ctors` hook in the `wasi-sdk` build;
+- runtime checks assert that repeated `dlopen` reuses the loaded module and does
+  not rerun constructors;
+- the SDK ABI checker parses `dylink.0` metadata with
+  `core/dylink/src/metadata.ts` and asserts memory/table metadata is present;
+- the checker also asserts no accidental `needed_dynlibs`, the expected GOT
+  imports, `__wasm_apply_data_relocs`, and `__wasm_call_ctors`.
+
 This status changes the immediate work: do not re-implement the bootstrap, the
-basic wrapper selector, or the Phase 9 archive probe. The next blocker is
-expanding the focused dylink compatibility tests in Phase 10.
+basic wrapper selector, the Phase 9 archive probe, or the Phase 10 focused
+dylink compatibility tests. The next blocker is porting the first simple
+packages in Phase 11, starting with `core/zlib`.
 
 ## Order Of Work
 
@@ -727,11 +741,11 @@ Landed actions:
 Deliverable: CoWasm's dylink runtime archive can participate in a
 `wasi-sdk`-built main-module test.
 
-## Phase 10: Focused Dylink Compatibility Tests
+## Phase 10: Focused Dylink Compatibility Tests (Landed)
 
 Before touching packages, expand the small dynamic-linking tests.
 
-Test cases:
+Landed and existing test cases:
 
 - exported function with no globals;
 - exported function with mutable global data;

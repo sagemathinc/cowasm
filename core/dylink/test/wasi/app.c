@@ -81,6 +81,18 @@ int add_main_data_relocation(int n) {
   return (*f)(n);
 }
 
+EXPORTED_SYMBOL
+int repeated_dlopen_and_ctor_count() {
+  void* handle1 = dlopen("./dynamic-library.so", 2);
+  void* handle2 = dlopen("./dynamic-library.so", 2);
+  assert(handle1 == handle2);
+
+  FUN_PTR f1 = (FUN_PTR)dlsym(handle1, "ctor_count");
+  FUN_PTR f2 = (FUN_PTR)dlsym(handle2, "ctor_count");
+  assert(f1 == f2);
+  return (*f1)(0);
+}
+
 // This is going to get called by the dynamic library to do something.
 EXPORTED_SYMBOL
 int add5077(int n) { return n + 5077; }
@@ -110,6 +122,9 @@ int main() {
 
   printf("add_main_data_relocation(2022) = %d\n", add_main_data_relocation(2022));
   assert(add_main_data_relocation(2022) == 2022 + main_value);
+
+  printf("repeated_dlopen_and_ctor_count() = %d\n", repeated_dlopen_and_ctor_count());
+  assert(repeated_dlopen_and_ctor_count() == 1);
 
   int n = add5077_using_lib_using_main(389);
   printf("add5077_using_lib_using_main(389) = %d\n", n);

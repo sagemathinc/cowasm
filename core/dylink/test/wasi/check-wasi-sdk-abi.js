@@ -1,5 +1,6 @@
 const assert = require("assert");
 const { readFileSync } = require("fs");
+const getMetadata = require("../../dist/metadata").default;
 
 const [appPath, sidePath] = process.argv.slice(2);
 
@@ -67,8 +68,14 @@ function assertExport(module, name, kind) {
 
 const app = wasmModule(appPath);
 const side = wasmModule(sidePath);
+const sideMetadata = getMetadata(readFileSync(sidePath));
 
 assert.strictEqual(firstSectionName(sidePath), "dylink.0");
+assert.strictEqual(sideMetadata.neededDynlibs.length, 0);
+assert(Number.isInteger(sideMetadata.memorySize), "side metadata memorySize");
+assert(Number.isInteger(sideMetadata.memoryAlign), "side metadata memoryAlign");
+assert(Number.isInteger(sideMetadata.tableSize), "side metadata tableSize");
+assert(Number.isInteger(sideMetadata.tableAlign), "side metadata tableAlign");
 
 assertImport(app, "env", "memory", "memory");
 assertImport(app, "env", "__indirect_function_table", "table");
@@ -100,5 +107,7 @@ assertExport(side, "pointer_to_add10", "function");
 assertExport(side, "add389", "function");
 assertExport(side, "add_side_data_relocation", "function");
 assertExport(side, "add_main_data_relocation", "function");
+assertExport(side, "ctor_count", "function");
 assertExport(side, "add5077_using_func_from_main", "function");
 assertExport(side, "__wasm_apply_data_relocs", "function");
+assertExport(side, "__wasm_call_ctors", "function");

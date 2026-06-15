@@ -54,6 +54,7 @@ build/wasi-sdk/dynamic-library.so: dynamic-library.c
 		-nostdlib \
 		-Wl,--allow-undefined \
 		-Wl,--no-entry \
+		-Wl,--export=__wasm_call_ctors \
 		dynamic-library.c \
 		-o build/wasi-sdk/dynamic-library.so
 

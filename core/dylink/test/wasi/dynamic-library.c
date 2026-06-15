@@ -9,6 +9,12 @@ int y = 1;
 static int* y_ptr = &y;
 extern int main_value;
 static int* main_value_ptr = &main_value;
+static int ctor_counter = 0;
+
+__attribute__((constructor))
+static void dynamic_library_ctor(void) {
+  ctor_counter += 1;
+}
 
 EXPORTED_SYMBOL
 PyObject* pynone_b() { return PyNone; }
@@ -27,6 +33,9 @@ int add_side_data_relocation(const int a) { return a + *y_ptr; }
 
 EXPORTED_SYMBOL
 int add_main_data_relocation(const int a) { return a + *main_value_ptr; }
+
+EXPORTED_SYMBOL
+int ctor_count(const int unused) { return ctor_counter + unused * 0; }
 
 // This illustrates calling a function that is
 // defined in the main app.c.
