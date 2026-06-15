@@ -48,6 +48,7 @@ patches=(
   22-regrtest-stty-enotty.patch
   23-regrtest-no-sysconfig-env.patch
   24-wasip1-multiarch-alias.patch
+  25-tuple-resize-same-size-noop.patch
 )
 
 for patch_name in "${patches[@]}"; do

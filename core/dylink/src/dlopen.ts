@@ -344,6 +344,13 @@ export default class DlopenManger {
     const __table_base = metadata.tableSize
       ? this.functionTable.getNextTablePos()
       : 0;
+    if (__memory_base != 0) {
+      new Uint8Array(
+        this.memory.buffer,
+        __memory_base,
+        metadata.memorySize
+      ).fill(0);
+    }
 
     const env = {
       memory: this.memory,

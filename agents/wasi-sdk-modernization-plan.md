@@ -567,33 +567,50 @@ Do not proceed to pip, extension imports, or broader package work until this
 allocator/startup trap is understood and `test-wasi-sdk-runtime-contracts`
 passes.
 
-June 2026 follow-up evidence narrows the blocker further:
+June 2026 follow-up work narrows the blocker further:
 
 - the dylink loader now provides a side-module-local `env.__memory_size`
   function derived from `dylink.0` memory metadata;
 - the SDK CPython wrapper can use `__memory_base` plus `__memory_size` to keep
   side-module allocator calls from forwarding static-data, pre-load, or
   out-of-linear-memory pointers to the main runtime allocator;
-- with that allocator guard in place, `./bin/python-wasi-sdk -S --version`
-  succeeds and reports `Python 3.14.6`;
-- `./bin/python-wasi-sdk -S -c 'pass'` still traps, but the failure has moved
-  past the original main-runtime `free` trap and now reaches CPython tuple/type
-  state during initialization/command compilation;
-- a build-tree diagnostic showed `_PyTuple_Resize` being called as a no-op
-  resize on an exact tuple with `size == newsize == 4` and `refcnt == 33`,
-  which trips CPython's uniqueness check before the same-size early return;
-- moving that same-size return ahead of the uniqueness check in the build tree
-  moved execution to a later initialization/deallocation trap, so it is useful
-  evidence but is not yet a source-level fix to land.
-- the later trap goes through `_Py_Dealloc` after the side module's active
-  element segment has been installed at `__table_base`; this makes the current
-  failure look like CPython startup/object lifetime or allocator state rather
-  than a missing table-base relocation.
+- the dylink loader now clears the whole side-module static-memory allocation
+  before instantiating the module. This is required because the `dylink.0`
+  memory size includes BSS, while the wasm data segment only initializes the
+  non-zero prefix;
+- after BSS clearing, the original `method_dealloc`/GC-header trap moved to a
+  later CPython startup path, confirming that dirty side-module static memory
+  was one real defect;
+- the SDK CPython patch list now includes a target patch that treats
+  `_PyTuple_Resize(tuple, current_size)` as a no-op before enforcing the unique
+  reference precondition. This matches the operation's behavior: no resize is
+  needed when `oldsize == newsize`, so uniqueness is not required;
+- the clean SDK CPython build, link, and install path completes through:
+  `make -C python/cpython test-wasi-sdk-link wasi-sdk-cpython
+  python-wasi-sdk`;
+- `./bin/python-wasi-sdk -S --version` succeeds and reports
+  `Python 3.14.6`.
 
-The next focused investigation should determine why the SDK build reaches
-`_PyTuple_Resize` with a shared tuple for a no-op resize, and whether that is a
-real CPython invariant violation caused by earlier object/refcount corruption
-or a harmless no-op resize that CoWasm can safely patch for this target.
+The remaining Phase 14 blocker is still runtime startup for command execution:
+
+```sh
+./bin/python-wasi-sdk -S -c 'pass'
+./bin/python-wasi-sdk -S -c 'print(1)'
+```
+
+Both commands still trap with `RuntimeError: memory access out of bounds`.
+The current stack is through `MemoryError_dealloc`,
+`_PyObject_GC_UNTRACK`, `_Py_Dealloc`, and `Py_InitializeFromConfig`.
+
+A temporary build-tree diagnostic around `MemoryError_dealloc` showed the
+preallocated `MemoryError` objects are allocated contiguously at a 0x30 stride,
+which matches the 32-bit `PyBaseExceptionObject` plus GC-header layout. The
+first few objects have plausible GC links, then a later object's `_gc_next`
+field is already corrupted before `_PyObject_GC_UNTRACK` runs. This makes the
+next focused investigation the GC allocation/tracking path for preallocated
+`MemoryError` objects under the SDK side-module build, especially the
+interaction among `PyObject_GC_New`, `_PyObject_GC_TRACK`, pymalloc/mimalloc
+state, and the host allocator imported from the main runtime.
 
 ## Order Of Work
 
