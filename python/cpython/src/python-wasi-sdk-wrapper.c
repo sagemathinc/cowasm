@@ -1,5 +1,8 @@
 #include "Python.h"
 
+#include <arpa/inet.h>
+#include <errno.h>
+#include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,8 +10,47 @@
 extern void wasmSendString(const char *ptr, size_t len);
 extern void wasmSetException(void);
 
+#ifndef HOST_NOT_FOUND
+#define HOST_NOT_FOUND 1
+#endif
+
 static int didInit = 0;
 static PyObject *globals = NULL;
+
+int h_errno = 0;
+
+__attribute__((visibility("hidden"))) int Py_EMSCRIPTEN_SIGNAL_HANDLING = 0;
+__attribute__((visibility("hidden"))) int _Py_emscripten_signal_clock = 50;
+
+struct hostent *
+getipnodebyaddr(const void *addr, size_t len, int af, int *error_num)
+{
+    if (error_num != NULL) {
+        *error_num = HOST_NOT_FOUND;
+    }
+    return NULL;
+}
+
+void
+freehostent(struct hostent *ent)
+{
+}
+
+char *
+inet_ntoa(struct in_addr in)
+{
+    static char buf[16];
+    const unsigned char *addr = (const unsigned char *)&in.s_addr;
+    snprintf(buf, sizeof(buf), "%u.%u.%u.%u", addr[0], addr[1], addr[2], addr[3]);
+    return buf;
+}
+
+int
+fchdir(int fd)
+{
+    errno = ENOSYS;
+    return -1;
+}
 
 __attribute__((visibility("default")))
 void
@@ -130,4 +172,11 @@ int
 cowasm_python_terminal(int argc, char **argv)
 {
     return Py_BytesMain(argc, argv);
+}
+
+__attribute__((visibility("default")))
+int
+__main_argc_argv(int argc, char **argv)
+{
+    return cowasm_python_terminal(argc, argv);
 }

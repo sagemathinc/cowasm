@@ -177,8 +177,9 @@ BLDSHARED = cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
 BLDCXXSHARED = cowasm-c++ --experimental-pic -shared ${DEBUG_MODE}
 BLDSHARED_WASI_SDK = ${BIN}/cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
 BLDCXXSHARED_WASI_SDK = ${BIN}/cowasm-c++ --experimental-pic -shared ${DEBUG_MODE}
-WASI_SDK_PYTHON_CFLAGS = ${DEBUG_MODE} -I${BUILD_WASI_SDK} -I${BUILD_WASI_SDK}/Include -I${POSIX_WASI_SDK} -DPy_DEFAULT_RECURSION_LIMIT=700
+WASI_SDK_PYTHON_CFLAGS = ${DEBUG_MODE} -fPIC -I${BUILD_WASI_SDK} -I${BUILD_WASI_SDK}/Include -I${POSIX_WASI_SDK} -DPy_DEFAULT_RECURSION_LIMIT=700
 WASI_SDK_PYTHON_EXPORTS = \
+	-Wl,--export=__main_argc_argv \
 	-Wl,--export=keepalive \
 	-Wl,--export=c_malloc \
 	-Wl,--export=c_free \
@@ -274,7 +275,7 @@ ${BUILD_WASI_SDK}/.configured: node_modules ${BUILD_WASI_SDK}/.patched ${DIST_NA
 		CXX="${BIN}/cowasm-c++" \
 		AR="${BIN}/cowasm-ar" \
 		RANLIB="${BIN}/cowasm-ranlib" \
-		CFLAGS="${DEBUG_MODE} -I${BUILD_WASI_SDK} -I${POSIX_WASI_SDK} -DPy_DEFAULT_RECURSION_LIMIT=700" \
+		CFLAGS="${DEBUG_MODE} -fPIC -I${BUILD_WASI_SDK} -I${POSIX_WASI_SDK} -DPy_DEFAULT_RECURSION_LIMIT=700" \
 		BLDSHARED="${BLDSHARED_WASI_SDK}" \
 		LDCXXSHARED="${BLDCXXSHARED_WASI_SDK}" \
 		CONFIG_SITE=./config.site \
@@ -355,6 +356,9 @@ ${BUILD_WASI_SDK}/Programs/libpython-wasi-sdk.o: ${BUILD_WASI_SDK}/Programs/libp
 
 ${BUILD_WASI_SDK}/python-wasi-sdk.wasm: ${BUILD_WASI_SDK}/Programs/python-wasi-sdk-wrapper.o ${BUILD_WASI_SDK}/Programs/libpython-wasi-sdk.o test-wasi-sdk-archive
 	${BIN}/wasi-sdk-clang-next -target wasm32-wasip1 ${WASM_OPT} \
+		-fPIC \
+		-shared \
+		-nostdlib \
 		-Wl,--allow-undefined \
 		-Wl,--no-entry \
 		${WASI_SDK_PYTHON_EXPORTS} \
@@ -367,12 +371,48 @@ ${BUILD_WASI_SDK}/python-wasi-sdk.wasm: ${BUILD_WASI_SDK}/Programs/python-wasi-s
 	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'env._PyEM_TrampolineCall'
 	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'cowasm_python_init'
 	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'cowasm_python_terminal'
+	wasm-objdump -h ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'dylink.0'
 
 .PHONY: test-wasi-sdk-link
 test-wasi-sdk-link: ${BUILD_WASI_SDK}/python-wasi-sdk.wasm
 
 .PHONY: test-wasi-sdk-next
 test-wasi-sdk-next: test-wasi-sdk-configure test-wasi-sdk-compile test-wasi-sdk-link
+
+${DIST_WASI_SDK}/.install-cpython: node_modules ${BUILD_WASI_SDK}/python-wasi-sdk.wasm ${BIN}/python-native
+	rm -rf ${DIST_WASI_SDK}
+	mkdir -p ${DIST_WASI_SDK}/bin ${DIST_WASI_SDK}/lib/${PYTHON_LIB} ${DIST_WASI_SDK}/lib/dist ${DIST_WASI_SDK}/include/${PYTHON_LIB}
+	cp ${BUILD_WASI_SDK}/python-wasi-sdk.wasm ${DIST_WASI_SDK}/bin/python${PYTHON_MAJOR}.${PYTHON_MINOR}.wasm
+	cp ${BUILD_WASI_SDK}/libpython${PYTHON_MAJOR}.${PYTHON_MINOR}.a ${DIST_WASI_SDK}/lib/
+	cp ${BUILD_WASI_SDK}/Programs/libpython.c ${DIST_WASI_SDK}/lib/
+	cp ${BUILD_WASI_SDK}/Modules/_hacl/libHacl*.a ${DIST_WASI_SDK}/lib/
+	cp -R ${BUILD_WASI_SDK}/Lib/. ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/
+	cd ${BUILD_WASI_SDK} && ${WASI_SDK_CPYTHON_ENV} make pybuilddir.txt
+	cp ${BUILD_WASI_SDK}/`cat ${BUILD_WASI_SDK}/pybuilddir.txt`/_sysconfigdata__wasi_wasm32-wasi.py ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/
+	cd ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/ \
+		&& sed -i'.bak' \
+			-e "s|'LDSHARED': ''|'LDSHARED': '${BLDSHARED_WASI_SDK}'|g" \
+			-e "s|'LDCXXSHARED': ''|'LDCXXSHARED': '${BLDCXXSHARED_WASI_SDK}'|g" \
+			_sysconfigdata__wasi_wasm32-wasi.py
+	cat ${SRC}/patches/17-fix-sysconfigdata.py >> ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/_sysconfigdata__wasi_wasm32-wasi.py
+	cp -R ${BUILD_WASI_SDK}/Include/. ${DIST_WASI_SDK}/include/${PYTHON_LIB}/
+	cp ${BUILD_WASI_SDK}/pyconfig.h ${DIST_WASI_SDK}/include/${PYTHON_LIB}/
+	cp -v ${POSIX_WASI_SDK}/*.h ${DIST_WASI_SDK}/include/${PYTHON_LIB}/
+	cd ${DIST_WASI_SDK}/lib && zip -qr dist/python-stdlib.zip ${PYTHON_LIB}
+	touch ${DIST_WASI_SDK}/.install-cpython
+
+.PHONY: wasi-sdk-cpython
+wasi-sdk-cpython: ${DIST_WASI_SDK}/.install-cpython
+
+${BIN}/python-wasi-sdk: ${DIST_WASI_SDK}/.install-cpython ${CWD}/bin/python-wasi-sdk
+	ln -sf ${CWD}/bin/python-wasi-sdk ${BIN}/python-wasi-sdk
+
+.PHONY: python-wasi-sdk
+python-wasi-sdk: ${BIN}/python-wasi-sdk
+
+.PHONY: test-wasi-sdk-runtime-contracts
+test-wasi-sdk-runtime-contracts: ${BIN}/python-wasi-sdk
+	${CWD}/bin/python-wasi-sdk ${SRC}/runtime_contract_tests.py
 
 ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
 	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR}/_sysconfigdata__wasi_wasm32-wasi.py so it

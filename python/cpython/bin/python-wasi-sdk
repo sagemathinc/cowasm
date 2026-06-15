@@ -1,0 +1,10 @@
+#!/bin/sh
+
+export PYTHONEXECUTABLE=$(readlink -f "$0")
+SCRIPTDIR=$(dirname "$PYTHONEXECUTABLE")
+export PYTHONHOME="$SCRIPTDIR"/../dist/wasi-sdk/
+if [ ! -t 0 ] || [ "$1" = "-" ]; then
+    export COWASM_STDIN_NONINTERACTIVE=1
+    export PYTHON_BASIC_REPL=1
+fi
+"$SCRIPTDIR"/../node_modules/.bin/kernel "$SCRIPTDIR"/../dist/wasi-sdk/bin/python3.14.wasm "$@"

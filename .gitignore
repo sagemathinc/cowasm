@@ -10,6 +10,7 @@ bin/wasi-js
 bin/cython
 bin/cowasm*
 bin/*-wasm
+bin/*-wasi-sdk
 bin/wasm-opt
 bin/wasi-sdk-*-next
 bin-wasm/**

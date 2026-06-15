@@ -498,21 +498,74 @@ The Phase 14 CPython configure and core-compile probe is now landed:
   runtime entry points such as `cowasm_python_init` and
   `cowasm_python_terminal`, and imports the expected TypeScript runtime hooks
   such as `wasmSendString` and `_PyEM_TrampolineCall`.
+- the SDK CPython link now compiles CPython and the wrapper as PIC and links
+  `build/wasi-sdk/python-wasi-sdk.wasm` as a real `dylink.0` side module with
+  `-shared -nostdlib`;
+- the SDK wrapper provides the disabled Emscripten signal globals required by
+  CPython's `ceval.o`, legacy `netdb` compatibility symbols not provided by
+  the main runtime (`h_errno`, `getipnodebyaddr`, `freehostent`, `inet_ntoa`),
+  a local `fchdir` wasm fallback for the only host POSIX function imported
+  through `GOT.func`, and an exported `__main_argc_argv` entrypoint for the
+  kernel runner;
+- `make -C python/cpython wasi-sdk-cpython` installs from the SDK link-probe
+  artifacts without invoking CPython's built-in `python.wasm` rule, including
+  `dist/wasi-sdk/bin/python3.14.wasm`, `libpython3.14.a`, HACL archives,
+  headers, patched `_sysconfigdata__wasi_wasm32-wasi.py`, and
+  `lib/dist/python-stdlib.zip`;
+- `make -C python/cpython python-wasi-sdk` creates the top-level wrapper
+  symlink to `python/cpython/bin/python-wasi-sdk`.
 
-The next Phase 14 blocker is moving from a linkable SDK-built CPython main
-module to an installed and runnable SDK CPython package: install the SDK build
-tree, point the existing `python-wasm` loader at `python-wasi-sdk.wasm`, and run
-the existing runtime-contract tests before attempting broader package work.
+The next Phase 14 blocker is runtime startup. The installed SDK artifact loads
+far enough for the kernel to find `__main_argc_argv`, but even the minimal
+command:
 
-A direct `make install` in `python/cpython/build/wasi-sdk` is not the right
-install path yet. It first tries to build CPython's own `python.wasm`
-executable target, which still fails at link time on CoWasm runtime hooks such
-as `wasmGetSignalState`, `_PyEM_TrampolineCall`, `_Py_emscripten_runtime`,
-`python_wasm_set_inheritable`, and the Emscripten signal globals. The SDK
-install target therefore needs to either install from the archive/link-probe
-artifacts without invoking CPython's built-in executable rule, or teach that
-rule the same explicit `--allow-undefined` runtime-import contract used by
-`test-wasi-sdk-link`.
+```sh
+./bin/python-wasi-sdk -S -c 'print(1)'
+```
+
+currently traps during CPython initialization with:
+
+```text
+RuntimeError: memory access out of bounds
+  at kernel free
+  at python-wasi-sdk.wasm ... PyMem_Free / _PyUnicode_FromId startup path
+```
+
+Forcing `PYTHONMALLOC=malloc` keeps the same trap shape, so the current
+evidence does not point only at CPython's pymalloc policy.
+
+Additional local probes from the same blocker:
+
+- `DEBUG=dylink* ./bin/python-wasi-sdk -S -c 'print(1)'` confirms that
+  `__wasm_apply_data_relocs` runs before `__main_argc_argv` is called;
+- forcing an exported `__wasm_call_ctors` hook into the SDK side module did not
+  change the trap;
+- rebuilding the SDK archive with `WITH_MIMALLOC` disabled did not change the
+  trap;
+- forcing the SDK build-tree `ALIGNOF_MAX_ALIGN_T` from 16 back to the Zig
+  baseline value 8 did not change the trap;
+- linking the SDK sysroot `libc.a` into the side module is blocked by non-PIC
+  `R_WASM_MEMORY_ADDR_LEB` relocations in the SDK archive, so the near-term
+  side-module probe still has to resolve libc and allocator imports from the
+  existing main runtime.
+
+The pre-runtime blockers already cleared in this phase were:
+
+- non-PIC CPython objects could not be linked as a side module; rebuilding the
+  SDK tree with `-fPIC` fixed the relocation class failure;
+- the first shared link then failed on undefined Emscripten signal data
+  symbols, fixed by defining the disabled signal globals in the SDK wrapper;
+- the loader rejected missing legacy socket/name-service imports such as
+  `getipnodebyaddr`, `freehostent`, `inet_ntoa`, and `h_errno`;
+- the dynamic linker rejected `GOT.func.fchdir` because modern V8 cannot put a
+  JavaScript host function into the wasm function table, fixed with a local
+  wasm `fchdir` fallback;
+- the kernel runner required `__main_argc_argv` or `main`, fixed by exporting
+  `__main_argc_argv`.
+
+Do not proceed to pip, extension imports, or broader package work until this
+allocator/startup trap is understood and `test-wasi-sdk-runtime-contracts`
+passes.
 
 ## Order Of Work
 
@@ -1107,7 +1160,7 @@ Only after the prior phases are green:
 - configure `python/cpython` with `wasi-sdk` (probe target landed);
 - build `python/cpython`'s static archive with `wasi-sdk` (probe target landed);
 - link `python/cpython` with `wasi-sdk` (probe target landed);
-- install `python/cpython` with `wasi-sdk`;
+- install `python/cpython` with `wasi-sdk` (artifact install target landed);
 - run `make -C python/cpython pip`;
 - run `make -C python/cpython test-runtime-contracts`;
 - run the supported CPython test suite;
@@ -1150,9 +1203,18 @@ Landed configure and core-compile probe details:
 - C wrapper link coverage for `build/wasi-sdk/python-wasi-sdk.wasm`, including
   the CoWasm runtime exports used by `python/python-wasm` and the expected
   TypeScript runtime imports.
-- direct SDK `make install` blocker identified: CPython's built-in
-  `python.wasm` link rule does not yet use the explicit CoWasm runtime-import
-  contract from `test-wasi-sdk-link`.
+- SDK artifact install coverage via `make -C python/cpython wasi-sdk-cpython`.
+- runnable wrapper target via `make -C python/cpython python-wasi-sdk`.
+
+Current runtime blocker:
+
+- `./bin/python-wasi-sdk -S -c 'print(1)'` traps in the main runtime `free`
+  during CPython startup, after `__main_argc_argv` is found and before runtime
+  contract tests can run. `PYTHONMALLOC=malloc`, disabling mimalloc in the
+  SDK build tree, forcing the old max-align value, and forcing a constructor
+  export do not avoid the trap. `DEBUG=dylink*` shows data relocations are
+  applied before startup. Treat this as an SDK side-module startup/object-layout
+  or imported-libc ABI problem, not as an install-layout or stdlib problem.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 
