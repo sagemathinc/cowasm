@@ -397,6 +397,22 @@ The `core/tar` Phase 12 package probe is also partially landed:
 - `make -C core/tar test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
+The `core/openssl` Phase 12 package probe is also partially landed:
+
+- `make -C core/openssl test-wasi-sdk-standalone` builds OpenSSL with
+  `COWASM_TOOLCHAIN=wasi-sdk`;
+- the probe first ensures the `core/posix-wasm` runtime archive exists;
+- it supplies standalone compatibility shims for wait, termios, network
+  lookup, uid/gid access, fork, pipe, dup, alarm, and terminal attributes;
+- it links against the CoWasm POSIX runtime plus WASI emulation libraries for
+  mmap, getpid, signal, and process clocks;
+- it installs `libcrypto.a`, `libssl.a`, OpenSSL headers, pkg-config metadata,
+  and the `openssl` command into `dist/wasi-sdk`;
+- it runs `openssl md5` under the standalone WASI runner and checks the
+  expected stdin digest;
+- `make -C core/openssl test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name.
+
 ## Order Of Work
 
 Recommended order:
@@ -948,7 +964,7 @@ Suggested order:
 2. `core/ncurses` (probe target landed)
 3. `core/less` (probe target landed)
 4. `core/tar` (probe target landed)
-5. `core/openssl`
+5. `core/openssl` (probe target landed)
 6. `core/libgit2`
 
 Validation:
