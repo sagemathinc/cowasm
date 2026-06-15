@@ -53,6 +53,12 @@ extern "C" {
 // we provide our own stubs
 #undef HAVE_PTHREAD_STUBS
 
+// CoWasm provides these process APIs through the JavaScript POSIX runtime.
+// Cross configure does not detect them in the wasi-sdk side-module build.
+#define HAVE_EXECV 1
+#define HAVE_FORK 1
+#define HAVE_WAITPID 1
+
 // CoWasm does not implement these platform-specific pthread convenience APIs.
 // Python should fall back to behavior that does not import them.
 #undef HAVE_PTHREAD_GETATTR_NP

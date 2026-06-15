@@ -3,10 +3,12 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netdb.h>
+#include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 extern void wasmSendString(const char *ptr, size_t len);
 extern void wasmSetException(void);
@@ -33,6 +35,175 @@ int h_errno = 0;
 
 __attribute__((visibility("hidden"))) int Py_EMSCRIPTEN_SIGNAL_HANDLING = 0;
 __attribute__((visibility("hidden"))) int _Py_emscripten_signal_clock = 50;
+
+#define COWASM_PTHREAD_KEYS 64
+
+// Keep SDK CPython pthread calls local. CoWasm's main runtime exports pthread
+// stubs with a different struct layout than wasi-sdk's pthread.h.
+static void *pthread_key_values[COWASM_PTHREAD_KEYS];
+static pthread_key_t next_pthread_key = 1;
+
+int
+pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr)
+{
+    return 0;
+}
+
+int
+pthread_mutex_destroy(pthread_mutex_t *mutex)
+{
+    return 0;
+}
+
+int
+pthread_mutex_lock(pthread_mutex_t *mutex)
+{
+    return 0;
+}
+
+int
+pthread_mutex_unlock(pthread_mutex_t *mutex)
+{
+    return 0;
+}
+
+int
+pthread_mutex_trylock(pthread_mutex_t *mutex)
+{
+    return 0;
+}
+
+int
+pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr)
+{
+    return 0;
+}
+
+int
+pthread_cond_destroy(pthread_cond_t *cond)
+{
+    return 0;
+}
+
+int
+pthread_cond_signal(pthread_cond_t *cond)
+{
+    return 0;
+}
+
+int
+pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex)
+{
+    return 0;
+}
+
+int
+pthread_cond_timedwait(
+    pthread_cond_t *cond, pthread_mutex_t *mutex, const struct timespec *abstime)
+{
+    return 0;
+}
+
+int
+pthread_condattr_init(pthread_condattr_t *attr)
+{
+    return 0;
+}
+
+int
+pthread_condattr_setclock(pthread_condattr_t *attr, clockid_t clock_id)
+{
+    return 0;
+}
+
+int
+pthread_attr_init(pthread_attr_t *attr)
+{
+    return 0;
+}
+
+int
+pthread_attr_destroy(pthread_attr_t *attr)
+{
+    return 0;
+}
+
+int
+pthread_attr_setstacksize(pthread_attr_t *attr, size_t stacksize)
+{
+    return 0;
+}
+
+int
+pthread_attr_setscope(pthread_attr_t *attr, int scope)
+{
+    return 0;
+}
+
+int
+pthread_create(
+    pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine)(void *),
+    void *arg)
+{
+    errno = ENOSYS;
+    return ENOSYS;
+}
+
+int
+pthread_detach(pthread_t thread)
+{
+    return 0;
+}
+
+int
+pthread_join(pthread_t thread, void **retval)
+{
+    return 0;
+}
+
+pthread_t
+pthread_self(void)
+{
+    return (pthread_t)1;
+}
+
+int
+pthread_key_create(pthread_key_t *key, void (*destructor)(void *))
+{
+    if (next_pthread_key >= COWASM_PTHREAD_KEYS) {
+        return EAGAIN;
+    }
+    *key = next_pthread_key++;
+    return 0;
+}
+
+int
+pthread_key_delete(pthread_key_t key)
+{
+    if (key < COWASM_PTHREAD_KEYS) {
+        pthread_key_values[key] = NULL;
+    }
+    return 0;
+}
+
+int
+pthread_setspecific(pthread_key_t key, const void *value)
+{
+    if (key >= COWASM_PTHREAD_KEYS) {
+        return EINVAL;
+    }
+    pthread_key_values[key] = (void *)value;
+    return 0;
+}
+
+void *
+pthread_getspecific(pthread_key_t key)
+{
+    if (key >= COWASM_PTHREAD_KEYS) {
+        return NULL;
+    }
+    return pthread_key_values[key];
+}
 
 struct hostent *
 getipnodebyaddr(const void *addr, size_t len, int af, int *error_num)

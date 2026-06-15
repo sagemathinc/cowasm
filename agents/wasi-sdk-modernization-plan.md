@@ -516,60 +516,10 @@ The Phase 14 CPython configure and core-compile probe is now landed:
 - `make -C python/cpython python-wasi-sdk` creates the top-level wrapper
   symlink to `python/cpython/bin/python-wasi-sdk`.
 
-The next Phase 14 blocker is runtime startup. The installed SDK artifact loads
-far enough for the kernel to find `__main_argc_argv`, but even the minimal
-command:
+The Phase 14 runtime-startup blocker is now cleared.
 
-```sh
-./bin/python-wasi-sdk -S -c 'print(1)'
-```
-
-currently traps during CPython initialization with:
-
-```text
-RuntimeError: memory access out of bounds
-  at kernel free
-  at python-wasi-sdk.wasm ... PyMem_Free / _PyUnicode_FromId startup path
-```
-
-Forcing `PYTHONMALLOC=malloc` keeps the same trap shape, so the current
-evidence does not point only at CPython's pymalloc policy.
-
-Additional local probes from the same blocker:
-
-- `DEBUG=dylink* ./bin/python-wasi-sdk -S -c 'print(1)'` confirms that
-  `__wasm_apply_data_relocs` runs before `__main_argc_argv` is called;
-- exporting `__wasm_call_ctors` from the SDK side module exposes wasm-ld's
-  synthesized global-relocation hook and the loader calls it before
-  `__main_argc_argv`, but this does not change the trap;
-- rebuilding the SDK archive with `WITH_MIMALLOC` disabled did not change the
-  trap;
-- forcing the SDK build-tree `ALIGNOF_MAX_ALIGN_T` from 16 back to the Zig
-  baseline value 8 did not change the trap;
-- linking the SDK sysroot `libc.a` into the side module is blocked by non-PIC
-  `R_WASM_MEMORY_ADDR_LEB` relocations in the SDK archive, so the near-term
-  side-module probe still has to resolve libc and allocator imports from the
-  existing main runtime.
-
-The pre-runtime blockers already cleared in this phase were:
-
-- non-PIC CPython objects could not be linked as a side module; rebuilding the
-  SDK tree with `-fPIC` fixed the relocation class failure;
-- the first shared link then failed on undefined Emscripten signal data
-  symbols, fixed by defining the disabled signal globals in the SDK wrapper;
-- the loader rejected missing legacy socket/name-service imports such as
-  `getipnodebyaddr`, `freehostent`, `inet_ntoa`, and `h_errno`;
-- the dynamic linker rejected `GOT.func.fchdir` because modern V8 cannot put a
-  JavaScript host function into the wasm function table, fixed with a local
-  wasm `fchdir` fallback;
-- the kernel runner required `__main_argc_argv` or `main`, fixed by exporting
-  `__main_argc_argv`.
-
-Do not proceed to pip, extension imports, or broader package work until this
-allocator/startup trap is understood and `test-wasi-sdk-runtime-contracts`
-passes.
-
-June 2026 follow-up work narrows the blocker further:
+Earlier June 2026 follow-up work had already narrowed several real
+side-module defects:
 
 - the dylink loader now provides a side-module-local `env.__memory_size`
   function derived from `dylink.0` memory metadata;
@@ -593,26 +543,48 @@ June 2026 follow-up work narrows the blocker further:
 - `./bin/python-wasi-sdk -S --version` succeeds and reports
   `Python 3.14.6`.
 
-The remaining Phase 14 blocker is still runtime startup for command execution:
+The final startup trap was caused by pthread ABI mismatch, not by the
+`MemoryError` object layout itself. SDK CPython was compiled against
+`wasi-sdk`'s `pthread.h`, but unresolved `pthread_*` imports were being
+satisfied by CoWasm's main runtime pthread exports, whose stub structs come
+from the CoWasm POSIX runtime. Keeping CPython's pthread calls local to the SDK
+side module avoids cross-ABI writes into CPython runtime state.
+
+The SDK wrapper now provides local single-thread pthread stubs for the subset
+CPython imports during startup and normal single-thread execution:
+
+- mutex, condvar, condattr, and attr init/destroy/lock/wait helpers;
+- `pthread_self`;
+- `pthread_create` returning `ENOSYS`;
+- TLS key create/delete/get/set with a small wrapper-local key table.
+
+The SDK pyconfig overlay now also declares the CoWasm JavaScript POSIX process
+surface that cross configure misses in the side-module build:
+
+- `HAVE_EXECV`;
+- `HAVE_FORK`;
+- `HAVE_WAITPID`.
+
+Those macros expose the same `os.fork`, `os.execv`, `os.execve`, and
+`os.waitpid` names that the default wasm build has. CPython's patched WASI
+`os.spawn*` implementation then publishes `spawnv`/`spawnl` and routes actual
+process creation through `subprocess`, so the runtime-contract tests exercise
+CoWasm's process surface without relying on native WASI fork.
+
+Validated Phase 14 runtime status:
 
 ```sh
+./bin/python-wasi-sdk -S --version
 ./bin/python-wasi-sdk -S -c 'pass'
 ./bin/python-wasi-sdk -S -c 'print(1)'
+make -C python/cpython test-wasi-sdk-runtime-contracts
 ```
 
-Both commands still trap with `RuntimeError: memory access out of bounds`.
-The current stack is through `MemoryError_dealloc`,
-`_PyObject_GC_UNTRACK`, `_Py_Dealloc`, and `Py_InitializeFromConfig`.
-
-A temporary build-tree diagnostic around `MemoryError_dealloc` showed the
-preallocated `MemoryError` objects are allocated contiguously at a 0x30 stride,
-which matches the 32-bit `PyBaseExceptionObject` plus GC-header layout. The
-first few objects have plausible GC links, then a later object's `_gc_next`
-field is already corrupted before `_PyObject_GC_UNTRACK` runs. This makes the
-next focused investigation the GC allocation/tracking path for preallocated
-`MemoryError` objects under the SDK side-module build, especially the
-interaction among `PyObject_GC_New`, `_PyObject_GC_TRACK`, pymalloc/mimalloc
-state, and the host allocator imported from the main runtime.
+The runtime contract suite passes all 12 tests, covering filesystem behavior,
+`os.spawnl`, and subprocess stdin/stdout/stderr, environment, cwd, file
+descriptor, and nonzero-exit semantics. This clears the previous "do not
+proceed" gate for Phase 14; the next work can move to SDK CPython import tests,
+pip behavior, and package/extension integration.
 
 ## Order Of Work
 
