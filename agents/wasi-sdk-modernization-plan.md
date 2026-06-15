@@ -331,9 +331,9 @@ The `core/lua` Phase 11 package probe is also partially landed:
 - `make -C core/lua test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The Phase 11 and Phase 12 package lists are now covered by side-by-side
-`wasi-sdk-next` probe targets. The next blocker is Phase 13 C++ runtime and
-Python-extension surface work.
+The Phase 11, Phase 12, and Phase 13 probe lists are now covered by
+side-by-side `wasi-sdk-next` probe targets. The next blocker is Phase 14
+CPython work.
 
 The first Phase 12 package probe is partially landed for `core/libedit`:
 
@@ -447,6 +447,12 @@ landed:
   behavior under the standalone Node/WASI runner;
 - `make -C core/dylink test-wasi-sdk-next` now includes the WASI dylink tests,
   archive dylink tests, C++ runtime fixture, and Python-extension fixture.
+- `make -C python/bench/src/cython test-wasi-sdk-next` regenerates `fib.c`
+  from `fib.pyx` with the repo's packaged Cython 3.2.5 and builds the
+  generated extension C into a `wasi-sdk` side module;
+- the generated Cython side-module probe verifies `dylink.0`, exported
+  `PyInit_fib`, and no `needed_dynlibs`; it is intentionally a compile and
+  module-shape check until Phase 14 CPython import tests are available.
 
 ## Order Of Work
 
@@ -1011,7 +1017,7 @@ Validation:
 
 Deliverable: terminal/runtime package layer works with `wasi-sdk`.
 
-## Phase 13: C++ Runtime And Python Extension Surface (In Progress)
+## Phase 13: C++ Runtime And Python Extension Surface (Probe Targets Landed)
 
 Do not attempt CPython before C++ runtime behavior is clear.
 
@@ -1029,7 +1035,7 @@ Actions:
   - coexistence with C modules (probe target landed).
 - Build one simple Python-extension-shaped module with `wasi-sdk` (probe target
   landed).
-- Build one Cython-generated extension module.
+- Build one Cython-generated extension module (probe target landed).
 
 Deliverable: C++ and Python-extension dynamic module rules are explicit and
 tested under `wasi-sdk`.
