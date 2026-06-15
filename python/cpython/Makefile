@@ -202,6 +202,7 @@ WASI_SDK_BZ2_EXTENSION = _bz2.${PYTHON_PLATFORM}.so
 WASI_SDK_LZMA_EXTENSION = _lzma.${PYTHON_PLATFORM}.so
 WASI_SDK_SQLITE3_EXTENSION = _sqlite3.${PYTHON_PLATFORM}.so
 WASI_SDK_UNICODEDATA_EXTENSION = unicodedata.${PYTHON_PLATFORM}.so
+WASI_SDK_HASHLIB_EXTENSION = _hashlib.${PYTHON_PLATFORM}.so
 WASI_SDK_CJK_CODEC_EXTENSIONS = _codecs_cn.${PYTHON_PLATFORM}.so _codecs_hk.${PYTHON_PLATFORM}.so _codecs_iso2022.${PYTHON_PLATFORM}.so _codecs_jp.${PYTHON_PLATFORM}.so _codecs_kr.${PYTHON_PLATFORM}.so _codecs_tw.${PYTHON_PLATFORM}.so
 
 ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
@@ -558,6 +559,45 @@ ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_UNICODEDATA_EXTENSION}
 	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
 	cp ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
 
+${OPENSSL_WASI_SDK}/lib/libcrypto.a:
+	cd ${CORE_PACKAGES}/openssl && make test-wasi-sdk-next
+
+${OPENSSL_WASI_SDK}/include/openssl/evp.h:
+	cd ${CORE_PACKAGES}/openssl && make test-wasi-sdk-next
+
+${BUILD_WASI_SDK}/.hashlib-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.configured ${OPENSSL_WASI_SDK}/lib/libcrypto.a ${OPENSSL_WASI_SDK}/include/openssl/evp.h
+	rm -f ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION} ${BUILD_WASI_SDK}/Modules/_hashlib.o
+	COWASM_TOOLCHAIN=wasi-sdk ${BIN}/cowasm-cc \
+		-DOPENSSL_THREADS \
+		-I${OPENSSL_WASI_SDK}/include \
+		${WASM_OPT} \
+		${WASI_SDK_PYTHON_CFLAGS} \
+		-std=c11 \
+		-Wextra \
+		-Wno-unused-parameter \
+		-Wno-missing-field-initializers \
+		-Wstrict-prototypes \
+		-Werror=implicit-function-declaration \
+		-fvisibility=hidden \
+		-I${BUILD_WASI_SDK}/Include/internal \
+		-I${BUILD_WASI_SDK}/Include/internal/mimalloc \
+		-I${BUILD_WASI_SDK}/Include \
+		-c ${BUILD_WASI_SDK}/Modules/_hashopenssl.c \
+		-o ${BUILD_WASI_SDK}/Modules/_hashlib.o
+	COWASM_TOOLCHAIN=wasi-sdk ${BLDSHARED_WASI_SDK} \
+		${BUILD_WASI_SDK}/Modules/_hashlib.o \
+		${OPENSSL_WASI_SDK}/lib/libcrypto.a \
+		-o ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION}
+	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION} | grep -F 'dylink.0'
+	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION} | grep -F '<- env.memory'
+	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION} | grep '^PyInit__hashlib$$'
+	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION} | grep 'needed_dynlibs'
+	touch ${BUILD_WASI_SDK}/.hashlib-extension-built
+
+${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_HASHLIB_EXTENSION}: ${DIST_WASI_SDK}/.install-cpython ${BUILD_WASI_SDK}/.hashlib-extension-built
+	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
+	cp ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
+
 ${BUILD_WASI_SDK}/.cjk-codecs-extensions-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.configured test-wasi-sdk-archive
 	rm -f $(addprefix ${BUILD_WASI_SDK}/Modules/,${WASI_SDK_CJK_CODEC_EXTENSIONS})
 	cd ${BUILD_WASI_SDK} && \
@@ -577,7 +617,7 @@ ${DIST_WASI_SDK}/.cjk-codecs-extensions-installed: ${DIST_WASI_SDK}/.install-cpy
 	cp $(addprefix ${BUILD_WASI_SDK}/Modules/,${WASI_SDK_CJK_CODEC_EXTENSIONS}) ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
 	touch ${DIST_WASI_SDK}/.cjk-codecs-extensions-installed
 
-WASI_SDK_EXTENSION_IMPORT_DEPS = ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_PYEXPAT_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_BZ2_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_LZMA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_SQLITE3_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_UNICODEDATA_EXTENSION} ${DIST_WASI_SDK}/.cjk-codecs-extensions-installed
+WASI_SDK_EXTENSION_IMPORT_DEPS = ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_PYEXPAT_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_BZ2_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_LZMA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_SQLITE3_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_UNICODEDATA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_HASHLIB_EXTENSION} ${DIST_WASI_SDK}/.cjk-codecs-extensions-installed
 
 .PHONY: test-wasi-sdk-extension-imports
 test-wasi-sdk-extension-imports: ${BIN}/python-wasi-sdk ${WASI_SDK_EXTENSION_IMPORT_DEPS}

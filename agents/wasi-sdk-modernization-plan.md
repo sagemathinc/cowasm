@@ -749,6 +749,28 @@ The SDK CPython CJK codec extension batch is also landed:
 - it imports each codec module under `python-wasi-sdk` and checks representative
   CJK codec round trips.
 
+The OpenSSL-backed SDK CPython `_hashlib` extension probe is also landed:
+
+- the SDK `core/openssl` package probe now compiles `libcrypto.a` and
+  `libssl.a` with `-fPIC` while preserving the standalone `openssl md5`
+  command smoke;
+- the SDK `core/openssl` probe now rejects non-PIC absolute
+  `R_WASM_MEMORY_ADDR_(LEB|SLEB)` relocations in the installed static archives
+  so they can participate in side-module links;
+- `make -C python/cpython test-wasi-sdk-extension-imports` now also builds
+  `Modules/_hashlib.cpython-314-wasm32-wasi.so` against the SDK OpenSSL
+  `libcrypto.a`;
+- the target applies the same shared-module guardrails as the other SDK
+  extension probes: imported memory, `dylink.0`, expected `PyInit__hashlib`,
+  and no `needed_dynlibs`;
+- it installs `_hashlib` into `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports `_hashlib` under `python-wasi-sdk` and checks that `hashlib` uses
+  OpenSSL-backed digest objects for representative algorithms.
+
+`_ssl` remains a separate optional gate because the current SDK OpenSSL package
+is intentionally configured with `no-sock`, so the installed headers hide
+socket APIs such as `SSL_set_fd` that CPython's `_ssl` module currently uses.
+
 SDK pip/ensurepip behavior is also landed:
 
 - CPython's SDK pyconfig overlay now exposes runtime-resolved `getuid`,
@@ -774,8 +796,8 @@ The SDK CPython supported-suite gate is also landed:
   path.
 
 Remaining Phase 14 extension work can now focus on whether heavier optional
-modules such as `_ssl`/`_hashlib`, `_ctypes`, and `_curses` should become
-required gates before default wrapper behavior changes.
+modules such as `_ssl`, `_ctypes`, and `_curses` should become required gates
+before default wrapper behavior changes.
 
 ## Order Of Work
 
@@ -1392,8 +1414,8 @@ Only after the prior phases are green:
 - run focused SDK runtime contracts (landed);
 - run focused SDK stdlib/sysconfig imports (landed);
 - run focused SDK dynamic-extension imports for `_json`, `pyexpat`, `zlib`,
-  `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, and the CJK codec side modules
-  (landed);
+  `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, `_hashlib`, and the CJK codec
+  side modules (landed);
 - run SDK pip/ensurepip behavior (landed);
 - run the supported CPython test suite (landed).
 
@@ -1457,8 +1479,9 @@ Current runtime status:
 - `make -C python/cpython test-wasi-sdk-extension-imports` imports `_json`,
   `pyexpat`, `zlib`, `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, `_codecs_cn`,
   `_codecs_hk`, `_codecs_iso2022`, `_codecs_jp`, `_codecs_kr`, and
-  `_codecs_tw` from `dist/wasi-sdk/lib/python3.14/lib-dynload` and verifies
-  their basic runtime behavior;
+  `_codecs_tw`, and `_hashlib` from
+  `dist/wasi-sdk/lib/python3.14/lib-dynload` and verifies their basic runtime
+  behavior;
 - `make -C python/cpython test-wasi-sdk-pip` patches the bundled pip wheel,
   runs SDK `ensurepip`, verifies `import pip`, and checks `python-wasi-sdk -m
   pip` usage output;
@@ -1472,9 +1495,9 @@ Current runtime status:
 
 Optional Phase 14 follow-up:
 
-- decide whether heavier optional extensions such as `_ssl`/`_hashlib`,
-  `_ctypes`, and `_curses` should become required SDK gates before default
-  wrapper behavior changes.
+- decide whether heavier optional extensions such as `_ssl`, `_ctypes`, and
+  `_curses` should become required SDK gates before default wrapper behavior
+  changes.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 
@@ -1617,7 +1640,7 @@ implementation code.
 - When, if ever, should CoWasm start investigating `wasm32-wasip2` component
   artifacts?
 - Which heavier CPython extension should be the next SDK import gate:
-  `_ssl`/`_hashlib`, `_ctypes`, or `_curses`?
+  socket-enabled `_ssl`, `_ctypes`, or `_curses`?
 - How much of the root `make test-wasi-sdk` target should include by default
   before the SDK path becomes a release gate, given the growing number of
   package probes?

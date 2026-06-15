@@ -189,6 +189,7 @@ EOF
 
 cflags=(
   -Oz
+  -fPIC
   -fvisibility-main
   -DNO_SYSLOG
   -D_WASI_EMULATED_MMAN
@@ -230,6 +231,13 @@ RANLIB="$bin_dir/cowasm-ranlib" \
 
 COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs" build_sw BIN_EX_LIBS="${ldlibs[*]}"
 COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs" install_sw BIN_EX_LIBS="${ldlibs[*]}"
+
+for archive in "$dist_dir/lib/libcrypto.a" "$dist_dir/lib/libssl.a"; do
+  if "$bin_dir/wasi-sdk-llvm-objdump-next" -r "$archive" | grep -E 'R_WASM_MEMORY_ADDR_(LEB|SLEB)\b'; then
+    echo "non-PIC absolute wasm relocation found in $archive" >&2
+    exit 1
+  fi
+done
 
 openssl_bin="$dist_dir/bin/openssl"
 ln -sf openssl "$openssl_bin.wasm"

@@ -1,4 +1,5 @@
 import bz2
+import hashlib
 import importlib
 import json
 import lzma
@@ -133,6 +134,29 @@ class WasiSdkExtensionImportTests(unittest.TestCase):
     def test_unicodedata_normalization(self):
         self.assertEqual(unicodedata.normalize("NFC", "e\u0301"), "\u00e9")
         self.assertEqual(unicodedata.name("\u03c0"), "GREEK SMALL LETTER PI")
+
+    def test_hashlib_extension_imports_from_lib_dynload(self):
+        import _hashlib
+
+        suffix = sysconfig.get_config_var("EXT_SUFFIX")
+        self.assertTrue(
+            _hashlib.__file__.endswith(f"/lib-dynload/_hashlib{suffix}"),
+            _hashlib.__file__,
+        )
+
+    def test_hashlib_uses_openssl_extension(self):
+        import _hashlib
+
+        self.assertIn("sha256", _hashlib.openssl_md_meth_names)
+        self.assertEqual(hashlib.new("sha256").__class__.__module__, "_hashlib")
+        self.assertEqual(
+            hashlib.sha256(b"cowasm").hexdigest(),
+            "1b836ad18cd01022df2e7ac15471d70ec26fd8dd723d3992344a0c42a8561002",
+        )
+        self.assertEqual(
+            hashlib.new("sha3_256", b"cowasm").hexdigest(),
+            "368c62d92cf4f3a3d7480c8773ecf641347a2bbc9a38c5ed589fc853d084454b",
+        )
 
     def test_cjk_codec_extensions_import_from_lib_dynload(self):
         suffix = sysconfig.get_config_var("EXT_SUFFIX")
