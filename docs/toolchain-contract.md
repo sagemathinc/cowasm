@@ -587,6 +587,21 @@ readline, and math dependencies, builds `libsqlite3.a` with
 through the WASI runner. It installs into `core/sqlite/dist/wasi-sdk`, leaving
 the default Zig-backed package untouched.
 
+`core/lua` has the same opt-in standalone executable smoke shape:
+
+```sh
+make -C core/lua test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, rebuilds Lua from source with
+`COWASM_TOOLCHAIN=wasi-sdk`, uses selector-aware archive tools, installs the
+Lua CLI and static archive under `core/lua/dist/wasi-sdk`, and runs the
+package's existing summation script through the WASI runner. Like the direct
+clang smoke, the standalone build omits readline/libedit so it exercises Lua
+itself without pulling in the interactive terminal dependency chain. It also
+uses local `setjmp`, signal, clock, tempfile, and `system()` compatibility
+shims for Lua OS/error paths that the summation smoke does not exercise.
+
 The bootstrap currently installs `wasi-sdk-33.0` under
 `core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
 driver names into `bin/`:
