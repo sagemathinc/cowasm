@@ -59,6 +59,9 @@ test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.patched
 	$(MAKE) -C ../termcap test-wasi-sdk-standalone
 	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CWD}/../termcap/dist/wasi-sdk
 
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: test-wasi-sdk-standalone
+
 .PHONY: clean-wasi-sdk
 clean-wasi-sdk:
 	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
@@ -129,7 +132,18 @@ ${BUILD_WASM}/examples/tc1: node_modules ${DIST_WASM}/.built
 run-tc1: ${BUILD_WASM}/examples/tc1
 	${BIN}/cowasm ${BUILD_WASM}/examples/tc1
 
-test: ${BUILD_WASM}/examples/tc1
-	# This is a pretty dumb test, since not interactive, but at least it shows
-	# that the program builds and runs at all...
-	echo 'ls' | cowasm ${BUILD_WASM}/examples/tc1 |grep "Makefile"
+${BUILD_WASM}/examples/libedit-smoke: node_modules ${DIST_WASM}/.built ${SRC}/libedit-smoke.c
+	cd ../build && make zig
+	${BIN}/cowasm-cc \
+		-fvisibility-main \
+		${CFLAGS_WASM} \
+		-I${DIST_WASM}/include \
+		-I${BUILD_WASM}/ \
+		-I${BUILD_WASM}/src \
+		${SRC}/libedit-smoke.c \
+		-L${DIST_WASM}/lib -ledit \
+		${LDFLAGS_WASM} \
+		-o ${BUILD_WASM}/examples/libedit-smoke
+
+test: ${BUILD_WASM}/examples/libedit-smoke
+	${BIN}/cowasm ${BUILD_WASM}/examples/libedit-smoke

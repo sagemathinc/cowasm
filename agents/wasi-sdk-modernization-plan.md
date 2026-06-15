@@ -335,6 +335,20 @@ The Phase 11 package list is now covered by side-by-side `wasi-sdk-next` probe
 targets. The next blocker is Phase 12 runtime-adjacent packages, starting with
 `core/libedit`.
 
+The first Phase 12 package probe is partially landed for `core/libedit`:
+
+- `make -C core/libedit test-wasi-sdk-standalone` builds libedit with
+  `COWASM_TOOLCHAIN=wasi-sdk`;
+- the probe first builds the `core/termcap` SDK dependency;
+- it applies the existing readline compatibility patch and disables example
+  builds;
+- it installs `libedit.a`, histedit/readline headers, and pkg-config metadata
+  into `dist/wasi-sdk`;
+- it compiles and runs a focused history/tokenizer API smoke under the
+  standalone WASI runner;
+- `make -C core/libedit test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name.
+
 ## Order Of Work
 
 Recommended order:
@@ -875,14 +889,14 @@ For each package:
 
 Deliverable: a first dependency layer builds and tests with `wasi-sdk`.
 
-## Phase 12: Port Runtime-Adjacent Packages
+## Phase 12: Port Runtime-Adjacent Packages (In Progress)
 
 Move to packages that stress headers, termios, filesystem behavior, and
 dynamic-linking details.
 
 Suggested order:
 
-1. `core/libedit`
+1. `core/libedit` (probe target landed)
 2. `core/ncurses`
 3. `core/less`
 4. `core/tar`
