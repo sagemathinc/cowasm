@@ -4,6 +4,8 @@ include ../build/Makefile-vars
 ZLIB_VERSION = 1.2.13
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 # https://stackoverflow.com/questions/18136918/how-to-get-current-relative-directory-of-your-makefile
 
@@ -73,3 +75,20 @@ clean-clang:
 	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
 
 clean:: clean-clang
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
+	cd ../build && make wasi-sdk-next
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN}
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk

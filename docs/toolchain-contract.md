@@ -524,6 +524,19 @@ make -C core/build test-wasi-sdk-next
 make -C core/dylink test-wasi-sdk-next
 ```
 
+`core/zlib` has the first package-level standalone smoke target for this
+backend:
+
+```sh
+make -C core/zlib test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, rebuilds zlib from source with
+`COWASM_TOOLCHAIN=wasi-sdk`, uses selector-aware archive tools, and runs zlib's
+upstream `example` program through the WASI runner. It installs into
+`core/zlib/dist/wasi-sdk`, leaving the default Zig-backed `dist/wasm` package
+untouched.
+
 The bootstrap currently installs `wasi-sdk-33.0` under
 `core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
 driver names into `bin/`:
@@ -632,8 +645,10 @@ use `wasi-sdk-llvm-ar-next` and `wasi-sdk-llvm-ranlib-next` by default, again
 honoring `COWASM_AR` and `COWASM_RANLIB` when set.
 
 Some packages need explicit workarounds. For example, `core/zlib` rebuilds the
-generated `libz.a` from object files using `zig ar rc` because the upstream
-archive produced during the WebAssembly configure build is malformed.
+generated `libz.a` from object files because the upstream archive produced
+during WebAssembly configure builds is malformed. The default Zig package
+target uses `zig ar rc`; the `wasi-sdk` smoke target uses selector-aware
+`cowasm-ar rc`.
 
 ## Native Helper Contract
 
