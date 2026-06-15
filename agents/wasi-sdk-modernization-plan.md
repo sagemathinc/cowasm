@@ -1438,11 +1438,14 @@ Current runtime status:
   behavior;
 - `make -C python/cpython test-wasi-sdk-pip` patches the bundled pip wheel,
   runs SDK `ensurepip`, verifies `import pip`, and checks `python-wasi-sdk -m
-  pip` usage output.
+  pip` usage output;
+- `make -C python/cpython test-wasi-sdk-regrtest-smoke` runs CPython's native
+  regrtest harness against `python-wasi-sdk` for `test_atexit` and
+  `test_base64`.
 
 Remaining Phase 14 work:
 
-- expand toward the supported CPython test suite;
+- expand from the SDK regrtest smoke to the supported CPython test suite;
 - decide whether heavier optional extensions such as `_ssl`/`_hashlib`,
   `_ctypes`, and `_curses` should become required SDK gates before default
   wrapper behavior changes.
