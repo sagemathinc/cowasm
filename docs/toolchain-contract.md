@@ -714,6 +714,21 @@ target configures PARI against `sagemath/gmp/dist/wasi-sdk`, builds the static
 `gp` executable, and checks both the GMP kernel banner and a small arithmetic
 expression through the WASI runner.
 
+`core/libcxx` has an opt-in C++ runtime side-module smoke target:
+
+```sh
+make -C core/libcxx test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, resolves `libc++.a`, `libc++abi.a`, and
+the compiler runtime archive from the `wasm32-wasip1` SDK driver, then links a
+separate `core/libcxx/dist/wasi-sdk/libcxx.so` with `wasm-ld
+--experimental-pic -shared --allow-undefined --no-entry --export-all`. It
+checks for a `dylink.0` side-module section and verifies that the output does
+not record accidental `libc.so`, `libc++.so`, or `libc++abi.so`
+`needed_dynlibs`. This is a C++ runtime object-shape probe, not a replacement
+for the default Emscripten PIC `core/libcxx/dist/wasm/libcxx.so` artifact.
+
 The bootstrap currently installs `wasi-sdk-33.0` under
 `core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
 driver names into `bin/`:
