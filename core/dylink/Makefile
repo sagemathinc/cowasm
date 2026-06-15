@@ -103,6 +103,7 @@ test-wasi-sdk-next: dist/.built dist/wasm/libdylink-wasi-sdk.a
 	cd test/wasi && make test-wasi-sdk-next
 	cd test/wasi && make test-wasi-sdk-archive-next
 	cd test/cxx-runtime && make test-wasi-sdk-next
+	cd test/python-extension && make test-wasi-sdk-next
 .PHONY: test-wasi-sdk-next
 
 test-native-macos:

@@ -33,11 +33,15 @@ build/wasm/lib.so: build/wasm/lib.o ${LIBCXX_WASM}/libcxx.so
 		build/wasm/lib.o \
 		${LIBCXX_WASM}/libcxx.so
 
+build/wasm/c-lib.so: c-lib.c
+	mkdir -p build/wasm
+	${COWASM} c-lib.c -o build/wasm/c-lib.so
+
 build/wasm/libcxx.so: ${LIBCXX_WASM}/libcxx.so
 	mkdir -p build/wasm
 	cp ${LIBCXX_WASM}/libcxx.so build/wasm/libcxx.so
 
-test-wasm: build/wasm/app.wasm build/wasm/lib.so build/wasm/libcxx.so
+test-wasm: build/wasm/app.wasm build/wasm/lib.so build/wasm/c-lib.so build/wasm/libcxx.so
 	cd build/wasm && node ../../app.js
 
 build/wasi-sdk/app.wasm: app.c
@@ -64,10 +68,26 @@ build/wasi-sdk/lib.so: lib.cpp
 		$$(${WASI_SDK_CLANGXX} -target wasm32-wasip1 -print-file-name=libc++abi.a) \
 		-o build/wasi-sdk/lib.so
 
-build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/lib.so
+build/wasi-sdk/c-lib.so: c-lib.c
+	mkdir -p build/wasi-sdk
+	${BIN}/wasi-sdk-clang-next -target wasm32-wasip1 \
+		-O0 \
+		-fPIC \
+		-shared \
+		-nostdlib \
+		-Wl,--allow-undefined \
+		-Wl,--no-entry \
+		c-lib.c \
+		-o build/wasi-sdk/c-lib.so
+
+build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/lib.so build/wasi-sdk/c-lib.so
 	${WASI_SDK_OBJDUMP} -h build/wasi-sdk/lib.so | grep 'dylink\.0'
+	${WASI_SDK_OBJDUMP} -h build/wasi-sdk/c-lib.so | grep 'dylink\.0'
 	${WASI_SDK_STRINGS} build/wasi-sdk/lib.so | grep '^string_size$$'
+	${WASI_SDK_STRINGS} build/wasi-sdk/lib.so | grep '^rtti_matches$$'
+	${WASI_SDK_STRINGS} build/wasi-sdk/c-lib.so | grep '^c_add$$'
 	! ${WASI_SDK_STRINGS} build/wasi-sdk/lib.so | grep 'needed_dynlibs'
+	! ${WASI_SDK_STRINGS} build/wasi-sdk/c-lib.so | grep 'needed_dynlibs'
 	touch build/wasi-sdk/.checked
 
 test-wasi-sdk-next: build/wasi-sdk/.checked

@@ -430,6 +430,24 @@ The `core/libgit2` Phase 12 package probe is also partially landed:
 - `make -C core/libgit2 test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
+The first Phase 13 C++ and Python-extension surface probes are partially
+landed:
+
+- `make -C core/dylink/test/cxx-runtime test-wasi-sdk-next` builds a C++ side
+  module with `wasi-sdk-clang++-next`;
+- the C++ side module statically links the pinned SDK `libc++.a` and
+  `libc++abi.a` archives instead of declaring `needed_dynlibs`;
+- the C++ smoke now checks `std::string`, pointer-safe RTTI, repeated
+  `dlopen` of the same side module, and coexistence with a separate C side
+  module in the same process;
+- `make -C core/dylink/test/python-extension test-wasi-sdk-next` builds the
+  Python-extension-shaped `hello.so` fixture with `wasi-sdk-clang-next`;
+- the Python-extension fixture verifies `dylink.0`, exported `PyInit_hello`,
+  no `needed_dynlibs`, `dlopen`, `dlsym`, and function-pointer callback
+  behavior under the standalone Node/WASI runner;
+- `make -C core/dylink test-wasi-sdk-next` now includes the WASI dylink tests,
+  archive dylink tests, C++ runtime fixture, and Python-extension fixture.
+
 ## Order Of Work
 
 Recommended order:
@@ -993,22 +1011,24 @@ Validation:
 
 Deliverable: terminal/runtime package layer works with `wasi-sdk`.
 
-## Phase 13: C++ Runtime And Python Extension Surface
+## Phase 13: C++ Runtime And Python Extension Surface (In Progress)
 
 Do not attempt CPython before C++ runtime behavior is clear.
 
 Actions:
 
-- Decide whether CoWasm side modules should:
-  - continue resolving C++ runtime symbols from the main module; or
-  - eventually load `wasi-sdk`'s `libc++.so` / `libc++abi.so`.
+- For now, keep CoWasm side modules resolving C/C++ runtime symbols from the
+  main module and statically linked SDK archives. Do not introduce
+  `wasi-sdk` `libc++.so` / `libc++abi.so` dependencies until there is a clear
+  loader contract for transitive dynamic libraries.
 - Validate:
-  - C++ shared module with `std::string`;
-  - RTTI if needed;
-  - exceptions if needed;
-  - repeated dlopen;
-  - coexistence with C modules.
-- Build one simple Python extension module with `wasi-sdk`.
+  - C++ shared module with `std::string` (probe target landed);
+  - pointer-safe RTTI (probe target landed);
+  - exceptions only if a real package requires them;
+  - repeated dlopen of a C++ side module (probe target landed);
+  - coexistence with C modules (probe target landed).
+- Build one simple Python-extension-shaped module with `wasi-sdk` (probe target
+  landed).
 - Build one Cython-generated extension module.
 
 Deliverable: C++ and Python-extension dynamic module rules are explicit and

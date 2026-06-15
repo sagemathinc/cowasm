@@ -12,17 +12,23 @@ static PyObject *hello(PyObject *self, PyObject *args) {
   printf(
       "If this takes more than a second, then the function pointer mechanism "
       "is broken:\n");
+#ifndef COWASM_WASI_SDK_STANDALONE
   time_t start, end;
   time(&start);
+#endif
   // ((int)self) % n is just to keep this from getting compiled out:
   for (int i = 0; i < 1000000 + ((int)self) % 1000; i++) {
     s += mysin(i);
   }
+#ifndef COWASM_WASI_SDK_STANDALONE
   time(&end);
   printf("done hello... s=%f\n", s);
   printf("time = %ld seconds\n",
          end - start);  // this is in *seconds*, so basicaly going to be 0
   assert(end - start <= 1);
+#else
+  printf("done hello... s=%f\n", s);
+#endif
   // printf("python-wasm: 'hello there ** FROM HELLO!'\n");
   return PyNone;
 }

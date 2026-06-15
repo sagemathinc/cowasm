@@ -17,6 +17,17 @@ exports.table = table;
 async function main() {
   const memory = new WebAssembly.Memory({ initial: 100 });
   const wasi = new WASI({ bindings });
+  const enosys = () => 52;
+  for (const name of [
+    "sock_accept",
+    "sock_recv",
+    "sock_send",
+    "sock_shutdown",
+  ]) {
+    if (wasi.wasiImport[name] == null) {
+      wasi.wasiImport[name] = enosys;
+    }
+  }
   const importObject = {
     wasi_snapshot_preview1: wasi.wasiImport,
     env: {
