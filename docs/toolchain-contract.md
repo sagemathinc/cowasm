@@ -729,6 +729,20 @@ not record accidental `libc.so`, `libc++.so`, or `libc++abi.so`
 `needed_dynlibs`. This is a C++ runtime object-shape probe, not a replacement
 for the default Emscripten PIC `core/libcxx/dist/wasm/libcxx.so` artifact.
 
+`core/posix-wasm` has an opt-in archive smoke target:
+
+```sh
+make -C core/posix-wasm test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, builds the POSIX compatibility archive
+with `COWASM_TOOLCHAIN=wasi-sdk`, uses selector-aware archive tools, installs a
+self-contained header/archive set under `core/posix-wasm/dist/wasi-sdk`, then
+links and runs a small probe covering `strtonum`, `siprintf`, and `mkdtemp`
+through the WASI runner. The smoke supplies local `sys/wait.h`, `termios.h`,
+and `netdb.h` headers for the libc gaps that Zig's WASI top-half previously
+covered.
+
 The bootstrap currently installs `wasi-sdk-33.0` under
 `core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
 driver names into `bin/`:

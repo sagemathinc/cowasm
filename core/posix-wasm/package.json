@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "test": "echo \"Error: no tests yet\""
+    "test": "echo \"Error: no tests yet\"",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
   },
   "repository": {
     "type": "git",

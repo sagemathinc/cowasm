@@ -6,6 +6,8 @@ all: deps wasm
 
 include ../build/Makefile-rules
 
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 BUILTINS = ${BUILD_WASM}/lib/builtins
 LEGACY = ${BUILD_WASM}/lib/legacy
 TEMP = ${BUILD_WASM}/lib/temp
@@ -41,3 +43,14 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/libposix.a
 
 test: ${DIST_WASM}/.built
 	echo "no tests yet (beyond 'it builds')"
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone:
+	cd ../build && make wasi-sdk-next
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${SRC}
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk
