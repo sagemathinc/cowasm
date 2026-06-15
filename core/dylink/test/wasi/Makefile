@@ -2,6 +2,8 @@ all: test-wasm
 
 include ../Makefile-common
 
+WASI_SDK_CLANG = ${BIN}/wasi-sdk-clang-next
+
 build/wasm/app.wasm: app.c
 	mkdir -p build/wasm
 	${ZIG} cc -target wasm32-wasi \
@@ -26,8 +28,38 @@ build/wasm/dynamic-library.wasm.so: dynamic-library.c
 	mkdir -p build/wasm
 	${COWASM} dynamic-library.c -o build/wasm/dynamic-library.so
 
+build/wasi-sdk/app.wasm: app.c
+	mkdir -p build/wasi-sdk
+	${WASI_SDK_CLANG} -target wasm32-wasip1 \
+		-O0 \
+		-fPIC \
+		-fvisibility=default \
+		app.c \
+		-o build/wasi-sdk/app.wasm \
+		-Wl,--import-memory \
+		-Wl,--import-table \
+		-Wl,--allow-undefined \
+		-Wl,--export-all \
+		-Wl,--export=malloc \
+		-Wl,--export=free
+
+build/wasi-sdk/dynamic-library.so: dynamic-library.c
+	mkdir -p build/wasi-sdk
+	${WASI_SDK_CLANG} -target wasm32-wasip1 \
+		-O0 \
+		-fPIC \
+		-shared \
+		-nostdlib \
+		-Wl,--allow-undefined \
+		-Wl,--no-entry \
+		dynamic-library.c \
+		-o build/wasi-sdk/dynamic-library.so
+
 test-wasm: build/wasm/app.wasm build/wasm/dynamic-library.wasm.so
 	cd build/wasm && node ../../app.js
+
+test-wasi-sdk-next: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so
+	cd build/wasi-sdk && node ../../app.js
 
 # NOTE: We're using gcc here (which is really clang on MacOS), because
 # the above with gcc replaced by "zig cc" doesn't build properly for me
@@ -45,5 +77,5 @@ build/native-macos/dynamic-library.native.so: dynamic-library.c
 test-native-macos: build/native-macos/app.native build/native-macos/dynamic-library.native.so
 	cd build/native-macos && ./app.native
 
-.PHONY: test
+.PHONY: test test-wasi-sdk-next
 test: test-wasm
