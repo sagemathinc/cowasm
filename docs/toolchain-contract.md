@@ -504,6 +504,117 @@ It uses focused standalone compatibility shims for user, process, and network
 lookups that are outside the smoke's scope, then links and runs the existing
 repository-initialization probe through the CoWasm launcher.
 
+## Experimental WASI SDK Backend
+
+`COWASM_TOOLCHAIN=wasi-sdk` is the side-by-side backend for the pinned
+`wasi-sdk-next` probe toolchain. It keeps the default Zig backend unchanged
+while exposing a canonical Clang/lld/wasi-libc path for standalone C/C++
+programs and CoWasm-style side modules.
+
+Install or refresh the pinned SDK with:
+
+```sh
+make -C core/build wasi-sdk-next
+```
+
+Validate the SDK and wrapper contract with:
+
+```sh
+make -C core/build test-wasi-sdk-next
+make -C core/dylink test-wasi-sdk-next
+```
+
+The bootstrap currently installs `wasi-sdk-33.0` under
+`core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
+driver names into `bin/`:
+
+- `wasi-sdk-clang-next`
+- `wasi-sdk-clang++-next`
+- `wasi-sdk-wasm-ld-next`
+- `wasi-sdk-llvm-ar-next`
+- `wasi-sdk-llvm-ranlib-next`
+- `wasi-sdk-llvm-nm-next`
+- `wasi-sdk-llvm-objdump-next`
+- `wasi-sdk-llvm-strip-next`
+- `wasi-sdk-llvm-strings-next`
+
+The wrapper selects `wasm32-wasip1` for this backend. `--print-multiarch`
+therefore prints:
+
+```text
+wasm32-wasip1
+```
+
+Tool discovery is deliberately separate from the older direct clang backend:
+
+```sh
+COWASM_WASI_SDK_CLANG=/path/to/wasi-sdk-clang-next
+COWASM_WASI_SDK_CLANGXX=/path/to/wasi-sdk-clang++-next
+COWASM_WASI_SDK_WASM_LD=/path/to/wasi-sdk-wasm-ld-next
+COWASM_WASI_SYSROOT=/path/to/wasi-sysroot
+COWASM_COMPILER_RT=/path/to/libclang_rt.builtins-wasm32.a
+```
+
+The `COWASM_WASI_SDK_*` overrides are optional when the `*-next` symlinks are
+discoverable through `PATH` or next to the invoked wrapper. If no sysroot is
+provided, the wrapper derives it from the selected SDK clang location at
+`../share/wasi-sysroot`.
+
+Compile-only, preprocessing, assembly-only, dependency-only, and no-input
+commands run the selected SDK clang driver directly with:
+
+```sh
+--target=wasm32-wasip1 --sysroot <wasi-sysroot>
+```
+
+The backend also defines the same CoWasm-facing preprocessor symbols as the
+direct clang backend:
+
+```c
+#define __wasi__
+#define __cowasm__
+#define _WASI_EMULATED_SIGNAL
+#define _WASI_EMULATED_PROCESS_CLOCKS
+```
+
+Standalone executable links compile source files to temporary objects and
+invoke the pinned SDK `wasm-ld` directly:
+
+```sh
+wasm-ld -o <output> <sysroot>/lib/wasm32-wasip1/crt1.o ... \
+  -L <sysroot>/lib/wasm32-wasip1 -lc <compiler-rt>
+```
+
+For CoWasm-style side modules, the backend recognizes `-shared`, `--shared`,
+or an `.so` output name. It routes the command through the SDK clang driver and
+ensures the current loader-compatible shape:
+
+```sh
+clang --target=wasm32-wasip1 --sysroot <wasi-sysroot> \
+  -fPIC -shared -nostdlib \
+  -Wl,--allow-undefined -Wl,--no-entry
+```
+
+Non-debug side-module links also add `-Wl,--strip-all`. The wrapper filters
+user-supplied `-lc`, `-lm`, and `-ldl` flags, including when they are forwarded
+through `-Wl,`, so SDK shared runtime libraries are not recorded as accidental
+`needed_dynlibs`. Loading SDK `libc.so`, `libc++.so`, or `libc++abi.so` is a
+separate runtime design problem and is not the current side-module default.
+
+The current focused dylink coverage checks:
+
+- C side modules with unresolved function and data imports;
+- a `wasi-sdk` main module linked against the existing `libdylink.a`;
+- an archive-linked main module that exports the libc-like symbols needed by
+  side modules;
+- a C++ side module using `std::string` with static `libc++.a` and
+  `libc++abi.a`;
+- absence of accidental `needed_dynlibs` in CoWasm-style side modules.
+
+The backend still rejects `cowasm-zig`. Standalone PIE and dynamic-executable
+flags such as `-fPIE`, `-fpie`, `-dynamic`, `-pie`, and `--pie` are also
+rejected until there is a tested CoWasm contract for them.
+
 ## Archive Tools
 
 Package builds use Zig archive tools directly:
@@ -516,7 +627,9 @@ selector for packages that are ready to stop naming Zig directly. With the
 default Zig backend they invoke the pinned `zig ar` and `zig ranlib`, resolving
 `zig` the same way as the compiler wrappers. With `COWASM_TOOLCHAIN=clang`,
 they invoke `llvm-ar` and `llvm-ranlib`; `COWASM_AR` and `COWASM_RANLIB` can
-override those tool paths.
+override those tool paths. With `COWASM_TOOLCHAIN=wasi-sdk`, the same wrappers
+use `wasi-sdk-llvm-ar-next` and `wasi-sdk-llvm-ranlib-next` by default, again
+honoring `COWASM_AR` and `COWASM_RANLIB` when set.
 
 Some packages need explicit workarounds. For example, `core/zlib` rebuilds the
 generated `libz.a` from object files using `zig ar rc` because the upstream
@@ -630,7 +743,7 @@ or `EMSCRIPTEN_CXX_LIB` when overridden.
 
 ## Backend Selector Implications
 
-A future `COWASM_TOOLCHAIN=clang` backend must preserve the visible contract
+Any backend selected by `COWASM_TOOLCHAIN` must preserve the visible contract
 above before replacing package Makefile usage broadly. In particular, it must
 provide:
 
@@ -645,5 +758,6 @@ provide:
 - a deliberate source for libc++, libc++abi, libunwind, and compiler-rt;
 - a way to keep native helper builds reproducible.
 
-The first backend-selector implementation should keep Zig as the default and
-make clang diagnostics easy to compare against the commands documented here.
+The current selector keeps Zig as the default. The direct clang backend is a
+standalone-C comparison path, and the pinned `wasi-sdk` backend is the active
+side-by-side probe for standalone C/C++ programs and CoWasm-style side modules.
