@@ -27,7 +27,7 @@ CHOST=none \
 AR="$bin_dir/cowasm-ar" \
 RANLIB="$bin_dir/cowasm-ranlib" \
 CC="$bin_dir/cowasm-cc" \
-CFLAGS="-Oz -fvisibility-main" \
+CFLAGS="-Oz -fPIC -fvisibility-main" \
 COWASM_TOOLCHAIN=wasi-sdk \
   ./configure --static --prefix="$dist_dir"
 

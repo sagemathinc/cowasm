@@ -611,9 +611,26 @@ The first SDK CPython dynamic-extension import probe is also landed for
 - it imports `_json` under `python-wasi-sdk` and verifies that `json` uses the
   extension accelerators.
 
-This clears the first extension-import boundary. Remaining Phase 14 work should
-expand from this small extension to dependency-backed extensions such as
-`zlib`, `pyexpat`, `_bz2`, and `_sqlite3`, then move to pip/ensurepip behavior.
+This clears the first extension-import boundary and sets up the
+dependency-backed extension probes.
+
+The first dependency-backed SDK CPython extension import probe is also landed
+for `zlib`:
+
+- the SDK `core/zlib` package probe now compiles zlib objects with `-fPIC`
+  while preserving the standalone zlib example smoke;
+- `make -C python/cpython test-wasi-sdk-extension-imports` also builds
+  `Modules/zlib.cpython-314-wasm32-wasi.so` against the SDK zlib archive;
+- the target applies the same shared-module guardrails as `_json`: no
+  main-module memory flags, `env.memory` initial size of one page,
+  `dylink.0`, expected `PyInit_zlib`, and no `needed_dynlibs`;
+- it installs `zlib` into `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports `zlib` under `python-wasi-sdk` and checks compression,
+  decompression, and CRC behavior.
+
+This clears the first dependency-backed extension boundary. Remaining Phase 14
+extension work can now move to `pyexpat`, `_bz2`, `_lzma`, `_sqlite3`, and
+other package-backed modules before pip/ensurepip behavior.
 
 ## Order Of Work
 
@@ -1274,7 +1291,7 @@ Current runtime status:
 Remaining Phase 14 work:
 
 - expand SDK CPython shared-extension install/import coverage beyond `_json`
-  to dependency-backed extensions;
+  and `zlib` to the remaining dependency-backed extensions;
 - add SDK pip/ensurepip behavior after dependency-backed extension imports are
   proven;
 - only then expand toward the supported CPython test suite.

@@ -196,6 +196,7 @@ WASI_SDK_HACL_LIBS = \
 	${BUILD_WASI_SDK}/Modules/_hacl/libHacl_Hash_BLAKE2.a \
 	${BUILD_WASI_SDK}/Modules/_hacl/libHacl_HMAC.a
 WASI_SDK_JSON_EXTENSION = _json.${PYTHON_PLATFORM}.so
+WASI_SDK_ZLIB_EXTENSION = zlib.${PYTHON_PLATFORM}.so
 
 ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
@@ -436,8 +437,27 @@ ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION}: ${DIS
 	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
 	cp ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
 
+${ZLIB_WASI_SDK}/lib/libz.a:
+	cd ${CORE_PACKAGES}/zlib && make test-wasi-sdk-next
+
+${BUILD_WASI_SDK}/.zlib-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.configured test-wasi-sdk-archive ${ZLIB_WASI_SDK}/lib/libz.a
+	rm -f ${BUILD_WASI_SDK}/Modules/${WASI_SDK_ZLIB_EXTENSION}
+	cd ${BUILD_WASI_SDK} && \
+		COWASM_TOOLCHAIN=wasi-sdk \
+		ZLIB_WASM="${ZLIB_WASI_SDK}" \
+		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_ZLIB_EXTENSION}
+	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_ZLIB_EXTENSION} | grep -F 'dylink.0'
+	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_ZLIB_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
+	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_ZLIB_EXTENSION} | grep '^PyInit_zlib$$'
+	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_ZLIB_EXTENSION} | grep 'needed_dynlibs'
+	touch ${BUILD_WASI_SDK}/.zlib-extension-built
+
+${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION}: ${DIST_WASI_SDK}/.install-cpython ${BUILD_WASI_SDK}/.zlib-extension-built
+	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
+	cp ${BUILD_WASI_SDK}/Modules/${WASI_SDK_ZLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
+
 .PHONY: test-wasi-sdk-extension-imports
-test-wasi-sdk-extension-imports: ${BIN}/python-wasi-sdk ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION}
+test-wasi-sdk-extension-imports: ${BIN}/python-wasi-sdk ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION}
 	${CWD}/bin/python-wasi-sdk ${SRC}/wasi_sdk_extension_import_tests.py
 
 ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
