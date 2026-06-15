@@ -253,8 +253,9 @@ The focused `core/dylink` Phase 10 test expansion is also landed:
 
 This status changes the immediate work: do not re-implement the bootstrap, the
 basic wrapper selector, the Phase 9 archive probe, or the Phase 10 focused
-dylink compatibility tests. The next blocker is porting the first simple
-packages in Phase 11, starting with `core/zlib`.
+dylink compatibility tests. The Phase 11 simple package probe targets are also
+covered. The next blocker is Phase 12 runtime-adjacent package work, starting
+with `core/libedit`.
 
 The first Phase 11 package probe is partially landed for `core/zlib`:
 
@@ -317,6 +318,22 @@ The `core/sqlite` Phase 11 package probe is also partially landed:
 - it runs `select 389*5077` under the standalone WASI runner;
 - `make -C core/sqlite test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
+
+The `core/lua` Phase 11 package probe is also partially landed:
+
+- `make -C core/lua test-wasi-sdk-standalone` builds Lua with
+  `COWASM_TOOLCHAIN=wasi-sdk`;
+- the probe supplies local compatibility shims for setjmp/longjmp, signal,
+  clock, temporary files, and `system`;
+- it installs the Lua executable, headers, and `liblua.a` into
+  `dist/wasi-sdk`;
+- it runs the existing `sum.lua` smoke under the standalone WASI runner;
+- `make -C core/lua test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name.
+
+The Phase 11 package list is now covered by side-by-side `wasi-sdk-next` probe
+targets. The next blocker is Phase 12 runtime-adjacent packages, starting with
+`core/libedit`.
 
 ## Order Of Work
 
@@ -835,7 +852,7 @@ Expected object shape:
 Deliverable: `core/dylink` tests pass with `wasi-sdk`-built side modules and a
 `wasi-sdk`-built main-module path.
 
-## Phase 11: Port Simple Packages (In Progress)
+## Phase 11: Port Simple Packages (Probe Targets Landed)
 
 Start with packages that have small build systems and clear smoke tests.
 
@@ -846,7 +863,7 @@ Suggested order:
 3. `core/termcap` (probe target landed)
 4. `sagemath/gmp` (probe target landed)
 5. `core/sqlite` (probe target landed)
-6. `core/lua`
+6. `core/lua` (probe target landed)
 
 For each package:
 
