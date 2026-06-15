@@ -364,6 +364,23 @@ The `core/ncurses` Phase 12 package probe is also partially landed:
 - `make -C core/ncurses test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
+The `core/less` Phase 12 package probe is also partially landed:
+
+- `make -C core/less test-wasi-sdk-standalone` builds less with
+  `COWASM_TOOLCHAIN=wasi-sdk`;
+- the probe first builds the `core/termcap` and `core/ncurses` SDK
+  dependencies;
+- it supplies local standalone compatibility shims for legacy terminal,
+  setjmp, signal, and process APIs;
+- it disables shell escapes, editor integration, `popen`, `ttyname`,
+  `_setjmp`, and `sigsetmask` for the standalone SDK smoke;
+- it installs `less`, `lesskey`, `lessecho`, and man pages into
+  `dist/wasi-sdk`;
+- it runs `less --help` under the standalone WASI runner and checks the command
+  help text;
+- `make -C core/less test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name.
+
 ## Order Of Work
 
 Recommended order:
@@ -913,7 +930,7 @@ Suggested order:
 
 1. `core/libedit` (probe target landed)
 2. `core/ncurses` (probe target landed)
-3. `core/less`
+3. `core/less` (probe target landed)
 4. `core/tar`
 5. `core/openssl`
 6. `core/libgit2`
