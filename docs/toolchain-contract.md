@@ -537,6 +537,18 @@ upstream `example` program through the WASI runner. It installs into
 `core/zlib/dist/wasi-sdk`, leaving the default Zig-backed `dist/wasm` package
 untouched.
 
+`core/bzip2` has the same opt-in package smoke shape:
+
+```sh
+make -C core/bzip2 test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, rebuilds bzip2 from source with
+`COWASM_TOOLCHAIN=wasi-sdk`, uses selector-aware archive tools, then starts
+`bzip2` and `bunzip2` through the WASI runner and verifies a small
+compress/decompress round trip. It installs into `core/bzip2/dist/wasi-sdk`,
+leaving the default Zig-backed package untouched.
+
 The bootstrap currently installs `wasi-sdk-33.0` under
 `core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
 driver names into `bin/`:
