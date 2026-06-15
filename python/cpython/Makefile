@@ -416,6 +416,10 @@ python-wasi-sdk: ${BIN}/python-wasi-sdk
 test-wasi-sdk-runtime-contracts: ${BIN}/python-wasi-sdk
 	${CWD}/bin/python-wasi-sdk ${SRC}/runtime_contract_tests.py
 
+.PHONY: test-wasi-sdk-imports
+test-wasi-sdk-imports: ${BIN}/python-wasi-sdk
+	${CWD}/bin/python-wasi-sdk ${SRC}/wasi_sdk_import_tests.py
+
 ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
 	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR}/_sysconfigdata__wasi_wasm32-wasi.py so it
 	# matches the configuration we just used.  TODO: Find a better way to fix this, e.g., by configuration or

@@ -586,6 +586,22 @@ descriptor, and nonzero-exit semantics. This clears the previous "do not
 proceed" gate for Phase 14; the next work can move to SDK CPython import tests,
 pip behavior, and package/extension integration.
 
+The first SDK CPython import-smoke target is also landed:
+
+- `make -C python/cpython test-wasi-sdk-imports` runs under
+  `./bin/python-wasi-sdk`;
+- it verifies `site` startup installs the CoWasm import hook;
+- it imports representative pure-Python stdlib modules used by packaging,
+  subprocess, filesystem, and HTTP/client code;
+- it checks that SDK sysconfig still reports the expected
+  `cpython-314-wasm32-wasi` SOABI, `.cpython-314-wasm32-wasi.so` extension
+  suffix, SDK include path, and `cowasm-cc` shared-link command.
+
+This is intentionally not yet a dynamic-extension import test. The SDK install
+does not currently populate `dist/wasi-sdk/lib/python3.14/lib-dynload` with
+shared modules, so the next Phase 14 boundary is building and installing the
+first SDK CPython extension module for import under `python-wasi-sdk`.
+
 ## Order Of Work
 
 Recommended order:
@@ -1226,25 +1242,29 @@ Landed configure and core-compile probe details:
 - SDK artifact install coverage via `make -C python/cpython wasi-sdk-cpython`.
 - runnable wrapper target via `make -C python/cpython python-wasi-sdk`.
 
-Current runtime blocker:
+Current runtime status:
 
 - the original main-runtime `free` trap is avoided by giving side modules an
   `env.__memory_size` import and guarding the SDK wrapper's allocator
   forwarding to pointers outside the side module's static memory range;
-- `./bin/python-wasi-sdk -S --version` now starts far enough to report
-  `Python 3.14.6`;
-- `./bin/python-wasi-sdk -S -c 'pass'` and
-  `make -C python/cpython test-wasi-sdk-runtime-contracts` still trap during
-  CPython startup;
-- the `_PyTuple_Resize(tuple, current_size)` no-op patch is now in the SDK
-  CPython patch list and moves past the tuple uniqueness failure; the remaining
-  trap is later in the `_Py_Dealloc`/GC path;
-- `DEBUG=dylink:function-table,dylink:dlopen` shows the side module imports
-  with `__table_base`, its active element segment installed, and
-  `__wasm_call_ctors` plus `__wasm_apply_data_relocs` called before
-  `__main_argc_argv`, making the next blocker more likely CPython
-  startup/object lifetime or imported-libc allocator ABI state than install
-  layout, global relocation, or stdlib packaging.
+- the SDK wrapper keeps CPython's pthread calls inside the SDK side module
+  through local single-thread pthread stubs, avoiding the previous
+  wasi-sdk/CoWasm pthread ABI mismatch;
+- `./bin/python-wasi-sdk -S --version`,
+  `./bin/python-wasi-sdk -S -c 'pass'`, and
+  `./bin/python-wasi-sdk -S -c 'print(1)'` all start successfully;
+- `make -C python/cpython test-wasi-sdk-runtime-contracts` passes the focused
+  runtime contract suite;
+- `make -C python/cpython test-wasi-sdk-imports` passes the first pure-stdlib
+  and sysconfig import smoke.
+
+Remaining Phase 14 work:
+
+- build and install at least one SDK CPython shared extension into
+  `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- import that extension through `python-wasi-sdk`;
+- add SDK pip/ensurepip behavior after extension imports are proven;
+- only then expand toward the supported CPython test suite.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 
