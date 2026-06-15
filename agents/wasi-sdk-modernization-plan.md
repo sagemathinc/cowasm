@@ -1612,8 +1612,8 @@ Current status:
 
 Deliverable: the first Sage-relevant math dependency layer works with
 `wasi-sdk`, and PARI has a visible capability gate instead of a silent failure.
-PARI remains the next Sage-facing blocker once SDK setjmp/longjmp support is
-available.
+PARI's full mathematical smoke remains future Sage-facing work once SDK
+setjmp/longjmp support is available in the local runner.
 
 ## Phase 16: Flip The Default
 
@@ -1632,7 +1632,7 @@ Current pre-flip gate:
 
 This roadmap's default-flip deliverable is the preserved gate definition above,
 not the policy decision to change the default in this commit stream. The flip
-should happen in a separate change after reviewing the Zig baseline and the
+belongs to a separate transition track after reviewing the Zig baseline and the
 SDK aggregate gate side by side.
 
 Minimum gate:
@@ -1727,8 +1727,8 @@ implementation code.
   runtime libraries instead of staying on the current `-nostdlib` side-module
   contract?
 - How much of the `wasi-sdk` dylink archive path should replace the old
-  Zig-built archive versus remain a side-by-side probe until broader package
-  tests pass?
+  Zig-built archive during the default-flip transition, versus remaining a
+  side-by-side probe for one compatibility window?
 - Does the current SDK static-archive `libcxx.so` probe become the replacement
   for the special handling in `core/libcxx`, or should it remain a comparison
   artifact until real C++ package users are migrated?
@@ -1758,7 +1758,7 @@ implementation code.
 
 ## Success Criteria
 
-This completed roadmap is successful now because:
+This completed SDK probe roadmap is successful now because:
 
 - a pinned `wasi-sdk` bootstrap exists and is checksum-validated;
 - `COWASM_TOOLCHAIN=wasi-sdk` builds CoWasm-compatible standalone programs,
@@ -1771,22 +1771,18 @@ This completed roadmap is successful now because:
 - Sage-relevant GMP passes with a mathematical smoke, while PARI has an
   explicit setjmp/longjmp capability gate instead of a silent failure.
 
-The broader modernization remains incomplete until:
+The broader modernization now continues in separate transition tracks:
 
-- CoWasm core runtime builds do not depend on CoWasm-owned Zig source files.
-- CoWasm builds from a pinned `wasi-sdk` without local Zig stdlib patches.
-- Dynamic side modules use `wasm32-wasip1 -fPIC -shared` with an explicit
-  CoWasm-compatible dynamic-linking contract.
-- `cowasm-cc` and `cowasm-c++` are simpler and more explicit.
-- Core dylink tests pass with `wasi-sdk`-built side modules and main modules.
-- Native POSIX addon tests pass through the C implementation.
-- CPython starts, passes runtime contracts, imports representative stdlib
-  modules, imports package-backed dynamic extensions, and then passes the
-  supported suite.
-- GMP passes with a mathematical smoke; PARI's mathematical smoke is gated on
-  usable SDK setjmp/longjmp support.
-- Modern Zig and direct LLVM/lld probes remain optional comparison paths, not
-  required foundations.
+- translate the CoWasm-owned Zig kernel and native POSIX addon glue to C;
+- review the preserved Zig baseline and the SDK aggregate gate side by side,
+  then flip the default toolchain in a separate change;
+- simplify and rename wrapper internals once Zig is no longer the primary
+  provider;
+- retire the old Zig path after a compatibility window;
+- graduate PARI, socket-enabled `_ssl`, and full `_ctypes` foreign-call support
+  when the required runtime capabilities exist.
 
-The desired end state is a pinned `wasi-sdk` CoWasm toolchain with C runtime
-glue and a visible, testable WASI/dylink contract.
+The desired end state remains a pinned `wasi-sdk` CoWasm toolchain with C
+runtime glue and a visible, testable WASI/dylink contract. This file is now the
+closed record for the SDK probe roadmap, not the active implementation plan for
+those follow-up transition tracks.
