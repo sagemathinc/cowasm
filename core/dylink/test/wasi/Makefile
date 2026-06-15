@@ -3,6 +3,8 @@ all: test-wasm
 include ../Makefile-common
 
 WASI_SDK_CLANG = ${BIN}/wasi-sdk-clang-next
+WASI_SDK_NM = ${BIN}/wasi-sdk-llvm-nm-next
+WASI_SDK_STRINGS = ${BIN}/wasi-sdk-llvm-strings-next
 
 build/wasm/app.wasm: app.c
 	mkdir -p build/wasm
@@ -55,10 +57,21 @@ build/wasi-sdk/dynamic-library.so: dynamic-library.c
 		dynamic-library.c \
 		-o build/wasi-sdk/dynamic-library.so
 
+build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so
+	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' U dlopen'
+	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' U dlsym'
+	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' T malloc$$'
+	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' T free$$'
+	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' T printf$$'
+	${WASI_SDK_STRINGS} build/wasi-sdk/dynamic-library.so | grep '^dylink\.0$$'
+	! ${WASI_SDK_STRINGS} build/wasi-sdk/app.wasm | grep 'needed_dynlibs'
+	! ${WASI_SDK_STRINGS} build/wasi-sdk/dynamic-library.so | grep 'needed_dynlibs'
+	touch build/wasi-sdk/.checked
+
 test-wasm: build/wasm/app.wasm build/wasm/dynamic-library.wasm.so
 	cd build/wasm && node ../../app.js
 
-test-wasi-sdk-next: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so
+test-wasi-sdk-next: build/wasi-sdk/.checked
 	cd build/wasi-sdk && node ../../app.js
 
 # NOTE: We're using gcc here (which is really clang on MacOS), because
