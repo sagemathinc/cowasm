@@ -48,20 +48,18 @@ ${BUILD}/libpython.o:
 		-c ${CPYTHON_WASM}/lib/libpython.c \
 		-o ${BUILD}/libpython.o
 
-${DIST}/python.wasm: src/python.zig src/signal.zig ${BUILD}/libpython.o ${BUILD}/lib${PYTHON_LIB}.a ${HACL_LIBS}
+${DIST}/python.wasm: src/python.c ${BUILD}/libpython.o ${BUILD}/lib${PYTHON_LIB}.a ${HACL_LIBS}
 	cd ../build && make zig
 	mkdir -p ${DIST}
-	cd src/ \
-		&& ${BIN}/cowasm-zig \
-			-cowasm-verbose \
-			${OPT} \
-			${CFLAGS} \
-			${LDFLAGS} \
-			python.zig \
-			${BUILD}/libpython.o \
-			${HACL_LIBS} \
-		&& rm python.o \
-		&& mv python.wasm ${DIST}/python.wasm
+	${BIN}/cowasm-cc \
+		-cowasm-verbose \
+		-Oz \
+		${CFLAGS} \
+		src/python.c \
+		${BUILD}/libpython.o \
+		${HACL_LIBS} \
+		${LDFLAGS} \
+		-o ${DIST}/python.wasm
 
 BUNDLES = ${DIST}/python-minimal.zip ${DIST}/python-readline.zip ${DIST}/python-stdlib.zip ${DIST}/python-everything.zip
 
@@ -139,16 +137,15 @@ ${DIST}/hello.${PLATFORM}.so: src/extension/hellomodule.c
 hello: ${DIST}/hello.${PLATFORM}.so
 
 ###
-# An example minimal Python extension module, written in Zig.
+# An example minimal Python extension module, written in C.
 ###
 
-${DIST}/hellozig.${PLATFORM}.so: src/extension/hellozigmodule.zig src/extension/hellozigmodule.c
+${DIST}/hellozig.${PLATFORM}.so: src/extension/hellozigmodule-extra.c src/extension/hellozigmodule.c
 	cd ../build && make zig
-	cd src/extension \
-		&&	${BIN}/cowasm-cc ${CFLAGS} -Oz -c hellozigmodule.c -o hellozigmodule-c.o \
-		&&	${BIN}/cowasm-zig ${CFLAGS} ${OPT} hellozigmodule-c.o hellozigmodule.zig \
-		&&	rm hellozigmodule-c.o \
-		&&  mv hellozigmodule.wasm ${DIST}/hellozig.${PLATFORM}.so
+	${BIN}/cowasm-cc ${CFLAGS} -Oz -shared \
+		src/extension/hellozigmodule.c \
+		src/extension/hellozigmodule-extra.c \
+		-o ${DIST}/hellozig.${PLATFORM}.so
 
 .PHONY: hellozig
 hellozig: ${DIST}/hellozig.${PLATFORM}.so

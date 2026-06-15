@@ -12,8 +12,8 @@ rather than control+C.
 
 import socket
 
-# TODO: ipv6 is not supported yet in posix-node/src/socket.zig.
-# See comments there and use this code to test it:
+# TODO: ipv6 is not supported yet in posix-node's socket wrapper.
+# Use this code to test it:
 #s = socket.create_server(("localhost", 2000), family=socket.AF_INET6)
 
 # TODO: when I try "" for the address then "wildcard resolved to multiple address"
