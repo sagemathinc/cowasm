@@ -63,8 +63,8 @@ BACKEND SELECTION:
                             COWASM_WASM_LD, and COWASM_WASI_SYSROOT when the
                             tools are not discoverable on PATH.
    COWASM_TOOLCHAIN=wasi-sdk = use the pinned wasi-sdk-next probe toolchain.
-                            This supports tiny standalone C programs and
-                            CoWasm-style C side modules.
+                            This supports tiny standalone C/C++ programs and
+                            CoWasm-style C/C++ side modules.
 
 EXTRA OPTIONS:
 
@@ -570,16 +570,18 @@ def clang_backend():
 def wasi_sdk_backend():
     if LANG == 'zig':
         fail("cowasm: COWASM_TOOLCHAIN=wasi-sdk does not support cowasm-zig")
-    if LANG == 'c++':
-        fail("cowasm: COWASM_TOOLCHAIN=wasi-sdk does not support C++ yet")
 
     args = strip_host_system_path_args(expand_response_args(sys.argv[2:]))
     if '--print-multiarch' in args:
         print('wasm32-wasip1')
         return
 
-    clang = find_required_program(
-        "COWASM_WASI_SDK_CLANG", "wasi-sdk-clang-next", "wasi-sdk")
+    if LANG == 'c++':
+        clang = find_required_program(
+            "COWASM_WASI_SDK_CLANGXX", "wasi-sdk-clang++-next", "wasi-sdk")
+    else:
+        clang = find_required_program(
+            "COWASM_WASI_SDK_CLANG", "wasi-sdk-clang-next", "wasi-sdk")
     sysroot = find_wasi_sdk_sysroot(clang)
     base_flags = clang_base_flags(sysroot, target="wasm32-wasip1")
 

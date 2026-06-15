@@ -82,6 +82,16 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   "$tmp/wrapper-main.c" -o "$tmp/wrapper-main.wasm"
 test -s "$tmp/wrapper-main.wasm"
 
+cat >"$tmp/wrapper-main.cpp" <<'EOF'
+int main(int argc, char **argv) {
+  return argc == 0 || argv == 0;
+}
+EOF
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
+  "$tmp/wrapper-main.cpp" -o "$tmp/wrapper-main-cxx.wasm"
+test -s "$tmp/wrapper-main-cxx.wasm"
+
 cat >"$tmp/wrapper-side.c" <<'EOF'
 #define EXPORTED_SYMBOL __attribute__((visibility("default")))
 
@@ -100,5 +110,28 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 
 if "$strings" "$tmp/wrapper-side.so" | grep -E 'lib(c|c\+\+|c\+\+abi)\.so'; then
   echo "unexpected needed_dynlibs from cowasm-cc wasi-sdk side module" >&2
+  exit 1
+fi
+
+cat >"$tmp/wrapper-cxx-side.cpp" <<'EOF'
+#include <string>
+
+extern "C" __attribute__((visibility("default")))
+int cowasm_cxx_string_size(void) {
+  std::string value = "cowasm";
+  return static_cast<int>(value.size());
+}
+EOF
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
+  -fPIC -shared "$tmp/wrapper-cxx-side.cpp" \
+  "$("$clangxx" -target wasm32-wasip1 -print-file-name=libc++.a)" \
+  "$("$clangxx" -target wasm32-wasip1 -print-file-name=libc++abi.a)" \
+  -o "$tmp/wrapper-cxx-side.so"
+"$objdump" -h "$tmp/wrapper-cxx-side.so" | grep 'dylink.0'
+"$strings" "$tmp/wrapper-cxx-side.so" | grep 'cowasm_cxx_string_size'
+
+if "$strings" "$tmp/wrapper-cxx-side.so" | grep -E 'lib(c|c\+\+|c\+\+abi)\.so'; then
+  echo "unexpected needed_dynlibs from cowasm-c++ wasi-sdk side module" >&2
   exit 1
 fi
