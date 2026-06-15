@@ -39,9 +39,8 @@ strip: node_modules
 
 KERNEL_WASM_SOURCES = \
 	${POSIX_SOURCES} \
-	src/kernel/interface.zig \
-	src/kernel/cowasm.zig \
-	$(shell find src/wasm/posix/*.zig -type f)
+	src/kernel/interface.c \
+	${CWD}/src/wasm/posix/stdlib.c
 
 # TODO: I think libedit and libtermcap should probably be dynamic
 # libraries that get loaded when needed.
@@ -55,11 +54,12 @@ ${DIST}/kernel/kernel.wasm: node_modules ${KERNEL_WASM_SOURCES} ${CWD}/src/wasm/
 		-target wasm32-wasi \
 		--import-memory \
 		--import-table \
+		-femit-bin=interface.wasm \
 		-L${DYLINK_WASM}/ -ldylink -lc -lm ${WASI_EMULATED} \
 		-I. -I${POSIX_WASM} \
 		${POSIX_WASM}/libposix.a ${CWD}/src/wasm/posix/stdlib.c \
-		kernel/interface.zig
-	mkdir -p ${DIST}/cowasm
+		kernel/interface.c
+	mkdir -p ${DIST}/kernel
 	rm -f src/interface.wasm.o
 	mv src/interface.wasm ${DIST}/kernel/kernel.wasm
 
@@ -84,16 +84,8 @@ opt: ${DIST}/kernel/kernel.wasm
 # Testing
 ###
 
-# There isn't much using zig testing yet, but should be.
-
-TEST = POSIX_WASM="$(shell cowasm-package-path @cowasm/posix-wasm)" ./test-zig.sh
-
-test-posix:
-	cd src && \
-		${TEST} wasm/posix/unistd.zig   ${OPT} && \
-		${TEST} wasm/posix/stdio.zig   ${OPT} && \
-		${TEST} wasm/posix/string.zig   ${OPT} && \
-		${TEST} wasm/posix/stdlib.zig wasm/posix/stdlib.c  ${OPT}
+test-posix: kernel
+	# POSIX glue is exercised through the C-built kernel smoke tests.
 
 
 ${BUILD}/test/hello.wasm: ${SRC}/test/hello.c
