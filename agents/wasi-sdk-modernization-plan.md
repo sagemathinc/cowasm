@@ -597,10 +597,23 @@ The first SDK CPython import-smoke target is also landed:
   `cpython-314-wasm32-wasi` SOABI, `.cpython-314-wasm32-wasi.so` extension
   suffix, SDK include path, and `cowasm-cc` shared-link command.
 
-This is intentionally not yet a dynamic-extension import test. The SDK install
-does not currently populate `dist/wasi-sdk/lib/python3.14/lib-dynload` with
-shared modules, so the next Phase 14 boundary is building and installing the
-first SDK CPython extension module for import under `python-wasi-sdk`.
+The first SDK CPython dynamic-extension import probe is also landed for
+`_json`:
+
+- `make -C python/cpython test-wasi-sdk-extension-imports` builds
+  `Modules/_json.cpython-314-wasm32-wasi.so` with `COWASM_TOOLCHAIN=wasi-sdk`;
+- the extension link clears CPython's generated `CONFIGURE_LDFLAGS_NODIST`
+  for the shared-module link so main-module memory flags such as
+  `--initial-memory` and `--stack-first` do not leak into side modules;
+- the target checks that the extension has a `dylink.0` section, exports
+  `PyInit__json`, and does not declare `needed_dynlibs`;
+- it installs `_json` into `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports `_json` under `python-wasi-sdk` and verifies that `json` uses the
+  extension accelerators.
+
+This clears the first extension-import boundary. Remaining Phase 14 work should
+expand from this small extension to dependency-backed extensions such as
+`zlib`, `pyexpat`, `_bz2`, and `_sqlite3`, then move to pip/ensurepip behavior.
 
 ## Order Of Work
 
@@ -1260,10 +1273,10 @@ Current runtime status:
 
 Remaining Phase 14 work:
 
-- build and install at least one SDK CPython shared extension into
-  `dist/wasi-sdk/lib/python3.14/lib-dynload`;
-- import that extension through `python-wasi-sdk`;
-- add SDK pip/ensurepip behavior after extension imports are proven;
+- expand SDK CPython shared-extension install/import coverage beyond `_json`
+  to dependency-backed extensions;
+- add SDK pip/ensurepip behavior after dependency-backed extension imports are
+  proven;
 - only then expand toward the supported CPython test suite.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.

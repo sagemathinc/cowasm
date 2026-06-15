@@ -195,6 +195,7 @@ WASI_SDK_HACL_LIBS = \
 	${BUILD_WASI_SDK}/Modules/_hacl/libHacl_Hash_SHA3.a \
 	${BUILD_WASI_SDK}/Modules/_hacl/libHacl_Hash_BLAKE2.a \
 	${BUILD_WASI_SDK}/Modules/_hacl/libHacl_HMAC.a
+WASI_SDK_JSON_EXTENSION = _json.${PYTHON_PLATFORM}.so
 
 ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
@@ -419,6 +420,25 @@ test-wasi-sdk-runtime-contracts: ${BIN}/python-wasi-sdk
 .PHONY: test-wasi-sdk-imports
 test-wasi-sdk-imports: ${BIN}/python-wasi-sdk
 	${CWD}/bin/python-wasi-sdk ${SRC}/wasi_sdk_import_tests.py
+
+${BUILD_WASI_SDK}/.json-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.configured test-wasi-sdk-archive
+	rm -f ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION}
+	cd ${BUILD_WASI_SDK} && \
+		COWASM_TOOLCHAIN=wasi-sdk \
+		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_JSON_EXTENSION}
+	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION} | grep -F 'dylink.0'
+	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
+	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION} | grep '^PyInit__json$$'
+	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION} | grep 'needed_dynlibs'
+	touch ${BUILD_WASI_SDK}/.json-extension-built
+
+${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION}: ${DIST_WASI_SDK}/.install-cpython ${BUILD_WASI_SDK}/.json-extension-built
+	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
+	cp ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
+
+.PHONY: test-wasi-sdk-extension-imports
+test-wasi-sdk-extension-imports: ${BIN}/python-wasi-sdk ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION}
+	${CWD}/bin/python-wasi-sdk ${SRC}/wasi_sdk_extension_import_tests.py
 
 ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
 	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR}/_sysconfigdata__wasi_wasm32-wasi.py so it
