@@ -114,6 +114,7 @@ ac_cv_have_lchflags=no
 ac_cv_func_gethostbyname_r=no
 ac_cv_func_gethostbyname=yes
 ac_cv_func_gethostbyaddr=yes
+ac_cv_func_getaddrinfo=yes
 ac_cv_func_getlogin=no
 ac_cv_func_getlogin_r=no
 ac_cv_header_sys_timerfd_h=no

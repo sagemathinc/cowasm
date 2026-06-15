@@ -70,6 +70,10 @@ cat >"$build_dir/compat/netdb.h" <<'EOF'
 #ifndef COWASM_POSIX_WASM_WASI_SDK_NETDB_H
 #define COWASM_POSIX_WASM_WASI_SDK_NETDB_H
 
+#ifndef WASMPOSIX
+#include <__typedef_socklen_t.h>
+#endif
+
 #ifndef EAI_NONAME
 #define EAI_NONAME -2
 #endif

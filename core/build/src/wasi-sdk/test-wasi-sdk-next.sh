@@ -104,7 +104,8 @@ int add_main_runtime_value(int n) {
 EOF
 
 env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
-  -fPIC -shared "$tmp/wrapper-side.c" -o "$tmp/wrapper-side.so"
+  --experimental-pic -fPIC -shared "$tmp/wrapper-side.c" \
+  -o "$tmp/wrapper-side.so"
 "$objdump" -h "$tmp/wrapper-side.so" | grep 'dylink.0'
 "$strings" "$tmp/wrapper-side.so" | grep 'main_runtime_value'
 

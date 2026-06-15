@@ -58,9 +58,10 @@
  )
 --- a/configure
 +++ b/configure
-@@ -19203,6 +19203,13 @@
+@@ -19199,7 +19199,13 @@
  case $ac_sys_system in #(
    Emscripten) :
+-
 -    as_fn_append PLATFORM_OBJS ' Python/emscripten_signal.o Python/emscripten_trampoline.o Python/emscripten_trampoline_wasm.o Python/emscripten_syscalls.o'
 +    as_fn_append PLATFORM_OBJS ' Python/emscripten_signal.o Python/emscripten_trampoline.o Python/emscripten_trampoline_wasm.o'
 +    case $host in #(

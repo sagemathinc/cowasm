@@ -452,6 +452,10 @@ def remove_unsupported_libs(argv):
     return stripped
 
 
+def remove_legacy_pic_flags(argv):
+    return [arg for arg in argv if arg != '--experimental-pic']
+
+
 def split_wl_arg(arg):
     return arg[len('-Wl,'):].split(',')
 
@@ -596,7 +600,8 @@ def wasi_sdk_backend():
     if LANG == 'zig':
         fail("cowasm: COWASM_TOOLCHAIN=wasi-sdk does not support cowasm-zig")
 
-    args = strip_host_system_path_args(expand_response_args(sys.argv[2:]))
+    args = remove_legacy_pic_flags(
+        strip_host_system_path_args(expand_response_args(sys.argv[2:])))
     if '--print-multiarch' in args:
         print('wasm32-wasip1')
         return

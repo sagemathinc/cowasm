@@ -1,0 +1,30 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -1177,6 +1177,12 @@
+ ])
+ AC_SUBST([MULTIARCH])
+ 
++dnl wasi-sdk uses the newer wasip1 spelling, while CPython's historical
++dnl WASI platform triplet is still wasm32-wasi.
++if test x$PLATFORM_TRIPLET = xwasm32-wasi && test x$MULTIARCH = xwasm32-wasip1; then
++  MULTIARCH=$PLATFORM_TRIPLET
++fi
++
+ if test x$PLATFORM_TRIPLET != x && test x$MULTIARCH != x; then
+   if test x$PLATFORM_TRIPLET != x$MULTIARCH; then
+     AC_MSG_ERROR([internal configure error for the platform triplet, please file a bug report])
+--- a/configure
++++ b/configure
+@@ -7189,6 +7189,12 @@
+ esac
+ 
+ 
++# wasi-sdk uses the newer wasip1 spelling, while CPython's historical
++# WASI platform triplet is still wasm32-wasi.
++if test x$PLATFORM_TRIPLET = xwasm32-wasi && test x$MULTIARCH = xwasm32-wasip1; then
++  MULTIARCH=$PLATFORM_TRIPLET
++fi
++
+ if test x$PLATFORM_TRIPLET != x && test x$MULTIARCH != x; then
+   if test x$PLATFORM_TRIPLET != x$MULTIARCH; then
+     as_fn_error $? "internal configure error for the platform triplet, please file a bug report" "$LINENO" 5

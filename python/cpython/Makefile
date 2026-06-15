@@ -36,6 +36,20 @@ ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
 LIBFFI_WASM = $(shell cowasm-package-path @cowasm/libffi)
 
 PYTHON_WASM = ${BIN}/python-wasm
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
+
+CORE_PACKAGES = ${CWD}/../../core
+POSIX_WASI_SDK = ${CORE_PACKAGES}/posix-wasm/dist/wasi-sdk
+LIBEDIT_WASI_SDK = ${CORE_PACKAGES}/libedit/dist/wasi-sdk
+LZMA_WASI_SDK = ${CORE_PACKAGES}/lzma/dist/wasi-sdk
+NCURSES_WASI_SDK = ${CORE_PACKAGES}/ncurses/dist/wasi-sdk
+TERMCAP_WASI_SDK = ${CORE_PACKAGES}/termcap/dist/wasi-sdk
+OPENSSL_WASI_SDK = ${CORE_PACKAGES}/openssl/dist/wasi-sdk
+SQLITE_WASI_SDK = ${CORE_PACKAGES}/sqlite/dist/wasi-sdk
+BZIP2_WASI_SDK = ${CORE_PACKAGES}/bzip2/dist/wasi-sdk
+ZLIB_WASI_SDK = ${CORE_PACKAGES}/zlib/dist/wasi-sdk
+LIBFFI_WASI_SDK = ${CORE_PACKAGES}/libffi/dist/wasi-sdk
 
 PYTHON_WASM_ALLOCATOR ?= pymalloc-mimalloc
 
@@ -145,68 +159,20 @@ run-native: ${DIST_NATIVE}/.built ${BIN}/python-native
 
 ## WASM
 
+CPYTHON_WASM_PATCH_INPUTS = ${SRC}/prepare-wasm-build.sh ${SRC}/config.site $(wildcard ${SRC}/patches/*.patch)
+
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# Create declarations that make everything extension modules need
 	# accessible from outside our "python.wasm as a shared library".
-	pnpm exec dylink-libpython ${BUILD_WASM} > ${BUILD_WASM}/Programs/libpython.c
-	cp ${SRC}/cowasm_signal.c ${BUILD_WASM}/Programs/cowasm_signal.c
-	# Scripts to make it easy to change CPython and rebuild iteratively
-	ln -sf ${SRC}/rebuild ${BUILD_WASM}/rebuild
-	# Copy the config.site, which answers questions needed for
-	# cross compiling, without which ./configure won't work.
-	cp src/config.site ${BUILD_WASM}
-	# Configure how modules are built
-	cp src/Setup.local ${BUILD_WASM}/Modules/Setup.local
-	# Custom code to run at startup
-	cp src/sitecustomize.py ${BUILD_WASM}/Lib
-	# Copy over our small cowasm-specific library with functionality for our packages.
-	cp ${SRC}/cowasm_bundler.py ${BUILD_WASM}/Lib
-	cp ${SRC}/cowasm_importer.py ${BUILD_WASM}/Lib
-	# Make empty sys/wait.h so that python's configure will conclude that we have sys/wait.h; we will
-	# explicitly add anything that is really used from there to posix-wasm.h
-	mkdir ${BUILD_WASM}/sys
-	echo '#include "posix-wasm.h"' >  ${BUILD_WASM}/sys/wait.h
-	# Apply our patches:
-	cd ${BUILD_WASM} && cat ${SRC}/patches/01-main.patch | patch -p1
-	cd ${BUILD_WASM} && cat ${SRC}/patches/02-pydoc.patch | patch -p1
-	cd ${BUILD_WASM} && cat ${SRC}/patches/03-wasm-assets.patch | patch -p1
-	# Apply this patch when we want to take testing to the next level, and fully enable all
-	# tests that involve subprocess support.  Our goal is to support subprocesses fully, but
-	# it is NOT to support fork, which is just not possible in general with WebAssembly.
-	# However, I believe subprocess support is possible in a fully solid robust way.
-	cd ${BUILD_WASM} && cat ${SRC}/patches/04-enable-subprocess-tests.patch | patch -p1
-	cd ${BUILD_WASM} && cat ${SRC}/patches/05-st_mode.patch | patch -p1
-	# Implement 'import platform; platform.architecture()' for wasm.
-	cd ${BUILD_WASM} && cat ${SRC}/patches/06-platform.patch | patch -p1
-	# Fork and execv on top of posix-node work, but it takes some restrictions to be robust:
-	cd ${BUILD_WASM} && cat ${SRC}/patches/07-subprocess.patch | patch -p1
-	cd ${BUILD_WASM} && cat ${SRC}/patches/08-os-spawn-subprocess.patch | patch -p1
-	cd ${BUILD_WASM} && cat ${SRC}/patches/09-set-inheritable.patch | patch -p1
-	cd ${BUILD_WASM} && cat ${SRC}/patches/11-ceval-wasi-emscripten.patch | patch -p1
-	# clang15 is more strict:
-	cd ${BUILD_WASM} && cat ${SRC}/patches/12-timemodule-clang15.patch | patch -p1
-	# We can't use the modified WASI socket.h headers, since they annoyingly render the
-	# data structure useless (why!? - to save a few bytes?).
-	# See packages/python-wasm/src/wasm/posix/socket.zig  (which will move soon)
-	cd ${BUILD_WASM} && cat ${SRC}/patches/13-socket-unmodified-headers.patch | patch -p1
-	# Warn instead of error on attempt to start a thread.
-	# cd ${BUILD_WASM} && cat ${SRC}/patches/14-threading-warning.patch | patch -p1
-	# Do not let script files fall into interactive parsing mode.
-	cd ${BUILD_WASM} && cat ${SRC}/patches/19-noninteractive-script-files.patch | patch -p1
-	# Respect the launcher's noninteractive stdin marker despite WASI tty shims.
-	cd ${BUILD_WASM} && cat ${SRC}/patches/20-noninteractive-stdin-main.patch | patch -p1
-	# Avoid OpenSSL OBJ_txt2obj in the ssl module's import-time purpose constants.
-	cd ${BUILD_WASM} && cat ${SRC}/patches/21-ssl-purpose-txt2obj.patch | patch -p1
-	# Ignore non-TTY stdin when the CPython regrtest harness saves terminal echo state.
-	cd ${BUILD_WASM} && cat ${SRC}/patches/22-regrtest-stty-enotty.patch | patch -p1
-	# sysconfig lazily initializes cross-build paths under the WASM runner.
-	cd ${BUILD_WASM} && cat ${SRC}/patches/23-regrtest-no-sysconfig-env.patch | patch -p1
+	${SRC}/prepare-wasm-build.sh ${BUILD_WASM} ${SRC}/Setup.local
 	touch ${BUILD_WASM}/.patched
 
 DEBUG_MODE = ""
 # DEBUG_MODE = "-g"
 BLDSHARED = cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
 BLDCXXSHARED = cowasm-c++ --experimental-pic -shared ${DEBUG_MODE}
+BLDSHARED_WASI_SDK = ${BIN}/cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
+BLDCXXSHARED_WASI_SDK = ${BIN}/cowasm-c++ --experimental-pic -shared ${DEBUG_MODE}
 
 ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
@@ -263,6 +229,69 @@ ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/
 	cd ${BUILD_WASM} && \
 		LZMA_WASM="${LZMA_WASM}" LIBEDIT_WASM="${LIBEDIT_WASM}" NCURSES_WASM="${NCURSES_WASM}" TERMCAP_WASM="${TERMCAP_WASM}" OPENSSL_WASM="${OPENSSL_WASM}" SQLITE_WASM="${SQLITE_WASM}" BZIP2_WASM="${BZIP2_WASM}" LIBFFI_WASM="${LIBFFI_WASM}" ZLIB_WASM="${ZLIB_WASM}" make -j8
 	mkdir -p ${DIST_WASM} && touch ${DIST_WASM}/.built-cpython
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+${BUILD_WASI_SDK}/.patched: ${TARBALL} ${CPYTHON_WASM_PATCH_INPUTS}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+	${SRC}/prepare-wasm-build.sh ${BUILD_WASI_SDK} ${SRC}/Setup.local
+	touch ${BUILD_WASI_SDK}/.patched
+
+${BUILD_WASI_SDK}/.configured: node_modules ${BUILD_WASI_SDK}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
+	cd ../../core/build && make wasi-sdk-next
+	cd ../../core/posix-wasm && make test-wasi-sdk-standalone
+	cd ${BUILD_WASI_SDK} && \
+		OPT="${WASM_OPT}" \
+		COWASM_TOOLCHAIN=wasi-sdk \
+		CC="${BIN}/cowasm-cc" \
+		CXX="${BIN}/cowasm-c++" \
+		AR="${BIN}/cowasm-ar" \
+		RANLIB="${BIN}/cowasm-ranlib" \
+		CFLAGS="${DEBUG_MODE} -I${BUILD_WASI_SDK} -I${POSIX_WASI_SDK} -DPy_DEFAULT_RECURSION_LIMIT=700" \
+		BLDSHARED="${BLDSHARED_WASI_SDK}" \
+		LDCXXSHARED="${BLDCXXSHARED_WASI_SDK}" \
+		CONFIG_SITE=./config.site \
+		READELF=true \
+		HOSTRUNNER="${BIN}/cowasm" \
+		LZMA_WASM="${LZMA_WASI_SDK}" \
+		LIBEDIT_WASM="${LIBEDIT_WASI_SDK}" \
+		NCURSES_WASM="${NCURSES_WASI_SDK}" \
+		TERMCAP_WASM="${TERMCAP_WASI_SDK}" \
+		OPENSSL_WASM="${OPENSSL_WASI_SDK}" \
+		SQLITE_WASM="${SQLITE_WASI_SDK}" \
+		BZIP2_WASM="${BZIP2_WASI_SDK}" \
+		LIBFFI_WASM="${LIBFFI_WASI_SDK}" \
+		ZLIB_WASM="${ZLIB_WASI_SDK}" \
+		./configure \
+			--config-cache \
+			--prefix=${DIST_WASI_SDK}  \
+			--enable-big-digits=30 \
+			--enable-ipv6 \
+			--disable-shared \
+			--with-pkg-config=no \
+			--with-readline=editline \
+			--with-build-python=${BIN}/python-native \
+			${PYTHON_WASM_ALLOCATOR_CONFIGURE} \
+			--with-ensurepip \
+			--host=wasm32-unknown-wasi \
+			--build=`./config.guess`
+	grep -F 'Target: wasm32-unknown-wasip1' ${BUILD_WASI_SDK}/config.log
+	grep -F 'MULTIARCH=	wasm32-wasi' ${BUILD_WASI_SDK}/Makefile
+	grep -F '${BIN}/cowasm-cc --experimental-pic -shared' ${BUILD_WASI_SDK}/Makefile
+	touch ${BUILD_WASI_SDK}/.configured
+
+.PHONY: test-wasi-sdk-configure
+test-wasi-sdk-configure: ${BUILD_WASI_SDK}/.configured
+
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: test-wasi-sdk-configure
 
 ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
 	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR}/_sysconfigdata__wasi_wasm32-wasi.py so it
@@ -527,3 +556,9 @@ ${DIST_WASM}/.publishable: wasm
 
 .PHONY: publishable
 publishable: ${DIST_WASM}/.publishable
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk

@@ -30,7 +30,7 @@ ${BUILD}/wasi-sdk/Makefile: ${BUILD}/.build ${WASI_SDK_BOOTSTRAP_FILES}
 .PHONY: wasi-sdk-next
 wasi-sdk-next:
 	@set -e; \
-	lock_dir="${BUILD}/wasi-sdk.lock"; \
+	lock_dir="${CWD}/.wasi-sdk.lock"; \
 	while ! mkdir "$${lock_dir}" 2>/dev/null; do sleep 1; done; \
 	trap 'rmdir "$${lock_dir}"' EXIT INT TERM; \
 	$(MAKE) ${BUILD}/wasi-sdk/Makefile; \
@@ -39,7 +39,7 @@ wasi-sdk-next:
 .PHONY: test-wasi-sdk-next
 test-wasi-sdk-next:
 	@set -e; \
-	lock_dir="${BUILD}/wasi-sdk.lock"; \
+	lock_dir="${CWD}/.wasi-sdk.lock"; \
 	while ! mkdir "$${lock_dir}" 2>/dev/null; do sleep 1; done; \
 	trap 'rmdir "$${lock_dir}"' EXIT INT TERM; \
 	$(MAKE) ${BUILD}/wasi-sdk/Makefile; \
@@ -101,4 +101,4 @@ test: all
 	rm -f "$$tmp"
 
 clean:
-	rm -rf build
+	rm -rf build .wasi-sdk.lock
