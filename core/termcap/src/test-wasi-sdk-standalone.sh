@@ -25,6 +25,7 @@ mkdir -p "$dist_dir"
 
 cd "$build_dir"
 cp "$src_dir/config.h" .
+rm -f config.cache libtermcap.a ./*.o
 
 build_triple="${COWASM_BUILD_TRIPLE:-}"
 if [ -z "$build_triple" ]; then
@@ -39,7 +40,7 @@ fi
 
 RANLIB="$bin_dir/cowasm-ranlib" \
 AR="$bin_dir/cowasm-ar" \
-CC="$bin_dir/cowasm-cc -Oz -DHAVE_CONFIG_H=1" \
+CC="$bin_dir/cowasm-cc -Oz -fPIC -DHAVE_CONFIG_H=1" \
 COWASM_TOOLCHAIN=wasi-sdk \
   ./configure \
     --build="$build_triple" \
@@ -51,6 +52,11 @@ COWASM_TOOLCHAIN=wasi-sdk make AR="$bin_dir/cowasm-ar" -j"$jobs" libtermcap.a
 mkdir -p "$dist_dir/lib" "$dist_dir/include"
 cp libtermcap.a "$dist_dir/lib/"
 cp termcap.h "$dist_dir/include/"
+
+if "$bin_dir/wasi-sdk-llvm-objdump-next" -r "$dist_dir/lib/libtermcap.a" | grep -E 'R_WASM_MEMORY_ADDR_(LEB|SLEB)\b'; then
+  echo "termcap wasi-sdk archive contains non-PIC memory relocations" >&2
+  exit 1
+fi
 
 cat >"$probe_dir/termcap-test.c" <<'EOF'
 #include <stdlib.h>

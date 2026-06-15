@@ -811,6 +811,24 @@ current wasm32 libffi overlay still traps unsupported dynamic call helpers such
 as the path reached by `ctypes.string_at`, so ctypes should remain an optional
 extension gate until real wasm libffi call/closure support is implemented.
 
+The ncurses-backed SDK CPython `_curses` import probe is also landed:
+
+- the SDK `core/termcap` package probe now compiles `libtermcap.a` with
+  `-fPIC` and rejects non-PIC absolute memory relocations;
+- the SDK `core/ncurses` package probe now compiles `libncurses.a` and
+  `libpanel.a` with `-fPIC`, rejects non-PIC absolute memory relocations, and
+  installs the standalone `sgtty.h` compatibility shim needed by generated
+  `term.h`;
+- `make -C python/cpython test-wasi-sdk-extension-imports` now also builds
+  `Modules/_curses.cpython-314-wasm32-wasi.so` against SDK ncurses and
+  termcap;
+- the target applies the same shared-module guardrails as the other SDK
+  extension probes: imported memory, `dylink.0`, expected `PyInit__curses`,
+  and no `needed_dynlibs`;
+- it installs `_curses` into `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports `_curses`/`curses` under `python-wasi-sdk` and checks basic
+  constants and ncurses version metadata.
+
 SDK pip/ensurepip behavior is also landed:
 
 - CPython's SDK pyconfig overlay now exposes runtime-resolved `getuid`,
@@ -835,10 +853,10 @@ The SDK CPython supported-suite gate is also landed:
 - the current run passes all 234 supported CPython test files under the SDK
   path.
 
-Remaining Phase 14 extension work can now focus on whether heavier optional
-modules such as `_ssl` and `_curses` should become required gates before
-default wrapper behavior changes, and whether `_ctypes` should graduate from
-the current import/layout gate to full foreign-call support.
+Remaining Phase 14 extension work can now focus on whether socket-enabled
+`_ssl` should become a required gate before default wrapper behavior changes,
+and whether `_ctypes` should graduate from the current import/layout gate to
+full foreign-call support.
 
 ## Order Of Work
 
@@ -1456,8 +1474,8 @@ Only after the prior phases are green:
 - run focused SDK runtime contracts (landed);
 - run focused SDK stdlib/sysconfig imports (landed);
 - run focused SDK dynamic-extension imports for `_json`, `pyexpat`, `zlib`,
-  `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, `_hashlib`, and the CJK codec
-  side modules (landed);
+  `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, `_hashlib`, `_ctypes`,
+  `_curses`, and the CJK codec side modules (landed);
 - run SDK pip/ensurepip behavior (landed);
 - run the supported CPython test suite (landed).
 
@@ -1521,7 +1539,7 @@ Current runtime status:
 - `make -C python/cpython test-wasi-sdk-extension-imports` imports `_json`,
   `pyexpat`, `zlib`, `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, `_decimal`,
   `_codecs_cn`, `_codecs_hk`, `_codecs_iso2022`, `_codecs_jp`, `_codecs_kr`,
-  `_codecs_tw`, `_hashlib`, and `_ctypes` from
+  `_codecs_tw`, `_hashlib`, `_ctypes`, and `_curses` from
   `dist/wasi-sdk/lib/python3.14/lib-dynload` and verifies their basic runtime
   behavior;
 - `make -C python/cpython test-wasi-sdk-pip` patches the bundled pip wheel,
@@ -1537,9 +1555,8 @@ Current runtime status:
 
 Optional Phase 14 follow-up:
 
-- decide whether heavier optional extensions such as socket-enabled `_ssl` and
-  `_curses` should become required SDK gates before default wrapper behavior
-  changes;
+- decide whether socket-enabled `_ssl` should become a required SDK gate before
+  default wrapper behavior changes;
 - decide whether `_ctypes` should graduate from the current import/layout gate
   to full foreign-call support.
 
@@ -1688,7 +1705,7 @@ implementation code.
 - When, if ever, should CoWasm start investigating `wasm32-wasip2` component
   artifacts?
 - Which heavier CPython extension or behavior should be the next SDK gate:
-  socket-enabled `_ssl`, `_curses`, or full `_ctypes` foreign-call support?
+  socket-enabled `_ssl` or full `_ctypes` foreign-call support?
 
 ## Risks
 

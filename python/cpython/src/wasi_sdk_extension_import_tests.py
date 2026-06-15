@@ -1,4 +1,5 @@
 import bz2
+import curses
 import ctypes
 import decimal
 import hashlib
@@ -208,6 +209,21 @@ class WasiSdkExtensionImportTests(unittest.TestCase):
 
         array = (ctypes.c_int * 3)(1, 2, 3)
         self.assertEqual(list(array), [1, 2, 3])
+
+    def test_curses_extension_imports_from_lib_dynload(self):
+        import _curses
+
+        suffix = sysconfig.get_config_var("EXT_SUFFIX")
+        self.assertTrue(
+            _curses.__file__.endswith(f"/lib-dynload/_curses{suffix}"),
+            _curses.__file__,
+        )
+
+    def test_curses_basic_constants_and_version(self):
+        self.assertEqual(curses.OK, 0)
+        self.assertLess(curses.ERR, 0)
+        self.assertIn("ncurses", curses.ncurses_version.__class__.__name__.lower())
+        self.assertGreaterEqual(curses.ncurses_version.major, 6)
 
     def test_cjk_codec_extensions_import_from_lib_dynload(self):
         suffix = sysconfig.get_config_var("EXT_SUFFIX")

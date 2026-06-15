@@ -110,6 +110,9 @@ rm -rf "$dist_dir"
 mkdir -p "$dist_dir"
 
 cd "$build_dir"
+rm -f config.cache
+find . -name '*.o' -delete
+find . -name '*.a' -delete
 
 if ! grep -q '^#xterm-16color' misc/terminfo.src; then
   cd misc
@@ -128,8 +131,8 @@ RANLIB="$bin_dir/cowasm-ranlib" \
 AR="$bin_dir/cowasm-ar" \
 CC="$bin_dir/cowasm-cc" \
 CXX="$bin_dir/cowasm-c++" \
-CFLAGS="-Oz -fvisibility-main -I$compat_dir -I$termcap_dist_dir/include -L$termcap_dist_dir/lib -I$posix_wasm_dir" \
-CXXFLAGS="-Oz -I$compat_dir -I$termcap_dist_dir/include -L$termcap_dist_dir/lib -I$posix_wasm_dir" \
+CFLAGS="-Oz -fPIC -fvisibility-main -I$compat_dir -I$termcap_dist_dir/include -L$termcap_dist_dir/lib -I$posix_wasm_dir" \
+CXXFLAGS="-Oz -fPIC -I$compat_dir -I$termcap_dist_dir/include -L$termcap_dist_dir/lib -I$posix_wasm_dir" \
 COWASM_TOOLCHAIN=wasi-sdk \
   ./configure \
     --without-ada \
@@ -146,8 +149,16 @@ COWASM_TOOLCHAIN=wasi-sdk \
 COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs" libs
 COWASM_TOOLCHAIN=wasi-sdk make install.libs
 
+for archive in "$dist_dir/lib/libncurses.a" "$dist_dir/lib/libpanel.a"; do
+  if "$bin_dir/wasi-sdk-llvm-objdump-next" -r "$archive" | grep -E 'R_WASM_MEMORY_ADDR_(LEB|SLEB)\b'; then
+    echo "ncurses wasi-sdk archive contains non-PIC memory relocations: $archive" >&2
+    exit 1
+  fi
+done
+
 cd "$dist_dir/include"
 ln -sf ncurses/curses.h .
+cp "$compat_dir/sgtty.h" sgtty.h
 cd "$build_dir"
 
 cat >"$probe_dir/ncurses-test.c" <<'EOF'
