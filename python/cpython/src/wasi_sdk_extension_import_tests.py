@@ -3,6 +3,7 @@ import json
 import lzma
 import sysconfig
 import unittest
+from xml.parsers import expat
 import zlib
 
 
@@ -23,6 +24,37 @@ class WasiSdkExtensionImportTests(unittest.TestCase):
         self.assertEqual(json.dumps({"b": 5}, sort_keys=True), '{"b": 5}')
         self.assertIs(json.scanner.c_make_scanner, _json.make_scanner)
         self.assertIs(json.encoder.c_make_encoder, _json.make_encoder)
+
+    def test_pyexpat_extension_imports_from_lib_dynload(self):
+        import pyexpat
+
+        suffix = sysconfig.get_config_var("EXT_SUFFIX")
+        self.assertTrue(
+            pyexpat.__file__.endswith(f"/lib-dynload/pyexpat{suffix}"),
+            pyexpat.__file__,
+        )
+
+    def test_pyexpat_parser_callbacks(self):
+        events = []
+        parser = expat.ParserCreate()
+        parser.StartElementHandler = lambda name, attrs: events.append(
+            ("start", name, sorted(attrs.items()))
+        )
+        parser.EndElementHandler = lambda name: events.append(("end", name))
+        parser.CharacterDataHandler = lambda data: events.append(("data", data))
+
+        parser.Parse('<root a="1"><child>cowasm</child></root>', True)
+
+        self.assertEqual(
+            events,
+            [
+                ("start", "root", [("a", "1")]),
+                ("start", "child", []),
+                ("data", "cowasm"),
+                ("end", "child"),
+                ("end", "root"),
+            ],
+        )
 
     def test_zlib_extension_imports_from_lib_dynload(self):
         suffix = sysconfig.get_config_var("EXT_SUFFIX")

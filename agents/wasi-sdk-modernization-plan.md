@@ -697,8 +697,21 @@ for `_lzma`:
 - it imports `_lzma`/`lzma` under `python-wasi-sdk` and checks compression and
   decompression behavior.
 
-Remaining Phase 14 extension work can now move to `pyexpat`, `_sqlite3`, and
-other package-backed modules before pip/ensurepip behavior.
+The bundled-expat SDK CPython extension import probe is also landed for
+`pyexpat`:
+
+- `make -C python/cpython test-wasi-sdk-extension-imports` also builds
+  `Modules/pyexpat.cpython-314-wasm32-wasi.so` against CPython's bundled
+  `Modules/expat/libexpat.a`;
+- the target applies the same shared-module guardrails as the other SDK
+  extension probes: no main-module memory flags, `env.memory` initial size of
+  one page, `dylink.0`, expected `PyInit_pyexpat`, and no `needed_dynlibs`;
+- it installs `pyexpat` into `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports `pyexpat` under `python-wasi-sdk` and checks XML parser callback
+  behavior through `xml.parsers.expat`.
+
+Remaining Phase 14 extension work can now move to `_sqlite3` and other
+package-backed modules before pip/ensurepip behavior.
 
 ## Order Of Work
 
