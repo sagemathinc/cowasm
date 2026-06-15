@@ -617,6 +617,20 @@ The smoke supplies local `setjmp`, process-clock, and unused `tmpfile`
 compatibility shims for wasi-sdk libc gaps outside the successful PNG decode
 path that the test exercises.
 
+`core/less` has the same opt-in dependent-executable smoke shape:
+
+```sh
+make -C core/less test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK through its dependencies, first rebuilds
+termcap and ncurses with their WASI SDK standalone smoke targets, then builds
+the `less` executable against those installs with `COWASM_TOOLCHAIN=wasi-sdk`.
+It applies the same noninteractive compatibility shims as the direct clang
+smoke, verifies that `less --help` starts through the WASI runner, and installs
+into `core/less/dist/wasi-sdk`, leaving the default Zig-backed package
+untouched.
+
 The bootstrap currently installs `wasi-sdk-33.0` under
 `core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
 driver names into `bin/`:

@@ -7,6 +7,8 @@ TARBALL = ${UPSTREAM}/less-${VERSION}.tar.gz
 TARBALL_SHA256 = a69abe2e0a126777e021d3b73aa3222e1b261f10e64624d41ec079685a6ac209
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
@@ -82,3 +84,27 @@ clean-clang:
 	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
 
 clean:: clean-clang
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
+	@status=0; \
+	$(MAKE) -C ../termcap test-wasi-sdk-standalone || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	if [ "$$status" -ne 0 ]; then exit "$$status"; fi
+	@status=0; \
+	$(MAKE) -C ../ncurses test-wasi-sdk-standalone || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	if [ "$$status" -ne 0 ]; then exit "$$status"; fi
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CWD}/../termcap/dist/wasi-sdk ${CWD}/../ncurses/dist/wasi-sdk ${CWD}/../posix-wasm/dist/wasm ${SRC}
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk
