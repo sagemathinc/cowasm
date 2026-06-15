@@ -269,6 +269,18 @@ The first Phase 11 package probe is partially landed for `core/zlib`:
 - `make -C core/zlib test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
+The `core/bzip2` Phase 11 package probe is also partially landed:
+
+- `make -C core/bzip2 test-wasi-sdk-standalone` builds bzip2 with
+  `COWASM_TOOLCHAIN=wasi-sdk`;
+- the probe uses the existing `extra_config.h` plus a small WASI-only shim for
+  `fchmod`, `fchown`, and `signal`;
+- it installs the bzip2 command-line tools and `libbz2.a`;
+- it checks `bzip2 --help` and `bunzip2 --help`;
+- it runs a compress/decompress roundtrip under the standalone WASI runner;
+- `make -C core/bzip2 test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name.
+
 ## Order Of Work
 
 Recommended order:
@@ -793,7 +805,7 @@ Start with packages that have small build systems and clear smoke tests.
 Suggested order:
 
 1. `core/zlib` (probe target landed)
-2. `core/bzip2`
+2. `core/bzip2` (probe target landed)
 3. `core/termcap`
 4. `sagemath/gmp`
 5. `core/sqlite`

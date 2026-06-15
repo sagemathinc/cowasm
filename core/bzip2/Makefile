@@ -32,11 +32,12 @@ ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 # WASM
 ##################
 
-${DIST_WASM}/.built: ${BUILD_WASM}/.build
+${DIST_WASM}/.built: ${BUILD_WASM}/.build ${SRC}/extra_config.h
 	cd ../build && make zig
 	cp ${SRC}/extra_config.h ${BUILD_WASM}
 	cd ${BUILD_WASM} \
-		&&  echo '#include "extra_config.h"' >> bzlib.h \
+		&&  grep -Fq 'extra_config.h' bzlib.h || echo '#include "extra_config.h"' >> bzlib.h \
+		&&	make clean \
 		&&	make -j8 \
 			AR="zig ar" \
 			CC="cowasm-cc" \
@@ -49,11 +50,12 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 
 test: ${DIST_WASM}/.built
 	# compress and decompress a file using the bzip2 and bunzip2 WASM executables.
+	rm -f ${BUILD_WASM}/testfile.txt ${BUILD_WASM}/testfile.txt.bz2 ${BUILD_WASM}/testfile.out
 	echo "coWasm" > ${BUILD_WASM}/testfile.txt
-	${BIN}/cowasm ${DIST_WASM}/bin/bzip2 ${BUILD_WASM}/testfile.txt
-	${BIN}/cowasm ${DIST_WASM}/bin/bunzip2 ${BUILD_WASM}/testfile.txt.bz2
-	cat  ${BUILD_WASM}/testfile.txt |grep coWasm
-	rm ${BUILD_WASM}/testfile.txt
+	${BIN}/cowasm ${DIST_WASM}/bin/bzip2 -cf ${BUILD_WASM}/testfile.txt > ${BUILD_WASM}/testfile.txt.bz2
+	${BIN}/cowasm ${DIST_WASM}/bin/bunzip2 -cf ${BUILD_WASM}/testfile.txt.bz2 > ${BUILD_WASM}/testfile.out
+	cmp ${BUILD_WASM}/testfile.txt ${BUILD_WASM}/testfile.out
+	rm ${BUILD_WASM}/testfile.txt ${BUILD_WASM}/testfile.txt.bz2 ${BUILD_WASM}/testfile.out
 
 ${BUILD_CLANG}/.build: ${TARBALL}
 	rm -rf ${BUILD_CLANG}
@@ -86,6 +88,9 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
 	cd ../build && make wasi-sdk-next
 	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${SRC}
+
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: test-wasi-sdk-standalone
 
 .PHONY: clean-wasi-sdk
 clean-wasi-sdk:
