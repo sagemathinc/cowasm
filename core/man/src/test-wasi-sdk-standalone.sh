@@ -113,12 +113,6 @@ cat >"$compat_dir/netdb.h" <<'EOF'
 #endif
 
 struct sockaddr;
-#ifndef COWASM_MAN_COMPAT_IN_ADDR
-#define COWASM_MAN_COMPAT_IN_ADDR
-struct in_addr {
-  unsigned long s_addr;
-};
-#endif
 
 struct addrinfo {
   int ai_flags;
@@ -155,30 +149,7 @@ cat >"$compat_dir/arpa/inet.h" <<'EOF'
 #ifndef COWASM_MAN_COMPAT_ARPA_INET_H
 #define COWASM_MAN_COMPAT_ARPA_INET_H
 
-#include <stdint.h>
-
-#ifndef COWASM_MAN_COMPAT_IN_ADDR
-#define COWASM_MAN_COMPAT_IN_ADDR
-struct in_addr {
-  uint32_t s_addr;
-};
-#endif
-
-static inline uint16_t htons(uint16_t value) {
-  return (uint16_t)((value << 8) | (value >> 8));
-}
-
-static inline uint16_t ntohs(uint16_t value) {
-  return htons(value);
-}
-
-static inline uint32_t htonl(uint32_t value) {
-  return __builtin_bswap32(value);
-}
-
-static inline uint32_t ntohl(uint32_t value) {
-  return htonl(value);
-}
+#include <netinet/in.h>
 
 char *inet_ntoa(struct in_addr in);
 
