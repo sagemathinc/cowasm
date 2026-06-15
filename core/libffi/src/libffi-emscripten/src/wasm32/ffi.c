@@ -92,8 +92,8 @@
 
 #include <stddef.h>
 
-#define MAX_ALIGN 8
-_Static_assert(MAX_ALIGN == __alignof__(max_align_t), "max_align_t must be 8");
+#define MAX_ALIGN __alignof__(max_align_t)
+_Static_assert(MAX_ALIGN >= 8, "max_align_t must align to at least 8 bytes");
 
 #define VARARGS_FLAG 1
 

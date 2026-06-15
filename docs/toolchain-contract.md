@@ -587,6 +587,18 @@ readline, and math dependencies, builds `libsqlite3.a` with
 through the WASI runner. It installs into `core/sqlite/dist/wasi-sdk`, leaving
 the default Zig-backed package untouched.
 
+`core/libffi` has the same opt-in Autoconf static-library smoke shape:
+
+```sh
+make -C core/libffi test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, configures libffi as a static library
+with `COWASM_TOOLCHAIN=wasi-sdk`, uses selector-aware archive tools, then
+links and runs a minimal `ffi_prep_cif` ABI-layout probe through the WASI
+runner. It installs into `core/libffi/dist/wasi-sdk`, leaving the default
+Zig-backed package untouched.
+
 `core/lua` has the same opt-in standalone executable smoke shape:
 
 ```sh

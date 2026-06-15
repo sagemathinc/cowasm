@@ -13,6 +13,8 @@ TARBALL = ${UPSTREAM}/libffi-${VERSION}.tar.gz
 TARBALL_SHA256 = 2bdbf3fce7e9c05f3e3384b10146b0be6ad08df89af95c8b0b3c7f30f6562a40
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 include ../build/Makefile-rules
 
@@ -34,6 +36,17 @@ ${BUILD_CLANG}/.patched: ${BUILD_CLANG}/.build
 	cd ${BUILD_CLANG} && cat ${SRC}/patches/01-configure.patch | patch -p1
 	cp -rv ${SRC}/libffi-emscripten/* ${BUILD_CLANG}
 	touch ${BUILD_CLANG}/.patched
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
+	cd ${BUILD_WASI_SDK} && cat ${SRC}/patches/01-configure.patch | patch -p1
+	cp -rv ${SRC}/libffi-emscripten/* ${BUILD_WASI_SDK}
+	touch ${BUILD_WASI_SDK}/.patched
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ../build && make zig
@@ -70,3 +83,14 @@ clean-clang:
 	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
 
 clean:: clean-clang
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.patched
+	cd ../build && make wasi-sdk-next
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN}
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk
