@@ -281,6 +281,17 @@ The `core/bzip2` Phase 11 package probe is also partially landed:
 - `make -C core/bzip2 test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
+The `core/termcap` Phase 11 package probe is also partially landed:
+
+- `make -C core/termcap test-wasi-sdk-standalone` builds `libtermcap.a` with
+  `COWASM_TOOLCHAIN=wasi-sdk`;
+- the probe configures termcap with the pinned SDK wrapper, archive, and ranlib
+  tools;
+- it compiles and runs a small termcap API program that checks `tgetent`,
+  `tgetnum`, `tgetflag`, `tgetstr`, and `tgoto`;
+- `make -C core/termcap test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name.
+
 ## Order Of Work
 
 Recommended order:
@@ -806,7 +817,7 @@ Suggested order:
 
 1. `core/zlib` (probe target landed)
 2. `core/bzip2` (probe target landed)
-3. `core/termcap`
+3. `core/termcap` (probe target landed)
 4. `sagemath/gmp`
 5. `core/sqlite`
 6. `core/lua`
