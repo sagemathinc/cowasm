@@ -20,6 +20,25 @@ This makes `wasi-sdk` the canonical long-term toolchain provider because it is
 exactly the bundle CoWasm wants: Clang, lld, wasi-libc, compiler runtime
 support, libc++, target-specific sysroots, and WASI driver defaults.
 
+## Completion Status
+
+Status as of June 15, 2026:
+
+- The `wasi-sdk-next` probe path is implemented and broad enough to be treated
+  as the active pre-flip gate.
+- `make test-wasi-sdk` aggregates the pinned SDK bootstrap, dylink tests,
+  package probes, CPython supported-suite gate, GMP, and the PARI probe with
+  its documented setjmp/longjmp capability skip.
+- CPython builds, links, installs, starts, imports representative stdlib and
+  dynamic-extension modules, bootstraps pip, and passes the supported CoWasm
+  CPython suite under the SDK path.
+- The plan is now a completed modernization roadmap plus migration-status
+  record. The remaining engineering work is not to add more discovery probes;
+  it is to finish the separate source-language and policy transitions:
+  translate CoWasm-owned Zig runtime glue to C, flip the default toolchain only
+  after the preserved baseline gates are reviewed, and retire the old Zig path
+  after a transition window.
+
 ## Strategic Decision
 
 Prefer `wasi-sdk` over modern Zig as the long-term replacement for Zig 0.10.1.
@@ -253,10 +272,11 @@ The focused `core/dylink` Phase 10 test expansion is also landed:
 
 This status changes the immediate work: do not re-implement the bootstrap, the
 basic wrapper selector, the Phase 9 archive probe, or the Phase 10 focused
-dylink compatibility tests. The Phase 11, Phase 12, Phase 13, and first Phase
-14 CPython gates are also covered. The next blockers are narrower: expand the
-supported CPython test surface and decide which heavier optional extensions
-should become SDK release gates.
+dylink compatibility tests. The Phase 11, Phase 12, Phase 13, and Phase 14
+CPython gates are also covered. The remaining decisions are narrower: whether
+socket-enabled `_ssl` should become a required SDK gate before default wrapper
+behavior changes, and whether `_ctypes` should graduate from the current
+import/layout gate to full foreign-call support.
 
 The first Phase 11 package probe is landed for `core/zlib`:
 
@@ -881,10 +901,11 @@ This order avoids porting old Zig syntax to new Zig syntax just to delete it
 later. It also avoids switching package builds before the runtime glue and
 dylink archives are ready for a Clang/lld-first path.
 
-Some work has intentionally landed out of strict phase order: the
-side-by-side SDK bootstrap and basic `COWASM_TOOLCHAIN=wasi-sdk` wrapper mode
-exist before the C translation. Keep treating them as probes until the runtime
-archive and core translation phases are green.
+Some work intentionally landed out of strict phase order: the side-by-side SDK
+bootstrap, `COWASM_TOOLCHAIN=wasi-sdk` wrapper mode, package probes, and CPython
+SDK gate exist before the C translation. Keep treating the old Zig 0.10.1 path
+as the known-good baseline until the C translation and explicit default-flip
+review are complete.
 
 ## Zig Source Inventory
 
@@ -1251,7 +1272,7 @@ Actions:
 Deliverable: CoWasm core runtime is C/C++/TypeScript from the implementation
 language perspective, even if old Zig still provides the compiler.
 
-## Phase 8: Create WASI SDK Toolchain Wrapper Mode (Partly Landed)
+## Phase 8: Create WASI SDK Toolchain Wrapper Mode (Landed)
 
 Teach the CoWasm compiler wrapper to use `wasi-sdk` explicitly.
 
@@ -1289,18 +1310,18 @@ Landed actions:
   C++ side modules, side-module library-flag filtering, and archive wrapper
   selection.
 
-Remaining actions:
+Follow-up actions:
 
 - Keep an explicit two-step `clang -c` plus `wasm-ld` path available for cases
   where the driver hides too much.
-- Preserve `--experimental-pic` behavior where direct `wasm-ld` needs it.
-- Preserve `-fvisibility-main` behavior or replace it with a cleaner export
-  mechanism only after tests prove parity.
-- Expand beyond tiny wrapper smokes now that Phase 9 has unblocked
-  `core/dylink` main-module linking.
+- Continue preserving legacy `--experimental-pic` and `-fvisibility-main`
+  behavior in wrapper-facing build paths until tests prove a cleaner export
+  mechanism can replace them.
 
-Deliverable: `COWASM_TOOLCHAIN=wasi-sdk cowasm-cc` builds tiny dylink modules
-matching the current loader's expectations.
+Deliverable: `COWASM_TOOLCHAIN=wasi-sdk cowasm-cc` builds CoWasm-compatible
+dylink modules, standalone C/C++ programs, SDK package probes, CPython, and
+CPython dynamic-extension side modules matching the current loader's
+expectations.
 
 ## Phase 9: Rebuild Dylink Runtime Archives As PIC (Landed)
 
