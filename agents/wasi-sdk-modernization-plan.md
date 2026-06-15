@@ -305,6 +305,19 @@ The `sagemath/gmp` Phase 11 package probe is also partially landed:
 - `make -C sagemath/gmp test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
+The `core/sqlite` Phase 11 package probe is also partially landed:
+
+- `make -C core/sqlite test-wasi-sdk-standalone` builds a static SQLite
+  archive with `COWASM_TOOLCHAIN=wasi-sdk`;
+- the probe applies the existing syscall and shell patches;
+- it disables loadable extensions, threads, largefile, readline, zlib, and math
+  functions for the standalone SDK smoke;
+- it links a small in-memory SQLite program against the SDK-built
+  `libsqlite3.a`;
+- it runs `select 389*5077` under the standalone WASI runner;
+- `make -C core/sqlite test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name.
+
 ## Order Of Work
 
 Recommended order:
@@ -832,7 +845,7 @@ Suggested order:
 2. `core/bzip2` (probe target landed)
 3. `core/termcap` (probe target landed)
 4. `sagemath/gmp` (probe target landed)
-5. `core/sqlite`
+5. `core/sqlite` (probe target landed)
 6. `core/lua`
 
 For each package:

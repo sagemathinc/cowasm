@@ -77,6 +77,9 @@ test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.patched
 	NATIVE_CC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" \
 		${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN}
 
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: test-wasi-sdk-standalone
+
 .PHONY: clean-wasi-sdk
 clean-wasi-sdk:
 	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
