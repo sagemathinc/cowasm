@@ -349,6 +349,21 @@ The first Phase 12 package probe is partially landed for `core/libedit`:
 - `make -C core/libedit test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
+The `core/ncurses` Phase 12 package probe is also partially landed:
+
+- `make -C core/ncurses test-wasi-sdk-standalone` builds ncurses with
+  `COWASM_TOOLCHAIN=wasi-sdk`;
+- the probe first builds the `core/termcap` SDK dependency;
+- it supplies a small standalone `sgtty.h` compatibility shim and uses
+  `core/posix-wasm` headers for CoWasm runtime-adjacent declarations;
+- it installs `libncurses.a`, `libpanel.a`, `libmenu.a`, `libform.a`,
+  `libncurses++.a`, headers, and the `ncurses6-config` helper into
+  `dist/wasi-sdk`;
+- it compiles and runs a focused `curses_version()`/constant smoke under the
+  standalone WASI runner;
+- `make -C core/ncurses test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name.
+
 ## Order Of Work
 
 Recommended order:
@@ -897,7 +912,7 @@ dynamic-linking details.
 Suggested order:
 
 1. `core/libedit` (probe target landed)
-2. `core/ncurses`
+2. `core/ncurses` (probe target landed)
 3. `core/less`
 4. `core/tar`
 5. `core/openssl`

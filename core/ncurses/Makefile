@@ -54,6 +54,9 @@ test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
 	if [ "$$status" -ne 0 ]; then exit "$$status"; fi
 	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CWD}/../termcap/dist/wasi-sdk ${CWD}/../posix-wasm/dist/wasm
 
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: test-wasi-sdk-standalone
+
 .PHONY: clean-wasi-sdk
 clean-wasi-sdk:
 	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
