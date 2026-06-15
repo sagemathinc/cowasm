@@ -151,6 +151,7 @@ test-wasi-sdk:
 	$(MAKE) -C core/dylink test-wasi-sdk-next
 	$(MAKE) -C core/zlib test-wasi-sdk-standalone
 	$(MAKE) -C core/bzip2 test-wasi-sdk-standalone
+	$(MAKE) -C core/termcap test-wasi-sdk-standalone
 
 # clean up everything after each test, to prove can build and test everything
 # in isolation.
