@@ -1,5 +1,6 @@
 import bz2
 import ctypes
+import decimal
 import hashlib
 import importlib
 import json
@@ -135,6 +136,26 @@ class WasiSdkExtensionImportTests(unittest.TestCase):
     def test_unicodedata_normalization(self):
         self.assertEqual(unicodedata.normalize("NFC", "e\u0301"), "\u00e9")
         self.assertEqual(unicodedata.name("\u03c0"), "GREEK SMALL LETTER PI")
+
+    def test_decimal_extension_imports_from_lib_dynload(self):
+        import _decimal
+
+        suffix = sysconfig.get_config_var("EXT_SUFFIX")
+        self.assertTrue(
+            _decimal.__file__.endswith(f"/lib-dynload/_decimal{suffix}"),
+            _decimal.__file__,
+        )
+
+    def test_decimal_uses_c_extension(self):
+        import _decimal
+
+        self.assertIs(decimal.Decimal, _decimal.Decimal)
+        self.assertIs(decimal.getcontext().__class__, _decimal.Context)
+        self.assertEqual(decimal.Decimal.__module__, "decimal")
+        self.assertEqual(decimal.getcontext().__class__.__module__, "decimal")
+        value = decimal.Decimal("1.2345") * decimal.Decimal("1000")
+        self.assertEqual(value, decimal.Decimal("1234.5000"))
+        self.assertEqual(value.quantize(decimal.Decimal("0.01")), decimal.Decimal("1234.50"))
 
     def test_hashlib_extension_imports_from_lib_dynload(self):
         import _hashlib

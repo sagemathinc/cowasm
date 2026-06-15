@@ -751,6 +751,20 @@ The SDK CPython CJK codec extension batch is also landed:
 - it imports each codec module under `python-wasi-sdk` and checks representative
   CJK codec round trips.
 
+The SDK CPython `_decimal` extension probe is also landed:
+
+- `make -C python/cpython test-wasi-sdk-extension-imports` now also builds
+  `Modules/_decimal.cpython-314-wasm32-wasi.so`;
+- the target applies the same shared-module guardrails as the other SDK
+  extension probes: imported memory, `dylink.0`, expected `PyInit__decimal`,
+  and no `needed_dynlibs`;
+- it installs `_decimal` into `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports `_decimal`/`decimal` under `python-wasi-sdk`, checks that decimal
+  arithmetic is backed by the C extension, and verifies a representative
+  quantize path;
+- CPython's native `test_decimal` regrtest passes under `python-wasi-sdk` and
+  is included in the SDK supported-suite gate.
+
 The OpenSSL-backed SDK CPython `_hashlib` extension probe is also landed:
 
 - the SDK `core/openssl` package probe now compiles `libcrypto.a` and
@@ -816,9 +830,9 @@ The SDK CPython supported-suite gate is also landed:
   `SUPPORTED_TESTS` suite against `python-wasi-sdk`;
 - the target depends on the SDK extension import artifacts and patched pip
   bootstrap so tests such as `test_bz2`, `test_lzma`, `test_ensurepip`,
-  `test_pyexpat`, `test_multibytecodec`, and the CJK codec tests exercise the
-  intended side modules;
-- the current run passes all 233 supported CPython test files under the SDK
+  `test_decimal`, `test_pyexpat`, `test_multibytecodec`, and the CJK codec
+  tests exercise the intended side modules;
+- the current run passes all 234 supported CPython test files under the SDK
   path.
 
 Remaining Phase 14 extension work can now focus on whether heavier optional
@@ -1505,8 +1519,8 @@ Current runtime status:
   and sysconfig import smoke, including the process identity and `umask`
   surface needed by pip;
 - `make -C python/cpython test-wasi-sdk-extension-imports` imports `_json`,
-  `pyexpat`, `zlib`, `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, `_codecs_cn`,
-  `_codecs_hk`, `_codecs_iso2022`, `_codecs_jp`, `_codecs_kr`, and
+  `pyexpat`, `zlib`, `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, `_decimal`,
+  `_codecs_cn`, `_codecs_hk`, `_codecs_iso2022`, `_codecs_jp`, `_codecs_kr`,
   `_codecs_tw`, `_hashlib`, and `_ctypes` from
   `dist/wasi-sdk/lib/python3.14/lib-dynload` and verifies their basic runtime
   behavior;
@@ -1519,7 +1533,7 @@ Current runtime status:
   semantics, ntpath, py_compile, quopri, and struct behavior.
 - `make -C python/cpython test-wasi-sdk-supported` runs the existing
   supported-by-python-wasm CPython suite against `python-wasi-sdk`; the current
-  SDK path passes all 233 supported test files.
+  SDK path passes all 234 supported test files.
 
 Optional Phase 14 follow-up:
 
