@@ -3,11 +3,12 @@ CWD := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 BUILD = ${CWD}/build
 BIN = ${CWD}/../../bin
 SRC = ${CWD}/src
+ZIG_BOOTSTRAP_FILES = $(shell find ${SRC}/zig -type f 2>/dev/null)
 WASI_SDK_BOOTSTRAP_FILES = $(shell find ${SRC}/wasi-sdk -type f 2>/dev/null)
 
 all: ${BIN}/zig
 
-${BUILD}/.build: ${TARBALL}
+${BUILD}/.build: ${TARBALL} ${ZIG_BOOTSTRAP_FILES}
 	rm -rf ${BUILD}
 	cp -rv src ${BUILD}
 	touch ${BUILD}/.build

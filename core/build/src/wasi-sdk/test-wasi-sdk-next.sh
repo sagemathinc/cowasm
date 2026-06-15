@@ -113,6 +113,18 @@ if "$strings" "$tmp/wrapper-side.so" | grep -E 'lib(c|c\+\+|c\+\+abi)\.so'; then
   exit 1
 fi
 
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
+  -fPIC -shared "$tmp/wrapper-side.c" -lm -ldl -lc -l c -l m -l dl \
+  -Wl,-lm,-ldl,-lc -Wl,-l,c,-l,m,-l,dl \
+  -o "$tmp/wrapper-side-libflags.so"
+"$objdump" -h "$tmp/wrapper-side-libflags.so" | grep 'dylink.0'
+"$strings" "$tmp/wrapper-side-libflags.so" | grep 'main_runtime_value'
+
+if "$strings" "$tmp/wrapper-side-libflags.so" | grep -E 'lib(c|m|dl)\.so'; then
+  echo "unexpected needed_dynlibs from wasi-sdk side-module lib flags" >&2
+  exit 1
+fi
+
 cat >"$tmp/wrapper-cxx-side.cpp" <<'EOF'
 #include <string>
 

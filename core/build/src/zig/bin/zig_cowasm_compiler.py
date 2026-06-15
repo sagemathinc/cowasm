@@ -417,14 +417,39 @@ def append_missing_wl(args, flag):
     args.append(f'-Wl,{flag}')
 
 
+UNSUPPORTED_LIBS = {"c", "m", "dl"}
+
+
 def is_unsupported_lib(arg):
-    return arg in ['-lc', '-lm', '-ldl']
+    return arg.startswith("-l") and arg != "-l" and arg[2:] in UNSUPPORTED_LIBS
 
 
 def remove_unsupported_libs(argv):
     # These are either supplied by the current CoWasm core runtime or appended
     # explicitly by the standalone clang backend below.
-    return [arg for arg in argv if not is_unsupported_lib(arg)]
+    stripped = []
+    i = 0
+    while i < len(argv):
+        if argv[i].startswith("-Wl,"):
+            linker_args = remove_unsupported_libs(split_wl_arg(argv[i]))
+            if linker_args:
+                stripped.append("-Wl," + ",".join(linker_args))
+            i += 1
+            continue
+        if argv[i] == "-l":
+            lib = require_option_value(argv, i)
+            if lib in UNSUPPORTED_LIBS:
+                i += 2
+                continue
+            stripped += [argv[i], lib]
+            i += 2
+            continue
+        if is_unsupported_lib(argv[i]):
+            i += 1
+            continue
+        stripped.append(argv[i])
+        i += 1
+    return stripped
 
 
 def split_wl_arg(arg):
@@ -474,7 +499,7 @@ def clang_parse_link_args(args):
             linker_args.append(require_option_value(args, i))
             i += 2
             continue
-        if arg == '-L':
+        if arg in {'-L', '-l'}:
             linker_args += [arg, require_option_value(args, i)]
             i += 2
             continue
@@ -600,6 +625,7 @@ def wasi_sdk_backend():
             args.append('-shared')
         if '-nostdlib' not in args:
             args.append('-nostdlib')
+        args = remove_unsupported_libs(args)
         append_missing_wl(args, '--allow-undefined')
         append_missing_wl(args, '--no-entry')
         if not clang_is_debug(args):
@@ -797,8 +823,8 @@ def extract_linker_args(argv):
             link.append(require_option_value(argv, i))
             i += 2
             continue
-        if argv[i] == '-L':
-            # -L path
+        if argv[i] in {'-L', '-l'}:
+            # -L path or -l lib
             link.append(argv[i])
             link.append(require_option_value(argv, i))
             i += 2
