@@ -57,14 +57,14 @@ build/wasi-sdk/dynamic-library.so: dynamic-library.c
 		dynamic-library.c \
 		-o build/wasi-sdk/dynamic-library.so
 
-build/wasi-sdk-archive/app.wasm: app.c ../../dist/wasm/libdylink.a
+build/wasi-sdk-archive/app.wasm: app.c ../../dist/wasm/libdylink-wasi-sdk.a
 	mkdir -p build/wasi-sdk-archive
 	${WASI_SDK_CLANG} -target wasm32-wasip1 \
 		-O0 \
 		-fPIC \
 		-fvisibility=default \
 		app.c \
-		-L../../dist/wasm/ -ldylink \
+		../../dist/wasm/libdylink-wasi-sdk.a \
 		-o build/wasi-sdk-archive/app.wasm \
 		-Wl,--import-memory \
 		-Wl,--import-table \

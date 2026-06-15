@@ -2,6 +2,8 @@ include ../build/Makefile-vars
 
 PYTHON = ${PACKAGES}/cpython/dist/wasm
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+WASI_SDK_CLANG = ${BIN}/wasi-sdk-clang-next
+WASI_SDK_OBJDUMP = ${BIN}/wasi-sdk-llvm-objdump-next
 
 all: dist/.built
 
@@ -25,6 +27,10 @@ dist/index.js: node_modules src/index.ts
 dist/wasm-export/libc.c: dist/libc.js
 	mkdir -p dist/wasm-export/
 	node ./dist/libc.js > dist/wasm-export/libc.c
+
+dist/wasm-export/libc-wasi-sdk.c: dist/libc.js
+	mkdir -p dist/wasm-export/
+	node ./dist/libc.js --wasi-sdk > dist/wasm-export/libc-wasi-sdk.c
 
 # TODO!  We are moving this to happen in the cpython
 # package in the cowasm-python github repo.  That's where
@@ -66,6 +72,22 @@ dist/wasm/libdylink.a: build/wasm/libdylink.o
 	mkdir -p dist/wasm
 	cp build/wasm/libdylink.o dist/wasm/libdylink.a
 
+build/wasm/libdylink-wasi-sdk.o: dist/wasm-export/libc-wasi-sdk.c
+	cd ../build && make wasi-sdk-next
+	mkdir -p build/wasm
+	${WASI_SDK_CLANG} -target wasm32-wasip1 \
+		-w \
+		-c \
+		-fPIC \
+		-fvisibility=default \
+		dist/wasm-export/libc-wasi-sdk.c \
+		-o build/wasm/libdylink-wasi-sdk.o
+	! ${WASI_SDK_OBJDUMP} -r build/wasm/libdylink-wasi-sdk.o | grep 'R_WASM_MEMORY_ADDR'
+
+dist/wasm/libdylink-wasi-sdk.a: build/wasm/libdylink-wasi-sdk.o
+	mkdir -p dist/wasm
+	cp build/wasm/libdylink-wasi-sdk.o dist/wasm/libdylink-wasi-sdk.a
+
 test: wasm-export dist/.built
 	pnpm install
 	pnpm run build
@@ -76,7 +98,7 @@ test: wasm-export dist/.built
 	cd test/cxx-runtime && make test
 .PHONY: test
 
-test-wasi-sdk-next: dist/.built
+test-wasi-sdk-next: dist/.built dist/wasm/libdylink-wasi-sdk.a
 	cd ../build && make wasi-sdk-next
 	cd test/wasi && make test-wasi-sdk-next
 	cd test/wasi && make test-wasi-sdk-archive-next
