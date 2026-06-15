@@ -6,7 +6,7 @@ import shutil
 import subprocess
 import sys
 
-SUPPORTED_TOOLCHAINS = {"zig", "clang"}
+SUPPORTED_TOOLCHAINS = {"zig", "clang", "wasi-sdk"}
 ORIGINAL_ARGV0 = sys.argv[0]
 
 
@@ -47,7 +47,7 @@ def find_zig():
     )
 
 
-def find_required_program(env_name, program):
+def find_required_program(env_name, program, toolchain):
     override = os.environ.get(env_name)
     if override:
         path = pathlib.Path(override)
@@ -61,8 +61,12 @@ def find_required_program(env_name, program):
         # through generic binaries whose behavior depends on argv[0].
         return found
 
+    sibling = pathlib.Path(ORIGINAL_ARGV0).parent / program
+    if sibling.is_file() and os.access(sibling, os.X_OK):
+        return str(sibling)
+
     fail(
-        f"cowasm: COWASM_TOOLCHAIN=clang requires '{program}'; "
+        f"cowasm: COWASM_TOOLCHAIN={toolchain} requires '{program}'; "
         f"install it or set {env_name}=/path/to/{program}"
     )
 
@@ -70,9 +74,19 @@ def find_required_program(env_name, program):
 def command_for(toolchain, tool):
     if toolchain == "zig":
         return [find_zig(), tool]
+    if toolchain == "clang":
+        if tool == "ar":
+            return [find_required_program("COWASM_AR", "llvm-ar", toolchain)]
+        return [find_required_program("COWASM_RANLIB", "llvm-ranlib", toolchain)]
     if tool == "ar":
-        return [find_required_program("COWASM_AR", "llvm-ar")]
-    return [find_required_program("COWASM_RANLIB", "llvm-ranlib")]
+        return [
+            find_required_program(
+                "COWASM_AR", "wasi-sdk-llvm-ar-next", toolchain)
+        ]
+    return [
+        find_required_program(
+            "COWASM_RANLIB", "wasi-sdk-llvm-ranlib-next", toolchain)
+    ]
 
 
 def main():
@@ -80,7 +94,7 @@ def main():
     if toolchain not in SUPPORTED_TOOLCHAINS:
         fail(
             f"cowasm: unsupported COWASM_TOOLCHAIN={toolchain!r}; "
-            "supported values are 'zig' and 'clang'."
+            "supported values are 'zig', 'clang', and 'wasi-sdk'."
         )
 
     cmd = command_for(toolchain, archive_tool()) + sys.argv[1:]

@@ -56,6 +56,26 @@ printf '\n' >>"$COWASM_TEST_LOG"
 EOF
 chmod +x "$tmp/custom-ranlib"
 
+cat >"$tmp/wasi-sdk-llvm-ar-next" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+printf 'wasi-sdk-llvm-ar-next' >>"$COWASM_TEST_LOG"
+printf ' %q' "$@" >>"$COWASM_TEST_LOG"
+printf '\n' >>"$COWASM_TEST_LOG"
+EOF
+chmod +x "$tmp/wasi-sdk-llvm-ar-next"
+
+cat >"$tmp/wasi-sdk-llvm-ranlib-next" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+printf 'wasi-sdk-llvm-ranlib-next' >>"$COWASM_TEST_LOG"
+printf ' %q' "$@" >>"$COWASM_TEST_LOG"
+printf '\n' >>"$COWASM_TEST_LOG"
+EOF
+chmod +x "$tmp/wasi-sdk-llvm-ranlib-next"
+
 export PATH="$tmp:$PATH"
 export COWASM_TEST_LOG="$tmp/tool.log"
 touch "$tmp/foo.o"
@@ -84,11 +104,17 @@ COWASM_TOOLCHAIN=clang \
 grep -F -- "custom-ar rcs $tmp/libfoo.a $tmp/foo.o" "$COWASM_TEST_LOG"
 grep -F -- "custom-ranlib $tmp/libfoo.a" "$COWASM_TEST_LOG"
 
+: >"$COWASM_TEST_LOG"
+COWASM_TOOLCHAIN=wasi-sdk "$cowasm_ar" rcs "$tmp/libfoo.a" "$tmp/foo.o"
+COWASM_TOOLCHAIN=wasi-sdk "$cowasm_ranlib" "$tmp/libfoo.a"
+grep -F -- "wasi-sdk-llvm-ar-next rcs $tmp/libfoo.a $tmp/foo.o" "$COWASM_TEST_LOG"
+grep -F -- "wasi-sdk-llvm-ranlib-next $tmp/libfoo.a" "$COWASM_TEST_LOG"
+
 err="$tmp/unsupported.err"
 if COWASM_TOOLCHAIN=other "$cowasm_ar" rcs "$tmp/libfoo.a" "$tmp/foo.o" >"$err" 2>&1; then
   cat "$err"
   echo "expected unsupported toolchain to fail" >&2
   exit 1
 fi
-grep -F -- "supported values are 'zig' and 'clang'" "$err"
+grep -F -- "supported values are 'zig', 'clang', and 'wasi-sdk'" "$err"
 ! grep -F -- "Traceback" "$err"

@@ -116,7 +116,8 @@ test: all
 		${WASI_SDK_WASM_LD} \
 		${WASI_SDK_LLVM_OBJDUMP} \
 		${WASI_SDK_LLVM_NM} \
-		${WASI_SDK_LLVM_STRINGS}
+		${WASI_SDK_LLVM_STRINGS} \
+		${BIN}
 
 .PHONY: clean
 clean:

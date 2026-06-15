@@ -62,6 +62,9 @@ BACKEND SELECTION:
                             tiny non-PIC C programs. Set COWASM_CLANG,
                             COWASM_WASM_LD, and COWASM_WASI_SYSROOT when the
                             tools are not discoverable on PATH.
+   COWASM_TOOLCHAIN=wasi-sdk = use the pinned wasi-sdk-next probe toolchain.
+                            This supports tiny standalone C programs and
+                            CoWasm-style C side modules.
 
 EXTRA OPTIONS:
 
@@ -72,7 +75,7 @@ EXTRA OPTIONS:
 import os, shlex, shutil, subprocess, sys, tempfile, pathlib
 
 verbose = False  # default
-SUPPORTED_TOOLCHAINS = {"zig", "clang"}
+SUPPORTED_TOOLCHAINS = {"zig", "clang", "wasi-sdk"}
 ORIGINAL_ARGV0 = sys.argv[0]
 
 
@@ -93,7 +96,7 @@ TOOLCHAIN = selected_toolchain()
 if TOOLCHAIN not in SUPPORTED_TOOLCHAINS:
     print(
         f"cowasm: unsupported COWASM_TOOLCHAIN={TOOLCHAIN!r}; "
-        "supported values are 'zig' and 'clang'.",
+        "supported values are 'zig', 'clang', and 'wasi-sdk'.",
         file=sys.stderr,
     )
     sys.exit(2)
@@ -241,7 +244,7 @@ def require_option_value(argv, index):
 strip_isys()
 
 
-def find_required_program(env_name, program):
+def find_required_program(env_name, program, toolchain="clang"):
     override = os.environ.get(env_name)
     if override:
         path = pathlib.Path(override)
@@ -255,8 +258,12 @@ def find_required_program(env_name, program):
         # symlinks to a generic binary that selects behavior from argv[0].
         return found
 
+    sibling = pathlib.Path(ORIGINAL_ARGV0).parent / program
+    if sibling.is_file() and os.access(sibling, os.X_OK):
+        return str(sibling)
+
     fail(
-        f"cowasm: COWASM_TOOLCHAIN=clang requires '{program}'; "
+        f"cowasm: COWASM_TOOLCHAIN={toolchain} requires '{program}'; "
         f"install it or set {env_name}=/path/to/{program}"
     )
 
@@ -281,6 +288,27 @@ def find_wasi_sysroot():
     fail(
         "cowasm: COWASM_TOOLCHAIN=clang requires a WASI sysroot; "
         "set COWASM_WASI_SYSROOT=/path/to/wasi-sysroot"
+    )
+
+
+def find_wasi_sdk_sysroot(clang):
+    for env_name in ["COWASM_WASI_SYSROOT", "WASI_SYSROOT"]:
+        value = os.environ.get(env_name)
+        if value:
+            path = pathlib.Path(value)
+            if path.is_dir():
+                return str(path)
+            fail(f"cowasm: {env_name}={value!r} is not a directory")
+
+    clang_path = pathlib.Path(clang).resolve()
+    candidate = clang_path.parent.parent / "share" / "wasi-sysroot"
+    if candidate.is_dir():
+        return str(candidate)
+
+    fail(
+        "cowasm: COWASM_TOOLCHAIN=wasi-sdk requires the pinned wasi-sdk "
+        "sysroot; run make -C core/build wasi-sdk-next or set "
+        "COWASM_WASI_SYSROOT=/path/to/wasi-sysroot"
     )
 
 
@@ -328,9 +356,9 @@ def clang_is_debug(args):
     return False
 
 
-def clang_base_flags(sysroot):
+def clang_base_flags(sysroot, target="wasm32-wasi"):
     flags = [
-        '--target=wasm32-wasi', '--sysroot', sysroot, '-D__wasi__',
+        f'--target={target}', '--sysroot', sysroot, '-D__wasi__',
         '-D__cowasm__', '-D_WASI_EMULATED_SIGNAL',
         '-D_WASI_EMULATED_PROCESS_CLOCKS'
     ]
@@ -355,6 +383,38 @@ def reject_unsupported_clang_args(args):
                 "non-PIC standalone C programs; unsupported flag "
                 f"{forwarded_arg!r}{detail}"
             )
+
+
+def reject_unsupported_wasi_sdk_standalone_args(args):
+    unsupported = {'-fPIE', '-fpie', '-dynamic', '-pie', '--pie'}
+    for arg in args:
+        forwarded_args = split_wl_arg(arg) if arg.startswith('-Wl,') else [arg]
+        for forwarded_arg in forwarded_args:
+            if forwarded_arg not in unsupported:
+                continue
+            detail = f" from {arg!r}" if forwarded_arg != arg else ""
+            fail(
+                "cowasm: COWASM_TOOLCHAIN=wasi-sdk does not support "
+                f"standalone flag {forwarded_arg!r}{detail}"
+            )
+
+
+def has_shared_module_flag(args):
+    for arg in args:
+        forwarded_args = split_wl_arg(arg) if arg.startswith('-Wl,') else [arg]
+        if any(forwarded_arg in {'-shared', '--shared'} for forwarded_arg in forwarded_args):
+            return True
+    return clang_output_name(args).endswith('.so')
+
+
+def has_flag(args, flag):
+    return flag in args or any(flag in split_wl_arg(arg) for arg in args if arg.startswith('-Wl,'))
+
+
+def append_missing_wl(args, flag):
+    if has_flag(args, flag):
+        return
+    args.append(f'-Wl,{flag}')
 
 
 def is_unsupported_lib(arg):
@@ -507,8 +567,78 @@ def clang_backend():
     run(link)
 
 
+def wasi_sdk_backend():
+    if LANG == 'zig':
+        fail("cowasm: COWASM_TOOLCHAIN=wasi-sdk does not support cowasm-zig")
+    if LANG == 'c++':
+        fail("cowasm: COWASM_TOOLCHAIN=wasi-sdk does not support C++ yet")
+
+    args = strip_host_system_path_args(expand_response_args(sys.argv[2:]))
+    if '--print-multiarch' in args:
+        print('wasm32-wasip1')
+        return
+
+    clang = find_required_program(
+        "COWASM_WASI_SDK_CLANG", "wasi-sdk-clang-next", "wasi-sdk")
+    sysroot = find_wasi_sdk_sysroot(clang)
+    base_flags = clang_base_flags(sysroot, target="wasm32-wasip1")
+
+    if is_compile_only_mode(args) or not clang_has_input(args):
+        run([clang] + base_flags + args)
+        return
+
+    if clang_output_name(args).endswith('.o'):
+        run([clang] + base_flags + args)
+        return
+
+    if has_shared_module_flag(args):
+        if '-fPIC' not in args and '-fpic' not in args:
+            args.append('-fPIC')
+        if not has_flag(args, '-shared') and not has_flag(args, '--shared'):
+            args.append('-shared')
+        if '-nostdlib' not in args:
+            args.append('-nostdlib')
+        append_missing_wl(args, '--allow-undefined')
+        append_missing_wl(args, '--no-entry')
+        if not clang_is_debug(args):
+            append_missing_wl(args, '--strip-all')
+        run([clang] + base_flags + args)
+        return
+
+    reject_unsupported_wasi_sdk_standalone_args(args)
+    wasm_ld = find_required_program(
+        "COWASM_WASI_SDK_WASM_LD", "wasi-sdk-wasm-ld-next", "wasi-sdk")
+    source_files, compiler_args, linker_args, object_args = clang_parse_link_args(
+        args)
+
+    objects = []
+    for source_file in source_files:
+        tmpfile = tempfile.NamedTemporaryFile(suffix='.o')
+        run([clang] + base_flags + compiler_args +
+            ['-c', source_file, '-o', tmpfile.name])
+        objects.append(tmpfile)
+
+    output_name = clang_output_name(args)
+    sysroot_lib = os.path.join(sysroot, "lib", "wasm32-wasip1")
+    crt1 = os.path.join(sysroot_lib, "crt1.o")
+    if not pathlib.Path(crt1).is_file():
+        fail(f"cowasm: WASI startup object not found: {crt1}")
+
+    link = [wasm_ld, '-o', output_name]
+    if not clang_is_debug(args):
+        link.append('--strip-all')
+    link += [crt1] + object_args + [obj.name for obj in objects]
+    link += ['-L', sysroot_lib] + linker_args
+    link += ['-lc', clang_builtin_runtime(clang, base_flags)]
+    run(link)
+
+
 if TOOLCHAIN == 'clang':
     clang_backend()
+    sys.exit(0)
+
+if TOOLCHAIN == 'wasi-sdk':
+    wasi_sdk_backend()
     sys.exit(0)
 
 
