@@ -1,5 +1,6 @@
 import bz2
 import json
+import lzma
 import sysconfig
 import unittest
 import zlib
@@ -51,6 +52,21 @@ class WasiSdkExtensionImportTests(unittest.TestCase):
         compressed = bz2.compress(payload)
         self.assertLess(len(compressed), len(payload))
         self.assertEqual(bz2.decompress(compressed), payload)
+
+    def test_lzma_extension_imports_from_lib_dynload(self):
+        import _lzma
+
+        suffix = sysconfig.get_config_var("EXT_SUFFIX")
+        self.assertTrue(
+            _lzma.__file__.endswith(f"/lib-dynload/_lzma{suffix}"),
+            _lzma.__file__,
+        )
+
+    def test_lzma_extension_roundtrip(self):
+        payload = b"cowasm-lzma-extension" * 64
+        compressed = lzma.compress(payload)
+        self.assertLess(len(compressed), len(payload))
+        self.assertEqual(lzma.decompress(compressed), payload)
 
 
 if __name__ == "__main__":

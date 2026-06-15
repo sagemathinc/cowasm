@@ -679,8 +679,26 @@ for `_bz2`:
 - it imports `_bz2`/`bz2` under `python-wasi-sdk` and checks compression and
   decompression behavior.
 
-Remaining Phase 14 extension work can now move to `pyexpat`, `_lzma`,
-`_sqlite3`, and other package-backed modules before pip/ensurepip behavior.
+The third dependency-backed SDK CPython extension import probe is also landed
+for `_lzma`:
+
+- the SDK `core/lzma` package probe now compiles liblzma objects with `-fPIC`
+  while preserving the standalone `xz` roundtrip smoke;
+- the SDK `core/lzma` probe now rejects the non-PIC wasm relocation forms that
+  prevent shared-module linking;
+- `make -C core/lzma test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name;
+- `make -C python/cpython test-wasi-sdk-extension-imports` also builds
+  `Modules/_lzma.cpython-314-wasm32-wasi.so` against the SDK liblzma archive;
+- the target applies the same shared-module guardrails as `_json`, `zlib`, and
+  `_bz2`: no main-module memory flags, `env.memory` initial size of one page,
+  `dylink.0`, expected `PyInit__lzma`, and no `needed_dynlibs`;
+- it installs `_lzma` into `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports `_lzma`/`lzma` under `python-wasi-sdk` and checks compression and
+  decompression behavior.
+
+Remaining Phase 14 extension work can now move to `pyexpat`, `_sqlite3`, and
+other package-backed modules before pip/ensurepip behavior.
 
 ## Order Of Work
 

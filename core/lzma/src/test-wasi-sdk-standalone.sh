@@ -221,7 +221,7 @@ AR="$bin_dir/cowasm-ar" \
 RANLIB="$bin_dir/cowasm-ranlib" \
 CC="$bin_dir/cowasm-cc" \
 CXX="$bin_dir/cowasm-c++" \
-CFLAGS="-Oz -fvisibility-main -I$compat_dir -I$posix_wasm_dir" \
+CFLAGS="-Oz -fPIC -fvisibility-main -I$compat_dir -I$posix_wasm_dir" \
 COWASM_TOOLCHAIN=wasi-sdk \
   ./configure \
     --build="$(./build-aux/config.guess)" \
@@ -238,6 +238,8 @@ printf '\nxz_LDADD += %s\n' "$probe_dir/compat.o" >>src/xz/Makefile
 echo '#include "posix-wasm.h"' >>config.h
 COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs"
 COWASM_TOOLCHAIN=wasi-sdk make install
+"$bin_dir/wasi-sdk-llvm-objdump-next" -r "$dist_dir/lib/liblzma.a" |
+  (! grep -E 'R_WASM_(MEMORY_ADDR|TABLE_INDEX)_SLEB')
 
 test_dir="$probe_dir/lzma-roundtrip"
 mkdir -p "$test_dir"
