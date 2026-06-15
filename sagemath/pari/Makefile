@@ -8,6 +8,8 @@ TARBALL = ${UPSTREAM}/pari-${VERSION}.tar.gz
 TARBALL_SHA256 = 8d9c4fcd584c468d27e0f23c36836587284452094c4b1c404c20c4b810462dcb
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 all: deps wasm
 
@@ -15,6 +17,7 @@ include ../build/Makefile-rules
 
 GMP_WASM = ${PACKAGES}/gmp/dist/wasm
 GMP_CLANG = ${PACKAGES}/gmp/dist/clang
+GMP_WASI_SDK = ${PACKAGES}/gmp/dist/wasi-sdk
 #POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 
 ${GMP_WASM}/.built:
@@ -22,6 +25,9 @@ ${GMP_WASM}/.built:
 
 ${GMP_CLANG}/lib/libgmp.a:
 	$(MAKE) -C ${PACKAGES}/gmp test-clang-standalone
+
+${GMP_WASI_SDK}/lib/libgmp.a:
+	$(MAKE) -C ${PACKAGES}/gmp test-wasi-sdk-standalone
 
 ${BUILD_CLANG}/.build: ${TARBALL}
 	rm -rf ${BUILD_CLANG}
@@ -46,6 +52,31 @@ clean-clang:
 	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
 
 clean:: clean-clang
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
+	cd ${BUILD_WASI_SDK} && \
+		cat ${SRC}/patches/01-pipes.patch | patch -p1
+	touch ${BUILD_WASI_SDK}/.patched
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmp.a ${BUILD_WASI_SDK}/.patched
+	cd ../../core/build && make wasi-sdk-next
+	@status=0; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${GMP_WASI_SDK} || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && \

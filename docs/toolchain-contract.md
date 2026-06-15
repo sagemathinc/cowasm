@@ -657,6 +657,33 @@ runner and performs a small archive create/extract round trip. It installs
 into `core/tar/dist/wasi-sdk`, leaving the default Zig-backed package
 untouched.
 
+`sagemath/gmp` has the same opt-in static-library smoke shape:
+
+```sh
+make -C sagemath/gmp test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, builds GMP with `COWASM_TOOLCHAIN=wasi-sdk`
+in `ABI=standard` mode, installs a static archive under
+`sagemath/gmp/dist/wasi-sdk`, then links and runs the package's existing
+multi-precision arithmetic probe through the WASI runner. It links
+`libwasi-emulated-signal` during configure and in the final probe so GMP uses
+WASI libc's `raise` shim instead of compiling its fallback signal path.
+
+`sagemath/pari` has the same opt-in static executable smoke shape:
+
+```sh
+make -C sagemath/pari test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP WASI SDK standalone archive is available, then
+probes `wasi-sdk` setjmp/longjmp support before configuring PARI/GP. PARI uses
+real `setjmp`/`longjmp` for error handling, so the smoke skips when the
+selected SDK and runner cannot provide that contract. Once available, the
+target configures PARI against `sagemath/gmp/dist/wasi-sdk`, builds the static
+`gp` executable, and checks both the GMP kernel banner and a small arithmetic
+expression through the WASI runner.
+
 The bootstrap currently installs `wasi-sdk-33.0` under
 `core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
 driver names into `bin/`:
