@@ -1505,6 +1505,13 @@ next Sage-facing blocker once SDK setjmp/longjmp support is available.
 
 Only flip default wrapper behavior after parity.
 
+Current pre-flip gate:
+
+- top-level `make test-wasi-sdk` now aggregates the pinned SDK bootstrap,
+  dylink, POSIX compatibility, compression/database dependency probes,
+  CPython's supported-suite target, GMP, and the PARI probe with its existing
+  setjmp/longjmp skip behavior.
+
 Minimum gate:
 
 - `core/build test`

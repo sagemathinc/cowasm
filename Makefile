@@ -149,9 +149,15 @@ test-bin: all
 test-wasi-sdk:
 	$(MAKE) -C core/build test-wasi-sdk-next
 	$(MAKE) -C core/dylink test-wasi-sdk-next
+	$(MAKE) -C core/posix-wasm test-wasi-sdk-standalone
 	$(MAKE) -C core/zlib test-wasi-sdk-standalone
 	$(MAKE) -C core/bzip2 test-wasi-sdk-standalone
+	$(MAKE) -C core/lzma test-wasi-sdk-next
+	$(MAKE) -C core/sqlite test-wasi-sdk-next
 	$(MAKE) -C core/termcap test-wasi-sdk-standalone
+	$(MAKE) -C python/cpython test-wasi-sdk-supported
+	$(MAKE) -C sagemath/gmp test-wasi-sdk-next
+	$(MAKE) -C sagemath/pari test-wasi-sdk-standalone
 
 # clean up everything after each test, to prove can build and test everything
 # in isolation.
