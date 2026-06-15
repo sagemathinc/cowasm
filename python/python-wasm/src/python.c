@@ -119,13 +119,7 @@ __attribute__((visibility("default"))) void _Py_CheckEmscriptenSignals(void) {
   }
 }
 
-static int signal_counter = 50;
-
 __attribute__((visibility("default"))) void
 _Py_CheckEmscriptenSignalsPeriodically(void) {
-  signal_counter -= 1;
-  if (signal_counter <= 0) {
-    signal_counter = 50;
-    _Py_CheckEmscriptenSignals();
-  }
+  _Py_CheckEmscriptenSignals();
 }
