@@ -63,6 +63,13 @@ struct termios {
   speed_t c_ospeed;
 };
 
+struct winsize {
+  unsigned short ws_row;
+  unsigned short ws_col;
+  unsigned short ws_xpixel;
+  unsigned short ws_ypixel;
+};
+
 #endif
 EOF
 
@@ -77,8 +84,21 @@ cat >"$build_dir/compat/netdb.h" <<'EOF'
 #ifndef EAI_NONAME
 #define EAI_NONAME -2
 #endif
+#ifndef AI_PASSIVE
+#define AI_PASSIVE 0x01
+#endif
+#ifndef AI_CANONNAME
+#define AI_CANONNAME 0x02
+#endif
+#ifndef AI_NUMERICHOST
+#define AI_NUMERICHOST 0x04
+#endif
+#ifndef AI_NUMERICSERV
+#define AI_NUMERICSERV 0x400
+#endif
 
 struct sockaddr;
+struct addrinfo;
 
 struct hostent {
   char *h_name;
@@ -88,21 +108,25 @@ struct hostent {
   char **h_addr_list;
 };
 
-struct addrinfo {
-  int ai_flags;
-  int ai_family;
-  int ai_socktype;
-  int ai_protocol;
-  socklen_t ai_addrlen;
-  struct sockaddr *ai_addr;
-  char *ai_canonname;
-  struct addrinfo *ai_next;
+struct servent {
+  char *s_name;
+  char **s_aliases;
+  int s_port;
+  char *s_proto;
 };
+
+extern int h_errno;
 
 int getaddrinfo(const char *node, const char *service,
                 const struct addrinfo *hints, struct addrinfo **res);
 void freeaddrinfo(struct addrinfo *res);
 const char *gai_strerror(int errcode);
+struct hostent *gethostbyname(const char *name);
+struct hostent *gethostbyaddr(const void *addr, socklen_t len, int type);
+struct hostent *getipnodebyaddr(const void *addr, size_t len, int af,
+                                int *error_num);
+void freehostent(struct hostent *ent);
+struct servent *getservbyport(int port, const char *proto);
 
 #endif
 EOF

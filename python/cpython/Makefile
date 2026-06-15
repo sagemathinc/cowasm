@@ -318,7 +318,13 @@ ${BUILD_WASI_SDK}/.core-compiled: ${BUILD_WASI_SDK}/.configured ${SRC}/test-wasi
 	touch ${BUILD_WASI_SDK}/.core-compiled
 
 .PHONY: test-wasi-sdk-compile
-test-wasi-sdk-compile: ${BUILD_WASI_SDK}/.core-compiled
+test-wasi-sdk-compile: ${BUILD_WASI_SDK}/.core-compiled test-wasi-sdk-archive
+
+.PHONY: test-wasi-sdk-archive
+test-wasi-sdk-archive: ${BUILD_WASI_SDK}/.core-compiled
+	cd ${BUILD_WASI_SDK} && \
+		${WASI_SDK_CPYTHON_ENV} \
+		make libpython${PYTHON_MAJOR}.${PYTHON_MINOR}.a
 
 .PHONY: test-wasi-sdk-next
 test-wasi-sdk-next: test-wasi-sdk-configure test-wasi-sdk-compile

@@ -313,24 +313,25 @@ struct passwd* getpwuid(uid_t uid);
 #define SOCK_SEQPACKET 5
 #define __WASI_RIFLAGS_RECV_DATA_TRUNCATED 0
 
+struct sockaddr;
 typedef unsigned int socklen_t;
 int setsockopt(int sockfd, int level, int optname, const void* optval,
                socklen_t optlen);
 
-int bind(int sockfd, const void* addr, socklen_t addrlen);
-int connect(int sockfd, const void* addr, socklen_t addrlen);
-int getsockname(int sockfd, void* addr, socklen_t* addrlen);
-int getpeername(int sockfd, void* addr, socklen_t* addrlen);
+int bind(int sockfd, const struct sockaddr* addr, socklen_t addrlen);
+int connect(int sockfd, const struct sockaddr* addr, socklen_t addrlen);
+int getsockname(int sockfd, struct sockaddr* addr, socklen_t* addrlen);
+int getpeername(int sockfd, struct sockaddr* addr, socklen_t* addrlen);
 
 int listen(int sockfd, int backlog);
-ssize_t recvfrom(int sockfd, void* buf, size_t len, int flags, void* src_addr,
-                 socklen_t* addrlen);
+ssize_t recvfrom(int sockfd, void* buf, size_t len, int flags,
+                 struct sockaddr* src_addr, socklen_t* addrlen);
 ssize_t sendto(int sockfd, const void* buf, size_t len, int flags,
-               const void* dest_addr, socklen_t addrlen);
+               const struct sockaddr* dest_addr, socklen_t addrlen);
 int socket(int domain, int type, int protocol);
 int gethostname(char* name, size_t len);
 int sethostname(const char* name, size_t len);
-int accept(int socket, void *addr, socklen_t *address_len);
+int accept(int socket, struct sockaddr* addr, socklen_t* address_len);
 
 // These are needed to build parts of posixmodule in Python.  They seem harmless
 // since they are self contained and copied from
@@ -439,6 +440,7 @@ int rpmatch(const char* response);
 
 // This is needed by openssl.
 #include "netdb.h"
+#include <netinet/in.h>
 char* inet_ntoa(struct in_addr in);
 
 void openlog(const char*, int, int);

@@ -475,19 +475,26 @@ The Phase 14 CPython configure and core-compile probe is now landed:
   configured `wasi-sdk` build;
 - it compiles `Programs/python.o`, parser objects, object-runtime objects,
   Python core objects, bootstrap module objects, and the CoWasm static
-  `_posixsubprocess` module with `COWASM_TOOLCHAIN=wasi-sdk`;
+  `_posixsubprocess` module with `COWASM_TOOLCHAIN=wasi-sdk` before running the
+  broader archive build;
 - the `_posixsubprocess` patch now declares the unreachable fallback fork/exec
   path prototypes under `__wasi__`, so clang can parse the upstream fallback
   code while the runtime path still goes through `python_wasm_fork_exec`;
 - the SDK `posix-wasm` compatibility header now defers to wasi-sdk's
   `sched.h` definition of `struct sched_param`, avoiding a duplicate type
-  definition once the CoWasm pyconfig overlay is appended.
+  definition once the CoWasm pyconfig overlay is appended;
+- the SDK `posix-wasm` compatibility layer now exposes POSIX-shaped socket
+  prototypes, name-service declarations, address-info flags, `struct servent`,
+  `h_errno`, and `struct winsize` in the generated SDK headers, while leaving
+  `struct addrinfo` to CPython's fallback definition;
+- `make -C python/cpython test-wasi-sdk-next` now builds
+  `libpython3.14.a` with the SDK path, so the Phase 14 compile probe covers the
+  built-in extension-module object set as well as the core runtime objects.
 
-A full `libpython3.14.a` SDK archive attempt now gets past that core layer and
-stops in the built-in extension-module set, first at `_socket`. The next Phase
-14 blocker is wiring the full SDK dependency/header contract for extension
-modules, especially the socket and name-service declarations that the current
-CoWasm runtime resolves dynamically.
+The next Phase 14 blocker is moving from a static archive compile to a usable
+SDK-built CPython program/runtime: link the archive into the CoWasm main module,
+install the SDK build tree, and run the existing runtime-contract tests before
+attempting broader package work.
 
 ## Order Of Work
 
@@ -1080,7 +1087,8 @@ tested under `wasi-sdk`.
 Only after the prior phases are green:
 
 - configure `python/cpython` with `wasi-sdk` (probe target landed);
-- build `python/cpython` with `wasi-sdk`;
+- build `python/cpython`'s static archive with `wasi-sdk` (probe target landed);
+- link/install `python/cpython` with `wasi-sdk`;
 - run `make -C python/cpython pip`;
 - run `make -C python/cpython test-runtime-contracts`;
 - run the supported CPython test suite;
@@ -1112,8 +1120,14 @@ Landed configure and core-compile probe details:
 - `Programs/python.o`, parser, object runtime, Python core, bootstrap module,
   and `_posixsubprocess` object compile coverage under
   `COWASM_TOOLCHAIN=wasi-sdk`;
-- full SDK archive compile currently reaches the built-in extension-module
-  layer and stops at the `_socket` header/declaration contract.
+- SDK socket/name-service compatibility declarations for `_socket`, including
+  POSIX-shaped socket prototypes, address-info flags, `struct servent`,
+  `h_errno`, host/service lookup prototypes, and an `addrinfo` forward
+  declaration that avoids conflicting with CPython's fallback struct body;
+- SDK terminal-size compatibility via `struct winsize` in the generated
+  `termios.h` shim;
+- full `libpython3.14.a` archive compile coverage under
+  `COWASM_TOOLCHAIN=wasi-sdk`.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 
