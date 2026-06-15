@@ -453,7 +453,7 @@ landed:
   `PyInit_fib`, and no `needed_dynlibs`; it is intentionally a compile and
   module-shape check until Phase 14 CPython import tests are available.
 
-The first Phase 14 CPython configure probe is now landed:
+The first Phase 14 CPython configure and partial-compile probe is now landed:
 
 - `make -C python/cpython test-wasi-sdk-next` prepares a side-by-side
   `build/wasi-sdk` tree without changing the default `build/wasm` path;
@@ -467,8 +467,15 @@ The first Phase 14 CPython configure probe is now landed:
   CPython's existing `wasm32-wasi` multiarch/SOABI names;
 - it keeps `--experimental-pic` in `BLDSHARED` as a CoWasm compatibility flag,
   with the wasi-sdk wrapper filtering that legacy flag before invoking clang;
-- the next Phase 14 blocker is moving from configure to a partial CPython
-  compile and then wiring the full SDK dependency set for extension modules.
+- it generates the SDK CPython `Programs/libpython.c` export thunk without
+  Emscripten signal exports and fork-hook exports that are not declared in the
+  configured `wasi-sdk` build;
+- it compiles `Programs/python.o` with `COWASM_TOOLCHAIN=wasi-sdk`, proving the
+  generated export thunk and first CPython main-program object compile under
+  the pinned SDK;
+- the next Phase 14 blocker is moving from this focused object compile to a
+  larger CPython core compile and then wiring the full SDK dependency set for
+  extension modules.
 
 ## Order Of Work
 
@@ -1077,7 +1084,7 @@ Pay special attention to:
 - object and archive tool behavior;
 - configure-script differences caused by newer wasi-libc headers.
 
-Landed configure-probe details:
+Landed configure and partial-compile probe details:
 
 - `make -C python/cpython test-wasi-sdk-next`;
 - side-by-side `python/cpython/build/wasi-sdk` and
@@ -1086,7 +1093,10 @@ Landed configure-probe details:
   `BLDSHARED`;
 - CPython `wasm32-wasip1`/`wasm32-wasi` multiarch alias patch;
 - SDK `posix-wasm` `netdb.h` shim fix for direct configure header checks;
-- config-site socket contract update for runtime-resolved `getaddrinfo`.
+- config-site socket contract update for runtime-resolved `getaddrinfo`;
+- `dylink-libpython --without-emscripten-signal --without-fork` for the SDK
+  generated export source;
+- `Programs/python.o` compile coverage under `COWASM_TOOLCHAIN=wasi-sdk`.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 

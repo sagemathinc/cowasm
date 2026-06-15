@@ -38,7 +38,13 @@ let omit =
 // save valuable space.
 
 const extra =
-  "_PyUnicodeWriter_WriteChar _PyUnicodeWriter_Init _PyUnicodeWriter_Finish _PyUnicodeWriter_Dealloc _PyUnicodeWriter_WriteStr PyCode_New PyCode_NewWithPosOnlyArgs PyCode_NewEmpty PyFrame_New _PyObject_GenericGetAttrWithDict _PyObject_LookupSpecial _Py_FatalErrorFunc _PyUnicodeWriter_PrepareInternal _PyBytes_ReverseFind _PyBytes_Find _Py_dup Py_EMSCRIPTEN_SIGNAL_HANDLING _Py_emscripten_signal_clock";
+  "_PyUnicodeWriter_WriteChar _PyUnicodeWriter_Init _PyUnicodeWriter_Finish _PyUnicodeWriter_Dealloc _PyUnicodeWriter_WriteStr PyCode_New PyCode_NewWithPosOnlyArgs PyCode_NewEmpty PyFrame_New _PyObject_GenericGetAttrWithDict _PyObject_LookupSpecial _Py_FatalErrorFunc _PyUnicodeWriter_PrepareInternal _PyBytes_ReverseFind _PyBytes_Find _Py_dup";
+
+const emscriptenSignalExtra =
+  "Py_EMSCRIPTEN_SIGNAL_HANDLING _Py_emscripten_signal_clock";
+
+const forkExtra =
+  "PyOS_AfterFork_Child PyOS_AfterFork_Parent PyOS_BeforeFork";
 //_PyArg_VaParseTupleAndKeywords_SizeT _PyArg_ParseStack_SizeT";
 
 const headers =
@@ -111,13 +117,21 @@ function stableABI(pathToPythonSource: string) {
   return names;
 }
 
-export async function main(pathToPythonSource: string) {
+export async function main(
+  pathToPythonSource: string,
+  { withoutEmscriptenSignal = false, withoutFork = false } = {}
+) {
   if (!statSync(pathToPythonSource).isDirectory()) {
     throw Error(
       `${pathToPythonSource} must be the path to the Python source code`
     );
   }
   const exclude = new Set(omit.split(/\s+/));
+  if (withoutFork) {
+    for (const name of forkExtra.split(/\s+/)) {
+      exclude.add(name);
+    }
+  }
   let names: string[] = [];
   const includeDir = join(pathToPythonSource, "Include");
   const output = (
@@ -179,6 +193,9 @@ export async function main(pathToPythonSource: string) {
     return true;
   });
   names = names.concat(extra.split(/\s+/));
+  if (!withoutEmscriptenSignal) {
+    names = names.concat(emscriptenSignalExtra.split(/\s+/));
+  }
   // In addition to the above "heuristics", it's critical that we
   // include the entire stable abi, which we get below:
   names = names.concat(stableABI(pathToPythonSource));
@@ -190,17 +207,32 @@ export async function main(pathToPythonSource: string) {
 
 function usage() {
   process.stderr.write(
-    `Usage: ${process.argv[0]} <path to python source code>\n`
+    `Usage: ${process.argv[0]} [--without-emscripten-signal] [--without-fork] <path to python source code>\n`
   );
 }
 
 (async () => {
-  if (process.argv.length <= 2) {
+  const args = process.argv.slice(2);
+  let withoutEmscriptenSignal = false;
+  let withoutFork = false;
+  while (args[0]?.startsWith("--")) {
+    const flag = args.shift();
+    if (flag == "--without-emscripten-signal") {
+      withoutEmscriptenSignal = true;
+    } else if (flag == "--without-fork") {
+      withoutFork = true;
+    } else {
+      usage();
+      process.exit(1);
+    }
+  }
+
+  if (args.length != 1) {
     usage();
     process.exit(1);
   } else {
     try {
-      await main(process.argv[2]);
+      await main(args[0], { withoutEmscriptenSignal, withoutFork });
     } catch (err) {
       usage();
       process.stderr.write(`Error: ${err.message}\n`);

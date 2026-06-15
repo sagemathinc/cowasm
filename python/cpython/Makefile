@@ -40,6 +40,7 @@ BUILD_WASI_SDK = ${BUILD}/wasi-sdk
 DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 CORE_PACKAGES = ${CWD}/../../core
+DYLINK_LIBPYTHON_JS = ${CORE_PACKAGES}/dylink/dist/libpython.js
 POSIX_WASI_SDK = ${CORE_PACKAGES}/posix-wasm/dist/wasi-sdk
 LIBEDIT_WASI_SDK = ${CORE_PACKAGES}/libedit/dist/wasi-sdk
 LZMA_WASI_SDK = ${CORE_PACKAGES}/lzma/dist/wasi-sdk
@@ -159,7 +160,10 @@ run-native: ${DIST_NATIVE}/.built ${BIN}/python-native
 
 ## WASM
 
-CPYTHON_WASM_PATCH_INPUTS = ${SRC}/prepare-wasm-build.sh ${SRC}/config.site $(wildcard ${SRC}/patches/*.patch)
+CPYTHON_WASM_PATCH_INPUTS = ${SRC}/prepare-wasm-build.sh ${SRC}/config.site ${DYLINK_LIBPYTHON_JS} $(wildcard ${SRC}/patches/*.patch)
+
+${DYLINK_LIBPYTHON_JS}: $(wildcard ${CORE_PACKAGES}/dylink/src/*.ts) ${CORE_PACKAGES}/dylink/tsconfig.json
+	cd ${CORE_PACKAGES}/dylink && pnpm run build
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	# Create declarations that make everything extension modules need
@@ -241,7 +245,7 @@ ${BUILD_WASI_SDK}/.patched: ${TARBALL} ${CPYTHON_WASM_PATCH_INPUTS}
 	mkdir -p ${BUILD_WASI_SDK}
 	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
 	touch ${BUILD_WASI_SDK}/.build
-	${SRC}/prepare-wasm-build.sh ${BUILD_WASI_SDK} ${SRC}/Setup.local
+	COWASM_LIBPYTHON_WITHOUT_EMSCRIPTEN_SIGNAL=1 COWASM_LIBPYTHON_WITHOUT_FORK=1 ${SRC}/prepare-wasm-build.sh ${BUILD_WASI_SDK} ${SRC}/Setup.local
 	touch ${BUILD_WASI_SDK}/.patched
 
 ${BUILD_WASI_SDK}/.configured: node_modules ${BUILD_WASI_SDK}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
@@ -290,8 +294,25 @@ ${BUILD_WASI_SDK}/.configured: node_modules ${BUILD_WASI_SDK}/.patched ${DIST_NA
 .PHONY: test-wasi-sdk-configure
 test-wasi-sdk-configure: ${BUILD_WASI_SDK}/.configured
 
+${BUILD_WASI_SDK}/Programs/python.o: ${BUILD_WASI_SDK}/.configured
+	cd ${BUILD_WASI_SDK} && \
+		COWASM_TOOLCHAIN=wasi-sdk \
+		LZMA_WASM="${LZMA_WASI_SDK}" \
+		LIBEDIT_WASM="${LIBEDIT_WASI_SDK}" \
+		NCURSES_WASM="${NCURSES_WASI_SDK}" \
+		TERMCAP_WASM="${TERMCAP_WASI_SDK}" \
+		OPENSSL_WASM="${OPENSSL_WASI_SDK}" \
+		SQLITE_WASM="${SQLITE_WASI_SDK}" \
+		BZIP2_WASM="${BZIP2_WASI_SDK}" \
+		LIBFFI_WASM="${LIBFFI_WASI_SDK}" \
+		ZLIB_WASM="${ZLIB_WASI_SDK}" \
+		make Programs/python.o
+
+.PHONY: test-wasi-sdk-compile
+test-wasi-sdk-compile: ${BUILD_WASI_SDK}/Programs/python.o
+
 .PHONY: test-wasi-sdk-next
-test-wasi-sdk-next: test-wasi-sdk-configure
+test-wasi-sdk-next: test-wasi-sdk-configure test-wasi-sdk-compile
 
 ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
 	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR}/_sysconfigdata__wasi_wasm32-wasi.py so it
