@@ -289,27 +289,36 @@ ${BUILD_WASI_SDK}/.configured: node_modules ${BUILD_WASI_SDK}/.patched ${DIST_NA
 	grep -F 'Target: wasm32-unknown-wasip1' ${BUILD_WASI_SDK}/config.log
 	grep -F 'MULTIARCH=	wasm32-wasi' ${BUILD_WASI_SDK}/Makefile
 	grep -F '${BIN}/cowasm-cc --experimental-pic -shared' ${BUILD_WASI_SDK}/Makefile
+	cat src/pyconfig.h >> ${BUILD_WASI_SDK}/pyconfig.h
 	touch ${BUILD_WASI_SDK}/.configured
 
 .PHONY: test-wasi-sdk-configure
 test-wasi-sdk-configure: ${BUILD_WASI_SDK}/.configured
 
+WASI_SDK_CPYTHON_ENV = \
+	COWASM_TOOLCHAIN=wasi-sdk \
+	LZMA_WASM="${LZMA_WASI_SDK}" \
+	LIBEDIT_WASM="${LIBEDIT_WASI_SDK}" \
+	NCURSES_WASM="${NCURSES_WASI_SDK}" \
+	TERMCAP_WASM="${TERMCAP_WASI_SDK}" \
+	OPENSSL_WASM="${OPENSSL_WASI_SDK}" \
+	SQLITE_WASM="${SQLITE_WASI_SDK}" \
+	BZIP2_WASM="${BZIP2_WASI_SDK}" \
+	LIBFFI_WASM="${LIBFFI_WASI_SDK}" \
+	ZLIB_WASM="${ZLIB_WASI_SDK}"
+
 ${BUILD_WASI_SDK}/Programs/python.o: ${BUILD_WASI_SDK}/.configured
 	cd ${BUILD_WASI_SDK} && \
-		COWASM_TOOLCHAIN=wasi-sdk \
-		LZMA_WASM="${LZMA_WASI_SDK}" \
-		LIBEDIT_WASM="${LIBEDIT_WASI_SDK}" \
-		NCURSES_WASM="${NCURSES_WASI_SDK}" \
-		TERMCAP_WASM="${TERMCAP_WASI_SDK}" \
-		OPENSSL_WASM="${OPENSSL_WASI_SDK}" \
-		SQLITE_WASM="${SQLITE_WASI_SDK}" \
-		BZIP2_WASM="${BZIP2_WASI_SDK}" \
-		LIBFFI_WASM="${LIBFFI_WASI_SDK}" \
-		ZLIB_WASM="${ZLIB_WASI_SDK}" \
+		${WASI_SDK_CPYTHON_ENV} \
 		make Programs/python.o
 
+${BUILD_WASI_SDK}/.core-compiled: ${BUILD_WASI_SDK}/.configured ${SRC}/test-wasi-sdk-core-compile.sh
+	${WASI_SDK_CPYTHON_ENV} \
+		${SRC}/test-wasi-sdk-core-compile.sh ${BUILD_WASI_SDK}
+	touch ${BUILD_WASI_SDK}/.core-compiled
+
 .PHONY: test-wasi-sdk-compile
-test-wasi-sdk-compile: ${BUILD_WASI_SDK}/Programs/python.o
+test-wasi-sdk-compile: ${BUILD_WASI_SDK}/.core-compiled
 
 .PHONY: test-wasi-sdk-next
 test-wasi-sdk-next: test-wasi-sdk-configure test-wasi-sdk-compile

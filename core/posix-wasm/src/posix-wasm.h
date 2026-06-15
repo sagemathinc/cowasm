@@ -63,9 +63,12 @@ int execve(const char* pathname, char* const argv[], char* const envp[]);
 int execlp(const char* file, const char* arg, ... /* (char  *) NULL */);
 int execvp(const char* file, char* const argv[]);
 
+#include <sched.h>
+#ifndef _SCHED_H
 struct sched_param {
   int sched_priority;
 };
+#endif
 
 struct sigaction {
   void (*sa_handler)(int);

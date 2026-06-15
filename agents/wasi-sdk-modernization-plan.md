@@ -453,7 +453,7 @@ landed:
   `PyInit_fib`, and no `needed_dynlibs`; it is intentionally a compile and
   module-shape check until Phase 14 CPython import tests are available.
 
-The first Phase 14 CPython configure and partial-compile probe is now landed:
+The Phase 14 CPython configure and core-compile probe is now landed:
 
 - `make -C python/cpython test-wasi-sdk-next` prepares a side-by-side
   `build/wasi-sdk` tree without changing the default `build/wasm` path;
@@ -465,17 +465,29 @@ The first Phase 14 CPython configure and partial-compile probe is now landed:
   headers and archive;
 - it records the wasi-sdk `wasm32-wasip1` compiler target while preserving
   CPython's existing `wasm32-wasi` multiarch/SOABI names;
+- it appends the normal CoWasm `src/pyconfig.h` overlay after SDK configure so
+  the SDK build sees the same runtime compatibility declarations and config
+  overrides as the default wasm build;
 - it keeps `--experimental-pic` in `BLDSHARED` as a CoWasm compatibility flag,
   with the wasi-sdk wrapper filtering that legacy flag before invoking clang;
 - it generates the SDK CPython `Programs/libpython.c` export thunk without
   Emscripten signal exports and fork-hook exports that are not declared in the
   configured `wasi-sdk` build;
-- it compiles `Programs/python.o` with `COWASM_TOOLCHAIN=wasi-sdk`, proving the
-  generated export thunk and first CPython main-program object compile under
-  the pinned SDK;
-- the next Phase 14 blocker is moving from this focused object compile to a
-  larger CPython core compile and then wiring the full SDK dependency set for
-  extension modules.
+- it compiles `Programs/python.o`, parser objects, object-runtime objects,
+  Python core objects, bootstrap module objects, and the CoWasm static
+  `_posixsubprocess` module with `COWASM_TOOLCHAIN=wasi-sdk`;
+- the `_posixsubprocess` patch now declares the unreachable fallback fork/exec
+  path prototypes under `__wasi__`, so clang can parse the upstream fallback
+  code while the runtime path still goes through `python_wasm_fork_exec`;
+- the SDK `posix-wasm` compatibility header now defers to wasi-sdk's
+  `sched.h` definition of `struct sched_param`, avoiding a duplicate type
+  definition once the CoWasm pyconfig overlay is appended.
+
+A full `libpython3.14.a` SDK archive attempt now gets past that core layer and
+stops in the built-in extension-module set, first at `_socket`. The next Phase
+14 blocker is wiring the full SDK dependency/header contract for extension
+modules, especially the socket and name-service declarations that the current
+CoWasm runtime resolves dynamically.
 
 ## Order Of Work
 
@@ -1084,7 +1096,7 @@ Pay special attention to:
 - object and archive tool behavior;
 - configure-script differences caused by newer wasi-libc headers.
 
-Landed configure and partial-compile probe details:
+Landed configure and core-compile probe details:
 
 - `make -C python/cpython test-wasi-sdk-next`;
 - side-by-side `python/cpython/build/wasi-sdk` and
@@ -1096,7 +1108,12 @@ Landed configure and partial-compile probe details:
 - config-site socket contract update for runtime-resolved `getaddrinfo`;
 - `dylink-libpython --without-emscripten-signal --without-fork` for the SDK
   generated export source;
-- `Programs/python.o` compile coverage under `COWASM_TOOLCHAIN=wasi-sdk`.
+- CoWasm `src/pyconfig.h` overlay appended after SDK configure;
+- `Programs/python.o`, parser, object runtime, Python core, bootstrap module,
+  and `_posixsubprocess` object compile coverage under
+  `COWASM_TOOLCHAIN=wasi-sdk`;
+- full SDK archive compile currently reaches the built-in extension-module
+  layer and stops at the `_socket` header/declaration contract.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 

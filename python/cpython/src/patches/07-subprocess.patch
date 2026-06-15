@@ -11,7 +11,7 @@
      import _winapi
 --- native/Modules/_posixsubprocess.c
 +++ wasm/Modules/_posixsubprocess.c
-@@ -102,6 +102,23 @@
+@@ -102,6 +102,35 @@
  
  #include "clinic/_posixsubprocess.c.h"
  
@@ -31,6 +31,18 @@
 +             int child_umask,
 +             const void *child_sigmask,
 +             int *py_fds_to_keep);
++
++#ifdef __wasi__
++extern int dup(int oldfd);
++extern int dup2(int oldfd, int newfd);
++extern mode_t umask(mode_t mask);
++extern int execve(const char *pathname, char *const argv[], char *const envp[]);
++extern int execv(const char *path, char *const argv[]);
++extern pid_t fork(void);
++extern void PyOS_BeforeFork(void);
++extern void PyOS_AfterFork_Child(void);
++extern void PyOS_AfterFork_Parent(void);
++#endif
 +
  /* Convert ASCII to a positive int, no libc call. no overflow. -1 on error. */
  static int
