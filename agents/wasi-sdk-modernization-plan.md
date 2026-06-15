@@ -612,11 +612,25 @@ R_WASM_MEMORY_ADDR_LEB
 R_WASM_MEMORY_ADDR_SLEB
 ```
 
+A follow-up manual run narrowed this further:
+
+- passing `-fPIC` to the current Zig 0.10.1 `zig cc` compile of
+  `dist/wasm-export/libc.c` still produced the same absolute memory
+  relocations;
+- compiling that generated file directly with `wasi-sdk` did not get to the
+  relocation check because CoWasm's generated libc export source still includes
+  Zig/musl-oriented headers through `posix-wasm.h`, starting with
+  `sys/wait.h`, which is not provided by the `wasi-sdk` wasip1 sysroot.
+
 Actions:
 
 - Identify how `core/dylink/dist/wasm/libdylink.a` is produced.
-- Rebuild the relevant objects with `-fPIC` when they are linked into shared or
-  dynamically relocatable wasm outputs.
+- Rebuild the relevant objects with a compiler path that actually emits PIC
+  wasm relocations when they are linked into shared or dynamically relocatable
+  wasm outputs.
+- Split or shim the generated libc export headers enough that the dylink
+  runtime archive can be compiled by `wasi-sdk` without depending on
+  Zig/musl-only include files.
 - Add a focused test that links the existing `core/dylink/test/wasi/app.c`
   main module with `wasi-sdk`.
 - Inspect imports/exports and loader behavior.
@@ -883,4 +897,3 @@ The modernization is successful when:
 
 The desired end state is a pinned `wasi-sdk` CoWasm toolchain with C runtime
 glue and a visible, testable WASI/dylink contract.
-
