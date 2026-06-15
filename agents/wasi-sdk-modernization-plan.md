@@ -504,6 +504,16 @@ module to an installed and runnable SDK CPython package: install the SDK build
 tree, point the existing `python-wasm` loader at `python-wasi-sdk.wasm`, and run
 the existing runtime-contract tests before attempting broader package work.
 
+A direct `make install` in `python/cpython/build/wasi-sdk` is not the right
+install path yet. It first tries to build CPython's own `python.wasm`
+executable target, which still fails at link time on CoWasm runtime hooks such
+as `wasmGetSignalState`, `_PyEM_TrampolineCall`, `_Py_emscripten_runtime`,
+`python_wasm_set_inheritable`, and the Emscripten signal globals. The SDK
+install target therefore needs to either install from the archive/link-probe
+artifacts without invoking CPython's built-in executable rule, or teach that
+rule the same explicit `--allow-undefined` runtime-import contract used by
+`test-wasi-sdk-link`.
+
 ## Order Of Work
 
 Recommended order:
@@ -1140,6 +1150,9 @@ Landed configure and core-compile probe details:
 - C wrapper link coverage for `build/wasi-sdk/python-wasi-sdk.wasm`, including
   the CoWasm runtime exports used by `python/python-wasm` and the expected
   TypeScript runtime imports.
+- direct SDK `make install` blocker identified: CPython's built-in
+  `python.wasm` link rule does not yet use the explicit CoWasm runtime-import
+  contract from `test-wasi-sdk-link`.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 
