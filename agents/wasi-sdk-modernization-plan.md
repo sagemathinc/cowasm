@@ -188,6 +188,46 @@ for current CoWasm.
   - `core/build/src/zig/bin/zig_cowasm_compiler.py`, which still accepts `.zig`
     sources.
 
+## Current Landed State
+
+As of the June 2026 manual runs, the plan is no longer purely prospective.
+The repository already has a side-by-side `wasi-sdk` probe path:
+
+- `make -C core/build wasi-sdk-next`;
+- `make -C core/build test-wasi-sdk-next`;
+- pinned `wasi-sdk-33.0` bootstrap in `core/build/src/wasi-sdk/Makefile`;
+- checksum validation for Linux x86_64, Linux arm64, macOS x86_64, and macOS
+  arm64 release assets;
+- SDK install path:
+  `core/build/build/wasi-sdk/dist/wasi-sdk-next/native`;
+- explicit tool symlinks in `bin/` for `clang`, `clang++`, `wasm-ld`,
+  `llvm-ar`, `llvm-ranlib`, `llvm-nm`, `llvm-objdump`, `llvm-strip`, and
+  `llvm-strings`.
+
+The compiler wrapper also has a first `wasi-sdk` selector:
+
+```sh
+COWASM_TOOLCHAIN=zig       # current default
+COWASM_TOOLCHAIN=clang     # direct experimental clang/lld probe
+COWASM_TOOLCHAIN=wasi-sdk  # pinned wasi-sdk-next probe
+```
+
+The landed `wasi-sdk` wrapper mode currently supports:
+
+- `--print-multiarch` returning `wasm32-wasip1`;
+- standalone tiny C and C++ programs;
+- compile-only C/C++;
+- CoWasm-style C/C++ side modules through `-fPIC -shared -nostdlib
+  -Wl,--allow-undefined -Wl,--no-entry`;
+- stripping optimized side modules with `--strip-all`;
+- filtering `-lc`, `-lm`, and `-ldl` from side-module link flags so the SDK
+  driver does not accidentally emit `needed_dynlibs`;
+- archive tool selection through `cowasm-ar` and `cowasm-ranlib`.
+
+This status changes the immediate work: do not re-implement the bootstrap or
+the basic wrapper selector. The next blocker is the `core/dylink` runtime
+archive and generated libc export header path described in Phase 9.
+
 ## Order Of Work
 
 Recommended order:
@@ -206,6 +246,11 @@ Recommended order:
 This order avoids porting old Zig syntax to new Zig syntax just to delete it
 later. It also avoids switching package builds before the runtime glue and
 dylink archives are ready for a Clang/lld-first path.
+
+Some work has intentionally landed out of strict phase order: the
+side-by-side SDK bootstrap and basic `COWASM_TOOLCHAIN=wasi-sdk` wrapper mode
+exist before the C translation. Keep treating them as probes until the runtime
+archive and core translation phases are green.
 
 ## Zig Source Inventory
 
@@ -376,32 +421,42 @@ Actions:
 Deliverable: baseline logs and object-shape notes that define the behavior the
 C translation and `wasi-sdk` toolchain must preserve.
 
-## Phase 1: Add Side-By-Side WASI SDK Bootstrap
+## Phase 1: Add Side-By-Side WASI SDK Bootstrap (Landed)
 
 Add `wasi-sdk` without changing the default build.
 
-Actions:
+Landed actions:
 
-- Add `make -C core/build wasi-sdk-next`.
-- Install a deliberately chosen `wasi-sdk` release into a separate directory,
-  such as `core/build/build/wasi-sdk-next/dist/native`.
-- Symlink drivers into `bin/` with explicit names:
+- Added `make -C core/build wasi-sdk-next`.
+- Added `make -C core/build test-wasi-sdk-next`.
+- Pinned `wasi-sdk-33.0`.
+- Installed the SDK into:
+  `core/build/build/wasi-sdk/dist/wasi-sdk-next/native`.
+- Symlinked drivers into `bin/` with explicit names:
   - `bin/wasi-sdk-clang-next`;
   - `bin/wasi-sdk-clang++-next`;
   - `bin/wasi-sdk-wasm-ld-next`;
   - `bin/wasi-sdk-llvm-ar-next`;
   - `bin/wasi-sdk-llvm-ranlib-next`;
-  - `bin/wasi-sdk-llvm-objdump-next`.
-- Add checksum validation for Linux x86_64 first, then Linux aarch64, macOS
-  x86_64, and macOS aarch64.
-- Add a minimal `make -C core/build test-wasi-sdk-next` target:
+  - `bin/wasi-sdk-llvm-nm-next`;
+  - `bin/wasi-sdk-llvm-objdump-next`;
+  - `bin/wasi-sdk-llvm-strip-next`;
+  - `bin/wasi-sdk-llvm-strings-next`.
+- Added checksum validation for Linux x86_64, Linux arm64, macOS x86_64, and
+  macOS arm64.
+- Added a probe script that checks:
   - `clang --version`;
+  - `clang++ --version`;
   - `wasm-ld --version`;
+  - `llvm-nm --version`;
+  - `llvm-strings --version`;
   - `clang -target wasm32-wasip1 hello.c`;
   - `clang -target wasm32-wasip1 -Oz -fPIC -shared add.c`;
   - `clang -target wasm32-wasip1 -Oz -fPIC -shared -nostdlib
     -Wl,--allow-undefined -Wl,--no-entry add.c`;
-  - `llvm-objdump -x` checks that `dylink.0` is present.
+  - `llvm-objdump` checks that `dylink.0` is present;
+  - `llvm-strings` checks that CoWasm-style side modules do not contain
+    accidental SDK `needed_dynlibs`.
 
 Non-goals in this phase:
 
@@ -562,24 +617,25 @@ Actions:
 Deliverable: CoWasm core runtime is C/C++/TypeScript from the implementation
 language perspective, even if old Zig still provides the compiler.
 
-## Phase 8: Create WASI SDK Toolchain Wrapper Mode
+## Phase 8: Create WASI SDK Toolchain Wrapper Mode (Partly Landed)
 
 Teach the CoWasm compiler wrapper to use `wasi-sdk` explicitly.
 
-Possible selector:
+Current selector:
 
 ```sh
 COWASM_TOOLCHAIN=zig
 COWASM_TOOLCHAIN=wasi-sdk
-COWASM_TOOLCHAIN=modern-zig
 COWASM_TOOLCHAIN=clang
 ```
 
-Actions:
+Landed actions:
 
-- Keep `zig` mapped to the current 0.10.1 behavior.
-- Add `wasi-sdk` mode that discovers the pinned SDK.
-- Use `wasm32-wasip1` for new `wasi-sdk` builds.
+- Kept `zig` mapped to the current 0.10.1 behavior and default.
+- Added `wasi-sdk` mode that discovers the pinned SDK tools.
+- Added sibling-tool discovery so direct `./bin/cowasm-cc` invocations work
+  without putting `bin/` first on `PATH`.
+- Used `wasm32-wasip1` for new `wasi-sdk` builds.
 - For compile-only C/C++:
   - use `clang -target wasm32-wasip1 -fPIC`;
   - stop injecting emscripten target flags;
@@ -588,12 +644,26 @@ Actions:
   - start with direct driver linking:
     `clang -target wasm32-wasip1 -fPIC -shared -nostdlib
     -Wl,--allow-undefined -Wl,--no-entry`;
-  - keep an explicit two-step `clang -c` plus `wasm-ld` path available for
-    cases where the driver hides too much;
-  - preserve `--experimental-pic` behavior where direct `wasm-ld` needs it;
-  - keep current strip/debug behavior until artifact comparisons say otherwise.
+  - add `-fPIC`, `-shared`, `-nostdlib`, `--allow-undefined`, and `--no-entry`
+    when needed;
+  - remove `-lc`, `-lm`, and `-ldl` from side-module link flags;
+  - keep optimized side modules stripped unless debug flags are present.
+- Added standalone tiny C and C++ program support.
+- Added `cowasm-ar` and `cowasm-ranlib` selection for `zig`, `clang`, and
+  `wasi-sdk`.
+- Added smoke coverage for wrapper C/C++ standalone builds, C side modules,
+  C++ side modules, side-module library-flag filtering, and archive wrapper
+  selection.
+
+Remaining actions:
+
+- Keep an explicit two-step `clang -c` plus `wasm-ld` path available for cases
+  where the driver hides too much.
+- Preserve `--experimental-pic` behavior where direct `wasm-ld` needs it.
 - Preserve `-fvisibility-main` behavior or replace it with a cleaner export
   mechanism only after tests prove parity.
+- Expand beyond tiny wrapper smokes only after Phase 9 unblocks
+  `core/dylink` main-module linking.
 
 Deliverable: `COWASM_TOOLCHAIN=wasi-sdk cowasm-cc` builds tiny dylink modules
 matching the current loader's expectations.
@@ -844,12 +914,16 @@ implementation code.
   supports SDK shared runtime loading.
 - Runtime archives such as `libdylink` need PIC-aware rebuild work.
 
+## Resolved Decisions
+
+- First pinned SDK: `wasi-sdk-33.0`.
+- Backend selector: keep both `COWASM_TOOLCHAIN=wasi-sdk` for the pinned SDK
+  path and `COWASM_TOOLCHAIN=clang` for direct local LLVM/lld probes.
+- Modern Zig is not a first-class wrapper selector in the current plan. Keep it
+  as an external comparison path unless a concrete need appears.
+
 ## Open Questions
 
-- Should the first pinned SDK be `wasi-sdk-33` or the next stable release after
-  it?
-- Should the backend selector use `COWASM_TOOLCHAIN=wasi-sdk`,
-  `COWASM_TOOLCHAIN=clang`, or both?
 - Should `zig_cowasm_compiler.py` be renamed once Zig is no longer the primary
   provider? (yes)
 - Should CoWasm side modules always use `-nostdlib`, or should some package
