@@ -602,6 +602,21 @@ itself without pulling in the interactive terminal dependency chain. It also
 uses local `setjmp`, signal, clock, tempfile, and `system()` compatibility
 shims for Lua OS/error paths that the summation smoke does not exercise.
 
+`core/libpng` has the same opt-in dependent-library smoke shape:
+
+```sh
+make -C core/libpng test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, first rebuilds zlib with its WASI SDK
+standalone smoke target, then builds libpng against that zlib install with
+`COWASM_TOOLCHAIN=wasi-sdk` and selector-aware archive tools. It runs libpng's
+upstream `timepng` test program through the WASI runner and installs into
+`core/libpng/dist/wasi-sdk`, leaving the default Zig-backed package untouched.
+The smoke supplies local `setjmp`, process-clock, and unused `tmpfile`
+compatibility shims for wasi-sdk libc gaps outside the successful PNG decode
+path that the test exercises.
+
 The bootstrap currently installs `wasi-sdk-33.0` under
 `core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
 driver names into `bin/`:
