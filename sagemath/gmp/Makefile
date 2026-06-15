@@ -7,6 +7,8 @@ TARBALL = ${UPSTREAM}/gmp-${VERSION}.tar.bz2
 TARBALL_SHA256 = eae9326beb4158c386e39a356818031bd28f3124cf915f8c5b1dc4c7a36b4d7c
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 all: wasm
 
@@ -31,6 +33,23 @@ clean-clang:
 	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
 
 clean:: clean-clang
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
+	cd ../../core/build && make wasi-sdk-next
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${SRC}
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk
 
 
 ${DIST_WASM}/.built: ${BUILD_WASM}/.build
