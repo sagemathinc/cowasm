@@ -641,8 +641,8 @@ make -C python/cpython test-wasi-sdk-runtime-contracts
 The runtime contract suite passes all 12 tests, covering filesystem behavior,
 `os.spawnl`, and subprocess stdin/stdout/stderr, environment, cwd, file
 descriptor, and nonzero-exit semantics. This clears the previous "do not
-proceed" gate for Phase 14; the next work can move to SDK CPython import tests,
-pip behavior, and package/extension integration.
+proceed" gate for Phase 14. The SDK CPython import tests, pip behavior, and
+package/extension integration gates described below are now landed.
 
 The first SDK CPython import-smoke target is also landed:
 
@@ -1591,7 +1591,7 @@ Post-roadmap Phase 14 follow-up:
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 
-## Phase 15: Sage-Relevant Math Packages (GMP Landed)
+## Phase 15: Sage-Relevant Math Packages (GMP And PARI Gates Landed)
 
 After CPython and basic extension behavior:
 
@@ -1606,13 +1606,14 @@ Current status:
 
 - `make -C sagemath/gmp test-wasi-sdk-next` builds SDK GMP and passes the
   large-integer mathematical smoke under the standalone WASI runner;
-- `make -C sagemath/pari test-wasi-sdk-standalone` reaches the existing local
-  skip because this pinned SDK runner does not provide the setjmp/longjmp
-  support PARI needs.
+- `make -C sagemath/pari test-wasi-sdk-standalone` is wired into the SDK gate
+  and records an explicit setjmp/longjmp capability skip when the local pinned
+  SDK runner does not provide the support PARI needs.
 
-Deliverable: one Sage-relevant math dependency layer works with `wasi-sdk` and
-keeps the long-term SageMath-in-WebAssembly direction viable. PARI remains the
-next Sage-facing blocker once SDK setjmp/longjmp support is available.
+Deliverable: the first Sage-relevant math dependency layer works with
+`wasi-sdk`, and PARI has a visible capability gate instead of a silent failure.
+PARI remains the next Sage-facing blocker once SDK setjmp/longjmp support is
+available.
 
 ## Phase 16: Flip The Default
 
@@ -1770,7 +1771,7 @@ This completed roadmap is successful now because:
 - Sage-relevant GMP passes with a mathematical smoke, while PARI has an
   explicit setjmp/longjmp capability gate instead of a silent failure.
 
-The full modernization remains successful only when:
+The broader modernization remains incomplete until:
 
 - CoWasm core runtime builds do not depend on CoWasm-owned Zig source files.
 - CoWasm builds from a pinned `wasi-sdk` without local Zig stdlib patches.
