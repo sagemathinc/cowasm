@@ -561,6 +561,20 @@ The target refreshes the pinned SDK, rebuilds xz/lzma with
 installs into `core/lzma/dist/wasi-sdk`, leaving the default Zig-backed package
 untouched.
 
+`core/qhull` has the same opt-in CMake static-library smoke shape:
+
+```sh
+make -C core/qhull test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, builds Qhull's reentrant static library
+with `COWASM_TOOLCHAIN=wasi-sdk`, uses selector-aware archive tools, then links
+and runs a minimal `qh_zero`/`qh_freeqhull` initialization probe through the
+WASI runner. The standalone smoke supplies local `setjmp.h` and `clock()`
+compatibility shims for Qhull paths that the minimal initialization probe does
+not exercise. It installs into `core/qhull/dist/wasi-sdk`, leaving the default
+Zig-backed package untouched.
+
 The bootstrap currently installs `wasi-sdk-33.0` under
 `core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
 driver names into `bin/`:
