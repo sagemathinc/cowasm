@@ -6,6 +6,8 @@ include ../build/Makefile-vars
 VERSION = 1.5.0
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 URL = https://github.com/libgit2/libgit2/archive/refs/tags/v${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/libgit2-${VERSION}.tar.gz
@@ -26,6 +28,7 @@ ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	cd ${BUILD_WASM} && cat ${SRC}/patches/00-fix_missing_max_align.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${SRC}/patches/01-realpath-cast.patch | patch -p1
 	cd ${BUILD_WASM} && cat ${SRC}/patches/02-validate_ownership.patch | patch -p1
+	cd ${BUILD_WASM} && cat ${SRC}/patches/03-wasm-size-overflow.patch | patch -p1
 	cp ${SRC}/ar ${BUILD_WASM}
 	cp ${SRC}/ranlib ${BUILD_WASM}
 	touch ${BUILD_WASM}/.patched
@@ -100,3 +103,21 @@ clean-clang:
 	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
 
 clean:: clean-clang
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
+	$(MAKE) -C ../zlib test-wasi-sdk-standalone
+	cd ../build && make wasi-sdk-next
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CWD}/../zlib/dist/wasi-sdk ${SRC}
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk

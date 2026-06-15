@@ -1,0 +1,21 @@
+--- native/src/util/integer.h	2022-07-13 17:06:59.000000000 -0700
++++ wasm/src/util/integer.h	2026-06-14 10:12:00.000000000 -0700
+@@ -51,7 +51,17 @@
+ #if (__has_builtin(__builtin_add_overflow) || \
+      (defined(__GNUC__) && (__GNUC__ >= 5)))
+ 
+-# if (SIZE_MAX == UINT_MAX)
++# if defined(__wasm__) && defined(__clang__)
++/*
++ * wasm32 wasi-libc may typedef size_t as unsigned long even when UINT_MAX
++ * and ULONG_MAX are both 32-bit.  The generic builtin keeps the pointer type
++ * aligned with size_t instead of selecting the first numerically equal max.
++ */
++#  define git__add_sizet_overflow(out, one, two) \
++     __builtin_add_overflow(one, two, out)
++#  define git__multiply_sizet_overflow(out, one, two) \
++     __builtin_mul_overflow(one, two, out)
++# elif (SIZE_MAX == UINT_MAX)
+ #  define git__add_sizet_overflow(out, one, two) \
+      __builtin_uadd_overflow(one, two, out)
+ #  define git__multiply_sizet_overflow(out, one, two) \

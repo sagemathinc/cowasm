@@ -2,7 +2,7 @@
 set -euo pipefail
 
 if [ "$#" -ne 5 ]; then
-  echo "usage: test-clang-standalone.sh BUILD_DIR DIST_DIR BIN_DIR ZLIB_DIST_DIR SRC_DIR" >&2
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR ZLIB_DIST_DIR SRC_DIR" >&2
   exit 2
 fi
 
@@ -19,17 +19,17 @@ source "$script_dir/../../build/src/test/clang-standalone-common.sh"
 probe_dir="$(mktemp -d)"
 trap 'rm -rf "$probe_dir"' EXIT
 
-cowasm_clang_standalone_probe "libgit2" "$bin_dir" "$probe_dir"
+cowasm_standalone_probe "libgit2" wasi-sdk "$bin_dir" "$probe_dir"
 
-cmake_build="$build_dir/cowasm-clang-build"
+cmake_build="$build_dir/cowasm-wasi-sdk-build"
 compat_dir="$probe_dir/compat"
 
 rm -rf "$dist_dir" "$cmake_build"
 mkdir -p "$dist_dir" "$cmake_build" "$compat_dir"
 
 cat >"$compat_dir/netdb.h" <<'EOF'
-#ifndef COWASM_CLANG_COMPAT_NETDB_H
-#define COWASM_CLANG_COMPAT_NETDB_H
+#ifndef COWASM_WASI_SDK_COMPAT_NETDB_H
+#define COWASM_WASI_SDK_COMPAT_NETDB_H
 
 #include <stddef.h>
 #include <sys/socket.h>
@@ -75,8 +75,8 @@ static const char *gai_strerror(int errcode) {
 EOF
 
 cat >"$compat_dir/pwd.h" <<'EOF'
-#ifndef COWASM_CLANG_COMPAT_PWD_H
-#define COWASM_CLANG_COMPAT_PWD_H
+#ifndef COWASM_WASI_SDK_COMPAT_PWD_H
+#define COWASM_WASI_SDK_COMPAT_PWD_H
 
 #include <errno.h>
 #include <stddef.h>
@@ -149,7 +149,7 @@ for patch_file in \
 done
 
 cd "$cmake_build"
-COWASM_TOOLCHAIN=clang cmake "$build_dir" \
+COWASM_TOOLCHAIN=wasi-sdk cmake "$build_dir" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_SYSTEM_NAME=Generic \
   -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY \
@@ -171,15 +171,16 @@ COWASM_TOOLCHAIN=clang cmake "$build_dir" \
   -DBUILD_SHARED_LIBS=OFF \
   -DGIT_QSORT_S:INTERNAL=
 
-COWASM_TOOLCHAIN=clang cmake --build . --target libgit2package --parallel "$jobs"
+COWASM_TOOLCHAIN=wasi-sdk cmake --build . --target libgit2package --parallel "$jobs"
 
 mkdir -p "$dist_dir/include" "$dist_dir/lib"
 cp liblibgit2package.a "$dist_dir/lib/libgit2.a"
 cp -R "$build_dir/include/." "$dist_dir/include/"
 
-COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
+COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -fvisibility-main \
   -Oz \
+  -Wl,-z,stack-size=1048576 \
   -I"$dist_dir/include" \
   -I"$zlib_dist_dir/include" \
   -L"$dist_dir/lib" \

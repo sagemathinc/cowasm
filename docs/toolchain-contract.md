@@ -657,6 +657,22 @@ runner and performs a small archive create/extract round trip. It installs
 into `core/tar/dist/wasi-sdk`, leaving the default Zig-backed package
 untouched.
 
+`core/libgit2` has the same opt-in dependent-library smoke shape:
+
+```sh
+make -C core/libgit2 test-wasi-sdk-standalone
+```
+
+The target first rebuilds zlib with its WASI SDK standalone smoke target, then
+builds libgit2's static package target against that install with
+`COWASM_TOOLCHAIN=wasi-sdk`. The smoke uses the same local user, process, and
+network lookup compatibility shims as the direct clang path, plus a wasm
+`size_t` overflow-helper patch for SDKs where `size_t` is an unsigned long on
+wasm32. It links the repository-initialization probe with a 1 MiB wasm stack so
+libgit2's filesystem setup path does not exhaust the default 64 KiB stack, then
+runs `git_repository_init` through the WASI runner. It installs into
+`core/libgit2/dist/wasi-sdk`, leaving the default Zig-backed package untouched.
+
 `sagemath/gmp` has the same opt-in static-library smoke shape:
 
 ```sh
