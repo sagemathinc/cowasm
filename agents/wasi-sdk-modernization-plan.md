@@ -331,9 +331,9 @@ The `core/lua` Phase 11 package probe is also partially landed:
 - `make -C core/lua test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The Phase 11 package list is now covered by side-by-side `wasi-sdk-next` probe
-targets. The next blocker is Phase 12 runtime-adjacent packages, starting with
-`core/libedit`.
+The Phase 11 and Phase 12 package lists are now covered by side-by-side
+`wasi-sdk-next` probe targets. The next blocker is Phase 13 C++ runtime and
+Python-extension surface work.
 
 The first Phase 12 package probe is partially landed for `core/libedit`:
 
@@ -970,7 +970,7 @@ For each package:
 
 Deliverable: a first dependency layer builds and tests with `wasi-sdk`.
 
-## Phase 12: Port Runtime-Adjacent Packages (In Progress)
+## Phase 12: Port Runtime-Adjacent Packages (Probe Targets Landed)
 
 Move to packages that stress headers, termios, filesystem behavior, and
 dynamic-linking details.
