@@ -21,16 +21,29 @@ ${BIN}/zig: ${BUILD}/.build
 zig: ${BIN}/zig
 
 ${BUILD}/wasi-sdk/Makefile: ${BUILD}/.build ${WASI_SDK_BOOTSTRAP_FILES}
+	rm -rf ${BUILD}/wasi-sdk.tmp
+	cp -a ${SRC}/wasi-sdk ${BUILD}/wasi-sdk.tmp
 	rm -rf ${BUILD}/wasi-sdk
-	cp -a ${SRC}/wasi-sdk ${BUILD}/wasi-sdk
+	mv ${BUILD}/wasi-sdk.tmp ${BUILD}/wasi-sdk
+	touch ${BUILD}/wasi-sdk/Makefile
 
 .PHONY: wasi-sdk-next
-wasi-sdk-next: ${BUILD}/wasi-sdk/Makefile
-	cd ${BUILD}/wasi-sdk && make
+wasi-sdk-next:
+	@set -e; \
+	lock_dir="${BUILD}/wasi-sdk.lock"; \
+	while ! mkdir "$${lock_dir}" 2>/dev/null; do sleep 1; done; \
+	trap 'rmdir "$${lock_dir}"' EXIT INT TERM; \
+	$(MAKE) ${BUILD}/wasi-sdk/Makefile; \
+	cd ${BUILD}/wasi-sdk && $(MAKE)
 
 .PHONY: test-wasi-sdk-next
-test-wasi-sdk-next: ${BUILD}/wasi-sdk/Makefile
-	cd ${BUILD}/wasi-sdk && make test
+test-wasi-sdk-next:
+	@set -e; \
+	lock_dir="${BUILD}/wasi-sdk.lock"; \
+	while ! mkdir "$${lock_dir}" 2>/dev/null; do sleep 1; done; \
+	trap 'rmdir "$${lock_dir}"' EXIT INT TERM; \
+	$(MAKE) ${BUILD}/wasi-sdk/Makefile; \
+	cd ${BUILD}/wasi-sdk && $(MAKE) test
 
 .PHONY: test
 test: all
