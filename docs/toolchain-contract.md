@@ -18,6 +18,8 @@ selector. The current recognized values are:
 - `clang`: use an experimental direct clang/lld backend for tiny non-PIC C
   programs. This path is intentionally narrow and does not silently fall back
   to Zig.
+- `wasi-sdk`: use the pinned `wasi-sdk-next` probe backend described below for
+  standalone C/C++ programs and CoWasm-style side modules.
 
 Any other selector value is rejected before invoking compiler or linker tools.
 

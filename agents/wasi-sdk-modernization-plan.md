@@ -282,6 +282,18 @@ CPython gates are also covered. Socket-enabled `_ssl` and full `_ctypes`
 foreign-call support should be tracked as post-roadmap feature work, not as
 unfinished discovery probes.
 
+Scope boundary for future scheduled runs:
+
+- Phases 1 and 8 through 15 are the completed SDK probe roadmap.
+- Phases 2 through 7 are retained below as the separate Zig-to-C transition
+  track. They are not unfinished discovery probes for this roadmap.
+- Phases 16 and 17 are separate default-flip and retirement transition tracks.
+  They require explicit review of the preserved Zig baseline versus the
+  `wasi-sdk` aggregate gate before implementation.
+- A scheduled run whose goal is to finish this file should treat the roadmap as
+  closed once the status, gate definition, and post-roadmap boundaries remain
+  accurate.
+
 The first Phase 11 package probe is landed for `core/zlib`:
 
 - `make -C core/zlib test-wasi-sdk-standalone` builds zlib with
@@ -1127,7 +1139,7 @@ Non-goals in this phase:
 Deliverable: `wasi-sdk` is available as a C/C++ toolchain probe, not as the
 default.
 
-## Phase 2: Build C Scaffolding And Parity Harnesses
+## Phase 2: Build C Scaffolding And Parity Harnesses (Deferred Transition Track)
 
 Create the C infrastructure before translating large files.
 
@@ -1147,7 +1159,7 @@ Actions:
 Deliverable: the repository has a C-shaped place for the translated code to
 land, with focused tests before the large migration starts.
 
-## Phase 3: Translate Wasm Kernel Glue To C
+## Phase 3: Translate Wasm Kernel Glue To C (Deferred Transition Track)
 
 Translate the smaller wasm-side Zig layer first.
 
@@ -1180,7 +1192,7 @@ Validation after each cluster:
 
 Deliverable: `core/kernel` no longer requires Zig source to build.
 
-## Phase 4: Replace Constants Generation
+## Phase 4: Replace Constants Generation (Deferred Transition Track)
 
 Remove the Zig comptime constants dependency.
 
@@ -1198,7 +1210,7 @@ Actions:
 
 Deliverable: constants no longer require Zig, and drift is testable.
 
-## Phase 5: Translate Native N-API Foundation
+## Phase 5: Translate Native N-API Foundation (Deferred Transition Track)
 
 Translate `core/posix-node/src/node.zig` before translating most POSIX modules.
 
@@ -1220,7 +1232,7 @@ Validation:
 
 Deliverable: a C N-API module skeleton can replace the Zig module skeleton.
 
-## Phase 6: Translate Native POSIX Modules
+## Phase 6: Translate Native POSIX Modules (Deferred Transition Track)
 
 Translate native addon modules from least risky to most risky.
 
@@ -1257,7 +1269,7 @@ Validation for each module:
 
 Deliverable: `core/posix-node` no longer requires Zig source to build.
 
-## Phase 7: Remove Core Zig Build Dependencies
+## Phase 7: Remove Core Zig Build Dependencies (Deferred Transition Track)
 
 After the C translations pass parity, remove the old source-language path.
 
@@ -1615,7 +1627,7 @@ Deliverable: the first Sage-relevant math dependency layer works with
 PARI's full mathematical smoke remains future Sage-facing work once SDK
 setjmp/longjmp support is available in the local runner.
 
-## Phase 16: Flip The Default
+## Phase 16: Flip The Default (Separate Transition Track)
 
 Only flip default wrapper behavior after parity.
 
@@ -1658,7 +1670,7 @@ Recommended gate:
 
 Deliverable: `wasi-sdk` becomes the default pinned toolchain provider.
 
-## Phase 17: Retire Old Zig Path
+## Phase 17: Retire Old Zig Path (Separate Transition Track)
 
 After the `wasi-sdk` path has been default for long enough to shake out
 regressions:
