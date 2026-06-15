@@ -567,6 +567,34 @@ Do not proceed to pip, extension imports, or broader package work until this
 allocator/startup trap is understood and `test-wasi-sdk-runtime-contracts`
 passes.
 
+June 2026 follow-up evidence narrows the blocker further:
+
+- the dylink loader now provides a side-module-local `env.__memory_size`
+  function derived from `dylink.0` memory metadata;
+- the SDK CPython wrapper can use `__memory_base` plus `__memory_size` to keep
+  side-module allocator calls from forwarding static-data, pre-load, or
+  out-of-linear-memory pointers to the main runtime allocator;
+- with that allocator guard in place, `./bin/python-wasi-sdk -S --version`
+  succeeds and reports `Python 3.14.6`;
+- `./bin/python-wasi-sdk -S -c 'pass'` still traps, but the failure has moved
+  past the original main-runtime `free` trap and now reaches CPython tuple/type
+  state during initialization/command compilation;
+- a build-tree diagnostic showed `_PyTuple_Resize` being called as a no-op
+  resize on an exact tuple with `size == newsize == 4` and `refcnt == 33`,
+  which trips CPython's uniqueness check before the same-size early return;
+- moving that same-size return ahead of the uniqueness check in the build tree
+  moved execution to a later initialization/deallocation trap, so it is useful
+  evidence but is not yet a source-level fix to land.
+- the later trap goes through `_Py_Dealloc` after the side module's active
+  element segment has been installed at `__table_base`; this makes the current
+  failure look like CPython startup/object lifetime or allocator state rather
+  than a missing table-base relocation.
+
+The next focused investigation should determine why the SDK build reaches
+`_PyTuple_Resize` with a shared tuple for a no-op resize, and whether that is a
+real CPython invariant violation caused by earlier object/refcount corruption
+or a harmless no-op resize that CoWasm can safely patch for this target.
+
 ## Order Of Work
 
 Recommended order:
@@ -1208,13 +1236,23 @@ Landed configure and core-compile probe details:
 
 Current runtime blocker:
 
-- `./bin/python-wasi-sdk -S -c 'print(1)'` traps in the main runtime `free`
-  during CPython startup, after `__main_argc_argv` is found and before runtime
-  contract tests can run. `PYTHONMALLOC=malloc`, disabling mimalloc in the
-  SDK build tree, forcing the old max-align value, and forcing a constructor
-  export do not avoid the trap. `DEBUG=dylink*` shows data relocations are
-  applied before startup. Treat this as an SDK side-module startup/object-layout
-  or imported-libc ABI problem, not as an install-layout or stdlib problem.
+- the original main-runtime `free` trap is avoided by giving side modules an
+  `env.__memory_size` import and guarding the SDK wrapper's allocator
+  forwarding to pointers outside the side module's static memory range;
+- `./bin/python-wasi-sdk -S --version` now starts far enough to report
+  `Python 3.14.6`;
+- `./bin/python-wasi-sdk -S -c 'pass'` and
+  `make -C python/cpython test-wasi-sdk-runtime-contracts` still trap during
+  CPython startup;
+- a build-tree `_PyTuple_Resize` no-op experiment moves past the tuple
+  uniqueness failure and reaches a later `_Py_Dealloc`/allocator trap, so do
+  not land that CPython source patch until the object lifetime issue is
+  understood;
+- `DEBUG=dylink:function-table,dylink:dlopen` shows the side module imports
+  with `__table_base` and its active element segment installed before
+  `__wasm_apply_data_relocs`, making the next blocker more likely CPython
+  startup/object lifetime or imported-libc allocator ABI state than install
+  layout or stdlib packaging.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 

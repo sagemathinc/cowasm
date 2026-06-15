@@ -349,6 +349,7 @@ export default class DlopenManger {
       memory: this.memory,
       __indirect_function_table: this.functionTable.table,
       __memory_base,
+      __memory_size: () => metadata.memorySize ?? 0,
       __table_base,
       __stack_pointer: new WebAssembly.Global(
         {

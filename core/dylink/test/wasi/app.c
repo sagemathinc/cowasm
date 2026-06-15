@@ -46,6 +46,7 @@ int add10(int n) {
 }
 
 typedef void* (*FUN0_PTR)();
+typedef int (*FUN_VOID_PTR)();
 
 EXPORTED_SYMBOL
 int add10b(int n) {
@@ -93,6 +94,13 @@ int repeated_dlopen_and_ctor_count() {
   return (*f1)(0);
 }
 
+EXPORTED_SYMBOL
+int side_memory_size_is_positive() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "side_memory_size_is_positive");
+  return (*f)();
+}
+
 // This is going to get called by the dynamic library to do something.
 EXPORTED_SYMBOL
 int add5077(int n) { return n + 5077; }
@@ -125,6 +133,9 @@ int main() {
 
   printf("repeated_dlopen_and_ctor_count() = %d\n", repeated_dlopen_and_ctor_count());
   assert(repeated_dlopen_and_ctor_count() == 1);
+
+  printf("side_memory_size_is_positive() = %d\n", side_memory_size_is_positive());
+  assert(side_memory_size_is_positive() == 1);
 
   int n = add5077_using_lib_using_main(389);
   printf("add5077_using_lib_using_main(389) = %d\n", n);

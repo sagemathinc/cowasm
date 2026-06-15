@@ -10,6 +10,7 @@ static int* y_ptr = &y;
 extern int main_value;
 static int* main_value_ptr = &main_value;
 static int ctor_counter = 0;
+extern size_t __memory_size(void);
 
 __attribute__((constructor))
 static void dynamic_library_ctor(void) {
@@ -36,6 +37,9 @@ int add_main_data_relocation(const int a) { return a + *main_value_ptr; }
 
 EXPORTED_SYMBOL
 int ctor_count(const int unused) { return ctor_counter + unused * 0; }
+
+EXPORTED_SYMBOL
+int side_memory_size_is_positive(void) { return __memory_size() > 0; }
 
 // This illustrates calling a function that is
 // defined in the main app.c.

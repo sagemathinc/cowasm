@@ -3,12 +3,24 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netdb.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 extern void wasmSendString(const char *ptr, size_t len);
 extern void wasmSetException(void);
+extern unsigned char __memory_base;
+extern void *cowasm_env_malloc(size_t size)
+    __attribute__((import_module("env"), import_name("malloc")));
+extern void *cowasm_env_calloc(size_t nelem, size_t elsize)
+    __attribute__((import_module("env"), import_name("calloc")));
+extern void *cowasm_env_realloc(void *ptr, size_t size)
+    __attribute__((import_module("env"), import_name("realloc")));
+extern void cowasm_env_free(void *ptr)
+    __attribute__((import_module("env"), import_name("free")));
+extern uintptr_t cowasm_memory_size(void)
+    __attribute__((import_module("env"), import_name("__memory_size")));
 
 #ifndef HOST_NOT_FOUND
 #define HOST_NOT_FOUND 1
@@ -34,6 +46,50 @@ getipnodebyaddr(const void *addr, size_t len, int af, int *error_num)
 void
 freehostent(struct hostent *ent)
 {
+}
+
+static int
+is_forwardable_runtime_pointer(const void *ptr)
+{
+    uintptr_t p = (uintptr_t)ptr;
+    uintptr_t base = (uintptr_t)&__memory_base;
+    uintptr_t side_module_end = base + cowasm_memory_size();
+    uintptr_t linear_memory_size =
+        (uintptr_t)__builtin_wasm_memory_size(0) * 65536;
+    return p >= side_module_end && p < linear_memory_size;
+}
+
+void *
+malloc(size_t size)
+{
+    return cowasm_env_malloc(size);
+}
+
+void *
+calloc(size_t nelem, size_t elsize)
+{
+    return cowasm_env_calloc(nelem, elsize);
+}
+
+void *
+realloc(void *ptr, size_t size)
+{
+    if (ptr == NULL) {
+        return malloc(size);
+    }
+    if (!is_forwardable_runtime_pointer(ptr)) {
+        return malloc(size);
+    }
+    return cowasm_env_realloc(ptr, size);
+}
+
+void
+free(void *ptr)
+{
+    if (ptr == NULL || !is_forwardable_runtime_pointer(ptr)) {
+        return;
+    }
+    cowasm_env_free(ptr);
 }
 
 char *
