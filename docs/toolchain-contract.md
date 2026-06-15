@@ -575,6 +575,18 @@ compatibility shims for Qhull paths that the minimal initialization probe does
 not exercise. It installs into `core/qhull/dist/wasi-sdk`, leaving the default
 Zig-backed package untouched.
 
+`core/sqlite` has the same opt-in Autoconf static-library smoke shape:
+
+```sh
+make -C core/sqlite test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, configures SQLite without optional zlib,
+readline, and math dependencies, builds `libsqlite3.a` with
+`COWASM_TOOLCHAIN=wasi-sdk`, then links and runs an in-memory query probe
+through the WASI runner. It installs into `core/sqlite/dist/wasi-sdk`, leaving
+the default Zig-backed package untouched.
+
 The bootstrap currently installs `wasi-sdk-33.0` under
 `core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
 driver names into `bin/`:

@@ -15,6 +15,8 @@ TARBALL = ${UPSTREAM}/sqlite-${VERSION}.tar.gz
 TARBALL_SHA256 = 32bba6d607cd33b014efa47bce93a5711c8c5cde55229307e1da514cc1e57f7c
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)
@@ -56,6 +58,30 @@ clean-clang:
 	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
 
 clean:: clean-clang
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
+	cp ${SRC}/config.site ${BUILD_WASI_SDK}
+	cd ${BUILD_WASI_SDK} && cat ${SRC}/patches/00-syscall.patch | patch -p1
+	cd ${BUILD_WASI_SDK} && cat ${SRC}/patches/01-shell.patch | patch -p1
+	touch ${BUILD_WASI_SDK}/.patched
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.patched
+	cd ../build && make wasi-sdk-next
+	NATIVE_CC="zig cc ${ZIG_NATIVE_CFLAGS_GNU}" \
+		${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN}
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk
 
 # Notes on flags below.
 #   - ?? MAYBE ?? Without -Oz (optimize for size rather than speed), we get 'Function addresses
