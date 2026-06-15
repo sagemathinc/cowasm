@@ -1440,8 +1440,9 @@ Current runtime status:
   runs SDK `ensurepip`, verifies `import pip`, and checks `python-wasi-sdk -m
   pip` usage output;
 - `make -C python/cpython test-wasi-sdk-regrtest-smoke` runs CPython's native
-  regrtest harness against `python-wasi-sdk` for `test_atexit` and
-  `test_base64`.
+  regrtest harness against `python-wasi-sdk` for a 12-test smoke covering
+  startup, base64, calendar, compile, f-strings, graphlib, hashing, module
+  semantics, ntpath, py_compile, quopri, and struct behavior.
 
 Remaining Phase 14 work:
 
