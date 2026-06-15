@@ -524,12 +524,16 @@ make test-wasi-sdk
 ```
 
 That top-level scheduled check runs the lower-level bootstrap and dylink
-contracts, plus the first package-level standalone smoke:
+contracts, the landed package-level standalone smokes, the SDK CPython
+supported-suite gate, and the Sage-relevant math probes. The same checks are
+also available as named groups:
 
 ```sh
-make -C core/build test-wasi-sdk-next
-make -C core/dylink test-wasi-sdk-next
-make -C core/zlib test-wasi-sdk-standalone
+make test-wasi-sdk-bootstrap
+make test-wasi-sdk-dylink
+make test-wasi-sdk-packages
+make test-wasi-sdk-python
+make test-wasi-sdk-math
 ```
 
 `core/zlib` has the first package-level standalone smoke target for this

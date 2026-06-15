@@ -457,6 +457,8 @@ the evidence base for later default-flip decisions:
   the POSIX compatibility layer;
 - `make -C core/coreutils test-wasi-sdk-standalone` currently builds focused
   basename/dirname standalone command smokes;
+- `make -C core/f2c test-wasi-sdk-standalone` builds the Fortran-to-C runtime
+  archive and runs a translated Fortran smoke;
 - `make -C sagemath/pari test-wasi-sdk-standalone` builds PARI against SDK GMP
   and runs a mathematical `gp` smoke when SDK setjmp/longjmp support is usable
   in the local runner.
@@ -1362,6 +1364,7 @@ Additional simple package probes now landed:
 - `core/freetype`;
 - `core/libffi`;
 - `core/qhull`;
+- `core/f2c`;
 - focused `core/coreutils` basename/dirname smokes.
 
 For each package:
@@ -1504,7 +1507,7 @@ Current runtime status:
 - `make -C python/cpython test-wasi-sdk-extension-imports` imports `_json`,
   `pyexpat`, `zlib`, `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, `_codecs_cn`,
   `_codecs_hk`, `_codecs_iso2022`, `_codecs_jp`, `_codecs_kr`, and
-  `_codecs_tw`, and `_hashlib` from
+  `_codecs_tw`, `_hashlib`, and `_ctypes` from
   `dist/wasi-sdk/lib/python3.14/lib-dynload` and verifies their basic runtime
   behavior;
 - `make -C python/cpython test-wasi-sdk-pip` patches the bundled pip wheel,
@@ -1520,9 +1523,11 @@ Current runtime status:
 
 Optional Phase 14 follow-up:
 
-- decide whether heavier optional extensions such as `_ssl`, `_ctypes`, and
+- decide whether heavier optional extensions such as socket-enabled `_ssl` and
   `_curses` should become required SDK gates before default wrapper behavior
-  changes.
+  changes;
+- decide whether `_ctypes` should graduate from the current import/layout gate
+  to full foreign-call support.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 
@@ -1556,9 +1561,13 @@ Only flip default wrapper behavior after parity.
 Current pre-flip gate:
 
 - top-level `make test-wasi-sdk` now aggregates the pinned SDK bootstrap,
-  dylink, POSIX compatibility, compression/database dependency probes,
-  CPython's supported-suite target, GMP, and the PARI probe with its existing
-  setjmp/longjmp skip behavior.
+  dylink, all landed package-level standalone probes, CPython's
+  supported-suite target, GMP, and the PARI probe with its existing
+  setjmp/longjmp skip behavior;
+- the root gate is split into named subgroups for targeted scheduled runs:
+  `test-wasi-sdk-bootstrap`, `test-wasi-sdk-dylink`,
+  `test-wasi-sdk-packages`, `test-wasi-sdk-python`, and
+  `test-wasi-sdk-math`.
 
 Minimum gate:
 
@@ -1664,11 +1673,8 @@ implementation code.
   tests will not catch?
 - When, if ever, should CoWasm start investigating `wasm32-wasip2` component
   artifacts?
-- Which heavier CPython extension should be the next SDK import gate:
-  socket-enabled `_ssl`, `_ctypes`, or `_curses`?
-- How much of the root `make test-wasi-sdk` target should include by default
-  before the SDK path becomes a release gate, given the growing number of
-  package probes?
+- Which heavier CPython extension or behavior should be the next SDK gate:
+  socket-enabled `_ssl`, `_curses`, or full `_ctypes` foreign-call support?
 
 ## Risks
 

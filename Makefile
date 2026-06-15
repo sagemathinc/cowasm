@@ -146,16 +146,48 @@ test-bin: all
 	./bin/sqlite3-wasm  --version
 
 .PHONY: test-wasi-sdk
-test-wasi-sdk:
+test-wasi-sdk: test-wasi-sdk-bootstrap test-wasi-sdk-dylink test-wasi-sdk-packages test-wasi-sdk-python test-wasi-sdk-math
+
+.PHONY: test-wasi-sdk-bootstrap
+test-wasi-sdk-bootstrap:
 	$(MAKE) -C core/build test-wasi-sdk-next
+
+.PHONY: test-wasi-sdk-dylink
+test-wasi-sdk-dylink:
 	$(MAKE) -C core/dylink test-wasi-sdk-next
+
+.PHONY: test-wasi-sdk-packages
+test-wasi-sdk-packages:
 	$(MAKE) -C core/posix-wasm test-wasi-sdk-standalone
 	$(MAKE) -C core/zlib test-wasi-sdk-standalone
 	$(MAKE) -C core/bzip2 test-wasi-sdk-standalone
 	$(MAKE) -C core/lzma test-wasi-sdk-next
 	$(MAKE) -C core/sqlite test-wasi-sdk-next
 	$(MAKE) -C core/termcap test-wasi-sdk-standalone
+	$(MAKE) -C core/lua test-wasi-sdk-next
+	$(MAKE) -C core/libedit test-wasi-sdk-next
+	$(MAKE) -C core/ncurses test-wasi-sdk-next
+	$(MAKE) -C core/less test-wasi-sdk-next
+	$(MAKE) -C core/tar test-wasi-sdk-next
+	$(MAKE) -C core/openssl test-wasi-sdk-next
+	$(MAKE) -C core/libgit2 test-wasi-sdk-next
+	$(MAKE) -C core/libpng test-wasi-sdk-standalone
+	$(MAKE) -C core/freetype test-wasi-sdk-standalone
+	$(MAKE) -C core/libffi test-wasi-sdk-next
+	$(MAKE) -C core/qhull test-wasi-sdk-standalone
+	$(MAKE) -C core/libcxx test-wasi-sdk-standalone
+	$(MAKE) -C core/dash test-wasi-sdk-standalone
+	$(MAKE) -C core/rogue test-wasi-sdk-standalone
+	$(MAKE) -C core/man test-wasi-sdk-standalone
+	$(MAKE) -C core/coreutils test-wasi-sdk-standalone
+	$(MAKE) -C core/f2c test-wasi-sdk-standalone
+
+.PHONY: test-wasi-sdk-python
+test-wasi-sdk-python:
 	$(MAKE) -C python/cpython test-wasi-sdk-supported
+
+.PHONY: test-wasi-sdk-math
+test-wasi-sdk-math:
 	$(MAKE) -C sagemath/gmp test-wasi-sdk-next
 	$(MAKE) -C sagemath/pari test-wasi-sdk-standalone
 
