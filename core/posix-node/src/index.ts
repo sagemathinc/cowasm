@@ -1,14 +1,14 @@
 import { log } from "./logging";
 
-// Map from nodejs to zig descriptions:
-const nodeToZig = {
+// Map from nodejs platform names to packaged native addon names.
+const nodeToNative = {
   arm64: "aarch64",
   x64: "x86_64",
   linux: "linux-gnu",
   darwin: "macos",
 };
 
-const name = `${nodeToZig[process.arch]}-${nodeToZig[process.platform]}`;
+const name = `${nodeToNative[process.arch]}-${nodeToNative[process.platform]}`;
 
 const LINUX_ONLY = [
   "getresuid",
@@ -407,7 +407,7 @@ try {
         if (attrs == null) {
           attrs = {};
         } else {
-          // from Set([...]) to [...], which is easier to work with from Zig via node api.
+          // from Set([...]) to [...], which is easier for the native addon.
           if (attrs.sigmask != null) {
             attrs.sigmask = Array.from(attrs.sigmask);
           }

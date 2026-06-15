@@ -1,8 +1,6 @@
-# Missing Posix Functions for Node.js -- via a native module written in Zig
+# Missing Posix Functions for Node.js -- via a native C module
 
-`posiz-zig` is a Node.js native module written using Zig that provides access to Posix functions not in node that are needed to fully support WebAssembly modules. It includes precompiled binaries for `[x86_64/aarch64]-[macos/linux]`, and falls back to empty functionality on all other platforms.  In particular, this doesn't support any functionality on Windows yet.  On Windows, the import provides an empty collection of functions.
-
-This builds using the new _**self\-hosted stage2**_ zig compiler.
+`posix-node` is a Node.js native module written in C that provides access to Posix functions not in node that are needed to fully support WebAssembly modules. It includes native binaries for `[x86_64/aarch64]-[macos/linux]`, and falls back to empty functionality on all other platforms. In particular, this doesn't support any functionality on Windows yet. On Windows, the import provides an empty collection of functions.
 
 Install it:
 
@@ -116,15 +114,11 @@ getaddrinfo: (
 ## Why?
 
 There is an [npm module called posix](https://www.npmjs.com/package/posix), which claims to provide _"The missing POSIX system calls for Node."_, but there are many calls that I want that are missing, at least for
-my application to https://cowasm.org/, since CPython exposes much of Posix. Also, the Zig code here is hopefully likely to be easier to maintain and extend. The [posix npm module](https://www.npmjs.com/package/posix) also has a [high severity vulnerability](https://github.com/ohmu/node-posix/issues/66), but hasn't been updated in a while \(see note below\).
+my application to https://cowasm.org/, since CPython exposes much of Posix. The [posix npm module](https://www.npmjs.com/package/posix) also has a [high severity vulnerability](https://github.com/ohmu/node-posix/issues/66), but hasn't been updated in a while \(see note below\).
 
-## Why Zig?
+## Native addon build
 
-[Zig](https://ziglang.org/) is very easy to install, and makes it simple to cross compile for many architectures, and provides much better compile time sanity checks than C.
-
-I'm not using [node\-gyp](https://github.com/nodejs/node-gyp) since I have a
-specific target list of platforms where I need this module to work, and using
-Zig I can easily build binaries for all of them.  It's also very important to build for all supported platforms as part of the dev process, since the precise details of how these functions are implemented depends on the platform.  The binaries are small, since they are just lightweight wrappers around calls to libc, which is dynamically linked by the operating system. I can thus include all target binaries with the npm package, and it is still only 1.2MB.
+The addon is intentionally a thin C layer over libc and Node N-API. The exact behavior is platform-dependent, so supported native targets should be built and tested on their corresponding operating systems.
 
 ## Also posix\-browser
 
@@ -132,7 +126,7 @@ We also plan to build a [browser analogue called posix-browser](https://www.npmj
 
 ## License and acknowledgements
 
-This is licensed BSD-3 clause. The template for using Zig to build node.js native modules is https://github.com/staltz/zig-nodejs-example
+This is licensed BSD-3 clause.
 
 ## CVE-2022-21211 in the posix package
 
@@ -153,4 +147,3 @@ try {
 }
 console.log("but we ok");
 ```
-

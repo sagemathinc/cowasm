@@ -1,18 +1,20 @@
 include ../build/Makefile-vars
 
-# Notes:
-#   - using -OReleaseSmall or -OReleaseFast with zig v 0.10.0-dev.4161+dab5bb924 cause a segfault.
-#   - using -OReleaseSafe breaks some tests.
-#   - the default -ODebug works fine with all tests passing.  I'm fine with this settting, since this code
-#     is really a wrapper layer to the underlying C library between Javascript and WASM, and the
-#     Javascript overhead is orders of magnitude more.
-OPTS = -mcpu=baseline -ODebug
+ifeq ($(UNAME_S),Linux)
+  NATIVE_NODE_TARGET = $(if $(filter $(UNAME_M),aarch64 arm64),aarch64-linux-gnu,x86_64-linux-gnu)
+  NODE_LDFLAGS =
+else
+  NATIVE_NODE_TARGET = $(if $(filter $(UNAME_M),arm64),aarch64-macos,x86_64-macos)
+  NODE_LDFLAGS = -undefined dynamic_lookup
+endif
+
+NODE_CFLAGS = -O2 -fPIC -Wall -Wextra -Wno-unused-parameter
 
 all: ${DIST}/.built
 
 include ../build/Makefile-rules
 
-${DIST}/.built: dist/index.js dist/aarch64-macos.node dist/x86_64-macos.node dist/aarch64-linux-gnu.node dist/x86_64-linux-gnu.node
+${DIST}/.built: dist/index.js dist/${NATIVE_NODE_TARGET}.node
 	touch dist/.built
 
 build/headers:
@@ -26,10 +28,9 @@ dist/index.js: src/index.ts node_modules
 	pnpm exec tsc -b
 
 # Make an "automatic rules pattern".
-dist/%.node: build/headers $(shell find src/*.zig -type f)
-	cd ../build && make zig
+dist/%.node: build/headers ${SRC}/addon.c
 	mkdir -p ${DIST}
-	zig build-lib ${OPTS} --cache-dir ${BUILD}/zig-cache -dynamic -lc -isystem ${BUILD}/headers/include/node ${SRC}/lib.zig -fallow-shlib-undefined -target $* -femit-bin=$@
+	cc ${NODE_CFLAGS} -I${BUILD}/headers/include/node -shared ${SRC}/addon.c ${NODE_LDFLAGS} -o $@
 
 dist/aarch64-macos.node:
 dist/x86_64-macos.node:
@@ -43,4 +44,3 @@ test: all
 	@# for "make test"; do "npm run test" for the 2x faster cached testing.
 	@# pnpm run test-no-cache
 	pnpm run test
-
