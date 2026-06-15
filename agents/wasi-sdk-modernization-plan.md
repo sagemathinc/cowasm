@@ -1478,19 +1478,28 @@ Optional Phase 14 follow-up:
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 
-## Phase 15: Sage-Relevant Math Packages
+## Phase 15: Sage-Relevant Math Packages (GMP Landed)
 
 After CPython and basic extension behavior:
 
-1. `sagemath/gmp` (probe target landed)
+1. `sagemath/gmp` (probe target landed and validated)
 2. `sagemath/pari` (standalone probe target landed, with a local
    setjmp/longjmp capability skip when unsupported)
 3. high-value Sagelite dependencies selected by mathematical payoff
 
 Each package should have mathematical smoke tests, not just build tests.
 
+Current status:
+
+- `make -C sagemath/gmp test-wasi-sdk-next` builds SDK GMP and passes the
+  large-integer mathematical smoke under the standalone WASI runner;
+- `make -C sagemath/pari test-wasi-sdk-standalone` reaches the existing local
+  skip because this pinned SDK runner does not provide the setjmp/longjmp
+  support PARI needs.
+
 Deliverable: one Sage-relevant math dependency layer works with `wasi-sdk` and
-keeps the long-term SageMath-in-WebAssembly direction viable.
+keeps the long-term SageMath-in-WebAssembly direction viable. PARI remains the
+next Sage-facing blocker once SDK setjmp/longjmp support is available.
 
 ## Phase 16: Flip The Default
 
@@ -1634,7 +1643,8 @@ The modernization is successful when:
 - CPython starts, passes runtime contracts, imports representative stdlib
   modules, imports package-backed dynamic extensions, and then passes the
   supported suite.
-- GMP and PARI pass with mathematical smokes.
+- GMP passes with a mathematical smoke; PARI's mathematical smoke is gated on
+  usable SDK setjmp/longjmp support.
 - Modern Zig and direct LLVM/lld probes remain optional comparison paths, not
   required foundations.
 
