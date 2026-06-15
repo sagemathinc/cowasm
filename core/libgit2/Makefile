@@ -116,6 +116,9 @@ test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
 	cd ../build && make wasi-sdk-next
 	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CWD}/../zlib/dist/wasi-sdk ${SRC}
 
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: test-wasi-sdk-standalone
+
 .PHONY: clean-wasi-sdk
 clean-wasi-sdk:
 	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
