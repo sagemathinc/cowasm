@@ -1,4 +1,5 @@
 import bz2
+import importlib
 import json
 import lzma
 import sqlite3
@@ -132,6 +133,29 @@ class WasiSdkExtensionImportTests(unittest.TestCase):
     def test_unicodedata_normalization(self):
         self.assertEqual(unicodedata.normalize("NFC", "e\u0301"), "\u00e9")
         self.assertEqual(unicodedata.name("\u03c0"), "GREEK SMALL LETTER PI")
+
+    def test_cjk_codec_extensions_import_from_lib_dynload(self):
+        suffix = sysconfig.get_config_var("EXT_SUFFIX")
+        for name in (
+            "_codecs_cn",
+            "_codecs_hk",
+            "_codecs_iso2022",
+            "_codecs_jp",
+            "_codecs_kr",
+            "_codecs_tw",
+        ):
+            with self.subTest(name=name):
+                module = importlib.import_module(name)
+                self.assertTrue(
+                    module.__file__.endswith(f"/lib-dynload/{name}{suffix}"),
+                    module.__file__,
+                )
+
+    def test_cjk_codecs_are_registered(self):
+        for encoding in ("gb18030", "big5", "cp932", "euc_kr", "shift_jis"):
+            with self.subTest(encoding=encoding):
+                encoded = "cowasm".encode(encoding)
+                self.assertEqual(encoded.decode(encoding), "cowasm")
 
 
 if __name__ == "__main__":

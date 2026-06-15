@@ -202,6 +202,7 @@ WASI_SDK_BZ2_EXTENSION = _bz2.${PYTHON_PLATFORM}.so
 WASI_SDK_LZMA_EXTENSION = _lzma.${PYTHON_PLATFORM}.so
 WASI_SDK_SQLITE3_EXTENSION = _sqlite3.${PYTHON_PLATFORM}.so
 WASI_SDK_UNICODEDATA_EXTENSION = unicodedata.${PYTHON_PLATFORM}.so
+WASI_SDK_CJK_CODEC_EXTENSIONS = _codecs_cn.${PYTHON_PLATFORM}.so _codecs_hk.${PYTHON_PLATFORM}.so _codecs_iso2022.${PYTHON_PLATFORM}.so _codecs_jp.${PYTHON_PLATFORM}.so _codecs_kr.${PYTHON_PLATFORM}.so _codecs_tw.${PYTHON_PLATFORM}.so
 
 ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
@@ -557,8 +558,29 @@ ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_UNICODEDATA_EXTENSION}
 	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
 	cp ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
 
+${BUILD_WASI_SDK}/.cjk-codecs-extensions-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.configured test-wasi-sdk-archive
+	rm -f $(addprefix ${BUILD_WASI_SDK}/Modules/,${WASI_SDK_CJK_CODEC_EXTENSIONS})
+	cd ${BUILD_WASI_SDK} && \
+		COWASM_TOOLCHAIN=wasi-sdk \
+		make CONFIGURE_LDFLAGS_NODIST= $(addprefix Modules/,${WASI_SDK_CJK_CODEC_EXTENSIONS})
+	for extension in ${WASI_SDK_CJK_CODEC_EXTENSIONS}; do \
+		module=$${extension%.${PYTHON_PLATFORM}.so}; \
+		wasm-objdump -h ${BUILD_WASI_SDK}/Modules/$${extension} | grep -F 'dylink.0'; \
+		wasm-objdump -x ${BUILD_WASI_SDK}/Modules/$${extension} | grep -F '<- env.memory'; \
+		${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/$${extension} | grep "^PyInit_$${module}$$"; \
+		! wasm-objdump -x ${BUILD_WASI_SDK}/Modules/$${extension} | grep 'needed_dynlibs'; \
+	done
+	touch ${BUILD_WASI_SDK}/.cjk-codecs-extensions-built
+
+${DIST_WASI_SDK}/.cjk-codecs-extensions-installed: ${DIST_WASI_SDK}/.install-cpython ${BUILD_WASI_SDK}/.cjk-codecs-extensions-built
+	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
+	cp $(addprefix ${BUILD_WASI_SDK}/Modules/,${WASI_SDK_CJK_CODEC_EXTENSIONS}) ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
+	touch ${DIST_WASI_SDK}/.cjk-codecs-extensions-installed
+
+WASI_SDK_EXTENSION_IMPORT_DEPS = ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_PYEXPAT_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_BZ2_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_LZMA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_SQLITE3_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_UNICODEDATA_EXTENSION} ${DIST_WASI_SDK}/.cjk-codecs-extensions-installed
+
 .PHONY: test-wasi-sdk-extension-imports
-test-wasi-sdk-extension-imports: ${BIN}/python-wasi-sdk ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_PYEXPAT_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_BZ2_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_LZMA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_SQLITE3_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_UNICODEDATA_EXTENSION}
+test-wasi-sdk-extension-imports: ${BIN}/python-wasi-sdk ${WASI_SDK_EXTENSION_IMPORT_DEPS}
 	${CWD}/bin/python-wasi-sdk ${SRC}/wasi_sdk_extension_import_tests.py
 
 ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
@@ -771,6 +793,12 @@ test: wasm native ${BIN}/python-wasm test-pip
 	cd ${BUILD_WASM} && PATH=${TEST_PATH} ${RUN_TESTS}  -j4 --timeout=600 ${SUPPORTED_TESTS}
 	echo "Ran ${SUPPORTED_TEST_DESC}"
 .PHONY: test
+
+test-wasi-sdk-supported: native ${BIN}/python-wasi-sdk ${WASI_SDK_EXTENSION_IMPORT_DEPS} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/site-packages/pip/.built
+	echo "Running ${SUPPORTED_TEST_DESC} under WASI SDK"
+	cd ${BUILD_WASI_SDK} && PATH=${TEST_PATH} ${RUN_WASI_SDK_TESTS} -j4 --timeout=600 ${SUPPORTED_TESTS}
+	echo "Ran ${SUPPORTED_TEST_DESC} under WASI SDK"
+.PHONY: test-wasi-sdk-supported
 
 PASSED_WITHOUT_SUBPROCESS_DESC = "These tests all passed without subprocess or socket support enabled, but fail with it."
 PASSED_WITHOUT_SUBPROCESS = test_timeout test_stat test_robotparser test_nntplib test_largefile test_logging test_audit test_bytes test_c_locale_coercion test_cmd_line_script test_compileall test_coroutines test_exceptions test_gc test_json test_marshal test_runpy test_site  test_traceback test_unicode test_utf8_mode test_warnings

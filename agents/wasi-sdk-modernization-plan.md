@@ -738,6 +738,17 @@ The SDK CPython `unicodedata` extension probe is also landed:
 - it imports `unicodedata` under `python-wasi-sdk` and checks normalization and
   Unicode-name lookup behavior.
 
+The SDK CPython CJK codec extension batch is also landed:
+
+- `make -C python/cpython test-wasi-sdk-extension-imports` also builds
+  `_codecs_cn`, `_codecs_hk`, `_codecs_iso2022`, `_codecs_jp`, `_codecs_kr`,
+  and `_codecs_tw` as SDK side modules;
+- the target applies the same shared-module guardrails as the other SDK
+  extension probes and installs the codec side modules into
+  `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports each codec module under `python-wasi-sdk` and checks representative
+  CJK codec round trips.
+
 SDK pip/ensurepip behavior is also landed:
 
 - CPython's SDK pyconfig overlay now exposes runtime-resolved `getuid`,
@@ -751,9 +762,20 @@ SDK pip/ensurepip behavior is also landed:
 - the target runs `python-wasi-sdk -m ensurepip`, verifies `import pip`, and
   checks that `python-wasi-sdk -m pip` reaches the usage output.
 
-Remaining Phase 14 extension work can now move to heavier optional modules such
-as `_ssl`/`_hashlib`, `_ctypes`, and `_curses`, alongside broader CPython test
-coverage.
+The SDK CPython supported-suite gate is also landed:
+
+- `make -C python/cpython test-wasi-sdk-supported` runs the existing
+  `SUPPORTED_TESTS` suite against `python-wasi-sdk`;
+- the target depends on the SDK extension import artifacts and patched pip
+  bootstrap so tests such as `test_bz2`, `test_lzma`, `test_ensurepip`,
+  `test_pyexpat`, `test_multibytecodec`, and the CJK codec tests exercise the
+  intended side modules;
+- the current run passes all 233 supported CPython test files under the SDK
+  path.
+
+Remaining Phase 14 extension work can now focus on whether heavier optional
+modules such as `_ssl`/`_hashlib`, `_ctypes`, and `_curses` should become
+required gates before default wrapper behavior changes.
 
 ## Order Of Work
 
@@ -1359,7 +1381,7 @@ Actions:
 Deliverable: C++ and Python-extension dynamic module rules are explicit and
 tested under `wasi-sdk`.
 
-## Phase 14: CPython (Partly Landed)
+## Phase 14: CPython (Landed)
 
 Only after the prior phases are green:
 
@@ -1370,10 +1392,10 @@ Only after the prior phases are green:
 - run focused SDK runtime contracts (landed);
 - run focused SDK stdlib/sysconfig imports (landed);
 - run focused SDK dynamic-extension imports for `_json`, `pyexpat`, `zlib`,
-  `_bz2`, `_lzma`, `_sqlite3`, and `unicodedata` (landed);
+  `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, and the CJK codec side modules
+  (landed);
 - run SDK pip/ensurepip behavior (landed);
-- run the supported CPython test suite (remaining);
-- inspect failures before broad package work.
+- run the supported CPython test suite (landed).
 
 Pay special attention to:
 
@@ -1433,9 +1455,10 @@ Current runtime status:
   and sysconfig import smoke, including the process identity and `umask`
   surface needed by pip;
 - `make -C python/cpython test-wasi-sdk-extension-imports` imports `_json`,
-  `pyexpat`, `zlib`, `_bz2`, `_lzma`, `_sqlite3`, and `unicodedata` from
-  `dist/wasi-sdk/lib/python3.14/lib-dynload` and verifies their basic runtime
-  behavior;
+  `pyexpat`, `zlib`, `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, `_codecs_cn`,
+  `_codecs_hk`, `_codecs_iso2022`, `_codecs_jp`, `_codecs_kr`, and
+  `_codecs_tw` from `dist/wasi-sdk/lib/python3.14/lib-dynload` and verifies
+  their basic runtime behavior;
 - `make -C python/cpython test-wasi-sdk-pip` patches the bundled pip wheel,
   runs SDK `ensurepip`, verifies `import pip`, and checks `python-wasi-sdk -m
   pip` usage output;
@@ -1443,10 +1466,12 @@ Current runtime status:
   regrtest harness against `python-wasi-sdk` for a 12-test smoke covering
   startup, base64, calendar, compile, f-strings, graphlib, hashing, module
   semantics, ntpath, py_compile, quopri, and struct behavior.
+- `make -C python/cpython test-wasi-sdk-supported` runs the existing
+  supported-by-python-wasm CPython suite against `python-wasi-sdk`; the current
+  SDK path passes all 233 supported test files.
 
-Remaining Phase 14 work:
+Optional Phase 14 follow-up:
 
-- expand from the SDK regrtest smoke to the supported CPython test suite;
 - decide whether heavier optional extensions such as `_ssl`/`_hashlib`,
   `_ctypes`, and `_curses` should become required SDK gates before default
   wrapper behavior changes.
