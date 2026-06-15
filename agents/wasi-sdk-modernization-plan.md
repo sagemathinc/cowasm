@@ -381,6 +381,22 @@ The `core/less` Phase 12 package probe is also partially landed:
 - `make -C core/less test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
+The `core/tar` Phase 12 package probe is also partially landed:
+
+- `make -C core/tar test-wasi-sdk-standalone` builds libarchive with
+  `COWASM_TOOLCHAIN=wasi-sdk`;
+- the probe first builds the SDK zlib, bzip2, and lzma dependencies;
+- it supplies standalone compatibility shims for wait, termios, network
+  lookup, passwd/group lookup, process IDs, and archive child-process hooks;
+- it installs `libarchive.a`, archive headers, pkg-config metadata, `tar`,
+  `cat`, `cpio`, and man pages into `dist/wasi-sdk`;
+- it checks `tar -h`, `cat --version`, and `cpio --version` under the
+  standalone WASI runner;
+- it creates and extracts a tar archive under the standalone WASI runner and
+  compares the extracted file content;
+- `make -C core/tar test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name.
+
 ## Order Of Work
 
 Recommended order:
@@ -931,7 +947,7 @@ Suggested order:
 1. `core/libedit` (probe target landed)
 2. `core/ncurses` (probe target landed)
 3. `core/less` (probe target landed)
-4. `core/tar`
+4. `core/tar` (probe target landed)
 5. `core/openssl`
 6. `core/libgit2`
 

@@ -86,6 +86,9 @@ test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.patched
 		${CWD}/../lzma/dist/wasi-sdk \
 		${SRC}
 
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: test-wasi-sdk-standalone
+
 .PHONY: clean-wasi-sdk
 clean-wasi-sdk:
 	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
