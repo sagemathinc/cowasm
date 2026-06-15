@@ -9,6 +9,8 @@ URL = https://www.thrysoee.dk/editline/libedit-${VERSION}.tar.gz
 TARBALL_SHA256 = 6792a6a992050762edcca28ff3318cdb7de37dccf7bc30db59fcd7017eed13c5
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 include ../build/Makefile-rules
 
@@ -40,6 +42,28 @@ clean-clang:
 	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
 
 clean:: clean-clang
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
+	cp -rv src/* ${BUILD_WASI_SDK}/src/
+	cd ${BUILD_WASI_SDK}/src/ && patch -p0 < readline.patch
+	touch ${BUILD_WASI_SDK}/.patched
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.patched
+	$(MAKE) -C ../termcap test-wasi-sdk-standalone
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CWD}/../termcap/dist/wasi-sdk
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk
 
 ##################
 # NATIVE
