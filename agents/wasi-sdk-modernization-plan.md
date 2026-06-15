@@ -253,9 +253,8 @@ The focused `core/dylink` Phase 10 test expansion is also landed:
 
 This status changes the immediate work: do not re-implement the bootstrap, the
 basic wrapper selector, the Phase 9 archive probe, or the Phase 10 focused
-dylink compatibility tests. The Phase 11 simple package probe targets are also
-covered. The next blocker is Phase 12 runtime-adjacent package work, starting
-with `core/libedit`.
+dylink compatibility tests. The Phase 11, Phase 12, and Phase 13 probe targets
+are also covered. The next blocker is Phase 14 CPython work.
 
 The first Phase 11 package probe is partially landed for `core/zlib`:
 
