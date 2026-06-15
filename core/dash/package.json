@@ -8,7 +8,8 @@
     "preinstall": "npx only-allow pnpm",
     "build": "make wasm",
     "prepublishOnly": "npm run build && make test",
-    "test": "make test"
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
   },
   "repository": {
     "type": "git",

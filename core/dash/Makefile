@@ -13,6 +13,10 @@ TARBALL_SHA256 = 145447c4514524384bdd7a0ad0c16d7d1b72b51e3022a70b848ff6986317565
 LIBEDIT_WASM = $(shell cowasm-package-path @cowasm/libedit)
 TERMCAP_WASM = $(shell cowasm-package-path @cowasm/termcap)
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
+LIBEDIT_WASI_SDK = ${CWD}/../libedit/dist/wasi-sdk
+TERMCAP_WASI_SDK = ${CWD}/../termcap/dist/wasi-sdk
 
 all: deps wasm ${BIN}/dash-wasm-raw
 
@@ -69,3 +73,38 @@ test: node_modules ${DIST_WASM}/.built
 	echo "echo \$$((389*5077))" | cowasm ${DIST_WASM}/bin/dash | grep 1974953
 	# test that a syntax error doesn't terminate the shell (i.e., no longjmp exception handling)
 	echo "); echo 'I am still alive'" | cowasm ${DIST_WASM}/bin/dash | grep alive
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
+	mkdir -p ${BUILD_WASI_SDK}/src/bits
+	printf 'typedef int __jmp_buf;\n' > ${BUILD_WASI_SDK}/src/bits/setjmp.h
+	printf '#ifndef COWASM_DASH_WASI_SDK_SETJMP_H\n#define COWASM_DASH_WASI_SDK_SETJMP_H\n#include <stdlib.h>\ntypedef int jmp_buf[1];\n#define setjmp(env) (0)\nstatic inline void longjmp(jmp_buf env, int status) __attribute__((noreturn));\nstatic inline void longjmp(jmp_buf env, int status) { (void)env; (void)status; abort(); }\n#endif\n' > ${BUILD_WASI_SDK}/src/setjmp.h
+	ln -sf ${SRC}/rebuild.sh ${BUILD_WASI_SDK}/rebuild.sh
+	ln -sf ${SRC}/update.sh ${BUILD_WASI_SDK}/update.sh
+	echo "ac_cv_func_sigsetmask=no" > ${BUILD_WASI_SDK}/config.site
+	cd ${BUILD_WASI_SDK} \
+		&&	cat ${SRC}/patches/03-emacs-default.patch | patch -p1 \
+		&&	cat ${SRC}/patches/04-vforkexec.patch | patch -p1 \
+		&&	cat ${SRC}/patches/05-savefd-without-fcntl.patch | patch -p1 \
+		&&	cat ${SRC}/patches/06-growjobtab-initial-null.patch | patch -p1 \
+		&&	cat ${SRC}/patches/07-pipeline-without-fork.patch | patch -p1
+	touch ${BUILD_WASI_SDK}/.patched
+
+${LIBEDIT_WASI_SDK}/lib/libedit.a:
+	$(MAKE) -C ../libedit test-wasi-sdk-standalone
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.patched ${LIBEDIT_WASI_SDK}/lib/libedit.a
+	cd ../build && make wasi-sdk-next
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${LIBEDIT_WASI_SDK} ${TERMCAP_WASI_SDK}
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk
