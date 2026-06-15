@@ -38,6 +38,7 @@ async function main() {
     readFileSync,
     stub: "silent",
     allowMainExports: true,
+    callMainCtors: process.env.COWASM_DYLINK_CALL_MAIN_CTORS !== "0",
   });
   wasi.start(instance, memory);
   exports.instance = instance;

@@ -61,6 +61,7 @@ export interface Options {
   readFileSync: (path: string) => any; // todo?
   stub?: "warn" | "silent" | false; // if warn, automatically generate stub functions but with a huge warning; if silent, just silently create stubs.
   allowMainExports?: boolean; // DANGEROUS -- allow dll to use functions defined in the main module that are NOT exported via the function table.  This is dangerous since they are 1000x slower, and might not be posisble to properly call (depending on data types).  Use with caution.
+  callMainCtors?: boolean;
 }
 
 export default async function importWebAssemblyDlopen({
@@ -71,6 +72,7 @@ export default async function importWebAssemblyDlopen({
   readFileSync,
   stub,
   allowMainExports,
+  callMainCtors = true,
 }: Options): Promise<WebAssembly.Instance> {
   let mainInstance: WebAssembly.Instance | null = null;
   if (importObject == null) {
@@ -209,7 +211,7 @@ export default async function importWebAssemblyDlopen({
     logImport("imported ", path, ", time =", new Date().valueOf() - t0, "ms");
   }
 
-  if (mainInstance.exports.__wasm_call_ctors != null) {
+  if (callMainCtors && mainInstance.exports.__wasm_call_ctors != null) {
     // We also **MUST** explicitly call the WASM constructors. This is
     // a library function that is part of the zig libc code.  We have
     // to call this because the wasm file is built using build-lib, so
