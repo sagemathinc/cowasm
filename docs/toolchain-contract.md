@@ -631,6 +631,20 @@ smoke, verifies that `less --help` starts through the WASI runner, and installs
 into `core/less/dist/wasi-sdk`, leaving the default Zig-backed package
 untouched.
 
+`core/tar` has the same opt-in dependent-executable smoke shape:
+
+```sh
+make -C core/tar test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK through its dependencies, first rebuilds
+zlib, bzip2, and lzma with their WASI SDK standalone smoke targets, then
+builds libarchive's `tar`, `cat`, and `cpio` tools against those installs with
+`COWASM_TOOLCHAIN=wasi-sdk`. It verifies the tools start through the WASI
+runner and performs a small archive create/extract round trip. It installs
+into `core/tar/dist/wasi-sdk`, leaving the default Zig-backed package
+untouched.
+
 The bootstrap currently installs `wasi-sdk-33.0` under
 `core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
 driver names into `bin/`:

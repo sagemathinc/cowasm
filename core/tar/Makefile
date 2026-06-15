@@ -6,6 +6,8 @@ include ../build/Makefile-vars
 VERSION = 3.6.1
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 URL = https://github.com/libarchive/libarchive/releases/download/v${VERSION}/libarchive-${VERSION}.tar.xz
 TARBALL = ${UPSTREAM}/libarchive-${VERSION}.tar.gz
@@ -57,6 +59,38 @@ clean-clang:
 	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
 
 clean:: clean-clang
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
+	cd ${BUILD_WASI_SDK} && cat ${SRC}/patches/01-main-visibility.patch | patch -p1
+	touch ${BUILD_WASI_SDK}/.patched
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.patched
+	$(MAKE) -C ../zlib test-wasi-sdk-standalone
+	$(MAKE) -C ../bzip2 test-wasi-sdk-standalone
+	$(MAKE) -C ../lzma test-wasi-sdk-standalone
+	cd ../build && make wasi-sdk-next
+	${SRC}/test-wasi-sdk-standalone.sh \
+		${BUILD_WASI_SDK} \
+		${DIST_WASI_SDK} \
+		${BIN} \
+		${POSIX_WASM} \
+		${CWD}/../zlib/dist/wasi-sdk \
+		${CWD}/../bzip2/dist/wasi-sdk \
+		${CWD}/../lzma/dist/wasi-sdk \
+		${SRC}
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk
 
 ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.patched
 	cd ../build && make zig
