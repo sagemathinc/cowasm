@@ -253,10 +253,12 @@ The focused `core/dylink` Phase 10 test expansion is also landed:
 
 This status changes the immediate work: do not re-implement the bootstrap, the
 basic wrapper selector, the Phase 9 archive probe, or the Phase 10 focused
-dylink compatibility tests. The Phase 11, Phase 12, and Phase 13 probe targets
-are also covered. The next blocker is Phase 14 CPython work.
+dylink compatibility tests. The Phase 11, Phase 12, Phase 13, and first Phase
+14 CPython gates are also covered. The next blockers are narrower: complete
+the remaining SDK CPython package-backed extension imports, then validate
+SDK pip/ensurepip behavior and the supported CPython test surface.
 
-The first Phase 11 package probe is partially landed for `core/zlib`:
+The first Phase 11 package probe is landed for `core/zlib`:
 
 - `make -C core/zlib test-wasi-sdk-standalone` builds zlib with
   `COWASM_TOOLCHAIN=wasi-sdk`;
@@ -269,7 +271,7 @@ The first Phase 11 package probe is partially landed for `core/zlib`:
 - `make -C core/zlib test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The `core/bzip2` Phase 11 package probe is also partially landed:
+The `core/bzip2` Phase 11 package probe is also landed:
 
 - `make -C core/bzip2 test-wasi-sdk-standalone` builds bzip2 with
   `COWASM_TOOLCHAIN=wasi-sdk`;
@@ -281,7 +283,7 @@ The `core/bzip2` Phase 11 package probe is also partially landed:
 - `make -C core/bzip2 test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The `core/termcap` Phase 11 package probe is also partially landed:
+The `core/termcap` Phase 11 package probe is also landed:
 
 - `make -C core/termcap test-wasi-sdk-standalone` builds `libtermcap.a` with
   `COWASM_TOOLCHAIN=wasi-sdk`;
@@ -292,7 +294,7 @@ The `core/termcap` Phase 11 package probe is also partially landed:
 - `make -C core/termcap test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The `sagemath/gmp` Phase 11 package probe is also partially landed:
+The `sagemath/gmp` Phase 11 package probe is also landed:
 
 - `make -C sagemath/gmp test-wasi-sdk-standalone` builds static GMP with
   `COWASM_TOOLCHAIN=wasi-sdk`;
@@ -305,7 +307,7 @@ The `sagemath/gmp` Phase 11 package probe is also partially landed:
 - `make -C sagemath/gmp test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The `core/sqlite` Phase 11 package probe is also partially landed:
+The `core/sqlite` Phase 11 package probe is also landed:
 
 - `make -C core/sqlite test-wasi-sdk-standalone` builds a static SQLite
   archive with `COWASM_TOOLCHAIN=wasi-sdk`;
@@ -318,7 +320,7 @@ The `core/sqlite` Phase 11 package probe is also partially landed:
 - `make -C core/sqlite test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The `core/lua` Phase 11 package probe is also partially landed:
+The `core/lua` Phase 11 package probe is also landed:
 
 - `make -C core/lua test-wasi-sdk-standalone` builds Lua with
   `COWASM_TOOLCHAIN=wasi-sdk`;
@@ -331,10 +333,10 @@ The `core/lua` Phase 11 package probe is also partially landed:
   `wasi-sdk-next` target name.
 
 The Phase 11, Phase 12, and Phase 13 probe lists are now covered by
-side-by-side `wasi-sdk-next` probe targets. The next blocker is Phase 14
-CPython work.
+side-by-side `wasi-sdk-next` probe targets, with additional package probes
+landed beyond the original phase lists.
 
-The first Phase 12 package probe is partially landed for `core/libedit`:
+The first Phase 12 package probe is landed for `core/libedit`:
 
 - `make -C core/libedit test-wasi-sdk-standalone` builds libedit with
   `COWASM_TOOLCHAIN=wasi-sdk`;
@@ -348,7 +350,7 @@ The first Phase 12 package probe is partially landed for `core/libedit`:
 - `make -C core/libedit test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The `core/ncurses` Phase 12 package probe is also partially landed:
+The `core/ncurses` Phase 12 package probe is also landed:
 
 - `make -C core/ncurses test-wasi-sdk-standalone` builds ncurses with
   `COWASM_TOOLCHAIN=wasi-sdk`;
@@ -363,7 +365,7 @@ The `core/ncurses` Phase 12 package probe is also partially landed:
 - `make -C core/ncurses test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The `core/less` Phase 12 package probe is also partially landed:
+The `core/less` Phase 12 package probe is also landed:
 
 - `make -C core/less test-wasi-sdk-standalone` builds less with
   `COWASM_TOOLCHAIN=wasi-sdk`;
@@ -380,7 +382,7 @@ The `core/less` Phase 12 package probe is also partially landed:
 - `make -C core/less test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The `core/tar` Phase 12 package probe is also partially landed:
+The `core/tar` Phase 12 package probe is also landed:
 
 - `make -C core/tar test-wasi-sdk-standalone` builds libarchive with
   `COWASM_TOOLCHAIN=wasi-sdk`;
@@ -396,7 +398,7 @@ The `core/tar` Phase 12 package probe is also partially landed:
 - `make -C core/tar test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The `core/openssl` Phase 12 package probe is also partially landed:
+The `core/openssl` Phase 12 package probe is also landed:
 
 - `make -C core/openssl test-wasi-sdk-standalone` builds OpenSSL with
   `COWASM_TOOLCHAIN=wasi-sdk`;
@@ -412,7 +414,7 @@ The `core/openssl` Phase 12 package probe is also partially landed:
 - `make -C core/openssl test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The `core/libgit2` Phase 12 package probe is also partially landed:
+The `core/libgit2` Phase 12 package probe is also landed:
 
 - `make -C core/libgit2 test-wasi-sdk-standalone` builds libgit2 with
   `COWASM_TOOLCHAIN=wasi-sdk`;
@@ -429,8 +431,37 @@ The `core/libgit2` Phase 12 package probe is also partially landed:
 - `make -C core/libgit2 test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
-The first Phase 13 C++ and Python-extension surface probes are partially
-landed:
+Additional SDK package probes are also landed and should be treated as part of
+the evidence base for later default-flip decisions:
+
+- `make -C core/posix-wasm test-wasi-sdk-standalone` builds the CoWasm POSIX
+  compatibility archive and headers with `COWASM_TOOLCHAIN=wasi-sdk`;
+- `make -C core/lzma test-wasi-sdk-standalone` builds the LZMA dependency
+  layer with the SDK toolchain and standalone compatibility shims;
+- `make -C core/libpng test-wasi-sdk-standalone` builds against SDK zlib and
+  runs the `timepng` smoke;
+- `make -C core/freetype test-wasi-sdk-standalone` builds against SDK zlib and
+  runs a FreeType API smoke;
+- `make -C core/libffi test-wasi-sdk-standalone` builds libffi and runs a
+  focused call-interface smoke;
+- `make -C core/qhull test-wasi-sdk-standalone` builds `libqhull_r.a` through
+  CMake and runs a reentrant qhull smoke;
+- `make -C core/libcxx test-wasi-sdk-standalone` builds a CoWasm-style
+  `libcxx.so` side module from pinned SDK `libc++.a`, `libc++abi.a`, and
+  compiler-rt archives without `needed_dynlibs`;
+- `make -C core/dash test-wasi-sdk-standalone` builds dash against SDK libedit
+  and termcap;
+- `make -C core/rogue test-wasi-sdk-standalone` builds rogue against SDK
+  ncurses and termcap;
+- `make -C core/man test-wasi-sdk-standalone` builds man against SDK zlib and
+  the POSIX compatibility layer;
+- `make -C core/coreutils test-wasi-sdk-standalone` currently builds focused
+  basename/dirname standalone command smokes;
+- `make -C sagemath/pari test-wasi-sdk-standalone` builds PARI against SDK GMP
+  and runs a mathematical `gp` smoke when SDK setjmp/longjmp support is usable
+  in the local runner.
+
+The first Phase 13 C++ and Python-extension surface probes are landed:
 
 - `make -C core/dylink/test/cxx-runtime test-wasi-sdk-next` builds a C++ side
   module with `wasi-sdk-clang++-next`;
@@ -450,8 +481,9 @@ landed:
   from `fib.pyx` with the repo's packaged Cython 3.2.5 and builds the
   generated extension C into a `wasi-sdk` side module;
 - the generated Cython side-module probe verifies `dylink.0`, exported
-  `PyInit_fib`, and no `needed_dynlibs`; it is intentionally a compile and
-  module-shape check until Phase 14 CPython import tests are available.
+  `PyInit_fib`, and no `needed_dynlibs`; it remains a compile and module-shape
+  check, while real CPython extension imports are now covered by the Phase 14
+  `_json`, `zlib`, and `_bz2` probes.
 
 The Phase 14 CPython configure and core-compile probe is now landed:
 
@@ -1180,6 +1212,16 @@ Suggested order:
 5. `core/sqlite` (probe target landed)
 6. `core/lua` (probe target landed)
 
+Additional simple package probes now landed:
+
+- `core/posix-wasm`;
+- `core/lzma`;
+- `core/libpng`;
+- `core/freetype`;
+- `core/libffi`;
+- `core/qhull`;
+- focused `core/coreutils` basename/dirname smokes.
+
 For each package:
 
 - add a `test-wasi-sdk` or backend-selectable test target;
@@ -1203,6 +1245,12 @@ Suggested order:
 4. `core/tar` (probe target landed)
 5. `core/openssl` (probe target landed)
 6. `core/libgit2` (probe target landed)
+
+Additional runtime-adjacent probes now landed:
+
+- `core/dash`;
+- `core/rogue`;
+- `core/man`.
 
 Validation:
 
@@ -1232,11 +1280,13 @@ Actions:
 - Build one simple Python-extension-shaped module with `wasi-sdk` (probe target
   landed).
 - Build one Cython-generated extension module (probe target landed).
+- Build a standalone CoWasm-style `libcxx.so` from pinned SDK static archives
+  and verify it has no accidental `needed_dynlibs` (probe target landed).
 
 Deliverable: C++ and Python-extension dynamic module rules are explicit and
 tested under `wasi-sdk`.
 
-## Phase 14: CPython
+## Phase 14: CPython (Partly Landed)
 
 Only after the prior phases are green:
 
@@ -1244,9 +1294,12 @@ Only after the prior phases are green:
 - build `python/cpython`'s static archive with `wasi-sdk` (probe target landed);
 - link `python/cpython` with `wasi-sdk` (probe target landed);
 - install `python/cpython` with `wasi-sdk` (artifact install target landed);
-- run `make -C python/cpython pip`;
-- run `make -C python/cpython test-runtime-contracts`;
-- run the supported CPython test suite;
+- run focused SDK runtime contracts (landed);
+- run focused SDK stdlib/sysconfig imports (landed);
+- run focused SDK dynamic-extension imports for `_json`, `zlib`, and `_bz2`
+  (landed);
+- run SDK pip/ensurepip behavior (remaining);
+- run the supported CPython test suite (remaining);
 - inspect failures before broad package work.
 
 Pay special attention to:
@@ -1304,12 +1357,17 @@ Current runtime status:
 - `make -C python/cpython test-wasi-sdk-runtime-contracts` passes the focused
   runtime contract suite;
 - `make -C python/cpython test-wasi-sdk-imports` passes the first pure-stdlib
-  and sysconfig import smoke.
+  and sysconfig import smoke;
+- `make -C python/cpython test-wasi-sdk-extension-imports` imports `_json`,
+  `zlib`, and `_bz2` from `dist/wasi-sdk/lib/python3.14/lib-dynload` and
+  verifies their basic runtime behavior.
 
 Remaining Phase 14 work:
 
 - expand SDK CPython shared-extension install/import coverage beyond `_json`,
   `zlib`, and `_bz2` to the remaining dependency-backed extensions;
+- immediate extension candidates are `pyexpat`, `_lzma`, `_sqlite3`, `_ssl`,
+  `_hashlib`, `_ctypes`, and `_curses`, in dependency order;
 - add SDK pip/ensurepip behavior after dependency-backed extension imports are
   proven;
 - only then expand toward the supported CPython test suite.
@@ -1320,8 +1378,9 @@ Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 
 After CPython and basic extension behavior:
 
-1. `sagemath/gmp`
-2. `sagemath/pari`
+1. `sagemath/gmp` (probe target landed)
+2. `sagemath/pari` (standalone probe target landed, with a local
+   setjmp/longjmp capability skip when unsupported)
 3. high-value Sagelite dependencies selected by mathematical payoff
 
 Each package should have mathematical smoke tests, not just build tests.
@@ -1406,18 +1465,30 @@ implementation code.
   path and `COWASM_TOOLCHAIN=clang` for direct local LLVM/lld probes.
 - Modern Zig is not a first-class wrapper selector in the current plan. Keep it
   as an external comparison path unless a concrete need appears.
+- Current side-module rule: default CoWasm-style SDK side modules to
+  `-nostdlib`, unresolved runtime symbols, and no accidental SDK
+  `needed_dynlibs`.
+- Current C++ rule: statically include pinned SDK C++ runtime archives in
+  CoWasm-style C++ side modules unless/until the loader has an explicit
+  transitive shared-runtime contract.
+- Current CPython SDK rule: keep CPython's startup pthread calls local to the
+  SDK side module through wrapper-local single-thread pthread stubs instead of
+  resolving them against CoWasm main-runtime pthread exports with a different
+  ABI.
 
 ## Open Questions
 
 - Should `zig_cowasm_compiler.py` be renamed once Zig is no longer the primary
   provider? (yes)
-- Should CoWasm side modules always use `-nostdlib`, or should some package
-  classes eventually load SDK shared libraries?
+- Which future package classes, if any, should deliberately load SDK shared
+  runtime libraries instead of staying on the current `-nostdlib` side-module
+  contract?
 - How much of the `wasi-sdk` dylink archive path should replace the old
   Zig-built archive versus remain a side-by-side probe until broader package
   tests pass?
-- Does `wasi-sdk`'s libc++ reduce or replace the special handling in
-  `core/libcxx`?
+- Does the current SDK static-archive `libcxx.so` probe become the replacement
+  for the special handling in `core/libcxx`, or should it remain a comparison
+  artifact until real C++ package users are migrated?
 - Do `wasi-sdk` shared modules preserve all loader assumptions around GOT data
   symbols, function-table symbols, and weak imports?
 - What is the artifact-size impact for real packages at `-Oz` plus stripping?
@@ -1425,6 +1496,12 @@ implementation code.
   tests will not catch?
 - When, if ever, should CoWasm start investigating `wasm32-wasip2` component
   artifacts?
+- Which CPython extension should be the next dependency-backed SDK import
+  gate: `pyexpat`, `_lzma`, `_sqlite3`, `_ssl`/`_hashlib`, `_ctypes`, or
+  `_curses`?
+- How much of the root `make test-wasi-sdk` target should include by default
+  before the SDK path becomes a release gate, given the growing number of
+  package probes?
 
 ## Risks
 
@@ -1451,8 +1528,10 @@ The modernization is successful when:
 - `cowasm-cc` and `cowasm-c++` are simpler and more explicit.
 - Core dylink tests pass with `wasi-sdk`-built side modules and main modules.
 - Native POSIX addon tests pass through the C implementation.
-- CPython's supported suite passes.
-- GMP and PARI pass.
+- CPython starts, passes runtime contracts, imports representative stdlib
+  modules, imports package-backed dynamic extensions, and then passes the
+  supported suite.
+- GMP and PARI pass with mathematical smokes.
 - Modern Zig and direct LLVM/lld probes remain optional comparison paths, not
   required foundations.
 
