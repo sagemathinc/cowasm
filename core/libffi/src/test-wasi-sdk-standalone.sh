@@ -26,7 +26,7 @@ cd "$build_dir"
 RANLIB="$bin_dir/cowasm-ranlib" \
 AR="$bin_dir/cowasm-ar" \
 CC="$bin_dir/cowasm-cc" \
-CFLAGS="-Oz" \
+CFLAGS="-Oz -fPIC" \
 COWASM_TOOLCHAIN=wasi-sdk \
   ./configure \
     --disable-docs \
@@ -38,6 +38,11 @@ COWASM_TOOLCHAIN=wasi-sdk \
 mkdir -p "$build_dir/wasm32-unknown-wasi/src/wasm32/.deps"
 COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs"
 COWASM_TOOLCHAIN=wasi-sdk make install
+
+if "$bin_dir/wasi-sdk-llvm-objdump-next" -r "$dist_dir/lib/libffi.a" | grep -E 'R_WASM_MEMORY_ADDR_(LEB|SLEB)\b'; then
+  echo "libffi.a contains non-PIC absolute memory relocations" >&2
+  exit 1
+fi
 
 cat >"$probe_dir/libffi-test.c" <<'EOF'
 #include <ffi.h>

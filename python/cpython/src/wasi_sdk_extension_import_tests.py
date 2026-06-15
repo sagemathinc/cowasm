@@ -1,4 +1,5 @@
 import bz2
+import ctypes
 import hashlib
 import importlib
 import json
@@ -157,6 +158,35 @@ class WasiSdkExtensionImportTests(unittest.TestCase):
             hashlib.new("sha3_256", b"cowasm").hexdigest(),
             "368c62d92cf4f3a3d7480c8773ecf641347a2bbc9a38c5ed589fc853d084454b",
         )
+
+    def test_ctypes_extension_imports_from_lib_dynload(self):
+        import _ctypes
+
+        suffix = sysconfig.get_config_var("EXT_SUFFIX")
+        self.assertTrue(
+            _ctypes.__file__.endswith(f"/lib-dynload/_ctypes{suffix}"),
+            _ctypes.__file__,
+        )
+
+    def test_ctypes_basic_layout_and_pointer_access(self):
+        class Pair(ctypes.Structure):
+            _fields_ = [
+                ("left", ctypes.c_int),
+                ("right", ctypes.c_int),
+            ]
+
+        pair = Pair(389, 5077)
+        self.assertEqual((pair.left, pair.right), (389, 5077))
+        self.assertEqual(ctypes.sizeof(Pair), ctypes.sizeof(ctypes.c_int) * 2)
+
+        value = ctypes.c_int(389)
+        pointer = ctypes.pointer(value)
+        self.assertEqual(pointer.contents.value, 389)
+        pointer.contents.value = 5077
+        self.assertEqual(value.value, 5077)
+
+        array = (ctypes.c_int * 3)(1, 2, 3)
+        self.assertEqual(list(array), [1, 2, 3])
 
     def test_cjk_codec_extensions_import_from_lib_dynload(self):
         suffix = sysconfig.get_config_var("EXT_SUFFIX")

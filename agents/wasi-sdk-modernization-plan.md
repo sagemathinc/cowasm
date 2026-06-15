@@ -771,6 +771,30 @@ The OpenSSL-backed SDK CPython `_hashlib` extension probe is also landed:
 is intentionally configured with `no-sock`, so the installed headers hide
 socket APIs such as `SSL_set_fd` that CPython's `_ssl` module currently uses.
 
+The libffi-backed SDK CPython `_ctypes` import probe is also landed:
+
+- the SDK `core/libffi` package probe now compiles `libffi.a` with `-fPIC`;
+- the SDK `core/libffi` probe rejects non-PIC absolute
+  `R_WASM_MEMORY_ADDR_(LEB|SLEB)` relocations in the installed static archive
+  so it can participate in side-module links;
+- the wasm32 libffi overlay no longer emits unsupported-path diagnostic strings
+  from trap stubs, avoiding data relocations in the PIC archive;
+- `make -C core/libffi test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name;
+- `make -C python/cpython test-wasi-sdk-extension-imports` now also builds
+  `Modules/_ctypes.cpython-314-wasm32-wasi.so` against the SDK libffi archive;
+- the target applies the same shared-module guardrails as the other SDK
+  extension probes: imported memory, `dylink.0`, expected `PyInit__ctypes`,
+  and no `needed_dynlibs`;
+- it installs `_ctypes` into `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports `_ctypes`/`ctypes` under `python-wasi-sdk` and checks basic
+  ctypes type sizing, structures, pointers, and arrays.
+
+This is an import-and-layout gate, not full ctypes foreign-call support. The
+current wasm32 libffi overlay still traps unsupported dynamic call helpers such
+as the path reached by `ctypes.string_at`, so ctypes should remain an optional
+extension gate until real wasm libffi call/closure support is implemented.
+
 SDK pip/ensurepip behavior is also landed:
 
 - CPython's SDK pyconfig overlay now exposes runtime-resolved `getuid`,
@@ -796,8 +820,9 @@ The SDK CPython supported-suite gate is also landed:
   path.
 
 Remaining Phase 14 extension work can now focus on whether heavier optional
-modules such as `_ssl`, `_ctypes`, and `_curses` should become required gates
-before default wrapper behavior changes.
+modules such as `_ssl` and `_curses` should become required gates before
+default wrapper behavior changes, and whether `_ctypes` should graduate from
+the current import/layout gate to full foreign-call support.
 
 ## Order Of Work
 

@@ -24,8 +24,6 @@
    DEALINGS IN THE SOFTWARE.
    ----------------------------------------------------------------------- */
 
-#include <stdio.h>
-
 #include <ffi.h>
 #include <ffi_common.h>
 
@@ -158,7 +156,11 @@ EM_JS_MACROS(void, unbox_small_structs, (ffi_type type_ptr), {
 })
 
 void ffi_call(ffi_cif *cif, ffi_fp fn, void *rvalue, void **avalue) {
-  printf("STUB: ffi_call\n");
+  (void)cif;
+  (void)fn;
+  (void)rvalue;
+  (void)avalue;
+  __builtin_trap();
 }
 
 EM_JS_MACROS(
@@ -395,7 +397,9 @@ EM_JS_MACROS(
 #define CLOSURE__user_data(addr) DEREF_U32(addr, 3)
 
 void *ffi_closure_alloc_helper(size_t size, void **code) {
-  printf("STUB: ffi_closure_alloc_helper\n");
+  (void)size;
+  (void)code;
+  __builtin_trap();
 }
 
 EM_JS_MACROS(void *, ffi_closure_alloc_helper, (size_t size, void **code), {
@@ -425,7 +429,12 @@ EM_JS_MACROS(void, ffi_closure_free_helper, (void *closure), {
 ffi_status ffi_prep_closure_loc_helper(ffi_closure *closure, ffi_cif *cif,
                                        void *fun, void *user_data,
                                        void *codeloc) {
-  printf("STUB: ffi_prep_closure_loc_helper\n");
+  (void)closure;
+  (void)cif;
+  (void)fun;
+  (void)user_data;
+  (void)codeloc;
+  __builtin_trap();
 }
 
 EM_JS_MACROS(
