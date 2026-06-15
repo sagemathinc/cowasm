@@ -254,9 +254,9 @@ The focused `core/dylink` Phase 10 test expansion is also landed:
 This status changes the immediate work: do not re-implement the bootstrap, the
 basic wrapper selector, the Phase 9 archive probe, or the Phase 10 focused
 dylink compatibility tests. The Phase 11, Phase 12, Phase 13, and first Phase
-14 CPython gates are also covered. The next blockers are narrower: complete
-the remaining SDK CPython package-backed extension imports, then validate
-SDK pip/ensurepip behavior and the supported CPython test surface.
+14 CPython gates are also covered. The next blockers are narrower: expand the
+supported CPython test surface and decide which heavier optional extensions
+should become SDK release gates.
 
 The first Phase 11 package probe is landed for `core/zlib`:
 
@@ -726,8 +726,34 @@ The SQLite-backed SDK CPython extension import probe is also landed for
 - it imports `_sqlite3`/`sqlite3` under `python-wasi-sdk` and checks an
   in-memory table insert/query path.
 
-Remaining Phase 14 extension work can now move to other package-backed modules
-before pip/ensurepip behavior.
+The SDK CPython `unicodedata` extension probe is also landed:
+
+- `make -C python/cpython test-wasi-sdk-extension-imports` also builds
+  `Modules/unicodedata.cpython-314-wasm32-wasi.so`;
+- the target applies the same shared-module guardrails as the other SDK
+  extension probes, with a looser `env.memory` check because the Unicode table
+  data currently requires eleven imported memory pages;
+- it installs `unicodedata` into
+  `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports `unicodedata` under `python-wasi-sdk` and checks normalization and
+  Unicode-name lookup behavior.
+
+SDK pip/ensurepip behavior is also landed:
+
+- CPython's SDK pyconfig overlay now exposes runtime-resolved `getuid`,
+  `geteuid`, `getgid`, `getegid`, and `umask`, matching the default wasm
+  runtime surface that pip expects;
+- `make -C python/cpython test-wasi-sdk-pip` patches the bundled pip wheel
+  before `ensurepip` so pip's bootstrap path does not require `mmap` or Rich's
+  auto-refresh thread;
+- the SDK pip target depends on `pyexpat`, `zlib`, and `unicodedata`, the
+  extension modules needed by the pip bootstrap wheel;
+- the target runs `python-wasi-sdk -m ensurepip`, verifies `import pip`, and
+  checks that `python-wasi-sdk -m pip` reaches the usage output.
+
+Remaining Phase 14 extension work can now move to heavier optional modules such
+as `_ssl`/`_hashlib`, `_ctypes`, and `_curses`, alongside broader CPython test
+coverage.
 
 ## Order Of Work
 
@@ -1343,9 +1369,9 @@ Only after the prior phases are green:
 - install `python/cpython` with `wasi-sdk` (artifact install target landed);
 - run focused SDK runtime contracts (landed);
 - run focused SDK stdlib/sysconfig imports (landed);
-- run focused SDK dynamic-extension imports for `_json`, `zlib`, and `_bz2`
-  (landed);
-- run SDK pip/ensurepip behavior (remaining);
+- run focused SDK dynamic-extension imports for `_json`, `pyexpat`, `zlib`,
+  `_bz2`, `_lzma`, `_sqlite3`, and `unicodedata` (landed);
+- run SDK pip/ensurepip behavior (landed);
 - run the supported CPython test suite (remaining);
 - inspect failures before broad package work.
 
@@ -1404,20 +1430,22 @@ Current runtime status:
 - `make -C python/cpython test-wasi-sdk-runtime-contracts` passes the focused
   runtime contract suite;
 - `make -C python/cpython test-wasi-sdk-imports` passes the first pure-stdlib
-  and sysconfig import smoke;
+  and sysconfig import smoke, including the process identity and `umask`
+  surface needed by pip;
 - `make -C python/cpython test-wasi-sdk-extension-imports` imports `_json`,
-  `zlib`, and `_bz2` from `dist/wasi-sdk/lib/python3.14/lib-dynload` and
-  verifies their basic runtime behavior.
+  `pyexpat`, `zlib`, `_bz2`, `_lzma`, `_sqlite3`, and `unicodedata` from
+  `dist/wasi-sdk/lib/python3.14/lib-dynload` and verifies their basic runtime
+  behavior;
+- `make -C python/cpython test-wasi-sdk-pip` patches the bundled pip wheel,
+  runs SDK `ensurepip`, verifies `import pip`, and checks `python-wasi-sdk -m
+  pip` usage output.
 
 Remaining Phase 14 work:
 
-- expand SDK CPython shared-extension install/import coverage beyond `_json`,
-  `zlib`, and `_bz2` to the remaining dependency-backed extensions;
-- immediate extension candidates are `pyexpat`, `_lzma`, `_sqlite3`, `_ssl`,
-  `_hashlib`, `_ctypes`, and `_curses`, in dependency order;
-- add SDK pip/ensurepip behavior after dependency-backed extension imports are
-  proven;
-- only then expand toward the supported CPython test suite.
+- expand toward the supported CPython test suite;
+- decide whether heavier optional extensions such as `_ssl`/`_hashlib`,
+  `_ctypes`, and `_curses` should become required SDK gates before default
+  wrapper behavior changes.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 
@@ -1543,9 +1571,8 @@ implementation code.
   tests will not catch?
 - When, if ever, should CoWasm start investigating `wasm32-wasip2` component
   artifacts?
-- Which CPython extension should be the next dependency-backed SDK import
-  gate: `pyexpat`, `_lzma`, `_sqlite3`, `_ssl`/`_hashlib`, `_ctypes`, or
-  `_curses`?
+- Which heavier CPython extension should be the next SDK import gate:
+  `_ssl`/`_hashlib`, `_ctypes`, or `_curses`?
 - How much of the root `make test-wasi-sdk` target should include by default
   before the SDK path becomes a release gate, given the growing number of
   package probes?

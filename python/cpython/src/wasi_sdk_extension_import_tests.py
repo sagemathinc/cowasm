@@ -3,6 +3,7 @@ import json
 import lzma
 import sqlite3
 import sysconfig
+import unicodedata
 import unittest
 from xml.parsers import expat
 import zlib
@@ -120,6 +121,17 @@ class WasiSdkExtensionImportTests(unittest.TestCase):
             result = db.execute("select value from values_table order by value").fetchall()
 
         self.assertEqual(result, [(389,), (5077,)])
+
+    def test_unicodedata_extension_imports_from_lib_dynload(self):
+        suffix = sysconfig.get_config_var("EXT_SUFFIX")
+        self.assertTrue(
+            unicodedata.__file__.endswith(f"/lib-dynload/unicodedata{suffix}"),
+            unicodedata.__file__,
+        )
+
+    def test_unicodedata_normalization(self):
+        self.assertEqual(unicodedata.normalize("NFC", "e\u0301"), "\u00e9")
+        self.assertEqual(unicodedata.name("\u03c0"), "GREEK SMALL LETTER PI")
 
 
 if __name__ == "__main__":

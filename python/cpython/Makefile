@@ -165,7 +165,7 @@ CPYTHON_WASM_PATCH_INPUTS = ${SRC}/prepare-wasm-build.sh ${SRC}/config.site ${DY
 ${DYLINK_LIBPYTHON_JS}: $(wildcard ${CORE_PACKAGES}/dylink/src/*.ts) ${CORE_PACKAGES}/dylink/tsconfig.json
 	cd ${CORE_PACKAGES}/dylink && pnpm run build
 
-${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
+${BUILD_WASM}/.patched: ${BUILD_WASM}/.build ${SRC}/pyconfig.h
 	# Create declarations that make everything extension modules need
 	# accessible from outside our "python.wasm as a shared library".
 	${SRC}/prepare-wasm-build.sh ${BUILD_WASM} ${SRC}/Setup.local
@@ -201,6 +201,7 @@ WASI_SDK_ZLIB_EXTENSION = zlib.${PYTHON_PLATFORM}.so
 WASI_SDK_BZ2_EXTENSION = _bz2.${PYTHON_PLATFORM}.so
 WASI_SDK_LZMA_EXTENSION = _lzma.${PYTHON_PLATFORM}.so
 WASI_SDK_SQLITE3_EXTENSION = _sqlite3.${PYTHON_PLATFORM}.so
+WASI_SDK_UNICODEDATA_EXTENSION = unicodedata.${PYTHON_PLATFORM}.so
 
 ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
@@ -272,7 +273,7 @@ ${BUILD_WASI_SDK}/.patched: ${TARBALL} ${CPYTHON_WASM_PATCH_INPUTS}
 	COWASM_LIBPYTHON_WITHOUT_EMSCRIPTEN_SIGNAL=1 COWASM_LIBPYTHON_WITHOUT_FORK=1 ${SRC}/prepare-wasm-build.sh ${BUILD_WASI_SDK} ${SRC}/Setup.local
 	touch ${BUILD_WASI_SDK}/.patched
 
-${BUILD_WASI_SDK}/.configured: node_modules ${BUILD_WASI_SDK}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
+${BUILD_WASI_SDK}/.configured: node_modules ${BUILD_WASI_SDK}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native ${SRC}/pyconfig.h
 	cd ../../core/build && make wasi-sdk-next
 	cd ../../core/posix-wasm && make test-wasi-sdk-standalone
 	cd ${BUILD_WASI_SDK} && \
@@ -541,8 +542,23 @@ ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_SQLITE3_EXTENSION}: ${
 	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
 	cp ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
 
+${BUILD_WASI_SDK}/.unicodedata-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.configured test-wasi-sdk-archive
+	rm -f ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION}
+	cd ${BUILD_WASI_SDK} && \
+		COWASM_TOOLCHAIN=wasi-sdk \
+		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_UNICODEDATA_EXTENSION}
+	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} | grep -F 'dylink.0'
+	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} | grep -F '<- env.memory'
+	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} | grep '^PyInit_unicodedata$$'
+	! wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} | grep 'needed_dynlibs'
+	touch ${BUILD_WASI_SDK}/.unicodedata-extension-built
+
+${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_UNICODEDATA_EXTENSION}: ${DIST_WASI_SDK}/.install-cpython ${BUILD_WASI_SDK}/.unicodedata-extension-built
+	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
+	cp ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
+
 .PHONY: test-wasi-sdk-extension-imports
-test-wasi-sdk-extension-imports: ${BIN}/python-wasi-sdk ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_PYEXPAT_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_BZ2_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_LZMA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_SQLITE3_EXTENSION}
+test-wasi-sdk-extension-imports: ${BIN}/python-wasi-sdk ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_PYEXPAT_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_BZ2_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_LZMA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_SQLITE3_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_UNICODEDATA_EXTENSION}
 	${CWD}/bin/python-wasi-sdk ${SRC}/wasi_sdk_extension_import_tests.py
 
 ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
@@ -660,6 +676,19 @@ ${DIST_WASM}/lib/${PYTHON_LIB}/site-packages/pip/.built: ${DIST_WASM}/.built
 pip: ${DIST_WASM}/lib/${PYTHON_LIB}/site-packages/pip/.built
 .PHONY: pip
 
+${DIST_WASI_SDK}/lib/${PYTHON_LIB}/ensurepip/_bundled/.pip-wheel-patched: ${DIST_WASI_SDK}/.install-cpython ${SRC}/patch-pip-wheel-for-wasi-sdk.py
+	${BIN}/python-native ${SRC}/patch-pip-wheel-for-wasi-sdk.py ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/ensurepip/_bundled
+	touch ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/ensurepip/_bundled/.pip-wheel-patched
+
+${DIST_WASI_SDK}/lib/${PYTHON_LIB}/site-packages/pip/.built: ${DIST_WASI_SDK}/.install-cpython ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/ensurepip/_bundled/.pip-wheel-patched ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_PYEXPAT_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_UNICODEDATA_EXTENSION}
+	rm -rf ${DIST_WASI_SDK}/lib/python*/site-packages/*pip* ${DIST_WASI_SDK}/lib/python*/site-packages/*setuptools*
+	PIP_USE_DEPRECATED=legacy-certs ${CWD}/bin/python-wasi-sdk -m ensurepip
+	find ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/site-packages/pip -type d -name __pycache__ -prune -exec rm -rf {} +
+	touch ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/site-packages/pip/.built
+
+wasi-sdk-pip: ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/site-packages/pip/.built
+.PHONY: wasi-sdk-pip
+
 
 # Run the full official Python test suite on the wasm build.  We can't just do
 # "make test" in build/wasm, since that only support wasmtime and emscripten.
@@ -708,6 +737,13 @@ test-pip: pip
 	PYTHONDONTWRITEBYTECODE=1 ${CWD}/bin/python-wasm -m pip |grep Usage
 	echo "Success"
 .PHONY: test-pip
+
+test-wasi-sdk-pip: wasi-sdk-pip
+	echo "Testing WASI SDK PIP"
+	PYTHONDONTWRITEBYTECODE=1 ${CWD}/bin/python-wasi-sdk -c 'import pip'
+	PYTHONDONTWRITEBYTECODE=1 ${CWD}/bin/python-wasi-sdk -m pip |grep Usage
+	echo "Success"
+.PHONY: test-wasi-sdk-pip
 
 test-runtime-contracts: wasm ${BIN}/python-wasm
 	${CWD}/bin/python-wasm ${SRC}/runtime_contract_tests.py

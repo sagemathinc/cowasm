@@ -42,6 +42,23 @@ class WasiSdkImportTests(unittest.TestCase):
             with self.subTest(name=name):
                 self.assertEqual(importlib.import_module(name).__name__, name)
 
+    def test_process_identity_functions_are_available(self):
+        import os
+
+        for name in ("getuid", "geteuid", "getgid", "getegid"):
+            with self.subTest(name=name):
+                func = getattr(os, name)
+                self.assertIsInstance(func(), int)
+
+    def test_umask_is_available(self):
+        import os
+
+        original = os.umask(0)
+        try:
+            self.assertIsInstance(original, int)
+        finally:
+            os.umask(original)
+
     def test_sysconfig_matches_cowasm_wasi_sdk_extension_shape(self):
         self.assertEqual(sysconfig.get_config_var("SOABI"), "cpython-314-wasm32-wasi")
         self.assertEqual(

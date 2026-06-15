@@ -57,6 +57,11 @@ extern "C" {
 // Cross configure does not detect them in the wasi-sdk side-module build.
 #define HAVE_EXECV 1
 #define HAVE_FORK 1
+#define HAVE_GETEGID 1
+#define HAVE_GETEUID 1
+#define HAVE_GETGID 1
+#define HAVE_GETUID 1
+#define HAVE_UMASK 1
 #define HAVE_WAITPID 1
 
 // CoWasm does not implement these platform-specific pthread convenience APIs.
