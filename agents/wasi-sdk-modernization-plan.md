@@ -256,6 +256,19 @@ basic wrapper selector, the Phase 9 archive probe, or the Phase 10 focused
 dylink compatibility tests. The next blocker is porting the first simple
 packages in Phase 11, starting with `core/zlib`.
 
+The first Phase 11 package probe is partially landed for `core/zlib`:
+
+- `make -C core/zlib test-wasi-sdk-standalone` builds zlib with
+  `COWASM_TOOLCHAIN=wasi-sdk`;
+- the probe configures zlib with `cowasm-cc`, `cowasm-ar`, and
+  `cowasm-ranlib`;
+- it rebuilds `libz.a` from object files, preserving parity with the default
+  wasm target's archive workaround;
+- it builds and runs zlib's upstream `example` program through the standalone
+  WASI runner;
+- `make -C core/zlib test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name.
+
 ## Order Of Work
 
 Recommended order:
@@ -773,13 +786,13 @@ Expected object shape:
 Deliverable: `core/dylink` tests pass with `wasi-sdk`-built side modules and a
 `wasi-sdk`-built main-module path.
 
-## Phase 11: Port Simple Packages
+## Phase 11: Port Simple Packages (In Progress)
 
 Start with packages that have small build systems and clear smoke tests.
 
 Suggested order:
 
-1. `core/zlib`
+1. `core/zlib` (probe target landed)
 2. `core/bzip2`
 3. `core/termcap`
 4. `sagemath/gmp`
