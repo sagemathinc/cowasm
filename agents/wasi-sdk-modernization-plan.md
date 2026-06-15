@@ -710,8 +710,24 @@ The bundled-expat SDK CPython extension import probe is also landed for
 - it imports `pyexpat` under `python-wasi-sdk` and checks XML parser callback
   behavior through `xml.parsers.expat`.
 
-Remaining Phase 14 extension work can now move to `_sqlite3` and other
-package-backed modules before pip/ensurepip behavior.
+The SQLite-backed SDK CPython extension import probe is also landed for
+`_sqlite3`:
+
+- the SDK `core/sqlite` package probe now compiles the SQLite amalgamation with
+  `-fPIC` while preserving the standalone in-memory query smoke;
+- the SDK `core/sqlite` probe now rejects the non-PIC wasm relocation forms
+  that prevent shared-module linking;
+- `make -C python/cpython test-wasi-sdk-extension-imports` also builds
+  `Modules/_sqlite3.cpython-314-wasm32-wasi.so` against the SDK SQLite archive;
+- the target applies the same shared-module guardrails as the other SDK
+  extension probes, with a looser `env.memory` check because the SQLite side
+  module currently requires two imported memory pages;
+- it installs `_sqlite3` into `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports `_sqlite3`/`sqlite3` under `python-wasi-sdk` and checks an
+  in-memory table insert/query path.
+
+Remaining Phase 14 extension work can now move to other package-backed modules
+before pip/ensurepip behavior.
 
 ## Order Of Work
 

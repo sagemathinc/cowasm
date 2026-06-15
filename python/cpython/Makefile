@@ -200,6 +200,7 @@ WASI_SDK_PYEXPAT_EXTENSION = pyexpat.${PYTHON_PLATFORM}.so
 WASI_SDK_ZLIB_EXTENSION = zlib.${PYTHON_PLATFORM}.so
 WASI_SDK_BZ2_EXTENSION = _bz2.${PYTHON_PLATFORM}.so
 WASI_SDK_LZMA_EXTENSION = _lzma.${PYTHON_PLATFORM}.so
+WASI_SDK_SQLITE3_EXTENSION = _sqlite3.${PYTHON_PLATFORM}.so
 
 ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
@@ -518,8 +519,30 @@ ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_LZMA_EXTENSION}: ${DIS
 	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
 	cp ${BUILD_WASI_SDK}/Modules/${WASI_SDK_LZMA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
 
+${SQLITE_WASI_SDK}/lib/libsqlite3.a:
+	cd ${CORE_PACKAGES}/sqlite && make test-wasi-sdk-next
+
+${SQLITE_WASI_SDK}/include/sqlite3.h:
+	cd ${CORE_PACKAGES}/sqlite && make test-wasi-sdk-next
+
+${BUILD_WASI_SDK}/.sqlite3-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.configured test-wasi-sdk-archive ${SQLITE_WASI_SDK}/lib/libsqlite3.a ${SQLITE_WASI_SDK}/include/sqlite3.h
+	rm -f ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION}
+	cd ${BUILD_WASI_SDK} && \
+		COWASM_TOOLCHAIN=wasi-sdk \
+		SQLITE_WASM="${SQLITE_WASI_SDK}" \
+		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_SQLITE3_EXTENSION}
+	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION} | grep -F 'dylink.0'
+	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION} | grep -F '<- env.memory'
+	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION} | grep '^PyInit__sqlite3$$'
+	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION} | grep 'needed_dynlibs'
+	touch ${BUILD_WASI_SDK}/.sqlite3-extension-built
+
+${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_SQLITE3_EXTENSION}: ${DIST_WASI_SDK}/.install-cpython ${BUILD_WASI_SDK}/.sqlite3-extension-built
+	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
+	cp ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
+
 .PHONY: test-wasi-sdk-extension-imports
-test-wasi-sdk-extension-imports: ${BIN}/python-wasi-sdk ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_PYEXPAT_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_BZ2_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_LZMA_EXTENSION}
+test-wasi-sdk-extension-imports: ${BIN}/python-wasi-sdk ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_PYEXPAT_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_BZ2_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_LZMA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_SQLITE3_EXTENSION}
 	${CWD}/bin/python-wasi-sdk ${SRC}/wasi_sdk_extension_import_tests.py
 
 ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython

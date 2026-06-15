@@ -1,6 +1,7 @@
 import bz2
 import json
 import lzma
+import sqlite3
 import sysconfig
 import unittest
 from xml.parsers import expat
@@ -99,6 +100,26 @@ class WasiSdkExtensionImportTests(unittest.TestCase):
         compressed = lzma.compress(payload)
         self.assertLess(len(compressed), len(payload))
         self.assertEqual(lzma.decompress(compressed), payload)
+
+    def test_sqlite3_extension_imports_from_lib_dynload(self):
+        import _sqlite3
+
+        suffix = sysconfig.get_config_var("EXT_SUFFIX")
+        self.assertTrue(
+            _sqlite3.__file__.endswith(f"/lib-dynload/_sqlite3{suffix}"),
+            _sqlite3.__file__,
+        )
+
+    def test_sqlite3_in_memory_query(self):
+        with sqlite3.connect(":memory:") as db:
+            db.execute("create table values_table (value integer)")
+            db.executemany(
+                "insert into values_table values (?)",
+                [(389,), (5077,)],
+            )
+            result = db.execute("select value from values_table order by value").fetchall()
+
+        self.assertEqual(result, [(389,), (5077,)])
 
 
 if __name__ == "__main__":

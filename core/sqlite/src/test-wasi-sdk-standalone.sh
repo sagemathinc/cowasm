@@ -18,7 +18,7 @@ source "$script_dir/../../build/src/test/clang-standalone-common.sh"
 
 probe_dir="$(mktemp -d)"
 trap 'rm -rf "$probe_dir"' EXIT
-sqlite_wasi_cflags="-Oz -fvisibility-main -DSQLITE_DEFAULT_MMAP_SIZE=0 -DSQLITE_MAX_MMAP_SIZE=0 -DSQLITE_OMIT_WAL -DSQLITE_OMIT_LOAD_EXTENSION=1 -D_WASI_EMULATED_GETPID -include $compat_header"
+sqlite_wasi_cflags="-Oz -fPIC -fvisibility-main -DSQLITE_DEFAULT_MMAP_SIZE=0 -DSQLITE_MAX_MMAP_SIZE=0 -DSQLITE_OMIT_WAL -DSQLITE_OMIT_LOAD_EXTENSION=1 -D_WASI_EMULATED_GETPID -include $compat_header"
 
 cat >"$compat_header" <<'EOF'
 #ifndef COWASM_SQLITE_WASI_COMPAT_H
@@ -97,6 +97,8 @@ COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 
 COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-ar" rc libsqlite3.a sqlite3.o
 COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-ranlib" libsqlite3.a
+"$bin_dir/wasi-sdk-llvm-objdump-next" -r libsqlite3.a |
+  (! grep -E 'R_WASM_(MEMORY_ADDR_(S)?LEB|TABLE_INDEX_SLEB)')
 
 mkdir -p "$dist_dir/lib" "$dist_dir/include"
 cp libsqlite3.a "$dist_dir/lib/"
