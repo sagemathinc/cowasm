@@ -6,6 +6,9 @@
 
 static int x = 388;
 int y = 1;
+static int* y_ptr = &y;
+extern int main_value;
+static int* main_value_ptr = &main_value;
 
 EXPORTED_SYMBOL
 PyObject* pynone_b() { return PyNone; }
@@ -18,6 +21,12 @@ FUN_PTR pointer_to_add10() { return &add10; }
 
 EXPORTED_SYMBOL
 int add389(const int a) { return a + x + y; }
+
+EXPORTED_SYMBOL
+int add_side_data_relocation(const int a) { return a + *y_ptr; }
+
+EXPORTED_SYMBOL
+int add_main_data_relocation(const int a) { return a + *main_value_ptr; }
 
 // This illustrates calling a function that is
 // defined in the main app.c.
