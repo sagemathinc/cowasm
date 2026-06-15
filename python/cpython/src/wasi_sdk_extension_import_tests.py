@@ -225,6 +225,21 @@ class WasiSdkExtensionImportTests(unittest.TestCase):
         self.assertIn("ncurses", curses.ncurses_version.__class__.__name__.lower())
         self.assertGreaterEqual(curses.ncurses_version.major, 6)
 
+    def test_curses_panel_extension_imports_from_lib_dynload(self):
+        import _curses_panel
+
+        suffix = sysconfig.get_config_var("EXT_SUFFIX")
+        self.assertTrue(
+            _curses_panel.__file__.endswith(f"/lib-dynload/_curses_panel{suffix}"),
+            _curses_panel.__file__,
+        )
+
+    def test_curses_panel_module_imports(self):
+        import curses.panel
+
+        self.assertTrue(callable(curses.panel.new_panel))
+        self.assertTrue(callable(curses.panel.top_panel))
+
     def test_cjk_codec_extensions_import_from_lib_dynload(self):
         suffix = sysconfig.get_config_var("EXT_SUFFIX")
         for name in (

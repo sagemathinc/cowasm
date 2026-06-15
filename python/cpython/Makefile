@@ -206,6 +206,7 @@ WASI_SDK_DECIMAL_EXTENSION = _decimal.${PYTHON_PLATFORM}.so
 WASI_SDK_HASHLIB_EXTENSION = _hashlib.${PYTHON_PLATFORM}.so
 WASI_SDK_CTYPES_EXTENSION = _ctypes.${PYTHON_PLATFORM}.so
 WASI_SDK_CURSES_EXTENSION = _curses.${PYTHON_PLATFORM}.so
+WASI_SDK_CURSES_PANEL_EXTENSION = _curses_panel.${PYTHON_PLATFORM}.so
 WASI_SDK_CJK_CODEC_EXTENSIONS = _codecs_cn.${PYTHON_PLATFORM}.so _codecs_hk.${PYTHON_PLATFORM}.so _codecs_iso2022.${PYTHON_PLATFORM}.so _codecs_jp.${PYTHON_PLATFORM}.so _codecs_kr.${PYTHON_PLATFORM}.so _codecs_tw.${PYTHON_PLATFORM}.so
 
 ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
@@ -640,7 +641,13 @@ ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_CTYPES_EXTENSION}: ${D
 ${NCURSES_WASI_SDK}/lib/libncurses.a:
 	cd ${CORE_PACKAGES}/ncurses && make test-wasi-sdk-next
 
+${NCURSES_WASI_SDK}/lib/libpanel.a:
+	cd ${CORE_PACKAGES}/ncurses && make test-wasi-sdk-next
+
 ${NCURSES_WASI_SDK}/include/ncurses/curses.h:
+	cd ${CORE_PACKAGES}/ncurses && make test-wasi-sdk-next
+
+${NCURSES_WASI_SDK}/include/ncurses/panel.h:
 	cd ${CORE_PACKAGES}/ncurses && make test-wasi-sdk-next
 
 ${NCURSES_WASI_SDK}/include/sgtty.h:
@@ -664,6 +671,21 @@ ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_CURSES_EXTENSION}: ${D
 	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
 	cp ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
 
+${BUILD_WASI_SDK}/.curses-panel-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.configured test-wasi-sdk-archive ${NCURSES_WASI_SDK}/lib/libpanel.a ${NCURSES_WASI_SDK}/lib/libncurses.a ${NCURSES_WASI_SDK}/include/ncurses/panel.h ${NCURSES_WASI_SDK}/include/sgtty.h ${TERMCAP_WASI_SDK}/lib/libtermcap.a
+	rm -f ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_PANEL_EXTENSION}
+	cd ${BUILD_WASI_SDK} && \
+		${WASI_SDK_CPYTHON_ENV} \
+		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_CURSES_PANEL_EXTENSION}
+	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_PANEL_EXTENSION} | grep -F 'dylink.0'
+	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_PANEL_EXTENSION} | grep -F '<- env.memory'
+	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_PANEL_EXTENSION} | grep '^PyInit__curses_panel$$'
+	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_PANEL_EXTENSION} | grep 'needed_dynlibs'
+	touch ${BUILD_WASI_SDK}/.curses-panel-extension-built
+
+${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_CURSES_PANEL_EXTENSION}: ${DIST_WASI_SDK}/.install-cpython ${BUILD_WASI_SDK}/.curses-panel-extension-built
+	mkdir -p ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload
+	cp ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_PANEL_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
+
 ${BUILD_WASI_SDK}/.cjk-codecs-extensions-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.configured test-wasi-sdk-archive
 	rm -f $(addprefix ${BUILD_WASI_SDK}/Modules/,${WASI_SDK_CJK_CODEC_EXTENSIONS})
 	cd ${BUILD_WASI_SDK} && \
@@ -683,7 +705,7 @@ ${DIST_WASI_SDK}/.cjk-codecs-extensions-installed: ${DIST_WASI_SDK}/.install-cpy
 	cp $(addprefix ${BUILD_WASI_SDK}/Modules/,${WASI_SDK_CJK_CODEC_EXTENSIONS}) ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/
 	touch ${DIST_WASI_SDK}/.cjk-codecs-extensions-installed
 
-WASI_SDK_EXTENSION_IMPORT_DEPS = ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_PYEXPAT_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_BZ2_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_LZMA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_SQLITE3_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_UNICODEDATA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_DECIMAL_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_HASHLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_CTYPES_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_CURSES_EXTENSION} ${DIST_WASI_SDK}/.cjk-codecs-extensions-installed
+WASI_SDK_EXTENSION_IMPORT_DEPS = ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_JSON_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_PYEXPAT_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_ZLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_BZ2_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_LZMA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_SQLITE3_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_UNICODEDATA_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_DECIMAL_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_HASHLIB_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_CTYPES_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_CURSES_EXTENSION} ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_CURSES_PANEL_EXTENSION} ${DIST_WASI_SDK}/.cjk-codecs-extensions-installed
 
 .PHONY: test-wasi-sdk-extension-imports
 test-wasi-sdk-extension-imports: ${BIN}/python-wasi-sdk ${WASI_SDK_EXTENSION_IMPORT_DEPS}

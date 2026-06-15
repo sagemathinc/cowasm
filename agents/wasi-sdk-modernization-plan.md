@@ -811,7 +811,8 @@ current wasm32 libffi overlay still traps unsupported dynamic call helpers such
 as the path reached by `ctypes.string_at`, so ctypes should remain an optional
 extension gate until real wasm libffi call/closure support is implemented.
 
-The ncurses-backed SDK CPython `_curses` import probe is also landed:
+The ncurses-backed SDK CPython `_curses` and `_curses_panel` import probes are
+also landed:
 
 - the SDK `core/termcap` package probe now compiles `libtermcap.a` with
   `-fPIC` and rejects non-PIC absolute memory relocations;
@@ -820,14 +821,17 @@ The ncurses-backed SDK CPython `_curses` import probe is also landed:
   installs the standalone `sgtty.h` compatibility shim needed by generated
   `term.h`;
 - `make -C python/cpython test-wasi-sdk-extension-imports` now also builds
-  `Modules/_curses.cpython-314-wasm32-wasi.so` against SDK ncurses and
-  termcap;
+  `Modules/_curses.cpython-314-wasm32-wasi.so` and
+  `Modules/_curses_panel.cpython-314-wasm32-wasi.so` against SDK ncurses,
+  panel, and termcap;
 - the target applies the same shared-module guardrails as the other SDK
-  extension probes: imported memory, `dylink.0`, expected `PyInit__curses`,
-  and no `needed_dynlibs`;
-- it installs `_curses` into `dist/wasi-sdk/lib/python3.14/lib-dynload`;
-- it imports `_curses`/`curses` under `python-wasi-sdk` and checks basic
-  constants and ncurses version metadata.
+  extension probes: imported memory, `dylink.0`, expected `PyInit__curses` /
+  `PyInit__curses_panel`, and no `needed_dynlibs`;
+- it installs `_curses` and `_curses_panel` into
+  `dist/wasi-sdk/lib/python3.14/lib-dynload`;
+- it imports `_curses`/`curses` and `_curses_panel`/`curses.panel` under
+  `python-wasi-sdk`, then checks basic constants, ncurses version metadata, and
+  panel API availability.
 
 SDK pip/ensurepip behavior is also landed:
 
@@ -1475,7 +1479,7 @@ Only after the prior phases are green:
 - run focused SDK stdlib/sysconfig imports (landed);
 - run focused SDK dynamic-extension imports for `_json`, `pyexpat`, `zlib`,
   `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, `_hashlib`, `_ctypes`,
-  `_curses`, and the CJK codec side modules (landed);
+  `_curses`, `_curses_panel`, and the CJK codec side modules (landed);
 - run SDK pip/ensurepip behavior (landed);
 - run the supported CPython test suite (landed).
 
@@ -1539,7 +1543,7 @@ Current runtime status:
 - `make -C python/cpython test-wasi-sdk-extension-imports` imports `_json`,
   `pyexpat`, `zlib`, `_bz2`, `_lzma`, `_sqlite3`, `unicodedata`, `_decimal`,
   `_codecs_cn`, `_codecs_hk`, `_codecs_iso2022`, `_codecs_jp`, `_codecs_kr`,
-  `_codecs_tw`, `_hashlib`, `_ctypes`, and `_curses` from
+  `_codecs_tw`, `_hashlib`, `_ctypes`, `_curses`, and `_curses_panel` from
   `dist/wasi-sdk/lib/python3.14/lib-dynload` and verifies their basic runtime
   behavior;
 - `make -C python/cpython test-wasi-sdk-pip` patches the bundled pip wheel,
