@@ -4,6 +4,8 @@ include ../build/Makefile-vars
 VERSION = 2.13.3
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 URL = https://download.savannah.gnu.org/releases/freetype/freetype-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/freetype-${VERSION}.tar.gz
@@ -34,6 +36,24 @@ clean-clang:
 	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
 
 clean:: clean-clang
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
+	$(MAKE) -C ../zlib test-wasi-sdk-standalone
+	cd ../build && make wasi-sdk-next
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CWD}/../zlib/dist/wasi-sdk
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk
 
 ${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
 	mkdir ${BUILD_WASM}/bits
