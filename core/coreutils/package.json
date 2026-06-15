@@ -9,7 +9,8 @@
     "build": "make -j8 all",
     "prepublishOnly": "npm run build && make test",
     "test": "make test",
-    "test:clang-standalone": "make test-clang-standalone"
+    "test:clang-standalone": "make test-clang-standalone",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
   },
   "repository": {
     "type": "git",
