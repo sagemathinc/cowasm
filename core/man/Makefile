@@ -5,9 +5,12 @@ include ../build/Makefile-vars
 TARBALL = ${SRC}/mandoc-2022-10-14.tar.xz
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 POSIX_WASM = $(shell cowasm-package-path @cowasm/posix-wasm)
 ZLIB_WASM = $(shell cowasm-package-path @cowasm/zlib)
+ZLIB_WASI_SDK = ${CWD}/../zlib/dist/wasi-sdk
 
 all: deps wasm
 
@@ -86,3 +89,26 @@ clean-clang:
 	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
 
 clean:: clean-clang
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+${ZLIB_WASI_SDK}/lib/libz.a:
+	$(MAKE) -C ../zlib test-wasi-sdk-standalone
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build ${ZLIB_WASI_SDK}/lib/libz.a
+	cd ../build && make wasi-sdk-next
+	@status=0; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${POSIX_WASM} ${ZLIB_WASI_SDK} ${SRC} || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk

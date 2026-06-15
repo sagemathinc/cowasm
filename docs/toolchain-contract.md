@@ -657,6 +657,20 @@ runner and performs a small archive create/extract round trip. It installs
 into `core/tar/dist/wasi-sdk`, leaving the default Zig-backed package
 untouched.
 
+`core/man` has the same opt-in dependent-executable smoke shape:
+
+```sh
+make -C core/man test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK through its dependencies, first rebuilds
+zlib with its WASI SDK standalone smoke target, then builds mandoc's `man` and
+`mandoc` binaries against that install with `COWASM_TOOLCHAIN=wasi-sdk`. It
+uses the same local process, terminal, temporary-file, and network lookup
+compatibility shims as the direct clang smoke, verifies a manual page render
+through the WASI runner, and installs into `core/man/dist/wasi-sdk`, leaving
+the default Zig-backed package untouched.
+
 `core/libgit2` has the same opt-in dependent-library smoke shape:
 
 ```sh
