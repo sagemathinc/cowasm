@@ -58,6 +58,7 @@ build/wasi-sdk/dynamic-library.so: dynamic-library.c
 		-o build/wasi-sdk/dynamic-library.so
 
 build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so
+	node check-wasi-sdk-abi.js build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so
 	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' U dlopen'
 	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' U dlsym'
 	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' T malloc$$'
