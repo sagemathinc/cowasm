@@ -1,8 +1,8 @@
 /*
 This is an implementation of POSIX Sockets.
 
-Of course, much of the code for this is written in zig in the posix-node package
-in  this file packages/posix-node/src/socket.zig
+Much of the host-side code for this is implemented by the native C addon in the
+posix-node package.
 
 
 RELATED WORK:  I wrote most of this, then searched and found it is solving
@@ -16,7 +16,7 @@ a similar problem to emscripten's "Full POSIX Sockets over WebSocket Proxy Serve
 Of course, the architecture of the CoWasm solution is massively different.
 It looks like Emscripten's is a full multithreaded standalone C++ program
 for proxying many network connections from (presumably) many clients.
-In contrast, CoWasm's solution is partly written in zig as a node extension
+In contrast, CoWasm's solution is partly implemented as a native Node extension
 and integrated with Javascript.  It can be used standalone with other Javascript
 projects having nothing to do with cowasm, by using the posix-node package,
 so there is potential for more community feedback and development.
