@@ -496,8 +496,9 @@ The Phase 14 CPython configure and core-compile probe is now landed:
   HACL static archives;
 - `test-wasi-sdk-link` verifies that the SDK-built wasm exports the CoWasm
   runtime entry points such as `cowasm_python_init` and
-  `cowasm_python_terminal`, and imports the expected TypeScript runtime hooks
-  such as `wasmSendString` and `_PyEM_TrampolineCall`.
+  `cowasm_python_terminal`, exports `__wasm_call_ctors` for wasm-ld's
+  synthesized global-relocation hook, and imports the expected TypeScript
+  runtime hooks such as `wasmSendString` and `_PyEM_TrampolineCall`.
 - the SDK CPython link now compiles CPython and the wrapper as PIC and links
   `build/wasi-sdk/python-wasi-sdk.wasm` as a real `dylink.0` side module with
   `-shared -nostdlib`;
@@ -538,8 +539,9 @@ Additional local probes from the same blocker:
 
 - `DEBUG=dylink* ./bin/python-wasi-sdk -S -c 'print(1)'` confirms that
   `__wasm_apply_data_relocs` runs before `__main_argc_argv` is called;
-- forcing an exported `__wasm_call_ctors` hook into the SDK side module did not
-  change the trap;
+- exporting `__wasm_call_ctors` from the SDK side module exposes wasm-ld's
+  synthesized global-relocation hook and the loader calls it before
+  `__main_argc_argv`, but this does not change the trap;
 - rebuilding the SDK archive with `WITH_MIMALLOC` disabled did not change the
   trap;
 - forcing the SDK build-tree `ALIGNOF_MAX_ALIGN_T` from 16 back to the Zig
@@ -1246,8 +1248,9 @@ Landed configure and core-compile probe details:
 - full `libpython3.14.a` archive compile coverage under
   `COWASM_TOOLCHAIN=wasi-sdk`.
 - C wrapper link coverage for `build/wasi-sdk/python-wasi-sdk.wasm`, including
-  the CoWasm runtime exports used by `python/python-wasm` and the expected
-  TypeScript runtime imports.
+  the CoWasm runtime exports used by `python/python-wasm`, the
+  `__wasm_call_ctors` relocation hook, and the expected TypeScript runtime
+  imports.
 - SDK artifact install coverage via `make -C python/cpython wasi-sdk-cpython`.
 - runnable wrapper target via `make -C python/cpython python-wasi-sdk`.
 
@@ -1261,15 +1264,15 @@ Current runtime blocker:
 - `./bin/python-wasi-sdk -S -c 'pass'` and
   `make -C python/cpython test-wasi-sdk-runtime-contracts` still trap during
   CPython startup;
-- a build-tree `_PyTuple_Resize` no-op experiment moves past the tuple
-  uniqueness failure and reaches a later `_Py_Dealloc`/allocator trap, so do
-  not land that CPython source patch until the object lifetime issue is
-  understood;
+- the `_PyTuple_Resize(tuple, current_size)` no-op patch is now in the SDK
+  CPython patch list and moves past the tuple uniqueness failure; the remaining
+  trap is later in the `_Py_Dealloc`/GC path;
 - `DEBUG=dylink:function-table,dylink:dlopen` shows the side module imports
-  with `__table_base` and its active element segment installed before
-  `__wasm_apply_data_relocs`, making the next blocker more likely CPython
+  with `__table_base`, its active element segment installed, and
+  `__wasm_call_ctors` plus `__wasm_apply_data_relocs` called before
+  `__main_argc_argv`, making the next blocker more likely CPython
   startup/object lifetime or imported-libc allocator ABI state than install
-  layout or stdlib packaging.
+  layout, global relocation, or stdlib packaging.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 

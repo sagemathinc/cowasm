@@ -180,6 +180,7 @@ BLDCXXSHARED_WASI_SDK = ${BIN}/cowasm-c++ --experimental-pic -shared ${DEBUG_MOD
 WASI_SDK_PYTHON_CFLAGS = ${DEBUG_MODE} -fPIC -I${BUILD_WASI_SDK} -I${BUILD_WASI_SDK}/Include -I${POSIX_WASI_SDK} -DPy_DEFAULT_RECURSION_LIMIT=700
 WASI_SDK_PYTHON_EXPORTS = \
 	-Wl,--export=__main_argc_argv \
+	-Wl,--export=__wasm_call_ctors \
 	-Wl,--export=keepalive \
 	-Wl,--export=c_malloc \
 	-Wl,--export=c_free \
@@ -371,6 +372,7 @@ ${BUILD_WASI_SDK}/python-wasi-sdk.wasm: ${BUILD_WASI_SDK}/Programs/python-wasi-s
 	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'env._PyEM_TrampolineCall'
 	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'cowasm_python_init'
 	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'cowasm_python_terminal'
+	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F '__wasm_call_ctors'
 	wasm-objdump -h ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'dylink.0'
 
 .PHONY: test-wasi-sdk-link
