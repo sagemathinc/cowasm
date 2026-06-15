@@ -177,6 +177,22 @@ BLDSHARED = cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
 BLDCXXSHARED = cowasm-c++ --experimental-pic -shared ${DEBUG_MODE}
 BLDSHARED_WASI_SDK = ${BIN}/cowasm-cc --experimental-pic -shared ${DEBUG_MODE}
 BLDCXXSHARED_WASI_SDK = ${BIN}/cowasm-c++ --experimental-pic -shared ${DEBUG_MODE}
+WASI_SDK_PYTHON_CFLAGS = ${DEBUG_MODE} -I${BUILD_WASI_SDK} -I${BUILD_WASI_SDK}/Include -I${POSIX_WASI_SDK} -DPy_DEFAULT_RECURSION_LIMIT=700
+WASI_SDK_PYTHON_EXPORTS = \
+	-Wl,--export=keepalive \
+	-Wl,--export=c_malloc \
+	-Wl,--export=c_free \
+	-Wl,--export=cowasm_python_init \
+	-Wl,--export=cowasm_python_repr \
+	-Wl,--export=cowasm_python_exec \
+	-Wl,--export=cowasm_python_terminal
+WASI_SDK_HACL_LIBS = \
+	${BUILD_WASI_SDK}/Modules/_hacl/libHacl_Hash_MD5.a \
+	${BUILD_WASI_SDK}/Modules/_hacl/libHacl_Hash_SHA1.a \
+	${BUILD_WASI_SDK}/Modules/_hacl/libHacl_Hash_SHA2.a \
+	${BUILD_WASI_SDK}/Modules/_hacl/libHacl_Hash_SHA3.a \
+	${BUILD_WASI_SDK}/Modules/_hacl/libHacl_Hash_BLAKE2.a \
+	${BUILD_WASI_SDK}/Modules/_hacl/libHacl_HMAC.a
 
 ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
@@ -326,8 +342,37 @@ test-wasi-sdk-archive: ${BUILD_WASI_SDK}/.core-compiled
 		${WASI_SDK_CPYTHON_ENV} \
 		make libpython${PYTHON_MAJOR}.${PYTHON_MINOR}.a
 
+${BUILD_WASI_SDK}/Programs/python-wasi-sdk-wrapper.o: ${SRC}/python-wasi-sdk-wrapper.c ${BUILD_WASI_SDK}/.configured
+	${BIN}/wasi-sdk-clang-next -target wasm32-wasip1 ${WASM_OPT} ${WASI_SDK_PYTHON_CFLAGS} \
+		-c ${SRC}/python-wasi-sdk-wrapper.c \
+		-o ${BUILD_WASI_SDK}/Programs/python-wasi-sdk-wrapper.o
+
+${BUILD_WASI_SDK}/Programs/libpython-wasi-sdk.o: ${BUILD_WASI_SDK}/Programs/libpython.c ${BUILD_WASI_SDK}/.configured
+	${BIN}/wasi-sdk-clang-next -target wasm32-wasip1 ${WASM_OPT} ${WASI_SDK_PYTHON_CFLAGS} \
+		-Wno-incompatible-pointer-types-discards-qualifiers \
+		-c ${BUILD_WASI_SDK}/Programs/libpython.c \
+		-o ${BUILD_WASI_SDK}/Programs/libpython-wasi-sdk.o
+
+${BUILD_WASI_SDK}/python-wasi-sdk.wasm: ${BUILD_WASI_SDK}/Programs/python-wasi-sdk-wrapper.o ${BUILD_WASI_SDK}/Programs/libpython-wasi-sdk.o test-wasi-sdk-archive
+	${BIN}/wasi-sdk-clang-next -target wasm32-wasip1 ${WASM_OPT} \
+		-Wl,--allow-undefined \
+		-Wl,--no-entry \
+		${WASI_SDK_PYTHON_EXPORTS} \
+		${BUILD_WASI_SDK}/Programs/python-wasi-sdk-wrapper.o \
+		${BUILD_WASI_SDK}/Programs/libpython-wasi-sdk.o \
+		${BUILD_WASI_SDK}/libpython${PYTHON_MAJOR}.${PYTHON_MINOR}.a \
+		${WASI_SDK_HACL_LIBS} \
+		-o ${BUILD_WASI_SDK}/python-wasi-sdk.wasm
+	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'env.wasmSendString'
+	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'env._PyEM_TrampolineCall'
+	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'cowasm_python_init'
+	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'cowasm_python_terminal'
+
+.PHONY: test-wasi-sdk-link
+test-wasi-sdk-link: ${BUILD_WASI_SDK}/python-wasi-sdk.wasm
+
 .PHONY: test-wasi-sdk-next
-test-wasi-sdk-next: test-wasi-sdk-configure test-wasi-sdk-compile
+test-wasi-sdk-next: test-wasi-sdk-configure test-wasi-sdk-compile test-wasi-sdk-link
 
 ${DIST_WASM}/.install-cpython: node_modules ${DIST_WASM}/.built-cpython
 	# CRITICAL!  We have to make changes to build/lib.wasi-wasm32-${PYTHON_MAJOR}.${PYTHON_MINOR}/_sysconfigdata__wasi_wasm32-wasi.py so it

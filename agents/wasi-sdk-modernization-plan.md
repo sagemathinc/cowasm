@@ -490,11 +490,19 @@ The Phase 14 CPython configure and core-compile probe is now landed:
 - `make -C python/cpython test-wasi-sdk-next` now builds
   `libpython3.14.a` with the SDK path, so the Phase 14 compile probe covers the
   built-in extension-module object set as well as the core runtime objects.
+- the SDK probe now also links `build/wasi-sdk/python-wasi-sdk.wasm` from a C
+  translation of the `python/python-wasm` Zig wrapper, the generated
+  `Programs/libpython.c` export thunk, `libpython3.14.a`, and the generated
+  HACL static archives;
+- `test-wasi-sdk-link` verifies that the SDK-built wasm exports the CoWasm
+  runtime entry points such as `cowasm_python_init` and
+  `cowasm_python_terminal`, and imports the expected TypeScript runtime hooks
+  such as `wasmSendString` and `_PyEM_TrampolineCall`.
 
-The next Phase 14 blocker is moving from a static archive compile to a usable
-SDK-built CPython program/runtime: link the archive into the CoWasm main module,
-install the SDK build tree, and run the existing runtime-contract tests before
-attempting broader package work.
+The next Phase 14 blocker is moving from a linkable SDK-built CPython main
+module to an installed and runnable SDK CPython package: install the SDK build
+tree, point the existing `python-wasm` loader at `python-wasi-sdk.wasm`, and run
+the existing runtime-contract tests before attempting broader package work.
 
 ## Order Of Work
 
@@ -1088,7 +1096,8 @@ Only after the prior phases are green:
 
 - configure `python/cpython` with `wasi-sdk` (probe target landed);
 - build `python/cpython`'s static archive with `wasi-sdk` (probe target landed);
-- link/install `python/cpython` with `wasi-sdk`;
+- link `python/cpython` with `wasi-sdk` (probe target landed);
+- install `python/cpython` with `wasi-sdk`;
 - run `make -C python/cpython pip`;
 - run `make -C python/cpython test-runtime-contracts`;
 - run the supported CPython test suite;
@@ -1128,6 +1137,9 @@ Landed configure and core-compile probe details:
   `termios.h` shim;
 - full `libpython3.14.a` archive compile coverage under
   `COWASM_TOOLCHAIN=wasi-sdk`.
+- C wrapper link coverage for `build/wasi-sdk/python-wasi-sdk.wasm`, including
+  the CoWasm runtime exports used by `python/python-wasm` and the expected
+  TypeScript runtime imports.
 
 Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 
