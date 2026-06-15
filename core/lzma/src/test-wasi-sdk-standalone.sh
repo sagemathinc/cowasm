@@ -18,20 +18,7 @@ source "$script_dir/../../build/src/test/clang-standalone-common.sh"
 probe_dir="$(mktemp -d)"
 trap 'rm -rf "$probe_dir"' EXIT
 
-cat >"$probe_dir/probe.c" <<'EOF'
-int main(int argc, char **argv) {
-  return argc == 0 || argv == 0;
-}
-EOF
-
-env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
-  "$probe_dir/probe.c" -o "$probe_dir/probe.wasm"
-env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
-  -c "$probe_dir/probe.c" -o "$probe_dir/probe.o"
-env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-ar" \
-  rc "$probe_dir/libprobe.a" "$probe_dir/probe.o"
-env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-ranlib" \
-  "$probe_dir/libprobe.a"
+cowasm_standalone_probe "lzma" wasi-sdk "$bin_dir" "$probe_dir"
 
 rm -rf "$dist_dir"
 mkdir -p "$dist_dir"

@@ -20,20 +20,7 @@ trap 'rm -rf "$probe_dir"' EXIT
 compat_dir="$probe_dir/compat"
 mkdir -p "$compat_dir"
 
-cat >"$probe_dir/probe.c" <<'EOF'
-int main(int argc, char **argv) {
-  return argc == 0 || argv == 0;
-}
-EOF
-
-env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
-  "$probe_dir/probe.c" -o "$probe_dir/probe.wasm"
-env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
-  -c "$probe_dir/probe.c" -o "$probe_dir/probe.o"
-env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-ar" \
-  rc "$probe_dir/libprobe.a" "$probe_dir/probe.o"
-env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-ranlib" \
-  "$probe_dir/libprobe.a"
+cowasm_standalone_probe "lua" wasi-sdk "$bin_dir" "$probe_dir"
 
 rm -rf "$dist_dir"
 mkdir -p "$dist_dir/bin" "$dist_dir/include" "$dist_dir/lib"
