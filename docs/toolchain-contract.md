@@ -549,6 +549,18 @@ The target refreshes the pinned SDK, rebuilds bzip2 from source with
 compress/decompress round trip. It installs into `core/bzip2/dist/wasi-sdk`,
 leaving the default Zig-backed package untouched.
 
+`core/termcap` has the same opt-in static-library smoke shape:
+
+```sh
+make -C core/termcap test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, builds `libtermcap.a` with
+`COWASM_TOOLCHAIN=wasi-sdk` and selector-aware archive tools, then links and
+runs a minimal termcap lookup and cursor-formatting probe through the WASI
+runner. It installs into `core/termcap/dist/wasi-sdk`, leaving the default
+Zig-backed package untouched.
+
 `core/lzma` has the same opt-in standalone executable smoke shape:
 
 ```sh
@@ -575,6 +587,20 @@ compatibility shims for Qhull paths that the minimal initialization probe does
 not exercise. It installs into `core/qhull/dist/wasi-sdk`, leaving the default
 Zig-backed package untouched.
 
+`core/freetype` has the same opt-in dependent-library smoke shape:
+
+```sh
+make -C core/freetype test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, first rebuilds zlib with its WASI SDK
+standalone smoke target, then builds FreeType against that install with
+`COWASM_TOOLCHAIN=wasi-sdk` and selector-aware archive tools. It links and runs
+a minimal `FT_Init_FreeType` probe through the WASI runner, using local
+`setjmp` compatibility shims for FreeType paths outside the probe. It installs
+into `core/freetype/dist/wasi-sdk`, leaving the default Zig-backed package
+untouched.
+
 `core/sqlite` has the same opt-in Autoconf static-library smoke shape:
 
 ```sh
@@ -599,6 +625,33 @@ links and runs a minimal `ffi_prep_cif` ABI-layout probe through the WASI
 runner. It installs into `core/libffi/dist/wasi-sdk`, leaving the default
 Zig-backed package untouched.
 
+`core/libedit` has the same opt-in dependent-library smoke shape:
+
+```sh
+make -C core/libedit test-wasi-sdk-standalone
+```
+
+The target first rebuilds termcap with its WASI SDK standalone smoke target,
+then builds libedit against that install with `COWASM_TOOLCHAIN=wasi-sdk` and
+selector-aware archive tools. It installs readline-compat headers and links a
+minimal history and tokenizer probe through the WASI runner, installing into
+`core/libedit/dist/wasi-sdk` while leaving the default Zig-backed package
+untouched.
+
+`core/ncurses` has the same opt-in dependent-library smoke shape:
+
+```sh
+make -C core/ncurses test-wasi-sdk-standalone
+```
+
+The target first rebuilds termcap with its WASI SDK standalone smoke target,
+then builds ncurses libraries against that install with
+`COWASM_TOOLCHAIN=wasi-sdk` and selector-aware archive tools. It uses a local
+`sgtty.h` compatibility shim for terminal paths outside the smoke, installs
+headers under `core/ncurses/dist/wasi-sdk`, and links a minimal
+`curses_version` probe through the WASI runner while leaving the default
+Zig-backed package untouched.
+
 `core/lua` has the same opt-in standalone executable smoke shape:
 
 ```sh
@@ -613,6 +666,32 @@ clang smoke, the standalone build omits readline/libedit so it exercises Lua
 itself without pulling in the interactive terminal dependency chain. It also
 uses local `setjmp`, signal, clock, tempfile, and `system()` compatibility
 shims for Lua OS/error paths that the summation smoke does not exercise.
+
+`core/coreutils` has the same opt-in focused executable smoke shape:
+
+```sh
+make -C core/coreutils test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, builds focused `basename` and `dirname`
+utilities with `COWASM_TOOLCHAIN=wasi-sdk`, and runs argument-handling probes
+for both commands through the WASI runner. It installs those focused tools
+under `core/coreutils/dist/wasi-sdk`, leaving the default Zig-backed package
+untouched.
+
+`core/f2c` has the same opt-in translated-program smoke shape:
+
+```sh
+make -C core/f2c test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, builds `libf2c.a` with
+`COWASM_TOOLCHAIN=wasi-sdk`, uses selector-aware archive tools, and keeps the
+native `f2c` translator as the source-generation helper. It translates the
+package's `hello.f` probe, links the result against the WASI SDK archive with
+small signal and tempfile stubs, and runs it through the WASI runner. It
+installs into `core/f2c/dist/wasi-sdk`, leaving the default Zig-backed package
+untouched.
 
 `core/libpng` has the same opt-in dependent-library smoke shape:
 
@@ -642,6 +721,33 @@ It applies the same noninteractive compatibility shims as the direct clang
 smoke, verifies that `less --help` starts through the WASI runner, and installs
 into `core/less/dist/wasi-sdk`, leaving the default Zig-backed package
 untouched.
+
+`core/dash` has the same opt-in dependent-executable smoke shape:
+
+```sh
+make -C core/dash test-wasi-sdk-standalone
+```
+
+The target first rebuilds libedit, termcap, and the pinned SDK pieces needed by
+the shell build, then configures dash with `COWASM_TOOLCHAIN=wasi-sdk` and
+selector-aware archive tools. It uses focused process, signal, wait, descriptor,
+and temporary-file compatibility stubs for shell paths outside the smoke, then
+checks arithmetic expansion and syntax-error recovery through the WASI runner.
+It installs into `core/dash/dist/wasi-sdk`, leaving the default Zig-backed
+package untouched.
+
+`core/rogue` has the same opt-in dependent-executable smoke shape:
+
+```sh
+make -C core/rogue test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK through ncurses and termcap, then builds
+the rogue executable against those installs with `COWASM_TOOLCHAIN=wasi-sdk`.
+It supplies focused user-account and input compatibility shims, avoids
+standalone terminfo setup for the smoke, and verifies the score-table startup
+path through the WASI runner. It installs into `core/rogue/dist/wasi-sdk`,
+leaving the default Zig-backed package untouched.
 
 `core/tar` has the same opt-in dependent-executable smoke shape:
 
@@ -686,6 +792,19 @@ wasm32. It links the repository-initialization probe with a 1 MiB wasm stack so
 libgit2's filesystem setup path does not exhaust the default 64 KiB stack, then
 runs `git_repository_init` through the WASI runner. It installs into
 `core/libgit2/dist/wasi-sdk`, leaving the default Zig-backed package untouched.
+
+`core/openssl` has the same opt-in executable smoke shape:
+
+```sh
+make -C core/openssl test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK and builds OpenSSL with
+`COWASM_TOOLCHAIN=wasi-sdk` against the POSIX compatibility headers already used
+by the Zig-backed package. It supplies focused wait, terminal, network lookup,
+user, process, and randomness compatibility shims for paths outside the smoke,
+then runs a small OpenSSL command through the WASI runner. It installs into
+`core/openssl/dist/wasi-sdk`, leaving the default Zig-backed package untouched.
 
 `sagemath/gmp` has the same opt-in static-library smoke shape:
 
