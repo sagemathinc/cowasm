@@ -18,8 +18,8 @@ ${DIST}/.built: node_modules
 	mkdir ${DIST}
 	touch ${DIST}/.built
 
-${BIN}/wasm-opt: ${DIST}/.built
-	ln -sf `pwd`/node_modules/.bin/wasm-opt ${BIN}/wasm-opt
+${BIN}/wasm-opt: ${DIST}/.built Makefile
+	ln -sf `pwd`/node_modules/binaryen/bin/wasm-opt ${BIN}/wasm-opt
 	touch ${BIN}/wasm-opt
 
 ${BIN}/cowasm-opt: ${BIN}/wasm-opt ${SRC}/cowasm_opt.py

@@ -520,6 +520,13 @@ make -C core/build wasi-sdk-next
 Validate the SDK and wrapper contract with:
 
 ```sh
+make test-wasi-sdk
+```
+
+That top-level scheduled check runs the lower-level bootstrap and dylink
+contracts:
+
+```sh
 make -C core/build test-wasi-sdk-next
 make -C core/dylink test-wasi-sdk-next
 ```

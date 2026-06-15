@@ -145,6 +145,11 @@ test-bin: all
 	# That sqlite3-wasm does something:
 	./bin/sqlite3-wasm  --version
 
+.PHONY: test-wasi-sdk
+test-wasi-sdk:
+	$(MAKE) -C core/build test-wasi-sdk-next
+	$(MAKE) -C core/dylink test-wasi-sdk-next
+
 # clean up everything after each test, to prove can build and test everything
 # in isolation.
 .PHONY: test-clean
