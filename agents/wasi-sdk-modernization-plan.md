@@ -292,6 +292,19 @@ The `core/termcap` Phase 11 package probe is also partially landed:
 - `make -C core/termcap test-wasi-sdk-next` is available as the stable
   `wasi-sdk-next` target name.
 
+The `sagemath/gmp` Phase 11 package probe is also partially landed:
+
+- `make -C sagemath/gmp test-wasi-sdk-standalone` builds static GMP with
+  `COWASM_TOOLCHAIN=wasi-sdk`;
+- the probe configures GMP with `ABI=standard`, generic mpn code,
+  `--disable-assembly`, and `--disable-shared`;
+- it links the existing `test-gmp.c` mathematical smoke against the SDK-built
+  `libgmp.a`;
+- it runs the smoke under the standalone WASI runner and checks the expected
+  large integer output;
+- `make -C sagemath/gmp test-wasi-sdk-next` is available as the stable
+  `wasi-sdk-next` target name.
+
 ## Order Of Work
 
 Recommended order:
@@ -818,7 +831,7 @@ Suggested order:
 1. `core/zlib` (probe target landed)
 2. `core/bzip2` (probe target landed)
 3. `core/termcap` (probe target landed)
-4. `sagemath/gmp`
+4. `sagemath/gmp` (probe target landed)
 5. `core/sqlite`
 6. `core/lua`
 

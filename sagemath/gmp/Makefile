@@ -48,6 +48,9 @@ test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
 	exit "$$status"
 
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: test-wasi-sdk-standalone
+
 .PHONY: clean-wasi-sdk
 clean-wasi-sdk:
 	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
