@@ -524,11 +524,12 @@ make test-wasi-sdk
 ```
 
 That top-level scheduled check runs the lower-level bootstrap and dylink
-contracts:
+contracts, plus the first package-level standalone smoke:
 
 ```sh
 make -C core/build test-wasi-sdk-next
 make -C core/dylink test-wasi-sdk-next
+make -C core/zlib test-wasi-sdk-standalone
 ```
 
 `core/zlib` has the first package-level standalone smoke target for this

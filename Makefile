@@ -149,6 +149,7 @@ test-bin: all
 test-wasi-sdk:
 	$(MAKE) -C core/build test-wasi-sdk-next
 	$(MAKE) -C core/dylink test-wasi-sdk-next
+	$(MAKE) -C core/zlib test-wasi-sdk-standalone
 
 # clean up everything after each test, to prove can build and test everything
 # in isolation.
