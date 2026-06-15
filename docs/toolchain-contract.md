@@ -549,6 +549,18 @@ The target refreshes the pinned SDK, rebuilds bzip2 from source with
 compress/decompress round trip. It installs into `core/bzip2/dist/wasi-sdk`,
 leaving the default Zig-backed package untouched.
 
+`core/lzma` has the same opt-in standalone executable smoke shape:
+
+```sh
+make -C core/lzma test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, rebuilds xz/lzma with
+`COWASM_TOOLCHAIN=wasi-sdk`, uses selector-aware archive tools, and runs an
+`xz` streaming compress/decompress round trip through the WASI runner. It
+installs into `core/lzma/dist/wasi-sdk`, leaving the default Zig-backed package
+untouched.
+
 The bootstrap currently installs `wasi-sdk-33.0` under
 `core/build/build/wasi-sdk/dist/wasi-sdk-next/native` and symlinks explicit
 driver names into `bin/`:

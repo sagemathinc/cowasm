@@ -2,6 +2,8 @@ include ../build/Makefile-vars
 
 BUILD_CLANG = ${BUILD}/clang
 DIST_CLANG = ${DIST}/clang
+BUILD_WASI_SDK = ${BUILD}/wasi-sdk
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 all: deps wasm
 
@@ -34,6 +36,24 @@ clean-clang:
 	rm -rf ${BUILD_CLANG} ${DIST_CLANG}
 
 clean:: clean-clang
+
+${BUILD_WASI_SDK}/.build: ${TARBALL}
+	rm -rf ${BUILD_WASI_SDK}
+	mkdir -p ${BUILD_WASI_SDK}
+	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
+	touch ${BUILD_WASI_SDK}/.build
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
+	cd ../build && make wasi-sdk-next
+	$(MAKE) -C ../posix-wasm wasm
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CWD}/../posix-wasm/dist/wasm
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk
 
 ${DIST_NATIVE}/.built: ${BUILD_NATIVE}/.build
 	cd ../build && make zig
