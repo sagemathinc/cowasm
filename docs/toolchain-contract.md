@@ -871,6 +871,17 @@ available, then builds MPC against those installs, places `libmpc.a` under
 `sagemath/mpc/dist/wasi-sdk`, and runs a small complex-arithmetic probe through
 the WASI runner.
 
+`sagemath/mpfrcx` has the same opt-in dependent static-library smoke shape:
+
+```sh
+make -C sagemath/mpfrcx test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP, MPFR, and MPC WASI SDK standalone archives
+are available, then builds MPFRCX against those installs, places
+`libmpfrcx.a` under `sagemath/mpfrcx/dist/wasi-sdk`, and runs real and complex
+polynomial arithmetic probes through the WASI runner.
+
 `sagemath/mpfi` has the same opt-in dependent static-library smoke shape:
 
 ```sh
