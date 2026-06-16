@@ -986,6 +986,8 @@ importers:
         specifier: workspace:*
         version: link:../gsl
 
+  sagemath/lrcalc: {}
+
   sagemath/m4ri: {}
 
   sagemath/m4rie:

@@ -19,6 +19,7 @@ Current wasi-sdk standalone math smoke packages:
 - FLINT
 - IML
 - LinBox
+- lrcalc
 - NTL
 - PARI/GP
 - primesieve
