@@ -39,6 +39,14 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 libcxx_noeh="$("$bin_dir/wasi-sdk-clang++-next" -target wasm32-wasip1 -print-file-name=libc++.a)"
 libcxx="${libcxx_noeh%/noeh/libc++.a}/eh/libc++.a"
 libcxxabi="${libcxx_noeh%/noeh/libc++.a}/eh/libc++abi.a"
+libunwind="${libcxx_noeh%/noeh/libc++.a}/eh/libunwind.a"
+if [ ! -f "$libcxx" ] || [ ! -f "$libcxxabi" ] || [ ! -f "$libunwind" ]; then
+  echo "cowasm: gfan standalone smoke requires pinned wasi-sdk exception archives" >&2
+  echo "  $libcxx" >&2
+  echo "  $libcxxabi" >&2
+  echo "  $libunwind" >&2
+  exit 77
+fi
 build_log="$probe_dir/gfan-build.log"
 
 cd "$build_dir"
@@ -55,17 +63,12 @@ env COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs" \
   OPTFLAGS="-DGMPRATIONAL -DNDEBUG -Oz" \
   CDD_LINKOPTIONS="$cddlib_dir/lib/libcddgmp.a" \
   GMP_LINKOPTIONS="$gmp_dir/lib/libgmp.a" \
-  ADDITIONALLINKOPTIONS="$probe_dir/cowasm-system-stub.o $cddlib_dir/lib/libcddgmp.a $gmp_dir/lib/libgmp.a $libcxx $libcxxabi -lwasi-emulated-signal -lwasi-emulated-process-clocks" \
+  ADDITIONALLINKOPTIONS="$probe_dir/cowasm-system-stub.o $cddlib_dir/lib/libcddgmp.a $gmp_dir/lib/libgmp.a $libcxx $libcxxabi $libunwind -lwasi-emulated-signal -lwasi-emulated-process-clocks" \
   gfan >"$build_log" 2>&1
 status=$?
 set -e
 
 if [ "$status" -ne 0 ]; then
-  if grep -E "undefined symbol: (__cxa_allocate_exception|__cxa_throw|__cpp_exception)" "$build_log" >/dev/null; then
-    grep -E "undefined symbol: (__cxa_allocate_exception|__cxa_throw|__cpp_exception)" "$build_log" | head -3 >&2
-    echo "gfan wasi-sdk standalone skipped: exception-enabled C++ runtime link is not wired through yet" >&2
-    exit 77
-  fi
   cat "$build_log"
   exit "$status"
 fi
