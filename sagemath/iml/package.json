@@ -1,0 +1,39 @@
+{
+  "name": "@cowasm/iml",
+  "version": "1.0.0",
+  "description": "IML integer matrix library",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
+  "files": [
+    "dist/js/*",
+    "README.md",
+    "src/*",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/iml",
+  "keywords": ["integer-matrices", "linear-algebra", "sagemath"],
+  "author": "William Stein",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "dependencies": {
+    "@cowasm/gmp": "workspace:*",
+    "@cowasm/gsl": "workspace:*"
+  },
+  "devDependencies": {}
+}

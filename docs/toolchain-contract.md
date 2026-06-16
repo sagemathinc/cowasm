@@ -900,6 +900,19 @@ with `COWASM_TOOLCHAIN=wasi-sdk`, installs the static libraries under
 functions, distribution CDFs, vector allocation, and BLAS dot products through
 the WASI runner.
 
+`sagemath/iml` has the same opt-in dependent static-library smoke shape:
+
+```sh
+make -C sagemath/iml test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP and GSL WASI SDK standalone archives are
+available, then builds IML against GMP and GSL's bundled CBLAS archive with
+`COWASM_TOOLCHAIN=wasi-sdk`. It installs `libiml.a` under
+`sagemath/iml/dist/wasi-sdk`, seeds the old autotools `realloc(0)` cross check
+for WASI libc, and links a deterministic probe covering modular determinant,
+modular rank, and exact rational linear solving through the WASI runner.
+
 `core/libcxx` has an opt-in C++ runtime side-module smoke target:
 
 ```sh
