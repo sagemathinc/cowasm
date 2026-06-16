@@ -905,6 +905,105 @@ importers:
         specifier: ^4.8.4
         version: 4.9.5
 
+  sagemath/cddlib:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+
+  sagemath/ecm:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+
+  sagemath/fflas-ffpack:
+    dependencies:
+      '@cowasm/givaro':
+        specifier: workspace:*
+        version: link:../givaro
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/gsl':
+        specifier: workspace:*
+        version: link:../gsl
+
+  sagemath/flint:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/mpfr':
+        specifier: workspace:*
+        version: link:../mpfr
+
+  sagemath/givaro:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+
+  sagemath/gmp: {}
+
+  sagemath/gsl: {}
+
+  sagemath/iml:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/gsl':
+        specifier: workspace:*
+        version: link:../gsl
+
+  sagemath/linbox:
+    dependencies:
+      '@cowasm/fflas-ffpack':
+        specifier: workspace:*
+        version: link:../fflas-ffpack
+      '@cowasm/givaro':
+        specifier: workspace:*
+        version: link:../givaro
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/gsl':
+        specifier: workspace:*
+        version: link:../gsl
+
+  sagemath/mpc:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/mpfr':
+        specifier: workspace:*
+        version: link:../mpfr
+
+  sagemath/mpfi:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/mpfr':
+        specifier: workspace:*
+        version: link:../mpfr
+
+  sagemath/mpfr:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+
+  sagemath/ntl:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+
+  sagemath/pari: {}
+
   web/browser:
     dependencies:
       debug:
