@@ -1,0 +1,57 @@
+--- a/lib/cliquer.c
++++ b/lib/cliquer.c
+@@ -14,0 +15 @@
++#include <time.h>
+@@ -16,0 +18,22 @@
++
++#ifdef __wasi__
++static clock_t cowasm_cliquer_times(struct tms *buffer) {
++	struct timeval now;
++	long clocks_per_sec = sysconf(_SC_CLK_TCK);
++	clock_t ticks = 0;
++
++	if (clocks_per_sec <= 0)
++		clocks_per_sec = 100;
++	if (gettimeofday(&now, NULL) == 0)
++		ticks = (clock_t)(now.tv_sec * clocks_per_sec +
++				  now.tv_usec * clocks_per_sec / 1000000);
++	if (buffer) {
++		buffer->tms_utime = ticks;
++		buffer->tms_stime = 0;
++		buffer->tms_cutime = 0;
++		buffer->tms_cstime = 0;
++	}
++	return ticks;
++}
++#define times cowasm_cliquer_times
++#endif
+--- a/lib/reorder.c
++++ b/lib/reorder.c
+@@ -10,0 +11,27 @@
++#include <sys/time.h>
++#include <sys/times.h>
++#include <time.h>
++#include <unistd.h>
++
++#ifdef __wasi__
++static clock_t cowasm_cliquer_times(struct tms *buffer) {
++	struct timeval now;
++	long clocks_per_sec = sysconf(_SC_CLK_TCK);
++	clock_t ticks = 0;
++
++	if (clocks_per_sec <= 0)
++		clocks_per_sec = 100;
++	if (gettimeofday(&now, NULL) == 0)
++		ticks = (clock_t)(now.tv_sec * clocks_per_sec +
++				  now.tv_usec * clocks_per_sec / 1000000);
++	if (buffer) {
++		buffer->tms_utime = ticks;
++		buffer->tms_stime = 0;
++		buffer->tms_cutime = 0;
++		buffer->tms_cstime = 0;
++	}
++	return ticks;
++}
++#define times cowasm_cliquer_times
++#endif
++
