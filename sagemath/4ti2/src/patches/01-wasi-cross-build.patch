@@ -1,0 +1,48 @@
+diff -urN 4ti2-orig/configure 4ti2-new/configure
+--- 4ti2-orig/configure	2023-04-25 13:30:46.000000000 -0700
++++ 4ti2-new/configure	2026-06-16 16:06:59.893966160 -0700
+@@ -10312,10 +10312,7 @@
+ trapv_int=no
+ if test "$cross_compiling" = yes
+ then :
+-  { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+-printf "%s\n" "$as_me: error: in \`$ac_pwd':" >&2;}
+-as_fn_error $? "cannot run test program while cross compiling
+-See \`config.log' for more details" "$LINENO" 5; }
++  trapv_int=no
+ else $as_nop
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+@@ -10353,10 +10350,7 @@
+ trapv_long_long=no
+ if test "$cross_compiling" = yes
+ then :
+-  { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+-printf "%s\n" "$as_me: error: in \`$ac_pwd':" >&2;}
+-as_fn_error $? "cannot run test program while cross compiling
+-See \`config.log' for more details" "$LINENO" 5; }
++  trapv_long_long=no
+ else $as_nop
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+@@ -24704,1 +24698,5 @@
+ printf "%s\n" "#define HAVE_GMP 1" >>confdefs.h
++				gmp_found="yes"
++				GMP_LIBS="$GMP_LIBS -lgmpxx -lgmp"
++				GMP_HAVE_CXX=yes
++				GMP_VERSION=""
+diff -urN 4ti2-orig/src/groebner/Makefile.in 4ti2-new/src/groebner/Makefile.in
+--- 4ti2-orig/src/groebner/Makefile.in	2023-04-25 13:31:02.000000000 -0700
++++ 4ti2-new/src/groebner/Makefile.in	2026-06-16 16:06:59.885511751 -0700
+@@ -1155,2 +1155,2 @@
+ DISTCLEANFILES = $(WRAPPERSCRIPTS)
+-AM_LDFLAGS = -L../4ti2 -R$(libdir) -l4ti2common -no-undefined
++AM_LDFLAGS = -L../4ti2 -l4ti2common -no-undefined
+diff -urN 4ti2-orig/src/zsolve/Makefile.in 4ti2-new/src/zsolve/Makefile.in
+--- 4ti2-orig/src/zsolve/Makefile.in	2023-04-25 13:31:02.000000000 -0700
++++ 4ti2-new/src/zsolve/Makefile.in	2026-06-16 16:06:59.886869701 -0700
+@@ -612,3 +612,3 @@
+ # -no-undefined declares that no undefined symbols will remain after linking all these libraries.
+ # (This is necessary to build shared libraries on Cygwin.)
+-libzsolve_la_LDFLAGS = -L../4ti2 -R$(libdir) -l4ti2common ${GMP_LIBS} -no-undefined
++libzsolve_la_LDFLAGS = -L../4ti2 -l4ti2common ${GMP_LIBS} -no-undefined

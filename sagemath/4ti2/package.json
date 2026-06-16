@@ -1,0 +1,39 @@
+{
+  "name": "@cowasm/4ti2",
+  "version": "1.0.0",
+  "description": "4ti2 algebraic, geometric, and combinatorial computations on linear spaces",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
+  "files": [
+    "dist/js/*",
+    "README.md",
+    "src/*",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/4ti2",
+  "keywords": ["algebra", "geometry", "combinatorics", "sagemath"],
+  "author": "William Stein",
+  "license": "GPL-2.0-or-later",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "dependencies": {
+    "@cowasm/glpk": "workspace:*",
+    "@cowasm/gmp": "workspace:*"
+  },
+  "devDependencies": {}
+}
