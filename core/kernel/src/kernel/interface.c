@@ -36,6 +36,9 @@ extern int _fchmod(int fd, mode_t mode);
 void keepalive(void) {}
 WASM_EXPORT(keepalive)
 
+extern void __SIG_ERR(int signum);
+WASM_EXPORT(__SIG_ERR)
+
 int cowasm_exec(int argc, char **argv) {
   (void)argc;
   int ret = cowasm_vforkexec(argv, NULL);
