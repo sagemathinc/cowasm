@@ -1,0 +1,59 @@
+--- linbox-1.7.0.orig/linbox/vector/blas-subvector.h
++++ linbox-1.7.0/linbox/vector/blas-subvector.h
+@@ -118,7 +118,7 @@
+          * \param inc distance between two element
+          */
+         BlasSubvector (Self_t &V, size_t beg, size_t inc, size_t dim) :
+-            _ptr(V.data()+beg), _size(dim), _inc(inc), _field(&V.field()) {}
++            _ptr(V.getPointer()+beg), _size(dim), _inc(inc), _field(&V.field()) {}
+ 
+         
+         /** Constructor from an existing @ref BlasVector
+--- linbox-1.7.0.orig/linbox/matrix/sparsematrix/sparse-ell-matrix.h
++++ linbox-1.7.0/linbox/matrix/sparsematrix/sparse-ell-matrix.h
+@@ -1086,9 +1086,6 @@
+ 			_Iterator &operator = (const _Iterator &iter)
+ 			{
+ 				_data_it  = iter._data_it  ;
+-				_data_beg  = iter._data_beg  ;
+-				_data_end  = iter._data_end  ;
+-				_field  = iter._field  ;
+ 
+ 				return *this;
+ 			}
+@@ -1210,10 +1207,6 @@
+ 				_colid_beg = iter._colid_beg ;
+ 				_colid_it  = iter._colid_it ;
+ 				_data_it   = iter._data_it  ;
+-				_data_beg  = iter._data_beg ;
+-				_data_end  = iter._data_end  ;
+-				_field     = iter._field ;
+-				_ld        = iter._ld ;
+ 				_row       = iter._row ;
+ 
+ 				return *this;
+--- linbox-1.7.0.orig/linbox/matrix/sparsematrix/sparse-ellr-matrix.h
++++ linbox-1.7.0/linbox/matrix/sparsematrix/sparse-ellr-matrix.h
+@@ -1102,11 +1102,6 @@
+ 			_Iterator &operator = (const _Iterator &iter)
+ 			{
+ 				_data_it  = iter._data_it  ;
+-				_data_beg  = iter._data_beg  ;
+-				_data_end  = iter._data_end  ;
+-				_field  = iter._field  ;
+-				_rowid = iter._rowid;
+-				_ld = iter._ld ;
+ 				_row = iter._row ;
+ 
+ 				return *this;
+@@ -1252,10 +1247,6 @@
+ 				_colid_beg = iter._colid_beg ;
+ 				_colid_it  = iter._colid_it ;
+ 				_data_it   = iter._data_it  ;
+-				_data_beg  = iter._data_beg ;
+-				_data_end  = iter._data_end  ;
+-				_field     = iter._field ;
+-				_ld        = iter._ld ;
+ 				_row       = iter._row ;
+ 
+ 				return *this;

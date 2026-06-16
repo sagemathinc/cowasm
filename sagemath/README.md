@@ -17,6 +17,7 @@ Current wasi-sdk standalone math smoke packages:
 - FFLAS-FFPACK
 - FLINT
 - IML
+- LinBox
 - NTL
 - PARI/GP
 - GSL
