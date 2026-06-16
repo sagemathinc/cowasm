@@ -224,6 +224,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/iml test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ntl test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/pari test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/lcalc test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/primesieve test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/primecount test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/nauty test-wasi-sdk-standalone

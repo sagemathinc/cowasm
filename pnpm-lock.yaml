@@ -1039,6 +1039,8 @@ importers:
         specifier: workspace:*
         version: link:../gsl
 
+  sagemath/lcalc: {}
+
   sagemath/libatomic-ops: {}
 
   sagemath/libbraiding: {}

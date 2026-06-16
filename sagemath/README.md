@@ -28,6 +28,7 @@ Current wasi-sdk standalone math smoke packages:
 - libbraiding
 - NTL
 - PARI/GP
+- Lcalc
 - primesieve
 - primecount
 - nauty
