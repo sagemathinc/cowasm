@@ -905,6 +905,8 @@ importers:
         specifier: ^4.8.4
         version: 4.9.5
 
+  sagemath/bliss: {}
+
   sagemath/boost-cropped: {}
 
   sagemath/brial:
@@ -923,6 +925,8 @@ importers:
         version: link:../gmp
 
   sagemath/cliquer: {}
+
+  sagemath/coxeter3: {}
 
   sagemath/cysignals:
     devDependencies:
@@ -1005,6 +1009,8 @@ importers:
         specifier: workspace:*
         version: link:../gsl
 
+  sagemath/libbraiding: {}
+
   sagemath/linbox:
     dependencies:
       '@cowasm/fflas-ffpack':
@@ -1035,6 +1041,8 @@ importers:
       '@cowasm/m4ri':
         specifier: workspace:*
         version: link:../m4ri
+
+  sagemath/mcqd: {}
 
   sagemath/mpc:
     dependencies:
@@ -1068,13 +1076,27 @@ importers:
         specifier: workspace:*
         version: link:../gmp
 
-  sagemath/pari: {}
+  sagemath/pari:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
 
   sagemath/planarity: {}
 
+  sagemath/primecount:
+    dependencies:
+      '@cowasm/primesieve':
+        specifier: workspace:*
+        version: link:../primesieve
+
   sagemath/primesieve: {}
 
-  sagemath/ratpoints: {}
+  sagemath/ratpoints:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
 
   sagemath/symmetrica: {}
 
