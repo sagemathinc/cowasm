@@ -83,11 +83,9 @@ commits over broad rewrites.
 
 - Treat Sagelite as the practical bridge to SageMath-in-Wasm, not as a side
   quest. Prefer dependencies that unlock visible Sage/Sagelite features.
-- Near-term candidates after GMP and PARI:
-  - MPFR, because it is foundational for serious real-number arithmetic;
-  - MPC, because it builds naturally on GMP and MPFR;
+- Near-term candidates after GMP, MPFR, MPC, and PARI:
   - FLINT/Arb, because it unlocks high-value number theory and exact/ball
-    arithmetic;
+    arithmetic and can draw on `/home/user/upstream/wasm-flint` for prior art;
   - cysignals, because Sage error/interrupt semantics will need deliberate
     runtime integration;
   - Cython package hardening, because much of Sage's Python/C boundary depends

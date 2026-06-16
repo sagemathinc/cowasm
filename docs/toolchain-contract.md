@@ -833,6 +833,29 @@ multi-precision arithmetic probe through the WASI runner. It links
 `libwasi-emulated-signal` during configure and in the final probe so GMP uses
 WASI libc's `raise` shim instead of compiling its fallback signal path.
 
+`sagemath/mpfr` has an opt-in static-library smoke target:
+
+```sh
+make -C sagemath/mpfr test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP WASI SDK standalone archive is available, then
+builds MPFR against `sagemath/gmp/dist/wasi-sdk` with
+`COWASM_TOOLCHAIN=wasi-sdk`, installs `libmpfr.a` under
+`sagemath/mpfr/dist/wasi-sdk`, and runs a small high-precision arithmetic probe
+through the WASI runner.
+
+`sagemath/mpc` has the same opt-in static-library smoke shape:
+
+```sh
+make -C sagemath/mpc test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP and MPFR WASI SDK standalone archives are
+available, then builds MPC against those installs, places `libmpc.a` under
+`sagemath/mpc/dist/wasi-sdk`, and runs a small complex-arithmetic probe through
+the WASI runner.
+
 `sagemath/pari` has the same opt-in static executable smoke shape:
 
 ```sh
