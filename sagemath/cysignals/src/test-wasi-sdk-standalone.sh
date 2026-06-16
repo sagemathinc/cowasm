@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ "$#" -ne 6 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON POSIX_WASI_SDK" >&2
+  exit 2
+fi
+
+build_dir="$(cd "$1" && pwd)"
+dist_dir="$2"
+bin_dir="$(cd "$3" && pwd)"
+cpython_wasm="$(cd "$4" && pwd)"
+py_cython="$(cd "$5" && pwd)"
+posix_wasi_sdk="$(cd "$6" && pwd)"
+src_dir="$(cd "$(dirname "$0")" && pwd)"
+repo_dir="$(cd "$src_dir/../../.." && pwd)"
+
+# shellcheck source=/dev/null
+source "$repo_dir/core/build/src/test/clang-standalone-common.sh"
+
+probe_dir="$(mktemp -d)"
+trap 'rm -rf "$probe_dir"' EXIT
+
+cowasm_standalone_probe "cysignals" wasi-sdk "$bin_dir" "$probe_dir"
+
+python_include="$cpython_wasm/include/python3.14"
+extension_suffix=".cpython-314-wasm32-wasi.so"
+cysignals_src="$build_dir/src/cysignals"
+
+rm -rf "$dist_dir"
+mkdir -p "$dist_dir/cysignals" "$probe_dir/cysignals"
+
+cd "$cysignals_src"
+
+cat >cysignals_config.h <<'EOF'
+#undef HAVE_BACKTRACE
+#undef HAVE_FORK
+#undef HAVE_KILL
+#undef HAVE_SIGALTSTACK
+#undef HAVE_SIGPROCMASK
+#undef HAVE_SYS_MMAN_H
+#undef HAVE_SYS_TIME_H
+#undef HAVE_SYS_WAIT_H
+#define ENABLE_DEBUG_CYSIGNALS 0
+#define HAVE_EXECINFO_H 0
+#define HAVE_SYS_MMAN_H 0
+#define HAVE_SYS_PRCTL_H 0
+#define HAVE_TIME_H 1
+#define HAVE_SYS_TYPES_H 1
+#define HAVE_SYS_TIME_H 0
+#define HAVE_SYS_WAIT_H 0
+#define HAVE_UNISTD_H 1
+#define HAVE_WINDOWS_H 0
+#define HAVE_FORK 0
+#define HAVE_KILL 0
+#define HAVE_SIGPROCMASK 0
+#define HAVE_SIGALTSTACK 0
+#define HAVE_BACKTRACE 0
+#define HAVE_EMMS 0
+#define CYSIGNALS_USE_SIGSETJMP 0
+#define CYSIGNALS_C_ATOMIC 1
+#define CYSIGNALS_C_ATOMIC_WITH_OPENMP 0
+#define CYSIGNALS_CXX_ATOMIC 0
+#define CYSIGNALS_CXX_ATOMIC_WITH_OPENMP 0
+#define CYSIGNALS_STD_ATOMIC 0
+#define CYSIGNALS_STD_ATOMIC_WITH_OPENMP 0
+EOF
+cp cysignals_config.h config.h
+
+PYTHONPATH="$py_cython" python3 -m cython -3 --output-file signals.c signals.pyx
+
+"$bin_dir/wasi-sdk-clang-next" -target wasm32-wasip1 \
+  -O0 \
+  -fPIC \
+  -D_SCHED_H \
+  -shared \
+  -nostdlib \
+  -Wl,--allow-undefined \
+  -Wl,--no-entry \
+  -Wl,--export=PyInit_signals \
+  -I. \
+  -I"$python_include" \
+  -I"$posix_wasi_sdk" \
+  signals.c \
+  -o "$dist_dir/cysignals/signals$extension_suffix"
+
+cp \
+  __init__.py \
+  cysignals.pc \
+  cysignals-CSI-helper.py \
+  memory.pxd \
+  pysignals.pxd \
+  signals.pxd \
+  struct_signals.h \
+  macros.h \
+  cysignals_config.h \
+  "$dist_dir/cysignals/"
+
+"$bin_dir/wasi-sdk-llvm-objdump-next" -h "$dist_dir/cysignals/signals$extension_suffix" |
+  grep 'dylink\.0'
+"$bin_dir/wasi-sdk-llvm-nm-next" "$dist_dir/cysignals/signals$extension_suffix" |
+  grep ' T PyInit_signals$'
+
+PYTHONPATH="$dist_dir" "$bin_dir/python-wasm" - <<'PY'
+import signal
+
+import cysignals
+from cysignals.signals import sig_print_exception
+
+assert cysignals.SignalError.__module__ == "cysignals.signals"
+sig_print_exception(signal.SIGFPE)
+PY
+
+echo "cysignals-ok signals-extension import"

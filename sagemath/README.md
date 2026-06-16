@@ -8,6 +8,7 @@ This is a work in progress, which starts with copying over some packages [from h
 Current wasi-sdk standalone math smoke packages:
 
 - GMP
+- cysignals
 - cddlib
 - GMP-ECM
 - eclib

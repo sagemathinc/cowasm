@@ -1,0 +1,31 @@
+--- a/src/cysignals/implementation.c
++++ b/src/cysignals/implementation.c
+@@ -87,7 +87,7 @@ static int n_custom_handlers = 0;
+ #if HAVE_WINDOWS_H
+ #include <windows.h>
+ #endif
+-#if !_WIN32
++#if !_WIN32 && !defined(__wasi__)
+ #include <pthread.h>
+ #endif
+ #include "struct_signals.h"
+@@ -465,7 +465,7 @@ static void cysigs_signal_handler(int sig)
+     }
+ }
+
+-#if !_WIN32
++#if !_WIN32 && !defined(__wasi__)
+ /* A trampoline to jump to after handling a signal.
+  *
+  * The jump to sig_on() uses cylongjmp(), which does not restore the
+@@ -656,6 +656,10 @@ static void setup_cysignals_handlers(void)
+     signal(SIGINT, cysigs_interrupt_handler);
+     signal(SIGTERM, cysigs_interrupt_handler);
+     signal(SIGABRT, cysigs_signal_handler);
++#elif defined(__wasi__)
++    /* WASI has no POSIX process signal delivery. Keep cysignals importable
++       so Cython modules can use sig_check/sig_on as Python exception checks. */
++    memset(&cysigs, 0, sizeof(cysigs));
+ #else
+     struct sigaction sa;
+     memset(&sa, 0, sizeof(sa));

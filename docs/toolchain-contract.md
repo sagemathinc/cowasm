@@ -882,6 +882,21 @@ available, then builds MPFI against those installs, places `libmpfi.a` under
 `sagemath/mpfi/dist/wasi-sdk`, and runs an interval-arithmetic probe through the
 WASI runner.
 
+`sagemath/cysignals` has an opt-in Python extension side-module smoke target:
+
+```sh
+make -C sagemath/cysignals test-wasi-sdk-standalone
+```
+
+The target first ensures the CPython, Cython, POSIX shim, and pinned SDK
+artifacts are available. It then builds the core `cysignals.signals` extension
+as a WASI side module, installs the Cython `.pxd` headers and runtime metadata
+under `sagemath/cysignals/dist/wasi-sdk`, verifies the `dylink.0` section and
+`PyInit_signals` export, and imports the module through `python-wasm`. WASI has
+no POSIX process signal delivery, so the local patch keeps upstream's signal
+handler setup as an explicit no-op while preserving `sig_check` and `sig_on`
+as Python exception checks for downstream Sage Cython modules.
+
 `sagemath/flint` has the same opt-in dependent static-library smoke shape:
 
 ```sh
