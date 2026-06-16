@@ -52,4 +52,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/rw-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/rw-test" |
-  grep "rw-ok path4-width=1"
+  grep "rw-ok empty5=0 path4=1 complete5=1 cycle5=2"
