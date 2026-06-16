@@ -206,6 +206,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/fflas-ffpack test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/linbox test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/lrcalc test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/libbraiding test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/flint test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/gf2x test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/gsl test-wasi-sdk-standalone
