@@ -112,7 +112,14 @@ sig_print_exception(signal.SIGFPE)
 PY
 
 cat >"$probe_dir/cysignals_guard_probe.pyx" <<'PYX'
-from cysignals.signals cimport sig_block, sig_check, sig_off, sig_on, sig_unblock
+from cysignals.signals cimport (
+    sig_block,
+    sig_check,
+    sig_occurred,
+    sig_off,
+    sig_on,
+    sig_unblock,
+)
 
 
 def guarded_sum(unsigned int n):
@@ -127,7 +134,36 @@ def guarded_sum(unsigned int n):
         sig_check()
     sig_off()
 
+    if sig_occurred() != NULL:
+        raise AssertionError("unexpected cysignals exception state")
+
     return total
+
+
+def nested_guard_cleanup():
+    sig_on()
+    sig_on()
+    sig_off()
+    sig_off()
+
+    return sig_occurred() == NULL
+
+
+def guarded_python_exception_cleanup():
+    cdef bint cleaned = False
+
+    try:
+        sig_on()
+        try:
+            raise ValueError("guarded failure")
+        finally:
+            sig_off()
+    except ValueError as err:
+        if str(err) != "guarded failure":
+            raise
+        cleaned = sig_occurred() == NULL
+
+    return cleaned
 PYX
 
 PYTHONPATH="$dist_dir:$py_cython" python3 -m cython -3 \
@@ -162,6 +198,8 @@ import cysignals_guard_probe
 
 assert cysignals.SignalError.__module__ == "cysignals.signals"
 assert cysignals_guard_probe.guarded_sum(8) == 28
+assert cysignals_guard_probe.nested_guard_cleanup()
+assert cysignals_guard_probe.guarded_python_exception_cleanup()
 PY
 
-echo "cysignals-ok signals-extension import guarded-cython-module"
+echo "cysignals-ok signals-extension import guarded-cython-module guard-cleanup"
