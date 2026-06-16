@@ -1,0 +1,18 @@
+--- linbox-1.7.0.orig/linbox/ring/ntl/ntl-zz.h
++++ linbox-1.7.0/linbox/ring/ntl/ntl-zz.h
+@@ -201,11 +201,11 @@
+ 		inline Element& init (Element& x, const uint64_t& y) const
+ 		{
+ 			uint64_t shift = (uint64_t)1 << 32;
+-			uint32_t temp = uint32_t(y % shift);
+-			NTL::conv (x,temp);
++			uint32_t low = uint32_t(y % shift);
++			uint32_t high = uint32_t(y / shift);
++			NTL::conv (x, high);
+ 			x <<= 32;
+-			temp = (uint32_t)(y / shift);
+-			x += temp;
++			x += low;
+ 			return x;
+ 		}
+ 

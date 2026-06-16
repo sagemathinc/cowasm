@@ -11,6 +11,7 @@
 #include <linbox/matrix/densematrix/blas-matrix.h>
 #include <linbox/matrix/dense-matrix.h>
 #include <linbox/matrix/matrix-domain.h>
+#include <linbox/ring/ntl.h>
 
 #ifndef __LINBOX_HAVE_MPFR
 #error "LinBox was not configured with MPFR support"
@@ -26,6 +27,10 @@
 
 #ifndef __LINBOX_HAVE_FLINT
 #error "LinBox was not configured with FLINT support"
+#endif
+
+#ifndef __LINBOX_HAVE_NTL
+#error "LinBox was not configured with NTL support"
 #endif
 
 bool test_modular_product() {
@@ -121,11 +126,31 @@ bool test_flint_product() {
   return true;
 }
 
+bool test_ntl_ring() {
+  LinBox::NTL_ZZ integers;
+  LinBox::NTL_ZZ::Element left;
+  LinBox::NTL_ZZ::Element right;
+  LinBox::NTL_ZZ::Element product;
+  LinBox::integer actual;
+
+  integers.init(left, static_cast<int64_t>(6));
+  integers.init(right, static_cast<int64_t>(7));
+  integers.mul(product, left, right);
+  integers.convert(actual, product);
+
+  if (actual != LinBox::integer(42)) {
+    std::cerr << "unexpected NTL_ZZ product: " << actual << "\n";
+    return false;
+  }
+
+  return true;
+}
+
 int main() {
-  if (!test_modular_product() || !test_flint_product()) {
+  if (!test_modular_product() || !test_flint_product() || !test_ntl_ring()) {
     return 1;
   }
 
-  std::cout << "linbox-ok product=2,5,9,16 mod17 flint=7,10,15,22\n";
+  std::cout << "linbox-ok product=2,5,9,16 mod17 flint=7,10,15,22 ntl=42\n";
   return 0;
 }

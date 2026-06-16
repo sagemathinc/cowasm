@@ -1,0 +1,15 @@
+--- linbox-1.7.0.orig/configure
++++ linbox-1.7.0/configure
+@@ -18362,10 +18362,10 @@
+ if test -r "$NTL_HOME/include/NTL/ZZ.h"; then
+ 
+ 	if test "x$NTL_HOME" != "x/usr" -a "x$NTL_HOME" != "x/usr/local"; then
+-		NTL_CFLAGS="-I${NTL_HOME}/include -pthread"
++		NTL_CFLAGS="-I${NTL_HOME}/include"
+ 		NTL_LIBS="-L${NTL_HOME}/lib -lntl"
+ 	else
+-		NTL_CFLAGS="-pthread"
++		NTL_CFLAGS=""
+ 		NTL_LIBS="-lntl"
+ 	fi
+ 	CXXFLAGS="${BACKUP_CXXFLAGS} ${NTL_CFLAGS} ${FFLAS_FFPACK_CFLAGS}"

@@ -20,6 +20,7 @@ MPFR_WASI_SDK = ${PACKAGES}/mpfr/dist/wasi-sdk
 FPLLL_WASI_SDK = ${PACKAGES}/fplll/dist/wasi-sdk
 IML_WASI_SDK = ${PACKAGES}/iml/dist/wasi-sdk
 FLINT_WASI_SDK = ${PACKAGES}/flint/dist/wasi-sdk
+NTL_WASI_SDK = ${PACKAGES}/ntl/dist/wasi-sdk
 
 ${GMP_WASI_SDK}/lib/libgmpxx.a:
 	$(MAKE) -C ${PACKAGES}/gmp test-wasi-sdk-standalone
@@ -45,27 +46,32 @@ ${IML_WASI_SDK}/lib/libiml.a:
 ${FLINT_WASI_SDK}/lib/libflint.a: ${GMP_WASI_SDK}/lib/libgmpxx.a ${MPFR_WASI_SDK}/lib/libmpfr.a
 	$(MAKE) -C ${PACKAGES}/flint test-wasi-sdk-standalone
 
+${NTL_WASI_SDK}/lib/libntl.a:
+	$(MAKE) -C ${PACKAGES}/ntl test-wasi-sdk-standalone
+
 ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	rm -rf ${BUILD_WASI_SDK}
 	mkdir -p ${BUILD_WASI_SDK}
 	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
 	touch ${BUILD_WASI_SDK}/.build
 
-${BUILD_WASI_SDK}/.patched: ${TARBALL} ${SRC}/patches/01-libcxx-header-compat.patch ${SRC}/patches/02-flint-fmpz-header.patch
+${BUILD_WASI_SDK}/.patched: ${TARBALL} ${SRC}/patches/01-libcxx-header-compat.patch ${SRC}/patches/02-flint-fmpz-header.patch ${SRC}/patches/03-ntl-no-pthread.patch ${SRC}/patches/04-ntl-zz-uint64-init.patch
 	rm -rf ${BUILD_WASI_SDK}
 	mkdir -p ${BUILD_WASI_SDK}
 	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
 	cd ${BUILD_WASI_SDK} && \
 		cat ${SRC}/patches/01-libcxx-header-compat.patch | patch -p1 && \
-		cat ${SRC}/patches/02-flint-fmpz-header.patch | patch -p1
+		cat ${SRC}/patches/02-flint-fmpz-header.patch | patch -p1 && \
+		cat ${SRC}/patches/03-ntl-no-pthread.patch | patch -p1 && \
+		cat ${SRC}/patches/04-ntl-zz-uint64-init.patch | patch -p1
 	touch ${BUILD_WASI_SDK}/.build
 	touch ${BUILD_WASI_SDK}/.patched
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmpxx.a ${GIVARO_WASI_SDK}/lib/libgivaro.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${FFLAS_FFPACK_WASI_SDK}/include/fflas-ffpack/fflas-ffpack.h ${MPFR_WASI_SDK}/lib/libmpfr.a ${FPLLL_WASI_SDK}/lib/libfplll.a ${IML_WASI_SDK}/lib/libiml.a ${FLINT_WASI_SDK}/lib/libflint.a ${BUILD_WASI_SDK}/.patched
+test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmpxx.a ${GIVARO_WASI_SDK}/lib/libgivaro.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${FFLAS_FFPACK_WASI_SDK}/include/fflas-ffpack/fflas-ffpack.h ${MPFR_WASI_SDK}/lib/libmpfr.a ${FPLLL_WASI_SDK}/lib/libfplll.a ${IML_WASI_SDK}/lib/libiml.a ${FLINT_WASI_SDK}/lib/libflint.a ${NTL_WASI_SDK}/lib/libntl.a ${BUILD_WASI_SDK}/.patched
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
-	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${GMP_WASI_SDK} ${GIVARO_WASI_SDK} ${GSL_WASI_SDK} ${FFLAS_FFPACK_WASI_SDK} ${MPFR_WASI_SDK} ${FPLLL_WASI_SDK} ${IML_WASI_SDK} ${FLINT_WASI_SDK} || status=$$?; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${GMP_WASI_SDK} ${GIVARO_WASI_SDK} ${GSL_WASI_SDK} ${FFLAS_FFPACK_WASI_SDK} ${MPFR_WASI_SDK} ${FPLLL_WASI_SDK} ${IML_WASI_SDK} ${FLINT_WASI_SDK} ${NTL_WASI_SDK} || status=$$?; \
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
 	exit "$$status"
 
