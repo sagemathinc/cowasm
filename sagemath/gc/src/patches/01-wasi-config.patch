@@ -1,0 +1,33 @@
+--- a/include/private/gcconfig.h
++++ b/include/private/gcconfig.h
+@@ -152,6 +152,11 @@
+        /* Here we will rely upon arch-specific defines. */
+ #    endif
+ # endif
++# if defined(__wasi__) && defined(__wasm32__)
++#    define I386
++#    define WASI
++#    define mach_type_known
++# endif
+ # if defined(__aarch64__)
+ #    define AARCH64
+ #    if !defined(LINUX) && !defined(DARWIN) && !defined(FREEBSD) \
+@@ -1444,6 +1449,18 @@
+ #       error No threads support yet
+ #     endif
+ #   endif
++#   ifdef WASI
++#     define OS_TYPE "WASI"
++#     define DATASTART (ptr_t)ALIGNMENT
++#     define DATAEND (ptr_t)ALIGNMENT
++      /* WebAssembly has linear memory rather than native mmap support. */
++#     undef USE_MMAP
++#     undef USE_MUNMAP
++#     define STACK_GROWS_DOWN
++#     undef STACK_GRAN
++#     define STACK_GRAN 0x10000
++#     define HEURISTIC1
++#   endif
+ #   if defined(__QNX__)
+ #     define OS_TYPE "QNX"
+ #     define SA_RESTART 0

@@ -897,6 +897,21 @@ no POSIX process signal delivery, so the local patch keeps upstream's signal
 handler setup as an explicit no-op while preserving `sig_check` and `sig_on`
 as Python exception checks for downstream Sage Cython modules.
 
+`sagemath/gc` has the same opt-in dependent static-library smoke shape:
+
+```sh
+make -C sagemath/gc test-wasi-sdk-standalone
+```
+
+The target first ensures the libatomic_ops WASI SDK standalone archive is
+available, then builds Boehm GC as a single-threaded static library with
+`COWASM_TOOLCHAIN=wasi-sdk`. A local patch adds a narrow WASI machine stanza
+that avoids mmap and uses BDWGC's stack heuristic, while the smoke supplies a
+local setjmp compatibility header and links the process-clock shim. It installs
+`libgc.a` and `libcord.a` under `sagemath/gc/dist/wasi-sdk`, then runs
+allocation, atomic allocation, collection, and finalizer probes through the
+WASI runner.
+
 `sagemath/flint` has the same opt-in dependent static-library smoke shape:
 
 ```sh

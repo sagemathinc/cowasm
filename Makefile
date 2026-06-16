@@ -195,6 +195,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/m4ri test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/m4rie test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/libatomic-ops test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/gc test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/boost-cropped test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/brial test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ratpoints test-wasi-sdk-standalone

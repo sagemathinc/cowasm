@@ -1,0 +1,38 @@
+{
+  "name": "@cowasm/gc",
+  "version": "1.0.0",
+  "description": "Boehm-Demers-Weiser conservative garbage collector for SageMath",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
+  "files": [
+    "dist/js/*",
+    "README.md",
+    "src/*",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/gc",
+  "keywords": ["sagemath", "garbage-collector", "boehm-gc"],
+  "author": "William Stein",
+  "license": "Boehm-GC",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "dependencies": {
+    "@cowasm/libatomic-ops": "workspace:*"
+  },
+  "devDependencies": {}
+}

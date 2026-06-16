@@ -988,9 +988,30 @@ importers:
         specifier: workspace:*
         version: link:../mpfr
 
+  sagemath/gc:
+    dependencies:
+      '@cowasm/libatomic-ops':
+        specifier: workspace:*
+        version: link:../libatomic-ops
+
   sagemath/gf2x: {}
 
+  sagemath/gfan:
+    dependencies:
+      '@cowasm/cddlib':
+        specifier: workspace:*
+        version: link:../cddlib
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+
   sagemath/givaro:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+
+  sagemath/glpk:
     dependencies:
       '@cowasm/gmp':
         specifier: workspace:*
@@ -1008,6 +1029,8 @@ importers:
       '@cowasm/gsl':
         specifier: workspace:*
         version: link:../gsl
+
+  sagemath/libatomic-ops: {}
 
   sagemath/libbraiding: {}
 
@@ -1033,6 +1056,12 @@ importers:
         version: link:../mpfr
 
   sagemath/lrcalc: {}
+
+  sagemath/lrslib:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
 
   sagemath/m4ri: {}
 
@@ -1076,6 +1105,8 @@ importers:
         specifier: workspace:*
         version: link:../gmp
 
+  sagemath/palp: {}
+
   sagemath/pari:
     dependencies:
       '@cowasm/gmp':
@@ -1098,7 +1129,15 @@ importers:
         specifier: workspace:*
         version: link:../gmp
 
+  sagemath/rw: {}
+
   sagemath/symmetrica: {}
+
+  sagemath/zn-poly:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
 
   web/browser:
     dependencies:
