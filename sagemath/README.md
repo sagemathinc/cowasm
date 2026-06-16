@@ -22,6 +22,7 @@ Current wasi-sdk standalone math smoke packages:
 - PARI/GP
 - GSL
 - ratpoints
+- M4RI
 
 **WARNING: Unlike the rest of CoWasm, there is code in this directory
 that is licensed under the GPL. No code in the other packages (core, python, web, etc.,) depends on this code.**
