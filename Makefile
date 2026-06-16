@@ -204,6 +204,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/mpfi test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mpc test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/fflas-ffpack test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/fplll test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/linbox test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/lrcalc test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/libbraiding test-wasi-sdk-standalone
@@ -214,8 +215,10 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/ntl test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/pari test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/primesieve test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/primecount test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/nauty test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/cliquer test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/mcqd test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/coxeter3 test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/planarity test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/symmetrica test-wasi-sdk-standalone
