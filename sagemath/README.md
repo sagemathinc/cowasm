@@ -28,6 +28,7 @@ Current wasi-sdk standalone math smoke packages:
 - primecount
 - nauty
 - Cliquer
+- MCQD
 - planarity
 - GSL
 - Boost.Cropped
