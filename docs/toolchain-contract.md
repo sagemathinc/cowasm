@@ -888,6 +888,18 @@ executable, and checks the GMP kernel banner, a small arithmetic expression,
 divide-by-zero error handling, `break` recovery, and a second successful
 calculation through the WASI runner.
 
+`sagemath/gsl` has the same opt-in static-library smoke shape:
+
+```sh
+make -C sagemath/gsl test-wasi-sdk-standalone
+```
+
+The target refreshes the pinned SDK, builds GSL and its bundled CBLAS archive
+with `COWASM_TOOLCHAIN=wasi-sdk`, installs the static libraries under
+`sagemath/gsl/dist/wasi-sdk`, then links and runs a probe covering special
+functions, distribution CDFs, vector allocation, and BLAS dot products through
+the WASI runner.
+
 `core/libcxx` has an opt-in C++ runtime side-module smoke target:
 
 ```sh
