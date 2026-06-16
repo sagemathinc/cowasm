@@ -1,0 +1,36 @@
+{
+  "name": "@cowasm/libatomic-ops",
+  "version": "1.0.0",
+  "description": "Atomic memory update primitives used by Boehm GC",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
+  "files": [
+    "dist/js/*",
+    "README.md",
+    "src/*",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/libatomic-ops",
+  "keywords": ["sagemath", "atomic", "boehm-gc"],
+  "author": "William Stein",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
