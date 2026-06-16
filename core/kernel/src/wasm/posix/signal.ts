@@ -42,8 +42,23 @@ function setSignalSetToMask(setPtr: number): void {
   }
 }
 
-export default function signal({ process }) {
+export default function signal(context) {
+  const { process } = context;
+  function getSignalHandlers(): { [signum: number]: number } {
+    if (context.state.signalHandlers == null) {
+      context.state.signalHandlers = {};
+    }
+    return context.state.signalHandlers;
+  }
   const signal = {
+    // void (*signal(int signum, void (*handler)(int)))(int);
+    signal: (signum: number, handler: number): number => {
+      const signalHandlers = getSignalHandlers();
+      const oldHandler = signalHandlers[signum] ?? 0;
+      signalHandlers[signum] = handler;
+      return oldHandler;
+    },
+
     // int kill(pid_t pid, int sig);
     kill: (pid: number, signal: number): number => {
       if (process.kill == null) return 0;
