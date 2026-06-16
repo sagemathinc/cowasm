@@ -911,6 +911,20 @@ importers:
         specifier: workspace:*
         version: link:../gmp
 
+  sagemath/cliquer: {}
+
+  sagemath/eclib:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/ntl':
+        specifier: workspace:*
+        version: link:../ntl
+      '@cowasm/pari':
+        specifier: workspace:*
+        version: link:../pari
+
   sagemath/ecm:
     dependencies:
       '@cowasm/gmp':

@@ -1,0 +1,40 @@
+{
+  "name": "@cowasm/eclib",
+  "version": "1.0.0",
+  "description": "John Cremona's elliptic curve library",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
+  "files": [
+    "dist/js/*",
+    "README.md",
+    "src/*",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/eclib",
+  "keywords": ["elliptic-curves", "number-theory"],
+  "author": "William Stein",
+  "license": "GPL-2.0-or-later",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "dependencies": {
+    "@cowasm/gmp": "workspace:*",
+    "@cowasm/ntl": "workspace:*",
+    "@cowasm/pari": "workspace:*"
+  },
+  "devDependencies": {}
+}

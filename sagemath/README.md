@@ -10,6 +10,7 @@ Current wasi-sdk standalone math smoke packages:
 - GMP
 - cddlib
 - GMP-ECM
+- eclib
 - Givaro
 - MPFR
 - MPFI
