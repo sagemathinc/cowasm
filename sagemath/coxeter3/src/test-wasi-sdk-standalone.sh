@@ -75,4 +75,16 @@ banner="$(
 printf '%s\n' "$banner" | grep -F "This is Coxeter version 3.1."
 printf '%s\n' "$banner" | grep -F "coxeter :"
 
-echo "coxeter3-ok banner static-library headers data"
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
+  "${cxxflags[@]}" \
+  "$src_dir/test-coxeter.cpp" \
+  -I"$dist_dir/include/coxeter" \
+  -L"$dist_dir/lib" \
+  -lcoxeter \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/coxeter-test"
+
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/coxeter-test" |
+  grep -F "coxeter3-ok b2-order=8 longest-length=4 descent-after-s2=5"
+
+echo "coxeter3-ok banner static-library headers data b2-word"
