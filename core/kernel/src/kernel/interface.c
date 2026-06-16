@@ -24,7 +24,7 @@ struct if_nameindex {
 };
 #endif
 
-#ifndef __wasi__
+#if defined(__wasi__) && !defined(COWASM_WASI_SDK_KERNEL)
 struct sched_param {
   int sched_priority;
 };
@@ -224,7 +224,6 @@ struct addrinfo {
     return &(name);                                                           \
   }
 
-extern void wasmSetException(void);
 extern int cowasm_vforkexec(char **argv, char *path);
 extern uid_t _geteuid(void);
 extern int _fchown(int fd, uid_t owner, gid_t group);
@@ -238,13 +237,7 @@ WASM_EXPORT(__SIG_ERR)
 
 int cowasm_exec(int argc, char **argv) {
   (void)argc;
-  int ret = cowasm_vforkexec(argv, NULL);
-  if (ret) {
-    wasmSetException();
-    fprintf(stderr, "error when starting %s\n", argv == NULL ? "" : argv[0]);
-    return 1;
-  }
-  return ret;
+  return cowasm_vforkexec(argv, NULL);
 }
 WASM_EXPORT(cowasm_exec)
 

@@ -911,7 +911,8 @@ Recommended order:
 2. Add side-by-side `wasi-sdk-next` bootstrap and probes.
 3. Translate CoWasm-owned Zig runtime glue to C. (Landed)
 4. Remove `zig build-lib` and `.zig` source dependencies from core runtime
-   builds. (`.zig` sources removed; `zig build-lib` removal remains active)
+   builds. (`.zig` sources removed; remaining compiler-driver work belongs to
+   the separate default-transition track)
 5. Move `cowasm-cc` / `cowasm-c++` to a `wasi-sdk`-backed C/C++ toolchain
    path.
 6. Rebuild CoWasm runtime archives such as `libdylink` with PIC where needed.
