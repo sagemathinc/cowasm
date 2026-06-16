@@ -27,8 +27,7 @@ Status as of June 16, 2026:
 - The `wasi-sdk-next` probe path is implemented and broad enough to be treated
   as the active pre-flip gate.
 - `make test-wasi-sdk` aggregates the pinned SDK bootstrap, dylink tests,
-  package probes, CPython supported-suite gate, GMP, and the PARI probe with
-  its documented setjmp/longjmp capability skip.
+  package probes, CPython supported-suite gate, GMP, and the PARI/GP smoke.
 - CPython builds, links, installs, starts, imports representative stdlib and
   dynamic-extension modules, bootstraps pip, and passes the supported CoWasm
   CPython suite under the SDK path.
@@ -501,8 +500,8 @@ the evidence base for later default-flip decisions:
 - `make -C core/f2c test-wasi-sdk-standalone` builds the Fortran-to-C runtime
   archive and runs a translated Fortran smoke;
 - `make -C sagemath/pari test-wasi-sdk-standalone` builds PARI against SDK GMP
-  and runs a mathematical `gp` smoke when SDK setjmp/longjmp support is usable
-  in the local runner.
+  with wasi-sdk setjmp/longjmp flags and runs a mathematical `gp` smoke in the
+  local runner.
 
 The first Phase 13 C++ and Python-extension surface probes are landed:
 
@@ -1662,8 +1661,8 @@ Deliverable: CPython's supported CoWasm suite passes with `wasi-sdk`.
 After CPython and basic extension behavior:
 
 1. `sagemath/gmp` (probe target landed and validated)
-2. `sagemath/pari` (standalone probe target landed, with a local
-   setjmp/longjmp capability skip when unsupported)
+2. `sagemath/pari` (standalone probe target landed and validated with
+   wasi-sdk setjmp/longjmp support)
 3. high-value Sagelite dependencies selected by mathematical payoff
 
 Each package should have mathematical smoke tests, not just build tests.
@@ -1673,13 +1672,12 @@ Current status:
 - `make -C sagemath/gmp test-wasi-sdk-next` builds SDK GMP and passes the
   large-integer mathematical smoke under the standalone WASI runner;
 - `make -C sagemath/pari test-wasi-sdk-standalone` is wired into the SDK gate
-  and records an explicit setjmp/longjmp capability skip when the local pinned
-  SDK runner does not provide the support PARI needs.
+  and passes the PARI/GP kernel-banner and arithmetic smoke with explicit
+  wasi-sdk setjmp/longjmp support.
 
 Deliverable: the first Sage-relevant math dependency layer works with
-`wasi-sdk`, and PARI has a visible capability gate instead of a silent failure.
-PARI's full mathematical smoke remains future Sage-facing work once SDK
-setjmp/longjmp support is available in the local runner.
+`wasi-sdk`, including PARI's real setjmp/longjmp error-handling path and a
+visible mathematical `gp` smoke.
 
 ## Phase 16: Flip The Default (Separate Transition Track)
 
@@ -1689,8 +1687,7 @@ Current pre-flip gate:
 
 - top-level `make test-wasi-sdk` now aggregates the pinned SDK bootstrap,
   dylink, all landed package-level standalone probes, CPython's
-  supported-suite target, GMP, and the PARI probe with its existing
-  setjmp/longjmp skip behavior;
+  supported-suite target, GMP, and the PARI/GP mathematical smoke;
 - the root gate is split into named subgroups for targeted scheduled runs:
   `test-wasi-sdk-bootstrap`, `test-wasi-sdk-dylink`,
   `test-wasi-sdk-packages`, `test-wasi-sdk-python`, and
@@ -1830,12 +1827,11 @@ This completed SDK probe roadmap is successful now because:
 - `COWASM_TOOLCHAIN=wasi-sdk` builds CoWasm-compatible standalone programs,
   side modules, archives, CPython, and CPython extension side modules;
 - `make test-wasi-sdk` aggregates the SDK bootstrap, dylink, package, CPython,
-  GMP, and PARI capability gates;
+  GMP, and PARI/GP gates;
 - CPython starts, passes runtime contracts, imports representative stdlib
   modules and package-backed dynamic extensions, bootstraps pip, and passes
   the supported suite;
-- Sage-relevant GMP passes with a mathematical smoke, while PARI has an
-  explicit setjmp/longjmp capability gate instead of a silent failure.
+- Sage-relevant GMP and PARI both pass mathematical smokes under the SDK path.
 
 The broader modernization now continues in separate transition tracks:
 

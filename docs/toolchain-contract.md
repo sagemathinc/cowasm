@@ -841,10 +841,11 @@ make -C sagemath/pari test-wasi-sdk-standalone
 
 The target first ensures the GMP WASI SDK standalone archive is available, then
 probes `wasi-sdk` setjmp/longjmp support before configuring PARI/GP. PARI uses
-real `setjmp`/`longjmp` for error handling, so the smoke skips when the
-selected SDK and runner cannot provide that contract. Once available, the
-target configures PARI against `sagemath/gmp/dist/wasi-sdk`, builds the static
-`gp` executable, and checks both the GMP kernel banner and a small arithmetic
+real `setjmp`/`longjmp` for error handling, so the probe and package build pass
+the SDK SJLJ flags and link `libsetjmp`. The target configures PARI against
+`sagemath/gmp/dist/wasi-sdk`, adds small local compatibility headers for
+WASI-missing password-database and `clock()` APIs, builds the static `gp`
+executable, and checks both the GMP kernel banner and a small arithmetic
 expression through the WASI runner.
 
 `core/libcxx` has an opt-in C++ runtime side-module smoke target:
@@ -1072,7 +1073,8 @@ CC="zcc" AR="zig ar" ./Configure ...
 `zcc` is used there because it produces a runnable shell launcher for a linked
 WASM executable, which matches PARI's build-time expectations. A direct clang
 PARI build also needs explicit WASI `setjmp`/`longjmp` runtime support because
-PARI's error-handling path uses those APIs directly.
+PARI's error-handling path uses those APIs directly; the standalone clang and
+wasi-sdk probes both pass the LLVM SJLJ flags and link `libsetjmp`.
 
 ## Zig-Provided Pieces
 

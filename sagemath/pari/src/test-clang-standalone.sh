@@ -24,6 +24,7 @@ rm -rf "$dist_dir"
 mkdir -p "$dist_dir"
 
 standalone_ldlibs=(
+  -lsetjmp
   -lwasi-emulated-signal
 )
 
@@ -54,11 +55,13 @@ int main(void) {
 }
 EOF
 
-sjlj_cflags="-Oz -fvisibility-main -mllvm -wasm-enable-sjlj"
+sjlj_cflags="-Oz -fvisibility-main -mllvm -wasm-enable-sjlj -mllvm -wasm-use-legacy-eh=false"
+sjlj_ldflags="$sjlj_cflags ${standalone_ldlibs[*]}"
 setjmp_log="$probe_dir/setjmp-probe.log"
 if ! env COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
-  -mllvm -wasm-enable-sjlj \
+  $sjlj_cflags \
   "$probe_dir/setjmp-probe.c" \
+  -lsetjmp \
   -o "$probe_dir/setjmp-probe" >"$setjmp_log" 2>&1; then
   if grep -E "Setjmp/longjmp support|__wasm_(setjmp|longjmp)" "$setjmp_log" >/dev/null; then
     echo "Skipping pari clang standalone smoke: direct clang/lld WASI setjmp support is not configured."
@@ -90,7 +93,7 @@ CC="$bin_dir/cowasm-cc" \
 AR="$bin_dir/cowasm-ar" \
 RANLIB="$bin_dir/cowasm-ranlib" \
 CFLAGS="$sjlj_cflags" \
-LDFLAGS="-Oz -fvisibility-main ${standalone_ldlibs[*]}" \
+LDFLAGS="$sjlj_ldflags" \
 RUNTEST="$probe_dir/run-wasi" \
 COWASM_TOOLCHAIN=clang \
   ./Configure \
@@ -104,8 +107,44 @@ COWASM_TOOLCHAIN=clang \
 # Zig's sysroot supplies indirectly in the main wasm build.
 cd "$build_dir"/O*
 mkdir -p bits
-printf '#define __jmp_buf int\n' >bits/setjmp.h
+printf 'typedef unsigned long __jmp_buf[8];\n' >bits/setjmp.h
 printf '\n' >bits/wordsize.h
+cat >pwd.h <<'EOF'
+#ifndef COWASM_PARI_CLANG_PWD_H
+#define COWASM_PARI_CLANG_PWD_H
+#include <sys/types.h>
+
+struct passwd {
+  char *pw_name;
+  uid_t pw_uid;
+  gid_t pw_gid;
+  char *pw_dir;
+  char *pw_shell;
+};
+
+static inline uid_t getuid(void) { return 0; }
+static inline uid_t geteuid(void) { return 0; }
+static inline struct passwd *getpwuid(uid_t uid) {
+  (void)uid;
+  return 0;
+}
+static inline struct passwd *getpwnam(const char *name) {
+  (void)name;
+  return 0;
+}
+
+#endif
+EOF
+cat >time.h <<'EOF'
+#ifndef COWASM_PARI_CLANG_TIME_H
+#define COWASM_PARI_CLANG_TIME_H
+#include_next <time.h>
+
+#undef clock
+#define clock() ((clock_t)0)
+
+#endif
+EOF
 
 COWASM_TOOLCHAIN=clang make -j"$jobs" \
   AR="$bin_dir/cowasm-ar" \

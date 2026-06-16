@@ -25,3 +25,15 @@ returns NULL instead of 0, so we fix that.
  #else
    FILE *f;
    check_secure(s);
+@@ -5011,9 +5013,11 @@
+ {
+   check_gp_file("fileclose", n);
+   if (DEBUGLEVEL) err_printf("fileclose(%ld)\n",n);
++#ifdef HAVE_PIPES
+   if (gp_file[n].type == mf_PIPE)
+     pclose(gp_file[n].fp);
+   else
++#endif
+     fclose(gp_file[n].fp);
+   pari_free((void*)gp_file[n].name);
+   gp_file[n].name = NULL;
