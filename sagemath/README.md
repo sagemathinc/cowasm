@@ -24,6 +24,7 @@ Current wasi-sdk standalone math smoke packages:
 - primesieve
 - nauty
 - Cliquer
+- planarity
 - GSL
 - ratpoints
 - M4RI

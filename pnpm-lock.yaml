@@ -1028,9 +1028,13 @@ importers:
 
   sagemath/pari: {}
 
+  sagemath/planarity: {}
+
   sagemath/primesieve: {}
 
   sagemath/ratpoints: {}
+
+  sagemath/symmetrica: {}
 
   web/browser:
     dependencies:

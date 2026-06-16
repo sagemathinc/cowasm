@@ -1,0 +1,36 @@
+{
+  "name": "@cowasm/planarity",
+  "version": "1.0.0",
+  "description": "Edge-addition planarity graph algorithms",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
+  "files": [
+    "dist/js/*",
+    "README.md",
+    "src/*",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/planarity",
+  "keywords": ["sagemath", "graph-theory", "planarity"],
+  "author": "William Stein",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
