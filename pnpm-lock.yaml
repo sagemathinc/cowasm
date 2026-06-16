@@ -972,6 +972,14 @@ importers:
         specifier: workspace:*
         version: link:../gsl
 
+  sagemath/m4ri: {}
+
+  sagemath/m4rie:
+    dependencies:
+      '@cowasm/m4ri':
+        specifier: workspace:*
+        version: link:../m4ri
+
   sagemath/mpc:
     dependencies:
       '@cowasm/gmp':
@@ -996,6 +1004,8 @@ importers:
         specifier: workspace:*
         version: link:../gmp
 
+  sagemath/nauty: {}
+
   sagemath/ntl:
     dependencies:
       '@cowasm/gmp':
@@ -1003,6 +1013,10 @@ importers:
         version: link:../gmp
 
   sagemath/pari: {}
+
+  sagemath/primesieve: {}
+
+  sagemath/ratpoints: {}
 
   web/browser:
     dependencies:

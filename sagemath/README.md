@@ -21,6 +21,7 @@ Current wasi-sdk standalone math smoke packages:
 - NTL
 - PARI/GP
 - primesieve
+- nauty
 - GSL
 - ratpoints
 - M4RI
