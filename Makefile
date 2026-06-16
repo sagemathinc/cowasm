@@ -198,6 +198,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/gc test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/libhomfly test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/boost-cropped test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/tdlib test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/brial test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ratpoints test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/cddlib test-wasi-sdk-standalone

@@ -1114,6 +1114,19 @@ hardware-specific code disabled, and native build helpers compiled with Zig.
 It installs `libgf2x.a` under `sagemath/gf2x/dist/wasi-sdk`, then links and
 runs a GF(2)[x] multiplication probe through the WASI runner.
 
+`sagemath/tdlib` has an opt-in dependent C++ header smoke shape:
+
+```sh
+make -C sagemath/tdlib test-wasi-sdk-standalone
+```
+
+The target first ensures the cropped Boost WASI SDK standalone headers are
+available, then configures tdlib with optional Python, GALA, Boost.System, and
+Boost.Thread integrations disabled. It installs the treedec headers under
+`sagemath/tdlib/dist/wasi-sdk`; the smoke requires the pinned SDK
+exception-enabled C++ runtime archives and runs a cycle-graph tree
+decomposition validity probe through the WASI runner.
+
 `core/libcxx` has an opt-in C++ runtime side-module smoke target:
 
 ```sh
