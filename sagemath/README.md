@@ -51,6 +51,7 @@ Current wasi-sdk standalone math smoke packages:
 - lrslib
 - Gfan
 - GLPK
+- 4ti2
 - tdlib
 
 **WARNING: Unlike the rest of CoWasm, there is code in this directory
