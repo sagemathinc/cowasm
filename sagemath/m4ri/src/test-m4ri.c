@@ -9,6 +9,78 @@ static int expect_entry(mzd_t const *matrix, rci_t row, rci_t col, int expected)
   return mzd_read_bit(matrix, row, col) == (expected != 0);
 }
 
+static int check_solve_left(void) {
+  mzd_t *system = mzd_init(3, 3);
+  mzd_t *rhs = mzd_init(3, 2);
+  mzd_t *expected = mzd_init(3, 2);
+  int ok;
+
+  if (system == NULL || rhs == NULL || expected == NULL) {
+    mzd_free(system);
+    mzd_free(rhs);
+    mzd_free(expected);
+    return 0;
+  }
+
+  write_entry(system, 0, 0, 1);
+  write_entry(system, 0, 1, 1);
+  write_entry(system, 1, 1, 1);
+  write_entry(system, 1, 2, 1);
+  write_entry(system, 2, 0, 1);
+
+  write_entry(expected, 0, 0, 1);
+  write_entry(expected, 1, 1, 1);
+  write_entry(expected, 2, 0, 1);
+  write_entry(expected, 2, 1, 1);
+
+  write_entry(rhs, 0, 0, 1);
+  write_entry(rhs, 0, 1, 1);
+  write_entry(rhs, 1, 0, 1);
+  write_entry(rhs, 2, 0, 1);
+
+  ok = mzd_solve_left(system, rhs, 0, 1) == 0 && mzd_equal(rhs, expected);
+
+  mzd_free(system);
+  mzd_free(rhs);
+  mzd_free(expected);
+  return ok;
+}
+
+static int check_kernel_left(void) {
+  mzd_t *system = mzd_init(2, 3);
+  mzd_t *system_copy = NULL;
+  mzd_t *kernel = NULL;
+  mzd_t *product = NULL;
+  int ok;
+
+  if (system == NULL) {
+    return 0;
+  }
+
+  write_entry(system, 0, 0, 1);
+  write_entry(system, 0, 1, 1);
+  write_entry(system, 1, 1, 1);
+  write_entry(system, 1, 2, 1);
+
+  system_copy = mzd_copy(NULL, system);
+  kernel = mzd_kernel_left_pluq(system, 0);
+  if (system_copy != NULL && kernel != NULL) {
+    product = mzd_mul(NULL, system_copy, kernel, 0);
+  }
+
+  ok = system_copy != NULL && kernel != NULL && product != NULL;
+  ok = ok && kernel->nrows == 3 && kernel->ncols == 1;
+  ok = ok && expect_entry(kernel, 0, 0, 1) &&
+       expect_entry(kernel, 1, 0, 1) && expect_entry(kernel, 2, 0, 1);
+  ok = ok && mzd_is_zero(product);
+
+  mzd_free(product);
+  mzd_free(kernel);
+  mzd_free(system_copy);
+  mzd_free(system);
+  return ok;
+}
+
 int main(void) {
   mzd_t *a = mzd_init(2, 3);
   mzd_t *b = mzd_init(3, 2);
@@ -48,9 +120,11 @@ int main(void) {
            expect_entry(product, 0, 0, 1) &&
            expect_entry(product, 0, 1, 0) &&
            expect_entry(product, 1, 0, 1) &&
-           expect_entry(product, 1, 1, 1);
+           expect_entry(product, 1, 1, 1) &&
+           check_solve_left() &&
+           check_kernel_left();
 
-  printf("m4ri-ok rank=%d product=%d%d%d%d\n",
+  printf("m4ri-ok rank=%d product=%d%d%d%d solve kernel\n",
          (int)rank,
          (int)mzd_read_bit(product, 0, 0),
          (int)mzd_read_bit(product, 0, 1),

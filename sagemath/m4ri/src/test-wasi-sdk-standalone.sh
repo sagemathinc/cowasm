@@ -61,4 +61,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/m4ri-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/m4ri-test" |
-  grep -F "m4ri-ok rank=2 product=1011"
+  grep -F "m4ri-ok rank=2 product=1011 solve kernel"
