@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 10 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR GMP_DIR GIVARO_DIR GSL_DIR FFLAS_FFPACK_DIR MPFR_DIR FPLLL_DIR IML_DIR" >&2
+if [ "$#" -ne 11 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR GMP_DIR GIVARO_DIR GSL_DIR FFLAS_FFPACK_DIR MPFR_DIR FPLLL_DIR IML_DIR FLINT_DIR" >&2
   exit 2
 fi
 
@@ -16,6 +16,7 @@ fflas_ffpack_dir="$(cd "$7" && pwd)"
 mpfr_dir="$(cd "$8" && pwd)"
 fplll_dir="$(cd "$9" && pwd)"
 iml_dir="$(cd "${10}" && pwd)"
+flint_dir="$(cd "${11}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -51,6 +52,7 @@ fflas_libs="-L$givaro_dir/lib -L$gmp_dir/lib -L$gsl_dir/lib -lgivaro -lgmpxx -lg
 mpfr_cflags="-I$mpfr_dir/include"
 fplll_cflags="-I$fplll_dir/include"
 iml_cflags="-I$iml_dir/include"
+flint_cflags="-I$flint_dir/include"
 
 cd "$build_dir"
 env \
@@ -59,9 +61,9 @@ env \
   NM="$bin_dir/wasi-sdk-llvm-nm-next" \
   CC="$bin_dir/cowasm-cc" \
   CXX="$bin_dir/cowasm-c++" \
-  CPPFLAGS="$fflas_cflags $mpfr_cflags $fplll_cflags $iml_cflags" \
+  CPPFLAGS="$fflas_cflags $mpfr_cflags $fplll_cflags $iml_cflags $flint_cflags" \
   CXXFLAGS="-std=c++14 -Oz -fvisibility-main" \
-  LDFLAGS="-L$mpfr_dir/lib -L$fplll_dir/lib -L$iml_dir/lib ${standalone_ldlibs[*]}" \
+  LDFLAGS="-L$mpfr_dir/lib -L$fplll_dir/lib -L$iml_dir/lib -L$flint_dir/lib ${standalone_ldlibs[*]}" \
   FFLAS_FFPACK_CFLAGS="$fflas_cflags" \
   FFLAS_FFPACK_LIBS="$fflas_libs" \
   CCNAM=clang \
@@ -74,7 +76,7 @@ env \
       --without-ntl \
       --with-mpfr="$mpfr_dir" \
       --with-iml="$iml_dir" \
-      --without-flint \
+      --with-flint="$flint_dir" \
       --with-fplll="$fplll_dir" \
       --without-ocl \
       --without-mpi \
@@ -98,7 +100,9 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -I"$mpfr_dir/include" \
   -I"$fplll_dir/include" \
   -I"$iml_dir/include" \
+  -I"$flint_dir/include" \
   -L"$dist_dir/lib" \
+  -L"$flint_dir/lib" \
   -L"$fplll_dir/lib" \
   -L"$mpfr_dir/lib" \
   -L"$iml_dir/lib" \
@@ -106,6 +110,7 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -L"$gmp_dir/lib" \
   -L"$gsl_dir/lib" \
   -llinbox \
+  -lflint \
   -lfplll \
   -lmpfr \
   -liml \
@@ -120,4 +125,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -o "$probe_dir/linbox-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/linbox-test" |
-  grep -F "linbox-ok product=2,5,9,16 mod17"
+  grep -F "linbox-ok product=2,5,9,16 mod17 flint=7,10,15,22"

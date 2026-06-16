@@ -1,0 +1,10 @@
+--- linbox-1.7.0.orig/linbox/algorithms/matrix-blas3/mul.h
++++ linbox-1.7.0/linbox/algorithms/matrix-blas3/mul.h
+@@ -155,6 +155,7 @@
+ 		// #include "longlong.h"
+ #define __GMP_BITS_PER_MP_LIMB GMP_LIMB_BITS
+ #include "flint/flint.h"
++#include "flint/fmpz.h"
+ #include "flint/fmpz_mat.h"
+ 	}
+ }
