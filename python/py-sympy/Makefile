@@ -26,6 +26,7 @@ test: deps ${DIST_WASM}/.built
 
 	# A little test of functionality
 	PYTHONPATH=${DIST_WASM}:$(shell cowasm-package-path @cowasm/py-mpmath) pnpm-exec cpython ${SRC}/test_basic.py
+	PYTHONPATH=${DIST_WASM}:$(shell cowasm-package-path @cowasm/py-mpmath) pnpm-exec cpython ${SRC}/test_sage_symbolics.py
 
 
 
