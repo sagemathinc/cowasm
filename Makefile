@@ -215,6 +215,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/primesieve test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/nauty test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/cliquer test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/coxeter3 test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/planarity test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/symmetrica test-wasi-sdk-standalone
 

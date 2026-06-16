@@ -29,6 +29,7 @@ Current wasi-sdk standalone math smoke packages:
 - nauty
 - Cliquer
 - MCQD
+- Coxeter3
 - planarity
 - GSL
 - Boost.Cropped

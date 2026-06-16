@@ -1,0 +1,16 @@
+diff --git a/directories.h b/directories.h
+--- a/directories.h
++++ b/directories.h
+@@ -25,9 +25,9 @@
+ */
+
+ namespace directories {
+-  const char* const COXMATRIX_DIR = "/usr/local/coxeter/coxeter_matrices";
+-  const char* const HEADER_DIR = "/usr/local/coxeter/headers";
+-  const char* const MESSAGE_DIR = "/usr/local/coxeter/messages";
++  const char* const COXMATRIX_DIR = "coxeter_matrices";
++  const char* const HEADER_DIR = "headers";
++  const char* const MESSAGE_DIR = "messages";
+ };
+
+ #endif
