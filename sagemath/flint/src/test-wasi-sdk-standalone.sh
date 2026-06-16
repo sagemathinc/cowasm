@@ -57,8 +57,28 @@ env \
 COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs" LD="$bin_dir/wasi-sdk-wasm-ld-next"
 COWASM_TOOLCHAIN=wasi-sdk make install LD="$bin_dir/wasi-sdk-wasm-ld-next"
 
+cat >"$probe_dir/flint-wasi-stubs.c" <<'EOF'
+#include <errno.h>
+#include <time.h>
+
+int mkstemp(char *template) {
+  (void)template;
+  errno = ENOSYS;
+  return -1;
+}
+
+clock_t clock(void) {
+  return (clock_t)0;
+}
+EOF
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
+  -c "$probe_dir/flint-wasi-stubs.c" \
+  -o "$probe_dir/flint-wasi-stubs.o"
+
 env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   "$src_dir/test-flint.c" \
+  "$probe_dir/flint-wasi-stubs.o" \
   -I"$dist_dir/include" \
   -I"$mpfr_dir/include" \
   -I"$gmp_dir/include" \
@@ -72,4 +92,5 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   "${standalone_ldlibs[@]}" \
   -o "$probe_dir/flint-test"
 
-cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/flint-test" | grep "265252859812191058636308480000000"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/flint-test" |
+  grep "flint-ok rational=1/2 factors=2"
