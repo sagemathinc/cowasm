@@ -190,6 +190,7 @@ test-wasi-sdk-python:
 test-wasi-sdk-math:
 	$(MAKE) -C sagemath/gmp test-wasi-sdk-next
 	$(MAKE) -C sagemath/ecm test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/givaro test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mpfr test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mpc test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/flint test-wasi-sdk-standalone

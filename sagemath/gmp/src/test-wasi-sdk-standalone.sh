@@ -27,13 +27,20 @@ standalone_ldlibs=(
   -lwasi-emulated-signal
 )
 
+cc_for_build="${CC_FOR_BUILD:-cc}"
+if [ -z "${CC_FOR_BUILD:-}" ] && [ -x "$bin_dir/zig" ]; then
+  cc_for_build="$bin_dir/zig cc ${ZIG_NATIVE_CFLAGS:-}"
+fi
+
 cd "$build_dir"
 ABI=standard \
 AR="$bin_dir/cowasm-ar" \
 RANLIB="$bin_dir/cowasm-ranlib" \
 CC="$bin_dir/cowasm-cc" \
-CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS:-}" \
+CXX="$bin_dir/cowasm-c++" \
+CC_FOR_BUILD="$cc_for_build" \
 CFLAGS="-Oz -fvisibility-main" \
+CXXFLAGS="-Oz -fvisibility-main" \
 LDFLAGS="${standalone_ldlibs[*]}" \
 COWASM_TOOLCHAIN=wasi-sdk \
   ./configure \
@@ -42,7 +49,8 @@ COWASM_TOOLCHAIN=wasi-sdk \
     --prefix="$dist_dir" \
     --disable-assembly \
     --disable-shared \
-    --enable-static
+    --enable-static \
+    --enable-cxx
 
 sed -i'.original' -e 's/HAVE_OBSTACK_VPRINTF 1/HAVE_OBSTACK_VPRINTF 0/' config.h
 COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs" install
@@ -58,4 +66,18 @@ COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/test-gmp"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/test-gmp" |
+  grep 1606938044258990275541962092341162602522202993782792835301376
+
+COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
+  -fvisibility-main \
+  -Oz \
+  -I"$dist_dir/include" \
+  -L"$dist_dir/lib" \
+  "$src_dir/test-gmpxx.cpp" \
+  -lgmpxx \
+  -lgmp \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/test-gmpxx"
+
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/test-gmpxx" |
   grep 1606938044258990275541962092341162602522202993782792835301376
