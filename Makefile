@@ -194,10 +194,12 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/cysignals test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/m4ri test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/m4rie test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/libatomic-ops test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/boost-cropped test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/brial test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ratpoints test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/cddlib test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/gfan test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ecm test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/eclib test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/givaro test-wasi-sdk-standalone
@@ -208,6 +210,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/fplll test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/linbox test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/lrcalc test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/lrslib test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/libbraiding test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/flint test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/gf2x test-wasi-sdk-standalone
