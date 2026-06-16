@@ -1,0 +1,18 @@
+diff --git a/src/gfanlib_matrix.h b/src/gfanlib_matrix.h
+--- a/src/gfanlib_matrix.h
++++ b/src/gfanlib_matrix.h
+@@ -107,6 +107,14 @@ public:
+       return true;
+     }
+ */
++  Vector<typ> vectormultiply(Vector<typ> const &v)const
++    {
++      assert(v.size()==static_cast<unsigned int>(width));
++      Vector<typ> ret(height);
++      for(int i=0;i<height;i++)
++        ret[i]=dot((*this)[i].toVector(),v);
++      return ret;
++    }
+   friend Matrix operator*(const typ &s, const Matrix& q)
+     {
+       Matrix p=q;

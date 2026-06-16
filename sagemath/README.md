@@ -47,5 +47,10 @@ Current wasi-sdk standalone math smoke packages:
 - PALP
 - lrslib
 
+In-progress wasi-sdk standalone math smoke packages:
+
+- Gfan: reaches the final C++ link with GMP and cddlib; currently skipped on
+  exception-enabled wasi-sdk C++ runtime linkage.
+
 **WARNING: Unlike the rest of CoWasm, there is code in this directory
 that is licensed under the GPL. No code in the other packages (core, python, web, etc.,) depends on this code.**
