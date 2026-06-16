@@ -192,6 +192,8 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/gmp test-wasi-sdk-next
 	$(MAKE) -C sagemath/m4ri test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/m4rie test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/boost-cropped test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/brial test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ratpoints test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/cddlib test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ecm test-wasi-sdk-standalone
@@ -202,7 +204,9 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/mpc test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/fflas-ffpack test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/linbox test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/lrcalc test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/flint test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/gf2x test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/gsl test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/iml test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ntl test-wasi-sdk-standalone

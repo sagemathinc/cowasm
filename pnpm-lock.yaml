@@ -905,6 +905,17 @@ importers:
         specifier: ^4.8.4
         version: 4.9.5
 
+  sagemath/boost-cropped: {}
+
+  sagemath/brial:
+    dependencies:
+      '@cowasm/boost-cropped':
+        specifier: workspace:*
+        version: link:../boost-cropped
+      '@cowasm/m4ri':
+        specifier: workspace:*
+        version: link:../m4ri
+
   sagemath/cddlib:
     dependencies:
       '@cowasm/gmp':
@@ -951,6 +962,8 @@ importers:
       '@cowasm/mpfr':
         specifier: workspace:*
         version: link:../mpfr
+
+  sagemath/gf2x: {}
 
   sagemath/givaro:
     dependencies:
