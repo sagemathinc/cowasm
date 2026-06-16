@@ -1,0 +1,47 @@
+--- a/rp-private.h
++++ b/rp-private.h
+@@ -31,7 +31,10 @@
+ #include <math.h>
+ #include <string.h>
+
+-#define LONG_LENGTH (8*sizeof(long))
++#ifndef RATPOINTS_LONG_LENGTH
++# define RATPOINTS_LONG_LENGTH (8*sizeof(long))
++#endif
++#define LONG_LENGTH RATPOINTS_LONG_LENGTH
+    /* number of bits in an unsigned long */
+ #define LONG_SHIFT ((LONG_LENGTH == 16) ? 4 : \
+                     (LONG_LENGTH == 32) ? 5 : \
+--- a/gen_find_points_h.c
++++ b/gen_find_points_h.c
+@@ -88,6 +88,11 @@
+   }
+
+   { unsigned long work[RATPOINTS_MAX_PRIME];
++    unsigned long word_mask = 0;
++    long bit;
++
++    for(bit = 0; bit < LONG_LENGTH; bit++)
++    { word_mask = (word_mask << 1) | 1UL; }
+
+     printf("unsigned long "
+            "sieves0[RATPOINTS_NUM_PRIMES][2*RATPOINTS_MAX_PRIME_EVEN] =\n{\n");
+@@ -95,15 +100,15 @@
+     { long p = prime[n];
+       long i;
+
+-      for(i = 0; i < p; i++) work[i] = ~0UL;
++      for(i = 0; i < p; i++) work[i] = word_mask;
+       for(i = 0; i < LONG_LENGTH; i++)
+       { work[(p*i)>>LONG_SHIFT] &= ~(1UL<<((p*i) & LONG_MASK)); }
+
+       printf("{");
+       for(i = 0; i < p; i++)
+-      { printf("0x%*.*lx, ", 16, 16, work[i]); }
++      { printf("0x%*.*lx, ", WIDTH, WIDTH, work[i]); }
+       for(i = 0; i < p; i++)
+-      { printf("0x%*.*lx", 16, 16, work[i]);
++      { printf("0x%*.*lx", WIDTH, WIDTH, work[i]);
+         if(i < p-1) printf(", ");
+       }
+       printf((n < RATPOINTS_NUM_PRIMES - 1) ? "},\n" : "}\n");
