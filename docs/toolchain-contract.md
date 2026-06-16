@@ -1074,6 +1074,20 @@ and shared libraries disabled. It installs `libsymmetrica.a` under
 smoke link, and runs factorial, binomial, partition, and Schur product probes
 through the WASI runner.
 
+`sagemath/rubiks` has an opt-in command-line executable smoke shape:
+
+```sh
+make -C sagemath/rubiks test-wasi-sdk-standalone
+```
+
+The target builds the Sage-packaged Rubik's cube solvers with
+`COWASM_TOOLCHAIN=wasi-sdk`, using explicit GNU89 flags for the older Dik
+Winter C sources. It installs the solver binaries under
+`sagemath/rubiks/dist/wasi-sdk/bin` and runs deterministic `cu2`, `cubex`,
+`dikcube`, `size222`, and `twist` probes through the WASI runner. The Michael
+Reid optimal solver is compiled and installed, but the smoke does not run its
+expensive table-generation path.
+
 `sagemath/givaro` has the same opt-in dependent C++ static-library smoke shape:
 
 ```sh

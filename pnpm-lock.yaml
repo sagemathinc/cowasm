@@ -1153,6 +1153,8 @@ importers:
         specifier: workspace:*
         version: link:../gmp
 
+  sagemath/rubiks: {}
+
   sagemath/rw: {}
 
   sagemath/symmetrica: {}

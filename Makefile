@@ -235,6 +235,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/zn-poly test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/rw test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/palp test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/rubiks test-wasi-sdk-standalone
 
 # clean up everything after each test, to prove can build and test everything
 # in isolation.
