@@ -8,7 +8,9 @@
 #include <flint/fmpz_mat.h>
 #include <flint/fmpz_poly.h>
 #include <flint/fmpz_poly_factor.h>
+#include <flint/fq_nmod.h>
 #include <flint/nmod_mat.h>
+#include <flint/nmod_mpoly.h>
 #include <flint/nmod_poly.h>
 #include <flint/nmod_poly_factor.h>
 
@@ -38,6 +40,13 @@ int main(void) {
   nmod_poly_t mod_factor_power;
   nmod_poly_t mod_factor_tmp;
   nmod_poly_factor_t mod_factorization;
+  fq_nmod_ctx_t finite_field_ctx;
+  fq_nmod_t finite_field_gen;
+  fq_nmod_t finite_field_power;
+  nmod_mpoly_ctx_t mpoly_ctx;
+  nmod_mpoly_t mpoly_a;
+  nmod_mpoly_t mpoly_b;
+  nmod_mpoly_t mpoly_product;
   nmod_mat_t mod_matrix;
   nmod_mat_t mod_rhs;
   nmod_mat_t mod_solution;
@@ -60,6 +69,7 @@ int main(void) {
   slong matrix_rank;
   slong mod_matrix_rank;
   ulong mod_det;
+  ulong exp_xy[2];
   slong i;
 
   fmpz_init(n);
@@ -84,6 +94,13 @@ int main(void) {
   nmod_poly_init(mod_factor_power, 5);
   nmod_poly_init(mod_factor_tmp, 5);
   nmod_poly_factor_init(mod_factorization);
+  fq_nmod_ctx_init_ui(finite_field_ctx, 3, 2, "t");
+  fq_nmod_init(finite_field_gen, finite_field_ctx);
+  fq_nmod_init(finite_field_power, finite_field_ctx);
+  nmod_mpoly_ctx_init(mpoly_ctx, 2, ORD_LEX, 7);
+  nmod_mpoly_init(mpoly_a, mpoly_ctx);
+  nmod_mpoly_init(mpoly_b, mpoly_ctx);
+  nmod_mpoly_init(mpoly_product, mpoly_ctx);
   nmod_mat_init(mod_matrix, 3, 3, 17);
   nmod_mat_init(mod_rhs, 3, 1, 17);
   nmod_mat_init(mod_solution, 3, 1, 17);
@@ -166,6 +183,37 @@ int main(void) {
   ok = ok && fmpz_poly_equal(factor_product, factor_poly);
   ok = ok && mod_factorization->num == 2;
   ok = ok && nmod_poly_equal(mod_factor_product, mod_poly);
+
+  fq_nmod_gen(finite_field_gen, finite_field_ctx);
+  fq_nmod_pow_ui(finite_field_power, finite_field_gen, 8, finite_field_ctx);
+  ok = ok && fq_nmod_is_one(finite_field_power, finite_field_ctx);
+
+  exp_xy[0] = 2;
+  exp_xy[1] = 1;
+  nmod_mpoly_set_coeff_ui_ui(mpoly_a, 2, exp_xy, mpoly_ctx);
+  exp_xy[0] = 0;
+  exp_xy[1] = 1;
+  nmod_mpoly_set_coeff_ui_ui(mpoly_a, 3, exp_xy, mpoly_ctx);
+  exp_xy[0] = 1;
+  exp_xy[1] = 0;
+  nmod_mpoly_set_coeff_ui_ui(mpoly_b, 1, exp_xy, mpoly_ctx);
+  exp_xy[0] = 0;
+  exp_xy[1] = 0;
+  nmod_mpoly_set_coeff_ui_ui(mpoly_b, 4, exp_xy, mpoly_ctx);
+  nmod_mpoly_mul(mpoly_product, mpoly_a, mpoly_b, mpoly_ctx);
+  exp_xy[0] = 3;
+  exp_xy[1] = 1;
+  ok = ok && nmod_mpoly_get_coeff_ui_ui(mpoly_product, exp_xy, mpoly_ctx) == 2;
+  exp_xy[0] = 2;
+  exp_xy[1] = 1;
+  ok = ok && nmod_mpoly_get_coeff_ui_ui(mpoly_product, exp_xy, mpoly_ctx) == 1;
+  exp_xy[0] = 1;
+  exp_xy[1] = 1;
+  ok = ok && nmod_mpoly_get_coeff_ui_ui(mpoly_product, exp_xy, mpoly_ctx) == 3;
+  exp_xy[0] = 0;
+  exp_xy[1] = 1;
+  ok = ok && nmod_mpoly_get_coeff_ui_ui(mpoly_product, exp_xy, mpoly_ctx) == 5;
+
   ok = ok && arb_contains_zero(sin_pi);
   ok = ok && arb_contains_si(exp_log_two, 2);
   ok = ok && arb_contains_si(acb_realref(z_squared), 0);
@@ -226,7 +274,7 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 finite-field-factors=2 matrix-det=22 mod-solve=1,2,3 ball-poly=16");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 finite-field-factors=2 fq=gf9 mpoly=zmod7 matrix-det=22 mod-solve=1,2,3 ball-poly=16");
   }
 
   flint_free(poly_str);
@@ -246,6 +294,13 @@ int main(void) {
   nmod_mat_clear(mod_solution);
   nmod_mat_clear(mod_rhs);
   nmod_mat_clear(mod_matrix);
+  nmod_mpoly_clear(mpoly_product, mpoly_ctx);
+  nmod_mpoly_clear(mpoly_b, mpoly_ctx);
+  nmod_mpoly_clear(mpoly_a, mpoly_ctx);
+  nmod_mpoly_ctx_clear(mpoly_ctx);
+  fq_nmod_clear(finite_field_power, finite_field_ctx);
+  fq_nmod_clear(finite_field_gen, finite_field_ctx);
+  fq_nmod_ctx_clear(finite_field_ctx);
   nmod_poly_factor_clear(mod_factorization);
   nmod_poly_clear(mod_factor_tmp);
   nmod_poly_clear(mod_factor_power);
