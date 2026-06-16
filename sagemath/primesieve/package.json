@@ -1,6 +1,17 @@
 {
   "name": "@cowasm/primesieve",
   "version": "1.0.0",
+  "description": "primesieve prime number generator library",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
+  "files": [
+    "dist/js/*",
+    "README.md",
+    "src/*",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "make",
@@ -8,6 +19,17 @@
     "prepublishOnly": "pnpm run build && make test",
     "test": "make test",
     "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/primesieve",
+  "keywords": ["prime-numbers", "sieve", "number-theory", "sagemath"],
+  "author": "William Stein",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
   },
   "dependencies": {},
   "devDependencies": {}
