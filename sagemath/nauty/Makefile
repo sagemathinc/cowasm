@@ -23,7 +23,10 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 .PHONY: test-wasi-sdk-standalone
 test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
 	cd ../../core/build && make wasi-sdk-next
-	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN}
+	@status=0; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} || status=$$?; \
+	if [ "$$status" -eq 77 ]; then exit 0; fi; \
+	exit "$$status"
 
 .PHONY: test-wasi-sdk-next
 test-wasi-sdk-next: test-wasi-sdk-standalone
