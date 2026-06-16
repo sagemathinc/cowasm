@@ -93,4 +93,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/flint-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/flint-test" |
-  grep "flint-ok rational=1/2 bernoulli=-691/2730 factors=2 ball-poly=16"
+  grep "flint-ok rational=1/2 bernoulli=-691/2730 factors=2 finite-field-factors=2 ball-poly=16"

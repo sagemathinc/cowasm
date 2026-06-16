@@ -7,6 +7,8 @@
 #include <flint/fmpz.h>
 #include <flint/fmpz_poly.h>
 #include <flint/fmpz_poly_factor.h>
+#include <flint/nmod_poly.h>
+#include <flint/nmod_poly_factor.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -24,6 +26,11 @@ int main(void) {
   fmpz_poly_t factor_power;
   fmpz_poly_t factor_tmp;
   fmpz_poly_factor_t factorization;
+  nmod_poly_t mod_poly;
+  nmod_poly_t mod_factor_product;
+  nmod_poly_t mod_factor_power;
+  nmod_poly_t mod_factor_tmp;
+  nmod_poly_factor_t mod_factorization;
   arb_t two;
   arb_t log_two;
   arb_t exp_log_two;
@@ -53,6 +60,11 @@ int main(void) {
   fmpz_poly_init(factor_power);
   fmpz_poly_init(factor_tmp);
   fmpz_poly_factor_init(factorization);
+  nmod_poly_init(mod_poly, 5);
+  nmod_poly_init(mod_factor_product, 5);
+  nmod_poly_init(mod_factor_power, 5);
+  nmod_poly_init(mod_factor_tmp, 5);
+  nmod_poly_factor_init(mod_factorization);
   arb_init(two);
   arb_init(log_two);
   arb_init(exp_log_two);
@@ -96,6 +108,17 @@ int main(void) {
     fmpz_poly_set(factor_product, factor_tmp);
   }
 
+  nmod_poly_set_coeff_ui(mod_poly, 0, 1);
+  nmod_poly_set_coeff_ui(mod_poly, 2, 1);
+  nmod_poly_factor(mod_factorization, mod_poly);
+  nmod_poly_set_coeff_ui(mod_factor_product, 0, 1);
+  for (i = 0; i < mod_factorization->num; i++) {
+    nmod_poly_pow(mod_factor_power, mod_factorization->p + i,
+                  (ulong)mod_factorization->exp[i]);
+    nmod_poly_mul(mod_factor_tmp, mod_factor_product, mod_factor_power);
+    nmod_poly_set(mod_factor_product, mod_factor_tmp);
+  }
+
   arb_const_pi(pi, 128);
   arb_sin(sin_pi, pi, 128);
   pi_str = arb_get_str(pi, 24, ARB_STR_NO_RADIUS);
@@ -119,6 +142,8 @@ int main(void) {
   ok = ok && strcmp(bernoulli_str, "-691/2730") == 0;
   ok = ok && factorization->num == 2;
   ok = ok && fmpz_poly_equal(factor_product, factor_poly);
+  ok = ok && mod_factorization->num == 2;
+  ok = ok && nmod_poly_equal(mod_factor_product, mod_poly);
   ok = ok && arb_contains_zero(sin_pi);
   ok = ok && arb_contains_si(exp_log_two, 2);
   ok = ok && arb_contains_si(acb_realref(z_squared), 0);
@@ -127,7 +152,7 @@ int main(void) {
   ok = ok && arb_contains_zero(acb_imagref(eval_value));
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 ball-poly=16");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 finite-field-factors=2 ball-poly=16");
   }
 
   flint_free(poly_str);
@@ -144,6 +169,11 @@ int main(void) {
   arb_clear(exp_log_two);
   arb_clear(log_two);
   arb_clear(two);
+  nmod_poly_factor_clear(mod_factorization);
+  nmod_poly_clear(mod_factor_tmp);
+  nmod_poly_clear(mod_factor_power);
+  nmod_poly_clear(mod_factor_product);
+  nmod_poly_clear(mod_poly);
   fmpz_poly_factor_clear(factorization);
   fmpz_poly_clear(factor_tmp);
   fmpz_poly_clear(factor_power);
