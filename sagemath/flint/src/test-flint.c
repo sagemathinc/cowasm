@@ -8,6 +8,7 @@
 #include <flint/fmpz_mat.h>
 #include <flint/fmpz_poly.h>
 #include <flint/fmpz_poly_factor.h>
+#include <flint/fmpq_mpoly.h>
 #include <flint/fq_nmod.h>
 #include <flint/nmod_mat.h>
 #include <flint/nmod_mpoly.h>
@@ -17,6 +18,11 @@
 #include <stdio.h>
 #include <string.h>
 
+static int fmpq_equal_frac_si(const fmpq_t value, slong num, ulong den) {
+  return fmpz_cmp_si(fmpq_numref(value), num) == 0 &&
+         fmpz_cmp_ui(fmpq_denref(value), den) == 0;
+}
+
 int main(void) {
   fmpz_t n;
   fmpz_t factor_content;
@@ -24,6 +30,7 @@ int main(void) {
   fmpq_t a;
   fmpq_t b;
   fmpq_t bernoulli;
+  fmpq_t q_mpoly_coeff;
   fmpq_t rational_sum;
   fmpz_mat_t matrix_a;
   fmpz_mat_t matrix_b;
@@ -47,6 +54,10 @@ int main(void) {
   nmod_mpoly_t mpoly_a;
   nmod_mpoly_t mpoly_b;
   nmod_mpoly_t mpoly_product;
+  fmpq_mpoly_ctx_t q_mpoly_ctx;
+  fmpq_mpoly_t q_mpoly_a;
+  fmpq_mpoly_t q_mpoly_b;
+  fmpq_mpoly_t q_mpoly_product;
   nmod_mat_t mod_matrix;
   nmod_mat_t mod_rhs;
   nmod_mat_t mod_solution;
@@ -78,6 +89,7 @@ int main(void) {
   fmpq_init(a);
   fmpq_init(b);
   fmpq_init(bernoulli);
+  fmpq_init(q_mpoly_coeff);
   fmpq_init(rational_sum);
   fmpz_mat_init(matrix_a, 3, 3);
   fmpz_mat_init(matrix_b, 3, 3);
@@ -101,6 +113,10 @@ int main(void) {
   nmod_mpoly_init(mpoly_a, mpoly_ctx);
   nmod_mpoly_init(mpoly_b, mpoly_ctx);
   nmod_mpoly_init(mpoly_product, mpoly_ctx);
+  fmpq_mpoly_ctx_init(q_mpoly_ctx, 2, ORD_LEX);
+  fmpq_mpoly_init(q_mpoly_a, q_mpoly_ctx);
+  fmpq_mpoly_init(q_mpoly_b, q_mpoly_ctx);
+  fmpq_mpoly_init(q_mpoly_product, q_mpoly_ctx);
   nmod_mat_init(mod_matrix, 3, 3, 17);
   nmod_mat_init(mod_rhs, 3, 1, 17);
   nmod_mat_init(mod_solution, 3, 1, 17);
@@ -214,6 +230,49 @@ int main(void) {
   exp_xy[1] = 1;
   ok = ok && nmod_mpoly_get_coeff_ui_ui(mpoly_product, exp_xy, mpoly_ctx) == 5;
 
+  fmpq_set_si(q_mpoly_coeff, 1, 2);
+  exp_xy[0] = 2;
+  exp_xy[1] = 1;
+  fmpq_mpoly_set_coeff_fmpq_ui(q_mpoly_a, q_mpoly_coeff, exp_xy,
+                               q_mpoly_ctx);
+  fmpq_set_si(q_mpoly_coeff, 2, 3);
+  exp_xy[0] = 0;
+  exp_xy[1] = 1;
+  fmpq_mpoly_set_coeff_fmpq_ui(q_mpoly_a, q_mpoly_coeff, exp_xy,
+                               q_mpoly_ctx);
+  fmpq_set_si(q_mpoly_coeff, 3, 5);
+  exp_xy[0] = 1;
+  exp_xy[1] = 0;
+  fmpq_mpoly_set_coeff_fmpq_ui(q_mpoly_b, q_mpoly_coeff, exp_xy,
+                               q_mpoly_ctx);
+  fmpq_set_si(q_mpoly_coeff, 5, 1);
+  exp_xy[0] = 0;
+  exp_xy[1] = 0;
+  fmpq_mpoly_set_coeff_fmpq_ui(q_mpoly_b, q_mpoly_coeff, exp_xy,
+                               q_mpoly_ctx);
+  fmpq_mpoly_mul(q_mpoly_product, q_mpoly_a, q_mpoly_b, q_mpoly_ctx);
+
+  exp_xy[0] = 3;
+  exp_xy[1] = 1;
+  fmpq_mpoly_get_coeff_fmpq_ui(q_mpoly_coeff, q_mpoly_product, exp_xy,
+                               q_mpoly_ctx);
+  ok = ok && fmpq_equal_frac_si(q_mpoly_coeff, 3, 10);
+  exp_xy[0] = 2;
+  exp_xy[1] = 1;
+  fmpq_mpoly_get_coeff_fmpq_ui(q_mpoly_coeff, q_mpoly_product, exp_xy,
+                               q_mpoly_ctx);
+  ok = ok && fmpq_equal_frac_si(q_mpoly_coeff, 5, 2);
+  exp_xy[0] = 1;
+  exp_xy[1] = 1;
+  fmpq_mpoly_get_coeff_fmpq_ui(q_mpoly_coeff, q_mpoly_product, exp_xy,
+                               q_mpoly_ctx);
+  ok = ok && fmpq_equal_frac_si(q_mpoly_coeff, 2, 5);
+  exp_xy[0] = 0;
+  exp_xy[1] = 1;
+  fmpq_mpoly_get_coeff_fmpq_ui(q_mpoly_coeff, q_mpoly_product, exp_xy,
+                               q_mpoly_ctx);
+  ok = ok && fmpq_equal_frac_si(q_mpoly_coeff, 10, 3);
+
   ok = ok && arb_contains_zero(sin_pi);
   ok = ok && arb_contains_si(exp_log_two, 2);
   ok = ok && arb_contains_si(acb_realref(z_squared), 0);
@@ -274,7 +333,7 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 finite-field-factors=2 fq=gf9 mpoly=zmod7 matrix-det=22 mod-solve=1,2,3 ball-poly=16");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 finite-field-factors=2 fq=gf9 mpoly=zmod7 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 ball-poly=16");
   }
 
   flint_free(poly_str);
@@ -298,6 +357,10 @@ int main(void) {
   nmod_mpoly_clear(mpoly_b, mpoly_ctx);
   nmod_mpoly_clear(mpoly_a, mpoly_ctx);
   nmod_mpoly_ctx_clear(mpoly_ctx);
+  fmpq_mpoly_clear(q_mpoly_product, q_mpoly_ctx);
+  fmpq_mpoly_clear(q_mpoly_b, q_mpoly_ctx);
+  fmpq_mpoly_clear(q_mpoly_a, q_mpoly_ctx);
+  fmpq_mpoly_ctx_clear(q_mpoly_ctx);
   fq_nmod_clear(finite_field_power, finite_field_ctx);
   fq_nmod_clear(finite_field_gen, finite_field_ctx);
   fq_nmod_ctx_clear(finite_field_ctx);
@@ -317,6 +380,7 @@ int main(void) {
   fmpz_mat_clear(matrix_b);
   fmpz_mat_clear(matrix_a);
   fmpq_clear(rational_sum);
+  fmpq_clear(q_mpoly_coeff);
   fmpq_clear(bernoulli);
   fmpq_clear(b);
   fmpq_clear(a);
