@@ -26,10 +26,12 @@ Current wasi-sdk standalone math smoke packages:
 - Cliquer
 - planarity
 - GSL
+- Boost.Cropped
 - GF2X
 - ratpoints
 - M4RI
 - M4RIE
+- BRiAl
 - Symmetrica
 
 **WARNING: Unlike the rest of CoWasm, there is code in this directory

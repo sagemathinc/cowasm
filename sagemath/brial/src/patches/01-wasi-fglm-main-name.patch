@@ -1,0 +1,14 @@
+diff --git a/groebner/include/polybori/groebner/FGLMStrategy.h b/groebner/include/polybori/groebner/FGLMStrategy.h
+index 0b5f635..5a4c3f0 100644
+--- a/groebner/include/polybori/groebner/FGLMStrategy.h
++++ b/groebner/include/polybori/groebner/FGLMStrategy.h
+@@ -38 +38 @@ public:
+-    PolynomialVector main();
++    PolynomialVector run();
+diff --git a/groebner/src/FGLMStrategy.cc b/groebner/src/FGLMStrategy.cc
+index a9dd9df..bc46918 100644
+--- a/groebner/src/FGLMStrategy.cc
++++ b/groebner/src/FGLMStrategy.cc
+@@ -539 +539 @@ FGLMStrategy::rowVectorIsLinearCombinationOfRows(mzd_t* mat, mzd_t* v){
+-PolynomialVector FGLMStrategy::main(){
++PolynomialVector FGLMStrategy::run(){
