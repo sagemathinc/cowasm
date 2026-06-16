@@ -835,6 +835,19 @@ multi-precision arithmetic probe through the WASI runner. It links
 `libwasi-emulated-signal` during configure and in the final probe so GMP uses
 WASI libc's `raise` shim instead of compiling its fallback signal path.
 
+`sagemath/cddlib` has the same opt-in dependent static-library smoke shape:
+
+```sh
+make -C sagemath/cddlib test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP WASI SDK standalone archive is available, then
+builds cddlib against `sagemath/gmp/dist/wasi-sdk` with
+`COWASM_TOOLCHAIN=wasi-sdk`. It installs the GMP rational `libcddgmp.a`
+archive under `sagemath/cddlib/dist/wasi-sdk`, then links and runs a
+polyhedron vertex-enumeration probe through the WASI runner using cddlib's
+GMP-backed rational arithmetic path.
+
 `sagemath/mpfr` has an opt-in static-library smoke target:
 
 ```sh
