@@ -195,6 +195,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/mpfr test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mpfi test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mpc test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/fflas-ffpack test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/flint test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/gsl test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/iml test-wasi-sdk-standalone
