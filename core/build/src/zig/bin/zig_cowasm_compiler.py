@@ -417,6 +417,120 @@ def append_missing_wl(args, flag):
     args.append(f'-Wl,{flag}')
 
 
+ELF_LINKER_FLAGS = {
+    '--as-needed',
+    '--no-as-needed',
+    '--no-undefined',
+    '-no-undefined',
+}
+ELF_LINKER_FLAGS_WITH_VALUES = {
+    '-rpath',
+    '--rpath',
+    '-rpath-link',
+    '--rpath-link',
+    '-soname',
+    '--soname',
+    '--version-script',
+}
+ELF_LINKER_JOINED_PREFIXES = (
+    '-rpath=',
+    '--rpath=',
+    '-rpath-link=',
+    '--rpath-link=',
+    '-soname=',
+    '--soname=',
+    '--version-script=',
+)
+ELF_Z_VALUES = {'defs', 'execstack', 'initfirst', 'lazy', 'now', 'origin', 'relro'}
+
+
+def is_joined_elf_linker_arg(arg):
+    return arg.startswith(ELF_LINKER_JOINED_PREFIXES)
+
+
+def is_elf_z_arg(arg):
+    return arg.startswith('-z') and arg != '-z' and arg[2:] in ELF_Z_VALUES
+
+
+def strip_elf_linker_tokens(tokens):
+    stripped = []
+    i = 0
+    while i < len(tokens):
+        token = tokens[i]
+        if token in ELF_LINKER_FLAGS or is_joined_elf_linker_arg(token):
+            i += 1
+            continue
+        if token in ELF_LINKER_FLAGS_WITH_VALUES:
+            i += 2
+            continue
+        if token == '-z' and i + 1 < len(tokens) and tokens[i + 1] in ELF_Z_VALUES:
+            i += 2
+            continue
+        if is_elf_z_arg(token):
+            i += 1
+            continue
+        stripped.append(token)
+        i += 1
+    return stripped
+
+
+def strip_elf_linker_args(argv):
+    stripped = []
+    i = 0
+    while i < len(argv):
+        arg = argv[i]
+        if arg == '-Xlinker':
+            linker_arg = require_option_value(argv, i)
+            if linker_arg in ELF_LINKER_FLAGS or is_joined_elf_linker_arg(linker_arg):
+                i += 2
+                continue
+            if linker_arg in ELF_LINKER_FLAGS_WITH_VALUES:
+                i += 2
+                if i < len(argv) and argv[i] == '-Xlinker':
+                    require_option_value(argv, i)
+                    i += 2
+                elif i < len(argv):
+                    i += 1
+                continue
+            if linker_arg == '-z':
+                if i + 2 < len(argv) and argv[i + 2] == '-Xlinker':
+                    z_value = require_option_value(argv, i + 2)
+                    if z_value in ELF_Z_VALUES:
+                        i += 4
+                        continue
+                elif i + 2 < len(argv) and argv[i + 2] in ELF_Z_VALUES:
+                    i += 3
+                    continue
+            if is_elf_z_arg(linker_arg):
+                i += 2
+                continue
+            stripped += [arg, linker_arg]
+            i += 2
+            continue
+        if arg.startswith('-Wl,'):
+            linker_args = strip_elf_linker_tokens(split_wl_arg(arg))
+            if linker_args:
+                stripped.append('-Wl,' + ','.join(linker_args))
+            i += 1
+            continue
+        if arg in ELF_LINKER_FLAGS or is_joined_elf_linker_arg(arg):
+            i += 1
+            continue
+        if arg in ELF_LINKER_FLAGS_WITH_VALUES:
+            require_option_value(argv, i)
+            i += 2
+            continue
+        if arg == '-z' and i + 1 < len(argv) and argv[i + 1] in ELF_Z_VALUES:
+            i += 2
+            continue
+        if is_elf_z_arg(arg):
+            i += 1
+            continue
+        stripped.append(arg)
+        i += 1
+    return stripped
+
+
 UNSUPPORTED_LIBS = {"c", "m", "dl"}
 
 
@@ -600,8 +714,9 @@ def wasi_sdk_backend():
     if LANG == 'zig':
         fail("cowasm: COWASM_TOOLCHAIN=wasi-sdk does not support cowasm-zig")
 
-    args = remove_legacy_pic_flags(
-        strip_host_system_path_args(expand_response_args(sys.argv[2:])))
+    args = strip_elf_linker_args(
+        remove_legacy_pic_flags(
+            strip_host_system_path_args(expand_response_args(sys.argv[2:]))))
     if '--print-multiarch' in args:
         print('wasm32-wasip1')
         return

@@ -66,6 +66,14 @@ export COWASM_COMPILER_RT="$tmp/libclang_rt.builtins.a"
 export COWASM_FAKE_BUILTINS="$tmp/libclang_rt.builtins.a"
 export COWASM_TEST_LOG="$tmp/tool.log"
 
+expect_no_log_match() {
+  local pattern="$1"
+  if grep -F -- "$pattern" "$COWASM_TEST_LOG"; then
+    echo "unexpected compiler argument matching $pattern" >&2
+    exit 1
+  fi
+}
+
 "$wrapper" -Oz -fvisibility-main "$tmp/hello.cpp" -o "$tmp/hello.wasm"
 test -f "$tmp/hello.wasm"
 
@@ -80,3 +88,42 @@ grep -F -- "--strip-all" "$COWASM_TEST_LOG"
 "$wrapper" -g -Oz "$tmp/hello.cpp" -o "$tmp/debug.wasm"
 test -f "$tmp/debug.wasm"
 ! grep -F -- "--strip-all" "$COWASM_TEST_LOG"
+
+cat >"$tmp/module.cpp" <<'EOF'
+extern "C" int cowasm_test_square(int x) {
+  return x * x;
+}
+EOF
+
+: >"$COWASM_TEST_LOG"
+"$wrapper" \
+  -Oz \
+  -shared \
+  "$tmp/module.cpp" \
+  -Wl,-soname,libmodule.so \
+  -Wl,-rpath,/host/lib \
+  -Wl,-z,defs \
+  -Wl,--as-needed \
+  -Wl,--no-undefined \
+  -Xlinker -rpath -Xlinker /other/host/lib \
+  -Xlinker -z -Xlinker now \
+  -lm \
+  -ldl \
+  -lc \
+  -o "$tmp/libmodule.so"
+test -f "$tmp/libmodule.so"
+
+grep -F -- "-shared" "$COWASM_TEST_LOG"
+grep -F -- "-nostdlib" "$COWASM_TEST_LOG"
+grep -F -- "--allow-undefined" "$COWASM_TEST_LOG"
+grep -F -- "--no-entry" "$COWASM_TEST_LOG"
+grep -F -- "--strip-all" "$COWASM_TEST_LOG"
+expect_no_log_match "-soname"
+expect_no_log_match "-rpath"
+expect_no_log_match "/host/lib"
+expect_no_log_match "-z"
+expect_no_log_match "--as-needed"
+expect_no_log_match "--no-undefined"
+expect_no_log_match " -lm"
+expect_no_log_match " -ldl"
+expect_no_log_match " -lc"
