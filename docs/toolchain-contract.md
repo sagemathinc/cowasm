@@ -884,8 +884,9 @@ real `setjmp`/`longjmp` for error handling, so the probe and package build pass
 the SDK SJLJ flags and link `libsetjmp`. The target configures PARI against
 `sagemath/gmp/dist/wasi-sdk`, adds small local compatibility headers for
 WASI-missing password-database and `clock()` APIs, builds the static `gp`
-executable, and checks both the GMP kernel banner and a small arithmetic
-expression through the WASI runner.
+executable, and checks the GMP kernel banner, a small arithmetic expression,
+divide-by-zero error handling, `break` recovery, and a second successful
+calculation through the WASI runner.
 
 `core/libcxx` has an opt-in C++ runtime side-module smoke target:
 

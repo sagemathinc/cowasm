@@ -47,7 +47,7 @@ commits over broad rewrites.
 
 ## WASI SDK Package Hardening
 
-- Promote PARI's `wasi-sdk` smoke from "interesting probe" to a regression
+- [x] Promote PARI's `wasi-sdk` smoke from "interesting probe" to a regression
   target with explicit error-recovery coverage:
   - GP kernel banner;
   - arithmetic smoke;

@@ -158,9 +158,11 @@ COWASM_TOOLCHAIN=wasi-sdk make \
   DLCFLAGS= \
   install
 
-cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/gp" </dev/null |
-  grep "portable C/GMP"
+pari_smoke_log="$probe_dir/pari-smoke.log"
+printf '7*17*17\n1/0\nbreak\n13*17\n\\q\n' |
+  cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/gp" >"$pari_smoke_log" 2>&1
 
-printf '7*17*17\n\\q\n' |
-  cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/gp" |
-  grep 2023
+grep -F "portable C/GMP" "$pari_smoke_log"
+grep -F "%1 = 2023" "$pari_smoke_log"
+grep -F "impossible inverse in gdiv: 0" "$pari_smoke_log"
+grep -F "%2 = 221" "$pari_smoke_log"
