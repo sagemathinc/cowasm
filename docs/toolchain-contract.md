@@ -1049,6 +1049,17 @@ SDK exception-enabled C++ runtime archives, installs `liblinbox.a` under
 `sagemath/linbox/dist/wasi-sdk`, and runs a finite-field dense-matrix
 multiplication probe through the WASI runner.
 
+`sagemath/gf2x` has the same opt-in static-library smoke shape:
+
+```sh
+make -C sagemath/gf2x test-wasi-sdk-standalone
+```
+
+The target builds GF2X with `COWASM_TOOLCHAIN=wasi-sdk`, static libraries,
+hardware-specific code disabled, and native build helpers compiled with Zig.
+It installs `libgf2x.a` under `sagemath/gf2x/dist/wasi-sdk`, then links and
+runs a GF(2)[x] multiplication probe through the WASI runner.
+
 `core/libcxx` has an opt-in C++ runtime side-module smoke target:
 
 ```sh
