@@ -66,7 +66,7 @@ COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/test-gmp"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/test-gmp" |
-  grep 1606938044258990275541962092341162602522202993782792835301376
+  grep -F "gmp-ok integer=2^200 rational=1/2 gcd=1 inverse=2753 powm=445"
 
 COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -fvisibility-main \
@@ -80,4 +80,4 @@ COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -o "$probe_dir/test-gmpxx"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/test-gmpxx" |
-  grep 1606938044258990275541962092341162602522202993782792835301376
+  grep -F "gmpxx-ok integer=2^200 rational=1/2 gcd=1 inverse=2753 powm=445"

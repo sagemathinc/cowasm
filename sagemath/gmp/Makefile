@@ -84,4 +84,4 @@ test: ${DIST_WASM}/.built
 		${SRC}/test-gmp.c \
 		-lgmp \
 		-o ${BUILD_WASM}/test-gmp
-	${BIN}/cowasm ${BUILD_WASM}/test-gmp | grep 1606938044258990275541962092341162602522202993782792835301376
+	${BIN}/cowasm ${BUILD_WASM}/test-gmp | grep -F "gmp-ok integer=2^200 rational=1/2 gcd=1 inverse=2753 powm=445"
