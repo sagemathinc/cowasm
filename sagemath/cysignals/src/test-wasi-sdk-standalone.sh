@@ -111,4 +111,57 @@ assert cysignals.SignalError.__module__ == "cysignals.signals"
 sig_print_exception(signal.SIGFPE)
 PY
 
-echo "cysignals-ok signals-extension import"
+cat >"$probe_dir/cysignals_guard_probe.pyx" <<'PYX'
+from cysignals.signals cimport sig_block, sig_check, sig_off, sig_on, sig_unblock
+
+
+def guarded_sum(unsigned int n):
+    cdef unsigned int i
+    cdef unsigned long total = 0
+
+    sig_on()
+    sig_block()
+    sig_unblock()
+    for i in range(n):
+        total += i
+        sig_check()
+    sig_off()
+
+    return total
+PYX
+
+PYTHONPATH="$dist_dir:$py_cython" python3 -m cython -3 \
+  --output-file "$probe_dir/cysignals_guard_probe.c" \
+  "$probe_dir/cysignals_guard_probe.pyx"
+
+"$bin_dir/wasi-sdk-clang-next" -target wasm32-wasip1 \
+  -O0 \
+  -fPIC \
+  -D_SCHED_H \
+  -shared \
+  -nostdlib \
+  -Wl,--allow-undefined \
+  -Wl,--no-entry \
+  -Wl,--export=PyInit_cysignals_guard_probe \
+  -I"$python_include" \
+  -I"$dist_dir" \
+  -I"$dist_dir/cysignals" \
+  -I"$posix_wasi_sdk" \
+  "$probe_dir/cysignals_guard_probe.c" \
+  -o "$probe_dir/cysignals_guard_probe$extension_suffix"
+
+"$bin_dir/wasi-sdk-llvm-objdump-next" -h "$probe_dir/cysignals_guard_probe$extension_suffix" |
+  grep 'dylink\.0'
+"$bin_dir/wasi-sdk-llvm-nm-next" "$probe_dir/cysignals_guard_probe$extension_suffix" |
+  grep ' T PyInit_cysignals_guard_probe$'
+
+PYTHONPATH="$probe_dir:$dist_dir" "$bin_dir/python-wasm" - <<'PY'
+import cysignals
+import cysignals.signals
+import cysignals_guard_probe
+
+assert cysignals.SignalError.__module__ == "cysignals.signals"
+assert cysignals_guard_probe.guarded_sum(8) == 28
+PY
+
+echo "cysignals-ok signals-extension import guarded-cython-module"
