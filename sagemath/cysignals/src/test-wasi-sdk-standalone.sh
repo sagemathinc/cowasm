@@ -113,6 +113,7 @@ PY
 
 cat >"$probe_dir/cysignals_guard_probe.pyx" <<'PYX'
 from cysignals.signals cimport (
+    sig_raise_exception,
     sig_block,
     sig_check,
     sig_occurred,
@@ -120,6 +121,28 @@ from cysignals.signals cimport (
     sig_on,
     sig_unblock,
 )
+from libc.signal cimport SIGALRM, SIGFPE, SIGINT, SIGSEGV
+
+from cysignals.signals import AlarmInterrupt, SignalError
+
+
+cdef bint raises_exception(int sig, bytes message, object expected_type,
+                           object expected_text=None):
+    cdef const char* raw_message = NULL
+
+    if message is not None:
+        raw_message = message
+
+    try:
+        sig_raise_exception(sig, raw_message)
+    except expected_type as err:
+        if expected_text is not None and str(err) != expected_text:
+            raise AssertionError(
+                "unexpected signal exception text: %r" % (str(err),)
+            )
+        return True
+
+    return False
 
 
 def guarded_sum(unsigned int n):
@@ -164,6 +187,21 @@ def guarded_python_exception_cleanup():
         cleaned = sig_occurred() == NULL
 
     return cleaned
+
+
+def mapped_signal_exceptions():
+    ok = raises_exception(SIGFPE, None, FloatingPointError,
+                          "Floating point exception")
+    ok = ok and raises_exception(SIGFPE, b"domain error",
+                                 FloatingPointError, "domain error")
+    ok = ok and raises_exception(SIGSEGV, b"bad pointer",
+                                 SignalError, "bad pointer")
+    ok = ok and raises_exception(SIGALRM, None, AlarmInterrupt)
+    ok = ok and raises_exception(SIGINT, None, KeyboardInterrupt)
+    ok = ok and raises_exception(0, None, SystemError,
+                                 "unknown signal number 0")
+
+    return ok and sig_occurred() == NULL
 PYX
 
 PYTHONPATH="$dist_dir:$py_cython" python3 -m cython -3 \
@@ -200,6 +238,7 @@ assert cysignals.SignalError.__module__ == "cysignals.signals"
 assert cysignals_guard_probe.guarded_sum(8) == 28
 assert cysignals_guard_probe.nested_guard_cleanup()
 assert cysignals_guard_probe.guarded_python_exception_cleanup()
+assert cysignals_guard_probe.mapped_signal_exceptions()
 PY
 
-echo "cysignals-ok signals-extension import guarded-cython-module guard-cleanup"
+echo "cysignals-ok signals-extension import guarded-cython-module guard-cleanup signal-exceptions"
