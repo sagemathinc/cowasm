@@ -190,6 +190,7 @@ test-wasi-sdk-python:
 .PHONY: test-wasi-sdk-math
 test-wasi-sdk-math:
 	$(MAKE) -C sagemath/gmp test-wasi-sdk-next
+	$(MAKE) -C sagemath/ratpoints test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/cddlib test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ecm test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/givaro test-wasi-sdk-standalone
@@ -197,6 +198,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/mpfi test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mpc test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/fflas-ffpack test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/linbox test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/flint test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/gsl test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/iml test-wasi-sdk-standalone
