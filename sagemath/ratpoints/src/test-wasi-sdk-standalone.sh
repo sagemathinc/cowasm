@@ -84,4 +84,32 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/ratpoints-rptest"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/ratpoints-rptest" -z -h 20 >/dev/null
-echo "ratpoints-ok rptest"
+
+curve_output="$(
+  cowasm_clang_standalone_run_wasi \
+    "$bin_dir" \
+    "$dist_dir/bin/ratpoints" \
+    "0 1" \
+    10 \
+    -q
+)"
+curve_points="$(printf '%s\n' "$curve_output" | sed '/^$/d' | wc -l)"
+if [ "$curve_points" -ne 16 ]; then
+  printf '%s\n' "$curve_output"
+  echo "ratpoints: expected 16 rational points on y^2 = x up to height 10" >&2
+  exit 1
+fi
+
+for expected_point in \
+  "(1 : 0 : 0)" \
+  "(0 : 0 : 1)" \
+  "(9 : 6 : 4)" \
+  "(4 : -6 : 9)"; do
+  if ! printf '%s\n' "$curve_output" | grep -Fx "$expected_point" >/dev/null; then
+    printf '%s\n' "$curve_output"
+    echo "ratpoints: missing expected point $expected_point" >&2
+    exit 1
+  fi
+done
+
+echo "ratpoints-ok rptest curve-points=$curve_points"
