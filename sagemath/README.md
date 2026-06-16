@@ -11,6 +11,7 @@ Current wasi-sdk standalone math smoke packages:
 - MPFR
 - MPC
 - FLINT
+- NTL
 - PARI/GP
 
 **WARNING: Unlike the rest of CoWasm, there is code in this directory

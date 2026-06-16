@@ -75,6 +75,7 @@ test: all
 	rm -f "$$tmp"
 	PATH="${BIN}:$$PATH" ${SRC}/test/clang-backend-smoke.sh ${BIN}/cowasm-cc
 	PATH="${BIN}:$$PATH" ${SRC}/test/archive-wrapper-smoke.sh ${BIN}/cowasm-ar ${BIN}/cowasm-ranlib
+	PATH="${BIN}:$$PATH" ${SRC}/test/wasi-sdk-cxx-smoke.sh ${BIN}/cowasm-c++
 	tmp="$$(mktemp)"; \
 	if ! PATH="/usr/bin:/bin" COWASM_TOOLCHAIN= ${BIN}/zcc --print-multiarch >"$$tmp" 2>&1; then \
 		cat "$$tmp"; \

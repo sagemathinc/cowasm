@@ -858,6 +858,20 @@ available, then builds MPC against those installs, places `libmpc.a` under
 `sagemath/mpc/dist/wasi-sdk`, and runs a small complex-arithmetic probe through
 the WASI runner.
 
+`sagemath/ntl` has the same opt-in dependent C++ static-library smoke shape:
+
+```sh
+make -C sagemath/ntl test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP WASI SDK standalone archive is available, then
+builds NTL against it with `COWASM_TOOLCHAIN=wasi-sdk` and selector-aware
+archive tools. NTL's configure/build helpers are generated C++ programs, so
+the smoke uses a narrow runner shim that emits `program.wasm` plus a host
+`program` wrapper for those setup probes. It installs `libntl.a` under
+`sagemath/ntl/dist/wasi-sdk`, then links and runs an exact integer,
+polynomial, and finite-field factorization probe through the WASI runner.
+
 `sagemath/pari` has the same opt-in static executable smoke shape:
 
 ```sh

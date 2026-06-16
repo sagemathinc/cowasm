@@ -192,6 +192,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/mpfr test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mpc test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/flint test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/ntl test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/pari test-wasi-sdk-standalone
 
 # clean up everything after each test, to prove can build and test everything

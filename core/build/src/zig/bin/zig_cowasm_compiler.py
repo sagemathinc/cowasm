@@ -639,6 +639,12 @@ def wasi_sdk_backend():
         return
 
     reject_unsupported_wasi_sdk_standalone_args(args)
+    if LANG == 'c++':
+        if not clang_is_debug(args):
+            append_missing_wl(args, '--strip-all')
+        run([clang] + base_flags + args)
+        return
+
     wasm_ld = find_required_program(
         "COWASM_WASI_SDK_WASM_LD", "wasi-sdk-wasm-ld-next", "wasi-sdk")
     source_files, compiler_args, linker_args, object_args = clang_parse_link_args(
