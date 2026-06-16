@@ -730,6 +730,15 @@ importers:
         specifier: workspace:*
         version: link:../py-pip
 
+  python/py-networkx:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
   python/py-numpy:
     devDependencies:
       '@cowasm/cpython':
@@ -1045,6 +1054,9 @@ importers:
       '@cowasm/fflas-ffpack':
         specifier: workspace:*
         version: link:../fflas-ffpack
+      '@cowasm/flint':
+        specifier: workspace:*
+        version: link:../flint
       '@cowasm/fplll':
         specifier: workspace:*
         version: link:../fplll
@@ -1057,9 +1069,15 @@ importers:
       '@cowasm/gsl':
         specifier: workspace:*
         version: link:../gsl
+      '@cowasm/iml':
+        specifier: workspace:*
+        version: link:../iml
       '@cowasm/mpfr':
         specifier: workspace:*
         version: link:../mpfr
+      '@cowasm/ntl':
+        specifier: workspace:*
+        version: link:../ntl
 
   sagemath/lrcalc: {}
 
@@ -1138,6 +1156,8 @@ importers:
   sagemath/rw: {}
 
   sagemath/symmetrica: {}
+
+  sagemath/tdlib: {}
 
   sagemath/zn-poly:
     dependencies:

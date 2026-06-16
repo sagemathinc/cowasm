@@ -32,7 +32,7 @@ Hmm.   The size is a factor of 20x in a lot of cases, e.g., a normal sympy insta
 - [ ] scikit\-learn
 - [ ] scikit\-image
 - [ ] matplotlib
-- [ ] networkx
+- [x] networkx
 - [ ] ipython \- this is a nontrivial challenge, with uses of pexpect, curses, etc. and like 15 other dependencies.
 - [ ] tensorflow
 - [x] cython
@@ -53,4 +53,3 @@ This is much more challenging
 ### Pyodide's list
 
 See this directory: https://github.com/pyodide/pyodide/tree/main/packages Some of these are Python packages.
-
