@@ -63,14 +63,11 @@ env \
 # WASI has fcntl(), but not the advisory-lock constants used for resume files.
 sed -i'.original' -e 's/#define HAVE_FCNTL 1/\/\* #undef HAVE_FCNTL \*\//' config.h
 
-COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs" libecm.la ecm
+COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs" libecm.la
 COWASM_TOOLCHAIN=wasi-sdk make \
-  install-binPROGRAMS \
   install-libLTLIBRARIES \
-  install-includeHEADERS \
-  install-man
+  install-includeHEADERS
 
-test -f "$dist_dir/bin/ecm"
 test -f "$dist_dir/include/ecm.h"
 test -f "$dist_dir/lib/libecm.a"
 
