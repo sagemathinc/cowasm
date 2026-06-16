@@ -63,4 +63,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/zn-poly-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/zn-poly-test" |
-  grep -F "zn-poly-ok product=4,13,0,8 middle=13,0 inverse=7"
+  grep -F "zn-poly-ok product middle scalar sub mod-inverse"
