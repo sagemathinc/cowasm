@@ -896,6 +896,18 @@ the smoke link, and runs integer, rational, Bernoulli, polynomial
 factorization, real ball, complex ball, and complex ball polynomial probes
 through the WASI runner.
 
+`sagemath/fplll` has the same opt-in dependent C++ static-library smoke shape:
+
+```sh
+make -C sagemath/fplll test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP and MPFR WASI SDK standalone archives are
+available, then builds the fplll static library with parallel enumeration
+disabled. The smoke requires the pinned SDK exception-enabled C++ runtime
+archives, installs `libfplll.a` under `sagemath/fplll/dist/wasi-sdk`, and runs
+an LLL reduction probe through the WASI runner.
+
 `sagemath/ntl` has the same opt-in dependent C++ static-library smoke shape:
 
 ```sh
