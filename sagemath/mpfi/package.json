@@ -1,0 +1,39 @@
+{
+  "name": "@cowasm/mpfi",
+  "version": "1.0.0",
+  "description": "MPFI multiple-precision interval arithmetic library",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
+  "files": [
+    "dist/js/*",
+    "README.md",
+    "src/*",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/mpfi",
+  "keywords": ["number", "theory", "interval-arithmetic"],
+  "author": "William Stein",
+  "license": "LGPL-2.1-or-later",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "dependencies": {
+    "@cowasm/gmp": "workspace:*",
+    "@cowasm/mpfr": "workspace:*"
+  },
+  "devDependencies": {}
+}

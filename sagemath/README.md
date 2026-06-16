@@ -11,6 +11,7 @@ Current wasi-sdk standalone math smoke packages:
 - GMP-ECM
 - Givaro
 - MPFR
+- MPFI
 - MPC
 - FLINT
 - NTL
