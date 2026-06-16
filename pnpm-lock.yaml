@@ -1034,6 +1034,12 @@ importers:
 
   sagemath/libbraiding: {}
 
+  sagemath/libhomfly:
+    dependencies:
+      '@cowasm/gc':
+        specifier: workspace:*
+        version: link:../gc
+
   sagemath/linbox:
     dependencies:
       '@cowasm/fflas-ffpack':

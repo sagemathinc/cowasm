@@ -912,6 +912,18 @@ local setjmp compatibility header and links the process-clock shim. It installs
 allocation, atomic allocation, collection, and finalizer probes through the
 WASI runner.
 
+`sagemath/libhomfly` has the same opt-in dependent static-library smoke shape:
+
+```sh
+make -C sagemath/libhomfly test-wasi-sdk-standalone
+```
+
+The target first ensures the Boehm GC WASI SDK standalone archive is available,
+then builds libhomfly as a static library against that install. It installs
+`libhomfly.a` under `sagemath/libhomfly/dist/wasi-sdk`, then links and runs a
+trefoil HOMFLY polynomial probe through the WASI runner, covering both the
+string API and the structured `Poly` term API used by Sage.
+
 `sagemath/flint` has the same opt-in dependent static-library smoke shape:
 
 ```sh

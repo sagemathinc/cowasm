@@ -43,6 +43,7 @@ Current wasi-sdk standalone math smoke packages:
 - BRiAl
 - Symmetrica
 - Boehm GC
+- libhomfly
 - zn_poly
 - rw
 - PALP
