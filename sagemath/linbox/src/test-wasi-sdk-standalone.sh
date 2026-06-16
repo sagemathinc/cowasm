@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 9 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR GMP_DIR GIVARO_DIR GSL_DIR FFLAS_FFPACK_DIR MPFR_DIR FPLLL_DIR" >&2
+if [ "$#" -ne 10 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR GMP_DIR GIVARO_DIR GSL_DIR FFLAS_FFPACK_DIR MPFR_DIR FPLLL_DIR IML_DIR" >&2
   exit 2
 fi
 
@@ -15,6 +15,7 @@ gsl_dir="$(cd "$6" && pwd)"
 fflas_ffpack_dir="$(cd "$7" && pwd)"
 mpfr_dir="$(cd "$8" && pwd)"
 fplll_dir="$(cd "$9" && pwd)"
+iml_dir="$(cd "${10}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -49,6 +50,7 @@ fflas_cflags="-I$fflas_ffpack_dir/include -I$givaro_dir/include -I$gmp_dir/inclu
 fflas_libs="-L$givaro_dir/lib -L$gmp_dir/lib -L$gsl_dir/lib -lgivaro -lgmpxx -lgmp -lgslcblas -lm"
 mpfr_cflags="-I$mpfr_dir/include"
 fplll_cflags="-I$fplll_dir/include"
+iml_cflags="-I$iml_dir/include"
 
 cd "$build_dir"
 env \
@@ -57,9 +59,9 @@ env \
   NM="$bin_dir/wasi-sdk-llvm-nm-next" \
   CC="$bin_dir/cowasm-cc" \
   CXX="$bin_dir/cowasm-c++" \
-  CPPFLAGS="$fflas_cflags $mpfr_cflags $fplll_cflags" \
+  CPPFLAGS="$fflas_cflags $mpfr_cflags $fplll_cflags $iml_cflags" \
   CXXFLAGS="-std=c++14 -Oz -fvisibility-main" \
-  LDFLAGS="-L$mpfr_dir/lib -L$fplll_dir/lib ${standalone_ldlibs[*]}" \
+  LDFLAGS="-L$mpfr_dir/lib -L$fplll_dir/lib -L$iml_dir/lib ${standalone_ldlibs[*]}" \
   FFLAS_FFPACK_CFLAGS="$fflas_cflags" \
   FFLAS_FFPACK_LIBS="$fflas_libs" \
   CCNAM=clang \
@@ -71,7 +73,7 @@ env \
       --without-archnative \
       --without-ntl \
       --with-mpfr="$mpfr_dir" \
-      --without-iml \
+      --with-iml="$iml_dir" \
       --without-flint \
       --with-fplll="$fplll_dir" \
       --without-ocl \
@@ -95,15 +97,18 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -I"$gsl_dir/include" \
   -I"$mpfr_dir/include" \
   -I"$fplll_dir/include" \
+  -I"$iml_dir/include" \
   -L"$dist_dir/lib" \
   -L"$fplll_dir/lib" \
   -L"$mpfr_dir/lib" \
+  -L"$iml_dir/lib" \
   -L"$givaro_dir/lib" \
   -L"$gmp_dir/lib" \
   -L"$gsl_dir/lib" \
   -llinbox \
   -lfplll \
   -lmpfr \
+  -liml \
   -lgivaro \
   -lgmpxx \
   -lgmp \

@@ -16,6 +16,10 @@
 #error "LinBox was not configured with fplll support"
 #endif
 
+#ifndef __LINBOX_HAVE_IML
+#error "LinBox was not configured with IML support"
+#endif
+
 int main() {
   using Field = Givaro::Modular<int64_t>;
 

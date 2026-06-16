@@ -18,6 +18,7 @@ GSL_WASI_SDK = ${PACKAGES}/gsl/dist/wasi-sdk
 FFLAS_FFPACK_WASI_SDK = ${PACKAGES}/fflas-ffpack/dist/wasi-sdk
 MPFR_WASI_SDK = ${PACKAGES}/mpfr/dist/wasi-sdk
 FPLLL_WASI_SDK = ${PACKAGES}/fplll/dist/wasi-sdk
+IML_WASI_SDK = ${PACKAGES}/iml/dist/wasi-sdk
 
 ${GMP_WASI_SDK}/lib/libgmpxx.a:
 	$(MAKE) -C ${PACKAGES}/gmp test-wasi-sdk-standalone
@@ -37,6 +38,9 @@ ${MPFR_WASI_SDK}/lib/libmpfr.a:
 ${FPLLL_WASI_SDK}/lib/libfplll.a:
 	$(MAKE) -C ${PACKAGES}/fplll test-wasi-sdk-standalone
 
+${IML_WASI_SDK}/lib/libiml.a:
+	$(MAKE) -C ${PACKAGES}/iml test-wasi-sdk-standalone
+
 ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	rm -rf ${BUILD_WASI_SDK}
 	mkdir -p ${BUILD_WASI_SDK}
@@ -49,10 +53,10 @@ ${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
 	touch ${BUILD_WASI_SDK}/.patched
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmpxx.a ${GIVARO_WASI_SDK}/lib/libgivaro.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${FFLAS_FFPACK_WASI_SDK}/include/fflas-ffpack/fflas-ffpack.h ${MPFR_WASI_SDK}/lib/libmpfr.a ${FPLLL_WASI_SDK}/lib/libfplll.a ${BUILD_WASI_SDK}/.patched
+test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmpxx.a ${GIVARO_WASI_SDK}/lib/libgivaro.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${FFLAS_FFPACK_WASI_SDK}/include/fflas-ffpack/fflas-ffpack.h ${MPFR_WASI_SDK}/lib/libmpfr.a ${FPLLL_WASI_SDK}/lib/libfplll.a ${IML_WASI_SDK}/lib/libiml.a ${BUILD_WASI_SDK}/.patched
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
-	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${GMP_WASI_SDK} ${GIVARO_WASI_SDK} ${GSL_WASI_SDK} ${FFLAS_FFPACK_WASI_SDK} ${MPFR_WASI_SDK} ${FPLLL_WASI_SDK} || status=$$?; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${GMP_WASI_SDK} ${GIVARO_WASI_SDK} ${GSL_WASI_SDK} ${FFLAS_FFPACK_WASI_SDK} ${MPFR_WASI_SDK} ${FPLLL_WASI_SDK} ${IML_WASI_SDK} || status=$$?; \
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
 	exit "$$status"
 
