@@ -77,4 +77,16 @@ cp gfan "$dist_dir/bin/gfan"
 cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/gfan" _list |
   grep -F "gfan_buchberger"
 
-echo "gfan-ok list"
+cat >"$probe_dir/buchberger.input" <<'EOF'
+Q[a,b,c]
+{aab-c,bbc-a,cca-b}
+EOF
+
+buchberger_log="$probe_dir/buchberger.log"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/gfan" _buchberger \
+  <"$probe_dir/buchberger.input" >"$buchberger_log"
+grep -F "c^15-c" "$buchberger_log"
+grep -F "b-c^11" "$buchberger_log"
+grep -F "a-c^9" "$buchberger_log"
+
+echo "gfan-ok list buchberger"
