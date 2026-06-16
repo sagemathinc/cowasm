@@ -718,7 +718,9 @@ standalone smoke target, then builds libpng against that zlib install with
 `COWASM_TOOLCHAIN=wasi-sdk` and selector-aware archive tools. It runs libpng's
 upstream `timepng` test program through the WASI runner and installs into
 `core/libpng/dist/wasi-sdk`, leaving the default Zig-backed package untouched.
-The smoke supplies local `setjmp`, process-clock, and unused `tmpfile`
+The smoke probes wasi-sdk `setjmp`/`longjmp` support, builds libpng with the
+SDK SJLJ flags and `libsetjmp`, and exercises an intentional `png_error`
+recovery path. It still supplies process-clock and unused `tmpfile`
 compatibility shims for wasi-sdk libc gaps outside the successful PNG decode
 path that the test exercises.
 

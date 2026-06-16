@@ -56,7 +56,6 @@ commits over broad rewrites.
 - Try real setjmp/longjmp support in packages that currently carry local
   setjmp shims:
   - `core/qhull`;
-  - `core/libpng`;
   - `core/lua`;
   - `core/dash`;
   - `core/freetype`;
