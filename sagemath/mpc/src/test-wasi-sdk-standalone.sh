@@ -63,4 +63,5 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   "${standalone_ldlibs[@]}" \
   -o "$probe_dir/mpc-test"
 
-cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/mpc-test" | grep "0.0 + 2.0i"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/mpc-test" |
+  grep -F "mpc-ok square=0.0+2.0i cube=-2.0+2.0i div=1.0+1.0i sqrt=-1->1.0i"
