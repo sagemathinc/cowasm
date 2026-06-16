@@ -33,9 +33,11 @@
   },
   "dependencies": {
     "@cowasm/fflas-ffpack": "workspace:*",
+    "@cowasm/fplll": "workspace:*",
     "@cowasm/givaro": "workspace:*",
     "@cowasm/gmp": "workspace:*",
-    "@cowasm/gsl": "workspace:*"
+    "@cowasm/gsl": "workspace:*",
+    "@cowasm/mpfr": "workspace:*"
   },
   "devDependencies": {}
 }

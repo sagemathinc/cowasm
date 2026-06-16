@@ -8,6 +8,14 @@
 #include <linbox/matrix/dense-matrix.h>
 #include <linbox/matrix/matrix-domain.h>
 
+#ifndef __LINBOX_HAVE_MPFR
+#error "LinBox was not configured with MPFR support"
+#endif
+
+#ifndef __LINBOX_HAVE_FPLLL
+#error "LinBox was not configured with fplll support"
+#endif
+
 int main() {
   using Field = Givaro::Modular<int64_t>;
 

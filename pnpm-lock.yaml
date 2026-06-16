@@ -963,6 +963,15 @@ importers:
         specifier: workspace:*
         version: link:../mpfr
 
+  sagemath/fplll:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/mpfr':
+        specifier: workspace:*
+        version: link:../mpfr
+
   sagemath/gf2x: {}
 
   sagemath/givaro:
@@ -989,6 +998,9 @@ importers:
       '@cowasm/fflas-ffpack':
         specifier: workspace:*
         version: link:../fflas-ffpack
+      '@cowasm/fplll':
+        specifier: workspace:*
+        version: link:../fplll
       '@cowasm/givaro':
         specifier: workspace:*
         version: link:../givaro
@@ -998,6 +1010,9 @@ importers:
       '@cowasm/gsl':
         specifier: workspace:*
         version: link:../gsl
+      '@cowasm/mpfr':
+        specifier: workspace:*
+        version: link:../mpfr
 
   sagemath/lrcalc: {}
 
