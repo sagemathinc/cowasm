@@ -1893,7 +1893,7 @@ static PyObject *__pyx_pf_2nt_2xgcd(CYTHON_UNUSED PyObject *__pyx_self, int __py
  * def xgcd(int a, int b) -> Tuple[int, int, int]:
  *     cdef int cx, cy, g
  *     g = xgcd_c(a,b,&cx,&cy)             # <<<<<<<<<<<<<<
- *     return [g,cx,cy]
+ *     return (g,cx,cy)
  * 
  */
   __pyx_v_g = __pyx_f_2nt_xgcd_c(__pyx_v_a, __pyx_v_b, (&__pyx_v_cx), (&__pyx_v_cy));
@@ -1901,7 +1901,7 @@ static PyObject *__pyx_pf_2nt_2xgcd(CYTHON_UNUSED PyObject *__pyx_self, int __py
   /* "nt.pyx":35
  *     cdef int cx, cy, g
  *     g = xgcd_c(a,b,&cx,&cy)
- *     return [g,cx,cy]             # <<<<<<<<<<<<<<
+ *     return (g,cx,cy)             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -1912,14 +1912,14 @@ static PyObject *__pyx_pf_2nt_2xgcd(CYTHON_UNUSED PyObject *__pyx_self, int __py
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_cy); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 35, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = PyList_New(3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 35, __pyx_L1_error)
+  __pyx_t_4 = PyTuple_New(3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 35, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_GIVEREF(__pyx_t_1);
-  PyList_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_2);
-  PyList_SET_ITEM(__pyx_t_4, 1, __pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_3);
-  PyList_SET_ITEM(__pyx_t_4, 2, __pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_4, 2, __pyx_t_3);
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;

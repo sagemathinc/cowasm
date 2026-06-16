@@ -32,7 +32,7 @@ cdef int xgcd_c(int a, int b, int* cx, int* cy):
 def xgcd(int a, int b) -> Tuple[int, int, int]:
     cdef int cx, cy, g
     g = xgcd_c(a,b,&cx,&cy)
-    return [g,cx,cy]
+    return (g,cx,cy)
 
 
 cpdef int inverse_mod(int a, int N):

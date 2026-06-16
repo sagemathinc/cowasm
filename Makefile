@@ -185,6 +185,7 @@ test-wasi-sdk-packages:
 .PHONY: test-wasi-sdk-python
 test-wasi-sdk-python:
 	$(MAKE) -C python/cpython test-wasi-sdk-supported
+	$(MAKE) -C python/bench/src/cython test-wasi-sdk-next
 
 .PHONY: test-wasi-sdk-math
 test-wasi-sdk-math:
