@@ -64,7 +64,7 @@ int execlp(const char* file, const char* arg, ... /* (char  *) NULL */);
 int execvp(const char* file, char* const argv[]);
 
 #include <sched.h>
-#ifndef _SCHED_H
+#if !defined(_SCHED_H) && !defined(__wasi__)
 struct sched_param {
   int sched_priority;
 };

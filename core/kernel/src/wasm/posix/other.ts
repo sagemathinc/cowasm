@@ -31,6 +31,19 @@ export default function other(context) {
     return data.real;
   }
 
+  function parseInteger(nptr: number, endptr: number, base: number): number {
+    const text = recv.string(nptr);
+    const value = parseInt(text, base || 10);
+    if (endptr) {
+      const match = text.match(
+        /^[\t\n\v\f\r ]*[+-]?(?:0[xX][0-9a-fA-F]+|[0-9a-fA-F]+)/
+      );
+      const consumed = match?.[0]?.length ?? 0;
+      send.pointer(endptr, nptr + consumed);
+    }
+    return Number.isNaN(value) ? 0 : value;
+  }
+
   const lib = {
     syslog: () => {
       notImplemented("syslog");
@@ -234,6 +247,71 @@ export default function other(context) {
     },
     _ZTISt20bad_array_new_length: () => {
       notImplemented("_ZTISt20bad_array_new_length");
+    },
+    __cxa_begin_catch: (ptr: number): number => {
+      return ptr;
+    },
+    __cxa_find_matching_catch_2: (): number => {
+      return 0;
+    },
+    __cxa_find_matching_catch_3: (ptr: number): number => {
+      return ptr;
+    },
+    __cxa_current_primary_exception: (): number => {
+      return 0;
+    },
+    __cxa_uncaught_exceptions: (): number => {
+      return 0;
+    },
+    __cxa_end_catch: () => {},
+    __cxa_rethrow: () => {
+      notImplemented("__cxa_rethrow");
+    },
+    __cxa_rethrow_primary_exception: () => {
+      notImplemented("__cxa_rethrow_primary_exception");
+    },
+    __resumeException: () => {
+      notImplemented("__resumeException");
+    },
+    getTempRet0: (): number => {
+      return 0;
+    },
+    __THREW__: (): number => {
+      return 0;
+    },
+    __threwValue: (): number => {
+      return 0;
+    },
+    __small_sprintf: (): number => {
+      return 0;
+    },
+    __small_printf: (): number => {
+      return 0;
+    },
+    __small_fprintf: (): number => {
+      return 0;
+    },
+    getprogname: (): number => {
+      return 0;
+    },
+    setprogname: () => {},
+    getgrgid: (): number => {
+      return 0;
+    },
+    getgrnam: (): number => {
+      return 0;
+    },
+    strtol_l: (nptr: number, endptr: number, base: number): number => {
+      return parseInteger(nptr, endptr, base);
+    },
+    strtoul_l: (nptr: number, endptr: number, base: number): number => {
+      return parseInteger(nptr, endptr, base) >>> 0;
+    },
+    strtoll_l: (nptr: number, endptr: number, base: number): bigint => {
+      return BigInt(parseInteger(nptr, endptr, base));
+    },
+    strtoull_l: (nptr: number, endptr: number, base: number): bigint => {
+      return BigInt(parseInteger(nptr, endptr, base) >>> 0);
     },
 
     ngettext: () => {

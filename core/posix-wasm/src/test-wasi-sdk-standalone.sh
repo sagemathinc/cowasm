@@ -154,6 +154,7 @@ objects=(
 
 cflags=(
   -Oz
+  -fPIC
   -I"$build_dir/compat"
   -I"$src_dir"
 )

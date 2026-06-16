@@ -2,7 +2,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
-#include <net/if.h>
 #include <netdb.h>
 #include <poll.h>
 #include <stdarg.h>
@@ -16,11 +15,204 @@
 #include <termios.h>
 #include <unistd.h>
 
+#if __has_include(<net/if.h>)
+#include <net/if.h>
+#else
+struct if_nameindex {
+  unsigned int if_index;
+  char *if_name;
+};
+#endif
+
+#ifndef __wasi__
 struct sched_param {
   int sched_priority;
 };
+#endif
 
 #include "posix-wasm.h"
+
+#ifdef COWASM_WASI_SDK_KERNEL
+struct addrinfo {
+  int ai_flags;
+  int ai_family;
+  int ai_socktype;
+  int ai_protocol;
+  socklen_t ai_addrlen;
+  struct sockaddr *ai_addr;
+  char *ai_canonname;
+  struct addrinfo *ai_next;
+};
+
+#ifndef CBAUD
+#define CBAUD 0010017
+#endif
+
+#ifndef IFNAMSIZ
+#define IFNAMSIZ 16
+#endif
+
+#ifndef AI_V4MAPPED
+#define AI_V4MAPPED 0x08
+#endif
+#ifndef AI_ALL
+#define AI_ALL 0x10
+#endif
+#ifndef AI_ADDRCONFIG
+#define AI_ADDRCONFIG 0x20
+#endif
+#ifndef EAI_BADFLAGS
+#define EAI_BADFLAGS -1
+#endif
+#ifndef EAI_AGAIN
+#define EAI_AGAIN -3
+#endif
+#ifndef EAI_FAIL
+#define EAI_FAIL -4
+#endif
+#ifndef EAI_FAMILY
+#define EAI_FAMILY -6
+#endif
+#ifndef EAI_SOCKTYPE
+#define EAI_SOCKTYPE -7
+#endif
+#ifndef EAI_SERVICE
+#define EAI_SERVICE -8
+#endif
+#ifndef EAI_MEMORY
+#define EAI_MEMORY -10
+#endif
+#ifndef EAI_SYSTEM
+#define EAI_SYSTEM -11
+#endif
+#ifndef EAI_OVERFLOW
+#define EAI_OVERFLOW -12
+#endif
+
+#ifndef IGNBRK
+#define IGNBRK 0000001
+#endif
+#ifndef BRKINT
+#define BRKINT 0000002
+#endif
+#ifndef IGNPAR
+#define IGNPAR 0000004
+#endif
+#ifndef PARMRK
+#define PARMRK 0000010
+#endif
+#ifndef INPCK
+#define INPCK 0000020
+#endif
+#ifndef ISTRIP
+#define ISTRIP 0000040
+#endif
+#ifndef INLCR
+#define INLCR 0000100
+#endif
+#ifndef IGNCR
+#define IGNCR 0000200
+#endif
+#ifndef ICRNL
+#define ICRNL 0000400
+#endif
+#ifndef IXON
+#define IXON 0002000
+#endif
+#ifndef IXANY
+#define IXANY 0004000
+#endif
+#ifndef IXOFF
+#define IXOFF 0010000
+#endif
+#ifndef IMAXBEL
+#define IMAXBEL 0020000
+#endif
+#ifndef IUTF8
+#define IUTF8 0040000
+#endif
+#ifndef OPOST
+#define OPOST 0000001
+#endif
+#ifndef ONLCR
+#define ONLCR 0000004
+#endif
+#ifndef OCRNL
+#define OCRNL 0000010
+#endif
+#ifndef ONOCR
+#define ONOCR 0000020
+#endif
+#ifndef ONLRET
+#define ONLRET 0000040
+#endif
+#ifndef OFILL
+#define OFILL 0000100
+#endif
+#ifndef OFDEL
+#define OFDEL 0000200
+#endif
+#ifndef CSIZE
+#define CSIZE 0000060
+#endif
+#ifndef CS5
+#define CS5 0000000
+#endif
+#ifndef CS6
+#define CS6 0000020
+#endif
+#ifndef CS7
+#define CS7 0000040
+#endif
+#ifndef CS8
+#define CS8 0000060
+#endif
+#ifndef CSTOPB
+#define CSTOPB 0000100
+#endif
+#ifndef CREAD
+#define CREAD 0000200
+#endif
+#ifndef PARENB
+#define PARENB 0000400
+#endif
+#ifndef PARODD
+#define PARODD 0001000
+#endif
+#ifndef HUPCL
+#define HUPCL 0002000
+#endif
+#ifndef CLOCAL
+#define CLOCAL 0004000
+#endif
+#ifndef ISIG
+#define ISIG 0000001
+#endif
+#ifndef ICANON
+#define ICANON 0000002
+#endif
+#ifndef ECHO
+#define ECHO 0000010
+#endif
+#ifndef ECHOE
+#define ECHOE 0000020
+#endif
+#ifndef ECHOK
+#define ECHOK 0000040
+#endif
+#ifndef ECHONL
+#define ECHONL 0000100
+#endif
+#ifndef NOFLSH
+#define NOFLSH 0000200
+#endif
+#ifndef TOSTOP
+#define TOSTOP 0000400
+#endif
+#ifndef IEXTEN
+#define IEXTEN 0100000
+#endif
+#endif
 
 #define WASM_EXPORT(name)                                                     \
   __attribute__((visibility("default"))) void *__WASM_EXPORT__##name(void) { \

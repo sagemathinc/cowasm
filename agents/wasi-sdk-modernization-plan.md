@@ -22,7 +22,7 @@ support, libc++, target-specific sysroots, and WASI driver defaults.
 
 ## Completion Status
 
-Status as of June 15, 2026:
+Status as of June 16, 2026:
 
 - The `wasi-sdk-next` probe path is implemented and broad enough to be treated
   as the active pre-flip gate.
@@ -35,10 +35,13 @@ Status as of June 15, 2026:
 - The plan is now a completed SDK probe roadmap plus migration-status record.
   No additional discovery probe is required before treating `wasi-sdk` as the
   active pre-flip gate.
-- The remaining engineering work belongs to separate transition tracks:
-  translate CoWasm-owned Zig runtime glue to C, flip the default toolchain only
-  after the preserved baseline gates are reviewed, and retire the old Zig path
-  after a transition window.
+- The CoWasm-owned Zig source translation track is now complete: `rg --files
+  -g '*.zig' -g '*.zon'` returns no source files, and the kernel, native
+  POSIX addon, and Python wasm wrapper are implemented in C/TypeScript.
+- The remaining engineering work belongs to the default-toolchain transition:
+  remove the remaining Zig compiler-driver use from core runtime builds, flip
+  the default toolchain only after the preserved baseline gates are reviewed,
+  and retire the old Zig path after a transition window.
 - Socket-enabled `_ssl` and full `_ctypes` foreign-call support are useful
   follow-on features, but they are not blockers for closing this roadmap. The
   current SDK gate intentionally covers `_hashlib`, pip/ensurepip, `_ctypes`
@@ -203,14 +206,13 @@ for current CoWasm.
 - The wrapper currently compiles dynamic modules through
   `wasm32-emscripten -fPIC` plus manually supplied WASI/musl include paths.
 - CoWasm carries `01-emscripten.patch` for the old Zig path.
-- CoWasm has 35 Zig files and 4086 lines of Zig source in:
-  - `core/kernel/src`;
-  - `core/posix-node/src`.
-- The main Zig build entry points are:
-  - `core/kernel/Makefile`, which builds `src/kernel/interface.zig`;
-  - `core/posix-node/Makefile`, which builds `src/lib.zig`;
-  - `core/build/src/zig/bin/zig_cowasm_compiler.py`, which still accepts `.zig`
-    sources.
+- CoWasm-owned Zig implementation source has been removed. The current tree has
+  no `.zig` or `.zon` files.
+- The remaining Zig coupling is toolchain-provider coupling:
+  - `core/kernel/Makefile` still uses `zig build-lib` to compile/link the C
+    kernel wasm;
+  - `core/build/src/zig/bin/zig_cowasm_compiler.py` still defaults to the Zig
+    backend and still contains legacy `.zig` source handling for that backend.
 
 ## Current Landed State
 
@@ -285,8 +287,9 @@ unfinished discovery probes.
 Scope boundary for future scheduled runs:
 
 - Phases 1 and 8 through 15 are the completed SDK probe roadmap.
-- Phases 2 through 7 are retained below as the separate Zig-to-C transition
-  track. They are not unfinished discovery probes for this roadmap.
+- Phases 2 through 6 are landed as the Zig-to-C transition track. Phase 7 is
+  partially landed: `.zig` source dependencies are gone, but `core/kernel`
+  still uses `zig build-lib` as a compiler driver for C sources.
 - Phases 16 and 17 are separate default-flip and retirement transition tracks.
   They require explicit review of the preserved Zig baseline versus the
   `wasi-sdk` aggregate gate before implementation.
@@ -904,9 +907,9 @@ Recommended order:
 
 1. Preserve the current Zig 0.10.1 baseline.
 2. Add side-by-side `wasi-sdk-next` bootstrap and probes.
-3. Translate CoWasm-owned Zig runtime glue to C.
+3. Translate CoWasm-owned Zig runtime glue to C. (Landed)
 4. Remove `zig build-lib` and `.zig` source dependencies from core runtime
-   builds.
+   builds. (`.zig` sources removed; `zig build-lib` removal remains active)
 5. Move `cowasm-cc` / `cowasm-c++` to a `wasi-sdk`-backed C/C++ toolchain
    path.
 6. Rebuild CoWasm runtime archives such as `libdylink` with PIC where needed.
@@ -918,10 +921,10 @@ later. It also avoids switching package builds before the runtime glue and
 dylink archives are ready for a Clang/lld-first path.
 
 Some work intentionally landed out of strict phase order: the side-by-side SDK
-bootstrap, `COWASM_TOOLCHAIN=wasi-sdk` wrapper mode, package probes, and CPython
-SDK gate exist before the C translation. Keep treating the old Zig 0.10.1 path
-as the known-good baseline until the C translation and explicit default-flip
-review are complete.
+bootstrap, `COWASM_TOOLCHAIN=wasi-sdk` wrapper mode, package probes, CPython
+SDK gate, and C translation are all in place before the default flip. Keep
+treating the old Zig 0.10.1 compiler-driver path as the known-good baseline
+until the explicit default-flip review is complete.
 
 ## Zig Source Inventory
 
@@ -1139,7 +1142,7 @@ Non-goals in this phase:
 Deliverable: `wasi-sdk` is available as a C/C++ toolchain probe, not as the
 default.
 
-## Phase 2: Build C Scaffolding And Parity Harnesses (Deferred Transition Track)
+## Phase 2: Build C Scaffolding And Parity Harnesses (Landed)
 
 Create the C infrastructure before translating large files.
 
@@ -1159,7 +1162,7 @@ Actions:
 Deliverable: the repository has a C-shaped place for the translated code to
 land, with focused tests before the large migration starts.
 
-## Phase 3: Translate Wasm Kernel Glue To C (Deferred Transition Track)
+## Phase 3: Translate Wasm Kernel Glue To C (Landed)
 
 Translate the smaller wasm-side Zig layer first.
 
@@ -1190,9 +1193,20 @@ Validation after each cluster:
 - inspect wasm imports/exports for changed names;
 - inspect artifact size changes when meaningful.
 
-Deliverable: `core/kernel` no longer requires Zig source to build.
+Current status:
 
-## Phase 4: Replace Constants Generation (Deferred Transition Track)
+- `core/kernel/src/kernel/interface.c` replaces the old kernel interface Zig
+  source;
+- remaining wasm POSIX glue is C/TypeScript;
+- no kernel `.zig` sources remain;
+- `make -C core/kernel test` passes after the C translation and follow-up
+  signal import/export fixes.
+
+Deliverable: `core/kernel` no longer requires Zig source to build. The
+remaining kernel transition work is replacing `zig build-lib` as the compiler
+driver for these C sources.
+
+## Phase 4: Replace Constants Generation (Landed)
 
 Remove the Zig comptime constants dependency.
 
@@ -1208,9 +1222,12 @@ Actions:
 - Add a validation target that fails when generated constants differ from the
   checked-in output.
 
+Current status: constants no longer depend on checked-in Zig source; no
+`constants.zig` files remain.
+
 Deliverable: constants no longer require Zig, and drift is testable.
 
-## Phase 5: Translate Native N-API Foundation (Deferred Transition Track)
+## Phase 5: Translate Native N-API Foundation (Landed)
 
 Translate `core/posix-node/src/node.zig` before translating most POSIX modules.
 
@@ -1230,9 +1247,12 @@ Validation:
 - call trivial methods;
 - run any existing `core/posix-node` smoke tests.
 
+Current status: `core/posix-node/src/addon.c` provides the native N-API module
+entry point and local helper layer; the old Zig module skeleton is gone.
+
 Deliverable: a C N-API module skeleton can replace the Zig module skeleton.
 
-## Phase 6: Translate Native POSIX Modules (Deferred Transition Track)
+## Phase 6: Translate Native POSIX Modules (Landed)
 
 Translate native addon modules from least risky to most risky.
 
@@ -1267,17 +1287,20 @@ Validation for each module:
 - run the runtime paths that consume the module;
 - run under Linux first, then macOS once Linux is stable.
 
+Current status: `core/posix-node/src/addon.c` contains the translated native
+POSIX addon surface, and no `core/posix-node` `.zig` sources remain.
+
 Deliverable: `core/posix-node` no longer requires Zig source to build.
 
-## Phase 7: Remove Core Zig Build Dependencies (Deferred Transition Track)
+## Phase 7: Remove Core Zig Build Dependencies (Partially Landed, Active)
 
 After the C translations pass parity, remove the old source-language path.
 
 Actions:
 
-- Remove `zig build-lib` invocations for CoWasm-owned source.
-- Remove `.zig` source discovery from `core/kernel/Makefile`.
-- Remove `.zig` source discovery from `core/posix-node/Makefile`.
+- Remove `zig build-lib` invocations for CoWasm-owned source. (active)
+- Remove `.zig` source discovery from `core/kernel/Makefile`. (landed)
+- Remove `.zig` source discovery from `core/posix-node/Makefile`. (landed)
 - Decide whether `zig_cowasm_compiler.py` should still accept `.zig` inputs:
   - likely remove CoWasm's dependency on it;
   - optionally keep passthrough support only if third-party use needs it.
@@ -1285,8 +1308,31 @@ Actions:
 - Keep `bin/zig` as the old compiler distribution until the `wasi-sdk`
   migration is ready.
 
-Deliverable: CoWasm core runtime is C/C++/TypeScript from the implementation
-language perspective, even if old Zig still provides the compiler.
+Current status: CoWasm core runtime is C/C++/TypeScript from the implementation
+language perspective. The old Zig compiler distribution still provides the
+default wrapper backend, and `core/kernel` still uses `zig build-lib` to link
+the C kernel wasm.
+
+Current SDK-kernel link status:
+
+- `core/kernel/src/kernel/interface.c` now has explicit wasi-sdk compatibility
+  fallbacks for the `net/if.h`, `netdb.h`, and `termios.h` surface that the
+  kernel helper code needs;
+- the SDK `core/posix-wasm` archive is built as PIC so it can participate in a
+  shared/import-memory kernel link;
+- a direct pinned-SDK compile plus static `wasm-ld` link can produce a
+  no-`needed_dynlibs` kernel wasm artifact;
+- the TypeScript POSIX shim now provides the C++/locale helper imports needed
+  for that SDK-linked kernel artifact to instantiate past the import phase;
+- that artifact does not yet replace the default kernel because its
+  constructors call WASI functions before the current loader has wired the WASI
+  import object's memory view. The next Phase 7 blocker is aligning SDK-kernel
+  constructor and WASI-memory initialization with the existing Zig-linked kernel
+  contract.
+
+Deliverable: CoWasm core runtime builds no longer require Zig source, and the
+remaining Zig compiler-driver use is either replaced by the pinned SDK path or
+kept only as an explicit compatibility backend.
 
 ## Phase 8: Create WASI SDK Toolchain Wrapper Mode (Landed)
 
@@ -1785,7 +1831,7 @@ This completed SDK probe roadmap is successful now because:
 
 The broader modernization now continues in separate transition tracks:
 
-- translate the CoWasm-owned Zig kernel and native POSIX addon glue to C;
+- replace the remaining Zig compiler-driver use in core runtime builds;
 - review the preserved Zig baseline and the SDK aggregate gate side by side,
   then flip the default toolchain in a separate change;
 - simplify and rename wrapper internals once Zig is no longer the primary
