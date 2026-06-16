@@ -33,6 +33,11 @@ struct sched_param {
 #include "posix-wasm.h"
 
 #ifdef COWASM_WASI_SDK_KERNEL
+__attribute__((import_module("env"), import_name("main"))) extern int
+cowasm_env_main(int argc, char **argv);
+
+int __main_void(void) { return cowasm_env_main(0, NULL); }
+
 struct addrinfo {
   int ai_flags;
   int ai_family;
