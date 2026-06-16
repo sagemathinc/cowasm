@@ -28,6 +28,7 @@ Current wasi-sdk standalone math smoke packages:
 - ratpoints
 - M4RI
 - M4RIE
+- Symmetrica
 
 **WARNING: Unlike the rest of CoWasm, there is code in this directory
 that is licensed under the GPL. No code in the other packages (core, python, web, etc.,) depends on this code.**

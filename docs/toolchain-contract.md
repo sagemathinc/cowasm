@@ -996,6 +996,18 @@ builds M4RIE against that install with `COWASM_TOOLCHAIN=wasi-sdk`. It installs
 `libm4rie.a` under `sagemath/m4rie/dist/wasi-sdk`, then links and runs a finite
 field extension matrix probe through the WASI runner.
 
+`sagemath/symmetrica` has the same opt-in static-library smoke shape:
+
+```sh
+make -C sagemath/symmetrica test-wasi-sdk-standalone
+```
+
+The target builds Symmetrica with `COWASM_TOOLCHAIN=wasi-sdk`, static libraries,
+and shared libraries disabled. It installs `libsymmetrica.a` under
+`sagemath/symmetrica/dist/wasi-sdk`, supplies a small `clock` stub for the
+smoke link, and runs factorial, binomial, partition, and Schur product probes
+through the WASI runner.
+
 `sagemath/givaro` has the same opt-in dependent C++ static-library smoke shape:
 
 ```sh
