@@ -58,3 +58,17 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/nauty-test" |
   grep "nauty-ok cycle=5 automorphisms=10 orbit=transitive"
+
+graph_file="$probe_dir/connected4.g6"
+count_log="$probe_dir/countg.log"
+show_log="$probe_dir/showg.log"
+
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/geng" 4 -c >"$graph_file"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/countg" <"$graph_file" >"$count_log"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/showg" <"$graph_file" >"$show_log"
+
+grep -F "6 graphs altogether" "$count_log"
+grep -F "Graph 6, order 4." "$show_log"
+grep -F "  0 : 1 2 3;" "$show_log"
+
+echo "nauty-ok library geng countg showg"
