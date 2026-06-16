@@ -871,6 +871,30 @@ available, then builds MPC against those installs, places `libmpc.a` under
 `sagemath/mpc/dist/wasi-sdk`, and runs a small complex-arithmetic probe through
 the WASI runner.
 
+`sagemath/mpfi` has the same opt-in dependent static-library smoke shape:
+
+```sh
+make -C sagemath/mpfi test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP and MPFR WASI SDK standalone archives are
+available, then builds MPFI against those installs, places `libmpfi.a` under
+`sagemath/mpfi/dist/wasi-sdk`, and runs an interval-arithmetic probe through the
+WASI runner.
+
+`sagemath/flint` has the same opt-in dependent static-library smoke shape:
+
+```sh
+make -C sagemath/flint test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP and MPFR WASI SDK standalone archives are
+available, then builds FLINT against those installs with assembly and threading
+disabled for the standalone contract. It installs `libflint.a` under
+`sagemath/flint/dist/wasi-sdk`, supplies small `mkstemp` and `clock` stubs for
+the smoke link, and runs integer, rational, polynomial factorization, Arb, and
+Acb probes through the WASI runner.
+
 `sagemath/ntl` has the same opt-in dependent C++ static-library smoke shape:
 
 ```sh
@@ -925,6 +949,92 @@ available, then builds IML against GMP and GSL's bundled CBLAS archive with
 `sagemath/iml/dist/wasi-sdk`, seeds the old autotools `realloc(0)` cross check
 for WASI libc, and links a deterministic probe covering modular determinant,
 modular rank, and exact rational linear solving through the WASI runner.
+
+`sagemath/ecm` has the same opt-in dependent static-library smoke shape:
+
+```sh
+make -C sagemath/ecm test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP WASI SDK standalone archive is available, then
+builds GMP-ECM with `COWASM_TOOLCHAIN=wasi-sdk`, process-clock and getpid
+emulation enabled, OpenMP disabled, and advisory-lock detection disabled for
+WASI. It installs `libecm.a` under `sagemath/ecm/dist/wasi-sdk`, then links and
+runs a small factorization probe through the WASI runner.
+
+`sagemath/ratpoints` has the same opt-in dependent static-library smoke shape:
+
+```sh
+make -C sagemath/ratpoints test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP WASI SDK standalone archive is available, then
+builds the ratpoints generated headers with a native compiler, compiles the
+library objects with `cowasm-cc`, installs `libratpoints.a` under
+`sagemath/ratpoints/dist/wasi-sdk`, and runs the package's `rptest` probe
+through the WASI runner.
+
+`sagemath/m4ri` has the same opt-in static-library smoke shape:
+
+```sh
+make -C sagemath/m4ri test-wasi-sdk-standalone
+```
+
+The target builds M4RI with `COWASM_TOOLCHAIN=wasi-sdk`, static libraries,
+SSE2 and PNG disabled, and fixed cache-size configure values. It installs
+`libm4ri.a` under `sagemath/m4ri/dist/wasi-sdk`, then links and runs a binary
+matrix rank and multiplication probe through the WASI runner.
+
+`sagemath/m4rie` has the same opt-in dependent static-library smoke shape:
+
+```sh
+make -C sagemath/m4rie test-wasi-sdk-standalone
+```
+
+The target first ensures the M4RI WASI SDK standalone archive is available, then
+builds M4RIE against that install with `COWASM_TOOLCHAIN=wasi-sdk`. It installs
+`libm4rie.a` under `sagemath/m4rie/dist/wasi-sdk`, then links and runs a finite
+field extension matrix probe through the WASI runner.
+
+`sagemath/givaro` has the same opt-in dependent C++ static-library smoke shape:
+
+```sh
+make -C sagemath/givaro test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP C and C++ WASI SDK standalone archives are
+available, then builds Givaro against them with native-architecture tuning and
+shared libraries disabled. The smoke requires the pinned SDK exception-enabled
+`libc++abi` and `libunwind` archives, installs `libgivaro.a` under
+`sagemath/givaro/dist/wasi-sdk`, and runs integer, rational, and modular-field
+probes through the WASI runner.
+
+`sagemath/fflas-ffpack` has the same opt-in dependent C++ header/library smoke
+shape:
+
+```sh
+make -C sagemath/fflas-ffpack test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP, Givaro, and GSL CBLAS WASI SDK standalone
+archives are available, then builds FFLAS-FFPACK with OpenMP and precompilation
+disabled. The smoke requires the pinned SDK exception-enabled C++ runtime
+archives, installs the headers and package metadata under
+`sagemath/fflas-ffpack/dist/wasi-sdk`, and runs finite-field matrix product,
+rank, and determinant probes through the WASI runner.
+
+`sagemath/linbox` has the same opt-in dependent C++ static-library smoke shape:
+
+```sh
+make -C sagemath/linbox test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP, Givaro, GSL CBLAS, and FFLAS-FFPACK WASI SDK
+standalone installs are available, then builds LinBox with optional NTL, MPFR,
+IML, FLINT, FPLLL, OpenCL, MPI, and docs disabled. The smoke requires the pinned
+SDK exception-enabled C++ runtime archives, installs `liblinbox.a` under
+`sagemath/linbox/dist/wasi-sdk`, and runs a finite-field dense-matrix
+multiplication probe through the WASI runner.
 
 `core/libcxx` has an opt-in C++ runtime side-module smoke target:
 

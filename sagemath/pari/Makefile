@@ -72,6 +72,9 @@ test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmp.a ${BUILD_WASI_SDK}/.patche
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
 	exit "$$status"
 
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: test-wasi-sdk-standalone
+
 .PHONY: clean-wasi-sdk
 clean-wasi-sdk:
 	rm -rf ${BUILD_WASI_SDK} ${DIST_WASI_SDK}
