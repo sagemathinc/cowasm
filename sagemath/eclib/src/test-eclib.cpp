@@ -4,6 +4,14 @@
 #include <iostream>
 #include <vector>
 
+static bool has_coordinates(const Point &p, const bigint &expected_x,
+                            const bigint &expected_y,
+                            const bigint &expected_z) {
+  bigint x, y, z;
+  p.getcoordinates(x, y, z);
+  return x == expected_x && y == expected_y && z == expected_z;
+}
+
 int main() {
   set_precision(80);
   initprimes("PRIMES", 0);
@@ -22,17 +30,23 @@ int main() {
   Point sum = p0 + p1;
   Point triple = 3 * p0;
 
+  const bool ok_sum = has_coordinates(sum, bigint(3), bigint(3), bigint(1));
+  const bool ok_triple = has_coordinates(
+      triple, bigint(-74725), bigint(-438957), bigint(117649));
+
   if (conductor != bigint(11) || torsion.size() != 5 || !p0.isvalid() ||
-      !p1.isvalid() || !sum.isvalid() || !triple.isvalid()) {
+      !p1.isvalid() || !sum.isvalid() || !triple.isvalid() || !ok_sum ||
+      !ok_triple) {
     std::cerr << "unexpected eclib result: conductor=" << conductor
               << " torsion=" << torsion.size() << " p0=" << p0.isvalid()
               << " p1=" << p1.isvalid() << " sum=" << sum.isvalid()
-              << " triple=" << triple.isvalid() << "\n";
+              << " triple=" << triple.isvalid() << " ok_sum=" << ok_sum
+              << " ok_triple=" << ok_triple << "\n";
     return 1;
   }
 
   std::cout << "eclib-ok conductor=" << conductor
             << " torsion=" << torsion.size()
-            << " point-arithmetic=valid\n";
+            << " point-arithmetic=checked\n";
   return 0;
 }

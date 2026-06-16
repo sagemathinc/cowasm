@@ -138,4 +138,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -o "$probe_dir/eclib-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/eclib-test" |
-  grep -F "eclib-ok conductor=11 torsion=5 point-arithmetic=valid"
+  grep -F "eclib-ok conductor=11 torsion=5 point-arithmetic=checked"
