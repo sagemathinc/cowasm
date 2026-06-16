@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 4 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR GMP_DIR" >&2
+if [ "$#" -ne 5 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR GMP_DIR GF2X_DIR" >&2
   exit 2
 fi
 
@@ -10,6 +10,7 @@ build_dir="$(cd "$1" && pwd)"
 dist_dir="$2"
 bin_dir="$(cd "$3" && pwd)"
 gmp_dir="$(cd "$4" && pwd)"
+gf2x_dir="$(cd "$5" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -104,11 +105,12 @@ env \
       LDFLAGS="${standalone_ldlibs[*]}" \
       PREFIX="$dist_dir" \
       GMP_PREFIX="$gmp_dir" \
+      GF2X_PREFIX="$gf2x_dir" \
       NATIVE=off \
       TUNE=generic \
       NTL_THREADS=off \
       SHARED=off \
-      NTL_GF2X_LIB=off
+      NTL_GF2X_LIB=on
 
 COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs"
 COWASM_TOOLCHAIN=wasi-sdk make install
@@ -118,10 +120,13 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   "$src_dir/test-ntl.cpp" \
   -I"$dist_dir/include" \
   -I"$gmp_dir/include" \
+  -I"$gf2x_dir/include" \
   -L"$dist_dir/lib" \
   -L"$gmp_dir/lib" \
+  -L"$gf2x_dir/lib" \
   -lntl \
   -lgmp \
+  -lgf2x \
   -lm \
   "${standalone_ldlibs[@]}" \
   -o "$probe_dir/ntl-test"

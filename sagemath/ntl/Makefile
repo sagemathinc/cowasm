@@ -13,9 +13,13 @@ all: test-wasi-sdk-standalone
 include ../build/Makefile-rules
 
 GMP_WASI_SDK = ${PACKAGES}/gmp/dist/wasi-sdk
+GF2X_WASI_SDK = ${PACKAGES}/gf2x/dist/wasi-sdk
 
 ${GMP_WASI_SDK}/lib/libgmp.a:
 	$(MAKE) -C ${PACKAGES}/gmp test-wasi-sdk-standalone
+
+${GF2X_WASI_SDK}/lib/libgf2x.a:
+	$(MAKE) -C ${PACKAGES}/gf2x test-wasi-sdk-standalone
 
 ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	rm -rf ${BUILD_WASI_SDK}
@@ -24,10 +28,10 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	touch ${BUILD_WASI_SDK}/.build
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmp.a ${BUILD_WASI_SDK}/.build
+test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmp.a ${GF2X_WASI_SDK}/lib/libgf2x.a ${BUILD_WASI_SDK}/.build
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
-	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${GMP_WASI_SDK} || status=$$?; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${GMP_WASI_SDK} ${GF2X_WASI_SDK} || status=$$?; \
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
 	exit "$$status"
 
