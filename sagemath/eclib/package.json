@@ -32,7 +32,9 @@
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
   "dependencies": {
+    "@cowasm/flint": "workspace:*",
     "@cowasm/gmp": "workspace:*",
+    "@cowasm/mpfr": "workspace:*",
     "@cowasm/ntl": "workspace:*",
     "@cowasm/pari": "workspace:*"
   },

@@ -13,11 +13,19 @@ all: test-wasi-sdk-standalone
 include ../build/Makefile-rules
 
 GMP_WASI_SDK = ${PACKAGES}/gmp/dist/wasi-sdk
+MPFR_WASI_SDK = ${PACKAGES}/mpfr/dist/wasi-sdk
+FLINT_WASI_SDK = ${PACKAGES}/flint/dist/wasi-sdk
 NTL_WASI_SDK = ${PACKAGES}/ntl/dist/wasi-sdk
 PARI_WASI_SDK = ${PACKAGES}/pari/dist/wasi-sdk
 
 ${GMP_WASI_SDK}/lib/libgmpxx.a:
 	$(MAKE) -C ${PACKAGES}/gmp test-wasi-sdk-standalone
+
+${MPFR_WASI_SDK}/lib/libmpfr.a:
+	$(MAKE) -C ${PACKAGES}/mpfr test-wasi-sdk-standalone
+
+${FLINT_WASI_SDK}/lib/libflint.a:
+	$(MAKE) -C ${PACKAGES}/flint test-wasi-sdk-standalone
 
 ${NTL_WASI_SDK}/lib/libntl.a:
 	$(MAKE) -C ${PACKAGES}/ntl test-wasi-sdk-standalone
@@ -32,10 +40,10 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	touch ${BUILD_WASI_SDK}/.build
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmpxx.a ${NTL_WASI_SDK}/lib/libntl.a ${PARI_WASI_SDK}/lib/libpari.a ${BUILD_WASI_SDK}/.build
+test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmpxx.a ${MPFR_WASI_SDK}/lib/libmpfr.a ${FLINT_WASI_SDK}/lib/libflint.a ${NTL_WASI_SDK}/lib/libntl.a ${PARI_WASI_SDK}/lib/libpari.a ${BUILD_WASI_SDK}/.build
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
-	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${GMP_WASI_SDK} ${NTL_WASI_SDK} ${PARI_WASI_SDK} || status=$$?; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${GMP_WASI_SDK} ${MPFR_WASI_SDK} ${FLINT_WASI_SDK} ${NTL_WASI_SDK} ${PARI_WASI_SDK} || status=$$?; \
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
 	exit "$$status"
 
