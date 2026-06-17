@@ -1138,8 +1138,10 @@ The target first ensures the GMP, Givaro, GSL CBLAS, and FFLAS-FFPACK WASI SDK
 standalone installs are available, then builds LinBox with optional NTL, MPFR,
 IML, FLINT, FPLLL, OpenCL, MPI, and docs disabled. The smoke requires the pinned
 SDK exception-enabled C++ runtime archives, installs `liblinbox.a` under
-`sagemath/linbox/dist/wasi-sdk`, and runs a finite-field dense-matrix
-multiplication probe through the WASI runner.
+`sagemath/linbox/dist/wasi-sdk`, and runs finite-field dense-matrix
+multiplication, FLINT-backed integer matrix multiplication, modular
+rank/determinant, NTL integer-ring, fplll LLL-reduction, and IML exact-solve
+probes through the WASI runner.
 
 `sagemath/gf2x` has the same opt-in static-library smoke shape:
 
