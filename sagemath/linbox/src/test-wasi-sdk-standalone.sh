@@ -130,4 +130,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -o "$probe_dir/linbox-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/linbox-test" |
-  grep -F "linbox-ok product=2,5,9,16 mod17 flint=7,10,15,22 ntl=42"
+  grep -F "linbox-ok product=2,5,9,16 mod17 flint=7,10,15,22 rank=2 det=5 ntl=42"

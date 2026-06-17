@@ -11,6 +11,7 @@
 #include <linbox/matrix/densematrix/blas-matrix.h>
 #include <linbox/matrix/dense-matrix.h>
 #include <linbox/matrix/matrix-domain.h>
+#include <linbox/matrix/matrixdomain/blas-matrix-domain.h>
 #include <linbox/ring/ntl.h>
 
 #ifndef __LINBOX_HAVE_MPFR
@@ -126,6 +127,50 @@ bool test_flint_product() {
   return true;
 }
 
+bool test_modular_rank_det() {
+  using Field = Givaro::Modular<int64_t>;
+  using Matrix = LinBox::BlasMatrix<Field>;
+
+  Field field(17);
+  LinBox::BlasMatrixDomain<Field> domain(field);
+
+  Matrix full_rank(field, 3, 3);
+  Matrix rank_deficient(field, 3, 3);
+  const int64_t full_rank_entries[9] = {
+      1, 2, 3,
+      0, 4, 5,
+      1, 0, 6,
+  };
+  const int64_t rank_deficient_entries[9] = {
+      1, 2, 3,
+      2, 4, 6,
+      4, 5, 6,
+  };
+
+  Field::Element value;
+  for (std::size_t row = 0; row < 3; row++) {
+    for (std::size_t col = 0; col < 3; col++) {
+      field.init(value, full_rank_entries[row * 3 + col]);
+      full_rank.setEntry(row, col, value);
+      field.init(value, rank_deficient_entries[row * 3 + col]);
+      rank_deficient.setEntry(row, col, value);
+    }
+  }
+
+  Field::Element det = domain.detInPlace(full_rank);
+  int64_t det_int = 0;
+  field.convert(det_int, det);
+  const unsigned int rank = domain.rankInPlace(rank_deficient);
+
+  if (det_int != 5 || rank != 2) {
+    std::cerr << "unexpected LinBox rank/det: det=" << det_int
+              << " rank=" << rank << "\n";
+    return false;
+  }
+
+  return true;
+}
+
 bool test_ntl_ring() {
   LinBox::NTL_ZZ integers;
   LinBox::NTL_ZZ::Element left;
@@ -147,10 +192,12 @@ bool test_ntl_ring() {
 }
 
 int main() {
-  if (!test_modular_product() || !test_flint_product() || !test_ntl_ring()) {
+  if (!test_modular_product() || !test_flint_product() ||
+      !test_modular_rank_det() || !test_ntl_ring()) {
     return 1;
   }
 
-  std::cout << "linbox-ok product=2,5,9,16 mod17 flint=7,10,15,22 ntl=42\n";
+  std::cout << "linbox-ok product=2,5,9,16 mod17 flint=7,10,15,22"
+            << " rank=2 det=5 ntl=42\n";
   return 0;
 }
