@@ -70,4 +70,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/symmetrica-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/symmetrica-test" |
-  grep "symmetrica-ok factorial=39916800 pascal schur=3"
+  grep "symmetrica-ok factorial=39916800 pascal kostka=2 schur=3"

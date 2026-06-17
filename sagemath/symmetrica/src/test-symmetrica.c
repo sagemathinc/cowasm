@@ -78,6 +78,41 @@ static int check_first_partition(void) {
   return ok;
 }
 
+static void set_partition3(OP vector, OP partition, INT a, INT b, INT c) {
+  m_il_v(3, vector);
+  M_I_I(a, S_V_I(vector, 0));
+  M_I_I(b, S_V_I(vector, 1));
+  M_I_I(c, S_V_I(vector, 2));
+  m_v_pa(vector, partition);
+}
+
+static int check_kostka(void) {
+  OP vector = callocobject();
+  OP shape = callocobject();
+  OP content = callocobject();
+  OP number = callocobject();
+  OP tableaux = callocobject();
+  OP tableau_count = callocobject();
+  int ok;
+
+  set_partition3(vector, shape, 3, 1, 0);
+  set_partition3(vector, content, 2, 1, 1);
+
+  ok = kostka_number(content, shape, number) == OK && S_I_I(number) == 2;
+  ok = ok && kostka_tab(shape, content, tableaux) == OK;
+  length_list(tableaux, tableau_count);
+  ok = ok && S_I_I(tableau_count) == 2;
+
+  freeall(tableau_count);
+  freeall(tableaux);
+  freeall(number);
+  freeall(content);
+  freeall(shape);
+  freeall(vector);
+
+  return ok;
+}
+
 static int add_schur_term(OP vector, OP partition, OP coeff, OP terms,
                           INT length, INT a, INT b, INT c, INT multiplicity) {
   m_il_v(length, vector);
@@ -134,6 +169,7 @@ int main(void) {
   int factorial_ok;
   int binom_ok;
   int partition_ok;
+  int kostka_ok;
   int schur_ok;
   int ok;
 
@@ -150,15 +186,19 @@ int main(void) {
   if (!partition_ok) {
     puts("symmetrica partition check failed");
   }
+  kostka_ok = check_kostka();
+  if (!kostka_ok) {
+    puts("symmetrica kostka check failed");
+  }
   schur_ok = check_schur_product();
   if (!schur_ok) {
     puts("symmetrica schur check failed");
   }
   ende();
 
-  ok = factorial_ok && binom_ok && partition_ok && schur_ok;
+  ok = factorial_ok && binom_ok && partition_ok && kostka_ok && schur_ok;
   if (ok) {
-    puts("symmetrica-ok factorial=39916800 pascal schur=3");
+    puts("symmetrica-ok factorial=39916800 pascal kostka=2 schur=3");
   }
 
   return ok ? 0 : 1;
