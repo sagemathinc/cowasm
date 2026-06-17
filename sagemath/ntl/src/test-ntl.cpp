@@ -6,6 +6,7 @@
 #include <NTL/ZZ_pX.h>
 #include <NTL/ZZ_pXFactoring.h>
 #include <NTL/config.h>
+#include <NTL/mat_ZZ.h>
 
 #ifndef NTL_GF2X_LIB
 #error "NTL was not configured with GF2X support"
@@ -54,6 +55,20 @@ int main() {
   vec_pair_GF2X_long binary_factors;
   CanZass(binary_factors, binary_factor_poly);
 
+  mat_ZZ matrix;
+  matrix.SetDims(3, 3);
+  matrix[0][0] = 1;
+  matrix[0][1] = 2;
+  matrix[0][2] = 3;
+  matrix[1][0] = 0;
+  matrix[1][1] = 4;
+  matrix[1][2] = 5;
+  matrix[2][0] = 1;
+  matrix[2][1] = 0;
+  matrix[2][2] = 6;
+  ZZ matrix_det;
+  determinant(matrix_det, matrix);
+
   const std::string expected =
       "1606938044258990275541962092341162602522202993782792835301376";
   const bool ok_integer = n_out.str() == expected;
@@ -67,10 +82,14 @@ int main() {
       coeff(binary_product, 3) == 1 && coeff(binary_product, 4) == 1 &&
       coeff(binary_product, 5) == 1 && coeff(binary_product, 6) == 1;
   const bool ok_binary_factorization = binary_factors.length() == 2;
+  const bool ok_matrix_det = matrix_det == 22;
 
   if (ok_integer && ok_polynomial && ok_factorization && ok_binary_product &&
-      ok_binary_factorization) {
-    std::cout << "ntl-ok gf2x factors=" << binary_factors.length() << "\n";
+      ok_binary_factorization && ok_matrix_det) {
+    std::cout << "ntl-ok integer=2^200 polynomial=(x+1)^4 mod-factors="
+              << factors.length() << " gf2x-factors="
+              << binary_factors.length() << " matrix-det=" << matrix_det
+              << "\n";
     return 0;
   }
   return 1;
