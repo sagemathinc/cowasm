@@ -914,6 +914,15 @@ importers:
         specifier: ^4.8.4
         version: 4.9.5
 
+  sagemath/4ti2:
+    dependencies:
+      '@cowasm/glpk':
+        specifier: workspace:*
+        version: link:../glpk
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+
   sagemath/bliss: {}
 
   sagemath/boost-cropped: {}
@@ -1123,6 +1132,18 @@ importers:
         specifier: workspace:*
         version: link:../gmp
 
+  sagemath/mpfrcx:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/mpc':
+        specifier: workspace:*
+        version: link:../mpc
+      '@cowasm/mpfr':
+        specifier: workspace:*
+        version: link:../mpfr
+
   sagemath/nauty: {}
 
   sagemath/ntl:
@@ -1162,6 +1183,15 @@ importers:
   sagemath/symmetrica: {}
 
   sagemath/tdlib: {}
+
+  sagemath/topcom:
+    dependencies:
+      '@cowasm/cddlib':
+        specifier: workspace:*
+        version: link:../cddlib
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
 
   sagemath/zn-poly:
     dependencies:
