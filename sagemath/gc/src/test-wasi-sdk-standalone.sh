@@ -84,4 +84,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/gc-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/gc-test" |
-  grep "gc-ok sum=528 atomic=wasi-gc finalizer=17"
+  grep "gc-ok sum=528 atomic=wasi-gc realloc=136 finalizer=17"

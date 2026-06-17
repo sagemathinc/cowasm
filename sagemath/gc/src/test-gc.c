@@ -46,21 +46,46 @@ int main(void) {
   }
   strcpy(atomic, "wasi-gc");
 
+  int *values = GC_MALLOC(8 * sizeof(*values));
+  if (values == NULL) {
+    return 4;
+  }
+  for (int i = 0; i < 8; i++) {
+    values[i] = i + 1;
+  }
+
+  values = GC_REALLOC(values, 16 * sizeof(*values));
+  if (values == NULL) {
+    return 5;
+  }
+  for (int i = 8; i < 16; i++) {
+    values[i] = i + 1;
+  }
+
+  int realloc_sum = 0;
+  for (int i = 0; i < 16; i++) {
+    realloc_sum += values[i];
+  }
+  GC_FREE(values);
+
   void *watched = GC_MALLOC(32);
   if (watched == NULL) {
-    return 4;
+    return 6;
   }
   GC_REGISTER_FINALIZER(watched, finalizer, (void *)(intptr_t)17, NULL, NULL);
   watched = NULL;
   GC_gcollect();
   GC_invoke_finalizers();
 
-  if (sum != 528 || strcmp(atomic, "wasi-gc") != 0 || finalizer_seen != 17) {
-    fprintf(stderr, "unexpected gc result: sum=%d atomic=%s finalizer=%d\n",
-            sum, atomic, finalizer_seen);
-    return 5;
+  if (sum != 528 || strcmp(atomic, "wasi-gc") != 0 || realloc_sum != 136 ||
+      finalizer_seen != 17) {
+    fprintf(stderr,
+            "unexpected gc result: sum=%d atomic=%s realloc=%d finalizer=%d\n",
+            sum, atomic, realloc_sum, finalizer_seen);
+    return 7;
   }
 
-  printf("gc-ok sum=%d atomic=%s finalizer=%d\n", sum, atomic, finalizer_seen);
+  printf("gc-ok sum=%d atomic=%s realloc=%d finalizer=%d\n", sum, atomic,
+         realloc_sum, finalizer_seen);
   return 0;
 }
