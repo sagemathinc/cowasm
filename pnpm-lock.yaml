@@ -1033,6 +1033,12 @@ importers:
         specifier: workspace:*
         version: link:../mpfr
 
+  sagemath/frobby:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+
   sagemath/gc:
     dependencies:
       '@cowasm/libatomic-ops':
@@ -1232,7 +1238,11 @@ importers:
 
   sagemath/sympow: {}
 
-  sagemath/tdlib: {}
+  sagemath/tdlib:
+    dependencies:
+      '@cowasm/boost-cropped':
+        specifier: workspace:*
+        version: link:../boost-cropped
 
   sagemath/topcom:
     dependencies:

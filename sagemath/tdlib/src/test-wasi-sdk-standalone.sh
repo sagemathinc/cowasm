@@ -21,12 +21,6 @@ trap 'rm -rf "$probe_dir"' EXIT
 
 cowasm_standalone_probe "tdlib" wasi-sdk "$bin_dir" "$probe_dir"
 
-jobs="${MAKEFLAGS:-}"
-jobs="${jobs##*-j}"
-if ! [[ "$jobs" =~ ^[0-9]+$ ]]; then
-  jobs=4
-fi
-
 clangxx="$bin_dir/wasi-sdk-clang++-next"
 default_libcxx="$("$clangxx" -target wasm32-wasip1 -print-file-name=libc++.a)"
 libcxx="${default_libcxx%/noeh/libc++.a}/eh/libc++.a"
@@ -59,30 +53,13 @@ done
 unset IFS
 
 rm -rf "$dist_dir"
+mkdir -p "$dist_dir/include/treedec"
 
 cd "$build_dir"
-env \
-  COWASM_TOOLCHAIN=wasi-sdk \
-  AR="$bin_dir/cowasm-ar" \
-  RANLIB="$bin_dir/cowasm-ranlib" \
-  CC="$bin_dir/cowasm-cc" \
-  CXX="$bin_dir/cowasm-c++" \
-  CPPFLAGS="-I$boost_cropped_dir/include" \
-  CFLAGS="-Oz -fvisibility-main" \
-  CXXFLAGS="-Oz -fvisibility-main" \
-  LDFLAGS="-lwasi-emulated-signal" \
-  ac_cv_lib_boost_system_main=no \
-  ac_cv_lib_boost_thread_main=no \
-    ./configure \
-      --build=i686-pc-linux-gnu \
-      --host=none \
-      --prefix="$dist_dir" \
-      --with-python=no \
-      --without-gala \
-      --disable-shared \
-      --enable-static
-
-COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs" install
+find src -type f \( -name '*.h' -o -name '*.hpp' \) -print |
+  while IFS= read -r header; do
+    install -D -m 0644 "$header" "$dist_dir/include/treedec/${header#src/}"
+  done
 
 env \
   -u MAKEFLAGS \

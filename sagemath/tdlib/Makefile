@@ -21,7 +21,6 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	rm -rf ${BUILD_WASI_SDK}
 	mkdir -p ${BUILD_WASI_SDK}
 	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
-	cd ${BUILD_WASI_SDK} && ./bootstrap
 	touch ${BUILD_WASI_SDK}/.build
 
 .PHONY: test-wasi-sdk-standalone
