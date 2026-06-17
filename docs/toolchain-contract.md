@@ -1207,6 +1207,19 @@ exception-enabled C++ runtime archives, installs `libbraiding.a` under
 `sagemath/libbraiding/dist/wasi-sdk`, then links and runs a braid canonical
 form and conjugator probe through the WASI runner.
 
+`sagemath/topcom` has an opt-in dependent C++ executable smoke shape:
+
+```sh
+make -C sagemath/topcom test-wasi-sdk-standalone
+```
+
+The target first ensures the GMP/GMPXX and cddlib WASI SDK standalone archives
+are available, then builds TOPCOM with `COWASM_TOOLCHAIN=wasi-sdk` and links
+selected command-line tools against the pinned SDK exception-enabled C++
+runtime archives. It installs `points2ntriangs` and `points2facets` under
+`sagemath/topcom/dist/wasi-sdk/bin`, then runs small triangulation-count and
+facet computations through the WASI runner.
+
 `sagemath/tdlib` has an opt-in dependent C++ header smoke shape:
 
 ```sh

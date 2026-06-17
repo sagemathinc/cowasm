@@ -121,3 +121,5 @@ cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/points2ntriangs" \
 cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/points2facets" \
   < "$build_dir/examples/cube_2.dat" |
   grep -F "{0,1}"
+
+echo "topcom-ok triangulation-count facets"
