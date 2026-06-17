@@ -47,6 +47,11 @@ env \
 COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs"
 COWASM_TOOLCHAIN=wasi-sdk make install
 
+test -f "$dist_dir/bin/planarity"
+test -f "$dist_dir/lib/libplanarity.a"
+test -f "$dist_dir/include/planarity/graphLib.h"
+test -d "$dist_dir/share/doc/planarity/samples"
+
 env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   "$src_dir/test-planarity.c" \
   -I"$dist_dir/include" \
@@ -57,3 +62,14 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/planarity-test" |
   grep "planarity-ok cycle5=planar k5=nonplanar k33=nonplanar"
+
+sample_dir="$dist_dir/share/doc/planarity/samples"
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/planarity" -test -q "$sample_dir"
+
+max_planar_out="$probe_dir/maxPlanar5.embedding.txt"
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/planarity" \
+  -s -q -p "$sample_dir/maxPlanar5.0-based.txt" "$max_planar_out"
+
+grep "^N=5$" "$max_planar_out"
