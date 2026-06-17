@@ -116,6 +116,9 @@ from cysignals.signals cimport (
     sig_raise_exception,
     sig_block,
     sig_check,
+    sig_check_no_except,
+    sig_on_no_except,
+    sig_str_no_except,
     sig_occurred,
     sig_off,
     sig_on,
@@ -189,6 +192,20 @@ def guarded_python_exception_cleanup():
     return cleaned
 
 
+def no_except_guard_cleanup():
+    if not sig_on_no_except():
+        raise AssertionError("unexpected sig_on_no_except failure")
+    sig_off()
+
+    if not sig_str_no_except("wasi no-except guard"):
+        raise AssertionError("unexpected sig_str_no_except failure")
+    if not sig_check_no_except():
+        raise AssertionError("unexpected sig_check_no_except failure")
+    sig_off()
+
+    return sig_occurred() == NULL
+
+
 def mapped_signal_exceptions():
     ok = raises_exception(SIGFPE, None, FloatingPointError,
                           "Floating point exception")
@@ -238,7 +255,8 @@ assert cysignals.SignalError.__module__ == "cysignals.signals"
 assert cysignals_guard_probe.guarded_sum(8) == 28
 assert cysignals_guard_probe.nested_guard_cleanup()
 assert cysignals_guard_probe.guarded_python_exception_cleanup()
+assert cysignals_guard_probe.no_except_guard_cleanup()
 assert cysignals_guard_probe.mapped_signal_exceptions()
 PY
 
-echo "cysignals-ok signals-extension import guarded-cython-module guard-cleanup signal-exceptions"
+echo "cysignals-ok signals-extension import guarded-cython-module guard-cleanup no-except-guards signal-exceptions"
