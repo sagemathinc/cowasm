@@ -12,6 +12,7 @@ bin_dir="$(cd "$3" && pwd)"
 gmp_dist_dir="$4"
 jobs="${JOBS:-8}"
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+src_dir="$script_dir"
 
 source "$script_dir/../../../core/build/src/test/clang-standalone-common.sh"
 
@@ -166,3 +167,21 @@ grep -F "portable C/GMP" "$pari_smoke_log"
 grep -F "%1 = 2023" "$pari_smoke_log"
 grep -F "impossible inverse in gdiv: 0" "$pari_smoke_log"
 grep -F "%2 = 221" "$pari_smoke_log"
+
+libpari_probe_flags="-Oz -mllvm -wasm-enable-sjlj -mllvm -wasm-use-legacy-eh=false"
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
+  $libpari_probe_flags \
+  "$src_dir/test-libpari.c" \
+  -I"$dist_dir/include" \
+  -I"$gmp_dist_dir/include" \
+  -L"$dist_dir/lib" \
+  -L"$gmp_dist_dir/lib" \
+  -lpari \
+  -lgmp \
+  $libpari_probe_flags \
+  "${standalone_ldlibs[@]}" \
+  -lm \
+  -o "$probe_dir/libpari-test"
+
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/libpari-test" |
+  grep -F "libpari result: 2023"
