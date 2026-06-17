@@ -1,0 +1,15 @@
+diff --git a/include/hfloats.h b/include/hfloats.h
+--- a/include/hfloats.h
++++ b/include/hfloats.h
+@@ -84,6 +84,11 @@ typedef union {
+ #define roundup() fesetround(FE_UPWARD)
+ #endif
+ 
++#if defined(__wasi__)
++#define rounddown() ((void)0)
++#define roundup() ((void)0)
++#endif
++
+ /* ----------------------------------------*/
+ /*            Hardware intervals           */
+ /* ----------------------------------------*/

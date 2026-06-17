@@ -1,0 +1,20 @@
+diff --git a/bin/mksysdep.pl b/bin/mksysdep.pl
+--- a/bin/mksysdep.pl
++++ b/bin/mksysdep.pl
+@@ -50,7 +50,15 @@
+ }
+ 
+ ### Call appropriate install script
+-if ($#ARGV == 1 && $ARGV[0] eq "x86linux")
++if ($#ARGV == 0 && $ARGV[0] eq "wasi")
++{
++    print "SACLIB Warning: Installing wasi system dependent files!\n";
++    open(my $sysdep, '>', "$ENV{'saclib'}/include/sysdep.h") or die $!;
++    print $sysdep "#ifndef _LITTLE_ENDIAN_\n#define _LITTLE_ENDIAN_\n#endif\n#undef _BIG_ENDIAN_\n#define __WORDSIZE 32\n";
++    close($sysdep);
++    system("cp $ENV{'saclib'}/sysdep/linuxX86_64/GC.c $ENV{'saclib'}/src/GC.c");
++}
++elsif ($#ARGV == 1 && $ARGV[0] eq "x86linux")
+ {
+     print "SACLIB Warning: Installing x86linux system dependent files!\n";
+     system("bash -c \"pushd >/dev/null $ENV{'saclib'}/sysdep/linuxX86 ; ./install ; popd >/dev/null\"");

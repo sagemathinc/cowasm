@@ -1,0 +1,12 @@
+diff --git a/bin/mkmake b/bin/mkmake
+--- a/bin/mkmake
++++ b/bin/mkmake
+@@ -39,8 +39,8 @@ CFLAGS   = -I${saclib}/include -c ${SACFLAG}
+ AFLAGS   = -I${saclib}/include -P
+ AS       = as
+-AR       = ar
+-RANLIB   = ranlib
++AR       ?= ar
++RANLIB   ?= ranlib
+ 
+ # Object files
