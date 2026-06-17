@@ -7,6 +7,7 @@
 #include <flint/bernoulli.h>
 #include <flint/fmpq.h>
 #include <flint/fmpz.h>
+#include <flint/fmpz_factor.h>
 #include <flint/fmpz_mat.h>
 #include <flint/fmpz_mod.h>
 #include <flint/fmpz_mod_poly.h>
@@ -38,6 +39,10 @@ static int acb_contains_si_si(const acb_t value, slong real, slong imag) {
 int main(void) {
   fmpz_t n;
   fmpz_t factor_content;
+  fmpz_t integer_factor_input;
+  fmpz_t integer_factor_reexpanded;
+  fmpz_t integer_phi;
+  fmpz_t integer_sigma;
   fmpz_t matrix_det;
   fmpq_t a;
   fmpq_t b;
@@ -64,6 +69,7 @@ int main(void) {
   fmpz_mod_poly_t fmpz_mod_factor_power;
   fmpz_mod_poly_t fmpz_mod_factor_tmp;
   fmpz_poly_factor_t factorization;
+  fmpz_factor_t integer_factorization;
   fmpz_mod_poly_factor_t fmpz_mod_factorization;
   fmpq_poly_t rational_poly;
   fmpq_poly_t rational_derivative;
@@ -124,6 +130,10 @@ int main(void) {
 
   fmpz_init(n);
   fmpz_init(factor_content);
+  fmpz_init(integer_factor_input);
+  fmpz_init(integer_factor_reexpanded);
+  fmpz_init(integer_phi);
+  fmpz_init(integer_sigma);
   fmpz_init(matrix_det);
   fmpq_init(a);
   fmpq_init(b);
@@ -150,6 +160,7 @@ int main(void) {
   fmpz_mod_poly_init(fmpz_mod_factor_power, fmpz_mod_ctx);
   fmpz_mod_poly_init(fmpz_mod_factor_tmp, fmpz_mod_ctx);
   fmpz_poly_factor_init(factorization);
+  fmpz_factor_init(integer_factorization);
   fmpz_mod_poly_factor_init(fmpz_mod_factorization, fmpz_mod_ctx);
   fmpq_poly_init(rational_poly);
   fmpq_poly_init(rational_derivative);
@@ -270,6 +281,23 @@ int main(void) {
   ok = ok && fmpz_poly_equal(factor_product, factor_poly);
   ok = ok && mod_factorization->num == 2;
   ok = ok && nmod_poly_equal(mod_factor_product, mod_poly);
+
+  fmpz_set_ui(integer_factor_input, 360);
+  fmpz_factor(integer_factorization, integer_factor_input);
+  fmpz_factor_expand(integer_factor_reexpanded, integer_factorization);
+  fmpz_factor_euler_phi(integer_phi, integer_factorization);
+  fmpz_factor_divisor_sigma(integer_sigma, 1, integer_factorization);
+  ok = ok && integer_factorization->num == 3;
+  ok = ok && fmpz_equal_ui(integer_factorization->p + 0, 2);
+  ok = ok && integer_factorization->exp[0] == 3;
+  ok = ok && fmpz_equal_ui(integer_factorization->p + 1, 3);
+  ok = ok && integer_factorization->exp[1] == 2;
+  ok = ok && fmpz_equal_ui(integer_factorization->p + 2, 5);
+  ok = ok && integer_factorization->exp[2] == 1;
+  ok = ok && fmpz_equal(integer_factor_reexpanded, integer_factor_input);
+  ok = ok && fmpz_equal_ui(integer_phi, 96);
+  ok = ok && fmpz_equal_ui(integer_sigma, 1170);
+  ok = ok && fmpz_factor_moebius_mu(integer_factorization) == 0;
 
   fmpz_mod_poly_set_coeff_si(fmpz_mod_poly, 0, -1, fmpz_mod_ctx);
   fmpz_mod_poly_set_coeff_ui(fmpz_mod_poly, 2, 1, fmpz_mod_ctx);
@@ -475,7 +503,7 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 poly-gcd=x-2 finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 poly-gcd=x-2 finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
   }
 
   flint_free(poly_str);
@@ -526,6 +554,7 @@ int main(void) {
   nmod_poly_clear(mod_poly);
   fmpq_poly_clear(rational_derivative);
   fmpq_poly_clear(rational_poly);
+  fmpz_factor_clear(integer_factorization);
   fmpz_poly_factor_clear(factorization);
   fmpz_poly_clear(gcd_poly_expected);
   fmpz_poly_clear(gcd_poly_result);
@@ -552,6 +581,10 @@ int main(void) {
   fmpq_clear(b);
   fmpq_clear(a);
   fmpz_clear(matrix_det);
+  fmpz_clear(integer_sigma);
+  fmpz_clear(integer_phi);
+  fmpz_clear(integer_factor_reexpanded);
+  fmpz_clear(integer_factor_input);
   fmpz_clear(factor_content);
   fmpz_clear(n);
   flint_cleanup();
