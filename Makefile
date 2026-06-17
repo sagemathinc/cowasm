@@ -238,6 +238,14 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/palp test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/topcom test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/rubiks test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/tachyon test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/conway-polynomials test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/elliptic-curves test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/graphs test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/polytopes-db test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/pari-elldata test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/pari-galdata test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/pari-seadata-small test-wasi-sdk-standalone
 
 # clean up everything after each test, to prove can build and test everything
 # in isolation.
