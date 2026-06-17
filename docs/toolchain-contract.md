@@ -1165,6 +1165,25 @@ Boost.Thread integrations disabled. It installs the treedec headers under
 exception-enabled C++ runtime archives and runs a cycle-graph tree
 decomposition validity probe through the WASI runner.
 
+The pure Python and data-only Sage packages use the same opt-in target name for
+their `dist/wasi-sdk` install layouts:
+
+```sh
+make -C sagemath/conway-polynomials test-wasi-sdk-standalone
+make -C sagemath/elliptic-curves test-wasi-sdk-standalone
+make -C sagemath/graphs test-wasi-sdk-standalone
+make -C sagemath/pari-elldata test-wasi-sdk-standalone
+make -C sagemath/pari-galdata test-wasi-sdk-standalone
+make -C sagemath/pari-seadata-small test-wasi-sdk-standalone
+make -C sagemath/polytopes-db test-wasi-sdk-standalone
+```
+
+These packages do not compile C or C++ code, but the SDK target gives the
+standalone package gate a consistent install prefix. The smokes reuse each
+package's existing data-integrity checks against `dist/wasi-sdk`, covering the
+Conway polynomial Python module, Cremona elliptic-curve data, graph databases,
+PARI data directories, and reflexive-polytope data.
+
 `core/libcxx` has an opt-in C++ runtime side-module smoke target:
 
 ```sh

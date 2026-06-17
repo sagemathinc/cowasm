@@ -58,7 +58,7 @@ Current wasi-sdk standalone math smoke packages:
 - rubiks
 - Tachyon
 
-Current Sage pure Python/data packages:
+Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 
 - Conway polynomials
 - Elliptic curves

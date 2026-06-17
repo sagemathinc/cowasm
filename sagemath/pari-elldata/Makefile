@@ -7,6 +7,7 @@ UPSTREAM_NAME = pari_elldata
 URL = https://mirrors.mit.edu/sage/spkg/upstream/${UPSTREAM_NAME}/elldata.tgz
 TARBALL = ${UPSTREAM}/pari_elldata-elldata.tgz
 TARBALL_SHA256 = 6c909f09bb19c8a8125145b1aac3758915daa7fd03530bc909dcb460d4eecb38
+DIST_WASI_SDK = ${DIST}/wasi-sdk
 
 include ../build/Makefile-rules
 
@@ -16,8 +17,31 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.build
 	cp -R ${BUILD_WASM}/elldata ${DIST_WASM}/share/pari/
 	touch ${DIST_WASM}/.built
 
+${DIST_WASI_SDK}/.built: ${BUILD_WASM}/.build
+	rm -rf ${DIST_WASI_SDK}
+	mkdir -p ${DIST_WASI_SDK}/share/pari
+	cp -R ${BUILD_WASM}/elldata ${DIST_WASI_SDK}/share/pari/
+	touch ${DIST_WASI_SDK}/.built
+
+define TEST_ELLDATA
+	test -d $(1)/share/pari/elldata
+	test -f $(1)/share/pari/elldata/ell0
+	test -f $(1)/share/pari/elldata/ell399
+	test "$$(find $(1)/share/pari/elldata -type f | wc -l)" -ge 400
+endef
+
 test: ${DIST_WASM}/.built
-	test -d ${DIST_WASM}/share/pari/elldata
-	test -f ${DIST_WASM}/share/pari/elldata/ell0
-	test -f ${DIST_WASM}/share/pari/elldata/ell399
-	test "$$(find ${DIST_WASM}/share/pari/elldata -type f | wc -l)" -ge 400
+	$(call TEST_ELLDATA,${DIST_WASM})
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: ${DIST_WASI_SDK}/.built
+	$(call TEST_ELLDATA,${DIST_WASI_SDK})
+
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: test-wasi-sdk-standalone
+
+.PHONY: clean-wasi-sdk
+clean-wasi-sdk:
+	rm -rf ${DIST_WASI_SDK}
+
+clean:: clean-wasi-sdk
