@@ -49,6 +49,7 @@ Current wasi-sdk standalone math smoke packages:
 - zn_poly
 - rw
 - PALP
+- TOPCOM
 - lrslib
 - Gfan
 - GLPK
