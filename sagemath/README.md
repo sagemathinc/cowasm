@@ -32,6 +32,7 @@ Current wasi-sdk standalone math smoke packages:
 - primesieve
 - primecount
 - nauty
+- plantri
 - Cliquer
 - MCQD
 - Coxeter3
