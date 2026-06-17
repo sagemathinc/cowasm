@@ -58,6 +58,7 @@ Current wasi-sdk standalone math smoke packages:
 - tdlib
 - rubiks
 - Tachyon
+- SYMPOW
 
 Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 

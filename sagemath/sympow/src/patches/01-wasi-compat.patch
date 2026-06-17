@@ -1,0 +1,64 @@
+--- a/generate.c
++++ b/generate.c
+@@ -5 +5,3 @@
++#ifndef __wasi__
+ #include <sys/wait.h>
++#endif
+@@ -237 +239,6 @@ int fork_new_data(char *S)
+-{int STATUS=0; pid_t PID;
++{
++#ifdef __wasi__
++ (void)S;
++ return -2;
++#else
++ int STATUS=0; pid_t PID;
+@@ -242 +249,3 @@ int fork_new_data(char *S)
+- return STATUS; }
++ return STATUS;
++#endif
++}
+--- a/main.c
++++ b/main.c
+@@ -4,2 +4,4 @@
++#ifndef __wasi__
+ #include <grp.h>
+ #include <pwd.h>
++#endif
+@@ -60 +62,5 @@ static int ownership(struct stat info)
+-{int status=0;
++{int status=0;
++#ifdef __wasi__
++ (void)info;
++ return 2;
++#else
+@@ -70 +76,3 @@ static int ownership(struct stat info)
+- return status;}
++ return status;
++#endif
++}
+@@ -111 +119,24 @@ static void prepare_main(char *argv0)
+-{char *env_pkgdir; struct stat infod, infodb, infof; int flag;
++{char *env_pkgdir; struct stat infod, infodb, infof; int flag;
++#ifdef __wasi__
++ invocationname=argv0;
++ datauid=0;
++ datagid=0;
++ pkgdatadir=PKGDATADIR;
++ pkglibdir=PKGLIBDIR;
++ pkgcachedir=PKGCACHEDIR;
++ cachedir=strdup("/tmp/sympow");
++ asprintf(&pkgdatafilesdir,"%s/datafiles",pkgdatadir);
++ asprintf(&pkgdatafilesbindir,"%s/datafiles/"ENDIANTUPLE,pkgcachedir);
++ datafilesdir=strdup("/tmp/sympow/datafiles");
++ datafilesbindir=strdup("/tmp/sympow/datafiles/"ENDIANTUPLE);
++ newdatascript=strdup("/lib/sympow/new_data");
++ paramdatafile=strdup("/tmp/sympow/datafiles/param_data");
++ mkdir("/tmp",0777);
++ mkdir(cachedir,0777);
++ mkdir(datafilesdir,0777);
++ mkdir(datafilesbindir,0777);
++ {int fd=open(paramdatafile,(O_WRONLY|O_CREAT),0666); if (fd != -1) close(fd);}
++ asprintf(&txtdatafiletemplate,"%s/PXXXXXXXXxxxxxxxxXXXXXXXXxxxxxxxx",datafilesdir);
++ asprintf(&bindatafiletemplate,"%s/PXXXXXXXXxxxxxxxxXXXXXXXXxxxxxxxx",datafilesbindir);
++ return;
++#endif

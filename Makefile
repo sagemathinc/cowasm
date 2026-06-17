@@ -240,6 +240,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/topcom test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/rubiks test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/tachyon test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/sympow test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/conway-polynomials test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/elliptic-curves test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/graphs test-wasi-sdk-standalone

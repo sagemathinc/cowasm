@@ -1221,6 +1221,8 @@ importers:
 
   sagemath/symmetrica: {}
 
+  sagemath/sympow: {}
+
   sagemath/tdlib: {}
 
   sagemath/topcom:
