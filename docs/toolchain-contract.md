@@ -1154,6 +1154,34 @@ hardware-specific code disabled, and native build helpers compiled with Zig.
 It installs `libgf2x.a` under `sagemath/gf2x/dist/wasi-sdk`, then links and
 runs a GF(2)[x] multiplication probe through the WASI runner.
 
+`sagemath/primesieve` has the same opt-in C++ static-library smoke shape:
+
+```sh
+make -C sagemath/primesieve test-wasi-sdk-standalone
+```
+
+The target builds primesieve with `COWASM_TOOLCHAIN=wasi-sdk`, static libraries,
+shared libraries disabled, and command-line tools disabled. The smoke requires
+the pinned SDK exception-enabled C++ runtime archives, installs
+`libprimesieve.a` under `sagemath/primesieve/dist/wasi-sdk`, then links and
+runs prime-counting, n-th prime, twin-prime, range-generation, and iterator
+probes through the WASI runner.
+
+`sagemath/primecount` has the same opt-in dependent C++ static-library smoke
+shape:
+
+```sh
+make -C sagemath/primecount test-wasi-sdk-standalone
+```
+
+The target first ensures the primesieve WASI SDK standalone archive is
+available, then builds primecount against it with `COWASM_TOOLCHAIN=wasi-sdk`,
+static libraries, shared libraries disabled, and command-line tools disabled.
+The smoke requires the pinned SDK exception-enabled C++ runtime archives,
+installs `libprimecount.a` under `sagemath/primecount/dist/wasi-sdk`, then
+links and runs prime-counting, n-th prime, partial sieve-function, and decimal
+string API probes through the WASI runner.
+
 `sagemath/lrcalc` has an opt-in static-library and executable smoke shape:
 
 ```sh
