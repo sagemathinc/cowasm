@@ -1,13 +1,29 @@
-#include <gmp.h>
 #include <stdio.h>
 
 #include <cddlib/setoper.h>
 #include <cddlib/cdd.h>
 
 static int row_matches(dd_MatrixPtr matrix, long row, long x, long y) {
-  return mpq_cmp_si(matrix->matrix[row][0], 1, 1) == 0 &&
-         mpq_cmp_si(matrix->matrix[row][1], x, 1) == 0 &&
-         mpq_cmp_si(matrix->matrix[row][2], y, 1) == 0;
+  mytype expected[3];
+  int matches = 0;
+
+  for (int i = 0; i < 3; i++) {
+    dd_init(expected[i]);
+  }
+
+  dd_set_si(expected[0], 1);
+  dd_set_si(expected[1], x);
+  dd_set_si(expected[2], y);
+
+  matches = dd_cmp(matrix->matrix[row][0], expected[0]) == 0 &&
+            dd_cmp(matrix->matrix[row][1], expected[1]) == 0 &&
+            dd_cmp(matrix->matrix[row][2], expected[2]) == 0;
+
+  for (int i = 0; i < 3; i++) {
+    dd_clear(expected[i]);
+  }
+
+  return matches;
 }
 
 int main(void) {
@@ -66,7 +82,7 @@ int main(void) {
   ok = saw_vertices[0] && saw_vertices[1] && saw_vertices[2] &&
        saw_vertices[3];
   if (ok) {
-    puts("cddlib-ok vertices=4 arithmetic=gmp-rational");
+    printf("cddlib-ok vertices=4 arithmetic=%s\n", dd_ARITHMETIC);
   }
 
 done:
