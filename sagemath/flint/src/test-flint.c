@@ -16,6 +16,7 @@
 #include <flint/nmod_mpoly.h>
 #include <flint/nmod_poly.h>
 #include <flint/nmod_poly_factor.h>
+#include <flint/qqbar.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -86,6 +87,11 @@ int main(void) {
   acb_t eval_value;
   acb_poly_t ball_poly;
   acb_ptr complex_roots;
+  qqbar_t algebraic_sqrt2;
+  qqbar_t algebraic_square;
+  qqbar_t algebraic_i;
+  qqbar_t algebraic_minus_one;
+  qqbar_t algebraic_eval;
   char *bernoulli_str;
   char *poly_str;
   char *rational_str;
@@ -94,7 +100,9 @@ int main(void) {
   int mod_solved;
   slong matrix_rank;
   slong mod_matrix_rank;
+  slong root_of_unity_p;
   ulong mod_det;
+  ulong root_of_unity_q;
   ulong exp_xy[2];
   slong i;
 
@@ -153,6 +161,11 @@ int main(void) {
   acb_init(eval_value);
   acb_poly_init(ball_poly);
   complex_roots = _acb_vec_init(2);
+  qqbar_init(algebraic_sqrt2);
+  qqbar_init(algebraic_square);
+  qqbar_init(algebraic_i);
+  qqbar_init(algebraic_minus_one);
+  qqbar_init(algebraic_eval);
 
   fmpz_fac_ui(n, 30);
   fmpz_print(n);
@@ -337,6 +350,24 @@ int main(void) {
         (acb_contains_si_si(complex_roots + 0, 0, -1) &&
          acb_contains_si_si(complex_roots + 1, 0, 1)));
 
+  qqbar_sqrt_ui(algebraic_sqrt2, 2);
+  qqbar_sqr(algebraic_square, algebraic_sqrt2);
+  qqbar_set_ui(algebraic_eval, 2);
+  ok = ok && qqbar_equal(algebraic_square, algebraic_eval);
+
+  qqbar_i(algebraic_i);
+  qqbar_sqr(algebraic_minus_one, algebraic_i);
+  ok = ok && qqbar_is_neg_one(algebraic_minus_one);
+  ok = ok && qqbar_is_root_of_unity(&root_of_unity_p, &root_of_unity_q,
+                                    algebraic_i);
+  ok = ok && root_of_unity_p == 1 && root_of_unity_q == 4;
+
+  fmpz_poly_zero(poly);
+  fmpz_poly_set_coeff_si(poly, 0, -2);
+  fmpz_poly_set_coeff_ui(poly, 2, 1);
+  qqbar_evaluate_fmpz_poly(algebraic_eval, poly, algebraic_sqrt2);
+  ok = ok && qqbar_is_zero(algebraic_eval);
+
   fmpz_set_si(fmpz_mat_entry(matrix_a, 0, 0), 1);
   fmpz_set_si(fmpz_mat_entry(matrix_a, 0, 1), 2);
   fmpz_set_si(fmpz_mat_entry(matrix_a, 0, 2), 3);
@@ -390,13 +421,18 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 poly-gcd=x-2 finite-field-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 ball-poly=16 roots=+i,-i");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 poly-gcd=x-2 finite-field-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
   }
 
   flint_free(poly_str);
   flint_free(rational_str);
   flint_free(bernoulli_str);
   flint_free(pi_str);
+  qqbar_clear(algebraic_eval);
+  qqbar_clear(algebraic_minus_one);
+  qqbar_clear(algebraic_i);
+  qqbar_clear(algebraic_square);
+  qqbar_clear(algebraic_sqrt2);
   _acb_vec_clear(complex_roots, 2);
   acb_poly_clear(ball_poly);
   acb_clear(eval_value);
