@@ -77,4 +77,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -o "$probe_dir/primesieve-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/primesieve-test" |
-  grep "primesieve-ok pi(1e6)=78498 nth1000=7919 window-count=6 generated=3"
+  grep "primesieve-ok pi(1e6)=78498 nth1000=7919 twins100=8 window-count=6 generated=3 next4=31,37,41,43 iterator=101,103,97"
