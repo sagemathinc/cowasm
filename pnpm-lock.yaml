@@ -967,6 +967,15 @@ importers:
         specifier: workspace:*
         version: link:../../python/py-cython
 
+  sagemath/database-odlyzko-zeta:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../../python/cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
   sagemath/eclib:
     dependencies:
       '@cowasm/gmp':
