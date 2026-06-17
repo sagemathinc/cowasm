@@ -60,4 +60,5 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   "${standalone_ldlibs[@]}" \
   -o "$probe_dir/mpfr-test"
 
-cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/mpfr-test" | grep "3.1415926535897932384626433832795028841972"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/mpfr-test" |
+  grep -F "mpfr-ok pi exp log sqrt exact-div directed-rounding flags mpz"
