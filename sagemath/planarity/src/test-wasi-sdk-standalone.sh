@@ -56,4 +56,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/planarity-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/planarity-test" |
-  grep "planarity-ok cycle5=planar k5=nonplanar"
+  grep "planarity-ok cycle5=planar k5=nonplanar k33=nonplanar"
