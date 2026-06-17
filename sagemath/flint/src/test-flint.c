@@ -1,6 +1,7 @@
 #include <flint/flint.h>
 #include <flint/acb.h>
 #include <flint/acb_poly.h>
+#include <flint/arb_fmpz_poly.h>
 #include <flint/arb.h>
 #include <flint/bernoulli.h>
 #include <flint/fmpq.h>
@@ -23,6 +24,11 @@ static int fmpq_equal_frac_si(const fmpq_t value, slong num, ulong den) {
          fmpz_cmp_ui(fmpq_denref(value), den) == 0;
 }
 
+static int acb_contains_si_si(const acb_t value, slong real, slong imag) {
+  return arb_contains_si(acb_realref(value), real) &&
+         arb_contains_si(acb_imagref(value), imag);
+}
+
 int main(void) {
   fmpz_t n;
   fmpz_t factor_content;
@@ -41,6 +47,7 @@ int main(void) {
   fmpz_poly_t factor_product;
   fmpz_poly_t factor_power;
   fmpz_poly_t factor_tmp;
+  fmpz_poly_t complex_roots_poly;
   fmpz_poly_factor_t factorization;
   nmod_poly_t mod_poly;
   nmod_poly_t mod_factor_product;
@@ -71,6 +78,7 @@ int main(void) {
   acb_t eval_point;
   acb_t eval_value;
   acb_poly_t ball_poly;
+  acb_ptr complex_roots;
   char *bernoulli_str;
   char *poly_str;
   char *rational_str;
@@ -100,6 +108,7 @@ int main(void) {
   fmpz_poly_init(factor_product);
   fmpz_poly_init(factor_power);
   fmpz_poly_init(factor_tmp);
+  fmpz_poly_init(complex_roots_poly);
   fmpz_poly_factor_init(factorization);
   nmod_poly_init(mod_poly, 5);
   nmod_poly_init(mod_factor_product, 5);
@@ -130,6 +139,7 @@ int main(void) {
   acb_init(eval_point);
   acb_init(eval_value);
   acb_poly_init(ball_poly);
+  complex_roots = _acb_vec_init(2);
 
   fmpz_fac_ui(n, 30);
   fmpz_print(n);
@@ -280,6 +290,15 @@ int main(void) {
   ok = ok && arb_contains_si(acb_realref(eval_value), 16);
   ok = ok && arb_contains_zero(acb_imagref(eval_value));
 
+  fmpz_poly_set_coeff_ui(complex_roots_poly, 0, 1);
+  fmpz_poly_set_coeff_ui(complex_roots_poly, 2, 1);
+  arb_fmpz_poly_complex_roots(complex_roots, complex_roots_poly, 0, 64);
+  ok = ok &&
+       ((acb_contains_si_si(complex_roots + 0, 0, 1) &&
+         acb_contains_si_si(complex_roots + 1, 0, -1)) ||
+        (acb_contains_si_si(complex_roots + 0, 0, -1) &&
+         acb_contains_si_si(complex_roots + 1, 0, 1)));
+
   fmpz_set_si(fmpz_mat_entry(matrix_a, 0, 0), 1);
   fmpz_set_si(fmpz_mat_entry(matrix_a, 0, 1), 2);
   fmpz_set_si(fmpz_mat_entry(matrix_a, 0, 2), 3);
@@ -333,13 +352,14 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 finite-field-factors=2 fq=gf9 mpoly=zmod7 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 ball-poly=16");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 finite-field-factors=2 fq=gf9 mpoly=zmod7 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 ball-poly=16 roots=+i,-i");
   }
 
   flint_free(poly_str);
   flint_free(rational_str);
   flint_free(bernoulli_str);
   flint_free(pi_str);
+  _acb_vec_clear(complex_roots, 2);
   acb_poly_clear(ball_poly);
   acb_clear(eval_value);
   acb_clear(eval_point);
@@ -374,6 +394,7 @@ int main(void) {
   fmpz_poly_clear(factor_power);
   fmpz_poly_clear(factor_product);
   fmpz_poly_clear(factor_poly);
+  fmpz_poly_clear(complex_roots_poly);
   fmpz_poly_clear(poly);
   fmpz_mat_clear(matrix_expected);
   fmpz_mat_clear(matrix_product);
