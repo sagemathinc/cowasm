@@ -1,0 +1,28 @@
+diff --git a/src/util.h b/src/util.h
+--- a/src/util.h
++++ b/src/util.h
+@@ -30,11 +30,11 @@
+ #define SQRT(x)    sqrt(x)
+ /* Note: it may be necessary to define _GNU_SOURCE   */
+ /*       to obtain function prototypes for sincos()  */
+ #if defined(__APPLE__)
+ #define SINCOS(ax, sx, cx)  __sincos(ax, sx, cx)
+-#elif defined(_MSC_VER)
++#elif defined(_MSC_VER) || defined(__wasi__)
+ #define SINCOS(ax, sx, cx)  (*(sx))=sin(ax); (*(cx))=cos(ax)
+ #else
+ #define SINCOS(ax, sx, cx)  sincos(ax, sx, cx)
+ #endif
+
+@@ -51,11 +51,11 @@
+ #define SQRT(x)    sqrtf(x)
+ /* Note: it may be necessary to define _GNU_SOURCE   */
+ /*       to obtain function prototypes for sincos()  */
+ #if defined(__APPLE__)
+ #define SINCOS(ax, sx, cx)  __sincosf(ax, sx, cx)
+-#elif defined(_MSC_VER)
++#elif defined(_MSC_VER) || defined(__wasi__)
+ #define SINCOS(ax, sx, cx)  (*(sx))=sinf(ax); (*(cx))=cosf(ax)
+ #else
+ #define SINCOS(ax, sx, cx)  sincosf(ax, sx, cx)
+ #endif
