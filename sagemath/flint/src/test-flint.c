@@ -7,6 +7,9 @@
 #include <flint/fmpq.h>
 #include <flint/fmpz.h>
 #include <flint/fmpz_mat.h>
+#include <flint/fmpz_mod.h>
+#include <flint/fmpz_mod_poly.h>
+#include <flint/fmpz_mod_poly_factor.h>
 #include <flint/fmpz_poly.h>
 #include <flint/fmpz_poly_factor.h>
 #include <flint/fmpq_poly.h>
@@ -54,7 +57,13 @@ int main(void) {
   fmpz_poly_t gcd_poly_result;
   fmpz_poly_t gcd_poly_expected;
   fmpz_poly_t complex_roots_poly;
+  fmpz_mod_ctx_t fmpz_mod_ctx;
+  fmpz_mod_poly_t fmpz_mod_poly;
+  fmpz_mod_poly_t fmpz_mod_factor_product;
+  fmpz_mod_poly_t fmpz_mod_factor_power;
+  fmpz_mod_poly_t fmpz_mod_factor_tmp;
   fmpz_poly_factor_t factorization;
+  fmpz_mod_poly_factor_t fmpz_mod_factorization;
   fmpq_poly_t rational_poly;
   fmpq_poly_t rational_derivative;
   nmod_poly_t mod_poly;
@@ -128,7 +137,13 @@ int main(void) {
   fmpz_poly_init(gcd_poly_result);
   fmpz_poly_init(gcd_poly_expected);
   fmpz_poly_init(complex_roots_poly);
+  fmpz_mod_ctx_init_ui(fmpz_mod_ctx, 17);
+  fmpz_mod_poly_init(fmpz_mod_poly, fmpz_mod_ctx);
+  fmpz_mod_poly_init(fmpz_mod_factor_product, fmpz_mod_ctx);
+  fmpz_mod_poly_init(fmpz_mod_factor_power, fmpz_mod_ctx);
+  fmpz_mod_poly_init(fmpz_mod_factor_tmp, fmpz_mod_ctx);
   fmpz_poly_factor_init(factorization);
+  fmpz_mod_poly_factor_init(fmpz_mod_factorization, fmpz_mod_ctx);
   fmpq_poly_init(rational_poly);
   fmpq_poly_init(rational_derivative);
   nmod_poly_init(mod_poly, 5);
@@ -235,6 +250,22 @@ int main(void) {
   ok = ok && fmpz_poly_equal(factor_product, factor_poly);
   ok = ok && mod_factorization->num == 2;
   ok = ok && nmod_poly_equal(mod_factor_product, mod_poly);
+
+  fmpz_mod_poly_set_coeff_si(fmpz_mod_poly, 0, -1, fmpz_mod_ctx);
+  fmpz_mod_poly_set_coeff_ui(fmpz_mod_poly, 2, 1, fmpz_mod_ctx);
+  fmpz_mod_poly_factor(fmpz_mod_factorization, fmpz_mod_poly, fmpz_mod_ctx);
+  fmpz_mod_poly_set_coeff_ui(fmpz_mod_factor_product, 0, 1, fmpz_mod_ctx);
+  for (i = 0; i < fmpz_mod_factorization->num; i++) {
+    fmpz_mod_poly_pow(fmpz_mod_factor_power, fmpz_mod_factorization->poly + i,
+                      (ulong)fmpz_mod_factorization->exp[i], fmpz_mod_ctx);
+    fmpz_mod_poly_mul(fmpz_mod_factor_tmp, fmpz_mod_factor_product,
+                      fmpz_mod_factor_power, fmpz_mod_ctx);
+    fmpz_mod_poly_set(fmpz_mod_factor_product, fmpz_mod_factor_tmp,
+                      fmpz_mod_ctx);
+  }
+  ok = ok && fmpz_mod_factorization->num == 2;
+  ok = ok && fmpz_mod_poly_equal(fmpz_mod_factor_product, fmpz_mod_poly,
+                                 fmpz_mod_ctx);
 
   fmpz_poly_set_coeff_si(gcd_poly_a, 0, -2);
   fmpz_poly_set_coeff_si(gcd_poly_a, 1, 1);
@@ -421,7 +452,7 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 poly-gcd=x-2 finite-field-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 poly-gcd=x-2 finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
   }
 
   flint_free(poly_str);
@@ -459,6 +490,7 @@ int main(void) {
   fq_nmod_clear(finite_field_gen, finite_field_ctx);
   fq_nmod_ctx_clear(finite_field_ctx);
   nmod_poly_factor_clear(mod_factorization);
+  fmpz_mod_poly_factor_clear(fmpz_mod_factorization, fmpz_mod_ctx);
   nmod_poly_clear(mod_factor_tmp);
   nmod_poly_clear(mod_factor_power);
   nmod_poly_clear(mod_factor_product);
@@ -470,6 +502,11 @@ int main(void) {
   fmpz_poly_clear(gcd_poly_result);
   fmpz_poly_clear(gcd_poly_b);
   fmpz_poly_clear(gcd_poly_a);
+  fmpz_mod_poly_clear(fmpz_mod_factor_tmp, fmpz_mod_ctx);
+  fmpz_mod_poly_clear(fmpz_mod_factor_power, fmpz_mod_ctx);
+  fmpz_mod_poly_clear(fmpz_mod_factor_product, fmpz_mod_ctx);
+  fmpz_mod_poly_clear(fmpz_mod_poly, fmpz_mod_ctx);
+  fmpz_mod_ctx_clear(fmpz_mod_ctx);
   fmpz_poly_clear(factor_tmp);
   fmpz_poly_clear(factor_power);
   fmpz_poly_clear(factor_product);
