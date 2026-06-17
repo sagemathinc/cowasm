@@ -44,4 +44,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -o "$probe_dir/boost-cropped-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/boost-cropped-test" |
-  grep -F "boost-cropped-ok version=1_66 bits=2 refs=1 token=cowasm"
+  grep -F "boost-cropped-ok version=1_66 bits=2 refs=1 big-low=12345 ratio=1/1 components=2 token=cowasm"
