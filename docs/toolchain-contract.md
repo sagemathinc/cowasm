@@ -1152,6 +1152,31 @@ hardware-specific code disabled, and native build helpers compiled with Zig.
 It installs `libgf2x.a` under `sagemath/gf2x/dist/wasi-sdk`, then links and
 runs a GF(2)[x] multiplication probe through the WASI runner.
 
+`sagemath/lrcalc` has an opt-in static-library and executable smoke shape:
+
+```sh
+make -C sagemath/lrcalc test-wasi-sdk-standalone
+```
+
+The target builds lrcalc with `COWASM_TOOLCHAIN=wasi-sdk`, static libraries,
+and shared libraries disabled. It installs `liblrcalc.a`, the `lrcalc` CLI,
+and the `schubmult` CLI under `sagemath/lrcalc/dist/wasi-sdk`, then links and
+runs a Littlewood-Richardson coefficient probe through the WASI runner. It
+also runs command-line smokes for coefficient, skew Schur expansion, quantum
+Schur multiplication, and Schubert-polynomial multiplication.
+
+`sagemath/libbraiding` has an opt-in C/C++ static-library smoke shape:
+
+```sh
+make -C sagemath/libbraiding test-wasi-sdk-standalone
+```
+
+The target builds libbraiding with `COWASM_TOOLCHAIN=wasi-sdk`, static
+libraries, and shared libraries disabled. It requires the pinned SDK
+exception-enabled C++ runtime archives, installs `libbraiding.a` under
+`sagemath/libbraiding/dist/wasi-sdk`, then links and runs a braid canonical
+form and conjugator probe through the WASI runner.
+
 `sagemath/tdlib` has an opt-in dependent C++ header smoke shape:
 
 ```sh

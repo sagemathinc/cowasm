@@ -63,3 +63,15 @@ cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/lrcalc-test" |
 cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/lrcalc" \
   coef 3 2 1 - 2 1 - 2 1 |
   grep -Fx "2"
+
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/lrcalc" \
+  skew 3 2 1 / 2 1 |
+  grep -F "2  (2,1)"
+
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/lrcalc" \
+  mult -q 3,2 3 2 1 - 3 2 1 |
+  grep -F "1  (1,1)"
+
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/schubmult" \
+  1 3 2 - 1 3 2 |
+  grep -F "1  (2,3,1)"
