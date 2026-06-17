@@ -2,6 +2,7 @@
 #include <polybori/groebner/groebner_alg.h>
 
 #include <iostream>
+#include <vector>
 
 USING_NAMESPACE_PBORI
 USING_NAMESPACE_PBORIGB
@@ -29,8 +30,25 @@ int main() {
     return 1;
   }
 
+  GroebnerStrategy strategy(ring);
+  strategy.addGeneratorDelayed(x + y);
+  strategy.addGeneratorDelayed(y + BoolePolynomial(true, ring));
+  strategy.symmGB_F2();
+  std::vector<BoolePolynomial> basis = strategy.minimalizeAndTailReduce();
+
+  BoolePolynomial x_normal = strategy.nf(x);
+  BoolePolynomial y_normal = strategy.nf(y);
+  if (x_normal != BoolePolynomial(true, ring) ||
+      y_normal != BoolePolynomial(true, ring)) {
+    std::cerr << "unexpected Groebner normal forms: x=" << x_normal
+              << " y=" << y_normal << std::endl;
+    return 1;
+  }
+
   std::cout << "brial-ok product=" << product
             << " reduced=" << reduced
+            << " groebner-basis=" << basis.size()
+            << " nf(x)=" << x_normal
             << " terms=" << product.length() << std::endl;
   return 0;
 }

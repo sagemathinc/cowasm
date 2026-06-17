@@ -89,4 +89,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/brial-test" |
   grep -F "brial-ok product=" |
-  grep -F "reduced=y*z terms=4"
+  grep -F "reduced=y*z groebner-basis=2 nf(x)=1 terms=4"
