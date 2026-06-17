@@ -1,0 +1,26 @@
+{
+  "name": "@cowasm/pari-seadata-small",
+  "version": "1.0.0",
+  "description": "PARI small SEA database package for SageMath",
+  "main": "index.js",
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js", "src/*"],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make wasm",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "keywords": ["sagemath", "pari", "elliptic-curves", "data"],
+  "author": "William Stein",
+  "license": "GPL-2.0-or-later",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/pari-seadata-small",
+  "devDependencies": {}
+}

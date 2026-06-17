@@ -62,6 +62,8 @@ Current Sage pure Python/data packages:
 - Conway polynomials
 - Elliptic curves
 - Graph databases
+- PARI galdata
+- PARI seadata small
 - Polytopes DB
 
 **WARNING: Unlike the rest of CoWasm, there is code in this directory
