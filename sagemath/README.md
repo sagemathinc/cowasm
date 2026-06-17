@@ -60,6 +60,7 @@ Current wasi-sdk standalone math smoke packages:
 Current Sage pure Python/data packages:
 
 - Conway polynomials
+- Elliptic curves
 - Graph databases
 - Polytopes DB
 
