@@ -9,6 +9,7 @@
 #include <flint/fmpz_mat.h>
 #include <flint/fmpz_poly.h>
 #include <flint/fmpz_poly_factor.h>
+#include <flint/fmpq_poly.h>
 #include <flint/fmpq_mpoly.h>
 #include <flint/fq_nmod.h>
 #include <flint/nmod_mat.h>
@@ -47,8 +48,14 @@ int main(void) {
   fmpz_poly_t factor_product;
   fmpz_poly_t factor_power;
   fmpz_poly_t factor_tmp;
+  fmpz_poly_t gcd_poly_a;
+  fmpz_poly_t gcd_poly_b;
+  fmpz_poly_t gcd_poly_result;
+  fmpz_poly_t gcd_poly_expected;
   fmpz_poly_t complex_roots_poly;
   fmpz_poly_factor_t factorization;
+  fmpq_poly_t rational_poly;
+  fmpq_poly_t rational_derivative;
   nmod_poly_t mod_poly;
   nmod_poly_t mod_factor_product;
   nmod_poly_t mod_factor_power;
@@ -108,8 +115,14 @@ int main(void) {
   fmpz_poly_init(factor_product);
   fmpz_poly_init(factor_power);
   fmpz_poly_init(factor_tmp);
+  fmpz_poly_init(gcd_poly_a);
+  fmpz_poly_init(gcd_poly_b);
+  fmpz_poly_init(gcd_poly_result);
+  fmpz_poly_init(gcd_poly_expected);
   fmpz_poly_init(complex_roots_poly);
   fmpz_poly_factor_init(factorization);
+  fmpq_poly_init(rational_poly);
+  fmpq_poly_init(rational_derivative);
   nmod_poly_init(mod_poly, 5);
   nmod_poly_init(mod_factor_product, 5);
   nmod_poly_init(mod_factor_power, 5);
@@ -209,6 +222,31 @@ int main(void) {
   ok = ok && fmpz_poly_equal(factor_product, factor_poly);
   ok = ok && mod_factorization->num == 2;
   ok = ok && nmod_poly_equal(mod_factor_product, mod_poly);
+
+  fmpz_poly_set_coeff_si(gcd_poly_a, 0, -2);
+  fmpz_poly_set_coeff_si(gcd_poly_a, 1, 1);
+  fmpz_poly_set_coeff_si(gcd_poly_a, 2, -2);
+  fmpz_poly_set_coeff_si(gcd_poly_a, 3, 1);
+  fmpz_poly_set_coeff_si(gcd_poly_b, 0, -10);
+  fmpz_poly_set_coeff_si(gcd_poly_b, 1, 3);
+  fmpz_poly_set_coeff_si(gcd_poly_b, 2, 1);
+  fmpz_poly_set_coeff_si(gcd_poly_expected, 0, -2);
+  fmpz_poly_set_coeff_si(gcd_poly_expected, 1, 1);
+  fmpz_poly_gcd(gcd_poly_result, gcd_poly_a, gcd_poly_b);
+  ok = ok && fmpz_poly_equal(gcd_poly_result, gcd_poly_expected);
+
+  fmpq_set_si(q_mpoly_coeff, 1, 2);
+  fmpq_poly_set_coeff_fmpq(rational_poly, 0, q_mpoly_coeff);
+  fmpq_poly_set_coeff_si(rational_poly, 1, -3);
+  fmpq_set_si(q_mpoly_coeff, 5, 6);
+  fmpq_poly_set_coeff_fmpq(rational_poly, 3, q_mpoly_coeff);
+  fmpq_poly_derivative(rational_derivative, rational_poly);
+  fmpq_poly_get_coeff_fmpq(q_mpoly_coeff, rational_derivative, 0);
+  ok = ok && fmpq_equal_frac_si(q_mpoly_coeff, -3, 1);
+  fmpq_poly_get_coeff_fmpq(q_mpoly_coeff, rational_derivative, 1);
+  ok = ok && fmpq_is_zero(q_mpoly_coeff);
+  fmpq_poly_get_coeff_fmpq(q_mpoly_coeff, rational_derivative, 2);
+  ok = ok && fmpq_equal_frac_si(q_mpoly_coeff, 5, 2);
 
   fq_nmod_gen(finite_field_gen, finite_field_ctx);
   fq_nmod_pow_ui(finite_field_power, finite_field_gen, 8, finite_field_ctx);
@@ -352,7 +390,7 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 finite-field-factors=2 fq=gf9 mpoly=zmod7 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 ball-poly=16 roots=+i,-i");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 poly-gcd=x-2 finite-field-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 ball-poly=16 roots=+i,-i");
   }
 
   flint_free(poly_str);
@@ -389,7 +427,13 @@ int main(void) {
   nmod_poly_clear(mod_factor_power);
   nmod_poly_clear(mod_factor_product);
   nmod_poly_clear(mod_poly);
+  fmpq_poly_clear(rational_derivative);
+  fmpq_poly_clear(rational_poly);
   fmpz_poly_factor_clear(factorization);
+  fmpz_poly_clear(gcd_poly_expected);
+  fmpz_poly_clear(gcd_poly_result);
+  fmpz_poly_clear(gcd_poly_b);
+  fmpz_poly_clear(gcd_poly_a);
   fmpz_poly_clear(factor_tmp);
   fmpz_poly_clear(factor_power);
   fmpz_poly_clear(factor_product);
