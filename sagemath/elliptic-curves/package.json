@@ -9,7 +9,8 @@
     "build": "make wasm",
     "clean": "make clean",
     "prepublishOnly": "pnpm run build && make test",
-    "test": "make test"
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
   },
   "repository": {
     "type": "git",
