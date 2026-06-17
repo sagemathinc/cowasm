@@ -55,4 +55,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/cliquer-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/cliquer-test" |
-  grep "cliquer-ok max=3 clique=111 edges=5"
+  grep "cliquer-ok max=3 clique=111 all=3 weight=11 weighted=11 edges=5"
