@@ -1175,6 +1175,9 @@ importers:
 
   sagemath/ntl:
     dependencies:
+      '@cowasm/gf2x':
+        specifier: workspace:*
+        version: link:../gf2x
       '@cowasm/gmp':
         specifier: workspace:*
         version: link:../gmp
