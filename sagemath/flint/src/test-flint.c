@@ -3,6 +3,7 @@
 #include <flint/acb_poly.h>
 #include <flint/arb_fmpz_poly.h>
 #include <flint/arb.h>
+#include <flint/arb_hypgeom.h>
 #include <flint/bernoulli.h>
 #include <flint/fmpq.h>
 #include <flint/fmpz.h>
@@ -90,6 +91,12 @@ int main(void) {
   arb_t exp_log_two;
   arb_t pi;
   arb_t sin_pi;
+  arb_t gamma_arg;
+  arb_t gamma_value;
+  arb_t erf_zero;
+  arb_t bessel_order;
+  arb_t bessel_arg;
+  arb_t bessel_value;
   acb_t z;
   acb_t z_squared;
   acb_t eval_point;
@@ -170,6 +177,12 @@ int main(void) {
   arb_init(exp_log_two);
   arb_init(pi);
   arb_init(sin_pi);
+  arb_init(gamma_arg);
+  arb_init(gamma_value);
+  arb_init(erf_zero);
+  arb_init(bessel_order);
+  arb_init(bessel_arg);
+  arb_init(bessel_value);
   acb_init(z);
   acb_init(z_squared);
   acb_init(eval_point);
@@ -233,6 +246,13 @@ int main(void) {
   arb_set_ui(two, 2);
   arb_log(log_two, two, 128);
   arb_exp(exp_log_two, log_two, 128);
+  arb_set_ui(gamma_arg, 5);
+  arb_hypgeom_gamma(gamma_value, gamma_arg, 128);
+  arb_zero(erf_zero);
+  arb_hypgeom_erf(erf_zero, erf_zero, 128);
+  arb_zero(bessel_order);
+  arb_zero(bessel_arg);
+  arb_hypgeom_bessel_j(bessel_value, bessel_order, bessel_arg, 128);
 
   acb_set_si_si(z, 1, 1);
   acb_mul(z_squared, z, z, 128);
@@ -367,6 +387,9 @@ int main(void) {
 
   ok = ok && arb_contains_zero(sin_pi);
   ok = ok && arb_contains_si(exp_log_two, 2);
+  ok = ok && arb_contains_si(gamma_value, 24);
+  ok = ok && arb_contains_zero(erf_zero);
+  ok = ok && arb_contains_si(bessel_value, 1);
   ok = ok && arb_contains_si(acb_realref(z_squared), 0);
   ok = ok && arb_contains_si(acb_imagref(z_squared), 2);
   ok = ok && arb_contains_si(acb_realref(eval_value), 16);
@@ -452,7 +475,7 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 poly-gcd=x-2 finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 poly-gcd=x-2 finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
   }
 
   flint_free(poly_str);
@@ -472,6 +495,12 @@ int main(void) {
   acb_clear(z);
   arb_clear(sin_pi);
   arb_clear(pi);
+  arb_clear(bessel_value);
+  arb_clear(bessel_arg);
+  arb_clear(bessel_order);
+  arb_clear(erf_zero);
+  arb_clear(gamma_value);
+  arb_clear(gamma_arg);
   arb_clear(exp_log_two);
   arb_clear(log_two);
   arb_clear(two);

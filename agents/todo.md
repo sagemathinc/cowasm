@@ -47,6 +47,10 @@ commits over broad rewrites.
 
 ## WASI SDK Package Hardening
 
+- [x] Harden FLINT's standalone smoke with bundled Arb hypergeometric coverage:
+  - exact `gamma(5) = 24`;
+  - `erf(0) = 0`;
+  - `J_0(0) = 1`.
 - [x] Promote PARI's `wasi-sdk` smoke from "interesting probe" to a regression
   target with explicit error-recovery coverage:
   - GP kernel banner;
@@ -83,8 +87,8 @@ commits over broad rewrites.
 - Treat Sagelite as the practical bridge to SageMath-in-Wasm, not as a side
   quest. Prefer dependencies that unlock visible Sage/Sagelite features.
 - Near-term candidates after GMP, MPFR, MPC, and PARI:
-  - FLINT/Arb, because it unlocks high-value number theory and exact/ball
-    arithmetic and can draw on `/home/user/upstream/wasm-flint` for prior art;
+  - Keep expanding FLINT/Arb coverage around high-value number theory,
+    exact/ball arithmetic, and special functions;
   - cysignals, because Sage error/interrupt semantics will need deliberate
     runtime integration;
   - Cython package hardening, because much of Sage's Python/C boundary depends
