@@ -1180,6 +1180,15 @@ importers:
 
   sagemath/planarity: {}
 
+  sagemath/polytopes-db:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../../python/cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
   sagemath/primecount:
     dependencies:
       '@cowasm/primesieve':
