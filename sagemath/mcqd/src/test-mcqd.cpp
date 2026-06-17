@@ -38,7 +38,30 @@ int main() {
     return 1;
   }
 
-  std::printf("mcqd-ok max=%d clique=%d%d%d steps=%d\n", size, contains0,
-              contains1, contains2, mcq.steps());
+  Maxclique mcqdyn(conn, 5);
+  clique = nullptr;
+  size = 0;
+  mcqdyn.mcqdyn(clique, size);
+
+  contains0 = 0;
+  contains1 = 0;
+  contains2 = 0;
+  for (int i = 0; i < size; i++) {
+    contains0 |= clique[i] == 0;
+    contains1 |= clique[i] == 1;
+    contains2 |= clique[i] == 2;
+  }
+
+  ok = size == 3 && contains0 && contains1 && contains2;
+  delete[] clique;
+
+  if (!ok) {
+    std::fprintf(stderr, "unexpected MCQD dynamic clique result: size=%d\n",
+                 size);
+    return 1;
+  }
+
+  std::printf("mcqd-ok max=%d clique=%d%d%d steps=%d dyn-steps=%d\n", size,
+              contains0, contains1, contains2, mcq.steps(), mcqdyn.steps());
   return 0;
 }

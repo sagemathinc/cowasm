@@ -32,6 +32,15 @@ if [ ! -f "$libcxxabi" ] || [ ! -f "$libunwind" ]; then
   exit 77
 fi
 
+cat >"$probe_dir/small.clq" <<'EOF'
+p edge 5 5
+e 1 2
+e 1 3
+e 2 3
+e 3 4
+e 4 5
+EOF
+
 rm -rf "$dist_dir"
 mkdir -p "$dist_dir/bin" "$dist_dir/include/mcqd" "$dist_dir/share/mcqd"
 
@@ -46,7 +55,7 @@ mkdir -p "$dist_dir/bin" "$dist_dir/include/mcqd" "$dist_dir/share/mcqd"
   -o "$dist_dir/bin/mcqd.wasm"
 
 cp "$build_dir/mcqd.h" "$dist_dir/include/mcqd/mcqd.h"
-cp "$build_dir/test.clq" "$dist_dir/share/mcqd/test.clq"
+cp "$probe_dir/small.clq" "$dist_dir/share/mcqd/small.clq"
 ln -sf mcqd.wasm "$dist_dir/bin/mcqd"
 
 "$clangxx" \
@@ -59,8 +68,8 @@ ln -sf mcqd.wasm "$dist_dir/bin/mcqd"
   -o "$probe_dir/mcqd-test.wasm"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/mcqd-test.wasm" |
-  grep "mcqd-ok max=3 clique=111"
+  grep "mcqd-ok max=3 clique=111 steps=4 dyn-steps=4"
 
 cowasm_clang_standalone_run_wasi \
-  "$bin_dir" "$dist_dir/bin/mcqd.wasm" "$dist_dir/share/mcqd/test.clq" |
-  grep "Size = 5"
+  "$bin_dir" "$dist_dir/bin/mcqd.wasm" "$dist_dir/share/mcqd/small.clq" |
+  grep "Size = 3"
