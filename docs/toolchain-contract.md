@@ -1293,9 +1293,11 @@ make -C sagemath/database-knotinfo test-wasi-sdk-standalone
 make -C sagemath/database-kohel test-wasi-sdk-standalone
 make -C sagemath/database-mutation-class test-wasi-sdk-standalone
 make -C sagemath/database-odlyzko-zeta test-wasi-sdk-standalone
+make -C sagemath/database-stein-watkins-mini test-wasi-sdk-standalone
 make -C sagemath/database-symbolic-data test-wasi-sdk-standalone
 make -C sagemath/elliptic-curves test-wasi-sdk-standalone
 make -C sagemath/graphs test-wasi-sdk-standalone
+make -C sagemath/matroid-database test-wasi-sdk-standalone
 make -C sagemath/pari-elldata test-wasi-sdk-standalone
 make -C sagemath/pari-galdata test-wasi-sdk-standalone
 make -C sagemath/pari-galpol test-wasi-sdk-standalone
@@ -1311,8 +1313,9 @@ Conway polynomial Python module, design-theory tables, Cunningham tables, cubic
 Hecke algebra representation data, Jones number fields, KnotInfo and LinkInfo
 tables, Kohel modular/Hilbert polynomial tables, mutation classes, Odlyzko zeta
 zeros, symbolic polynomial-system benchmark data, Cremona elliptic-curve data,
-graph databases, PARI data directories, Galois-polynomial and number-field
-tables, and reflexive-polytope data.
+Stein-Watkins elliptic-curve data, graph databases, matroid enumerations, PARI
+data directories, Galois-polynomial and number-field tables, and
+reflexive-polytope data.
 
 `core/libcxx` has an opt-in C++ runtime side-module smoke target:
 
