@@ -1081,6 +1081,21 @@ importers:
         specifier: workspace:*
         version: link:../../core/kernel
 
+  sagemath/e-antic:
+    dependencies:
+      '@cowasm/boost-cropped':
+        specifier: workspace:*
+        version: link:../boost-cropped
+      '@cowasm/flint':
+        specifier: workspace:*
+        version: link:../flint
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/mpfr':
+        specifier: workspace:*
+        version: link:../mpfr
+
   sagemath/eclib:
     dependencies:
       '@cowasm/flint':

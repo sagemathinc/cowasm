@@ -13,6 +13,7 @@ Current wasi-sdk standalone math smoke packages:
 - memory_allocator
 - cddlib
 - GMP-ECM
+- e-antic
 - eclib
 - Givaro
 - MPFR
