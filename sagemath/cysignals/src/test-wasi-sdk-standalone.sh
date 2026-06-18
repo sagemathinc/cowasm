@@ -26,6 +26,7 @@ cowasm_standalone_probe "cysignals" wasi-sdk "$bin_dir" "$probe_dir"
 python_include="$cpython_wasm/include/python3.14"
 extension_suffix=".cpython-314-wasm32-wasi.so"
 cysignals_src="$build_dir/src/cysignals"
+sjlj_flags=(-mllvm -wasm-enable-sjlj -mllvm -wasm-use-legacy-eh=false)
 
 rm -rf "$dist_dir"
 mkdir -p "$dist_dir/cysignals" "$probe_dir/cysignals"
@@ -236,12 +237,16 @@ from cysignals.signals cimport (
     sig_occurred,
     sig_off,
     sig_on,
+    sig_retry,
     sig_unblock,
 )
 from libc.signal cimport SIGALRM, SIGFPE, SIGINT, SIGSEGV
 from libc.stdint cimport uint32_t
 
 from cysignals.signals import AlarmInterrupt, SignalError
+
+cdef extern from *:
+    ctypedef int volatile_int "volatile int"
 
 
 cdef int custom_signal_is_blocked() noexcept:
@@ -291,6 +296,19 @@ def guarded_sum(unsigned int n):
         raise AssertionError("unexpected cysignals exception state")
 
     return total
+
+
+def bounded_sig_retry():
+    cdef volatile_int attempts = 0
+
+    with nogil:
+        sig_on()
+        if attempts < 4:
+            attempts = attempts + 1
+            sig_retry()
+        sig_off()
+
+    return attempts
 
 
 def nested_guard_cleanup():
@@ -465,6 +483,7 @@ PYTHONPATH="$dist_dir:$py_cython" python3 -m cython -3 \
 
 "$bin_dir/wasi-sdk-clang-next" -target wasm32-wasip1 \
   -O0 \
+  "${sjlj_flags[@]}" \
   -fPIC \
   -D_SCHED_H \
   -shared \
@@ -477,6 +496,8 @@ PYTHONPATH="$dist_dir:$py_cython" python3 -m cython -3 \
   -I"$dist_dir/cysignals" \
   -I"$posix_wasi_sdk" \
   "$probe_dir/cysignals_guard_probe.c" \
+  -Wl,-Bstatic \
+  -lsetjmp \
   -o "$probe_dir/cysignals_guard_probe$extension_suffix"
 
 "$bin_dir/wasi-sdk-llvm-objdump-next" -h "$probe_dir/cysignals_guard_probe$extension_suffix" |
@@ -484,6 +505,9 @@ PYTHONPATH="$dist_dir:$py_cython" python3 -m cython -3 \
 "$bin_dir/wasi-sdk-llvm-nm-next" "$probe_dir/cysignals_guard_probe$extension_suffix" |
   grep ' T PyInit_cysignals_guard_probe$'
 
+# sig_retry() needs wasm SJLJ lowering and the static setjmp runtime inside the
+# side module. Otherwise the module either traps in longjmp or imports the
+# __c_longjmp exception tag from the main runtime.
 PYTHONPATH="$probe_dir:$dist_dir" "$bin_dir/python-wasm" - <<'PY'
 import cysignals
 import cysignals.signals
@@ -491,6 +515,7 @@ import cysignals_guard_probe
 
 assert cysignals.SignalError.__module__ == "cysignals.signals"
 assert cysignals_guard_probe.guarded_sum(8) == 28
+assert cysignals_guard_probe.bounded_sig_retry() == 4
 assert cysignals_guard_probe.nested_guard_cleanup()
 assert cysignals_guard_probe.guarded_python_exception_cleanup()
 assert cysignals_guard_probe.no_except_guard_cleanup()
@@ -503,4 +528,4 @@ assert cysignals_guard_probe.memory_allocator_roundtrip()
 assert cysignals_guard_probe.memory_allocator_failure()
 PY
 
-echo "cysignals-ok signals-extension pysignals-extension import init-api sigaction-api python-signal-api guarded-cython-module guard-cleanup no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check memory-helpers"
+echo "cysignals-ok signals-extension pysignals-extension import init-api sigaction-api python-signal-api guarded-cython-module guard-cleanup sig-retry no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check memory-helpers"

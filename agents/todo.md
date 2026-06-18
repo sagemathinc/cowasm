@@ -94,12 +94,13 @@ commits over broad rewrites.
   - Cython package hardening, because much of Sage's Python/C boundary depends
     on it.
 - Current cysignals `wasi-sdk` side-module smoke covers import, guard cleanup,
-  normal and no-except guard strings, signal-to-exception mapping, custom
-  handler registration, and the interrupt-safe memory allocation helpers that
-  downstream Sage Cython modules cimport. A bounded `sig_retry()` probe
-  currently traps with `RuntimeError: unreachable` in the side module; keep
-  that as a focused runtime/toolchain follow-up instead of enabling it in the
-  smoke yet.
+  normal and no-except guard strings, bounded `sig_retry()` recovery,
+  signal-to-exception mapping, custom handler registration, and the
+  interrupt-safe memory allocation helpers that downstream Sage Cython modules
+  cimport. The `sig_retry()` probe requires wasm SJLJ lowering and a statically
+  linked `libsetjmp` in the generated side module; without that, it either
+  traps in `longjmp` or imports the `__c_longjmp` exception tag from the main
+  runtime.
 - Delay very broad systems such as GAP, Singular, and full Sage until the
   smaller math dependency layer and runtime error/interrupt behavior are
   stronger.
