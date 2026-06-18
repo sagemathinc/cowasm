@@ -80,6 +80,7 @@ Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 - Mutation class database
 - Elliptic curves
 - Graph databases
+- Stein-Watkins mini elliptic-curve database
 - PARI elldata
 - PARI galdata
 - PARI galpol
