@@ -9,6 +9,7 @@
 #include <flint/bernoulli.h>
 #include <flint/ca.h>
 #include <flint/fmpq.h>
+#include <flint/fmpq_mat.h>
 #include <flint/fmpz.h>
 #include <flint/fmpz_factor.h>
 #include <flint/fmpz_mat.h>
@@ -70,7 +71,11 @@ int main(void) {
   fmpq_t b;
   fmpq_t bernoulli;
   fmpq_t q_mpoly_coeff;
+  fmpq_t rational_matrix_det;
   fmpq_t rational_sum;
+  fmpq_mat_t rational_matrix;
+  fmpq_mat_t rational_matrix_inverse;
+  fmpq_mat_t rational_matrix_identity;
   fmpz_mat_t matrix_a;
   fmpz_mat_t matrix_b;
   fmpz_mat_t matrix_product;
@@ -219,7 +224,11 @@ int main(void) {
   fmpq_init(b);
   fmpq_init(bernoulli);
   fmpq_init(q_mpoly_coeff);
+  fmpq_init(rational_matrix_det);
   fmpq_init(rational_sum);
+  fmpq_mat_init(rational_matrix, 2, 2);
+  fmpq_mat_init(rational_matrix_inverse, 2, 2);
+  fmpq_mat_init(rational_matrix_identity, 2, 2);
   fmpz_mat_init(matrix_a, 3, 3);
   fmpz_mat_init(matrix_b, 3, 3);
   fmpz_mat_init(matrix_product, 3, 3);
@@ -796,8 +805,19 @@ int main(void) {
   ok = ok && fmpz_equal_ui(fmpz_mat_entry(snf_matrix, 0, 0), 2);
   ok = ok && fmpz_equal_ui(fmpz_mat_entry(snf_matrix, 1, 1), 4);
 
+  fmpq_set_si(fmpq_mat_entry(rational_matrix, 0, 0), 1, 2);
+  fmpq_set_si(fmpq_mat_entry(rational_matrix, 0, 1), 1, 3);
+  fmpq_set_si(fmpq_mat_entry(rational_matrix, 1, 0), 2, 1);
+  fmpq_set_si(fmpq_mat_entry(rational_matrix, 1, 1), 3, 1);
+  fmpq_mat_det(rational_matrix_det, rational_matrix);
+  ok = ok && fmpq_equal_frac_si(rational_matrix_det, 5, 6);
+  ok = ok && fmpq_mat_inv(rational_matrix_inverse, rational_matrix);
+  fmpq_mat_mul(rational_matrix_identity, rational_matrix,
+               rational_matrix_inverse);
+  ok = ok && fmpq_mat_is_one(rational_matrix_identity);
+
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-poly-series=exp,inv,revert q-mpoly=Qxy z-mpoly=gcd,division,derivative,evaluation,factor matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-poly-series=exp,inv,revert q-mpoly=Qxy z-mpoly=gcd,division,derivative,evaluation,factor matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf rational-matrix=det,inv arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
   }
 
   flint_free(poly_str);
@@ -911,7 +931,11 @@ int main(void) {
   fmpz_mat_clear(matrix_product);
   fmpz_mat_clear(matrix_b);
   fmpz_mat_clear(matrix_a);
+  fmpq_mat_clear(rational_matrix_identity);
+  fmpq_mat_clear(rational_matrix_inverse);
+  fmpq_mat_clear(rational_matrix);
   fmpq_clear(rational_sum);
+  fmpq_clear(rational_matrix_det);
   fmpq_clear(q_mpoly_coeff);
   fmpq_clear(bernoulli);
   fmpq_clear(b);
