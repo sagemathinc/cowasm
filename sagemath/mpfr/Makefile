@@ -13,9 +13,13 @@ all: test-wasi-sdk-standalone
 include ../build/Makefile-rules
 
 GMP_WASI_SDK = ${PACKAGES}/gmp/dist/wasi-sdk
+GMP_WASM = ${PACKAGES}/gmp/dist/wasm
 
 ${GMP_WASI_SDK}/lib/libgmp.a:
 	$(MAKE) -C ${PACKAGES}/gmp test-wasi-sdk-standalone
+
+${GMP_WASM}/lib/libgmp.a:
+	$(MAKE) -C ${PACKAGES}/gmp wasm
 
 ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	rm -rf ${BUILD_WASI_SDK}
@@ -41,3 +45,24 @@ clean-wasi-sdk:
 clean:: clean-wasi-sdk
 
 test: test-wasi-sdk-standalone
+
+${DIST_WASM}/.built: ${GMP_WASM}/lib/libgmp.a ${BUILD_WASM}/.build
+	cd ${BUILD_WASM} && \
+		ABI=standard \
+		AR="zig ar" \
+		RANLIB="zig ranlib" \
+		CC="cowasm-cc" \
+		CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS}" \
+		CPPFLAGS="-I${GMP_WASM}/include" \
+		CFLAGS="-Oz" \
+		LDFLAGS="-L${GMP_WASM}/lib" \
+		./configure \
+			--build=i686-pc-linux-gnu \
+			--host=none \
+			--prefix=${DIST_WASM} \
+			--with-gmp=${GMP_WASM} \
+			--disable-shared \
+			--enable-static \
+			--disable-thread-safe
+	cd ${BUILD_WASM} && make -j4 install
+	touch ${DIST_WASM}/.built

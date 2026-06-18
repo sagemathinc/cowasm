@@ -1,0 +1,35 @@
+{
+  "name": "@cowasm/py-gmpy2",
+  "version": "1.0.0",
+  "description": "WebAssembly build of the gmpy2 Python library",
+  "main": "index.js",
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make wasm",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone",
+    "test:wasi-sdk-next": "make test-wasi-sdk-next"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "keywords": ["WebAssembly", "wasm", "number theory"],
+  "author": "William Stein <wstein@sagemath.com>",
+  "license": "LGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/python/py-gmpy2",
+  "devDependencies": {
+    "@cowasm/cpython": "workspace:*",
+    "@cowasm/gmp": "workspace:*",
+    "@cowasm/kernel": "workspace:*",
+    "@cowasm/mpc": "workspace:*",
+    "@cowasm/mpfr": "workspace:*",
+    "@cowasm/py-pip": "workspace:*",
+    "@cowasm/py-setuptools": "workspace:*"
+  }
+}

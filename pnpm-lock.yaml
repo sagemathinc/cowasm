@@ -649,6 +649,30 @@ importers:
         specifier: workspace:*
         version: link:../../core/kernel
 
+  python/py-gmpy2:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../cpython
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../../sagemath/gmp
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+      '@cowasm/mpc':
+        specifier: workspace:*
+        version: link:../../sagemath/mpc
+      '@cowasm/mpfr':
+        specifier: workspace:*
+        version: link:../../sagemath/mpfr
+      '@cowasm/py-pip':
+        specifier: workspace:*
+        version: link:../py-pip
+      '@cowasm/py-setuptools':
+        specifier: workspace:*
+        version: link:../py-setuptools
+
   python/py-kiwisolver:
     devDependencies:
       '@cowasm/cpython':

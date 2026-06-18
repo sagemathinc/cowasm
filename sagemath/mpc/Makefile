@@ -14,12 +14,20 @@ include ../build/Makefile-rules
 
 GMP_WASI_SDK = ${PACKAGES}/gmp/dist/wasi-sdk
 MPFR_WASI_SDK = ${PACKAGES}/mpfr/dist/wasi-sdk
+GMP_WASM = ${PACKAGES}/gmp/dist/wasm
+MPFR_WASM = ${PACKAGES}/mpfr/dist/wasm
 
 ${GMP_WASI_SDK}/lib/libgmp.a:
 	$(MAKE) -C ${PACKAGES}/gmp test-wasi-sdk-standalone
 
 ${MPFR_WASI_SDK}/lib/libmpfr.a:
 	$(MAKE) -C ${PACKAGES}/mpfr test-wasi-sdk-standalone
+
+${GMP_WASM}/lib/libgmp.a:
+	$(MAKE) -C ${PACKAGES}/gmp wasm
+
+${MPFR_WASM}/lib/libmpfr.a:
+	$(MAKE) -C ${PACKAGES}/mpfr wasm
 
 ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	rm -rf ${BUILD_WASI_SDK}
@@ -45,3 +53,23 @@ clean-wasi-sdk:
 clean:: clean-wasi-sdk
 
 test: test-wasi-sdk-standalone
+
+${DIST_WASM}/.built: ${GMP_WASM}/lib/libgmp.a ${MPFR_WASM}/lib/libmpfr.a ${BUILD_WASM}/.build
+	cd ${BUILD_WASM} && \
+		AR="zig ar" \
+		RANLIB="zig ranlib" \
+		CC="cowasm-cc" \
+		CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS}" \
+		CPPFLAGS="-I${GMP_WASM}/include -I${MPFR_WASM}/include" \
+		CFLAGS="-Oz" \
+		LDFLAGS="-L${GMP_WASM}/lib -L${MPFR_WASM}/lib" \
+		./configure \
+			--build=i686-pc-linux-gnu \
+			--host=none \
+			--prefix=${DIST_WASM} \
+			--with-gmp=${GMP_WASM} \
+			--with-mpfr=${MPFR_WASM} \
+			--disable-shared \
+			--enable-static
+	cd ${BUILD_WASM} && make -j4 install
+	touch ${DIST_WASM}/.built
