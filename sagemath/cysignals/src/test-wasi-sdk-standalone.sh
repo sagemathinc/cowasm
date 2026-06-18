@@ -135,6 +135,14 @@ PY
 
 cat >"$probe_dir/cysignals_guard_probe.pyx" <<'PYX'
 from cpython.exc cimport PyErr_SetString
+from cysignals.memory cimport (
+    check_allocarray,
+    check_calloc,
+    check_malloc,
+    check_realloc,
+    check_reallocarray,
+    sig_free,
+)
 from cysignals.signals cimport (
     add_custom_signals,
     cython_check_exception,
@@ -151,6 +159,7 @@ from cysignals.signals cimport (
     sig_unblock,
 )
 from libc.signal cimport SIGALRM, SIGFPE, SIGINT, SIGSEGV
+from libc.stdint cimport uint32_t
 
 from cysignals.signals import AlarmInterrupt, SignalError
 
@@ -310,6 +319,64 @@ def cython_check_exception_probe():
         return False
 
     return sig_occurred() == NULL
+
+
+def memory_allocator_roundtrip():
+    cdef unsigned char* raw = NULL
+    cdef unsigned char* grown = NULL
+    cdef uint32_t* zeroed = NULL
+    cdef uint32_t* array = NULL
+    cdef int i
+    cdef unsigned int total = 0
+
+    try:
+        raw = <unsigned char*>check_malloc(4)
+        for i in range(4):
+            raw[i] = i + 1
+
+        grown = <unsigned char*>check_realloc(raw, 8)
+        raw = NULL
+        for i in range(4, 8):
+            grown[i] = i + 1
+        for i in range(8):
+            total += grown[i]
+
+        zeroed = <uint32_t*>check_calloc(3, sizeof(uint32_t))
+        for i in range(3):
+            total += zeroed[i]
+            zeroed[i] = 10 + i
+
+        array = <uint32_t*>check_allocarray(2, sizeof(uint32_t))
+        array[0] = zeroed[0]
+        array[1] = zeroed[1]
+        array = <uint32_t*>check_reallocarray(array, 4, sizeof(uint32_t))
+        array[2] = zeroed[2]
+        array[3] = 99
+        total += array[0] + array[1] + array[2] + array[3]
+
+        array = <uint32_t*>check_reallocarray(array, 0, sizeof(uint32_t))
+        if array != NULL:
+            raise AssertionError("zero-sized realloc did not return NULL")
+
+        return total == 36 + 10 + 11 + 12 + 99 and sig_occurred() == NULL
+    finally:
+        if raw != NULL:
+            sig_free(raw)
+        if grown != NULL:
+            sig_free(grown)
+        if zeroed != NULL:
+            sig_free(zeroed)
+        if array != NULL:
+            sig_free(array)
+
+
+def memory_allocator_failure():
+    try:
+        check_allocarray(2, (<size_t>-1) // 2 + 1)
+    except MemoryError as err:
+        return str(err).startswith("failed to allocate 2 * ")
+
+    return False
 PYX
 
 PYTHONPATH="$dist_dir:$py_cython" python3 -m cython -3 \
@@ -352,6 +419,8 @@ assert cysignals_guard_probe.mapped_signal_exceptions()
 assert cysignals_guard_probe.custom_handler_registration_limit()
 assert cysignals_guard_probe.sig_on_reset_after_unbalanced_guard()
 assert cysignals_guard_probe.cython_check_exception_probe()
+assert cysignals_guard_probe.memory_allocator_roundtrip()
+assert cysignals_guard_probe.memory_allocator_failure()
 PY
 
-echo "cysignals-ok signals-extension import init-api guarded-cython-module guard-cleanup no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check"
+echo "cysignals-ok signals-extension import init-api guarded-cython-module guard-cleanup no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check memory-helpers"

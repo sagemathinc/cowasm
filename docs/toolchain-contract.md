@@ -906,7 +906,10 @@ under `sagemath/cysignals/dist/wasi-sdk`, verifies the `dylink.0` section and
 `PyInit_signals` export, and imports the module through `python-wasm`. WASI has
 no POSIX process signal delivery, so the local patch keeps upstream's signal
 handler setup as an explicit no-op while preserving `sig_check` and `sig_on`
-as Python exception checks for downstream Sage Cython modules.
+as Python exception checks for downstream Sage Cython modules. The smoke also
+compiles a dependent Cython side module that cimports `cysignals.memory`,
+exercises the interrupt-safe allocation helpers, and verifies their
+`MemoryError` path under `python-wasm`.
 
 `sagemath/gc` has the same opt-in dependent static-library smoke shape:
 
