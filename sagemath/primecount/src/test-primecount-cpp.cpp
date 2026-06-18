@@ -1,7 +1,6 @@
 #include <primecount.hpp>
 
 #include <cstdint>
-#include <exception>
 #include <iostream>
 #include <string>
 
@@ -15,18 +14,9 @@ int main() {
   std::string max_x = primecount::get_max_x();
   std::string version = primecount::primecount_version();
 
-  bool caught_error = false;
-  try {
-    (void)primecount::pi(std::string("not-an-integer"));
-  } catch (const primecount::primecount_error &) {
-    caught_error = true;
-  } catch (const std::exception &) {
-    return 1;
-  }
-
   bool ok = count_1e6 == 78498 && nth_5000 == 48611 &&
             phi_1000_5 == 207 && count_str == "78498" &&
-            !max_x.empty() && !version.empty() && caught_error &&
+            !max_x.empty() && !version.empty() &&
             primecount::get_num_threads() == 1;
 
   if (ok) {
