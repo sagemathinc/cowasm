@@ -29,6 +29,7 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -Wall \
   -Wno-deprecated-non-prototype \
   -fvisibility-main \
+  -Wl,-z,stack-size=1048576 \
   buckygen.c \
   -o "$dist_dir/bin/buckygen"
 ln -sf buckygen "$dist_dir/bin/buckygen.wasm"
@@ -38,6 +39,11 @@ count_log="$probe_dir/buckygen-count.log"
 cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/buckygen" \
   20 -u >"$count_log" 2>&1
 grep -F "15 fullerenes generated" "$count_log"
+
+ipr_log="$probe_dir/buckygen-ipr60.log"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/buckygen" \
+  60 -I -u >"$ipr_log" 2>&1
+grep -F "6063 fullerenes generated" "$ipr_log"
 
 graph6_log="$probe_dir/buckygen-graph6.log"
 cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/buckygen" \
@@ -50,4 +56,4 @@ cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/buckygen" \
 grep -aqF ">>planar_code<<" "$planar_file"
 test "$(wc -c < "$planar_file")" -eq 1950
 
-echo "buckygen-ok count graph6 planar-code"
+echo "buckygen-ok count ipr-c60 graph6 planar-code"
