@@ -93,4 +93,4 @@ env \
   -o "$probe_dir/tdlib-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/tdlib-test" |
-  grep -F "tdlib-ok cycle-width=2 valid=1"
+  grep -F "tdlib-ok path-width=1 cycle-width=2 clique-width=4 valid=1"
