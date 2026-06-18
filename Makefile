@@ -192,6 +192,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/gmp test-wasi-sdk-next
 	$(MAKE) -C sagemath/bliss test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/cysignals test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/memory-allocator test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/m4ri test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/m4rie test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/libatomic-ops test-wasi-sdk-standalone
@@ -235,6 +236,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/buckygen test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/cliquer test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mcqd test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/meataxe test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/coxeter3 test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/planarity test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/symmetrica test-wasi-sdk-standalone
@@ -255,6 +257,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/database-kohel test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-mutation-class test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-odlyzko-zeta test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/database-stein-watkins-mini test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-symbolic-data test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/elliptic-curves test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/graphs test-wasi-sdk-standalone
