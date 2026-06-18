@@ -32,7 +32,7 @@ rm -rf "$dist_dir"
 
 cd "$build_dir"
 env COWASM_TOOLCHAIN=wasi-sdk \
-  python makemakefile.py \
+  python3 makemakefile.py \
     --prefix="$dist_dir" \
     --gmp-prefix="$gmp_dir" \
     --cflags="-Oz -fvisibility-main" \
@@ -63,4 +63,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/zn-poly-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/zn-poly-test" |
-  grep -F "zn-poly-ok product middle scalar sub mod-inverse"
+  grep -F "zn-poly-ok product square middle scalar sub neg copy zero mod-inverse mod-pow"
