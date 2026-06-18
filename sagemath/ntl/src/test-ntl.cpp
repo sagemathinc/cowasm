@@ -1,5 +1,9 @@
+#include <NTL/GF2E.h>
+#include <NTL/GF2EX.h>
+#include <NTL/GF2EXFactoring.h>
 #include <NTL/GF2X.h>
 #include <NTL/GF2XFactoring.h>
+#include <NTL/LLL.h>
 #include <NTL/ZZ.h>
 #include <NTL/ZZX.h>
 #include <NTL/ZZ_p.h>
@@ -17,6 +21,70 @@
 #include <string>
 
 using namespace NTL;
+
+namespace {
+
+bool check_lattice_reduction(long &lattice_rank, ZZ &lattice_det) {
+  mat_ZZ basis;
+  basis.SetDims(3, 3);
+  basis[0][0] = 105;
+  basis[0][1] = 821;
+  basis[0][2] = 17;
+  basis[1][0] = 4;
+  basis[1][1] = 34;
+  basis[1][2] = 9;
+  basis[2][0] = 29;
+  basis[2][1] = 8;
+  basis[2][2] = 77;
+
+  mat_ZZ original = basis;
+  mat_ZZ transform;
+  lattice_rank = LLL(lattice_det, basis, transform);
+
+  mat_ZZ transformed;
+  mul(transformed, transform, original);
+
+  ZZ original_det;
+  determinant(original_det, original);
+  if (original_det < 0) {
+    negate(original_det, original_det);
+  }
+  ZZ original_det_square = sqr(original_det);
+
+  return lattice_rank == 3 && lattice_det == original_det_square &&
+         transformed == basis;
+}
+
+bool check_extension_field(long &extension_factors) {
+  GF2X modulus;
+  BuildIrred(modulus, 4);
+  GF2E::init(modulus);
+
+  GF2X generator_poly;
+  SetX(generator_poly);
+  GF2E alpha = to_GF2E(generator_poly);
+
+  GF2E alpha_order = power(alpha, 15);
+  if (!IsOne(alpha_order) || IsOne(alpha)) {
+    return false;
+  }
+
+  GF2EX polynomial;
+  SetCoeff(polynomial, 0, alpha);
+  SetCoeff(polynomial, 1, alpha + 1);
+  SetCoeff(polynomial, 2);
+
+  vec_pair_GF2EX_long factors;
+  CanZass(factors, polynomial);
+  extension_factors = factors.length();
+
+  GF2EX product;
+  mul(product, factors);
+
+  return extension_factors == 2 && product == polynomial;
+}
+
+} // namespace
 
 int main() {
   ZZ n = power(ZZ(2), 200);
@@ -69,6 +137,10 @@ int main() {
   ZZ matrix_det;
   determinant(matrix_det, matrix);
 
+  long lattice_rank = 0;
+  ZZ lattice_det;
+  long extension_factors = 0;
+
   const std::string expected =
       "1606938044258990275541962092341162602522202993782792835301376";
   const bool ok_integer = n_out.str() == expected;
@@ -83,14 +155,32 @@ int main() {
       coeff(binary_product, 5) == 1 && coeff(binary_product, 6) == 1;
   const bool ok_binary_factorization = binary_factors.length() == 2;
   const bool ok_matrix_det = matrix_det == 22;
+  const bool ok_lattice = check_lattice_reduction(lattice_rank, lattice_det);
+  const bool ok_extension = check_extension_field(extension_factors);
 
   if (ok_integer && ok_polynomial && ok_factorization && ok_binary_product &&
-      ok_binary_factorization && ok_matrix_det) {
+      ok_binary_factorization && ok_matrix_det && ok_lattice && ok_extension) {
     std::cout << "ntl-ok integer=2^200 polynomial=(x+1)^4 mod-factors="
               << factors.length() << " gf2x-factors="
               << binary_factors.length() << " matrix-det=" << matrix_det
+              << " lll-rank=" << lattice_rank
+              << " lll-det-square=" << lattice_det
+              << " gf2e-factors=" << extension_factors
               << "\n";
     return 0;
   }
+  std::cerr << "ntl smoke failure:"
+            << " integer=" << ok_integer
+            << " polynomial=" << ok_polynomial
+            << " mod-factorization=" << ok_factorization
+            << " gf2x-product=" << ok_binary_product
+            << " gf2x-factorization=" << ok_binary_factorization
+            << " matrix-det=" << ok_matrix_det
+            << " lattice=" << ok_lattice
+            << " extension-field=" << ok_extension
+            << " lll-rank=" << lattice_rank
+            << " lll-det-square=" << lattice_det
+            << " gf2e-factors=" << extension_factors
+            << "\n";
   return 1;
 }
