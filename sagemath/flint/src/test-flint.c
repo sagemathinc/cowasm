@@ -72,6 +72,9 @@ int main(void) {
   fmpz_mat_t matrix_b;
   fmpz_mat_t matrix_product;
   fmpz_mat_t matrix_expected;
+  fmpz_mat_t normal_form_input;
+  fmpz_mat_t hnf_matrix;
+  fmpz_mat_t snf_matrix;
   fmpz_poly_t poly;
   fmpz_poly_t factor_poly;
   fmpz_poly_t factor_product;
@@ -193,6 +196,9 @@ int main(void) {
   fmpz_mat_init(matrix_b, 3, 3);
   fmpz_mat_init(matrix_product, 3, 3);
   fmpz_mat_init(matrix_expected, 3, 3);
+  fmpz_mat_init(normal_form_input, 2, 2);
+  fmpz_mat_init(hnf_matrix, 2, 2);
+  fmpz_mat_init(snf_matrix, 2, 2);
   fmpz_poly_init(poly);
   fmpz_poly_init(factor_poly);
   fmpz_poly_init(factor_product);
@@ -624,8 +630,19 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 1, 0) == 2;
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
+  fmpz_set_si(fmpz_mat_entry(normal_form_input, 0, 0), 2);
+  fmpz_set_si(fmpz_mat_entry(normal_form_input, 0, 1), 4);
+  fmpz_set_si(fmpz_mat_entry(normal_form_input, 1, 0), 6);
+  fmpz_set_si(fmpz_mat_entry(normal_form_input, 1, 1), 8);
+  fmpz_mat_hnf(hnf_matrix, normal_form_input);
+  fmpz_mat_snf(snf_matrix, normal_form_input);
+  ok = ok && fmpz_mat_is_in_hnf(hnf_matrix);
+  ok = ok && fmpz_mat_is_in_snf(snf_matrix);
+  ok = ok && fmpz_equal_ui(fmpz_mat_entry(snf_matrix, 0, 0), 2);
+  ok = ok && fmpz_equal_ui(fmpz_mat_entry(snf_matrix, 1, 1), 4);
+
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
   }
 
   flint_free(poly_str);
@@ -708,6 +725,9 @@ int main(void) {
   fmpz_poly_clear(factor_poly);
   fmpz_poly_clear(complex_roots_poly);
   fmpz_poly_clear(poly);
+  fmpz_mat_clear(snf_matrix);
+  fmpz_mat_clear(hnf_matrix);
+  fmpz_mat_clear(normal_form_input);
   fmpz_mat_clear(matrix_expected);
   fmpz_mat_clear(matrix_product);
   fmpz_mat_clear(matrix_b);
