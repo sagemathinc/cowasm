@@ -204,6 +204,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/cddlib test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/gfan test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/glpk test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/ppl test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/4ti2 test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ecm test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/eclib test-wasi-sdk-standalone

@@ -56,6 +56,7 @@ Current wasi-sdk standalone math smoke packages:
 - lrslib
 - Gfan
 - GLPK
+- PPL
 - 4ti2
 - tdlib
 - rubiks
