@@ -53,5 +53,10 @@ cowasm_clang_standalone_run_wasi \
 grep -F "Tachyon Parallel/Multiprocessor Ray Tracer" "$render_log"
 grep -F "Ray Tracing Time:" "$render_log"
 head -c 3 "$probe_dir/null.ppm" | grep -F "P6" >/dev/null
+ppm_size="$(wc -c <"$probe_dir/null.ppm")"
+if [ "$ppm_size" -le 32 ]; then
+  echo "tachyon smoke produced a truncated PPM: $ppm_size bytes" >&2
+  exit 1
+fi
 
 echo "tachyon-ok render-ppm"
