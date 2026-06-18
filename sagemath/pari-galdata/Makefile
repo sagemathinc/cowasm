@@ -9,6 +9,7 @@ URL = https://mirrors.mit.edu/sage/spkg/upstream/${UPSTREAM_NAME}/${UPSTREAM_NAM
 TARBALL = ${UPSTREAM}/${UPSTREAM_NAME}-${VERSION}.tar.bz2
 TARBALL_SHA256 = 3d3ce1cec77a523971f53c225b78ed8bdd23e2fbfce03742d93a65a8fe4021cf
 DIST_WASI_SDK = ${DIST}/wasi-sdk
+PYTHON_WASM = ${CWD}/../../python/cpython/dist/wasm/bin/python3.wasm
 
 include ../build/Makefile-rules
 
@@ -24,19 +25,12 @@ ${DIST_WASI_SDK}/.built: ${BUILD_WASM}/.build
 	cp -R ${BUILD_WASM}/galdata ${DIST_WASI_SDK}/share/pari/
 	touch ${DIST_WASI_SDK}/.built
 
-define TEST_GALDATA
-	test -d $(1)/share/pari/galdata
-	test -f $(1)/share/pari/galdata/COS8_10_2
-	test -f $(1)/share/pari/galdata/COS11_7_6
-	test "$$(find $(1)/share/pari/galdata -type f | wc -l)" -gt 100
-endef
-
 test: ${DIST_WASM}/.built
-	$(call TEST_GALDATA,${DIST_WASM})
+	PYTHONDONTWRITEBYTECODE=1 COWASM_PARI_GALDATA=${DIST_WASM}/share/pari/galdata python3 ${SRC}/test_pari_galdata.py
 
 .PHONY: test-wasi-sdk-standalone
 test-wasi-sdk-standalone: ${DIST_WASI_SDK}/.built
-	$(call TEST_GALDATA,${DIST_WASI_SDK})
+	PYTHONDONTWRITEBYTECODE=1 COWASM_PARI_GALDATA=${DIST_WASI_SDK}/share/pari/galdata ${BIN}/cowasm ${PYTHON_WASM} ${SRC}/test_pari_galdata.py
 
 .PHONY: test-wasi-sdk-next
 test-wasi-sdk-next: test-wasi-sdk-standalone
