@@ -923,6 +923,8 @@ importers:
         specifier: workspace:*
         version: link:../gmp
 
+  sagemath/benzene: {}
+
   sagemath/bliss: {}
 
   sagemath/boost-cropped: {}
@@ -955,6 +957,8 @@ importers:
 
   sagemath/coxeter3: {}
 
+  sagemath/cunningham-tables: {}
+
   sagemath/cysignals:
     devDependencies:
       '@cowasm/cpython':
@@ -967,6 +971,24 @@ importers:
         specifier: workspace:*
         version: link:../../python/py-cython
 
+  sagemath/database-jones-numfield:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../../python/cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
+  sagemath/database-mutation-class:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../../python/cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
   sagemath/database-odlyzko-zeta:
     devDependencies:
       '@cowasm/cpython':
@@ -978,9 +1000,15 @@ importers:
 
   sagemath/eclib:
     dependencies:
+      '@cowasm/flint':
+        specifier: workspace:*
+        version: link:../flint
       '@cowasm/gmp':
         specifier: workspace:*
         version: link:../gmp
+      '@cowasm/mpfr':
+        specifier: workspace:*
+        version: link:../mpfr
       '@cowasm/ntl':
         specifier: workspace:*
         version: link:../ntl
@@ -1205,7 +1233,15 @@ importers:
         specifier: workspace:*
         version: link:../gmp
 
+  sagemath/pari-elldata: {}
+
+  sagemath/pari-galdata: {}
+
+  sagemath/pari-seadata-small: {}
+
   sagemath/planarity: {}
+
+  sagemath/plantri: {}
 
   sagemath/polytopes-db:
     devDependencies:
@@ -1239,6 +1275,8 @@ importers:
   sagemath/symmetrica: {}
 
   sagemath/sympow: {}
+
+  sagemath/tachyon: {}
 
   sagemath/tdlib:
     dependencies:
