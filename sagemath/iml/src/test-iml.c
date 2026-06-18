@@ -51,11 +51,66 @@ static int check_exact_solve(void) {
   return failed;
 }
 
-int main(void) {
-  if (check_modular_matrix() != 0 || check_exact_solve() != 0) {
+static int check_nullspace(void) {
+  const long n = 2;
+  const long m = 3;
+  const long a[6] = {1, 2, 3, 2, 4, 6};
+  mpz_t *nullspace = NULL;
+  mpz_t dot;
+  long dimension;
+  long row;
+  long column;
+  long vector;
+  int failed = 0;
+
+  dimension = nullspaceLong(n, m, a, &nullspace);
+  if (dimension != 2) {
+    fprintf(stderr, "unexpected nullspace dimension: %ld\n", dimension);
+    if (nullspace != NULL) {
+      for (column = 0; column < m * dimension; column++) {
+        mpz_clear(nullspace[column]);
+      }
+      free(nullspace);
+    }
     return 1;
   }
 
-  puts("iml-ok det=99 rank=1 solution=(1/5,3/5)");
+  mpz_init(dot);
+  for (row = 0; row < n; row++) {
+    for (vector = 0; vector < dimension; vector++) {
+      mpz_set_ui(dot, 0);
+      for (column = 0; column < m; column++) {
+        if (a[row * m + column] < 0) {
+          mpz_submul_ui(dot, nullspace[column * dimension + vector],
+                        labs(a[row * m + column]));
+        } else {
+          mpz_addmul_ui(dot, nullspace[column * dimension + vector],
+                        a[row * m + column]);
+        }
+      }
+      if (mpz_sgn(dot) != 0) {
+        gmp_fprintf(stderr, "nullspace vector %ld failed row %ld: %Zd\n",
+                    vector, row, dot);
+        failed = 1;
+      }
+    }
+  }
+
+  mpz_clear(dot);
+  for (column = 0; column < m * dimension; column++) {
+    mpz_clear(nullspace[column]);
+  }
+  free(nullspace);
+
+  return failed;
+}
+
+int main(void) {
+  if (check_modular_matrix() != 0 || check_exact_solve() != 0 ||
+      check_nullspace() != 0) {
+    return 1;
+  }
+
+  puts("iml-ok det=99 rank=1 solution=(1/5,3/5) nullspace-dim=2");
   return 0;
 }
