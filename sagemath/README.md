@@ -77,6 +77,8 @@ Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 - Graph databases
 - PARI elldata
 - PARI galdata
+- PARI galpol
+- PARI nftables
 - PARI seadata small
 - Polytopes DB
 - Odlyzko zeta-zero database

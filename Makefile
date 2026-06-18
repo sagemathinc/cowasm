@@ -257,6 +257,8 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/polytopes-db test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/pari-elldata test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/pari-galdata test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/pari-galpol test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/pari-nftables test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/pari-seadata-small test-wasi-sdk-standalone
 
 # clean up everything after each test, to prove can build and test everything

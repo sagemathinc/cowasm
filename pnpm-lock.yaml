@@ -1258,6 +1258,10 @@ importers:
 
   sagemath/pari-galdata: {}
 
+  sagemath/pari-galpol: {}
+
+  sagemath/pari-nftables: {}
+
   sagemath/pari-seadata-small: {}
 
   sagemath/planarity: {}
