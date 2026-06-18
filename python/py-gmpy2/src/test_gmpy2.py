@@ -59,6 +59,13 @@ def check_real_context():
         assert_decimal_digits(zeta2, "164493406684822643647", 1)
         assert format(zeta2, ".20f") == "1.64493406684822643647"
 
+        tenth = gmpy2.mpfr("0.1")
+        assert str(tenth) == "0.10000000000000000000000002"
+        assert format(tenth, "") == str(tenth)
+        assert repr(tenth) == "mpfr('0.10000000000000000000000002',80)"
+        assert format(gmpy2.mpfr("1e-20"), ".6g") == "1e-20"
+        assert format(gmpy2.mpfr("1e20"), ".6g") == "1e+20"
+
         assert format(gmpy2.mpfr("0.1"), ".20f") == "0.10000000000000000000"
         assert format(gmpy2.mpfr("1e-20"), ".20f") == "0.00000000000000000001"
         assert (

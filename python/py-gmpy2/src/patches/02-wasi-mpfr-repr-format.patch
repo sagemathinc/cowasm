@@ -1,0 +1,53 @@
+--- a/src/gmpy2_convert_mpfr.c
++++ b/src/gmpy2_convert_mpfr.c
+@@ -854,6 +854,30 @@
+ }
+ #endif
+ 
++static char *
++GMPy_CoWasm_MPFR_Append_Long(char *p, long value)
++{
++    char tmp[32];
++    size_t i = 0;
++    unsigned long n;
++
++    if (value < 0) {
++        *(p++) = '-';
++        n = (unsigned long)(-value);
++    }
++    else {
++        n = (unsigned long)value;
++    }
++    do {
++        tmp[i++] = (char)('0' + (n % 10));
++        n /= 10;
++    } while (n != 0);
++    while (i != 0) {
++        *(p++) = tmp[--i];
++    }
++    return p;
++}
++
+ /* str and repr implementations for mpfr */
+ static PyObject *
+ GMPy_MPFR_Str_Slot(MPFR_Object *self)
+@@ -874,13 +898,17 @@
+     PyObject *result, *temp;
+     long bits = mpfr_get_prec(MPFR(self));
+     char fmtstr[60];
++    char *p;
+ 
+     if (mpfr_number_p(MPFR(self)) && bits != DBL_MANT_DIG) {
+-        sprintf(fmtstr, "mpfr('{0:}',%ld)", bits);
++        strcpy(fmtstr, "mpfr('{0:}',");
++        p = fmtstr + strlen(fmtstr);
++        p = GMPy_CoWasm_MPFR_Append_Long(p, bits);
++        strcpy(p, ")");
+     }
+     else {
+-        sprintf(fmtstr, "mpfr('{0:}')");
++        strcpy(fmtstr, "mpfr('{0:}')");
+     }
+     temp = PyUnicode_FromString(fmtstr);
+     if (!temp) {
+         return NULL;
