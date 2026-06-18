@@ -1454,6 +1454,15 @@ importers:
 
   sagemath/saclib: {}
 
+  sagemath/sirocco:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/mpfr':
+        specifier: workspace:*
+        version: link:../mpfr
+
   sagemath/symmetrica: {}
 
   sagemath/sympow: {}
