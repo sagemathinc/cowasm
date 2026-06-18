@@ -20,6 +20,7 @@ Current wasi-sdk standalone math smoke packages:
 - MPFI
 - MPC
 - MPFRCX
+- LiDIA
 - FFLAS-FFPACK
 - FLINT
 - fplll

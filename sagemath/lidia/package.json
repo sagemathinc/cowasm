@@ -1,0 +1,39 @@
+{
+  "name": "@cowasm/lidia",
+  "version": "1.0.0",
+  "description": "LiDIA computational number theory library for SageMath",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
+  "files": [
+    "dist/js/*",
+    "README.md",
+    "src/*",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone",
+    "test:wasi-sdk-next": "make test-wasi-sdk-next"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/lidia",
+  "keywords": ["sagemath", "number-theory", "latte-int"],
+  "author": "William Stein",
+  "license": "SEE LICENSE IN README.md",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "dependencies": {
+    "@cowasm/gmp": "workspace:*"
+  },
+  "devDependencies": {}
+}
