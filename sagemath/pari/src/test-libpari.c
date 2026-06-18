@@ -49,6 +49,8 @@ int main(void) {
   }
 
   ok = ok && check_expression_long("primepi(10000)", 1229);
+  ok = ok && check_expression_long("factorback(factor(360))", 360);
+  ok = ok && check_expression_long("znorder(Mod(2,101))", 100);
   ok = ok && check_expression_long("polisirreducible(x^5 - x - 1)", 1);
   ok = ok && check_expression_long("ellcard(ellinit([0,-1]), 101)", 102);
   ok = ok && check_error_recovery();
@@ -59,8 +61,8 @@ int main(void) {
     return 1;
   }
 
-  printf("libpari result: %ld primepi=1229 irreducible=1 ellcard=102 "
-         "recovered=221 caught=e_INV\n",
+  printf("libpari result: %ld primepi=1229 factorback=360 znorder=100 "
+         "irreducible=1 ellcard=102 recovered=221 caught=e_INV\n",
          product);
   return 0;
 }
