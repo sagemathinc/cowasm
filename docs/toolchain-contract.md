@@ -1284,16 +1284,21 @@ their `dist/wasi-sdk` install layouts:
 
 ```sh
 make -C sagemath/conway-polynomials test-wasi-sdk-standalone
+make -C sagemath/combinatorial-designs test-wasi-sdk-standalone
 make -C sagemath/cunningham-tables test-wasi-sdk-standalone
 make -C sagemath/database-cubic-hecke test-wasi-sdk-standalone
 make -C sagemath/database-jones-numfield test-wasi-sdk-standalone
+make -C sagemath/database-knotinfo test-wasi-sdk-standalone
 make -C sagemath/database-kohel test-wasi-sdk-standalone
 make -C sagemath/database-mutation-class test-wasi-sdk-standalone
 make -C sagemath/database-odlyzko-zeta test-wasi-sdk-standalone
+make -C sagemath/database-symbolic-data test-wasi-sdk-standalone
 make -C sagemath/elliptic-curves test-wasi-sdk-standalone
 make -C sagemath/graphs test-wasi-sdk-standalone
 make -C sagemath/pari-elldata test-wasi-sdk-standalone
 make -C sagemath/pari-galdata test-wasi-sdk-standalone
+make -C sagemath/pari-galpol test-wasi-sdk-standalone
+make -C sagemath/pari-nftables test-wasi-sdk-standalone
 make -C sagemath/pari-seadata-small test-wasi-sdk-standalone
 make -C sagemath/polytopes-db test-wasi-sdk-standalone
 ```
@@ -1301,10 +1306,12 @@ make -C sagemath/polytopes-db test-wasi-sdk-standalone
 These packages do not compile C or C++ code, but the SDK target gives the
 standalone package gate a consistent install prefix. The smokes reuse each
 package's existing data-integrity checks against `dist/wasi-sdk`, covering the
-Conway polynomial Python module, Cunningham tables, cubic Hecke algebra
-representation data, Jones number fields, Kohel modular/Hilbert polynomial
-tables, mutation classes, Odlyzko zeta zeros, Cremona elliptic-curve data,
-graph databases, PARI data directories, and reflexive-polytope data.
+Conway polynomial Python module, design-theory tables, Cunningham tables, cubic
+Hecke algebra representation data, Jones number fields, KnotInfo and LinkInfo
+tables, Kohel modular/Hilbert polynomial tables, mutation classes, Odlyzko zeta
+zeros, symbolic polynomial-system benchmark data, Cremona elliptic-curve data,
+graph databases, PARI data directories, Galois-polynomial and number-field
+tables, and reflexive-polytope data.
 
 `core/libcxx` has an opt-in C++ runtime side-module smoke target:
 
