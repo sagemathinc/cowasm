@@ -208,6 +208,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/ppl test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/4ti2 test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ecm test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/e-antic test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/eclib test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/givaro test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mpfr test-wasi-sdk-standalone
