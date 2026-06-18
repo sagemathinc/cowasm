@@ -8,6 +8,7 @@ URL = https://mirrors.mit.edu/sage/spkg/upstream/polytopes_db/polytopes_db-${VER
 TARBALL = ${UPSTREAM}/polytopes_db-${VERSION}.tar.bz2
 TARBALL_SHA256 = cb788bdfca6e00864ec0bfa67932a68ae68bfeb9c527a91be90ad218026a0ce0
 DIST_WASI_SDK = ${DIST}/wasi-sdk
+PYTHON_WASM = ${CWD}/../../python/cpython/dist/wasm/bin/python3.wasm
 
 include ../build/Makefile-rules
 
@@ -33,8 +34,8 @@ test: deps ${DIST_WASM}/.built
 	PYTHONDONTWRITEBYTECODE=1 COWASM_POLYTOPES_DB_DATA=${DIST_WASM}/share/polytopes_db pnpm-exec cpython ${SRC}/test_polytopes_db.py
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: deps ${DIST_WASI_SDK}/.built
-	PYTHONDONTWRITEBYTECODE=1 COWASM_POLYTOPES_DB_DATA=${DIST_WASI_SDK}/share/polytopes_db pnpm-exec cpython ${SRC}/test_polytopes_db.py
+test-wasi-sdk-standalone: ${DIST_WASI_SDK}/.built
+	PYTHONDONTWRITEBYTECODE=1 COWASM_POLYTOPES_DB_DATA=${DIST_WASI_SDK}/share/polytopes_db ${BIN}/cowasm ${PYTHON_WASM} ${SRC}/test_polytopes_db.py
 
 .PHONY: test-wasi-sdk-next
 test-wasi-sdk-next: test-wasi-sdk-standalone

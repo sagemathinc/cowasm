@@ -9,6 +9,7 @@ URL = https://mirrors.mit.edu/sage/spkg/upstream/${UPSTREAM_NAME}/${UPSTREAM_NAM
 TARBALL = ${UPSTREAM}/${UPSTREAM_NAME}-${VERSION}.tar.gz
 TARBALL_SHA256 = 704d70101bc504bbdd2d7ac5847cb3bbc43e017c0ee163a9b4ab3ed2e572a001
 DIST_WASI_SDK = ${DIST}/wasi-sdk
+PYTHON_WASM = ${CWD}/../../python/cpython/dist/wasm/bin/python3.wasm
 
 include ../build/Makefile-rules
 
@@ -28,8 +29,8 @@ test: deps ${DIST_WASM}/.built
 	PYTHONDONTWRITEBYTECODE=1 COWASM_JONES_NUMFIELD_DATA=${DIST_WASM}/share/jones_numfield pnpm-exec cpython ${SRC}/test_jones_numfield.py
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: deps ${DIST_WASI_SDK}/.built
-	PYTHONDONTWRITEBYTECODE=1 COWASM_JONES_NUMFIELD_DATA=${DIST_WASI_SDK}/share/jones_numfield pnpm-exec cpython ${SRC}/test_jones_numfield.py
+test-wasi-sdk-standalone: ${DIST_WASI_SDK}/.built
+	PYTHONDONTWRITEBYTECODE=1 COWASM_JONES_NUMFIELD_DATA=${DIST_WASI_SDK}/share/jones_numfield ${BIN}/cowasm ${PYTHON_WASM} ${SRC}/test_jones_numfield.py
 
 .PHONY: test-wasi-sdk-next
 test-wasi-sdk-next: test-wasi-sdk-standalone

@@ -229,6 +229,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/primecount test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/nauty test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/plantri test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/benzene test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/cliquer test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mcqd test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/coxeter3 test-wasi-sdk-standalone
@@ -242,6 +243,10 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/tachyon test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/sympow test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/conway-polynomials test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/cunningham-tables test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/database-jones-numfield test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/database-mutation-class test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/database-odlyzko-zeta test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/elliptic-curves test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/graphs test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/polytopes-db test-wasi-sdk-standalone

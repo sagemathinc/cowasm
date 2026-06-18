@@ -8,6 +8,7 @@ URL = https://mirrors.mit.edu/sage/spkg/upstream/database_odlyzko_zeta/database_
 TARBALL = ${UPSTREAM}/database_odlyzko_zeta-${VERSION}.tar.bz2
 TARBALL_SHA256 = 8919f01992718b9bf5c0602dbf16dd9d6f58b141b25f67f5cfd59f6cd0f9a0d4
 DIST_WASI_SDK = ${DIST}/wasi-sdk
+PYTHON_WASM = ${CWD}/../../python/cpython/dist/wasm/bin/python3.wasm
 
 include ../build/Makefile-rules
 
@@ -27,8 +28,8 @@ test: deps ${DIST_WASM}/.built
 	PYTHONDONTWRITEBYTECODE=1 COWASM_ODLYZKO_ZETA_DATA=${DIST_WASM}/share/odlyzko_zeta pnpm-exec cpython ${SRC}/test_odlyzko_zeta.py
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: deps ${DIST_WASI_SDK}/.built
-	PYTHONDONTWRITEBYTECODE=1 COWASM_ODLYZKO_ZETA_DATA=${DIST_WASI_SDK}/share/odlyzko_zeta pnpm-exec cpython ${SRC}/test_odlyzko_zeta.py
+test-wasi-sdk-standalone: ${DIST_WASI_SDK}/.built
+	PYTHONDONTWRITEBYTECODE=1 COWASM_ODLYZKO_ZETA_DATA=${DIST_WASI_SDK}/share/odlyzko_zeta ${BIN}/cowasm ${PYTHON_WASM} ${SRC}/test_odlyzko_zeta.py
 
 .PHONY: test-wasi-sdk-next
 test-wasi-sdk-next: test-wasi-sdk-standalone

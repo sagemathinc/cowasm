@@ -8,6 +8,7 @@ URL = https://github.com/sagemath/sage-package/releases/download/tars/graphs-${V
 TARBALL = ${UPSTREAM}/graphs-${VERSION}.tar.bz2
 TARBALL_SHA256 = 07237c0d9853611505c389fd7bb92500c8743f5631babb4d0f45dfd8332f3741
 DIST_WASI_SDK = ${DIST}/wasi-sdk
+PYTHON_WASM = ${CWD}/../../python/cpython/dist/wasm/bin/python3.wasm
 
 include ../build/Makefile-rules
 
@@ -33,8 +34,8 @@ test: deps ${DIST_WASM}/.built
 	PYTHONDONTWRITEBYTECODE=1 COWASM_GRAPHS_DATA=${DIST_WASM}/share/graphs pnpm-exec cpython ${SRC}/test_graphs.py
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: deps ${DIST_WASI_SDK}/.built
-	PYTHONDONTWRITEBYTECODE=1 COWASM_GRAPHS_DATA=${DIST_WASI_SDK}/share/graphs pnpm-exec cpython ${SRC}/test_graphs.py
+test-wasi-sdk-standalone: ${DIST_WASI_SDK}/.built
+	PYTHONDONTWRITEBYTECODE=1 COWASM_GRAPHS_DATA=${DIST_WASI_SDK}/share/graphs ${BIN}/cowasm ${PYTHON_WASM} ${SRC}/test_graphs.py
 
 .PHONY: test-wasi-sdk-next
 test-wasi-sdk-next: test-wasi-sdk-standalone

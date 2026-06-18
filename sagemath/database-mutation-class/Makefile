@@ -9,6 +9,7 @@ URL = https://mirrors.mit.edu/sage/spkg/upstream/${UPSTREAM_NAME}/${UPSTREAM_NAM
 TARBALL = ${UPSTREAM}/${UPSTREAM_NAME}-${VERSION}.tar.gz
 TARBALL_SHA256 = 5105eed820e469bc0645788e23a47ff19420d3e398f5866df1424a05c67ee067
 DIST_WASI_SDK = ${DIST}/wasi-sdk
+PYTHON_WASM = ${CWD}/../../python/cpython/dist/wasm/bin/python3.wasm
 
 include ../build/Makefile-rules
 
@@ -30,8 +31,8 @@ test: deps ${DIST_WASM}/.built
 	PYTHONDONTWRITEBYTECODE=1 COWASM_MUTATION_CLASS_DATA=${DIST_WASM}/share/mutation_class pnpm-exec cpython ${SRC}/test_mutation_class.py
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: deps ${DIST_WASI_SDK}/.built
-	PYTHONDONTWRITEBYTECODE=1 COWASM_MUTATION_CLASS_DATA=${DIST_WASI_SDK}/share/mutation_class pnpm-exec cpython ${SRC}/test_mutation_class.py
+test-wasi-sdk-standalone: ${DIST_WASI_SDK}/.built
+	PYTHONDONTWRITEBYTECODE=1 COWASM_MUTATION_CLASS_DATA=${DIST_WASI_SDK}/share/mutation_class ${BIN}/cowasm ${PYTHON_WASM} ${SRC}/test_mutation_class.py
 
 .PHONY: test-wasi-sdk-next
 test-wasi-sdk-next: test-wasi-sdk-standalone
