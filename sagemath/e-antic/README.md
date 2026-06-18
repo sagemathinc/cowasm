@@ -7,8 +7,9 @@ number fields.
 This package builds the upstream `libeantic` C archive for the wasi-sdk
 toolchain against the existing CoWasm GMP, MPFR, FLINT, and Boost.Cropped
 ports. The standalone smoke test links a C probe against the installed archive
-and verifies an embedded square-root field, generator arithmetic, sign
-comparison, flooring, and string formatting under the WASI runner.
+and verifies embedded square-root and cube-root fields, generator arithmetic,
+inversion/division, ordering, rational detection, rounding, and string
+formatting under the WASI runner.
 
 The current CoWasm smoke intentionally builds only the C library. The upstream
 C++ wrapper still hits old Boost.MPL enum diagnostics with the cropped Boost

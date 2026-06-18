@@ -97,4 +97,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/e-antic-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/e-antic-test" |
-  grep "e-antic-ok degree=2 relation=1 sign=1 floor=1 field=NumberField(a^2 - 2"
+  grep "e-antic-ok degree=2 relation=1 sign=1 floor=1 cubic-degree=3 cubic-relation=1 inverse=1 quotient=1 ordering=1 field=NumberField(a^2 - 2"
