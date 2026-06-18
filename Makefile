@@ -214,6 +214,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/mpfrcx test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/fflas-ffpack test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/fplll test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/frobby test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/linbox test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/lrcalc test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/lrslib test-wasi-sdk-standalone
