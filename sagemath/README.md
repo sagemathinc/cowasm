@@ -26,6 +26,7 @@ Current wasi-sdk standalone math smoke packages:
 - IML
 - LinBox
 - lrcalc
+- lrcalc_python
 - libatomic_ops
 - libbraiding
 - NTL

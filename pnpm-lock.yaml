@@ -1245,6 +1245,22 @@ importers:
 
   sagemath/lrcalc: {}
 
+  sagemath/lrcalc-python:
+    dependencies:
+      '@cowasm/lrcalc':
+        specifier: workspace:*
+        version: link:../lrcalc
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../../python/cpython
+      '@cowasm/posix-wasm':
+        specifier: workspace:*
+        version: link:../../core/posix-wasm
+      '@cowasm/py-cython':
+        specifier: workspace:*
+        version: link:../../python/py-cython
+
   sagemath/lrslib:
     dependencies:
       '@cowasm/gmp':
