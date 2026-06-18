@@ -1193,6 +1193,19 @@ installs `libprimecount.a` under `sagemath/primecount/dist/wasi-sdk`, then
 links and runs prime-counting, n-th prime, partial sieve-function, and decimal
 string API probes through the WASI runner.
 
+`sagemath/primecountpy` has an opt-in Python extension side-module smoke
+shape:
+
+```sh
+make -C sagemath/primecountpy test-wasi-sdk-standalone
+```
+
+The target first ensures the CoWasm CPython, Cython, POSIX shim, libc++,
+cysignals, primecount, and primesieve WASI installs are available. It builds a
+Cython C++ side module for Sage's primecount Python binding, verifies the
+`dylink.0` section and `PyInit_primecount` export, then imports it through
+`python-wasm` and checks `prime_pi`, `prime_pi_128`, `nth_prime`, and `phi`.
+
 `sagemath/lrcalc` has an opt-in static-library and executable smoke shape:
 
 ```sh
@@ -1205,6 +1218,20 @@ and the `schubmult` CLI under `sagemath/lrcalc/dist/wasi-sdk`, then links and
 runs a Littlewood-Richardson coefficient probe through the WASI runner. It
 also runs command-line smokes for coefficient, skew Schur expansion, quantum
 Schur multiplication, and Schubert-polynomial multiplication.
+
+`sagemath/lrcalc-python` has an opt-in Python extension side-module smoke
+shape:
+
+```sh
+make -C sagemath/lrcalc-python test-wasi-sdk-standalone
+```
+
+The target first ensures the CoWasm CPython, Cython, POSIX shim, and lrcalc
+standalone installs are available. It builds the upstream Cython binding as a
+WASI side module, verifies the `dylink.0` section and `PyInit_lrcalc` export,
+then imports it through `python-wasm` and checks Littlewood-Richardson
+coefficients, Schur products, skew Schur expansions, coproducts, fusion
+products, and Schubert-polynomial multiplication.
 
 `sagemath/libbraiding` has an opt-in C/C++ static-library smoke shape:
 
@@ -1262,6 +1289,7 @@ make -C sagemath/glpk test-wasi-sdk-standalone
 make -C sagemath/libatomic-ops test-wasi-sdk-standalone
 make -C sagemath/lrslib test-wasi-sdk-standalone
 make -C sagemath/mcqd test-wasi-sdk-standalone
+make -C sagemath/msolve test-wasi-sdk-standalone
 make -C sagemath/nauty test-wasi-sdk-standalone
 make -C sagemath/palp test-wasi-sdk-standalone
 make -C sagemath/planarity test-wasi-sdk-standalone
@@ -1277,13 +1305,14 @@ These targets follow the package-local `dist/wasi-sdk` convention used above.
 They cover integer programming and toric-algebra tools (`4ti2`, `glpk`),
 graph and planarity kernels (`benzene`, `bliss`, `cliquer`, `mcqd`, `nauty`,
 `planarity`, `plantri`, `rw`), algebraic and combinatorial libraries
-(`brial`, `frobby`, `gfan`, `lrslib`, `saclib`, `zn-poly`), Coxeter and
-elliptic-curve helpers (`coxeter3`, `eclib`, `sympow`), the cropped Boost and
-libatomic-ops dependency leaves, and Tachyon's command-line renderer. Where
-the package depends on GMP, GLPK, cddlib, Boost, or the pinned
-exception-enabled C++ runtime archives, the package Makefile first builds or
-locates the corresponding sibling `dist/wasi-sdk` install. Their smokes run
-deterministic Sage-relevant probes such as Groebner/Hilbert examples,
+(`brial`, `frobby`, `gfan`, `lrslib`, `msolve`, `saclib`, `zn-poly`), Coxeter
+and elliptic-curve helpers (`coxeter3`, `eclib`, `sympow`), the cropped Boost
+and libatomic-ops dependency leaves, and Tachyon's command-line renderer.
+Where the package depends on GMP, GLPK, cddlib, Boost, FLINT, MPFR, or the
+pinned exception-enabled C++ runtime archives, the package Makefile first
+builds or locates the corresponding sibling `dist/wasi-sdk` install. Their
+smokes run deterministic Sage-relevant probes such as Groebner/Hilbert
+examples, Groebner-basis and zero-dimensional real-solve checks,
 maximum-clique and graph isomorphism checks, reflexive-polytope and fan
 computations, polynomial arithmetic, real-algebraic SACLIB arithmetic, elliptic
 curve L-function examples, and a Tachyon PPM render.
