@@ -6,5 +6,5 @@ statistics, integration, optimization, and special functions.
 
 The standalone smoke builds the static GSL archive and links a C probe that
 checks representative BLAS, CDF, eigenvalue, integration, linear algebra,
-minimization, polynomial, root-finding, sorting, statistics, vector, and Bessel
-function APIs under the WASI runner.
+minimization, ODE, polynomial, root-finding, sorting, spline, statistics,
+vector, and Bessel function APIs under the WASI runner.

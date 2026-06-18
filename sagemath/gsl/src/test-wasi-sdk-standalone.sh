@@ -59,4 +59,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/gsl-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/gsl-test" |
-  grep "gsl-ok j0=-0.177596771314 gaussian=0.841344746069 dot=16.0 linear=3.0 integral=2.0 root=0.739085133215 eigen=1.0 poly=1.0 min=2.0 mean=6.2"
+  grep "gsl-ok j0=-0.177596771314 gaussian=0.841344746069 dot=16.0 linear=3.0 integral=2.0 root=0.739085133215 eigen=1.0 poly=1.0 min=2.0 ode=2.718281828 spline=2.2 mean=6.2"

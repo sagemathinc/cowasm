@@ -6,10 +6,12 @@
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_min.h>
+#include <gsl/gsl_odeiv2.h>
 #include <gsl/gsl_poly.h>
 #include <gsl/gsl_roots.h>
 #include <gsl/gsl_permutation.h>
 #include <gsl/gsl_sf_bessel.h>
+#include <gsl/gsl_spline.h>
 #include <gsl/gsl_sort_vector.h>
 #include <gsl/gsl_statistics_double.h>
 #include <gsl/gsl_vector.h>
@@ -33,6 +35,26 @@ static double fixed_point_function(double x, void *params) {
 static double parabola_function(double x, void *params) {
   (void)params;
   return (x - 2.0) * (x - 2.0) + 1.0;
+}
+
+static int exponential_system(double t, const double y[], double dydt[],
+                              void *params) {
+  (void)t;
+  (void)params;
+  dydt[0] = y[0];
+  return GSL_SUCCESS;
+}
+
+static int exponential_jacobian(double t, const double y[], double *dfdy,
+                                double dfdt[], void *params) {
+  gsl_matrix_view matrix = gsl_matrix_view_array(dfdy, 1, 1);
+
+  (void)t;
+  (void)y;
+  (void)params;
+  gsl_matrix_set(&matrix.matrix, 0, 0, 1.0);
+  dfdt[0] = 0.0;
+  return GSL_SUCCESS;
 }
 
 static int check_lu_solve(double *third_solution_entry) {
@@ -245,6 +267,53 @@ static int check_minimizer(double *minimum) {
          close_to(*minimum, 2.0, 1e-10);
 }
 
+static int check_ode(double *value) {
+  gsl_odeiv2_system system = {exponential_system, exponential_jacobian, 1,
+                              NULL};
+  gsl_odeiv2_driver *driver =
+      gsl_odeiv2_driver_alloc_y_new(&system, gsl_odeiv2_step_rk8pd, 1e-6,
+                                    1e-10, 1e-10);
+  double t = 0.0;
+  double y[1] = {1.0};
+  int status;
+
+  *value = 0.0;
+  if (driver == NULL) {
+    return 0;
+  }
+
+  status = gsl_odeiv2_driver_apply(driver, &t, 1.0, y);
+  *value = y[0];
+  gsl_odeiv2_driver_free(driver);
+
+  return status == GSL_SUCCESS && close_to(*value, M_E, 1e-9);
+}
+
+static int check_spline(double *value) {
+  const double xs[] = {0.0, 1.0, 2.0, 3.0};
+  const double ys[] = {0.0, 1.0, 4.0, 9.0};
+  gsl_interp_accel *accelerator = gsl_interp_accel_alloc();
+  gsl_spline *spline = gsl_spline_alloc(gsl_interp_cspline, 4);
+  int status;
+
+  *value = 0.0;
+  if (accelerator == NULL || spline == NULL) {
+    gsl_interp_accel_free(accelerator);
+    gsl_spline_free(spline);
+    return 0;
+  }
+
+  status = gsl_spline_init(spline, xs, ys, 4);
+  if (status == GSL_SUCCESS) {
+    *value = gsl_spline_eval(spline, 1.5, accelerator);
+  }
+
+  gsl_spline_free(spline);
+  gsl_interp_accel_free(accelerator);
+
+  return status == GSL_SUCCESS && close_to(*value, 2.2, 1e-12);
+}
+
 int main(void) {
   gsl_set_error_handler_off();
 
@@ -256,6 +325,8 @@ int main(void) {
   double eigen = 0.0;
   double polynomial = 0.0;
   double minimum = 0.0;
+  double ode = 0.0;
+  double spline = 0.0;
   double samples[] = {1.0, 2.0, 4.0, 8.0, 16.0};
   double mean = gsl_stats_mean(samples, 1, 5);
   int linear_ok;
@@ -264,6 +335,8 @@ int main(void) {
   int eigen_ok;
   int polynomial_ok;
   int minimizer_ok;
+  int ode_ok;
+  int spline_ok;
 
   gsl_vector *x = gsl_vector_alloc(3);
   gsl_vector *y = gsl_vector_alloc(3);
@@ -286,15 +359,17 @@ int main(void) {
   eigen_ok = check_eigen(&eigen);
   polynomial_ok = check_polynomial(&polynomial);
   minimizer_ok = check_minimizer(&minimum);
+  ode_ok = check_ode(&ode);
+  spline_ok = check_spline(&spline);
 
   gsl_vector_free(x);
   gsl_vector_free(y);
 
   printf("gsl-ok j0=%.12f gaussian=%.12f dot=%.1f linear=%.1f "
          "integral=%.1f root=%.12f eigen=%.1f poly=%.1f min=%.1f "
-         "mean=%.1f\n",
+         "ode=%.9f spline=%.1f mean=%.1f\n",
          j0, gaussian, dot, linear, integral, root, eigen, polynomial,
-         minimum, mean);
+         minimum, ode, spline, mean);
 
   if (blas_status != GSL_SUCCESS) {
     return 1;
@@ -324,6 +399,12 @@ int main(void) {
     return 1;
   }
   if (!minimizer_ok) {
+    return 1;
+  }
+  if (!ode_ok) {
+    return 1;
+  }
+  if (!spline_ok) {
     return 1;
   }
   if (!close_to(mean, 6.2, 1e-12)) {
