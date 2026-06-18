@@ -81,6 +81,43 @@ static int check_kernel_left(void) {
   return ok;
 }
 
+static int check_inverse(void) {
+  mzd_t *matrix = mzd_init(3, 3);
+  mzd_t *identity = mzd_init(3, 3);
+  mzd_t *inverse = NULL;
+  mzd_t *product = NULL;
+  int ok;
+
+  if (matrix == NULL || identity == NULL) {
+    mzd_free(matrix);
+    mzd_free(identity);
+    return 0;
+  }
+
+  write_entry(matrix, 0, 0, 1);
+  write_entry(matrix, 0, 1, 1);
+  write_entry(matrix, 1, 1, 1);
+  write_entry(matrix, 1, 2, 1);
+  write_entry(matrix, 2, 0, 1);
+
+  write_entry(identity, 0, 0, 1);
+  write_entry(identity, 1, 1, 1);
+  write_entry(identity, 2, 2, 1);
+
+  inverse = mzd_inv_m4ri(NULL, matrix, 0);
+  if (inverse != NULL) {
+    product = mzd_mul(NULL, matrix, inverse, 0);
+  }
+
+  ok = inverse != NULL && product != NULL && mzd_equal(product, identity);
+
+  mzd_free(product);
+  mzd_free(inverse);
+  mzd_free(identity);
+  mzd_free(matrix);
+  return ok;
+}
+
 int main(void) {
   mzd_t *a = mzd_init(2, 3);
   mzd_t *b = mzd_init(3, 2);
@@ -122,9 +159,10 @@ int main(void) {
            expect_entry(product, 1, 0, 1) &&
            expect_entry(product, 1, 1, 1) &&
            check_solve_left() &&
-           check_kernel_left();
+           check_kernel_left() &&
+           check_inverse();
 
-  printf("m4ri-ok rank=%d product=%d%d%d%d solve kernel\n",
+  printf("m4ri-ok rank=%d product=%d%d%d%d solve kernel inverse\n",
          (int)rank,
          (int)mzd_read_bit(product, 0, 0),
          (int)mzd_read_bit(product, 0, 1),
