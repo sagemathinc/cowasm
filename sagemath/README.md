@@ -40,6 +40,7 @@ Current wasi-sdk standalone math smoke packages:
 - Qhull (provided by `core/qhull`)
 - nauty
 - plantri
+- NetworkX (provided by `python/py-networkx`)
 - Cliquer
 - MCQD
 - Coxeter3
