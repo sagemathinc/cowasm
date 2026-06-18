@@ -219,6 +219,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/frobby test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/linbox test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/lrcalc test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/lrcalc-python test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/lrslib test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/libbraiding test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/flint test-wasi-sdk-standalone
