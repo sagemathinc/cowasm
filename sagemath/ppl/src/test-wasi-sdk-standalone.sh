@@ -125,4 +125,4 @@ env \
   -o "$probe_dir/ppl-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/ppl-test" |
-  grep -F "ppl-ok poly-max=18/1 mip-max=25/1 hull=contains"
+  grep -F "ppl-ok poly-max=18/1 poly-min=-14/1 mip-max=25/1 hull=contains minimized-generators=checked"
