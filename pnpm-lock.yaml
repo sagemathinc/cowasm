@@ -1314,6 +1314,8 @@ importers:
 
   sagemath/pari-nftables: {}
 
+  sagemath/pari-seadata: {}
+
   sagemath/pari-seadata-small: {}
 
   sagemath/planarity: {}

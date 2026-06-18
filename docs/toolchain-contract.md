@@ -1302,6 +1302,7 @@ make -C sagemath/pari-elldata test-wasi-sdk-standalone
 make -C sagemath/pari-galdata test-wasi-sdk-standalone
 make -C sagemath/pari-galpol test-wasi-sdk-standalone
 make -C sagemath/pari-nftables test-wasi-sdk-standalone
+make -C sagemath/pari-seadata test-wasi-sdk-standalone
 make -C sagemath/pari-seadata-small test-wasi-sdk-standalone
 make -C sagemath/polytopes-db test-wasi-sdk-standalone
 ```
