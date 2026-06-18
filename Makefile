@@ -206,6 +206,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/gfan test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/glpk test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ppl test-wasi-sdk-standalone
+	$(MAKE) -C python/py-gmpy2 test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/pplpy test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/4ti2 test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ecm test-wasi-sdk-standalone

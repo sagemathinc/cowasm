@@ -65,6 +65,7 @@ Current wasi-sdk standalone math smoke packages:
 - GLPK
 - PPL
 - 4ti2
+- gmpy2 (provided by `python/py-gmpy2`)
 - tdlib
 - rubiks
 - Tachyon
@@ -104,8 +105,12 @@ Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 - Polytopes DB
 - Odlyzko zeta-zero database
 
-Current partial Sage Python-interface packages with wasi-sdk standalone smokes:
+Current Sage Python-interface packages with wasi-sdk standalone smokes:
 
+- `gmpy2` 2.3.0: the Python extension builds against the shared GMP, MPFR,
+  and MPC CoWasm packages. The standalone smoke covers integer, rational, real,
+  and complex arithmetic, MPFR decimal digits, and the C API capsule used by
+  downstream Cython modules.
 - `pplpy` 0.9.0: the upstream Cython extension modules build and import
   against the shared `sagemath/ppl` `libppl.so` side module, and simple
   `Bit_Row` and `Variable` wrappers work under `python-wasm`. Heavier

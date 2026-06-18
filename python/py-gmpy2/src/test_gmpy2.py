@@ -5,6 +5,12 @@ def assert_close(actual, expected, tolerance):
     assert abs(actual - expected) <= tolerance, (actual, expected, tolerance)
 
 
+def assert_decimal_digits(actual, expected_prefix, expected_exponent):
+    digits, exponent, bits = actual.digits(10)
+    assert exponent == expected_exponent, (digits, exponent, bits)
+    assert digits.startswith(expected_prefix), (digits, expected_prefix, bits)
+
+
 def check_integer_arithmetic():
     n = gmpy2.mpz(2) ** 127 - 1
     assert gmpy2.is_prime(n)
@@ -41,13 +47,15 @@ def check_real_context():
     context.trap_overflow = False
     try:
         root = gmpy2.sqrt(gmpy2.mpfr(2))
-        assert str(root).startswith("1.41421356237309504880")
+        assert_close(root * root, gmpy2.mpfr(2), gmpy2.mpfr("1e-22"))
+        assert_decimal_digits(root, "141421356237309504880", 1)
 
         exp_log = gmpy2.exp(gmpy2.log(gmpy2.mpfr(17)))
         assert_close(exp_log, gmpy2.mpfr(17), gmpy2.mpfr("1e-22"))
 
         zeta2 = gmpy2.zeta(2)
-        assert str(zeta2).startswith("1.64493406684822643647")
+        assert_close(zeta2, gmpy2.const_pi() ** 2 / 6, gmpy2.mpfr("1e-22"))
+        assert_decimal_digits(zeta2, "164493406684822643647", 1)
 
         context.round = gmpy2.RoundDown
         down = gmpy2.mpfr(1) / 10
