@@ -93,5 +93,19 @@ Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 - Polytopes DB
 - Odlyzko zeta-zero database
 
+Current investigated Sage optional solver gaps:
+
+- `kissat` 3.1.0: the upstream C build can produce a WASI binary after
+  disabling POSIX-only `alarm`/resident-set reporting and avoiding the host
+  `tissat` test program, but the full `kissat` executable traps while parsing
+  DIMACS input under the current WASI runner. Its standalone `kitten` helper
+  does solve small DIMACS SAT instances, but that is not enough for a useful
+  `@cowasm/kissat` package yet.
+- `glucose` 4.1: the sequential `simp/glucose` build reaches link and needs
+  the existing CoWasm zlib port plus the pinned wasi-sdk C++ exception
+  archives. The POSIX signal/resource-limit setup must be disabled for WASI,
+  and the resulting executable currently traps in the DIMACS parser under the
+  current WASI runner.
+
 **WARNING: Unlike the rest of CoWasm, there is code in this directory
 that is licensed under the GPL. No code in the other packages (core, python, web, etc.,) depends on this code.**
