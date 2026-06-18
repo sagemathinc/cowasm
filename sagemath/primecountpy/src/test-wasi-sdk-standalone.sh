@@ -159,12 +159,26 @@ cd "$probe_dir"
 PYTHONPATH="$dist_dir:$cysignals_dir" "$bin_dir/python-wasm" - <<'PY'
 from primecountpy.primecount import nth_prime, phi, prime_pi, prime_pi_128
 
+assert prime_pi(1) == 0
+assert prime_pi(2) == 1
 assert prime_pi(1000) == 168
 assert prime_pi(1000, method="deleglise_rivat") == 168
 assert prime_pi_128(10**10) == 455052511
+assert nth_prime(1) == 2
 assert nth_prime(168) == 997
+assert nth_prime(1000) == 7919
 assert phi(100, 4) == 22
 assert phi(1000, 5) == 207
+
+try:
+    nth_prime(0)
+except ValueError as err:
+    assert "positive" in str(err)
+else:
+    raise AssertionError("nth_prime(0) should reject non-positive input")
+
+assert prime_pi(100) == 25
+assert nth_prime(10) == 29
 PY
 
-echo "primecountpy-ok prime_pi prime_pi_128 nth_prime phi"
+echo "primecountpy-ok prime_pi prime_pi_128 nth_prime phi validation recovery"
