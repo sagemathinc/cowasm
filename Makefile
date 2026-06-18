@@ -230,6 +230,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/lcalc test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/primesieve test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/primecount test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/primecountpy test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/nauty test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/plantri test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/benzene test-wasi-sdk-standalone

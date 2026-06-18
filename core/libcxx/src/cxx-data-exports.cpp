@@ -1,0 +1,31 @@
+#define CXX_DATA_EXPORT(wrapper, symbol)                                      \
+  extern "C" char wrapper[] __asm__(#symbol);                                \
+  extern "C" __attribute__((visibility("default"))) void                    \
+      *__WASM_EXPORT__##symbol(void) {                                       \
+    return wrapper;                                                           \
+  }
+
+CXX_DATA_EXPORT(cowasm_ZTISt9bad_alloc, _ZTISt9bad_alloc)
+CXX_DATA_EXPORT(cowasm_ZTISt11logic_error, _ZTISt11logic_error)
+CXX_DATA_EXPORT(cowasm_ZTISt12length_error, _ZTISt12length_error)
+CXX_DATA_EXPORT(cowasm_ZTISt12out_of_range, _ZTISt12out_of_range)
+CXX_DATA_EXPORT(cowasm_ZTISt13runtime_error, _ZTISt13runtime_error)
+CXX_DATA_EXPORT(cowasm_ZTISt20bad_array_new_length, _ZTISt20bad_array_new_length)
+CXX_DATA_EXPORT(cowasm_ZTINSt3__217__assoc_sub_stateE, _ZTINSt3__217__assoc_sub_stateE)
+
+CXX_DATA_EXPORT(cowasm_ZTVSt9bad_alloc, _ZTVSt9bad_alloc)
+CXX_DATA_EXPORT(cowasm_ZTVSt11logic_error, _ZTVSt11logic_error)
+CXX_DATA_EXPORT(cowasm_ZTVSt12length_error, _ZTVSt12length_error)
+CXX_DATA_EXPORT(cowasm_ZTVSt12out_of_range, _ZTVSt12out_of_range)
+CXX_DATA_EXPORT(cowasm_ZTVSt13runtime_error, _ZTVSt13runtime_error)
+CXX_DATA_EXPORT(cowasm_ZTVSt20bad_array_new_length, _ZTVSt20bad_array_new_length)
+CXX_DATA_EXPORT(cowasm_ZTVNSt3__217__assoc_sub_stateE, _ZTVNSt3__217__assoc_sub_stateE)
+
+CXX_DATA_EXPORT(cowasm_ZTTNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE, _ZTTNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE)
+CXX_DATA_EXPORT(cowasm_ZTTNSt3__219basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE, _ZTTNSt3__219basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE)
+CXX_DATA_EXPORT(cowasm_ZTTNSt3__218basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE, _ZTTNSt3__218basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE)
+CXX_DATA_EXPORT(cowasm_ZTCNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_ostreamIcS2_EE, _ZTCNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_ostreamIcS2_EE)
+CXX_DATA_EXPORT(cowasm_ZTCNSt3__219basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE, _ZTCNSt3__219basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE)
+CXX_DATA_EXPORT(cowasm_ZTCNSt3__218basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE, _ZTCNSt3__218basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE)
+CXX_DATA_EXPORT(cowasm_ZTCNSt3__218basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_14basic_iostreamIcS2_EE, _ZTCNSt3__218basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_14basic_iostreamIcS2_EE)
+CXX_DATA_EXPORT(cowasm_ZTCNSt3__218basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE8_NS_13basic_ostreamIcS2_EE, _ZTCNSt3__218basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE8_NS_13basic_ostreamIcS2_EE)
