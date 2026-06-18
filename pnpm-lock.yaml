@@ -1239,6 +1239,8 @@ importers:
 
   sagemath/meataxe: {}
 
+  sagemath/modular-decomposition: {}
+
   sagemath/memory-allocator:
     devDependencies:
       '@cowasm/cpython':
