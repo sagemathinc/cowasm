@@ -1329,6 +1329,18 @@ importers:
         specifier: workspace:*
         version: link:../mpfr
 
+  sagemath/msolve:
+    dependencies:
+      '@cowasm/flint':
+        specifier: workspace:*
+        version: link:../flint
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/mpfr':
+        specifier: workspace:*
+        version: link:../mpfr
+
   sagemath/nauty: {}
 
   sagemath/ntl:

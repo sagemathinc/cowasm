@@ -1,0 +1,13 @@
+diff --git a/src/fglm/fglm_core.c b/src/fglm/fglm_core.c
+index 4cc8127..de5cf2c 100644
+--- a/src/fglm/fglm_core.c
++++ b/src/fglm/fglm_core.c
+@@ -49,7 +49,7 @@ double omp_get_wtime(void) { return realtime();}
+ #include "matrix-mult.c"
+ #include "berlekamp_massey.c"
+
+-#ifdef BLOCKWIED
++#if BLOCKWIED
+ #include <flint/nmod_mat.h>
+ #include <flint/nmod_poly_mat.h>
+ #include <flint/fmpz_mat.h>

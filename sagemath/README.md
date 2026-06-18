@@ -70,6 +70,7 @@ Current wasi-sdk standalone math smoke packages:
 - Buckygen
 - SharedMeatAxe
 - Modular decomposition
+- msolve
 
 Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 
