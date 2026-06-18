@@ -101,6 +101,15 @@ int side_memory_size_is_positive() {
   return (*f)();
 }
 
+#ifdef COWASM_WASI_SDK_TEST
+EXPORTED_SYMBOL
+int add_provider_data_relocation(int n) {
+  void* handle = dlopen("./consumer.so", 2);
+  FUN_PTR f = (FUN_PTR)dlsym(handle, "add_provider_data_relocation");
+  return (*f)(n);
+}
+#endif
+
 // This is going to get called by the dynamic library to do something.
 EXPORTED_SYMBOL
 int add5077(int n) { return n + 5077; }
@@ -136,6 +145,11 @@ int main() {
 
   printf("side_memory_size_is_positive() = %d\n", side_memory_size_is_positive());
   assert(side_memory_size_is_positive() == 1);
+
+#ifdef COWASM_WASI_SDK_TEST
+  printf("add_provider_data_relocation(2022) = %d\n", add_provider_data_relocation(2022));
+  assert(add_provider_data_relocation(2022) == 2022 + 41);
+#endif
 
   int n = add5077_using_lib_using_main(389);
   printf("add5077_using_lib_using_main(389) = %d\n", n);

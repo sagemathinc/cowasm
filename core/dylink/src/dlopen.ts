@@ -160,6 +160,40 @@ export default class DlopenManger {
     return sym;
   }
 
+  private symbolViaPointerFromLibrary(name: string, library: Library) {
+    const f = library.instance.exports[`__WASM_EXPORT__${name}`];
+    if (typeof f != "function") {
+      return undefined;
+    }
+    const sym = (f as Function)();
+    log("symbolViaPointerFromLibrary", name, library.path, "-->", sym);
+    return sym;
+  }
+
+  private symbolViaPointerFromPaths(name: string, paths: string[]) {
+    for (const path of paths) {
+      const library = this.pathToLibrary[path];
+      if (library == null) continue;
+      const ptr = this.symbolViaPointerFromLibrary(name, library);
+      if (ptr != null) {
+        return ptr;
+      }
+    }
+    return undefined;
+  }
+
+  private symbolViaPointerFromLoadedLibraries(name: string) {
+    for (const handle in this.handleToLibrary) {
+      const library = this.handleToLibrary[handle];
+      if (!library.path) continue;
+      const ptr = this.symbolViaPointerFromLibrary(name, library);
+      if (ptr != null) {
+        return ptr;
+      }
+    }
+    return undefined;
+  }
+
   private pathForNeededDynlib(path: string, needed: string): string {
     if (needed.startsWith("/") || needed.startsWith("./")) {
       return needed;
@@ -515,7 +549,10 @@ export default class DlopenManger {
       delete memMap[symName];
       const ptrBeforeOffset = (instance.exports[symName] as any)?.value;
       if (ptrBeforeOffset == null) {
-        const ptr = this.symbolViaPointer(symName);
+        const ptr =
+          this.symbolViaPointerFromPaths(symName, neededPaths) ??
+          this.symbolViaPointerFromLoadedLibraries(symName) ??
+          this.symbolViaPointer(symName);
         if (ptr == null) {
           console.error(
             `dlopen: FATAL ERROR - Symbol '${symName}' is not available in the cowasm kernel or any loaded library via __WASM_EXPORT__${symName} but is required by '${path}'.`
