@@ -7,14 +7,52 @@
 static int check_modular_matrix(void) {
   Double det_matrix[4] = {1, 2, 3, 4};
   Double rank_matrix[6] = {1, 2, 3, 2, 4, 6};
+  Double inverse_matrix[4] = {1, 2, 3, 4};
+  Double basis_matrix[6] = {1, 2, 3, 2, 4, 6};
+  Double *row_basis = NULL;
+  Double *left_nullspace = NULL;
   const long det = mDeterminant(101, det_matrix, 2);
   const long rank = mRank(101, rank_matrix, 2, 3);
+  const long inverse_ok = mInverse(101, inverse_matrix, 2);
+  const long basis_rank = mBasis(101, basis_matrix, 2, 3, 1, 1, &row_basis,
+                                 &left_nullspace);
+  int failed = 0;
 
   if (det != 99 || rank != 1) {
     fprintf(stderr, "unexpected modular results: det=%ld rank=%ld\n", det, rank);
-    return 1;
+    failed = 1;
   }
-  return 0;
+
+  if (!inverse_ok || (long)inverse_matrix[0] != 99 ||
+      (long)inverse_matrix[1] != 1 || (long)inverse_matrix[2] != 52 ||
+      (long)inverse_matrix[3] != 50) {
+    fprintf(stderr, "unexpected modular inverse: ok=%ld entries=%ld,%ld,%ld,%ld\n",
+            inverse_ok, (long)inverse_matrix[0], (long)inverse_matrix[1],
+            (long)inverse_matrix[2], (long)inverse_matrix[3]);
+    failed = 1;
+  }
+
+  if (basis_rank != 1 || row_basis == NULL || left_nullspace == NULL) {
+    fprintf(stderr, "unexpected modular basis result: rank=%ld basis=%p nullspace=%p\n",
+            basis_rank, (void *)row_basis, (void *)left_nullspace);
+    failed = 1;
+  } else {
+    for (long column = 0; column < 3; column++) {
+      const long dot = ((long)left_nullspace[0] * (long)basis_matrix[column] +
+                        (long)left_nullspace[1] *
+                            (long)basis_matrix[3 + column]) %
+                       101;
+      if (dot != 0) {
+        fprintf(stderr, "left nullspace vector failed column %ld: %ld\n",
+                column, dot);
+        failed = 1;
+      }
+    }
+  }
+
+  free(row_basis);
+  free(left_nullspace);
+  return failed;
 }
 
 static int check_exact_solve(void) {
@@ -111,6 +149,7 @@ int main(void) {
     return 1;
   }
 
-  puts("iml-ok det=99 rank=1 solution=(1/5,3/5) nullspace-dim=2");
+  puts("iml-ok det=99 rank=1 inverse=99,1,52,50 modular-basis=rank1 "
+       "solution=(1/5,3/5) nullspace-dim=2");
   return 0;
 }

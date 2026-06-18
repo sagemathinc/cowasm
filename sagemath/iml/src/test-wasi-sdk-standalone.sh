@@ -74,4 +74,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/iml-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/iml-test" |
-  grep "iml-ok det=99 rank=1 solution=(1/5,3/5)"
+  grep "iml-ok det=99 rank=1 inverse=99,1,52,50 modular-basis=rank1 solution=(1/5,3/5) nullspace-dim=2"

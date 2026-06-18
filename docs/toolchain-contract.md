@@ -1039,7 +1039,8 @@ available, then builds IML against GMP and GSL's bundled CBLAS archive with
 `COWASM_TOOLCHAIN=wasi-sdk`. It installs `libiml.a` under
 `sagemath/iml/dist/wasi-sdk`, seeds the old autotools `realloc(0)` cross check
 for WASI libc, and links a deterministic probe covering modular determinant,
-modular rank, and exact rational linear solving through the WASI runner.
+modular rank, modular inverse/basis, exact rational linear solving, and integer
+nullspace checks through the WASI runner.
 
 `sagemath/ecm` has the same opt-in dependent static-library smoke shape:
 
