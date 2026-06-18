@@ -101,6 +101,15 @@ Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 - Polytopes DB
 - Odlyzko zeta-zero database
 
+Current partial Sage Python-interface packages with wasi-sdk standalone smokes:
+
+- `pplpy` 0.9.0: the upstream Cython extension modules build and import
+  against the shared `sagemath/ppl` `libppl.so` side module, and simple
+  `Bit_Row` and `Variable` wrappers work under `python-wasm`. Heavier
+  linear-expression, constraint, polyhedron, and MIP operations still expose a
+  WebAssembly dynamic-linking function-table signature mismatch between inline
+  PPL C++ constructors in the extension modules and the shared PPL side module.
+
 Current investigated Sage optional solver gaps:
 
 - `kissat` 3.1.0: the upstream C build can produce a WASI binary after
@@ -117,17 +126,9 @@ Current investigated Sage optional solver gaps:
 
 Current investigated Sage Python-interface gaps:
 
-- `pplpy` 0.9.0: the upstream Cython sources compile against the existing
-  CoWasm CPython, Cython, cysignals, gmpy2, GMP, GLPK, and PPL artifacts, but
-  the modules cannot be packaged by linking `libppl.a` into each extension.
-  `pplpy` passes PPL objects between its Cython extension modules, so each
-  module needs to share one PPL dynamic library instance. The PPL standalone
-  smoke now builds a `libppl.so` side module from the PIC PPL and GMP/GMPXX
-  archives while leaving GLPK normally selected, and it generates explicit
-  `__WASM_EXPORT__...` wrappers for PPL data globals such as
-  `Parma_Polyhedra_Library::Coefficient_one_p`. The next durable `pplpy` step
-  is packaging its Cython modules against that shared PPL side module and
-  validating module-to-module PPL object sharing under the CoWasm loader.
+- `pplpy` full API support: the next durable step is fixing the C++ function
+  table mismatch that appears when the current partial package constructs
+  constraints, polyhedra, and MIP objects through the shared PPL side module.
 
 **WARNING: Unlike the rest of CoWasm, there is code in this directory
 that is licensed under the GPL. No code in the other packages (core, python, web, etc.,) depends on this code.**
