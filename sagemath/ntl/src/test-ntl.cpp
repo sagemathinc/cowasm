@@ -84,6 +84,37 @@ bool check_extension_field(long &extension_factors) {
   return extension_factors == 2 && product == polynomial;
 }
 
+bool check_modular_interpolation(long &interpolated_value,
+                                 long &derivative_value) {
+  ZZ_p::init(ZZ(97));
+
+  vec_ZZ_p points;
+  vec_ZZ_p values;
+  points.SetLength(4);
+  values.SetLength(4);
+
+  for (long i = 0; i < 4; i++) {
+    points[i] = to_ZZ_p(i);
+    values[i] = 3 * power(to_ZZ_p(i), 3) + 2 * to_ZZ_p(i) + 5;
+  }
+
+  ZZ_pX polynomial;
+  interpolate(polynomial, points, values);
+
+  ZZ_pX expected;
+  SetCoeff(expected, 0, 5);
+  SetCoeff(expected, 1, 2);
+  SetCoeff(expected, 3, 3);
+
+  ZZ_p interpolated = eval(polynomial, to_ZZ_p(4));
+  ZZ_p derivative = eval(diff(polynomial), to_ZZ_p(4));
+  conv(interpolated_value, interpolated);
+  conv(derivative_value, derivative);
+
+  return polynomial == expected && interpolated == to_ZZ_p(11) &&
+         derivative == to_ZZ_p(49);
+}
+
 } // namespace
 
 int main() {
@@ -140,6 +171,8 @@ int main() {
   long lattice_rank = 0;
   ZZ lattice_det;
   long extension_factors = 0;
+  long interpolated_value = 0;
+  long derivative_value = 0;
 
   const std::string expected =
       "1606938044258990275541962092341162602522202993782792835301376";
@@ -157,15 +190,20 @@ int main() {
   const bool ok_matrix_det = matrix_det == 22;
   const bool ok_lattice = check_lattice_reduction(lattice_rank, lattice_det);
   const bool ok_extension = check_extension_field(extension_factors);
+  const bool ok_interpolation =
+      check_modular_interpolation(interpolated_value, derivative_value);
 
   if (ok_integer && ok_polynomial && ok_factorization && ok_binary_product &&
-      ok_binary_factorization && ok_matrix_det && ok_lattice && ok_extension) {
+      ok_binary_factorization && ok_matrix_det && ok_lattice && ok_extension &&
+      ok_interpolation) {
     std::cout << "ntl-ok integer=2^200 polynomial=(x+1)^4 mod-factors="
               << factors.length() << " gf2x-factors="
               << binary_factors.length() << " matrix-det=" << matrix_det
               << " lll-rank=" << lattice_rank
               << " lll-det-square=" << lattice_det
               << " gf2e-factors=" << extension_factors
+              << " zz_p-interpolate=" << interpolated_value
+              << " derivative=" << derivative_value
               << "\n";
     return 0;
   }
@@ -178,9 +216,12 @@ int main() {
             << " matrix-det=" << ok_matrix_det
             << " lattice=" << ok_lattice
             << " extension-field=" << ok_extension
+            << " interpolation=" << ok_interpolation
             << " lll-rank=" << lattice_rank
             << " lll-det-square=" << lattice_det
             << " gf2e-factors=" << extension_factors
+            << " zz_p-interpolate=" << interpolated_value
+            << " derivative=" << derivative_value
             << "\n";
   return 1;
 }

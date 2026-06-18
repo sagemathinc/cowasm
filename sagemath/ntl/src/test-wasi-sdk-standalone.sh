@@ -132,4 +132,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -o "$probe_dir/ntl-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/ntl-test" |
-  grep -F "ntl-ok integer=2^200 polynomial=(x+1)^4 mod-factors=2 gf2x-factors=2 matrix-det=22 lll-rank=3 lll-det-square=45166875625 gf2e-factors=2"
+  grep -F "ntl-ok integer=2^200 polynomial=(x+1)^4 mod-factors=2 gf2x-factors=2 matrix-det=22 lll-rank=3 lll-det-square=45166875625 gf2e-factors=2 zz_p-interpolate=11 derivative=49"
