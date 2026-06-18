@@ -69,6 +69,7 @@ Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 - Conway polynomials
 - Cunningham tables
 - Jones number-field database
+- Symbolic polynomial-system database
 - Mutation class database
 - Elliptic curves
 - Graph databases

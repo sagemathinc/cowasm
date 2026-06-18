@@ -998,6 +998,15 @@ importers:
         specifier: workspace:*
         version: link:../../core/kernel
 
+  sagemath/database-symbolic-data:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../../python/cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
   sagemath/eclib:
     dependencies:
       '@cowasm/flint':
