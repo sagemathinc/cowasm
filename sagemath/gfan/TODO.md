@@ -3,7 +3,8 @@
 The `gfan` wasi-sdk standalone smoke builds and runs after:
 
 - renaming the upstream `log2` helper to avoid the C++ standard library name;
-- adding the missing `gfan::Matrix<typ>::vectormultiply` implementation used by gfanlib;
+- adding and testing the missing `gfan::Matrix<typ>::vectormultiply`
+  implementation used by gfanlib;
 - using the upstream clang compile rule for `symmetrictraversal.cpp`;
 - building against the existing CoWasm GMP and cddlib ports;
 - providing a WASI-local `system()` stub, since gfan only uses it for optional shell integration.

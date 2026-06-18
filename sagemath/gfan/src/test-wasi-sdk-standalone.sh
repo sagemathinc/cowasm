@@ -36,7 +36,8 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -c "$src_dir/cowasm-system-stub.c" \
   -o "$probe_dir/cowasm-system-stub.o"
 
-libcxx_noeh="$("$bin_dir/wasi-sdk-clang++-next" -target wasm32-wasip1 -print-file-name=libc++.a)"
+clangxx="$bin_dir/wasi-sdk-clang++-next"
+libcxx_noeh="$("$clangxx" -target wasm32-wasip1 -print-file-name=libc++.a)"
 libcxx="${libcxx_noeh%/noeh/libc++.a}/eh/libc++.a"
 libcxxabi="${libcxx_noeh%/noeh/libc++.a}/eh/libc++abi.a"
 libunwind="${libcxx_noeh%/noeh/libc++.a}/eh/libunwind.a"
@@ -89,4 +90,19 @@ grep -F "c^15-c" "$buchberger_log"
 grep -F "b-c^11" "$buchberger_log"
 grep -F "a-c^9" "$buchberger_log"
 
-echo "gfan-ok list buchberger"
+env "$clangxx" \
+  -target wasm32-wasip1 \
+  -Oz \
+  -fno-exceptions \
+  -I"$build_dir/src" \
+  -I"$gmp_dir/include" \
+  "$src_dir/test-gfanlib-matrix.cpp" \
+  -L"$gmp_dir/lib" \
+  -lgmp \
+  -lwasi-emulated-signal \
+  -o "$probe_dir/gfanlib-matrix-test"
+
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/gfanlib-matrix-test" |
+  grep -F "gfanlib-matrix-ok product=68,161"
+
+echo "gfan-ok list buchberger gfanlib-matrix"
