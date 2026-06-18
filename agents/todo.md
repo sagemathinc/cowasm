@@ -95,6 +95,7 @@ commits over broad rewrites.
     on it.
 - Current cysignals `wasi-sdk` side-module smoke covers import, guard cleanup,
   normal and no-except guard strings, bounded `sig_retry()` recovery,
+  `sig_error()` recovery of pending Python exceptions,
   signal-to-exception mapping, custom handler registration, and the
   interrupt-safe memory allocation helpers that downstream Sage Cython modules
   cimport. The `sig_retry()` probe requires wasm SJLJ lowering and a statically

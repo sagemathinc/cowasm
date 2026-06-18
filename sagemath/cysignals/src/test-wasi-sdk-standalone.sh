@@ -231,6 +231,7 @@ from cysignals.signals cimport (
     sig_block,
     sig_check,
     sig_check_no_except,
+    sig_error,
     sig_on_no_except,
     sig_str,
     sig_str_no_except,
@@ -419,6 +420,17 @@ def cython_check_exception_probe():
     return sig_occurred() == NULL
 
 
+def sig_error_pending_exception():
+    try:
+        sig_on()
+        PyErr_SetString(ValueError, "manual c-level failure")
+        sig_error()
+    except ValueError as err:
+        return str(err) == "manual c-level failure" and sig_occurred() == NULL
+
+    return False
+
+
 def memory_allocator_roundtrip():
     cdef unsigned char* raw = NULL
     cdef unsigned char* grown = NULL
@@ -540,8 +552,9 @@ assert cysignals_guard_probe.mapped_signal_exceptions()
 assert cysignals_guard_probe.custom_handler_registration_limit()
 assert cysignals_guard_probe.sig_on_reset_after_unbalanced_guard()
 assert cysignals_guard_probe.cython_check_exception_probe()
+assert cysignals_guard_probe.sig_error_pending_exception()
 assert cysignals_guard_probe.memory_allocator_roundtrip()
 assert cysignals_guard_probe.memory_allocator_failure()
 PY
 
-echo "cysignals-ok signals-extension pysignals-extension import init-api sigaction-api python-signal-api guarded-cython-module guard-cleanup sig-retry no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check memory-helpers overflow-checks"
+echo "cysignals-ok signals-extension pysignals-extension import init-api sigaction-api python-signal-api guarded-cython-module guard-cleanup sig-retry sig-error no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check memory-helpers overflow-checks"

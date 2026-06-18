@@ -29,3 +29,17 @@
  #else
      struct sigaction sa;
      memset(&sa, 0, sizeof(sa));
+--- a/src/cysignals/macros.h
++++ b/src/cysignals/macros.h
+@@ -304,7 +304,11 @@ static inline void sig_error(void)
+     {
+         fprintf(stderr, "sig_error() without sig_on()\n");
+     }
++#if defined(__wasi__)
++    cylongjmp(cysigs.env, SIGABRT);
++#else
+     proc_raise(SIGABRT);
++#endif
+ }
+ 
+ 
