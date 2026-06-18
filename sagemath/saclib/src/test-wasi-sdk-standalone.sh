@@ -57,4 +57,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/test-saclib"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/test-saclib" |
-  grep -F "saclib-ok abs=42 sign=-1 even=1 eval=17 tprod-deg=2 tprod-lead=14 tprod-eval=78"
+  grep -F "saclib-ok abs=42 sign=-1 even=1 eval=17 tprod-deg=2 tprod-lead=14 tprod-eval=78 gcd-deg=1 gcd-eval=6 cofactors=17,3 gca-len=3 gca-evals=17,6,3"
