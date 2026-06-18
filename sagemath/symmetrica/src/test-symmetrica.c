@@ -113,6 +113,23 @@ static int check_kostka(void) {
   return ok;
 }
 
+static int check_partition_dimension(void) {
+  OP vector = callocobject();
+  OP partition = callocobject();
+  OP number = callocobject();
+  int ok;
+
+  set_partition3(vector, partition, 4, 2, 1);
+
+  ok = dimension(partition, number) == OK && S_I_I(number) == 35;
+
+  freeall(number);
+  freeall(partition);
+  freeall(vector);
+
+  return ok;
+}
+
 static int add_schur_term(OP vector, OP partition, OP coeff, OP terms,
                           INT length, INT a, INT b, INT c, INT multiplicity) {
   m_il_v(length, vector);
@@ -170,6 +187,7 @@ int main(void) {
   int binom_ok;
   int partition_ok;
   int kostka_ok;
+  int dimension_ok;
   int schur_ok;
   int ok;
 
@@ -190,15 +208,21 @@ int main(void) {
   if (!kostka_ok) {
     puts("symmetrica kostka check failed");
   }
+  dimension_ok = check_partition_dimension();
+  if (!dimension_ok) {
+    puts("symmetrica dimension check failed");
+  }
   schur_ok = check_schur_product();
   if (!schur_ok) {
     puts("symmetrica schur check failed");
   }
   ende();
 
-  ok = factorial_ok && binom_ok && partition_ok && kostka_ok && schur_ok;
+  ok = factorial_ok && binom_ok && partition_ok && kostka_ok && dimension_ok &&
+       schur_ok;
   if (ok) {
-    puts("symmetrica-ok factorial=39916800 pascal kostka=2 schur=3");
+    puts("symmetrica-ok factorial=39916800 pascal kostka=2 dimension=35 "
+         "schur=3");
   }
 
   return ok ? 0 : 1;
