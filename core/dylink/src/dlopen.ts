@@ -443,7 +443,14 @@ export default class DlopenManger {
         f = undefined;
       }
       if (f != null) {
-        return f;
+        return (...args: any[]) => {
+          try {
+            return (f as CallableFunction)(...args);
+          } catch (err) {
+            log("direct import failed", key, args, err);
+            throw err;
+          }
+        };
       }
 
       f = this.emscriptenCxxRuntimeImport(key);

@@ -1,0 +1,92 @@
+--- a/ppl/ppl_decl.pxd
++++ b/ppl/ppl_decl.pxd
+@@ -427,3 +427,14 @@
+     PPL_Poly_Con_Relation* new_relation_with(PPL_Polyhedron &p, PPL_Constraint &c) except +ValueError
+ 
+     PPL_Congruence modulo(const PPL_Linear_Expression &expr, PPL_Coefficient& mod)
++
++cdef extern from "ppl_cowasm_shim.hh":
++    PPL_C_Polyhedron* cowasm_ppl_new_c_polyhedron_dim(PPL_dimension_type dim, PPL_Degenerate_Element kind)
++    PPL_C_Polyhedron* cowasm_ppl_new_c_polyhedron_constraints(const PPL_Constraint_System* cs) except +ValueError
++    PPL_C_Polyhedron* cowasm_ppl_new_c_polyhedron_generators(const PPL_Generator_System* gs) except +ValueError
++    PPL_C_Polyhedron* cowasm_ppl_new_c_polyhedron_copy(const PPL_C_Polyhedron* ph)
++    PPL_NNC_Polyhedron* cowasm_ppl_new_nnc_polyhedron_dim(PPL_dimension_type dim, PPL_Degenerate_Element kind)
++    PPL_NNC_Polyhedron* cowasm_ppl_new_nnc_polyhedron_constraints(const PPL_Constraint_System* cs) except +ValueError
++    PPL_NNC_Polyhedron* cowasm_ppl_new_nnc_polyhedron_generators(const PPL_Generator_System* gs) except +ValueError
++    PPL_NNC_Polyhedron* cowasm_ppl_new_nnc_polyhedron_copy(const PPL_NNC_Polyhedron* ph)
++    PPL_NNC_Polyhedron* cowasm_ppl_new_nnc_polyhedron_from_c(const PPL_C_Polyhedron* ph)
+--- a/ppl/polyhedron.pyx
++++ b/ppl/polyhedron.pyx
+@@ -2488,15 +2488,15 @@
+         """
+         if isinstance(arg, C_Polyhedron):
+             ph = <C_Polyhedron>arg
+-            self.thisptr = new PPL_C_Polyhedron(<PPL_C_Polyhedron&>ph.thisptr[0])
++            self.thisptr = cowasm_ppl_new_c_polyhedron_copy(<PPL_C_Polyhedron*>ph.thisptr)
+             return
+         if isinstance(arg, Generator):
+             arg = Generator_System(arg)
+         if isinstance(arg, Constraint):
+             arg = Constraint_System(arg)
+         if isinstance(arg, Generator_System):
+             gs = <Generator_System>arg
+-            self.thisptr = new PPL_C_Polyhedron(gs.thisptr[0])
++            self.thisptr = cowasm_ppl_new_c_polyhedron_generators(<PPL_Generator_System*>gs.thisptr)
+             return
+         if isinstance(arg, Constraint_System):
+             cs = <Constraint_System>arg
+-            self.thisptr = new PPL_C_Polyhedron(cs.thisptr[0])
++            self.thisptr = cowasm_ppl_new_c_polyhedron_constraints(<PPL_Constraint_System*>cs.thisptr)
+             return
+@@ -2509,10 +2509,10 @@
+             raise ValueError('Cannot initialize C_Polyhedron with '+str(arg)+'.')
+         degenerate_element = degenerate_element.lower()
+         if degenerate_element=='universe':
+-            self.thisptr = new PPL_C_Polyhedron(<PPL_dimension_type>dim, UNIVERSE)
++            self.thisptr = cowasm_ppl_new_c_polyhedron_dim(<PPL_dimension_type>dim, UNIVERSE)
+             return
+         elif degenerate_element=='empty':
+-            self.thisptr = new PPL_C_Polyhedron(<PPL_dimension_type>dim, EMPTY)
++            self.thisptr = cowasm_ppl_new_c_polyhedron_dim(<PPL_dimension_type>dim, EMPTY)
+             return
+         else:
+             raise ValueError('Unknown value: degenerate_element='+str(degenerate_element)+'.')
+@@ -2660,21 +2660,21 @@
+         """
+         if isinstance(arg, NNC_Polyhedron):
+             p_nnc = <NNC_Polyhedron>arg
+-            self.thisptr = new PPL_NNC_Polyhedron(<PPL_NNC_Polyhedron&>p_nnc.thisptr[0])
++            self.thisptr = cowasm_ppl_new_nnc_polyhedron_copy(<PPL_NNC_Polyhedron*>p_nnc.thisptr)
+             return
+         if isinstance(arg, C_Polyhedron):
+             p_c = <C_Polyhedron>arg
+-            self.thisptr = new PPL_NNC_Polyhedron(<PPL_C_Polyhedron&>p_c.thisptr[0])
++            self.thisptr = cowasm_ppl_new_nnc_polyhedron_from_c(<PPL_C_Polyhedron*>p_c.thisptr)
+             return
+         if isinstance(arg, Generator):
+             arg = Generator_System(arg)
+         if isinstance(arg, Constraint):
+             arg = Constraint_System(arg)
+         if isinstance(arg, Generator_System):
+             gs = <Generator_System>arg
+-            self.thisptr = new PPL_NNC_Polyhedron(gs.thisptr[0])
++            self.thisptr = cowasm_ppl_new_nnc_polyhedron_generators(<PPL_Generator_System*>gs.thisptr)
+             return
+         if isinstance(arg, Constraint_System):
+             cs = <Constraint_System>arg
+-            self.thisptr = new PPL_NNC_Polyhedron(cs.thisptr[0])
++            self.thisptr = cowasm_ppl_new_nnc_polyhedron_constraints(<PPL_Constraint_System*>cs.thisptr)
+             return
+@@ -2684,10 +2684,10 @@
+             raise ValueError('Cannot initialize NNC_Polyhedron with '+str(arg)+'.')
+         degenerate_element = degenerate_element.lower()
+         if degenerate_element=='universe':
+-            self.thisptr = new PPL_NNC_Polyhedron(<PPL_dimension_type>dim, UNIVERSE)
++            self.thisptr = cowasm_ppl_new_nnc_polyhedron_dim(<PPL_dimension_type>dim, UNIVERSE)
+             return
+         elif degenerate_element=='empty':
+-            self.thisptr = new PPL_NNC_Polyhedron(<PPL_dimension_type>dim, EMPTY)
++            self.thisptr = cowasm_ppl_new_nnc_polyhedron_dim(<PPL_dimension_type>dim, EMPTY)
+             return
+         else:
+             raise ValueError('Unknown value: degenerate_element='+str(degenerate_element)+'.')

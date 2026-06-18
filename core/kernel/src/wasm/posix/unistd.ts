@@ -31,6 +31,40 @@ export default function unistd(context) {
   const STDIN = wasi.FD_MAP.get(0);
   const STDOUT = wasi.FD_MAP.get(1);
 
+  function writeFdData(fd: number, data: Buffer): number {
+    if (data.byteLength == 0) return 0;
+    const stats = wasi.FD_MAP.get(fd);
+    if (stats == null) {
+      context.callFunction("setErrno", constants.EBADF);
+      return -1;
+    }
+    const sendStdout = (wasi as any).sendStdout;
+    const sendStderr = (wasi as any).sendStderr;
+    if (fd == 1 && sendStdout != null) {
+      sendStdout(data);
+      return data.byteLength;
+    }
+    if (fd == 2 && sendStderr != null) {
+      sendStderr(data);
+      return data.byteLength;
+    }
+    let written = 0;
+    while (written < data.byteLength) {
+      const n = fs.writeSync(
+        stats.real ?? fd,
+        data,
+        written,
+        data.byteLength - written,
+        stats.offset ? Number(stats.offset) : null
+      );
+      if (stats.offset) {
+        stats.offset += BigInt(n);
+      }
+      written += n;
+    }
+    return written;
+  }
+
   const unistd = {
     chown: (pathPtr: number, uid: number, gid: number): -1 | 0 => {
       const path = recv.string(pathPtr);
@@ -87,36 +121,28 @@ export default function unistd(context) {
 
     // ssize_t write(int fd, const void *buf, size_t count);
     write: (fd: number, bufPtr: number, count: number): number => {
-      const tmpPtr = send.malloc(12);
-      try {
-        send.u32(tmpPtr, bufPtr);
-        send.u32(tmpPtr + 4, count);
-        send.u32(tmpPtr + 8, 0);
-        const err = wasi.wasiImport.fd_write(fd, tmpPtr, 1, tmpPtr + 8);
-        if (err) {
-          context.callFunction("setErrno", err);
-          return -1;
-        }
-        return recv.u32(tmpPtr + 8);
-      } finally {
-        send.free(tmpPtr);
-      }
+      const data = Buffer.from(memory.buffer.slice(bufPtr, bufPtr + count));
+      return writeFdData(fd, data);
     },
 
     // ssize_t writev(int fd, const struct iovec *iov, int iovcnt);
     writev: (fd: number, iovPtr: number, iovcnt: number): number => {
-      const nwrittenPtr = send.malloc(4);
-      try {
-        send.u32(nwrittenPtr, 0);
-        const err = wasi.wasiImport.fd_write(fd, iovPtr, iovcnt, nwrittenPtr);
-        if (err) {
-          context.callFunction("setErrno", err);
-          return -1;
+      let total = 0;
+      const view = new DataView(memory.buffer);
+      for (let i = 0; i < iovcnt; i++) {
+        const ptr = view.getUint32(iovPtr + 8 * i, true);
+        const len = view.getUint32(iovPtr + 8 * i + 4, true);
+        const data = Buffer.from(memory.buffer.slice(ptr, ptr + len));
+        const written = writeFdData(fd, data);
+        if (written < 0) {
+          return total > 0 ? total : -1;
         }
-        return recv.u32(nwrittenPtr);
-      } finally {
-        send.free(nwrittenPtr);
+        total += written;
+        if (written < len) {
+          break;
+        }
       }
+      return total;
     },
 
     getpgid: (pid: number): number => {

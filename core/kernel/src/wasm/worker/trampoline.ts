@@ -7,9 +7,14 @@ export default function initPythonTrampolineCalls(
   env: object
 ): void {
   env["_PyImport_InitFunc_TrampolineCall"] = (ptr: number): number => {
-    const r = table.get(ptr)();
-    log("_PyImport_InitFunc_TrampolineCall - ptr=", ptr, " r=", r);
-    return r;
+    try {
+      const r = table.get(ptr)();
+      log("_PyImport_InitFunc_TrampolineCall - ptr=", ptr, " r=", r);
+      return r;
+    } catch (err) {
+      log("_PyImport_InitFunc_TrampolineCall failed - ptr=", ptr, err);
+      throw err;
+    }
   };
 
   env["_PyCFunctionWithKeywords_TrampolineCall"] = (
@@ -30,7 +35,18 @@ export default function initPythonTrampolineCalls(
   ) => {
     // Python 3.14 routes the older CPython trampoline macros through this
     // generic Emscripten entry point.
-    return table.get(ptr)(arg1, arg2, arg3);
+    try {
+      return table.get(ptr)(arg1, arg2, arg3);
+    } catch (err) {
+      log(
+        "_PyEM_TrampolineCall failed - ptr=",
+        ptr,
+        " args=",
+        [arg1, arg2, arg3],
+        err
+      );
+      throw err;
+    }
   };
 
   env["descr_set_trampoline_call"] = (

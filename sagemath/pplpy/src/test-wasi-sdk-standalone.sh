@@ -55,6 +55,22 @@ void __wasm_call_ctors(void);
 #endif
 EOF
 
+cat >"$probe_dir/wasi-cxx-stubs.cc" <<'EOF'
+extern "C" int sched_yield(void) {
+  return 0;
+}
+
+extern "C" __attribute__((noreturn)) void abort(void) {
+  __builtin_trap();
+  __builtin_unreachable();
+}
+
+extern "C" __attribute__((noreturn)) void __assert_fail(
+    const char*, const char*, unsigned int, const char*) {
+  abort();
+}
+EOF
+
 cp "$package_src"/__init__.py "$dist_dir/ppl/"
 cp "$package_src"/*.pxd "$package_src"/ppl_shim.hh "$dist_dir/ppl/"
 cp "$ppl_dir/lib/libppl.so" "$dist_dir/ppl/"
@@ -62,16 +78,22 @@ cp "$libcxx_dir/libcxx.so" "$dist_dir/ppl/"
 
 for module in "${modules[@]}"; do
   PYTHONPATH="$py_cython:$cysignals_dir:$py_gmpy2" python3 -m cython -3 --cplus \
+    -X binding=False \
+    -X auto_pickle=False \
     -I "$package_src" \
     -I "$cysignals_dir" \
     -I "$py_gmpy2" \
     --output-file "$probe_dir/cpp/$module.cpp" \
     "$package_src/$module.pyx"
 
-  "$bin_dir/wasi-sdk-clang++-next" -target wasm32-wasip1 \
+  env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" --experimental-pic \
     -O0 \
     -fPIC \
     -std=c++11 \
+    -DNDEBUG \
+    -DCYTHON_PEP489_MULTI_PHASE_INIT=0 \
+    -DCYTHON_METH_FASTCALL=0 \
+    -DCYTHON_VECTORCALL=0 \
     -D_SCHED_H \
     -shared \
     -nostdlib \
@@ -90,6 +112,7 @@ for module in "${modules[@]}"; do
     -I"$gmp_dir/include" \
     "$probe_dir/cpp/$module.cpp" \
     "$package_src/ppl_shim.cc" \
+    "$probe_dir/wasi-cxx-stubs.cc" \
     "$libcxx_dir/libcxx.so" \
     "$ppl_dir/lib/libppl.so" \
     -o "$dist_dir/ppl/$module$extension_suffix"

@@ -53,6 +53,7 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 
 ${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
 	cd ${BUILD_WASI_SDK} && patch -p1 < ${SRC}/patches/01-wasi-linear-expression-arithmetic.patch
+	cd ${BUILD_WASI_SDK} && patch -p1 < ${SRC}/patches/02-wasi-polyhedron-constructors.patch
 	touch ${BUILD_WASI_SDK}/.patched
 
 .PHONY: test-wasi-sdk-standalone

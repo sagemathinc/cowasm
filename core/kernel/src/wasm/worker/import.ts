@@ -161,6 +161,11 @@ async function doWasmImport({
   if (wasmOpts.env.backtrace_symbols_fd == null) {
     wasmOpts.env.backtrace_symbols_fd = () => {};
   }
+  if (wasmOpts.env.__assert_fail == null) {
+    wasmOpts.env.__assert_fail = () => {
+      wasmOpts.env.abort();
+    };
+  }
   const cstringLength = (ptr: number, maxLen?: number) => {
     const mem = new Uint8Array(memory.buffer);
     let len = 0;
@@ -181,6 +186,65 @@ async function doWasmImport({
       i += 1;
     }
     return 0;
+  };
+  const writeEndPtr = (endPtr: number, value: number) => {
+    if (endPtr != 0) {
+      new DataView(memory.buffer).setUint32(endPtr, value, true);
+    }
+  };
+  const cDigit = (c: number): number => {
+    if (c >= 48 && c <= 57) return c - 48;
+    if (c >= 65 && c <= 90) return c - 65 + 10;
+    if (c >= 97 && c <= 122) return c - 97 + 10;
+    return -1;
+  };
+  const isSpace = (c: number): boolean =>
+    c == 32 || (c >= 9 && c <= 13);
+  const parseInteger = (nptr: number, endPtr: number, base: number): number => {
+    const mem = new Uint8Array(memory.buffer);
+    let p = nptr;
+    while (isSpace(mem[p] ?? 0)) p += 1;
+    let sign = 1;
+    if (mem[p] == 43 || mem[p] == 45) {
+      sign = mem[p] == 45 ? -1 : 1;
+      p += 1;
+    }
+    if (base == 0) {
+      base = 10;
+      if (mem[p] == 48 && (mem[p + 1] == 120 || mem[p + 1] == 88)) {
+        base = 16;
+        p += 2;
+      } else if (mem[p] == 48) {
+        base = 8;
+      }
+    } else if (
+      base == 16 &&
+      mem[p] == 48 &&
+      (mem[p + 1] == 120 || mem[p + 1] == 88)
+    ) {
+      p += 2;
+    }
+    let value = 0;
+    let last = nptr;
+    while (p < mem.byteLength) {
+      const digit = cDigit(mem[p] ?? 0);
+      if (digit < 0 || digit >= base) break;
+      value = value * base + digit;
+      p += 1;
+      last = p;
+    }
+    writeEndPtr(endPtr, last);
+    return sign * value;
+  };
+  const parseFloatNumber = (nptr: number, endPtr: number): number => {
+    const text = wasm.recv.string(nptr, cstringLength(nptr, 256));
+    const match = text.match(/^[\t\n\v\f\r ]*[+-]?(?:Infinity|NaN|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)/);
+    if (match == null) {
+      writeEndPtr(endPtr, nptr);
+      return 0;
+    }
+    writeEndPtr(endPtr, nptr + match[0].length);
+    return Number(match[0]);
   };
   if (wasmOpts.env.strlen == null) {
     wasmOpts.env.strlen = (ptr: number) => cstringLength(ptr);
@@ -228,6 +292,43 @@ async function doWasmImport({
         i += 1;
       }
     };
+  }
+  if (wasmOpts.env.isalnum == null) {
+    wasmOpts.env.isalnum = (c: number) =>
+      (c >= 48 && c <= 57) ||
+      (c >= 65 && c <= 90) ||
+      (c >= 97 && c <= 122)
+        ? 1
+        : 0;
+  }
+  if (wasmOpts.env.isdigit == null) {
+    wasmOpts.env.isdigit = (c: number) => (c >= 48 && c <= 57 ? 1 : 0);
+  }
+  if (wasmOpts.env.isspace == null) {
+    wasmOpts.env.isspace = (c: number) => (isSpace(c) ? 1 : 0);
+  }
+  if (wasmOpts.env.isxdigit == null) {
+    wasmOpts.env.isxdigit = (c: number) => {
+      const digit = cDigit(c);
+      return digit >= 0 && digit < 16 ? 1 : 0;
+    };
+  }
+  if (wasmOpts.env.tolower == null) {
+    wasmOpts.env.tolower = (c: number) =>
+      c >= 65 && c <= 90 ? c + 32 : c;
+  }
+  if (wasmOpts.env.toupper == null) {
+    wasmOpts.env.toupper = (c: number) =>
+      c >= 97 && c <= 122 ? c - 32 : c;
+  }
+  if (wasmOpts.env.tolower_l == null) {
+    wasmOpts.env.tolower_l = (c: number) => wasmOpts.env.tolower(c);
+  }
+  if (wasmOpts.env.toupper_l == null) {
+    wasmOpts.env.toupper_l = (c: number) => wasmOpts.env.toupper(c);
+  }
+  if (wasmOpts.env.iswspace_l == null) {
+    wasmOpts.env.iswspace_l = (c: number) => wasmOpts.env.isspace(c);
   }
   if (wasmOpts.env.strcpy == null) {
     wasmOpts.env.strcpy = (dest: number, src: number) => {
@@ -342,6 +443,85 @@ async function doWasmImport({
       }
       return 0;
     };
+  }
+  if (wasmOpts.env.strtol == null) {
+    wasmOpts.env.strtol = parseInteger;
+  }
+  if (wasmOpts.env.strtoul == null) {
+    wasmOpts.env.strtoul = (nptr: number, endPtr: number, base: number) =>
+      parseInteger(nptr, endPtr, base) >>> 0;
+  }
+  if (wasmOpts.env.strtoll == null) {
+    wasmOpts.env.strtoll = (nptr: number, endPtr: number, base: number) =>
+      BigInt(parseInteger(nptr, endPtr, base));
+  }
+  if (wasmOpts.env.strtoull == null) {
+    wasmOpts.env.strtoull = (nptr: number, endPtr: number, base: number) =>
+      BigInt(parseInteger(nptr, endPtr, base) >>> 0);
+  }
+  if (wasmOpts.env.strtod == null) {
+    wasmOpts.env.strtod = parseFloatNumber;
+  }
+  if (wasmOpts.env.strtof == null) {
+    wasmOpts.env.strtof = parseFloatNumber;
+  }
+  if (wasmOpts.env.strtold == null) {
+    wasmOpts.env.strtold = (resultPtr: number, nptr: number, endPtr: number) => {
+      parseFloatNumber(nptr, endPtr);
+      new Uint8Array(memory.buffer).fill(0, resultPtr, resultPtr + 16);
+    };
+  }
+  if (wasmOpts.env.strtold_l == null) {
+    wasmOpts.env.strtold_l = (
+      resultPtr: number,
+      nptr: number,
+      endPtr: number
+    ) => {
+      wasmOpts.env.strtold(resultPtr, nptr, endPtr);
+    };
+  }
+  if (wasmOpts.env.atoi == null) {
+    wasmOpts.env.atoi = (nptr: number) => parseInteger(nptr, 0, 10);
+  }
+  if (wasmOpts.env.atol == null) {
+    wasmOpts.env.atol = wasmOpts.env.atoi;
+  }
+  if (wasmOpts.env.atoll == null) {
+    wasmOpts.env.atoll = (nptr: number) => BigInt(parseInteger(nptr, 0, 10));
+  }
+  if (wasmOpts.env.atof == null) {
+    wasmOpts.env.atof = (nptr: number) => parseFloatNumber(nptr, 0);
+  }
+  if (wasmOpts.env.localeconv == null) {
+    wasmOpts.env.localeconv = () => 0;
+  }
+  const mathFns = {
+    acos: Math.acos,
+    asin: Math.asin,
+    atan: Math.atan,
+    atan2: Math.atan2,
+    ceil: Math.ceil,
+    cos: Math.cos,
+    exp: Math.exp,
+    fabs: Math.abs,
+    floor: Math.floor,
+    fmod: (x: number, y: number) => x % y,
+    hypot: Math.hypot,
+    log: Math.log,
+    log10: Math.log10,
+    log2: Math.log2,
+    pow: Math.pow,
+    round: Math.round,
+    sin: Math.sin,
+    sqrt: Math.sqrt,
+    tan: Math.tan,
+    trunc: Math.trunc,
+    truncate: Math.trunc,
+  };
+  for (const [name, fn] of Object.entries(mathFns)) {
+    if (wasmOpts.env[name] == null) {
+      wasmOpts.env[name] = fn;
+    }
   }
   if (wasmOpts.env.main == null) {
     // TODO: this seems suspect
@@ -461,6 +641,12 @@ async function doWasmImport({
       return 0;
     };
   }
+  if (wasmOpts.env.fiprintf == null) {
+    wasmOpts.env.fiprintf = () => 0;
+  }
+  if (wasmOpts.env.siprintf == null) {
+    wasmOpts.env.siprintf = () => 0;
+  }
   if (wasmOpts.env.putchar == null) {
     wasmOpts.env.putchar = (c: number) => {
       wasmOpts.env.fputc(c, wasm?.exports?.__WASM_EXPORT__stdout?.() ?? 0);
@@ -483,6 +669,10 @@ async function doWasmImport({
   }
   if (wasmOpts.env.fileno_unlocked == null) {
     wasmOpts.env.fileno_unlocked = wasmOpts.env.fileno;
+  }
+  if (wasmOpts.env.freopen == null) {
+    wasmOpts.env.freopen = (_path: number, _mode: number, stream: number) =>
+      stream;
   }
   if (wasmOpts.env.ferror == null) {
     wasmOpts.env.ferror = () => 0;
