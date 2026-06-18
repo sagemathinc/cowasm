@@ -20,6 +20,11 @@ trap 'rm -rf "$probe_dir"' EXIT
 
 cowasm_standalone_probe "primesieve" wasi-sdk "$bin_dir" "$probe_dir"
 
+if ! command -v cmake >/dev/null 2>&1; then
+  echo "cowasm: primesieve standalone smoke requires cmake" >&2
+  exit 77
+fi
+
 jobs="${MAKEFLAGS:-}"
 jobs="${jobs##*-j}"
 if ! [[ "$jobs" =~ ^[0-9]+$ ]]; then

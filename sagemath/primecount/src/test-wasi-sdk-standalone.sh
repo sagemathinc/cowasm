@@ -9,7 +9,7 @@ fi
 build_dir="$(cd "$1" && pwd)"
 dist_dir="$2"
 bin_dir="$(cd "$3" && pwd)"
-primesieve_dir="$(cd "$4" && pwd)"
+primesieve_dir="$4"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -20,6 +20,18 @@ probe_dir="$(mktemp -d)"
 trap 'rm -rf "$probe_dir"' EXIT
 
 cowasm_standalone_probe "primecount" wasi-sdk "$bin_dir" "$probe_dir"
+
+if ! command -v cmake >/dev/null 2>&1; then
+  echo "cowasm: primecount standalone smoke requires cmake" >&2
+  exit 77
+fi
+
+if [ ! -f "$primesieve_dir/lib/libprimesieve.a" ]; then
+  echo "cowasm: primecount standalone smoke requires primesieve wasi-sdk dist" >&2
+  echo "  $primesieve_dir/lib/libprimesieve.a" >&2
+  exit 77
+fi
+primesieve_dir="$(cd "$primesieve_dir" && pwd)"
 
 jobs="${MAKEFLAGS:-}"
 jobs="${jobs##*-j}"
