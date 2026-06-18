@@ -4,6 +4,7 @@
 #include <flint/arb_fmpz_poly.h>
 #include <flint/arb.h>
 #include <flint/arb_hypgeom.h>
+#include <flint/arb_poly.h>
 #include <flint/arith.h>
 #include <flint/bernoulli.h>
 #include <flint/fmpq.h>
@@ -122,10 +123,16 @@ int main(void) {
   arb_t bessel_order;
   arb_t bessel_arg;
   arb_t bessel_value;
+  arb_t real_ball_value;
+  arb_t real_ball_derivative_value;
+  arb_t real_ball_integral_value;
   acb_t z;
   acb_t z_squared;
   acb_t eval_point;
   acb_t eval_value;
+  arb_poly_t real_ball_poly;
+  arb_poly_t real_ball_derivative;
+  arb_poly_t real_ball_integral;
   acb_poly_t ball_poly;
   acb_ptr complex_roots;
   qqbar_t algebraic_sqrt2;
@@ -231,10 +238,16 @@ int main(void) {
   arb_init(bessel_order);
   arb_init(bessel_arg);
   arb_init(bessel_value);
+  arb_init(real_ball_value);
+  arb_init(real_ball_derivative_value);
+  arb_init(real_ball_integral_value);
   acb_init(z);
   acb_init(z_squared);
   acb_init(eval_point);
   acb_init(eval_value);
+  arb_poly_init(real_ball_poly);
+  arb_poly_init(real_ball_derivative);
+  arb_poly_init(real_ball_integral);
   acb_poly_init(ball_poly);
   complex_roots = _acb_vec_init(2);
   qqbar_init(algebraic_sqrt2);
@@ -310,6 +323,15 @@ int main(void) {
   acb_poly_set_coeff_si(ball_poly, 2, 1);
   acb_set_si(eval_point, 3);
   acb_poly_evaluate(eval_value, ball_poly, eval_point, 128);
+
+  arb_poly_set_coeff_si(real_ball_poly, 0, 1);
+  arb_poly_set_coeff_si(real_ball_poly, 1, 2);
+  arb_poly_set_coeff_si(real_ball_poly, 2, 3);
+  arb_poly_evaluate(real_ball_value, real_ball_poly, two, 128);
+  arb_poly_derivative(real_ball_derivative, real_ball_poly, 128);
+  arb_poly_evaluate(real_ball_derivative_value, real_ball_derivative, two, 128);
+  arb_poly_integral(real_ball_integral, real_ball_poly, 128);
+  arb_poly_evaluate(real_ball_integral_value, real_ball_integral, two, 128);
 
   ok = fmpz_cmp_ui(n, 0) > 0 && strcmp(poly_str, "3  1 2 1") == 0;
   ok = ok && strcmp(rational_str, "1/2") == 0;
@@ -496,6 +518,9 @@ int main(void) {
   ok = ok && arb_contains_si(acb_imagref(z_squared), 2);
   ok = ok && arb_contains_si(acb_realref(eval_value), 16);
   ok = ok && arb_contains_zero(acb_imagref(eval_value));
+  ok = ok && arb_contains_si(real_ball_value, 17);
+  ok = ok && arb_contains_si(real_ball_derivative_value, 14);
+  ok = ok && arb_contains_si(real_ball_integral_value, 14);
 
   fmpz_poly_set_coeff_ui(complex_roots_poly, 0, 1);
   fmpz_poly_set_coeff_ui(complex_roots_poly, 2, 1);
@@ -577,7 +602,7 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
   }
 
   flint_free(poly_str);
@@ -591,10 +616,16 @@ int main(void) {
   qqbar_clear(algebraic_sqrt2);
   _acb_vec_clear(complex_roots, 2);
   acb_poly_clear(ball_poly);
+  arb_poly_clear(real_ball_integral);
+  arb_poly_clear(real_ball_derivative);
+  arb_poly_clear(real_ball_poly);
   acb_clear(eval_value);
   acb_clear(eval_point);
   acb_clear(z_squared);
   acb_clear(z);
+  arb_clear(real_ball_integral_value);
+  arb_clear(real_ball_derivative_value);
+  arb_clear(real_ball_value);
   arb_clear(sin_pi);
   arb_clear(pi);
   arb_clear(bessel_value);

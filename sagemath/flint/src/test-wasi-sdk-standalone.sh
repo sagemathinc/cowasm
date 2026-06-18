@@ -93,4 +93,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/flint-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/flint-test" |
-  grep "flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel ball-poly=16 roots=+i,-i qqbar=sqrt2,i"
+  grep "flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i"
