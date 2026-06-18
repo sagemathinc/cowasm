@@ -66,6 +66,7 @@ Current wasi-sdk standalone math smoke packages:
 - SACLIB
 - Benzene
 - Buckygen
+- SharedMeatAxe
 
 Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 
