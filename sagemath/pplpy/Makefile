@@ -51,8 +51,12 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
 	touch ${BUILD_WASI_SDK}/.build
 
+${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
+	cd ${BUILD_WASI_SDK} && patch -p1 < ${SRC}/patches/01-wasi-linear-expression-arithmetic.patch
+	touch ${BUILD_WASI_SDK}/.patched
+
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_GMPY2}/gmpy2/gmpy2.pxd ${POSIX_WASI_SDK}/posix-wasm.h ${LIBCXX_WASI_SDK}/libcxx.so ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${PPL_WASI_SDK}/lib/libppl.so ${GMP_WASI_SDK}/lib/libgmp.a ${BUILD_WASI_SDK}/.build
+test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_GMPY2}/gmpy2/gmpy2.pxd ${POSIX_WASI_SDK}/posix-wasm.h ${LIBCXX_WASI_SDK}/libcxx.so ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${PPL_WASI_SDK}/lib/libppl.so ${GMP_WASI_SDK}/lib/libgmp.a ${BUILD_WASI_SDK}/.patched
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
 	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CPYTHON_WASM} ${PY_CYTHON} ${PY_GMPY2} ${POSIX_WASI_SDK} ${LIBCXX_WASI_SDK} ${CYSIGNALS_WASI_SDK} ${PPL_WASI_SDK} ${GMP_WASI_SDK} || status=$$?; \

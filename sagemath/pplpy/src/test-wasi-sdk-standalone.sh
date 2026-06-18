@@ -148,6 +148,22 @@ assert constant.inhomogeneous_term() == 7
 assert constant.all_homogeneous_terms_are_zero()
 assert not constant.is_zero()
 
+arith = x + y + 2
+assert repr(arith) == "x0+x1+2"
+assert arith.space_dimension() == 2
+assert arith.coefficients() == (1, 1)
+assert arith.inhomogeneous_term() == 2
+
+arith = 3*x - 2*y + 5
+assert repr(arith) == "3*x0-2*x1+5"
+assert arith.coefficients() == (3, -2)
+assert arith.inhomogeneous_term() == 5
+
+arith = 9 - x - y - (1 - x) - y - y
+assert repr(arith) == "-3*x1+8"
+assert arith.coefficients() == (0, -3)
+assert arith.inhomogeneous_term() == 8
+
 for name in (
     "bit_arrays",
     "congruence",
@@ -163,5 +179,5 @@ assert ppl.Variable is Variable
 assert ppl.Bit_Row is Bit_Row
 assert ppl.Linear_Expression is Linear_Expression
 
-print("pplpy-ok import modules bit-row variable linear-expression")
+print("pplpy-ok import modules bit-row variable linear-expression arithmetic")
 PY

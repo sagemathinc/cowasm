@@ -1,0 +1,28 @@
+--- a/ppl/linear_algebra.pyx
++++ b/ppl/linear_algebra.pyx
+@@ -1104 +1104,4 @@
+-        result.thisptr[0] = lhs.thisptr[0] + rhs.thisptr[0]
++        d = max(lhs.space_dimension(), rhs.space_dimension())
++        coeffs = [lhs.coefficient(i) + rhs.coefficient(i)
++                  for i in range(d)]
++        result = Linear_Expression(coeffs, lhs.inhomogeneous_term() + rhs.inhomogeneous_term())
+@@ -1121 +1124,4 @@
+-        result.thisptr[0] = lhs.thisptr[0] + rhs.thisptr[0]
++        d = max(lhs.space_dimension(), rhs.space_dimension())
++        coeffs = [lhs.coefficient(i) + rhs.coefficient(i)
++                  for i in range(d)]
++        result = Linear_Expression(coeffs, lhs.inhomogeneous_term() + rhs.inhomogeneous_term())
+@@ -1165 +1171,4 @@
+-        result.thisptr[0] = lhs.thisptr[0] - rhs.thisptr[0]
++        d = max(lhs.space_dimension(), rhs.space_dimension())
++        coeffs = [lhs.coefficient(i) - rhs.coefficient(i)
++                  for i in range(d)]
++        result = Linear_Expression(coeffs, lhs.inhomogeneous_term() - rhs.inhomogeneous_term())
+@@ -1213 +1222,2 @@
+-        result.thisptr[0] = e.thisptr[0] * cc
++        coeffs = [coeff * c for coeff in e.coefficients()]
++        result = Linear_Expression(coeffs, e.inhomogeneous_term() * c)
+@@ -1227 +1237,2 @@
+-        result.thisptr[0] = e.thisptr[0] * cc
++        coeffs = [coeff * c for coeff in e.coefficients()]
++        result = Linear_Expression(coeffs, e.inhomogeneous_term() * c)
