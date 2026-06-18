@@ -8,7 +8,8 @@ This package builds the upstream static `libec.a` archive for the wasi-sdk
 standalone target against the existing CoWasm GMP, MPFR, FLINT, NTL, and PARI
 ports. The standalone smoke test verifies that the installed headers and
 archive link into a WASI executable, then checks an elliptic curve conductor,
-torsion order, point addition, and scalar multiplication under the WASI runner.
+exact invariants, bad-prime reduction data, torsion point orders, point
+addition, negation, doubling, and scalar multiplication under the WASI runner.
 
 The current target disables eclib's command-line programs and builds the
 library interface used by SageMath.
