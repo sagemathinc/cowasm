@@ -113,6 +113,7 @@ PY
 
 cat >"$probe_dir/cysignals_guard_probe.pyx" <<'PYX'
 from cysignals.signals cimport (
+    add_custom_signals,
     sig_raise_exception,
     sig_block,
     sig_check,
@@ -127,6 +128,18 @@ from cysignals.signals cimport (
 from libc.signal cimport SIGALRM, SIGFPE, SIGINT, SIGSEGV
 
 from cysignals.signals import AlarmInterrupt, SignalError
+
+
+cdef int custom_signal_is_blocked() noexcept:
+    return 0
+
+
+cdef void custom_signal_unblock() noexcept:
+    pass
+
+
+cdef void custom_set_pending_signal(int sig) noexcept:
+    pass
 
 
 cdef bint raises_exception(int sig, bytes message, object expected_type,
@@ -219,6 +232,26 @@ def mapped_signal_exceptions():
                                  "unknown signal number 0")
 
     return ok and sig_occurred() == NULL
+
+
+def custom_handler_registration_limit():
+    cdef int i
+
+    for i in range(16):
+        add_custom_signals(custom_signal_is_blocked,
+                           custom_signal_unblock,
+                           custom_set_pending_signal)
+
+    try:
+        add_custom_signals(custom_signal_is_blocked,
+                           custom_signal_unblock,
+                           custom_set_pending_signal)
+    except IndexError as err:
+        if str(err) != "maximal number of custom handlers exceeded":
+            raise
+        return sig_occurred() == NULL
+
+    return False
 PYX
 
 PYTHONPATH="$dist_dir:$py_cython" python3 -m cython -3 \
@@ -257,6 +290,7 @@ assert cysignals_guard_probe.nested_guard_cleanup()
 assert cysignals_guard_probe.guarded_python_exception_cleanup()
 assert cysignals_guard_probe.no_except_guard_cleanup()
 assert cysignals_guard_probe.mapped_signal_exceptions()
+assert cysignals_guard_probe.custom_handler_registration_limit()
 PY
 
-echo "cysignals-ok signals-extension import guarded-cython-module guard-cleanup no-except-guards signal-exceptions"
+echo "cysignals-ok signals-extension import guarded-cython-module guard-cleanup no-except-guards signal-exceptions custom-handlers"
