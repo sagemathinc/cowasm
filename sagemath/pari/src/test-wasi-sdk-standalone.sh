@@ -184,4 +184,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/libpari-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/libpari-test" |
-  grep -F "libpari result: 2023 primepi=1229 irreducible=1 ellcard=102"
+  grep -F "libpari result: 2023 primepi=1229 irreducible=1 ellcard=102 recovered=221 caught=e_INV"
