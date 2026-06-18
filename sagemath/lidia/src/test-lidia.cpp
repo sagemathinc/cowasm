@@ -1,5 +1,6 @@
 #include <LiDIA/bigint.h>
 #include <LiDIA/bigint_matrix.h>
+#include <LiDIA/bigint_polynomial.h>
 #include <LiDIA/bigmod.h>
 #include <LiDIA/bigrational.h>
 
@@ -40,8 +41,49 @@ int main() {
     return 5;
   }
 
+  long f_coeffs[] = {2, -1, -2, 1};
+  long g_coeffs[] = {-3, -1, 3, 1};
+  polynomial< bigint > f(f_coeffs, 3);
+  polynomial< bigint > h(g_coeffs, 3);
+  polynomial< bigint > common = pp(gcd(f, h));
+  if (common.degree() >= 0 && common[common.degree()] < bigint(0)) {
+    common = -common;
+  }
+  if (common.degree() != 2 || common[0] != bigint(-1) ||
+      common[1] != bigint(0) || common[2] != bigint(1)) {
+    std::cerr << "unexpected LiDIA polynomial gcd: degree="
+              << common.degree() << " coeffs=" << common[0] << ","
+              << common[1] << "," << common[2] << "\n";
+    return 6;
+  }
+
+  long quadratic_coeffs[] = {-5, 0, 1};
+  polynomial< bigint > quadratic(quadratic_coeffs, 2);
+  if (discriminant(quadratic) != bigint(20) ||
+      no_of_real_roots(quadratic) != 2) {
+    std::cerr << "unexpected LiDIA quadratic invariants: discriminant="
+              << discriminant(quadratic)
+              << " real-roots=" << no_of_real_roots(quadratic) << "\n";
+    return 7;
+  }
+
+  bigint_matrix snf_matrix(2, 2);
+  snf_matrix.sto(0, 0, bigint(2));
+  snf_matrix.sto(0, 1, bigint(4));
+  snf_matrix.sto(1, 0, bigint(6));
+  snf_matrix.sto(1, 1, bigint(8));
+  snf_matrix.snf_simple();
+  if (snf_matrix(0, 0) != bigint(2) || snf_matrix(0, 1) != bigint(0) ||
+      snf_matrix(1, 0) != bigint(0) || snf_matrix(1, 1) != bigint(4)) {
+    std::cerr << "unexpected LiDIA SNF: entries=" << snf_matrix(0, 0) << ","
+              << snf_matrix(0, 1) << "," << snf_matrix(1, 0) << ","
+              << snf_matrix(1, 1) << "\n";
+    return 8;
+  }
+
   std::cout << "lidia-ok gcd=" << g << " nextprime=" << next
             << " rational=" << rational << " mod=" << z << " det=" << det
+            << " poly-gcd=x^2-1 roots=2 snf=2,4"
             << "\n";
   return 0;
 }

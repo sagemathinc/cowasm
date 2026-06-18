@@ -142,4 +142,4 @@ if [ "$link_status" -ne 0 ]; then
 fi
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/lidia-test" |
-  grep -F "lidia-ok gcd=3 nextprime=1009 rational=29/21 mod=2 det=-1"
+  grep -F "lidia-ok gcd=3 nextprime=1009 rational=29/21 mod=2 det=-1 poly-gcd=x^2-1 roots=2 snf=2,4"
