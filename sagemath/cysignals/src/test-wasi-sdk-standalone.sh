@@ -119,6 +119,7 @@ from cysignals.signals cimport (
     sig_check,
     sig_check_no_except,
     sig_on_no_except,
+    sig_str,
     sig_str_no_except,
     sig_occurred,
     sig_off,
@@ -219,6 +220,14 @@ def no_except_guard_cleanup():
     return sig_occurred() == NULL
 
 
+def string_guard_cleanup():
+    sig_str("wasi string guard")
+    sig_check()
+    sig_off()
+
+    return sig_occurred() == NULL
+
+
 def mapped_signal_exceptions():
     ok = raises_exception(SIGFPE, None, FloatingPointError,
                           "Floating point exception")
@@ -289,8 +298,9 @@ assert cysignals_guard_probe.guarded_sum(8) == 28
 assert cysignals_guard_probe.nested_guard_cleanup()
 assert cysignals_guard_probe.guarded_python_exception_cleanup()
 assert cysignals_guard_probe.no_except_guard_cleanup()
+assert cysignals_guard_probe.string_guard_cleanup()
 assert cysignals_guard_probe.mapped_signal_exceptions()
 assert cysignals_guard_probe.custom_handler_registration_limit()
 PY
 
-echo "cysignals-ok signals-extension import guarded-cython-module guard-cleanup no-except-guards signal-exceptions custom-handlers"
+echo "cysignals-ok signals-extension import guarded-cython-module guard-cleanup no-except-guards string-guards signal-exceptions custom-handlers"

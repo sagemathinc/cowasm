@@ -93,6 +93,11 @@ commits over broad rewrites.
     runtime integration;
   - Cython package hardening, because much of Sage's Python/C boundary depends
     on it.
+- Current cysignals `wasi-sdk` side-module smoke covers import, guard cleanup,
+  normal and no-except guard strings, signal-to-exception mapping, and custom
+  handler registration. A bounded `sig_retry()` probe currently traps with
+  `RuntimeError: unreachable` in the side module; keep that as a focused
+  runtime/toolchain follow-up instead of enabling it in the smoke yet.
 - Delay very broad systems such as GAP, Singular, and full Sage until the
   smaller math dependency layer and runtime error/interrupt behavior are
   stronger.
