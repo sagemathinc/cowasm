@@ -99,12 +99,26 @@ ptr = mem.realloc(ptr, 128)
 assert ptr
 assert mem.n() == 1
 
+ptr = mem.realloc(0, 96)
+assert ptr
+assert mem.n() == 2
+
 ptr = mem.calloc(8, 8)
 assert ptr
 ptr = mem.allocarray(8, 8)
 assert ptr
 ptr = mem.reallocarray(ptr, 9, 8)
 assert ptr
+
+ptr = mem.reallocarray(0, 4, 16)
+assert ptr
+
+growth = TestMemoryAllocator()
+assert growth.size() == 16
+for index in range(20):
+    assert growth.malloc(index + 1)
+assert growth.n() == 20
+assert growth.size() == 32
 
 for alignment in (1, 2, 4, 8, 16, 32, 64):
     ptr = mem.aligned_malloc(alignment, 256)
@@ -124,12 +138,33 @@ except ValueError as err:
 else:
     raise AssertionError("foreign pointer realloc unexpectedly succeeded")
 
+foreign_ptr = owner.allocarray(4, 8)
+try:
+    other.reallocarray(foreign_ptr, 5, 8)
+except ValueError as err:
+    assert str(err) == "given pointer not found in MemoryAllocator"
+else:
+    raise AssertionError("foreign pointer reallocarray unexpectedly succeeded")
+
 try:
     mem.malloc(mem.size_t_max())
 except MemoryError as err:
     assert str(err).startswith("failed to allocate ")
 else:
     raise AssertionError("oversized malloc unexpectedly succeeded")
+
+overflow_ptr = mem.allocarray(1, 1)
+for alloc, args, text in (
+    (mem.calloc, (mem.size_t_max(), 2), " * 2 bytes"),
+    (mem.allocarray, (mem.size_t_max(), 2), " * 2 bytes"),
+    (mem.reallocarray, (overflow_ptr, mem.size_t_max(), 2), " * 2 bytes"),
+):
+    try:
+        alloc(*args)
+    except MemoryError as err:
+        assert text in str(err), str(err)
+    else:
+        raise AssertionError(f"{alloc.__name__} overflow unexpectedly succeeded")
 PY
 
-echo "memory-allocator-ok extension-import allocation reallocation aligned-allocation allocation-errors"
+echo "memory-allocator-ok extension-import allocation reallocation null-reallocation allocator-growth aligned-allocation allocation-errors"
