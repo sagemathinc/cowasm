@@ -92,4 +92,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -o "$probe_dir/fflas-ffpack-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/fflas-ffpack-test" |
-  grep "fflas-ffpack-ok product=2,5,9,16 rank=1 det=15"
+  grep "fflas-ffpack-ok product=2,5,9,16 rank=1 det=15 solve=13,11,13,15"
