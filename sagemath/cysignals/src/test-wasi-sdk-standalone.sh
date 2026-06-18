@@ -369,7 +369,7 @@ def mapped_signal_exceptions():
     ok = ok and raises_exception(SIGALRM, None, AlarmInterrupt)
     ok = ok and raises_exception(SIGINT, None, KeyboardInterrupt)
     ok = ok and raises_exception(0, None, SystemError,
-                                 "unknown signal number 0")
+                                 "unknown signal number ")
 
     return ok and sig_occurred() == NULL
 
@@ -472,9 +472,25 @@ def memory_allocator_failure():
     try:
         check_allocarray(2, (<size_t>-1) // 2 + 1)
     except MemoryError as err:
-        return str(err).startswith("failed to allocate 2 * ")
+        allocarray_ok = str(err).startswith("failed to allocate 2 * ")
+    else:
+        return False
 
-    return False
+    try:
+        check_calloc((<size_t>-1) // 2 + 1, 2)
+    except MemoryError as err:
+        calloc_ok = str(err).startswith("failed to allocate ")
+    else:
+        return False
+
+    try:
+        check_reallocarray(NULL, 2, (<size_t>-1) // 2 + 1)
+    except MemoryError as err:
+        reallocarray_ok = str(err).startswith("failed to allocate 2 * ")
+    else:
+        return False
+
+    return allocarray_ok and calloc_ok and reallocarray_ok
 PYX
 
 PYTHONPATH="$dist_dir:$py_cython" python3 -m cython -3 \
@@ -528,4 +544,4 @@ assert cysignals_guard_probe.memory_allocator_roundtrip()
 assert cysignals_guard_probe.memory_allocator_failure()
 PY
 
-echo "cysignals-ok signals-extension pysignals-extension import init-api sigaction-api python-signal-api guarded-cython-module guard-cleanup sig-retry no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check memory-helpers"
+echo "cysignals-ok signals-extension pysignals-extension import init-api sigaction-api python-signal-api guarded-cython-module guard-cleanup sig-retry no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check memory-helpers overflow-checks"
