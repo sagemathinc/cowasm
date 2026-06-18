@@ -118,16 +118,13 @@ Current investigated Sage Python-interface gaps:
   CoWasm CPython, Cython, cysignals, gmpy2, GMP, GLPK, and PPL artifacts, but
   the modules cannot be packaged by linking `libppl.a` into each extension.
   `pplpy` passes PPL objects between its Cython extension modules, so each
-  module needs to share one PPL dynamic library instance. A prototype
-  `libppl.so` side library can be made from the PIC PPL archive by forcing the
-  PPL and GMP/GMPXX archives into the side module while leaving GLPK normally
-  selected. That resolves duplicate PPL state and ordinary GMP function imports,
-  but module loading still fails on PPL data globals such as
-  `Parma_Polyhedra_Library::Coefficient_one_p`, which are not exported through
-  the current CoWasm dylink data-symbol path. A durable `pplpy` port likely
-  needs either explicit PPL data exports, similar in spirit to the libc++ data
-  export shim, or a more general dylink treatment for C++ data symbols in side
-  libraries.
+  module needs to share one PPL dynamic library instance. The PPL standalone
+  smoke now builds a `libppl.so` side module from the PIC PPL and GMP/GMPXX
+  archives while leaving GLPK normally selected, and it generates explicit
+  `__WASM_EXPORT__...` wrappers for PPL data globals such as
+  `Parma_Polyhedra_Library::Coefficient_one_p`. The next durable `pplpy` step
+  is packaging its Cython modules against that shared PPL side module and
+  validating module-to-module PPL object sharing under the CoWasm loader.
 
 **WARNING: Unlike the rest of CoWasm, there is code in this directory
 that is licensed under the GPL. No code in the other packages (core, python, web, etc.,) depends on this code.**

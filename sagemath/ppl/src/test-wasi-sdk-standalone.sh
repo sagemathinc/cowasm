@@ -31,6 +31,11 @@ fi
 libcxx_noeh="$("$bin_dir/wasi-sdk-clang++-next" -target wasm32-wasip1 -print-file-name=libc++.a)"
 libcxxabi="${libcxx_noeh%/noeh/libc++.a}/eh/libc++abi.a"
 libunwind="${libcxx_noeh%/noeh/libc++.a}/eh/libunwind.a"
+clangxx="$bin_dir/wasi-sdk-clang++-next"
+wasm_ld="$bin_dir/wasi-sdk-wasm-ld-next"
+objdump="$bin_dir/wasi-sdk-llvm-objdump-next"
+nm="$bin_dir/wasi-sdk-llvm-nm-next"
+strings="$bin_dir/wasi-sdk-llvm-strings-next"
 if [ ! -f "$libcxxabi" ] || [ ! -f "$libunwind" ]; then
   echo "cowasm: ppl standalone smoke requires pinned wasi-sdk exception archives" >&2
   echo "  $libcxxabi" >&2
@@ -93,6 +98,63 @@ PATH="$standalone_path" COWASM_TOOLCHAIN=wasi-sdk make -C src install-libLTLIBRA
 
 test -f "$dist_dir/include/ppl.hh"
 test -f "$dist_dir/lib/libppl.a"
+
+data_symbols="$probe_dir/ppl-data-symbols.txt"
+"$nm" -g --defined-only "$dist_dir/lib/libppl.a" 2>/dev/null |
+  awk '$2 ~ /^[BDV]$/ && $3 ~ /^_/ { print $3 }' |
+  sort -u >"$data_symbols"
+test -s "$data_symbols"
+
+data_exports_cpp="$probe_dir/ppl-data-exports.cpp"
+{
+  cat <<'EOF'
+#define PPL_DATA_EXPORT(wrapper, symbol)                                      \
+  extern "C" char wrapper[] __asm__(#symbol);                                \
+  extern "C" __attribute__((visibility("default"))) void                    \
+      *__WASM_EXPORT__##symbol(void) {                                       \
+    return wrapper;                                                           \
+  }
+
+EOF
+  awk '{ printf "PPL_DATA_EXPORT(cowasm_ppl_data_export_%d, %s)\n", NR, $0 }' \
+    "$data_symbols"
+} >"$data_exports_cpp"
+
+"$clangxx" -target wasm32-wasip1 \
+  -Oz \
+  -fPIC \
+  -c "$data_exports_cpp" \
+  -o "$probe_dir/ppl-data-exports.o"
+
+"$wasm_ld" \
+  --experimental-pic \
+  -shared \
+  --allow-undefined \
+  --no-entry \
+  --export-all \
+  --whole-archive \
+    "$dist_dir/lib/libppl.a" \
+    "$gmp_dir/lib/libgmpxx.a" \
+    "$gmp_dir/lib/libgmp.a" \
+  --no-whole-archive \
+    "$glpk_dir/lib/libglpk.a" \
+    "$probe_dir/ppl-data-exports.o" \
+  -o "$dist_dir/lib/libppl.so"
+
+test -s "$dist_dir/lib/libppl.so"
+"$objdump" -h "$dist_dir/lib/libppl.so" | grep 'dylink.0'
+if "$strings" "$dist_dir/lib/libppl.so" | grep 'needed_dynlibs'; then
+  echo "unexpected needed_dynlibs from PPL side module" >&2
+  exit 1
+fi
+for symbol in \
+  _ZN23Parma_Polyhedra_Library17Coefficient_one_pE \
+  _ZN23Parma_Polyhedra_Library18Coefficient_zero_pE \
+  _ZN23Parma_Polyhedra_Library17Linear_Expression6zero_pE
+do
+  "$nm" -g "$dist_dir/lib/libppl.so" |
+    grep -F " T __WASM_EXPORT__${symbol}"
+done
 
 env \
   -u MAKEFLAGS \

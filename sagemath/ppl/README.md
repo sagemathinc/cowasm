@@ -12,3 +12,9 @@ The standalone regression links against the installed static library, solves
 exact linear maximization and minimization problems, checks a GLPK-backed MIP
 problem, verifies a convex-hull containment query, and reconstructs a minimized
 generator system under the WASI runner.
+
+The smoke also builds `libppl.so` as a WASI side module from the PIC PPL,
+GMPXX, and GMP archives, with GLPK linked normally. It generates
+`__WASM_EXPORT__...` address wrappers for PPL's global data symbols so
+downstream dynamic modules such as `pplpy` can resolve shared PPL objects
+through the CoWasm dylink data-symbol path.
