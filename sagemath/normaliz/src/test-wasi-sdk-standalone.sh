@@ -114,4 +114,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -o "$probe_dir/normaliz-lib-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/normaliz-lib-test" |
-  grep -F "normaliz-lib-ok rows=2 cols=2"
+  grep -F "normaliz-lib-ok hilbert=2 support=2 rays=2 rank=2 multiplicity=1"
