@@ -250,6 +250,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/cunningham-tables test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-cubic-hecke test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-jones-numfield test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/database-kohel test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-mutation-class test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-odlyzko-zeta test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-symbolic-data test-wasi-sdk-standalone

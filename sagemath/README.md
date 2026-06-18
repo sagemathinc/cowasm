@@ -73,6 +73,7 @@ Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 - Cubic Hecke algebra database
 - KnotInfo and LinkInfo database
 - Jones number-field database
+- Kohel modular and Hilbert polynomial database
 - Symbolic polynomial-system database
 - Mutation class database
 - Elliptic curves
