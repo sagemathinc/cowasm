@@ -89,4 +89,9 @@ cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/plantri_deg" -q 8 >"$
 grep -aF "33333333  1" "$plugin_log"
 grep -aF "3- 3 : 1" "$plugin_log"
 
-echo "plantri-ok plantri fullgen plugins"
+mdcount_log="$probe_dir/plantri-mdcount.log"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/plantri_mdcount" -q 8 >"$mdcount_log" 2>&1
+grep -aF "1 have minimum degree 3" "$mdcount_log"
+grep -aF "1 quadrangulations written to stdout" "$mdcount_log"
+
+echo "plantri-ok plantri fullgen deg-plugin mdcount-plugin"
