@@ -19,7 +19,8 @@
     "prepublishOnly": "pnpm run build && make test",
     "test": "make test",
     "test:clang-standalone": "make test-clang-standalone",
-    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone"
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone",
+    "test:wasi-sdk-next": "make test-wasi-sdk-next"
   },
   "repository": {
     "type": "git",
