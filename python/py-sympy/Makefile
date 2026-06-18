@@ -10,6 +10,9 @@ URL = https://files.pythonhosted.org/packages/py3/s/sympy/${WHEEL}
 TARBALL = ${UPSTREAM}/${WHEEL}
 TARBALL_SHA256 = e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5
 
+PYTHON_WASM = ${PACKAGES}/cpython/dist/wasm/bin/python3.wasm
+MPMATH_WASM = ${PACKAGES}/py-mpmath/dist/wasm
+
 include ../build/Makefile-vars-wheel
 
 define WHEEL_BUILD
@@ -27,6 +30,18 @@ test: deps ${DIST_WASM}/.built
 	# A little test of functionality
 	PYTHONPATH=${DIST_WASM}:$(shell cowasm-package-path @cowasm/py-mpmath) pnpm-exec cpython ${SRC}/test_basic.py
 	PYTHONPATH=${DIST_WASM}:$(shell cowasm-package-path @cowasm/py-mpmath) pnpm-exec cpython ${SRC}/test_sage_symbolics.py
+
+${MPMATH_WASM}/mpmath/__init__.py:
+	$(MAKE) -C ${PACKAGES}/py-mpmath test-wasi-sdk-standalone
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: deps ${DIST_WASM}/.built ${MPMATH_WASM}/mpmath/__init__.py
+	PYTHONPATH=${DIST_WASM}:${MPMATH_WASM} ${BIN}/cowasm ${PYTHON_WASM} -c 'import sympy'
+	PYTHONPATH=${DIST_WASM}:${MPMATH_WASM} ${BIN}/cowasm ${PYTHON_WASM} ${SRC}/test_basic.py
+	PYTHONPATH=${DIST_WASM}:${MPMATH_WASM} ${BIN}/cowasm ${PYTHON_WASM} ${SRC}/test_sage_symbolics.py
+
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: test-wasi-sdk-standalone
 
 
 

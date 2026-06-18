@@ -240,6 +240,8 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/primecount test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/primecountpy test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/pycosat test-wasi-sdk-standalone
+	$(MAKE) -C python/py-mpmath test-wasi-sdk-standalone
+	$(MAKE) -C python/py-sympy test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/nauty test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/plantri test-wasi-sdk-standalone
 	$(MAKE) -C python/py-networkx test-wasi-sdk-standalone

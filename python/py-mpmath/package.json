@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "description": "WebAssembly build of the mpmath python library",
   "main": "index.js",
-  "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js", "src/*"],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "make wasm",
     "prepublishOnly": "pnpm run build && make test",
-    "test": "make test"
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone",
+    "test:wasi-sdk-next": "make test-wasi-sdk-next"
   },
   "repository": {
     "type": "git",
