@@ -58,7 +58,7 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/lrcalc-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/lrcalc-test" |
-  grep -F "lrcalc-ok lrcoef-321=2 lrcoef-420=1 skew-terms=3 fusion-terms=2"
+  grep -F "lrcalc-ok lrcoef-321=2 lrcoef-420=1 skew-terms=3 fusion-terms=2 schubert-terms=2"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/lrcalc" \
   coef 3 2 1 - 2 1 - 2 1 |
