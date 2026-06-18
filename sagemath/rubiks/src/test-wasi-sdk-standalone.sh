@@ -94,13 +94,18 @@ build_cpp_program() {
 }
 
 empty_cflags=()
+empty_ldflags=()
 dik_wasi_cflags=(-include "$src_dir/dik-wasi-prototypes.h")
 reid_wasi_cflags=(-include "$src_dir/reid-wasi-compat.h")
+reid_optimal_wasi_cflags=(-include "$src_dir/reid-wasi-compat.h")
+reid_optimal_wasi_ldflags=(-Wl,-z,stack-size=1048576)
 
-build_c_program_with_flags() {
+build_c_program_with_compile_and_link_flags() {
   local out="$1"
   shift
   local -n extra_flags="$1"
+  shift
+  local -n extra_ldflags="$1"
   shift
   local objects=()
   for source in "$@"; do
@@ -116,7 +121,14 @@ build_c_program_with_flags() {
     "${cflags_gnu89[@]}" \
     "${extra_flags[@]}" \
     "${objects[@]}" \
+    "${extra_ldflags[@]}" \
     -o "$out"
+}
+
+build_c_program_with_flags() {
+  local out="$1"
+  shift
+  build_c_program_with_compile_and_link_flags "$out" "$1" empty_ldflags "${@:2}"
 }
 
 build_c_program() {
@@ -155,9 +167,10 @@ build_c_program \
   "$dist_dir/bin/size222" \
   "$build_dir/dik/size222.c"
 
-build_c_program_with_flags \
+build_c_program_with_compile_and_link_flags \
   "$dist_dir/bin/optimal" \
-  reid_wasi_cflags \
+  reid_optimal_wasi_cflags \
+  reid_optimal_wasi_ldflags \
   "$build_dir/reid/optimal.c"
 
 build_c_program \
@@ -217,4 +230,10 @@ printf 'F\n' |
   cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/twist" >"$twist_log"
 grep -F "LF UR UB UL RF DR DB DL FU FD BR BL LFU URB UBL LDF RUF RFD DLB DBR" "$twist_log"
 
-echo "rubiks-ok cu2 cubex mcube dikcube size222 twist optimal-compiled"
+optimal_log="$probe_dir/optimal.log"
+printf 'UF UR UB UL DF DR DB DL FR FL BR BL UFR URB UBL ULF DRF DFL DLB DBR\n' |
+  cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/optimal" >"$optimal_log"
+grep -F "initializing distance table" "$optimal_log"
+grep -F "cube is already solved!" "$optimal_log"
+
+echo "rubiks-ok cu2 cubex mcube dikcube size222 twist optimal-solved"
