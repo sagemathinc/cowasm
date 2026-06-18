@@ -1,0 +1,31 @@
+{
+  "name": "@cowasm/database-cubic-hecke",
+  "version": "1.0.0",
+  "description": "Cubic Hecke algebra representation database package for SageMath",
+  "main": "index.js",
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js", "src/*"],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make wasm",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone",
+    "test:wasi-sdk-next": "make test-wasi-sdk-next"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "keywords": ["sagemath", "cubic-hecke", "representation-theory", "data"],
+  "author": "Sebastian Oehms",
+  "license": "GPL-2.0-or-later",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/database-cubic-hecke",
+  "devDependencies": {
+    "@cowasm/cpython": "workspace:*",
+    "@cowasm/kernel": "workspace:*"
+  }
+}
