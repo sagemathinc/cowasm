@@ -9,4 +9,6 @@ covering integers, rationals, finite fields, polynomial arithmetic,
 factorization, matrices, normal forms, Arb/ACB ball arithmetic, QQbar, and
 Calcium APIs under the WASI runner. The finite-field checks cover GF(9)
 exponentiation together with Frobenius, trace, norm, and multiplicative-order
-operations used by Sage finite-field code.
+operations used by Sage finite-field code. The Arb/ACB checks include special
+function identities for zeta, Lambert W, complex exp/log inversion, and
+trigonometric evaluation on the imaginary axis.

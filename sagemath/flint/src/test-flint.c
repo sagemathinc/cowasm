@@ -169,11 +169,19 @@ int main(void) {
   arb_t bessel_order;
   arb_t bessel_arg;
   arb_t bessel_value;
+  arb_t zeta_two;
+  arb_t zeta_expected;
+  arb_t pi_squared;
+  arb_t lambert_zero;
   arb_t real_ball_value;
   arb_t real_ball_derivative_value;
   arb_t real_ball_integral_value;
   acb_t z;
   acb_t z_squared;
+  acb_t z_log;
+  acb_t z_log_exp;
+  acb_t acb_i;
+  acb_t acb_sin_i;
   acb_t eval_point;
   acb_t eval_value;
   arb_poly_t real_ball_poly;
@@ -330,11 +338,19 @@ int main(void) {
   arb_init(bessel_order);
   arb_init(bessel_arg);
   arb_init(bessel_value);
+  arb_init(zeta_two);
+  arb_init(zeta_expected);
+  arb_init(pi_squared);
+  arb_init(lambert_zero);
   arb_init(real_ball_value);
   arb_init(real_ball_derivative_value);
   arb_init(real_ball_integral_value);
   acb_init(z);
   acb_init(z_squared);
+  acb_init(z_log);
+  acb_init(z_log_exp);
+  acb_init(acb_i);
+  acb_init(acb_sin_i);
   acb_init(eval_point);
   acb_init(eval_value);
   arb_poly_init(real_ball_poly);
@@ -411,9 +427,18 @@ int main(void) {
   arb_zero(bessel_order);
   arb_zero(bessel_arg);
   arb_hypgeom_bessel_j(bessel_value, bessel_order, bessel_arg, 128);
+  arb_zeta_ui(zeta_two, 2, 128);
+  arb_mul(pi_squared, pi, pi, 128);
+  arb_div_ui(zeta_expected, pi_squared, 6, 128);
+  arb_zero(lambert_zero);
+  arb_lambertw(lambert_zero, lambert_zero, 0, 128);
 
   acb_set_si_si(z, 1, 1);
   acb_mul(z_squared, z, z, 128);
+  acb_log(z_log, z, 128);
+  acb_exp(z_log_exp, z_log, 128);
+  acb_set_si_si(acb_i, 0, 1);
+  acb_sin(acb_sin_i, acb_i, 128);
 
   acb_poly_set_coeff_si(ball_poly, 0, 1);
   acb_poly_set_coeff_si(ball_poly, 1, 2);
@@ -736,8 +761,13 @@ int main(void) {
   ok = ok && arb_contains_si(gamma_value, 24);
   ok = ok && arb_contains_zero(erf_zero);
   ok = ok && arb_contains_si(bessel_value, 1);
+  ok = ok && arb_overlaps(zeta_two, zeta_expected);
+  ok = ok && arb_contains_zero(lambert_zero);
   ok = ok && arb_contains_si(acb_realref(z_squared), 0);
   ok = ok && arb_contains_si(acb_imagref(z_squared), 2);
+  ok = ok && acb_contains(z_log_exp, z);
+  ok = ok && arb_contains_zero(acb_realref(acb_sin_i));
+  ok = ok && arb_contains_positive(acb_imagref(acb_sin_i));
   ok = ok && arb_contains_si(acb_realref(eval_value), 16);
   ok = ok && arb_contains_zero(acb_imagref(eval_value));
   ok = ok && arb_contains_si(real_ball_value, 17);
@@ -855,7 +885,7 @@ int main(void) {
   ok = ok && fmpq_mat_is_one(rational_matrix_identity);
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9,trace,norm,frobenius,order mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-poly-series=exp,inv,revert q-mpoly=Qxy z-mpoly=gcd,division,derivative,evaluation,factor matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf rational-matrix=det,inv arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9,trace,norm,frobenius,order mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-poly-series=exp,inv,revert q-mpoly=Qxy z-mpoly=gcd,division,derivative,evaluation,factor matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf rational-matrix=det,inv arb-hypgeom=gamma,erf,bessel arb-special=zeta,lambertw acb=exp-log,sin-i arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
   }
 
   flint_free(poly_str);
@@ -879,6 +909,10 @@ int main(void) {
   arb_poly_clear(real_ball_poly);
   acb_clear(eval_value);
   acb_clear(eval_point);
+  acb_clear(acb_sin_i);
+  acb_clear(acb_i);
+  acb_clear(z_log_exp);
+  acb_clear(z_log);
   acb_clear(z_squared);
   acb_clear(z);
   arb_clear(real_ball_integral_value);
@@ -889,6 +923,10 @@ int main(void) {
   arb_clear(bessel_value);
   arb_clear(bessel_arg);
   arb_clear(bessel_order);
+  arb_clear(lambert_zero);
+  arb_clear(pi_squared);
+  arb_clear(zeta_expected);
+  arb_clear(zeta_two);
   arb_clear(erf_zero);
   arb_clear(gamma_value);
   arb_clear(gamma_arg);
