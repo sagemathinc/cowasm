@@ -32,6 +32,9 @@
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@cowasm/gmp": "workspace:*",
+    "@cowasm/pari": "workspace:*"
+  },
   "devDependencies": {}
 }

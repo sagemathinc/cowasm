@@ -1216,7 +1216,14 @@ importers:
         specifier: workspace:*
         version: link:../gsl
 
-  sagemath/lcalc: {}
+  sagemath/lcalc:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+      '@cowasm/pari':
+        specifier: workspace:*
+        version: link:../pari
 
   sagemath/libatomic-ops: {}
 
@@ -1357,6 +1364,12 @@ importers:
         version: link:../mpfr
 
   sagemath/nauty: {}
+
+  sagemath/normaliz:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
 
   sagemath/ntl:
     dependencies:
