@@ -7,6 +7,7 @@
 #include <flint/arb_poly.h>
 #include <flint/arith.h>
 #include <flint/bernoulli.h>
+#include <flint/ca.h>
 #include <flint/fmpq.h>
 #include <flint/fmpz.h>
 #include <flint/fmpz_factor.h>
@@ -24,6 +25,7 @@
 #include <flint/nmod_poly.h>
 #include <flint/nmod_poly_factor.h>
 #include <flint/qqbar.h>
+#include <flint/gr_types.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -60,6 +62,7 @@ int main(void) {
   fmpz_t residue_combined;
   fmpz_t residue_mod_a;
   fmpz_t residue_mod_b;
+  fmpz_t calcium_integer;
   fmpq_t a;
   fmpq_t b;
   fmpq_t bernoulli;
@@ -140,6 +143,11 @@ int main(void) {
   qqbar_t algebraic_i;
   qqbar_t algebraic_minus_one;
   qqbar_t algebraic_eval;
+  ca_ctx_t calcium_ctx;
+  ca_t calcium_two;
+  ca_t calcium_sqrt2;
+  ca_t calcium_square;
+  ca_t calcium_expected;
   char *bernoulli_str;
   char *poly_str;
   char *rational_str;
@@ -175,6 +183,7 @@ int main(void) {
   fmpz_init(residue_combined);
   fmpz_init(residue_mod_a);
   fmpz_init(residue_mod_b);
+  fmpz_init(calcium_integer);
   fmpq_init(a);
   fmpq_init(b);
   fmpq_init(bernoulli);
@@ -255,6 +264,11 @@ int main(void) {
   qqbar_init(algebraic_i);
   qqbar_init(algebraic_minus_one);
   qqbar_init(algebraic_eval);
+  ca_ctx_init(calcium_ctx);
+  ca_init(calcium_two, calcium_ctx);
+  ca_init(calcium_sqrt2, calcium_ctx);
+  ca_init(calcium_square, calcium_ctx);
+  ca_init(calcium_expected, calcium_ctx);
 
   fmpz_fac_ui(n, 30);
   fmpz_print(n);
@@ -549,6 +563,15 @@ int main(void) {
   qqbar_evaluate_fmpz_poly(algebraic_eval, poly, algebraic_sqrt2);
   ok = ok && qqbar_is_zero(algebraic_eval);
 
+  ca_set_ui(calcium_two, 2, calcium_ctx);
+  ca_sqrt(calcium_sqrt2, calcium_two, calcium_ctx);
+  ca_mul(calcium_square, calcium_sqrt2, calcium_sqrt2, calcium_ctx);
+  ca_set_ui(calcium_expected, 2, calcium_ctx);
+  ok = ok && ca_check_equal(calcium_square, calcium_expected, calcium_ctx) ==
+                 T_TRUE;
+  ok = ok && ca_get_fmpz(calcium_integer, calcium_expected, calcium_ctx);
+  ok = ok && fmpz_equal_ui(calcium_integer, 2);
+
   fmpz_set_si(fmpz_mat_entry(matrix_a, 0, 0), 1);
   fmpz_set_si(fmpz_mat_entry(matrix_a, 0, 1), 2);
   fmpz_set_si(fmpz_mat_entry(matrix_a, 0, 2), 3);
@@ -602,13 +625,18 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
   }
 
   flint_free(poly_str);
   flint_free(rational_str);
   flint_free(bernoulli_str);
   flint_free(pi_str);
+  ca_clear(calcium_expected, calcium_ctx);
+  ca_clear(calcium_square, calcium_ctx);
+  ca_clear(calcium_sqrt2, calcium_ctx);
+  ca_clear(calcium_two, calcium_ctx);
+  ca_ctx_clear(calcium_ctx);
   qqbar_clear(algebraic_eval);
   qqbar_clear(algebraic_minus_one);
   qqbar_clear(algebraic_i);
@@ -695,6 +723,7 @@ int main(void) {
   fmpz_clear(residue_combined);
   fmpz_clear(residue_b);
   fmpz_clear(residue_a);
+  fmpz_clear(calcium_integer);
   fmpz_clear(poly_eval_x);
   fmpz_clear(poly_eval_value);
   fmpz_clear(poly_discriminant);
