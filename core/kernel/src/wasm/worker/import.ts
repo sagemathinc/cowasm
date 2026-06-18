@@ -338,6 +338,26 @@ async function doWasmImport({
       return dest;
     };
   }
+  if (wasmOpts.env.strdup == null) {
+    wasmOpts.env.strdup = (src: number) => {
+      let malloc = wasm?.exports?.malloc;
+      if (typeof malloc != "function") {
+        const mallocPtr = wasm?.exports?.__WASM_EXPORT__malloc;
+        if (typeof mallocPtr == "function") {
+          malloc = table.get(Number(mallocPtr()));
+        }
+      }
+      if (typeof malloc != "function") {
+        throw Error("strdup requires malloc from the main WebAssembly module");
+      }
+      const mem = new Uint8Array(memory.buffer);
+      const len = cstringLength(src);
+      const dest = Number(malloc(len + 1));
+      if (dest == 0) return 0;
+      mem.set(mem.slice(src, src + len + 1), dest);
+      return dest;
+    };
+  }
   if (wasmOpts.env.strcat == null) {
     wasmOpts.env.strcat = (dest: number, src: number) => {
       wasmOpts.env.strcpy(dest + cstringLength(dest), src);
