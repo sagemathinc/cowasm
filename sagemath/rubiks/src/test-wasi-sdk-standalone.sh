@@ -164,6 +164,10 @@ build_c_program \
   "$dist_dir/bin/twist" \
   "$build_dir/reid/twist.c"
 
+for program in cu2 cubex mcube dikcube size222 optimal twist; do
+  ln -sf "$program" "$dist_dir/bin/$program.wasm"
+done
+
 cu2_log="$probe_dir/cu2.log"
 printf '\n\n\n' |
   cowasm_clang_standalone_run_wasi \
@@ -182,6 +186,23 @@ printf '\n' |
 grep -F "200 cube solved ok." "$cubex_log"
 grep -F "201 terminating successfully." "$cubex_log"
 
+mcube_log="$probe_dir/mcube.log"
+printf '\n\n\n' |
+  cowasm_clang_standalone_run_wasi \
+    "$bin_dir" \
+    "$dist_dir/bin/mcube" \
+    U:1111111111111111 \
+    L:2222333333332222 \
+    F:5555222222225555 \
+    R:4444555555554444 \
+    B:3333444444443333 \
+    D:6666666666666666 >"$mcube_log"
+grep -F "200 cube solved ok." "$mcube_log"
+grep -F "202 2 moves 11 groups 0 0 0 0 0 0 0 0 1 1 0" "$mcube_log"
+grep -F "inner top left" "$mcube_log"
+grep -F "inner bottom left" "$mcube_log"
+grep -F "201 terminating successfully." "$mcube_log"
+
 dik_log="$probe_dir/dikcube.log"
 printf 'F\n' |
   cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/dikcube" -t >"$dik_log"
@@ -196,4 +217,4 @@ printf 'F\n' |
   cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/twist" >"$twist_log"
 grep -F "LF UR UB UL RF DR DB DL FU FD BR BL LFU URB UBL LDF RUF RFD DLB DBR" "$twist_log"
 
-echo "rubiks-ok cu2 cubex dikcube size222 twist optimal-compiled"
+echo "rubiks-ok cu2 cubex mcube dikcube size222 twist optimal-compiled"
