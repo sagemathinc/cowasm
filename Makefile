@@ -212,6 +212,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/e-antic test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/eclib test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/lidia test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/lie test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/givaro test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mpfr test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mpfi test-wasi-sdk-standalone
