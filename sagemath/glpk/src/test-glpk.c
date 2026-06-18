@@ -1,6 +1,16 @@
 #include <glpk.h>
 
+#include <stddef.h>
 #include <stdio.h>
+
+typedef struct {
+  int cut;
+} vertex_data;
+
+typedef struct {
+  double cap;
+  double flow;
+} arc_data;
 
 static int nearly_equal(double a, double b) {
   double diff = a - b;
@@ -8,6 +18,22 @@ static int nearly_equal(double a, double b) {
     diff = -diff;
   }
   return diff < 1e-7;
+}
+
+static glp_arc *add_cap_arc(glp_graph *graph, int tail, int head,
+                            double capacity) {
+  glp_arc *arc = glp_add_arc(graph, tail, head);
+  ((arc_data *)arc->data)->cap = capacity;
+  ((arc_data *)arc->data)->flow = 0.0;
+  return arc;
+}
+
+static double arc_flow(const glp_arc *arc) {
+  return ((const arc_data *)arc->data)->flow;
+}
+
+static double arc_cap(const glp_arc *arc) {
+  return ((const arc_data *)arc->data)->cap;
 }
 
 static int test_lp(void) {
@@ -122,9 +148,76 @@ static int test_mip(void) {
   return ok;
 }
 
+static int test_graph_maxflow(void) {
+  glp_graph *graph = glp_create_graph(sizeof(vertex_data), sizeof(arc_data));
+  glp_prob *lp = glp_create_prob();
+  glp_smcp smcp;
+  glp_arc *source_to_left;
+  glp_arc *source_to_right;
+  glp_arc *left_to_right;
+  glp_arc *left_to_sink;
+  glp_arc *right_to_sink;
+  double flow = 0.0;
+  int ret;
+  int ok = 0;
+
+  glp_add_vertices(graph, 4);
+  glp_set_vertex_name(graph, 1, "source");
+  glp_set_vertex_name(graph, 2, "left");
+  glp_set_vertex_name(graph, 3, "right");
+  glp_set_vertex_name(graph, 4, "sink");
+  glp_create_v_index(graph);
+
+  source_to_left = add_cap_arc(graph, 1, 2, 3.0);
+  source_to_right = add_cap_arc(graph, 1, 3, 2.0);
+  left_to_right = add_cap_arc(graph, 2, 3, 1.0);
+  left_to_sink = add_cap_arc(graph, 2, 4, 2.0);
+  right_to_sink = add_cap_arc(graph, 3, 4, 4.0);
+
+  ret = glp_maxflow_ffalg(graph, 1, 4, offsetof(arc_data, cap), &flow,
+                          offsetof(arc_data, flow),
+                          offsetof(vertex_data, cut));
+  if (ret != 0 || !nearly_equal(flow, 5.0)) {
+    goto done;
+  }
+  if (glp_find_vertex(graph, "source") != 1 ||
+      glp_find_vertex(graph, "sink") != 4) {
+    goto done;
+  }
+  if (!nearly_equal(arc_flow(source_to_left) + arc_flow(source_to_right),
+                    5.0) ||
+      !nearly_equal(arc_flow(right_to_sink) + arc_flow(left_to_sink), 5.0) ||
+      !nearly_equal(arc_flow(source_to_left),
+                    arc_flow(left_to_right) + arc_flow(left_to_sink)) ||
+      !nearly_equal(arc_flow(source_to_right) + arc_flow(left_to_right),
+                    arc_flow(right_to_sink))) {
+    goto done;
+  }
+  if (arc_flow(source_to_left) > arc_cap(source_to_left) ||
+      arc_flow(source_to_right) > arc_cap(source_to_right) ||
+      arc_flow(left_to_right) > arc_cap(left_to_right) ||
+      arc_flow(left_to_sink) > arc_cap(left_to_sink) ||
+      arc_flow(right_to_sink) > arc_cap(right_to_sink)) {
+    goto done;
+  }
+
+  glp_maxflow_lp(lp, graph, GLP_OFF, 1, 4, offsetof(arc_data, cap));
+  glp_init_smcp(&smcp);
+  smcp.msg_lev = GLP_MSG_OFF;
+  if (glp_simplex(lp, &smcp) == 0 && glp_get_status(lp) == GLP_OPT &&
+      nearly_equal(glp_get_obj_val(lp), 5.0)) {
+    ok = 1;
+  }
+
+done:
+  glp_delete_prob(lp);
+  glp_delete_graph(graph);
+  return ok;
+}
+
 int main(void) {
-  if (test_lp() && test_mip()) {
-    puts("glpk-ok simplex=76 exact=76 mip=6");
+  if (test_lp() && test_mip() && test_graph_maxflow()) {
+    puts("glpk-ok simplex=76 exact=76 mip=6 maxflow=5");
     return 0;
   }
   return 1;

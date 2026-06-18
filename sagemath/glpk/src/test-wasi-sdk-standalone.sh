@@ -111,4 +111,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/glpk-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/glpk-test" |
-  grep -F "glpk-ok simplex=76 exact=76 mip=6"
+  grep -F "glpk-ok simplex=76 exact=76 mip=6 maxflow=5"
