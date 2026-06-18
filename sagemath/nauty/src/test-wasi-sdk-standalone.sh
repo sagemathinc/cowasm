@@ -56,8 +56,10 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -lnauty \
   -o "$probe_dir/nauty-test"
 
-cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/nauty-test" |
-  grep "nauty-ok cycle=5 automorphisms=10 orbit=transitive"
+library_log="$probe_dir/library.log"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/nauty-test" >"$library_log"
+grep -F "nauty-ok cycle=5 automorphisms=10 orbit=transitive" "$library_log"
+grep -F "nauty-ok traces cycle=5 automorphisms=10 orbit=transitive" "$library_log"
 
 graph_file="$probe_dir/connected4.g6"
 count_log="$probe_dir/countg.log"
