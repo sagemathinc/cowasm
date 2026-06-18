@@ -44,6 +44,10 @@ int main(void) {
   fmpz_t integer_phi;
   fmpz_t integer_sigma;
   fmpz_t matrix_det;
+  fmpz_t poly_discriminant;
+  fmpz_t poly_eval_value;
+  fmpz_t poly_eval_x;
+  fmpz_t poly_resultant;
   fmpq_t a;
   fmpq_t b;
   fmpq_t bernoulli;
@@ -63,6 +67,10 @@ int main(void) {
   fmpz_poly_t gcd_poly_result;
   fmpz_poly_t gcd_poly_expected;
   fmpz_poly_t complex_roots_poly;
+  fmpz_poly_t transform_poly_a;
+  fmpz_poly_t transform_poly_b;
+  fmpz_poly_t transform_poly_composed;
+  fmpz_poly_t transform_poly_expected;
   fmpz_mod_ctx_t fmpz_mod_ctx;
   fmpz_mod_poly_t fmpz_mod_poly;
   fmpz_mod_poly_t fmpz_mod_factor_product;
@@ -135,6 +143,10 @@ int main(void) {
   fmpz_init(integer_phi);
   fmpz_init(integer_sigma);
   fmpz_init(matrix_det);
+  fmpz_init(poly_discriminant);
+  fmpz_init(poly_eval_value);
+  fmpz_init(poly_eval_x);
+  fmpz_init(poly_resultant);
   fmpq_init(a);
   fmpq_init(b);
   fmpq_init(bernoulli);
@@ -154,6 +166,10 @@ int main(void) {
   fmpz_poly_init(gcd_poly_result);
   fmpz_poly_init(gcd_poly_expected);
   fmpz_poly_init(complex_roots_poly);
+  fmpz_poly_init(transform_poly_a);
+  fmpz_poly_init(transform_poly_b);
+  fmpz_poly_init(transform_poly_composed);
+  fmpz_poly_init(transform_poly_expected);
   fmpz_mod_ctx_init_ui(fmpz_mod_ctx, 17);
   fmpz_mod_poly_init(fmpz_mod_poly, fmpz_mod_ctx);
   fmpz_mod_poly_init(fmpz_mod_factor_product, fmpz_mod_ctx);
@@ -326,6 +342,26 @@ int main(void) {
   fmpz_poly_set_coeff_si(gcd_poly_expected, 1, 1);
   fmpz_poly_gcd(gcd_poly_result, gcd_poly_a, gcd_poly_b);
   ok = ok && fmpz_poly_equal(gcd_poly_result, gcd_poly_expected);
+
+  fmpz_poly_set_coeff_si(transform_poly_a, 0, -2);
+  fmpz_poly_set_coeff_ui(transform_poly_a, 2, 1);
+  fmpz_poly_set_coeff_si(transform_poly_b, 0, -1);
+  fmpz_poly_set_coeff_ui(transform_poly_b, 1, 1);
+  fmpz_poly_resultant(poly_resultant, transform_poly_a, transform_poly_b);
+  fmpz_poly_discriminant(poly_discriminant, transform_poly_a);
+  fmpz_set_ui(poly_eval_x, 5);
+  fmpz_poly_evaluate_fmpz(poly_eval_value, transform_poly_a, poly_eval_x);
+
+  fmpz_poly_set_coeff_ui(transform_poly_b, 0, 1);
+  fmpz_poly_compose(transform_poly_composed, transform_poly_a,
+                    transform_poly_b);
+  fmpz_poly_set_coeff_si(transform_poly_expected, 0, -1);
+  fmpz_poly_set_coeff_ui(transform_poly_expected, 1, 2);
+  fmpz_poly_set_coeff_ui(transform_poly_expected, 2, 1);
+  ok = ok && fmpz_equal_si(poly_resultant, -1);
+  ok = ok && fmpz_equal_ui(poly_discriminant, 8);
+  ok = ok && fmpz_equal_ui(poly_eval_value, 23);
+  ok = ok && fmpz_poly_equal(transform_poly_composed, transform_poly_expected);
 
   fmpq_set_si(q_mpoly_coeff, 1, 2);
   fmpq_poly_set_coeff_fmpq(rational_poly, 0, q_mpoly_coeff);
@@ -503,7 +539,7 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 poly-gcd=x-2 finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 poly-gcd=x-2 poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
   }
 
   flint_free(poly_str);
@@ -560,6 +596,10 @@ int main(void) {
   fmpz_poly_clear(gcd_poly_result);
   fmpz_poly_clear(gcd_poly_b);
   fmpz_poly_clear(gcd_poly_a);
+  fmpz_poly_clear(transform_poly_expected);
+  fmpz_poly_clear(transform_poly_composed);
+  fmpz_poly_clear(transform_poly_b);
+  fmpz_poly_clear(transform_poly_a);
   fmpz_mod_poly_clear(fmpz_mod_factor_tmp, fmpz_mod_ctx);
   fmpz_mod_poly_clear(fmpz_mod_factor_power, fmpz_mod_ctx);
   fmpz_mod_poly_clear(fmpz_mod_factor_product, fmpz_mod_ctx);
@@ -580,6 +620,10 @@ int main(void) {
   fmpq_clear(bernoulli);
   fmpq_clear(b);
   fmpq_clear(a);
+  fmpz_clear(poly_resultant);
+  fmpz_clear(poly_eval_x);
+  fmpz_clear(poly_eval_value);
+  fmpz_clear(poly_discriminant);
   fmpz_clear(matrix_det);
   fmpz_clear(integer_sigma);
   fmpz_clear(integer_phi);
