@@ -118,4 +118,4 @@ env PATH="$standalone_path" "$clangxx" -target wasm32-wasip1 \
   -o "$probe_dir/lcalc-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/lcalc-test" |
-  grep -F "lcalc-ok zeta-real=2.692619886 zeta-imag=-0.0203860296 zeta2-partial=1.643934567 zeta2-tail=9.08223555e-05 gcd=21 nextprime=1009 powmod=97 elliptic=0.655514388573"
+  grep -F "lcalc-ok zeta-real=2.692619886 zeta-imag=-0.0203860296 zeta2-partial=1.643934567 zeta2-tail=9.08223555e-05 dirichlet=l4,l5 gcd=21 nextprime=1009 powmod=97 elliptic=0.655514388573"

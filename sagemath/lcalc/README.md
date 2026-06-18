@@ -7,5 +7,5 @@ This package builds a WASI SDK standalone baseline for the upstream
 command-line frontend still depends on generated `gengetopt` sources, so the
 port deliberately validates the reusable library layer directly. The standalone
 smoke links a C++ probe against the installed archive and verifies Riemann zeta
-values, a zeta Dirichlet series, basic number-theory helpers, and the 32A
-elliptic-curve central value through the WASI runner.
+values, zeta and Dirichlet-character series, basic number-theory helpers, and
+the 32A elliptic-curve central value through the WASI runner.

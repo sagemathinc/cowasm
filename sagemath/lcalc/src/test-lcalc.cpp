@@ -45,17 +45,62 @@ int main() {
     return 6;
   }
 
-  if (gcd(462, 1071) != 21) {
+  int coeff_l4[] = {0, 1, 0, -1, 0};
+  Double gamma_l4[] = {0, 0.5};
+  Complex lambda_l4[] = {0, 0.5};
+  L_function<int> l4("L4", 1, 4, coeff_l4, 4, sqrt(4 / Pi), 1, 1,
+                     gamma_l4, lambda_l4);
+  Complex l4_partial = l4.dirichlet_series(Complex(2.0, 0.0), 1000);
+  double l4_expected = 0.0;
+  for (int n = 1; n <= 1000; n++) {
+    int index = n % 4;
+    if (index == 0) {
+      index = 4;
+    }
+    l4_expected += static_cast<double>(coeff_l4[index]) / (n * n);
+  }
+  if (!close_to(real(l4_partial), l4_expected, 1e-12)) {
     return 7;
   }
-  if (nextprime(1000) != 1009) {
+  if (!close_to(imag(l4_partial), 0.0, 1e-15)) {
     return 8;
   }
-  if (!isprime(1009) || isprime(1024)) {
+
+  Complex coeff_l5[] = {0, 1, I, -I, -1, 0};
+  Complex gauss_sum = 0;
+  for (int n = 1; n <= 4; n++) {
+    gauss_sum += coeff_l5[n] * exp(n * 2 * I * Pi / 5);
+  }
+  L_function<Complex> l5("L5", 1, 5, coeff_l5, 5, sqrt(5 / Pi),
+                         gauss_sum / (I * sqrt(5.0)), 1, gamma_l4,
+                         lambda_l4);
+  Complex l5_partial = l5.dirichlet_series(Complex(2.0, 0.0), 1000);
+  Complex l5_expected = 0.0;
+  for (int n = 1; n <= 1000; n++) {
+    int index = n % 5;
+    if (index == 0) {
+      index = 5;
+    }
+    l5_expected += coeff_l5[index] / static_cast<double>(n * n);
+  }
+  if (!close_to(real(l5_partial), real(l5_expected), 1e-12)) {
     return 9;
   }
-  if (power_mod_q(7, 128, 101) != 97) {
+  if (!close_to(imag(l5_partial), imag(l5_expected), 1e-12)) {
     return 10;
+  }
+
+  if (gcd(462, 1071) != 21) {
+    return 11;
+  }
+  if (nextprime(1000) != 1009) {
+    return 12;
+  }
+  if (!isprime(1009) || isprime(1024)) {
+    return 13;
+  }
+  if (power_mod_q(7, 128, 101) != 97) {
+    return 14;
   }
 
   pari_init_opts(400000000, 2, INIT_DFTm);
@@ -69,7 +114,7 @@ int main() {
   double elliptic_expected =
       real(GAMMA(0.5) * GAMMA(0.25) / GAMMA(0.75) / 8.0);
   if (!close_to(elliptic_value, elliptic_expected, 1e-9)) {
-    return 11;
+    return 15;
   }
 
   std::cout << std::setprecision(10)
@@ -77,6 +122,7 @@ int main() {
             << " zeta-imag=" << imag_part
             << " zeta2-partial=" << real(zeta_2_partial)
             << " zeta2-tail=" << real(zeta_tail)
+            << " dirichlet=l4,l5"
             << " gcd=21 nextprime=1009 powmod=97"
             << std::setprecision(12)
             << " elliptic=" << elliptic_value << "\n";
