@@ -4,6 +4,7 @@
 #include <flint/arb_fmpz_poly.h>
 #include <flint/arb.h>
 #include <flint/arb_hypgeom.h>
+#include <flint/arith.h>
 #include <flint/bernoulli.h>
 #include <flint/fmpq.h>
 #include <flint/fmpz.h>
@@ -44,10 +45,20 @@ int main(void) {
   fmpz_t integer_phi;
   fmpz_t integer_sigma;
   fmpz_t matrix_det;
+  fmpz_t modular_base;
+  fmpz_t modular_inverse;
+  fmpz_t modular_modulus;
+  fmpz_t modular_power;
+  fmpz_t partition_count;
   fmpz_t poly_discriminant;
   fmpz_t poly_eval_value;
   fmpz_t poly_eval_x;
   fmpz_t poly_resultant;
+  fmpz_t residue_a;
+  fmpz_t residue_b;
+  fmpz_t residue_combined;
+  fmpz_t residue_mod_a;
+  fmpz_t residue_mod_b;
   fmpq_t a;
   fmpq_t b;
   fmpq_t bernoulli;
@@ -143,10 +154,20 @@ int main(void) {
   fmpz_init(integer_phi);
   fmpz_init(integer_sigma);
   fmpz_init(matrix_det);
+  fmpz_init(modular_base);
+  fmpz_init(modular_inverse);
+  fmpz_init(modular_modulus);
+  fmpz_init(modular_power);
+  fmpz_init(partition_count);
   fmpz_init(poly_discriminant);
   fmpz_init(poly_eval_value);
   fmpz_init(poly_eval_x);
   fmpz_init(poly_resultant);
+  fmpz_init(residue_a);
+  fmpz_init(residue_b);
+  fmpz_init(residue_combined);
+  fmpz_init(residue_mod_a);
+  fmpz_init(residue_mod_b);
   fmpq_init(a);
   fmpq_init(b);
   fmpq_init(bernoulli);
@@ -314,6 +335,23 @@ int main(void) {
   ok = ok && fmpz_equal_ui(integer_phi, 96);
   ok = ok && fmpz_equal_ui(integer_sigma, 1170);
   ok = ok && fmpz_factor_moebius_mu(integer_factorization) == 0;
+
+  arith_number_of_partitions(partition_count, 10);
+  fmpz_set_ui(residue_a, 2);
+  fmpz_set_ui(residue_mod_a, 3);
+  fmpz_set_ui(residue_b, 3);
+  fmpz_set_ui(residue_mod_b, 5);
+  fmpz_CRT(residue_combined, residue_a, residue_mod_a, residue_b,
+           residue_mod_b, 0);
+  fmpz_set_ui(modular_base, 7);
+  fmpz_set_ui(modular_modulus, 40);
+  fmpz_powm_ui(modular_power, modular_base, 4, modular_modulus);
+  ok = ok && fmpz_equal_ui(partition_count, 42);
+  ok = ok && fmpz_equal_ui(residue_combined, 8);
+  ok = ok && fmpz_invmod(modular_inverse, modular_base, modular_modulus);
+  ok = ok && fmpz_equal_ui(modular_inverse, 23);
+  ok = ok && fmpz_equal_ui(modular_power, 1);
+  ok = ok && fmpz_jacobi(modular_base, residue_mod_b) == -1;
 
   fmpz_mod_poly_set_coeff_si(fmpz_mod_poly, 0, -1, fmpz_mod_ctx);
   fmpz_mod_poly_set_coeff_ui(fmpz_mod_poly, 2, 1, fmpz_mod_ctx);
@@ -539,7 +577,7 @@ int main(void) {
   ok = ok && nmod_mat_get_entry(mod_solution, 2, 0) == 3;
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 poly-gcd=x-2 poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 arb-hypgeom=gamma,erf,bessel ball-poly=16 roots=+i,-i qqbar=sqrt2,i");
   }
 
   flint_free(poly_str);
@@ -621,9 +659,19 @@ int main(void) {
   fmpq_clear(b);
   fmpq_clear(a);
   fmpz_clear(poly_resultant);
+  fmpz_clear(residue_mod_b);
+  fmpz_clear(residue_mod_a);
+  fmpz_clear(residue_combined);
+  fmpz_clear(residue_b);
+  fmpz_clear(residue_a);
   fmpz_clear(poly_eval_x);
   fmpz_clear(poly_eval_value);
   fmpz_clear(poly_discriminant);
+  fmpz_clear(partition_count);
+  fmpz_clear(modular_power);
+  fmpz_clear(modular_modulus);
+  fmpz_clear(modular_inverse);
+  fmpz_clear(modular_base);
   fmpz_clear(matrix_det);
   fmpz_clear(integer_sigma);
   fmpz_clear(integer_phi);
