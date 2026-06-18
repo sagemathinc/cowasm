@@ -65,6 +65,7 @@ Current wasi-sdk standalone math smoke packages:
 - Gfan
 - GLPK
 - PPL
+- libsemigroups
 - 4ti2
 - gmpy2 (provided by `python/py-gmpy2`)
 - tdlib

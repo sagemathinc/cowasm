@@ -1229,6 +1229,8 @@ importers:
 
   sagemath/libbraiding: {}
 
+  sagemath/libsemigroups: {}
+
   sagemath/libhomfly:
     dependencies:
       '@cowasm/gc':

@@ -1,0 +1,12 @@
+diff --git a/include/libsemigroups/config.hpp b/include/libsemigroups/config.hpp
+index 20f0261..4ab7440 100644
+--- a/include/libsemigroups/config.hpp
++++ b/include/libsemigroups/config.hpp
+@@ -6,7 +6,7 @@
+ /* config/config.h.in.  Generated from configure.ac by autoheader.  */
+
+ /* define if building with backward-cpp enabled */
+-#ifndef LIBSEMIGROUPS_BACKWARD_ENABLED
++#if defined(BACKWARD_ENABLED) && !defined(LIBSEMIGROUPS_BACKWARD_ENABLED)
+ #define LIBSEMIGROUPS_BACKWARD_ENABLED 1
+ #endif
