@@ -57,9 +57,62 @@ solution = pycosat.solve(cnf)
 assert isinstance(solution, list), solution
 assert all(any(lit in solution for lit in clause) for clause in cnf)
 assert len(list(pycosat.itersolve(cnf))) == 18
+assert pycosat.solve((tuple(clause) for clause in cnf), vars=7) == [
+    1,
+    -2,
+    -3,
+    -4,
+    5,
+    -6,
+    -7,
+]
 
 assert pycosat.solve([[1], [-1]]) == "UNSAT"
 assert pycosat.solve([[1, 2, 3], [-1, -2]], prop_limit=1) == "UNKNOWN"
+
+try:
+    pycosat.solve([[1, 0]])
+except ValueError:
+    pass
+else:
+    raise AssertionError("zero literal should raise ValueError")
+
+assert pycosat.solve([[1]]) == [1]
+
+
+def var(row, col):
+    return row * 4 + col + 1
+
+
+def exactly_one(literals):
+    clauses = [literals[:]]
+    for i, left in enumerate(literals):
+        for right in literals[i + 1 :]:
+            clauses.append([-left, -right])
+    return clauses
+
+
+queens = []
+for row in range(4):
+    queens.extend(exactly_one([var(row, col) for col in range(4)]))
+for col in range(4):
+    queens.extend(exactly_one([var(row, col) for row in range(4)]))
+for row in range(4):
+    for col in range(4):
+        current = var(row, col)
+        for next_row in range(row + 1, 4):
+            delta = next_row - row
+            for next_col in (col - delta, col + delta):
+                if 0 <= next_col < 4:
+                    queens.append([-current, -var(next_row, next_col)])
+
+queen_solutions = list(pycosat.itersolve(queens, vars=16))
+assert len(queen_solutions) == 2, queen_solutions
+for queen_solution in queen_solutions:
+    assignment = set(queen_solution)
+    placed = {literal for literal in queen_solution if literal > 0}
+    assert len(placed) == 4, queen_solution
+    assert all(any(literal in assignment for literal in clause) for clause in queens)
 PY
 
-echo "pycosat-ok solve itersolve unsat unknown"
+echo "pycosat-ok solve itersolve unsat unknown vars errors queens"
