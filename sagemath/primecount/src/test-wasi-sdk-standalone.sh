@@ -65,6 +65,7 @@ COWASM_TOOLCHAIN=wasi-sdk cmake "$build_dir" \
   -DCMAKE_INSTALL_PREFIX="$dist_dir" \
   -DCMAKE_PREFIX_PATH="$primesieve_dir" \
   -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+  -DCMAKE_HAVE_LIBC_PTHREAD=ON \
   -DBUILD_PRIMECOUNT=OFF \
   -DBUILD_LIBPRIMESIEVE=OFF \
   -DBUILD_SHARED_LIBS=OFF \
@@ -74,8 +75,26 @@ COWASM_TOOLCHAIN=wasi-sdk cmake "$build_dir" \
   -DWITH_OPENMP=OFF \
   -DWITH_MULTIARCH=OFF
 
-COWASM_TOOLCHAIN=wasi-sdk cmake --build . --parallel "$jobs"
+COWASM_TOOLCHAIN=wasi-sdk cmake --build . --target libprimecount-static --parallel "$jobs"
 COWASM_TOOLCHAIN=wasi-sdk cmake --install .
+
+# Link the CLI directly to avoid CMake's imported Threads target adding -lpthreads.
+mkdir -p "$dist_dir/bin"
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
+  "$build_dir/src/app/CmdOptions.cpp" \
+  "$build_dir/src/app/main.cpp" \
+  "$build_dir/src/app/help.cpp" \
+  "$build_dir/src/app/test.cpp" \
+  -I"$build_dir/src" \
+  -I"$build_dir/include" \
+  -I"$primesieve_dir/include" \
+  -L"$dist_dir/lib" \
+  -L"$primesieve_dir/lib" \
+  "$libcxxabi" \
+  "$libunwind" \
+  -lprimecount \
+  -lprimesieve \
+  -o "$dist_dir/bin/primecount"
 
 env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -c \
@@ -114,3 +133,14 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/primecount-cpp-test" |
   grep "primecount-cpp-ok pi(1e6)=78498 nth5000=48611 phi1000_5=207 pi-str=78498"
+
+test -x "$dist_dir/bin/primecount"
+
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/primecount" 1000000 |
+  grep "^78498$"
+
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/primecount" 1000 --nth-prime |
+  grep "^7919$"
+
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/primecount" 100 4 --phi |
+  grep "^22$"
