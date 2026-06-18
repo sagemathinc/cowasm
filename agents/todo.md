@@ -93,14 +93,13 @@ commits over broad rewrites.
     runtime integration;
   - Cython package hardening, because much of Sage's Python/C boundary depends
     on it.
-- Continue investigating `py-gmpy2` MPFR string formatting under the current
-  PIC `dist/wasm` side-module path. Numeric MPFR/MPC arithmetic and
-  `mpfr.digits(10)` work in the standalone smoke, and fixed decimal
-  `format(mpfr, ".Nf")` is now covered by a CoWasm fallback. `str(mpfr)` and
-  empty-format `format(mpfr, "")` can still produce bad decimal placement or
-  corrupt strings. The standalone `sagemath/mpfr` `wasi-sdk` C smoke does not
-  show this issue, so the remaining gap is probably in the side-module/PIC
-  math-library path or in gmpy2's MPFR printf integration.
+- Keep expanding `py-gmpy2` MPFR formatting coverage under the current PIC
+  `dist/wasm` side-module path. Numeric MPFR/MPC arithmetic,
+  `mpfr.digits(10)`, `str(mpfr)`, empty-format `format(mpfr, "")`, and fixed
+  decimal formatting including zero precision/sign/alternate cases are covered
+  by CoWasm fallbacks. Remaining useful coverage is around less common MPFR and
+  MPC presentation modes, especially scientific notation, percent formatting,
+  width/alignment interactions, and special values.
 - Current cysignals `wasi-sdk` side-module smoke covers import, guard cleanup,
   normal and no-except guard strings, bounded `sig_retry()` recovery,
   `sig_error()` recovery of pending Python exceptions,

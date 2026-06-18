@@ -72,6 +72,12 @@ def check_real_context():
             format(gmpy2.mpfr("1e20"), ".5f")
             == "100000000000000000000.00000"
         )
+        zero = gmpy2.mpfr(0)
+        assert format(zero, ".6f") == "0.000000"
+        assert format(zero, "+.6f") == "+0.000000"
+        assert format(zero, " .6f") == " 0.000000"
+        assert format(zero, ".0f") == "0"
+        assert format(zero, "#.0f") == "0."
 
         context.round = gmpy2.RoundDown
         down = gmpy2.mpfr(1) / 10

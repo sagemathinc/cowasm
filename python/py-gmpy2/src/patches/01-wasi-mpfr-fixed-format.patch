@@ -1,6 +1,6 @@
 --- a/src/gmpy2_format.c
 +++ b/src/gmpy2_format.c
-@@ -176,6 +176,406 @@
+@@ -176,6 +176,431 @@
          } \
      } while (0);
 -
@@ -85,7 +85,32 @@
 +            word = (conv == 'F') ? "INF" : "inf";
 +        }
 +        else {
-+            word = "0";
++            out = malloc((size_t)precision + 4);
++            if (!out) {
++                return PyErr_NoMemory();
++            }
++            p = out;
++            if (negative) {
++                *(p++) = '-';
++            }
++            else if (plus) {
++                *(p++) = '+';
++            }
++            else if (space) {
++                *(p++) = ' ';
++            }
++            *(p++) = '0';
++            if (precision > 0 || alternate) {
++                *(p++) = '.';
++            }
++            if (precision > 0) {
++                memset(p, '0', (size_t)precision);
++                p += precision;
++            }
++            *p = '\0';
++            result = PyUnicode_FromString(out);
++            free(out);
++            return result;
 +        }
 +
 +        out = malloc(strlen(word) + 3);
@@ -408,7 +433,7 @@
  PyDoc_STRVAR(GMPy_doc_mpfr_format,
  "__format__($self, fmt, /)\n--\n\n"
  "Return a Python string by formatting self using the format string 'fmt'.\n\n"
-@@ -309,13 +709,9 @@
+@@ -309,13 +734,9 @@
                   *p1 == 'N') && *(p1+1) == '\00')
              {
                  long precision = (long)(log10(2) * (double)mpfr_get_prec(MPFR(self))) + 2;
@@ -424,7 +449,7 @@
              }
              *(p2++) = 'R';
          }
-@@ -367,13 +763,9 @@
+@@ -367,13 +788,9 @@
 -
 +
      if (!seendigits) {
@@ -441,7 +466,7 @@
          *(p2++) = 'R';
      }
      if (!seenconv) {
-@@ -387,6 +779,25 @@
+@@ -387,6 +804,25 @@
      *(p2) = '\00';
      *(p3) = '\00';
  
