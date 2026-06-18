@@ -1,0 +1,41 @@
+{
+  "name": "@cowasm/memory-allocator",
+  "version": "1.0.0",
+  "description": "MemoryAllocator Cython extension for SageMath",
+  "exports": { "./*": "./dist/js/*.js" },
+  "type": "module",
+  "files": [
+    "dist/js/*",
+    "README.md",
+    "src/*",
+    "package.json",
+    "tsconfig.json",
+    "Makefile"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone",
+    "test:wasi-sdk-next": "make test-wasi-sdk-next"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/memory-allocator",
+  "keywords": ["cython", "memory", "allocator", "sagemath"],
+  "author": "William Stein",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@cowasm/cpython": "workspace:*",
+    "@cowasm/posix-wasm": "workspace:*",
+    "@cowasm/py-cython": "workspace:*"
+  }
+}

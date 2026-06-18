@@ -10,6 +10,7 @@ Current wasi-sdk standalone math smoke packages:
 - GMP
 - bliss
 - cysignals
+- memory_allocator
 - cddlib
 - GMP-ECM
 - eclib
