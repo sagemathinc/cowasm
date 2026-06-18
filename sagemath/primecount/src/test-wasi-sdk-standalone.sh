@@ -98,3 +98,19 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/primecount-test" |
   grep "primecount-ok pi(1e6)=78498 nth1000=7919 phi100_4=22 pi-str=78498"
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
+  -fvisibility-main \
+  "$src_dir/test-primecount-cpp.cpp" \
+  -I"$dist_dir/include" \
+  -I"$primesieve_dir/include" \
+  -L"$dist_dir/lib" \
+  -L"$primesieve_dir/lib" \
+  -lprimecount \
+  -lprimesieve \
+  "$libcxxabi" \
+  "$libunwind" \
+  -o "$probe_dir/primecount-cpp-test"
+
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/primecount-cpp-test" |
+  grep "primecount-cpp-ok pi(1e6)=78498 nth5000=48611 phi1000_5=207 pi-str=78498"
