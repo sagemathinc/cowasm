@@ -1,0 +1,42 @@
+{
+  "name": "@cowasm/sagelite",
+  "version": "1.0.0",
+  "description": "Controlled Sagelite build probe for CoWasm Node.js and Electron",
+  "type": "module",
+  "files": [
+    "README.md",
+    "src/*",
+    "package.json",
+    "Makefile"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make",
+    "clean": "make clean",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone",
+    "test:wasi-sdk-next": "make test-wasi-sdk-next"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/sagelite",
+  "keywords": ["sagelite", "sagemath", "wasi", "electron"],
+  "author": "William Stein",
+  "license": "GPL-2.0-or-later",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "dependencies": {
+    "@cowasm/cysignals": "workspace:*",
+    "@cowasm/memory-allocator": "workspace:*"
+  },
+  "devDependencies": {
+    "@cowasm/cpython": "workspace:*",
+    "@cowasm/posix-wasm": "workspace:*",
+    "@cowasm/py-cython": "workspace:*",
+    "@cowasm/py-gmpy2": "workspace:*",
+    "@cowasm/py-numpy": "workspace:*"
+  }
+}
