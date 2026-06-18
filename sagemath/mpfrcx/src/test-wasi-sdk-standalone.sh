@@ -74,4 +74,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/mpfrcx-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/mpfrcx-test" |
-  grep -F "mpfrcx-ok real-eval=25.0 real-derivative=10.0 complex-eval=1.0+2.0i"
+  grep -F "mpfrcx-ok real-eval=25.0 real-derivative=10.0 root=-2.0 remainder=0.0 complex-eval=1.0+2.0i projection=5.0-5.0i"
