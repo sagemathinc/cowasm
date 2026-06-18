@@ -58,4 +58,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/gf2x-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/gf2x-test" |
-  grep -F "gf2x-ok version=10300 product=0x79 wide=0:f:e0000029:40000079"
+  grep -F "gf2x-ok version=10300 product=0x79 wide=0:f:e0000029:40000079 small=1..4 one-word=mul,addmul"
