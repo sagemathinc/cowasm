@@ -86,7 +86,41 @@ int main(void) {
     goto cleanup;
   }
 
-  puts("mpfr-ok pi exp log sqrt exact-div directed-rounding flags mpz");
+  mpfr_set_ui(x, 6, MPFR_RNDN);
+  mpfr_gamma(x, x, MPFR_RNDN);
+  if (mpfr_cmp_ui(x, 120) != 0) {
+    goto cleanup;
+  }
+
+  mpfr_fac_ui(x, 10, MPFR_RNDN);
+  if (mpfr_cmp_ui(x, 3628800) != 0) {
+    goto cleanup;
+  }
+
+  mpfr_zeta_ui(x, 2, MPFR_RNDN);
+  if (check_string(x, "%.40RNf",
+                   "1.6449340668482264364724151666460251892189")) {
+    goto cleanup;
+  }
+
+  mpfr_erf(x, z, MPFR_RNDN);
+  if (check_string(x, "%.40RNf",
+                   "0.8427007929497148693412206350826092592961")) {
+    goto cleanup;
+  }
+
+  mpfr_set_ui(x, 1, MPFR_RNDN);
+  mpfr_nextabove(x);
+  if (mpfr_cmp_ui(x, 1) <= 0) {
+    goto cleanup;
+  }
+  mpfr_nextbelow(x);
+  if (mpfr_cmp_ui(x, 1) != 0) {
+    goto cleanup;
+  }
+
+  puts("mpfr-ok pi exp log sqrt exact-div directed-rounding flags mpz "
+       "special-functions nextafter");
   status = 0;
 
 cleanup:
