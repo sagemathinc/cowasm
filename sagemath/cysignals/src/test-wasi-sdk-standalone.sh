@@ -105,15 +105,39 @@ PYTHONPATH="$dist_dir" "$bin_dir/python-wasm" - <<'PY'
 import signal
 
 import cysignals
-from cysignals.signals import sig_print_exception
+import cysignals.signals
+from cysignals.signals import (
+    _pari_version,
+    init_cysignals,
+    set_debug_level,
+    sig_print_exception,
+    sig_on_reset,
+)
 
 assert cysignals.SignalError.__module__ == "cysignals.signals"
+assert cysignals.signals.AlarmInterrupt is cysignals.AlarmInterrupt
+assert cysignals.signals.SignalError is cysignals.SignalError
+assert signal.getsignal(signal.SIGINT) is cysignals.signals.python_check_interrupt
+old_handler = init_cysignals()
+assert old_handler is cysignals.signals.python_check_interrupt
+assert signal.getsignal(signal.SIGINT) is cysignals.signals.python_check_interrupt
+assert _pari_version() is None
+assert set_debug_level(0) == 0
+try:
+    set_debug_level(1)
+except RuntimeError as err:
+    assert str(err) == "cysignals is compiled without debugging, recompile with --enable-debug"
+else:
+    raise AssertionError("set_debug_level(1) unexpectedly succeeded")
+assert sig_on_reset() == 0
 sig_print_exception(signal.SIGFPE)
 PY
 
 cat >"$probe_dir/cysignals_guard_probe.pyx" <<'PYX'
+from cpython.exc cimport PyErr_SetString
 from cysignals.signals cimport (
     add_custom_signals,
+    cython_check_exception,
     sig_raise_exception,
     sig_block,
     sig_check,
@@ -261,6 +285,31 @@ def custom_handler_registration_limit():
         return sig_occurred() == NULL
 
     return False
+
+
+def sig_on_reset_after_unbalanced_guard():
+    from cysignals.signals import sig_on_reset
+
+    sig_on()
+    if sig_on_reset() != 1:
+        raise AssertionError("sig_on_reset did not report the open guard")
+
+    return sig_on_reset() == 0
+
+
+def cython_check_exception_probe():
+    cdef bint ok = False
+
+    PyErr_SetString(RuntimeError, "pending no-except check")
+    try:
+        cython_check_exception()
+    except RuntimeError as err:
+        ok = str(err) == "pending no-except check"
+
+    if not ok:
+        return False
+
+    return sig_occurred() == NULL
 PYX
 
 PYTHONPATH="$dist_dir:$py_cython" python3 -m cython -3 \
@@ -301,6 +350,8 @@ assert cysignals_guard_probe.no_except_guard_cleanup()
 assert cysignals_guard_probe.string_guard_cleanup()
 assert cysignals_guard_probe.mapped_signal_exceptions()
 assert cysignals_guard_probe.custom_handler_registration_limit()
+assert cysignals_guard_probe.sig_on_reset_after_unbalanced_guard()
+assert cysignals_guard_probe.cython_check_exception_probe()
 PY
 
-echo "cysignals-ok signals-extension import guarded-cython-module guard-cleanup no-except-guards string-guards signal-exceptions custom-handlers"
+echo "cysignals-ok signals-extension import init-api guarded-cython-module guard-cleanup no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check"
