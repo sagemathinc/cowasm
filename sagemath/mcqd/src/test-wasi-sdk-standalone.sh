@@ -70,6 +70,9 @@ ln -sf mcqd.wasm "$dist_dir/bin/mcqd"
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/mcqd-test.wasm" |
   grep "mcqd-ok max=3 clique=111 steps=4 dyn-steps=4"
 
-cowasm_clang_standalone_run_wasi \
-  "$bin_dir" "$dist_dir/bin/mcqd.wasm" "$dist_dir/share/mcqd/small.clq" |
-  grep "Size = 3"
+cli_output="$(
+  cowasm_clang_standalone_run_wasi \
+    "$bin_dir" "$dist_dir/bin/mcqd.wasm" "$dist_dir/share/mcqd/small.clq"
+)"
+printf '%s\n' "$cli_output" | grep "Maximum clique: 2 1 3"
+test "$(printf '%s\n' "$cli_output" | grep -c "Size = 3")" -eq 2
