@@ -233,6 +233,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/primesieve test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/primecount test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/primecountpy test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/pycosat test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/nauty test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/plantri test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/benzene test-wasi-sdk-standalone
@@ -248,6 +249,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/modular-decomposition test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/msolve test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/saclib test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/sirocco test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/palp test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/topcom test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/rubiks test-wasi-sdk-standalone
