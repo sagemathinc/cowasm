@@ -13,6 +13,9 @@ all: test-wasi-sdk-standalone
 
 include ../build/Makefile-rules
 
+${GMP_WASI_SDK}/lib/libgmp.a:
+	$(MAKE) -C ${PACKAGES}/gmp test-wasi-sdk-standalone
+
 ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	rm -rf ${BUILD_WASI_SDK}
 	mkdir -p ${BUILD_WASI_SDK}
@@ -20,9 +23,8 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	touch ${BUILD_WASI_SDK}/.build
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
+test-wasi-sdk-standalone: ${GMP_WASI_SDK}/lib/libgmp.a ${BUILD_WASI_SDK}/.build
 	cd ../../core/build && make wasi-sdk-next
-	cd ../gmp && make test-wasi-sdk-standalone
 	@status=0; \
 	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${GMP_WASI_SDK} || status=$$?; \
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
