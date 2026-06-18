@@ -2,7 +2,7 @@
 
 This table records observed build/test status for the revived baseline.  Unknown means not checked in the current revival pass.
 
-Last updated: 2026-06-05.
+Last updated: 2026-06-18.
 
 | Package | Build Status | Test Status | Last Checked | Notes |
 | --- | --- | --- | --- | --- |
@@ -23,6 +23,7 @@ Last updated: 2026-06-05.
 | `python/python-wasm` | pass | pass | 2026-06-05 | `make -C python/python-wasm test` passed 14 Jest suites, with 2 suites intentionally skipped. |
 | `python/bench` | pass | pass | 2026-06-05 | `make test-python` ran the benchmark target successfully, but it uses `pnpm dlx python-wasm`, so this is not a pure local workspace validation. |
 | `python/py-matplotlib` | disabled | disabled | 2026-06-05 | Makefile says this package does not work yet; `all` is a no-op and `test` fails explicitly. This is the reason aggregate `make test-python` stops after the earlier Python tests pass. |
+| `sagemath/database-symbolic-data` | pass | pass | 2026-06-18 | `make -C sagemath/database-symbolic-data test-wasi-sdk-standalone` passed and the package is covered by aggregate `test-wasi-sdk-math`. |
 
 ## Aggregate Python Commands
 

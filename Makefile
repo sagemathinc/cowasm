@@ -249,6 +249,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/database-jones-numfield test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-mutation-class test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-odlyzko-zeta test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/database-symbolic-data test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/elliptic-curves test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/graphs test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/polytopes-db test-wasi-sdk-standalone
