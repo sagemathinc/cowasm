@@ -231,6 +231,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/gf2x test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/gsl test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/iml test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/isl test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/ntl test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/pari test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/lcalc test-wasi-sdk-standalone
