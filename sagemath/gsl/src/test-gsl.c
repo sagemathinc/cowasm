@@ -5,6 +5,8 @@
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_matrix.h>
+#include <gsl/gsl_min.h>
+#include <gsl/gsl_poly.h>
 #include <gsl/gsl_roots.h>
 #include <gsl/gsl_permutation.h>
 #include <gsl/gsl_sf_bessel.h>
@@ -26,6 +28,11 @@ static double sin_integrand(double x, void *params) {
 static double fixed_point_function(double x, void *params) {
   (void)params;
   return cos(x) - x;
+}
+
+static double parabola_function(double x, void *params) {
+  (void)params;
+  return (x - 2.0) * (x - 2.0) + 1.0;
 }
 
 static int check_lu_solve(double *third_solution_entry) {
@@ -179,6 +186,65 @@ static int check_eigen(double *smallest_eigenvalue) {
   return ok;
 }
 
+static int check_polynomial(double *imaginary_root) {
+  gsl_complex z0;
+  gsl_complex z1;
+  int roots = gsl_poly_complex_solve_quadratic(1.0, 0.0, 1.0, &z0, &z1);
+
+  *imaginary_root = fabs(GSL_IMAG(z0));
+
+  return roots == 2 && close_to(GSL_REAL(z0), 0.0, 1e-12) &&
+         close_to(GSL_REAL(z1), 0.0, 1e-12) &&
+         close_to(fabs(GSL_IMAG(z0)), 1.0, 1e-12) &&
+         close_to(fabs(GSL_IMAG(z1)), 1.0, 1e-12);
+}
+
+static int check_minimizer(double *minimum) {
+  const gsl_min_fminimizer_type *solver_type = gsl_min_fminimizer_brent;
+  gsl_min_fminimizer *solver = gsl_min_fminimizer_alloc(solver_type);
+  gsl_function function;
+  double low = 0.0;
+  double high = 6.0;
+  int status = GSL_CONTINUE;
+  int iter = 0;
+
+  *minimum = 0.0;
+  if (solver == NULL) {
+    return 0;
+  }
+
+  function.function = &parabola_function;
+  function.params = NULL;
+  status = gsl_min_fminimizer_set(solver, &function, 1.5, low, high);
+  if (status != GSL_SUCCESS) {
+    gsl_min_fminimizer_free(solver);
+    return 0;
+  }
+
+  while (iter < 64) {
+    iter++;
+    status = gsl_min_fminimizer_iterate(solver);
+    if (status != GSL_SUCCESS) {
+      break;
+    }
+    *minimum = gsl_min_fminimizer_x_minimum(solver);
+    low = gsl_min_fminimizer_x_lower(solver);
+    high = gsl_min_fminimizer_x_upper(solver);
+    status = gsl_min_test_interval(low, high, 0.0, 1e-12);
+    if (status == GSL_SUCCESS) {
+      break;
+    }
+    if (status != GSL_CONTINUE) {
+      break;
+    }
+  }
+
+  gsl_min_fminimizer_free(solver);
+
+  return (status == GSL_SUCCESS || status == GSL_CONTINUE) &&
+         close_to(*minimum, 2.0, 1e-10);
+}
+
 int main(void) {
   gsl_set_error_handler_off();
 
@@ -188,12 +254,16 @@ int main(void) {
   double integral = 0.0;
   double root = 0.0;
   double eigen = 0.0;
+  double polynomial = 0.0;
+  double minimum = 0.0;
   double samples[] = {1.0, 2.0, 4.0, 8.0, 16.0};
   double mean = gsl_stats_mean(samples, 1, 5);
   int linear_ok;
   int integration_ok;
   int root_ok;
   int eigen_ok;
+  int polynomial_ok;
+  int minimizer_ok;
 
   gsl_vector *x = gsl_vector_alloc(3);
   gsl_vector *y = gsl_vector_alloc(3);
@@ -214,13 +284,17 @@ int main(void) {
   integration_ok = check_integration(&integral);
   root_ok = check_root(&root);
   eigen_ok = check_eigen(&eigen);
+  polynomial_ok = check_polynomial(&polynomial);
+  minimizer_ok = check_minimizer(&minimum);
 
   gsl_vector_free(x);
   gsl_vector_free(y);
 
   printf("gsl-ok j0=%.12f gaussian=%.12f dot=%.1f linear=%.1f "
-         "integral=%.1f root=%.12f eigen=%.1f mean=%.1f\n",
-         j0, gaussian, dot, linear, integral, root, eigen, mean);
+         "integral=%.1f root=%.12f eigen=%.1f poly=%.1f min=%.1f "
+         "mean=%.1f\n",
+         j0, gaussian, dot, linear, integral, root, eigen, polynomial,
+         minimum, mean);
 
   if (blas_status != GSL_SUCCESS) {
     return 1;
@@ -244,6 +318,12 @@ int main(void) {
     return 1;
   }
   if (!eigen_ok) {
+    return 1;
+  }
+  if (!polynomial_ok) {
+    return 1;
+  }
+  if (!minimizer_ok) {
     return 1;
   }
   if (!close_to(mean, 6.2, 1e-12)) {

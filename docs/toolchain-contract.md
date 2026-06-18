@@ -1023,8 +1023,9 @@ make -C sagemath/gsl test-wasi-sdk-standalone
 The target refreshes the pinned SDK, builds GSL and its bundled CBLAS archive
 with `COWASM_TOOLCHAIN=wasi-sdk`, installs the static libraries under
 `sagemath/gsl/dist/wasi-sdk`, then links and runs a probe covering special
-functions, distribution CDFs, vector allocation, and BLAS dot products through
-the WASI runner.
+functions, distribution CDFs, vector allocation, BLAS dot products, LU linear
+solves, adaptive integration, scalar root finding, symmetric eigenvalues,
+polynomial roots, scalar minimization, and statistics through the WASI runner.
 
 `sagemath/iml` has the same opt-in dependent static-library smoke shape:
 
