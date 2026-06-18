@@ -24,6 +24,16 @@ bool equals_vector(const std::vector<fplll::Z_NR<mpz_t>> &v,
   return true;
 }
 
+bool first_row_equals(const fplll::ZZ_mat<mpz_t> &basis,
+                      const long expected[]) {
+  for (int i = 0; i < basis.get_cols(); i++) {
+    if (basis[0][i].get_si() != expected[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 }  // namespace
 
 int main() {
@@ -37,6 +47,7 @@ int main() {
   basis[2][0] = 29;
   basis[2][1] = 8;
   basis[2][2] = 77;
+  fplll::ZZ_mat<mpz_t> bkz_basis = basis;
 
   int status = fplll::lll_reduction(basis);
   if (status != fplll::RED_SUCCESS) {
@@ -93,9 +104,39 @@ int main() {
     return 1;
   }
 
+  fplll::ZZ_mat<mpz_t> bkz_transform;
+  std::vector<fplll::Strategy> bkz_strategies;
+  fplll::BKZParam bkz_params(3, bkz_strategies, fplll::LLL_DEF_DELTA,
+                             fplll::BKZ_MAX_LOOPS, 1);
+  status = fplll::bkz_reduction(&bkz_basis, &bkz_transform, bkz_params,
+                                fplll::FT_MPFR, 64);
+  if (status != fplll::RED_SUCCESS &&
+      status != fplll::RED_BKZ_LOOPS_LIMIT) {
+    std::cerr << "bkz_reduction failed: "
+              << fplll::get_red_status_str(status) << "\n";
+    return 1;
+  }
+
+  fplll::ZZ_mat<mpz_t> bkz_inverse_transform;
+  fplll::MatGSO<fplll::Z_NR<mpz_t>, fplll::FP_NR<mpfr_t>> bkz_gso(
+      bkz_basis, bkz_transform, bkz_inverse_transform, 0);
+  if (!fplll::is_lll_reduced<fplll::Z_NR<mpz_t>, fplll::FP_NR<mpfr_t>>(
+          bkz_gso, fplll::LLL_DEF_DELTA, fplll::LLL_DEF_ETA)) {
+    std::cerr << "BKZ output basis is not LLL reduced\n";
+    return 1;
+  }
+
+  const long expected_bkz_first[] = {4, 34, 9};
+  if (bkz_basis.get_cols() != 3 ||
+      !first_row_equals(bkz_basis, expected_bkz_first)) {
+    std::cerr << "unexpected BKZ first vector\n";
+    return 1;
+  }
+
   std::cout << "fplll-ok first-vector=" << basis[0][0] << "," << basis[0][1]
             << "," << basis[0][2] << " svp-norm=" << squared_norm(svp_vector)
             << " cvp-vector=" << cvp_vector[0] << "," << cvp_vector[1] << ","
-            << cvp_vector[2] << "\n";
+            << cvp_vector[2] << " bkz-first=" << bkz_basis[0][0] << ","
+            << bkz_basis[0][1] << "," << bkz_basis[0][2] << "\n";
   return 0;
 }

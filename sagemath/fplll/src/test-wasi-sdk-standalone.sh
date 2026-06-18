@@ -93,4 +93,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -o "$probe_dir/fplll-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/fplll-test" |
-  grep "fplll-ok first-vector=4,34,9 svp-norm=1253 cvp-vector=4,34,9"
+  grep "fplll-ok first-vector=4,34,9 svp-norm=1253 cvp-vector=4,34,9 bkz-first=4,34,9"
