@@ -64,7 +64,7 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/cddlib-gmp-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/cddlib-gmp-test" |
-  grep -F "cddlib-ok vertices=4 arithmetic=GMP rational"
+  grep -F "cddlib-ok h-to-v=4 v-to-h=4 arithmetic=GMP rational"
 
 env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   "$src_dir/test-cddlib.c" \
@@ -75,4 +75,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/cddlib-double-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/cddlib-double-test" |
-  grep -F "cddlib-ok vertices=4 arithmetic=C double"
+  grep -F "cddlib-ok h-to-v=4 v-to-h=4 arithmetic=C double"
