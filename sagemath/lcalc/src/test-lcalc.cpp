@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <pari/pari.h>
 
 namespace {
 
@@ -57,11 +58,27 @@ int main() {
     return 10;
   }
 
+  pari_init_opts(400000000, 2, INIT_DFTm);
+  char a1[] = "0";
+  char a2[] = "0";
+  char a3[] = "0";
+  char a4[] = "4";
+  char a6[] = "0";
+  L_function<double> curve_32a(a1, a2, a3, a4, a6, 1000);
+  double elliptic_value = real(curve_32a.value(0.5));
+  double elliptic_expected =
+      real(GAMMA(0.5) * GAMMA(0.25) / GAMMA(0.75) / 8.0);
+  if (!close_to(elliptic_value, elliptic_expected, 1e-9)) {
+    return 11;
+  }
+
   std::cout << std::setprecision(10)
             << "lcalc-ok zeta-real=" << real_part
             << " zeta-imag=" << imag_part
             << " zeta2-partial=" << real(zeta_2_partial)
             << " zeta2-tail=" << real(zeta_tail)
-            << " gcd=21 nextprime=1009 powmod=97\n";
+            << " gcd=21 nextprime=1009 powmod=97"
+            << std::setprecision(12)
+            << " elliptic=" << elliptic_value << "\n";
   return 0;
 }

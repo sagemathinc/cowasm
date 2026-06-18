@@ -12,6 +12,15 @@ all: test-wasi-sdk-standalone
 
 include ../build/Makefile-rules
 
+GMP_WASI_SDK = ${PACKAGES}/gmp/dist/wasi-sdk
+PARI_WASI_SDK = ${PACKAGES}/pari/dist/wasi-sdk
+
+${GMP_WASI_SDK}/lib/libgmp.a:
+	$(MAKE) -C ${PACKAGES}/gmp test-wasi-sdk-standalone
+
+${PARI_WASI_SDK}/lib/libpari.a:
+	$(MAKE) -C ${PACKAGES}/pari test-wasi-sdk-standalone
+
 ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	rm -rf ${BUILD_WASI_SDK}
 	mkdir -p ${BUILD_WASI_SDK}
@@ -19,10 +28,10 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	touch ${BUILD_WASI_SDK}/.build
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${BUILD_WASI_SDK}/.build
+test-wasi-sdk-standalone: ${PARI_WASI_SDK}/lib/libpari.a ${GMP_WASI_SDK}/lib/libgmp.a ${BUILD_WASI_SDK}/.build
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
-	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} || status=$$?; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${PARI_WASI_SDK} ${GMP_WASI_SDK} || status=$$?; \
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
 	exit "$$status"
 

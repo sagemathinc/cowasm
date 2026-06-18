@@ -1002,10 +1002,13 @@ make -C sagemath/lcalc test-wasi-sdk-standalone
 
 The target builds the upstream `libLfunction` C++ sources directly with
 `COWASM_TOOLCHAIN=wasi-sdk`, installs the public headers and a generated
-double-precision `config.h` under `sagemath/lcalc/dist/wasi-sdk`, and archives
-`libLfunction.a`. The upstream command-line frontend still depends on generated
-`gengetopt` sources, so this first WASI baseline links a library probe and
-checks a Riemann zeta value at `0.5 + 100i` through the WASI runner.
+double-precision `config.h` with `HAVE_LIBPARI` enabled under
+`sagemath/lcalc/dist/wasi-sdk`, and archives `libLfunction.a`. It links the
+probe against the existing PARI and GMP WASI installs with SDK SJLJ flags. The
+upstream command-line frontend still depends on generated `gengetopt` sources,
+so this WASI baseline links a library probe and checks a Riemann zeta value at
+`0.5 + 100i`, basic number-theory helpers, and the PARI-backed 32A
+elliptic-curve central value through the WASI runner.
 
 `sagemath/gsl` has the same opt-in static-library smoke shape:
 
