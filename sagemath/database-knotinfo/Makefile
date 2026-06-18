@@ -4,10 +4,10 @@ all: wasm
 
 # SageMath ships database_knotinfo for knot and link invariant tables.
 UPSTREAM_NAME = database_knotinfo
-VERSION = 2026.3.1
-URL = https://mirrors.mit.edu/sage/spkg/upstream/${UPSTREAM_NAME}/${UPSTREAM_NAME}-${VERSION}.tar.gz
+VERSION = 2026.6.1
+URL = https://files.pythonhosted.org/packages/bb/ad/d57c4d56c23df66431c525dfaad9f5a600b3e0f367a6e9172be03615ad09/${UPSTREAM_NAME}-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/${UPSTREAM_NAME}-${VERSION}.tar.gz
-TARBALL_SHA256 = 31dc15dccbdf76b5d1a76ac34de05b09acf6481ca5cf375678af9bb81f605f09
+TARBALL_SHA256 = 989ba9c3d59c946c863192e421ee5adf39d8505ca1769dcd76817a165e5e7edf
 DIST_WASI_SDK = ${DIST}/wasi-sdk
 PYTHON_WASM = ${CWD}/../../python/cpython/dist/wasm/bin/python3.wasm
 

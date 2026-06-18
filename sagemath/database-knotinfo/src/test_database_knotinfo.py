@@ -4,7 +4,7 @@ import database_knotinfo
 from database_knotinfo import link_list, version
 
 
-assert version() == "2026.3.1"
+assert version() == "2026.6.1"
 
 package_path = database_knotinfo.__path__[0]
 csv_path = os.path.join(package_path, "csv_data")
@@ -39,6 +39,6 @@ assert hopf_link["braid_notation"] == "{2, {1, 1}}"
 assert hopf_link["homflypt_polynomial"] == "v/z-v^3/z + v*z"
 
 print(
-    "database-knotinfo-ok version=2026.3.1 knots=12967 links=4189 "
+    "database-knotinfo-ok version=2026.6.1 knots=12967 links=4189 "
     "trefoil braid=2 figure-eight volume=2.0298832128 hopf"
 )
