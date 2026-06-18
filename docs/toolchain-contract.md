@@ -949,11 +949,11 @@ available, then builds FLINT against those installs with assembly and threading
 disabled for the standalone contract. It installs `libflint.a` under
 `sagemath/flint/dist/wasi-sdk`, supplies small `mkstemp` and `clock` stubs for
 the smoke link, and runs integer, rational, Bernoulli, partition-count, CRT,
-modular inverse/power, polynomial factorization, real ball, complex ball, and
-complex ball polynomial probes through the WASI runner. The same smoke also
-covers FLINT 3's bundled Arb hypergeometric/special-function entry points with
-exact gamma, erf, and Bessel ball checks, which keeps the former Arb dependency
-path visible for Sage.
+modular inverse/power, polynomial factorization, integer-polynomial extended
+gcd, real ball, complex ball, and complex ball polynomial probes through the
+WASI runner. The same smoke also covers FLINT 3's bundled Arb
+hypergeometric/special-function entry points with exact gamma, erf, and Bessel
+ball checks, which keeps the former Arb dependency path visible for Sage.
 
 `sagemath/fplll` has the same opt-in dependent C++ static-library smoke shape:
 

@@ -62,6 +62,7 @@ int main(void) {
   fmpz_t residue_combined;
   fmpz_t residue_mod_a;
   fmpz_t residue_mod_b;
+  fmpz_t xgcd_constant;
   fmpz_t calcium_integer;
   fmpq_t a;
   fmpq_t b;
@@ -84,6 +85,12 @@ int main(void) {
   fmpz_poly_t gcd_poly_b;
   fmpz_poly_t gcd_poly_result;
   fmpz_poly_t gcd_poly_expected;
+  fmpz_poly_t xgcd_poly_a;
+  fmpz_poly_t xgcd_poly_b;
+  fmpz_poly_t xgcd_s;
+  fmpz_poly_t xgcd_t;
+  fmpz_poly_t xgcd_tmp;
+  fmpz_poly_t xgcd_sum;
   fmpz_poly_t complex_roots_poly;
   fmpz_poly_t transform_poly_a;
   fmpz_poly_t transform_poly_b;
@@ -186,6 +193,7 @@ int main(void) {
   fmpz_init(residue_combined);
   fmpz_init(residue_mod_a);
   fmpz_init(residue_mod_b);
+  fmpz_init(xgcd_constant);
   fmpz_init(calcium_integer);
   fmpq_init(a);
   fmpq_init(b);
@@ -208,6 +216,12 @@ int main(void) {
   fmpz_poly_init(gcd_poly_b);
   fmpz_poly_init(gcd_poly_result);
   fmpz_poly_init(gcd_poly_expected);
+  fmpz_poly_init(xgcd_poly_a);
+  fmpz_poly_init(xgcd_poly_b);
+  fmpz_poly_init(xgcd_s);
+  fmpz_poly_init(xgcd_t);
+  fmpz_poly_init(xgcd_tmp);
+  fmpz_poly_init(xgcd_sum);
   fmpz_poly_init(complex_roots_poly);
   fmpz_poly_init(transform_poly_a);
   fmpz_poly_init(transform_poly_b);
@@ -422,6 +436,17 @@ int main(void) {
   fmpz_poly_set_coeff_si(gcd_poly_expected, 1, 1);
   fmpz_poly_gcd(gcd_poly_result, gcd_poly_a, gcd_poly_b);
   ok = ok && fmpz_poly_equal(gcd_poly_result, gcd_poly_expected);
+
+  fmpz_poly_set_coeff_si(xgcd_poly_a, 0, -2);
+  fmpz_poly_set_coeff_ui(xgcd_poly_a, 2, 1);
+  fmpz_poly_set_coeff_si(xgcd_poly_b, 0, -1);
+  fmpz_poly_set_coeff_ui(xgcd_poly_b, 1, 1);
+  fmpz_poly_xgcd(xgcd_constant, xgcd_s, xgcd_t, xgcd_poly_a, xgcd_poly_b);
+  fmpz_poly_mul(xgcd_tmp, xgcd_s, xgcd_poly_a);
+  fmpz_poly_mul(xgcd_sum, xgcd_t, xgcd_poly_b);
+  fmpz_poly_add(xgcd_sum, xgcd_sum, xgcd_tmp);
+  ok = ok && fmpz_poly_equal_fmpz(xgcd_sum, xgcd_constant);
+  ok = ok && fmpz_equal_si(xgcd_constant, -1);
 
   fmpz_poly_set_coeff_si(transform_poly_a, 0, -2);
   fmpz_poly_set_coeff_ui(transform_poly_a, 2, 1);
@@ -642,7 +667,7 @@ int main(void) {
   ok = ok && fmpz_equal_ui(fmpz_mat_entry(snf_matrix, 1, 1), 4);
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
   }
 
   flint_free(poly_str);
@@ -710,6 +735,12 @@ int main(void) {
   fmpz_poly_clear(gcd_poly_result);
   fmpz_poly_clear(gcd_poly_b);
   fmpz_poly_clear(gcd_poly_a);
+  fmpz_poly_clear(xgcd_sum);
+  fmpz_poly_clear(xgcd_tmp);
+  fmpz_poly_clear(xgcd_t);
+  fmpz_poly_clear(xgcd_s);
+  fmpz_poly_clear(xgcd_poly_b);
+  fmpz_poly_clear(xgcd_poly_a);
   fmpz_poly_clear(transform_poly_expected);
   fmpz_poly_clear(transform_poly_composed);
   fmpz_poly_clear(transform_poly_b);
@@ -743,6 +774,7 @@ int main(void) {
   fmpz_clear(residue_combined);
   fmpz_clear(residue_b);
   fmpz_clear(residue_a);
+  fmpz_clear(xgcd_constant);
   fmpz_clear(calcium_integer);
   fmpz_clear(poly_eval_x);
   fmpz_clear(poly_eval_value);
