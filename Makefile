@@ -252,6 +252,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/combinatorial-designs test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/conway-polynomials test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/cunningham-tables test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/database-cremona-ellcurve test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-cubic-hecke test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-jones-numfield test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-knotinfo test-wasi-sdk-standalone

@@ -74,6 +74,7 @@ Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 - Combinatorial designs
 - Conway polynomials
 - Cunningham tables
+- Cremona elliptic-curve database
 - Cubic Hecke algebra database
 - KnotInfo and LinkInfo database
 - Jones number-field database
