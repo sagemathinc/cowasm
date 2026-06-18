@@ -946,6 +946,15 @@ importers:
 
   sagemath/cliquer: {}
 
+  sagemath/combinatorial-designs:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../../python/cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
   sagemath/conway-polynomials:
     devDependencies:
       '@cowasm/cpython':

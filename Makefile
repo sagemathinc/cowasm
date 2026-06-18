@@ -244,6 +244,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/rubiks test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/tachyon test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/sympow test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/combinatorial-designs test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/conway-polynomials test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/cunningham-tables test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/database-cubic-hecke test-wasi-sdk-standalone

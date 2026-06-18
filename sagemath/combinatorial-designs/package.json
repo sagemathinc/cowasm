@@ -1,0 +1,31 @@
+{
+  "name": "@cowasm/combinatorial-designs",
+  "version": "1.0.0",
+  "description": "Combinatorial design data package for SageMath",
+  "main": "index.js",
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js", "src/*"],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make wasm",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test",
+    "test:wasi-sdk-standalone": "make test-wasi-sdk-standalone",
+    "test:wasi-sdk-next": "make test-wasi-sdk-next"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sagemathinc/cowasm.git"
+  },
+  "keywords": ["sagemath", "combinatorics", "design-theory", "data"],
+  "author": "William Stein",
+  "license": "GPL-2.0-or-later",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/combinatorial-designs",
+  "devDependencies": {
+    "@cowasm/cpython": "workspace:*",
+    "@cowasm/kernel": "workspace:*"
+  }
+}

@@ -66,6 +66,7 @@ Current wasi-sdk standalone math smoke packages:
 
 Current Sage pure Python/data packages with wasi-sdk standalone layout smokes:
 
+- Combinatorial designs
 - Conway polynomials
 - Cunningham tables
 - Cubic Hecke algebra database
