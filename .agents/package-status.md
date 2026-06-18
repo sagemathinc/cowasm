@@ -24,6 +24,7 @@ Last updated: 2026-06-18.
 | `python/bench` | pass | pass | 2026-06-05 | `make test-python` ran the benchmark target successfully, but it uses `pnpm dlx python-wasm`, so this is not a pure local workspace validation. |
 | `python/py-matplotlib` | disabled | disabled | 2026-06-05 | Makefile says this package does not work yet; `all` is a no-op and `test` fails explicitly. This is the reason aggregate `make test-python` stops after the earlier Python tests pass. |
 | `sagemath/database-cubic-hecke` | pass | pass | 2026-06-18 | `make -C sagemath/database-cubic-hecke test-wasi-sdk-standalone` passed and the package is covered by aggregate `test-wasi-sdk-math`. |
+| `sagemath/database-knotinfo` | pass | pass | 2026-06-18 | `make -C sagemath/database-knotinfo test-wasi-sdk-standalone` passed and the package is covered by aggregate `test-wasi-sdk-math`. |
 | `sagemath/database-symbolic-data` | pass | pass | 2026-06-18 | `make -C sagemath/database-symbolic-data test-wasi-sdk-standalone` passed and the package is covered by aggregate `test-wasi-sdk-math`. |
 
 ## Aggregate Python Commands
