@@ -25,10 +25,12 @@ ${DIST_WASI_SDK}/.built: ${BUILD_WASM}/.build
 	touch ${DIST_WASI_SDK}/.built
 
 test: deps ${DIST_WASM}/.built
+	node -e 'const data = require("./"); if (!data.odlyzko_zeta.endsWith("dist/wasm/share/odlyzko_zeta")) process.exit(1)'
 	PYTHONDONTWRITEBYTECODE=1 COWASM_ODLYZKO_ZETA_DATA=${DIST_WASM}/share/odlyzko_zeta pnpm-exec cpython ${SRC}/test_odlyzko_zeta.py
 
 .PHONY: test-wasi-sdk-standalone
 test-wasi-sdk-standalone: ${DIST_WASI_SDK}/.built
+	node -e 'const data = require("./"); if (!data.odlyzko_zeta.endsWith("dist/wasm/share/odlyzko_zeta")) process.exit(1)'
 	PYTHONDONTWRITEBYTECODE=1 COWASM_ODLYZKO_ZETA_DATA=${DIST_WASI_SDK}/share/odlyzko_zeta ${BIN}/cowasm ${PYTHON_WASM} ${SRC}/test_odlyzko_zeta.py
 
 .PHONY: test-wasi-sdk-next
