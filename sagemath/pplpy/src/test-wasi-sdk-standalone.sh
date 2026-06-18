@@ -103,17 +103,50 @@ done
 cd "$probe_dir"
 PYTHONPATH="$dist_dir:$cysignals_dir:$py_gmpy2" "$bin_dir/python-wasm" - <<'PY'
 import ppl
-from ppl import Bit_Row, Variable
+from ppl import Bit_Row, Linear_Expression, Variable
 
 row = Bit_Row()
 row.set(2)
 row.set(12)
 assert repr(row) == "{2, 12}"
+assert row.first() == 2
+assert row.last() == 12
+row.set_until(4)
+assert repr(row) == "{0, 1, 2, 3, 12}"
+row.clear_from(4)
+assert repr(row) == "{0, 1, 2, 3}"
+row.clear()
+assert repr(row) == "{}"
+assert row.first() == -1
+assert row.last() == -1
 
 x = Variable(0)
+y = Variable(1)
 assert repr(x) == "x0"
 assert x.id() == 0
 assert x.space_dimension() == 1
+
+expr = Linear_Expression([1, -2], 5)
+assert repr(expr) == "x0-2*x1+5"
+assert expr.space_dimension() == 2
+assert expr.coefficients() == (1, -2)
+assert expr.coefficient(x) == 1
+assert expr.coefficient(y) == -2
+assert expr.inhomogeneous_term() == 5
+assert not expr.is_zero()
+assert not expr.all_homogeneous_terms_are_zero()
+expr.set_coefficient(x, 3)
+expr.set_inhomogeneous_term(-4)
+assert repr(expr) == "3*x0-2*x1-4"
+assert expr.coefficients() == (3, -2)
+assert expr.inhomogeneous_term() == -4
+
+constant = Linear_Expression(7)
+assert repr(constant) == "7"
+assert constant.space_dimension() == 0
+assert constant.inhomogeneous_term() == 7
+assert constant.all_homogeneous_terms_are_zero()
+assert not constant.is_zero()
 
 for name in (
     "bit_arrays",
@@ -128,6 +161,7 @@ for name in (
 
 assert ppl.Variable is Variable
 assert ppl.Bit_Row is Bit_Row
+assert ppl.Linear_Expression is Linear_Expression
 
-print("pplpy-ok import modules bit-row variable")
+print("pplpy-ok import modules bit-row variable linear-expression")
 PY
