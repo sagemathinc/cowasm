@@ -1111,9 +1111,9 @@ The target builds the Sage-packaged Rubik's cube solvers with
 `COWASM_TOOLCHAIN=wasi-sdk`, using explicit GNU89 flags for the older Dik
 Winter C sources. It installs the solver binaries under
 `sagemath/rubiks/dist/wasi-sdk/bin` and runs deterministic `cu2`, `cubex`,
-`dikcube`, `size222`, and `twist` probes through the WASI runner. The Michael
-Reid optimal solver is compiled and installed, but the smoke does not run its
-expensive table-generation path.
+`mcube`, `dikcube`, `size222`, `twist`, and Michael Reid `optimal` probes
+through the WASI runner. The `optimal` smoke covers table generation, a solved
+cube, and a one-quarter-turn scramble.
 
 `sagemath/givaro` has the same opt-in dependent C++ static-library smoke shape:
 

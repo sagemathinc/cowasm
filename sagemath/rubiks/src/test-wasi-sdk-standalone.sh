@@ -236,4 +236,11 @@ printf 'UF UR UB UL DF DR DB DL FR FL BR BL UFR URB UBL ULF DRF DFL DLB DBR\n' |
 grep -F "initializing distance table" "$optimal_log"
 grep -F "cube is already solved!" "$optimal_log"
 
-echo "rubiks-ok cu2 cubex mcube dikcube size222 twist optimal-solved"
+optimal_turn_log="$probe_dir/optimal-turn.log"
+printf 'LF UR UB UL RF DR DB DL FU FD BR BL LFU URB UBL LDF RUF RFD DLB DBR\n' |
+  cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/optimal" >"$optimal_turn_log"
+grep -F "position has 4-fold symmetry" "$optimal_turn_log"
+grep -F " F'  (1q*, 1f)" "$optimal_turn_log"
+grep -F "depth  1q completed" "$optimal_turn_log"
+
+echo "rubiks-ok cu2 cubex mcube dikcube size222 twist optimal-solved optimal-turn"
