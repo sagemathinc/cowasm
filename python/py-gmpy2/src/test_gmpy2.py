@@ -84,14 +84,22 @@ def check_complex_arithmetic():
         context.precision = old_precision
 
 
+def check_c_api_capsule():
+    from gmpy2 import gmpy2 as gmpy2_extension
+
+    assert hasattr(gmpy2, "_C_API")
+    assert hasattr(gmpy2_extension, "_C_API")
+
+
 def main():
     n = check_integer_arithmetic()
     check_rational_arithmetic()
     check_real_context()
     check_complex_arithmetic()
+    check_c_api_capsule()
 
     print(
-        "gmpy2-ok version=%s prime_bits=%s mpz mpq mpfr mpc"
+        "gmpy2-ok version=%s prime_bits=%s mpz mpq mpfr mpc c-api"
         % (gmpy2.__version__, n.bit_length())
     )
 

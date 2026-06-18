@@ -39,8 +39,8 @@ RANLIB="$bin_dir/cowasm-ranlib" \
 CC="$bin_dir/cowasm-cc" \
 CXX="$bin_dir/cowasm-c++" \
 CC_FOR_BUILD="$cc_for_build" \
-CFLAGS="-Oz -fvisibility-main" \
-CXXFLAGS="-Oz -fvisibility-main" \
+CFLAGS="-Oz -fPIC -fvisibility-main" \
+CXXFLAGS="-Oz -fPIC -fvisibility-main" \
 LDFLAGS="${standalone_ldlibs[*]}" \
 COWASM_TOOLCHAIN=wasi-sdk \
   ./configure \

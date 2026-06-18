@@ -67,8 +67,8 @@ env \
   CXX="$bin_dir/cowasm-c++" \
   CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS:-}" \
   CPPFLAGS="-I$gmp_dir/include -I$glpk_dir/include" \
-  CFLAGS="-Oz -fvisibility-main" \
-  CXXFLAGS="-Oz -std=c++11 -fvisibility-main" \
+  CFLAGS="-Oz -fPIC -fvisibility-main" \
+  CXXFLAGS="-Oz -std=c++11 -fPIC -fvisibility-main" \
   LDFLAGS="-L$gmp_dir/lib -L$glpk_dir/lib -lwasi-emulated-signal" \
   LIBS="-lglpk -lsetjmp -lgmpxx -lgmp -lwasi-emulated-signal -lm" \
   COWASM_TOOLCHAIN=wasi-sdk \

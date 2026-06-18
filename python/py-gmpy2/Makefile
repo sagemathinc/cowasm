@@ -17,6 +17,11 @@ PYTHONPATH = $(shell cowasm-package-path @cowasm/py-pip):$(shell cowasm-package-
 PYTHON_WASM = ${PACKAGES}/cpython/dist/wasm/bin/python3.wasm
 STATIC_PREFIX = ${BUILD_WASM}/cowasm-static
 
+${BUILD_WASM}/.build::
+	# Keep gmpy2's C API capsule enabled for downstream Cython modules while
+	# still linking the GMP/MPFR/MPC libraries from the local static prefix.
+	sed -i'.cowasm-original' -e "/self.static_dir:/,+4{/DSHARED=1/d; /DSTATIC=1/d;}" ${BUILD_WASM}/setup.py
+
 ${GMP_WASM}/lib/libgmp.a:
 	$(MAKE) -C ${CWD}/../../sagemath/gmp wasm
 
