@@ -237,6 +237,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/symmetrica test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/zn-poly test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/rw test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/saclib test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/palp test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/topcom test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/rubiks test-wasi-sdk-standalone
