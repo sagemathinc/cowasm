@@ -76,7 +76,7 @@ ${DIST}/python-stdlib.zip:
 	mkdir -p ${DIST}
 	cp ${CPYTHON_WASM}/lib/dist/python-stdlib.zip ${DIST}
 
-PYTHON_PACKAGES = ${DIST}/Cython.tar.xz ${DIST}/mpmath.tar.xz ${DIST}/numpy.tar.xz ${DIST}/sympy.tar.xz ${DIST}/pandas.tar.xz ${DIST}/pytz.tar.xz ${DIST}/dateutil.tar.xz ${DIST}/six.tar.xz
+PYTHON_PACKAGES = ${DIST}/Cython.tar.xz ${DIST}/mpmath.tar.xz ${DIST}/numpy.tar.xz ${DIST}/sympy.tar.xz ${DIST}/networkx.tar.xz ${DIST}/pandas.tar.xz ${DIST}/pytz.tar.xz ${DIST}/dateutil.tar.xz ${DIST}/six.tar.xz
 
 ${DIST}/Cython.tar.xz:
 	mkdir -p ${DIST}
@@ -109,6 +109,10 @@ ${DIST}/six.tar.xz:
 ${DIST}/sympy.tar.xz:
 	mkdir -p ${DIST}
 	cd $(shell cowasm-package-path @cowasm/py-sympy) && tar -Jcf ${DIST}/sympy.tar.xz sympy
+
+${DIST}/networkx.tar.xz:
+	mkdir -p ${DIST}
+	cd ${PACKAGES}/py-networkx/dist/wasm && tar -Jcf ${DIST}/networkx.tar.xz networkx
 
 ${DIST}/python-everything.zip: ${DIST}/python-stdlib.zip ${PYTHON_PACKAGES} ${DIST}/python.wasm
 	cd ${DIST} \

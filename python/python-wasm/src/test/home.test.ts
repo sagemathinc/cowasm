@@ -15,5 +15,5 @@ test("that the default asyncPython has the PYTHONHOME", async () => {
 
 test("also confirm that some interesting packages are installed", async () => {
   const { exec } = await syncPython();
-  exec("import pandas, sympy");
+  exec("import networkx, pandas, sympy");
 }, 15000);

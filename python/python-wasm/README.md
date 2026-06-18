@@ -50,6 +50,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> np.linspace(0, 10, num=5)
 array([ 0. ,  2.5,  5. ,  7.5, 10. ])
 >>> import sympy
+>>> import networkx
 >>> input('name? ')*3
 name? william  <-- I just typed "william"
 'williamwilliamwilliam'

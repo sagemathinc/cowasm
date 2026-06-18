@@ -45,6 +45,7 @@
     "@cowasm/posix-wasm": "workspace:*",
     "@cowasm/py-cython": "workspace:*",
     "@cowasm/py-mpmath": "workspace:*",
+    "@cowasm/py-networkx": "workspace:*",
     "@cowasm/py-numpy": "workspace:*",
     "@cowasm/py-pandas": "workspace:*",
     "@cowasm/py-sympy": "workspace:*",

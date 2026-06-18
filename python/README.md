@@ -18,6 +18,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 5
 >>> import numpy
 >>> import sympy
+>>> import networkx
 >>> import pandas
 ...
 ```

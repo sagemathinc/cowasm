@@ -889,6 +889,9 @@ importers:
       '@cowasm/py-mpmath':
         specifier: workspace:*
         version: link:../py-mpmath
+      '@cowasm/py-networkx':
+        specifier: workspace:*
+        version: link:../py-networkx
       '@cowasm/py-numpy':
         specifier: workspace:*
         version: link:../py-numpy

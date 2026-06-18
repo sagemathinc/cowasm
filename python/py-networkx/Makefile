@@ -11,6 +11,14 @@ TARBALL_SHA256 = d47fbf302e7d9cbbb9e2555a0d267983d2aa476bac30e90dfbe5669bd57f376
 include ../build/Makefile-vars-wheel
 
 TOP_LEVEL = networkx
+PYTHON_WASM = ${PACKAGES}/cpython/dist/wasm/bin/python3.wasm
 
 test: deps ${DIST_WASM}/.built
-	PYTHONPATH=${DIST_WASM} pnpm-exec cpython -c 'import networkx as nx; g = nx.path_graph(5); assert nx.shortest_path(g, 0, 4) == [0, 1, 2, 3, 4]; assert sorted(nx.connected_components(g)) == [{0, 1, 2, 3, 4}]; dag = nx.DiGraph([(1, 3), (2, 3), (3, 4)]); order = list(nx.topological_sort(dag)); assert order.index(3) > order.index(1) and order.index(3) > order.index(2); assert nx.is_isomorphic(nx.cycle_graph(4), nx.Graph([(10, 11), (11, 12), (12, 13), (13, 10)]))'
+	PYTHONPATH=${DIST_WASM} pnpm-exec cpython ${SRC}/test_sage_graphs.py
+
+.PHONY: test-wasi-sdk-standalone
+test-wasi-sdk-standalone: deps ${DIST_WASM}/.built
+	PYTHONPATH=${DIST_WASM} ${BIN}/cowasm ${PYTHON_WASM} ${SRC}/test_sage_graphs.py
+
+.PHONY: test-wasi-sdk-next
+test-wasi-sdk-next: test-wasi-sdk-standalone
