@@ -1235,11 +1235,59 @@ Boost.Thread integrations disabled. It installs the treedec headers under
 exception-enabled C++ runtime archives and runs a cycle-graph tree
 decomposition validity probe through the WASI runner.
 
+Several additional SageMath packages now participate in the same standalone
+WASI SDK math gate:
+
+```sh
+make -C sagemath/4ti2 test-wasi-sdk-standalone
+make -C sagemath/benzene test-wasi-sdk-standalone
+make -C sagemath/bliss test-wasi-sdk-standalone
+make -C sagemath/boost-cropped test-wasi-sdk-standalone
+make -C sagemath/brial test-wasi-sdk-standalone
+make -C sagemath/cliquer test-wasi-sdk-standalone
+make -C sagemath/coxeter3 test-wasi-sdk-standalone
+make -C sagemath/eclib test-wasi-sdk-standalone
+make -C sagemath/frobby test-wasi-sdk-standalone
+make -C sagemath/gfan test-wasi-sdk-standalone
+make -C sagemath/glpk test-wasi-sdk-standalone
+make -C sagemath/libatomic-ops test-wasi-sdk-standalone
+make -C sagemath/lrslib test-wasi-sdk-standalone
+make -C sagemath/mcqd test-wasi-sdk-standalone
+make -C sagemath/nauty test-wasi-sdk-standalone
+make -C sagemath/palp test-wasi-sdk-standalone
+make -C sagemath/planarity test-wasi-sdk-standalone
+make -C sagemath/plantri test-wasi-sdk-standalone
+make -C sagemath/rw test-wasi-sdk-standalone
+make -C sagemath/saclib test-wasi-sdk-standalone
+make -C sagemath/sympow test-wasi-sdk-standalone
+make -C sagemath/tachyon test-wasi-sdk-standalone
+make -C sagemath/zn-poly test-wasi-sdk-standalone
+```
+
+These targets follow the package-local `dist/wasi-sdk` convention used above.
+They cover integer programming and toric-algebra tools (`4ti2`, `glpk`),
+graph and planarity kernels (`benzene`, `bliss`, `cliquer`, `mcqd`, `nauty`,
+`planarity`, `plantri`, `rw`), algebraic and combinatorial libraries
+(`brial`, `frobby`, `gfan`, `lrslib`, `saclib`, `zn-poly`), Coxeter and
+elliptic-curve helpers (`coxeter3`, `eclib`, `sympow`), the cropped Boost and
+libatomic-ops dependency leaves, and Tachyon's command-line renderer. Where
+the package depends on GMP, GLPK, cddlib, Boost, or the pinned
+exception-enabled C++ runtime archives, the package Makefile first builds or
+locates the corresponding sibling `dist/wasi-sdk` install. Their smokes run
+deterministic Sage-relevant probes such as Groebner/Hilbert examples,
+maximum-clique and graph isomorphism checks, reflexive-polytope and fan
+computations, polynomial arithmetic, real-algebraic SACLIB arithmetic, elliptic
+curve L-function examples, and a Tachyon PPM render.
+
 The pure Python and data-only Sage packages use the same opt-in target name for
 their `dist/wasi-sdk` install layouts:
 
 ```sh
 make -C sagemath/conway-polynomials test-wasi-sdk-standalone
+make -C sagemath/cunningham-tables test-wasi-sdk-standalone
+make -C sagemath/database-jones-numfield test-wasi-sdk-standalone
+make -C sagemath/database-mutation-class test-wasi-sdk-standalone
+make -C sagemath/database-odlyzko-zeta test-wasi-sdk-standalone
 make -C sagemath/elliptic-curves test-wasi-sdk-standalone
 make -C sagemath/graphs test-wasi-sdk-standalone
 make -C sagemath/pari-elldata test-wasi-sdk-standalone
@@ -1251,8 +1299,9 @@ make -C sagemath/polytopes-db test-wasi-sdk-standalone
 These packages do not compile C or C++ code, but the SDK target gives the
 standalone package gate a consistent install prefix. The smokes reuse each
 package's existing data-integrity checks against `dist/wasi-sdk`, covering the
-Conway polynomial Python module, Cremona elliptic-curve data, graph databases,
-PARI data directories, and reflexive-polytope data.
+Conway polynomial Python module, Cunningham tables, Jones number fields,
+mutation classes, Odlyzko zeta zeros, Cremona elliptic-curve data, graph
+databases, PARI data directories, and reflexive-polytope data.
 
 `core/libcxx` has an opt-in C++ runtime side-module smoke target:
 
