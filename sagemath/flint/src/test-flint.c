@@ -108,6 +108,14 @@ int main(void) {
   fmpz_mod_poly_factor_t fmpz_mod_factorization;
   fmpq_poly_t rational_poly;
   fmpq_poly_t rational_derivative;
+  fmpq_poly_t rational_series_input;
+  fmpq_poly_t rational_series_log;
+  fmpq_poly_t rational_series_exp;
+  fmpq_poly_t rational_series_inverse;
+  fmpq_poly_t rational_series_product;
+  fmpq_poly_t rational_series_expected;
+  fmpq_poly_t rational_series_reversion;
+  fmpq_poly_t rational_series_identity;
   nmod_poly_t mod_poly;
   nmod_poly_t mod_factor_product;
   nmod_poly_t mod_factor_power;
@@ -249,6 +257,14 @@ int main(void) {
   fmpz_mod_poly_factor_init(fmpz_mod_factorization, fmpz_mod_ctx);
   fmpq_poly_init(rational_poly);
   fmpq_poly_init(rational_derivative);
+  fmpq_poly_init(rational_series_input);
+  fmpq_poly_init(rational_series_log);
+  fmpq_poly_init(rational_series_exp);
+  fmpq_poly_init(rational_series_inverse);
+  fmpq_poly_init(rational_series_product);
+  fmpq_poly_init(rational_series_expected);
+  fmpq_poly_init(rational_series_reversion);
+  fmpq_poly_init(rational_series_identity);
   nmod_poly_init(mod_poly, 5);
   nmod_poly_init(mod_factor_product, 5);
   nmod_poly_init(mod_factor_power, 5);
@@ -502,6 +518,30 @@ int main(void) {
   ok = ok && fmpq_is_zero(q_mpoly_coeff);
   fmpq_poly_get_coeff_fmpq(q_mpoly_coeff, rational_derivative, 2);
   ok = ok && fmpq_equal_frac_si(q_mpoly_coeff, 5, 2);
+
+  fmpq_poly_one(rational_series_input);
+  fmpq_poly_set_coeff_si(rational_series_input, 1, 1);
+  fmpq_poly_log_series(rational_series_log, rational_series_input, 6);
+  fmpq_poly_exp_series(rational_series_exp, rational_series_log, 6);
+  ok = ok && fmpq_poly_equal(rational_series_exp, rational_series_input);
+
+  fmpq_poly_inv_series(rational_series_inverse, rational_series_input, 6);
+  fmpq_poly_mullow(rational_series_product, rational_series_input,
+                   rational_series_inverse, 6);
+  fmpq_poly_one(rational_series_expected);
+  ok = ok && fmpq_poly_equal(rational_series_product,
+                             rational_series_expected);
+
+  fmpq_poly_zero(rational_series_input);
+  fmpq_poly_set_coeff_si(rational_series_input, 1, 1);
+  fmpq_poly_set_coeff_si(rational_series_input, 2, 1);
+  fmpq_poly_revert_series(rational_series_reversion, rational_series_input, 6);
+  fmpq_poly_compose_series(rational_series_product, rational_series_input,
+                           rational_series_reversion, 6);
+  fmpq_poly_zero(rational_series_identity);
+  fmpq_poly_set_coeff_si(rational_series_identity, 1, 1);
+  ok = ok && fmpq_poly_equal(rational_series_product,
+                             rational_series_identity);
 
   fq_nmod_gen(finite_field_gen, finite_field_ctx);
   fq_nmod_pow_ui(finite_field_power, finite_field_gen, 8, finite_field_ctx);
@@ -757,7 +797,7 @@ int main(void) {
   ok = ok && fmpz_equal_ui(fmpz_mat_entry(snf_matrix, 1, 1), 4);
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy z-mpoly=gcd,division,derivative,evaluation,factor matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-poly-series=exp,inv,revert q-mpoly=Qxy z-mpoly=gcd,division,derivative,evaluation,factor matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
   }
 
   flint_free(poly_str);
@@ -827,6 +867,14 @@ int main(void) {
   nmod_poly_clear(mod_factor_power);
   nmod_poly_clear(mod_factor_product);
   nmod_poly_clear(mod_poly);
+  fmpq_poly_clear(rational_series_identity);
+  fmpq_poly_clear(rational_series_reversion);
+  fmpq_poly_clear(rational_series_expected);
+  fmpq_poly_clear(rational_series_product);
+  fmpq_poly_clear(rational_series_inverse);
+  fmpq_poly_clear(rational_series_exp);
+  fmpq_poly_clear(rational_series_log);
+  fmpq_poly_clear(rational_series_input);
   fmpq_poly_clear(rational_derivative);
   fmpq_poly_clear(rational_poly);
   fmpz_factor_clear(integer_factorization);
