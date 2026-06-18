@@ -64,5 +64,21 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/meataxe-test" |
   grep "meataxe-ok product=1212 trace=0 nullity=1"
 
-cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/zmu" --help |
-  grep -i "MeatAxe"
+left_matrix="$probe_dir/left.mtx"
+right_matrix="$probe_dir/right.mtx"
+product_matrix="$probe_dir/product.mtx"
+product_text="$probe_dir/product.txt"
+
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$probe_dir/meataxe-test" "$left_matrix" "$right_matrix" |
+  grep "meataxe-files-ok"
+
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/zmu" "$left_matrix" "$right_matrix" "$product_matrix"
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/zpr" "$product_matrix" >"$product_text"
+
+grep -F "matrix field=3 rows=2 cols=2" "$product_text"
+test "$(grep -cx "12" "$product_text")" -eq 2
+
+echo "meataxe-cli-ok zmu-zpr product=1212"
