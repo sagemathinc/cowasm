@@ -86,21 +86,11 @@ ${DIST_WASM}/.built: node_modules ${BUILD_WASM}/.build
 	touch ${DIST_WASM}/.built
 
 test: node_modules ${DIST_WASM}/.built
-	printf '%s\n' \
-		'#include <stdio.h>' \
-		'#include <libqhull_r/libqhull_r.h>' \
-		'int main(void) {' \
-		'  qhT qh_qh;' \
-		'  qhT *qh = &qh_qh;' \
-		'  qh_zero(qh, stderr);' \
-		'  qh_freeqhull(qh, !qh_ALL);' \
-		'  return 0;' \
-		'}' > ${BUILD_WASM}/cowasm-qhull-test.c
 	cowasm-cc \
 		-fvisibility-main \
 		-I${DIST_WASM}/include \
 		-L${DIST_WASM}/lib \
-		${BUILD_WASM}/cowasm-qhull-test.c \
+		${SRC}/test-qhull.c \
 		-lqhull_r \
 		-o ${BUILD_WASM}/cowasm-qhull-test
-	cowasm ${BUILD_WASM}/cowasm-qhull-test
+	cowasm ${BUILD_WASM}/cowasm-qhull-test | grep -F "qhull-ok square facets=4 vertices=4"

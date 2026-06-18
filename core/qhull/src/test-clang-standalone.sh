@@ -48,25 +48,13 @@ cp -R "$build_dir/src/libqhull_r" "$dist_dir/include/"
 cp "$build_dir/bits/setjmp.h" "$dist_dir/include/bits/setjmp.h"
 cp "$cmake_build/libqhullstatic_r.a" "$dist_dir/lib/libqhull_r.a"
 
-cat >"$probe_dir/qhull-test.c" <<'EOF'
-#include <stdio.h>
-#include <libqhull_r/libqhull_r.h>
-
-int main(void) {
-  qhT qh_qh;
-  qhT *qh = &qh_qh;
-  qh_zero(qh, stderr);
-  qh_freeqhull(qh, !qh_ALL);
-  return 0;
-}
-EOF
-
 COWASM_TOOLCHAIN=clang "$bin_dir/cowasm-cc" \
   -fvisibility-main \
   -I"$dist_dir/include" \
   -L"$dist_dir/lib" \
-  "$probe_dir/qhull-test.c" \
+  "$script_dir/test-qhull.c" \
   -lqhull_r \
   -o "$probe_dir/qhull-test"
 
-cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/qhull-test"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/qhull-test" |
+  grep -F "qhull-ok square facets=4 vertices=4"
