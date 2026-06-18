@@ -80,4 +80,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -o "$probe_dir/givaro-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/givaro-test" |
-  grep "givaro-ok factorial=265252859812191058636308480000000 rational=2/3 mod17=1"
+  grep "givaro-ok factorial=265252859812191058636308480000000 rational=2/3 mod17=1 gf4-matrix=checked"
