@@ -104,4 +104,27 @@ cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/msolve" \
 grep -F "[0, [1," "$solve_log"
 grep -F "[[[0, 0], [0, 0]]]" "$solve_log"
 
-echo "msolve-ok groebner real-solve"
+cat >"$probe_dir/finite-field.ms" <<'EOF'
+x,y
+31
+x^2-1,
+y-x
+EOF
+
+finite_field_groebner_log="$probe_dir/finite-field-groebner.out"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/msolve" \
+  -g 2 -f "$probe_dir/finite-field.ms" -o "$finite_field_groebner_log"
+grep -F "#field characteristic: 31" "$finite_field_groebner_log"
+grep -F "#length of basis:      2 elements sorted by increasing leading monomials" "$finite_field_groebner_log"
+grep -F "1*x^1+30*y^1" "$finite_field_groebner_log"
+grep -F "1*y^2+30" "$finite_field_groebner_log"
+
+finite_field_solve_log="$probe_dir/finite-field-solve.out"
+cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/msolve" \
+  -f "$probe_dir/finite-field.ms" -o "$finite_field_solve_log"
+grep -F "[0, [31," "$finite_field_solve_log"
+grep -F "['x', 'y']" "$finite_field_solve_log"
+grep -F "[30, 0, 1]" "$finite_field_solve_log"
+grep -F "[0, 30]" "$finite_field_solve_log"
+
+echo "msolve-ok groebner real-solve finite-field"
