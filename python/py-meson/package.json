@@ -1,0 +1,28 @@
+{
+  "name": "@cowasm/py-meson",
+  "version": "1.0.0",
+  "description": "Meson Python package and host wrapper for CoWasm build probes",
+  "main": "index.js",
+  "files": ["dist/wasm/**", "bin/meson", "README.md", "package.json", "index.js"],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make wasm",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sagemathinc/cowasm.git"
+  },
+  "keywords": ["WebAssembly", "wasm", "meson", "sagelite"],
+  "author": "William Stein <wstein@sagemath.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/python/py-meson",
+  "devDependencies": {
+    "@cowasm/cpython": "workspace:*",
+    "@cowasm/kernel": "workspace:*"
+  }
+}

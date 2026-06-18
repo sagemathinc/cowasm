@@ -12,6 +12,8 @@ CPYTHON_WASM = ${CWD}/../../python/cpython/dist/wasm
 PY_CYTHON = ${CWD}/../../python/py-cython/dist/wasm
 PY_NUMPY = ${CWD}/../../python/py-numpy/dist/wasm
 PY_GMPY2 = ${CWD}/../../python/py-gmpy2/dist/wasm
+PY_MESON = ${CWD}/../../python/py-meson/dist/wasm
+PY_NINJA = ${CWD}/../../python/py-ninja/dist/native
 POSIX_WASI_SDK = ${CWD}/../../core/posix-wasm/dist/wasi-sdk
 CYSIGNALS_WASI_SDK = ${PACKAGES}/cysignals/dist/wasi-sdk
 MEMORY_ALLOCATOR_WASI_SDK = ${PACKAGES}/memory-allocator/dist/wasi-sdk
@@ -27,6 +29,12 @@ ${PY_NUMPY}/numpy/__init__.py:
 
 ${PY_GMPY2}/gmpy2/__init__.py:
 	$(MAKE) -C ${CWD}/../../python/py-gmpy2 wasm
+
+${PY_MESON}/mesonbuild/mesonmain.py:
+	$(MAKE) -C ${CWD}/../../python/py-meson all
+
+${PY_NINJA}/bin/ninja:
+	$(MAKE) -C ${CWD}/../../python/py-ninja all
 
 ${POSIX_WASI_SDK}/posix-wasm.h:
 	$(MAKE) -C ${CWD}/../../core/posix-wasm test-wasi-sdk-standalone
@@ -45,7 +53,7 @@ ${BUILD_WASI_SDK}/.build:
 	touch ${BUILD_WASI_SDK}/.build
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_NUMPY}/numpy/__init__.py ${PY_GMPY2}/gmpy2/__init__.py ${POSIX_WASI_SDK}/posix-wasm.h ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd ${BUILD_WASI_SDK}/.build
+test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_NUMPY}/numpy/__init__.py ${PY_GMPY2}/gmpy2/__init__.py ${PY_MESON}/mesonbuild/mesonmain.py ${PY_NINJA}/bin/ninja ${POSIX_WASI_SDK}/posix-wasm.h ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd ${BUILD_WASI_SDK}/.build
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
 	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CPYTHON_WASM} ${PY_CYTHON} ${PY_NUMPY} ${PY_GMPY2} ${CYSIGNALS_WASI_SDK} ${MEMORY_ALLOCATOR_WASI_SDK} ${POSIX_WASI_SDK} || status=$$?; \

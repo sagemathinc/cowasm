@@ -37,6 +37,8 @@
     "@cowasm/posix-wasm": "workspace:*",
     "@cowasm/py-cython": "workspace:*",
     "@cowasm/py-gmpy2": "workspace:*",
+    "@cowasm/py-meson": "workspace:*",
+    "@cowasm/py-ninja": "workspace:*",
     "@cowasm/py-numpy": "workspace:*"
   }
 }

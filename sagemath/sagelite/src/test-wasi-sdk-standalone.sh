@@ -80,13 +80,14 @@ done
 pkg_config_path="$(IFS=:; echo "${pkg_config_paths[*]}")"
 
 cross_file="$probe_dir/cowasm-wasi.ini"
+pkg_config="$src_dir/cowasm-pkg-config.py"
 cat >"$cross_file" <<EOF
 [binaries]
 c = '$bin_dir/wasi-sdk-clang-next'
 cpp = '$bin_dir/wasi-sdk-clang++-next'
 ar = '$bin_dir/wasi-sdk-llvm-ar-next'
 strip = '$bin_dir/wasi-sdk-llvm-strip-next'
-pkg-config = 'pkg-config'
+pkg-config = '$pkg_config'
 python = '$bin_dir/python-wasm'
 
 [host_machine]
@@ -106,6 +107,7 @@ set +e
 PYTHONPATH="$pythonpath" \
 PKG_CONFIG_PATH="$pkg_config_path" \
 PKG_CONFIG_LIBDIR="$pkg_config_path" \
+PKG_CONFIG="$pkg_config" \
   meson setup \
     "$build_dir/cowasm-meson-build" \
     "$build_dir" \
@@ -135,11 +137,13 @@ fi
 PYTHONPATH="$pythonpath" \
 PKG_CONFIG_PATH="$pkg_config_path" \
 PKG_CONFIG_LIBDIR="$pkg_config_path" \
+PKG_CONFIG="$pkg_config" \
   meson compile -C "$build_dir/cowasm-meson-build"
 
 PYTHONPATH="$pythonpath" \
 PKG_CONFIG_PATH="$pkg_config_path" \
 PKG_CONFIG_LIBDIR="$pkg_config_path" \
+PKG_CONFIG="$pkg_config" \
   meson install -C "$build_dir/cowasm-meson-build" --destdir "$dist_dir/stage"
 
 echo "sagelite-ok meson configure compile install" | tee "$status_file"

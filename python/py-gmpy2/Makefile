@@ -62,7 +62,7 @@ ${DIST_WASM}/.built: ${BUILD_WASM}/.install
 	cd ${DIST_WASM} && tar xf ${BUILD_WASM}/build/lib*/gmpy2.tar.xz
 	cp -a ${BUILD_WASM}/gmpy2.egg-info ${DIST_WASM}/
 	cd ${BUILD_WASM} \
-		&& find gmpy2 -type f \( -name '*.pxd' -o -name '*.h' \) -print \
+		&& find gmpy2 -type f \( -name '*.pxd' -o -name '*.h' -o -name '__init__.py' \) -print \
 		| tar cf - -T - \
 		| tar xf - -C ${DIST_WASM}
 	touch ${DIST_WASM}/.built
