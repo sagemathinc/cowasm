@@ -127,7 +127,7 @@ import signal
 
 import cysignals
 import cysignals.signals
-from cysignals.pysignals import SigAction, getossignal, setossignal
+from cysignals.pysignals import SigAction, changesignal, getossignal, setossignal, setsignal
 from cysignals.signals import (
     _pari_version,
     init_cysignals,
@@ -179,6 +179,38 @@ try:
     assert isinstance(getossignal(signal.SIGTERM), SigAction)
 finally:
     setossignal(signal.SIGTERM, old_action)
+
+
+def _term_probe(sig, frame):
+    raise AssertionError("SIGTERM delivery is not expected during this smoke")
+
+
+old_python_handler = signal.getsignal(signal.SIGTERM)
+old_os_action = getossignal(signal.SIGTERM)
+try:
+    returned_handler = setsignal(signal.SIGTERM, _term_probe)
+    assert returned_handler == old_python_handler
+    assert signal.getsignal(signal.SIGTERM) is _term_probe
+    assert getossignal(signal.SIGTERM) == old_os_action
+
+    returned_handler = setsignal(signal.SIGTERM, signal.SIG_IGN, signal.SIG_DFL)
+    assert returned_handler is _term_probe
+    assert signal.getsignal(signal.SIGTERM) is signal.SIG_IGN
+    assert getossignal(signal.SIGTERM) == SigAction(signal.SIG_DFL)
+finally:
+    setsignal(signal.SIGTERM, old_python_handler, old_os_action)
+
+assert signal.getsignal(signal.SIGTERM) == old_python_handler
+assert getossignal(signal.SIGTERM) == old_os_action
+try:
+    with changesignal(signal.SIGTERM, _term_probe):
+        assert signal.getsignal(signal.SIGTERM) is _term_probe
+        assert isinstance(getossignal(signal.SIGTERM), SigAction)
+finally:
+    setsignal(signal.SIGTERM, old_python_handler, old_os_action)
+
+assert signal.getsignal(signal.SIGTERM) == old_python_handler
+assert getossignal(signal.SIGTERM) == old_os_action
 PY
 
 cat >"$probe_dir/cysignals_guard_probe.pyx" <<'PYX'
@@ -471,4 +503,4 @@ assert cysignals_guard_probe.memory_allocator_roundtrip()
 assert cysignals_guard_probe.memory_allocator_failure()
 PY
 
-echo "cysignals-ok signals-extension pysignals-extension import init-api sigaction-api guarded-cython-module guard-cleanup no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check memory-helpers"
+echo "cysignals-ok signals-extension pysignals-extension import init-api sigaction-api python-signal-api guarded-cython-module guard-cleanup no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check memory-helpers"
