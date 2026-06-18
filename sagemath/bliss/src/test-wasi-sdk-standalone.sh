@@ -109,7 +109,23 @@ env PATH="$host_path" COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
   -o "$probe_dir/bliss-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/bliss-test" |
-  grep "bliss-ok c4-group=8"
+  grep -F "bliss-ok c4-group=8"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$dist_dir/bin/bliss" -version |
-  grep "0.77"
+  grep -F "bliss version 0.77"
+
+cat >"$probe_dir/c4.dimacs" <<'EOF'
+p edge 4 4
+e 1 2
+e 2 3
+e 3 4
+e 4 1
+EOF
+
+cli_log="$probe_dir/bliss-cli.log"
+cowasm_clang_standalone_run_wasi \
+  "$bin_dir" "$dist_dir/bin/bliss" -can -v=0 "$probe_dir/c4.dimacs" \
+  >"$cli_log"
+grep -F "Generator: (2,4)" "$cli_log"
+grep -F "Generator: (1,2)(3,4)" "$cli_log"
+grep -F "Canonical labeling: (1,4,2,3)" "$cli_log"
