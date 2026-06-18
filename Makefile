@@ -232,6 +232,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/nauty test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/plantri test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/benzene test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/buckygen test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/cliquer test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/mcqd test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/coxeter3 test-wasi-sdk-standalone

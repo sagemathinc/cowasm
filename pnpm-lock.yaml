@@ -928,6 +928,8 @@ importers:
 
   sagemath/benzene: {}
 
+  sagemath/buckygen: {}
+
   sagemath/bliss: {}
 
   sagemath/boost-cropped: {}
