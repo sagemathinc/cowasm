@@ -61,4 +61,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/mpfr-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/mpfr-test" |
-  grep -F "mpfr-ok pi exp log sqrt exact-div directed-rounding flags mpz special-functions nextafter"
+  grep -F "mpfr-ok pi exp log sqrt exact-div directed-rounding flags mpz special-functions nextafter fma rootn hypot trig special-values"

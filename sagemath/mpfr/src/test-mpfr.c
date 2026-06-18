@@ -119,8 +119,47 @@ int main(void) {
     goto cleanup;
   }
 
+  mpfr_set_ui(x, 2, MPFR_RNDN);
+  mpfr_set_ui(y, 3, MPFR_RNDN);
+  mpfr_set_ui(z, 4, MPFR_RNDN);
+  mpfr_fma(x, x, y, z, MPFR_RNDN);
+  if (mpfr_cmp_ui(x, 10) != 0 || !mpfr_integer_p(x)) {
+    goto cleanup;
+  }
+
+  mpfr_set_ui(x, 81, MPFR_RNDN);
+  mpfr_rootn_ui(x, x, 4, MPFR_RNDN);
+  if (mpfr_cmp_ui(x, 3) != 0) {
+    goto cleanup;
+  }
+
+  mpfr_set_ui(x, 3, MPFR_RNDN);
+  mpfr_set_ui(y, 4, MPFR_RNDN);
+  mpfr_hypot(x, x, y, MPFR_RNDN);
+  if (mpfr_cmp_ui(x, 5) != 0) {
+    goto cleanup;
+  }
+
+  mpfr_set_ui(x, 0, MPFR_RNDN);
+  mpfr_sin_cos(x, y, x, MPFR_RNDN);
+  if (mpfr_cmp_ui(x, 0) != 0 || mpfr_cmp_ui(y, 1) != 0) {
+    goto cleanup;
+  }
+
+  mpfr_set_nan(x);
+  if (!mpfr_nan_p(x)) {
+    goto cleanup;
+  }
+
+  mpfr_set_inf(x, 1);
+  mpfr_set_inf(y, -1);
+  if (!mpfr_inf_p(x) || !mpfr_inf_p(y) || mpfr_sgn(x) <= 0 ||
+      mpfr_sgn(y) >= 0) {
+    goto cleanup;
+  }
+
   puts("mpfr-ok pi exp log sqrt exact-div directed-rounding flags mpz "
-       "special-functions nextafter");
+       "special-functions nextafter fma rootn hypot trig special-values");
   status = 0;
 
 cleanup:
