@@ -949,11 +949,12 @@ The target first ensures the GMP and MPFR WASI SDK standalone archives are
 available, then builds FLINT against those installs with assembly and threading
 disabled for the standalone contract. It installs `libflint.a` under
 `sagemath/flint/dist/wasi-sdk`, supplies small `mkstemp` and `clock` stubs for
-the smoke link, and runs integer, rational, Bernoulli, partition-count, CRT,
-modular inverse/power, finite-field Frobenius/trace/norm/order, polynomial
-factorization, integer-polynomial extended gcd, real ball, complex ball, and
-complex ball polynomial probes through the WASI runner. The same smoke also
-covers FLINT 3's bundled Arb
+the smoke link, and runs integer, rational, Bernoulli, partition-count,
+harmonic-number, Bell-number, Stirling-number, Euler-number, sums-of-squares,
+CRT, modular inverse/power, finite-field Frobenius/trace/norm/order,
+polynomial factorization, integer-polynomial extended gcd, real ball, complex
+ball, and complex ball polynomial probes through the WASI runner. The same
+smoke also covers FLINT 3's bundled Arb
 hypergeometric/special-function entry points with exact gamma, erf, and Bessel
 ball checks, which keeps the former Arb dependency path visible for Sage.
 

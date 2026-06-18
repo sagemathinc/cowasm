@@ -46,10 +46,17 @@ static int acb_contains_si_si(const acb_t value, slong real, slong imag) {
 int main(void) {
   fmpz_t n;
   fmpz_t factor_content;
+  fmpz_t harmonic_expected_den;
+  fmpz_t harmonic_expected_num;
+  fmpz_t integer_bell;
+  fmpz_t integer_euler;
   fmpz_t integer_factor_input;
   fmpz_t integer_factor_reexpanded;
   fmpz_t integer_phi;
   fmpz_t integer_sigma;
+  fmpz_t integer_squares;
+  fmpz_t integer_stirling_first;
+  fmpz_t integer_stirling_second;
   fmpz_t matrix_det;
   fmpz_t modular_base;
   fmpz_t modular_inverse;
@@ -75,6 +82,7 @@ int main(void) {
   fmpq_t a;
   fmpq_t b;
   fmpq_t bernoulli;
+  fmpq_t harmonic;
   fmpq_t q_mpoly_coeff;
   fmpq_t rational_matrix_det;
   fmpq_t rational_sum;
@@ -215,10 +223,17 @@ int main(void) {
 
   fmpz_init(n);
   fmpz_init(factor_content);
+  fmpz_init(harmonic_expected_den);
+  fmpz_init(harmonic_expected_num);
+  fmpz_init(integer_bell);
+  fmpz_init(integer_euler);
   fmpz_init(integer_factor_input);
   fmpz_init(integer_factor_reexpanded);
   fmpz_init(integer_phi);
   fmpz_init(integer_sigma);
+  fmpz_init(integer_squares);
+  fmpz_init(integer_stirling_first);
+  fmpz_init(integer_stirling_second);
   fmpz_init(matrix_det);
   fmpz_init(modular_base);
   fmpz_init(modular_inverse);
@@ -244,6 +259,7 @@ int main(void) {
   fmpq_init(a);
   fmpq_init(b);
   fmpq_init(bernoulli);
+  fmpq_init(harmonic);
   fmpq_init(q_mpoly_coeff);
   fmpq_init(rational_matrix_det);
   fmpq_init(rational_sum);
@@ -481,6 +497,15 @@ int main(void) {
   ok = ok && fmpz_factor_moebius_mu(integer_factorization) == 0;
 
   arith_number_of_partitions(partition_count, 10);
+  arith_harmonic_number(harmonic, 5);
+  fmpz_set_ui(harmonic_expected_num, 137);
+  fmpz_set_ui(harmonic_expected_den, 60);
+  arith_bell_number(integer_bell, 5);
+  arith_stirling_number_1(integer_stirling_first, 5, 2);
+  arith_stirling_number_2(integer_stirling_second, 5, 2);
+  arith_euler_number(integer_euler, 6);
+  fmpz_set_ui(integer_squares, 5);
+  arith_sum_of_squares(integer_squares, 2, integer_squares);
   fmpz_set_ui(residue_a, 2);
   fmpz_set_ui(residue_mod_a, 3);
   fmpz_set_ui(residue_b, 3);
@@ -491,6 +516,13 @@ int main(void) {
   fmpz_set_ui(modular_modulus, 40);
   fmpz_powm_ui(modular_power, modular_base, 4, modular_modulus);
   ok = ok && fmpz_equal_ui(partition_count, 42);
+  ok = ok && fmpz_equal(fmpq_numref(harmonic), harmonic_expected_num);
+  ok = ok && fmpz_equal(fmpq_denref(harmonic), harmonic_expected_den);
+  ok = ok && fmpz_equal_ui(integer_bell, 52);
+  ok = ok && fmpz_equal_si(integer_stirling_first, -50);
+  ok = ok && fmpz_equal_ui(integer_stirling_second, 15);
+  ok = ok && fmpz_equal_si(integer_euler, -61);
+  ok = ok && fmpz_equal_ui(integer_squares, 8);
   ok = ok && fmpz_equal_ui(residue_combined, 8);
   ok = ok && fmpz_invmod(modular_inverse, modular_base, modular_modulus);
   ok = ok && fmpz_equal_ui(modular_inverse, 23);
@@ -885,7 +917,7 @@ int main(void) {
   ok = ok && fmpq_mat_is_one(rational_matrix_identity);
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9,trace,norm,frobenius,order mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-poly-series=exp,inv,revert q-mpoly=Qxy z-mpoly=gcd,division,derivative,evaluation,factor matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf rational-matrix=det,inv arb-hypgeom=gamma,erf,bessel arb-special=zeta,lambertw acb=exp-log,sin-i arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,harmonic,bell,stirling,euler,squares,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9,trace,norm,frobenius,order mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-poly-series=exp,inv,revert q-mpoly=Qxy z-mpoly=gcd,division,derivative,evaluation,factor matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf rational-matrix=det,inv arb-hypgeom=gamma,erf,bessel arb-special=zeta,lambertw acb=exp-log,sin-i arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
   }
 
   flint_free(poly_str);
@@ -1016,6 +1048,7 @@ int main(void) {
   fmpq_clear(rational_sum);
   fmpq_clear(rational_matrix_det);
   fmpq_clear(q_mpoly_coeff);
+  fmpq_clear(harmonic);
   fmpq_clear(bernoulli);
   fmpq_clear(b);
   fmpq_clear(a);
@@ -1043,8 +1076,15 @@ int main(void) {
   fmpz_clear(matrix_det);
   fmpz_clear(integer_sigma);
   fmpz_clear(integer_phi);
+  fmpz_clear(integer_stirling_second);
+  fmpz_clear(integer_stirling_first);
+  fmpz_clear(integer_squares);
   fmpz_clear(integer_factor_reexpanded);
   fmpz_clear(integer_factor_input);
+  fmpz_clear(integer_euler);
+  fmpz_clear(integer_bell);
+  fmpz_clear(harmonic_expected_num);
+  fmpz_clear(harmonic_expected_den);
   fmpz_clear(factor_content);
   fmpz_clear(n);
   flint_cleanup();
