@@ -1,0 +1,194 @@
+--- a/src/gmpy2_format.c
++++ b/src/gmpy2_format.c
+@@ -176,6 +176,174 @@
+         } \
+     } while (0);
+ 
++static PyObject *
++GMPy_CoWasm_MPFR_Format_Fixed(MPFR_Object *self, const char *mpfrfmt)
++{
++    const char *scan = mpfrfmt + 1;
++    char conv = mpfrfmt[strlen(mpfrfmt) - 1];
++    char *digits = NULL, *out = NULL, *p, *point;
++    mpfr_exp_t exp = 0, exp_est = 0;
++    mpfr_rnd_t round = MPFR_RNDN;
++    long precision = -1, sig_digits;
++    size_t digits_len, frac_len, out_size;
++    int plus = 0, space = 0, alternate = 0, negative = 0;
++    PyObject *result;
++
++    while (*scan && *scan != 'R') {
++        if (*scan == '+') {
++            plus = 1;
++        }
++        else if (*scan == ' ') {
++            space = 1;
++        }
++        else if (*scan == '#') {
++            alternate = 1;
++        }
++        else if (*scan == '.') {
++            precision = strtol(scan + 1, (char **)&scan, 10);
++            continue;
++        }
++        scan++;
++    }
++    if (*scan == 'R') {
++        scan++;
++        switch (*scan) {
++            case 'D': round = MPFR_RNDD; break;
++            case 'U': round = MPFR_RNDU; break;
++            case 'Z': round = MPFR_RNDZ; break;
++            case 'Y': round = MPFR_RNDA; break;
++            case 'N': default: round = MPFR_RNDN; break;
++        }
++    }
++    if (precision < 0) {
++        precision = 6;
++    }
++
++    if (!mpfr_regular_p(MPFR(self))) {
++        const char *word;
++
++        negative = mpfr_signbit(MPFR(self));
++        if (mpfr_nan_p(MPFR(self))) {
++            word = (conv == 'F') ? "NAN" : "nan";
++            negative = 0;
++        }
++        else if (mpfr_inf_p(MPFR(self))) {
++            word = (conv == 'F') ? "INF" : "inf";
++        }
++        else {
++            word = "0";
++        }
++
++        out = malloc(strlen(word) + 3);
++        if (!out) {
++            return PyErr_NoMemory();
++        }
++        p = out;
++        if (negative) {
++            *(p++) = '-';
++        }
++        else if (plus) {
++            *(p++) = '+';
++        }
++        else if (space) {
++            *(p++) = ' ';
++        }
++        strcpy(p, word);
++        result = PyUnicode_FromString(out);
++        free(out);
++        return result;
++    }
++
++    negative = mpfr_signbit(MPFR(self));
++    digits = mpfr_get_str(NULL, &exp_est, 10, 0, MPFR(self), round);
++    if (!digits) {
++        return PyErr_NoMemory();
++    }
++    if (digits[0] == '-') {
++        exp_est--;
++    }
++    mpfr_free_str(digits);
++
++    sig_digits = exp_est > 0 ? exp_est + precision : precision + exp_est;
++    if (sig_digits < 1) {
++        sig_digits = 1;
++    }
++    digits = mpfr_get_str(NULL, &exp, 10, sig_digits, MPFR(self), round);
++    if (!digits) {
++        return PyErr_NoMemory();
++    }
++    if (digits[0] == '-') {
++        negative = 1;
++        memmove(digits, digits + 1, strlen(digits));
++    }
++    digits_len = strlen(digits);
++    out_size = digits_len + (exp > 0 ? (size_t)exp : (size_t)(-exp)) +
++               (size_t)precision + 32;
++    out = malloc(out_size);
++    if (!out) {
++        mpfr_free_str(digits);
++        return PyErr_NoMemory();
++    }
++
++    p = out;
++    if (negative) {
++        *(p++) = '-';
++    }
++    else if (plus) {
++        *(p++) = '+';
++    }
++    else if (space) {
++        *(p++) = ' ';
++    }
++
++    if (exp <= 0) {
++        *(p++) = '0';
++        *(p++) = '.';
++        memset(p, '0', (size_t)(-exp));
++        p += (size_t)(-exp);
++        memcpy(p, digits, digits_len);
++        p += digits_len;
++    }
++    else if ((size_t)exp >= digits_len) {
++        memcpy(p, digits, digits_len);
++        p += digits_len;
++        memset(p, '0', (size_t)exp - digits_len);
++        p += (size_t)exp - digits_len;
++        *(p++) = '.';
++    }
++    else {
++        memcpy(p, digits, (size_t)exp);
++        p += (size_t)exp;
++        *(p++) = '.';
++        memcpy(p, digits + exp, digits_len - (size_t)exp);
++        p += digits_len - (size_t)exp;
++    }
++    *p = '\0';
++
++    point = strchr(out, '.');
++    if (!point) {
++        *(p++) = '.';
++        point = p - 1;
++    }
++    frac_len = strlen(point + 1);
++    if (frac_len < (size_t)precision) {
++        memset(p, '0', (size_t)precision - frac_len);
++        p += (size_t)precision - frac_len;
++    }
++    else if (frac_len > (size_t)precision) {
++        p = point + 1 + precision;
++    }
++    if (precision == 0 && !alternate && p > out && *(p - 1) == '.') {
++        p--;
++    }
++    *p = '\0';
++
++    mpfr_free_str(digits);
++    result = PyUnicode_FromString(out);
++    free(out);
++    return result;
++}
++
+ PyDoc_STRVAR(GMPy_doc_mpfr_format,
+ "__format__($self, fmt, /)\n--\n\n"
+ "Return a Python string by formatting self using the format string 'fmt'.\n\n"
+@@ -387,6 +555,16 @@
+     *(p2) = '\00';
+     *(p3) = '\00';
+ 
++    if (*(p2 - 1) == 'f' || *(p2 - 1) == 'F') {
++        mpfrstr = GMPy_CoWasm_MPFR_Format_Fixed((MPFR_Object *)self, mpfrfmt);
++        if (!mpfrstr) {
++            return NULL;
++        }
++        result = PyObject_CallMethod(mpfrstr, "__format__", "(s)", fmt);
++        Py_DECREF(mpfrstr);
++        return result;
++    }
++
+     if (seenconv && *(p2 - 1) == '%') {
+         mpfr_t tmp;
+ 

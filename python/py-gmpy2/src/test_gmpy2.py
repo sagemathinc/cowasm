@@ -49,6 +49,7 @@ def check_real_context():
         root = gmpy2.sqrt(gmpy2.mpfr(2))
         assert_close(root * root, gmpy2.mpfr(2), gmpy2.mpfr("1e-22"))
         assert_decimal_digits(root, "141421356237309504880", 1)
+        assert format(root, ".20f") == "1.41421356237309504880"
 
         exp_log = gmpy2.exp(gmpy2.log(gmpy2.mpfr(17)))
         assert_close(exp_log, gmpy2.mpfr(17), gmpy2.mpfr("1e-22"))
@@ -56,6 +57,14 @@ def check_real_context():
         zeta2 = gmpy2.zeta(2)
         assert_close(zeta2, gmpy2.const_pi() ** 2 / 6, gmpy2.mpfr("1e-22"))
         assert_decimal_digits(zeta2, "164493406684822643647", 1)
+        assert format(zeta2, ".20f") == "1.64493406684822643647"
+
+        assert format(gmpy2.mpfr("0.1"), ".20f") == "0.10000000000000000000"
+        assert format(gmpy2.mpfr("1e-20"), ".20f") == "0.00000000000000000001"
+        assert (
+            format(gmpy2.mpfr("1e20"), ".5f")
+            == "100000000000000000000.00000"
+        )
 
         context.round = gmpy2.RoundDown
         down = gmpy2.mpfr(1) / 10

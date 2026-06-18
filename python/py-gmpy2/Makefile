@@ -7,6 +7,7 @@ VERSION = 2.3.0
 URL = https://files.pythonhosted.org/packages/source/g/gmpy2/gmpy2-${VERSION}.tar.gz
 TARBALL = ${UPSTREAM}/gmpy2-${VERSION}.tar.gz
 TARBALL_SHA256 = 2d943cc9051fcd6b15b2a09369e2f7e18c526bc04c210782e4da61b62495eb4a
+PATCHES = $(sort $(wildcard ${SRC}/patches/*.patch))
 
 include ../build/Makefile-rules
 
@@ -17,10 +18,12 @@ PYTHONPATH = $(shell cowasm-package-path @cowasm/py-pip):$(shell cowasm-package-
 PYTHON_WASM = ${PACKAGES}/cpython/dist/wasm/bin/python3.wasm
 STATIC_PREFIX = ${BUILD_WASM}/cowasm-static
 
-${BUILD_WASM}/.build::
+${BUILD_WASM}/.patched: ${BUILD_WASM}/.build
+	for patch in ${PATCHES}; do patch -d ${BUILD_WASM} -p1 < "$$patch"; done
 	# Keep gmpy2's C API capsule enabled for downstream Cython modules while
 	# still linking the GMP/MPFR/MPC libraries from the local static prefix.
 	sed -i'.cowasm-original' -e "/self.static_dir:/,+4{/DSHARED=1/d; /DSTATIC=1/d;}" ${BUILD_WASM}/setup.py
+	touch ${BUILD_WASM}/.patched
 
 ${GMP_WASM}/lib/libgmp.a:
 	$(MAKE) -C ${CWD}/../../sagemath/gmp wasm
@@ -31,7 +34,7 @@ ${MPFR_WASM}/lib/libmpfr.a:
 ${MPC_WASM}/lib/libmpc.a:
 	$(MAKE) -C ${CWD}/../../sagemath/mpc wasm
 
-${BUILD_WASM}/.static-prefix: ${GMP_WASM}/lib/libgmp.a ${MPFR_WASM}/lib/libmpfr.a ${MPC_WASM}/lib/libmpc.a ${BUILD_WASM}/.build
+${BUILD_WASM}/.static-prefix: ${GMP_WASM}/lib/libgmp.a ${MPFR_WASM}/lib/libmpfr.a ${MPC_WASM}/lib/libmpc.a ${BUILD_WASM}/.patched
 	rm -rf ${STATIC_PREFIX}
 	mkdir -p ${STATIC_PREFIX}/include ${STATIC_PREFIX}/lib
 	cp -a ${GMP_WASM}/include/. ${STATIC_PREFIX}/include/
