@@ -84,4 +84,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/ecm-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/ecm-test" |
-  grep "ecm-ok status=1 factor=2 version=7.0.7"
+  grep "ecm-ok pm1-status=1 pm1-factor=2 ecm-status=2 ecm-factor=30210181 version=7.0.7"
