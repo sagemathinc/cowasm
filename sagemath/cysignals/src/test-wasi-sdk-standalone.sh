@@ -96,16 +96,38 @@ cp \
   cysignals_config.h \
   "$dist_dir/cysignals/"
 
+PYTHONPATH="$py_cython" python3 -m cython -3 --output-file pysignals.c pysignals.pyx
+
+"$bin_dir/wasi-sdk-clang-next" -target wasm32-wasip1 \
+  -O0 \
+  -fPIC \
+  -D_SCHED_H \
+  -shared \
+  -nostdlib \
+  -Wl,--allow-undefined \
+  -Wl,--no-entry \
+  -Wl,--export=PyInit_pysignals \
+  -I. \
+  -I"$python_include" \
+  -I"$posix_wasi_sdk" \
+  pysignals.c \
+  -o "$dist_dir/cysignals/pysignals$extension_suffix"
+
 "$bin_dir/wasi-sdk-llvm-objdump-next" -h "$dist_dir/cysignals/signals$extension_suffix" |
   grep 'dylink\.0'
 "$bin_dir/wasi-sdk-llvm-nm-next" "$dist_dir/cysignals/signals$extension_suffix" |
   grep ' T PyInit_signals$'
+"$bin_dir/wasi-sdk-llvm-objdump-next" -h "$dist_dir/cysignals/pysignals$extension_suffix" |
+  grep 'dylink\.0'
+"$bin_dir/wasi-sdk-llvm-nm-next" "$dist_dir/cysignals/pysignals$extension_suffix" |
+  grep ' T PyInit_pysignals$'
 
 PYTHONPATH="$dist_dir" "$bin_dir/python-wasm" - <<'PY'
 import signal
 
 import cysignals
 import cysignals.signals
+from cysignals.pysignals import SigAction, getossignal, setossignal
 from cysignals.signals import (
     _pari_version,
     init_cysignals,
@@ -131,6 +153,32 @@ else:
     raise AssertionError("set_debug_level(1) unexpectedly succeeded")
 assert sig_on_reset() == 0
 sig_print_exception(signal.SIGFPE)
+
+default_action = SigAction()
+ignored_action = SigAction(signal.SIG_IGN)
+assert repr(default_action) == "<SigAction with sa_handler=SIG_DFL>"
+assert repr(ignored_action) == "<SigAction with sa_handler=SIG_IGN>"
+assert SigAction(default_action) == default_action
+assert SigAction(default_action) != ignored_action
+try:
+    default_action < ignored_action
+except TypeError as err:
+    assert str(err) == "SigAction instances can only be compared with == or !="
+else:
+    raise AssertionError("SigAction ordering unexpectedly succeeded")
+try:
+    SigAction(42)
+except TypeError as err:
+    assert str(err).startswith("cannot initialize SigAction from ")
+else:
+    raise AssertionError("invalid SigAction initializer unexpectedly succeeded")
+old_action = getossignal(signal.SIGTERM)
+returned_action = setossignal(signal.SIGTERM, signal.SIG_IGN)
+try:
+    assert isinstance(returned_action, SigAction)
+    assert isinstance(getossignal(signal.SIGTERM), SigAction)
+finally:
+    setossignal(signal.SIGTERM, old_action)
 PY
 
 cat >"$probe_dir/cysignals_guard_probe.pyx" <<'PYX'
@@ -423,4 +471,4 @@ assert cysignals_guard_probe.memory_allocator_roundtrip()
 assert cysignals_guard_probe.memory_allocator_failure()
 PY
 
-echo "cysignals-ok signals-extension import init-api guarded-cython-module guard-cleanup no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check memory-helpers"
+echo "cysignals-ok signals-extension pysignals-extension import init-api sigaction-api guarded-cython-module guard-cleanup no-except-guards string-guards signal-exceptions custom-handlers reset-check exception-check memory-helpers"
