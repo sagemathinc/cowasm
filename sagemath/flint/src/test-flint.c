@@ -13,6 +13,8 @@
 #include <flint/fmpz_factor.h>
 #include <flint/fmpz_mat.h>
 #include <flint/fmpz_mod.h>
+#include <flint/fmpz_mpoly.h>
+#include <flint/fmpz_mpoly_factor.h>
 #include <flint/fmpz_mod_poly.h>
 #include <flint/fmpz_mod_poly_factor.h>
 #include <flint/fmpz_poly.h>
@@ -122,6 +124,16 @@ int main(void) {
   fmpq_mpoly_t q_mpoly_a;
   fmpq_mpoly_t q_mpoly_b;
   fmpq_mpoly_t q_mpoly_product;
+  fmpz_mpoly_ctx_t integer_mpoly_ctx;
+  fmpz_mpoly_t integer_mpoly;
+  fmpz_mpoly_t integer_mpoly_derivative;
+  fmpz_mpoly_t integer_mpoly_derivative_expected;
+  fmpz_mpoly_t integer_mpoly_divisor;
+  fmpz_mpoly_t integer_mpoly_eval;
+  fmpz_mpoly_t integer_mpoly_eval_expected;
+  fmpz_mpoly_t integer_mpoly_gcd;
+  fmpz_mpoly_t integer_mpoly_quotient;
+  fmpz_mpoly_factor_t integer_mpoly_factorization;
   nmod_mat_t mod_matrix;
   nmod_mat_t mod_rhs;
   nmod_mat_t mod_solution;
@@ -253,6 +265,16 @@ int main(void) {
   fmpq_mpoly_init(q_mpoly_a, q_mpoly_ctx);
   fmpq_mpoly_init(q_mpoly_b, q_mpoly_ctx);
   fmpq_mpoly_init(q_mpoly_product, q_mpoly_ctx);
+  fmpz_mpoly_ctx_init(integer_mpoly_ctx, 2, ORD_LEX);
+  fmpz_mpoly_init(integer_mpoly, integer_mpoly_ctx);
+  fmpz_mpoly_init(integer_mpoly_derivative, integer_mpoly_ctx);
+  fmpz_mpoly_init(integer_mpoly_derivative_expected, integer_mpoly_ctx);
+  fmpz_mpoly_init(integer_mpoly_divisor, integer_mpoly_ctx);
+  fmpz_mpoly_init(integer_mpoly_eval, integer_mpoly_ctx);
+  fmpz_mpoly_init(integer_mpoly_eval_expected, integer_mpoly_ctx);
+  fmpz_mpoly_init(integer_mpoly_gcd, integer_mpoly_ctx);
+  fmpz_mpoly_init(integer_mpoly_quotient, integer_mpoly_ctx);
+  fmpz_mpoly_factor_init(integer_mpoly_factorization, integer_mpoly_ctx);
   nmod_mat_init(mod_matrix, 3, 3, 17);
   nmod_mat_init(mod_rhs, 3, 1, 17);
   nmod_mat_init(mod_solution, 3, 1, 17);
@@ -554,6 +576,74 @@ int main(void) {
                                q_mpoly_ctx);
   ok = ok && fmpq_equal_frac_si(q_mpoly_coeff, 10, 3);
 
+  exp_xy[0] = 2;
+  exp_xy[1] = 0;
+  fmpz_mpoly_set_coeff_ui_ui(integer_mpoly, 1, exp_xy, integer_mpoly_ctx);
+  exp_xy[0] = 1;
+  exp_xy[1] = 1;
+  fmpz_mpoly_set_coeff_ui_ui(integer_mpoly, 2, exp_xy, integer_mpoly_ctx);
+  exp_xy[0] = 0;
+  exp_xy[1] = 2;
+  fmpz_mpoly_set_coeff_ui_ui(integer_mpoly, 1, exp_xy, integer_mpoly_ctx);
+
+  exp_xy[0] = 1;
+  exp_xy[1] = 0;
+  fmpz_mpoly_set_coeff_ui_ui(integer_mpoly_divisor, 1, exp_xy,
+                             integer_mpoly_ctx);
+  fmpz_mpoly_set_coeff_ui_ui(integer_mpoly_derivative_expected, 2, exp_xy,
+                             integer_mpoly_ctx);
+  exp_xy[0] = 0;
+  exp_xy[1] = 1;
+  fmpz_mpoly_set_coeff_ui_ui(integer_mpoly_divisor, 1, exp_xy,
+                             integer_mpoly_ctx);
+  fmpz_mpoly_set_coeff_ui_ui(integer_mpoly_derivative_expected, 2, exp_xy,
+                             integer_mpoly_ctx);
+
+  fmpz_mpoly_derivative(integer_mpoly_derivative, integer_mpoly, 0,
+                        integer_mpoly_ctx);
+  ok = ok && fmpz_mpoly_equal(integer_mpoly_derivative,
+                              integer_mpoly_derivative_expected,
+                              integer_mpoly_ctx);
+
+  fmpz_set_ui(poly_eval_x, 2);
+  ok = ok && fmpz_mpoly_evaluate_one_fmpz(integer_mpoly_eval,
+                                          integer_mpoly, 0, poly_eval_x,
+                                          integer_mpoly_ctx);
+  exp_xy[0] = 0;
+  exp_xy[1] = 0;
+  fmpz_mpoly_set_coeff_ui_ui(integer_mpoly_eval_expected, 4, exp_xy,
+                             integer_mpoly_ctx);
+  exp_xy[0] = 0;
+  exp_xy[1] = 1;
+  fmpz_mpoly_set_coeff_ui_ui(integer_mpoly_eval_expected, 4, exp_xy,
+                             integer_mpoly_ctx);
+  exp_xy[0] = 0;
+  exp_xy[1] = 2;
+  fmpz_mpoly_set_coeff_ui_ui(integer_mpoly_eval_expected, 1, exp_xy,
+                             integer_mpoly_ctx);
+  ok = ok && fmpz_mpoly_equal(integer_mpoly_eval,
+                              integer_mpoly_eval_expected,
+                              integer_mpoly_ctx);
+
+  ok = ok && fmpz_mpoly_gcd(integer_mpoly_gcd, integer_mpoly,
+                            integer_mpoly_divisor, integer_mpoly_ctx);
+  ok = ok && fmpz_mpoly_equal(integer_mpoly_gcd, integer_mpoly_divisor,
+                              integer_mpoly_ctx);
+  ok = ok && fmpz_mpoly_divides(integer_mpoly_quotient, integer_mpoly,
+                                integer_mpoly_divisor, integer_mpoly_ctx);
+  ok = ok && fmpz_mpoly_equal(integer_mpoly_quotient, integer_mpoly_divisor,
+                              integer_mpoly_ctx);
+  ok = ok && fmpz_mpoly_factor(integer_mpoly_factorization, integer_mpoly,
+                               integer_mpoly_ctx);
+  ok = ok && fmpz_mpoly_factor_length(integer_mpoly_factorization,
+                                      integer_mpoly_ctx) == 1;
+  ok = ok &&
+       fmpz_mpoly_factor_get_exp_si(integer_mpoly_factorization, 0,
+                                    integer_mpoly_ctx) == 2;
+  ok = ok && fmpz_mpoly_factor_matches(integer_mpoly,
+                                       integer_mpoly_factorization,
+                                       integer_mpoly_ctx);
+
   ok = ok && arb_contains_zero(sin_pi);
   ok = ok && arb_contains_si(exp_log_two, 2);
   ok = ok && arb_contains_si(gamma_value, 24);
@@ -667,7 +757,7 @@ int main(void) {
   ok = ok && fmpz_equal_ui(fmpz_mat_entry(snf_matrix, 1, 1), 4);
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-mpoly=Qxy z-mpoly=gcd,division,derivative,evaluation,factor matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
   }
 
   flint_free(poly_str);
@@ -714,6 +804,16 @@ int main(void) {
   nmod_mpoly_clear(mpoly_b, mpoly_ctx);
   nmod_mpoly_clear(mpoly_a, mpoly_ctx);
   nmod_mpoly_ctx_clear(mpoly_ctx);
+  fmpz_mpoly_factor_clear(integer_mpoly_factorization, integer_mpoly_ctx);
+  fmpz_mpoly_clear(integer_mpoly_quotient, integer_mpoly_ctx);
+  fmpz_mpoly_clear(integer_mpoly_gcd, integer_mpoly_ctx);
+  fmpz_mpoly_clear(integer_mpoly_eval_expected, integer_mpoly_ctx);
+  fmpz_mpoly_clear(integer_mpoly_eval, integer_mpoly_ctx);
+  fmpz_mpoly_clear(integer_mpoly_divisor, integer_mpoly_ctx);
+  fmpz_mpoly_clear(integer_mpoly_derivative_expected, integer_mpoly_ctx);
+  fmpz_mpoly_clear(integer_mpoly_derivative, integer_mpoly_ctx);
+  fmpz_mpoly_clear(integer_mpoly, integer_mpoly_ctx);
+  fmpz_mpoly_ctx_clear(integer_mpoly_ctx);
   fmpq_mpoly_clear(q_mpoly_product, q_mpoly_ctx);
   fmpq_mpoly_clear(q_mpoly_b, q_mpoly_ctx);
   fmpq_mpoly_clear(q_mpoly_a, q_mpoly_ctx);
