@@ -69,4 +69,4 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -o "$probe_dir/mpfi-test"
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/mpfi-test" |
-  grep -F "mpfi-ok interval-arithmetic sum=[3,8] product=[2,15] intersection=[2,3] hull=[1,5] bisect=[1,3]|[3,5]"
+  grep -F "mpfi-ok interval-arithmetic sum=[3,8] product=[2,15] intersection=[2,3] hull=[1,5] bisect=[1,3]|[3,5] transcendentals=pi,sin,cos,log,exp"
