@@ -1009,6 +1009,15 @@ importers:
         specifier: workspace:*
         version: link:../../python/py-cython
 
+  sagemath/database-cremona-ellcurve:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../../python/cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
   sagemath/database-cubic-hecke:
     devDependencies:
       '@cowasm/cpython':
@@ -1216,6 +1225,12 @@ importers:
         specifier: workspace:*
         version: link:../gsl
 
+  sagemath/isl:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+
   sagemath/lcalc:
     dependencies:
       '@cowasm/gmp':
@@ -1229,13 +1244,21 @@ importers:
 
   sagemath/libbraiding: {}
 
-  sagemath/libsemigroups: {}
-
   sagemath/libhomfly:
     dependencies:
       '@cowasm/gc':
         specifier: workspace:*
         version: link:../gc
+
+  sagemath/libsemigroups: {}
+
+  sagemath/lidia:
+    dependencies:
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
+
+  sagemath/lie: {}
 
   sagemath/linbox:
     dependencies:
@@ -1299,11 +1322,18 @@ importers:
         specifier: workspace:*
         version: link:../m4ri
 
+  sagemath/matroid-database:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../../python/cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
   sagemath/mcqd: {}
 
   sagemath/meataxe: {}
-
-  sagemath/modular-decomposition: {}
 
   sagemath/memory-allocator:
     devDependencies:
@@ -1316,6 +1346,8 @@ importers:
       '@cowasm/py-cython':
         specifier: workspace:*
         version: link:../../python/py-cython
+
+  sagemath/modular-decomposition: {}
 
   sagemath/mpc:
     dependencies:
@@ -1484,6 +1516,15 @@ importers:
         version: link:../../python/py-cython
 
   sagemath/primesieve: {}
+
+  sagemath/pycosat:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../../python/cpython
+      '@cowasm/posix-wasm':
+        specifier: workspace:*
+        version: link:../../core/posix-wasm
 
   sagemath/ratpoints:
     dependencies:
