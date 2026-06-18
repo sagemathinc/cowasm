@@ -1290,6 +1290,7 @@ make -C sagemath/glpk test-wasi-sdk-standalone
 make -C sagemath/libatomic-ops test-wasi-sdk-standalone
 make -C sagemath/lrslib test-wasi-sdk-standalone
 make -C sagemath/mcqd test-wasi-sdk-standalone
+make -C sagemath/meataxe test-wasi-sdk-standalone
 make -C sagemath/msolve test-wasi-sdk-standalone
 make -C sagemath/nauty test-wasi-sdk-standalone
 make -C sagemath/palp test-wasi-sdk-standalone
@@ -1306,17 +1307,19 @@ These targets follow the package-local `dist/wasi-sdk` convention used above.
 They cover integer programming and toric-algebra tools (`4ti2`, `glpk`),
 graph and planarity kernels (`benzene`, `bliss`, `cliquer`, `mcqd`, `nauty`,
 `planarity`, `plantri`, `rw`), algebraic and combinatorial libraries
-(`brial`, `frobby`, `gfan`, `lrslib`, `msolve`, `saclib`, `zn-poly`), Coxeter
-and elliptic-curve helpers (`coxeter3`, `eclib`, `sympow`), the cropped Boost
-and libatomic-ops dependency leaves, and Tachyon's command-line renderer.
+(`brial`, `frobby`, `gfan`, `lrslib`, `meataxe`, `msolve`, `saclib`,
+`zn-poly`), Coxeter and elliptic-curve helpers (`coxeter3`, `eclib`,
+`sympow`), the cropped Boost and libatomic-ops dependency leaves, and
+Tachyon's command-line renderer.
 Where the package depends on GMP, GLPK, cddlib, Boost, FLINT, MPFR, or the
 pinned exception-enabled C++ runtime archives, the package Makefile first
 builds or locates the corresponding sibling `dist/wasi-sdk` install. Their
 smokes run deterministic Sage-relevant probes such as Groebner/Hilbert
 examples, Groebner-basis and zero-dimensional real-solve checks,
 maximum-clique and graph isomorphism checks, reflexive-polytope and fan
-computations, polynomial arithmetic, real-algebraic SACLIB arithmetic, elliptic
-curve L-function examples, and a Tachyon PPM render.
+computations, polynomial arithmetic, finite-field MeatAxe matrix
+linear-algebra checks, real-algebraic SACLIB arithmetic, elliptic curve
+L-function examples, and a Tachyon PPM render.
 
 The pure Python and data-only Sage packages use the same opt-in target name for
 their `dist/wasi-sdk` install layouts:

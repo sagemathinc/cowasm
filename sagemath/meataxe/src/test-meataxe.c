@@ -39,6 +39,59 @@ static Matrix_t *make_right_matrix(void) {
   return matrix;
 }
 
+static int check_linear_algebra(Matrix_t *a, Matrix_t *product, int *order,
+                                long *rank, long *nullity) {
+  int ok = 0;
+  Matrix_t *inverse = MatInverse(a);
+  Matrix_t *identity = MatId(3, 2);
+  Matrix_t *unit = MatDup(a);
+  Matrix_t *echelon = MatDup(product);
+  Matrix_t *nullspace = MatNullSpace(product);
+  Matrix_t *zero_check = NULL;
+
+  if (inverse == NULL || identity == NULL || unit == NULL || echelon == NULL ||
+      nullspace == NULL) {
+    goto cleanup;
+  }
+
+  *order = MatOrder(a);
+  if (MatMul(unit, inverse) == NULL || MatCompare(unit, identity) != 0) {
+    goto cleanup;
+  }
+
+  *rank = MatEchelonize(echelon);
+  *nullity = MatNullity(product);
+  zero_check = MatDup(nullspace);
+  if (zero_check == NULL || MatMul(zero_check, product) == NULL) {
+    goto cleanup;
+  }
+
+  ok = *order == 3 && *rank == 1 && echelon->Nor == 1 && *nullity == 1 &&
+       nullspace->Nor == 1 && nullspace->Noc == 2 &&
+       get_entry(zero_check, 0, 0) == 0 && get_entry(zero_check, 0, 1) == 0;
+
+cleanup:
+  if (zero_check != NULL) {
+    MatFree(zero_check);
+  }
+  if (nullspace != NULL) {
+    MatFree(nullspace);
+  }
+  if (echelon != NULL) {
+    MatFree(echelon);
+  }
+  if (unit != NULL) {
+    MatFree(unit);
+  }
+  if (identity != NULL) {
+    MatFree(identity);
+  }
+  if (inverse != NULL) {
+    MatFree(inverse);
+  }
+  return ok;
+}
+
 int main(int argc, char **argv) {
   if (MtxInitLibrary() < 0) {
     return 1;
@@ -78,15 +131,18 @@ int main(int argc, char **argv) {
   int p10 = get_entry(product, 1, 0);
   int p11 = get_entry(product, 1, 1);
   int trace = FfToInt(MatTrace(product));
-  long nullity = MatNullity(product);
+  int order = -1;
+  long rank = -1;
+  long nullity = -1;
+  int algebra_ok = check_linear_algebra(a, product, &order, &rank, &nullity);
 
   MatFree(product);
   MatFree(b);
   MatFree(a);
   MtxCleanupLibrary();
 
-  printf("meataxe-ok product=%d%d%d%d trace=%d nullity=%ld\n",
-         p00, p01, p10, p11, trace, nullity);
+  printf("meataxe-ok product=%d%d%d%d trace=%d order=%d rank=%ld nullity=%ld\n",
+         p00, p01, p10, p11, trace, order, rank, nullity);
   return !(p00 == 1 && p01 == 2 && p10 == 1 && p11 == 2 &&
-           trace == 0 && nullity == 1);
+           trace == 0 && algebra_ok);
 }

@@ -61,8 +61,12 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   -lwasi-emulated-getpid \
   -o "$probe_dir/meataxe-test"
 
-cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/meataxe-test" |
-  grep "meataxe-ok product=1212 trace=0 nullity=1"
+library_output="$(
+  cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/meataxe-test"
+)"
+printf "%s\n" "$library_output"
+grep "meataxe-ok product=1212 trace=0 order=3 rank=1 nullity=1" \
+  <<<"$library_output"
 
 left_matrix="$probe_dir/left.mtx"
 right_matrix="$probe_dir/right.mtx"
@@ -70,8 +74,9 @@ product_matrix="$probe_dir/product.mtx"
 product_text="$probe_dir/product.txt"
 
 cowasm_clang_standalone_run_wasi \
-  "$bin_dir" "$probe_dir/meataxe-test" "$left_matrix" "$right_matrix" |
-  grep "meataxe-files-ok"
+  "$bin_dir" "$probe_dir/meataxe-test" "$left_matrix" "$right_matrix" \
+  >"$probe_dir/meataxe-files.log"
+grep "meataxe-files-ok" "$probe_dir/meataxe-files.log"
 
 cowasm_clang_standalone_run_wasi \
   "$bin_dir" "$dist_dir/bin/zmu" "$left_matrix" "$right_matrix" "$product_matrix"
