@@ -11,9 +11,10 @@ WASI_SDK_CLANG = ${BIN}/wasi-sdk-clang-next
 WASI_SDK_NM = ${BIN}/wasi-sdk-llvm-nm-next
 WASI_SDK_OBJDUMP = ${BIN}/wasi-sdk-llvm-objdump-next
 WASI_SDK_STRINGS = ${BIN}/wasi-sdk-llvm-strings-next
+PYTHON_EXTENSION_SUFFIX = .cpython-314-wasm32-wasi.so
 CYTHON_WASI_MODULES = fib nt numbers
 CYTHON_WASI_C = ${CYTHON_WASI_MODULES:%=${BUILD_WASI_SDK}/%.c}
-CYTHON_WASI_SO = ${CYTHON_WASI_MODULES:%=${BUILD_WASI_SDK}/%.so}
+CYTHON_WASI_SO = ${CYTHON_WASI_MODULES:%=${BUILD_WASI_SDK}/%${PYTHON_EXTENSION_SUFFIX}}
 
 build:
 	python-wasm setup.py build
@@ -34,7 +35,7 @@ ${BUILD_WASI_SDK}/numbers.c: numbers.pyx nt.pxd
 	mkdir -p ${BUILD_WASI_SDK}
 	PYTHONPATH=${PY_CYTHON} python3 -m cython -3 --output-file $@ numbers.pyx
 
-${BUILD_WASI_SDK}/%.so: ${BUILD_WASI_SDK}/%.c
+${BUILD_WASI_SDK}/%${PYTHON_EXTENSION_SUFFIX}: ${BUILD_WASI_SDK}/%.c
 	cd ${ROOT}/core/build && make wasi-sdk-next
 	${WASI_SDK_CLANG} -target wasm32-wasip1 \
 		-O0 \
@@ -53,10 +54,12 @@ ${BUILD_WASI_SDK}/%.so: ${BUILD_WASI_SDK}/%.c
 test-wasi-sdk-next: ${CYTHON_WASI_SO}
 	@set -e; \
 	for module in ${CYTHON_WASI_MODULES}; do \
-		${WASI_SDK_OBJDUMP} -h ${BUILD_WASI_SDK}/$$module.so | grep 'dylink\.0'; \
-		${WASI_SDK_NM} ${BUILD_WASI_SDK}/$$module.so | grep " T PyInit_$${module}$$"; \
-		! ${WASI_SDK_STRINGS} ${BUILD_WASI_SDK}/$$module.so | grep 'needed_dynlibs'; \
-	done
+		extension=${BUILD_WASI_SDK}/$$module${PYTHON_EXTENSION_SUFFIX}; \
+		${WASI_SDK_OBJDUMP} -h $$extension | grep 'dylink\.0'; \
+		${WASI_SDK_NM} $$extension | grep " T PyInit_$${module}$$"; \
+		! ${WASI_SDK_STRINGS} $$extension | grep 'needed_dynlibs'; \
+	done; \
+	PYTHONPATH=${BUILD_WASI_SDK}:$(CURDIR) ${BIN}/python-wasm test_wasi_runtime.py
 .PHONY: test-wasi-sdk-next
 
 clean:

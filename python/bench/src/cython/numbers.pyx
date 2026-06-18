@@ -20,6 +20,19 @@ cdef class A:
     def __add__(self, right):
         return A((<A>self).i + (<A>right).i)
 
+
+def cimport_smoke():
+    cdef int cx, cy, g
+    g = xgcd_c(240, 46, &cx, &cy)
+    return (
+        gcd(92250, 922350),
+        g,
+        cx,
+        cy,
+        inverse_mod(17, 3120),
+        (A(2) + A(3)).value(),
+    )
+
 def operator_add(int n=100000):
 
     a = A(2)
