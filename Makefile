@@ -252,6 +252,7 @@ test-wasi-sdk-math:
 	$(MAKE) -C sagemath/rw test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/modular-decomposition test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/msolve test-wasi-sdk-standalone
+	$(MAKE) -C sagemath/normaliz test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/saclib test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/sirocco test-wasi-sdk-standalone
 	$(MAKE) -C sagemath/palp test-wasi-sdk-standalone
