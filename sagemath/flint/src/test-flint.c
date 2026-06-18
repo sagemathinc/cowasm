@@ -65,6 +65,11 @@ int main(void) {
   fmpz_t residue_combined;
   fmpz_t residue_mod_a;
   fmpz_t residue_mod_b;
+  fmpz_t finite_field_norm;
+  fmpz_t finite_field_norm_from_product;
+  fmpz_t finite_field_order;
+  fmpz_t finite_field_trace;
+  fmpz_t finite_field_trace_from_sum;
   fmpz_t xgcd_constant;
   fmpz_t calcium_integer;
   fmpq_t a;
@@ -128,7 +133,10 @@ int main(void) {
   nmod_poly_factor_t mod_factorization;
   fq_nmod_ctx_t finite_field_ctx;
   fq_nmod_t finite_field_gen;
+  fq_nmod_t finite_field_frobenius;
+  fq_nmod_t finite_field_norm_element;
   fq_nmod_t finite_field_power;
+  fq_nmod_t finite_field_trace_element;
   nmod_mpoly_ctx_t mpoly_ctx;
   nmod_mpoly_t mpoly_a;
   nmod_mpoly_t mpoly_b;
@@ -218,6 +226,11 @@ int main(void) {
   fmpz_init(residue_combined);
   fmpz_init(residue_mod_a);
   fmpz_init(residue_mod_b);
+  fmpz_init(finite_field_norm);
+  fmpz_init(finite_field_norm_from_product);
+  fmpz_init(finite_field_order);
+  fmpz_init(finite_field_trace);
+  fmpz_init(finite_field_trace_from_sum);
   fmpz_init(xgcd_constant);
   fmpz_init(calcium_integer);
   fmpq_init(a);
@@ -281,7 +294,10 @@ int main(void) {
   nmod_poly_factor_init(mod_factorization);
   fq_nmod_ctx_init_ui(finite_field_ctx, 3, 2, "t");
   fq_nmod_init(finite_field_gen, finite_field_ctx);
+  fq_nmod_init(finite_field_frobenius, finite_field_ctx);
+  fq_nmod_init(finite_field_norm_element, finite_field_ctx);
   fq_nmod_init(finite_field_power, finite_field_ctx);
+  fq_nmod_init(finite_field_trace_element, finite_field_ctx);
   nmod_mpoly_ctx_init(mpoly_ctx, 2, ORD_LEX, 7);
   nmod_mpoly_init(mpoly_a, mpoly_ctx);
   nmod_mpoly_init(mpoly_b, mpoly_ctx);
@@ -555,6 +571,28 @@ int main(void) {
   fq_nmod_gen(finite_field_gen, finite_field_ctx);
   fq_nmod_pow_ui(finite_field_power, finite_field_gen, 8, finite_field_ctx);
   ok = ok && fq_nmod_is_one(finite_field_power, finite_field_ctx);
+  fq_nmod_frobenius(finite_field_frobenius, finite_field_gen, 1,
+                    finite_field_ctx);
+  fq_nmod_add(finite_field_trace_element, finite_field_gen,
+              finite_field_frobenius, finite_field_ctx);
+  fq_nmod_mul(finite_field_norm_element, finite_field_gen,
+              finite_field_frobenius, finite_field_ctx);
+  fq_nmod_trace(finite_field_trace, finite_field_gen, finite_field_ctx);
+  fq_nmod_norm(finite_field_norm, finite_field_gen, finite_field_ctx);
+  ok = ok && fq_nmod_get_fmpz(finite_field_trace_from_sum,
+                              finite_field_trace_element, finite_field_ctx);
+  ok = ok && fq_nmod_get_fmpz(finite_field_norm_from_product,
+                              finite_field_norm_element, finite_field_ctx);
+  ok = ok && fmpz_equal(finite_field_trace, finite_field_trace_from_sum);
+  ok = ok && fmpz_equal(finite_field_norm, finite_field_norm_from_product);
+  fq_nmod_frobenius(finite_field_frobenius, finite_field_gen, 2,
+                    finite_field_ctx);
+  ok = ok && fq_nmod_equal(finite_field_frobenius, finite_field_gen,
+                           finite_field_ctx);
+  ok = ok && fq_nmod_multiplicative_order(finite_field_order,
+                                          finite_field_gen,
+                                          finite_field_ctx) == 1;
+  ok = ok && fmpz_equal_ui(finite_field_order, 8);
 
   exp_xy[0] = 2;
   exp_xy[1] = 1;
@@ -817,7 +855,7 @@ int main(void) {
   ok = ok && fmpq_mat_is_one(rational_matrix_identity);
 
   if (ok) {
-    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9 mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-poly-series=exp,inv,revert q-mpoly=Qxy z-mpoly=gcd,division,derivative,evaluation,factor matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf rational-matrix=det,inv arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
+    puts("flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9,trace,norm,frobenius,order mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-poly-series=exp,inv,revert q-mpoly=Qxy z-mpoly=gcd,division,derivative,evaluation,factor matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf rational-matrix=det,inv arb-hypgeom=gamma,erf,bessel arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2");
   }
 
   flint_free(poly_str);
@@ -878,7 +916,10 @@ int main(void) {
   fmpq_mpoly_clear(q_mpoly_b, q_mpoly_ctx);
   fmpq_mpoly_clear(q_mpoly_a, q_mpoly_ctx);
   fmpq_mpoly_ctx_clear(q_mpoly_ctx);
+  fq_nmod_clear(finite_field_trace_element, finite_field_ctx);
   fq_nmod_clear(finite_field_power, finite_field_ctx);
+  fq_nmod_clear(finite_field_norm_element, finite_field_ctx);
+  fq_nmod_clear(finite_field_frobenius, finite_field_ctx);
   fq_nmod_clear(finite_field_gen, finite_field_ctx);
   fq_nmod_ctx_clear(finite_field_ctx);
   nmod_poly_factor_clear(mod_factorization);
@@ -946,6 +987,11 @@ int main(void) {
   fmpz_clear(residue_combined);
   fmpz_clear(residue_b);
   fmpz_clear(residue_a);
+  fmpz_clear(finite_field_trace_from_sum);
+  fmpz_clear(finite_field_trace);
+  fmpz_clear(finite_field_order);
+  fmpz_clear(finite_field_norm_from_product);
+  fmpz_clear(finite_field_norm);
   fmpz_clear(xgcd_constant);
   fmpz_clear(calcium_integer);
   fmpz_clear(poly_eval_x);
