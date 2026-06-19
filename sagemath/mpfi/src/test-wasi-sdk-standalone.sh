@@ -38,7 +38,7 @@ env \
   CC="$bin_dir/cowasm-cc" \
   CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS:-}" \
   CPPFLAGS="-I$gmp_dir/include -I$mpfr_dir/include" \
-  CFLAGS="-Oz -fvisibility-main" \
+  CFLAGS="-Oz -fPIC -fvisibility-main" \
   LDFLAGS="-L$gmp_dir/lib -L$mpfr_dir/lib ${standalone_ldlibs[*]}" \
   COWASM_TOOLCHAIN=wasi-sdk \
     ./configure \
@@ -52,6 +52,10 @@ env \
 
 COWASM_TOOLCHAIN=wasi-sdk make -j"$jobs"
 COWASM_TOOLCHAIN=wasi-sdk make install
+
+sed -i \
+  "s|^Libs:.*|Libs: -L\${libdir} -lmpfi -L$mpfr_dir/lib -lmpfr -L$gmp_dir/lib -lgmp|" \
+  "$dist_dir/lib/pkgconfig/mpfi.pc"
 
 env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
   "$src_dir/test-mpfi.c" \
@@ -70,3 +74,34 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/mpfi-test" |
   grep -F "mpfi-ok interval-arithmetic sum=[3,8] product=[2,15] intersection=[2,3] hull=[1,5] bisect=[1,3]|[3,5] transcendentals=pi,sin,cos,log,exp"
+
+cat >"$probe_dir/mpfi-side.c" <<'EOF'
+#include <mpfi.h>
+
+__attribute__((visibility("default")))
+int mpfi_side_smoke(void) {
+  mpfi_t interval;
+  mpfi_init2(interval, 128);
+  mpfi_interv_ui(interval, 2, 5);
+  int ok = mpfi_is_inside_ui(3, interval) != 0;
+  mpfi_clear(interval);
+  return ok;
+}
+EOF
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
+  -shared \
+  -fPIC \
+  "$probe_dir/mpfi-side.c" \
+  -I"$dist_dir/include" \
+  -I"$mpfr_dir/include" \
+  -I"$gmp_dir/include" \
+  -L"$dist_dir/lib" \
+  -L"$mpfr_dir/lib" \
+  -L"$gmp_dir/lib" \
+  -lmpfi \
+  -lmpfr \
+  -lgmp \
+  -lm \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/mpfi-side.so"

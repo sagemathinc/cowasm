@@ -101,7 +101,7 @@ env \
       AR="$bin_dir/cowasm-ar" \
       RANLIB="$bin_dir/cowasm-ranlib" \
       CXX="$probe_dir/cowasm-wasi-c++" \
-      CXXFLAGS="-Oz -fvisibility-main" \
+      CXXFLAGS="-Oz -fPIC -fvisibility-main" \
       LDFLAGS="${standalone_ldlibs[*]}" \
       PREFIX="$dist_dir" \
       GMP_PREFIX="$gmp_dir" \
@@ -133,3 +133,30 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/ntl-test" |
   grep -F "ntl-ok integer=2^200 polynomial=(x+1)^4 mod-factors=2 gf2x-factors=2 matrix-det=22 lll-rank=3 lll-det-square=45166875625 gf2e-factors=2 zz_p-interpolate=11 derivative=49"
+
+cat >"$probe_dir/ntl-side.cpp" <<'EOF'
+#include <NTL/ZZ.h>
+
+extern "C" __attribute__((visibility("default")))
+long ntl_side_smoke(void) {
+  NTL::ZZ x = NTL::power2_ZZ(80);
+  return NTL::NumBits(x);
+}
+EOF
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
+  -shared \
+  -fPIC \
+  "$probe_dir/ntl-side.cpp" \
+  -I"$dist_dir/include" \
+  -I"$gmp_dir/include" \
+  -I"$gf2x_dir/include" \
+  -L"$dist_dir/lib" \
+  -L"$gmp_dir/lib" \
+  -L"$gf2x_dir/lib" \
+  -lntl \
+  -lgmp \
+  -lgf2x \
+  -lm \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/ntl-side.so"

@@ -35,7 +35,7 @@ env \
   RANLIB="$bin_dir/cowasm-ranlib" \
   CC="$bin_dir/cowasm-cc" \
   CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS:-}" \
-  CFLAGS="-Oz -fvisibility-main" \
+  CFLAGS="-Oz -fPIC -fvisibility-main" \
   LDFLAGS="${standalone_ldlibs[*]}" \
   COWASM_TOOLCHAIN=wasi-sdk \
     ./configure \
@@ -60,3 +60,28 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/gsl-test" |
   grep "gsl-ok j0=-0.177596771314 gaussian=0.841344746069 dot=16.0 linear=3.0 integral=2.0 root=0.739085133215 eigen=1.0 poly=1.0 min=2.0 ode=2.718281828 spline=2.2 mean=6.2"
+
+cat >"$probe_dir/gsl-cblas-side.c" <<'EOF'
+#include <gsl/gsl_cblas.h>
+
+__attribute__((visibility("default")))
+double gsl_cblas_side_smoke(void) {
+  const double a[4] = {1.0, 2.0, 3.0, 4.0};
+  const double b[4] = {5.0, 6.0, 7.0, 8.0};
+  double c[4] = {0.0, 0.0, 0.0, 0.0};
+  cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+              2, 2, 2, 1.0, a, 2, b, 2, 0.0, c, 2);
+  return c[0];
+}
+EOF
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
+  -shared \
+  -fPIC \
+  "$probe_dir/gsl-cblas-side.c" \
+  -I"$dist_dir/include" \
+  -L"$dist_dir/lib" \
+  -lgslcblas \
+  -lm \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/gsl-cblas-side.so"

@@ -40,10 +40,13 @@ for Sagelite extension targets that do not inherit all required Meson
 dependencies.
 
 With the matching LinBox `BlockHankel` accessor patch applied, the standalone
-probe gets through Meson configure, clears the earlier CPython mimalloc,
-LinBox, fenv, Boost graph, GSL CBLAS, MPFR, signal, link group, NTL, MPFI,
-M4RI, M4RIE, GMP link-path, FLINT PIC, and MPFR PIC blockers, and now compiles
-into the later side-module link set.  The latest validated run stops at
-`958/1390`; the next blockers are linking Sagelite side modules against
-`libntl.a` and `libgslcblas.a` objects that were not built as
-position-independent WASM code.
+probe gets through Meson configure, compile, and install.  The latest validated
+run reports `sagelite-ok meson configure compile install`.
+
+The dependency archives that Sagelite links into CPython side modules are now
+rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,
+M4RI, M4RIE, MPFI, and MPFR have package-local side-module link coverage; PARI
+is also rebuilt with `-fPIC` and retains its standalone `gp`/`libpari` smoke.
+MPFI's installed `pkg-config` metadata also carries the MPFR and GMP library
+search paths so Sagelite extension links do not lose transitive static archive
+locations.

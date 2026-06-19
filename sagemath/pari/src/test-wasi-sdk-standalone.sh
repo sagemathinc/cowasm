@@ -56,7 +56,7 @@ int main(void) {
 }
 EOF
 
-sjlj_cflags="-Oz -fvisibility-main -mllvm -wasm-enable-sjlj -mllvm -wasm-use-legacy-eh=false"
+sjlj_cflags="-Oz -fPIC -fvisibility-main -mllvm -wasm-enable-sjlj -mllvm -wasm-use-legacy-eh=false"
 sjlj_ldflags="$sjlj_cflags ${standalone_ldlibs[*]}"
 setjmp_log="$probe_dir/setjmp-probe.log"
 if ! env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \

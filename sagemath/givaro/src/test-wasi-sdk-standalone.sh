@@ -46,7 +46,7 @@ env \
   CC="$bin_dir/cowasm-cc" \
   CXX="$bin_dir/cowasm-c++" \
   CPPFLAGS="-I$gmp_dir/include" \
-  CXXFLAGS="-Oz" \
+  CXXFLAGS="-Oz -fPIC" \
   LDFLAGS="-L$gmp_dir/lib ${standalone_ldlibs[*]}" \
   LIBS="-lgmpxx -lgmp" \
   CCNAM=clang \
@@ -81,3 +81,31 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/givaro-test" |
   grep "givaro-ok factorial=265252859812191058636308480000000 rational=2/3 egcd=2 mod17=1 gf4-matrix=checked z13-polys=checked"
+
+cat >"$probe_dir/givaro-side.cpp" <<'EOF'
+#include <givaro/givinteger.h>
+
+extern "C" __attribute__((visibility("default")))
+long givaro_side_smoke(void) {
+  Givaro::Integer x(17);
+  Givaro::Integer y(19);
+  return (x * y).bitsize();
+}
+EOF
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-c++" \
+  -shared \
+  -fPIC \
+  -Wl,--allow-undefined \
+  -Wl,--no-entry \
+  "$probe_dir/givaro-side.cpp" \
+  -I"$dist_dir/include" \
+  -I"$gmp_dir/include" \
+  -L"$dist_dir/lib" \
+  -L"$gmp_dir/lib" \
+  -lgivaro \
+  -lgmpxx \
+  -lgmp \
+  -lm \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/givaro-side.so"

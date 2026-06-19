@@ -35,7 +35,7 @@ env \
   RANLIB="$bin_dir/cowasm-ranlib" \
   CC="$bin_dir/cowasm-cc" \
   CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS:-}" \
-  CFLAGS="-Oz -fvisibility-main" \
+  CFLAGS="-Oz -fPIC -fvisibility-main" \
   LDFLAGS="${standalone_ldlibs[*]}" \
   COWASM_TOOLCHAIN=wasi-sdk \
     ./configure \
@@ -62,3 +62,44 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/m4ri-test" |
   grep -F "m4ri-ok rank=2 product=1011 solve kernel inverse"
+
+cat >"$probe_dir/m4ri-side.c" <<'EOF'
+#include <m4ri/m4ri.h>
+
+__attribute__((visibility("default")))
+int m4ri_side_smoke(void) {
+  mzd_t *a = mzd_init(2, 2);
+  mzd_t *b = mzd_init(2, 2);
+  if (a == NULL || b == NULL) {
+    mzd_free(a);
+    mzd_free(b);
+    return 0;
+  }
+
+  mzd_write_bit(a, 0, 0, 1);
+  mzd_write_bit(a, 1, 1, 1);
+  mzd_write_bit(b, 0, 1, 1);
+  mzd_write_bit(b, 1, 0, 1);
+
+  mzd_t *product = mzd_mul(NULL, a, b, 0);
+  int ok = product != NULL &&
+           mzd_read_bit(product, 0, 1) &&
+           mzd_read_bit(product, 1, 0);
+
+  mzd_free(product);
+  mzd_free(a);
+  mzd_free(b);
+  return ok;
+}
+EOF
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
+  -shared \
+  -fPIC \
+  "$probe_dir/m4ri-side.c" \
+  -I"$dist_dir/include" \
+  -L"$dist_dir/lib" \
+  -lm4ri \
+  -lm \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/m4ri-side.so"

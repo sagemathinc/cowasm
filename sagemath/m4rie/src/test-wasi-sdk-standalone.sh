@@ -36,7 +36,7 @@ env \
   RANLIB="$bin_dir/cowasm-ranlib" \
   CC="$bin_dir/cowasm-cc" \
   CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS:-}" \
-  CFLAGS="-Oz -fvisibility-main" \
+  CFLAGS="-Oz -fPIC -fvisibility-main" \
   CPPFLAGS="-I$m4ri_dir/include" \
   LDFLAGS="-L$m4ri_dir/lib ${standalone_ldlibs[*]}" \
   M4RI_CFLAGS="-I$m4ri_dir/include" \
@@ -67,3 +67,49 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/m4rie-test" |
   grep -F "m4rie-ok degree=2 product=0211 sum=2321"
+
+cat >"$probe_dir/m4rie-side.c" <<'EOF'
+#include <m4rie/m4rie.h>
+
+__attribute__((visibility("default")))
+int m4rie_side_smoke(void) {
+  gf2e *field = gf2e_init(0x7);
+  if (field == NULL) {
+    return 0;
+  }
+
+  mzed_t *a = mzed_init(field, 1, 1);
+  mzed_t *b = mzed_init(field, 1, 1);
+  if (a == NULL || b == NULL) {
+    mzed_free(a);
+    mzed_free(b);
+    gf2e_free(field);
+    return 0;
+  }
+
+  mzed_write_elem(a, 0, 0, 2);
+  mzed_write_elem(b, 0, 0, 2);
+  mzed_t *product = mzed_mul(NULL, a, b);
+  int ok = product != NULL && mzed_read_elem(product, 0, 0) == 3;
+
+  mzed_free(product);
+  mzed_free(a);
+  mzed_free(b);
+  gf2e_free(field);
+  return ok;
+}
+EOF
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
+  -shared \
+  -fPIC \
+  "$probe_dir/m4rie-side.c" \
+  -I"$dist_dir/include" \
+  -I"$m4ri_dir/include" \
+  -L"$dist_dir/lib" \
+  -L"$m4ri_dir/lib" \
+  -lm4rie \
+  -lm4ri \
+  -lm \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/m4rie-side.so"
