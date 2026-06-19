@@ -102,6 +102,77 @@ _Static_assert(FFI_OK_MACRO == FFI_OK, "FFI_OK must be 0");
 _Static_assert(FFI_BAD_TYPEDEF_MACRO == FFI_BAD_TYPEDEF,
                "FFI_BAD_TYPEDEF must be 1");
 
+static int ffi_wasm32_type_is_word(ffi_type *type) {
+  switch (type->type) {
+    case FFI_TYPE_INT:
+    case FFI_TYPE_UINT8:
+    case FFI_TYPE_SINT8:
+    case FFI_TYPE_UINT16:
+    case FFI_TYPE_SINT16:
+    case FFI_TYPE_UINT32:
+    case FFI_TYPE_SINT32:
+    case FFI_TYPE_POINTER:
+      return 1;
+    default:
+      return 0;
+  }
+}
+
+static ffi_arg ffi_wasm32_load_word(ffi_type *type, void *value) {
+  switch (type->type) {
+    case FFI_TYPE_INT:
+      return (ffi_arg)*(int *)value;
+    case FFI_TYPE_UINT8:
+      return (ffi_arg)*(uint8_t *)value;
+    case FFI_TYPE_SINT8:
+      return (ffi_arg)*(int8_t *)value;
+    case FFI_TYPE_UINT16:
+      return (ffi_arg)*(uint16_t *)value;
+    case FFI_TYPE_SINT16:
+      return (ffi_arg)*(int16_t *)value;
+    case FFI_TYPE_UINT32:
+      return (ffi_arg)*(uint32_t *)value;
+    case FFI_TYPE_SINT32:
+      return (ffi_arg)*(int32_t *)value;
+    case FFI_TYPE_POINTER:
+      return (ffi_arg)(uintptr_t)*(void **)value;
+    default:
+      __builtin_trap();
+  }
+}
+
+static void ffi_wasm32_store_word(ffi_type *type, void *rvalue,
+                                  ffi_arg result) {
+  switch (type->type) {
+    case FFI_TYPE_INT:
+      *(int *)rvalue = (int)result;
+      break;
+    case FFI_TYPE_UINT8:
+      *(uint8_t *)rvalue = (uint8_t)result;
+      break;
+    case FFI_TYPE_SINT8:
+      *(int8_t *)rvalue = (int8_t)result;
+      break;
+    case FFI_TYPE_UINT16:
+      *(uint16_t *)rvalue = (uint16_t)result;
+      break;
+    case FFI_TYPE_SINT16:
+      *(int16_t *)rvalue = (int16_t)result;
+      break;
+    case FFI_TYPE_UINT32:
+      *(uint32_t *)rvalue = (uint32_t)result;
+      break;
+    case FFI_TYPE_SINT32:
+      *(int32_t *)rvalue = (int32_t)result;
+      break;
+    case FFI_TYPE_POINTER:
+      *(void **)rvalue = (void *)(uintptr_t)result;
+      break;
+    default:
+      __builtin_trap();
+  }
+}
+
 ffi_status FFI_HIDDEN ffi_prep_cif_machdep(ffi_cif *cif) {
   // This is called after ffi_prep_cif_machdep_var so we need to avoid
   // overwriting cif->nfixedargs.
@@ -111,6 +182,15 @@ ffi_status FFI_HIDDEN ffi_prep_cif_machdep(ffi_cif *cif) {
   // If they put the COMPLEX type into a struct we won't notice, but whatever.
   for (int i = 0; i < cif->nargs; i++)
     if (cif->arg_types[i]->type == FFI_TYPE_COMPLEX) return FFI_BAD_TYPEDEF;
+  if (cif->abi == FFI_WASM32) {
+    if (cif->nargs > 8) return FFI_BAD_TYPEDEF;
+    if (cif->rtype->type != FFI_TYPE_VOID &&
+        !ffi_wasm32_type_is_word(cif->rtype))
+      return FFI_BAD_TYPEDEF;
+    for (unsigned i = 0; i < cif->nargs; i++)
+      if (!ffi_wasm32_type_is_word(cif->arg_types[i]))
+        return FFI_BAD_TYPEDEF;
+  }
   return FFI_OK;
 }
 
@@ -155,12 +235,135 @@ EM_JS_MACROS(void, unbox_small_structs, (ffi_type type_ptr), {
   return [ type_ptr, type_id ];
 })
 
+typedef ffi_arg (*ffi_wasm32_word_fn_0)(void);
+typedef ffi_arg (*ffi_wasm32_word_fn_1)(ffi_arg);
+typedef ffi_arg (*ffi_wasm32_word_fn_2)(ffi_arg, ffi_arg);
+typedef ffi_arg (*ffi_wasm32_word_fn_3)(ffi_arg, ffi_arg, ffi_arg);
+typedef ffi_arg (*ffi_wasm32_word_fn_4)(ffi_arg, ffi_arg, ffi_arg, ffi_arg);
+typedef ffi_arg (*ffi_wasm32_word_fn_5)(ffi_arg, ffi_arg, ffi_arg, ffi_arg,
+                                        ffi_arg);
+typedef ffi_arg (*ffi_wasm32_word_fn_6)(ffi_arg, ffi_arg, ffi_arg, ffi_arg,
+                                        ffi_arg, ffi_arg);
+typedef ffi_arg (*ffi_wasm32_word_fn_7)(ffi_arg, ffi_arg, ffi_arg, ffi_arg,
+                                        ffi_arg, ffi_arg, ffi_arg);
+typedef ffi_arg (*ffi_wasm32_word_fn_8)(ffi_arg, ffi_arg, ffi_arg, ffi_arg,
+                                        ffi_arg, ffi_arg, ffi_arg, ffi_arg);
+
+typedef void (*ffi_wasm32_void_fn_0)(void);
+typedef void (*ffi_wasm32_void_fn_1)(ffi_arg);
+typedef void (*ffi_wasm32_void_fn_2)(ffi_arg, ffi_arg);
+typedef void (*ffi_wasm32_void_fn_3)(ffi_arg, ffi_arg, ffi_arg);
+typedef void (*ffi_wasm32_void_fn_4)(ffi_arg, ffi_arg, ffi_arg, ffi_arg);
+typedef void (*ffi_wasm32_void_fn_5)(ffi_arg, ffi_arg, ffi_arg, ffi_arg,
+                                     ffi_arg);
+typedef void (*ffi_wasm32_void_fn_6)(ffi_arg, ffi_arg, ffi_arg, ffi_arg,
+                                     ffi_arg, ffi_arg);
+typedef void (*ffi_wasm32_void_fn_7)(ffi_arg, ffi_arg, ffi_arg, ffi_arg,
+                                     ffi_arg, ffi_arg, ffi_arg);
+typedef void (*ffi_wasm32_void_fn_8)(ffi_arg, ffi_arg, ffi_arg, ffi_arg,
+                                     ffi_arg, ffi_arg, ffi_arg, ffi_arg);
+
+#define FFI_WASM32_LOAD_ARGS()                                              \
+  ffi_arg args[8] = {0};                                                     \
+  if (cif->nargs > 8) __builtin_trap();                                      \
+  for (unsigned i = 0; i < cif->nargs; i++)                                  \
+    args[i] = ffi_wasm32_load_word(cif->arg_types[i], avalue[i])
+
+#define FFI_WASM32_CALL_WORD(result)                                         \
+  do {                                                                       \
+    switch (cif->nargs) {                                                    \
+      case 0:                                                                \
+        result = ((ffi_wasm32_word_fn_0)fn)();                               \
+        break;                                                               \
+      case 1:                                                                \
+        result = ((ffi_wasm32_word_fn_1)fn)(args[0]);                        \
+        break;                                                               \
+      case 2:                                                                \
+        result = ((ffi_wasm32_word_fn_2)fn)(args[0], args[1]);               \
+        break;                                                               \
+      case 3:                                                                \
+        result = ((ffi_wasm32_word_fn_3)fn)(args[0], args[1], args[2]);      \
+        break;                                                               \
+      case 4:                                                                \
+        result = ((ffi_wasm32_word_fn_4)fn)(args[0], args[1], args[2],       \
+                                           args[3]);                         \
+        break;                                                               \
+      case 5:                                                                \
+        result = ((ffi_wasm32_word_fn_5)fn)(args[0], args[1], args[2],       \
+                                           args[3], args[4]);                \
+        break;                                                               \
+      case 6:                                                                \
+        result = ((ffi_wasm32_word_fn_6)fn)(args[0], args[1], args[2],       \
+                                           args[3], args[4], args[5]);       \
+        break;                                                               \
+      case 7:                                                                \
+        result = ((ffi_wasm32_word_fn_7)fn)(args[0], args[1], args[2],       \
+                                           args[3], args[4], args[5],        \
+                                           args[6]);                         \
+        break;                                                               \
+      case 8:                                                                \
+        result = ((ffi_wasm32_word_fn_8)fn)(args[0], args[1], args[2],       \
+                                           args[3], args[4], args[5],        \
+                                           args[6], args[7]);                \
+        break;                                                               \
+      default:                                                               \
+        __builtin_trap();                                                    \
+    }                                                                        \
+  } while (0)
+
+#define FFI_WASM32_CALL_VOID()                                               \
+  do {                                                                       \
+    switch (cif->nargs) {                                                    \
+      case 0:                                                                \
+        ((ffi_wasm32_void_fn_0)fn)();                                        \
+        break;                                                               \
+      case 1:                                                                \
+        ((ffi_wasm32_void_fn_1)fn)(args[0]);                                 \
+        break;                                                               \
+      case 2:                                                                \
+        ((ffi_wasm32_void_fn_2)fn)(args[0], args[1]);                        \
+        break;                                                               \
+      case 3:                                                                \
+        ((ffi_wasm32_void_fn_3)fn)(args[0], args[1], args[2]);               \
+        break;                                                               \
+      case 4:                                                                \
+        ((ffi_wasm32_void_fn_4)fn)(args[0], args[1], args[2], args[3]);      \
+        break;                                                               \
+      case 5:                                                                \
+        ((ffi_wasm32_void_fn_5)fn)(args[0], args[1], args[2], args[3],       \
+                                  args[4]);                                  \
+        break;                                                               \
+      case 6:                                                                \
+        ((ffi_wasm32_void_fn_6)fn)(args[0], args[1], args[2], args[3],       \
+                                  args[4], args[5]);                         \
+        break;                                                               \
+      case 7:                                                                \
+        ((ffi_wasm32_void_fn_7)fn)(args[0], args[1], args[2], args[3],       \
+                                  args[4], args[5], args[6]);                \
+        break;                                                               \
+      case 8:                                                                \
+        ((ffi_wasm32_void_fn_8)fn)(args[0], args[1], args[2], args[3],       \
+                                  args[4], args[5], args[6], args[7]);       \
+        break;                                                               \
+      default:                                                               \
+        __builtin_trap();                                                    \
+    }                                                                        \
+  } while (0)
+
 void ffi_call(ffi_cif *cif, ffi_fp fn, void *rvalue, void **avalue) {
-  (void)cif;
-  (void)fn;
-  (void)rvalue;
-  (void)avalue;
-  __builtin_trap();
+  if (cif->abi != FFI_WASM32) __builtin_trap();
+  if (cif->flags & VARARGS_FLAG) __builtin_trap();
+
+  FFI_WASM32_LOAD_ARGS();
+
+  if (cif->rtype->type == FFI_TYPE_VOID) {
+    FFI_WASM32_CALL_VOID();
+    return;
+  }
+
+  ffi_arg result = 0;
+  FFI_WASM32_CALL_WORD(result);
+  if (rvalue != NULL) ffi_wasm32_store_word(cif->rtype, rvalue, result);
 }
 
 EM_JS_MACROS(

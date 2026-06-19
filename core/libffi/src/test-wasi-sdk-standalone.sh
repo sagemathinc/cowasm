@@ -48,9 +48,27 @@ cat >"$probe_dir/libffi-test.c" <<'EOF'
 #include <ffi.h>
 #include <stddef.h>
 
+static int add_words(int left, int right) {
+  return left + right;
+}
+
+static int is_null_pointer(void *ptr) {
+  return ptr == NULL ? 37 : -1;
+}
+
+static void write_word(int *target, int value) {
+  *target = value;
+}
+
 int main(void) {
   ffi_cif cif;
   ffi_type *args[2];
+  void *values[2];
+  int left;
+  int right;
+  int result;
+  void *ptr;
+  int target;
 
   args[0] = &ffi_type_sint;
   args[1] = &ffi_type_pointer;
@@ -63,6 +81,49 @@ int main(void) {
   }
   if (cif.nargs != 2) return 5;
   if (cif.rtype != &ffi_type_sint) return 6;
+
+  args[0] = &ffi_type_sint;
+  args[1] = &ffi_type_sint;
+  left = 12;
+  right = 30;
+  values[0] = &left;
+  values[1] = &right;
+  result = 0;
+  if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 2, &ffi_type_sint, args) != FFI_OK) {
+    return 7;
+  }
+  ffi_call(&cif, (ffi_fp)add_words, &result, values);
+  if (result != 42) return 8;
+
+  args[0] = &ffi_type_pointer;
+  ptr = NULL;
+  values[0] = &ptr;
+  result = 0;
+  if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1, &ffi_type_sint, args) != FFI_OK) {
+    return 9;
+  }
+  ffi_call(&cif, (ffi_fp)is_null_pointer, &result, values);
+  if (result != 37) return 10;
+
+  args[0] = &ffi_type_pointer;
+  args[1] = &ffi_type_sint;
+  target = 0;
+  ptr = &target;
+  right = 391;
+  values[0] = &ptr;
+  values[1] = &right;
+  if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 2, &ffi_type_void, args) != FFI_OK) {
+    return 11;
+  }
+  ffi_call(&cif, (ffi_fp)write_word, NULL, values);
+  if (target != 391) return 12;
+
+  args[0] = &ffi_type_double;
+  if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1, &ffi_type_sint, args) !=
+      FFI_BAD_TYPEDEF) {
+    return 13;
+  }
+
   return 0;
 }
 EOF

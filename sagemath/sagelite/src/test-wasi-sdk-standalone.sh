@@ -304,6 +304,11 @@ run_node_import() {
     record_blocker "sagelite-blocked: Node.js python-wasm import failed at $label; see $node_import_log for the first runtime blocker."
   fi
   if ! grep -Fqx "$marker" "$node_import_log"; then
+    printf '## %s verbose import trace after missing marker\n' "$label" >>"$node_import_log"
+    set +e
+    PYTHONPATH="$node_pythonpath" \
+      node "$python_wasm/bin/python-wasm" -v -c "$wrapped_code" >>"$node_import_log" 2>&1
+    set -e
     tail -120 "$node_import_log" >&2
     record_blocker "sagelite-blocked: Node.js python-wasm import exited before completing $label; see $node_import_log for the first runtime blocker."
   fi

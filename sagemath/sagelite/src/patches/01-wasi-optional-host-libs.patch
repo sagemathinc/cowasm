@@ -345,6 +345,18 @@ diff -urN a/src/sage/libs/all.py b/src/sage/libs/all.py
 +lazy_import('sage.libs.ntl', 'all', 'ntl')
 +lazy_import('sage.libs.pari.all', ['pari', 'pari_gen', 'PariError'])
 +lazy_import('sage.libs.symmetrica', 'all', 'symmetrica')
+diff -urN a/src/sage/all.py b/src/sage/all.py
+--- a/src/sage/all.py
++++ b/src/sage/all.py
+@@ -211,4 +211,8 @@
+     Suppress C-level startup chatter from optional runtimes in wheel installs.
+     """
+     def __enter__(self):
++        if sys.platform == 'wasi':
++            self._active = False
++            return
++
+         import ctypes
 diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 --- a/src/sage/rings/all.py
 +++ b/src/sage/rings/all.py

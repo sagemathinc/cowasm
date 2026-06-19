@@ -9,6 +9,8 @@ fi
 build_dir="$1"
 setup_local="$2"
 src_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_dir="$(cd "$src_dir/../../.." && pwd)"
+dylink_libpython="$repo_dir/core/dylink/dist/libpython.js"
 
 libpython_flags=()
 if [ "${COWASM_LIBPYTHON_WITHOUT_EMSCRIPTEN_SIGNAL:-}" = "1" ]; then
@@ -18,7 +20,11 @@ if [ "${COWASM_LIBPYTHON_WITHOUT_FORK:-}" = "1" ]; then
   libpython_flags+=(--without-fork)
 fi
 
-pnpm exec dylink-libpython "${libpython_flags[@]}" "$build_dir" >"$build_dir/Programs/libpython.c"
+if [ -f "$dylink_libpython" ]; then
+  node "$dylink_libpython" "${libpython_flags[@]}" "$build_dir" >"$build_dir/Programs/libpython.c"
+else
+  pnpm exec dylink-libpython "${libpython_flags[@]}" "$build_dir" >"$build_dir/Programs/libpython.c"
+fi
 cp "$src_dir/cowasm_signal.c" "$build_dir/Programs/cowasm_signal.c"
 ln -sf "$src_dir/rebuild" "$build_dir/rebuild"
 cp "$src_dir/config.site" "$build_dir"

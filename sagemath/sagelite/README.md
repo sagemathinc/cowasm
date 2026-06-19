@@ -57,7 +57,15 @@ aggregates from `sage.libs.all`; this avoids optional C/C++ library startup
 paths turning `import sage.all` into a clean process exit before the current
 runtime has stable NTL and full `cypari2` extension support. It also skips
 eager Givaro and NTL finite-field backend imports on WASI so the finite-field
-constructor can import without initializing those side modules.
+constructor can import without initializing those side modules, and disables
+Sagelite's optional startup-output silencing on WASI so it does not call through
+`ctypes.CDLL(None).fflush(NULL)` during `sage.all` import.
+
+The local libffi wasm32 backend now has a constrained raw `ffi_call`
+implementation for direct word-sized `int`, 8/16/32-bit integer, pointer, and
+`void` signatures with up to eight arguments. This is enough for standalone
+WASI `ffi_call` smoke tests, but calls through imported/main-module function
+pointers still need more dynamic-loader/runtime work.
 
 Sagelite side modules intentionally do not link `libwasi-emulated-signal`.
 Keeping those signal references unresolved lets the CoWasm dynamic loader bind
@@ -67,11 +75,11 @@ would search for next to every extension.
 
 The current first Node.js runtime blocker is still `import sage.all`, but the
 startup path now gets past the eager number-field import, the p-adic
-`cypari2.gen` import, and the Cython `Gen_base`/`Gen` type-size checks. The
-next blocker is a clean early process exit after the runtime reaches the
-current libffi `ffi_call` stub (`STUB: ffi_call`). The exact blocker is recorded
-in `dist/wasi-sdk/status.txt`, with the import trace in
-`dist/wasi-sdk/node-import.log`.
+`cypari2.gen` import, the Cython `Gen_base`/`Gen` type-size checks, and the old
+`STUB: ffi_call` exit. The next blocker is a clean process exit after verbose
+import tracing reaches `sage.rings.padics.common_conversion` in the p-adic
+import path. The exact blocker is recorded in `dist/wasi-sdk/status.txt`, with
+the import trace in `dist/wasi-sdk/node-import.log`.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,
