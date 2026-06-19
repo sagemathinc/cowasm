@@ -793,7 +793,23 @@ diff -urN a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/r
 diff -urN a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
 --- a/src/sage/rings/polynomial/polynomial_ring.py
 +++ b/src/sage/rings/polynomial/polynomial_ring.py
-@@ -2144,6 +2144,6 @@
+@@ -2053,10 +2053,13 @@
+             [None, 'generic']
+         """
+         if base_ring is ZZ and not sparse:
+-            defaults = ["FLINT", None]
++            if sys.platform == 'wasi':
++                defaults = [None, "generic"]
++            else:
++                defaults = ["FLINT", None]
+             if implementation in defaults:
+                 return defaults
+-            if implementation in ["NTL", "generic"]:
++            if implementation in ["FLINT", "NTL", "generic"]:
+                 return [implementation]
+         elif implementation is None or implementation == "generic":
+             return [None, "generic"]
+@@ -2144,6 +2147,6 @@
                  )
                  return Polynomial_generic_sparse_field
 -            if isinstance(base_ring, rational_field.RationalField):

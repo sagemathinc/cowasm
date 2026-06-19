@@ -97,22 +97,24 @@ The Node.js runtime probe now completes the first exact-math smoke from
 `sage.all`: integer arithmetic, integer ideals, modular integer rings, prime
 finite fields, two-argument rational construction,
 univariate polynomial construction/arithmetic over `QQ`, integer
-factorization with factor inspection, and `prime_pi(10**6)`. The probe also
-checks exact dense matrix determinant, multiplication, and inverse over `ZZ`
-and `QQ` through `sage.matrix.constructor`. On WASI the patch routes `QQ[x]`
-startup through the generic polynomial element class for now, avoiding eager
-`polynomial_rational_flint` startup while that side-module path still needs
-runtime hardening. A remaining follow-up is richer polynomial factorization
-support; constructing the generic `QQ[x]` factorization currently still exits
-before the Node marker.
+polynomial construction/arithmetic over default `ZZ[x]`, integer factorization
+with factor inspection, and `prime_pi(10**6)`. The probe also checks exact
+dense matrix determinant, multiplication, and inverse over `ZZ` and `QQ`
+through `sage.matrix.constructor`. On WASI the patch routes `QQ[x]` and the
+default dense `ZZ[x]` startup through generic polynomial element classes for
+now, avoiding eager `polynomial_rational_flint` and
+`polynomial_integer_dense_flint` startup while those side-module paths still
+need runtime hardening. A remaining follow-up is richer polynomial
+factorization support; constructing the generic `QQ[x]` factorization currently
+still exits before the Node marker.
 
 The standalone target also runs non-blocking Node.js follow-up probes after the
 required exact-math smokes and writes any missing markers to
 `dist/wasi-sdk/followups.txt`, with process output in
-`dist/wasi-sdk/node-followups.log`. The first recorded follow-up is
-`PolynomialRing(ZZ, "x")`: loading `primecountpy` first makes the current
-`libcxx.so` side module available, but the FLINT-backed integer polynomial
-startup path still exits before the completion marker.
+`dist/wasi-sdk/node-followups.log`. The recorded follow-up is explicit
+`PolynomialRing(ZZ, "x", implementation="FLINT")`: loading `primecountpy` first
+makes the current `libcxx.so` side module available, but the FLINT-backed
+integer polynomial startup path still exits before the completion marker.
 
 The standalone target also stages an Electron-shaped resources directory under
 `dist/wasi-sdk/electron-resources`, hardlinks the Sagelite install and runtime

@@ -462,6 +462,9 @@ assert QQ(6, 15) == QQ(2, 5)
 R = PolynomialRing(QQ, 'x')
 x = R.gen()
 assert (x + 1) * (x - 1) == x**2 - 1
+ZZx = PolynomialRing(ZZ, 'x')
+y = ZZx.gen()
+assert (y + 2) * (y + 3) == y**2 + 5*y + 6
 assert list(factor(2**31 - 1)) == [(ZZ(2147483647), 1)]
 assert prime_pi(10**6) == 78498
 print('sagelite-node-ok exact math smoke')"
@@ -514,16 +517,17 @@ record_node_followup_probe() {
 }
 
 record_node_followup_probe \
-  "integer polynomial ring over ZZ" \
-  "integer polynomial ring startup over ZZ did not complete under Node.js" \
+  "explicit FLINT integer polynomial implementation" \
+  "explicit FLINT integer polynomial implementation did not complete under Node.js" \
   "from sage.all import ZZ, PolynomialRing, prime_pi
-# Loading primecountpy first makes the current libcxx side module available;
-# the remaining failure is in the FLINT-backed integer polynomial startup path.
+# Loading primecountpy first makes the current libcxx side module available.
+# The default ZZ[x] path uses the generic implementation on WASI; this keeps
+# tracking the remaining FLINT-backed side-module startup path explicitly.
 prime_pi(10)
-R = PolynomialRing(ZZ, 'x')
+R = PolynomialRing(ZZ, 'x', implementation='FLINT')
 x = R.gen()
 assert (x + 2) * (x + 3) == x**2 + 5*x + 6
-print('sagelite-node-followup-ok integer polynomial ring over ZZ')"
+print('sagelite-node-followup-ok explicit FLINT integer polynomial implementation')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
@@ -580,6 +584,10 @@ electron_required_paths=(
   "site-packages/sage/rings/integer_ring.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/rational.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/finite_rings/integer_mod.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/polynomial/polynomial_element.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/polynomial/polynomial_element_generic.py"
+  "site-packages/sage/rings/polynomial/polynomial_ring.py"
+  "site-packages/sage/rings/polynomial/polynomial_ring_constructor.py"
   "site-packages/sage/matrix/constructor.cpython-314-wasm32-wasi.so"
   "deps/cypari2/cypari2/gen.cpython-314-wasm32-wasi.so"
   "deps/primecountpy/primecountpy/primecount.cpython-314-wasm32-wasi.so"

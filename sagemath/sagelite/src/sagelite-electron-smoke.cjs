@@ -103,6 +103,9 @@ assert QQ(6, 15) == QQ(2, 5)
 R = PolynomialRing(QQ, 'x')
 x = R.gen()
 assert (x + 1) * (x - 1) == x**2 - 1
+ZZx = PolynomialRing(ZZ, 'x')
+y = ZZx.gen()
+assert (y + 2) * (y + 3) == y**2 + 5*y + 6
 assert list(factor(2**31 - 1)) == [(ZZ(2147483647), 1)]
 assert prime_pi(10**6) == 78498
 
