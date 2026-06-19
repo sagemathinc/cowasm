@@ -589,6 +589,7 @@ print('sagelite-node-followup-ok initialized FLINT integer polynomial side-modul
 python3 - \
   "$followups_file" \
   "$node_followups_log" \
+  "$libcxx_wasi_sdk/libcxx.so" \
   "$installed_site_packages/sage/rings/polynomial/polynomial_integer_dense_flint.cpython-314-wasm32-wasi.so" \
   "$installed_site_packages/sage/rings/polynomial/polynomial_rational_flint.cpython-314-wasm32-wasi.so" \
   "$installed_site_packages/sage/rings/polynomial/polynomial_zmod_flint.cpython-314-wasm32-wasi.so" <<'PY'
@@ -598,19 +599,8 @@ from pathlib import Path
 
 followups_file = Path(sys.argv[1])
 node_followups_log = Path(sys.argv[2])
-modules = [Path(path) for path in sys.argv[3:]]
-cxx_prefixes = (
-    "_ZNSt",
-    "_ZNKSt",
-    "_ZSt",
-    "_ZTINSt",
-    "_ZTSNSt",
-    "_ZTVNSt",
-    "_ZdlPvm",
-    "_ZnwmRKSt",
-    "_Znam",
-    "_Zda",
-)
+libcxx = Path(sys.argv[3])
+modules = [Path(path) for path in sys.argv[4:]]
 
 
 def read_uleb(data, offset):
@@ -672,6 +662,32 @@ def imported_symbols(path):
     return []
 
 
+def exported_symbols(path):
+    data = path.read_bytes()
+    if data[:4] != b"\0asm":
+        return set()
+    offset = 8
+    while offset < len(data):
+        section_id = data[offset]
+        offset += 1
+        section_size, offset = read_uleb(data, offset)
+        section_end = offset + section_size
+        if section_id != 7:
+            offset = section_end
+            continue
+        symbols = set()
+        export_count, offset = read_uleb(data, offset)
+        for _ in range(export_count):
+            name, offset = read_name(data, offset)
+            offset += 1
+            _, offset = read_uleb(data, offset)
+            symbols.add(name)
+        return symbols
+    return set()
+
+
+cxx_data_prefixes = ("_ZT",)
+libcxx_exports = exported_symbols(libcxx)
 leaks = {}
 for module in modules:
     if not module.exists():
@@ -679,7 +695,11 @@ for module in modules:
     symbols = sorted(
         symbol
         for symbol in imported_symbols(module)
-        if symbol.startswith(cxx_prefixes)
+        if (
+            symbol == "_ZSt7nothrow"
+            or symbol.startswith(cxx_data_prefixes)
+        )
+        and f"__WASM_EXPORT__{symbol}" not in libcxx_exports
     )
     if symbols:
         leaks[module.name] = symbols
@@ -688,10 +708,10 @@ if leaks:
     missing_libcxx = [
         module
         for module in leaks
-        if b"libcxx.so" not in (Path(sys.argv[3]).parent / module).read_bytes()
+        if b"libcxx.so" not in (modules[0].parent / module).read_bytes()
     ]
     with node_followups_log.open("a") as log:
-        print("## FLINT polynomial unresolved C++ runtime imports", file=log)
+        print("## FLINT polynomial unresolved C++ data exports", file=log)
         for module, symbols in leaks.items():
             preview = ", ".join(symbols[:16])
             suffix = "" if len(symbols) <= 16 else f", ... ({len(symbols)} total)"
@@ -703,7 +723,7 @@ if leaks:
     with followups_file.open("a") as followups:
         print(
             f"sagelite-followup: FLINT polynomial side-module imports include "
-            f"WASI C++ runtime symbols; see {node_followups_log}.",
+            f"WASI C++ runtime data symbols not exported by libcxx; see {node_followups_log}.",
             file=followups,
         )
         if missing_libcxx:

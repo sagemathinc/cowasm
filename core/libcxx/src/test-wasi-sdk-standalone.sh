@@ -22,6 +22,7 @@ clangxx="$bin_dir/wasi-sdk-clang++-next"
 clang="$bin_dir/wasi-sdk-clang-next"
 wasm_ld="$bin_dir/wasi-sdk-wasm-ld-next"
 objdump="$bin_dir/wasi-sdk-llvm-objdump-next"
+nm="$bin_dir/wasi-sdk-llvm-nm-next"
 strings="$bin_dir/wasi-sdk-llvm-strings-next"
 
 resolve_log="$probe_dir/resolve.log"
@@ -102,6 +103,24 @@ cowasm_clang_standalone_run_or_skip "libcxx" "$link_log" \
 
 test -s "$dist_dir/libcxx.so"
 "$objdump" -h "$dist_dir/libcxx.so" | grep 'dylink.0'
+for export in \
+  __WASM_EXPORT___ZSt7nothrow \
+  __WASM_EXPORT___ZTINSt3__215basic_streambufIcNS_11char_traitsIcEEEE \
+  __WASM_EXPORT___ZTTNSt3__214basic_ifstreamIcNS_11char_traitsIcEEEE \
+  __WASM_EXPORT___ZTTNSt3__214basic_ofstreamIcNS_11char_traitsIcEEEE \
+  __WASM_EXPORT___ZTVN10__cxxabiv117__class_type_infoE \
+  __WASM_EXPORT___ZTVN10__cxxabiv120__si_class_type_infoE \
+  __WASM_EXPORT___ZTVNSt3__213basic_istreamIcNS_11char_traitsIcEEEE \
+  __WASM_EXPORT___ZTVNSt3__214basic_ofstreamIcNS_11char_traitsIcEEEE \
+  __WASM_EXPORT___ZTVNSt3__215basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE \
+  __WASM_EXPORT___ZTVNSt3__218basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE \
+  __WASM_EXPORT___ZTVNSt3__219basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE \
+  __WASM_EXPORT___ZTVNSt3__219basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE \
+  __WASM_EXPORT___ZTVNSt3__28ios_baseE \
+  __WASM_EXPORT___ZTVNSt3__29basic_iosIcNS_11char_traitsIcEEEE
+do
+  "$nm" --defined-only "$dist_dir/libcxx.so" | grep " T ${export}$"
+done
 
 if "$strings" "$dist_dir/libcxx.so" | grep -E 'lib(c|c\+\+|c\+\+abi)\.so'; then
   echo "unexpected needed_dynlibs from wasi-sdk libcxx side module" >&2

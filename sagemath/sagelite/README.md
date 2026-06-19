@@ -126,11 +126,15 @@ the clean exit.
 
 The Sagelite package now carries `core/libcxx` as an explicit build/runtime
 input and passes its `libcxx.so` path into the patched Sagelite Meson files for
-the FLINT polynomial modules. The standalone target also copies `libcxx.so`
-next to installed side modules that actually record that dependency. Current
-Node.js follow-ups still report the FLINT polynomial imports that do not
-complete, but the runtime-dependency handoff is now separate from the broader
-unresolved C++ symbol list.
+the FLINT polynomial modules. The `libcxx` WASI side module exports the C++
+runtime data symbols currently needed by the Sagelite NTL and FLINT follow-up
+modules, including `std::nothrow`, iostream vtables, and the C++ ABI typeinfo
+vtables that WebAssembly side modules import through `GOT.mem`. The standalone
+target also copies `libcxx.so` next to installed side modules that actually
+record that dependency, and its follow-up analyzer now reports only C++ data
+imports that are not exported by `libcxx`. Current Node.js follow-ups still
+record the initialized FLINT polynomial imports that exit before their markers,
+but they no longer fail at the earlier missing C++ runtime data-symbol layer.
 
 The standalone target also stages an Electron-shaped resources directory under
 `dist/wasi-sdk/electron-resources`, hardlinks the Sagelite install and runtime
