@@ -328,8 +328,17 @@ assert QQ(6, 15) == QQ(2, 5)
 R = PolynomialRing(QQ, 'x')
 x = R.gen()
 assert (x + 1) * (x - 1) == x**2 - 1
-assert factor(2**31 - 1) is not None
+assert list(factor(2**31 - 1)) == [(ZZ(2147483647), 1)]
 assert prime_pi(10**6) == 78498
 print('sagelite-node-ok exact math smoke')"
+run_node_import "linear algebra smoke" "from sage.all import ZZ, QQ
+from sage.matrix.constructor import matrix
+A = matrix(ZZ, [[1, 2], [3, 4]])
+assert A.det() == ZZ(-2)
+assert A * A == matrix(ZZ, [[7, 10], [15, 22]])
+B = matrix(QQ, [[1, 2], [3, 5]])
+assert B.det() == QQ(-1)
+assert B.inverse() * B == matrix(QQ, [[1, 0], [0, 1]])
+print('sagelite-node-ok linear algebra smoke')"
 
 echo "sagelite-ok meson configure compile install node import" | tee "$status_file"

@@ -90,12 +90,14 @@ would search for next to every extension.
 The Node.js runtime probe now completes the first exact-math smoke from
 `sage.all`: integer arithmetic, two-argument rational construction,
 univariate polynomial construction/arithmetic over `QQ`, integer
-factorization, and `prime_pi(10**6)`. On WASI the patch routes `QQ[x]`
+factorization with factor inspection, and `prime_pi(10**6)`. The probe also
+checks exact dense matrix determinant, multiplication, and inverse over `ZZ`
+and `QQ` through `sage.matrix.constructor`. On WASI the patch routes `QQ[x]`
 startup through the generic polynomial element class for now, avoiding eager
 `polynomial_rational_flint` startup while that side-module path still needs
-runtime hardening. A remaining follow-up is richer display/use of the returned
-`Factorization` object; the current milestone only checks that factorization
-returns an object without failing.
+runtime hardening. A remaining follow-up is richer polynomial factorization
+support; constructing the generic `QQ[x]` factorization currently still exits
+before the Node marker.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,
