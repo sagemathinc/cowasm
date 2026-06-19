@@ -29,7 +29,7 @@ compile, or install blocker in `dist/wasi-sdk/status.txt`.
 The current `cypari2` package is build-support only: it provides the package
 marker and Cython declarations needed by Sagelite's configure/Cython phases,
 but it does not yet provide the compiled `cypari2` runtime extension modules.
-The current probe gets through Meson configure and starts the Ninja compile.
-The next blockers are compile-time issues around Sagelite's Cython include
-environment, Python build helpers such as `jinja2`, and MPFI/MPFR declaration
-compatibility.
+The current probe gets through Meson configure and compiles hundreds of Cython
+sources before the first C compile blocker.  The next blocker is CPython's
+internal mimalloc header using `sched_yield()` without a visible WASI
+declaration while compiling `sage/cpython/atexit.pyx`.

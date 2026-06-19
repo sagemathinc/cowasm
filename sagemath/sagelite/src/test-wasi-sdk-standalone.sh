@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 13 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MESON PY_NINJA CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK CYPARI2_WASI_SDK" >&2
+if [ "$#" -ne 14 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK CYPARI2_WASI_SDK" >&2
   exit 2
 fi
 
@@ -13,12 +13,13 @@ cpython_wasm="$(cd "$4" && pwd)"
 py_cython="$(cd "$5" && pwd)"
 py_numpy="$(cd "$6" && pwd)"
 py_gmpy2="$(cd "$7" && pwd)"
-py_meson="$(cd "$8" && pwd)"
-py_ninja="$(cd "$9" && pwd)"
-cysignals_wasi_sdk="$(cd "${10}" && pwd)"
-memory_allocator_wasi_sdk="$(cd "${11}" && pwd)"
-posix_wasi_sdk="$(cd "${12}" && pwd)"
-cypari2_wasi_sdk="$(cd "${13}" && pwd)"
+py_jinja2="$(cd "$8" && pwd)"
+py_meson="$(cd "$9" && pwd)"
+py_ninja="$(cd "${10}" && pwd)"
+cysignals_wasi_sdk="$(cd "${11}" && pwd)"
+memory_allocator_wasi_sdk="$(cd "${12}" && pwd)"
+posix_wasi_sdk="$(cd "${13}" && pwd)"
+cypari2_wasi_sdk="$(cd "${14}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -71,6 +72,7 @@ pythonpath_parts=(
   "$cypari2_wasi_sdk"
   "$cysignals_wasi_sdk"
   "$memory_allocator_wasi_sdk"
+  "$py_jinja2"
   "$py_gmpy2"
   "$py_numpy"
   "$py_cython"
@@ -119,6 +121,9 @@ for pkg_dir in \
   "$repo_dir/sagemath/gmp/dist/wasi-sdk" \
   "$repo_dir/sagemath/mpfr/dist/wasi-sdk" \
   "$repo_dir/sagemath/mpc/dist/wasi-sdk" \
+  "$repo_dir/sagemath/mpfi/dist/wasi-sdk" \
+  "$repo_dir/sagemath/gf2x/dist/wasi-sdk" \
+  "$repo_dir/sagemath/ntl/dist/wasi-sdk" \
   "$repo_dir/sagemath/pari/dist/wasi-sdk" \
   "$repo_dir/sagemath/gsl/dist/wasi-sdk" \
   "$repo_dir/sagemath/flint/dist/wasi-sdk" \

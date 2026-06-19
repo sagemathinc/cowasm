@@ -12,6 +12,60 @@ diff -urN a/meson.build b/meson.build
 diff -urN a/src/meson.build b/src/meson.build
 --- a/src/meson.build
 +++ b/src/meson.build
+@@ -26,6 +26,28 @@
+   numpy = declare_dependency(include_directories: inc_numpy)
+ endif
+ 
++inc_numpy_cython = run_command(
++  py,
++  [
++    '-c',
++    '''
++from os.path import relpath
++from pathlib import Path
++import numpy
++path = Path(numpy.__file__).resolve()
++for parent in [path.parent, *path.parents]:
++  if parent.name == 'numpy':
++    path = parent
++    break
++try:
++  print(relpath(path))
++except Exception:
++  print(path)
++    '''.strip(),
++  ],
++  check: true,
++).stdout().strip()
++
+ inc_cysignals = run_command(
+   py,
+   [
+@@ -61,6 +61,24 @@
+   check: true,
+ ).stdout().strip()
+ gmpy2 = declare_dependency(include_directories: inc_gmpy2)
++
++inc_memory_allocator = run_command(
++  py,
++  [
++    '-c',
++    '''
++from os.path import relpath
++import memory_allocator
++path = memory_allocator.__file__.replace('__init__.py', '')
++try:
++  print(relpath(path))
++except Exception:
++  print(path)
++    '''.strip(),
++  ],
++  check: true,
++).stdout().strip()
++
+ gmp = dependency('gmp')
+ 
+ if is_windows
 @@ -103,7 +103,7 @@
    add_project_arguments('-I' + cypari2_cython_include, language: 'cython')
    # Cannot be found via pkg-config
@@ -39,7 +93,7 @@ diff -urN a/src/meson.build b/src/meson.build
  endif
  mtx = dependency('libmtx', required: false)
  if not mtx.found()
-@@ -220,25 +220,25 @@
+@@ -220,26 +220,29 @@
    required: get_option('eclib'),
    disabler: true,
  )
@@ -65,13 +119,18 @@ diff -urN a/src/meson.build b/src/meson.build
  if not linbox.found()
 -  linbox = cc.find_library('linbox', required: not is_windows, disabler: true)
 +  linbox = cc.find_library('linbox', required: not is_windows and not is_wasi, disabler: true)
++endif
++mpc = cc.find_library('mpc', required: not is_windows and not is_wasi, disabler: true)
++mpfi = dependency('mpfi', required: false)
++if not mpfi.found()
++  mpfi = cc.find_library('mpfi', required: false)
  endif
 -mpc = cc.find_library('mpc', required: not is_windows, disabler: true)
-+mpc = cc.find_library('mpc', required: not is_windows and not is_wasi, disabler: true)
- mpfi = cc.find_library('mpfi', required: false)
+-mpfi = cc.find_library('mpfi', required: false)
  if not mpfi.found()
    mpfi_proj = subproject('mpfi')
-@@ -252,11 +252,11 @@
+   mpfi = mpfi_proj.get_variable('mpfi_dep')
+@@ -252,15 +255,15 @@
    gap = cc.find_library(
      'gap',
      has_headers: ['gap/common.h'],
@@ -85,7 +144,21 @@ diff -urN a/src/meson.build b/src/meson.build
  singular_factory = disabler()
  if singular.found()
    singular_factory = singular
-@@ -285,7 +285,7 @@
+-else
++elif not is_wasi
+   singular_proj = subproject('singular')
+   singular_factory = singular_proj.get_variable('factory_dep')
+ endif
+@@ -274,7 +277,7 @@
+     ntl_lib_dir = candidate_ntl_lib
+   endif
+ endif
+-ntl = disabler()
++ntl = dependency('ntl', required: false)
+ if ntl_lib_dir != '' and cpp.has_header('NTL/config.h', args: ['-I' + ntl_include_dir], required: false)
+   ntl = cpp.find_library(
+     'ntl',
+@@ -285,7 +288,7 @@
  endif
  if not ntl.found()
    # Cannot be found via pkg-config
@@ -94,6 +167,19 @@ diff -urN a/src/meson.build b/src/meson.build
  endif
  
  boost_cpp17_compatible = false
+@@ -314,6 +349,12 @@
+ # https://github.com/mesonbuild/meson/issues/9562
+ add_project_arguments('-I', meson.current_source_dir(), language: 'cython')
+ add_project_arguments('-I', meson.current_build_dir(), language: 'cython')
++add_project_arguments('-I', inc_numpy_cython, language: 'cython')
++add_project_arguments('-I', join_paths(inc_numpy_cython, '..'), language: 'cython')
++add_project_arguments('-I', join_paths(inc_cysignals, '..'), language: 'cython')
++add_project_arguments('-I', inc_gmpy2, language: 'cython')
++add_project_arguments('-I', inc_memory_allocator, language: 'cython')
++add_project_arguments('-I', join_paths(inc_memory_allocator, '..'), language: 'cython')
+ 
+ # Add global compiler flags
+ add_project_arguments('-X auto_pickle=False', language: 'cython')
 diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
 --- a/src/sage/graphs/meson.build
 +++ b/src/sage/graphs/meson.build
@@ -115,6 +201,16 @@ diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
      disabler: true,
    )
  endif
+diff -urN a/src/sage/modular/arithgroup/meson.build b/src/sage/modular/arithgroup/meson.build
+--- a/src/sage/modular/arithgroup/meson.build
++++ b/src/sage/modular/arithgroup/meson.build
+@@ -51,4 +51,6 @@
+     '-I',
+     join_paths(meson.current_source_dir(), '../../../'),
++    '-I',
++    join_paths(inc_cysignals, '..'),
+   ],
+ )
 diff -urN a/src/sage/libs/lcalc/meson.build b/src/sage/libs/lcalc/meson.build
 --- a/src/sage/libs/lcalc/meson.build
 +++ b/src/sage/libs/lcalc/meson.build
