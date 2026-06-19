@@ -48,6 +48,133 @@ record_blocker() {
   exit 77
 }
 
+audit_wasm_side_modules() {
+  local module_list="$1"
+  local audit_log="$2"
+  local pyinit_mode="$3"
+  local blocker_message="$4"
+  local success_marker="$5"
+  local module_count
+  local require_pyinit
+
+  module_count="$(wc -l <"$module_list" | tr -d ' ')"
+  if [ "$module_count" -eq 0 ]; then
+    record_blocker "$blocker_message: no side modules found."
+  fi
+
+  : >"$audit_log"
+  while IFS= read -r side_module; do
+    if ! "$bin_dir/wasi-sdk-llvm-objdump-next" -h "$side_module" |
+        grep -Eq '^[[:space:]]*[0-9]+[[:space:]]+dylink\.0[[:space:]]'; then
+      printf '%s: missing dylink.0 section\n' "$side_module" >>"$audit_log"
+    fi
+    case "$pyinit_mode" in
+      all)
+        require_pyinit=1
+        ;;
+      cpython)
+        case "$(basename "$side_module")" in
+          *.cpython-*.so) require_pyinit=1 ;;
+          *) require_pyinit=0 ;;
+        esac
+        ;;
+      *)
+        echo "unknown pyinit audit mode: $pyinit_mode" >&2
+        exit 2
+        ;;
+    esac
+    if [ "$require_pyinit" -eq 1 ] &&
+        ! "$bin_dir/wasi-sdk-llvm-nm-next" --defined-only "$side_module" |
+          grep -Eq '[[:space:]]T[[:space:]]PyInit_'; then
+      printf '%s: missing PyInit_* export\n' "$side_module" >>"$audit_log"
+    fi
+    if "$bin_dir/wasi-sdk-llvm-strings-next" "$side_module" |
+        grep -Fq 'needed_dynlibs'; then
+      printf '%s: records needed_dynlibs\n' "$side_module" >>"$audit_log"
+    fi
+  done <"$module_list"
+
+  python3 - "$module_list" >>"$audit_log" 2>&1 <<'PY'
+import sys
+from pathlib import Path
+
+
+def read_uleb(data, offset):
+    result = 0
+    shift = 0
+    while True:
+        byte = data[offset]
+        offset += 1
+        result |= (byte & 0x7F) << shift
+        if byte & 0x80 == 0:
+            return result, offset
+        shift += 7
+
+
+def read_name(data, offset):
+    size, offset = read_uleb(data, offset)
+    return offset + size
+
+
+def imports_memory(path):
+    data = path.read_bytes()
+    if data[:4] != b"\0asm":
+        return False
+
+    offset = 8
+    while offset < len(data):
+        section_id = data[offset]
+        offset += 1
+        section_size, offset = read_uleb(data, offset)
+        section_end = offset + section_size
+        if section_id != 2:
+            offset = section_end
+            continue
+
+        import_count, offset = read_uleb(data, offset)
+        for _ in range(import_count):
+            offset = read_name(data, offset)
+            offset = read_name(data, offset)
+            kind = data[offset]
+            offset += 1
+            if kind == 0:  # function
+                _, offset = read_uleb(data, offset)
+            elif kind == 1:  # table
+                offset += 1
+                flags, offset = read_uleb(data, offset)
+                _, offset = read_uleb(data, offset)
+                if flags & 1:
+                    _, offset = read_uleb(data, offset)
+            elif kind == 2:  # memory
+                return True
+            elif kind == 3:  # global
+                offset += 1
+            else:
+                return False
+        return False
+    return False
+
+
+missing_memory_imports = []
+for line in Path(sys.argv[1]).read_text().splitlines():
+    side_module = Path(line)
+    if not imports_memory(side_module):
+        missing_memory_imports.append(side_module)
+
+for side_module in missing_memory_imports:
+    print(f"{side_module}: missing imported memory")
+
+sys.exit(1 if missing_memory_imports else 0)
+PY
+
+  if [ -s "$audit_log" ]; then
+    tail -120 "$audit_log" >&2
+    record_blocker "$blocker_message; see $audit_log."
+  fi
+
+  printf '%s %s modules\n' "$success_marker" "$module_count" >"$audit_log"
+}
+
 cat >"$probe_dir/bin/meson" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
@@ -278,106 +405,12 @@ fi
 
 side_module_list="$dist_dir/sagelite-side-modules.txt"
 find "$installed_site_packages/sage" -name '*.so' -type f | sort >"$side_module_list"
-side_module_count="$(wc -l <"$side_module_list" | tr -d ' ')"
-if [ "$side_module_count" -eq 0 ]; then
-  record_blocker "sagelite-blocked: meson install did not create any Sage extension modules under $installed_site_packages/sage."
-fi
-
-: >"$side_module_audit_log"
-while IFS= read -r side_module; do
-  if ! "$bin_dir/wasi-sdk-llvm-objdump-next" -h "$side_module" |
-      grep -Eq '^[[:space:]]*[0-9]+[[:space:]]+dylink\.0[[:space:]]'; then
-    printf '%s: missing dylink.0 section\n' "$side_module" >>"$side_module_audit_log"
-  fi
-  if ! "$bin_dir/wasi-sdk-llvm-nm-next" --defined-only "$side_module" |
-      grep -Eq '[[:space:]]T[[:space:]]PyInit_'; then
-    printf '%s: missing PyInit_* export\n' "$side_module" >>"$side_module_audit_log"
-  fi
-  if "$bin_dir/wasi-sdk-llvm-strings-next" "$side_module" |
-      grep -Fq 'needed_dynlibs'; then
-    printf '%s: records needed_dynlibs\n' "$side_module" >>"$side_module_audit_log"
-  fi
-done <"$side_module_list"
-
-python3 - "$side_module_list" >>"$side_module_audit_log" 2>&1 <<'PY'
-import sys
-from pathlib import Path
-
-
-def read_uleb(data, offset):
-    result = 0
-    shift = 0
-    while True:
-        byte = data[offset]
-        offset += 1
-        result |= (byte & 0x7F) << shift
-        if byte & 0x80 == 0:
-            return result, offset
-        shift += 7
-
-
-def read_name(data, offset):
-    size, offset = read_uleb(data, offset)
-    return offset + size
-
-
-def imports_memory(path):
-    data = path.read_bytes()
-    if data[:4] != b"\0asm":
-        return False
-
-    offset = 8
-    while offset < len(data):
-        section_id = data[offset]
-        offset += 1
-        section_size, offset = read_uleb(data, offset)
-        section_end = offset + section_size
-        if section_id != 2:
-            offset = section_end
-            continue
-
-        import_count, offset = read_uleb(data, offset)
-        for _ in range(import_count):
-            offset = read_name(data, offset)
-            offset = read_name(data, offset)
-            kind = data[offset]
-            offset += 1
-            if kind == 0:  # function
-                _, offset = read_uleb(data, offset)
-            elif kind == 1:  # table
-                offset += 1
-                flags, offset = read_uleb(data, offset)
-                _, offset = read_uleb(data, offset)
-                if flags & 1:
-                    _, offset = read_uleb(data, offset)
-            elif kind == 2:  # memory
-                return True
-            elif kind == 3:  # global
-                offset += 1
-            else:
-                return False
-        return False
-    return False
-
-
-missing_memory_imports = []
-for line in Path(sys.argv[1]).read_text().splitlines():
-    side_module = Path(line)
-    if not imports_memory(side_module):
-        missing_memory_imports.append(side_module)
-
-for side_module in missing_memory_imports:
-    print(f"{side_module}: missing imported memory")
-
-sys.exit(1 if missing_memory_imports else 0)
-PY
-
-if [ -s "$side_module_audit_log" ]; then
-  tail -120 "$side_module_audit_log" >&2
-  record_blocker "sagelite-blocked: installed Sage side-module audit failed; see $side_module_audit_log."
-fi
-
-printf 'sagelite-side-module-audit-ok %s modules\n' "$side_module_count" >"$side_module_audit_log"
+audit_wasm_side_modules \
+  "$side_module_list" \
+  "$side_module_audit_log" \
+  all \
+  "sagelite-blocked: installed Sage side-module audit failed" \
+  "sagelite-side-module-audit-ok"
 
 node_pythonpath_parts=(
   "$installed_site_packages"
@@ -518,6 +551,16 @@ for required_path in "${electron_required_paths[@]}"; do
     record_blocker "sagelite-blocked: Electron resources are missing required path $required_path."
   fi
 done
+
+electron_side_module_list="$dist_dir/electron-resource-side-modules.txt"
+electron_side_module_audit_log="$dist_dir/electron-side-module-audit.log"
+find "$electron_resources_dir" -name '*.so' -type f | sort >"$electron_side_module_list"
+audit_wasm_side_modules \
+  "$electron_side_module_list" \
+  "$electron_side_module_audit_log" \
+  cpython \
+  "sagelite-blocked: Electron resource side-module audit failed" \
+  "sagelite-electron-side-module-audit-ok"
 
 cp "$src_dir/sagelite-electron-smoke.cjs" "$electron_resources_dir/sagelite-electron-smoke.cjs"
 {
