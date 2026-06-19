@@ -313,6 +313,7 @@ run_node_import "import sage" "import sage; print('sagelite-node-ok import sage'
 run_node_import "import sage.env" "import sage.env; print(sage.env.SAGE_VERSION)"
 run_node_import "import sage.structure.element" "import sage.structure.element; print('sagelite-node-ok import sage.structure.element')"
 run_node_import "integer arithmetic" "from sage.rings.integer_ring import ZZ; print(ZZ(2) + ZZ(3))"
+run_node_import "rational arithmetic" "from sage.rings.rational_field import QQ; print(QQ(2) / QQ(5) + QQ(1) / QQ(5))"
 run_node_import "import sage.all" "import sage.all; print('sagelite-node-ok import sage.all')"
 
 echo "sagelite-ok meson configure compile install node import" | tee "$status_file"
