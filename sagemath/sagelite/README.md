@@ -88,7 +88,8 @@ them from the Python host and prevents extension modules from recording
 would search for next to every extension.
 
 The Node.js runtime probe now completes the first exact-math smoke from
-`sage.all`: integer arithmetic, two-argument rational construction,
+`sage.all`: integer arithmetic, integer ideals, modular integer rings, prime
+finite fields, two-argument rational construction,
 univariate polynomial construction/arithmetic over `QQ`, integer
 factorization with factor inspection, and `prime_pi(10**6)`. The probe also
 checks exact dense matrix determinant, multiplication, and inverse over `ZZ`
@@ -104,9 +105,10 @@ The standalone target also stages an Electron-shaped resources directory under
 Python dependencies into that directory, and reruns the exact arithmetic and
 matrix smoke through the checked-in
 `src/sagelite-electron-smoke.cjs` async `python-wasm` worker API from relative
-`PYTHONPATH` entries. The Electron smoke now includes integer extended-gcd
-coverage in addition to the core integer, rational, polynomial, factorization,
-`prime_pi`, and dense matrix checks. It then reruns the same smoke from a
+`PYTHONPATH` entries. The Electron smoke now includes integer extended-gcd,
+integer ideal, modular integer ring, and prime finite-field coverage in
+addition to the core integer, rational, polynomial, factorization, `prime_pi`,
+and dense matrix checks. It then reruns the same smoke from a
 relocated copy of that resources tree, which catches build-output absolute path
 assumptions before the resources are handed to Electron packaging. The same
 smoke is exposed from `desktop/electron` as `pnpm test:sagelite`, which reruns
@@ -114,11 +116,6 @@ it through the Electron package's `python-wasm` dependency without launching
 the UI. On WASI, `sage.all` skips writing the lazy-import cache file during
 startup, since that cache persistence is not required for the packaged worker
 path and currently trips `os.umask` under the worker runtime.
-
-A current exact-arithmetic follow-up is modular and prime finite-field
-construction: `ZZ.ideal(7)`, `Integers(7)`, and `GF(7)` still fail in the
-Node/Electron runtime because the ideal-construction path tries to coerce a
-`None` generator into `ZZ`.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,

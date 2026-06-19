@@ -340,6 +340,14 @@ B = matrix(QQ, [[1, 2], [3, 5]])
 assert B.det() == QQ(-1)
 assert B.inverse() * B == matrix(QQ, [[1, 0], [0, 1]])
 print('sagelite-node-ok linear algebra smoke')"
+run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
+I = ZZ.ideal(7)
+assert I.gen() == ZZ(7)
+Z7 = Integers(7)
+assert Z7(3) + Z7(5) == Z7(1)
+F7 = GF(7)
+assert F7(3) * F7(5) == F7(1)
+print('sagelite-node-ok modular arithmetic smoke')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"

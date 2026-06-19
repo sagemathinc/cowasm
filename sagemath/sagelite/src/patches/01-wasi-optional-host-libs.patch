@@ -192,7 +192,7 @@ diff -urN a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
 
 
  cdef inline Integer as_Integer(x):
-@@ -7819,25 +7819,36 @@
+@@ -7819,25 +7819,37 @@
 
  # zero and one initialization
  initialized = False
@@ -204,8 +204,9 @@ diff -urN a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
 +DEF small_pool_max = 256
 +
 +def init_integer_ring(parent):
-+    global the_integer_ring
++    global the_integer_ring, global_dummy_Integer
 +    the_integer_ring = parent
++    global_dummy_Integer._parent = parent
 +    set_zero_one_elements()
 +
  cdef set_zero_one_elements():

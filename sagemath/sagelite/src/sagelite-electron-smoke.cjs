@@ -15,13 +15,19 @@ async function main() {
   try {
     await python.exec(String.raw`
 import sage.all
-from sage.all import ZZ, QQ, PolynomialRing, factor, prime_pi
+from sage.all import ZZ, QQ, Integers, GF, PolynomialRing, factor, prime_pi
 from sage.matrix.constructor import matrix
 
 assert ZZ(2) + ZZ(3) == ZZ(5)
 g, s, t = ZZ(240).xgcd(ZZ(46))
 assert g == ZZ(2)
 assert s * ZZ(240) + t * ZZ(46) == g
+I = ZZ.ideal(7)
+assert I.gen() == ZZ(7)
+Z7 = Integers(7)
+assert Z7(3) + Z7(5) == Z7(1)
+F7 = GF(7)
+assert F7(3) * F7(5) == F7(1)
 assert QQ(6, 15) == QQ(2, 5)
 R = PolynomialRing(QQ, 'x')
 x = R.gen()
