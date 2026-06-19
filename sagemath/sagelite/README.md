@@ -28,9 +28,10 @@ in the `cypari2` build-support include surface, includes the pure Python
 configure, compile, install, or Node.js import blocker in
 `dist/wasi-sdk/status.txt`.
 
-The current `cypari2` package is build-support only: it provides the package
-marker and Cython declarations needed by Sagelite's configure/Cython phases,
-but it does not yet provide the compiled `cypari2` runtime extension modules.
+The current `cypari2` package is still build-support only for real PARI
+operations: it provides the package marker, Cython declarations, and a minimal
+ABI-compatible `cypari2.gen` side-module placeholder needed by Sagelite's
+configure/Cython phases and import-time type checks.
 
 The current probe uses CPython's `dist/wasi-sdk` header/runtime surface via
 `python-wasi-sdk`, so it no longer needs to hide system scheduler declarations
@@ -65,12 +66,12 @@ them from the Python host and prevents extension modules from recording
 would search for next to every extension.
 
 The current first Node.js runtime blocker is still `import sage.all`, but the
-startup path now gets past the eager number-field import by lazy-loading the
-PARI-backed number-field constructors on WASI. It next reaches p-adic startup,
-which imports `cypari2.gen`. The current `cypari2` package is still
-build-support only and does not yet provide that runtime extension module. The
-exact blocker is recorded in `dist/wasi-sdk/status.txt`, with the import trace
-in `dist/wasi-sdk/node-import.log`.
+startup path now gets past the eager number-field import, the p-adic
+`cypari2.gen` import, and the Cython `Gen_base`/`Gen` type-size checks. The
+next blocker is a clean early process exit after the runtime reaches the
+current libffi `ffi_call` stub (`STUB: ffi_call`). The exact blocker is recorded
+in `dist/wasi-sdk/status.txt`, with the import trace in
+`dist/wasi-sdk/node-import.log`.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,
