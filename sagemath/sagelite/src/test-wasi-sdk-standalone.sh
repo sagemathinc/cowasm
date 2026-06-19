@@ -395,9 +395,21 @@ for i in "${!runtime_dep_labels[@]}"; do
   stage_runtime_tree "${runtime_dep_paths[$i]}" "$electron_resources_dir/deps/${runtime_dep_labels[$i]}"
   electron_pythonpath_parts+=("deps/${runtime_dep_labels[$i]}")
 done
-electron_pythonpath="$(IFS=:; echo "${electron_pythonpath_parts[*]}")"
 
 cp "$src_dir/sagelite-electron-smoke.cjs" "$electron_resources_dir/sagelite-electron-smoke.cjs"
+{
+  printf '{\n'
+  printf '  "schemaVersion": 1,\n'
+  printf '  "pythonPath": [\n'
+  for i in "${!electron_pythonpath_parts[@]}"; do
+    if [ "$i" -gt 0 ]; then
+      printf ',\n'
+    fi
+    printf '    "%s"' "${electron_pythonpath_parts[$i]}"
+  done
+  printf '\n  ]\n'
+  printf '}\n'
+} >"$electron_resources_dir/sagelite-electron-resources.json"
 
 run_electron_smoke() {
   local label="$1"
@@ -411,7 +423,7 @@ run_electron_smoke() {
   set +e
   (
     cd "$resources_dir"
-    PYTHONPATH="$electron_pythonpath" \
+    PYTHONPATH= \
       COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
       node sagelite-electron-smoke.cjs
   ) >>"$electron_bundle_log" 2>&1

@@ -1,14 +1,51 @@
 #!/usr/bin/env node
 "use strict";
 
+const fs = require("fs");
+const path = require("path");
+
+const manifestName = "sagelite-electron-resources.json";
 const pythonWasmModule = process.env.COWASM_PYTHON_WASM_NODE || "python-wasm";
 const { asyncPython } = require(pythonWasmModule);
 
+function loadPythonPath() {
+  if (process.env.PYTHONPATH) {
+    return process.env.PYTHONPATH;
+  }
+
+  const resourceRoot = path.resolve(
+    process.env.COWASM_SAGELITE_ELECTRON_RESOURCES || process.cwd(),
+  );
+  const manifestPath = path.join(resourceRoot, manifestName);
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+
+  if (manifest.schemaVersion !== 1) {
+    throw new Error(
+      `${manifestPath} has unsupported schemaVersion ${manifest.schemaVersion}`,
+    );
+  }
+  if (!Array.isArray(manifest.pythonPath) || manifest.pythonPath.length === 0) {
+    throw new Error(`${manifestPath} must define a non-empty pythonPath array`);
+  }
+  for (const entry of manifest.pythonPath) {
+    if (typeof entry !== "string" || entry.length === 0) {
+      throw new Error(`${manifestPath} contains an invalid pythonPath entry`);
+    }
+    if (path.isAbsolute(entry) || entry.includes(":")) {
+      throw new Error(`${manifestPath} pythonPath entries must be relative`);
+    }
+  }
+
+  process.chdir(resourceRoot);
+  return manifest.pythonPath.join(":");
+}
+
 async function main() {
+  const pythonPath = loadPythonPath();
   const python = await asyncPython({
     fs: "everything",
     noStdio: true,
-    env: { PYTHONPATH: process.env.PYTHONPATH || "" },
+    env: { PYTHONPATH: pythonPath },
   });
   python.kernel.on("stdout", (data) => process.stdout.write(data));
   python.kernel.on("stderr", (data) => process.stderr.write(data));

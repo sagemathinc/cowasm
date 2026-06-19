@@ -6,7 +6,6 @@ include ../build/Makefile-rules
 
 SAGELITE_DIR = ${CWD}/../../sagemath/sagelite
 SAGELITE_ELECTRON_RESOURCES = ${SAGELITE_DIR}/dist/wasi-sdk/electron-resources
-SAGELITE_ELECTRON_PYTHONPATH = site-packages:deps/cypari2:deps/primecountpy:deps/cysignals:deps/memory_allocator:deps/jinja2:deps/platformdirs:deps/gmpy2:deps/numpy:deps/cython
 
 ${DIST}/.built: node_modules src/index.ts
 	pnpm run build
@@ -19,7 +18,7 @@ clean-build::
 test-sagelite: node_modules
 	$(MAKE) -C ${SAGELITE_DIR} test-wasi-sdk-standalone
 	cd ${SAGELITE_ELECTRON_RESOURCES} && \
-	  PYTHONPATH="${SAGELITE_ELECTRON_PYTHONPATH}" \
+	  PYTHONPATH= \
 	  COWASM_PYTHON_WASM_NODE="${CWD}/node_modules/python-wasm/dist/node.js" \
 	  node ${SAGELITE_DIR}/src/sagelite-electron-smoke.cjs
 
