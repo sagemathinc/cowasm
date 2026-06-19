@@ -115,11 +115,14 @@ The standalone target also runs non-blocking Node.js follow-up probes after the
 required exact-math smokes and writes any missing markers to
 `dist/wasi-sdk/followups.txt`, with process output in
 `dist/wasi-sdk/node-followups.log`. The recorded follow-ups now split the
-FLINT-backed integer polynomial path down to the direct
-`sage.rings.polynomial.polynomial_integer_dense_flint` side-module import
-probe. That direct import is the first incomplete marker under Node.js, and
-incomplete follow-ups are rerun with Python verbose import tracing so the next
-runtime hardening pass has the import ladder that led to the clean exit.
+FLINT-backed polynomial path into the direct integer-polynomial import, the
+same import after `ZZ`/`QQ` singleton initialization, the rational and zmod
+FLINT polynomial imports after the same initialization, and the shared
+`sage.libs.flint.fmpz_poly_sage` helper. The helper import completes after ring
+initialization, while the FLINT polynomial side modules still exit before their
+Node markers. Incomplete follow-ups are rerun with Python verbose import
+tracing so the next runtime hardening pass has the import ladder that led to
+the clean exit.
 
 The standalone target also stages an Electron-shaped resources directory under
 `dist/wasi-sdk/electron-resources`, hardlinks the Sagelite install and runtime

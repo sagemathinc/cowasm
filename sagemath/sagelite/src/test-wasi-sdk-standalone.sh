@@ -539,6 +539,42 @@ record_node_followup_probe \
 import sage.rings.polynomial.polynomial_integer_dense_flint
 print('sagelite-node-followup-ok direct FLINT integer polynomial side-module import')"
 
+record_node_followup_probe \
+  "initialized FLINT fmpz_poly_sage helper import" \
+  "initialized FLINT fmpz_poly_sage helper import did not complete under Node.js" \
+  "from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+print('sagelite-node-followup-start initialized FLINT fmpz_poly_sage helper import')
+import sage.libs.flint.fmpz_poly_sage
+print('sagelite-node-followup-ok initialized FLINT fmpz_poly_sage helper import')"
+
+record_node_followup_probe \
+  "initialized FLINT rational polynomial side-module import" \
+  "initialized FLINT rational polynomial side-module import did not complete under Node.js" \
+  "from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+print('sagelite-node-followup-start initialized FLINT rational polynomial side-module import')
+import sage.rings.polynomial.polynomial_rational_flint
+print('sagelite-node-followup-ok initialized FLINT rational polynomial side-module import')"
+
+record_node_followup_probe \
+  "initialized FLINT zmod polynomial side-module import" \
+  "initialized FLINT zmod polynomial side-module import did not complete under Node.js" \
+  "from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+print('sagelite-node-followup-start initialized FLINT zmod polynomial side-module import')
+import sage.rings.polynomial.polynomial_zmod_flint
+print('sagelite-node-followup-ok initialized FLINT zmod polynomial side-module import')"
+
+record_node_followup_probe \
+  "initialized FLINT integer polynomial side-module import" \
+  "initialized FLINT integer polynomial side-module import did not complete under Node.js" \
+  "from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+print('sagelite-node-followup-start initialized FLINT integer polynomial side-module import')
+import sage.rings.polynomial.polynomial_integer_dense_flint
+print('sagelite-node-followup-ok initialized FLINT integer polynomial side-module import')"
+
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
 rm -rf "$electron_resources_dir"
