@@ -396,6 +396,30 @@ for i in "${!runtime_dep_labels[@]}"; do
   electron_pythonpath_parts+=("deps/${runtime_dep_labels[$i]}")
 done
 
+electron_required_paths=(
+  "site-packages/sage/all.py"
+  "site-packages/sage/env.py"
+  "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/integer.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/integer_ring.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/rational.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/finite_rings/integer_mod.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/matrix/constructor.cpython-314-wasm32-wasi.so"
+  "deps/cypari2/cypari2/gen.cpython-314-wasm32-wasi.so"
+  "deps/primecountpy/primecountpy/primecount.cpython-314-wasm32-wasi.so"
+  "deps/cysignals/cysignals/signals.cpython-314-wasm32-wasi.so"
+  "deps/memory_allocator/memory_allocator/memory_allocator.cpython-314-wasm32-wasi.so"
+  "deps/gmpy2/gmpy2/gmpy2.cpython-314-wasm32-wasi.so"
+  "deps/numpy/numpy/__init__.pyc"
+  "deps/numpy/numpy/core/_multiarray_umath.cpython-314-wasm32-wasi.so"
+)
+
+for required_path in "${electron_required_paths[@]}"; do
+  if [ ! -e "$electron_resources_dir/$required_path" ]; then
+    record_blocker "sagelite-blocked: Electron resources are missing required path $required_path."
+  fi
+done
+
 cp "$src_dir/sagelite-electron-smoke.cjs" "$electron_resources_dir/sagelite-electron-smoke.cjs"
 {
   printf '{\n'
@@ -406,6 +430,14 @@ cp "$src_dir/sagelite-electron-smoke.cjs" "$electron_resources_dir/sagelite-elec
       printf ',\n'
     fi
     printf '    "%s"' "${electron_pythonpath_parts[$i]}"
+  done
+  printf '\n  ],\n'
+  printf '  "requiredResourcePaths": [\n'
+  for i in "${!electron_required_paths[@]}"; do
+    if [ "$i" -gt 0 ]; then
+      printf ',\n'
+    fi
+    printf '    "%s"' "${electron_required_paths[$i]}"
   done
   printf '\n  ]\n'
   printf '}\n'

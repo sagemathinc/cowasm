@@ -14,6 +14,7 @@ let python: PythonWasmAsync | null = null;
 interface SageliteManifest {
   schemaVersion: number;
   pythonPath: string[];
+  requiredResourcePaths?: string[];
 }
 
 function candidateSageliteResourceRoots(): string[] {
@@ -46,15 +47,47 @@ function readSageliteManifest(resourceRoot: string): SageliteManifest {
   if (!Array.isArray(manifest.pythonPath) || manifest.pythonPath.length === 0) {
     throw new Error(`${manifestPath} must define a non-empty pythonPath array`);
   }
+  validateRelativeManifestEntries(manifestPath, "pythonPath", manifest.pythonPath);
   for (const entry of manifest.pythonPath) {
-    if (typeof entry !== "string" || entry.length === 0) {
-      throw new Error(`${manifestPath} contains an invalid pythonPath entry`);
+    const entryPath = join(resourceRoot, entry);
+    if (!existsSync(entryPath)) {
+      throw new Error(`${manifestPath} pythonPath entry ${entry} does not exist`);
     }
-    if (isAbsolute(entry) || entry.includes(":")) {
-      throw new Error(`${manifestPath} pythonPath entries must be relative`);
+  }
+  if (manifest.requiredResourcePaths !== undefined) {
+    if (!Array.isArray(manifest.requiredResourcePaths)) {
+      throw new Error(`${manifestPath} requiredResourcePaths must be an array`);
+    }
+    validateRelativeManifestEntries(
+      manifestPath,
+      "requiredResourcePaths",
+      manifest.requiredResourcePaths,
+    );
+    for (const entry of manifest.requiredResourcePaths) {
+      const entryPath = join(resourceRoot, entry);
+      if (!existsSync(entryPath)) {
+        throw new Error(
+          `${manifestPath} required resource ${entry} does not exist`,
+        );
+      }
     }
   }
   return manifest;
+}
+
+function validateRelativeManifestEntries(
+  manifestPath: string,
+  fieldName: string,
+  entries: string[],
+) {
+  for (const entry of entries) {
+    if (typeof entry !== "string" || entry.length === 0) {
+      throw new Error(`${manifestPath} contains an invalid ${fieldName} entry`);
+    }
+    if (isAbsolute(entry) || entry.includes(":")) {
+      throw new Error(`${manifestPath} ${fieldName} entries must be relative`);
+    }
+  }
 }
 
 function sageliteEnv(): Record<string, string> | undefined {

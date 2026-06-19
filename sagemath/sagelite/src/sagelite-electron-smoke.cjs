@@ -27,17 +27,43 @@ function loadPythonPath() {
   if (!Array.isArray(manifest.pythonPath) || manifest.pythonPath.length === 0) {
     throw new Error(`${manifestPath} must define a non-empty pythonPath array`);
   }
+  validateRelativeEntries(manifestPath, "pythonPath", manifest.pythonPath);
   for (const entry of manifest.pythonPath) {
-    if (typeof entry !== "string" || entry.length === 0) {
-      throw new Error(`${manifestPath} contains an invalid pythonPath entry`);
+    const entryPath = path.join(resourceRoot, entry);
+    if (!fs.existsSync(entryPath)) {
+      throw new Error(`${manifestPath} pythonPath entry ${entry} does not exist`);
     }
-    if (path.isAbsolute(entry) || entry.includes(":")) {
-      throw new Error(`${manifestPath} pythonPath entries must be relative`);
+  }
+  if (manifest.requiredResourcePaths !== undefined) {
+    if (!Array.isArray(manifest.requiredResourcePaths)) {
+      throw new Error(`${manifestPath} requiredResourcePaths must be an array`);
+    }
+    validateRelativeEntries(
+      manifestPath,
+      "requiredResourcePaths",
+      manifest.requiredResourcePaths,
+    );
+    for (const entry of manifest.requiredResourcePaths) {
+      const entryPath = path.join(resourceRoot, entry);
+      if (!fs.existsSync(entryPath)) {
+        throw new Error(`${manifestPath} required resource ${entry} does not exist`);
+      }
     }
   }
 
   process.chdir(resourceRoot);
   return manifest.pythonPath.join(":");
+}
+
+function validateRelativeEntries(manifestPath, fieldName, entries) {
+  for (const entry of entries) {
+    if (typeof entry !== "string" || entry.length === 0) {
+      throw new Error(`${manifestPath} contains an invalid ${fieldName} entry`);
+    }
+    if (path.isAbsolute(entry) || entry.includes(":")) {
+      throw new Error(`${manifestPath} ${fieldName} entries must be relative`);
+    }
+  }
 }
 
 async function main() {

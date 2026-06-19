@@ -103,20 +103,21 @@ before the Node marker.
 The standalone target also stages an Electron-shaped resources directory under
 `dist/wasi-sdk/electron-resources`, hardlinks the Sagelite install and runtime
 Python dependencies into that directory, writes a
-`sagelite-electron-resources.json` manifest with the relative `PYTHONPATH`
-entries, and reruns the exact arithmetic and matrix smoke through the checked-in
-`src/sagelite-electron-smoke.cjs` async `python-wasm` worker API. The Electron
-smoke now includes integer extended-gcd, integer ideal, modular integer ring,
-and prime finite-field coverage in addition to the core integer, rational,
-polynomial, factorization, `prime_pi`, and dense matrix checks. It then reruns
-the same smoke from a relocated copy of that resources tree, which catches
-build-output absolute path assumptions before the resources are handed to
-Electron packaging. The same smoke is exposed from `desktop/electron` as
-`pnpm test:sagelite`, which reruns it through the Electron package's
-`python-wasm` dependency without launching the UI. On WASI, `sage.all` skips
-writing the lazy-import cache file during startup, since that cache persistence
-is not required for the packaged worker path and currently trips `os.umask`
-under the worker runtime.
+`sagelite-electron-resources.json` manifest with relative `PYTHONPATH` entries
+and required resource paths, and reruns the exact arithmetic and matrix smoke
+through the checked-in `src/sagelite-electron-smoke.cjs` async `python-wasm`
+worker API. The Electron smoke validates the manifest before launching Python,
+then checks integer extended-gcd, integer ideal, modular integer ring, and prime
+finite-field coverage in addition to the core integer, rational, polynomial,
+factorization, `prime_pi`, and dense matrix checks. It then reruns the same
+smoke from a relocated copy of that resources tree, which catches build-output
+absolute path assumptions and incomplete resource copies before the resources
+are handed to Electron packaging. The same smoke is exposed from
+`desktop/electron` as `pnpm test:sagelite`, which reruns it through the Electron
+package's `python-wasm` dependency without launching the UI. On WASI, `sage.all`
+skips writing the lazy-import cache file during startup, since that cache
+persistence is not required for the packaged worker path and currently trips
+`os.umask` under the worker runtime.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,
