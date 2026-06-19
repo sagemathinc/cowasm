@@ -41,12 +41,14 @@ and globally exposes the CoWasm Boost, GSL, MPFR, MPFI, and NTL include surfaces
 for Sagelite extension targets that do not inherit all required Meson
 dependencies.
 
-With the matching LinBox `BlockHankel` accessor patch applied and
-`platformdirs` available on the runtime `PYTHONPATH`, the standalone probe gets
-through Meson configure, compile, and install against the installed Sage package
-tree.  The Node.js `python-wasm` import ladder now requires a per-step
-completion marker so a clean process exit is not mistaken for a completed
-import or math check.
+With the matching LinBox `BlockHankel` accessor patch applied,
+`platformdirs` available on the runtime `PYTHONPATH`, and the Sagelite integer
+ring initialization deferred until `integer_ring.ZZ` exists, the standalone
+probe gets through Meson configure, compile, install, `import sage`, `import
+sage.env`, `import sage.structure.element`, and a basic `ZZ(2) + ZZ(3)` Node.js
+integer arithmetic smoke.  The Node.js `python-wasm` import ladder requires a
+per-step completion marker so a clean process exit is not mistaken for a
+completed import or math check.
 
 Sagelite side modules intentionally do not link `libwasi-emulated-signal`.
 Keeping those signal references unresolved lets the CoWasm dynamic loader bind
@@ -54,11 +56,10 @@ them from the Python host and prevents extension modules from recording
 `libwasi-emulated-signal.so` as a `needed_dynlibs` entry that the Node.js loader
 would search for next to every extension.
 
-The current first Node.js runtime blocker is integer arithmetic: importing
-`sage.rings.integer_ring` reaches `sage.rings.integer`, which tries to read
-`integer_ring.ZZ` before the partially initialized `integer_ring` module has
-created it.  The exact blocker is recorded in `dist/wasi-sdk/status.txt`, with
-the import trace in `dist/wasi-sdk/node-import.log`.
+The current first Node.js runtime blocker is `import sage.all`: the process
+exits cleanly before the per-step completion marker is printed.  The exact
+blocker is recorded in `dist/wasi-sdk/status.txt`, with the import trace in
+`dist/wasi-sdk/node-import.log`.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,
