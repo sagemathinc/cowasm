@@ -1578,15 +1578,27 @@ importers:
         specifier: workspace:*
         version: link:../memory-allocator
     devDependencies:
+      '@cowasm/boost-cropped':
+        specifier: workspace:*
+        version: link:../boost-cropped
       '@cowasm/cpython':
         specifier: workspace:*
         version: link:../../python/cpython
+      '@cowasm/gmp':
+        specifier: workspace:*
+        version: link:../gmp
       '@cowasm/gsl':
         specifier: workspace:*
         version: link:../gsl
       '@cowasm/ligpng':
         specifier: workspace:*
         version: link:../../core/libpng
+      '@cowasm/m4ri':
+        specifier: workspace:*
+        version: link:../m4ri
+      '@cowasm/m4rie':
+        specifier: workspace:*
+        version: link:../m4rie
       '@cowasm/mpfi':
         specifier: workspace:*
         version: link:../mpfi

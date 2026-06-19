@@ -20,11 +20,14 @@ CYSIGNALS_WASI_SDK = ${PACKAGES}/cysignals/dist/wasi-sdk
 MEMORY_ALLOCATOR_WASI_SDK = ${PACKAGES}/memory-allocator/dist/wasi-sdk
 CYPARI2_WASI_SDK = ${PACKAGES}/cypari2/dist/wasi-sdk
 BOOST_CROPPED_WASI_SDK = ${PACKAGES}/boost-cropped/dist/wasi-sdk
+GMP_WASI_SDK = ${PACKAGES}/gmp/dist/wasi-sdk
 MPFR_WASI_SDK = ${PACKAGES}/mpfr/dist/wasi-sdk
 MPFI_WASI_SDK = ${PACKAGES}/mpfi/dist/wasi-sdk
 NTL_WASI_SDK = ${PACKAGES}/ntl/dist/wasi-sdk
 PARI_WASI_SDK = ${PACKAGES}/pari/dist/wasi-sdk
 GSL_WASI_SDK = ${PACKAGES}/gsl/dist/wasi-sdk
+M4RI_WASI_SDK = ${PACKAGES}/m4ri/dist/wasi-sdk
+M4RIE_WASI_SDK = ${PACKAGES}/m4rie/dist/wasi-sdk
 LIBPNG_WASI_SDK = ${CWD}/../../core/libpng/dist/wasi-sdk
 
 ${CPYTHON_WASM}/include/python3.14/Python.h:
@@ -63,6 +66,9 @@ ${CYPARI2_WASI_SDK}/cypari2/auto_paridecl.pxd:
 ${BOOST_CROPPED_WASI_SDK}/include/boost/graph/adjacency_list.hpp:
 	$(MAKE) -C ${PACKAGES}/boost-cropped test-wasi-sdk-standalone
 
+${GMP_WASI_SDK}/lib/libgmp.a:
+	$(MAKE) -C ${PACKAGES}/gmp test-wasi-sdk-standalone
+
 ${MPFR_WASI_SDK}/include/mpfr.h:
 	$(MAKE) -C ${PACKAGES}/mpfr test-wasi-sdk-standalone
 
@@ -77,6 +83,12 @@ ${PARI_WASI_SDK}/lib/libpari.a:
 
 ${GSL_WASI_SDK}/lib/libgslcblas.a:
 	$(MAKE) -C ${PACKAGES}/gsl test-wasi-sdk-standalone
+
+${M4RI_WASI_SDK}/include/m4ri/m4ri.h:
+	$(MAKE) -C ${PACKAGES}/m4ri test-wasi-sdk-standalone
+
+${M4RIE_WASI_SDK}/include/m4rie/m4rie.h:
+	$(MAKE) -C ${PACKAGES}/m4rie test-wasi-sdk-standalone
 
 ${LIBPNG_WASI_SDK}/lib/libpng.a:
 	$(MAKE) -C ${CWD}/../../core/libpng test-wasi-sdk-standalone
@@ -93,7 +105,7 @@ ${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
 	touch ${BUILD_WASI_SDK}/.patched
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_NUMPY}/numpy/__init__.py ${PY_GMPY2}/gmpy2/__init__.py ${PY_JINJA2}/jinja2/__init__.py ${PY_MESON}/mesonbuild/mesonmain.py ${PY_NINJA}/bin/ninja ${POSIX_WASI_SDK}/posix-wasm.h ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd ${CYPARI2_WASI_SDK}/cypari2/auto_paridecl.pxd ${BOOST_CROPPED_WASI_SDK}/include/boost/graph/adjacency_list.hpp ${MPFR_WASI_SDK}/include/mpfr.h ${MPFI_WASI_SDK}/lib/libmpfi.a ${NTL_WASI_SDK}/lib/libntl.a ${PARI_WASI_SDK}/lib/libpari.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${LIBPNG_WASI_SDK}/lib/libpng.a ${BUILD_WASI_SDK}/.patched
+test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_NUMPY}/numpy/__init__.py ${PY_GMPY2}/gmpy2/__init__.py ${PY_JINJA2}/jinja2/__init__.py ${PY_MESON}/mesonbuild/mesonmain.py ${PY_NINJA}/bin/ninja ${POSIX_WASI_SDK}/posix-wasm.h ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd ${CYPARI2_WASI_SDK}/cypari2/auto_paridecl.pxd ${BOOST_CROPPED_WASI_SDK}/include/boost/graph/adjacency_list.hpp ${GMP_WASI_SDK}/lib/libgmp.a ${MPFR_WASI_SDK}/include/mpfr.h ${MPFI_WASI_SDK}/lib/libmpfi.a ${NTL_WASI_SDK}/lib/libntl.a ${PARI_WASI_SDK}/lib/libpari.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${M4RI_WASI_SDK}/include/m4ri/m4ri.h ${M4RIE_WASI_SDK}/include/m4rie/m4rie.h ${LIBPNG_WASI_SDK}/lib/libpng.a ${BUILD_WASI_SDK}/.patched
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
 	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CPYTHON_WASM} ${PY_CYTHON} ${PY_NUMPY} ${PY_GMPY2} ${PY_JINJA2} ${PY_MESON} ${PY_NINJA} ${CYSIGNALS_WASI_SDK} ${MEMORY_ALLOCATOR_WASI_SDK} ${POSIX_WASI_SDK} ${CYPARI2_WASI_SDK} || status=$$?; \
