@@ -5,6 +5,13 @@ const fs = require("fs");
 const path = require("path");
 
 const manifestName = "sagelite-electron-resources.json";
+const expectedManifest = {
+  schemaVersion: 2,
+  resourceKind: "cowasm-sagelite-electron-resources",
+  pythonAbi: "cpython-314-wasm32-wasi",
+  pythonPlatform: "wasi",
+  smokeContract: "exact-arithmetic-matrix-v1",
+};
 const pythonWasmModule = process.env.COWASM_PYTHON_WASM_NODE || "python-wasm";
 const { asyncPython } = require(pythonWasmModule);
 
@@ -19,11 +26,7 @@ function loadPythonPath() {
   const manifestPath = path.join(resourceRoot, manifestName);
   const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 
-  if (manifest.schemaVersion !== 1) {
-    throw new Error(
-      `${manifestPath} has unsupported schemaVersion ${manifest.schemaVersion}`,
-    );
-  }
+  validateManifestContract(manifestPath, manifest);
   if (!Array.isArray(manifest.pythonPath) || manifest.pythonPath.length === 0) {
     throw new Error(`${manifestPath} must define a non-empty pythonPath array`);
   }
@@ -53,6 +56,18 @@ function loadPythonPath() {
 
   process.chdir(resourceRoot);
   return manifest.pythonPath.join(":");
+}
+
+function validateManifestContract(manifestPath, manifest) {
+  for (const [fieldName, expectedValue] of Object.entries(expectedManifest)) {
+    if (manifest[fieldName] !== expectedValue) {
+      throw new Error(
+        `${manifestPath} has unsupported ${fieldName} ${JSON.stringify(
+          manifest[fieldName],
+        )}; expected ${JSON.stringify(expectedValue)}`,
+      );
+    }
+  }
 }
 
 function validateRelativeEntries(manifestPath, fieldName, entries) {

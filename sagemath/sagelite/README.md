@@ -131,14 +131,15 @@ Python dependencies into that directory, writes a
 and required resource paths, and reruns the exact arithmetic and matrix smoke
 through the checked-in `src/sagelite-electron-smoke.cjs` async `python-wasm`
 worker API. The Electron smoke validates the manifest before launching Python,
-including root-local POSIX-style relative paths so the staged resources cannot
-escape their bundle root or depend on host-specific path separators, and
-then checks integer extended-gcd, integer ideal, modular integer ring, and prime
-finite-field coverage in addition to the core integer, rational, polynomial,
-factorization, `prime_pi`, and dense matrix checks. It then reruns the same
-smoke from a relocated copy of that resources tree, which catches build-output
-absolute path assumptions and incomplete resource copies before the resources
-are handed to Electron packaging. The same smoke is exposed from
+including the expected manifest schema, resource kind, CPython WASI ABI,
+runtime platform, smoke contract, and root-local POSIX-style relative paths so
+the staged resources cannot escape their bundle root or depend on host-specific
+path separators. It then checks integer extended-gcd, integer ideal, modular
+integer ring, and prime finite-field coverage in addition to the core integer,
+rational, polynomial, factorization, `prime_pi`, and dense matrix checks. It
+then reruns the same smoke from a relocated copy of that resources tree, which
+catches build-output absolute path assumptions and incomplete resource copies
+before the resources are handed to Electron packaging. The same smoke is exposed from
 `desktop/electron` as `pnpm test:sagelite`, which reruns it through the Electron
 package's `python-wasm` dependency without launching the UI. On WASI, `sage.all`
 skips writing the lazy-import cache file during startup, since that cache

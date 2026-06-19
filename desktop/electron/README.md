@@ -49,6 +49,8 @@ This does not launch the Electron UI. It uses the staged resources from
 arithmetic and dense matrix operations work with relative `PYTHONPATH` entries.
 The manifest also lists resource files that must be present for the current
 smoke path, so incomplete resource copies fail before the worker starts.
+It also records the expected resource kind, CPython WASI ABI, runtime platform,
+and smoke contract, so stale resource bundles fail before the worker starts.
 Manifest paths must be root-local POSIX-style relative paths, which keeps the
 resource layout portable across Linux, macOS, and Windows Electron hosts. The
 Sagelite package target also reruns the same smoke from a relocated copy of the

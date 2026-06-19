@@ -8,11 +8,22 @@ type PythonWasmAsync = Awaited<ReturnType<typeof asyncPython>>;
 
 const log = debug("python");
 const sageliteManifestName = "sagelite-electron-resources.json";
+const expectedSageliteManifest = {
+  schemaVersion: 2,
+  resourceKind: "cowasm-sagelite-electron-resources",
+  pythonAbi: "cpython-314-wasm32-wasi",
+  pythonPlatform: "wasi",
+  smokeContract: "exact-arithmetic-matrix-v1",
+};
 
 let python: PythonWasmAsync | null = null;
 
 interface SageliteManifest {
   schemaVersion: number;
+  resourceKind?: string;
+  pythonAbi?: string;
+  pythonPlatform?: string;
+  smokeContract?: string;
   pythonPath: string[];
   requiredResourcePaths?: string[];
 }
@@ -39,11 +50,7 @@ function readSageliteManifest(resourceRoot: string): SageliteManifest {
   const manifest = JSON.parse(
     readFileSync(manifestPath, "utf8"),
   ) as SageliteManifest;
-  if (manifest.schemaVersion !== 1) {
-    throw new Error(
-      `${manifestPath} has unsupported schemaVersion ${manifest.schemaVersion}`,
-    );
-  }
+  validateSageliteManifestContract(manifestPath, manifest);
   if (!Array.isArray(manifest.pythonPath) || manifest.pythonPath.length === 0) {
     throw new Error(`${manifestPath} must define a non-empty pythonPath array`);
   }
@@ -73,6 +80,24 @@ function readSageliteManifest(resourceRoot: string): SageliteManifest {
     }
   }
   return manifest;
+}
+
+function validateSageliteManifestContract(
+  manifestPath: string,
+  manifest: SageliteManifest,
+) {
+  for (const [fieldName, expectedValue] of Object.entries(
+    expectedSageliteManifest,
+  )) {
+    const actualValue = manifest[fieldName as keyof SageliteManifest];
+    if (actualValue !== expectedValue) {
+      throw new Error(
+        `${manifestPath} has unsupported ${fieldName} ${JSON.stringify(
+          actualValue,
+        )}; expected ${JSON.stringify(expectedValue)}`,
+      );
+    }
+  }
 }
 
 function validateRelativeManifestEntries(

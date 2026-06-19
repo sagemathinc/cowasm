@@ -577,6 +577,11 @@ print('sagelite-node-followup-ok initialized FLINT integer polynomial side-modul
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
+electron_manifest_schema_version=2
+electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
+electron_manifest_python_abi="cpython-314-wasm32-wasi"
+electron_manifest_python_platform="wasi"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-v1"
 rm -rf "$electron_resources_dir"
 mkdir -p "$electron_resources_dir/deps"
 
@@ -663,7 +668,11 @@ audit_wasm_side_modules \
 cp "$src_dir/sagelite-electron-smoke.cjs" "$electron_resources_dir/sagelite-electron-smoke.cjs"
 {
   printf '{\n'
-  printf '  "schemaVersion": 1,\n'
+  printf '  "schemaVersion": %s,\n' "$electron_manifest_schema_version"
+  printf '  "resourceKind": "%s",\n' "$electron_manifest_resource_kind"
+  printf '  "pythonAbi": "%s",\n' "$electron_manifest_python_abi"
+  printf '  "pythonPlatform": "%s",\n' "$electron_manifest_python_platform"
+  printf '  "smokeContract": "%s",\n' "$electron_manifest_smoke_contract"
   printf '  "pythonPath": [\n'
   for i in "${!electron_pythonpath_parts[@]}"; do
     if [ "$i" -gt 0 ]; then
