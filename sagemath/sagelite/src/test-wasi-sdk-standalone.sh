@@ -509,12 +509,27 @@ record_node_followup_probe() {
   set -e
   if [ "$followup_status" -ne 0 ] ||
       ! grep -Fqx "$marker" "$node_followups_log"; then
+    printf 'probe verbose trace after incomplete follow-up: exit_status=%s marker=%s\n' \
+      "$followup_status" "$marker" >>"$node_followups_log"
+    set +e
+    PYTHONPATH="$node_pythonpath" \
+      timeout "${SAGELITE_FOLLOWUP_TIMEOUT_SECONDS:-60}" \
+      node "$python_wasm/bin/python-wasm" -v -c "$wrapped_code" \
+      >>"$node_followups_log" 2>&1
+    set -e
     printf 'probe did not complete: exit_status=%s marker=%s\n' \
       "$followup_status" "$marker" >>"$node_followups_log"
     printf 'sagelite-followup: %s; see %s.\n' \
       "$summary" "$node_followups_log" >>"$followups_file"
   fi
 }
+
+record_node_followup_probe \
+  "direct FLINT integer polynomial side-module import" \
+  "direct FLINT integer polynomial side-module import did not complete under Node.js" \
+  "print('sagelite-node-followup-start direct FLINT integer polynomial side-module import')
+import sage.rings.polynomial.polynomial_integer_dense_flint
+print('sagelite-node-followup-ok direct FLINT integer polynomial side-module import')"
 
 record_node_followup_probe \
   "explicit FLINT integer polynomial implementation" \
