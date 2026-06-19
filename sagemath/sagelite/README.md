@@ -15,9 +15,10 @@ make -C sagemath/sagelite test-wasi-sdk-standalone
 ```
 
 The target stages the Sagelite checkout into `build/wasi-sdk`, prepares explicit
-CoWasm Python, Cython, NumPy, gmpy2, cysignals, memory_allocator, Meson, Ninja,
-compiler, and pkg-config paths, and then runs direct `meson setup`. It does not
-use build isolation and does not run `pip install sagelite`.
+CoWasm Python, Cython, NumPy, gmpy2, cysignals, memory_allocator, primecountpy,
+Meson, Ninja, compiler, and pkg-config paths, and then runs direct `meson
+setup`. It does not use build isolation and does not run `pip install
+sagelite`.
 
 ## Current Status
 
@@ -67,6 +68,13 @@ constructor. This lets polynomial ring startup proceed without initializing the
 current p-adic side modules, while preserving explicit p-adic imports as a
 separate runtime follow-up.
 
+The WASI `sage.all` startup path is now intentionally exact-arithmetic-focused:
+symbolic, plotting, algebra-system, and broad optional families stay out of
+startup until their side modules are ready. It exposes `prime_pi` through the
+existing CoWasm `primecountpy` package and lazy-loads interval, complex,
+imaginary-unit, and host-signal helpers that previously caused clean exits or
+normal import failures during `sage.all`.
+
 The local libffi wasm32 backend now has a constrained raw `ffi_call`
 implementation for direct word-sized `int`, 8/16/32-bit integer, pointer, and
 `void` signatures with up to eight arguments. This is enough for standalone
@@ -79,20 +87,13 @@ them from the Python host and prevents extension modules from recording
 `libwasi-emulated-signal.so` as a `needed_dynlibs` entry that the Node.js loader
 would search for next to every extension.
 
-The current first Node.js runtime blocker is still `import sage.all`, but the
-startup path now gets past the eager number-field import, the p-adic
-`cypari2.gen` import, the Cython `Gen_base`/`Gen` type-size checks, the old
-`STUB: ffi_call` exit, the former
-`sage.rings.padics.common_conversion` clean-exit path, the eager
-`sage.rings.complex_mpfr` startup exit, and the eager NTL-backed
-`sage.rings.bernoulli_mod_p` startup exit. The `sage.modules` Cython extension
-targets also build on WASI now that their optional `gd` dependency no longer
-disables the whole module-extension set, so `sage.modules.free_module_element`
-is installed as a side module instead of only as `.pyx` source. The next blocker
-is a normal Python `ModuleNotFoundError` for `sage.symbolic.expression` during
-`sage.symbolic.ring` import from `sage.all`. The exact blocker is recorded in
-`dist/wasi-sdk/status.txt`, with the import trace in
-`dist/wasi-sdk/node-import.log`.
+The current first Node.js runtime blocker has moved past `import sage.all`.
+The probe now completes `import sage.all` and records the first exact-math
+smoke blocker. The current blocker is `QQ(6, 15)`, which raises
+`NotImplementedError` because the `sage.rings.rational.int_to_Q` coercion map
+does not implement the two-argument parent-call path under the current WASI
+runtime. The exact blocker is recorded in `dist/wasi-sdk/status.txt`, with the
+import trace in `dist/wasi-sdk/node-import.log`.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,

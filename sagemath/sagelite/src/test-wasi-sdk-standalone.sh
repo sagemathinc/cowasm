@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 16 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA PY_PLATFORMDIRS PYTHON_WASM CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK CYPARI2_WASI_SDK" >&2
+if [ "$#" -ne 17 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA PY_PLATFORMDIRS PYTHON_WASM PRIMECOUNTPY_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK CYPARI2_WASI_SDK" >&2
   exit 2
 fi
 
@@ -18,10 +18,11 @@ py_meson="$(cd "$9" && pwd)"
 py_ninja="$(cd "${10}" && pwd)"
 py_platformdirs="$(cd "${11}" && pwd)"
 python_wasm="$(cd "${12}" && pwd)"
-cysignals_wasi_sdk="$(cd "${13}" && pwd)"
-memory_allocator_wasi_sdk="$(cd "${14}" && pwd)"
-posix_wasi_sdk="$(cd "${15}" && pwd)"
-cypari2_wasi_sdk="$(cd "${16}" && pwd)"
+primecountpy_wasi_sdk="$(cd "${13}" && pwd)"
+cysignals_wasi_sdk="$(cd "${14}" && pwd)"
+memory_allocator_wasi_sdk="$(cd "${15}" && pwd)"
+posix_wasi_sdk="$(cd "${16}" && pwd)"
+cypari2_wasi_sdk="$(cd "${17}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -107,6 +108,7 @@ fi
 
 pythonpath_parts=(
   "$cypari2_wasi_sdk"
+  "$primecountpy_wasi_sdk"
   "$cysignals_wasi_sdk"
   "$memory_allocator_wasi_sdk"
   "$py_jinja2"
@@ -320,5 +322,14 @@ run_node_import "import sage.structure.element" "import sage.structure.element; 
 run_node_import "integer arithmetic" "from sage.rings.integer_ring import ZZ; print(ZZ(2) + ZZ(3))"
 run_node_import "rational arithmetic" "from sage.rings.rational_field import QQ; print(QQ(2) / QQ(5) + QQ(1) / QQ(5))"
 run_node_import "import sage.all" "import sage.all; print('sagelite-node-ok import sage.all')"
+run_node_import "exact math smoke" "from sage.all import ZZ, QQ, PolynomialRing, factor, prime_pi
+assert ZZ(2) + ZZ(3) == ZZ(5)
+assert QQ(6, 15) == QQ(2, 5)
+R = PolynomialRing(QQ, 'x')
+x = R.gen()
+assert (x + 1) * (x - 1) == x**2 - 1
+assert factor(2**31 - 1) is not None
+assert prime_pi(10**6) == 78498
+print('sagelite-node-ok exact math smoke')"
 
 echo "sagelite-ok meson configure compile install node import" | tee "$status_file"

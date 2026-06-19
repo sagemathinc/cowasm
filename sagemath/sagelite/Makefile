@@ -17,6 +17,7 @@ PY_MESON = ${CWD}/../../python/py-meson/dist/wasm
 PY_NINJA = ${CWD}/../../python/py-ninja/dist/native
 PY_PLATFORMDIRS = ${CWD}/../../python/py-platformdirs/dist/wasm
 PYTHON_WASM = ${CWD}/../../python/python-wasm
+PRIMECOUNTPY_WASI_SDK = ${PACKAGES}/primecountpy/dist/wasi-sdk
 POSIX_WASI_SDK = ${CWD}/../../core/posix-wasm/dist/wasi-sdk
 CYSIGNALS_WASI_SDK = ${PACKAGES}/cysignals/dist/wasi-sdk
 MEMORY_ALLOCATOR_WASI_SDK = ${PACKAGES}/memory-allocator/dist/wasi-sdk
@@ -58,6 +59,9 @@ ${PY_PLATFORMDIRS}/platformdirs/__init__.py:
 
 ${PYTHON_WASM}/dist/.built ${PYTHON_WASM}/dist/python.wasm:
 	$(MAKE) -C ${PYTHON_WASM} all
+
+${PRIMECOUNTPY_WASI_SDK}/primecountpy/primecount.cpython-314-wasm32-wasi.so:
+	$(MAKE) -C ${PACKAGES}/primecountpy test-wasi-sdk-standalone
 
 ${POSIX_WASI_SDK}/posix-wasm.h:
 	$(MAKE) -C ${CWD}/../../core/posix-wasm test-wasi-sdk-standalone
@@ -113,10 +117,10 @@ ${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
 	touch ${BUILD_WASI_SDK}/.patched
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_NUMPY}/numpy/__init__.py ${PY_GMPY2}/gmpy2/__init__.py ${PY_JINJA2}/jinja2/__init__.py ${PY_MESON}/mesonbuild/mesonmain.py ${PY_NINJA}/bin/ninja ${PY_PLATFORMDIRS}/platformdirs/__init__.py ${PYTHON_WASM}/dist/.built ${PYTHON_WASM}/dist/python.wasm ${POSIX_WASI_SDK}/posix-wasm.h ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd ${CYPARI2_WASI_SDK}/cypari2/auto_paridecl.pxd ${BOOST_CROPPED_WASI_SDK}/include/boost/graph/adjacency_list.hpp ${GMP_WASI_SDK}/lib/libgmp.a ${MPFR_WASI_SDK}/include/mpfr.h ${MPFI_WASI_SDK}/lib/libmpfi.a ${NTL_WASI_SDK}/lib/libntl.a ${PARI_WASI_SDK}/lib/libpari.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${M4RI_WASI_SDK}/include/m4ri/m4ri.h ${M4RIE_WASI_SDK}/include/m4rie/m4rie.h ${LIBPNG_WASI_SDK}/lib/libpng.a ${BUILD_WASI_SDK}/.patched
+test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_NUMPY}/numpy/__init__.py ${PY_GMPY2}/gmpy2/__init__.py ${PY_JINJA2}/jinja2/__init__.py ${PY_MESON}/mesonbuild/mesonmain.py ${PY_NINJA}/bin/ninja ${PY_PLATFORMDIRS}/platformdirs/__init__.py ${PYTHON_WASM}/dist/.built ${PYTHON_WASM}/dist/python.wasm ${PRIMECOUNTPY_WASI_SDK}/primecountpy/primecount.cpython-314-wasm32-wasi.so ${POSIX_WASI_SDK}/posix-wasm.h ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd ${CYPARI2_WASI_SDK}/cypari2/auto_paridecl.pxd ${BOOST_CROPPED_WASI_SDK}/include/boost/graph/adjacency_list.hpp ${GMP_WASI_SDK}/lib/libgmp.a ${MPFR_WASI_SDK}/include/mpfr.h ${MPFI_WASI_SDK}/lib/libmpfi.a ${NTL_WASI_SDK}/lib/libntl.a ${PARI_WASI_SDK}/lib/libpari.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${M4RI_WASI_SDK}/include/m4ri/m4ri.h ${M4RIE_WASI_SDK}/include/m4rie/m4rie.h ${LIBPNG_WASI_SDK}/lib/libpng.a ${BUILD_WASI_SDK}/.patched
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
-	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CPYTHON_WASM} ${PY_CYTHON} ${PY_NUMPY} ${PY_GMPY2} ${PY_JINJA2} ${PY_MESON} ${PY_NINJA} ${PY_PLATFORMDIRS} ${PYTHON_WASM} ${CYSIGNALS_WASI_SDK} ${MEMORY_ALLOCATOR_WASI_SDK} ${POSIX_WASI_SDK} ${CYPARI2_WASI_SDK} || status=$$?; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CPYTHON_WASM} ${PY_CYTHON} ${PY_NUMPY} ${PY_GMPY2} ${PY_JINJA2} ${PY_MESON} ${PY_NINJA} ${PY_PLATFORMDIRS} ${PYTHON_WASM} ${PRIMECOUNTPY_WASI_SDK} ${CYSIGNALS_WASI_SDK} ${MEMORY_ALLOCATOR_WASI_SDK} ${POSIX_WASI_SDK} ${CYPARI2_WASI_SDK} || status=$$?; \
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
 	exit "$$status"
 

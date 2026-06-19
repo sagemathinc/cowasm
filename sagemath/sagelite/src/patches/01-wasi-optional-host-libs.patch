@@ -359,18 +359,18 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
          import ctypes
 @@ -324,7 +328,8 @@
  lazy_import('sage.interacts', 'all', 'interacts')
- 
+
  # The code executed here uses a large amount of Sage components
 -from sage.rings.qqbar import _init_qqbar
 -_init_qqbar()
 +if sys.platform != 'wasi':
 +    from sage.rings.qqbar import _init_qqbar
 +    _init_qqbar()
- 
+
  ###########################################################
 @@ -339,8 +343,11 @@
  ###########################################################
- 
+
 -CC = ComplexField()
 +if sys.platform == 'wasi':
 +    lazy_import('sage.rings.cc', 'CC')
@@ -380,7 +380,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 -RR = RealField()  # default real field
 +lazy_import('sage.rings.real_mpfr', 'RR')
  ZZ = IntegerRing()
- 
+
  true = True
 diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 --- a/src/sage/rings/all.py
@@ -523,7 +523,7 @@ diff -urN a/src/sage/modules/meson.build b/src/sage/modules/meson.build
 @@ -63,6 +63,11 @@
    subdir: 'sage/modules',
  )
- 
+
 +modules_extension_dependencies = [py_dep, cysignals, gmp, m4ri, png, numpy]
 +if not is_wasi
 +  modules_extension_dependencies += gd
@@ -539,7 +539,7 @@ diff -urN a/src/sage/modules/meson.build b/src/sage/modules/meson.build
 +    dependencies: modules_extension_dependencies,
    )
  endforeach
- 
+
 @@ -113,6 +118,6 @@
      override_options: ['cython_language=cpp'],
      include_directories: [inc_cpython, inc_ext, inc_rings, inc_rings_finite],
@@ -547,7 +547,7 @@ diff -urN a/src/sage/modules/meson.build b/src/sage/modules/meson.build
 +    dependencies: modules_extension_dependencies,
    )
  endforeach
- 
+
 diff -urN a/src/sage/meson.build b/src/sage/meson.build
 --- a/src/sage/meson.build
 +++ b/src/sage/meson.build
@@ -616,22 +616,22 @@ diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 +    from sage.rings.real_mpfr import (RealField, RR,
 +                           create_RealNumber as RealNumber)   # this is used by the preparser to wrap real literals -- very important.
  Reals = RealField
- 
+
 -from sage.rings.real_double import RealDoubleField, RDF, RealDoubleElement
 +lazy_import('sage.rings.real_double',
 +            ['RealDoubleField', 'RDF', 'RealDoubleElement'])
- 
+
 -from sage.rings.real_lazy import RealLazyField, RLF, ComplexLazyField, CLF
 +lazy_import('sage.rings.real_lazy',
 +            ['RealLazyField', 'RLF', 'ComplexLazyField', 'CLF'])
- 
+
 -from sage.rings.real_arb import RealBallField, RBF
 +lazy_import('sage.rings.real_arb', ['RealBallField', 'RBF'])
- 
+
  # Polynomial Rings and Polynomial Quotient Rings
  from sage.rings.polynomial.all import *
 @@ -88,8 +94,15 @@
- 
+
  # Algebraic numbers
 -from sage.rings.qqbar import (AlgebraicRealField, AA,
 -                   AlgebraicReal,
@@ -660,7 +660,7 @@ diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 -                       RealInterval)
 +lazy_import('sage.rings.real_mpfi',
 +            ['RealIntervalField', 'RIF', 'RealInterval'])
- 
+
  # Complex numbers
 -from sage.rings.complex_mpfr import ComplexField
 -from sage.rings.complex_mpfr import create_ComplexNumber as ComplexNumber
@@ -672,17 +672,17 @@ diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 +lazy_import('sage.rings.complex_interval_field', 'ComplexIntervalField')
 +lazy_import('sage.rings.complex_interval', 'create_ComplexIntervalFieldElement',
 +            as_='ComplexIntervalFieldElement')
- 
+
 -from sage.rings.complex_double import ComplexDoubleField, ComplexDoubleElement, CDF
 +lazy_import('sage.rings.complex_double',
 +            ['ComplexDoubleField', 'ComplexDoubleElement', 'CDF'])
- 
+
 -from sage.rings.complex_mpc import MPComplexField
 +lazy_import('sage.rings.complex_mpc', 'MPComplexField')
- 
+
 -from sage.rings.complex_arb import ComplexBallField, CBF
 +lazy_import('sage.rings.complex_arb', ['ComplexBallField', 'CBF'])
- 
+
  lazy_import("sage.rings.imaginary_unit", "I")
 @@ -153,5 +165,10 @@
 -from sage.rings.bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
@@ -691,9 +691,9 @@ diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 +                ['bernoulli_mod_p', 'bernoulli_mod_p_single'])
 +else:
 +    from sage.rings.bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
- 
+
  from sage.rings.monomials import monomials
- 
+
 -from sage.rings.cc import CC
 -from sage.rings.cif import CIF
 +if sys.platform == 'wasi':
@@ -728,3 +728,252 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            pAdicRingCappedRelative = ()
 +            pAdicRingCappedAbsolute = ()
 +            pAdicRingFixedMod = ()
+--- a/src/sage/all.py
++++ b/src/sage/all.py
+@@ -253,74 +253,82 @@
+ from sage.arith.all import *
+ from sage.matrix.all import *
+
+-from sage.symbolic.all import *
+-from sage.modules.all import *
+-from sage.monoids.all import *
+-from sage.algebras.all import *
+-from sage.modular.all import *
+-from sage.sat.all import *
+-from sage.schemes.all import *
+-from sage.graphs.all import *
+-from sage.groups.all import *
+-from sage.databases.all import *
+-from sage.categories.all import *
+-from sage.sets.all import *
+-from sage.probability.all import *
+-from sage.interfaces.all import *
++if sys.platform == 'wasi':
++    from primecountpy.primecount import prime_pi as _primecount_prime_pi
++
++    def prime_pi(x):
++        from sage.rings.integer import Integer
++        return Integer(_primecount_prime_pi(Integer(x)))
++else:
++    from sage.symbolic.all import *
++    from sage.modules.all import *
++    from sage.monoids.all import *
++    from sage.algebras.all import *
++    from sage.modular.all import *
++    from sage.sat.all import *
++    from sage.schemes.all import *
++    from sage.graphs.all import *
++    from sage.groups.all import *
++    from sage.databases.all import *
++    from sage.categories.all import *
++    from sage.sets.all import *
++    from sage.probability.all import *
++    from sage.interfaces.all import *
+
+-from sage.functions.all import *
+-from sage.calculus.all import *
++    from sage.functions.all import *
++    from sage.calculus.all import *
+
+-from sage.cpython.all import *
++    from sage.cpython.all import *
+
+-from sage.crypto.all import *
+-from sage.crypto import mq
++    from sage.crypto.all import *
++    from sage.crypto import mq
+
+-from sage.plot.all import *
+-from sage.plot.plot3d.all import *
++    from sage.plot.all import *
++    from sage.plot.plot3d.all import *
+
+-from sage.coding.all import *
+-from sage.combinat.all import *
++    from sage.coding.all import *
++    from sage.combinat.all import *
+
+-from sage.lfunctions.all import *
++    from sage.lfunctions.all import *
+
+-from sage.geometry.all import *
+-from sage.geometry.triangulation.all import *
+-from sage.geometry.riemannian_manifolds.all import *
++    from sage.geometry.all import *
++    from sage.geometry.triangulation.all import *
++    from sage.geometry.riemannian_manifolds.all import *
+
+-from sage.dynamics.all import *
++    from sage.dynamics.all import *
+
+-from sage.homology.all import *
++    from sage.homology.all import *
+
+-from sage.topology.all import *
++    from sage.topology.all import *
+
+-from sage.quadratic_forms.all import *
++    from sage.quadratic_forms.all import *
+
+-from sage.games.all import *
++    from sage.games.all import *
+
+-from sage.logic.all import *
++    from sage.logic.all import *
+
+-from sage.numerical.all import *
++    from sage.numerical.all import *
+
+-from sage.stats.all import *
+-import sage.stats.all as stats
++    from sage.stats.all import *
++    import sage.stats.all as stats
+
+-from sage.parallel.all import *
++    from sage.parallel.all import *
+
+ from sage.ext.fast_callable import fast_callable
+ from sage.ext.fast_eval import fast_float
+
+-from sage.sandpiles.all import *
++if sys.platform != 'wasi':
++    from sage.sandpiles.all import *
+
+-from sage.tensor.all import *
++    from sage.tensor.all import *
+
+-from sage.matroids.all import *
++    from sage.matroids.all import *
+
+-from sage.game_theory.all import *
++    from sage.game_theory.all import *
+
+-from sage.knots.all import *
++    from sage.knots.all import *
+
+-from sage.manifolds.all import *
++    from sage.manifolds.all import *
+
+ if sys.platform != 'win32':
+     from cysignals.alarm import alarm, cancel_alarm
+@@ -360,24 +368,25 @@
+ copyright = license
+
+ from sage.misc.persist import register_unpickle_override
+-register_unpickle_override('sage.categories.category', 'Sets', Sets)
+-register_unpickle_override('sage.categories.category_types', 'HeckeModules',
+-                           HeckeModules)
+-register_unpickle_override('sage.categories.category_types', 'Objects',
+-                           Objects)
+-register_unpickle_override('sage.categories.category_types', 'Rings',
+-                           Rings)
+-register_unpickle_override('sage.categories.category_types', 'Fields',
+-                           Fields)
+-register_unpickle_override('sage.categories.category_types', 'VectorSpaces',
+-                           VectorSpaces)
+-register_unpickle_override('sage.categories.category_types',
+-                           'Schemes_over_base',
+-                           sage.categories.schemes.Schemes_over_base)
+-register_unpickle_override('sage.categories.category_types',
+-                           'ModularAbelianVarieties',
+-                           ModularAbelianVarieties)
+-register_unpickle_override('sage.libs.pari.gen_py', 'pari', pari)
++if sys.platform != 'wasi':
++    register_unpickle_override('sage.categories.category', 'Sets', Sets)
++    register_unpickle_override('sage.categories.category_types', 'HeckeModules',
++                               HeckeModules)
++    register_unpickle_override('sage.categories.category_types', 'Objects',
++                               Objects)
++    register_unpickle_override('sage.categories.category_types', 'Rings',
++                               Rings)
++    register_unpickle_override('sage.categories.category_types', 'Fields',
++                               Fields)
++    register_unpickle_override('sage.categories.category_types', 'VectorSpaces',
++                               VectorSpaces)
++    register_unpickle_override('sage.categories.category_types',
++                               'Schemes_over_base',
++                               sage.categories.schemes.Schemes_over_base)
++    register_unpickle_override('sage.categories.category_types',
++                               'ModularAbelianVarieties',
++                               ModularAbelianVarieties)
++    register_unpickle_override('sage.libs.pari.gen_py', 'pari', pari)
+
+ # Cache the contents of star imports.
+ sage.misc.lazy_import.save_cache_file()
+--- a/src/sage/all.py
++++ b/src/sage/all.py
+@@ -325,2 +325,2 @@
+-if sys.platform != 'win32':
++if sys.platform not in ('win32', 'wasi'):
+     from cysignals.alarm import alarm, cancel_alarm
+--- a/src/sage/all.py
++++ b/src/sage/all.py
+@@ -352,3 +352,6 @@
+ false = False
+ oo = infinity
+-from sage.rings.imaginary_unit import I
++if sys.platform == 'wasi':
++    lazy_import('sage.rings.imaginary_unit', 'I')
++else:
++    from sage.rings.imaginary_unit import I
+ i = I
+--- a/src/sage/rings/all.py
++++ b/src/sage/rings/all.py
+@@ -130,22 +130,23 @@
+                        number_field_elements_from_algebraics)
+
+ # Intervals
+-from sage.rings.real_mpfi import (RealIntervalField,
+-                       RIF,
+-                       RealInterval)
++lazy_import('sage.rings.real_mpfi',
++            ['RealIntervalField', 'RIF', 'RealInterval'])
+
+ # Complex numbers
+-from sage.rings.complex_mpfr import ComplexField
+-from sage.rings.complex_mpfr import create_ComplexNumber as ComplexNumber
++lazy_import('sage.rings.complex_mpfr', ['ComplexField', 'create_ComplexNumber'],
++            as_=['ComplexField', 'ComplexNumber'])
+ Complexes = ComplexField
+-from sage.rings.complex_interval_field import ComplexIntervalField
+-from sage.rings.complex_interval import (create_ComplexIntervalFieldElement as ComplexIntervalFieldElement)
++lazy_import('sage.rings.complex_interval_field', 'ComplexIntervalField')
++lazy_import('sage.rings.complex_interval', 'create_ComplexIntervalFieldElement',
++            as_='ComplexIntervalFieldElement')
+
+-from sage.rings.complex_double import ComplexDoubleField, ComplexDoubleElement, CDF
++lazy_import('sage.rings.complex_double',
++            ['ComplexDoubleField', 'ComplexDoubleElement', 'CDF'])
+
+-from sage.rings.complex_mpc import MPComplexField
++lazy_import('sage.rings.complex_mpc', 'MPComplexField')
+
+-from sage.rings.complex_arb import ComplexBallField, CBF
++lazy_import('sage.rings.complex_arb', ['ComplexBallField', 'CBF'])
+
+ lazy_import("sage.rings.imaginary_unit", "I")
+
+@@ -186,12 +187,20 @@
+ # c-finite sequences
+ from sage.rings.cfinite_sequence import CFiniteSequence, CFiniteSequences
+
+-from sage.rings.bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
++if sys.platform == 'wasi':
++    lazy_import('sage.rings.bernoulli_mod_p',
++                ['bernoulli_mod_p', 'bernoulli_mod_p_single'])
++else:
++    from sage.rings.bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
+
+ from sage.rings.monomials import monomials
+
+-from sage.rings.cc import CC
+-from sage.rings.cif import CIF
++if sys.platform == 'wasi':
++    lazy_import('sage.rings.cc', 'CC')
++    lazy_import('sage.rings.cif', 'CIF')
++else:
++    from sage.rings.cc import CC
++    from sage.rings.cif import CIF
+
+ # invariant theory
+ from sage.rings.invariants.all import *

@@ -31,7 +31,8 @@
   "dependencies": {
     "@cowasm/cypari2": "workspace:*",
     "@cowasm/cysignals": "workspace:*",
-    "@cowasm/memory-allocator": "workspace:*"
+    "@cowasm/memory-allocator": "workspace:*",
+    "@cowasm/primecountpy": "workspace:*"
   },
   "devDependencies": {
     "@cowasm/boost-cropped": "workspace:*",
