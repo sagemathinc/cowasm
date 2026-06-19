@@ -67,7 +67,7 @@ audit_wasm_side_modules() {
   : >"$audit_log"
   while IFS= read -r side_module; do
     if ! "$bin_dir/wasi-sdk-llvm-objdump-next" -h "$side_module" |
-        grep -Eq '^[[:space:]]*[0-9]+[[:space:]]+dylink\.0[[:space:]]'; then
+        awk '$2 == "dylink.0" { found = 1 } END { exit found ? 0 : 1 }'; then
       printf '%s: missing dylink.0 section\n' "$side_module" >>"$audit_log"
     fi
     case "$pyinit_mode" in
@@ -87,11 +87,11 @@ audit_wasm_side_modules() {
     esac
     if [ "$require_pyinit" -eq 1 ] &&
         ! "$bin_dir/wasi-sdk-llvm-nm-next" --defined-only "$side_module" |
-          grep -Eq '[[:space:]]T[[:space:]]PyInit_'; then
+          awk '$2 == "T" && $3 ~ /^PyInit_/ { found = 1 } END { exit found ? 0 : 1 }'; then
       printf '%s: missing PyInit_* export\n' "$side_module" >>"$audit_log"
     fi
     if "$bin_dir/wasi-sdk-llvm-strings-next" "$side_module" |
-        grep -Fq 'needed_dynlibs'; then
+        awk '$0 == "needed_dynlibs" { found = 1 } END { exit found ? 0 : 1 }'; then
       printf '%s: records needed_dynlibs\n' "$side_module" >>"$audit_log"
     fi
   done <"$module_list"
@@ -115,7 +115,7 @@ def read_uleb(data, offset):
 
 def read_name(data, offset):
     size, offset = read_uleb(data, offset)
-    return offset + size
+    return data[offset:offset + size].decode(), offset + size
 
 
 def imports_memory(path):
@@ -135,8 +135,8 @@ def imports_memory(path):
 
         import_count, offset = read_uleb(data, offset)
         for _ in range(import_count):
-            offset = read_name(data, offset)
-            offset = read_name(data, offset)
+            _, offset = read_name(data, offset)
+            _, offset = read_name(data, offset)
             kind = data[offset]
             offset += 1
             if kind == 0:  # function
@@ -150,7 +150,7 @@ def imports_memory(path):
             elif kind == 2:  # memory
                 return True
             elif kind == 3:  # global
-                offset += 1
+                offset += 2
             else:
                 return False
         return False
@@ -574,6 +574,119 @@ from sage.rings.rational_field import QQ
 print('sagelite-node-followup-start initialized FLINT integer polynomial side-module import')
 import sage.rings.polynomial.polynomial_integer_dense_flint
 print('sagelite-node-followup-ok initialized FLINT integer polynomial side-module import')"
+
+python3 - \
+  "$followups_file" \
+  "$node_followups_log" \
+  "$installed_site_packages/sage/rings/polynomial/polynomial_integer_dense_flint.cpython-314-wasm32-wasi.so" \
+  "$installed_site_packages/sage/rings/polynomial/polynomial_rational_flint.cpython-314-wasm32-wasi.so" \
+  "$installed_site_packages/sage/rings/polynomial/polynomial_zmod_flint.cpython-314-wasm32-wasi.so" <<'PY'
+import sys
+from pathlib import Path
+
+
+followups_file = Path(sys.argv[1])
+node_followups_log = Path(sys.argv[2])
+modules = [Path(path) for path in sys.argv[3:]]
+cxx_prefixes = (
+    "_ZNSt",
+    "_ZNKSt",
+    "_ZSt",
+    "_ZTINSt",
+    "_ZTSNSt",
+    "_ZTVNSt",
+    "_ZdlPvm",
+    "_ZnwmRKSt",
+    "_Znam",
+    "_Zda",
+)
+
+
+def read_uleb(data, offset):
+    result = 0
+    shift = 0
+    while True:
+        byte = data[offset]
+        offset += 1
+        result |= (byte & 0x7F) << shift
+        if byte & 0x80 == 0:
+            return result, offset
+        shift += 7
+
+
+def read_name(data, offset):
+    size, offset = read_uleb(data, offset)
+    return data[offset:offset + size].decode(), offset + size
+
+
+def imported_symbols(path):
+    data = path.read_bytes()
+    if data[:4] != b"\0asm":
+        return []
+    offset = 8
+    while offset < len(data):
+        section_id = data[offset]
+        offset += 1
+        section_size, offset = read_uleb(data, offset)
+        section_end = offset + section_size
+        if section_id != 2:
+            offset = section_end
+            continue
+        symbols = []
+        import_count, offset = read_uleb(data, offset)
+        for _ in range(import_count):
+            _, offset = read_name(data, offset)
+            name, offset = read_name(data, offset)
+            kind = data[offset]
+            offset += 1
+            symbols.append(name)
+            if kind == 0:
+                _, offset = read_uleb(data, offset)
+            elif kind == 1:
+                offset += 1
+                flags, offset = read_uleb(data, offset)
+                _, offset = read_uleb(data, offset)
+                if flags & 1:
+                    _, offset = read_uleb(data, offset)
+            elif kind == 2:
+                flags, offset = read_uleb(data, offset)
+                _, offset = read_uleb(data, offset)
+                if flags & 1:
+                    _, offset = read_uleb(data, offset)
+            elif kind == 3:
+                offset += 2
+            else:
+                break
+        return symbols
+    return []
+
+
+leaks = {}
+for module in modules:
+    if not module.exists():
+        continue
+    symbols = sorted(
+        symbol
+        for symbol in imported_symbols(module)
+        if symbol.startswith(cxx_prefixes)
+    )
+    if symbols:
+        leaks[module.name] = symbols
+
+if leaks:
+    with node_followups_log.open("a") as log:
+        print("## FLINT polynomial unresolved C++ runtime imports", file=log)
+        for module, symbols in leaks.items():
+            preview = ", ".join(symbols[:16])
+            suffix = "" if len(symbols) <= 16 else f", ... ({len(symbols)} total)"
+            print(f"{module}: {preview}{suffix}", file=log)
+    with followups_file.open("a") as followups:
+        print(
+            f"sagelite-followup: FLINT polynomial side-module imports include "
+            f"WASI C++ runtime symbols; see {node_followups_log}.",
+            file=followups,
+        )
+PY
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
