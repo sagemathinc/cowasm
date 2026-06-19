@@ -81,12 +81,16 @@ would search for next to every extension.
 
 The current first Node.js runtime blocker is still `import sage.all`, but the
 startup path now gets past the eager number-field import, the p-adic
-`cypari2.gen` import, the Cython `Gen_base`/`Gen` type-size checks, and the old
-`STUB: ffi_call` exit. It also gets past the former
-`sage.rings.padics.common_conversion` clean-exit path. The next blocker is a
-clean process exit after verbose import tracing loads
-`sage.rings.complex_mpfr`, while initializing non-exact numeric rings during
-`sage.all` startup. The exact blocker is recorded in
+`cypari2.gen` import, the Cython `Gen_base`/`Gen` type-size checks, the old
+`STUB: ffi_call` exit, the former
+`sage.rings.padics.common_conversion` clean-exit path, the eager
+`sage.rings.complex_mpfr` startup exit, and the eager NTL-backed
+`sage.rings.bernoulli_mod_p` startup exit. The `sage.modules` Cython extension
+targets also build on WASI now that their optional `gd` dependency no longer
+disables the whole module-extension set, so `sage.modules.free_module_element`
+is installed as a side module instead of only as `.pyx` source. The next blocker
+is a normal Python `ModuleNotFoundError` for `sage.symbolic.expression` during
+`sage.symbolic.ring` import from `sage.all`. The exact blocker is recorded in
 `dist/wasi-sdk/status.txt`, with the import trace in
 `dist/wasi-sdk/node-import.log`.
 

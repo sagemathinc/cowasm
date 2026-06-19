@@ -357,6 +357,31 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +            return
 +
          import ctypes
+@@ -324,7 +328,8 @@
+ lazy_import('sage.interacts', 'all', 'interacts')
+ 
+ # The code executed here uses a large amount of Sage components
+-from sage.rings.qqbar import _init_qqbar
+-_init_qqbar()
++if sys.platform != 'wasi':
++    from sage.rings.qqbar import _init_qqbar
++    _init_qqbar()
+ 
+ ###########################################################
+@@ -339,8 +343,11 @@
+ ###########################################################
+ 
+-CC = ComplexField()
++if sys.platform == 'wasi':
++    lazy_import('sage.rings.cc', 'CC')
++else:
++    CC = ComplexField()
+ QQ = RationalField()
+-RR = RealField()  # default real field
++lazy_import('sage.rings.real_mpfr', 'RR')
+ ZZ = IntegerRing()
+ 
+ true = True
 diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 --- a/src/sage/rings/all.py
 +++ b/src/sage/rings/all.py
@@ -492,6 +517,37 @@ diff -urN a/src/sage/matrix/meson.build b/src/sage/matrix/meson.build
 
 
  py.install_sources(
+diff -urN a/src/sage/modules/meson.build b/src/sage/modules/meson.build
+--- a/src/sage/modules/meson.build
++++ b/src/sage/modules/meson.build
+@@ -63,6 +63,11 @@
+   subdir: 'sage/modules',
+ )
+ 
++modules_extension_dependencies = [py_dep, cysignals, gmp, m4ri, png, numpy]
++if not is_wasi
++  modules_extension_dependencies += gd
++endif
++
+ extension_data = {
+   'finite_submodule_iter': files('finite_submodule_iter.pyx'),
+   'free_module_element': files('free_module_element.pyx'),
+@@ -91,6 +96,6 @@
+     install: true,
+     include_directories: [inc_cpython, inc_ext, inc_rings, inc_rings_finite],
+-    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png, numpy],
++    dependencies: modules_extension_dependencies,
+   )
+ endforeach
+ 
+@@ -113,6 +118,6 @@
+     override_options: ['cython_language=cpp'],
+     include_directories: [inc_cpython, inc_ext, inc_rings, inc_rings_finite],
+-    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png, numpy],
++    dependencies: modules_extension_dependencies,
+   )
+ endforeach
+ 
 diff -urN a/src/sage/meson.build b/src/sage/meson.build
 --- a/src/sage/meson.build
 +++ b/src/sage/meson.build
@@ -546,6 +602,106 @@ diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 +else:
 +    from sage.rings.padics.all import *
 +    from sage.rings.padics.padic_printing import _printer_defaults as padic_printing
+diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
+--- a/src/sage/rings/all.py
++++ b/src/sage/rings/all.py
+@@ -73,13 +73,19 @@
+ # Real numbers
+-from sage.rings.real_mpfr import (RealField, RR,
+-                       create_RealNumber as RealNumber)   # this is used by the preparser to wrap real literals -- very important.
++if sys.platform == 'wasi':
++    lazy_import('sage.rings.real_mpfr', ['RealField', 'RR', 'create_RealNumber'],
++                as_=['RealField', 'RR', 'RealNumber'])
++else:
++    from sage.rings.real_mpfr import (RealField, RR,
++                           create_RealNumber as RealNumber)   # this is used by the preparser to wrap real literals -- very important.
+ Reals = RealField
+ 
+-from sage.rings.real_double import RealDoubleField, RDF, RealDoubleElement
++lazy_import('sage.rings.real_double',
++            ['RealDoubleField', 'RDF', 'RealDoubleElement'])
+ 
+-from sage.rings.real_lazy import RealLazyField, RLF, ComplexLazyField, CLF
++lazy_import('sage.rings.real_lazy',
++            ['RealLazyField', 'RLF', 'ComplexLazyField', 'CLF'])
+ 
+-from sage.rings.real_arb import RealBallField, RBF
++lazy_import('sage.rings.real_arb', ['RealBallField', 'RBF'])
+ 
+ # Polynomial Rings and Polynomial Quotient Rings
+ from sage.rings.polynomial.all import *
+@@ -88,8 +94,15 @@
+ 
+ # Algebraic numbers
+-from sage.rings.qqbar import (AlgebraicRealField, AA,
+-                   AlgebraicReal,
+-                   AlgebraicField, QQbar,
+-                   AlgebraicNumber,
+-                   number_field_elements_from_algebraics)
+-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField, E
++if sys.platform == 'wasi':
++    lazy_import('sage.rings.qqbar',
++                ['AlgebraicRealField', 'AA', 'AlgebraicReal',
++                 'AlgebraicField', 'QQbar', 'AlgebraicNumber',
++                 'number_field_elements_from_algebraics'])
++    lazy_import('sage.rings.universal_cyclotomic_field',
++                ['UniversalCyclotomicField', 'E'])
++else:
++    from sage.rings.qqbar import (AlgebraicRealField, AA,
++                       AlgebraicReal,
++                       AlgebraicField, QQbar,
++                       AlgebraicNumber,
++                       number_field_elements_from_algebraics)
++    from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField, E
+@@ -96,19 +108,20 @@
+ # Intervals
+-from sage.rings.real_mpfi import (RealIntervalField,
+-                       RIF,
+-                       RealInterval)
++lazy_import('sage.rings.real_mpfi',
++            ['RealIntervalField', 'RIF', 'RealInterval'])
+ 
+ # Complex numbers
+-from sage.rings.complex_mpfr import ComplexField
+-from sage.rings.complex_mpfr import create_ComplexNumber as ComplexNumber
++lazy_import('sage.rings.complex_mpfr', ['ComplexField', 'create_ComplexNumber'],
++            as_=['ComplexField', 'ComplexNumber'])
+ Complexes = ComplexField
+-from sage.rings.complex_interval_field import ComplexIntervalField
+-from sage.rings.complex_interval import (create_ComplexIntervalFieldElement as ComplexIntervalFieldElement)
++lazy_import('sage.rings.complex_interval_field', 'ComplexIntervalField')
++lazy_import('sage.rings.complex_interval', 'create_ComplexIntervalFieldElement',
++            as_='ComplexIntervalFieldElement')
+ 
+-from sage.rings.complex_double import ComplexDoubleField, ComplexDoubleElement, CDF
++lazy_import('sage.rings.complex_double',
++            ['ComplexDoubleField', 'ComplexDoubleElement', 'CDF'])
+ 
+-from sage.rings.complex_mpc import MPComplexField
++lazy_import('sage.rings.complex_mpc', 'MPComplexField')
+ 
+-from sage.rings.complex_arb import ComplexBallField, CBF
++lazy_import('sage.rings.complex_arb', ['ComplexBallField', 'CBF'])
+ 
+ lazy_import("sage.rings.imaginary_unit", "I")
+@@ -153,5 +165,10 @@
+-from sage.rings.bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
++if sys.platform == 'wasi':
++    lazy_import('sage.rings.bernoulli_mod_p',
++                ['bernoulli_mod_p', 'bernoulli_mod_p_single'])
++else:
++    from sage.rings.bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
+ 
+ from sage.rings.monomials import monomials
+ 
+-from sage.rings.cc import CC
+-from sage.rings.cif import CIF
++if sys.platform == 'wasi':
++    lazy_import('sage.rings.cc', 'CC')
++    lazy_import('sage.rings.cif', 'CIF')
++else:
++    from sage.rings.cc import CC
++    from sage.rings.cif import CIF
 diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/rings/polynomial/polynomial_ring_constructor.py
 --- a/src/sage/rings/polynomial/polynomial_ring_constructor.py
 +++ b/src/sage/rings/polynomial/polynomial_ring_constructor.py
