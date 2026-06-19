@@ -48,6 +48,8 @@ Current CoWasm state:
 - Python 3.14.6 is the active Python target and is within Sagelite's supported
   version range.
 - `python/py-cython` exists.
+- `python/py-platformdirs` exists and is wired into the Sagelite Node.js import
+  ladder for `sage.env`.
 - WASI side-module extension import infrastructure exists.
 - Sage-style Cython extension smokes already exist for:
   - `sagemath/cysignals`

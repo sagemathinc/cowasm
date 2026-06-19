@@ -1,0 +1,29 @@
+{
+  "name": "@cowasm/py-platformdirs",
+  "version": "1.0.0",
+  "description": "WebAssembly build of the platformdirs Python library",
+  "main": "index.js",
+  "files": ["dist/wasm/**", "README.md", "package.json", "index.js"],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "make wasm",
+    "clean": "make clean",
+    "prepublishOnly": "pnpm run build && make test",
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sagemathinc/cowasm.git"
+  },
+  "keywords": ["WebAssembly", "wasm", "platformdirs"],
+  "author": "William Stein <wstein@sagemath.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sagemathinc/cowasm/issues"
+  },
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/python/py-platformdirs",
+  "devDependencies": {
+    "@cowasm/cpython": "workspace:*",
+    "@cowasm/kernel": "workspace:*"
+  }
+}

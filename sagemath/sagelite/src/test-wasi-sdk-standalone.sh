@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 15 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA PYTHON_WASM CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK CYPARI2_WASI_SDK" >&2
+if [ "$#" -ne 16 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA PY_PLATFORMDIRS PYTHON_WASM CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK CYPARI2_WASI_SDK" >&2
   exit 2
 fi
 
@@ -16,11 +16,12 @@ py_gmpy2="$(cd "$7" && pwd)"
 py_jinja2="$(cd "$8" && pwd)"
 py_meson="$(cd "$9" && pwd)"
 py_ninja="$(cd "${10}" && pwd)"
-python_wasm="$(cd "${11}" && pwd)"
-cysignals_wasi_sdk="$(cd "${12}" && pwd)"
-memory_allocator_wasi_sdk="$(cd "${13}" && pwd)"
-posix_wasi_sdk="$(cd "${14}" && pwd)"
-cypari2_wasi_sdk="$(cd "${15}" && pwd)"
+py_platformdirs="$(cd "${11}" && pwd)"
+python_wasm="$(cd "${12}" && pwd)"
+cysignals_wasi_sdk="$(cd "${13}" && pwd)"
+memory_allocator_wasi_sdk="$(cd "${14}" && pwd)"
+posix_wasi_sdk="$(cd "${15}" && pwd)"
+cypari2_wasi_sdk="$(cd "${16}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -109,6 +110,7 @@ pythonpath_parts=(
   "$cysignals_wasi_sdk"
   "$memory_allocator_wasi_sdk"
   "$py_jinja2"
+  "$py_platformdirs"
   "$py_gmpy2"
   "$py_numpy"
   "$py_cython"

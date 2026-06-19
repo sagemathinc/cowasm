@@ -23,8 +23,10 @@ use build isolation and does not run `pip install sagelite`.
 
 The package boundary now exists, includes package-local host Meson and Ninja
 drivers, uses a package-local `pkg-config` shim for WASI `.pc` discovery, wires
-in the `cypari2` build-support include surface, and records the first configure,
-compile, install, or Node.js import blocker in `dist/wasi-sdk/status.txt`.
+in the `cypari2` build-support include surface, includes the pure Python
+`platformdirs` runtime package needed by `sage.env`, and records the first
+configure, compile, install, or Node.js import blocker in
+`dist/wasi-sdk/status.txt`.
 
 The current `cypari2` package is build-support only: it provides the package
 marker and Cython declarations needed by Sagelite's configure/Cython phases,
@@ -39,12 +41,12 @@ and globally exposes the CoWasm Boost, GSL, MPFR, MPFI, and NTL include surfaces
 for Sagelite extension targets that do not inherit all required Meson
 dependencies.
 
-With the matching LinBox `BlockHankel` accessor patch applied, the standalone
-probe gets through Meson configure, compile, and install.  It now also runs a
-Node.js `python-wasm` import ladder against the installed Sage package tree.
-The first plain `import sage` succeeds, and the current runtime blocker is
-`import sage.env`, which fails because `platformdirs` is not packaged yet for
-the CoWasm Python runtime.  The probe records the traceback in
+With the matching LinBox `BlockHankel` accessor patch applied and
+`platformdirs` available on the runtime `PYTHONPATH`, the standalone probe gets
+through Meson configure, compile, install, and the Node.js `python-wasm` import
+ladder against the installed Sage package tree.  The current ladder imports
+`sage`, imports `sage.env`, imports `sage.structure.element`, and runs a basic
+`ZZ` integer arithmetic smoke.  Future blockers will still be recorded in
 `dist/wasi-sdk/node-import.log`.
 
 The dependency archives that Sagelite links into CPython side modules are now

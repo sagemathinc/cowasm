@@ -838,6 +838,15 @@ importers:
         specifier: workspace:*
         version: link:../py-setuptools
 
+  python/py-platformdirs:
+    devDependencies:
+      '@cowasm/cpython':
+        specifier: workspace:*
+        version: link:../cpython
+      '@cowasm/kernel':
+        specifier: workspace:*
+        version: link:../../core/kernel
+
   python/py-pyparsing:
     devDependencies:
       '@cowasm/cpython':
@@ -1632,6 +1641,9 @@ importers:
       '@cowasm/py-numpy':
         specifier: workspace:*
         version: link:../../python/py-numpy
+      '@cowasm/py-platformdirs':
+        specifier: workspace:*
+        version: link:../../python/py-platformdirs
 
   sagemath/sirocco:
     dependencies:
