@@ -13,6 +13,7 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
+    "test:sagelite": "make test-sagelite",
     "tsc": "pnpm exec tsc --watch",
     "webpack": "pnpm exec webpack --watch"
   },

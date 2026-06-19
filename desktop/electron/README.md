@@ -34,3 +34,16 @@ pnpm webpack
 pnpm start
 ```
 
+## Sagelite Smoke
+
+After the Sagelite WASI package has been built, the Electron package can rerun
+the Sagelite relative-resource smoke through its own `python-wasm` dependency:
+
+```sh
+pnpm test:sagelite
+```
+
+This does not launch the Electron UI. It uses the staged resources from
+`sagemath/sagelite/dist/wasi-sdk/electron-resources` and verifies that
+`sage.all` exact arithmetic and dense matrix operations work with relative
+`PYTHONPATH` entries, matching the shape of packaged Electron assets.
