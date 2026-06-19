@@ -48,7 +48,9 @@ This does not launch the Electron UI. It uses the staged resources from
 `sagelite-electron-resources.json` manifest, and verifies that `sage.all` exact
 arithmetic and dense matrix operations work with relative `PYTHONPATH` entries.
 The manifest also lists resource files that must be present for the current
-smoke path, so incomplete resource copies fail before the worker starts. The
+smoke path, so incomplete resource copies fail before the worker starts.
+Manifest paths must be root-local POSIX-style relative paths, which keeps the
+resource layout portable across Linux, macOS, and Windows Electron hosts. The
 Sagelite package target also reruns the same smoke from a relocated copy of the
 resources tree so absolute build-output paths do not silently become packaging
 requirements.

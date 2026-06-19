@@ -60,8 +60,16 @@ function validateRelativeEntries(manifestPath, fieldName, entries) {
     if (typeof entry !== "string" || entry.length === 0) {
       throw new Error(`${manifestPath} contains an invalid ${fieldName} entry`);
     }
-    if (path.isAbsolute(entry) || entry.includes(":")) {
-      throw new Error(`${manifestPath} ${fieldName} entries must be relative`);
+    const parts = entry.split("/");
+    if (
+      path.isAbsolute(entry) ||
+      entry.includes(":") ||
+      entry.includes("\\") ||
+      parts.some((part) => part === "" || part === "." || part === "..")
+    ) {
+      throw new Error(
+        `${manifestPath} ${fieldName} entries must be root-local POSIX relative paths`,
+      );
     }
   }
 }

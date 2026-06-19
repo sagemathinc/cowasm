@@ -107,6 +107,8 @@ Python dependencies into that directory, writes a
 and required resource paths, and reruns the exact arithmetic and matrix smoke
 through the checked-in `src/sagelite-electron-smoke.cjs` async `python-wasm`
 worker API. The Electron smoke validates the manifest before launching Python,
+including root-local POSIX-style relative paths so the staged resources cannot
+escape their bundle root or depend on host-specific path separators, and
 then checks integer extended-gcd, integer ideal, modular integer ring, and prime
 finite-field coverage in addition to the core integer, rational, polynomial,
 factorization, `prime_pi`, and dense matrix checks. It then reruns the same
