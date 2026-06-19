@@ -39,7 +39,7 @@ env \
   CC="$bin_dir/cowasm-cc" \
   CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS:-}" \
   CPPFLAGS="-I$gmp_dir/include -I$mpfr_dir/include" \
-  CFLAGS="-Oz -include $src_dir/cowasm_fenv_compat.h" \
+  CFLAGS="-Oz -fPIC -include $src_dir/cowasm_fenv_compat.h" \
   LDFLAGS="-L$gmp_dir/lib -L$mpfr_dir/lib ${standalone_ldlibs[*]}" \
   COWASM_TOOLCHAIN=wasi-sdk \
     ./configure \
@@ -94,3 +94,20 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/flint-test" |
   grep "flint-ok rational=1/2 bernoulli=-691/2730 factors=2 integer-factor=360 arith=partitions,harmonic,bell,stirling,euler,squares,crt,powmod poly-gcd=x-2 poly-xgcd=bezout poly-transform=resultant,discriminant,compose finite-field-factors=2 fmpz-mod-factors=2 fq=gf9,trace,norm,frobenius,order mpoly=zmod7 q-poly-derivative=5/2x^2-3 q-poly-series=exp,inv,revert q-mpoly=Qxy z-mpoly=gcd,division,derivative,evaluation,factor matrix-det=22 mod-solve=1,2,3 normal-forms=hnf,snf rational-matrix=det,inv arb-hypgeom=gamma,erf,bessel arb-special=zeta,lambertw acb=exp-log,sin-i arb-poly=value,derivative,integral ball-poly=16 roots=+i,-i qqbar=sqrt2,i calcium=sqrt2"
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
+  -shared \
+  -fPIC \
+  "$probe_dir/flint-wasi-stubs.o" \
+  -I"$dist_dir/include" \
+  -I"$mpfr_dir/include" \
+  -I"$gmp_dir/include" \
+  -L"$dist_dir/lib" \
+  -L"$mpfr_dir/lib" \
+  -L"$gmp_dir/lib" \
+  -lflint \
+  -lmpfr \
+  -lgmp \
+  -lm \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/flint-side.so"

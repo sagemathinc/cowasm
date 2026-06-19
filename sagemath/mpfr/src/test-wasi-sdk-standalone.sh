@@ -33,7 +33,7 @@ env \
   CC="$bin_dir/cowasm-cc" \
   CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS:-}" \
   CPPFLAGS="-I$gmp_dir/include" \
-  CFLAGS="-Oz -fvisibility-main" \
+  CFLAGS="-Oz -fPIC -fvisibility-main" \
   LDFLAGS="-L$gmp_dir/lib ${standalone_ldlibs[*]}" \
   COWASM_TOOLCHAIN=wasi-sdk \
     ./configure \
@@ -62,3 +62,31 @@ env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
 
 cowasm_clang_standalone_run_wasi "$bin_dir" "$probe_dir/mpfr-test" |
   grep -F "mpfr-ok pi exp log sqrt exact-div directed-rounding flags mpz special-functions nextafter fma rootn hypot trig special-values"
+
+cat >"$probe_dir/mpfr-side.c" <<'EOF'
+#include <mpfr.h>
+
+__attribute__((visibility("default")))
+int mpfr_side_smoke(void) {
+  mpfr_t x;
+  mpfr_init2(x, 128);
+  mpfr_const_pi(x, MPFR_RNDN);
+  int ok = mpfr_cmp_ui(x, 3) > 0;
+  mpfr_clear(x);
+  return ok;
+}
+EOF
+
+env COWASM_TOOLCHAIN=wasi-sdk "$bin_dir/cowasm-cc" \
+  -shared \
+  -fPIC \
+  "$probe_dir/mpfr-side.c" \
+  -I"$dist_dir/include" \
+  -I"$gmp_dir/include" \
+  -L"$dist_dir/lib" \
+  -L"$gmp_dir/lib" \
+  -lmpfr \
+  -lgmp \
+  -lm \
+  "${standalone_ldlibs[@]}" \
+  -o "$probe_dir/mpfr-side.so"

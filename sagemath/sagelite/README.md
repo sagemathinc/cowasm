@@ -42,7 +42,8 @@ dependencies.
 With the matching LinBox `BlockHankel` accessor patch applied, the standalone
 probe gets through Meson configure, clears the earlier CPython mimalloc,
 LinBox, fenv, Boost graph, GSL CBLAS, MPFR, signal, link group, NTL, MPFI,
-M4RI, M4RIE, and GMP link-path blockers, and now compiles into the FLINT
-extension link set.  The latest validated run stops at `943/1390`; the next
-blocker is linking Sagelite side modules against `libflint.a` objects that were
-not built as position-independent WASM code.
+M4RI, M4RIE, GMP link-path, FLINT PIC, and MPFR PIC blockers, and now compiles
+into the later side-module link set.  The latest validated run stops at
+`958/1390`; the next blockers are linking Sagelite side modules against
+`libntl.a` and `libgslcblas.a` objects that were not built as
+position-independent WASM code.
