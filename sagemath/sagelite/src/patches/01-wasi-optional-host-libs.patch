@@ -1006,6 +1006,13 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
      from cysignals.alarm import alarm, cancel_alarm
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
+@@ -375,2 +375,3 @@
+ # Cache the contents of star imports.
+-sage.misc.lazy_import.save_cache_file()
++if sys.platform != 'wasi':
++    sage.misc.lazy_import.save_cache_file()
+--- a/src/sage/all.py
++++ b/src/sage/all.py
 @@ -352,3 +352,6 @@
  false = False
  oo = infinity

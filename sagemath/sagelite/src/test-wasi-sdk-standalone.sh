@@ -341,4 +341,113 @@ assert B.det() == QQ(-1)
 assert B.inverse() * B == matrix(QQ, [[1, 0], [0, 1]])
 print('sagelite-node-ok linear algebra smoke')"
 
-echo "sagelite-ok meson configure compile install node import" | tee "$status_file"
+electron_resources_dir="$dist_dir/electron-resources"
+electron_bundle_log="$dist_dir/electron-bundle.log"
+rm -rf "$electron_resources_dir"
+mkdir -p "$electron_resources_dir/deps"
+
+stage_runtime_tree() {
+  local src="$1"
+  local dst="$2"
+  mkdir -p "$dst"
+  if ! cp -al "$src/." "$dst/" 2>/dev/null; then
+    rm -rf "$dst"
+    mkdir -p "$dst"
+    cp -a "$src/." "$dst/"
+  fi
+}
+
+stage_runtime_tree "$installed_site_packages" "$electron_resources_dir/site-packages"
+
+runtime_dep_labels=(
+  cypari2
+  primecountpy
+  cysignals
+  memory_allocator
+  jinja2
+  platformdirs
+  gmpy2
+  numpy
+  cython
+)
+runtime_dep_paths=(
+  "$cypari2_wasi_sdk"
+  "$primecountpy_wasi_sdk"
+  "$cysignals_wasi_sdk"
+  "$memory_allocator_wasi_sdk"
+  "$py_jinja2"
+  "$py_platformdirs"
+  "$py_gmpy2"
+  "$py_numpy"
+  "$py_cython"
+)
+
+electron_pythonpath_parts=("site-packages")
+for i in "${!runtime_dep_labels[@]}"; do
+  stage_runtime_tree "${runtime_dep_paths[$i]}" "$electron_resources_dir/deps/${runtime_dep_labels[$i]}"
+  electron_pythonpath_parts+=("deps/${runtime_dep_labels[$i]}")
+done
+electron_pythonpath="$(IFS=:; echo "${electron_pythonpath_parts[*]}")"
+
+cat >"$electron_resources_dir/sagelite-electron-smoke.cjs" <<EOF
+const { asyncPython } = require("$python_wasm/dist/node.js");
+
+async function main() {
+  const python = await asyncPython({
+    fs: "everything",
+    noStdio: true,
+    env: { PYTHONPATH: process.env.PYTHONPATH || "" },
+  });
+  python.kernel.on("stdout", (data) => process.stdout.write(data));
+  python.kernel.on("stderr", (data) => process.stderr.write(data));
+  try {
+    await python.exec(String.raw\`
+import sage.all
+from sage.all import ZZ, QQ, PolynomialRing, factor, prime_pi
+from sage.matrix.constructor import matrix
+
+assert ZZ(2) + ZZ(3) == ZZ(5)
+assert QQ(6, 15) == QQ(2, 5)
+R = PolynomialRing(QQ, 'x')
+x = R.gen()
+assert (x + 1) * (x - 1) == x**2 - 1
+assert list(factor(2**31 - 1)) == [(ZZ(2147483647), 1)]
+assert prime_pi(10**6) == 78498
+
+A = matrix(ZZ, [[1, 2], [3, 4]])
+assert A.det() == ZZ(-2)
+assert A * A == matrix(ZZ, [[7, 10], [15, 22]])
+B = matrix(QQ, [[1, 2], [3, 5]])
+assert B.det() == QQ(-1)
+assert B.inverse() * B == matrix(QQ, [[1, 0], [0, 1]])
+\`);
+    console.log("sagelite-electron-ok relative resources smoke");
+  } finally {
+    python.terminate();
+  }
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
+EOF
+
+: >"$electron_bundle_log"
+set +e
+(
+  cd "$electron_resources_dir"
+  PYTHONPATH="$electron_pythonpath" node sagelite-electron-smoke.cjs
+) >"$electron_bundle_log" 2>&1
+electron_bundle_status=$?
+set -e
+if [ "$electron_bundle_status" -ne 0 ]; then
+  tail -120 "$electron_bundle_log" >&2
+  record_blocker "sagelite-blocked: Electron-shaped relative resources smoke failed; see $electron_bundle_log for the first runtime blocker."
+fi
+if ! grep -Fqx "sagelite-electron-ok relative resources smoke" "$electron_bundle_log"; then
+  tail -120 "$electron_bundle_log" >&2
+  record_blocker "sagelite-blocked: Electron-shaped relative resources smoke exited before its completion marker; see $electron_bundle_log for the first runtime blocker."
+fi
+
+echo "sagelite-ok meson configure compile install node import electron resources smoke" | tee "$status_file"
