@@ -19,6 +19,9 @@ from sage.all import ZZ, QQ, PolynomialRing, factor, prime_pi
 from sage.matrix.constructor import matrix
 
 assert ZZ(2) + ZZ(3) == ZZ(5)
+g, s, t = ZZ(240).xgcd(ZZ(46))
+assert g == ZZ(2)
+assert s * ZZ(240) + t * ZZ(46) == g
 assert QQ(6, 15) == QQ(2, 5)
 R = PolynomialRing(QQ, 'x')
 x = R.gen()
