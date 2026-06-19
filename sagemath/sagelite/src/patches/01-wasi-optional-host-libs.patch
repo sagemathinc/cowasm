@@ -262,6 +262,7 @@ diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
  
  planarity = dependency('libplanarity', required: false, disabler: true)
 @@ -17,7 +17,7 @@
+ if not planarity.found()
    # fallback for older versions without pkg-config
    planarity = cc.find_library(
      'planarity',
@@ -270,6 +271,56 @@ diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
      disabler: true,
    )
  endif
+diff -urN a/src/sage/libs/all.py b/src/sage/libs/all.py
+--- a/src/sage/libs/all.py
++++ b/src/sage/libs/all.py
+@@ -2,7 +2,4 @@
+-import sage.libs.ntl.all as ntl
+-
+-from sage.libs.pari.all import pari, pari_gen, PariError
+-
+-import sage.libs.symmetrica.all as symmetrica
+-
+ from sage.misc.lazy_import import lazy_import
++lazy_import('sage.libs.ntl', 'all', 'ntl')
++lazy_import('sage.libs.pari.all', ['pari', 'pari_gen', 'PariError'])
++lazy_import('sage.libs.symmetrica', 'all', 'symmetrica')
+diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -175,4 +175,5 @@
+ from collections import defaultdict
++import sys
+ from sage.structure.category_object import normalize_names, certify_names
+ from sage.rings.polynomial.polynomial_element import Polynomial
+ from sage.rings.integer import Integer
+@@ -180,12 +181,16 @@
+-try:
+-    # We don't late import this because this means trouble with the Givaro library
+-    # On a Macbook Pro OSX 10.5.8, this manifests as a Bus Error on exiting Sage.
+-    # TODO: figure out why
+-    from .finite_field_givaro import FiniteField_givaro
+-except ImportError:
++if sys.platform == 'wasi':
+     FiniteField_givaro = None
+-
+-try:
+-    from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
+-except ImportError:
+     FiniteField_ntl_gf2e = None
++else:
++    try:
++        # We don't late import this because this means trouble with the Givaro library
++        # On a Macbook Pro OSX 10.5.8, this manifests as a Bus Error on exiting Sage.
++        # TODO: figure out why
++        from .finite_field_givaro import FiniteField_givaro
++    except ImportError:
++        FiniteField_givaro = None
++
++    try:
++        from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
++    except ImportError:
++        FiniteField_ntl_gf2e = None
 diff -urN a/src/sage/modular/arithgroup/meson.build b/src/sage/modular/arithgroup/meson.build
 --- a/src/sage/modular/arithgroup/meson.build
 +++ b/src/sage/modular/arithgroup/meson.build

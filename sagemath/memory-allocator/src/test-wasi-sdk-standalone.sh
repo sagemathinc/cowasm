@@ -38,6 +38,12 @@ cp \
   "$package_src/signals.pxd" \
   "$dist_dir/memory_allocator/"
 
+cat >>"$dist_dir/memory_allocator/__init__.py" <<'PY'
+from memory_allocator.memory_allocator import MemoryAllocator
+
+__all__ = ["MemoryAllocator"]
+PY
+
 PYTHONPATH="$py_cython" python3 -m cython -3 \
   --output-file "$probe_dir/memory_allocator.c" \
   "$package_src/memory_allocator.pyx"
@@ -88,7 +94,10 @@ PYTHONPATH="$dist_dir:$py_cython" python3 -m cython -3 \
   grep ' T PyInit_test$'
 
 PYTHONPATH="$dist_dir" "$bin_dir/python-wasm" - <<'PY'
+from memory_allocator import MemoryAllocator
 from memory_allocator.test import TestMemoryAllocator
+
+assert MemoryAllocator.__name__ == "MemoryAllocator"
 
 mem = TestMemoryAllocator()
 ptr = mem.malloc(64)

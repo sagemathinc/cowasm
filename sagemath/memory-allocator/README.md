@@ -9,3 +9,6 @@ import under `python-wasm`, then exercises malloc/calloc, array allocation,
 NULL and ordinary reallocation, allocator table growth, aligned allocation, and
 the expected error paths for oversized allocations and reallocating a pointer
 owned by a different allocator.
+
+The package-level `memory_allocator` module also exports `MemoryAllocator`,
+matching Sagelite's runtime import expectation.
