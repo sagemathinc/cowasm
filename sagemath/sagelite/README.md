@@ -48,11 +48,17 @@ tree.  The Node.js `python-wasm` import ladder now requires a per-step
 completion marker so a clean process exit is not mistaken for a completed
 import or math check.
 
-The current first Node.js runtime blocker is `import sage.structure.element`:
-after importing `sage` and `sage.env`, `python-wasm` exits before printing the
-completion marker for the extension-backed `sage.structure.element` import.
-The exact blocker is recorded in `dist/wasi-sdk/status.txt`, with the import
-trace in `dist/wasi-sdk/node-import.log`.
+Sagelite side modules intentionally do not link `libwasi-emulated-signal`.
+Keeping those signal references unresolved lets the CoWasm dynamic loader bind
+them from the Python host and prevents extension modules from recording
+`libwasi-emulated-signal.so` as a `needed_dynlibs` entry that the Node.js loader
+would search for next to every extension.
+
+The current first Node.js runtime blocker is integer arithmetic: importing
+`sage.rings.integer_ring` reaches `sage.rings.integer`, which tries to read
+`integer_ring.ZZ` before the partially initialized `integer_ring` module has
+created it.  The exact blocker is recorded in `dist/wasi-sdk/status.txt`, with
+the import trace in `dist/wasi-sdk/node-import.log`.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,
