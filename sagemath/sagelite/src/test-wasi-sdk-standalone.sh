@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 14 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK CYPARI2_WASI_SDK" >&2
+if [ "$#" -ne 15 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA PYTHON_WASM CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK CYPARI2_WASI_SDK" >&2
   exit 2
 fi
 
@@ -16,10 +16,11 @@ py_gmpy2="$(cd "$7" && pwd)"
 py_jinja2="$(cd "$8" && pwd)"
 py_meson="$(cd "$9" && pwd)"
 py_ninja="$(cd "${10}" && pwd)"
-cysignals_wasi_sdk="$(cd "${11}" && pwd)"
-memory_allocator_wasi_sdk="$(cd "${12}" && pwd)"
-posix_wasi_sdk="$(cd "${13}" && pwd)"
-cypari2_wasi_sdk="$(cd "${14}" && pwd)"
+python_wasm="$(cd "${11}" && pwd)"
+cysignals_wasi_sdk="$(cd "${12}" && pwd)"
+memory_allocator_wasi_sdk="$(cd "${13}" && pwd)"
+posix_wasi_sdk="$(cd "${14}" && pwd)"
+cypari2_wasi_sdk="$(cd "${15}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -36,6 +37,7 @@ mkdir -p "$dist_dir" "$build_dir/cowasm-meson-build" "$probe_dir/bin" "$probe_di
 
 status_file="$dist_dir/status.txt"
 log_file="$dist_dir/meson-setup.log"
+node_import_log="$dist_dir/node-import.log"
 
 record_blocker() {
   local message="$1"
@@ -264,4 +266,36 @@ if [ "$install_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: meson install failed; compile succeeded, see $dist_dir/meson-install.log for the first install blocker."
 fi
 
-echo "sagelite-ok meson configure compile install" | tee "$status_file"
+installed_site_packages="$dist_dir/stage$cpython_wasm/lib/python3.14/site-packages"
+if [ ! -d "$installed_site_packages/sage" ]; then
+  record_blocker "sagelite-blocked: meson install did not create a Sage package under $installed_site_packages."
+fi
+
+node_pythonpath_parts=(
+  "$installed_site_packages"
+  "${pythonpath_parts[@]}"
+)
+node_pythonpath="$(IFS=:; echo "${node_pythonpath_parts[*]}")"
+: >"$node_import_log"
+
+run_node_import() {
+  local label="$1"
+  local code="$2"
+  printf '## %s\n' "$label" >>"$node_import_log"
+  set +e
+  PYTHONPATH="$node_pythonpath" \
+    node "$python_wasm/bin/python-wasm" -c "$code" >>"$node_import_log" 2>&1
+  local import_status=$?
+  set -e
+  if [ "$import_status" -ne 0 ]; then
+    tail -120 "$node_import_log" >&2
+    record_blocker "sagelite-blocked: Node.js python-wasm import failed at $label; see $node_import_log for the first runtime blocker."
+  fi
+}
+
+run_node_import "import sage" "import sage; print('sagelite-node-ok import sage')"
+run_node_import "import sage.env" "import sage.env; print(sage.env.SAGE_VERSION)"
+run_node_import "import sage.structure.element" "import sage.structure.element; print('sagelite-node-ok import sage.structure.element')"
+run_node_import "integer arithmetic" "from sage.rings.integer_ring import ZZ; print(ZZ(2) + ZZ(3))"
+
+echo "sagelite-ok meson configure compile install node import" | tee "$status_file"
