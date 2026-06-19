@@ -50,3 +50,12 @@ arithmetic and dense matrix operations work with relative `PYTHONPATH` entries.
 The Sagelite package target also reruns the same smoke from a relocated copy of
 the resources tree so absolute build-output paths do not silently become
 packaging requirements.
+
+The Electron main process also consumes that same manifest when launching the
+interactive Python worker. During development it looks for
+`../../sagemath/sagelite/dist/wasi-sdk/electron-resources` from the compiled
+main-process files. In packaged builds, Electron Forge copies that directory as
+an extra resource and the app resolves it from `process.resourcesPath`.
+
+Set `COWASM_SAGELITE_ELECTRON_RESOURCES=/path/to/electron-resources` to test a
+different staged Sagelite resource tree without rebuilding the app.
