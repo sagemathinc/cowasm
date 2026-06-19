@@ -523,3 +523,52 @@ diff -urN a/src/sage/numerical/backends/meson.build b/src/sage/numerical/backend
 
  py.install_sources(
    '__init__.py',
+diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
+--- a/src/sage/rings/all.py
++++ b/src/sage/rings/all.py
+@@ -58,2 +58,17 @@
+-from sage.rings.padics.all import *
+-from sage.rings.padics.padic_printing import _printer_defaults as padic_printing
++if sys.platform == 'wasi':
++    lazy_import('sage.rings.padics.factory',
++                ['Zp', 'Zq', 'ZpCR', 'ZpCA', 'ZpFM', 'ZpFP', 'ZpLC',
++                 'ZpLF', 'ZqCR', 'ZqCA', 'ZqFM', 'ZqFP', 'ZpER',
++                 'Qp', 'Qq', 'QpCR', 'QpFP', 'QpLC', 'QpLF', 'QqCR',
++                 'QqFP', 'QpER', 'pAdicExtension'])
++    lazy_import('sage.rings.padics.factory', 'Zp', as_='pAdicRing')
++    lazy_import('sage.rings.padics.factory', 'Qp', as_='pAdicField')
++    lazy_import('sage.rings.padics.padic_generic', 'local_print_mode')
++    lazy_import('sage.rings.padics.pow_computer', 'PowComputer')
++    lazy_import('sage.rings.padics.pow_computer_ext', 'PowComputer_ext_maker')
++    lazy_import('sage.rings.padics.witt_vector_ring', 'WittVectorRing')
++    lazy_import('sage.rings.padics.padic_printing', '_printer_defaults',
++                as_='padic_printing')
++else:
++    from sage.rings.padics.all import *
++    from sage.rings.padics.padic_printing import _printer_defaults as padic_printing
+diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/rings/polynomial/polynomial_ring_constructor.py
+--- a/src/sage/rings/polynomial/polynomial_ring_constructor.py
++++ b/src/sage/rings/polynomial/polynomial_ring_constructor.py
+@@ -24,10 +24,18 @@
+ from sage.structure.category_object import normalize_names
+-
+-try:
+-    from sage.rings.padics import padic_base_leaves
+-except ImportError:
++import sys
++
++if sys.platform == 'wasi':
+     class padic_base_leaves:
+         pAdicFieldCappedRelative = ()
+         pAdicRingCappedRelative = ()
+         pAdicRingCappedAbsolute = ()
+         pAdicRingFixedMod = ()
++else:
++    try:
++        from sage.rings.padics import padic_base_leaves
++    except ImportError:
++        class padic_base_leaves:
++            pAdicFieldCappedRelative = ()
++            pAdicRingCappedRelative = ()
++            pAdicRingCappedAbsolute = ()
++            pAdicRingFixedMod = ()

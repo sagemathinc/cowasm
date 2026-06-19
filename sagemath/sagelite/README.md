@@ -61,6 +61,12 @@ constructor can import without initializing those side modules, and disables
 Sagelite's optional startup-output silencing on WASI so it does not call through
 `ctypes.CDLL(None).fflush(NULL)` during `sage.all` import.
 
+The WASI patch also keeps p-adic constructors lazy during `sage.rings.all`
+startup and uses a lightweight p-adic leaf-class stub in the polynomial ring
+constructor. This lets polynomial ring startup proceed without initializing the
+current p-adic side modules, while preserving explicit p-adic imports as a
+separate runtime follow-up.
+
 The local libffi wasm32 backend now has a constrained raw `ffi_call`
 implementation for direct word-sized `int`, 8/16/32-bit integer, pointer, and
 `void` signatures with up to eight arguments. This is enough for standalone
@@ -76,10 +82,13 @@ would search for next to every extension.
 The current first Node.js runtime blocker is still `import sage.all`, but the
 startup path now gets past the eager number-field import, the p-adic
 `cypari2.gen` import, the Cython `Gen_base`/`Gen` type-size checks, and the old
-`STUB: ffi_call` exit. The next blocker is a clean process exit after verbose
-import tracing reaches `sage.rings.padics.common_conversion` in the p-adic
-import path. The exact blocker is recorded in `dist/wasi-sdk/status.txt`, with
-the import trace in `dist/wasi-sdk/node-import.log`.
+`STUB: ffi_call` exit. It also gets past the former
+`sage.rings.padics.common_conversion` clean-exit path. The next blocker is a
+clean process exit after verbose import tracing loads
+`sage.rings.complex_mpfr`, while initializing non-exact numeric rings during
+`sage.all` startup. The exact blocker is recorded in
+`dist/wasi-sdk/status.txt`, with the import trace in
+`dist/wasi-sdk/node-import.log`.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,
