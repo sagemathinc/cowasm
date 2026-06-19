@@ -1,16 +1,8 @@
-const { existsSync } = require('fs');
-const { resolve } = require('path');
-
-const sageliteElectronResources = resolve(
-  __dirname,
-  '../../sagemath/sagelite/dist/wasi-sdk/electron-resources',
-);
+const { resolveSageliteExtraResources } = require('./sagelite-resources');
 
 module.exports = {
   packagerConfig: {
-    extraResource: existsSync(sageliteElectronResources)
-      ? [sageliteElectronResources]
-      : [],
+    extraResource: resolveSageliteExtraResources(__dirname),
   },
   rebuildConfig: {},
   makers: [
