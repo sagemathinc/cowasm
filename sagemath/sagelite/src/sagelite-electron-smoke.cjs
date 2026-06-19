@@ -108,6 +108,12 @@ y = ZZx.gen()
 assert (y + 2) * (y + 3) == y**2 + 5*y + 6
 assert list(factor(2**31 - 1)) == [(ZZ(2147483647), 1)]
 assert prime_pi(10**6) == 78498
+try:
+    PolynomialRing(ZZ, 'x', implementation='FLINT')
+except NotImplementedError as err:
+    assert 'WASI' in str(err)
+else:
+    raise AssertionError('explicit FLINT polynomial implementation should be rejected on WASI')
 
 A = matrix(ZZ, [[1, 2], [3, 4]])
 assert A.det() == ZZ(-2)

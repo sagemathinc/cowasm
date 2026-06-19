@@ -793,6 +793,16 @@ diff -urN a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/r
 diff -urN a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
 --- a/src/sage/rings/polynomial/polynomial_ring.py
 +++ b/src/sage/rings/polynomial/polynomial_ring.py
+@@ -1909,5 +1909,9 @@
+                         self._implementation_repr = ' (using NTL)'
+                     elif implementation == 'FLINT':
++                        if sys.platform == 'wasi':
++                            raise NotImplementedError(
++                                "FLINT integer polynomial implementation is not available on WASI yet"
++                            )
+                         try:
+                             from .polynomial_integer_dense_flint import (
+                                 Polynomial_integer_dense_flint as element_class,
 @@ -2053,10 +2053,13 @@
              [None, 'generic']
          """

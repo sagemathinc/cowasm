@@ -485,6 +485,14 @@ assert Z7(3) + Z7(5) == Z7(1)
 F7 = GF(7)
 assert F7(3) * F7(5) == F7(1)
 print('sagelite-node-ok modular arithmetic smoke')"
+run_node_import "explicit FLINT polynomial rejection" "from sage.all import ZZ, PolynomialRing
+try:
+    PolynomialRing(ZZ, 'x', implementation='FLINT')
+except NotImplementedError as err:
+    assert 'WASI' in str(err)
+else:
+    raise AssertionError('explicit FLINT polynomial implementation should be rejected on WASI')
+print('sagelite-node-ok explicit FLINT polynomial rejection')"
 
 : >"$node_followups_log"
 : >"$followups_file"
@@ -530,19 +538,6 @@ record_node_followup_probe \
   "print('sagelite-node-followup-start direct FLINT integer polynomial side-module import')
 import sage.rings.polynomial.polynomial_integer_dense_flint
 print('sagelite-node-followup-ok direct FLINT integer polynomial side-module import')"
-
-record_node_followup_probe \
-  "explicit FLINT integer polynomial implementation" \
-  "explicit FLINT integer polynomial implementation did not complete under Node.js" \
-  "from sage.all import ZZ, PolynomialRing, prime_pi
-# Loading primecountpy first makes the current libcxx side module available.
-# The default ZZ[x] path uses the generic implementation on WASI; this keeps
-# tracking the remaining FLINT-backed side-module startup path explicitly.
-prime_pi(10)
-R = PolynomialRing(ZZ, 'x', implementation='FLINT')
-x = R.gen()
-assert (x + 2) * (x + 3) == x**2 + 5*x + 6
-print('sagelite-node-followup-ok explicit FLINT integer polynomial implementation')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"

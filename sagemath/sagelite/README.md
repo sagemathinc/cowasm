@@ -104,7 +104,10 @@ through `sage.matrix.constructor`. On WASI the patch routes `QQ[x]` and the
 default dense `ZZ[x]` startup through generic polynomial element classes for
 now, avoiding eager `polynomial_rational_flint` and
 `polynomial_integer_dense_flint` startup while those side-module paths still
-need runtime hardening. A remaining follow-up is richer polynomial
+need runtime hardening. Explicit `PolynomialRing(ZZ, "x",
+implementation="FLINT")` requests are rejected with a normal
+`NotImplementedError` on WASI instead of letting that unsafe side-module import
+terminate the Node.js process. A remaining follow-up is richer polynomial
 factorization support; constructing the generic `QQ[x]` factorization currently
 still exits before the Node marker.
 
@@ -112,10 +115,9 @@ The standalone target also runs non-blocking Node.js follow-up probes after the
 required exact-math smokes and writes any missing markers to
 `dist/wasi-sdk/followups.txt`, with process output in
 `dist/wasi-sdk/node-followups.log`. The recorded follow-ups now split the
-FLINT-backed integer polynomial path into a direct
-`sage.rings.polynomial.polynomial_integer_dense_flint` side-module import probe
-and explicit `PolynomialRing(ZZ, "x", implementation="FLINT")` construction.
-The direct side-module import is the first incomplete marker under Node.js, and
+FLINT-backed integer polynomial path down to the direct
+`sage.rings.polynomial.polynomial_integer_dense_flint` side-module import
+probe. That direct import is the first incomplete marker under Node.js, and
 incomplete follow-ups are rerun with Python verbose import tracing so the next
 runtime hardening pass has the import ladder that led to the clean exit.
 
