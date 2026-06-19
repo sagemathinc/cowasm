@@ -87,6 +87,12 @@ them from the Python host and prevents extension modules from recording
 `libwasi-emulated-signal.so` as a `needed_dynlibs` entry that the Node.js loader
 would search for next to every extension.
 
+After install, the standalone target audits every installed Sagelite extension
+module before starting the Node.js import ladder. The audit requires a
+`dylink.0` section, a `PyInit_*` export, imported WASM memory, and no
+`needed_dynlibs` metadata. This turns the milestone's side-module ABI contract
+into a package-wide gate instead of checking only one representative extension.
+
 The Node.js runtime probe now completes the first exact-math smoke from
 `sage.all`: integer arithmetic, integer ideals, modular integer rings, prime
 finite fields, two-argument rational construction,

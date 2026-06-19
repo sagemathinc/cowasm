@@ -40,6 +40,7 @@ mkdir -p "$dist_dir" "$build_dir/cowasm-meson-build" "$probe_dir/bin" "$probe_di
 status_file="$dist_dir/status.txt"
 log_file="$dist_dir/meson-setup.log"
 node_import_log="$dist_dir/node-import.log"
+side_module_audit_log="$dist_dir/side-module-audit.log"
 
 record_blocker() {
   local message="$1"
@@ -275,10 +276,108 @@ if [ ! -d "$installed_site_packages/sage" ]; then
   record_blocker "sagelite-blocked: meson install did not create a Sage package under $installed_site_packages."
 fi
 
-if "$bin_dir/wasi-sdk-llvm-strings-next" "$installed_site_packages/sage/structure/element.cpython-314-wasm32-wasi.so" |
-    grep -Fq 'needed_dynlibs'; then
-  record_blocker "sagelite-blocked: sage.structure.element still records dynamic library dependencies; side modules must be self-contained for the Node.js loader."
+side_module_list="$dist_dir/sagelite-side-modules.txt"
+find "$installed_site_packages/sage" -name '*.so' -type f | sort >"$side_module_list"
+side_module_count="$(wc -l <"$side_module_list" | tr -d ' ')"
+if [ "$side_module_count" -eq 0 ]; then
+  record_blocker "sagelite-blocked: meson install did not create any Sage extension modules under $installed_site_packages/sage."
 fi
+
+: >"$side_module_audit_log"
+while IFS= read -r side_module; do
+  if ! "$bin_dir/wasi-sdk-llvm-objdump-next" -h "$side_module" |
+      grep -Eq '^[[:space:]]*[0-9]+[[:space:]]+dylink\.0[[:space:]]'; then
+    printf '%s: missing dylink.0 section\n' "$side_module" >>"$side_module_audit_log"
+  fi
+  if ! "$bin_dir/wasi-sdk-llvm-nm-next" --defined-only "$side_module" |
+      grep -Eq '[[:space:]]T[[:space:]]PyInit_'; then
+    printf '%s: missing PyInit_* export\n' "$side_module" >>"$side_module_audit_log"
+  fi
+  if "$bin_dir/wasi-sdk-llvm-strings-next" "$side_module" |
+      grep -Fq 'needed_dynlibs'; then
+    printf '%s: records needed_dynlibs\n' "$side_module" >>"$side_module_audit_log"
+  fi
+done <"$side_module_list"
+
+python3 - "$side_module_list" >>"$side_module_audit_log" 2>&1 <<'PY'
+import sys
+from pathlib import Path
+
+
+def read_uleb(data, offset):
+    result = 0
+    shift = 0
+    while True:
+        byte = data[offset]
+        offset += 1
+        result |= (byte & 0x7F) << shift
+        if byte & 0x80 == 0:
+            return result, offset
+        shift += 7
+
+
+def read_name(data, offset):
+    size, offset = read_uleb(data, offset)
+    return offset + size
+
+
+def imports_memory(path):
+    data = path.read_bytes()
+    if data[:4] != b"\0asm":
+        return False
+
+    offset = 8
+    while offset < len(data):
+        section_id = data[offset]
+        offset += 1
+        section_size, offset = read_uleb(data, offset)
+        section_end = offset + section_size
+        if section_id != 2:
+            offset = section_end
+            continue
+
+        import_count, offset = read_uleb(data, offset)
+        for _ in range(import_count):
+            offset = read_name(data, offset)
+            offset = read_name(data, offset)
+            kind = data[offset]
+            offset += 1
+            if kind == 0:  # function
+                _, offset = read_uleb(data, offset)
+            elif kind == 1:  # table
+                offset += 1
+                flags, offset = read_uleb(data, offset)
+                _, offset = read_uleb(data, offset)
+                if flags & 1:
+                    _, offset = read_uleb(data, offset)
+            elif kind == 2:  # memory
+                return True
+            elif kind == 3:  # global
+                offset += 1
+            else:
+                return False
+        return False
+    return False
+
+
+missing_memory_imports = []
+for line in Path(sys.argv[1]).read_text().splitlines():
+    side_module = Path(line)
+    if not imports_memory(side_module):
+        missing_memory_imports.append(side_module)
+
+for side_module in missing_memory_imports:
+    print(f"{side_module}: missing imported memory")
+
+sys.exit(1 if missing_memory_imports else 0)
+PY
+
+if [ -s "$side_module_audit_log" ]; then
+  tail -120 "$side_module_audit_log" >&2
+  record_blocker "sagelite-blocked: installed Sage side-module audit failed; see $side_module_audit_log."
+fi
+
+printf 'sagelite-side-module-audit-ok %s modules\n' "$side_module_count" >"$side_module_audit_log"
 
 node_pythonpath_parts=(
   "$installed_site_packages"
