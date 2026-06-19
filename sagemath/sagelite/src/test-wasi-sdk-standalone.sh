@@ -391,23 +391,45 @@ electron_pythonpath="$(IFS=:; echo "${electron_pythonpath_parts[*]}")"
 
 cp "$src_dir/sagelite-electron-smoke.cjs" "$electron_resources_dir/sagelite-electron-smoke.cjs"
 
-: >"$electron_bundle_log"
-set +e
-(
-  cd "$electron_resources_dir"
-  PYTHONPATH="$electron_pythonpath" \
-    COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
-    node sagelite-electron-smoke.cjs
-) >"$electron_bundle_log" 2>&1
-electron_bundle_status=$?
-set -e
-if [ "$electron_bundle_status" -ne 0 ]; then
-  tail -120 "$electron_bundle_log" >&2
-  record_blocker "sagelite-blocked: Electron-shaped relative resources smoke failed; see $electron_bundle_log for the first runtime blocker."
-fi
-if ! grep -Fqx "sagelite-electron-ok relative resources smoke" "$electron_bundle_log"; then
-  tail -120 "$electron_bundle_log" >&2
-  record_blocker "sagelite-blocked: Electron-shaped relative resources smoke exited before its completion marker; see $electron_bundle_log for the first runtime blocker."
-fi
+run_electron_smoke() {
+  local label="$1"
+  local resources_dir="$2"
+  local marker="sagelite-electron-ok relative resources smoke"
+  local marker_count_before
+  local marker_count_after
 
-echo "sagelite-ok meson configure compile install node import electron resources smoke" | tee "$status_file"
+  marker_count_before=$(grep -Fxc "$marker" "$electron_bundle_log" || true)
+  printf '## %s\n' "$label" >>"$electron_bundle_log"
+  set +e
+  (
+    cd "$resources_dir"
+    PYTHONPATH="$electron_pythonpath" \
+      COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+      node sagelite-electron-smoke.cjs
+  ) >>"$electron_bundle_log" 2>&1
+  local electron_bundle_status=$?
+  set -e
+  if [ "$electron_bundle_status" -ne 0 ]; then
+    tail -120 "$electron_bundle_log" >&2
+    record_blocker "sagelite-blocked: Electron-shaped relative resources smoke failed at $label; see $electron_bundle_log for the first runtime blocker."
+  fi
+  marker_count_after=$(grep -Fxc "$marker" "$electron_bundle_log" || true)
+  if [ "$marker_count_after" -le "$marker_count_before" ]; then
+    tail -120 "$electron_bundle_log" >&2
+    record_blocker "sagelite-blocked: Electron-shaped relative resources smoke exited before its completion marker at $label; see $electron_bundle_log for the first runtime blocker."
+  fi
+}
+
+: >"$electron_bundle_log"
+run_electron_smoke "staged resources" "$electron_resources_dir"
+
+relocated_electron_resources="$probe_dir/electron-resources-relocated"
+mkdir -p "$relocated_electron_resources"
+if ! cp -al "$electron_resources_dir/." "$relocated_electron_resources/" 2>/dev/null; then
+  rm -rf "$relocated_electron_resources"
+  mkdir -p "$relocated_electron_resources"
+  cp -a "$electron_resources_dir/." "$relocated_electron_resources/"
+fi
+run_electron_smoke "relocated resources" "$relocated_electron_resources"
+
+echo "sagelite-ok meson configure compile install node import electron resources smoke relocated" | tee "$status_file"

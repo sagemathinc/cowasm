@@ -46,4 +46,7 @@ pnpm test:sagelite
 This does not launch the Electron UI. It uses the staged resources from
 `sagemath/sagelite/dist/wasi-sdk/electron-resources` and verifies that
 `sage.all` exact arithmetic and dense matrix operations work with relative
-`PYTHONPATH` entries, matching the shape of packaged Electron assets.
+`PYTHONPATH` entries, matching the shape of packaged Electron assets. The
+Sagelite package target also reruns the same smoke from a relocated copy of the
+resources tree so absolute build-output paths do not silently become packaging
+requirements.

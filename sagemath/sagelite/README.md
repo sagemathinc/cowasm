@@ -104,12 +104,14 @@ The standalone target also stages an Electron-shaped resources directory under
 Python dependencies into that directory, and reruns the exact arithmetic and
 matrix smoke through the checked-in
 `src/sagelite-electron-smoke.cjs` async `python-wasm` worker API from relative
-`PYTHONPATH` entries. The same smoke is exposed from `desktop/electron` as
-`pnpm test:sagelite`, which reruns it through the Electron package's
-`python-wasm` dependency without launching the UI. On WASI, `sage.all` skips
-writing the lazy-import cache file during startup, since that cache persistence
-is not required for the packaged worker path and currently trips `os.umask`
-under the worker runtime.
+`PYTHONPATH` entries. It then reruns the same smoke from a relocated copy of
+that resources tree, which catches build-output absolute path assumptions
+before the resources are handed to Electron packaging. The same smoke is
+exposed from `desktop/electron` as `pnpm test:sagelite`, which reruns it
+through the Electron package's `python-wasm` dependency without launching the
+UI. On WASI, `sage.all` skips writing the lazy-import cache file during
+startup, since that cache persistence is not required for the packaged worker
+path and currently trips `os.umask` under the worker runtime.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,
