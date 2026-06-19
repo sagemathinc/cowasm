@@ -40,6 +40,8 @@ mkdir -p "$dist_dir" "$build_dir/cowasm-meson-build" "$probe_dir/bin" "$probe_di
 status_file="$dist_dir/status.txt"
 log_file="$dist_dir/meson-setup.log"
 node_import_log="$dist_dir/node-import.log"
+node_followups_log="$dist_dir/node-followups.log"
+followups_file="$dist_dir/followups.txt"
 side_module_audit_log="$dist_dir/side-module-audit.log"
 
 record_blocker() {
@@ -481,6 +483,48 @@ F7 = GF(7)
 assert F7(3) * F7(5) == F7(1)
 print('sagelite-node-ok modular arithmetic smoke')"
 
+: >"$node_followups_log"
+: >"$followups_file"
+node_followup_index=0
+
+record_node_followup_probe() {
+  local label="$1"
+  local summary="$2"
+  local code="$3"
+  local marker="__sagelite_node_followup_done_${node_followup_index}__"
+  local wrapped_code
+  local followup_status
+  node_followup_index=$((node_followup_index + 1))
+  printf -v wrapped_code '%s\nprint("%s")' "$code" "$marker"
+  printf '## %s\n' "$label" >>"$node_followups_log"
+  set +e
+  PYTHONPATH="$node_pythonpath" \
+    timeout "${SAGELITE_FOLLOWUP_TIMEOUT_SECONDS:-60}" \
+    node "$python_wasm/bin/python-wasm" -c "$wrapped_code" \
+    >>"$node_followups_log" 2>&1
+  followup_status=$?
+  set -e
+  if [ "$followup_status" -ne 0 ] ||
+      ! grep -Fqx "$marker" "$node_followups_log"; then
+    printf 'probe did not complete: exit_status=%s marker=%s\n' \
+      "$followup_status" "$marker" >>"$node_followups_log"
+    printf 'sagelite-followup: %s; see %s.\n' \
+      "$summary" "$node_followups_log" >>"$followups_file"
+  fi
+}
+
+record_node_followup_probe \
+  "integer polynomial ring over ZZ" \
+  "integer polynomial ring startup over ZZ did not complete under Node.js" \
+  "from sage.all import ZZ, PolynomialRing, prime_pi
+# Loading primecountpy first makes the current libcxx side module available;
+# the remaining failure is in the FLINT-backed integer polynomial startup path.
+prime_pi(10)
+R = PolynomialRing(ZZ, 'x')
+x = R.gen()
+assert (x + 2) * (x + 3) == x**2 + 5*x + 6
+print('sagelite-node-followup-ok integer polynomial ring over ZZ')"
+
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
 rm -rf "$electron_resources_dir"
@@ -626,4 +670,8 @@ if ! cp -al "$electron_resources_dir/." "$relocated_electron_resources/" 2>/dev/
 fi
 run_electron_smoke "relocated resources" "$relocated_electron_resources"
 
-echo "sagelite-ok meson configure compile install node import electron resources smoke relocated" | tee "$status_file"
+if [ -s "$followups_file" ]; then
+  echo "sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded" | tee "$status_file"
+else
+  echo "sagelite-ok meson configure compile install node import electron resources smoke relocated no followups" | tee "$status_file"
+fi

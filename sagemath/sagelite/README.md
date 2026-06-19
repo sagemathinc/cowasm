@@ -106,6 +106,14 @@ runtime hardening. A remaining follow-up is richer polynomial factorization
 support; constructing the generic `QQ[x]` factorization currently still exits
 before the Node marker.
 
+The standalone target also runs non-blocking Node.js follow-up probes after the
+required exact-math smokes and writes any missing markers to
+`dist/wasi-sdk/followups.txt`, with process output in
+`dist/wasi-sdk/node-followups.log`. The first recorded follow-up is
+`PolynomialRing(ZZ, "x")`: loading `primecountpy` first makes the current
+`libcxx.so` side module available, but the FLINT-backed integer polynomial
+startup path still exits before the completion marker.
+
 The standalone target also stages an Electron-shaped resources directory under
 `dist/wasi-sdk/electron-resources`, hardlinks the Sagelite install and runtime
 Python dependencies into that directory, writes a
