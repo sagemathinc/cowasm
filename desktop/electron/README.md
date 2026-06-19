@@ -65,3 +65,10 @@ an extra resource and the app resolves it from `process.resourcesPath`.
 
 Set `COWASM_SAGELITE_ELECTRON_RESOURCES=/path/to/electron-resources` to test a
 different staged Sagelite resource tree without rebuilding the app.
+
+To validate the Electron manifest parser and relative-path checks without
+building Sagelite or launching Electron, run:
+
+```sh
+make test-sagelite-manifest
+```

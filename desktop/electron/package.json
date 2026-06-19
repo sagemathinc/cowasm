@@ -14,6 +14,7 @@
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
     "test:sagelite": "make test-sagelite",
+    "test:sagelite-manifest": "make test-sagelite-manifest",
     "tsc": "pnpm exec tsc --watch",
     "webpack": "pnpm exec webpack --watch"
   },

@@ -22,5 +22,10 @@ test-sagelite: node_modules
 	  COWASM_PYTHON_WASM_NODE="${CWD}/node_modules/python-wasm/dist/node.js" \
 	  node ${SAGELITE_DIR}/src/sagelite-electron-smoke.cjs
 
+.PHONY: test-sagelite-manifest
+test-sagelite-manifest: node_modules
+	./node_modules/.bin/tsc
+	node test/sagelite-manifest.test.cjs
+
 test:
 	echo "no tests yet"
