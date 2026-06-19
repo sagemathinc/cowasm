@@ -17,6 +17,10 @@ PY_NINJA = ${CWD}/../../python/py-ninja/dist/native
 POSIX_WASI_SDK = ${CWD}/../../core/posix-wasm/dist/wasi-sdk
 CYSIGNALS_WASI_SDK = ${PACKAGES}/cysignals/dist/wasi-sdk
 MEMORY_ALLOCATOR_WASI_SDK = ${PACKAGES}/memory-allocator/dist/wasi-sdk
+CYPARI2_WASI_SDK = ${PACKAGES}/cypari2/dist/wasi-sdk
+PARI_WASI_SDK = ${PACKAGES}/pari/dist/wasi-sdk
+GSL_WASI_SDK = ${PACKAGES}/gsl/dist/wasi-sdk
+LIBPNG_WASI_SDK = ${CWD}/../../core/libpng/dist/wasi-sdk
 
 ${CPYTHON_WASM}/include/python3.14/Python.h:
 	$(MAKE) -C ${CWD}/../../python/cpython wasm
@@ -45,6 +49,18 @@ ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd:
 ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd:
 	$(MAKE) -C ${PACKAGES}/memory-allocator test-wasi-sdk-standalone
 
+${CYPARI2_WASI_SDK}/cypari2/auto_paridecl.pxd:
+	$(MAKE) -C ${PACKAGES}/cypari2 test-wasi-sdk-standalone
+
+${PARI_WASI_SDK}/lib/libpari.a:
+	$(MAKE) -C ${PACKAGES}/pari test-wasi-sdk-standalone
+
+${GSL_WASI_SDK}/lib/libgslcblas.a:
+	$(MAKE) -C ${PACKAGES}/gsl test-wasi-sdk-standalone
+
+${LIBPNG_WASI_SDK}/lib/libpng.a:
+	$(MAKE) -C ${CWD}/../../core/libpng test-wasi-sdk-standalone
+
 ${BUILD_WASI_SDK}/.build:
 	test -d ${SAGELITE_SOURCE}
 	rm -rf ${BUILD_WASI_SDK}
@@ -52,11 +68,15 @@ ${BUILD_WASI_SDK}/.build:
 	cd ${SAGELITE_SOURCE} && tar --exclude .git -cf - . | tar -xf - -C ${BUILD_WASI_SDK}
 	touch ${BUILD_WASI_SDK}/.build
 
+${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
+	cd ${BUILD_WASI_SDK} && patch -p1 < ${SRC}/patches/01-wasi-optional-host-libs.patch
+	touch ${BUILD_WASI_SDK}/.patched
+
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_NUMPY}/numpy/__init__.py ${PY_GMPY2}/gmpy2/__init__.py ${PY_MESON}/mesonbuild/mesonmain.py ${PY_NINJA}/bin/ninja ${POSIX_WASI_SDK}/posix-wasm.h ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd ${BUILD_WASI_SDK}/.build
+test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_NUMPY}/numpy/__init__.py ${PY_GMPY2}/gmpy2/__init__.py ${PY_MESON}/mesonbuild/mesonmain.py ${PY_NINJA}/bin/ninja ${POSIX_WASI_SDK}/posix-wasm.h ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd ${CYPARI2_WASI_SDK}/cypari2/auto_paridecl.pxd ${PARI_WASI_SDK}/lib/libpari.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${LIBPNG_WASI_SDK}/lib/libpng.a ${BUILD_WASI_SDK}/.patched
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
-	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CPYTHON_WASM} ${PY_CYTHON} ${PY_NUMPY} ${PY_GMPY2} ${CYSIGNALS_WASI_SDK} ${MEMORY_ALLOCATOR_WASI_SDK} ${POSIX_WASI_SDK} || status=$$?; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CPYTHON_WASM} ${PY_CYTHON} ${PY_NUMPY} ${PY_GMPY2} ${PY_MESON} ${PY_NINJA} ${CYSIGNALS_WASI_SDK} ${MEMORY_ALLOCATOR_WASI_SDK} ${POSIX_WASI_SDK} ${CYPARI2_WASI_SDK} || status=$$?; \
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
 	exit "$$status"
 

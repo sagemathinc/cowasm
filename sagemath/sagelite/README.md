@@ -22,10 +22,14 @@ use build isolation and does not run `pip install sagelite`.
 ## Current Status
 
 The package boundary now exists, includes package-local host Meson and Ninja
-drivers, uses a package-local `pkg-config` shim for WASI `.pc` discovery, and
-records the first missing configure blocker in `dist/wasi-sdk/status.txt`.
+drivers, uses a package-local `pkg-config` shim for WASI `.pc` discovery, wires
+in the `cypari2` build-support include surface, and records the first configure,
+compile, or install blocker in `dist/wasi-sdk/status.txt`.
 
-The current blocker is `cypari2`: Meson reaches the Sagelite dependency probe
-for `cypari2` after finding CoWasm Python, Cython, NumPy headers, gmpy2,
-cysignals, memory_allocator, Meson, Ninja, the WASI compilers, and `gmp`
-through package-local metadata.
+The current `cypari2` package is build-support only: it provides the package
+marker and Cython declarations needed by Sagelite's configure/Cython phases,
+but it does not yet provide the compiled `cypari2` runtime extension modules.
+The current probe gets through Meson configure and starts the Ninja compile.
+The next blockers are compile-time issues around Sagelite's Cython include
+environment, Python build helpers such as `jinja2`, and MPFI/MPFR declaration
+compatibility.

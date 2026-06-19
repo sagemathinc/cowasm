@@ -1,7 +1,7 @@
 {
-  "name": "@cowasm/sagelite",
+  "name": "@cowasm/cypari2",
   "version": "1.0.0",
-  "description": "Controlled Sagelite build probe for CoWasm Node.js and Electron",
+  "description": "cypari2 build-support surface for Sagelite on CoWasm",
   "type": "module",
   "files": [
     "README.md",
@@ -21,28 +21,19 @@
     "type": "git",
     "url": "git+https://github.com/sagemathinc/cowasm.git"
   },
-  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/sagelite",
-  "keywords": ["sagelite", "sagemath", "wasi", "electron"],
+  "homepage": "https://github.com/sagemathinc/cowasm/tree/main/sagemath/cypari2",
+  "keywords": ["cypari2", "pari", "cython", "sagemath", "wasi"],
   "author": "William Stein",
   "license": "GPL-2.0-or-later",
   "bugs": {
     "url": "https://github.com/sagemathinc/cowasm/issues"
   },
   "dependencies": {
-    "@cowasm/cypari2": "workspace:*",
     "@cowasm/cysignals": "workspace:*",
-    "@cowasm/memory-allocator": "workspace:*"
+    "@cowasm/pari": "workspace:*"
   },
   "devDependencies": {
     "@cowasm/cpython": "workspace:*",
-    "@cowasm/gsl": "workspace:*",
-    "@cowasm/ligpng": "workspace:*",
-    "@cowasm/pari": "workspace:*",
-    "@cowasm/posix-wasm": "workspace:*",
-    "@cowasm/py-cython": "workspace:*",
-    "@cowasm/py-gmpy2": "workspace:*",
-    "@cowasm/py-meson": "workspace:*",
-    "@cowasm/py-ninja": "workspace:*",
-    "@cowasm/py-numpy": "workspace:*"
+    "@cowasm/py-cython": "workspace:*"
   }
 }

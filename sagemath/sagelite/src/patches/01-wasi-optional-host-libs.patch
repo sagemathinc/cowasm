@@ -1,0 +1,211 @@
+diff -urN a/meson.build b/meson.build
+--- a/meson.build
++++ b/meson.build
+@@ -16,6 +16,7 @@
+ fs = import('fs')
+ 
+ is_windows = host_machine.system() == 'windows'
++is_wasi = host_machine.system() == 'wasi'
+ 
+ # Additional targets
+ py_with_pytest = py_module.find_installation(
+diff -urN a/src/meson.build b/src/meson.build
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -103,7 +103,7 @@
+   add_project_arguments('-I' + cypari2_cython_include, language: 'cython')
+   # Cannot be found via pkg-config
+   # We need to link against libpari directly to avoid runtime issues, so use pari as dependency of cypari2
+-  pari = cc.find_library('pari', required: not is_windows, disabler: true)
++  pari = cc.find_library('pari', required: not is_windows and not is_wasi, disabler: true)
+   if pari.found() and not meson.is_cross_build()
+     # Verify PARI version
+     pari_version_code = '''
+@@ -178,7 +178,7 @@
+ gd = dependency('gdlib', required: false, version: '>=2.1')
+ if not gd.found()
+   # Doesn't have a pkg-config file on some systems (https://github.com/conda-forge/libgd-feedstock/issues/55)
+-  gd = cc.find_library('gd', required: not is_windows, disabler: true)
++  gd = cc.find_library('gd', required: not is_windows and not is_wasi, disabler: true)
+ endif
+ # Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
+ m = cc.find_library('m', required: false)
+@@ -197,7 +197,7 @@
+ m4rie = dependency('m4rie', required: false)
+ if not m4rie.found()
+   # For some reason, m4rie is not found via pkg-config on some systems (eg Conda)
+-  m4rie = cc.find_library('m4rie', required: not is_windows, disabler: true)
++  m4rie = cc.find_library('m4rie', required: not is_windows and not is_wasi, disabler: true)
+ endif
+ mtx = dependency('libmtx', required: false)
+ if not mtx.found()
+@@ -220,25 +220,25 @@
+   required: get_option('eclib'),
+   disabler: true,
+ )
+-ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
+-gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
++ecm = cc.find_library('ecm', required: not is_windows and not is_wasi, disabler: true)
++gmpxx = dependency('gmpxx', required: not is_windows and not is_wasi, disabler: true)
+ fflas = dependency(
+   'fflas-ffpack',
+-  required: not is_windows,
++  required: not is_windows and not is_wasi,
+   disabler: true,
+   version: '>=2.5.0',
+ )
+ givaro = dependency(
+   'givaro',
+-  required: not is_windows,
++  required: not is_windows and not is_wasi,
+   disabler: true,
+   version: '>=4.2.0',
+ )
+ linbox = dependency('linbox', required: false, version: '>=1.7.0')
+ if not linbox.found()
+-  linbox = cc.find_library('linbox', required: not is_windows, disabler: true)
++  linbox = cc.find_library('linbox', required: not is_windows and not is_wasi, disabler: true)
+ endif
+-mpc = cc.find_library('mpc', required: not is_windows, disabler: true)
++mpc = cc.find_library('mpc', required: not is_windows and not is_wasi, disabler: true)
+ mpfi = cc.find_library('mpfi', required: false)
+ if not mpfi.found()
+   mpfi_proj = subproject('mpfi')
+@@ -252,11 +252,11 @@
+   gap = cc.find_library(
+     'gap',
+     has_headers: ['gap/common.h'],
+-    required: not is_windows,
++    required: not is_windows and not is_wasi,
+     disabler: true,
+   )
+ endif
+-singular = dependency('Singular', required: not is_windows, disabler: true)
++singular = dependency('Singular', required: not is_windows and not is_wasi, disabler: true)
+ singular_factory = disabler()
+ if singular.found()
+   singular_factory = singular
+@@ -285,7 +285,7 @@
+ endif
+ if not ntl.found()
+   # Cannot be found via pkg-config
+-  ntl = cc.find_library('ntl', required: not is_windows, disabler: true)
++  ntl = cc.find_library('ntl', required: not is_windows and not is_wasi, disabler: true)
+ endif
+ 
+ boost_cpp17_compatible = false
+diff -urN a/src/sage/graphs/meson.build b/src/sage/graphs/meson.build
+--- a/src/sage/graphs/meson.build
++++ b/src/sage/graphs/meson.build
+@@ -9,7 +9,7 @@
+ cliquer = dependency('libcliquer', required: false, disabler: true)
+ if not cliquer.found()
+   # fallback for older versions without pkg-config
+-  cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
++  cliquer = cc.find_library('cliquer', required: not is_windows and not is_wasi, disabler: true)
+ endif
+ 
+ planarity = dependency('libplanarity', required: false, disabler: true)
+@@ -17,7 +17,7 @@
+   # fallback for older versions without pkg-config
+   planarity = cc.find_library(
+     'planarity',
+-    required: not is_windows,
++    required: not is_windows and not is_wasi,
+     disabler: true,
+   )
+ endif
+diff -urN a/src/sage/libs/lcalc/meson.build b/src/sage/libs/lcalc/meson.build
+--- a/src/sage/libs/lcalc/meson.build
++++ b/src/sage/libs/lcalc/meson.build
+@@ -1,7 +1,7 @@
+ lcalc = dependency(
+   'lcalc',
+   version: '>= 2.0.0',
+-  required: not is_windows,
++  required: not is_windows and not is_wasi,
+   disabler: true,
+ )
+ 
+diff -urN a/src/sage/libs/meson.build b/src/sage/libs/meson.build
+--- a/src/sage/libs/meson.build
++++ b/src/sage/libs/meson.build
+@@ -9,7 +9,7 @@
+ endif
+ # cannot be found via pkg-config
+ ecl = cc.find_library('ecl', required: false, disabler: true)
+-if not ecl.found() and not is_windows
++if not ecl.found() and not is_windows and not is_wasi
+   ecl_proj = subproject('ecl')
+   ecl = ecl_proj.get_variable('ecl_dep')
+ endif
+@@ -51,7 +51,7 @@
+   maxima_present = false
+ endif
+ if not maxima_present
+-  if is_windows
++  if is_windows or is_wasi
+     # We currently cannot build Maxima on Windows, so we disable it
+     maxima = disabler()
+   else
+@@ -110,7 +110,7 @@
+ gc = dependency(
+   ['bdw-gc-threaded', 'bdw-gc'],
+   version: '>=7.6.4',
+-  required: not is_windows,
++  required: not is_windows and not is_wasi,
+   disabler: true,
+ )
+ homfly = dependency('libhomfly', required: false, disabler: true)
+diff -urN a/src/sage/libs/symmetrica/meson.build b/src/sage/libs/symmetrica/meson.build
+--- a/src/sage/libs/symmetrica/meson.build
++++ b/src/sage/libs/symmetrica/meson.build
+@@ -3,7 +3,7 @@
+   # fallback for older versions without pkg-config
+   symmetrica = cc.find_library(
+     'symmetrica',
+-    required: not is_windows,
++    required: not is_windows and not is_wasi,
+     disabler: true,
+   )
+ endif
+diff -urN a/src/sage/matrix/meson.build b/src/sage/matrix/meson.build
+--- a/src/sage/matrix/meson.build
++++ b/src/sage/matrix/meson.build
+@@ -1,4 +1,4 @@
+-iml = cc.find_library('iml', required: not is_windows, disabler: true)
++iml = cc.find_library('iml', required: not is_windows and not is_wasi, disabler: true)
+ 
+ 
+ py.install_sources(
+diff -urN a/src/sage/meson.build b/src/sage/meson.build
+--- a/src/sage/meson.build
++++ b/src/sage/meson.build
+@@ -43,7 +43,7 @@
+   conf_data.set('OPENMP_CFLAGS', '-fopenmp')
+   conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')
+ endif
+-gap_exe = find_program('gap', required: not is_windows, disabler: true)
++gap_exe = find_program('gap', required: not is_windows and not is_wasi, disabler: true)
+ if gap_exe.found()
+   gaprun = run_command(
+     gap_exe,
+@@ -60,7 +60,7 @@
+ endif
+ ecm_bin = find_program(
+   ['ecm', 'gmp-ecm'],
+-  required: not is_windows,
++  required: not is_windows and not is_wasi,
+   disabler: true,
+ )
+ conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
+diff -urN a/src/sage/numerical/backends/meson.build b/src/sage/numerical/backends/meson.build
+--- a/src/sage/numerical/backends/meson.build
++++ b/src/sage/numerical/backends/meson.build
+@@ -1,5 +1,5 @@
+ # Cannot be found via pkg-config
+-glpk = cc.find_library('glpk', required: not is_windows, disabler: true)
++glpk = cc.find_library('glpk', required: not is_windows and not is_wasi, disabler: true)
+ 
+ py.install_sources(
+   '__init__.py',
