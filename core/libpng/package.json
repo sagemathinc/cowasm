@@ -1,5 +1,5 @@
 {
-  "name": "@cowasm/ligpng",
+  "name": "@cowasm/libpng",
   "upstream_version": "1.6.35",
   "version": "1.0.0",
   "description": "WebAssembly build of the libpng library",

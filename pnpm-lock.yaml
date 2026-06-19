@@ -1586,6 +1586,9 @@ importers:
       '@cowasm/memory-allocator':
         specifier: workspace:*
         version: link:../memory-allocator
+      '@cowasm/primecountpy':
+        specifier: workspace:*
+        version: link:../primecountpy
     devDependencies:
       '@cowasm/boost-cropped':
         specifier: workspace:*
@@ -1599,7 +1602,7 @@ importers:
       '@cowasm/gsl':
         specifier: workspace:*
         version: link:../gsl
-      '@cowasm/ligpng':
+      '@cowasm/libpng':
         specifier: workspace:*
         version: link:../../core/libpng
       '@cowasm/m4ri':
