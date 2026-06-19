@@ -39,6 +39,7 @@
     "@cowasm/cpython": "workspace:*",
     "@cowasm/gmp": "workspace:*",
     "@cowasm/gsl": "workspace:*",
+    "@cowasm/libcxx": "workspace:*",
     "@cowasm/libpng": "workspace:*",
     "@cowasm/m4ri": "workspace:*",
     "@cowasm/m4rie": "workspace:*",

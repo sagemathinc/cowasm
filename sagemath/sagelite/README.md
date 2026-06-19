@@ -124,6 +124,14 @@ Node markers. Incomplete follow-ups are rerun with Python verbose import
 tracing so the next runtime hardening pass has the import ladder that led to
 the clean exit.
 
+The Sagelite package now carries `core/libcxx` as an explicit build/runtime
+input and passes its `libcxx.so` path into the patched Sagelite Meson files for
+the FLINT polynomial modules. The standalone target also copies `libcxx.so`
+next to installed side modules that actually record that dependency. Current
+Node.js follow-ups still report the FLINT polynomial imports that do not
+complete, but the runtime-dependency handoff is now separate from the broader
+unresolved C++ symbol list.
+
 The standalone target also stages an Electron-shaped resources directory under
 `dist/wasi-sdk/electron-resources`, hardlinks the Sagelite install and runtime
 Python dependencies into that directory, writes a

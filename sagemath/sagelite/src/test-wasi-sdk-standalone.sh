@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 17 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA PY_PLATFORMDIRS PYTHON_WASM PRIMECOUNTPY_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK CYPARI2_WASI_SDK" >&2
+if [ "$#" -ne 18 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA PY_PLATFORMDIRS PYTHON_WASM PRIMECOUNTPY_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK" >&2
   exit 2
 fi
 
@@ -22,7 +22,8 @@ primecountpy_wasi_sdk="$(cd "${13}" && pwd)"
 cysignals_wasi_sdk="$(cd "${14}" && pwd)"
 memory_allocator_wasi_sdk="$(cd "${15}" && pwd)"
 posix_wasi_sdk="$(cd "${16}" && pwd)"
-cypari2_wasi_sdk="$(cd "${17}" && pwd)"
+libcxx_wasi_sdk="$(cd "${17}" && pwd)"
+cypari2_wasi_sdk="$(cd "${18}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -341,6 +342,9 @@ c_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-incl
 cpp_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include', '-I$m4ri_wasi_sdk/include', '-I$m4rie_wasi_sdk/include']
 c_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib']
 cpp_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-L$gmp_wasi_sdk/lib']
+
+[properties]
+cowasm_libcxx = '$libcxx_wasi_sdk/libcxx.so'
 EOF
 
 set +e
@@ -413,6 +417,13 @@ audit_wasm_side_modules \
   all \
   "sagelite-blocked: installed Sage side-module audit failed" \
   "sagelite-side-module-audit-ok"
+
+while IFS= read -r side_module; do
+  if "$bin_dir/wasi-sdk-llvm-strings-next" "$side_module" |
+      awk '$0 ~ /(^|[[:space:]])libcxx[.]so$/ { found = 1 } END { exit found ? 0 : 1 }'; then
+    cp "$libcxx_wasi_sdk/libcxx.so" "$(dirname "$side_module")/libcxx.so"
+  fi
+done <"$side_module_list"
 
 node_pythonpath_parts=(
   "$installed_site_packages"
@@ -674,18 +685,33 @@ for module in modules:
         leaks[module.name] = symbols
 
 if leaks:
+    missing_libcxx = [
+        module
+        for module in leaks
+        if b"libcxx.so" not in (Path(sys.argv[3]).parent / module).read_bytes()
+    ]
     with node_followups_log.open("a") as log:
         print("## FLINT polynomial unresolved C++ runtime imports", file=log)
         for module, symbols in leaks.items():
             preview = ", ".join(symbols[:16])
             suffix = "" if len(symbols) <= 16 else f", ... ({len(symbols)} total)"
             print(f"{module}: {preview}{suffix}", file=log)
+        if missing_libcxx:
+            print("## FLINT polynomial libcxx dependency metadata", file=log)
+            for module in missing_libcxx:
+                print(f"{module}: does not record libcxx.so", file=log)
     with followups_file.open("a") as followups:
         print(
             f"sagelite-followup: FLINT polynomial side-module imports include "
             f"WASI C++ runtime symbols; see {node_followups_log}.",
             file=followups,
         )
+        if missing_libcxx:
+            print(
+                f"sagelite-followup: FLINT polynomial side-module imports do "
+                f"not record a libcxx.so dependency; see {node_followups_log}.",
+                file=followups,
+            )
 PY
 
 electron_resources_dir="$dist_dir/electron-resources"
@@ -714,6 +740,7 @@ stage_runtime_tree "$installed_site_packages" "$electron_resources_dir/site-pack
 runtime_dep_labels=(
   cypari2
   primecountpy
+  libcxx
   cysignals
   memory_allocator
   jinja2
@@ -725,6 +752,7 @@ runtime_dep_labels=(
 runtime_dep_paths=(
   "$cypari2_wasi_sdk"
   "$primecountpy_wasi_sdk"
+  "$libcxx_wasi_sdk"
   "$cysignals_wasi_sdk"
   "$memory_allocator_wasi_sdk"
   "$py_jinja2"
