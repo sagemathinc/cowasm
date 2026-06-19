@@ -284,6 +284,56 @@ diff -urN a/src/sage/rings/rational.pyx b/src/sage/rings/rational.pyx
 +    initialized = True
 
  set_zero_one_elements()
+@@ -4252,8 +4262,47 @@
+         else:
+             mpz_set_pylong(mpq_numref(rat.value), a)
+-
++
+         return rat
+-
++
++    cpdef Element _call_with_args(self, a, args=(), kwds={}):
++        """
++        Return the image of ``a`` with constructor arguments.
++        """
++        cdef Rational rat
++        cdef object denom
++        cdef Integer num_integer
++        cdef Integer denom_integer
++
++        if not args and not kwds:
++            return self._call_(a)
++
++        if len(args) == 1 and not kwds:
++            denom = args[0]
++            rat = <Rational> Rational.__new__(Rational)
++            if isinstance(a, int):
++                mpz_set_pylong(mpq_numref(rat.value), a)
++            elif isinstance(a, Integer):
++                mpz_set(mpq_numref(rat.value), (<Integer>a).value)
++            else:
++                num_integer = Integer(a)
++                mpz_set(mpq_numref(rat.value), num_integer.value)
++
++            if isinstance(denom, int):
++                mpz_set_pylong(mpq_denref(rat.value), denom)
++            elif isinstance(denom, Integer):
++                mpz_set(mpq_denref(rat.value), (<Integer>denom).value)
++            else:
++                denom_integer = Integer(denom)
++                mpz_set(mpq_denref(rat.value), denom_integer.value)
++
++            if mpz_sgn(mpq_denref(rat.value)) == 0:
++                raise ValueError("denominator must not be 0")
++            mpq_canonicalize(rat.value)
++            return rat
++
++        raise NotImplementedError("_call_with_args not overridden "
++                                  f"to accept arguments for {type(self)}")
++
+     def _repr_type(self):
+         """
+         Return string that describes the type of morphism.
 diff -urN a/src/sage/rings/rational_field.py b/src/sage/rings/rational_field.py
 --- a/src/sage/rings/rational_field.py
 +++ b/src/sage/rings/rational_field.py
@@ -702,6 +752,54 @@ diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 +else:
 +    from sage.rings.cc import CC
 +    from sage.rings.cif import CIF
+diff -urN a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/rings/polynomial/polynomial_element_generic.py
+--- a/src/sage/rings/polynomial/polynomial_element_generic.py
++++ b/src/sage/rings/polynomial/polynomial_element_generic.py
+@@ -29,7 +29,8 @@
+ #  as published by the Free Software Foundation; either version 2 of
+ #  the License, or (at your option) any later version.
+ #                  https://www.gnu.org/licenses/
+ # ****************************************************************************
++import sys
+ from sage.rings.polynomial.polynomial_element import (
+     Polynomial,
+     Polynomial_generic_dense,
+@@ -1610,13 +1611,14 @@
+ # XXX:  Ensures that the generic polynomials implemented in Sage via PARI  #
+ # until at least until 4.5.0 unpickle correctly as polynomials implemented #
+ # via FLINT.                                                               #
+-try:
+-    from sage.rings.polynomial.polynomial_rational_flint import (
+-        Polynomial_rational_flint,
+-    )
+-except ImportError:
+-    pass
+-else:
+-    from sage.misc.persist import register_unpickle_override
+-    register_unpickle_override('sage.rings.polynomial.polynomial_element_generic',
+-                               'Polynomial_rational_dense', Polynomial_rational_flint)
++if sys.platform != 'wasi':
++    try:
++        from sage.rings.polynomial.polynomial_rational_flint import (
++            Polynomial_rational_flint,
++        )
++    except ImportError:
++        pass
++    else:
++        from sage.misc.persist import register_unpickle_override
++        register_unpickle_override('sage.rings.polynomial.polynomial_element_generic',
++                                   'Polynomial_rational_dense', Polynomial_rational_flint)
+diff -urN a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
+--- a/src/sage/rings/polynomial/polynomial_ring.py
++++ b/src/sage/rings/polynomial/polynomial_ring.py
+@@ -2144,6 +2144,6 @@
+                 )
+                 return Polynomial_generic_sparse_field
+-            if isinstance(base_ring, rational_field.RationalField):
++            if sys.platform != 'wasi' and isinstance(base_ring, rational_field.RationalField):
+                 try:
+                     from sage.rings.polynomial.polynomial_rational_flint import (
+                         Polynomial_rational_flint,
 diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/rings/polynomial/polynomial_ring_constructor.py
 --- a/src/sage/rings/polynomial/polynomial_ring_constructor.py
 +++ b/src/sage/rings/polynomial/polynomial_ring_constructor.py

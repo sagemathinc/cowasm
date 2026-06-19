@@ -87,13 +87,15 @@ them from the Python host and prevents extension modules from recording
 `libwasi-emulated-signal.so` as a `needed_dynlibs` entry that the Node.js loader
 would search for next to every extension.
 
-The current first Node.js runtime blocker has moved past `import sage.all`.
-The probe now completes `import sage.all` and records the first exact-math
-smoke blocker. The current blocker is `QQ(6, 15)`, which raises
-`NotImplementedError` because the `sage.rings.rational.int_to_Q` coercion map
-does not implement the two-argument parent-call path under the current WASI
-runtime. The exact blocker is recorded in `dist/wasi-sdk/status.txt`, with the
-import trace in `dist/wasi-sdk/node-import.log`.
+The Node.js runtime probe now completes the first exact-math smoke from
+`sage.all`: integer arithmetic, two-argument rational construction,
+univariate polynomial construction/arithmetic over `QQ`, integer
+factorization, and `prime_pi(10**6)`. On WASI the patch routes `QQ[x]`
+startup through the generic polynomial element class for now, avoiding eager
+`polynomial_rational_flint` startup while that side-module path still needs
+runtime hardening. A remaining follow-up is richer display/use of the returned
+`Factorization` object; the current milestone only checks that factorization
+returns an object without failing.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,
