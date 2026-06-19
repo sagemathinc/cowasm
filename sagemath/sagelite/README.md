@@ -43,11 +43,16 @@ dependencies.
 
 With the matching LinBox `BlockHankel` accessor patch applied and
 `platformdirs` available on the runtime `PYTHONPATH`, the standalone probe gets
-through Meson configure, compile, install, and the Node.js `python-wasm` import
-ladder against the installed Sage package tree.  The current ladder imports
-`sage`, imports `sage.env`, imports `sage.structure.element`, and runs a basic
-`ZZ` integer arithmetic smoke.  Future blockers will still be recorded in
-`dist/wasi-sdk/node-import.log`.
+through Meson configure, compile, and install against the installed Sage package
+tree.  The Node.js `python-wasm` import ladder now requires a per-step
+completion marker so a clean process exit is not mistaken for a completed
+import or math check.
+
+The current first Node.js runtime blocker is `import sage.structure.element`:
+after importing `sage` and `sage.env`, `python-wasm` exits before printing the
+completion marker for the extension-backed `sage.structure.element` import.
+The exact blocker is recorded in `dist/wasi-sdk/status.txt`, with the import
+trace in `dist/wasi-sdk/node-import.log`.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,

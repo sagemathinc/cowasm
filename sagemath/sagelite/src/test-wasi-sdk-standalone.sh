@@ -279,19 +279,28 @@ node_pythonpath_parts=(
 )
 node_pythonpath="$(IFS=:; echo "${node_pythonpath_parts[*]}")"
 : >"$node_import_log"
+node_import_index=0
 
 run_node_import() {
   local label="$1"
   local code="$2"
+  local marker="__sagelite_node_import_done_${node_import_index}__"
+  local wrapped_code
+  node_import_index=$((node_import_index + 1))
+  printf -v wrapped_code '%s\nprint("%s")' "$code" "$marker"
   printf '## %s\n' "$label" >>"$node_import_log"
   set +e
   PYTHONPATH="$node_pythonpath" \
-    node "$python_wasm/bin/python-wasm" -c "$code" >>"$node_import_log" 2>&1
+    node "$python_wasm/bin/python-wasm" -c "$wrapped_code" >>"$node_import_log" 2>&1
   local import_status=$?
   set -e
   if [ "$import_status" -ne 0 ]; then
     tail -120 "$node_import_log" >&2
     record_blocker "sagelite-blocked: Node.js python-wasm import failed at $label; see $node_import_log for the first runtime blocker."
+  fi
+  if ! grep -Fqx "$marker" "$node_import_log"; then
+    tail -120 "$node_import_log" >&2
+    record_blocker "sagelite-blocked: Node.js python-wasm import exited before completing $label; see $node_import_log for the first runtime blocker."
   fi
 }
 
