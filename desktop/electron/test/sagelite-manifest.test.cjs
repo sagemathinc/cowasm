@@ -91,7 +91,7 @@ withResourceRoot((root) => {
 
   assert.throws(
     () => loadSageliteManifest(root),
-    /required resource python\.wasm does not exist/,
+    /requiredResourcePaths entry python\.wasm does not exist/,
   );
 });
 

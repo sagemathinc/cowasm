@@ -4,16 +4,30 @@
 const fs = require("fs");
 const path = require("path");
 
-const manifestName = "sagelite-electron-resources.json";
-const expectedManifest = {
-  schemaVersion: 2,
-  resourceKind: "cowasm-sagelite-electron-resources",
-  pythonAbi: "cpython-314-wasm32-wasi",
-  pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-v1",
-};
 const pythonWasmModule = process.env.COWASM_PYTHON_WASM_NODE || "python-wasm";
 const { asyncPython } = require(pythonWasmModule);
+const {
+  loadSageliteManifest,
+  sagelitePythonPath,
+} = loadSageliteManifestTools();
+
+function loadSageliteManifestTools() {
+  const candidates = [
+    path.join(process.cwd(), "sagelite-manifest-common.cjs"),
+    path.resolve(
+      __dirname,
+      "../../../desktop/electron/src/sagelite-manifest-common.js",
+    ),
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return require(candidate);
+    }
+  }
+  throw new Error(
+    `Sagelite Electron manifest validator not found; tried ${candidates.join(", ")}`,
+  );
+}
 
 function loadPythonPath() {
   if (process.env.PYTHONPATH) {
@@ -23,70 +37,9 @@ function loadPythonPath() {
   const resourceRoot = path.resolve(
     process.env.COWASM_SAGELITE_ELECTRON_RESOURCES || process.cwd(),
   );
-  const manifestPath = path.join(resourceRoot, manifestName);
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-
-  validateManifestContract(manifestPath, manifest);
-  if (!Array.isArray(manifest.pythonPath) || manifest.pythonPath.length === 0) {
-    throw new Error(`${manifestPath} must define a non-empty pythonPath array`);
-  }
-  validateRelativeEntries(manifestPath, "pythonPath", manifest.pythonPath);
-  for (const entry of manifest.pythonPath) {
-    const entryPath = path.join(resourceRoot, entry);
-    if (!fs.existsSync(entryPath)) {
-      throw new Error(`${manifestPath} pythonPath entry ${entry} does not exist`);
-    }
-  }
-  if (manifest.requiredResourcePaths !== undefined) {
-    if (!Array.isArray(manifest.requiredResourcePaths)) {
-      throw new Error(`${manifestPath} requiredResourcePaths must be an array`);
-    }
-    validateRelativeEntries(
-      manifestPath,
-      "requiredResourcePaths",
-      manifest.requiredResourcePaths,
-    );
-    for (const entry of manifest.requiredResourcePaths) {
-      const entryPath = path.join(resourceRoot, entry);
-      if (!fs.existsSync(entryPath)) {
-        throw new Error(`${manifestPath} required resource ${entry} does not exist`);
-      }
-    }
-  }
-
+  const manifest = loadSageliteManifest(resourceRoot);
   process.chdir(resourceRoot);
-  return manifest.pythonPath.join(":");
-}
-
-function validateManifestContract(manifestPath, manifest) {
-  for (const [fieldName, expectedValue] of Object.entries(expectedManifest)) {
-    if (manifest[fieldName] !== expectedValue) {
-      throw new Error(
-        `${manifestPath} has unsupported ${fieldName} ${JSON.stringify(
-          manifest[fieldName],
-        )}; expected ${JSON.stringify(expectedValue)}`,
-      );
-    }
-  }
-}
-
-function validateRelativeEntries(manifestPath, fieldName, entries) {
-  for (const entry of entries) {
-    if (typeof entry !== "string" || entry.length === 0) {
-      throw new Error(`${manifestPath} contains an invalid ${fieldName} entry`);
-    }
-    const parts = entry.split("/");
-    if (
-      path.isAbsolute(entry) ||
-      entry.includes(":") ||
-      entry.includes("\\") ||
-      parts.some((part) => part === "" || part === "." || part === "..")
-    ) {
-      throw new Error(
-        `${manifestPath} ${fieldName} entries must be root-local POSIX relative paths`,
-      );
-    }
-  }
+  return sagelitePythonPath(manifest);
 }
 
 async function main() {

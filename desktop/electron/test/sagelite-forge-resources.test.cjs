@@ -68,6 +68,16 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /Sagelite Electron resource manifest does not exist/,
+  );
+});
+
+withResourceRoot((root) => {
   touch(root, "site-packages/sage/all.py");
   writeManifest(root, validManifest({ pythonPath: ["site-packages", "../escape"] }));
 
