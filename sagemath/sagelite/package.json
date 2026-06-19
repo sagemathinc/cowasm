@@ -34,10 +34,12 @@
     "@cowasm/memory-allocator": "workspace:*"
   },
   "devDependencies": {
+    "@cowasm/boost-cropped": "workspace:*",
     "@cowasm/cpython": "workspace:*",
     "@cowasm/gsl": "workspace:*",
     "@cowasm/ligpng": "workspace:*",
     "@cowasm/mpfi": "workspace:*",
+    "@cowasm/mpfr": "workspace:*",
     "@cowasm/ntl": "workspace:*",
     "@cowasm/pari": "workspace:*",
     "@cowasm/posix-wasm": "workspace:*",

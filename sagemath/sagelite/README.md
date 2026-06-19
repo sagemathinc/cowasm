@@ -29,7 +29,19 @@ compile, or install blocker in `dist/wasi-sdk/status.txt`.
 The current `cypari2` package is build-support only: it provides the package
 marker and Cython declarations needed by Sagelite's configure/Cython phases,
 but it does not yet provide the compiled `cypari2` runtime extension modules.
-The current probe gets through Meson configure and compiles hundreds of Cython
-sources before the first C compile blocker.  The next blocker is CPython's
-internal mimalloc header using `sched_yield()` without a visible WASI
-declaration while compiling `sage/cpython/atexit.pyx`.
+
+The current probe uses CPython's `dist/wasi-sdk` header/runtime surface via
+`python-wasi-sdk`, so it no longer needs to hide system scheduler declarations
+with `_SCHED_H`.  It also preincludes a small fenv compatibility header, enables
+WASI emulated signal declarations for sources that include `<signal.h>`, drops
+Meson's unsupported GNU archive group markers in a probe-local compiler wrapper,
+and globally exposes the CoWasm Boost, GSL, MPFR, MPFI, and NTL include surfaces
+for Sagelite extension targets that do not inherit all required Meson
+dependencies.
+
+With the matching LinBox `BlockHankel` accessor patch applied, the standalone
+probe gets through Meson configure, clears the earlier CPython mimalloc,
+LinBox, fenv, Boost graph, GSL CBLAS, MPFR, signal, link group, NTL, and MPFI
+blockers, and now compiles into the polynomial extension set.  The latest
+validated run stops at `914/1390`; the next blocker is
+`sage/rings/polynomial/polynomial_gf2x.pyx.cpp` missing `m4ri/m4ri.h`.

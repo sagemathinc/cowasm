@@ -986,6 +986,9 @@ importers:
 
   sagemath/combinatorial-designs:
     devDependencies:
+      '@cowasm/boost-cropped':
+        specifier: workspace:*
+        version: link:../boost-cropped
       '@cowasm/cpython':
         specifier: workspace:*
         version: link:../../python/cpython
@@ -1587,6 +1590,9 @@ importers:
       '@cowasm/mpfi':
         specifier: workspace:*
         version: link:../mpfi
+      '@cowasm/mpfr':
+        specifier: workspace:*
+        version: link:../mpfr
       '@cowasm/ntl':
         specifier: workspace:*
         version: link:../ntl

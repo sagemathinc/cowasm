@@ -55,7 +55,7 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
 	touch ${BUILD_WASI_SDK}/.build
 
-${BUILD_WASI_SDK}/.patched: ${TARBALL} ${SRC}/patches/01-libcxx-header-compat.patch ${SRC}/patches/02-flint-fmpz-header.patch ${SRC}/patches/03-ntl-no-pthread.patch ${SRC}/patches/04-ntl-zz-uint64-init.patch
+${BUILD_WASI_SDK}/.patched: ${TARBALL} ${SRC}/patches/01-libcxx-header-compat.patch ${SRC}/patches/02-flint-fmpz-header.patch ${SRC}/patches/03-ntl-no-pthread.patch ${SRC}/patches/04-ntl-zz-uint64-init.patch ${SRC}/patches/05-block-hankel-dim-accessors.patch
 	rm -rf ${BUILD_WASI_SDK}
 	mkdir -p ${BUILD_WASI_SDK}
 	tar xf ${TARBALL} -C ${BUILD_WASI_SDK} --strip-components=1
@@ -63,7 +63,8 @@ ${BUILD_WASI_SDK}/.patched: ${TARBALL} ${SRC}/patches/01-libcxx-header-compat.pa
 		cat ${SRC}/patches/01-libcxx-header-compat.patch | patch -p1 && \
 		cat ${SRC}/patches/02-flint-fmpz-header.patch | patch -p1 && \
 		cat ${SRC}/patches/03-ntl-no-pthread.patch | patch -p1 && \
-		cat ${SRC}/patches/04-ntl-zz-uint64-init.patch | patch -p1
+		cat ${SRC}/patches/04-ntl-zz-uint64-init.patch | patch -p1 && \
+		cat ${SRC}/patches/05-block-hankel-dim-accessors.patch | patch -p1
 	touch ${BUILD_WASI_SDK}/.build
 	touch ${BUILD_WASI_SDK}/.patched
 

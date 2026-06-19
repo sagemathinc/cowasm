@@ -58,6 +58,40 @@ exec "$py_ninja/bin/ninja" "\$@"
 EOF
 chmod +x "$probe_dir/bin/ninja"
 
+cat >"$probe_dir/bin/wasi-sdk-clang-next" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+args=()
+for arg in "\$@"; do
+  case "\$arg" in
+    -Wl,--start-group|-Wl,--end-group|--start-group|--end-group)
+      ;;
+    *)
+      args+=("\$arg")
+      ;;
+  esac
+done
+exec "$bin_dir/wasi-sdk-clang-next" "\${args[@]}"
+EOF
+chmod +x "$probe_dir/bin/wasi-sdk-clang-next"
+
+cat >"$probe_dir/bin/wasi-sdk-clang++-next" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+args=()
+for arg in "\$@"; do
+  case "\$arg" in
+    -Wl,--start-group|-Wl,--end-group|--start-group|--end-group)
+      ;;
+    *)
+      args+=("\$arg")
+      ;;
+  esac
+done
+exec "$bin_dir/wasi-sdk-clang++-next" "\${args[@]}"
+EOF
+chmod +x "$probe_dir/bin/wasi-sdk-clang++-next"
+
 export PATH="$probe_dir/bin:$PATH"
 
 if ! command -v meson >/dev/null 2>&1; then
@@ -81,6 +115,10 @@ pythonpath="$(IFS=:; echo "${pythonpath_parts[*]}")"
 
 pkg_config_paths=()
 pari_wasi_sdk="$repo_dir/sagemath/pari/dist/wasi-sdk"
+boost_cropped_wasi_sdk="$repo_dir/sagemath/boost-cropped/dist/wasi-sdk"
+mpfr_wasi_sdk="$repo_dir/sagemath/mpfr/dist/wasi-sdk"
+mpfi_wasi_sdk="$repo_dir/sagemath/mpfi/dist/wasi-sdk"
+ntl_wasi_sdk="$repo_dir/sagemath/ntl/dist/wasi-sdk"
 gsl_wasi_sdk="$repo_dir/sagemath/gsl/dist/wasi-sdk"
 libpng_wasi_sdk="$repo_dir/core/libpng/dist/wasi-sdk"
 zlib_wasi_sdk="$repo_dir/core/zlib/dist/wasi-sdk"
@@ -146,12 +184,12 @@ cross_file="$probe_dir/cowasm-wasi.ini"
 pkg_config="$src_dir/cowasm-pkg-config.py"
 cat >"$cross_file" <<EOF
 [binaries]
-c = '$bin_dir/wasi-sdk-clang-next'
-cpp = '$bin_dir/wasi-sdk-clang++-next'
+c = '$probe_dir/bin/wasi-sdk-clang-next'
+cpp = '$probe_dir/bin/wasi-sdk-clang++-next'
 ar = '$bin_dir/wasi-sdk-llvm-ar-next'
 strip = '$bin_dir/wasi-sdk-llvm-strip-next'
 pkg-config = '$pkg_config'
-python = '$bin_dir/python-wasm'
+python = '$bin_dir/python-wasi-sdk'
 
 [host_machine]
 system = 'wasi'
@@ -160,10 +198,10 @@ cpu = 'wasm32'
 endian = 'little'
 
 [built-in options]
-c_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_SCHED_H', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include']
-cpp_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_SCHED_H', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include']
-c_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib']
-cpp_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib']
+c_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include']
+cpp_args = ['-target', 'wasm32-wasip1', '-fPIC', '-D_WASI_EMULATED_SIGNAL', '-include', '$src_dir/cowasm-fenv-compat.h', '-I$cpython_wasm/include/python3.14', '-I$posix_wasi_sdk', '-I$pari_wasi_sdk/include', '-I$boost_cropped_wasi_sdk/include', '-I$gsl_wasi_sdk/include', '-I$mpfr_wasi_sdk/include', '-I$mpfi_wasi_sdk/include', '-I$ntl_wasi_sdk/include']
+c_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-lwasi-emulated-signal']
+cpp_link_args = ['-target', 'wasm32-wasip1', '-shared', '-nostdlib', '-Wl,--allow-undefined', '-Wl,--no-entry', '-L$pari_wasi_sdk/lib', '-lwasi-emulated-signal']
 EOF
 
 set +e
