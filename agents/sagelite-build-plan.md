@@ -407,6 +407,10 @@ Follow-up snapshot:
   `sage.combinat.perfect_matching`. The manifest now requires the perfect
   matching module and its direct runtime helpers, so bundles missing the new
   combinatorics surface fail validation before worker startup.
+- Change: schema 55 manifest validation rejects symlinked descendants under
+  packaged `PYTHONPATH` and runtime dependency directories. This keeps
+  Electron bundles from accepting importable Sagelite resource trees that can
+  resolve outside the copied resource root.
 
 ## Runtime Milestones
 

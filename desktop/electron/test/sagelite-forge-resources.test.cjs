@@ -573,7 +573,7 @@ withResourceRoot((root) => {
       resolveSageliteExtraResources(__dirname, {
         COWASM_SAGELITE_ELECTRON_RESOURCES: root,
       }),
-    /requiredResourcePaths entry site-packages\/sage\/__init__\.py must not contain symbolic path component site-packages\/sage/,
+    /pythonPath directory contains symbolic path site-packages\/sage/,
   );
 });
 

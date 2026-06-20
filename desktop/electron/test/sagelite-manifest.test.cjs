@@ -1202,6 +1202,25 @@ withResourceRoot((root) => {
   stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
+  touch(root, "linked-runtime-target.py");
+  fs.symlinkSync(
+    path.join(root, "linked-runtime-target.py"),
+    path.join(root, "deps/platformdirs/platformdirs/linked_runtime.py"),
+  );
+  writeManifest(root, validManifest());
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /pythonPath directory contains symbolic path deps\/platformdirs\/platformdirs\/linked_runtime\.py/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
   writeManifest(
     root,
     validManifest({
@@ -1354,7 +1373,7 @@ withResourceRoot((root) => {
 
   assert.throws(
     () => loadSageliteManifest(root),
-    /requiredResourcePaths entry site-packages\/sage\/__init__\.py must not contain symbolic path component site-packages\/sage/,
+    /pythonPath directory contains symbolic path site-packages\/sage/,
   );
 });
 

@@ -223,11 +223,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 54,
+  schemaVersion: 55,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v20",
+  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v21",
 };
 
 const expectedSageliteManifestFields = Object.freeze([
@@ -275,6 +275,12 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
     manifest.pythonPath,
     { requireDirectory: true, requireNonEmpty: true },
   );
+  validateNoSymbolicEntriesUnderDirectories(
+    resourceRoot,
+    manifestPath,
+    "pythonPath",
+    manifest.pythonPath,
+  );
   validateExpectedEntries(
     manifestPath,
     "pythonPath",
@@ -287,6 +293,12 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
     "runtimeDependencyPaths",
     manifest.runtimeDependencyPaths,
     { requireDirectory: true, requireNonEmpty: true },
+  );
+  validateNoSymbolicEntriesUnderDirectories(
+    resourceRoot,
+    manifestPath,
+    "runtimeDependencyPaths",
+    manifest.runtimeDependencyPaths,
   );
   validateExpectedEntries(
     manifestPath,
@@ -494,6 +506,54 @@ function validateNoSymbolicPathComponents(
       );
     }
   }
+}
+
+function validateNoSymbolicEntriesUnderDirectories(
+  resourceRoot,
+  manifestPath,
+  fieldName,
+  entries,
+) {
+  for (const entry of entries) {
+    const targetPath = join(resourceRoot, entry);
+    validateNoSymbolicEntriesUnderDirectory(
+      resourceRoot,
+      targetPath,
+      manifestPath,
+      fieldName,
+    );
+  }
+}
+
+function validateNoSymbolicEntriesUnderDirectory(
+  resourceRoot,
+  targetPath,
+  manifestPath,
+  fieldName,
+) {
+  for (const entry of readdirSync(targetPath, { withFileTypes: true })) {
+    const entryPath = join(targetPath, entry.name);
+    if (entry.isSymbolicLink()) {
+      throw new Error(
+        `${manifestPath} ${fieldName} directory contains symbolic path ${relativePosixPathFromRoot(resourceRoot, entryPath)}`,
+      );
+    }
+    if (entry.isDirectory()) {
+      validateNoSymbolicEntriesUnderDirectory(
+        resourceRoot,
+        entryPath,
+        manifestPath,
+        fieldName,
+      );
+    }
+  }
+}
+
+function relativePosixPathFromRoot(resourceRoot, targetPath) {
+  return targetPath
+    .slice(resourceRoot.length + 1)
+    .split(/[\\/]+/)
+    .join("/");
 }
 
 function validateRelativeManifestEntries(manifestPath, fieldName, entries) {

@@ -260,6 +260,28 @@ withTempDir((root) => {
 });
 
 withTempDir((root) => {
+  const explicitRoot = path.join(root, "explicit");
+  stageValidResources(explicitRoot);
+  touch(explicitRoot, "linked-runtime-target.py");
+  fs.symlinkSync(
+    path.join(explicitRoot, "linked-runtime-target.py"),
+    path.join(
+      explicitRoot,
+      "deps/platformdirs/platformdirs/linked_runtime.py",
+    ),
+  );
+
+  assert.throws(
+    () =>
+      findSageliteRuntime({
+        env: { COWASM_SAGELITE_ELECTRON_RESOURCES: explicitRoot },
+        resourcesPath: undefined,
+      }),
+    /pythonPath directory contains symbolic path deps\/platformdirs\/platformdirs\/linked_runtime\.py/,
+  );
+});
+
+withTempDir((root) => {
   const packagedRoot = path.join(root, "resources", "electron-resources");
   const defaultRoot = path.join(
     root,
