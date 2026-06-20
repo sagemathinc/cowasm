@@ -239,6 +239,42 @@ withTempDir((root) => {
   );
 });
 
+withTempDir((root) => {
+  const packagedRoot = path.join(root, "resources", "electron-resources");
+  const defaultRoot = path.join(
+    root,
+    "sagemath",
+    "sagelite",
+    "dist",
+    "wasi-sdk",
+    "electron-resources",
+  );
+  fs.mkdirSync(packagedRoot, { recursive: true });
+  stageValidResources(defaultRoot);
+
+  assert.throws(
+    () =>
+      findSageliteRuntime({
+        mainDir: path.join(root, "app", "dist", "main"),
+        env: {},
+        resourcesPath: path.join(root, "resources"),
+      }),
+    /Sagelite Electron resource manifest does not exist/,
+  );
+});
+
+withTempDir((root) => {
+  assert.throws(
+    () =>
+      findSageliteRuntime({
+        mainDir: path.join(root, "app", "dist", "main"),
+        env: { COWASM_REQUIRE_SAGELITE_ELECTRON_RESOURCES: "1" },
+        resourcesPath: undefined,
+      }),
+    /Required Sagelite Electron resources were not found/,
+  );
+});
+
 (async () => {
   await withTempDirAsync(async (root) => {
     const originalCwd = process.cwd();

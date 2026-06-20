@@ -54,8 +54,9 @@ export function findSageliteRuntime(
   const explicitResourceRoot = env.COWASM_SAGELITE_ELECTRON_RESOURCES
     ? resolve(env.COWASM_SAGELITE_ELECTRON_RESOURCES)
     : null;
+  const candidateRoots = candidateSageliteResourceRoots(options);
 
-  for (const resourceRoot of candidateSageliteResourceRoots(options)) {
+  for (const resourceRoot of candidateRoots) {
     const manifestPath = join(resourceRoot, sageliteManifestName);
     if (!existsSync(manifestPath)) {
       if (resourceRoot === explicitResourceRoot) {
@@ -68,10 +69,22 @@ export function findSageliteRuntime(
           `Sagelite Electron resource manifest does not exist: ${manifestPath}`,
         );
       }
+      if (existsSync(resourceRoot)) {
+        throw new Error(
+          `Sagelite Electron resource manifest does not exist: ${manifestPath}`,
+        );
+      }
       continue;
     }
     const manifest = loadSageliteManifest(resourceRoot);
     return { resourceRoot, env: sagelitePythonEnv(manifest, resourceRoot) };
+  }
+  if (env.COWASM_REQUIRE_SAGELITE_ELECTRON_RESOURCES === "1") {
+    throw new Error(
+      `Required Sagelite Electron resources were not found; checked: ${candidateRoots.join(
+        ", ",
+      )}`,
+    );
   }
   return null;
 }
