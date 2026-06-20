@@ -30,11 +30,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 8,
+  schemaVersion: 9,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-v2",
+  smokeContract: "exact-arithmetic-matrix-cypari2-failclosed-v3",
 };
 
 function loadSageliteManifest(resourceRoot) {

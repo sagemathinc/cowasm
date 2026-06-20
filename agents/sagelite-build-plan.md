@@ -157,6 +157,11 @@ Follow-up snapshot:
   `sideModulePaths` mandatory instead of optional. This prevents current-schema
   Electron bundles from omitting the runtime-library contract or the complete
   copied `.so` inventory while still passing startup validation.
+- Change: schema 9 manifests advance the smoke contract to
+  `exact-arithmetic-matrix-cypari2-failclosed-v3`. The Node.js and
+  Electron-shaped smokes now import `cypari2`, instantiate `Pari`, and assert
+  that PARI calls fail closed with the expected CoWasm WASI
+  `NotImplementedError` until the compiled PARI runtime is ported.
 - Change: the Electron runtime now passes the resolved Sagelite resource root
   into the Python worker as `COWASM_SAGELITE_RESOURCE_ROOT`, and the staged and
   relocated Electron smoke asserts that the variable matches the active

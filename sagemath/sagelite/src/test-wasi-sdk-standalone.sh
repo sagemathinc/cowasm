@@ -571,6 +571,16 @@ for module in modules:
         raise AssertionError(f'{module} should fail closed on WASI')
 print('sagelite-node-ok FLINT polynomial imports fail closed')"
 
+run_node_import "cypari2 runtime fails closed" "from cypari2 import Pari
+pari = Pari()
+try:
+    pari('primepi(10^6)')
+except NotImplementedError as err:
+    assert 'compiled PARI runtime is not ported yet' in str(err)
+else:
+    raise AssertionError('cypari2 PARI runtime should fail closed on WASI')
+print('sagelite-node-ok cypari2 runtime fails closed')"
+
 : >"$followups_file"
 run_node_import \
   "initialized FLINT fmpz_poly_sage helper import" \
@@ -582,11 +592,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=8
+electron_manifest_schema_version=9
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-v2"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-cypari2-failclosed-v3"
 rm -rf "$electron_resources_dir"
 mkdir -p "$electron_resources_dir/deps"
 
@@ -650,7 +660,9 @@ electron_required_paths=(
   "site-packages/sage/rings/polynomial/polynomial_ring_constructor.py"
   "site-packages/sage/libs/flint/fmpz_poly_sage.cpython-314-wasm32-wasi.so"
   "site-packages/sage/matrix/constructor.cpython-314-wasm32-wasi.so"
+  "deps/cypari2/cypari2/__init__.py"
   "deps/cypari2/cypari2/gen.cpython-314-wasm32-wasi.so"
+  "deps/cypari2/cypari2/pari_instance.py"
   "deps/primecountpy/primecountpy/primecount.cpython-314-wasm32-wasi.so"
   "deps/libcxx/libcxx.so"
   "deps/primecountpy/primecountpy/libcxx.so"

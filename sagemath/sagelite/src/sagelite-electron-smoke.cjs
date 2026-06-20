@@ -60,6 +60,7 @@ async function main() {
 import sage.all
 import sage.libs.flint.fmpz_poly_sage
 import os
+from cypari2 import Pari
 from sage.all import (
     ZZ,
     QQ,
@@ -124,6 +125,14 @@ for module in [
         assert 'disabled on CoWasm WASI' in str(err)
     else:
         raise AssertionError(f'{module} should fail closed on WASI')
+
+pari = Pari()
+try:
+    pari('primepi(10^6)')
+except NotImplementedError as err:
+    assert 'compiled PARI runtime is not ported yet' in str(err)
+else:
+    raise AssertionError('cypari2 PARI runtime should fail closed on WASI')
 
 A = matrix(ZZ, [[1, 2], [3, 4]])
 assert A.det() == ZZ(-2)
