@@ -304,6 +304,11 @@ Follow-up snapshot:
   and verify real `cypari2.Pari` string expressions for arithmetic,
   `primepi`, and `factorback(factor(...))`. Full `Gen` conversion and rich
   cypari2 error translation remain separate runtime work.
+- Change: schema 35 manifests advance the smoke contract to
+  `exact-arithmetic-matrix-cypari2-pari-runtime-v5`. The Node.js and
+  Electron-shaped smokes now also require the private C PARI runtime probe and
+  verify direct PARI calls plus `e_INV` error recovery before exercising the
+  public `cypari2.Pari` string wrapper.
 
 ## Runtime Milestones
 

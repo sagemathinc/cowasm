@@ -61,6 +61,7 @@ import sage.all
 import sage.libs.flint.fmpz_poly_sage
 import os
 from cypari2 import Pari
+from cypari2 import _pari_runtime_probe as pari_probe
 from sage.all import (
     ZZ,
     QQ,
@@ -127,6 +128,10 @@ for module in [
         raise AssertionError(f'{module} should fail closed on WASI')
 
 pari = Pari()
+assert pari_probe.eval_long('2+3') == 5
+assert pari_probe.eval_long('primepi(10000)') == 1229
+assert pari_probe.eval_long('factorback(factor(360))') == 360
+assert pari_probe.check_error_recovery() == 'caught=e_INV recovered=221'
 assert str(pari('2+3')) == '5'
 assert str(pari('primepi(10^6)')) == '78498'
 assert str(pari('factorback(factor(360))')) == '360'

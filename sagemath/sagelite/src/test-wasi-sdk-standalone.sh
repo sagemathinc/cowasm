@@ -572,6 +572,11 @@ for module in modules:
 print('sagelite-node-ok FLINT polynomial imports fail closed')"
 
 run_node_import "cypari2 PARI runtime smoke" "from cypari2 import Pari
+from cypari2 import _pari_runtime_probe as pari_probe
+assert pari_probe.eval_long('2+3') == 5
+assert pari_probe.eval_long('primepi(10000)') == 1229
+assert pari_probe.eval_long('factorback(factor(360))') == 360
+assert pari_probe.check_error_recovery() == 'caught=e_INV recovered=221'
 pari = Pari()
 assert str(pari('2+3')) == '5'
 assert str(pari('primepi(10^6)')) == '78498'
@@ -589,11 +594,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=34
+electron_manifest_schema_version=35
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-cypari2-pari-runtime-v4"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-cypari2-pari-runtime-v5"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."
@@ -739,6 +744,7 @@ electron_required_paths=(
   "site-packages/sage/matrix/special.py"
   "deps/cypari2/cypari2/__init__.py"
   "deps/cypari2/cypari2/_pari_cython_probe.cpython-314-wasm32-wasi.so"
+  "deps/cypari2/cypari2/_pari_runtime_probe.cpython-314-wasm32-wasi.so"
   "deps/cypari2/cypari2/gen.cpython-314-wasm32-wasi.so"
   "deps/cypari2/cypari2/handle_error.py"
   "deps/cypari2/cypari2/pari_instance.py"
