@@ -82,6 +82,17 @@ except NotImplementedError as err:
     assert 'WASI' in str(err)
 else:
     raise AssertionError('explicit FLINT polynomial implementation should be rejected on WASI')
+for module in [
+    'sage.rings.polynomial.polynomial_integer_dense_flint',
+    'sage.rings.polynomial.polynomial_rational_flint',
+    'sage.rings.polynomial.polynomial_zmod_flint',
+]:
+    try:
+        __import__(module)
+    except ImportError as err:
+        assert 'disabled on CoWasm WASI' in str(err)
+    else:
+        raise AssertionError(f'{module} should fail closed on WASI')
 
 A = matrix(ZZ, [[1, 2], [3, 4]])
 assert A.det() == ZZ(-2)

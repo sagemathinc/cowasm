@@ -107,22 +107,22 @@ now, avoiding eager `polynomial_rational_flint` and
 need runtime hardening. Explicit `PolynomialRing(ZZ, "x",
 implementation="FLINT")` requests are rejected with a normal
 `NotImplementedError` on WASI instead of letting that unsafe side-module import
-terminate the Node.js process. A remaining follow-up is richer polynomial
-factorization support; constructing the generic `QQ[x]` factorization currently
-still exits before the Node marker.
+terminate the Node.js process. After install, the known-unsafe FLINT
+polynomial side modules for `ZZ[x]`, `QQ[x]`, and modular polynomial rings are
+quarantined under `dist/wasi-sdk/disabled-side-modules` and replaced with small
+Python stubs. Direct imports now fail closed with a catchable `ImportError`
+instead of terminating the Node.js worker. A remaining follow-up is richer
+polynomial factorization support.
 
 The standalone target also runs non-blocking Node.js follow-up probes after the
 required exact-math smokes and writes any missing markers to
 `dist/wasi-sdk/followups.txt`, with process output in
-`dist/wasi-sdk/node-followups.log`. The recorded follow-ups now split the
-FLINT-backed polynomial path into the direct integer-polynomial import, the
-same import after `ZZ`/`QQ` singleton initialization, the rational and zmod
-FLINT polynomial imports after the same initialization, and the shared
-`sage.libs.flint.fmpz_poly_sage` helper. The helper import completes after ring
-initialization, while the FLINT polynomial side modules still exit before their
-Node markers. Incomplete follow-ups are rerun with Python verbose import
-tracing so the next runtime hardening pass has the import ladder that led to
-the clean exit.
+`dist/wasi-sdk/node-followups.log`. The required Node.js ladder now asserts that
+the quarantined FLINT polynomial imports fail closed, and the remaining
+`sage.libs.flint.fmpz_poly_sage` helper follow-up completes after `ZZ`/`QQ`
+singleton initialization. Incomplete follow-ups are rerun with Python verbose
+import tracing so the next runtime hardening pass has the import ladder that led
+to the clean exit.
 
 The Sagelite package now carries `core/libcxx` as an explicit build/runtime
 input and passes its `libcxx.so` path into the patched Sagelite Meson files for
@@ -131,10 +131,9 @@ runtime data symbols currently needed by the Sagelite NTL and FLINT follow-up
 modules, including `std::nothrow`, iostream vtables, and the C++ ABI typeinfo
 vtables that WebAssembly side modules import through `GOT.mem`. The standalone
 target also copies `libcxx.so` next to installed side modules that actually
-record that dependency, and its follow-up analyzer now reports only C++ data
-imports that are not exported by `libcxx`. Current Node.js follow-ups still
-record the initialized FLINT polynomial imports that exit before their markers,
-but they no longer fail at the earlier missing C++ runtime data-symbol layer.
+record that dependency. The quarantined FLINT polynomial side modules still
+need a future runtime-hardening pass before they can move back into the active
+Sagelite package surface.
 
 The standalone target also stages an Electron-shaped resources directory under
 `dist/wasi-sdk/electron-resources`, hardlinks the Sagelite install and runtime
