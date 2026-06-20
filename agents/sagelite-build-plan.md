@@ -101,6 +101,37 @@ For this milestone, "works" means the Node.js runtime path works. That is the
 path needed for server-side use and for an Electron app, including Electron on
 Windows. Browser execution is intentionally deferred.
 
+## Current Validation Snapshot
+
+Snapshot source:
+
+- Date: 2026-06-19
+- Command: `make -C sagemath/sagelite test-wasi-sdk-standalone`
+- Result: pass
+- Final marker:
+  `sagelite-ok meson configure compile install node import electron resources smoke relocated no followups`
+
+This target now completes the Node.js/Electron milestone path end to end:
+
+- configures Sagelite with Meson against the CoWasm Python 3.14 WASI SDK
+  runtime and package-local compiler wrappers;
+- compiles and installs the generated Sagelite WASI side modules;
+- audits installed Sage side modules for `dylink.0`, imported memory,
+  `PyInit_*` exports, and accidental `needed_dynlibs` records;
+- runs Node.js `python-wasm` imports for `sage`, `sage.env`,
+  `sage.structure.element`, and `sage.all`;
+- passes exact arithmetic, linear algebra, modular arithmetic, and FLINT
+  fail-closed runtime smokes under Node.js;
+- stages `dist/wasi-sdk/electron-resources`, writes the Electron resource
+  manifest, validates the copied side-module inventory, and passes both staged
+  and relocated Electron-shaped resource smokes.
+
+The build produced 471 installed Sagelite side modules and 515 Electron
+resource side modules in the validation run. The Electron smoke still emits
+Sagelite lazy-import warnings about `at_startup=True`; those warnings did not
+block the milestone and should be tracked separately only if they become noisy
+for users.
+
 ## Runtime Milestones
 
 ### Milestone 1: Node.js And Electron
