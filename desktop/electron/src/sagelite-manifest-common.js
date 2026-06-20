@@ -1,6 +1,6 @@
 "use strict";
 
-const { existsSync, readFileSync } = require("fs");
+const { existsSync, readFileSync, statSync } = require("fs");
 const { isAbsolute, join } = require("path");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
@@ -43,7 +43,7 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
       manifestPath,
       "requiredResourcePaths",
       manifest.requiredResourcePaths,
-      { requireNonEmpty: false },
+      { requireFile: true, requireNonEmpty: false },
     );
   }
   if (manifest.nativeLibraryPaths !== undefined) {
@@ -52,7 +52,7 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
       manifestPath,
       "nativeLibraryPaths",
       manifest.nativeLibraryPaths,
-      { requireNonEmpty: true },
+      { requireFile: true, requireNonEmpty: true },
     );
   }
 }
@@ -77,7 +77,7 @@ function validateExistingRelativeEntries(
   manifestPath,
   fieldName,
   entries,
-  { requireNonEmpty },
+  { requireFile = false, requireNonEmpty },
 ) {
   if (!Array.isArray(entries)) {
     throw new Error(`${manifestPath} ${fieldName} must be an array`);
@@ -87,8 +87,12 @@ function validateExistingRelativeEntries(
   }
   validateRelativeManifestEntries(manifestPath, fieldName, entries);
   for (const entry of entries) {
-    if (!existsSync(join(resourceRoot, entry))) {
+    const targetPath = join(resourceRoot, entry);
+    if (!existsSync(targetPath)) {
       throw new Error(`${manifestPath} ${fieldName} entry ${entry} does not exist`);
+    }
+    if (requireFile && !statSync(targetPath).isFile()) {
+      throw new Error(`${manifestPath} ${fieldName} entry ${entry} must be a file`);
     }
   }
 }

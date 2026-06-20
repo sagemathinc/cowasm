@@ -25,6 +25,10 @@ function touch(root, relativePath) {
   fs.writeFileSync(target, "");
 }
 
+function mkdir(root, relativePath) {
+  fs.mkdirSync(path.join(root, relativePath), { recursive: true });
+}
+
 function withResourceRoot(fn) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "cowasm-sagelite-forge-"));
   try {
@@ -119,6 +123,23 @@ withResourceRoot((root) => {
   touch(root, "site-packages/sage/all.py");
   touch(root, "runtime/platformdirs/__init__.py");
   touch(root, "sagelite-electron-smoke.cjs");
+  mkdir(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(root, validManifest());
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /requiredResourcePaths entry python\.wasm must be a file/,
+  );
+});
+
+withResourceRoot((root) => {
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "runtime/platformdirs/__init__.py");
+  touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
   writeManifest(root, validManifest());
 
@@ -128,6 +149,23 @@ withResourceRoot((root) => {
         COWASM_SAGELITE_ELECTRON_RESOURCES: root,
       }),
     /nativeLibraryPaths entry deps\/libcxx\/libcxx\.so does not exist/,
+  );
+});
+
+withResourceRoot((root) => {
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "runtime/platformdirs/__init__.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  mkdir(root, "deps/libcxx/libcxx.so");
+  writeManifest(root, validManifest());
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /nativeLibraryPaths entry deps\/libcxx\/libcxx\.so must be a file/,
   );
 });
 

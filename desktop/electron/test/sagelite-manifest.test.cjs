@@ -128,12 +128,42 @@ withResourceRoot((root) => {
   mkdir(root, "runtime/platformdirs");
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
+  mkdir(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(root, validManifest());
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths entry python\.wasm must be a file/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
+  mkdir(root, "runtime/platformdirs");
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
   writeManifest(root, validManifest());
 
   assert.throws(
     () => loadSageliteManifest(root),
     /nativeLibraryPaths entry deps\/libcxx\/libcxx\.so does not exist/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
+  mkdir(root, "runtime/platformdirs");
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  mkdir(root, "deps/libcxx/libcxx.so");
+  writeManifest(root, validManifest());
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /nativeLibraryPaths entry deps\/libcxx\/libcxx\.so must be a file/,
   );
 });
 
