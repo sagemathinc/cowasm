@@ -292,6 +292,12 @@ Follow-up snapshot:
   `site-packages/sage/__init__.py`. This makes the top-level Sage package
   initializer an explicit packaged resource instead of relying on later
   `sage.all` import behavior to catch a damaged bundle.
+- Change: schema 33 manifest validation now also requires package
+  initializers for the core Sage package roots exercised by the packaged
+  smoke: `sage.arith`, `sage.misc`, `sage.functions`, `sage.categories`,
+  `sage.structure`, `sage.rings`, `sage.rings.finite_rings`, and
+  `sage.rings.polynomial`. This catches bundles that retain individual
+  modules but are missing the package roots needed to import them.
 
 ## Runtime Milestones
 
