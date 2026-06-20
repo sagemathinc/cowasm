@@ -399,6 +399,10 @@ Follow-up snapshot:
   binary Hamming code construction through `sage.coding`. The manifest now
   requires the coding package startup files used by that smoke as hashed
   resources before worker startup.
+- Change: schema 53 manifests advance the packaged smoke contract to cover
+  binary Hamming code minimum-distance computation through the bounded
+  Node/Electron worker path. Generator/parity matrix and ad hoc `LinearCode`
+  construction remain follow-up coding-runtime work.
 
 ## Runtime Milestones
 

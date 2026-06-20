@@ -169,7 +169,8 @@ integer extended-gcd, integer ideal, modular integer ring, and prime
 finite-field coverage in addition to the core integer, rational, polynomial,
 factorization, `prime_pi`, dense matrix, free-module, and combinatorics checks.
 The exact-arithmetic slice also covers Sage number-theory helpers such as CRT
-and integer valuations.
+and integer valuations, and the coding slice verifies binary Hamming code
+minimum-distance computation.
 The combinatorics smoke covers partitions, permutations, tableaux,
 set partitions, subsets, combinations, and integer-vector enumeration. It then
 reruns the same smoke from a relocated copy of that resources tree, which

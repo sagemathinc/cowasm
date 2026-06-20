@@ -131,6 +131,9 @@ startup.
 Schema 50 manifests extend that finite abelian group smoke to cover mixed-order
 generator products, powers, and identity relations through the bounded
 Node/Electron worker path.
+Schema 53 manifests extend the packaged coding smoke to cover Hamming code
+minimum-distance computation, keeping that runtime slice tied to the validated
+Electron resource bundle.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

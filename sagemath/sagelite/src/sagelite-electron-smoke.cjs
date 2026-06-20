@@ -164,6 +164,7 @@ assert F7(3) * F7(5) == F7(1)
 H = HammingCode(GF(2), 3)
 assert H.length() == 7
 assert H.dimension() == 4
+assert H.minimum_distance() == 3
 Z9 = Integers(9)
 assert Z9(4) + Z9(8) == Z9(3)
 assert Z9(2) ** 3 == Z9(8)
