@@ -41,6 +41,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/arith/all.py",
   "site-packages/sage/arith/functions.cpython-314-wasm32-wasi.so",
   "site-packages/sage/arith/misc.py",
+  "site-packages/sage/misc/misc_c.cpython-314-wasm32-wasi.so",
   "site-packages/sage/functions/all.py",
   "site-packages/sage/functions/prime_pi.cpython-314-wasm32-wasi.so",
   "site-packages/sage/categories/action.cpython-314-wasm32-wasi.so",
@@ -57,12 +58,16 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/categories/modules.py",
   "site-packages/sage/categories/modules_with_basis.py",
   "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/structure/coerce.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/structure/sequence.py",
   "site-packages/sage/structure/factorization.py",
   "site-packages/sage/structure/factorization_integer.py",
   "site-packages/sage/rings/factorint.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/factorint_flint.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/factorint_pari.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/rings/abc.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/all.py",
+  "site-packages/sage/rings/fast_arith.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/ideal.py",
   "site-packages/sage/rings/ideal_monoid.py",
   "site-packages/sage/rings/integer.cpython-314-wasm32-wasi.so",
@@ -136,7 +141,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 29,
+  schemaVersion: 30,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",

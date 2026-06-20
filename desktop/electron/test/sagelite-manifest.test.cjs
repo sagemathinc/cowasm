@@ -250,6 +250,31 @@ withResourceRoot((root) => {
     validManifest({
       requiredResourcePaths: [
         ...expectedSageliteMandatoryResourcePaths.filter(
+          (entry) =>
+            entry !== "site-packages/sage/misc/misc_c.cpython-314-wasm32-wasi.so",
+        ),
+        ...expectedSageliteNativeLibraryPaths,
+      ],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths must include the Sagelite Electron mandatory resources/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: [
+        ...expectedSageliteMandatoryResourcePaths.filter(
           (entry) => entry !== "deps/cypari2/cypari2/handle_error.py",
         ),
         ...expectedSageliteNativeLibraryPaths,
@@ -274,7 +299,58 @@ withResourceRoot((root) => {
     validManifest({
       requiredResourcePaths: [
         ...expectedSageliteMandatoryResourcePaths.filter(
+          (entry) =>
+            entry !==
+            "site-packages/sage/structure/coerce.cpython-314-wasm32-wasi.so",
+        ),
+        ...expectedSageliteNativeLibraryPaths,
+      ],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths must include the Sagelite Electron mandatory resources/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: [
+        ...expectedSageliteMandatoryResourcePaths.filter(
           (entry) => entry !== "site-packages/sage/rings/all.py",
+        ),
+        ...expectedSageliteNativeLibraryPaths,
+      ],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths must include the Sagelite Electron mandatory resources/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: [
+        ...expectedSageliteMandatoryResourcePaths.filter(
+          (entry) =>
+            entry !== "site-packages/sage/rings/fast_arith.cpython-314-wasm32-wasi.so",
         ),
         ...expectedSageliteNativeLibraryPaths,
       ],

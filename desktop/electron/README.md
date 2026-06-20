@@ -75,6 +75,10 @@ the worker starts.
 Schema 25 manifests also require the ring ideal/quotient modules and
 finite-field base side modules used by the exact arithmetic smoke, so missing
 `ZZ.ideal(7)` or `GF(7)` support fails validation before worker startup.
+Schema 30 manifests also require the direct helper modules behind
+`sage.arith.misc`, including `misc_c`, coercion, sequence, ring ABC, and
+fast-arithmetic resources, so `sage.all` arithmetic cannot validate with a
+partial helper set.
 Schema 9 manifests also include the current `cypari2` fail-closed runtime
 contract: Electron resources must contain the build-support `cypari2` files
 needed by Sagelite, and the smoke asserts that PARI calls still raise the

@@ -278,6 +278,12 @@ Follow-up snapshot:
   `platformdirs`. This keeps copied Electron resources from validating when
   the extension modules exist but the Python package files needed to import or
   initialize them are missing.
+- Change: schema 30 manifest validation now also requires the direct helper
+  modules imported by `sage.arith.misc`, including `sage.misc.misc_c`,
+  `sage.structure.coerce`, `sage.structure.sequence`, `sage.rings.abc`, and
+  `sage.rings.fast_arith`. This catches Electron resource bundles that retain
+  the arithmetic entrypoint but are missing the helper modules needed by
+  `sage.all` exact arithmetic.
 
 ## Runtime Milestones
 
