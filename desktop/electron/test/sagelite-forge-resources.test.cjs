@@ -122,6 +122,26 @@ withResourceRoot((root) => {
 
 withResourceRoot((root) => {
   touch(root, "site-packages/sage/all.py");
+  touch(root, "runtime-platformdirs.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(
+    root,
+    validManifest({ pythonPath: ["site-packages", "runtime-platformdirs.py"] }),
+  );
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /pythonPath entry runtime-platformdirs\.py must be a directory/,
+  );
+});
+
+withResourceRoot((root) => {
+  touch(root, "site-packages/sage/all.py");
   touch(root, "runtime/platformdirs/__init__.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "deps/libcxx/libcxx.so");

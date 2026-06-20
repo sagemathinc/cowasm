@@ -111,6 +111,24 @@ withResourceRoot((root) => {
 
 withResourceRoot((root) => {
   mkdir(root, "site-packages");
+  touch(root, "runtime-platformdirs.py");
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(
+    root,
+    validManifest({ pythonPath: ["site-packages", "runtime-platformdirs.py"] }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /pythonPath entry runtime-platformdirs\.py must be a directory/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
   mkdir(root, "runtime/platformdirs");
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");

@@ -35,7 +35,7 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
     manifestPath,
     "pythonPath",
     manifest.pythonPath,
-    { requireNonEmpty: true },
+    { requireDirectory: true, requireNonEmpty: true },
   );
   if (manifest.requiredResourcePaths !== undefined) {
     validateExistingRelativeEntries(
@@ -77,7 +77,7 @@ function validateExistingRelativeEntries(
   manifestPath,
   fieldName,
   entries,
-  { requireFile = false, requireNonEmpty },
+  { requireDirectory = false, requireFile = false, requireNonEmpty },
 ) {
   if (!Array.isArray(entries)) {
     throw new Error(`${manifestPath} ${fieldName} must be an array`);
@@ -91,7 +91,13 @@ function validateExistingRelativeEntries(
     if (!existsSync(targetPath)) {
       throw new Error(`${manifestPath} ${fieldName} entry ${entry} does not exist`);
     }
-    if (requireFile && !statSync(targetPath).isFile()) {
+    const targetStat = statSync(targetPath);
+    if (requireDirectory && !targetStat.isDirectory()) {
+      throw new Error(
+        `${manifestPath} ${fieldName} entry ${entry} must be a directory`,
+      );
+    }
+    if (requireFile && !targetStat.isFile()) {
       throw new Error(`${manifestPath} ${fieldName} entry ${entry} must be a file`);
     }
   }
