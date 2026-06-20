@@ -124,6 +124,10 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/matrix/matrix_misc.py",
   "site-packages/sage/matrix/matrix_space.py",
   "site-packages/sage/matrix/special.py",
+  "site-packages/sage/modules/__init__.py",
+  "site-packages/sage/modules/free_module.py",
+  "site-packages/sage/modules/free_module_element.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so",
   "deps/cypari2/cypari2/__init__.py",
   "deps/cypari2/cypari2/_pari_cython_probe.cpython-314-wasm32-wasi.so",
   "deps/cypari2/cypari2/_pari_runtime_probe.cpython-314-wasm32-wasi.so",
@@ -160,11 +164,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 41,
+  schemaVersion: 42,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-cypari2-pari-arithmetic-v7",
+  smokeContract: "exact-arithmetic-matrix-free-module-cypari2-pari-arithmetic-v8",
 };
 
 const expectedSageliteManifestFields = Object.freeze([

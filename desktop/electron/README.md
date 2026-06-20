@@ -103,6 +103,11 @@ Electron resource root.
 Schema 40 manifests also reject a symbolic-link `electron-resources` root, so
 an override or packaged resource directory cannot validate by redirecting the
 entire Sagelite resource tree outside the copied bundle.
+Schema 42 manifests extend the packaged exact-math smoke to cover
+`FreeModule(ZZ, 3)` and `FreeModule(QQ, 2)` arithmetic. The manifest requires
+the corresponding Sage module files and side modules as hashed resources, so a
+bundle with matrix support but missing free-module arithmetic fails before
+worker startup.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

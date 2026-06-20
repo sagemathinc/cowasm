@@ -540,6 +540,18 @@ assert C.charpoly()(C) == matrix(ZZ, [[0, 0], [0, 0]])
 I = identity_matrix(QQ, 3)
 assert I.det() == QQ(1)
 print('sagelite-node-ok linear algebra smoke')"
+run_node_import "free module smoke" "from sage.all import ZZ, QQ
+from sage.modules.free_module import FreeModule
+M = FreeModule(ZZ, 3)
+v = M([1, 2, 3])
+w = M([4, 5, 6])
+assert v + w == M([5, 7, 9])
+assert v.dot_product(w) == ZZ(32)
+assert 2 * v == M([2, 4, 6])
+V = FreeModule(QQ, 2)
+q = V([QQ(1, 2), QQ(2, 3)])
+assert q.denominator() == 6
+print('sagelite-node-ok free module smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
@@ -610,11 +622,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=41
+electron_manifest_schema_version=42
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-cypari2-pari-arithmetic-v7"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-cypari2-pari-arithmetic-v8"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."
@@ -764,6 +776,10 @@ electron_required_paths=(
   "site-packages/sage/matrix/matrix_misc.py"
   "site-packages/sage/matrix/matrix_space.py"
   "site-packages/sage/matrix/special.py"
+  "site-packages/sage/modules/__init__.py"
+  "site-packages/sage/modules/free_module.py"
+  "site-packages/sage/modules/free_module_element.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so"
   "deps/cypari2/cypari2/__init__.py"
   "deps/cypari2/cypari2/_pari_cython_probe.cpython-314-wasm32-wasi.so"
   "deps/cypari2/cypari2/_pari_runtime_probe.cpython-314-wasm32-wasi.so"

@@ -76,6 +76,7 @@ from sage.all import (
     xgcd,
 )
 from sage.matrix.constructor import identity_matrix, matrix
+from sage.modules.free_module import FreeModule
 
 assert os.environ['COWASM_SAGELITE_RESOURCE_ROOT'] == os.getcwd()
 assert ZZ(2) + ZZ(3) == ZZ(5)
@@ -88,6 +89,15 @@ assert g2 == ZZ(2)
 assert s2 * ZZ(240) + t2 * ZZ(46) == g2
 assert binomial(20, 8) == ZZ(125970)
 assert factorial(10) == ZZ(3628800)
+M = FreeModule(ZZ, 3)
+v = M([1, 2, 3])
+w = M([4, 5, 6])
+assert v + w == M([5, 7, 9])
+assert v.dot_product(w) == ZZ(32)
+assert 2 * v == M([2, 4, 6])
+V = FreeModule(QQ, 2)
+q = V([QQ(1, 2), QQ(2, 3)])
+assert q.denominator() == 6
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
 Z7 = Integers(7)

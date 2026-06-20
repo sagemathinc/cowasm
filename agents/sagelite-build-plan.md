@@ -342,6 +342,11 @@ Follow-up snapshot:
   arithmetic over `znorder`, `polisirreducible`, and `ellcard(ellinit(...))`,
   while keeping non-string `Pari` input and `objtogen` fail-closed until full
   `Gen` conversion is ported.
+- Change: schema 42 manifests advance the smoke contract to
+  `exact-arithmetic-matrix-free-module-cypari2-pari-arithmetic-v8`. The
+  Node.js and Electron-shaped smokes now verify exact `FreeModule(ZZ, 3)` and
+  `FreeModule(QQ, 2)` arithmetic, and the manifest requires the Sage
+  free-module implementation files and side modules as hashed resources.
 
 ## Runtime Milestones
 
