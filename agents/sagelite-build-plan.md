@@ -353,6 +353,12 @@ Follow-up snapshot:
   partition conjugation and permutation inversion/cycle conversion, and the
   manifest requires the corresponding `sage.combinat` and `sage.sets` startup
   files and side modules as hashed resources.
+- Change: the Sagelite standalone probe now bounds each Node.js import ladder
+  step and each staged/relocated Electron-shaped smoke with configurable
+  timeouts, and the Electron package's exposed Sagelite smoke uses the same
+  bounded worker launch. This keeps broader runtime expansion attempts from
+  turning a hung Python worker into an indefinitely running build and records
+  the stalled step as the first runtime blocker.
 
 ## Runtime Milestones
 

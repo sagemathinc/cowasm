@@ -6,6 +6,7 @@ include ../build/Makefile-rules
 
 SAGELITE_DIR = ${CWD}/../../sagemath/sagelite
 SAGELITE_ELECTRON_RESOURCES = ${SAGELITE_DIR}/dist/wasi-sdk/electron-resources
+SAGELITE_ELECTRON_SMOKE_TIMEOUT ?= 180s
 
 ${DIST}/.built: node_modules src/index.ts
 	pnpm run build
@@ -20,7 +21,7 @@ test-sagelite: node_modules
 	cd ${SAGELITE_ELECTRON_RESOURCES} && \
 	  PYTHONPATH= \
 	  COWASM_PYTHON_WASM_NODE="${CWD}/node_modules/python-wasm/dist/node.js" \
-	  node sagelite-electron-smoke.cjs
+	  timeout "${SAGELITE_ELECTRON_SMOKE_TIMEOUT}" node sagelite-electron-smoke.cjs
 
 .PHONY: test-sagelite-manifest
 test-sagelite-manifest: node_modules

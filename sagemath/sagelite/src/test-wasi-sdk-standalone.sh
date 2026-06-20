@@ -43,6 +43,8 @@ log_file="$dist_dir/meson-setup.log"
 node_import_log="$dist_dir/node-import.log"
 followups_file="$dist_dir/followups.txt"
 side_module_audit_log="$dist_dir/side-module-audit.log"
+node_import_timeout="${SAGELITE_NODE_IMPORT_TIMEOUT:-180s}"
+electron_smoke_timeout="${SAGELITE_ELECTRON_SMOKE_TIMEOUT:-180s}"
 
 record_blocker() {
   local message="$1"
@@ -243,6 +245,10 @@ fi
 
 if ! command -v ninja >/dev/null 2>&1; then
   record_blocker "sagelite-blocked: package-local ninja wrapper is not available on PATH."
+fi
+
+if ! command -v timeout >/dev/null 2>&1; then
+  record_blocker "sagelite-blocked: host timeout command is required for bounded Node.js runtime probes."
 fi
 
 pythonpath_parts=(
@@ -490,9 +496,14 @@ run_node_import() {
   printf '## %s\n' "$label" >>"$node_import_log"
   set +e
   PYTHONPATH="$node_pythonpath" \
-    node "$python_wasm/bin/python-wasm" -c "$wrapped_code" >>"$node_import_log" 2>&1
+    timeout "$node_import_timeout" \
+      node "$python_wasm/bin/python-wasm" -c "$wrapped_code" >>"$node_import_log" 2>&1
   local import_status=$?
   set -e
+  if [ "$import_status" -eq 124 ]; then
+    tail -120 "$node_import_log" >&2
+    record_blocker "sagelite-blocked: Node.js python-wasm import timed out after $node_import_timeout at $label; see $node_import_log for the first runtime blocker."
+  fi
   if [ "$import_status" -ne 0 ]; then
     tail -120 "$node_import_log" >&2
     record_blocker "sagelite-blocked: Node.js python-wasm import failed at $label; see $node_import_log for the first runtime blocker."
@@ -501,8 +512,14 @@ run_node_import() {
     printf '## %s verbose import trace after missing marker\n' "$label" >>"$node_import_log"
     set +e
     PYTHONPATH="$node_pythonpath" \
-      node "$python_wasm/bin/python-wasm" -v -c "$wrapped_code" >>"$node_import_log" 2>&1
+      timeout "$node_import_timeout" \
+        node "$python_wasm/bin/python-wasm" -v -c "$wrapped_code" >>"$node_import_log" 2>&1
+    local verbose_status=$?
     set -e
+    if [ "$verbose_status" -eq 124 ]; then
+      tail -120 "$node_import_log" >&2
+      record_blocker "sagelite-blocked: verbose Node.js python-wasm import timed out after $node_import_timeout at $label; see $node_import_log for the first runtime blocker."
+    fi
     tail -120 "$node_import_log" >&2
     record_blocker "sagelite-blocked: Node.js python-wasm import exited before completing $label; see $node_import_log for the first runtime blocker."
   fi
@@ -964,10 +981,14 @@ run_electron_smoke() {
     cd "$resources_dir"
     PYTHONPATH= \
       COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
-      node sagelite-electron-smoke.cjs
+      timeout "$electron_smoke_timeout" node sagelite-electron-smoke.cjs
   ) >>"$electron_bundle_log" 2>&1
   local electron_bundle_status=$?
   set -e
+  if [ "$electron_bundle_status" -eq 124 ]; then
+    tail -120 "$electron_bundle_log" >&2
+    record_blocker "sagelite-blocked: Electron-shaped relative resources smoke timed out after $electron_smoke_timeout at $label; see $electron_bundle_log for the first runtime blocker."
+  fi
   if [ "$electron_bundle_status" -ne 0 ]; then
     tail -120 "$electron_bundle_log" >&2
     record_blocker "sagelite-blocked: Electron-shaped relative resources smoke failed at $label; see $electron_bundle_log for the first runtime blocker."
