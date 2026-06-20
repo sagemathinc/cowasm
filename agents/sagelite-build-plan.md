@@ -388,6 +388,9 @@ Follow-up snapshot:
   requires the Sage group package roots, abelian group implementation files,
   and the `sage.groups.group` side module as hashed resources before worker
   startup.
+- Change: schema 50 manifests advance the finite abelian group smoke to cover
+  mixed-order generator products, powers, and identity relations through the
+  bounded Node/Electron worker path.
 
 ## Runtime Milestones
 

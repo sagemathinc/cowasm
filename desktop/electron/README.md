@@ -128,6 +128,9 @@ construction and element arithmetic. The manifest requires the Sage group
 package roots, abelian group implementation files, and group side module as
 hashed resources, so a bundle missing that algebra slice fails before worker
 startup.
+Schema 50 manifests extend that finite abelian group smoke to cover mixed-order
+generator products, powers, and identity relations through the bounded
+Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

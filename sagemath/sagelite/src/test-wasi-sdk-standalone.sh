@@ -576,6 +576,13 @@ a, b = G.gens()
 assert a.order() == 2
 assert b.order() == 3
 assert (a * b).order() == 6
+H = AbelianGroup([4, 6])
+c, d = H.gens()
+assert (c * d).order() == 12
+assert (c**2 * d**3).order() == 2
+assert (c**3 * d**5)**2 == c**2 * d**4
+assert c**4 == H.one()
+assert d**6 == H.one()
 print('sagelite-node-ok finite abelian group smoke')"
 run_node_import "combinatorics smoke" "import sage.all
 from sage.combinat.combination import Combinations
@@ -684,11 +691,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=49
+electron_manifest_schema_version=50
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-tableau-set-partition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v15"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-power-tableau-set-partition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v16"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."

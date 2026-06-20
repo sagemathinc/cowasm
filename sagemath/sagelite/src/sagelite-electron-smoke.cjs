@@ -124,6 +124,13 @@ a, b = A2x3.gens()
 assert a.order() == 2
 assert b.order() == 3
 assert (a * b).order() == 6
+A4x6 = AbelianGroup([4, 6])
+c, d = A4x6.gens()
+assert (c * d).order() == 12
+assert (c**2 * d**3).order() == 2
+assert (c**3 * d**5)**2 == c**2 * d**4
+assert c**4 == A4x6.one()
+assert d**6 == A4x6.one()
 p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
 assert p.size() == 7
