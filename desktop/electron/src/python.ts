@@ -76,26 +76,38 @@ export function findSageliteRuntime(
   return null;
 }
 
-function sageliteEnv(): Record<string, string> | undefined {
-  const runtime = findSageliteRuntime();
-  if (runtime == null) {
-    log("Sagelite resources not found; starting base Python runtime");
-    return undefined;
+export async function withProcessCwd<T>(
+  cwd: string,
+  fn: () => Promise<T>,
+): Promise<T> {
+  const previousCwd = process.cwd();
+  process.chdir(cwd);
+  try {
+    return await fn();
+  } finally {
+    process.chdir(previousCwd);
   }
-  process.chdir(runtime.resourceRoot);
-  log(`using Sagelite resources from ${runtime.resourceRoot}`);
-  return runtime.env;
 }
 
 // todo: reuseInFlight...?
 export default async function getPython() {
   if (python == null) {
+    const runtime = findSageliteRuntime();
     // Very important to explicitly set the fs, since that's not the default yet.
-    python = await asyncPython({
+    const options = {
       noStdio: true,
-      fs: "everything",
-      env: sageliteEnv(),
-    });
+      fs: "everything" as const,
+      ...(runtime == null ? {} : { env: runtime.env }),
+    };
+    if (runtime == null) {
+      log("Sagelite resources not found; starting base Python runtime");
+      python = await asyncPython(options);
+    } else {
+      log(`using Sagelite resources from ${runtime.resourceRoot}`);
+      python = await withProcessCwd(runtime.resourceRoot, () =>
+        asyncPython(options),
+      );
+    }
   }
   return python;
 }

@@ -9,6 +9,7 @@ const path = require("path");
 const {
   candidateSageliteResourceRoots,
   findSageliteRuntime,
+  withProcessCwd,
 } = require("../dist/main/python");
 const {
   expectedSageliteManifest,
@@ -32,6 +33,15 @@ function withTempDir(fn) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "cowasm-sagelite-runtime-"));
   try {
     return fn(root);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+}
+
+async function withTempDirAsync(fn) {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "cowasm-sagelite-runtime-"));
+  try {
+    return await fn(root);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
@@ -161,4 +171,40 @@ withTempDir((root) => {
       }),
     /root-local POSIX relative paths/,
   );
+});
+
+(async () => {
+  await withTempDirAsync(async (root) => {
+    const originalCwd = process.cwd();
+    const resourceRoot = path.join(root, "resources");
+    fs.mkdirSync(resourceRoot, { recursive: true });
+
+    const result = await withProcessCwd(resourceRoot, async () => {
+      assert.strictEqual(process.cwd(), resourceRoot);
+      return "started";
+    });
+
+    assert.strictEqual(result, "started");
+    assert.strictEqual(process.cwd(), originalCwd);
+  });
+
+  await withTempDirAsync(async (root) => {
+    const originalCwd = process.cwd();
+    const resourceRoot = path.join(root, "resources");
+    fs.mkdirSync(resourceRoot, { recursive: true });
+
+    await assert.rejects(
+      () =>
+        withProcessCwd(resourceRoot, async () => {
+          assert.strictEqual(process.cwd(), resourceRoot);
+          throw new Error("startup failed");
+        }),
+      /startup failed/,
+    );
+
+    assert.strictEqual(process.cwd(), originalCwd);
+  });
+})().catch((err) => {
+  console.error(err);
+  process.exit(1);
 });
