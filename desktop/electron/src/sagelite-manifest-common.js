@@ -32,7 +32,17 @@ const expectedSageliteRequiredToolPaths = Object.freeze([
 const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/all.py",
   "site-packages/sage/env.py",
+  "site-packages/sage/arith/all.py",
+  "site-packages/sage/arith/functions.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/arith/misc.py",
+  "site-packages/sage/functions/all.py",
+  "site-packages/sage/functions/prime_pi.cpython-314-wasm32-wasi.so",
   "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/structure/factorization.py",
+  "site-packages/sage/structure/factorization_integer.py",
+  "site-packages/sage/rings/factorint.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/rings/factorint_flint.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/rings/factorint_pari.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/integer.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/integer_ring.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/rational.cpython-314-wasm32-wasi.so",
@@ -86,7 +96,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 21,
+  schemaVersion: 22,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",

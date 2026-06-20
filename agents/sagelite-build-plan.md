@@ -234,6 +234,11 @@ Follow-up snapshot:
   full 40-character git commit hash. This keeps packaged Electron bundle
   provenance unambiguous across Sagelite checkouts with similar abbreviated
   revisions.
+- Change: schema 22 manifest validation now also requires the arithmetic
+  startup resources used by the exact-math smoke, including `sage.arith`,
+  `sage.functions.prime_pi`, and the integer factorization helpers. This catches
+  bundles that can import the core rings but are missing the `factor` or
+  `prime_pi` paths before the Electron worker starts.
 
 ## Runtime Milestones
 

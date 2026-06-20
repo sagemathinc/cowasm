@@ -68,9 +68,9 @@ or side-module companion libraries before the worker starts.
 Schema 7 manifests also require native libraries to be listed as required
 resources with SHA-256 digests, so packaging validation rejects corrupted or
 stale smoke/runtime/native files instead of only checking that the paths exist.
-Schema 18 manifests also require the pure-Python rational-field, modular-ring,
-and prime finite-field constructor files used by the exact arithmetic smoke, so
-those missing files fail validation before the worker starts.
+Schema 22 manifests also require the arithmetic and factorization resources
+used by the exact arithmetic smoke, so missing `factor` or `prime_pi` startup
+files fail validation before the worker starts.
 Schema 9 manifests also include the current `cypari2` fail-closed runtime
 contract: Electron resources must contain the build-support `cypari2` files
 needed by Sagelite, and the smoke asserts that PARI calls still raise the
