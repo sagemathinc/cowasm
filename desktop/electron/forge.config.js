@@ -1,8 +1,12 @@
-const { resolveSageliteExtraResources } = require('./sagelite-resources');
+const {
+  afterCopySageliteExtraResources,
+  resolveSageliteExtraResources,
+} = require('./sagelite-resources');
 
 module.exports = {
   packagerConfig: {
     extraResource: resolveSageliteExtraResources(__dirname),
+    afterCopyExtraResources: [afterCopySageliteExtraResources(__dirname)],
   },
   rebuildConfig: {},
   makers: [

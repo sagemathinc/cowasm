@@ -7,7 +7,10 @@ const os = require("os");
 const path = require("path");
 
 const {
+  afterCopySageliteExtraResources,
   expectedSageliteManifest,
+  normalizeCopiedSageliteExtraResource,
+  packagedSageliteResourceDirname,
   resolveSageliteExtraResources,
   sageliteManifestName,
 } = require("../sagelite-resources");
@@ -27,6 +30,11 @@ function touch(root, relativePath) {
 
 function mkdir(root, relativePath) {
   fs.mkdirSync(path.join(root, relativePath), { recursive: true });
+}
+
+function copyTree(src, dst) {
+  fs.mkdirSync(path.dirname(dst), { recursive: true });
+  fs.cpSync(src, dst, { recursive: true });
 }
 
 function withResourceRoot(fn) {
@@ -50,6 +58,15 @@ function validManifest(overrides = {}) {
     nativeLibraryPaths: ["deps/libcxx/libcxx.so"],
     ...overrides,
   };
+}
+
+function stageValidResources(root) {
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "runtime/platformdirs/__init__.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(root, validManifest());
 }
 
 withResourceRoot((root) => {
@@ -173,6 +190,97 @@ assert.deepStrictEqual(
   resolveSageliteExtraResources(path.join(os.tmpdir(), "cowasm-no-default"), {}),
   [],
 );
+
+withResourceRoot((root) => {
+  const sourceRoot = path.join(root, "custom-sagelite-resources");
+  const stagingPath = path.join(root, "stage");
+  stageValidResources(sourceRoot);
+  copyTree(
+    sourceRoot,
+    path.join(stagingPath, "resources", path.basename(sourceRoot)),
+  );
+
+  normalizeCopiedSageliteExtraResource(sourceRoot, stagingPath);
+
+  assert.ok(
+    fs.existsSync(
+      path.join(
+        stagingPath,
+        "resources",
+        packagedSageliteResourceDirname,
+        sageliteManifestName,
+      ),
+    ),
+  );
+  assert.ok(
+    !fs.existsSync(
+      path.join(stagingPath, "resources", path.basename(sourceRoot)),
+    ),
+  );
+});
+
+withResourceRoot((root) => {
+  const sourceRoot = path.join(root, "override-name");
+  const stagingPath = path.join(root, "stage");
+  stageValidResources(sourceRoot);
+  const hook = afterCopySageliteExtraResources(__dirname, {
+    COWASM_SAGELITE_ELECTRON_RESOURCES: sourceRoot,
+  });
+  copyTree(
+    sourceRoot,
+    path.join(stagingPath, "resources", path.basename(sourceRoot)),
+  );
+
+  hook(stagingPath, "21.3.0", process.platform, process.arch, (err) => {
+    assert.ifError(err);
+  });
+
+  assert.ok(
+    fs.existsSync(
+      path.join(
+        stagingPath,
+        "resources",
+        packagedSageliteResourceDirname,
+        sageliteManifestName,
+      ),
+    ),
+  );
+});
+
+withResourceRoot((root) => {
+  const sourceRoot = path.join(root, "darwin-override");
+  const stagingPath = path.join(root, "stage");
+  const resourceParent = path.join(
+    stagingPath,
+    "CoWasm Desktop.app",
+    "Contents",
+    "Resources",
+  );
+  stageValidResources(sourceRoot);
+  copyTree(sourceRoot, path.join(resourceParent, path.basename(sourceRoot)));
+
+  normalizeCopiedSageliteExtraResource(sourceRoot, stagingPath, "darwin");
+
+  assert.ok(
+    fs.existsSync(
+      path.join(
+        resourceParent,
+        packagedSageliteResourceDirname,
+        sageliteManifestName,
+      ),
+    ),
+  );
+  assert.ok(!fs.existsSync(path.join(resourceParent, path.basename(sourceRoot))));
+});
+
+withResourceRoot((root) => {
+  const stagingPath = path.join(root, "stage");
+  const hook = afterCopySageliteExtraResources(root, {});
+
+  hook(stagingPath, "21.3.0", process.platform, process.arch, (err) => {
+    assert.ifError(err);
+  });
+});
 
 assert.throws(
   () =>
