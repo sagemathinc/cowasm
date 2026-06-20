@@ -249,6 +249,31 @@ withResourceRoot((root) => {
       requiredResourcePaths: [
         ...expectedSageliteMandatoryResourcePaths.filter(
           (entry) =>
+            entry !== "site-packages/sage/groups/group.cpython-314-wasm32-wasi.so",
+        ),
+        ...expectedSageliteNativeLibraryPaths,
+      ],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths must include the Sagelite Electron mandatory resources/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: [
+        ...expectedSageliteMandatoryResourcePaths.filter(
+          (entry) =>
             entry !== "site-packages/sage/rings/quotient_ring_element.py",
         ),
         ...expectedSageliteNativeLibraryPaths,

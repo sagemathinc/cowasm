@@ -383,6 +383,11 @@ Follow-up snapshot:
   integer quotient-ring arithmetic imports this element implementation, so
   stale Electron bundles missing it now fail validation before worker startup
   instead of reaching a runtime import failure.
+- Change: schema 49 manifests advance the packaged smoke contract to cover
+  finite abelian group construction and element arithmetic. The manifest now
+  requires the Sage group package roots, abelian group implementation files,
+  and the `sage.groups.group` side module as hashed resources before worker
+  startup.
 
 ## Runtime Milestones
 

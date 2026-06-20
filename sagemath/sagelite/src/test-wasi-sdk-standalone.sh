@@ -569,6 +569,14 @@ V = FreeModule(QQ, 2)
 q = V([QQ(1, 2), QQ(2, 3)])
 assert q.denominator() == 6
 print('sagelite-node-ok free module smoke')"
+run_node_import "finite abelian group smoke" "import sage.all
+from sage.groups.abelian_gps.abelian_group import AbelianGroup
+G = AbelianGroup([2, 3])
+a, b = G.gens()
+assert a.order() == 2
+assert b.order() == 3
+assert (a * b).order() == 6
+print('sagelite-node-ok finite abelian group smoke')"
 run_node_import "combinatorics smoke" "import sage.all
 from sage.combinat.combination import Combinations
 from sage.combinat.integer_vector import IntegerVectors
@@ -676,11 +684,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=48
+electron_manifest_schema_version=49
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-tableau-set-partition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v14"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-tableau-set-partition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v15"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."
@@ -835,6 +843,12 @@ electron_required_paths=(
   "site-packages/sage/modules/free_module.py"
   "site-packages/sage/modules/free_module_element.cpython-314-wasm32-wasi.so"
   "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/groups/__init__.py"
+  "site-packages/sage/groups/group.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/groups/abelian_gps/__init__.py"
+  "site-packages/sage/groups/abelian_gps/abelian_group.py"
+  "site-packages/sage/groups/abelian_gps/abelian_group_element.py"
+  "site-packages/sage/groups/abelian_gps/element_base.py"
   "site-packages/sage/combinat/SJT.py"
   "site-packages/sage/combinat/__init__.py"
   "site-packages/sage/combinat/backtrack.py"

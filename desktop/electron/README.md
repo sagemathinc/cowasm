@@ -123,6 +123,11 @@ bounded Node/Electron worker path.
 Schema 47 manifests extend the packaged exact-math smoke to cover Sage
 integer/rational helper methods, integer quotient rings, and composite-modulus
 integer-ring arithmetic through the same bounded worker path.
+Schema 49 manifests extend the packaged smoke to cover finite abelian group
+construction and element arithmetic. The manifest requires the Sage group
+package roots, abelian group implementation files, and group side module as
+hashed resources, so a bundle missing that algebra slice fails before worker
+startup.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

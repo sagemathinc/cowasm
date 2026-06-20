@@ -78,6 +78,7 @@ from sage.all import (
 from sage.arith.misc import CRT, valuation
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.modules.free_module import FreeModule
+from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.combinat.combination import Combinations
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition
@@ -118,6 +119,11 @@ assert 2 * v == M([2, 4, 6])
 V = FreeModule(QQ, 2)
 q = V([QQ(1, 2), QQ(2, 3)])
 assert q.denominator() == 6
+A2x3 = AbelianGroup([2, 3])
+a, b = A2x3.gens()
+assert a.order() == 2
+assert b.order() == 3
+assert (a * b).order() == 6
 p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
 assert p.size() == 7

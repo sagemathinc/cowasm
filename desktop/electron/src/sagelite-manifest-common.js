@@ -129,6 +129,12 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/modules/free_module.py",
   "site-packages/sage/modules/free_module_element.cpython-314-wasm32-wasi.so",
   "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/groups/__init__.py",
+  "site-packages/sage/groups/group.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/groups/abelian_gps/__init__.py",
+  "site-packages/sage/groups/abelian_gps/abelian_group.py",
+  "site-packages/sage/groups/abelian_gps/abelian_group_element.py",
+  "site-packages/sage/groups/abelian_gps/element_base.py",
   "site-packages/sage/combinat/SJT.py",
   "site-packages/sage/combinat/__init__.py",
   "site-packages/sage/combinat/backtrack.py",
@@ -199,11 +205,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 48,
+  schemaVersion: 49,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-free-module-tableau-set-partition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v14",
+  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-tableau-set-partition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v15",
 };
 
 const expectedSageliteManifestFields = Object.freeze([
