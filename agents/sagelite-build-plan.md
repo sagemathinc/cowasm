@@ -209,6 +209,10 @@ Follow-up snapshot:
   `PYTHONPATH`: Jinja2, MarkupSafe, platformdirs, and Cython. This catches
   copied dependency directories that exist but are empty or stale before the
   worker reaches `sage.all` startup.
+- Change: schema 17 manifest validation now requires the three WASI FLINT
+  polynomial placeholder modules to be listed in `requiredResourcePaths` and
+  covered by `requiredResourceSha256`. This keeps the packaged Electron smoke's
+  fail-closed FLINT import checks from depending on unverified copied files.
 
 ## Runtime Milestones
 

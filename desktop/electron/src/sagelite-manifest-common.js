@@ -39,8 +39,11 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/rings/finite_rings/integer_mod.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/polynomial/polynomial_element.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/polynomial/polynomial_element_generic.py",
+  "site-packages/sage/rings/polynomial/polynomial_integer_dense_flint.py",
   "site-packages/sage/rings/polynomial/polynomial_ring.py",
   "site-packages/sage/rings/polynomial/polynomial_ring_constructor.py",
+  "site-packages/sage/rings/polynomial/polynomial_rational_flint.py",
+  "site-packages/sage/rings/polynomial/polynomial_zmod_flint.py",
   "site-packages/sage/libs/flint/fmpz_poly_sage.cpython-314-wasm32-wasi.so",
   "site-packages/sage/matrix/constructor.cpython-314-wasm32-wasi.so",
   "deps/cypari2/cypari2/__init__.py",
@@ -66,7 +69,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 16,
+  schemaVersion: 17,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
