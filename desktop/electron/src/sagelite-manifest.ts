@@ -7,6 +7,8 @@ export const expectedSagelitePythonPath: readonly string[] =
   common.expectedSagelitePythonPath;
 export const expectedSageliteRuntimeDependencyPaths: readonly string[] =
   common.expectedSageliteRuntimeDependencyPaths;
+export const expectedSageliteNativeLibraryPaths: readonly string[] =
+  common.expectedSageliteNativeLibraryPaths;
 
 export interface SageliteManifest {
   schemaVersion: number;

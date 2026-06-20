@@ -19,6 +19,11 @@ const expectedSageliteRuntimeDependencyPaths = Object.freeze([
   "deps/cython",
 ]);
 
+const expectedSageliteNativeLibraryPaths = Object.freeze([
+  "deps/libcxx/libcxx.so",
+  "deps/primecountpy/primecountpy/libcxx.so",
+]);
+
 const expectedSagelitePythonPath = Object.freeze([
   "site-packages",
   ...expectedSageliteRuntimeDependencyPaths,
@@ -100,6 +105,12 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
       "nativeLibraryPaths",
       manifest.nativeLibraryPaths,
       { requireFile: true, requireNonEmpty: true },
+    );
+    validateExpectedEntries(
+      manifestPath,
+      "nativeLibraryPaths",
+      manifest.nativeLibraryPaths,
+      expectedSageliteNativeLibraryPaths,
     );
   }
   if (manifest.sideModulePaths !== undefined) {
@@ -340,6 +351,7 @@ function validateNativeLibrariesInSideModuleInventory(
 
 module.exports = {
   expectedSageliteManifest,
+  expectedSageliteNativeLibraryPaths,
   expectedSagelitePythonPath,
   expectedSageliteRuntimeDependencyPaths,
   loadSageliteManifest,

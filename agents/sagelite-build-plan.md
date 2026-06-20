@@ -145,6 +145,10 @@ Follow-up snapshot:
   array and a matching `requiredResourceSha256` object. This keeps Electron
   bundles from silently accepting a digest-less manifest that claims the current
   Sagelite resource contract.
+- Change: schema 6 manifest validation now requires `nativeLibraryPaths` to
+  match the current Sagelite Electron runtime-library contract exactly and to
+  remain covered by `sideModulePaths`, so bundles with stale or unexpected
+  native `.so` resources fail before worker startup.
 
 ## Runtime Milestones
 

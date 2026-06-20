@@ -17,6 +17,7 @@ const {
 const getPython = pythonModule.default;
 const {
   expectedSageliteManifest,
+  expectedSageliteNativeLibraryPaths,
   expectedSagelitePythonPath,
   expectedSageliteRuntimeDependencyPaths,
   sageliteManifestName,
@@ -69,6 +70,12 @@ function stagePythonPath(root) {
   }
 }
 
+function stageNativeLibraries(root) {
+  for (const entry of expectedSageliteNativeLibraryPaths) {
+    touch(root, entry);
+  }
+}
+
 function withTempDir(fn) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "cowasm-sagelite-runtime-"));
   try {
@@ -97,8 +104,8 @@ function validManifest(overrides = {}) {
       "deps/platformdirs/__init__.py",
       "sagelite-electron-smoke.cjs",
     ],
-    nativeLibraryPaths: ["deps/libcxx/libcxx.so"],
-    sideModulePaths: ["deps/libcxx/libcxx.so"],
+    nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
+    sideModulePaths: [...expectedSageliteNativeLibraryPaths],
     ...overrides,
   };
 }
@@ -108,7 +115,7 @@ function stageValidResources(root) {
   touch(root, "site-packages/sage/all.py");
   touch(root, "deps/platformdirs/__init__.py");
   touch(root, "sagelite-electron-smoke.cjs");
-  touch(root, "deps/libcxx/libcxx.so");
+  stageNativeLibraries(root);
   writeManifest(root, validManifest());
 }
 
