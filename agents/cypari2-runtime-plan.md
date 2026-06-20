@@ -27,6 +27,21 @@ CoWasm already has a useful split:
 - Sagelite's Node/Electron smoke currently imports `cypari2`, constructs
   `Pari`, and verifies that PARI calls fail closed.
 
+Progress snapshot:
+
+- Date: 2026-06-20
+- Change: Phase 1 now has a private `cypari2._pari_runtime_probe` CPython side
+  module in `sagemath/cypari2`. It links CoWasm `libpari.a`, `libgmp.a`, and
+  explicit static `libsetjmp.a`, imports under `python-wasm`, evaluates PARI
+  expressions, catches an `e_INV` error from `1/0`, and successfully computes
+  again in the same Python process.
+- Validation:
+  `make -C sagemath/cypari2 test-wasi-sdk-standalone`
+- Important detail: the first working side-module probe does not link
+  `libwasi-emulated-signal.a`. The static signal archive is not PIC enough for
+  side-module linking, and the minimal PARI arithmetic/error-recovery path does
+  not need it. cysignals and interrupt behavior remain later phases.
+
 That means the work is not "port PARI" from scratch. It is specifically:
 
 ```text

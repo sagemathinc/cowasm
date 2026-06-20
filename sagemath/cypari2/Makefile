@@ -16,6 +16,7 @@ CPYTHON_WASM = ${CWD}/../../python/cpython/dist/wasm
 PY_CYTHON = ${CWD}/../../python/py-cython/dist/wasm
 CYSIGNALS_WASI_SDK = ${PACKAGES}/cysignals/dist/wasi-sdk
 PARI_WASI_SDK = ${PACKAGES}/pari/dist/wasi-sdk
+GMP_WASI_SDK = ${PACKAGES}/gmp/dist/wasi-sdk
 POSIX_WASI_SDK = ${CWD}/../../core/posix-wasm/dist/wasi-sdk
 
 ${CPYTHON_WASM}/include/python3.14/Python.h:
@@ -30,6 +31,9 @@ ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd:
 ${PARI_WASI_SDK}/share/pari/pari.desc:
 	$(MAKE) -C ${PACKAGES}/pari test-wasi-sdk-standalone
 
+${GMP_WASI_SDK}/lib/libgmp.a:
+	$(MAKE) -C ${PACKAGES}/gmp test-wasi-sdk-standalone
+
 ${POSIX_WASI_SDK}/posix-wasm.h:
 	$(MAKE) -C ${CWD}/../../core/posix-wasm test-wasi-sdk-standalone
 
@@ -40,9 +44,9 @@ ${BUILD_WASI_SDK}/.build: ${TARBALL}
 	touch ${BUILD_WASI_SDK}/.build
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${PARI_WASI_SDK}/share/pari/pari.desc ${POSIX_WASI_SDK}/posix-wasm.h ${BUILD_WASI_SDK}/.build
+test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${PARI_WASI_SDK}/share/pari/pari.desc ${GMP_WASI_SDK}/lib/libgmp.a ${POSIX_WASI_SDK}/posix-wasm.h ${BUILD_WASI_SDK}/.build
 	@status=0; \
-	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CPYTHON_WASM} ${PY_CYTHON} ${CYSIGNALS_WASI_SDK} ${PARI_WASI_SDK} ${POSIX_WASI_SDK} || status=$$?; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CPYTHON_WASM} ${PY_CYTHON} ${CYSIGNALS_WASI_SDK} ${PARI_WASI_SDK} ${GMP_WASI_SDK} ${POSIX_WASI_SDK} || status=$$?; \
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
 	exit "$$status"
 

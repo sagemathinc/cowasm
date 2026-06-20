@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 8 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON CYSIGNALS_WASI_SDK PARI_WASI_SDK POSIX_WASI_SDK" >&2
+if [ "$#" -ne 9 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON CYSIGNALS_WASI_SDK PARI_WASI_SDK GMP_WASI_SDK POSIX_WASI_SDK" >&2
   exit 2
 fi
 
@@ -13,7 +13,8 @@ cpython_wasm="$(cd "$4" && pwd)"
 py_cython="$(cd "$5" && pwd)"
 cysignals_wasi_sdk="$(cd "$6" && pwd)"
 pari_wasi_sdk="$(cd "$7" && pwd)"
-posix_wasi_sdk="$(cd "$8" && pwd)"
+gmp_wasi_sdk="$(cd "$8" && pwd)"
+posix_wasi_sdk="$(cd "$9" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -27,6 +28,88 @@ cowasm_standalone_probe "cypari2" wasi-sdk "$bin_dir" "$probe_dir"
 
 python_include="$cpython_wasm/include/python3.14"
 extension_suffix=".cpython-314-wasm32-wasi.so"
+
+assert_wasm_imports_memory() {
+  local module_path="$1"
+  python3 - "$module_path" <<'PY'
+import sys
+from pathlib import Path
+
+
+def read_uleb(data, offset):
+    result = 0
+    shift = 0
+    while True:
+        byte = data[offset]
+        offset += 1
+        result |= (byte & 0x7F) << shift
+        if byte & 0x80 == 0:
+            return result, offset
+        shift += 7
+
+
+def read_name(data, offset):
+    size, offset = read_uleb(data, offset)
+    return data[offset:offset + size].decode(), offset + size
+
+
+def imports_memory(path):
+    data = path.read_bytes()
+    if data[:4] != b"\0asm":
+        return False
+    offset = 8
+    while offset < len(data):
+        section_id = data[offset]
+        offset += 1
+        section_size, offset = read_uleb(data, offset)
+        section_end = offset + section_size
+        if section_id != 2:
+            offset = section_end
+            continue
+        import_count, offset = read_uleb(data, offset)
+        for _ in range(import_count):
+            _, offset = read_name(data, offset)
+            _, offset = read_name(data, offset)
+            kind = data[offset]
+            offset += 1
+            if kind == 0:
+                _, offset = read_uleb(data, offset)
+            elif kind == 1:
+                offset += 1
+                flags, offset = read_uleb(data, offset)
+                _, offset = read_uleb(data, offset)
+                if flags & 1:
+                    _, offset = read_uleb(data, offset)
+            elif kind == 2:
+                return True
+            elif kind == 3:
+                offset += 2
+            else:
+                return False
+        return False
+    return False
+
+
+module = Path(sys.argv[1])
+if not imports_memory(module):
+    raise SystemExit(f"{module}: missing imported memory")
+PY
+}
+
+audit_cpython_side_module() {
+  local module_path="$1"
+  local pyinit_symbol="$2"
+  "$bin_dir/wasi-sdk-llvm-objdump-next" -h "$module_path" |
+    grep 'dylink\.0'
+  "$bin_dir/wasi-sdk-llvm-nm-next" "$module_path" |
+    grep " T ${pyinit_symbol}$"
+  assert_wasm_imports_memory "$module_path"
+  if "$bin_dir/wasi-sdk-llvm-strings-next" "$module_path" |
+      grep -Fx 'needed_dynlibs'; then
+    echo "$module_path records needed_dynlibs" >&2
+    exit 1
+  fi
+}
 
 rm -rf "$dist_dir"
 mkdir -p "$dist_dir/cypari2" "$probe_dir/bin"
@@ -153,10 +236,119 @@ PYTHONPATH="$py_cython" python3 -m cython -3 \
   "$probe_dir/gen.c" \
   -o "$dist_dir/cypari2/gen$extension_suffix"
 
-"$bin_dir/wasi-sdk-llvm-objdump-next" -h "$dist_dir/cypari2/gen$extension_suffix" |
-  grep 'dylink\.0'
-"$bin_dir/wasi-sdk-llvm-nm-next" "$dist_dir/cypari2/gen$extension_suffix" |
-  grep ' T PyInit_gen$'
+audit_cpython_side_module "$dist_dir/cypari2/gen$extension_suffix" PyInit_gen
+
+cat >"$probe_dir/pari_runtime_probe.c" <<'EOF'
+#include <Python.h>
+#include <pari/pari.h>
+#include <stdio.h>
+
+static int pari_initialized = 0;
+
+static void ensure_pari(void) {
+  if (!pari_initialized) {
+    pari_init(8000000, 2);
+    pari_initialized = 1;
+  }
+}
+
+static PyObject *eval_long(PyObject *self, PyObject *args) {
+  const char *expression;
+  GEN value;
+
+  (void)self;
+  if (!PyArg_ParseTuple(args, "s", &expression)) {
+    return NULL;
+  }
+
+  ensure_pari();
+  value = gp_read_str(expression);
+  return PyLong_FromLong(itos(value));
+}
+
+static PyObject *check_error_recovery(PyObject *self,
+                                      PyObject *Py_UNUSED(ignored)) {
+  int caught_inverse_error = 0;
+  GEN value;
+  long result;
+  char message[64];
+
+  (void)self;
+  ensure_pari();
+
+  pari_CATCH(e_INV) {
+    GEN error = pari_err_last();
+    caught_inverse_error = error && err_get_num(error) == e_INV;
+  }
+  pari_TRY {
+    (void)gp_read_str("1/0");
+  }
+  pari_ENDCATCH;
+
+  if (!caught_inverse_error) {
+    PyErr_SetString(PyExc_RuntimeError,
+                    "PARI inverse error was not caught as e_INV");
+    return NULL;
+  }
+
+  value = gp_read_str("13*17");
+  result = itos(value);
+  snprintf(message, sizeof(message), "caught=e_INV recovered=%ld", result);
+  return PyUnicode_FromString(message);
+}
+
+static PyMethodDef methods[] = {
+    {"eval_long", eval_long, METH_VARARGS,
+     "Evaluate a PARI expression as a C long."},
+    {"check_error_recovery", check_error_recovery, METH_NOARGS,
+     "Check PARI error recovery and a later computation."},
+    {NULL, NULL, 0, NULL},
+};
+
+static struct PyModuleDef module = {
+    PyModuleDef_HEAD_INIT,
+    "_pari_runtime_probe",
+    "CoWasm PARI runtime side-module probe.",
+    -1,
+    methods,
+};
+
+PyMODINIT_FUNC PyInit__pari_runtime_probe(void) {
+  return PyModule_Create(&module);
+}
+EOF
+
+setjmp_lib="$("$bin_dir/wasi-sdk-clang-next" -target wasm32-wasip1 -print-file-name=libsetjmp.a)"
+if [ ! -f "$setjmp_lib" ]; then
+  echo "cypari2 runtime probe could not locate static libsetjmp.a" >&2
+  exit 1
+fi
+
+"$bin_dir/wasi-sdk-clang-next" -target wasm32-wasip1 \
+  -O0 \
+  -fPIC \
+  -D_SCHED_H \
+  -shared \
+  -nostdlib \
+  -mllvm -wasm-enable-sjlj \
+  -mllvm -wasm-use-legacy-eh=false \
+  -Wl,--allow-undefined \
+  -Wl,--no-entry \
+  -Wl,--export=PyInit__pari_runtime_probe \
+  -I"$python_include" \
+  -I"$posix_wasi_sdk" \
+  -I"$pari_wasi_sdk/include" \
+  -I"$gmp_wasi_sdk/include" \
+  "$probe_dir/pari_runtime_probe.c" \
+  "$pari_wasi_sdk/lib/libpari.a" \
+  "$gmp_wasi_sdk/lib/libgmp.a" \
+  "$setjmp_lib" \
+  -lm \
+  -o "$dist_dir/cypari2/_pari_runtime_probe$extension_suffix"
+
+audit_cpython_side_module \
+  "$dist_dir/cypari2/_pari_runtime_probe$extension_suffix" \
+  PyInit__pari_runtime_probe
 
 cat >"$dist_dir/cypari2/handle_error.py" <<'PY'
 """Import-time placeholder for cypari2.handle_error."""
@@ -215,6 +407,7 @@ PYTHONPATH="$py_cython:$cysignals_wasi_sdk" python3 -m cython -3 \
 
 PYTHONPATH="$dist_dir" "$bin_dir/python-wasm" - <<'PY'
 import cypari2
+from cypari2 import _pari_runtime_probe as pari_probe
 from cypari2.gen import Gen, Gen_base, objtogen
 from cypari2.handle_error import PariError
 from cypari2.pari_instance import Pari
@@ -228,6 +421,11 @@ assert issubclass(Gen, Gen_base)
 assert issubclass(PariError, RuntimeError)
 assert isinstance(Gen(1), Gen_base)
 assert Pari(1, 2).default("debugmem", 0) is None
+assert pari_probe.eval_long("2+3") == 5
+assert pari_probe.eval_long("primepi(10000)") == 1229
+assert pari_probe.eval_long("factorback(factor(360))") == 360
+assert pari_probe.check_error_recovery() == "caught=e_INV recovered=221"
+assert pari_probe.eval_long("13*17") == 221
 for constructor in (lambda: objtogen(1), Pari().__call__, Gen().__getattr__("factor")):
     try:
         constructor()
@@ -237,4 +435,4 @@ for constructor in (lambda: objtogen(1), Pari().__call__, Gen().__getattr__("fac
         raise AssertionError(f"{constructor!r} did not fail closed")
 PY
 
-echo "cypari2-build-support-ok generated-pari-declarations cython-cimport-probe runtime-placeholders"
+echo "cypari2-build-support-ok generated-pari-declarations cython-cimport-probe runtime-placeholders libpari-side-module-error-recovery"
