@@ -101,8 +101,9 @@ polynomial construction/arithmetic over default `ZZ[x]`, polynomial division,
 derivatives, evaluation, integer factorization with factor inspection, Sage
 arithmetic helpers including `gcd`, `xgcd`, `binomial`, and `factorial`, and
 `prime_pi(10**6)`. The probe also checks exact dense matrix determinant,
-multiplication, and inverse over `ZZ` and `QQ`, including a 3x3 rational
-inverse, through `sage.matrix.constructor`. On WASI the patch routes `QQ[x]` and the
+multiplication, trace, characteristic-polynomial evaluation, identity-matrix
+construction, and inverse over `ZZ` and `QQ`, including a 3x3 rational inverse,
+through `sage.matrix.constructor`. On WASI the patch routes `QQ[x]` and the
 default dense `ZZ[x]` startup through generic polynomial element classes for
 now, avoiding eager `polynomial_rational_flint` and
 `polynomial_integer_dense_flint` startup while those side-module paths still

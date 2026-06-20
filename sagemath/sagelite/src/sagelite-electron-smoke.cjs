@@ -68,7 +68,7 @@ from sage.all import (
     prime_pi,
     xgcd,
 )
-from sage.matrix.constructor import matrix
+from sage.matrix.constructor import identity_matrix, matrix
 
 assert ZZ(2) + ZZ(3) == ZZ(5)
 g, s, t = ZZ(240).xgcd(ZZ(46))
@@ -125,9 +125,14 @@ assert A * A == matrix(ZZ, [[7, 10], [15, 22]])
 B = matrix(QQ, [[1, 2], [3, 5]])
 assert B.det() == QQ(-1)
 assert B.inverse() * B == matrix(QQ, [[1, 0], [0, 1]])
-C = matrix(QQ, [[1, 2, 3], [0, 1, 4], [5, 6, 0]])
-assert C.det() == QQ(1)
-assert C.inverse() * C == matrix(
+C = matrix(ZZ, [[2, 1], [1, 2]])
+assert C.trace() == ZZ(4)
+assert C.charpoly()(C) == matrix(ZZ, [[0, 0], [0, 0]])
+I = identity_matrix(QQ, 3)
+assert I.det() == QQ(1)
+D = matrix(QQ, [[1, 2, 3], [0, 1, 4], [5, 6, 0]])
+assert D.det() == QQ(1)
+assert D.inverse() * D == matrix(
     QQ,
     3,
     3,

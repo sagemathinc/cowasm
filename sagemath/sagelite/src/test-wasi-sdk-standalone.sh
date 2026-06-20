@@ -527,13 +527,18 @@ assert list(factor(2**31 - 1)) == [(ZZ(2147483647), 1)]
 assert prime_pi(10**6) == 78498
 print('sagelite-node-ok exact math smoke')"
 run_node_import "linear algebra smoke" "from sage.all import ZZ, QQ
-from sage.matrix.constructor import matrix
+from sage.matrix.constructor import identity_matrix, matrix
 A = matrix(ZZ, [[1, 2], [3, 4]])
 assert A.det() == ZZ(-2)
 assert A * A == matrix(ZZ, [[7, 10], [15, 22]])
 B = matrix(QQ, [[1, 2], [3, 5]])
 assert B.det() == QQ(-1)
 assert B.inverse() * B == matrix(QQ, [[1, 0], [0, 1]])
+C = matrix(ZZ, [[2, 1], [1, 2]])
+assert C.trace() == ZZ(4)
+assert C.charpoly()(C) == matrix(ZZ, [[0, 0], [0, 0]])
+I = identity_matrix(QQ, 3)
+assert I.det() == QQ(1)
 print('sagelite-node-ok linear algebra smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
