@@ -160,7 +160,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 38,
+  schemaVersion: 39,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -384,11 +384,12 @@ function validateExistingRelativeEntries(
     if (!existsSync(targetPath)) {
       throw new Error(`${manifestPath} ${fieldName} entry ${entry} does not exist`);
     }
-    if (lstatSync(targetPath).isSymbolicLink()) {
-      throw new Error(
-        `${manifestPath} ${fieldName} entry ${entry} must not be a symbolic link`,
-      );
-    }
+    validateNoSymbolicPathComponents(
+      resourceRoot,
+      manifestPath,
+      fieldName,
+      entry,
+    );
     const targetStat = statSync(targetPath);
     if (requireDirectory && !targetStat.isDirectory()) {
       throw new Error(
@@ -397,6 +398,30 @@ function validateExistingRelativeEntries(
     }
     if (requireFile && !targetStat.isFile()) {
       throw new Error(`${manifestPath} ${fieldName} entry ${entry} must be a file`);
+    }
+  }
+}
+
+function validateNoSymbolicPathComponents(
+  resourceRoot,
+  manifestPath,
+  fieldName,
+  entry,
+) {
+  const parts = entry.split("/");
+  let targetPath = resourceRoot;
+  for (const [index, part] of parts.entries()) {
+    targetPath = join(targetPath, part);
+    if (lstatSync(targetPath).isSymbolicLink()) {
+      if (index === parts.length - 1) {
+        throw new Error(
+          `${manifestPath} ${fieldName} entry ${entry} must not be a symbolic link`,
+        );
+      }
+      const symbolicComponent = parts.slice(0, index + 1).join("/");
+      throw new Error(
+        `${manifestPath} ${fieldName} entry ${entry} must not contain symbolic path component ${symbolicComponent}`,
+      );
     }
   }
 }

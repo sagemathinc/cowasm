@@ -96,6 +96,10 @@ Schema 38 manifests advance the cypari2 PARI smoke contract to keep the current
 runtime boundary explicit: real string PARI evaluation must work, while public
 non-string `Pari` inputs and `objtogen` conversion still fail closed until the
 full cypari2 `Gen` object model is ported.
+Schema 39 manifests reject required, `PYTHONPATH`, runtime-dependency,
+side-module, and native-library entries that pass through symbolic-link path
+components, so packaged resources must remain self-contained under the copied
+Electron resource root.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

@@ -426,6 +426,30 @@ withResourceRoot((root) => {
   stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
+  const linkedSageTarget = path.join(root, "linked-sage-target");
+  fs.renameSync(path.join(root, "site-packages", "sage"), linkedSageTarget);
+  fs.symlinkSync(
+    linkedSageTarget,
+    path.join(root, "site-packages", "sage"),
+    "dir",
+  );
+  writeManifest(root, validManifest());
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /requiredResourcePaths entry site-packages\/sage\/__init__\.py must not contain symbolic path component site-packages\/sage/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
   writeManifest(root, validManifest({ staleManifestField: true }));
 
   assert.throws(

@@ -327,6 +327,11 @@ Follow-up snapshot:
   `objtogen` conversion still fail closed after the real string PARI runtime
   slice initializes. This keeps the partial cypari2 runtime boundary explicit
   until the full `Gen` object model is ported.
+- Change: schema 39 manifest validation now rejects manifest-listed resources
+  whose path resolves through a symbolic-link component, not only entries that
+  are themselves symbolic links. This keeps packaged Electron resources
+  self-contained under the copied resource root and prevents a valid-looking
+  bundle from depending on mutable or escaping parent directories.
 
 ## Runtime Milestones
 
