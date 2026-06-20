@@ -670,7 +670,7 @@ for module in modules:
         raise AssertionError(f'{module} should fail closed on WASI')
 print('sagelite-node-ok FLINT polynomial imports fail closed')"
 
-run_node_import "cypari2 PARI runtime smoke" "from cypari2 import Pari, objtogen
+run_node_import "cypari2 PARI runtime smoke" "from cypari2 import Pari, PariError, objtogen
 from cypari2 import _pari_runtime_probe as pari_probe
 assert pari_probe.eval_long('2+3') == 5
 assert pari_probe.eval_long('primepi(10000)') == 1229
@@ -686,6 +686,13 @@ assert str(pari('factorback(factor(360))')) == '360'
 assert str(pari('znorder(Mod(2,101))')) == '100'
 assert str(pari('polisirreducible(x^2+1)')) == '1'
 assert str(pari('ellcard(ellinit([0,-1]), 5)')) == '6'
+try:
+    pari('1/0')
+except PariError as err:
+    assert 'impossible inverse' in str(err)
+else:
+    raise AssertionError('PARI division by zero did not raise PariError')
+assert str(pari('13*17')) == '221'
 for label, thunk in [
     ('non-string Pari input', lambda: pari(5)),
     ('Gen conversion', lambda: objtogen('2+3')),
@@ -709,11 +716,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=56
+electron_manifest_schema_version=57
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v22"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-error-recovery-v23"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."

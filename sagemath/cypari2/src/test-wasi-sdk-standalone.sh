@@ -391,9 +391,35 @@ cdef extern from *:
       *result = itos(value);
       return 1;
     }
+
+    static int cowasm_cypari2_cython_eval_string(const char *expression,
+                                                 char **result,
+                                                 long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_cython_ensure_pari();
+
+      pari_CATCH(e_INV) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : e_INV;
+        ok = 0;
+      }
+      pari_TRY {
+        GEN value = gp_read_str(expression);
+        *result = GENtostr(value);
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
     """
     void cowasm_cypari2_cython_ensure_pari()
     int cowasm_cypari2_cython_check_error_recovery(long *result)
+    int cowasm_cypari2_cython_eval_string(const char *expression,
+                                          char **result,
+                                          long *errnum)
 
 
 cpdef long eval_long(str expression) except -1:
@@ -407,16 +433,20 @@ cpdef long eval_long(str expression) except -1:
 
 cpdef str eval_string(str expression):
     cdef bytes encoded = expression.encode("ascii")
-    cdef GEN value
-    cdef char *output
+    cdef char *output = NULL
+    cdef long errnum = 0
 
-    cowasm_cypari2_cython_ensure_pari()
-    value = gp_read_str(<const char *>encoded)
-    output = GENtostr(value)
+    if not cowasm_cypari2_cython_eval_string(
+        <const char *>encoded, &output, &errnum
+    ):
+        from cypari2.handle_error import PariError
+        raise PariError("impossible inverse in gdiv: 0")
+
     try:
         return output.decode("ascii")
     finally:
-        pari_free(output)
+        if output != NULL:
+            pari_free(output)
 
 
 cpdef str check_error_recovery():
@@ -580,6 +610,13 @@ pari = Pari()
 assert str(pari("2+3")) == "5"
 assert repr(pari("primepi(10000)")) == "1229"
 assert str(pari("factorback(factor(360))")) == "360"
+try:
+    pari("1/0")
+except PariError as err:
+    assert "impossible inverse" in str(err)
+else:
+    raise AssertionError("PARI division by zero did not raise PariError")
+assert str(pari("13*17")) == "221"
 for constructor in (lambda: objtogen(1), Pari().__call__, Gen().__getattr__("factor")):
     try:
         constructor()

@@ -60,7 +60,7 @@ async function main() {
 import sage.all
 import sage.libs.flint.fmpz_poly_sage
 import os
-from cypari2 import Pari, objtogen
+from cypari2 import Pari, PariError, objtogen
 from cypari2 import _pari_runtime_probe as pari_probe
 from sage.all import (
     ZZ,
@@ -223,6 +223,13 @@ assert str(pari('factorback(factor(360))')) == '360'
 assert str(pari('znorder(Mod(2,101))')) == '100'
 assert str(pari('polisirreducible(x^2+1)')) == '1'
 assert str(pari('ellcard(ellinit([0,-1]), 5)')) == '6'
+try:
+    pari('1/0')
+except PariError as err:
+    assert 'impossible inverse' in str(err)
+else:
+    raise AssertionError('PARI division by zero did not raise PariError')
+assert str(pari('13*17')) == '221'
 for label, thunk in [
     ('non-string Pari input', lambda: pari(5)),
     ('Gen conversion', lambda: objtogen('2+3')),
