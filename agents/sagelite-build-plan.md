@@ -186,6 +186,11 @@ Follow-up snapshot:
   supported field set. Unknown keys now fail during Sagelite resource staging,
   Electron Forge packaging validation, and Electron runtime discovery instead
   of being silently ignored.
+- Change: schema 13 manifest validation now requires `site-packages/sage/env.py`
+  to be listed in `requiredResourcePaths` and covered by
+  `requiredResourceSha256`. This makes the Sage environment module explicit in
+  the Electron resource contract instead of relying on a later `sage.env`
+  import failure to catch incomplete bundles.
 
 ## Runtime Milestones
 

@@ -17,6 +17,7 @@ const {
 const getPython = pythonModule.default;
 const {
   expectedSageliteManifest,
+  expectedSageliteMandatoryResourcePaths,
   expectedSageliteNativeLibraryPaths,
   expectedSagelitePythonPath,
   expectedSageliteRequiredToolPaths,
@@ -83,6 +84,11 @@ function stageRequiredTools(root) {
   }
 }
 
+function stageSageEntrypoints(root) {
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "site-packages/sage/env.py");
+}
+
 function withTempDir(fn) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "cowasm-sagelite-runtime-"));
   try {
@@ -107,10 +113,8 @@ function validManifest(overrides = {}) {
     pythonPath: [...expectedSagelitePythonPath],
     runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
     requiredResourcePaths: [
-      "site-packages/sage/all.py",
-      "python.wasm",
+      ...expectedSageliteMandatoryResourcePaths,
       "deps/platformdirs/__init__.py",
-      ...expectedSageliteRequiredToolPaths,
       ...expectedSageliteNativeLibraryPaths,
     ],
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
@@ -121,7 +125,7 @@ function validManifest(overrides = {}) {
 
 function stageValidResources(root) {
   stagePythonPath(root);
-  touch(root, "site-packages/sage/all.py");
+  stageSageEntrypoints(root);
   touch(root, "python.wasm");
   touch(root, "deps/platformdirs/__init__.py");
   stageRequiredTools(root);
@@ -322,7 +326,7 @@ withTempDir((root) => {
 
     fs.mkdirSync(path.dirname(modulePath), { recursive: true });
     stagePythonPath(resourceRoot);
-    touch(resourceRoot, "site-packages/sage/all.py");
+    stageSageEntrypoints(resourceRoot);
     touch(resourceRoot, "python.wasm");
     stageRequiredTools(resourceRoot);
     stageNativeLibraries(resourceRoot);
@@ -331,10 +335,8 @@ withTempDir((root) => {
       resourceRoot,
       validManifest({
         requiredResourcePaths: [
-          "site-packages/sage/all.py",
-          "python.wasm",
+          ...expectedSageliteMandatoryResourcePaths,
           "site-packages/electron_probe.py",
-          ...expectedSageliteRequiredToolPaths,
           ...expectedSageliteNativeLibraryPaths,
         ],
       }),

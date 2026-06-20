@@ -10,6 +10,7 @@ const path = require("path");
 const {
   afterCopySageliteExtraResources,
   expectedSageliteManifest,
+  expectedSageliteMandatoryResourcePaths,
   expectedSageliteNativeLibraryPaths,
   expectedSagelitePythonPath,
   expectedSageliteRequiredToolPaths,
@@ -80,6 +81,11 @@ function stageRequiredTools(root) {
   }
 }
 
+function stageSageEntrypoints(root) {
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "site-packages/sage/env.py");
+}
+
 function copyTree(src, dst) {
   fs.mkdirSync(path.dirname(dst), { recursive: true });
   fs.cpSync(src, dst, { recursive: true });
@@ -100,9 +106,7 @@ function validManifest(overrides = {}) {
     pythonPath: [...expectedSagelitePythonPath],
     runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
     requiredResourcePaths: [
-      "site-packages/sage/all.py",
-      "python.wasm",
-      ...expectedSageliteRequiredToolPaths,
+      ...expectedSageliteMandatoryResourcePaths,
       ...expectedSageliteNativeLibraryPaths,
     ],
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
@@ -113,7 +117,7 @@ function validManifest(overrides = {}) {
 
 function stageValidResources(root) {
   stagePythonPath(root);
-  touch(root, "site-packages/sage/all.py");
+  stageSageEntrypoints(root);
   touch(root, "python.wasm");
   stageRequiredTools(root);
   stageNativeLibraries(root);
@@ -122,7 +126,7 @@ function stageValidResources(root) {
 
 withResourceRoot((root) => {
   stagePythonPath(root);
-  touch(root, "site-packages/sage/all.py");
+  stageSageEntrypoints(root);
   stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
@@ -157,7 +161,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  touch(root, "site-packages/sage/all.py");
+  stageSageEntrypoints(root);
   stageRequiredTools(root);
   stageNativeLibraries(root);
   writeManifest(root, validManifest({ pythonPath: ["site-packages", "../escape"] }));
@@ -172,7 +176,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  touch(root, "site-packages/sage/all.py");
+  stageSageEntrypoints(root);
   touch(root, "runtime-platformdirs.py");
   stageRequiredTools(root);
   touch(root, "python.wasm");
@@ -193,7 +197,7 @@ withResourceRoot((root) => {
 
 withResourceRoot((root) => {
   stagePythonPath(root);
-  touch(root, "site-packages/sage/all.py");
+  stageSageEntrypoints(root);
   stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
@@ -210,7 +214,7 @@ withResourceRoot((root) => {
 
 withResourceRoot((root) => {
   stagePythonPath(root);
-  touch(root, "site-packages/sage/all.py");
+  stageSageEntrypoints(root);
   stageRequiredTools(root);
   stageNativeLibraries(root);
   writeManifest(root, validManifest());
@@ -226,7 +230,7 @@ withResourceRoot((root) => {
 
 withResourceRoot((root) => {
   stagePythonPath(root);
-  touch(root, "site-packages/sage/all.py");
+  stageSageEntrypoints(root);
   stageRequiredTools(root);
   mkdir(root, "python.wasm");
   stageNativeLibraries(root);
@@ -243,7 +247,7 @@ withResourceRoot((root) => {
 
 withResourceRoot((root) => {
   stagePythonPath(root);
-  touch(root, "site-packages/sage/all.py");
+  stageSageEntrypoints(root);
   stageRequiredTools(root);
   touch(root, "python.wasm");
   writeManifest(root, validManifest());
@@ -259,7 +263,7 @@ withResourceRoot((root) => {
 
 withResourceRoot((root) => {
   stagePythonPath(root);
-  touch(root, "site-packages/sage/all.py");
+  stageSageEntrypoints(root);
   stageRequiredTools(root);
   touch(root, "python.wasm");
   mkdir(root, "deps/libcxx/libcxx.so");
@@ -276,7 +280,7 @@ withResourceRoot((root) => {
 
 withResourceRoot((root) => {
   stagePythonPath(root);
-  touch(root, "site-packages/sage/all.py");
+  stageSageEntrypoints(root);
   stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
@@ -300,7 +304,7 @@ withResourceRoot((root) => {
 
 withResourceRoot((root) => {
   stagePythonPath(root);
-  touch(root, "site-packages/sage/all.py");
+  stageSageEntrypoints(root);
   touch(root, "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so");
   stageRequiredTools(root);
   touch(root, "python.wasm");

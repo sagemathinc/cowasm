@@ -31,6 +31,7 @@ const expectedSageliteRequiredToolPaths = Object.freeze([
 
 const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/all.py",
+  "site-packages/sage/env.py",
   "python.wasm",
   ...expectedSageliteRequiredToolPaths,
 ]);
@@ -41,7 +42,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 12,
+  schemaVersion: 13,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
