@@ -79,10 +79,12 @@ Schema 30 manifests also require the direct helper modules behind
 `sage.arith.misc`, including `misc_c`, coercion, sequence, ring ABC, and
 fast-arithmetic resources, so `sage.all` arithmetic cannot validate with a
 partial helper set.
-Schema 9 manifests also include the current `cypari2` fail-closed runtime
-contract: Electron resources must contain the build-support `cypari2` files
-needed by Sagelite, and the smoke asserts that PARI calls still raise the
-expected WASI `NotImplementedError` until the compiled PARI runtime is ported.
+Schema 34 manifests include the current minimal `cypari2` PARI runtime
+contract: Electron resources must contain the private Cython PARI probe side
+module, and the smoke asserts that public `Pari()("...")` string expressions
+can evaluate arithmetic, `primepi`, and `factorback(factor(...))` through real
+PARI. The full `Gen` object model, Python conversion layer, and PARI error
+translation are still later cypari2 runtime work.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

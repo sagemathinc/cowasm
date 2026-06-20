@@ -29,10 +29,14 @@ in the `cypari2` build-support include surface, includes the pure Python
 configure, compile, install, or Node.js import blocker in
 `dist/wasi-sdk/status.txt`.
 
-The current `cypari2` package is still build-support only for real PARI
-operations: it provides the package marker, Cython declarations, and a minimal
-ABI-compatible `cypari2.gen` side-module placeholder needed by Sagelite's
-configure/Cython phases and import-time type checks.
+The current `cypari2` package now includes the first real PARI runtime slice:
+public `Pari()("...")` string expressions route through a private Cython PARI
+probe side module and support arithmetic, `primepi`, and
+`factorback(factor(...))`. The full upstream `Gen` object model, Python
+conversion layer, and rich PARI error translation are still follow-up runtime
+work; the placeholder `cypari2.gen` side module remains only the minimal
+ABI-compatible surface needed by Sagelite's configure/Cython phases and
+import-time type checks.
 
 The current probe uses CPython's `dist/wasi-sdk` header/runtime surface via
 `python-wasi-sdk`, so it no longer needs to hide system scheduler declarations

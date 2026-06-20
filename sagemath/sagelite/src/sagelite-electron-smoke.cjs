@@ -127,12 +127,9 @@ for module in [
         raise AssertionError(f'{module} should fail closed on WASI')
 
 pari = Pari()
-try:
-    pari('primepi(10^6)')
-except NotImplementedError as err:
-    assert 'compiled PARI runtime is not ported yet' in str(err)
-else:
-    raise AssertionError('cypari2 PARI runtime should fail closed on WASI')
+assert str(pari('2+3')) == '5'
+assert str(pari('primepi(10^6)')) == '78498'
+assert str(pari('factorback(factor(360))')) == '360'
 
 A = matrix(ZZ, [[1, 2], [3, 4]])
 assert A.det() == ZZ(-2)

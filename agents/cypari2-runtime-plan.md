@@ -48,6 +48,12 @@ Progress snapshot:
   and computes again afterward in the same Python process.
 - Validation:
   `make -C sagemath/cypari2 test-wasi-sdk-standalone`
+- Change: the generated public `cypari2.pari_instance.Pari` wrapper now routes
+  one-argument string expressions through the private Cython PARI probe and
+  returns a lightweight display object. This makes `Pari()("2+3")`,
+  `Pari()("primepi(10000)")`, and `Pari()("factorback(factor(360))")` work
+  under `python-wasm` while the full `Gen` object model and error translation
+  remain follow-up work.
 
 That means the work is not "port PARI" from scratch. It is specifically:
 

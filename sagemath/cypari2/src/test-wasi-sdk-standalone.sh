@@ -179,7 +179,8 @@ from .types cimport GEN
 
 def _missing_runtime(*_args, **_kwargs):
     raise NotImplementedError(
-        "CoWasm cypari2 is build-support only; the compiled PARI runtime is not ported yet"
+        "CoWasm cypari2 currently supports only minimal Pari string evaluation; "
+        "the full Gen conversion and object model is not ported yet"
     )
 
 
@@ -351,7 +352,7 @@ audit_cpython_side_module \
   PyInit__pari_runtime_probe
 
 cat >"$probe_dir/pari_cython_probe.pyx" <<'PYX'
-from cypari2.paridecl cimport GEN, gp_read_str, itos
+from cypari2.paridecl cimport GEN, GENtostr, gp_read_str, itos, pari_free
 
 
 cdef extern from *:
@@ -402,6 +403,20 @@ cpdef long eval_long(str expression) except -1:
     cowasm_cypari2_cython_ensure_pari()
     value = gp_read_str(<const char *>encoded)
     return itos(value)
+
+
+cpdef str eval_string(str expression):
+    cdef bytes encoded = expression.encode("ascii")
+    cdef GEN value
+    cdef char *output
+
+    cowasm_cypari2_cython_ensure_pari()
+    value = gp_read_str(<const char *>encoded)
+    output = GENtostr(value)
+    try:
+        return output.decode("ascii")
+    finally:
+        pari_free(output)
 
 
 cpdef str check_error_recovery():
@@ -456,9 +471,32 @@ class PariError(RuntimeError):
 PY
 
 cat >"$dist_dir/cypari2/pari_instance.py" <<'PY'
-"""Import-time placeholder for cypari2.pari_instance."""
+"""Minimal CoWasm PARI runtime wrapper for cypari2.pari_instance.
 
+This is not the full upstream cypari2 ``Pari``/``Gen`` object model yet. It
+routes string expressions through the private Cython PARI side-module probe so
+the public ``Pari()("...")`` path can exercise real PARI arithmetic while
+unsupported conversion and method paths still fail closed.
+"""
+
+from ._pari_cython_probe import eval_string
 from .gen import _missing_runtime
+
+
+class PariValue:
+    def __init__(self, text):
+        self._text = text
+
+    def __repr__(self):
+        return self._text
+
+    def __str__(self):
+        return self._text
+
+    def __eq__(self, other):
+        if isinstance(other, PariValue):
+            return self._text == other._text
+        return self._text == str(other)
 
 
 class Pari:
@@ -472,7 +510,12 @@ class Pari:
         return None
 
     def __call__(self, *args, **kwargs):
-        return _missing_runtime(*args, **kwargs)
+        if kwargs or len(args) != 1:
+            return _missing_runtime(*args, **kwargs)
+        expression = args[0]
+        if not isinstance(expression, str):
+            return _missing_runtime(*args, **kwargs)
+        return PariValue(eval_string(expression))
 
     def __getattr__(self, _name):
         return _missing_runtime
@@ -527,8 +570,16 @@ assert pari_probe.eval_long("13*17") == 221
 assert pari_cython_probe.eval_long("2+3") == 5
 assert pari_cython_probe.eval_long("primepi(10000)") == 1229
 assert pari_cython_probe.eval_long("factorback(factor(360))") == 360
+assert pari_cython_probe.eval_string("2+3") == "5"
+factor_360 = pari_cython_probe.eval_string("factor(360)")
+for entry in ("2 3", "3 2", "5 1"):
+    assert entry in factor_360
 assert pari_cython_probe.check_error_recovery() == "caught=e_INV recovered=221"
 assert pari_cython_probe.eval_long("13*17") == 221
+pari = Pari()
+assert str(pari("2+3")) == "5"
+assert repr(pari("primepi(10000)")) == "1229"
+assert str(pari("factorback(factor(360))")) == "360"
 for constructor in (lambda: objtogen(1), Pari().__call__, Gen().__getattr__("factor")):
     try:
         constructor()

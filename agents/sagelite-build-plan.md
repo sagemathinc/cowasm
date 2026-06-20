@@ -157,7 +157,7 @@ Follow-up snapshot:
   `sideModulePaths` mandatory instead of optional. This prevents current-schema
   Electron bundles from omitting the runtime-library contract or the complete
   copied `.so` inventory while still passing startup validation.
-- Change: schema 9 manifests advance the smoke contract to
+- Change: schema 9 manifests advanced the smoke contract to
   `exact-arithmetic-matrix-cypari2-failclosed-v3`. The Node.js and
   Electron-shaped smokes now import `cypari2`, instantiate `Pari`, and assert
   that PARI calls fail closed with the expected CoWasm WASI
@@ -298,6 +298,12 @@ Follow-up snapshot:
   `sage.structure`, `sage.rings`, `sage.rings.finite_rings`, and
   `sage.rings.polynomial`. This catches bundles that retain individual
   modules but are missing the package roots needed to import them.
+- Change: schema 34 manifests advance the smoke contract to
+  `exact-arithmetic-matrix-cypari2-pari-runtime-v4`. The Node.js and
+  Electron-shaped smokes now require the private Cython PARI probe side module
+  and verify real `cypari2.Pari` string expressions for arithmetic,
+  `primepi`, and `factorback(factor(...))`. Full `Gen` conversion and rich
+  cypari2 error translation remain separate runtime work.
 
 ## Runtime Milestones
 

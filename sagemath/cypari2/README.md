@@ -11,9 +11,10 @@ Sagelite's Meson configure step to locate `cypari2`, for Cython to resolve the
 `.pxd` files used by Sage modules, and for Sagelite modules that cimport
 `cypari2.gen` to pass their import-time Cython type checks.
 
-It is not yet the full `cypari2` runtime port. The placeholder `Gen` object,
-`Pari` object, and conversion entry points intentionally fail closed for real
-PARI operations.
+It is not yet the full `cypari2` runtime port. The placeholder `Gen` object
+and most conversion entry points intentionally fail closed for real PARI
+operations. The public `Pari()("...")` path now supports a small string-input
+runtime slice backed by the private Cython PARI probe.
 
 The standalone target now also builds private
 `cypari2._pari_runtime_probe` and `cypari2._pari_cython_probe` side modules
@@ -21,10 +22,12 @@ that link the CoWasm `libpari.a`, `libgmp.a`, and static `libsetjmp.a`. These
 probes prove the first runtime ABI gates: PARI calls can execute inside Python
 extension side modules, Cython-generated code can call PARI through cypari2's
 generated `.pxd` declarations, PARI can catch an `e_INV` error from `1/0`, and
-a later computation in the same Python process still works. The full public
-`cypari2` runtime modules still need a dedicated follow-up port that connects
-this proven PARI/SJLJ boundary to cypari2's Cython `Gen`, `Pari`, conversion,
-stack, and error-translation modules.
+a later computation in the same Python process still works. The minimal public
+`Pari` wrapper uses this boundary for string expressions such as `2+3`,
+`primepi(10000)`, and `factorback(factor(360))`. The full public `cypari2`
+runtime modules still need a dedicated follow-up port that connects this
+proven PARI/SJLJ boundary to cypari2's Cython `Gen`, conversion, stack, and
+error-translation modules.
 
 Run the current probe with:
 
