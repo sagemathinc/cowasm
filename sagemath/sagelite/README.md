@@ -168,6 +168,8 @@ It then checks the initialized FLINT `fmpz_poly_sage` helper,
 integer extended-gcd, integer ideal, modular integer ring, and prime
 finite-field coverage in addition to the core integer, rational, polynomial,
 factorization, `prime_pi`, dense matrix, free-module, and combinatorics checks.
+The exact-arithmetic slice also covers Sage number-theory helpers such as CRT
+and integer valuations.
 The combinatorics smoke covers partitions, permutations, tableaux,
 set partitions, subsets, combinations, and integer-vector enumeration. It then
 reruns the same smoke from a relocated copy of that resources tree, which

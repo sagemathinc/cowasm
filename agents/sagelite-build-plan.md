@@ -369,6 +369,10 @@ Follow-up snapshot:
   bounded worker launch. This keeps broader runtime expansion attempts from
   turning a hung Python worker into an indefinitely running build and records
   the stalled step as the first runtime blocker.
+- Change: schema 46 manifests advance the packaged smoke contract to cover
+  additional Sage number-theory helpers: CRT and integer valuations. The
+  Node.js and Electron-shaped smokes now exercise those helpers through the
+  same bounded exact-arithmetic path.
 
 ## Runtime Milestones
 

@@ -75,6 +75,7 @@ from sage.all import (
     prime_pi,
     xgcd,
 )
+from sage.arith.misc import CRT, valuation
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.modules.free_module import FreeModule
 from sage.combinat.combination import Combinations
@@ -94,6 +95,8 @@ assert gcd(ZZ(84), ZZ(126)) == ZZ(42)
 g2, s2, t2 = xgcd(ZZ(240), ZZ(46))
 assert g2 == ZZ(2)
 assert s2 * ZZ(240) + t2 * ZZ(46) == g2
+assert CRT(2, 3, 5, 7) == ZZ(17)
+assert valuation(ZZ(360), 2) == 3
 assert binomial(20, 8) == ZZ(125970)
 assert factorial(10) == ZZ(3628800)
 M = FreeModule(ZZ, 3)

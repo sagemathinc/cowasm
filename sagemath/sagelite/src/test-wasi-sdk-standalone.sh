@@ -606,6 +606,14 @@ assert Z7(3) + Z7(5) == Z7(1)
 F7 = GF(7)
 assert F7(3) * F7(5) == F7(1)
 print('sagelite-node-ok modular arithmetic smoke')"
+run_node_import "number theory helper smoke" "from sage.rings.integer_ring import ZZ
+from sage.arith.misc import CRT, valuation
+g, s, t = ZZ(240).xgcd(ZZ(46))
+assert g == ZZ(2)
+assert s * ZZ(240) + t * ZZ(46) == g
+assert CRT(2, 3, 5, 7) == ZZ(17)
+assert valuation(ZZ(360), 2) == 3
+print('sagelite-node-ok number theory helper smoke')"
 run_node_import "explicit FLINT polynomial rejection" "from sage.all import ZZ, PolynomialRing
 try:
     PolynomialRing(ZZ, 'x', implementation='FLINT')
@@ -668,11 +676,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=45
+electron_manifest_schema_version=46
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-tableau-set-partition-combinat-cypari2-pari-arithmetic-v11"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-tableau-set-partition-crt-valuation-combinat-cypari2-pari-arithmetic-v12"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."

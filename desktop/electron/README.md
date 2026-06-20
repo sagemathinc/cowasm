@@ -117,6 +117,9 @@ Schema 45 manifests extend that combinatorics slice to cover standard tableaux
 and set partitions. The manifest requires the set-partition Python module and
 Cython iterator side module as hashed resources, so a bundle missing that
 enumeration path fails before worker startup.
+Schema 46 manifests extend the packaged exact-math smoke to cover Sage
+number-theory helpers, including CRT and integer valuations, through the
+bounded Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

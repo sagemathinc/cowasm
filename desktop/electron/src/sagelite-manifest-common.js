@@ -198,11 +198,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 45,
+  schemaVersion: 46,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-free-module-tableau-set-partition-combinat-cypari2-pari-arithmetic-v11",
+  smokeContract: "exact-arithmetic-matrix-free-module-tableau-set-partition-crt-valuation-combinat-cypari2-pari-arithmetic-v12",
 };
 
 const expectedSageliteManifestFields = Object.freeze([
