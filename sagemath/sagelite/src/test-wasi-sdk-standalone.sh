@@ -592,7 +592,7 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=22
+electron_manifest_schema_version=23
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -686,6 +686,10 @@ electron_required_paths=(
   "site-packages/sage/rings/polynomial/polynomial_ring_constructor.py"
   "site-packages/sage/rings/polynomial/polynomial_rational_flint.py"
   "site-packages/sage/rings/polynomial/polynomial_zmod_flint.py"
+  "site-packages/sage/libs/__init__.py"
+  "site-packages/sage/libs/flint/__init__.py"
+  "site-packages/sage/libs/flint/flint_sage.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/libs/flint/fmpz_poly.cpython-314-wasm32-wasi.so"
   "site-packages/sage/libs/flint/fmpz_poly_sage.cpython-314-wasm32-wasi.so"
   "site-packages/sage/matrix/__init__.py"
   "site-packages/sage/matrix/action.cpython-314-wasm32-wasi.so"

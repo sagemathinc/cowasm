@@ -239,6 +239,11 @@ Follow-up snapshot:
   `sage.functions.prime_pi`, and the integer factorization helpers. This catches
   bundles that can import the core rings but are missing the `factor` or
   `prime_pi` paths before the Electron worker starts.
+- Change: schema 23 manifest validation now also requires the FLINT package
+  bootstrap files and direct helper side modules used by the packaged
+  `sage.libs.flint.fmpz_poly_sage` smoke. This catches bundles that retain the
+  top-level helper file but are missing the FLINT package initializer or
+  companion `flint_sage`/`fmpz_poly` side modules before worker startup.
 
 ## Runtime Milestones
 
