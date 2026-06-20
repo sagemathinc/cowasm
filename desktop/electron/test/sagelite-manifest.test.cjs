@@ -494,13 +494,32 @@ withResourceRoot((root) => {
   writeManifest(
     root,
     validManifest({
+      nativeLibraryPaths: undefined,
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /nativeLibraryPaths must be an array/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
       sideModulePaths: undefined,
     }),
   );
 
   assert.throws(
     () => loadSageliteManifest(root),
-    /nativeLibraryPaths requires sideModulePaths/,
+    /sideModulePaths must be an array/,
   );
 });
 

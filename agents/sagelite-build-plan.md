@@ -153,6 +153,10 @@ Follow-up snapshot:
   `nativeLibraryPaths` entry to appear in `requiredResourcePaths`, giving the
   Electron validators SHA-256 coverage for the `libcxx.so` runtime libraries
   that the Sagelite worker depends on.
+- Change: schema 8 manifest validation makes `nativeLibraryPaths` and
+  `sideModulePaths` mandatory instead of optional. This prevents current-schema
+  Electron bundles from omitting the runtime-library contract or the complete
+  copied `.so` inventory while still passing startup validation.
 
 ## Runtime Milestones
 

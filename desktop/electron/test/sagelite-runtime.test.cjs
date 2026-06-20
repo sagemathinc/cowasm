@@ -271,13 +271,15 @@ withTempDir((root) => {
 
     fs.mkdirSync(path.dirname(modulePath), { recursive: true });
     stagePythonPath(resourceRoot);
+    stageNativeLibraries(resourceRoot);
     fs.writeFileSync(modulePath, "VALUE = 'resource-root'\n");
     writeManifest(
       resourceRoot,
       validManifest({
-        requiredResourcePaths: ["site-packages/electron_probe.py"],
-        nativeLibraryPaths: undefined,
-        sideModulePaths: undefined,
+        requiredResourcePaths: [
+          "site-packages/electron_probe.py",
+          ...expectedSageliteNativeLibraryPaths,
+        ],
       }),
     );
 

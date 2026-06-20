@@ -20,8 +20,8 @@ export interface SageliteManifest {
   runtimeDependencyPaths: string[];
   requiredResourcePaths: string[];
   requiredResourceSha256: Record<string, string>;
-  nativeLibraryPaths?: string[];
-  sideModulePaths?: string[];
+  nativeLibraryPaths: string[];
+  sideModulePaths: string[];
 }
 
 export interface SagelitePythonEnv extends Record<string, string> {

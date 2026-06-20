@@ -30,7 +30,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 7,
+  schemaVersion: 8,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -98,52 +98,41 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
     manifest.requiredResourcePaths,
     manifest.requiredResourceSha256,
   );
-  if (manifest.nativeLibraryPaths !== undefined) {
-    validateExistingRelativeEntries(
-      resourceRoot,
-      manifestPath,
-      "nativeLibraryPaths",
-      manifest.nativeLibraryPaths,
-      { requireFile: true, requireNonEmpty: true },
-    );
-    validateExpectedEntries(
-      manifestPath,
-      "nativeLibraryPaths",
-      manifest.nativeLibraryPaths,
-      expectedSageliteNativeLibraryPaths,
-    );
-    validateNativeLibrariesCoveredByRequiredResources(
-      manifestPath,
-      manifest.nativeLibraryPaths,
-      manifest.requiredResourcePaths,
-    );
-  }
-  if (manifest.sideModulePaths !== undefined) {
-    validateExistingRelativeEntries(
-      resourceRoot,
-      manifestPath,
-      "sideModulePaths",
-      manifest.sideModulePaths,
-      { requireFile: true, requireNonEmpty: true },
-    );
-    validateCompleteSideModuleInventory(
-      resourceRoot,
-      manifestPath,
-      manifest.sideModulePaths,
-    );
-  }
-  if (manifest.nativeLibraryPaths !== undefined) {
-    if (manifest.sideModulePaths === undefined) {
-      throw new Error(
-        `${manifestPath} nativeLibraryPaths requires sideModulePaths`,
-      );
-    }
-    validateNativeLibrariesInSideModuleInventory(
-      manifestPath,
-      manifest.nativeLibraryPaths,
-      manifest.sideModulePaths,
-    );
-  }
+  validateExistingRelativeEntries(
+    resourceRoot,
+    manifestPath,
+    "nativeLibraryPaths",
+    manifest.nativeLibraryPaths,
+    { requireFile: true, requireNonEmpty: true },
+  );
+  validateExpectedEntries(
+    manifestPath,
+    "nativeLibraryPaths",
+    manifest.nativeLibraryPaths,
+    expectedSageliteNativeLibraryPaths,
+  );
+  validateNativeLibrariesCoveredByRequiredResources(
+    manifestPath,
+    manifest.nativeLibraryPaths,
+    manifest.requiredResourcePaths,
+  );
+  validateExistingRelativeEntries(
+    resourceRoot,
+    manifestPath,
+    "sideModulePaths",
+    manifest.sideModulePaths,
+    { requireFile: true, requireNonEmpty: true },
+  );
+  validateCompleteSideModuleInventory(
+    resourceRoot,
+    manifestPath,
+    manifest.sideModulePaths,
+  );
+  validateNativeLibrariesInSideModuleInventory(
+    manifestPath,
+    manifest.nativeLibraryPaths,
+    manifest.sideModulePaths,
+  );
 }
 
 function validateSageliteManifestContract(manifestPath, manifest) {
