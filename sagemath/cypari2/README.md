@@ -15,15 +15,16 @@ It is not yet the full `cypari2` runtime port. The placeholder `Gen` object,
 `Pari` object, and conversion entry points intentionally fail closed for real
 PARI operations.
 
-The standalone target now also builds a private
-`cypari2._pari_runtime_probe` CPython side module that links the CoWasm
-`libpari.a`, `libgmp.a`, and static `libsetjmp.a`. This probe proves the first
-runtime ABI gate: PARI calls can execute inside a Python extension side module,
-PARI can catch an `e_INV` error from `1/0`, and a later computation in the same
-Python process still works. The full public `cypari2` runtime modules still
-need a dedicated follow-up port that connects this proven PARI/SJLJ boundary to
-cypari2's Cython `Gen`, `Pari`, conversion, stack, and error-translation
-modules.
+The standalone target now also builds private
+`cypari2._pari_runtime_probe` and `cypari2._pari_cython_probe` side modules
+that link the CoWasm `libpari.a`, `libgmp.a`, and static `libsetjmp.a`. These
+probes prove the first runtime ABI gates: PARI calls can execute inside Python
+extension side modules, Cython-generated code can call PARI through cypari2's
+generated `.pxd` declarations, PARI can catch an `e_INV` error from `1/0`, and
+a later computation in the same Python process still works. The full public
+`cypari2` runtime modules still need a dedicated follow-up port that connects
+this proven PARI/SJLJ boundary to cypari2's Cython `Gen`, `Pari`, conversion,
+stack, and error-translation modules.
 
 Run the current probe with:
 

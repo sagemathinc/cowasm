@@ -41,6 +41,13 @@ Progress snapshot:
   `libwasi-emulated-signal.a`. The static signal archive is not PIC enough for
   side-module linking, and the minimal PARI arithmetic/error-recovery path does
   not need it. cysignals and interrupt behavior remain later phases.
+- Change: Phase 2 now has a private `cypari2._pari_cython_probe` Cython side
+  module. It cimports cypari2's generated `paridecl.pxd`, calls PARI through
+  that declaration layer for ordinary expression evaluation, uses the same
+  proven static `libsetjmp.a` link path, catches an `e_INV` error from `1/0`,
+  and computes again afterward in the same Python process.
+- Validation:
+  `make -C sagemath/cypari2 test-wasi-sdk-standalone`
 
 That means the work is not "port PARI" from scratch. It is specifically:
 

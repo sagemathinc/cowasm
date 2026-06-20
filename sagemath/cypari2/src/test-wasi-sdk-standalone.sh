@@ -350,6 +350,103 @@ audit_cpython_side_module \
   "$dist_dir/cypari2/_pari_runtime_probe$extension_suffix" \
   PyInit__pari_runtime_probe
 
+cat >"$probe_dir/pari_cython_probe.pyx" <<'PYX'
+from cypari2.paridecl cimport GEN, gp_read_str, itos
+
+
+cdef extern from *:
+    """
+    #include <pari/pari.h>
+
+    static int cowasm_cypari2_cython_pari_initialized = 0;
+
+    static void cowasm_cypari2_cython_ensure_pari(void) {
+      if (!cowasm_cypari2_cython_pari_initialized) {
+        pari_init(8000000, 2);
+        cowasm_cypari2_cython_pari_initialized = 1;
+      }
+    }
+
+    static int cowasm_cypari2_cython_check_error_recovery(long *result) {
+      int caught_inverse_error = 0;
+      GEN value;
+
+      cowasm_cypari2_cython_ensure_pari();
+
+      pari_CATCH(e_INV) {
+        GEN error = pari_err_last();
+        caught_inverse_error = error && err_get_num(error) == e_INV;
+      }
+      pari_TRY {
+        (void)gp_read_str("1/0");
+      }
+      pari_ENDCATCH;
+
+      if (!caught_inverse_error) {
+        return 0;
+      }
+
+      value = gp_read_str("13*17");
+      *result = itos(value);
+      return 1;
+    }
+    """
+    void cowasm_cypari2_cython_ensure_pari()
+    int cowasm_cypari2_cython_check_error_recovery(long *result)
+
+
+cpdef long eval_long(str expression) except -1:
+    cdef bytes encoded = expression.encode("ascii")
+    cdef GEN value
+
+    cowasm_cypari2_cython_ensure_pari()
+    value = gp_read_str(<const char *>encoded)
+    return itos(value)
+
+
+cpdef str check_error_recovery():
+    cdef long result
+
+    if not cowasm_cypari2_cython_check_error_recovery(&result):
+        raise RuntimeError("PARI inverse error was not caught as e_INV")
+    return f"caught=e_INV recovered={result}"
+PYX
+
+PYTHONPATH="$py_cython:$dist_dir" python3 -m cython -3 \
+  --module-name cypari2._pari_cython_probe \
+  -I "$dist_dir" \
+  -I "$dist_dir/cypari2" \
+  -I "$pari_wasi_sdk/include" \
+  --output-file "$probe_dir/pari_cython_probe.c" \
+  "$probe_dir/pari_cython_probe.pyx"
+
+"$bin_dir/wasi-sdk-clang-next" -target wasm32-wasip1 \
+  -O0 \
+  -fPIC \
+  -D_SCHED_H \
+  -shared \
+  -nostdlib \
+  -mllvm -wasm-enable-sjlj \
+  -mllvm -wasm-use-legacy-eh=false \
+  -Wl,--allow-undefined \
+  -Wl,--no-entry \
+  -Wl,--export=PyInit__pari_cython_probe \
+  -I"$python_include" \
+  -I"$dist_dir/cypari2" \
+  -I"$posix_wasi_sdk" \
+  -I"$pari_wasi_sdk/include" \
+  -I"$gmp_wasi_sdk/include" \
+  "$probe_dir/pari_cython_probe.c" \
+  "$pari_wasi_sdk/lib/libpari.a" \
+  "$gmp_wasi_sdk/lib/libgmp.a" \
+  "$setjmp_lib" \
+  -lm \
+  -o "$dist_dir/cypari2/_pari_cython_probe$extension_suffix"
+
+audit_cpython_side_module \
+  "$dist_dir/cypari2/_pari_cython_probe$extension_suffix" \
+  PyInit__pari_cython_probe
+
 cat >"$dist_dir/cypari2/handle_error.py" <<'PY'
 """Import-time placeholder for cypari2.handle_error."""
 
@@ -407,6 +504,7 @@ PYTHONPATH="$py_cython:$cysignals_wasi_sdk" python3 -m cython -3 \
 
 PYTHONPATH="$dist_dir" "$bin_dir/python-wasm" - <<'PY'
 import cypari2
+from cypari2 import _pari_cython_probe as pari_cython_probe
 from cypari2 import _pari_runtime_probe as pari_probe
 from cypari2.gen import Gen, Gen_base, objtogen
 from cypari2.handle_error import PariError
@@ -426,6 +524,11 @@ assert pari_probe.eval_long("primepi(10000)") == 1229
 assert pari_probe.eval_long("factorback(factor(360))") == 360
 assert pari_probe.check_error_recovery() == "caught=e_INV recovered=221"
 assert pari_probe.eval_long("13*17") == 221
+assert pari_cython_probe.eval_long("2+3") == 5
+assert pari_cython_probe.eval_long("primepi(10000)") == 1229
+assert pari_cython_probe.eval_long("factorback(factor(360))") == 360
+assert pari_cython_probe.check_error_recovery() == "caught=e_INV recovered=221"
+assert pari_cython_probe.eval_long("13*17") == 221
 for constructor in (lambda: objtogen(1), Pari().__call__, Gen().__getattr__("factor")):
     try:
         constructor()
@@ -435,4 +538,4 @@ for constructor in (lambda: objtogen(1), Pari().__call__, Gen().__getattr__("fac
         raise AssertionError(f"{constructor!r} did not fail closed")
 PY
 
-echo "cypari2-build-support-ok generated-pari-declarations cython-cimport-probe runtime-placeholders libpari-side-module-error-recovery"
+echo "cypari2-build-support-ok generated-pari-declarations cython-cimport-probe runtime-placeholders libpari-side-module-error-recovery cython-pari-side-module-error-recovery"
