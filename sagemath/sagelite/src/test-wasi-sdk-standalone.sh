@@ -570,14 +570,20 @@ q = V([QQ(1, 2), QQ(2, 3)])
 assert q.denominator() == 6
 print('sagelite-node-ok free module smoke')"
 run_node_import "combinatorics smoke" "import sage.all
+from sage.combinat.combination import Combinations
+from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutation
+from sage.combinat.subset import Subsets
 p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
 assert p.size() == 7
 sigma = Permutation([3, 1, 2])
 assert sigma.inverse() == Permutation([2, 3, 1])
 assert sigma.to_cycles() == [(1, 3, 2)]
+assert [sorted(s) for s in Subsets([1, 2, 3], 2)] == [[1, 2], [1, 3], [2, 3]]
+assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
+assert [list(v) for v in IntegerVectors(4, 2)] == [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
 print('sagelite-node-ok combinatorics smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
@@ -649,11 +655,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=43
+electron_manifest_schema_version=44
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-combinat-cypari2-pari-arithmetic-v9"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-enumerated-combinat-cypari2-pari-arithmetic-v10"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."

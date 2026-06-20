@@ -77,8 +77,11 @@ from sage.all import (
 )
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.modules.free_module import FreeModule
+from sage.combinat.combination import Combinations
+from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutation
+from sage.combinat.subset import Subsets
 
 assert os.environ['COWASM_SAGELITE_RESOURCE_ROOT'] == os.getcwd()
 assert ZZ(2) + ZZ(3) == ZZ(5)
@@ -106,6 +109,9 @@ assert p.size() == 7
 sigma = Permutation([3, 1, 2])
 assert sigma.inverse() == Permutation([2, 3, 1])
 assert sigma.to_cycles() == [(1, 3, 2)]
+assert [sorted(s) for s in Subsets([1, 2, 3], 2)] == [[1, 2], [1, 3], [2, 3]]
+assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
+assert [list(v) for v in IntegerVectors(4, 2)] == [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
 Z7 = Integers(7)

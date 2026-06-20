@@ -167,10 +167,12 @@ digest entries.
 It then checks the initialized FLINT `fmpz_poly_sage` helper,
 integer extended-gcd, integer ideal, modular integer ring, and prime
 finite-field coverage in addition to the core integer, rational, polynomial,
-factorization, `prime_pi`, and dense matrix checks. It then reruns the same
-smoke from a relocated copy of that resources tree, which catches build-output
-absolute path assumptions and incomplete resource copies before the resources
-are handed to Electron packaging. The same smoke is exposed from
+factorization, `prime_pi`, dense matrix, free-module, and combinatorics checks.
+The combinatorics smoke covers partitions, permutations, subsets, combinations,
+and integer-vector enumeration. It then reruns the same smoke from a relocated
+copy of that resources tree, which catches build-output absolute path
+assumptions and incomplete resource copies before the resources are handed to
+Electron packaging. The same smoke is exposed from
 `desktop/electron` as `pnpm test:sagelite`, which reruns it through the Electron
 package's `python-wasm` dependency without launching the UI. On WASI,
 `sage.all` skips writing the lazy-import cache file during startup, since that

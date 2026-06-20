@@ -353,6 +353,11 @@ Follow-up snapshot:
   partition conjugation and permutation inversion/cycle conversion, and the
   manifest requires the corresponding `sage.combinat` and `sage.sets` startup
   files and side modules as hashed resources.
+- Change: schema 44 manifests advance the smoke contract to
+  `exact-arithmetic-matrix-free-module-enumerated-combinat-cypari2-pari-arithmetic-v10`.
+  The Node.js and Electron-shaped smokes now also verify subset, combination,
+  and integer-vector enumeration through Sage's combinatorics package, keeping
+  those packaged helper modules covered by the runtime contract.
 - Change: the Sagelite standalone probe now bounds each Node.js import ladder
   step and each staged/relocated Electron-shaped smoke with configurable
   timeouts, and the Electron package's exposed Sagelite smoke uses the same
