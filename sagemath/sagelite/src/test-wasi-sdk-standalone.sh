@@ -588,6 +588,7 @@ run_node_import "combinatorics smoke" "import sage.all
 from sage.combinat.combination import Combinations
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition
+from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
 from sage.combinat.permutation import Permutation
 from sage.combinat.set_partition import SetPartitions
 from sage.combinat.subset import Subsets
@@ -595,6 +596,9 @@ from sage.combinat.tableau import StandardTableaux, Tableau
 p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
 assert p.size() == 7
+assert PerfectMatchings(4).cardinality() == 3
+assert PerfectMatching([2, 1, 4, 3]).number_of_crossings() == 0
+assert PerfectMatching([(1, 4), (2, 3)]).is_noncrossing()
 sigma = Permutation([3, 1, 2])
 assert sigma.inverse() == Permutation([2, 3, 1])
 assert sigma.to_cycles() == [(1, 3, 2)]
@@ -699,11 +703,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=53
+electron_manifest_schema_version=54
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v19"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v20"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."
@@ -894,6 +898,7 @@ electron_required_paths=(
   "site-packages/sage/combinat/partition.py"
   "site-packages/sage/combinat/partition_tuple.py"
   "site-packages/sage/combinat/partitions.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/combinat/perfect_matching.py"
   "site-packages/sage/combinat/permutation.py"
   "site-packages/sage/combinat/permutation_cython.cpython-314-wasm32-wasi.so"
   "site-packages/sage/combinat/set_partition.py"
@@ -911,7 +916,10 @@ electron_required_paths=(
   "site-packages/sage/sets/pythonclass.cpython-314-wasm32-wasi.so"
   "site-packages/sage/sets/recursively_enumerated_set.cpython-314-wasm32-wasi.so"
   "site-packages/sage/sets/set.py"
+  "site-packages/sage/misc/cachefunc.cpython-314-wasm32-wasi.so"
   "site-packages/sage/misc/persist.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/infinity.py"
+  "site-packages/sage/structure/list_clone.cpython-314-wasm32-wasi.so"
   "deps/cypari2/cypari2/__init__.py"
   "deps/cypari2/cypari2/_pari_cython_probe.cpython-314-wasm32-wasi.so"
   "deps/cypari2/cypari2/_pari_runtime_probe.cpython-314-wasm32-wasi.so"

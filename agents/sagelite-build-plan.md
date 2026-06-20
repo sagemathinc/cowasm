@@ -238,7 +238,7 @@ Follow-up snapshot:
   startup resources used by the exact-math smoke, including `sage.arith`,
   `sage.functions.prime_pi`, and the integer factorization helpers. This catches
   bundles that can import the core rings but are missing the `factor` or
-  `prime_pi` paths before the Electron worker starts.
+  `prime_pi` startup path.
 - Change: schema 23 manifest validation now also requires the FLINT package
   bootstrap files and direct helper side modules used by the packaged
   `sage.libs.flint.fmpz_poly_sage` smoke. This catches bundles that retain the
@@ -403,6 +403,10 @@ Follow-up snapshot:
   binary Hamming code minimum-distance computation through the bounded
   Node/Electron worker path. Generator/parity matrix and ad hoc `LinearCode`
   construction remain follow-up coding-runtime work.
+- Change: schema 54 manifests extend the packaged Node.js/Electron smoke to
+  `sage.combinat.perfect_matching`. The manifest now requires the perfect
+  matching module and its direct runtime helpers, so bundles missing the new
+  combinatorics surface fail validation before worker startup.
 
 ## Runtime Milestones
 

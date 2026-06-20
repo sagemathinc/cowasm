@@ -221,6 +221,34 @@ withResourceRoot((root) => {
       requiredResourcePaths: [
         ...expectedSageliteMandatoryResourcePaths.filter(
           (entry) =>
+            entry !== "site-packages/sage/combinat/perfect_matching.py",
+        ),
+        ...expectedSageliteNativeLibraryPaths,
+      ],
+    }),
+  );
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /requiredResourcePaths must include the Sagelite Electron mandatory resources/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: [
+        ...expectedSageliteMandatoryResourcePaths.filter(
+          (entry) =>
             entry !==
             "site-packages/sage/groups/abelian_gps/abelian_group.py",
         ),

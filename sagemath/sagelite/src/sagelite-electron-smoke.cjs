@@ -84,6 +84,7 @@ from sage.combinat.combination import Combinations
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition
+from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
 from sage.combinat.permutation import Permutation
 from sage.combinat.set_partition import SetPartitions
 from sage.combinat.subset import Subsets
@@ -136,6 +137,9 @@ assert d**6 == A4x6.one()
 p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
 assert p.size() == 7
+assert PerfectMatchings(4).cardinality() == 3
+assert PerfectMatching([2, 1, 4, 3]).number_of_crossings() == 0
+assert PerfectMatching([(1, 4), (2, 3)]).is_noncrossing()
 sigma = Permutation([3, 1, 2])
 assert sigma.inverse() == Permutation([2, 3, 1])
 assert sigma.to_cycles() == [(1, 3, 2)]
