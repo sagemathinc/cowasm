@@ -2,6 +2,7 @@
 "use strict";
 
 const assert = require("assert");
+const { createHash } = require("crypto");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
@@ -19,10 +20,34 @@ const {
 } = require("../sagelite-resources");
 
 function writeManifest(root, manifest) {
+  if (
+    manifest.requiredResourcePaths !== undefined &&
+    manifest.requiredResourceSha256 === undefined
+  ) {
+    manifest = {
+      ...manifest,
+      requiredResourceSha256: digestRequiredResources(
+        root,
+        manifest.requiredResourcePaths,
+      ),
+    };
+  }
   fs.writeFileSync(
     path.join(root, sageliteManifestName),
     JSON.stringify(manifest, null, 2),
   );
+}
+
+function digestRequiredResources(root, requiredResourcePaths) {
+  const digests = {};
+  for (const relativePath of requiredResourcePaths) {
+    const target = path.join(root, relativePath);
+    digests[relativePath] =
+      fs.existsSync(target) && fs.statSync(target).isFile()
+        ? createHash("sha256").update(fs.readFileSync(target)).digest("hex")
+        : "0".repeat(64);
+  }
+  return digests;
 }
 
 function touch(root, relativePath) {
@@ -328,6 +353,24 @@ withResourceRoot((root) => {
   assert.throws(
     () => normalizeCopiedSageliteExtraResource(sourceRoot, stagingPath),
     /requiredResourcePaths entry python\.wasm does not exist/,
+  );
+});
+
+withResourceRoot((root) => {
+  const sourceRoot = path.join(root, "corrupt-sagelite-resources");
+  const stagingPath = path.join(root, "stage");
+  const copiedRoot = path.join(
+    stagingPath,
+    "resources",
+    path.basename(sourceRoot),
+  );
+  stageValidResources(sourceRoot);
+  copyTree(sourceRoot, copiedRoot);
+  fs.writeFileSync(path.join(copiedRoot, "python.wasm"), "changed");
+
+  assert.throws(
+    () => normalizeCopiedSageliteExtraResource(sourceRoot, stagingPath),
+    /requiredResourceSha256 entry python\.wasm does not match copied resource/,
   );
 });
 

@@ -64,6 +64,9 @@ The manifest also records the audited side-module inventory and required native
 library resources such as `libcxx.so`; native libraries must also appear in the
 side-module inventory, so packaging validation catches missing extension modules
 or side-module companion libraries before the worker starts.
+Schema 6 manifests also include SHA-256 digests for every required resource
+file, so packaging validation rejects corrupted or stale smoke/runtime files
+instead of only checking that the paths exist.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

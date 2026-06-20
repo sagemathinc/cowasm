@@ -2,6 +2,7 @@
 "use strict";
 
 const assert = require("assert");
+const { createHash } = require("crypto");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
@@ -17,10 +18,34 @@ const {
 } = require("../dist/main/sagelite-manifest");
 
 function writeManifest(root, manifest) {
+  if (
+    manifest.requiredResourcePaths !== undefined &&
+    manifest.requiredResourceSha256 === undefined
+  ) {
+    manifest = {
+      ...manifest,
+      requiredResourceSha256: digestRequiredResources(
+        root,
+        manifest.requiredResourcePaths,
+      ),
+    };
+  }
   fs.writeFileSync(
     path.join(root, sageliteManifestName),
     JSON.stringify(manifest, null, 2),
   );
+}
+
+function digestRequiredResources(root, requiredResourcePaths) {
+  const digests = {};
+  for (const relativePath of requiredResourcePaths) {
+    const target = path.join(root, relativePath);
+    digests[relativePath] =
+      fs.existsSync(target) && fs.statSync(target).isFile()
+        ? createHash("sha256").update(fs.readFileSync(target)).digest("hex")
+        : "0".repeat(64);
+  }
+  return digests;
 }
 
 function touch(root, relativePath) {
@@ -94,6 +119,76 @@ withResourceRoot((root) => {
   assert.deepStrictEqual(sagelitePythonEnv(manifest), {
     PYTHONPATH: expectedSagelitePythonPath.join(":"),
   });
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(root, validManifest({ requiredResourceSha256: null }));
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourceSha256 must be an object/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourceSha256: {
+        "site-packages/sage/all.py": "0".repeat(64),
+      },
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourceSha256 keys must match requiredResourcePaths/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  const manifest = validManifest();
+  manifest.requiredResourceSha256 = digestRequiredResources(
+    root,
+    manifest.requiredResourcePaths,
+  );
+  manifest.requiredResourceSha256["python.wasm"] = "not-a-digest";
+  writeManifest(root, manifest);
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourceSha256 entry python\.wasm must be a lowercase sha256 hex digest/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(root, validManifest());
+  fs.writeFileSync(path.join(root, "python.wasm"), "changed");
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourceSha256 entry python\.wasm does not match copied resource/,
+  );
 });
 
 for (const entry of [

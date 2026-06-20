@@ -141,7 +141,10 @@ Python dependencies into that directory, writes a
 required resource paths, the audited side-module inventory, and required native
 library resources such as `libcxx.so`. Native library resources must also
 appear in the side-module inventory, so Electron packaging validation catches
-incomplete dynamic-library copies before runtime startup. The target reruns the
+incomplete dynamic-library copies before runtime startup. The manifest also
+records SHA-256 digests for every required resource file so the Electron
+packaging and runtime validators reject corrupted or stale copied resources.
+The target reruns the
 exact arithmetic and matrix smoke through the checked-in
 `src/sagelite-electron-smoke.cjs` async `python-wasm` worker API.
 The Electron smoke validates the manifest before launching Python, including
@@ -150,7 +153,8 @@ smoke contract, exact packaged Python dependency roots, and root-local
 POSIX-style relative paths so the staged resources cannot escape their bundle
 root or depend on host-specific path separators. Manifest path arrays must also
 be duplicate-free, so stale or merged resource inventories cannot hide
-ambiguous `PYTHONPATH`, side-module, or native-library entries.
+ambiguous `PYTHONPATH`, side-module, native-library, or required-resource
+digest entries.
 It then checks the initialized FLINT `fmpz_poly_sage` helper,
 integer extended-gcd, integer ideal, modular integer ring, and prime
 finite-field coverage in addition to the core integer, rational, polynomial,

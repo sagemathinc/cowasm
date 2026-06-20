@@ -1,5 +1,6 @@
 "use strict";
 
+const { createHash } = require("crypto");
 const { existsSync, readdirSync, readFileSync, statSync } = require("fs");
 const { isAbsolute, join } = require("path");
 
@@ -24,7 +25,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 5,
+  schemaVersion: 6,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -86,6 +87,12 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
       "requiredResourcePaths",
       manifest.requiredResourcePaths,
       { requireFile: true, requireNonEmpty: false },
+    );
+    validateRequiredResourceSha256(
+      resourceRoot,
+      manifestPath,
+      manifest.requiredResourcePaths,
+      manifest.requiredResourceSha256,
     );
   }
   if (manifest.nativeLibraryPaths !== undefined) {
@@ -233,6 +240,50 @@ function validateUniqueManifestEntries(manifestPath, fieldName, entries) {
   }
 }
 
+function validateRequiredResourceSha256(
+  resourceRoot,
+  manifestPath,
+  requiredResourcePaths,
+  requiredResourceSha256,
+) {
+  if (
+    requiredResourceSha256 === null ||
+    typeof requiredResourceSha256 !== "object" ||
+    Array.isArray(requiredResourceSha256)
+  ) {
+    throw new Error(`${manifestPath} requiredResourceSha256 must be an object`);
+  }
+  const expectedPaths = [...requiredResourcePaths].sort();
+  const actualPaths = Object.keys(requiredResourceSha256).sort();
+  if (
+    actualPaths.length !== expectedPaths.length ||
+    actualPaths.some((entry, index) => entry !== expectedPaths[index])
+  ) {
+    throw new Error(
+      `${manifestPath} requiredResourceSha256 keys must match requiredResourcePaths`,
+    );
+  }
+  for (const entry of requiredResourcePaths) {
+    const expectedDigest = requiredResourceSha256[entry];
+    if (
+      typeof expectedDigest !== "string" ||
+      !/^[0-9a-f]{64}$/.test(expectedDigest)
+    ) {
+      throw new Error(
+        `${manifestPath} requiredResourceSha256 entry ${entry} must be a lowercase sha256 hex digest`,
+      );
+    }
+    const actualDigest = createHash("sha256")
+      .update(readFileSync(join(resourceRoot, entry)))
+      .digest("hex");
+    if (actualDigest !== expectedDigest) {
+      throw new Error(
+        `${manifestPath} requiredResourceSha256 entry ${entry} does not match copied resource`,
+      );
+    }
+  }
+}
+
 function relativePosixPath(parts) {
   return parts.join("/");
 }
@@ -298,6 +349,7 @@ module.exports = {
   sagelitePythonEnv,
   sagelitePythonPath,
   validateRelativeManifestEntries,
+  validateRequiredResourceSha256,
   validateSageliteManifest,
   validateSageliteManifestContract,
   validateUniqueManifestEntries,

@@ -50,6 +50,15 @@ record_blocker() {
   exit 77
 }
 
+sha256_file() {
+  local path="$1"
+  if command -v sha256sum >/dev/null; then
+    sha256sum "$path" | awk '{ print $1 }'
+  else
+    shasum -a 256 "$path" | awk '{ print $1 }'
+  fi
+}
+
 audit_wasm_side_modules() {
   local module_list="$1"
   local audit_log="$2"
@@ -568,7 +577,7 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=5
+electron_manifest_schema_version=6
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -712,6 +721,17 @@ fi
     printf '    "%s"' "${electron_required_paths[$i]}"
   done
   printf '\n  ],\n'
+  printf '  "requiredResourceSha256": {\n'
+  for i in "${!electron_required_paths[@]}"; do
+    if [ "$i" -gt 0 ]; then
+      printf ',\n'
+    fi
+    required_path="${electron_required_paths[$i]}"
+    printf '    "%s": "%s"' \
+      "$required_path" \
+      "$(sha256_file "$electron_resources_dir/$required_path")"
+  done
+  printf '\n  },\n'
   printf '  "sideModulePaths": [\n'
   for i in "${!electron_side_module_paths[@]}"; do
     if [ "$i" -gt 0 ]; then

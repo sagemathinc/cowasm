@@ -2,6 +2,7 @@
 "use strict";
 
 const assert = require("assert");
+const { createHash } = require("crypto");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
@@ -22,10 +23,34 @@ const {
 } = require("../dist/main/sagelite-manifest");
 
 function writeManifest(root, manifest) {
+  if (
+    manifest.requiredResourcePaths !== undefined &&
+    manifest.requiredResourceSha256 === undefined
+  ) {
+    manifest = {
+      ...manifest,
+      requiredResourceSha256: digestRequiredResources(
+        root,
+        manifest.requiredResourcePaths,
+      ),
+    };
+  }
   fs.writeFileSync(
     path.join(root, sageliteManifestName),
     JSON.stringify(manifest, null, 2),
   );
+}
+
+function digestRequiredResources(root, requiredResourcePaths) {
+  const digests = {};
+  for (const relativePath of requiredResourcePaths) {
+    const target = path.join(root, relativePath);
+    digests[relativePath] =
+      fs.existsSync(target) && fs.statSync(target).isFile()
+        ? createHash("sha256").update(fs.readFileSync(target)).digest("hex")
+        : "0".repeat(64);
+  }
+  return digests;
 }
 
 function touch(root, relativePath) {

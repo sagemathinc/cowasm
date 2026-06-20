@@ -123,14 +123,24 @@ This target now completes the Node.js/Electron milestone path end to end:
 - passes exact arithmetic, linear algebra, modular arithmetic, and FLINT
   fail-closed runtime smokes under Node.js;
 - stages `dist/wasi-sdk/electron-resources`, writes the Electron resource
-  manifest, validates the copied side-module inventory, and passes both staged
-  and relocated Electron-shaped resource smokes.
+  manifest, validates the copied side-module inventory and required-resource
+  SHA-256 digests, and passes both staged and relocated Electron-shaped
+  resource smokes.
 
 The build produced 471 installed Sagelite side modules and 515 Electron
 resource side modules in the validation run. The Electron smoke still emits
 Sagelite lazy-import warnings about `at_startup=True`; those warnings did not
 block the milestone and should be tracked separately only if they become noisy
 for users.
+
+Follow-up snapshot:
+
+- Date: 2026-06-20
+- Change: schema 6 Electron resource manifests add `requiredResourceSha256`.
+  Sagelite now hashes every required resource file when staging
+  `electron-resources`, and the Electron runtime/Forge validators reject
+  corrupted, stale, or key-mismatched required resources before launching the
+  worker.
 
 ## Runtime Milestones
 
