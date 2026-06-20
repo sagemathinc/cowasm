@@ -10,7 +10,7 @@ const expectedSageliteManifest = {
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-v1",
+  smokeContract: "exact-arithmetic-matrix-v2",
 };
 
 function loadSageliteManifest(resourceRoot) {

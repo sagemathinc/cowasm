@@ -55,13 +55,31 @@ async function main() {
     await python.exec(String.raw`
 import sage.all
 import sage.libs.flint.fmpz_poly_sage
-from sage.all import ZZ, QQ, Integers, GF, PolynomialRing, factor, prime_pi
+from sage.all import (
+    ZZ,
+    QQ,
+    Integers,
+    GF,
+    PolynomialRing,
+    binomial,
+    factor,
+    factorial,
+    gcd,
+    prime_pi,
+    xgcd,
+)
 from sage.matrix.constructor import matrix
 
 assert ZZ(2) + ZZ(3) == ZZ(5)
 g, s, t = ZZ(240).xgcd(ZZ(46))
 assert g == ZZ(2)
 assert s * ZZ(240) + t * ZZ(46) == g
+assert gcd(ZZ(84), ZZ(126)) == ZZ(42)
+g2, s2, t2 = xgcd(ZZ(240), ZZ(46))
+assert g2 == ZZ(2)
+assert s2 * ZZ(240) + t2 * ZZ(46) == g2
+assert binomial(20, 8) == ZZ(125970)
+assert factorial(10) == ZZ(3628800)
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
 Z7 = Integers(7)
@@ -72,6 +90,12 @@ assert QQ(6, 15) == QQ(2, 5)
 R = PolynomialRing(QQ, 'x')
 x = R.gen()
 assert (x + 1) * (x - 1) == x**2 - 1
+q, r = (x**3 - 1).quo_rem(x - 1)
+assert r == 0
+assert q == x**2 + x + 1
+f = x**4 - 1
+assert f.derivative() == 4*x**3
+assert f(QQ(2)) == QQ(15)
 ZZx = PolynomialRing(ZZ, 'x')
 y = ZZx.gen()
 assert (y + 2) * (y + 3) == y**2 + 5*y + 6
@@ -101,6 +125,14 @@ assert A * A == matrix(ZZ, [[7, 10], [15, 22]])
 B = matrix(QQ, [[1, 2], [3, 5]])
 assert B.det() == QQ(-1)
 assert B.inverse() * B == matrix(QQ, [[1, 0], [0, 1]])
+C = matrix(QQ, [[1, 2, 3], [0, 1, 4], [5, 6, 0]])
+assert C.det() == QQ(1)
+assert C.inverse() * C == matrix(
+    QQ,
+    3,
+    3,
+    [1, 0, 0, 0, 1, 0, 0, 0, 1],
+)
 `);
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {

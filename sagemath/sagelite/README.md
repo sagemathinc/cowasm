@@ -93,14 +93,16 @@ module before starting the Node.js import ladder. The audit requires a
 `needed_dynlibs` metadata. This turns the milestone's side-module ABI contract
 into a package-wide gate instead of checking only one representative extension.
 
-The Node.js runtime probe now completes the first exact-math smoke from
+The Node.js runtime probe now completes the second exact-math smoke from
 `sage.all`: integer arithmetic, integer ideals, modular integer rings, prime
 finite fields, two-argument rational construction,
 univariate polynomial construction/arithmetic over `QQ`, integer
-polynomial construction/arithmetic over default `ZZ[x]`, integer factorization
-with factor inspection, and `prime_pi(10**6)`. The probe also checks exact
-dense matrix determinant, multiplication, and inverse over `ZZ` and `QQ`
-through `sage.matrix.constructor`. On WASI the patch routes `QQ[x]` and the
+polynomial construction/arithmetic over default `ZZ[x]`, polynomial division,
+derivatives, evaluation, integer factorization with factor inspection, Sage
+arithmetic helpers including `gcd`, `xgcd`, `binomial`, and `factorial`, and
+`prime_pi(10**6)`. The probe also checks exact dense matrix determinant,
+multiplication, and inverse over `ZZ` and `QQ`, including a 3x3 rational
+inverse, through `sage.matrix.constructor`. On WASI the patch routes `QQ[x]` and the
 default dense `ZZ[x]` startup through generic polynomial element classes for
 now, avoiding eager `polynomial_rational_flint` and
 `polynomial_integer_dense_flint` startup while those side-module paths still
