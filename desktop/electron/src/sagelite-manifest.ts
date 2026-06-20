@@ -26,6 +26,7 @@ export interface SageliteManifest {
 
 export interface SagelitePythonEnv extends Record<string, string> {
   PYTHONPATH: string;
+  COWASM_SAGELITE_RESOURCE_ROOT?: string;
 }
 
 export function loadSageliteManifest(resourceRoot: string): SageliteManifest {
@@ -34,8 +35,9 @@ export function loadSageliteManifest(resourceRoot: string): SageliteManifest {
 
 export function sagelitePythonEnv(
   manifest: SageliteManifest,
+  resourceRoot?: string,
 ): SagelitePythonEnv {
-  return common.sagelitePythonEnv(manifest) as SagelitePythonEnv;
+  return common.sagelitePythonEnv(manifest, resourceRoot) as SagelitePythonEnv;
 }
 
 export function sagelitePythonPath(manifest: SageliteManifest): string {

@@ -148,7 +148,10 @@ withTempDir((root) => {
     }),
     {
       resourceRoot: explicitRoot,
-      env: { PYTHONPATH: expectedSagelitePythonPath.join(":") },
+      env: {
+        PYTHONPATH: expectedSagelitePythonPath.join(":"),
+        COWASM_SAGELITE_RESOURCE_ROOT: explicitRoot,
+      },
     },
   );
 });
@@ -164,7 +167,10 @@ withTempDir((root) => {
     }),
     {
       resourceRoot: packagedRoot,
-      env: { PYTHONPATH: expectedSagelitePythonPath.join(":") },
+      env: {
+        PYTHONPATH: expectedSagelitePythonPath.join(":"),
+        COWASM_SAGELITE_RESOURCE_ROOT: packagedRoot,
+      },
     },
   );
 });
@@ -292,6 +298,7 @@ import os
 import electron_probe
 
 assert os.getcwd() == ${JSON.stringify(resourceRoot)}
+assert os.environ['COWASM_SAGELITE_RESOURCE_ROOT'] == ${JSON.stringify(resourceRoot)}
 assert electron_probe.VALUE == 'resource-root'
 `);
     } finally {

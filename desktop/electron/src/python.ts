@@ -71,7 +71,7 @@ export function findSageliteRuntime(
       continue;
     }
     const manifest = loadSageliteManifest(resourceRoot);
-    return { resourceRoot, env: sagelitePythonEnv(manifest) };
+    return { resourceRoot, env: sagelitePythonEnv(manifest, resourceRoot) };
   }
   return null;
 }

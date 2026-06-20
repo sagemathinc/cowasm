@@ -157,6 +157,10 @@ Follow-up snapshot:
   `sideModulePaths` mandatory instead of optional. This prevents current-schema
   Electron bundles from omitting the runtime-library contract or the complete
   copied `.so` inventory while still passing startup validation.
+- Change: the Electron runtime now passes the resolved Sagelite resource root
+  into the Python worker as `COWASM_SAGELITE_RESOURCE_ROOT`, and the staged and
+  relocated Electron smoke asserts that the variable matches the active
+  resource working directory.
 
 ## Runtime Milestones
 

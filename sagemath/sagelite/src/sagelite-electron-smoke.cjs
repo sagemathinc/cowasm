@@ -8,7 +8,7 @@ const pythonWasmModule = process.env.COWASM_PYTHON_WASM_NODE || "python-wasm";
 const { asyncPython } = require(pythonWasmModule);
 const {
   loadSageliteManifest,
-  sagelitePythonPath,
+  sagelitePythonEnv,
 } = loadSageliteManifestTools();
 
 function loadSageliteManifestTools() {
@@ -29,9 +29,13 @@ function loadSageliteManifestTools() {
   );
 }
 
-function loadPythonPath() {
+function loadPythonEnv() {
   if (process.env.PYTHONPATH) {
-    return process.env.PYTHONPATH;
+    return {
+      PYTHONPATH: process.env.PYTHONPATH,
+      COWASM_SAGELITE_RESOURCE_ROOT:
+        process.env.COWASM_SAGELITE_RESOURCE_ROOT || process.cwd(),
+    };
   }
 
   const resourceRoot = path.resolve(
@@ -39,15 +43,15 @@ function loadPythonPath() {
   );
   const manifest = loadSageliteManifest(resourceRoot);
   process.chdir(resourceRoot);
-  return sagelitePythonPath(manifest);
+  return sagelitePythonEnv(manifest, resourceRoot);
 }
 
 async function main() {
-  const pythonPath = loadPythonPath();
+  const env = loadPythonEnv();
   const python = await asyncPython({
     fs: "everything",
     noStdio: true,
-    env: { PYTHONPATH: pythonPath },
+    env,
   });
   python.kernel.on("stdout", (data) => process.stdout.write(data));
   python.kernel.on("stderr", (data) => process.stderr.write(data));
@@ -55,6 +59,7 @@ async function main() {
     await python.exec(String.raw`
 import sage.all
 import sage.libs.flint.fmpz_poly_sage
+import os
 from sage.all import (
     ZZ,
     QQ,
@@ -70,6 +75,7 @@ from sage.all import (
 )
 from sage.matrix.constructor import identity_matrix, matrix
 
+assert os.environ['COWASM_SAGELITE_RESOURCE_ROOT'] == os.getcwd()
 assert ZZ(2) + ZZ(3) == ZZ(5)
 g, s, t = ZZ(240).xgcd(ZZ(46))
 assert g == ZZ(2)

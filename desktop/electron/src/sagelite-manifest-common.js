@@ -48,8 +48,13 @@ function sagelitePythonPath(manifest) {
   return manifest.pythonPath.join(":");
 }
 
-function sagelitePythonEnv(manifest) {
-  return { PYTHONPATH: sagelitePythonPath(manifest) };
+function sagelitePythonEnv(manifest, resourceRoot) {
+  return {
+    PYTHONPATH: sagelitePythonPath(manifest),
+    ...(resourceRoot == null
+      ? {}
+      : { COWASM_SAGELITE_RESOURCE_ROOT: resourceRoot }),
+  };
 }
 
 function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
