@@ -96,6 +96,7 @@ function validManifest(overrides = {}) {
       "site-packages/sage/all.py",
       "sagelite-electron-smoke.cjs",
       "python.wasm",
+      ...expectedSageliteNativeLibraryPaths,
     ],
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
     sideModulePaths: [...expectedSageliteNativeLibraryPaths],
@@ -228,7 +229,7 @@ withResourceRoot((root) => {
       resolveSageliteExtraResources(__dirname, {
         COWASM_SAGELITE_ELECTRON_RESOURCES: root,
       }),
-    /nativeLibraryPaths entry deps\/libcxx\/libcxx\.so does not exist/,
+    /requiredResourcePaths entry deps\/libcxx\/libcxx\.so does not exist/,
   );
 });
 
@@ -245,7 +246,7 @@ withResourceRoot((root) => {
       resolveSageliteExtraResources(__dirname, {
         COWASM_SAGELITE_ELECTRON_RESOURCES: root,
       }),
-    /nativeLibraryPaths entry deps\/libcxx\/libcxx\.so must be a file/,
+    /requiredResourcePaths entry deps\/libcxx\/libcxx\.so must be a file/,
   );
 });
 

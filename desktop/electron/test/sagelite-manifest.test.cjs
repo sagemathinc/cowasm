@@ -89,6 +89,7 @@ function validManifest(overrides = {}) {
       "site-packages/sage/all.py",
       "sagelite-electron-smoke.cjs",
       "python.wasm",
+      ...expectedSageliteNativeLibraryPaths,
     ],
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
     sideModulePaths: [...expectedSageliteNativeLibraryPaths],
@@ -386,7 +387,7 @@ withResourceRoot((root) => {
 
   assert.throws(
     () => loadSageliteManifest(root),
-    /nativeLibraryPaths entry deps\/libcxx\/libcxx\.so does not exist/,
+    /requiredResourcePaths entry deps\/libcxx\/libcxx\.so does not exist/,
   );
 });
 
@@ -400,7 +401,7 @@ withResourceRoot((root) => {
 
   assert.throws(
     () => loadSageliteManifest(root),
-    /nativeLibraryPaths entry deps\/libcxx\/libcxx\.so must be a file/,
+    /requiredResourcePaths entry deps\/libcxx\/libcxx\.so must be a file/,
   );
 });
 
@@ -458,6 +459,29 @@ withResourceRoot((root) => {
   assert.throws(
     () => loadSageliteManifest(root),
     /nativeLibraryPaths must match the Sagelite Electron runtime contract/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: [
+        "site-packages/sage/all.py",
+        "sagelite-electron-smoke.cjs",
+        "python.wasm",
+      ],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /nativeLibraryPaths entries must also be listed in requiredResourcePaths/,
   );
 });
 

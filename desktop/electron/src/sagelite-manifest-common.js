@@ -30,7 +30,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 6,
+  schemaVersion: 7,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -111,6 +111,11 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
       "nativeLibraryPaths",
       manifest.nativeLibraryPaths,
       expectedSageliteNativeLibraryPaths,
+    );
+    validateNativeLibrariesCoveredByRequiredResources(
+      manifestPath,
+      manifest.nativeLibraryPaths,
+      manifest.requiredResourcePaths,
     );
   }
   if (manifest.sideModulePaths !== undefined) {
@@ -345,6 +350,22 @@ function validateNativeLibrariesInSideModuleInventory(
   if (missingNativeLibraries.length !== 0) {
     throw new Error(
       `${manifestPath} nativeLibraryPaths entries must also be listed in sideModulePaths`,
+    );
+  }
+}
+
+function validateNativeLibrariesCoveredByRequiredResources(
+  manifestPath,
+  nativeLibraryPaths,
+  requiredResourcePaths,
+) {
+  const requiredResourcePathSet = new Set(requiredResourcePaths);
+  const missingNativeLibraries = nativeLibraryPaths.filter(
+    (entry) => !requiredResourcePathSet.has(entry),
+  );
+  if (missingNativeLibraries.length !== 0) {
+    throw new Error(
+      `${manifestPath} nativeLibraryPaths entries must also be listed in requiredResourcePaths`,
     );
   }
 }

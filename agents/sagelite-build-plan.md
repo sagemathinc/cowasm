@@ -149,6 +149,10 @@ Follow-up snapshot:
   match the current Sagelite Electron runtime-library contract exactly and to
   remain covered by `sideModulePaths`, so bundles with stale or unexpected
   native `.so` resources fail before worker startup.
+- Change: schema 7 manifest validation now also requires every
+  `nativeLibraryPaths` entry to appear in `requiredResourcePaths`, giving the
+  Electron validators SHA-256 coverage for the `libcxx.so` runtime libraries
+  that the Sagelite worker depends on.
 
 ## Runtime Milestones
 

@@ -582,7 +582,7 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=6
+electron_manifest_schema_version=7
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -652,6 +652,8 @@ electron_required_paths=(
   "site-packages/sage/matrix/constructor.cpython-314-wasm32-wasi.so"
   "deps/cypari2/cypari2/gen.cpython-314-wasm32-wasi.so"
   "deps/primecountpy/primecountpy/primecount.cpython-314-wasm32-wasi.so"
+  "deps/libcxx/libcxx.so"
+  "deps/primecountpy/primecountpy/libcxx.so"
   "deps/cysignals/cysignals/signals.cpython-314-wasm32-wasi.so"
   "deps/memory_allocator/memory_allocator/memory_allocator.cpython-314-wasm32-wasi.so"
   "deps/gmpy2/gmpy2/gmpy2.cpython-314-wasm32-wasi.so"

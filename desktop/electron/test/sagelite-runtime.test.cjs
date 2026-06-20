@@ -103,6 +103,7 @@ function validManifest(overrides = {}) {
       "site-packages/sage/all.py",
       "deps/platformdirs/__init__.py",
       "sagelite-electron-smoke.cjs",
+      ...expectedSageliteNativeLibraryPaths,
     ],
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
     sideModulePaths: [...expectedSageliteNativeLibraryPaths],

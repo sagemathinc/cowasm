@@ -142,11 +142,11 @@ Python dependencies into that directory, writes a
 required resource paths, the audited side-module inventory, and required native
 library resources such as the top-level and `primecountpy` `libcxx.so` copies.
 Native library resources must also match the current expected runtime-library
-contract and appear in the side-module inventory, so Electron packaging
-validation catches incomplete or stale dynamic-library copies before runtime
-startup. The manifest also records SHA-256 digests for every required resource
-file so the Electron packaging and runtime validators reject corrupted or stale
-copied resources.
+contract, appear in the side-module inventory, and be listed as required
+resources, so Electron packaging validation catches incomplete, corrupted, or
+stale dynamic-library copies before runtime startup. The manifest also records
+SHA-256 digests for every required resource file so the Electron packaging and
+runtime validators reject corrupted or stale copied resources.
 The target reruns the
 exact arithmetic and matrix smoke through the checked-in
 `src/sagelite-electron-smoke.cjs` async `python-wasm` worker API.
