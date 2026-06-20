@@ -5,7 +5,7 @@ import { asyncPython } from "python-wasm";
 import {
   loadSageliteManifest,
   sageliteManifestName,
-  sagelitePythonPath,
+  sagelitePythonEnv,
 } from "./sagelite-manifest";
 
 // TODO: will get exported in future version of python-wasm.
@@ -15,37 +15,61 @@ const log = debug("python");
 
 let python: PythonWasmAsync | null = null;
 
-function candidateSageliteResourceRoots(): string[] {
+export interface SageliteResourceRootOptions {
+  mainDir?: string;
+  env?: NodeJS.ProcessEnv;
+  resourcesPath?: string;
+}
+
+export interface SageliteRuntime {
+  resourceRoot: string;
+  env: Record<string, string>;
+}
+
+export function candidateSageliteResourceRoots({
+  mainDir = __dirname,
+  env = process.env,
+  resourcesPath = process.resourcesPath,
+}: SageliteResourceRootOptions = {}): string[] {
   const roots: string[] = [];
-  if (process.env.COWASM_SAGELITE_ELECTRON_RESOURCES) {
-    roots.push(resolve(process.env.COWASM_SAGELITE_ELECTRON_RESOURCES));
+  if (env.COWASM_SAGELITE_ELECTRON_RESOURCES) {
+    roots.push(resolve(env.COWASM_SAGELITE_ELECTRON_RESOURCES));
   }
-  if (process.resourcesPath) {
-    roots.push(join(process.resourcesPath, "electron-resources"));
+  if (resourcesPath) {
+    roots.push(join(resourcesPath, "electron-resources"));
   }
   roots.push(
     resolve(
-      __dirname,
+      mainDir,
       "../../../../sagemath/sagelite/dist/wasi-sdk/electron-resources",
     ),
   );
   return roots;
 }
 
-function sageliteEnv(): Record<string, string> | undefined {
-  for (const resourceRoot of candidateSageliteResourceRoots()) {
+export function findSageliteRuntime(
+  options: SageliteResourceRootOptions = {},
+): SageliteRuntime | null {
+  for (const resourceRoot of candidateSageliteResourceRoots(options)) {
     const manifestPath = join(resourceRoot, sageliteManifestName);
     if (!existsSync(manifestPath)) {
       continue;
     }
     const manifest = loadSageliteManifest(resourceRoot);
-    process.chdir(resourceRoot);
-    const pythonPath = sagelitePythonPath(manifest);
-    log(`using Sagelite resources from ${resourceRoot}`);
-    return { PYTHONPATH: pythonPath };
+    return { resourceRoot, env: sagelitePythonEnv(manifest) };
   }
-  log("Sagelite resources not found; starting base Python runtime");
-  return undefined;
+  return null;
+}
+
+function sageliteEnv(): Record<string, string> | undefined {
+  const runtime = findSageliteRuntime();
+  if (runtime == null) {
+    log("Sagelite resources not found; starting base Python runtime");
+    return undefined;
+  }
+  process.chdir(runtime.resourceRoot);
+  log(`using Sagelite resources from ${runtime.resourceRoot}`);
+  return runtime.env;
 }
 
 // todo: reuseInFlight...?

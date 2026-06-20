@@ -10,6 +10,7 @@ const {
   expectedSageliteManifest,
   loadSageliteManifest,
   sageliteManifestName,
+  sagelitePythonEnv,
   sagelitePythonPath,
 } = require("../dist/main/sagelite-manifest");
 
@@ -64,6 +65,9 @@ withResourceRoot((root) => {
     sagelitePythonPath(manifest),
     "site-packages:runtime/platformdirs",
   );
+  assert.deepStrictEqual(sagelitePythonEnv(manifest), {
+    PYTHONPATH: "site-packages:runtime/platformdirs",
+  });
 });
 
 for (const entry of [

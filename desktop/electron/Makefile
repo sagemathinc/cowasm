@@ -27,6 +27,7 @@ test-sagelite-manifest: node_modules
 	./node_modules/.bin/tsc
 	node test/sagelite-manifest.test.cjs
 	node test/sagelite-forge-resources.test.cjs
+	node test/sagelite-runtime.test.cjs
 
 test:
 	echo "no tests yet"

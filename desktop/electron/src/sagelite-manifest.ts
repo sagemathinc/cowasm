@@ -14,8 +14,18 @@ export interface SageliteManifest {
   requiredResourcePaths?: string[];
 }
 
+export interface SagelitePythonEnv extends Record<string, string> {
+  PYTHONPATH: string;
+}
+
 export function loadSageliteManifest(resourceRoot: string): SageliteManifest {
   return common.loadSageliteManifest(resourceRoot) as SageliteManifest;
+}
+
+export function sagelitePythonEnv(
+  manifest: SageliteManifest,
+): SagelitePythonEnv {
+  return common.sagelitePythonEnv(manifest) as SagelitePythonEnv;
 }
 
 export function sagelitePythonPath(manifest: SageliteManifest): string {

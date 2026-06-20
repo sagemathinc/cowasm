@@ -24,6 +24,10 @@ function sagelitePythonPath(manifest) {
   return manifest.pythonPath.join(":");
 }
 
+function sagelitePythonEnv(manifest) {
+  return { PYTHONPATH: sagelitePythonPath(manifest) };
+}
+
 function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
   validateSageliteManifestContract(manifestPath, manifest);
   validateExistingRelativeEntries(
@@ -103,6 +107,7 @@ module.exports = {
   expectedSageliteManifest,
   loadSageliteManifest,
   sageliteManifestName,
+  sagelitePythonEnv,
   sagelitePythonPath,
   validateRelativeManifestEntries,
   validateSageliteManifest,
