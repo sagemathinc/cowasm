@@ -576,11 +576,17 @@ from cypari2 import _pari_runtime_probe as pari_probe
 assert pari_probe.eval_long('2+3') == 5
 assert pari_probe.eval_long('primepi(10000)') == 1229
 assert pari_probe.eval_long('factorback(factor(360))') == 360
+assert pari_probe.eval_long('znorder(Mod(2,101))') == 100
+assert pari_probe.eval_long('polisirreducible(x^2+1)') == 1
+assert pari_probe.eval_long('ellcard(ellinit([0,-1]), 5)') == 6
 assert pari_probe.check_error_recovery() == 'caught=e_INV recovered=221'
 pari = Pari()
 assert str(pari('2+3')) == '5'
 assert str(pari('primepi(10^6)')) == '78498'
 assert str(pari('factorback(factor(360))')) == '360'
+assert str(pari('znorder(Mod(2,101))')) == '100'
+assert str(pari('polisirreducible(x^2+1)')) == '1'
+assert str(pari('ellcard(ellinit([0,-1]), 5)')) == '6'
 for label, thunk in [
     ('non-string Pari input', lambda: pari(5)),
     ('Gen conversion', lambda: objtogen('2+3')),
@@ -604,11 +610,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=40
+electron_manifest_schema_version=41
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-cypari2-pari-runtime-v6"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-cypari2-pari-arithmetic-v7"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."

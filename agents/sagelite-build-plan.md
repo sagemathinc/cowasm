@@ -336,6 +336,12 @@ Follow-up snapshot:
   `electron-resources` root before validating the manifest. This closes the
   root-level escape that schema 39 intentionally left outside per-entry
   component checks.
+- Change: schema 41 manifests advance the smoke contract to
+  `exact-arithmetic-matrix-cypari2-pari-arithmetic-v7`. The Node.js and
+  Electron-shaped smokes now verify additional public `cypari2.Pari` string
+  arithmetic over `znorder`, `polisirreducible`, and `ellcard(ellinit(...))`,
+  while keeping non-string `Pari` input and `objtogen` fail-closed until full
+  `Gen` conversion is ported.
 
 ## Runtime Milestones
 

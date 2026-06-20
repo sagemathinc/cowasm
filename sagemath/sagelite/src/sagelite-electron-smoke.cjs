@@ -131,10 +131,16 @@ pari = Pari()
 assert pari_probe.eval_long('2+3') == 5
 assert pari_probe.eval_long('primepi(10000)') == 1229
 assert pari_probe.eval_long('factorback(factor(360))') == 360
+assert pari_probe.eval_long('znorder(Mod(2,101))') == 100
+assert pari_probe.eval_long('polisirreducible(x^2+1)') == 1
+assert pari_probe.eval_long('ellcard(ellinit([0,-1]), 5)') == 6
 assert pari_probe.check_error_recovery() == 'caught=e_INV recovered=221'
 assert str(pari('2+3')) == '5'
 assert str(pari('primepi(10^6)')) == '78498'
 assert str(pari('factorback(factor(360))')) == '360'
+assert str(pari('znorder(Mod(2,101))')) == '100'
+assert str(pari('polisirreducible(x^2+1)')) == '1'
+assert str(pari('ellcard(ellinit([0,-1]), 5)')) == '6'
 for label, thunk in [
     ('non-string Pari input', lambda: pari(5)),
     ('Gen conversion', lambda: objtogen('2+3')),
