@@ -160,7 +160,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 39,
+  schemaVersion: 40,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -203,6 +203,7 @@ function sagelitePythonEnv(manifest, resourceRoot) {
 }
 
 function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
+  validateSageliteResourceRoot(manifestPath, resourceRoot);
   validateSageliteManifestContract(manifestPath, manifest);
   validateExistingRelativeEntries(
     resourceRoot,
@@ -287,6 +288,12 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
     manifest.nativeLibraryPaths,
     manifest.sideModulePaths,
   );
+}
+
+function validateSageliteResourceRoot(manifestPath, resourceRoot) {
+  if (lstatSync(resourceRoot).isSymbolicLink()) {
+    throw new Error(`${manifestPath} resource root must not be a symbolic link`);
+  }
 }
 
 function validateSageliteManifestContract(manifestPath, manifest) {

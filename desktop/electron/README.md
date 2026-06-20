@@ -100,6 +100,9 @@ Schema 39 manifests reject required, `PYTHONPATH`, runtime-dependency,
 side-module, and native-library entries that pass through symbolic-link path
 components, so packaged resources must remain self-contained under the copied
 Electron resource root.
+Schema 40 manifests also reject a symbolic-link `electron-resources` root, so
+an override or packaged resource directory cannot validate by redirecting the
+entire Sagelite resource tree outside the copied bundle.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

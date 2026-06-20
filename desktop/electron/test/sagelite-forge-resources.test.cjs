@@ -421,6 +421,27 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
+  const realRoot = path.join(root, "real-resources");
+  const linkedRoot = path.join(root, "linked-resources");
+
+  stagePythonPath(realRoot);
+  stageSageEntrypoints(realRoot);
+  stageRequiredTools(realRoot);
+  touch(realRoot, "python.wasm");
+  stageNativeLibraries(realRoot);
+  writeManifest(realRoot, validManifest());
+  fs.symlinkSync(realRoot, linkedRoot, "dir");
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: linkedRoot,
+      }),
+    /resource root must not be a symbolic link/,
+  );
+});
+
+withResourceRoot((root) => {
   stagePythonPath(root);
   stageSageEntrypoints(root);
   stageRequiredTools(root);

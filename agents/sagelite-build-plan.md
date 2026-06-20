@@ -332,6 +332,10 @@ Follow-up snapshot:
   are themselves symbolic links. This keeps packaged Electron resources
   self-contained under the copied resource root and prevents a valid-looking
   bundle from depending on mutable or escaping parent directories.
+- Change: schema 40 manifest validation now rejects a symbolic-link
+  `electron-resources` root before validating the manifest. This closes the
+  root-level escape that schema 39 intentionally left outside per-entry
+  component checks.
 
 ## Runtime Milestones
 
