@@ -77,6 +77,8 @@ from sage.all import (
 )
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.modules.free_module import FreeModule
+from sage.combinat.partition import Partition
+from sage.combinat.permutation import Permutation
 
 assert os.environ['COWASM_SAGELITE_RESOURCE_ROOT'] == os.getcwd()
 assert ZZ(2) + ZZ(3) == ZZ(5)
@@ -98,6 +100,12 @@ assert 2 * v == M([2, 4, 6])
 V = FreeModule(QQ, 2)
 q = V([QQ(1, 2), QQ(2, 3)])
 assert q.denominator() == 6
+p = Partition([4, 2, 1])
+assert p.conjugate() == Partition([3, 2, 1, 1])
+assert p.size() == 7
+sigma = Permutation([3, 1, 2])
+assert sigma.inverse() == Permutation([2, 3, 1])
+assert sigma.to_cycles() == [(1, 3, 2)]
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
 Z7 = Integers(7)

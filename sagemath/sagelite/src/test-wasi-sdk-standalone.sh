@@ -552,6 +552,16 @@ V = FreeModule(QQ, 2)
 q = V([QQ(1, 2), QQ(2, 3)])
 assert q.denominator() == 6
 print('sagelite-node-ok free module smoke')"
+run_node_import "combinatorics smoke" "import sage.all
+from sage.combinat.partition import Partition
+from sage.combinat.permutation import Permutation
+p = Partition([4, 2, 1])
+assert p.conjugate() == Partition([3, 2, 1, 1])
+assert p.size() == 7
+sigma = Permutation([3, 1, 2])
+assert sigma.inverse() == Permutation([2, 3, 1])
+assert sigma.to_cycles() == [(1, 3, 2)]
+print('sagelite-node-ok combinatorics smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
@@ -622,11 +632,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=42
+electron_manifest_schema_version=43
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-cypari2-pari-arithmetic-v8"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-combinat-cypari2-pari-arithmetic-v9"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."
@@ -780,6 +790,38 @@ electron_required_paths=(
   "site-packages/sage/modules/free_module.py"
   "site-packages/sage/modules/free_module_element.cpython-314-wasm32-wasi.so"
   "site-packages/sage/modules/module.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/combinat/SJT.py"
+  "site-packages/sage/combinat/__init__.py"
+  "site-packages/sage/combinat/backtrack.py"
+  "site-packages/sage/combinat/combinat.py"
+  "site-packages/sage/combinat/combinat_cython.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/combinat/combination.py"
+  "site-packages/sage/combinat/combinatorial_map.py"
+  "site-packages/sage/combinat/composition.py"
+  "site-packages/sage/combinat/integer_lists/__init__.py"
+  "site-packages/sage/combinat/integer_lists/base.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/combinat/integer_lists/invlex.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/combinat/integer_lists/lists.py"
+  "site-packages/sage/combinat/integer_vector.py"
+  "site-packages/sage/combinat/integer_vector_weighted.py"
+  "site-packages/sage/combinat/partition.py"
+  "site-packages/sage/combinat/partition_tuple.py"
+  "site-packages/sage/combinat/partitions.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/combinat/permutation.py"
+  "site-packages/sage/combinat/permutation_cython.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/combinat/subset.py"
+  "site-packages/sage/combinat/tableau.py"
+  "site-packages/sage/combinat/tools.py"
+  "site-packages/sage/sets/__init__.py"
+  "site-packages/sage/sets/disjoint_union_enumerated_sets.py"
+  "site-packages/sage/sets/family.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/sets/finite_enumerated_set.py"
+  "site-packages/sage/sets/integer_range.py"
+  "site-packages/sage/sets/non_negative_integers.py"
+  "site-packages/sage/sets/positive_integers.py"
+  "site-packages/sage/sets/pythonclass.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/sets/recursively_enumerated_set.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/sets/set.py"
   "deps/cypari2/cypari2/__init__.py"
   "deps/cypari2/cypari2/_pari_cython_probe.cpython-314-wasm32-wasi.so"
   "deps/cypari2/cypari2/_pari_runtime_probe.cpython-314-wasm32-wasi.so"

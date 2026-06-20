@@ -347,6 +347,12 @@ Follow-up snapshot:
   Node.js and Electron-shaped smokes now verify exact `FreeModule(ZZ, 3)` and
   `FreeModule(QQ, 2)` arithmetic, and the manifest requires the Sage
   free-module implementation files and side modules as hashed resources.
+- Change: schema 43 manifests advance the smoke contract to
+  `exact-arithmetic-matrix-free-module-combinat-cypari2-pari-arithmetic-v9`.
+  The Node.js and Electron-shaped smokes now verify Sage combinatorics
+  partition conjugation and permutation inversion/cycle conversion, and the
+  manifest requires the corresponding `sage.combinat` and `sage.sets` startup
+  files and side modules as hashed resources.
 
 ## Runtime Milestones
 

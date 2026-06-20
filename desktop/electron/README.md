@@ -108,6 +108,11 @@ Schema 42 manifests extend the packaged exact-math smoke to cover
 the corresponding Sage module files and side modules as hashed resources, so a
 bundle with matrix support but missing free-module arithmetic fails before
 worker startup.
+Schema 43 manifests extend the packaged smoke to cover Sage combinatorics
+partition and permutation arithmetic. The manifest requires the corresponding
+`sage.combinat` and `sage.sets` startup files and side modules as hashed
+resources, so a bundle missing that combinatorics slice fails before worker
+startup.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for
