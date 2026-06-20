@@ -218,6 +218,13 @@ Follow-up snapshot:
   listed in `requiredResourcePaths` and covered by `requiredResourceSha256`.
   This catches bundles missing rational-field, modular-ring, or prime
   finite-field constructors before the Electron worker starts.
+- Change: schema 19 manifest validation now also requires the matrix startup
+  modules loaded by the packaged exact-math smoke, including the matrix package
+  initializer, constructor helpers, `action`, `args`, `matrix0`, `matrix1`,
+  `matrix2`, `matrix_dense`, `matrix_generic_dense`, and pure-Python matrix
+  helpers. This catches bundles that can import `sage.matrix.constructor` but
+  are missing the modules needed for matrix arithmetic, determinants, inverses,
+  traces, and characteristic polynomials.
 
 ## Runtime Milestones
 
