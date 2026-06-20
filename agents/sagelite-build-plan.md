@@ -177,6 +177,11 @@ Follow-up snapshot:
   covered by `requiredResourceSha256`. This catches resource bundles that can
   validate core Sagelite files but cannot run the packaged smoke from the
   copied bundle root.
+- Change: schema 11 manifest validation now also requires
+  `site-packages/sage/all.py` and `python.wasm` to be listed in
+  `requiredResourcePaths` and covered by `requiredResourceSha256`. This makes
+  the Sage entrypoint and packaged Python runtime explicit mandatory resources,
+  instead of relying on later worker startup failures to catch stale bundles.
 
 ## Runtime Milestones
 

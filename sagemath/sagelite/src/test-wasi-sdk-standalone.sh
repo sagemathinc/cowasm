@@ -592,7 +592,7 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=10
+electron_manifest_schema_version=11
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -612,6 +612,7 @@ stage_runtime_tree() {
 }
 
 stage_runtime_tree "$installed_site_packages" "$electron_resources_dir/site-packages"
+cp "$python_wasm/dist/python.wasm" "$electron_resources_dir/python.wasm"
 cp "$repo_dir/desktop/electron/src/sagelite-manifest-common.js" "$electron_resources_dir/sagelite-manifest-common.cjs"
 cp "$src_dir/sagelite-electron-smoke.cjs" "$electron_resources_dir/sagelite-electron-smoke.cjs"
 
@@ -648,6 +649,7 @@ done
 
 electron_required_paths=(
   "site-packages/sage/all.py"
+  "python.wasm"
   "site-packages/sage/env.py"
   "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/integer.cpython-314-wasm32-wasi.so"

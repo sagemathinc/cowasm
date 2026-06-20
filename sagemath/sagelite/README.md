@@ -141,6 +141,8 @@ Python dependencies into that directory, writes a
 `sagelite-electron-resources.json` manifest with relative `PYTHONPATH` entries,
 required resource paths, the audited side-module inventory, and required native
 library resources such as the top-level and `primecountpy` `libcxx.so` copies.
+The required resources include the Sage entrypoint, the packaged `python.wasm`
+runtime, the packaged smoke tools, and native runtime-library resources.
 Native library resources must also match the current expected runtime-library
 contract, appear in the side-module inventory, and be listed as required
 resources, so Electron packaging validation catches incomplete, corrupted, or

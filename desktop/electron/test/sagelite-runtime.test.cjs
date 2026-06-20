@@ -108,6 +108,7 @@ function validManifest(overrides = {}) {
     runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
     requiredResourcePaths: [
       "site-packages/sage/all.py",
+      "python.wasm",
       "deps/platformdirs/__init__.py",
       ...expectedSageliteRequiredToolPaths,
       ...expectedSageliteNativeLibraryPaths,
@@ -121,6 +122,7 @@ function validManifest(overrides = {}) {
 function stageValidResources(root) {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
+  touch(root, "python.wasm");
   touch(root, "deps/platformdirs/__init__.py");
   stageRequiredTools(root);
   stageNativeLibraries(root);
@@ -320,6 +322,8 @@ withTempDir((root) => {
 
     fs.mkdirSync(path.dirname(modulePath), { recursive: true });
     stagePythonPath(resourceRoot);
+    touch(resourceRoot, "site-packages/sage/all.py");
+    touch(resourceRoot, "python.wasm");
     stageRequiredTools(resourceRoot);
     stageNativeLibraries(resourceRoot);
     fs.writeFileSync(modulePath, "VALUE = 'resource-root'\n");
@@ -327,6 +331,8 @@ withTempDir((root) => {
       resourceRoot,
       validManifest({
         requiredResourcePaths: [
+          "site-packages/sage/all.py",
+          "python.wasm",
           "site-packages/electron_probe.py",
           ...expectedSageliteRequiredToolPaths,
           ...expectedSageliteNativeLibraryPaths,

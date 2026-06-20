@@ -29,13 +29,19 @@ const expectedSageliteRequiredToolPaths = Object.freeze([
   "sagelite-electron-smoke.cjs",
 ]);
 
+const expectedSageliteMandatoryResourcePaths = Object.freeze([
+  "site-packages/sage/all.py",
+  "python.wasm",
+  ...expectedSageliteRequiredToolPaths,
+]);
+
 const expectedSagelitePythonPath = Object.freeze([
   "site-packages",
   ...expectedSageliteRuntimeDependencyPaths,
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 10,
+  schemaVersion: 11,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -108,7 +114,7 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
     manifest.requiredResourcePaths,
     manifest.requiredResourceSha256,
   );
-  validateRequiredToolsCoveredByRequiredResources(
+  validateMandatoryResourcesCoveredByRequiredResources(
     manifestPath,
     manifest.requiredResourcePaths,
   );
@@ -373,23 +379,24 @@ function validateNativeLibrariesCoveredByRequiredResources(
   }
 }
 
-function validateRequiredToolsCoveredByRequiredResources(
+function validateMandatoryResourcesCoveredByRequiredResources(
   manifestPath,
   requiredResourcePaths,
 ) {
   const requiredResourcePathSet = new Set(requiredResourcePaths);
-  const missingToolPaths = expectedSageliteRequiredToolPaths.filter(
+  const missingResourcePaths = expectedSageliteMandatoryResourcePaths.filter(
     (entry) => !requiredResourcePathSet.has(entry),
   );
-  if (missingToolPaths.length !== 0) {
+  if (missingResourcePaths.length !== 0) {
     throw new Error(
-      `${manifestPath} requiredResourcePaths must include the Sagelite Electron smoke tools`,
+      `${manifestPath} requiredResourcePaths must include the Sagelite Electron mandatory resources`,
     );
   }
 }
 
 module.exports = {
   expectedSageliteManifest,
+  expectedSageliteMandatoryResourcePaths,
   expectedSageliteNativeLibraryPaths,
   expectedSagelitePythonPath,
   expectedSageliteRequiredToolPaths,
