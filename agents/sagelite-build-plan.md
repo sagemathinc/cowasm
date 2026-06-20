@@ -272,6 +272,12 @@ Follow-up snapshot:
   retain the pure-Python category bootstrap files but are missing
   `category_cy_helper` before polynomial or matrix construction reaches the
   worker.
+- Change: schema 29 manifest validation now also requires the dependency
+  package initializer and helper files loaded by the packaged smoke for
+  `cypari2`, `primecountpy`, `cysignals`, `memory_allocator`, `gmpy2`, and
+  `platformdirs`. This keeps copied Electron resources from validating when
+  the extension modules exist but the Python package files needed to import or
+  initialize them are missing.
 
 ## Runtime Milestones
 
