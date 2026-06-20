@@ -86,7 +86,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 19,
+  schemaVersion: 20,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -99,6 +99,7 @@ const expectedSageliteManifestFields = Object.freeze([
   "pythonAbi",
   "pythonPlatform",
   "smokeContract",
+  "sageliteSourceRevision",
   "pythonPath",
   "runtimeDependencyPaths",
   "requiredResourcePaths",
@@ -228,6 +229,7 @@ function validateSageliteManifestContract(manifestPath, manifest) {
       );
     }
   }
+  validateSageliteSourceRevision(manifestPath, manifest.sageliteSourceRevision);
 }
 
 function validateSageliteManifestFields(manifestPath, manifest) {
@@ -243,6 +245,17 @@ function validateSageliteManifestFields(manifestPath, manifest) {
       `${manifestPath} contains unsupported Sagelite manifest fields: ${unexpectedFields
         .sort()
         .join(", ")}`,
+    );
+  }
+}
+
+function validateSageliteSourceRevision(manifestPath, sourceRevision) {
+  if (
+    typeof sourceRevision !== "string" ||
+    !/^[0-9a-f]{7,40}$/.test(sourceRevision)
+  ) {
+    throw new Error(
+      `${manifestPath} sageliteSourceRevision must be a git commit hash`,
     );
   }
 }

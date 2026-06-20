@@ -225,6 +225,11 @@ Follow-up snapshot:
   helpers. This catches bundles that can import `sage.matrix.constructor` but
   are missing the modules needed for matrix arithmetic, determinants, inverses,
   traces, and characteristic polynomials.
+- Change: schema 20 manifests now require `sageliteSourceRevision`, a git
+  commit hash for the Sagelite checkout used to stage Electron resources. The
+  Sagelite staging target writes this metadata from `SAGELITE_SOURCE`, and the
+  shared Electron validators reject bundles with missing or malformed source
+  revision provenance before worker startup.
 
 ## Runtime Milestones
 

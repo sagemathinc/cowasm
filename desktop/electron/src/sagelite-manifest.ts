@@ -20,6 +20,7 @@ export interface SageliteManifest {
   pythonAbi?: string;
   pythonPlatform?: string;
   smokeContract?: string;
+  sageliteSourceRevision: string;
   pythonPath: string[];
   runtimeDependencyPaths: string[];
   requiredResourcePaths: string[];

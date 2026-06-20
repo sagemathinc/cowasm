@@ -122,6 +122,7 @@ async function withTempDirAsync(fn) {
 function validManifest(overrides = {}) {
   return {
     ...expectedSageliteManifest,
+    sageliteSourceRevision: "875c1cc836d",
     pythonPath: [...expectedSagelitePythonPath],
     runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
     requiredResourcePaths: [

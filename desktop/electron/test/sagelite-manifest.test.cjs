@@ -108,6 +108,7 @@ function withResourceRoot(fn) {
 function validManifest(overrides = {}) {
   return {
     ...expectedSageliteManifest,
+    sageliteSourceRevision: "875c1cc836d",
     pythonPath: [...expectedSagelitePythonPath],
     runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
     requiredResourcePaths: [
@@ -122,6 +123,34 @@ function validManifest(overrides = {}) {
     ...overrides,
   };
 }
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
+  writeManifest(root, validManifest({ sageliteSourceRevision: undefined }));
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /sageliteSourceRevision must be a git commit hash/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
+  writeManifest(root, validManifest({ sageliteSourceRevision: "not-a-commit" }));
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /sageliteSourceRevision must be a git commit hash/,
+  );
+});
 
 withResourceRoot((root) => {
   stagePythonPath(root);

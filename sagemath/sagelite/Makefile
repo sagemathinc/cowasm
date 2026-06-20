@@ -114,6 +114,7 @@ ${BUILD_WASI_SDK}/.build: ${SRC}/patches/01-wasi-optional-host-libs.patch
 	rm -rf ${BUILD_WASI_SDK}
 	mkdir -p ${BUILD_WASI_SDK}
 	cd ${SAGELITE_SOURCE} && tar --exclude .git -cf - . | tar -xf - -C ${BUILD_WASI_SDK}
+	git -C ${SAGELITE_SOURCE} rev-parse --verify HEAD > ${BUILD_WASI_SDK}/.cowasm-sagelite-source-revision
 	touch ${BUILD_WASI_SDK}/.build
 
 ${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
