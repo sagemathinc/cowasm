@@ -244,6 +244,12 @@ Follow-up snapshot:
   `sage.libs.flint.fmpz_poly_sage` smoke. This catches bundles that retain the
   top-level helper file but are missing the FLINT package initializer or
   companion `flint_sage`/`fmpz_poly` side modules before worker startup.
+- Change: schema 24 manifest validation now also requires the Sage ring
+  package startup modules used by the packaged `sage.all`, finite-field, and
+  polynomial-ring smoke paths. This catches bundles that retain individual
+  ring side modules but are missing `sage.rings.all`,
+  `sage.rings.finite_rings.all`, or `sage.rings.polynomial.all` before worker
+  startup.
 
 ## Runtime Milestones
 
