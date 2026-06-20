@@ -204,6 +204,11 @@ Follow-up snapshot:
   covered by `requiredResourceSha256`. This makes the shared Electron
   validator enforce the same smoke-resource contract that the Sagelite staging
   target already writes.
+- Change: schema 16 manifest validation now also requires marker files for the
+  pure-Python runtime dependency roots used on the packaged Electron
+  `PYTHONPATH`: Jinja2, MarkupSafe, platformdirs, and Cython. This catches
+  copied dependency directories that exist but are empty or stale before the
+  worker reaches `sage.all` startup.
 
 ## Runtime Milestones
 
