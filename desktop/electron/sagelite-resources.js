@@ -94,6 +94,7 @@ function normalizeCopiedSageliteExtraResource(
   );
 
   if (resolve(copiedPath) === resolve(packagedPath)) {
+    validatePackagedSageliteExtraResource(packagedPath);
     return;
   }
   if (!existsSync(copiedPath)) {
@@ -107,6 +108,22 @@ function normalizeCopiedSageliteExtraResource(
     );
   }
   renameSync(copiedPath, packagedPath);
+  validatePackagedSageliteExtraResource(packagedPath);
+}
+
+function validatePackagedSageliteExtraResource(packagedPath) {
+  const manifestPath = join(packagedPath, sageliteManifestName);
+  if (!existsSync(packagedPath)) {
+    throw new Error(
+      `Sagelite packaged Electron resources do not exist: ${packagedPath}`,
+    );
+  }
+  if (!existsSync(manifestPath)) {
+    throw new Error(
+      `Sagelite Electron resource manifest does not exist: ${manifestPath}`,
+    );
+  }
+  loadSageliteManifest(packagedPath);
 }
 
 function afterCopySageliteExtraResources(baseDir, env = process.env) {
@@ -133,4 +150,5 @@ module.exports = {
   packagedSageliteResourceDirname,
   resolveSageliteExtraResources,
   sageliteManifestName,
+  validatePackagedSageliteExtraResource,
 };

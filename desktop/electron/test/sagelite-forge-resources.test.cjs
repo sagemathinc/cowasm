@@ -13,6 +13,7 @@ const {
   packagedSageliteResourceDirname,
   resolveSageliteExtraResources,
   sageliteManifestName,
+  validatePackagedSageliteExtraResource,
 } = require("../sagelite-resources");
 
 function writeManifest(root, manifest) {
@@ -236,6 +237,40 @@ withResourceRoot((root) => {
     !fs.existsSync(
       path.join(stagingPath, "resources", path.basename(sourceRoot)),
     ),
+  );
+});
+
+withResourceRoot((root) => {
+  const sourceRoot = path.join(root, packagedSageliteResourceDirname);
+  const stagingPath = path.join(root, "stage");
+  const packagedRoot = path.join(
+    stagingPath,
+    "resources",
+    packagedSageliteResourceDirname,
+  );
+  stageValidResources(sourceRoot);
+  copyTree(sourceRoot, packagedRoot);
+
+  normalizeCopiedSageliteExtraResource(sourceRoot, stagingPath);
+
+  validatePackagedSageliteExtraResource(packagedRoot);
+});
+
+withResourceRoot((root) => {
+  const sourceRoot = path.join(root, "partial-sagelite-resources");
+  const stagingPath = path.join(root, "stage");
+  const copiedRoot = path.join(
+    stagingPath,
+    "resources",
+    path.basename(sourceRoot),
+  );
+  stageValidResources(sourceRoot);
+  copyTree(sourceRoot, copiedRoot);
+  fs.rmSync(path.join(copiedRoot, "python.wasm"));
+
+  assert.throws(
+    () => normalizeCopiedSageliteExtraResource(sourceRoot, stagingPath),
+    /requiredResourcePaths entry python\.wasm does not exist/,
   );
 });
 

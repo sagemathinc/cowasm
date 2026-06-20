@@ -72,9 +72,9 @@ different staged Sagelite resource tree without rebuilding the app. Electron
 Forge and the Electron runtime treat that override as authoritative: missing
 resources or a missing manifest fail instead of falling back to another
 resource tree. Forge also honors that variable when packaging, validates the
-manifest before adding the resource directory, and normalizes the copied
-resource directory to `electron-resources` so the packaged runtime can find it
-even when the override path has a different basename. Set
+manifest before adding the resource directory, normalizes the copied resource
+directory to `electron-resources`, and revalidates the final packaged bundle so
+incomplete copies fail during packaging. Set
 `COWASM_REQUIRE_SAGELITE_ELECTRON_RESOURCES=1` when packaging release builds so
 missing Sagelite resources fail the package step instead of producing a base
 Python-only app.
