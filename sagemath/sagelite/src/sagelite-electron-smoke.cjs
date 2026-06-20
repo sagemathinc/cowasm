@@ -79,6 +79,7 @@ from sage.arith.misc import CRT, valuation
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.modules.free_module import FreeModule
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
+from sage.coding.hamming_code import HammingCode
 from sage.combinat.combination import Combinations
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.integer_vector import IntegerVectors
@@ -160,6 +161,9 @@ Z7 = Integers(7)
 assert Z7(3) + Z7(5) == Z7(1)
 F7 = GF(7)
 assert F7(3) * F7(5) == F7(1)
+H = HammingCode(GF(2), 3)
+assert H.length() == 7
+assert H.dimension() == 4
 Z9 = Integers(9)
 assert Z9(4) + Z9(8) == Z9(3)
 assert Z9(2) ** 3 == Z9(8)

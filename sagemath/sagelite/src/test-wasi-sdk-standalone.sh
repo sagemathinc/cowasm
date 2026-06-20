@@ -621,6 +621,13 @@ assert Z7(3) + Z7(5) == Z7(1)
 F7 = GF(7)
 assert F7(3) * F7(5) == F7(1)
 print('sagelite-node-ok modular arithmetic smoke')"
+run_node_import "Hamming code smoke" "import sage.all
+from sage.all import GF
+from sage.coding.hamming_code import HammingCode
+H = HammingCode(GF(2), 3)
+assert H.length() == 7
+assert H.dimension() == 4
+print('sagelite-node-ok Hamming code smoke')"
 run_node_import "number theory helper smoke" "from sage.rings.integer_ring import ZZ
 from sage.arith.misc import CRT, valuation
 g, s, t = ZZ(240).xgcd(ZZ(46))
@@ -691,11 +698,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=51
+electron_manifest_schema_version=52
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-power-tableau-set-partition-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v17"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-power-tableau-set-partition-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v18"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."
@@ -861,6 +868,14 @@ electron_required_paths=(
   "site-packages/sage/groups/abelian_gps/abelian_group.py"
   "site-packages/sage/groups/abelian_gps/abelian_group_element.py"
   "site-packages/sage/groups/abelian_gps/element_base.py"
+  "site-packages/sage/coding/__init__.py"
+  "site-packages/sage/coding/abstract_code.py"
+  "site-packages/sage/coding/decoder.py"
+  "site-packages/sage/coding/encoder.py"
+  "site-packages/sage/coding/hamming_code.py"
+  "site-packages/sage/coding/information_set_decoder.py"
+  "site-packages/sage/coding/linear_code.py"
+  "site-packages/sage/coding/linear_code_no_metric.py"
   "site-packages/sage/combinat/SJT.py"
   "site-packages/sage/combinat/__init__.py"
   "site-packages/sage/combinat/backtrack.py"

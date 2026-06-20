@@ -140,6 +140,14 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/groups/abelian_gps/abelian_group.py",
   "site-packages/sage/groups/abelian_gps/abelian_group_element.py",
   "site-packages/sage/groups/abelian_gps/element_base.py",
+  "site-packages/sage/coding/__init__.py",
+  "site-packages/sage/coding/abstract_code.py",
+  "site-packages/sage/coding/decoder.py",
+  "site-packages/sage/coding/encoder.py",
+  "site-packages/sage/coding/hamming_code.py",
+  "site-packages/sage/coding/information_set_decoder.py",
+  "site-packages/sage/coding/linear_code.py",
+  "site-packages/sage/coding/linear_code_no_metric.py",
   "site-packages/sage/combinat/SJT.py",
   "site-packages/sage/combinat/__init__.py",
   "site-packages/sage/combinat/backtrack.py",
@@ -211,11 +219,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 51,
+  schemaVersion: 52,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-power-tableau-set-partition-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v17",
+  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-hamming-code-power-tableau-set-partition-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v18",
 };
 
 const expectedSageliteManifestFields = Object.freeze([

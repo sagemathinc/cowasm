@@ -395,6 +395,10 @@ Follow-up snapshot:
   Sage composition construction and enumeration. The manifest now requires the
   composition startup category and persistence helper resources as hashed
   resources before worker startup.
+- Change: schema 52 manifests advance the packaged smoke contract to cover
+  binary Hamming code construction through `sage.coding`. The manifest now
+  requires the coding package startup files used by that smoke as hashed
+  resources before worker startup.
 
 ## Runtime Milestones
 
