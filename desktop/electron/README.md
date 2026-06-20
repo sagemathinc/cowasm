@@ -85,6 +85,10 @@ module, and the smoke asserts that public `Pari()("...")` string expressions
 can evaluate arithmetic, `primepi`, and `factorback(factor(...))` through real
 PARI. The full `Gen` object model, Python conversion layer, and PARI error
 translation are still later cypari2 runtime work.
+Schema 36 manifests also require the Sage arithmetic helper side modules behind
+the packaged exact-math smoke, including `power`, `rational_reconstruction`,
+and `srange`, so partial arithmetic bundles fail validation before worker
+startup.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

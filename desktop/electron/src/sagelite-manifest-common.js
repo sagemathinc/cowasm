@@ -43,6 +43,9 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/arith/all.py",
   "site-packages/sage/arith/functions.cpython-314-wasm32-wasi.so",
   "site-packages/sage/arith/misc.py",
+  "site-packages/sage/arith/power.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/arith/rational_reconstruction.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/arith/srange.cpython-314-wasm32-wasi.so",
   "site-packages/sage/misc/__init__.py",
   "site-packages/sage/misc/misc_c.cpython-314-wasm32-wasi.so",
   "site-packages/sage/functions/__init__.py",
@@ -154,7 +157,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 35,
+  schemaVersion: 36,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",

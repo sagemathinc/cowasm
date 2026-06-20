@@ -309,6 +309,12 @@ Follow-up snapshot:
   Electron-shaped smokes now also require the private C PARI runtime probe and
   verify direct PARI calls plus `e_INV` error recovery before exercising the
   public `cypari2.Pari` string wrapper.
+- Change: schema 36 manifest validation now also requires the arithmetic
+  helper side modules loaded by the exact-math smoke:
+  `sage.arith.power`, `sage.arith.rational_reconstruction`, and
+  `sage.arith.srange`. This catches bundles that retain the arithmetic
+  entrypoint but are missing helper modules imported during `sage.all`
+  startup and exact arithmetic.
 
 ## Runtime Milestones
 
