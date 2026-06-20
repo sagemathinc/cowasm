@@ -592,7 +592,7 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=31
+electron_manifest_schema_version=32
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -657,6 +657,7 @@ for i in "${!runtime_dep_labels[@]}"; do
 done
 
 electron_required_paths=(
+  "site-packages/sage/__init__.py"
   "site-packages/sage/all.py"
   "python.wasm"
   "site-packages/sage/env.py"

@@ -288,6 +288,10 @@ Follow-up snapshot:
   bootstrap files `numpy/core/__init__.pyc` and `numpy/core/multiarray.pyc` in
   addition to the `_multiarray_umath` side module. This catches partial copied
   NumPy dependency trees before the packaged worker reaches NumPy startup.
+- Change: schema 32 manifest validation now also requires
+  `site-packages/sage/__init__.py`. This makes the top-level Sage package
+  initializer an explicit packaged resource instead of relying on later
+  `sage.all` import behavior to catch a damaged bundle.
 
 ## Runtime Milestones
 

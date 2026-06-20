@@ -36,6 +36,7 @@ const expectedSageliteRequiredToolPaths = Object.freeze([
 ]);
 
 const expectedSageliteMandatoryResourcePaths = Object.freeze([
+  "site-packages/sage/__init__.py",
   "site-packages/sage/all.py",
   "site-packages/sage/env.py",
   "site-packages/sage/arith/all.py",
@@ -143,7 +144,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 31,
+  schemaVersion: 32,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
