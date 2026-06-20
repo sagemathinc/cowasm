@@ -120,6 +120,9 @@ enumeration path fails before worker startup.
 Schema 46 manifests extend the packaged exact-math smoke to cover Sage
 number-theory helpers, including CRT and integer valuations, through the
 bounded Node/Electron worker path.
+Schema 47 manifests extend the packaged exact-math smoke to cover Sage
+integer/rational helper methods, integer quotient rings, and composite-modulus
+integer-ring arithmetic through the same bounded worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

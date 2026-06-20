@@ -676,11 +676,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=46
+electron_manifest_schema_version=47
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-tableau-set-partition-crt-valuation-combinat-cypari2-pari-arithmetic-v12"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-tableau-set-partition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v13"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."

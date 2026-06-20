@@ -373,6 +373,11 @@ Follow-up snapshot:
   additional Sage number-theory helpers: CRT and integer valuations. The
   Node.js and Electron-shaped smokes now exercise those helpers through the
   same bounded exact-arithmetic path.
+- Change: schema 47 manifests advance the packaged smoke contract to cover
+  Sage integer/rational helper methods, integer quotient rings, and
+  composite-modulus integer-ring arithmetic. This keeps the existing
+  ring-ideal and quotient-ring resources tied to observable bounded
+  Node/Electron runtime behavior.
 
 ## Runtime Milestones
 
