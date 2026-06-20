@@ -102,6 +102,37 @@ withTempDir((root) => {
 });
 
 withTempDir((root) => {
+  const explicitRoot = path.join(root, "explicit");
+  const packagedRoot = path.join(root, "resources", "electron-resources");
+  stageValidResources(packagedRoot);
+
+  assert.throws(
+    () =>
+      findSageliteRuntime({
+        env: { COWASM_SAGELITE_ELECTRON_RESOURCES: explicitRoot },
+        resourcesPath: path.join(root, "resources"),
+      }),
+    /Sagelite Electron resources do not exist/,
+  );
+});
+
+withTempDir((root) => {
+  const explicitRoot = path.join(root, "explicit");
+  const packagedRoot = path.join(root, "resources", "electron-resources");
+  fs.mkdirSync(explicitRoot, { recursive: true });
+  stageValidResources(packagedRoot);
+
+  assert.throws(
+    () =>
+      findSageliteRuntime({
+        env: { COWASM_SAGELITE_ELECTRON_RESOURCES: explicitRoot },
+        resourcesPath: path.join(root, "resources"),
+      }),
+    /Sagelite Electron resource manifest does not exist/,
+  );
+});
+
+withTempDir((root) => {
   assert.strictEqual(
     findSageliteRuntime({
       mainDir: path.join(root, "dist", "main"),

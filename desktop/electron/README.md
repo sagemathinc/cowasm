@@ -65,8 +65,10 @@ an extra resource and the app resolves it from `process.resourcesPath`.
 
 Set `COWASM_SAGELITE_ELECTRON_RESOURCES=/path/to/electron-resources` to test a
 different staged Sagelite resource tree without rebuilding the app. Electron
-Forge also honors that variable when packaging, and validates the manifest
-before adding the resource directory. Set
+Forge and the Electron runtime treat that override as authoritative: missing
+resources or a missing manifest fail instead of falling back to another
+resource tree. Forge also honors that variable when packaging, and validates
+the manifest before adding the resource directory. Set
 `COWASM_REQUIRE_SAGELITE_ELECTRON_RESOURCES=1` when packaging release builds so
 missing Sagelite resources fail the package step instead of producing a base
 Python-only app.
