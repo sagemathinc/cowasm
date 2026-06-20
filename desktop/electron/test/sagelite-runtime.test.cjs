@@ -6,11 +6,14 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 
+const pythonModule = require("../dist/main/python");
 const {
   candidateSageliteResourceRoots,
   findSageliteRuntime,
+  pythonTerminate,
   withProcessCwd,
-} = require("../dist/main/python");
+} = pythonModule;
+const getPython = pythonModule.default;
 const {
   expectedSageliteManifest,
   sageliteManifestName,
@@ -203,6 +206,48 @@ withTempDir((root) => {
     );
 
     assert.strictEqual(process.cwd(), originalCwd);
+  });
+
+  await withTempDirAsync(async (root) => {
+    pythonTerminate();
+    const originalCwd = process.cwd();
+    const originalResourceEnv = process.env.COWASM_SAGELITE_ELECTRON_RESOURCES;
+    const resourceRoot = path.join(root, "resources");
+    const modulePath = path.join(
+      resourceRoot,
+      "site-packages",
+      "electron_probe.py",
+    );
+
+    fs.mkdirSync(path.dirname(modulePath), { recursive: true });
+    fs.writeFileSync(modulePath, "VALUE = 'resource-root'\n");
+    writeManifest(
+      resourceRoot,
+      validManifest({
+        pythonPath: ["site-packages"],
+        requiredResourcePaths: ["site-packages/electron_probe.py"],
+      }),
+    );
+
+    process.env.COWASM_SAGELITE_ELECTRON_RESOURCES = resourceRoot;
+    try {
+      const python = await getPython();
+      assert.strictEqual(process.cwd(), originalCwd);
+      await python.exec(`
+import os
+import electron_probe
+
+assert os.getcwd() == ${JSON.stringify(resourceRoot)}
+assert electron_probe.VALUE == 'resource-root'
+`);
+    } finally {
+      pythonTerminate();
+      if (originalResourceEnv === undefined) {
+        delete process.env.COWASM_SAGELITE_ELECTRON_RESOURCES;
+      } else {
+        process.env.COWASM_SAGELITE_ELECTRON_RESOURCES = originalResourceEnv;
+      }
+    }
   });
 })().catch((err) => {
   console.error(err);
