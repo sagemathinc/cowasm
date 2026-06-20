@@ -57,6 +57,9 @@ resource layout portable across Linux, macOS, and Windows Electron hosts. The
 Sagelite package target also reruns the same smoke from a relocated copy of the
 resources tree so absolute build-output paths do not silently become packaging
 requirements.
+Manifest path arrays must not contain duplicates, so generated resource
+inventories cannot hide ambiguous `PYTHONPATH`, side-module, or native library
+entries.
 The manifest also records the audited side-module inventory and required native
 library resources such as `libcxx.so`; native libraries must also appear in the
 side-module inventory, so packaging validation catches missing extension modules

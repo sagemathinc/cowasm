@@ -145,6 +145,26 @@ withResourceRoot((root) => {
   mkdir(root, "site-packages");
   mkdir(root, "runtime/platformdirs");
   touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(
+    root,
+    validManifest({
+      pythonPath: ["site-packages", "runtime/platformdirs", "site-packages"],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /pythonPath entries must not contain duplicates/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
+  mkdir(root, "runtime/platformdirs");
+  touch(root, "site-packages/sage/all.py");
   touch(root, "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
@@ -159,6 +179,26 @@ withResourceRoot((root) => {
   assert.throws(
     () => loadSageliteManifest(root),
     /sideModulePaths must list every copied \.so resource/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
+  mkdir(root, "runtime/platformdirs");
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(
+    root,
+    validManifest({
+      sideModulePaths: ["deps/libcxx/libcxx.so", "deps/libcxx/libcxx.so"],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /sideModulePaths entries must not contain duplicates/,
   );
 });
 
@@ -217,6 +257,26 @@ withResourceRoot((root) => {
   assert.throws(
     () => loadSageliteManifest(root),
     /nativeLibraryPaths entry deps\/libcxx\/libcxx\.so must be a file/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
+  mkdir(root, "runtime/platformdirs");
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(
+    root,
+    validManifest({
+      nativeLibraryPaths: ["deps/libcxx/libcxx.so", "deps/libcxx/libcxx.so"],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /nativeLibraryPaths entries must not contain duplicates/,
   );
 });
 

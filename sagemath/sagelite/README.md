@@ -146,7 +146,10 @@ The Electron smoke validates the manifest before launching Python, including
 the expected manifest schema, resource kind, CPython WASI ABI, runtime platform,
 smoke contract, and root-local POSIX-style relative paths so the staged
 resources cannot escape their bundle root or depend on host-specific path
-separators. It then checks the initialized FLINT `fmpz_poly_sage` helper,
+separators. Manifest path arrays must also be duplicate-free, so stale or
+merged resource inventories cannot hide ambiguous `PYTHONPATH`, side-module, or
+native-library entries.
+It then checks the initialized FLINT `fmpz_poly_sage` helper,
 integer extended-gcd, integer ideal, modular integer ring, and prime
 finite-field coverage in addition to the core integer, rational, polynomial,
 factorization, `prime_pi`, and dense matrix checks. It then reruns the same

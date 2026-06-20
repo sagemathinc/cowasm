@@ -112,6 +112,7 @@ function validateExistingRelativeEntries(
     throw new Error(`${manifestPath} must define a non-empty ${fieldName} array`);
   }
   validateRelativeManifestEntries(manifestPath, fieldName, entries);
+  validateUniqueManifestEntries(manifestPath, fieldName, entries);
   for (const entry of entries) {
     const targetPath = join(resourceRoot, entry);
     if (!existsSync(targetPath)) {
@@ -145,6 +146,18 @@ function validateRelativeManifestEntries(manifestPath, fieldName, entries) {
         `${manifestPath} ${fieldName} entries must be root-local POSIX relative paths`,
       );
     }
+  }
+}
+
+function validateUniqueManifestEntries(manifestPath, fieldName, entries) {
+  const seen = new Set();
+  for (const entry of entries) {
+    if (seen.has(entry)) {
+      throw new Error(
+        `${manifestPath} ${fieldName} entries must not contain duplicates`,
+      );
+    }
+    seen.add(entry);
   }
 }
 
@@ -213,4 +226,5 @@ module.exports = {
   validateRelativeManifestEntries,
   validateSageliteManifest,
   validateSageliteManifestContract,
+  validateUniqueManifestEntries,
 };
