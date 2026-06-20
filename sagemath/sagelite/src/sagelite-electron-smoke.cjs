@@ -81,7 +81,9 @@ from sage.combinat.combination import Combinations
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutation
+from sage.combinat.set_partition import SetPartitions
 from sage.combinat.subset import Subsets
+from sage.combinat.tableau import StandardTableaux, Tableau
 
 assert os.environ['COWASM_SAGELITE_RESOURCE_ROOT'] == os.getcwd()
 assert ZZ(2) + ZZ(3) == ZZ(5)
@@ -112,6 +114,17 @@ assert sigma.to_cycles() == [(1, 3, 2)]
 assert [sorted(s) for s in Subsets([1, 2, 3], 2)] == [[1, 2], [1, 3], [2, 3]]
 assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
 assert [list(v) for v in IntegerVectors(4, 2)] == [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
+T = Tableau([[1, 2], [3]])
+assert T.shape() == [2, 1]
+assert T.conjugate() == Tableau([[1, 3], [2]])
+assert StandardTableaux(3).cardinality() == 4
+assert [list(t.shape()) for t in StandardTableaux(3)] == [[3], [2, 1], [2, 1], [1, 1, 1]]
+assert SetPartitions(3).cardinality() == 5
+assert sorted([sorted([tuple(sorted(block)) for block in p]) for p in SetPartitions([1, 2, 3], 2)]) == [
+    [(1,), (2, 3)],
+    [(1, 2), (3,)],
+    [(1, 3), (2,)],
+]
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
 Z7 = Integers(7)

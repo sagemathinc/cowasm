@@ -358,6 +358,11 @@ Follow-up snapshot:
   The Node.js and Electron-shaped smokes now also verify subset, combination,
   and integer-vector enumeration through Sage's combinatorics package, keeping
   those packaged helper modules covered by the runtime contract.
+- Change: schema 45 manifests advance the smoke contract to
+  `exact-arithmetic-matrix-free-module-tableau-set-partition-combinat-cypari2-pari-arithmetic-v11`.
+  The Node.js and Electron-shaped smokes now also verify standard tableaux and
+  set partitions, and the manifest requires the set-partition Python module
+  and Cython iterator side module as hashed resources before worker startup.
 - Change: the Sagelite standalone probe now bounds each Node.js import ladder
   step and each staged/relocated Electron-shaped smoke with configurable
   timeouts, and the Electron package's exposed Sagelite smoke uses the same

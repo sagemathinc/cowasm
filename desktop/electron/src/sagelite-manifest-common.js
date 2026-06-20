@@ -147,6 +147,8 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/combinat/partitions.cpython-314-wasm32-wasi.so",
   "site-packages/sage/combinat/permutation.py",
   "site-packages/sage/combinat/permutation_cython.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/combinat/set_partition.py",
+  "site-packages/sage/combinat/set_partition_iterator.cpython-314-wasm32-wasi.so",
   "site-packages/sage/combinat/subset.py",
   "site-packages/sage/combinat/tableau.py",
   "site-packages/sage/combinat/tools.py",
@@ -196,11 +198,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 44,
+  schemaVersion: 45,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-free-module-enumerated-combinat-cypari2-pari-arithmetic-v10",
+  smokeContract: "exact-arithmetic-matrix-free-module-tableau-set-partition-combinat-cypari2-pari-arithmetic-v11",
 };
 
 const expectedSageliteManifestFields = Object.freeze([

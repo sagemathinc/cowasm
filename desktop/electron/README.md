@@ -113,6 +113,10 @@ partition and permutation arithmetic. The manifest requires the corresponding
 `sage.combinat` and `sage.sets` startup files and side modules as hashed
 resources, so a bundle missing that combinatorics slice fails before worker
 startup.
+Schema 45 manifests extend that combinatorics slice to cover standard tableaux
+and set partitions. The manifest requires the set-partition Python module and
+Cython iterator side module as hashed resources, so a bundle missing that
+enumeration path fails before worker startup.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for
