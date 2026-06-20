@@ -41,7 +41,11 @@ function validManifest(overrides = {}) {
   return {
     ...expectedSageliteManifest,
     pythonPath: ["site-packages", "deps/platformdirs"],
-    requiredResourcePaths: ["site-packages/sage/all.py", "deps/platformdirs/__init__.py"],
+    requiredResourcePaths: [
+      "site-packages/sage/all.py",
+      "deps/platformdirs/__init__.py",
+      "sagelite-electron-smoke.cjs",
+    ],
     ...overrides,
   };
 }
@@ -49,6 +53,7 @@ function validManifest(overrides = {}) {
 function stageValidResources(root) {
   touch(root, "site-packages/sage/all.py");
   touch(root, "deps/platformdirs/__init__.py");
+  touch(root, "sagelite-electron-smoke.cjs");
   writeManifest(root, validManifest());
 }
 

@@ -44,7 +44,11 @@ function validManifest(overrides = {}) {
   return {
     ...expectedSageliteManifest,
     pythonPath: ["site-packages", "runtime/platformdirs"],
-    requiredResourcePaths: ["site-packages/sage/all.py", "python.wasm"],
+    requiredResourcePaths: [
+      "site-packages/sage/all.py",
+      "sagelite-electron-smoke.cjs",
+      "python.wasm",
+    ],
     ...overrides,
   };
 }
@@ -53,6 +57,7 @@ withResourceRoot((root) => {
   mkdir(root, "site-packages");
   mkdir(root, "runtime/platformdirs");
   touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
   writeManifest(root, validManifest());
 
@@ -91,6 +96,7 @@ withResourceRoot((root) => {
   mkdir(root, "site-packages");
   mkdir(root, "runtime/platformdirs");
   touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
   writeManifest(root, validManifest());
 
   assert.throws(

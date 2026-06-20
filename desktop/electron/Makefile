@@ -20,7 +20,7 @@ test-sagelite: node_modules
 	cd ${SAGELITE_ELECTRON_RESOURCES} && \
 	  PYTHONPATH= \
 	  COWASM_PYTHON_WASM_NODE="${CWD}/node_modules/python-wasm/dist/node.js" \
-	  node ${SAGELITE_DIR}/src/sagelite-electron-smoke.cjs
+	  node sagelite-electron-smoke.cjs
 
 .PHONY: test-sagelite-manifest
 test-sagelite-manifest: node_modules

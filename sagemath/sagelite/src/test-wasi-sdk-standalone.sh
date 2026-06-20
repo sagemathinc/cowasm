@@ -628,6 +628,7 @@ stage_runtime_tree() {
 
 stage_runtime_tree "$installed_site_packages" "$electron_resources_dir/site-packages"
 cp "$repo_dir/desktop/electron/src/sagelite-manifest-common.js" "$electron_resources_dir/sagelite-manifest-common.cjs"
+cp "$src_dir/sagelite-electron-smoke.cjs" "$electron_resources_dir/sagelite-electron-smoke.cjs"
 
 runtime_dep_labels=(
   cypari2
@@ -681,6 +682,7 @@ electron_required_paths=(
   "deps/numpy/numpy/__init__.pyc"
   "deps/numpy/numpy/core/_multiarray_umath.cpython-314-wasm32-wasi.so"
   "sagelite-manifest-common.cjs"
+  "sagelite-electron-smoke.cjs"
 )
 
 for required_path in "${electron_required_paths[@]}"; do
@@ -699,7 +701,6 @@ audit_wasm_side_modules \
   "sagelite-blocked: Electron resource side-module audit failed" \
   "sagelite-electron-side-module-audit-ok"
 
-cp "$src_dir/sagelite-electron-smoke.cjs" "$electron_resources_dir/sagelite-electron-smoke.cjs"
 {
   printf '{\n'
   printf '  "schemaVersion": %s,\n' "$electron_manifest_schema_version"
