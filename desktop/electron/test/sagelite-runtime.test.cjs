@@ -60,6 +60,7 @@ function validManifest(overrides = {}) {
       "sagelite-electron-smoke.cjs",
     ],
     nativeLibraryPaths: ["deps/libcxx/libcxx.so"],
+    sideModulePaths: ["deps/libcxx/libcxx.so"],
     ...overrides,
   };
 }
@@ -229,6 +230,7 @@ withTempDir((root) => {
         pythonPath: ["site-packages"],
         requiredResourcePaths: ["site-packages/electron_probe.py"],
         nativeLibraryPaths: undefined,
+        sideModulePaths: undefined,
       }),
     );
 

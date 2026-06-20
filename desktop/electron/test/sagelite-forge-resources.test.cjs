@@ -57,6 +57,7 @@ function validManifest(overrides = {}) {
       "python.wasm",
     ],
     nativeLibraryPaths: ["deps/libcxx/libcxx.so"],
+    sideModulePaths: ["deps/libcxx/libcxx.so"],
     ...overrides,
   };
 }

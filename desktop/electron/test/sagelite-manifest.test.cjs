@@ -50,6 +50,7 @@ function validManifest(overrides = {}) {
       "python.wasm",
     ],
     nativeLibraryPaths: ["deps/libcxx/libcxx.so"],
+    sideModulePaths: ["deps/libcxx/libcxx.so"],
     ...overrides,
   };
 }
@@ -216,6 +217,48 @@ withResourceRoot((root) => {
   assert.throws(
     () => loadSageliteManifest(root),
     /nativeLibraryPaths entry deps\/libcxx\/libcxx\.so must be a file/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
+  mkdir(root, "runtime/platformdirs");
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(
+    root,
+    validManifest({
+      sideModulePaths: undefined,
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /nativeLibraryPaths requires sideModulePaths/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
+  mkdir(root, "runtime/platformdirs");
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  touch(root, "deps/native/libextra.wasm");
+  writeManifest(
+    root,
+    validManifest({
+      nativeLibraryPaths: ["deps/libcxx/libcxx.so", "deps/native/libextra.wasm"],
+      sideModulePaths: ["deps/libcxx/libcxx.so"],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /nativeLibraryPaths entries must also be listed in sideModulePaths/,
   );
 });
 

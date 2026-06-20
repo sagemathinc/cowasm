@@ -58,8 +58,9 @@ Sagelite package target also reruns the same smoke from a relocated copy of the
 resources tree so absolute build-output paths do not silently become packaging
 requirements.
 The manifest also records the audited side-module inventory and required native
-library resources such as `libcxx.so`, so packaging validation catches missing
-extension modules or side-module companion libraries before the worker starts.
+library resources such as `libcxx.so`; native libraries must also appear in the
+side-module inventory, so packaging validation catches missing extension modules
+or side-module companion libraries before the worker starts.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

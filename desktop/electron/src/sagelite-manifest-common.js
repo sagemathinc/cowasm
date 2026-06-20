@@ -6,7 +6,7 @@ const { isAbsolute, join } = require("path");
 const sageliteManifestName = "sagelite-electron-resources.json";
 
 const expectedSageliteManifest = {
-  schemaVersion: 3,
+  schemaVersion: 4,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -66,6 +66,18 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
     validateCompleteSideModuleInventory(
       resourceRoot,
       manifestPath,
+      manifest.sideModulePaths,
+    );
+  }
+  if (manifest.nativeLibraryPaths !== undefined) {
+    if (manifest.sideModulePaths === undefined) {
+      throw new Error(
+        `${manifestPath} nativeLibraryPaths requires sideModulePaths`,
+      );
+    }
+    validateNativeLibrariesInSideModuleInventory(
+      manifestPath,
+      manifest.nativeLibraryPaths,
       manifest.sideModulePaths,
     );
   }
@@ -172,6 +184,22 @@ function validateCompleteSideModuleInventory(
   ) {
     throw new Error(
       `${manifestPath} sideModulePaths must list every copied .so resource`,
+    );
+  }
+}
+
+function validateNativeLibrariesInSideModuleInventory(
+  manifestPath,
+  nativeLibraryPaths,
+  sideModulePaths,
+) {
+  const sideModulePathSet = new Set(sideModulePaths);
+  const missingNativeLibraries = nativeLibraryPaths.filter(
+    (entry) => !sideModulePathSet.has(entry),
+  );
+  if (missingNativeLibraries.length !== 0) {
+    throw new Error(
+      `${manifestPath} nativeLibraryPaths entries must also be listed in sideModulePaths`,
     );
   }
 }
