@@ -72,6 +72,9 @@ Schema 23 manifests also require the arithmetic, factorization, and direct
 FLINT helper resources used by the exact arithmetic smoke, so missing
 `factor`, `prime_pi`, or `fmpz_poly_sage` startup files fail validation before
 the worker starts.
+Schema 25 manifests also require the ring ideal/quotient modules and
+finite-field base side modules used by the exact arithmetic smoke, so missing
+`ZZ.ideal(7)` or `GF(7)` support fails validation before worker startup.
 Schema 9 manifests also include the current `cypari2` fail-closed runtime
 contract: Electron resources must contain the build-support `cypari2` files
 needed by Sagelite, and the smoke asserts that PARI calls still raise the

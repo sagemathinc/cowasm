@@ -250,6 +250,11 @@ Follow-up snapshot:
   ring side modules but are missing `sage.rings.all`,
   `sage.rings.finite_rings.all`, or `sage.rings.polynomial.all` before worker
   startup.
+- Change: schema 25 manifest validation now also requires the ring
+  ideal/quotient modules and finite-field base side modules used by the
+  packaged exact-arithmetic smoke. This catches bundles that can import the
+  ring package entrypoints but are missing the files behind `ZZ.ideal(7)` or
+  `GF(7)` before worker startup.
 
 ## Runtime Milestones
 
