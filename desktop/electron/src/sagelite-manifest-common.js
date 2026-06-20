@@ -37,6 +37,18 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/arith/misc.py",
   "site-packages/sage/functions/all.py",
   "site-packages/sage/functions/prime_pi.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/categories/action.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/categories/algebras.py",
+  "site-packages/sage/categories/algebras_with_basis.py",
+  "site-packages/sage/categories/associative_algebras.py",
+  "site-packages/sage/categories/category.py",
+  "site-packages/sage/categories/category_singleton.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/categories/category_with_axiom.py",
+  "site-packages/sage/categories/commutative_algebras.py",
+  "site-packages/sage/categories/finite_dimensional_algebras_with_basis.py",
+  "site-packages/sage/categories/finite_dimensional_modules_with_basis.py",
+  "site-packages/sage/categories/modules.py",
+  "site-packages/sage/categories/modules_with_basis.py",
   "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
   "site-packages/sage/structure/factorization.py",
   "site-packages/sage/structure/factorization_integer.py",
@@ -108,7 +120,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 25,
+  schemaVersion: 26,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",

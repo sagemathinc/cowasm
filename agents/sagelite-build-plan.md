@@ -255,6 +255,12 @@ Follow-up snapshot:
   packaged exact-arithmetic smoke. This catches bundles that can import the
   ring package entrypoints but are missing the files behind `ZZ.ideal(7)` or
   `GF(7)` before worker startup.
+- Change: schema 26 manifest validation now also requires the Sage category
+  bootstrap modules exercised by polynomial and matrix construction, including
+  category singletons, category axioms, algebra categories, module categories,
+  and the category action side module. This catches bundles that retain the
+  ring and matrix entrypoints but are missing the category machinery needed by
+  the packaged Electron smoke.
 
 ## Runtime Milestones
 
