@@ -81,7 +81,10 @@ function stageRequiredTools(root) {
 
 function stageSageEntrypoints(root) {
   for (const entry of expectedSageliteMandatoryResourcePaths) {
-    if (entry.startsWith("site-packages/sage/")) {
+    if (
+      entry !== "python.wasm" &&
+      !expectedSageliteRequiredToolPaths.includes(entry)
+    ) {
       touch(root, entry);
     }
   }
@@ -200,6 +203,31 @@ withResourceRoot((root) => {
       requiredResourcePaths: [
         ...expectedSageliteMandatoryResourcePaths.filter(
           (entry) => entry !== "site-packages/sage/env.py",
+        ),
+        ...expectedSageliteNativeLibraryPaths,
+      ],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths must include the Sagelite Electron mandatory resources/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: [
+        ...expectedSageliteMandatoryResourcePaths.filter(
+          (entry) =>
+            entry !== "deps/cypari2/cypari2/gen.cpython-314-wasm32-wasi.so",
         ),
         ...expectedSageliteNativeLibraryPaths,
       ],

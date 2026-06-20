@@ -197,6 +197,13 @@ Follow-up snapshot:
   This catches incomplete packaged bundles before worker launch when they are
   missing the initial Sage element, integer, rational, modular, polynomial, or
   matrix modules.
+- Change: schema 15 manifest validation now also requires the smoke's
+  dependency-side resources, including `cypari2`, `primecountpy`, `cysignals`,
+  `memory_allocator`, `gmpy2`, NumPy core startup files, and the initialized
+  FLINT `fmpz_poly_sage` helper, to be listed in `requiredResourcePaths` and
+  covered by `requiredResourceSha256`. This makes the shared Electron
+  validator enforce the same smoke-resource contract that the Sagelite staging
+  target already writes.
 
 ## Runtime Milestones
 

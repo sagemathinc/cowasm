@@ -86,7 +86,10 @@ function stageRequiredTools(root) {
 
 function stageSageEntrypoints(root) {
   for (const entry of expectedSageliteMandatoryResourcePaths) {
-    if (entry.startsWith("site-packages/sage/")) {
+    if (
+      entry !== "python.wasm" &&
+      !expectedSageliteRequiredToolPaths.includes(entry)
+    ) {
       touch(root, entry);
     }
   }
