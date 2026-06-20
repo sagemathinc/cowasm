@@ -16,8 +16,8 @@ export interface SageliteManifest {
   smokeContract?: string;
   pythonPath: string[];
   runtimeDependencyPaths: string[];
-  requiredResourcePaths?: string[];
-  requiredResourceSha256?: Record<string, string>;
+  requiredResourcePaths: string[];
+  requiredResourceSha256: Record<string, string>;
   nativeLibraryPaths?: string[];
   sideModulePaths?: string[];
 }

@@ -80,21 +80,19 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
     manifest.pythonPath,
     manifest.runtimeDependencyPaths,
   );
-  if (manifest.requiredResourcePaths !== undefined) {
-    validateExistingRelativeEntries(
-      resourceRoot,
-      manifestPath,
-      "requiredResourcePaths",
-      manifest.requiredResourcePaths,
-      { requireFile: true, requireNonEmpty: false },
-    );
-    validateRequiredResourceSha256(
-      resourceRoot,
-      manifestPath,
-      manifest.requiredResourcePaths,
-      manifest.requiredResourceSha256,
-    );
-  }
+  validateExistingRelativeEntries(
+    resourceRoot,
+    manifestPath,
+    "requiredResourcePaths",
+    manifest.requiredResourcePaths,
+    { requireFile: true, requireNonEmpty: true },
+  );
+  validateRequiredResourceSha256(
+    resourceRoot,
+    manifestPath,
+    manifest.requiredResourcePaths,
+    manifest.requiredResourceSha256,
+  );
   if (manifest.nativeLibraryPaths !== undefined) {
     validateExistingRelativeEntries(
       resourceRoot,

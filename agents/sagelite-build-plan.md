@@ -141,6 +141,10 @@ Follow-up snapshot:
   `electron-resources`, and the Electron runtime/Forge validators reject
   corrupted, stale, or key-mismatched required resources before launching the
   worker.
+- Change: schema 6 manifests now require a non-empty `requiredResourcePaths`
+  array and a matching `requiredResourceSha256` object. This keeps Electron
+  bundles from silently accepting a digest-less manifest that claims the current
+  Sagelite resource contract.
 
 ## Runtime Milestones
 

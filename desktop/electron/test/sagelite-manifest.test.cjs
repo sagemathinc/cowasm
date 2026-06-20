@@ -123,6 +123,28 @@ withResourceRoot((root) => {
 
 withResourceRoot((root) => {
   stagePythonPath(root);
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(root, validManifest({ requiredResourcePaths: undefined }));
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths must be an array/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(root, validManifest({ requiredResourcePaths: [] }));
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /must define a non-empty requiredResourcePaths array/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
