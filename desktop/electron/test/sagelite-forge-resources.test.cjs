@@ -437,6 +437,28 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
+  const sourceRoot = path.join(root, "duplicate-darwin-resources");
+  const stagingPath = path.join(root, "stage");
+  const appResourceParent = path.join(
+    stagingPath,
+    "CoWasm Desktop.app",
+    "Contents",
+    "Resources",
+  );
+  stageValidResources(sourceRoot);
+  copyTree(
+    sourceRoot,
+    path.join(stagingPath, "resources", path.basename(sourceRoot)),
+  );
+  copyTree(sourceRoot, path.join(appResourceParent, path.basename(sourceRoot)));
+
+  assert.throws(
+    () => normalizeCopiedSageliteExtraResource(sourceRoot, stagingPath, "darwin"),
+    /Multiple copied Sagelite Electron resources exist/,
+  );
+});
+
+withResourceRoot((root) => {
   const stagingPath = path.join(root, "stage");
   const hook = afterCopySageliteExtraResources(root, {});
 

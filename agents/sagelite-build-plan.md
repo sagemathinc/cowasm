@@ -161,6 +161,11 @@ Follow-up snapshot:
   into the Python worker as `COWASM_SAGELITE_RESOURCE_ROOT`, and the staged and
   relocated Electron smoke asserts that the variable matches the active
   resource working directory.
+- Change: the Electron Forge after-copy resource normalizer now rejects
+  staging trees with multiple copied Sagelite resource candidates before
+  renaming or validating them. This prevents Darwin-style staging layouts from
+  silently choosing one copied resource tree when both the generic `resources`
+  parent and an `.app/Contents/Resources` parent contain Sagelite resources.
 
 ## Runtime Milestones
 

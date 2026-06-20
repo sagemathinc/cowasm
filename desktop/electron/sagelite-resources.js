@@ -68,21 +68,28 @@ function packagerResourceParentCandidates(stagingPath, platform) {
 
 function copiedSageliteResourcePaths(resourceRoot, stagingPath, platform) {
   const copiedDirname = basename(resourceRoot);
-  for (const parent of packagerResourceParentCandidates(stagingPath, platform)) {
-    const copiedPath = join(parent, copiedDirname);
-    if (existsSync(copiedPath)) {
-      return {
-        copiedPath,
-        packagedPath: join(parent, packagedSageliteResourceDirname),
-      };
-    }
+  const candidates = packagerResourceParentCandidates(stagingPath, platform).map(
+    (parent) => ({
+      copiedPath: join(parent, copiedDirname),
+      packagedPath: join(parent, packagedSageliteResourceDirname),
+    }),
+  );
+  const existingCandidates = candidates.filter(({ copiedPath }) =>
+    existsSync(copiedPath),
+  );
+
+  if (existingCandidates.length > 1) {
+    throw new Error(
+      `Multiple copied Sagelite Electron resources exist: ${existingCandidates
+        .map(({ copiedPath }) => copiedPath)
+        .join(", ")}`,
+    );
+  }
+  if (existingCandidates.length === 1) {
+    return existingCandidates[0];
   }
 
-  const defaultParent = packagerResourceParentCandidates(stagingPath, platform)[0];
-  return {
-    copiedPath: join(defaultParent, copiedDirname),
-    packagedPath: join(defaultParent, packagedSageliteResourceDirname),
-  };
+  return candidates[0];
 }
 
 function normalizeCopiedSageliteExtraResource(
