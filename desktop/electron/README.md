@@ -89,6 +89,13 @@ Schema 36 manifests also require the Sage arithmetic helper side modules behind
 the packaged exact-math smoke, including `power`, `rational_reconstruction`,
 and `srange`, so partial arithmetic bundles fail validation before worker
 startup.
+Schema 37 manifests also require the Sage structure parent/category-object side
+modules loaded by polynomial, ring, and matrix construction, so the packaged
+smoke cannot validate with missing parent machinery.
+Schema 38 manifests advance the cypari2 PARI smoke contract to keep the current
+runtime boundary explicit: real string PARI evaluation must work, while public
+non-string `Pari` inputs and `objtogen` conversion still fail closed until the
+full cypari2 `Gen` object model is ported.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

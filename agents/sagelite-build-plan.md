@@ -321,6 +321,12 @@ Follow-up snapshot:
   `sage.structure.parent_old`. This catches bundles that retain the structure
   entrypoint modules but are missing the parent machinery used by the packaged
   exact-math smoke.
+- Change: schema 38 manifests advance the smoke contract to
+  `exact-arithmetic-matrix-cypari2-pari-runtime-v6`. The Node.js and
+  Electron-shaped smokes now verify that public non-string `Pari` input and
+  `objtogen` conversion still fail closed after the real string PARI runtime
+  slice initializes. This keeps the partial cypari2 runtime boundary explicit
+  until the full `Gen` object model is ported.
 
 ## Runtime Milestones
 

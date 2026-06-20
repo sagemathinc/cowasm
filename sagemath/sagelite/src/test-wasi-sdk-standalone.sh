@@ -571,7 +571,7 @@ for module in modules:
         raise AssertionError(f'{module} should fail closed on WASI')
 print('sagelite-node-ok FLINT polynomial imports fail closed')"
 
-run_node_import "cypari2 PARI runtime smoke" "from cypari2 import Pari
+run_node_import "cypari2 PARI runtime smoke" "from cypari2 import Pari, objtogen
 from cypari2 import _pari_runtime_probe as pari_probe
 assert pari_probe.eval_long('2+3') == 5
 assert pari_probe.eval_long('primepi(10000)') == 1229
@@ -581,6 +581,16 @@ pari = Pari()
 assert str(pari('2+3')) == '5'
 assert str(pari('primepi(10^6)')) == '78498'
 assert str(pari('factorback(factor(360))')) == '360'
+for label, thunk in [
+    ('non-string Pari input', lambda: pari(5)),
+    ('Gen conversion', lambda: objtogen('2+3')),
+]:
+    try:
+        thunk()
+    except NotImplementedError as err:
+        assert 'full Gen conversion' in str(err)
+    else:
+        raise AssertionError(f'{label} should fail closed on WASI')
 print('sagelite-node-ok cypari2 PARI runtime smoke')"
 
 : >"$followups_file"
@@ -594,11 +604,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=37
+electron_manifest_schema_version=38
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-cypari2-pari-runtime-v5"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-cypari2-pari-runtime-v6"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."

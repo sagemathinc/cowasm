@@ -60,7 +60,7 @@ async function main() {
 import sage.all
 import sage.libs.flint.fmpz_poly_sage
 import os
-from cypari2 import Pari
+from cypari2 import Pari, objtogen
 from cypari2 import _pari_runtime_probe as pari_probe
 from sage.all import (
     ZZ,
@@ -135,6 +135,16 @@ assert pari_probe.check_error_recovery() == 'caught=e_INV recovered=221'
 assert str(pari('2+3')) == '5'
 assert str(pari('primepi(10^6)')) == '78498'
 assert str(pari('factorback(factor(360))')) == '360'
+for label, thunk in [
+    ('non-string Pari input', lambda: pari(5)),
+    ('Gen conversion', lambda: objtogen('2+3')),
+]:
+    try:
+        thunk()
+    except NotImplementedError as err:
+        assert 'full Gen conversion' in str(err)
+    else:
+        raise AssertionError(f'{label} should fail closed on WASI')
 
 A = matrix(ZZ, [[1, 2], [3, 4]])
 assert A.det() == ZZ(-2)
