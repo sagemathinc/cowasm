@@ -411,6 +411,10 @@ Follow-up snapshot:
   packaged `PYTHONPATH` and runtime dependency directories. This keeps
   Electron bundles from accepting importable Sagelite resource trees that can
   resolve outside the copied resource root.
+- Change: schema 56 manifests advance the packaged smoke contract to cover
+  signed composition construction and enumeration through
+  `sage.combinat.composition_signed`. The manifest now requires the signed
+  composition module as a hashed resource before worker startup.
 
 ## Runtime Milestones
 

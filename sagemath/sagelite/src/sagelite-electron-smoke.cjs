@@ -82,6 +82,7 @@ from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.coding.hamming_code import HammingCode
 from sage.combinat.combination import Combinations
 from sage.combinat.composition import Composition, Compositions
+from sage.combinat.composition_signed import SignedCompositions
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition
 from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
@@ -148,6 +149,8 @@ assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
 assert [list(v) for v in IntegerVectors(4, 2)] == [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
 assert Composition([2, 1]).size() == 3
 assert Compositions(4).cardinality() == 8
+assert SignedCompositions(3).cardinality() == 18
+assert [list(c) for c in SignedCompositions(2)] == [[1, 1], [1, -1], [-1, 1], [-1, -1], [2], [-2]]
 T = Tableau([[1, 2], [3]])
 assert T.shape() == [2, 1]
 assert T.conjugate() == Tableau([[1, 3], [2]])

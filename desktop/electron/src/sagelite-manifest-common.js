@@ -156,6 +156,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/combinat/combination.py",
   "site-packages/sage/combinat/combinatorial_map.py",
   "site-packages/sage/combinat/composition.py",
+  "site-packages/sage/combinat/composition_signed.py",
   "site-packages/sage/combinat/integer_lists/__init__.py",
   "site-packages/sage/combinat/integer_lists/base.cpython-314-wasm32-wasi.so",
   "site-packages/sage/combinat/integer_lists/invlex.cpython-314-wasm32-wasi.so",
@@ -223,11 +224,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 55,
+  schemaVersion: 56,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v21",
+  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v22",
 };
 
 const expectedSageliteManifestFields = Object.freeze([
