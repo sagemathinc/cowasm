@@ -592,7 +592,7 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=30
+electron_manifest_schema_version=31
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -753,6 +753,8 @@ electron_required_paths=(
   "deps/platformdirs/platformdirs/unix.py"
   "deps/platformdirs/platformdirs/version.py"
   "deps/numpy/numpy/__init__.pyc"
+  "deps/numpy/numpy/core/__init__.pyc"
+  "deps/numpy/numpy/core/multiarray.pyc"
   "deps/numpy/numpy/core/_multiarray_umath.cpython-314-wasm32-wasi.so"
   "deps/cython/Cython/__init__.pyc"
   "sagelite-manifest-common.cjs"

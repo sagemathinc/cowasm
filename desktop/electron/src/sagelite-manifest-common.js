@@ -129,6 +129,8 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "deps/platformdirs/platformdirs/unix.py",
   "deps/platformdirs/platformdirs/version.py",
   "deps/numpy/numpy/__init__.pyc",
+  "deps/numpy/numpy/core/__init__.pyc",
+  "deps/numpy/numpy/core/multiarray.pyc",
   "deps/numpy/numpy/core/_multiarray_umath.cpython-314-wasm32-wasi.so",
   "deps/cython/Cython/__init__.pyc",
   "python.wasm",
@@ -141,7 +143,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 30,
+  schemaVersion: 31,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",

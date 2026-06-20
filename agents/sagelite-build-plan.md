@@ -284,6 +284,10 @@ Follow-up snapshot:
   `sage.rings.fast_arith`. This catches Electron resource bundles that retain
   the arithmetic entrypoint but are missing the helper modules needed by
   `sage.all` exact arithmetic.
+- Change: schema 31 manifest validation now also requires the NumPy core
+  bootstrap files `numpy/core/__init__.pyc` and `numpy/core/multiarray.pyc` in
+  addition to the `_multiarray_umath` side module. This catches partial copied
+  NumPy dependency trees before the packaged worker reaches NumPy startup.
 
 ## Runtime Milestones
 
