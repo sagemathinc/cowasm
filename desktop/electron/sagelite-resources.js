@@ -4,6 +4,8 @@ const { existsSync, readdirSync, renameSync } = require("fs");
 const { basename, join, resolve } = require("path");
 const {
   expectedSageliteManifest,
+  expectedSagelitePythonPath,
+  expectedSageliteRuntimeDependencyPaths,
   loadSageliteManifest,
   sageliteManifestName,
 } = require("./src/sagelite-manifest-common");
@@ -145,6 +147,8 @@ module.exports = {
   copiedSageliteResourcePaths,
   defaultSageliteResourceRoot,
   expectedSageliteManifest,
+  expectedSagelitePythonPath,
+  expectedSageliteRuntimeDependencyPaths,
   normalizeCopiedSageliteExtraResource,
   packagerResourceParentCandidates,
   packagedSageliteResourceDirname,

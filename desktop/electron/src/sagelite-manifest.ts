@@ -3,6 +3,10 @@ import common = require("./sagelite-manifest-common");
 export const sageliteManifestName: string = common.sageliteManifestName;
 
 export const expectedSageliteManifest = common.expectedSageliteManifest;
+export const expectedSagelitePythonPath: readonly string[] =
+  common.expectedSagelitePythonPath;
+export const expectedSageliteRuntimeDependencyPaths: readonly string[] =
+  common.expectedSageliteRuntimeDependencyPaths;
 
 export interface SageliteManifest {
   schemaVersion: number;
@@ -11,6 +15,7 @@ export interface SageliteManifest {
   pythonPlatform?: string;
   smokeContract?: string;
   pythonPath: string[];
+  runtimeDependencyPaths: string[];
   requiredResourcePaths?: string[];
   nativeLibraryPaths?: string[];
   sideModulePaths?: string[];

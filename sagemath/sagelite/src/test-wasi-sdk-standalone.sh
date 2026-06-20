@@ -568,7 +568,7 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=4
+electron_manifest_schema_version=5
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -694,6 +694,14 @@ fi
       printf ',\n'
     fi
     printf '    "%s"' "${electron_pythonpath_parts[$i]}"
+  done
+  printf '\n  ],\n'
+  printf '  "runtimeDependencyPaths": [\n'
+  for i in "${!runtime_dep_labels[@]}"; do
+    if [ "$i" -gt 0 ]; then
+      printf ',\n'
+    fi
+    printf '    "deps/%s"' "${runtime_dep_labels[$i]}"
   done
   printf '\n  ],\n'
   printf '  "requiredResourcePaths": [\n'

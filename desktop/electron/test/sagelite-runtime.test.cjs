@@ -16,6 +16,8 @@ const {
 const getPython = pythonModule.default;
 const {
   expectedSageliteManifest,
+  expectedSagelitePythonPath,
+  expectedSageliteRuntimeDependencyPaths,
   sageliteManifestName,
 } = require("../dist/main/sagelite-manifest");
 
@@ -30,6 +32,16 @@ function touch(root, relativePath) {
   const target = path.join(root, relativePath);
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(target, "");
+}
+
+function mkdir(root, relativePath) {
+  fs.mkdirSync(path.join(root, relativePath), { recursive: true });
+}
+
+function stagePythonPath(root) {
+  for (const entry of expectedSagelitePythonPath) {
+    mkdir(root, entry);
+  }
 }
 
 function withTempDir(fn) {
@@ -53,7 +65,8 @@ async function withTempDirAsync(fn) {
 function validManifest(overrides = {}) {
   return {
     ...expectedSageliteManifest,
-    pythonPath: ["site-packages", "deps/platformdirs"],
+    pythonPath: [...expectedSagelitePythonPath],
+    runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
     requiredResourcePaths: [
       "site-packages/sage/all.py",
       "deps/platformdirs/__init__.py",
@@ -66,6 +79,7 @@ function validManifest(overrides = {}) {
 }
 
 function stageValidResources(root) {
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "deps/platformdirs/__init__.py");
   touch(root, "sagelite-electron-smoke.cjs");
@@ -101,7 +115,7 @@ withTempDir((root) => {
     }),
     {
       resourceRoot: explicitRoot,
-      env: { PYTHONPATH: "site-packages:deps/platformdirs" },
+      env: { PYTHONPATH: expectedSagelitePythonPath.join(":") },
     },
   );
 });
@@ -117,7 +131,7 @@ withTempDir((root) => {
     }),
     {
       resourceRoot: packagedRoot,
-      env: { PYTHONPATH: "site-packages:deps/platformdirs" },
+      env: { PYTHONPATH: expectedSagelitePythonPath.join(":") },
     },
   );
 });
@@ -223,11 +237,11 @@ withTempDir((root) => {
     );
 
     fs.mkdirSync(path.dirname(modulePath), { recursive: true });
+    stagePythonPath(resourceRoot);
     fs.writeFileSync(modulePath, "VALUE = 'resource-root'\n");
     writeManifest(
       resourceRoot,
       validManifest({
-        pythonPath: ["site-packages"],
         requiredResourcePaths: ["site-packages/electron_probe.py"],
         nativeLibraryPaths: undefined,
         sideModulePaths: undefined,

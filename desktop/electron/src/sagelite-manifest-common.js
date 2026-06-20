@@ -5,8 +5,26 @@ const { isAbsolute, join } = require("path");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
 
+const expectedSageliteRuntimeDependencyPaths = Object.freeze([
+  "deps/cypari2",
+  "deps/primecountpy",
+  "deps/libcxx",
+  "deps/cysignals",
+  "deps/memory_allocator",
+  "deps/jinja2",
+  "deps/platformdirs",
+  "deps/gmpy2",
+  "deps/numpy",
+  "deps/cython",
+]);
+
+const expectedSagelitePythonPath = Object.freeze([
+  "site-packages",
+  ...expectedSageliteRuntimeDependencyPaths,
+]);
+
 const expectedSageliteManifest = {
-  schemaVersion: 4,
+  schemaVersion: 5,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -36,6 +54,30 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
     "pythonPath",
     manifest.pythonPath,
     { requireDirectory: true, requireNonEmpty: true },
+  );
+  validateExpectedEntries(
+    manifestPath,
+    "pythonPath",
+    manifest.pythonPath,
+    expectedSagelitePythonPath,
+  );
+  validateExistingRelativeEntries(
+    resourceRoot,
+    manifestPath,
+    "runtimeDependencyPaths",
+    manifest.runtimeDependencyPaths,
+    { requireDirectory: true, requireNonEmpty: true },
+  );
+  validateExpectedEntries(
+    manifestPath,
+    "runtimeDependencyPaths",
+    manifest.runtimeDependencyPaths,
+    expectedSageliteRuntimeDependencyPaths,
+  );
+  validatePythonPathMatchesRuntimeDependencies(
+    manifestPath,
+    manifest.pythonPath,
+    manifest.runtimeDependencyPaths,
   );
   if (manifest.requiredResourcePaths !== undefined) {
     validateExistingRelativeEntries(
@@ -96,6 +138,36 @@ function validateSageliteManifestContract(manifestPath, manifest) {
       );
     }
   }
+}
+
+function validateExpectedEntries(
+  manifestPath,
+  fieldName,
+  entries,
+  expectedEntries,
+) {
+  if (
+    entries.length !== expectedEntries.length ||
+    entries.some((entry, index) => entry !== expectedEntries[index])
+  ) {
+    throw new Error(
+      `${manifestPath} ${fieldName} must match the Sagelite Electron runtime contract`,
+    );
+  }
+}
+
+function validatePythonPathMatchesRuntimeDependencies(
+  manifestPath,
+  pythonPath,
+  runtimeDependencyPaths,
+) {
+  const expectedPythonPath = ["site-packages", ...runtimeDependencyPaths];
+  validateExpectedEntries(
+    manifestPath,
+    "pythonPath",
+    pythonPath,
+    expectedPythonPath,
+  );
 }
 
 function validateExistingRelativeEntries(
@@ -219,6 +291,8 @@ function validateNativeLibrariesInSideModuleInventory(
 
 module.exports = {
   expectedSageliteManifest,
+  expectedSagelitePythonPath,
+  expectedSageliteRuntimeDependencyPaths,
   loadSageliteManifest,
   sageliteManifestName,
   sagelitePythonEnv,

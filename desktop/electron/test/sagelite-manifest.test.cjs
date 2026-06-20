@@ -8,6 +8,8 @@ const path = require("path");
 
 const {
   expectedSageliteManifest,
+  expectedSagelitePythonPath,
+  expectedSageliteRuntimeDependencyPaths,
   loadSageliteManifest,
   sageliteManifestName,
   sagelitePythonEnv,
@@ -31,6 +33,12 @@ function mkdir(root, relativePath) {
   fs.mkdirSync(path.join(root, relativePath), { recursive: true });
 }
 
+function stagePythonPath(root) {
+  for (const entry of expectedSagelitePythonPath) {
+    mkdir(root, entry);
+  }
+}
+
 function withResourceRoot(fn) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "cowasm-sagelite-"));
   try {
@@ -43,7 +51,8 @@ function withResourceRoot(fn) {
 function validManifest(overrides = {}) {
   return {
     ...expectedSageliteManifest,
-    pythonPath: ["site-packages", "runtime/platformdirs"],
+    pythonPath: [...expectedSagelitePythonPath],
+    runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
     requiredResourcePaths: [
       "site-packages/sage/all.py",
       "sagelite-electron-smoke.cjs",
@@ -56,8 +65,7 @@ function validManifest(overrides = {}) {
 }
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so");
   touch(root, "sagelite-electron-smoke.cjs");
@@ -78,16 +86,13 @@ withResourceRoot((root) => {
     "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
     "deps/libcxx/libcxx.so",
   ]);
-  assert.deepStrictEqual(manifest.pythonPath, [
-    "site-packages",
-    "runtime/platformdirs",
-  ]);
+  assert.deepStrictEqual(manifest.pythonPath, expectedSagelitePythonPath);
   assert.strictEqual(
     sagelitePythonPath(manifest),
-    "site-packages:runtime/platformdirs",
+    expectedSagelitePythonPath.join(":"),
   );
   assert.deepStrictEqual(sagelitePythonEnv(manifest), {
-    PYTHONPATH: "site-packages:runtime/platformdirs",
+    PYTHONPATH: expectedSagelitePythonPath.join(":"),
   });
 });
 
@@ -109,8 +114,7 @@ for (const entry of [
 }
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
@@ -142,8 +146,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
@@ -162,8 +165,30 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
+  writeManifest(root, validManifest({ runtimeDependencyPaths: undefined }));
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /runtimeDependencyPaths must be an array/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  writeManifest(
+    root,
+    validManifest({ runtimeDependencyPaths: ["deps/platformdirs"] }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /runtimeDependencyPaths must match the Sagelite Electron runtime contract/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so");
   touch(root, "sagelite-electron-smoke.cjs");
@@ -183,8 +208,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
@@ -203,8 +227,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "deps/libcxx/libcxx.so");
@@ -217,8 +240,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   mkdir(root, "python.wasm");
@@ -232,8 +254,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
@@ -246,8 +267,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
@@ -261,8 +281,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
@@ -281,8 +300,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
@@ -301,8 +319,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
@@ -332,8 +349,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
@@ -354,8 +370,7 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
-  mkdir(root, "site-packages");
-  mkdir(root, "runtime/platformdirs");
+  stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
