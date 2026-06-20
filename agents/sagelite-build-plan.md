@@ -391,6 +391,10 @@ Follow-up snapshot:
 - Change: schema 50 manifests advance the finite abelian group smoke to cover
   mixed-order generator products, powers, and identity relations through the
   bounded Node/Electron worker path.
+- Change: schema 51 manifests advance the packaged smoke contract to cover
+  Sage composition construction and enumeration. The manifest now requires the
+  composition startup category and persistence helper resources as hashed
+  resources before worker startup.
 
 ## Runtime Milestones
 

@@ -60,7 +60,10 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/categories/category_cy_helper.cpython-314-wasm32-wasi.so",
   "site-packages/sage/categories/category_singleton.cpython-314-wasm32-wasi.so",
   "site-packages/sage/categories/category_with_axiom.py",
+  "site-packages/sage/categories/additive_monoids.py",
   "site-packages/sage/categories/commutative_algebras.py",
+  "site-packages/sage/categories/cartesian_product.py",
+  "site-packages/sage/categories/enumerated_sets.py",
   "site-packages/sage/categories/finite_dimensional_algebras_with_basis.py",
   "site-packages/sage/categories/finite_dimensional_modules_with_basis.py",
   "site-packages/sage/categories/modules.py",
@@ -72,6 +75,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/structure/parent_old.cpython-314-wasm32-wasi.so",
   "site-packages/sage/structure/__init__.py",
   "site-packages/sage/structure/sequence.py",
+  "site-packages/sage/structure/unique_representation.py",
   "site-packages/sage/structure/factorization.py",
   "site-packages/sage/structure/factorization_integer.py",
   "site-packages/sage/rings/factorint.cpython-314-wasm32-wasi.so",
@@ -111,6 +115,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/libs/flint/flint_sage.cpython-314-wasm32-wasi.so",
   "site-packages/sage/libs/flint/fmpz_poly.cpython-314-wasm32-wasi.so",
   "site-packages/sage/libs/flint/fmpz_poly_sage.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/misc/lazy_import.cpython-314-wasm32-wasi.so",
   "site-packages/sage/matrix/__init__.py",
   "site-packages/sage/matrix/action.cpython-314-wasm32-wasi.so",
   "site-packages/sage/matrix/all.py",
@@ -169,6 +174,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/sets/pythonclass.cpython-314-wasm32-wasi.so",
   "site-packages/sage/sets/recursively_enumerated_set.cpython-314-wasm32-wasi.so",
   "site-packages/sage/sets/set.py",
+  "site-packages/sage/misc/persist.cpython-314-wasm32-wasi.so",
   "deps/cypari2/cypari2/__init__.py",
   "deps/cypari2/cypari2/_pari_cython_probe.cpython-314-wasm32-wasi.so",
   "deps/cypari2/cypari2/_pari_runtime_probe.cpython-314-wasm32-wasi.so",
@@ -205,11 +211,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 50,
+  schemaVersion: 51,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-power-tableau-set-partition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v16",
+  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-power-tableau-set-partition-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v17",
 };
 
 const expectedSageliteManifestFields = Object.freeze([

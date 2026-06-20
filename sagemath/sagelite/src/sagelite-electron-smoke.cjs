@@ -80,6 +80,7 @@ from sage.matrix.constructor import identity_matrix, matrix
 from sage.modules.free_module import FreeModule
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.combinat.combination import Combinations
+from sage.combinat.composition import Composition, Compositions
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutation
@@ -140,6 +141,8 @@ assert sigma.to_cycles() == [(1, 3, 2)]
 assert [sorted(s) for s in Subsets([1, 2, 3], 2)] == [[1, 2], [1, 3], [2, 3]]
 assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
 assert [list(v) for v in IntegerVectors(4, 2)] == [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
+assert Composition([2, 1]).size() == 3
+assert Compositions(4).cardinality() == 8
 T = Tableau([[1, 2], [3]])
 assert T.shape() == [2, 1]
 assert T.conjugate() == Tableau([[1, 3], [2]])
