@@ -126,7 +126,6 @@ function validManifest(overrides = {}) {
     runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
     requiredResourcePaths: [
       ...expectedSageliteMandatoryResourcePaths,
-      "deps/platformdirs/__init__.py",
       ...expectedSageliteNativeLibraryPaths,
     ],
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
@@ -142,7 +141,6 @@ function stageValidResources(root) {
   stagePythonPath(root);
   stageSageEntrypoints(root);
   touch(root, "python.wasm");
-  touch(root, "deps/platformdirs/__init__.py");
   stageRequiredTools(root);
   stageNativeLibraries(root);
   writeManifest(root, validManifest());

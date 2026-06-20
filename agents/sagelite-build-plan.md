@@ -213,6 +213,11 @@ Follow-up snapshot:
   polynomial placeholder modules to be listed in `requiredResourcePaths` and
   covered by `requiredResourceSha256`. This keeps the packaged Electron smoke's
   fail-closed FLINT import checks from depending on unverified copied files.
+- Change: schema 18 manifest validation now also requires the pure-Python
+  exact-arithmetic startup modules behind `QQ`, `Integers`, and `GF` to be
+  listed in `requiredResourcePaths` and covered by `requiredResourceSha256`.
+  This catches bundles missing rational-field, modular-ring, or prime
+  finite-field constructors before the Electron worker starts.
 
 ## Runtime Milestones
 

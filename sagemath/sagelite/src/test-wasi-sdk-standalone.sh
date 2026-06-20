@@ -592,7 +592,7 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=17
+electron_manifest_schema_version=18
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -655,7 +655,11 @@ electron_required_paths=(
   "site-packages/sage/rings/integer.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/integer_ring.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/rational.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/rational_field.py"
+  "site-packages/sage/rings/finite_rings/finite_field_constructor.py"
+  "site-packages/sage/rings/finite_rings/finite_field_prime_modn.py"
   "site-packages/sage/rings/finite_rings/integer_mod.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/finite_rings/integer_mod_ring.py"
   "site-packages/sage/rings/polynomial/polynomial_element.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/polynomial/polynomial_element_generic.py"
   "site-packages/sage/rings/polynomial/polynomial_integer_dense_flint.py"
