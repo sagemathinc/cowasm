@@ -115,7 +115,7 @@ function withResourceRoot(fn) {
 function validManifest(overrides = {}) {
   return {
     ...expectedSageliteManifest,
-    sageliteSourceRevision: "875c1cc836d",
+    sageliteSourceRevision: "0123456789abcdef0123456789abcdef01234567",
     pythonPath: [...expectedSagelitePythonPath],
     runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
     requiredResourcePaths: [
@@ -144,7 +144,7 @@ withResourceRoot((root) => {
       resolveSageliteExtraResources(__dirname, {
         COWASM_SAGELITE_ELECTRON_RESOURCES: root,
       }),
-    /sageliteSourceRevision must be a git commit hash/,
+    /sageliteSourceRevision must be a full git commit hash/,
   );
 });
 
@@ -161,7 +161,24 @@ withResourceRoot((root) => {
       resolveSageliteExtraResources(__dirname, {
         COWASM_SAGELITE_ELECTRON_RESOURCES: root,
       }),
-    /sageliteSourceRevision must be a git commit hash/,
+    /sageliteSourceRevision must be a full git commit hash/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  writeManifest(root, validManifest({ sageliteSourceRevision: "875c1cc836d" }));
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /sageliteSourceRevision must be a full git commit hash/,
   );
 });
 

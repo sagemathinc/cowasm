@@ -86,7 +86,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 20,
+  schemaVersion: 21,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -252,10 +252,10 @@ function validateSageliteManifestFields(manifestPath, manifest) {
 function validateSageliteSourceRevision(manifestPath, sourceRevision) {
   if (
     typeof sourceRevision !== "string" ||
-    !/^[0-9a-f]{7,40}$/.test(sourceRevision)
+    !/^[0-9a-f]{40}$/.test(sourceRevision)
   ) {
     throw new Error(
-      `${manifestPath} sageliteSourceRevision must be a git commit hash`,
+      `${manifestPath} sageliteSourceRevision must be a full git commit hash`,
     );
   }
 }

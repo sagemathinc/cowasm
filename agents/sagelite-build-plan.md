@@ -230,6 +230,10 @@ Follow-up snapshot:
   Sagelite staging target writes this metadata from `SAGELITE_SOURCE`, and the
   shared Electron validators reject bundles with missing or malformed source
   revision provenance before worker startup.
+- Change: schema 21 manifests now require `sageliteSourceRevision` to be a
+  full 40-character git commit hash. This keeps packaged Electron bundle
+  provenance unambiguous across Sagelite checkouts with similar abbreviated
+  revisions.
 
 ## Runtime Milestones
 
