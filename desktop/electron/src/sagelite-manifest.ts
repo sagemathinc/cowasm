@@ -13,6 +13,7 @@ export interface SageliteManifest {
   pythonPath: string[];
   requiredResourcePaths?: string[];
   nativeLibraryPaths?: string[];
+  sideModulePaths?: string[];
 }
 
 export interface SagelitePythonEnv extends Record<string, string> {

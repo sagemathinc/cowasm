@@ -207,6 +207,30 @@ withResourceRoot((root) => {
   );
 });
 
+withResourceRoot((root) => {
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "runtime/platformdirs/__init__.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(
+    root,
+    validManifest({
+      sideModulePaths: [
+        "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+      ],
+    }),
+  );
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /sideModulePaths entry site-packages\/sage\/structure\/element\.cpython-314-wasm32-wasi\.so does not exist/,
+  );
+});
+
 assert.deepStrictEqual(
   resolveSageliteExtraResources(path.join(os.tmpdir(), "cowasm-no-default"), {}),
   [],

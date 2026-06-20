@@ -55,6 +55,15 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
       { requireFile: true, requireNonEmpty: true },
     );
   }
+  if (manifest.sideModulePaths !== undefined) {
+    validateExistingRelativeEntries(
+      resourceRoot,
+      manifestPath,
+      "sideModulePaths",
+      manifest.sideModulePaths,
+      { requireFile: true, requireNonEmpty: true },
+    );
+  }
 }
 
 function validateSageliteManifestContract(manifestPath, manifest) {

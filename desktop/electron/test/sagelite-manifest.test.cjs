@@ -58,12 +58,23 @@ withResourceRoot((root) => {
   mkdir(root, "site-packages");
   mkdir(root, "runtime/platformdirs");
   touch(root, "site-packages/sage/all.py");
+  touch(root, "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
   touch(root, "deps/libcxx/libcxx.so");
-  writeManifest(root, validManifest());
+  writeManifest(
+    root,
+    validManifest({
+      sideModulePaths: [
+        "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+      ],
+    }),
+  );
 
   const manifest = loadSageliteManifest(root);
+  assert.deepStrictEqual(manifest.sideModulePaths, [
+    "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+  ]);
   assert.deepStrictEqual(manifest.pythonPath, [
     "site-packages",
     "runtime/platformdirs",
@@ -191,5 +202,50 @@ withResourceRoot((root) => {
   assert.throws(
     () => loadSageliteManifest(root),
     /unsupported smokeContract "old-contract"/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
+  mkdir(root, "runtime/platformdirs");
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(
+    root,
+    validManifest({
+      sideModulePaths: [
+        "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+      ],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /sideModulePaths entry site-packages\/sage\/structure\/element\.cpython-314-wasm32-wasi\.so does not exist/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
+  mkdir(root, "runtime/platformdirs");
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  mkdir(root, "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so");
+  writeManifest(
+    root,
+    validManifest({
+      sideModulePaths: [
+        "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+      ],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /sideModulePaths entry site-packages\/sage\/structure\/element\.cpython-314-wasm32-wasi\.so must be a file/,
   );
 });

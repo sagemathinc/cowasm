@@ -701,6 +701,15 @@ audit_wasm_side_modules \
   "sagelite-blocked: Electron resource side-module audit failed" \
   "sagelite-electron-side-module-audit-ok"
 
+electron_side_module_paths=()
+while IFS= read -r side_module_path; do
+  electron_side_module_paths+=("${side_module_path#"$electron_resources_dir/"}")
+done <"$electron_side_module_list"
+
+if [ "${#electron_side_module_paths[@]}" -eq 0 ]; then
+  record_blocker "sagelite-blocked: Electron resources are missing side module paths."
+fi
+
 electron_native_library_paths=()
 while IFS= read -r native_library_path; do
   electron_native_library_paths+=("${native_library_path#"$electron_resources_dir/"}")
@@ -731,6 +740,14 @@ fi
       printf ',\n'
     fi
     printf '    "%s"' "${electron_required_paths[$i]}"
+  done
+  printf '\n  ],\n'
+  printf '  "sideModulePaths": [\n'
+  for i in "${!electron_side_module_paths[@]}"; do
+    if [ "$i" -gt 0 ]; then
+      printf ',\n'
+    fi
+    printf '    "%s"' "${electron_side_module_paths[$i]}"
   done
   printf '\n  ],\n'
   printf '  "nativeLibraryPaths": [\n'

@@ -139,9 +139,10 @@ The standalone target also stages an Electron-shaped resources directory under
 `dist/wasi-sdk/electron-resources`, hardlinks the Sagelite install and runtime
 Python dependencies into that directory, writes a
 `sagelite-electron-resources.json` manifest with relative `PYTHONPATH` entries,
-required resource paths, and required native library resources such as
-`libcxx.so`, and reruns the exact arithmetic and matrix smoke through the
-checked-in `src/sagelite-electron-smoke.cjs` async `python-wasm` worker API.
+required resource paths, the audited side-module inventory, and required native
+library resources such as `libcxx.so`, and reruns the exact arithmetic and
+matrix smoke through the checked-in `src/sagelite-electron-smoke.cjs` async
+`python-wasm` worker API.
 The Electron smoke validates the manifest before launching Python, including
 the expected manifest schema, resource kind, CPython WASI ABI, runtime platform,
 smoke contract, and root-local POSIX-style relative paths so the staged
