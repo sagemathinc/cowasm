@@ -629,6 +629,30 @@ withResourceRoot((root) => {
   stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
+  mkdir(root, "linked-platformdirs-target");
+  fs.rmSync(path.join(root, "deps/platformdirs"), {
+    recursive: true,
+    force: true,
+  });
+  fs.symlinkSync(
+    path.join(root, "linked-platformdirs-target"),
+    path.join(root, "deps/platformdirs"),
+    "dir",
+  );
+  writeManifest(root, validManifest());
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /pythonPath entry deps\/platformdirs must not be a symbolic link/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
   writeManifest(
     root,
     validManifest({
@@ -728,6 +752,21 @@ withResourceRoot((root) => {
   assert.throws(
     () => loadSageliteManifest(root),
     /requiredResourcePaths entry python\.wasm must be a file/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python-real.wasm");
+  fs.symlinkSync("python-real.wasm", path.join(root, "python.wasm"));
+  stageNativeLibraries(root);
+  writeManifest(root, validManifest());
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths entry python\.wasm must not be a symbolic link/,
   );
 });
 

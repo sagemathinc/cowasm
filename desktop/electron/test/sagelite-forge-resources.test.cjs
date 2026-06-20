@@ -349,6 +349,24 @@ withResourceRoot((root) => {
   stagePythonPath(root);
   stageSageEntrypoints(root);
   stageRequiredTools(root);
+  touch(root, "python-real.wasm");
+  fs.symlinkSync("python-real.wasm", path.join(root, "python.wasm"));
+  stageNativeLibraries(root);
+  writeManifest(root, validManifest());
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /requiredResourcePaths entry python\.wasm must not be a symbolic link/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(root, validManifest({ staleManifestField: true }));

@@ -1,7 +1,13 @@
 "use strict";
 
 const { createHash } = require("crypto");
-const { existsSync, readdirSync, readFileSync, statSync } = require("fs");
+const {
+  existsSync,
+  lstatSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+} = require("fs");
 const { isAbsolute, join } = require("path");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
@@ -120,7 +126,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 26,
+  schemaVersion: 27,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -343,6 +349,11 @@ function validateExistingRelativeEntries(
     const targetPath = join(resourceRoot, entry);
     if (!existsSync(targetPath)) {
       throw new Error(`${manifestPath} ${fieldName} entry ${entry} does not exist`);
+    }
+    if (lstatSync(targetPath).isSymbolicLink()) {
+      throw new Error(
+        `${manifestPath} ${fieldName} entry ${entry} must not be a symbolic link`,
+      );
     }
     const targetStat = statSync(targetPath);
     if (requireDirectory && !targetStat.isDirectory()) {

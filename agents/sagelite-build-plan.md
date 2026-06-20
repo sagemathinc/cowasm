@@ -261,6 +261,12 @@ Follow-up snapshot:
   and the category action side module. This catches bundles that retain the
   ring and matrix entrypoints but are missing the category machinery needed by
   the packaged Electron smoke.
+- Change: schema 27 manifest validation rejects symbolic-link entries in
+  `pythonPath`, `runtimeDependencyPaths`, `requiredResourcePaths`,
+  `nativeLibraryPaths`, and `sideModulePaths`. This keeps packaged Electron
+  resources self-contained and prevents manifest-listed files or directories
+  from validating through links that can escape or change outside the copied
+  resource tree.
 
 ## Runtime Milestones
 
