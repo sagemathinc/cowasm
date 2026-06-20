@@ -191,6 +191,12 @@ Follow-up snapshot:
   `requiredResourceSha256`. This makes the Sage environment module explicit in
   the Electron resource contract instead of relying on a later `sage.env`
   import failure to catch incomplete bundles.
+- Change: schema 14 manifest validation now requires the core exact-arithmetic
+  and matrix startup resources used by the `sage.all` Electron smoke to be
+  listed in `requiredResourcePaths` and covered by `requiredResourceSha256`.
+  This catches incomplete packaged bundles before worker launch when they are
+  missing the initial Sage element, integer, rational, modular, polynomial, or
+  matrix modules.
 
 ## Runtime Milestones
 

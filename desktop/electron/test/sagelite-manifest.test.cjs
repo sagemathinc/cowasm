@@ -80,8 +80,17 @@ function stageRequiredTools(root) {
 }
 
 function stageSageEntrypoints(root) {
-  touch(root, "site-packages/sage/all.py");
-  touch(root, "site-packages/sage/env.py");
+  for (const entry of expectedSageliteMandatoryResourcePaths) {
+    if (entry.startsWith("site-packages/sage/")) {
+      touch(root, entry);
+    }
+  }
+}
+
+function expectedSageliteMandatorySideModulePaths() {
+  return expectedSageliteMandatoryResourcePaths.filter((entry) =>
+    entry.endsWith(".so"),
+  );
 }
 
 function withResourceRoot(fn) {
@@ -103,7 +112,10 @@ function validManifest(overrides = {}) {
       ...expectedSageliteNativeLibraryPaths,
     ],
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
-    sideModulePaths: [...expectedSageliteNativeLibraryPaths],
+    sideModulePaths: [
+      ...expectedSageliteMandatorySideModulePaths(),
+      ...expectedSageliteNativeLibraryPaths,
+    ],
     ...overrides,
   };
 }
@@ -119,7 +131,7 @@ withResourceRoot((root) => {
     root,
     validManifest({
       sideModulePaths: [
-        "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+        ...expectedSageliteMandatorySideModulePaths(),
         ...expectedSageliteNativeLibraryPaths,
       ],
     }),
@@ -127,7 +139,7 @@ withResourceRoot((root) => {
 
   const manifest = loadSageliteManifest(root);
   assert.deepStrictEqual(manifest.sideModulePaths, [
-    "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+    ...expectedSageliteMandatorySideModulePaths(),
     ...expectedSageliteNativeLibraryPaths,
   ]);
   assert.deepStrictEqual(manifest.pythonPath, expectedSagelitePythonPath);
@@ -180,13 +192,15 @@ withResourceRoot((root) => {
   stagePythonPath(root);
   stageSageEntrypoints(root);
   touch(root, "python.wasm");
+  stageRequiredTools(root);
   stageNativeLibraries(root);
   writeManifest(
     root,
     validManifest({
       requiredResourcePaths: [
-        "site-packages/sage/all.py",
-        "python.wasm",
+        ...expectedSageliteMandatoryResourcePaths.filter(
+          (entry) => entry !== "site-packages/sage/env.py",
+        ),
         ...expectedSageliteNativeLibraryPaths,
       ],
     }),
@@ -208,8 +222,9 @@ withResourceRoot((root) => {
     root,
     validManifest({
       requiredResourcePaths: [
-        "python.wasm",
-        ...expectedSageliteRequiredToolPaths,
+        ...expectedSageliteMandatoryResourcePaths.filter(
+          (entry) => entry !== "site-packages/sage/all.py",
+        ),
         ...expectedSageliteNativeLibraryPaths,
       ],
     }),
@@ -633,14 +648,16 @@ withResourceRoot((root) => {
     root,
     validManifest({
       sideModulePaths: [
-        "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+        ...expectedSageliteMandatorySideModulePaths(),
+        ...expectedSageliteNativeLibraryPaths,
+        "site-packages/sage/extra.cpython-314-wasm32-wasi.so",
       ],
     }),
   );
 
   assert.throws(
     () => loadSageliteManifest(root),
-    /sideModulePaths entry site-packages\/sage\/structure\/element\.cpython-314-wasm32-wasi\.so does not exist/,
+    /sideModulePaths entry site-packages\/sage\/extra\.cpython-314-wasm32-wasi\.so does not exist/,
   );
 });
 
@@ -650,18 +667,20 @@ withResourceRoot((root) => {
   stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
-  mkdir(root, "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so");
+  mkdir(root, "site-packages/sage/extra.cpython-314-wasm32-wasi.so");
   writeManifest(
     root,
     validManifest({
       sideModulePaths: [
-        "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+        ...expectedSageliteMandatorySideModulePaths(),
+        ...expectedSageliteNativeLibraryPaths,
+        "site-packages/sage/extra.cpython-314-wasm32-wasi.so",
       ],
     }),
   );
 
   assert.throws(
     () => loadSageliteManifest(root),
-    /sideModulePaths entry site-packages\/sage\/structure\/element\.cpython-314-wasm32-wasi\.so must be a file/,
+    /sideModulePaths entry site-packages\/sage\/extra\.cpython-314-wasm32-wasi\.so must be a file/,
   );
 });

@@ -85,8 +85,17 @@ function stageRequiredTools(root) {
 }
 
 function stageSageEntrypoints(root) {
-  touch(root, "site-packages/sage/all.py");
-  touch(root, "site-packages/sage/env.py");
+  for (const entry of expectedSageliteMandatoryResourcePaths) {
+    if (entry.startsWith("site-packages/sage/")) {
+      touch(root, entry);
+    }
+  }
+}
+
+function expectedSageliteMandatorySideModulePaths() {
+  return expectedSageliteMandatoryResourcePaths.filter((entry) =>
+    entry.endsWith(".so"),
+  );
 }
 
 function withTempDir(fn) {
@@ -118,7 +127,10 @@ function validManifest(overrides = {}) {
       ...expectedSageliteNativeLibraryPaths,
     ],
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
-    sideModulePaths: [...expectedSageliteNativeLibraryPaths],
+    sideModulePaths: [
+      ...expectedSageliteMandatorySideModulePaths(),
+      ...expectedSageliteNativeLibraryPaths,
+    ],
     ...overrides,
   };
 }

@@ -82,8 +82,17 @@ function stageRequiredTools(root) {
 }
 
 function stageSageEntrypoints(root) {
-  touch(root, "site-packages/sage/all.py");
-  touch(root, "site-packages/sage/env.py");
+  for (const entry of expectedSageliteMandatoryResourcePaths) {
+    if (entry.startsWith("site-packages/sage/")) {
+      touch(root, entry);
+    }
+  }
+}
+
+function expectedSageliteMandatorySideModulePaths() {
+  return expectedSageliteMandatoryResourcePaths.filter((entry) =>
+    entry.endsWith(".so"),
+  );
 }
 
 function copyTree(src, dst) {
@@ -110,7 +119,10 @@ function validManifest(overrides = {}) {
       ...expectedSageliteNativeLibraryPaths,
     ],
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
-    sideModulePaths: [...expectedSageliteNativeLibraryPaths],
+    sideModulePaths: [
+      ...expectedSageliteMandatorySideModulePaths(),
+      ...expectedSageliteNativeLibraryPaths,
+    ],
     ...overrides,
   };
 }
@@ -288,7 +300,9 @@ withResourceRoot((root) => {
     root,
     validManifest({
       sideModulePaths: [
-        "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+        ...expectedSageliteMandatorySideModulePaths(),
+        ...expectedSageliteNativeLibraryPaths,
+        "site-packages/sage/extra.cpython-314-wasm32-wasi.so",
       ],
     }),
   );
@@ -298,7 +312,7 @@ withResourceRoot((root) => {
       resolveSageliteExtraResources(__dirname, {
         COWASM_SAGELITE_ELECTRON_RESOURCES: root,
       }),
-    /sideModulePaths entry site-packages\/sage\/structure\/element\.cpython-314-wasm32-wasi\.so does not exist/,
+    /sideModulePaths entry site-packages\/sage\/extra\.cpython-314-wasm32-wasi\.so does not exist/,
   );
 });
 
