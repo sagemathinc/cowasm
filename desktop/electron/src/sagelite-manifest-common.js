@@ -48,6 +48,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/categories/algebras_with_basis.py",
   "site-packages/sage/categories/associative_algebras.py",
   "site-packages/sage/categories/category.py",
+  "site-packages/sage/categories/category_cy_helper.cpython-314-wasm32-wasi.so",
   "site-packages/sage/categories/category_singleton.cpython-314-wasm32-wasi.so",
   "site-packages/sage/categories/category_with_axiom.py",
   "site-packages/sage/categories/commutative_algebras.py",
@@ -126,7 +127,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 27,
+  schemaVersion: 28,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",

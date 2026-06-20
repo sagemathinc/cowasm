@@ -592,7 +592,7 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=27
+electron_manifest_schema_version=28
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -670,6 +670,7 @@ electron_required_paths=(
   "site-packages/sage/categories/algebras_with_basis.py"
   "site-packages/sage/categories/associative_algebras.py"
   "site-packages/sage/categories/category.py"
+  "site-packages/sage/categories/category_cy_helper.cpython-314-wasm32-wasi.so"
   "site-packages/sage/categories/category_singleton.cpython-314-wasm32-wasi.so"
   "site-packages/sage/categories/category_with_axiom.py"
   "site-packages/sage/categories/commutative_algebras.py"

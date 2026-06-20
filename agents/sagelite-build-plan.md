@@ -267,6 +267,11 @@ Follow-up snapshot:
   resources self-contained and prevents manifest-listed files or directories
   from validating through links that can escape or change outside the copied
   resource tree.
+- Change: schema 28 manifest validation now also requires the category Cython
+  helper side module used by Sage category startup. This catches bundles that
+  retain the pure-Python category bootstrap files but are missing
+  `category_cy_helper` before polynomial or matrix construction reaches the
+  worker.
 
 ## Runtime Milestones
 
