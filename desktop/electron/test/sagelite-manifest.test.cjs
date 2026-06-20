@@ -124,6 +124,81 @@ function validManifest(overrides = {}) {
   };
 }
 
+function sageliteStandaloneScript() {
+  return fs.readFileSync(
+    path.join(
+      __dirname,
+      "../../../sagemath/sagelite/src/test-wasi-sdk-standalone.sh",
+    ),
+    "utf8",
+  );
+}
+
+function extractShellScalar(script, name) {
+  const pattern = new RegExp(`^${name}=([^\\n]+)$`, "m");
+  const match = script.match(pattern);
+  assert(match, `missing ${name} in Sagelite standalone script`);
+  return match[1].replace(/^"|"$/g, "");
+}
+
+function extractShellArray(script, name) {
+  const pattern = new RegExp(`^${name}=\\(\\n([\\s\\S]*?)\\n\\)`, "m");
+  const match = script.match(pattern);
+  assert(match, `missing ${name} in Sagelite standalone script`);
+  return match[1]
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((entry) => entry.replace(/^"|"$/g, ""));
+}
+
+function sorted(entries) {
+  return [...entries].sort();
+}
+
+withResourceRoot(() => {
+  const script = sageliteStandaloneScript();
+
+  assert.strictEqual(
+    Number(extractShellScalar(script, "electron_manifest_schema_version")),
+    expectedSageliteManifest.schemaVersion,
+  );
+  assert.strictEqual(
+    extractShellScalar(script, "electron_manifest_resource_kind"),
+    expectedSageliteManifest.resourceKind,
+  );
+  assert.strictEqual(
+    extractShellScalar(script, "electron_manifest_python_abi"),
+    expectedSageliteManifest.pythonAbi,
+  );
+  assert.strictEqual(
+    extractShellScalar(script, "electron_manifest_python_platform"),
+    expectedSageliteManifest.pythonPlatform,
+  );
+  assert.strictEqual(
+    extractShellScalar(script, "electron_manifest_smoke_contract"),
+    expectedSageliteManifest.smokeContract,
+  );
+
+  const runtimeDepLabels = extractShellArray(script, "runtime_dep_labels");
+  assert.deepStrictEqual(
+    runtimeDepLabels.map((entry) => `deps/${entry}`),
+    expectedSageliteRuntimeDependencyPaths,
+  );
+  assert.deepStrictEqual(
+    ["site-packages", ...runtimeDepLabels.map((entry) => `deps/${entry}`)],
+    expectedSagelitePythonPath,
+  );
+
+  assert.deepStrictEqual(
+    sorted(extractShellArray(script, "electron_required_paths")),
+    sorted([
+      ...expectedSageliteMandatoryResourcePaths,
+      ...expectedSageliteNativeLibraryPaths,
+    ]),
+  );
+});
+
 withResourceRoot((root) => {
   stagePythonPath(root);
   stageSageEntrypoints(root);
