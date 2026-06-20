@@ -9,6 +9,8 @@ export const expectedSageliteRuntimeDependencyPaths: readonly string[] =
   common.expectedSageliteRuntimeDependencyPaths;
 export const expectedSageliteNativeLibraryPaths: readonly string[] =
   common.expectedSageliteNativeLibraryPaths;
+export const expectedSageliteRequiredToolPaths: readonly string[] =
+  common.expectedSageliteRequiredToolPaths;
 
 export interface SageliteManifest {
   schemaVersion: number;

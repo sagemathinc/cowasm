@@ -171,6 +171,12 @@ Follow-up snapshot:
   renaming or validating them. This prevents Darwin-style staging layouts from
   silently choosing one copied resource tree when both the generic `resources`
   parent and an `.app/Contents/Resources` parent contain Sagelite resources.
+- Change: schema 10 manifest validation now requires the packaged Electron
+  smoke tools, `sagelite-manifest-common.cjs` and
+  `sagelite-electron-smoke.cjs`, to be listed in `requiredResourcePaths` and
+  covered by `requiredResourceSha256`. This catches resource bundles that can
+  validate core Sagelite files but cannot run the packaged smoke from the
+  copied bundle root.
 
 ## Runtime Milestones
 

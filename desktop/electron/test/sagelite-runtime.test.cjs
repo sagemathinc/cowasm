@@ -19,6 +19,7 @@ const {
   expectedSageliteManifest,
   expectedSageliteNativeLibraryPaths,
   expectedSagelitePythonPath,
+  expectedSageliteRequiredToolPaths,
   expectedSageliteRuntimeDependencyPaths,
   sageliteManifestName,
 } = require("../dist/main/sagelite-manifest");
@@ -76,6 +77,12 @@ function stageNativeLibraries(root) {
   }
 }
 
+function stageRequiredTools(root) {
+  for (const entry of expectedSageliteRequiredToolPaths) {
+    touch(root, entry);
+  }
+}
+
 function withTempDir(fn) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "cowasm-sagelite-runtime-"));
   try {
@@ -102,7 +109,7 @@ function validManifest(overrides = {}) {
     requiredResourcePaths: [
       "site-packages/sage/all.py",
       "deps/platformdirs/__init__.py",
-      "sagelite-electron-smoke.cjs",
+      ...expectedSageliteRequiredToolPaths,
       ...expectedSageliteNativeLibraryPaths,
     ],
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
@@ -115,7 +122,7 @@ function stageValidResources(root) {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "deps/platformdirs/__init__.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   stageNativeLibraries(root);
   writeManifest(root, validManifest());
 }
@@ -277,6 +284,7 @@ withTempDir((root) => {
 
     fs.mkdirSync(path.dirname(modulePath), { recursive: true });
     stagePythonPath(resourceRoot);
+    stageRequiredTools(resourceRoot);
     stageNativeLibraries(resourceRoot);
     fs.writeFileSync(modulePath, "VALUE = 'resource-root'\n");
     writeManifest(
@@ -284,6 +292,7 @@ withTempDir((root) => {
       validManifest({
         requiredResourcePaths: [
           "site-packages/electron_probe.py",
+          ...expectedSageliteRequiredToolPaths,
           ...expectedSageliteNativeLibraryPaths,
         ],
       }),

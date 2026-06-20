@@ -11,6 +11,7 @@ const {
   expectedSageliteManifest,
   expectedSageliteNativeLibraryPaths,
   expectedSagelitePythonPath,
+  expectedSageliteRequiredToolPaths,
   expectedSageliteRuntimeDependencyPaths,
   loadSageliteManifest,
   sageliteManifestName,
@@ -71,6 +72,12 @@ function stageNativeLibraries(root) {
   }
 }
 
+function stageRequiredTools(root) {
+  for (const entry of expectedSageliteRequiredToolPaths) {
+    touch(root, entry);
+  }
+}
+
 function withResourceRoot(fn) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "cowasm-sagelite-"));
   try {
@@ -87,8 +94,8 @@ function validManifest(overrides = {}) {
     runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
     requiredResourcePaths: [
       "site-packages/sage/all.py",
-      "sagelite-electron-smoke.cjs",
       "python.wasm",
+      ...expectedSageliteRequiredToolPaths,
       ...expectedSageliteNativeLibraryPaths,
     ],
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
@@ -101,8 +108,8 @@ withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so");
-  touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
+  stageRequiredTools(root);
   stageNativeLibraries(root);
   writeManifest(
     root,
@@ -154,8 +161,30 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: [
+        "site-packages/sage/all.py",
+        "python.wasm",
+        ...expectedSageliteNativeLibraryPaths,
+      ],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths must include the Sagelite Electron smoke tools/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
   stageNativeLibraries(root);
   writeManifest(root, validManifest({ requiredResourceSha256: null }));
 
@@ -168,8 +197,8 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
+  stageRequiredTools(root);
   stageNativeLibraries(root);
   writeManifest(
     root,
@@ -189,8 +218,8 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
+  stageRequiredTools(root);
   stageNativeLibraries(root);
   const manifest = validManifest();
   manifest.requiredResourceSha256 = digestRequiredResources(
@@ -209,8 +238,8 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
+  stageRequiredTools(root);
   stageNativeLibraries(root);
   writeManifest(root, validManifest());
   fs.writeFileSync(path.join(root, "python.wasm"), "changed");
@@ -241,7 +270,7 @@ for (const entry of [
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(root, validManifest({ nativeLibraryPaths: ["../escape"] }));
@@ -256,7 +285,7 @@ withResourceRoot((root) => {
   mkdir(root, "site-packages");
   touch(root, "runtime-platformdirs.py");
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(
@@ -273,7 +302,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(
@@ -316,7 +345,7 @@ withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   touch(root, "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(
@@ -335,7 +364,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(
@@ -354,7 +383,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   stageNativeLibraries(root);
   writeManifest(root, validManifest());
 
@@ -367,7 +396,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   mkdir(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(root, validManifest());
@@ -381,7 +410,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   writeManifest(root, validManifest());
 
@@ -394,7 +423,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   mkdir(root, "deps/libcxx/libcxx.so");
   writeManifest(root, validManifest());
@@ -408,7 +437,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(
@@ -427,7 +456,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(root, validManifest({ nativeLibraryPaths: [] }));
@@ -441,7 +470,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   touch(root, "deps/native/libextra.so");
@@ -465,7 +494,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(
@@ -473,8 +502,8 @@ withResourceRoot((root) => {
     validManifest({
       requiredResourcePaths: [
         "site-packages/sage/all.py",
-        "sagelite-electron-smoke.cjs",
         "python.wasm",
+        ...expectedSageliteRequiredToolPaths,
       ],
     }),
   );
@@ -488,7 +517,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(
@@ -507,7 +536,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(
@@ -535,7 +564,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   writeManifest(
@@ -556,7 +585,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
-  touch(root, "sagelite-electron-smoke.cjs");
+  stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
   mkdir(root, "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so");
