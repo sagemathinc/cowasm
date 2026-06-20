@@ -41,7 +41,6 @@ mkdir -p "$dist_dir" "$build_dir/cowasm-meson-build" "$probe_dir/bin" "$probe_di
 status_file="$dist_dir/status.txt"
 log_file="$dist_dir/meson-setup.log"
 node_import_log="$dist_dir/node-import.log"
-node_followups_log="$dist_dir/node-followups.log"
 followups_file="$dist_dir/followups.txt"
 side_module_audit_log="$dist_dir/side-module-audit.log"
 
@@ -558,52 +557,14 @@ for module in modules:
         raise AssertionError(f'{module} should fail closed on WASI')
 print('sagelite-node-ok FLINT polynomial imports fail closed')"
 
-: >"$node_followups_log"
 : >"$followups_file"
-node_followup_index=0
-
-record_node_followup_probe() {
-  local label="$1"
-  local summary="$2"
-  local code="$3"
-  local marker="__sagelite_node_followup_done_${node_followup_index}__"
-  local wrapped_code
-  local followup_status
-  node_followup_index=$((node_followup_index + 1))
-  printf -v wrapped_code '%s\nprint("%s")' "$code" "$marker"
-  printf '## %s\n' "$label" >>"$node_followups_log"
-  set +e
-  PYTHONPATH="$node_pythonpath" \
-    timeout "${SAGELITE_FOLLOWUP_TIMEOUT_SECONDS:-60}" \
-    node "$python_wasm/bin/python-wasm" -c "$wrapped_code" \
-    >>"$node_followups_log" 2>&1
-  followup_status=$?
-  set -e
-  if [ "$followup_status" -ne 0 ] ||
-      ! grep -Fqx "$marker" "$node_followups_log"; then
-    printf 'probe verbose trace after incomplete follow-up: exit_status=%s marker=%s\n' \
-      "$followup_status" "$marker" >>"$node_followups_log"
-    set +e
-    PYTHONPATH="$node_pythonpath" \
-      timeout "${SAGELITE_FOLLOWUP_TIMEOUT_SECONDS:-60}" \
-      node "$python_wasm/bin/python-wasm" -v -c "$wrapped_code" \
-      >>"$node_followups_log" 2>&1
-    set -e
-    printf 'probe did not complete: exit_status=%s marker=%s\n' \
-      "$followup_status" "$marker" >>"$node_followups_log"
-    printf 'sagelite-followup: %s; see %s.\n' \
-      "$summary" "$node_followups_log" >>"$followups_file"
-  fi
-}
-
-record_node_followup_probe \
+run_node_import \
   "initialized FLINT fmpz_poly_sage helper import" \
-  "initialized FLINT fmpz_poly_sage helper import did not complete under Node.js" \
   "from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-print('sagelite-node-followup-start initialized FLINT fmpz_poly_sage helper import')
+print('sagelite-node-start initialized FLINT fmpz_poly_sage helper import')
 import sage.libs.flint.fmpz_poly_sage
-print('sagelite-node-followup-ok initialized FLINT fmpz_poly_sage helper import')"
+print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
@@ -673,6 +634,7 @@ electron_required_paths=(
   "site-packages/sage/rings/polynomial/polynomial_element_generic.py"
   "site-packages/sage/rings/polynomial/polynomial_ring.py"
   "site-packages/sage/rings/polynomial/polynomial_ring_constructor.py"
+  "site-packages/sage/libs/flint/fmpz_poly_sage.cpython-314-wasm32-wasi.so"
   "site-packages/sage/matrix/constructor.cpython-314-wasm32-wasi.so"
   "deps/cypari2/cypari2/gen.cpython-314-wasm32-wasi.so"
   "deps/primecountpy/primecountpy/primecount.cpython-314-wasm32-wasi.so"

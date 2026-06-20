@@ -114,15 +114,12 @@ Python stubs. Direct imports now fail closed with a catchable `ImportError`
 instead of terminating the Node.js worker. A remaining follow-up is richer
 polynomial factorization support.
 
-The standalone target also runs non-blocking Node.js follow-up probes after the
-required exact-math smokes and writes any missing markers to
-`dist/wasi-sdk/followups.txt`, with process output in
-`dist/wasi-sdk/node-followups.log`. The required Node.js ladder now asserts that
-the quarantined FLINT polynomial imports fail closed, and the remaining
-`sage.libs.flint.fmpz_poly_sage` helper follow-up completes after `ZZ`/`QQ`
-singleton initialization. Incomplete follow-ups are rerun with Python verbose
-import tracing so the next runtime hardening pass has the import ladder that led
-to the clean exit.
+The required Node.js ladder now asserts that the quarantined FLINT polynomial
+imports fail closed and that the initialized
+`sage.libs.flint.fmpz_poly_sage` helper imports after `ZZ`/`QQ` singleton
+initialization. A remaining follow-up is moving the quarantined FLINT
+polynomial side modules back into the active Sagelite package surface once
+their initializers no longer terminate the Node.js worker.
 
 The Sagelite package now carries `core/libcxx` as an explicit build/runtime
 input and passes its `libcxx.so` path into the patched Sagelite Meson files for
@@ -147,17 +144,18 @@ The Electron smoke validates the manifest before launching Python, including
 the expected manifest schema, resource kind, CPython WASI ABI, runtime platform,
 smoke contract, and root-local POSIX-style relative paths so the staged
 resources cannot escape their bundle root or depend on host-specific path
-separators. It then checks integer extended-gcd, integer ideal, modular integer
-ring, and prime finite-field coverage in addition to the core integer,
-rational, polynomial, factorization, `prime_pi`, and dense matrix checks. It
-then reruns the same smoke from a relocated copy of that resources tree, which
-catches build-output absolute path assumptions and incomplete resource copies
-before the resources are handed to Electron packaging. The same smoke is
-exposed from `desktop/electron` as `pnpm test:sagelite`, which reruns it through
-the Electron package's `python-wasm` dependency without launching the UI. On
-WASI, `sage.all` skips writing the lazy-import cache file during startup, since
-that cache persistence is not required for the packaged worker path and
-currently trips `os.umask` under the worker runtime.
+separators. It then checks the initialized FLINT `fmpz_poly_sage` helper,
+integer extended-gcd, integer ideal, modular integer ring, and prime
+finite-field coverage in addition to the core integer, rational, polynomial,
+factorization, `prime_pi`, and dense matrix checks. It then reruns the same
+smoke from a relocated copy of that resources tree, which catches build-output
+absolute path assumptions and incomplete resource copies before the resources
+are handed to Electron packaging. The same smoke is exposed from
+`desktop/electron` as `pnpm test:sagelite`, which reruns it through the Electron
+package's `python-wasm` dependency without launching the UI. On WASI,
+`sage.all` skips writing the lazy-import cache file during startup, since that
+cache persistence is not required for the packaged worker path and currently
+trips `os.umask` under the worker runtime.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,

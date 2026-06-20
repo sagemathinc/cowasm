@@ -54,6 +54,7 @@ async function main() {
   try {
     await python.exec(String.raw`
 import sage.all
+import sage.libs.flint.fmpz_poly_sage
 from sage.all import ZZ, QQ, Integers, GF, PolynomialRing, factor, prime_pi
 from sage.matrix.constructor import matrix
 
