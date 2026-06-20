@@ -65,8 +65,11 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/categories/finite_dimensional_modules_with_basis.py",
   "site-packages/sage/categories/modules.py",
   "site-packages/sage/categories/modules_with_basis.py",
+  "site-packages/sage/structure/category_object.cpython-314-wasm32-wasi.so",
   "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
   "site-packages/sage/structure/coerce.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/structure/parent.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/structure/parent_old.cpython-314-wasm32-wasi.so",
   "site-packages/sage/structure/__init__.py",
   "site-packages/sage/structure/sequence.py",
   "site-packages/sage/structure/factorization.py",
@@ -157,7 +160,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 36,
+  schemaVersion: 37,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",

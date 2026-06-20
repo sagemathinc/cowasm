@@ -315,6 +315,12 @@ Follow-up snapshot:
   `sage.arith.srange`. This catches bundles that retain the arithmetic
   entrypoint but are missing helper modules imported during `sage.all`
   startup and exact arithmetic.
+- Change: schema 37 manifest validation now also requires the Sage structure
+  parent/category-object side modules loaded by polynomial, ring, and matrix
+  construction: `sage.structure.category_object`, `sage.structure.parent`, and
+  `sage.structure.parent_old`. This catches bundles that retain the structure
+  entrypoint modules but are missing the parent machinery used by the packaged
+  exact-math smoke.
 
 ## Runtime Milestones
 

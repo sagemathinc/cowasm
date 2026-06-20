@@ -594,7 +594,7 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=36
+electron_manifest_schema_version=37
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -690,8 +690,11 @@ electron_required_paths=(
   "site-packages/sage/categories/modules.py"
   "site-packages/sage/categories/modules_with_basis.py"
   "site-packages/sage/structure/__init__.py"
+  "site-packages/sage/structure/category_object.cpython-314-wasm32-wasi.so"
   "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so"
   "site-packages/sage/structure/coerce.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/structure/parent.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/structure/parent_old.cpython-314-wasm32-wasi.so"
   "site-packages/sage/structure/sequence.py"
   "site-packages/sage/structure/factorization.py"
   "site-packages/sage/structure/factorization_integer.py"
