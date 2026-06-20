@@ -86,6 +86,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/rings/integer.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/integer_ring.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/quotient_ring.py",
+  "site-packages/sage/rings/quotient_ring_element.py",
   "site-packages/sage/rings/rational.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/rational_field.py",
   "site-packages/sage/rings/finite_rings/__init__.py",
@@ -198,11 +199,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 47,
+  schemaVersion: 48,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-free-module-tableau-set-partition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v13",
+  smokeContract: "exact-arithmetic-matrix-free-module-tableau-set-partition-crt-valuation-quotient-ring-combinat-cypari2-pari-arithmetic-v14",
 };
 
 const expectedSageliteManifestFields = Object.freeze([

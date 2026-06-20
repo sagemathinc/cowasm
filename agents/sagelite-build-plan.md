@@ -378,6 +378,11 @@ Follow-up snapshot:
   composite-modulus integer-ring arithmetic. This keeps the existing
   ring-ideal and quotient-ring resources tied to observable bounded
   Node/Electron runtime behavior.
+- Change: schema 48 manifest validation now also requires
+  `site-packages/sage/rings/quotient_ring_element.py`. The packaged smoke's
+  integer quotient-ring arithmetic imports this element implementation, so
+  stale Electron bundles missing it now fail validation before worker startup
+  instead of reaching a runtime import failure.
 
 ## Runtime Milestones
 
