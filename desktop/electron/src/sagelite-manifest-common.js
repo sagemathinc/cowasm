@@ -41,12 +41,26 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 11,
+  schemaVersion: 12,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
   smokeContract: "exact-arithmetic-matrix-cypari2-failclosed-v3",
 };
+
+const expectedSageliteManifestFields = Object.freeze([
+  "schemaVersion",
+  "resourceKind",
+  "pythonAbi",
+  "pythonPlatform",
+  "smokeContract",
+  "pythonPath",
+  "runtimeDependencyPaths",
+  "requiredResourcePaths",
+  "requiredResourceSha256",
+  "nativeLibraryPaths",
+  "sideModulePaths",
+]);
 
 function loadSageliteManifest(resourceRoot) {
   const manifestPath = join(resourceRoot, sageliteManifestName);
@@ -156,6 +170,7 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
 }
 
 function validateSageliteManifestContract(manifestPath, manifest) {
+  validateSageliteManifestFields(manifestPath, manifest);
   for (const [fieldName, expectedValue] of Object.entries(
     expectedSageliteManifest,
   )) {
@@ -167,6 +182,23 @@ function validateSageliteManifestContract(manifestPath, manifest) {
         )}; expected ${JSON.stringify(expectedValue)}`,
       );
     }
+  }
+}
+
+function validateSageliteManifestFields(manifestPath, manifest) {
+  if (manifest === null || typeof manifest !== "object" || Array.isArray(manifest)) {
+    throw new Error(`${manifestPath} must contain a Sagelite manifest object`);
+  }
+  const expectedFields = new Set(expectedSageliteManifestFields);
+  const unexpectedFields = Object.keys(manifest).filter(
+    (fieldName) => !expectedFields.has(fieldName),
+  );
+  if (unexpectedFields.length !== 0) {
+    throw new Error(
+      `${manifestPath} contains unsupported Sagelite manifest fields: ${unexpectedFields
+        .sort()
+        .join(", ")}`,
+    );
   }
 }
 
@@ -409,5 +441,6 @@ module.exports = {
   validateRequiredResourceSha256,
   validateSageliteManifest,
   validateSageliteManifestContract,
+  validateSageliteManifestFields,
   validateUniqueManifestEntries,
 };

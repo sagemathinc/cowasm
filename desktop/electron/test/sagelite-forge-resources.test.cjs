@@ -195,6 +195,23 @@ withResourceRoot((root) => {
   stagePythonPath(root);
   touch(root, "site-packages/sage/all.py");
   stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  writeManifest(root, validManifest({ staleManifestField: true }));
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /contains unsupported Sagelite manifest fields: staleManifestField/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  touch(root, "site-packages/sage/all.py");
+  stageRequiredTools(root);
   stageNativeLibraries(root);
   writeManifest(root, validManifest());
 

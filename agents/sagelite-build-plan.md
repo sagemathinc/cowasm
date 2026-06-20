@@ -182,6 +182,10 @@ Follow-up snapshot:
   `requiredResourcePaths` and covered by `requiredResourceSha256`. This makes
   the Sage entrypoint and packaged Python runtime explicit mandatory resources,
   instead of relying on later worker startup failures to catch stale bundles.
+- Change: schema 12 manifest validation closes the manifest object over the
+  supported field set. Unknown keys now fail during Sagelite resource staging,
+  Electron Forge packaging validation, and Electron runtime discovery instead
+  of being silently ignored.
 
 ## Runtime Milestones
 
