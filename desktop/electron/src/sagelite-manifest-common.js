@@ -6,7 +6,7 @@ const { isAbsolute, join } = require("path");
 const sageliteManifestName = "sagelite-electron-resources.json";
 
 const expectedSageliteManifest = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
@@ -44,6 +44,15 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
       "requiredResourcePaths",
       manifest.requiredResourcePaths,
       { requireNonEmpty: false },
+    );
+  }
+  if (manifest.nativeLibraryPaths !== undefined) {
+    validateExistingRelativeEntries(
+      resourceRoot,
+      manifestPath,
+      "nativeLibraryPaths",
+      manifest.nativeLibraryPaths,
+      { requireNonEmpty: true },
     );
   }
 }

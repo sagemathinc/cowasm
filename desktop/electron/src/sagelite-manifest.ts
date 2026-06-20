@@ -12,6 +12,7 @@ export interface SageliteManifest {
   smokeContract?: string;
   pythonPath: string[];
   requiredResourcePaths?: string[];
+  nativeLibraryPaths?: string[];
 }
 
 export interface SagelitePythonEnv extends Record<string, string> {

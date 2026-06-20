@@ -59,6 +59,7 @@ function validManifest(overrides = {}) {
       "deps/platformdirs/__init__.py",
       "sagelite-electron-smoke.cjs",
     ],
+    nativeLibraryPaths: ["deps/libcxx/libcxx.so"],
     ...overrides,
   };
 }
@@ -67,6 +68,7 @@ function stageValidResources(root) {
   touch(root, "site-packages/sage/all.py");
   touch(root, "deps/platformdirs/__init__.py");
   touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "deps/libcxx/libcxx.so");
   writeManifest(root, validManifest());
 }
 
@@ -226,6 +228,7 @@ withTempDir((root) => {
       validManifest({
         pythonPath: ["site-packages"],
         requiredResourcePaths: ["site-packages/electron_probe.py"],
+        nativeLibraryPaths: undefined,
       }),
     );
 

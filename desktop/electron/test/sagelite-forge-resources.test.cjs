@@ -43,6 +43,7 @@ function validManifest(overrides = {}) {
       "sagelite-electron-smoke.cjs",
       "python.wasm",
     ],
+    nativeLibraryPaths: ["deps/libcxx/libcxx.so"],
     ...overrides,
   };
 }
@@ -52,6 +53,7 @@ withResourceRoot((root) => {
   touch(root, "runtime/platformdirs/__init__.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
   writeManifest(root, validManifest());
 
   assert.deepStrictEqual(
@@ -85,6 +87,7 @@ withResourceRoot((root) => {
 withResourceRoot((root) => {
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "deps/libcxx/libcxx.so");
   writeManifest(root, validManifest({ pythonPath: ["site-packages", "../escape"] }));
 
   assert.throws(
@@ -100,6 +103,7 @@ withResourceRoot((root) => {
   touch(root, "site-packages/sage/all.py");
   touch(root, "runtime/platformdirs/__init__.py");
   touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "deps/libcxx/libcxx.so");
   writeManifest(root, validManifest());
 
   assert.throws(
@@ -108,6 +112,22 @@ withResourceRoot((root) => {
         COWASM_SAGELITE_ELECTRON_RESOURCES: root,
       }),
     /requiredResourcePaths entry python\.wasm does not exist/,
+  );
+});
+
+withResourceRoot((root) => {
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "runtime/platformdirs/__init__.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  writeManifest(root, validManifest());
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /nativeLibraryPaths entry deps\/libcxx\/libcxx\.so does not exist/,
   );
 });
 

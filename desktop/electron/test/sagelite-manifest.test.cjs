@@ -49,6 +49,7 @@ function validManifest(overrides = {}) {
       "sagelite-electron-smoke.cjs",
       "python.wasm",
     ],
+    nativeLibraryPaths: ["deps/libcxx/libcxx.so"],
     ...overrides,
   };
 }
@@ -59,6 +60,7 @@ withResourceRoot((root) => {
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
   touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
   writeManifest(root, validManifest());
 
   const manifest = loadSageliteManifest(root);
@@ -97,11 +99,41 @@ withResourceRoot((root) => {
   mkdir(root, "runtime/platformdirs");
   touch(root, "site-packages/sage/all.py");
   touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(root, validManifest({ nativeLibraryPaths: ["../escape"] }));
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /root-local POSIX relative paths/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
+  mkdir(root, "runtime/platformdirs");
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "deps/libcxx/libcxx.so");
   writeManifest(root, validManifest());
 
   assert.throws(
     () => loadSageliteManifest(root),
     /requiredResourcePaths entry python\.wasm does not exist/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
+  mkdir(root, "runtime/platformdirs");
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  writeManifest(root, validManifest());
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /nativeLibraryPaths entry deps\/libcxx\/libcxx\.so does not exist/,
   );
 });
 

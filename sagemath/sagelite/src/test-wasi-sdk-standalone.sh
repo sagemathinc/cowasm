@@ -607,7 +607,7 @@ print('sagelite-node-followup-ok initialized FLINT fmpz_poly_sage helper import'
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=2
+electron_manifest_schema_version=3
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -701,6 +701,15 @@ audit_wasm_side_modules \
   "sagelite-blocked: Electron resource side-module audit failed" \
   "sagelite-electron-side-module-audit-ok"
 
+electron_native_library_paths=()
+while IFS= read -r native_library_path; do
+  electron_native_library_paths+=("${native_library_path#"$electron_resources_dir/"}")
+done < <(find "$electron_resources_dir" -name 'libcxx.so' -type f | sort)
+
+if [ "${#electron_native_library_paths[@]}" -eq 0 ]; then
+  record_blocker "sagelite-blocked: Electron resources are missing native library paths for libcxx.so."
+fi
+
 {
   printf '{\n'
   printf '  "schemaVersion": %s,\n' "$electron_manifest_schema_version"
@@ -722,6 +731,14 @@ audit_wasm_side_modules \
       printf ',\n'
     fi
     printf '    "%s"' "${electron_required_paths[$i]}"
+  done
+  printf '\n  ],\n'
+  printf '  "nativeLibraryPaths": [\n'
+  for i in "${!electron_native_library_paths[@]}"; do
+    if [ "$i" -gt 0 ]; then
+      printf ',\n'
+    fi
+    printf '    "%s"' "${electron_native_library_paths[$i]}"
   done
   printf '\n  ]\n'
   printf '}\n'
