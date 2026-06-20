@@ -67,6 +67,7 @@ withResourceRoot((root) => {
     validManifest({
       sideModulePaths: [
         "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+        "deps/libcxx/libcxx.so",
       ],
     }),
   );
@@ -74,6 +75,7 @@ withResourceRoot((root) => {
   const manifest = loadSageliteManifest(root);
   assert.deepStrictEqual(manifest.sideModulePaths, [
     "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
+    "deps/libcxx/libcxx.so",
   ]);
   assert.deepStrictEqual(manifest.pythonPath, [
     "site-packages",
@@ -135,6 +137,27 @@ withResourceRoot((root) => {
   assert.throws(
     () => loadSageliteManifest(root),
     /pythonPath entry runtime-platformdirs\.py must be a directory/,
+  );
+});
+
+withResourceRoot((root) => {
+  mkdir(root, "site-packages");
+  mkdir(root, "runtime/platformdirs");
+  touch(root, "site-packages/sage/all.py");
+  touch(root, "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so");
+  touch(root, "sagelite-electron-smoke.cjs");
+  touch(root, "python.wasm");
+  touch(root, "deps/libcxx/libcxx.so");
+  writeManifest(
+    root,
+    validManifest({
+      sideModulePaths: ["deps/libcxx/libcxx.so"],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /sideModulePaths must list every copied \.so resource/,
   );
 });
 

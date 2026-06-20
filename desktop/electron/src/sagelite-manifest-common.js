@@ -1,6 +1,6 @@
 "use strict";
 
-const { existsSync, readFileSync, statSync } = require("fs");
+const { existsSync, readdirSync, readFileSync, statSync } = require("fs");
 const { isAbsolute, join } = require("path");
 
 const sageliteManifestName = "sagelite-electron-resources.json";
@@ -62,6 +62,11 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
       "sideModulePaths",
       manifest.sideModulePaths,
       { requireFile: true, requireNonEmpty: true },
+    );
+    validateCompleteSideModuleInventory(
+      resourceRoot,
+      manifestPath,
+      manifest.sideModulePaths,
     );
   }
 }
@@ -128,6 +133,46 @@ function validateRelativeManifestEntries(manifestPath, fieldName, entries) {
         `${manifestPath} ${fieldName} entries must be root-local POSIX relative paths`,
       );
     }
+  }
+}
+
+function relativePosixPath(parts) {
+  return parts.join("/");
+}
+
+function collectSideModulePaths(root, current = root, pathParts = []) {
+  const sideModulePaths = [];
+  for (const entry of readdirSync(current, { withFileTypes: true })) {
+    if (entry.name === "." || entry.name === "..") {
+      continue;
+    }
+    const entryPath = join(current, entry.name);
+    const entryPathParts = [...pathParts, entry.name];
+    if (entry.isDirectory()) {
+      sideModulePaths.push(
+        ...collectSideModulePaths(root, entryPath, entryPathParts),
+      );
+    } else if (entry.isFile() && entry.name.endsWith(".so")) {
+      sideModulePaths.push(relativePosixPath(entryPathParts));
+    }
+  }
+  return sideModulePaths.sort();
+}
+
+function validateCompleteSideModuleInventory(
+  resourceRoot,
+  manifestPath,
+  sideModulePaths,
+) {
+  const manifestSideModules = [...sideModulePaths].sort();
+  const actualSideModules = collectSideModulePaths(resourceRoot);
+  if (
+    manifestSideModules.length !== actualSideModules.length ||
+    manifestSideModules.some((entry, index) => entry !== actualSideModules[index])
+  ) {
+    throw new Error(
+      `${manifestPath} sideModulePaths must list every copied .so resource`,
+    );
   }
 }
 
