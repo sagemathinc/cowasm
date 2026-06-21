@@ -332,6 +332,7 @@ assert (t**2 + 1)(GF(7)(3)) == GF(7)(3)
     await python.exec(String.raw`
 from sage.all import GF
 from sage.matrix.constructor import identity_matrix, matrix
+from sage.matrix.matrix_space import MatrixSpace
 
 F7 = GF(7)
 A = matrix(F7, [[1, 2], [3, 4]])
@@ -339,6 +340,11 @@ assert A.det() == F7(5)
 assert A.inverse() * A == identity_matrix(F7, 2)
 assert A.trace() == F7(5)
 assert A.charpoly()(A) == matrix(F7, [[0, 0], [0, 0]])
+M = MatrixSpace(F7, 2)
+B = M([1, 2, 3, 4])
+assert B.parent() is M
+assert B**2 == M([0, 3, 1, 1])
+assert B.transpose()[0, 1] == F7(3)
 `);
     console.log("sagelite-electron-ok finite-field matrix smoke");
     console.log("sagelite-electron-start Laurent polynomial smoke");

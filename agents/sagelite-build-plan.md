@@ -543,6 +543,11 @@ Follow-up snapshot:
   finite-field matrix smoke to cover trace and characteristic-polynomial
   evaluation over `GF(7)`. The checks stay within the current finite-field and
   matrix resource surface, so no new mandatory resource files are added.
+- Change: schema 84 manifests extend the bounded Node.js/Electron
+  finite-field matrix smoke to cover explicit `MatrixSpace(GF(7), 2)`
+  construction, parent identity, powers, and transpose. The checks use the
+  already mandatory matrix-space resource, so no new required resource files
+  are added.
 
 ## Runtime Milestones
 
