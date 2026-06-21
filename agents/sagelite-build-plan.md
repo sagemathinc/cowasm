@@ -529,6 +529,12 @@ Follow-up snapshot:
   paths are added. Univariate polynomial roots still hit a `__wasm_setjmp`
   side-module import gap, and univariate polynomial GCD can hang in the
   packaged async worker; keep both as follow-up runtime-table issues.
+- Change: schema 81 manifest validation now also requires the Laurent
+  polynomial startup resources and their fraction-field support files. The
+  Node.js and Electron-shaped smokes construct a Laurent polynomial ring over
+  `QQ` and check multiplication, degree, and valuation, which extends the
+  packaged exact-math contract beyond ordinary univariate and multivariate
+  polynomial rings.
 
 ## Runtime Milestones
 

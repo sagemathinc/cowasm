@@ -328,6 +328,18 @@ assert (t**3 + 2*t + 1).derivative() == 3*t**2 + 2
 assert (t**2 + 1)(GF(7)(3)) == GF(7)(3)
 `);
     console.log("sagelite-electron-ok finite-field polynomial smoke");
+    console.log("sagelite-electron-start Laurent polynomial smoke");
+    await python.exec(String.raw`
+from sage.all import QQ, LaurentPolynomialRing
+
+R = LaurentPolynomialRing(QQ, 't')
+t = R.gen()
+f = t**2 + 2 + t**-1
+assert f * t == t**3 + 2*t + 1
+assert f.degree() == 2
+assert f.valuation() == -1
+`);
+    console.log("sagelite-electron-ok Laurent polynomial smoke");
     console.log("sagelite-electron-start modular arithmetic extension smoke");
     await python.exec(String.raw`
 from sage.all import GF, Integers

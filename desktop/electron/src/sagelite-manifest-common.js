@@ -94,6 +94,8 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/rings/ideal_monoid.py",
   "site-packages/sage/rings/integer.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/integer_ring.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/rings/fraction_field.py",
+  "site-packages/sage/rings/fraction_field_element.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/quotient_ring.py",
   "site-packages/sage/rings/quotient_ring_element.py",
   "site-packages/sage/rings/rational.cpython-314-wasm32-wasi.so",
@@ -114,6 +116,9 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/rings/polynomial/multi_polynomial_ring.py",
   "site-packages/sage/rings/polynomial/multi_polynomial_ring_base.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/polynomial/polydict.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/rings/polynomial/laurent_polynomial.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/rings/polynomial/laurent_polynomial_ring.py",
+  "site-packages/sage/rings/polynomial/laurent_polynomial_ring_base.py",
   "site-packages/sage/rings/polynomial/polynomial_element.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/polynomial/polynomial_element_generic.py",
   "site-packages/sage/rings/polynomial/polynomial_integer_dense_flint.py",
@@ -245,11 +250,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 80,
+  schemaVersion: 81,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-polynomial-helpers-finite-field-polynomial-multivariate-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v46",
+  smokeContract: "exact-arithmetic-polynomial-helpers-finite-field-polynomial-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v47",
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 
