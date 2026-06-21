@@ -597,6 +597,11 @@ Follow-up snapshot:
   finite-field matrix smoke to cover matrix addition and scalar
   multiplication over `GF(7)`. The checks reuse the existing finite-field and
   matrix resource surface, so no new mandatory resource files are added.
+- Change: the async kernel response path now unregisters each per-call worker
+  `exit` listener once a Python call returns. This keeps the expanded
+  packaged Electron smoke from accumulating stale listeners across many
+  sequential `python.exec` calls and removes the Node.js
+  `MaxListenersExceededWarning` from successful Sagelite smoke runs.
 
 ## Runtime Milestones
 

@@ -214,9 +214,14 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
   private async waitForResponse(id: number): Promise<any> {
     return (
       await callback((cb) => {
+        const worker = this.worker;
+        let exitListener: (() => void) | undefined;
         const removeListeners = () => {
           this.removeListener("id", messageListener);
           this.removeListener("sigint", sigintListener);
+          if (worker != null && exitListener != null) {
+            worker.removeListener("exit", exitListener);
+          }
         };
 
         const messageListener = (message) => {
@@ -237,10 +242,11 @@ export class WasmInstanceAbstractBaseClass extends EventEmitter {
         };
         this.once("sigint", sigintListener);
 
-        this.worker?.on("exit", () => {
+        exitListener = () => {
           removeListeners();
           cb("exit");
-        });
+        };
+        worker?.on("exit", exitListener);
       })
     ).result;
   }
