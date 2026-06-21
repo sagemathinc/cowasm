@@ -166,6 +166,9 @@ worker path.
 Schema 73 manifests extend the packaged combinatorics smoke to cover partition
 hook/arm/leg statistics and permutation inversion/descent/signature helpers
 through the bounded Node/Electron worker path.
+Schema 74 manifests extend the packaged exact-arithmetic smoke to cover
+modular inverses, residue-ring division, and prime finite-field powering
+through the bounded Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

@@ -294,6 +294,19 @@ assert D.inverse() * D == matrix(
 )
 `);
     console.log("sagelite-electron-ok core resources smoke");
+    console.log("sagelite-electron-start modular arithmetic extension smoke");
+    await python.exec(String.raw`
+from sage.all import GF, Integers
+
+Z7 = Integers(7)
+assert Z7(3).inverse_of_unit() == Z7(5)
+assert Z7(3) / Z7(5) == Z7(2)
+F11 = GF(11)
+assert F11(3)**5 == F11(1)
+Z9 = Integers(9)
+assert Z9(4).inverse_of_unit() == Z9(7)
+`);
+    console.log("sagelite-electron-ok modular arithmetic extension smoke");
     console.log("sagelite-electron-start combinatorics extension smoke");
     await python.exec(String.raw`
 import sage.all

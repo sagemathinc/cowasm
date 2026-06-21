@@ -478,6 +478,11 @@ Follow-up snapshot:
   cover partition hook/arm/leg statistics and permutation
   inversion/descent/signature helpers through the bounded Node/Electron worker
   path, without adding a new mandatory resource file.
+- Change: schema 74 manifests advance the packaged exact-arithmetic smoke to
+  cover modular inverses, residue-ring division, and prime finite-field
+  powering through the bounded Node/Electron worker path, without adding a new
+  mandatory resource file. Modular multiplicative-order calls still terminate
+  before the Node worker prints its marker and remain follow-up runtime work.
 
 ## Runtime Milestones
 
