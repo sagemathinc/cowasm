@@ -548,6 +548,12 @@ Follow-up snapshot:
   construction, parent identity, powers, and transpose. The checks use the
   already mandatory matrix-space resource, so no new required resource files
   are added.
+- Change: schema 85 manifests extend the bounded Node.js/Electron
+  finite-field matrix smoke to cover rank and echelon-form computation over
+  `GF(7)`, including a singular rank-one case. The standalone Node.js
+  linear-algebra ladder now also mirrors the Electron smoke's existing
+  rank/echelon check over `QQ`. These checks stay within the current matrix
+  resource surface, so no new mandatory resource files are added.
 
 ## Runtime Milestones
 

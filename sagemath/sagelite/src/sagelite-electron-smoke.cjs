@@ -340,6 +340,10 @@ assert A.det() == F7(5)
 assert A.inverse() * A == identity_matrix(F7, 2)
 assert A.trace() == F7(5)
 assert A.charpoly()(A) == matrix(F7, [[0, 0], [0, 0]])
+assert A.rank() == 2
+assert A.echelon_form() == matrix(F7, [[1, 0], [0, 1]])
+C = matrix(F7, [[1, 2], [2, 4]])
+assert C.rank() == 1
 M = MatrixSpace(F7, 2)
 B = M([1, 2, 3, 4])
 assert B.parent() is M

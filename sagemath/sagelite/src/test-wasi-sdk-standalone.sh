@@ -551,6 +551,9 @@ assert A * A == matrix(ZZ, [[7, 10], [15, 22]])
 B = matrix(QQ, [[1, 2], [3, 5]])
 assert B.det() == QQ(-1)
 assert B.inverse() * B == matrix(QQ, [[1, 0], [0, 1]])
+E = matrix(QQ, [[2, 1], [1, 1]])
+assert E.rank() == 2
+assert E.echelon_form() == matrix(QQ, [[1, 0], [0, 1]])
 C = matrix(ZZ, [[2, 1], [1, 2]])
 assert C.trace() == ZZ(4)
 assert C.charpoly()(C) == matrix(ZZ, [[0, 0], [0, 0]])
@@ -725,6 +728,10 @@ assert A.det() == F7(5)
 assert A.inverse() * A == identity_matrix(F7, 2)
 assert A.trace() == F7(5)
 assert A.charpoly()(A) == matrix(F7, [[0, 0], [0, 0]])
+assert A.rank() == 2
+assert A.echelon_form() == matrix(F7, [[1, 0], [0, 1]])
+C = matrix(F7, [[1, 2], [2, 4]])
+assert C.rank() == 1
 M = MatrixSpace(F7, 2)
 B = M([1, 2, 3, 4])
 assert B.parent() is M
@@ -855,11 +862,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=84
+electron_manifest_schema_version=85
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-charpoly-matrix-space-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v50"
+electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v51"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
