@@ -602,6 +602,11 @@ Follow-up snapshot:
   or `dirty`. The Sagelite staging target refreshes this metadata from
   `SAGELITE_SOURCE`, and the shared Electron validators reject bundles with
   missing or malformed source-tree-state provenance before worker startup.
+- Change: schema 95 manifest validation now also requires
+  `site-packages/sage/version.py`, and the bounded Node.js/Electron smoke
+  asserts that `sage.version.version` matches `sage.env.SAGE_VERSION`. This
+  catches packaged bundles that retain the environment module but are missing
+  Sage's version module before worker startup.
 - Change: the async kernel response path now unregisters each per-call worker
   `exit` listener once a Python call returns. This keeps the expanded
   packaged Electron smoke from accumulating stale listeners across many

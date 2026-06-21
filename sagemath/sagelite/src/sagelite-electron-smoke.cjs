@@ -56,6 +56,14 @@ async function main() {
   python.kernel.on("stdout", (data) => process.stdout.write(data));
   python.kernel.on("stderr", (data) => process.stderr.write(data));
   try {
+    console.log("sagelite-electron-start version resources smoke");
+    await python.exec(String.raw`
+import sage.env
+import sage.version
+
+assert sage.version.version == sage.env.SAGE_VERSION
+`);
+    console.log("sagelite-electron-ok version resources smoke");
     console.log("sagelite-electron-start core resources smoke");
     await python.exec(String.raw`
 import sage.all
