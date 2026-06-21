@@ -294,6 +294,18 @@ assert D.inverse() * D == matrix(
 )
 `);
     console.log("sagelite-electron-ok core resources smoke");
+    console.log("sagelite-electron-start combinatorics cardinality smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.combinat.combination import Combinations
+from sage.combinat.perfect_matching import PerfectMatchings
+from sage.combinat.set_partition import SetPartitions
+
+assert PerfectMatchings(6).cardinality() == 15
+assert Combinations([1, 2, 3, 4], 3).cardinality() == 4
+assert SetPartitions(4).cardinality() == 15
+`);
+    console.log("sagelite-electron-ok combinatorics cardinality smoke");
     console.log("sagelite-electron-start polynomial helper smoke");
     await python.exec(String.raw`
 from sage.all import ZZ, QQ, PolynomialRing

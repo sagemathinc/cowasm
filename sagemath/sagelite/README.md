@@ -180,7 +180,8 @@ arithmetic, and the coding slice verifies binary Hamming code minimum-distance
 computation.
 The combinatorics smoke covers partitions, permutations, tableaux,
 set partitions, subsets, combinations, integer-vector enumeration, and finite
-set maps, ordered and unordered tuple enumeration, partition hook/arm/leg
+set maps, larger perfect-matching, combination, and set-partition cardinality
+checks, ordered and unordered tuple enumeration, partition hook/arm/leg
 statistics, and permutation inversion/descent/signature helpers. It then reruns
 the same smoke from a relocated copy of that resources tree, which catches
 build-output absolute path

@@ -561,6 +561,12 @@ Follow-up snapshot:
   files are added. Divisor enumeration, Euler phi, sigma, and `next_prime`
   still reach the current `__wasm_setjmp` import gap and remain follow-up
   runtime-table work.
+- Change: schema 87 manifests extend the bounded Node.js/Electron
+  combinatorics smoke to cover larger cardinality checks for perfect matchings,
+  combinations, and set partitions. The checks use already mandatory resource
+  files, so no new staged resources are required. Weighted integer-vector
+  enumeration and `FiniteEnumeratedSet` still exit or trap before the combined
+  packaged smoke marker and remain follow-up runtime-table work.
 
 ## Runtime Milestones
 

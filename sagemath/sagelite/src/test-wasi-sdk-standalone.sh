@@ -665,6 +665,14 @@ F2 = FiniteSetMaps([1, 2, 3], [4, 5])
 assert F2.cardinality() == 8
 assert [f(2) for f in F2] == [4, 4, 5, 5, 4, 4, 5, 5]
 print('sagelite-node-ok combinatorics smoke')"
+run_node_import "combinatorics cardinality smoke" "import sage.all
+from sage.combinat.combination import Combinations
+from sage.combinat.perfect_matching import PerfectMatchings
+from sage.combinat.set_partition import SetPartitions
+assert PerfectMatchings(6).cardinality() == 15
+assert Combinations([1, 2, 3, 4], 3).cardinality() == 4
+assert SetPartitions(4).cardinality() == 15
+print('sagelite-node-ok combinatorics cardinality smoke')"
 run_node_import "integer lists smoke" "import sage.all
 from sage.combinat.integer_lists import IntegerListsLex
 L = IntegerListsLex(4, length=3)
@@ -867,11 +875,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=86
+electron_manifest_schema_version=87
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v52"
+electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v53"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
