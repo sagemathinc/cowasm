@@ -314,9 +314,14 @@ assert Subwords([1, 2, 3, 4], 3).list() == [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2,
 FSM = FiniteSetMaps([1, 2], [3, 4])
 assert FSM.cardinality() == 4
 assert [f(1) for f in FSM] == [3, 3, 4, 4]
+FSM2 = FiniteSetMaps([1, 2, 3], [4, 5])
+assert FSM2.cardinality() == 8
+assert [f(2) for f in FSM2] == [4, 4, 5, 5, 4, 4, 5, 5]
 assert Tuples([1, 2], 3).cardinality() == 8
 assert Tuples([1, 2], 2).list() == [(1, 1), (2, 1), (1, 2), (2, 2)]
 assert UnorderedTuples([1, 2, 3], 2).list() == [(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)]
+assert Tuples([1, 2, 3], 2).cardinality() == 9
+assert UnorderedTuples([1, 2], 3).list() == [(1, 1, 1), (1, 1, 2), (1, 2, 2), (2, 2, 2)]
 `);
     console.log("sagelite-electron-ok combinatorics extension smoke");
     console.log("sagelite-electron-ok relative resources smoke");

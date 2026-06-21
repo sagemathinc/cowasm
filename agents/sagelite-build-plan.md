@@ -471,6 +471,12 @@ Follow-up snapshot:
   staging target already writes this list from a sorted filesystem walk, and
   the Electron validators now reject stale or hand-edited manifests with
   nondeterministic side-module inventories.
+- Change: schema 72 manifests advance the packaged combinatorics smoke to
+  cover larger finite-set-map and tuple enumeration cases through the bounded
+  Node/Electron worker path. De Bruijn sequences, Dyck words, and parking
+  functions remain separate follow-ups because their import paths can still hit
+  unresolved `calloc`/`malloc` imports when loaded after the full Electron
+  smoke core.
 
 ## Runtime Milestones
 

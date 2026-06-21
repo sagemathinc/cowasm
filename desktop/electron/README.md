@@ -160,6 +160,9 @@ module is part of the hashed Electron resource contract.
 Schema 71 manifests require the copied side-module inventory to be sorted, so
 Electron resource manifests stay deterministic and packaging validation catches
 stale or hand-edited side-module lists.
+Schema 72 manifests extend the packaged combinatorics smoke to cover larger
+finite-set-map and tuple enumeration cases through the bounded Node/Electron
+worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for
