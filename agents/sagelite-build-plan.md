@@ -522,6 +522,13 @@ Follow-up snapshot:
   derivatives, monomial coefficients, and zero tests. The added checks stay
   within the schema 78 polynomial resource surface, so no new mandatory
   resource paths are added.
+- Change: schema 80 manifests extend the bounded Node.js/Electron polynomial
+  smoke to cover finite-field polynomial arithmetic over `GF(7)`, including
+  formal derivatives and evaluation. The added checks stay within the current
+  finite-field and polynomial resource surface, so no new mandatory resource
+  paths are added. Univariate polynomial roots still hit a `__wasm_setjmp`
+  side-module import gap, and univariate polynomial GCD can hang in the
+  packaged async worker; keep both as follow-up runtime-table issues.
 
 ## Runtime Milestones
 

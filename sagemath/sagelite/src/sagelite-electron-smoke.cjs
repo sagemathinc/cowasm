@@ -318,6 +318,16 @@ assert g.monomial_coefficient(x**2*y) == QQ(3)
 assert (g - (x + y + 1)**3).is_zero()
 `);
     console.log("sagelite-electron-ok polynomial helper smoke");
+    console.log("sagelite-electron-start finite-field polynomial smoke");
+    await python.exec(String.raw`
+from sage.all import GF, PolynomialRing
+
+S = PolynomialRing(GF(7), 't')
+t = S.gen()
+assert (t**3 + 2*t + 1).derivative() == 3*t**2 + 2
+assert (t**2 + 1)(GF(7)(3)) == GF(7)(3)
+`);
+    console.log("sagelite-electron-ok finite-field polynomial smoke");
     console.log("sagelite-electron-start modular arithmetic extension smoke");
     await python.exec(String.raw`
 from sage.all import GF, Integers
