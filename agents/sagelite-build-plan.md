@@ -447,6 +447,11 @@ Follow-up snapshot:
   cover subword enumeration through `sage.combinat.subword.Subwords`. The
   manifest now requires the subword module and its direct `groupoid` category
   helper as hashed resources before worker startup.
+- Change: schema 66 manifests advance the packaged combinatorics smoke to
+  cover `sage.combinat.derangements.Derangements` cardinality and listing.
+  The manifest now requires the derangements module as a hashed resource before
+  worker startup, so the packaged Node.js/Electron contract includes this
+  additional finite-enumerated combinatorics path.
 
 ## Runtime Milestones
 

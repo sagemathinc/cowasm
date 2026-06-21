@@ -166,6 +166,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/combinat/combinatorial_map.py",
   "site-packages/sage/combinat/composition.py",
   "site-packages/sage/combinat/composition_signed.py",
+  "site-packages/sage/combinat/derangements.py",
   "site-packages/sage/combinat/integer_lists/__init__.py",
   "site-packages/sage/combinat/integer_lists/base.cpython-314-wasm32-wasi.so",
   "site-packages/sage/combinat/integer_lists/invlex.cpython-314-wasm32-wasi.so",
@@ -234,11 +235,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 65,
+  schemaVersion: 66,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-subwords-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v31",
+  smokeContract: "exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v32",
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 

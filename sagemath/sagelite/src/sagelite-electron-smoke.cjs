@@ -294,8 +294,11 @@ assert D.inverse() * D == matrix(
 `);
     await python.exec(String.raw`
 import sage.all
+from sage.combinat.derangements import Derangements
 from sage.combinat.subword import Subwords
 
+assert Derangements([1, 2, 3]).cardinality() == 2
+assert Derangements([1, 2, 3]).list() == [[2, 3, 1], [3, 1, 2]]
 S = Subwords([1, 2, 3], 2)
 assert S.cardinality() == 3
 assert S.list() == [[1, 2], [1, 3], [2, 3]]

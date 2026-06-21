@@ -144,6 +144,10 @@ notation fail validation before worker startup.
 Schema 63 manifests extend the packaged dense-matrix smoke to cover exact
 matrix rank and echelon-form computation over `QQ`, keeping that linear
 algebra slice tied to the bounded Node/Electron worker path.
+Schema 66 manifests extend the packaged combinatorics smoke to cover
+derangement cardinality and listing through `sage.combinat.derangements`,
+keeping that finite-enumerated combinatorics slice tied to the validated
+Electron resource bundle.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

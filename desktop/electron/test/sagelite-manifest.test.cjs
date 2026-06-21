@@ -253,6 +253,30 @@ withResourceRoot((root) => {
     validManifest({
       requiredResourcePaths: [
         ...expectedSageliteMandatoryResourcePaths.filter(
+          (entry) => entry !== "site-packages/sage/combinat/derangements.py",
+        ),
+        ...expectedSageliteNativeLibraryPaths,
+      ],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths must include the Sagelite Electron mandatory resources/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: [
+        ...expectedSageliteMandatoryResourcePaths.filter(
           (entry) => entry !== "site-packages/sage/misc/functional.py",
         ),
         ...expectedSageliteNativeLibraryPaths,
