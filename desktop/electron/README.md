@@ -154,6 +154,9 @@ worker path.
 Schema 68 manifests also reject a symbolic-link
 `sagelite-electron-resources.json` file, so a copied Electron resource bundle
 cannot validate against manifest metadata redirected outside the bundle.
+Schema 70 manifests extend the packaged combinatorics smoke to cover ordered
+and unordered tuple enumeration through `sage.combinat.tuple`, so the tuple
+module is part of the hashed Electron resource contract.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

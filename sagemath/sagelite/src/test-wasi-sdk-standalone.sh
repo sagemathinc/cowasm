@@ -605,6 +605,7 @@ from sage.combinat.set_partition import SetPartitions
 from sage.combinat.subword import Subwords
 from sage.combinat.subset import Subsets
 from sage.combinat.tableau import StandardTableaux, Tableau
+from sage.combinat.tuple import Tuples, UnorderedTuples
 from sage.sets.finite_set_maps import FiniteSetMaps
 p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
@@ -623,6 +624,9 @@ assert Subwords([1, 2, 3], 2).cardinality() == 3
 assert Subwords([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
 assert Subwords([1, 2, 3, 4]).cardinality() == 16
 assert Subwords([1, 2, 3, 4], 3).list() == [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
+assert Tuples([1, 2], 3).cardinality() == 8
+assert Tuples([1, 2], 2).list() == [(1, 1), (2, 1), (1, 2), (2, 2)]
+assert UnorderedTuples([1, 2, 3], 2).list() == [(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)]
 assert [sorted(s) for s in Subsets([1, 2, 3], 2)] == [[1, 2], [1, 3], [2, 3]]
 assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
 assert [list(v) for v in IntegerVectors(4, 2)] == [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
@@ -764,11 +768,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=69
+electron_manifest_schema_version=70
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-enumeration-finite-set-maps-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-v35"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-enumeration-finite-set-maps-tuples-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-v36"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
@@ -980,6 +984,7 @@ electron_required_paths=(
   "site-packages/sage/combinat/subset.py"
   "site-packages/sage/combinat/tableau.py"
   "site-packages/sage/combinat/tools.py"
+  "site-packages/sage/combinat/tuple.py"
   "site-packages/sage/sets/__init__.py"
   "site-packages/sage/sets/disjoint_union_enumerated_sets.py"
   "site-packages/sage/sets/family.cpython-314-wasm32-wasi.so"

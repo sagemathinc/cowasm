@@ -463,6 +463,10 @@ Follow-up snapshot:
   set smoke to cover `sage.sets.finite_set_maps.FiniteSetMaps`. The manifest
   now requires the finite-set maps Python module and Cython helper side module
   as hashed resources before worker startup.
+- Change: schema 70 manifests advance the packaged combinatorics smoke to
+  cover ordered and unordered tuple enumeration through
+  `sage.combinat.tuple`. The manifest now requires the tuple Python module as
+  a hashed resource before worker startup.
 
 ## Runtime Milestones
 

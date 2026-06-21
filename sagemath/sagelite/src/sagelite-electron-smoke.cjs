@@ -300,6 +300,7 @@ import sage.all
 from sage.combinat.derangements import Derangements
 from sage.combinat.subword import Subwords
 from sage.sets.finite_set_maps import FiniteSetMaps
+from sage.combinat.tuple import Tuples, UnorderedTuples
 
 assert Derangements([1, 2, 3]).cardinality() == 2
 assert Derangements([1, 2, 3]).list() == [[2, 3, 1], [3, 1, 2]]
@@ -313,6 +314,9 @@ assert Subwords([1, 2, 3, 4], 3).list() == [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2,
 FSM = FiniteSetMaps([1, 2], [3, 4])
 assert FSM.cardinality() == 4
 assert [f(1) for f in FSM] == [3, 3, 4, 4]
+assert Tuples([1, 2], 3).cardinality() == 8
+assert Tuples([1, 2], 2).list() == [(1, 1), (2, 1), (1, 2), (2, 2)]
+assert UnorderedTuples([1, 2, 3], 2).list() == [(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)]
 `);
     console.log("sagelite-electron-ok combinatorics extension smoke");
     console.log("sagelite-electron-ok relative resources smoke");
