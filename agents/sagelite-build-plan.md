@@ -607,6 +607,15 @@ Follow-up snapshot:
   asserts that `sage.version.version` matches `sage.env.SAGE_VERSION`. This
   catches packaged bundles that retain the environment module but are missing
   Sage's version module before worker startup.
+- Change: schema 96 manifest validation now also requires
+  `sage.combinat.binary_tree`, `sage.combinat.parking_functions`, and
+  `sage.combinat.set_partition_ordered` module files. Isolated Electron-worker
+  probes for binary-tree, parking-function, and ordered set-partition
+  cardinality/enumeration pass, but promoting them into the combined packaged
+  smoke still hits a `malloc` function-import gap after the long existing smoke
+  sequence. A probe of `sage.combinat.crystals.letters` still hits a
+  `__wasm_setjmp` import gap in the Electron worker. Treat both as follow-up
+  runtime-table work.
 - Change: the async kernel response path now unregisters each per-call worker
   `exit` listener once a Python call returns. This keeps the expanded
   packaged Electron smoke from accumulating stale listeners across many
