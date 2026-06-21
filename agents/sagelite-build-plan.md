@@ -218,6 +218,14 @@ Follow-up snapshot:
   listed in `requiredResourcePaths` and covered by `requiredResourceSha256`.
   This catches bundles missing rational-field, modular-ring, or prime
   finite-field constructors before the Electron worker starts.
+- Probe outcome: `sage.combinat.q_analogues` is not ready for the packaged
+  Electron smoke. A Node.js `python-wasm -c` probe can evaluate polynomial
+  `q_int`, `q_factorial`, and `q_binomial` after `sage.all`, but the
+  Electron-style `asyncPython({ fs: "everything", noStdio: true })` worker
+  does not reach the post-`q_binomial` marker, and promoting even the narrower
+  `q_int`/`q_factorial` checks into the combined packaged smoke trips a WASM
+  function signature mismatch before the core smoke marker. Treat q-analogues
+  as a follow-up runtime-table issue, not a schema-75 resource-contract bump.
 - Change: schema 19 manifest validation now also requires the matrix startup
   modules loaded by the packaged exact-math smoke, including the matrix package
   initializer, constructor helpers, `action`, `args`, `matrix0`, `matrix1`,
