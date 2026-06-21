@@ -621,6 +621,10 @@ Follow-up snapshot:
   packaged Electron smoke from accumulating stale listeners across many
   sequential `python.exec` calls and removes the Node.js
   `MaxListenersExceededWarning` from successful Sagelite smoke runs.
+- Change: schema 97 manifests extend the bounded Node.js/Electron smoke to
+  cover `sage.sets.family.Family` and `NonNegativeIntegers`. The checks use
+  already mandatory set-family and integer-set resources, so no new staged
+  files are required.
 
 ## Runtime Milestones
 

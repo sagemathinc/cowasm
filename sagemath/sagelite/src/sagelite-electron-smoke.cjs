@@ -526,6 +526,21 @@ assert Subsets([1, 2, 3, 4], 3).cardinality() == 4
 assert IntegerVectors(5, 3).cardinality() == 21
 `);
     console.log("sagelite-electron-ok tableau and enumerated combinatorics smoke");
+    console.log("sagelite-electron-start set family smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.sets.family import Family
+from sage.sets.non_negative_integers import NonNegativeIntegers
+
+F = Family([1, 2, 3], lambda i: i * i)
+assert list(F) == [1, 4, 9]
+assert F.cardinality() == 3
+N = NonNegativeIntegers()
+assert 0 in N
+assert 5 in N
+assert -1 not in N
+`);
+    console.log("sagelite-electron-ok set family smoke");
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {
     python.terminate();
