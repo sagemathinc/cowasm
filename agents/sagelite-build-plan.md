@@ -572,6 +572,12 @@ Follow-up snapshot:
   sorted order, and the shared Electron validators reject current-schema
   bundles with nondeterministic mandatory-resource ordering before worker
   startup.
+- Change: schema 89 manifests extend the bounded Node.js/Electron
+  combinatorics smoke to cover partition enumeration through
+  `sage.combinat.partition.Partitions`, including cardinality, complete
+  enumeration for `Partitions(5)`, and length-constrained enumeration for
+  `Partitions(6, length=2)`. The checks use the already mandatory partition
+  resource, so no new staged resources are required.
 
 ## Runtime Milestones
 

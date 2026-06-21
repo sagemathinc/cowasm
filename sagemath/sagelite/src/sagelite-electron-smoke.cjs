@@ -423,7 +423,7 @@ assert binomial(ZZ(-5), 3) == ZZ(-35)
     await python.exec(String.raw`
 import sage.all
 from sage.combinat.derangements import Derangements
-from sage.combinat.partition import Partition
+from sage.combinat.partition import Partition, Partitions
 from sage.combinat.permutation import Permutation
 from sage.combinat.subword import Subwords
 from sage.sets.finite_set_maps import FiniteSetMaps
@@ -450,6 +450,17 @@ assert UnorderedTuples([1, 2, 3], 2).list() == [(1, 1), (1, 2), (1, 3), (2, 2), 
 assert Tuples([1, 2, 3], 2).cardinality() == 9
 assert UnorderedTuples([1, 2], 3).list() == [(1, 1, 1), (1, 1, 2), (1, 2, 2), (2, 2, 2)]
 p = Partition([4, 2, 1])
+assert Partitions(5).cardinality() == 7
+assert Partitions(5).list() == [
+    Partition([5]),
+    Partition([4, 1]),
+    Partition([3, 2]),
+    Partition([3, 1, 1]),
+    Partition([2, 2, 1]),
+    Partition([2, 1, 1, 1]),
+    Partition([1, 1, 1, 1, 1]),
+]
+assert Partitions(6, length=2).list() == [Partition([5, 1]), Partition([4, 2]), Partition([3, 3])]
 assert p.hook_lengths() == [[6, 4, 2, 1], [3, 1], [1]]
 assert p.arm_lengths() == [[3, 2, 1, 0], [1, 0], [0]]
 assert p.leg_lengths() == [[2, 1, 0, 0], [1, 0], [0]]

@@ -178,7 +178,7 @@ list CRT, integer valuations, negative upper-argument binomial coefficients,
 and list LCM; the algebra slice verifies free abelian monoid element
 arithmetic, and the coding slice verifies binary Hamming code minimum-distance
 computation.
-The combinatorics smoke covers partitions, permutations, tableaux,
+The combinatorics smoke covers partitions, partition enumeration, permutations, tableaux,
 set partitions, subsets, combinations, integer-vector enumeration, and finite
 set maps, larger perfect-matching, combination, and set-partition cardinality
 checks, ordered and unordered tuple enumeration, partition hook/arm/leg
