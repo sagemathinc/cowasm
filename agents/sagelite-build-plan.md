@@ -467,6 +467,10 @@ Follow-up snapshot:
   cover ordered and unordered tuple enumeration through
   `sage.combinat.tuple`. The manifest now requires the tuple Python module as
   a hashed resource before worker startup.
+- Change: schema 71 manifests require sorted `sideModulePaths`. The Sagelite
+  staging target already writes this list from a sorted filesystem walk, and
+  the Electron validators now reject stale or hand-edited manifests with
+  nondeterministic side-module inventories.
 
 ## Runtime Milestones
 

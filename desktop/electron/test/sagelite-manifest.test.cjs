@@ -116,10 +116,10 @@ function validManifest(overrides = {}) {
       ...expectedSageliteNativeLibraryPaths,
     ],
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
-    sideModulePaths: [
+    sideModulePaths: sorted([
       ...expectedSageliteMandatorySideModulePaths(),
       ...expectedSageliteNativeLibraryPaths,
-    ],
+    ]),
     ...overrides,
   };
 }
@@ -1044,18 +1044,18 @@ withResourceRoot((root) => {
   writeManifest(
     root,
     validManifest({
-      sideModulePaths: [
+      sideModulePaths: sorted([
         ...expectedSageliteMandatorySideModulePaths(),
         ...expectedSageliteNativeLibraryPaths,
-      ],
+      ]),
     }),
   );
 
   const manifest = loadSageliteManifest(root);
-  assert.deepStrictEqual(manifest.sideModulePaths, [
+  assert.deepStrictEqual(manifest.sideModulePaths, sorted([
     ...expectedSageliteMandatorySideModulePaths(),
     ...expectedSageliteNativeLibraryPaths,
-  ]);
+  ]));
   assert.deepStrictEqual(manifest.pythonPath, expectedSagelitePythonPath);
   assert.strictEqual(
     sagelitePythonPath(manifest),
@@ -1077,6 +1077,28 @@ withResourceRoot((root) => {
   assert.throws(
     () => loadSageliteManifest(root),
     /contains unsupported Sagelite manifest fields: staleManifestField/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      sideModulePaths: sorted([
+        ...expectedSageliteMandatorySideModulePaths(),
+        ...expectedSageliteNativeLibraryPaths,
+      ]).reverse(),
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /sideModulePaths entries must be sorted/,
   );
 });
 

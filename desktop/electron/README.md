@@ -157,6 +157,9 @@ cannot validate against manifest metadata redirected outside the bundle.
 Schema 70 manifests extend the packaged combinatorics smoke to cover ordered
 and unordered tuple enumeration through `sage.combinat.tuple`, so the tuple
 module is part of the hashed Electron resource contract.
+Schema 71 manifests require the copied side-module inventory to be sorted, so
+Electron resource manifests stay deterministic and packaging validation catches
+stale or hand-edited side-module lists.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

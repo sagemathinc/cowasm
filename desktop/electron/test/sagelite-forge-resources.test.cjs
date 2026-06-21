@@ -126,7 +126,7 @@ function validManifest(overrides = {}) {
     sideModulePaths: [
       ...expectedSageliteMandatorySideModulePaths(),
       ...expectedSageliteNativeLibraryPaths,
-    ],
+    ].sort(),
     ...overrides,
   };
 }

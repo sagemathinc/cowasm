@@ -238,11 +238,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 70,
+  schemaVersion: 71,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-enumeration-finite-set-maps-tuples-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-v36",
+  smokeContract: "exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-enumeration-finite-set-maps-tuples-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v37",
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 
@@ -369,6 +369,11 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
     "sideModulePaths",
     manifest.sideModulePaths,
     { requireFile: true, requireNonEmpty: true },
+  );
+  validateSortedManifestEntries(
+    manifestPath,
+    "sideModulePaths",
+    manifest.sideModulePaths,
   );
   validateCompleteSideModuleInventory(
     resourceRoot,
@@ -604,6 +609,14 @@ function validateUniqueManifestEntries(manifestPath, fieldName, entries) {
       );
     }
     seen.add(entry);
+  }
+}
+
+function validateSortedManifestEntries(manifestPath, fieldName, entries) {
+  for (let index = 1; index < entries.length; index += 1) {
+    if (entries[index - 1] > entries[index]) {
+      throw new Error(`${manifestPath} ${fieldName} entries must be sorted`);
+    }
   }
 }
 
