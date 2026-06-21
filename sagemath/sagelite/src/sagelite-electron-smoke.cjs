@@ -307,6 +307,20 @@ Z9 = Integers(9)
 assert Z9(4).inverse_of_unit() == Z9(7)
 `);
     console.log("sagelite-electron-ok modular arithmetic extension smoke");
+    console.log("sagelite-electron-start integer and rational helper smoke");
+    await python.exec(String.raw`
+from sage.all import ZZ, QQ, lcm
+
+assert ZZ(255).digits(16) == [15, 15]
+assert ZZ(10).digits(2) == [0, 1, 0, 1]
+assert ZZ(12345).quo_rem(ZZ(97)) == (ZZ(127), ZZ(26))
+assert ZZ(144).sqrtrem() == (ZZ(12), ZZ(0))
+assert ZZ(145).sqrtrem() == (ZZ(12), ZZ(1))
+assert lcm([ZZ(6), ZZ(10), ZZ(15)]) == ZZ(30)
+assert QQ(45, 28).floor() == 1
+assert QQ(45, 28).ceil() == 2
+`);
+    console.log("sagelite-electron-ok integer and rational helper smoke");
     console.log("sagelite-electron-start combinatorics extension smoke");
     await python.exec(String.raw`
 import sage.all

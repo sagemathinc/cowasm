@@ -169,6 +169,10 @@ through the bounded Node/Electron worker path.
 Schema 74 manifests extend the packaged exact-arithmetic smoke to cover
 modular inverses, residue-ring division, and prime finite-field powering
 through the bounded Node/Electron worker path.
+Schema 75 manifests extend the packaged exact-arithmetic smoke to cover
+integer and rational helper methods, including integer digit expansion,
+quotient/remainder, square-root remainder, list LCM, and rational floor/ceil
+operations through the bounded Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

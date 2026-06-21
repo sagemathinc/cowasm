@@ -491,6 +491,11 @@ Follow-up snapshot:
   powering through the bounded Node/Electron worker path, without adding a new
   mandatory resource file. Modular multiplicative-order calls still terminate
   before the Node worker prints its marker and remain follow-up runtime work.
+- Change: schema 75 manifests advance the packaged exact-arithmetic smoke to
+  cover integer and rational helper methods, including integer digit
+  expansion, quotient/remainder, square-root remainder, list LCM, and rational
+  floor/ceil operations through the bounded Node/Electron worker path, without
+  adding a new mandatory resource file.
 
 ## Runtime Milestones
 
