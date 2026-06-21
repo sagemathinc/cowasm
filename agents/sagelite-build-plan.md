@@ -432,6 +432,9 @@ Follow-up snapshot:
   Sage exact-helper notation through `sage.misc.flatten` and
   `sage.misc.functional.cyclotomic_polynomial`. The manifest now requires
   those helper modules as hashed resources before worker startup.
+- Change: schema 63 manifests advance the packaged dense-matrix smoke to cover
+  exact rank and echelon-form computation over `QQ`, keeping this linear
+  algebra slice under the same bounded Node/Electron worker contract.
 
 ## Runtime Milestones
 

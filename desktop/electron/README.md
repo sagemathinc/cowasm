@@ -141,6 +141,9 @@ Schema 62 manifests extend the packaged exact-helper smoke to cover
 `sage.misc.flatten` and `sage.misc.functional.cyclotomic_polynomial`, so
 bundles missing the functional helper modules used by common Sage-style
 notation fail validation before worker startup.
+Schema 63 manifests extend the packaged dense-matrix smoke to cover exact
+matrix rank and echelon-form computation over `QQ`, keeping that linear
+algebra slice tied to the bounded Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for
