@@ -151,6 +151,9 @@ Electron resource bundle.
 Schema 67 manifests extend the packaged combinatorics smoke to cover larger
 derangement and subword enumeration cases through the bounded Node/Electron
 worker path.
+Schema 68 manifests also reject a symbolic-link
+`sagelite-electron-resources.json` file, so a copied Electron resource bundle
+cannot validate against manifest metadata redirected outside the bundle.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

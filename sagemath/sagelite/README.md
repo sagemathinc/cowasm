@@ -164,6 +164,9 @@ root or depend on host-specific path separators. Manifest path arrays must also
 be duplicate-free, so stale or merged resource inventories cannot hide
 ambiguous `PYTHONPATH`, side-module, native-library, or required-resource
 digest entries.
+The resource root and manifest file must be real files in the copied resource
+tree rather than symbolic links, so the bundle cannot validate against
+metadata redirected outside the packaged resources.
 It then checks the initialized FLINT `fmpz_poly_sage` helper,
 integer extended-gcd, integer ideal, modular integer ring, and prime
 finite-field coverage in addition to the core integer, rational, polynomial,

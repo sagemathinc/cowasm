@@ -455,6 +455,10 @@ Follow-up snapshot:
 - Change: schema 67 manifests advance the packaged combinatorics smoke to
   cover larger derangement and subword enumeration cases through the bounded
   Node/Electron worker path, without adding a new mandatory resource file.
+- Change: schema 68 manifest validation now rejects a symbolic-link
+  `sagelite-electron-resources.json` file. This keeps the copied Electron
+  bundle self-contained by preventing an otherwise valid resource tree from
+  validating against manifest metadata redirected outside the bundle.
 
 ## Runtime Milestones
 

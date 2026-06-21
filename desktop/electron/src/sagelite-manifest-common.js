@@ -235,11 +235,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 67,
+  schemaVersion: 68,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v33",
+  smokeContract: "exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-v34",
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 
@@ -382,6 +382,9 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
 function validateSageliteResourceRoot(manifestPath, resourceRoot) {
   if (lstatSync(resourceRoot).isSymbolicLink()) {
     throw new Error(`${manifestPath} resource root must not be a symbolic link`);
+  }
+  if (lstatSync(manifestPath).isSymbolicLink()) {
+    throw new Error(`${manifestPath} manifest file must not be a symbolic link`);
   }
 }
 

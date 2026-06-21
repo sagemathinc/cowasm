@@ -223,6 +223,24 @@ withResourceRoot((root) => {
   touch(root, "python.wasm");
   stageRequiredTools(root);
   stageNativeLibraries(root);
+  writeManifest(root, validManifest());
+  const manifestPath = path.join(root, sageliteManifestName);
+  const realManifestPath = path.join(root, "real-sagelite-manifest.json");
+  fs.renameSync(manifestPath, realManifestPath);
+  fs.symlinkSync(realManifestPath, manifestPath);
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /manifest file must not be a symbolic link/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
   writeManifest(
     root,
     validManifest({
