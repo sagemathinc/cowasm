@@ -443,6 +443,10 @@ Follow-up snapshot:
   async-worker `nextafterf` import gap; block-matrix construction and richer
   combinatorics methods are also excluded because they produced function
   signature mismatches in the full packaged smoke.
+- Change: schema 65 manifests advance the packaged combinatorics smoke to
+  cover subword enumeration through `sage.combinat.subword.Subwords`. The
+  manifest now requires the subword module and its direct `groupoid` category
+  helper as hashed resources before worker startup.
 
 ## Runtime Milestones
 

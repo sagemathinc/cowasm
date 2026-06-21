@@ -292,6 +292,14 @@ assert D.inverse() * D == matrix(
     [1, 0, 0, 0, 1, 0, 0, 0, 1],
 )
 `);
+    await python.exec(String.raw`
+import sage.all
+from sage.combinat.subword import Subwords
+
+S = Subwords([1, 2, 3], 2)
+assert S.cardinality() == 3
+assert S.list() == [[1, 2], [1, 3], [2, 3]]
+`);
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {
     python.terminate();

@@ -601,6 +601,7 @@ from sage.combinat.partition import Partition
 from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
 from sage.combinat.permutation import Permutation
 from sage.combinat.set_partition import SetPartitions
+from sage.combinat.subword import Subwords
 from sage.combinat.subset import Subsets
 from sage.combinat.tableau import StandardTableaux, Tableau
 p = Partition([4, 2, 1])
@@ -612,6 +613,8 @@ assert PerfectMatching([(1, 4), (2, 3)]).is_noncrossing()
 sigma = Permutation([3, 1, 2])
 assert sigma.inverse() == Permutation([2, 3, 1])
 assert sigma.to_cycles() == [(1, 3, 2)]
+assert Subwords([1, 2, 3], 2).cardinality() == 3
+assert Subwords([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
 assert [sorted(s) for s in Subsets([1, 2, 3], 2)] == [[1, 2], [1, 3], [2, 3]]
 assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
 assert [list(v) for v in IntegerVectors(4, 2)] == [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
@@ -750,11 +753,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=64
+electron_manifest_schema_version=65
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v30"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-subwords-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v31"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
@@ -849,6 +852,7 @@ electron_required_paths=(
   "site-packages/sage/categories/enumerated_sets.py"
   "site-packages/sage/categories/finite_dimensional_algebras_with_basis.py"
   "site-packages/sage/categories/finite_dimensional_modules_with_basis.py"
+  "site-packages/sage/categories/groupoid.py"
   "site-packages/sage/categories/modules.py"
   "site-packages/sage/categories/modules_with_basis.py"
   "site-packages/sage/categories/monoids.py"
@@ -960,6 +964,7 @@ electron_required_paths=(
   "site-packages/sage/combinat/permutation_cython.cpython-314-wasm32-wasi.so"
   "site-packages/sage/combinat/set_partition.py"
   "site-packages/sage/combinat/set_partition_iterator.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/combinat/subword.py"
   "site-packages/sage/combinat/subset.py"
   "site-packages/sage/combinat/tableau.py"
   "site-packages/sage/combinat/tools.py"
