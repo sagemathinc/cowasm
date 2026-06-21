@@ -109,6 +109,7 @@ function validManifest(overrides = {}) {
   return {
     ...expectedSageliteManifest,
     sageliteSourceRevision: "0123456789abcdef0123456789abcdef01234567",
+    sageliteSourceTreeState: "clean",
     pythonPath: [...expectedSagelitePythonPath],
     runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
     requiredResourcePaths: sorted([
@@ -215,6 +216,31 @@ withResourceRoot((root) => {
     () => loadSageliteManifest(root),
     /sageliteSourceRevision must be a full git commit hash/,
   );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
+  writeManifest(root, validManifest({ sageliteSourceTreeState: undefined }));
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /sageliteSourceTreeState must be clean or dirty/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
+  writeManifest(root, validManifest({ sageliteSourceTreeState: "dirty" }));
+
+  assert.strictEqual(loadSageliteManifest(root).sageliteSourceTreeState, "dirty");
 });
 
 withResourceRoot((root) => {

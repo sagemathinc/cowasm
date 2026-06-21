@@ -154,7 +154,9 @@ contract, appear in the side-module inventory, and be listed as required
 resources, so Electron packaging validation catches incomplete, corrupted, or
 stale dynamic-library copies before runtime startup. The manifest also records
 SHA-256 digests for every required resource file so the Electron packaging and
-runtime validators reject corrupted or stale copied resources.
+runtime validators reject corrupted or stale copied resources. It records the
+Sagelite source commit and whether that source checkout was `clean` or `dirty`
+when the Electron resources were staged.
 The target reruns the
 exact arithmetic and matrix smoke through the checked-in
 `src/sagelite-electron-smoke.cjs` async `python-wasm` worker API.

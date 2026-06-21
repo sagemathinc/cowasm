@@ -250,11 +250,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 93,
+  schemaVersion: 94,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-linear-arithmetic-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-tableau-subset-integer-vector-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-sorted-required-resources-v59",
+  smokeContract: "exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-linear-arithmetic-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-tableau-subset-integer-vector-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-sorted-required-resources-source-tree-state-v60",
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 
@@ -265,6 +265,7 @@ const expectedSageliteManifestFields = Object.freeze([
   "pythonPlatform",
   "smokeContract",
   "sageliteSourceRevision",
+  "sageliteSourceTreeState",
   "resourceRootEnvName",
   "pythonPath",
   "runtimeDependencyPaths",
@@ -428,6 +429,10 @@ function validateSageliteManifestContract(manifestPath, manifest) {
     }
   }
   validateSageliteSourceRevision(manifestPath, manifest.sageliteSourceRevision);
+  validateSageliteSourceTreeState(
+    manifestPath,
+    manifest.sageliteSourceTreeState,
+  );
 }
 
 function validateSageliteManifestFields(manifestPath, manifest) {
@@ -454,6 +459,14 @@ function validateSageliteSourceRevision(manifestPath, sourceRevision) {
   ) {
     throw new Error(
       `${manifestPath} sageliteSourceRevision must be a full git commit hash`,
+    );
+  }
+}
+
+function validateSageliteSourceTreeState(manifestPath, sourceTreeState) {
+  if (sourceTreeState !== "clean" && sourceTreeState !== "dirty") {
+    throw new Error(
+      `${manifestPath} sageliteSourceTreeState must be clean or dirty`,
     );
   }
 }

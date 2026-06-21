@@ -194,6 +194,9 @@ Schema 92 manifests extend the packaged combinatorics smoke to cover
 fixed-shape standard tableaux, larger standard-tableau shape enumeration,
 `SetPartitions(5)`, larger subset cardinality, and `IntegerVectors(5, 3)`
 cardinality through the same bounded worker path.
+Schema 94 manifests also record whether the Sagelite source checkout used to
+stage the Electron resources was `clean` or `dirty`, so packaged bundles carry
+source-tree-state provenance alongside the Sagelite commit hash.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

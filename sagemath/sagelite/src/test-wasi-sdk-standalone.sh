@@ -925,21 +925,32 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=93
+electron_manifest_schema_version=94
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-linear-arithmetic-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-tableau-subset-integer-vector-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-sorted-required-resources-v59"
+electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-linear-arithmetic-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-tableau-subset-integer-vector-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-sorted-required-resources-source-tree-state-v60"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
+electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."
+fi
+if [ ! -s "$electron_manifest_source_tree_state_file" ]; then
+  record_blocker "sagelite-blocked: Sagelite source tree state metadata is missing."
 fi
 electron_manifest_source_revision="$(tr -d '[:space:]' <"$electron_manifest_source_revision_file")"
 if ! printf '%s\n' "$electron_manifest_source_revision" |
     grep -Eq '^[0-9a-f]{40}$'; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is not a full git commit hash."
 fi
+electron_manifest_source_tree_state="$(tr -d '[:space:]' <"$electron_manifest_source_tree_state_file")"
+case "$electron_manifest_source_tree_state" in
+  clean|dirty) ;;
+  *)
+    record_blocker "sagelite-blocked: Sagelite source tree state metadata must be clean or dirty."
+    ;;
+esac
 rm -rf "$electron_resources_dir"
 mkdir -p "$electron_resources_dir/deps"
 
@@ -1246,6 +1257,7 @@ fi
   printf '  "pythonPlatform": "%s",\n' "$electron_manifest_python_platform"
   printf '  "smokeContract": "%s",\n' "$electron_manifest_smoke_contract"
   printf '  "sageliteSourceRevision": "%s",\n' "$electron_manifest_source_revision"
+  printf '  "sageliteSourceTreeState": "%s",\n' "$electron_manifest_source_tree_state"
   printf '  "resourceRootEnvName": "%s",\n' "$electron_manifest_resource_root_env_name"
   printf '  "pythonPath": [\n'
   for i in "${!electron_pythonpath_parts[@]}"; do

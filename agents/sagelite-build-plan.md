@@ -597,6 +597,11 @@ Follow-up snapshot:
   finite-field matrix smoke to cover matrix addition and scalar
   multiplication over `GF(7)`. The checks reuse the existing finite-field and
   matrix resource surface, so no new mandatory resource files are added.
+- Change: schema 94 manifests now require `sageliteSourceTreeState`, recording
+  whether the Sagelite checkout used to stage Electron resources was `clean`
+  or `dirty`. The Sagelite staging target refreshes this metadata from
+  `SAGELITE_SOURCE`, and the shared Electron validators reject bundles with
+  missing or malformed source-tree-state provenance before worker startup.
 - Change: the async kernel response path now unregisters each per-call worker
   `exit` listener once a Python call returns. This keeps the expanded
   packaged Electron smoke from accumulating stale listeners across many

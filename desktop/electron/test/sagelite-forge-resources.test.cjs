@@ -116,6 +116,7 @@ function validManifest(overrides = {}) {
   return {
     ...expectedSageliteManifest,
     sageliteSourceRevision: "0123456789abcdef0123456789abcdef01234567",
+    sageliteSourceTreeState: "clean",
     pythonPath: [...expectedSagelitePythonPath],
     runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
     requiredResourcePaths: [

@@ -21,6 +21,7 @@ export interface SageliteManifest {
   pythonPlatform?: string;
   smokeContract?: string;
   sageliteSourceRevision: string;
+  sageliteSourceTreeState: "clean" | "dirty";
   resourceRootEnvName: string;
   pythonPath: string[];
   runtimeDependencyPaths: string[];
