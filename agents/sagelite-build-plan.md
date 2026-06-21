@@ -593,6 +593,10 @@ Follow-up snapshot:
   and `IntegerVectors(5, 3)` cardinality. The checks stay within the already
   mandatory tableau, set-partition, subset, and integer-vector resources, so no
   new staged files are required.
+- Change: schema 93 manifests extend the bounded Node.js/Electron
+  finite-field matrix smoke to cover matrix addition and scalar
+  multiplication over `GF(7)`. The checks reuse the existing finite-field and
+  matrix resource surface, so no new mandatory resource files are added.
 
 ## Runtime Milestones
 
