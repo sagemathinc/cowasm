@@ -459,6 +459,10 @@ Follow-up snapshot:
   `sagelite-electron-resources.json` file. This keeps the copied Electron
   bundle self-contained by preventing an otherwise valid resource tree from
   validating against manifest metadata redirected outside the bundle.
+- Change: schema 69 manifests advance the packaged combinatorics and finite
+  set smoke to cover `sage.sets.finite_set_maps.FiniteSetMaps`. The manifest
+  now requires the finite-set maps Python module and Cython helper side module
+  as hashed resources before worker startup.
 
 ## Runtime Milestones
 

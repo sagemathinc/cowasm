@@ -189,6 +189,8 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/sets/disjoint_union_enumerated_sets.py",
   "site-packages/sage/sets/family.cpython-314-wasm32-wasi.so",
   "site-packages/sage/sets/finite_enumerated_set.py",
+  "site-packages/sage/sets/finite_set_map_cy.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/sets/finite_set_maps.py",
   "site-packages/sage/sets/integer_range.py",
   "site-packages/sage/sets/non_negative_integers.py",
   "site-packages/sage/sets/positive_integers.py",
@@ -235,11 +237,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 68,
+  schemaVersion: 69,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-v34",
+  smokeContract: "exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-enumeration-finite-set-maps-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-v35",
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 

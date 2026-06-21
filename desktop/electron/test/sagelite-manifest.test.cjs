@@ -223,6 +223,30 @@ withResourceRoot((root) => {
   touch(root, "python.wasm");
   stageRequiredTools(root);
   stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: [
+        ...expectedSageliteMandatoryResourcePaths.filter(
+          (entry) => entry !== "site-packages/sage/sets/finite_set_maps.py",
+        ),
+        ...expectedSageliteNativeLibraryPaths,
+      ],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths must include the Sagelite Electron mandatory resources/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
   writeManifest(root, validManifest());
   const manifestPath = path.join(root, sageliteManifestName);
   const realManifestPath = path.join(root, "real-sagelite-manifest.json");

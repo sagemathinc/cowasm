@@ -605,6 +605,7 @@ from sage.combinat.set_partition import SetPartitions
 from sage.combinat.subword import Subwords
 from sage.combinat.subset import Subsets
 from sage.combinat.tableau import StandardTableaux, Tableau
+from sage.sets.finite_set_maps import FiniteSetMaps
 p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
 assert p.size() == 7
@@ -640,6 +641,9 @@ assert sorted([sorted([tuple(sorted(block)) for block in p]) for p in SetPartiti
     [(1, 2), (3,)],
     [(1, 3), (2,)],
 ]
+F = FiniteSetMaps([1, 2], [3, 4])
+assert F.cardinality() == 4
+assert [f(1) for f in F] == [3, 3, 4, 4]
 print('sagelite-node-ok combinatorics smoke')"
 run_node_import "integer lists smoke" "import sage.all
 from sage.combinat.integer_lists import IntegerListsLex
@@ -760,11 +764,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=68
+electron_manifest_schema_version=69
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-v34"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-enumeration-finite-set-maps-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-v35"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
@@ -980,6 +984,8 @@ electron_required_paths=(
   "site-packages/sage/sets/disjoint_union_enumerated_sets.py"
   "site-packages/sage/sets/family.cpython-314-wasm32-wasi.so"
   "site-packages/sage/sets/finite_enumerated_set.py"
+  "site-packages/sage/sets/finite_set_map_cy.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/sets/finite_set_maps.py"
   "site-packages/sage/sets/integer_range.py"
   "site-packages/sage/sets/non_negative_integers.py"
   "site-packages/sage/sets/positive_integers.py"
