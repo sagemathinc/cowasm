@@ -337,6 +337,8 @@ F7 = GF(7)
 A = matrix(F7, [[1, 2], [3, 4]])
 assert A.det() == F7(5)
 assert A.inverse() * A == identity_matrix(F7, 2)
+assert A.trace() == F7(5)
+assert A.charpoly()(A) == matrix(F7, [[0, 0], [0, 0]])
 `);
     console.log("sagelite-electron-ok finite-field matrix smoke");
     console.log("sagelite-electron-start Laurent polynomial smoke");
