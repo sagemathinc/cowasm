@@ -510,6 +510,13 @@ Follow-up snapshot:
   isolated Electron worker probe but still trips a function signature mismatch
   inside the combined packaged smoke, so it remains a follow-up runtime-table
   issue.
+- Change: schema 78 manifests now require the core multivariate polynomial
+  startup resources and the packaged Node.js/Electron smoke checks bivariate
+  polynomial arithmetic over `QQ`. This catches bundles that can construct
+  univariate polynomial rings but are missing the `multi_polynomial`,
+  `multi_polynomial_ring`, `multi_polynomial_ring_base`, `polydict`,
+  `commutative_polynomial`, or `term_order` resources needed for practical
+  Sage polynomial-ring work.
 
 ## Runtime Milestones
 

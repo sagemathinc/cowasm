@@ -108,6 +108,12 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/rings/finite_rings/integer_mod_ring.py",
   "site-packages/sage/rings/polynomial/__init__.py",
   "site-packages/sage/rings/polynomial/all.py",
+  "site-packages/sage/rings/polynomial/commutative_polynomial.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/rings/polynomial/multi_polynomial.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/rings/polynomial/multi_polynomial_element.py",
+  "site-packages/sage/rings/polynomial/multi_polynomial_ring.py",
+  "site-packages/sage/rings/polynomial/multi_polynomial_ring_base.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/rings/polynomial/polydict.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/polynomial/polynomial_element.cpython-314-wasm32-wasi.so",
   "site-packages/sage/rings/polynomial/polynomial_element_generic.py",
   "site-packages/sage/rings/polynomial/polynomial_integer_dense_flint.py",
@@ -115,6 +121,7 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/rings/polynomial/polynomial_ring_constructor.py",
   "site-packages/sage/rings/polynomial/polynomial_rational_flint.py",
   "site-packages/sage/rings/polynomial/polynomial_zmod_flint.py",
+  "site-packages/sage/rings/polynomial/term_order.py",
   "site-packages/sage/libs/__init__.py",
   "site-packages/sage/libs/flint/__init__.py",
   "site-packages/sage/libs/flint/flint_sage.cpython-314-wasm32-wasi.so",
@@ -238,11 +245,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 77,
+  schemaVersion: 78,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-polynomial-helpers-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v43",
+  smokeContract: "exact-arithmetic-polynomial-helpers-multivariate-polynomial-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v44",
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 

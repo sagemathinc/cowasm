@@ -710,6 +710,13 @@ ZZt = PolynomialRing(ZZ, 't')
 t = ZZt.gen()
 assert (t**4 - 1).quo_rem(t**2 - 1) == (t**2 + 1, 0)
 print('sagelite-node-ok polynomial helper smoke')"
+run_node_import "multivariate polynomial smoke" "from sage.all import QQ, PolynomialRing
+R = PolynomialRing(QQ, ('x', 'y'))
+x, y = R.gens()
+f = (x + y + 1)**2
+assert f.coefficient({x: 1, y: 1}) == QQ(2)
+assert f.subs({x: 1, y: 2}) == QQ(16)
+print('sagelite-node-ok multivariate polynomial smoke')"
 run_node_import "Hamming code smoke" "import sage.all
 from sage.all import GF
 from sage.coding.hamming_code import HammingCode
@@ -813,11 +820,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=77
+electron_manifest_schema_version=78
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v43"
+electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-multivariate-polynomial-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v44"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
@@ -952,6 +959,12 @@ electron_required_paths=(
   "site-packages/sage/rings/finite_rings/integer_mod_ring.py"
   "site-packages/sage/rings/polynomial/__init__.py"
   "site-packages/sage/rings/polynomial/all.py"
+  "site-packages/sage/rings/polynomial/commutative_polynomial.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/polynomial/multi_polynomial.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/polynomial/multi_polynomial_element.py"
+  "site-packages/sage/rings/polynomial/multi_polynomial_ring.py"
+  "site-packages/sage/rings/polynomial/multi_polynomial_ring_base.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/rings/polynomial/polydict.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/polynomial/polynomial_element.cpython-314-wasm32-wasi.so"
   "site-packages/sage/rings/polynomial/polynomial_element_generic.py"
   "site-packages/sage/rings/polynomial/polynomial_integer_dense_flint.py"
@@ -959,6 +972,7 @@ electron_required_paths=(
   "site-packages/sage/rings/polynomial/polynomial_ring_constructor.py"
   "site-packages/sage/rings/polynomial/polynomial_rational_flint.py"
   "site-packages/sage/rings/polynomial/polynomial_zmod_flint.py"
+  "site-packages/sage/rings/polynomial/term_order.py"
   "site-packages/sage/libs/__init__.py"
   "site-packages/sage/libs/flint/__init__.py"
   "site-packages/sage/libs/flint/flint_sage.cpython-314-wasm32-wasi.so"

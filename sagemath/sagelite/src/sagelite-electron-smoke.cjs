@@ -305,6 +305,11 @@ assert (x**4 - 1)(QQ(2)) == QQ(15)
 ZZt = PolynomialRing(ZZ, 't')
 t = ZZt.gen()
 assert (t**4 - 1).quo_rem(t**2 - 1) == (t**2 + 1, 0)
+S = PolynomialRing(QQ, ('x', 'y'))
+x, y = S.gens()
+f = (x + y + 1)**2
+assert f.coefficient({x: 1, y: 1}) == QQ(2)
+assert f.subs({x: 1, y: 2}) == QQ(16)
 `);
     console.log("sagelite-electron-ok polynomial helper smoke");
     console.log("sagelite-electron-start modular arithmetic extension smoke");

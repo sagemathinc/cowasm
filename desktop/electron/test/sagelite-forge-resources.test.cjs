@@ -434,6 +434,35 @@ withResourceRoot((root) => {
   );
 });
 
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: [
+        ...expectedSageliteMandatoryResourcePaths.filter(
+          (entry) =>
+            entry !==
+            "site-packages/sage/rings/polynomial/multi_polynomial.cpython-314-wasm32-wasi.so",
+        ),
+        ...expectedSageliteNativeLibraryPaths,
+      ],
+    }),
+  );
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /requiredResourcePaths must include the Sagelite Electron mandatory resources/,
+  );
+});
+
 function stageValidResources(root) {
   stagePythonPath(root);
   stageSageEntrypoints(root);
