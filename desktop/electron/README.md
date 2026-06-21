@@ -181,6 +181,9 @@ Schema 77 manifests extend the packaged smoke to cover exact polynomial helper
 behavior, including derivative coefficient lists, integer-polynomial
 quotient/remainder, and rational-polynomial evaluation through the bounded
 Node/Electron worker path.
+Schema 79 manifests extend the packaged multivariate polynomial smoke to cover
+bivariate degree, partial derivatives, monomial coefficients, and zero tests
+through the bounded Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

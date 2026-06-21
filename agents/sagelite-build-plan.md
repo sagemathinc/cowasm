@@ -517,6 +517,11 @@ Follow-up snapshot:
   `multi_polynomial_ring`, `multi_polynomial_ring_base`, `polydict`,
   `commutative_polynomial`, or `term_order` resources needed for practical
   Sage polynomial-ring work.
+- Change: schema 79 manifests extend the bounded Node.js/Electron
+  multivariate polynomial smoke to cover bivariate degree, partial
+  derivatives, monomial coefficients, and zero tests. The added checks stay
+  within the schema 78 polynomial resource surface, so no new mandatory
+  resource paths are added.
 
 ## Runtime Milestones
 

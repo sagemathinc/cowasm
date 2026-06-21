@@ -310,6 +310,12 @@ x, y = S.gens()
 f = (x + y + 1)**2
 assert f.coefficient({x: 1, y: 1}) == QQ(2)
 assert f.subs({x: 1, y: 2}) == QQ(16)
+g = (x + y + 1)**3
+assert g.degree() == 3
+assert g.derivative(x).coefficient({x: 1, y: 1}) == QQ(6)
+assert g.derivative(y).subs({x: 1, y: 2}) == QQ(48)
+assert g.monomial_coefficient(x**2*y) == QQ(3)
+assert (g - (x + y + 1)**3).is_zero()
 `);
     console.log("sagelite-electron-ok polynomial helper smoke");
     console.log("sagelite-electron-start modular arithmetic extension smoke");

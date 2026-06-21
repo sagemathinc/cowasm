@@ -716,6 +716,12 @@ x, y = R.gens()
 f = (x + y + 1)**2
 assert f.coefficient({x: 1, y: 1}) == QQ(2)
 assert f.subs({x: 1, y: 2}) == QQ(16)
+g = (x + y + 1)**3
+assert g.degree() == 3
+assert g.derivative(x).coefficient({x: 1, y: 1}) == QQ(6)
+assert g.derivative(y).subs({x: 1, y: 2}) == QQ(48)
+assert g.monomial_coefficient(x**2*y) == QQ(3)
+assert (g - (x + y + 1)**3).is_zero()
 print('sagelite-node-ok multivariate polynomial smoke')"
 run_node_import "Hamming code smoke" "import sage.all
 from sage.all import GF
@@ -820,11 +826,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=78
+electron_manifest_schema_version=79
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-multivariate-polynomial-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v44"
+electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-multivariate-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v45"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
