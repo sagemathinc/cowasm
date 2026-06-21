@@ -56,6 +56,7 @@ async function main() {
   python.kernel.on("stdout", (data) => process.stdout.write(data));
   python.kernel.on("stderr", (data) => process.stderr.write(data));
   try {
+    console.log("sagelite-electron-start core resources smoke");
     await python.exec(String.raw`
 import sage.all
 import sage.libs.flint.fmpz_poly_sage
@@ -292,6 +293,8 @@ assert D.inverse() * D == matrix(
     [1, 0, 0, 0, 1, 0, 0, 0, 1],
 )
 `);
+    console.log("sagelite-electron-ok core resources smoke");
+    console.log("sagelite-electron-start combinatorics extension smoke");
     await python.exec(String.raw`
 import sage.all
 from sage.combinat.derangements import Derangements
@@ -311,6 +314,7 @@ FSM = FiniteSetMaps([1, 2], [3, 4])
 assert FSM.cardinality() == 4
 assert [f(1) for f in FSM] == [3, 3, 4, 4]
 `);
+    console.log("sagelite-electron-ok combinatorics extension smoke");
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {
     python.terminate();
