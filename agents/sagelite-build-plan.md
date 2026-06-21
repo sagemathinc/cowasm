@@ -578,6 +578,11 @@ Follow-up snapshot:
   enumeration for `Partitions(5)`, and length-constrained enumeration for
   `Partitions(6, length=2)`. The checks use the already mandatory partition
   resource, so no new staged resources are required.
+- Change: schema 90 manifests extend the bounded Node.js/Electron
+  combinatorics smoke to cover partition dominance and conjugation round trips
+  plus composition descent-to-subset helpers. The checks stay within already
+  mandatory partition and composition resources, so no new staged files are
+  required.
 
 ## Runtime Milestones
 

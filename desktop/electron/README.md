@@ -184,6 +184,9 @@ Node/Electron worker path.
 Schema 79 manifests extend the packaged multivariate polynomial smoke to cover
 bivariate degree, partial derivatives, monomial coefficients, and zero tests
 through the bounded Node/Electron worker path.
+Schema 90 manifests extend the packaged combinatorics smoke to cover partition
+dominance and conjugation round trips plus composition descent-to-subset helper
+methods through the bounded Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

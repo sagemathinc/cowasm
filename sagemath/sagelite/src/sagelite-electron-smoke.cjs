@@ -470,6 +470,21 @@ assert sigma.descents() == [1, 3]
 assert sigma.signature() == 1
 `);
     console.log("sagelite-electron-ok combinatorics extension smoke");
+    console.log("sagelite-electron-start partition and composition method smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.combinat.composition import Composition
+from sage.combinat.partition import Partition
+
+p = Partition([4, 2, 1])
+assert p.conjugate().conjugate() == p
+assert p.dominates(Partition([3, 3, 1]))
+assert not Partition([3, 2, 2]).dominates(p)
+comp = Composition([2, 1, 3])
+assert comp.descents() == [1, 2]
+assert comp.to_subset() == {2, 3}
+`);
+    console.log("sagelite-electron-ok partition and composition method smoke");
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {
     python.terminate();

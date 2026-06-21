@@ -182,7 +182,8 @@ The combinatorics smoke covers partitions, partition enumeration, permutations, 
 set partitions, subsets, combinations, integer-vector enumeration, and finite
 set maps, larger perfect-matching, combination, and set-partition cardinality
 checks, ordered and unordered tuple enumeration, partition hook/arm/leg
-statistics, and permutation inversion/descent/signature helpers. It then reruns
+statistics, partition dominance, composition descent-to-subset helpers, and
+permutation inversion/descent/signature helpers. It then reruns
 the same smoke from a relocated copy of that resources tree, which catches
 build-output absolute path
 assumptions and incomplete resource copies before the resources are handed to
