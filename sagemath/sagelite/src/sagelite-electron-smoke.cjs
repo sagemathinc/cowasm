@@ -83,6 +83,7 @@ from sage.coding.hamming_code import HammingCode
 from sage.combinat.combination import Combinations
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.composition_signed import SignedCompositions
+from sage.combinat.integer_lists import IntegerListsLex
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition
 from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
@@ -151,6 +152,11 @@ assert Composition([2, 1]).size() == 3
 assert Compositions(4).cardinality() == 8
 assert SignedCompositions(3).cardinality() == 18
 assert [list(c) for c in SignedCompositions(2)] == [[1, 1], [1, -1], [-1, 1], [-1, -1], [2], [-2]]
+IL = IntegerListsLex(4, length=3)
+assert IL.cardinality() == 15
+assert list(IL.first()) == [4, 0, 0]
+assert list(IL.last()) == [0, 0, 4]
+assert [list(v) for v in IL[:4]] == [[4, 0, 0], [3, 1, 0], [3, 0, 1], [2, 2, 0]]
 T = Tableau([[1, 2], [3]])
 assert T.shape() == [2, 1]
 assert T.conjugate() == Tableau([[1, 3], [2]])

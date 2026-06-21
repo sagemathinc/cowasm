@@ -623,6 +623,14 @@ assert sorted([sorted([tuple(sorted(block)) for block in p]) for p in SetPartiti
     [(1, 3), (2,)],
 ]
 print('sagelite-node-ok combinatorics smoke')"
+run_node_import "integer lists smoke" "import sage.all
+from sage.combinat.integer_lists import IntegerListsLex
+L = IntegerListsLex(4, length=3)
+assert L.cardinality() == 15
+assert list(L.first()) == [4, 0, 0]
+assert list(L.last()) == [0, 0, 4]
+assert [list(v) for v in L[:4]] == [[4, 0, 0], [3, 1, 0], [3, 0, 1], [2, 2, 0]]
+print('sagelite-node-ok integer lists smoke')"
 run_node_import "modular arithmetic smoke" "from sage.all import ZZ, Integers, GF
 I = ZZ.ideal(7)
 assert I.gen() == ZZ(7)
@@ -716,11 +724,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=57
+electron_manifest_schema_version=58
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-crt-valuation-quotient-ring-combinat-cypari2-pari-error-recovery-v23"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-cypari2-pari-error-recovery-v24"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."

@@ -415,6 +415,11 @@ Follow-up snapshot:
   signed composition construction and enumeration through
   `sage.combinat.composition_signed`. The manifest now requires the signed
   composition module as a hashed resource before worker startup.
+- Change: schema 58 manifests advance the packaged smoke contract to cover
+  direct integer-list enumeration through `sage.combinat.integer_lists`.
+  The Node.js and Electron-shaped smokes now exercise `IntegerListsLex`
+  directly, keeping the integer-list Cython side modules tied to observable
+  bounded runtime behavior.
 
 ## Runtime Milestones
 
