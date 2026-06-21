@@ -187,6 +187,9 @@ through the bounded Node/Electron worker path.
 Schema 90 manifests extend the packaged combinatorics smoke to cover partition
 dominance and conjugation round trips plus composition descent-to-subset helper
 methods through the bounded Node/Electron worker path.
+Schema 91 manifests extend that combinatorics slice to cover finite
+permutation enumeration plus permutation order and cycle-type helpers through
+the same bounded worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

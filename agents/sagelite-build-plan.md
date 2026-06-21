@@ -583,6 +583,10 @@ Follow-up snapshot:
   plus composition descent-to-subset helpers. The checks stay within already
   mandatory partition and composition resources, so no new staged files are
   required.
+- Change: schema 91 manifests extend the bounded Node.js/Electron
+  combinatorics smoke to cover finite permutation enumeration plus permutation
+  order and cycle-type helpers. The checks stay within the already mandatory
+  permutation resources, so no new staged files are required.
 
 ## Runtime Milestones
 

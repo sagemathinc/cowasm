@@ -92,7 +92,7 @@ from sage.combinat.integer_lists import IntegerListsLex
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition
 from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
-from sage.combinat.permutation import Permutation
+from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.set_partition import SetPartitions
 from sage.combinat.subset import Subsets
 from sage.combinat.tableau import StandardTableaux, Tableau
@@ -468,6 +468,18 @@ sigma = Permutation([4, 1, 3, 2])
 assert sigma.number_of_inversions() == 4
 assert sigma.descents() == [1, 3]
 assert sigma.signature() == 1
+assert Permutations(3).cardinality() == 6
+assert Permutations(3).list() == [
+    Permutation([1, 2, 3]),
+    Permutation([1, 3, 2]),
+    Permutation([2, 1, 3]),
+    Permutation([2, 3, 1]),
+    Permutation([3, 1, 2]),
+    Permutation([3, 2, 1]),
+]
+rho = Permutation([3, 1, 2])
+assert rho.order() == 3
+assert rho.cycle_type() == [3]
 `);
     console.log("sagelite-electron-ok combinatorics extension smoke");
     console.log("sagelite-electron-start partition and composition method smoke");

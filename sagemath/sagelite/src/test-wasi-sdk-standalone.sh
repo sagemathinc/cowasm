@@ -603,7 +603,7 @@ from sage.combinat.derangements import Derangements
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
-from sage.combinat.permutation import Permutation
+from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.set_partition import SetPartitions
 from sage.combinat.subword import Subwords
 from sage.combinat.subset import Subsets
@@ -651,6 +651,17 @@ tau = Permutation([4, 1, 3, 2])
 assert tau.number_of_inversions() == 4
 assert tau.descents() == [1, 3]
 assert tau.signature() == 1
+assert Permutations(3).cardinality() == 6
+assert Permutations(3).list() == [
+    Permutation([1, 2, 3]),
+    Permutation([1, 3, 2]),
+    Permutation([2, 1, 3]),
+    Permutation([2, 3, 1]),
+    Permutation([3, 1, 2]),
+    Permutation([3, 2, 1]),
+]
+assert sigma.order() == 3
+assert sigma.cycle_type() == [3]
 assert [sorted(s) for s in Subsets([1, 2, 3], 2)] == [[1, 2], [1, 3], [2, 3]]
 assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
 assert [list(v) for v in IntegerVectors(4, 2)] == [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
@@ -897,11 +908,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=90
+electron_manifest_schema_version=91
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-sorted-required-resources-v56"
+electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-sorted-required-resources-v57"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
