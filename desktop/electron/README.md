@@ -137,6 +137,10 @@ Electron resource bundle.
 Schema 60 manifests extend the packaged algebra smoke to cover free abelian
 monoid construction and Cython-backed element arithmetic, so missing
 `sage.monoids` startup files fail validation before worker startup.
+Schema 62 manifests extend the packaged exact-helper smoke to cover
+`sage.misc.flatten` and `sage.misc.functional.cyclotomic_polynomial`, so
+bundles missing the functional helper modules used by common Sage-style
+notation fail validation before worker startup.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

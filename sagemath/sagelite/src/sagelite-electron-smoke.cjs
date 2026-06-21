@@ -76,6 +76,8 @@ from sage.all import (
     xgcd,
 )
 from sage.arith.misc import CRT, valuation
+from sage.misc.flatten import flatten
+from sage.misc.functional import cyclotomic_polynomial
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.modules.free_module import FreeModule
 from sage.rings.factorint_pari import factor_using_pari
@@ -105,6 +107,10 @@ assert g2 == ZZ(2)
 assert s2 * ZZ(240) + t2 * ZZ(46) == g2
 assert CRT(2, 3, 5, 7) == ZZ(17)
 assert valuation(ZZ(360), 2) == 3
+assert flatten([[1, [2]], 3]) == [1, 2, 3]
+phi5 = cyclotomic_polynomial(5, 'x')
+assert phi5.degree() == 4
+assert phi5(1) == 5
 assert binomial(20, 8) == ZZ(125970)
 assert factorial(10) == ZZ(3628800)
 assert ZZ(-42).abs() == ZZ(42)

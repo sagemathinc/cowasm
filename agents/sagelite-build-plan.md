@@ -428,6 +428,10 @@ Follow-up snapshot:
   field when constructing the worker environment. This makes the resource-root
   environment variable part of the validated bundle contract instead of an
   implicit loader-side convention.
+- Change: schema 62 manifests advance the packaged smoke contract to cover
+  Sage exact-helper notation through `sage.misc.flatten` and
+  `sage.misc.functional.cyclotomic_polynomial`. The manifest now requires
+  those helper modules as hashed resources before worker startup.
 
 ## Runtime Milestones
 

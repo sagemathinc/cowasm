@@ -47,6 +47,8 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/arith/rational_reconstruction.cpython-314-wasm32-wasi.so",
   "site-packages/sage/arith/srange.cpython-314-wasm32-wasi.so",
   "site-packages/sage/misc/__init__.py",
+  "site-packages/sage/misc/flatten.py",
+  "site-packages/sage/misc/functional.py",
   "site-packages/sage/misc/misc_c.cpython-314-wasm32-wasi.so",
   "site-packages/sage/functions/__init__.py",
   "site-packages/sage/functions/all.py",
@@ -230,11 +232,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 61,
+  schemaVersion: 62,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v27",
+  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v28",
   resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 

@@ -663,6 +663,14 @@ assert s * ZZ(240) + t * ZZ(46) == g
 assert CRT(2, 3, 5, 7) == ZZ(17)
 assert valuation(ZZ(360), 2) == 3
 print('sagelite-node-ok number theory helper smoke')"
+run_node_import "functional helper smoke" "import sage.all
+from sage.misc.flatten import flatten
+from sage.misc.functional import cyclotomic_polynomial
+assert flatten([[1, [2]], 3]) == [1, 2, 3]
+phi5 = cyclotomic_polynomial(5, 'x')
+assert phi5.degree() == 4
+assert phi5(1) == 5
+print('sagelite-node-ok functional helper smoke')"
 run_node_import "explicit FLINT polynomial rejection" "from sage.all import ZZ, PolynomialRing
 try:
     PolynomialRing(ZZ, 'x', implementation='FLINT')
@@ -742,11 +750,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=61
+electron_manifest_schema_version=62
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v27"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v28"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
@@ -820,6 +828,8 @@ electron_required_paths=(
   "site-packages/sage/arith/rational_reconstruction.cpython-314-wasm32-wasi.so"
   "site-packages/sage/arith/srange.cpython-314-wasm32-wasi.so"
   "site-packages/sage/misc/__init__.py"
+  "site-packages/sage/misc/flatten.py"
+  "site-packages/sage/misc/functional.py"
   "site-packages/sage/misc/misc_c.cpython-314-wasm32-wasi.so"
   "site-packages/sage/functions/__init__.py"
   "site-packages/sage/functions/all.py"
