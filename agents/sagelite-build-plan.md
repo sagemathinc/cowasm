@@ -420,6 +420,9 @@ Follow-up snapshot:
   The Node.js and Electron-shaped smokes now exercise `IntegerListsLex`
   directly, keeping the integer-list Cython side modules tied to observable
   bounded runtime behavior.
+- Change: schema 60 manifests extend the packaged algebra smoke to cover
+  `FreeAbelianMonoid` construction and Cython-backed element arithmetic, with
+  the corresponding `sage.monoids` files listed as hashed required resources.
 
 ## Runtime Milestones
 

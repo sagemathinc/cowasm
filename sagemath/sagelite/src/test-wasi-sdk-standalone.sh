@@ -584,6 +584,14 @@ assert (c**3 * d**5)**2 == c**2 * d**4
 assert c**4 == H.one()
 assert d**6 == H.one()
 print('sagelite-node-ok finite abelian group smoke')"
+run_node_import "free abelian monoid smoke" "import sage.all
+from sage.monoids.free_abelian_monoid import FreeAbelianMonoid
+M = FreeAbelianMonoid(3, 'xyz')
+x, y, z = M.gens()
+assert x * y * x == x**2 * y
+assert (x * y * z).parent() is M
+assert (x**3 * z**2).list() == [3, 0, 2]
+print('sagelite-node-ok free abelian monoid smoke')"
 run_node_import "combinatorics smoke" "import sage.all
 from sage.combinat.combination import Combinations
 from sage.combinat.composition import Composition, Compositions
@@ -734,11 +742,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=59
+electron_manifest_schema_version=60
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-cypari2-pari-error-recovery-sage-pari-boundary-v25"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-cypari2-pari-error-recovery-sage-pari-boundary-v26"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."
@@ -832,10 +840,12 @@ electron_required_paths=(
   "site-packages/sage/categories/finite_dimensional_modules_with_basis.py"
   "site-packages/sage/categories/modules.py"
   "site-packages/sage/categories/modules_with_basis.py"
+  "site-packages/sage/categories/monoids.py"
   "site-packages/sage/structure/__init__.py"
   "site-packages/sage/structure/category_object.cpython-314-wasm32-wasi.so"
   "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so"
   "site-packages/sage/structure/coerce.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/structure/factory.cpython-314-wasm32-wasi.so"
   "site-packages/sage/structure/parent.cpython-314-wasm32-wasi.so"
   "site-packages/sage/structure/parent_old.cpython-314-wasm32-wasi.so"
   "site-packages/sage/structure/sequence.py"
@@ -904,6 +914,10 @@ electron_required_paths=(
   "site-packages/sage/groups/abelian_gps/abelian_group.py"
   "site-packages/sage/groups/abelian_gps/abelian_group_element.py"
   "site-packages/sage/groups/abelian_gps/element_base.py"
+  "site-packages/sage/monoids/__init__.py"
+  "site-packages/sage/monoids/free_abelian_monoid.py"
+  "site-packages/sage/monoids/free_abelian_monoid_element.cpython-314-wasm32-wasi.so"
+  "site-packages/sage/monoids/monoid.py"
   "site-packages/sage/coding/__init__.py"
   "site-packages/sage/coding/abstract_code.py"
   "site-packages/sage/coding/decoder.py"

@@ -134,6 +134,9 @@ Node/Electron worker path.
 Schema 53 manifests extend the packaged coding smoke to cover Hamming code
 minimum-distance computation, keeping that runtime slice tied to the validated
 Electron resource bundle.
+Schema 60 manifests extend the packaged algebra smoke to cover free abelian
+monoid construction and Cython-backed element arithmetic, so missing
+`sage.monoids` startup files fail validation before worker startup.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

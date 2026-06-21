@@ -68,9 +68,11 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/categories/finite_dimensional_modules_with_basis.py",
   "site-packages/sage/categories/modules.py",
   "site-packages/sage/categories/modules_with_basis.py",
+  "site-packages/sage/categories/monoids.py",
   "site-packages/sage/structure/category_object.cpython-314-wasm32-wasi.so",
   "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so",
   "site-packages/sage/structure/coerce.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/structure/factory.cpython-314-wasm32-wasi.so",
   "site-packages/sage/structure/parent.cpython-314-wasm32-wasi.so",
   "site-packages/sage/structure/parent_old.cpython-314-wasm32-wasi.so",
   "site-packages/sage/structure/__init__.py",
@@ -140,6 +142,10 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "site-packages/sage/groups/abelian_gps/abelian_group.py",
   "site-packages/sage/groups/abelian_gps/abelian_group_element.py",
   "site-packages/sage/groups/abelian_gps/element_base.py",
+  "site-packages/sage/monoids/__init__.py",
+  "site-packages/sage/monoids/free_abelian_monoid.py",
+  "site-packages/sage/monoids/free_abelian_monoid_element.cpython-314-wasm32-wasi.so",
+  "site-packages/sage/monoids/monoid.py",
   "site-packages/sage/coding/__init__.py",
   "site-packages/sage/coding/abstract_code.py",
   "site-packages/sage/coding/decoder.py",
@@ -224,11 +230,11 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 59,
+  schemaVersion: 60,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-cypari2-pari-error-recovery-sage-pari-boundary-v25",
+  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-cypari2-pari-error-recovery-sage-pari-boundary-v26",
 };
 
 const expectedSageliteManifestFields = Object.freeze([

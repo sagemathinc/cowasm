@@ -80,6 +80,7 @@ from sage.matrix.constructor import identity_matrix, matrix
 from sage.modules.free_module import FreeModule
 from sage.rings.factorint_pari import factor_using_pari
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
+from sage.monoids.free_abelian_monoid import FreeAbelianMonoid
 from sage.coding.hamming_code import HammingCode
 from sage.combinat.combination import Combinations
 from sage.combinat.composition import Composition, Compositions
@@ -137,6 +138,11 @@ assert (c**2 * d**3).order() == 2
 assert (c**3 * d**5)**2 == c**2 * d**4
 assert c**4 == A4x6.one()
 assert d**6 == A4x6.one()
+FAM = FreeAbelianMonoid(3, 'xyz')
+xm, ym, zm = FAM.gens()
+assert xm * ym * xm == xm**2 * ym
+assert (xm * ym * zm).parent() is FAM
+assert (xm**3 * zm**2).list() == [3, 0, 2]
 p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
 assert p.size() == 7
