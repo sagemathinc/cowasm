@@ -716,6 +716,13 @@ t = S.gen()
 assert (t**3 + 2*t + 1).derivative() == 3*t**2 + 2
 assert (t**2 + 1)(GF(7)(3)) == GF(7)(3)
 print('sagelite-node-ok finite-field polynomial smoke')"
+run_node_import "finite-field matrix smoke" "from sage.all import GF
+from sage.matrix.constructor import identity_matrix, matrix
+F7 = GF(7)
+A = matrix(F7, [[1, 2], [3, 4]])
+assert A.det() == F7(5)
+assert A.inverse() * A == identity_matrix(F7, 2)
+print('sagelite-node-ok finite-field matrix smoke')"
 run_node_import "multivariate polynomial smoke" "from sage.all import QQ, PolynomialRing
 R = PolynomialRing(QQ, ('x', 'y'))
 x, y = R.gens()
@@ -840,11 +847,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=81
+electron_manifest_schema_version=82
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v47"
+electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-manifest-self-contained-sorted-side-modules-v48"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then

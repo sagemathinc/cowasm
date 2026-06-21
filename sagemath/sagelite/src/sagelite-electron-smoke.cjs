@@ -328,6 +328,17 @@ assert (t**3 + 2*t + 1).derivative() == 3*t**2 + 2
 assert (t**2 + 1)(GF(7)(3)) == GF(7)(3)
 `);
     console.log("sagelite-electron-ok finite-field polynomial smoke");
+    console.log("sagelite-electron-start finite-field matrix smoke");
+    await python.exec(String.raw`
+from sage.all import GF
+from sage.matrix.constructor import identity_matrix, matrix
+
+F7 = GF(7)
+A = matrix(F7, [[1, 2], [3, 4]])
+assert A.det() == F7(5)
+assert A.inverse() * A == identity_matrix(F7, 2)
+`);
+    console.log("sagelite-electron-ok finite-field matrix smoke");
     console.log("sagelite-electron-start Laurent polynomial smoke");
     await python.exec(String.raw`
 from sage.all import QQ, LaurentPolynomialRing

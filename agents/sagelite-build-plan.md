@@ -535,6 +535,10 @@ Follow-up snapshot:
   `QQ` and check multiplication, degree, and valuation, which extends the
   packaged exact-math contract beyond ordinary univariate and multivariate
   polynomial rings.
+- Change: schema 82 manifests extend the bounded Node.js/Electron linear
+  algebra smoke to cover determinant and inversion for matrices over `GF(7)`.
+  The check reuses the existing finite-field and matrix resource surface, so
+  no new mandatory resource files are added.
 
 ## Runtime Milestones
 
