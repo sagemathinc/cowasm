@@ -567,6 +567,11 @@ Follow-up snapshot:
   files, so no new staged resources are required. Weighted integer-vector
   enumeration and `FiniteEnumeratedSet` still exit or trap before the combined
   packaged smoke marker and remain follow-up runtime-table work.
+- Change: schema 88 manifests require sorted `requiredResourcePaths`. The
+  Sagelite staging target writes the hashed required-resource inventory in
+  sorted order, and the shared Electron validators reject current-schema
+  bundles with nondeterministic mandatory-resource ordering before worker
+  startup.
 
 ## Runtime Milestones
 

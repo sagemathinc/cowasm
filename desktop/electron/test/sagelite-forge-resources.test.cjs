@@ -121,7 +121,7 @@ function validManifest(overrides = {}) {
     requiredResourcePaths: [
       ...expectedSageliteMandatoryResourcePaths,
       ...expectedSageliteNativeLibraryPaths,
-    ],
+    ].sort(),
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
     sideModulePaths: [
       ...expectedSageliteMandatorySideModulePaths(),

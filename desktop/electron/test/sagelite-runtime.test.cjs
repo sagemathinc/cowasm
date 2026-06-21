@@ -128,7 +128,7 @@ function validManifest(overrides = {}) {
     requiredResourcePaths: [
       ...expectedSageliteMandatoryResourcePaths,
       ...expectedSageliteNativeLibraryPaths,
-    ],
+    ].sort(),
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
     sideModulePaths: [
       ...expectedSageliteMandatorySideModulePaths(),
@@ -374,7 +374,7 @@ withTempDir((root) => {
           ...expectedSageliteMandatoryResourcePaths,
           "site-packages/electron_probe.py",
           ...expectedSageliteNativeLibraryPaths,
-        ],
+        ].sort(),
       }),
     );
 

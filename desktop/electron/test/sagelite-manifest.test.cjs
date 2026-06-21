@@ -111,10 +111,10 @@ function validManifest(overrides = {}) {
     sageliteSourceRevision: "0123456789abcdef0123456789abcdef01234567",
     pythonPath: [...expectedSagelitePythonPath],
     runtimeDependencyPaths: [...expectedSageliteRuntimeDependencyPaths],
-    requiredResourcePaths: [
+    requiredResourcePaths: sorted([
       ...expectedSageliteMandatoryResourcePaths,
       ...expectedSageliteNativeLibraryPaths,
-    ],
+    ]),
     nativeLibraryPaths: [...expectedSageliteNativeLibraryPaths],
     sideModulePaths: sorted([
       ...expectedSageliteMandatorySideModulePaths(),
@@ -1156,6 +1156,28 @@ withResourceRoot((root) => {
 
 withResourceRoot((root) => {
   stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: sorted([
+        ...expectedSageliteMandatoryResourcePaths,
+        ...expectedSageliteNativeLibraryPaths,
+      ]).reverse(),
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths entries must be sorted/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
   stageNativeLibraries(root);
   writeManifest(root, validManifest({ requiredResourcePaths: undefined }));
 
@@ -1713,9 +1735,9 @@ withResourceRoot((root) => {
   writeManifest(
     root,
     validManifest({
-      requiredResourcePaths: [
+      requiredResourcePaths: sorted([
         ...expectedSageliteMandatoryResourcePaths,
-      ],
+      ]),
     }),
   );
 
