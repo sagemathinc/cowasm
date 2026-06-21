@@ -385,6 +385,11 @@ assert ZZ(10).digits(2) == [0, 1, 0, 1]
 assert ZZ(12345).quo_rem(ZZ(97)) == (ZZ(127), ZZ(26))
 assert ZZ(144).sqrtrem() == (ZZ(12), ZZ(0))
 assert ZZ(145).sqrtrem() == (ZZ(12), ZZ(1))
+assert ZZ(97).is_prime()
+assert not ZZ(221).is_prime()
+assert ZZ(2).powermod(10, 17) == ZZ(4)
+assert ZZ(35).gcd(ZZ(21)) == ZZ(7)
+assert ZZ(35).lcm(ZZ(21)) == ZZ(105)
 assert lcm([ZZ(6), ZZ(10), ZZ(15)]) == ZZ(30)
 assert QQ(45, 28).floor() == 1
 assert QQ(45, 28).ceil() == 2

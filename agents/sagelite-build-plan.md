@@ -554,6 +554,13 @@ Follow-up snapshot:
   linear-algebra ladder now also mirrors the Electron smoke's existing
   rank/echelon check over `QQ`. These checks stay within the current matrix
   resource surface, so no new mandatory resource files are added.
+- Change: schema 86 manifests extend the bounded Node.js/Electron integer
+  helper smoke to cover direct Sage integer methods: primality testing,
+  modular exponentiation, and integer `gcd`/`lcm`. The checks stay within the
+  current exact-arithmetic resource surface, so no new mandatory resource
+  files are added. Divisor enumeration, Euler phi, sigma, and `next_prime`
+  still reach the current `__wasm_setjmp` import gap and remain follow-up
+  runtime-table work.
 
 ## Runtime Milestones
 
