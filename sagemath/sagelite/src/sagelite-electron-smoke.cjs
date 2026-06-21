@@ -294,6 +294,19 @@ assert D.inverse() * D == matrix(
 )
 `);
     console.log("sagelite-electron-ok core resources smoke");
+    console.log("sagelite-electron-start polynomial helper smoke");
+    await python.exec(String.raw`
+from sage.all import ZZ, QQ, PolynomialRing
+
+R = PolynomialRing(QQ, 'x')
+x = R.gen()
+assert (x**3 - 2*x + 1).derivative().list() == [QQ(-2), QQ(0), QQ(3)]
+assert (x**4 - 1)(QQ(2)) == QQ(15)
+ZZt = PolynomialRing(ZZ, 't')
+t = ZZt.gen()
+assert (t**4 - 1).quo_rem(t**2 - 1) == (t**2 + 1, 0)
+`);
+    console.log("sagelite-electron-ok polynomial helper smoke");
     console.log("sagelite-electron-start modular arithmetic extension smoke");
     await python.exec(String.raw`
 from sage.all import GF, Integers

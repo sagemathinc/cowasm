@@ -102,7 +102,8 @@ The Node.js runtime probe now completes the second exact-math smoke from
 finite fields, two-argument rational construction,
 univariate polynomial construction/arithmetic over `QQ`, integer
 polynomial construction/arithmetic over default `ZZ[x]`, polynomial division,
-derivatives, evaluation, integer factorization with factor inspection, Sage
+derivatives, coefficient lists, evaluation, integer factorization with factor
+inspection, Sage
 arithmetic helpers including `gcd`, `xgcd`, `binomial`, `factorial`, list
 LCM, list CRT, and repeated-prime valuation, and `prime_pi(10**6)`. The probe
 also checks exact dense matrix determinant,

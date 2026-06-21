@@ -177,6 +177,10 @@ Schema 76 manifests extend the packaged exact-arithmetic smoke to cover
 additional integer helper behavior, including CRT over lists, repeated-prime
 valuation, negative upper-argument binomial coefficients, and another list LCM
 case through the bounded Node/Electron worker path.
+Schema 77 manifests extend the packaged smoke to cover exact polynomial helper
+behavior, including derivative coefficient lists, integer-polynomial
+quotient/remainder, and rational-polynomial evaluation through the bounded
+Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

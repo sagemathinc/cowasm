@@ -502,6 +502,14 @@ Follow-up snapshot:
   LCM case. The added checks stay within the current exact-arithmetic runtime
   surface and deliberately do not promote list `gcd`, which still imports the
   multivariate polynomial sequence path that is outside this packaged slice.
+- Change: schema 77 manifests extend the bounded Node.js/Electron smoke to
+  cover exact polynomial helper behavior: derivative coefficient lists,
+  integer-polynomial quotient/remainder, and rational-polynomial evaluation.
+  The checks use the already packaged polynomial resource surface, so no new
+  mandatory resource paths are added. Rational matrix solving passes in an
+  isolated Electron worker probe but still trips a function signature mismatch
+  inside the combined packaged smoke, so it remains a follow-up runtime-table
+  issue.
 
 ## Runtime Milestones
 
