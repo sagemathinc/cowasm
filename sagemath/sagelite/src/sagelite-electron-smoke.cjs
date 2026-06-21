@@ -152,16 +152,19 @@ assert (xm**3 * zm**2).list() == [3, 0, 2]
 p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
 assert p.size() == 7
+assert list(p) == [4, 2, 1]
 assert PerfectMatchings(4).cardinality() == 3
 assert PerfectMatching([2, 1, 4, 3]).number_of_crossings() == 0
 assert PerfectMatching([(1, 4), (2, 3)]).is_noncrossing()
 sigma = Permutation([3, 1, 2])
 assert sigma.inverse() == Permutation([2, 3, 1])
 assert sigma.to_cycles() == [(1, 3, 2)]
+assert list(sigma) == [3, 1, 2]
 assert [sorted(s) for s in Subsets([1, 2, 3], 2)] == [[1, 2], [1, 3], [2, 3]]
 assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
 assert [list(v) for v in IntegerVectors(4, 2)] == [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
 assert Composition([2, 1]).size() == 3
+assert list(Composition([2, 1])) == [2, 1]
 assert Compositions(4).cardinality() == 8
 assert SignedCompositions(3).cardinality() == 18
 assert [list(c) for c in SignedCompositions(2)] == [[1, 1], [1, -1], [-1, 1], [-1, -1], [2], [-2]]

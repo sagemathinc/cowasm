@@ -435,6 +435,14 @@ Follow-up snapshot:
 - Change: schema 63 manifests advance the packaged dense-matrix smoke to cover
   exact rank and echelon-form computation over `QQ`, keeping this linear
   algebra slice under the same bounded Node/Electron worker contract.
+- Change: schema 64 manifests advance the packaged combinatorics smoke to
+  cover list round-trips for partitions, permutations, and compositions. This
+  expands the bounded Node/Electron combinatorics contract without adding new
+  mandatory resource files. Matrix Smith normal form and the standalone vector
+  constructor remain excluded from the Electron smoke because they reach an
+  async-worker `nextafterf` import gap; block-matrix construction and richer
+  combinatorics methods are also excluded because they produced function
+  signature mismatches in the full packaged smoke.
 
 ## Runtime Milestones
 
