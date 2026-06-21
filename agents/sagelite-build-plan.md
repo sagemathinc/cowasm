@@ -587,6 +587,12 @@ Follow-up snapshot:
   combinatorics smoke to cover finite permutation enumeration plus permutation
   order and cycle-type helpers. The checks stay within the already mandatory
   permutation resources, so no new staged files are required.
+- Change: schema 92 manifests extend the bounded Node.js/Electron
+  combinatorics smoke to cover fixed-shape standard tableaux, larger standard
+  tableau shape enumeration, `SetPartitions(5)`, larger subset cardinality,
+  and `IntegerVectors(5, 3)` cardinality. The checks stay within the already
+  mandatory tableau, set-partition, subset, and integer-vector resources, so no
+  new staged files are required.
 
 ## Runtime Milestones
 

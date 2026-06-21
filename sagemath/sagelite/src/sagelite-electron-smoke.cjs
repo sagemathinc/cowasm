@@ -497,6 +497,25 @@ assert comp.descents() == [1, 2]
 assert comp.to_subset() == {2, 3}
 `);
     console.log("sagelite-electron-ok partition and composition method smoke");
+    console.log("sagelite-electron-start tableau and enumerated combinatorics smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat.set_partition import SetPartitions
+from sage.combinat.subset import Subsets
+from sage.combinat.tableau import StandardTableaux, Tableau
+
+assert StandardTableaux([2, 1]).list() == [
+    Tableau([[1, 3], [2]]),
+    Tableau([[1, 2], [3]]),
+]
+assert StandardTableaux([2, 2]).cardinality() == 2
+assert [list(t.shape()) for t in StandardTableaux(4)[:5]] == [[4], [3, 1], [3, 1], [3, 1], [2, 2]]
+assert SetPartitions(5).cardinality() == 52
+assert Subsets([1, 2, 3, 4], 3).cardinality() == 4
+assert IntegerVectors(5, 3).cardinality() == 21
+`);
+    console.log("sagelite-electron-ok tableau and enumerated combinatorics smoke");
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {
     python.terminate();

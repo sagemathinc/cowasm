@@ -190,6 +190,10 @@ methods through the bounded Node/Electron worker path.
 Schema 91 manifests extend that combinatorics slice to cover finite
 permutation enumeration plus permutation order and cycle-type helpers through
 the same bounded worker path.
+Schema 92 manifests extend the packaged combinatorics smoke to cover
+fixed-shape standard tableaux, larger standard-tableau shape enumeration,
+`SetPartitions(5)`, larger subset cardinality, and `IntegerVectors(5, 3)`
+cardinality through the same bounded worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for
