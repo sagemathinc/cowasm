@@ -298,6 +298,8 @@ assert D.inverse() * D == matrix(
     await python.exec(String.raw`
 import sage.all
 from sage.combinat.derangements import Derangements
+from sage.combinat.partition import Partition
+from sage.combinat.permutation import Permutation
 from sage.combinat.subword import Subwords
 from sage.sets.finite_set_maps import FiniteSetMaps
 from sage.combinat.tuple import Tuples, UnorderedTuples
@@ -322,6 +324,14 @@ assert Tuples([1, 2], 2).list() == [(1, 1), (2, 1), (1, 2), (2, 2)]
 assert UnorderedTuples([1, 2, 3], 2).list() == [(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)]
 assert Tuples([1, 2, 3], 2).cardinality() == 9
 assert UnorderedTuples([1, 2], 3).list() == [(1, 1, 1), (1, 1, 2), (1, 2, 2), (2, 2, 2)]
+p = Partition([4, 2, 1])
+assert p.hook_lengths() == [[6, 4, 2, 1], [3, 1], [1]]
+assert p.arm_lengths() == [[3, 2, 1, 0], [1, 0], [0]]
+assert p.leg_lengths() == [[2, 1, 0, 0], [1, 0], [0]]
+sigma = Permutation([4, 1, 3, 2])
+assert sigma.number_of_inversions() == 4
+assert sigma.descents() == [1, 3]
+assert sigma.signature() == 1
 `);
     console.log("sagelite-electron-ok combinatorics extension smoke");
     console.log("sagelite-electron-ok relative resources smoke");

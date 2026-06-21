@@ -163,6 +163,9 @@ stale or hand-edited side-module lists.
 Schema 72 manifests extend the packaged combinatorics smoke to cover larger
 finite-set-map and tuple enumeration cases through the bounded Node/Electron
 worker path.
+Schema 73 manifests extend the packaged combinatorics smoke to cover partition
+hook/arm/leg statistics and permutation inversion/descent/signature helpers
+through the bounded Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

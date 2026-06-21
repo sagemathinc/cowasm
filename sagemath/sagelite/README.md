@@ -177,9 +177,10 @@ arithmetic, and the coding slice verifies binary Hamming code minimum-distance
 computation.
 The combinatorics smoke covers partitions, permutations, tableaux,
 set partitions, subsets, combinations, integer-vector enumeration, and finite
-set maps, plus ordered and unordered tuple enumeration. It then reruns the same
-smoke from a relocated copy of that resources tree, which catches build-output
-absolute path
+set maps, ordered and unordered tuple enumeration, partition hook/arm/leg
+statistics, and permutation inversion/descent/signature helpers. It then reruns
+the same smoke from a relocated copy of that resources tree, which catches
+build-output absolute path
 assumptions and incomplete resource copies before the resources are handed to
 Electron packaging. The same smoke is exposed from
 `desktop/electron` as `pnpm test:sagelite`, which reruns it through the Electron
