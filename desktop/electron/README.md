@@ -148,6 +148,9 @@ Schema 66 manifests extend the packaged combinatorics smoke to cover
 derangement cardinality and listing through `sage.combinat.derangements`,
 keeping that finite-enumerated combinatorics slice tied to the validated
 Electron resource bundle.
+Schema 67 manifests extend the packaged combinatorics smoke to cover larger
+derangement and subword enumeration cases through the bounded Node/Electron
+worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

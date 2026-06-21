@@ -452,6 +452,9 @@ Follow-up snapshot:
   The manifest now requires the derangements module as a hashed resource before
   worker startup, so the packaged Node.js/Electron contract includes this
   additional finite-enumerated combinatorics path.
+- Change: schema 67 manifests advance the packaged combinatorics smoke to
+  cover larger derangement and subword enumeration cases through the bounded
+  Node/Electron worker path, without adding a new mandatory resource file.
 
 ## Runtime Milestones
 

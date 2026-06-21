@@ -299,9 +299,13 @@ from sage.combinat.subword import Subwords
 
 assert Derangements([1, 2, 3]).cardinality() == 2
 assert Derangements([1, 2, 3]).list() == [[2, 3, 1], [3, 1, 2]]
+assert Derangements([1, 2, 3, 4]).cardinality() == 9
+assert all(all(value != image for value, image in zip([1, 2, 3, 4], d)) for d in Derangements([1, 2, 3, 4]))
 S = Subwords([1, 2, 3], 2)
 assert S.cardinality() == 3
 assert S.list() == [[1, 2], [1, 3], [2, 3]]
+assert Subwords([1, 2, 3, 4]).cardinality() == 16
+assert Subwords([1, 2, 3, 4], 3).list() == [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
 `);
     console.log("sagelite-electron-ok relative resources smoke");
   } finally {

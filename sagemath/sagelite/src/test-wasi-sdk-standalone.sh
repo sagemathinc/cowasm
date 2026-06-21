@@ -613,11 +613,15 @@ assert PerfectMatching([2, 1, 4, 3]).number_of_crossings() == 0
 assert PerfectMatching([(1, 4), (2, 3)]).is_noncrossing()
 assert Derangements([1, 2, 3]).cardinality() == 2
 assert Derangements([1, 2, 3]).list() == [[2, 3, 1], [3, 1, 2]]
+assert Derangements([1, 2, 3, 4]).cardinality() == 9
+assert all(all(value != image for value, image in zip([1, 2, 3, 4], d)) for d in Derangements([1, 2, 3, 4]))
 sigma = Permutation([3, 1, 2])
 assert sigma.inverse() == Permutation([2, 3, 1])
 assert sigma.to_cycles() == [(1, 3, 2)]
 assert Subwords([1, 2, 3], 2).cardinality() == 3
 assert Subwords([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
+assert Subwords([1, 2, 3, 4]).cardinality() == 16
+assert Subwords([1, 2, 3, 4], 3).list() == [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
 assert [sorted(s) for s in Subsets([1, 2, 3], 2)] == [[1, 2], [1, 3], [2, 3]]
 assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
 assert [list(v) for v in IntegerVectors(4, 2)] == [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
@@ -756,11 +760,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=66
+electron_manifest_schema_version=67
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v32"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-enumeration-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-functional-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v33"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
