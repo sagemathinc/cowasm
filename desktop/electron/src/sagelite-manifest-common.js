@@ -230,11 +230,12 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 60,
+  schemaVersion: 61,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",
-  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-cypari2-pari-error-recovery-sage-pari-boundary-v26",
+  smokeContract: "exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v27",
+  resourceRootEnvName: "COWASM_SAGELITE_RESOURCE_ROOT",
 };
 
 const expectedSageliteManifestFields = Object.freeze([
@@ -244,6 +245,7 @@ const expectedSageliteManifestFields = Object.freeze([
   "pythonPlatform",
   "smokeContract",
   "sageliteSourceRevision",
+  "resourceRootEnvName",
   "pythonPath",
   "runtimeDependencyPaths",
   "requiredResourcePaths",
@@ -268,7 +270,7 @@ function sagelitePythonEnv(manifest, resourceRoot) {
     PYTHONPATH: sagelitePythonPath(manifest),
     ...(resourceRoot == null
       ? {}
-      : { COWASM_SAGELITE_RESOURCE_ROOT: resourceRoot }),
+      : { [manifest.resourceRootEnvName]: resourceRoot }),
   };
 }
 

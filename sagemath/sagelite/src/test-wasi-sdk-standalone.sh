@@ -742,11 +742,12 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=60
+electron_manifest_schema_version=61
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-cypari2-pari-error-recovery-sage-pari-boundary-v26"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-monoid-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-v27"
+electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."
@@ -1040,6 +1041,7 @@ fi
   printf '  "pythonPlatform": "%s",\n' "$electron_manifest_python_platform"
   printf '  "smokeContract": "%s",\n' "$electron_manifest_smoke_contract"
   printf '  "sageliteSourceRevision": "%s",\n' "$electron_manifest_source_revision"
+  printf '  "resourceRootEnvName": "%s",\n' "$electron_manifest_resource_root_env_name"
   printf '  "pythonPath": [\n'
   for i in "${!electron_pythonpath_parts[@]}"; do
     if [ "$i" -gt 0 ]; then

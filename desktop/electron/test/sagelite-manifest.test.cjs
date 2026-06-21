@@ -179,6 +179,10 @@ withResourceRoot(() => {
     extractShellScalar(script, "electron_manifest_smoke_contract"),
     expectedSageliteManifest.smokeContract,
   );
+  assert.strictEqual(
+    extractShellScalar(script, "electron_manifest_resource_root_env_name"),
+    expectedSageliteManifest.resourceRootEnvName,
+  );
 
   const runtimeDepLabels = extractShellArray(script, "runtime_dep_labels");
   assert.deepStrictEqual(
@@ -1577,6 +1581,20 @@ withResourceRoot((root) => {
   assert.throws(
     () => loadSageliteManifest(root),
     /unsupported smokeContract "old-contract"/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  touch(root, "python.wasm");
+  stageRequiredTools(root);
+  stageNativeLibraries(root);
+  writeManifest(root, validManifest({ resourceRootEnvName: "PYTHONPATH" }));
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /unsupported resourceRootEnvName "PYTHONPATH"/,
   );
 });
 

@@ -423,6 +423,11 @@ Follow-up snapshot:
 - Change: schema 60 manifests extend the packaged algebra smoke to cover
   `FreeAbelianMonoid` construction and Cython-backed element arithmetic, with
   the corresponding `sage.monoids` files listed as hashed required resources.
+- Change: schema 61 manifests now require `resourceRootEnvName` to match
+  `COWASM_SAGELITE_RESOURCE_ROOT`, and the Electron runtime helper reads that
+  field when constructing the worker environment. This makes the resource-root
+  environment variable part of the validated bundle contract instead of an
+  implicit loader-side convention.
 
 ## Runtime Milestones
 
