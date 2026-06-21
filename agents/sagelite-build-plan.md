@@ -496,6 +496,12 @@ Follow-up snapshot:
   expansion, quotient/remainder, square-root remainder, list LCM, and rational
   floor/ceil operations through the bounded Node/Electron worker path, without
   adding a new mandatory resource file.
+- Change: schema 76 manifests extend the bounded Node.js/Electron exact-math
+  smoke to cover additional integer helper behavior: list CRT, repeated-prime
+  valuation, negative upper-argument binomial coefficients, and another list
+  LCM case. The added checks stay within the current exact-arithmetic runtime
+  surface and deliberately do not promote list `gcd`, which still imports the
+  multivariate polynomial sequence path that is outside this packaged slice.
 
 ## Runtime Milestones
 

@@ -321,6 +321,18 @@ assert QQ(45, 28).floor() == 1
 assert QQ(45, 28).ceil() == 2
 `);
     console.log("sagelite-electron-ok integer and rational helper smoke");
+    console.log("sagelite-electron-start extended integer helper smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.all import ZZ, lcm, binomial
+from sage.arith.misc import CRT_list, valuation
+
+assert lcm([ZZ(4), ZZ(6), ZZ(14)]) == ZZ(84)
+assert CRT_list([2, 3, 2], [3, 5, 7]) == ZZ(23)
+assert valuation(ZZ(3)**10 * ZZ(5)**2, 3) == 10
+assert binomial(ZZ(-5), 3) == ZZ(-35)
+`);
+    console.log("sagelite-electron-ok extended integer helper smoke");
     console.log("sagelite-electron-start combinatorics extension smoke");
     await python.exec(String.raw`
 import sage.all

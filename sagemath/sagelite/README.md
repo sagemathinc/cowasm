@@ -103,8 +103,9 @@ finite fields, two-argument rational construction,
 univariate polynomial construction/arithmetic over `QQ`, integer
 polynomial construction/arithmetic over default `ZZ[x]`, polynomial division,
 derivatives, evaluation, integer factorization with factor inspection, Sage
-arithmetic helpers including `gcd`, `xgcd`, `binomial`, and `factorial`, and
-`prime_pi(10**6)`. The probe also checks exact dense matrix determinant,
+arithmetic helpers including `gcd`, `xgcd`, `binomial`, `factorial`, list
+LCM, list CRT, and repeated-prime valuation, and `prime_pi(10**6)`. The probe
+also checks exact dense matrix determinant,
 multiplication, trace, characteristic-polynomial evaluation, identity-matrix
 construction, and inverse over `ZZ` and `QQ`, including a 3x3 rational inverse,
 through `sage.matrix.constructor`. On WASI the patch routes `QQ[x]` and the
@@ -171,8 +172,9 @@ It then checks the initialized FLINT `fmpz_poly_sage` helper,
 integer extended-gcd, integer ideal, modular integer ring, and prime
 finite-field coverage in addition to the core integer, rational, polynomial,
 factorization, `prime_pi`, dense matrix, free-module, and combinatorics checks.
-The exact-arithmetic slice also covers Sage number-theory helpers such as CRT
-and integer valuations, the algebra slice verifies free abelian monoid element
+The exact-arithmetic slice also covers Sage number-theory helpers such as CRT,
+list CRT, integer valuations, negative upper-argument binomial coefficients,
+and list LCM; the algebra slice verifies free abelian monoid element
 arithmetic, and the coding slice verifies binary Hamming code minimum-distance
 computation.
 The combinatorics smoke covers partitions, permutations, tableaux,
