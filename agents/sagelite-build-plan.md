@@ -625,6 +625,10 @@ Follow-up snapshot:
   cover `sage.sets.family.Family` and `NonNegativeIntegers`. The checks use
   already mandatory set-family and integer-set resources, so no new staged
   files are required.
+- Change: schema 98 manifests extend the bounded Node.js/Electron smoke to
+  cover `PositiveIntegers` membership checks alongside the existing set-family
+  and nonnegative-integer smoke. The resource file was already mandatory, so no
+  new staged files are required.
 
 ## Runtime Milestones
 

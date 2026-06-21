@@ -531,6 +531,7 @@ assert IntegerVectors(5, 3).cardinality() == 21
 import sage.all
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.sets.positive_integers import PositiveIntegers
 
 F = Family([1, 2, 3], lambda i: i * i)
 assert list(F) == [1, 4, 9]
@@ -539,6 +540,10 @@ N = NonNegativeIntegers()
 assert 0 in N
 assert 5 in N
 assert -1 not in N
+P = PositiveIntegers()
+assert 1 in P
+assert 5 in P
+assert 0 not in P
 `);
     console.log("sagelite-electron-ok set family smoke");
     console.log("sagelite-electron-ok relative resources smoke");
