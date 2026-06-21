@@ -713,6 +713,16 @@ for label, thunk in [
         raise AssertionError(f'{label} should fail closed on WASI')
 print('sagelite-node-ok cypari2 PARI runtime smoke')"
 
+run_node_import "Sage PARI factorization boundary" "from sage.rings.integer_ring import ZZ
+from sage.rings.factorint_pari import factor_using_pari
+try:
+    factor_using_pari(ZZ(360))
+except NotImplementedError as err:
+    assert 'full Gen conversion' in str(err)
+else:
+    raise AssertionError('Sage PARI factorization should fail closed until full Gen conversion is ported')
+print('sagelite-node-ok Sage PARI factorization boundary')"
+
 : >"$followups_file"
 run_node_import \
   "initialized FLINT fmpz_poly_sage helper import" \
@@ -724,11 +734,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=58
+electron_manifest_schema_version=59
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-cypari2-pari-error-recovery-v24"
+electron_manifest_smoke_contract="exact-arithmetic-matrix-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-signed-composition-integer-lists-crt-valuation-quotient-ring-combinat-cypari2-pari-error-recovery-sage-pari-boundary-v25"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 if [ ! -s "$electron_manifest_source_revision_file" ]; then
   record_blocker "sagelite-blocked: Sagelite source revision metadata is missing."

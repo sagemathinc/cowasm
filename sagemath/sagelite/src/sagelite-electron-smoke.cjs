@@ -78,6 +78,7 @@ from sage.all import (
 from sage.arith.misc import CRT, valuation
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.modules.free_module import FreeModule
+from sage.rings.factorint_pari import factor_using_pari
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.coding.hamming_code import HammingCode
 from sage.combinat.combination import Combinations
@@ -246,6 +247,12 @@ for label, thunk in [
         assert 'full Gen conversion' in str(err)
     else:
         raise AssertionError(f'{label} should fail closed on WASI')
+try:
+    factor_using_pari(ZZ(360))
+except NotImplementedError as err:
+    assert 'full Gen conversion' in str(err)
+else:
+    raise AssertionError('Sage PARI factorization should fail closed until full Gen conversion is ported')
 
 A = matrix(ZZ, [[1, 2], [3, 4]])
 assert A.det() == ZZ(-2)
