@@ -543,6 +543,10 @@ assert C.base_ring() is F7
 assert C.nrows() == 2
 assert C.ncols() == 3
 assert C + N.zero() == C
+G = matrix(F7, [[1, 2, 0], [0, 1, 3], [4, 0, 1]])
+assert G.det() == F7(4)
+assert G.trace() == F7(3)
+assert G**2 == matrix(F7, [[1, 4, 6], [5, 1, 6], [1, 1, 1]])
 `);
     console.log("sagelite-electron-ok finite-field matrix smoke");
     console.log("sagelite-electron-start matrix solve smoke");

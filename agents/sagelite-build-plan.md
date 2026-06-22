@@ -352,6 +352,10 @@ Follow-up snapshot:
   smoke with integer row/column linear-combination updates and rational
   rectangular row/column rescaling checks. These reuse existing matrix
   resources, so no new mandatory resource files are added.
+- Change: schema 136 manifests extend the Node.js/Electron finite-field matrix
+  smoke with a 3x3 determinant, trace, and power check over `GF(7)`. These
+  reuse existing finite-field and matrix resources, so no new mandatory
+  resource files are added.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
