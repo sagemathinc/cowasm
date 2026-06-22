@@ -331,6 +331,11 @@ Follow-up snapshot:
   smoke with negative-valuation, exponent, coefficient, dictionary, and
   symmetric-square checks. These reuse the existing Laurent polynomial
   resources, so no new mandatory resource files are added.
+- Change: schema 130 manifest validation now requires the
+  `laurent_polynomial_mpair` side module as a mandatory resource. This makes
+  the Laurent polynomial Electron smoke fail during manifest validation when
+  the multivariate Laurent element implementation is missing from a copied
+  resource bundle.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
