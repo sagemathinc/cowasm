@@ -343,6 +343,23 @@ assert A.augment(identity_matrix(QQ, 3)).ncols() == 6
 assert A.stack(identity_matrix(QQ, 3)).nrows() == 6
 `);
     console.log("sagelite-electron-ok rational matrix solve and view smoke");
+    console.log("sagelite-electron-start matrix row-column mutation smoke");
+    await python.exec(String.raw`
+from sage.all import ZZ, QQ
+from sage.matrix.constructor import matrix
+
+A = matrix(ZZ, [[1, 2, 3], [4, 5, 6], [7, 8, 10]])
+A.swap_rows(0, 2)
+assert A == matrix(ZZ, [[7, 8, 10], [4, 5, 6], [1, 2, 3]])
+A.swap_columns(0, 1)
+assert A == matrix(ZZ, [[8, 7, 10], [5, 4, 6], [2, 1, 3]])
+A.rescale_row(1, ZZ(2))
+assert list(A[1]) == [ZZ(10), ZZ(8), ZZ(12)]
+B = matrix(QQ, [[1, 2], [3, 5]])
+B.add_multiple_of_row(1, 0, QQ(-3))
+assert B == matrix(QQ, [[1, 2], [0, -1]])
+`);
+    console.log("sagelite-electron-ok matrix row-column mutation smoke");
     console.log("sagelite-electron-start combinatorics cardinality smoke");
     await python.exec(String.raw`
 import sage.all
