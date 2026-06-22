@@ -547,6 +547,11 @@ G = matrix(F7, [[1, 2, 0], [0, 1, 3], [4, 0, 1]])
 assert G.det() == F7(4)
 assert G.trace() == F7(3)
 assert G**2 == matrix(F7, [[1, 4, 6], [5, 1, 6], [1, 1, 1]])
+assert G.inverse() * G == identity_matrix(F7, 3)
+rhs3 = matrix(F7, 3, 1, [1, 2, 3])
+assert G * G.solve_right(rhs3) == rhs3
+lhs3 = matrix(F7, 1, 3, [3, 2, 1])
+assert G.solve_left(lhs3) * G == lhs3
 `);
     console.log("sagelite-electron-ok finite-field matrix smoke");
     console.log("sagelite-electron-start matrix solve smoke");
