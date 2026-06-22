@@ -432,6 +432,21 @@ Z9 = Integers(9)
 assert Z9(4).inverse_of_unit() == Z9(7)
 `);
     console.log("sagelite-electron-ok modular arithmetic extension smoke");
+    console.log("sagelite-electron-start integer quotient ring extension smoke");
+    await python.exec(String.raw`
+from sage.all import ZZ
+
+Q7 = ZZ.quotient(7 * ZZ)
+q3 = Q7(3)
+q5 = Q7(5)
+assert q3 + q5 == Q7(1)
+assert q3 * q5 == Q7(1)
+assert q3**6 == Q7(1)
+assert -q3 == Q7(4)
+assert q3.lift() == ZZ(3)
+assert q3 - q5 == Q7(5)
+`);
+    console.log("sagelite-electron-ok integer quotient ring extension smoke");
     console.log("sagelite-electron-start integer and rational helper smoke");
     await python.exec(String.raw`
 from sage.all import ZZ, QQ, lcm

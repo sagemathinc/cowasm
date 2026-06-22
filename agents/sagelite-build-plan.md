@@ -645,6 +645,10 @@ Follow-up snapshot:
   and `some_elements()` for nonnegative and positive integer sets. The checks
   use already mandatory set-family and integer-set resources, so no new staged
   files are required.
+- Change: schema 103 manifests extend the bounded Node.js/Electron integer
+  quotient-ring smoke to cover quotient element powers, negation, subtraction,
+  and lifting back to `ZZ`. The checks use already mandatory quotient-ring
+  resources, so no new staged files are required.
 
 ## Runtime Milestones
 
