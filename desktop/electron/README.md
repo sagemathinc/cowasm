@@ -229,6 +229,9 @@ finite-field identity determinants, polynomial indexing/monomial/monic
 helpers, and small partition/permutation accessors.
 Schema 118 manifests extend the packaged integer helper smoke to cover integer
 comparison through the bounded Node/Electron worker path.
+Schema 125 manifests extend the finite-field matrix-space smoke to cover
+identity and zero matrix construction plus left and right multiplication by
+the parent identity over `GF(7)`.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

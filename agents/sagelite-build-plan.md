@@ -310,6 +310,10 @@ Follow-up snapshot:
   `MatrixSpace(GF(7), 2)` identity multiplication and zero addition checks.
   These keep matrix-space arithmetic covered in both the standalone Node.js
   ladder and packaged Electron smoke without adding required resource files.
+- Change: schema 125 manifests extend the finite-field matrix-space smoke with
+  identity and zero matrix construction plus left and right multiplication by
+  the parent identity over `GF(7)`. These checks reuse the existing finite-field
+  matrix resources.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
