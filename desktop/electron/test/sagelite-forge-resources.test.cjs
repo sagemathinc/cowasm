@@ -21,6 +21,7 @@ const {
   sageliteManifestName,
   validatePackagedSageliteExtraResource,
 } = require("../sagelite-resources");
+const { loadSageliteManifest } = require("../src/sagelite-manifest-common");
 
 function writeManifest(root, manifest) {
   if (
@@ -510,6 +511,16 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
+  const fileRoot = path.join(root, "not-a-directory");
+  fs.writeFileSync(fileRoot, "");
+
+  assert.throws(
+    () => loadSageliteManifest(fileRoot),
+    /resource root must be a directory/,
+  );
+});
+
+withResourceRoot((root) => {
   stageSageEntrypoints(root);
   stageRequiredTools(root);
   stageNativeLibraries(root);
@@ -541,6 +552,23 @@ withResourceRoot((root) => {
         COWASM_SAGELITE_ELECTRON_RESOURCES: root,
       }),
     /pythonPath entry runtime-platformdirs\.py must be a directory/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  fs.mkdirSync(path.join(root, sageliteManifestName));
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /manifest file must be a regular file/,
   );
 });
 

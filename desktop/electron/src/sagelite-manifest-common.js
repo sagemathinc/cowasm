@@ -281,6 +281,7 @@ const expectedSageliteManifestFields = Object.freeze([
 
 function loadSageliteManifest(resourceRoot) {
   const manifestPath = join(resourceRoot, sageliteManifestName);
+  validateSageliteResourceRoot(manifestPath, resourceRoot);
   const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
   validateSageliteManifest(resourceRoot, manifestPath, manifest);
   return manifest;
@@ -420,11 +421,19 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
 }
 
 function validateSageliteResourceRoot(manifestPath, resourceRoot) {
-  if (lstatSync(resourceRoot).isSymbolicLink()) {
+  const resourceRootStat = lstatSync(resourceRoot);
+  if (resourceRootStat.isSymbolicLink()) {
     throw new Error(`${manifestPath} resource root must not be a symbolic link`);
   }
-  if (lstatSync(manifestPath).isSymbolicLink()) {
+  if (!resourceRootStat.isDirectory()) {
+    throw new Error(`${manifestPath} resource root must be a directory`);
+  }
+  const manifestStat = lstatSync(manifestPath);
+  if (manifestStat.isSymbolicLink()) {
     throw new Error(`${manifestPath} manifest file must not be a symbolic link`);
+  }
+  if (!manifestStat.isFile()) {
+    throw new Error(`${manifestPath} manifest file must be a regular file`);
   }
 }
 
