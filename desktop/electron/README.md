@@ -201,6 +201,9 @@ Schema 100 manifests extend the packaged exact-arithmetic smoke to cover
 signed integer `abs`/`sign` behavior and negative rational `abs`/floor/ceil
 behavior, keeping those common Sage helper methods tied to the bounded
 Node/Electron worker path.
+Schema 102 manifests extend the Node and packaged Electron number-theory smoke
+to cover integer `gcd` and `lcm` methods, keeping those common Sage arithmetic
+methods tied to the validated resource bundle.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

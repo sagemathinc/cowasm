@@ -64,6 +64,14 @@ import sage.version
 assert sage.version.version == sage.env.SAGE_VERSION
 `);
     console.log("sagelite-electron-ok version resources smoke");
+    console.log("sagelite-electron-start integer method resources smoke");
+    await python.exec(String.raw`
+from sage.rings.integer_ring import ZZ
+
+assert ZZ(84).gcd(ZZ(30)) == ZZ(6)
+assert ZZ(84).lcm(ZZ(30)) == ZZ(420)
+`);
+    console.log("sagelite-electron-ok integer method resources smoke");
     console.log("sagelite-electron-start core resources smoke");
     await python.exec(String.raw`
 import sage.all
