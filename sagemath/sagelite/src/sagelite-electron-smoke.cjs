@@ -429,6 +429,14 @@ B = matrix(ZZ, [[2, 1, 0], [1, 2, 1], [0, 1, 2]])
 b = matrix(ZZ, 3, 1, [1, 2, 3])
 integer_solution = B.solve_right(b)
 assert B * integer_solution == b
+F = matrix(ZZ, [[1, 1], [1, 0]])
+assert F**5 == matrix(ZZ, [[8, 5], [5, 3]])
+stacked = F.stack(F)
+assert stacked.nrows() == 4
+assert stacked.ncols() == 2
+augmented = F.augment(F)
+assert augmented.nrows() == 2
+assert augmented.ncols() == 4
 row = matrix(ZZ, 1, 3, [3, 2, 1])
 integer_left_solution = B.solve_left(row)
 assert integer_left_solution * B == row

@@ -217,6 +217,9 @@ Schema 109 manifests extend the integer/rational helper smoke to cover modular
 integer inverse, negative integer quotient/remainder, integer-argument
 `powermod`, and rational multiplication/division through the same bounded
 worker path.
+Schema 110 manifests extend the matrix smoke to cover integer matrix powers,
+vertical stacking, and horizontal augmentation through the bounded
+Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

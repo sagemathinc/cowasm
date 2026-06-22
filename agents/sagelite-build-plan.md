@@ -241,6 +241,11 @@ Follow-up snapshot:
   quotient/remainder, integer-argument `powermod`, and rational
   multiplication/division checks. This advances exact-arithmetic coverage
   without adding new required resource files.
+- Change: schema 110 manifests extend the Node.js and Electron-shaped matrix
+  smoke with integer matrix powers, vertical stacking, and horizontal
+  augmentation. These checks use the existing mandatory matrix resources and
+  keep more matrix construction/manipulation behavior tied to the packaged
+  Electron resource contract.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
