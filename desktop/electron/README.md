@@ -227,6 +227,8 @@ Schema 116 manifests extend the packaged free-module, matrix, polynomial, and
 combinatorics smoke with zero/list/negation helpers, zero-matrix addition,
 finite-field identity determinants, polynomial indexing/monomial/monic
 helpers, and small partition/permutation accessors.
+Schema 118 manifests extend the packaged integer helper smoke to cover integer
+comparison through the bounded Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

@@ -281,6 +281,12 @@ Follow-up snapshot:
   covered by the Electron-shaped smoke. This keeps direct Node.js validation in
   sync with the packaged Electron runtime path without adding new mandatory
   resource files.
+- Change: schema 118 manifests extend the bounded Node.js/Electron
+  integer helper smoke to cover integer comparison. The check reuses the
+  current exact-arithmetic resource surface, so no new mandatory resource files
+  are added. Integer powers, integer matrix right-kernel computation,
+  univariate polynomial GCD, and rational power/comparison still expose
+  Node/Electron runtime gaps and remain follow-up runtime work.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.

@@ -70,6 +70,7 @@ from sage.rings.integer_ring import ZZ
 
 assert ZZ(84).gcd(ZZ(30)) == ZZ(6)
 assert ZZ(84).lcm(ZZ(30)) == ZZ(420)
+assert ZZ(7) < ZZ(9)
 `);
     console.log("sagelite-electron-ok integer method resources smoke");
     console.log("sagelite-electron-start core resources smoke");
