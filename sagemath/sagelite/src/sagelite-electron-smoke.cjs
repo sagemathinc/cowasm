@@ -355,9 +355,17 @@ A.swap_columns(0, 1)
 assert A == matrix(ZZ, [[8, 7, 10], [5, 4, 6], [2, 1, 3]])
 A.rescale_row(1, ZZ(2))
 assert list(A[1]) == [ZZ(10), ZZ(8), ZZ(12)]
+A.set_row(0, [ZZ(1), ZZ(0), ZZ(1)])
+assert list(A[0]) == [ZZ(1), ZZ(0), ZZ(1)]
+A.set_column(2, [ZZ(3), ZZ(6), ZZ(9)])
+assert A == matrix(ZZ, [[1, 0, 3], [10, 8, 6], [2, 1, 9]])
 B = matrix(QQ, [[1, 2], [3, 5]])
 B.add_multiple_of_row(1, 0, QQ(-3))
 assert B == matrix(QQ, [[1, 2], [0, -1]])
+B.rescale_col(0, QQ(2, 3))
+assert B == matrix(QQ, [[QQ(2, 3), 2], [0, -1]])
+B.add_multiple_of_column(1, 0, QQ(-3))
+assert B == matrix(QQ, [[QQ(2, 3), 0], [0, -1]])
 `);
     console.log("sagelite-electron-ok matrix row-column mutation smoke");
     console.log("sagelite-electron-start combinatorics cardinality smoke");

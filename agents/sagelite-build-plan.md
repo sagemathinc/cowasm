@@ -344,6 +344,10 @@ Follow-up snapshot:
   row and column mutation checks: row swap, column swap, row rescaling, and
   rational row addition. These reuse existing matrix resources, so no new
   mandatory resource files are added.
+- Change: schema 134 manifests extend the Node.js/Electron matrix mutation
+  smoke with row assignment, column assignment, rational column rescaling, and
+  rational column addition checks. These reuse existing matrix resources, so no
+  new mandatory resource files are added.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
