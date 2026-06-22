@@ -971,6 +971,11 @@ else:
 print('sagelite-node-ok Sage PARI factorization boundary')"
 
 : >"$followups_file"
+cat >>"$followups_file" <<'EOFOLLOWUPS'
+sagelite-followup: rational polynomial roots over QQ exit before the Node.js polynomial helper smoke marker when promoted to the standalone import ladder.
+sagelite-followup: integer matrix right_kernel exits before the Node.js linear algebra smoke marker when promoted to the standalone import ladder.
+sagelite-followup: basic Graph and Poset construction stop at missing sage.graphs.generic_graph_pyx in the staged Electron resource tree.
+EOFOLLOWUPS
 run_node_import \
   "initialized FLINT fmpz_poly_sage helper import" \
   "from sage.rings.integer_ring import ZZ

@@ -236,6 +236,25 @@ Follow-up snapshot:
   algebra smoke with a rational `solve_left` check. This keeps rational left-
   and right-solve execution covered by the bounded resource contract without
   adding new required files.
+- Change: the Sagelite standalone probe now records the next blocked
+  Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
+  instead of leaving failed promotion probes only in transient logs.
+- Probe outcome: rational polynomial root extraction over `QQ` is not ready
+  for the packaged Node.js import ladder. Promoting
+  `(x**3 - 6*x**2 + 11*x - 6).roots()` to the polynomial helper smoke exits
+  before the smoke marker, so polynomial roots remain follow-up exact-algebra
+  runtime work.
+- Probe outcome: integer matrix `right_kernel()` is not ready for the packaged
+  Node.js import ladder. An isolated Electron-shaped probe can return, but the
+  full standalone target exits before the linear algebra smoke marker after
+  promoting `matrix(ZZ, [[1, 2, 3], [2, 4, 6]]).right_kernel()`. Treat matrix
+  kernel coverage as follow-up linear-algebra runtime work.
+- Probe outcome: basic `sage.graphs.graph.Graph` and
+  `sage.combinat.posets.posets.Poset` construction are not ready for the
+  packaged smoke. Both currently stop at a missing
+  `sage.graphs.generic_graph_pyx` import in the staged Electron resource tree,
+  so graph and poset coverage should wait for that Cython module to build and
+  package cleanly.
 - Probe outcome: finite-field polynomial factorization over `GF(7)` is not
   ready for the packaged smoke. A direct Node.js probe against the broad staged
   `electron-resources` tree can return, but the standalone milestone path exits
