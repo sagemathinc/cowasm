@@ -16,10 +16,10 @@ export const expectedSageliteRequiredToolPaths: readonly string[] =
 
 export interface SageliteManifest {
   schemaVersion: number;
-  resourceKind?: string;
-  pythonAbi?: string;
-  pythonPlatform?: string;
-  smokeContract?: string;
+  resourceKind: string;
+  pythonAbi: string;
+  pythonPlatform: string;
+  smokeContract: string;
   sageliteSourceRevision: string;
   sageliteSourceTreeState: "clean" | "dirty";
   resourceRootEnvName: string;

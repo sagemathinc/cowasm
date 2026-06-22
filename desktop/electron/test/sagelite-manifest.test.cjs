@@ -218,6 +218,25 @@ withResourceRoot((root) => {
   );
 });
 
+for (const [fieldName, errorPattern] of [
+  ["resourceKind", /unsupported resourceKind/],
+  ["pythonAbi", /unsupported pythonAbi/],
+  ["pythonPlatform", /unsupported pythonPlatform/],
+  ["smokeContract", /unsupported smokeContract/],
+  ["resourceRootEnvName", /unsupported resourceRootEnvName/],
+]) {
+  withResourceRoot((root) => {
+    stagePythonPath(root);
+    stageSageEntrypoints(root);
+    touch(root, "python.wasm");
+    stageRequiredTools(root);
+    stageNativeLibraries(root);
+    writeManifest(root, validManifest({ [fieldName]: undefined }));
+
+    assert.throws(() => loadSageliteManifest(root), errorPattern);
+  });
+}
+
 withResourceRoot((root) => {
   stagePythonPath(root);
   stageSageEntrypoints(root);
