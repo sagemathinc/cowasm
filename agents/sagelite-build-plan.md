@@ -318,6 +318,11 @@ Follow-up snapshot:
   trivariate derivative, monomial coefficient, and substitution checks over
   `QQ`. This advances the bounded Node.js/Electron polynomial contract without
   adding required Electron resource files.
+- Change: schema 127 manifests extend the standalone Node.js finite-field
+  matrix smoke to match the Electron-shaped parent/indexing checks for
+  `MatrixSpace(GF(7), 2)` and `MatrixSpace(GF(7), 2, 3)`. This keeps the
+  Node.js/Electron milestone contract aligned without adding required Electron
+  resource files.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
