@@ -435,6 +435,8 @@ assert integer_left_solution * B == row
 C = matrix(QQ, [[1, 2], [3, 5]])
 rational_solution = C.solve_right(matrix(QQ, 2, 1, [1, 1]))
 assert rational_solution == matrix(QQ, 2, 1, [-3, 2])
+rational_left_solution = C.solve_left(matrix(QQ, 1, 2, [1, 1]))
+assert rational_left_solution * C == matrix(QQ, 1, 2, [1, 1])
 `);
     console.log("sagelite-electron-ok matrix solve smoke");
     console.log("sagelite-electron-start Laurent polynomial smoke");

@@ -232,6 +232,10 @@ Follow-up snapshot:
   3x3 integer right solve, a 3x3 integer left solve, and a small rational
   right solve. The checks use already mandatory matrix and exact-arithmetic
   resources, so no new resource files are added.
+- Change: schema 108 manifests extend the Node.js and Electron-shaped linear
+  algebra smoke with a rational `solve_left` check. This keeps rational left-
+  and right-solve execution covered by the bounded resource contract without
+  adding new required files.
 - Probe outcome: finite-field polynomial factorization over `GF(7)` is not
   ready for the packaged smoke. A direct Node.js probe against the broad staged
   `electron-resources` tree can return, but the standalone milestone path exits

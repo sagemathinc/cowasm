@@ -210,6 +210,9 @@ directions tied to the bounded Node/Electron worker path.
 Schema 106 manifests extend the finite-field polynomial smoke to cover
 quotient/remainder, coefficient lists, and powers over `GF(7)`, keeping that
 exact algebra path tied to the bounded Node/Electron worker path.
+Schema 108 manifests extend the matrix solver smoke to cover rational
+`solve_left` in addition to rational `solve_right`, keeping both exact solve
+directions tied to the bounded Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for
