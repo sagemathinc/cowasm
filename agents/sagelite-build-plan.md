@@ -327,6 +327,10 @@ Follow-up snapshot:
   rational helper smoke with explicit rational numerator and denominator
   checks. These reuse the existing rational-field startup resources, so no new
   mandatory resource files are added.
+- Change: schema 129 manifests extend the Node.js/Electron Laurent polynomial
+  smoke with negative-valuation, exponent, coefficient, dictionary, and
+  symmetric-square checks. These reuse the existing Laurent polynomial
+  resources, so no new mandatory resource files are added.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.

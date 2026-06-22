@@ -537,6 +537,13 @@ f = t**2 + 2 + t**-1
 assert f * t == t**3 + 2*t + 1
 assert f.degree() == 2
 assert f.valuation() == -1
+h = f + t**-2
+assert h.valuation() == -2
+g = f * t**2
+assert g.exponents() == [1, 2, 4]
+assert g.dict() == {1: QQ(1), 2: QQ(2), 4: QQ(1)}
+assert g.coefficients() == [QQ(1), QQ(2), QQ(1)]
+assert (t + t**-1)**2 == t**2 + 2 + t**-2
 `);
     console.log("sagelite-electron-ok Laurent polynomial smoke");
     console.log("sagelite-electron-start modular arithmetic extension smoke");

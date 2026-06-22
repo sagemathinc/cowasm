@@ -235,6 +235,9 @@ the parent identity over `GF(7)`.
 Schema 126 manifests extend the packaged multivariate polynomial smoke to cover
 trivariate derivative and substitution checks over `QQ` without adding new
 required resource files.
+Schema 129 manifests extend the packaged Laurent polynomial smoke to cover
+negative valuations, exponent and coefficient accessors, dictionary access,
+and symmetric-square arithmetic without adding new required resource files.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for
