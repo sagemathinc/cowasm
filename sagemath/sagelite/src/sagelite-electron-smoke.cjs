@@ -332,6 +332,10 @@ assert (x**3 - 2*x + 1).derivative().list() == [QQ(-2), QQ(0), QQ(3)]
 assert (x**4 - 1)(QQ(2)) == QQ(15)
 assert x.degree() == 1
 assert ((x + 2)**4).list() == [QQ(16), QQ(32), QQ(24), QQ(8), QQ(1)]
+h = x**5 - x + 1
+assert h.truncate(3) == 1 - x
+assert h.shift(2) == x**7 - x**3 + x**2
+assert h.reverse(degree=5) == x**5 - x**4 + 1
 ZZt = PolynomialRing(ZZ, 't')
 t = ZZt.gen()
 assert (t**4 - 1).quo_rem(t**2 - 1) == (t**2 + 1, 0)
@@ -449,6 +453,14 @@ assert A.change_ring(QQ) == matrix(QQ, [[1, 2], [3, 4]])
 assert A.list() == [ZZ(1), ZZ(2), ZZ(3), ZZ(4)]
 assert list(A.rows()[0]) == [ZZ(1), ZZ(2)]
 assert list(A.columns()[1]) == [ZZ(2), ZZ(4)]
+G = matrix(ZZ, [[1, 2, 3], [4, 5, 6], [7, 8, 10]])
+assert G[0, 2] == ZZ(3)
+assert list(G[1]) == [ZZ(4), ZZ(5), ZZ(6)]
+assert G.column(1).list() == [ZZ(2), ZZ(5), ZZ(8)]
+assert G.matrix_from_rows_and_columns([0, 2], [1, 2]) == matrix(ZZ, [[2, 3], [8, 10]])
+assert G.delete_rows([1]) == matrix(ZZ, [[1, 2, 3], [7, 8, 10]])
+assert G.delete_columns([0]) == matrix(ZZ, [[2, 3], [5, 6], [8, 10]])
+assert G.antitranspose()[0, 0] == ZZ(10)
 row = matrix(ZZ, 1, 3, [3, 2, 1])
 integer_left_solution = B.solve_left(row)
 assert integer_left_solution * B == row
@@ -622,6 +634,9 @@ p = Partition([4, 2, 1])
 assert p.conjugate().conjugate() == p
 assert p.dominates(Partition([3, 3, 1]))
 assert not Partition([3, 2, 2]).dominates(p)
+p3 = Partition([5, 3, 1])
+assert p3.frobenius_coordinates() == ([4, 1], [2, 0])
+assert p3.to_exp() == [1, 0, 1, 0, 1]
 comp = Composition([2, 1, 3])
 assert comp.descents() == [1, 2]
 assert comp.to_subset() == {2, 3}

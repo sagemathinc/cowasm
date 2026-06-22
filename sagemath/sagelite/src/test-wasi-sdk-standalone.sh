@@ -560,6 +560,14 @@ assert list(A.columns()[1]) == [ZZ(2), ZZ(4)]
 u = matrix(ZZ, 2, 1, [1, 2])
 solution = A.solve_right(u)
 assert A * solution == u
+G = matrix(ZZ, [[1, 2, 3], [4, 5, 6], [7, 8, 10]])
+assert G[0, 2] == ZZ(3)
+assert list(G[1]) == [ZZ(4), ZZ(5), ZZ(6)]
+assert G.column(1).list() == [ZZ(2), ZZ(5), ZZ(8)]
+assert G.matrix_from_rows_and_columns([0, 2], [1, 2]) == matrix(ZZ, [[2, 3], [8, 10]])
+assert G.delete_rows([1]) == matrix(ZZ, [[1, 2, 3], [7, 8, 10]])
+assert G.delete_columns([0]) == matrix(ZZ, [[2, 3], [5, 6], [8, 10]])
+assert G.antitranspose()[0, 0] == ZZ(10)
 B = matrix(QQ, [[1, 2], [3, 5]])
 assert B.det() == QQ(-1)
 assert B.inverse() * B == matrix(QQ, [[1, 0], [0, 1]])
@@ -709,6 +717,9 @@ p = Partition([4, 2, 1])
 assert p.conjugate().conjugate() == p
 assert p.dominates(Partition([3, 3, 1]))
 assert not Partition([3, 2, 2]).dominates(p)
+p3 = Partition([5, 3, 1])
+assert p3.frobenius_coordinates() == ([4, 1], [2, 0])
+assert p3.to_exp() == [1, 0, 1, 0, 1]
 comp = Composition([2, 1, 3])
 assert comp.descents() == [1, 2]
 assert comp.to_subset() == {2, 3}
@@ -849,6 +860,10 @@ assert g.degree() == 3
 assert g.leading_coefficient() == ZZ(1)
 assert g.constant_coefficient() == ZZ(5)
 assert ((t - 1)**4)(ZZ(3)) == ZZ(16)
+h = x**5 - x + 1
+assert h.truncate(3) == 1 - x
+assert h.shift(2) == x**7 - x**3 + x**2
+assert h.reverse(degree=5) == x**5 - x**4 + 1
 print('sagelite-node-ok polynomial helper smoke')"
 run_node_import "finite-field polynomial smoke" "from sage.all import GF, PolynomialRing
 S = PolynomialRing(GF(7), 't')
@@ -1014,11 +1029,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=113
+electron_manifest_schema_version=114
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-linear-arithmetic-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-tableau-subset-integer-vector-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-signed-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-set-family-positive-integers-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-version-manifest-self-contained-sorted-side-modules-sorted-required-resources-source-tree-state-version-required-combinat-resource-files-v64-extended-linear-polynomial-set-family-indexing-v65-integer-gcd-lcm-v66-integer-quotient-ring-operations-v67-matrix-solve-right-v68-matrix-solve-left-v69-finite-field-polynomial-quotient-list-power-v70-extended-matrix-solve-v71-rational-left-solve-v72-integer-rational-arithmetic-v73-matrix-power-stack-augment-v74-integer-xgcd-quotient-family-v75-polynomial-coefficients-power-v76-matrix-views-change-ring-v77"
+electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-linear-arithmetic-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-tableau-subset-integer-vector-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-signed-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-set-family-positive-integers-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-version-manifest-self-contained-sorted-side-modules-sorted-required-resources-source-tree-state-version-required-combinat-resource-files-v64-extended-linear-polynomial-set-family-indexing-v65-integer-gcd-lcm-v66-integer-quotient-ring-operations-v67-matrix-solve-right-v68-matrix-solve-left-v69-finite-field-polynomial-quotient-list-power-v70-extended-matrix-solve-v71-rational-left-solve-v72-integer-rational-arithmetic-v73-matrix-power-stack-augment-v74-integer-xgcd-quotient-family-v75-polynomial-coefficients-power-v76-matrix-views-change-ring-v77-matrix-polynomial-partition-accessors-v78"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"

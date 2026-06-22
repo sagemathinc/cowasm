@@ -260,6 +260,11 @@ Follow-up snapshot:
   list conversion checks. These checks reuse the existing matrix and
   exact-arithmetic resources, so the mandatory resource inventory does not
   change.
+- Change: schema 114 manifests extend the bounded Node.js/Electron smoke with
+  matrix indexing, row/column access, submatrix extraction, row/column
+  deletion, antitranspose, polynomial truncate/shift/reverse helpers, and
+  partition Frobenius/exponential notation. These checks reuse existing
+  packaged resources, so the mandatory resource inventory does not change.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
