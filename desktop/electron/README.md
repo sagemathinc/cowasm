@@ -204,6 +204,9 @@ Node/Electron worker path.
 Schema 102 manifests extend the Node and packaged Electron number-theory smoke
 to cover integer `gcd` and `lcm` methods, keeping those common Sage arithmetic
 methods tied to the validated resource bundle.
+Schema 105 manifests extend the packaged matrix solver smoke to cover integer
+`solve_left` in addition to `solve_right`, keeping both exact matrix solve
+directions tied to the bounded Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

@@ -416,6 +416,9 @@ A = matrix(ZZ, [[1, 2], [3, 4]])
 u = matrix(ZZ, 2, 1, [1, 2])
 solution = A.solve_right(u)
 assert A * solution == u
+v = matrix(ZZ, 1, 2, [5, 6])
+left_solution = A.solve_left(v)
+assert left_solution * A == v
 `);
     console.log("sagelite-electron-ok matrix solve smoke");
     console.log("sagelite-electron-start Laurent polynomial smoke");

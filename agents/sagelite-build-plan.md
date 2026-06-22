@@ -222,6 +222,9 @@ Follow-up snapshot:
   matrix `solve_right` check under both Node.js and Electron-shaped resources.
   This keeps packaged linear algebra coverage tied to actual solver execution,
   not just determinant, inverse, rank, and characteristic-polynomial startup.
+- Change: schema 105 manifests advanced the same matrix-solver smoke with an
+  integer `solve_left` check, keeping left- and right-solve execution covered by
+  the Node.js/Electron resource contract without adding new required files.
 - Probe outcome: `sage.combinat.q_analogues` is not ready for the packaged
   Electron smoke. A Node.js `python-wasm -c` probe can evaluate polynomial
   `q_int`, `q_factorial`, and `q_binomial` after `sage.all`, but the
