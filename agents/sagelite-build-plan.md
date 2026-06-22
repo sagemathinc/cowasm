@@ -246,6 +246,11 @@ Follow-up snapshot:
   augmentation. These checks use the existing mandatory matrix resources and
   keep more matrix construction/manipulation behavior tied to the packaged
   Electron resource contract.
+- Change: schema 111 manifests extend the bounded Node.js/Electron smoke with
+  integer `xgcd` coefficient validation, additional quotient-ring arithmetic
+  over `ZZ/11ZZ`, and keyed `Family` lookup/value checks. These checks reuse
+  existing exact-arithmetic and set-family resources, so the mandatory
+  resource inventory does not change.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.

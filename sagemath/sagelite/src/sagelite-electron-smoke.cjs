@@ -485,12 +485,19 @@ assert q3**6 == Q7(1)
 assert -q3 == Q7(4)
 assert q3.lift() == ZZ(3)
 assert q3 - q5 == Q7(5)
+Q11 = ZZ.quotient(11 * ZZ)
+q7 = Q11(7)
+assert q7**10 == Q11(1)
+assert (q7 + Q11(9)).lift() == ZZ(5)
 `);
     console.log("sagelite-electron-ok integer quotient ring extension smoke");
     console.log("sagelite-electron-start integer and rational helper smoke");
     await python.exec(String.raw`
 from sage.all import ZZ, QQ, lcm
 
+g, s, t = ZZ(5).xgcd(ZZ(12))
+assert g == ZZ(1)
+assert s * ZZ(5) + t * ZZ(12) == g
 assert ZZ(255).digits(16) == [15, 15]
 assert ZZ(10).digits(2) == [0, 1, 0, 1]
 assert ZZ(12345).quo_rem(ZZ(97)) == (ZZ(127), ZZ(26))
@@ -641,6 +648,10 @@ G = Family([1, 2, 3, 4], lambda i: i * i)
 assert G[3] == 9
 assert list(G.keys()) == [1, 2, 3, 4]
 assert list(G.values()) == [1, 4, 9, 16]
+H = Family([1, 2, 3, 4], lambda i: i + 10)
+assert list(H.keys()) == [1, 2, 3, 4]
+assert list(H.values()) == [11, 12, 13, 14]
+assert H[4] == 14
 N = NonNegativeIntegers()
 assert 0 in N
 assert 5 in N
