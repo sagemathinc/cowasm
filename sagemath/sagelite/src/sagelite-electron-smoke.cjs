@@ -495,14 +495,19 @@ assert (-ZZ(12)).sign() == -1
 assert ZZ(0).sign() == 0
 assert ZZ(12).sign() == 1
 assert ZZ(2).powermod(10, 17) == ZZ(4)
+assert ZZ(2).powermod(ZZ(20), ZZ(17)) == ZZ(16)
+assert ZZ(2).inverse_mod(ZZ(5)) == ZZ(3)
 assert ZZ(35).gcd(ZZ(21)) == ZZ(7)
 assert ZZ(35).lcm(ZZ(21)) == ZZ(105)
+assert ZZ(-17).quo_rem(ZZ(5)) == (ZZ(-4), ZZ(3))
 assert lcm([ZZ(6), ZZ(10), ZZ(15)]) == ZZ(30)
 assert QQ(-45, 28).abs() == QQ(45, 28)
 assert QQ(-45, 28).floor() == -2
 assert QQ(-45, 28).ceil() == -1
 assert QQ(45, 28).floor() == 1
 assert QQ(45, 28).ceil() == 2
+assert QQ(7, 10) * QQ(15, 14) == QQ(3, 4)
+assert QQ(5, 6) / QQ(10, 9) == QQ(3, 4)
 `);
     console.log("sagelite-electron-ok integer and rational helper smoke");
     console.log("sagelite-electron-start extended integer helper smoke");

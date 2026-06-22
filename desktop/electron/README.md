@@ -213,6 +213,10 @@ exact algebra path tied to the bounded Node/Electron worker path.
 Schema 108 manifests extend the matrix solver smoke to cover rational
 `solve_left` in addition to rational `solve_right`, keeping both exact solve
 directions tied to the bounded Node/Electron worker path.
+Schema 109 manifests extend the integer/rational helper smoke to cover modular
+integer inverse, negative integer quotient/remainder, integer-argument
+`powermod`, and rational multiplication/division through the same bounded
+worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

@@ -236,6 +236,11 @@ Follow-up snapshot:
   algebra smoke with a rational `solve_left` check. This keeps rational left-
   and right-solve execution covered by the bounded resource contract without
   adding new required files.
+- Change: schema 109 manifests extend the Node.js and Electron-shaped
+  integer/rational helper smoke with modular integer inverse, negative integer
+  quotient/remainder, integer-argument `powermod`, and rational
+  multiplication/division checks. This advances exact-arithmetic coverage
+  without adding new required resource files.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
