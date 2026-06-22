@@ -228,6 +228,10 @@ Follow-up snapshot:
 - Change: schema 106 manifests advanced the finite-field polynomial smoke with
   quotient/remainder, coefficient-list, and power checks over `GF(7)`, keeping
   that exact algebra path covered by the Node.js/Electron resource contract.
+- Change: schema 107 manifests extend the bounded matrix-solver smoke with a
+  3x3 integer right solve, a 3x3 integer left solve, and a small rational
+  right solve. The checks use already mandatory matrix and exact-arithmetic
+  resources, so no new resource files are added.
 - Probe outcome: finite-field polynomial factorization over `GF(7)` is not
   ready for the packaged smoke. A direct Node.js probe against the broad staged
   `electron-resources` tree can return, but the standalone milestone path exits

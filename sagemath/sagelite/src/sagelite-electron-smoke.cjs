@@ -415,7 +415,7 @@ assert B.transpose()[0, 1] == F7(3)
     console.log("sagelite-electron-ok finite-field matrix smoke");
     console.log("sagelite-electron-start matrix solve smoke");
     await python.exec(String.raw`
-from sage.all import ZZ
+from sage.all import ZZ, QQ
 from sage.matrix.constructor import matrix
 
 A = matrix(ZZ, [[1, 2], [3, 4]])
@@ -425,6 +425,16 @@ assert A * solution == u
 v = matrix(ZZ, 1, 2, [5, 6])
 left_solution = A.solve_left(v)
 assert left_solution * A == v
+B = matrix(ZZ, [[2, 1, 0], [1, 2, 1], [0, 1, 2]])
+b = matrix(ZZ, 3, 1, [1, 2, 3])
+integer_solution = B.solve_right(b)
+assert B * integer_solution == b
+row = matrix(ZZ, 1, 3, [3, 2, 1])
+integer_left_solution = B.solve_left(row)
+assert integer_left_solution * B == row
+C = matrix(QQ, [[1, 2], [3, 5]])
+rational_solution = C.solve_right(matrix(QQ, 2, 1, [1, 1]))
+assert rational_solution == matrix(QQ, 2, 1, [-3, 2])
 `);
     console.log("sagelite-electron-ok matrix solve smoke");
     console.log("sagelite-electron-start Laurent polynomial smoke");
