@@ -197,6 +197,10 @@ cardinality through the same bounded worker path.
 Schema 94 manifests also record whether the Sagelite source checkout used to
 stage the Electron resources was `clean` or `dirty`, so packaged bundles carry
 source-tree-state provenance alongside the Sagelite commit hash.
+Schema 100 manifests extend the packaged exact-arithmetic smoke to cover
+signed integer `abs`/`sign` behavior and negative rational `abs`/floor/ceil
+behavior, keeping those common Sage helper methods tied to the bounded
+Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

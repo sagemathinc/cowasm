@@ -771,10 +771,17 @@ assert ZZ(144).sqrtrem() == (ZZ(12), ZZ(0))
 assert ZZ(145).sqrtrem() == (ZZ(12), ZZ(1))
 assert ZZ(97).is_prime()
 assert not ZZ(221).is_prime()
+assert ZZ(-12345).abs() == ZZ(12345)
+assert (-ZZ(12)).sign() == -1
+assert ZZ(0).sign() == 0
+assert ZZ(12).sign() == 1
 assert ZZ(2).powermod(10, 17) == ZZ(4)
 assert ZZ(35).gcd(ZZ(21)) == ZZ(7)
 assert ZZ(35).lcm(ZZ(21)) == ZZ(105)
 assert lcm([ZZ(6), ZZ(10), ZZ(15)]) == ZZ(30)
+assert QQ(-45, 28).abs() == QQ(45, 28)
+assert QQ(-45, 28).floor() == -2
+assert QQ(-45, 28).ceil() == -1
 assert QQ(45, 28).floor() == 1
 assert QQ(45, 28).ceil() == 2
 print('sagelite-node-ok integer and rational helper smoke')"
@@ -945,11 +952,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=99
+electron_manifest_schema_version=100
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-linear-arithmetic-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-tableau-subset-integer-vector-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-extended-integer-helpers-combinat-monoid-functional-set-family-positive-integers-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-version-manifest-self-contained-sorted-side-modules-sorted-required-resources-source-tree-state-version-required-combinat-resource-files-v64-extended-linear-polynomial"
+electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-linear-arithmetic-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-tableau-subset-integer-vector-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-signed-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-set-family-positive-integers-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-version-manifest-self-contained-sorted-side-modules-sorted-required-resources-source-tree-state-version-required-combinat-resource-files-v64-extended-linear-polynomial"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
