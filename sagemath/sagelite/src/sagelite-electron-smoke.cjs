@@ -346,8 +346,12 @@ assert g.constant_coefficient() == ZZ(5)
 assert ((t - 1)**4)(ZZ(3)) == ZZ(16)
 h = x**4 + 2*x**2 + 1
 assert h.coefficients(sparse=False) == [QQ(1), QQ(0), QQ(2), QQ(0), QQ(1)]
+assert h[0] == QQ(1)
+assert h[2] == QQ(2)
 assert h.exponents() == [0, 2, 4]
 assert h.dict() == {0: QQ(1), 2: QQ(2), 4: QQ(1)}
+assert h.monomials() == [x**4, x**2, 1]
+assert (x + 1).is_monic()
 S = PolynomialRing(QQ, ('x', 'y'))
 x, y = S.gens()
 f = (x + y + 1)**2
@@ -385,6 +389,11 @@ u = M([2, 4, 6])
 v = M([1, 0, -1])
 assert u - 2 * v == M([0, 4, 8])
 assert u.dot_product(v) == ZZ(-4)
+assert M.zero() == M([0, 0, 0])
+assert M([1, 2, 3]).list() == [ZZ(1), ZZ(2), ZZ(3)]
+assert (-M([1, -2, 3])).list() == [ZZ(-1), ZZ(2), ZZ(-3)]
+V = FreeModule(QQ, 2)
+assert V([QQ(1, 3), QQ(1, 6)]).denominator() == 6
 `);
     console.log("sagelite-electron-ok extended linear polynomial smoke");
     console.log("sagelite-electron-start finite-field polynomial smoke");
@@ -413,6 +422,7 @@ F7 = GF(7)
 A = matrix(F7, [[1, 2], [3, 4]])
 assert A.det() == F7(5)
 assert A.inverse() * A == identity_matrix(F7, 2)
+assert identity_matrix(F7, 2).det() == F7(1)
 assert A + identity_matrix(F7, 2) == matrix(F7, [[2, 2], [3, 5]])
 assert 2 * A == matrix(F7, [[2, 4], [6, 1]])
 assert A.trace() == F7(5)
@@ -431,7 +441,7 @@ assert B.transpose()[0, 1] == F7(3)
     console.log("sagelite-electron-start matrix solve smoke");
     await python.exec(String.raw`
 from sage.all import ZZ, QQ
-from sage.matrix.constructor import matrix
+from sage.matrix.constructor import matrix, zero_matrix
 
 A = matrix(ZZ, [[1, 2], [3, 4]])
 u = matrix(ZZ, 2, 1, [1, 2])
@@ -446,6 +456,7 @@ integer_solution = B.solve_right(b)
 assert B * integer_solution == b
 F = matrix(ZZ, [[1, 1], [1, 0]])
 assert F**5 == matrix(ZZ, [[8, 5], [5, 3]])
+assert zero_matrix(ZZ, 2, 2) + F == F
 stacked = F.stack(F)
 assert stacked.nrows() == 4
 assert stacked.ncols() == 2
@@ -626,6 +637,7 @@ assert Permutations(3).list() == [
 rho = Permutation([3, 1, 2])
 assert rho.order() == 3
 assert rho.cycle_type() == [3]
+assert Permutation([2, 3, 1]).order() == 3
 `);
     console.log("sagelite-electron-ok combinatorics extension smoke");
     console.log("sagelite-electron-start partition and composition method smoke");
@@ -638,6 +650,7 @@ p = Partition([4, 2, 1])
 assert p.conjugate().conjugate() == p
 assert p.dominates(Partition([3, 3, 1]))
 assert not Partition([3, 2, 2]).dominates(p)
+assert Partition([3, 2]).length() == 2
 p3 = Partition([5, 3, 1])
 assert p3.frobenius_coordinates() == ([4, 1], [2, 0])
 assert p3.to_exp() == [1, 0, 1, 0, 1]

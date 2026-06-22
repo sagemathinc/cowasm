@@ -270,6 +270,12 @@ Follow-up snapshot:
   dictionaries, partition indexing helpers, and composition partial sums. These
   checks reuse existing polynomial and combinatorics resources, so the
   mandatory resource inventory does not change.
+- Change: schema 116 manifests extend the packaged Node/Electron smoke to
+  cover free-module zero/list/negation helpers, zero-matrix addition,
+  finite-field identity determinants, polynomial indexing/monomial/monic
+  helpers, and small partition/permutation accessors. These checks reuse
+  existing free-module, matrix, polynomial, and combinatorics resources, so the
+  mandatory resource inventory does not change.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
@@ -303,6 +309,11 @@ Follow-up snapshot:
   `q_int`/`q_factorial` checks into the combined packaged smoke trips a WASM
   function signature mismatch before the core smoke marker. Treat q-analogues
   as a follow-up runtime-table issue, not a schema-75 resource-contract bump.
+- Probe outcome: `FreeModule(...).basis()` and `diagonal_matrix(...)` are not
+  ready for the packaged smoke because both route through `Sequence`, which
+  imports missing `sage.rings.polynomial.plural` in the staged Electron
+  resource tree. Treat Sequence-backed constructor coverage as follow-up
+  packaging/runtime work.
 - Change: schema 19 manifest validation now also requires the matrix startup
   modules loaded by the packaged exact-math smoke, including the matrix package
   initializer, constructor helpers, `action`, `args`, `matrix0`, `matrix1`,

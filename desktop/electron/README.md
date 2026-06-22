@@ -223,6 +223,10 @@ Node/Electron worker path.
 Schema 115 manifests extend the packaged polynomial and combinatorics smoke to
 cover sparse/dense polynomial coefficient accessors plus partition and
 composition indexing helpers through the same bounded worker path.
+Schema 116 manifests extend the packaged free-module, matrix, polynomial, and
+combinatorics smoke with zero/list/negation helpers, zero-matrix addition,
+finite-field identity determinants, polynomial indexing/monomial/monic
+helpers, and small partition/permutation accessors.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for
