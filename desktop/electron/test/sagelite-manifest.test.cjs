@@ -1809,6 +1809,30 @@ withResourceRoot((root) => {
   stageRequiredTools(root);
   touch(root, "python.wasm");
   stageNativeLibraries(root);
+  touch(root, "deps/extra-runtime/libcxx.so");
+  writeManifest(
+    root,
+    validManifest({
+      sideModulePaths: sorted([
+        ...expectedSageliteMandatorySideModulePaths(),
+        ...expectedSageliteNativeLibraryPaths,
+        "deps/extra-runtime/libcxx.so",
+      ]),
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /nativeLibraryPaths must list every copied libcxx\.so resource/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
   writeManifest(
     root,
     validManifest({

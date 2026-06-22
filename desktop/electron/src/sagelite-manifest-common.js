@@ -380,6 +380,11 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
     manifest.nativeLibraryPaths,
     expectedSageliteNativeLibraryPaths,
   );
+  validateCompleteNativeLibraryInventory(
+    resourceRoot,
+    manifestPath,
+    manifest.nativeLibraryPaths,
+  );
   validateNativeLibrariesCoveredByRequiredResources(
     manifestPath,
     manifest.nativeLibraryPaths,
@@ -721,6 +726,12 @@ function collectSideModulePaths(root, current = root, pathParts = []) {
   return sideModulePaths.sort();
 }
 
+function collectNativeLibraryPaths(root) {
+  return collectSideModulePaths(root).filter(
+    (entry) => entry.split("/").pop() === "libcxx.so",
+  );
+}
+
 function validateCompleteSideModuleInventory(
   resourceRoot,
   manifestPath,
@@ -734,6 +745,25 @@ function validateCompleteSideModuleInventory(
   ) {
     throw new Error(
       `${manifestPath} sideModulePaths must list every copied .so resource`,
+    );
+  }
+}
+
+function validateCompleteNativeLibraryInventory(
+  resourceRoot,
+  manifestPath,
+  nativeLibraryPaths,
+) {
+  const manifestNativeLibraries = [...nativeLibraryPaths].sort();
+  const actualNativeLibraries = collectNativeLibraryPaths(resourceRoot);
+  if (
+    manifestNativeLibraries.length !== actualNativeLibraries.length ||
+    manifestNativeLibraries.some(
+      (entry, index) => entry !== actualNativeLibraries[index],
+    )
+  ) {
+    throw new Error(
+      `${manifestPath} nativeLibraryPaths must list every copied libcxx.so resource`,
     );
   }
 }
