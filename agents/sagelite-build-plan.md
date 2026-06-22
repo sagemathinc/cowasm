@@ -276,6 +276,11 @@ Follow-up snapshot:
   helpers, and small partition/permutation accessors. These checks reuse
   existing free-module, matrix, polynomial, and combinatorics resources, so the
   mandatory resource inventory does not change.
+- Change: schema 117 manifests extend the direct Node.js linear algebra smoke
+  with a nonsymmetric 3x3 rational matrix determinant and inverse check already
+  covered by the Electron-shaped smoke. This keeps direct Node.js validation in
+  sync with the packaged Electron runtime path without adding new mandatory
+  resource files.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
