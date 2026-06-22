@@ -297,6 +297,11 @@ Follow-up snapshot:
   polynomial composition, coefficient mapping, and substitution checks over
   `QQ[x]`, `ZZ[x]`, and `GF(5)[x]`. These reuse the existing polynomial and
   finite-field resource surface, so no new mandatory resource files are added.
+- Change: schema 121 manifests extend the Node.js/Electron smoke contract with
+  `solve_right` and `solve_left` checks over matrices defined over `GF(7)`.
+  These reuse the existing finite-field and matrix resource surface, so no new
+  mandatory resource files are added. Validation on 2026-06-22 passed with:
+  `sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded`.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.

@@ -437,6 +437,10 @@ F7 = GF(7)
 A = matrix(F7, [[1, 2], [3, 4]])
 assert A.det() == F7(5)
 assert A.inverse() * A == identity_matrix(F7, 2)
+rhs = matrix(F7, 2, 1, [1, 0])
+assert A * A.solve_right(rhs) == rhs
+lhs = matrix(F7, 1, 2, [1, 0])
+assert A.solve_left(lhs) * A == lhs
 assert identity_matrix(F7, 2).det() == F7(1)
 assert A + identity_matrix(F7, 2) == matrix(F7, [[2, 2], [3, 5]])
 assert 2 * A == matrix(F7, [[2, 4], [6, 1]])
