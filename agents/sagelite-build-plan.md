@@ -629,6 +629,17 @@ Follow-up snapshot:
   cover `PositiveIntegers` membership checks alongside the existing set-family
   and nonnegative-integer smoke. The resource file was already mandatory, so no
   new staged files are required.
+- Change: schema 99 manifests advance the packaged Electron smoke with
+  additional exact polynomial coefficient/list checks, 3x3 integer matrix
+  multiplication, and free-module subtraction/dot-product checks. This
+  strengthens already-working exact algebra surfaces without expanding the
+  first Electron smoke into runtime paths that still need `__wasm_setjmp`
+  support.
+- Probe outcome: `sage.combinat.words` and the narrower `sage.sets.primes`
+  import path are not ready for the packaged Electron smoke. Both probes
+  reached a side-module import that requires a callable `env.__wasm_setjmp`.
+  Treat those as follow-up runtime import issues rather than schema-99
+  resource-contract blockers.
 
 ## Runtime Milestones
 

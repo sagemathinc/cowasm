@@ -338,6 +338,32 @@ assert g.monomial_coefficient(x**2*y) == QQ(3)
 assert (g - (x + y + 1)**3).is_zero()
 `);
     console.log("sagelite-electron-ok polynomial helper smoke");
+    console.log("sagelite-electron-start extended linear polynomial smoke");
+    await python.exec(String.raw`
+import sage.all
+from sage.all import ZZ, QQ, PolynomialRing
+from sage.matrix.constructor import matrix
+from sage.modules.free_module import FreeModule
+
+R = PolynomialRing(QQ, 'x')
+x = R.gen()
+f = x**4 - 3*x + 2
+assert f.list() == [QQ(2), QQ(-3), QQ(0), QQ(0), QQ(1)]
+assert (f + 1).degree() == 4
+assert (f - x**4).list() == [QQ(2), QQ(-3)]
+
+A = matrix(ZZ, [[1, 2, 3], [0, 1, 4], [5, 6, 0]])
+assert A.det() == ZZ(1)
+assert A.trace() == ZZ(2)
+assert A * A == matrix(ZZ, [[16, 22, 11], [20, 25, 4], [5, 16, 39]])
+
+M = FreeModule(ZZ, 3)
+u = M([2, 4, 6])
+v = M([1, 0, -1])
+assert u - 2 * v == M([0, 4, 8])
+assert u.dot_product(v) == ZZ(-4)
+`);
+    console.log("sagelite-electron-ok extended linear polynomial smoke");
     console.log("sagelite-electron-start finite-field polynomial smoke");
     await python.exec(String.raw`
 from sage.all import GF, PolynomialRing
