@@ -603,6 +603,8 @@ assert QQ(-45, 28).floor() == -2
 assert QQ(-45, 28).ceil() == -1
 assert QQ(45, 28).floor() == 1
 assert QQ(45, 28).ceil() == 2
+assert QQ(7, 9).numerator() == 7
+assert QQ(7, 9).denominator() == 9
 assert QQ(7, 10) * QQ(15, 14) == QQ(3, 4)
 assert QQ(5, 6) / QQ(10, 9) == QQ(3, 4)
 `);
