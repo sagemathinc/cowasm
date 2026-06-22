@@ -244,6 +244,9 @@ without adding new required resource files.
 Schema 132 manifests extend the rational matrix smoke to cover 3x3 left and
 right solves plus row/column deletion, submatrix selection, stacking, and
 augmentation over `QQ` without adding new required resource files.
+Schema 138 manifests extend the finite-field 3x3 matrix smoke with
+Cayley-Hamilton and rank checks over `GF(7)` without adding new required
+resource files.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

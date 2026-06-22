@@ -360,6 +360,10 @@ Follow-up snapshot:
   with inverse, right-solve, and left-solve checks over `GF(7)`. These reuse
   existing finite-field and matrix resources, so no new mandatory resource
   files are added.
+- Change: schema 138 manifests extend the Node.js/Electron finite-field 3x3
+  matrix smoke with Cayley-Hamilton and rank checks over `GF(7)`. These reuse
+  existing finite-field and matrix resources, so no new mandatory resource
+  files are added.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.

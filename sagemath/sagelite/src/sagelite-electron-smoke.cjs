@@ -547,6 +547,8 @@ G = matrix(F7, [[1, 2, 0], [0, 1, 3], [4, 0, 1]])
 assert G.det() == F7(4)
 assert G.trace() == F7(3)
 assert G**2 == matrix(F7, [[1, 4, 6], [5, 1, 6], [1, 1, 1]])
+assert G.charpoly()(G) == matrix(F7, 3, 3, [0, 0, 0, 0, 0, 0, 0, 0, 0])
+assert G.rank() == 3
 assert G.inverse() * G == identity_matrix(F7, 3)
 rhs3 = matrix(F7, 3, 1, [1, 2, 3])
 assert G * G.solve_right(rhs3) == rhs3
