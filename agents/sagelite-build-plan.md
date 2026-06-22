@@ -314,6 +314,10 @@ Follow-up snapshot:
   identity and zero matrix construction plus left and right multiplication by
   the parent identity over `GF(7)`. These checks reuse the existing finite-field
   matrix resources.
+- Change: schema 126 manifests extend the multivariate polynomial smoke with
+  trivariate derivative, monomial coefficient, and substitution checks over
+  `QQ`. This advances the bounded Node.js/Electron polynomial contract without
+  adding required Electron resource files.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.

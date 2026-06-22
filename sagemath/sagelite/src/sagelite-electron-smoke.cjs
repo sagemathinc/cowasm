@@ -374,6 +374,15 @@ assert g.derivative(x).coefficient({x: 1, y: 1}) == QQ(6)
 assert g.derivative(y).subs({x: 1, y: 2}) == QQ(48)
 assert g.monomial_coefficient(x**2*y) == QQ(3)
 assert (g - (x + y + 1)**3).is_zero()
+T = PolynomialRing(QQ, ('a', 'b', 'c'))
+a, b, c = T.gens()
+h = (a + 2*b + 3*c + 1)**2
+assert h.degree() == 2
+assert h.monomial_coefficient(a*b) == QQ(4)
+assert h.monomial_coefficient(b*c) == QQ(12)
+assert h.subs({a: 1, b: 2, c: 3}) == QQ(225)
+assert h.derivative(c).subs({a: 1, b: 2, c: 3}) == QQ(90)
+assert (h - (a + 2*b + 3*c + 1)**2).is_zero()
 `);
     console.log("sagelite-electron-ok polynomial helper smoke");
     console.log("sagelite-electron-start extended linear polynomial smoke");

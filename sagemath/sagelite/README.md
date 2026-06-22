@@ -196,6 +196,9 @@ package's `python-wasm` dependency without launching the UI. On WASI,
 `sage.all` skips writing the lazy-import cache file during startup, since that
 cache persistence is not required for the packaged worker path and currently
 trips `os.umask` under the worker runtime.
+Schema 126 manifests also cover trivariate polynomial derivative, monomial
+coefficient, and substitution checks over `QQ` using the existing polynomial
+resource set.
 
 The dependency archives that Sagelite links into CPython side modules are now
 rebuilt as position-independent WASM where needed.  NTL, GSL CBLAS, Givaro,
