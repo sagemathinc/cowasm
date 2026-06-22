@@ -392,6 +392,10 @@ cdef extern from *:
       return 1;
     }
 
+    static int cowasm_cypari2_cython_is_inverse_error(long errnum) {
+      return errnum == e_INV;
+    }
+
     static int cowasm_cypari2_cython_eval_string(const char *expression,
                                                  char **result,
                                                  long *errnum) {
@@ -401,9 +405,9 @@ cdef extern from *:
       *errnum = 0;
       cowasm_cypari2_cython_ensure_pari();
 
-      pari_CATCH(e_INV) {
+      pari_CATCH(CATCH_ALL) {
         GEN error = pari_err_last();
-        *errnum = error ? err_get_num(error) : e_INV;
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
         ok = 0;
       }
       pari_TRY {
@@ -417,6 +421,7 @@ cdef extern from *:
     """
     void cowasm_cypari2_cython_ensure_pari()
     int cowasm_cypari2_cython_check_error_recovery(long *result)
+    int cowasm_cypari2_cython_is_inverse_error(long errnum)
     int cowasm_cypari2_cython_eval_string(const char *expression,
                                           char **result,
                                           long *errnum)
@@ -440,7 +445,9 @@ cpdef str eval_string(str expression):
         <const char *>encoded, &output, &errnum
     ):
         from cypari2.handle_error import PariError
-        raise PariError("impossible inverse in gdiv: 0")
+        if cowasm_cypari2_cython_is_inverse_error(errnum):
+            raise PariError("impossible inverse in gdiv: 0")
+        raise PariError(f"PARI error {errnum}")
 
     try:
         return output.decode("ascii")
@@ -617,6 +624,13 @@ except PariError as err:
 else:
     raise AssertionError("PARI division by zero did not raise PariError")
 assert str(pari("13*17")) == "221"
+try:
+    pari("sqrtint(-1)")
+except PariError as err:
+    assert "PARI error" in str(err)
+else:
+    raise AssertionError("PARI domain error did not raise PariError")
+assert str(pari("19*23")) == "437"
 for constructor in (lambda: objtogen(1), Pari().__call__, Gen().__getattr__("factor")):
     try:
         constructor()
