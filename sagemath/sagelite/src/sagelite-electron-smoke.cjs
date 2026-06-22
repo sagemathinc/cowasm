@@ -330,9 +330,16 @@ R = PolynomialRing(QQ, 'x')
 x = R.gen()
 assert (x**3 - 2*x + 1).derivative().list() == [QQ(-2), QQ(0), QQ(3)]
 assert (x**4 - 1)(QQ(2)) == QQ(15)
+assert x.degree() == 1
+assert ((x + 2)**4).list() == [QQ(16), QQ(32), QQ(24), QQ(8), QQ(1)]
 ZZt = PolynomialRing(ZZ, 't')
 t = ZZt.gen()
 assert (t**4 - 1).quo_rem(t**2 - 1) == (t**2 + 1, 0)
+g = t**3 + 2*t + 5
+assert g.degree() == 3
+assert g.leading_coefficient() == ZZ(1)
+assert g.constant_coefficient() == ZZ(5)
+assert ((t - 1)**4)(ZZ(3)) == ZZ(16)
 S = PolynomialRing(QQ, ('x', 'y'))
 x, y = S.gens()
 f = (x + y + 1)**2

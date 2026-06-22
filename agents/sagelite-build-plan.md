@@ -251,6 +251,10 @@ Follow-up snapshot:
   over `ZZ/11ZZ`, and keyed `Family` lookup/value checks. These checks reuse
   existing exact-arithmetic and set-family resources, so the mandatory
   resource inventory does not change.
+- Change: schema 112 manifests extend the bounded Node.js/Electron polynomial
+  helper smoke with degree, leading/coefficient, power-list, and evaluation
+  checks over `QQ[x]` and `ZZ[t]`. These checks reuse the existing polynomial
+  resources, so the mandatory resource inventory does not change.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
