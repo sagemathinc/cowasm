@@ -238,6 +238,9 @@ required resource files.
 Schema 129 manifests extend the packaged Laurent polynomial smoke to cover
 negative valuations, exponent and coefficient accessors, dictionary access,
 and symmetric-square arithmetic without adding new required resource files.
+Schema 131 manifests extend the rational matrix smoke to cover 3x3
+determinant, trace, inverse, power, and shifted determinant checks over `QQ`
+without adding new required resource files.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

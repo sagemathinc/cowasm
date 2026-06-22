@@ -336,6 +336,10 @@ Follow-up snapshot:
   the Laurent polynomial Electron smoke fail during manifest validation when
   the multivariate Laurent element implementation is missing from a copied
   resource bundle.
+- Change: schema 131 manifests extend the Node.js/Electron rational matrix
+  smoke with 3x3 determinant, trace, inverse, power, and shifted determinant
+  checks over `QQ`. These reuse existing matrix resources, so no new mandatory
+  resource files are added.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.

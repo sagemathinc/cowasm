@@ -311,6 +311,19 @@ assert D.inverse() * D == matrix(
 )
 `);
     console.log("sagelite-electron-ok core resources smoke");
+    console.log("sagelite-electron-start rational 3x3 matrix smoke");
+    await python.exec(String.raw`
+from sage.all import QQ
+from sage.matrix.constructor import identity_matrix, matrix
+
+S = matrix(QQ, [[2, 1, 0], [1, 2, 1], [0, 1, 2]])
+assert S.det() == QQ(4)
+assert S.trace() == QQ(6)
+assert S.inverse() * S == identity_matrix(QQ, 3)
+assert S**2 == matrix(QQ, [[5, 4, 1], [4, 6, 4], [1, 4, 5]])
+assert (S + identity_matrix(QQ, 3)).det() == QQ(21)
+`);
+    console.log("sagelite-electron-ok rational 3x3 matrix smoke");
     console.log("sagelite-electron-start combinatorics cardinality smoke");
     await python.exec(String.raw`
 import sage.all
