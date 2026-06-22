@@ -324,6 +324,25 @@ assert S**2 == matrix(QQ, [[5, 4, 1], [4, 6, 4], [1, 4, 5]])
 assert (S + identity_matrix(QQ, 3)).det() == QQ(21)
 `);
     console.log("sagelite-electron-ok rational 3x3 matrix smoke");
+    console.log("sagelite-electron-start rational matrix solve and view smoke");
+    await python.exec(String.raw`
+from sage.all import QQ
+from sage.matrix.constructor import identity_matrix, matrix
+
+A = matrix(QQ, [[3, 1, 2], [2, 2, 1], [1, 0, 1]])
+b = matrix(QQ, 3, 1, [1, 2, 3])
+x = A.solve_right(b)
+assert A * x == b
+row = matrix(QQ, 1, 3, [2, 0, 1])
+y = A.solve_left(row)
+assert y * A == row
+assert A.matrix_from_rows_and_columns([0, 2], [0, 2]) == matrix(QQ, [[3, 2], [1, 1]])
+assert A.delete_rows([1]) == matrix(QQ, [[3, 1, 2], [1, 0, 1]])
+assert A.delete_columns([1]) == matrix(QQ, [[3, 2], [2, 1], [1, 1]])
+assert A.augment(identity_matrix(QQ, 3)).ncols() == 6
+assert A.stack(identity_matrix(QQ, 3)).nrows() == 6
+`);
+    console.log("sagelite-electron-ok rational matrix solve and view smoke");
     console.log("sagelite-electron-start combinatorics cardinality smoke");
     await python.exec(String.raw`
 import sage.all

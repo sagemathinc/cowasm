@@ -241,6 +241,9 @@ and symmetric-square arithmetic without adding new required resource files.
 Schema 131 manifests extend the rational matrix smoke to cover 3x3
 determinant, trace, inverse, power, and shifted determinant checks over `QQ`
 without adding new required resource files.
+Schema 132 manifests extend the rational matrix smoke to cover 3x3 left and
+right solves plus row/column deletion, submatrix selection, stacking, and
+augmentation over `QQ` without adding new required resource files.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for
