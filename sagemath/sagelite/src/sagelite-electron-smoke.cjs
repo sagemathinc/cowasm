@@ -454,6 +454,8 @@ M = MatrixSpace(F7, 2)
 B = M([1, 2, 3, 4])
 assert B.parent() is M
 assert B**2 == M([0, 3, 1, 1])
+assert B * M.identity_matrix() == B
+assert B + M.zero() == B
 assert B[0, 1] == F7(2)
 assert B[1, 0] == F7(3)
 assert B.list() == [F7(1), F7(2), F7(3), F7(4)]

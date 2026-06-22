@@ -306,6 +306,10 @@ Follow-up snapshot:
   square matrix entry access, list conversion, and matrix-space identity
   construction. These checks reuse the existing finite-field and matrix
   resources, so the mandatory resource inventory does not change.
+- Change: schema 124 manifests extend the finite-field matrix smoke with
+  `MatrixSpace(GF(7), 2)` identity multiplication and zero addition checks.
+  These keep matrix-space arithmetic covered in both the standalone Node.js
+  ladder and packaged Electron smoke without adding required resource files.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
