@@ -569,14 +569,20 @@ from sage.sets.positive_integers import PositiveIntegers
 F = Family([1, 2, 3], lambda i: i * i)
 assert list(F) == [1, 4, 9]
 assert F.cardinality() == 3
+G = Family([1, 2, 3, 4], lambda i: i * i)
+assert G[3] == 9
+assert list(G.keys()) == [1, 2, 3, 4]
+assert list(G.values()) == [1, 4, 9, 16]
 N = NonNegativeIntegers()
 assert 0 in N
 assert 5 in N
 assert -1 not in N
+assert list(N.some_elements())[:4] == [0, 1, 3, 42]
 P = PositiveIntegers()
 assert 1 in P
 assert 5 in P
 assert 0 not in P
+assert list(P.some_elements())[:5] == [1, 2, 3, 4, 5]
 `);
     console.log("sagelite-electron-ok set family smoke");
     console.log("sagelite-electron-ok relative resources smoke");

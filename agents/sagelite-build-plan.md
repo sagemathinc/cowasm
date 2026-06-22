@@ -640,6 +640,11 @@ Follow-up snapshot:
   reached a side-module import that requires a callable `env.__wasm_setjmp`.
   Treat those as follow-up runtime import issues rather than schema-99
   resource-contract blockers.
+- Change: schema 101 manifests extend the bounded Node.js/Electron set-family
+  smoke to cover keyed `Family` lookup, `Family.keys()`, `Family.values()`,
+  and `some_elements()` for nonnegative and positive integer sets. The checks
+  use already mandatory set-family and integer-set resources, so no new staged
+  files are required.
 
 ## Runtime Milestones
 
