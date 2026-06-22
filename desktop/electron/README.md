@@ -207,6 +207,9 @@ methods tied to the validated resource bundle.
 Schema 105 manifests extend the packaged matrix solver smoke to cover integer
 `solve_left` in addition to `solve_right`, keeping both exact matrix solve
 directions tied to the bounded Node/Electron worker path.
+Schema 106 manifests extend the finite-field polynomial smoke to cover
+quotient/remainder, coefficient lists, and powers over `GF(7)`, keeping that
+exact algebra path tied to the bounded Node/Electron worker path.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for

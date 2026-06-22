@@ -225,6 +225,15 @@ Follow-up snapshot:
 - Change: schema 105 manifests advanced the same matrix-solver smoke with an
   integer `solve_left` check, keeping left- and right-solve execution covered by
   the Node.js/Electron resource contract without adding new required files.
+- Change: schema 106 manifests advanced the finite-field polynomial smoke with
+  quotient/remainder, coefficient-list, and power checks over `GF(7)`, keeping
+  that exact algebra path covered by the Node.js/Electron resource contract.
+- Probe outcome: finite-field polynomial factorization over `GF(7)` is not
+  ready for the packaged smoke. A direct Node.js probe against the broad staged
+  `electron-resources` tree can return, but the standalone milestone path exits
+  before the finite-field polynomial smoke marker after loading the disabled
+  `polynomial_zmod_flint` placeholder. Treat finite-field factorization and gcd
+  as follow-up runtime work instead of a schema-106 contract requirement.
 - Probe outcome: `sage.combinat.q_analogues` is not ready for the packaged
   Electron smoke. A Node.js `python-wasm -c` probe can evaluate polynomial
   `q_int`, `q_factorial`, and `q_binomial` after `sage.all`, but the

@@ -380,6 +380,12 @@ S = PolynomialRing(GF(7), 't')
 t = S.gen()
 assert (t**3 + 2*t + 1).derivative() == 3*t**2 + 2
 assert (t**2 + 1)(GF(7)(3)) == GF(7)(3)
+f = t**4 - 1
+q, r = (t**4 + 3*t**2 + 2).quo_rem(t**2 + 1)
+assert q == t**2 + 2
+assert r == 0
+assert f.list() == [GF(7)(6), GF(7)(0), GF(7)(0), GF(7)(0), GF(7)(1)]
+assert (t + 3)**3 == t**3 + 2*t**2 + 6*t + 6
 `);
     console.log("sagelite-electron-ok finite-field polynomial smoke");
     console.log("sagelite-electron-start finite-field matrix smoke");
