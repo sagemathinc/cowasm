@@ -1230,6 +1230,31 @@ withResourceRoot((root) => {
 
 withResourceRoot((root) => {
   stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  writeManifest(
+    root,
+    validManifest({
+      requiredResourcePaths: [
+        ...sorted([
+          ...expectedSageliteMandatoryResourcePaths,
+          ...expectedSageliteNativeLibraryPaths,
+        ]),
+        "python.wasm",
+      ],
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /requiredResourcePaths entries must not contain duplicates/,
+  );
+});
+
+withResourceRoot((root) => {
+  stagePythonPath(root);
   stageNativeLibraries(root);
   writeManifest(root, validManifest({ requiredResourcePaths: undefined }));
 
