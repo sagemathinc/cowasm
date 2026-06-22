@@ -455,6 +455,13 @@ B = M([1, 2, 3, 4])
 assert B.parent() is M
 assert B**2 == M([0, 3, 1, 1])
 assert B.transpose()[0, 1] == F7(3)
+N = MatrixSpace(F7, 2, 3)
+C = N([1, 2, 3, 4, 5, 6])
+assert C.parent() is N
+assert C.base_ring() is F7
+assert C.nrows() == 2
+assert C.ncols() == 3
+assert C + N.zero() == C
 `);
     console.log("sagelite-electron-ok finite-field matrix smoke");
     console.log("sagelite-electron-start matrix solve smoke");
