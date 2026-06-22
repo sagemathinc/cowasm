@@ -454,7 +454,11 @@ M = MatrixSpace(F7, 2)
 B = M([1, 2, 3, 4])
 assert B.parent() is M
 assert B**2 == M([0, 3, 1, 1])
+assert B[0, 1] == F7(2)
+assert B[1, 0] == F7(3)
+assert B.list() == [F7(1), F7(2), F7(3), F7(4)]
 assert B.transpose()[0, 1] == F7(3)
+assert M.identity_matrix() == identity_matrix(F7, 2)
 N = MatrixSpace(F7, 2, 3)
 C = N([1, 2, 3, 4, 5, 6])
 assert C.parent() is N

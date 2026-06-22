@@ -302,6 +302,10 @@ Follow-up snapshot:
   These reuse the existing finite-field and matrix resource surface, so no new
   mandatory resource files are added. Validation on 2026-06-22 passed with:
   `sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded`.
+- Change: schema 123 manifests extend the finite-field matrix smoke with
+  square matrix entry access, list conversion, and matrix-space identity
+  construction. These checks reuse the existing finite-field and matrix
+  resources, so the mandatory resource inventory does not change.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
