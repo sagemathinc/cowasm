@@ -287,6 +287,12 @@ Follow-up snapshot:
   are added. Integer powers, integer matrix right-kernel computation,
   univariate polynomial GCD, and rational power/comparison still expose
   Node/Electron runtime gaps and remain follow-up runtime work.
+- Change: schema 119 manifests extend the Node.js/Electron smoke contract with
+  integer bit/base-string conversion checks and polynomial coefficient
+  indexing plus truncation checks. These reuse the existing exact-arithmetic
+  and polynomial resource surface, so no new mandatory resource files are
+  added. Validation on 2026-06-22 passed with:
+  `sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded`.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.

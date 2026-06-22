@@ -353,6 +353,9 @@ assert h.exponents() == [0, 2, 4]
 assert h.dict() == {0: QQ(1), 2: QQ(2), 4: QQ(1)}
 assert h.monomials() == [x**4, x**2, 1]
 assert (x + 1).is_monic()
+p = (x + 1)**5
+assert p[3] == QQ(10)
+assert p.truncate(4).degree() == 3
 S = PolynomialRing(QQ, ('x', 'y'))
 x, y = S.gens()
 f = (x + y + 1)**2
@@ -540,6 +543,8 @@ assert g == ZZ(1)
 assert s * ZZ(5) + t * ZZ(12) == g
 assert ZZ(255).digits(16) == [15, 15]
 assert ZZ(10).digits(2) == [0, 1, 0, 1]
+assert ZZ(255).bits() == [1, 1, 1, 1, 1, 1, 1, 1]
+assert ZZ(123456).str(16) == '1e240'
 assert ZZ(12345).quo_rem(ZZ(97)) == (ZZ(127), ZZ(26))
 assert ZZ(144).sqrtrem() == (ZZ(12), ZZ(0))
 assert ZZ(145).sqrtrem() == (ZZ(12), ZZ(1))
