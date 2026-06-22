@@ -356,6 +356,13 @@ assert (x + 1).is_monic()
 p = (x + 1)**5
 assert p[3] == QQ(10)
 assert p.truncate(4).degree() == 3
+f = x**3 - 2*x + 1
+assert f(x + 1) == x**3 + 3*x**2 + x
+assert f.map_coefficients(lambda c: c * 2) == 2*x**3 - 4*x + 2
+assert (x**2 + 2*x + 1).subs(x=QQ(3)) == QQ(16)
+ZZz = PolynomialRing(ZZ, 'z')
+z = ZZz.gen()
+assert (z**3 - z)(z + 1) == z**3 + 3*z**2 + 2*z
 S = PolynomialRing(QQ, ('x', 'y'))
 x, y = S.gens()
 f = (x + y + 1)**2
@@ -414,6 +421,10 @@ assert q == t**2 + 2
 assert r == 0
 assert f.list() == [GF(7)(6), GF(7)(0), GF(7)(0), GF(7)(0), GF(7)(1)]
 assert (t + 3)**3 == t**3 + 2*t**2 + 6*t + 6
+S5 = PolynomialRing(GF(5), 'u')
+u = S5.gen()
+assert (u**3 + 4*u + 2)(u + 1) == u**3 + 3*u**2 + 2*u + 2
+assert (u**2 + 3*u + 4).subs(u=GF(5)(2)) == GF(5)(4)
 `);
     console.log("sagelite-electron-ok finite-field polynomial smoke");
     console.log("sagelite-electron-start finite-field matrix smoke");

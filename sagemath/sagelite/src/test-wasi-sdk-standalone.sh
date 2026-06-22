@@ -872,6 +872,13 @@ assert h.reverse(degree=5) == x**5 - x**4 + 1
 p = (x + 1)**5
 assert p[3] == QQ(10)
 assert p.truncate(4).degree() == 3
+f = x**3 - 2*x + 1
+assert f(x + 1) == x**3 + 3*x**2 + x
+assert f.map_coefficients(lambda c: c * 2) == 2*x**3 - 4*x + 2
+assert (x**2 + 2*x + 1).subs(x=QQ(3)) == QQ(16)
+ZZz = PolynomialRing(ZZ, 'z')
+z = ZZz.gen()
+assert (z**3 - z)(z + 1) == z**3 + 3*z**2 + 2*z
 print('sagelite-node-ok polynomial helper smoke')"
 run_node_import "finite-field polynomial smoke" "from sage.all import GF, PolynomialRing
 S = PolynomialRing(GF(7), 't')
@@ -884,6 +891,10 @@ assert q == t**2 + 2
 assert r == 0
 assert f.list() == [GF(7)(6), GF(7)(0), GF(7)(0), GF(7)(0), GF(7)(1)]
 assert (t + 3)**3 == t**3 + 2*t**2 + 6*t + 6
+S5 = PolynomialRing(GF(5), 'u')
+u = S5.gen()
+assert (u**3 + 4*u + 2)(u + 1) == u**3 + 3*u**2 + 2*u + 2
+assert (u**2 + 3*u + 4).subs(u=GF(5)(2)) == GF(5)(4)
 print('sagelite-node-ok finite-field polynomial smoke')"
 run_node_import "finite-field matrix smoke" "from sage.all import GF
 from sage.matrix.constructor import identity_matrix, matrix
@@ -1038,11 +1049,11 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=119
+electron_manifest_schema_version=120
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
-electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-linear-arithmetic-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-tableau-subset-integer-vector-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-signed-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-set-family-positive-integers-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-version-manifest-self-contained-sorted-side-modules-sorted-required-resources-source-tree-state-version-required-combinat-resource-files-v64-extended-linear-polynomial-set-family-indexing-v65-integer-gcd-lcm-v66-integer-quotient-ring-operations-v67-matrix-solve-right-v68-matrix-solve-left-v69-finite-field-polynomial-quotient-list-power-v70-extended-matrix-solve-v71-rational-left-solve-v72-integer-rational-arithmetic-v73-matrix-power-stack-augment-v74-integer-xgcd-quotient-family-v75-polynomial-coefficients-power-v76-matrix-views-change-ring-v77-matrix-polynomial-partition-accessors-v78-polynomial-dict-partition-composition-accessors-v79-free-module-matrix-polynomial-accessors-v80-rational-matrix-inverse-v81-integer-comparison-v82-integer-bits-polynomial-truncation-v83"
+electron_manifest_smoke_contract="exact-arithmetic-polynomial-helpers-finite-field-polynomial-finite-field-matrix-linear-arithmetic-charpoly-matrix-space-finite-field-matrix-rank-multivariate-polynomial-laurent-polynomial-derivatives-matrix-rank-free-module-abelian-group-hamming-code-distance-power-tableau-set-partition-perfect-matching-derangements-subwords-finite-set-maps-tuples-partition-permutation-statistics-larger-enumeration-partition-enumeration-partition-composition-methods-permutation-enumeration-tableau-subset-integer-vector-enumeration-combinatorics-cardinality-combinat-list-roundtrip-signed-composition-integer-lists-crt-valuation-quotient-ring-modular-inverse-integer-rational-helpers-integer-methods-signed-integer-rational-helpers-extended-integer-helpers-combinat-monoid-functional-set-family-positive-integers-cypari2-pari-error-recovery-sage-pari-boundary-resource-root-env-version-manifest-self-contained-sorted-side-modules-sorted-required-resources-source-tree-state-version-required-combinat-resource-files-v64-extended-linear-polynomial-set-family-indexing-v65-integer-gcd-lcm-v66-integer-quotient-ring-operations-v67-matrix-solve-right-v68-matrix-solve-left-v69-finite-field-polynomial-quotient-list-power-v70-extended-matrix-solve-v71-rational-left-solve-v72-integer-rational-arithmetic-v73-matrix-power-stack-augment-v74-integer-xgcd-quotient-family-v75-polynomial-coefficients-power-v76-matrix-views-change-ring-v77-matrix-polynomial-partition-accessors-v78-polynomial-dict-partition-composition-accessors-v79-free-module-matrix-polynomial-accessors-v80-rational-matrix-inverse-v81-integer-comparison-v82-integer-bits-polynomial-truncation-v83-polynomial-composition-substitution-v84"
 electron_manifest_resource_root_env_name="COWASM_SAGELITE_RESOURCE_ROOT"
 electron_manifest_source_revision_file="$build_dir/.cowasm-sagelite-source-revision"
 electron_manifest_source_tree_state_file="$build_dir/.cowasm-sagelite-source-tree-state"
