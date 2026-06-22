@@ -366,6 +366,15 @@ B.rescale_col(0, QQ(2, 3))
 assert B == matrix(QQ, [[QQ(2, 3), 2], [0, -1]])
 B.add_multiple_of_column(1, 0, QQ(-3))
 assert B == matrix(QQ, [[QQ(2, 3), 0], [0, -1]])
+A.add_multiple_of_row(2, 0, ZZ(-2))
+assert A == matrix(ZZ, [[1, 0, 3], [10, 8, 6], [0, 1, 3]])
+A.add_multiple_of_column(1, 0, ZZ(3))
+assert A == matrix(ZZ, [[1, 3, 3], [10, 38, 6], [0, 1, 3]])
+C = matrix(QQ, [[1, 2, 3], [4, 5, 6]])
+C.rescale_row(0, QQ(1, 2))
+assert C == matrix(QQ, [[QQ(1, 2), 1, QQ(3, 2)], [4, 5, 6]])
+C.rescale_col(2, QQ(2, 3))
+assert C == matrix(QQ, [[QQ(1, 2), 1, 1], [4, 5, 4]])
 `);
     console.log("sagelite-electron-ok matrix row-column mutation smoke");
     console.log("sagelite-electron-start combinatorics cardinality smoke");
