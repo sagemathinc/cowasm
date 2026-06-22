@@ -265,6 +265,11 @@ Follow-up snapshot:
   deletion, antitranspose, polynomial truncate/shift/reverse helpers, and
   partition Frobenius/exponential notation. These checks reuse existing
   packaged resources, so the mandatory resource inventory does not change.
+- Change: schema 115 manifests extend the packaged Node/Electron smoke to
+  cover sparse and dense polynomial coefficient accessors, polynomial exponent
+  dictionaries, partition indexing helpers, and composition partial sums. These
+  checks reuse existing polynomial and combinatorics resources, so the
+  mandatory resource inventory does not change.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.

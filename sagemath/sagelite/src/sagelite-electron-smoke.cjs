@@ -344,6 +344,10 @@ assert g.degree() == 3
 assert g.leading_coefficient() == ZZ(1)
 assert g.constant_coefficient() == ZZ(5)
 assert ((t - 1)**4)(ZZ(3)) == ZZ(16)
+h = x**4 + 2*x**2 + 1
+assert h.coefficients(sparse=False) == [QQ(1), QQ(0), QQ(2), QQ(0), QQ(1)]
+assert h.exponents() == [0, 2, 4]
+assert h.dict() == {0: QQ(1), 2: QQ(2), 4: QQ(1)}
 S = PolynomialRing(QQ, ('x', 'y'))
 x, y = S.gens()
 f = (x + y + 1)**2
@@ -637,9 +641,13 @@ assert not Partition([3, 2, 2]).dominates(p)
 p3 = Partition([5, 3, 1])
 assert p3.frobenius_coordinates() == ([4, 1], [2, 0])
 assert p3.to_exp() == [1, 0, 1, 0, 1]
+assert p.length() == 3
+assert p[0] == 4
+assert p.get_part(4) == 0
 comp = Composition([2, 1, 3])
 assert comp.descents() == [1, 2]
 assert comp.to_subset() == {2, 3}
+assert comp.partial_sums() == [2, 3, 6]
 `);
     console.log("sagelite-electron-ok partition and composition method smoke");
     console.log("sagelite-electron-start tableau and enumerated combinatorics smoke");
