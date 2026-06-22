@@ -218,6 +218,10 @@ Follow-up snapshot:
   listed in `requiredResourcePaths` and covered by `requiredResourceSha256`.
   This catches bundles missing rational-field, modular-ring, or prime
   finite-field constructors before the Electron worker starts.
+- Change: schema 104 manifests advanced the smoke contract with an integer
+  matrix `solve_right` check under both Node.js and Electron-shaped resources.
+  This keeps packaged linear algebra coverage tied to actual solver execution,
+  not just determinant, inverse, rank, and characteristic-polynomial startup.
 - Probe outcome: `sage.combinat.q_analogues` is not ready for the packaged
   Electron smoke. A Node.js `python-wasm -c` probe can evaluate polynomial
   `q_int`, `q_factorial`, and `q_binomial` after `sage.all`, but the

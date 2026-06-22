@@ -407,6 +407,17 @@ assert B**2 == M([0, 3, 1, 1])
 assert B.transpose()[0, 1] == F7(3)
 `);
     console.log("sagelite-electron-ok finite-field matrix smoke");
+    console.log("sagelite-electron-start matrix solve smoke");
+    await python.exec(String.raw`
+from sage.all import ZZ
+from sage.matrix.constructor import matrix
+
+A = matrix(ZZ, [[1, 2], [3, 4]])
+u = matrix(ZZ, 2, 1, [1, 2])
+solution = A.solve_right(u)
+assert A * solution == u
+`);
+    console.log("sagelite-electron-ok matrix solve smoke");
     console.log("sagelite-electron-start Laurent polynomial smoke");
     await python.exec(String.raw`
 from sage.all import QQ, LaurentPolynomialRing
