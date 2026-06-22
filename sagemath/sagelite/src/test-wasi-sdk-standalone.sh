@@ -1283,14 +1283,6 @@ electron_required_paths=(
   "sagelite-electron-smoke.cjs"
 )
 
-mapfile -t electron_required_paths < <(printf '%s\n' "${electron_required_paths[@]}" | sort)
-
-for required_path in "${electron_required_paths[@]}"; do
-  if [ ! -e "$electron_resources_dir/$required_path" ]; then
-    record_blocker "sagelite-blocked: Electron resources are missing required path $required_path."
-  fi
-done
-
 electron_side_module_list="$dist_dir/electron-resource-side-modules.txt"
 electron_side_module_audit_log="$dist_dir/electron-side-module-audit.log"
 find "$electron_resources_dir" -name '*.so' -type f | sort >"$electron_side_module_list"
@@ -1318,6 +1310,17 @@ done < <(find "$electron_resources_dir" -name 'libcxx.so' -type f | sort)
 if [ "${#electron_native_library_paths[@]}" -eq 0 ]; then
   record_blocker "sagelite-blocked: Electron resources are missing native library paths for libcxx.so."
 fi
+
+mapfile -t electron_required_paths < <(
+  printf '%s\n' "${electron_required_paths[@]}" "${electron_side_module_paths[@]}" |
+    sort -u
+)
+
+for required_path in "${electron_required_paths[@]}"; do
+  if [ ! -e "$electron_resources_dir/$required_path" ]; then
+    record_blocker "sagelite-blocked: Electron resources are missing required path $required_path."
+  fi
+done
 
 {
   printf '{\n'

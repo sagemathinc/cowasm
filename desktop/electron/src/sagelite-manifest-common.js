@@ -407,6 +407,11 @@ function validateSageliteManifest(resourceRoot, manifestPath, manifest) {
     manifestPath,
     manifest.sideModulePaths,
   );
+  validateSideModulesCoveredByRequiredResources(
+    manifestPath,
+    manifest.sideModulePaths,
+    manifest.requiredResourcePaths,
+  );
   validateNativeLibrariesInSideModuleInventory(
     manifestPath,
     manifest.nativeLibraryPaths,
@@ -796,6 +801,22 @@ function validateNativeLibrariesCoveredByRequiredResources(
   if (missingNativeLibraries.length !== 0) {
     throw new Error(
       `${manifestPath} nativeLibraryPaths entries must also be listed in requiredResourcePaths`,
+    );
+  }
+}
+
+function validateSideModulesCoveredByRequiredResources(
+  manifestPath,
+  sideModulePaths,
+  requiredResourcePaths,
+) {
+  const requiredResourcePathSet = new Set(requiredResourcePaths);
+  const missingSideModules = sideModulePaths.filter(
+    (entry) => !requiredResourcePathSet.has(entry),
+  );
+  if (missingSideModules.length !== 0) {
+    throw new Error(
+      `${manifestPath} sideModulePaths entries must also be listed in requiredResourcePaths`,
     );
   }
 }

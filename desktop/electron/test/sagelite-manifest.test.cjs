@@ -1933,6 +1933,32 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
+  const extraSideModule =
+    "site-packages/sage/extra.cpython-314-wasm32-wasi.so";
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  touch(root, extraSideModule);
+  writeManifest(
+    root,
+    validManifest({
+      sideModulePaths: sorted([
+        ...expectedSageliteMandatorySideModulePaths(),
+        ...expectedSageliteNativeLibraryPaths,
+        extraSideModule,
+      ]),
+    }),
+  );
+
+  assert.throws(
+    () => loadSageliteManifest(root),
+    /sideModulePaths entries must also be listed in requiredResourcePaths/,
+  );
+});
+
+withResourceRoot((root) => {
   stagePythonPath(root);
   stageSageEntrypoints(root);
   stageRequiredTools(root);

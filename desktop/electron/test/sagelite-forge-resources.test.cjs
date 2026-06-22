@@ -717,6 +717,35 @@ withResourceRoot((root) => {
 });
 
 withResourceRoot((root) => {
+  const extraSideModule =
+    "site-packages/sage/extra.cpython-314-wasm32-wasi.so";
+  stagePythonPath(root);
+  stageSageEntrypoints(root);
+  stageRequiredTools(root);
+  touch(root, "python.wasm");
+  stageNativeLibraries(root);
+  touch(root, extraSideModule);
+  writeManifest(
+    root,
+    validManifest({
+      sideModulePaths: [
+        ...expectedSageliteMandatorySideModulePaths(),
+        ...expectedSageliteNativeLibraryPaths,
+        extraSideModule,
+      ].sort(),
+    }),
+  );
+
+  assert.throws(
+    () =>
+      resolveSageliteExtraResources(__dirname, {
+        COWASM_SAGELITE_ELECTRON_RESOURCES: root,
+      }),
+    /sideModulePaths entries must also be listed in requiredResourcePaths/,
+  );
+});
+
+withResourceRoot((root) => {
   stagePythonPath(root);
   stageSageEntrypoints(root);
   touch(root, "site-packages/sage/structure/element.cpython-314-wasm32-wasi.so");
