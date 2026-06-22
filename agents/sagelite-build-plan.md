@@ -255,6 +255,11 @@ Follow-up snapshot:
   helper smoke with degree, leading/coefficient, power-list, and evaluation
   checks over `QQ[x]` and `ZZ[t]`. These checks reuse the existing polynomial
   resources, so the mandatory resource inventory does not change.
+- Change: schema 113 manifests extend the bounded Node.js/Electron matrix
+  smoke with transpose, `change_ring`, row/column materialization, and matrix
+  list conversion checks. These checks reuse the existing matrix and
+  exact-arithmetic resources, so the mandatory resource inventory does not
+  change.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.

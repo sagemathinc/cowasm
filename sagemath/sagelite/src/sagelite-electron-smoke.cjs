@@ -444,6 +444,11 @@ assert stacked.ncols() == 2
 augmented = F.augment(F)
 assert augmented.nrows() == 2
 assert augmented.ncols() == 4
+assert A.transpose() == matrix(ZZ, [[1, 3], [2, 4]])
+assert A.change_ring(QQ) == matrix(QQ, [[1, 2], [3, 4]])
+assert A.list() == [ZZ(1), ZZ(2), ZZ(3), ZZ(4)]
+assert list(A.rows()[0]) == [ZZ(1), ZZ(2)]
+assert list(A.columns()[1]) == [ZZ(2), ZZ(4)]
 row = matrix(ZZ, 1, 3, [3, 2, 1])
 integer_left_solution = B.solve_left(row)
 assert integer_left_solution * B == row
