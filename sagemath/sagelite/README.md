@@ -14,6 +14,17 @@ Run the current probe with:
 make -C sagemath/sagelite test-wasi-sdk-standalone
 ```
 
+After the probe has staged `dist/wasi-sdk/electron-resources`, try the
+Node.js worker-backed Sagelite demo REPL with:
+
+```sh
+node sagemath/sagelite/src/sagelite-node-repl.cjs
+```
+
+This REPL uses the same async `python-wasm` worker API and packaged resource
+manifest as the Electron smoke, so it avoids the lower-level
+`Py_BytesMain` terminal path used by `python-wasm`.
+
 The target stages the Sagelite checkout into `build/wasi-sdk`, prepares explicit
 CoWasm Python, Cython, NumPy, gmpy2, cysignals, memory_allocator, primecountpy,
 Meson, Ninja, compiler, and pkg-config paths, and then runs direct `meson
