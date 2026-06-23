@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 7;
+const doctestRunnerVersion = 8;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -380,7 +380,17 @@ function classifyDoctestHostError(err) {
   if (/timed out after \d+(?:\.\d+)?s/.test(detail)) {
     return "timeout";
   }
-  if (/WebAssembly\.RuntimeError|wasm trap|unreachable/i.test(detail)) {
+  if (
+    /(?:^|\n)(?:WebAssembly\.)?LinkError:/i.test(detail) ||
+    /WebAssembly\.Instance\(\): Import #\d+/i.test(detail) ||
+    /function import requires a callable/i.test(detail)
+  ) {
+    return "wasm_link_error";
+  }
+  if (
+    /WebAssembly\.RuntimeError|(?:^|\n)RuntimeError: function signature mismatch/i.test(detail) ||
+    /wasm trap|unreachable|memory access out of bounds/i.test(detail)
+  ) {
     return "wasm_trap";
   }
   return err && err.name ? err.name : "host_exception";
