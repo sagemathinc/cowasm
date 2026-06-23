@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 14;
+const doctestRunnerVersion = 15;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -624,6 +624,18 @@ def __cowasm_state_diagnostic(detail):
     return "\\n".join(context) + "\\n" + detail
 
 
+def _cowasm_exception_detail(exc):
+    if isinstance(exc, ModuleNotFoundError) and getattr(exc, "name", None):
+        return f"missing module: {exc.name}"
+    if isinstance(exc, ImportError):
+        message = str(exc).strip()
+        return f"import error: {message}" if message else "import error"
+    message = str(exc).strip()
+    if message:
+        return f"{exc.__class__.__name__}: {message}"
+    return exc.__class__.__name__
+
+
 def _cowasm_tags(source):
     tags = []
     checks = [
@@ -903,7 +915,12 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
 
     def report_failure(self, out, test, example, got):
         row = self.__base(test, example)
-        row.update({"status": "failed", "actual": got, "failure_class": "output_mismatch"})
+        row.update({
+            "status": "failed",
+            "actual": got,
+            "failure_class": "output_mismatch",
+            "failure_detail": "expected output mismatch",
+        })
         self.blocks.append(row)
 
     def report_unexpected_exception(self, out, test, example, exc_info):
@@ -912,6 +929,7 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
             "status": "failed",
             "actual": "".join(traceback.format_exception(*exc_info)),
             "failure_class": exc_info[0].__name__,
+            "failure_detail": _cowasm_exception_detail(exc_info[1]),
         })
         self.blocks.append(row)
 
@@ -1265,6 +1283,7 @@ function ensureDoctestSchema(dbPath) {
       actual TEXT,
       status TEXT NOT NULL,
       failure_class TEXT,
+      failure_detail TEXT,
       tags TEXT,
       skip_reason TEXT,
       duration_ms INTEGER NOT NULL
@@ -1285,6 +1304,7 @@ function ensureDoctestSchema(dbPath) {
   ensureSqliteColumn(dbPath, "blocks", "block_key", "TEXT");
   ensureSqliteColumn(dbPath, "blocks", "source_hash", "TEXT");
   ensureSqliteColumn(dbPath, "blocks", "expected_kind", "TEXT");
+  ensureSqliteColumn(dbPath, "blocks", "failure_detail", "TEXT");
   ensureSqliteColumn(dbPath, "blocks", "tags", "TEXT");
   ensureSqliteColumn(dbPath, "blocks", "skip_reason", "TEXT");
   sqliteExec(dbPath, "CREATE INDEX IF NOT EXISTS blocks_key_idx ON blocks(block_key);");
@@ -1381,7 +1401,7 @@ function writeDoctestSqlite(dbPath, run) {
       rows.push(`INSERT INTO blocks (
         file_id, block_index, block_key, name, start_line, end_line, source,
         source_hash, expected, expected_kind, actual, status, failure_class,
-        tags, skip_reason, duration_ms
+        failure_detail, tags, skip_reason, duration_ms
       ) VALUES (
         ${fileId}, ${sqlNumber(block.block_index)}, ${sqlString(blockKeyFor(file, block, run))},
         ${sqlString(block.name)},
@@ -1389,7 +1409,8 @@ function writeDoctestSqlite(dbPath, run) {
         ${sqlString(block.source)}, ${sqlString(block.source_hash)},
         ${sqlString(block.expected)}, ${sqlString(block.expected_kind)},
         ${sqlString(block.actual)}, ${sqlString(block.status)},
-        ${sqlString(block.failure_class)}, ${sqlString(block.tags)},
+        ${sqlString(block.failure_class)}, ${sqlString(block.failure_detail)},
+        ${sqlString(block.tags)},
         ${sqlString(block.skip_reason)}, ${sqlNumber(block.duration_ms)}
       );`);
     }

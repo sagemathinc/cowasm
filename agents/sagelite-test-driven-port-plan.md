@@ -54,6 +54,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   identify the exact Sage example that triggered the runtime failure.
 - Function-signature traps are classified as `wasm_signature_mismatch`, so
   C/WASM ABI regressions are separated from generic runtime traps.
+- Block-level doctest failures record `failure_detail`, and the saved
+  `block-failure-clusters.sql` query groups failed examples by class plus
+  normalized detail instead of only by broad exception type.
 - Run metadata records the CoWasm commit, documented Sagelite package commit,
   runtime profile, runner version, and resource root, so corpus dashboards can
   distinguish runtime/profile changes from Sagelite source changes.
@@ -336,6 +339,17 @@ blocks:
 ```sh
 sqlite3 sagelite-doctests.sqlite3 \
   < sagemath/sagelite/src/doctest-sql/file-error-clusters.sql
+```
+
+### Block Failure Clusters
+
+Block-level failures should be grouped by class and normalized detail so a
+single missing module or output-checking gap does not disappear into a broad
+exception class:
+
+```sh
+sqlite3 sagelite-doctests.sqlite3 \
+  < sagemath/sagelite/src/doctest-sql/block-failure-clusters.sql
 ```
 
 ### Newly Passing Blocks

@@ -1834,11 +1834,11 @@ if [ "$doctest_rel_tol_failure_status" -eq 0 ]; then
   sqlite3 "$doctest_rel_tol_failure_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t relative-tolerance failure smoke unexpectedly passed."
 fi
-doctest_rel_tol_failure_count="$(sqlite3 "$doctest_rel_tol_failure_db" "select count(*) from blocks where status = 'failed' and expected_kind = 'tolerance' and failure_class = 'output_mismatch';")"
+doctest_rel_tol_failure_count="$(sqlite3 "$doctest_rel_tol_failure_db" "select count(*) from blocks where status = 'failed' and expected_kind = 'tolerance' and failure_class = 'output_mismatch' and failure_detail = 'expected output mismatch';")"
 if [ "$doctest_rel_tol_failure_count" != "1" ]; then
   cat "$doctest_rel_tol_failure_log" >&2
   sqlite3 "$doctest_rel_tol_failure_db" ".dump" >&2 || true
-  record_blocker "sagelite-blocked: sage -t relative-tolerance failure smoke did not record the expected failed tolerance block."
+  record_blocker "sagelite-blocked: sage -t relative-tolerance failure smoke did not record the expected failed tolerance block metadata."
 fi
 printf 'sagelite-node-ok sage doctest sqlite smoke\n' >>"$node_import_log"
 
