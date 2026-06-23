@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 2;
+const doctestRunnerVersion = 3;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -170,6 +170,7 @@ function parseDoctestArgs(args, invocationCwd) {
     timeoutSeconds: 0,
     long: false,
     optional: false,
+    optionalFeatures: [],
     profile: process.env.COWASM_SAGELITE_DOCTEST_PROFILE || "node",
     files: [],
   };
@@ -193,8 +194,12 @@ function parseDoctestArgs(args, invocationCwd) {
       options.timeoutSeconds = Number(arg.slice("--timeout=".length));
     } else if (arg === "--long" || arg === "-l") {
       options.long = true;
-    } else if (arg === "--optional" || arg.startsWith("--optional=")) {
+    } else if (arg === "--optional") {
       options.optional = true;
+    } else if (arg.startsWith("--optional=")) {
+      options.optionalFeatures.push(
+        ...parseDoctestFeatureList(arg.slice("--optional=".length)),
+      );
     } else if (arg === "--profile") {
       i += 1;
       if (i >= args.length) {
@@ -232,6 +237,17 @@ function parseDoctestArgs(args, invocationCwd) {
   return options;
 }
 
+function parseDoctestFeatureList(value) {
+  const features = value
+    .split(/[,\s]+/)
+    .map((feature) => feature.trim().toLowerCase())
+    .filter(Boolean);
+  if (features.length === 0) {
+    throw new Error("--optional=FEATURE requires at least one feature");
+  }
+  return features;
+}
+
 async function runDoctestMode(python, args, invocationCwd) {
   const options = parseDoctestArgs(args, invocationCwd);
   const startedAt = new Date().toISOString();
@@ -261,6 +277,7 @@ async function runDoctestMode(python, args, invocationCwd) {
       resultPath,
       long: options.long,
       optional: options.optional,
+      optionalFeatures: options.optionalFeatures,
     });
     await execPythonWithTimeout(python, code, options.timeoutSeconds);
     await python.kernel.flushOutput(250);
@@ -321,7 +338,13 @@ async function execPythonWithTimeout(python, code, timeoutSeconds) {
   }
 }
 
-function buildDoctestPython({ files, resultPath, long, optional }) {
+function buildDoctestPython({
+  files,
+  resultPath,
+  long,
+  optional,
+  optionalFeatures,
+}) {
   return `
 import ast
 import builtins
@@ -350,12 +373,17 @@ __cowasm_files = ${JSON.stringify(JSON.stringify(files))}
 __cowasm_result_path = ${JSON.stringify(resultPath)}
 __cowasm_long = ${long ? "True" : "False"}
 __cowasm_optional = ${optional ? "True" : "False"}
+__cowasm_optional_features = set(json.loads(${JSON.stringify(JSON.stringify(optionalFeatures))}))
 
 __cowasm_deferred_re = re.compile(
     r"#.*\\b(not implemented|not tested|known bug)\\b",
     re.IGNORECASE,
 )
 __cowasm_optional_re = re.compile(r"#.*\\b(optional|needs)\\b", re.IGNORECASE)
+__cowasm_optional_tag_re = re.compile(
+    r"#.*?\\b(optional|needs)\\b(?P<features>[^\\n]*)",
+    re.IGNORECASE,
+)
 __cowasm_long_re = re.compile(r"#.*\\blong time\\b", re.IGNORECASE)
 __cowasm_random_re = re.compile(r"#.*\\brandom\\b", re.IGNORECASE)
 __cowasm_tol_re = re.compile(r"#.*\\b(abs tol|rel tol|tol)\\b", re.IGNORECASE)
@@ -382,7 +410,35 @@ def _cowasm_tags(source):
     for name, regex in checks:
         if regex.search(source):
             tags.append(name)
+    for kind, feature in __cowasm_optional_feature_tags(source):
+        tags.append(f"{kind}:{feature}")
     return ",".join(tags)
+
+
+def __cowasm_optional_feature_tags(source):
+    tags = []
+    for match in __cowasm_optional_tag_re.finditer(source):
+        kind = match.group(1).lower()
+        feature_tail = (match.group("features") or "").strip()
+        feature_tail = re.sub(r"^[-:]\\s*", "", feature_tail)
+        for feature in re.split(r"[\\s,]+", feature_tail):
+            feature = feature.strip().strip(";.")
+            if feature:
+                tags.append((kind, feature.lower()))
+    return tags
+
+
+def __cowasm_optional_features_in(source):
+    return [feature for _kind, feature in __cowasm_optional_feature_tags(source)]
+
+
+def __cowasm_optional_enabled(source):
+    if not __cowasm_optional_re.search(source):
+        return True
+    if __cowasm_optional:
+        return True
+    features = __cowasm_optional_features_in(source)
+    return bool(features and any(feature in __cowasm_optional_features for feature in features))
 
 
 def _cowasm_source_hash(source):
@@ -457,7 +513,7 @@ def __cowasm_docstrings(filename, text):
 def __cowasm_should_skip(source):
     if __cowasm_deferred_re.search(source):
         return True
-    if not __cowasm_optional and __cowasm_optional_re.search(source):
+    if not __cowasm_optional_enabled(source):
         return True
     if not __cowasm_long and __cowasm_long_re.search(source):
         return True
@@ -467,8 +523,9 @@ def __cowasm_should_skip(source):
 def __cowasm_skip_reason(source):
     if __cowasm_deferred_re.search(source):
         return "deferred"
-    if not __cowasm_optional and __cowasm_optional_re.search(source):
-        return "optional"
+    if not __cowasm_optional_enabled(source):
+        features = __cowasm_optional_features_in(source)
+        return "optional:" + ",".join(features) if features else "optional"
     if not __cowasm_long and __cowasm_long_re.search(source):
         return "long time"
     return None

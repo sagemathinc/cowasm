@@ -27,7 +27,8 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   - skips `# optional` and `# needs` tests by default;
   - runs `# random` tests while accepting their output without comparison;
   - skips `# long time` unless `--long` is passed;
-  - supports `--optional`, `--long`, `--timeout`, and `--sqlite`;
+  - supports `--optional`, feature-filtered `--optional=FEATURE`, `--long`,
+    `--timeout`, and `--sqlite`;
   - seeds the namespace with `sage.all` and, where possible, the tested Sage
     module globals.
 - The Sagelite standalone target has a smoke test that runs `sage -t`, checks
@@ -423,4 +424,3 @@ The next milestone is complete when:
 - failures can be grouped into actionable root-cause clusters;
 - the fast Sagelite standalone smoke remains separate and still passes up to
   the known Electron-shaped resource blocker.
-

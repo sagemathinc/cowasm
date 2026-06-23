@@ -1594,6 +1594,8 @@ EXAMPLES::
     0.333333333334
     sage: ZZ.random_element()  # random
     output is intentionally unchecked
+    sage: 7 + 8  # optional - cowasm_smoke
+    15
     sage: magma('2 + 2')  # optional - magma
     4
 """
@@ -1616,10 +1618,16 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|6|5|0|1" ]; then
+if [ "$doctest_smoke_counts" != "passed|7|5|0|2" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
+fi
+doctest_optional_magma_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'skipped' and skip_reason = 'optional:magma' and tags like '%optional:magma%';")"
+if [ "$doctest_optional_magma_count" != "1" ]; then
+  cat "$doctest_smoke_log" >&2
+  sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest smoke did not record optional feature metadata."
 fi
 doctest_tolerance_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'passed' and expected_kind = 'tolerance' and tags like '%tolerance%';")"
 if [ "$doctest_tolerance_count" != "1" ]; then
@@ -1632,6 +1640,38 @@ if [ "$doctest_random_count" != "1" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record the random doctest as unchecked."
+fi
+doctest_optional_feature_db="$probe_dir/sagelite-doctest-optional-feature.sqlite3"
+doctest_optional_feature_log="$dist_dir/doctest-optional-feature.log"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --optional=cowasm_smoke \
+      --sqlite "$doctest_optional_feature_db" "$doctest_smoke_file" \
+      >"$doctest_optional_feature_log" 2>&1
+doctest_optional_feature_status=$?
+set -e
+if [ "$doctest_optional_feature_status" -eq 124 ]; then
+  tail -120 "$doctest_optional_feature_log" >&2
+  record_blocker "sagelite-blocked: sage -t optional-feature smoke timed out after $node_import_timeout; see $doctest_optional_feature_log for the first runtime blocker."
+fi
+if [ "$doctest_optional_feature_status" -ne 0 ]; then
+  tail -120 "$doctest_optional_feature_log" >&2
+  record_blocker "sagelite-blocked: sage -t optional-feature smoke failed; see $doctest_optional_feature_log for the first runtime blocker."
+fi
+doctest_optional_feature_counts="$(sqlite3 "$doctest_optional_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_optional_feature_counts" != "passed|7|6|0|1" ]; then
+  cat "$doctest_optional_feature_log" >&2
+  sqlite3 "$doctest_optional_feature_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t optional-feature smoke wrote unexpected SQLite counts: $doctest_optional_feature_counts"
+fi
+doctest_optional_feature_pass_count="$(sqlite3 "$doctest_optional_feature_db" "select count(*) from blocks where status = 'passed' and tags like '%optional:cowasm_smoke%';")"
+if [ "$doctest_optional_feature_pass_count" != "1" ]; then
+  cat "$doctest_optional_feature_log" >&2
+  sqlite3 "$doctest_optional_feature_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t optional-feature smoke did not run the requested optional feature."
 fi
 printf 'sagelite-node-ok sage doctest sqlite smoke\n' >>"$node_import_log"
 
