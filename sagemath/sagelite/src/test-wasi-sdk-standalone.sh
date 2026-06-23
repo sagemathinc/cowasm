@@ -1900,6 +1900,19 @@ insert into files (
   'ModuleNotFoundError',
   'ModuleNotFoundError: No module named ''sage_zero_block''',
   ''
+), (
+  2,
+  1,
+  '/tmp/state-crash.py',
+  'error',
+  1,
+  'wasm_signature_mismatch',
+  'doctest state: phase=run_example; file=/tmp/state-crash.py; doctest=state-crash; line=42
+doctest source:
+crash()
+
+RuntimeError: function signature mismatch',
+  ''
 );
 SQL
 doctest_query_failures_by_class="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/failures-by-class.sql")"
@@ -1919,6 +1932,12 @@ if ! printf '%s\n' "$doctest_query_missing_modules" | grep -Fxq 'sage_zero_block
   printf '%s\n' "$doctest_query_missing_modules" >&2
   sqlite3 "$doctest_query_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: top-missing-modules query did not include a zero-block file-level import error."
+fi
+doctest_query_file_error_reruns="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/file-error-reruns.sql")"
+if ! printf '%s\n' "$doctest_query_file_error_reruns" | grep -Fxq 'wasm_signature_mismatch|/tmp/state-crash.py|42|sage -t --line 42 /tmp/state-crash.py'; then
+  printf '%s\n' "$doctest_query_file_error_reruns" >&2
+  sqlite3 "$doctest_query_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: file-error rerun query did not extract the source-line reproduction command."
 fi
 doctest_state_file="$probe_dir/sagelite-doctest-state.py"
 doctest_state_db="$probe_dir/sagelite-doctest-state.sqlite3"

@@ -63,6 +63,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - File-level crash diagnostics now also include the active doctest source and
   expected output, so crashes that prevent block rows from being written still
   identify the exact Sage example that triggered the runtime failure.
+- The saved `file-error-reruns.sql` query extracts source-line breadcrumbs from
+  file-level errors and emits `sage -t --line ...` commands for reproducing
+  crashes that happened before a block row could be persisted.
 - Function-signature traps are classified as `wasm_signature_mismatch`, so
   C/WASM ABI regressions are separated from generic runtime traps.
 - Block-level doctest failures record `failure_detail`, and the saved
@@ -368,6 +371,16 @@ exception class:
 ```sh
 sqlite3 sagelite-doctests.sqlite3 \
   < sagemath/sagelite/src/doctest-sql/block-failure-clusters.sql
+```
+
+### File Error Reruns
+
+File-level errors that include doctest state breadcrumbs should produce direct
+line-based reproduction commands:
+
+```sh
+sqlite3 sagelite-doctests.sqlite3 \
+  < sagemath/sagelite/src/doctest-sql/file-error-reruns.sql
 ```
 
 ### Newly Passing Blocks
