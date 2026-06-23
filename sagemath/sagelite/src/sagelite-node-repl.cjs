@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 9;
+const doctestRunnerVersion = 10;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -176,6 +176,7 @@ function parseDoctestArgs(args, invocationCwd) {
     long: false,
     optional: false,
     optionalFeatures: [],
+    blockKeys: [],
     profile: process.env.COWASM_SAGELITE_DOCTEST_PROFILE || "node",
     sourceRoot: process.env.COWASM_SAGELITE_DOCTEST_SOURCE_ROOT
       ? path.resolve(invocationCwd, process.env.COWASM_SAGELITE_DOCTEST_SOURCE_ROOT)
@@ -208,6 +209,14 @@ function parseDoctestArgs(args, invocationCwd) {
       options.optionalFeatures.push(
         ...parseDoctestFeatureList(arg.slice("--optional=".length)),
       );
+    } else if (arg === "--block-key") {
+      i += 1;
+      if (i >= args.length) {
+        throw new Error("--block-key requires a block key");
+      }
+      options.blockKeys.push(args[i]);
+    } else if (arg.startsWith("--block-key=")) {
+      options.blockKeys.push(arg.slice("--block-key=".length));
     } else if (arg === "--profile") {
       i += 1;
       if (i >= args.length) {
@@ -243,6 +252,9 @@ function parseDoctestArgs(args, invocationCwd) {
   }
   if (options.files.length === 0) {
     throw new Error("sage -t requires at least one file");
+  }
+  if (options.blockKeys.some((key) => !key)) {
+    throw new Error("--block-key requires a nonempty block key");
   }
   const allowedProfiles = new Set([
     "browser",
@@ -308,6 +320,9 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
           long: options.long,
           optional: options.optional,
           optionalFeatures: options.optionalFeatures,
+          blockKeys: options.blockKeys,
+          sourceRoot: options.sourceRoot,
+          invocationCwd,
         });
         await execPythonWithTimeout(python, code, options.timeoutSeconds);
         await python.kernel.flushOutput(250);
@@ -432,6 +447,9 @@ function buildDoctestPython({
   long,
   optional,
   optionalFeatures,
+  blockKeys,
+  sourceRoot,
+  invocationCwd,
 }) {
   return `
 import ast
@@ -463,6 +481,9 @@ __cowasm_state_path = ${JSON.stringify(statePath)}
 __cowasm_long = ${long ? "True" : "False"}
 __cowasm_optional = ${optional ? "True" : "False"}
 __cowasm_optional_features = set(json.loads(${JSON.stringify(JSON.stringify(optionalFeatures))}))
+__cowasm_block_keys = set(json.loads(${JSON.stringify(JSON.stringify(blockKeys))}))
+__cowasm_source_root = ${sourceRoot ? JSON.stringify(sourceRoot) : "None"}
+__cowasm_invocation_cwd = ${JSON.stringify(invocationCwd)}
 
 __cowasm_deferred_re = re.compile(
     r"#.*\\b(not implemented|not tested|known bug)\\b",
@@ -540,6 +561,42 @@ def __cowasm_optional_enabled(source):
 def _cowasm_source_hash(source):
     normalized = "\\n".join(line.rstrip() for line in source.strip().splitlines())
     return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+
+
+def __cowasm_posix_path(value):
+    return value.replace(os.sep, "/")
+
+
+def __cowasm_is_relative_subpath(value):
+    return (
+        value
+        and value != os.pardir
+        and not value.startswith(os.pardir + os.sep)
+        and not os.path.isabs(value)
+    )
+
+
+def __cowasm_stable_doctest_path(filename):
+    absolute = os.path.abspath(filename)
+    if __cowasm_source_root:
+        relative = os.path.relpath(absolute, __cowasm_source_root)
+        if __cowasm_is_relative_subpath(relative):
+            return __cowasm_posix_path(relative)
+
+    parts = os.path.normpath(absolute).split(os.sep)
+    for index in range(max(0, len(parts) - 1)):
+        if parts[index] == "src" and parts[index + 1] == "sage":
+            return "/".join(parts[index:])
+
+    if __cowasm_invocation_cwd:
+        relative = os.path.relpath(absolute, __cowasm_invocation_cwd)
+        if __cowasm_is_relative_subpath(relative):
+            return __cowasm_posix_path(relative)
+    return __cowasm_posix_path(absolute)
+
+
+def __cowasm_block_key(filename, start_line, source_hash):
+    return f"{__cowasm_stable_doctest_path(filename)}:{start_line or ''}:{source_hash or ''}"
 
 
 def __cowasm_convert_prompts(text):
@@ -701,6 +758,7 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
             "source": getattr(example, "sage_source", example.source),
             "expected": getattr(example, "_cowasm_expected", example.want),
             "expected_kind": getattr(example, "_cowasm_expected_kind", "exact"),
+            "block_key": getattr(example, "_cowasm_block_key", None),
             "source_hash": _cowasm_source_hash(getattr(example, "sage_source", example.source)),
             "tags": _cowasm_tags(getattr(example, "sage_source", example.source)),
             "skip_reason": getattr(example, "_cowasm_skip_reason", None),
@@ -853,6 +911,12 @@ def __cowasm_run_file(filename):
                 if test.lineno is not None and example.lineno is not None:
                     start_line = test.lineno + example.lineno + 1
                     end_line = start_line + len(example.source.splitlines()) - 1
+                source_hash = _cowasm_source_hash(example.sage_source)
+                block_key = __cowasm_block_key(filename, start_line, source_hash)
+                example._cowasm_block_key = block_key
+                if __cowasm_block_keys and block_key not in __cowasm_block_keys:
+                    example.options[doctest.SKIP] = True
+                    continue
                 if __cowasm_should_skip(example.sage_source):
                     skip_reason = __cowasm_skip_reason(example.sage_source)
                     example._cowasm_skip_reason = skip_reason
@@ -864,7 +928,8 @@ def __cowasm_run_file(filename):
                         "source": example.sage_source,
                         "expected": example.want,
                         "expected_kind": "skip",
-                        "source_hash": _cowasm_source_hash(example.sage_source),
+                        "block_key": block_key,
+                        "source_hash": source_hash,
                         "tags": _cowasm_tags(example.sage_source),
                         "skip_reason": skip_reason,
                         "actual": "",
@@ -896,7 +961,8 @@ def __cowasm_run_file(filename):
                             "source": example.sage_source,
                             "expected": example.want,
                             "expected_kind": "error",
-                            "source_hash": _cowasm_source_hash(example.sage_source),
+                            "block_key": block_key,
+                            "source_hash": source_hash,
                             "tags": _cowasm_tags(example.sage_source),
                             "skip_reason": None,
                             "actual": traceback.format_exc(),
@@ -1115,6 +1181,9 @@ function stableDoctestPath(filePath, run) {
 }
 
 function blockKeyFor(file, block, run) {
+  if (block.block_key) {
+    return block.block_key;
+  }
   const line = block.start_line ?? "";
   const sourceHash = block.source_hash || "";
   return `${stableDoctestPath(file.path, run)}:${line}:${sourceHash}`;
