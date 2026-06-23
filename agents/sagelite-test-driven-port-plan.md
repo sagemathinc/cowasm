@@ -112,6 +112,16 @@ That run attempted all eight curated files. The current non-`integer_ring.pyx`
 failures are file-level runtime/linkage errors, which are preserved in SQLite
 instead of aborting the corpus.
 
+After the 2026-06-23 dynamic-linking pass, the representative
+`integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
+still `203 passed, 7 failed, 27 skipped`, but the failures now split into
+narrower follow-up clusters: `integer.pyx` reaches a missing `getenv` import at
+line 3112 after clearing earlier `wcslen`, `qsort`, and ctype imports;
+PARI-backed rational/number-field setup reaches a side-module signature
+mismatch; finite-field and polynomial constructor paths reach libcxx/NTL traps;
+and several constructor imports still hit a dynamic symbol lookup signature
+mismatch.
+
 That is already enough signal to start a real compatibility loop, but the
 runner and database still need hardening before results should be treated as a
 stable dashboard.
@@ -482,6 +492,18 @@ interrupt a stuck worker when the host was waiting on the worker response. The
 runner now executes each doctest file in a hidden Node worker process and
 enforces `--timeout` from the parent process, so timeout rows are usable
 dashboard data for stuck file-level executions.
+
+Follow-up dynamic-linking work showed that the original `integer.pyx:2266`
+doctest crash was triggered while freeing a large string passed through the
+kernel worker bridge. Reusing a grow-only large-string buffer avoids that
+kernel-side finalizer trap. Providing callable libc/libm fallbacks for common
+side-module imports then lets that representative doctest pass and exposes the
+next import cluster at `integer.pyx:3112`. Adding `wcslen`, `qsort`, and common
+ctype fallbacks moves the focused line rerun to a PARI `err_recover` signature
+mismatch, while the full corpus still exposes `getenv` as the next direct
+missing import. A null-returning `getenv` stub regressed every corpus file to a
+startup `RuntimeError`, so it was not kept; `getenv` needs a real runtime-aware
+implementation.
 
 ## Phase 5: Subprocess Strategy
 

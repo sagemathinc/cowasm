@@ -123,6 +123,15 @@ export default class DlopenManger {
     this._free(ptr);
   }
 
+  private mainFunction(name: string, path?: string): Function | undefined {
+    try {
+      const f = this.mainGetFunction(name, path);
+      return typeof f == "function" ? f : undefined;
+    } catch (_) {
+      return undefined;
+    }
+  }
+
   dlopenEnvHandler(path: string) {
     return (env, key: string) => {
       if (key in env) {
@@ -394,6 +403,15 @@ export default class DlopenManger {
       ).fill(0);
     }
 
+    const byteChar = (c: number) => c & 0xff;
+    const isDigit = (c: number) => c >= 48 && c <= 57;
+    const isLower = (c: number) => c >= 97 && c <= 122;
+    const isUpper = (c: number) => c >= 65 && c <= 90;
+    const isAlpha = (c: number) => isLower(c) || isUpper(c);
+    const isSpace = (c: number) =>
+      c == 32 || c == 9 || c == 10 || c == 11 || c == 12 || c == 13;
+    const isGraph = (c: number) => c >= 33 && c <= 126;
+
     const env = {
       memory: this.memory,
       __indirect_function_table: this.functionTable.table,
@@ -414,7 +432,264 @@ export default class DlopenManger {
         parameters: ["i32"],
         results: [],
       }),
+      malloc: (bytes: number) => this.malloc(bytes, "dynamic library malloc"),
+      free: (ptr: number) => this.free(ptr),
+      calloc: (nmemb: number, size: number) => {
+        const bytes = nmemb * size;
+        const ptr = this.malloc(bytes, "dynamic library calloc");
+        new Uint8Array(this.memory.buffer, ptr, bytes).fill(0);
+        return ptr;
+      },
+      realloc: (ptr: number, size: number) => {
+        if (!ptr) {
+          return this.malloc(size, "dynamic library realloc");
+        }
+        if (!size) {
+          this.free(ptr);
+          return 0;
+        }
+        const next = this.malloc(size, "dynamic library realloc");
+        new Uint8Array(this.memory.buffer).copyWithin(next, ptr, ptr + size);
+        return next;
+      },
+      abort: () => {
+        throw Error("abort called from dynamic library");
+      },
+      clock: () => BigInt(Date.now()),
+      isalnum: (c: number) => {
+        c = byteChar(c);
+        return isAlpha(c) || isDigit(c) ? 1 : 0;
+      },
+      isalpha: (c: number) => {
+        c = byteChar(c);
+        return isAlpha(c) ? 1 : 0;
+      },
+      isblank: (c: number) => {
+        c = byteChar(c);
+        return c == 32 || c == 9 ? 1 : 0;
+      },
+      iscntrl: (c: number) => {
+        c = byteChar(c);
+        return c < 32 || c == 127 ? 1 : 0;
+      },
+      isdigit: (c: number) => {
+        c = byteChar(c);
+        return isDigit(c) ? 1 : 0;
+      },
+      isgraph: (c: number) => {
+        c = byteChar(c);
+        return isGraph(c) ? 1 : 0;
+      },
+      islower: (c: number) => {
+        c = byteChar(c);
+        return isLower(c) ? 1 : 0;
+      },
+      isprint: (c: number) => {
+        c = byteChar(c);
+        return c >= 32 && c <= 126 ? 1 : 0;
+      },
+      ispunct: (c: number) => {
+        c = byteChar(c);
+        return isGraph(c) && !isAlpha(c) && !isDigit(c) ? 1 : 0;
+      },
+      isspace: (c: number) => {
+        c = byteChar(c);
+        return isSpace(c) ? 1 : 0;
+      },
+      isupper: (c: number) => {
+        c = byteChar(c);
+        return isUpper(c) ? 1 : 0;
+      },
+      isxdigit: (c: number) => {
+        c = byteChar(c);
+        return isDigit(c) || (c >= 65 && c <= 70) || (c >= 97 && c <= 102)
+          ? 1
+          : 0;
+      },
+      fprintf: () => 0,
+      printf: () => 0,
+      qsort: (
+        base: number,
+        nmemb: number,
+        size: number,
+        comparPtr: number
+      ) => {
+        const compare = this.functionTable.get(comparPtr);
+        if (typeof compare != "function") {
+          throw Error(`qsort called with invalid comparator ${comparPtr}`);
+        }
+        if (nmemb <= 1 || size <= 0) {
+          return;
+        }
+        const memory = new Uint8Array(this.memory.buffer);
+        const tmp = new Uint8Array(size);
+        const elementPtr = (i: number) => base + i * size;
+        for (let i = 1; i < nmemb; i += 1) {
+          tmp.set(memory.subarray(elementPtr(i), elementPtr(i) + size));
+          let j = i;
+          while (j > 0) {
+            memory.set(tmp, elementPtr(j));
+            if ((compare as CallableFunction)(elementPtr(j), elementPtr(j - 1)) >= 0) {
+              break;
+            }
+            memory.copyWithin(
+              elementPtr(j),
+              elementPtr(j - 1),
+              elementPtr(j - 1) + size
+            );
+            j -= 1;
+          }
+          memory.set(tmp, elementPtr(j));
+        }
+      },
+      snprintf: (str: number, size: number) => {
+        if (str && size > 0) {
+          new Uint8Array(this.memory.buffer)[str] = 0;
+        }
+        return 0;
+      },
+      sprintf: (str: number) => {
+        if (str) {
+          new Uint8Array(this.memory.buffer)[str] = 0;
+        }
+        return 0;
+      },
+      vfprintf: () => 0,
+      vprintf: () => 0,
+      vsnprintf: (str: number, size: number) => {
+        if (str && size > 0) {
+          new Uint8Array(this.memory.buffer)[str] = 0;
+        }
+        return 0;
+      },
+      vsprintf: (str: number) => {
+        if (str) {
+          new Uint8Array(this.memory.buffer)[str] = 0;
+        }
+        return 0;
+      },
+      time: (ptr: number) => {
+        const seconds = BigInt(Math.floor(Date.now() / 1000));
+        if (ptr) {
+          new DataView(this.memory.buffer).setBigInt64(ptr, seconds, true);
+        }
+        return seconds;
+      },
+      tolower: (c: number) => {
+        c = byteChar(c);
+        return isUpper(c) ? c + 32 : c;
+      },
+      toupper: (c: number) => {
+        c = byteChar(c);
+        return isLower(c) ? c - 32 : c;
+      },
+      wcslen: (ptr: number) => {
+        const view = new DataView(this.memory.buffer);
+        let len = 0;
+        while (view.getUint32(ptr + len * 4, true) != 0) {
+          len += 1;
+        }
+        return len;
+      },
     };
+    Object.assign(env, {
+      acos: Math.acos,
+      acosf: Math.acos,
+      asin: Math.asin,
+      asinf: Math.asin,
+      atan: Math.atan,
+      atan2: Math.atan2,
+      atan2f: Math.atan2,
+      atanf: Math.atan,
+      ceil: Math.ceil,
+      ceilf: Math.ceil,
+      cos: Math.cos,
+      cosf: Math.cos,
+      exp: Math.exp,
+      exp2: (x: number) => 2 ** x,
+      exp2f: (x: number) => 2 ** x,
+      expf: Math.exp,
+      fabs: Math.abs,
+      fabsf: Math.abs,
+      floor: Math.floor,
+      floorf: Math.floor,
+      fmax: Math.max,
+      fmaxf: Math.max,
+      fmin: Math.min,
+      fminf: Math.min,
+      fmod: (x: number, y: number) => x % y,
+      fmodf: (x: number, y: number) => x % y,
+      frexp: (x: number, expPtr: number) => {
+        if (x == 0 || !Number.isFinite(x)) {
+          if (expPtr) {
+            new DataView(this.memory.buffer).setInt32(expPtr, 0, true);
+          }
+          return x;
+        }
+        const exponent = Math.floor(Math.log2(Math.abs(x))) + 1;
+        if (expPtr) {
+          new DataView(this.memory.buffer).setInt32(expPtr, exponent, true);
+        }
+        return x / 2 ** exponent;
+      },
+      frexpf: (x: number, expPtr: number) => {
+        if (x == 0 || !Number.isFinite(x)) {
+          if (expPtr) {
+            new DataView(this.memory.buffer).setInt32(expPtr, 0, true);
+          }
+          return x;
+        }
+        const exponent = Math.floor(Math.log2(Math.abs(x))) + 1;
+        if (expPtr) {
+          new DataView(this.memory.buffer).setInt32(expPtr, exponent, true);
+        }
+        return x / 2 ** exponent;
+      },
+      hypot: Math.hypot,
+      hypotf: Math.hypot,
+      ldexp: (x: number, exp: number) => x * 2 ** exp,
+      ldexpf: (x: number, exp: number) => x * 2 ** exp,
+      log: Math.log,
+      log10: Math.log10,
+      log10f: Math.log10,
+      log2: Math.log2,
+      log2f: Math.log2,
+      logf: Math.log,
+      pow: Math.pow,
+      powf: Math.pow,
+      round: Math.round,
+      roundf: Math.round,
+      sin: Math.sin,
+      sinf: Math.sin,
+      sqrt: Math.sqrt,
+      sqrtf: Math.sqrt,
+      tan: Math.tan,
+      tanf: Math.tan,
+      trunc: Math.trunc,
+      truncf: Math.trunc,
+    });
+    for (const name of [
+      "abort",
+      "calloc",
+      "fflush",
+      "fprintf",
+      "fputc",
+      "fputs",
+      "fwrite",
+      "printf",
+      "realloc",
+      "snprintf",
+      "sprintf",
+      "vfprintf",
+      "vprintf",
+      "vsnprintf",
+      "vsprintf",
+    ]) {
+      const f = this.mainFunction(name, path);
+      if (f != null) {
+        env[name] = f;
+      }
+    }
     log("env =", env);
     const envHandler = (env, key: string) => {
       if (key in env) {
@@ -438,12 +713,12 @@ export default class DlopenManger {
         key,
         neededPaths
       );
-      if (f != null) {
+      if (typeof f == "function") {
         return f;
       }
 
       f = this.getFunction(key);
-      if (f != null) {
+      if (typeof f == "function") {
         return f;
       }
 
@@ -454,7 +729,7 @@ export default class DlopenManger {
       } catch (_) {
         f = undefined;
       }
-      if (f != null) {
+      if (typeof f == "function") {
         return (...args: any[]) => {
           try {
             return (f as CallableFunction)(...args);
@@ -533,10 +808,16 @@ export default class DlopenManger {
       let libraryFunction: Function | null | undefined =
         this.getFunctionFromPaths(symName, neededPaths) ??
         this.getFunction(symName);
+      if (typeof libraryFunction != "function") {
+        libraryFunction = undefined;
+      }
       let mainFunction: Function | null | undefined;
       try {
         mainFunction = this.mainGetFunction(symName, path);
       } catch (_) {
+        mainFunction = undefined;
+      }
+      if (typeof mainFunction != "function") {
         mainFunction = undefined;
       }
       const f =
@@ -735,7 +1016,8 @@ export default class DlopenManger {
       library.symToPtr?.[name] ??
       (library.instance.exports[`__WASM_EXPORT__${name}`] as Function)?.();
     if (ptr != null) {
-      return this.functionTable.get(ptr);
+      const f = this.functionTable.get(ptr);
+      return typeof f == "function" ? f : undefined;
     }
     return undefined;
   }

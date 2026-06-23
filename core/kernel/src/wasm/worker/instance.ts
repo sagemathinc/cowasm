@@ -24,6 +24,8 @@ export default class WasmInstanceSync extends EventEmitter {
   instance: any; // todo
   memory: WebAssembly.Memory;
   smallStringPtr?: number;
+  largeStringPtr?: number;
+  largeStringSize: number = 0;
   // functions never go away and getFunction is expensive if
   // it has to use the table, and same function gets called often,
   // so this is well worth doing.
@@ -121,17 +123,10 @@ export default class WasmInstanceSync extends EventEmitter {
     } else if (typeof str == "string") {
       const strAsArray = encoder.encode(str);
       if (strAsArray.length < SMALL_STRING_SIZE) {
-        r = this.callWithSmallString(f, strAsArray);
+        r = this.callWithSmallString(f, strAsArray, ...args);
         return this.result ?? r;
       }
-      const ptr = this.send.encodedString(strAsArray);
-      try {
-        // @ts-ignore
-        r = f(ptr, ...args);
-      } finally {
-        // @ts-ignore
-        this.exports.c_free(ptr);
-      }
+      r = this.callWithLargeString(f, strAsArray, ...args);
     } else {
       // TODO: solve problem in more generality, obviously!
       // Convert array of strings to char** of null terminated
@@ -181,6 +176,28 @@ export default class WasmInstanceSync extends EventEmitter {
   private callWithSmallString(f: Function, strAsArray, ...args): any {
     const ptr = this.getSmallStringPtr();
     const len = strAsArray.length + 1;
+    const array = new Int8Array(this.memory.buffer, ptr, len);
+    array.set(strAsArray);
+    array[len - 1] = 0;
+    return f(ptr, ...args);
+  }
+
+  private getLargeStringPtr(size: number): number {
+    if (this.largeStringPtr == null || this.largeStringSize < size) {
+      this.largeStringSize = Math.max(size, this.largeStringSize * 2);
+      this.largeStringPtr = this.exports.c_malloc(this.largeStringSize);
+      if (!this.largeStringPtr) {
+        throw Error(
+          `MemoryError -- out of memory allocating ${this.largeStringSize} byte string buffer`
+        );
+      }
+    }
+    return this.largeStringPtr;
+  }
+
+  private callWithLargeString(f: Function, strAsArray, ...args): any {
+    const len = strAsArray.length + 1;
+    const ptr = this.getLargeStringPtr(len);
     const array = new Int8Array(this.memory.buffer, ptr, len);
     array.set(strAsArray);
     array[len - 1] = 0;
