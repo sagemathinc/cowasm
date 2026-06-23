@@ -42,6 +42,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - File-level doctest errors now record `failure_class` and `failure_detail`
   metadata in SQLite, and the saved failure-cluster queries include those
   errors instead of only block-level failures.
+- Run metadata records the CoWasm commit, documented Sagelite package commit,
+  runtime profile, runner version, and resource root, so corpus dashboards can
+  distinguish runtime/profile changes from Sagelite source changes.
 - The Sagelite standalone target has a smoke test that runs `sage -t`, checks
   SQLite aggregate counts, and checks that random doctests are recorded as
   unchecked passed blocks.

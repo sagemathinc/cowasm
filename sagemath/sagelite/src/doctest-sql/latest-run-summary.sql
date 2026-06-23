@@ -2,7 +2,7 @@ select
   id,
   started_at,
   git_commit,
-  sagelite_source_commit,
+  coalesce(sagelite_package_commit, sagelite_source_commit) as sagelite_package_commit,
   run_profile,
   runner_version,
   status,

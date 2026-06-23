@@ -1630,6 +1630,12 @@ if [ "$doctest_smoke_counts" != "passed|10|5|0|5" ]; then
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
 fi
+doctest_sagelite_package_commit_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from runs where sagelite_package_commit is not null and sagelite_package_commit = sagelite_source_commit;")"
+if [ "$doctest_sagelite_package_commit_count" != "1" ]; then
+  cat "$doctest_smoke_log" >&2
+  sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest smoke did not record matching Sagelite package commit metadata."
+fi
 doctest_block_key_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where block_key like 'sagelite-doctest-smoke.py:%:%' and block_key not like '/%';")"
 if [ "$doctest_block_key_count" != "10" ]; then
   cat "$doctest_smoke_log" >&2

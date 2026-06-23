@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 6;
+const doctestRunnerVersion = 7;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -270,11 +270,13 @@ function parseDoctestFeatureList(value) {
 async function runDoctestMode(args, invocationCwd, pythonOptions) {
   const options = parseDoctestArgs(args, invocationCwd);
   const startedAt = new Date().toISOString();
+  const sagelitePackageCommit = sageliteSourceCommit();
   const run = {
     started_at: startedAt,
     finished_at: null,
     git_commit: gitCommit(path.resolve(__dirname, "../../..")),
-    sagelite_source_commit: sageliteSourceCommit(),
+    sagelite_source_commit: sagelitePackageCommit,
+    sagelite_package_commit: sagelitePackageCommit,
     command: ["sage", "-t", ...args].join(" "),
     run_profile: options.profile,
     runner_version: doctestRunnerVersion,
@@ -996,6 +998,7 @@ function ensureDoctestSchema(dbPath) {
       finished_at TEXT,
       git_commit TEXT NOT NULL,
       sagelite_source_commit TEXT,
+      sagelite_package_commit TEXT,
       command TEXT NOT NULL,
       run_profile TEXT DEFAULT 'node',
       runner_version INTEGER DEFAULT 1,
@@ -1048,6 +1051,8 @@ function ensureDoctestSchema(dbPath) {
   ensureSqliteColumn(dbPath, "runs", "run_profile", "TEXT DEFAULT 'node'");
   ensureSqliteColumn(dbPath, "runs", "runner_version", "INTEGER DEFAULT 1");
   ensureSqliteColumn(dbPath, "runs", "resource_root", "TEXT");
+  ensureSqliteColumn(dbPath, "runs", "sagelite_source_commit", "TEXT");
+  ensureSqliteColumn(dbPath, "runs", "sagelite_package_commit", "TEXT");
   ensureSqliteColumn(dbPath, "files", "failure_class", "TEXT");
   ensureSqliteColumn(dbPath, "files", "failure_detail", "TEXT");
   ensureSqliteColumn(dbPath, "blocks", "block_key", "TEXT");
@@ -1108,13 +1113,15 @@ function writeDoctestSqlite(dbPath, run) {
   const insertRun = [
     "PRAGMA foreign_keys=ON;",
     `INSERT INTO runs (
-      started_at, finished_at, git_commit, sagelite_source_commit, command,
+      started_at, finished_at, git_commit, sagelite_source_commit,
+      sagelite_package_commit, command,
       run_profile, runner_version, resource_root,
       status, total_blocks, passed_blocks, failed_blocks, skipped_blocks, duration_ms
     ) VALUES (
       ${sqlString(run.started_at)}, ${sqlString(run.finished_at)},
       ${sqlString(run.git_commit)}, ${sqlString(run.sagelite_source_commit)},
-      ${sqlString(run.command)}, ${sqlString(run.run_profile)},
+      ${sqlString(run.sagelite_package_commit)}, ${sqlString(run.command)},
+      ${sqlString(run.run_profile)},
       ${sqlNumber(run.runner_version)}, ${sqlString(run.resource_root)},
       ${sqlString(run.status)},
       ${sqlNumber(run.total_blocks)}, ${sqlNumber(run.passed_blocks)},
