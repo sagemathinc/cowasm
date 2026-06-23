@@ -64,12 +64,14 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - Block-level doctest failures record `failure_detail`, and the saved
   `block-failure-clusters.sql` query groups failed examples by class plus
   normalized detail instead of only by broad exception type.
+- Skipped doctest blocks can be grouped with `skips-by-reason.sql`, so optional,
+  long, and deferred-test coverage is visible alongside failure clusters.
 - Run metadata records the CoWasm commit, documented Sagelite package commit,
   runtime profile, runner version, and resource root, so corpus dashboards can
   distinguish runtime/profile changes from Sagelite source changes.
 - The Sagelite standalone target has a smoke test that runs `sage -t`, checks
-  SQLite aggregate counts, and checks that random doctests are recorded as
-  unchecked passed blocks.
+  SQLite aggregate counts, and checks that random doctests and skip-reason
+  clusters are recorded with queryable metadata.
 - `make -C sagemath/sagelite test-sage-doctest-corpus` runs the curated
   pure-math corpus into SQLite, allowing doctest failures by default so the
   command remains useful as a porting dashboard while compatibility is partial.
