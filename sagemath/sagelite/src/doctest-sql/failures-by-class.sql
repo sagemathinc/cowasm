@@ -17,7 +17,6 @@ file_failures as (
   where
     f.run_id = (select run_id from latest)
     and f.status = 'error'
-    and f.failed_blocks > 0
 ),
 all_failures as (
   select failure_class from block_failures

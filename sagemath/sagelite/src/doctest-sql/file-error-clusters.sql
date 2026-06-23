@@ -10,7 +10,6 @@ raw_file_errors as (
   where
     run_id = (select run_id from latest)
     and status = 'error'
-    and failed_blocks > 0
 ),
 anchored_file_errors as (
   select

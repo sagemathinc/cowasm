@@ -31,7 +31,6 @@ missing as (
     where
       f.run_id = (select run_id from latest)
       and f.status = 'error'
-      and f.failed_blocks > 0
   )
   where
     instr(message, 'ModuleNotFoundError: No module named ') > 0

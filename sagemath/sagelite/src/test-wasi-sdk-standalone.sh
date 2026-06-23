@@ -1811,6 +1811,59 @@ if [ "$doctest_missing_count" != "1" ]; then
   sqlite3 "$doctest_missing_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t missing-file doctest smoke did not record file-level failure metadata."
 fi
+doctest_query_db="$probe_dir/sagelite-doctest-query-smoke.sqlite3"
+sqlite3 "$doctest_query_db" <<'SQL'
+create table runs (
+  id integer primary key
+);
+create table files (
+  id integer primary key,
+  run_id integer not null,
+  path text not null,
+  status text not null,
+  failed_blocks integer not null,
+  failure_class text,
+  failure_detail text,
+  stderr text
+);
+create table blocks (
+  file_id integer not null,
+  status text not null,
+  failure_class text,
+  actual text
+);
+insert into runs (id) values (1);
+insert into files (
+  id, run_id, path, status, failed_blocks, failure_class, failure_detail, stderr
+) values (
+  1,
+  1,
+  'zero-block.py',
+  'error',
+  0,
+  'ModuleNotFoundError',
+  'ModuleNotFoundError: No module named ''sage_zero_block''',
+  ''
+);
+SQL
+doctest_query_failures_by_class="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/failures-by-class.sql")"
+if ! printf '%s\n' "$doctest_query_failures_by_class" | grep -Fxq 'ModuleNotFoundError|1'; then
+  printf '%s\n' "$doctest_query_failures_by_class" >&2
+  sqlite3 "$doctest_query_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: failures-by-class query did not include a zero-block file-level error."
+fi
+doctest_query_file_errors="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/file-error-clusters.sql")"
+if ! printf '%s\n' "$doctest_query_file_errors" | grep -Fq 'zero-block.py'; then
+  printf '%s\n' "$doctest_query_file_errors" >&2
+  sqlite3 "$doctest_query_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: file-error cluster query did not include a zero-block file-level error."
+fi
+doctest_query_missing_modules="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/top-missing-modules.sql")"
+if ! printf '%s\n' "$doctest_query_missing_modules" | grep -Fxq 'sage_zero_block|1'; then
+  printf '%s\n' "$doctest_query_missing_modules" >&2
+  sqlite3 "$doctest_query_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: top-missing-modules query did not include a zero-block file-level import error."
+fi
 doctest_state_file="$probe_dir/sagelite-doctest-state.py"
 doctest_state_db="$probe_dir/sagelite-doctest-state.sqlite3"
 doctest_state_log="$dist_dir/doctest-state.log"
