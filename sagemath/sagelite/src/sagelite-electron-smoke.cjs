@@ -675,6 +675,8 @@ assert ZZ(-12345).abs() == ZZ(12345)
 assert (-ZZ(12)).sign() == -1
 assert ZZ(0).sign() == 0
 assert ZZ(12).sign() == 1
+assert ZZ(0).is_zero()
+assert ZZ(1).is_one()
 assert ZZ(2).powermod(10, 17) == ZZ(4)
 assert ZZ(2).powermod(ZZ(20), ZZ(17)) == ZZ(16)
 assert ZZ(2).inverse_mod(ZZ(5)) == ZZ(3)

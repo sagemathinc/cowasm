@@ -364,6 +364,14 @@ Follow-up snapshot:
   matrix smoke with Cayley-Hamilton and rank checks over `GF(7)`. These reuse
   existing finite-field and matrix resources, so no new mandatory resource
   files are added.
+- Change: schema 139 manifests extend the Node.js/Electron integer helper
+  smoke with zero and one predicate checks. These reuse existing integer
+  resources, so no new mandatory resource files are added.
+- Probe outcome: finite-field matrix row/column views, submatrix extraction,
+  deletion, and row/column mutation pass isolated Electron-shaped probes but
+  trigger a dynamic-load `malloc` LinkError when promoted into the combined
+  packaged Electron smoke. Treat that finite-field matrix expansion as
+  follow-up runtime-table work.
 - Change: the Sagelite standalone probe now records the next blocked
   Node.js/Electron runtime expansion candidates in `dist/wasi-sdk/followups.txt`
   instead of leaving failed promotion probes only in transient logs.
