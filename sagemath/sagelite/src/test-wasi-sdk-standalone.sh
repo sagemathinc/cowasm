@@ -1735,6 +1735,42 @@ if [ "$doctest_missing_count" != "1" ]; then
   sqlite3 "$doctest_missing_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t missing-file doctest smoke did not record file-level failure metadata."
 fi
+doctest_state_file="$probe_dir/sagelite-doctest-state.py"
+doctest_state_db="$probe_dir/sagelite-doctest-state.sqlite3"
+doctest_state_log="$dist_dir/doctest-state.log"
+cat >"$doctest_state_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: raise KeyboardInterrupt("state source smoke")
+    unreachable
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --sqlite "$doctest_state_db" "$doctest_state_file" \
+      >"$doctest_state_log" 2>&1
+doctest_state_status=$?
+set -e
+if [ "$doctest_state_status" -eq 124 ]; then
+  tail -120 "$doctest_state_log" >&2
+  record_blocker "sagelite-blocked: sage -t doctest state smoke timed out after $node_import_timeout; see $doctest_state_log for the first runtime blocker."
+fi
+if [ "$doctest_state_status" -eq 0 ]; then
+  cat "$doctest_state_log" >&2
+  sqlite3 "$doctest_state_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest state smoke unexpectedly passed."
+fi
+doctest_state_count="$(sqlite3 "$doctest_state_db" "select count(*) from files where status = 'error' and failure_class = 'KeyboardInterrupt' and failure_detail like '%doctest source:%' and failure_detail like '%raise KeyboardInterrupt(\"state source smoke\")%' and failure_detail like '%doctest expected:%unreachable%';")"
+if [ "$doctest_state_count" != "1" ]; then
+  cat "$doctest_state_log" >&2
+  sqlite3 "$doctest_state_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest state smoke did not record active example source metadata."
+fi
 doctest_optional_feature_db="$probe_dir/sagelite-doctest-optional-feature.sqlite3"
 doctest_optional_feature_log="$dist_dir/doctest-optional-feature.log"
 set +e

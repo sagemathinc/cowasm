@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 13;
+const doctestRunnerVersion = 14;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -411,7 +411,21 @@ function doctestStateDiagnostic(state, detail) {
   if (parts.length === 0) {
     return detail;
   }
-  return `doctest state: ${parts.join("; ")}\n${detail}`;
+  const context = [`doctest state: ${parts.join("; ")}`];
+  if (typeof state.source === "string" && state.source) {
+    context.push(`doctest source:\n${truncateDoctestStateText(state.source)}`);
+  }
+  if (typeof state.expected === "string" && state.expected) {
+    context.push(`doctest expected:\n${truncateDoctestStateText(state.expected)}`);
+  }
+  return `${context.join("\n")}\n${detail}`;
+}
+
+function truncateDoctestStateText(value) {
+  const maxLength = 1200;
+  return value.length > maxLength
+    ? `${value.slice(0, maxLength)}\n... truncated ...`
+    : value;
 }
 
 function classifyDoctestHostError(err) {
@@ -514,6 +528,7 @@ __cowasm_block_keys = set(json.loads(${JSON.stringify(JSON.stringify(blockKeys))
 __cowasm_source_root = ${sourceRoot ? JSON.stringify(sourceRoot) : "None"}
 __cowasm_invocation_cwd = ${JSON.stringify(invocationCwd)}
 __cowasm_current_state = {}
+__cowasm_state_unset = object()
 
 __cowasm_deferred_re = re.compile(
     r"#.*\\b(not implemented|not tested|known bug)\\b",
@@ -538,7 +553,14 @@ COWASM_RANDOM_ACCEPT = "__COWASM_RANDOM_ACCEPT__\\n"
 COWASM_TOLERANCE_PREFIX = "__COWASM_TOLERANCE__"
 
 
-def __cowasm_note_state(current_file=None, phase=None, name=None, line=None):
+def __cowasm_note_state(
+    current_file=None,
+    phase=None,
+    name=None,
+    line=None,
+    source=__cowasm_state_unset,
+    expected=__cowasm_state_unset,
+):
     global __cowasm_current_state
     if current_file is not None:
         __cowasm_current_state["current_file"] = current_file
@@ -552,11 +574,28 @@ def __cowasm_note_state(current_file=None, phase=None, name=None, line=None):
         __cowasm_current_state["line"] = line
     else:
         __cowasm_current_state.pop("line", None)
+    if source is not __cowasm_state_unset:
+        if source is None:
+            __cowasm_current_state.pop("source", None)
+        else:
+            __cowasm_current_state["source"] = source
+    if expected is not __cowasm_state_unset:
+        if expected is None:
+            __cowasm_current_state.pop("expected", None)
+        else:
+            __cowasm_current_state["expected"] = expected
     try:
         with open(__cowasm_state_path, "w", encoding="utf-8") as __cowasm_state:
             json.dump(__cowasm_current_state, __cowasm_state)
     except BaseException:
         pass
+
+
+def __cowasm_limited_state_text(value):
+    max_length = 1200
+    if len(value) <= max_length:
+        return value
+    return value[:max_length] + "\\n... truncated ..."
 
 
 def __cowasm_state_diagnostic(detail):
@@ -565,6 +604,8 @@ def __cowasm_state_diagnostic(detail):
     current_file = __cowasm_current_state.get("current_file")
     name = __cowasm_current_state.get("name")
     line = __cowasm_current_state.get("line")
+    source = __cowasm_current_state.get("source")
+    expected = __cowasm_current_state.get("expected")
     if phase:
         parts.append(f"phase={phase}")
     if current_file:
@@ -575,7 +616,12 @@ def __cowasm_state_diagnostic(detail):
         parts.append(f"line={line}")
     if not parts:
         return detail
-    return "doctest state: " + "; ".join(parts) + "\\n" + detail
+    context = ["doctest state: " + "; ".join(parts)]
+    if source:
+        context.append("doctest source:\\n" + __cowasm_limited_state_text(source))
+    if expected:
+        context.append("doctest expected:\\n" + __cowasm_limited_state_text(expected))
+    return "\\n".join(context) + "\\n" + detail
 
 
 def _cowasm_tags(source):
@@ -839,7 +885,14 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
         start_line = None
         if test.lineno is not None and example.lineno is not None:
             start_line = test.lineno + example.lineno + 1
-        globals()["__cowasm_note_state"](test.filename, "run_example", test.name, start_line)
+        globals()["__cowasm_note_state"](
+            test.filename,
+            "run_example",
+            test.name,
+            start_line,
+            getattr(example, "sage_source", example.source),
+            getattr(example, "_cowasm_expected", example.want),
+        )
         super().report_start(out, test, example)
 
     def report_success(self, out, test, example, got):
@@ -942,7 +995,7 @@ class __CowasmOutputChecker(doctest.OutputChecker):
 
 def __cowasm_run_file(filename):
     started = time.time()
-    __cowasm_note_state(filename, "start_file")
+    __cowasm_note_state(filename, "start_file", source=None, expected=None)
     file_result = {
         "path": filename,
         "status": "error",
@@ -958,13 +1011,13 @@ def __cowasm_run_file(filename):
         "blocks": [],
     }
     try:
-        __cowasm_note_state(filename, "read_source")
+        __cowasm_note_state(filename, "read_source", source=None, expected=None)
         with open(filename, "r", encoding="utf-8") as f:
             original = f.read()
-        __cowasm_note_state(filename, "load_namespace")
+        __cowasm_note_state(filename, "load_namespace", source=None, expected=None)
         parser = doctest.DocTestParser()
         namespace = __cowasm_namespace(filename)
-        __cowasm_note_state(filename, "initialize_runner")
+        __cowasm_note_state(filename, "initialize_runner", source=None, expected=None)
         checker = __CowasmOutputChecker()
         runner = __CowasmRecordingRunner(
             checker=checker,
@@ -974,9 +1027,9 @@ def __cowasm_run_file(filename):
         attempted = 0
         failed = 0
         block_counter = 0
-        __cowasm_note_state(filename, "collect_docstrings")
+        __cowasm_note_state(filename, "collect_docstrings", source=None, expected=None)
         for name, docstring, line_offset in __cowasm_docstrings(filename, original):
-            __cowasm_note_state(filename, "parse_doctest", name, line_offset)
+            __cowasm_note_state(filename, "parse_doctest", name, line_offset, None, None)
             converted = __cowasm_convert_prompts(docstring)
             test = parser.get_doctest(converted, namespace, name, filename, line_offset)
             if not test.examples:
@@ -994,7 +1047,14 @@ def __cowasm_run_file(filename):
                 if test.lineno is not None and example.lineno is not None:
                     start_line = test.lineno + example.lineno + 1
                     end_line = start_line + len(example.source.splitlines()) - 1
-                __cowasm_note_state(filename, "prepare_example", name, start_line)
+                __cowasm_note_state(
+                    filename,
+                    "prepare_example",
+                    name,
+                    start_line,
+                    example.sage_source,
+                    example.want,
+                )
                 source_hash = _cowasm_source_hash(example.sage_source)
                 block_key = __cowasm_block_key(filename, start_line, source_hash)
                 example._cowasm_block_key = block_key
@@ -1055,7 +1115,7 @@ def __cowasm_run_file(filename):
                             "duration_ms": 0,
                         })
                         example.options[doctest.SKIP] = True
-            __cowasm_note_state(filename, "run_doctest", name, line_offset)
+            __cowasm_note_state(filename, "run_doctest", name, line_offset, None, None)
             before = time.time()
             result = runner.run(test, clear_globs=False)
             attempted += result.attempted

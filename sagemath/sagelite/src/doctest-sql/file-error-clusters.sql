@@ -28,6 +28,22 @@ file_errors as (
     path
   from raw_file_errors
 ),
+normalized_diagnostics as (
+  select
+    failure_class,
+    doctest_state,
+    case
+      when instr(diagnostic, 'RuntimeError: function signature mismatch') > 0 then
+        substr(diagnostic, instr(diagnostic, 'RuntimeError: function signature mismatch'))
+      when instr(diagnostic, 'LinkError:') > 0 then
+        substr(diagnostic, instr(diagnostic, 'LinkError:'))
+      when instr(diagnostic, char(10) || 'Traceback ') > 0 then
+        substr(diagnostic, instr(diagnostic, char(10) || 'Traceback ') + 1)
+      else diagnostic
+    end as diagnostic,
+    path
+  from file_errors
+),
 diagnostics as (
   select
     failure_class,
@@ -40,7 +56,7 @@ diagnostics as (
       )
     ) as diagnostic_line,
     path
-  from file_errors
+  from normalized_diagnostics
 )
 select
   failure_class,
