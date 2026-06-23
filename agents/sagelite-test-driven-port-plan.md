@@ -518,6 +518,19 @@ The curated Sagelite corpus result remained `203 passed, 7 failed, 27 skipped`;
 the next high-leverage cluster is still PARI `err_recover` / side-module
 function-table signature compatibility, followed by the NTL/libcxx memory trap.
 
+A follow-up SJLJ-loader pass implemented the wasi-sdk `libsetjmp.a` helper ABI
+for dynamic side-module imports of `__wasm_setjmp`,
+`__wasm_setjmp_test`, and `__wasm_longjmp`, including the shared
+`__c_longjmp` WebAssembly exception tag. The focused WASI dylink smoke now
+leaves those helpers unresolved in a side module and verifies that a
+side-module `setjmp`/`longjmp` recovery path succeeds through the loader. This
+narrows the Sagelite PARI cluster but does not clear it yet: the
+`integer.pyx:3112` rerun for `(-3).divisors()` still fails with
+`RuntimeError: function signature mismatch` at
+`convert_sage...so.err_recover`. The next pass should inspect PARI's remaining
+plain `setjmp` import / `err_recover` callback path rather than the already
+covered `__wasm_*` helper imports.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

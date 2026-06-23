@@ -50,9 +50,12 @@ build/wasi-sdk/dynamic-library.so: dynamic-library.c
 	mkdir -p build/wasi-sdk
 	${WASI_SDK_CLANG} -target wasm32-wasip1 \
 		-O0 \
+		-DCOWASM_WASI_SDK_TEST \
 		-fPIC \
 		-shared \
 		-nostdlib \
+		-mllvm -wasm-enable-sjlj \
+		-mllvm -wasm-use-legacy-eh=false \
 		-Wl,--allow-undefined \
 		-Wl,--no-entry \
 		-Wl,--export=__wasm_call_ctors \

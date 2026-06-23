@@ -236,7 +236,10 @@ export default class DlopenManger {
     return `${path.slice(0, i + 1)}${needed}`;
   }
 
-  private emscriptenCxxRuntimeImport(name: string): Function | undefined {
+  private emscriptenCxxRuntimeImport(
+    name: string,
+    cLongjmpTag?: any
+  ): Function | undefined {
     if (name == "strtod_l" || name == "strtof_l") {
       return (nptr: number, endptr: number) => {
         const text = recvString(nptr, this.memory);
@@ -324,10 +327,38 @@ export default class DlopenManger {
         throw Error("longjmp is not supported by the CoWasm C++ runtime");
       };
     }
-    if (name == "__wasm_setjmp" || name == "__wasm_setjmp_test") {
-      return () => 0;
+    if (name == "__wasm_setjmp") {
+      return (envPtr: number, label: number, table: number) => {
+        if (!label || !table) {
+          throw Error("__wasm_setjmp requires nonzero label and table values");
+        }
+        const view = new DataView(this.memory.buffer);
+        view.setInt32(envPtr + 4, label, true);
+        view.setInt32(envPtr, table, true);
+      };
     }
-    if (name == "__wasm_longjmp" || name == "__c_longjmp") {
+    if (name == "__wasm_setjmp_test") {
+      return (envPtr: number, label: number) => {
+        const view = new DataView(this.memory.buffer);
+        const savedLabel = view.getInt32(envPtr + 4, true);
+        if (!savedLabel || !label) {
+          throw Error("__wasm_setjmp_test requires nonzero label values");
+        }
+        return view.getInt32(envPtr, true) == label ? savedLabel : 0;
+      };
+    }
+    if (name == "__wasm_longjmp") {
+      return (envPtr: number, value: number) => {
+        if (cLongjmpTag == null) {
+          throw Error("__wasm_longjmp requires a __c_longjmp tag");
+        }
+        const view = new DataView(this.memory.buffer);
+        view.setInt32(envPtr + 12, value > 1 ? value : 1, true);
+        view.setInt32(envPtr + 8, envPtr, true);
+        throw new (WebAssembly as any).Exception(cLongjmpTag, [envPtr + 8]);
+      };
+    }
+    if (name == "__c_longjmp") {
       return () => {
         throw Error(`${name} is not supported by the CoWasm dynamic linker`);
       };
@@ -434,6 +465,10 @@ export default class DlopenManger {
       c == 32 || c == 9 || c == 10 || c == 11 || c == 12 || c == 13;
     const isGraph = (c: number) => c >= 33 && c <= 126;
 
+    const cLongjmpTag = new (WebAssembly as any).Tag({
+      parameters: ["i32"],
+      results: [],
+    });
     const env = {
       memory: this.memory,
       __indirect_function_table: this.functionTable.table,
@@ -450,10 +485,7 @@ export default class DlopenManger {
         // down, in terms of memory addresses.
         stack_alloc + STACK_SIZE
       ),
-      __c_longjmp: new (WebAssembly as any).Tag({
-        parameters: ["i32"],
-        results: [],
-      }),
+      __c_longjmp: cLongjmpTag,
       malloc: (bytes: number) => this.malloc(bytes, "dynamic library malloc"),
       free: (ptr: number) => this.free(ptr),
       calloc: (nmemb: number, size: number) => {
@@ -768,7 +800,7 @@ export default class DlopenManger {
         };
       }
 
-      f = this.emscriptenCxxRuntimeImport(key);
+      f = this.emscriptenCxxRuntimeImport(key, cLongjmpTag);
       if (f != null) {
         return f;
       }

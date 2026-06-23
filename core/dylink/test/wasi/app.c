@@ -110,6 +110,13 @@ int sorted_with_qsort() {
 
 #ifdef COWASM_WASI_SDK_TEST
 EXPORTED_SYMBOL
+int side_setjmp_recovery() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "side_setjmp_recovery");
+  return (*f)();
+}
+
+EXPORTED_SYMBOL
 int add_provider_data_relocation(int n) {
   void* handle = dlopen("./consumer.so", 2);
   FUN_PTR f = (FUN_PTR)dlsym(handle, "add_provider_data_relocation");
@@ -157,6 +164,9 @@ int main() {
   assert(sorted_with_qsort() == 1);
 
 #ifdef COWASM_WASI_SDK_TEST
+  printf("side_setjmp_recovery() = %d\n", side_setjmp_recovery());
+  assert(side_setjmp_recovery() == 1);
+
   printf("add_provider_data_relocation(2022) = %d\n", add_provider_data_relocation(2022));
   assert(add_provider_data_relocation(2022) == 2022 + 41);
 #endif

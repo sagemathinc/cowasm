@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef COWASM_WASI_SDK_TEST
+#include <setjmp.h>
+#endif
 //#include <assert.h>
 #include "app.h"
 
@@ -60,6 +63,24 @@ int sorted_with_qsort(void) {
   }
   return 1;
 }
+
+#ifdef COWASM_WASI_SDK_TEST
+static jmp_buf side_jmp;
+
+static void jump_back_to_side_setjmp(void) {
+  longjmp(side_jmp, 7);
+}
+
+EXPORTED_SYMBOL
+int side_setjmp_recovery(void) {
+  int status = setjmp(side_jmp);
+  if (status == 0) {
+    jump_back_to_side_setjmp();
+    return 0;
+  }
+  return status == 7;
+}
+#endif
 
 // This illustrates calling a function that is
 // defined in the main app.c.
