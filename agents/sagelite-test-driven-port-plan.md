@@ -71,6 +71,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - `make -C sagemath/sagelite test-sage-doctest-corpus` runs the curated
   pure-math corpus into SQLite, allowing doctest failures by default so the
   command remains useful as a porting dashboard while compatibility is partial.
+- Sagelite's WASI source patch marks the `ZZ[...]` examples that rely on
+  symbolic `sqrt(...)` as `# needs sage.symbolic`, so the browser-compatible
+  profile records them as explicit skips instead of missing-module failures.
 
 Useful recent sample:
 
@@ -82,19 +85,20 @@ cd /home/user/sagelite/src/sage/rings
 Recent result after standalone directive propagation:
 
 ```text
-integer_ring.pyx: 202 passed, 6 failed, 22 skipped
+integer_ring.pyx: 202 passed, 1 failed, 27 skipped
 ```
 
 Recent corpus result after per-file process isolation, adding the polynomial
-constructor to the initial corpus, and propagating standalone directives:
+constructor to the initial corpus, propagating standalone directives, and
+tagging symbolic-only `ZZ[...]` examples:
 
 ```text
-sage -t failed: 202 passed, 13 failed, 22 skipped
+sage -t failed: 202 passed, 8 failed, 27 skipped
 ```
 
 That run attempted all eight curated files. The current non-`integer_ring.pyx`
-failures are mostly file-level runtime/linkage errors, which are now preserved
-in SQLite instead of aborting the corpus.
+failures are file-level runtime/linkage errors, which are preserved in SQLite
+instead of aborting the corpus.
 
 That is already enough signal to start a real compatibility loop, but the
 runner and database still need hardening before results should be treated as a
@@ -401,11 +405,10 @@ Every porting iteration should look like this:
 
 Current remaining failures include:
 
-- number-field construction via `sqrt(...)`;
-- root-finding paths in `ZZ._roots_univariate_polynomial`;
-- dependent `NameError` failures after a setup block fails;
-- missing module paths that should either be ported, skipped by an accurate
-  tag, or classified as a known package gap.
+- root-finding paths in `ZZ._roots_univariate_polynomial`, currently failing
+  with `TypeError: PARI object does not have a Python length`;
+- file-level `wasm_signature_mismatch` crashes across number-field, finite
+  field, polynomial, rational, and matrix constructors.
 
 These are good clusters. Do not patch individual doctest expectations.
 
