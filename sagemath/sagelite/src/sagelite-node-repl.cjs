@@ -835,6 +835,13 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
             "duration_ms": int(getattr(example, "_cowasm_duration_ms", 0)),
         }
 
+    def report_start(self, out, test, example):
+        start_line = None
+        if test.lineno is not None and example.lineno is not None:
+            start_line = test.lineno + example.lineno + 1
+        globals()["__cowasm_note_state"](test.filename, "run_example", test.name, start_line)
+        super().report_start(out, test, example)
+
     def report_success(self, out, test, example, got):
         row = self.__base(test, example)
         failure_class = "random_unchecked" if getattr(example, "_cowasm_random", False) else None
