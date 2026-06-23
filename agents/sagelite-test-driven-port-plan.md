@@ -29,6 +29,8 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   - skips `# long time` unless `--long` is passed;
   - supports `--optional`, feature-filtered `--optional=FEATURE`, `--long`,
     `--timeout`, and `--sqlite`;
+  - records specific deferred skip metadata for `# known bug`,
+    `# not implemented`, and `# not tested`;
   - seeds the namespace with `sage.all` and, where possible, the tested Sage
     module globals.
 - The doctest runner checkpoints SQLite-bound JSON after each file, so a WASM

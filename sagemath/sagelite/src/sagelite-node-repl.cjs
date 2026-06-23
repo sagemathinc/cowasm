@@ -467,15 +467,22 @@ def _cowasm_tags(source):
         ("random", __cowasm_random_re),
         ("long time", __cowasm_long_re),
         ("optional", __cowasm_optional_re),
-        ("deferred", __cowasm_deferred_re),
         ("tolerance", __cowasm_tol_re),
     ]
     for name, regex in checks:
         if regex.search(source):
             tags.append(name)
+    deferred_tags = __cowasm_deferred_tags(source)
+    if deferred_tags:
+        tags.append("deferred")
+        tags.extend(f"deferred:{tag}" for tag in deferred_tags)
     for kind, feature in __cowasm_optional_feature_tags(source):
         tags.append(f"{kind}:{feature}")
     return ",".join(tags)
+
+
+def __cowasm_deferred_tags(source):
+    return [match.group(1).lower() for match in __cowasm_deferred_re.finditer(source)]
 
 
 def __cowasm_optional_feature_tags(source):
@@ -584,8 +591,9 @@ def __cowasm_should_skip(source):
 
 
 def __cowasm_skip_reason(source):
-    if __cowasm_deferred_re.search(source):
-        return "deferred"
+    deferred_tags = __cowasm_deferred_tags(source)
+    if deferred_tags:
+        return "deferred:" + ",".join(deferred_tags)
     if not __cowasm_optional_enabled(source):
         features = __cowasm_optional_features_in(source)
         return "optional:" + ",".join(features) if features else "optional"
