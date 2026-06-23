@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 5;
+const doctestRunnerVersion = 6;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -356,6 +356,7 @@ function appendDoctestFiles(run, parsed) {
 }
 
 function appendDoctestErrorFile(run, failedPath, err, durationMs) {
+  const detail = String(err && err.stack ? err.stack : err);
   run.files.push({
     path: failedPath,
     status: "error",
@@ -365,9 +366,22 @@ function appendDoctestErrorFile(run, failedPath, err, durationMs) {
     skipped_blocks: 0,
     duration_ms: durationMs,
     stdout: "",
-    stderr: String(err && err.stack ? err.stack : err),
+    stderr: detail,
+    failure_class: classifyDoctestHostError(err),
+    failure_detail: detail,
     blocks: [],
   });
+}
+
+function classifyDoctestHostError(err) {
+  const detail = String(err && err.stack ? err.stack : err);
+  if (/timed out after \d+(?:\.\d+)?s/.test(detail)) {
+    return "timeout";
+  }
+  if (/WebAssembly\.RuntimeError|wasm trap|unreachable/i.test(detail)) {
+    return "wasm_trap";
+  }
+  return err && err.name ? err.name : "host_exception";
 }
 
 function readJsonFile(filename) {
@@ -788,6 +802,8 @@ def __cowasm_run_file(filename):
         "duration_ms": 0,
         "stdout": "",
         "stderr": "",
+        "failure_class": None,
+        "failure_detail": None,
         "blocks": [],
     }
     try:
@@ -888,8 +904,11 @@ def __cowasm_run_file(filename):
         file_result["failed_blocks"] = sum(1 for row in file_result["blocks"] if row["status"] == "failed")
         file_result["skipped_blocks"] = sum(1 for row in file_result["blocks"] if row["status"] == "skipped")
         file_result["status"] = "passed" if file_result["failed_blocks"] == 0 else "failed"
-    except BaseException:
-        file_result["stderr"] = traceback.format_exc()
+    except BaseException as exc:
+        detail = traceback.format_exc()
+        file_result["stderr"] = detail
+        file_result["failure_class"] = exc.__class__.__name__
+        file_result["failure_detail"] = detail
         file_result["failed_blocks"] = 1
     finally:
         file_result["duration_ms"] = int((time.time() - started) * 1000)
@@ -999,7 +1018,9 @@ function ensureDoctestSchema(dbPath) {
       skipped_blocks INTEGER NOT NULL,
       duration_ms INTEGER NOT NULL,
       stdout TEXT,
-      stderr TEXT
+      stderr TEXT,
+      failure_class TEXT,
+      failure_detail TEXT
     );`,
     `CREATE TABLE IF NOT EXISTS blocks (
       id INTEGER PRIMARY KEY,
@@ -1027,6 +1048,8 @@ function ensureDoctestSchema(dbPath) {
   ensureSqliteColumn(dbPath, "runs", "run_profile", "TEXT DEFAULT 'node'");
   ensureSqliteColumn(dbPath, "runs", "runner_version", "INTEGER DEFAULT 1");
   ensureSqliteColumn(dbPath, "runs", "resource_root", "TEXT");
+  ensureSqliteColumn(dbPath, "files", "failure_class", "TEXT");
+  ensureSqliteColumn(dbPath, "files", "failure_detail", "TEXT");
   ensureSqliteColumn(dbPath, "blocks", "block_key", "TEXT");
   ensureSqliteColumn(dbPath, "blocks", "source_hash", "TEXT");
   ensureSqliteColumn(dbPath, "blocks", "expected_kind", "TEXT");
@@ -1106,12 +1129,13 @@ function writeDoctestSqlite(dbPath, run) {
   for (const file of run.files) {
     rows.push(`INSERT INTO files (
       run_id, path, status, total_blocks, passed_blocks, failed_blocks,
-      skipped_blocks, duration_ms, stdout, stderr
+      skipped_blocks, duration_ms, stdout, stderr, failure_class, failure_detail
     ) VALUES (
       ${sqlNumber(Number(runId))}, ${sqlString(file.path)}, ${sqlString(file.status)},
       ${sqlNumber(file.total_blocks)}, ${sqlNumber(file.passed_blocks)},
       ${sqlNumber(file.failed_blocks)}, ${sqlNumber(file.skipped_blocks)},
-      ${sqlNumber(file.duration_ms)}, ${sqlString(file.stdout)}, ${sqlString(file.stderr)}
+      ${sqlNumber(file.duration_ms)}, ${sqlString(file.stdout)}, ${sqlString(file.stderr)},
+      ${sqlString(file.failure_class)}, ${sqlString(file.failure_detail)}
     );`);
     rows.push("SELECT last_insert_rowid();");
     const fileId = "__COWASM_FILE_ID__";

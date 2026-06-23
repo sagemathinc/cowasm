@@ -39,6 +39,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - Doctest corpus runs now isolate each file in a fresh `python-wasm` process.
   A trap or dynamic-link failure in one Sage file is recorded as that file's
   error and does not prevent later corpus files from being attempted.
+- File-level doctest errors now record `failure_class` and `failure_detail`
+  metadata in SQLite, and the saved failure-cluster queries include those
+  errors instead of only block-level failures.
 - The Sagelite standalone target has a smoke test that runs `sage -t`, checks
   SQLite aggregate counts, and checks that random doctests are recorded as
   unchecked passed blocks.

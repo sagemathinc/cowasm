@@ -4,29 +4,38 @@ with latest as (
 missing as (
   select
     case
-      when instr(b.actual, 'ModuleNotFoundError: No module named ') > 0 then
+      when instr(message, 'ModuleNotFoundError: No module named ') > 0 then
         replace(
           substr(
-            b.actual,
-            instr(b.actual, 'ModuleNotFoundError: No module named ')
+            message,
+            instr(message, 'ModuleNotFoundError: No module named ')
               + length('ModuleNotFoundError: No module named ')
           ),
           '''',
           ''
         )
-      when instr(b.actual, 'ImportError: ') > 0 then
-        substr(b.actual, instr(b.actual, 'ImportError: ') + length('ImportError: '))
+      when instr(message, 'ImportError: ') > 0 then
+        substr(message, instr(message, 'ImportError: ') + length('ImportError: '))
       else null
     end as message
-  from blocks b
-  join files f on f.id = b.file_id
+  from (
+    select b.actual as message
+    from blocks b
+    join files f on f.id = b.file_id
+    where
+      f.run_id = (select run_id from latest)
+      and b.status = 'failed'
+    union all
+    select coalesce(f.failure_detail, f.stderr) as message
+    from files f
+    where
+      f.run_id = (select run_id from latest)
+      and f.status = 'error'
+      and f.failed_blocks > 0
+  )
   where
-    f.run_id = (select run_id from latest)
-    and b.status = 'failed'
-    and (
-      instr(b.actual, 'ModuleNotFoundError: No module named ') > 0
-      or instr(b.actual, 'ImportError: ') > 0
-    )
+    instr(message, 'ModuleNotFoundError: No module named ') > 0
+    or instr(message, 'ImportError: ') > 0
 )
 select
   trim(substr(message, 1, instr(message || char(10), char(10)) - 1)) as missing_import,

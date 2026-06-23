@@ -1660,6 +1660,33 @@ if [ "$doctest_random_count" != "1" ]; then
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record the random doctest as unchecked."
 fi
+doctest_missing_db="$probe_dir/sagelite-doctest-missing-file.sqlite3"
+doctest_missing_log="$dist_dir/doctest-missing-file.log"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --sqlite "$doctest_missing_db" "$probe_dir/does-not-exist.py" \
+      >"$doctest_missing_log" 2>&1
+doctest_missing_status=$?
+set -e
+if [ "$doctest_missing_status" -eq 124 ]; then
+  tail -120 "$doctest_missing_log" >&2
+  record_blocker "sagelite-blocked: sage -t missing-file doctest smoke timed out after $node_import_timeout; see $doctest_missing_log for the first runtime blocker."
+fi
+if [ "$doctest_missing_status" -eq 0 ]; then
+  cat "$doctest_missing_log" >&2
+  sqlite3 "$doctest_missing_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t missing-file doctest smoke unexpectedly passed."
+fi
+doctest_missing_count="$(sqlite3 "$doctest_missing_db" "select count(*) from files where status = 'error' and failure_class = 'FileNotFoundError' and failure_detail like '%No such file%';")"
+if [ "$doctest_missing_count" != "1" ]; then
+  cat "$doctest_missing_log" >&2
+  sqlite3 "$doctest_missing_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t missing-file doctest smoke did not record file-level failure metadata."
+fi
 doctest_optional_feature_db="$probe_dir/sagelite-doctest-optional-feature.sqlite3"
 doctest_optional_feature_log="$dist_dir/doctest-optional-feature.log"
 set +e

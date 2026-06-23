@@ -8,6 +8,7 @@ select
   passed_blocks,
   failed_blocks,
   skipped_blocks,
+  failure_class,
   round(
     100.0 * passed_blocks / nullif(total_blocks - skipped_blocks, 0),
     2
