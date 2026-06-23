@@ -35,9 +35,9 @@ env \
   NM="$bin_dir/wasi-sdk-llvm-nm-next" \
   CC="$bin_dir/cowasm-cc" \
   CXX="$bin_dir/cowasm-c++" \
-  CC_FOR_BUILD="zig cc ${ZIG_NATIVE_CFLAGS:-}" \
-  CFLAGS="-Oz -fvisibility-main" \
-  CXXFLAGS="-Oz -fvisibility-main" \
+  CC_FOR_BUILD="${CC_FOR_BUILD:-cc -include stdlib.h}" \
+  CFLAGS="-Oz -fPIC -fvisibility-main" \
+  CXXFLAGS="-Oz -fPIC -fvisibility-main" \
   COWASM_TOOLCHAIN=wasi-sdk \
     ./configure \
       --build=i686-pc-linux-gnu \

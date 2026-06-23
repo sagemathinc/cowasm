@@ -150,22 +150,28 @@ diff -urN a/src/meson.build b/src/meson.build
    singular_factory = singular_proj.get_variable('factory_dep')
  endif
 @@ -274,7 +277,7 @@
-     ntl_lib_dir = candidate_ntl_lib
-   endif
+    ntl_lib_dir = candidate_ntl_lib
+  endif
  endif
 -ntl = disabler()
 +ntl = dependency('ntl', required: false)
  if ntl_lib_dir != '' and cpp.has_header('NTL/config.h', args: ['-I' + ntl_include_dir], required: false)
    ntl = cpp.find_library(
      'ntl',
-@@ -285,7 +288,7 @@
+@@ -285,7 +288,12 @@
  endif
  if not ntl.found()
    # Cannot be found via pkg-config
 -  ntl = cc.find_library('ntl', required: not is_windows, disabler: true)
 +  ntl = cc.find_library('ntl', required: not is_windows and not is_wasi, disabler: true)
++endif
++
++gf2x = dependency('gf2x', required: false)
++if not gf2x.found()
++  gf2x = cc.find_library('gf2x', required: not is_windows and not is_wasi, disabler: true)
  endif
-
+-
++
  boost_cpp17_compatible = false
 @@ -314,6 +349,12 @@
  # https://github.com/mesonbuild/meson/issues/9562
@@ -624,10 +630,11 @@ diff -urN a/src/sage/modules/meson.build b/src/sage/modules/meson.build
 diff -urN a/src/sage/rings/polynomial/meson.build b/src/sage/rings/polynomial/meson.build
 --- a/src/sage/rings/polynomial/meson.build
 +++ b/src/sage/rings/polynomial/meson.build
-@@ -180,6 +180,15 @@
+@@ -180,7 +180,16 @@
    'polynomial_zz_pex': files('polynomial_zz_pex.pyx'),
  }
-
+-
++
 +cowasm_libcxx_link_args = []
 +if is_wasi
 +  cowasm_libcxx_path = meson.get_external_property('cowasm_libcxx', '')
@@ -640,32 +647,41 @@ diff -urN a/src/sage/rings/polynomial/meson.build b/src/sage/rings/polynomial/me
 +  extra_link_args = []
    deps = [py_dep, cysignals, gmp, numpy]
    if name == 'polynomial_rational_flint'
-@@ -187,12 +196,15 @@
-       cypari2,
-       flint,
+     deps += [
+@@ -189,10 +198,13 @@
        mpfi,
        ntl,  # indirect dependency
      ]
 +    extra_link_args = cowasm_libcxx_link_args
    elif name == 'polynomial_zmod_flint'
--    deps += [cypari2, flint]
-+    deps += [cypari2, flint]
+     deps += [cypari2, flint]
 +    extra_link_args = cowasm_libcxx_link_args
    elif name == 'polynomial_integer_dense_flint'
--    deps += [cypari2, flint, ntl]
-+    deps += [cypari2, flint, ntl]
+     deps += [cypari2, flint, ntl]
 +    extra_link_args = cowasm_libcxx_link_args
    elif name == 'multi_polynomial_ideal_libsingular' or name == 'multi_polynomial_libsingular'
      deps += [cypari2, singular]
    elif name == 'plural'
-@@ -220,7 +232,8 @@
-       inc_rings,
+@@ -200,9 +212,9 @@
+   elif name == 'polynomial_zz_pex'
+     deps += [cypari2]
+   elif name == 'polynomial_integer_dense_ntl' or name == 'polynomial_modn_dense_ntl'
+-    deps += [cypari2]
++    deps += [cypari2, ntl, gf2x]
+   elif name == 'polynomial_gf2x'
+-    deps += [cypari2]
++    deps += [cypari2, ntl, gf2x]
+   elif name == 'evaluation_ntl'
+     deps += [ntl, mpfr, mpfi]    # Runtime dependencies
+   endif
+@@ -221,6 +233,7 @@
        inc_rings_finite,
      ],
      dependencies: deps,
 +    link_args: extra_link_args,
    )
-
+-
++
  endforeach
 diff -urN a/src/sage/meson.build b/src/sage/meson.build
 --- a/src/sage/meson.build
