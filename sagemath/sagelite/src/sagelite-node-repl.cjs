@@ -270,11 +270,13 @@ async function runDoctestMode(python, args, invocationCwd) {
   };
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "sagelite-doctest-"));
   const resultPath = path.join(tmpDir, "result.json");
+  const statePath = path.join(tmpDir, "state.json");
   const begin = Date.now();
   try {
     const code = buildDoctestPython({
       files: options.files,
       resultPath,
+      statePath,
       long: options.long,
       optional: options.optional,
       optionalFeatures: options.optionalFeatures,
@@ -285,18 +287,29 @@ async function runDoctestMode(python, args, invocationCwd) {
     Object.assign(run, parsed);
     run.status = "finished";
   } catch (err) {
-    run.files.push({
-      path: options.files.join("\n"),
-      status: "error",
-      total_blocks: 0,
-      passed_blocks: 0,
-      failed_blocks: 0,
-      skipped_blocks: 0,
-      duration_ms: Date.now() - begin,
-      stdout: "",
-      stderr: String(err && err.stack ? err.stack : err),
-      blocks: [],
-    });
+    const partial = readJsonFile(resultPath);
+    if (partial && Array.isArray(partial.files)) {
+      Object.assign(run, partial);
+    }
+    const state = readJsonFile(statePath);
+    const failedPath =
+      state && typeof state.current_file === "string"
+        ? state.current_file
+        : options.files.join("\n");
+    if (!run.files.some((file) => file.path === failedPath)) {
+      run.files.push({
+        path: failedPath,
+        status: "error",
+        total_blocks: 0,
+        passed_blocks: 0,
+        failed_blocks: 1,
+        skipped_blocks: 0,
+        duration_ms: Date.now() - begin,
+        stdout: "",
+        stderr: String(err && err.stack ? err.stack : err),
+        blocks: [],
+      });
+    }
   } finally {
     run.finished_at = new Date().toISOString();
     run.duration_ms = Date.now() - begin;
@@ -315,6 +328,14 @@ async function runDoctestMode(python, args, invocationCwd) {
   }
   printDoctestSummary(options.dbPath, run, invocationCwd);
   return run.status === "passed" ? 0 : 1;
+}
+
+function readJsonFile(filename) {
+  try {
+    return JSON.parse(fs.readFileSync(filename, "utf8"));
+  } catch {
+    return null;
+  }
 }
 
 async function execPythonWithTimeout(python, code, timeoutSeconds) {
@@ -341,6 +362,7 @@ async function execPythonWithTimeout(python, code, timeoutSeconds) {
 function buildDoctestPython({
   files,
   resultPath,
+  statePath,
   long,
   optional,
   optionalFeatures,
@@ -371,6 +393,7 @@ from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
 
 __cowasm_files = ${JSON.stringify(JSON.stringify(files))}
 __cowasm_result_path = ${JSON.stringify(resultPath)}
+__cowasm_state_path = ${JSON.stringify(statePath)}
 __cowasm_long = ${long ? "True" : "False"}
 __cowasm_optional = ${optional ? "True" : "False"}
 __cowasm_optional_features = set(json.loads(${JSON.stringify(JSON.stringify(optionalFeatures))}))
@@ -826,11 +849,18 @@ def __cowasm_run_file(filename):
 
 
 __cowasm_results = {"files": []}
-for __cowasm_file in json.loads(__cowasm_files):
-    __cowasm_results["files"].append(__cowasm_run_file(__cowasm_file))
+def __cowasm_write_results():
+    with open(__cowasm_result_path, "w", encoding="utf-8") as __cowasm_out:
+        json.dump(__cowasm_results, __cowasm_out, ensure_ascii=False)
 
-with open(__cowasm_result_path, "w", encoding="utf-8") as __cowasm_out:
-    json.dump(__cowasm_results, __cowasm_out, ensure_ascii=False)
+
+for __cowasm_file in json.loads(__cowasm_files):
+    with open(__cowasm_state_path, "w", encoding="utf-8") as __cowasm_state:
+        json.dump({"current_file": __cowasm_file}, __cowasm_state)
+    __cowasm_results["files"].append(__cowasm_run_file(__cowasm_file))
+    __cowasm_write_results()
+
+__cowasm_write_results()
 `;
 }
 

@@ -31,6 +31,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
     `--timeout`, and `--sqlite`;
   - seeds the namespace with `sage.all` and, where possible, the tested Sage
     module globals.
+- The doctest runner checkpoints SQLite-bound JSON after each file, so a WASM
+  trap in a later file preserves completed file results and records the current
+  crashing file separately.
 - The Sagelite standalone target has a smoke test that runs `sage -t`, checks
   SQLite aggregate counts, and checks that random doctests are recorded as
   unchecked passed blocks.
