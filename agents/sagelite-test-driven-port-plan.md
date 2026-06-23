@@ -45,6 +45,10 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - File-level doctest errors now record `failure_class` and `failure_detail`
   metadata in SQLite, and the saved failure-cluster queries include those
   errors instead of only block-level failures.
+- File-level host/runtime crashes now preserve doctest state breadcrumbs in
+  `failure_detail`, including the runner phase, file, doctest name, and source
+  line where available; the file-error cluster query groups by the underlying
+  diagnostic while listing those breadcrumbs as context.
 - Function-signature traps are classified as `wasm_signature_mismatch`, so
   C/WASM ABI regressions are separated from generic runtime traps.
 - Run metadata records the CoWasm commit, documented Sagelite package commit,
