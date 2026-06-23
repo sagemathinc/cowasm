@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 16;
+const doctestRunnerVersion = 17;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -678,6 +678,19 @@ def _cowasm_tags(source):
     return ",".join(tags)
 
 
+def __cowasm_directive_only_source(source):
+    lines = [line.strip() for line in source.splitlines() if line.strip()]
+    if not lines or not all(line.startswith("#") for line in lines):
+        return False
+    return bool(_cowasm_tags(source))
+
+
+def __cowasm_merge_directive_source(directive_source, source):
+    if not directive_source:
+        return source
+    return directive_source.rstrip() + "\\n" + source
+
+
 def __cowasm_deferred_tags(source):
     return [match.group(1).lower() for match in __cowasm_deferred_re.finditer(source)]
 
@@ -751,11 +764,25 @@ def __cowasm_block_key(filename, start_line, source_hash):
 
 def __cowasm_convert_prompts(text):
     out = []
-    for line in text.splitlines(True):
+    standalone_directives = {}
+    active_directive_source = None
+    for lineno, line in enumerate(text.splitlines(True), start=1):
+        prompt = re.match(r"^(\\s*)sage:( ?)(.*?)(\\r?\\n?)$", line)
+        if prompt:
+            source = prompt.group(3)
+            if __cowasm_directive_only_source(source):
+                active_directive_source = __cowasm_merge_directive_source(
+                    active_directive_source,
+                    source,
+                )
+            elif active_directive_source:
+                standalone_directives[lineno] = active_directive_source
+        elif not line.strip():
+            active_directive_source = None
         line = re.sub(r"^(\\s*)sage:( ?)", r"\\1>>> ", line)
         line = re.sub(r"^(\\s*)\\.\\.\\.\\.:( ?)", r"\\1... ", line)
         out.append(line)
-    return "".join(out)
+    return "".join(out), standalone_directives
 
 
 def __cowasm_filtered_text_with_prompts(text):
@@ -900,17 +927,19 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
         if test.lineno is not None and example.lineno is not None:
             start_line = test.lineno + example.lineno + 1
             end_line = start_line + len(example.source.splitlines()) - 1
+        sage_source = getattr(example, "sage_source", example.source)
+        effective_source = getattr(example, "_cowasm_effective_source", sage_source)
         return {
             "block_index": getattr(example, "_cowasm_block_index", len(self.blocks)),
             "name": test.name,
             "start_line": start_line,
             "end_line": end_line,
-            "source": getattr(example, "sage_source", example.source),
+            "source": sage_source,
             "expected": getattr(example, "_cowasm_expected", example.want),
             "expected_kind": getattr(example, "_cowasm_expected_kind", "exact"),
             "block_key": getattr(example, "_cowasm_block_key", None),
-            "source_hash": _cowasm_source_hash(getattr(example, "sage_source", example.source)),
-            "tags": _cowasm_tags(getattr(example, "sage_source", example.source)),
+            "source_hash": _cowasm_source_hash(sage_source),
+            "tags": _cowasm_tags(effective_source),
             "skip_reason": getattr(example, "_cowasm_skip_reason", None),
             "duration_ms": int(getattr(example, "_cowasm_duration_ms", 0)),
         }
@@ -1070,23 +1099,56 @@ def __cowasm_run_file(filename):
         __cowasm_note_state(filename, "collect_docstrings", source=None, expected=None)
         for name, docstring, line_offset in __cowasm_docstrings(filename, original):
             __cowasm_note_state(filename, "parse_doctest", name, line_offset, None, None)
-            converted = __cowasm_convert_prompts(docstring)
+            converted, standalone_directives = __cowasm_convert_prompts(docstring)
             test = parser.get_doctest(converted, namespace, name, filename, line_offset)
             if not test.examples:
                 continue
+            active_directive_source = None
+            previous_physical_end_line = None
             for example in test.examples:
+                start_line = None
+                end_line = None
+                physical_end_line = None
+                if test.lineno is not None and example.lineno is not None:
+                    start_line = test.lineno + example.lineno + 1
+                    end_line = start_line + len(example.source.splitlines()) - 1
+                    physical_line_count = (
+                        len(example.source.splitlines()) + len(example.want.splitlines())
+                    )
+                    physical_end_line = start_line + max(physical_line_count, 1) - 1
+                if (
+                    active_directive_source
+                    and previous_physical_end_line is not None
+                    and start_line is not None
+                    and start_line > previous_physical_end_line + 1
+                ):
+                    active_directive_source = None
+                mapped_directive_source = (
+                    standalone_directives.get(example.lineno + 1)
+                    if example.lineno is not None
+                    else None
+                )
+                if mapped_directive_source:
+                    active_directive_source = mapped_directive_source
+                if __cowasm_directive_only_source(example.source):
+                    active_directive_source = __cowasm_merge_directive_source(
+                        active_directive_source,
+                        example.source,
+                    )
+                    previous_physical_end_line = physical_end_line
+                    example.options[doctest.SKIP] = True
+                    continue
                 index = block_counter
                 block_counter += 1
                 example._cowasm_block_index = index
                 example.sage_source = example.source
+                example._cowasm_effective_source = __cowasm_merge_directive_source(
+                    active_directive_source,
+                    example.sage_source,
+                )
                 example._cowasm_expected = example.want
                 example._cowasm_expected_kind = "exact"
                 example._cowasm_skip_reason = None
-                start_line = None
-                end_line = None
-                if test.lineno is not None and example.lineno is not None:
-                    start_line = test.lineno + example.lineno + 1
-                    end_line = start_line + len(example.source.splitlines()) - 1
                 __cowasm_note_state(
                     filename,
                     "prepare_example",
@@ -1100,12 +1162,14 @@ def __cowasm_run_file(filename):
                 example._cowasm_block_key = block_key
                 if __cowasm_lines and start_line not in __cowasm_lines:
                     example.options[doctest.SKIP] = True
+                    previous_physical_end_line = physical_end_line
                     continue
                 if __cowasm_block_keys and block_key not in __cowasm_block_keys:
                     example.options[doctest.SKIP] = True
+                    previous_physical_end_line = physical_end_line
                     continue
-                if __cowasm_should_skip(example.sage_source):
-                    skip_reason = __cowasm_skip_reason(example.sage_source)
+                if __cowasm_should_skip(example._cowasm_effective_source):
+                    skip_reason = __cowasm_skip_reason(example._cowasm_effective_source)
                     example._cowasm_skip_reason = skip_reason
                     runner.blocks.append({
                         "block_index": index,
@@ -1117,7 +1181,7 @@ def __cowasm_run_file(filename):
                         "expected_kind": "skip",
                         "block_key": block_key,
                         "source_hash": source_hash,
-                        "tags": _cowasm_tags(example.sage_source),
+                        "tags": _cowasm_tags(example._cowasm_effective_source),
                         "skip_reason": skip_reason,
                         "actual": "",
                         "status": "skipped",
@@ -1126,12 +1190,12 @@ def __cowasm_run_file(filename):
                     })
                     example.options[doctest.SKIP] = True
                 else:
-                    if __cowasm_is_random(example.sage_source):
+                    if __cowasm_is_random(example._cowasm_effective_source):
                         example._cowasm_random = True
                         example._cowasm_expected_kind = "random"
                         example.want = COWASM_RANDOM_ACCEPT
                     else:
-                        tolerance = __cowasm_tolerance(example.sage_source)
+                        tolerance = __cowasm_tolerance(example._cowasm_effective_source)
                         if tolerance is not None:
                             tolerance_key = "t" + str(index)
                             checker.tolerances[tolerance_key] = tolerance
@@ -1150,7 +1214,7 @@ def __cowasm_run_file(filename):
                             "expected_kind": "error",
                             "block_key": block_key,
                             "source_hash": source_hash,
-                            "tags": _cowasm_tags(example.sage_source),
+                            "tags": _cowasm_tags(example._cowasm_effective_source),
                             "skip_reason": None,
                             "actual": traceback.format_exc(),
                             "status": "failed",
@@ -1158,6 +1222,7 @@ def __cowasm_run_file(filename):
                             "duration_ms": 0,
                         })
                         example.options[doctest.SKIP] = True
+                previous_physical_end_line = physical_end_line
             __cowasm_note_state(filename, "run_doctest", name, line_offset, None, None)
             before = time.time()
             result = runner.run(test, clear_globs=False)

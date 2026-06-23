@@ -25,6 +25,8 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   - applies the Sage preparser, so syntax such as `2^5` works;
   - records run, file, and block results in SQLite;
   - skips `# optional` and `# needs` tests by default;
+  - propagates standalone directive prompts such as `sage: # needs numpy` to
+    the following contiguous doctest examples;
   - runs `# random` tests while accepting their output without comparison;
   - skips `# long time` unless `--long` is passed;
   - supports `--optional`, feature-filtered `--optional=FEATURE`, `--long`,
@@ -77,17 +79,17 @@ cd /home/user/sagelite/src/sage/rings
 /home/user/cowasm/sagemath/sagelite/bin/sage -t integer_ring.pyx
 ```
 
-Recent result after the optional/random refinements:
+Recent result after standalone directive propagation:
 
 ```text
-integer_ring.pyx: 200 passed, 13 failed, 17 skipped
+integer_ring.pyx: 202 passed, 6 failed, 22 skipped
 ```
 
-Recent corpus result after per-file process isolation and adding the polynomial
-constructor to the initial corpus:
+Recent corpus result after per-file process isolation, adding the polynomial
+constructor to the initial corpus, and propagating standalone directives:
 
 ```text
-sage -t failed: 200 passed, 20 failed, 17 skipped
+sage -t failed: 202 passed, 13 failed, 22 skipped
 ```
 
 That run attempted all eight curated files. The current non-`integer_ring.pyx`
