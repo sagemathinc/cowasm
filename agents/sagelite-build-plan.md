@@ -367,6 +367,10 @@ Follow-up snapshot:
 - Change: schema 139 manifests extend the Node.js/Electron integer helper
   smoke with zero and one predicate checks. These reuse existing integer
   resources, so no new mandatory resource files are added.
+- Change: schema 140 manifests extend the Node.js/Electron integer/rational
+  helper smoke with integer unit and divisibility predicates plus rational
+  comparison checks. These reuse existing exact-arithmetic resources, so no
+  new mandatory resource files are added.
 - Probe outcome: finite-field matrix row/column views, submatrix extraction,
   deletion, and row/column mutation pass isolated Electron-shaped probes but
   trigger a dynamic-load `malloc` LinkError when promoted into the combined

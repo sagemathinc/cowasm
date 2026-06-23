@@ -677,6 +677,11 @@ assert ZZ(0).sign() == 0
 assert ZZ(12).sign() == 1
 assert ZZ(0).is_zero()
 assert ZZ(1).is_one()
+assert ZZ(1).is_unit()
+assert ZZ(-1).is_unit()
+assert not ZZ(7).is_unit()
+assert ZZ(6).divides(ZZ(42))
+assert not ZZ(6).divides(ZZ(43))
 assert ZZ(2).powermod(10, 17) == ZZ(4)
 assert ZZ(2).powermod(ZZ(20), ZZ(17)) == ZZ(16)
 assert ZZ(2).inverse_mod(ZZ(5)) == ZZ(3)
@@ -691,6 +696,10 @@ assert QQ(45, 28).floor() == 1
 assert QQ(45, 28).ceil() == 2
 assert QQ(7, 9).numerator() == 7
 assert QQ(7, 9).denominator() == 9
+assert QQ(2, 3) < QQ(3, 4)
+assert QQ(-5, 7) < QQ(0)
+assert QQ(9, 12) == QQ(3, 4)
+assert QQ(5, 6) > QQ(4, 5)
 assert QQ(7, 10) * QQ(15, 14) == QQ(3, 4)
 assert QQ(5, 6) / QQ(10, 9) == QQ(3, 4)
 `);

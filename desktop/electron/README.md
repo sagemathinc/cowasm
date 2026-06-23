@@ -247,6 +247,11 @@ augmentation over `QQ` without adding new required resource files.
 Schema 138 manifests extend the finite-field 3x3 matrix smoke with
 Cayley-Hamilton and rank checks over `GF(7)` without adding new required
 resource files.
+Schema 139 manifests extend the integer helper smoke with zero and one
+predicate checks.
+Schema 140 manifests extend the integer/rational helper smoke with integer
+unit/divisibility predicates and rational comparison checks without adding new
+required resource files.
 
 The Electron main process also consumes that same manifest when launching the
 interactive Python worker. During development it looks for
