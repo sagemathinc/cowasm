@@ -1590,6 +1590,8 @@ EXAMPLES::
     32
     sage: GF(9).cardinality()
     9
+    sage: ZZ.random_element()  # random
+    output is intentionally unchecked
     sage: magma('2 + 2')  # optional - magma
     4
 """
@@ -1612,10 +1614,16 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|4|3|0|1" ]; then
+if [ "$doctest_smoke_counts" != "passed|5|4|0|1" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
+fi
+doctest_random_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'passed' and failure_class = 'random_unchecked';")"
+if [ "$doctest_random_count" != "1" ]; then
+  cat "$doctest_smoke_log" >&2
+  sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest smoke did not record the random doctest as unchecked."
 fi
 printf 'sagelite-node-ok sage doctest sqlite smoke\n' >>"$node_import_log"
 

@@ -168,6 +168,7 @@ function parseDoctestArgs(args, invocationCwd) {
       : path.resolve(invocationCwd, "sagelite-doctest-results.sqlite3"),
     timeoutSeconds: 0,
     long: false,
+    optional: false,
     files: [],
   };
   for (let i = 0; i < args.length; i += 1) {
@@ -190,6 +191,8 @@ function parseDoctestArgs(args, invocationCwd) {
       options.timeoutSeconds = Number(arg.slice("--timeout=".length));
     } else if (arg === "--long" || arg === "-l") {
       options.long = true;
+    } else if (arg === "--optional" || arg.startsWith("--optional=")) {
+      options.optional = true;
     } else if (arg === "--") {
       for (const file of args.slice(i + 1)) {
         options.files.push(path.resolve(invocationCwd, file));
@@ -235,6 +238,7 @@ async function runDoctestMode(python, args, invocationCwd) {
       files: options.files,
       resultPath,
       long: options.long,
+      optional: options.optional,
     });
     await execPythonWithTimeout(python, code, options.timeoutSeconds);
     await python.kernel.flushOutput(250);
@@ -295,10 +299,11 @@ async function execPythonWithTimeout(python, code, timeoutSeconds) {
   }
 }
 
-function buildDoctestPython({ files, resultPath, long }) {
+function buildDoctestPython({ files, resultPath, long, optional }) {
   return `
 import ast
 import doctest
+import importlib
 import json
 import os
 import re
@@ -319,12 +324,16 @@ from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
 __cowasm_files = ${JSON.stringify(JSON.stringify(files))}
 __cowasm_result_path = ${JSON.stringify(resultPath)}
 __cowasm_long = ${long ? "True" : "False"}
+__cowasm_optional = ${optional ? "True" : "False"}
 
-__cowasm_skip_re = re.compile(
-    r"#\\s*(optional|needs|not implemented|not tested|known bug)\\b",
+__cowasm_deferred_re = re.compile(
+    r"#.*\\b(not implemented|not tested|known bug)\\b",
     re.IGNORECASE,
 )
-__cowasm_long_re = re.compile(r"#\\s*long time\\b", re.IGNORECASE)
+__cowasm_optional_re = re.compile(r"#.*\\b(optional|needs)\\b", re.IGNORECASE)
+__cowasm_long_re = re.compile(r"#.*\\blong time\\b", re.IGNORECASE)
+__cowasm_random_re = re.compile(r"#.*\\brandom\\b", re.IGNORECASE)
+COWASM_RANDOM_ACCEPT = "__COWASM_RANDOM_ACCEPT__\\n"
 
 
 def __cowasm_convert_prompts(text):
@@ -337,28 +346,28 @@ def __cowasm_convert_prompts(text):
 
 
 def __cowasm_filtered_text_with_prompts(text):
-    kept = []
+    lines = text.splitlines(True)
+    kept = [False] * len(lines)
     active_indent = None
-    for lineno, line in enumerate(text.splitlines(True), start=1):
+    for lineno, line in enumerate(lines, start=1):
         prompt = re.match(r"^(\\s*)(sage:|\\.\\.\\.\\.:)", line)
         if prompt:
             active_indent = prompt.group(1)
-            kept.append((lineno, line))
+            kept[lineno - 1] = True
             continue
         if active_indent is not None:
             stripped = line.strip()
             if not stripped:
-                kept.append((lineno, line))
+                kept[lineno - 1] = True
                 active_indent = None
                 continue
             if line.startswith(active_indent) and not stripped.startswith(('\"\"\"', "'''")):
-                kept.append((lineno, line))
+                kept[lineno - 1] = True
                 continue
             active_indent = None
-    if not kept:
+    if not any(kept):
         return "", 0
-    first = kept[0][0]
-    return "".join(line for _, line in kept), first - 1
+    return "".join(line if keep else "\\n" for line, keep in zip(lines, kept)), 0
 
 
 def __cowasm_docstrings(filename, text):
@@ -392,11 +401,42 @@ def __cowasm_docstrings(filename, text):
 
 
 def __cowasm_should_skip(source):
-    if __cowasm_skip_re.search(source):
+    if __cowasm_deferred_re.search(source):
+        return True
+    if not __cowasm_optional and __cowasm_optional_re.search(source):
         return True
     if not __cowasm_long and __cowasm_long_re.search(source):
         return True
     return False
+
+
+def __cowasm_is_random(source):
+    return __cowasm_random_re.search(source) is not None
+
+
+def __cowasm_module_name_from_path(filename):
+    base, ext = os.path.splitext(filename)
+    if ext not in (".py", ".pyx"):
+        return None
+    parts = os.path.normpath(base).split(os.sep)
+    if "sage" not in parts:
+        return None
+    i = len(parts) - 1 - parts[::-1].index("sage")
+    return ".".join(parts[i:])
+
+
+def __cowasm_namespace(filename):
+    namespace = {}
+    exec("from sage.all import *", namespace)
+    module_name = __cowasm_module_name_from_path(filename)
+    if module_name:
+        try:
+            module = importlib.import_module(module_name)
+        except BaseException:
+            pass
+        else:
+            namespace.update(vars(module))
+    return namespace
 
 
 class __CowasmRecordingRunner(doctest.DocTestRunner):
@@ -416,13 +456,14 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
             "start_line": start_line,
             "end_line": end_line,
             "source": getattr(example, "sage_source", example.source),
-            "expected": example.want,
+            "expected": getattr(example, "_cowasm_expected", example.want),
             "duration_ms": int(getattr(example, "_cowasm_duration_ms", 0)),
         }
 
     def report_success(self, out, test, example, got):
         row = self.__base(test, example)
-        row.update({"status": "passed", "actual": got, "failure_class": None})
+        failure_class = "random_unchecked" if getattr(example, "_cowasm_random", False) else None
+        row.update({"status": "passed", "actual": got, "failure_class": failure_class})
         self.blocks.append(row)
 
     def report_failure(self, out, test, example, got):
@@ -442,6 +483,8 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
 
 class __CowasmOutputChecker(doctest.OutputChecker):
     def check_output(self, want, got, optionflags):
+        if want == COWASM_RANDOM_ACCEPT:
+            return True
         if super().check_output(want, got, optionflags):
             return True
         return super().check_output(str(want), str(got), optionflags)
@@ -465,8 +508,7 @@ def __cowasm_run_file(filename):
         with open(filename, "r", encoding="utf-8") as f:
             original = f.read()
         parser = doctest.DocTestParser()
-        namespace = {}
-        exec("from sage.all import *", namespace)
+        namespace = __cowasm_namespace(filename)
         runner = __CowasmRecordingRunner(
             checker=__CowasmOutputChecker(),
             verbose=False,
@@ -485,6 +527,7 @@ def __cowasm_run_file(filename):
                 block_counter += 1
                 example._cowasm_block_index = index
                 example.sage_source = example.source
+                example._cowasm_expected = example.want
                 start_line = None
                 end_line = None
                 if test.lineno is not None and example.lineno is not None:
@@ -505,6 +548,9 @@ def __cowasm_run_file(filename):
                     })
                     example.options[doctest.SKIP] = True
                 else:
+                    if __cowasm_is_random(example.sage_source):
+                        example._cowasm_random = True
+                        example.want = COWASM_RANDOM_ACCEPT
                     try:
                         example.source = __cowasm_sagelite_preparse(example.source)
                     except BaseException:
