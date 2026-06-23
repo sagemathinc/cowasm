@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 4;
+const doctestRunnerVersion = 5;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -66,27 +66,21 @@ async function main() {
   const manifest = loadSageliteManifest(resourceRoot);
   process.chdir(resourceRoot);
 
-  const python = await asyncPython({
-    fs: "everything",
-    noStdio: true,
-    env: sagelitePythonEnv(manifest, resourceRoot),
-  });
-  python.kernel.on("stdout", (data) => process.stdout.write(data));
-  python.kernel.on("stderr", (data) => process.stderr.write(data));
-
   const args = process.argv.slice(2);
   if (args[0] === "-t" || args[0] === "--test") {
-    try {
-      process.exitCode = await runDoctestMode(
-        python,
-        args.slice(1),
-        invocationCwd,
-      );
-    } finally {
-      python.terminate();
-    }
+    process.exitCode = await runDoctestMode(args.slice(1), invocationCwd, {
+      manifest,
+      resourceRoot,
+      sagelitePythonEnv,
+    });
     return;
   }
+
+  const python = await createSagelitePython({
+    manifest,
+    resourceRoot,
+    sagelitePythonEnv,
+  });
 
   await python.exec(`
 import code
@@ -160,6 +154,17 @@ def __cowasm_sagelite_push(line):
     inputClosed = true;
     setImmediate(() => pending.finally(terminate));
   });
+}
+
+async function createSagelitePython({ manifest, resourceRoot, sagelitePythonEnv }) {
+  const python = await asyncPython({
+    fs: "everything",
+    noStdio: true,
+    env: sagelitePythonEnv(manifest, resourceRoot),
+  });
+  python.kernel.on("stdout", (data) => process.stdout.write(data));
+  python.kernel.on("stderr", (data) => process.stderr.write(data));
+  return python;
 }
 
 function parseDoctestArgs(args, invocationCwd) {
@@ -262,7 +267,7 @@ function parseDoctestFeatureList(value) {
   return features;
 }
 
-async function runDoctestMode(python, args, invocationCwd) {
+async function runDoctestMode(args, invocationCwd, pythonOptions) {
   const options = parseDoctestArgs(args, invocationCwd);
   const startedAt = new Date().toISOString();
   const run = {
@@ -285,47 +290,42 @@ async function runDoctestMode(python, args, invocationCwd) {
     files: [],
   };
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "sagelite-doctest-"));
-  const resultPath = path.join(tmpDir, "result.json");
-  const statePath = path.join(tmpDir, "state.json");
   const begin = Date.now();
   try {
-    const code = buildDoctestPython({
-      files: options.files,
-      resultPath,
-      statePath,
-      long: options.long,
-      optional: options.optional,
-      optionalFeatures: options.optionalFeatures,
-    });
-    await execPythonWithTimeout(python, code, options.timeoutSeconds);
-    await python.kernel.flushOutput(250);
-    const parsed = JSON.parse(fs.readFileSync(resultPath, "utf8"));
-    Object.assign(run, parsed);
+    for (const [index, file] of options.files.entries()) {
+      const resultPath = path.join(tmpDir, `result-${index}.json`);
+      const statePath = path.join(tmpDir, `state-${index}.json`);
+      const fileBegin = Date.now();
+      let python = null;
+      try {
+        python = await createSagelitePython(pythonOptions);
+        const code = buildDoctestPython({
+          files: [file],
+          resultPath,
+          statePath,
+          long: options.long,
+          optional: options.optional,
+          optionalFeatures: options.optionalFeatures,
+        });
+        await execPythonWithTimeout(python, code, options.timeoutSeconds);
+        await python.kernel.flushOutput(250);
+        appendDoctestFiles(run, readJsonFile(resultPath));
+      } catch (err) {
+        const before = run.files.length;
+        appendDoctestFiles(run, readJsonFile(resultPath));
+        if (run.files.length === before) {
+          const state = readJsonFile(statePath);
+          const failedPath =
+            state && typeof state.current_file === "string" ? state.current_file : file;
+          appendDoctestErrorFile(run, failedPath, err, Date.now() - fileBegin);
+        }
+      } finally {
+        if (python) {
+          python.terminate();
+        }
+      }
+    }
     run.status = "finished";
-  } catch (err) {
-    const partial = readJsonFile(resultPath);
-    if (partial && Array.isArray(partial.files)) {
-      Object.assign(run, partial);
-    }
-    const state = readJsonFile(statePath);
-    const failedPath =
-      state && typeof state.current_file === "string"
-        ? state.current_file
-        : options.files.join("\n");
-    if (!run.files.some((file) => file.path === failedPath)) {
-      run.files.push({
-        path: failedPath,
-        status: "error",
-        total_blocks: 0,
-        passed_blocks: 0,
-        failed_blocks: 1,
-        skipped_blocks: 0,
-        duration_ms: Date.now() - begin,
-        stdout: "",
-        stderr: String(err && err.stack ? err.stack : err),
-        blocks: [],
-      });
-    }
   } finally {
     run.finished_at = new Date().toISOString();
     run.duration_ms = Date.now() - begin;
@@ -344,6 +344,30 @@ async function runDoctestMode(python, args, invocationCwd) {
   }
   printDoctestSummary(options.dbPath, run, invocationCwd);
   return run.status === "passed" ? 0 : 1;
+}
+
+function appendDoctestFiles(run, parsed) {
+  if (!parsed || !Array.isArray(parsed.files)) {
+    return;
+  }
+  for (const file of parsed.files) {
+    run.files.push(file);
+  }
+}
+
+function appendDoctestErrorFile(run, failedPath, err, durationMs) {
+  run.files.push({
+    path: failedPath,
+    status: "error",
+    total_blocks: 0,
+    passed_blocks: 0,
+    failed_blocks: 1,
+    skipped_blocks: 0,
+    duration_ms: durationMs,
+    stdout: "",
+    stderr: String(err && err.stack ? err.stack : err),
+    blocks: [],
+  });
 }
 
 function readJsonFile(filename) {

@@ -34,9 +34,15 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - The doctest runner checkpoints SQLite-bound JSON after each file, so a WASM
   trap in a later file preserves completed file results and records the current
   crashing file separately.
+- Doctest corpus runs now isolate each file in a fresh `python-wasm` process.
+  A trap or dynamic-link failure in one Sage file is recorded as that file's
+  error and does not prevent later corpus files from being attempted.
 - The Sagelite standalone target has a smoke test that runs `sage -t`, checks
   SQLite aggregate counts, and checks that random doctests are recorded as
   unchecked passed blocks.
+- `make -C sagemath/sagelite test-sage-doctest-corpus` runs the curated
+  pure-math corpus into SQLite, allowing doctest failures by default so the
+  command remains useful as a porting dashboard while compatibility is partial.
 
 Useful recent sample:
 
@@ -50,6 +56,17 @@ Recent result after the optional/random refinements:
 ```text
 integer_ring.pyx: 200 passed, 13 failed, 17 skipped
 ```
+
+Recent corpus result after per-file process isolation and adding the polynomial
+constructor to the initial corpus:
+
+```text
+sage -t failed: 200 passed, 20 failed, 17 skipped
+```
+
+That run attempted all eight curated files. The current non-`integer_ring.pyx`
+failures are mostly file-level runtime/linkage errors, which are now preserved
+in SQLite instead of aborting the corpus.
 
 That is already enough signal to start a real compatibility loop, but the
 runner and database still need hardening before results should be treated as a
