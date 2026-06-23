@@ -45,6 +45,8 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - File-level doctest errors now record `failure_class` and `failure_detail`
   metadata in SQLite, and the saved failure-cluster queries include those
   errors instead of only block-level failures.
+- Function-signature traps are classified as `wasm_signature_mismatch`, so
+  C/WASM ABI regressions are separated from generic runtime traps.
 - Run metadata records the CoWasm commit, documented Sagelite package commit,
   runtime profile, runner version, and resource root, so corpus dashboards can
   distinguish runtime/profile changes from Sagelite source changes.
@@ -316,6 +318,17 @@ where r.id = (select max(id) from runs)
   and b.failure_class = 'ModuleNotFoundError'
 group by missing
 order by failures desc;
+```
+
+### File Error Clusters
+
+File-level errors should be grouped by class and first diagnostic line so
+runtime/linkage clusters are visible even when a file produces no doctest
+blocks:
+
+```sh
+sqlite3 sagelite-doctests.sqlite3 \
+  < sagemath/sagelite/src/doctest-sql/file-error-clusters.sql
 ```
 
 ### Newly Passing Blocks
