@@ -51,10 +51,12 @@ normalized_diagnostics as (
     path
   from anchored_file_errors
 ),
-diagnostics as (
+diagnostics_with_stack as (
   select
     failure_class,
     context,
+    diagnostic,
+    path,
     trim(
       substr(
         diagnostic,
@@ -62,15 +64,43 @@ diagnostics as (
         instr(diagnostic || char(10), char(10)) - 1
       )
     ) as diagnostic_line,
-    path
+    case
+      when instr(diagnostic, char(10)) > 0 then
+        trim(
+          substr(
+            substr(diagnostic, instr(diagnostic, char(10)) + 1),
+            1,
+            instr(
+              substr(diagnostic, instr(diagnostic, char(10)) + 1)
+                || char(10),
+              char(10)
+            ) - 1
+          )
+        )
+      else ''
+    end as raw_top_stack_frame
   from normalized_diagnostics
+),
+diagnostics as (
+  select
+    failure_class,
+    context,
+    diagnostic_line,
+    case
+      when instr(raw_top_stack_frame, 'wasm-function[') > 0 then
+        substr(raw_top_stack_frame, instr(raw_top_stack_frame, 'wasm-function['))
+      else raw_top_stack_frame
+    end as top_stack_frame,
+    path
+  from diagnostics_with_stack
 )
 select
   failure_class,
   diagnostic_line,
+  top_stack_frame,
   count(*) as files,
   group_concat(context, char(10) || char(10)) as contexts,
   group_concat(path, char(10)) as paths
 from diagnostics
-group by failure_class, diagnostic_line
-order by files desc, failure_class, diagnostic_line;
+group by failure_class, diagnostic_line, top_stack_frame
+order by files desc, failure_class, diagnostic_line, top_stack_frame;

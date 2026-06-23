@@ -55,7 +55,8 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - File-level host/runtime crashes now preserve doctest state breadcrumbs in
   `failure_detail`, including the runner phase, file, doctest name, and source
   line where available; the file-error cluster query groups by the underlying
-  diagnostic while listing those breadcrumbs as context.
+  diagnostic and normalized top stack frame while listing those breadcrumbs as
+  context.
 - File-level crash diagnostics now also include the active doctest source and
   expected output, so crashes that prevent block rows from being written still
   identify the exact Sage example that triggered the runtime failure.
