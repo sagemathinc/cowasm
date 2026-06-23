@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 8;
+const doctestRunnerVersion = 9;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -477,11 +477,11 @@ __cowasm_long_re = re.compile(r"#.*\\blong time\\b", re.IGNORECASE)
 __cowasm_random_re = re.compile(r"#.*\\brandom\\b", re.IGNORECASE)
 __cowasm_tol_re = re.compile(r"#.*\\b(abs tol|rel tol|tol)\\b", re.IGNORECASE)
 __cowasm_tol_directive_re = re.compile(
-    r"#.*?\\b(abs tol|rel tol|tol)\\b(?:\\s+([-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][-+]?\\d+)?))?",
+    r"#.*?\\b((?:abs(?:olute)?|rel(?:ative)?)\\s+tol(?:erance)?|tol(?:erance)?)\\b(?:\\s+([-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][-+]?\\d+)?))?",
     re.IGNORECASE,
 )
 _cowasm_number_re = re.compile(
-    r"(?<![\\w.])[-+]?(?:(?:\\d+\\.\\d*)|(?:\\.\\d+)|(?:\\d+))(?:[eE][-+]?\\d+)?(?![\\w.])"
+    r"(?<![\\w.])[ \\t]*[-+]?[ \\t]*(?:(?:\\d+\\.\\d*)|(?:\\.\\d+)|(?:\\d+))(?:[eE][-+]?\\d+)?(?![\\w.])"
 )
 COWASM_RANDOM_ACCEPT = "__COWASM_RANDOM_ACCEPT__\\n"
 COWASM_TOLERANCE_PREFIX = "__COWASM_TOLERANCE__"
@@ -634,18 +634,19 @@ def __cowasm_is_random(source):
 
 def __cowasm_tolerance(source):
     match = __cowasm_tol_directive_re.search(source)
-    if not match or match.group(2) is None:
+    if not match:
         return None
+    value = match.group(2) if match.group(2) is not None else "1e-15"
     try:
-        tolerance = builtins.float(match.group(2))
+        tolerance = builtins.float(value)
     except ValueError:
         return None
     if tolerance < 0 or not math.isfinite(tolerance):
         return None
-    directive = match.group(1).lower()
-    if directive == "abs tol":
+    directive = " ".join(match.group(1).lower().split())
+    if directive.startswith("abs"):
         mode = "abs"
-    elif directive == "rel tol":
+    elif directive.startswith("rel"):
         mode = "rel"
     else:
         mode = "hybrid"
@@ -779,7 +780,7 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             tokens.append(
                 ("text", self.__normalize_text(text[offset:match.start()], optionflags))
             )
-            tokens.append(("number", builtins.float(match.group(0))))
+            tokens.append(("number", builtins.float(match.group(0).replace(" ", ""))))
             offset = match.end()
         tokens.append(("text", self.__normalize_text(text[offset:], optionflags)))
         return [token for token in tokens if token[0] == "number" or token[1] != ""]
@@ -798,8 +799,10 @@ class __CowasmOutputChecker(doctest.OutputChecker):
         if mode == "abs":
             return diff <= tol
         if mode == "rel":
-            return diff <= tol * max(abs(want), 1.0)
-        return diff <= tol or diff <= tol * max(abs(want), abs(got), 1.0)
+            return diff <= tol * abs(want)
+        if want == 0:
+            return diff <= tol
+        return diff <= tol * abs(want)
 
 
 def __cowasm_run_file(filename):

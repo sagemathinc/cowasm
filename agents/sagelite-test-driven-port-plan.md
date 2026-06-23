@@ -29,6 +29,8 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   - skips `# long time` unless `--long` is passed;
   - supports `--optional`, feature-filtered `--optional=FEATURE`, `--long`,
     `--timeout`, and `--sqlite`;
+  - supports common numeric tolerance tags, including bare `# tol`/`# rel tol`
+    with Sage's default `1e-15` tolerance and relative tolerance around zero;
   - records specific deferred skip metadata for `# known bug`,
     `# not implemented`, and `# not tested`;
   - seeds the namespace with `sage.all` and, where possible, the tested Sage

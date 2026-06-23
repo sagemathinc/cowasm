@@ -1592,6 +1592,8 @@ EXAMPLES::
     9
     sage: float("0.3333333333333")  # abs tol 1e-12
     0.333333333334
+    sage: float("0.3333333333333334")  # tol
+    0.3333333333333333
     sage: ZZ.random_element()  # random
     output is intentionally unchecked
     sage: 7 + 8  # optional - cowasm_smoke
@@ -1625,7 +1627,7 @@ if [ "$doctest_smoke_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
 fi
 doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_smoke_counts" != "passed|10|5|0|5" ]; then
+if [ "$doctest_smoke_counts" != "passed|11|6|0|5" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
@@ -1637,7 +1639,7 @@ if [ "$doctest_sagelite_package_commit_count" != "1" ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record matching Sagelite package commit metadata."
 fi
 doctest_block_key_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where block_key like 'sagelite-doctest-smoke.py:%:%' and block_key not like '/%';")"
-if [ "$doctest_block_key_count" != "10" ]; then
+if [ "$doctest_block_key_count" != "11" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record relative stable block keys."
@@ -1655,7 +1657,7 @@ if [ "$doctest_deferred_count" != "3" ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record deferred skip metadata."
 fi
 doctest_tolerance_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'passed' and expected_kind = 'tolerance' and tags like '%tolerance%';")"
-if [ "$doctest_tolerance_count" != "1" ]; then
+if [ "$doctest_tolerance_count" != "2" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record the tolerance doctest."
@@ -1715,7 +1717,7 @@ if [ "$doctest_optional_feature_status" -ne 0 ]; then
   record_blocker "sagelite-blocked: sage -t optional-feature smoke failed; see $doctest_optional_feature_log for the first runtime blocker."
 fi
 doctest_optional_feature_counts="$(sqlite3 "$doctest_optional_feature_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
-if [ "$doctest_optional_feature_counts" != "passed|10|6|0|4" ]; then
+if [ "$doctest_optional_feature_counts" != "passed|11|7|0|4" ]; then
   cat "$doctest_optional_feature_log" >&2
   sqlite3 "$doctest_optional_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t optional-feature smoke wrote unexpected SQLite counts: $doctest_optional_feature_counts"
@@ -1725,6 +1727,42 @@ if [ "$doctest_optional_feature_pass_count" != "1" ]; then
   cat "$doctest_optional_feature_log" >&2
   sqlite3 "$doctest_optional_feature_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t optional-feature smoke did not run the requested optional feature."
+fi
+doctest_rel_tol_failure_file="$probe_dir/sagelite-doctest-rel-tol-failure.py"
+doctest_rel_tol_failure_db="$probe_dir/sagelite-doctest-rel-tol-failure.sqlite3"
+doctest_rel_tol_failure_log="$dist_dir/doctest-rel-tol-failure.log"
+cat >"$doctest_rel_tol_failure_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: float("0.05")  # rel tol 1
+    0.0
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --sqlite "$doctest_rel_tol_failure_db" "$doctest_rel_tol_failure_file" \
+      >"$doctest_rel_tol_failure_log" 2>&1
+doctest_rel_tol_failure_status=$?
+set -e
+if [ "$doctest_rel_tol_failure_status" -eq 124 ]; then
+  tail -120 "$doctest_rel_tol_failure_log" >&2
+  record_blocker "sagelite-blocked: sage -t relative-tolerance failure smoke timed out after $node_import_timeout; see $doctest_rel_tol_failure_log for the first runtime blocker."
+fi
+if [ "$doctest_rel_tol_failure_status" -eq 0 ]; then
+  cat "$doctest_rel_tol_failure_log" >&2
+  sqlite3 "$doctest_rel_tol_failure_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t relative-tolerance failure smoke unexpectedly passed."
+fi
+doctest_rel_tol_failure_count="$(sqlite3 "$doctest_rel_tol_failure_db" "select count(*) from blocks where status = 'failed' and expected_kind = 'tolerance' and failure_class = 'output_mismatch';")"
+if [ "$doctest_rel_tol_failure_count" != "1" ]; then
+  cat "$doctest_rel_tol_failure_log" >&2
+  sqlite3 "$doctest_rel_tol_failure_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t relative-tolerance failure smoke did not record the expected failed tolerance block."
 fi
 printf 'sagelite-node-ok sage doctest sqlite smoke\n' >>"$node_import_log"
 
