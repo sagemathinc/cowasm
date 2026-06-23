@@ -416,6 +416,56 @@ Current remaining failures include:
 
 These are good clusters. Do not patch individual doctest expectations.
 
+### 2026-06-23 Runtime-Table Probe Notes
+
+Representative reproduction:
+
+```sh
+COWASM_PYTHON_WASM_NODE=/home/user/cowasm/python/python-wasm/dist/node.js \
+COWASM_SAGELITE_ELECTRON_RESOURCES=/home/user/cowasm/sagemath/sagelite/dist/wasi-sdk/electron-resources \
+COWASM_SAGELITE_DOCTEST_SOURCE_ROOT=/home/user/sagelite \
+  /home/user/cowasm/sagemath/sagelite/bin/sage -t \
+  --sqlite /tmp/sagelite-one.sqlite3 \
+  --line 2266 \
+  /home/user/sagelite/src/sage/rings/integer.pyx
+```
+
+The failing block is:
+
+```text
+pow(-1, 1/2, 0)
+```
+
+The top trap maps into `python.wasm` at `0x3164ad`, a CPython
+`call_indirect` in the descriptor-get path:
+
+```text
+call_indirect ... (type 4)  # (i32, i32, i32) -> i32
+```
+
+That means the immediate failure is a function-table signature mismatch in a
+Python descriptor slot, not a doctest output-comparison issue.
+
+A direct REPL probe of the same expression uncovered a related dynamic-loader
+failure while importing:
+
+```text
+sage/rings/polynomial/evaluation_ntl.cpython-314-wasm32-wasi.so
+```
+
+After `libcxx.so` is loaded from the packaged resources, imports of core C
+runtime functions such as `malloc`, `fprintf`, `abort`, `realloc`, and `free`
+can resolve to `null` for this module. A broad experiment caching main-module
+`__WASM_EXPORT__*` function-table entries moved the direct REPL probe past the
+first `malloc` failure but then hung on a later import (`bsearch`) and did not
+fix the doctest `wasm_signature_mismatch`, so it was not kept.
+
+The same experiment also exposed a doctest-runner robustness gap: `--timeout`
+is implemented as an in-process JavaScript timer, and it does not interrupt a
+stuck worker when the host is waiting on the worker response. A process-level
+timeout boundary around each isolated doctest file should be added before using
+timeouts as reliable dashboard data.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
