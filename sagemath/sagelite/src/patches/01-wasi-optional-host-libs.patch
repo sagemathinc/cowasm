@@ -858,6 +858,22 @@ diff -urN a/src/sage/rings/polynomial/polynomial_element_generic.py b/src/sage/r
 +        from sage.misc.persist import register_unpickle_override
 +        register_unpickle_override('sage.rings.polynomial.polynomial_element_generic',
 +                                   'Polynomial_rational_dense', Polynomial_rational_flint)
+diff -urN a/src/sage/structure/sequence.py b/src/sage/structure/sequence.py
+--- a/src/sage/structure/sequence.py
++++ b/src/sage/structure/sequence.py
+@@ -296,6 +296,5 @@
+     from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+-    from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+     from sage.rings.quotient_ring import QuotientRing_nc
+     try:
+         # pbori (brial) is optional, so to keep the isinstance() below
+         # working as intended in its absence, we set it equal to the
+@@ -305,3 +304,5 @@
+         BooleanMonomialMonoid = MPolynomialRing_base
+     if isinstance(universe, (MPolynomialRing_base, BooleanMonomialMonoid)) or (isinstance(universe, QuotientRing_nc) and isinstance(universe.cover_ring(), MPolynomialRing_base)):
++        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
++
+         return PolynomialSequence(x, universe, immutable=immutable, cr=cr, cr_str=cr_str)
 diff -urN a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
 --- a/src/sage/rings/polynomial/polynomial_ring.py
 +++ b/src/sage/rings/polynomial/polynomial_ring.py

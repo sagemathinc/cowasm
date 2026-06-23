@@ -658,6 +658,7 @@ assert (q7 + Q11(9)).lift() == ZZ(5)
     console.log("sagelite-electron-start integer and rational helper smoke");
     await python.exec(String.raw`
 from sage.all import ZZ, QQ, lcm
+from sage.structure.sequence import Sequence
 
 g, s, t = ZZ(5).xgcd(ZZ(12))
 assert g == ZZ(1)
@@ -710,6 +711,8 @@ assert QQ(9, 12) == QQ(3, 4)
 assert QQ(5, 6) > QQ(4, 5)
 assert QQ(7, 10) * QQ(15, 14) == QQ(3, 4)
 assert QQ(5, 6) / QQ(10, 9) == QQ(3, 4)
+R = ZZ['x']
+assert Sequence([R(2), R(3)]).universe() is R
 `);
     console.log("sagelite-electron-ok integer and rational helper smoke");
     console.log("sagelite-electron-start extended integer helper smoke");
