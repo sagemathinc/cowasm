@@ -68,6 +68,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   crashes that happened before a block row could be persisted.
 - Function-signature traps are classified as `wasm_signature_mismatch`, so
   C/WASM ABI regressions are separated from generic runtime traps.
+- The dynamic-loader fallback for side-module `qsort` now performs comparator-
+  driven sorting correctly and has a WASI dylink smoke that sorts side-module
+  data through an imported function-pointer comparator.
 - Block-level doctest failures record `failure_detail`, and the saved
   `block-failure-clusters.sql` query groups failed examples by class plus
   normalized detail instead of only by broad exception type.
@@ -505,6 +508,15 @@ signature mismatch. The full corpus still reports 203 passed, 7 failed, and 27
 skipped, but the former missing-import cluster has been replaced by narrower
 PARI signature-mismatch, loader table-signature, and NTL/libcxx memory-trap
 clusters.
+
+A follow-up qsort fallback pass fixed the JavaScript dynamic-loader
+implementation used when side modules import `qsort`: the previous insertion
+sort mutated the comparison slot before checking the comparator, so it could
+silently leave side-module arrays unsorted. The WASI dylink smoke now exercises
+that fallback with a side-module integer array and function-pointer comparator.
+The curated Sagelite corpus result remained `203 passed, 7 failed, 27 skipped`;
+the next high-leverage cluster is still PARI `err_recover` / side-module
+function-table signature compatibility, followed by the NTL/libcxx memory trap.
 
 ## Phase 5: Subprocess Strategy
 

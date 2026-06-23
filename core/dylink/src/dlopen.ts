@@ -548,22 +548,24 @@ export default class DlopenManger {
         const memory = new Uint8Array(this.memory.buffer);
         const tmp = new Uint8Array(size);
         const elementPtr = (i: number) => base + i * size;
-        for (let i = 1; i < nmemb; i += 1) {
-          tmp.set(memory.subarray(elementPtr(i), elementPtr(i) + size));
-          let j = i;
-          while (j > 0) {
-            memory.set(tmp, elementPtr(j));
-            if ((compare as CallableFunction)(elementPtr(j), elementPtr(j - 1)) >= 0) {
-              break;
+        for (let i = 0; i < nmemb - 1; i += 1) {
+          let min = i;
+          for (let j = i + 1; j < nmemb; j += 1) {
+            if (
+              (compare as CallableFunction)(elementPtr(j), elementPtr(min)) < 0
+            ) {
+              min = j;
             }
-            memory.copyWithin(
-              elementPtr(j),
-              elementPtr(j - 1),
-              elementPtr(j - 1) + size
-            );
-            j -= 1;
           }
-          memory.set(tmp, elementPtr(j));
+          if (min != i) {
+            tmp.set(memory.subarray(elementPtr(i), elementPtr(i) + size));
+            memory.copyWithin(
+              elementPtr(i),
+              elementPtr(min),
+              elementPtr(min) + size
+            );
+            memory.set(tmp, elementPtr(min));
+          }
         }
       },
       snprintf: (str: number, size: number) => {

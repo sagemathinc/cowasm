@@ -17,6 +17,12 @@ static void dynamic_library_ctor(void) {
   ctor_counter += 1;
 }
 
+static int compare_ints(const void* a, const void* b) {
+  int left = *(const int*)a;
+  int right = *(const int*)b;
+  return (left > right) - (left < right);
+}
+
 EXPORTED_SYMBOL
 PyObject* pynone_b() { return PyNone; }
 
@@ -40,6 +46,20 @@ int ctor_count(const int unused) { return ctor_counter + unused * 0; }
 
 EXPORTED_SYMBOL
 int side_memory_size_is_positive(void) { return __memory_size() > 0; }
+
+EXPORTED_SYMBOL
+int sorted_with_qsort(void) {
+  int values[] = {5, -1, 8, 0, 3, 3, -4};
+  int expected[] = {-4, -1, 0, 3, 3, 5, 8};
+  size_t n = sizeof(values) / sizeof(values[0]);
+  qsort(values, n, sizeof(values[0]), compare_ints);
+  for (size_t i = 0; i < n; i++) {
+    if (values[i] != expected[i]) {
+      return 0;
+    }
+  }
+  return 1;
+}
 
 // This illustrates calling a function that is
 // defined in the main app.c.

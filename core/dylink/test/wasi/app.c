@@ -101,6 +101,13 @@ int side_memory_size_is_positive() {
   return (*f)();
 }
 
+EXPORTED_SYMBOL
+int sorted_with_qsort() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "sorted_with_qsort");
+  return (*f)();
+}
+
 #ifdef COWASM_WASI_SDK_TEST
 EXPORTED_SYMBOL
 int add_provider_data_relocation(int n) {
@@ -145,6 +152,9 @@ int main() {
 
   printf("side_memory_size_is_positive() = %d\n", side_memory_size_is_positive());
   assert(side_memory_size_is_positive() == 1);
+
+  printf("sorted_with_qsort() = %d\n", sorted_with_qsort());
+  assert(sorted_with_qsort() == 1);
 
 #ifdef COWASM_WASI_SDK_TEST
   printf("add_provider_data_relocation(2022) = %d\n", add_provider_data_relocation(2022));
