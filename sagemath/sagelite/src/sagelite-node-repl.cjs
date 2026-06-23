@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 12;
+const doctestRunnerVersion = 13;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1166,6 +1166,8 @@ function ensureDoctestSchema(dbPath) {
       run_profile TEXT DEFAULT 'node',
       runner_version INTEGER DEFAULT 1,
       resource_root TEXT,
+      source_root TEXT,
+      invocation_cwd TEXT,
       status TEXT NOT NULL,
       total_blocks INTEGER NOT NULL,
       passed_blocks INTEGER NOT NULL,
@@ -1214,6 +1216,8 @@ function ensureDoctestSchema(dbPath) {
   ensureSqliteColumn(dbPath, "runs", "run_profile", "TEXT DEFAULT 'node'");
   ensureSqliteColumn(dbPath, "runs", "runner_version", "INTEGER DEFAULT 1");
   ensureSqliteColumn(dbPath, "runs", "resource_root", "TEXT");
+  ensureSqliteColumn(dbPath, "runs", "source_root", "TEXT");
+  ensureSqliteColumn(dbPath, "runs", "invocation_cwd", "TEXT");
   ensureSqliteColumn(dbPath, "runs", "sagelite_source_commit", "TEXT");
   ensureSqliteColumn(dbPath, "runs", "sagelite_package_commit", "TEXT");
   ensureSqliteColumn(dbPath, "files", "failure_class", "TEXT");
@@ -1281,7 +1285,7 @@ function writeDoctestSqlite(dbPath, run) {
     `INSERT INTO runs (
       started_at, finished_at, git_commit, sagelite_source_commit,
       sagelite_package_commit, command,
-      run_profile, runner_version, resource_root,
+      run_profile, runner_version, resource_root, source_root, invocation_cwd,
       status, total_blocks, passed_blocks, failed_blocks, skipped_blocks, duration_ms
     ) VALUES (
       ${sqlString(run.started_at)}, ${sqlString(run.finished_at)},
@@ -1289,6 +1293,7 @@ function writeDoctestSqlite(dbPath, run) {
       ${sqlString(run.sagelite_package_commit)}, ${sqlString(run.command)},
       ${sqlString(run.run_profile)},
       ${sqlNumber(run.runner_version)}, ${sqlString(run.resource_root)},
+      ${sqlString(run.source_root)}, ${sqlString(run.invocation_cwd)},
       ${sqlString(run.status)},
       ${sqlNumber(run.total_blocks)}, ${sqlNumber(run.passed_blocks)},
       ${sqlNumber(run.failed_blocks)}, ${sqlNumber(run.skipped_blocks)},

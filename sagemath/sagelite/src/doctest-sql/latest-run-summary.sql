@@ -5,6 +5,7 @@ select
   coalesce(sagelite_package_commit, sagelite_source_commit) as sagelite_package_commit,
   run_profile,
   runner_version,
+  resource_root,
   status,
   total_blocks,
   passed_blocks,

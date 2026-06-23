@@ -1638,6 +1638,12 @@ if [ "$doctest_sagelite_package_commit_count" != "1" ]; then
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record matching Sagelite package commit metadata."
 fi
+doctest_run_path_metadata_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from runs where source_root = '$probe_dir' and invocation_cwd is not null and invocation_cwd != '' and resource_root = '$electron_resources_dir';")"
+if [ "$doctest_run_path_metadata_count" != "1" ]; then
+  cat "$doctest_smoke_log" >&2
+  sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest smoke did not record run path metadata."
+fi
 doctest_block_key_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where block_key like 'sagelite-doctest-smoke.py:%:%' and block_key not like '/%';")"
 if [ "$doctest_block_key_count" != "11" ]; then
   cat "$doctest_smoke_log" >&2
