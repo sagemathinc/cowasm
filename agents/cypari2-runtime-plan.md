@@ -62,6 +62,183 @@ make PARI's already-working WASI setjmp/longjmp behavior survive inside
 CPython extension side modules and cypari2's Cython/Python object model.
 ```
 
+## Focused Target: Sage Integer Factorization
+
+The concrete user-visible failure that should drive the next milestone is:
+
+```python
+from sage.all import factor
+factor(9349949894994)
+```
+
+In the current Sagelite shell this reaches Sage's integer factorization path,
+then fails at the placeholder `cypari2.gen._missing_runtime` implementation
+when `factor_using_pari` first calls `pari.get_debug_level()`.
+
+Use this as the first real `Gen` object-model target. It is narrow enough to
+test quickly, but it exercises the important cypari2/PARI boundary instead of
+only string evaluation.
+
+### Minimal Call Chain To Support
+
+Trace and support the exact Sage path before broadening cypari2:
+
+```text
+sage.all.factor(...)
+  -> sage.arith.misc.factor(...)
+  -> sage.rings.integer.Integer.factor(...)
+  -> sage.rings.factorint_pari.factor_using_pari(...)
+  -> cypari2.Pari.get_debug_level()
+  -> cypari2.Pari.set_debug_level(...) or Pari.default("debug", ...)
+  -> cypari2.Pari(n)
+  -> cypari2.Gen.factor(limit=-1, proof=...)
+  -> factor-matrix access and conversion back into Sage integers
+```
+
+The first failure is `get_debug_level`, but the milestone is not done when that
+single method exists. It is done when the returned PARI factor matrix can be
+kept alive, indexed, converted, and used by Sage without process exit,
+`NotImplementedError`, stale-stack memory, or swallowed PARI exceptions.
+
+Do not solve this by adding a Sage-side Python fallback around
+`factor_using_pari`. A temporary diagnostic bridge is fine during reduction,
+but the durable fix must live at the cypari2 boundary because many later Sage
+paths need the same `Pari` and `Gen` semantics.
+
+### API Surface For The First Factorization Milestone
+
+Implement the smallest real subset that the factorization path needs:
+
+- `Pari.default("debug")`, `Pari.default("debug", value)`,
+  `Pari.get_debug_level()`, and `Pari.set_debug_level(level)`.
+- `Pari.__call__` for Python `int`, Sage `Integer`/integer-like objects, and
+  strings. String support can keep using the proven private PARI evaluator
+  until the real `Gen` constructor replaces it.
+- `objtogen` for exact integers, with explicit failure for unsupported Python
+  types.
+- `Gen.__repr__`/`__str__` for display and smoke diagnostics.
+- `Gen.__int__`/`__index__` for exact PARI integers.
+- `Gen.factor(limit=-1, proof=None)`, implemented through PARI `factor(...)`
+  and the `factor_proven` flag handling used by upstream cypari2.
+- Matrix/vector access needed for PARI factor results:
+  `Gen.nrows()`, `Gen.ncols()`, `Gen.__getitem__`, `Gen.__iter__`, and
+  `Gen.python_list()` if Sage uses it in this path.
+
+Everything outside that list should still fail explicitly. Avoid pretending
+the complete cypari2 object model is available before the stack/lifetime tests
+prove it.
+
+### Implementation Slices
+
+1. Record the native contract.
+   Inspect the exact Sagelite/Sage sources that are bundled into the current
+   resource tree and write down every cypari2 method called by
+   `factor_using_pari`. Use that trace to keep the port from expanding into
+   unrelated PARI methods.
+
+2. Promote debug/default handling before `Gen`.
+   Add a Cython smoke proving `Pari().get_debug_level()` returns an integer,
+   `set_debug_level(0)` round-trips through PARI's `debug` default, and a
+   later `Pari()("13*17")` still works. This removes the current first
+   blocker while keeping the test small.
+
+3. Add integer `objtogen` and `Pari.__call__(int)`.
+   Use PARI integer construction directly for machine-size values and a
+   decimal-string path for arbitrary Python integers. The result must be a
+   real `Gen`, not the current lightweight display-only value.
+
+4. Establish conservative `Gen` ownership.
+   The first implementation can copy returned `GEN` values into stable storage
+   more aggressively than upstream cypari2 if that simplifies correctness.
+   The invariant is that no Python `Gen` may reference PARI stack memory that
+   can be invalidated by a later PARI call. Once that passes, optimize toward
+   upstream's stack/clone strategy.
+
+5. Implement `Gen.factor()` and factor-matrix readers.
+   Start with integer inputs. Verify `factor(360)` first, then a larger
+   integer. Add matrix indexing and `int(...)` conversion only as far as the
+   Sage factorization path requires.
+
+6. Replace placeholder `PariError`.
+   Move from `RuntimeError`/`NotImplementedError` to real PARI error
+   translation before marking the runtime as available. Repeated `1/0`
+   followed by successful arithmetic must stay green.
+
+7. Flip Sagelite expectations.
+   Once cypari2 owns the real path, change Sagelite's smoke from expecting
+   fail-closed PARI behavior to expecting real integer factorization through
+   the Sage shell.
+
+### Validation Ladder For This Target
+
+Keep these tests in ascending order so failures stay local:
+
+```python
+from cypari2 import Pari
+
+pari = Pari()
+old_debug = pari.get_debug_level()
+pari.set_debug_level(0)
+assert pari.get_debug_level() == 0
+pari.set_debug_level(old_debug)
+assert str(pari("13*17")) == "221"
+```
+
+```python
+from cypari2 import Pari
+
+pari = Pari()
+g = pari(360)
+assert int(g) == 360
+F = g.factor()
+assert F.ncols() == 2
+product = 1
+for i in range(F.nrows()):
+    product *= int(F[i, 0]) ** int(F[i, 1])
+assert product == 360
+```
+
+```python
+from cypari2 import Pari
+
+pari = Pari()
+n = 9349949894994
+F = pari(n).factor()
+product = 1
+for i in range(F.nrows()):
+    product *= int(F[i, 0]) ** int(F[i, 1])
+assert product == n
+```
+
+Then verify the actual user surface:
+
+```sage
+from sage.all import factor, prod
+
+n = 9349949894994
+F = factor(n)
+assert prod(p**e for p, e in F) == n
+```
+
+For day-to-day compile tests, keep `360` and one medium integer in the fast
+smoke. The reported `9349949894994` case should remain a milestone smoke and
+can move into a slower test group if the complete factorization is too slow
+under Node.js/Electron.
+
+### Risk Notes Specific To `Gen.factor`
+
+- PARI factorization returns a matrix whose entries are owned by the returned
+  `GEN`. Indexing must keep the parent object alive or clone referenced
+  entries before returning child `Gen` objects.
+- `factor_proven` is global PARI state. `Gen.factor(proof=...)` must restore
+  the previous value even when PARI raises.
+- `set_debug_level` and `factor_proven` updates are process-global. The first
+  runtime can document single-process, single-thread expectations, but tests
+  must still restore old state.
+- A direct string call such as `Pari()("factor(n)")` is not enough validation.
+  It bypasses Python integer conversion, `Gen.factor()`, matrix indexing, and
+  Sage conversion, which are the parts that matter here.
+
 ## First Success Criteria
 
 The first real runtime milestone is complete when all of these pass in one
@@ -100,7 +277,16 @@ object without import-time type failures.
 
 For Sagelite, the smoke should stop expecting `NotImplementedError` and should
 instead run a small real PARI check under both the normal Node path and the
-Electron-shaped resource path.
+Electron-shaped resource path. It should also prove the Sage-facing integer
+factorization path:
+
+```sage
+from sage.all import factor, prod
+
+n = 9349949894994
+F = factor(n)
+assert prod(p**e for p, e in F) == n
+```
 
 ## Non-Goals For The First Runtime Port
 
