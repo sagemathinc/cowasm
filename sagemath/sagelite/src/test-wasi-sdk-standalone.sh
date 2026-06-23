@@ -1577,6 +1577,48 @@ done
   printf '}\n'
 } >"$electron_resources_dir/sagelite-electron-resources.json"
 
+doctest_smoke_file="$probe_dir/sagelite-doctest-smoke.py"
+doctest_smoke_db="$probe_dir/sagelite-doctest-smoke.sqlite3"
+doctest_smoke_log="$dist_dir/doctest-smoke.log"
+cat >"$doctest_smoke_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: 2 + 3
+    5
+    sage: 2^5
+    32
+    sage: GF(9).cardinality()
+    9
+    sage: magma('2 + 2')  # optional - magma
+    4
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --sqlite "$doctest_smoke_db" "$doctest_smoke_file" \
+      >"$doctest_smoke_log" 2>&1
+doctest_smoke_status=$?
+set -e
+if [ "$doctest_smoke_status" -eq 124 ]; then
+  tail -120 "$doctest_smoke_log" >&2
+  record_blocker "sagelite-blocked: sage -t doctest smoke timed out after $node_import_timeout; see $doctest_smoke_log for the first runtime blocker."
+fi
+if [ "$doctest_smoke_status" -ne 0 ]; then
+  tail -120 "$doctest_smoke_log" >&2
+  record_blocker "sagelite-blocked: sage -t doctest smoke failed; see $doctest_smoke_log for the first runtime blocker."
+fi
+doctest_smoke_counts="$(sqlite3 "$doctest_smoke_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_smoke_counts" != "passed|4|3|0|1" ]; then
+  cat "$doctest_smoke_log" >&2
+  sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
+fi
+printf 'sagelite-node-ok sage doctest sqlite smoke\n' >>"$node_import_log"
+
 run_electron_smoke() {
   local label="$1"
   local resources_dir="$2"
