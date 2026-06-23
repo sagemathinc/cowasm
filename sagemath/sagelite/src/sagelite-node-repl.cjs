@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 15;
+const doctestRunnerVersion = 16;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -177,6 +177,7 @@ function parseDoctestArgs(args, invocationCwd) {
     optional: false,
     optionalFeatures: [],
     blockKeys: [],
+    lines: [],
     profile: process.env.COWASM_SAGELITE_DOCTEST_PROFILE || "node",
     sourceRoot: process.env.COWASM_SAGELITE_DOCTEST_SOURCE_ROOT
       ? path.resolve(invocationCwd, process.env.COWASM_SAGELITE_DOCTEST_SOURCE_ROOT)
@@ -217,6 +218,14 @@ function parseDoctestArgs(args, invocationCwd) {
       options.blockKeys.push(args[i]);
     } else if (arg.startsWith("--block-key=")) {
       options.blockKeys.push(arg.slice("--block-key=".length));
+    } else if (arg === "--line") {
+      i += 1;
+      if (i >= args.length) {
+        throw new Error("--line requires a source line number");
+      }
+      options.lines.push(parseDoctestLine(args[i]));
+    } else if (arg.startsWith("--line=")) {
+      options.lines.push(parseDoctestLine(arg.slice("--line=".length)));
     } else if (arg === "--profile") {
       i += 1;
       if (i >= args.length) {
@@ -256,6 +265,9 @@ function parseDoctestArgs(args, invocationCwd) {
   if (options.blockKeys.some((key) => !key)) {
     throw new Error("--block-key requires a nonempty block key");
   }
+  if (options.blockKeys.length > 0 && options.lines.length > 0) {
+    throw new Error("--block-key and --line cannot be combined");
+  }
   const allowedProfiles = new Set([
     "browser",
     "node",
@@ -266,6 +278,13 @@ function parseDoctestArgs(args, invocationCwd) {
     throw new Error(`unsupported Sagelite doctest profile: ${options.profile}`);
   }
   return options;
+}
+
+function parseDoctestLine(value) {
+  if (!/^[1-9][0-9]*$/.test(value)) {
+    throw new Error("--line requires a positive integer source line number");
+  }
+  return Number(value);
 }
 
 function parseDoctestFeatureList(value) {
@@ -321,6 +340,7 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
           optional: options.optional,
           optionalFeatures: options.optionalFeatures,
           blockKeys: options.blockKeys,
+          lines: options.lines,
           sourceRoot: options.sourceRoot,
           invocationCwd,
         });
@@ -491,6 +511,7 @@ function buildDoctestPython({
   optional,
   optionalFeatures,
   blockKeys,
+  lines,
   sourceRoot,
   invocationCwd,
 }) {
@@ -525,6 +546,7 @@ __cowasm_long = ${long ? "True" : "False"}
 __cowasm_optional = ${optional ? "True" : "False"}
 __cowasm_optional_features = set(json.loads(${JSON.stringify(JSON.stringify(optionalFeatures))}))
 __cowasm_block_keys = set(json.loads(${JSON.stringify(JSON.stringify(blockKeys))}))
+__cowasm_lines = set(json.loads(${JSON.stringify(JSON.stringify(lines))}))
 __cowasm_source_root = ${sourceRoot ? JSON.stringify(sourceRoot) : "None"}
 __cowasm_invocation_cwd = ${JSON.stringify(invocationCwd)}
 __cowasm_current_state = {}
@@ -1076,6 +1098,9 @@ def __cowasm_run_file(filename):
                 source_hash = _cowasm_source_hash(example.sage_source)
                 block_key = __cowasm_block_key(filename, start_line, source_hash)
                 example._cowasm_block_key = block_key
+                if __cowasm_lines and start_line not in __cowasm_lines:
+                    example.options[doctest.SKIP] = True
+                    continue
                 if __cowasm_block_keys and block_key not in __cowasm_block_keys:
                     example.options[doctest.SKIP] = True
                     continue

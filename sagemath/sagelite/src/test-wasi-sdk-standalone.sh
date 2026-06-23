@@ -1684,6 +1684,40 @@ if [ "$doctest_block_key_match_count" != "1" ]; then
   sqlite3 "$doctest_block_key_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t block-key doctest smoke did not rerun the requested block key."
 fi
+doctest_line="$(sqlite3 "$doctest_smoke_db" "select start_line from blocks where source like '2^5%' limit 1;")"
+doctest_line_db="$probe_dir/sagelite-doctest-line.sqlite3"
+doctest_line_log="$dist_dir/doctest-line.log"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --line "$doctest_line" \
+      --sqlite "$doctest_line_db" "$doctest_smoke_file" \
+      >"$doctest_line_log" 2>&1
+doctest_line_status=$?
+set -e
+if [ "$doctest_line_status" -eq 124 ]; then
+  tail -120 "$doctest_line_log" >&2
+  record_blocker "sagelite-blocked: sage -t line doctest smoke timed out after $node_import_timeout; see $doctest_line_log for the first runtime blocker."
+fi
+if [ "$doctest_line_status" -ne 0 ]; then
+  tail -120 "$doctest_line_log" >&2
+  record_blocker "sagelite-blocked: sage -t line doctest smoke failed; see $doctest_line_log for the first runtime blocker."
+fi
+doctest_line_counts="$(sqlite3 "$doctest_line_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_line_counts" != "passed|1|1|0|0" ]; then
+  cat "$doctest_line_log" >&2
+  sqlite3 "$doctest_line_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t line doctest smoke wrote unexpected SQLite counts: $doctest_line_counts"
+fi
+doctest_line_match_count="$(sqlite3 "$doctest_line_db" "select count(*) from blocks where start_line = $doctest_line and source like '2^5%';")"
+if [ "$doctest_line_match_count" != "1" ]; then
+  cat "$doctest_line_log" >&2
+  sqlite3 "$doctest_line_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t line doctest smoke did not rerun the requested source line."
+fi
 doctest_optional_magma_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'skipped' and skip_reason = 'optional:magma' and tags like '%optional:magma%';")"
 if [ "$doctest_optional_magma_count" != "1" ]; then
   cat "$doctest_smoke_log" >&2
