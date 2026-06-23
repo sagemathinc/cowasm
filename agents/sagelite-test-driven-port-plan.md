@@ -498,12 +498,13 @@ doctest crash was triggered while freeing a large string passed through the
 kernel worker bridge. Reusing a grow-only large-string buffer avoids that
 kernel-side finalizer trap. Providing callable libc/libm fallbacks for common
 side-module imports then lets that representative doctest pass and exposes the
-next import cluster at `integer.pyx:3112`. Adding `wcslen`, `qsort`, and common
-ctype fallbacks moves the focused line rerun to a PARI `err_recover` signature
-mismatch, while the full corpus still exposes `getenv` as the next direct
-missing import. A null-returning `getenv` stub regressed every corpus file to a
-startup `RuntimeError`, so it was not kept; `getenv` needs a real runtime-aware
-implementation.
+next import cluster at `integer.pyx:3112`. Adding `wcslen`, `qsort`, common
+ctype fallbacks, a runtime-backed `getenv` / `secure_getenv`, and a harmless
+`fclose` fallback moves the focused line rerun to the PARI `err_recover`
+signature mismatch. The full corpus still reports 203 passed, 7 failed, and 27
+skipped, but the former missing-import cluster has been replaced by narrower
+PARI signature-mismatch, loader table-signature, and NTL/libcxx memory-trap
+clusters.
 
 ## Phase 5: Subprocess Strategy
 

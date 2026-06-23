@@ -24,6 +24,8 @@ export default class DlopenManger {
   private handleToLibrary: { [handle: number]: Library } = {};
   private readFileSync: (path: string) => Buffer;
   private importObject: { env?: Env; wasi_snapshot_preview1?: any };
+  private environment: { [name: string]: string | undefined };
+  private getenvPtrs: { [name: string]: number } = {};
   private mainGetFunction: (
     name: string,
     path?: string
@@ -47,7 +49,8 @@ export default class DlopenManger {
       importObject: object
     ) => WebAssembly.Instance,
     getMainInstanceExports: () => { [key: string]: any },
-    getMainInstance: () => WebAssembly.Instance
+    getMainInstance: () => WebAssembly.Instance,
+    environment: { [name: string]: string | undefined } = {}
   ) {
     this.mainGetFunction = getFunction;
     this.memory = memory;
@@ -58,6 +61,7 @@ export default class DlopenManger {
     this.importWebAssemblySync = importWebAssemblySync;
     this.getMainInstanceExports = getMainInstanceExports;
     this.getMainInstance = getMainInstance;
+    this.environment = environment;
   }
 
   add_dlmethods(env: Env) {
@@ -130,6 +134,24 @@ export default class DlopenManger {
     } catch (_) {
       return undefined;
     }
+  }
+
+  private getenv(namePtr: number): number {
+    if (!namePtr) {
+      return 0;
+    }
+    const name = recvString(namePtr, this.memory);
+    const value = this.environment[name];
+    if (value == null) {
+      return 0;
+    }
+    if (this.getenvPtrs[name] == null) {
+      const bytes = new TextEncoder().encode(value).byteLength + 1;
+      const ptr = this.malloc(bytes, "environment variable " + name);
+      sendString(value, ptr, this.memory);
+      this.getenvPtrs[name] = ptr;
+    }
+    return this.getenvPtrs[name];
   }
 
   dlopenEnvHandler(path: string) {
@@ -507,6 +529,8 @@ export default class DlopenManger {
           : 0;
       },
       fprintf: () => 0,
+      fclose: () => 0,
+      getenv: (namePtr: number) => this.getenv(namePtr),
       printf: () => 0,
       qsort: (
         base: number,
@@ -591,6 +615,7 @@ export default class DlopenManger {
         }
         return len;
       },
+      secure_getenv: (namePtr: number) => this.getenv(namePtr),
     };
     Object.assign(env, {
       acos: Math.acos,
@@ -671,6 +696,7 @@ export default class DlopenManger {
     for (const name of [
       "abort",
       "calloc",
+      "fclose",
       "fflush",
       "fprintf",
       "fputc",

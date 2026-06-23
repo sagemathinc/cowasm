@@ -62,6 +62,7 @@ export interface Options {
   stub?: "warn" | "silent" | false; // if warn, automatically generate stub functions but with a huge warning; if silent, just silently create stubs.
   allowMainExports?: boolean; // DANGEROUS -- allow dll to use functions defined in the main module that are NOT exported via the function table.  This is dangerous since they are 1000x slower, and might not be posisble to properly call (depending on data types).  Use with caution.
   callMainCtors?: boolean;
+  environment?: { [name: string]: string | undefined };
 }
 
 export default async function importWebAssemblyDlopen({
@@ -73,6 +74,7 @@ export default async function importWebAssemblyDlopen({
   stub,
   allowMainExports,
   callMainCtors = true,
+  environment,
 }: Options): Promise<WebAssembly.Instance> {
   let mainInstance: WebAssembly.Instance | null = null;
   if (importObject == null) {
@@ -184,7 +186,8 @@ export default async function importWebAssemblyDlopen({
     importObject,
     importWebAssemblySync,
     getMainInstanceExports,
-    getMainInstance
+    getMainInstance,
+    environment
   );
 
   dlopenManager.add_dlmethods(env);

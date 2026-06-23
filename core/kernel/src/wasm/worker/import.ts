@@ -715,10 +715,8 @@ async function doWasmImport({
     importWebAssembly,
     readFileSync,
     stub: false,
-  } as Pick<
-    DylinkOptions,
-    "importWebAssemblySync" | "importWebAssembly" | "readFileSync" | "stub"
-  >;
+    environment: options.env,
+  };
 
   const posixContext = new PosixContext({
     memory,
