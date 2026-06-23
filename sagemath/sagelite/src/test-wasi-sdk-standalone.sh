@@ -1134,26 +1134,25 @@ except PariError as err:
 else:
     raise AssertionError('PARI division by zero did not raise PariError')
 assert str(pari('13*17')) == '221'
-for label, thunk in [
-    ('non-string Pari input', lambda: pari(5)),
-    ('Gen conversion', lambda: objtogen('2+3')),
-]:
-    try:
-        thunk()
-    except NotImplementedError as err:
-        assert 'full Gen conversion' in str(err)
-    else:
-        raise AssertionError(f'{label} should fail closed on WASI')
+g = pari(360)
+assert int(g) == 360
+F = g.factor()
+assert F.ncols() == 2
+assert F.nrows() == 3
+product = 1
+for i in range(F.nrows()):
+    product *= int(F[i, 0]) ** int(F[i, 1])
+assert product == 360
+p, e = F
+assert [int(p[i]) for i in range(len(p))] == [2, 3, 5]
+assert [int(e[i]) for i in range(len(e))] == [3, 2, 1]
+assert str(objtogen('2+3')) == '5'
 print('sagelite-node-ok cypari2 PARI runtime smoke')"
 
 run_node_import "Sage PARI factorization boundary" "from sage.rings.integer_ring import ZZ
 from sage.rings.factorint_pari import factor_using_pari
-try:
-    factor_using_pari(ZZ(360))
-except NotImplementedError as err:
-    assert 'full Gen conversion' in str(err)
-else:
-    raise AssertionError('Sage PARI factorization should fail closed until full Gen conversion is ported')
+assert factor_using_pari(ZZ(360)) == [(ZZ(2), 3), (ZZ(3), 2), (ZZ(5), 1)]
+assert factor_using_pari(ZZ(2**31 - 1)) == [(ZZ(2147483647), 1)]
 print('sagelite-node-ok Sage PARI factorization boundary')"
 
 : >"$followups_file"

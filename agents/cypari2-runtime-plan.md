@@ -19,13 +19,16 @@ CoWasm already has a useful split:
   `primepi`, factorization, modular order, polynomial irreducibility,
   elliptic-curve cardinality, and PARI error recovery.
 - `sagemath/cypari2` currently installs the pinned `cypari2` 2.2.4 Cython
-  include surface, generated `pari.desc` declarations, and an ABI-compatible
-  `cypari2.gen` placeholder side module.
-- The current `cypari2` runtime intentionally fails closed with
-  `NotImplementedError`; it is enough for Sagelite build/import but not enough
-  for actual PARI-backed mathematics.
-- Sagelite's Node/Electron smoke currently imports `cypari2`, constructs
-  `Pari`, and verifies that PARI calls fail closed.
+  include surface, generated `pari.desc` declarations, and a focused
+  PARI-backed `cypari2.gen` side module.
+- The current `cypari2` runtime supports only a narrow `Pari`/`Gen` subset:
+  string evaluation, exact integer conversion, debug default round-trips,
+  `Gen.factor()`, and factor-matrix access. Unsupported cypari2 object-model
+  paths still fail explicitly with `NotImplementedError`.
+- Sagelite's Node smoke now imports `cypari2`, constructs `Pari`, validates
+  real PARI integer factorization through `cypari2`, and checks Sage's
+  `factor_using_pari` boundary. The Electron-shaped staged resource smoke
+  still has a separate soft blocker outside this cypari2 factorization slice.
 
 Progress snapshot:
 
@@ -54,6 +57,20 @@ Progress snapshot:
   `Pari()("primepi(10000)")`, and `Pari()("factorback(factor(360))")` work
   under `python-wasm` while the full `Gen` object model and error translation
   remain follow-up work.
+- Date: 2026-06-22
+- Change: the public generated `cypari2.gen` module now has a focused real
+  `Gen` subset. It clones PARI integers and factor results into stable PARI
+  storage, exposes display, integer conversion, indexing, iteration, row/column
+  dimensions, and `Gen.factor(limit=-1, proof=None)`, and routes unsupported
+  paths to explicit `NotImplementedError`.
+- Change: Sagelite's WASI patch now routes Sage `Integer.__pari__` and
+  PARI-to-Sage integer conversion through the focused WASI `Gen` subset instead
+  of the native cypari2 stack/conversion path that is not ported yet.
+- Validation:
+  `make -C sagemath/cypari2 test-wasi-sdk-standalone`,
+  `make -C sagemath/sagelite test-wasi-sdk-standalone`, and the reported
+  staged-resource case
+  `factor(9349949894994) == 2 * 3^2 * 421 * 1233828173`.
 
 That means the work is not "port PARI" from scratch. It is specifically:
 

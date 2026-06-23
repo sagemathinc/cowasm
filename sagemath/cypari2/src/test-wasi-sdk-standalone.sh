@@ -167,21 +167,211 @@ Cflags = f"-I{includedir}"
 PY
 
 cat >"$probe_dir/gen.pyx" <<'PYX'
-"""Import-time placeholder extension for cypari2.gen.
+"""Focused CoWasm runtime subset for cypari2.gen.
 
-This is not a PARI runtime. It only gives Sagelite modules ABI-compatible
-``Gen`` extension types to import until CoWasm has a real compiled cypari2
-port.
+This is not the full upstream cypari2 object model. It implements the first
+PARI-backed ``Gen`` surface needed by Sagelite's integer factorization path:
+integer conversion, display, factorization, and factor-matrix access.
+Unsupported paths still fail explicitly.
 """
 
-from .types cimport GEN
+from .types cimport GEN, t_COL, t_INT, t_MAT, t_VEC, typ
+from .paridecl cimport GENtostr, gel, glength, gclone, gunclone_deep, itos, pari_free
 
 
 def _missing_runtime(*_args, **_kwargs):
     raise NotImplementedError(
-        "CoWasm cypari2 currently supports only minimal Pari string evaluation; "
-        "the full Gen conversion and object model is not ported yet"
+        "CoWasm cypari2 currently supports only a focused PARI Gen subset; "
+        "the requested cypari2 object-model path is not ported yet"
     )
+
+
+cdef extern from *:
+    """
+    #include <pari/pari.h>
+
+    static int cowasm_cypari2_gen_pari_initialized = 0;
+
+    static void cowasm_cypari2_gen_ensure_pari(void) {
+      if (!cowasm_cypari2_gen_pari_initialized) {
+        pari_init(8000000, 2);
+        cowasm_cypari2_gen_pari_initialized = 1;
+      }
+    }
+
+    static int cowasm_cypari2_gen_is_inverse_error(long errnum) {
+      return errnum == e_INV;
+    }
+
+    static int cowasm_cypari2_gen_eval_string(const char *expression,
+                                              char **result,
+                                              long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        GEN value = gp_read_str(expression);
+        *result = GENtostr(value);
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_expression(const char *expression,
+                                                   GEN *result,
+                                                   long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gp_read_str(expression));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_integer(const char *digits,
+                                                GEN *result,
+                                                long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(strtoi(digits));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_factor(GEN input,
+                                               int has_proof,
+                                               int proof,
+                                               GEN *result,
+                                               long *errnum) {
+      int ok = 1;
+      int saved_factor_proven;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+      saved_factor_proven = factor_proven;
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        if (has_proof) {
+          factor_proven = proof ? 1 : 0;
+        }
+        *result = gclone(factor(input));
+      }
+      pari_ENDCATCH;
+
+      factor_proven = saved_factor_proven;
+      return ok;
+    }
+    """
+    void cowasm_cypari2_gen_ensure_pari()
+    int cowasm_cypari2_gen_is_inverse_error(long errnum)
+    int cowasm_cypari2_gen_eval_string(const char *expression,
+                                       char **result,
+                                       long *errnum)
+    int cowasm_cypari2_gen_clone_expression(const char *expression,
+                                            GEN *result,
+                                            long *errnum)
+    int cowasm_cypari2_gen_clone_integer(const char *digits,
+                                         GEN *result,
+                                         long *errnum)
+    int cowasm_cypari2_gen_clone_factor(GEN input,
+                                        int has_proof,
+                                        int proof,
+                                        GEN *result,
+                                        long *errnum)
+
+
+_debug_level = 0
+
+
+cdef object _raise_pari_error(long errnum):
+    from cypari2.handle_error import PariError
+    if cowasm_cypari2_gen_is_inverse_error(errnum):
+        raise PariError("impossible inverse in gdiv: 0")
+    raise PariError(f"PARI error {errnum}")
+
+
+cdef Gen _new_owned(GEN g):
+    cdef Gen z = <Gen>Gen.__new__(Gen)
+    z.g = g
+    z.address = g
+    z.next = None
+    z.itemcache = None
+    return z
+
+
+cdef Gen _new_clone(GEN g):
+    return _new_owned(gclone(g))
+
+
+cdef bint _is_integer_text(str text):
+    cdef str body = text.strip()
+    if not body:
+        return False
+    if body[0] in "+-":
+        body = body[1:]
+    return bool(body) and body.isdigit()
+
+
+cpdef str eval_string(str expression):
+    cdef bytes encoded = expression.encode("ascii")
+    cdef char *output = NULL
+    cdef long errnum = 0
+
+    if not cowasm_cypari2_gen_eval_string(<const char *>encoded, &output, &errnum):
+        _raise_pari_error(errnum)
+
+    try:
+        return output.decode("ascii")
+    finally:
+        if output != NULL:
+            pari_free(output)
+
+
+cpdef int get_debug_level():
+    return int(_debug_level)
+
+
+cpdef set_debug_level(int level):
+    global _debug_level
+    _debug_level = int(level)
 
 
 cdef class Gen_base:
@@ -190,22 +380,171 @@ cdef class Gen_base:
 
 cdef class Gen(Gen_base):
     def __init__(self, value=None):
-        pass
+        cdef Gen converted
+        if value is None:
+            self.g = NULL
+            self.address = NULL
+            self.next = None
+            self.itemcache = None
+            return
+        converted = objtogen(value)
+        self.g = gclone(converted.g)
+        self.address = self.g
+        self.next = None
+        self.itemcache = None
+
+    def __dealloc__(self):
+        if self.address != NULL:
+            gunclone_deep(self.address)
+            self.address = NULL
+            self.g = NULL
 
     def __getattr__(self, _name):
         return _missing_runtime
 
+    def __repr__(self):
+        cdef char *output = NULL
+        if self.g == NULL:
+            return "Gen()"
+        cowasm_cypari2_gen_ensure_pari()
+        output = GENtostr(self.g)
+        try:
+            return output.decode("ascii")
+        finally:
+            if output != NULL:
+                pari_free(output)
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __len__(self):
+        cdef long kind
+        if self.g == NULL:
+            return 0
+        kind = typ(self.g)
+        if kind == t_MAT or kind == t_VEC or kind == t_COL:
+            return glength(self.g)
+        raise TypeError("PARI object does not have a Python length")
+
+    def __iter__(self):
+        cdef Py_ssize_t i
+        for i in range(len(self)):
+            yield self[i]
+
+    def __getitem__(self, key):
+        cdef long kind
+        cdef Py_ssize_t row
+        cdef Py_ssize_t col
+        cdef Py_ssize_t n
+        cdef GEN column
+
+        if self.g == NULL:
+            raise IndexError("empty PARI object")
+
+        kind = typ(self.g)
+        if kind == t_MAT:
+            if isinstance(key, tuple):
+                if len(key) != 2:
+                    raise IndexError("PARI matrix indices must be row, column")
+                row = key[0]
+                col = key[1]
+                if col < 0 or col >= glength(self.g):
+                    raise IndexError("PARI matrix column index out of range")
+                column = gel(self.g, col + 1)
+                if row < 0 or row >= glength(column):
+                    raise IndexError("PARI matrix row index out of range")
+                return _new_clone(gel(column, row + 1))
+            col = key
+            if col < 0 or col >= glength(self.g):
+                raise IndexError("PARI matrix column index out of range")
+            return _new_clone(gel(self.g, col + 1))
+
+        if kind == t_VEC or kind == t_COL:
+            n = key
+            if n < 0 or n >= glength(self.g):
+                raise IndexError("PARI vector index out of range")
+            return _new_clone(gel(self.g, n + 1))
+
+        raise TypeError("PARI object is not indexable")
+
+    def __int__(self):
+        if self.g == NULL:
+            raise TypeError("empty PARI object is not an integer")
+        if typ(self.g) != t_INT:
+            return int(str(self))
+        return int(str(self))
+
+    def __index__(self):
+        return int(self)
+
+    def ncols(self):
+        if self.g == NULL or typ(self.g) != t_MAT:
+            raise TypeError("PARI object is not a matrix")
+        return glength(self.g)
+
+    def nrows(self):
+        if self.g == NULL or typ(self.g) != t_MAT:
+            raise TypeError("PARI object is not a matrix")
+        if glength(self.g) == 0:
+            return 0
+        return glength(gel(self.g, 1))
+
+    def python_list(self):
+        return [self[i] for i in range(len(self))]
+
+    def factor(self, long limit=-1, proof=None):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+        cdef int has_proof = 0
+        cdef int proof_value = 0
+
+        if limit != -1:
+            _missing_runtime()
+        if proof is not None:
+            has_proof = 1
+            proof_value = 1 if proof else 0
+
+        if not cowasm_cypari2_gen_clone_factor(
+            self.g, has_proof, proof_value, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
     cdef Gen new_ref(self, GEN g):
-        _missing_runtime()
+        return _new_clone(g)
 
     cdef GEN fixGEN(self) except NULL:
-        _missing_runtime()
+        return self.g
 
     cdef GEN ref_target(self) except NULL:
-        _missing_runtime()
+        return self.g
 
 
 cpdef Gen objtogen(s):
+    cdef bytes encoded
+    cdef GEN result = NULL
+    cdef long errnum = 0
+    cdef str text
+
+    if isinstance(s, Gen):
+        return <Gen>s
+
+    text = str(s)
+    encoded = text.encode("ascii")
+    if _is_integer_text(text):
+        if not cowasm_cypari2_gen_clone_integer(
+            <const char *>encoded, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    if isinstance(s, str):
+        if not cowasm_cypari2_gen_clone_expression(
+            <const char *>encoded, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
     _missing_runtime()
 
 
@@ -221,12 +560,20 @@ PYTHONPATH="$py_cython" python3 -m cython -3 \
   --output-file "$probe_dir/gen.c" \
   "$probe_dir/gen.pyx"
 
+setjmp_lib="$("$bin_dir/wasi-sdk-clang-next" -target wasm32-wasip1 -print-file-name=libsetjmp.a)"
+if [ ! -f "$setjmp_lib" ]; then
+  echo "cypari2 runtime probe could not locate static libsetjmp.a" >&2
+  exit 1
+fi
+
 "$bin_dir/wasi-sdk-clang-next" -target wasm32-wasip1 \
   -O0 \
   -fPIC \
   -D_SCHED_H \
   -shared \
   -nostdlib \
+  -mllvm -wasm-enable-sjlj \
+  -mllvm -wasm-use-legacy-eh=false \
   -Wl,--allow-undefined \
   -Wl,--no-entry \
   -Wl,--export=PyInit_gen \
@@ -234,7 +581,12 @@ PYTHONPATH="$py_cython" python3 -m cython -3 \
   -I"$dist_dir/cypari2" \
   -I"$posix_wasi_sdk" \
   -I"$pari_wasi_sdk/include" \
+  -I"$gmp_wasi_sdk/include" \
   "$probe_dir/gen.c" \
+  "$pari_wasi_sdk/lib/libpari.a" \
+  "$gmp_wasi_sdk/lib/libgmp.a" \
+  "$setjmp_lib" \
+  -lm \
   -o "$dist_dir/cypari2/gen$extension_suffix"
 
 audit_cpython_side_module "$dist_dir/cypari2/gen$extension_suffix" PyInit_gen
@@ -318,12 +670,6 @@ PyMODINIT_FUNC PyInit__pari_runtime_probe(void) {
   return PyModule_Create(&module);
 }
 EOF
-
-setjmp_lib="$("$bin_dir/wasi-sdk-clang-next" -target wasm32-wasip1 -print-file-name=libsetjmp.a)"
-if [ ! -f "$setjmp_lib" ]; then
-  echo "cypari2 runtime probe could not locate static libsetjmp.a" >&2
-  exit 1
-fi
 
 "$bin_dir/wasi-sdk-clang-next" -target wasm32-wasip1 \
   -O0 \
@@ -511,13 +857,18 @@ cat >"$dist_dir/cypari2/pari_instance.py" <<'PY'
 """Minimal CoWasm PARI runtime wrapper for cypari2.pari_instance.
 
 This is not the full upstream cypari2 ``Pari``/``Gen`` object model yet. It
-routes string expressions through the private Cython PARI side-module probe so
-the public ``Pari()("...")`` path can exercise real PARI arithmetic while
-unsupported conversion and method paths still fail closed.
+routes strings and exact integers through the focused ``cypari2.gen`` runtime
+subset so Sagelite can exercise real PARI arithmetic and integer
+factorization while unsupported conversion and method paths still fail closed.
 """
 
-from ._pari_cython_probe import eval_string
-from .gen import _missing_runtime
+from .gen import (
+    _missing_runtime,
+    eval_string,
+    get_debug_level,
+    objtogen,
+    set_debug_level,
+)
 
 
 class PariValue:
@@ -541,18 +892,29 @@ class Pari:
         self.stack_initial = stack_initial
         self.stack_max = stack_max
 
-    def default(self, _key, value=None):
+    def default(self, key, value=None):
+        if key == "debug":
+            if value is None:
+                return get_debug_level()
+            set_debug_level(int(value))
+            return None
         if value is None:
             _missing_runtime()
         return None
+
+    def get_debug_level(self):
+        return get_debug_level()
+
+    def set_debug_level(self, level):
+        set_debug_level(int(level))
 
     def __call__(self, *args, **kwargs):
         if kwargs or len(args) != 1:
             return _missing_runtime(*args, **kwargs)
         expression = args[0]
-        if not isinstance(expression, str):
-            return _missing_runtime(*args, **kwargs)
-        return PariValue(eval_string(expression))
+        if isinstance(expression, str):
+            return PariValue(eval_string(expression))
+        return objtogen(expression)
 
     def __getattr__(self, _name):
         return _missing_runtime
@@ -598,6 +960,7 @@ assert Gen_base.__module__ == "cypari2.gen"
 assert issubclass(Gen, Gen_base)
 assert issubclass(PariError, RuntimeError)
 assert isinstance(Gen(1), Gen_base)
+assert int(Gen(360)) == 360
 assert Pari(1, 2).default("debugmem", 0) is None
 assert pari_probe.eval_long("2+3") == 5
 assert pari_probe.eval_long("primepi(10000)") == 1229
@@ -614,9 +977,29 @@ for entry in ("2 3", "3 2", "5 1"):
 assert pari_cython_probe.check_error_recovery() == "caught=e_INV recovered=221"
 assert pari_cython_probe.eval_long("13*17") == 221
 pari = Pari()
+old_debug = pari.get_debug_level()
+pari.set_debug_level(0)
+assert pari.get_debug_level() == 0
+assert pari.default("debug") == 0
+pari.default("debug", old_debug)
+assert pari.get_debug_level() == old_debug
 assert str(pari("2+3")) == "5"
 assert repr(pari("primepi(10000)")) == "1229"
 assert str(pari("factorback(factor(360))")) == "360"
+g = pari(360)
+assert isinstance(g, Gen)
+assert int(g) == 360
+F = g.factor()
+assert F.ncols() == 2
+assert F.nrows() == 3
+product = 1
+for i in range(F.nrows()):
+    product *= int(F[i, 0]) ** int(F[i, 1])
+assert product == 360
+p, e = F
+assert [int(p[i]) for i in range(len(p))] == [2, 3, 5]
+assert [int(e[i]) for i in range(len(e))] == [3, 2, 1]
+assert int(pari(2**31 - 1).factor()[0][0]) == 2147483647
 try:
     pari("1/0")
 except PariError as err:
@@ -631,7 +1014,7 @@ except PariError as err:
 else:
     raise AssertionError("PARI domain error did not raise PariError")
 assert str(pari("19*23")) == "437"
-for constructor in (lambda: objtogen(1), Pari().__call__, Gen().__getattr__("factor")):
+for constructor in (Pari().__call__, Gen().__getattr__("factor")):
     try:
         constructor()
     except NotImplementedError:
@@ -640,4 +1023,4 @@ for constructor in (lambda: objtogen(1), Pari().__call__, Gen().__getattr__("fac
         raise AssertionError(f"{constructor!r} did not fail closed")
 PY
 
-echo "cypari2-build-support-ok generated-pari-declarations cython-cimport-probe runtime-placeholders libpari-side-module-error-recovery cython-pari-side-module-error-recovery"
+echo "cypari2-build-support-ok generated-pari-declarations cython-cimport-probe focused-gen-runtime libpari-side-module-error-recovery cython-pari-side-module-error-recovery"

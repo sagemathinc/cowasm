@@ -1155,3 +1155,44 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 
  # invariant theory
  from sage.rings.invariants.all import *
+--- a/src/sage/rings/integer.pyx
++++ b/src/sage/rings/integer.pyx
+@@ -6348,6 +6348,10 @@
+             1041334
+         """
+         global new_gen_from_integer
++        import sys
++        if sys.platform == "wasi":
++            from cypari2 import objtogen
++            return objtogen(self)
+         if new_gen_from_integer is None:
+             from sage.libs.pari.convert_sage import new_gen_from_integer
+         return new_gen_from_integer(self)
+--- a/src/sage/libs/pari/convert_sage.pyx
++++ b/src/sage/libs/pari/convert_sage.pyx
+@@ -368,6 +368,11 @@
+         ...
+         TypeError: Attempt to coerce non-integral real number to an Integer
+     """
++    import sys
++    if sys.platform == "wasi":
++        from sage.rings.integer import Integer as Integer_py
++        mpz_set(self.value, (<Integer>Integer_py(int(x))).value)
++        return
+     # Simplify and lift until we get an integer
+     while typ((<Gen>x).g) != t_INT:
+         x = x.simplify()
+--- a/src/sage/rings/integer.pyx
++++ b/src/sage/rings/integer.pyx
+@@ -695,6 +695,11 @@
+                 raise TypeError("cannot convert non-integral float to integer")
+
+             elif isinstance(x, pari_gen):
++                import sys
++                if sys.platform == "wasi":
++                    mpz_set_pylong(self.value, int(x))
++                    return
++
+                 global set_integer_from_gen
+                 if set_integer_from_gen is None:
+                     from sage.libs.pari.convert_sage import set_integer_from_gen
