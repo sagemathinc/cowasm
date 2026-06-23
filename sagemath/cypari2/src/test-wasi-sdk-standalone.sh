@@ -904,27 +904,27 @@ cat >"$probe_dir/stack.pyx" <<'PYX'
 """Focused CoWasm runtime subset for cypari2.stack.
 
 The upstream cypari2 stack module tracks PARI stack ownership precisely. The
-current CoWasm runtime subset keeps returned GENs as PARI heap clones instead,
-which is sufficient for Sagelite's first PARI FFELT finite-field path and avoids
-dangling stack references while the full cypari2 object model is still absent.
+current CoWasm runtime subset returns borrowed wrappers instead. Sage's PARI
+FFELT side module has its own linked PARI runtime, so cloning or freeing those
+GENs from this module crosses PARI heap ownership boundaries and can corrupt
+memory.
 """
 
 from .types cimport GEN, pari_sp
 from .gen cimport Gen
-from .paridecl cimport gclone
 
 
-cdef Gen _new_owned(GEN g):
+cdef Gen _new_borrowed(GEN g):
     cdef Gen z = <Gen>Gen.__new__(Gen)
     z.g = g
-    z.address = g
+    z.address = NULL
     z.next = None
     z.itemcache = None
     return z
 
 
 cdef Gen new_gen(GEN x):
-    return _new_owned(gclone(x))
+    return _new_borrowed(x)
 
 
 cdef new_gens2(GEN x, GEN y):
@@ -932,15 +932,15 @@ cdef new_gens2(GEN x, GEN y):
 
 
 cdef Gen new_gen_noclear(GEN x):
-    return _new_owned(gclone(x))
+    return _new_borrowed(x)
 
 
 cdef Gen clone_gen(GEN x):
-    return _new_owned(gclone(x))
+    return _new_borrowed(x)
 
 
 cdef Gen clone_gen_noclear(GEN x):
-    return _new_owned(gclone(x))
+    return _new_borrowed(x)
 
 
 cdef void clear_stack() noexcept:

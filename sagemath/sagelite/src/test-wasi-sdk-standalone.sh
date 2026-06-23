@@ -868,6 +868,7 @@ assert F9.cardinality() == 9
 assert z.parent() is F9
 assert z**9 == z
 assert len(list(F9)) == 9
+assert len([str(x) for x in F9]) == 9
 Z9 = Integers(9)
 assert Z9(4).inverse_of_unit() == Z9(7)
 print('sagelite-node-ok modular arithmetic smoke')"
