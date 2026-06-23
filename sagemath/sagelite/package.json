@@ -5,10 +5,14 @@
   "type": "module",
   "files": [
     "README.md",
+    "bin/*",
     "src/*",
     "package.json",
     "Makefile"
   ],
+  "bin": {
+    "sage-wasm": "./bin/sage"
+  },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "make",

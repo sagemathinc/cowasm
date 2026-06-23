@@ -72,15 +72,35 @@ async function main() {
 
   await python.exec(`
 import code
+import warnings
+
+warnings.filterwarnings(
+    "ignore",
+    message=r"Option .*at_startup=True.* for lazy import .* not needed anymore",
+    category=UserWarning,
+)
+from sage.all import *
+from sage.repl.preparse import preparse as __cowasm_sagelite_preparse
+
+__cowasm_sagelite_do_preparse = True
 __cowasm_sagelite_console = code.InteractiveConsole(globals())
 __cowasm_sagelite_console_more = False
+
+def preparser(on=True):
+    global __cowasm_sagelite_do_preparse
+    __cowasm_sagelite_do_preparse = on is True
+
+def __cowasm_sagelite_push(line):
+    if __cowasm_sagelite_do_preparse:
+        line = __cowasm_sagelite_preparse(line)
+    return __cowasm_sagelite_console.push(line)
 `);
 
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
     terminal: true,
-    prompt: ">>> ",
+    prompt: "sage: ",
   });
 
   let inputClosed = false;
@@ -99,7 +119,7 @@ __cowasm_sagelite_console_more = False
   };
   process.on("SIGINT", () => {
     process.stdout.write("\n");
-    rl.setPrompt(">>> ");
+    rl.setPrompt("sage: ");
     rl.prompt();
   });
 
@@ -109,7 +129,7 @@ __cowasm_sagelite_console_more = False
       .then(() => handleLine(python, rl, line, shutdown))
       .catch((err) => {
         console.error(err);
-        rl.setPrompt(">>> ");
+        rl.setPrompt("sage: ");
       })
       .finally(async () => {
         await new Promise((resolve) => setImmediate(resolve));
@@ -131,13 +151,13 @@ async function handleLine(python, rl, line, shutdown) {
   }
   try {
     await python.exec(
-      `__cowasm_sagelite_console_more = __cowasm_sagelite_console.push(${JSON.stringify(line)})`,
+      `__cowasm_sagelite_console_more = __cowasm_sagelite_push(${JSON.stringify(line)})`,
     );
     const more = await python.repr("__cowasm_sagelite_console_more");
-    rl.setPrompt(more === "True" ? "... " : ">>> ");
+    rl.setPrompt(more === "True" ? "....: " : "sage: ");
   } catch (err) {
     console.error(err);
-    rl.setPrompt(">>> ");
+    rl.setPrompt("sage: ");
   }
 }
 
