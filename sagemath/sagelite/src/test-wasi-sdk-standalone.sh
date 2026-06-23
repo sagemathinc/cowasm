@@ -1726,6 +1726,34 @@ if [ "$doctest_line_match_count" != "1" ]; then
   sqlite3 "$doctest_line_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t line doctest smoke did not rerun the requested source line."
 fi
+doctest_missing_line_db="$probe_dir/sagelite-doctest-missing-line.sqlite3"
+doctest_missing_line_log="$dist_dir/doctest-missing-line.log"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --line 999999 \
+      --sqlite "$doctest_missing_line_db" "$doctest_smoke_file" \
+      >"$doctest_missing_line_log" 2>&1
+doctest_missing_line_status=$?
+set -e
+if [ "$doctest_missing_line_status" -eq 124 ]; then
+  tail -120 "$doctest_missing_line_log" >&2
+  record_blocker "sagelite-blocked: sage -t missing-line doctest smoke timed out after $node_import_timeout; see $doctest_missing_line_log for the first runtime blocker."
+fi
+if [ "$doctest_missing_line_status" -eq 0 ]; then
+  cat "$doctest_missing_line_log" >&2
+  sqlite3 "$doctest_missing_line_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t missing-line doctest smoke unexpectedly passed."
+fi
+doctest_missing_line_count="$(sqlite3 "$doctest_missing_line_db" "select count(*) from files where status = 'error' and failure_class = 'doctest_filter_miss' and failure_detail = 'no doctest block matched --line 999999';")"
+if [ "$doctest_missing_line_count" != "1" ]; then
+  cat "$doctest_missing_line_log" >&2
+  sqlite3 "$doctest_missing_line_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t missing-line doctest smoke did not record filter-miss metadata."
+fi
 doctest_optional_magma_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'skipped' and skip_reason = 'optional:magma' and tags like '%optional:magma%';")"
 if [ "$doctest_optional_magma_count" != "1" ]; then
   cat "$doctest_smoke_log" >&2

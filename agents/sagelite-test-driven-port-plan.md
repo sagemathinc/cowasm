@@ -35,6 +35,8 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   - supports `--line` reruns for a specific source line, which gives a direct
     reproduction path for file-level crashes whose state breadcrumbs identify
     the active doctest line before a block row can be written;
+  - records unmatched `--line`/`--block-key` reruns as explicit
+    `doctest_filter_miss` file-level errors instead of empty successful runs;
   - supports common numeric tolerance tags, including bare `# tol`/`# rel tol`
     with Sage's default `1e-15` tolerance and relative tolerance around zero;
   - records specific deferred skip metadata for `# known bug`,
@@ -82,10 +84,11 @@ cd /home/user/sagelite/src/sage/rings
 /home/user/cowasm/sagemath/sagelite/bin/sage -t integer_ring.pyx
 ```
 
-Recent result after standalone directive propagation:
+Recent result after standalone directive propagation and symbolic-only test
+tagging:
 
 ```text
-integer_ring.pyx: 202 passed, 1 failed, 27 skipped
+integer_ring.pyx: 203 passed, 0 failed, 27 skipped
 ```
 
 Recent corpus result after per-file process isolation, adding the polynomial
@@ -93,7 +96,7 @@ constructor to the initial corpus, propagating standalone directives, and
 tagging symbolic-only `ZZ[...]` examples:
 
 ```text
-sage -t failed: 202 passed, 8 failed, 27 skipped
+sage -t failed: 203 passed, 7 failed, 27 skipped
 ```
 
 That run attempted all eight curated files. The current non-`integer_ring.pyx`
@@ -401,12 +404,10 @@ Every porting iteration should look like this:
 7. Rerun the corpus.
 8. Commit the code fix and note the compatibility delta.
 
-### Example Clusters From `integer_ring.pyx`
+### Example Clusters From The Current Corpus
 
 Current remaining failures include:
 
-- root-finding paths in `ZZ._roots_univariate_polynomial`, currently failing
-  with `TypeError: PARI object does not have a Python length`;
 - file-level `wasm_signature_mismatch` crashes across number-field, finite
   field, polynomial, rational, and matrix constructors.
 

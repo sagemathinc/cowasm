@@ -891,6 +891,14 @@ def __cowasm_tolerance_want(key, want):
     return COWASM_TOLERANCE_PREFIX + key + "\\n" + want
 
 
+def __cowasm_filter_miss_detail():
+    if __cowasm_lines:
+        lines = ", ".join(str(line) for line in sorted(__cowasm_lines))
+        return f"no doctest block matched --line {lines}"
+    keys = ", ".join(sorted(__cowasm_block_keys))
+    return f"no doctest block matched --block-key {keys}"
+
+
 def __cowasm_module_name_from_path(filename):
     base, ext = os.path.splitext(filename)
     if ext not in (".py", ".pyx"):
@@ -1096,6 +1104,7 @@ def __cowasm_run_file(filename):
         attempted = 0
         failed = 0
         block_counter = 0
+        selected_blocks = 0
         __cowasm_note_state(filename, "collect_docstrings", source=None, expected=None)
         for name, docstring, line_offset in __cowasm_docstrings(filename, original):
             __cowasm_note_state(filename, "parse_doctest", name, line_offset, None, None)
@@ -1168,6 +1177,7 @@ def __cowasm_run_file(filename):
                     example.options[doctest.SKIP] = True
                     previous_physical_end_line = physical_end_line
                     continue
+                selected_blocks += 1
                 if __cowasm_should_skip(example._cowasm_effective_source):
                     skip_reason = __cowasm_skip_reason(example._cowasm_effective_source)
                     example._cowasm_skip_reason = skip_reason
@@ -1237,7 +1247,14 @@ def __cowasm_run_file(filename):
         file_result["passed_blocks"] = sum(1 for row in file_result["blocks"] if row["status"] == "passed")
         file_result["failed_blocks"] = sum(1 for row in file_result["blocks"] if row["status"] == "failed")
         file_result["skipped_blocks"] = sum(1 for row in file_result["blocks"] if row["status"] == "skipped")
-        file_result["status"] = "passed" if file_result["failed_blocks"] == 0 else "failed"
+        if (__cowasm_lines or __cowasm_block_keys) and selected_blocks == 0:
+            file_result["status"] = "error"
+            file_result["failed_blocks"] = 1
+            file_result["failure_class"] = "doctest_filter_miss"
+            file_result["failure_detail"] = __cowasm_filter_miss_detail()
+            file_result["stderr"] = file_result["failure_detail"]
+        else:
+            file_result["status"] = "passed" if file_result["failed_blocks"] == 0 else "failed"
     except BaseException as exc:
         detail = __cowasm_state_diagnostic(traceback.format_exc())
         file_result["stderr"] = detail
