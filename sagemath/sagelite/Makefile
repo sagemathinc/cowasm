@@ -5,6 +5,11 @@ include ../build/Makefile-vars
 SAGELITE_SOURCE ?= /home/user/sagelite
 BUILD_WASI_SDK = ${BUILD}/wasi-sdk
 DIST_WASI_SDK = ${DIST}/wasi-sdk
+SAGELITE_DOCTEST_CORPUS ?= ${SRC}/doctest-corpus/basic-pure-math.txt
+SAGELITE_DOCTEST_DB ?= ${DIST_WASI_SDK}/sagelite-doctests.sqlite3
+SAGELITE_DOCTEST_PROFILE ?= node
+SAGELITE_DOCTEST_TIMEOUT ?= 0
+SAGELITE_DOCTEST_ALLOW_FAILURES ?= 1
 
 all: test-wasi-sdk-standalone
 
@@ -145,6 +150,32 @@ test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHO
 
 .PHONY: test-wasi-sdk-next
 test-wasi-sdk-next: test-wasi-sdk-standalone
+
+.PHONY: test-sage-doctest-corpus
+test-sage-doctest-corpus:
+	test -f ${DIST_WASI_SDK}/electron-resources/sagelite-electron-resources.json || \
+	  (echo "Sagelite Electron resources are missing; run make -C sagemath/sagelite test-wasi-sdk-standalone first." >&2; exit 2)
+	test -f ${SAGELITE_DOCTEST_CORPUS}
+	mkdir -p "$$(dirname ${SAGELITE_DOCTEST_DB})"
+	@files="$$(grep -Ev '^[[:space:]]*($$|#)' ${SAGELITE_DOCTEST_CORPUS} | \
+	  while IFS= read -r file; do \
+	    case "$$file" in \
+	      /*) printf '%s\n' "$$file" ;; \
+	      *) printf '%s\n' "${SAGELITE_SOURCE}/$$file" ;; \
+	    esac; \
+	  done)"; \
+	status=0; \
+	COWASM_PYTHON_WASM_NODE="${PYTHON_WASM}/dist/node.js" \
+	COWASM_SAGELITE_ELECTRON_RESOURCES="${DIST_WASI_SDK}/electron-resources" \
+	${CWD}/bin/sage -t \
+	  --profile "${SAGELITE_DOCTEST_PROFILE}" \
+	  --timeout "${SAGELITE_DOCTEST_TIMEOUT}" \
+	  --sqlite "${SAGELITE_DOCTEST_DB}" \
+	  $$files || status=$$?; \
+	if [ "$$status" -ne 0 ]; then \
+	  echo "Sagelite doctest corpus completed with doctest failures; results are in ${SAGELITE_DOCTEST_DB}." >&2; \
+	  if [ "${SAGELITE_DOCTEST_ALLOW_FAILURES}" != "1" ]; then exit "$$status"; fi; \
+	fi
 
 .PHONY: clean-wasi-sdk
 clean-wasi-sdk:

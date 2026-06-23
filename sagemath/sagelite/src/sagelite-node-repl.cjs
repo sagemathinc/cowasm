@@ -10,6 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
+const doctestRunnerVersion = 2;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -169,6 +170,7 @@ function parseDoctestArgs(args, invocationCwd) {
     timeoutSeconds: 0,
     long: false,
     optional: false,
+    profile: process.env.COWASM_SAGELITE_DOCTEST_PROFILE || "node",
     files: [],
   };
   for (let i = 0; i < args.length; i += 1) {
@@ -193,6 +195,14 @@ function parseDoctestArgs(args, invocationCwd) {
       options.long = true;
     } else if (arg === "--optional" || arg.startsWith("--optional=")) {
       options.optional = true;
+    } else if (arg === "--profile") {
+      i += 1;
+      if (i >= args.length) {
+        throw new Error("--profile requires a runtime profile");
+      }
+      options.profile = args[i];
+    } else if (arg.startsWith("--profile=")) {
+      options.profile = arg.slice("--profile=".length);
     } else if (arg === "--") {
       for (const file of args.slice(i + 1)) {
         options.files.push(path.resolve(invocationCwd, file));
@@ -210,6 +220,15 @@ function parseDoctestArgs(args, invocationCwd) {
   if (options.files.length === 0) {
     throw new Error("sage -t requires at least one file");
   }
+  const allowedProfiles = new Set([
+    "browser",
+    "node",
+    "electron",
+    "node-subprocess",
+  ]);
+  if (!allowedProfiles.has(options.profile)) {
+    throw new Error(`unsupported Sagelite doctest profile: ${options.profile}`);
+  }
   return options;
 }
 
@@ -219,9 +238,12 @@ async function runDoctestMode(python, args, invocationCwd) {
   const run = {
     started_at: startedAt,
     finished_at: null,
-    git_commit: gitCommit(invocationCwd),
+    git_commit: gitCommit(path.resolve(__dirname, "../../..")),
     sagelite_source_commit: sageliteSourceCommit(),
     command: ["sage", "-t", ...args].join(" "),
+    run_profile: options.profile,
+    runner_version: doctestRunnerVersion,
+    resource_root: process.cwd(),
     status: "error",
     total_blocks: 0,
     passed_blocks: 0,
@@ -303,6 +325,7 @@ function buildDoctestPython({ files, resultPath, long, optional }) {
   return `
 import ast
 import doctest
+import hashlib
 import importlib
 import json
 import os
@@ -333,7 +356,28 @@ __cowasm_deferred_re = re.compile(
 __cowasm_optional_re = re.compile(r"#.*\\b(optional|needs)\\b", re.IGNORECASE)
 __cowasm_long_re = re.compile(r"#.*\\blong time\\b", re.IGNORECASE)
 __cowasm_random_re = re.compile(r"#.*\\brandom\\b", re.IGNORECASE)
+__cowasm_tol_re = re.compile(r"#.*\\b(abs tol|rel tol|tol)\\b", re.IGNORECASE)
 COWASM_RANDOM_ACCEPT = "__COWASM_RANDOM_ACCEPT__\\n"
+
+
+def _cowasm_tags(source):
+    tags = []
+    checks = [
+        ("random", __cowasm_random_re),
+        ("long time", __cowasm_long_re),
+        ("optional", __cowasm_optional_re),
+        ("deferred", __cowasm_deferred_re),
+        ("tolerance", __cowasm_tol_re),
+    ]
+    for name, regex in checks:
+        if regex.search(source):
+            tags.append(name)
+    return ",".join(tags)
+
+
+def _cowasm_source_hash(source):
+    normalized = "\\n".join(line.rstrip() for line in source.strip().splitlines())
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
 
 def __cowasm_convert_prompts(text):
@@ -410,6 +454,16 @@ def __cowasm_should_skip(source):
     return False
 
 
+def __cowasm_skip_reason(source):
+    if __cowasm_deferred_re.search(source):
+        return "deferred"
+    if not __cowasm_optional and __cowasm_optional_re.search(source):
+        return "optional"
+    if not __cowasm_long and __cowasm_long_re.search(source):
+        return "long time"
+    return None
+
+
 def __cowasm_is_random(source):
     return __cowasm_random_re.search(source) is not None
 
@@ -457,6 +511,10 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
             "end_line": end_line,
             "source": getattr(example, "sage_source", example.source),
             "expected": getattr(example, "_cowasm_expected", example.want),
+            "expected_kind": getattr(example, "_cowasm_expected_kind", "exact"),
+            "source_hash": _cowasm_source_hash(getattr(example, "sage_source", example.source)),
+            "tags": _cowasm_tags(getattr(example, "sage_source", example.source)),
+            "skip_reason": getattr(example, "_cowasm_skip_reason", None),
             "duration_ms": int(getattr(example, "_cowasm_duration_ms", 0)),
         }
 
@@ -528,12 +586,16 @@ def __cowasm_run_file(filename):
                 example._cowasm_block_index = index
                 example.sage_source = example.source
                 example._cowasm_expected = example.want
+                example._cowasm_expected_kind = "exact"
+                example._cowasm_skip_reason = None
                 start_line = None
                 end_line = None
                 if test.lineno is not None and example.lineno is not None:
                     start_line = test.lineno + example.lineno + 1
                     end_line = start_line + len(example.source.splitlines()) - 1
                 if __cowasm_should_skip(example.sage_source):
+                    skip_reason = __cowasm_skip_reason(example.sage_source)
+                    example._cowasm_skip_reason = skip_reason
                     runner.blocks.append({
                         "block_index": index,
                         "name": test.name,
@@ -541,6 +603,10 @@ def __cowasm_run_file(filename):
                         "end_line": end_line,
                         "source": example.sage_source,
                         "expected": example.want,
+                        "expected_kind": "skip",
+                        "source_hash": _cowasm_source_hash(example.sage_source),
+                        "tags": _cowasm_tags(example.sage_source),
+                        "skip_reason": skip_reason,
                         "actual": "",
                         "status": "skipped",
                         "failure_class": "optional_or_deferred",
@@ -550,6 +616,7 @@ def __cowasm_run_file(filename):
                 else:
                     if __cowasm_is_random(example.sage_source):
                         example._cowasm_random = True
+                        example._cowasm_expected_kind = "random"
                         example.want = COWASM_RANDOM_ACCEPT
                     try:
                         example.source = __cowasm_sagelite_preparse(example.source)
@@ -561,6 +628,10 @@ def __cowasm_run_file(filename):
                             "end_line": end_line,
                             "source": example.sage_source,
                             "expected": example.want,
+                            "expected_kind": "error",
+                            "source_hash": _cowasm_source_hash(example.sage_source),
+                            "tags": _cowasm_tags(example.sage_source),
+                            "skip_reason": None,
                             "actual": traceback.format_exc(),
                             "status": "failed",
                             "failure_class": "preparse_error",
@@ -633,9 +704,29 @@ function sqlNumber(value) {
   return Number.isFinite(value) ? String(Math.trunc(value)) : "NULL";
 }
 
-function writeDoctestSqlite(dbPath, run) {
-  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-  const statements = [
+function sqliteExec(dbPath, sql) {
+  return execFileSync("sqlite3", [dbPath], {
+    input: sql,
+    encoding: "utf8",
+  });
+}
+
+function sqliteScalar(dbPath, sql) {
+  return sqliteExec(dbPath, sql).trim();
+}
+
+function ensureSqliteColumn(dbPath, table, column, declaration) {
+  const columns = sqliteScalar(dbPath, `PRAGMA table_info(${table});`)
+    .split("\n")
+    .filter(Boolean)
+    .map((line) => line.split("|")[1]);
+  if (!columns.includes(column)) {
+    sqliteExec(dbPath, `ALTER TABLE ${table} ADD COLUMN ${column} ${declaration};`);
+  }
+}
+
+function ensureDoctestSchema(dbPath) {
+  const schema = [
     "PRAGMA foreign_keys=ON;",
     `CREATE TABLE IF NOT EXISTS runs (
       id INTEGER PRIMARY KEY,
@@ -644,6 +735,9 @@ function writeDoctestSqlite(dbPath, run) {
       git_commit TEXT NOT NULL,
       sagelite_source_commit TEXT,
       command TEXT NOT NULL,
+      run_profile TEXT DEFAULT 'node',
+      runner_version INTEGER DEFAULT 1,
+      resource_root TEXT,
       status TEXT NOT NULL,
       total_blocks INTEGER NOT NULL,
       passed_blocks INTEGER NOT NULL,
@@ -668,35 +762,64 @@ function writeDoctestSqlite(dbPath, run) {
       id INTEGER PRIMARY KEY,
       file_id INTEGER NOT NULL REFERENCES files(id) ON DELETE CASCADE,
       block_index INTEGER NOT NULL,
+      block_key TEXT,
       name TEXT,
       start_line INTEGER,
       end_line INTEGER,
       source TEXT NOT NULL,
+      source_hash TEXT,
       expected TEXT,
+      expected_kind TEXT,
       actual TEXT,
       status TEXT NOT NULL,
       failure_class TEXT,
+      tags TEXT,
+      skip_reason TEXT,
       duration_ms INTEGER NOT NULL
     );`,
     "CREATE INDEX IF NOT EXISTS files_run_path_idx ON files(run_id, path);",
     "CREATE INDEX IF NOT EXISTS blocks_file_status_idx ON blocks(file_id, status);",
+  ];
+  sqliteExec(dbPath, schema.join("\n"));
+  ensureSqliteColumn(dbPath, "runs", "run_profile", "TEXT DEFAULT 'node'");
+  ensureSqliteColumn(dbPath, "runs", "runner_version", "INTEGER DEFAULT 1");
+  ensureSqliteColumn(dbPath, "runs", "resource_root", "TEXT");
+  ensureSqliteColumn(dbPath, "blocks", "block_key", "TEXT");
+  ensureSqliteColumn(dbPath, "blocks", "source_hash", "TEXT");
+  ensureSqliteColumn(dbPath, "blocks", "expected_kind", "TEXT");
+  ensureSqliteColumn(dbPath, "blocks", "tags", "TEXT");
+  ensureSqliteColumn(dbPath, "blocks", "skip_reason", "TEXT");
+  sqliteExec(dbPath, "CREATE INDEX IF NOT EXISTS blocks_key_idx ON blocks(block_key);");
+}
+
+function blockKeyFor(file, block) {
+  const line = block.start_line ?? "";
+  const sourceHash = block.source_hash || "";
+  return `${file.path}:${line}:${sourceHash}`;
+}
+
+function writeDoctestSqlite(dbPath, run) {
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  ensureDoctestSchema(dbPath);
+  const insertRun = [
+    "PRAGMA foreign_keys=ON;",
     `INSERT INTO runs (
       started_at, finished_at, git_commit, sagelite_source_commit, command,
+      run_profile, runner_version, resource_root,
       status, total_blocks, passed_blocks, failed_blocks, skipped_blocks, duration_ms
     ) VALUES (
       ${sqlString(run.started_at)}, ${sqlString(run.finished_at)},
       ${sqlString(run.git_commit)}, ${sqlString(run.sagelite_source_commit)},
-      ${sqlString(run.command)}, ${sqlString(run.status)},
+      ${sqlString(run.command)}, ${sqlString(run.run_profile)},
+      ${sqlNumber(run.runner_version)}, ${sqlString(run.resource_root)},
+      ${sqlString(run.status)},
       ${sqlNumber(run.total_blocks)}, ${sqlNumber(run.passed_blocks)},
       ${sqlNumber(run.failed_blocks)}, ${sqlNumber(run.skipped_blocks)},
       ${sqlNumber(run.duration_ms)}
     );`,
     "SELECT last_insert_rowid();",
   ];
-  const runId = execFileSync("sqlite3", [dbPath], {
-    input: statements.join("\n"),
-    encoding: "utf8",
-  }).trim().split(/\s+/).pop();
+  const runId = sqliteExec(dbPath, insertRun.join("\n")).trim().split(/\s+/).pop();
 
   const rows = ["PRAGMA foreign_keys=ON;"];
   for (const file of run.files) {
@@ -713,14 +836,18 @@ function writeDoctestSqlite(dbPath, run) {
     const fileId = "__COWASM_FILE_ID__";
     for (const block of file.blocks || []) {
       rows.push(`INSERT INTO blocks (
-        file_id, block_index, name, start_line, end_line, source, expected,
-        actual, status, failure_class, duration_ms
+        file_id, block_index, block_key, name, start_line, end_line, source,
+        source_hash, expected, expected_kind, actual, status, failure_class,
+        tags, skip_reason, duration_ms
       ) VALUES (
-        ${fileId}, ${sqlNumber(block.block_index)}, ${sqlString(block.name)},
+        ${fileId}, ${sqlNumber(block.block_index)}, ${sqlString(blockKeyFor(file, block))},
+        ${sqlString(block.name)},
         ${sqlNumber(block.start_line)}, ${sqlNumber(block.end_line)},
-        ${sqlString(block.source)}, ${sqlString(block.expected)},
+        ${sqlString(block.source)}, ${sqlString(block.source_hash)},
+        ${sqlString(block.expected)}, ${sqlString(block.expected_kind)},
         ${sqlString(block.actual)}, ${sqlString(block.status)},
-        ${sqlString(block.failure_class)}, ${sqlNumber(block.duration_ms)}
+        ${sqlString(block.failure_class)}, ${sqlString(block.tags)},
+        ${sqlString(block.skip_reason)}, ${sqlNumber(block.duration_ms)}
       );`);
     }
   }
@@ -733,16 +860,13 @@ function writeDoctestSqlite(dbPath, run) {
   let sql = chunks[0];
   let fileCursor = 0;
   for (let i = 1; i < chunks.length; i += 1) {
-    const output = execFileSync("sqlite3", [dbPath], {
-      input: sql + "\nSELECT last_insert_rowid();\n",
-      encoding: "utf8",
-    }).trim();
+    const output = sqliteExec(dbPath, sql + "\nSELECT last_insert_rowid();\n").trim();
     const fileId = output.split(/\s+/).pop();
     sql = chunks[i].replaceAll("__COWASM_FILE_ID__", fileId);
     fileCursor += 1;
   }
   if (sql.trim()) {
-    execFileSync("sqlite3", [dbPath], { input: sql, encoding: "utf8" });
+    sqliteExec(dbPath, sql);
   }
   void fileCursor;
 }

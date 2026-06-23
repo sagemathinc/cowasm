@@ -1,0 +1,12 @@
+# Initial Sagelite pure-math doctest corpus.
+#
+# This corpus is intentionally small and central.  It should run often while
+# the WebAssembly port is still moving quickly, and it should grow only when
+# the added files improve signal rather than just adding noise.
+src/sage/rings/integer_ring.pyx
+src/sage/rings/integer.pyx
+src/sage/rings/rational.pyx
+src/sage/rings/rational_field.py
+src/sage/rings/finite_rings/integer_mod_ring.py
+src/sage/rings/finite_rings/finite_field_constructor.py
+src/sage/matrix/constructor.py
