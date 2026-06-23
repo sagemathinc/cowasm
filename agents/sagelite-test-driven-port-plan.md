@@ -203,7 +203,7 @@ Suggested first entries:
 /home/user/sagelite/src/sage/rings/finite_rings/finite_field_constructor.py
 /home/user/sagelite/src/sage/rings/finite_rings/integer_mod_ring.py
 /home/user/sagelite/src/sage/rings/polynomial/polynomial_ring_constructor.py
-/home/user/sagelite/src/sage/matrix/constructor.py
+/home/user/sagelite/src/sage/matrix/constructor.pyx
 ```
 
 Add more only after the dashboard can explain failures well.
