@@ -371,6 +371,10 @@ Follow-up snapshot:
   helper smoke with integer unit and divisibility predicates plus rational
   comparison checks. These reuse existing exact-arithmetic resources, so no
   new mandatory resource files are added.
+- Change: schema 141 manifests extend the same bounded exact-arithmetic smoke
+  with normalized rational numerator/denominator checks and rational
+  zero/one/sign predicates. These reuse existing rational-field resources, so
+  no new mandatory resource files are added.
 - Probe outcome: finite-field matrix row/column views, submatrix extraction,
   deletion, and row/column mutation pass isolated Electron-shaped probes but
   trigger a dynamic-load `malloc` LinkError when promoted into the combined

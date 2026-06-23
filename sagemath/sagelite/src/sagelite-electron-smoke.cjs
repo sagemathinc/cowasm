@@ -696,6 +696,14 @@ assert QQ(45, 28).floor() == 1
 assert QQ(45, 28).ceil() == 2
 assert QQ(7, 9).numerator() == 7
 assert QQ(7, 9).denominator() == 9
+assert QQ(12, 18).numerator() == 2
+assert QQ(12, 18).denominator() == 3
+assert QQ(0).is_zero()
+assert QQ(1).is_one()
+assert not QQ(2).is_one()
+assert QQ(-7, 3).sign() == -1
+assert QQ(0).sign() == 0
+assert QQ(7, 3).sign() == 1
 assert QQ(2, 3) < QQ(3, 4)
 assert QQ(-5, 7) < QQ(0)
 assert QQ(9, 12) == QQ(3, 4)
