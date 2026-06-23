@@ -167,6 +167,7 @@ test-sage-doctest-corpus:
 	status=0; \
 	COWASM_PYTHON_WASM_NODE="${PYTHON_WASM}/dist/node.js" \
 	COWASM_SAGELITE_ELECTRON_RESOURCES="${DIST_WASI_SDK}/electron-resources" \
+	COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="${SAGELITE_SOURCE}" \
 	${CWD}/bin/sage -t \
 	  --profile "${SAGELITE_DOCTEST_PROFILE}" \
 	  --timeout "${SAGELITE_DOCTEST_TIMEOUT}" \

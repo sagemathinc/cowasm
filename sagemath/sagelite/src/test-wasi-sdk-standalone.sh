@@ -1603,6 +1603,7 @@ PY
 set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
   timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --sqlite "$doctest_smoke_db" "$doctest_smoke_file" \
@@ -1622,6 +1623,12 @@ if [ "$doctest_smoke_counts" != "passed|7|5|0|2" ]; then
   cat "$doctest_smoke_log" >&2
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke wrote unexpected SQLite counts: $doctest_smoke_counts"
+fi
+doctest_block_key_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where block_key like 'sagelite-doctest-smoke.py:%:%' and block_key not like '/%';")"
+if [ "$doctest_block_key_count" != "7" ]; then
+  cat "$doctest_smoke_log" >&2
+  sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest smoke did not record relative stable block keys."
 fi
 doctest_optional_magma_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'skipped' and skip_reason = 'optional:magma' and tags like '%optional:magma%';")"
 if [ "$doctest_optional_magma_count" != "1" ]; then
@@ -1646,6 +1653,7 @@ doctest_optional_feature_log="$dist_dir/doctest-optional-feature.log"
 set +e
 COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
   COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
   timeout "$node_import_timeout" \
     node "$src_dir/sagelite-node-repl.cjs" -t \
       --optional=cowasm_smoke \

@@ -10,7 +10,7 @@ const { execFileSync } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 3;
+const doctestRunnerVersion = 4;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -172,6 +172,9 @@ function parseDoctestArgs(args, invocationCwd) {
     optional: false,
     optionalFeatures: [],
     profile: process.env.COWASM_SAGELITE_DOCTEST_PROFILE || "node",
+    sourceRoot: process.env.COWASM_SAGELITE_DOCTEST_SOURCE_ROOT
+      ? path.resolve(invocationCwd, process.env.COWASM_SAGELITE_DOCTEST_SOURCE_ROOT)
+      : null,
     files: [],
   };
   for (let i = 0; i < args.length; i += 1) {
@@ -208,6 +211,17 @@ function parseDoctestArgs(args, invocationCwd) {
       options.profile = args[i];
     } else if (arg.startsWith("--profile=")) {
       options.profile = arg.slice("--profile=".length);
+    } else if (arg === "--source-root") {
+      i += 1;
+      if (i >= args.length) {
+        throw new Error("--source-root requires a path");
+      }
+      options.sourceRoot = path.resolve(invocationCwd, args[i]);
+    } else if (arg.startsWith("--source-root=")) {
+      options.sourceRoot = path.resolve(
+        invocationCwd,
+        arg.slice("--source-root=".length),
+      );
     } else if (arg === "--") {
       for (const file of args.slice(i + 1)) {
         options.files.push(path.resolve(invocationCwd, file));
@@ -260,6 +274,8 @@ async function runDoctestMode(python, args, invocationCwd) {
     run_profile: options.profile,
     runner_version: doctestRunnerVersion,
     resource_root: process.cwd(),
+    source_root: options.sourceRoot,
+    invocation_cwd: invocationCwd,
     status: "error",
     total_blocks: 0,
     passed_blocks: 0,
@@ -987,10 +1003,48 @@ function ensureDoctestSchema(dbPath) {
   sqliteExec(dbPath, "CREATE INDEX IF NOT EXISTS blocks_key_idx ON blocks(block_key);");
 }
 
-function blockKeyFor(file, block) {
+function posixPath(value) {
+  return value.split(path.sep).join(path.posix.sep);
+}
+
+function isRelativeSubpath(value) {
+  return (
+    value &&
+    value !== ".." &&
+    !value.startsWith(`..${path.sep}`) &&
+    !path.isAbsolute(value)
+  );
+}
+
+function stableDoctestPath(filePath, run) {
+  const absolute = path.resolve(filePath);
+  if (run && run.source_root) {
+    const relative = path.relative(run.source_root, absolute);
+    if (isRelativeSubpath(relative)) {
+      return posixPath(relative);
+    }
+  }
+
+  const parts = path.normalize(absolute).split(path.sep);
+  for (let i = 0; i < parts.length - 1; i += 1) {
+    if (parts[i] === "src" && parts[i + 1] === "sage") {
+      return parts.slice(i).join(path.posix.sep);
+    }
+  }
+
+  if (run && run.invocation_cwd) {
+    const relative = path.relative(run.invocation_cwd, absolute);
+    if (isRelativeSubpath(relative)) {
+      return posixPath(relative);
+    }
+  }
+  return posixPath(absolute);
+}
+
+function blockKeyFor(file, block, run) {
   const line = block.start_line ?? "";
   const sourceHash = block.source_hash || "";
-  return `${file.path}:${line}:${sourceHash}`;
+  return `${stableDoctestPath(file.path, run)}:${line}:${sourceHash}`;
 }
 
 function writeDoctestSqlite(dbPath, run) {
@@ -1035,7 +1089,7 @@ function writeDoctestSqlite(dbPath, run) {
         source_hash, expected, expected_kind, actual, status, failure_class,
         tags, skip_reason, duration_ms
       ) VALUES (
-        ${fileId}, ${sqlNumber(block.block_index)}, ${sqlString(blockKeyFor(file, block))},
+        ${fileId}, ${sqlNumber(block.block_index)}, ${sqlString(blockKeyFor(file, block, run))},
         ${sqlString(block.name)},
         ${sqlNumber(block.start_line)}, ${sqlNumber(block.end_line)},
         ${sqlString(block.source)}, ${sqlString(block.source_hash)},
