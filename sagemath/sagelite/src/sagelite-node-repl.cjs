@@ -132,7 +132,7 @@ def __cowasm_sagelite_push(line):
         rl.setPrompt("sage: ");
       })
       .finally(async () => {
-        await new Promise((resolve) => setImmediate(resolve));
+        await python.kernel.flushOutput(250);
         if (!inputClosed && !terminated) {
           rl.prompt();
         }
