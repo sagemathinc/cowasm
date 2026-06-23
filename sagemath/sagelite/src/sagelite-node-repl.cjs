@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 18;
+const doctestRunnerVersion = 19;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -958,7 +958,7 @@ def __cowasm_docstrings(filename, text):
                 and isinstance(first.value, ast.Constant)
                 and isinstance(first.value.value, str)
             ):
-                yield name, first.value.value, first.lineno
+                yield name, first.value.value, max(0, first.lineno - 1)
         for child in body:
             if isinstance(child, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
                 stack.append((f"{name}.{child.name}", child))

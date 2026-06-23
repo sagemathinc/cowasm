@@ -1661,6 +1661,13 @@ if [ "$doctest_block_key_count" != "15" ]; then
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record relative stable block keys."
 fi
+doctest_expected_line="$(grep -nF 'sage: 2^5' "$doctest_smoke_file" | head -n 1 | cut -d: -f1)"
+doctest_recorded_line="$(sqlite3 "$doctest_smoke_db" "select start_line from blocks where source like '2^5%' limit 1;")"
+if [ "$doctest_recorded_line" != "$doctest_expected_line" ]; then
+  cat "$doctest_smoke_log" >&2
+  sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest smoke recorded line $doctest_recorded_line for 2^5, expected $doctest_expected_line."
+fi
 doctest_block_key="$(sqlite3 "$doctest_smoke_db" "select block_key from blocks where source like '2^5%' limit 1;")"
 doctest_block_key_db="$probe_dir/sagelite-doctest-block-key.sqlite3"
 doctest_block_key_log="$dist_dir/doctest-block-key.log"
