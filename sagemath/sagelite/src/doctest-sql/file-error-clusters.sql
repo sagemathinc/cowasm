@@ -12,42 +12,50 @@ raw_file_errors as (
     and status = 'error'
     and failed_blocks > 0
 ),
-file_errors as (
+anchored_file_errors as (
   select
     failure_class,
+    detail,
     case
-      when detail like 'doctest state:%' || char(10) || '%' then
-        trim(substr(detail, 1, instr(detail || char(10), char(10)) - 1))
-      else null
-    end as doctest_state,
-    case
-      when detail like 'doctest state:%' || char(10) || '%' then
-        substr(detail, instr(detail || char(10), char(10)) + 1)
-      else detail
-    end as diagnostic,
+      when instr(detail, 'RuntimeError: function signature mismatch') > 0 then
+        instr(detail, 'RuntimeError: function signature mismatch')
+      when instr(detail, 'LinkError:') > 0 then
+        instr(detail, 'LinkError:')
+      when instr(detail, char(10) || 'Traceback ') > 0 then
+        instr(detail, char(10) || 'Traceback ') + 1
+      else 0
+    end as diagnostic_start,
     path
   from raw_file_errors
 ),
 normalized_diagnostics as (
   select
     failure_class,
-    doctest_state,
     case
-      when instr(diagnostic, 'RuntimeError: function signature mismatch') > 0 then
-        substr(diagnostic, instr(diagnostic, 'RuntimeError: function signature mismatch'))
-      when instr(diagnostic, 'LinkError:') > 0 then
-        substr(diagnostic, instr(diagnostic, 'LinkError:'))
-      when instr(diagnostic, char(10) || 'Traceback ') > 0 then
-        substr(diagnostic, instr(diagnostic, char(10) || 'Traceback ') + 1)
-      else diagnostic
+      when detail like 'doctest state:%' || char(10) || '%' then
+        trim(
+          substr(
+            detail,
+            1,
+            case
+              when diagnostic_start > 1 then diagnostic_start - 1
+              else instr(detail || char(10), char(10)) - 1
+            end
+          )
+        )
+      else path
+    end as context,
+    case
+      when diagnostic_start > 0 then substr(detail, diagnostic_start)
+      else detail
     end as diagnostic,
     path
-  from file_errors
+  from anchored_file_errors
 ),
 diagnostics as (
   select
     failure_class,
-    doctest_state,
+    context,
     trim(
       substr(
         diagnostic,
@@ -62,7 +70,7 @@ select
   failure_class,
   diagnostic_line,
   count(*) as files,
-  group_concat(coalesce(doctest_state, path), char(10)) as contexts,
+  group_concat(context, char(10) || char(10)) as contexts,
   group_concat(path, char(10)) as paths
 from diagnostics
 group by failure_class, diagnostic_line

@@ -1817,6 +1817,21 @@ if [ "$doctest_state_count" != "1" ]; then
   sqlite3 "$doctest_state_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest state smoke did not record active example source metadata."
 fi
+doctest_state_cluster_output="$(sqlite3 "$doctest_state_db" <"$src_dir/doctest-sql/file-error-clusters.sql")"
+if ! printf '%s\n' "$doctest_state_cluster_output" |
+    grep -Fq 'raise KeyboardInterrupt("state source smoke")'; then
+  cat "$doctest_state_log" >&2
+  printf '%s\n' "$doctest_state_cluster_output" >&2
+  sqlite3 "$doctest_state_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: file-error cluster query did not include active doctest source context."
+fi
+if ! printf '%s\n' "$doctest_state_cluster_output" |
+    grep -Fq 'doctest expected:'; then
+  cat "$doctest_state_log" >&2
+  printf '%s\n' "$doctest_state_cluster_output" >&2
+  sqlite3 "$doctest_state_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: file-error cluster query did not include active doctest expected-output context."
+fi
 doctest_optional_feature_db="$probe_dir/sagelite-doctest-optional-feature.sqlite3"
 doctest_optional_feature_log="$dist_dir/doctest-optional-feature.log"
 set +e
