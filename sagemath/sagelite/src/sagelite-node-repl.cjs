@@ -5,12 +5,12 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const readline = require("readline");
-const { execFileSync } = require("child_process");
+const { execFileSync, spawn } = require("child_process");
 
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 17;
+const doctestRunnerVersion = 18;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -67,6 +67,14 @@ async function main() {
   process.chdir(resourceRoot);
 
   const args = process.argv.slice(2);
+  if (args[0] === "--doctest-worker") {
+    process.exitCode = await runDoctestWorker(args.slice(1), invocationCwd, {
+      manifest,
+      resourceRoot,
+      sagelitePythonEnv,
+    });
+    return;
+  }
   if (args[0] === "-t" || args[0] === "--test") {
     process.exitCode = await runDoctestMode(args.slice(1), invocationCwd, {
       manifest,
@@ -328,12 +336,12 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
     for (const [index, file] of options.files.entries()) {
       const resultPath = path.join(tmpDir, `result-${index}.json`);
       const statePath = path.join(tmpDir, `state-${index}.json`);
+      const workerOptionsPath = path.join(tmpDir, `worker-${index}.json`);
       const fileBegin = Date.now();
-      let python = null;
       try {
-        python = await createSagelitePython(pythonOptions);
-        const code = buildDoctestPython({
-          files: [file],
+        await runDoctestFileWorker({
+          workerOptionsPath,
+          file,
           resultPath,
           statePath,
           long: options.long,
@@ -343,9 +351,9 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
           lines: options.lines,
           sourceRoot: options.sourceRoot,
           invocationCwd,
+          resourceRoot: pythonOptions.resourceRoot,
+          timeoutSeconds: options.timeoutSeconds,
         });
-        await execPythonWithTimeout(python, code, options.timeoutSeconds);
-        await python.kernel.flushOutput(250);
         appendDoctestFiles(run, readJsonFile(resultPath));
       } catch (err) {
         const before = run.files.length;
@@ -355,10 +363,6 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
           const failedPath =
             state && typeof state.current_file === "string" ? state.current_file : file;
           appendDoctestErrorFile(run, failedPath, err, Date.now() - fileBegin, state);
-        }
-      } finally {
-        if (python) {
-          python.terminate();
         }
       }
     }
@@ -381,6 +385,142 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
   }
   printDoctestSummary(options.dbPath, run, invocationCwd);
   return run.status === "passed" ? 0 : 1;
+}
+
+async function runDoctestWorker(args, invocationCwd, pythonOptions) {
+  if (args.length !== 1) {
+    throw new Error("--doctest-worker requires one JSON options path");
+  }
+  const payload = JSON.parse(fs.readFileSync(args[0], "utf8"));
+  let python = null;
+  try {
+    python = await createSagelitePython(pythonOptions);
+    const code = buildDoctestPython({
+      files: [payload.file],
+      resultPath: payload.resultPath,
+      statePath: payload.statePath,
+      long: payload.long,
+      optional: payload.optional,
+      optionalFeatures: payload.optionalFeatures,
+      blockKeys: payload.blockKeys,
+      lines: payload.lines,
+      sourceRoot: payload.sourceRoot,
+      invocationCwd: payload.invocationCwd || invocationCwd,
+    });
+    await python.exec(code);
+    await python.kernel.flushOutput(250);
+    return 0;
+  } finally {
+    if (python) {
+      python.terminate();
+    }
+  }
+}
+
+function runDoctestFileWorker({
+  workerOptionsPath,
+  file,
+  resultPath,
+  statePath,
+  long,
+  optional,
+  optionalFeatures,
+  blockKeys,
+  lines,
+  sourceRoot,
+  invocationCwd,
+  resourceRoot,
+  timeoutSeconds,
+}) {
+  fs.writeFileSync(
+    workerOptionsPath,
+    JSON.stringify(
+      {
+        file,
+        resultPath,
+        statePath,
+        long,
+        optional,
+        optionalFeatures,
+        blockKeys,
+        lines,
+        sourceRoot,
+        invocationCwd,
+      },
+      null,
+      2,
+    ),
+  );
+  const childEnv = {
+    ...process.env,
+    COWASM_SAGELITE_ELECTRON_RESOURCES: resourceRoot,
+  };
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [__filename, "--doctest-worker", workerOptionsPath], {
+      cwd: invocationCwd,
+      env: childEnv,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let stdout = "";
+    let stderr = "";
+    let timedOut = false;
+    let timeout = null;
+    let forceKill = null;
+    if (timeoutSeconds) {
+      timeout = setTimeout(() => {
+        timedOut = true;
+        child.kill("SIGTERM");
+        forceKill = setTimeout(() => {
+          child.kill("SIGKILL");
+        }, 2000);
+      }, timeoutSeconds * 1000);
+    }
+    child.stdout.on("data", (data) => {
+      stdout = limitDiagnosticText(stdout + data.toString());
+    });
+    child.stderr.on("data", (data) => {
+      stderr = limitDiagnosticText(stderr + data.toString());
+    });
+    child.on("error", (err) => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      if (forceKill) {
+        clearTimeout(forceKill);
+      }
+      reject(err);
+    });
+    child.on("close", (code, signal) => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      if (forceKill) {
+        clearTimeout(forceKill);
+      }
+      if (timedOut) {
+        const err = new Error(`sage -t timed out after ${timeoutSeconds}s for ${file}`);
+        err.stdout = stdout;
+        err.stderr = stderr;
+        reject(err);
+        return;
+      }
+      if (code === 0) {
+        resolve();
+        return;
+      }
+      const detail = [
+        `sage -t worker exited with status ${code}${signal ? ` signal ${signal}` : ""} for ${file}`,
+        stderr ? `stderr:\n${stderr}` : "",
+        stdout ? `stdout:\n${stdout}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+      const err = new Error(detail);
+      err.stdout = stdout;
+      err.stderr = stderr;
+      reject(err);
+    });
+  });
 }
 
 function appendDoctestFiles(run, parsed) {
@@ -448,6 +588,11 @@ function truncateDoctestStateText(value) {
     : value;
 }
 
+function limitDiagnosticText(value) {
+  const maxLength = 20000;
+  return value.length > maxLength ? value.slice(value.length - maxLength) : value;
+}
+
 function classifyDoctestHostError(err) {
   const detail = String(err && err.stack ? err.stack : err);
   if (/timed out after \d+(?:\.\d+)?s/.test(detail)) {
@@ -479,27 +624,6 @@ function readJsonFile(filename) {
     return JSON.parse(fs.readFileSync(filename, "utf8"));
   } catch {
     return null;
-  }
-}
-
-async function execPythonWithTimeout(python, code, timeoutSeconds) {
-  if (!timeoutSeconds) {
-    await python.exec(code);
-    return;
-  }
-  let timeout;
-  try {
-    await Promise.race([
-      python.exec(code),
-      new Promise((_, reject) => {
-        timeout = setTimeout(() => {
-          python.terminate();
-          reject(new Error(`sage -t timed out after ${timeoutSeconds}s`));
-        }, timeoutSeconds * 1000);
-      }),
-    ]);
-  } finally {
-    clearTimeout(timeout);
   }
 }
 

@@ -49,6 +49,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - Doctest corpus runs now isolate each file in a fresh `python-wasm` process.
   A trap or dynamic-link failure in one Sage file is recorded as that file's
   error and does not prevent later corpus files from being attempted.
+- `--timeout` is enforced at the isolated Node worker-process boundary for
+  each doctest file, so a stuck WASM/Python execution can be killed by the
+  parent runner and still recorded as a file-level timeout in SQLite.
 - File-level doctest errors now record `failure_class` and `failure_detail`
   metadata in SQLite, and the saved failure-cluster queries include those
   errors instead of only block-level failures.
@@ -461,10 +464,11 @@ first `malloc` failure but then hung on a later import (`bsearch`) and did not
 fix the doctest `wasm_signature_mismatch`, so it was not kept.
 
 The same experiment also exposed a doctest-runner robustness gap: `--timeout`
-is implemented as an in-process JavaScript timer, and it does not interrupt a
-stuck worker when the host is waiting on the worker response. A process-level
-timeout boundary around each isolated doctest file should be added before using
-timeouts as reliable dashboard data.
+was originally implemented as an in-process JavaScript timer, and it did not
+interrupt a stuck worker when the host was waiting on the worker response. The
+runner now executes each doctest file in a hidden Node worker process and
+enforces `--timeout` from the parent process, so timeout rows are usable
+dashboard data for stuck file-level executions.
 
 ## Phase 5: Subprocess Strategy
 

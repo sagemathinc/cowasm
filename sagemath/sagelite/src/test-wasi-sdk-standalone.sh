@@ -45,6 +45,7 @@ followups_file="$dist_dir/followups.txt"
 side_module_audit_log="$dist_dir/side-module-audit.log"
 node_import_timeout="${SAGELITE_NODE_IMPORT_TIMEOUT:-180s}"
 electron_smoke_timeout="${SAGELITE_ELECTRON_SMOKE_TIMEOUT:-180s}"
+doctest_timeout_smoke_seconds="${SAGELITE_DOCTEST_TIMEOUT_SMOKE_SECONDS:-10}"
 
 record_blocker() {
   local message="$1"
@@ -1828,6 +1829,43 @@ if [ "$doctest_missing_count" != "1" ]; then
   cat "$doctest_missing_log" >&2
   sqlite3 "$doctest_missing_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t missing-file doctest smoke did not record file-level failure metadata."
+fi
+doctest_timeout_file="$probe_dir/sagelite-doctest-timeout.py"
+doctest_timeout_db="$probe_dir/sagelite-doctest-timeout.sqlite3"
+doctest_timeout_log="$dist_dir/doctest-timeout.log"
+cat >"$doctest_timeout_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: while True:
+    ....:     pass
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --timeout "$doctest_timeout_smoke_seconds" \
+      --sqlite "$doctest_timeout_db" "$doctest_timeout_file" \
+      >"$doctest_timeout_log" 2>&1
+doctest_timeout_status=$?
+set -e
+if [ "$doctest_timeout_status" -eq 124 ]; then
+  tail -120 "$doctest_timeout_log" >&2
+  record_blocker "sagelite-blocked: sage -t timeout smoke reached the outer $node_import_timeout timeout; see $doctest_timeout_log for the first runtime blocker."
+fi
+if [ "$doctest_timeout_status" -eq 0 ]; then
+  cat "$doctest_timeout_log" >&2
+  sqlite3 "$doctest_timeout_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t timeout smoke unexpectedly passed."
+fi
+doctest_timeout_count="$(sqlite3 "$doctest_timeout_db" "select count(*) from files where status = 'error' and failure_class = 'timeout' and failure_detail like '%timed out after ${doctest_timeout_smoke_seconds}s%' and failure_detail like '%while True:%';")"
+if [ "$doctest_timeout_count" != "1" ]; then
+  cat "$doctest_timeout_log" >&2
+  sqlite3 "$doctest_timeout_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t timeout smoke did not record process-level timeout metadata."
 fi
 doctest_query_db="$probe_dir/sagelite-doctest-query-smoke.sqlite3"
 sqlite3 "$doctest_query_db" <<'SQL'
