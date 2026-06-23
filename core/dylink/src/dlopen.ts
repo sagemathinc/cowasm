@@ -293,6 +293,14 @@ export default class DlopenManger {
         throw Error("longjmp is not supported by the CoWasm C++ runtime");
       };
     }
+    if (name == "__wasm_setjmp" || name == "__wasm_setjmp_test") {
+      return () => 0;
+    }
+    if (name == "__wasm_longjmp" || name == "__c_longjmp") {
+      return () => {
+        throw Error(`${name} is not supported by the CoWasm dynamic linker`);
+      };
+    }
     if (
       name.startsWith("pthread_mutex") ||
       name.startsWith("pthread_cond") ||
@@ -402,6 +410,10 @@ export default class DlopenManger {
         // down, in terms of memory addresses.
         stack_alloc + STACK_SIZE
       ),
+      __c_longjmp: new (WebAssembly as any).Tag({
+        parameters: ["i32"],
+        results: [],
+      }),
     };
     log("env =", env);
     const envHandler = (env, key: string) => {

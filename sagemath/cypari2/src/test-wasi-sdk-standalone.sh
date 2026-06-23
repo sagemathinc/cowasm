@@ -175,8 +175,8 @@ integer conversion, display, factorization, and factor-matrix access.
 Unsupported paths still fail explicitly.
 """
 
-from .types cimport GEN, t_COL, t_INT, t_MAT, t_VEC, typ
-from .paridecl cimport GENtostr, gel, glength, gclone, gunclone_deep, itos, pari_free
+from .types cimport GEN, set_gel, t_COL, t_INT, t_MAT, t_POL, t_VEC, typ
+from .paridecl cimport GENtostr, cgetg, gel, glength, gclone, gunclone_deep, itos, pari_free
 
 
 def _missing_runtime(*_args, **_kwargs):
@@ -263,7 +263,13 @@ cdef extern from *:
         ok = 0;
       }
       pari_TRY {
-        *result = gclone(strtoi(digits));
+        if (digits[0] == '-') {
+          *result = gclone(gneg(strtoi(digits + 1)));
+        } else if (digits[0] == '+') {
+          *result = gclone(strtoi(digits + 1));
+        } else {
+          *result = gclone(strtoi(digits));
+        }
       }
       pari_ENDCATCH;
 
@@ -299,6 +305,189 @@ cdef extern from *:
       factor_proven = saved_factor_proven;
       return ok;
     }
+
+    static int cowasm_cypari2_gen_clone_ispower(GEN input,
+                                                GEN k,
+                                                int has_k,
+                                                long *power,
+                                                GEN *base,
+                                                long *errnum) {
+      int ok = 1;
+      long n = 0;
+      GEN y = NULL;
+
+      *power = 0;
+      *base = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        if (has_k) {
+          n = ispower(input, k, &y);
+          if (n != 0) {
+            *power = 1;
+            *base = gclone(y);
+          }
+        } else {
+          n = gisanypower(input, &y);
+          if (n == 0) {
+            *power = 1;
+            *base = gclone(input);
+          } else {
+            *power = n;
+            *base = gclone(y);
+          }
+        }
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_ffinit(GEN p,
+                                               long degree,
+                                               GEN *result,
+                                               long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(ffinit(p, degree, -1));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_ffgen(GEN polynomial,
+                                              GEN *result,
+                                              long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(ffgen(polynomial, -1));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static const char *cowasm_cypari2_gen_type_name(GEN input) {
+      return type_name(typ(input));
+    }
+
+    static int cowasm_cypari2_gen_clone_lift(GEN input,
+                                             GEN *result,
+                                             long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(lift(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_lifted_polcoeffs(GEN input,
+                                                         GEN *result,
+                                                         long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        GEN lifted = lift(input);
+        long degree = poldegree(lifted, -1);
+        *result = gclone(RgX_to_RgC(lifted, degree < 0 ? 0 : degree + 1));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_mod(GEN input,
+                                            GEN modulus,
+                                            GEN *result,
+                                            long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gmodulo(input, modulus));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_polrev(GEN input,
+                                               GEN *result,
+                                               long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(gtopolyrev(input, -1));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
     """
     void cowasm_cypari2_gen_ensure_pari()
     int cowasm_cypari2_gen_is_inverse_error(long errnum)
@@ -314,6 +503,33 @@ cdef extern from *:
     int cowasm_cypari2_gen_clone_factor(GEN input,
                                         int has_proof,
                                         int proof,
+                                        GEN *result,
+                                        long *errnum)
+    int cowasm_cypari2_gen_clone_ispower(GEN input,
+                                         GEN k,
+                                         int has_k,
+                                         long *power,
+                                         GEN *base,
+                                         long *errnum)
+    int cowasm_cypari2_gen_clone_ffinit(GEN p,
+                                        long degree,
+                                        GEN *result,
+                                        long *errnum)
+    int cowasm_cypari2_gen_clone_ffgen(GEN polynomial,
+                                       GEN *result,
+                                       long *errnum)
+    const char *cowasm_cypari2_gen_type_name(GEN input)
+    int cowasm_cypari2_gen_clone_lift(GEN input,
+                                      GEN *result,
+                                      long *errnum)
+    int cowasm_cypari2_gen_clone_lifted_polcoeffs(GEN input,
+                                                  GEN *result,
+                                                  long *errnum)
+    int cowasm_cypari2_gen_clone_mod(GEN input,
+                                     GEN modulus,
+                                     GEN *result,
+                                     long *errnum)
+    int cowasm_cypari2_gen_clone_polrev(GEN input,
                                         GEN *result,
                                         long *errnum)
 
@@ -492,6 +708,50 @@ cdef class Gen(Gen_base):
     def python_list(self):
         return [self[i] for i in range(len(self))]
 
+    def list(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if self.g != NULL and typ(self.g) == t_POL:
+            if not cowasm_cypari2_gen_clone_lifted_polcoeffs(
+                self.g, &result, &errnum
+            ):
+                _raise_pari_error(errnum)
+            return _new_owned(result).python_list()
+        return self.python_list()
+
+    def type(self):
+        if self.g == NULL:
+            raise TypeError("empty PARI object has no type")
+        return cowasm_cypari2_gen_type_name(self.g).decode("ascii")
+
+    def lift(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_lift(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def Mod(self, modulus):
+        cdef Gen converted = objtogen(modulus)
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_mod(
+            self.g, converted.g, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def Polrev(self, _variable=None):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_polrev(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
     def factor(self, long limit=-1, proof=None):
         cdef GEN result = NULL
         cdef long errnum = 0
@@ -510,6 +770,44 @@ cdef class Gen(Gen_base):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
+    def ispower(self, k=None):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+        cdef long power = 0
+        cdef Gen exponent
+
+        if k is None:
+            if not cowasm_cypari2_gen_clone_ispower(
+                self.g, NULL, 0, &power, &result, &errnum
+            ):
+                _raise_pari_error(errnum)
+            return int(power), _new_owned(result)
+
+        exponent = objtogen(k)
+        if not cowasm_cypari2_gen_clone_ispower(
+            self.g, exponent.g, 1, &power, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        if power == 0:
+            return False, None
+        return k, _new_owned(result)
+
+    def ffinit(self, long degree):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_ffinit(self.g, degree, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def ffgen(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_ffgen(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
     cdef Gen new_ref(self, GEN g):
         return _new_clone(g)
 
@@ -525,9 +823,14 @@ cpdef Gen objtogen(s):
     cdef GEN result = NULL
     cdef long errnum = 0
     cdef str text
+    cdef list converted
 
     if isinstance(s, Gen):
         return <Gen>s
+
+    if isinstance(s, (list, tuple)):
+        converted = [objtogen(x) for x in s]
+        return list_of_Gens_to_Gen(converted)
 
     text = str(s)
     encoded = text.encode("ascii")
@@ -549,7 +852,13 @@ cpdef Gen objtogen(s):
 
 
 cdef Gen list_of_Gens_to_Gen(list s):
-    _missing_runtime()
+    cdef Py_ssize_t length = len(s)
+    cdef Py_ssize_t i
+    cdef GEN vector = cgetg(length + 1, t_VEC)
+
+    for i in range(length):
+        set_gel(vector, i + 1, (<Gen>s[i]).g)
+    return _new_owned(gclone(vector))
 PYX
 
 PYTHONPATH="$py_cython" python3 -m cython -3 \
@@ -590,6 +899,117 @@ fi
   -o "$dist_dir/cypari2/gen$extension_suffix"
 
 audit_cpython_side_module "$dist_dir/cypari2/gen$extension_suffix" PyInit_gen
+
+cat >"$probe_dir/stack.pyx" <<'PYX'
+"""Focused CoWasm runtime subset for cypari2.stack.
+
+The upstream cypari2 stack module tracks PARI stack ownership precisely. The
+current CoWasm runtime subset keeps returned GENs as PARI heap clones instead,
+which is sufficient for Sagelite's first PARI FFELT finite-field path and avoids
+dangling stack references while the full cypari2 object model is still absent.
+"""
+
+from .types cimport GEN, pari_sp
+from .gen cimport Gen
+from .paridecl cimport gclone
+
+
+cdef Gen _new_owned(GEN g):
+    cdef Gen z = <Gen>Gen.__new__(Gen)
+    z.g = g
+    z.address = g
+    z.next = None
+    z.itemcache = None
+    return z
+
+
+cdef Gen new_gen(GEN x):
+    return _new_owned(gclone(x))
+
+
+cdef new_gens2(GEN x, GEN y):
+    return new_gen(x), new_gen(y)
+
+
+cdef Gen new_gen_noclear(GEN x):
+    return _new_owned(gclone(x))
+
+
+cdef Gen clone_gen(GEN x):
+    return _new_owned(gclone(x))
+
+
+cdef Gen clone_gen_noclear(GEN x):
+    return _new_owned(gclone(x))
+
+
+cdef void clear_stack() noexcept:
+    pass
+
+
+cdef void reset_avma() noexcept:
+    pass
+
+
+cdef void remove_from_pari_stack(Gen self) noexcept:
+    pass
+
+
+cdef int move_gens_to_heap(pari_sp lim) except -1:
+    return 0
+
+
+cdef int before_resize() except -1:
+    return 0
+
+
+cdef int set_pari_stack_size(size_t size, size_t sizemax) except -1:
+    return 0
+
+
+cdef void after_resize() noexcept:
+    pass
+
+
+cdef class DetachGen:
+    cdef GEN detach(self) except NULL:
+        if isinstance(self.source, Gen):
+            return (<Gen>self.source).g
+        return NULL
+PYX
+
+PYTHONPATH="$py_cython:$dist_dir" python3 -m cython -3 \
+  --module-name cypari2.stack \
+  -I "$dist_dir" \
+  -I "$dist_dir/cypari2" \
+  -I "$pari_wasi_sdk/include" \
+  --output-file "$probe_dir/stack.c" \
+  "$probe_dir/stack.pyx"
+
+"$bin_dir/wasi-sdk-clang-next" -target wasm32-wasip1 \
+  -O0 \
+  -fPIC \
+  -D_SCHED_H \
+  -shared \
+  -nostdlib \
+  -mllvm -wasm-enable-sjlj \
+  -mllvm -wasm-use-legacy-eh=false \
+  -Wl,--allow-undefined \
+  -Wl,--no-entry \
+  -Wl,--export=PyInit_stack \
+  -I"$python_include" \
+  -I"$dist_dir/cypari2" \
+  -I"$posix_wasi_sdk" \
+  -I"$pari_wasi_sdk/include" \
+  -I"$gmp_wasi_sdk/include" \
+  "$probe_dir/stack.c" \
+  "$pari_wasi_sdk/lib/libpari.a" \
+  "$gmp_wasi_sdk/lib/libgmp.a" \
+  "$setjmp_lib" \
+  -lm \
+  -o "$dist_dir/cypari2/stack$extension_suffix"
+
+audit_cpython_side_module "$dist_dir/cypari2/stack$extension_suffix" PyInit_stack
 
 cat >"$probe_dir/pari_runtime_probe.c" <<'EOF'
 #include <Python.h>
@@ -961,6 +1381,7 @@ assert issubclass(Gen, Gen_base)
 assert issubclass(PariError, RuntimeError)
 assert isinstance(Gen(1), Gen_base)
 assert int(Gen(360)) == 360
+assert int(Gen(-8)) == -8
 assert Pari(1, 2).default("debugmem", 0) is None
 assert pari_probe.eval_long("2+3") == 5
 assert pari_probe.eval_long("primepi(10000)") == 1229
@@ -1000,6 +1421,21 @@ p, e = F
 assert [int(p[i]) for i in range(len(p))] == [2, 3, 5]
 assert [int(e[i]) for i in range(len(e))] == [3, 2, 1]
 assert int(pari(2**31 - 1).factor()[0][0]) == 2147483647
+assert tuple(map(int, pari(9).ispower())) == (2, 3)
+assert tuple(map(int, pari(17).ispower())) == (1, 17)
+assert pari(17).ispower(2) == (False, None)
+power, base = pari(-8).ispower()
+assert power == 3
+assert int(base) == -2
+ff9_pol = pari(3).ffinit(2)
+assert ff9_pol.type() == "t_POL"
+assert str(ff9_pol) == "Mod(1, 3)*x^2 + Mod(1, 3)*x + Mod(2, 3)"
+assert [int(c) for c in ff9_pol.list()] == [2, 1, 1]
+assert str(ff9_pol.ffgen()) == "x"
+assert str(pari(2).Mod(3)) == "Mod(2, 3)"
+rebuilt = pari([pari(2).Mod(3), pari(1).Mod(3), pari(1).Mod(3)]).Polrev()
+assert str(rebuilt) == str(ff9_pol)
+assert rebuilt.factor().ncols() == 2
 try:
     pari("1/0")
 except PariError as err:

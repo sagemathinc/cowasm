@@ -862,6 +862,12 @@ assert Z7(3).inverse_of_unit() == Z7(5)
 assert Z7(3) / Z7(5) == Z7(2)
 F11 = GF(11)
 assert F11(3)**5 == F11(1)
+F9 = GF(9)
+z = F9.gen()
+assert F9.cardinality() == 9
+assert z.parent() is F9
+assert z**9 == z
+assert len(list(F9)) == 9
 Z9 = Integers(9)
 assert Z9(4).inverse_of_unit() == Z9(7)
 print('sagelite-node-ok modular arithmetic smoke')"

@@ -495,6 +495,28 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
 +        from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 +    except ImportError:
 +        FiniteField_ntl_gf2e = None
+@@ -699,13 +704,14 @@
+                     name = prefix + str(n)
+                     if modulus is not None:
+                         raise ValueError("no modulus may be specified if variable name not given")
+-                    # Fpbar will have a strong reference, since algebraic_closure caches its results,
+-                    # and the coefficients of modulus lie in GF(p)
+-                    Fpbar = GF(p).algebraic_closure(prefix)
+-                    # This will give a Conway polynomial if p,n is small enough to be in the database
+-                    # and a pseudo-Conway polynomial if it's not.
+-                    modulus = Fpbar._get_polynomial(n)
+-                    check_irreducible = False
++                    if sys.platform != 'wasi':
++                        # Fpbar will have a strong reference, since algebraic_closure caches its results,
++                        # and the coefficients of modulus lie in GF(p)
++                        Fpbar = GF(p).algebraic_closure(prefix)
++                        # This will give a Conway polynomial if p,n is small enough to be in the database
++                        # and a pseudo-Conway polynomial if it's not.
++                        modulus = Fpbar._get_polynomial(n)
++                        check_irreducible = False
+                 name = normalize_names(1, name)
+
+                 if implementation is None:
 diff -urN a/src/sage/modular/arithgroup/meson.build b/src/sage/modular/arithgroup/meson.build
 --- a/src/sage/modular/arithgroup/meson.build
 +++ b/src/sage/modular/arithgroup/meson.build
@@ -1196,3 +1218,27 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
                  global set_integer_from_gen
                  if set_integer_from_gen is None:
                      from sage.libs.pari.convert_sage import set_integer_from_gen
+--- a/src/sage/rings/finite_rings/element_pari_ffelt.pyx
++++ b/src/sage/rings/finite_rings/element_pari_ffelt.pyx
+@@ -23,6 +23,10 @@
+ from cypari2.stack cimport new_gen, new_gen_noclear, clear_stack
+ from cypari2.gen cimport Gen as pari_gen, objtogen
+
++import sys
++if sys.platform == "wasi":
++    pari_init(8000000, 2)
++
+ from sage.rings.finite_rings.element_base cimport FinitePolyExtElement
+ from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
+
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -727,6 +727,8 @@
+                 R = PolynomialRing(FiniteField(p), 'x')
+                 if modulus is None:
+                     modulus = R.irreducible_element(n)
++                    if sys.platform == 'wasi':
++                        check_irreducible = False
+                 if isinstance(modulus, str):
+                     # A string specifies an algorithm to find a suitable modulus.
+                     if modulus != "random" and modulus in self._modulus_cache[order]:
