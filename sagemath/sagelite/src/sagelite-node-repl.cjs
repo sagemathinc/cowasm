@@ -324,10 +324,12 @@ async function execPythonWithTimeout(python, code, timeoutSeconds) {
 function buildDoctestPython({ files, resultPath, long, optional }) {
   return `
 import ast
+import builtins
 import doctest
 import hashlib
 import importlib
 import json
+import math
 import os
 import re
 import sys
@@ -357,7 +359,15 @@ __cowasm_optional_re = re.compile(r"#.*\\b(optional|needs)\\b", re.IGNORECASE)
 __cowasm_long_re = re.compile(r"#.*\\blong time\\b", re.IGNORECASE)
 __cowasm_random_re = re.compile(r"#.*\\brandom\\b", re.IGNORECASE)
 __cowasm_tol_re = re.compile(r"#.*\\b(abs tol|rel tol|tol)\\b", re.IGNORECASE)
+__cowasm_tol_directive_re = re.compile(
+    r"#.*?\\b(abs tol|rel tol|tol)\\b(?:\\s+([-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][-+]?\\d+)?))?",
+    re.IGNORECASE,
+)
+_cowasm_number_re = re.compile(
+    r"(?<![\\w.])[-+]?(?:(?:\\d+\\.\\d*)|(?:\\.\\d+)|(?:\\d+))(?:[eE][-+]?\\d+)?(?![\\w.])"
+)
 COWASM_RANDOM_ACCEPT = "__COWASM_RANDOM_ACCEPT__\\n"
+COWASM_TOLERANCE_PREFIX = "__COWASM_TOLERANCE__"
 
 
 def _cowasm_tags(source):
@@ -468,6 +478,30 @@ def __cowasm_is_random(source):
     return __cowasm_random_re.search(source) is not None
 
 
+def __cowasm_tolerance(source):
+    match = __cowasm_tol_directive_re.search(source)
+    if not match or match.group(2) is None:
+        return None
+    try:
+        tolerance = builtins.float(match.group(2))
+    except ValueError:
+        return None
+    if tolerance < 0 or not math.isfinite(tolerance):
+        return None
+    directive = match.group(1).lower()
+    if directive == "abs tol":
+        mode = "abs"
+    elif directive == "rel tol":
+        mode = "rel"
+    else:
+        mode = "hybrid"
+    return {"mode": mode, "tolerance": tolerance}
+
+
+def __cowasm_tolerance_want(key, want):
+    return COWASM_TOLERANCE_PREFIX + key + "\\n" + want
+
+
 def __cowasm_module_name_from_path(filename):
     base, ext = os.path.splitext(filename)
     if ext not in (".py", ".pyx"):
@@ -540,12 +574,78 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
 
 
 class __CowasmOutputChecker(doctest.OutputChecker):
+    def __init__(self):
+        super().__init__()
+        self.tolerances = {}
+
     def check_output(self, want, got, optionflags):
         if want == COWASM_RANDOM_ACCEPT:
             return True
+        if want.startswith(COWASM_TOLERANCE_PREFIX):
+            header, _, want_body = want.partition("\\n")
+            key = header[len(COWASM_TOLERANCE_PREFIX):]
+            tolerance = self.tolerances.get(key)
+            if tolerance is None:
+                return False
+            if super().check_output(want_body, got, optionflags):
+                return True
+            return self.__check_tolerant_output(want_body, got, tolerance, optionflags)
         if super().check_output(want, got, optionflags):
             return True
         return super().check_output(str(want), str(got), optionflags)
+
+    def __check_tolerant_output(self, want, got, tolerance, optionflags):
+        mode = tolerance.get("mode")
+        tol = tolerance.get("tolerance")
+        if mode not in ("abs", "rel", "hybrid") or not isinstance(
+            tol, (builtins.int, builtins.float)
+        ):
+            return False
+        want_tokens = self.__numeric_tokens(want, optionflags)
+        got_tokens = self.__numeric_tokens(got, optionflags)
+        if len(want_tokens) != len(got_tokens):
+            return False
+        saw_number = False
+        for want_token, got_token in zip(want_tokens, got_tokens):
+            if want_token[0] != got_token[0]:
+                return False
+            if want_token[0] == "text":
+                if want_token[1] != got_token[1]:
+                    return False
+                continue
+            saw_number = True
+            if not self.__numbers_close(want_token[1], got_token[1], mode, builtins.float(tol)):
+                return False
+        return saw_number
+
+    def __numeric_tokens(self, text, optionflags):
+        tokens = []
+        offset = 0
+        for match in _cowasm_number_re.finditer(text):
+            tokens.append(
+                ("text", self.__normalize_text(text[offset:match.start()], optionflags))
+            )
+            tokens.append(("number", builtins.float(match.group(0))))
+            offset = match.end()
+        tokens.append(("text", self.__normalize_text(text[offset:], optionflags)))
+        return [token for token in tokens if token[0] == "number" or token[1] != ""]
+
+    def __normalize_text(self, text, optionflags):
+        if optionflags & doctest.NORMALIZE_WHITESPACE:
+            return " ".join(text.split())
+        return text
+
+    def __numbers_close(self, want, got, mode, tol):
+        if math.isnan(want) or math.isnan(got):
+            return math.isnan(want) and math.isnan(got)
+        if math.isinf(want) or math.isinf(got):
+            return want == got
+        diff = abs(want - got)
+        if mode == "abs":
+            return diff <= tol
+        if mode == "rel":
+            return diff <= tol * max(abs(want), 1.0)
+        return diff <= tol or diff <= tol * max(abs(want), abs(got), 1.0)
 
 
 def __cowasm_run_file(filename):
@@ -567,8 +667,9 @@ def __cowasm_run_file(filename):
             original = f.read()
         parser = doctest.DocTestParser()
         namespace = __cowasm_namespace(filename)
+        checker = __CowasmOutputChecker()
         runner = __CowasmRecordingRunner(
-            checker=__CowasmOutputChecker(),
+            checker=checker,
             verbose=False,
             optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS,
         )
@@ -618,6 +719,13 @@ def __cowasm_run_file(filename):
                         example._cowasm_random = True
                         example._cowasm_expected_kind = "random"
                         example.want = COWASM_RANDOM_ACCEPT
+                    else:
+                        tolerance = __cowasm_tolerance(example.sage_source)
+                        if tolerance is not None:
+                            tolerance_key = "t" + str(index)
+                            checker.tolerances[tolerance_key] = tolerance
+                            example._cowasm_expected_kind = "tolerance"
+                            example.want = __cowasm_tolerance_want(tolerance_key, example.want)
                     try:
                         example.source = __cowasm_sagelite_preparse(example.source)
                     except BaseException:
