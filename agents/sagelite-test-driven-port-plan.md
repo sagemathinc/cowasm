@@ -1109,6 +1109,33 @@ or add a scoped `_ssl`/SSL strategy for the wasi-sdk CPython backend before the
 Sagelite corpus target switches away from the known-working `python-wasm`
 worker.
 
+A follow-up 2026-06-24 browser-profile import pass avoids that eager SSL edge:
+the Sagelite WASI patch now lazy-imports `sage.misc.remote_file.get_remote_file`
+from `sage.misc.all`, and `remote_file.py` imports `ssl` only inside the actual
+download path. On WASI, `get_remote_file(...)` now fails closed with an explicit
+browser-profile `NotImplementedError` before importing `ssl` or `_ssl`.
+
+Validation:
+
+```sh
+make -C sagemath/sagelite test-wasi-sdk-standalone
+```
+
+That target rebuilt the patched Sagelite tree, completed the normal Node import
+smokes, and still exited successfully through the known staged-resource soft
+blocker. A focused `python-wasi-sdk` probe against the generated Sagelite
+site-packages confirmed:
+
+```text
+imported_misc_all False False
+remote_file_error remote file downloads require SSL/network support, which is not available in the WASI browser profile
+after_call False False
+```
+
+The next backend pass can continue past this import-time `_ssl` blocker and
+look for the next `python-wasi-sdk` startup dependency before switching the
+Sagelite doctest runner backend.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -1199,6 +1199,46 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -sage.misc.lazy_import.save_cache_file()
 +if sys.platform != 'wasi':
 +    sage.misc.lazy_import.save_cache_file()
+diff -urN a/src/sage/misc/all.py b/src/sage/misc/all.py
+--- a/src/sage/misc/all.py
++++ b/src/sage/misc/all.py
+@@ -1,2 +1,3 @@
+ from sage.misc.lazy_attribute import lazy_attribute, lazy_class_attribute
+ from sage.misc.lazy_import import lazy_import
++import sys
+@@ -61,5 +62,8 @@
+ from sage.misc.session import load_session, save_session, show_identifiers
+
+-from sage.misc.remote_file import get_remote_file
++if sys.platform == 'wasi':
++    lazy_import('sage.misc.remote_file', 'get_remote_file')
++else:
++    from sage.misc.remote_file import get_remote_file
+
+ from sage.misc.mrange import xmrange, mrange, xmrange_iter, mrange_iter, cartesian_product_iterator
+diff -urN a/src/sage/misc/remote_file.py b/src/sage/misc/remote_file.py
+--- a/src/sage/misc/remote_file.py
++++ b/src/sage/misc/remote_file.py
+@@ -2,5 +2,5 @@
+ import os
++import sys
+ from pathlib import Path
+ from urllib.request import Request, urlopen
+-from ssl import create_default_context as default_context
+ def get_remote_file(filename, verbose=True) -> Path:
+@@ -29,5 +29,12 @@
+     if verbose:
+         print("Attempting to load remote file: " + filename)
+
++    if sys.platform == 'wasi':
++        raise NotImplementedError(
++            "remote file downloads require SSL/network support, "
++            "which is not available in the WASI browser profile"
++        )
++    from ssl import create_default_context as default_context
++
+     from sage.misc.temporary_file import tmp_filename
+     ext = os.path.splitext(filename)[1]
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
 @@ -352,3 +352,6 @@
