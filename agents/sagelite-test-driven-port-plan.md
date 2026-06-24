@@ -290,6 +290,23 @@ failures are two file-level traps: one PARI-backed finite-field constructor
 example at `finite_field_constructor.py:360`, and one NTL-backed modular-root
 example at `integer_mod_ring.py:1771`.
 
+Latest checked local corpus run after the 2026-06-24 finite-field constructor
+backend-scope tagging pass:
+
+```text
+sage -t passed: 2390 passed, 0 failed, 767 skipped
+```
+
+That run records 3,157 block rows in
+`/tmp/sagelite-corpus-after-finite-field-tags-cleanpatch.sqlite3`, with no
+block-level failures and no file-level errors. The pass marks the remaining
+browser-out-of-scope finite-field constructor doctests for Givaro/LinBox,
+FLINT polynomial representation, PARI finite-field construction, and one
+invalid-implementation diagnostic path that currently reaches NTL-backed
+modulus construction before raising the intended Sage `ValueError`. The curated
+pure-math corpus now has a clean non-skipped pass rate in the default node
+profile.
+
 Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
 `python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
 currently blocked during WASM configure by `mimalloc requires stdatomic.h`.

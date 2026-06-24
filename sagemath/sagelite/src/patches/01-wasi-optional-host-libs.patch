@@ -2174,6 +2174,57 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -98,2 +98,2 @@
+-    sage: k = GF(9, 'a')
+-    sage: for i,x in enumerate(k):  print("{} {}".format(i, x))
++    sage: k = GF(9, 'a')                                                              # needs sage.libs.linbox
++    sage: for i,x in enumerate(k):  print("{} {}".format(i, x))                       # needs sage.libs.linbox
+@@ -128,3 +128,3 @@
+-    sage: k = GF(9,'alpha'); type(k)
++    sage: k = GF(9,'alpha'); type(k)                                                  # needs sage.libs.linbox
+     <class 'sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro_with_category'>
+-    sage: k.base_ring()
++    sage: k.base_ring()                                                               # needs sage.libs.linbox
+@@ -274,5 +274,5 @@
+-        sage: k.<a> = FiniteField(9); k
++        sage: k.<a> = FiniteField(9); k                                                # needs sage.libs.linbox
+         Finite Field in a of size 3^2
+-        sage: parent(a)
++        sage: parent(a)                                                               # needs sage.libs.linbox
+         Finite Field in a of size 3^2
+-        sage: charpoly(a, 'y')
++        sage: charpoly(a, 'y')                                                        # needs sage.libs.linbox
+@@ -300 +300 @@
+-        sage: type(f)
++        sage: type(f)                                                                 # needs sage.libs.flint
+@@ -307,7 +307,7 @@
+-        sage: K.<a> = GF(5^45)
+-        sage: a.multiplicative_order()
++        sage: K.<a> = GF(5^45)                                                        # needs sage.libs.pari
++        sage: a.multiplicative_order()                                                # needs sage.libs.pari
+         7105427357601001858711242675781
+-        sage: a.is_square()
++        sage: a.is_square()                                                           # needs sage.libs.pari
+         True
+-        sage: K.<b> = GF(5^45, modulus='primitive')
+-        sage: b.multiplicative_order()
++        sage: K.<b> = GF(5^45, modulus='primitive')                                   # needs sage.libs.pari
++        sage: b.multiplicative_order()                                                # needs sage.libs.pari
+diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -91 +91 @@
+-    sage: k = GF((3, 16),'c'); type(k)
++    sage: k = GF((3, 16),'c'); type(k)                                                 # needs sage.libs.pari
+@@ -135,3 +135,3 @@
+-    sage: k = GF((3, 40),'b'); type(k)
++    sage: k = GF((3, 40),'b'); type(k)                                                 # needs sage.libs.pari
+     <class 'sage.rings.finite_rings.finite_field_pari_ffelt.FiniteField_pari_ffelt_with_category'>
+-    sage: k.base_ring()
++    sage: k.base_ring()                                                                # needs sage.libs.pari
+diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
 @@ -459,29 +459,29 @@
      You can still pass in ``prefix`` as an argument, which has the
      effect of changing the variable name of the algebraic closure::
@@ -2479,6 +2530,46 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
              Traceback (most recent call last):
              ...
              ValueError: the order of a finite field must be a prime power
+diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -629,24 +629,24 @@
+             sage: GF(7, name='aa')
+             Finite Field of size 7
+-            sage: GF(7^2, name='aa')
++            sage: GF(7^2, name='aa')                                                   # needs sage.libs.pari
+             Finite Field in aa of size 7^2
+             sage: GF(7, name=('aa',))
+             Finite Field of size 7
+-            sage: GF(7^2, name=('aa',))
++            sage: GF(7^2, name=('aa',))                                                # needs sage.libs.pari
+             Finite Field in aa of size 7^2
+             sage: GF(7, name=['aa'])
+             Finite Field of size 7
+-            sage: GF(7^2, name=['aa'])
++            sage: GF(7^2, name=['aa'])                                                 # needs sage.libs.pari
+             Finite Field in aa of size 7^2
+             sage: GF(7, names='aa')
+             Finite Field of size 7
+-            sage: GF(7^2, names='aa')
++            sage: GF(7^2, names='aa')                                                  # needs sage.libs.pari
+             Finite Field in aa of size 7^2
+             sage: GF(7, names=('aa',))
+             Finite Field of size 7
+-            sage: GF(7^2, names=('aa',))
++            sage: GF(7^2, names=('aa',))                                               # needs sage.libs.pari
+             Finite Field in aa of size 7^2
+             sage: GF(7, names=['aa'])
+             Finite Field of size 7
+-            sage: GF(7^2, names=['aa'])
++            sage: GF(7^2, names=['aa'])                                                # needs sage.libs.pari
+             Finite Field in aa of size 7^2
+diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -786 +786 @@
+-            sage: k = GF(2, implementation='supercalifragilisticexpialidocious')
++            sage: k = GF(2, implementation='supercalifragilisticexpialidocious')          # needs sage.libs.ntl
 diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py
