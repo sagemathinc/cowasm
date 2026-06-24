@@ -1831,6 +1831,44 @@ empty. The same sampling pass still keeps `sage/combinat/subword.py`,
 quiet corpus because their remaining failures need separate namespace,
 semantics, or browser-scope work.
 
+Follow-up combinatorics namespace and corpus-growth pass:
+`sage/combinat/composition.py` and `sage/combinat/subword.py` are now included
+in the browser-profile corpus. Both files exposed missing Sage doctest globals
+caused by the WASI profile intentionally avoiding the full
+`sage.combinat.all` aggregate import at `sage.all` startup. The Sagelite
+doctest runner now seeds a focused set of lightweight combinatorics
+constructors in every doctest namespace: `IntegerVectors`, `Permutation`,
+`Subsets`, and `Word`. The standalone doctest smoke covers those globals and
+records the namespace behavior under doctest runner version 23.
+
+Focused reruns record:
+
+```text
+composition.py: 273 passed, 0 failed, 32 skipped
+subword.py: 108 passed, 0 failed, 0 skipped
+```
+
+The full corpus target passes with both files included and failures
+disallowed:
+
+```text
+sage -t passed: 4511 passed, 0 failed, 1000 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-composition-subword-v23.sqlite3`
+with 5,511 total block rows across 37 files. The saved block- and file-failure
+cluster queries are empty. The Sagelite standalone target also passes after a
+full rebuild:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The same sampling pass still keeps `sage/combinat/permutation.py` out of the
+quiet corpus because its current failures remain broader than doctest namespace
+fidelity: Singular/plural, GAP, graph, permutation-group, and matrix-constructor
+coverage need separate browser-scope or runtime work.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

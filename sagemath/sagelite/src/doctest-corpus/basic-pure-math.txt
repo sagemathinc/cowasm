@@ -22,10 +22,12 @@ src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
 src/sage/combinat/combination.py
+src/sage/combinat/composition.py
 src/sage/combinat/subset.py
 src/sage/combinat/composition_signed.py
 src/sage/combinat/derangements.py
 src/sage/combinat/perfect_matching.py
+src/sage/combinat/subword.py
 src/sage/combinat/tuple.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
