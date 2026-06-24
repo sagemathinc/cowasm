@@ -413,6 +413,23 @@ The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 25,
 and about 330 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-24 integer-vector
+corpus-growth pass:
+
+```text
+sage -t passed: 5151 passed, 0 failed, 1107 skipped
+```
+
+That run records 6,258 block rows in
+`/tmp/sagelite-corpus-integer-vector.sqlite3`, with no block-level failures
+and no file-level errors. It covers the current 47-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/integer_vector.py` to the previous clean browser-profile
+baseline. The focused rerun records
+`integer_vector.py: 248 passed, 0 failed, 37 skipped`. The Sagelite doctest
+runner now seeds the lightweight `IntegerListsLex` constructor in the common
+doctest namespace and records this behavior under runner version 26.
+
 Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
 `python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
 currently blocked during WASM configure by `mimalloc requires stdatomic.h`.
@@ -2030,6 +2047,37 @@ Direct probes against the staged Sagelite package pass for all three surfaces.
 The full standalone target passes after a rebuild, so these checks now run
 from the normal package target alongside the Node import ladder, doctest smoke,
 and Electron resource smoke:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+Follow-up integer-vector corpus-growth pass:
+`sage/combinat/integer_vector.py` is now included in the browser-profile
+corpus. The file exposed the same focused doctest-namespace boundary as recent
+combinatorics additions: Sage examples expect `IntegerListsLex` to be
+available without importing the full `sage.combinat.all` aggregate at
+`sage.all` startup. The Sagelite doctest runner now seeds `IntegerListsLex`
+alongside `IntegerVectors` and records this namespace behavior under doctest
+runner version 26.
+
+Focused rerun:
+
+```text
+integer_vector.py: 248 passed, 0 failed, 37 skipped
+```
+
+The full corpus target passes with `integer_vector.py` included and failures
+disallowed:
+
+```text
+sage -t passed: 5151 passed, 0 failed, 1107 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-integer-vector.sqlite3` with
+6,258 total block rows across 47 files. The saved block- and file-failure
+cluster queries are empty. The Sagelite standalone target also passes after
+the doctest smoke was extended to cover the seeded `IntegerListsLex` global:
 
 ```text
 sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
