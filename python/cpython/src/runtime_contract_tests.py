@@ -208,6 +208,33 @@ class RuntimeContractTests(unittest.TestCase):
             self.assertTrue(link.is_symlink())
             self.assertEqual(link.read_text(), "symlink-target")
 
+    def test_unicode_fromformat_integer_fields(self):
+        def keyword_only(*, value=None):
+            return value
+
+        with self.assertRaisesRegex(
+            TypeError,
+            r"keyword_only\(\) takes 0 positional arguments but 1 was given",
+        ):
+            keyword_only(5)
+
+        for code, expected in [
+            ("[].pop(3)", "pop index out of range"),
+            ("'{0}'.format()", "Replacement index 0 out of range"),
+        ]:
+            with self.subTest(code=code):
+                result = self.run_child(
+                    (
+                        "try:\n"
+                        f"    {code}\n"
+                        "except Exception as err:\n"
+                        "    print(err)\n"
+                    ),
+                    capture_output=True,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn(expected, result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

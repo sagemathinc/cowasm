@@ -56,6 +56,7 @@ patches=(
   24-wasip1-multiarch-alias.patch
   25-tuple-resize-same-size-noop.patch
   26-wasi-float-exponent-format.patch
+  27-wasi-unicode-fromformat-integers.patch
 )
 
 for patch_name in "${patches[@]}"; do
