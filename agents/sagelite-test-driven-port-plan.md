@@ -1227,6 +1227,24 @@ The next backend pass can use this as the first clean standalone baseline for
 deciding whether to move selected Sagelite probes or doctest execution from the
 older `python-wasm` worker toward the validated `python-wasi-sdk` backend.
 
+A follow-up backend-contract pass added a focused `python-wasi-sdk` probe to
+the Sagelite standalone target for the CPython `PyUnicode_FromFormat` integer
+field regression that previously showed up in doctest diagnostics such as
+`gamma() takes exactly  positional arguments ( given)`. The probe imports
+`sage.all` under the packaged Sagelite `PYTHONPATH`, then checks that a pure
+Python positional-argument `TypeError` still includes the numeric fields:
+
+```text
+keyword_only() takes 0 positional arguments but 1 was given
+```
+
+This keeps the formatting fix covered in the actual Sagelite package context
+without prematurely switching `sage -t` away from the known-working
+`python-wasm` worker. A direct `python-wasi-sdk` probe of the rational
+`(1/2).gamma(5)` path is still too broad for this backend boundary because it
+currently reaches the missing `mpmath` dependency before the intended
+argument-count diagnostic.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

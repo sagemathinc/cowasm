@@ -573,6 +573,17 @@ run_wasi_sdk_python_import "import sage.all" "import sys
 assert sys.platform == 'wasi'
 import sage.all
 print('sagelite-wasi-sdk-ok import sage.all')"
+run_wasi_sdk_python_import "unicode typeerror integer fields after sage.all" "import sage.all
+def keyword_only(*, value=None):
+    return value
+try:
+    keyword_only(5)
+except TypeError as err:
+    message = str(err)
+else:
+    raise AssertionError('keyword_only should reject positional arguments')
+assert 'takes 0 positional arguments but 1 was given' in message, message
+print('sagelite-wasi-sdk-ok unicode typeerror integer fields')"
 run_wasi_sdk_python_import "remote-file browser guard" "import sys
 import sage.misc.all
 assert 'ssl' not in sys.modules
