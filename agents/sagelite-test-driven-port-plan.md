@@ -1200,6 +1200,33 @@ failure and decide whether it is a packaging-resource dependency, a
 `python-wasm` runtime-only issue, or another browser-profile import that should
 fail closed before switching the doctest corpus to `python-wasi-sdk`.
 
+A follow-up Electron-resource smoke pass inspected that blocker and found a
+stale negative PARI expectation rather than a packaging or relative-resource
+failure. The staged runtime now supports `Pari(5)`, `objtogen('2+3')`, and
+Sage-facing `factor_using_pari(...)`, while the Electron smoke still expected
+those calls to fail closed with the older "full Gen conversion" boundary. The
+smoke now asserts the supported conversions and PARI-backed integer
+factorization.
+
+Validation:
+
+```sh
+make -C sagemath/sagelite test-wasi-sdk-standalone
+```
+
+The target rebuilt the patched Sagelite tree, passed the `python-wasi-sdk`
+startup probes, passed the Node import ladder, passed the doctest smoke
+(`9 passed, 0 failed, 7 skipped`), audited 518 Electron resource side modules,
+and passed both staged and relocated Electron resource smokes:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The next backend pass can use this as the first clean standalone baseline for
+deciding whether to move selected Sagelite probes or doctest execution from the
+older `python-wasm` worker toward the validated `python-wasi-sdk` backend.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
@@ -1283,5 +1310,5 @@ The next milestone is complete when:
 - `integer_ring.pyx` and at least five other curated files are included;
 - random, optional, long, and deferred tests are classified correctly;
 - failures can be grouped into actionable root-cause clusters;
-- the fast Sagelite standalone smoke remains separate and still passes up to
-  the known Electron-shaped resource blocker.
+- the fast Sagelite standalone smoke remains separate and passes its Node,
+  `python-wasi-sdk`, doctest, and Electron resource probes.

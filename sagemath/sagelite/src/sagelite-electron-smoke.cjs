@@ -270,22 +270,10 @@ except PariError as err:
 else:
     raise AssertionError('PARI division by zero did not raise PariError')
 assert str(pari('13*17')) == '221'
-for label, thunk in [
-    ('non-string Pari input', lambda: pari(5)),
-    ('Gen conversion', lambda: objtogen('2+3')),
-]:
-    try:
-        thunk()
-    except NotImplementedError as err:
-        assert 'full Gen conversion' in str(err)
-    else:
-        raise AssertionError(f'{label} should fail closed on WASI')
-try:
-    factor_using_pari(ZZ(360))
-except NotImplementedError as err:
-    assert 'full Gen conversion' in str(err)
-else:
-    raise AssertionError('Sage PARI factorization should fail closed until full Gen conversion is ported')
+assert str(pari(5)) == '5'
+assert str(objtogen('2+3')) == '5'
+assert factor_using_pari(ZZ(360)) == [(ZZ(2), 3), (ZZ(3), 2), (ZZ(5), 1)]
+assert factor_using_pari(ZZ(2**31 - 1)) == [(ZZ(2147483647), 1)]
 
 A = matrix(ZZ, [[1, 2], [3, 4]])
 assert A.det() == ZZ(-2)
