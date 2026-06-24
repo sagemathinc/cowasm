@@ -220,6 +220,13 @@ the non-skipped block pass rate is 100%. The remaining failures are all
 file-level runtime clusters: 3 `wasm_signature_mismatch` dynamic-import
 failures and 2 NTL/libcxx `wasm_trap` failures.
 
+Follow-up loader-diagnostic pass: rerunning the same corpus after rebuilding
+`core/dylink` from TypeScript keeps the total at 1699 passed, 5 failed, and
+329 skipped, but the signature-mismatch cluster now identifies the failing
+import as `function signature mismatch resolving __assert_fail from <main>`.
+The two trap failures still group at the NTL/libcxx ostream
+`memory access out of bounds` frame.
+
 Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
 `python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
 currently blocked during WASM configure by `mimalloc requires stdatomic.h`.

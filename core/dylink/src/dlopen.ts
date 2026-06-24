@@ -1270,9 +1270,27 @@ export default class DlopenManger {
     library: Library
   ): Function | null | undefined {
     // Two places that could have the pointer:
-    const ptr =
-      library.symToPtr?.[name] ??
-      (library.instance.exports[`__WASM_EXPORT__${name}`] as Function)?.();
+    let ptr = library.symToPtr?.[name];
+    if (ptr == null) {
+      const exportName = `__WASM_EXPORT__${name}`;
+      const exported = library.instance.exports[exportName] as Function | undefined;
+      if (typeof exported == "function") {
+        try {
+          ptr = exported();
+        } catch (err) {
+          if (/function signature mismatch/i.test(String(err))) {
+            const detail = `${name} from ${library.path || "<main>"}`;
+            const annotated = new WebAssembly.RuntimeError(
+              `function signature mismatch resolving ${detail}`
+            );
+            const originalStack = err instanceof Error ? err.stack : String(err);
+            annotated.stack = `${annotated.stack}\nCaused by: ${originalStack}`;
+            throw annotated;
+          }
+          throw err;
+        }
+      }
+    }
     if (ptr != null) {
       const f = this.functionTable.get(ptr);
       return typeof f == "function" ? f : undefined;
