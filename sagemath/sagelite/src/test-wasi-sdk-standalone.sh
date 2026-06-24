@@ -585,6 +585,47 @@ assert (y + 2) * (y + 3) == y**2 + 5*y + 6
 assert list(factor(2**31 - 1)) == [(ZZ(2147483647), 1)]
 assert prime_pi(10**6) == 78498
 print('sagelite-wasi-sdk-ok exact math smoke')"
+run_wasi_sdk_python_import "linear algebra smoke" "from sage.all import ZZ, QQ
+from sage.matrix.constructor import identity_matrix, matrix
+A = matrix(ZZ, [[1, 2], [3, 4]])
+assert A.det() == ZZ(-2)
+assert A * A == matrix(ZZ, [[7, 10], [15, 22]])
+assert A.transpose() == matrix(ZZ, [[1, 3], [2, 4]])
+assert A.change_ring(QQ) == matrix(QQ, [[1, 2], [3, 4]])
+B = matrix(QQ, [[1, 2], [3, 5]])
+assert B.det() == QQ(-1)
+assert B.inverse() * B == identity_matrix(QQ, 2)
+D = matrix(QQ, [[1, 2, 3], [0, 1, 4], [5, 6, 0]])
+assert D.det() == QQ(1)
+assert D.inverse() * D == identity_matrix(QQ, 3)
+print('sagelite-wasi-sdk-ok linear algebra smoke')"
+run_wasi_sdk_python_import "finite enumeration smoke" "import sage.all
+from sage.combinat.combination import Combinations
+from sage.combinat.composition import Composition, Compositions
+from sage.combinat.derangements import Derangements
+from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
+from sage.combinat.subword import Subwords
+from sage.combinat.tuple import Tuples, UnorderedTuples
+from sage.sets.family import Family
+from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.sets.positive_integers import PositiveIntegers
+assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
+assert Composition([2, 1]).size() == 3
+assert Compositions(4).cardinality() == 8
+assert Derangements([1, 2, 3]).cardinality() == 2
+assert PerfectMatchings(4).cardinality() == 3
+assert PerfectMatching([2, 1, 4, 3]).number_of_crossings() == 0
+assert Subwords([1, 2, 3], 2).cardinality() == 3
+assert Tuples([1, 2], 3).cardinality() == 8
+assert UnorderedTuples([1, 2, 3], 2).list() == [(1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)]
+F = Family([1, 2, 3], lambda i: i * i)
+assert list(F) == [1, 4, 9]
+assert F.cardinality() == 3
+N = NonNegativeIntegers()
+assert 0 in N and 5 in N and -1 not in N
+P = PositiveIntegers()
+assert 1 in P and 5 in P and 0 not in P
+print('sagelite-wasi-sdk-ok finite enumeration smoke')"
 run_wasi_sdk_python_import "unicode typeerror integer fields after sage.all" "import sage.all
 def keyword_only(*, value=None):
     return value

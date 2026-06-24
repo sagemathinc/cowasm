@@ -1973,6 +1973,28 @@ full rebuild:
 sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
 ```
 
+Follow-up `python-wasi-sdk` backend-contract pass: the Sagelite standalone
+target now checks a broader packaged-runtime surface under the wasi-sdk CPython
+backend before the older `python-wasm` doctest worker is replaced. In addition
+to `sage.all` import, exact arithmetic, the Unicode `TypeError` formatting
+regression, and the remote-file browser guard, the standalone target now runs
+bounded `python-wasi-sdk` probes for:
+
+- integer and rational matrix arithmetic, determinants, inverses, and
+  change-of-ring behavior;
+- compact combinatorics constructors such as combinations, compositions,
+  derangements, perfect matchings, subwords, and tuples;
+- basic set families and the positive/non-negative integer sets.
+
+Direct probes against the staged Sagelite package pass for all three surfaces.
+The full standalone target passes after a rebuild, so these checks now run
+from the normal package target alongside the Node import ladder, doctest smoke,
+and Electron resource smoke:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
