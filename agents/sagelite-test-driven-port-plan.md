@@ -794,6 +794,17 @@ reaches much deeper into `integer.pyx` and `rational.pyx`:
 sage -t failed: 1621 passed, 119 failed, 293 skipped
 ```
 
+A follow-up browser-profile classification pass tagged additional symbolic
+integer/rational doctests in the Sagelite WASI source patch. These include
+symbolic integer powers, global symbolic `log(...)`, complex logarithm, and
+exact gamma examples that currently depend on Sage's symbolic layer rather
+than the browser-compatible pure integer/rational slice. A fresh corpus run
+against the patched build source now records:
+
+```text
+sage -t failed: 1621 passed, 101 failed, 311 skipped
+```
+
 The remaining file-level clusters are now the generic loader
 `wasm_signature_mismatch` in rational-field, integer-mod-ring, and matrix
 constructor paths, plus the NTL/libcxx `memory access out of bounds` trap in

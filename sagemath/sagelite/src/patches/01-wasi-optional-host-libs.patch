@@ -1363,3 +1363,72 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
                  if isinstance(modulus, str):
                      # A string specifies an algorithm to find a suitable modulus.
                      if modulus != "random" and modulus in self._modulus_cache[order]:
+--- a/src/sage/rings/integer.pyx
++++ b/src/sage/rings/integer.pyx
+@@ -2247,7 +2247,7 @@
+-            sage: x, y, z = var('x,y,z')
+-            sage: 2^(x + y + z)
++            sage: x, y, z = var('x,y,z')                                               # needs sage.symbolic
++            sage: 2^(x + y + z)                                                        # needs sage.symbolic
+             2^(x + y + z)
+-            sage: 2^(1/2)
++            sage: 2^(1/2)                                                              # needs sage.symbolic
+             sqrt(2)
+-            sage: 2^(-1/2)
++            sage: 2^(-1/2)                                                             # needs sage.symbolic
+            1/2*sqrt(2)
+@@ -2747,5 +2747,5 @@
+             sage: x = 3^100000
+-            sage: RR(log(RR(x), 3))
++            sage: RR(log(RR(x), 3))                                                    # needs sage.symbolic
+             100000.000000000
+-            sage: RR(log(RR(x + 100000), 3))
++            sage: RR(log(RR(x + 100000), 3))                                           # needs sage.symbolic
+            100000.000000000
+@@ -2873,3 +2873,3 @@
+             sage: x = 3^100000
+-            sage: log(x, 3)
++            sage: log(x, 3)                                                            # needs sage.symbolic
+            100000
+@@ -2930,4 +2930,4 @@
+-            sage: 8.log(-2)
++            sage: 8.log(-2)                                                            # needs sage.symbolic
+             3*log(2)/(I*pi + log(2))
+            sage: (-10).log(prec=53)
+            2.30258509299405 + 3.14159265358979*I
+@@ -2937,2 +2937,2 @@
+-            sage: 8.log(0)
++            sage: 8.log(0)                                                             # needs sage.symbolic
+            0
+@@ -4788,8 +4788,8 @@
+-            sage: gamma(5)
++            sage: gamma(5)                                                             # needs sage.symbolic
+             24
+-            sage: gamma(0)
++            sage: gamma(0)                                                             # needs sage.symbolic
+             Infinity
+-            sage: gamma(-1)
++            sage: gamma(-1)                                                            # needs sage.symbolic
+             Infinity
+-            sage: gamma(-2^150)
++            sage: gamma(-2^150)                                                        # needs sage.symbolic
+             Infinity
+         """
+--- a/src/sage/rings/rational.pyx
++++ b/src/sage/rings/rational.pyx
+@@ -3268,10 +3268,10 @@
+-            sage: gamma(1/2)
++            sage: gamma(1/2)                                                           # needs sage.symbolic
+             sqrt(pi)
+-            sage: gamma(7/2)
++            sage: gamma(7/2)                                                           # needs sage.symbolic
+             15/8*sqrt(pi)
+-            sage: gamma(-3/2)
++            sage: gamma(-3/2)                                                          # needs sage.symbolic
+             4/3*sqrt(pi)
+-            sage: gamma(6/1)
++            sage: gamma(6/1)                                                           # needs sage.symbolic
+             120
+-            sage: gamma(1/3)
++            sage: gamma(1/3)                                                           # needs sage.symbolic
+            gamma(1/3)
