@@ -86,6 +86,7 @@ from sage.all import (
     Integers,
     GF,
     PolynomialRing,
+    Compositions,
     binomial,
     factor,
     factorial,
@@ -103,7 +104,7 @@ from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.monoids.free_abelian_monoid import FreeAbelianMonoid
 from sage.coding.hamming_code import HammingCode
 from sage.combinat.combination import Combinations
-from sage.combinat.composition import Composition, Compositions
+from sage.combinat.composition import Composition
 from sage.combinat.composition_signed import SignedCompositions
 from sage.combinat.integer_lists import IntegerListsLex
 from sage.combinat.integer_vector import IntegerVectors

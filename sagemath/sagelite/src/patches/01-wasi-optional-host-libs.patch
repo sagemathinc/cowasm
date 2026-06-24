@@ -1049,7 +1049,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')  # needs cysignals.alarm
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,84 @@
+@@ -253,74 +253,85 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1069,6 +1069,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -from sage.interfaces.all import *
 +if sys.platform == 'wasi':
 +    from sage.categories.cartesian_product import cartesian_product
++    from sage.combinat.composition import Compositions
 +    from sage.functions.log import exp, log
 +    from primecountpy.primecount import prime_pi as _primecount_prime_pi
 +
@@ -2654,8 +2655,9 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
              sage: k.<a> = GF(2^15, implementation='givaro')                                       # needs sage.libs.linbox
              sage: k.<a> = GF(2^15, implementation='ntl')                                          # needs sage.libs.ntl
 -            sage: k.<a> = GF(2^15, implementation='pari')
+-            sage: k.<a> = GF(3^60, implementation='modn')
 +            sage: k.<a> = GF(2^15, implementation='pari')                                             # needs sage.libs.pari
-             sage: k.<a> = GF(3^60, implementation='modn')
++            sage: k.<a> = GF(3^60, implementation='modn')                                             # needs sage.libs.pari
              Traceback (most recent call last):
              ...
 @@ -806,7 +806,7 @@

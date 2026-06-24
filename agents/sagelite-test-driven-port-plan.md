@@ -684,6 +684,7 @@ src/sage/combinat/combinat.py
 src/sage/combinat/combination.py
 src/sage/combinat/dlx.py
 src/sage/combinat/misc.py
+src/sage/combinat/necklace.py
 src/sage/combinat/output.py
 src/sage/combinat/restricted_growth.py
 src/sage/combinat/sidon_sets.py
@@ -1684,16 +1685,32 @@ failure sets, while `homset.py` reaches an NTL dynamic-import boundary at
 `ZZ_pContext::restore`. Those are better handled as separate focused runtime
 or browser-scope passes instead of adding noisy dashboard coverage.
 
-The full corpus target passes with the new file included:
+Latest checked local corpus run after the 2026-06-24 necklace corpus-growth
+pass:
 
 ```text
-sage -t passed: 2516 passed, 0 failed, 785 skipped
+sage -t passed: 5635 passed, 0 failed, 1240 skipped
 ```
 
-That run is recorded in
-`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` as run `2` with
-3,301 total block rows for the latest run. The saved block- and file-failure
-cluster queries are empty.
+That run records 6,875 block rows in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, with empty
+`block-failure-clusters.sql` and `file-error-clusters.sql` results. The
+curated browser-profile corpus now has 53 files, adding
+`sage/combinat/necklace.py`:
+
+```text
+necklace.py: 75 passed, 0 failed, 1 skipped
+```
+
+The pass exposes `Compositions` from the lightweight WASI `sage.all`
+namespace, matching Sage startup expectations for necklace doctests without
+importing the full `sage.combinat.all` surface. The packaged Sagelite smoke
+now imports `Compositions` through `sage.all` to keep that namespace contract
+covered. The same pass also marks the `GF(3^60, implementation='modn')`
+finite-field diagnostic example as `# needs sage.libs.pari`; in the current
+browser profile that path reaches cypari2/PARI `Gen.ispower` and can trap
+before Sage raises the expected `ValueError`, so it belongs with the deferred
+PARI-backed finite-field scope until the runtime path is made safe.
 
 Follow-up corpus-growth pass: `sage/rings/numbers_abc.py` is another compact
 clean addition to the browser-profile corpus. A focused rerun records:
