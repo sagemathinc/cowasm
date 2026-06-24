@@ -2695,3 +2695,9 @@ diff -urN a/src/sage/combinat/combinat.py b/src/sage/combinat/combinat.py
 @@ -1018 +1018 @@
 -        sage: all(lah_number(n, k) == sum(S1(n, j) * S2(j, k) for j in [k..n])
 +        sage: all(lah_number(n, k) == sum(S1(n, j) * S2(j, k) for j in [k..n])  # needs sage.libs.gap
+diff -urN a/src/sage/combinat/subsets_hereditary.py b/src/sage/combinat/subsets_hereditary.py
+--- a/src/sage/combinat/subsets_hereditary.py
++++ b/src/sage/combinat/subsets_hereditary.py
+@@ -67 +67 @@
+-        sage: sorted(subsets_with_hereditary_property(f, range(4), ncpus=2))
++        sage: sorted(subsets_with_hereditary_property(f, range(4), ncpus=2))       # needs cysignals.alarm

@@ -503,6 +503,27 @@ larger adjacent files such as `sage/sets/set.py`, `sage/combinat/partition.py`,
 quiet corpus because their failures still cluster around broader set,
 partition, permutation, or combinatorial-generation semantics.
 
+Latest checked local corpus run after the 2026-06-24 hereditary-subsets
+corpus-growth pass:
+
+```text
+sage -t passed: 5641 passed, 0 failed, 1250 skipped
+```
+
+That run records 6,891 block rows in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, with no
+block-level failures and no file-level errors. It covers the current 54-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/subsets_hereditary.py` to the previous clean
+browser-profile baseline. The focused rerun records
+`subsets_hereditary.py: 6 passed, 0 failed, 10 skipped`; the added WASI patch
+classifies the file's parallel-only `ncpus=2` example as
+`# needs cysignals.alarm`, matching the existing browser-profile boundary for
+fork/alarm-backed Sage parallelism. The latest run metadata records CoWasm
+commit `604adba6753bc04026bb31254c309a092da53ea8`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 26,
+and about 378 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
@@ -695,6 +716,7 @@ src/sage/combinat/cartesian_product.py
 src/sage/combinat/backtrack.py
 src/sage/combinat/composition.py
 src/sage/combinat/subset.py
+src/sage/combinat/subsets_hereditary.py
 src/sage/combinat/composition_signed.py
 src/sage/combinat/derangements.py
 src/sage/combinat/perfect_matching.py
@@ -1711,6 +1733,33 @@ finite-field diagnostic example as `# needs sage.libs.pari`; in the current
 browser profile that path reaches cypari2/PARI `Gen.ispower` and can trap
 before Sage raises the expected `ValueError`, so it belongs with the deferred
 PARI-backed finite-field scope until the runtime path is made safe.
+
+Follow-up corpus-growth probe: `sage/combinat/subsets_hereditary.py` is a
+small clean addition once its parallel-only `ncpus=2` example is classified as
+`# needs cysignals.alarm`. The browser-profile runtime lacks the fork/alarm
+stack used by Sage's `parallel(...)` decorator, but the single-process exact
+subset enumeration examples are useful corpus signal. A focused rerun records:
+
+```text
+subsets_hereditary.py: 6 passed, 0 failed, 10 skipped
+```
+
+The full corpus target passes with the new file included:
+
+```text
+sage -t passed: 5641 passed, 0 failed, 1250 skipped
+```
+
+That run is recorded in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` as run `4`, with
+6,891 total block rows for the latest run. The saved block- and file-failure
+cluster queries are empty.
+
+The same sampling pass kept `sage/combinat/subsets_pairwise.py` out of the
+quiet corpus because its remaining failures cluster around self-equality and
+pickling behavior for locally defined predicates in the doctest namespace, not
+a simple missing startup symbol. `sage/combinat/quickref.py` was also left out
+because its failures are broad missing combinatorics/words startup imports.
 
 Follow-up corpus-growth pass: `sage/rings/numbers_abc.py` is another compact
 clean addition to the browser-profile corpus. A focused rerun records:

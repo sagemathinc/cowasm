@@ -37,6 +37,7 @@ src/sage/combinat/cartesian_product.py
 src/sage/combinat/backtrack.py
 src/sage/combinat/composition.py
 src/sage/combinat/subset.py
+src/sage/combinat/subsets_hereditary.py
 src/sage/combinat/composition_signed.py
 src/sage/combinat/derangements.py
 src/sage/combinat/perfect_matching.py
