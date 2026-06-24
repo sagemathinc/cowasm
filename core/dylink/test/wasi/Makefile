@@ -61,6 +61,20 @@ build/wasi-sdk/archive-callback.o: archive-callback.c
 build/wasi-sdk/libarchive-callback.a: build/wasi-sdk/archive-callback.o
 	${WASI_SDK_AR} rcs build/wasi-sdk/libarchive-callback.a build/wasi-sdk/archive-callback.o
 
+build/wasi-sdk/pari-state-archive.o: pari-state-archive.c
+	mkdir -p build/wasi-sdk
+	${WASI_SDK_CLANG} -target wasm32-wasip1 \
+		-O0 \
+		-DCOWASM_WASI_SDK_TEST \
+		-fPIC \
+		-nostdlib \
+		-c \
+		pari-state-archive.c \
+		-o build/wasi-sdk/pari-state-archive.o
+
+build/wasi-sdk/libpari-state.a: build/wasi-sdk/pari-state-archive.o
+	${WASI_SDK_AR} rcs build/wasi-sdk/libpari-state.a build/wasi-sdk/pari-state-archive.o
+
 build/wasi-sdk/dynamic-library.so: dynamic-library.c build/wasi-sdk/libarchive-callback.a
 	mkdir -p build/wasi-sdk
 	${WASI_SDK_CLANG} -target wasm32-wasip1 \
@@ -118,6 +132,35 @@ build/wasi-sdk/consumer.so: consumer.c build/wasi-sdk/provider.so
 		build/wasi-sdk/provider.so \
 		-o build/wasi-sdk/consumer.so
 
+build/wasi-sdk/pari-state-provider.so: pari-state-provider.c build/wasi-sdk/libpari-state.a
+	mkdir -p build/wasi-sdk
+	${WASI_SDK_CLANG} -target wasm32-wasip1 \
+		-O0 \
+		-fPIC \
+		-shared \
+		-nostdlib \
+		-Wl,--allow-undefined \
+		-Wl,--no-entry \
+		-Wl,--export=provider_installs_pari_recover_callback \
+		pari-state-provider.c \
+		build/wasi-sdk/libpari-state.a \
+		-o build/wasi-sdk/pari-state-provider.so
+
+build/wasi-sdk/pari-state-consumer.so: pari-state-consumer.c build/wasi-sdk/libpari-state.a
+	mkdir -p build/wasi-sdk
+	${WASI_SDK_CLANG} -target wasm32-wasip1 \
+		-O0 \
+		-fPIC \
+		-shared \
+		-nostdlib \
+		-Wl,--allow-undefined \
+		-Wl,--no-entry \
+		-Wl,--export=consumer_does_not_share_provider_pari_state \
+		-Wl,--export=consumer_installs_local_pari_recover_callback \
+		pari-state-consumer.c \
+		build/wasi-sdk/libpari-state.a \
+		-o build/wasi-sdk/pari-state-consumer.so
+
 build/wasi-sdk-archive/app.wasm: app.c ../../dist/wasm/libdylink-wasi-sdk.a
 	mkdir -p build/wasi-sdk-archive
 	${WASI_SDK_CLANG} -target wasm32-wasip1 \
@@ -152,7 +195,15 @@ build/wasi-sdk-archive/consumer.so: build/wasi-sdk/consumer.so
 	mkdir -p build/wasi-sdk-archive
 	cp build/wasi-sdk/consumer.so build/wasi-sdk-archive/consumer.so
 
-build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so build/wasi-sdk/plain-setjmp.so build/wasi-sdk/provider.so build/wasi-sdk/consumer.so
+build/wasi-sdk-archive/pari-state-provider.so: build/wasi-sdk/pari-state-provider.so
+	mkdir -p build/wasi-sdk-archive
+	cp build/wasi-sdk/pari-state-provider.so build/wasi-sdk-archive/pari-state-provider.so
+
+build/wasi-sdk-archive/pari-state-consumer.so: build/wasi-sdk/pari-state-consumer.so
+	mkdir -p build/wasi-sdk-archive
+	cp build/wasi-sdk/pari-state-consumer.so build/wasi-sdk-archive/pari-state-consumer.so
+
+build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so build/wasi-sdk/plain-setjmp.so build/wasi-sdk/provider.so build/wasi-sdk/consumer.so build/wasi-sdk/pari-state-provider.so build/wasi-sdk/pari-state-consumer.so
 	node check-wasi-sdk-abi.js build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so build/wasi-sdk/plain-setjmp.so
 	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' U dlopen'
 	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' U dlsym'
@@ -161,11 +212,12 @@ build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.
 	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' T printf$$'
 	${WASI_SDK_STRINGS} build/wasi-sdk/dynamic-library.so | grep '^dylink\.0$$'
 	${WASI_SDK_STRINGS} build/wasi-sdk/consumer.so | grep 'provider\.so'
+	${WASI_SDK_STRINGS} build/wasi-sdk/pari-state-provider.so | grep 'pari_state_raise'
 	! ${WASI_SDK_STRINGS} build/wasi-sdk/app.wasm | grep 'needed_dynlibs'
 	! ${WASI_SDK_STRINGS} build/wasi-sdk/dynamic-library.so | grep 'needed_dynlibs'
 	touch build/wasi-sdk/.checked
 
-build/wasi-sdk-archive/.checked: build/wasi-sdk-archive/app.wasm build/wasi-sdk-archive/dynamic-library.so build/wasi-sdk-archive/plain-setjmp.so build/wasi-sdk-archive/provider.so build/wasi-sdk-archive/consumer.so
+build/wasi-sdk-archive/.checked: build/wasi-sdk-archive/app.wasm build/wasi-sdk-archive/dynamic-library.so build/wasi-sdk-archive/plain-setjmp.so build/wasi-sdk-archive/provider.so build/wasi-sdk-archive/consumer.so build/wasi-sdk-archive/pari-state-provider.so build/wasi-sdk-archive/pari-state-consumer.so
 	node check-wasi-sdk-abi.js build/wasi-sdk-archive/app.wasm build/wasi-sdk-archive/dynamic-library.so build/wasi-sdk-archive/plain-setjmp.so
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' U dlopen'
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' U dlsym'
@@ -176,6 +228,7 @@ build/wasi-sdk-archive/.checked: build/wasi-sdk-archive/app.wasm build/wasi-sdk-
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' T __WASM_EXPORT__printf$$'
 	! ${WASI_SDK_STRINGS} build/wasi-sdk-archive/app.wasm | grep 'needed_dynlibs'
 	${WASI_SDK_STRINGS} build/wasi-sdk-archive/dynamic-library.so | grep 'archive_callback_probe'
+	${WASI_SDK_STRINGS} build/wasi-sdk-archive/pari-state-consumer.so | grep 'pari_state_raise'
 	touch build/wasi-sdk-archive/.checked
 
 test-wasm: build/wasm/app.wasm build/wasm/dynamic-library.wasm.so

@@ -159,6 +159,22 @@ int add_provider_data_relocation(int n) {
   FUN_PTR f = (FUN_PTR)dlsym(handle, "add_provider_data_relocation");
   return (*f)(n);
 }
+
+int pari_callback_state_is_module_local() {
+  void* provider_handle = dlopen("./pari-state-provider.so", 2);
+  FUN_VOID_PTR provider =
+      (FUN_VOID_PTR)dlsym(provider_handle, "provider_installs_pari_recover_callback");
+  if (!(*provider)()) {
+    return 0;
+  }
+
+  void* consumer_handle = dlopen("./pari-state-consumer.so", 2);
+  FUN_VOID_PTR consumer_unset =
+      (FUN_VOID_PTR)dlsym(consumer_handle, "consumer_does_not_share_provider_pari_state");
+  FUN_VOID_PTR consumer_local =
+      (FUN_VOID_PTR)dlsym(consumer_handle, "consumer_installs_local_pari_recover_callback");
+  return (*consumer_unset)() && (*consumer_local)();
+}
 #endif
 
 // This is going to get called by the dynamic library to do something.
@@ -223,6 +239,11 @@ int main() {
 
   printf("add_provider_data_relocation(2022) = %d\n", add_provider_data_relocation(2022));
   assert(add_provider_data_relocation(2022) == 2022 + 41);
+
+  int pari_state_is_module_local = pari_callback_state_is_module_local();
+  printf("pari_callback_state_is_module_local() = %d\n",
+         pari_state_is_module_local);
+  assert(pari_state_is_module_local == 1);
 #endif
 
   int n = add5077_using_lib_using_main(389);

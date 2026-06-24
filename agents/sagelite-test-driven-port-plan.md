@@ -731,6 +731,25 @@ either export/share one PARI provider side module, link converter modules
 against that provider, or make a narrowly scoped module-local initialization
 strategy that installs a correct local recovery callback before any PARI call.
 
+That two-side-module dylink smoke is now landed in `core/dylink/test/wasi`.
+It links the same PIC archive containing a PARI-shaped recovery callback slot
+into two independent side modules. The provider module installs and exercises
+its local callback, then the consumer module verifies that this did not
+initialize its own archive copy before installing and exercising its own local
+callback. Both `test-wasi-sdk-next` and `test-wasi-sdk-archive-next` pass,
+which confirms the WebAssembly side-module behavior that duplicated static
+PARI state is module-local, not process-global.
+
+This makes the Sagelite `err_recover` cluster more concrete: if
+`convert_sage` expects cypari2's PARI initialization to configure its recovery
+callback slot, that cannot work while both extensions link independent PARI
+archive copies. The next implementation pass should inspect and change the
+Sagelite/PARI extension layout instead of adding more generic loader fallbacks:
+either share one PARI-owning provider module across cypari2 and Sage PARI
+converter extensions, or add a narrowly scoped initialization path that installs
+a valid local recovery callback in each PARI-containing Sage side module before
+it can call PARI error paths.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
