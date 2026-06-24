@@ -629,6 +629,26 @@ A focused rerun after adding that smoke still fails at `integer.pyx:3112` for
 PARI's callback mutation/recovery path rather than the already-covered generic
 archive callback relocation path.
 
+A 2026-06-24 Sagelite cross-file experiment tested whether the difference
+between the passing `cypari2` PARI probes and the failing Sagelite extension was
+simply that the probes link `libsetjmp.a` while Sagelite extensions leave SJLJ
+helpers unresolved for the loader. Two global Sagelite variants were tried and
+rejected:
+
+- enabling `-mllvm -wasm-enable-sjlj -mllvm -wasm-use-legacy-eh=false` for all
+  Sagelite C/C++ extension compilation and linking `-lsetjmp`;
+- leaving normal Sagelite C/C++ codegen unchanged but adding `-lsetjmp` to the
+  global extension link arguments.
+
+Both variants rebuilt successfully but regressed the standalone smoke before
+the PARI doctest could be tested: `make -C sagemath/sagelite
+test-wasi-sdk-standalone` returned through the known blocker path after the
+Node.js import process exited while importing `sage.structure.element`. The
+next pass should avoid a global Sagelite `libsetjmp` link change. If this
+direction is revisited, make it module-scoped to the PARI extensions or inspect
+how adding the setjmp archive perturbs side-module table layout before changing
+the build defaults.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
