@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 21;
+const doctestRunnerVersion = 22;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -782,6 +782,18 @@ def _cowasm_exception_detail(exc):
     return exc.__class__.__name__
 
 
+def __cowasm_resolve_core_lazy_namespace(namespace):
+    for name in ("RIF", "RDF"):
+        value = namespace.get(name)
+        get_object = getattr(value, "_get_object", None)
+        if get_object is None:
+            continue
+        try:
+            namespace[name] = get_object()
+        except BaseException:
+            pass
+
+
 def _cowasm_tags(source):
     tags = []
     checks = [
@@ -1066,6 +1078,7 @@ def __cowasm_module_name_from_path(filename):
 def __cowasm_namespace(filename):
     namespace = {}
     exec("from sage.all import *", namespace)
+    __cowasm_resolve_core_lazy_namespace(namespace)
     try:
         from sage.functions.generalized import sign, sgn
         namespace.setdefault("sign", sign)

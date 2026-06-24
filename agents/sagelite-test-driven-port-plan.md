@@ -46,7 +46,8 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   - records specific deferred skip metadata for `# known bug`,
     `# not implemented`, and `# not tested`;
   - seeds the namespace with `sage.all` and, where possible, the tested Sage
-    module globals.
+    module globals, while resolving focused core lazy imports such as `RIF`
+    and `RDF` so ABC/isinstance doctests see concrete field instances.
 - The doctest runner checkpoints SQLite-bound JSON after each file, so a WASM
   trap in a later file preserves completed file results and records the current
   crashing file separately.
@@ -325,22 +326,22 @@ allocation through `objtogen([1, 2, 3])`. Focused probes confirm that
 now reaches the next higher-level cypari2 object-model gap,
 `Gen._rational_()`, rather than a WASM function-signature mismatch.
 
-Latest checked local corpus run after verifying the expanded checked-in
-pure-math corpus:
+Latest checked local corpus run after adding the rings ABC doctests:
 
 ```text
-sage -t passed: 2779 passed, 0 failed, 863 skipped
+sage -t passed: 2849 passed, 0 failed, 918 skipped
 ```
 
-That run records 3,642 block rows in `/tmp/sagelite-corpus-current.sqlite3`,
+That run records 3,767 block rows in `/tmp/sagelite-corpus-after-abc.sqlite3`,
 with no block-level failures and no file-level errors. It covers the current
-14-file `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus:
+17-file `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus:
 the original integer, rational, finite-field, polynomial-constructor, and
-matrix files plus `fast_arith.pyx`, `generic.py`, `monomials.py`, `big_oh.py`,
-`numbers_abc.py`, and `infinity.py`. The latest run metadata records CoWasm
-commit `b38943355ad4977ea0ff2049c723987d969d6e45`, Sagelite package commit
+matrix files plus `abc.pyx`, `real_field.py`, `fast_arith.pyx`, `generic.py`,
+`continued_fraction_gosper.py`, `monomials.py`, `big_oh.py`, `numbers_abc.py`,
+and `infinity.py`. The latest run metadata records CoWasm commit
+`69cfe3bd736764c52cbbf22a022995caf7a16587`, Sagelite package commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner version
-21.
+22.
 
 Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
 `python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
@@ -508,11 +509,14 @@ The checked-in corpus currently contains:
 
 ```text
 src/sage/rings/integer_ring.pyx
+src/sage/rings/abc.pyx
 src/sage/rings/integer.pyx
 src/sage/rings/rational.pyx
 src/sage/rings/rational_field.py
+src/sage/rings/real_field.py
 src/sage/rings/fast_arith.pyx
 src/sage/rings/generic.py
+src/sage/rings/continued_fraction_gosper.py
 src/sage/rings/monomials.py
 src/sage/rings/big_oh.py
 src/sage/rings/numbers_abc.py
