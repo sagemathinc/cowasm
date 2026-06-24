@@ -1221,6 +1221,20 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
  from sage.rings.invariants.all import *
 --- a/src/sage/rings/integer.pyx
 +++ b/src/sage/rings/integer.pyx
+@@ -3201,6 +3201,10 @@
+         value_fits_slong = mpz_fits_slong_p(self.value)
+         if method is None:
+-            method = 'pari' if value_fits_slong else 'sage'
++            import sys
++            if sys.platform == 'wasi':
++                method = 'sage'
++            else:
++                method = 'pari' if value_fits_slong else 'sage'
+         if method == 'pari':
+             if not value_fits_slong:
+                 raise ValueError("method `pari` requested, but integer value is too large")
+--- a/src/sage/rings/integer.pyx
++++ b/src/sage/rings/integer.pyx
 @@ -6348,6 +6348,10 @@
              1041334
          """

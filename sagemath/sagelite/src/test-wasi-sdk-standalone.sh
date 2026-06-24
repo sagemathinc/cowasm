@@ -897,6 +897,8 @@ assert ZZ(-1).is_unit()
 assert not ZZ(7).is_unit()
 assert ZZ(6).divides(ZZ(42))
 assert not ZZ(6).divides(ZZ(43))
+assert ZZ(-3).divisors() == [ZZ(1), ZZ(3)]
+assert ZZ(28).divisors() == [ZZ(1), ZZ(2), ZZ(4), ZZ(7), ZZ(14), ZZ(28)]
 assert ZZ(2).powermod(10, 17) == ZZ(4)
 assert ZZ(2).powermod(ZZ(20), ZZ(17)) == ZZ(16)
 assert ZZ(2).inverse_mod(ZZ(5)) == ZZ(3)

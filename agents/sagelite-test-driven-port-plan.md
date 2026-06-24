@@ -750,6 +750,26 @@ converter extensions, or add a narrowly scoped initialization path that installs
 a valid local recovery callback in each PARI-containing Sage side module before
 it can call PARI error paths.
 
+A follow-up Sagelite WASI patch now defaults `Integer.divisors(method=None)` to
+Sage's native divisor construction instead of importing the PARI converter for
+small integers. An explicit `method='pari'` still exercises the PARI converter
+path. This clears the focused `integer.pyx:3112` reproduction:
+
+```text
+passed: ../sagelite/src/sage/rings/integer.pyx (1 passed, 0 failed, 0 skipped)
+```
+
+The standalone Sagelite target still reaches its known Electron-shaped resource
+soft blocker after the Node import ladder passes, including the new
+`ZZ(-3).divisors()` smoke. The curated corpus total remains
+`203 passed, 7 failed, 27 skipped`, but the integer-file crash moved forward to
+`integer.pyx:5709` at `K = NumberField(x^2 - 2, 'beta')`. The active PARI
+cluster is now broader and more clearly tied to Sage's converter modules:
+`convert_gmp...so.err_recover` is reached through
+`new_gen_from_rational`, while rational-field, integer-mod-ring, and matrix
+constructor files still hit loader table-signature mismatches and finite-field
+constructor paths still hit the NTL/libcxx memory trap.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
