@@ -1245,6 +1245,16 @@ without prematurely switching `sage -t` away from the known-working
 currently reaches the missing `mpmath` dependency before the intended
 argument-count diagnostic.
 
+A follow-up backend-contract pass extended the packaged `python-wasi-sdk`
+standalone probe from import-only coverage to the same exact-math surface used
+by the Node smoke. After importing `sage.all` under the staged Sagelite
+`PYTHONPATH`, it now checks integer and rational arithmetic, univariate
+polynomial construction over `QQ` and `ZZ`, PARI-backed integer factorization,
+and `prime_pi(10^6)`. This gives the backend migration a concrete
+mathematical contract while keeping full doctest execution on the
+known-working `python-wasm` worker until the remaining backend differences are
+understood.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

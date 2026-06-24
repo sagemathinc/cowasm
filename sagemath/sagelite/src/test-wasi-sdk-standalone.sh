@@ -573,6 +573,18 @@ run_wasi_sdk_python_import "import sage.all" "import sys
 assert sys.platform == 'wasi'
 import sage.all
 print('sagelite-wasi-sdk-ok import sage.all')"
+run_wasi_sdk_python_import "exact math smoke" "from sage.all import ZZ, QQ, PolynomialRing, factor, prime_pi
+assert ZZ(2) + ZZ(3) == ZZ(5)
+assert QQ(6, 15) == QQ(2, 5)
+R = PolynomialRing(QQ, 'x')
+x = R.gen()
+assert (x + 1) * (x - 1) == x**2 - 1
+ZZx = PolynomialRing(ZZ, 'x')
+y = ZZx.gen()
+assert (y + 2) * (y + 3) == y**2 + 5*y + 6
+assert list(factor(2**31 - 1)) == [(ZZ(2147483647), 1)]
+assert prime_pi(10**6) == 78498
+print('sagelite-wasi-sdk-ok exact math smoke')"
 run_wasi_sdk_python_import "unicode typeerror integer fields after sage.all" "import sage.all
 def keyword_only(*, value=None):
     return value
