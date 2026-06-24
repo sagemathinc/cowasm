@@ -127,18 +127,35 @@ That run attempted all eight curated files. The current non-`integer_ring.pyx`
 failures are file-level runtime/linkage errors, which are preserved in SQLite
 instead of aborting the corpus.
 
-Latest checked local corpus run after the 2026-06-24 formatter fallback pass:
+Checked local corpus run after the 2026-06-24 formatter fallback pass:
 
 ```text
 sage -t failed: 1682 passed, 31 failed, 320 skipped
 ```
 
-That run records 2,033 total blocks in `/tmp/sagelite-corpus-after-format.sqlite3`.
-The formatter fallback pass makes representative truncated-exponent reruns such
-as `integer.pyx:3727` and `rational.pyx:3935` pass. Rational underflow examples
-such as `rational.pyx:3899` still fail with `0.0` and should be treated as a
-separate numeric-conversion cluster. The remaining latest-run failure classes
-are 18 `output_mismatch`, 3 `TypeError`, 3 `wasm_signature_mismatch`, 2
+That run recorded 2,028 block rows in
+`/tmp/sagelite-corpus-after-format.sqlite3`, plus five file-level errors that
+are included in the failed count. The formatter fallback pass made
+representative truncated-exponent reruns such as `integer.pyx:3727` and
+`rational.pyx:3935` pass, leaving rational underflow examples as a separate
+numeric-conversion cluster.
+
+Latest checked local corpus run after the 2026-06-24 rational subnormal
+conversion pass:
+
+```text
+sage -t failed: 1696 passed, 17 failed, 320 skipped
+```
+
+That run records 2,028 block rows in
+`/tmp/sagelite-corpus-after-rational-ldexp.sqlite3`, plus the same five
+file-level errors. The rational conversion pass makes the representative
+smallest-normal and subnormal reruns pass, for example `rational.pyx:3905` and
+`rational.pyx:3921` in the patched source copy. A full `rational.pyx` rerun now
+reports `468 passed, 5 failed, 112 skipped`; the remaining rational failures
+are separate `sqrt`, `log`, and `gamma` clusters. The remaining latest-run
+failure classes are 4
+`output_mismatch`, 3 `TypeError`, 3 `wasm_signature_mismatch`, 2
 `ModuleNotFoundError`, 2 `wasm_trap`, and one each of `NameError`,
 `NotImplementedError`, and `OSError`.
 

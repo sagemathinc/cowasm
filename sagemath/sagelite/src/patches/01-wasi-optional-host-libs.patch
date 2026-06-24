@@ -259,6 +259,31 @@ diff -urN a/src/sage/rings/integer_ring.pyx b/src/sage/rings/integer_ring.pyx
 diff -urN a/src/sage/rings/rational.pyx b/src/sage/rings/rational.pyx
 --- a/src/sage/rings/rational.pyx
 +++ b/src/sage/rings/rational.pyx
+@@ -3874,6 +3874,12 @@
+
+
+ # The except value is just some random double, it doesn't matter what it is.
++cdef inline double ldexp_subnormal_safe(double d, Py_ssize_t shift) noexcept:
++    if shift < -1022:
++        return d * 2.2250738585072014e-308 * ldexp(1.0, shift + 1022)
++    return ldexp(d, shift)
++
++
+ cdef double mpq_get_d_nearest(mpq_t x) except? -648555075988944.5:
+     """
+     Convert a ``mpq_t`` to a ``double``, with round-to-nearest-even.
+@@ -4061,7 +4067,7 @@
+     cdef double d = <double>q64
+     if resultsign < 0:
+         d = -d
+-    return ldexp(d, shift)
++    return ldexp_subnormal_safe(d, shift)
+
+
+ def make_rational(s):
+diff -urN a/src/sage/rings/rational.pyx b/src/sage/rings/rational.pyx
+--- a/src/sage/rings/rational.pyx
++++ b/src/sage/rings/rational.pyx
 @@ -65,7 +65,13 @@
  import operator
  import fractions
