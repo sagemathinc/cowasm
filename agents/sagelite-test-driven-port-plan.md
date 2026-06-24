@@ -394,6 +394,25 @@ records CoWasm commit `d56472a039b800e18cd8b9118daefa56fed68bec`, Sagelite
 package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
 runner version 25, and about 300 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-24 small combinatorics and
+condition-set corpus expansion:
+
+```text
+sage -t passed: 4903 passed, 0 failed, 1070 skipped
+```
+
+That run records 5,973 block rows in
+`/tmp/sagelite-corpus-after-combinat-sets-expansion.sqlite3`, with no
+block-level failures and no file-level errors. It covers the current 46-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/restricted_growth.py`, `sage/combinat/sidon_sets.py`,
+`sage/combinat/ranker.py`, `sage/combinat/gray_codes.py`, and
+`sage/sets/condition_set.py` to the previous clean browser-profile baseline.
+The latest run metadata records CoWasm commit
+`8b6bb86616666faac9f0dfc13920df7a34253868`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 25,
+and about 330 seconds of elapsed time.
+
 Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
 `python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
 currently blocked during WASM configure by `mimalloc requires stdatomic.h`.
@@ -579,6 +598,11 @@ src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
 src/sage/combinat/combination.py
 src/sage/combinat/misc.py
+src/sage/combinat/restricted_growth.py
+src/sage/combinat/sidon_sets.py
+src/sage/combinat/ranker.py
+src/sage/combinat/gray_codes.py
+src/sage/combinat/backtrack.py
 src/sage/combinat/composition.py
 src/sage/combinat/subset.py
 src/sage/combinat/composition_signed.py
@@ -588,6 +612,8 @@ src/sage/combinat/subword.py
 src/sage/combinat/tuple.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
+src/sage/sets/finite_enumerated_set.py
+src/sage/sets/condition_set.py
 src/sage/sets/totally_ordered_finite_set.py
 src/sage/sets/non_negative_integers.py
 src/sage/sets/positive_integers.py
