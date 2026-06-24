@@ -41,6 +41,7 @@ mkdir -p "$dist_dir" "$build_dir/cowasm-meson-build" "$probe_dir/bin" "$probe_di
 status_file="$dist_dir/status.txt"
 log_file="$dist_dir/meson-setup.log"
 node_import_log="$dist_dir/node-import.log"
+wasi_sdk_python_import_log="$dist_dir/wasi-sdk-python-import.log"
 followups_file="$dist_dir/followups.txt"
 side_module_audit_log="$dist_dir/side-module-audit.log"
 node_import_timeout="${SAGELITE_NODE_IMPORT_TIMEOUT:-180s}"
@@ -485,7 +486,9 @@ node_pythonpath_parts=(
 )
 node_pythonpath="$(IFS=:; echo "${node_pythonpath_parts[*]}")"
 : >"$node_import_log"
+: >"$wasi_sdk_python_import_log"
 node_import_index=0
+wasi_sdk_python_import_index=0
 
 run_node_import() {
   local label="$1"
@@ -526,6 +529,36 @@ run_node_import() {
   fi
 }
 
+run_wasi_sdk_python_import() {
+  local label="$1"
+  local code="$2"
+  local marker="__sagelite_wasi_sdk_python_import_done_${wasi_sdk_python_import_index}__"
+  local wrapped_code
+  wasi_sdk_python_import_index=$((wasi_sdk_python_import_index + 1))
+  printf -v wrapped_code '%s\nprint("%s")' "$code" "$marker"
+  printf '## %s\n' "$label" >>"$wasi_sdk_python_import_log"
+  set +e
+  PYTHONPATH="$node_pythonpath" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    timeout "$node_import_timeout" \
+      "$bin_dir/python-wasi-sdk" -c "$wrapped_code" \
+      >>"$wasi_sdk_python_import_log" 2>&1
+  local import_status=$?
+  set -e
+  if [ "$import_status" -eq 124 ]; then
+    tail -120 "$wasi_sdk_python_import_log" >&2
+    record_blocker "sagelite-blocked: python-wasi-sdk import timed out after $node_import_timeout at $label; see $wasi_sdk_python_import_log for the first runtime blocker."
+  fi
+  if [ "$import_status" -ne 0 ]; then
+    tail -120 "$wasi_sdk_python_import_log" >&2
+    record_blocker "sagelite-blocked: python-wasi-sdk import failed at $label; see $wasi_sdk_python_import_log for the first runtime blocker."
+  fi
+  if ! grep -Fqx "$marker" "$wasi_sdk_python_import_log"; then
+    tail -120 "$wasi_sdk_python_import_log" >&2
+    record_blocker "sagelite-blocked: python-wasi-sdk import exited before completing $label; see $wasi_sdk_python_import_log for the first runtime blocker."
+  fi
+}
+
 run_node_import "import sage" "import sage; print('sagelite-node-ok import sage')"
 run_node_import "import sage.env" "import sage.env; print(sage.env.SAGE_VERSION)"
 run_node_import "import sage.version" "import sage.env
@@ -536,6 +569,24 @@ run_node_import "import sage.structure.element" "import sage.structure.element; 
 run_node_import "integer arithmetic" "from sage.rings.integer_ring import ZZ; assert ZZ(7) < ZZ(9); print(ZZ(2) + ZZ(3))"
 run_node_import "rational arithmetic" "from sage.rings.rational_field import QQ; print(QQ(2) / QQ(5) + QQ(1) / QQ(5))"
 run_node_import "import sage.all" "import sage.all; print('sagelite-node-ok import sage.all')"
+run_wasi_sdk_python_import "import sage.all" "import sys
+assert sys.platform == 'wasi'
+import sage.all
+print('sagelite-wasi-sdk-ok import sage.all')"
+run_wasi_sdk_python_import "remote-file browser guard" "import sys
+import sage.misc.all
+assert 'ssl' not in sys.modules
+assert '_ssl' not in sys.modules
+from sage.misc.remote_file import get_remote_file
+try:
+    get_remote_file('https://example.com/sagelite.txt')
+except NotImplementedError as err:
+    assert 'WASI browser profile' in str(err)
+else:
+    raise AssertionError('remote file downloads should fail closed on WASI')
+assert 'ssl' not in sys.modules
+assert '_ssl' not in sys.modules
+print('sagelite-wasi-sdk-ok remote-file browser guard')"
 run_node_import "exact math smoke" "from sage.all import ZZ, QQ, PolynomialRing, factor, prime_pi
 assert ZZ(2) + ZZ(3) == ZZ(5)
 assert QQ(6, 15) == QQ(2, 5)

@@ -1155,6 +1155,33 @@ The next backend pass can continue past this import-time `_ssl` blocker and
 look for the next `python-wasi-sdk` startup dependency before switching the
 Sagelite doctest runner backend.
 
+A follow-up backend-probe pass added that check to the Sagelite standalone
+target instead of switching the doctest runner backend prematurely. The target
+now runs bounded `python-wasi-sdk` probes against the staged Sagelite
+site-packages after the normal Node `python-wasm` `sage.all` import succeeds.
+Those probes verify that `sage.all` imports under the wasi-sdk CPython backend
+and that the remote-file browser guard still raises before importing `ssl` or
+`_ssl`.
+
+Validation:
+
+```sh
+make -C sagemath/sagelite test-wasi-sdk-standalone
+```
+
+The run completed the new `python-wasi-sdk` probes, the existing Node import
+ladder, and the doctest smoke (`9 passed, 0 failed, 7 skipped`), then exited
+successfully through the known Electron-shaped staged-resource soft blocker:
+
+```text
+sagelite-blocked: Electron-shaped relative resources smoke failed at staged resources
+```
+
+The next backend pass should inspect that staged-resource Electron smoke
+failure and decide whether it is a packaging-resource dependency, a
+`python-wasm` runtime-only issue, or another browser-profile import that should
+fail closed before switching the doctest corpus to `python-wasi-sdk`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
