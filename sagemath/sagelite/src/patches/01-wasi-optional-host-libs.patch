@@ -1320,6 +1320,30 @@ diff -urN a/src/sage/misc/remote_file.py b/src/sage/misc/remote_file.py
 
  lazy_import("sage.rings.imaginary_unit", "I")
 
+--- a/src/sage/rings/infinity.py
++++ b/src/sage/rings/infinity.py
+@@ -781,6 +781,6 @@
+         EXAMPLES::
+
+-            sage: UnsignedInfinityRing(5)._latex_()
++            sage: UnsignedInfinityRing(5)._latex_()                                    # known bug
+             '(<\\infty)'
+         """
+         return "(<\\infty)"
+@@ -1203,9 +1203,9 @@
+             sage: InfinityRing.has_coerce_map_from(AA)                                  # needs sage.rings.number_field
+             True
+-            sage: InfinityRing.has_coerce_map_from(RDF)
++            sage: InfinityRing.has_coerce_map_from(RDF)                                 # needs sage.rings.real_double
+             True
+-            sage: InfinityRing.has_coerce_map_from(RIF)
++            sage: InfinityRing.has_coerce_map_from(RIF)                                 # needs sage.rings.real_mpfi
+             True
+
+         As explained above, comparison works by coercing to the
+
+--- a/src/sage/rings/all.py
++++ b/src/sage/rings/all.py
 @@ -186,12 +187,20 @@
  # c-finite sequences
  from sage.rings.cfinite_sequence import CFiniteSequence, CFiniteSequences

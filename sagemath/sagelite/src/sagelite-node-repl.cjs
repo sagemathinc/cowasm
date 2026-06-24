@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 20;
+const doctestRunnerVersion = 21;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1066,6 +1066,12 @@ def __cowasm_module_name_from_path(filename):
 def __cowasm_namespace(filename):
     namespace = {}
     exec("from sage.all import *", namespace)
+    try:
+        from sage.functions.generalized import sign, sgn
+        namespace.setdefault("sign", sign)
+        namespace.setdefault("sgn", sgn)
+    except BaseException:
+        pass
     module_name = __cowasm_module_name_from_path(filename)
     if module_name:
         try:
@@ -1168,7 +1174,58 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             return self.__check_tolerant_output(want_body, got, tolerance, optionflags)
         if super().check_output(want, got, optionflags):
             return True
+        if self.__check_exception_line_output(want, got, optionflags):
+            return True
+        if self.__check_traceback_output(want, got, optionflags):
+            return True
         return super().check_output(str(want), str(got), optionflags)
+
+    def __check_exception_line_output(self, want, got, optionflags):
+        want_lines = [line.strip() for line in want.strip().splitlines() if line.strip()]
+        got_lines = [line.strip() for line in got.strip().splitlines() if line.strip()]
+        if len(want_lines) != 1 or len(got_lines) != 1:
+            return False
+        return self.__exception_lines_match(want_lines[0], got_lines[0], optionflags)
+
+    def __check_traceback_output(self, want, got, optionflags):
+        want_error = self.__traceback_exception_line(want)
+        got_error = self.__traceback_exception_line(got)
+        if want_error is None or got_error is None:
+            return False
+        return self.__exception_lines_match(want_error, got_error, optionflags)
+
+    def __traceback_exception_line(self, text):
+        lines = [line.strip() for line in text.strip().splitlines() if line.strip()]
+        if not lines or lines[0] != "Traceback (most recent call last):":
+            return None
+        for line in reversed(lines[1:]):
+            if line == "...":
+                continue
+            return line
+        return None
+
+    def __exception_lines_match(self, want, got, optionflags):
+        want_class, want_detail = self.__split_exception_line(want)
+        got_class, got_detail = self.__split_exception_line(got)
+        if want_class is None or got_class is None:
+            return False
+        if not self.__looks_like_exception_class(want_class):
+            return False
+        if want_class.rsplit(".", 1)[-1] != got_class.rsplit(".", 1)[-1]:
+            return False
+        return super().check_output(want_detail, got_detail, optionflags)
+
+    def __looks_like_exception_class(self, name):
+        return name.rsplit(".", 1)[-1][:1].isupper()
+
+    def __split_exception_line(self, line):
+        head, separator, detail = line.partition(":")
+        if not separator:
+            return None, None
+        head = head.strip()
+        if not re.match(r"^[A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*$", head):
+            return None, None
+        return head, detail.strip()
 
     def __check_tolerant_output(self, want, got, tolerance, optionflags):
         mode = tolerance.get("mode")

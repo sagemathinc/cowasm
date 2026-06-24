@@ -1501,6 +1501,34 @@ that belongs in a focused PARI object-model pass rather than a quiet corpus
 growth commit. `imaginary_unit.py` was also not added because it has no current
 doctest signal.
 
+Follow-up runner-fidelity and corpus-growth pass: `sage/rings/infinity.py`
+exposed a reusable doctest-runner mismatch rather than a Sagelite semantic
+failure. Python's doctest passes only the final exception line to the output
+checker for expected exceptions, while Sagelite reports qualified exception
+classes such as `sage.rings.infinity.SignError`. The Sagelite runner now
+accepts qualified exception class names when the unqualified class and message
+match, and its doctest namespace explicitly seeds Sage's usual `sign`/`sgn`
+helpers when available.
+
+The remaining `infinity.py` browser-profile rows are classified in the WASI
+source patch: one non-raw docstring latex escape drift is deferred as
+`# known bug`, and the `RDF`/`RIF` coercion checks are marked as real
+double/interval coverage. A focused rerun records:
+
+```text
+infinity.py: 253 passed, 0 failed, 70 skipped
+```
+
+The full corpus target passes with the new file included:
+
+```text
+sage -t passed: 2779 passed, 0 failed, 863 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-infinity.sqlite3` with 3,642
+total block rows for the latest run. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
