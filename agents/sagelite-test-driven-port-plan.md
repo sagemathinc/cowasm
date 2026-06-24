@@ -813,6 +813,38 @@ state-sharing issue remains real, but the default browser-compatible corpus
 should not block on number-field-only norm examples until number fields are in
 scope.
 
+A later cypari2 focused-runtime pass exposed the PARI integer methods used by
+Sage's current integer doctests: `nextprime`, `ispseudoprime`,
+`isprimepower`, and `ispseudoprimepower`. These stay within the deliberately
+small `cypari2.gen` runtime surface while clearing a large
+`NotImplementedError` cluster from integer methods. A full `integer.pyx`
+doctest rerun improved from:
+
+```text
+971 passed, 61 failed, 181 skipped
+```
+
+to:
+
+```text
+995 passed, 37 failed, 181 skipped
+```
+
+The remaining integer-file failures are now split between output-mismatch
+semantics, eleven still-unsupported PARI object-model calls, a few coercion
+gaps for `PariValue`, and out-of-scope optional modules such as GAP and
+`cysignals.alarm`. The full curated corpus moved from:
+
+```text
+sage -t failed: 1623 passed, 90 failed, 320 skipped
+```
+
+to:
+
+```text
+sage -t failed: 1647 passed, 66 failed, 320 skipped
+```
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -14,7 +14,10 @@ Sagelite's Meson configure step to locate `cypari2`, for Cython to resolve the
 It is not yet the full `cypari2` runtime port. The placeholder `Gen` object
 and most conversion entry points intentionally fail closed for real PARI
 operations. The public `Pari()("...")` path now supports a small string-input
-runtime slice backed by the private Cython PARI probe.
+runtime slice backed by the private Cython PARI probe. The focused `Gen`
+runtime also exposes the PARI integer operations needed by Sagelite's current
+pure-integer doctest slice, including factorization, `nextprime`,
+`ispseudoprime`, `isprimepower`, and `ispseudoprimepower`.
 
 The standalone target now also builds private
 `cypari2._pari_runtime_probe` and `cypari2._pari_cython_probe` side modules

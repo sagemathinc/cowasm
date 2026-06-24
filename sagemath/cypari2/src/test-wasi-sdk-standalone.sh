@@ -306,6 +306,83 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_nextprime(GEN input,
+                                                  GEN *result,
+                                                  long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(nextprime(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_ispseudoprime(GEN input,
+                                                long flag,
+                                                long *result,
+                                                long *errnum) {
+      int ok = 1;
+
+      *result = 0;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = ispseudoprime(input, flag);
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_primepower(GEN input,
+                                                   int proven,
+                                                   long *power,
+                                                   GEN *base,
+                                                   long *errnum) {
+      int ok = 1;
+
+      *power = 0;
+      *base = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        if (proven) {
+          *power = isprimepower(input, base);
+        } else {
+          *power = ispseudoprimepower(input, base);
+        }
+        if (*base != NULL) {
+          *base = gclone(*base);
+        }
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_clone_ispower(GEN input,
                                                 GEN k,
                                                 int has_k,
@@ -505,6 +582,18 @@ cdef extern from *:
                                         int proof,
                                         GEN *result,
                                         long *errnum)
+    int cowasm_cypari2_gen_clone_nextprime(GEN input,
+                                           GEN *result,
+                                           long *errnum)
+    int cowasm_cypari2_gen_ispseudoprime(GEN input,
+                                         long flag,
+                                         long *result,
+                                         long *errnum)
+    int cowasm_cypari2_gen_clone_primepower(GEN input,
+                                            int proven,
+                                            long *power,
+                                            GEN *base,
+                                            long *errnum)
     int cowasm_cypari2_gen_clone_ispower(GEN input,
                                          GEN k,
                                          int has_k,
@@ -769,6 +858,41 @@ cdef class Gen(Gen_base):
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
+
+    def nextprime(self, _flag=True):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_nextprime(self.g, &result, &errnum):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def ispseudoprime(self, long flag=0):
+        cdef long result = 0
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_ispseudoprime(
+            self.g, flag, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return bool(result)
+
+    def isprimepower(self):
+        return self._primepower(True)
+
+    def ispseudoprimepower(self):
+        return self._primepower(False)
+
+    def _primepower(self, bint proven):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+        cdef long power = 0
+
+        if not cowasm_cypari2_gen_clone_primepower(
+            self.g, 1 if proven else 0, &power, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return int(power), _new_owned(result)
 
     def ispower(self, k=None):
         cdef GEN result = NULL
@@ -1421,6 +1545,24 @@ p, e = F
 assert [int(p[i]) for i in range(len(p))] == [2, 3, 5]
 assert [int(e[i]) for i in range(len(e))] == [3, 2, 1]
 assert int(pari(2**31 - 1).factor()[0][0]) == 2147483647
+assert int(pari(100).nextprime(True)) == 101
+assert int(pari(-37).nextprime(True)) == 2
+expected_nextprime_2_512 = int(
+    "134078079299425970995740249982058461274793658205923933777235614437217640"
+    "300735469768018742981669034276900318581864860508537538828119465699464336"
+    "49006084171"
+)
+assert int(pari(2**512).nextprime(True)) == expected_nextprime_2_512
+assert pari(2**31 - 1).ispseudoprime() is True
+assert pari(2**31).ispseudoprime() is False
+power, base = pari(3**100).isprimepower()
+assert power == 100
+assert int(base) == 3
+power, base = pari(997**100).ispseudoprimepower()
+assert power == 100
+assert int(base) == 997
+power, base = pari(998**100).ispseudoprimepower()
+assert power == 0
 assert tuple(map(int, pari(9).ispower())) == (2, 3)
 assert tuple(map(int, pari(17).ispower())) == (1, 17)
 assert pari(17).ispower(2) == (False, None)
