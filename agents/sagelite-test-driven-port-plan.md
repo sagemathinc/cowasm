@@ -1477,6 +1477,30 @@ That run is recorded in
 3,301 total block rows for the latest run. The saved block- and file-failure
 cluster queries are empty.
 
+Follow-up corpus-growth pass: `sage/rings/numbers_abc.py` is another compact
+clean addition to the browser-profile corpus. A focused rerun records:
+
+```text
+numbers_abc.py: 10 passed, 0 failed, 8 skipped
+```
+
+The skipped examples are explicit browser-profile optional coverage for NumPy,
+symbolic, and number-field features. The full corpus target passes with the
+new file included:
+
+```text
+sage -t passed: 2526 passed, 0 failed, 793 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-numbers-abc.sqlite3` with 3,319
+total block rows for the latest run. The saved block- and file-failure cluster
+queries are empty. The same sampling pass rejected `pari_ring.py` for this
+narrow iteration because its remaining failures are clustered around unsupported
+`cypari2.gen.Gen` arithmetic, comparison, inversion, and pickling operations;
+that belongs in a focused PARI object-model pass rather than a quiet corpus
+growth commit. `imaginary_unit.py` was also not added because it has no current
+doctest signal.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
