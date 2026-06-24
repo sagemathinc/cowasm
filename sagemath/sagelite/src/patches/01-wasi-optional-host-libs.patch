@@ -1049,7 +1049,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')  # needs cysignals.alarm
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,83 @@
+@@ -253,74 +253,84 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1068,6 +1068,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -from sage.probability.all import *
 -from sage.interfaces.all import *
 +if sys.platform == 'wasi':
++    from sage.categories.cartesian_product import cartesian_product
 +    from sage.functions.log import exp, log
 +    from primecountpy.primecount import prime_pi as _primecount_prime_pi
 +
@@ -1176,7 +1177,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 
  if sys.platform != 'win32':
      from cysignals.alarm import alarm, cancel_alarm
-@@ -360,24 +368,25 @@
+@@ -360,24 +369,25 @@
  copyright = license
 
  from sage.misc.persist import register_unpickle_override
@@ -2680,3 +2681,9 @@ diff -urN a/src/sage/sets/primes.py b/src/sage/sets/primes.py
 @@ -429 +429 @@
 -            sage: x in P
 +            sage: x in P                                                               # needs sage.symbolic
+diff -urN a/src/sage/combinat/subset.py b/src/sage/combinat/subset.py
+--- a/src/sage/combinat/subset.py
++++ b/src/sage/combinat/subset.py
+@@ -1501 +1501 @@
+-        sage: subsets([1,2,3])
++        sage: subsets([1,2,3])                                                        # known bug

@@ -437,6 +437,30 @@ Until that toolchain/configure issue is fixed, the rational
 `(1/2).gamma(5)` doctest still reports the old missing-integer TypeError text
 in the installed Sagelite runtime.
 
+Latest checked local corpus run after the 2026-06-24 cartesian-product
+corpus-growth pass:
+
+```text
+sage -t passed: 5218 passed, 0 failed, 1108 skipped
+```
+
+That run records 6,326 block rows in
+`/tmp/sagelite-corpus-after-cartesian-product.sqlite3`, with no block-level
+failures and no file-level errors. It covers the current 48-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/cartesian_product.py` to the previous clean
+browser-profile baseline. The pass exposes Sage's `cartesian_product`
+constructor from the WASI `sage.all` namespace, keeping the module's doctests
+on the same startup surface as upstream Sage without importing the broad
+`sage.categories.all` or `sage.sets.all` collections into the stripped WASI
+profile. The focused reruns record
+`cartesian_product.py: 68 passed, 0 failed, 0 skipped` and
+`subset.py: 278 passed, 0 failed, 3 skipped`; the extra `subset.py` skip
+defers the generator repr display drift where the WASM runtime omits the
+address prefix expected by Sage's historical doctest. The latest run metadata
+records node profile, runner version 26, and about 343 seconds of elapsed
+time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
@@ -619,6 +643,8 @@ src/sage/combinat/restricted_growth.py
 src/sage/combinat/sidon_sets.py
 src/sage/combinat/ranker.py
 src/sage/combinat/gray_codes.py
+src/sage/combinat/integer_vector.py
+src/sage/combinat/cartesian_product.py
 src/sage/combinat/backtrack.py
 src/sage/combinat/composition.py
 src/sage/combinat/subset.py
