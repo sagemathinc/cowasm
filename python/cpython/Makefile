@@ -163,7 +163,7 @@ run-native: ${DIST_NATIVE}/.built ${BIN}/python-native
 CPYTHON_WASM_PATCH_INPUTS = ${SRC}/prepare-wasm-build.sh ${SRC}/config.site ${DYLINK_LIBPYTHON_JS} $(wildcard ${SRC}/patches/*.patch)
 
 ${DYLINK_LIBPYTHON_JS}: $(wildcard ${CORE_PACKAGES}/dylink/src/*.ts) ${CORE_PACKAGES}/dylink/tsconfig.json
-	cd ${CORE_PACKAGES}/dylink && pnpm run build
+	cd ${CORE_PACKAGES}/dylink && ./node_modules/.bin/tsc -b
 
 ${BUILD_WASM}/.patched: ${TARBALL} ${CPYTHON_WASM_PATCH_INPUTS} ${SRC}/pyconfig.h
 	rm -rf ${BUILD_WASM}
@@ -372,7 +372,7 @@ ${BUILD_WASI_SDK}/Programs/libpython-wasi-sdk.o: ${BUILD_WASI_SDK}/Programs/libp
 		-c ${BUILD_WASI_SDK}/Programs/libpython.c \
 		-o ${BUILD_WASI_SDK}/Programs/libpython-wasi-sdk.o
 
-${BUILD_WASI_SDK}/python-wasi-sdk.wasm: ${BUILD_WASI_SDK}/Programs/python-wasi-sdk-wrapper.o ${BUILD_WASI_SDK}/Programs/libpython-wasi-sdk.o test-wasi-sdk-archive
+${BUILD_WASI_SDK}/python-wasi-sdk.wasm: ${BUILD_WASI_SDK}/Programs/python-wasi-sdk-wrapper.o ${BUILD_WASI_SDK}/Programs/libpython-wasi-sdk.o ${SRC}/check-wasi-sdk-python-abi.cjs test-wasi-sdk-archive
 	${BIN}/wasi-sdk-clang-next -target wasm32-wasip1 ${WASM_OPT} \
 		-fPIC \
 		-shared \
@@ -385,12 +385,7 @@ ${BUILD_WASI_SDK}/python-wasi-sdk.wasm: ${BUILD_WASI_SDK}/Programs/python-wasi-s
 		${BUILD_WASI_SDK}/libpython${PYTHON_MAJOR}.${PYTHON_MINOR}.a \
 		${WASI_SDK_HACL_LIBS} \
 		-o ${BUILD_WASI_SDK}/python-wasi-sdk.wasm
-	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'env.wasmSendString'
-	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'env._PyEM_TrampolineCall'
-	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'cowasm_python_init'
-	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'cowasm_python_terminal'
-	wasm-objdump -x ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F '__wasm_call_ctors'
-	wasm-objdump -h ${BUILD_WASI_SDK}/python-wasi-sdk.wasm | grep -F 'dylink.0'
+	node ${SRC}/check-wasi-sdk-python-abi.cjs ${BUILD_WASI_SDK}/python-wasi-sdk.wasm
 
 .PHONY: test-wasi-sdk-link
 test-wasi-sdk-link: ${BUILD_WASI_SDK}/python-wasi-sdk.wasm
@@ -417,7 +412,7 @@ ${DIST_WASI_SDK}/.install-cpython: node_modules ${BUILD_WASI_SDK}/python-wasi-sd
 	cp -R ${BUILD_WASI_SDK}/Include/. ${DIST_WASI_SDK}/include/${PYTHON_LIB}/
 	cp ${BUILD_WASI_SDK}/pyconfig.h ${DIST_WASI_SDK}/include/${PYTHON_LIB}/
 	cp -v ${POSIX_WASI_SDK}/*.h ${DIST_WASI_SDK}/include/${PYTHON_LIB}/
-	cd ${DIST_WASI_SDK}/lib && zip -qr dist/python-stdlib.zip ${PYTHON_LIB}
+	cd ${DIST_WASI_SDK}/lib && ${BIN}/python-native -m zipfile -c dist/python-stdlib.zip ${PYTHON_LIB}
 	touch ${DIST_WASI_SDK}/.install-cpython
 
 .PHONY: wasi-sdk-cpython

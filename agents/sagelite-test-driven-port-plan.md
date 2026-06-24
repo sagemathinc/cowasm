@@ -1033,21 +1033,25 @@ did not depend on `prepare-wasm-build.sh` or the CPython patch set. The
 Makefile now regenerates the WASM patched tree from the upstream tarball when
 those inputs change; the patch stage was checked to apply cleanly.
 
-Full runtime validation is still blocked earlier than the contract test:
+The 2026-06-24 wasi-sdk CPython backend pass unblocked this validation path.
+The `python/cpython` Makefile now rebuilds `core/dylink` with the local
+TypeScript compiler instead of triggering a workspace-wide `pnpm` install,
+checks the linked `python-wasi-sdk.wasm` ABI with a small Node/WebAssembly
+probe instead of requiring WABT's `wasm-objdump`, and creates the wasi-sdk
+stdlib archive with `python-native -m zipfile` instead of requiring a host
+`zip` binary. The default allocator configure path now reaches
+`stdatomic.h`, and the wasi-sdk runtime contract suite passes:
 
 ```sh
-make -C python/cpython test-runtime-contracts
-PYTHON_WASM_ALLOCATOR=pymalloc make -C python/cpython test-runtime-contracts
+make -C python/cpython test-wasi-sdk-runtime-contracts
 ```
 
-The default allocator run stops at configure because the current fresh
-`python-wasm` path requests mimalloc without `stdatomic.h`. The `pymalloc`
-run gets past that but then the C99 `libm` probe fails because the Zig-backed
-`cowasm-cc` link line cannot find `-lwasi-emulated-signal`,
-`-lwasi-emulated-getpid`, and `-lwasi-emulated-process-clocks`. The next pass
-should fix the fresh `python-wasm` configure/link environment or choose the
-intended wasi-sdk backend for that target, then rerun `test-runtime-contracts`
-and the focused Sagelite line:
+That run includes the `test_unicode_fromformat_integer_fields` regression for
+the missing `%zd` TypeError fields. Sagelite still imports the separate
+`python/python-wasm/dist/node.js` bundle, whose `python.wasm` and stdlib zip
+are older artifacts. The next pass should either refresh that bundle from the
+validated CPython backend or teach Sagelite to use the intended wasi-sdk
+backend, then rerun the focused Sagelite line:
 
 ```sh
 COWASM_PYTHON_WASM_NODE=/home/user/cowasm/python/python-wasm/dist/node.js \
