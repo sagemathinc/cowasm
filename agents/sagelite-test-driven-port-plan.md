@@ -1755,6 +1755,41 @@ That run is recorded in `/tmp/sagelite-corpus-sets-primes.sqlite3` with 4,422
 total block rows for the latest run. The saved block- and file-failure cluster
 queries are empty.
 
+Follow-up compact combinatorics corpus-growth pass:
+`sage/combinat/composition_signed.py`, `sage/combinat/derangements.py`,
+`sage/combinat/perfect_matching.py`, and `sage/combinat/tuple.py` are now
+included in the browser-profile corpus. These files match the existing
+standalone combinatorics smoke surface and add finite enumeration coverage
+without pulling the default dashboard into the broader permutation/subword
+failure clusters.
+
+Focused reruns record:
+
+```text
+composition_signed.py: 20 passed, 0 failed, 0 skipped
+derangements.py: 93 passed, 0 failed, 0 skipped
+perfect_matching.py: 115 passed, 0 failed, 12 skipped
+tuple.py: 66 passed, 0 failed, 3 skipped
+```
+
+The same sampling pass kept `sage/combinat/subset.py`,
+`sage/sets/finite_set_maps.py`, `sage/combinat/subword.py`,
+`sage/combinat/composition.py`, and `sage/combinat/permutation.py` out of this
+quiet corpus growth because they still have block-level failures. Those belong
+in focused runner, semantics, or browser-scope passes instead of being added
+to the clean corpus.
+
+The full corpus target passes with the four compact combinatorics files
+included and failures disallowed:
+
+```text
+sage -t passed: 3765 passed, 0 failed, 966 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-combinatorics.sqlite3` with
+4,731 total block rows for the latest run. The saved block- and file-failure
+cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

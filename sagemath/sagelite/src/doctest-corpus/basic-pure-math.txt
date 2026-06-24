@@ -22,6 +22,10 @@ src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
 src/sage/combinat/combination.py
+src/sage/combinat/composition_signed.py
+src/sage/combinat/derangements.py
+src/sage/combinat/perfect_matching.py
+src/sage/combinat/tuple.py
 src/sage/sets/integer_range.py
 src/sage/sets/non_negative_integers.py
 src/sage/sets/positive_integers.py
