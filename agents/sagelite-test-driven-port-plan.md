@@ -74,6 +74,11 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - The dynamic-loader fallback for side-module `bsearch` now performs binary
   search through an imported function-pointer comparator and is covered by the
   same WASI dylink smoke, including the archive-linked loader path.
+- The dynamic-loader fallback for side-module `snprintf`/`sprintf` now handles
+  common scalar integer, float, string, character, pointer, width, precision,
+  and sign formats. This fixes Sagelite doctests where side-module numeric
+  formatting previously produced truncated exponent text such as
+  `9.028340982349083e` instead of `9.028340982349083e+35`.
 - Block-level doctest failures record `failure_detail`, and the saved
   `block-failure-clusters.sql` query groups failed examples by class plus
   normalized detail instead of only by broad exception type.
@@ -122,15 +127,30 @@ That run attempted all eight curated files. The current non-`integer_ring.pyx`
 failures are file-level runtime/linkage errors, which are preserved in SQLite
 instead of aborting the corpus.
 
+Latest checked local corpus run after the 2026-06-24 formatter fallback pass:
+
+```text
+sage -t failed: 1682 passed, 31 failed, 320 skipped
+```
+
+That run records 2,033 total blocks in `/tmp/sagelite-corpus-after-format.sqlite3`.
+The formatter fallback pass makes representative truncated-exponent reruns such
+as `integer.pyx:3727` and `rational.pyx:3935` pass. Rational underflow examples
+such as `rational.pyx:3899` still fail with `0.0` and should be treated as a
+separate numeric-conversion cluster. The remaining latest-run failure classes
+are 18 `output_mismatch`, 3 `TypeError`, 3 `wasm_signature_mismatch`, 2
+`ModuleNotFoundError`, 2 `wasm_trap`, and one each of `NameError`,
+`NotImplementedError`, and `OSError`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
-still `203 passed, 7 failed, 27 skipped`, but the failures now split into
-narrower follow-up clusters: `integer.pyx` reaches a missing `getenv` import at
-line 3112 after clearing earlier `wcslen`, `qsort`, and ctype imports;
-PARI-backed rational/number-field setup reaches a side-module signature
-mismatch; finite-field and polynomial constructor paths reach libcxx/NTL traps;
-and several constructor imports still hit a dynamic symbol lookup signature
-mismatch.
+at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
+split into narrower follow-up clusters: `integer.pyx` reaches a missing
+`getenv` import at line 3112 after clearing earlier `wcslen`, `qsort`, and
+ctype imports; PARI-backed rational/number-field setup reaches a side-module
+signature mismatch; finite-field and polynomial constructor paths reach
+libcxx/NTL traps; and several constructor imports still hit a dynamic symbol
+lookup signature mismatch.
 
 That is already enough signal to start a real compatibility loop, but the
 runner and database still need hardening before results should be treated as a

@@ -12,6 +12,110 @@ const STACK_ALIGN = 16; // copied from emscripten
 // a runtime parameter.
 const STACK_SIZE = 1048576; // 1MB;  to use 64KB it would be 65536.
 
+export function formatDlopenCString(
+  format: string,
+  args: any[],
+  readCString: (ptr: number) => string
+): string {
+  let argIndex = 0;
+  return format.replace(
+    /%([-+ #0]*)(\*|\d+)?(?:\.(\*|\d+))?(?:hh|h|ll|l|j|z|t|L)?([diuoxXfFeEgGscp%])/g,
+    (_match, flags, widthText, precisionText, specifier) => {
+      if (specifier == "%") {
+        return "%";
+      }
+      let width = widthText == null ? undefined : Number(widthText);
+      if (widthText == "*") {
+        width = Number(args[argIndex++]);
+      }
+      let precision = precisionText == null ? undefined : Number(precisionText);
+      if (precisionText == "*") {
+        precision = Number(args[argIndex++]);
+      }
+      const value = args[argIndex++];
+      let text: string;
+      switch (specifier) {
+        case "d":
+        case "i":
+          text = String(Number(value) | 0);
+          break;
+        case "u":
+          text = String(Number(value) >>> 0);
+          break;
+        case "o":
+          text = (Number(value) >>> 0).toString(8);
+          break;
+        case "x":
+        case "X":
+          text = (Number(value) >>> 0).toString(16);
+          if (specifier == "X") {
+            text = text.toUpperCase();
+          }
+          break;
+        case "f":
+        case "F":
+          text =
+            precision == null
+              ? Number(value).toString()
+              : Number(value).toFixed(precision);
+          break;
+        case "e":
+        case "E":
+          text =
+            precision == null
+              ? Number(value).toExponential()
+              : Number(value).toExponential(precision);
+          if (specifier == "E") {
+            text = text.toUpperCase();
+          }
+          break;
+        case "g":
+        case "G":
+          text =
+            precision == null
+              ? Number(value).toString()
+              : Number(value).toPrecision(precision);
+          if (specifier == "G") {
+            text = text.toUpperCase();
+          }
+          break;
+        case "s":
+          text = value ? readCString(Number(value)) : "(null)";
+          if (precision != null) {
+            text = text.slice(0, precision);
+          }
+          break;
+        case "c":
+          text = String.fromCharCode(Number(value) & 0xff);
+          break;
+        case "p":
+          text = Number(value) ? `0x${Number(value).toString(16)}` : "(nil)";
+          break;
+        default:
+          text = "";
+      }
+      if (
+        flags.includes("+") &&
+        !text.startsWith("-") &&
+        /[diufFeEgG]/.test(specifier)
+      ) {
+        text = `+${text}`;
+      }
+      if (width != null && text.length < width) {
+        const pad = flags.includes("0") && !flags.includes("-") ? "0" : " ";
+        if (pad == "0" && /^[+-]/.test(text)) {
+          text = text[0] + pad.repeat(width - text.length) + text.slice(1);
+        } else if (flags.includes("-")) {
+          text = text + " ".repeat(width - text.length);
+        } else {
+          text = pad.repeat(width - text.length) + text;
+        }
+      }
+      return text;
+    }
+  );
+}
+
 export default class DlopenManger {
   private dlerrorPtr: number = 0;
   private errnoPtr: number = 0;
@@ -179,6 +283,35 @@ export default class DlopenManger {
       this.getenvPtrs[name] = ptr;
     }
     return this.getenvPtrs[name];
+  }
+
+  private writeCString(
+    ptr: number,
+    size: number | undefined,
+    text: string
+  ): number {
+    if (!ptr) {
+      return text.length;
+    }
+    const bytes = new TextEncoder().encode(text);
+    const memory = new Uint8Array(this.memory.buffer);
+    const capacity = size == null ? bytes.length + 1 : Math.max(0, size);
+    if (capacity > 0) {
+      memory.set(bytes.subarray(0, capacity - 1), ptr);
+      memory[ptr + Math.min(bytes.length, capacity - 1)] = 0;
+    }
+    return bytes.length;
+  }
+
+  private formatCString(formatPtr: number, args: any[]): string {
+    if (!formatPtr) {
+      return "";
+    }
+    return formatDlopenCString(
+      recvString(formatPtr, this.memory),
+      args,
+      (ptr: number) => recvString(ptr, this.memory)
+    );
   }
 
   dlopenEnvHandler(path: string) {
@@ -650,17 +783,24 @@ export default class DlopenManger {
           }
         }
       },
-      snprintf: (str: number, size: number) => {
-        if (str && size > 0) {
-          new Uint8Array(this.memory.buffer)[str] = 0;
-        }
-        return 0;
+      snprintf: (
+        str: number,
+        size: number,
+        formatPtr: number,
+        ...args: any[]
+      ) => {
+        return this.writeCString(
+          str,
+          size,
+          this.formatCString(formatPtr, args)
+        );
       },
-      sprintf: (str: number) => {
-        if (str) {
-          new Uint8Array(this.memory.buffer)[str] = 0;
-        }
-        return 0;
+      sprintf: (str: number, formatPtr: number, ...args: any[]) => {
+        return this.writeCString(
+          str,
+          undefined,
+          this.formatCString(formatPtr, args)
+        );
       },
       vfprintf: () => 0,
       vprintf: () => 0,

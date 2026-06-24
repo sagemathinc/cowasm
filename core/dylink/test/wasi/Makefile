@@ -205,6 +205,7 @@ build/wasi-sdk-archive/pari-state-consumer.so: build/wasi-sdk/pari-state-consume
 
 build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so build/wasi-sdk/plain-setjmp.so build/wasi-sdk/provider.so build/wasi-sdk/consumer.so build/wasi-sdk/pari-state-provider.so build/wasi-sdk/pari-state-consumer.so
 	node check-wasi-sdk-abi.js build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so build/wasi-sdk/plain-setjmp.so
+	node -e "const { formatDlopenCString } = require('../../dist/dlopen.js'); const read = (ptr) => ({1: 'ok'}[ptr] || ''); if (formatDlopenCString('e%+.02d', [35], read) !== 'e+35' || formatDlopenCString('%03d/%s/%c', [7, 1, 90], read) !== '007/ok/Z') process.exit(1);"
 	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' U dlopen'
 	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' U dlsym'
 	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' T malloc$$'
@@ -219,6 +220,7 @@ build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.
 
 build/wasi-sdk-archive/.checked: build/wasi-sdk-archive/app.wasm build/wasi-sdk-archive/dynamic-library.so build/wasi-sdk-archive/plain-setjmp.so build/wasi-sdk-archive/provider.so build/wasi-sdk-archive/consumer.so build/wasi-sdk-archive/pari-state-provider.so build/wasi-sdk-archive/pari-state-consumer.so
 	node check-wasi-sdk-abi.js build/wasi-sdk-archive/app.wasm build/wasi-sdk-archive/dynamic-library.so build/wasi-sdk-archive/plain-setjmp.so
+	node -e "const { formatDlopenCString } = require('../../dist/dlopen.js'); const read = (ptr) => ({1: 'ok'}[ptr] || ''); if (formatDlopenCString('e%+.02d', [35], read) !== 'e+35' || formatDlopenCString('%03d/%s/%c', [7, 1, 90], read) !== '007/ok/Z') process.exit(1);"
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' U dlopen'
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' U dlsym'
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' T malloc$$'
