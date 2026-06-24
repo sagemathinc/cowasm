@@ -676,6 +676,16 @@ PARI `err_recover` / side-module function-table signature compatibility and
 the NTL/libcxx memory trap. This removes one memory-corruption variable before
 continuing the PARI callback-slot investigation.
 
+A follow-up PARI-shaped dylink probe added a PIC archive callback global that
+is initialized to null, assigned at runtime to an archive-local
+`void (*)(long)` function, and then called indirectly through the side module.
+The direct and archive-linked WASI dylink smokes both pass. That rules out the
+generic form of PARI's `pari_init_opts()` assignment
+`cb_pari_err_recover = dflt_err_recover`; the remaining Sagelite
+`err_recover` failure is more likely tied to the actual cypari2/PARI
+initialization sequence, duplicated PARI state across extensions, or a later
+overwrite of the callback slot.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

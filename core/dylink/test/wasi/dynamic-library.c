@@ -101,6 +101,7 @@ int found_with_bsearch(void) {
 #ifdef COWASM_WASI_SDK_TEST
 static jmp_buf side_jmp;
 extern int archive_callback_probe(long value);
+extern int archive_runtime_callback_probe(long value);
 
 static void jump_back_to_side_setjmp(void) {
   longjmp(side_jmp, 7);
@@ -119,6 +120,11 @@ int side_setjmp_recovery(void) {
 EXPORTED_SYMBOL
 int archive_callback_from_pic_archive(void) {
   return archive_callback_probe(25) == 42;
+}
+
+EXPORTED_SYMBOL
+int archive_runtime_callback_from_pic_archive(void) {
+  return archive_runtime_callback_probe(26) == 43;
 }
 #endif
 

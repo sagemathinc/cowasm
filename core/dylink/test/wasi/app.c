@@ -139,6 +139,14 @@ int archive_callback_from_pic_archive() {
 }
 
 EXPORTED_SYMBOL
+int archive_runtime_callback_from_pic_archive() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f =
+      (FUN_VOID_PTR)dlsym(handle, "archive_runtime_callback_from_pic_archive");
+  return (*f)();
+}
+
+EXPORTED_SYMBOL
 int plain_setjmp_returns_zero() {
   void* handle = dlopen("./plain-setjmp.so", 2);
   FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "plain_setjmp_returns_zero");
@@ -205,6 +213,10 @@ int main() {
   printf("archive_callback_from_pic_archive() = %d\n",
          archive_callback_from_pic_archive());
   assert(archive_callback_from_pic_archive() == 1);
+
+  printf("archive_runtime_callback_from_pic_archive() = %d\n",
+         archive_runtime_callback_from_pic_archive());
+  assert(archive_runtime_callback_from_pic_archive() == 1);
 
   printf("plain_setjmp_returns_zero() = %d\n", plain_setjmp_returns_zero());
   assert(plain_setjmp_returns_zero() == 1);
