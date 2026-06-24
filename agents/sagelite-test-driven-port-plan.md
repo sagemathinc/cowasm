@@ -770,6 +770,34 @@ cluster is now broader and more clearly tied to Sage's converter modules:
 constructor files still hit loader table-signature mismatches and finite-field
 constructor paths still hit the NTL/libcxx memory trap.
 
+A later doctest-classification pass marked the integer and rational
+`is_norm()` examples that construct `NumberField(...)` objects as
+`# needs sage.rings.number_field` in the Sagelite WASI source patch. This does
+not solve the PARI converter callback problem, but it correctly treats these
+examples as outside the current browser-compatible pure-math slice instead of
+letting unavailable number-field coverage abort two corpus files. Focused
+line reruns now record explicit skips:
+
+```text
+integer.pyx:5709: 0 passed, 0 failed, 1 skipped
+rational.pyx:1433: 0 passed, 0 failed, 1 skipped
+```
+
+With the patched source text applied temporarily for validation, the curated
+corpus reaches much deeper into `integer.pyx` and `rational.pyx`:
+
+```text
+sage -t failed: 1621 passed, 119 failed, 293 skipped
+```
+
+The remaining file-level clusters are now the generic loader
+`wasm_signature_mismatch` in rational-field, integer-mod-ring, and matrix
+constructor paths, plus the NTL/libcxx `memory access out of bounds` trap in
+finite-field and polynomial constructor paths. The broader PARI converter
+state-sharing issue remains real, but the default browser-compatible corpus
+should not block on number-field-only norm examples until number fields are in
+scope.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
