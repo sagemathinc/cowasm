@@ -212,6 +212,7 @@ WASI_SDK_CTYPES_EXTENSION = _ctypes.${PYTHON_PLATFORM}.so
 WASI_SDK_CURSES_EXTENSION = _curses.${PYTHON_PLATFORM}.so
 WASI_SDK_CURSES_PANEL_EXTENSION = _curses_panel.${PYTHON_PLATFORM}.so
 WASI_SDK_CJK_CODEC_EXTENSIONS = _codecs_cn.${PYTHON_PLATFORM}.so _codecs_hk.${PYTHON_PLATFORM}.so _codecs_iso2022.${PYTHON_PLATFORM}.so _codecs_jp.${PYTHON_PLATFORM}.so _codecs_kr.${PYTHON_PLATFORM}.so _codecs_tw.${PYTHON_PLATFORM}.so
+WASM_OBJDUMP ?= ${CORE_PACKAGES}/kernel/node_modules/.bin/wasm-objdump
 
 ${DIST_WASM}/.built-cpython: node_modules ${BUILD_WASM}/.patched ${DIST_NATIVE}/.built ${BIN}/python-native
 	# - Important to set CXX even though it's not in the main build so zig is used for C++ extension modules.
@@ -437,8 +438,8 @@ ${BUILD_WASI_SDK}/.json-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.conf
 	cd ${BUILD_WASI_SDK} && \
 		COWASM_TOOLCHAIN=wasi-sdk \
 		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_JSON_EXTENSION}
-	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION} | grep -F 'dylink.0'
-	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
+	${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION} | grep -F 'dylink.0'
+	${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
 	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION} | grep '^PyInit__json$$'
 	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_JSON_EXTENSION} | grep 'needed_dynlibs'
 	touch ${BUILD_WASI_SDK}/.json-extension-built
@@ -452,8 +453,8 @@ ${BUILD_WASI_SDK}/.pyexpat-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.c
 	cd ${BUILD_WASI_SDK} && \
 		COWASM_TOOLCHAIN=wasi-sdk \
 		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_PYEXPAT_EXTENSION}
-	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_PYEXPAT_EXTENSION} | grep -F 'dylink.0'
-	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_PYEXPAT_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
+	${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_PYEXPAT_EXTENSION} | grep -F 'dylink.0'
+	${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_PYEXPAT_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
 	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_PYEXPAT_EXTENSION} | grep '^PyInit_pyexpat$$'
 	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_PYEXPAT_EXTENSION} | grep 'needed_dynlibs'
 	touch ${BUILD_WASI_SDK}/.pyexpat-extension-built
@@ -471,8 +472,8 @@ ${BUILD_WASI_SDK}/.zlib-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.conf
 		COWASM_TOOLCHAIN=wasi-sdk \
 		ZLIB_WASM="${ZLIB_WASI_SDK}" \
 		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_ZLIB_EXTENSION}
-	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_ZLIB_EXTENSION} | grep -F 'dylink.0'
-	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_ZLIB_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
+	${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_ZLIB_EXTENSION} | grep -F 'dylink.0'
+	${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_ZLIB_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
 	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_ZLIB_EXTENSION} | grep '^PyInit_zlib$$'
 	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_ZLIB_EXTENSION} | grep 'needed_dynlibs'
 	touch ${BUILD_WASI_SDK}/.zlib-extension-built
@@ -493,8 +494,8 @@ ${BUILD_WASI_SDK}/.bz2-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.confi
 		COWASM_TOOLCHAIN=wasi-sdk \
 		BZIP2_WASM="${BZIP2_WASI_SDK}" \
 		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_BZ2_EXTENSION}
-	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_BZ2_EXTENSION} | grep -F 'dylink.0'
-	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_BZ2_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
+	${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_BZ2_EXTENSION} | grep -F 'dylink.0'
+	${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_BZ2_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
 	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_BZ2_EXTENSION} | grep '^PyInit__bz2$$'
 	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_BZ2_EXTENSION} | grep 'needed_dynlibs'
 	touch ${BUILD_WASI_SDK}/.bz2-extension-built
@@ -515,8 +516,8 @@ ${BUILD_WASI_SDK}/.lzma-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.conf
 		COWASM_TOOLCHAIN=wasi-sdk \
 		LZMA_WASM="${LZMA_WASI_SDK}" \
 		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_LZMA_EXTENSION}
-	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_LZMA_EXTENSION} | grep -F 'dylink.0'
-	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_LZMA_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
+	${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_LZMA_EXTENSION} | grep -F 'dylink.0'
+	${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_LZMA_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
 	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_LZMA_EXTENSION} | grep '^PyInit__lzma$$'
 	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_LZMA_EXTENSION} | grep 'needed_dynlibs'
 	touch ${BUILD_WASI_SDK}/.lzma-extension-built
@@ -537,8 +538,8 @@ ${BUILD_WASI_SDK}/.sqlite3-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.c
 		COWASM_TOOLCHAIN=wasi-sdk \
 		SQLITE_WASM="${SQLITE_WASI_SDK}" \
 		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_SQLITE3_EXTENSION}
-	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION} | grep -F 'dylink.0'
-	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION} | grep -F '<- env.memory'
+	${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION} | grep -F 'dylink.0'
+	${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION} | grep -F '<- env.memory'
 	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION} | grep '^PyInit__sqlite3$$'
 	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_SQLITE3_EXTENSION} | grep 'needed_dynlibs'
 	touch ${BUILD_WASI_SDK}/.sqlite3-extension-built
@@ -552,10 +553,10 @@ ${BUILD_WASI_SDK}/.unicodedata-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK
 	cd ${BUILD_WASI_SDK} && \
 		COWASM_TOOLCHAIN=wasi-sdk \
 		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_UNICODEDATA_EXTENSION}
-	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} | grep -F 'dylink.0'
-	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} | grep -F '<- env.memory'
+	${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} | grep -F 'dylink.0'
+	${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} | grep -F '<- env.memory'
 	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} | grep '^PyInit_unicodedata$$'
-	! wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} | grep 'needed_dynlibs'
+	! ${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_UNICODEDATA_EXTENSION} | grep 'needed_dynlibs'
 	touch ${BUILD_WASI_SDK}/.unicodedata-extension-built
 
 ${DIST_WASI_SDK}/lib/${PYTHON_LIB}/lib-dynload/${WASI_SDK_UNICODEDATA_EXTENSION}: ${DIST_WASI_SDK}/.install-cpython ${BUILD_WASI_SDK}/.unicodedata-extension-built
@@ -567,8 +568,8 @@ ${BUILD_WASI_SDK}/.decimal-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.c
 	cd ${BUILD_WASI_SDK} && \
 		COWASM_TOOLCHAIN=wasi-sdk \
 		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_DECIMAL_EXTENSION}
-	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_DECIMAL_EXTENSION} | grep -F 'dylink.0'
-	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_DECIMAL_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
+	${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_DECIMAL_EXTENSION} | grep -F 'dylink.0'
+	${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_DECIMAL_EXTENSION} | grep -F 'memory[0] pages: initial=1 <- env.memory'
 	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_DECIMAL_EXTENSION} | grep '^PyInit__decimal$$'
 	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_DECIMAL_EXTENSION} | grep 'needed_dynlibs'
 	touch ${BUILD_WASI_SDK}/.decimal-extension-built
@@ -606,8 +607,8 @@ ${BUILD_WASI_SDK}/.hashlib-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.c
 		${BUILD_WASI_SDK}/Modules/_hashlib.o \
 		${OPENSSL_WASI_SDK}/lib/libcrypto.a \
 		-o ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION}
-	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION} | grep -F 'dylink.0'
-	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION} | grep -F '<- env.memory'
+	${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION} | grep -F 'dylink.0'
+	${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION} | grep -F '<- env.memory'
 	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION} | grep '^PyInit__hashlib$$'
 	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_HASHLIB_EXTENSION} | grep 'needed_dynlibs'
 	touch ${BUILD_WASI_SDK}/.hashlib-extension-built
@@ -627,8 +628,8 @@ ${BUILD_WASI_SDK}/.ctypes-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.co
 	cd ${BUILD_WASI_SDK} && \
 		${WASI_SDK_CPYTHON_ENV} \
 		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_CTYPES_EXTENSION}
-	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CTYPES_EXTENSION} | grep -F 'dylink.0'
-	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CTYPES_EXTENSION} | grep -F '<- env.memory'
+	${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CTYPES_EXTENSION} | grep -F 'dylink.0'
+	${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CTYPES_EXTENSION} | grep -F '<- env.memory'
 	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CTYPES_EXTENSION} | grep '^PyInit__ctypes$$'
 	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CTYPES_EXTENSION} | grep 'needed_dynlibs'
 	touch ${BUILD_WASI_SDK}/.ctypes-extension-built
@@ -660,8 +661,8 @@ ${BUILD_WASI_SDK}/.curses-extension-built: ${CWD}/Makefile ${BUILD_WASI_SDK}/.co
 	cd ${BUILD_WASI_SDK} && \
 		${WASI_SDK_CPYTHON_ENV} \
 		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_CURSES_EXTENSION}
-	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_EXTENSION} | grep -F 'dylink.0'
-	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_EXTENSION} | grep -F '<- env.memory'
+	${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_EXTENSION} | grep -F 'dylink.0'
+	${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_EXTENSION} | grep -F '<- env.memory'
 	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_EXTENSION} | grep '^PyInit__curses$$'
 	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_EXTENSION} | grep 'needed_dynlibs'
 	touch ${BUILD_WASI_SDK}/.curses-extension-built
@@ -675,8 +676,8 @@ ${BUILD_WASI_SDK}/.curses-panel-extension-built: ${CWD}/Makefile ${BUILD_WASI_SD
 	cd ${BUILD_WASI_SDK} && \
 		${WASI_SDK_CPYTHON_ENV} \
 		make CONFIGURE_LDFLAGS_NODIST= Modules/${WASI_SDK_CURSES_PANEL_EXTENSION}
-	wasm-objdump -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_PANEL_EXTENSION} | grep -F 'dylink.0'
-	wasm-objdump -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_PANEL_EXTENSION} | grep -F '<- env.memory'
+	${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_PANEL_EXTENSION} | grep -F 'dylink.0'
+	${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_PANEL_EXTENSION} | grep -F '<- env.memory'
 	${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_PANEL_EXTENSION} | grep '^PyInit__curses_panel$$'
 	! ${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/${WASI_SDK_CURSES_PANEL_EXTENSION} | grep 'needed_dynlibs'
 	touch ${BUILD_WASI_SDK}/.curses-panel-extension-built
@@ -692,10 +693,10 @@ ${BUILD_WASI_SDK}/.cjk-codecs-extensions-built: ${CWD}/Makefile ${BUILD_WASI_SDK
 		make CONFIGURE_LDFLAGS_NODIST= $(addprefix Modules/,${WASI_SDK_CJK_CODEC_EXTENSIONS})
 	for extension in ${WASI_SDK_CJK_CODEC_EXTENSIONS}; do \
 		module=$${extension%.${PYTHON_PLATFORM}.so}; \
-		wasm-objdump -h ${BUILD_WASI_SDK}/Modules/$${extension} | grep -F 'dylink.0'; \
-		wasm-objdump -x ${BUILD_WASI_SDK}/Modules/$${extension} | grep -F '<- env.memory'; \
+		${WASM_OBJDUMP} -h ${BUILD_WASI_SDK}/Modules/$${extension} | grep -F 'dylink.0'; \
+		${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/$${extension} | grep -F '<- env.memory'; \
 		${BIN}/wasi-sdk-llvm-strings-next ${BUILD_WASI_SDK}/Modules/$${extension} | grep "^PyInit_$${module}$$"; \
-		! wasm-objdump -x ${BUILD_WASI_SDK}/Modules/$${extension} | grep 'needed_dynlibs'; \
+		! ${WASM_OBJDUMP} -x ${BUILD_WASI_SDK}/Modules/$${extension} | grep 'needed_dynlibs'; \
 	done
 	touch ${BUILD_WASI_SDK}/.cjk-codecs-extensions-built
 

@@ -1090,6 +1090,25 @@ COWASM_SAGELITE_DOCTEST_SOURCE_ROOT=/home/user/cowasm/sagemath/sagelite/build/wa
   /home/user/cowasm/sagemath/sagelite/build/wasi-sdk/src/sage/rings/rational.pyx
 ```
 
+A follow-up backend-selection probe sharpened the remaining runtime boundary.
+The classic `python-wasm` rebuild path still fails during WASM configure with
+`mimalloc requires stdatomic.h`, so refreshing that bundle is still blocked.
+The wasi-sdk CPython backend can run the `PyUnicode_FromFormat` integer-field
+regression and, after switching CPython's extension checks to the repo-local
+WABT `wasm-objdump`, `make -C python/cpython test-wasi-sdk-extension-imports`
+passes and installs dynamic stdlib extensions such as `zlib`.
+
+That is not yet enough to move Sagelite doctests to `python-wasi-sdk` by
+default. With Sagelite's packaged environment, `import sage.all` now gets past
+the Cython string-compression dependency on `zlib.decompress` but stops at
+`sage.misc.remote_file -> ssl -> _ssl`; the wasi-sdk `_ssl` module is not
+currently built, and a direct `_ssl` side-module build fails because the WASI
+OpenSSL headers do not expose `SSL_set_fd`. The next backend pass should either
+make Sagelite's browser profile avoid eager SSL-dependent remote-file imports
+or add a scoped `_ssl`/SSL strategy for the wasi-sdk CPython backend before the
+Sagelite corpus target switches away from the known-working `python-wasm`
+worker.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
