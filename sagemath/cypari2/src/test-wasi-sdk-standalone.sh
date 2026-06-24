@@ -364,6 +364,28 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_eulerphi(GEN input,
+                                                 GEN *result,
+                                                 long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(eulerphi(input));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_ispseudoprime(GEN input,
                                                 long flag,
                                                 long *result,
@@ -671,6 +693,9 @@ cdef extern from *:
                                          int has_multiple,
                                          GEN *result,
                                          long *errnum)
+    int cowasm_cypari2_gen_clone_eulerphi(GEN input,
+                                          GEN *result,
+                                          long *errnum)
     int cowasm_cypari2_gen_ispseudoprime(GEN input,
                                          long flag,
                                          long *result,
@@ -1007,6 +1032,14 @@ cdef class Gen(Gen_base):
         if not cowasm_cypari2_gen_clone_znorder(
             self.g, multiple_gen, has_multiple, &result, &errnum
         ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def eulerphi(self):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_clone_eulerphi(self.g, &result, &errnum):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
@@ -1739,6 +1772,8 @@ assert int(pari(-37).nextprime(True)) == 2
 assert int(pari(2).nextprime(True)) == 3
 assert int(pari(2).Mod(101).znorder()) == 100
 assert int(pari(2).Mod(101).znorder(100)) == 100
+assert int(pari(4).eulerphi()) == 2
+assert int(pari(360).eulerphi()) == 96
 assert int(pari.prime(58)) == 271
 assert pari(2**31 - 1).isprime() is True
 assert pari(2**31).isprime() is False

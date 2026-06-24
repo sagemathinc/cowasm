@@ -2674,3 +2674,9 @@ diff -urN a/src/sage/rings/continued_fraction_gosper.py b/src/sage/rings/continu
 -    sage: it = iter(gosper_iterator(3,2,3,1,x))
 +    sage: x = continued_fraction(pi)                                                    # needs sage.symbolic
 +    sage: it = iter(gosper_iterator(3,2,3,1,x))                                         # needs sage.symbolic
+diff -urN a/src/sage/sets/primes.py b/src/sage/sets/primes.py
+--- a/src/sage/sets/primes.py
++++ b/src/sage/sets/primes.py
+@@ -429 +429 @@
+-            sage: x in P
++            sage: x in P                                                               # needs sage.symbolic

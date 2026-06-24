@@ -1726,6 +1726,35 @@ That run is recorded in
 block rows for the latest run. The saved block- and file-failure cluster
 queries are empty.
 
+Follow-up set and prime corpus-growth pass:
+`sage/sets/non_negative_integers.py`, `sage/sets/positive_integers.py`, and
+`sage/sets/primes.py` are now included in the browser-profile corpus. The two
+integer-set files were already clean exact-enumerated-set coverage. `primes.py`
+needed one focused runtime addition: the CoWasm cypari2 `Gen` subset now
+exposes `eulerphi()`, which lets `Primes(modulus=4).density()` use the
+existing PARI-backed arithmetic path instead of hitting the generic
+unsupported object-model boundary. The lone symbolic variable membership test
+is tagged as `# needs sage.symbolic` in the Sagelite WASI source patch.
+
+Focused reruns record:
+
+```text
+non_negative_integers.py: 43 passed, 0 failed, 8 skipped
+positive_integers.py: 13 passed, 0 failed, 1 skipped
+primes.py: 159 passed, 0 failed, 1 skipped
+```
+
+The full corpus passes with the three set files included and failures
+disallowed:
+
+```text
+sage -t passed: 3471 passed, 0 failed, 951 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-sets-primes.sqlite3` with 4,422
+total block rows for the latest run. The saved block- and file-failure cluster
+queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
