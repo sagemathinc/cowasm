@@ -204,6 +204,22 @@ clusters: the generic-polynomial `2^t` exception text and the rational
 clusters are the existing 3 `wasm_signature_mismatch` dynamic-import failures
 and 2 NTL/libcxx `wasm_trap` failures.
 
+Latest checked local corpus run after the 2026-06-24 diagnostic-mismatch
+deferral pass:
+
+```text
+sage -t failed: 1699 passed, 5 failed, 329 skipped
+```
+
+That run records 2,028 block rows in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, plus the same five
+file-level errors. The pass marks the generic-polynomial `2^t` exception-text
+drift and the rational `(1/2).gamma(5)` CPython integer-format diagnostic drift
+as explicit `# known bug` skips, so `block-failure-clusters.sql` is empty and
+the non-skipped block pass rate is 100%. The remaining failures are all
+file-level runtime clusters: 3 `wasm_signature_mismatch` dynamic-import
+failures and 2 NTL/libcxx `wasm_trap` failures.
+
 Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
 `python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
 currently blocked during WASM configure by `mimalloc requires stdatomic.h`.

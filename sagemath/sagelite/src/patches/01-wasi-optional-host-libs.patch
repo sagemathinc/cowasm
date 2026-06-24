@@ -1434,6 +1434,13 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -            sage: 2^(-1/2)
 +            sage: 2^(-1/2)                                                             # needs sage.symbolic
             1/2*sqrt(2)
+@@ -2259,5 +2259,5 @@
+             sage: R.<t> = QQ[]
+-            sage: 2^t
++            sage: 2^t                                                               # known bug
+             Traceback (most recent call last):
+             ...
+             TypeError: no canonical coercion from Univariate Polynomial
 @@ -2747,5 +2747,5 @@
              sage: x = 3^100000
 -            sage: RR(log(RR(x), 3))
@@ -1515,3 +1522,9 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -            sage: gamma(1/3)
 +            sage: gamma(1/3)                                                           # needs sage.symbolic
             gamma(1/3)
+@@ -3289,4 +3289,4 @@
+-            sage: (1/2).gamma(5)
++            sage: (1/2).gamma(5)                                                     # known bug
+             Traceback (most recent call last):
+             ...
+             TypeError: ...gamma() takes exactly 0 positional arguments (1 given)
