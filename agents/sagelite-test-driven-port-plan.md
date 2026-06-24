@@ -1421,6 +1421,37 @@ but its remaining failures currently come from `Sequence(...)` importing
 `sage.rings.polynomial.plural`; that should be treated as a polynomial/plural
 import-scope issue rather than a doctest expectation mismatch.
 
+Latest checked local corpus run after the 2026-06-24 monomials corpus-growth
+pass:
+
+```text
+sage -t passed: 2487 passed, 0 failed, 775 skipped
+```
+
+That run records 3,262 block rows in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, with empty
+`block-failure-clusters.sql` and `file-error-clusters.sql` results. The
+curated browser-profile corpus now has eleven files, adding
+`sage/rings/monomials.py`:
+
+```text
+monomials.py: 3 passed, 0 failed, 2 skipped
+```
+
+The pass keeps `Sequence(...)` useful for basic commutative multivariate
+polynomial lists on WASI when the richer `PolynomialSequence` path is blocked
+by the unavailable `sage.rings.polynomial.plural` module. On that specific
+missing-module edge, `Sequence` falls back to `Sequence_generic` instead of
+turning simple monomial enumeration into a Singular/plural import-scope
+failure. The richer polynomial-sequence API remains a separate follow-up for
+the native-library-backed polynomial/plural slice.
+
+The next useful corpus-growth pass should try another compact exact-math file
+and keep this same boundary: add files whose failures can be fixed with
+already-supported generic arithmetic, but leave Singular, plural, and
+native-library polynomial algorithms as explicit future scope unless the
+underlying runtime support is being implemented.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

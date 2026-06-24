@@ -947,10 +947,16 @@ diff -urN a/src/sage/structure/sequence.py b/src/sage/structure/sequence.py
      try:
          # pbori (brial) is optional, so to keep the isinstance() below
          # working as intended in its absence, we set it equal to the
-@@ -305,3 +304,5 @@
+@@ -305,3 +304,11 @@
          BooleanMonomialMonoid = MPolynomialRing_base
      if isinstance(universe, (MPolynomialRing_base, BooleanMonomialMonoid)) or (isinstance(universe, QuotientRing_nc) and isinstance(universe.cover_ring(), MPolynomialRing_base)):
-+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
++        try:
++            from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
++        except ModuleNotFoundError as err:
++            import sys
++            if sys.platform == 'wasi' and err.name == 'sage.rings.polynomial.plural':
++                return Sequence_generic(x, universe, check, immutable, cr, cr_str, use_sage_types)
++            raise
 +
          return PolynomialSequence(x, universe, immutable=immutable, cr=cr, cr_str=cr_str)
 diff -urN a/src/sage/rings/polynomial/polynomial_ring.py b/src/sage/rings/polynomial/polynomial_ring.py
