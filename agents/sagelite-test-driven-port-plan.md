@@ -1255,6 +1255,34 @@ mathematical contract while keeping full doctest execution on the
 known-working `python-wasm` worker until the remaining backend differences are
 understood.
 
+A follow-up finite-ring browser-scope tagging pass marked the currently
+observed finite-field explicit-modulus examples and quotient-root examples as
+native PARI/NTL coverage. Focused line reruns for the previous file-level
+traps now record explicit skips instead of crashing:
+
+```text
+finite_field_constructor.py:360: 0 passed, 0 failed, 1 skipped
+finite_field_constructor.py:366: 0 passed, 0 failed, 1 skipped
+integer_mod_ring.py:1770: 0 passed, 0 failed, 1 skipped
+integer_mod_ring.py:1773: 0 passed, 0 failed, 1 skipped
+```
+
+The full curated corpus still reports the same aggregate shape:
+
+```text
+sage -t failed: 2048 passed, 2 failed, 518 skipped
+```
+
+The remaining two file-level failures moved deeper into the same regions:
+`integer_mod_ring.py:1778` now traps in the NTL/libcxx modular-root path for
+`R.<x> = Zmod(2)[]`, and `finite_field_constructor.py:378` now traps in the
+cypari2/PARI cleanup path for `GF(100)`. This shows that one-line tagging is
+not a good next iteration for these files. The next useful finite-ring pass
+should either classify the whole affected doctest regions as native-library
+coverage with broader directives, or fix the underlying NTL/libcxx and
+cypari2/PARI state traps so the browser-profile corpus can keep the finite-ring
+examples in scope.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

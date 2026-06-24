@@ -1888,3 +1888,39 @@ diff -urN a/src/sage/misc/remote_file.py b/src/sage/misc/remote_file.py
              [29, 41, 49, 1, 59, 11, 19, 31]
  
          We may also ask for roots modulo a quotient of the ring over which the
+diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -355,14 +355,14 @@
+ 
+     ::
+ 
+-        sage: K.<a> = GF(5**2, name='a', modulus=x^2 + 2, check_irreducible=False)
++        sage: K.<a> = GF(5**2, name='a', modulus=x^2 + 2, check_irreducible=False)    # needs sage.libs.pari
+ 
+     Even for prime fields, you can specify a modulus. This will not
+     change how Sage computes in this field, but it will change the
+     result of the :meth:`modulus` and :meth:`gen` methods::
+ 
+-        sage: k.<a> = GF(5, modulus='primitive')
+-        sage: k.modulus()
++        sage: k.<a> = GF(5, modulus='primitive')                                      # needs sage.libs.pari
++        sage: k.modulus()                                                             # needs sage.libs.pari
+         x + 3
+-        sage: a
++        sage: a                                                                       # needs sage.libs.pari
+         2
+diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/finite_rings/integer_mod_ring.py
+--- a/src/sage/rings/finite_rings/integer_mod_ring.py
++++ b/src/sage/rings/finite_rings/integer_mod_ring.py
+@@ -1770,10 +1770,10 @@
+         polynomial is defined::
+ 
+-            sage: R.<x> = Zmod(120)[]
+-            sage: (x^2 - 1).roots(multiplicities=False)
++            sage: R.<x> = Zmod(120)[]                                                 # needs sage.libs.ntl
++            sage: (x^2 - 1).roots(multiplicities=False)                               # needs sage.libs.ntl
+             [89, 41, 49, 1, 29, 101, 109, 61, 59, 11, 19, 91, 119, 71, 79, 31]
+-            sage: (x^2 - 1).roots(Zmod(60), multiplicities=False)
++            sage: (x^2 - 1).roots(Zmod(60), multiplicities=False)                     # needs sage.libs.ntl
+             [29, 41, 49, 1, 59, 11, 19, 31]
