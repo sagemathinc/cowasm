@@ -115,6 +115,7 @@ assertExport(side, "add_side_data_relocation", "function");
 assertExport(side, "add_main_data_relocation", "function");
 assertExport(side, "ctor_count", "function");
 assertExport(side, "side_memory_size_is_positive", "function");
+assertExport(side, "side_realloc_preserves_prefix", "function");
 assertExport(side, "sorted_with_qsort", "function");
 assertExport(side, "side_setjmp_recovery", "function");
 assertExport(side, "archive_callback_from_pic_archive", "function");

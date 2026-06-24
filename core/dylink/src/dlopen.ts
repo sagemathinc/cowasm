@@ -17,6 +17,7 @@ export default class DlopenManger {
   private errnoPtr: number = 0;
   private _malloc?: (number) => number;
   private _free?: (number) => void;
+  private allocationSizes: Map<number, number> = new Map();
   private memory: WebAssembly.Memory;
   private functionTable: FunctionTable;
   private globalOffsetTable: GlobalOffsetTable;
@@ -113,10 +114,14 @@ export default class DlopenManger {
       console.warn(err);
       throw Error(err);
     }
+    this.allocationSizes.set(ptr, bytes);
     return ptr;
   }
 
   private free(ptr: number): void {
+    if (!ptr) {
+      return;
+    }
     if (this._free == null) {
       const f = this.mainGetFunction("free");
       if (f == null) {
@@ -124,7 +129,29 @@ export default class DlopenManger {
       }
       this._free = f as (number) => void;
     }
+    this.allocationSizes.delete(ptr);
     this._free(ptr);
+  }
+
+  private realloc(ptr: number, size: number, purpose: string): number {
+    if (!ptr) {
+      return this.malloc(size, purpose);
+    }
+    if (!size) {
+      this.free(ptr);
+      return 0;
+    }
+    const oldSize = this.allocationSizes.get(ptr);
+    const next = this.malloc(size, purpose);
+    if (oldSize != null) {
+      new Uint8Array(this.memory.buffer).copyWithin(
+        next,
+        ptr,
+        ptr + Math.min(oldSize, size)
+      );
+    }
+    this.free(ptr);
+    return next;
   }
 
   private mainFunction(name: string, path?: string): Function | undefined {
@@ -495,16 +522,7 @@ export default class DlopenManger {
         return ptr;
       },
       realloc: (ptr: number, size: number) => {
-        if (!ptr) {
-          return this.malloc(size, "dynamic library realloc");
-        }
-        if (!size) {
-          this.free(ptr);
-          return 0;
-        }
-        const next = this.malloc(size, "dynamic library realloc");
-        new Uint8Array(this.memory.buffer).copyWithin(next, ptr, ptr + size);
-        return next;
+        return this.realloc(ptr, size, "dynamic library realloc");
       },
       abort: () => {
         throw Error("abort called from dynamic library");

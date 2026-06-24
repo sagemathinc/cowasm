@@ -649,6 +649,15 @@ direction is revisited, make it module-scoped to the PARI extensions or inspect
 how adding the setjmp archive perturbs side-module table layout before changing
 the build defaults.
 
+A 2026-06-24 dynamic-loader allocation pass made the JavaScript side-module
+`realloc` fallback track allocation sizes, preserve only the valid old prefix,
+and discard size metadata on `free`. The WASI dylink smoke now exercises a
+side-module `realloc` import. The curated Sagelite corpus result remained
+`203 passed, 7 failed, 27 skipped`, with the active failures still split between
+PARI `err_recover` / side-module function-table signature compatibility and
+the NTL/libcxx memory trap. This removes one memory-corruption variable before
+continuing the PARI callback-slot investigation.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -102,6 +102,13 @@ int side_memory_size_is_positive() {
 }
 
 EXPORTED_SYMBOL
+int side_realloc_preserves_prefix() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "side_realloc_preserves_prefix");
+  return (*f)();
+}
+
+EXPORTED_SYMBOL
 int sorted_with_qsort() {
   void* handle = dlopen("./dynamic-library.so", 2);
   FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "sorted_with_qsort");
@@ -167,6 +174,9 @@ int main() {
 
   printf("side_memory_size_is_positive() = %d\n", side_memory_size_is_positive());
   assert(side_memory_size_is_positive() == 1);
+
+  printf("side_realloc_preserves_prefix() = %d\n", side_realloc_preserves_prefix());
+  assert(side_realloc_preserves_prefix() == 1);
 
   printf("sorted_with_qsort() = %d\n", sorted_with_qsort());
   assert(sorted_with_qsort() == 1);

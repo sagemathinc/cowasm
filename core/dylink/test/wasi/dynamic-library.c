@@ -51,6 +51,29 @@ EXPORTED_SYMBOL
 int side_memory_size_is_positive(void) { return __memory_size() > 0; }
 
 EXPORTED_SYMBOL
+int side_realloc_preserves_prefix(void) {
+  unsigned char* bytes = malloc(4);
+  if (!bytes) {
+    return 0;
+  }
+  for (size_t i = 0; i < 4; i++) {
+    bytes[i] = (unsigned char)(0xa0 + i);
+  }
+  bytes = realloc(bytes, 16);
+  if (!bytes) {
+    return 0;
+  }
+  for (size_t i = 0; i < 4; i++) {
+    if (bytes[i] != (unsigned char)(0xa0 + i)) {
+      free(bytes);
+      return 0;
+    }
+  }
+  free(bytes);
+  return 1;
+}
+
+EXPORTED_SYMBOL
 int sorted_with_qsort(void) {
   int values[] = {5, -1, 8, 0, 3, 3, -4};
   int expected[] = {-4, -1, 0, 3, 3, 5, 8};
