@@ -2666,3 +2666,11 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
          """
          # IMPORTANT!  If you add a new class to the list of classes
          # that get cached by this factor object, then you *must* add
+diff -urN a/src/sage/rings/continued_fraction_gosper.py b/src/sage/rings/continued_fraction_gosper.py
+--- a/src/sage/rings/continued_fraction_gosper.py
++++ b/src/sage/rings/continued_fraction_gosper.py
+@@ -7,2 +7,2 @@
+-    sage: x = continued_fraction(pi)
+-    sage: it = iter(gosper_iterator(3,2,3,1,x))
++    sage: x = continued_fraction(pi)                                                    # needs sage.symbolic
++    sage: it = iter(gosper_iterator(3,2,3,1,x))                                         # needs sage.symbolic

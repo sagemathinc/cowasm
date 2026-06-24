@@ -1555,6 +1555,34 @@ That run is recorded in `/tmp/sagelite-corpus-infinity.sqlite3` with 3,642
 total block rows for the latest run. The saved block- and file-failure cluster
 queries are empty.
 
+Follow-up corpus-growth pass: `sage/rings/real_field.py` and
+`sage/rings/continued_fraction_gosper.py` are now included in the
+browser-profile corpus. `real_field.py` is a small clean exact/real-field
+constructor check. `continued_fraction_gosper.py` exposed a source-scope
+classification issue: two top-level setup prompts used symbolic `pi` without a
+matching `# needs sage.symbolic` tag, while the later symbolic checks in the
+same file were already tagged. The Sagelite WASI patch now marks those setup
+prompts as symbolic coverage, letting the file contribute its exact iterator
+tests without turning skipped symbolic/combinatorics examples into namespace
+failures.
+
+Focused reruns record:
+
+```text
+real_field.py: 5 passed, 0 failed, 0 skipped
+continued_fraction_gosper.py: 22 passed, 0 failed, 16 skipped
+```
+
+The full corpus target passes with both files included and failures disallowed:
+
+```text
+sage -t passed: 2806 passed, 0 failed, 879 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-realfield-gosper.sqlite3` with
+3,685 total block rows for the latest run. The saved block- and file-failure
+cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
