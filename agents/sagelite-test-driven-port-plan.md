@@ -334,7 +334,7 @@ sage -t passed: 2902 passed, 0 failed, 922 skipped
 
 That run records 3,824 block rows in
 `/tmp/sagelite-corpus-after-semiring.sqlite3`, with no block-level failures
-and no file-level errors. It covers the current 20-file
+and no file-level errors. It covers the then-current 20-file
 `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus: the
 original integer, rational, finite-field, polynomial-constructor, and matrix
 files plus `abc.pyx`, `real_field.py`, `fast_arith.pyx`, `generic.py`,
@@ -342,6 +342,25 @@ files plus `abc.pyx`, `real_field.py`, `fast_arith.pyx`, `generic.py`,
 `infinity.py`, `commutative_polynomial.pyx`, `convolution.py`, and
 `non_negative_integer_semiring.py`. The latest run metadata records CoWasm
 commit `e9f68c7f56c01c4044bded805493588e22040be5`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner version
+22.
+
+Latest checked local corpus run after the 2026-06-24 arithmetic corpus-growth
+pass:
+
+```text
+sage -t passed: 2989 passed, 0 failed, 934 skipped
+```
+
+That run records 3,923 block rows in
+`/tmp/sagelite-corpus-after-arith-expansion.sqlite3`, with no block-level
+failures and no file-level errors. It covers the current 24-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/arith/srange.pyx`, `sage/arith/power.pyx`,
+`sage/arith/rational_reconstruction.pyx`, and
+`sage/arith/numerical_approx.pyx` to the previous clean browser-profile
+baseline. The latest run metadata records CoWasm commit
+`6f60f4f0bbb6663a06236f8c2358ccb66011c957`, Sagelite package commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner version
 22.
 
@@ -524,6 +543,10 @@ src/sage/rings/big_oh.py
 src/sage/rings/numbers_abc.py
 src/sage/rings/infinity.py
 src/sage/rings/semirings/non_negative_integer_semiring.py
+src/sage/arith/srange.pyx
+src/sage/arith/power.pyx
+src/sage/arith/rational_reconstruction.pyx
+src/sage/arith/numerical_approx.pyx
 src/sage/rings/finite_rings/integer_mod_ring.py
 src/sage/rings/finite_rings/finite_field_constructor.py
 src/sage/rings/polynomial/commutative_polynomial.pyx
@@ -1622,6 +1645,40 @@ sage -t passed: 2890 passed, 0 failed, 918 skipped
 That run is recorded in `/tmp/sagelite-corpus-polynomial-helpers.sqlite3` with
 3,808 total block rows for the latest run. The saved block- and file-failure
 cluster queries are empty.
+
+Follow-up arithmetic corpus-growth pass: `sage/arith/srange.pyx`,
+`sage/arith/power.pyx`, `sage/arith/rational_reconstruction.pyx`, and
+`sage/arith/numerical_approx.pyx` are now included in the browser-profile
+corpus. These files add compact arithmetic, range, power, and numeric
+approximation coverage without broadening the dashboard into unresolved native
+backend clusters.
+
+Focused reruns record:
+
+```text
+srange.pyx: 67 passed, 0 failed, 10 skipped
+power.pyx: 16 passed, 0 failed, 0 skipped
+rational_reconstruction.pyx: 1 passed, 0 failed, 1 skipped
+numerical_approx.pyx: 3 passed, 0 failed, 1 skipped
+```
+
+The same sampling pass kept several nearby files out of the quiet corpus:
+`sage/structure/factorization.py` still exposes a polynomial-element
+`__dict__` gap with cascading state failures, `sage/arith/functions.pyx`
+reaches a side-module `table index is out of bounds` trap in
+`polynomial_number_field`, `sage/combinat/subset.py` has three output
+mismatches in `Subsets(3,4)` edge cases, and `sage/combinat/combinat.py`
+still reaches the unavailable `sage.libs.gap.libgap` module.
+
+The full corpus target passes with the arithmetic files included:
+
+```text
+sage -t passed: 2989 passed, 0 failed, 934 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-after-arith-expansion.sqlite3`
+with 3,923 total block rows for the latest run. The saved block- and
+file-failure cluster queries are empty.
 
 ## Phase 5: Subprocess Strategy
 
