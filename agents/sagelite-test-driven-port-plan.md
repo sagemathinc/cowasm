@@ -364,21 +364,35 @@ baseline. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner version
 22.
 
-Latest checked local corpus run after the 2026-06-24 combinatorics and set
-range corpus-growth pass:
+Latest checked local corpus run after the 2026-06-24 expanded combinatorics
+and enumerated-set corpus validation:
 
 ```text
-sage -t passed: 3256 passed, 0 failed, 941 skipped
+sage -t passed: 4768 passed, 0 failed, 1003 skipped
 ```
 
-That run records 4,197 block rows in
-`/tmp/sagelite-corpus-plus-combination-integer-range.sqlite3`, with no
-block-level failures and no file-level errors. It covers the current 26-file
-`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
-`sage/combinat/combination.py` and `sage/sets/integer_range.py` to the
-previous clean browser-profile baseline. Focused probes kept
-`sage/combinat/subset.py` and `sage/sets/finite_set_maps.py` out of this quiet
-corpus growth because they still have block-level failures.
+That run records 5,771 block rows in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, with no
+block-level failures and no file-level errors. It covers the current 41-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, including
+the earlier arithmetic, finite-ring, polynomial, and matrix coverage plus the
+expanded combinatorics and enumerated-set batch:
+`sage/combinat/combination.py`, `sage/combinat/misc.py`,
+`sage/combinat/backtrack.py`, `sage/combinat/composition.py`,
+`sage/combinat/subset.py`, `sage/combinat/composition_signed.py`,
+`sage/combinat/derangements.py`, `sage/combinat/perfect_matching.py`,
+`sage/combinat/subword.py`, `sage/combinat/tuple.py`,
+`sage/sets/integer_range.py`, `sage/sets/finite_set_maps.py`,
+`sage/sets/finite_enumerated_set.py`,
+`sage/sets/totally_ordered_finite_set.py`,
+`sage/sets/non_negative_integers.py`, `sage/sets/positive_integers.py`, and
+`sage/sets/primes.py`. Focused reruns confirmed that
+`sage/combinat/subset.py` now reports `279 passed, 0 failed, 2 skipped` and
+`sage/sets/finite_set_maps.py` reports `86 passed, 0 failed, 0 skipped`, so
+both are part of the quiet browser-profile dashboard. The latest run metadata
+records CoWasm commit `d56472a039b800e18cd8b9118daefa56fed68bec`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
+runner version 25, and about 300 seconds of elapsed time.
 
 Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
 `python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
