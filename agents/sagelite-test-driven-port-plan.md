@@ -325,6 +325,23 @@ allocation through `objtogen([1, 2, 3])`. Focused probes confirm that
 now reaches the next higher-level cypari2 object-model gap,
 `Gen._rational_()`, rather than a WASM function-signature mismatch.
 
+Latest checked local corpus run after verifying the expanded checked-in
+pure-math corpus:
+
+```text
+sage -t passed: 2779 passed, 0 failed, 863 skipped
+```
+
+That run records 3,642 block rows in `/tmp/sagelite-corpus-current.sqlite3`,
+with no block-level failures and no file-level errors. It covers the current
+14-file `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus:
+the original integer, rational, finite-field, polynomial-constructor, and
+matrix files plus `fast_arith.pyx`, `generic.py`, `monomials.py`, `big_oh.py`,
+`numbers_abc.py`, and `infinity.py`. The latest run metadata records CoWasm
+commit `b38943355ad4977ea0ff2049c723987d969d6e45`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner version
+21.
+
 Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
 `python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
 currently blocked during WASM configure by `mimalloc requires stdatomic.h`.
@@ -479,7 +496,7 @@ For each file:
 Do not start by running every Sage file. Start with a curated corpus that
 matches the current pure-math target and grows deliberately.
 
-### Initial Corpus
+### Current Corpus
 
 Create a file such as:
 
@@ -487,20 +504,29 @@ Create a file such as:
 sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt
 ```
 
-Suggested first entries:
+The checked-in corpus currently contains:
 
 ```text
-/home/user/sagelite/src/sage/rings/integer.pyx
-/home/user/sagelite/src/sage/rings/integer_ring.pyx
-/home/user/sagelite/src/sage/rings/rational.pyx
-/home/user/sagelite/src/sage/rings/rational_field.py
-/home/user/sagelite/src/sage/rings/finite_rings/finite_field_constructor.py
-/home/user/sagelite/src/sage/rings/finite_rings/integer_mod_ring.py
-/home/user/sagelite/src/sage/rings/polynomial/polynomial_ring_constructor.py
-/home/user/sagelite/src/sage/matrix/constructor.pyx
+src/sage/rings/integer_ring.pyx
+src/sage/rings/integer.pyx
+src/sage/rings/rational.pyx
+src/sage/rings/rational_field.py
+src/sage/rings/fast_arith.pyx
+src/sage/rings/generic.py
+src/sage/rings/monomials.py
+src/sage/rings/big_oh.py
+src/sage/rings/numbers_abc.py
+src/sage/rings/infinity.py
+src/sage/rings/finite_rings/integer_mod_ring.py
+src/sage/rings/finite_rings/finite_field_constructor.py
+src/sage/rings/polynomial/polynomial_ring_constructor.py
+src/sage/matrix/constructor.pyx
 ```
 
-Add more only after the dashboard can explain failures well.
+Add more only after the dashboard can explain failures well. The default
+corpus should preserve a clean non-skipped pass rate; larger exploratory
+coverage belongs in a separate corpus file until its failure clusters are
+classified.
 
 ### First Command
 
