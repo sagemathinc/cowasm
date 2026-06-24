@@ -680,6 +680,19 @@ PARI `err_recover` / side-module function-table signature compatibility and
 the NTL/libcxx memory trap. This removes one memory-corruption variable before
 continuing the PARI callback-slot investigation.
 
+A 2026-06-24 dashboard refresh showed that the older `integer.pyx:3112`
+focused rerun now passes against `/home/user/sagelite`, but the curated corpus
+still reports `203 passed, 7 failed, 27 skipped`. The live PARI-backed failure
+has moved to the `NumberField(x^2 - 2, 'beta')` examples in
+`integer.pyx:5709` and `rational.pyx:1433`, both trapping in
+`convert_gmp...so.err_recover`. Three other files cluster around a generic
+side-module function-table signature mismatch during dynamic import, and the
+two NTL/libcxx finite-field/polynomial constructor failures still trap with
+`RuntimeError: memory access out of bounds` in `libcxx.so` ostream setup. The
+file-error cluster query now anchors generic `RuntimeError:` diagnostics so
+these memory traps group by the runtime diagnostic and top frame instead of
+being split by doctest breadcrumb text.
+
 A follow-up PARI-shaped dylink probe added a PIC archive callback global that
 is initialized to null, assigned at runtime to an archive-local
 `void (*)(long)` function, and then called indirectly through the side module.

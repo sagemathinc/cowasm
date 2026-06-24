@@ -18,6 +18,8 @@ anchored_file_errors as (
     case
       when instr(detail, 'RuntimeError: function signature mismatch') > 0 then
         instr(detail, 'RuntimeError: function signature mismatch')
+      when instr(detail, 'RuntimeError:') > 0 then
+        instr(detail, 'RuntimeError:')
       when instr(detail, 'LinkError:') > 0 then
         instr(detail, 'LinkError:')
       when instr(detail, char(10) || 'Traceback ') > 0 then

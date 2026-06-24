@@ -1922,6 +1922,34 @@ crash()
 
 RuntimeError: function signature mismatch',
   ''
+), (
+  3,
+  1,
+  '/tmp/memory-a.py',
+  'error',
+  1,
+  'wasm_trap',
+  'doctest state: phase=run_example; file=/tmp/memory-a.py; doctest=memory-a; line=11
+doctest source:
+GF(8, ''a'').is_field()
+
+RuntimeError: memory access out of bounds
+    at libcxx.so.std::__2::basic_ostream<char, std::__2::char_traits<char>>::sentry::sentry(std::__2::basic_ostream<char, std::__2::char_traits<char>>&) (wasm://wasm/libcxx.so-01a6b506:wasm-function[1500]:0x897b4)',
+  ''
+), (
+  4,
+  1,
+  '/tmp/memory-b.py',
+  'error',
+  1,
+  'wasm_trap',
+  'doctest state: phase=run_example; file=/tmp/memory-b.py; doctest=memory-b; line=22
+doctest source:
+PolynomialRing(GF(2), ''j'')
+
+RuntimeError: memory access out of bounds
+    at libcxx.so.std::__2::basic_ostream<char, std::__2::char_traits<char>>::sentry::sentry(std::__2::basic_ostream<char, std::__2::char_traits<char>>&) (wasm://wasm/libcxx.so-01a6b506:wasm-function[1500]:0x897b4)',
+  ''
 );
 SQL
 doctest_query_failures_by_class="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/failures-by-class.sql")"
@@ -1935,6 +1963,19 @@ if ! printf '%s\n' "$doctest_query_file_errors" | grep -Fq 'zero-block.py'; then
   printf '%s\n' "$doctest_query_file_errors" >&2
   sqlite3 "$doctest_query_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: file-error cluster query did not include a zero-block file-level error."
+fi
+doctest_memory_trap_cluster="$(printf '%s\n' "$doctest_query_file_errors" |
+  grep -F 'wasm_trap|RuntimeError: memory access out of bounds|libcxx.so.std::__2::basic_ostream<char, std::__2::char_traits<char>>::sentry::sentry' ||
+  true)"
+if [ -z "$doctest_memory_trap_cluster" ]; then
+  printf '%s\n' "$doctest_query_file_errors" >&2
+  sqlite3 "$doctest_query_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: file-error cluster query did not anchor memory-trap diagnostics at RuntimeError."
+fi
+if ! printf '%s\n' "$doctest_memory_trap_cluster" | grep -Fq '|2|'; then
+  printf '%s\n' "$doctest_query_file_errors" >&2
+  sqlite3 "$doctest_query_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: file-error cluster query did not group matching memory traps."
 fi
 doctest_query_missing_modules="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/top-missing-modules.sql")"
 if ! printf '%s\n' "$doctest_query_missing_modules" | grep -Fxq 'sage_zero_block|1'; then
