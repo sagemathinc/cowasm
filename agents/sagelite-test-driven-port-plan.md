@@ -1329,6 +1329,34 @@ doctest-output mismatch; either avoid constructing PARI `Gen` objects in the
 browser-profile finite-field constructor path or fix the cypari2/PARI cleanup
 trap so skipped/native-scope examples do not leave unsafe teardown state.
 
+Current checked rerun on 2026-06-24 shows that the staged patched source has
+already moved past that finite-field cleanup trap:
+
+```text
+sage -t passed: 2390 passed, 0 failed, 767 skipped
+```
+
+That run records 3,157 block rows in `/tmp/sagelite-corpus-current.sqlite3`.
+All eight curated files pass with empty `block-failure-clusters.sql` and
+`file-error-clusters.sql` results:
+
+```text
+integer_ring.pyx: 203 passed, 0 failed, 27 skipped
+integer.pyx: 1024 passed, 0 failed, 189 skipped
+rational.pyx: 472 passed, 0 failed, 113 skipped
+rational_field.py: 144 passed, 0 failed, 68 skipped
+integer_mod_ring.py: 303 passed, 0 failed, 140 skipped
+finite_field_constructor.py: 39 passed, 0 failed, 109 skipped
+polynomial_ring_constructor.py: 98 passed, 0 failed, 73 skipped
+matrix/constructor.pyx: 107 passed, 0 failed, 48 skipped
+```
+
+The next useful pass should not keep chasing the stale finite-field teardown
+note. Start from this clean browser-profile corpus baseline and either grow the
+curated corpus deliberately into the next pure-math module, or continue the
+backend-migration work by moving a narrow Sagelite doctest probe from the older
+`python-wasm` worker toward the validated `python-wasi-sdk` backend.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
