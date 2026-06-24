@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 19;
+const doctestRunnerVersion = 20;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -934,8 +934,37 @@ def __cowasm_filtered_text_with_prompts(text):
     return "".join(line if keep else "\\n" for line, keep in zip(lines, kept)), 0
 
 
+def __cowasm_triple_quoted_docstrings(filename, text):
+    pattern = re.compile(r"(?i)(?:\\b[rubf]+)?('''|\\\"\\\"\\\")")
+    position = 0
+    index = 0
+    while True:
+        match = pattern.search(text, position)
+        if not match:
+            return
+        quote = match.group(1)
+        content_start = match.end()
+        content_end = text.find(quote, content_start)
+        if content_end < 0:
+            return
+        content = text[content_start:content_end]
+        filtered, _ = __cowasm_filtered_text_with_prompts(content)
+        if filtered:
+            line_base = text.count("\\n", 0, match.start())
+            index += 1
+            yield f"{os.path.basename(filename)}[{index}]", filtered, line_base
+        position = content_end + len(quote)
+
+
 def __cowasm_docstrings(filename, text):
     if not filename.endswith(".py"):
+        if os.path.basename(filename) == "rational.pyx":
+            yielded = False
+            for item in __cowasm_triple_quoted_docstrings(filename, text):
+                yielded = True
+                yield item
+            if yielded:
+                return
         filtered, lineno = __cowasm_filtered_text_with_prompts(text)
         if filtered:
             yield os.path.basename(filename), filtered, lineno
@@ -1044,7 +1073,8 @@ def __cowasm_namespace(filename):
         except BaseException:
             pass
         else:
-            namespace.update(vars(module))
+            for name, value in vars(module).items():
+                namespace.setdefault(name, value)
     return namespace
 
 

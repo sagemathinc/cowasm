@@ -1000,7 +1000,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            pAdicRingFixedMod = ()
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,82 @@
+@@ -253,74 +253,83 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1019,6 +1019,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -from sage.probability.all import *
 -from sage.interfaces.all import *
 +if sys.platform == 'wasi':
++    from sage.functions.log import log
 +    from primecountpy.primecount import prime_pi as _primecount_prime_pi
 +
 +    def prime_pi(x):

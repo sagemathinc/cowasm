@@ -46,6 +46,11 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - The doctest runner checkpoints SQLite-bound JSON after each file, so a WASM
   trap in a later file preserves completed file results and records the current
   crashing file separately.
+- The doctest runner now splits the known-problematic `rational.pyx` fallback
+  text into triple-quoted doctest regions so an early `from gmpy2 import *`
+  does not leak `sqrt`/`log` into later rational docstrings. Broader `.pyx`
+  splitting is deferred until checkpointing can preserve completed blocks if a
+  newly exposed later docstring crashes the worker.
 - Doctest corpus runs now isolate each file in a fresh `python-wasm` process.
   A trap or dynamic-link failure in one Sage file is recorded as that file's
   error and does not prevent later corpus files from being attempted.
@@ -100,6 +105,8 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - Sagelite's WASI source patch marks the `ZZ[...]` examples that rely on
   symbolic `sqrt(...)` as `# needs sage.symbolic`, so the browser-compatible
   profile records them as explicit skips instead of missing-module failures.
+- Sagelite's WASI `sage.all` startup namespace now exposes `log`, which keeps
+  exact rational examples such as `log(QQ(125), 5)` on the non-symbolic path.
 
 Useful recent sample:
 
@@ -158,6 +165,21 @@ failure classes are 4
 `output_mismatch`, 3 `TypeError`, 3 `wasm_signature_mismatch`, 2
 `ModuleNotFoundError`, 2 `wasm_trap`, and one each of `NameError`,
 `NotImplementedError`, and `OSError`.
+
+Latest checked local corpus run after the 2026-06-24 rational doctest namespace
+and scoped `.pyx` parsing pass:
+
+```text
+sage -t failed: 1700 passed, 13 failed, 320 skipped
+```
+
+That run records 2,028 block rows in
+`/tmp/sagelite-corpus-after-narrow-pyx.sqlite3`, plus the same five file-level
+errors. The pass removes the rational `gmpy2.sqrt`/`gmpy2.log` leakage cluster
+and makes `log(QQ(125), 5)` available from the WASI `sage.all` namespace. The
+remaining latest-run failure classes are 3 `output_mismatch`, 3
+`wasm_signature_mismatch`, 2 `ModuleNotFoundError`, 2 `wasm_trap`, and one each
+of `NameError`, `NotImplementedError`, and `OSError`.
 
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
