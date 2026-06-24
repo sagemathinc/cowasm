@@ -564,13 +564,17 @@ src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
 src/sage/combinat/combination.py
+src/sage/combinat/misc.py
+src/sage/combinat/composition.py
 src/sage/combinat/subset.py
 src/sage/combinat/composition_signed.py
 src/sage/combinat/derangements.py
 src/sage/combinat/perfect_matching.py
+src/sage/combinat/subword.py
 src/sage/combinat/tuple.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
+src/sage/sets/totally_ordered_finite_set.py
 src/sage/sets/non_negative_integers.py
 src/sage/sets/positive_integers.py
 src/sage/sets/primes.py
@@ -1868,6 +1872,44 @@ The same sampling pass still keeps `sage/combinat/permutation.py` out of the
 quiet corpus because its current failures remain broader than doctest namespace
 fidelity: Singular/plural, GAP, graph, permutation-group, and matrix-constructor
 coverage need separate browser-scope or runtime work.
+
+Follow-up compact combinatorics/set corpus-growth pass:
+`sage/combinat/misc.py` and `sage/sets/totally_ordered_finite_set.py` are now
+included in the browser-profile corpus. Both files are compact exact
+enumeration/helper coverage and add clean signal without pulling in the broader
+set/cartesian-product namespace and semantic failure clusters.
+
+Focused sampling records:
+
+```text
+misc.py: 82 passed, 0 failed, 0 skipped
+totally_ordered_finite_set.py: 67 passed, 0 failed, 2 skipped
+```
+
+The same sampling pass kept `sage/combinat/backtrack.py`,
+`sage/combinat/cartesian_product.py`, `sage/sets/finite_enumerated_set.py`, and
+`sage/sets/set.py` out of this quiet corpus growth. Their current failures are
+clustered around missing globals such as `Permutations`, `cartesian_product`,
+`Hom`, `Primes`, `IntegerRange`, `ConditionSet`, and `RealSet`, plus a few
+set/cartesian-product semantic mismatches. Those should be handled as focused
+namespace, semantics, or browser-scope passes before joining the default clean
+dashboard.
+
+The Sagelite SQLite writer now invokes the `sqlite3` CLI with a 30-second busy
+timeout, so transient overlapping readers do not immediately fail a corpus run
+with `database is locked`.
+
+The full corpus target passes with the two new files included and failures
+disallowed:
+
+```text
+sage -t passed: 4660 passed, 0 failed, 1002 skipped
+```
+
+That run is recorded in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` as run `1` with
+5,662 total block rows across 39 files. The saved block- and file-failure
+cluster queries are empty.
 
 ## Phase 5: Subprocess Strategy
 

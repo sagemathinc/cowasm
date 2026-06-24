@@ -1607,7 +1607,7 @@ function sqlNumber(value) {
 }
 
 function sqliteExec(dbPath, sql) {
-  return execFileSync("sqlite3", [dbPath], {
+  return execFileSync("sqlite3", ["-cmd", ".timeout 30000", dbPath], {
     input: sql,
     encoding: "utf8",
   });
