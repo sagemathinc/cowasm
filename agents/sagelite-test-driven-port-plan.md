@@ -881,6 +881,25 @@ missing GAP/alarm modules, and one still-unsupported PARI object-model path in
 the large-divisor example. The non-integer corpus blockers remain the existing
 loader `wasm_signature_mismatch` and NTL/libcxx memory-trap clusters.
 
+A later CPython/Python-Wasm formatting pass fixed a broad float output cluster
+where WASM Python's float repr dropped the signed exponent suffix, for example
+`9.028340982349083e+35` and `1e-20` were printed as `9.028340982349083e` and
+`1e`. The root cause was CPython's WASI float formatting path relying on
+`sprintf(p, "%+.02d", exp)` while constructing exponent text; the CoWasm
+patch now appends the signed exponent digits manually and `python-wasm` has a
+regression test for both positive and negative exponents.
+
+Focused Sagelite reruns now pass for the representative integer doctest lines:
+
+```text
+integer.pyx:3727: 1 passed, 0 failed, 0 skipped
+integer.pyx:7902: 1 passed, 0 failed, 0 skipped
+```
+
+This separates the exponent-formatting failures from a still-open denormal
+conversion issue: `rational.pyx:3915` expects `5e-324` for `1 / 2^1074`, but
+currently gets `0.0`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

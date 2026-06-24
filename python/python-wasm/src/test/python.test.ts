@@ -85,3 +85,11 @@ test("an annoying-to-real-mathematicians new 'feature' of Python can be disabled
   exec("import sys; sys.set_int_max_str_digits(0)");
   expect(repr("len(str(10**5000))")).toEqual("5001");
 });
+
+test("float repr keeps signed exponent digits", async () => {
+  const { repr } = await syncPython();
+  expect(repr("float(902834098234908209348209834092834098)")).toBe(
+    "9.028340982349083e+35"
+  );
+  expect(repr("1e-20")).toBe("1e-20");
+});

@@ -1,0 +1,57 @@
+--- a/Python/pystrtod.c
++++ b/Python/pystrtod.c
+@@ -89,6 +89,35 @@
+ 
+ #if _PY_SHORT_FLOAT_REPR == 1
+ 
++static char *
++cowasm_append_signed_exponent(char *p, int value)
++{
++    char tmp[16];
++    int i = 0;
++    unsigned int n;
++
++    if (value < 0) {
++        *p++ = '-';
++        n = (unsigned int)(-value);
++    }
++    else {
++        *p++ = '+';
++        n = (unsigned int)value;
++    }
++
++    do {
++        tmp[i++] = (char)('0' + (n % 10));
++        n /= 10;
++    } while (n != 0);
++    while (i < 2) {
++        tmp[i++] = '0';
++    }
++    while (i != 0) {
++        *p++ = tmp[--i];
++    }
++    return p;
++}
++
+ static double
+ _PyOS_ascii_strtod(const char *nptr, char **endptr)
+ {
+@@ -976,7 +1005,7 @@
+     char *p = NULL;
+     Py_ssize_t bufsize = 0;
+     char *digits, *digits_end;
+-    int decpt_as_int, sign, exp_len, exp = 0, use_exp = 0;
++    int decpt_as_int, sign, exp = 0, use_exp = 0;
+     Py_ssize_t decpt, digits_len, vdigits_start, vdigits_end;
+     _Py_SET_53BIT_PRECISION_HEADER;
+ 
+@@ -1201,8 +1230,7 @@
+     /* Now that we've done zero padding, add an exponent if needed. */
+     if (use_exp) {
+         *p++ = float_strings[OFS_E][0];
+-        exp_len = sprintf(p, "%+.02d", exp);
+-        p += exp_len;
++        p = cowasm_append_signed_exponent(p, exp);
+     }
+   exit:
+     if (buf) {
