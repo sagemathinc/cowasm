@@ -740,11 +740,21 @@ diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 diff -urN a/src/sage/rings/all.py b/src/sage/rings/all.py
 --- a/src/sage/rings/all.py
 +++ b/src/sage/rings/all.py
-@@ -73,13 +73,19 @@
+@@ -73,13 +73,29 @@
  # Real numbers
 -from sage.rings.real_mpfr import (RealField, RR,
 -                       create_RealNumber as RealNumber)   # this is used by the preparser to wrap real literals -- very important.
 +if sys.platform == 'wasi':
++    import importlib
++    import sage.rings as _sage_rings
++
++    class _CowasmLazyRealMpfrModule:
++        def __getattr__(self, name):
++            module = importlib.import_module('sage.rings.real_mpfr')
++            _sage_rings.real_mpfr = module
++            return getattr(module, name)
++
++    _sage_rings.real_mpfr = _CowasmLazyRealMpfrModule()
 +    lazy_import('sage.rings.real_mpfr', ['RealField', 'RR', 'create_RealNumber'],
 +                as_=['RealField', 'RR', 'RealNumber'])
 +else:
@@ -1365,6 +1375,12 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
                      if modulus != "random" and modulus in self._modulus_cache[order]:
 --- a/src/sage/rings/integer.pyx
 +++ b/src/sage/rings/integer.pyx
+@@ -358,3 +358,3 @@
+             sage: from sage.rings.integer import IntegerWrapper
+-
+-            sage: n = IntegerWrapper(Primes(), 3) # indirect doctest
++            sage: # needs sage.libs.pari sage.sets
++            sage: n = IntegerWrapper(Primes(), 3) # indirect doctest
 @@ -2247,7 +2247,7 @@
 -            sage: x, y, z = var('x,y,z')
 -            sage: 2^(x + y + z)
@@ -1416,6 +1432,32 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          """
 --- a/src/sage/rings/rational.pyx
 +++ b/src/sage/rings/rational.pyx
+@@ -317,19 +317,17 @@
+         (1, -1)
+         sage: all(rational_power_parts(-1, i/77) == (1,-1) for i in range(1,9))
+         True
+-
+-        sage: (-1)^(-1/3)
++        sage: (-1)^(-1/3)                                                              # needs sage.symbolic
+         -(-1)^(2/3)
+-        sage: 1 / ((-1)^(1/3))
++        sage: 1 / ((-1)^(1/3))                                                         # needs sage.symbolic
+         -(-1)^(2/3)
+-        sage: (-1)^(2/3)
++        sage: (-1)^(2/3)                                                               # needs sage.symbolic
+         (-1)^(2/3)
+-        sage: (-1)^(1/3)*(-1)^(1/5)
++        sage: (-1)^(1/3)*(-1)^(1/5)                                                    # needs sage.symbolic
+         (-1)^(8/15)
+-        sage: bool((-1)^(2/3) == -1/2 + sqrt(3)/2*I)
++        sage: bool((-1)^(2/3) == -1/2 + sqrt(3)/2*I)                                   # needs sage.symbolic
+         True
+-        sage: all((-1)^(p/q) == cos(p*pi/q) + I * sin(p*pi/q)
++        sage: all((-1)^(p/q) == cos(p*pi/q) + I * sin(p*pi/q)                          # needs sage.symbolic
+         ....:     for p in srange(1, 6) for q in srange(1, 6))
+         True
+-
+     A few more tests added in :issue:`26414`::
 @@ -3268,10 +3268,10 @@
 -            sage: gamma(1/2)
 +            sage: gamma(1/2)                                                           # needs sage.symbolic
