@@ -858,6 +858,29 @@ to:
 sage -t failed: 1647 passed, 66 failed, 320 skipped
 ```
 
+A follow-up cypari2 focused-runtime pass added the Sage-facing
+`Pari.prime(n)` wrapper plus `Gen.isprime()`, and aligned
+`Gen.nextprime(add_one=True)` with upstream cypari2 by asking PARI for the
+next prime after `n + 1`. This clears the integer doctest cluster that routed
+through `nth_prime`, `primes_first_n`, large `next_prime(...)`, and
+`Integer._pseudoprime_is_prime(...)`:
+
+```text
+integer.pyx: 1012 passed, 20 failed, 181 skipped
+```
+
+The curated corpus now records:
+
+```text
+sage -t failed: 1664 passed, 49 failed, 320 skipped
+```
+
+The remaining integer-file failures are mostly output-mismatch formatting,
+PARI `PariValue` integer coercion, out-of-scope subprocess-backed ECM,
+missing GAP/alarm modules, and one still-unsupported PARI object-model path in
+the large-divisor example. The non-integer corpus blockers remain the existing
+loader `wasm_signature_mismatch` and NTL/libcxx memory-trap clusters.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

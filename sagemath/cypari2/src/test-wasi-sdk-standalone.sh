@@ -307,6 +307,7 @@ cdef extern from *:
     }
 
     static int cowasm_cypari2_gen_clone_nextprime(GEN input,
+                                                  int add_one,
                                                   GEN *result,
                                                   long *errnum) {
       int ok = 1;
@@ -321,7 +322,7 @@ cdef extern from *:
         ok = 0;
       }
       pari_TRY {
-        *result = gclone(nextprime(input));
+        *result = gclone(nextprime(add_one ? gaddsg(1, input) : input));
       }
       pari_ENDCATCH;
 
@@ -345,6 +346,28 @@ cdef extern from *:
       }
       pari_TRY {
         *result = ispseudoprime(input, flag);
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_isprime(GEN input,
+                                          long *result,
+                                          long *errnum) {
+      int ok = 1;
+
+      *result = 0;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = isprime(input);
       }
       pari_ENDCATCH;
 
@@ -420,6 +443,28 @@ cdef extern from *:
             *base = gclone(y);
           }
         }
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
+    static int cowasm_cypari2_gen_clone_prime(long n,
+                                              GEN *result,
+                                              long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(prime(n));
       }
       pari_ENDCATCH;
 
@@ -583,12 +628,16 @@ cdef extern from *:
                                         GEN *result,
                                         long *errnum)
     int cowasm_cypari2_gen_clone_nextprime(GEN input,
+                                           int add_one,
                                            GEN *result,
                                            long *errnum)
     int cowasm_cypari2_gen_ispseudoprime(GEN input,
                                          long flag,
                                          long *result,
                                          long *errnum)
+    int cowasm_cypari2_gen_isprime(GEN input,
+                                   long *result,
+                                   long *errnum)
     int cowasm_cypari2_gen_clone_primepower(GEN input,
                                             int proven,
                                             long *power,
@@ -600,6 +649,9 @@ cdef extern from *:
                                          long *power,
                                          GEN *base,
                                          long *errnum)
+    int cowasm_cypari2_gen_clone_prime(long n,
+                                       GEN *result,
+                                       long *errnum)
     int cowasm_cypari2_gen_clone_ffinit(GEN p,
                                         long degree,
                                         GEN *result,
@@ -859,11 +911,13 @@ cdef class Gen(Gen_base):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
-    def nextprime(self, _flag=True):
+    def nextprime(self, bint add_one=False):
         cdef GEN result = NULL
         cdef long errnum = 0
 
-        if not cowasm_cypari2_gen_clone_nextprime(self.g, &result, &errnum):
+        if not cowasm_cypari2_gen_clone_nextprime(
+            self.g, 1 if add_one else 0, &result, &errnum
+        ):
             _raise_pari_error(errnum)
         return _new_owned(result)
 
@@ -874,6 +928,14 @@ cdef class Gen(Gen_base):
         if not cowasm_cypari2_gen_ispseudoprime(
             self.g, flag, &result, &errnum
         ):
+            _raise_pari_error(errnum)
+        return bool(result)
+
+    def isprime(self):
+        cdef long result = 0
+        cdef long errnum = 0
+
+        if not cowasm_cypari2_gen_isprime(self.g, &result, &errnum):
             _raise_pari_error(errnum)
         return bool(result)
 
@@ -973,6 +1035,15 @@ cpdef Gen objtogen(s):
         return _new_owned(result)
 
     _missing_runtime()
+
+
+cpdef Gen prime(long n):
+    cdef GEN result = NULL
+    cdef long errnum = 0
+
+    if not cowasm_cypari2_gen_clone_prime(n, &result, &errnum):
+        _raise_pari_error(errnum)
+    return _new_owned(result)
 
 
 cdef Gen list_of_Gens_to_Gen(list s):
@@ -1411,6 +1482,7 @@ from .gen import (
     eval_string,
     get_debug_level,
     objtogen,
+    prime as _prime,
     set_debug_level,
 )
 
@@ -1451,6 +1523,9 @@ class Pari:
 
     def set_debug_level(self, level):
         set_debug_level(int(level))
+
+    def prime(self, n):
+        return _prime(int(n))
 
     def __call__(self, *args, **kwargs):
         if kwargs or len(args) != 1:
@@ -1547,6 +1622,11 @@ assert [int(e[i]) for i in range(len(e))] == [3, 2, 1]
 assert int(pari(2**31 - 1).factor()[0][0]) == 2147483647
 assert int(pari(100).nextprime(True)) == 101
 assert int(pari(-37).nextprime(True)) == 2
+assert int(pari(2).nextprime(True)) == 3
+assert int(pari.prime(58)) == 271
+assert pari(2**31 - 1).isprime() is True
+assert pari(2**31).isprime() is False
+assert pari(10**20 + 39).isprime() is True
 expected_nextprime_2_512 = int(
     "134078079299425970995740249982058461274793658205923933777235614437217640"
     "300735469768018742981669034276900318581864860508537538828119465699464336"
