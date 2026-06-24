@@ -175,7 +175,18 @@ integer conversion, display, factorization, and factor-matrix access.
 Unsupported paths still fail explicitly.
 """
 
-from .types cimport GEN, set_gel, t_COL, t_INT, t_MAT, t_POL, t_VEC, typ
+from .types cimport (
+    GEN,
+    set_gel,
+    t_COL,
+    t_INT,
+    t_MAT,
+    t_POL,
+    t_POLMOD,
+    t_REAL,
+    t_VEC,
+    typ,
+)
 from .paridecl cimport GENtostr, cgetg, gel, glength, gclone, gunclone_deep, itos, pari_free
 
 
@@ -707,6 +718,29 @@ cdef bint _is_integer_text(str text):
     return bool(body) and body.isdigit()
 
 
+def _int_from_real_text(str text):
+    cdef str body = text.strip()
+    cdef str integer_part
+    cdef str fraction_part
+
+    if " E" in body or "e" in body:
+        from cypari2.handle_error import PariError
+        raise PariError("precision too low in truncr (precision loss in truncation)")
+
+    integer_part, separator, fraction_part = body.partition(".")
+    if not separator or fraction_part.strip("0"):
+        raise TypeError("Attempt to coerce non-integral real number to an Integer")
+    return int(integer_part)
+
+
+def _raise_polmod_integer_error(str text):
+    cdef str value = text
+
+    if value.startswith("Mod(") and "," in value:
+        value = value[4:value.find(",")].strip()
+    raise TypeError(f"Unable to coerce PARI {value} to an Integer")
+
+
 cpdef str eval_string(str expression):
     cdef bytes encoded = expression.encode("ascii")
     cdef char *output = NULL
@@ -825,11 +859,19 @@ cdef class Gen(Gen_base):
         raise TypeError("PARI object is not indexable")
 
     def __int__(self):
+        cdef long kind
+        cdef str text
+
         if self.g == NULL:
             raise TypeError("empty PARI object is not an integer")
-        if typ(self.g) != t_INT:
-            return int(str(self))
-        return int(str(self))
+
+        kind = typ(self.g)
+        text = str(self)
+        if kind == t_REAL:
+            return _int_from_real_text(text)
+        if kind == t_POLMOD:
+            _raise_polmod_integer_error(text)
+        return int(text)
 
     def __index__(self):
         return int(self)
@@ -1466,6 +1508,9 @@ cat >"$dist_dir/cypari2/handle_error.py" <<'PY'
 
 class PariError(RuntimeError):
     pass
+
+
+PariError.__module__ = "builtins"
 PY
 
 cat >"$dist_dir/cypari2/pari_instance.py" <<'PY'
@@ -1531,8 +1576,6 @@ class Pari:
         if kwargs or len(args) != 1:
             return _missing_runtime(*args, **kwargs)
         expression = args[0]
-        if isinstance(expression, str):
-            return PariValue(eval_string(expression))
         return objtogen(expression)
 
     def __getattr__(self, _name):
@@ -1578,6 +1621,7 @@ assert Gen.__module__ == "cypari2.gen"
 assert Gen_base.__module__ == "cypari2.gen"
 assert issubclass(Gen, Gen_base)
 assert issubclass(PariError, RuntimeError)
+assert PariError.__module__ == "builtins"
 assert isinstance(Gen(1), Gen_base)
 assert int(Gen(360)) == 360
 assert int(Gen(-8)) == -8
@@ -1604,6 +1648,27 @@ assert pari.default("debug") == 0
 pari.default("debug", old_debug)
 assert pari.get_debug_level() == old_debug
 assert str(pari("2+3")) == "5"
+assert int(pari("-3.0")) == -3
+try:
+    int(pari("-3.5"))
+except TypeError as err:
+    assert "Attempt to coerce non-integral real number" in str(err)
+else:
+    raise AssertionError("non-integral PARI real converted to int")
+try:
+    int(pari("1e100"))
+except PariError as err:
+    assert "precision too low in truncr" in str(err)
+else:
+    raise AssertionError("low-precision PARI real converted to int")
+assert int(pari("10^50")) == 10**50
+assert int(pari("Pol(3)")) == 3
+try:
+    int(pari("Mod(x, x^3+x+1)"))
+except TypeError as err:
+    assert "Unable to coerce PARI x to an Integer" in str(err)
+else:
+    raise AssertionError("nonconstant PARI polynomial mod converted to int")
 assert repr(pari("primepi(10000)")) == "1229"
 assert str(pari("factorback(factor(360))")) == "360"
 g = pari(360)
