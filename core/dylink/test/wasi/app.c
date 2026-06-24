@@ -117,6 +117,14 @@ int side_setjmp_recovery() {
 }
 
 EXPORTED_SYMBOL
+int archive_callback_from_pic_archive() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f =
+      (FUN_VOID_PTR)dlsym(handle, "archive_callback_from_pic_archive");
+  return (*f)();
+}
+
+EXPORTED_SYMBOL
 int add_provider_data_relocation(int n) {
   void* handle = dlopen("./consumer.so", 2);
   FUN_PTR f = (FUN_PTR)dlsym(handle, "add_provider_data_relocation");
@@ -166,6 +174,10 @@ int main() {
 #ifdef COWASM_WASI_SDK_TEST
   printf("side_setjmp_recovery() = %d\n", side_setjmp_recovery());
   assert(side_setjmp_recovery() == 1);
+
+  printf("archive_callback_from_pic_archive() = %d\n",
+         archive_callback_from_pic_archive());
+  assert(archive_callback_from_pic_archive() == 1);
 
   printf("add_provider_data_relocation(2022) = %d\n", add_provider_data_relocation(2022));
   assert(add_provider_data_relocation(2022) == 2022 + 41);

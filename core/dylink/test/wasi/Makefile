@@ -5,6 +5,7 @@ include ../Makefile-common
 WASI_SDK_CLANG = ${BIN}/wasi-sdk-clang-next
 WASI_SDK_NM = ${BIN}/wasi-sdk-llvm-nm-next
 WASI_SDK_STRINGS = ${BIN}/wasi-sdk-llvm-strings-next
+WASI_SDK_AR = ${BIN}/wasi-sdk-llvm-ar-next
 
 build/wasm/app.wasm: app.c
 	mkdir -p build/wasm
@@ -46,7 +47,21 @@ build/wasi-sdk/app.wasm: app.c
 		-Wl,--export=malloc \
 		-Wl,--export=free
 
-build/wasi-sdk/dynamic-library.so: dynamic-library.c
+build/wasi-sdk/archive-callback.o: archive-callback.c
+	mkdir -p build/wasi-sdk
+	${WASI_SDK_CLANG} -target wasm32-wasip1 \
+		-O0 \
+		-DCOWASM_WASI_SDK_TEST \
+		-fPIC \
+		-nostdlib \
+		-c \
+		archive-callback.c \
+		-o build/wasi-sdk/archive-callback.o
+
+build/wasi-sdk/libarchive-callback.a: build/wasi-sdk/archive-callback.o
+	${WASI_SDK_AR} rcs build/wasi-sdk/libarchive-callback.a build/wasi-sdk/archive-callback.o
+
+build/wasi-sdk/dynamic-library.so: dynamic-library.c build/wasi-sdk/libarchive-callback.a
 	mkdir -p build/wasi-sdk
 	${WASI_SDK_CLANG} -target wasm32-wasip1 \
 		-O0 \
@@ -60,6 +75,7 @@ build/wasi-sdk/dynamic-library.so: dynamic-library.c
 		-Wl,--no-entry \
 		-Wl,--export=__wasm_call_ctors \
 		dynamic-library.c \
+		build/wasi-sdk/libarchive-callback.a \
 		-o build/wasi-sdk/dynamic-library.so
 
 build/wasi-sdk/provider.so: provider.c
@@ -132,8 +148,8 @@ build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.
 	! ${WASI_SDK_STRINGS} build/wasi-sdk/dynamic-library.so | grep 'needed_dynlibs'
 	touch build/wasi-sdk/.checked
 
-build/wasi-sdk-archive/.checked: build/wasi-sdk-archive/app.wasm build/wasi-sdk/dynamic-library.so
-	node check-wasi-sdk-abi.js build/wasi-sdk-archive/app.wasm build/wasi-sdk/dynamic-library.so
+build/wasi-sdk-archive/.checked: build/wasi-sdk-archive/app.wasm build/wasi-sdk-archive/dynamic-library.so build/wasi-sdk-archive/provider.so build/wasi-sdk-archive/consumer.so
+	node check-wasi-sdk-abi.js build/wasi-sdk-archive/app.wasm build/wasi-sdk-archive/dynamic-library.so
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' U dlopen'
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' U dlsym'
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' T malloc$$'
@@ -142,6 +158,7 @@ build/wasi-sdk-archive/.checked: build/wasi-sdk-archive/app.wasm build/wasi-sdk/
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' T __WASM_EXPORT__malloc$$'
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' T __WASM_EXPORT__printf$$'
 	! ${WASI_SDK_STRINGS} build/wasi-sdk-archive/app.wasm | grep 'needed_dynlibs'
+	${WASI_SDK_STRINGS} build/wasi-sdk-archive/dynamic-library.so | grep 'archive_callback_probe'
 	touch build/wasi-sdk-archive/.checked
 
 test-wasm: build/wasm/app.wasm build/wasm/dynamic-library.wasm.so
@@ -150,7 +167,7 @@ test-wasm: build/wasm/app.wasm build/wasm/dynamic-library.wasm.so
 test-wasi-sdk-next: build/wasi-sdk/.checked
 	cd build/wasi-sdk && node ../../app.js
 
-test-wasi-sdk-archive-next: build/wasi-sdk-archive/.checked build/wasi-sdk-archive/dynamic-library.so build/wasi-sdk-archive/provider.so build/wasi-sdk-archive/consumer.so
+test-wasi-sdk-archive-next: build/wasi-sdk-archive/.checked
 	cd build/wasi-sdk-archive && COWASM_DYLINK_CALL_MAIN_CTORS=0 node ../../app.js
 
 # NOTE: We're using gcc here (which is really clang on MacOS), because

@@ -117,6 +117,7 @@ assertExport(side, "ctor_count", "function");
 assertExport(side, "side_memory_size_is_positive", "function");
 assertExport(side, "sorted_with_qsort", "function");
 assertExport(side, "side_setjmp_recovery", "function");
+assertExport(side, "archive_callback_from_pic_archive", "function");
 assertExport(side, "add5077_using_func_from_main", "function");
 assertExport(side, "__wasm_apply_data_relocs", "function");
 assertExport(side, "__wasm_call_ctors", "function");

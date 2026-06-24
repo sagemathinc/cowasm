@@ -611,6 +611,24 @@ stored callback pointer is not adjusted by `__table_base`, and it is much
 smaller than rebuilding the full Sagelite/PARI stack while iterating on the
 loader or package flags.
 
+That focused `core/dylink/test/wasi` smoke is now landed. It builds a PIC
+archive with a `void (*)(long)` global initialized to an archive-local function,
+links it into the WASI SDK side module, and verifies the callback through both
+`test-wasi-sdk-next` and `test-wasi-sdk-archive-next`. The smoke passes, so the
+`err_recover` failure is probably not a generic side-module static-archive
+function-pointer relocation bug. The next useful probe should compare the
+actual PARI `cb_pari_err_recover` storage path against this passing smoke:
+whether the callback variable is imported, copied, overwritten during
+`pari_init_opts()`, or resolved through a different relocation/code path than a
+plain archive-internal initializer.
+
+A focused rerun after adding that smoke still fails at `integer.pyx:3112` for
+`(-3).divisors()` with `RuntimeError: function signature mismatch` in
+`convert_sage...so.err_recover`, reached through
+`new_chunk_resize -> pari_err -> err_recover`. That keeps the active cluster on
+PARI's callback mutation/recovery path rather than the already-covered generic
+archive callback relocation path.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
