@@ -253,6 +253,25 @@ clusters are one PARI `convert_gmp...so.err_recover` signature mismatch in
 `rational_field.py`, and three NTL/libcxx ostream `memory access out of
 bounds` traps in finite-field and polynomial constructor paths.
 
+Latest checked local corpus run after the 2026-06-24 rational-field browser
+scope tagging pass:
+
+```text
+sage -t failed: 1950 passed, 3 failed, 445 skipped
+```
+
+That run records 2,395 block rows in
+`/tmp/sagelite-corpus-after-rational-field-tags.sqlite3`, with no block-level
+failures. The pass marks `rational_field.py` doctests that require unavailable
+categories, elliptic curves, modules, PARI-backed rational polynomial
+factorization, and one automorphism display-format drift as explicit deferred
+skips. `rational_field.py` now runs to completion with `144 passed, 0 failed,
+68 skipped`, so the previous PARI `convert_gmp...so.err_recover` file-level
+signature-mismatch cluster is no longer part of the browser-profile dashboard.
+The only remaining corpus failures are the three NTL/libcxx ostream
+`memory access out of bounds` traps in finite-field and polynomial constructor
+paths.
+
 Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
 `python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
 currently blocked during WASM configure by `mimalloc requires stdatomic.h`.
