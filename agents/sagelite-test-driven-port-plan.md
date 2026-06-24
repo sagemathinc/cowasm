@@ -1283,6 +1283,35 @@ coverage with broader directives, or fix the underlying NTL/libcxx and
 cypari2/PARI state traps so the browser-profile corpus can keep the finite-ring
 examples in scope.
 
+A follow-up finite-ring browser-scope pass classified those broader native
+library regions instead of continuing one-line tags. The Sagelite WASI patch
+now marks finite-field extension/conway/modulus/implementation examples,
+integer-modular category checks, unit-group/PARI paths, and NTL-backed modular
+root-finding examples with explicit `# needs` directives. This lets
+`integer_mod_ring.py` run to completion in the browser-compatible corpus:
+
+```text
+integer_mod_ring.py: 303 passed, 0 failed, 140 skipped
+```
+
+The checked corpus run after this pass records:
+
+```text
+sage -t failed: 2351 passed, 1 failed, 658 skipped
+```
+
+That run is in
+`/tmp/sagelite-corpus-after-finite-ring-implementation-tags.sqlite3`.
+`block-failure-clusters.sql` is empty. The only remaining corpus failure is a
+file-level cleanup trap in `finite_field_constructor.py`, grouped as
+`wasm_trap|RuntimeError: memory access out of bounds` at
+`gen.cpython-314-wasm32-wasi.so.blockdelete`, reached during cypari2/PARI
+`Gen.__dealloc__` cleanup after the finite-field constructor file. The next
+useful pass should treat this as a PARI lifetime/state issue, not another
+doctest-output mismatch; either avoid constructing PARI `Gen` objects in the
+browser-profile finite-field constructor path or fix the cypari2/PARI cleanup
+trap so skipped/native-scope examples do not leave unsafe teardown state.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

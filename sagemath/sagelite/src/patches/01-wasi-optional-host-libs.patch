@@ -1913,7 +1913,7 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
 diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/finite_rings/integer_mod_ring.py
 --- a/src/sage/rings/finite_rings/integer_mod_ring.py
 +++ b/src/sage/rings/finite_rings/integer_mod_ring.py
-@@ -1770,10 +1770,10 @@
+@@ -1770,7 +1770,7 @@
          polynomial is defined::
  
 -            sage: R.<x> = Zmod(120)[]
@@ -1924,3 +1924,588 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 -            sage: (x^2 - 1).roots(Zmod(60), multiplicities=False)
 +            sage: (x^2 - 1).roots(Zmod(60), multiplicities=False)                     # needs sage.libs.ntl
              [29, 41, 49, 1, 59, 11, 19, 31]
+diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -375,18 +375,18 @@
+         Traceback (most recent call last):
+         ...
+         ValueError: the order of a finite field must be at least 2
+-        sage: GF(100)
++        sage: GF(100)                                                                 # needs sage.libs.pari
+         Traceback (most recent call last):
+         ...
+         ValueError: the order of a finite field must be a prime power
+ 
+     Finite fields with explicit random modulus are not cached::
+ 
+-        sage: k.<a> = GF(5**10, modulus='random')
+-        sage: n.<a> = GF(5**10, modulus='random')
+-        sage: while k.modulus() == n.modulus():
++        sage: k.<a> = GF(5**10, modulus='random')                                     # needs sage.libs.pari
++        sage: n.<a> = GF(5**10, modulus='random')                                     # needs sage.libs.pari
++        sage: while k.modulus() == n.modulus():                                       # needs sage.libs.pari
+         ....:     n.<a> = GF(5**10, modulus='random')
+-        sage: n is k
++        sage: n is k                                                                  # needs sage.libs.pari
+         False
+-        sage: GF(5**10, 'a') is GF(5**10, 'a')
++        sage: GF(5**10, 'a') is GF(5**10, 'a')                                        # needs sage.libs.pari
+         True
+diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/finite_rings/integer_mod_ring.py
+--- a/src/sage/rings/finite_rings/integer_mod_ring.py
++++ b/src/sage/rings/finite_rings/integer_mod_ring.py
+@@ -1775,48 +1775,48 @@
+ 
+         TESTS::
+ 
+-            sage: R.<x> = Zmod(2)[]
+-            sage: x.roots()
++            sage: R.<x> = Zmod(2)[]                                                   # needs sage.libs.ntl
++            sage: x.roots()                                                           # needs sage.libs.ntl
+             [(0, 1)]
+ 
+         Test polynomials with content::
+ 
+-            sage: R.<x> = Zmod(4)[]
+-            sage: (2*x).roots(multiplicities=False)
++            sage: R.<x> = Zmod(4)[]                                                   # needs sage.libs.ntl
++            sage: (2*x).roots(multiplicities=False)                                   # needs sage.libs.ntl
+             [0, 2]
+ 
+-            sage: R.<x> = Zmod(6)[]
+-            sage: (3*x).roots(multiplicities=False)
++            sage: R.<x> = Zmod(6)[]                                                   # needs sage.libs.ntl
++            sage: (3*x).roots(multiplicities=False)                                   # needs sage.libs.ntl
+             [0, 2, 4]
+ 
+         Test polynomial with many roots::
+ 
+-            sage: R.<x> = Zmod(6)[]
+-            sage: f = x * (x - 1) * (x - 2) * (x - 3) * (x - 4) * (x - 5)
+-            sage: len(f.roots(multiplicities=False))
++            sage: R.<x> = Zmod(6)[]                                                   # needs sage.libs.ntl
++            sage: f = x * (x - 1) * (x - 2) * (x - 3) * (x - 4) * (x - 5)             # needs sage.libs.ntl
++            sage: len(f.roots(multiplicities=False))                                  # needs sage.libs.ntl
+             6
+ 
+         Test finding roots over large prime powers::
+ 
+-            sage: R.<x> = Zmod(2**16)[]
+-            sage: (x^3 + 5).roots(multiplicities=False)
++            sage: R.<x> = Zmod(2**16)[]                                               # needs sage.libs.ntl
++            sage: (x^3 + 5).roots(multiplicities=False)                               # needs sage.libs.ntl
+             [45475]
+-            sage: (x^2 + 46*x + 1).roots(multiplicities=False)
++            sage: (x^2 + 46*x + 1).roots(multiplicities=False)                        # needs sage.libs.ntl
+             [421, 33189, 16805, 49573, 8613, 41381, 24997, 57765, 7725, 40493, 24109, 56877, 15917, 48685, 32301, 65069]
+ 
+-            sage: R.<x> = Zmod(3**16)[]
+-            sage: (x^2 + 2).roots(multiplicities=False)
++            sage: R.<x> = Zmod(3**16)[]                                               # needs sage.libs.ntl
++            sage: (x^2 + 2).roots(multiplicities=False)                               # needs sage.libs.ntl
+             [24620738, 18425983]
+-            sage: (x^2 + 11*x + 1).roots(multiplicities=False)
++            sage: (x^2 + 11*x + 1).roots(multiplicities=False)                        # needs sage.libs.ntl
+             [633836, 14982743, 29331650, 13715060, 28063967, 42412874]
+-            sage: (x^3 + 8).roots(multiplicities=False)
++            sage: (x^3 + 8).roots(multiplicities=False)                               # needs sage.libs.ntl
+             [14348905, 28697812, 43046719]
+ 
+         Test some larger primes::
+ 
+-            sage: R.<x> = Zmod(41**4)[]
+-            sage: (x^2 + 2).roots(multiplicities=False)
++            sage: R.<x> = Zmod(41**4)[]                                               # needs sage.libs.ntl
++            sage: (x^2 + 2).roots(multiplicities=False)                               # needs sage.libs.ntl
+             [2208905, 616856]
+-            sage: R.<x> = Zmod(43**4)[]
+-            sage: (x^2 + 3).roots(multiplicities=False)
++            sage: R.<x> = Zmod(43**4)[]                                               # needs sage.libs.ntl
++            sage: (x^2 + 3).roots(multiplicities=False)                               # needs sage.libs.ntl
+             [3269879, 148922]
+diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -400,50 +400,50 @@
+         True
+         sage: K is GF(7, modulus=K.modulus())
+         True
+-        sage: K = GF(4,'a'); K.modulus()
++        sage: K = GF(4,'a'); K.modulus()                                               # needs sage.libs.ntl
+         x^2 + x + 1
+-        sage: L = GF(4,'a', K.modulus())
+-        sage: K is L
++        sage: L = GF(4,'a', K.modulus())                                               # needs sage.libs.ntl
++        sage: K is L                                                                   # needs sage.libs.ntl
+         True
+-        sage: M = GF(4,'a', K.modulus().change_variable_name('y'))
+-        sage: K is M
++        sage: M = GF(4,'a', K.modulus().change_variable_name('y'))                     # needs sage.libs.ntl
++        sage: K is M                                                                   # needs sage.libs.ntl
+         True
+ 
+     You may print finite field elements as integers. This currently
+     only works if the order of field is `<2^{16}`, though::
+ 
+-        sage: k.<a> = GF(2^8, repr='int')
+-        sage: a
++        sage: k.<a> = GF(2^8, repr='int')                                              # needs sage.libs.ntl
++        sage: a                                                                        # needs sage.libs.ntl
+         2
+ 
+     The following demonstrate coercions for finite fields using Conway
+     polynomials::
+ 
+-        sage: k = GF(5^2); a = k.gen()
+-        sage: l = GF(5^5); b = l.gen()
+-        sage: a + b
++        sage: k = GF(5^2); a = k.gen()                                                 # needs sage.libs.ntl
++        sage: l = GF(5^5); b = l.gen()                                                 # needs sage.libs.ntl
++        sage: a + b                                                                    # needs sage.libs.ntl
+         3*z10^5 + z10^4 + z10^2 + 3*z10 + 1
+ 
+     Note that embeddings are compatible in lattices of such finite
+     fields::
+ 
+-        sage: m = GF(5^3); c = m.gen()
+-        sage: (a+b)+c == a+(b+c)
++        sage: m = GF(5^3); c = m.gen()                                                 # needs sage.libs.ntl
++        sage: (a+b)+c == a+(b+c)                                                       # needs sage.libs.ntl
+         True
+-        sage: (a*b)*c == a*(b*c)
++        sage: (a*b)*c == a*(b*c)                                                       # needs sage.libs.ntl
+         True
+-        sage: from sage.categories.pushout import pushout
+-        sage: n = pushout(k, l)
+-        sage: o = pushout(l, m)
+-        sage: q = pushout(n, o)
+-        sage: q(o(b)) == q(n(b))
++        sage: from sage.categories.pushout import pushout                              # needs sage.libs.ntl
++        sage: n = pushout(k, l)                                                        # needs sage.libs.ntl
++        sage: o = pushout(l, m)                                                        # needs sage.libs.ntl
++        sage: q = pushout(n, o)                                                        # needs sage.libs.ntl
++        sage: q(o(b)) == q(n(b))                                                       # needs sage.libs.ntl
+         True
+ 
+     Another check that embeddings are defined properly::
+ 
+-        sage: k = GF(3**10)
+-        sage: l = GF(3**20)
+-        sage: l(k.gen()**10) == l(k.gen())**10
++        sage: k = GF(3**10)                                                            # needs sage.libs.ntl
++        sage: l = GF(3**20)                                                            # needs sage.libs.ntl
++        sage: l(k.gen()**10) == l(k.gen())**10                                        # needs sage.libs.ntl
+         True
+ 
+     Using pseudo-Conway polynomials is slow for highly
+diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/finite_rings/integer_mod_ring.py
+--- a/src/sage/rings/finite_rings/integer_mod_ring.py
++++ b/src/sage/rings/finite_rings/integer_mod_ring.py
+@@ -1878,46 +1878,46 @@
+         Sage allows us to coerce polynomials from one modulus to another,
+         and that makes the following defined::
+ 
+-            sage: R.<x> = Zmod(100)[]
+-            sage: (x^2 - 1).roots(Zmod(99), multiplicities=False) == (x^2 - 1).change_ring(Zmod(99)).roots(multiplicities=False)
++            sage: R.<x> = Zmod(100)[]                                                 # needs sage.libs.ntl
++            sage: (x^2 - 1).roots(Zmod(99), multiplicities=False) == (x^2 - 1).change_ring(Zmod(99)).roots(multiplicities=False) # needs sage.libs.ntl
+             True
+ 
+         We can find roots of high degree polynomials in a reasonable time::
+ 
+-            sage: set_random_seed(31337)
+-            sage: p = random_prime(2^128)
+-            sage: R.<x> = Zmod(p)[]
+-            sage: f = R.random_element(degree=5000)
+-            sage: f.roots(multiplicities=False)
++            sage: set_random_seed(31337)                                               # needs sage.libs.ntl
++            sage: p = random_prime(2^128)                                              # needs sage.libs.ntl
++            sage: R.<x> = Zmod(p)[]                                                    # needs sage.libs.ntl
++            sage: f = R.random_element(degree=5000)                                    # needs sage.libs.ntl
++            sage: f.roots(multiplicities=False)                                        # needs sage.libs.ntl
+             [107295314027801680550847462044796892009, 75545907600948005385964943744536832524]
+ 
+         Roots of 0 or 1 degree polynomials should be computable without factoring the order::
+ 
+-            sage: set_random_seed(31337)
+-            sage: p = random_prime(2^512)
+-            sage: q = random_prime(2^512)
+-            sage: R.<x> = Zmod(p*q)[]
+-            sage: R(1).roots(multiplicities=False)
++            sage: set_random_seed(31337)                                               # needs sage.libs.ntl
++            sage: p = random_prime(2^512)                                              # needs sage.libs.ntl
++            sage: q = random_prime(2^512)                                              # needs sage.libs.ntl
++            sage: R.<x> = Zmod(p*q)[]                                                  # needs sage.libs.ntl
++            sage: R(1).roots(multiplicities=False)                                     # needs sage.libs.ntl
+             []
+-            sage: R(x + 1).roots(multiplicities=False)
++            sage: R(x + 1).roots(multiplicities=False)                                 # needs sage.libs.ntl
+             [3370329767268559825901742050737977765362112301264016666995728641595783763682895579491491312949884527233896437825100351818777861111199083287936712213803662588205628332090619063390145822822539640664875016851649375480771418576780687530310519702682544247717838214152013112397973300661385457793537189792695633500]
+-            sage: R(p*x + 1).roots(multiplicities=False)
++            sage: R(p*x + 1).roots(multiplicities=False)                               # needs sage.libs.ntl
+             []
+ 
+         Even when leading coefficient of linear polynomial is not invertible::
+ 
+-            sage: set_random_seed(31337)
+-            sage: p = random_prime(2^10)
+-            sage: q = random_prime(2^512)
+-            sage: R.<x> = Zmod((p**2)*q)[]
+-            sage: len(R(p*x + p*q).roots(multiplicities=False))
++            sage: set_random_seed(31337)                                               # needs sage.libs.ntl
++            sage: p = random_prime(2^10)                                               # needs sage.libs.ntl
++            sage: q = random_prime(2^512)                                              # needs sage.libs.ntl
++            sage: R.<x> = Zmod((p**2)*q)[]                                             # needs sage.libs.ntl
++            sage: len(R(p*x + p*q).roots(multiplicities=False))                        # needs sage.libs.ntl
+             857
+ 
+         Test all linear polynomials modulo 10::
+ 
+-            sage: N = 10 # maybe make a for loop
+-            sage: R = Zmod(N)
+-            sage: for f in R["x"].polynomials(1):
++            sage: N = 10 # maybe make a for loop                                      # needs sage.libs.ntl
++            sage: R = Zmod(N)                                                          # needs sage.libs.ntl
++            sage: for f in R["x"].polynomials(1):                                      # needs sage.libs.ntl
+             ....:     s1 = set(f.roots(multiplicities=False))
+             ....:     s2 = set(d for d in R if f(d) == 0)
+             ....:     assert s1 == s2, f"{f}: {s1} != {s2}"
+diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -459,29 +459,29 @@
+     You can still pass in ``prefix`` as an argument, which has the
+     effect of changing the variable name of the algebraic closure::
+ 
+-        sage: K = GF(3^10, prefix='w'); L = GF(3^10); K is L
++        sage: K = GF(3^10, prefix='w'); L = GF(3^10); K is L                          # needs sage.libs.ntl
+         False
+-        sage: K.variable_name(), L.variable_name()
++        sage: K.variable_name(), L.variable_name()                                     # needs sage.libs.ntl
+         ('w10', 'z10')
+-        sage: list(K.polynomial()) == list(L.polynomial())
++        sage: list(K.polynomial()) == list(L.polynomial())                             # needs sage.libs.ntl
+         True
+ 
+     TESTS:
+ 
+     Check that :issue:`16934` has been fixed::
+ 
+-        sage: k1.<a> = GF(17^14, implementation='pari')
+-        sage: _ = a/2
+-        sage: k2.<a> = GF(17^14, implementation='pari')
+-        sage: k1 is k2
++        sage: k1.<a> = GF(17^14, implementation='pari')                                # needs sage.libs.pari
++        sage: _ = a/2                                                                  # needs sage.libs.pari
++        sage: k2.<a> = GF(17^14, implementation='pari')                                # needs sage.libs.pari
++        sage: k1 is k2                                                                 # needs sage.libs.pari
+         True
+ 
+     Check that :issue:`21433` has been fixed::
+ 
+-        sage: K = GF(5^2)
+-        sage: L = GF(5^4)
+-        sage: from sage.categories.pushout import pushout
+-        sage: pushout(K,L) is L
++        sage: K = GF(5^2)                                                              # needs sage.libs.ntl
++        sage: L = GF(5^4)                                                              # needs sage.libs.ntl
++        sage: from sage.categories.pushout import pushout                              # needs sage.libs.ntl
++        sage: pushout(K,L) is L                                                        # needs sage.libs.ntl
+         True
+ 
+     Check that :issue:`25182` has been fixed::
+diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/finite_rings/integer_mod_ring.py
+--- a/src/sage/rings/finite_rings/integer_mod_ring.py
++++ b/src/sage/rings/finite_rings/integer_mod_ring.py
+@@ -154,9 +154,9 @@
+             and Category of subquotients of monoids
+             and Category of quotients of semigroups
+             and Category of finite enumerated sets
+-        sage: R in Fields()
++        sage: R in Fields()                                                           # needs sage.categories
+         True
+-        sage: R.category()
++        sage: R.category()                                                            # needs sage.categories
+         Join of Category of finite enumerated fields
+             and Category of subquotients of monoids
+             and Category of quotients of semigroups
+@@ -175,7 +175,7 @@
+     EXAMPLES::
+ 
+         sage: R = IntegerModRing(33, is_field=True)
+-        sage: R in Fields()
++        sage: R in Fields()                                                           # needs sage.categories
+         True
+         sage: R.is_field()
+         True
+@@ -195,7 +195,7 @@
+ 
+     However, the mistaken assignment is not automatically corrected::
+ 
+-        sage: R in Fields()
++        sage: R in Fields()                                                           # needs sage.categories
+         True
+ 
+     To avoid side-effects of this test on other tests, we clear the cache of
+@@ -317,14 +317,14 @@
+         sage: FF.order()
+         29
+ 
+-        sage: gens = FF.unit_gens()
+-        sage: a = gens[0]
+-        sage: a
++        sage: gens = FF.unit_gens()                                                    # needs sage.libs.pari
++        sage: a = gens[0]                                                              # needs sage.libs.pari
++        sage: a                                                                        # needs sage.libs.pari
+         2
+-        sage: a.is_square()
++        sage: a.is_square()                                                            # needs sage.libs.pari
+         False
+-        sage: def pow(i): return a**i
+-        sage: [pow(i) for i in range(16)]
++        sage: def pow(i): return a**i                                                  # needs sage.libs.pari
++        sage: [pow(i) for i in range(16)]                                              # needs sage.libs.pari
+         [1, 2, 4, 8, 16, 3, 6, 12, 24, 19, 9, 18, 7, 14, 28, 27]
+         sage: TestSuite(FF).run()
+ 
+@@ -334,14 +334,14 @@
+     of fields my re-initialise the category of the integer mod ring::
+ 
+         sage: F19 = IntegerModRing(19, is_field=True)
+-        sage: F19.category().is_subcategory(Fields())
++        sage: F19.category().is_subcategory(Fields())                                  # needs sage.categories
+         True
+         sage: F23 = IntegerModRing(23)
+-        sage: F23.category().is_subcategory(Fields())
++        sage: F23.category().is_subcategory(Fields())                                  # needs sage.categories
+         False
+-        sage: F23 in Fields()
++        sage: F23 in Fields()                                                          # needs sage.categories
+         True
+-        sage: F23.category().is_subcategory(Fields())
++        sage: F23.category().is_subcategory(Fields())                                  # needs sage.categories
+         True
+         sage: TestSuite(F19).run()
+         sage: TestSuite(F23).run()
+@@ -353,12 +353,12 @@
+     category of the unique instance::
+ 
+         sage: F31a = IntegerModRing(31)
+-        sage: F31a.category().is_subcategory(Fields())
++        sage: F31a.category().is_subcategory(Fields())                                 # needs sage.categories
+         False
+         sage: F31b = IntegerModRing(31, is_field=True)
+         sage: F31a is F31b
+         True
+-        sage: F31a.category().is_subcategory(Fields())
++        sage: F31a.category().is_subcategory(Fields())                                 # needs sage.categories
+         True
+ 
+     Next we compute with the integers modulo `16`.
+@@ -385,16 +385,16 @@
+         sage: b = gens[1]
+         sage: def powa(i): return a**i
+         sage: def powb(i): return b**i
+-        sage: gp_exp = FF.unit_group_exponent()
+-        sage: gp_exp
++        sage: gp_exp = FF.unit_group_exponent()                                        # needs sage.libs.pari
++        sage: gp_exp                                                                   # needs sage.libs.pari
+         28
+         sage: [powa(i) for i in range(15)]
+         [1, 15, 1, 15, 1, 15, 1, 15, 1, 15, 1, 15, 1, 15, 1]
+         sage: [powb(i) for i in range(15)]
+         [1, 5, 9, 13, 1, 5, 9, 13, 1, 5, 9, 13, 1, 5, 9]
+-        sage: a.multiplicative_order()
++        sage: a.multiplicative_order()                                                 # needs sage.libs.pari
+         2
+-        sage: b.multiplicative_order()
++        sage: b.multiplicative_order()                                                 # needs sage.libs.pari
+         4
+ 
+         sage: TestSuite(Z16).run()
+@@ -626,7 +626,7 @@
+         Check that :issue:`17453` is fixed::
+ 
+             sage: R = Zmod(5)
+-            sage: R in IntegralDomains()
++            sage: R in IntegralDomains()                                               # needs sage.categories
+             True
+         """
+         return self.is_field(proof)
+@@ -835,10 +835,10 @@
+ 
+             sage: R = Integers(7); R
+             Ring of integers modulo 7
+-            sage: R.multiplicative_generator()
++            sage: R.multiplicative_generator()                                         # needs sage.libs.pari
+             3
+             sage: R = Integers(9)
+-            sage: R.multiplicative_generator()
++            sage: R.multiplicative_generator()                                         # needs sage.libs.pari
+             2
+             sage: Integers(8).multiplicative_generator()
+             Traceback (most recent call last):
+@@ -850,9 +850,9 @@
+             Traceback (most recent call last):
+             ...
+             ValueError: multiplicative group of this ring is not cyclic
+-            sage: Integers(25*3).unit_gens()
++            sage: Integers(25*3).unit_gens()                                           # needs sage.libs.pari
+             (26, 52)
+-            sage: Integers(162).unit_gens()
++            sage: Integers(162).unit_gens()                                            # needs sage.libs.pari
+             (83,)
+         """
+         try:
+@@ -1096,11 +1096,11 @@
+             sage: K2 = GF(2)
+             sage: K3 = GF(3)
+             sage: K8 = GF(8, 'a')                                                      # needs sage.libs.ntl
+-            sage: K8(5)  # indirect doctest
++            sage: K8(5)  # indirect doctest                                            # needs sage.libs.ntl
+             1
+-            sage: K8('a+1')
++            sage: K8('a+1')                                                            # needs sage.libs.ntl
+             a + 1
+-            sage: K8(K2(1))
++            sage: K8(K2(1))                                                            # needs sage.libs.ntl
+             1
+ 
+         The following test refers to :issue:`6468`::
+@@ -1398,9 +1398,9 @@
+         cyclic factors are computed, but in a different order::
+ 
+             sage: A = Zmod(15)
+-            sage: G = A.unit_group(); G
++            sage: G = A.unit_group(); G                                                # needs sage.libs.pari
+             Multiplicative Abelian group isomorphic to C2 x C4
+-            sage: G.gens_values()
++            sage: G.gens_values()                                                      # needs sage.libs.pari
+             (11, 7)
+             sage: H = A.unit_group(algorithm='pari'); H                                 # needs sage.libs.pari
+             Multiplicative Abelian group isomorphic to C4 x C2
+@@ -1411,9 +1411,9 @@
+         but are ordered differently and have different generators::
+ 
+             sage: A = Zmod(40)
+-            sage: G = A.unit_group(); G
++            sage: G = A.unit_group(); G                                                # needs sage.libs.pari
+             Multiplicative Abelian group isomorphic to C2 x C2 x C4
+-            sage: G.gens_values()
++            sage: G.gens_values()                                                      # needs sage.libs.pari
+             (31, 21, 17)
+             sage: H = A.unit_group(algorithm='pari'); H                                 # needs sage.libs.pari
+             Multiplicative Abelian group isomorphic to C4 x C2 x C2
+@@ -1421,9 +1421,9 @@
+             (17, 31, 21)
+ 
+             sage: A = Zmod(192)
+-            sage: G = A.unit_group(); G
++            sage: G = A.unit_group(); G                                                # needs sage.libs.pari
+             Multiplicative Abelian group isomorphic to C2 x C16 x C2
+-            sage: G.gens_values()
++            sage: G.gens_values()                                                      # needs sage.libs.pari
+             (127, 133, 65)
+             sage: H = A.unit_group(algorithm='pari'); H                                 # needs sage.libs.pari
+             Multiplicative Abelian group isomorphic to C16 x C2 x C2
+@@ -1535,7 +1535,7 @@
+ 
+             sage: R = Zmod(2)
+             sage: S.<x> = R[]                                                         # needs sage.libs.ntl
+-            sage: R._lift_residue_field_root(2, 1, S.zero(), S.zero(), R(0))
++            sage: R._lift_residue_field_root(2, 1, S.zero(), S.zero(), R(0))           # needs sage.libs.ntl
+             (0,)
+ 
+         Lifting roots of the zero polynomial::
+diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -486,22 +486,22 @@
+ 
+     Check that :issue:`25182` has been fixed::
+ 
+-        sage: GF(next_prime(2^63)^6)
++        sage: GF(next_prime(2^63)^6)                                                   # needs sage.libs.ntl
+         Finite Field in z6 of size 9223372036854775837^6
+ 
+     Check that :issue:`31547` has been fixed::
+ 
+-        sage: q=2**152
+-        sage: GF(q,'a',modulus='primitive') == GF(q,'a',modulus='primitive')
++        sage: q=2**152                                                                 # needs sage.libs.ntl
++        sage: GF(q,'a',modulus='primitive') == GF(q,'a',modulus='primitive')           # needs sage.libs.ntl
+         True
+ 
+     Check that a number for ``name`` is interpreted as the degree instead::
+ 
+-        sage: GF(5, 2)
++        sage: GF(5, 2)                                                                 # needs sage.libs.ntl
+         Finite Field in z2 of size 5^2
+-        sage: GF((5, 2))
++        sage: GF((5, 2))                                                               # needs sage.libs.ntl
+         Finite Field in z2 of size 5^2
+-        sage: GF(5, 2) is GF((5, 2))
++        sage: GF(5, 2) is GF((5, 2))                                                   # needs sage.libs.ntl
+         True
+     """
+     def __init__(self, *args, **kwds):
+diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/finite_rings/integer_mod_ring.py
+--- a/src/sage/rings/finite_rings/integer_mod_ring.py
++++ b/src/sage/rings/finite_rings/integer_mod_ring.py
+@@ -434,7 +434,7 @@
+             sage: F19 = IntegerModRing(19, is_field=True)
+             sage: TestSuite(F19).run()
+             sage: F23 = IntegerModRing(23)
+-            sage: F23 in Fields()
++            sage: F23 in Fields()                                                      # needs sage.categories
+             True
+             sage: TestSuite(F23).run()
+             sage: Z16 = IntegerModRing(16)
+diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -616,11 +616,11 @@
+             Traceback (most recent call last):
+             ...
+             ValueError: variable name '3' does not start with a letter
+-            sage: GF(25, 2)
++            sage: GF(25, 2)                                                            # needs sage.libs.ntl
+             Traceback (most recent call last):
+             ...
+             ValueError: the order of a finite field must be a prime power
+-            sage: GF((25, 2))
++            sage: GF((25, 2))                                                          # needs sage.libs.ntl
+             Traceback (most recent call last):
+             ...
+             ValueError: the order of a finite field must be a prime power
+diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -779,7 +779,7 @@
+             sage: k = GF(2, implementation='modn')
+             sage: k = GF(2, implementation='givaro')                                              # needs sage.libs.linbox
+             sage: k = GF(2, implementation='ntl')                                                 # needs sage.libs.ntl
+-            sage: k = GF(2, implementation='pari')
++            sage: k = GF(2, implementation='pari')                                                   # needs sage.libs.pari
+             Traceback (most recent call last):
+             ...
+             ValueError: the degree must be at least 2
+@@ -793,7 +793,7 @@
+             ValueError: the 'modn' implementation requires a prime order
+             sage: k.<a> = GF(2^15, implementation='givaro')                                       # needs sage.libs.linbox
+             sage: k.<a> = GF(2^15, implementation='ntl')                                          # needs sage.libs.ntl
+-            sage: k.<a> = GF(2^15, implementation='pari')
++            sage: k.<a> = GF(2^15, implementation='pari')                                             # needs sage.libs.pari
+             sage: k.<a> = GF(3^60, implementation='modn')
+             Traceback (most recent call last):
+             ...
+@@ -806,7 +806,7 @@
+             Traceback (most recent call last):
+             ...
+             ValueError: q must be a 2-power
+-            sage: k.<a> = GF(3^60, implementation='pari')
++            sage: k.<a> = GF(3^60, implementation='pari')                                             # needs sage.libs.pari
+         """
+         # IMPORTANT!  If you add a new class to the list of classes
+         # that get cached by this factor object, then you *must* add
