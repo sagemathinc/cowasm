@@ -700,6 +700,14 @@ export default class DlopenManger {
         return len;
       },
       secure_getenv: (namePtr: number) => this.getenv(namePtr),
+      setjmp: () => 0,
+      sigsetjmp: () => 0,
+      longjmp: () => {
+        throw Error("longjmp is not supported by the CoWasm dynamic linker");
+      },
+      siglongjmp: () => {
+        throw Error("siglongjmp is not supported by the CoWasm dynamic linker");
+      },
     };
     Object.assign(env, {
       acos: Math.acos,

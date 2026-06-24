@@ -139,6 +139,13 @@ int archive_callback_from_pic_archive() {
 }
 
 EXPORTED_SYMBOL
+int plain_setjmp_returns_zero() {
+  void* handle = dlopen("./plain-setjmp.so", 2);
+  FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "plain_setjmp_returns_zero");
+  return (*f)();
+}
+
+EXPORTED_SYMBOL
 int add_provider_data_relocation(int n) {
   void* handle = dlopen("./consumer.so", 2);
   FUN_PTR f = (FUN_PTR)dlsym(handle, "add_provider_data_relocation");
@@ -198,6 +205,9 @@ int main() {
   printf("archive_callback_from_pic_archive() = %d\n",
          archive_callback_from_pic_archive());
   assert(archive_callback_from_pic_archive() == 1);
+
+  printf("plain_setjmp_returns_zero() = %d\n", plain_setjmp_returns_zero());
+  assert(plain_setjmp_returns_zero() == 1);
 
   printf("add_provider_data_relocation(2022) = %d\n", add_provider_data_relocation(2022));
   assert(add_provider_data_relocation(2022) == 2022 + 41);

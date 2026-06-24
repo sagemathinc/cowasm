@@ -2,10 +2,10 @@ const assert = require("assert");
 const { readFileSync } = require("fs");
 const getMetadata = require("../../dist/metadata").default;
 
-const [appPath, sidePath] = process.argv.slice(2);
+const [appPath, sidePath, plainSetjmpPath] = process.argv.slice(2);
 
-if (appPath == null || sidePath == null) {
-  console.error("usage: node check-wasi-sdk-abi.js APP_WASM SIDE_MODULE");
+if (appPath == null || sidePath == null || plainSetjmpPath == null) {
+  console.error("usage: node check-wasi-sdk-abi.js APP_WASM SIDE_MODULE PLAIN_SETJMP_MODULE");
   process.exit(2);
 }
 
@@ -68,6 +68,7 @@ function assertExport(module, name, kind) {
 
 const app = wasmModule(appPath);
 const side = wasmModule(sidePath);
+const plainSetjmp = wasmModule(plainSetjmpPath);
 const sideMetadata = getMetadata(readFileSync(sidePath));
 
 assert.strictEqual(firstSectionName(sidePath), "dylink.0");
@@ -124,3 +125,6 @@ assertExport(side, "archive_callback_from_pic_archive", "function");
 assertExport(side, "add5077_using_func_from_main", "function");
 assertExport(side, "__wasm_apply_data_relocs", "function");
 assertExport(side, "__wasm_call_ctors", "function");
+
+assertImport(plainSetjmp, "env", "setjmp", "function");
+assertExport(plainSetjmp, "plain_setjmp_returns_zero", "function");

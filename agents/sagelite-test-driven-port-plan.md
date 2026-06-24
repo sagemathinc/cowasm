@@ -553,6 +553,16 @@ PARI stack default from 1 MB to 8 MB in the packaged resource did not change
 the failure, so the next useful pass should keep treating this as callback /
 function-table compatibility rather than a simple initial-stack-size issue.
 
+A later loader-hardening pass added explicit JavaScript fallbacks for dynamic
+side-module imports of plain `setjmp`, `sigsetjmp`, `longjmp`, and
+`siglongjmp`, before generic main-module resolution can provide an incompatible
+callable. The WASI dylink smoke now includes a dedicated `plain-setjmp.so`
+module that imports `env.setjmp`, verifies that `setjmp(env)` returns zero, and
+runs through both direct and archive-linked loader paths. The focused
+`integer.pyx:3112` rerun still fails in `convert_sage...so.err_recover`, so the
+active PARI cluster is no longer explained by a generic plain-`setjmp` import
+gap.
+
 A later 2026-06-24 inspection narrowed the same failure to PARI's
 `cb_pari_err_recover` callback slot rather than the already-covered wasi-sdk
 `__wasm_*` SJLJ helper imports. The focused rerun remains:

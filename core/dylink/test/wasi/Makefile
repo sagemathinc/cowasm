@@ -78,6 +78,19 @@ build/wasi-sdk/dynamic-library.so: dynamic-library.c build/wasi-sdk/libarchive-c
 		build/wasi-sdk/libarchive-callback.a \
 		-o build/wasi-sdk/dynamic-library.so
 
+build/wasi-sdk/plain-setjmp.so: plain-setjmp.c
+	mkdir -p build/wasi-sdk
+	${WASI_SDK_CLANG} -target wasm32-wasip1 \
+		-O0 \
+		-fPIC \
+		-shared \
+		-nostdlib \
+		-Wl,--allow-undefined \
+		-Wl,--no-entry \
+		-Wl,--export=plain_setjmp_returns_zero \
+		plain-setjmp.c \
+		-o build/wasi-sdk/plain-setjmp.so
+
 build/wasi-sdk/provider.so: provider.c
 	mkdir -p build/wasi-sdk
 	${WASI_SDK_CLANG} -target wasm32-wasip1 \
@@ -127,6 +140,10 @@ build/wasi-sdk-archive/dynamic-library.so: build/wasi-sdk/dynamic-library.so
 	mkdir -p build/wasi-sdk-archive
 	cp build/wasi-sdk/dynamic-library.so build/wasi-sdk-archive/dynamic-library.so
 
+build/wasi-sdk-archive/plain-setjmp.so: build/wasi-sdk/plain-setjmp.so
+	mkdir -p build/wasi-sdk-archive
+	cp build/wasi-sdk/plain-setjmp.so build/wasi-sdk-archive/plain-setjmp.so
+
 build/wasi-sdk-archive/provider.so: build/wasi-sdk/provider.so
 	mkdir -p build/wasi-sdk-archive
 	cp build/wasi-sdk/provider.so build/wasi-sdk-archive/provider.so
@@ -135,8 +152,8 @@ build/wasi-sdk-archive/consumer.so: build/wasi-sdk/consumer.so
 	mkdir -p build/wasi-sdk-archive
 	cp build/wasi-sdk/consumer.so build/wasi-sdk-archive/consumer.so
 
-build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so build/wasi-sdk/provider.so build/wasi-sdk/consumer.so
-	node check-wasi-sdk-abi.js build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so
+build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so build/wasi-sdk/plain-setjmp.so build/wasi-sdk/provider.so build/wasi-sdk/consumer.so
+	node check-wasi-sdk-abi.js build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.so build/wasi-sdk/plain-setjmp.so
 	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' U dlopen'
 	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' U dlsym'
 	${WASI_SDK_NM} -a build/wasi-sdk/app.wasm | grep ' T malloc$$'
@@ -148,8 +165,8 @@ build/wasi-sdk/.checked: build/wasi-sdk/app.wasm build/wasi-sdk/dynamic-library.
 	! ${WASI_SDK_STRINGS} build/wasi-sdk/dynamic-library.so | grep 'needed_dynlibs'
 	touch build/wasi-sdk/.checked
 
-build/wasi-sdk-archive/.checked: build/wasi-sdk-archive/app.wasm build/wasi-sdk-archive/dynamic-library.so build/wasi-sdk-archive/provider.so build/wasi-sdk-archive/consumer.so
-	node check-wasi-sdk-abi.js build/wasi-sdk-archive/app.wasm build/wasi-sdk-archive/dynamic-library.so
+build/wasi-sdk-archive/.checked: build/wasi-sdk-archive/app.wasm build/wasi-sdk-archive/dynamic-library.so build/wasi-sdk-archive/plain-setjmp.so build/wasi-sdk-archive/provider.so build/wasi-sdk-archive/consumer.so
+	node check-wasi-sdk-abi.js build/wasi-sdk-archive/app.wasm build/wasi-sdk-archive/dynamic-library.so build/wasi-sdk-archive/plain-setjmp.so
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' U dlopen'
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' U dlsym'
 	${WASI_SDK_NM} -a build/wasi-sdk-archive/app.wasm | grep ' T malloc$$'
