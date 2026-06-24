@@ -71,6 +71,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - The dynamic-loader fallback for side-module `qsort` now performs comparator-
   driven sorting correctly and has a WASI dylink smoke that sorts side-module
   data through an imported function-pointer comparator.
+- The dynamic-loader fallback for side-module `bsearch` now performs binary
+  search through an imported function-pointer comparator and is covered by the
+  same WASI dylink smoke, including the archive-linked loader path.
 - Block-level doctest failures record `failure_detail`, and the saved
   `block-failure-clusters.sql` query groups failed examples by class plus
   normalized detail instead of only by broad exception type.
@@ -517,6 +520,11 @@ that fallback with a side-module integer array and function-pointer comparator.
 The curated Sagelite corpus result remained `203 passed, 7 failed, 27 skipped`;
 the next high-leverage cluster is still PARI `err_recover` / side-module
 function-table signature compatibility, followed by the NTL/libcxx memory trap.
+
+A 2026-06-24 pass added the corresponding JavaScript dynamic-loader fallback
+for side-module `bsearch`, using the side module's imported comparator pointer
+for binary search. The existing WASI dylink smoke now checks both the found and
+not-found cases for `bsearch` in the direct and archive-linked loader paths.
 
 A follow-up SJLJ-loader pass implemented the wasi-sdk `libsetjmp.a` helper ABI
 for dynamic side-module imports of `__wasm_setjmp`,

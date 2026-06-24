@@ -115,6 +115,13 @@ int sorted_with_qsort() {
   return (*f)();
 }
 
+EXPORTED_SYMBOL
+int found_with_bsearch() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "found_with_bsearch");
+  return (*f)();
+}
+
 #ifdef COWASM_WASI_SDK_TEST
 EXPORTED_SYMBOL
 int side_setjmp_recovery() {
@@ -180,6 +187,9 @@ int main() {
 
   printf("sorted_with_qsort() = %d\n", sorted_with_qsort());
   assert(sorted_with_qsort() == 1);
+
+  printf("found_with_bsearch() = %d\n", found_with_bsearch());
+  assert(found_with_bsearch() == 1);
 
 #ifdef COWASM_WASI_SDK_TEST
   printf("side_setjmp_recovery() = %d\n", side_setjmp_recovery());

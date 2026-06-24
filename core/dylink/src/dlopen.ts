@@ -582,6 +582,38 @@ export default class DlopenManger {
       fclose: () => 0,
       getenv: (namePtr: number) => this.getenv(namePtr),
       printf: () => 0,
+      bsearch: (
+        keyPtr: number,
+        base: number,
+        nmemb: number,
+        size: number,
+        comparPtr: number
+      ) => {
+        const compare = this.functionTable.get(comparPtr);
+        if (typeof compare != "function") {
+          throw Error(`bsearch called with invalid comparator ${comparPtr}`);
+        }
+        if (!keyPtr || !base || nmemb <= 0 || size <= 0) {
+          return 0;
+        }
+        const elementPtr = (i: number) => base + i * size;
+        let low = 0;
+        let high = nmemb;
+        while (low < high) {
+          const mid = low + Math.floor((high - low) / 2);
+          const ptr = elementPtr(mid);
+          const order = (compare as CallableFunction)(keyPtr, ptr);
+          if (order == 0) {
+            return ptr;
+          }
+          if (order < 0) {
+            high = mid;
+          } else {
+            low = mid + 1;
+          }
+        }
+        return 0;
+      },
       qsort: (
         base: number,
         nmemb: number,

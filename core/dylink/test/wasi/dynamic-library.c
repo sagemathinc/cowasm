@@ -87,6 +87,17 @@ int sorted_with_qsort(void) {
   return 1;
 }
 
+EXPORTED_SYMBOL
+int found_with_bsearch(void) {
+  int values[] = {-4, -1, 0, 3, 3, 5, 8};
+  size_t n = sizeof(values) / sizeof(values[0]);
+  int needle = 5;
+  int missing = 6;
+  int* found = bsearch(&needle, values, n, sizeof(values[0]), compare_ints);
+  int* not_found = bsearch(&missing, values, n, sizeof(values[0]), compare_ints);
+  return found != NULL && *found == needle && not_found == NULL;
+}
+
 #ifdef COWASM_WASI_SDK_TEST
 static jmp_buf side_jmp;
 extern int archive_callback_probe(long value);
