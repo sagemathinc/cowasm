@@ -21,6 +21,7 @@ src/sage/arith/srange.pyx
 src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
+src/sage/combinat/combinat.py
 src/sage/combinat/combination.py
 src/sage/combinat/misc.py
 src/sage/combinat/restricted_growth.py

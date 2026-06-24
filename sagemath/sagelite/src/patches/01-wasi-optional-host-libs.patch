@@ -2687,3 +2687,9 @@ diff -urN a/src/sage/combinat/subset.py b/src/sage/combinat/subset.py
 @@ -1501 +1501 @@
 -        sage: subsets([1,2,3])
 +        sage: subsets([1,2,3])                                                        # known bug
+diff -urN a/src/sage/combinat/combinat.py b/src/sage/combinat/combinat.py
+--- a/src/sage/combinat/combinat.py
++++ b/src/sage/combinat/combinat.py
+@@ -1018 +1018 @@
+-        sage: all(lah_number(n, k) == sum(S1(n, j) * S2(j, k) for j in [k..n])
++        sage: all(lah_number(n, k) == sum(S1(n, j) * S2(j, k) for j in [k..n])  # needs sage.libs.gap

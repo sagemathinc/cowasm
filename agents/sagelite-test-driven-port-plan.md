@@ -461,6 +461,26 @@ address prefix expected by Sage's historical doctest. The latest run metadata
 records node profile, runner version 26, and about 343 seconds of elapsed
 time.
 
+Latest checked local corpus run after the 2026-06-24 combinat-core
+corpus-growth pass:
+
+```text
+sage -t passed: 5403 passed, 0 failed, 1230 skipped
+```
+
+That run records 6,633 block rows in
+`/tmp/sagelite-corpus-after-combinat-core.sqlite3`, with no block-level
+failures and no file-level errors. It covers the current 49-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/combinat.py` to the previous clean browser-profile baseline.
+The focused rerun records `combinat.py: 185 passed, 0 failed, 122 skipped`;
+the added WASI patch classifies the Lah-number identity that routes through
+GAP-backed `stirling_number1` as `# needs sage.libs.gap`, matching the
+module's existing GAP-only doctest tagging. The latest run metadata records
+CoWasm commit `ee424d4edbbe5e1dc6d502300dec3d7bb4c05f26`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
+version 26, and about 351 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
@@ -637,6 +657,7 @@ src/sage/arith/srange.pyx
 src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
+src/sage/combinat/combinat.py
 src/sage/combinat/combination.py
 src/sage/combinat/misc.py
 src/sage/combinat/restricted_growth.py
