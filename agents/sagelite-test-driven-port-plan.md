@@ -1911,6 +1911,36 @@ That run is recorded in
 5,662 total block rows across 39 files. The saved block- and file-failure
 cluster queries are empty.
 
+Follow-up compact combinatorics corpus-growth pass:
+`sage/combinat/backtrack.py` is now included in the browser-profile corpus.
+The file exposed the same focused doctest-namespace boundary as recent
+combinatorics additions: Sage examples expect the standard `Permutations`
+constructor to be available without importing the full `sage.combinat.all`
+aggregate at `sage.all` startup. The Sagelite doctest runner now seeds
+`Permutations` alongside the existing lightweight `Permutation` constructor,
+and records this namespace behavior under doctest runner version 24.
+
+Focused rerun:
+
+```text
+backtrack.py: 24 passed, 0 failed, 1 skipped
+```
+
+The full corpus target passes with `backtrack.py` included and failures
+disallowed:
+
+```text
+sage -t passed: 4684 passed, 0 failed, 1003 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-backtrack.sqlite3` with 5,687
+total block rows across 40 files. The saved block- and file-failure cluster
+queries are empty. Sampling in the same pass kept
+`sage/sets/finite_enumerated_set.py`, `sage/combinat/cartesian_product.py`,
+and `sage/sets/set.py` out of the clean dashboard because their failures still
+cluster around broader namespace and set/cartesian-product semantics rather
+than a single lightweight doctest global.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

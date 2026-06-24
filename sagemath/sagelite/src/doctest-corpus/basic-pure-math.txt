@@ -23,6 +23,7 @@ src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
 src/sage/combinat/combination.py
 src/sage/combinat/misc.py
+src/sage/combinat/backtrack.py
 src/sage/combinat/composition.py
 src/sage/combinat/subset.py
 src/sage/combinat/composition_signed.py
