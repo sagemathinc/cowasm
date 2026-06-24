@@ -307,6 +307,24 @@ modulus construction before raising the intended Sage `ValueError`. The curated
 pure-math corpus now has a clean non-skipped pass rate in the default node
 profile.
 
+Latest checked local corpus run after the 2026-06-24 PARI module-local
+initialization pass:
+
+```text
+sage -t passed: 2390 passed, 0 failed, 767 skipped
+```
+
+That run records 3,157 block rows in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, with no
+block-level failures and no file-level errors. The pass initializes PARI in
+the Sagelite `convert_gmp` side module before direct PARI stack allocation and
+initializes the focused CoWasm `cypari2.gen` module before cold vector
+allocation through `objtogen([1, 2, 3])`. Focused probes confirm that
+`new_gen_from_rational(QQ(1)/QQ(7))` now returns `1/7` instead of trapping in
+`convert_gmp...err_recover`; the broader `NumberField(x^2 - 2, 'beta')` probe
+now reaches the next higher-level cypari2 object-model gap,
+`Gen._rational_()`, rather than a WASM function-signature mismatch.
+
 Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
 `python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
 currently blocked during WASM configure by `mimalloc requires stdatomic.h`.
@@ -978,6 +996,17 @@ cluster is now broader and more clearly tied to Sage's converter modules:
 `new_gen_from_rational`, while rational-field, integer-mod-ring, and matrix
 constructor files still hit loader table-signature mismatches and finite-field
 constructor paths still hit the NTL/libcxx memory trap.
+
+A later PARI module-local initialization pass added explicit initialization
+before the two currently observed cold allocation paths: Sagelite's
+`sage.libs.pari.convert_gmp` direct PARI stack allocation and CoWasm's focused
+`cypari2.gen` vector allocation through `objtogen([1, 2, 3])`. This clears the
+representative `new_gen_from_rational(QQ(1)/QQ(7))` trap and moves the
+`NumberField(x^2 - 2, 'beta')` probe from a WASM signature mismatch to the
+next missing cypari2 object-model method, `Gen._rational_()`. The next useful
+NumberField pass should implement only the minimal rational conversion surface
+needed by Sage's polynomial reconstruction, rather than adding more generic
+loader fallbacks.
 
 A later doctest-classification pass marked the integer and rational
 `is_norm()` examples that construct `NumberField(...)` objects as

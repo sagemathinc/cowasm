@@ -1204,6 +1204,7 @@ assert pari_probe.eval_long('znorder(Mod(2,101))') == 100
 assert pari_probe.eval_long('polisirreducible(x^2+1)') == 1
 assert pari_probe.eval_long('ellcard(ellinit([0,-1]), 5)') == 6
 assert pari_probe.check_error_recovery() == 'caught=e_INV recovered=221'
+assert str(objtogen([1, 2, 3])) == '[1, 2, 3]'
 pari = Pari()
 assert str(pari('2+3')) == '5'
 assert str(pari('primepi(10^6)')) == '78498'
@@ -1238,6 +1239,13 @@ from sage.rings.factorint_pari import factor_using_pari
 assert factor_using_pari(ZZ(360)) == [(ZZ(2), 3), (ZZ(3), 2), (ZZ(5), 1)]
 assert factor_using_pari(ZZ(2**31 - 1)) == [(ZZ(2147483647), 1)]
 print('sagelite-node-ok Sage PARI factorization boundary')"
+
+run_node_import "Sage PARI rational converter boundary" "from sage.all import QQ
+from sage.libs.pari.convert_sage import new_gen_from_rational
+q = QQ(1) / QQ(7)
+g = new_gen_from_rational(q)
+assert str(g) == '1/7'
+print('sagelite-node-ok Sage PARI rational converter boundary')"
 
 : >"$followups_file"
 cat >>"$followups_file" <<'EOFOLLOWUPS'

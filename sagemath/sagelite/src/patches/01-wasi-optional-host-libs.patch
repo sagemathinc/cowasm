@@ -1408,6 +1408,20 @@ diff -urN a/src/sage/misc/remote_file.py b/src/sage/misc/remote_file.py
 -            sage: 7.is_norm(K, proof=False)
 +            sage: 7.is_norm(K, proof=False)                                            # needs sage.rings.number_field
              False
+--- a/src/sage/libs/pari/convert_gmp.pyx
++++ b/src/sage/libs/pari/convert_gmp.pyx
+@@ -23,6 +23,10 @@
+ from cypari2.paridecl cimport *
+ from cypari2.stack cimport new_gen
+-
++import sys
++if sys.platform == "wasi":
++    pari_init(8000000, 2)
++
++
+ cdef Gen new_gen_from_mpz_t(mpz_srcptr value):
+     """
+     Create a new PARI Gen of type ``t_INT`` from a given
 --- a/src/sage/libs/pari/convert_sage.pyx
 +++ b/src/sage/libs/pari/convert_sage.pyx
 @@ -368,6 +368,11 @@

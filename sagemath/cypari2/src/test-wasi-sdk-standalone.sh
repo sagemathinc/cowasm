@@ -1091,6 +1091,7 @@ cpdef Gen prime(long n):
 cdef Gen list_of_Gens_to_Gen(list s):
     cdef Py_ssize_t length = len(s)
     cdef Py_ssize_t i
+    cowasm_cypari2_gen_ensure_pari()
     cdef GEN vector = cgetg(length + 1, t_VEC)
 
     for i in range(length):
@@ -1622,6 +1623,7 @@ assert Gen_base.__module__ == "cypari2.gen"
 assert issubclass(Gen, Gen_base)
 assert issubclass(PariError, RuntimeError)
 assert PariError.__module__ == "builtins"
+assert str(objtogen([1, 2, 3])) == "[1, 2, 3]"
 assert isinstance(Gen(1), Gen_base)
 assert int(Gen(360)) == 360
 assert int(Gen(-8)) == -8
