@@ -531,6 +531,20 @@ narrows the Sagelite PARI cluster but does not clear it yet: the
 plain `setjmp` import / `err_recover` callback path rather than the already
 covered `__wasm_*` helper imports.
 
+A 2026-06-24 focused rerun of `integer.pyx:3112` confirmed that the trap is
+reached through PARI's allocation-recovery path:
+
+```text
+new_chunk_resize -> pari_err -> err_recover
+```
+
+The top frame is
+`convert_sage.cpython-314-wasm32-wasi.so.err_recover
+wasm-function[7503]:0x1cbd3f`. Temporarily increasing Sagelite's Python-level
+PARI stack default from 1 MB to 8 MB in the packaged resource did not change
+the failure, so the next useful pass should keep treating this as callback /
+function-table compatibility rather than a simple initial-stack-size issue.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

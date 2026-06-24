@@ -87,6 +87,24 @@ diagnostics as (
     context,
     diagnostic_line,
     case
+      when instr(raw_top_stack_frame, 'wasm-function[') > 0
+        and instr(raw_top_stack_frame, ' (wasm://') > 0 then
+        trim(
+          substr(
+            raw_top_stack_frame,
+            case
+              when substr(raw_top_stack_frame, 1, 3) = 'at ' then 4
+              else 1
+            end,
+            instr(raw_top_stack_frame, ' (wasm://')
+              - case
+                  when substr(raw_top_stack_frame, 1, 3) = 'at ' then 4
+                  else 1
+                end
+          )
+        )
+        || ' '
+        || substr(raw_top_stack_frame, instr(raw_top_stack_frame, 'wasm-function['))
       when instr(raw_top_stack_frame, 'wasm-function[') > 0 then
         substr(raw_top_stack_frame, instr(raw_top_stack_frame, 'wasm-function['))
       else raw_top_stack_frame
