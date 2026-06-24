@@ -481,6 +481,28 @@ CoWasm commit `ee424d4edbbe5e1dc6d502300dec3d7bb4c05f26`, Sagelite package
 commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
 version 26, and about 351 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-24 small combinatorics
+helper corpus-growth pass:
+
+```text
+sage -t passed: 5561 passed, 0 failed, 1238 skipped
+```
+
+That run records 6,799 block rows in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, with no
+block-level failures and no file-level errors. It covers the current 52-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/SJT.py`, `sage/combinat/dlx.py`, and
+`sage/combinat/output.py` to the previous clean browser-profile baseline.
+Focused reruns recorded `SJT.py: 31 passed, 0 failed, 0 skipped`,
+`dlx.py: 57 passed, 0 failed, 8 skipped`, and
+`output.py: 70 passed, 0 failed, 0 skipped`. Sampling in the same pass kept
+larger adjacent files such as `sage/sets/set.py`, `sage/combinat/partition.py`,
+`sage/combinat/permutation.py`, `sage/sets/set_from_iterator.py`,
+`sage/combinat/necklace.py`, and `sage/combinat/bijectionist.py` out of the
+quiet corpus because their failures still cluster around broader set,
+partition, permutation, or combinatorial-generation semantics.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
@@ -657,9 +679,12 @@ src/sage/arith/srange.pyx
 src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
+src/sage/combinat/SJT.py
 src/sage/combinat/combinat.py
 src/sage/combinat/combination.py
+src/sage/combinat/dlx.py
 src/sage/combinat/misc.py
+src/sage/combinat/output.py
 src/sage/combinat/restricted_growth.py
 src/sage/combinat/sidon_sets.py
 src/sage/combinat/ranker.py
