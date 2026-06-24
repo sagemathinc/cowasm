@@ -998,6 +998,21 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            pAdicRingCappedRelative = ()
 +            pAdicRingCappedAbsolute = ()
 +            pAdicRingFixedMod = ()
+--- a/src/sage/rings/integer.pyx
++++ b/src/sage/rings/integer.pyx
+@@ -367,0 +368 @@
++            sage: # needs sage.libs.pari sage.sets
+@@ -3160,0 +3162 @@
++            sage: # needs sage.libs.pari
+@@ -4075 +4077 @@
+-            sage: n.factor(algorithm='ecm')
++            sage: n.factor(algorithm='ecm')                                             # needs sage.libs.ecm
+@@ -6374 +6376 @@
+-            sage: libgap(1)
++            sage: libgap(1)                                                            # needs sage.libs.gap
+@@ -7269 +7271 @@
+-            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')
++            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')  # needs cysignals.alarm
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
 @@ -253,74 +253,83 @@
@@ -1019,7 +1034,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -from sage.probability.all import *
 -from sage.interfaces.all import *
 +if sys.platform == 'wasi':
-+    from sage.functions.log import log
++    from sage.functions.log import exp, log
 +    from primecountpy.primecount import prime_pi as _primecount_prime_pi
 +
 +    def prime_pi(x):

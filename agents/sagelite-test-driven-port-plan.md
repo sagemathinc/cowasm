@@ -181,6 +181,25 @@ remaining latest-run failure classes are 3 `output_mismatch`, 3
 `wasm_signature_mismatch`, 2 `ModuleNotFoundError`, 2 `wasm_trap`, and one each
 of `NameError`, `NotImplementedError`, and `OSError`.
 
+Latest checked local corpus run after the 2026-06-24 browser-scope doctest
+tagging pass:
+
+```text
+sage -t failed: 1699 passed, 7 failed, 327 skipped
+```
+
+That run records 2,028 block rows in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, plus the same five
+file-level errors. The pass makes `exp(_)` available from the WASI `sage.all`
+namespace and marks browser-out-of-scope integer doctests for PARI-heavy
+divisor enumeration, ECM subprocess factoring, GAP conversion, cysignals alarm
+interruptibility, and the `IntegerWrapper(Primes(), 3)` pickling dependency as
+explicit skips. The remaining block-level failures are two `output_mismatch`
+clusters: the generic-polynomial `2^t` exception text and the rational
+`gamma()` positional-argument TypeError formatting. The remaining file-level
+clusters are the existing 3 `wasm_signature_mismatch` dynamic-import failures
+and 2 NTL/libcxx `wasm_trap` failures.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
