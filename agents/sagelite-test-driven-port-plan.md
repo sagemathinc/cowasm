@@ -88,6 +88,10 @@ As of 2026-06-23, CoWasm has a first useful test loop:
 - `make -C sagemath/sagelite test-sage-doctest-corpus` runs the curated
   pure-math corpus into SQLite, allowing doctest failures by default so the
   command remains useful as a porting dashboard while compatibility is partial.
+- The corpus target now resolves relative doctest corpus entries against the
+  patched `sagemath/sagelite/build/wasi-sdk` source copy, so checked-in WASI
+  doctest tags are reflected in dashboard runs without modifying the upstream
+  Sagelite checkout.
 - Sagelite's WASI source patch marks the `ZZ[...]` examples that rely on
   symbolic `sqrt(...)` as `# needs sage.symbolic`, so the browser-compatible
   profile records them as explicit skips instead of missing-module failures.
@@ -783,8 +787,8 @@ integer.pyx:5709: 0 passed, 0 failed, 1 skipped
 rational.pyx:1433: 0 passed, 0 failed, 1 skipped
 ```
 
-With the patched source text applied temporarily for validation, the curated
-corpus reaches much deeper into `integer.pyx` and `rational.pyx`:
+With the corpus target reading the patched build source, the curated corpus
+reaches much deeper into `integer.pyx` and `rational.pyx`:
 
 ```text
 sage -t failed: 1621 passed, 119 failed, 293 skipped
