@@ -1941,6 +1941,38 @@ and `sage/sets/set.py` out of the clean dashboard because their failures still
 cluster around broader namespace and set/cartesian-product semantics rather
 than a single lightweight doctest global.
 
+Follow-up finite enumerated set corpus-growth pass:
+`sage/sets/finite_enumerated_set.py` is now included in the browser-profile
+corpus. The file exposed the same focused doctest-namespace boundary as the
+recent set/combinatorics additions: Sage examples expect `Hom` and `Sets` to
+be available without importing broader category aggregates at `sage.all`
+startup. The Sagelite doctest runner now seeds those two lightweight category
+constructors and records this namespace behavior under doctest runner version
+25.
+
+Focused rerun:
+
+```text
+finite_enumerated_set.py: 84 passed, 0 failed, 0 skipped
+```
+
+The full corpus target passes with `finite_enumerated_set.py` included and
+failures disallowed:
+
+```text
+sage -t passed: 4768 passed, 0 failed, 1003 skipped
+```
+
+That run is recorded in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` as run `1` with
+5,771 total block rows across 41 files. The saved block- and file-failure
+cluster queries are empty. The Sagelite standalone target also passes after a
+full rebuild:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
