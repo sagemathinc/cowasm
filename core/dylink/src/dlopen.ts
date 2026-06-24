@@ -314,6 +314,87 @@ export default class DlopenManger {
     );
   }
 
+  private strlen(ptr: number): number {
+    const memory = new Uint8Array(this.memory.buffer);
+    let len = 0;
+    while (memory[ptr + len] != 0) {
+      len += 1;
+    }
+    return len;
+  }
+
+  private strcmp(left: number, right: number, maxLength?: number): number {
+    const memory = new Uint8Array(this.memory.buffer);
+    let offset = 0;
+    while (maxLength == null || offset < maxLength) {
+      const a = memory[left + offset] ?? 0;
+      const b = memory[right + offset] ?? 0;
+      if (a != b || a == 0 || b == 0) {
+        return a - b;
+      }
+      offset += 1;
+    }
+    return 0;
+  }
+
+  private strchr(ptr: number, c: number): number {
+    const memory = new Uint8Array(this.memory.buffer);
+    const needle = c & 0xff;
+    let offset = 0;
+    while (true) {
+      const value = memory[ptr + offset] ?? 0;
+      if (value == needle) {
+        return ptr + offset;
+      }
+      if (value == 0) {
+        return 0;
+      }
+      offset += 1;
+    }
+  }
+
+  private strrchr(ptr: number, c: number): number {
+    const memory = new Uint8Array(this.memory.buffer);
+    const needle = c & 0xff;
+    let match = 0;
+    let offset = 0;
+    while (true) {
+      const value = memory[ptr + offset] ?? 0;
+      if (value == needle) {
+        match = ptr + offset;
+      }
+      if (value == 0) {
+        return match;
+      }
+      offset += 1;
+    }
+  }
+
+  private strstr(haystack: number, needle: number): number {
+    const needleLength = this.strlen(needle);
+    if (needleLength == 0) {
+      return haystack;
+    }
+    const haystackLength = this.strlen(haystack);
+    for (let offset = 0; offset + needleLength <= haystackLength; offset += 1) {
+      if (this.strcmp(haystack + offset, needle, needleLength) == 0) {
+        return haystack + offset;
+      }
+    }
+    return 0;
+  }
+
+  private memchr(ptr: number, c: number, length: number): number {
+    const memory = new Uint8Array(this.memory.buffer);
+    const needle = c & 0xff;
+    for (let offset = 0; offset < length; offset += 1) {
+      if (memory[ptr + offset] == needle) {
+        return ptr + offset;
+      }
+    }
+    return 0;
+  }
+
   dlopenEnvHandler(path: string) {
     return (env, key: string) => {
       if (key in env) {
@@ -660,6 +741,31 @@ export default class DlopenManger {
       abort: () => {
         throw Error("abort called from dynamic library");
       },
+      __assert_fail: (
+        assertionPtr: number,
+        filePtr: number,
+        line: number,
+        functionPtr: number
+      ) => {
+        const assertion = assertionPtr
+          ? recvString(assertionPtr, this.memory)
+          : "<unknown assertion>";
+        const file = filePtr ? recvString(filePtr, this.memory) : "<unknown>";
+        const func = functionPtr
+          ? recvString(functionPtr, this.memory)
+          : "<unknown>";
+        throw Error(
+          `assertion failed in dynamic library: ${assertion} at ${file}:${line} (${func})`
+        );
+      },
+      __cxa_atexit: () => 0,
+      __cxa_begin_catch: (ptr: number) => ptr,
+      __cxa_find_matching_catch_2: () => 0,
+      __cxa_find_matching_catch_3: (ptr: number) => ptr,
+      __cxa_current_primary_exception: () => 0,
+      __cxa_uncaught_exceptions: () => 0,
+      __cxa_end_catch: () => {},
+      getTempRet0: () => 0,
       clock: () => BigInt(Date.now()),
       isalnum: (c: number) => {
         c = byteChar(c);
@@ -840,6 +946,18 @@ export default class DlopenManger {
         return len;
       },
       secure_getenv: (namePtr: number) => this.getenv(namePtr),
+      strlen: (ptr: number) => this.strlen(ptr),
+      strcmp: (left: number, right: number) => this.strcmp(left, right),
+      strncmp: (left: number, right: number, n: number) =>
+        this.strcmp(left, right, n),
+      strchr: (ptr: number, c: number) => this.strchr(ptr, c),
+      index: (ptr: number, c: number) => this.strchr(ptr, c),
+      strrchr: (ptr: number, c: number) => this.strrchr(ptr, c),
+      rindex: (ptr: number, c: number) => this.strrchr(ptr, c),
+      strstr: (haystack: number, needle: number) =>
+        this.strstr(haystack, needle),
+      memchr: (ptr: number, c: number, length: number) =>
+        this.memchr(ptr, c, length),
       setjmp: () => 0,
       sigsetjmp: () => 0,
       longjmp: () => {

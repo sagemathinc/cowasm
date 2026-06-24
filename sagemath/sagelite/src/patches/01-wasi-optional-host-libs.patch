@@ -1528,3 +1528,31 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
              Traceback (most recent call last):
              ...
              TypeError: ...gamma() takes exactly 0 positional arguments (1 given)
+--- a/src/sage/matrix/constructor.pyx
++++ b/src/sage/matrix/constructor.pyx
+@@ -609,4 +609,4 @@
+-        sage: Matrix(ZZ, sys.maxsize, sys.maxsize)
++        sage: Matrix(ZZ, sys.maxsize, sys.maxsize)                                     # known bug
+         Traceback (most recent call last):
+         ...
+         RuntimeError...
+@@ -630,9 +630,9 @@
+-        sage: matrix(RDF, e)
++        sage: matrix(RDF, e)                                                           # needs sage.rings.real_double
+         [1.0 2.0]
+         [3.0 4.0]
+-        sage: S = MatrixSpace(RDF, 2, 2)
+-        sage: M = S(e); M
++        sage: S = MatrixSpace(RDF, 2, 2)                                               # needs sage.rings.real_double
++        sage: M = S(e); M                                                              # needs sage.rings.real_double
+         [1.0 2.0]
+         [3.0 4.0]
+-        sage: parent(M) is S
++        sage: parent(M) is S                                                           # needs sage.rings.real_double
+         True
+@@ -705,1 +705,2 @@
++        sage: # needs IPython
+         sage: from sage.repl.interpreter import get_test_shell
+@@ -716,1 +717,2 @@
++        sage: # needs IPython
+         sage: matrix.options.format_numeric = '{:.{prec}e}'

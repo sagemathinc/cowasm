@@ -122,6 +122,13 @@ int found_with_bsearch() {
   return (*f)();
 }
 
+EXPORTED_SYMBOL
+int found_with_strchr() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "found_with_strchr");
+  return (*f)();
+}
+
 #ifdef COWASM_WASI_SDK_TEST
 EXPORTED_SYMBOL
 int side_setjmp_recovery() {
@@ -221,6 +228,9 @@ int main() {
 
   printf("found_with_bsearch() = %d\n", found_with_bsearch());
   assert(found_with_bsearch() == 1);
+
+  printf("found_with_strchr() = %d\n", found_with_strchr());
+  assert(found_with_strchr() == 1);
 
 #ifdef COWASM_WASI_SDK_TEST
   printf("side_setjmp_recovery() = %d\n", side_setjmp_recovery());

@@ -4,7 +4,7 @@
 #ifdef COWASM_WASI_SDK_TEST
 #include <setjmp.h>
 #endif
-//#include <assert.h>
+#include <assert.h>
 #include "app.h"
 
 static int x = 388;
@@ -98,6 +98,14 @@ int found_with_bsearch(void) {
   return found != NULL && *found == needle && not_found == NULL;
 }
 
+EXPORTED_SYMBOL
+int found_with_strchr(void) {
+  const char* text = "side-module-string";
+  const char* found = strchr(text, '-');
+  const char* missing = strchr(text, 'z');
+  return found != NULL && *found == '-' && missing == NULL;
+}
+
 #ifdef COWASM_WASI_SDK_TEST
 static jmp_buf side_jmp;
 extern int archive_callback_probe(long value);
@@ -140,7 +148,6 @@ int add5077_using_func_from_main(int a) {
   printf("I got some memory here: %p\n", mem);
   free(mem);
   int n = add5077(a - strlen("four") + 4);
-  // doesn't work due to issue with __assert_fail not being defined:
-  // assert(n == a + 5077);
+  assert(n == a + 5077);
   return n;
 }
