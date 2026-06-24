@@ -1386,6 +1386,41 @@ curated corpus deliberately into the next pure-math module, or continue the
 backend-migration work by moving a narrow Sagelite doctest probe from the older
 `python-wasm` worker toward the validated `python-wasi-sdk` backend.
 
+Latest checked local corpus run after the 2026-06-24 prime-range and
+`znorder` focused-runtime pass:
+
+```text
+sage -t passed: 2484 passed, 0 failed, 773 skipped
+```
+
+That run records 3,257 block rows in `/tmp/sagelite-corpus-expanded.sqlite3`,
+with empty `block-failure-clusters.sql` and `file-error-clusters.sql` results.
+The curated browser-profile corpus now has ten files, adding
+`sage/rings/fast_arith.pyx` and `sage/rings/generic.py` to the previous clean
+baseline:
+
+```text
+fast_arith.pyx: 20 passed, 0 failed, 0 skipped
+generic.py: 74 passed, 0 failed, 6 skipped
+```
+
+The pass changes Sagelite's WASI patch so `prime_range(..., algorithm=None)`
+uses the already-supported next-prime iterator path instead of PARI's prime
+table path. This keeps the core prime-range helper in the browser-compatible
+arithmetic slice without widening the PARI table startup surface. It also adds
+a focused `cypari2.Gen.znorder(o=None)` wrapper backed by PARI's `znorder`,
+which clears the remaining `generic.py` `ProductTree` example that checks the
+multiplicative order of `GF(65537)(1111)`. Both the cypari2 standalone target
+and Sagelite's packaged Node/Electron smokes now cover the new `znorder`
+surface.
+
+The next useful corpus-growth pass can look for another compact pure-math file
+whose failures cluster around already-supported exact arithmetic, instead of
+continuing broad native-library tagging. `monomials.py` is a small candidate,
+but its remaining failures currently come from `Sequence(...)` importing
+`sage.rings.polynomial.plural`; that should be treated as a polynomial/plural
+import-scope issue rather than a doctest expectation mismatch.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

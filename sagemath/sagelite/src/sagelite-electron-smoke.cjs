@@ -271,6 +271,7 @@ else:
     raise AssertionError('PARI division by zero did not raise PariError')
 assert str(pari('13*17')) == '221'
 assert str(pari(5)) == '5'
+assert int(pari(2).Mod(101).znorder()) == 100
 assert str(objtogen('2+3')) == '5'
 assert factor_using_pari(ZZ(360)) == [(ZZ(2), 3), (ZZ(3), 2), (ZZ(5), 1)]
 assert factor_using_pari(ZZ(2**31 - 1)) == [(ZZ(2147483647), 1)]

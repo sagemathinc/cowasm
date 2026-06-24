@@ -243,6 +243,28 @@ diff -urN a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
 
  cdef inline Integer smallInteger(long value):
      """
+diff -urN a/src/sage/rings/fast_arith.pyx b/src/sage/rings/fast_arith.pyx
+--- a/src/sage/rings/fast_arith.pyx
++++ b/src/sage/rings/fast_arith.pyx
+@@ -34,2 +34,4 @@
+ from libc.math cimport sqrt
++import sys
++
+ from sage.rings.integer cimport Integer
+@@ -176,6 +178,11 @@
+     if algorithm is None:
+-        # if 'stop' is 'None', need to change it to an integer before comparing with 'start'
+-        if max(start, stop or 0) <= small_prime_max:
++        # if 'stop' is 'None', need to change it to an integer before comparing with 'start'
++        if sys.platform == 'wasi':
++            # CoWasm's browser-compatible profile keeps PARI's prime-table
++            # side path out of the default startup surface, but Integer
++            # next-prime iteration is available through the focused runtime.
++            algorithm = "pari_isprime"
++        elif max(start, stop or 0) <= small_prime_max:
+             algorithm = "pari_primes"
+         else:
+             algorithm = "pari_isprime"
 diff -urN a/src/sage/rings/integer_ring.pyx b/src/sage/rings/integer_ring.pyx
 --- a/src/sage/rings/integer_ring.pyx
 +++ b/src/sage/rings/integer_ring.pyx

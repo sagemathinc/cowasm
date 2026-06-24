@@ -340,6 +340,30 @@ cdef extern from *:
       return ok;
     }
 
+    static int cowasm_cypari2_gen_clone_znorder(GEN input,
+                                                GEN multiple,
+                                                int has_multiple,
+                                                GEN *result,
+                                                long *errnum) {
+      int ok = 1;
+
+      *result = NULL;
+      *errnum = 0;
+      cowasm_cypari2_gen_ensure_pari();
+
+      pari_CATCH(CATCH_ALL) {
+        GEN error = pari_err_last();
+        *errnum = error ? err_get_num(error) : CATCH_ALL;
+        ok = 0;
+      }
+      pari_TRY {
+        *result = gclone(znorder(input, has_multiple ? multiple : NULL));
+      }
+      pari_ENDCATCH;
+
+      return ok;
+    }
+
     static int cowasm_cypari2_gen_ispseudoprime(GEN input,
                                                 long flag,
                                                 long *result,
@@ -642,6 +666,11 @@ cdef extern from *:
                                            int add_one,
                                            GEN *result,
                                            long *errnum)
+    int cowasm_cypari2_gen_clone_znorder(GEN input,
+                                         GEN multiple,
+                                         int has_multiple,
+                                         GEN *result,
+                                         long *errnum)
     int cowasm_cypari2_gen_ispseudoprime(GEN input,
                                          long flag,
                                          long *result,
@@ -959,6 +988,24 @@ cdef class Gen(Gen_base):
 
         if not cowasm_cypari2_gen_clone_nextprime(
             self.g, 1 if add_one else 0, &result, &errnum
+        ):
+            _raise_pari_error(errnum)
+        return _new_owned(result)
+
+    def znorder(self, o=None):
+        cdef GEN result = NULL
+        cdef long errnum = 0
+        cdef Gen multiple
+        cdef GEN multiple_gen = NULL
+        cdef int has_multiple = 0
+
+        if o is not None:
+            multiple = objtogen(o)
+            multiple_gen = multiple.g
+            has_multiple = 1
+
+        if not cowasm_cypari2_gen_clone_znorder(
+            self.g, multiple_gen, has_multiple, &result, &errnum
         ):
             _raise_pari_error(errnum)
         return _new_owned(result)
@@ -1690,6 +1737,8 @@ assert int(pari(2**31 - 1).factor()[0][0]) == 2147483647
 assert int(pari(100).nextprime(True)) == 101
 assert int(pari(-37).nextprime(True)) == 2
 assert int(pari(2).nextprime(True)) == 3
+assert int(pari(2).Mod(101).znorder()) == 100
+assert int(pari(2).Mod(101).znorder(100)) == 100
 assert int(pari.prime(58)) == 271
 assert pari(2**31 - 1).isprime() is True
 assert pari(2**31).isprime() is False

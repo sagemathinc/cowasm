@@ -118,7 +118,9 @@ polynomial construction/arithmetic over default `ZZ[x]`, polynomial division,
 derivatives, coefficient lists, evaluation, integer factorization with factor
 inspection, Sage
 arithmetic helpers including `gcd`, `xgcd`, `binomial`, `factorial`, list
-LCM, list CRT, and repeated-prime valuation, and `prime_pi(10**6)`. The probe
+LCM, list CRT, repeated-prime valuation, `prime_range`, and `prime_pi(10**6)`.
+The packaged cypari2 boundary also covers PARI-backed `Gen.znorder()` for
+integer-modular multiplicative-order checks. The probe
 also checks exact dense matrix determinant,
 multiplication, trace, characteristic-polynomial evaluation, identity-matrix
 construction, and inverse over `ZZ` and `QQ`, including a 3x3 rational inverse,

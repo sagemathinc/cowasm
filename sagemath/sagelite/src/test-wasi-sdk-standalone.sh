@@ -1221,6 +1221,7 @@ else:
 assert str(pari('13*17')) == '221'
 g = pari(360)
 assert int(g) == 360
+assert int(pari(2).Mod(101).znorder()) == 100
 F = g.factor()
 assert F.ncols() == 2
 assert F.nrows() == 3

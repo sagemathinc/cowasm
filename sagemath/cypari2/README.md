@@ -16,7 +16,7 @@ and most conversion entry points intentionally fail closed for real PARI
 operations. The public `Pari()("...")` path now supports a small string-input
 runtime slice backed by the private Cython PARI probe. The focused `Gen`
 runtime also exposes the PARI integer operations needed by Sagelite's current
-pure-integer doctest slice, including factorization, `nextprime`,
+pure-integer doctest slice, including factorization, `nextprime`, `znorder`,
 `ispseudoprime`, `isprimepower`, and `ispseudoprimepower`.
 
 The standalone target now also builds private
