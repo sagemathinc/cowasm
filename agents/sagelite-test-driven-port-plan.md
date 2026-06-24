@@ -1587,6 +1587,37 @@ That run is recorded in `/tmp/sagelite-corpus-realfield-gosper.sqlite3` with
 3,685 total block rows for the latest run. The saved block- and file-failure
 cluster queries are empty.
 
+Follow-up polynomial-helper corpus-growth pass:
+`sage/rings/polynomial/commutative_polynomial.pyx` and
+`sage/rings/polynomial/convolution.py` are now included in the
+browser-profile corpus. Both are compact exact-polynomial helper files and add
+clean signal without broadening into Singular/plural or native-library-backed
+polynomial algorithms.
+
+Focused reruns record:
+
+```text
+commutative_polynomial.pyx: 7 passed, 0 failed, 0 skipped
+convolution.py: 34 passed, 0 failed, 0 skipped
+```
+
+The same sampling pass kept `sage/rings/homset.py` out of this narrow corpus
+growth because it still reaches the known NTL dynamic-import boundary at
+`ZZ_pContext::restore`, and kept `sage/rings/pari_ring.py` out because its
+remaining failures cluster around the unsupported PARI object-model surface.
+Those are better handled as focused runtime or browser-scope passes.
+
+The full corpus target passes with both polynomial helpers included and
+failures disallowed:
+
+```text
+sage -t passed: 2890 passed, 0 failed, 918 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-polynomial-helpers.sqlite3` with
+3,808 total block rows for the latest run. The saved block- and file-failure
+cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

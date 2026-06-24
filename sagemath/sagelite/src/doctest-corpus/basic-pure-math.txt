@@ -18,5 +18,7 @@ src/sage/rings/numbers_abc.py
 src/sage/rings/infinity.py
 src/sage/rings/finite_rings/integer_mod_ring.py
 src/sage/rings/finite_rings/finite_field_constructor.py
+src/sage/rings/polynomial/commutative_polynomial.pyx
+src/sage/rings/polynomial/convolution.py
 src/sage/rings/polynomial/polynomial_ring_constructor.py
 src/sage/matrix/constructor.pyx
