@@ -364,6 +364,22 @@ baseline. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner version
 22.
 
+Latest checked local corpus run after the 2026-06-24 combinatorics and set
+range corpus-growth pass:
+
+```text
+sage -t passed: 3256 passed, 0 failed, 941 skipped
+```
+
+That run records 4,197 block rows in
+`/tmp/sagelite-corpus-plus-combination-integer-range.sqlite3`, with no
+block-level failures and no file-level errors. It covers the current 26-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/combination.py` and `sage/sets/integer_range.py` to the
+previous clean browser-profile baseline. Focused probes kept
+`sage/combinat/subset.py` and `sage/sets/finite_set_maps.py` out of this quiet
+corpus growth because they still have block-level failures.
+
 Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
 `python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
 currently blocked during WASM configure by `mimalloc requires stdatomic.h`.
@@ -547,6 +563,8 @@ src/sage/arith/srange.pyx
 src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
+src/sage/combinat/combination.py
+src/sage/sets/integer_range.py
 src/sage/rings/finite_rings/integer_mod_ring.py
 src/sage/rings/finite_rings/finite_field_constructor.py
 src/sage/rings/polynomial/commutative_polynomial.pyx
@@ -1679,6 +1697,34 @@ sage -t passed: 2989 passed, 0 failed, 934 skipped
 That run is recorded in `/tmp/sagelite-corpus-after-arith-expansion.sqlite3`
 with 3,923 total block rows for the latest run. The saved block- and
 file-failure cluster queries are empty.
+
+Follow-up combinatorics and set range corpus-growth pass:
+`sage/combinat/combination.py` and `sage/sets/integer_range.py` are now
+included in the browser-profile corpus. These files add clean finite
+enumeration and integer-range coverage that matches the existing standalone
+smoke surface without broadening the dashboard into GAP, Singular, or native
+finite-field algorithms.
+
+Focused reruns record:
+
+```text
+combination.py: 102 passed, 0 failed, 6 skipped
+integer_range.py: 165 passed, 0 failed, 1 skipped
+```
+
+The same sampling pass kept `sage/combinat/subset.py` and
+`sage/sets/finite_set_maps.py` out of this quiet corpus growth because they
+still have block-level failures. The full corpus passes with both new files
+included:
+
+```text
+sage -t passed: 3256 passed, 0 failed, 941 skipped
+```
+
+That run is recorded in
+`/tmp/sagelite-corpus-plus-combination-integer-range.sqlite3` with 4,197 total
+block rows for the latest run. The saved block- and file-failure cluster
+queries are empty.
 
 ## Phase 5: Subprocess Strategy
 
