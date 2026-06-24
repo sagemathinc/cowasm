@@ -686,6 +686,51 @@ generic form of PARI's `pari_init_opts()` assignment
 initialization sequence, duplicated PARI state across extensions, or a later
 overwrite of the callback slot.
 
+A 2026-06-24 loader-instrumented focused rerun sharpened that diagnosis. A
+temporary `COWASM_DYLINK_TRACE_PARI_CALLBACKS` probe in the dynamic loader
+showed that `convert_sage.cpython-314-wasm32-wasi.so` has both recovery
+callback slots unset immediately after data relocations:
+
+```text
+memory_base=171742624 table_base=28617
+cb_pari_err_recover=0
+cb_pari_pre_recover=0
+```
+
+The same rerun still failed at `integer.pyx:3112` with the existing
+`RuntimeError: function signature mismatch` in `err_recover`, so the bad
+callback value is written after load-time relocation. Static inspection with
+`wasm-objdump -x` then showed two separate PARI-containing side modules:
+
+- `deps/cypari2/cypari2/gen.cpython-314-wasm32-wasi.so` has
+  `table_size=2212` and its own `GOT.data.internal.cb_pari_err_recover` at
+  data offset `490676`.
+- `site-packages/sage/libs/pari/convert_sage.cpython-314-wasm32-wasi.so` has
+  `table_size=437`; its `err_recover` loads the local callback slots at data
+  offsets `96672` and `96684`.
+
+cypari2's `handle_error.pyx` installs `_pari_err_recover` into
+`cb_pari_err_recover`, while Sage's PARI converter modules `cimport`
+`cypari2.paridecl` and are currently built as separate side modules that also
+contain PARI code and PARI globals. This makes the active failure look less
+like a loader table relocation bug and more like duplicated static PARI state:
+cypari2 initializes one PARI copy, while `convert_sage` runs PARI code from
+another copy whose recovery callback is populated later with an incompatible
+or foreign table pointer.
+
+The next implementation pass should build a focused two-side-module dylink
+smoke rather than keep probing the full Sagelite stack. The probe should link
+the same PIC static archive containing a PARI-shaped callback global into two
+side modules: one module initializes the callback to its local
+`void (*)(long)` recovery function, and the other module calls an error path
+through its own archive copy. That will test whether the current Sagelite
+layout is accidentally relying on process-global C state that WebAssembly side
+modules do not share. If the smoke reproduces the mismatch, the fix direction
+is to stop linking independent PARI copies into Sage PARI converter modules:
+either export/share one PARI provider side module, link converter modules
+against that provider, or make a narrowly scoped module-local initialization
+strategy that installs a correct local recovery callback before any PARI call.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
