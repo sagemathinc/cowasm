@@ -1602,3 +1602,289 @@ diff -urN a/src/sage/misc/remote_file.py b/src/sage/misc/remote_file.py
 @@ -716,1 +717,2 @@
 +        sage: # needs IPython
          sage: matrix.options.format_numeric = '{:.{prec}e}'
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -143,9 +143,9 @@
+     True
+     sage: GF(next_prime(10^20)).is_field()
+     True
+-    sage: GF(19^20,'a').is_field()
++    sage: GF(19^20,'a').is_field()                                                    # needs sage.libs.ntl
+     True
+-    sage: GF(8,'a').is_field()
++    sage: GF(8,'a').is_field()                                                        # needs sage.libs.ntl
+     True
+ 
+ AUTHORS:
+--- a/src/sage/rings/finite_rings/integer_mod_ring.py
++++ b/src/sage/rings/finite_rings/integer_mod_ring.py
+@@ -1095,7 +1095,7 @@
+ 
+             sage: K2 = GF(2)
+             sage: K3 = GF(3)
+-            sage: K8 = GF(8, 'a')
++            sage: K8 = GF(8, 'a')                                                      # needs sage.libs.ntl
+             sage: K8(5)  # indirect doctest
+             1
+             sage: K8('a+1')
+--- a/src/sage/rings/polynomial/polynomial_ring_constructor.py
++++ b/src/sage/rings/polynomial/polynomial_ring_constructor.py
+@@ -444,9 +444,9 @@
+ 
+     The generic implementation is different in some cases::
+ 
+-        sage: R = PolynomialRing(GF(2), 'j', implementation='generic'); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)
++        sage: R = PolynomialRing(GF(2), 'j', implementation='generic'); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)       # needs sage.libs.ntl
+         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
+-        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)
++        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)               # needs sage.libs.ntl
+         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
+ 
+         sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -325,7 +325,7 @@
+     right degree (this is always checked)::
+ 
+         sage: F.<x> = QQ[]
+-        sage: factor(x^5 + 2)
++        sage: factor(x^5 + 2)                                                         # needs sage.libs.pari
+         x^5 + 2
+         sage: K.<a> = GF(5^5, modulus=x^5 + 2)
+         Traceback (most recent call last):
+--- a/src/sage/rings/finite_rings/integer_mod_ring.py
++++ b/src/sage/rings/finite_rings/integer_mod_ring.py
+@@ -1534,7 +1534,7 @@
+         TESTS::
+ 
+             sage: R = Zmod(2)
+-            sage: S.<x> = R[]
++            sage: S.<x> = R[]                                                         # needs sage.libs.ntl
+             sage: R._lift_residue_field_root(2, 1, S.zero(), S.zero(), R(0))
+             (0,)
+ 
+--- a/src/sage/rings/polynomial/polynomial_ring_constructor.py
++++ b/src/sage/rings/polynomial/polynomial_ring_constructor.py
+@@ -648,9 +648,9 @@
+         Multivariate Polynomial Ring in x over Rational Field
+         sage: Q0 = PolynomialRing(QQ,"x",0); TestSuite(Q0).run(skip=['_test_elements', '_test_elements_eq_transitive', '_test_gcd_vs_xgcd', '_test_quo_rem']); Q0
+         Multivariate Polynomial Ring in no variables over Rational Field
+-        sage: R = PolynomialRing(GF(2), 'j', implementation='generic'); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)
++        sage: R = PolynomialRing(GF(2), 'j', implementation='generic'); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)       # needs sage.libs.ntl
+         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
+-        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)
++        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)               # needs sage.libs.ntl
+         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
+         sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
+         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -328,11 +328,11 @@
+         sage: F.<x> = QQ[]
+        sage: factor(x^5 + 2)                                                         # needs sage.libs.pari
+         x^5 + 2
+-        sage: K.<a> = GF(5^5, modulus=x^5 + 2)
++        sage: K.<a> = GF(5^5, modulus=x^5 + 2)                                        # needs sage.libs.pari
+         Traceback (most recent call last):
+         ...
+         ValueError: finite field modulus must be irreducible but it is not
+-        sage: K.<a> = GF(5^5, modulus=x^3 + 3*x + 3, check_irreducible=False)
++        sage: K.<a> = GF(5^5, modulus=x^3 + 3*x + 3, check_irreducible=False)          # needs sage.libs.pari
+         Traceback (most recent call last):
+         ...
+         ValueError: the degree of the modulus does not equal the degree of the field
+--- a/src/sage/rings/finite_rings/integer_mod_ring.py
++++ b/src/sage/rings/finite_rings/integer_mod_ring.py
+@@ -1753,8 +1753,8 @@
+             sage: R.<x> = Zmod(7^3)[]
+             sage: (x^2 + x + 1).roots(multiplicities=False)
+             [18, 324]
+-            sage: R.<x> = Zmod(2^50)[]
+-            sage: (x + 1).roots(multiplicities=False)
++            sage: R.<x> = Zmod(2^50)[]                                                # needs sage.libs.ntl
++            sage: (x + 1).roots(multiplicities=False)                                  # needs sage.libs.ntl
+             [1125899906842623]
+ 
+         We can also find roots without multiplicities over a ring whose modulus
+--- a/src/sage/rings/polynomial/polynomial_ring_constructor.py
++++ b/src/sage/rings/polynomial/polynomial_ring_constructor.py
+@@ -432,9 +432,9 @@
+         sage: R is S
+         True
+ 
+-        sage: R = PolynomialRing(ZZ, 'j,k', implementation='singular')
+-        sage: S = PolynomialRing(ZZ, 'j,k', implementation=None)
+-        sage: R is S
++        sage: R = PolynomialRing(ZZ, 'j,k', implementation='singular')                 # needs sage.libs.singular
++        sage: S = PolynomialRing(ZZ, 'j,k', implementation=None)                       # needs sage.libs.singular
++        sage: R is S                                                                   # needs sage.libs.singular
+         True
+ 
+         sage: R = PolynomialRing(ZZ, 'p', sparse=True, implementation='generic')
+@@ -449,7 +449,7 @@
+        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)               # needs sage.libs.ntl
+         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
+ 
+-        sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
++        sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R) # known bug
+         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
+         sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)       # needs sage.libs.singular
+         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
+@@ -497,39 +497,39 @@
+     Polynomial rings over double-precision real and complex fields are supported
+     by the ``'singular'`` implementation::
+ 
+-        sage: R.<x> = PolynomialRing(RDF, implementation='singular')
+-        sage: x^2 + 1
++        sage: R.<x> = PolynomialRing(RDF, implementation='singular')                   # needs sage.libs.singular
++        sage: x^2 + 1                                                                  # needs sage.libs.singular
+         x^2 + (1.000e + 00)
+-        sage: C.<x> = PolynomialRing(CDF, implementation='singular')
+-        sage: x^2 + 1
++        sage: C.<x> = PolynomialRing(CDF, implementation='singular')                   # needs sage.libs.singular
++        sage: x^2 + 1                                                                  # needs sage.libs.singular
+         x^2 + 1
+ 
+     The ring printing via libsingular matches the output of the Singular
+     interface::
+ 
+-        sage: from sage.libs.singular.function import singular_function
+-        sage: print(singular_function("print")(R))
++        sage: from sage.libs.singular.function import singular_function                 # needs sage.libs.singular
++        sage: print(singular_function("print")(R))                                     # needs sage.libs.singular
+         polynomial ring, over a field, global ordering
+         // coefficients: Float() considered as a field
+         // number of vars : 1
+         //        block   1 : ordering dp
+         //                  : names    x
+         //        block   2 : ordering C
+-        sage: print(singular_function("print")(C))
++        sage: print(singular_function("print")(C))                                     # needs sage.libs.singular
+         polynomial ring, over a field, global ordering
+         // coefficients: real[I](complex:15 digits, additional 0 digits)/(I^2+1) considered as a field
+         // number of vars : 1
+         //        block   1 : ordering dp
+         //                  : names    x
+         //        block   2 : ordering C
+-        sage: print(singular(R))
++        sage: print(singular(R))                                                       # needs sage.libs.singular
+         polynomial ring, over a field, global ordering
+         // coefficients: Float(...) considered as a field
+         // number of vars : 1
+         //        block   1 : ordering dp
+         //                  : names    x
+         //        block   2 : ordering C
+-        sage: print(singular(C))
++        sage: print(singular(C))                                                       # needs sage.libs.singular
+         polynomial ring, over a field, global ordering
+         // coefficients: real[I](complex:15 digits, additional 0 digits)/(I^2+1) considered as a field
+         // number of vars : 1
+@@ -564,8 +564,8 @@
+         sage: C = (y-x)^3
+         sage: C(y/2)
+         1.?*y^3
+-        sage: R.<x,y> = PolynomialRing(RIF,2)
+-        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
++        sage: R.<x,y> = PolynomialRing(RIF,2)                                          # known bug
++        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']) # known bug
+         sage: RIF(-2,1)*x
+         0.?e1*x
+ 
+@@ -629,22 +629,22 @@
+         Univariate Polynomial Ring in w over Univariate Polynomial Ring in k over Finite Field of size 7
+         sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); TestSuite(ZxNTL).run(skip='_test_pickling'); ZxNTL                                         # needs sage.libs.ntl
+         Univariate Polynomial Ring in x over Integer Ring (using NTL)
+-        sage: ZxFLINT = PolynomialRing(ZZ, 'x', implementation='FLINT'); TestSuite(ZxFLINT).run(); ZxFLINT
++        sage: ZxFLINT = PolynomialRing(ZZ, 'x', implementation='FLINT'); TestSuite(ZxFLINT).run(); ZxFLINT # needs sage.libs.flint
+         Univariate Polynomial Ring in x over Integer Ring
+         sage: Zx = PolynomialRing(ZZ, 'x', implementation='generic'); TestSuite(Zx).run(skip=['_test_construction', '_test_pickling']); Zx
+         Univariate Polynomial Ring in x over Integer Ring
+-        sage: R = PolynomialRing(QQ, 'a,b,c'); TestSuite(R).run(skip='_test_elements'); R
++        sage: R = PolynomialRing(QQ, 'a,b,c'); TestSuite(R).run(skip='_test_elements'); R # known bug
+         Multivariate Polynomial Ring in a, b, c over Rational Field
+-        sage: R = PolynomialRing(QQ, 'x,y,z', order='degrevlex'); TestSuite(R).run(skip='_test_elements'); R
++        sage: R = PolynomialRing(QQ, 'x,y,z', order='degrevlex'); TestSuite(R).run(skip='_test_elements'); R # known bug
+         Multivariate Polynomial Ring in x, y, z over Rational Field
+-        sage: S = PolynomialRing(QQ, 'x,y,z', order='invlex'); TestSuite(S).run(skip=['_test_construction', '_test_elements']); S
++        sage: S = PolynomialRing(QQ, 'x,y,z', order='invlex'); TestSuite(S).run(skip=['_test_construction', '_test_elements']); S # known bug
+         Multivariate Polynomial Ring in x, y, z over Rational Field
+         sage: Q0 = PolynomialRing(QQ,[]); TestSuite(Q0).run(skip=['_test_elements', '_test_elements_eq_transitive', '_test_gcd_vs_xgcd', '_test_quo_rem']); Q0
+         Multivariate Polynomial Ring in no variables over Rational Field
+         sage: P.<x> = PolynomialRing(QQ, implementation='singular'); TestSuite(P).run(skip=['_test_construction', '_test_elements',                             # needs sage.libs.singular
+         ....:                                                                               '_test_euclidean_degree', '_test_quo_rem']); P
+         Multivariate Polynomial Ring in x over Rational Field
+-        sage: Q1 = PolynomialRing(QQ,"x",1); TestSuite(Q1).run(skip=['_test_construction', '_test_elements', '_test_euclidean_degree', '_test_quo_rem']); Q1
++        sage: Q1 = PolynomialRing(QQ,"x",1); TestSuite(Q1).run(skip=['_test_construction', '_test_elements', '_test_euclidean_degree', '_test_quo_rem']); Q1 # known bug
+         Multivariate Polynomial Ring in x over Rational Field
+         sage: Q0 = PolynomialRing(QQ,"x",0); TestSuite(Q0).run(skip=['_test_elements', '_test_elements_eq_transitive', '_test_gcd_vs_xgcd', '_test_quo_rem']); Q0
+         Multivariate Polynomial Ring in no variables over Rational Field
+@@ -652,7 +652,7 @@
+         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
+        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)               # needs sage.libs.ntl
+         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
+-        sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
++        sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R) # known bug
+         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
+         sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)       # needs sage.libs.singular
+         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
+@@ -666,8 +666,8 @@
+         sage: Q.<x> = PolynomialRing(P)
+         sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity',
+         ....:                        '_test_distributivity', '_test_prod'])
+-        sage: R.<x,y> = PolynomialRing(RIF,2)
+-        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
++        sage: R.<x,y> = PolynomialRing(RIF,2)                                          # known bug
++        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']) # known bug
+ 
+     We verify that multivariate polynomial rings over ``InfinityRing`` from
+     :issue:`34675` are fixed::
+@@ -995,11 +995,11 @@
+             and Category of commutative algebras over fields
+             and Category of infinite sets
+ 
+-        sage: QQ['t'].category() is EuclideanDomains() & CommutativeAlgebras(QQ.category()).WithBasis().Infinite()
++        sage: QQ['t'].category() is EuclideanDomains() & CommutativeAlgebras(QQ.category()).WithBasis().Infinite() # needs sage.categories
+         True
+-        sage: QQ['s','t'].category() is UniqueFactorizationDomains() & CommutativeAlgebras(QQ.category()).WithBasis().Infinite()
++        sage: QQ['s','t'].category() is UniqueFactorizationDomains() & CommutativeAlgebras(QQ.category()).WithBasis().Infinite() # needs sage.categories
+         True
+-        sage: QQ['s']['t'].category() is UniqueFactorizationDomains() & CommutativeAlgebras(QQ['s'].category()).WithBasis().Infinite()
++        sage: QQ['s']['t'].category() is UniqueFactorizationDomains() & CommutativeAlgebras(QQ['s'].category()).WithBasis().Infinite() # needs sage.categories
+         True
+     """
+     category = Algebras(base_ring_category).WithBasis()
+--- a/src/sage/rings/finite_rings/finite_field_constructor.py
++++ b/src/sage/rings/finite_rings/finite_field_constructor.py
+@@ -340,12 +340,12 @@
+ 
+     Any type which can be converted to the polynomial ring `GF(p)[x]`
+     is accepted as modulus::
+ 
+-        sage: K.<a> = GF(13^3, modulus=[1,0,0,2])
+-        sage: K.<a> = GF(13^10, modulus=pari("ffinit(13,10)"))
+-        sage: var('x')
++        sage: K.<a> = GF(13^3, modulus=[1,0,0,2])                                      # needs sage.libs.pari
++        sage: K.<a> = GF(13^10, modulus=pari("ffinit(13,10)"))                         # needs sage.libs.pari
++        sage: var('x')                                                                 # needs sage.symbolic
+         x
+-        sage: K.<a> = GF(13^2, modulus=x^2 - 2)
+-        sage: K.<a> = GF(13^2, modulus=sin(x))
++        sage: K.<a> = GF(13^2, modulus=x^2 - 2)                                       # needs sage.libs.pari sage.symbolic
++        sage: K.<a> = GF(13^2, modulus=sin(x))                                        # needs sage.libs.pari sage.symbolic
+         Traceback (most recent call last):
+         ...
+         TypeError: self must be a numeric expression
+--- a/src/sage/rings/finite_rings/integer_mod_ring.py
++++ b/src/sage/rings/finite_rings/integer_mod_ring.py
+@@ -1760,8 +1760,8 @@
+ 
+         We can also find roots without multiplicities over a ring whose modulus
+         is a product of primes or prime powers::
+ 
+-            sage: R.<x> = Zmod(60)[]
+-            sage: (x^2 - 1).roots(multiplicities=False)
++            sage: R.<x> = Zmod(60)[]                                                  # needs sage.libs.ntl
++            sage: (x^2 - 1).roots(multiplicities=False)                                # needs sage.libs.ntl
+             [29, 41, 49, 1, 59, 11, 19, 31]
+ 
+         We may also ask for roots modulo a quotient of the ring over which the

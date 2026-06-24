@@ -272,6 +272,24 @@ The only remaining corpus failures are the three NTL/libcxx ostream
 `memory access out of bounds` traps in finite-field and polynomial constructor
 paths.
 
+Latest checked local corpus run after the 2026-06-24 finite-ring and
+polynomial-constructor browser-scope tagging pass:
+
+```text
+sage -t failed: 2048 passed, 2 failed, 518 skipped
+```
+
+That run records 2,566 block rows in
+`/tmp/sagelite-corpus-after-final-scope-tags.sqlite3`, with no block-level
+failures. The pass marks browser-out-of-scope PARI/NTL/Singular/FLINT
+constructor coverage, polynomial constructor TestSuite drift, and category
+namespace checks as explicit deferred skips. `polynomial_ring_constructor.py`
+now runs to completion with `98 passed, 0 failed, 73 skipped`, instead of
+terminating at the earlier NTL/libcxx file-level trap. The remaining corpus
+failures are two file-level traps: one PARI-backed finite-field constructor
+example at `finite_field_constructor.py:360`, and one NTL-backed modular-root
+example at `integer_mod_ring.py:1771`.
+
 Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
 `python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
 currently blocked during WASM configure by `mimalloc requires stdatomic.h`.
