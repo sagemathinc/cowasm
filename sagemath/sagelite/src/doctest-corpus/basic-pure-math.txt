@@ -16,6 +16,7 @@ src/sage/rings/monomials.py
 src/sage/rings/big_oh.py
 src/sage/rings/numbers_abc.py
 src/sage/rings/infinity.py
+src/sage/rings/semirings/non_negative_integer_semiring.py
 src/sage/rings/finite_rings/integer_mod_ring.py
 src/sage/rings/finite_rings/finite_field_constructor.py
 src/sage/rings/polynomial/commutative_polynomial.pyx

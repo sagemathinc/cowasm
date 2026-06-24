@@ -326,20 +326,22 @@ allocation through `objtogen([1, 2, 3])`. Focused probes confirm that
 now reaches the next higher-level cypari2 object-model gap,
 `Gen._rational_()`, rather than a WASM function-signature mismatch.
 
-Latest checked local corpus run after adding the rings ABC doctests:
+Latest checked local corpus run after adding the semiring smoke corpus:
 
 ```text
-sage -t passed: 2849 passed, 0 failed, 918 skipped
+sage -t passed: 2902 passed, 0 failed, 922 skipped
 ```
 
-That run records 3,767 block rows in `/tmp/sagelite-corpus-after-abc.sqlite3`,
-with no block-level failures and no file-level errors. It covers the current
-17-file `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus:
-the original integer, rational, finite-field, polynomial-constructor, and
-matrix files plus `abc.pyx`, `real_field.py`, `fast_arith.pyx`, `generic.py`,
+That run records 3,824 block rows in
+`/tmp/sagelite-corpus-after-semiring.sqlite3`, with no block-level failures
+and no file-level errors. It covers the current 20-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus: the
+original integer, rational, finite-field, polynomial-constructor, and matrix
+files plus `abc.pyx`, `real_field.py`, `fast_arith.pyx`, `generic.py`,
 `continued_fraction_gosper.py`, `monomials.py`, `big_oh.py`, `numbers_abc.py`,
-and `infinity.py`. The latest run metadata records CoWasm commit
-`69cfe3bd736764c52cbbf22a022995caf7a16587`, Sagelite package commit
+`infinity.py`, `commutative_polynomial.pyx`, `convolution.py`, and
+`non_negative_integer_semiring.py`. The latest run metadata records CoWasm
+commit `e9f68c7f56c01c4044bded805493588e22040be5`, Sagelite package commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner version
 22.
 
@@ -521,8 +523,11 @@ src/sage/rings/monomials.py
 src/sage/rings/big_oh.py
 src/sage/rings/numbers_abc.py
 src/sage/rings/infinity.py
+src/sage/rings/semirings/non_negative_integer_semiring.py
 src/sage/rings/finite_rings/integer_mod_ring.py
 src/sage/rings/finite_rings/finite_field_constructor.py
+src/sage/rings/polynomial/commutative_polynomial.pyx
+src/sage/rings/polynomial/convolution.py
 src/sage/rings/polynomial/polynomial_ring_constructor.py
 src/sage/matrix/constructor.pyx
 ```
