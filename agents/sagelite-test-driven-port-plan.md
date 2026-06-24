@@ -711,6 +711,7 @@ src/sage/combinat/restricted_growth.py
 src/sage/combinat/sidon_sets.py
 src/sage/combinat/ranker.py
 src/sage/combinat/gray_codes.py
+src/sage/combinat/hall_polynomial.py
 src/sage/combinat/integer_vector.py
 src/sage/combinat/cartesian_product.py
 src/sage/combinat/backtrack.py
@@ -2220,6 +2221,34 @@ the doctest smoke was extended to cover the seeded `IntegerListsLex` global:
 ```text
 sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
 ```
+
+Follow-up Hall-polynomial corpus-growth pass:
+`sage/combinat/hall_polynomial.py` is now included in the browser-profile
+corpus. The file contributes compact exact Hall-polynomial coverage while
+marking the three larger examples that import unavailable Symmetrica as
+explicit `# needs sage.libs.symmetrica` deferred coverage.
+
+Focused rerun:
+
+```text
+hall_polynomial.py: 7 passed, 0 failed, 3 skipped
+```
+
+The default full-corpus target records a passed SQLite run with
+`hall_polynomial.py` included:
+
+```text
+sage -t passed: 5648 passed, 0 failed, 1253 skipped
+```
+
+That run is recorded in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` as run `5` with
+6,901 total block rows across 55 files. The saved block- and file-failure
+cluster queries are empty. The wrapper still printed the existing
+allow-failures message after the `sage -t passed` summary because the
+underlying process returned nonzero during shutdown, so a separate runner
+cleanup pass should make `SAGELITE_DOCTEST_ALLOW_FAILURES=0` usable for the
+now-clean corpus.
 
 ## Phase 5: Subprocess Strategy
 
