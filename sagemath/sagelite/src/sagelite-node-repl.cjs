@@ -1233,11 +1233,11 @@ class __CowasmOutputChecker(doctest.OutputChecker):
 
     def __split_exception_line(self, line):
         head, separator, detail = line.partition(":")
-        if not separator:
-            return None, None
         head = head.strip()
         if not re.match(r"^[A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*$", head):
             return None, None
+        if not separator:
+            return head, ""
         return head, detail.strip()
 
     def __check_tolerant_output(self, want, got, tolerance, optionflags):

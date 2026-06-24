@@ -564,7 +564,16 @@ src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
 src/sage/combinat/combination.py
+src/sage/combinat/subset.py
+src/sage/combinat/composition_signed.py
+src/sage/combinat/derangements.py
+src/sage/combinat/perfect_matching.py
+src/sage/combinat/tuple.py
 src/sage/sets/integer_range.py
+src/sage/sets/finite_set_maps.py
+src/sage/sets/non_negative_integers.py
+src/sage/sets/positive_integers.py
+src/sage/sets/primes.py
 src/sage/rings/finite_rings/integer_mod_ring.py
 src/sage/rings/finite_rings/finite_field_constructor.py
 src/sage/rings/polynomial/commutative_polynomial.pyx
@@ -1775,9 +1784,9 @@ tuple.py: 66 passed, 0 failed, 3 skipped
 The same sampling pass kept `sage/combinat/subset.py`,
 `sage/sets/finite_set_maps.py`, `sage/combinat/subword.py`,
 `sage/combinat/composition.py`, and `sage/combinat/permutation.py` out of this
-quiet corpus growth because they still have block-level failures. Those belong
-in focused runner, semantics, or browser-scope passes instead of being added
-to the clean corpus.
+quiet corpus growth because they still had block-level failures. Those
+belonged in focused runner, semantics, or browser-scope passes instead of
+being added to the clean corpus at that point.
 
 The full corpus target passes with the four compact combinatorics files
 included and failures disallowed:
@@ -1789,6 +1798,38 @@ sage -t passed: 3765 passed, 0 failed, 966 skipped
 That run is recorded in `/tmp/sagelite-corpus-combinatorics.sqlite3` with
 4,731 total block rows for the latest run. The saved block- and file-failure
 cluster queries are empty.
+
+Follow-up runner-fidelity and corpus-growth pass: `sage/combinat/subset.py`
+and `sage/sets/finite_set_maps.py` are now included in the browser-profile
+corpus. Both files exposed the same reusable doctest-runner mismatch: Sage
+doctests sometimes expect a bare exception class line such as `EmptySetError`,
+while Python reports the qualified class name
+`sage.categories.sets_cat.EmptySetError`. The Sagelite output checker already
+accepted qualified exception class names when the unqualified class and
+message matched; it now also accepts exception lines with no colon-delimited
+message.
+
+Focused reruns record:
+
+```text
+subset.py: 279 passed, 0 failed, 2 skipped
+finite_set_maps.py: 86 passed, 0 failed, 0 skipped
+```
+
+The full corpus target passes with both files included and failures
+disallowed:
+
+```text
+sage -t passed: 4130 passed, 0 failed, 968 skipped
+```
+
+That run is recorded in
+`/tmp/sagelite-corpus-subset-finite-set-maps.sqlite3` with 5,098 total block
+rows for the latest run. The saved block- and file-failure cluster queries are
+empty. The same sampling pass still keeps `sage/combinat/subword.py`,
+`sage/combinat/composition.py`, and `sage/combinat/permutation.py` out of the
+quiet corpus because their remaining failures need separate namespace,
+semantics, or browser-scope work.
 
 ## Phase 5: Subprocess Strategy
 
