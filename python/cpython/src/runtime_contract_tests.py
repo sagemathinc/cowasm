@@ -219,7 +219,7 @@ class RuntimeContractTests(unittest.TestCase):
             keyword_only(5)
 
         for code, expected in [
-            ("[].pop(3)", "pop index out of range"),
+            ("[1].pop(3)", "pop index out of range"),
             ("'{0}'.format()", "Replacement index 0 out of range"),
         ]:
             with self.subTest(code=code):

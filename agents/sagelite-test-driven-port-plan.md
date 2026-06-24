@@ -35,6 +35,10 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   - supports `--line` reruns for a specific source line, which gives a direct
     reproduction path for file-level crashes whose state breadcrumbs identify
     the active doctest line before a block row can be written;
+  - runs physically contiguous, outputless setup prompts before a selected
+    `--line` example without recording those setup prompts as extra block
+    results, so stateful reruns such as `R.<t> = QQ[]` followed by `2^t`
+    reproduce the real target failure instead of a missing-name artifact;
   - records unmatched `--line`/`--block-key` reruns as explicit
     `doctest_filter_miss` file-level errors instead of empty successful runs;
   - supports common numeric tolerance tags, including bare `# tol`/`# rel tol`
@@ -199,6 +203,13 @@ clusters: the generic-polynomial `2^t` exception text and the rational
 `gamma()` positional-argument TypeError formatting. The remaining file-level
 clusters are the existing 3 `wasm_signature_mismatch` dynamic-import failures
 and 2 NTL/libcxx `wasm_trap` failures.
+
+Checked follow-up note from the 2026-06-24 line-rerun setup pass: rebuilding
+`python/cpython` to pick up the `PyUnicode_FromFormat` integer-format patch is
+currently blocked during WASM configure by `mimalloc requires stdatomic.h`.
+Until that toolchain/configure issue is fixed, the rational
+`(1/2).gamma(5)` doctest still reports the old missing-integer TypeError text
+in the installed Sagelite runtime.
 
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is

@@ -1121,6 +1121,8 @@ class __CowasmRecordingRunner(doctest.DocTestRunner):
         super().report_start(out, test, example)
 
     def report_success(self, out, test, example, got):
+        if getattr(example, "_cowasm_record_block", True) is False:
+            return
         row = self.__base(test, example)
         failure_class = "random_unchecked" if getattr(example, "_cowasm_random", False) else None
         row.update({"status": "passed", "actual": got, "failure_class": failure_class})
@@ -1266,6 +1268,47 @@ def __cowasm_run_file(filename):
             test = parser.get_doctest(converted, namespace, name, filename, line_offset)
             if not test.examples:
                 continue
+            line_setup_examples = set()
+            if __cowasm_lines:
+                example_locations = []
+                for candidate in test.examples:
+                    candidate_start_line = None
+                    candidate_physical_end_line = None
+                    if test.lineno is not None and candidate.lineno is not None:
+                        candidate_start_line = test.lineno + candidate.lineno + 1
+                        candidate_physical_line_count = (
+                            len(candidate.source.splitlines())
+                            + len(candidate.want.splitlines())
+                        )
+                        candidate_physical_end_line = (
+                            candidate_start_line
+                            + max(candidate_physical_line_count, 1)
+                            - 1
+                        )
+                    example_locations.append({
+                        "example": candidate,
+                        "start_line": candidate_start_line,
+                        "physical_end_line": candidate_physical_end_line,
+                    })
+                for position, location in enumerate(example_locations):
+                    current_start_line = location["start_line"]
+                    if current_start_line not in __cowasm_lines:
+                        continue
+                    for previous_position in range(position - 1, -1, -1):
+                        previous = example_locations[previous_position]
+                        previous_example = previous["example"]
+                        previous_end_line = previous["physical_end_line"]
+                        if current_start_line is None or previous_end_line is None:
+                            break
+                        if previous_end_line + 1 != current_start_line:
+                            break
+                        if __cowasm_directive_only_source(previous_example.source):
+                            current_start_line = previous["start_line"]
+                            continue
+                        if previous_example.want.strip():
+                            break
+                        line_setup_examples.add(previous_example)
+                        current_start_line = previous["start_line"]
             active_directive_source = None
             previous_physical_end_line = None
             for example in test.examples:
@@ -1323,7 +1366,12 @@ def __cowasm_run_file(filename):
                 source_hash = _cowasm_source_hash(example.sage_source)
                 block_key = __cowasm_block_key(filename, start_line, source_hash)
                 example._cowasm_block_key = block_key
-                if __cowasm_lines and start_line not in __cowasm_lines:
+                line_selected = bool(__cowasm_lines and start_line in __cowasm_lines)
+                line_setup = bool(__cowasm_lines and example in line_setup_examples)
+                example._cowasm_record_block = not line_setup
+                if line_setup:
+                    example._cowasm_expected_kind = "line_setup"
+                if __cowasm_lines and not line_selected and not line_setup:
                     example.options[doctest.SKIP] = True
                     previous_physical_end_line = physical_end_line
                     continue
@@ -1331,7 +1379,8 @@ def __cowasm_run_file(filename):
                     example.options[doctest.SKIP] = True
                     previous_physical_end_line = physical_end_line
                     continue
-                selected_blocks += 1
+                if not line_setup:
+                    selected_blocks += 1
                 if __cowasm_should_skip(example._cowasm_effective_source):
                     skip_reason = __cowasm_skip_reason(example._cowasm_effective_source)
                     example._cowasm_skip_reason = skip_reason

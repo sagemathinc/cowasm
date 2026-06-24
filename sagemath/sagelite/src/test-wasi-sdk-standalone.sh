@@ -1740,6 +1740,51 @@ if [ "$doctest_line_match_count" != "1" ]; then
   sqlite3 "$doctest_line_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t line doctest smoke did not rerun the requested source line."
 fi
+doctest_line_setup_file="$probe_dir/sagelite-doctest-line-setup.py"
+doctest_line_setup_db="$probe_dir/sagelite-doctest-line-setup.sqlite3"
+doctest_line_setup_log="$dist_dir/doctest-line-setup.log"
+cat >"$doctest_line_setup_file" <<'PY'
+r"""
+EXAMPLES::
+
+    sage: line_setup_value = 37
+    sage: line_setup_value + 5
+    42
+"""
+PY
+doctest_line_setup_line="$(grep -nF 'sage: line_setup_value + 5' "$doctest_line_setup_file" | head -n 1 | cut -d: -f1)"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --line "$doctest_line_setup_line" \
+      --sqlite "$doctest_line_setup_db" "$doctest_line_setup_file" \
+      >"$doctest_line_setup_log" 2>&1
+doctest_line_setup_status=$?
+set -e
+if [ "$doctest_line_setup_status" -eq 124 ]; then
+  tail -120 "$doctest_line_setup_log" >&2
+  record_blocker "sagelite-blocked: sage -t line-setup doctest smoke timed out after $node_import_timeout; see $doctest_line_setup_log for the first runtime blocker."
+fi
+if [ "$doctest_line_setup_status" -ne 0 ]; then
+  tail -120 "$doctest_line_setup_log" >&2
+  sqlite3 "$doctest_line_setup_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t line-setup doctest smoke failed; see $doctest_line_setup_log for the first runtime blocker."
+fi
+doctest_line_setup_counts="$(sqlite3 "$doctest_line_setup_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_line_setup_counts" != "passed|1|1|0|0" ]; then
+  cat "$doctest_line_setup_log" >&2
+  sqlite3 "$doctest_line_setup_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t line-setup doctest smoke wrote unexpected SQLite counts: $doctest_line_setup_counts"
+fi
+doctest_line_setup_match_count="$(sqlite3 "$doctest_line_setup_db" "select count(*) from blocks where start_line = $doctest_line_setup_line and source like 'line_setup_value + 5%';")"
+if [ "$doctest_line_setup_match_count" != "1" ]; then
+  cat "$doctest_line_setup_log" >&2
+  sqlite3 "$doctest_line_setup_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t line-setup doctest smoke did not record only the requested source line."
+fi
 doctest_missing_line_db="$probe_dir/sagelite-doctest-missing-line.sqlite3"
 doctest_missing_line_log="$dist_dir/doctest-missing-line.log"
 set +e
