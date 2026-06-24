@@ -545,6 +545,72 @@ PARI stack default from 1 MB to 8 MB in the packaged resource did not change
 the failure, so the next useful pass should keep treating this as callback /
 function-table compatibility rather than a simple initial-stack-size issue.
 
+A later 2026-06-24 inspection narrowed the same failure to PARI's
+`cb_pari_err_recover` callback slot rather than the already-covered wasi-sdk
+`__wasm_*` SJLJ helper imports. The focused rerun remains:
+
+```sh
+COWASM_PYTHON_WASM_NODE=/home/user/cowasm/python/python-wasm/dist/node.js \
+COWASM_SAGELITE_ELECTRON_RESOURCES=/home/user/cowasm/sagemath/sagelite/dist/wasi-sdk/electron-resources \
+COWASM_SAGELITE_DOCTEST_SOURCE_ROOT=/home/user/sagelite \
+  /home/user/cowasm/sagemath/sagelite/bin/sage -t \
+  --timeout 30 \
+  --sqlite /tmp/sagelite-focused.sqlite3 \
+  --line 3112 \
+  /home/user/sagelite/src/sage/rings/integer.pyx
+```
+
+LLVM disassembly of the packaged
+`sage/libs/pari/convert_sage.cpython-314-wasm32-wasi.so` shows
+`err_recover` performing two indirect calls with Wasm type 5,
+`(i32) -> nil`:
+
+```text
+001c8138 <err_recover>:
+  ... load cb_pari_pre_recover at __memory_base + 96684 ...
+  call_indirect 5
+  ...
+  ... load cb_pari_err_recover at __memory_base + 96672 ...
+  call_indirect 5
+```
+
+In PARI source these are:
+
+```c
+if (cb_pari_pre_recover)
+  cb_pari_pre_recover(numerr);
+...
+cb_pari_err_recover(numerr);
+```
+
+`cb_pari_err_recover` is normally initialized by `pari_init_opts()` to
+`dflt_err_recover(long)`, so its expected Wasm signature is exactly
+`(i32) -> void`. The runtime `function signature mismatch` therefore means
+the slot contains a table index whose current table entry has a different
+signature. The likely failure mode is a raw side-module function index being
+stored instead of `__table_base + function_index`, or an equivalent relocation
+gap in the PARI archive when it is pulled into a dynamic Python extension.
+
+Useful local probes:
+
+```sh
+/home/user/cowasm/core/build/build/wasi-sdk/dist/wasi-sdk-next/native/bin/llvm-objdump \
+  -d --disassemble-symbols=err_recover \
+  sagemath/sagelite/dist/wasi-sdk/electron-resources/site-packages/sage/libs/pari/convert_sage.cpython-314-wasm32-wasi.so
+
+/home/user/cowasm/core/build/build/wasi-sdk/dist/wasi-sdk-next/native/bin/llvm-objdump \
+  -d --disassemble-symbols=__wasm_apply_global_relocs \
+  sagemath/sagelite/dist/wasi-sdk/electron-resources/site-packages/sage/libs/pari/convert_sage.cpython-314-wasm32-wasi.so
+```
+
+The next implementation pass should add a focused dynamic-link smoke that
+links a small side module against a PIC static archive containing a
+`void (*)(long)` callback initialized to an archive-internal function, then
+calls it through the side module after `dlopen`. That should fail if the
+stored callback pointer is not adjusted by `__table_base`, and it is much
+smaller than rebuilding the full Sagelite/PARI stack while iterating on the
+loader or package flags.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
