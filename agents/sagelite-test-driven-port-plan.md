@@ -1452,6 +1452,31 @@ already-supported generic arithmetic, but leave Singular, plural, and
 native-library polynomial algorithms as explicit future scope unless the
 underlying runtime support is being implemented.
 
+Follow-up corpus-growth probe: `sage/rings/big_oh.py` is a clean compact
+addition to the browser-profile corpus. A focused rerun records:
+
+```text
+big_oh.py: 29 passed, 0 failed, 10 skipped
+```
+
+The curated corpus now includes this file. The same sampling pass rejected
+`infinity.py`, `homset.py`, and `ideal_monoid.py` for this narrow iteration:
+`infinity.py` and `ideal_monoid.py` still produce broad semantic/import
+failure sets, while `homset.py` reaches an NTL dynamic-import boundary at
+`ZZ_pContext::restore`. Those are better handled as separate focused runtime
+or browser-scope passes instead of adding noisy dashboard coverage.
+
+The full corpus target passes with the new file included:
+
+```text
+sage -t passed: 2516 passed, 0 failed, 785 skipped
+```
+
+That run is recorded in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` as run `2` with
+3,301 total block rows for the latest run. The saved block- and file-failure
+cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
