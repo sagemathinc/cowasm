@@ -165,7 +165,11 @@ CPYTHON_WASM_PATCH_INPUTS = ${SRC}/prepare-wasm-build.sh ${SRC}/config.site ${DY
 ${DYLINK_LIBPYTHON_JS}: $(wildcard ${CORE_PACKAGES}/dylink/src/*.ts) ${CORE_PACKAGES}/dylink/tsconfig.json
 	cd ${CORE_PACKAGES}/dylink && pnpm run build
 
-${BUILD_WASM}/.patched: ${BUILD_WASM}/.build ${SRC}/pyconfig.h
+${BUILD_WASM}/.patched: ${TARBALL} ${CPYTHON_WASM_PATCH_INPUTS} ${SRC}/pyconfig.h
+	rm -rf ${BUILD_WASM}
+	mkdir -p ${BUILD_WASM}
+	tar xf ${TARBALL} -C ${BUILD_WASM} --strip-components=1
+	touch ${BUILD_WASM}/.build
 	# Create declarations that make everything extension modules need
 	# accessible from outside our "python.wasm as a shared library".
 	${SRC}/prepare-wasm-build.sh ${BUILD_WASM} ${SRC}/Setup.local

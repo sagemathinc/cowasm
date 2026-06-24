@@ -978,6 +978,54 @@ This separates the exponent-formatting failures from a still-open denormal
 conversion issue: `rational.pyx:3915` expects `5e-324` for `1 / 2^1074`, but
 currently gets `0.0`.
 
+A later 2026-06-24 mismatch triage showed that the remaining rational
+`(1/2).gamma(5)` block is not a Sage semantic failure. It is another
+formatting/regeneration issue: Cython raises the expected argument-count
+`TypeError`, but the active `python-wasm` runtime prints
+`gamma() takes exactly  positional arguments ( given)`, with the `%zd`
+integer fields missing. A direct `python-wasm` probe reproduces the same
+problem for pure Python keyword-only argument errors:
+
+```text
+keyword_only() takes  positional arguments but  was given
+```
+
+The root cause is stale build output rather than a missing source patch.
+`python/cpython/src/patches/27-wasi-unicode-fromformat-integers.patch` already
+removes the `sprintf` dependency from CPython's `PyUnicode_FromFormat`
+integer path, and the WASI-SDK source tree has that fix. The older
+`python-wasm` tree did not pick it up because `python/cpython/build/wasm/.patched`
+did not depend on `prepare-wasm-build.sh` or the CPython patch set. The
+Makefile now regenerates the WASM patched tree from the upstream tarball when
+those inputs change; the patch stage was checked to apply cleanly.
+
+Full runtime validation is still blocked earlier than the contract test:
+
+```sh
+make -C python/cpython test-runtime-contracts
+PYTHON_WASM_ALLOCATOR=pymalloc make -C python/cpython test-runtime-contracts
+```
+
+The default allocator run stops at configure because the current fresh
+`python-wasm` path requests mimalloc without `stdatomic.h`. The `pymalloc`
+run gets past that but then the C99 `libm` probe fails because the Zig-backed
+`cowasm-cc` link line cannot find `-lwasi-emulated-signal`,
+`-lwasi-emulated-getpid`, and `-lwasi-emulated-process-clocks`. The next pass
+should fix the fresh `python-wasm` configure/link environment or choose the
+intended wasi-sdk backend for that target, then rerun `test-runtime-contracts`
+and the focused Sagelite line:
+
+```sh
+COWASM_PYTHON_WASM_NODE=/home/user/cowasm/python/python-wasm/dist/node.js \
+COWASM_SAGELITE_ELECTRON_RESOURCES=/home/user/cowasm/sagemath/sagelite/dist/wasi-sdk/electron-resources \
+COWASM_SAGELITE_DOCTEST_SOURCE_ROOT=/home/user/cowasm/sagemath/sagelite/build/wasi-sdk \
+  /home/user/cowasm/sagemath/sagelite/bin/sage -t \
+  --timeout 30 \
+  --sqlite /tmp/sagelite-line-3289.sqlite3 \
+  --line 3289 \
+  /home/user/cowasm/sagemath/sagelite/build/wasi-sdk/src/sage/rings/rational.pyx
+```
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
