@@ -25,6 +25,7 @@ src/sage/combinat/SJT.py
 src/sage/combinat/combinat.py
 src/sage/combinat/combinat_cython.pyx
 src/sage/combinat/combination.py
+src/sage/combinat/combinatorial_map.py
 src/sage/combinat/debruijn_sequence.pyx
 src/sage/combinat/dlx.py
 src/sage/combinat/expnums.pyx

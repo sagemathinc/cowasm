@@ -2300,6 +2300,32 @@ That run is recorded in
 summary reports a 100% non-skipped pass rate under the node profile, runner
 version 26, and about 411 seconds of elapsed time.
 
+Follow-up doctest namespace and combinatorial-map corpus-growth pass:
+`sage/combinat/combinatorial_map.py` is now included in the browser-profile
+corpus. The file exposed a reusable runner-context mismatch: after seeding
+doctest globals with the tested module's globals, functions defined inside a
+doctest inherited the tested module's `__name__` instead of Sage's expected
+doctest `__main__` context. The Sagelite doctest runner now restores
+`__name__ = "__main__"` after module seeding and records this behavior under
+doctest runner version 27.
+
+Focused rerun:
+
+```text
+combinatorial_map.py: 73 passed, 0 failed, 2 skipped
+```
+
+The full corpus target passes with `combinatorial_map.py` included and
+failures disallowed:
+
+```text
+sage -t passed: 5817 passed, 0 failed, 1267 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-combinatorial-map.sqlite3` with
+7,084 total block rows across 60 files. The saved block- and file-failure
+cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
