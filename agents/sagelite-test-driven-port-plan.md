@@ -2512,6 +2512,46 @@ surface, and kept `sage/combinat/tamari_lattices.py` and
 poset/lattice functionality that is outside the current browser-profile
 corpus boundary.
 
+Follow-up set corpus-growth pass: `sage/sets/disjoint_set.pyx` and
+`sage/sets/family.pyx` are now included in the browser-profile corpus.
+`family.pyx` exposed a lightweight startup namespace gap: Sage doctests expect
+`PositiveIntegers` from `sage.all`, while the WASI profile intentionally avoids
+the full `sage.sets.all` import. The Sagelite WASI patch now exposes
+`PositiveIntegers` directly from the lightweight `sage.all` surface, and the
+packaged `python-wasi-sdk` exact-math smoke covers that export.
+
+`disjoint_set.pyx` exposed a source-scope classification issue where the
+`to_digraph()` setup line imported graph support before the following
+graph-only checks could be skipped. The Sagelite WASI patch now marks that
+setup prompt as `# needs sage.graphs`, keeping disjoint-set union/find
+coverage in the pure set corpus while graph-backed rendering stays deferred.
+
+Focused reruns record:
+
+```text
+disjoint_set.pyx: 263 passed, 0 failed, 10 skipped
+family.pyx: 375 passed, 0 failed, 3 skipped
+```
+
+The standalone Sagelite target passes after rebuilding the patched source and
+packaged resources:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The full corpus target passes with the two set files included and failures
+disallowed:
+
+```text
+sage -t passed: 6886 passed, 0 failed, 1300 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-sets-family.sqlite3` with 8,186
+total block rows across 72 files. The saved block- and file-failure cluster
+queries are empty. The latest run metadata records node profile, runner
+version 28, and about 524 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

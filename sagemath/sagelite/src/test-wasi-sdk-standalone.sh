@@ -573,9 +573,10 @@ run_wasi_sdk_python_import "import sage.all" "import sys
 assert sys.platform == 'wasi'
 import sage.all
 print('sagelite-wasi-sdk-ok import sage.all')"
-run_wasi_sdk_python_import "exact math smoke" "from sage.all import ZZ, QQ, PolynomialRing, factor, prime_pi
+run_wasi_sdk_python_import "exact math smoke" "from sage.all import ZZ, QQ, PolynomialRing, PositiveIntegers, factor, prime_pi
 assert ZZ(2) + ZZ(3) == ZZ(5)
 assert QQ(6, 15) == QQ(2, 5)
+assert str(PositiveIntegers().cardinality()) == '+Infinity'
 R = PolynomialRing(QQ, 'x')
 x = R.gen()
 assert (x + 1) * (x - 1) == x**2 - 1

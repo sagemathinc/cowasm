@@ -1049,7 +1049,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')  # needs cysignals.alarm
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,85 @@
+@@ -253,74 +253,86 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1071,6 +1071,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.cartesian_product import cartesian_product
 +    from sage.combinat.composition import Composition, Compositions
 +    from sage.functions.log import exp, log
++    from sage.sets.positive_integers import PositiveIntegers
 +    from primecountpy.primecount import prime_pi as _primecount_prime_pi
 +
 +    def prime_pi(x):
@@ -1275,6 +1276,18 @@ diff -urN a/src/sage/misc/remote_file.py b/src/sage/misc/remote_file.py
 +
      from sage.misc.temporary_file import tmp_filename
      ext = os.path.splitext(filename)[1]
+diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
+--- a/src/sage/sets/disjoint_set.pyx
++++ b/src/sage/sets/disjoint_set.pyx
+@@ -970,7 +970,7 @@
+             sage: d.union(3, 4)
+             sage: d
+             {{0}, {1, 2, 3, 4}}
+-            sage: g = d.to_digraph()
++            sage: g = d.to_digraph()                                                   # needs sage.graphs
+             sage: g                                                                     # needs sage.graphs
+             Looped digraph on 5 vertices
+             sage: g.edges(sort=True)                                                    # needs sage.graphs
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
 @@ -352,3 +352,6 @@
