@@ -59,6 +59,7 @@ src/sage/combinat/derangements.py
 src/sage/combinat/perfect_matching.py
 src/sage/combinat/non_decreasing_parking_function.py
 src/sage/combinat/set_partition_iterator.pyx
+src/sage/combinat/shuffle.py
 src/sage/combinat/subword.py
 src/sage/combinat/tools.py
 src/sage/combinat/tuple.py

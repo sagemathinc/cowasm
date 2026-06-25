@@ -2674,6 +2674,30 @@ triage; `sage/combinat/algebraic_combinatorics.py`,
 and `sage/combinat/ribbon.py` currently contribute no extracted doctest
 blocks under this runner.
 
+Latest checked local corpus run after the 2026-06-25 shuffle corpus-growth
+pass:
+
+```text
+sage -t passed: 8282 passed, 0 failed, 1446 skipped
+```
+
+That run records 9,728 block rows across the current 89-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/shuffle.py` to the previous clean browser-profile baseline.
+The focused rerun records `shuffle.py: 127 passed, 0 failed, 7 skipped`.
+The full corpus database is
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`; the saved block-
+and file-failure cluster queries are empty. The latest run metadata records
+CoWasm commit `3e9b1ea85fe1eb9a7a0cbcd29f4fbde479e0bf78`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
+version 28, and about 610 seconds of elapsed time. The same sampling pass kept
+`sage/sets/cartesian_product.py`,
+`sage/sets/disjoint_union_enumerated_sets.py`, `sage/combinat/q_analogues.py`,
+`sage/combinat/binary_tree.py`, `sage/combinat/ordered_tree.py`,
+`sage/combinat/abstract_tree.py`, and `sage/combinat/tutorial.py` out of the
+quiet corpus until their semantic, dependency, signature-mismatch, recursion,
+or timeout clusters get separate triage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
