@@ -2628,6 +2628,52 @@ cluster queries are empty. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 28,
 and about 558 seconds of elapsed time.
 
+Follow-up tableau and parking-function corpus-growth pass:
+`sage/combinat/composition_tableau.py`,
+`sage/combinat/non_decreasing_parking_function.py`,
+`sage/combinat/parking_functions.py`,
+`sage/combinat/ribbon_shaped_tableau.py`,
+`sage/combinat/ribbon_tableau.py`, and `sage/combinat/super_tableau.py` are
+now included in the browser-profile corpus. These files add compact exact
+combinatorics and tableau coverage without requiring a new focused namespace
+or source patch.
+
+Focused reruns record:
+
+```text
+composition_tableau.py: 100 passed, 0 failed, 0 skipped
+non_decreasing_parking_function.py: 122 passed, 0 failed, 0 skipped
+parking_functions.py: 265 passed, 0 failed, 8 skipped
+ribbon_shaped_tableau.py: 40 passed, 0 failed, 11 skipped
+ribbon_tableau.py: 169 passed, 0 failed, 8 skipped
+super_tableau.py: 139 passed, 0 failed, 1 skipped
+```
+
+The full corpus target passes with failures disallowed:
+
+```text
+sage -t passed: 8155 passed, 0 failed, 1439 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-tableau-parking.sqlite3` with
+9,594 total block rows across 83 files. The saved block- and file-failure
+cluster queries are empty. The latest run metadata records CoWasm commit
+`e7dd85680b3f7076cd28b2003d41bc6fe34530c0`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 28,
+and about 613 seconds of elapsed time. The same sampling pass kept
+`sage/combinat/cluster_complex.py`,
+`sage/combinat/multiset_partition_into_sets_ordered.py`,
+`sage/combinat/parallelogram_polyomino.py`,
+`sage/combinat/regular_sequence.py`,
+`sage/combinat/skew_partition.py`, `sage/combinat/skew_tableau.py`,
+`sage/combinat/shifted_primed_tableau.py`, and `sage/combinat/tiling.py` out
+until their dependency, semantic, or dynamic-link clusters get separate
+triage; `sage/combinat/algebraic_combinatorics.py`,
+`sage/combinat/counting.py`, `sage/combinat/enumerated_sets.py`,
+`sage/combinat/family.py`, `sage/combinat/positive_integer_semigroup_test.py`,
+and `sage/combinat/ribbon.py` currently contribute no extracted doctest
+blocks under this runner.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
