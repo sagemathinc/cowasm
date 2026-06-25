@@ -796,15 +796,19 @@ def __cowasm_resolve_core_lazy_namespace(namespace):
 
 def __cowasm_seed_common_doctest_globals(namespace):
     imports = (
+        ("sage.combinat.combination", ("Combinations",)),
         ("sage.combinat.composition", ("Composition",)),
         ("sage.combinat.integer_vector", ("IntegerVectors",)),
         ("sage.combinat.integer_lists", ("IntegerListsLex",)),
         ("sage.combinat.ordered_tree", ("OrderedTree",)),
         ("sage.combinat.partition", ("Partitions",)),
         ("sage.combinat.permutation", ("Permutation", "Permutations")),
+        ("sage.combinat.tableau", ("StandardTableau",)),
         ("sage.combinat.subset", ("Subsets",)),
         ("sage.combinat.vector_partition", ("VectorPartitions",)),
         ("sage.combinat.words.word", ("Word",)),
+        ("sage.combinat.words.words", ("Words",)),
+        ("sage.combinat.words.morphism", ("WordMorphism",)),
         ("sage.categories.homset", ("Hom",)),
         ("sage.categories.sets_cat", ("Sets",)),
         ("sage.sets.set", ("Set",)),

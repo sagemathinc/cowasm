@@ -1049,7 +1049,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')  # needs cysignals.alarm
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,86 @@
+@@ -253,74 +253,90 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1069,7 +1069,11 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -from sage.interfaces.all import *
 +if sys.platform == 'wasi':
 +    from sage.categories.cartesian_product import cartesian_product
++    from sage.combinat.combination import Combinations
 +    from sage.combinat.composition import Composition, Compositions
++    from sage.combinat.tableau import StandardTableau
++    from sage.combinat.words.morphism import WordMorphism
++    from sage.combinat.words.words import Words
 +    from sage.functions.log import exp, log
 +    from sage.sets.positive_integers import PositiveIntegers
 +    from primecountpy.primecount import prime_pi as _primecount_prime_pi

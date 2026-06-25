@@ -2602,6 +2602,32 @@ and about 536 seconds of elapsed time. The same pass also fixes the Sagelite
 package Makefile dependency so the generated `.patched` source tree is
 refreshed when the checked-in WASI patch file changes.
 
+Follow-up quickref corpus-growth pass: `sage/combinat/quickref.py` is now
+included in the browser-profile corpus. The file exercises common interactive
+combinatorics startup names without requiring the broad `sage.combinat.all`
+surface, so the Sagelite runner now seeds `Combinations`, `StandardTableau`,
+`Words`, and `WordMorphism` in focused doctest namespaces. The WASI
+`sage.all` patch exposes the same lightweight constructors for REPL parity.
+
+Focused rerun:
+
+```text
+quickref.py: 9 passed, 0 failed, 18 skipped
+```
+
+The full corpus target passes with failures disallowed:
+
+```text
+sage -t passed: 7320 passed, 0 failed, 1411 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-after-quickref.sqlite3` with
+8,731 total block rows across 77 files. The saved block- and file-failure
+cluster queries are empty. The latest run metadata records CoWasm commit
+`42e5034e90e2b62c59912c3370a2a696ec2995d1`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 28,
+and about 558 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
