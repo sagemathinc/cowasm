@@ -723,7 +723,9 @@ src/sage/combinat/SJT.py
 src/sage/combinat/combinat.py
 src/sage/combinat/combinat_cython.pyx
 src/sage/combinat/combination.py
+src/sage/combinat/combinatorial_map.py
 src/sage/combinat/debruijn_sequence.pyx
+src/sage/combinat/degree_sequences.pyx
 src/sage/combinat/dlx.py
 src/sage/combinat/expnums.pyx
 src/sage/combinat/misc.py
@@ -745,7 +747,9 @@ src/sage/combinat/subsets_hereditary.py
 src/sage/combinat/composition_signed.py
 src/sage/combinat/derangements.py
 src/sage/combinat/perfect_matching.py
+src/sage/combinat/set_partition_iterator.pyx
 src/sage/combinat/subword.py
+src/sage/combinat/tools.py
 src/sage/combinat/tuple.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
@@ -755,6 +759,7 @@ src/sage/sets/totally_ordered_finite_set.py
 src/sage/sets/non_negative_integers.py
 src/sage/sets/positive_integers.py
 src/sage/sets/primes.py
+src/sage/sets/pythonclass.pyx
 src/sage/rings/finite_rings/integer_mod_ring.py
 src/sage/rings/finite_rings/finite_field_constructor.py
 src/sage/rings/polynomial/commutative_polynomial.pyx
@@ -2352,6 +2357,50 @@ cluster queries are empty. The same sampling pass kept
 `qt_catalan_number(4)` still reaches a runtime `memory access out of bounds`
 trap, and `sage/combinat/counting.py` because it currently contributes no
 extracted doctest blocks to the Sagelite runner.
+
+Follow-up degree-sequence, set-partition, and set-pythonclass corpus-growth
+pass: `sage/combinat/degree_sequences.pyx`,
+`sage/combinat/set_partition_iterator.pyx`, `sage/combinat/tools.py`, and
+`sage/sets/pythonclass.pyx` are now included in the browser-profile corpus.
+The degree-sequence file exposed another common doctest namespace expectation:
+Sage examples use `Set(...)` without importing the broad set aggregate, so the
+Sagelite doctest runner now seeds `Set` from `sage.sets.set` alongside the
+other narrow startup constructors and records this behavior under runner
+version 28.
+
+Focused reruns record:
+
+```text
+degree_sequences.pyx: 35 passed, 0 failed, 5 skipped
+set_partition_iterator.pyx: 5 passed, 0 failed, 2 skipped
+tools.py: 2 passed, 0 failed, 0 skipped
+pythonclass.pyx: 55 passed, 0 failed, 0 skipped
+```
+
+The standalone Sagelite target passes after extending the doctest smoke to
+cover `Set` and updating the smoke aggregate checks:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+The full corpus target passes after the standalone rebuild repopulates the
+dashboard database:
+
+```text
+sage -t passed: 5978 passed, 0 failed, 1274 skipped
+```
+
+That run is recorded in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` as run `1`, with
+7,252 total block rows across 65 files. The saved block- and file-failure
+cluster queries are empty. The same sampling pass kept
+`sage/combinat/subsets_pairwise.py`, `sage/combinat/graph_path.py`,
+`sage/sets/cartesian_product.py`, `sage/sets/image_set.py`,
+`sage/sets/disjoint_union_enumerated_sets.py`, and
+`sage/combinat/quickref.py` out of the quiet corpus until their failure
+clusters get separate triage; `sage/combinat/family.py` currently contributes
+no extracted doctest blocks.
 
 ## Phase 5: Subprocess Strategy
 

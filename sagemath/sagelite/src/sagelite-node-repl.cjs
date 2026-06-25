@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 27;
+const doctestRunnerVersion = 28;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -804,6 +804,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.words.word", ("Word",)),
         ("sage.categories.homset", ("Hom",)),
         ("sage.categories.sets_cat", ("Sets",)),
+        ("sage.sets.set", ("Set",)),
     )
     for module_name, names in imports:
         try:

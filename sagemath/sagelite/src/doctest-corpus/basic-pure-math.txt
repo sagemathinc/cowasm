@@ -27,6 +27,7 @@ src/sage/combinat/combinat_cython.pyx
 src/sage/combinat/combination.py
 src/sage/combinat/combinatorial_map.py
 src/sage/combinat/debruijn_sequence.pyx
+src/sage/combinat/degree_sequences.pyx
 src/sage/combinat/dlx.py
 src/sage/combinat/expnums.pyx
 src/sage/combinat/misc.py
@@ -48,7 +49,9 @@ src/sage/combinat/subsets_hereditary.py
 src/sage/combinat/composition_signed.py
 src/sage/combinat/derangements.py
 src/sage/combinat/perfect_matching.py
+src/sage/combinat/set_partition_iterator.pyx
 src/sage/combinat/subword.py
+src/sage/combinat/tools.py
 src/sage/combinat/tuple.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
@@ -58,6 +61,7 @@ src/sage/sets/totally_ordered_finite_set.py
 src/sage/sets/non_negative_integers.py
 src/sage/sets/positive_integers.py
 src/sage/sets/primes.py
+src/sage/sets/pythonclass.pyx
 src/sage/rings/finite_rings/integer_mod_ring.py
 src/sage/rings/finite_rings/finite_field_constructor.py
 src/sage/rings/polynomial/commutative_polynomial.pyx
