@@ -796,6 +796,7 @@ def __cowasm_resolve_core_lazy_namespace(namespace):
 
 def __cowasm_seed_common_doctest_globals(namespace):
     imports = (
+        ("sage.combinat.composition", ("Composition",)),
         ("sage.combinat.integer_vector", ("IntegerVectors",)),
         ("sage.combinat.integer_lists", ("IntegerListsLex",)),
         ("sage.combinat.permutation", ("Permutation", "Permutations")),

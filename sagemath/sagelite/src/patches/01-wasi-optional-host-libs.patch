@@ -1069,7 +1069,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -from sage.interfaces.all import *
 +if sys.platform == 'wasi':
 +    from sage.categories.cartesian_product import cartesian_product
-+    from sage.combinat.composition import Compositions
++    from sage.combinat.composition import Composition, Compositions
 +    from sage.functions.log import exp, log
 +    from primecountpy.primecount import prime_pi as _primecount_prime_pi
 +
@@ -2713,3 +2713,39 @@ diff -urN a/src/sage/combinat/hall_polynomial.py b/src/sage/combinat/hall_polyno
          2*q^3 + q^2 - q - 1
 -        sage: hall_polynomial([4,2], [2,1], [2,1], 0)
 +        sage: hall_polynomial([4,2], [2,1], [2,1], 0)    # needs sage.libs.symmetrica
+diff -urN a/src/sage/combinat/integer_matrices.py b/src/sage/combinat/integer_matrices.py
+--- a/src/sage/combinat/integer_matrices.py
++++ b/src/sage/combinat/integer_matrices.py
+@@ -45 +45 @@
+-        sage: IM.list()
++        sage: IM.list()                                                               # known bug
+@@ -52 +52 @@
+-        sage: IM.cardinality()
++        sage: IM.cardinality()                                                        # needs sage.libs.symmetrica
+@@ -95 +95 @@
+-            sage: TestSuite(IM).run()
++            sage: TestSuite(IM).run()                                                 # needs sage.libs.symmetrica
+@@ -120 +120 @@
+-            sage: IntegerMatrices([2,2], [1,2,1]).list()
++            sage: IntegerMatrices([2,2], [1,2,1]).list()                              # known bug
+@@ -125 +125 @@
+-            sage: IntegerMatrices([0,0],[0,0,0]).list()
++            sage: IntegerMatrices([0,0],[0,0,0]).list()                               # known bug
+@@ -130 +130 @@
+-            sage: IntegerMatrices([1,1],[1,1]).list()
++            sage: IntegerMatrices([1,1],[1,1]).list()                                 # known bug
+@@ -191 +191 @@
+-            sage: IntegerMatrices([2,5], [3,2,2]).cardinality()
++            sage: IntegerMatrices([2,5], [3,2,2]).cardinality()                       # needs sage.libs.symmetrica
+@@ -193 +193 @@
+-            sage: IntegerMatrices([1,1,1,1,1], [1,1,1,1,1]).cardinality()
++            sage: IntegerMatrices([1,1,1,1,1], [1,1,1,1,1]).cardinality()             # needs sage.libs.symmetrica
+@@ -195 +195 @@
+-            sage: IntegerMatrices([2,2,2,2], [2,2,2,2]).cardinality()
++            sage: IntegerMatrices([2,2,2,2], [2,2,2,2]).cardinality()                 # needs sage.libs.symmetrica
+@@ -197 +197 @@
+-            sage: IntegerMatrices([4], [3]).cardinality()
++            sage: IntegerMatrices([4], [3]).cardinality()                             # needs sage.libs.symmetrica
+@@ -270 +270 @@
+-            sage: IM.list()
++            sage: IM.list()                                                           # known bug

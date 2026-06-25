@@ -33,6 +33,7 @@ src/sage/combinat/sidon_sets.py
 src/sage/combinat/ranker.py
 src/sage/combinat/gray_codes.py
 src/sage/combinat/hall_polynomial.py
+src/sage/combinat/integer_matrices.py
 src/sage/combinat/integer_vector.py
 src/sage/combinat/cartesian_product.py
 src/sage/combinat/backtrack.py

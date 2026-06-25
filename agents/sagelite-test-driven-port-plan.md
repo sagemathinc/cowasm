@@ -524,6 +524,25 @@ commit `604adba6753bc04026bb31254c309a092da53ea8`, Sagelite package commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 26,
 and about 378 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-24 integer-matrices
+corpus-growth pass:
+
+```text
+sage -t passed: 5688 passed, 0 failed, 1264 skipped
+```
+
+That run records the current 55-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/integer_matrices.py` to the previous clean browser-profile
+baseline. The focused rerun records
+`integer_matrices.py: 40 passed, 0 failed, 11 skipped`; the added WASI patch
+classifies Symmetrica-backed cardinality checks as optional
+`sage.libs.symmetrica` coverage and defers list-of-matrices display-format
+drift where the runtime prints one matrix per list slot instead of Sage's
+historical compact side-by-side layout. The doctest runner now seeds the
+`Composition` constructor in the common doctest namespace, while the WASI
+`sage.all` patch exposes both `Composition` and `Compositions`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
