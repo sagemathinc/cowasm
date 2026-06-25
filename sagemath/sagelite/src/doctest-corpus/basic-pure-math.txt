@@ -23,8 +23,11 @@ src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
 src/sage/combinat/SJT.py
 src/sage/combinat/combinat.py
+src/sage/combinat/combinat_cython.pyx
 src/sage/combinat/combination.py
+src/sage/combinat/debruijn_sequence.pyx
 src/sage/combinat/dlx.py
+src/sage/combinat/expnums.pyx
 src/sage/combinat/misc.py
 src/sage/combinat/necklace.py
 src/sage/combinat/output.py

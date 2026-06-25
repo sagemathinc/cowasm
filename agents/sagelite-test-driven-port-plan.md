@@ -721,8 +721,11 @@ src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
 src/sage/combinat/SJT.py
 src/sage/combinat/combinat.py
+src/sage/combinat/combinat_cython.pyx
 src/sage/combinat/combination.py
+src/sage/combinat/debruijn_sequence.pyx
 src/sage/combinat/dlx.py
+src/sage/combinat/expnums.pyx
 src/sage/combinat/misc.py
 src/sage/combinat/necklace.py
 src/sage/combinat/output.py
@@ -731,6 +734,7 @@ src/sage/combinat/sidon_sets.py
 src/sage/combinat/ranker.py
 src/sage/combinat/gray_codes.py
 src/sage/combinat/hall_polynomial.py
+src/sage/combinat/integer_matrices.py
 src/sage/combinat/integer_vector.py
 src/sage/combinat/cartesian_product.py
 src/sage/combinat/backtrack.py
@@ -2268,6 +2272,33 @@ allow-failures message after the `sage -t passed` summary because the
 underlying process returned nonzero during shutdown, so a separate runner
 cleanup pass should make `SAGELITE_DOCTEST_ALLOW_FAILURES=0` usable for the
 now-clean corpus.
+
+Follow-up Cython combinatorics corpus-growth pass:
+`sage/combinat/combinat_cython.pyx`,
+`sage/combinat/debruijn_sequence.pyx`, and `sage/combinat/expnums.pyx` are now
+included in the browser-profile corpus. These files add compact low-level
+combinatorics coverage without widening the dashboard into the broader
+partition/permutation modules that still have unresolved semantic clusters.
+
+Focused reruns record:
+
+```text
+combinat_cython.pyx: 21 passed, 0 failed, 1 skipped
+debruijn_sequence.pyx: 28 passed, 0 failed, 0 skipped
+expnums.pyx: 7 passed, 0 failed, 0 skipped
+```
+
+The full corpus target passes with the new files included:
+
+```text
+sage -t passed: 5744 passed, 0 failed, 1265 skipped
+```
+
+That run is recorded in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` as run `6`, with
+7,009 total block rows for the latest 59-file corpus. The saved latest-run
+summary reports a 100% non-skipped pass rate under the node profile, runner
+version 26, and about 411 seconds of elapsed time.
 
 ## Phase 5: Subprocess Strategy
 
