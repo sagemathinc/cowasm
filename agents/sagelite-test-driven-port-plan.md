@@ -724,7 +724,9 @@ src/sage/combinat/combinat.py
 src/sage/combinat/combinat_cython.pyx
 src/sage/combinat/combination.py
 src/sage/combinat/combinatorial_map.py
+src/sage/combinat/cyclic_sieving_phenomenon.py
 src/sage/combinat/debruijn_sequence.pyx
+src/sage/combinat/decorated_permutation.py
 src/sage/combinat/degree_sequences.pyx
 src/sage/combinat/dlx.py
 src/sage/combinat/expnums.pyx
@@ -2474,6 +2476,41 @@ The same sampling pass kept `sage/combinat/abstract_tree.py`,
 their broader tree-display and semantic clusters get separate triage. The
 latest run metadata records node profile, runner version 28, and about
 505 seconds of elapsed time.
+
+Follow-up compact combinatorics corpus-growth pass:
+`sage/combinat/cyclic_sieving_phenomenon.py` and
+`sage/combinat/decorated_permutation.py` are now included in the
+browser-profile corpus. Both files contribute compact exact-combinatorics
+coverage and pass under the existing focused doctest namespace without a new
+runtime or runner change.
+
+Focused reruns record:
+
+```text
+cyclic_sieving_phenomenon.py: 27 passed, 0 failed, 0 skipped
+decorated_permutation.py: 35 passed, 0 failed, 0 skipped
+```
+
+The full corpus target passes with both files included and failures
+disallowed:
+
+```text
+sage -t passed: 6248 passed, 0 failed, 1287 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-cyclic-decorated.sqlite3` with
+7,535 total block rows across 70 files. The saved block- and file-failure
+cluster queries are empty. The latest run metadata records node profile,
+runner version 28, and about 512 seconds of elapsed time.
+
+The same sampling pass kept `sage/combinat/q_bernoulli.pyx` out because it
+still reaches the known NTL/libcxx finite-field trap while constructing
+`PolynomialRing(GF(2), 'x')`, kept `sage/combinat/subword_complex_c.pyx` out
+because its examples require the broader Coxeter/subword-complex startup
+surface, and kept `sage/combinat/tamari_lattices.py` and
+`sage/combinat/baxter_permutations.py` out because they import graph-backed
+poset/lattice functionality that is outside the current browser-profile
+corpus boundary.
 
 ## Phase 5: Subprocess Strategy
 
