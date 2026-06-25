@@ -141,7 +141,7 @@ ${BUILD_WASI_SDK}/.cowasm-sagelite-source-tree-state: force-sagelite-source-meta
 	  echo dirty > $@; \
 	fi
 
-${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build
+${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build ${SRC}/patches/01-wasi-optional-host-libs.patch
 	cd ${BUILD_WASI_SDK} && patch -p1 < ${SRC}/patches/01-wasi-optional-host-libs.patch
 	touch ${BUILD_WASI_SDK}/.patched
 

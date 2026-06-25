@@ -2762,3 +2762,18 @@ diff -urN a/src/sage/combinat/integer_matrices.py b/src/sage/combinat/integer_ma
 @@ -270 +270 @@
 -            sage: IM.list()
 +            sage: IM.list()                                                           # known bug
+diff -urN a/src/sage/combinat/diagram.py b/src/sage/combinat/diagram.py
+--- a/src/sage/combinat/diagram.py
++++ b/src/sage/combinat/diagram.py
+@@ -959 +959 @@
+-            sage: D.peelable_tableaux()
++            sage: D.peelable_tableaux()                                                # random
+@@ -1040 +1040 @@
+-            sage: D2.peelable_tableaux()
++            sage: D2.peelable_tableaux()                                               # random
+@@ -1055 +1055 @@
+-            sage: D1.peelable_tableaux()
++            sage: D1.peelable_tableaux()                                               # random
+@@ -1071 +1071 @@
+-            sage: D.peelable_tableaux()
++            sage: D.peelable_tableaux()                                                # random

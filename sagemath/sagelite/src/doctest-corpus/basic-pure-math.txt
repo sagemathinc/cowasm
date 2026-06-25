@@ -30,6 +30,7 @@ src/sage/combinat/cyclic_sieving_phenomenon.py
 src/sage/combinat/debruijn_sequence.pyx
 src/sage/combinat/decorated_permutation.py
 src/sage/combinat/degree_sequences.pyx
+src/sage/combinat/diagram.py
 src/sage/combinat/dlx.py
 src/sage/combinat/expnums.pyx
 src/sage/combinat/misc.py

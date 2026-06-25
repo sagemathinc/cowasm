@@ -2552,6 +2552,35 @@ total block rows across 72 files. The saved block- and file-failure cluster
 queries are empty. The latest run metadata records node profile, runner
 version 28, and about 524 seconds of elapsed time.
 
+Follow-up diagram corpus-growth pass: `sage/combinat/diagram.py` is now
+included in the browser-profile corpus. The module exposed a focused doctest
+namespace gap for `Partitions.options`, so the Sagelite runner now seeds the
+lightweight `Partitions` constructor alongside the other common focused
+combinatorics globals. Its `peelable_tableaux()` examples also produce the
+same unordered sets with a different representation order under the WASI
+runtime, so the Sagelite WASI patch marks those display checks as `# random`
+while still executing the examples.
+
+Focused rerun:
+
+```text
+diagram.py: 222 passed, 0 failed, 25 skipped
+```
+
+The full corpus target passes with the new file included and failures
+disallowed:
+
+```text
+sage -t passed: 7108 passed, 0 failed, 1325 skipped
+```
+
+That run is recorded in `/tmp/sagelite-corpus-diagram.sqlite3` with 8,433
+total block rows across 73 files. The saved block- and file-failure cluster
+queries are empty. The run metadata records node profile, runner version 28,
+and about 536 seconds of elapsed time. The same pass also fixes the Sagelite
+package Makefile dependency so the generated `.patched` source tree is
+refreshed when the checked-in WASI patch file changes.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
