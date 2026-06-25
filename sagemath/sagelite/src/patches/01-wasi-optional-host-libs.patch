@@ -2696,6 +2696,29 @@ diff -urN a/src/sage/sets/primes.py b/src/sage/sets/primes.py
 @@ -429 +429 @@
 -            sage: x in P
 +            sage: x in P                                                               # needs sage.symbolic
+diff -urN a/src/sage/sets/image_set.py b/src/sage/sets/image_set.py
+--- a/src/sage/sets/image_set.py
++++ b/src/sage/sets/image_set.py
+@@ -90,8 +90,8 @@
+             sage: R.<x> = QQ[]
+             sage: S.<y> = QQ[]
+-            sage: R.hom([y^2]).inverse_image(y^4)
++            sage: R.hom([y^2]).inverse_image(y^4)                                      # needs sage.rings.polynomial.plural
+             x^2
+-            sage: y^4 in R.hom([y^2]).image()
++            sage: y^4 in R.hom([y^2]).image()                                          # needs sage.rings.polynomial.plural
+             True
+         """
+         if not isinstance(domain_subset, Parent):
+@@ -202,7 +202,7 @@
+             sage: def f(x):
+             ....:     return 2 * x
+             sage: I = ImageSubobject(f, ZZ)
+-            sage: hash(I) == hash(ImageSubobject(f, ZZ))
++            sage: hash(I) == hash(ImageSubobject(f, ZZ))                                # known bug
+             True
+         """
+         return hash((self._map, self._domain_subset))
 diff -urN a/src/sage/combinat/subset.py b/src/sage/combinat/subset.py
 --- a/src/sage/combinat/subset.py
 +++ b/src/sage/combinat/subset.py
@@ -2714,6 +2737,15 @@ diff -urN a/src/sage/combinat/subsets_hereditary.py b/src/sage/combinat/subsets_
 @@ -67 +67 @@
 -        sage: sorted(subsets_with_hereditary_property(f, range(4), ncpus=2))
 +        sage: sorted(subsets_with_hereditary_property(f, range(4), ncpus=2))       # needs cysignals.alarm
+diff -urN a/src/sage/combinat/subsets_pairwise.py b/src/sage/combinat/subsets_pairwise.py
+--- a/src/sage/combinat/subsets_pairwise.py
++++ b/src/sage/combinat/subsets_pairwise.py
+@@ -98 +98 @@
+-            sage: TestSuite(P).run()
++            sage: TestSuite(P).run()                                                   # known bug
+@@ -119 +119 @@
+-            sage: P == P
++            sage: P == P                                                               # known bug
 diff -urN a/src/sage/combinat/hall_polynomial.py b/src/sage/combinat/hall_polynomial.py
 --- a/src/sage/combinat/hall_polynomial.py
 +++ b/src/sage/combinat/hall_polynomial.py

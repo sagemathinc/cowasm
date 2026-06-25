@@ -24,6 +24,7 @@ src/sage/arith/numerical_approx.pyx
 src/sage/combinat/SJT.py
 src/sage/combinat/combinat.py
 src/sage/combinat/combinat_cython.pyx
+src/sage/combinat/core.py
 src/sage/combinat/combination.py
 src/sage/combinat/combinatorial_map.py
 src/sage/combinat/cyclic_sieving_phenomenon.py
@@ -50,6 +51,7 @@ src/sage/combinat/backtrack.py
 src/sage/combinat/composition.py
 src/sage/combinat/subset.py
 src/sage/combinat/subsets_hereditary.py
+src/sage/combinat/subsets_pairwise.py
 src/sage/combinat/composition_signed.py
 src/sage/combinat/derangements.py
 src/sage/combinat/perfect_matching.py
@@ -65,6 +67,7 @@ src/sage/sets/finite_enumerated_set.py
 src/sage/sets/disjoint_set.pyx
 src/sage/sets/family.pyx
 src/sage/sets/condition_set.py
+src/sage/sets/image_set.py
 src/sage/sets/totally_ordered_finite_set.py
 src/sage/sets/non_negative_integers.py
 src/sage/sets/positive_integers.py

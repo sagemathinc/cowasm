@@ -543,6 +543,27 @@ historical compact side-by-side layout. The doctest runner now seeds the
 `Composition` constructor in the common doctest namespace, while the WASI
 `sage.all` patch exposes both `Composition` and `Compositions`.
 
+Latest checked local corpus run after the 2026-06-25 set-image and
+pairwise-subset corpus-growth pass:
+
+```text
+sage -t passed: 7311 passed, 0 failed, 1393 skipped
+```
+
+That run records the current 76-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/core.py`, `sage/combinat/subsets_pairwise.py`, and
+`sage/sets/image_set.py` to the previous clean browser-profile baseline.
+Focused reruns recorded `core.py: 123 passed, 0 failed, 15 skipped`,
+`subsets_pairwise.py: 30 passed, 0 failed, 4 skipped`, and
+`image_set.py: 50 passed, 0 failed, 49 skipped`. The added WASI patch
+classifies `image_set.py` inverse-image doctests that route through the
+unavailable noncommutative polynomial `plural` module, plus hash/equality
+contract drift in `ImageSubobject` and `PairwiseCompatibleSubsets`, as
+deferred browser-profile skips. The latest run metadata records node profile,
+runner version 28, and writes the checked database to
+`/tmp/sagelite-corpus-after-core-image-subsets.sqlite3`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
