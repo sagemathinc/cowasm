@@ -751,6 +751,7 @@ src/sage/combinat/set_partition_iterator.pyx
 src/sage/combinat/subword.py
 src/sage/combinat/tools.py
 src/sage/combinat/tuple.py
+src/sage/combinat/vector_partition.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
 src/sage/sets/finite_enumerated_set.py
@@ -2401,6 +2402,26 @@ cluster queries are empty. The same sampling pass kept
 `sage/combinat/quickref.py` out of the quiet corpus until their failure
 clusters get separate triage; `sage/combinat/family.py` currently contributes
 no extracted doctest blocks.
+
+Latest checked local corpus run after the 2026-06-25 vector-partition
+corpus-growth pass:
+
+```text
+sage -t passed: 6017 passed, 0 failed, 1274 skipped
+```
+
+That run records the current 66-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/vector_partition.py` to the previous clean browser-profile
+baseline. The focused rerun records
+`vector_partition.py: 39 passed, 0 failed, 0 skipped`. The saved block- and
+file-failure cluster queries are empty for the full run. The same sampling pass
+kept `sage/combinat/subsets_pairwise.py`,
+`sage/sets/set_from_iterator.py`, `sage/sets/disjoint_union_enumerated_sets.py`,
+and `sage/combinat/shuffle.py` out of the quiet corpus because their failures
+still need separate semantic or dependency-scope triage. The latest run
+metadata records node profile, runner version 28, 7,291 total block rows, and
+about 457 seconds of elapsed time.
 
 ## Phase 5: Subprocess Strategy
 
