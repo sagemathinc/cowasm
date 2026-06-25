@@ -736,6 +736,7 @@ src/sage/combinat/gray_codes.py
 src/sage/combinat/hall_polynomial.py
 src/sage/combinat/integer_matrices.py
 src/sage/combinat/integer_vector.py
+src/sage/combinat/integer_vector_weighted.py
 src/sage/combinat/cartesian_product.py
 src/sage/combinat/backtrack.py
 src/sage/combinat/composition.py
@@ -2325,6 +2326,32 @@ sage -t passed: 5817 passed, 0 failed, 1267 skipped
 That run is recorded in `/tmp/sagelite-corpus-combinatorial-map.sqlite3` with
 7,084 total block rows across 60 files. The saved block- and file-failure
 cluster queries are empty.
+
+Follow-up weighted integer-vector corpus-growth pass:
+`sage/combinat/integer_vector_weighted.py` is now included in the
+browser-profile corpus. It extends the existing integer-vector coverage with a
+compact exact-combinatorics file and does not require new browser-scope tags.
+
+Focused rerun:
+
+```text
+integer_vector_weighted.py: 64 passed, 0 failed, 0 skipped
+```
+
+The full corpus target passes with `integer_vector_weighted.py` included:
+
+```text
+sage -t passed: 5881 passed, 0 failed, 1267 skipped
+```
+
+That run is recorded in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3` as run `7`, with
+7,148 total block rows across 61 files. The saved block- and file-failure
+cluster queries are empty. The same sampling pass kept
+`sage/combinat/q_analogues.py` out of the quiet corpus because
+`qt_catalan_number(4)` still reaches a runtime `memory access out of bounds`
+trap, and `sage/combinat/counting.py` because it currently contributes no
+extracted doctest blocks to the Sagelite runner.
 
 ## Phase 5: Subprocess Strategy
 
