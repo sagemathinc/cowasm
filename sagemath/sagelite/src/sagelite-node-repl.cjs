@@ -801,6 +801,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.integer_lists", ("IntegerListsLex",)),
         ("sage.combinat.permutation", ("Permutation", "Permutations")),
         ("sage.combinat.subset", ("Subsets",)),
+        ("sage.combinat.vector_partition", ("VectorPartitions",)),
         ("sage.combinat.words.word", ("Word",)),
         ("sage.categories.homset", ("Hom",)),
         ("sage.categories.sets_cat", ("Sets",)),

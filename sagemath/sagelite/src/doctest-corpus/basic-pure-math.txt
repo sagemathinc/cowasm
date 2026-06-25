@@ -53,6 +53,7 @@ src/sage/combinat/set_partition_iterator.pyx
 src/sage/combinat/subword.py
 src/sage/combinat/tools.py
 src/sage/combinat/tuple.py
+src/sage/combinat/fast_vector_partitions.pyx
 src/sage/combinat/vector_partition.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py

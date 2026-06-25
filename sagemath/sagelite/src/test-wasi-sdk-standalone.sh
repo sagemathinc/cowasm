@@ -805,6 +805,7 @@ from sage.combinat.subword import Subwords
 from sage.combinat.subset import Subsets
 from sage.combinat.tableau import StandardTableaux, Tableau
 from sage.combinat.tuple import Tuples, UnorderedTuples
+from sage.combinat.vector_partition import VectorPartitions
 from sage.sets.finite_set_maps import FiniteSetMaps
 p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
@@ -861,6 +862,7 @@ assert sigma.cycle_type() == [3]
 assert [sorted(s) for s in Subsets([1, 2, 3], 2)] == [[1, 2], [1, 3], [2, 3]]
 assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
 assert [list(v) for v in IntegerVectors(4, 2)] == [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
+assert len(list(VectorPartitions([2, 2]))) == 9
 assert Composition([2, 1]).size() == 3
 assert Compositions(4).cardinality() == 8
 assert SignedCompositions(3).cardinality() == 18

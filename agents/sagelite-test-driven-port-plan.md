@@ -751,6 +751,7 @@ src/sage/combinat/set_partition_iterator.pyx
 src/sage/combinat/subword.py
 src/sage/combinat/tools.py
 src/sage/combinat/tuple.py
+src/sage/combinat/fast_vector_partitions.pyx
 src/sage/combinat/vector_partition.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
@@ -2422,6 +2423,35 @@ and `sage/combinat/shuffle.py` out of the quiet corpus because their failures
 still need separate semantic or dependency-scope triage. The latest run
 metadata records node profile, runner version 28, 7,291 total block rows, and
 about 457 seconds of elapsed time.
+
+Latest checked local corpus run after the 2026-06-25 fast-vector-partition
+corpus-growth pass:
+
+```text
+sage -t passed: 6033 passed, 0 failed, 1277 skipped
+```
+
+That run records the current 67-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/fast_vector_partitions.pyx` to the previous clean
+browser-profile baseline. The doctest runner now seeds `VectorPartitions` in
+the common focused namespace, matching the upstream Sage startup assumptions
+used by `fast_vector_partitions.pyx` examples without importing broad
+combinatorics collections. The focused rerun records
+`fast_vector_partitions.pyx: 16 passed, 0 failed, 3 skipped`, and the full
+run records 7,310 total block rows with empty block- and file-failure cluster
+queries. The same sampling pass kept `sage/combinat/subsets_pairwise.py`,
+`sage/sets/set_from_iterator.py`, `sage/sets/image_set.py`,
+`sage/sets/disjoint_union_enumerated_sets.py`, `sage/combinat/shuffle.py`,
+`sage/combinat/binary_recurrence_sequences.py`,
+`sage/combinat/sloane_functions.py`,
+and `sage/combinat/integer_vectors_mod_permgroup.py` out until their semantic,
+dependency-scope, or runtime-cost clusters get separate triage; the
+`sage/combinat/q_analogues.py` probe was interrupted after it exceeded the
+fast-corpus sampling window, and `sage/combinat/counting.py` plus
+`sage/combinat/family.py` currently contribute no extracted doctest blocks.
+The latest run metadata records node profile, runner version 28, and about
+497 seconds of elapsed time.
 
 ## Phase 5: Subprocess Strategy
 
