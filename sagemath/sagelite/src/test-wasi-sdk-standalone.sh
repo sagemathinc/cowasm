@@ -797,6 +797,7 @@ from sage.combinat.composition import Composition, Compositions
 from sage.combinat.composition_signed import SignedCompositions
 from sage.combinat.derangements import Derangements
 from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat.ordered_tree import OrderedTree
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
 from sage.combinat.permutation import Permutation, Permutations
@@ -862,6 +863,7 @@ assert sigma.cycle_type() == [3]
 assert [sorted(s) for s in Subsets([1, 2, 3], 2)] == [[1, 2], [1, 3], [2, 3]]
 assert Combinations([1, 2, 3], 2).list() == [[1, 2], [1, 3], [2, 3]]
 assert [list(v) for v in IntegerVectors(4, 2)] == [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
+assert str(OrderedTree([[[]], []])) == '[[[]], []]'
 assert len(list(VectorPartitions([2, 2]))) == 9
 assert Composition([2, 1]).size() == 3
 assert Compositions(4).cardinality() == 8

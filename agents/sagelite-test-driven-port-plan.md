@@ -2453,6 +2453,28 @@ fast-corpus sampling window, and `sage/combinat/counting.py` plus
 The latest run metadata records node profile, runner version 28, and about
 497 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-25 rooted-tree
+corpus-growth pass:
+
+```text
+sage -t passed: 6186 passed, 0 failed, 1287 skipped
+```
+
+That run records the current 68-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/rooted_tree.py` to the previous clean browser-profile
+baseline. The doctest runner now seeds `OrderedTree` in the common focused
+namespace, matching the upstream Sage startup assumption used by the
+`RootedTree(OrderedTree(...))` examples without importing the broad
+combinatorics collection. The focused rerun records
+`rooted_tree.py: 153 passed, 0 failed, 10 skipped`, and the full run records
+7,473 total block rows with empty block- and file-failure cluster queries.
+The same sampling pass kept `sage/combinat/abstract_tree.py`,
+`sage/combinat/binary_tree.py`, and `sage/combinat/ordered_tree.py` out until
+their broader tree-display and semantic clusters get separate triage. The
+latest run metadata records node profile, runner version 28, and about
+505 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -32,6 +32,7 @@ src/sage/combinat/dlx.py
 src/sage/combinat/expnums.pyx
 src/sage/combinat/misc.py
 src/sage/combinat/necklace.py
+src/sage/combinat/rooted_tree.py
 src/sage/combinat/output.py
 src/sage/combinat/restricted_growth.py
 src/sage/combinat/sidon_sets.py
