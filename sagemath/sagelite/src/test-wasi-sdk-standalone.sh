@@ -1818,6 +1818,48 @@ if [ "$doctest_block_key_count" != "27" ]; then
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not record relative stable block keys."
 fi
+doctest_file_directive_file="$probe_dir/sagelite-doctest-file-directive.py"
+doctest_file_directive_db="$probe_dir/sagelite-doctest-file-directive.sqlite3"
+doctest_file_directive_log="$dist_dir/doctest-file-directive.log"
+cat >"$doctest_file_directive_file" <<'PY'
+# sage.doctest: needs cowasm_file_header
+r"""
+EXAMPLES::
+
+    sage: 1 / 0
+    skipped by the file-level doctest directive
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --sqlite "$doctest_file_directive_db" "$doctest_file_directive_file" \
+      >"$doctest_file_directive_log" 2>&1
+doctest_file_directive_status=$?
+set -e
+if [ "$doctest_file_directive_status" -eq 124 ]; then
+  tail -120 "$doctest_file_directive_log" >&2
+  record_blocker "sagelite-blocked: sage -t file-directive doctest smoke timed out after $node_import_timeout; see $doctest_file_directive_log for the first runtime blocker."
+fi
+if [ "$doctest_file_directive_status" -ne 0 ]; then
+  tail -120 "$doctest_file_directive_log" >&2
+  record_blocker "sagelite-blocked: sage -t file-directive doctest smoke failed; see $doctest_file_directive_log for the first runtime blocker."
+fi
+doctest_file_directive_counts="$(sqlite3 "$doctest_file_directive_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_file_directive_counts" != "passed|1|0|0|1" ]; then
+  cat "$doctest_file_directive_log" >&2
+  sqlite3 "$doctest_file_directive_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t file-directive doctest smoke wrote unexpected SQLite counts: $doctest_file_directive_counts"
+fi
+doctest_file_directive_skip_count="$(sqlite3 "$doctest_file_directive_db" "select count(*) from blocks where status = 'skipped' and skip_reason = 'optional:cowasm_file_header' and tags like '%needs:cowasm_file_header%';")"
+if [ "$doctest_file_directive_skip_count" != "1" ]; then
+  cat "$doctest_file_directive_log" >&2
+  sqlite3 "$doctest_file_directive_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t file-directive doctest smoke did not record file-level skip metadata."
+fi
 doctest_expected_line="$(grep -nF 'sage: 2^5' "$doctest_smoke_file" | head -n 1 | cut -d: -f1)"
 doctest_recorded_line="$(sqlite3 "$doctest_smoke_db" "select start_line from blocks where source like '2^5%' limit 1;")"
 if [ "$doctest_recorded_line" != "$doctest_expected_line" ]; then

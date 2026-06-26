@@ -953,6 +953,22 @@ def __cowasm_convert_prompts(text):
     return "".join(out), standalone_directives
 
 
+def __cowasm_file_directive_source(text):
+    directives = []
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if not stripped.startswith("#"):
+            break
+        match = re.match(r"#\\s*sage\\.doctest:\\s*(.*)$", stripped, re.IGNORECASE)
+        if match:
+            directive = match.group(1).strip()
+            if directive:
+                directives.append("# " + directive)
+    return "\\n".join(directives) if directives else None
+
+
 def __cowasm_filtered_text_with_prompts(text):
     lines = text.splitlines(True)
     kept = [False] * len(lines)
@@ -1351,6 +1367,7 @@ def __cowasm_run_file(filename):
         __cowasm_note_state(filename, "read_source", source=None, expected=None)
         with open(filename, "r", encoding="utf-8") as f:
             original = f.read()
+        file_directive_source = __cowasm_file_directive_source(original)
         __cowasm_note_state(filename, "load_namespace", source=None, expected=None)
         parser = doctest.DocTestParser()
         namespace = __cowasm_namespace(filename)
@@ -1453,8 +1470,11 @@ def __cowasm_run_file(filename):
                 example._cowasm_block_index = index
                 example.sage_source = example.source
                 example._cowasm_effective_source = __cowasm_merge_directive_source(
-                    active_directive_source,
-                    example.sage_source,
+                    file_directive_source,
+                    __cowasm_merge_directive_source(
+                        active_directive_source,
+                        example.sage_source,
+                    ),
                 )
                 example._cowasm_expected = example.want
                 example._cowasm_expected_kind = "exact"

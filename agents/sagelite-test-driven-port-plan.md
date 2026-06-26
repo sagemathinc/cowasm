@@ -25,6 +25,9 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   - applies the Sage preparser, so syntax such as `2^5` works;
   - records run, file, and block results in SQLite;
   - skips `# optional` and `# needs` tests by default;
+  - propagates file-level `# sage.doctest: needs ...` directives to extracted
+    examples, so module-wide Sage dependency declarations become SQLite skip
+    metadata instead of artificial startup-name failures;
   - propagates standalone directive prompts such as `sage: # needs numpy` to
     the following contiguous doctest examples;
   - runs `# random` tests while accepting their output without comparison;
@@ -2952,6 +2955,16 @@ side-by-side list layout. The full corpus database is
 `/tmp/sagelite-corpus-six-vertex.sqlite3`; the saved block- and file-failure
 cluster queries are empty. The latest run metadata records node profile,
 runner version 28, and about 688 seconds of elapsed time.
+
+Follow-up runner-fidelity pass: file-level Sage doctest directives such as
+`# sage.doctest: needs sage.combinat sage.modules` are now merged into every
+extracted example for tag and skip decisions while preserving the original
+example source and stable block key. A focused smoke records
+`passed|1|0|0|1` for a file-level `needs cowasm_file_header` directive, and
+the `sage/combinat/kazhdan_lusztig.py` probe now reports
+`0 passed, 0 failed, 26 skipped` instead of artificial `WeylGroup`, `W`, and
+`KL` `NameError` clusters. This keeps future corpus sampling honest when an
+entire module declares a broader optional dependency surface.
 
 ## Phase 5: Subprocess Strategy
 
