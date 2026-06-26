@@ -3665,7 +3665,7 @@ diff -urN a/src/sage/combinat/q_analogues.py b/src/sage/combinat/q_analogues.py
          43046640
 -        sage: number_of_irreducible_polynomials(5, q=11, m=3)
 +        sage: number_of_irreducible_polynomials(5, q=11, m=3)                          # needs sage.symbolic
-@@ -1017,7 +1017,7 @@
+@@ -1017,8 +1017,8 @@
 -        sage: poly = number_of_irreducible_polynomials(12); poly
 +        sage: poly = number_of_irreducible_polynomials(12); poly                       # needs sage.libs.pari
          1/12*q^12 - 1/12*q^6 - 1/12*q^4 + 1/12*q^2
@@ -3678,11 +3678,13 @@ diff -urN a/src/sage/combinat/q_analogues.py b/src/sage/combinat/q_analogues.py
 -        sage: poly(11) == number_of_irreducible_polynomials(5, q=11, m=3)
 +        sage: poly(11) == number_of_irreducible_polynomials(5, q=11, m=3)              # needs sage.symbolic
          True
-@@ -1028,2 +1028,2 @@
+@@ -1027,4 +1027,4 @@
+     This function is *much* faster than enumerating the polynomials::
 -        sage: num = number_of_irreducible_polynomials(99, q=101)
 -        sage: num.bit_length()
 +        sage: num = number_of_irreducible_polynomials(99, q=101)                       # needs sage.libs.pari
 +        sage: num.bit_length()                                                         # needs sage.libs.pari
+         653
 diff -urN a/src/sage/sets/recursively_enumerated_set.pyx b/src/sage/sets/recursively_enumerated_set.pyx
 --- a/src/sage/sets/recursively_enumerated_set.pyx
 +++ b/src/sage/sets/recursively_enumerated_set.pyx

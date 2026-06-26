@@ -776,6 +776,40 @@ commit `b95ded8d61aa1db4ea18c98d9678767f431708fa`, Sagelite package commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 37,
 and about 992 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 Puiseux-series
+corpus-growth pass:
+
+```text
+sage -t passed: 19255 passed, 0 failed, 3349 skipped
+```
+
+That run records 22,604 block rows across the current 136-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, adding
+`sage/rings/puiseux_series_ring.py` to the quiet browser-profile dashboard.
+A focused rerun records:
+
+```text
+puiseux_series_ring.py: 61 passed, 0 failed, 18 skipped
+```
+
+The pass also repairs the Sagelite WASI patch hunk for
+`sage/combinat/q_analogues.py` so the large
+`number_of_irreducible_polynomials(99, q=101)` example uses the
+already-intended `# needs sage.libs.pari` tags in the rebuilt source copy.
+A focused rerun records
+`q_analogues.py: 110 passed, 0 failed, 25 skipped`, and the saved block- and
+file-failure cluster queries are empty for the full corpus.
+
+The same sampling pass kept several nearby files out of the quiet corpus:
+`sage/combinat/q_bernoulli.pyx` still reaches the known NTL/libcxx
+`memory access out of bounds` trap through finite-field polynomial setup;
+`sage/rings/continued_fraction.py` reaches number-field construction and
+times out in the current browser profile; `sage/combinat/sine_gordon.py`
+imports unavailable symbolic-expression support before its module globals can
+be seeded; and `sage/rings/ring.pyx` reaches the existing
+`polynomial_number_field` table-index trap during a broad `TestSuite`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
