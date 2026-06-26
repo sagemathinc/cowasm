@@ -50,6 +50,7 @@ src/sage/combinat/integer_vector.py
 src/sage/combinat/integer_vector_weighted.py
 src/sage/combinat/cartesian_product.py
 src/sage/combinat/backtrack.py
+src/sage/combinat/binary_recurrence_sequences.py
 src/sage/combinat/composition.py
 src/sage/combinat/composition_tableau.py
 src/sage/combinat/subset.py

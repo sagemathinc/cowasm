@@ -2835,3 +2835,27 @@ diff -urN a/src/sage/sets/set_from_iterator.py b/src/sage/sets/set_from_iterator
 @@ -466 +466 @@
 -            sage: print(sage_getdoc(d))   # indirect doctest
 +            sage: print(sage_getdoc(d))   # indirect doctest                          # needs packaging
+diff -urN a/src/sage/combinat/binary_recurrence_sequences.py b/src/sage/combinat/binary_recurrence_sequences.py
+--- a/src/sage/combinat/binary_recurrence_sequences.py
++++ b/src/sage/combinat/binary_recurrence_sequences.py
+@@ -12 +12 @@
+-    sage: R(137) == fibonacci(137)
++    sage: R(137) == fibonacci(137)                                                     # needs sage.libs.pari
+@@ -15 +15 @@
+-    sage: R.period(4)        #the period of the fibonacci sequence modulo 4
++    sage: R.period(4)        #the period of the fibonacci sequence modulo 4        # needs sage.matrix.matrix_mod2_dense
+@@ -383 +383 @@
+-            sage: R.period(4)
++            sage: R.period(4)                                                        # needs sage.matrix.matrix_mod2_dense
+@@ -406 +406 @@
+-            sage: T.period(10)
++            sage: T.period(10)                                                       # needs sage.matrix.matrix_mod2_dense
+@@ -411 +411 @@
+-            sage: T.period(10,eventual=True)
++            sage: T.period(10,eventual=True)                                         # needs sage.matrix.matrix_mod2_dense
+@@ -423 +423 @@
+-            sage: T.period(4)
++            sage: T.period(4)                                                        # needs sage.matrix.matrix_mod2_dense
+@@ -428 +428 @@
+-            sage: T.period(4,eventual=True)
++            sage: T.period(4,eventual=True)                                          # needs sage.matrix.matrix_mod2_dense

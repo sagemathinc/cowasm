@@ -786,6 +786,7 @@ src/sage/combinat/integer_vector.py
 src/sage/combinat/integer_vector_weighted.py
 src/sage/combinat/cartesian_product.py
 src/sage/combinat/backtrack.py
+src/sage/combinat/binary_recurrence_sequences.py
 src/sage/combinat/composition.py
 src/sage/combinat/subset.py
 src/sage/combinat/subsets_hereditary.py
@@ -2818,6 +2819,29 @@ The same sampling pass kept nearby compact candidates such as
 `sage/combinat/subword_complex_c.pyx`, and `sage/combinat/tamari_lattices.py`
 out of the quiet corpus because they still hit graph-backed imports, NTL/libcxx
 traps, Coxeter/subword dependencies, or broader doctest-context failures.
+
+Latest checked local corpus run after the 2026-06-26 binary recurrence
+corpus-growth pass:
+
+```text
+sage -t passed: 8846 passed, 0 failed, 1552 skipped
+```
+
+That run records 10,398 block rows across the current 91-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/binary_recurrence_sequences.py` to the previous clean
+browser-profile baseline. The focused rerun records
+`binary_recurrence_sequences.py: 90 passed, 0 failed, 17 skipped`; the added
+WASI patch classifies the file's default `fibonacci(...)` comparison as PARI
+object-model coverage and its period examples over moduli with a factor of 2
+as requiring the unavailable dense mod-2 matrix backend. The doctest runner
+now seeds the lightweight `fibonacci` name in the common namespace so optional
+reruns reach the real backend gap instead of a startup-name artifact. The full
+corpus database is `/tmp/sagelite-corpus-binary-recurrence.sqlite3`. The saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `e06824b3c334c09927ddd0efd371fd1b3c94f9fe`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
+runner version 28, and about 664 seconds of elapsed time.
 
 ## Phase 5: Subprocess Strategy
 
