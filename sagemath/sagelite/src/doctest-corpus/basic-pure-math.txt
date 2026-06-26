@@ -11,6 +11,7 @@ src/sage/rings/rational_field.py
 src/sage/rings/real_field.py
 src/sage/rings/real_double.pyx
 src/sage/rings/complex_double.pyx
+src/sage/rings/tests.py
 src/sage/rings/fast_arith.pyx
 src/sage/rings/generic.py
 src/sage/rings/continued_fraction_gosper.py

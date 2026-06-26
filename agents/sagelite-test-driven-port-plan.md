@@ -3370,6 +3370,28 @@ CoWasm commit `6c5a2ecb3218d6316dd1ff8e6d8949c24c7c461f`, Sagelite package
 commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
 version 35, and about 827 seconds of elapsed time.
 
+Checked local ring-prefix run after the 2026-06-26 rings random-smoke
+corpus-growth pass:
+
+```text
+sage -t passed: 2465 passed, 0 failed, 581 skipped
+```
+
+That run records 3,046 block rows across the ring-prefix subset through
+`sage/rings/tests.py`, adding `sage/rings/tests.py` to the checked
+`basic-pure-math.txt` corpus list while exercising it after the existing
+integer, rational, real-double, and complex-double files. The focused rerun
+records `tests.py: 31 passed, 0 failed, 31 skipped`.
+
+The added WASI source patch classifies the relative-number-field examples and
+random ring smoke tests as `# needs sage.rings.number_field`, because those
+paths deliberately sample Sage number-field construction and currently reach
+the focused CoWasm `cypari2` object-model boundary. The nine-file aggregate
+database is `/tmp/sagelite-rings-tests-corpus.sqlite3`; it has no failed
+blocks and no file-level errors. A full 113-file corpus rerun should be
+performed as the next dashboard refresh before recording a new full-corpus
+total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

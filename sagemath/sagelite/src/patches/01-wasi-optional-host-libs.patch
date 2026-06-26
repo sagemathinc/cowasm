@@ -3474,3 +3474,40 @@ diff -urN a/src/sage/rings/complex_double.pyx b/src/sage/rings/complex_double.py
 @@ -2356 +2356 @@
 -            sage: CDF(-1,0).gamma()
 +            sage: CDF(-1,0).gamma()                                                     # needs sage.libs.pari
+diff -urN a/src/sage/rings/tests.py b/src/sage/rings/tests.py
+--- a/src/sage/rings/tests.py
++++ b/src/sage/rings/tests.py
+@@ -169,13 +169,13 @@
+         sage: import sage.rings.tests
+-        sage: K = sage.rings.tests.relative_number_field(3); K
++        sage: K = sage.rings.tests.relative_number_field(3); K                         # needs sage.rings.number_field
+         Number Field in aaa with defining polynomial x^2 ... over its base field
+-        sage: K.relative_degree()
++        sage: K.relative_degree()                                                       # needs sage.rings.number_field
+         2
+-        sage: L = K.base_ring()
++        sage: L = K.base_ring()                                                         # needs sage.rings.number_field
+-        sage: L.relative_degree()
++        sage: L.relative_degree()                                                       # needs sage.rings.number_field
+         2
+-        sage: M = L.base_ring()
++        sage: M = L.base_ring()                                                         # needs sage.rings.number_field
+-        sage: M.relative_degree()
++        sage: M.relative_degree()                                                       # needs sage.rings.number_field
+         2
+-        sage: M.base_ring() is QQ
++        sage: M.base_ring() is QQ                                                       # needs sage.rings.number_field
+         True
+@@ -363 +363 @@
+-        sage: sage.rings.tests.check_random_elements(trials=10)
++        sage: sage.rings.tests.check_random_elements(trials=10)                         # needs sage.rings.number_field
+@@ -400,4 +400,4 @@
+         sage: import sage.rings.tests
+-        sage: sage.rings.tests.check_random_arith(trials=2, seed=0)
++        sage: sage.rings.tests.check_random_arith(trials=2, seed=0)                     # needs sage.rings.number_field
+         survived 0 tests
+         Rational Field
+         -1/2 -1/95
+@@ -410 +410 @@
+-        sage: sage.rings.tests.check_random_arith(trials=10)
++        sage: sage.rings.tests.check_random_arith(trials=10)                            # needs sage.rings.number_field
