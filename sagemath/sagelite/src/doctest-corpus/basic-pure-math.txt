@@ -11,6 +11,7 @@ src/sage/rings/rational_field.py
 src/sage/rings/real_field.py
 src/sage/rings/real_double.pyx
 src/sage/rings/complex_double.pyx
+src/sage/rings/complex_conversion.pyx
 src/sage/rings/tests.py
 src/sage/rings/fast_arith.pyx
 src/sage/rings/generic.py
@@ -19,6 +20,8 @@ src/sage/rings/monomials.py
 src/sage/rings/big_oh.py
 src/sage/rings/numbers_abc.py
 src/sage/rings/infinity.py
+src/sage/rings/power_series_mpoly.pyx
+src/sage/rings/padics/padic_relaxed_errors.pyx
 src/sage/rings/semirings/non_negative_integer_semiring.py
 src/sage/arith/srange.pyx
 src/sage/arith/power.pyx

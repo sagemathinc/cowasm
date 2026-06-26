@@ -3392,6 +3392,31 @@ blocks and no file-level errors. A full 113-file corpus rerun should be
 performed as the next dashboard refresh before recording a new full-corpus
 total.
 
+Latest checked local corpus run after the 2026-06-26 small ring-helper
+corpus-growth pass:
+
+```text
+sage -t passed: 14046 passed, 0 failed, 2858 skipped
+```
+
+That run records 16,904 block rows across the current 116-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, adding
+`sage/rings/complex_conversion.pyx`, `sage/rings/power_series_mpoly.pyx`, and
+`sage/rings/padics/padic_relaxed_errors.pyx` to the quiet browser-profile
+dashboard. Focused reruns record `complex_conversion.pyx: 3 passed, 0 failed,
+1 skipped`, `power_series_mpoly.pyx: 4 passed, 0 failed, 0 skipped`, and
+`padic_relaxed_errors.pyx: 5 passed, 0 failed, 0 skipped`.
+
+The pass also repairs the Sagelite WASI source patch hunk metadata for
+`sage/rings/tests.py`, so the existing `check_random_arith(trials=10)`
+number-field random smoke is actually tagged as
+`# needs sage.rings.number_field` in a fresh patched source copy. The saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `15dccc2f61359fd966d1f52509b05003beb13ef3`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
+runner version 35, and about 851 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

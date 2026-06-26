@@ -3501,7 +3501,7 @@ diff -urN a/src/sage/rings/tests.py b/src/sage/rings/tests.py
 @@ -363 +363 @@
 -        sage: sage.rings.tests.check_random_elements(trials=10)
 +        sage: sage.rings.tests.check_random_elements(trials=10)                         # needs sage.rings.number_field
-@@ -400,4 +400,4 @@
+@@ -400,5 +400,5 @@
          sage: import sage.rings.tests
 -        sage: sage.rings.tests.check_random_arith(trials=2, seed=0)
 +        sage: sage.rings.tests.check_random_arith(trials=2, seed=0)                     # needs sage.rings.number_field
