@@ -2966,6 +2966,29 @@ the `sage/combinat/kazhdan_lusztig.py` probe now reports
 `KL` `NameError` clusters. This keeps future corpus sampling honest when an
 entire module declares a broader optional dependency surface.
 
+Follow-up runner-fidelity pass: expected-output lines that begin with a Sage
+ellipsis pattern such as `...-adic Field with capped relative precision ...`
+are now protected before Python's stock doctest parser sees them, then restored
+before output comparison and SQLite recording. This fixes the focused
+`sage/rings/tests.py:110` parser failure, which now records the p-adic example
+as an explicit `# needs sage.rings.padics` skip instead of a file-level
+`ValueError`. The standalone doctest smoke covers the restored expected output
+and records `28` blocks in the default run. A full `sage/rings/tests.py`
+sampling run still reaches a later NTL/libcxx memory trap in
+`check_random_elements`, so that file should remain outside the quiet corpus
+until the native finite-ring path is classified or fixed.
+
+The same sampling pass kept all-skipped dependency-boundary files such as
+`sage/combinat/kazhdan_lusztig.py`, `sage/combinat/lr_tableau.py`,
+`sage/combinat/tiling.py`, `sage/sets/real_set.py`, and
+`sage/arith/multi_modular.pyx` out of the default corpus because they add no
+non-skipped signal. Noisy candidates still needing separate triage include
+`sage/combinat/abstract_tree.py`, `sage/combinat/binary_tree.py`,
+`sage/combinat/sine_gordon.py`, `sage/combinat/shard_order.py`,
+`sage/combinat/skew_partition.py`, `sage/combinat/regular_sequence_bounded.py`,
+`sage/sets/set.py`, `sage/arith/functions.pyx`, `sage/arith/misc.py`, and
+`sage/rings/derivation.py`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

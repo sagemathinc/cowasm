@@ -697,6 +697,7 @@ _cowasm_number_re = re.compile(
 )
 COWASM_RANDOM_ACCEPT = "__COWASM_RANDOM_ACCEPT__\\n"
 COWASM_TOLERANCE_PREFIX = "__COWASM_TOLERANCE__"
+COWASM_LEADING_ELLIPSIS_SENTINEL = "__COWASM_LEADING_ELLIPSIS__"
 
 
 def __cowasm_note_state(
@@ -949,8 +950,17 @@ def __cowasm_convert_prompts(text):
             active_directive_source = None
         line = re.sub(r"^(\\s*)sage:( ?)", r"\\1>>> ", line)
         line = re.sub(r"^(\\s*)\\.\\.\\.\\.:( ?)", r"\\1... ", line)
+        line = re.sub(
+            r"^(\\s*)\\.\\.\\.(?=\\S)",
+            lambda match: match.group(1) + COWASM_LEADING_ELLIPSIS_SENTINEL,
+            line,
+        )
         out.append(line)
     return "".join(out), standalone_directives
+
+
+def __cowasm_restore_protected_expected_output(text):
+    return text.replace(COWASM_LEADING_ELLIPSIS_SENTINEL, "...")
 
 
 def __cowasm_file_directive_source(text):
@@ -1389,6 +1399,8 @@ def __cowasm_run_file(filename):
             test = parser.get_doctest(converted, namespace, name, filename, line_offset)
             if not test.examples:
                 continue
+            for example in test.examples:
+                example.want = __cowasm_restore_protected_expected_output(example.want)
             line_setup_examples = set()
             if __cowasm_lines:
                 example_locations = []
