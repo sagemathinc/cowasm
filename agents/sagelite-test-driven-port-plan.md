@@ -3147,6 +3147,34 @@ unavailable graph Cython layer. The lattice example itself is recorded as
 cluster queries are empty. The latest run metadata records node profile,
 runner version 31, and 13,891 total doctest blocks.
 
+Latest checked local corpus run after the 2026-06-26 superpartition
+corpus-growth pass:
+
+```text
+sage -t passed: 11703 passed, 0 failed, 2364 skipped
+```
+
+That run records 14,067 block rows across the current 104-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/superpartition.py` to the quiet browser-profile dashboard. The
+focused rerun records `superpartition.py: 176 passed, 0 failed, 0 skipped`.
+The full corpus database is
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`; the saved block-
+and file-failure cluster queries are empty. The latest run metadata records
+CoWasm commit `adf31f74def469564390c4ca4e59ee8fcb0ca06f`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
+version 31, and about 767 seconds of elapsed time.
+
+The same sampling pass kept `sage/combinat/q_analogues.py` and
+`sage/combinat/q_bernoulli.pyx` out of the quiet corpus because they still
+reach existing NTL/libcxx or generic WASM memory-trap clusters. It also kept
+all-skipped dependency-boundary files such as
+`sage/combinat/subword_complex_c.pyx`, `sage/combinat/nu_tamari_lattice.py`,
+`sage/combinat/tamari_lattices.py`, `sage/combinat/cluster_complex.py`,
+`sage/combinat/enumeration_mod_permgroup.pyx`, and several algebra-backed
+combinatorics modules out because they add no non-skipped browser-profile
+signal yet.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
