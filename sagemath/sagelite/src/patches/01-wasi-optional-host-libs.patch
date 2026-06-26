@@ -2823,3 +2823,15 @@ diff -urN a/src/sage/sets/cartesian_product.py b/src/sage/sets/cartesian_product
 @@ -383 +383 @@
 -                sage: type(_)
 +                sage: type(_)                                                           # needs sage.rings.real_mpfr
+diff -urN a/src/sage/sets/set_from_iterator.py b/src/sage/sets/set_from_iterator.py
+--- a/src/sage/sets/set_from_iterator.py
++++ b/src/sage/sets/set_from_iterator.py
+@@ -134 +134 @@
+-        sage: TestSuite(E).run()
++        sage: TestSuite(E).run()                                                       # known bug
+@@ -408 +408 @@
+-            sage: S(1)
++            sage: S(1)                                                                 # known bug
+@@ -466 +466 @@
+-            sage: print(sage_getdoc(d))   # indirect doctest
++            sage: print(sage_getdoc(d))   # indirect doctest                          # needs packaging

@@ -2720,6 +2720,27 @@ version 28, and about 610 seconds of elapsed time. The same sampling pass kept
 quiet corpus until their semantic, dependency, signature-mismatch, recursion,
 or timeout clusters get separate triage.
 
+Latest checked local corpus run after the 2026-06-25 set-from-iterator
+corpus-growth pass:
+
+```text
+sage -t passed: 8464 passed, 0 failed, 1531 skipped
+```
+
+That run records 9,995 block rows across the current 91-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/sets/set_from_iterator.py` to the previous clean browser-profile
+baseline. The focused rerun records
+`set_from_iterator.py: 133 passed, 0 failed, 79 skipped`. The added WASI patch
+classifies two warning-display drift examples as `# known bug` and marks a
+doc-formatting example that imports the unavailable `packaging` module as
+`# needs packaging`. The full corpus database is
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`; the saved block-
+and file-failure cluster queries are empty. The latest run metadata records
+CoWasm commit `caf5d5532be75eb2a1973d3d36de99c9d82b06db`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
+version 28, and about 629 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
