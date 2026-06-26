@@ -2777,6 +2777,25 @@ under this runner. The compact probes for `sage/combinat/kazhdan_lusztig.py`,
 still fail and need separate dependency or semantic classification before
 they belong in the quiet corpus.
 
+Latest checked local corpus run after the 2026-06-26 Hillman-Grassl and
+T-sequence corpus-growth pass:
+
+```text
+sage -t passed: 8687 passed, 0 failed, 1534 skipped
+```
+
+That run records 10,221 block rows across the current 89-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/hillman_grassl.py` and `sage/combinat/t_sequences.py` to the
+previous clean browser-profile baseline. Focused reruns record
+`hillman_grassl.py: 98 passed, 0 failed, 3 skipped` and
+`t_sequences.py: 86 passed, 0 failed, 0 skipped`; the full corpus database is
+`/tmp/sagelite-corpus-hillman-tseq.sqlite3`. The saved block- and file-failure
+cluster queries are empty. The latest run metadata records CoWasm commit
+`8d550fccbdca1b2650d5d424b52fb00fba3c5382`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 28,
+and about 639 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

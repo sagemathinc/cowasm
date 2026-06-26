@@ -44,6 +44,7 @@ src/sage/combinat/sidon_sets.py
 src/sage/combinat/ranker.py
 src/sage/combinat/gray_codes.py
 src/sage/combinat/hall_polynomial.py
+src/sage/combinat/hillman_grassl.py
 src/sage/combinat/integer_matrices.py
 src/sage/combinat/integer_vector.py
 src/sage/combinat/integer_vector_weighted.py
@@ -69,6 +70,7 @@ src/sage/combinat/parking_functions.py
 src/sage/combinat/ribbon_shaped_tableau.py
 src/sage/combinat/ribbon_tableau.py
 src/sage/combinat/super_tableau.py
+src/sage/combinat/t_sequences.py
 src/sage/combinat/vector_partition.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
