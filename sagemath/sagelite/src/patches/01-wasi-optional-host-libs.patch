@@ -1049,7 +1049,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')  # needs cysignals.alarm
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,90 @@
+@@ -253,74 +253,91 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1069,6 +1069,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -from sage.interfaces.all import *
 +if sys.platform == 'wasi':
 +    from sage.categories.cartesian_product import cartesian_product
++    from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 +    from sage.combinat.combination import Combinations
 +    from sage.combinat.composition import Composition, Compositions
 +    from sage.combinat.tableau import StandardTableau
@@ -2813,3 +2814,12 @@ diff -urN a/src/sage/combinat/diagram.py b/src/sage/combinat/diagram.py
 @@ -1071 +1071 @@
 -            sage: D.peelable_tableaux()
 +            sage: D.peelable_tableaux()                                                # random
+diff -urN a/src/sage/sets/cartesian_product.py b/src/sage/sets/cartesian_product.py
+--- a/src/sage/sets/cartesian_product.py
++++ b/src/sage/sets/cartesian_product.py
+@@ -380 +380 @@
+-                sage: A = cartesian_product([ZZ, RR])
++                sage: A = cartesian_product([ZZ, RR])                                  # needs sage.rings.real_mpfr
+@@ -383 +383 @@
+-                sage: type(_)
++                sage: type(_)                                                           # needs sage.rings.real_mpfr

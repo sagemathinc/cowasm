@@ -74,6 +74,7 @@ src/sage/sets/finite_set_maps.py
 src/sage/sets/finite_enumerated_set.py
 src/sage/sets/disjoint_set.pyx
 src/sage/sets/family.pyx
+src/sage/sets/cartesian_product.py
 src/sage/sets/condition_set.py
 src/sage/sets/image_set.py
 src/sage/sets/totally_ordered_finite_set.py

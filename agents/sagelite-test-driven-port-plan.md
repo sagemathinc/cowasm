@@ -564,6 +564,28 @@ deferred browser-profile skips. The latest run metadata records node profile,
 runner version 28, and writes the checked database to
 `/tmp/sagelite-corpus-after-core-image-subsets.sqlite3`.
 
+Latest checked local corpus run after the 2026-06-25 sets cartesian-product
+corpus-growth pass:
+
+```text
+sage -t passed: 8331 passed, 0 failed, 1452 skipped
+```
+
+That run records the current 85-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/sets/cartesian_product.py` to the previous clean browser-profile
+baseline. The focused rerun records
+`cartesian_product.py: 49 passed, 0 failed, 6 skipped`. The WASI `sage.all`
+patch now exposes the lightweight `InfiniteEnumeratedSets` category constructor
+needed by upstream cartesian-product doctests, and the added WASI source patch
+classifies the file's real-field cartesian-product example as
+`# needs sage.rings.real_mpfr` consistently with the adjacent `RR` examples.
+The latest run metadata records CoWasm commit
+`2f50a0a02f8f6a6ef85d139ecc1ea73b1bf792aa`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 28,
+and writes the checked database to
+`/tmp/sagelite-corpus-after-sets-cartesian-product.sqlite3`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
