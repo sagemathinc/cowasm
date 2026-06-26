@@ -67,6 +67,7 @@ src/sage/combinat/tools.py
 src/sage/combinat/tuple.py
 src/sage/combinat/fast_vector_partitions.pyx
 src/sage/combinat/parking_functions.py
+src/sage/combinat/partitions.pyx
 src/sage/combinat/ribbon_shaped_tableau.py
 src/sage/combinat/ribbon_tableau.py
 src/sage/combinat/super_tableau.py

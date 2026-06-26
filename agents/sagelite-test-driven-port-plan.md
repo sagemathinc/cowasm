@@ -2796,6 +2796,29 @@ cluster queries are empty. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 28,
 and about 639 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 partitions Cython
+corpus-growth pass:
+
+```text
+sage -t passed: 8756 passed, 0 failed, 1535 skipped
+```
+
+That run records 10,291 block rows across the current 90-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/partitions.pyx` to the previous clean browser-profile baseline.
+The focused rerun records `partitions.pyx: 69 passed, 0 failed, 1 skipped`;
+the full corpus database is `/tmp/sagelite-corpus-partitions.sqlite3`. The
+saved block- and file-failure cluster queries are empty. The latest run
+metadata records CoWasm commit `c54e2b378f5d0c6116926728abf2cba6cca6e187`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, runner version 28, and about 651 seconds of elapsed time.
+
+The same sampling pass kept nearby compact candidates such as
+`sage/combinat/baxter_permutations.py`, `sage/combinat/q_bernoulli.pyx`,
+`sage/combinat/subword_complex_c.pyx`, and `sage/combinat/tamari_lattices.py`
+out of the quiet corpus because they still hit graph-backed imports, NTL/libcxx
+traps, Coxeter/subword dependencies, or broader doctest-context failures.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
