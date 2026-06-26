@@ -692,6 +692,28 @@ The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 31,
 and about 784 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 core set
+corpus-growth pass:
+
+```text
+sage -t passed: 13010 passed, 0 failed, 2642 skipped
+```
+
+That run records the current 108-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, with no
+block-level failures and no file-level errors. It adds `sage/sets/set.py` to
+the quiet browser-profile dashboard; the focused rerun records
+`set.py: 308 passed, 0 failed, 108 skipped`. The doctest runner now seeds the
+lightweight set constructors `ConditionSet`, `IntegerRange`, and `Primes` in
+the common doctest namespace, which clears the main startup-name cluster in
+`set.py` without broadening the `sage.all` import surface. The added WASI
+source patch classifies real-field whole-set wrapping and symbolic
+`RealSet` examples as deferred browser-profile skips. The latest run metadata
+records CoWasm commit `fdf391e1820394cedbb9b2be2cf2d60f904f9e5d`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, runner version 32, and about 792 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

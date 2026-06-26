@@ -98,6 +98,7 @@ src/sage/sets/family.pyx
 src/sage/sets/cartesian_product.py
 src/sage/sets/condition_set.py
 src/sage/sets/image_set.py
+src/sage/sets/set.py
 src/sage/sets/set_from_iterator.py
 src/sage/sets/totally_ordered_finite_set.py
 src/sage/sets/non_negative_integers.py

@@ -3270,3 +3270,19 @@ diff -urN a/src/sage/combinat/triangles_FHM.py b/src/sage/combinat/triangles_FHM
 -            sage: hh.gamma() == g
 +            sage: hh = g.h()                                                            # needs sage.libs.singular
 +            sage: hh.gamma() == g                                                       # needs sage.libs.singular
+diff -urN a/src/sage/sets/set.py b/src/sage/sets/set.py
+--- a/src/sage/sets/set.py
++++ b/src/sage/sets/set.py
+@@ -586,2 +586,2 @@
+-            sage: R = Set(RR)
+-            sage: R.an_element()  # indirect doctest                                    # needs sage.rings.real_mpfr
++            sage: R = Set(RR)                                                           # needs sage.rings.real_mpfr
++            sage: R.an_element()  # indirect doctest                                    # needs sage.rings.real_mpfr
+@@ -1747,2 +1747,2 @@
+-            sage: X = Set(QQ).intersection(Set(RR))
+-            sage: 5 in X
++            sage: X = Set(QQ).intersection(Set(RR))                                     # needs sage.rings.real_mpfr
++            sage: 5 in X                                                                # needs sage.rings.real_mpfr
+@@ -1773 +1773 @@
+-            sage: X = Set(ZZ).intersection(RealSet([3/2, 11/2])); X
++            sage: X = Set(ZZ).intersection(RealSet([3/2, 11/2])); X                     # needs sage.symbolic
