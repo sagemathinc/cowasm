@@ -3700,3 +3700,9 @@ diff -urN a/src/sage/sets/recursively_enumerated_set.pyx b/src/sage/sets/recursi
 @@ -2082 +2082 @@
 -            sage: F.map_reduce()
 +            sage: F.map_reduce()                                                       # needs _multiprocessing
+diff -urN a/src/sage/combinat/tableau.py b/src/sage/combinat/tableau.py
+--- a/src/sage/combinat/tableau.py
++++ b/src/sage/combinat/tableau.py
+@@ -7413 +7413 @@
+-            sage: RowStandardTableaux(4).an_element()
++            sage: RowStandardTableaux(4).an_element()                                  # needs sage.graphs

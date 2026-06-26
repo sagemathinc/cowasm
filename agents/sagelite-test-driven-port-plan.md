@@ -714,6 +714,27 @@ records CoWasm commit `fdf391e1820394cedbb9b2be2cf2d60f904f9e5d`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, runner version 32, and about 792 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 row-standard-tableau
+corpus-growth pass:
+
+```text
+sage -t passed: 19028 passed, 0 failed, 3306 skipped
+```
+
+That run records the current 133-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, with no
+block-level failures and no file-level errors. It adds
+`sage/combinat/tableau.py` to the quiet browser-profile dashboard; the focused
+rerun records `tableau.py: 1254 passed, 0 failed, 162 skipped`. The added WASI
+source patch classifies the remaining `RowStandardTableaux(4).an_element()`
+example as `# needs sage.graphs`, matching the adjacent row-standard-tableau
+examples that already depend on the stripped graph backend. The latest run
+metadata records CoWasm commit
+`a6fcc0d8232c870ea718f8d6de8a804de4227a4a`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 36,
+and about 992 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
