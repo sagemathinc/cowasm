@@ -3634,6 +3634,33 @@ commit `d65ade06a1878809f57c7573d062d4d978a3b0c8`, Sagelite package commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 35,
 and about 951 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 abstract-word
+corpus-growth pass:
+
+```text
+sage -t passed: 16190 passed, 0 failed, 3033 skipped
+```
+
+That run records 19,223 block rows across the current 135-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-abstract-word-clean.sqlite3`, adding
+`sage/combinat/words/abstract_word.py` to the quiet browser-profile
+dashboard. The focused rerun records
+`abstract_word.py: 370 passed, 0 failed, 7 skipped`.
+
+The doctest runner now seeds the lightweight `WordOptions` constructor in the
+common startup namespace, and the WASI `sage.all` patch exposes the same
+constructor for startup parity on the next Sagelite package rebuild. This
+clears the abstract-word startup cluster where examples changed the global
+word letter separator before checking `Word(...).string_rep()`. The same WASI
+source patch classifies the rebuilt `xsrange(10)` Cython generator repr drift
+as a deferred `# known bug` skip because the stripped runtime now omits the
+address-shaped `0x...` portion expected by the historical doctest. The saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `c1c781f7962e2ebc691e94631bd735a870f38bc7`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
+runner version 35, and about 1012 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

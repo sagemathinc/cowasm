@@ -99,6 +99,7 @@ src/sage/combinat/tableau_residues.py
 src/sage/combinat/tableau_tuple.py
 src/sage/combinat/triangles_FHM.py
 src/sage/combinat/vector_partition.py
+src/sage/combinat/words/abstract_word.py
 src/sage/combinat/words/word_options.py
 src/sage/combinat/words/alphabet.py
 src/sage/combinat/words/infinite_word.py

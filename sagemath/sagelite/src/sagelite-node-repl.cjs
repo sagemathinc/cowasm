@@ -816,6 +816,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.vector_partition", ("VectorPartitions",)),
         ("sage.combinat.words.word", ("Word",)),
         ("sage.combinat.words.word_generators", ("words",)),
+        ("sage.combinat.words.word_options", ("WordOptions",)),
         ("sage.combinat.words.words", ("InfiniteWords", "Words")),
         ("sage.combinat.words.morphism", ("WordMorphism",)),
         ("sage.monoids.free_monoid", ("FreeMonoid",)),

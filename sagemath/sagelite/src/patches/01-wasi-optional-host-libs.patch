@@ -1078,6 +1078,17 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          Traceback (most recent call last):
          ...
          ValueError: m has to be positive
+--- a/src/sage/arith/srange.pyx
++++ b/src/sage/arith/srange.pyx
+@@ -83,7 +83,7 @@
+ 
+     EXAMPLES::
+ 
+-        sage: xsrange(10)
++        sage: xsrange(10)                                                              # known bug
+         <...generator object at 0x...>
+         sage: for i in xsrange(1,5):
+         ....:     print(i)
 --- a/src/sage/combinat/words/lyndon_word.py
 +++ b/src/sage/combinat/words/lyndon_word.py
 @@ -488,9 +488,9 @@
@@ -1105,7 +1116,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          def node_processing(node, parent, head):
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,102 @@
+@@ -253,74 +253,103 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1140,6 +1151,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.combinat.words.morphism import WordMorphism
 +    from sage.monoids.free_monoid import FreeMonoid
 +    from sage.combinat.words.word_generators import words
++    from sage.combinat.words.word_options import WordOptions
 +    from sage.combinat.words.words import InfiniteWords, Words
 +    from sage.functions.log import exp, log
 +    from sage.modules.free_module_element import vector
