@@ -3661,6 +3661,32 @@ records CoWasm commit `c1c781f7962e2ebc691e94631bd735a870f38bc7`, Sagelite
 package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
 runner version 35, and about 1012 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 finite-word
+corpus-growth pass:
+
+```text
+sage -t passed: 17452 passed, 0 failed, 3088 skipped
+```
+
+That run records 20,540 block rows across the current 131-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-finite-word.sqlite3`, adding
+`sage/combinat/words/finite_word.py` to the quiet browser-profile dashboard.
+The focused rerun records
+`finite_word.py: 1262 passed, 0 failed, 55 skipped`.
+
+The doctest runner now seeds the lightweight `LyndonWords` constructor in the
+common startup namespace, and the WASI `sage.all` patch exposes the same
+constructor for startup parity on the next Sagelite package rebuild. This
+clears the finite-word startup cluster where `is_lyndon()` sanity checks
+compare filtered words against `LyndonWords(3, n)`. The added WASI source
+patch classifies order-only set representations as `# random` and dictionary
+insertion-order display drift as deferred `# known bug` skips. The saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `82ce9887ecefd61f220a02696d577c0f5fc5acd1`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
+runner version 35, and about 960 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

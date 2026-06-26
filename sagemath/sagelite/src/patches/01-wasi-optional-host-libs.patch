@@ -1103,6 +1103,38 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          True
      """
      return StandardBracketedLyndonWords_nk(n, k)
+--- a/src/sage/combinat/words/finite_word.py
++++ b/src/sage/combinat/words/finite_word.py
+@@ -4512,4 +4512,4 @@
+-            sage: Word('21331233213231').return_words(Word('2'))
++            sage: Word('21331233213231').return_words(Word('2'))                       # random
+             {word: 213, word: 21331, word: 233}
+             sage: Word().return_words(Word('213'))
+             set()
+@@ -4676,6 +4676,6 @@
+-            sage: Word([2,1,4,2,3,4,2]).evaluation_dict()
++            sage: Word([2,1,4,2,3,4,2]).evaluation_dict()                               # known bug
+             {1: 1, 2: 3, 3: 1, 4: 2}
+-            sage: Word('badbcdb').evaluation_dict()
++            sage: Word('badbcdb').evaluation_dict()                                     # known bug
+             {'a': 1, 'b': 3, 'c': 1, 'd': 2}
+             sage: Word().evaluation_dict()
+             {}
+@@ -5405,4 +5405,4 @@
+-            sage: w.abelian_vectors(3)
++            sage: w.abelian_vectors(3)                                                  # random
+             {(1, 0, 2), (1, 1, 1), (1, 2, 0), (2, 0, 1)}
+             sage: w[:5].abelian_vectors(3)
+             {(1, 2, 0)}
+@@ -6919,6 +6919,6 @@
+-        sage: evaluation_dict([2,1,4,2,3,4,2])
++        sage: evaluation_dict([2,1,4,2,3,4,2])                                          # known bug
+         {1: 1, 2: 3, 3: 1, 4: 2}
+-        sage: evaluation_dict('badbcdb')
++        sage: evaluation_dict('badbcdb')                                                # known bug
+         {'a': 1, 'b': 3, 'c': 1, 'd': 2}
+         sage: evaluation_dict([])
+         {}
 --- a/src/sage/combinat/words/suffix_trees.py
 +++ b/src/sage/combinat/words/suffix_trees.py
 @@ -1657,7 +1657,7 @@
@@ -1116,7 +1148,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          def node_processing(node, parent, head):
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,103 @@
+@@ -253,74 +253,104 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1150,6 +1182,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.combinat.tableau_tuple import StandardTableauTuple, StandardTableauTuples, TableauTuples
 +    from sage.combinat.words.morphism import WordMorphism
 +    from sage.monoids.free_monoid import FreeMonoid
++    from sage.combinat.words.lyndon_word import LyndonWords
 +    from sage.combinat.words.word_generators import words
 +    from sage.combinat.words.word_options import WordOptions
 +    from sage.combinat.words.words import InfiniteWords, Words
