@@ -57,6 +57,7 @@ src/sage/combinat/subsets_pairwise.py
 src/sage/combinat/composition_signed.py
 src/sage/combinat/derangements.py
 src/sage/combinat/perfect_matching.py
+src/sage/combinat/permutation_cython.pyx
 src/sage/combinat/non_decreasing_parking_function.py
 src/sage/combinat/set_partition_iterator.pyx
 src/sage/combinat/shuffle.py

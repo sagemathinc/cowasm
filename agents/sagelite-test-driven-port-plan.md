@@ -2727,7 +2727,7 @@ corpus-growth pass:
 sage -t passed: 8464 passed, 0 failed, 1531 skipped
 ```
 
-That run records 9,995 block rows across the current 91-file
+That run records 9,995 block rows across the then-current 86-file
 `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
 `sage/sets/set_from_iterator.py` to the previous clean browser-profile
 baseline. The focused rerun records
@@ -2740,6 +2740,42 @@ and file-failure cluster queries are empty. The latest run metadata records
 CoWasm commit `caf5d5532be75eb2a1973d3d36de99c9d82b06db`, Sagelite package
 commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
 version 28, and about 629 seconds of elapsed time.
+
+Latest checked local corpus run after the 2026-06-25 permutation-Cython
+helper corpus-growth pass:
+
+```text
+sage -t passed: 8503 passed, 0 failed, 1531 skipped
+```
+
+That run records 10,034 block rows across the current 87-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/permutation_cython.pyx` to the previous clean
+browser-profile baseline. The focused rerun records
+`permutation_cython.pyx: 39 passed, 0 failed, 0 skipped`, and the full corpus
+database is `/tmp/sagelite-corpus-permutation-cython.sqlite3`. The saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `cb267b4e95d5b23a3610edc72d69624d6e1053ea`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
+runner version 28, and about 627 seconds of elapsed time. This pass also
+corrects the previous set-from-iterator corpus count to the measured checked
+corpus size.
+
+The same sampling pass kept `sage/sets/disjoint_union_enumerated_sets.py` out
+because it still has a broad failure cluster (`24 passed, 35 failed,
+70 skipped`), and kept `sage/combinat/binary_recurrence_sequences.py` out
+because its remaining recurrence examples need separate semantic triage
+(`90 passed, 7 failed, 10 skipped`). The low-content files
+`sage/combinat/algebraic_combinatorics.py`, `sage/combinat/counting.py`,
+`sage/combinat/enumerated_sets.py`, `sage/combinat/family.py`,
+`sage/combinat/positive_integer_semigroup_test.py`, and
+`sage/combinat/ribbon.py` currently contribute no extracted doctest blocks
+under this runner. The compact probes for `sage/combinat/kazhdan_lusztig.py`,
+`sage/combinat/nu_tamari_lattice.py`, `sage/combinat/sine_gordon.py`,
+`sage/combinat/shard_order.py`, `sage/combinat/lr_tableau.py`,
+`sage/combinat/six_vertex_model.py`, and `sage/sets/finite_set_map_cy.pyx`
+still fail and need separate dependency or semantic classification before
+they belong in the quiet corpus.
 
 ## Phase 5: Subprocess Strategy
 
