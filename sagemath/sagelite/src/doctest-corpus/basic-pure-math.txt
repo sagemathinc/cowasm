@@ -82,6 +82,7 @@ src/sage/combinat/subword.py
 src/sage/combinat/tools.py
 src/sage/combinat/tuple.py
 src/sage/combinat/fast_vector_partitions.pyx
+src/sage/combinat/multiset_partition_into_sets_ordered.py
 src/sage/combinat/parking_functions.py
 src/sage/combinat/partitions.pyx
 src/sage/combinat/partition_tuple.py

@@ -3613,6 +3613,27 @@ latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 35,
 and about 937 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 ordered multiset
+partition corpus-growth pass:
+
+```text
+sage -t passed: 15821 passed, 0 failed, 3025 skipped
+```
+
+That run records 18,846 block rows in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, adding
+`sage/combinat/multiset_partition_into_sets_ordered.py` to the quiet
+browser-profile dashboard. The focused rerun records
+`multiset_partition_into_sets_ordered.py: 504 passed, 0 failed, 67 skipped`.
+
+The added WASI source patch classifies four constraints-dictionary doctests as
+deferred `# known bug` skips because the runtime preserves a different keyword
+insertion order than the historical expected output. The saved block- and
+file-failure cluster queries are empty. The latest run metadata records CoWasm
+commit `d65ade06a1878809f57c7573d062d4d978a3b0c8`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 35,
+and about 951 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -3420,6 +3420,21 @@ diff -urN a/src/sage/combinat/regular_sequence_bounded.py b/src/sage/combinat/re
 @@ -509 +509 @@
 -        sage: regular_sequence_is_bounded(S)
 +        sage: regular_sequence_is_bounded(S)                                           # needs sage.libs.pari
+diff -urN a/src/sage/combinat/multiset_partition_into_sets_ordered.py b/src/sage/combinat/multiset_partition_into_sets_ordered.py
+--- a/src/sage/combinat/multiset_partition_into_sets_ordered.py
++++ b/src/sage/combinat/multiset_partition_into_sets_ordered.py
+@@ -1492 +1492 @@
+-            sage: OrderedMultisetPartitionsIntoSets(**c).constraints
++            sage: OrderedMultisetPartitionsIntoSets(**c).constraints                # known bug
+@@ -1494 +1494 @@
+-            sage: OrderedMultisetPartitionsIntoSets(17, **c).constraints
++            sage: OrderedMultisetPartitionsIntoSets(17, **c).constraints            # known bug
+@@ -1496 +1496 @@
+-            sage: OrderedMultisetPartitionsIntoSets(17, **c).full_constraints
++            sage: OrderedMultisetPartitionsIntoSets(17, **c).full_constraints       # known bug
+@@ -1500 +1500 @@
+-            sage: OrderedMultisetPartitionsIntoSets(**c).full_constraints
++            sage: OrderedMultisetPartitionsIntoSets(**c).full_constraints           # known bug
 diff -urN a/src/sage/combinat/set_partition.py b/src/sage/combinat/set_partition.py
 --- a/src/sage/combinat/set_partition.py
 +++ b/src/sage/combinat/set_partition.py
