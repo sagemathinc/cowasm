@@ -54,6 +54,7 @@ src/sage/combinat/regular_sequence_bounded.py
 src/sage/combinat/gray_codes.py
 src/sage/combinat/hall_polynomial.py
 src/sage/combinat/hillman_grassl.py
+src/sage/combinat/integer_lists/nn.py
 src/sage/combinat/integer_matrices.py
 src/sage/combinat/integer_vector.py
 src/sage/combinat/integer_vector_weighted.py
@@ -96,6 +97,7 @@ src/sage/combinat/tableau_residues.py
 src/sage/combinat/tableau_tuple.py
 src/sage/combinat/triangles_FHM.py
 src/sage/combinat/vector_partition.py
+src/sage/combinat/words/word_options.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
 src/sage/sets/finite_set_map_cy.pyx

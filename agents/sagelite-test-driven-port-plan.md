@@ -3417,6 +3417,34 @@ records CoWasm commit `15dccc2f61359fd966d1f52509b05003beb13ef3`, Sagelite
 package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
 runner version 35, and about 851 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 integer-list and word
+options corpus-growth pass:
+
+```text
+sage -t passed: 14059 passed, 0 failed, 2858 skipped
+```
+
+That run records 16,917 block rows across the current 118-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, adding
+`sage/combinat/integer_lists/nn.py` and
+`sage/combinat/words/word_options.py` to the quiet browser-profile
+dashboard. Focused reruns record:
+
+```text
+integer_lists/nn.py: 5 passed, 0 failed, 0 skipped
+word_options.py: 8 passed, 0 failed, 0 skipped
+```
+
+The saved block- and file-failure cluster queries are empty. The same sampling
+pass kept `sage/combinat/q_analogues.py` and
+`sage/combinat/q_bernoulli.pyx` out of the quiet corpus because they still
+reach runtime memory traps in polynomial/NTL-backed paths rather than simple
+startup-scope gaps. The latest run metadata records CoWasm commit
+`bbd49a08d8c72fb67674d3a91913d3a50c20876a`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 35,
+and about 867 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
