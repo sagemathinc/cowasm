@@ -800,6 +800,7 @@ from sage.combinat.derangements import Derangements
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.ordered_tree import OrderedTree
 from sage.combinat.partition import Partition, Partitions
+from sage.combinat.partition_tuple import PartitionTuples
 from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
 from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.set_partition import SetPartitions
@@ -813,6 +814,7 @@ p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
 assert p.size() == 7
 assert Partitions(5).cardinality() == 7
+assert PartitionTuples()([[2, 1], [1]]).size() == 4
 assert Partitions(5).list() == [
     Partition([5]),
     Partition([4, 1]),

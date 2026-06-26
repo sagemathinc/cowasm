@@ -3010,6 +3010,35 @@ non-skipped signal. Noisy candidates still needing separate triage include
 `sage/sets/set.py`, `sage/arith/functions.pyx`, `sage/arith/misc.py`, and
 `sage/rings/derivation.py`.
 
+Latest checked local corpus run after the 2026-06-26 tableau-tuple
+corpus-growth pass:
+
+```text
+sage -t passed: 9949 passed, 0 failed, 2195 skipped
+```
+
+That run records 12,144 block rows across the current 103-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/tableau_tuple.py` to the previous clean browser-profile
+baseline. The focused rerun records
+`tableau_tuple.py: 609 passed, 0 failed, 105 skipped`.
+
+The pass extends the focused doctest namespace with the lightweight
+`PartitionTuples` constructor, matching the upstream Sage startup assumption
+used by row-standard and standard tableau-tuple factory doctests. The WASI
+`sage.all` patch exposes the same constructor for startup parity, and the
+packaged standalone combinatorics smoke covers the `PartitionTuples` surface.
+The full corpus database is `/tmp/sagelite-corpus-after-tableau-tuple.sqlite3`;
+the saved block- and file-failure cluster queries are empty. The latest run
+metadata records CoWasm commit `6cf160a417e592ec6a670b7a01c835aa2309eb1b`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, runner version 30, and about 679 seconds of elapsed time.
+
+The same sampling pass kept `sage/combinat/partition_tuple.py` out because its
+remaining failure is list-display formatting drift in `PartitionTuple.block`,
+and kept `sage/combinat/skew_tableau.py` out because it still needs a focused
+`SemistandardTableaux` startup namespace or scope-classification pass.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

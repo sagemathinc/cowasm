@@ -1073,6 +1073,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.combinat.combination import Combinations
 +    from sage.combinat.composition import Composition, Compositions
 +    from sage.combinat.tableau import StandardTableau
++    from sage.combinat.partition_tuple import PartitionTuples
 +    from sage.combinat.tableau_tuple import StandardTableauTuple, StandardTableauTuples, TableauTuples
 +    from sage.combinat.words.morphism import WordMorphism
 +    from sage.combinat.words.words import Words
