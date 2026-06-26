@@ -1078,6 +1078,20 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          Traceback (most recent call last):
          ...
          ValueError: m has to be positive
+--- a/src/sage/combinat/words/lyndon_word.py
++++ b/src/sage/combinat/words/lyndon_word.py
+@@ -488,9 +488,9 @@
+         [1, [1, 2]]
+         sage: SBLW33.last()
+         [[2, 3], 3]
+-        sage: SBLW33.cardinality()
++        sage: SBLW33.cardinality()                                                     # needs sage.libs.pari
+         8
+-        sage: SBLW33.random_element() in SBLW33
++        sage: SBLW33.random_element() in SBLW33                                        # needs sage.libs.pari
+         True
+     """
+     return StandardBracketedLyndonWords_nk(n, k)
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
 @@ -253,74 +253,100 @@

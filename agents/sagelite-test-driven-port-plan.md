@@ -3515,6 +3515,30 @@ empty. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 35,
 and about 896 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 Lyndon and morphic word
+corpus-growth pass:
+
+```text
+sage -t passed: 14588 passed, 0 failed, 2944 skipped
+```
+
+That run records 17,532 block rows across the current 125-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-word-morphic-lyndon.sqlite3`, adding
+`sage/combinat/words/lyndon_word.py` and
+`sage/combinat/words/morphic.py` to the quiet browser-profile dashboard.
+Focused reruns record `lyndon_word.py: 85 passed, 0 failed, 10 skipped` and
+`morphic.py: 61 passed, 0 failed, 18 skipped`.
+
+The added WASI source patch classifies the two standard-bracketed Lyndon word
+cardinality/random-element examples as `# needs sage.libs.pari`, because those
+paths currently compute `moebius()` through the focused CoWasm `cypari2`
+object-model boundary. The saved block- and file-failure cluster queries are
+empty. The latest run metadata records CoWasm commit
+`0707b568ee853ead187e46a7d990c5f8862bf766`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 35,
+and about 913 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
