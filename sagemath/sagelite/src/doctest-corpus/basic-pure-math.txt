@@ -65,6 +65,7 @@ src/sage/combinat/perfect_matching.py
 src/sage/combinat/permutation_cython.pyx
 src/sage/combinat/non_decreasing_parking_function.py
 src/sage/combinat/set_partition_iterator.pyx
+src/sage/combinat/set_partition_ordered.py
 src/sage/combinat/shuffle.py
 src/sage/combinat/subword.py
 src/sage/combinat/tools.py

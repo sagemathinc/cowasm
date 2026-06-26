@@ -3175,6 +3175,29 @@ all-skipped dependency-boundary files such as
 combinatorics modules out because they add no non-skipped browser-profile
 signal yet.
 
+Latest checked local corpus run after the 2026-06-26 ordered set-partition
+corpus-growth pass:
+
+```text
+sage -t passed: 11945 passed, 0 failed, 2365 skipped
+```
+
+That run records 14,310 block rows across the current 105-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/set_partition_ordered.py` to the quiet browser-profile
+dashboard. The focused rerun records
+`set_partition_ordered.py: 242 passed, 0 failed, 1 skipped`.
+
+The pass classifies the unordered string `frozenset` display example for
+`x.base_set()` as `# random`, because the full corpus run exposed runtime hash
+order drift such as `{'b', 'c', 'a', 'd', 'e'}` versus Sage's historical
+expected order. The full corpus database is
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`; the saved block-
+and file-failure cluster queries are empty. The latest run metadata records
+CoWasm commit `9a6f924e78fb36ed27949f6dc8ee62781bee1462`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
+version 31, and about 780 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

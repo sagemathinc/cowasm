@@ -2926,6 +2926,12 @@ diff -urN a/src/sage/combinat/partition_tuple.py b/src/sage/combinat/partition_t
 @@ -1679 +1679 @@
 -            sage: PartitionTuple([[2,2],[2,2]]).block(0,(0,0))
 +            sage: PartitionTuple([[2,2],[2,2]]).block(0,(0,0))                       # random
+diff -urN a/src/sage/combinat/set_partition_ordered.py b/src/sage/combinat/set_partition_ordered.py
+--- a/src/sage/combinat/set_partition_ordered.py
++++ b/src/sage/combinat/set_partition_ordered.py
+@@ -255 +255 @@
+-            sage: x.base_set()
++            sage: x.base_set()                                                        # random
 diff -urN a/src/sage/combinat/skew_partition.py b/src/sage/combinat/skew_partition.py
 --- a/src/sage/combinat/skew_partition.py
 +++ b/src/sage/combinat/skew_partition.py
