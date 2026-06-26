@@ -3539,6 +3539,32 @@ empty. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 35,
 and about 913 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 suffix-tree
+corpus-growth pass:
+
+```text
+sage -t passed: 14876 passed, 0 failed, 2957 skipped
+```
+
+That run records 17,833 block rows across the current 126-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-suffix-trees.sqlite3`, adding
+`sage/combinat/words/suffix_trees.py` to the quiet browser-profile dashboard.
+The focused rerun records `suffix_trees.py: 288 passed, 0 failed, 13 skipped`.
+
+The added WASI source patch marks
+`DecoratedSuffixTree._partial_labeling()` as `# random`, because the runtime
+returns the same dictionary of edge labels with insertion-order display drift.
+The saved block- and file-failure cluster queries are empty. The latest run
+metadata records CoWasm commit `63d4e549222c7c07c15532ab6cd2458332674a70`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, runner version 35, and about 917 seconds of elapsed time.
+
+The same sampling pass kept adjacent word modules out of the quiet corpus:
+`word_datatypes.pyx`, `word_char.pyx`, and `morphism.py` had real block
+failures, while `paths.py` contributed only skipped rows under the current
+browser-profile tags.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
