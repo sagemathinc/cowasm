@@ -806,7 +806,7 @@ from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.set_partition import SetPartitions
 from sage.combinat.subword import Subwords
 from sage.combinat.subset import Subsets
-from sage.combinat.tableau import StandardTableaux, Tableau
+from sage.combinat.tableau import SemistandardTableaux, StandardTableaux, Tableau
 from sage.combinat.tuple import Tuples, UnorderedTuples
 from sage.combinat.vector_partition import VectorPartitions
 from sage.sets.finite_set_maps import FiniteSetMaps
@@ -815,6 +815,7 @@ assert p.conjugate() == Partition([3, 2, 1, 1])
 assert p.size() == 7
 assert Partitions(5).cardinality() == 7
 assert PartitionTuples()([[2, 1], [1]]).size() == 4
+assert SemistandardTableaux(shape=[3, 1, 1]).cardinality() == 126
 assert Partitions(5).list() == [
     Partition([5]),
     Partition([4, 1]),
@@ -1555,6 +1556,7 @@ electron_required_paths=(
   "site-packages/sage/combinat/set_partition.py"
   "site-packages/sage/combinat/set_partition_iterator.cpython-314-wasm32-wasi.so"
   "site-packages/sage/combinat/set_partition_ordered.py"
+  "site-packages/sage/combinat/skew_tableau.py"
   "site-packages/sage/combinat/subword.py"
   "site-packages/sage/combinat/subset.py"
   "site-packages/sage/combinat/tableau.py"

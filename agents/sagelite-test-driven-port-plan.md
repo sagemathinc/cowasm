@@ -3053,10 +3053,30 @@ metadata records CoWasm commit `6cf160a417e592ec6a670b7a01c835aa2309eb1b`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, runner version 30, and about 679 seconds of elapsed time.
 
-The same sampling pass kept `sage/combinat/partition_tuple.py` out because its
-remaining failure is list-display formatting drift in `PartitionTuple.block`,
-and kept `sage/combinat/skew_tableau.py` out because it still needs a focused
-`SemistandardTableaux` startup namespace or scope-classification pass.
+Latest checked local corpus run after the 2026-06-26 partition-tuple and
+skew-tableau corpus-growth pass:
+
+```text
+sage -t passed: 10696 passed, 0 failed, 2273 skipped
+```
+
+That run records 12,969 block rows across the current 100-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/partition_tuple.py` and `sage/combinat/skew_tableau.py` to the
+previous clean browser-profile baseline. Focused reruns record
+`partition_tuple.py: 361 passed, 0 failed, 41 skipped` and
+`skew_tableau.py: 386 passed, 0 failed, 37 skipped`.
+
+The pass classifies the `PartitionTuple.block` dictionary-display example as
+`# random`, because the output is semantically the same residue-multiplicity
+dictionary with runtime insertion-order drift. It also seeds and exposes the
+lightweight `SemistandardTableaux` constructor, matching the upstream Sage
+startup assumption used by `SkewTableau.weight` doctests. The full corpus
+database is `/tmp/sagelite-corpus-after-partition-skew.sqlite3`; the saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `59328a74ab827c76bb66703c480d7b9ea0bec286`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
+runner version 31, and about 713 seconds of elapsed time.
 
 ## Phase 5: Subprocess Strategy
 
