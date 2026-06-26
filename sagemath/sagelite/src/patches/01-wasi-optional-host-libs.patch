@@ -2989,3 +2989,201 @@ diff -urN a/src/sage/combinat/baxter_permutations.py b/src/sage/combinat/baxter_
 +        from sage.combinat.posets.lattices import LatticePoset
          return LatticePoset([list(self), lambda a, b: a.weak_le(b)],
                              check=False)
+ 
+diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
+--- a/src/sage/combinat/binary_tree.py
++++ b/src/sage/combinat/binary_tree.py
+@@ -712,36 +712,36 @@
+         EXAMPLES::
+ 
+             sage: t1 = BinaryTree([[], None])
+-            sage: t1.graph()
++            sage: t1.graph()                                                           # needs sage.graphs
+             Digraph on 5 vertices
+-            sage: t1.graph(with_leaves=False)
++            sage: t1.graph(with_leaves=False)                                          # needs sage.graphs
+             Digraph on 2 vertices
+ 
+             sage: t1 = BinaryTree([[], [[], None]])
+-            sage: t1.graph()
++            sage: t1.graph()                                                           # needs sage.graphs
+             Digraph on 9 vertices
+-            sage: t1.graph().edges(sort=True)
++            sage: t1.graph().edges(sort=True)                                          # needs sage.graphs
+             [(0, 1, None), (0, 4, None), (1, 2, None), (1, 3, None), (4, 5, None), (4, 8, None), (5, 6, None), (5, 7, None)]
+-            sage: t1.graph(with_leaves=False)
++            sage: t1.graph(with_leaves=False)                                          # needs sage.graphs
+             Digraph on 4 vertices
+-            sage: t1.graph(with_leaves=False).edges(sort=True)
++            sage: t1.graph(with_leaves=False).edges(sort=True)                         # needs sage.graphs
+             [(0, 1, None), (0, 2, None), (2, 3, None)]
+ 
+             sage: t1 = BinaryTree()
+-            sage: t1.graph()
++            sage: t1.graph()                                                           # needs sage.graphs
+             Digraph on 1 vertex
+-            sage: t1.graph(with_leaves=False)
++            sage: t1.graph(with_leaves=False)                                          # needs sage.graphs
+             Digraph on 0 vertices
+ 
+-            sage: BinaryTree([]).graph()
++            sage: BinaryTree([]).graph()                                               # needs sage.graphs
+             Digraph on 3 vertices
+-            sage: BinaryTree([]).graph(with_leaves=False)
++            sage: BinaryTree([]).graph(with_leaves=False)                              # needs sage.graphs
+             Digraph on 1 vertex
+ 
+             sage: t1 = BinaryTree([[], [[], []]])
+-            sage: t1.graph(with_leaves=False)
++            sage: t1.graph(with_leaves=False)                                          # needs sage.graphs
+             Digraph on 5 vertices
+-            sage: t1.graph(with_leaves=False).edges(sort=True)
++            sage: t1.graph(with_leaves=False).edges(sort=True)                         # needs sage.graphs
+             [(0, 1, None), (0, 2, None), (2, 3, None), (2, 4, None)]
+         """
+         from sage.graphs.digraph import DiGraph
+@@ -1026,22 +1026,22 @@
+         EXAMPLES::
+ 
+             sage: bt = BinaryTree([[None, [[], None]], None])
+-            sage: ip = bt.tamari_interval(BinaryTree([None, [[None, []], None]])); ip
++            sage: ip = bt.tamari_interval(BinaryTree([None, [[None, []], None]])); ip  # needs sage.graphs
+             The Tamari interval of size 4 induced by relations [(2, 4), (3, 4), (3, 1), (2, 1)]
+-            sage: ip.lower_binary_tree()
++            sage: ip.lower_binary_tree()                                               # needs sage.graphs
+             [[., [[., .], .]], .]
+-            sage: ip.upper_binary_tree()
++            sage: ip.upper_binary_tree()                                               # needs sage.graphs
+             [., [[., [., .]], .]]
+-            sage: ip.interval_cardinality()
++            sage: ip.interval_cardinality()                                            # needs sage.graphs
+             4
+-            sage: ip.number_of_tamari_inversions()
++            sage: ip.number_of_tamari_inversions()                                     # needs sage.graphs
+             2
+-            sage: list(ip.binary_trees())
++            sage: list(ip.binary_trees())                                              # needs sage.graphs
+             [[., [[., [., .]], .]],
+              [[., [., [., .]]], .],
+              [., [[[., .], .], .]],
+              [[., [[., .], .]], .]]
+-            sage: bt.tamari_interval(BinaryTree([[None,[]],[]]))
++            sage: bt.tamari_interval(BinaryTree([[None,[]],[]]))                       # needs sage.graphs
+             Traceback (most recent call last):
+             ...
+             ValueError: the two binary trees are not comparable on the Tamari lattice
+@@ -1051,19 +1051,19 @@
+         Setting ``other`` equal to ``bt`` gives an interval consisting of
+         just one element::
+ 
+-            sage: ip = bt.tamari_interval(bt)
+-            sage: ip
++            sage: ip = bt.tamari_interval(bt)                                          # needs sage.graphs
++            sage: ip                                                                   # needs sage.graphs
+             The Tamari interval of size 4 induced by relations [(1, 4), (2, 3), (3, 4), (3, 1), (2, 1)]
+-            sage: list(ip.binary_trees())
++            sage: list(ip.binary_trees())                                              # needs sage.graphs
+             [[[., [[., .], .]], .]]
+ 
+         Empty trees work well::
+ 
+             sage: bt = BinaryTree()
+-            sage: ip = bt.tamari_interval(bt)
+-            sage: ip
++            sage: ip = bt.tamari_interval(bt)                                          # needs sage.graphs
++            sage: ip                                                                   # needs sage.graphs
+             The Tamari interval of size 0 induced by relations []
+-            sage: list(ip.binary_trees())
++            sage: list(ip.binary_trees())                                              # needs sage.graphs
+             [.]
+         """
+         from sage.combinat.interval_posets import TamariIntervalPosets
+@@ -1561,15 +1561,15 @@
+         EXAMPLES::
+ 
+             sage: bt = BinaryTree([])
+-            sage: bt.to_undirected_graph()
++            sage: bt.to_undirected_graph()                                             # needs sage.graphs
+             Graph on 1 vertex
+-            sage: bt.to_undirected_graph(with_leaves=True)
++            sage: bt.to_undirected_graph(with_leaves=True)                             # needs sage.graphs
+             Graph on 3 vertices
+ 
+             sage: bt = BinaryTree()
+-            sage: bt.to_undirected_graph()
++            sage: bt.to_undirected_graph()                                             # needs sage.graphs
+             Graph on 0 vertices
+-            sage: bt.to_undirected_graph(with_leaves=True)
++            sage: bt.to_undirected_graph(with_leaves=True)                             # needs sage.graphs
+             Graph on 1 vertex
+ 
+         If the tree is labelled, we use its labelling to label the graph.
+@@ -1579,9 +1579,9 @@
+         EXAMPLES::
+ 
+             sage: bt = BinaryTree([[],[None,[]]])
+-            sage: bt.canonical_labelling().to_undirected_graph() == bt.to_undirected_graph()
++            sage: bt.canonical_labelling().to_undirected_graph() == bt.to_undirected_graph()  # needs sage.graphs
+             False
+-            sage: BinaryTree([[],[]]).to_undirected_graph() == BinaryTree([[[],None],None]).to_undirected_graph()
++            sage: BinaryTree([[],[]]).to_undirected_graph() == BinaryTree([[[],None],None]).to_undirected_graph()  # needs sage.graphs
+             True
+         """
+         if (not with_leaves) and (not self):
+@@ -1690,20 +1690,20 @@
+         EXAMPLES::
+ 
+             sage: bt = BinaryTree([])
+-            sage: bt.to_poset()
++            sage: bt.to_poset()                                                        # needs sage.graphs
+             Finite poset containing 1 elements
+-            sage: bt.to_poset(with_leaves=True)
++            sage: bt.to_poset(with_leaves=True)                                        # needs sage.graphs
+             Finite poset containing 3 elements
+-            sage: P1 = bt.to_poset(with_leaves=True)
+-            sage: len(P1.maximal_elements())
++            sage: P1 = bt.to_poset(with_leaves=True)                                   # needs sage.graphs
++            sage: len(P1.maximal_elements())                                           # needs sage.graphs
+             1
+-            sage: len(P1.minimal_elements())
++            sage: len(P1.minimal_elements())                                           # needs sage.graphs
+             2
+             sage: bt = BinaryTree([])
+-            sage: P2 = bt.to_poset(with_leaves=True,root_to_leaf=True)
+-            sage: len(P2.maximal_elements())
++            sage: P2 = bt.to_poset(with_leaves=True,root_to_leaf=True)                 # needs sage.graphs
++            sage: len(P2.maximal_elements())                                           # needs sage.graphs
+             2
+-            sage: len(P2.minimal_elements())
++            sage: len(P2.minimal_elements())                                           # needs sage.graphs
+             1
+ 
+         If the tree is labelled, we use its labelling to label the poset.
+@@ -1712,15 +1712,15 @@
+             sage: bt = BinaryTree([[],[None,[]]]).canonical_labelling()
+             sage: bt
+             2[1[., .], 3[., 4[., .]]]
+-            sage: bt.to_poset().cover_relations()
++            sage: bt.to_poset().cover_relations()                                      # needs sage.graphs
+             [[4, 3], [3, 2], [1, 2]]
+ 
+         Let us check that the empty binary tree is correctly handled::
+ 
+             sage: bt = BinaryTree()
+-            sage: bt.to_poset()
++            sage: bt.to_poset()                                                        # needs sage.graphs
+             Finite poset containing 0 elements
+-            sage: bt.to_poset(with_leaves=True)
++            sage: bt.to_poset(with_leaves=True)                                        # needs sage.graphs
+             Finite poset containing 1 elements
+         """
+         if (not with_leaves) and (not self):
+@@ -3364,7 +3364,7 @@
+             True
+ 
+             sage: x = g.over(l).over(l).over(g).over(g)
+-            sage: ascii_art(x)
++            sage: ascii_art(x)                                                         # known bug
+              o
+               \
+               _o_

@@ -651,6 +651,26 @@ CoWasm commit `0a75b95c9517de7ca96c1b725e1fcdb3d6a4e9e6`, Sagelite package
 commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
 version 31, and about 733 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 binary-tree
+corpus-growth pass:
+
+```text
+sage -t passed: 12569 passed, 0 failed, 2484 skipped
+```
+
+That run records the current 106-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-binary-tree.sqlite3`, with no block-level failures
+and no file-level errors. It adds `sage/combinat/binary_tree.py` to the quiet
+browser-profile dashboard; the focused rerun records
+`binary_tree.py: 624 passed, 0 failed, 119 skipped`. The added WASI source
+patch classifies graph, poset, and Tamari-interval examples as
+`# needs sage.graphs`, matching the current stripped graph backend boundary,
+and defers one ASCII-art layout drift as `# known bug`. The latest run metadata
+records CoWasm commit `1f64f3c6c8483c39fff60555347b5f99665d6f72`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
+runner version 31, and about 776 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

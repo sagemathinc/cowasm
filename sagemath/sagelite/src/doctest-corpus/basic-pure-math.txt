@@ -54,6 +54,7 @@ src/sage/combinat/cartesian_product.py
 src/sage/combinat/backtrack.py
 src/sage/combinat/baxter_permutations.py
 src/sage/combinat/binary_recurrence_sequences.py
+src/sage/combinat/binary_tree.py
 src/sage/combinat/composition.py
 src/sage/combinat/composition_tableau.py
 src/sage/combinat/subset.py
