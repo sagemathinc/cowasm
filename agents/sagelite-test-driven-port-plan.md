@@ -610,6 +610,25 @@ parity. The latest run metadata records CoWasm commit
 and writes the checked database to
 `/tmp/sagelite-corpus-after-tableau-residues.sqlite3`.
 
+Latest checked local corpus run after repairing the Sagelite WASI source patch
+header for the expanded `sage.all` startup hunk:
+
+```text
+sage -t passed: 9949 passed, 0 failed, 2195 skipped
+```
+
+That run records the current 103-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, with no
+block-level failures and no file-level errors. The fix corrects the unified
+diff new-line count for the `src/sage/all.py` WASI startup namespace hunk in
+`sagemath/sagelite/src/patches/01-wasi-optional-host-libs.patch`, so
+`make -C sagemath/sagelite test-sage-doctest-corpus` can rebuild a fresh
+patched source copy before running the dashboard. The latest run metadata
+records CoWasm commit `46e5460ef81dd26f67e8ca98c798abc144c5d038`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, runner version 30, and about 680 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
