@@ -784,7 +784,7 @@ def _cowasm_exception_detail(exc):
 
 
 def __cowasm_resolve_core_lazy_namespace(namespace):
-    for name in ("RIF", "RDF"):
+    for name in ("RIF", "RDF", "CDF"):
         value = namespace.get(name)
         get_object = getattr(value, "_get_object", None)
         if get_object is None:

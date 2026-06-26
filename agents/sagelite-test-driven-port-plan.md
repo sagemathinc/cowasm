@@ -3344,6 +3344,32 @@ CoWasm commit `99a9279e0606d9e7d6c90467fbd27d1e5c443859`, Sagelite package
 commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
 version 35, and about 814 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 complex-double
+corpus-growth pass:
+
+```text
+sage -t passed: 14003 passed, 0 failed, 2826 skipped
+```
+
+That run records 16,829 block rows across the current 112-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/rings/complex_double.pyx` to the quiet browser-profile dashboard. The
+focused rerun records
+`complex_double.pyx: 263 passed, 0 failed, 81 skipped`.
+
+The doctest runner now resolves `CDF` in the common startup namespace, matching
+the existing `RDF`/`RIF` lazy-import handling so complex-double identity and
+pickling doctests see the concrete field instance. The added WASI source patch
+classifies PARI-backed complex-double conversion, AGM, and gamma examples as
+`# needs sage.libs.pari`, and widens a small set of GSL/libm last-bit complex
+floating tolerances without weakening the checked values beyond `1e-14`.
+The full corpus database is
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`; the saved block-
+and file-failure cluster queries are empty. The latest run metadata records
+CoWasm commit `6c5a2ecb3218d6316dd1ff8e6d8949c24c7c461f`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
+version 35, and about 827 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

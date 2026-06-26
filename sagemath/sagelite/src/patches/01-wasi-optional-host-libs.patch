@@ -3426,3 +3426,51 @@ diff -urN a/src/sage/rings/real_double.pyx b/src/sage/rings/real_double.pyx
 @@ -1954 +1954 @@
 -            sage: r.algebraic_dependency(5)
 +            sage: r.algebraic_dependency(5)                                              # known bug
+diff -urN a/src/sage/rings/complex_double.pyx b/src/sage/rings/complex_double.pyx
+--- a/src/sage/rings/complex_double.pyx
++++ b/src/sage/rings/complex_double.pyx
+@@ -1107 +1107 @@
+-            sage: CDF(1,2).__pari__()
++            sage: CDF(1,2).__pari__()                                                   # needs sage.libs.pari
+@@ -1109 +1109 @@
+-            sage: pari(CDF(1,2))
++            sage: pari(CDF(1,2))                                                        # needs sage.libs.pari
+@@ -1111 +1111 @@
+-            sage: pari(CDF(2.0))
++            sage: pari(CDF(2.0))                                                        # needs sage.libs.pari
+@@ -1113 +1113 @@
+-            sage: pari(CDF(I))
++            sage: pari(CDF(I))                                                          # needs sage.libs.pari
+@@ -1287 +1287 @@
+-            sage: abs(CDF(-2,3))
++            sage: abs(CDF(-2,3))  # abs tol 1e-15
+@@ -1302 +1302 @@
+-            sage: CDF(2,3).abs()
++            sage: CDF(2,3).abs()  # abs tol 1e-15
+@@ -1394 +1394 @@
+-            sage: log(abs(CDF(1.1,0.1)))
++            sage: log(abs(CDF(1.1,0.1)))  # abs tol 1e-15
+@@ -1460 +1460 @@
+-            sage: a^(1/2)   # abs tol 1e-16
++            sage: a^(1/2)   # abs tol 1e-15
+@@ -1611 +1611 @@
+-            sage: c ^ (1/b)     # rel tol 2e-16
++            sage: c ^ (1/b)     # rel tol 1e-15
+@@ -1656 +1656 @@
+-            sage: (-2) ^ CDF(-0.5)  # abs tol 1e-16
++            sage: (-2) ^ CDF(-0.5)  # abs tol 1e-15
+@@ -2267 +2267 @@
+-            sage: a.agm(b, algorithm='principal')  # rel tol 2e-15
++            sage: a.agm(b, algorithm='principal')  # rel tol 1e-14
+@@ -2269 +2269 @@
+-            sage: a.agm(b, algorithm='pari')
++            sage: a.agm(b, algorithm='pari')                                             # needs sage.libs.pari
+@@ -2350 +2350 @@
+-            sage: CDF(5,0).gamma()
++            sage: CDF(5,0).gamma()                                                      # needs sage.libs.pari
+@@ -2352 +2352 @@
+-            sage: CDF(1,1).gamma()
++            sage: CDF(1,1).gamma()                                                      # needs sage.libs.pari
+@@ -2356 +2356 @@
+-            sage: CDF(-1,0).gamma()
++            sage: CDF(-1,0).gamma()                                                     # needs sage.libs.pari
