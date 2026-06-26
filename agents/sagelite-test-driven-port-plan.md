@@ -2843,6 +2843,26 @@ records CoWasm commit `e06824b3c334c09927ddd0efd371fd1b3c94f9fe`, Sagelite
 package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
 runner version 28, and about 664 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 plane-partition
+corpus-growth pass:
+
+```text
+sage -t passed: 9149 passed, 0 failed, 1608 skipped
+```
+
+That run records 10,757 block rows across the current 92-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/plane_partition.py` to the previous clean browser-profile
+baseline. The focused rerun records
+`plane_partition.py: 303 passed, 0 failed, 56 skipped`; the added WASI patch
+classifies the file's Symmetrica-backed semistandard-tableau iterator and
+graph/poset-backed symmetry iterators as explicit optional backend coverage.
+The full corpus database is `/tmp/sagelite-corpus-plane-partition.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The latest run
+metadata records CoWasm commit `2dce2dceabad7d2f672097678f2cbc95d2c61024`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, runner version 28, and about 664 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

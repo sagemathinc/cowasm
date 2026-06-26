@@ -2859,3 +2859,18 @@ diff -urN a/src/sage/combinat/binary_recurrence_sequences.py b/src/sage/combinat
 @@ -428 +428 @@
 -            sage: T.period(4,eventual=True)
 +            sage: T.period(4,eventual=True)                                          # needs sage.matrix.matrix_mod2_dense
+diff -urN a/src/sage/combinat/plane_partition.py b/src/sage/combinat/plane_partition.py
+--- a/src/sage/combinat/plane_partition.py
++++ b/src/sage/combinat/plane_partition.py
+@@ -1651 +1651 @@
+-            sage: all(len(set(PP)) == PP.cardinality()
++            sage: all(len(set(PP)) == PP.cardinality()                              # needs sage.libs.symmetrica
+@@ -2409 +2409 @@
+-            sage: all(len(set(PP)) == PP.cardinality() for n in range(5) if (PP := PlanePartitions([n]*3, symmetry='TSPP')))
++            sage: all(len(set(PP)) == PP.cardinality() for n in range(5) if (PP := PlanePartitions([n]*3, symmetry='TSPP')))  # needs sage.graphs
+@@ -2861 +2861 @@
+-            sage: all(len(set(PP)) == PP.cardinality()
++            sage: all(len(set(PP)) == PP.cardinality()                              # needs sage.graphs
+@@ -2962 +2962 @@
+-            sage: all(len(set(PP)) == PP.cardinality()
++            sage: all(len(set(PP)) == PP.cardinality()                              # needs sage.graphs
