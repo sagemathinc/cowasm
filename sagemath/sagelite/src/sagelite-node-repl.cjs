@@ -802,6 +802,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.composition", ("Composition",)),
         ("sage.combinat.integer_vector", ("IntegerVectors",)),
         ("sage.combinat.integer_lists", ("IntegerListsLex",)),
+        ("sage.combinat.non_decreasing_parking_function", ("NonDecreasingParkingFunction", "NonDecreasingParkingFunctions")),
         ("sage.combinat.ordered_tree", ("OrderedTree",)),
         ("sage.combinat.partition", ("Partition", "Partitions")),
         ("sage.combinat.permutation", ("Permutation", "Permutations")),

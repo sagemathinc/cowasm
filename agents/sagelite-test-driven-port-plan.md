@@ -629,6 +629,28 @@ records CoWasm commit `46e5460ef81dd26f67e8ca98c798abc144c5d038`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, runner version 30, and about 680 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 Dyck-word
+corpus-growth pass:
+
+```text
+sage -t passed: 11496 passed, 0 failed, 2359 skipped
+```
+
+That run records the current 102-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-dyck-word.sqlite3`, with no block-level failures
+and no file-level errors. It adds `sage/combinat/dyck_word.py` to the quiet
+browser-profile dashboard; the focused rerun records
+`dyck_word.py: 555 passed, 0 failed, 42 skipped`. The doctest runner now seeds
+the lightweight `NonDecreasingParkingFunction` and
+`NonDecreasingParkingFunctions` constructors in the common doctest namespace,
+and the WASI `sage.all` patch exposes the same constructors for startup
+parity. The added WASI source patch classifies the `latex_options()` dict-order
+display drift as a deferred `# known bug` skip. The latest run metadata records
+CoWasm commit `0a75b95c9517de7ca96c1b725e1fcdb3d6a4e9e6`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
+version 31, and about 733 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
