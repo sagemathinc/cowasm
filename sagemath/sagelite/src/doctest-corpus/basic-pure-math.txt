@@ -20,6 +20,7 @@ src/sage/rings/monomials.py
 src/sage/rings/big_oh.py
 src/sage/rings/numbers_abc.py
 src/sage/rings/infinity.py
+src/sage/rings/factorint.pyx
 src/sage/rings/power_series_mpoly.pyx
 src/sage/rings/padics/padic_relaxed_errors.pyx
 src/sage/rings/semirings/non_negative_integer_semiring.py

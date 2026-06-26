@@ -1047,6 +1047,37 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 @@ -7269 +7271 @@
 -            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')
 +            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')  # needs cysignals.alarm
+--- a/src/sage/rings/factorint.pyx
++++ b/src/sage/rings/factorint.pyx
+@@ -50,8 +50,8 @@
+-        sage: aurifeuillian(2, 2)
++        sage: aurifeuillian(2, 2)                                                       # needs sage.libs.pari
+         [5, 13]
+-        sage: aurifeuillian(2, 2^5)
++        sage: aurifeuillian(2, 2^5)                                                     # needs sage.libs.pari
+         [1985, 2113]
+-        sage: aurifeuillian(5, 3)
++        sage: aurifeuillian(5, 3)                                                       # needs sage.libs.pari
+         [1471, 2851]
+-        sage: aurifeuillian(15, 1)
++        sage: aurifeuillian(15, 1)                                                      # needs sage.libs.pari
+         [19231, 142111]
+@@ -59,12 +59,12 @@
+-        sage: aurifeuillian(12, 3)
++        sage: aurifeuillian(12, 3)                                                      # needs sage.libs.pari
+         Traceback (most recent call last):
+         ...
+         ValueError: n has to be square-free
+-        sage: aurifeuillian(1, 2)
++        sage: aurifeuillian(1, 2)                                                       # needs sage.libs.pari
+         Traceback (most recent call last):
+         ...
+         ValueError: n has to be greater than 1
+-        sage: aurifeuillian(2, 0)
++        sage: aurifeuillian(2, 0)                                                       # needs sage.libs.pari
+         Traceback (most recent call last):
+         ...
+         ValueError: m has to be positive
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
 @@ -253,74 +253,100 @@

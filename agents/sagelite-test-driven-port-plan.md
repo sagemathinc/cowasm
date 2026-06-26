@@ -3493,6 +3493,28 @@ metadata records CoWasm commit `d6c51da9e36a785b8ad0143aa836db9edd50fcfa`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, runner version 35, and about 892 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 factorization-helper
+corpus-growth pass:
+
+```text
+sage -t passed: 14442 passed, 0 failed, 2916 skipped
+```
+
+That run records 17,358 block rows across the current 123-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-factorint.sqlite3`, adding
+`sage/rings/factorint.pyx` to the quiet browser-profile dashboard. The
+focused rerun records `factorint.pyx: 17 passed, 0 failed, 9 skipped`.
+
+The added WASI source patch classifies the Aurifeuillian-factorization
+examples as `# needs sage.libs.pari`, because those paths currently call
+integer squarefreeness through PARI and reach the focused CoWasm `cypari2`
+object-model boundary. The saved block- and file-failure cluster queries are
+empty. The latest run metadata records CoWasm commit
+`848c39abf70ea35fc94ff121380f1261e81f58cf`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 35,
+and about 896 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
