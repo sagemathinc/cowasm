@@ -3565,6 +3565,30 @@ The same sampling pass kept adjacent word modules out of the quiet corpus:
 failures, while `paths.py` contributed only skipped rows under the current
 browser-profile tags.
 
+Latest checked local corpus run after the 2026-06-26 infinite-word datatype
+corpus-growth pass:
+
+```text
+sage -t passed: 15149 passed, 0 failed, 2957 skipped
+```
+
+That run records 18,106 block rows across the current 127-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, adding
+`sage/combinat/words/word_infinite_datatypes.py` to the quiet browser-profile
+dashboard. The focused rerun records
+`word_infinite_datatypes.py: 273 passed, 0 failed, 0 skipped`.
+
+The doctest runner now seeds Sage's public `words` word-generator catalog in
+the common startup namespace, matching the stripped WASI `sage.all` profile.
+This clears the module's only sampled failure cluster, where the
+`WordDatatype_callable_with_caching.flush()` examples used
+`words.ThueMorseWord()` before any local `words` binding existed. The saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `d6943eb246ffc950ef1d1f362aacf1e2ea79f4b5`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
+runner version 35, and about 919 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
