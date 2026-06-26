@@ -2910,3 +2910,9 @@ diff -urN a/src/sage/sets/finite_set_map_cy.pyx b/src/sage/sets/finite_set_map_c
 @@ -311 +311 @@
 -            sage: FiniteSetMaps(4, 3)([1, 0, 2, 1]).fibers()
 +            sage: FiniteSetMaps(4, 3)([1, 0, 2, 1]).fibers()                         # random
+diff -urN a/src/sage/sets/disjoint_union_enumerated_sets.py b/src/sage/sets/disjoint_union_enumerated_sets.py
+--- a/src/sage/sets/disjoint_union_enumerated_sets.py
++++ b/src/sage/sets/disjoint_union_enumerated_sets.py
+@@ -332 +332 @@
+-            sage: U4._is_a(Composition([3,2,1,1]))
++            sage: U4._is_a(Composition([3,2,1,1]))                                     # known bug

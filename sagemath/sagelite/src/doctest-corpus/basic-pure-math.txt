@@ -81,6 +81,7 @@ src/sage/sets/finite_set_maps.py
 src/sage/sets/finite_set_map_cy.pyx
 src/sage/sets/finite_enumerated_set.py
 src/sage/sets/disjoint_set.pyx
+src/sage/sets/disjoint_union_enumerated_sets.py
 src/sage/sets/family.pyx
 src/sage/sets/cartesian_product.py
 src/sage/sets/condition_set.py

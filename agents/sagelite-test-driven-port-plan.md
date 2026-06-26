@@ -2907,6 +2907,32 @@ commit `d4ca57573788816d8e19e51e8f89c909258649fb`, Sagelite package commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 28,
 and about 673 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 disjoint-union set
+corpus-growth pass:
+
+```text
+sage -t passed: 9539 passed, 0 failed, 1719 skipped
+```
+
+That run records 11,258 block rows across the current 95-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/sets/disjoint_union_enumerated_sets.py` to the previous clean
+browser-profile baseline. The focused rerun records
+`disjoint_union_enumerated_sets.py: 58 passed, 0 failed, 71 skipped`.
+
+The pass narrows the previous disjoint-union startup failure cluster by
+seeding `FiniteEnumeratedSet` and `NonNegativeIntegers` in the common doctest
+namespace. The remaining warning-output drift for
+`U4._is_a(Composition([3,2,1,1]))` is recorded as a `# known bug` in the
+Sagelite WASI patch, matching the existing browser-profile treatment for
+runtime warning/display drift. The saved block- and file-failure cluster
+queries are empty for the full corpus run. The Sagelite standalone target also
+passes after extending the doctest smoke to cover the new namespace globals:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

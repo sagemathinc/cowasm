@@ -812,7 +812,9 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.words.morphism", ("WordMorphism",)),
         ("sage.categories.homset", ("Hom",)),
         ("sage.categories.sets_cat", ("Sets",)),
+        ("sage.sets.finite_enumerated_set", ("FiniteEnumeratedSet",)),
         ("sage.sets.finite_set_maps", ("FiniteSetMaps",)),
+        ("sage.sets.non_negative_integers", ("NonNegativeIntegers",)),
         ("sage.sets.set", ("Set",)),
     )
     for module_name, names in imports:
