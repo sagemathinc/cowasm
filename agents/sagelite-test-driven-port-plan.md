@@ -755,6 +755,27 @@ records CoWasm commit `1bf48a050ad2fd1ebf6ccb9c17003d19a4e202ad`, Sagelite
 package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
 runner version 36, and about 993 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 q-analogues
+corpus-growth pass:
+
+```text
+sage -t passed: 19194 passed, 0 failed, 3331 skipped
+```
+
+That run records 22,525 block rows across the current 135-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-q-analogues.sqlite3`, adding
+`sage/combinat/q_analogues.py` to the quiet browser-profile dashboard. The
+focused rerun records `q_analogues.py: 110 passed, 0 failed, 25 skipped`.
+The added WASI source patch classifies the file's number-field, Symmetrica,
+Singular, symbolic, and PARI/cypari2-dependent doctests with explicit
+`# needs ...` tags, while deferring the finite-field q-binomial value drift
+and raw Python integer type drift as `# known bug`. The saved block- and
+file-failure cluster queries are empty. The latest run metadata records CoWasm
+commit `b95ded8d61aa1db4ea18c98d9678767f431708fa`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 37,
+and about 992 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

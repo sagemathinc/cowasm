@@ -3632,6 +3632,57 @@ diff -urN a/src/sage/rings/tests.py b/src/sage/rings/tests.py
 @@ -410 +410 @@
 -        sage: sage.rings.tests.check_random_arith(trials=10)
 +        sage: sage.rings.tests.check_random_arith(trials=10)                            # needs sage.rings.number_field
+diff -urN a/src/sage/combinat/q_analogues.py b/src/sage/combinat/q_analogues.py
+--- a/src/sage/combinat/q_analogues.py
++++ b/src/sage/combinat/q_analogues.py
+@@ -225 +225 @@
+-        sage: q_binomial(6, 3, t)
++        sage: q_binomial(6, 3, t)                                                      # known bug
+@@ -234,3 +234,3 @@
+-        sage: Sym = SymmetricFunctions(QQ)
+-        sage: s = Sym.schur()
+-        sage: q_binomial(4,1, s[2]+s[1])
++        sage: Sym = SymmetricFunctions(QQ)                                             # needs sage.libs.symmetrica
++        sage: s = Sym.schur()                                                          # needs sage.libs.symmetrica
++        sage: q_binomial(4,1, s[2]+s[1])                                               # needs sage.libs.symmetrica
+@@ -288 +288 @@
+-        sage: type(r)
++        sage: type(r)                                                                  # known bug
+@@ -301,2 +301,2 @@
+-        sage: R.<q> = CyclotomicField(3)
+-        sage: for algo in ["naive", "cyclotomic"]:
++        sage: R.<q> = CyclotomicField(3)                                               # needs sage.rings.number_field
++        sage: for algo in ["naive", "cyclotomic"]:                                    # needs sage.rings.number_field
+@@ -594 +594 @@
+-        sage: q_pochhammer(-3, a, q)
++        sage: q_pochhammer(-3, a, q)                                                   # needs sage.libs.singular
+@@ -1008,5 +1008,5 @@
+-        sage: number_of_irreducible_polynomials(8, q=2)
++        sage: number_of_irreducible_polynomials(8, q=2)                                # needs sage.libs.pari
+         30
+-        sage: number_of_irreducible_polynomials(9, q=9)
++        sage: number_of_irreducible_polynomials(9, q=9)                                # needs sage.libs.pari
+         43046640
+-        sage: number_of_irreducible_polynomials(5, q=11, m=3)
++        sage: number_of_irreducible_polynomials(5, q=11, m=3)                          # needs sage.symbolic
+@@ -1017,7 +1017,7 @@
+-        sage: poly = number_of_irreducible_polynomials(12); poly
++        sage: poly = number_of_irreducible_polynomials(12); poly                       # needs sage.libs.pari
+         1/12*q^12 - 1/12*q^6 - 1/12*q^4 + 1/12*q^2
+-        sage: poly(5) == number_of_irreducible_polynomials(12, q=5)
++        sage: poly(5) == number_of_irreducible_polynomials(12, q=5)                    # needs sage.libs.pari
+         True
+-        sage: poly = number_of_irreducible_polynomials(5, m=3); poly
++        sage: poly = number_of_irreducible_polynomials(5, m=3); poly                   # needs sage.symbolic
+         q^55 + q^54 + q^53 + q^52 + q^51 + q^50 + ... + 1/5*q^5 - 1/5*q^3 - 1/5*q^2 - 1/5*q
+-        sage: poly(11) == number_of_irreducible_polynomials(5, q=11, m=3)
++        sage: poly(11) == number_of_irreducible_polynomials(5, q=11, m=3)              # needs sage.symbolic
+         True
+@@ -1028,2 +1028,2 @@
+-        sage: num = number_of_irreducible_polynomials(99, q=101)
+-        sage: num.bit_length()
++        sage: num = number_of_irreducible_polynomials(99, q=101)                       # needs sage.libs.pari
++        sage: num.bit_length()                                                         # needs sage.libs.pari
 diff -urN a/src/sage/sets/recursively_enumerated_set.pyx b/src/sage/sets/recursively_enumerated_set.pyx
 --- a/src/sage/sets/recursively_enumerated_set.pyx
 +++ b/src/sage/sets/recursively_enumerated_set.pyx
