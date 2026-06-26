@@ -3316,6 +3316,34 @@ target passed after rebuilding packaged resources, and a focused
 `set_partition.py` rerun against that rebuilt dist kept the same
 `387 passed, 0 failed, 47 skipped` result.
 
+Latest checked local corpus run after the 2026-06-26 real-double
+corpus-growth pass:
+
+```text
+sage -t passed: 13740 passed, 0 failed, 2745 skipped
+```
+
+That run records 16,485 block rows across the current 111-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/rings/real_double.pyx` to the quiet browser-profile dashboard. The
+focused rerun records
+`real_double.pyx: 280 passed, 0 failed, 33 skipped`.
+
+The doctest runner now seeds the lightweight `FreeModule`, `VectorSpace`, and
+`sqrt` names in the common doctest namespace, matching startup assumptions in
+real-double doctests without importing broader module collections. The added
+WASI source patch classifies symbolic-constant and PARI-backed real-double
+examples as explicit deferred skips, and marks the full-file `.pyx`
+`gmpy2.sqrt` leakage around the algebraic-dependency example as a known runner
+limitation; the same example passes under a focused `--line` rerun before the
+earlier `from gmpy2 import *` doctest mutates the shared fallback namespace.
+The full corpus database is
+`/tmp/sagelite-corpus-after-real-double-notimeout.sqlite3`; the saved block-
+and file-failure cluster queries are empty. The latest run metadata records
+CoWasm commit `99a9279e0606d9e7d6c90467fbd27d1e5c443859`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
+version 35, and about 814 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

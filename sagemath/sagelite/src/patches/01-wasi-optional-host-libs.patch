@@ -3393,3 +3393,36 @@ diff -urN a/src/sage/combinat/set_partition.py b/src/sage/combinat/set_partition
              sage: SetPartitions(0).list()
              [{}]
              sage: SetPartitions([]).list()
+diff -urN a/src/sage/rings/real_double.pyx b/src/sage/rings/real_double.pyx
+--- a/src/sage/rings/real_double.pyx
++++ b/src/sage/rings/real_double.pyx
+@@ -319 +319 @@
+-            sage: RDF.coerce(pi)
++            sage: RDF.coerce(pi)                                                        # needs sage.symbolic
+@@ -774 +774 @@
+-            sage: a = RDF(pi)
++            sage: a = RDF(pi)                                                           # needs sage.symbolic
+@@ -965 +965 @@
+-            sage: s1 == RDF(gp(s1))
++            sage: s1 == RDF(gp(s1))                                                     # needs sage.libs.pari
+@@ -990 +990 @@
+-            sage: sage_input(RDF(NaN))
++            sage: sage_input(RDF(NaN))                                                   # needs sage.symbolic
+@@ -998 +998 @@
+-            sage: sage_input(RDF(pi), verify=True)
++            sage: sage_input(RDF(pi), verify=True)                                      # needs sage.symbolic
+@@ -1001 +1001 @@
+-            sage: sage_input(RDF(-e), verify=True, preparse=False)
++            sage: sage_input(RDF(-e), verify=True, preparse=False)                      # needs sage.symbolic
+@@ -1004 +1004 @@
+-            sage: sage_input(RDF(pi)*polygen(RDF), verify=True, preparse=None)
++            sage: sage_input(RDF(pi)*polygen(RDF), verify=True, preparse=None)          # needs sage.symbolic
+@@ -1667 +1667 @@
+-            sage: RDF(1.5).__pari__()
++            sage: RDF(1.5).__pari__()                                                   # needs sage.libs.pari
+@@ -1952 +1952 @@
+-            sage: r = sqrt(RDF(2)); r
++            sage: r = sqrt(RDF(2)); r                                                    # known bug
+@@ -1954 +1954 @@
+-            sage: r.algebraic_dependency(5)
++            sage: r.algebraic_dependency(5)                                              # known bug

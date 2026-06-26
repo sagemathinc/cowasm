@@ -9,6 +9,7 @@ src/sage/rings/integer.pyx
 src/sage/rings/rational.pyx
 src/sage/rings/rational_field.py
 src/sage/rings/real_field.py
+src/sage/rings/real_double.pyx
 src/sage/rings/fast_arith.pyx
 src/sage/rings/generic.py
 src/sage/rings/continued_fraction_gosper.py
