@@ -3287,6 +3287,35 @@ CoWasm commit `957ff769fef7f99681ac3e66eb4d228367b1b9f5`, Sagelite package
 commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
 version 33, and about 796 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 set-partition
+corpus-growth pass:
+
+```text
+sage -t passed: 13460 passed, 0 failed, 2712 skipped
+```
+
+That run records 16,172 block rows across the current 110-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/set_partition.py` to the quiet browser-profile dashboard. The
+focused rerun records
+`set_partition.py: 387 passed, 0 failed, 47 skipped`.
+
+The doctest runner now seeds the lightweight `PerfectMatching`,
+`OrderedSetPartition`, and `stirling_number2` names in the common doctest
+namespace, and the WASI `sage.all` patch exposes the same names for startup
+parity. The added WASI source patch classifies `latex_options()` dictionary
+display order as `# random` and marks the `SetPartitions(3)` TestSuite random
+element check as `# needs sage.symbolic`, since that path imports unavailable
+symbolic constants. The full corpus database is
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`; the saved block-
+and file-failure cluster queries are empty. The latest run metadata records
+CoWasm commit `8624986affb12387300a32ec27003745c27aebb8`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
+version 34, and about 809 seconds of elapsed time. The standalone Sagelite
+target passed after rebuilding packaged resources, and a focused
+`set_partition.py` rerun against that rebuilt dist kept the same
+`387 passed, 0 failed, 47 skipped` result.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

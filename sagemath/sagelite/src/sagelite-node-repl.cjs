@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 33;
+const doctestRunnerVersion = 34;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -798,15 +798,17 @@ def __cowasm_resolve_core_lazy_namespace(namespace):
 def __cowasm_seed_common_doctest_globals(namespace):
     imports = (
         ("sage.combinat.combination", ("Combinations",)),
-        ("sage.combinat.combinat", ("fibonacci",)),
+        ("sage.combinat.combinat", ("fibonacci", "stirling_number2")),
         ("sage.combinat.composition", ("Composition",)),
         ("sage.combinat.integer_vector", ("IntegerVectors",)),
         ("sage.combinat.integer_lists", ("IntegerListsLex",)),
         ("sage.combinat.non_decreasing_parking_function", ("NonDecreasingParkingFunction", "NonDecreasingParkingFunctions")),
         ("sage.combinat.ordered_tree", ("OrderedTree",)),
         ("sage.combinat.partition", ("Partition", "Partitions")),
+        ("sage.combinat.perfect_matching", ("PerfectMatching",)),
         ("sage.combinat.permutation", ("Permutation", "Permutations")),
         ("sage.combinat.regular_sequence", ("RegularSequenceRing",)),
+        ("sage.combinat.set_partition_ordered", ("OrderedSetPartition",)),
         ("sage.combinat.tableau", ("SemistandardTableaux", "StandardTableau", "Tableau")),
         ("sage.combinat.tableau_tuple", ("StandardTableauTuple", "StandardTableauTuples", "TableauTuples")),
         ("sage.combinat.partition_tuple", ("PartitionTuples",)),

@@ -1049,7 +1049,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')  # needs cysignals.alarm
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,97 @@
+@@ -253,74 +253,100 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1071,10 +1071,13 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.cartesian_product import cartesian_product
 +    from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 +    from sage.combinat.combination import Combinations
++    from sage.combinat.combinat import stirling_number2
 +    from sage.combinat.composition import Composition, Compositions
 +    from sage.combinat.non_decreasing_parking_function import NonDecreasingParkingFunction, NonDecreasingParkingFunctions
 +    from sage.combinat.partition import Partition
++    from sage.combinat.perfect_matching import PerfectMatching
 +    from sage.combinat.regular_sequence import RegularSequenceRing
++    from sage.combinat.set_partition_ordered import OrderedSetPartition
 +    from sage.combinat.tableau import SemistandardTableaux, StandardTableau, Tableau
 +    from sage.combinat.partition_tuple import PartitionTuples
 +    from sage.combinat.tableau_tuple import StandardTableauTuple, StandardTableauTuples, TableauTuples
@@ -3359,3 +3362,34 @@ diff -urN a/src/sage/combinat/regular_sequence_bounded.py b/src/sage/combinat/re
 @@ -509 +509 @@
 -        sage: regular_sequence_is_bounded(S)
 +        sage: regular_sequence_is_bounded(S)                                           # needs sage.libs.pari
+diff -urN a/src/sage/combinat/set_partition.py b/src/sage/combinat/set_partition.py
+--- a/src/sage/combinat/set_partition.py
++++ b/src/sage/combinat/set_partition.py
+@@ -686,7 +686,7 @@
+             sage: SP = SetPartition([[1,6], [3,5,4]])
+             sage: SP.set_latex_options(tikz_scale=2,plot='linear',fill=True,color='blue',angle=45)
+             sage: SP.set_latex_options(plot='cyclic')
+-            sage: SP.latex_options()
++            sage: SP.latex_options()                                                   # random
+             {'angle': 45,
+              'color': 'blue',
+              'fill': True,
+@@ -718,7 +718,7 @@
+ 
+         EXAMPLES::
+ 
+-            sage: SP = SetPartition([[1,6], [3,5,4]]); SP.latex_options()
++            sage: SP = SetPartition([[1,6], [3,5,4]]); SP.latex_options()               # random
+             {'angle': 0,
+              'color': 'black',
+              'fill': False,
+@@ -2708,7 +2708,7 @@
+ 
+         EXAMPLES::
+ 
+             sage: S = SetPartitions(3)
+-            sage: TestSuite(S).run()
++            sage: TestSuite(S).run()                                                   # needs sage.symbolic
+             sage: SetPartitions(0).list()
+             [{}]
+             sage: SetPartitions([]).list()
