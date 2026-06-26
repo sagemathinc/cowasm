@@ -3687,6 +3687,32 @@ records CoWasm commit `82ce9887ecefd61f220a02696d577c0f5fc5acd1`, Sagelite
 package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
 runner version 35, and about 960 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 recursively-enumerated
+set corpus-growth pass:
+
+```text
+sage -t passed: 17774 passed, 0 failed, 3144 skipped
+```
+
+That run records 20,918 block rows across the current 132-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-recursively-enumerated.sqlite3`, adding
+`sage/sets/recursively_enumerated_set.pyx` to the quiet browser-profile
+dashboard. The focused rerun records
+`recursively_enumerated_set.pyx: 322 passed, 0 failed, 56 skipped`.
+
+The doctest runner now seeds the lightweight `FiniteEnumeratedSets` category
+constructor and `Family` in the common startup namespace, and the WASI
+`sage.all` patch exposes the same names for startup parity on the next
+Sagelite package rebuild. The added WASI source patch classifies the file's
+alarm-backed interruptibility check, multiprocessing-backed `map_reduce`, and
+randomized membership examples as deferred browser-profile coverage, while
+marking order-only set representations as `# random`. The saved block- and
+file-failure cluster queries are empty. The latest run metadata records CoWasm
+commit `09b50b76f1c891e73af147c581a8a6779b9a1d2e`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 36,
+and about 1,209 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -128,6 +128,7 @@ src/sage/sets/non_negative_integers.py
 src/sage/sets/positive_integers.py
 src/sage/sets/primes.py
 src/sage/sets/pythonclass.pyx
+src/sage/sets/recursively_enumerated_set.pyx
 src/sage/rings/finite_rings/integer_mod_ring.py
 src/sage/rings/finite_rings/finite_field_constructor.py
 src/sage/rings/polynomial/commutative_polynomial.pyx

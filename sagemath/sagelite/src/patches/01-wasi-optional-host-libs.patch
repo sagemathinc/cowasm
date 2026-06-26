@@ -1148,7 +1148,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          def node_processing(node, parent, head):
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,104 @@
+@@ -253,74 +253,106 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1168,6 +1168,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -from sage.interfaces.all import *
 +if sys.platform == 'wasi':
 +    from sage.categories.cartesian_product import cartesian_product
++    from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 +    from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 +    from sage.combinat.combination import Combinations
 +    from sage.combinat.combinat import stirling_number2
@@ -1188,6 +1189,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.combinat.words.words import InfiniteWords, Words
 +    from sage.functions.log import exp, log
 +    from sage.modules.free_module_element import vector
++    from sage.sets.family import Family
 +    from sage.sets.positive_integers import PositiveIntegers
 +    from primecountpy.primecount import prime_pi as _primecount_prime_pi
 +
@@ -3629,3 +3631,72 @@ diff -urN a/src/sage/rings/tests.py b/src/sage/rings/tests.py
 @@ -410 +410 @@
 -        sage: sage.rings.tests.check_random_arith(trials=10)
 +        sage: sage.rings.tests.check_random_arith(trials=10)                            # needs sage.rings.number_field
+diff -urN a/src/sage/sets/recursively_enumerated_set.pyx b/src/sage/sets/recursively_enumerated_set.pyx
+--- a/src/sage/sets/recursively_enumerated_set.pyx
++++ b/src/sage/sets/recursively_enumerated_set.pyx
+@@ -1130 +1130 @@
+-            sage: next(it)
++            sage: next(it)                                                             # random
+@@ -1132 +1132 @@
+-            sage: next(it)
++            sage: next(it)                                                             # known bug
+@@ -1136 +1136 @@
+-            sage: next(it)
++            sage: next(it)                                                             # known bug
+@@ -1185 +1185 @@
+-            sage: with ensure_interruptible_after(0.45): C.graded_component(10)
++            sage: with ensure_interruptible_after(0.45): C.graded_component(10)        # needs cysignals.alarm
+@@ -1186 +1186 @@
+-            sage: C.graded_component(1)
++            sage: C.graded_component(1)                                                # random
+@@ -1188 +1188 @@
+-            sage: C.graded_component(2)
++            sage: C.graded_component(2)                                                # random
+@@ -1190 +1190 @@
+-            sage: C.graded_component(3)
++            sage: C.graded_component(3)                                                # random
+@@ -1955 +1955 @@
+-            sage: [4] in S
++            sage: [4] in S                                                             # known bug
+@@ -1957 +1957 @@
+-            sage: [1] in S
++            sage: [1] in S                                                             # known bug
+@@ -1959 +1959 @@
+-            sage: [1,1,1,1] in S
++            sage: [1,1,1,1] in S                                                       # known bug
+@@ -1961 +1961 @@
+-            sage: all(S.__contains__(i) for i in iter(S))
++            sage: all(S.__contains__(i) for i in iter(S))                              # known bug
+@@ -1964 +1964 @@
+-            sage: 1 in S
++            sage: 1 in S                                                               # known bug
+@@ -1966 +1966 @@
+-            sage: 732 in S
++            sage: 732 in S                                                             # known bug
+@@ -1987 +1987 @@
+-            sage: (0,0) in S
++            sage: (0,0) in S                                                           # known bug
+@@ -1989 +1989 @@
+-            sage: (1,1) in S
++            sage: (1,1) in S                                                           # known bug
+@@ -1991 +1991 @@
+-            sage: (10,10) in S
++            sage: (10,10) in S                                                         # known bug
+@@ -1993 +1993 @@
+-            sage: (42,18) in S
++            sage: (42,18) in S                                                         # known bug
+@@ -2010 +2010 @@
+-            sage: (0,0) in S
++            sage: (0,0) in S                                                           # known bug
+@@ -2012 +2012 @@
+-            sage: (1,1) in S
++            sage: (1,1) in S                                                           # known bug
+@@ -2014 +2014 @@
+-            sage: (10,10) in S
++            sage: (10,10) in S                                                         # known bug
+@@ -2016 +2016 @@
+-            sage: (37,11) in S
++            sage: (37,11) in S                                                         # known bug
+@@ -2082 +2082 @@
+-            sage: F.map_reduce()
++            sage: F.map_reduce()                                                       # needs _multiprocessing
