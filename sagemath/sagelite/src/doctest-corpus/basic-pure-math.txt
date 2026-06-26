@@ -44,6 +44,7 @@ src/sage/combinat/quickref.py
 src/sage/combinat/restricted_growth.py
 src/sage/combinat/sidon_sets.py
 src/sage/combinat/ranker.py
+src/sage/combinat/regular_sequence_bounded.py
 src/sage/combinat/gray_codes.py
 src/sage/combinat/hall_polynomial.py
 src/sage/combinat/hillman_grassl.py

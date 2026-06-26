@@ -3261,6 +3261,32 @@ CoWasm commit `9a6f924e78fb36ed27949f6dc8ee62781bee1462`, Sagelite package
 commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
 version 31, and about 780 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 bounded
+regular-sequence corpus-growth pass:
+
+```text
+sage -t passed: 13073 passed, 0 failed, 2665 skipped
+```
+
+That run records 15,738 block rows across the current 109-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/regular_sequence_bounded.py` to the quiet browser-profile
+dashboard. The focused rerun records
+`regular_sequence_bounded.py: 63 passed, 0 failed, 23 skipped`.
+
+The doctest runner now seeds the lightweight `RegularSequenceRing` and
+`vector` constructors in the common doctest namespace, and the WASI
+`sage.all` patch exposes the same names for startup parity. The added WASI
+source patch classifies list-of-matrices display-format drift as deferred
+`# known bug`, the symbolic `pi` matrix check as `# needs sage.symbolic`, and
+the eigenvalue/PARI-backed boundedness checks as `# needs sage.libs.pari`.
+The full corpus database is
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`; the saved block-
+and file-failure cluster queries are empty. The latest run metadata records
+CoWasm commit `957ff769fef7f99681ac3e66eb4d228367b1b9f5`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
+version 33, and about 796 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

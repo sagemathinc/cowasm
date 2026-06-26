@@ -1049,7 +1049,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')  # needs cysignals.alarm
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,95 @@
+@@ -253,74 +253,97 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1074,12 +1074,14 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.combinat.composition import Composition, Compositions
 +    from sage.combinat.non_decreasing_parking_function import NonDecreasingParkingFunction, NonDecreasingParkingFunctions
 +    from sage.combinat.partition import Partition
++    from sage.combinat.regular_sequence import RegularSequenceRing
 +    from sage.combinat.tableau import SemistandardTableaux, StandardTableau, Tableau
 +    from sage.combinat.partition_tuple import PartitionTuples
 +    from sage.combinat.tableau_tuple import StandardTableauTuple, StandardTableauTuples, TableauTuples
 +    from sage.combinat.words.morphism import WordMorphism
 +    from sage.combinat.words.words import Words
 +    from sage.functions.log import exp, log
++    from sage.modules.free_module_element import vector
 +    from sage.sets.positive_integers import PositiveIntegers
 +    from primecountpy.primecount import prime_pi as _primecount_prime_pi
 +
@@ -3286,3 +3288,74 @@ diff -urN a/src/sage/sets/set.py b/src/sage/sets/set.py
 @@ -1773 +1773 @@
 -            sage: X = Set(ZZ).intersection(RealSet([3/2, 11/2])); X
 +            sage: X = Set(ZZ).intersection(RealSet([3/2, 11/2])); X                     # needs sage.symbolic
+diff -urN a/src/sage/combinat/regular_sequence_bounded.py b/src/sage/combinat/regular_sequence_bounded.py
+--- a/src/sage/combinat/regular_sequence_bounded.py
++++ b/src/sage/combinat/regular_sequence_bounded.py
+@@ -98 +98 @@
+-        sage: construct_phi(L)
++        sage: construct_phi(L)                                                         # known bug
+@@ -108 +108 @@
+-        sage: construct_phi(L)
++        sage: construct_phi(L)                                                         # known bug
+@@ -124 +124 @@
+-        sage: construct_phi(L)
++        sage: construct_phi(L)                                                         # known bug
+@@ -183,2 +183,2 @@
+-        sage: matrices = [Matrix([[1, pi], [-1, 0]])]
+-        sage: is_integer_valued(matrices)
++        sage: matrices = [Matrix([[1, pi], [-1, 0]])]                                  # needs sage.symbolic
++        sage: is_integer_valued(matrices)                                              # needs sage.symbolic
+@@ -321 +321 @@
+-        sage: has_bounded_matrix_powers(matrices)
++        sage: has_bounded_matrix_powers(matrices)                                      # needs sage.libs.pari
+@@ -327 +327 @@
+-        sage: has_bounded_matrix_powers(matrices)
++        sage: has_bounded_matrix_powers(matrices)                                      # needs sage.libs.pari
+@@ -334 +334 @@
+-        sage: has_bounded_matrix_powers(matrices)
++        sage: has_bounded_matrix_powers(matrices)                                      # needs sage.libs.pari
+@@ -340 +340 @@
+-        sage: has_bounded_matrix_powers(matrices)
++        sage: has_bounded_matrix_powers(matrices)                                      # needs sage.libs.pari
+@@ -367 +367 @@
+-        sage: make_positive(matrices)
++        sage: make_positive(matrices)                                                  # known bug
+@@ -376 +376 @@
+-        sage: make_positive(matrices)
++        sage: make_positive(matrices)                                                  # known bug
+@@ -421 +421 @@
+-        sage: regular_sequence_is_bounded(TM)
++        sage: regular_sequence_is_bounded(TM)                                          # needs sage.libs.pari
+@@ -428 +428 @@
+-        sage: regular_sequence_is_bounded(SD)
++        sage: regular_sequence_is_bounded(SD)                                          # needs sage.libs.pari
+@@ -435 +435 @@
+-        sage: regular_sequence_is_bounded(N)
++        sage: regular_sequence_is_bounded(N)                                           # needs sage.libs.pari
+@@ -442 +442 @@
+-        sage: regular_sequence_is_bounded(E)
++        sage: regular_sequence_is_bounded(E)                                           # needs sage.libs.pari
+@@ -449 +449 @@
+-        sage: regular_sequence_is_bounded(O)
++        sage: regular_sequence_is_bounded(O)                                           # needs sage.libs.pari
+@@ -456 +456 @@
+-        sage: regular_sequence_is_bounded(U)
++        sage: regular_sequence_is_bounded(U)                                           # needs sage.libs.pari
+@@ -467 +467 @@
+-        sage: regular_sequence_is_bounded(C)
++        sage: regular_sequence_is_bounded(C)                                           # needs sage.libs.pari
+@@ -478 +478 @@
+-        sage: regular_sequence_is_bounded(D)
++        sage: regular_sequence_is_bounded(D)                                           # needs sage.libs.pari
+@@ -485 +485 @@
+-        sage: regular_sequence_is_bounded(S)
++        sage: regular_sequence_is_bounded(S)                                           # needs sage.libs.pari
+@@ -493 +493 @@
+-        sage: regular_sequence_is_bounded(S)
++        sage: regular_sequence_is_bounded(S)                                           # needs sage.libs.pari
+@@ -501 +501 @@
+-        sage: regular_sequence_is_bounded(S)
++        sage: regular_sequence_is_bounded(S)                                           # needs sage.libs.pari
+@@ -509 +509 @@
+-        sage: regular_sequence_is_bounded(S)
++        sage: regular_sequence_is_bounded(S)                                           # needs sage.libs.pari

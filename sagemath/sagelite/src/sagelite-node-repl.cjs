@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 32;
+const doctestRunnerVersion = 33;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -806,6 +806,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.ordered_tree", ("OrderedTree",)),
         ("sage.combinat.partition", ("Partition", "Partitions")),
         ("sage.combinat.permutation", ("Permutation", "Permutations")),
+        ("sage.combinat.regular_sequence", ("RegularSequenceRing",)),
         ("sage.combinat.tableau", ("SemistandardTableaux", "StandardTableau", "Tableau")),
         ("sage.combinat.tableau_tuple", ("StandardTableauTuple", "StandardTableauTuples", "TableauTuples")),
         ("sage.combinat.partition_tuple", ("PartitionTuples",)),
@@ -816,6 +817,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.words.morphism", ("WordMorphism",)),
         ("sage.categories.homset", ("Hom",)),
         ("sage.categories.sets_cat", ("Sets",)),
+        ("sage.modules.free_module_element", ("vector",)),
         ("sage.sets.condition_set", ("ConditionSet",)),
         ("sage.sets.finite_enumerated_set", ("FiniteEnumeratedSet",)),
         ("sage.sets.finite_set_maps", ("FiniteSetMaps",)),
