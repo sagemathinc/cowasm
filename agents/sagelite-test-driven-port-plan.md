@@ -801,7 +801,29 @@ A focused rerun records
 `q_analogues.py: 110 passed, 0 failed, 25 skipped`, and the saved block- and
 file-failure cluster queries are empty for the full corpus.
 
-The same sampling pass kept several nearby files out of the quiet corpus:
+Latest checked local corpus run after the 2026-06-26 words datatype/morphism
+corpus-growth pass:
+
+```text
+sage -t passed: 20120 passed, 0 failed, 3445 skipped
+```
+
+That run records 23,565 block rows across the current 139-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-word-datatypes.sqlite3`, adding
+`sage/combinat/words/word_char.pyx`,
+`sage/combinat/words/word_datatypes.pyx`, and
+`sage/combinat/words/morphism.py` to the quiet browser-profile dashboard.
+Focused reruns record `word_char.pyx: 143 passed, 0 failed, 2 skipped`,
+`word_datatypes.pyx: 161 passed, 0 failed, 0 skipped`, and
+`morphism.py: 561 passed, 0 failed, 94 skipped`. The saved block- and
+file-failure cluster queries are empty for the full corpus. The latest run
+metadata records CoWasm commit `ea14f2db4a7fca375a3d46d94a24e1ce8a0f1f2c`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, and runner version 37.
+
+The Puiseux-series sampling pass kept several nearby files out of the quiet
+corpus:
 `sage/combinat/q_bernoulli.pyx` still reaches the known NTL/libcxx
 `memory access out of bounds` trap through finite-field polynomial setup;
 `sage/rings/continued_fraction.py` reaches number-field construction and

@@ -107,10 +107,13 @@ src/sage/combinat/words/abstract_word.py
 src/sage/combinat/words/finite_word.py
 src/sage/combinat/words/word_options.py
 src/sage/combinat/words/alphabet.py
+src/sage/combinat/words/word_char.pyx
+src/sage/combinat/words/word_datatypes.pyx
 src/sage/combinat/words/infinite_word.py
 src/sage/combinat/words/word.py
 src/sage/combinat/words/word_infinite_datatypes.py
 src/sage/combinat/words/lyndon_word.py
+src/sage/combinat/words/morphism.py
 src/sage/combinat/words/morphic.py
 src/sage/combinat/words/shuffle_product.py
 src/sage/combinat/words/suffix_trees.py
