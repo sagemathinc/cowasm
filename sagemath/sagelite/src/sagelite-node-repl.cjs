@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 37;
+const doctestRunnerVersion = 38;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -803,6 +803,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.integer_vector", ("IntegerVectors",)),
         ("sage.combinat.integer_lists", ("IntegerListsLex",)),
         ("sage.combinat.non_decreasing_parking_function", ("NonDecreasingParkingFunction", "NonDecreasingParkingFunctions")),
+        ("sage.combinat.parking_functions", ("ParkingFunction",)),
         ("sage.combinat.ordered_tree", ("OrderedTree",)),
         ("sage.combinat.partition", ("Partition", "Partitions")),
         ("sage.combinat.perfect_matching", ("PerfectMatching",)),
@@ -815,6 +816,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.subset", ("Subsets",)),
         ("sage.combinat.vector_partition", ("VectorPartitions",)),
         ("sage.combinat.words.word", ("Word",)),
+        ("sage.combinat.words.alphabet", ("Alphabet",)),
         ("sage.combinat.words.word_generators", ("words",)),
         ("sage.combinat.words.word_options", ("WordOptions",)),
         ("sage.combinat.words.words", ("InfiniteWords", "Words")),

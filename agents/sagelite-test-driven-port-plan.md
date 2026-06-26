@@ -822,6 +822,29 @@ metadata records CoWasm commit `ea14f2db4a7fca375a3d46d94a24e1ce8a0f1f2c`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, and runner version 37.
 
+Latest checked local corpus run after the 2026-06-26 words frontend
+corpus-growth pass:
+
+```text
+sage -t passed: 20510 passed, 0 failed, 3468 skipped
+```
+
+That run records 23,978 block rows across the current 140-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-words-py.sqlite3`, adding
+`sage/combinat/words/words.py` to the quiet browser-profile dashboard. The
+focused patched-source rerun records
+`words.py: 390 passed, 0 failed, 23 skipped`. The doctest runner now seeds the
+lightweight `Alphabet` and `ParkingFunction` constructors in the common
+doctest namespace, and the WASI `sage.all` patch exposes the same constructors
+for startup parity. The added WASI source patch classifies the order-sensitive
+`Words('ab')._element_classes` dict display check as a deferred
+`# known bug` skip. The saved block- and file-failure cluster queries are
+empty for the full corpus. The latest run metadata records CoWasm commit
+`0b860275d086def80cad3b1c097a9ba0c6849af4`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
+and about 1,045 seconds of elapsed time.
+
 The Puiseux-series sampling pass kept several nearby files out of the quiet
 corpus:
 `sage/combinat/q_bernoulli.pyx` still reaches the known NTL/libcxx

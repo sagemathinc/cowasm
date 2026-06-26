@@ -118,6 +118,7 @@ src/sage/combinat/words/morphic.py
 src/sage/combinat/words/shuffle_product.py
 src/sage/combinat/words/suffix_trees.py
 src/sage/combinat/words/word_generators.py
+src/sage/combinat/words/words.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
 src/sage/sets/finite_set_map_cy.pyx
