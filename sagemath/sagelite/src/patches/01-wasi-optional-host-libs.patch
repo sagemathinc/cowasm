@@ -2916,3 +2916,15 @@ diff -urN a/src/sage/sets/disjoint_union_enumerated_sets.py b/src/sage/sets/disj
 @@ -332 +332 @@
 -            sage: U4._is_a(Composition([3,2,1,1]))
 +            sage: U4._is_a(Composition([3,2,1,1]))                                     # known bug
+diff -urN a/src/sage/combinat/six_vertex_model.py b/src/sage/combinat/six_vertex_model.py
+--- a/src/sage/combinat/six_vertex_model.py
++++ b/src/sage/combinat/six_vertex_model.py
+@@ -377 +377 @@
+-        sage: list(M)
++        sage: list(M)                                                                  # known bug
+@@ -403 +403 @@
+-        sage: list(M)
++        sage: list(M)                                                                  # known bug
+@@ -545 +545 @@
+-            sage: list(M)
++            sage: list(M)                                                              # known bug

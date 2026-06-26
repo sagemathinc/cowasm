@@ -2933,6 +2933,26 @@ passes after extending the doctest smoke to cover the new namespace globals:
 sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
 ```
 
+Latest checked local corpus run after the 2026-06-26 six-vertex model
+corpus-growth pass:
+
+```text
+sage -t passed: 9576 passed, 0 failed, 1733 skipped
+```
+
+That run records 11,309 block rows across the current 96-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/six_vertex_model.py` to the previous clean browser-profile
+baseline. The focused rerun records
+`six_vertex_model.py: 37 passed, 0 failed, 14 skipped`. The added WASI patch
+classifies three list-display examples as `# known bug`, matching the existing
+browser-profile treatment for multi-line ASCII-art list rendering drift where
+the current runtime prints each element vertically instead of Sage's compact
+side-by-side list layout. The full corpus database is
+`/tmp/sagelite-corpus-six-vertex.sqlite3`; the saved block- and file-failure
+cluster queries are empty. The latest run metadata records node profile,
+runner version 28, and about 688 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
