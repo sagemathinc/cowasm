@@ -2874,3 +2874,33 @@ diff -urN a/src/sage/combinat/plane_partition.py b/src/sage/combinat/plane_parti
 @@ -2962 +2962 @@
 -            sage: all(len(set(PP)) == PP.cardinality()
 +            sage: all(len(set(PP)) == PP.cardinality()                              # needs sage.graphs
+diff -urN a/src/sage/combinat/ordered_tree.py b/src/sage/combinat/ordered_tree.py
+--- a/src/sage/combinat/ordered_tree.py
++++ b/src/sage/combinat/ordered_tree.py
+@@ -533 +533 @@
+-            sage: t.to_undirected_graph()
++            sage: t.to_undirected_graph()                                             # needs sage.graphs
+@@ -536 +536 @@
+-            sage: t.to_undirected_graph()
++            sage: t.to_undirected_graph()                                             # needs sage.graphs
+@@ -547 +547 @@
+-            sage: t.canonical_labelling().to_undirected_graph()
++            sage: t.canonical_labelling().to_undirected_graph()                        # needs sage.graphs
+@@ -552 +552 @@
+-            sage: t.canonical_labelling().to_undirected_graph() == t.to_undirected_graph()
++            sage: t.canonical_labelling().to_undirected_graph() == t.to_undirected_graph()  # needs sage.graphs
+@@ -554 +554 @@
+-            sage: OrderedTree([[],[]]).to_undirected_graph() == OrderedTree([[[]]]).to_undirected_graph()
++            sage: OrderedTree([[],[]]).to_undirected_graph() == OrderedTree([[[]]]).to_undirected_graph()  # needs sage.graphs
+@@ -556 +556 @@
+-            sage: OrderedTree([[],[],[]]).to_undirected_graph() == OrderedTree([[[[]]]]).to_undirected_graph()
++            sage: OrderedTree([[],[],[]]).to_undirected_graph() == OrderedTree([[[[]]]]).to_undirected_graph()  # needs sage.graphs
+@@ -598 +598 @@
+-            sage: t.to_poset()
++            sage: t.to_poset()                                                        # needs sage.graphs
+@@ -600 +600 @@
+-            sage: p = OrderedTree([[[]],[],[]]).to_poset()
++            sage: p = OrderedTree([[[]],[],[]]).to_poset()                            # needs sage.graphs
+@@ -607 +607 @@
+-            sage: t = OrderedTree([[[]],[],[]]).canonical_labelling().to_poset()
++            sage: t = OrderedTree([[[]],[],[]]).canonical_labelling().to_poset()       # needs sage.graphs

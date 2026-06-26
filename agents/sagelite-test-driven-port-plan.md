@@ -2863,6 +2863,27 @@ metadata records CoWasm commit `2dce2dceabad7d2f672097678f2cbc95d2c61024`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, runner version 28, and about 664 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 ordered-tree
+corpus-growth pass:
+
+```text
+sage -t passed: 9370 passed, 0 failed, 1648 skipped
+```
+
+That run records 11,018 block rows across the current 93-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/ordered_tree.py` to the previous clean browser-profile
+baseline. The focused rerun records
+`ordered_tree.py: 221 passed, 0 failed, 40 skipped`; the added WASI patch
+classifies the file's graph and poset conversion examples as
+`# needs sage.graphs`, matching the existing browser-profile boundary for
+unavailable graph internals. The full corpus database is
+`/tmp/sagelite-corpus-after-ordered-tree.sqlite3`. The saved block- and
+file-failure cluster queries are empty. The latest run metadata records CoWasm
+commit `dfc17a1c30b3968b624018f7f6dba5a87285b711`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 28,
+and about 665 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
