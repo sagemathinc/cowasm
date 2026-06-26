@@ -2884,6 +2884,29 @@ commit `dfc17a1c30b3968b624018f7f6dba5a87285b711`, Sagelite package commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 28,
 and about 665 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 finite-set-map Cython
+corpus-growth pass:
+
+```text
+sage -t passed: 9481 passed, 0 failed, 1648 skipped
+```
+
+That run records 11,129 block rows across the current 94-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/sets/finite_set_map_cy.pyx` to the previous clean browser-profile
+baseline. The focused rerun records
+`finite_set_map_cy.pyx: 111 passed, 0 failed, 0 skipped`; the doctest runner
+now seeds `FiniteSetMaps` in the common namespace so Cython fallback doctests
+exercise the finite-set-map implementation instead of failing on a startup
+name artifact. The added WASI patch classifies one finite-map fiber display as
+`# random`, because the set-like dictionary representation has runtime order
+drift while preserving the same fibers. The full corpus database is
+`/tmp/sagelite-corpus-finite-set-map-cy.sqlite3`; the saved block- and
+file-failure cluster queries are empty. The latest run metadata records CoWasm
+commit `d4ca57573788816d8e19e51e8f89c909258649fb`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 28,
+and about 673 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

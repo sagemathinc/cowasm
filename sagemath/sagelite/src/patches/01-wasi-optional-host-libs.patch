@@ -2904,3 +2904,9 @@ diff -urN a/src/sage/combinat/ordered_tree.py b/src/sage/combinat/ordered_tree.p
 @@ -607 +607 @@
 -            sage: t = OrderedTree([[[]],[],[]]).canonical_labelling().to_poset()
 +            sage: t = OrderedTree([[[]],[],[]]).canonical_labelling().to_poset()       # needs sage.graphs
+diff -urN a/src/sage/sets/finite_set_map_cy.pyx b/src/sage/sets/finite_set_map_cy.pyx
+--- a/src/sage/sets/finite_set_map_cy.pyx
++++ b/src/sage/sets/finite_set_map_cy.pyx
+@@ -311 +311 @@
+-            sage: FiniteSetMaps(4, 3)([1, 0, 2, 1]).fibers()
++            sage: FiniteSetMaps(4, 3)([1, 0, 2, 1]).fibers()                         # random
