@@ -3187,3 +3187,86 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
               o
                \
                _o_
+diff -urN a/src/sage/combinat/triangles_FHM.py b/src/sage/combinat/triangles_FHM.py
+--- a/src/sage/combinat/triangles_FHM.py
++++ b/src/sage/combinat/triangles_FHM.py
+@@ -361 +361 @@
+-            sage: m.factor()
++            sage: m.factor()                                                            # needs sage.libs.singular
+@@ -439 +439 @@
+-            sage: M_triangle(1-y+x*y).h()
++            sage: M_triangle(1-y+x*y).h()                                               # needs sage.libs.singular
+@@ -447 +447 @@
+-            sage: M_triangle(mt, [x,y]).h()
++            sage: M_triangle(mt, [x,y]).h()                                             # needs sage.libs.singular
+@@ -466 +466 @@
+-            sage: M_triangle(1-y+x*y).f()
++            sage: M_triangle(1-y+x*y).f()                                               # needs sage.libs.singular
+@@ -474 +474 @@
+-            sage: M_triangle(mt, [x,y]).f()
++            sage: M_triangle(mt, [x,y]).f()                                             # needs sage.libs.singular
+@@ -523 +523 @@
+-            sage: ht.m()
++            sage: ht.m()                                                                # needs sage.libs.singular
+@@ -542 +542 @@
+-            sage: H_triangle(1+x*y).f()
++            sage: H_triangle(1+x*y).f()                                                 # needs sage.libs.singular
+@@ -544 +544 @@
+-            sage: H_triangle(x^2*y^2 + 2*x*y + x + 1).f()
++            sage: H_triangle(x^2*y^2 + 2*x*y + x + 1).f()                               # needs sage.libs.singular
+@@ -546 +546 @@
+-            sage: flo = H_triangle(1+4*x+2*x**2+x*y*(4+8*x)+
++            sage: flo = H_triangle(1+4*x+2*x**2+x*y*(4+8*x)+                            # needs sage.libs.singular
+@@ -551 +551 @@
+-            sage: flo(-1-x,-1-y) == flo
++            sage: flo(-1-x,-1-y) == flo                                                 # needs sage.libs.singular
+@@ -558 +558 @@
+-            sage: H_triangle(ht,[x,y]).f()
++            sage: H_triangle(ht,[x,y]).f()                                              # needs sage.libs.singular
+@@ -632 +632 @@
+-            sage: ft.h()
++            sage: ft.h()                                                                # needs sage.libs.singular
+@@ -640 +640 @@
+-            sage: F_triangle(ft, [x,y]).h()
++            sage: F_triangle(ft, [x,y]).h()                                             # needs sage.libs.singular
+@@ -658 +658 @@
+-            sage: H_triangle(1+x*y).f()
++            sage: H_triangle(1+x*y).f()                                                 # needs sage.libs.singular
+@@ -660 +660 @@
+-            sage: _.m()
++            sage: _.m()                                                                 # needs sage.libs.singular
+@@ -663 +663 @@
+-            sage: H_triangle(x^2*y^2 + 2*x*y + x + 1).f()
++            sage: H_triangle(x^2*y^2 + 2*x*y + x + 1).f()                               # needs sage.libs.singular
+@@ -665 +665 @@
+-            sage: _.m()
++            sage: _.m()                                                                 # needs sage.libs.singular
+@@ -672 +672 @@
+-            sage: flo = H_triangle(p).f(); flo
++            sage: flo = H_triangle(p).f(); flo                                          # needs sage.libs.singular
+@@ -676 +676 @@
+-            sage: flo.m()
++            sage: flo.m()                                                               # needs sage.libs.singular
+@@ -685 +685 @@
+-            sage: ft.m()
++            sage: ft.m()                                                                # needs sage.libs.singular
+@@ -707 +707 @@
+-            sage: H_triangle(1+x*y).f()
++            sage: H_triangle(1+x*y).f()                                                 # needs sage.libs.singular
+@@ -709 +709 @@
+-            sage: _.parabolic()
++            sage: _.parabolic()                                                         # needs sage.libs.singular
+@@ -715 +715 @@
+-            sage: H_triangle(1+a*b).f()
++            sage: H_triangle(1+a*b).f()                                                 # needs sage.libs.singular
+@@ -717 +717 @@
+-            sage: _.parabolic()
++            sage: _.parabolic()                                                         # needs sage.libs.singular
+@@ -766 +766 @@
+-            sage: Gamma_triangle(g).h()
++            sage: Gamma_triangle(g).h()                                                 # needs sage.libs.singular
+@@ -772,2 +772,2 @@
+-            sage: hh = g.h()
+-            sage: hh.gamma() == g
++            sage: hh = g.h()                                                            # needs sage.libs.singular
++            sage: hh.gamma() == g                                                       # needs sage.libs.singular

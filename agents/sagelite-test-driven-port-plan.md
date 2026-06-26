@@ -671,6 +671,27 @@ records CoWasm commit `1f64f3c6c8483c39fff60555347b5f99665d6f72`, Sagelite
 package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
 runner version 31, and about 776 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 triangle-polynomial
+corpus-growth pass:
+
+```text
+sage -t passed: 12702 passed, 0 failed, 2534 skipped
+```
+
+That run records the current 107-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-triangles-fhm.sqlite3`, with no block-level
+failures and no file-level errors. It adds `sage/combinat/triangles_FHM.py` to
+the quiet browser-profile dashboard; the focused rerun records
+`triangles_FHM.py: 133 passed, 0 failed, 50 skipped`. The added WASI source
+patch classifies triangle conversions and factorization examples that route
+through Singular-backed multivariate polynomial gcd/factorization as
+`# needs sage.libs.singular`, including dependent `_` and saved-variable checks.
+The latest run metadata records CoWasm commit
+`e59503cc49c5ec3a2210d49fe9202eb61d1de0e2`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 31,
+and about 784 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
