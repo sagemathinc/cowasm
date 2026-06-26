@@ -74,6 +74,7 @@ src/sage/combinat/partition_tuple.py
 src/sage/combinat/plane_partition.py
 src/sage/combinat/ribbon_shaped_tableau.py
 src/sage/combinat/ribbon_tableau.py
+src/sage/combinat/skew_partition.py
 src/sage/combinat/skew_tableau.py
 src/sage/combinat/six_vertex_model.py
 src/sage/combinat/super_tableau.py

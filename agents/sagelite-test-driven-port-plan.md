@@ -3060,7 +3060,7 @@ skew-tableau corpus-growth pass:
 sage -t passed: 10696 passed, 0 failed, 2273 skipped
 ```
 
-That run records 12,969 block rows across the current 100-file
+That run records 12,969 block rows across the then-current 105-file
 `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
 `sage/combinat/partition_tuple.py` and `sage/combinat/skew_tableau.py` to the
 previous clean browser-profile baseline. Focused reruns record
@@ -3077,6 +3077,31 @@ block- and file-failure cluster queries are empty. The latest run metadata
 records CoWasm commit `59328a74ab827c76bb66703c480d7b9ea0bec286`, Sagelite
 package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
 runner version 31, and about 713 seconds of elapsed time.
+
+Latest checked local corpus run after the 2026-06-26 skew-partition
+corpus-growth pass:
+
+```text
+sage -t passed: 10941 passed, 0 failed, 2317 skipped
+```
+
+That run records 13,258 block rows across the current 106-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/skew_partition.py` to the previous clean browser-profile
+baseline. The focused rerun records
+`skew_partition.py: 245 passed, 0 failed, 44 skipped`.
+
+The pass extends the focused doctest namespace with `Partition` and `Tableau`,
+matching upstream Sage startup assumptions used by skew-partition Frobenius
+rank and display-option doctests. The WASI `sage.all` patch exposes the same
+constructors for REPL parity, and the three Macdonald coefficient examples
+that route through the unavailable pexpect-backed interface layer are recorded
+as explicit skips. The full corpus database is
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`; the saved block-
+and file-failure cluster queries are empty. The latest run metadata records
+CoWasm commit `0ebb02c2f1729135c55eda52aae5af38fac68d81`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
+version 31, and about 768 seconds of elapsed time.
 
 ## Phase 5: Subprocess Strategy
 

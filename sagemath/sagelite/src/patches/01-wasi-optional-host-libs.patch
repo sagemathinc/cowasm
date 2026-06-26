@@ -1049,7 +1049,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')  # needs cysignals.alarm
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,93 @@
+@@ -253,74 +253,94 @@
  from sage.arith.all import *
  from sage.matrix.all import *
 
@@ -1072,7 +1072,8 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 +    from sage.combinat.combination import Combinations
 +    from sage.combinat.composition import Composition, Compositions
-+    from sage.combinat.tableau import SemistandardTableaux, StandardTableau
++    from sage.combinat.partition import Partition
++    from sage.combinat.tableau import SemistandardTableaux, StandardTableau, Tableau
 +    from sage.combinat.partition_tuple import PartitionTuples
 +    from sage.combinat.tableau_tuple import StandardTableauTuple, StandardTableauTuples, TableauTuples
 +    from sage.combinat.words.morphism import WordMorphism
@@ -2918,6 +2919,19 @@ diff -urN a/src/sage/combinat/partition_tuple.py b/src/sage/combinat/partition_t
 @@ -1679 +1679 @@
 -            sage: PartitionTuple([[2,2],[2,2]]).block(0,(0,0))
 +            sage: PartitionTuple([[2,2],[2,2]]).block(0,(0,0))                       # random
+diff -urN a/src/sage/combinat/skew_partition.py b/src/sage/combinat/skew_partition.py
+--- a/src/sage/combinat/skew_partition.py
++++ b/src/sage/combinat/skew_partition.py
+@@ -1176,5 +1176,5 @@
+-            sage: SkewPartition([[3,2,1],[2,2]]).pieri_macdonald_coeffs()
++            sage: SkewPartition([[3,2,1],[2,2]]).pieri_macdonald_coeffs()             # needs pexpect
+             (q^2*t^3 - q^2*t - t^2 + 1)/(q^2*t^3 - q*t^2 - q*t + 1)
+-            sage: SkewPartition([[3,2,1],[2,2,1]]).pieri_macdonald_coeffs()
++            sage: SkewPartition([[3,2,1],[2,2,1]]).pieri_macdonald_coeffs()           # needs pexpect
+             (q^6*t^8 - q^6*t^6 - q^4*t^7 - q^5*t^5 + q^4*t^5 - q^3*t^6 + q^5*t^3 + 2*q^3*t^4 + q*t^5 - q^3*t^2 + q^2*t^3 - q*t^3 - q^2*t - t^2 + 1)/(q^6*t^8 - q^5*t^7 - q^5*t^6 - q^4*t^6 + q^3*t^5 + 2*q^3*t^4 + q^3*t^3 - q^2*t^2 - q*t^2 - q*t + 1)
+-            sage: SkewPartition([[3,3,2,2],[3,2,2,1]]).pieri_macdonald_coeffs()
++            sage: SkewPartition([[3,3,2,2],[3,2,2,1]]).pieri_macdonald_coeffs()       # needs pexpect
+             (q^5*t^6 - q^5*t^5 + q^4*t^6 - q^4*t^5 - q^4*t^3 + q^4*t^2 - q^3*t^3 - q^2*t^4 + q^3*t^2 + q^2*t^3 - q*t^4 + q*t^3 + q*t - q + t - 1)/(q^5*t^6 - q^4*t^5 - q^3*t^4 - q^3*t^3 + q^2*t^3 + q^2*t^2 + q*t - 1)
 diff -urN a/src/sage/sets/disjoint_union_enumerated_sets.py b/src/sage/sets/disjoint_union_enumerated_sets.py
 --- a/src/sage/sets/disjoint_union_enumerated_sets.py
 +++ b/src/sage/sets/disjoint_union_enumerated_sets.py
