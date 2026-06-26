@@ -3467,6 +3467,32 @@ records CoWasm commit `7af054994f21c08163dbedd62326cac167db7845`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, runner version 35, and about 870 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 word helper
+corpus-growth pass:
+
+```text
+sage -t passed: 14425 passed, 0 failed, 2907 skipped
+```
+
+That run records 17,332 block rows across the current 122-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, adding
+`sage/combinat/words/alphabet.py`,
+`sage/combinat/words/shuffle_product.py`, and
+`sage/combinat/words/word_generators.py` to the quiet browser-profile
+dashboard. Focused reruns record `alphabet.py: 33 passed, 0 failed,
+3 skipped`, `shuffle_product.py: 56 passed, 0 failed, 0 skipped`, and
+`word_generators.py: 256 passed, 0 failed, 46 skipped`.
+
+The saved block- and file-failure cluster queries are empty. The same sampling
+pass kept larger adjacent word modules such as `abstract_word.py`, `word.py`,
+`words.py`, and `finite_word.py` out of the quiet corpus because they still
+have real failure clusters; `paths.py` is also excluded because it contributes
+only skipped rows under the current browser-profile tags. The latest run
+metadata records CoWasm commit `d6c51da9e36a785b8ad0143aa836db9edd50fcfa`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, runner version 35, and about 892 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

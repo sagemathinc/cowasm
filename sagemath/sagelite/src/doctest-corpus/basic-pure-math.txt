@@ -98,7 +98,10 @@ src/sage/combinat/tableau_tuple.py
 src/sage/combinat/triangles_FHM.py
 src/sage/combinat/vector_partition.py
 src/sage/combinat/words/word_options.py
+src/sage/combinat/words/alphabet.py
 src/sage/combinat/words/infinite_word.py
+src/sage/combinat/words/shuffle_product.py
+src/sage/combinat/words/word_generators.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
 src/sage/sets/finite_set_map_cy.pyx
