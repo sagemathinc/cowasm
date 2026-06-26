@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 36;
+const doctestRunnerVersion = 37;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -828,6 +828,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.modules.free_module", ("FreeModule", "VectorSpace")),
         ("sage.modules.free_module_element", ("vector",)),
         ("sage.sets.condition_set", ("ConditionSet",)),
+        ("sage.sets.disjoint_union_enumerated_sets", ("DisjointUnionEnumeratedSets",)),
         ("sage.sets.finite_enumerated_set", ("FiniteEnumeratedSet",)),
         ("sage.sets.finite_set_maps", ("FiniteSetMaps",)),
         ("sage.sets.family", ("Family",)),

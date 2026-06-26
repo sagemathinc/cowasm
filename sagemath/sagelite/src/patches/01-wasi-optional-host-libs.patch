@@ -1148,7 +1148,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          def node_processing(node, parent, head):
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,106 @@
+@@ -253,74 +253,107 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1189,6 +1189,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.combinat.words.words import InfiniteWords, Words
 +    from sage.functions.log import exp, log
 +    from sage.modules.free_module_element import vector
++    from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 +    from sage.sets.family import Family
 +    from sage.sets.positive_integers import PositiveIntegers
 +    from primecountpy.primecount import prime_pi as _primecount_prime_pi

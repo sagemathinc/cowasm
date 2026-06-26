@@ -735,6 +735,26 @@ metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 36,
 and about 992 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 integer-lists frontend
+corpus-growth pass:
+
+```text
+sage -t passed: 19084 passed, 0 failed, 3306 skipped
+```
+
+That run records the current 134-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-integer-lists-lists.sqlite3`, with no block-level
+failures and no file-level errors. It adds
+`sage/combinat/integer_lists/lists.py` to the quiet browser-profile dashboard;
+the focused rerun records `lists.py: 56 passed, 0 failed, 0 skipped`. The
+doctest runner now seeds the lightweight `DisjointUnionEnumeratedSets`
+constructor in the common doctest namespace, and the WASI `sage.all` patch
+exposes the same constructor for startup parity. The latest run metadata
+records CoWasm commit `1bf48a050ad2fd1ebf6ccb9c17003d19a4e202ad`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
+runner version 36, and about 993 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
