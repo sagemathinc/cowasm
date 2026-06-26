@@ -589,6 +589,27 @@ The latest run metadata records CoWasm commit
 and writes the checked database to
 `/tmp/sagelite-corpus-after-sets-cartesian-product.sqlite3`.
 
+Latest checked local corpus run after the 2026-06-26 tableau-residue
+corpus-growth pass:
+
+```text
+sage -t passed: 9340 passed, 0 failed, 2090 skipped
+```
+
+That run records the current 97-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/tableau_residues.py` to the previous clean browser-profile
+baseline. The focused rerun records
+`tableau_residues.py: 121 passed, 0 failed, 0 skipped`. The doctest runner now
+seeds the lightweight tableau-tuple constructors `StandardTableauTuple`,
+`StandardTableauTuples`, and `TableauTuples` in the common doctest namespace,
+and the WASI `sage.all` patch exposes the same constructors for startup
+parity. The latest run metadata records CoWasm commit
+`96af5d9cef0b0f716ac9ae18538502512e9b0c34`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 29,
+and writes the checked database to
+`/tmp/sagelite-corpus-after-tableau-residues.sqlite3`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
