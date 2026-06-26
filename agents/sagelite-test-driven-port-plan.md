@@ -3445,6 +3445,28 @@ startup-scope gaps. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 35,
 and about 867 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 infinite-word
+corpus-growth pass:
+
+```text
+sage -t passed: 14080 passed, 0 failed, 2858 skipped
+```
+
+That run records 16,938 block rows across the current 119-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-infinite-word.sqlite3`, adding
+`sage/combinat/words/infinite_word.py` to the quiet browser-profile dashboard.
+The focused rerun records `infinite_word.py: 21 passed, 0 failed, 0 skipped`.
+The doctest runner now seeds `InfiniteWords` beside the existing lightweight
+word constructors in the common doctest namespace, and the WASI `sage.all`
+patch exposes the same constructor for startup parity. The same pass repairs
+the `src/sage/all.py` hunk formatting in the WASI source patch so a fresh
+patched Sagelite source copy can be rebuilt before the corpus run. The saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `7af054994f21c08163dbedd62326cac167db7845`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, runner version 35, and about 870 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
