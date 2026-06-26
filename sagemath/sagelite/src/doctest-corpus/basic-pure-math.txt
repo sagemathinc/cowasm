@@ -101,6 +101,7 @@ src/sage/combinat/vector_partition.py
 src/sage/combinat/words/word_options.py
 src/sage/combinat/words/alphabet.py
 src/sage/combinat/words/infinite_word.py
+src/sage/combinat/words/word.py
 src/sage/combinat/words/word_infinite_datatypes.py
 src/sage/combinat/words/lyndon_word.py
 src/sage/combinat/words/morphic.py

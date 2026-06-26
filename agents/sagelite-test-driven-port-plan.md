@@ -3589,6 +3589,30 @@ records CoWasm commit `d6943eb246ffc950ef1d1f362aacf1e2ea79f4b5`, Sagelite
 package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
 runner version 35, and about 919 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 finite-word constructor
+corpus-growth pass:
+
+```text
+sage -t passed: 15317 passed, 0 failed, 2958 skipped
+```
+
+That run records 18,275 block rows across the current 128-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-word.sqlite3`, adding
+`sage/combinat/words/word.py` to the quiet browser-profile dashboard. The
+focused rerun records `word.py: 168 passed, 0 failed, 1 skipped`.
+
+The doctest runner now seeds the lightweight `FreeMonoid` constructor in the
+common startup namespace, and the WASI `sage.all` patch exposes the same
+constructor for startup parity on the next Sagelite package rebuild. This
+clears the module's only sampled failure cluster, where free-monoid examples
+used `M.<x,y,z> = FreeMonoid(3)` before any local `FreeMonoid` binding
+existed. The saved block- and file-failure cluster queries are empty. The
+latest run metadata records CoWasm commit
+`adf83036592be02decfdf9c4e09183c64ade3f3c`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 35,
+and about 937 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

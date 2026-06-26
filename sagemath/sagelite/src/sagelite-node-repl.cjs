@@ -818,6 +818,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.words.word_generators", ("words",)),
         ("sage.combinat.words.words", ("InfiniteWords", "Words")),
         ("sage.combinat.words.morphism", ("WordMorphism",)),
+        ("sage.monoids.free_monoid", ("FreeMonoid",)),
         ("sage.categories.homset", ("Hom",)),
         ("sage.categories.sets_cat", ("Sets",)),
         ("sage.misc.functional", ("sqrt",)),
