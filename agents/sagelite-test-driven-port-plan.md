@@ -3125,6 +3125,28 @@ CoWasm commit `0ebb02c2f1729135c55eda52aae5af38fac68d81`, Sagelite package
 commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
 version 31, and about 768 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 Baxter-permutation
+corpus-growth pass:
+
+```text
+sage -t passed: 11527 passed, 0 failed, 2364 skipped
+```
+
+That run records 13,891 block rows across the current 103-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/baxter_permutations.py` to the quiet browser-profile
+dashboard. The focused rerun records
+`baxter_permutations.py: 31 passed, 0 failed, 5 skipped`.
+
+The pass keeps the graph-backed lattice constructor out of the module import
+path by moving `LatticePoset` into `BaxterPermutations_size.lattice()`, so the
+pure Baxter permutation enumeration doctests can run without importing the
+unavailable graph Cython layer. The lattice example itself is recorded as
+`# needs sage.graphs`. The full corpus database is
+`/tmp/sagelite-corpus-after-baxter.sqlite3`; the saved block- and file-failure
+cluster queries are empty. The latest run metadata records node profile,
+runner version 31, and 13,891 total doctest blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

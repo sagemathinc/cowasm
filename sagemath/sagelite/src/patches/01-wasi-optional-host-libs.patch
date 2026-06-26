@@ -2957,3 +2957,29 @@ diff -urN a/src/sage/combinat/six_vertex_model.py b/src/sage/combinat/six_vertex
 @@ -545 +545 @@
 -            sage: list(M)
 +            sage: list(M)                                                              # known bug
+diff -urN a/src/sage/combinat/baxter_permutations.py b/src/sage/combinat/baxter_permutations.py
+--- a/src/sage/combinat/baxter_permutations.py
++++ b/src/sage/combinat/baxter_permutations.py
+@@ -4,7 +4,6 @@
+ from collections.abc import Iterator
+ 
+ from sage.combinat.permutation import Permutations
+-from sage.combinat.posets.lattices import LatticePoset
+ from sage.rings.integer import Integer
+ from sage.rings.integer_ring import ZZ
+ from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+@@ -244,13 +243,14 @@
+ 
+         EXAMPLES::
+ 
+-            sage: L = BaxterPermutations(4).lattice(); L
++            sage: L = BaxterPermutations(4).lattice(); L  # needs sage.graphs
+             Finite lattice containing 22 elements
+ 
+         REFERENCES:
+ 
+         - [Law2011]_
+         """
++        from sage.combinat.posets.lattices import LatticePoset
+         return LatticePoset([list(self), lambda a, b: a.weak_le(b)],
+                             check=False)
