@@ -1045,6 +1045,35 @@ metadata records CoWasm commit `14a5c4d338316a0e32d56154f7468ebf53761a85`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, runner version 38, and about 1,117 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-27 finite root-type
+corpus-growth pass:
+
+```text
+sage -t passed: 23114 passed, 0 failed, 4157 skipped
+```
+
+That run records 27,271 block rows across the current 158-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-root-types.sqlite3`, adding
+`sage/combinat/root_system/type_A.py`, `type_B.py`, `type_C.py`, `type_D.py`,
+`type_E.py`, `type_F.py`, `type_G.py`, `type_H.py`, `type_I.py`, and
+`type_Q.py` to the quiet browser-profile dashboard. The grouped focused rerun
+records:
+
+```text
+sage -t passed: 313 passed, 0 failed, 62 skipped
+```
+
+The doctest runner now seeds `WeylDim` beside `RootSystem` in the common
+startup namespace, and the WASI `sage.all` patch exposes the same function for
+REPL parity after a Sagelite package rebuild. This clears the type-G indirect
+doctest that computes the first small `G2` representation dimensions through
+`WeylDim(...)`. The saved block- and file-failure cluster queries are empty
+for the full corpus run. The latest run metadata records CoWasm commit
+`b1222d9e199807715b5df7bef34fdc94fe551a0c`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
+and about 1,171 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

@@ -55,6 +55,16 @@ src/sage/combinat/root_system/cartan_matrix.py
 src/sage/combinat/root_system/root_system.py
 src/sage/combinat/root_system/root_space.py
 src/sage/combinat/root_system/weight_space.py
+src/sage/combinat/root_system/type_A.py
+src/sage/combinat/root_system/type_B.py
+src/sage/combinat/root_system/type_C.py
+src/sage/combinat/root_system/type_D.py
+src/sage/combinat/root_system/type_E.py
+src/sage/combinat/root_system/type_F.py
+src/sage/combinat/root_system/type_G.py
+src/sage/combinat/root_system/type_H.py
+src/sage/combinat/root_system/type_I.py
+src/sage/combinat/root_system/type_Q.py
 src/sage/combinat/restricted_growth.py
 src/sage/combinat/sidon_sets.py
 src/sage/combinat/ranker.py
