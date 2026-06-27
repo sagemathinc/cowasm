@@ -79,6 +79,7 @@ src/sage/combinat/root_system/type_dual.py
 src/sage/combinat/root_system/type_folded.py
 src/sage/combinat/root_system/type_marked.py
 src/sage/combinat/root_system/type_reducible.py
+src/sage/combinat/root_system/type_relabel.py
 src/sage/combinat/restricted_growth.py
 src/sage/combinat/sidon_sets.py
 src/sage/combinat/ranker.py

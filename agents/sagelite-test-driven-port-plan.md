@@ -1104,6 +1104,28 @@ run. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
 and about 1,260 seconds of elapsed time.
 
+Follow-up root-system relabel focused pass: `type_relabel.py` is now included
+in the browser-profile corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 173 files. The
+doctest runner now seeds `CoxeterType` beside `CartanType`, `RootSystem`, and
+`WeylDim` in the common startup namespace, and the WASI `sage.all` patch
+exposes the same constructor for REPL parity after a Sagelite package rebuild.
+This clears the two relabelled Coxeter-type examples that previously failed
+with `NameError: name 'CoxeterType' is not defined`.
+
+Focused reruns record:
+
+```text
+type_relabel.py: 107 passed, 0 failed, 28 skipped
+type_relabel.py + type_reducible.py: 177 passed, 0 failed, 40 skipped
+```
+
+An attempted direct full-corpus run against the already-patched build tree was
+stopped after the parent Node process went idle with no worker child and an
+uninitialized SQLite output file, so it is not recorded as a checked corpus
+baseline. The next full dashboard should be run through the make target after
+refreshing the patched build tree.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

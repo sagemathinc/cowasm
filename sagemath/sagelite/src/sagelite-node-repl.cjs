@@ -827,6 +827,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.finite_enumerated_sets", ("FiniteEnumeratedSets",)),
         ("sage.categories.sets_cat", ("Sets",)),
         ("sage.combinat.root_system.cartan_type", ("CartanType",)),
+        ("sage.combinat.root_system.coxeter_type", ("CoxeterType",)),
         ("sage.combinat.root_system.root_system", ("RootSystem", "WeylDim")),
         ("sage.misc.functional", ("sqrt",)),
         ("sage.modules.free_module", ("FreeModule", "VectorSpace")),
