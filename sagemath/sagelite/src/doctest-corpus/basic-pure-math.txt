@@ -219,6 +219,7 @@ src/sage/categories/infinite_enumerated_sets.py
 src/sage/categories/finite_sets.py
 src/sage/categories/finite_monoids.py
 src/sage/categories/finite_semigroups.py
+src/sage/categories/finite_weyl_groups.py
 src/sage/categories/finitely_generated_magmas.py
 src/sage/categories/finitely_generated_semigroups.py
 src/sage/categories/functor.pyx
@@ -250,11 +251,13 @@ src/sage/categories/hopf_algebras_with_basis.py
 src/sage/categories/isomorphic_objects.py
 src/sage/categories/j_trivial_semigroups.py
 src/sage/categories/l_trivial_semigroups.py
+src/sage/categories/lie_groups.py
 src/sage/categories/magmas.py
 src/sage/categories/magmas_and_additive_magmas.py
 src/sage/categories/distributive_magmas_and_additive_magmas.py
 src/sage/categories/division_rings.py
 src/sage/categories/matrix_algebras.py
+src/sage/categories/modular_abelian_varieties.py
 src/sage/categories/monoid_algebras.py
 src/sage/categories/monoids.py
 src/sage/categories/noetherian_rings.py
@@ -262,6 +265,7 @@ src/sage/categories/objects.py
 src/sage/categories/partially_ordered_monoids.py
 src/sage/categories/permutation_groups.py
 src/sage/categories/pointed_sets.py
+src/sage/categories/polyhedra.py
 src/sage/categories/poor_man_map.py
 src/sage/categories/quotients.py
 src/sage/categories/ring_ideals.py
@@ -270,6 +274,7 @@ src/sage/categories/semisimple_algebras.py
 src/sage/categories/sets_cat.py
 src/sage/categories/sets_with_grading.py
 src/sage/categories/sets_with_partial_maps.py
+src/sage/categories/shephard_groups.py
 src/sage/categories/modules.py
 src/sage/categories/left_modules.py
 src/sage/categories/right_modules.py

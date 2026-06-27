@@ -5336,6 +5336,30 @@ such as `sage/categories/bialgebras.py` and
 `sage/categories/vector_bundles.py` still add no passing default-profile
 blocks.
 
+Focused lightweight category corpus-growth pass:
+
+```text
+sage -t passed: 31 passed, 0 failed, 5 skipped
+```
+
+That five-file make-target validation adds
+`sage/categories/finite_weyl_groups.py`, `sage/categories/lie_groups.py`,
+`sage/categories/modular_abelian_varieties.py`,
+`sage/categories/polyhedra.py`, and `sage/categories/shephard_groups.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 316 non-comment
+entries. The files add small category-surface coverage for Weyl, Lie,
+Shephard, modular-abelian-variety, and polyhedral categories without requiring
+new WASI source tags.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary five-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-category-light-make.sqlite3`. The saved
+block- and file-failure cluster queries are empty. The same sampling pass kept
+`sage/categories/graded_lie_algebras_with_basis.py` out of the quiet corpus
+because its focused doctests still have five block-level failures.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
