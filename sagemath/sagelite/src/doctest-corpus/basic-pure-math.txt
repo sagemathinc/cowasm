@@ -187,6 +187,11 @@ src/sage/categories/complete_discrete_valuation.py
 src/sage/categories/coercion_methods.pyx
 src/sage/categories/cw_complexes.py
 src/sage/categories/dedekind_domains.py
+src/sage/categories/examples/commutative_additive_monoids.py
+src/sage/categories/examples/finite_semigroups.py
+src/sage/categories/examples/monoids.py
+src/sage/categories/examples/semigroups.py
+src/sage/categories/examples/semirings.py
 src/sage/categories/facade_sets.py
 src/sage/categories/filtered_algebras.py
 src/sage/categories/filtered_algebras_with_basis.py

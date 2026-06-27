@@ -1418,6 +1418,27 @@ outside the dashboard pending focused triage. `sage/categories/algebra_functor.p
 also remains outside because it contributes only skipped rows under the
 default profile.
 
+Focused category examples corpus-growth pass:
+
+```text
+sage -t passed: 166 passed, 0 failed, 2 skipped
+```
+
+That five-file focused validation adds
+`sage/categories/examples/commutative_additive_monoids.py`,
+`sage/categories/examples/finite_semigroups.py`,
+`sage/categories/examples/monoids.py`,
+`sage/categories/examples/semigroups.py`, and
+`sage/categories/examples/semirings.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 296
+non-comment entries. Direct probes record clean default-profile results for
+all five files without new WASI source tags or startup namespace changes. The
+focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary five-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-category-examples-make.sqlite3`; the saved
+block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
