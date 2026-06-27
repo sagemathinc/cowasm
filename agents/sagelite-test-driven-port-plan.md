@@ -4994,6 +4994,28 @@ example still reaches a WASM signature mismatch. Skipped-only files such as
 `sage/categories/g_sets.py` also remain out because they add no passing
 default-profile blocks.
 
+Focused category-singleton corpus-growth pass:
+
+```text
+sage -t passed: 59 passed, 0 failed, 11 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/category_singleton.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 281 non-comment
+entries. The doctest runner now seeds the lightweight `Rngs` and `Semirings`
+category constructors in the common startup namespace, and the WASI
+`sage.all` patch exposes the same names for REPL parity on a fresh patched
+Sagelite source copy. This clears the file's only sampled failure in the
+singleton category note comparing `Rngs() & Semirings()` with `Rings()`.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-category-singleton-make.sqlite3`. The make
+target rebuilt and patched the Sagelite source copy successfully after the
+expanded `src/sage/all.py` WASI startup hunk. The saved block- and file-failure
+cluster queries are empty, and the runner version is now 42.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
