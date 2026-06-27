@@ -6445,6 +6445,33 @@ aggregate is internally consistent with 45 block rows, 43 passed blocks, and
 2 deferred skips. A full corpus rerun should be performed before recording the
 next dashboard total.
 
+Focused weak-dictionary corpus-growth pass:
+
+```text
+sage -t passed: 231 passed, 0 failed, 40 skipped
+```
+
+That one-file validation adds `sage/misc/weak_dict.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 409
+non-comment entries. Direct sampling first exposed one missing startup helper
+and one lazy-real-field proxy mismatch: the upstream doctests use `floor(...)`
+without a local import, and the WASI `sage.all` startup surface keeps `RLF` as
+a lazy import until first use. The doctest runner now seeds `floor` from
+`sage.functions.other` and resolves `RLF` beside the existing core lazy fields
+before examples run, so the weak-value dictionary examples exercise the real
+field object rather than a non-weakrefable lazy proxy.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-weak-dict-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and the SQLite
+aggregate is internally consistent with 271 block rows, 231 passed blocks, and
+40 skipped blocks. Sampling in the same pass kept the double-vector backends
+out because they add only skipped rows, kept `vector_mod2_dense.pyx` out
+because it still clusters around missing `sage.matrix.matrix_mod2_dense`, and
+kept `functional.py` out because it timed out in symbolic denominator setup.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

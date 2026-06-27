@@ -806,7 +806,7 @@ def _cowasm_exception_detail(exc):
 
 
 def __cowasm_resolve_core_lazy_namespace(namespace):
-    for name in ("RIF", "RDF", "CDF"):
+    for name in ("RIF", "RDF", "CDF", "RLF"):
         value = namespace.get(name)
         get_object = getattr(value, "_get_object", None)
         if get_object is None:
@@ -906,6 +906,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.root_system.cartan_type", ("CartanType",)),
         ("sage.combinat.root_system.coxeter_type", ("CoxeterType",)),
         ("sage.combinat.root_system.root_system", ("RootSystem", "WeylDim")),
+        ("sage.functions.other", ("floor",)),
         ("sage.misc.functional", ("sqrt",)),
         ("sage.modules.free_module", ("FreeModule", "VectorSpace", "span")),
         ("sage.modules.free_module_element", ("vector",)),
