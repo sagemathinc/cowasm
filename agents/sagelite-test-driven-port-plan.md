@@ -4387,6 +4387,26 @@ records CoWasm commit `a4693d2c56058064f566bcce1e9b8cdcb69b2733`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, and runner version 41.
 
+Focused monoid and infinite-enumerated category corpus-growth pass:
+
+```text
+sage -t passed: 54 passed, 0 failed, 66 skipped
+```
+
+That two-file make-target validation adds
+`sage/categories/infinite_enumerated_sets.py` and
+`sage/categories/monoids.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 188
+non-comment entries. `monoids.py` reuses the existing `Monoids` startup seed,
+while the doctest runner now also seeds `InfiniteEnumeratedSets` to match the
+reduced WASI `sage.all` startup namespace.
+
+The focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary two-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-category-monoids-corpus.sqlite3`. The
+saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -841,6 +841,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.monoids.free_monoid", ("FreeMonoid",)),
         ("sage.categories.homset", ("Hom",)),
         ("sage.categories.finite_enumerated_sets", ("FiniteEnumeratedSets",)),
+        ("sage.categories.infinite_enumerated_sets", ("InfiniteEnumeratedSets",)),
         ("sage.categories.algebras_with_basis", ("AlgebrasWithBasis",)),
         ("sage.categories.commutative_additive_semigroups", ("CommutativeAdditiveSemigroups",)),
         ("sage.categories.finite_dimensional_algebras_with_basis", ("FiniteDimensionalAlgebrasWithBasis",)),
