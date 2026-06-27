@@ -232,6 +232,7 @@ src/sage/categories/left_modules.py
 src/sage/categories/right_modules.py
 src/sage/categories/super_algebras.py
 src/sage/categories/super_modules.py
+src/sage/categories/super_modules_with_basis.py
 src/sage/categories/super_hopf_algebras_with_basis.py
 src/sage/categories/supercommutative_algebras.py
 src/sage/categories/subobjects.py

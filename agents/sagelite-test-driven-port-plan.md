@@ -4897,6 +4897,38 @@ they still have focused doctest failures around combinatorial free modules,
 exterior/Lie/descent algebras, matroid and arrangement examples, startup
 namespace gaps, or output-order drift.
 
+Focused super-module-with-basis category corpus-growth pass:
+
+```text
+sage -t passed: 4 passed, 0 failed, 38 skipped
+```
+
+That one-file focused validation adds
+`sage/categories/super_modules_with_basis.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 263 non-comment
+entries. The doctest runner now seeds the lightweight
+`GradedModulesWithBasis` category constructor in the common startup namespace,
+and the WASI `sage.all` patch exposes the same name for REPL parity on a fresh
+patched Sagelite source copy. This clears the file's startup-name cluster
+where upstream examples use `GradedModulesWithBasis(QQ)` without a local
+import.
+
+Focused validation used:
+
+```sh
+cd sagemath/sagelite/build/wasi-sdk
+/home/user/cowasm/sagemath/sagelite/bin/sage -t --timeout=120 \
+  --sqlite=/tmp/sagelite-super-modules-with-basis-after-seed.sqlite3 \
+  src/sage/categories/super_modules_with_basis.py
+```
+
+The saved block- and file-failure cluster queries are empty. The same sampling
+pass confirms that `sage/categories/modules_with_basis.py` and
+`sage/categories/filtered_modules_with_basis.py` still have broader focused
+failure clusters around `CombinatorialFreeModule`, exterior algebra, matroid,
+and arrangement examples, so those remain out of the quiet corpus for a
+larger category-with-basis pass.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
