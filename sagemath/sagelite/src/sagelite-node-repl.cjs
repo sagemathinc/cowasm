@@ -862,6 +862,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.algebras_with_basis", ("AlgebrasWithBasis",)),
         ("sage.categories.commutative_additive_monoids", ("CommutativeAdditiveMonoids",)),
         ("sage.categories.commutative_additive_semigroups", ("CommutativeAdditiveSemigroups",)),
+        ("sage.categories.coxeter_groups", ("CoxeterGroups",)),
         ("sage.categories.finite_dimensional_algebras_with_basis", ("FiniteDimensionalAlgebrasWithBasis",)),
         ("sage.categories.finite_dimensional_modules_with_basis", ("FiniteDimensionalModulesWithBasis",)),
         ("sage.categories.graded_algebras", ("GradedAlgebras",)),

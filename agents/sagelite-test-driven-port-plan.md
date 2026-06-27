@@ -5648,6 +5648,33 @@ Sagelite source copy from scratch, then ran a temporary one-file corpus with
 block- and file-failure cluster queries are empty. The runner version remains
 44.
 
+Focused Coxeter-adjacent category corpus-growth pass:
+
+```text
+sage -t passed: 15 passed, 0 failed, 10 skipped
+```
+
+That two-file focused validation adds
+`sage/categories/complex_reflection_groups.py` and
+`sage/categories/kac_moody_algebras.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 336
+non-comment entries. The doctest runner now seeds the lightweight
+`CoxeterGroups` category constructor in the common startup namespace, and the
+WASI `sage.all` patch exposes the same constructor for REPL parity on a fresh
+patched Sagelite source copy. This clears the
+`ComplexReflectionGroups.ParentMethods.rank` examples that use
+`CoxeterGroups().example()` without a local import.
+
+Focused direct validation recorded
+`complex_reflection_groups.py: 12 passed, 0 failed, 4 skipped` and
+`kac_moody_algebras.py: 3 passed, 0 failed, 6 skipped`. Focused make-target
+validation rebuilt and patched the Sagelite source copy from scratch, then ran
+a temporary two-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-root-category-make.sqlite3`; the saved
+block- and file-failure cluster queries are empty. The runner version remains
+44.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

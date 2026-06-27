@@ -184,6 +184,7 @@ src/sage/categories/commutative_additive_monoids.py
 src/sage/categories/enumerated_sets.py
 src/sage/categories/commutative_additive_semigroups.py
 src/sage/categories/commutative_ring_ideals.py
+src/sage/categories/complex_reflection_groups.py
 src/sage/categories/complete_discrete_valuation.py
 src/sage/categories/coercion_methods.pyx
 src/sage/categories/cw_complexes.py
@@ -257,6 +258,7 @@ src/sage/categories/hopf_algebras.py
 src/sage/categories/hopf_algebras_with_basis.py
 src/sage/categories/isomorphic_objects.py
 src/sage/categories/j_trivial_semigroups.py
+src/sage/categories/kac_moody_algebras.py
 src/sage/categories/l_trivial_semigroups.py
 src/sage/categories/lie_groups.py
 src/sage/categories/magmatic_algebras.py
