@@ -4627,6 +4627,38 @@ file-failure cluster queries. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner
 version 41.
 
+Focused magma-combination category corpus-growth pass:
+
+```text
+sage -t passed: 39 passed, 0 failed, 2 skipped
+```
+
+That three-file make-target validation adds
+`sage/categories/finitely_generated_magmas.py`,
+`sage/categories/magmas_and_additive_magmas.py`, and
+`sage/categories/distributive_magmas_and_additive_magmas.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 209
+non-comment entries. The doctest runner now seeds the lightweight `Fields`
+category constructor in the common startup namespace, and the WASI `sage.all`
+patch exposes the same constructor for REPL parity on a fresh patched Sagelite
+source copy. This clears the `magmas_and_additive_magmas.py` startup-name
+failure for `Fields().Distributive.__module__`.
+
+The focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary three-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-magma-category-growth.sqlite3`. It records
+`finitely_generated_magmas.py: 6 passed, 0 failed, 0 skipped`,
+`magmas_and_additive_magmas.py: 21 passed, 0 failed, 1 skipped`, and
+`distributive_magmas_and_additive_magmas.py: 12 passed, 0 failed, 1 skipped`,
+with empty saved block- and file-failure cluster queries. The make target also
+refreshed and patched the Sagelite source copy successfully after the WASI
+patch hunk grew by one startup import. The latest run metadata records CoWasm
+commit `e33e41322d8a3ab95c11bfc587ca9acd9071590e`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner
+version 41.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

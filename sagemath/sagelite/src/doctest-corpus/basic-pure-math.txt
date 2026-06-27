@@ -172,12 +172,15 @@ src/sage/categories/infinite_enumerated_sets.py
 src/sage/categories/finite_sets.py
 src/sage/categories/finite_monoids.py
 src/sage/categories/finite_semigroups.py
+src/sage/categories/finitely_generated_magmas.py
 src/sage/categories/finitely_generated_semigroups.py
 src/sage/categories/semigroups.py
 src/sage/categories/semirings.py
 src/sage/categories/rngs.py
 src/sage/categories/groups.py
 src/sage/categories/magmas.py
+src/sage/categories/magmas_and_additive_magmas.py
+src/sage/categories/distributive_magmas_and_additive_magmas.py
 src/sage/categories/monoids.py
 src/sage/categories/sets_cat.py
 src/sage/categories/modules.py
