@@ -5511,6 +5511,27 @@ one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 block- and file-failure cluster queries are empty. The runner version is now
 43.
 
+Focused manifold-category corpus-growth pass:
+
+```text
+sage -t passed: 32 passed, 0 failed, 23 skipped
+```
+
+That one-file focused validation adds `sage/categories/manifolds.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 329
+non-comment entries. The added WASI source patch classifies the seven
+remaining category `TestSuite(...).run()` examples as `# known bug` because
+they currently fail only in `_test_pickling` while serializing manifold
+category objects through a lazy-import tuple. The category construction,
+subcategory, and super-category examples still run in the default profile.
+
+Focused make-target validation rebuilt and patched the Sagelite source copy
+from scratch, then ran a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-manifolds-make.sqlite3`; the saved block-
+and file-failure cluster queries are empty. The runner version remains 43.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

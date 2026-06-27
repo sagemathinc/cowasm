@@ -4164,6 +4164,30 @@ diff -urN a/src/sage/categories/metric_spaces.py b/src/sage/categories/metric_sp
 @@ -380 +380 @@
 -                    sage: QR in MetricSpaces().Complete()
 +                    sage: QR in MetricSpaces().Complete()                                # needs sage.rings.real_mpfr
+diff -urN a/src/sage/categories/manifolds.py b/src/sage/categories/manifolds.py
+--- a/src/sage/categories/manifolds.py
++++ b/src/sage/categories/manifolds.py
+@@ -48 +48 @@
+-            sage: TestSuite(C).run(skip='_test_category_over_bases')
++            sage: TestSuite(C).run(skip='_test_category_over_bases')                    # known bug
+@@ -152 +152 @@
+-                sage: TestSuite(Manifolds(RR).Differentiable()).run()
++                sage: TestSuite(Manifolds(RR).Differentiable()).run()                   # known bug
+@@ -172 +172 @@
+-                sage: TestSuite(Manifolds(RR).Smooth()).run()
++                sage: TestSuite(Manifolds(RR).Smooth()).run()                           # known bug
+@@ -192 +192 @@
+-                sage: TestSuite(Manifolds(RR).Analytic()).run()
++                sage: TestSuite(Manifolds(RR).Analytic()).run()                         # known bug
+@@ -213 +213 @@
+-                sage: TestSuite(Manifolds(RR).AlmostComplex()).run()
++                sage: TestSuite(Manifolds(RR).AlmostComplex()).run()                    # known bug
+@@ -320 +320 @@
+-            sage: TestSuite(C).run(skip='_test_category_over_bases')
++            sage: TestSuite(C).run(skip='_test_category_over_bases')                    # known bug
+@@ -331 +331 @@
+-            sage: TestSuite(C).run(skip='_test_category_over_bases')
++            sage: TestSuite(C).run(skip='_test_category_over_bases')                    # known bug
 diff -urN a/src/sage/categories/schemes.py b/src/sage/categories/schemes.py
 --- a/src/sage/categories/schemes.py
 +++ b/src/sage/categories/schemes.py

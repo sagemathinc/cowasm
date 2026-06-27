@@ -262,6 +262,7 @@ src/sage/categories/magmas_and_additive_magmas.py
 src/sage/categories/distributive_magmas_and_additive_magmas.py
 src/sage/categories/division_rings.py
 src/sage/categories/matrix_algebras.py
+src/sage/categories/manifolds.py
 src/sage/categories/metric_spaces.py
 src/sage/categories/modular_abelian_varieties.py
 src/sage/categories/monoid_algebras.py
