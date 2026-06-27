@@ -923,6 +923,34 @@ startup-context, or broader semantic triage. Dependency-boundary files such as
 rows under the default browser-profile tags, so they remain outside the quiet
 corpus.
 
+Latest checked local corpus run after the 2026-06-26 partition
+corpus-growth pass:
+
+```text
+sage -t passed: 22550 passed, 0 failed, 3835 skipped
+```
+
+That run records 26,385 block rows across the current 144-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, adding
+`sage/combinat/partition.py` to the quiet browser-profile dashboard. The
+focused rerun records
+`partition.py: 1304 passed, 0 failed, 216 skipped`.
+
+The doctest runner now seeds `Tableaux` in the common startup namespace, and
+the WASI `sage.all` patch exposes the same constructor for REPL parity after a
+Sagelite package rebuild. This clears the partition display-option examples
+where upstream doctests set `Tableaux.options.convention` without a local
+import. The added WASI source patch classifies order-sensitive partition-block
+dictionary display drift as `# known bug`, tags Symmetrica-, Singular-, and
+GAP-backed partition examples with explicit `# needs ...` requirements, and
+keeps the GAP-backed partition-counting fallback out of the default browser
+profile. The saved block- and file-failure cluster queries are empty for the
+full corpus run. The latest run metadata records CoWasm commit
+`e6b6aeab640adc1f634591e9d1bae77dd5103515`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
+and about 1,092 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

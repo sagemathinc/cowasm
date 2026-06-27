@@ -1235,7 +1235,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.combinat.regular_sequence import RegularSequenceRing
 +    from sage.combinat.root_system.root_system import RootSystem
 +    from sage.combinat.set_partition_ordered import OrderedSetPartition
-+    from sage.combinat.tableau import SemistandardTableaux, StandardTableau, Tableau
++    from sage.combinat.tableau import SemistandardTableaux, StandardTableau, Tableau, Tableaux
 +    from sage.combinat.partition_tuple import PartitionTuples
 +    from sage.combinat.tableau_tuple import StandardTableauTuple, StandardTableauTuples, TableauTuples
 +    from sage.combinat.words.morphism import WordMorphism
@@ -3818,3 +3818,63 @@ diff -urN a/src/sage/combinat/tableau.py b/src/sage/combinat/tableau.py
 @@ -7413 +7413 @@
 -            sage: RowStandardTableaux(4).an_element()
 +            sage: RowStandardTableaux(4).an_element()                                  # needs sage.graphs
+diff -urN a/src/sage/combinat/partition.py b/src/sage/combinat/partition.py
+--- a/src/sage/combinat/partition.py
++++ b/src/sage/combinat/partition.py
+@@ -3967 +3967 @@
+-            sage: Partition([4,3,2]).block(0)
++            sage: Partition([4,3,2]).block(0)                                          # known bug
+@@ -3971 +3971 @@
+-            sage: Partition([4,3,2]).block(2, multicharge=(1,))
++            sage: Partition([4,3,2]).block(2, multicharge=(1,))                         # known bug
+@@ -5147 +5147 @@
+-            sage: Partition([3,2,1]).arms_legs_coeff(1,1)
++            sage: Partition([3,2,1]).arms_legs_coeff(1,1)                                # needs sage.libs.singular
+@@ -5149 +5149 @@
+-            sage: Partition([3,2,1]).arms_legs_coeff(0,0)
++            sage: Partition([3,2,1]).arms_legs_coeff(0,0)                                # needs sage.libs.singular
+@@ -5151 +5151 @@
+-            sage: Partition([3,2,1]).arms_legs_coeff(*[0,0])
++            sage: Partition([3,2,1]).arms_legs_coeff(*[0,0])                             # needs sage.libs.singular
+@@ -5710 +5710 @@
+-            sage: GP = Partition([3,2,1]).garsia_procesi_module(QQ); GP
++            sage: GP = Partition([3,2,1]).garsia_procesi_module(QQ); GP                  # needs sage.libs.symmetrica
+@@ -5712 +5712 @@
+-            sage: GP.graded_frobenius_image()
++            sage: GP.graded_frobenius_image()                                           # needs sage.libs.symmetrica
+@@ -5716 +5716 @@
+-            sage: Partition([3,2,1]).garsia_procesi_module(GF(3))
++            sage: Partition([3,2,1]).garsia_procesi_module(GF(3))                        # needs sage.libs.symmetrica
+@@ -5772 +5772 @@
+-            sage: for la in Partitions(6, regular=3):
++            sage: for la in Partitions(6, regular=3):                                    # needs sage.libs.gap
+@@ -5795 +5795 @@
+-            sage: TM = Partition([2,2,1]).tabloid_module(QQ); TM
++            sage: TM = Partition([2,2,1]).tabloid_module(QQ); TM                         # needs sage.libs.gap
+@@ -5797 +5797 @@
+-            sage: TM.frobenius_image()
++            sage: TM.frobenius_image()                                                  # needs sage.libs.gap
+@@ -6130 +6130 @@
+-        sage: Partitions(40, min_length=10).cardinality()
++        sage: Partitions(40, min_length=10).cardinality()                                # needs sage.libs.gap
+@@ -6133 +6133 @@
+-        sage: Partitions(40, max_length=10).cardinality()
++        sage: Partitions(40, max_length=10).cardinality()                                # needs sage.libs.gap
+@@ -7645 +7645 @@
+-            sage: list(Partitions(4,parts_in=vector(QQ,[2,4])))
++            sage: list(Partitions(4,parts_in=vector(QQ,[2,4])))                          # needs sage.libs.gap
+@@ -7651 +7651 @@
+-            sage: list(Partitions(4,parts_in=vector(ZZ,[2,4])))
++            sage: list(Partitions(4,parts_in=vector(ZZ,[2,4])))                          # needs sage.libs.gap
+@@ -9276 +9276 @@
+-            sage: all(P(n, min_length=k, max_length=m, min_part=a, max_part=b).cardinality()
++            sage: all(P(n, min_length=k, max_length=m, min_part=a, max_part=b).cardinality()  # needs sage.libs.gap
+@@ -9368 +9368 @@
+-            sage: all(PartitionsGreatestLE(n, a).cardinality() ==
++            sage: all(PartitionsGreatestLE(n, a).cardinality() ==                        # needs sage.libs.gap
+@@ -9941 +9941 @@
+-        sage: all(f(n, k, b) == q_binomial(k + b, b)[n] for n in range(5) for k in range(n+1) for b in range(n+1))
++        sage: all(f(n, k, b) == q_binomial(k + b, b)[n] for n in range(5) for k in range(n+1) for b in range(n+1))  # needs sage.libs.gap
+@@ -9957 +9957 @@
+-        sage: A(100)
++        sage: A(100)                                                                      # needs sage.libs.gap
