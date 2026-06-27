@@ -216,6 +216,7 @@ src/sage/categories/hopf_algebras_with_basis.py
 src/sage/categories/magmas.py
 src/sage/categories/magmas_and_additive_magmas.py
 src/sage/categories/distributive_magmas_and_additive_magmas.py
+src/sage/categories/division_rings.py
 src/sage/categories/matrix_algebras.py
 src/sage/categories/monoid_algebras.py
 src/sage/categories/monoids.py

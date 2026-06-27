@@ -863,6 +863,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.finite_dimensional_modules_with_basis", ("FiniteDimensionalModulesWithBasis",)),
         ("sage.categories.graded_modules_with_basis", ("GradedModulesWithBasis",)),
         ("sage.categories.graded_hopf_algebras_with_basis", ("GradedHopfAlgebrasWithBasis",)),
+        ("sage.categories.category", ("Category",)),
         ("sage.categories.hopf_algebras", ("HopfAlgebras",)),
         ("sage.categories.hopf_algebras_with_basis", ("HopfAlgebrasWithBasis",)),
         ("sage.categories.left_modules", ("LeftModules",)),

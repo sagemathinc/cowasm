@@ -4929,6 +4929,26 @@ failure clusters around `CombinatorialFreeModule`, exterior algebra, matroid,
 and arrangement examples, so those remain out of the quiet corpus for a
 larger category-with-basis pass.
 
+Focused division-ring category corpus-growth pass:
+
+```text
+sage -t passed: 11 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/division_rings.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 264
+non-comment entries. The doctest runner now seeds the lightweight `Category`
+base class in the common startup namespace, and the WASI `sage.all` patch
+exposes the same name for REPL parity on a fresh patched Sagelite source copy.
+This clears the file's only focused failure cluster, where upstream examples
+define a local test category with `class Foo(Category)` without a local import.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-division-rings-make.sqlite3`. The saved
+block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
