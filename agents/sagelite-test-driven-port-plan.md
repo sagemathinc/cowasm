@@ -845,6 +845,32 @@ empty for the full corpus. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
 and about 1,045 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 integer-list backend
+corpus-growth pass:
+
+```text
+sage -t passed: 20928 passed, 0 failed, 3476 skipped
+```
+
+That run records 24,404 block rows across the current 142-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-integer-list-backends.sqlite3`, adding
+`sage/combinat/integer_lists/base.pyx` and
+`sage/combinat/integer_lists/invlex.pyx` to the quiet browser-profile
+dashboard. Focused reruns record `base.pyx: 116 passed, 0 failed, 4 skipped`
+and `invlex.pyx: 302 passed, 0 failed, 4 skipped`.
+
+The added WASI source patch classifies the backend `__getstate__()` dict
+display-order drift and the `IntegerListsLex` warning-capture drift as
+deferred `# known bug` skips. The same pass marks a `ConditionSet` function
+address repr drift as `# random`, so the assignment still seeds state for the
+following finite-set examples while accepting the runtime's address formatting.
+The saved block- and file-failure cluster queries are empty for the full
+corpus. The latest run metadata records CoWasm commit
+`1f7f5a55e932a841caf5c80d2b36137d979cd939`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
+and about 1,044 seconds of elapsed time.
+
 The Puiseux-series sampling pass kept several nearby files out of the quiet
 corpus:
 `sage/combinat/q_bernoulli.pyx` still reaches the known NTL/libcxx
