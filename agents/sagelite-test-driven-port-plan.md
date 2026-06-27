@@ -6520,6 +6520,32 @@ the full corpus run. The latest full-run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 48,
 and about 49 minutes of elapsed time.
 
+Focused controlled-C3 corpus-growth pass:
+
+```text
+sage -t passed: 114 passed, 0 failed, 107 skipped
+```
+
+That one-file make-target validation adds `sage/misc/c3_controlled.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 412 non-comment
+entries. Direct sampling first recorded eight missing-name failures around
+category comparison-key examples for `SetsWithPartialMaps`,
+`EnumeratedSets`, `SetsWithGrading`, `LatticePosets`, and `Crystals`. The
+doctest runner now seeds those focused category constructors beside the
+existing common category startup names, so the file exercises the intended C3
+ordering behavior instead of depending on a broader `sage.categories.all`
+import.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-c3-controlled-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and the SQLite
+aggregate is internally consistent with 221 block rows, 114 passed blocks, and
+107 skipped blocks. A full corpus rerun should be performed before recording
+the next dashboard total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
