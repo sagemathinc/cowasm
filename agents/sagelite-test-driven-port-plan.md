@@ -1630,6 +1630,30 @@ because their current failures involve filesystem semantics, symbolic/timeit
 paths, warning capture, lazy-import weak references, or broader runtime
 behavior rather than narrow display drift.
 
+Focused misc lazy-format/shell/trace corpus-growth pass:
+
+```text
+sage -t passed: 27 passed, 0 failed, 9 skipped
+```
+
+That three-file make-target validation adds `sage/misc/lazy_format.py`,
+`sage/misc/sh.py`, and `sage/misc/trace.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 389
+non-comment entries. Direct sampling first recorded one `lazy_format.py`
+failure where the default profile surfaces the underlying `ValueError`
+traceback instead of CPython's compact failed-`repr(...)` placeholder; the
+added WASI source patch defers that diagnostic drift as `# known bug`.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary three-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-misc-lazy-sh-trace-make.sqlite3`,
+recording `lazy_format.py: 22 passed, 0 failed, 1 skipped`,
+`sh.py: 1 passed, 0 failed, 0 skipped`, and
+`trace.py: 4 passed, 0 failed, 8 skipped`. The saved block- and file-failure
+cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

@@ -4284,6 +4284,12 @@ diff -urN a/src/sage/misc/latex_macros.py b/src/sage/misc/latex_macros.py
 @@ -206 +206 @@
 -        sage: sage_mathjax_macros()
 +        sage: sage_mathjax_macros()                                                     # random
+diff -urN a/src/sage/misc/lazy_format.py b/src/sage/misc/lazy_format.py
+--- a/src/sage/misc/lazy_format.py
++++ b/src/sage/misc/lazy_format.py
+@@ -45 +45 @@
+-        sage: lf
++        sage: lf                                                                        # known bug
 diff -urN a/src/sage/misc/object_multiplexer.py b/src/sage/misc/object_multiplexer.py
 --- a/src/sage/misc/object_multiplexer.py
 +++ b/src/sage/misc/object_multiplexer.py
