@@ -4069,3 +4069,12 @@ diff -urN a/src/sage/categories/rngs.py b/src/sage/categories/rngs.py
 @@ -121 +121 @@
 -                sage: R.principal_ideal(x+2*y)
 +                sage: R.principal_ideal(x+2*y)                                         # needs sage.rings.polynomial.plural
+diff -urN a/src/sage/categories/functor.pyx b/src/sage/categories/functor.pyx
+--- a/src/sage/categories/functor.pyx
++++ b/src/sage/categories/functor.pyx
+@@ -133 +133 @@
+-        sage: F(f)
++        sage: F(f)                                                                      # needs sage.libs.singular
+@@ -138 +138 @@
+-        sage: F(f)(1/x)
++        sage: F(f)(1/x)                                                                 # needs sage.libs.singular

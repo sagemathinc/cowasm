@@ -1366,6 +1366,38 @@ quiet and already present in the current corpus; nearby
 `map.pyx` remain outside the quiet corpus because they still have focused
 doctest failures.
 
+Focused category functor corpus-growth pass:
+
+```text
+sage -t passed: 116 passed, 0 failed, 13 skipped
+```
+
+That one-file make-target validation adds `sage/categories/functor.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 283 non-comment
+entries. The added WASI source patch classifies the two coercion-functor
+morphism examples that reduce multivariate fraction-field elements as
+`# needs sage.libs.singular`, because they currently import the unavailable
+Singular interface through the polynomial gcd path.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-functor-make.sqlite3`. The make target
+rebuilt and patched the Sagelite source copy successfully, and the saved
+block- and file-failure cluster queries are empty.
+
+The same sampling pass kept `sage/categories/bialgebras.py`,
+`sage/categories/coalgebras.py`, `sage/categories/finite_groups.py`,
+`sage/categories/algebra_functor.py`, and `sage/categories/basic.py` out
+because they add no passing default-profile blocks. It kept
+`sage/categories/commutative_rings.py` out because it still reaches a memory
+trap in `is_square(root=True)`, kept `sage/categories/euclidean_domains.py`
+out because `gcd_free_basis` times out in the default node profile, and kept
+the broader `category.py`, `category_with_axiom.py`, and
+`covariant_functorial_construction.py` files out because their current
+failures are dominated by startup-namespace and ordering clusters that should
+be handled separately.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

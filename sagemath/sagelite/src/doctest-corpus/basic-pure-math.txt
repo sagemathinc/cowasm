@@ -200,6 +200,7 @@ src/sage/categories/finite_monoids.py
 src/sage/categories/finite_semigroups.py
 src/sage/categories/finitely_generated_magmas.py
 src/sage/categories/finitely_generated_semigroups.py
+src/sage/categories/functor.pyx
 src/sage/categories/function_fields.py
 src/sage/categories/semigroups.py
 src/sage/categories/semirings.py
