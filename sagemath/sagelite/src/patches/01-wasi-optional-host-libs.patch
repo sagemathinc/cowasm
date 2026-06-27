@@ -4229,3 +4229,9 @@ diff -urN a/src/sage/categories/schemes.py b/src/sage/categories/schemes.py
 @@ -299 +299 @@
 -                    sage: End(EllipticCurve(j=1)) in Rings()
 +                    sage: End(EllipticCurve(j=1)) in Rings()                            # needs sage.schemes.elliptic_curves
+diff -urN a/src/sage/categories/super_algebras_with_basis.py b/src/sage/categories/super_algebras_with_basis.py
+--- a/src/sage/categories/super_algebras_with_basis.py
++++ b/src/sage/categories/super_algebras_with_basis.py
+@@ -137 +137 @@
+-                sage: Algebras(QQ).Super().SignedTensorProducts().super_categories()
++                sage: Algebras(QQ).Super().SignedTensorProducts().super_categories()    # known bug

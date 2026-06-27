@@ -5579,6 +5579,30 @@ from scratch, then ran a temporary one-file corpus with
 block- and file-failure cluster queries are empty. The runner version remains
 44.
 
+Focused super-algebras-with-basis category corpus-growth pass:
+
+```text
+sage -t passed: 5 passed, 0 failed, 18 skipped
+```
+
+That one-file focused validation adds
+`sage/categories/super_algebras_with_basis.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 332
+non-comment entries. The added WASI source patch classifies the file's lone
+remaining category `super_categories()` ordering drift as `# known bug`: the
+same two category parents are returned, but the WebAssembly profile reports
+them in the opposite order from the upstream doctest expectation. The core
+super-algebra category construction and supercommutator examples remain
+default-profile coverage.
+
+Focused make-target validation rebuilt and patched the Sagelite source copy
+from scratch, then ran a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-super-algebras-with-basis-make.sqlite3`.
+The latest-run summary records 23 total blocks, 5 passed, 18 skipped,
+0 failed, runner version 44, and empty saved block- and file-failure cluster
+queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
