@@ -5675,6 +5675,32 @@ a temporary two-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 block- and file-failure cluster queries are empty. The runner version remains
 44.
 
+Focused action-category corpus-growth pass:
+
+```text
+sage -t passed: 74 passed, 0 failed, 33 skipped
+```
+
+That one-file focused validation adds `sage/categories/action.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 337
+non-comment entries. The added WASI source patch classifies the two weakref
+garbage-collection repr examples as `# known bug`, because the WebAssembly
+profile raises the underlying `RuntimeError` directly instead of formatting it
+through Sage's historical failed-`repr` output, and marks the `gc.collect()`
+count check as `# random`.
+
+Focused validation rebuilt and patched the Sagelite source copy from scratch,
+then ran a temporary one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-action-make.sqlite3`; the saved block- and
+file-failure cluster queries are empty. Sampling in the same pass confirmed
+that several skipped-only category wrappers, including `bialgebras.py`,
+`coalgebras.py`, `finite_groups.py`, `posets.py`, and
+`finite_coxeter_groups.py`, still add no passing default-profile blocks, while
+larger core category files still have startup-name or runtime-boundary
+clusters that need separate triage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

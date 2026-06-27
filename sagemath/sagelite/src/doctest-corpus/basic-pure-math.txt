@@ -158,6 +158,7 @@ src/sage/combinat/words/shuffle_product.py
 src/sage/combinat/words/suffix_trees.py
 src/sage/combinat/words/word_generators.py
 src/sage/combinat/words/words.py
+src/sage/categories/action.pyx
 src/sage/categories/additive_groups.py
 src/sage/categories/additive_magmas.py
 src/sage/categories/additive_monoids.py

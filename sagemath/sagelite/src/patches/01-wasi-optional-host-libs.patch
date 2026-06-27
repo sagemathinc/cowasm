@@ -4236,6 +4236,18 @@ diff -urN a/src/sage/categories/schemes.py b/src/sage/categories/schemes.py
 @@ -299 +299 @@
 -                    sage: End(EllipticCurve(j=1)) in Rings()
 +                    sage: End(EllipticCurve(j=1)) in Rings()                            # needs sage.schemes.elliptic_curves
+diff -urN a/src/sage/categories/action.pyx b/src/sage/categories/action.pyx
+--- a/src/sage/categories/action.pyx
++++ b/src/sage/categories/action.pyx
+@@ -23 +23 @@
+-        sage: A
++        sage: A                                                                         # known bug
+@@ -37 +37 @@
+-        sage: gc.collect()
++        sage: gc.collect()                                                              # random
+@@ -299 +299 @@
+-            sage: A
++            sage: A                                                                     # known bug
 diff -urN a/src/sage/categories/super_algebras_with_basis.py b/src/sage/categories/super_algebras_with_basis.py
 --- a/src/sage/categories/super_algebras_with_basis.py
 +++ b/src/sage/categories/super_algebras_with_basis.py
