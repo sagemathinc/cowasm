@@ -6356,6 +6356,27 @@ The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 48,
 and about 2,859 seconds of elapsed time.
 
+Focused lazy-attribute corpus-growth pass:
+
+```text
+sage -t passed: 96 passed, 0 failed, 12 skipped
+```
+
+That one-file make-target validation adds `sage/misc/lazy_attribute.pyx` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 402
+non-comment entries. Direct sampling first recorded two focused failures: an
+object-address repr display drift in `Parent.element_class`, now marked
+`# random`, and a `timeit('a.x')` example that imports IPython through Sage's
+timing helper despite random output, now marked `# needs IPython`.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-lazy-attribute-make.sqlite3`,
+recording `lazy_attribute.pyx: 96 passed, 0 failed, 12 skipped`. The saved
+block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

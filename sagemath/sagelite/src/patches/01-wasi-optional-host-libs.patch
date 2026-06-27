@@ -4358,6 +4358,15 @@ diff -urN a/src/sage/misc/lazy_format.py b/src/sage/misc/lazy_format.py
 @@ -45 +45 @@
 -        sage: lf
 +        sage: lf                                                                        # known bug
+diff -urN a/src/sage/misc/lazy_attribute.pyx b/src/sage/misc/lazy_attribute.pyx
+--- a/src/sage/misc/lazy_attribute.pyx
++++ b/src/sage/misc/lazy_attribute.pyx
+@@ -66 +66 @@
+-            sage: Parent.element_class
++            sage: Parent.element_class                                               # random
+@@ -200 +200 @@
+-        sage: timeit('a.x') # random
++        sage: timeit('a.x') # random                                                # needs IPython
 diff -urN a/src/sage/misc/object_multiplexer.py b/src/sage/misc/object_multiplexer.py
 --- a/src/sage/misc/object_multiplexer.py
 +++ b/src/sage/misc/object_multiplexer.py
