@@ -366,6 +366,7 @@ src/sage/misc/multireplace.py
 src/sage/misc/namespace_package.py
 src/sage/misc/nested_class.pyx
 src/sage/misc/package.py
+src/sage/misc/prandom.py
 src/sage/misc/parser.pyx
 src/sage/misc/python.py
 src/sage/misc/random_testing.py

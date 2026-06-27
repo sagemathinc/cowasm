@@ -1532,6 +1532,27 @@ three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-category-example-next-make.sqlite3`; the
 saved block- and file-failure cluster queries are empty.
 
+Focused misc random API corpus-growth pass:
+
+```text
+sage -t passed: 68 passed, 0 failed, 6 skipped
+```
+
+That one-file focused validation adds `sage/misc/prandom.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 381
+non-comment entries. Direct sampling first recorded two failures in the file's
+`timeit(...)` examples because Sage's timing helper imports IPython in that
+path; the added WASI source patch marks those examples as `# needs IPython`
+while preserving the seeded random-number doctests as ordinary passing
+coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-prandom-make.sqlite3`; the saved block- and
+file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

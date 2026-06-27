@@ -4266,3 +4266,12 @@ diff -urN a/src/sage/misc/converting_dict.py b/src/sage/misc/converting_dict.py
 @@ -286 +286 @@
 -            sage: d          # indirect doctest
 +            sage: d          # indirect doctest                                         # random
+diff -urN a/src/sage/misc/prandom.py b/src/sage/misc/prandom.py
+--- a/src/sage/misc/prandom.py
++++ b/src/sage/misc/prandom.py
+@@ -43 +43 @@
+-    sage: timeit('test1()') # random
++    sage: timeit('test1()') # random                                                    # needs IPython
+@@ -45 +45 @@
+-    sage: timeit('test2()') # random
++    sage: timeit('test2()') # random                                                    # needs IPython
