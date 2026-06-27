@@ -1183,6 +1183,32 @@ latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 39,
 and about 1,269 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-27 ambient-space
+root-system corpus-growth pass:
+
+```text
+sage -t passed: 24050 passed, 0 failed, 4338 skipped
+```
+
+That run records 28,388 block rows across all 176 files in the current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/root_system/ambient_space.py` to the quiet browser-profile
+dashboard. The focused rerun records:
+
+```text
+ambient_space.py: 82 passed, 0 failed, 2 skipped
+```
+
+The added file required no new WASI source tags or startup namespace changes.
+Sampling in the same pass kept `sage/combinat/root_system/coxeter_matrix.py`
+and `sage/combinat/root_system/dynkin_diagram.py` out of the quiet corpus
+because both currently add only skipped rows under the default browser-profile
+tags. The saved block- and file-failure cluster queries are empty for the full
+corpus run. The latest run metadata records CoWasm commit
+`2800924a4f4fb05a70484ed639a56a6e9d6e7fe2`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 39,
+and about 1,378 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
