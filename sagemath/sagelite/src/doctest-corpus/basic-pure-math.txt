@@ -181,8 +181,10 @@ src/sage/categories/commutative_ring_ideals.py
 src/sage/categories/facade_sets.py
 src/sage/categories/filtered_algebras.py
 src/sage/categories/filtered_algebras_with_basis.py
+src/sage/categories/filtered_modules.py
 src/sage/categories/filtered_hopf_algebras_with_basis.py
 src/sage/categories/finite_enumerated_sets.py
+src/sage/categories/finite_dimensional_bialgebras_with_basis.py
 src/sage/categories/finite_dimensional_coalgebras_with_basis.py
 src/sage/categories/finite_dimensional_hopf_algebras_with_basis.py
 src/sage/categories/finite_dimensional_modules_with_basis.py
@@ -229,6 +231,8 @@ src/sage/categories/modules.py
 src/sage/categories/left_modules.py
 src/sage/categories/right_modules.py
 src/sage/categories/super_algebras.py
+src/sage/categories/super_modules.py
+src/sage/categories/super_hopf_algebras_with_basis.py
 src/sage/categories/supercommutative_algebras.py
 src/sage/categories/subobjects.py
 src/sage/categories/topological_spaces.py

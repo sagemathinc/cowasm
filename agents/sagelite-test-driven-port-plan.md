@@ -4862,6 +4862,41 @@ failures, keeps `sage/categories/division_rings.py` out because it has focused
 semantic failures, and keeps `sage/categories/metric_spaces.py` out because it
 still has mixed failures and skipped graph/topology boundary coverage.
 
+Focused module-wrapper category corpus-growth pass:
+
+```text
+sage -t passed: 56 passed, 0 failed, 22 skipped
+```
+
+That four-file make-target validation adds
+`sage/categories/filtered_modules.py`,
+`sage/categories/finite_dimensional_bialgebras_with_basis.py`,
+`sage/categories/super_modules.py`, and
+`sage/categories/super_hopf_algebras_with_basis.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 262
+non-comment entries. These files reuse existing category startup namespace
+coverage and require no new WASI source tags.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary four-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-category-followup.sqlite3`. The saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `4e6f5fae5d6f21115840a145de41fecdbaee505a`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and
+runner version 42.
+
+Sampling in the same pass keeps `sage/categories/modules_with_basis.py`,
+`sage/categories/filtered_modules_with_basis.py`,
+`sage/categories/graded_modules.py`,
+`sage/categories/graded_algebras_with_basis.py`,
+`sage/categories/finite_dimensional_algebras_with_basis.py`,
+`sage/categories/super_modules_with_basis.py`, and
+`sage/categories/super_algebras_with_basis.py` out of the quiet corpus because
+they still have focused doctest failures around combinatorial free modules,
+exterior/Lie/descent algebras, matroid and arrangement examples, startup
+namespace gaps, or output-order drift.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
