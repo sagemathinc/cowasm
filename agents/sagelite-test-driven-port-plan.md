@@ -4729,6 +4729,40 @@ currently adds only skipped rows, and keeps
 `graded_algebras_with_basis.py`, and `graded_modules.py` out because they
 still have focused doctest failures.
 
+Focused algebra-module and super-category corpus-growth pass:
+
+```text
+sage -t passed: 60 passed, 0 failed, 80 skipped
+```
+
+That nine-file make-target validation adds
+`sage/categories/algebra_modules.py`, `sage/categories/bimodules.py`,
+`sage/categories/graded_bialgebras_with_basis.py`,
+`sage/categories/group_algebras.py`, `sage/categories/matrix_algebras.py`,
+`sage/categories/monoid_algebras.py`, `sage/categories/semisimple_algebras.py`,
+`sage/categories/super_algebras.py`, and
+`sage/categories/supercommutative_algebras.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 236
+non-comment entries. These files reuse existing category startup namespace
+coverage and do not need new WASI source tags.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary nine-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-category-clean.sqlite3`. The saved block-
+and file-failure cluster queries are empty. The latest run metadata records
+CoWasm commit `572d413356e5fbd2e30b7b576650295d6283803c`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner
+version 41. The same sampling pass keeps
+`sage/categories/filtered_modules.py`,
+`sage/categories/filtered_modules_with_basis.py`,
+`sage/categories/modules_with_basis.py`,
+`sage/categories/super_algebras_with_basis.py`,
+`sage/categories/super_hopf_algebras_with_basis.py`,
+`sage/categories/super_modules.py`, and
+`sage/categories/super_modules_with_basis.py` out because they still have
+focused doctest failures.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
