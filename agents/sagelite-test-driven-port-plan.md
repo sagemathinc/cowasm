@@ -4495,6 +4495,34 @@ used for this pass because the external `/home/user/sagelite` source checkout
 had unrelated dirty changes and a patch dry-run reported unrelated
 `integer_mod_ring.py` hunk drift.
 
+Focused additive-semigroup and rng category corpus-growth pass:
+
+```text
+sage -t passed: 17 passed, 0 failed, 14 skipped
+```
+
+That two-file direct-run validation adds
+`sage/categories/commutative_additive_semigroups.py` and
+`sage/categories/rngs.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 194
+non-comment entries. The doctest runner now seeds
+`CommutativeAdditiveGroups` in the common startup namespace, and the WASI
+`sage.all` patch exposes the same constructor for REPL parity on a fresh
+patched Sagelite source copy. This clears the `rngs.py` startup-name failure
+for `(CommutativeAdditiveGroups() & Semigroups()).Distributive()`.
+
+The added WASI source patch classifies the remaining `rngs.py`
+multivariate-principal-ideal display check as
+`# needs sage.rings.polynomial.plural`, because rendering that ideal imports
+the unavailable noncommutative polynomial `plural` module in the stripped
+browser profile. Focused validation against the existing patched source tree
+records `rngs.py: 11 passed, 0 failed, 14 skipped` and
+`commutative_additive_semigroups.py: 6 passed, 0 failed, 0 skipped`, with
+empty saved block- and file-failure cluster queries. The updated WASI source
+patch was also applied successfully to a temporary copy of the Sagelite source
+checkout; a full corpus refresh was deferred in favor of the focused two-file
+validation.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

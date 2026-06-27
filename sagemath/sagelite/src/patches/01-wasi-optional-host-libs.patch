@@ -1209,7 +1209,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))                       # needs sage.graphs
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,136 @@
+@@ -253,74 +253,137 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1233,6 +1233,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.algebras_with_basis import AlgebrasWithBasis
 +    from sage.categories.cartesian_product import cartesian_product
 +    from sage.categories.coalgebras import Coalgebras
++    from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 +    from sage.categories.commutative_additive_monoids import CommutativeAdditiveMonoids
 +    from sage.categories.commutative_additive_semigroups import CommutativeAdditiveSemigroups
 +    from sage.categories.euclidean_domains import EuclideanDomains
@@ -4029,3 +4030,9 @@ diff -urN a/src/sage/categories/semigroups.py b/src/sage/categories/semigroups.p
 @@ -747 +747 @@
 -                sage: Semigroups().Aperiodic().axioms()
 +                sage: Semigroups().Aperiodic().axioms()                                  # random
+diff -urN a/src/sage/categories/rngs.py b/src/sage/categories/rngs.py
+--- a/src/sage/categories/rngs.py
++++ b/src/sage/categories/rngs.py
+@@ -121 +121 @@
+-                sage: R.principal_ideal(x+2*y)
++                sage: R.principal_ideal(x+2*y)                                         # needs sage.rings.polynomial.plural

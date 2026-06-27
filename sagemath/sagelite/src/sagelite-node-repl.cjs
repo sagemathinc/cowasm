@@ -842,6 +842,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.additive_magmas", ("AdditiveMagmas",)),
         ("sage.categories.algebras", ("Algebras",)),
         ("sage.categories.coalgebras", ("Coalgebras",)),
+        ("sage.categories.commutative_additive_groups", ("CommutativeAdditiveGroups",)),
         ("sage.categories.euclidean_domains", ("EuclideanDomains",)),
         ("sage.categories.finite_fields", ("FiniteFields",)),
         ("sage.categories.homset", ("End", "Hom")),
