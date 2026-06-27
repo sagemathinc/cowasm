@@ -6497,6 +6497,29 @@ sampling pass kept `sage/misc/sage_ostools.pyx` out because its current
 failures cluster around stdout file-descriptor redirection under the Node
 doctest worker.
 
+Latest checked local corpus run after the 2026-06-27 verbose utility
+corpus-growth pass:
+
+```text
+sage -t passed: 32340 passed, 0 failed, 8146 skipped
+```
+
+That run records 40,486 block rows across the current 411-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/home/user/cowasm/.tmp/sagelite-corpus-after-verbose.sqlite3`, adding
+`sage/misc/verbose.py` to the quiet browser-profile dashboard. The focused
+make-target validation records `verbose.py: 22 passed, 0 failed, 4 skipped`.
+
+The added WASI source patch marks the two Python `logging` stream-capture
+examples as `# random`, matching the existing Sagelite doctest boundary where
+host logging or warning streams are not reliably captured by the Node worker
+while the examples still execute and preserve module state. The saved block-
+and file-failure cluster queries are empty for both the focused validation and
+the full corpus run. The latest full-run metadata records CoWasm commit
+`aba7f4d8ef7e703f10324d1bffa989408e708a3c`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 48,
+and about 49 minutes of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

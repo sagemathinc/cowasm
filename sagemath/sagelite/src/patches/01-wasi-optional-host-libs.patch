@@ -4401,6 +4401,15 @@ diff -urN a/src/sage/misc/misc.py b/src/sage/misc/misc.py
 @@ -923 +923 @@
 -        sage: from sage.repl.ipython_extension import run_once
 +        sage: from sage.repl.ipython_extension import run_once                         # needs IPython
+diff -urN a/src/sage/misc/verbose.py b/src/sage/misc/verbose.py
+--- a/src/sage/misc/verbose.py
++++ b/src/sage/misc/verbose.py
+@@ -22 +22 @@
+-    sage: logger.info('Hello. I am talking to you.')
++    sage: logger.info('Hello. I am talking to you.')                                  # random
+@@ -40 +40 @@
+-    sage: logger.warning('Hello. I am warning you.')
++    sage: logger.warning('Hello. I am warning you.')                                  # random
 diff -urN a/src/sage/misc/object_multiplexer.py b/src/sage/misc/object_multiplexer.py
 --- a/src/sage/misc/object_multiplexer.py
 +++ b/src/sage/misc/object_multiplexer.py
