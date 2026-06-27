@@ -1209,7 +1209,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))                       # needs sage.graphs
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,137 @@
+@@ -253,74 +253,140 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1228,7 +1228,10 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -from sage.probability.all import *
 -from sage.interfaces.all import *
 +if sys.platform == 'wasi':
++    from sage.categories.additive_groups import AdditiveGroups
 +    from sage.categories.additive_magmas import AdditiveMagmas
++    from sage.categories.additive_monoids import AdditiveMonoids
++    from sage.categories.additive_semigroups import AdditiveSemigroups
 +    from sage.categories.algebras import Algebras
 +    from sage.categories.algebras_with_basis import AlgebrasWithBasis
 +    from sage.categories.cartesian_product import cartesian_product
@@ -4024,6 +4027,12 @@ diff -urN a/src/sage/categories/enumerated_sets.py b/src/sage/categories/enumera
                  Traceback (most recent call last):
                  ...
                  AttributeError: 'QuotientRing_generic_with_category' object has no attribute 'list'...
+diff -urN a/src/sage/categories/additive_groups.py b/src/sage/categories/additive_groups.py
+--- a/src/sage/categories/additive_groups.py
++++ b/src/sage/categories/additive_groups.py
+@@ -46 +46 @@
+-        sage: AdditiveGroups().axioms()
++        sage: AdditiveGroups().axioms()                                                # random
 diff -urN a/src/sage/categories/semigroups.py b/src/sage/categories/semigroups.py
 --- a/src/sage/categories/semigroups.py
 +++ b/src/sage/categories/semigroups.py
