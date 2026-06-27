@@ -4551,6 +4551,33 @@ metadata records CoWasm commit `b0623c8f4d56f63ba3f51aae984f6e9c0084faa1`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, and runner version 41.
 
+Focused commutative-additive and group-category corpus-growth pass:
+
+```text
+sage -t passed: 29 passed, 0 failed, 83 skipped
+```
+
+That three-file make-target validation adds
+`sage/categories/commutative_additive_groups.py`,
+`sage/categories/commutative_additive_monoids.py`, and
+`sage/categories/groups.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 201
+non-comment entries. These files require no new WASI source tags or startup
+namespace changes beyond the constructors already seeded by the recent
+category passes.
+
+Focused validation against the existing patched source tree used
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary
+three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-comm-add-groups-make.sqlite3`. It records
+`commutative_additive_groups.py: 17 passed, 0 failed, 4 skipped`,
+`commutative_additive_monoids.py: 5 passed, 0 failed, 0 skipped`, and
+`groups.py: 7 passed, 0 failed, 79 skipped`, with empty saved block- and
+file-failure cluster queries. The latest run metadata records CoWasm commit
+`c3285a062fb2eb03e71be6304e90c825707007eb`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner
+version 41.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
