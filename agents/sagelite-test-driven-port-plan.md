@@ -1306,11 +1306,28 @@ still runs while the browser-profile dashboard does not depend on Python set
 iteration order. Nearby sampled category files remain outside the quiet corpus:
 `rings.py` reaches the known number-field function-signature mismatch,
 `fields.py` reaches the known NTL/libcxx finite-field trap, `rngs.py` still
-needs both startup namespace work and noncommutative-polynomial tagging, and
-`semirings.py` needs a focused startup namespace seed. The focused validation
-used the `test-sage-doctest-corpus` make target with a temporary one-file
-corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+needs both startup namespace work and noncommutative-polynomial tagging. The
+focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-semigroups-corpus.sqlite3`.
+
+Focused semiring-category corpus-growth pass:
+
+```text
+sage -t passed: 7 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds `sage/categories/semirings.py` to
+the curated corpus. The doctest runner now seeds the lightweight
+`CommutativeAdditiveMonoids` category constructor in the common startup
+namespace, and the WASI `sage.all` patch exposes the same constructor for REPL
+parity on a fresh patched Sagelite source copy. This clears the file's only
+sampled failure:
+`NameError: name 'CommutativeAdditiveMonoids' is not defined`. The focused
+validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0` and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-semirings-corpus.sqlite3`. The saved
+block- and file-failure cluster queries are empty.
 
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
