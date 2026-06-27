@@ -188,7 +188,12 @@ src/sage/categories/coercion_methods.pyx
 src/sage/categories/cw_complexes.py
 src/sage/categories/dedekind_domains.py
 src/sage/categories/examples/commutative_additive_monoids.py
+src/sage/categories/examples/commutative_additive_semigroups.py
+src/sage/categories/examples/finite_enumerated_sets.py
+src/sage/categories/examples/finite_monoids.py
 src/sage/categories/examples/finite_semigroups.py
+src/sage/categories/examples/infinite_enumerated_sets.py
+src/sage/categories/examples/magmas.py
 src/sage/categories/examples/monoids.py
 src/sage/categories/examples/semigroups.py
 src/sage/categories/examples/semirings.py

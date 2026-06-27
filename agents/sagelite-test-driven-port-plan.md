@@ -1439,6 +1439,36 @@ with a temporary five-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-category-examples-make.sqlite3`; the saved
 block- and file-failure cluster queries are empty.
 
+Follow-up category examples corpus-growth pass:
+
+```text
+sage -t passed: 127 passed, 0 failed, 155 skipped
+```
+
+That six-file direct sampling run found five more category example modules
+with useful passing default-profile coverage:
+`sage/categories/examples/commutative_additive_semigroups.py`,
+`sage/categories/examples/finite_monoids.py`,
+`sage/categories/examples/finite_enumerated_sets.py`,
+`sage/categories/examples/infinite_enumerated_sets.py`, and
+`sage/categories/examples/magmas.py`. These five files are added to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 301 non-comment
+entries. The same sampling run kept
+`sage/categories/examples/sets_cat.py` out of the quiet corpus because it
+currently contributes only skipped rows in the default browser-compatible
+profile.
+
+Direct sampling used `sage -t --timeout 120` with
+`COWASM_SAGELITE_DOCTEST_SOURCE_ROOT` pointed at the patched build tree and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-example-sampling.sqlite3`; the saved block-
+and file-failure cluster queries are empty. Focused make-target validation of
+the five added files used `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-category-examples-more-make.sqlite3`,
+recording 127 passed, 0 failed, and 0 skipped blocks with empty saved block-
+and file-failure cluster queries.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
