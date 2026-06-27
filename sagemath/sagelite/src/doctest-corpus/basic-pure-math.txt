@@ -100,6 +100,7 @@ src/sage/combinat/integer_lists/nn.py
 src/sage/combinat/integer_matrices.py
 src/sage/combinat/integer_vector.py
 src/sage/combinat/integer_vector_weighted.py
+src/sage/combinat/knutson_tao_puzzles.py
 src/sage/combinat/cartesian_product.py
 src/sage/combinat/backtrack.py
 src/sage/combinat/baxter_permutations.py

@@ -5701,6 +5701,34 @@ that several skipped-only category wrappers, including `bialgebras.py`,
 larger core category files still have startup-name or runtime-boundary
 clusters that need separate triage.
 
+Focused Knutson-Tao puzzle corpus-growth pass:
+
+```text
+sage -t passed: 384 passed, 0 failed, 14 skipped
+```
+
+That one-file make-target validation adds
+`sage/combinat/knutson_tao_puzzles.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 338
+non-comment entries. The file contributes substantial pure-combinatorics
+coverage with no new WASI source tags or startup namespace changes. Focused
+validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-knutson-make.sqlite3`; the saved block- and
+file-failure cluster queries are empty. The runner version is now 44.
+
+The same sampling pass kept several adjacent files out of the quiet corpus:
+`rsk.py`, `sloane_functions.py`, `similarity_class_type.py`,
+`tamari_lattices.py`, and `nu_dyck_word.py` currently add only skipped rows
+under the default browser-compatible profile, while
+`gelfand_tsetlin_patterns.py` still records six focused doctest failures.
+Broader category and module sampling in this run also found skipped-only
+wrappers such as `real_set.py`, `finite_coxeter_groups.py`, and category
+example modules, plus larger unresolved clusters in `coxeter_groups.py`,
+`modules_with_basis.py`, `finite_dimensional_algebras_with_basis.py`,
+`module_functors.py`, `unique_factorization_domains.py`, and
+`principal_ideal_domains.py`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
