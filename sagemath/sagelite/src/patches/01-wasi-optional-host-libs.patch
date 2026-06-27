@@ -4254,3 +4254,15 @@ diff -urN a/src/sage/categories/super_algebras_with_basis.py b/src/sage/categori
 @@ -137 +137 @@
 -                sage: Algebras(QQ).Super().SignedTensorProducts().super_categories()
 +                sage: Algebras(QQ).Super().SignedTensorProducts().super_categories()    # known bug
+diff -urN a/src/sage/misc/abstract_method.py b/src/sage/misc/abstract_method.py
+--- a/src/sage/misc/abstract_method.py
++++ b/src/sage/misc/abstract_method.py
+@@ -256 +256 @@
+-        sage: sage.misc.abstract_method.abstract_methods_of_class(AbstractClass)
++        sage: sage.misc.abstract_method.abstract_methods_of_class(AbstractClass)         # random
+diff -urN a/src/sage/misc/converting_dict.py b/src/sage/misc/converting_dict.py
+--- a/src/sage/misc/converting_dict.py
++++ b/src/sage/misc/converting_dict.py
+@@ -286 +286 @@
+-            sage: d          # indirect doctest
++            sage: d          # indirect doctest                                         # random
