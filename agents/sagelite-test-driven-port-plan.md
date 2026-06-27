@@ -4687,6 +4687,48 @@ rows, and keeps `sage/categories/modules_with_basis.py`,
 and `sage/categories/fields.py` out because they still have focused doctest
 failures or runtime traps.
 
+Focused algebra-wrapper category corpus-growth pass:
+
+```text
+sage -t passed: 139 passed, 0 failed, 515 skipped
+```
+
+That 15-file make-target validation adds
+`sage/categories/associative_algebras.py`,
+`sage/categories/bialgebras_with_basis.py`,
+`sage/categories/coalgebras_with_basis.py`,
+`sage/categories/commutative_algebras.py`,
+`sage/categories/filtered_algebras.py`,
+`sage/categories/filtered_algebras_with_basis.py`,
+`sage/categories/finite_dimensional_coalgebras_with_basis.py`,
+`sage/categories/finite_dimensional_hopf_algebras_with_basis.py`,
+`sage/categories/finite_dimensional_modules_with_basis.py`,
+`sage/categories/finite_dimensional_semisimple_algebras_with_basis.py`,
+`sage/categories/graded_algebras.py`,
+`sage/categories/graded_modules_with_basis.py`,
+`sage/categories/hopf_algebras.py`,
+`sage/categories/hopf_algebras_with_basis.py`, and
+`sage/categories/unital_algebras.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 227
+non-comment entries. These files reuse existing category startup namespace
+coverage and do not need new WASI source tags.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary 15-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-algebra-wrapper-categories.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The latest run
+metadata records CoWasm commit `fa81380a6b2ae1abaadb39c86d2f52d7b8701811`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, and runner version 41. The same sampling pass keeps
+`sage/categories/magmatic_algebras.py` out because it still has
+`DescentAlgebra` startup-name failures, keeps `bialgebras.py` out because it
+currently adds only skipped rows, and keeps
+`finite_dimensional_algebras_with_basis.py`,
+`finite_dimensional_bialgebras_with_basis.py`,
+`graded_algebras_with_basis.py`, and `graded_modules.py` out because they
+still have focused doctest failures.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
