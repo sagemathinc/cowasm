@@ -1260,6 +1260,14 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 @@ -141 +141 @@
 -    sage: phi.is_injective()
 +    sage: phi.is_injective()                                                           # needs sage.libs.pari
+--- a/src/sage/modules/vector_rational_dense.pyx
++++ b/src/sage/modules/vector_rational_dense.pyx
+@@ -107 +107 @@
+-            sage: Vector_rational_dense(QQ^(sys.maxsize))
++            sage: Vector_rational_dense(QQ^(sys.maxsize))                              # known bug
+@@ -118 +118 @@
+-            ....:     Vector_rational_dense(QQ^(2^56))
++            ....:     Vector_rational_dense(QQ^(2^56))                                 # known bug
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
 @@ -253,74 +253,172 @@

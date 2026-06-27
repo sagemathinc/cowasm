@@ -407,6 +407,7 @@ src/sage/modules/real_double_vector.py
 src/sage/modules/tensor_operations.py
 src/sage/modules/vector_integer_dense.pyx
 src/sage/modules/vector_modn_dense.pyx
+src/sage/modules/vector_rational_dense.pyx
 src/sage/modules/vector_space_homspace.py
 src/sage/modules/vector_space_morphism.py
 src/sage/matrix/constructor.pyx

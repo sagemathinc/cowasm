@@ -6418,6 +6418,33 @@ The same sampling pass kept adjacent heavier module files outside the quiet
 dashboard because they still hit known matrix action, matrix `__setitem__`,
 NTL dynamic-link, PARI object-model, timeout, or broader semantic clusters.
 
+Focused rational-vector backend corpus-growth pass:
+
+```text
+sage -t passed: 43 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds
+`sage/modules/vector_rational_dense.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 408
+non-comment entries. Direct sampling first exposed the file's two huge
+allocation diagnostics: native Sage expects catchable Python
+`MemoryError`/`OverflowError` behavior, while the current WASM allocator path
+aborts the worker while trying to satisfy the dynamic-library allocation. The
+added WASI source patch marks exactly those allocator-diagnostic examples as
+`# known bug`, leaving the remaining rational dense-vector backend examples as
+passing browser-profile coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-vector-rational-dense-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully;
+the saved block- and file-failure cluster queries are empty, and the SQLite
+aggregate is internally consistent with 45 block rows, 43 passed blocks, and
+2 deferred skips. A full corpus rerun should be performed before recording the
+next dashboard total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
