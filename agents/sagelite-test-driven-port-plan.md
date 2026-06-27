@@ -6227,6 +6227,37 @@ rebuilt and patched a fresh Sagelite source copy successfully, and the saved
 block- and file-failure cluster queries are empty. A full corpus rerun should
 be performed before recording a new dashboard total.
 
+Follow-up full corpus rerun after the misc superseded pass:
+
+```text
+sage -t failed: 31403 passed, 3 failed, 7954 skipped
+```
+
+That run used the 399-entry curated corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-corpus-after-misc-superseded.sqlite3`.
+It exposed three narrow browser-profile drifts: one order-sensitive
+`Monoids().axioms()` `frozenset` display, and two cascading
+`free_module_homspace.py` failures where the existing WASI source patch
+intended to skip the rational-generator `span(..., ZZ)` setup but a malformed
+free-module patch hunk count prevented the tags from reaching a fresh patched
+source copy.
+
+The follow-up fix corrects the free-module hunk line count, widens the
+`span(..., ZZ)` skip hunk so it applies under a fresh patch, and marks the
+monoids `frozenset` display as `# random`. Focused validation rebuilt a fresh
+patched source copy and ran `monoids.py` plus `free_module_homspace.py` with
+failure disallowed:
+
+```text
+sage -t passed: 78 passed, 0 failed, 76 skipped
+```
+
+The focused database is
+`/tmp/sagelite-regression-fixes-fresh2.sqlite3`; it has no failed block rows
+and no non-passing file rows. A full corpus rerun is still needed before
+recording the next clean dashboard total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

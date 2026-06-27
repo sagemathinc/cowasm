@@ -1214,7 +1214,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -    sage: V.hom([V.0, V.1])
 +    sage: V = (ZZ^2).span_of_basis([[1,2],[3,4]])                                      # needs sage.symbolic
 +    sage: V.hom([V.0, V.1])                                                            # needs sage.symbolic
-@@ -103,14 +103,14 @@
+@@ -103,15 +103,15 @@
 -            sage: V = (ZZ^3).span_of_basis([[1,1,0],[1,0,2]])
 -            sage: H = V.Hom(V); H
 +            sage: V = (ZZ^3).span_of_basis([[1,1,0],[1,0,2]])                           # needs sage.symbolic
@@ -1236,11 +1236,19 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -            sage: phi(V.0) == V.1
 +            sage: phi(V.0) == V.1                                                       # needs sage.symbolic
              True
-@@ -124,2 +124,2 @@
+@@ -119,10 +119,10 @@
+         The following tests against a bug that was fixed in
+         :issue:`9944`. The method ``zero()`` calls this hom space with
+         a function, not with a matrix, and that case had previously
+         not been taken care of::
+ 
 -            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
 -            sage: V.Hom(V).zero()   # indirect doctest
 +            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)                            # known bug
 +            sage: V.Hom(V).zero()   # indirect doctest                                 # known bug
+             Free module morphism defined by the matrix
+             [0 0 0]
+             [0 0 0]
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
 @@ -253,74 +253,171 @@
@@ -4283,6 +4291,12 @@ diff -urN a/src/sage/categories/schemes.py b/src/sage/categories/schemes.py
 @@ -299 +299 @@
 -                    sage: End(EllipticCurve(j=1)) in Rings()
 +                    sage: End(EllipticCurve(j=1)) in Rings()                            # needs sage.schemes.elliptic_curves
+diff -urN a/src/sage/categories/monoids.py b/src/sage/categories/monoids.py
+--- a/src/sage/categories/monoids.py
++++ b/src/sage/categories/monoids.py
+@@ -49 +49 @@
+-        sage: Monoids().axioms()
++        sage: Monoids().axioms()                                                        # random
 diff -urN a/src/sage/categories/action.pyx b/src/sage/categories/action.pyx
 --- a/src/sage/categories/action.pyx
 +++ b/src/sage/categories/action.pyx
