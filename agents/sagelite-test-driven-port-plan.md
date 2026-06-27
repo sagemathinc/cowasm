@@ -5113,6 +5113,29 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 target rebuilt and patched the Sagelite source copy successfully, and the
 saved block- and file-failure cluster queries are empty.
 
+Focused homsets category corpus-growth pass:
+
+```text
+sage -t passed: 57 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds `sage/categories/homsets.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 286 non-comment
+entries. The doctest runner now seeds the lightweight `Objects` category
+constructor in the common startup namespace, and the WASI `sage.all` patch
+exposes the same name for REPL parity on a fresh patched Sagelite source copy.
+This clears the file's only focused failure:
+`NameError: name 'Objects' is not defined` in
+`Objects().Homsets().super_categories()`.
+
+Focused validation used a direct `sage -t` rerun with
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-homsets-after.sqlite3`; the saved block-
+and file-failure cluster queries are empty. Sampling in the same pass kept
+`sage/categories/covariant_functorial_construction.py` and
+`sage/categories/map.pyx` out of the quiet corpus because they still have
+focused startup-name, Singular/plural dependency, and output-drift clusters.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

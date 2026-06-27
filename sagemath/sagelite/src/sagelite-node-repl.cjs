@@ -873,6 +873,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.modular_abelian_varieties", ("ModularAbelianVarieties",)),
         ("sage.categories.modules", ("Modules",)),
         ("sage.categories.modules_with_basis", ("ModulesWithBasis",)),
+        ("sage.categories.objects", ("Objects",)),
         ("sage.categories.right_modules", ("RightModules",)),
         ("sage.categories.ring_ideals", ("RingIdeals",)),
         ("sage.categories.sets_cat", ("Sets",)),
