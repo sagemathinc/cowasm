@@ -4426,6 +4426,15 @@ diff -urN a/src/sage/misc/verbose.py b/src/sage/misc/verbose.py
 @@ -40 +40 @@
 -    sage: logger.warning('Hello. I am warning you.')
 +    sage: logger.warning('Hello. I am warning you.')                                  # random
+diff -urN a/src/sage/misc/stopgap.pyx b/src/sage/misc/stopgap.pyx
+--- a/src/sage/misc/stopgap.pyx
++++ b/src/sage/misc/stopgap.pyx
+@@ -33 +33 @@
+-        sage: sage.misc.stopgap.stopgap("Displays something.", 123456)
++        sage: sage.misc.stopgap.stopgap("Displays something.", 123456)                # random
+@@ -72 +72 @@
+-        sage: sage.misc.stopgap.stopgap("Computation of heights on elliptic curves over number fields can return very imprecise results.", 12509)
++        sage: sage.misc.stopgap.stopgap("Computation of heights on elliptic curves over number fields can return very imprecise results.", 12509)  # random
 diff -urN a/src/sage/misc/object_multiplexer.py b/src/sage/misc/object_multiplexer.py
 --- a/src/sage/misc/object_multiplexer.py
 +++ b/src/sage/misc/object_multiplexer.py

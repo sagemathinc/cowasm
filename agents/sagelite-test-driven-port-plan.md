@@ -6573,6 +6573,31 @@ aggregate is internally consistent with 137 block rows, 120 passed blocks, and
 17 skipped blocks. A full corpus rerun should be performed before recording
 the next dashboard total.
 
+Focused stopgap utility corpus-growth pass:
+
+```text
+sage -t passed: 11 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds `sage/misc/stopgap.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 414
+non-comment entries. Direct sampling first recorded two warning-capture
+mismatches for `StopgapWarning` examples; the added WASI source patch marks
+those warning-producing calls as `# random`, matching the existing Sagelite
+doctest boundary where host warning streams are not reliably captured by the
+Node worker while the examples still execute and preserve stopgap module
+state.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-stopgap-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully.
+The saved block- and file-failure cluster queries are empty, and the SQLite
+aggregate is internally consistent with 11 block rows, all passed. A full
+corpus rerun should be performed before recording the next dashboard total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
