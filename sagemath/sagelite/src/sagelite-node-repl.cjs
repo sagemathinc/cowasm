@@ -840,7 +840,10 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.words.morphism", ("WordMorphism",)),
         ("sage.monoids.free_monoid", ("FreeMonoid",)),
         ("sage.categories.additive_magmas", ("AdditiveMagmas",)),
+        ("sage.categories.algebras", ("Algebras",)),
+        ("sage.categories.coalgebras", ("Coalgebras",)),
         ("sage.categories.euclidean_domains", ("EuclideanDomains",)),
+        ("sage.categories.finite_fields", ("FiniteFields",)),
         ("sage.categories.homset", ("End", "Hom")),
         ("sage.categories.rings", ("Rings",)),
         ("sage.categories.finite_enumerated_sets", ("FiniteEnumeratedSets",)),
@@ -851,8 +854,10 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.finite_dimensional_modules_with_basis", ("FiniteDimensionalModulesWithBasis",)),
         ("sage.categories.left_modules", ("LeftModules",)),
         ("sage.categories.modules", ("Modules",)),
+        ("sage.categories.modules_with_basis", ("ModulesWithBasis",)),
         ("sage.categories.right_modules", ("RightModules",)),
         ("sage.categories.sets_cat", ("Sets",)),
+        ("sage.categories.vector_spaces", ("VectorSpaces",)),
         ("sage.categories.groups", ("Groups",)),
         ("sage.categories.monoids", ("Monoids",)),
         ("sage.categories.posets", ("Posets",)),
@@ -882,6 +887,8 @@ def __cowasm_seed_common_doctest_globals(namespace):
             continue
         for name in names:
             namespace.setdefault(name, getattr(module, name))
+    if "Modules" in namespace:
+        namespace.setdefault("RingModules", namespace["Modules"])
 
 
 def _cowasm_tags(source):

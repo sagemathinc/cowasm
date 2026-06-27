@@ -4433,6 +4433,31 @@ CoWasm commit `38c936e10f8bfd4af89101b65af48097171a70c4`, Sagelite package
 commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner
 version 41.
 
+Focused module-category corpus-growth pass:
+
+```text
+sage -t passed: 86 passed, 0 failed, 63 skipped
+```
+
+That one-file direct-run validation adds `sage/categories/modules.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 190
+non-comment entries. The doctest runner now seeds the lightweight
+`Algebras`, `Coalgebras`, `FiniteFields`, `ModulesWithBasis`, and
+`VectorSpaces` category constructors in the common startup namespace, and
+aliases `RingModules` to `Modules` to match Sage's category-all export without
+importing the broad `sage.categories.all` surface. The WASI `sage.all` patch
+exposes the same startup names for REPL parity on a fresh patched Sagelite
+source copy.
+
+The focused validation used the direct doctest runner against the existing
+patched source tree with
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-modules-focus.sqlite3`. The saved block-
+and file-failure cluster queries are empty. A full make-target rebuild was not
+used for this pass because the external `/home/user/sagelite` source checkout
+had unrelated dirty changes and a patch dry-run reported unrelated
+`integer_mod_ring.py` hunk drift.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

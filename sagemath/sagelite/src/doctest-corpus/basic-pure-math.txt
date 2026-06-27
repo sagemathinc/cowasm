@@ -166,6 +166,7 @@ src/sage/categories/finite_monoids.py
 src/sage/categories/finite_semigroups.py
 src/sage/categories/monoids.py
 src/sage/categories/sets_cat.py
+src/sage/categories/modules.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
 src/sage/sets/finite_set_map_cy.pyx

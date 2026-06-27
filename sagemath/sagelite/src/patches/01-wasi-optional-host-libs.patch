@@ -1209,7 +1209,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))                       # needs sage.graphs
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,129 @@
+@@ -253,74 +253,135 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1229,25 +1229,31 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -from sage.interfaces.all import *
 +if sys.platform == 'wasi':
 +    from sage.categories.additive_magmas import AdditiveMagmas
++    from sage.categories.algebras import Algebras
 +    from sage.categories.algebras_with_basis import AlgebrasWithBasis
 +    from sage.categories.cartesian_product import cartesian_product
++    from sage.categories.coalgebras import Coalgebras
 +    from sage.categories.commutative_additive_semigroups import CommutativeAdditiveSemigroups
 +    from sage.categories.euclidean_domains import EuclideanDomains
 +    from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
 +    from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 +    from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
++    from sage.categories.finite_fields import FiniteFields
 +    from sage.categories.groups import Groups
 +    from sage.categories.homset import End
 +    from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 +    from sage.categories.left_modules import LeftModules
 +    from sage.categories.monoids import Monoids
 +    from sage.categories.modules import Modules
++    RingModules = Modules
++    from sage.categories.modules_with_basis import ModulesWithBasis
 +    from sage.categories.finite_monoids import FiniteMonoids
 +    from sage.categories.finite_semigroups import FiniteSemigroups
 +    from sage.categories.posets import Posets
 +    from sage.categories.right_modules import RightModules
 +    from sage.categories.rings import Rings
 +    from sage.categories.semigroups import Semigroups
++    from sage.categories.vector_spaces import VectorSpaces
 +    from sage.combinat.combination import Combinations
 +    from sage.combinat.combinat import stirling_number2
 +    from sage.combinat.composition import Composition, Compositions
