@@ -3930,3 +3930,42 @@ diff -urN a/src/sage/combinat/root_system/type_super_A.py b/src/sage/combinat/ro
 @@ -362 +362 @@
 -                sage: (al[-1] + al[0] + al[2]).associated_coroot()
 +                sage: (al[-1] + al[0] + al[2]).associated_coroot()                      # needs sage.libs.pari
+diff -urN a/src/sage/combinat/root_system/root_lattice_realizations.py b/src/sage/combinat/root_system/root_lattice_realizations.py
+--- a/src/sage/combinat/root_system/root_lattice_realizations.py
++++ b/src/sage/combinat/root_system/root_lattice_realizations.py
+@@ -3916 +3916 @@
+-                sage: (La[1] + 2*La[2]).is_verma_dominant()
++                sage: (La[1] + 2*La[2]).is_verma_dominant()                             # needs sage.graphs
+@@ -3919 +3919 @@
+-                sage: la.is_verma_dominant()
++                sage: la.is_verma_dominant()                                            # needs sage.graphs
+@@ -3923 +3923 @@
+-                sage: [(la+rho).scalar(coroot) for coroot in alphacheck]
++                sage: [(la+rho).scalar(coroot) for coroot in alphacheck]                 # needs sage.graphs
+@@ -3926 +3926 @@
+-                sage: mu.is_verma_dominant()
++                sage: mu.is_verma_dominant()                                            # needs sage.graphs
+@@ -3928 +3928 @@
+-                sage: mu.is_verma_dominant(positive=False)
++                sage: mu.is_verma_dominant(positive=False)                               # needs sage.graphs
+@@ -3930 +3930 @@
+-                sage: [(mu+rho).scalar(coroot) for coroot in alphacheck]
++                sage: [(mu+rho).scalar(coroot) for coroot in alphacheck]                 # needs sage.graphs
+diff -urN a/src/sage/combinat/root_system/weight_lattice_realizations.py b/src/sage/combinat/root_system/weight_lattice_realizations.py
+--- a/src/sage/combinat/root_system/weight_lattice_realizations.py
++++ b/src/sage/combinat/root_system/weight_lattice_realizations.py
+@@ -920 +920 @@
+-                sage: RootSystem(['A', 3]).ambient_lattice()._inverse_cartan_matrix
++                sage: RootSystem(['A', 3]).ambient_lattice()._inverse_cartan_matrix      # needs sage.graphs
+@@ -924 +924 @@
+-                sage: RootSystem(['G', 2]).weight_lattice()._inverse_cartan_matrix
++                sage: RootSystem(['G', 2]).weight_lattice()._inverse_cartan_matrix       # needs sage.graphs
+@@ -1174 +1174 @@
+-                sage: (e[0] + 3*e[3])._to_root_vector()  # not in the root space
++                sage: (e[0] + 3*e[3])._to_root_vector()  # not in the root space         # needs sage.libs.pari
+@@ -1175 +1175 @@
+-                sage: (e[0] - e[1])._to_root_vector()
++                sage: (e[0] - e[1])._to_root_vector()                                    # needs sage.libs.pari
+@@ -1177 +1177 @@
+-                sage: (e[0] + 2*e[1] - 3*e[2])._to_root_vector()
++                sage: (e[0] + 2*e[1] - 3*e[2])._to_root_vector()                         # needs sage.libs.pari

@@ -1209,6 +1209,42 @@ corpus run. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 39,
 and about 1,378 seconds of elapsed time.
 
+Latest checked SQLite dashboard after the 2026-06-27 root/weight lattice
+realization corpus-growth pass:
+
+```text
+sage -t passed: 24422 passed, 0 failed, 4848 skipped
+```
+
+That run records 29,270 block rows across all 178 files in the current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/root_system/root_lattice_realizations.py` and
+`sage/combinat/root_system/weight_lattice_realizations.py` to the quiet
+browser-profile dashboard. Focused reruns record:
+
+```text
+root_lattice_realizations.py: 282 passed, 0 failed, 379 skipped
+weight_lattice_realizations.py: 90 passed, 0 failed, 131 skipped
+```
+
+The added WASI source patch classifies the graph-backed Verma dominance and
+inverse-Cartan doctests as `# needs sage.graphs`, and classifies the
+ambient-lattice `_to_root_vector()` examples as `# needs sage.libs.pari`
+because they currently reach the focused cypari2 object-model boundary in the
+browser profile. The saved block- and file-failure cluster queries are empty
+for the full SQLite dashboard. The latest run metadata records CoWasm commit
+`228a639475accfc3d9878833555ec92cd051f993`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 39,
+and about 1,292 seconds of elapsed time.
+
+The make-target process for that full run rebuilt and patched the Sagelite
+source tree successfully, then wrote a passing SQLite dashboard, but the
+parent Node process stayed idle in `ep_poll` while holding the SQLite lock
+after the last worker exited. It was terminated to inspect the completed
+database, so this run is recorded as a checked SQLite dashboard rather than a
+clean make-target exit. A follow-up runner lifecycle pass should close this
+remaining post-run lock/exit path.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

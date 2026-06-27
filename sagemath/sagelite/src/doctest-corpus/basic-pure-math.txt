@@ -56,7 +56,9 @@ src/sage/combinat/root_system/coxeter_type.py
 src/sage/combinat/root_system/cartan_matrix.py
 src/sage/combinat/root_system/root_system.py
 src/sage/combinat/root_system/root_space.py
+src/sage/combinat/root_system/root_lattice_realizations.py
 src/sage/combinat/root_system/weight_space.py
+src/sage/combinat/root_system/weight_lattice_realizations.py
 src/sage/combinat/root_system/type_A.py
 src/sage/combinat/root_system/type_B.py
 src/sage/combinat/root_system/type_C.py
