@@ -1021,6 +1021,30 @@ corpus run. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
 and about 1,106 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-27 weight-space
+corpus-growth pass:
+
+```text
+sage -t passed: 22801 passed, 0 failed, 4095 skipped
+```
+
+That run records 26,896 block rows across the current 148-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, adding
+`sage/combinat/root_system/weight_space.py` to the quiet browser-profile
+dashboard. The focused rerun records
+`weight_space.py: 76 passed, 0 failed, 33 skipped`.
+
+The added WASI source patch classifies the two remaining `_to_root_vector()`
+examples as `# needs sage.graphs` because they compute through
+`dynkin_diagram()`, which imports the stripped graph backend. The same pass
+tightens the existing Cartan-matrix patch hunk so appending later root-system
+diffs does not depend on trailing ASCII-art context. The saved block- and
+file-failure cluster queries are empty for the full corpus run. The latest run
+metadata records CoWasm commit `14a5c4d338316a0e32d56154f7468ebf53761a85`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, runner version 38, and about 1,117 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

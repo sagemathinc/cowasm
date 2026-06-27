@@ -3891,7 +3891,7 @@ diff -urN a/src/sage/combinat/root_system/cartan_matrix.py b/src/sage/combinat/r
 @@ -393 +393 @@
 -            sage: CartanType("A3").subtype((2,)) is CartanType("A1").relabel({1:2})
 +            sage: CartanType("A3").subtype((2,)) is CartanType("A1").relabel({1:2})     # needs sage.graphs
-@@ -1152,11 +1152,11 @@
+@@ -1152,9 +1152,9 @@
 -        sage: cm = CartanMatrix(['A',7]).subtype([2,3,5])
 -        sage: find_cartan_type_from_matrix(cm)
 +        sage: cm = CartanMatrix(['A',7]).subtype([2,3,5])                               # needs sage.graphs
@@ -3905,4 +3905,18 @@ diff -urN a/src/sage/combinat/root_system/cartan_matrix.py b/src/sage/combinat/r
          D4xB3xA2 relabelled by {1: 0, 2: 2, 3: 1, 4: 3, 5: 8, 6: 9, 7: 10, 8: 5, 9: 6}
 -        sage: ct.dynkin_diagram()
 +        sage: ct.dynkin_diagram()                                                       # needs sage.graphs
-             O 3
+            O 3
+diff -urN a/src/sage/combinat/root_system/weight_space.py b/src/sage/combinat/root_system/weight_space.py
+--- a/src/sage/combinat/root_system/weight_space.py
++++ b/src/sage/combinat/root_system/weight_space.py
+@@ -623,8 +623,8 @@
+             sage: P = RootSystem(['A',3]).weight_lattice()
+             sage: La = P.fundamental_weights()
+-            sage: [al._to_root_vector() for al in P.simple_roots()]
++            sage: [al._to_root_vector() for al in P.simple_roots()]                     # needs sage.graphs
+             [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
+-            sage: (La[1] + La[2])._to_root_vector()
++            sage: (La[1] + La[2])._to_root_vector()                                     # needs sage.graphs
+             (5/4, 3/2, 3/4)
+         """
+         return self.parent()._inverse_cartan_matrix * self.to_vector()
