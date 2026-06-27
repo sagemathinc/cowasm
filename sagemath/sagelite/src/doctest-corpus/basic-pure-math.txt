@@ -173,6 +173,7 @@ src/sage/categories/bimodules.py
 src/sage/categories/cartesian_product.py
 src/sage/categories/category_types.py
 src/sage/categories/category_singleton.pyx
+src/sage/categories/chain_complexes.py
 src/sage/categories/coalgebras_with_basis.py
 src/sage/categories/commutative_algebra_ideals.py
 src/sage/categories/commutative_algebras.py
@@ -183,6 +184,7 @@ src/sage/categories/commutative_additive_semigroups.py
 src/sage/categories/commutative_ring_ideals.py
 src/sage/categories/complete_discrete_valuation.py
 src/sage/categories/coercion_methods.pyx
+src/sage/categories/cw_complexes.py
 src/sage/categories/dedekind_domains.py
 src/sage/categories/facade_sets.py
 src/sage/categories/filtered_algebras.py

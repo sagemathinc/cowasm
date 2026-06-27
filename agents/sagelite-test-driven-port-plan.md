@@ -1398,6 +1398,26 @@ the broader `category.py`, `category_with_axiom.py`, and
 failures are dominated by startup-namespace and ordering clusters that should
 be handled separately.
 
+Focused topological category corpus-growth pass:
+
+```text
+sage -t passed: 44 passed, 0 failed, 47 skipped
+```
+
+That two-file focused validation adds `sage/categories/chain_complexes.py` and
+`sage/categories/cw_complexes.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 290
+non-comment entries. Direct probes recorded
+`chain_complexes.py: 8 passed, 0 failed, 47 skipped` and
+`cw_complexes.py: 36 passed, 0 failed, 0 skipped`.
+
+Both files are quiet in the default node profile without new WASI source tags
+or startup namespace changes. A nearby `sage/categories/action.pyx` probe is
+not yet quiet, recording `73 passed, 3 failed, 31 skipped`, so it remains
+outside the dashboard pending focused triage. `sage/categories/algebra_functor.py`
+also remains outside because it contributes only skipped rows under the
+default profile.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
