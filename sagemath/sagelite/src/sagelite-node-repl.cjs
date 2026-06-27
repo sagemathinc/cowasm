@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 42;
+const doctestRunnerVersion = 43;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -915,6 +915,11 @@ def __cowasm_seed_common_doctest_globals(namespace):
             continue
         for name in names:
             namespace.setdefault(name, getattr(module, name))
+    try:
+        import sage.algebras.catalog as algebras
+        namespace.setdefault("algebras", algebras)
+    except BaseException:
+        pass
     if "Modules" in namespace:
         namespace.setdefault("RingModules", namespace["Modules"])
     if "RingIdeals" in namespace:

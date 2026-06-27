@@ -5486,6 +5486,31 @@ basis, sets, realizations, and the `groupoid.py`, `posets.py`, and
 out because its remaining focused failures are TestSuite pickling-output
 drift around lazy imports.
 
+Focused discrete-valuation category corpus-growth pass:
+
+```text
+sage -t passed: 23 passed, 0 failed, 33 skipped
+```
+
+That one-file focused validation adds
+`sage/categories/discrete_valuation.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 328
+non-comment entries. The doctest runner now seeds Sage's `algebras` catalog
+object in the common startup namespace, and the WASI `sage.all` patch exposes
+the same name for REPL parity on a fresh patched Sagelite source copy. This
+clears the file's only focused failure cluster, where the upstream
+`algebras.Free(...)` doctest previously cascaded into three `NameError`
+failures.
+
+Direct validation recorded `discrete_valuation.py: 23 passed, 0 failed,
+33 skipped`. Focused make-target validation rebuilt and patched the Sagelite
+source copy from scratch, then ran `test-sage-doctest-corpus` with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-discrete-valuation-make.sqlite3`; the saved
+block- and file-failure cluster queries are empty. The runner version is now
+43.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -187,6 +187,7 @@ src/sage/categories/commutative_ring_ideals.py
 src/sage/categories/complete_discrete_valuation.py
 src/sage/categories/coercion_methods.pyx
 src/sage/categories/cw_complexes.py
+src/sage/categories/discrete_valuation.py
 src/sage/categories/dedekind_domains.py
 src/sage/categories/examples/commutative_additive_monoids.py
 src/sage/categories/examples/commutative_additive_semigroups.py
