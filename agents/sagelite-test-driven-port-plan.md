@@ -4659,6 +4659,34 @@ commit `e33e41322d8a3ab95c11bfc587ca9acd9071590e`, Sagelite package commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner
 version 41.
 
+Focused algebra-category corpus-growth pass:
+
+```text
+sage -t passed: 57 passed, 0 failed, 82 skipped
+```
+
+That three-file make-target validation adds `sage/categories/algebras.py`,
+`sage/categories/algebras_with_basis.py`, and
+`sage/categories/vector_spaces.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 212
+non-comment entries. These files reuse startup constructors already seeded by
+the recent category passes, so no new WASI source tags or startup namespace
+changes are required.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary three-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-algebra-categories-make.sqlite3`.
+It records `algebras.py: 18 passed, 0 failed, 21 skipped`,
+`algebras_with_basis.py: 8 passed, 0 failed, 48 skipped`, and
+`vector_spaces.py: 31 passed, 0 failed, 13 skipped`, with empty saved block-
+and file-failure cluster queries. The same sampling pass keeps
+`sage/categories/coalgebras.py` out because it currently adds only skipped
+rows, and keeps `sage/categories/modules_with_basis.py`,
+`sage/categories/commutative_rings.py`, `sage/categories/finite_fields.py`,
+and `sage/categories/fields.py` out because they still have focused doctest
+failures or runtime traps.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
