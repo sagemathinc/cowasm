@@ -1237,6 +1237,26 @@ for the full SQLite dashboard. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 39,
 and about 1,292 seconds of elapsed time.
 
+Focused corpus-growth pass after the 2026-06-27 free-module startup namespace
+work:
+
+```text
+sage -t passed: 358 passed, 0 failed, 79 skipped
+```
+
+That one-file make-target validation adds
+`sage/combinat/free_module.py` to the curated corpus. The doctest runner now
+seeds the category constructors needed by upstream combinatorial free-module
+doctests, including `AlgebrasWithBasis`, `Modules`, `LeftModules`,
+`RightModules`, and finite-dimensional module/algebra categories, and the
+WASI `sage.all` patch exposes the same names for startup parity. The added
+WASI source patch classifies the remaining `WeylGroup(['A',3])` Cartesian
+product example as `# needs sage.libs.gap`, because importing `WeylGroup`
+currently reaches the stripped GAP-backed matrix-group stack. The focused
+validation used `make -C sagemath/sagelite test-sage-doctest-corpus` with a
+temporary one-file corpus and `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, writing
+`/tmp/sagelite-free-module-corpus.sqlite3`. The runner version is now 40.
+
 The make-target process for that full run rebuilt and patched the Sagelite
 source tree successfully, then wrote a passing SQLite dashboard, but the
 parent Node process stayed idle in `ep_poll` while holding the SQLite lock

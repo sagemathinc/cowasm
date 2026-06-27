@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 39;
+const doctestRunnerVersion = 40;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -841,6 +841,13 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.monoids.free_monoid", ("FreeMonoid",)),
         ("sage.categories.homset", ("Hom",)),
         ("sage.categories.finite_enumerated_sets", ("FiniteEnumeratedSets",)),
+        ("sage.categories.algebras_with_basis", ("AlgebrasWithBasis",)),
+        ("sage.categories.commutative_additive_semigroups", ("CommutativeAdditiveSemigroups",)),
+        ("sage.categories.finite_dimensional_algebras_with_basis", ("FiniteDimensionalAlgebrasWithBasis",)),
+        ("sage.categories.finite_dimensional_modules_with_basis", ("FiniteDimensionalModulesWithBasis",)),
+        ("sage.categories.left_modules", ("LeftModules",)),
+        ("sage.categories.modules", ("Modules",)),
+        ("sage.categories.right_modules", ("RightModules",)),
         ("sage.categories.sets_cat", ("Sets",)),
         ("sage.combinat.root_system.cartan_type", ("CartanType",)),
         ("sage.combinat.root_system.coxeter_type", ("CoxeterType",)),

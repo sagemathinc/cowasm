@@ -1209,7 +1209,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))                       # needs sage.graphs
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,112 @@
+@@ -253,74 +253,119 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1228,9 +1228,16 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 -from sage.probability.all import *
 -from sage.interfaces.all import *
 +if sys.platform == 'wasi':
++    from sage.categories.algebras_with_basis import AlgebrasWithBasis
 +    from sage.categories.cartesian_product import cartesian_product
++    from sage.categories.commutative_additive_semigroups import CommutativeAdditiveSemigroups
++    from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
++    from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 +    from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 +    from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
++    from sage.categories.left_modules import LeftModules
++    from sage.categories.modules import Modules
++    from sage.categories.right_modules import RightModules
 +    from sage.combinat.combination import Combinations
 +    from sage.combinat.combinat import stirling_number2
 +    from sage.combinat.composition import Composition, Compositions
@@ -3969,3 +3976,15 @@ diff -urN a/src/sage/combinat/root_system/weight_lattice_realizations.py b/src/s
 @@ -1177 +1177 @@
 -                sage: (e[0] + 2*e[1] - 3*e[2])._to_root_vector()
 +                sage: (e[0] + 2*e[1] - 3*e[2])._to_root_vector()                         # needs sage.libs.pari
+diff -urN a/src/sage/combinat/free_module.py b/src/sage/combinat/free_module.py
+--- a/src/sage/combinat/free_module.py
++++ b/src/sage/combinat/free_module.py
+@@ -1791,4 +1791,4 @@
+-            sage: Q = RootSystem(['A',3]).root_space(GF(3))
+-            sage: W = WeylGroup(['A',3], prefix='s')
+-            sage: CP = cartesian_product([Q, W])
+-            sage: type(CP)
++            sage: Q = RootSystem(['A',3]).root_space(GF(3))                             # needs sage.libs.gap
++            sage: W = WeylGroup(['A',3], prefix='s')                                    # needs sage.libs.gap
++            sage: CP = cartesian_product([Q, W])                                        # needs sage.libs.gap
++            sage: type(CP)                                                              # needs sage.libs.gap
