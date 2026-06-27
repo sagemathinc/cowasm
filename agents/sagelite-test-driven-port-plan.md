@@ -6337,6 +6337,25 @@ file and block rows exactly, and the workspace doctest temp directory is
 removed at exit. A fresh full corpus rerun is still needed before recording the
 next clean dashboard total.
 
+Follow-up full corpus rerun after the SQLite/temp-artifact runner pass:
+
+```text
+sage -t passed: 31484 passed, 0 failed, 7972 skipped
+```
+
+That make-target validation used the current 401-file curated corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`.
+The run completed cleanly through the make target, removed its workspace-local
+`.sagelite-doctest-*` temp directory at exit, and recorded runner version 48.
+The saved SQLite dashboard has internally consistent aggregates: 401 file
+rows, 39,456 block rows, 31,484 passed blocks, 0 failed blocks, and 7,972
+skipped blocks. The saved block- and file-failure cluster queries are empty.
+The latest run metadata records CoWasm commit
+`a8231a6c961ae04c188e6ec50150562ac33ea9af`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 48,
+and about 2,859 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
