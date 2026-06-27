@@ -1191,9 +1191,19 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          { x ∈ Ring of integers modulo 8 : <function is_prime at 0x...>(x) }
          sage: R_primes.is_finite()
          True
+--- a/src/sage/combinat/root_system/cartan_type.py
++++ b/src/sage/combinat/root_system/cartan_type.py
+@@ -1440,6 +1440,6 @@
+             sage: CartanType(["A",4,1]).is_implemented()                                # needs sage.graphs
+             True
+-            sage: CartanType(['H',3]).is_implemented()
++            sage: CartanType(['H',3]).is_implemented()                                  # needs sage.graphs
+             True
+         """
+         try:
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,109 @@
+@@ -253,74 +253,110 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1223,6 +1233,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.combinat.partition import Partition
 +    from sage.combinat.perfect_matching import PerfectMatching
 +    from sage.combinat.regular_sequence import RegularSequenceRing
++    from sage.combinat.root_system.root_system import RootSystem
 +    from sage.combinat.set_partition_ordered import OrderedSetPartition
 +    from sage.combinat.tableau import SemistandardTableaux, StandardTableau, Tableau
 +    from sage.combinat.partition_tuple import PartitionTuples

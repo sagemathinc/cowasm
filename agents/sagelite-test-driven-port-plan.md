@@ -881,6 +881,48 @@ imports unavailable symbolic-expression support before its module globals can
 be seeded; and `sage/rings/ring.pyx` reaches the existing
 `polynomial_number_field` table-index trap during a broad `TestSuite`.
 
+Latest checked local corpus run after the 2026-06-26 Cartan-type
+corpus-growth pass:
+
+```text
+sage -t passed: 21246 passed, 0 failed, 3619 skipped
+```
+
+That run records 24,865 block rows across the current 143-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-cartan-type.sqlite3`, adding
+`sage/combinat/root_system/cartan_type.py` to the quiet browser-profile
+dashboard. The focused rerun records
+`cartan_type.py: 318 passed, 0 failed, 143 skipped`.
+
+The doctest runner now seeds `RootSystem` in the common startup namespace, and
+the WASI `sage.all` patch exposes the same constructor for REPL parity on the
+next Sagelite package rebuild. This clears the Cartan-type startup-name
+cluster where upstream examples use `RootSystem(...)` without a local import.
+The remaining sampled mismatch,
+`CartanType(['H',3]).is_implemented()`, is tagged as
+`# needs sage.graphs` because that implementation checks `coxeter_diagram()`,
+which imports the unavailable graph backend. The saved block- and file-failure
+cluster queries are empty for the full corpus run. The latest run metadata
+records CoWasm commit `8fd0b384d16e0e23d399a65af5df11c08b9ba504`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile,
+runner version 38, and about 1,097 seconds of elapsed time.
+
+The same sampling pass kept `sage/combinat/abstract_tree.py` out because it
+still hits a `list_clone` maximum-call-stack trap, kept
+`sage/combinat/colored_permutations.py` out because it reaches the NTL
+`ZZ_pContext.restore` dynamic-link boundary, and kept
+`sage/combinat/graph_path.py`, `sage/combinat/interval_posets.py`, and the
+sampled path-tableaux helpers out because their current failures need graph,
+startup-context, or broader semantic triage. Dependency-boundary files such as
+`sage/combinat/fully_commutative_elements.py`,
+`sage/combinat/parallelogram_polyomino.py`,
+`sage/combinat/constellation.py`, `sage/combinat/e_one_star.py`,
+`sage/combinat/growth.py`, `sage/combinat/k_tableau.py`, and
+`sage/combinat/integer_vectors_mod_permgroup.py` currently add only skipped
+rows under the default browser-profile tags, so they remain outside the quiet
+corpus.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

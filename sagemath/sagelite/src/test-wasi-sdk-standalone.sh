@@ -810,6 +810,7 @@ from sage.combinat.tableau import SemistandardTableaux, StandardTableaux, Tablea
 from sage.combinat.tuple import Tuples, UnorderedTuples
 from sage.combinat.vector_partition import VectorPartitions
 from sage.sets.finite_set_maps import FiniteSetMaps
+assert str(sage.all.RootSystem(['A', 2])) == \"Root system of type ['A', 2]\"
 p = Partition([4, 2, 1])
 assert p.conjugate() == Partition([3, 2, 1, 1])
 assert p.size() == 7

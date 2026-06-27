@@ -50,6 +50,7 @@ src/sage/combinat/ordered_tree.py
 src/sage/combinat/output.py
 src/sage/combinat/quickref.py
 src/sage/combinat/q_analogues.py
+src/sage/combinat/root_system/cartan_type.py
 src/sage/combinat/restricted_growth.py
 src/sage/combinat/sidon_sets.py
 src/sage/combinat/ranker.py
