@@ -1532,6 +1532,16 @@ diff -urN a/src/sage/misc/all.py b/src/sage/misc/all.py
 +    from sage.misc.remote_file import get_remote_file
 
  from sage.misc.mrange import xmrange, mrange, xmrange_iter, mrange_iter, cartesian_product_iterator
+diff -urN a/src/sage/misc/citation.pyx b/src/sage/misc/citation.pyx
+--- a/src/sage/misc/citation.pyx
++++ b/src/sage/misc/citation.pyx
+@@ -77,5 +77,5 @@
+         ['Maxima', 'ginac']
+         sage: R.<x,y,z> = QQ[]
+         sage: I = R.ideal(x^2+y^2, z^2+y)
+-        sage: get_systems('I.primary_decomposition()')
++        sage: get_systems('I.primary_decomposition()')                                  # needs sage.libs.singular
+         ['Singular']
 diff -urN a/src/sage/misc/remote_file.py b/src/sage/misc/remote_file.py
 --- a/src/sage/misc/remote_file.py
 +++ b/src/sage/misc/remote_file.py

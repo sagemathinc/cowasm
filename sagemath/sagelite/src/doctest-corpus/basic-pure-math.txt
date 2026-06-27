@@ -346,6 +346,7 @@ src/sage/misc/binary_tree.pyx
 src/sage/misc/c3.pyx
 src/sage/misc/call.py
 src/sage/misc/callable_dict.pyx
+src/sage/misc/citation.pyx
 src/sage/misc/classcall_metaclass.pyx
 src/sage/misc/compat.py
 src/sage/misc/constant_function.pyx

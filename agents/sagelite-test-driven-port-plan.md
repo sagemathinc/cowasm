@@ -6095,6 +6095,30 @@ patch dry-run against the current `/home/user/sagelite` checkout still fails in
 older `integer_mod_ring.py` hunks, so this focused validation used the existing
 patched build tree after applying the new source-copy edits there.
 
+Focused misc citation corpus-growth pass:
+
+```text
+sage -t passed: 7 passed, 0 failed, 3 skipped
+```
+
+That one-file make-target validation adds `sage/misc/citation.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 392 non-comment
+entries. Direct sampling first recorded one failure in
+`get_systems('I.primary_decomposition()')`, which routes through Singular
+primary decomposition. The added WASI source patch marks that example as
+`# needs sage.libs.singular`, preserving the lightweight citation dependency
+tracking examples as ordinary passing coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-citation-make.sqlite3`. The make target
+rebuilt and patched a fresh Sagelite source copy successfully, and the saved
+block- and file-failure cluster queries are empty. Adjacent direct samples of
+`sage/misc/proof.py`, `sage/misc/mathml.py`, and `sage/misc/copying.py`
+produced no runnable doctest blocks, so they remain outside the quiet corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
