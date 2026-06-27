@@ -880,6 +880,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.ring_ideals", ("RingIdeals",)),
         ("sage.categories.sets_cat", ("Sets",)),
         ("sage.categories.schemes", ("Schemes",)),
+        ("sage.categories.simplicial_complexes", ("SimplicialComplexes",)),
         ("sage.categories.vector_spaces", ("VectorSpaces",)),
         ("sage.categories.groups", ("Groups",)),
         ("sage.categories.magmas", ("Magmas",)),

@@ -1209,7 +1209,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))                       # needs sage.graphs
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,163 @@
+@@ -253,74 +253,164 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1279,6 +1279,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.schemes import Schemes
 +    from sage.categories.semigroups import Semigroups
 +    from sage.categories.semirings import Semirings
++    from sage.categories.simplicial_complexes import SimplicialComplexes
 +    from sage.categories.tensor import tensor
 +    from sage.categories.vector_spaces import VectorSpaces
 +    from sage.combinat.combination import Combinations

@@ -5295,6 +5295,47 @@ Skipped-only files such as `sage/categories/algebra_functor.py`,
 `sage/categories/g_sets.py`, and `sage/categories/groupoid.py` still add no
 passing default-profile blocks.
 
+Focused category helper/graphs corpus-growth pass:
+
+```text
+sage -t passed: 65 passed, 0 failed, 1 skipped
+```
+
+That four-file make-target validation adds
+`sage/categories/category_cy_helper.pyx`, `sage/categories/graphs.py`,
+`sage/categories/ring_ideals.py`, and `sage/categories/tutorial.py` to the
+curated corpus, bringing the checked
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus to 311
+non-comment entries. The doctest runner now seeds the lightweight
+`SimplicialComplexes` category constructor in the common startup namespace,
+and the WASI `sage.all` patch exposes the same name for REPL parity on a fresh
+patched Sagelite source copy. This clears the `category_cy_helper.pyx`
+startup-name cluster where `SimplicialComplexes()` failed to build the shared
+`T` setup tuple used by the following `join_as_tuple(...)` examples.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary four-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-category-new-clean.sqlite3`. The make
+target rebuilt and patched the Sagelite source copy successfully after the
+expanded `src/sage/all.py` WASI startup hunk. The latest-run summary records
+66 total blocks, 65 passed, 1 skipped, 0 failed, runner version 42, and empty
+saved block- and file-failure cluster queries.
+
+Sampling in the same pass kept `sage/categories/category.py`,
+`sage/categories/category_with_axiom.py`, and `sage/categories/homset.py` out
+because they still have focused block-level failures. It kept
+`sage/categories/pushout.py` and `sage/categories/fields.py` out because they
+still reach the NTL/libcxx `memory access out of bounds` trap, kept
+`sage/categories/rings.py` out because a polynomial quotient example overflows
+the host call stack, and kept `sage/categories/commutative_rings.py`,
+`sage/categories/principal_ideal_domains.py`, and
+`sage/categories/unique_factorization_domains.py` out because their focused
+polynomial/number-field examples still trap or time out. Skipped-only files
+such as `sage/categories/bialgebras.py` and
+`sage/categories/vector_bundles.py` still add no passing default-profile
+blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

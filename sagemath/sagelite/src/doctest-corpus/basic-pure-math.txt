@@ -173,6 +173,7 @@ src/sage/categories/bimodules.py
 src/sage/categories/cartesian_product.py
 src/sage/categories/category_types.py
 src/sage/categories/category_singleton.pyx
+src/sage/categories/category_cy_helper.pyx
 src/sage/categories/chain_complexes.py
 src/sage/categories/covariant_functorial_construction.py
 src/sage/categories/coalgebras_with_basis.py
@@ -239,6 +240,7 @@ src/sage/categories/graded_coalgebras_with_basis.py
 src/sage/categories/graded_hopf_algebras.py
 src/sage/categories/graded_hopf_algebras_with_basis.py
 src/sage/categories/graded_modules_with_basis.py
+src/sage/categories/graphs.py
 src/sage/categories/groups.py
 src/sage/categories/group_algebras.py
 src/sage/categories/h_trivial_semigroups.py
@@ -262,6 +264,7 @@ src/sage/categories/permutation_groups.py
 src/sage/categories/pointed_sets.py
 src/sage/categories/poor_man_map.py
 src/sage/categories/quotients.py
+src/sage/categories/ring_ideals.py
 src/sage/categories/r_trivial_semigroups.py
 src/sage/categories/semisimple_algebras.py
 src/sage/categories/sets_cat.py
@@ -281,6 +284,7 @@ src/sage/categories/signed_tensor.py
 src/sage/categories/subobjects.py
 src/sage/categories/tensor.py
 src/sage/categories/topological_spaces.py
+src/sage/categories/tutorial.py
 src/sage/categories/unital_algebras.py
 src/sage/categories/vector_spaces.py
 src/sage/categories/with_realizations.py
