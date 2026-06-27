@@ -195,9 +195,12 @@ src/sage/categories/examples/facade_sets.py
 src/sage/categories/examples/finite_enumerated_sets.py
 src/sage/categories/examples/finite_monoids.py
 src/sage/categories/examples/finite_semigroups.py
+src/sage/categories/examples/finite_weyl_groups.py
 src/sage/categories/examples/filtered_algebras_with_basis.py
+src/sage/categories/examples/graphs.py
 src/sage/categories/examples/infinite_enumerated_sets.py
 src/sage/categories/examples/magmas.py
+src/sage/categories/examples/manifolds.py
 src/sage/categories/examples/monoids.py
 src/sage/categories/examples/posets.py
 src/sage/categories/examples/semigroups.py
