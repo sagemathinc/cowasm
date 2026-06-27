@@ -244,6 +244,7 @@ src/sage/categories/integral_domains.py
 src/sage/categories/gcd_domains.py
 src/sage/categories/graded_algebras.py
 src/sage/categories/graded_algebras_with_basis.py
+src/sage/categories/graded_lie_algebras_with_basis.py
 src/sage/categories/graded_bialgebras.py
 src/sage/categories/graded_bialgebras_with_basis.py
 src/sage/categories/graded_coalgebras.py

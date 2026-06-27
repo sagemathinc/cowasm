@@ -1251,7 +1251,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
              [0 0 0]
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,171 @@
+@@ -253,74 +253,172 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1297,6 +1297,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.finite_sets import FiniteSets
 +    from sage.categories.graded_algebras import GradedAlgebras
 +    from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
++    from sage.categories.lie_algebras import LieAlgebras
 +    from sage.categories.graded_modules import GradedModules
 +    from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
 +    from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis

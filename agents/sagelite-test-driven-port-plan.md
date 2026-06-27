@@ -6258,6 +6258,24 @@ The focused database is
 and no non-passing file rows. A full corpus rerun is still needed before
 recording the next clean dashboard total.
 
+Focused graded Lie category corpus-growth pass:
+
+```text
+sage -t passed: 5 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds
+`sage/categories/graded_lie_algebras_with_basis.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 400
+non-comment entries. The doctest runner now seeds the lightweight
+`LieAlgebras` category constructor in the common startup namespace, and the
+WASI `sage.all` patch exposes the same constructor for REPL parity on a fresh
+patched Sagelite source copy. This clears the file's only sampled failure:
+`NameError: name 'LieAlgebras' is not defined`. The focused validation used
+the direct `sage -t` harness with `--profile node`, `--timeout 90`, and
+`--sqlite /tmp/sagelite-graded-lie-focused.sqlite3`; the saved block- and
+file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
