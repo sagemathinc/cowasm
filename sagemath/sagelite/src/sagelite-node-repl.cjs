@@ -844,6 +844,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.additive_monoids", ("AdditiveMonoids",)),
         ("sage.categories.additive_semigroups", ("AdditiveSemigroups",)),
         ("sage.categories.algebras", ("Algebras",)),
+        ("sage.categories.algebra_ideals", ("AlgebraIdeals",)),
         ("sage.categories.bialgebras", ("Bialgebras",)),
         ("sage.categories.coalgebras", ("Coalgebras",)),
         ("sage.categories.coalgebras_with_basis", ("CoalgebrasWithBasis",)),
@@ -865,13 +866,17 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.graded_modules_with_basis", ("GradedModulesWithBasis",)),
         ("sage.categories.graded_hopf_algebras_with_basis", ("GradedHopfAlgebrasWithBasis",)),
         ("sage.categories.category", ("Category",)),
+        ("sage.categories.group_algebras", ("GroupAlgebras",)),
         ("sage.categories.hopf_algebras", ("HopfAlgebras",)),
         ("sage.categories.hopf_algebras_with_basis", ("HopfAlgebrasWithBasis",)),
         ("sage.categories.left_modules", ("LeftModules",)),
+        ("sage.categories.modular_abelian_varieties", ("ModularAbelianVarieties",)),
         ("sage.categories.modules", ("Modules",)),
         ("sage.categories.modules_with_basis", ("ModulesWithBasis",)),
         ("sage.categories.right_modules", ("RightModules",)),
+        ("sage.categories.ring_ideals", ("RingIdeals",)),
         ("sage.categories.sets_cat", ("Sets",)),
+        ("sage.categories.schemes", ("Schemes",)),
         ("sage.categories.vector_spaces", ("VectorSpaces",)),
         ("sage.categories.groups", ("Groups",)),
         ("sage.categories.magmas", ("Magmas",)),
@@ -896,6 +901,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.sets.non_negative_integers", ("NonNegativeIntegers",)),
         ("sage.sets.primes", ("Primes",)),
         ("sage.sets.set", ("Set",)),
+        ("sage.schemes.generic.spec", ("Spec",)),
     )
     for module_name, names in imports:
         try:
@@ -906,6 +912,8 @@ def __cowasm_seed_common_doctest_globals(namespace):
             namespace.setdefault(name, getattr(module, name))
     if "Modules" in namespace:
         namespace.setdefault("RingModules", namespace["Modules"])
+    if "RingIdeals" in namespace:
+        namespace.setdefault("Ideals", namespace["RingIdeals"])
 
 
 def _cowasm_tags(source):

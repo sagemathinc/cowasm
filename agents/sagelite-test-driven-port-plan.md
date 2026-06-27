@@ -5084,9 +5084,34 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_TIMEOUT=120`, and
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-poor-man-map-make.sqlite3`. The make target
 rebuilt and patched the Sagelite source copy successfully, and the saved
-block- and file-failure cluster queries are empty. A same-pass sample keeps
-`sage/categories/category_types.py` out of the quiet corpus for now; its
-focused rerun still records `48 passed, 21 failed, 27 skipped`.
+block- and file-failure cluster queries are empty.
+
+Focused category-types corpus-growth pass:
+
+```text
+sage -t passed: 68 passed, 0 failed, 28 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/category_types.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 285
+non-comment entries. The doctest runner now seeds the lightweight category and
+scheme constructors needed by the file's upstream examples, including
+`Spec`, `Schemes`, `ModularAbelianVarieties`, `GroupAlgebras`,
+`AlgebraIdeals`, and the `Ideals` alias for `RingIdeals`; the WASI
+`sage.all` patch exposes the same names for REPL parity on a fresh patched
+Sagelite source copy.
+
+This clears the startup-name cluster that previously left chained examples
+with missing `C` state. The remaining multivariate ideal display example is
+tagged as `# needs sage.rings.polynomial.plural`, matching the stripped
+browser-profile boundary for the unavailable noncommutative polynomial module.
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-category-types-make.sqlite3`. The make
+target rebuilt and patched the Sagelite source copy successfully, and the
+saved block- and file-failure cluster queries are empty.
 
 ## Phase 5: Subprocess Strategy
 

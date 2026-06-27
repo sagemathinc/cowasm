@@ -1209,7 +1209,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))                       # needs sage.graphs
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,152 @@
+@@ -253,74 +253,159 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1232,6 +1232,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.additive_magmas import AdditiveMagmas
 +    from sage.categories.additive_monoids import AdditiveMonoids
 +    from sage.categories.additive_semigroups import AdditiveSemigroups
++    from sage.categories.algebra_ideals import AlgebraIdeals
 +    from sage.categories.algebras import Algebras
 +    from sage.categories.algebras_with_basis import AlgebrasWithBasis
 +    from sage.categories.bialgebras import Bialgebras
@@ -1251,6 +1252,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
 +    from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
 +    from sage.categories.category import Category
++    from sage.categories.group_algebras import GroupAlgebras
 +    from sage.categories.groups import Groups
 +    from sage.categories.homset import End
 +    from sage.categories.hopf_algebras import HopfAlgebras
@@ -1258,6 +1260,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 +    from sage.categories.left_modules import LeftModules
 +    from sage.categories.magmas import Magmas
++    from sage.categories.modular_abelian_varieties import ModularAbelianVarieties
 +    from sage.categories.monoids import Monoids
 +    from sage.categories.modules import Modules
 +    RingModules = Modules
@@ -1266,8 +1269,11 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.finite_semigroups import FiniteSemigroups
 +    from sage.categories.posets import Posets
 +    from sage.categories.right_modules import RightModules
++    from sage.categories.ring_ideals import RingIdeals
++    Ideals = RingIdeals
 +    from sage.categories.rings import Rings
 +    from sage.categories.rngs import Rngs
++    from sage.categories.schemes import Schemes
 +    from sage.categories.semigroups import Semigroups
 +    from sage.categories.semirings import Semirings
 +    from sage.categories.vector_spaces import VectorSpaces
@@ -1295,6 +1301,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.combinat.words.words import InfiniteWords, Words
 +    from sage.functions.log import exp, log
 +    from sage.modules.free_module_element import vector
++    from sage.schemes.generic.spec import Spec
 +    from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 +    from sage.sets.family import Family
 +    from sage.sets.positive_integers import PositiveIntegers
@@ -4084,3 +4091,9 @@ diff -urN a/src/sage/categories/poor_man_map.py b/src/sage/categories/poor_man_m
 @@ -261 +261 @@
 -            sage: h = PoorManMap(sin, domain=RR, codomain=RR)
 +            sage: h = PoorManMap(sin, domain=RR, codomain=RR)                           # needs sympy sage.symbolic
+diff -urN a/src/sage/categories/category_types.py b/src/sage/categories/category_types.py
+--- a/src/sage/categories/category_types.py
++++ b/src/sage/categories/category_types.py
+@@ -627 +627 @@
+-            sage: C(Ig)
++            sage: C(Ig)                                                                # needs sage.rings.polynomial.plural
