@@ -5064,6 +5064,30 @@ target rebuilt and patched the Sagelite source copy successfully after the
 expanded `src/sage/all.py` WASI startup hunk. The saved block- and file-failure
 cluster queries are empty, and the runner version is now 42.
 
+Focused poor-man-map category corpus-growth pass:
+
+```text
+sage -t passed: 54 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/poor_man_map.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 284
+non-comment entries. The added WASI source patch gives the
+`PoorManMap(sin, domain=RR, codomain=RR)` setup prompt the same
+`# needs sympy sage.symbolic` metadata as the `_sympy_()` check it prepares,
+so the stripped browser profile records the symbolic/SymPy example as an
+explicit skip instead of failing before the tagged assertion line.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-poor-man-map-make.sqlite3`. The make target
+rebuilt and patched the Sagelite source copy successfully, and the saved
+block- and file-failure cluster queries are empty. A same-pass sample keeps
+`sage/categories/category_types.py` out of the quiet corpus for now; its
+focused rerun still records `48 passed, 21 failed, 27 skipped`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

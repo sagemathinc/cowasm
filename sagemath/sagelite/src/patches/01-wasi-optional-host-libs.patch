@@ -4078,3 +4078,9 @@ diff -urN a/src/sage/categories/functor.pyx b/src/sage/categories/functor.pyx
 @@ -138 +138 @@
 -        sage: F(f)(1/x)
 +        sage: F(f)(1/x)                                                                 # needs sage.libs.singular
+diff -urN a/src/sage/categories/poor_man_map.py b/src/sage/categories/poor_man_map.py
+--- a/src/sage/categories/poor_man_map.py
++++ b/src/sage/categories/poor_man_map.py
+@@ -261 +261 @@
+-            sage: h = PoorManMap(sin, domain=RR, codomain=RR)
++            sage: h = PoorManMap(sin, domain=RR, codomain=RR)                           # needs sympy sage.symbolic

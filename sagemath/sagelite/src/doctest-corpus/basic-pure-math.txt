@@ -237,6 +237,7 @@ src/sage/categories/objects.py
 src/sage/categories/partially_ordered_monoids.py
 src/sage/categories/permutation_groups.py
 src/sage/categories/pointed_sets.py
+src/sage/categories/poor_man_map.py
 src/sage/categories/quotients.py
 src/sage/categories/r_trivial_semigroups.py
 src/sage/categories/semisimple_algebras.py
