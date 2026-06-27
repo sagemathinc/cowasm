@@ -339,6 +339,12 @@ src/sage/rings/finite_rings/finite_field_constructor.py
 src/sage/rings/polynomial/commutative_polynomial.pyx
 src/sage/rings/polynomial/convolution.py
 src/sage/rings/polynomial/polynomial_ring_constructor.py
+src/sage/misc/binary_tree.pyx
+src/sage/misc/call.py
+src/sage/misc/callable_dict.pyx
+src/sage/misc/constant_function.pyx
+src/sage/misc/flatten.py
+src/sage/misc/mrange.py
 src/sage/modules/misc.py
 src/sage/modules/module.pyx
 src/sage/matrix/constructor.pyx

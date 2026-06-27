@@ -5749,6 +5749,37 @@ because they currently trap or time out before contributing passing blocks,
 and kept several empty or skipped-only utility/category files out of the quiet
 corpus.
 
+Focused misc-helper corpus-growth pass:
+
+```text
+sage -t passed: 224 passed, 0 failed, 9 skipped
+```
+
+That six-file make-target validation adds `sage/misc/binary_tree.pyx`,
+`sage/misc/call.py`, `sage/misc/callable_dict.pyx`,
+`sage/misc/constant_function.pyx`, `sage/misc/flatten.py`, and
+`sage/misc/mrange.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 345
+non-comment entries. The batch contributes compact Sage utility coverage for
+binary trees, call dispatch, callable dictionaries, constant functions,
+flattening, and multidimensional ranges without new WASI source tags or
+startup namespace changes.
+
+Direct focused reruns recorded `binary_tree.pyx: 59 passed, 0 failed, 2
+skipped`, `call.py: 24 passed, 0 failed, 4 skipped`,
+`callable_dict.pyx: 12 passed, 0 failed, 0 skipped`,
+`constant_function.pyx: 21 passed, 0 failed, 0 skipped`,
+`flatten.py: 12 passed, 0 failed, 3 skipped`, and
+`mrange.py: 96 passed, 0 failed, 0 skipped`. Focused make-target validation
+used a temporary six-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-misc-helpers-make.sqlite3`; the saved
+block- and file-failure cluster queries are empty. Sampling in the same pass
+kept skipped-only category wrappers such as `algebra_functor.py`,
+`finite_permutation_groups.py`, and `groupoid.py` out of the quiet corpus,
+while `fields.py`, `finite_fields.py`, `commutative_rings.py`, and
+`abstract_method.py` still need separate runtime-boundary or mismatch triage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
