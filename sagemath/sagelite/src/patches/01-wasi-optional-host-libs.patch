@@ -3878,3 +3878,24 @@ diff -urN a/src/sage/combinat/partition.py b/src/sage/combinat/partition.py
 @@ -9957 +9957 @@
 -        sage: A(100)
 +        sage: A(100)                                                                      # needs sage.libs.gap
+diff -urN a/src/sage/combinat/root_system/cartan_matrix.py b/src/sage/combinat/root_system/cartan_matrix.py
+--- a/src/sage/combinat/root_system/cartan_matrix.py
++++ b/src/sage/combinat/root_system/cartan_matrix.py
+@@ -393 +393 @@
+-            sage: CartanType("A3").subtype((2,)) is CartanType("A1").relabel({1:2})
++            sage: CartanType("A3").subtype((2,)) is CartanType("A1").relabel({1:2})     # needs sage.graphs
+@@ -1152,11 +1152,11 @@
+-        sage: cm = CartanMatrix(['A',7]).subtype([2,3,5])
+-        sage: find_cartan_type_from_matrix(cm)
++        sage: cm = CartanMatrix(['A',7]).subtype([2,3,5])                               # needs sage.graphs
++        sage: find_cartan_type_from_matrix(cm)                                          # needs sage.graphs
+         A2xA1 relabelled by {1: 2, 2: 3, 3: 5}
+ 
+-        sage: cm = CartanMatrix(['B',10,1]).subtype([0,1,2,3,5,6,8,9,10])
+-        sage: ct = find_cartan_type_from_matrix(cm); ct
++        sage: cm = CartanMatrix(['B',10,1]).subtype([0,1,2,3,5,6,8,9,10])                # needs sage.graphs
++        sage: ct = find_cartan_type_from_matrix(cm); ct                                  # needs sage.graphs
+         D4xB3xA2 relabelled by {1: 0, 2: 2, 3: 1, 4: 3, 5: 8, 6: 9, 7: 10, 8: 5, 9: 6}
+-        sage: ct.dynkin_diagram()
++        sage: ct.dynkin_diagram()                                                       # needs sage.graphs
+             O 3

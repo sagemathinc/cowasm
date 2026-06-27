@@ -951,6 +951,29 @@ full corpus run. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
 and about 1,092 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 Cartan-matrix
+corpus-growth pass:
+
+```text
+sage -t passed: 22572 passed, 0 failed, 3989 skipped
+```
+
+That run records 26,561 block rows across the current 145-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, adding
+`sage/combinat/root_system/cartan_matrix.py` to the quiet browser-profile
+dashboard. The focused rerun records
+`cartan_matrix.py: 22 passed, 0 failed, 154 skipped`.
+
+The added WASI source patch marks the remaining graph-backed Cartan subtype
+and Dynkin-diagram examples as `# needs sage.graphs`; the non-graph matrix
+construction and Cartan-type detection examples pass under the default node
+profile. The saved block- and file-failure cluster queries are empty for the
+full corpus run. The latest run metadata records CoWasm commit
+`1d29349b35ffb5c64b3ed119750109ee203baaa6`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
+and about 1,094 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
