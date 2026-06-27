@@ -1249,6 +1249,22 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
              Free module morphism defined by the matrix
              [0 0 0]
              [0 0 0]
+--- a/src/sage/modules/quotient_module.py
++++ b/src/sage/modules/quotient_module.py
+@@ -540,9 +540,9 @@
+ 
+         Ensure that :issue:`39507` is fixed::
+ 
+-            sage: V = VectorSpace(GF(2),3)
+-            sage: A = V.subspace([(0,1,0), (1,1,1)])
+-            sage: B = A.subspace([])
+-            sage: list(A/B)
++            sage: V = VectorSpace(GF(2),3)                                             # needs sage.matrix.matrix_mod2_dense
++            sage: A = V.subspace([(0,1,0), (1,1,1)])                                   # needs sage.matrix.matrix_mod2_dense
++            sage: B = A.subspace([])                                                    # needs sage.matrix.matrix_mod2_dense
++            sage: list(A/B)                                                             # needs sage.matrix.matrix_mod2_dense
+             [(0, 0), (1, 0), (0, 1), (1, 1)]
+         """
 --- a/src/sage/modules/vector_space_morphism.py
 +++ b/src/sage/modules/vector_space_morphism.py
 @@ -124 +124 @@

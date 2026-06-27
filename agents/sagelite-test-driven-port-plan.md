@@ -6546,6 +6546,33 @@ aggregate is internally consistent with 221 block rows, 114 passed blocks, and
 107 skipped blocks. A full corpus rerun should be performed before recording
 the next dashboard total.
 
+Focused quotient-module corpus-growth pass:
+
+```text
+sage -t passed: 120 passed, 0 failed, 17 skipped
+```
+
+That one-file make-target validation adds `sage/modules/quotient_module.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 413
+non-comment entries. Direct sampling first recorded 121 passed blocks and
+three failures in one contiguous `VectorSpace(GF(2), 3)` quotient example; the
+first line imports the stripped `sage.matrix.matrix_mod2_dense` backend, and
+the following two examples only fail because that setup state is missing. The
+added WASI source patch marks that region as
+`# needs sage.matrix.matrix_mod2_dense`, leaving the rest of the quotient
+module doctests as default browser-profile coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-quotient-module-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully.
+The saved block- and file-failure cluster queries are empty, and the SQLite
+aggregate is internally consistent with 137 block rows, 120 passed blocks, and
+17 skipped blocks. A full corpus rerun should be performed before recording
+the next dashboard total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

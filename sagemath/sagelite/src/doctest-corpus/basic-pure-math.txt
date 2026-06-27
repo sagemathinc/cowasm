@@ -407,6 +407,7 @@ src/sage/modules/free_module_homspace.py
 src/sage/modules/misc.py
 src/sage/modules/module.pyx
 src/sage/modules/ore_module_homspace.py
+src/sage/modules/quotient_module.py
 src/sage/modules/real_double_vector.py
 src/sage/modules/tensor_operations.py
 src/sage/modules/vector_integer_dense.pyx
