@@ -4342,6 +4342,28 @@ have focused doctest failures. `sage/categories/posets.py` is also still out:
 under the default browser-profile tags it currently adds only skipped rows, so
 it would not improve the non-skipped compatibility dashboard.
 
+Focused finite-semigroup category corpus-growth pass:
+
+```text
+sage -t passed: 11 passed, 0 failed, 3 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/finite_semigroups.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 185
+non-comment entries. The doctest runner now seeds `Semigroups` in the common
+startup namespace, and the WASI `sage.all` patch exposes the same constructor
+for REPL parity on a fresh patched Sagelite source copy. This clears the
+file's only sampled failure:
+`NameError: name 'Semigroups' is not defined`. The focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-finite-semigroups-make.sqlite3`. The saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `4b59149df25523cfe5edd636187136e50c7a2c6a`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and
+runner version 41.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
