@@ -6201,6 +6201,32 @@ version 44. Sampling in the same pass kept `sage/misc/classgraph.py`,
 corpus because they still have focused doctest failures, missing optional
 dependencies, or known NTL/libcxx trap boundaries under the default profile.
 
+Focused misc superseded corpus-growth pass:
+
+```text
+sage -t passed: 38 passed, 0 failed, 28 skipped
+```
+
+That one-file make-target validation adds `sage/misc/superseded.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 399
+non-comment entries. The file expands quiet misc coverage for Sage
+deprecation, warning, experimental-status, and deprecated-function-alias
+helpers.
+
+Direct sampling first recorded 12 output mismatches where the Sagelite
+doctest runner executed the examples and preserved ordinary return output,
+but did not compare the expected warning stream. The added WASI source patch
+marks exactly those warning-output examples as `# known bug`, leaving the
+non-warning superseded-helper examples as passing coverage until runner
+warning capture is improved. Focused validation used the
+`test-sage-doctest-corpus` make target with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-superseded-make.sqlite3`. The make target
+rebuilt and patched a fresh Sagelite source copy successfully, and the saved
+block- and file-failure cluster queries are empty. A full corpus rerun should
+be performed before recording a new dashboard total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

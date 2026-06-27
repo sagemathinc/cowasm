@@ -389,6 +389,7 @@ src/sage/misc/sage_eval.py
 src/sage/misc/sage_unittest.py
 src/sage/misc/search.pyx
 src/sage/misc/sh.py
+src/sage/misc/superseded.py
 src/sage/misc/table.py
 src/sage/misc/test_class_pickling.py
 src/sage/misc/test_nested_class.py

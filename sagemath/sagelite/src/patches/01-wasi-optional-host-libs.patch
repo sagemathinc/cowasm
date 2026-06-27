@@ -4358,6 +4358,45 @@ diff -urN a/src/sage/misc/prandom.py b/src/sage/misc/prandom.py
 @@ -45 +45 @@
 -    sage: timeit('test2()') # random
 +    sage: timeit('test2()') # random                                                    # needs IPython
+diff -urN a/src/sage/misc/superseded.py b/src/sage/misc/superseded.py
+--- a/src/sage/misc/superseded.py
++++ b/src/sage/misc/superseded.py
+@@ -89 +89 @@
+-        sage: foo()
++        sage: foo()  # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -164 +164 @@
+-        sage: foo()
++        sage: foo()  # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -203 +203 @@
+-        sage: foo()
++        sage: foo()  # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -236 +236 @@
+-            sage: foo(7, what='Hello')
++            sage: foo(7, what='Hello')  # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -249 +249 @@
+-            sage: _ = bird(99)
++            sage: _ = bird(99)  # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -264 +264 @@
+-            sage: _ = __experimental_self_test("A")
++            sage: _ = __experimental_self_test("A")  # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -296 +296 @@
+-            sage: ex_foo(3, what='Hello')
++            sage: ex_foo(3, what='Hello')  # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -445 +445 @@
+-            sage: blo()
++            sage: blo()  # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -450 +450 @@
+-            sage: blo()
++            sage: blo()  # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -491 +491 @@
+-            sage: a1.g(a2.g(0))
++            sage: a1.g(a2.g(0))  # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -546 +546 @@
+-        sage: cls().old_meth()
++        sage: cls().old_meth()  # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -555 +555 @@
+-        sage: b()
++        sage: b()  # known bug - warning stream is not captured by Sagelite doctest runner
 diff -urN a/src/sage/misc/sagedoc.py b/src/sage/misc/sagedoc.py
 --- a/src/sage/misc/sagedoc.py
 +++ b/src/sage/misc/sagedoc.py
