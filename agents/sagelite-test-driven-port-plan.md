@@ -5136,6 +5136,32 @@ and file-failure cluster queries are empty. Sampling in the same pass kept
 `sage/categories/map.pyx` out of the quiet corpus because they still have
 focused startup-name, Singular/plural dependency, and output-drift clusters.
 
+Focused map/morphism category corpus-growth pass:
+
+```text
+sage -t passed: 433 passed, 0 failed, 147 skipped
+```
+
+That two-file make-target validation adds `sage/categories/map.pyx` and
+`sage/categories/morphism.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 288 non-comment
+entries. The added WASI source patch classifies `Map._extra_slots_test()`,
+the deprecated `is_Map(...)` warning check, and the morphism
+`_extra_slots_test()` examples as `# random`, because the browser-profile
+runtime preserves the semantic result while printing dictionary keys and
+warnings differently from the historical doctest text. The same patch tags
+the multivariate ideal pushforward examples in `map.pyx` as
+`# needs sage.rings.polynomial.plural`, matching the stripped browser-profile
+boundary for noncommutative polynomial support.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-map-morphism-make.sqlite3`. The make target
+rebuilt and patched the Sagelite source copy successfully. The latest-run
+summary records 580 total blocks, 433 passed, 147 skipped, 0 failed, runner
+version 42, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

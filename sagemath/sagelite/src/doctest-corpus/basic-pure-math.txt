@@ -204,6 +204,8 @@ src/sage/categories/finitely_generated_semigroups.py
 src/sage/categories/functor.pyx
 src/sage/categories/function_fields.py
 src/sage/categories/homsets.py
+src/sage/categories/map.pyx
+src/sage/categories/morphism.pyx
 src/sage/categories/semigroups.py
 src/sage/categories/semirings.py
 src/sage/categories/rngs.py

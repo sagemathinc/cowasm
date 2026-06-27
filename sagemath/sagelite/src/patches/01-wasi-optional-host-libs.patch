@@ -4098,3 +4098,27 @@ diff -urN a/src/sage/categories/category_types.py b/src/sage/categories/category
 @@ -627 +627 @@
 -            sage: C(Ig)
 +            sage: C(Ig)                                                                # needs sage.rings.polynomial.plural
+diff -urN a/src/sage/categories/map.pyx b/src/sage/categories/map.pyx
+--- a/src/sage/categories/map.pyx
++++ b/src/sage/categories/map.pyx
+@@ -64 +64 @@
+-        sage: is_Map(f)
++        sage: is_Map(f)                                                               # random
+@@ -477 +477 @@
+-            sage: f._extra_slots_test()
++            sage: f._extra_slots_test()                                               # random
+@@ -719 +719 @@
+-            sage: I = ideal(x, y); I
++            sage: I = ideal(x, y); I                                                  # needs sage.rings.polynomial.plural
+@@ -721 +721 @@
+-            sage: phi(I)
++            sage: phi(I)                                                              # needs sage.rings.polynomial.plural
+diff -urN a/src/sage/categories/morphism.pyx b/src/sage/categories/morphism.pyx
+--- a/src/sage/categories/morphism.pyx
++++ b/src/sage/categories/morphism.pyx
+@@ -645 +645 @@
+-            sage: f._extra_slots_test()
++            sage: f._extra_slots_test()                                               # random
+@@ -813 +813 @@
+-            sage: f._extra_slots_test()
++            sage: f._extra_slots_test()                                               # random
