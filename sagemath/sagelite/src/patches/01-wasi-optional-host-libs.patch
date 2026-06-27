@@ -1249,6 +1249,17 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
              Free module morphism defined by the matrix
              [0 0 0]
              [0 0 0]
+--- a/src/sage/modules/vector_space_morphism.py
++++ b/src/sage/modules/vector_space_morphism.py
+@@ -124 +124 @@
+-    sage: phi.inverse_image( (QQ^2).span([[1,2]]) )
++    sage: phi.inverse_image( (QQ^2).span([[1,2]]) )                                    # needs sage.libs.pari
+@@ -131 +131 @@
+-    sage: phi.inverse_image( (QQ^2).span([[1,1]]) )
++    sage: phi.inverse_image( (QQ^2).span([[1,1]]) )                                    # needs sage.libs.pari
+@@ -141 +141 @@
+-    sage: phi.is_injective()
++    sage: phi.is_injective()                                                           # needs sage.libs.pari
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
 @@ -253,74 +253,172 @@

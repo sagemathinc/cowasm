@@ -6377,6 +6377,27 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 recording `lazy_attribute.pyx: 96 passed, 0 failed, 12 skipped`. The saved
 block- and file-failure cluster queries are empty.
 
+Focused vector-space morphism corpus-growth pass:
+
+```text
+sage -t passed: 200 passed, 0 failed, 77 skipped
+```
+
+That two-file focused validation adds
+`sage/modules/vector_space_homspace.py` and
+`sage/modules/vector_space_morphism.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 404
+non-comment entries. Direct sampling recorded
+`vector_space_homspace.py: 68 passed, 0 failed, 0 skipped`; adjacent heavier
+module morphism files still have broader failure clusters and remain outside
+the quiet dashboard.
+
+Direct sampling of `vector_space_morphism.py` recorded three focused failures
+in `inverse_image(...)` and `is_injective()` examples. All three route through
+matrix-kernel computation over rational vector spaces and reach the existing
+focused cypari2/PARI object-model boundary, so the added WASI source patch
+classifies those examples as `# needs sage.libs.pari`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
