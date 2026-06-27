@@ -263,6 +263,7 @@ src/sage/categories/isomorphic_objects.py
 src/sage/categories/j_trivial_semigroups.py
 src/sage/categories/kac_moody_algebras.py
 src/sage/categories/l_trivial_semigroups.py
+src/sage/categories/lie_conformal_algebras.py
 src/sage/categories/lie_groups.py
 src/sage/categories/magmatic_algebras.py
 src/sage/categories/magmas.py
@@ -398,4 +399,5 @@ src/sage/misc/viewer.py
 src/sage/modules/free_module_homspace.py
 src/sage/modules/misc.py
 src/sage/modules/module.pyx
+src/sage/modules/real_double_vector.py
 src/sage/matrix/constructor.pyx

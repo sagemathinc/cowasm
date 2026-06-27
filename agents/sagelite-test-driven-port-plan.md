@@ -1654,6 +1654,27 @@ recording `lazy_format.py: 22 passed, 0 failed, 1 skipped`,
 `trace.py: 4 passed, 0 failed, 8 skipped`. The saved block- and file-failure
 cluster queries are empty.
 
+Focused lie-conformal/vector utility corpus-growth pass:
+
+```text
+sage -t passed: 11 passed, 0 failed, 17 skipped
+```
+
+That two-file focused validation adds
+`sage/categories/lie_conformal_algebras.py` and
+`sage/modules/real_double_vector.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 398
+non-comment entries. Direct probes record
+`lie_conformal_algebras.py: 9 passed, 0 failed, 17 skipped` and
+`real_double_vector.py: 2 passed, 0 failed, 0 skipped`; both files are quiet
+under the default node profile without new WASI source tags or startup
+namespace changes. Sampling in the same pass kept adjacent category, module,
+and misc files such as `sage/categories/graded_lie_algebras.py`,
+`sage/misc/explain_pickle.py`, `sage/misc/html.py`,
+`sage/misc/sage_input.py`, and `sage/misc/stopgap.pyx` out of the quiet
+corpus because their current failures hit broader symbolic, finite-field,
+filesystem, timing, or diagnostic clusters.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
