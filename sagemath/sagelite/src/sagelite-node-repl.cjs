@@ -849,6 +849,8 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.modules", ("Modules",)),
         ("sage.categories.right_modules", ("RightModules",)),
         ("sage.categories.sets_cat", ("Sets",)),
+        ("sage.categories.groups", ("Groups",)),
+        ("sage.categories.monoids", ("Monoids",)),
         ("sage.categories.posets", ("Posets",)),
         ("sage.categories.semigroups", ("Semigroups",)),
         ("sage.categories.finite_monoids", ("FiniteMonoids",)),

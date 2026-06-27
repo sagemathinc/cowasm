@@ -4364,6 +4364,29 @@ records CoWasm commit `4b59149df25523cfe5edd636187136e50c7a2c6a`, Sagelite
 package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and
 runner version 41.
 
+Focused finite-monoid category corpus-growth pass:
+
+```text
+sage -t passed: 26 passed, 0 failed, 35 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/finite_monoids.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 186
+non-comment entries. The doctest runner now seeds the lightweight `Monoids`
+and `Groups` category constructors in the common startup namespace, and the
+WASI `sage.all` patch exposes the same names for REPL parity on a fresh
+patched Sagelite source copy. This clears the sampled `NameError` failures for
+`Monoids().Finite().example()` and
+`Semigroups().Finite().Subobjects() & Groups()`. The focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-finite-monoids-make.sqlite3`. The saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `a4693d2c56058064f566bcce1e9b8cdcb69b2733`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, and runner version 41.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
