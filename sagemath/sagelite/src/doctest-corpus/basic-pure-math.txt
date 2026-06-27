@@ -390,6 +390,7 @@ src/sage/misc/timing.py
 src/sage/misc/trace.py
 src/sage/misc/unknown.py
 src/sage/misc/viewer.py
+src/sage/modules/free_module_homspace.py
 src/sage/modules/misc.py
 src/sage/modules/module.pyx
 src/sage/matrix/constructor.pyx

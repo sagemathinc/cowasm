@@ -900,7 +900,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.root_system.coxeter_type", ("CoxeterType",)),
         ("sage.combinat.root_system.root_system", ("RootSystem", "WeylDim")),
         ("sage.misc.functional", ("sqrt",)),
-        ("sage.modules.free_module", ("FreeModule", "VectorSpace")),
+        ("sage.modules.free_module", ("FreeModule", "VectorSpace", "span")),
         ("sage.modules.free_module_element", ("vector",)),
         ("sage.sets.condition_set", ("ConditionSet",)),
         ("sage.sets.disjoint_union_enumerated_sets", ("DisjointUnionEnumeratedSets",)),
@@ -919,7 +919,14 @@ def __cowasm_seed_common_doctest_globals(namespace):
         except BaseException:
             continue
         for name in names:
-            namespace.setdefault(name, getattr(module, name))
+            value = getattr(module, name)
+            namespace.setdefault(name, value)
+            try:
+                import sage.all as sage_all
+                if not hasattr(sage_all, name):
+                    setattr(sage_all, name, value)
+            except BaseException:
+                pass
     try:
         import sage.algebras.catalog as algebras
         namespace.setdefault("algebras", algebras)

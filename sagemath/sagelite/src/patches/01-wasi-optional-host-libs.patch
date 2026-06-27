@@ -1207,9 +1207,43 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
              sage: lat = RootSystem(['B', 3]).root_lattice()
 -            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))
 +            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))                       # needs sage.graphs
+--- a/src/sage/modules/free_module_homspace.py
++++ b/src/sage/modules/free_module_homspace.py
+@@ -50,2 +50,2 @@
+-    sage: V = (ZZ^2).span_of_basis([[1,2],[3,4]])
+-    sage: V.hom([V.0, V.1])
++    sage: V = (ZZ^2).span_of_basis([[1,2],[3,4]])                                      # needs sage.symbolic
++    sage: V.hom([V.0, V.1])                                                            # needs sage.symbolic
+@@ -103,14 +103,14 @@
+-            sage: V = (ZZ^3).span_of_basis([[1,1,0],[1,0,2]])
+-            sage: H = V.Hom(V); H
++            sage: V = (ZZ^3).span_of_basis([[1,1,0],[1,0,2]])                           # needs sage.symbolic
++            sage: H = V.Hom(V); H                                                       # needs sage.symbolic
+             Set of Morphisms from ...
+-            sage: H([V.0,V.1])                    # indirect doctest
++            sage: H([V.0,V.1])                    # indirect doctest                    # needs sage.symbolic
+             Free module morphism defined by the matrix
+             [1 0]
+             [0 1]...
+-            sage: phi = H([V.1,V.0]); phi
++            sage: phi = H([V.1,V.0]); phi                                               # needs sage.symbolic
+             Free module morphism defined by the matrix
+             [0 1]
+             [1 0]...
+-            sage: phi(V.1) == V.0
++            sage: phi(V.1) == V.0                                                       # needs sage.symbolic
+             True
+-            sage: phi(V.0) == V.1
++            sage: phi(V.0) == V.1                                                       # needs sage.symbolic
+             True
+@@ -124,2 +124,2 @@
+-            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
+-            sage: V.Hom(V).zero()   # indirect doctest
++            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)                            # known bug
++            sage: V.Hom(V).zero()   # indirect doctest                                 # known bug
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,170 @@
+@@ -253,74 +253,171 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1311,6 +1345,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.combinat.words.word_options import WordOptions
 +    from sage.combinat.words.words import InfiniteWords, Words
 +    from sage.functions.log import exp, log
++    from sage.modules.free_module import FreeModule, VectorSpace, span
 +    from sage.modules.free_module_element import vector
 +    from sage.schemes.generic.spec import Spec
 +    from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets

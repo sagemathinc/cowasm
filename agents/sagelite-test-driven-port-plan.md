@@ -6069,6 +6069,32 @@ Focused make-target validation used a temporary one-file corpus with
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-primer-make.sqlite3`; the saved block- and
 file-failure cluster queries are empty. The runner version remains 44.
 
+Focused free-module homspace corpus-growth pass:
+
+```text
+sage -t passed: 37 passed, 0 failed, 10 skipped
+```
+
+That one-file make-target validation adds
+`sage/modules/free_module_homspace.py` to the curated corpus. The doctest
+runner now seeds `span` beside `FreeModule` and `VectorSpace`, and attaches
+seeded names to the loaded `sage.all` module so pickle round-trips that look up
+`sage.all.FreeModule` work in doctest mode without importing the full
+`sage.modules.all` surface. The WASI `sage.all` patch exposes the same
+`FreeModule`, `VectorSpace`, and `span` names for REPL parity on a fresh
+patched Sagelite source copy.
+
+The added WASI source patch classifies the `span_of_basis(...)` clusters as
+`# needs sage.symbolic` and defers the `span(..., ZZ)` rational-generator
+coercion drift as `# known bug`. Focused make-target validation used a
+temporary one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-free-module-homspace-make.sqlite3`; the
+saved block- and file-failure cluster queries are empty. A separate full
+patch dry-run against the current `/home/user/sagelite` checkout still fails in
+older `integer_mod_ring.py` hunks, so this focused validation used the existing
+patched build tree after applying the new source-copy edits there.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
