@@ -5414,6 +5414,47 @@ metadata records CoWasm commit `63177ca35204b9a20af808382580109b0ab8edda`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, and runner version 42.
 
+Focused Weyl/reflection/poset category corpus-growth pass:
+
+```text
+sage -t passed: 60 passed, 0 failed, 279 skipped
+```
+
+That five-file make-target validation adds
+`sage/categories/affine_weyl_groups.py`,
+`sage/categories/finite_complex_reflection_groups.py`,
+`sage/categories/finite_lattice_posets.py`,
+`sage/categories/generalized_coxeter_groups.py`, and
+`sage/categories/simplicial_complexes.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 322
+non-comment entries. The files provide lightweight default-profile coverage
+for affine Weyl, finite complex reflection, finite lattice poset, generalized
+Coxeter, and simplicial-complex category surfaces without adding new WASI
+source patches.
+
+Focused validation used a temporary five-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-weyl-reflection-poset-make.sqlite3`. The
+make target rebuilt and patched the Sagelite source copy successfully. The
+latest-run summary records 339 total blocks, 60 passed, 279 skipped, 0
+failed, runner version 42, and empty saved block- and file-failure cluster
+queries.
+
+Sampling in the same pass kept skip-only wrappers such as
+`sage/categories/weyl_groups.py`,
+`sage/categories/finite_coxeter_groups.py`,
+`sage/categories/complex_reflection_or_generalized_coxeter_groups.py`,
+`sage/categories/finite_permutation_groups.py`,
+`sage/categories/posets.py`, and `sage/categories/finite_posets.py` out of
+the quiet corpus because they add no passing default-profile blocks. It also
+kept `sage/categories/finite_fields.py`, `sage/categories/metric_spaces.py`,
+`sage/categories/filtered_modules_with_basis.py`,
+`sage/categories/graded_modules.py`, `sage/categories/manifolds.py`,
+`sage/categories/coxeter_groups.py`,
+`sage/categories/complex_reflection_groups.py`, and
+`sage/categories/lattice_posets.py` out because their focused doctests still
+have file-level traps or block-level failure clusters.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

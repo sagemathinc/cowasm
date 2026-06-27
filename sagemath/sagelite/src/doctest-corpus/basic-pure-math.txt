@@ -297,6 +297,11 @@ src/sage/categories/tutorial.py
 src/sage/categories/unital_algebras.py
 src/sage/categories/vector_spaces.py
 src/sage/categories/with_realizations.py
+src/sage/categories/affine_weyl_groups.py
+src/sage/categories/finite_complex_reflection_groups.py
+src/sage/categories/finite_lattice_posets.py
+src/sage/categories/generalized_coxeter_groups.py
+src/sage/categories/simplicial_complexes.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
 src/sage/sets/finite_set_map_cy.pyx
