@@ -341,6 +341,7 @@ src/sage/rings/polynomial/commutative_polynomial.pyx
 src/sage/rings/polynomial/convolution.py
 src/sage/rings/polynomial/polynomial_ring_constructor.py
 src/sage/misc/abstract_method.py
+src/sage/misc/banner.py
 src/sage/misc/bindable_class.py
 src/sage/misc/binary_tree.pyx
 src/sage/misc/c3.pyx

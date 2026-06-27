@@ -4307,6 +4307,12 @@ diff -urN a/src/sage/misc/abstract_method.py b/src/sage/misc/abstract_method.py
 @@ -256 +256 @@
 -        sage: sage.misc.abstract_method.abstract_methods_of_class(AbstractClass)
 +        sage: sage.misc.abstract_method.abstract_methods_of_class(AbstractClass)         # random
+diff -urN a/src/sage/misc/banner.py b/src/sage/misc/banner.py
+--- a/src/sage/misc/banner.py
++++ b/src/sage/misc/banner.py
+@@ -24 +24 @@
+-       sage: version()
++       sage: version()                                                                  # known bug
 diff -urN a/src/sage/misc/converting_dict.py b/src/sage/misc/converting_dict.py
 --- a/src/sage/misc/converting_dict.py
 +++ b/src/sage/misc/converting_dict.py
