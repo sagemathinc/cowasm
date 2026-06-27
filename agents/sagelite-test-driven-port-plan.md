@@ -1469,6 +1469,37 @@ the five added files used `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 recording 127 passed, 0 failed, and 0 skipped blocks with empty saved block-
 and file-failure cluster queries.
 
+Focused category example expansion pass:
+
+```text
+sage -t passed: 169 passed, 0 failed, 0 skipped
+```
+
+That six-file focused pass adds
+`sage/categories/examples/cw_complexes.py`,
+`sage/categories/examples/facade_sets.py`,
+`sage/categories/examples/filtered_algebras_with_basis.py`,
+`sage/categories/examples/posets.py`,
+`sage/categories/examples/semigroups_cython.pyx`, and
+`sage/categories/examples/sets_with_grading.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 307
+non-comment entries. Direct sampling recorded clean default-profile results
+for all six files without new WASI source tags or startup namespace changes.
+
+The same sampling pass kept skipped-only category example modules such as
+`sage/categories/examples/sets_cat.py`,
+`sage/categories/examples/with_realizations.py`,
+`sage/categories/examples/algebras_with_basis.py`,
+`sage/categories/examples/filtered_modules_with_basis.py`,
+`sage/categories/examples/graded_modules_with_basis.py`,
+`sage/categories/examples/hopf_algebras_with_basis.py`, and
+`sage/categories/examples/graded_connected_hopf_algebras_with_basis.py` out
+of the quiet corpus. Focused validation used the
+`test-sage-doctest-corpus` make target with a temporary six-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-category-examples-third-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
