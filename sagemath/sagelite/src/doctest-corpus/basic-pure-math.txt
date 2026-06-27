@@ -177,6 +177,7 @@ src/sage/categories/semigroups.py
 src/sage/categories/semirings.py
 src/sage/categories/rngs.py
 src/sage/categories/groups.py
+src/sage/categories/magmas.py
 src/sage/categories/monoids.py
 src/sage/categories/sets_cat.py
 src/sage/categories/modules.py

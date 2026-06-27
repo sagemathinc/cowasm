@@ -1329,6 +1329,27 @@ validation used a temporary one-file corpus with
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-semirings-corpus.sqlite3`. The saved
 block- and file-failure cluster queries are empty.
 
+Focused magma-category corpus-growth pass:
+
+```text
+sage -t passed: 126 passed, 0 failed, 45 skipped
+```
+
+That one-file make-target validation adds `sage/categories/magmas.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 206
+non-comment entries. The doctest runner now seeds the lightweight `Magmas` and
+`CommutativeRings` category constructors in the common startup namespace, and
+the WASI `sage.all` patch exposes the same names for REPL parity on a fresh
+patched Sagelite source copy. The added WASI source patch marks the
+order-sensitive `Semigroups().FinitelyGenerated().axioms()` frozenset display
+as `# random` and tags the real-field cartesian-product inverse setup as
+`# needs sage.rings.real_mpfr`, matching the adjacent real-field examples.
+The focused validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0` and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-magmas-corpus.sqlite3`. The saved block-
+and file-failure cluster queries are empty. The runner version is now 41.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
