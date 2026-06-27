@@ -6398,6 +6398,26 @@ matrix-kernel computation over rational vector spaces and reach the existing
 focused cypari2/PARI object-model boundary, so the added WASI source patch
 classifies those examples as `# needs sage.libs.pari`.
 
+Focused module backend corpus-growth pass:
+
+```text
+sage -t passed: 127 passed, 0 failed, 20 skipped
+```
+
+That three-file focused validation adds
+`sage/modules/ore_module_homspace.py`,
+`sage/modules/vector_integer_dense.pyx`, and
+`sage/modules/vector_modn_dense.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 407
+non-comment entries. Direct sampling recorded
+`ore_module_homspace.py: 27 passed, 0 failed, 0 skipped`,
+`vector_integer_dense.pyx: 43 passed, 0 failed, 3 skipped`, and
+`vector_modn_dense.pyx: 57 passed, 0 failed, 17 skipped`.
+
+The same sampling pass kept adjacent heavier module files outside the quiet
+dashboard because they still hit known matrix action, matrix `__setitem__`,
+NTL dynamic-link, PARI object-model, timeout, or broader semantic clusters.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
