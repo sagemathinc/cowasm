@@ -1126,6 +1126,35 @@ uninitialized SQLite output file, so it is not recorded as a checked corpus
 baseline. The next full dashboard should be run through the make target after
 refreshing the patched build tree.
 
+Follow-up doctest runner lifecycle pass: the root-system relabel corpus growth
+now has a checked full-dashboard baseline through the make target. The first
+complete rerun wrote a passing SQLite dashboard but the parent Node process
+segfaulted after printing the successful summary, causing `make` to report
+error 139 despite `0 failed`. Runner version 39 fixes the non-REPL exit path
+by flushing stdout/stderr and exiting explicitly after doctest-worker and
+`sage -t` modes complete.
+
+The fixed make-target run passes with failures disallowed:
+
+```sh
+make -C sagemath/sagelite test-sage-doctest-corpus \
+  SAGELITE_DOCTEST_ALLOW_FAILURES=0 \
+  SAGELITE_DOCTEST_DB=/tmp/sagelite-corpus-after-exit-fix.sqlite3
+```
+
+Latest checked local corpus run after the 2026-06-27 doctest CLI exit fix:
+
+```text
+sage -t passed: 23782 passed, 0 failed, 4309 skipped
+```
+
+That run records 28,091 block rows across all 173 files in the current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, with empty
+block- and file-failure cluster queries. The latest run metadata records
+CoWasm commit `d1bcb962e4efcbd4d4d923e4165c5af7e1fa1fe5`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
+version 39, and about 1,262 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

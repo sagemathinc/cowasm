@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 38;
+const doctestRunnerVersion = 39;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -68,20 +68,20 @@ async function main() {
 
   const args = process.argv.slice(2);
   if (args[0] === "--doctest-worker") {
-    process.exitCode = await runDoctestWorker(args.slice(1), invocationCwd, {
+    const code = await runDoctestWorker(args.slice(1), invocationCwd, {
       manifest,
       resourceRoot,
       sagelitePythonEnv,
     });
-    return;
+    await exitCliMode(code);
   }
   if (args[0] === "-t" || args[0] === "--test") {
-    process.exitCode = await runDoctestMode(args.slice(1), invocationCwd, {
+    const code = await runDoctestMode(args.slice(1), invocationCwd, {
       manifest,
       resourceRoot,
       sagelitePythonEnv,
     });
-    return;
+    await exitCliMode(code);
   }
 
   const python = await createSagelitePython({
@@ -161,6 +161,22 @@ def __cowasm_sagelite_push(line):
   rl.on("close", () => {
     inputClosed = true;
     setImmediate(() => pending.finally(terminate));
+  });
+}
+
+async function exitCliMode(code) {
+  process.exitCode = code;
+  await Promise.all([flushWritable(process.stdout), flushWritable(process.stderr)]);
+  process.exit(code);
+}
+
+function flushWritable(stream) {
+  return new Promise((resolve) => {
+    if (!stream || !stream.writable || stream.destroyed) {
+      resolve();
+      return;
+    }
+    stream.write("", resolve);
   });
 }
 
