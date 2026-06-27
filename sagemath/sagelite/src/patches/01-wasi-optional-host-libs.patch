@@ -4386,6 +4386,21 @@ diff -urN a/src/sage/misc/lazy_attribute.pyx b/src/sage/misc/lazy_attribute.pyx
 @@ -200 +200 @@
 -        sage: timeit('a.x') # random
 +        sage: timeit('a.x') # random                                                # needs IPython
+diff -urN a/src/sage/misc/misc.py b/src/sage/misc/misc.py
+--- a/src/sage/misc/misc.py
++++ b/src/sage/misc/misc.py
+@@ -851 +851 @@
+-        sage: inject_variable("a", 271)
++        sage: inject_variable("a", 271)                                               # random
+@@ -862 +862 @@
+-        sage: warn("blah")
++        sage: warn("blah")                                                            # known bug
+@@ -903 +903 @@
+-        sage: inject_variable_test("a2", 271, 2)
++        sage: inject_variable_test("a2", 271, 2)                                      # random
+@@ -923 +923 @@
+-        sage: from sage.repl.ipython_extension import run_once
++        sage: from sage.repl.ipython_extension import run_once                         # needs IPython
 diff -urN a/src/sage/misc/object_multiplexer.py b/src/sage/misc/object_multiplexer.py
 --- a/src/sage/misc/object_multiplexer.py
 +++ b/src/sage/misc/object_multiplexer.py

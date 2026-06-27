@@ -6472,6 +6472,31 @@ out because they add only skipped rows, kept `vector_mod2_dense.pyx` out
 because it still clusters around missing `sage.matrix.matrix_mod2_dense`, and
 kept `functional.py` out because it timed out in symbolic denominator setup.
 
+Focused misc core utility corpus-growth pass:
+
+```text
+sage -t passed: 137 passed, 0 failed, 19 skipped
+```
+
+That one-file validation adds `sage/misc/misc.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 410
+non-comment entries. Direct sampling first recorded warning-capture drift in
+the global-variable injection examples and one IPython-only `run_once`
+doctest. The WASI source patch marks the warning-producing stateful examples
+as `# random` so they still execute and preserve subsequent doctest state,
+marks the standalone `warn("blah")` stream-capture example as `# known bug`,
+and marks the `sage.repl.ipython_extension` import as `# needs IPython`.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-misc-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully,
+and the saved block- and file-failure cluster queries are empty. The same
+sampling pass kept `sage/misc/sage_ostools.pyx` out because its current
+failures cluster around stdout file-descriptor redirection under the Node
+doctest worker.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

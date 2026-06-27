@@ -373,6 +373,7 @@ src/sage/misc/latex_macros.py
 src/sage/misc/lazy_string.pyx
 src/sage/misc/messaging.py
 src/sage/misc/method_decorator.py
+src/sage/misc/misc.py
 src/sage/misc/misc_c.pyx
 src/sage/misc/mrange.py
 src/sage/misc/multireplace.py
