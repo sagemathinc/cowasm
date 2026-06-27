@@ -4266,6 +4266,18 @@ diff -urN a/src/sage/misc/converting_dict.py b/src/sage/misc/converting_dict.py
 @@ -286 +286 @@
 -            sage: d          # indirect doctest
 +            sage: d          # indirect doctest                                         # random
+diff -urN a/src/sage/misc/decorators.py b/src/sage/misc/decorators.py
+--- a/src/sage/misc/decorators.py
++++ b/src/sage/misc/decorators.py
+@@ -641 +641 @@
+-            sage: f(deprecated_option=1)
++            sage: f(deprecated_option=1)                                                # known bug
+diff -urN a/src/sage/misc/defaults.py b/src/sage/misc/defaults.py
+--- a/src/sage/misc/defaults.py
++++ b/src/sage/misc/defaults.py
+@@ -76 +76 @@
+-        sage: latex_variable_names(3,beta)
++        sage: latex_variable_names(3,beta)                                              # needs sage.symbolic
 diff -urN a/src/sage/misc/prandom.py b/src/sage/misc/prandom.py
 --- a/src/sage/misc/prandom.py
 +++ b/src/sage/misc/prandom.py

@@ -349,6 +349,8 @@ src/sage/misc/classcall_metaclass.pyx
 src/sage/misc/compat.py
 src/sage/misc/constant_function.pyx
 src/sage/misc/converting_dict.py
+src/sage/misc/decorators.py
+src/sage/misc/defaults.py
 src/sage/misc/derivative.pyx
 src/sage/misc/element_with_label.py
 src/sage/misc/fast_methods.pyx

@@ -1577,6 +1577,30 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-bindable-make.sqlite3`, recording
 `bindable_class.py: 47 passed, 0 failed, 0 skipped`.
 
+Focused misc decorator/defaults corpus-growth pass:
+
+```text
+sage -t passed: 133 passed, 0 failed, 14 skipped
+```
+
+That two-file make-target validation adds `sage/misc/decorators.py` and
+`sage/misc/defaults.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 384 non-comment
+entries. Direct sampling first recorded one warning-capture mismatch in
+`decorators.py` and one bare symbolic-name failure in `defaults.py`; the added
+WASI source patch defers the deprecated-keyword warning text as `# known bug`
+and marks the `latex_variable_names(3,beta)` example as
+`# needs sage.symbolic`.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-decorators-defaults-corpus.sqlite3`,
+recording `decorators.py: 120 passed, 0 failed, 13 skipped` and
+`defaults.py: 13 passed, 0 failed, 1 skipped`. The make target rebuilt and
+patched a fresh Sagelite source copy successfully, and the saved block- and
+file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
