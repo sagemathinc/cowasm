@@ -5182,6 +5182,37 @@ rebuilt and patched the Sagelite source copy successfully. The latest-run
 summary records 580 total blocks, 433 passed, 147 skipped, 0 failed, runner
 version 42, and empty saved block- and file-failure cluster queries.
 
+Focused covariant functorial construction corpus-growth pass:
+
+```text
+sage -t passed: 61 passed, 0 failed, 7 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/covariant_functorial_construction.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 291
+non-comment entries. The doctest runner now seeds `tensor`, `GradedModules`,
+and `GradedAlgebrasWithBasis` in the common startup namespace, and the WASI
+`sage.all` patch exposes the same names for REPL parity on a fresh patched
+Sagelite source copy. This clears the file's remaining startup-name clusters
+around tensor functor construction and graded category base-class recovery.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-covariant-make.sqlite3`. The make target
+rebuilt and patched the Sagelite source copy successfully. The latest-run
+summary records 68 total blocks, 61 passed, 7 skipped, 0 failed, runner
+version 42, and empty saved block- and file-failure cluster queries.
+
+Sampling in the same pass kept `sage/categories/euclidean_domains.py` and
+`sage/categories/quotient_fields.py` out because their focused polynomial and
+rational-function examples still time out at the 120-second per-file boundary.
+Skipped-only files such as `sage/categories/algebra_functor.py`,
+`sage/categories/basic.py`, `sage/categories/finite_groups.py`,
+`sage/categories/g_sets.py`, and `sage/categories/groupoid.py` still add no
+passing default-profile blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
