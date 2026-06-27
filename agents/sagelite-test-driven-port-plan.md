@@ -5894,6 +5894,35 @@ several nearby category files out because they either add only skipped rows or
 immediately enter known polynomial-number-field, NTL/libcxx, or timeout
 boundaries.
 
+Focused misc browser-support corpus-growth pass:
+
+```text
+sage -t passed: 74 passed, 0 failed, 58 skipped
+```
+
+That five-file make-target validation adds `sage/misc/messaging.py`,
+`sage/misc/package.py`, `sage/misc/remote_file.py`,
+`sage/misc/rest_index_of_methods.py`, and `sage/misc/viewer.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 380
+non-comment entries. The batch expands small browser-relevant utility
+coverage for warning/message helpers, Sage package metadata, remote-file
+fallback behavior, method index rendering, and viewer preference helpers
+without new WASI source tags or startup namespace changes.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary five-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-misc-browser-support-make.sqlite3`. The
+saved block- and file-failure cluster queries are empty. Direct sampling in
+the same pass kept empty or skipped-only modules such as `mathml.py`,
+`func_persist.py`, `proof.py`, `package_dir.py`, `pager.py`, and
+`randstate.pyx` out of the quiet corpus, kept `functional.py` out because it
+hit the 120-second focused-run guard, and kept `banner.py`,
+`latex_macros.py`, `latex.py`, `citation.pyx`, `reset.pyx`, and
+`sage_ostools.pyx` out because they still have focused doctest failures under
+the default browser-compatible profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
