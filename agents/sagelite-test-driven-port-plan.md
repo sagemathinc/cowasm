@@ -1074,6 +1074,36 @@ for the full corpus run. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
 and about 1,171 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-27 affine root-type wrapper
+corpus-growth pass:
+
+```text
+sage -t passed: 23675 passed, 0 failed, 4281 skipped
+```
+
+That run records 27,956 block rows across the current 172-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, adding
+`sage/combinat/root_system/type_A_affine.py`,
+`type_A_infinity.py`, `type_B_affine.py`, `type_BC_affine.py`,
+`type_C_affine.py`, `type_D_affine.py`, `type_E_affine.py`,
+`type_F_affine.py`, `type_G_affine.py`, `type_affine.py`, `type_dual.py`,
+`type_folded.py`, `type_marked.py`, and `type_reducible.py` to the quiet
+browser-profile dashboard. The grouped focused rerun records:
+
+```text
+sage -t passed: 561 passed, 0 failed, 124 skipped
+```
+
+The added files required no new WASI source tags or startup namespace changes.
+Sampled adjacent files `type_relabel.py` and `type_super_A.py` remain outside
+the quiet corpus because each still has two focused doctest failures. The
+saved block- and file-failure cluster queries are empty for the full corpus
+run. The latest run metadata records CoWasm commit
+`821a281d96b0512a7be448c8b6563d1983796e0b`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
+and about 1,260 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
