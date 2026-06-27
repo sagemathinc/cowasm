@@ -4291,6 +4291,33 @@ commit `09b50b76f1c891e73af147c581a8a6779b9a1d2e`, Sagelite package commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 36,
 and about 1,209 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-27 category
+corpus-growth pass:
+
+```text
+sage -t passed: 24968 passed, 0 failed, 4991 skipped
+```
+
+That run records 29,959 block rows across the current 183-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, adding
+`sage/categories/enumerated_sets.py` and `sage/categories/finite_sets.py` to
+the quiet browser-profile dashboard. Focused reruns record
+`enumerated_sets.py: 126 passed, 0 failed, 38 skipped` and
+`finite_sets.py: 16 passed, 0 failed, 0 skipped`.
+
+The doctest runner now seeds the lightweight `Posets`, `FiniteMonoids`, and
+`FiniteSemigroups` category constructors in the common startup namespace, and
+the WASI `sage.all` patch exposes the same names for startup parity on a
+fresh patched Sagelite source copy. The added WASI source patch marks the
+`enumerated_sets.py` quotient-ring examples as `# needs sage.libs.singular`,
+because they import the unavailable plural polynomial path before reaching the
+intended generic quotient-ring diagnostic. The saved block- and file-failure
+cluster queries are empty. The latest run metadata records CoWasm commit
+`8f66ee10bda2ce3eb69b9298d5f7f0f2f0ba797d`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 40,
+and about 1,325 seconds of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

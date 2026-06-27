@@ -1209,7 +1209,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))                       # needs sage.graphs
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,119 @@
+@@ -253,74 +253,122 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1237,6 +1237,9 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 +    from sage.categories.left_modules import LeftModules
 +    from sage.categories.modules import Modules
++    from sage.categories.finite_monoids import FiniteMonoids
++    from sage.categories.finite_semigroups import FiniteSemigroups
++    from sage.categories.posets import Posets
 +    from sage.categories.right_modules import RightModules
 +    from sage.combinat.combination import Combinations
 +    from sage.combinat.combinat import stirling_number2
@@ -3988,3 +3991,21 @@ diff -urN a/src/sage/combinat/free_module.py b/src/sage/combinat/free_module.py
 +            sage: W = WeylGroup(['A',3], prefix='s')                                    # needs sage.libs.gap
 +            sage: CP = cartesian_product([Q, W])                                        # needs sage.libs.gap
 +            sage: type(CP)                                                              # needs sage.libs.gap
+diff -urN a/src/sage/categories/enumerated_sets.py b/src/sage/categories/enumerated_sets.py
+--- a/src/sage/categories/enumerated_sets.py
++++ b/src/sage/categories/enumerated_sets.py
+@@ -634,9 +634,9 @@
+-                sage: R.<t,p> = QQ[]
+-                sage: Q = R.quotient(t^2-t+1)
+-                sage: Q.is_finite()
++                sage: R.<t,p> = QQ[]                                                   # needs sage.libs.singular
++                sage: Q = R.quotient(t^2-t+1)                                          # needs sage.libs.singular
++                sage: Q.is_finite()                                                    # needs sage.libs.singular
+                 Traceback (most recent call last):
+                 ...
+                 AttributeError: 'QuotientRing_generic_with_category' object has no attribute 'is_finite'...
+-                sage: Q.list()   # indirect test
++                sage: Q.list()   # indirect test                                       # needs sage.libs.singular
+                 Traceback (most recent call last):
+                 ...
+                 AttributeError: 'QuotientRing_generic_with_category' object has no attribute 'list'...
