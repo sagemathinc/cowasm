@@ -5729,6 +5729,26 @@ example modules, plus larger unresolved clusters in `coxeter_groups.py`,
 `module_functors.py`, `unique_factorization_domains.py`, and
 `principal_ideal_domains.py`.
 
+Focused braid-orbit root-system corpus-growth pass:
+
+```text
+sage -t passed: 11 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/combinat/root_system/braid_orbit.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 339
+non-comment entries. The file contributes small root-system braid-orbit
+coverage with no new WASI source tags or startup namespace changes. Focused
+validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-braid-orbit-make.sqlite3`; the saved
+block- and file-failure cluster queries are empty. Direct sampling in the same
+pass kept `quotient_fields.py`, `euclidean_domains.py`, and `rings.py` out
+because they currently trap or time out before contributing passing blocks,
+and kept several empty or skipped-only utility/category files out of the quiet
+corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

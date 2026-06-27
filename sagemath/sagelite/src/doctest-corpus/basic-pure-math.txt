@@ -52,6 +52,7 @@ src/sage/combinat/output.py
 src/sage/combinat/quickref.py
 src/sage/combinat/q_analogues.py
 src/sage/combinat/root_system/ambient_space.py
+src/sage/combinat/root_system/braid_orbit.pyx
 src/sage/combinat/root_system/cartan_type.py
 src/sage/combinat/root_system/coxeter_type.py
 src/sage/combinat/root_system/cartan_matrix.py
