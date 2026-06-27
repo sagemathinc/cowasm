@@ -6119,6 +6119,37 @@ block- and file-failure cluster queries are empty. Adjacent direct samples of
 `sage/misc/proof.py`, `sage/misc/mathml.py`, and `sage/misc/copying.py`
 produced no runnable doctest blocks, so they remain outside the quiet corpus.
 
+Focused misc pickle/search corpus-growth pass:
+
+```text
+sage -t passed: 32 passed, 0 failed, 6 skipped
+```
+
+That three-file make-target validation adds `sage/misc/edit_module.py`,
+`sage/misc/fpickle.pyx`, and `sage/misc/search.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 395
+non-comment entries. The batch expands quiet misc coverage for editor command
+construction, pickle helper routines, and source-search helpers without new
+WASI source tags or startup namespace changes.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary three-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-misc-pickle-search-make.sqlite3`. The
+saved run records CoWasm commit `f81bdfcf2781d732237a72e40d042bd7ce1130a0`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, runner version 44, 38 total blocks, 32 passed blocks, and 6 skipped
+blocks. The saved block- and file-failure cluster queries are empty. Direct
+sampling in the same pass kept larger or host-sensitive misc modules such as
+`cachefunc.pyx`, `dev_tools.py`, `explain_pickle.py`, `html.py`,
+`latex_standalone.py`, `persist.pyx`, `sagedoc.py`, `sageinspect.py`,
+`session.pyx`, `verbose.py`, and `weak_dict.pyx` out of the quiet corpus
+because they still have focused doctest failures, missing optional host
+dependencies, or timeout boundaries under the default browser-compatible
+profile. Skipped-only or empty modules such as `cython.py`, `map_threaded.py`,
+`pickle_old.pyx`, `profiler.py`, `sphinxify.py`, `latex_standalone_test.py`,
+`latex_test.py`, and `sagedoc_conf.py` remain outside the dashboard for now.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
