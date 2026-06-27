@@ -177,6 +177,7 @@ src/sage/categories/enumerated_sets.py
 src/sage/categories/commutative_additive_semigroups.py
 src/sage/categories/filtered_algebras.py
 src/sage/categories/filtered_algebras_with_basis.py
+src/sage/categories/filtered_hopf_algebras_with_basis.py
 src/sage/categories/finite_enumerated_sets.py
 src/sage/categories/finite_dimensional_coalgebras_with_basis.py
 src/sage/categories/finite_dimensional_hopf_algebras_with_basis.py
@@ -192,7 +193,12 @@ src/sage/categories/semigroups.py
 src/sage/categories/semirings.py
 src/sage/categories/rngs.py
 src/sage/categories/graded_algebras.py
+src/sage/categories/graded_bialgebras.py
 src/sage/categories/graded_bialgebras_with_basis.py
+src/sage/categories/graded_coalgebras.py
+src/sage/categories/graded_coalgebras_with_basis.py
+src/sage/categories/graded_hopf_algebras.py
+src/sage/categories/graded_hopf_algebras_with_basis.py
 src/sage/categories/graded_modules_with_basis.py
 src/sage/categories/groups.py
 src/sage/categories/group_algebras.py
@@ -204,6 +210,7 @@ src/sage/categories/distributive_magmas_and_additive_magmas.py
 src/sage/categories/matrix_algebras.py
 src/sage/categories/monoid_algebras.py
 src/sage/categories/monoids.py
+src/sage/categories/quotients.py
 src/sage/categories/semisimple_algebras.py
 src/sage/categories/sets_cat.py
 src/sage/categories/modules.py
@@ -211,8 +218,10 @@ src/sage/categories/left_modules.py
 src/sage/categories/right_modules.py
 src/sage/categories/super_algebras.py
 src/sage/categories/supercommutative_algebras.py
+src/sage/categories/subobjects.py
 src/sage/categories/unital_algebras.py
 src/sage/categories/vector_spaces.py
+src/sage/categories/with_realizations.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
 src/sage/sets/finite_set_map_cy.pyx

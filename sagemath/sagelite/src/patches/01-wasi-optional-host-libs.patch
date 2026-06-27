@@ -1209,7 +1209,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))                       # needs sage.graphs
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,143 @@
+@@ -253,74 +253,148 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1234,8 +1234,10 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.additive_semigroups import AdditiveSemigroups
 +    from sage.categories.algebras import Algebras
 +    from sage.categories.algebras_with_basis import AlgebrasWithBasis
++    from sage.categories.bialgebras import Bialgebras
 +    from sage.categories.cartesian_product import cartesian_product
 +    from sage.categories.coalgebras import Coalgebras
++    from sage.categories.coalgebras_with_basis import CoalgebrasWithBasis
 +    from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 +    from sage.categories.commutative_additive_monoids import CommutativeAdditiveMonoids
 +    from sage.categories.commutative_additive_semigroups import CommutativeAdditiveSemigroups
@@ -1246,8 +1248,11 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 +    from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 +    from sage.categories.finite_fields import FiniteFields
++    from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
 +    from sage.categories.groups import Groups
 +    from sage.categories.homset import End
++    from sage.categories.hopf_algebras import HopfAlgebras
++    from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 +    from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 +    from sage.categories.left_modules import LeftModules
 +    from sage.categories.magmas import Magmas

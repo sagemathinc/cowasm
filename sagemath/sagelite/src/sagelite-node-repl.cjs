@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 41;
+const doctestRunnerVersion = 42;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -844,7 +844,9 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.additive_monoids", ("AdditiveMonoids",)),
         ("sage.categories.additive_semigroups", ("AdditiveSemigroups",)),
         ("sage.categories.algebras", ("Algebras",)),
+        ("sage.categories.bialgebras", ("Bialgebras",)),
         ("sage.categories.coalgebras", ("Coalgebras",)),
+        ("sage.categories.coalgebras_with_basis", ("CoalgebrasWithBasis",)),
         ("sage.categories.commutative_additive_groups", ("CommutativeAdditiveGroups",)),
         ("sage.categories.euclidean_domains", ("EuclideanDomains",)),
         ("sage.categories.fields", ("Fields",)),
@@ -859,6 +861,9 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.commutative_additive_semigroups", ("CommutativeAdditiveSemigroups",)),
         ("sage.categories.finite_dimensional_algebras_with_basis", ("FiniteDimensionalAlgebrasWithBasis",)),
         ("sage.categories.finite_dimensional_modules_with_basis", ("FiniteDimensionalModulesWithBasis",)),
+        ("sage.categories.graded_hopf_algebras_with_basis", ("GradedHopfAlgebrasWithBasis",)),
+        ("sage.categories.hopf_algebras", ("HopfAlgebras",)),
+        ("sage.categories.hopf_algebras_with_basis", ("HopfAlgebrasWithBasis",)),
         ("sage.categories.left_modules", ("LeftModules",)),
         ("sage.categories.modules", ("Modules",)),
         ("sage.categories.modules_with_basis", ("ModulesWithBasis",)),

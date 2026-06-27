@@ -4763,6 +4763,45 @@ version 41. The same sampling pass keeps
 `sage/categories/super_modules_with_basis.py` out because they still have
 focused doctest failures.
 
+Focused graded and realization category corpus-growth pass:
+
+```text
+sage -t passed: 43 passed, 0 failed, 45 skipped
+```
+
+That nine-file make-target validation adds
+`sage/categories/filtered_hopf_algebras_with_basis.py`,
+`sage/categories/graded_bialgebras.py`,
+`sage/categories/graded_coalgebras.py`,
+`sage/categories/graded_coalgebras_with_basis.py`,
+`sage/categories/graded_hopf_algebras.py`,
+`sage/categories/graded_hopf_algebras_with_basis.py`,
+`sage/categories/quotients.py`, `sage/categories/subobjects.py`, and
+`sage/categories/with_realizations.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 245
+non-comment entries.
+
+The doctest runner now seeds lightweight bialgebra, coalgebra-with-basis, and
+Hopf-algebra category constructors in the common startup namespace:
+`Bialgebras`, `CoalgebrasWithBasis`, `GradedHopfAlgebrasWithBasis`,
+`HopfAlgebras`, and `HopfAlgebrasWithBasis`. The WASI `sage.all` patch exposes
+the same names for REPL parity on a fresh patched Sagelite source copy. This
+clears the startup-name failures in the graded Hopf, graded coalgebra, and
+with-realizations examples.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary nine-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-wrapper-categories.sqlite3`. The make
+target rebuilt and patched the Sagelite source copy successfully after the
+expanded `src/sage/all.py` WASI startup hunk. The saved block- and file-failure
+cluster queries are empty. The latest run metadata records CoWasm commit
+`8617cc901006d16ca90e4b78fb0eea1327d5413e`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner
+version 42. The same sampling pass keeps `sage/categories/bialgebras.py`,
+`sage/categories/coalgebras.py`, and `sage/categories/subquotients.py` out of
+the quiet corpus because they currently add no passing default-profile blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
