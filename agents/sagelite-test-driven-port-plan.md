@@ -4802,6 +4802,34 @@ version 42. The same sampling pass keeps `sage/categories/bialgebras.py`,
 `sage/categories/coalgebras.py`, and `sage/categories/subquotients.py` out of
 the quiet corpus because they currently add no passing default-profile blocks.
 
+Focused domain category corpus-growth pass:
+
+```text
+sage -t passed: 38 passed, 0 failed, 14 skipped
+```
+
+That three-file make-target validation adds `sage/categories/domains.py`,
+`sage/categories/integral_domains.py`, and `sage/categories/gcd_domains.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 248 non-comment
+entries. The files add lightweight category coverage for domain, integral
+domain, and gcd-domain examples without new startup namespace or WASI source
+patches.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary three-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-domain-categories.sqlite3`. The saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `53a74801a088653239b996ec3ab8c4a28b8ed6f5`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and
+runner version 42. The same sampling pass keeps
+`sage/categories/commutative_rings.py` out because its `is_square()` example
+still reaches a WASM `memory access out of bounds` trap, and keeps
+`sage/categories/principal_ideal_domains.py` and
+`sage/categories/unique_factorization_domains.py` out because their
+polynomial gcd/radical examples time out in the current default node profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
