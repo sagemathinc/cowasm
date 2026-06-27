@@ -1675,6 +1675,33 @@ and misc files such as `sage/categories/graded_lie_algebras.py`,
 corpus because their current failures hit broader symbolic, finite-field,
 filesystem, timing, or diagnostic clusters.
 
+Focused tensor-operation parser/corpus-growth pass:
+
+```text
+sage -t passed: 75 passed, 0 failed, 16 skipped
+```
+
+That one-file focused validation adds `sage/modules/tensor_operations.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 401
+non-comment entries. Direct sampling first recorded eight `SyntaxError`
+failures where Python collapsed backslash-newline continuations inside `.py`
+docstrings, leaving Sage continuation prompts such as `....:` inline before
+the doctest runner converted prompts. Runner version 45 restores those
+collapsed continuation prompts before prompt conversion and applies prompt
+rewrites in multiline mode, so the upstream multiline import examples execute
+normally.
+
+Focused validation used direct `sage -t --timeout 120` against the patched
+source tree with
+`COWASM_SAGELITE_DOCTEST_SOURCE_ROOT=/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`
+and wrote `/tmp/sagelite-tensor-after-continuation2.sqlite3`, recording
+`tensor_operations.py: 75 passed, 0 failed, 16 skipped`. Follow-up
+make-target validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-tensor-make.sqlite3`; the saved block- and
+file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

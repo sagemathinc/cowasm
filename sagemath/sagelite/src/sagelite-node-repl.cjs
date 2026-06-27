@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 44;
+const doctestRunnerVersion = 45;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1048,6 +1048,7 @@ def __cowasm_convert_prompts(text):
     standalone_directives = {}
     active_directive_source = None
     for lineno, line in enumerate(text.splitlines(True), start=1):
+        line = __cowasm_restore_collapsed_continuation_prompts(line)
         prompt = re.match(r"^(\\s*)sage:( ?)(.*?)(\\r?\\n?)$", line)
         if prompt:
             source = prompt.group(3)
@@ -1060,15 +1061,27 @@ def __cowasm_convert_prompts(text):
                 standalone_directives[lineno] = active_directive_source
         elif not line.strip():
             active_directive_source = None
-        line = re.sub(r"^(\\s*)sage:( ?)", r"\\1>>> ", line)
-        line = re.sub(r"^(\\s*)\\.\\.\\.\\.:( ?)", r"\\1... ", line)
+        line = re.sub(r"(?m)^(\\s*)sage:( ?)", r"\\1>>> ", line)
+        line = re.sub(r"(?m)^(\\s*)\\.\\.\\.\\.:( ?)", r"\\1... ", line)
         line = re.sub(
-            r"^(\\s*)\\.\\.\\.(?=\\S)",
+            r"(?m)^(\\s*)\\.\\.\\.(?=\\S)",
             lambda match: match.group(1) + COWASM_LEADING_ELLIPSIS_SENTINEL,
             line,
         )
         out.append(line)
     return "".join(out), standalone_directives
+
+
+def __cowasm_restore_collapsed_continuation_prompts(line):
+    match = re.match(r"^(\\s*)sage:( ?)", line)
+    if not match or "....:" not in line:
+        return line
+    indent = match.group(1)
+    return re.sub(
+        r"[ \\t]+\\.\\.\\.\\.:( ?)",
+        " \\\\\\n" + indent + "....: ",
+        line,
+    )
 
 
 def __cowasm_restore_protected_expected_output(text):
