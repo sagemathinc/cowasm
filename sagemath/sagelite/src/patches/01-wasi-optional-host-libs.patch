@@ -4275,3 +4275,35 @@ diff -urN a/src/sage/misc/prandom.py b/src/sage/misc/prandom.py
 @@ -45 +45 @@
 -    sage: timeit('test2()') # random
 +    sage: timeit('test2()') # random                                                    # needs IPython
+diff -urN a/src/sage/misc/sagedoc.py b/src/sage/misc/sagedoc.py
+--- a/src/sage/misc/sagedoc.py
++++ b/src/sage/misc/sagedoc.py
+@@ -620,5 +620,15 @@
+         "sage: K.<x> = FunctionField(GF(5^2,'a')); K\nRational function field in x over Finite Field in a of size 5^2"
+     """
+     import io
+-    from sage.doctest.external import available_software
++    import sys
++
++    if not re.search(r' *sage: *.*#.*\n', s):
++        return s
++
++    if sys.platform == "wasi":
++        # The full Sage feature detector uses multiprocessing shared memory,
++        # which is not available in the browser-compatible WASI runtime.
++        available_software = set()
++    else:
++        from sage.doctest.external import available_software
+     from sage.doctest.parsing import parse_optional_tags, update_optional_tags
+diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
+--- a/src/sage/misc/sageinspect.py
++++ b/src/sage/misc/sageinspect.py
+@@ -2158,7 +2158,7 @@
+     r = sage_getdoc_original(obj)
+     s = sage.misc.sagedoc.format(r, embedded=embedded)
+     f = sage_getfile(obj)
+-    if f and os.path.exists(f):
++    if f and os.path.exists(f) and sys.platform != "wasi":
+         from sage.doctest.control import skipfile
+         skip = skipfile(f)
+         if isinstance(skip, str):

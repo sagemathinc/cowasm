@@ -21,6 +21,7 @@ PY_GMPY2 = ${CWD}/../../python/py-gmpy2/dist/wasm
 PY_JINJA2 = ${CWD}/../../python/py-jinja2/dist/wasm
 PY_MESON = ${CWD}/../../python/py-meson/dist/wasm
 PY_NINJA = ${CWD}/../../python/py-ninja/dist/native
+PY_PACKAGING = ${CWD}/../../python/py-packaging/dist/wasm
 PY_PLATFORMDIRS = ${CWD}/../../python/py-platformdirs/dist/wasm
 PYTHON_WASM = ${CWD}/../../python/python-wasm
 PRIMECOUNTPY_WASI_SDK = ${PACKAGES}/primecountpy/dist/wasi-sdk
@@ -61,6 +62,9 @@ ${PY_MESON}/mesonbuild/mesonmain.py:
 
 ${PY_NINJA}/bin/ninja:
 	$(MAKE) -C ${CWD}/../../python/py-ninja all
+
+${PY_PACKAGING}/packaging/__init__.pyc:
+	$(MAKE) -C ${CWD}/../../python/py-packaging wasm
 
 ${PY_PLATFORMDIRS}/platformdirs/__init__.py:
 	$(MAKE) -C ${CWD}/../../python/py-platformdirs wasm
@@ -146,10 +150,10 @@ ${BUILD_WASI_SDK}/.patched: ${BUILD_WASI_SDK}/.build ${SRC}/patches/01-wasi-opti
 	touch ${BUILD_WASI_SDK}/.patched
 
 .PHONY: test-wasi-sdk-standalone
-test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_NUMPY}/numpy/__init__.py ${PY_GMPY2}/gmpy2/__init__.py ${PY_JINJA2}/jinja2/__init__.py ${PY_MESON}/mesonbuild/mesonmain.py ${PY_NINJA}/bin/ninja ${PY_PLATFORMDIRS}/platformdirs/__init__.py ${PYTHON_WASM}/dist/.built ${PYTHON_WASM}/dist/python.wasm ${PRIMECOUNTPY_WASI_SDK}/primecountpy/primecount.cpython-314-wasm32-wasi.so ${POSIX_WASI_SDK}/posix-wasm.h ${LIBCXX_WASI_SDK}/libcxx.so ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd ${CYPARI2_WASI_SDK}/cypari2/auto_paridecl.pxd ${BOOST_CROPPED_WASI_SDK}/include/boost/graph/adjacency_list.hpp ${GMP_WASI_SDK}/lib/libgmp.a ${MPFR_WASI_SDK}/include/mpfr.h ${MPFI_WASI_SDK}/lib/libmpfi.a ${GF2X_WASI_SDK}/lib/libgf2x.a ${NTL_WASI_SDK}/lib/libntl.a ${PARI_WASI_SDK}/lib/libpari.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${M4RI_WASI_SDK}/include/m4ri/m4ri.h ${M4RIE_WASI_SDK}/include/m4rie/m4rie.h ${LIBPNG_WASI_SDK}/lib/libpng.a ${BUILD_WASI_SDK}/.cowasm-sagelite-source-revision ${BUILD_WASI_SDK}/.cowasm-sagelite-source-tree-state ${BUILD_WASI_SDK}/.patched
+test-wasi-sdk-standalone: ${CPYTHON_WASM}/include/python3.14/Python.h ${PY_CYTHON}/Cython/Compiler/Main.pyc ${PY_NUMPY}/numpy/__init__.py ${PY_GMPY2}/gmpy2/__init__.py ${PY_JINJA2}/jinja2/__init__.py ${PY_MESON}/mesonbuild/mesonmain.py ${PY_NINJA}/bin/ninja ${PY_PACKAGING}/packaging/__init__.pyc ${PY_PLATFORMDIRS}/platformdirs/__init__.py ${PYTHON_WASM}/dist/.built ${PYTHON_WASM}/dist/python.wasm ${PRIMECOUNTPY_WASI_SDK}/primecountpy/primecount.cpython-314-wasm32-wasi.so ${POSIX_WASI_SDK}/posix-wasm.h ${LIBCXX_WASI_SDK}/libcxx.so ${CYSIGNALS_WASI_SDK}/cysignals/signals.pxd ${MEMORY_ALLOCATOR_WASI_SDK}/memory_allocator/memory_allocator.pxd ${CYPARI2_WASI_SDK}/cypari2/auto_paridecl.pxd ${BOOST_CROPPED_WASI_SDK}/include/boost/graph/adjacency_list.hpp ${GMP_WASI_SDK}/lib/libgmp.a ${MPFR_WASI_SDK}/include/mpfr.h ${MPFI_WASI_SDK}/lib/libmpfi.a ${GF2X_WASI_SDK}/lib/libgf2x.a ${NTL_WASI_SDK}/lib/libntl.a ${PARI_WASI_SDK}/lib/libpari.a ${GSL_WASI_SDK}/lib/libgslcblas.a ${M4RI_WASI_SDK}/include/m4ri/m4ri.h ${M4RIE_WASI_SDK}/include/m4rie/m4rie.h ${LIBPNG_WASI_SDK}/lib/libpng.a ${BUILD_WASI_SDK}/.cowasm-sagelite-source-revision ${BUILD_WASI_SDK}/.cowasm-sagelite-source-tree-state ${BUILD_WASI_SDK}/.patched
 	cd ../../core/build && make wasi-sdk-next
 	@status=0; \
-	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CPYTHON_WASM} ${PY_CYTHON} ${PY_NUMPY} ${PY_GMPY2} ${PY_JINJA2} ${PY_MESON} ${PY_NINJA} ${PY_PLATFORMDIRS} ${PYTHON_WASM} ${PRIMECOUNTPY_WASI_SDK} ${CYSIGNALS_WASI_SDK} ${MEMORY_ALLOCATOR_WASI_SDK} ${POSIX_WASI_SDK} ${LIBCXX_WASI_SDK} ${CYPARI2_WASI_SDK} || status=$$?; \
+	${SRC}/test-wasi-sdk-standalone.sh ${BUILD_WASI_SDK} ${DIST_WASI_SDK} ${BIN} ${CPYTHON_WASM} ${PY_CYTHON} ${PY_NUMPY} ${PY_GMPY2} ${PY_JINJA2} ${PY_MESON} ${PY_NINJA} ${PY_PACKAGING} ${PY_PLATFORMDIRS} ${PYTHON_WASM} ${PRIMECOUNTPY_WASI_SDK} ${CYSIGNALS_WASI_SDK} ${MEMORY_ALLOCATOR_WASI_SDK} ${POSIX_WASI_SDK} ${LIBCXX_WASI_SDK} ${CYPARI2_WASI_SDK} || status=$$?; \
 	if [ "$$status" -eq 77 ]; then exit 0; fi; \
 	exit "$$status"
 

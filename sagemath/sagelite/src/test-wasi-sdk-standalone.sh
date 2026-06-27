@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 18 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA PY_PLATFORMDIRS PYTHON_WASM PRIMECOUNTPY_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK" >&2
+if [ "$#" -ne 19 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM PRIMECOUNTPY_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK" >&2
   exit 2
 fi
 
@@ -16,14 +16,15 @@ py_gmpy2="$(cd "$7" && pwd)"
 py_jinja2="$(cd "$8" && pwd)"
 py_meson="$(cd "$9" && pwd)"
 py_ninja="$(cd "${10}" && pwd)"
-py_platformdirs="$(cd "${11}" && pwd)"
-python_wasm="$(cd "${12}" && pwd)"
-primecountpy_wasi_sdk="$(cd "${13}" && pwd)"
-cysignals_wasi_sdk="$(cd "${14}" && pwd)"
-memory_allocator_wasi_sdk="$(cd "${15}" && pwd)"
-posix_wasi_sdk="$(cd "${16}" && pwd)"
-libcxx_wasi_sdk="$(cd "${17}" && pwd)"
-cypari2_wasi_sdk="$(cd "${18}" && pwd)"
+py_packaging="$(cd "${11}" && pwd)"
+py_platformdirs="$(cd "${12}" && pwd)"
+python_wasm="$(cd "${13}" && pwd)"
+primecountpy_wasi_sdk="$(cd "${14}" && pwd)"
+cysignals_wasi_sdk="$(cd "${15}" && pwd)"
+memory_allocator_wasi_sdk="$(cd "${16}" && pwd)"
+posix_wasi_sdk="$(cd "${17}" && pwd)"
+libcxx_wasi_sdk="$(cd "${18}" && pwd)"
+cypari2_wasi_sdk="$(cd "${19}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -259,6 +260,7 @@ pythonpath_parts=(
   "$cysignals_wasi_sdk"
   "$memory_allocator_wasi_sdk"
   "$py_jinja2"
+  "$py_packaging"
   "$py_platformdirs"
   "$py_gmpy2"
   "$py_numpy"
@@ -1317,7 +1319,7 @@ print('sagelite-node-ok initialized FLINT fmpz_poly_sage helper import')"
 
 electron_resources_dir="$dist_dir/electron-resources"
 electron_bundle_log="$dist_dir/electron-bundle.log"
-electron_manifest_schema_version=141
+electron_manifest_schema_version=142
 electron_manifest_resource_kind="cowasm-sagelite-electron-resources"
 electron_manifest_python_abi="cpython-314-wasm32-wasi"
 electron_manifest_python_platform="wasi"
@@ -1369,6 +1371,7 @@ runtime_dep_labels=(
   cysignals
   memory_allocator
   jinja2
+  packaging
   platformdirs
   gmpy2
   numpy
@@ -1381,6 +1384,7 @@ runtime_dep_paths=(
   "$cysignals_wasi_sdk"
   "$memory_allocator_wasi_sdk"
   "$py_jinja2"
+  "$py_packaging"
   "$py_platformdirs"
   "$py_gmpy2"
   "$py_numpy"
@@ -1597,6 +1601,8 @@ electron_required_paths=(
   "deps/gmpy2/gmpy2/gmpy2.cpython-314-wasm32-wasi.so"
   "deps/jinja2/jinja2/__init__.py"
   "deps/jinja2/markupsafe/__init__.py"
+  "deps/packaging/packaging/__init__.pyc"
+  "deps/packaging/packaging/version.pyc"
   "deps/platformdirs/platformdirs/__init__.py"
   "deps/platformdirs/platformdirs/_xdg.py"
   "deps/platformdirs/platformdirs/api.py"

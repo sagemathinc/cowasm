@@ -19,6 +19,7 @@ const expectedSageliteRuntimeDependencyPaths = Object.freeze([
   "deps/cysignals",
   "deps/memory_allocator",
   "deps/jinja2",
+  "deps/packaging",
   "deps/platformdirs",
   "deps/gmpy2",
   "deps/numpy",
@@ -235,6 +236,8 @@ const expectedSageliteMandatoryResourcePaths = Object.freeze([
   "deps/gmpy2/gmpy2/gmpy2.cpython-314-wasm32-wasi.so",
   "deps/jinja2/jinja2/__init__.py",
   "deps/jinja2/markupsafe/__init__.py",
+  "deps/packaging/packaging/__init__.pyc",
+  "deps/packaging/packaging/version.pyc",
   "deps/platformdirs/platformdirs/__init__.py",
   "deps/platformdirs/platformdirs/_xdg.py",
   "deps/platformdirs/platformdirs/api.py",
@@ -255,7 +258,7 @@ const expectedSagelitePythonPath = Object.freeze([
 ]);
 
 const expectedSageliteManifest = {
-  schemaVersion: 141,
+  schemaVersion: 142,
   resourceKind: "cowasm-sagelite-electron-resources",
   pythonAbi: "cpython-314-wasm32-wasi",
   pythonPlatform: "wasi",

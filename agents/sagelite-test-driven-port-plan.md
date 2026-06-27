@@ -1553,6 +1553,30 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-prandom-make.sqlite3`; the saved block- and
 file-failure cluster queries are empty.
 
+Focused bindable-class introspection corpus-growth pass:
+
+```text
+sage -t passed: 47 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds `sage/misc/bindable_class.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 382
+non-comment entries. The runtime/resource pass stages CoWasm's pure-Python
+`py-packaging` package into Sagelite's Electron-shaped resource bundle and
+bumps the manifest schema to 142 so `sage.features` imports have their
+documented `packaging.version` dependency. The WASI source patch also keeps
+ordinary `sage_getdoc(...)` introspection on the browser-compatible path by
+avoiding Sage's multiprocessing-backed feature detector when docstrings have no
+optional doctest tags, and by skipping file-level doctest `skipfile(...)`
+warnings on WASI.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-bindable-make.sqlite3`, recording
+`bindable_class.py: 47 passed, 0 failed, 0 skipped`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
