@@ -3921,3 +3921,12 @@ diff -urN a/src/sage/combinat/root_system/weight_space.py b/src/sage/combinat/ro
              (5/4, 3/2, 3/4)
          """
          return self.parent()._inverse_cartan_matrix * self.to_vector()
+diff -urN a/src/sage/combinat/root_system/type_super_A.py b/src/sage/combinat/root_system/type_super_A.py
+--- a/src/sage/combinat/root_system/type_super_A.py
++++ b/src/sage/combinat/root_system/type_super_A.py
+@@ -356 +356 @@
+-                sage: a.associated_coroot()
++                sage: a.associated_coroot()                                             # needs sage.libs.pari
+@@ -362 +362 @@
+-                sage: (al[-1] + al[0] + al[2]).associated_coroot()
++                sage: (al[-1] + al[0] + al[2]).associated_coroot()                      # needs sage.libs.pari

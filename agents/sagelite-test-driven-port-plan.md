@@ -1155,6 +1155,34 @@ CoWasm commit `d1bcb962e4efcbd4d4d923e4165c5af7e1fa1fe5`, Sagelite package
 commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner
 version 39, and about 1,262 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-27 Coxeter-type and
+super-type-A root-system corpus-growth pass:
+
+```text
+sage -t passed: 23968 passed, 0 failed, 4336 skipped
+```
+
+That run records 28,304 block rows across all 175 files in the current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus, adding
+`sage/combinat/root_system/coxeter_type.py` and
+`sage/combinat/root_system/type_super_A.py` to the quiet browser-profile
+dashboard. Focused reruns record:
+
+```text
+coxeter_type.py: 75 passed, 0 failed, 10 skipped
+type_super_A.py: 111 passed, 0 failed, 17 skipped
+```
+
+The added WASI source patch classifies the two `associated_coroot()` examples
+in `type_super_A.py` as `# needs sage.libs.pari` because they compute a matrix
+kernel over a number field through PARI matrix conversion, which still reaches
+the focused cypari2 object-model boundary in the browser profile. The saved
+block- and file-failure cluster queries are empty for the full corpus run. The
+latest run metadata records CoWasm commit
+`55f62893939835ad7cdf38a00a5a5608a0878242`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 39,
+and about 1,269 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

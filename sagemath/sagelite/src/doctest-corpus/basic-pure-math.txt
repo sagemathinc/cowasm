@@ -51,6 +51,7 @@ src/sage/combinat/output.py
 src/sage/combinat/quickref.py
 src/sage/combinat/q_analogues.py
 src/sage/combinat/root_system/cartan_type.py
+src/sage/combinat/root_system/coxeter_type.py
 src/sage/combinat/root_system/cartan_matrix.py
 src/sage/combinat/root_system/root_system.py
 src/sage/combinat/root_system/root_space.py
@@ -80,6 +81,7 @@ src/sage/combinat/root_system/type_folded.py
 src/sage/combinat/root_system/type_marked.py
 src/sage/combinat/root_system/type_reducible.py
 src/sage/combinat/root_system/type_relabel.py
+src/sage/combinat/root_system/type_super_A.py
 src/sage/combinat/restricted_growth.py
 src/sage/combinat/sidon_sets.py
 src/sage/combinat/ranker.py
