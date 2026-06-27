@@ -5360,6 +5360,28 @@ block- and file-failure cluster queries are empty. The same sampling pass kept
 `sage/categories/graded_lie_algebras_with_basis.py` out of the quiet corpus
 because its focused doctests still have five block-level failures.
 
+Focused graded algebra category corpus-growth pass:
+
+```text
+sage -t passed: 6 passed, 0 failed, 35 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/graded_algebras_with_basis.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 317
+non-comment entries. The added WASI source patch classifies the file's
+matroid-backed Chow-ring top-degree examples as `# needs sage.matroids`,
+leaving the lightweight graded-algebra category doctests as default
+browser-profile coverage.
+
+Focused validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-graded-algebras-with-basis-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The latest run
+metadata records CoWasm commit `63177ca35204b9a20af808382580109b0ab8edda`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, and runner version 42.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
