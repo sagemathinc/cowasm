@@ -1350,6 +1350,22 @@ The focused validation used a temporary one-file corpus with
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-magmas-corpus.sqlite3`. The saved block-
 and file-failure cluster queries are empty. The runner version is now 41.
 
+Focused category cartesian-product corpus-growth pass:
+
+```text
+sage -t passed: 41 passed, 0 failed, 1 skipped
+```
+
+That one-file focused rerun adds `sage/categories/cartesian_product.py` to the
+curated corpus. The file gives the dashboard direct coverage of category-level
+cartesian-product construction without new WASI source tags or startup
+namespace changes. Sampling in the same pass confirmed that
+`sage/categories/objects.py` and `sage/categories/pointed_sets.py` were already
+quiet and already present in the current corpus; nearby
+`sage/categories/category_types.py`, `homsets.py`, `poor_man_map.py`, and
+`map.pyx` remain outside the quiet corpus because they still have focused
+doctest failures.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
