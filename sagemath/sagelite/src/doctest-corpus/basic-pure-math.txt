@@ -261,6 +261,7 @@ src/sage/categories/magmas_and_additive_magmas.py
 src/sage/categories/distributive_magmas_and_additive_magmas.py
 src/sage/categories/division_rings.py
 src/sage/categories/matrix_algebras.py
+src/sage/categories/metric_spaces.py
 src/sage/categories/modular_abelian_varieties.py
 src/sage/categories/monoid_algebras.py
 src/sage/categories/monoids.py
@@ -274,6 +275,7 @@ src/sage/categories/poor_man_map.py
 src/sage/categories/quotients.py
 src/sage/categories/ring_ideals.py
 src/sage/categories/r_trivial_semigroups.py
+src/sage/categories/schemes.py
 src/sage/categories/semisimple_algebras.py
 src/sage/categories/sets_cat.py
 src/sage/categories/sets_with_grading.py

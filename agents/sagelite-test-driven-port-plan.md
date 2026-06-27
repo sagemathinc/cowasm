@@ -5455,6 +5455,37 @@ kept `sage/categories/finite_fields.py`, `sage/categories/metric_spaces.py`,
 `sage/categories/lattice_posets.py` out because their focused doctests still
 have file-level traps or block-level failure clusters.
 
+Focused metric/scheme category corpus-growth pass:
+
+```text
+sage -t passed: 72 passed, 0 failed, 40 skipped
+```
+
+That two-file make-target validation adds
+`sage/categories/metric_spaces.py` and `sage/categories/schemes.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 327 measured
+non-comment entries. The added WASI source patch classifies the
+real-field-backed cartesian-product examples in `metric_spaces.py` as
+`# needs sage.rings.real_mpfr`, and classifies the elliptic-curve homset
+examples in `schemes.py` as `# needs sage.schemes.elliptic_curves`.
+
+Focused validation used a temporary two-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-metric-schemes-make.sqlite3`. The make
+target rebuilt and patched the Sagelite source copy successfully, then
+recorded `metric_spaces.py: 33 passed, 0 failed, 35 skipped` and
+`schemes.py: 39 passed, 0 failed, 5 skipped`; the saved block- and
+file-failure cluster queries are empty.
+
+Sampling in the same pass kept skipped-only files such as the category
+example modules for algebras with basis, filtered modules with basis, finite
+Coxeter groups, finite-dimensional algebras with basis, graded modules with
+basis, sets, realizations, and the `groupoid.py`, `posets.py`, and
+`finite_posets.py` wrappers out of the quiet corpus. `manifolds.py` remains
+out because its remaining focused failures are TestSuite pickling-output
+drift around lazy imports.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

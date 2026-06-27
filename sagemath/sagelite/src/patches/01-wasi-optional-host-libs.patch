@@ -4129,7 +4129,7 @@ diff -urN a/src/sage/categories/morphism.pyx b/src/sage/categories/morphism.pyx
 diff -urN a/src/sage/categories/graded_algebras_with_basis.py b/src/sage/categories/graded_algebras_with_basis.py
 --- a/src/sage/categories/graded_algebras_with_basis.py
 +++ b/src/sage/categories/graded_algebras_with_basis.py
-@@ -166,9 +166,9 @@
+@@ -166,8 +166,8 @@
 -                    sage: ch = matroids.Uniform(4,6).chow_ring(QQ, False)
 -                    sage: ch.top_degree()
 +                    sage: ch = matroids.Uniform(4,6).chow_ring(QQ, False)      # needs sage.matroids
@@ -4142,3 +4142,33 @@ diff -urN a/src/sage/categories/graded_algebras_with_basis.py b/src/sage/categor
                      3
                  """
                  return max(b.degree() for b in self.basis())
+diff -urN a/src/sage/categories/metric_spaces.py b/src/sage/categories/metric_spaces.py
+--- a/src/sage/categories/metric_spaces.py
++++ b/src/sage/categories/metric_spaces.py
+@@ -371 +371 @@
+-                    sage: R2 = RR.cartesian_product(RR)
++                    sage: R2 = RR.cartesian_product(RR)                                  # needs sage.rings.real_mpfr
+@@ -372 +372 @@
+-                    sage: R2 in MetricSpaces()
++                    sage: R2 in MetricSpaces()                                           # needs sage.rings.real_mpfr
+@@ -374 +374 @@
+-                    sage: R2 in MetricSpaces().Complete()
++                    sage: R2 in MetricSpaces().Complete()                                # needs sage.rings.real_mpfr
+@@ -377 +377 @@
+-                    sage: QR = QQ.cartesian_product(RR)
++                    sage: QR = QQ.cartesian_product(RR)                                  # needs sage.rings.real_mpfr
+@@ -378 +378 @@
+-                    sage: QR in MetricSpaces()
++                    sage: QR in MetricSpaces()                                           # needs sage.rings.real_mpfr
+@@ -380 +380 @@
+-                    sage: QR in MetricSpaces().Complete()
++                    sage: QR in MetricSpaces().Complete()                                # needs sage.rings.real_mpfr
+diff -urN a/src/sage/categories/schemes.py b/src/sage/categories/schemes.py
+--- a/src/sage/categories/schemes.py
++++ b/src/sage/categories/schemes.py
+@@ -280 +280 @@
+-                sage: Hom(EllipticCurve(j=1), EllipticCurve(j=2)) in CommutativeAdditiveGroups()
++                sage: Hom(EllipticCurve(j=1), EllipticCurve(j=2)) in CommutativeAdditiveGroups()  # needs sage.schemes.elliptic_curves
+@@ -299 +299 @@
+-                    sage: End(EllipticCurve(j=1)) in Rings()
++                    sage: End(EllipticCurve(j=1)) in Rings()                            # needs sage.schemes.elliptic_curves
