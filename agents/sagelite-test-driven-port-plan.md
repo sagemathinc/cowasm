@@ -974,6 +974,27 @@ full corpus run. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
 and about 1,094 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 root-system
+corpus-growth pass:
+
+```text
+sage -t passed: 22672 passed, 0 failed, 4027 skipped
+```
+
+That run records 26,699 block rows across the current 146-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`, adding
+`sage/combinat/root_system/root_system.py` to the quiet browser-profile
+dashboard. The focused rerun records
+`root_system.py: 100 passed, 0 failed, 38 skipped`.
+
+The module adds useful non-graph root-system coverage without new WASI source
+tags. The saved block- and file-failure cluster queries are empty for the full
+corpus run. The latest run metadata records CoWasm commit
+`189dfb1a3a7894d3cb2b30e14cbc7ae4234cddfa`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
+and about 1,152 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
