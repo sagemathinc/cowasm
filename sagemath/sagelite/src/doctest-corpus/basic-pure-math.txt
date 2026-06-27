@@ -162,6 +162,7 @@ src/sage/categories/additive_groups.py
 src/sage/categories/additive_magmas.py
 src/sage/categories/additive_monoids.py
 src/sage/categories/additive_semigroups.py
+src/sage/categories/aperiodic_semigroups.py
 src/sage/categories/commutative_additive_groups.py
 src/sage/categories/commutative_additive_monoids.py
 src/sage/categories/enumerated_sets.py
@@ -171,6 +172,7 @@ src/sage/categories/infinite_enumerated_sets.py
 src/sage/categories/finite_sets.py
 src/sage/categories/finite_monoids.py
 src/sage/categories/finite_semigroups.py
+src/sage/categories/finitely_generated_semigroups.py
 src/sage/categories/semigroups.py
 src/sage/categories/semirings.py
 src/sage/categories/rngs.py
@@ -178,6 +180,8 @@ src/sage/categories/groups.py
 src/sage/categories/monoids.py
 src/sage/categories/sets_cat.py
 src/sage/categories/modules.py
+src/sage/categories/left_modules.py
+src/sage/categories/right_modules.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py
 src/sage/sets/finite_set_map_cy.pyx

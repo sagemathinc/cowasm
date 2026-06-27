@@ -4578,6 +4578,34 @@ file-failure cluster queries. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner
 version 41.
 
+Focused semigroup/module-adjacent category corpus-growth pass:
+
+```text
+sage -t passed: 36 passed, 0 failed, 0 skipped
+```
+
+That four-file make-target validation adds
+`sage/categories/aperiodic_semigroups.py`,
+`sage/categories/finitely_generated_semigroups.py`,
+`sage/categories/left_modules.py`, and
+`sage/categories/right_modules.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 205
+non-comment entries. These files require no new WASI source tags or startup
+namespace changes.
+
+The focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary four-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-category-followup-make.sqlite3`. It records
+`aperiodic_semigroups.py: 1 passed, 0 failed, 0 skipped`,
+`finitely_generated_semigroups.py: 27 passed, 0 failed, 0 skipped`,
+`left_modules.py: 4 passed, 0 failed, 0 skipped`, and
+`right_modules.py: 4 passed, 0 failed, 0 skipped`, with empty saved block- and
+file-failure cluster queries. The latest run metadata records CoWasm commit
+`9a05a310c508f3c72d829b376c47b189a1376762`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner
+version 41.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
