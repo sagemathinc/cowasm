@@ -5603,6 +5603,28 @@ The latest-run summary records 23 total blocks, 5 passed, 18 skipped,
 0 failed, runner version 44, and empty saved block- and file-failure cluster
 queries.
 
+Focused number-field category corpus-growth pass:
+
+```text
+sage -t passed: 16 passed, 0 failed, 18 skipped
+```
+
+That one-file focused validation adds `sage/categories/number_fields.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 333 non-comment
+entries. The file gives the dashboard lightweight number-field category
+coverage without new WASI source tags or startup namespace changes.
+
+Focused make-target validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-number-fields-make.sqlite3`; the saved
+block- and file-failure cluster queries are empty. The same ring-category
+sampling pass kept `sage/categories/quotient_fields.py`,
+`sage/categories/principal_ideal_domains.py`, and
+`sage/categories/unique_factorization_domains.py` out of the quiet corpus:
+the first two still reach existing polynomial/number-field tuple assertion
+traps, while the third times out in polynomial radical computation.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -270,6 +270,7 @@ src/sage/categories/modular_abelian_varieties.py
 src/sage/categories/monoid_algebras.py
 src/sage/categories/monoids.py
 src/sage/categories/noetherian_rings.py
+src/sage/categories/number_fields.py
 src/sage/categories/objects.py
 src/sage/categories/partially_ordered_monoids.py
 src/sage/categories/permutation_groups.py
