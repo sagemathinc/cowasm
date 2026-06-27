@@ -360,6 +360,7 @@ src/sage/misc/inherit_comparison.pyx
 src/sage/misc/instancedoc.pyx
 src/sage/misc/lazy_import_cache.py
 src/sage/misc/lazy_list.pyx
+src/sage/misc/latex_macros.py
 src/sage/misc/lazy_string.pyx
 src/sage/misc/messaging.py
 src/sage/misc/method_decorator.py
@@ -368,6 +369,7 @@ src/sage/misc/mrange.py
 src/sage/misc/multireplace.py
 src/sage/misc/namespace_package.py
 src/sage/misc/nested_class.pyx
+src/sage/misc/object_multiplexer.py
 src/sage/misc/package.py
 src/sage/misc/prandom.py
 src/sage/misc/parser.pyx

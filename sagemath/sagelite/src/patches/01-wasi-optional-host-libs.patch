@@ -4278,6 +4278,18 @@ diff -urN a/src/sage/misc/defaults.py b/src/sage/misc/defaults.py
 @@ -76 +76 @@
 -        sage: latex_variable_names(3,beta)
 +        sage: latex_variable_names(3,beta)                                              # needs sage.symbolic
+diff -urN a/src/sage/misc/latex_macros.py b/src/sage/misc/latex_macros.py
+--- a/src/sage/misc/latex_macros.py
++++ b/src/sage/misc/latex_macros.py
+@@ -206 +206 @@
+-        sage: sage_mathjax_macros()
++        sage: sage_mathjax_macros()                                                     # random
+diff -urN a/src/sage/misc/object_multiplexer.py b/src/sage/misc/object_multiplexer.py
+--- a/src/sage/misc/object_multiplexer.py
++++ b/src/sage/misc/object_multiplexer.py
+@@ -82 +82 @@
+-            sage: m.str
++            sage: m.str                                                                 # random
 diff -urN a/src/sage/misc/prandom.py b/src/sage/misc/prandom.py
 --- a/src/sage/misc/prandom.py
 +++ b/src/sage/misc/prandom.py

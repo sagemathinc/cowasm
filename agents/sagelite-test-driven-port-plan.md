@@ -1601,6 +1601,35 @@ recording `decorators.py: 120 passed, 0 failed, 13 skipped` and
 patched a fresh Sagelite source copy successfully, and the saved block- and
 file-failure cluster queries are empty.
 
+Focused misc display-helper corpus-growth pass:
+
+```text
+sage -t passed: 26 passed, 0 failed, 0 skipped
+```
+
+That two-file make-target validation adds `sage/misc/latex_macros.py` and
+`sage/misc/object_multiplexer.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 386
+non-comment entries. Direct sampling first recorded one dict-order display
+mismatch in `latex_macros.py` and one object-address repr mismatch in
+`object_multiplexer.py`; the added WASI source patch marks both as `# random`
+so the examples still execute while the browser-profile dashboard does not
+depend on host/runtime display ordering or pointer formatting.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary two-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-misc-latex-multiplexer-make.sqlite3`,
+recording `latex_macros.py: 11 passed, 0 failed, 0 skipped` and
+`object_multiplexer.py: 15 passed, 0 failed, 0 skipped`. The saved block- and
+file-failure cluster queries are empty. The same sampling pass kept
+`sage/misc/temporary_file.py`, `functional.py`, `lazy_import.pyx`,
+`superseded.py`, `verbose.py`, and `weak_dict.pyx` out of the quiet corpus
+because their current failures involve filesystem semantics, symbolic/timeit
+paths, warning capture, lazy-import weak references, or broader runtime
+behavior rather than narrow display drift.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
