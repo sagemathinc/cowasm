@@ -6045,6 +6045,30 @@ hit the 120-second focused-run guard, and kept `banner.py`,
 `sage_ostools.pyx` out because they still have focused doctest failures under
 the default browser-compatible profile.
 
+Focused category-primer corpus-growth pass:
+
+```text
+sage -t passed: 122 passed, 0 failed, 83 skipped
+```
+
+That one-file focused validation adds `sage/categories/primer.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 390
+non-comment entries. The doctest runner now seeds the lightweight
+`FiniteSets` and `DivisionRings` category constructors in the common startup
+namespace, and the WASI `sage.all` patch exposes the same constructors for
+REPL parity on a fresh patched Sagelite source copy. This clears primer
+examples that use those constructors without local imports.
+
+The added WASI source patch classifies the noncommutative polynomial quotient
+example as `# needs sage.rings.polynomial.plural` and marks order-sensitive
+category introspection displays as `# random`, preserving their execution
+without treating set/dictionary ordering drift as a semantic failure.
+Focused make-target validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-primer-make.sqlite3`; the saved block- and
+file-failure cluster queries are empty. The runner version remains 44.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
