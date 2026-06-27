@@ -2,7 +2,6 @@
 "use strict";
 
 const fs = require("fs");
-const os = require("os");
 const path = require("path");
 const readline = require("readline");
 const { execFileSync, spawn } = require("child_process");
@@ -10,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 45;
+const doctestRunnerVersion = 48;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -346,7 +345,8 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
     duration_ms: 0,
     files: [],
   };
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "sagelite-doctest-"));
+  fs.mkdirSync(path.dirname(options.dbPath), { recursive: true });
+  const tmpDir = fs.mkdtempSync(path.join(path.dirname(options.dbPath), ".sagelite-doctest-"));
   const begin = Date.now();
   try {
     for (const [index, file] of options.files.entries()) {
@@ -355,30 +355,36 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
       const workerOptionsPath = path.join(tmpDir, `worker-${index}.json`);
       const fileBegin = Date.now();
       try {
-        await runDoctestFileWorker({
-          workerOptionsPath,
-          file,
-          resultPath,
-          statePath,
-          long: options.long,
-          optional: options.optional,
-          optionalFeatures: options.optionalFeatures,
-          blockKeys: options.blockKeys,
-          lines: options.lines,
-          sourceRoot: options.sourceRoot,
-          invocationCwd,
-          resourceRoot: pythonOptions.resourceRoot,
-          timeoutSeconds: options.timeoutSeconds,
-        });
-        appendDoctestFiles(run, readJsonFile(resultPath));
-      } catch (err) {
-        const before = run.files.length;
-        appendDoctestFiles(run, readJsonFile(resultPath));
-        if (run.files.length === before) {
-          const state = readJsonFile(statePath);
-          const failedPath =
-            state && typeof state.current_file === "string" ? state.current_file : file;
-          appendDoctestErrorFile(run, failedPath, err, Date.now() - fileBegin, state);
+        try {
+          await runDoctestFileWorker({
+            workerOptionsPath,
+            file,
+            resultPath,
+            statePath,
+            long: options.long,
+            optional: options.optional,
+            optionalFeatures: options.optionalFeatures,
+            blockKeys: options.blockKeys,
+            lines: options.lines,
+            sourceRoot: options.sourceRoot,
+            invocationCwd,
+            resourceRoot: pythonOptions.resourceRoot,
+            timeoutSeconds: options.timeoutSeconds,
+          });
+          appendDoctestFiles(run, readJsonFile(resultPath));
+        } catch (err) {
+          const before = run.files.length;
+          appendDoctestFiles(run, readJsonFile(resultPath));
+          if (run.files.length === before) {
+            const state = readJsonFile(statePath);
+            const failedPath =
+              state && typeof state.current_file === "string" ? state.current_file : file;
+            appendDoctestErrorFile(run, failedPath, err, Date.now() - fileBegin, state);
+          }
+        }
+      } finally {
+        for (const filePath of [workerOptionsPath, resultPath, statePath]) {
+          fs.rmSync(filePath, { force: true });
         }
       }
     }
@@ -1931,8 +1937,13 @@ function blockKeyFor(file, block, run) {
 function writeDoctestSqlite(dbPath, run) {
   fs.mkdirSync(path.dirname(dbPath), { recursive: true });
   ensureDoctestSchema(dbPath);
-  const insertRun = [
+  const rows = [
     "PRAGMA foreign_keys=ON;",
+    "BEGIN IMMEDIATE;",
+    "DROP TABLE IF EXISTS __cowasm_doctest_run_id;",
+    "DROP TABLE IF EXISTS __cowasm_doctest_file_id;",
+    "CREATE TEMP TABLE __cowasm_doctest_run_id(id INTEGER NOT NULL);",
+    "CREATE TEMP TABLE __cowasm_doctest_file_id(id INTEGER NOT NULL);",
     `INSERT INTO runs (
       started_at, finished_at, git_commit, sagelite_source_commit,
       sagelite_package_commit, command,
@@ -1950,31 +1961,31 @@ function writeDoctestSqlite(dbPath, run) {
       ${sqlNumber(run.failed_blocks)}, ${sqlNumber(run.skipped_blocks)},
       ${sqlNumber(run.duration_ms)}
     );`,
-    "SELECT last_insert_rowid();",
+    "INSERT INTO __cowasm_doctest_run_id(id) VALUES (last_insert_rowid());",
   ];
-  const runId = sqliteExec(dbPath, insertRun.join("\n")).trim().split(/\s+/).pop();
 
-  const rows = ["PRAGMA foreign_keys=ON;"];
   for (const file of run.files) {
+    rows.push("DELETE FROM __cowasm_doctest_file_id;");
     rows.push(`INSERT INTO files (
       run_id, path, status, total_blocks, passed_blocks, failed_blocks,
       skipped_blocks, duration_ms, stdout, stderr, failure_class, failure_detail
     ) VALUES (
-      ${sqlNumber(Number(runId))}, ${sqlString(file.path)}, ${sqlString(file.status)},
+      (SELECT id FROM __cowasm_doctest_run_id),
+      ${sqlString(file.path)}, ${sqlString(file.status)},
       ${sqlNumber(file.total_blocks)}, ${sqlNumber(file.passed_blocks)},
       ${sqlNumber(file.failed_blocks)}, ${sqlNumber(file.skipped_blocks)},
       ${sqlNumber(file.duration_ms)}, ${sqlString(file.stdout)}, ${sqlString(file.stderr)},
       ${sqlString(file.failure_class)}, ${sqlString(file.failure_detail)}
     );`);
-    rows.push("SELECT last_insert_rowid();");
-    const fileId = "__COWASM_FILE_ID__";
+    rows.push("INSERT INTO __cowasm_doctest_file_id(id) VALUES (last_insert_rowid());");
     for (const block of file.blocks || []) {
       rows.push(`INSERT INTO blocks (
         file_id, block_index, block_key, name, start_line, end_line, source,
         source_hash, expected, expected_kind, actual, status, failure_class,
         failure_detail, tags, skip_reason, duration_ms
       ) VALUES (
-        ${fileId}, ${sqlNumber(block.block_index)}, ${sqlString(blockKeyFor(file, block, run))},
+        (SELECT id FROM __cowasm_doctest_file_id),
+        ${sqlNumber(block.block_index)}, ${sqlString(blockKeyFor(file, block, run))},
         ${sqlString(block.name)},
         ${sqlNumber(block.start_line)}, ${sqlNumber(block.end_line)},
         ${sqlString(block.source)}, ${sqlString(block.source_hash)},
@@ -1986,24 +1997,12 @@ function writeDoctestSqlite(dbPath, run) {
       );`);
     }
   }
-  if (run.files.length === 0) {
-    return;
-  }
-
-  const script = rows.join("\n");
-  const chunks = script.split("SELECT last_insert_rowid();");
-  let sql = chunks[0];
-  let fileCursor = 0;
-  for (let i = 1; i < chunks.length; i += 1) {
-    const output = sqliteExec(dbPath, sql + "\nSELECT last_insert_rowid();\n").trim();
-    const fileId = output.split(/\s+/).pop();
-    sql = chunks[i].replaceAll("__COWASM_FILE_ID__", fileId);
-    fileCursor += 1;
-  }
-  if (sql.trim()) {
-    sqliteExec(dbPath, sql);
-  }
-  void fileCursor;
+  rows.push(
+    "DROP TABLE __cowasm_doctest_file_id;",
+    "DROP TABLE __cowasm_doctest_run_id;",
+    "COMMIT;",
+  );
+  sqliteExec(dbPath, rows.join("\n"));
 }
 
 function printDoctestSummary(dbPath, run, displayCwd) {

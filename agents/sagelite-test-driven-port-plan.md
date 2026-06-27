@@ -6303,6 +6303,40 @@ the direct `sage -t` harness with `--profile node`, `--timeout 90`, and
 `--sqlite /tmp/sagelite-graded-lie-focused.sqlite3`; the saved block- and
 file-failure cluster queries are empty.
 
+Doctest runner SQLite/temp-artifact follow-up:
+
+Full corpus reruns after the tensor-operation and graded-Lie additions exposed
+runner infrastructure limits rather than stable Sage doctest failures. The
+first full rerun completed enough to compute a clean aggregate
+`31484 passed, 0 failed, 7972 skipped`, but the old SQLite writer committed
+file/block rows incrementally through one `sqlite3` subprocess per file. The
+Node parent was interrupted while still finalizing row inserts, leaving the
+saved database internally inconsistent: the `runs` row had the full clean
+aggregate, but only the first 323 file rows and 33,889 block rows had been
+persisted.
+
+The SQLite writer now stores the whole run in a single transaction using
+temporary run/file-id tables, so file and block rows are committed atomically
+and finalization avoids the per-file subprocess loop. A second set of full
+reruns then exposed `/tmp` quota failures from the runner's worker option,
+state, and result files. The runner now creates its doctest temp directory
+next to the requested SQLite database and removes each file's worker artifacts
+immediately after reading them. Runner version is now 48.
+
+Focused make-target validation with workspace-local temp/database paths passes
+for the sampled quota-failure files:
+
+```text
+sage -t passed: 153 passed, 0 failed, 33 skipped
+```
+
+That four-file validation covers `sage/combinat/degree_sequences.pyx`,
+`sage/categories/algebra_ideals.py`, `sage/modules/tensor_operations.py`, and
+`sage/modules/free_module_homspace.py`; its SQLite aggregates match the saved
+file and block rows exactly, and the workspace doctest temp directory is
+removed at exit. A fresh full corpus rerun is still needed before recording the
+next clean dashboard total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
