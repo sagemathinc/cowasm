@@ -164,6 +164,7 @@ src/sage/categories/infinite_enumerated_sets.py
 src/sage/categories/finite_sets.py
 src/sage/categories/finite_monoids.py
 src/sage/categories/finite_semigroups.py
+src/sage/categories/semigroups.py
 src/sage/categories/monoids.py
 src/sage/categories/sets_cat.py
 src/sage/categories/modules.py

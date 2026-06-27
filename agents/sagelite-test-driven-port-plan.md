@@ -1292,6 +1292,26 @@ table had persisted only 153 of the 181 corpus entries and was missing the
 trailing set, finite-ring, polynomial, module, and matrix files, so that
 attempt is not recorded as a checked full-dashboard baseline.
 
+Focused semigroup-category corpus-growth pass after the 2026-06-27 category
+sampling:
+
+```text
+sage -t passed: 65 passed, 0 failed, 85 skipped
+```
+
+That one-file validation adds `sage/categories/semigroups.py` to the curated
+corpus. The only focused failure was unordered `frozenset` display drift in
+`Semigroups().Aperiodic().axioms()`, now marked `# random` so the example
+still runs while the browser-profile dashboard does not depend on Python set
+iteration order. Nearby sampled category files remain outside the quiet corpus:
+`rings.py` reaches the known number-field function-signature mismatch,
+`fields.py` reaches the known NTL/libcxx finite-field trap, `rngs.py` still
+needs both startup namespace work and noncommutative-polynomial tagging, and
+`semirings.py` needs a focused startup namespace seed. The focused validation
+used the `test-sage-doctest-corpus` make target with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-semigroups-corpus.sqlite3`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

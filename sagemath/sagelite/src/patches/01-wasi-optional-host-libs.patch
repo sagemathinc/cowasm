@@ -4022,3 +4022,9 @@ diff -urN a/src/sage/categories/enumerated_sets.py b/src/sage/categories/enumera
                  Traceback (most recent call last):
                  ...
                  AttributeError: 'QuotientRing_generic_with_category' object has no attribute 'list'...
+diff -urN a/src/sage/categories/semigroups.py b/src/sage/categories/semigroups.py
+--- a/src/sage/categories/semigroups.py
++++ b/src/sage/categories/semigroups.py
+@@ -747 +747 @@
+-                sage: Semigroups().Aperiodic().axioms()
++                sage: Semigroups().Aperiodic().axioms()                                  # random
