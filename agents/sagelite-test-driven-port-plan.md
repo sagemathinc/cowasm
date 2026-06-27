@@ -5834,6 +5834,39 @@ file-failure cluster queries are empty. The same sampling pass kept
 still have focused doctest failures under the default browser-compatible
 profile.
 
+Focused misc runtime corpus-growth pass:
+
+```text
+sage -t passed: 788 passed, 0 failed, 188 skipped
+```
+
+That twelve-file focused validation adds
+`sage/misc/classcall_metaclass.pyx`, `sage/misc/derivative.pyx`,
+`sage/misc/fast_methods.pyx`, `sage/misc/instancedoc.pyx`,
+`sage/misc/lazy_import_cache.py`, `sage/misc/lazy_list.pyx`,
+`sage/misc/misc_c.pyx`, `sage/misc/parser.pyx`,
+`sage/misc/sage_eval.py`, `sage/misc/table.py`,
+`sage/misc/test_class_pickling.py`, and
+`sage/misc/test_nested_class.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 373
+non-comment entries. The batch expands runtime utility coverage for
+classcall metaclasses, formal derivatives, fast method helpers, instance
+docstrings, lazy import cache/list behavior, C-level misc helpers, preparser
+parsing, Sage eval, text tables, and nested-class pickling.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary twelve-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-misc-runtime-make.sqlite3`; the saved
+block- and file-failure cluster queries are empty. Direct sampling kept
+`c3_controlled.pyx`, `html.py`, `lazy_attribute.pyx`, `lazy_import.pyx`,
+`misc.py`, `sage_input.py`, `sage_timeit.py`, `sage_timeit_class.pyx`,
+`stopgap.pyx`, `superseded.py`, `verbose.py`, and `weak_dict.pyx` out of the
+quiet corpus because they still have focused doctest failures or runtime
+traps in the default browser-compatible profile. Skipped-only or empty
+modules such as `copying.py`, `func_persist.py`, `mathml.py`, and `proof.py`
+remain outside the dashboard for now.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
