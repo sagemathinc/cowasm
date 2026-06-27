@@ -1201,9 +1201,15 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
              True
          """
          try:
+--- a/src/sage/combinat/root_system/root_space.py
++++ b/src/sage/combinat/root_system/root_space.py
+@@ -274,2 +274,2 @@
+             sage: lat = RootSystem(['B', 3]).root_lattice()
+-            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))
++            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))                       # needs sage.graphs
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,110 @@
+@@ -253,74 +253,111 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1233,6 +1239,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.combinat.partition import Partition
 +    from sage.combinat.perfect_matching import PerfectMatching
 +    from sage.combinat.regular_sequence import RegularSequenceRing
++    from sage.combinat.root_system.cartan_type import CartanType
 +    from sage.combinat.root_system.root_system import RootSystem
 +    from sage.combinat.set_partition_ordered import OrderedSetPartition
 +    from sage.combinat.tableau import SemistandardTableaux, StandardTableau, Tableau, Tableaux

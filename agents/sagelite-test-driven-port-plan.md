@@ -995,6 +995,32 @@ corpus run. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
 and about 1,152 seconds of elapsed time.
 
+Latest checked local corpus run after the 2026-06-26 root-space
+corpus-growth pass:
+
+```text
+sage -t passed: 22725 passed, 0 failed, 4062 skipped
+```
+
+That run records 26,787 block rows across the current 147-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/tmp/sagelite-corpus-after-root-space.sqlite3`, adding
+`sage/combinat/root_system/root_space.py` to the quiet browser-profile
+dashboard. The focused rerun records
+`root_space.py: 53 passed, 0 failed, 35 skipped`.
+
+The doctest runner now seeds `CartanType` in the common startup namespace, and
+the WASI `sage.all` patch exposes the same constructor for REPL parity after a
+Sagelite package rebuild. This clears root-space examples that use
+`CartanType(...)` without a local import. The added WASI source patch marks
+the remaining root-lattice scalar-product check as `# needs sage.graphs`
+because it routes through `dynkin_diagram()` and the stripped graph backend.
+The saved block- and file-failure cluster queries are empty for the full
+corpus run. The latest run metadata records CoWasm commit
+`f48a5f8e908c81f8dba9245a469cdde90f317ac3`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 38,
+and about 1,106 seconds of elapsed time.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
