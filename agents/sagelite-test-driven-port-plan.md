@@ -5532,6 +5532,30 @@ from scratch, then ran a temporary one-file corpus with
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-manifolds-make.sqlite3`; the saved block-
 and file-failure cluster queries are empty. The runner version remains 43.
 
+Focused homset category corpus-growth pass:
+
+```text
+sage -t passed: 139 passed, 0 failed, 122 skipped
+```
+
+That one-file focused validation adds `sage/categories/homset.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 330
+non-comment entries. The doctest runner now seeds the lightweight
+`ChainComplexes` constructor in the common startup namespace, and the WASI
+`sage.all` patch exposes the same constructor for REPL parity on a fresh
+patched Sagelite source copy. This clears the uninitialized-parent
+`Hom(..., ChainComplexes(QQ), check=False)` startup-name failure.
+
+The added WASI source patch classifies the noncommutative polynomial quotient
+example as `# needs sage.rings.polynomial.plural`, and classifies the
+affine/projective-space homset pickling examples as `# needs sage.schemes`.
+Focused make-target validation rebuilt and patched the Sagelite source copy
+from scratch, then ran a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-homset-make.sqlite3`; the saved block- and
+file-failure cluster queries are empty. The runner version is now 44.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

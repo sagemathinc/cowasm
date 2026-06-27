@@ -10,7 +10,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 43;
+const doctestRunnerVersion = 44;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -848,6 +848,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.bialgebras", ("Bialgebras",)),
         ("sage.categories.coalgebras", ("Coalgebras",)),
         ("sage.categories.coalgebras_with_basis", ("CoalgebrasWithBasis",)),
+        ("sage.categories.chain_complexes", ("ChainComplexes",)),
         ("sage.categories.commutative_additive_groups", ("CommutativeAdditiveGroups",)),
         ("sage.categories.euclidean_domains", ("EuclideanDomains",)),
         ("sage.categories.fields", ("Fields",)),

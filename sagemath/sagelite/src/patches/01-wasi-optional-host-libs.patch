@@ -1209,7 +1209,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))                       # needs sage.graphs
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,165 @@
+@@ -253,74 +253,166 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1237,6 +1237,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.algebras_with_basis import AlgebrasWithBasis
 +    from sage.categories.bialgebras import Bialgebras
 +    from sage.categories.cartesian_product import cartesian_product
++    from sage.categories.chain_complexes import ChainComplexes
 +    from sage.categories.coalgebras import Coalgebras
 +    from sage.categories.coalgebras_with_basis import CoalgebrasWithBasis
 +    from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
@@ -4097,6 +4098,36 @@ diff -urN a/src/sage/categories/poor_man_map.py b/src/sage/categories/poor_man_m
 @@ -261 +261 @@
 -            sage: h = PoorManMap(sin, domain=RR, codomain=RR)
 +            sage: h = PoorManMap(sin, domain=RR, codomain=RR)                           # needs sympy sage.symbolic
+diff -urN a/src/sage/categories/homset.py b/src/sage/categories/homset.py
+--- a/src/sage/categories/homset.py
++++ b/src/sage/categories/homset.py
+@@ -364 +364 @@
+-        sage: Q = P.quotient([x^2 - 1, y^2 - 1])
++        sage: Q = P.quotient([x^2 - 1, y^2 - 1])                                       # needs sage.rings.polynomial.plural
+@@ -598,4 +598,4 @@
+-        sage: H = End(AffineSpace(2, names='x,y'))
+-        sage: loads(dumps(AffineSpace(2, names='x,y'))) is AffineSpace(2, names='x,y')
++        sage: H = End(AffineSpace(2, names='x,y'))                                     # needs sage.schemes
++        sage: loads(dumps(AffineSpace(2, names='x,y'))) is AffineSpace(2, names='x,y') # needs sage.schemes
+         True
+-        sage: loads(dumps(H)) is H
++        sage: loads(dumps(H)) is H                                                     # needs sage.schemes
+@@ -606,9 +606,9 @@
+-        sage: P11 = ProductProjectiveSpaces(QQ, [1, 1])
+-        sage: H = End(P11)
+-        sage: loads(dumps(P11)) is ProductProjectiveSpaces(QQ, [1, 1])
++        sage: P11 = ProductProjectiveSpaces(QQ, [1, 1])                                # needs sage.schemes
++        sage: H = End(P11)                                                             # needs sage.schemes
++        sage: loads(dumps(P11)) is ProductProjectiveSpaces(QQ, [1, 1])                 # needs sage.schemes
+         False
+-        sage: loads(dumps(P11)) == ProductProjectiveSpaces(QQ, [1, 1])
++        sage: loads(dumps(P11)) == ProductProjectiveSpaces(QQ, [1, 1])                 # needs sage.schemes
+         True
+-        sage: loads(dumps(H)) is H
++        sage: loads(dumps(H)) is H                                                     # needs sage.schemes
+         False
+-        sage: loads(dumps(H)) == H
++        sage: loads(dumps(H)) == H                                                     # needs sage.schemes
 diff -urN a/src/sage/categories/category_types.py b/src/sage/categories/category_types.py
 --- a/src/sage/categories/category_types.py
 +++ b/src/sage/categories/category_types.py
