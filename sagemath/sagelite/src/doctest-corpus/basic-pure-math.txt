@@ -178,6 +178,9 @@ src/sage/categories/commutative_additive_monoids.py
 src/sage/categories/enumerated_sets.py
 src/sage/categories/commutative_additive_semigroups.py
 src/sage/categories/commutative_ring_ideals.py
+src/sage/categories/complete_discrete_valuation.py
+src/sage/categories/coercion_methods.pyx
+src/sage/categories/dedekind_domains.py
 src/sage/categories/facade_sets.py
 src/sage/categories/filtered_algebras.py
 src/sage/categories/filtered_algebras_with_basis.py
@@ -195,6 +198,7 @@ src/sage/categories/finite_monoids.py
 src/sage/categories/finite_semigroups.py
 src/sage/categories/finitely_generated_magmas.py
 src/sage/categories/finitely_generated_semigroups.py
+src/sage/categories/function_fields.py
 src/sage/categories/semigroups.py
 src/sage/categories/semirings.py
 src/sage/categories/rngs.py
@@ -211,8 +215,13 @@ src/sage/categories/graded_hopf_algebras_with_basis.py
 src/sage/categories/graded_modules_with_basis.py
 src/sage/categories/groups.py
 src/sage/categories/group_algebras.py
+src/sage/categories/h_trivial_semigroups.py
+src/sage/categories/hecke_modules.py
 src/sage/categories/hopf_algebras.py
 src/sage/categories/hopf_algebras_with_basis.py
+src/sage/categories/isomorphic_objects.py
+src/sage/categories/j_trivial_semigroups.py
+src/sage/categories/l_trivial_semigroups.py
 src/sage/categories/magmas.py
 src/sage/categories/magmas_and_additive_magmas.py
 src/sage/categories/distributive_magmas_and_additive_magmas.py
@@ -222,8 +231,11 @@ src/sage/categories/monoid_algebras.py
 src/sage/categories/monoids.py
 src/sage/categories/noetherian_rings.py
 src/sage/categories/objects.py
+src/sage/categories/partially_ordered_monoids.py
+src/sage/categories/permutation_groups.py
 src/sage/categories/pointed_sets.py
 src/sage/categories/quotients.py
+src/sage/categories/r_trivial_semigroups.py
 src/sage/categories/semisimple_algebras.py
 src/sage/categories/sets_cat.py
 src/sage/categories/sets_with_grading.py
@@ -236,7 +248,11 @@ src/sage/categories/super_modules.py
 src/sage/categories/super_modules_with_basis.py
 src/sage/categories/super_hopf_algebras_with_basis.py
 src/sage/categories/supercommutative_algebras.py
+src/sage/categories/dual.py
+src/sage/categories/realizations.py
+src/sage/categories/signed_tensor.py
 src/sage/categories/subobjects.py
+src/sage/categories/tensor.py
 src/sage/categories/topological_spaces.py
 src/sage/categories/unital_algebras.py
 src/sage/categories/vector_spaces.py

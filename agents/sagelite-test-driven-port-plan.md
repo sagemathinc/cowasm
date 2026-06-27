@@ -4949,6 +4949,51 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-division-rings-make.sqlite3`. The saved
 block- and file-failure cluster queries are empty.
 
+Focused category utility corpus-growth pass:
+
+```text
+sage -t passed: 107 passed, 0 failed, 93 skipped
+```
+
+That 16-file make-target validation adds
+`sage/categories/complete_discrete_valuation.py`,
+`sage/categories/coercion_methods.pyx`,
+`sage/categories/dedekind_domains.py`,
+`sage/categories/function_fields.py`,
+`sage/categories/h_trivial_semigroups.py`,
+`sage/categories/hecke_modules.py`,
+`sage/categories/isomorphic_objects.py`,
+`sage/categories/j_trivial_semigroups.py`,
+`sage/categories/l_trivial_semigroups.py`,
+`sage/categories/partially_ordered_monoids.py`,
+`sage/categories/permutation_groups.py`,
+`sage/categories/r_trivial_semigroups.py`, `sage/categories/dual.py`,
+`sage/categories/realizations.py`, `sage/categories/signed_tensor.py`, and
+`sage/categories/tensor.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 280
+non-comment entries.
+
+These files require no new WASI source tags or startup namespace changes.
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary 16-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-category-utility-make.sqlite3`. The saved
+block- and file-failure cluster queries are empty.
+
+The same sampling pass keeps `sage/categories/category_types.py`,
+`sage/categories/homsets.py`,
+`sage/categories/covariant_functorial_construction.py`,
+`sage/categories/functor.pyx`, `sage/categories/poor_man_map.py`,
+`sage/categories/map.pyx`, and `sage/categories/morphism.pyx` out because
+they still have focused block-level failures. It keeps
+`sage/categories/euclidean_domains.py` out because its polynomial
+`gcd_free_basis` example times out in the default node profile, and keeps
+`sage/categories/quotient_fields.py` out because its rational-function
+example still reaches a WASM signature mismatch. Skipped-only files such as
+`sage/categories/basic.py`, `sage/categories/groupoid.py`,
+`sage/categories/algebra_functor.py`, `sage/categories/finite_groups.py`, and
+`sage/categories/g_sets.py` also remain out because they add no passing
+default-profile blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
