@@ -5805,6 +5805,35 @@ string conversion, and `classgraph.py` imports the unavailable graph backend.
 `map_threaded.py` contributes only skipped rows, and `copying.py` contributes
 no doctest blocks under the default profile.
 
+Focused misc support corpus-growth pass:
+
+```text
+sage -t passed: 171 passed, 0 failed, 26 skipped
+```
+
+That seven-file focused validation adds `sage/misc/function_mangling.pyx`,
+`sage/misc/inherit_comparison.pyx`, `sage/misc/namespace_package.py`,
+`sage/misc/nested_class.pyx`, `sage/misc/random_testing.py`,
+`sage/misc/timing.py`, and `sage/misc/unknown.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 361
+non-comment entries. The batch contributes focused support coverage for
+function-name mangling, comparison inheritance, namespace-package helpers,
+nested classes, randomized testing helpers, timing, and Sage's unknown-value
+sentinel without new WASI source tags or startup namespace changes.
+
+Direct focused reruns recorded `function_mangling.pyx: 31 passed, 0 failed,
+1 skipped`, `inherit_comparison.pyx: 2 passed, 0 failed, 5 skipped`,
+`namespace_package.py: 7 passed, 0 failed, 0 skipped`,
+`nested_class.pyx: 66 passed, 0 failed, 9 skipped`,
+`random_testing.py: 18 passed, 0 failed, 1 skipped`,
+`timing.py: 25 passed, 0 failed, 10 skipped`, and
+`unknown.py: 22 passed, 0 failed, 0 skipped`. The saved block- and
+file-failure cluster queries are empty. The same sampling pass kept
+`bindable_class.py`, `converting_dict.py`, `object_multiplexer.py`,
+`prandom.py`, and `temporary_file.py` out of the quiet corpus because they
+still have focused doctest failures under the default browser-compatible
+profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
