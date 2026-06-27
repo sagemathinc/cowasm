@@ -259,6 +259,7 @@ src/sage/categories/isomorphic_objects.py
 src/sage/categories/j_trivial_semigroups.py
 src/sage/categories/l_trivial_semigroups.py
 src/sage/categories/lie_groups.py
+src/sage/categories/magmatic_algebras.py
 src/sage/categories/magmas.py
 src/sage/categories/magmas_and_additive_magmas.py
 src/sage/categories/distributive_magmas_and_additive_magmas.py

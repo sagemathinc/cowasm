@@ -4159,6 +4159,12 @@ diff -urN a/src/sage/categories/morphism.pyx b/src/sage/categories/morphism.pyx
 @@ -813 +813 @@
 -            sage: f._extra_slots_test()
 +            sage: f._extra_slots_test()                                               # random
+diff -urN a/src/sage/categories/magmatic_algebras.py b/src/sage/categories/magmatic_algebras.py
+--- a/src/sage/categories/magmatic_algebras.py
++++ b/src/sage/categories/magmatic_algebras.py
+@@ -255 +255,2 @@
++                        sage: # needs sage.combinat sage.groups sage.modules
+                         sage: B = DescentAlgebra(QQ,3).B()
 diff -urN a/src/sage/categories/graded_algebras_with_basis.py b/src/sage/categories/graded_algebras_with_basis.py
 --- a/src/sage/categories/graded_algebras_with_basis.py
 +++ b/src/sage/categories/graded_algebras_with_basis.py

@@ -5625,6 +5625,29 @@ sampling pass kept `sage/categories/quotient_fields.py`,
 the first two still reach existing polynomial/number-field tuple assertion
 traps, while the third times out in polynomial radical computation.
 
+Focused magmatic-algebras category corpus-growth pass:
+
+```text
+sage -t passed: 12 passed, 0 failed, 35 skipped
+```
+
+That one-file focused validation adds
+`sage/categories/magmatic_algebras.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 334
+non-comment entries. The added WASI source patch classifies the
+`DescentAlgebra(QQ,3).B()` finite-dimensional conversion example block as
+`# needs sage.combinat sage.groups sage.modules`, matching the adjacent
+already-tagged descent-algebra generator examples and avoiding cascading
+startup-name failures for `B`, `B_fda`, and `e`.
+
+Focused direct validation recorded `magmatic_algebras.py: 12 passed, 0
+failed, 35 skipped`. Focused make-target validation rebuilt and patched the
+Sagelite source copy from scratch, then ran a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-magmatic-algebras-make.sqlite3`; the saved
+block- and file-failure cluster queries are empty. The runner version remains
+44.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
