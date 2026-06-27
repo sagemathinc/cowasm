@@ -159,6 +159,7 @@ src/sage/combinat/words/suffix_trees.py
 src/sage/combinat/words/word_generators.py
 src/sage/combinat/words/words.py
 src/sage/categories/enumerated_sets.py
+src/sage/categories/finite_enumerated_sets.py
 src/sage/categories/finite_sets.py
 src/sage/sets/integer_range.py
 src/sage/sets/finite_set_maps.py

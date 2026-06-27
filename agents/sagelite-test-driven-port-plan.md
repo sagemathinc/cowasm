@@ -4318,6 +4318,30 @@ cluster queries are empty. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 40,
 and about 1,325 seconds of elapsed time.
 
+Focused category corpus-growth pass after the 2026-06-27
+finite-enumerated-sets sampling:
+
+```text
+sage -t passed: 122 passed, 0 failed, 16 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/finite_enumerated_sets.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 184
+non-comment entries. The file required no new WASI source tags or startup
+namespace changes; the existing `FiniteEnumeratedSets` startup seed covers its
+upstream examples in the default node profile. The focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-finite-enumerated-corpus.sqlite3`.
+
+Sampling in the same pass kept `sage/categories/sets_cat.py`,
+`sage/categories/finite_semigroups.py`, `sage/categories/finite_monoids.py`,
+and `sage/categories/modules.py` out of the quiet corpus because they still
+have focused doctest failures. `sage/categories/posets.py` is also still out:
+under the default browser-profile tags it currently adds only skipped rows, so
+it would not improve the non-skipped compatibility dashboard.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
