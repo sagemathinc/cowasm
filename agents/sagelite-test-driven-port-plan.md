@@ -5780,6 +5780,31 @@ kept skipped-only category wrappers such as `algebra_functor.py`,
 while `fields.py`, `finite_fields.py`, `commutative_rings.py`, and
 `abstract_method.py` still need separate runtime-boundary or mismatch triage.
 
+Focused misc utility corpus-growth pass:
+
+```text
+sage -t passed: 339 passed, 0 failed, 36 skipped
+```
+
+That nine-file focused validation adds `sage/misc/c3.pyx`,
+`sage/misc/compat.py`, `sage/misc/element_with_label.py`,
+`sage/misc/lazy_string.pyx`, `sage/misc/method_decorator.py`,
+`sage/misc/multireplace.py`, `sage/misc/python.py`, `sage/misc/repr.py`, and
+`sage/misc/sage_unittest.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 354
+non-comment entries. The batch expands compact Sage utility coverage for C3
+linearization, compatibility helpers, labelled elements, lazy strings, method
+decorators, multiple replacement, Python-helper predicates, repr helpers, and
+Sage unittest helpers without new WASI source tags or startup namespace
+changes.
+
+Direct sampling kept several nearby files out of the quiet corpus:
+`decorators.py` still has deprecated-option output drift, `defaults.py` misses
+the bare `beta` symbolic name, `lazy_format.py` intentionally raises during
+string conversion, and `classgraph.py` imports the unavailable graph backend.
+`map_threaded.py` contributes only skipped rows, and `copying.py` contributes
+no doctest blocks under the default profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
