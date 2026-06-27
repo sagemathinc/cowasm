@@ -181,4 +181,6 @@ src/sage/rings/finite_rings/finite_field_constructor.py
 src/sage/rings/polynomial/commutative_polynomial.pyx
 src/sage/rings/polynomial/convolution.py
 src/sage/rings/polynomial/polynomial_ring_constructor.py
+src/sage/modules/misc.py
+src/sage/modules/module.pyx
 src/sage/matrix/constructor.pyx

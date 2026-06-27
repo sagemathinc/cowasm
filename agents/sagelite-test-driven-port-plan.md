@@ -1265,6 +1265,33 @@ database, so this run is recorded as a checked SQLite dashboard rather than a
 clean make-target exit. A follow-up runner lifecycle pass should close this
 remaining post-run lock/exit path.
 
+Focused module-basics corpus-growth pass after the 2026-06-27 module
+infrastructure sampling:
+
+```text
+sage -t passed: 46 passed, 0 failed, 26 skipped
+```
+
+That two-file make-target validation adds `sage/modules/misc.py` and
+`sage/modules/module.pyx` to the curated corpus. These files give the dashboard
+foundational module-category and module-parent coverage without broadening into
+the heavier free-module implementation. Focused sampling kept
+`sage/modules/free_module.py` and `sage/modules/free_module_element.pyx` out of
+the quiet corpus for now: the former still reaches a matrix `__setitem__`
+function-signature mismatch while computing a sparse basis matrix, and the
+latter reaches the existing matrix-action table-index trap through
+`outer_product`.
+
+The focused validation used the `test-sage-doctest-corpus` make target with a
+temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-module-corpus.sqlite3`. A follow-up full
+corpus attempt wrote `/tmp/sagelite-corpus-after-module-basics.sqlite3` and
+left the run table with a passing aggregate, but the parent Node process again
+stayed idle while holding the SQLite lock. After interruption, the `files`
+table had persisted only 153 of the 181 corpus entries and was missing the
+trailing set, finite-ring, polynomial, module, and matrix files, so that
+attempt is not recorded as a checked full-dashboard baseline.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
