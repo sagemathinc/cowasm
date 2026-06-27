@@ -4830,6 +4830,38 @@ still reaches a WASM `memory access out of bounds` trap, and keeps
 `sage/categories/unique_factorization_domains.py` out because their
 polynomial gcd/radical examples time out in the current default node profile.
 
+Focused small-category wrapper corpus-growth pass:
+
+```text
+sage -t passed: 129 passed, 0 failed, 10 skipped
+```
+
+That ten-file make-target validation adds
+`sage/categories/algebra_ideals.py`,
+`sage/categories/commutative_algebra_ideals.py`,
+`sage/categories/commutative_ring_ideals.py`,
+`sage/categories/facade_sets.py`, `sage/categories/noetherian_rings.py`,
+`sage/categories/objects.py`, `sage/categories/pointed_sets.py`,
+`sage/categories/sets_with_grading.py`,
+`sage/categories/sets_with_partial_maps.py`, and
+`sage/categories/topological_spaces.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 258 non-comment
+entries. These files require no new WASI source tags or startup namespace
+changes.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary ten-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-small-category-followup.sqlite3`. The saved
+block- and file-failure cluster queries are empty. The latest run metadata
+records CoWasm commit `a1d5cd0cddd549b8c1908e5605e96b7301f3ed76`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and
+runner version 42. The same sampling pass keeps
+`sage/categories/ring_ideals.py` out because it still has focused doctest
+failures, keeps `sage/categories/division_rings.py` out because it has focused
+semantic failures, and keeps `sage/categories/metric_spaces.py` out because it
+still has mixed failures and skipped graph/topology boundary coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
