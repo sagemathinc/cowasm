@@ -4407,6 +4407,32 @@ test-sage-doctest-corpus` with a temporary two-file corpus,
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-category-monoids-corpus.sqlite3`. The
 saved block- and file-failure cluster queries are empty.
 
+Focused sets-category corpus-growth pass:
+
+```text
+sage -t passed: 342 passed, 0 failed, 167 skipped
+```
+
+That one-file make-target validation adds `sage/categories/sets_cat.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 189 non-comment
+entries. The doctest runner now seeds the lightweight `AdditiveMagmas`,
+`EuclideanDomains`, `Rings`, and `End` constructors in the common startup
+namespace, and the WASI `sage.all` patch exposes the same names for REPL
+parity on a fresh patched Sagelite source copy. This clears the sampled
+startup-name failures in `sets_cat.py`, including the `End(QQ).identity()`
+example whose dependent inverse-display checks previously compared against a
+stale doctest value after the setup assignment failed.
+
+The focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-sets-cat-make.sqlite3`. The saved block-
+and file-failure cluster queries are empty. The latest run metadata records
+CoWasm commit `38c936e10f8bfd4af89101b65af48097171a70c4`, Sagelite package
+commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and runner
+version 41.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
