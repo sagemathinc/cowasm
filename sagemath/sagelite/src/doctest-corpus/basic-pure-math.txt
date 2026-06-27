@@ -246,6 +246,7 @@ src/sage/categories/graded_coalgebras.py
 src/sage/categories/graded_coalgebras_with_basis.py
 src/sage/categories/graded_hopf_algebras.py
 src/sage/categories/graded_hopf_algebras_with_basis.py
+src/sage/categories/graded_modules.py
 src/sage/categories/graded_modules_with_basis.py
 src/sage/categories/graphs.py
 src/sage/categories/groups.py

@@ -5556,6 +5556,29 @@ from scratch, then ran a temporary one-file corpus with
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-homset-make.sqlite3`; the saved block- and
 file-failure cluster queries are empty. The runner version is now 44.
 
+Focused graded-modules category corpus-growth pass:
+
+```text
+sage -t passed: 16 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds `sage/categories/graded_modules.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 331 non-comment
+entries. The doctest runner now seeds the lightweight `GradedAlgebras`
+category constructor in the common startup namespace, and the WASI `sage.all`
+patch exposes the same constructor for REPL parity on a fresh patched
+Sagelite source copy. This clears the file's only focused failure cluster,
+where upstream examples use `GradedAlgebras(QQ)` before checking graded
+module category behavior.
+
+Focused make-target validation rebuilt and patched the Sagelite source copy
+from scratch, then ran a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/tmp/sagelite-graded-modules-make.sqlite3`; the saved
+block- and file-failure cluster queries are empty. The runner version remains
+44.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
