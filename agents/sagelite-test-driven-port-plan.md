@@ -1766,6 +1766,29 @@ doctest blocks. It also kept low-signal skip-only or zero-block files such as
 `sage/misc/sageinspect.py` and `sage/misc/sage_timeit.py` follow-up
 runtime/display clusters visible for future targeted work.
 
+Focused small helper corpus-growth pass:
+
+```text
+sage -t passed: 21 passed, 0 failed, 1 skipped
+```
+
+That three-file make-target validation adds `sage/cpython/type.pyx`,
+`sage/matrix/berlekamp_massey.py`, and `sage/monoids/string_ops.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 427
+non-comment entries. These files add small but useful Cython type-helper,
+Berlekamp-Massey, and monoid string-operation coverage without new WASI source
+tags or startup namespace changes.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-small-helper-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The same direct
+sampling pass kept `sage/structure/nonexact.py` and
+`sage/structure/debug_options.pyx` out of the quiet corpus because they still
+have focused symbolic-startup and debug-option display failures.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

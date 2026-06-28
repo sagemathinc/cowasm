@@ -29,6 +29,7 @@ src/sage/arith/srange.pyx
 src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
+src/sage/cpython/type.pyx
 src/sage/combinat/SJT.py
 src/sage/combinat/combinat.py
 src/sage/combinat/combinat_cython.pyx
@@ -349,6 +350,7 @@ src/sage/rings/polynomial/flatten.py
 src/sage/rings/polynomial/integer_valued_polynomials.py
 src/sage/rings/polynomial/polynomial_ring_constructor.py
 src/sage/rings/polynomial/toy_variety.py
+src/sage/matrix/berlekamp_massey.py
 src/sage/misc/abstract_method.py
 src/sage/misc/banner.py
 src/sage/misc/bindable_class.py
@@ -414,6 +416,7 @@ src/sage/misc/unknown.py
 src/sage/misc/verbose.py
 src/sage/misc/viewer.py
 src/sage/misc/weak_dict.pyx
+src/sage/monoids/string_ops.py
 src/sage/modules/free_module_homspace.py
 src/sage/modules/misc.py
 src/sage/modules/module.pyx
