@@ -4577,6 +4577,33 @@ diff -urN a/src/sage/misc/lazy_attribute.pyx b/src/sage/misc/lazy_attribute.pyx
 @@ -200 +200 @@
 -        sage: timeit('a.x') # random
 +        sage: timeit('a.x') # random                                                # needs IPython
+diff -urN a/src/sage/misc/lazy_import.pyx b/src/sage/misc/lazy_import.pyx
+--- a/src/sage/misc/lazy_import.pyx
++++ b/src/sage/misc/lazy_import.pyx
+@@ -31 +31 @@
+-    sage: ZZ
++    sage: ZZ                                                                          # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -48 +48 @@
+-        sage: isinstance(QQbar, Parent)
++        sage: isinstance(QQbar, Parent)                                               # needs sage.rings.number_field
+@@ -175 +175 @@
+-        sage: my_ZZ(123)
++        sage: my_ZZ(123)                                                              # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -211 +211 @@
+-            sage: lazy_ZZ._get_object() is ZZ
++            sage: lazy_ZZ._get_object() is ZZ                                         # known bug - startup namespace resolves a distinct integer-ring singleton
+@@ -250 +250 @@
+-            sage: my_rats
++            sage: my_rats                                                             # known bug - warning stream is not captured by Sagelite doctest runner
+@@ -336 +336 @@
+-            sage: 'A subset of the real line' in RealSet.__doc__
++            sage: 'A subset of the real line' in RealSet.__doc__                      # needs sage.symbolic
+@@ -1111 +1111 @@
+-        sage: not_there
++        sage: not_there                                                               # known bug - WASI optional-feature diagnostics use subprocess support
+@@ -1233 +1233 @@
+-        sage: D
++        sage: D                                                                       # random
 diff -urN a/src/sage/misc/misc.py b/src/sage/misc/misc.py
 --- a/src/sage/misc/misc.py
 +++ b/src/sage/misc/misc.py

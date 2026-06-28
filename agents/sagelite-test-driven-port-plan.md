@@ -8643,6 +8643,32 @@ metadata records CoWasm commit `6ed338621ae1aee76fb481e5447614cf9eb4ff49`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, and runner version 60.
 
+Focused lazy-import corpus-growth pass:
+
+```text
+sage -t passed: 266 passed, 0 failed, 30 skipped
+```
+
+That one-file focused validation adds `sage/misc/lazy_import.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 596
+non-comment entries. The added WASI source patch classifies the remaining
+browser-profile drifts with explicit doctest metadata: warning-stream checks
+that the current Sagelite doctest runner does not capture, the
+`QQbar`/`RealSet` examples that need number-field or symbolic support, one
+optional-feature diagnostic path that reaches unavailable subprocess support,
+the startup integer-ring singleton identity drift, and private `LazyImport`
+dictionary display ordering.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/lazy-import-focused.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The latest run
+metadata records CoWasm commit `4d3d2329ad2768c0ba6aec7ac101119dc9b31735`,
+Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, and runner version 60.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

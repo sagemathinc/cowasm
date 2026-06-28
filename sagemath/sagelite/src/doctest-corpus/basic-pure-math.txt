@@ -471,6 +471,7 @@ src/sage/misc/inherit_comparison.pyx
 src/sage/misc/instancedoc.pyx
 src/sage/misc/lazy_attribute.pyx
 src/sage/misc/lazy_format.py
+src/sage/misc/lazy_import.pyx
 src/sage/misc/lazy_import_cache.py
 src/sage/misc/lazy_list.pyx
 src/sage/misc/latex_macros.py
