@@ -479,6 +479,7 @@ src/sage/matrix/matrix_misc.py
 src/sage/doctest/check_tolerance.py
 src/sage/doctest/marked_output.py
 src/sage/logic/booleval.py
+src/sage/logic/boolformula.py
 src/sage/logic/logic.py
 src/sage/logic/logicparser.py
 src/sage/logic/logictable.py

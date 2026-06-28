@@ -7599,6 +7599,32 @@ The run records `debug.pyx: 10 passed, 0 failed, 4 skipped`,
 `character_art.py: 98 passed, 0 failed, 5 skipped`, and
 `character_art_factory.py: 32 passed, 0 failed, 26 skipped`.
 
+Focused propositional-logic formula corpus-growth pass:
+
+```text
+sage -t passed: 219 passed, 0 failed, 2 skipped
+```
+
+That one-file focused validation adds `sage/logic/boolformula.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 488
+non-comment entries. The file contributes substantial propositional-formula
+coverage on top of the existing logic parser and truth-table modules without
+new WASI source tags or startup namespace changes.
+
+Direct sampling used the patched source tree with `sage -t --profile node`,
+`--timeout 120`, and
+`--sqlite /home/user/cowasm/.tmp/sagelite-runs/next-helper-sample.sqlite3`.
+The same batch kept `sage/doctest/parsing.py`, `sage/doctest/rif_tol.py`, and
+`sage/doctest/util.py` out of the quiet corpus because they still have focused
+doctest-runner state, cysignals alarm, and output-capture clusters. It also
+kept the sampled `sage/cpython` helper wrappers out because they contributed
+only skipped or zero-block rows under the default profile. Focused make-target
+validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/boolformula-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
