@@ -7932,6 +7932,29 @@ while validating the inline metadata path; rerunning
 a workspace temp directory now passes the doctest SQLite smoke with the
 expected inline random and inline skip metadata.
 
+Focused low-level extension-helper corpus-growth pass:
+
+```text
+sage -t passed: 4 passed, 0 failed, 7 skipped
+```
+
+That two-file focused validation adds `sage/ext/fast_eval.pyx` and
+`sage/ext/memory.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 502
+non-comment entries. Direct sampling first found `fast_eval.pyx` and
+`memory.pyx` as the only clean runnable files in a small helper batch covering
+remaining `sage/cpython`, `sage/data_structures`, `sage/ext`, and adjacent
+misc helpers. The broader sampled files were skipped-only, empty, or still
+exposed known number-field, source-order, or symbolic/runtime clusters, so
+they remain outside the quiet browser-compatible corpus.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` after refreshing the patched Sagelite build tree,
+with a temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/ext-helper-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
