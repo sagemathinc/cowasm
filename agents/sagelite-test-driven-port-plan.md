@@ -1725,6 +1725,47 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-toy-variety-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused cachefunc corpus-growth pass:
+
+```text
+sage -t passed: 633 passed, 0 failed, 225 skipped
+```
+
+That one-file make-target validation adds `sage/misc/cachefunc.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 424
+non-comment entries. Direct sampling first recorded 634 passed blocks, 32
+failed blocks, and 192 skipped blocks. The failures clustered around
+multivariate ideal generator examples that import the stripped
+`sage.rings.polynomial.plural` backend, parallel `precompute(...)` examples
+that require `cysignals.alarm`, Groebner-basis cache placeholders that depend
+on Singular-backed setup, object-address repr drift, deprecated-alias warning
+display drift, and one invalid-argument WASI doc lookup.
+
+The added WASI source patch marks those backend and display examples as
+`# needs`, `# random`, or deferred `# known bug` metadata while preserving the
+ordinary cached-function and cached-method behavior as default-profile
+coverage. Focused validation used the `test-sage-doctest-corpus` make target
+after rebuilding a fresh patched Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-cachefunc-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
+The same sampling pass kept nearby polynomial files out of the quiet corpus:
+`sage/rings/polynomial/toy_buchberger.py` still has pexpect setup, number-field
+element attribute, and dependent name-failure clusters;
+`sage/rings/polynomial/toy_d_basis.py` still has plural-backend and algorithm
+output-mismatch clusters; `sage/rings/polynomial/omega.py` times out in the
+default profile; and `sage/rings/polynomial/polynomial_fateman.py` has no
+doctest blocks. It also kept low-signal skip-only or zero-block files such as
+`sage/misc/package_dir.py`, `sage/misc/copying.py`, `sage/misc/proof.py`,
+`sage/misc/mathml.py`, `sage/modules/diamond_cutting.py`,
+`sage/modules/complex_double_vector.py`, and
+`sage/modules/vector_double_dense.pyx` out of the corpus, while leaving
+`sage/misc/sageinspect.py` and `sage/misc/sage_timeit.py` follow-up
+runtime/display clusters visible for future targeted work.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

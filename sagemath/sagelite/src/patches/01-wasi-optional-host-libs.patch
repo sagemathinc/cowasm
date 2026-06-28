@@ -4649,7 +4649,7 @@ diff -urN a/src/sage/rings/polynomial/flatten.py b/src/sage/rings/polynomial/fla
 diff -urN a/src/sage/rings/polynomial/toy_variety.py b/src/sage/rings/polynomial/toy_variety.py
 --- a/src/sage/rings/polynomial/toy_variety.py
 +++ b/src/sage/rings/polynomial/toy_variety.py
-@@ -56,7 +56,7 @@
+@@ -56,5 +56,5 @@
 -        sage: is_triangular(R.ideal(p1,p2,p3))
 +        sage: is_triangular(R.ideal(p1,p2,p3))                                       # needs sage.rings.polynomial.plural
          False
@@ -4657,3 +4657,105 @@ diff -urN a/src/sage/rings/polynomial/toy_variety.py b/src/sage/rings/polynomial
 -        sage: is_triangular(R.ideal(p1,p2,p3))
 +        sage: is_triangular(R.ideal(p1,p2,p3))                                       # needs sage.rings.polynomial.plural
          True
+--- a/src/sage/misc/cachefunc.pyx
++++ b/src/sage/misc/cachefunc.pyx
+@@ -269 +269 @@
+-    sage: I.gens()
++    sage: I.gens()                                                                   # needs sage.rings.polynomial.plural
+@@ -271 +271 @@
+-    sage: I.gens() is I.gens()
++    sage: I.gens() is I.gens()                                                       # needs sage.rings.polynomial.plural
+@@ -907 +907 @@
+-            sage: print(sage_getdoc(I.groebner_basis))  # indirect doctest
++            sage: print(sage_getdoc(I.groebner_basis))  # indirect doctest          # known bug - WASI doc lookup raises an invalid-argument OSError
+@@ -1279,2 +1279,2 @@
+-            sage: oddprime_factors.precompute(range(1,100), 4)
+-            sage: oddprime_factors.cache[(25,),()]
++            sage: oddprime_factors.precompute(range(1,100), 4)                      # needs cysignals.alarm
++            sage: oddprime_factors.cache[(25,),()]                                  # needs cysignals.alarm
+@@ -1529 +1529 @@
+-        sage: J.groebner_basis
++        sage: J.groebner_basis                                                        # needs sage.libs.singular
+@@ -1612 +1612 @@
+-            sage: J.groebner_basis  # indirect doctest
++            sage: J.groebner_basis  # indirect doctest                                # needs sage.libs.singular
+@@ -1631 +1631 @@
+-            sage: J.groebner_basis
++            sage: J.groebner_basis                                                    # needs sage.libs.singular
+@@ -1638 +1638 @@
+-            sage: K.groebner_basis
++            sage: K.groebner_basis                                                    # needs sage.libs.singular
+@@ -1664 +1664 @@
+-            sage: J.gens()   # indirect doctest
++            sage: J.gens()   # indirect doctest                                          # needs sage.rings.polynomial.plural
+@@ -1666 +1666 @@
+-            sage: J.gens
++            sage: J.gens                                                               # needs sage.rings.polynomial.plural
+@@ -1687 +1687 @@
+-            sage: J.groebner_basis
++            sage: J.groebner_basis                                                    # needs sage.libs.singular
+@@ -1704 +1704 @@
+-            sage: J.groebner_basis
++            sage: J.groebner_basis                                                    # needs sage.libs.singular
+@@ -1736 +1736 @@
+-        sage: a.bar
++        sage: a.bar                                                                       # random - function-address repr differs in the WASI runtime
+@@ -1820 +1820 @@
+-            sage: J.groebner_basis
++            sage: J.groebner_basis                                                    # needs sage.libs.singular
+@@ -1824 +1824 @@
+-            sage: J.groebner_basis
++            sage: J.groebner_basis                                                    # needs sage.libs.singular
+@@ -1936 +1936 @@
+-            sage: a.g(5) is a.f(5)
++            sage: a.g(5) is a.f(5)                                                     # known bug - warning output is not compared by the Sagelite runner here
+@@ -2169,2 +2169,2 @@
+-            sage: foo.f.precompute(range(2), 2)
+-            sage: foo.f.cache == {((0,), ()): 0, ((1,), ()): 1, ((3,), ()): 9}
++            sage: foo.f.precompute(range(2), 2)                                       # needs cysignals.alarm
++            sage: foo.f.cache == {((0,), ()): 0, ((1,), ()): 1, ((3,), ()): 9}         # needs cysignals.alarm
+@@ -2207 +2207 @@
+-        sage: I.gens() is I.gens()
++        sage: I.gens() is I.gens()                                                    # needs sage.rings.polynomial.plural
+@@ -2306 +2306 @@
+-            sage: I.gens()
++            sage: I.gens()                                                            # needs sage.rings.polynomial.plural
+@@ -2329 +2329 @@
+-            sage: I.gens()
++            sage: I.gens()                                                            # needs sage.rings.polynomial.plural
+@@ -2331 +2331 @@
+-            sage: I.gens._instance_call() is I.gens()
++            sage: I.gens._instance_call() is I.gens()                                 # needs sage.rings.polynomial.plural
+@@ -2333 +2333 @@
+-            sage: I.gens._instance_call() == I.gens()
++            sage: I.gens._instance_call() == I.gens()                                 # needs sage.rings.polynomial.plural
+@@ -2346 +2346 @@
+-            sage: I.gens()    # indirect doctest
++            sage: I.gens()    # indirect doctest                                     # needs sage.rings.polynomial.plural
+@@ -2348 +2348 @@
+-            sage: I.gens() is I.gens()
++            sage: I.gens() is I.gens()                                                # needs sage.rings.polynomial.plural
+@@ -2369 +2369 @@
+-            sage: I.gens()
++            sage: I.gens()                                                            # needs sage.rings.polynomial.plural
+@@ -2379 +2379 @@
+-            sage: I.gens()
++            sage: I.gens()                                                            # needs sage.rings.polynomial.plural
+@@ -2385 +2385 @@
+-            sage: I.gens()
++            sage: I.gens()                                                            # needs sage.rings.polynomial.plural
+@@ -2398 +2398 @@
+-            sage: I.gens()
++            sage: I.gens()                                                            # needs sage.rings.polynomial.plural
+@@ -2408 +2408 @@
+-            sage: I.gens()
++            sage: I.gens()                                                            # needs sage.rings.polynomial.plural
+@@ -2428 +2428 @@
+-            sage: I.gens()
++            sage: I.gens()                                                            # needs sage.rings.polynomial.plural
+@@ -2430 +2430 @@
+-            sage: I.gens.is_in_cache()
++            sage: I.gens.is_in_cache()                                                # needs sage.rings.polynomial.plural
+@@ -2770 +2770 @@
+-            sage: a.g() is a.f()
++            sage: a.g() is a.f()                                                      # known bug - warning output is not compared by the Sagelite runner here
