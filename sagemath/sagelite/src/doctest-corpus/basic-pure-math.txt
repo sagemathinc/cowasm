@@ -29,6 +29,7 @@ src/sage/arith/srange.pyx
 src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
+src/sage/cpython/atexit.pyx
 src/sage/cpython/type.pyx
 src/sage/cpython/dict_del_by_value.pyx
 src/sage/combinat/SJT.py
@@ -474,9 +475,11 @@ src/sage/matrix/constructor.pyx
 src/sage/matrix/docs.py
 src/sage/matrix/matrix_misc.py
 src/sage/doctest/check_tolerance.py
+src/sage/doctest/marked_output.py
 src/sage/logic/booleval.py
 src/sage/logic/logictable.py
 src/sage/probability/random_variable.py
+src/sage/typeset/ascii_art.py
 src/sage/typeset/unicode_characters.py
 src/sage/typeset/symbols.py
 src/sage/typeset/unicode_art.py

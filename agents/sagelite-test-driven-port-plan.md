@@ -7538,6 +7538,34 @@ pass kept `sage/doctest/marked_output.py`, `sage/typeset/ascii_art.py`, and
 doctest parser null-byte handling, IPython display-shell, and `atexit` output
 formatting mismatches.
 
+Focused display/encoding utility corpus-growth pass:
+
+```text
+sage -t passed: 42 passed, 0 failed, 26 skipped
+```
+
+That three-file focused validation adds `sage/cpython/atexit.pyx`,
+`sage/doctest/marked_output.py`, and `sage/typeset/ascii_art.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 480 non-comment
+entries. The added WASI source patch classifies the remaining narrow
+browser-profile boundaries: `marked_output.py`'s non-ASCII microsecond literal
+still reaches the Sagelite source-conversion null-byte gap, `ascii_art.py`'s
+display hook setup depends on IPython's test shell, and `atexit.pyx` exposes
+function-address/list formatting drift in registered-handler displays. The
+ordinary tolerance-marker, ASCII-art, and `restore_atexit` behavior remains
+active default-profile coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/display-encoding-utilities-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully;
+the saved block- and file-failure cluster queries are empty. The run records
+`atexit.pyx: 19 passed, 0 failed, 0 skipped`,
+`marked_output.py: 20 passed, 0 failed, 1 skipped`, and
+`ascii_art.py: 3 passed, 0 failed, 25 skipped`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

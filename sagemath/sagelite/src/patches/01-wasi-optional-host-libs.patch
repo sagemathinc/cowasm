@@ -4895,6 +4895,46 @@ diff -urN a/src/sage/structure/unique_representation.py b/src/sage/structure/uni
 @@ -1047 +1047 @@
 -            sage: x.__dict__
 +            sage: x.__dict__                                                            # random
+diff -urN a/src/sage/cpython/atexit.pyx b/src/sage/cpython/atexit.pyx
+--- a/src/sage/cpython/atexit.pyx
++++ b/src/sage/cpython/atexit.pyx
+@@ -60 +60 @@
+-        sage: atexit.register(handler, 4, 5, d=6)
++        sage: atexit.register(handler, 4, 5, d=6)                                    # random
+@@ -62 +62 @@
+-        sage: with restore_atexit(clear=True):
++        sage: with restore_atexit(clear=True):                                      # random
+@@ -96 +96 @@
+-        sage: atexit.register(handler, 4, 5, d=6)
++        sage: atexit.register(handler, 4, 5, d=6)                                    # random
+@@ -98 +98 @@
+-        sage: print("Initial exit handlers:\n{}".format(_get_exithandlers()))
++        sage: print("Initial exit handlers:\n{}".format(_get_exithandlers()))       # random
+@@ -105 +105 @@
+-        sage: print("After restore_atexit:\n{}".format(_get_exithandlers()))
++        sage: print("After restore_atexit:\n{}".format(_get_exithandlers()))        # random
+@@ -115 +115 @@
+-        sage: print("After restore_atexit with clear=True:\n{}".format(
++        sage: print("After restore_atexit with clear=True:\n{}".format(             # random
+diff -urN a/src/sage/doctest/marked_output.py b/src/sage/doctest/marked_output.py
+--- a/src/sage/doctest/marked_output.py
++++ b/src/sage/doctest/marked_output.py
+@@ -43 +43 @@
+-        sage: MarkedOutput("56 µs")
++        sage: MarkedOutput("56 µs")                                                 # known bug - Sagelite source conversion mangles this non-ASCII literal
+diff -urN a/src/sage/typeset/ascii_art.py b/src/sage/typeset/ascii_art.py
+--- a/src/sage/typeset/ascii_art.py
++++ b/src/sage/typeset/ascii_art.py
+@@ -41,3 +41,4 @@
++    sage: # needs IPython
+     sage: from sage.repl.interpreter import get_test_shell
+     sage: shell = get_test_shell()
+     sage: shell.run_cell('%display ascii_art')
+@@ -68,2 +69,2 @@
+-    sage: shell.run_cell('%display simple')
+-    sage: shell.quit()
++    sage: shell.run_cell('%display simple')                                          # needs IPython
++    sage: shell.quit()                                                              # needs IPython
 diff -urN a/src/sage/misc/temporary_file.py b/src/sage/misc/temporary_file.py
 --- a/src/sage/misc/temporary_file.py
 +++ b/src/sage/misc/temporary_file.py
