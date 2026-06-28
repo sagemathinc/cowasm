@@ -416,10 +416,15 @@ src/sage/misc/unknown.py
 src/sage/misc/verbose.py
 src/sage/misc/viewer.py
 src/sage/misc/weak_dict.pyx
+src/sage/structure/element_wrapper.pyx
+src/sage/structure/factorization_integer.py
 src/sage/structure/formal_sum.py
 src/sage/structure/global_options.py
 src/sage/structure/indexed_generators.py
+src/sage/structure/list_clone.pyx
+src/sage/structure/list_clone_demo.pyx
 src/sage/structure/mutability.pyx
+src/sage/structure/richcmp.pyx
 src/sage/structure/set_factories_example.py
 src/sage/structure/support_view.py
 src/sage/structure/test_factory.py

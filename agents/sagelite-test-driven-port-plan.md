@@ -7099,6 +7099,29 @@ with a temporary three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-structure-factory-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused structure helper corpus-growth pass:
+
+```text
+sage -t passed: 644 passed, 0 failed, 5 skipped
+```
+
+That five-file focused validation adds
+`sage/structure/element_wrapper.pyx`,
+`sage/structure/factorization_integer.py`, `sage/structure/list_clone.pyx`,
+`sage/structure/list_clone_demo.pyx`, and `sage/structure/richcmp.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 444 non-comment
+entries. These files add rich comparison, list-clone, element-wrapper, and
+integer-factorization helper coverage without new WASI source tags or startup
+namespace changes.
+
+Direct sampling in the same area kept zero-block helpers such as
+`sage/structure/coerce_exceptions.py`, `sage/structure/gens_py.py`, and
+`sage/structure/sage_object_test.py` out of the corpus. It also kept
+`sage/structure/nonexact.py` and `sage/structure/debug_options.pyx` out
+because their focused doctests still have block-level failures rather than
+clean default-profile coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
