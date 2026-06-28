@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 58;
+const doctestRunnerVersion = 59;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1249,6 +1249,21 @@ def __cowasm_triple_quoted_docstrings(filename, text):
         position = content_end + len(quote)
 
 
+def __cowasm_raw_docstring_source(text, node):
+    segment = ast.get_source_segment(text, node)
+    if not segment:
+        return None
+    match = re.match(r"(?is)^\\s*(?:[rubf]+)?('''|\\\"\\\"\\\")", segment)
+    if not match:
+        return None
+    quote = match.group(1)
+    content_start = match.end()
+    content_end = segment.rfind(quote)
+    if content_end < content_start:
+        return None
+    return segment[content_start:content_end]
+
+
 def __cowasm_docstrings(filename, text):
     if not filename.endswith(".py"):
         if os.path.basename(filename) == "rational.pyx":
@@ -1281,7 +1296,12 @@ def __cowasm_docstrings(filename, text):
                 and isinstance(first.value, ast.Constant)
                 and isinstance(first.value.value, str)
             ):
-                docstrings.append((max(0, first.lineno - 1), name, first.value.value))
+                raw_docstring = __cowasm_raw_docstring_source(text, first.value)
+                docstrings.append((
+                    max(0, first.lineno - 1),
+                    name,
+                    raw_docstring if raw_docstring is not None else first.value.value,
+                ))
         for child in body:
             if isinstance(child, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
                 stack.append((f"{name}.{child.name}", child))

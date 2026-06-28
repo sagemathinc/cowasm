@@ -1965,6 +1965,32 @@ with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty; `skips-by-reason`
 groups the four skipped blocks under `optional:ipython`.
 
+Focused REPL preparser corpus-growth pass:
+
+```text
+sage -t passed: 347 passed, 0 failed, 14 skipped
+```
+
+That one-file make-target validation adds `sage/repl/preparse.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 517
+non-comment entries. Direct sampling first recorded two string-literal
+failures because the `.py` docstring collector used Python's interpreted AST
+docstring value, which removed backslashes that Sage's source-based doctest
+parser preserves. Runner version 59 now uses the raw triple-quoted docstring
+source when AST source locations are available, while keeping the old
+interpreted fallback for unusual cases.
+
+The added WASI source patch marks the `load(t)` preparser regression example
+as `# needs IPython`, because Sage's `load(...)` path imports the
+IPython-backed attach machinery in the stripped browser-compatible profile.
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/preparse-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
