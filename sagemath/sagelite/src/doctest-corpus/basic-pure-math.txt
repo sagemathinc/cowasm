@@ -572,6 +572,7 @@ src/sage/matrix/echelon_matrix.pyx
 src/sage/matrix/matrix_cdv.pyx
 src/sage/matrix/matrix_misc.py
 src/sage/matrix/strassen.pyx
+src/sage/matrix/symplectic_basis.py
 src/sage/doctest/check_tolerance.py
 src/sage/doctest/marked_output.py
 src/sage/repl/display/util.py

@@ -8690,6 +8690,32 @@ Direct sampling kept nearby matrix, module, and ring helpers out of the quiet
 corpus because they were skipped-only, zero-block, timed out, or still had
 focused block-level failures.
 
+Focused symplectic-basis corpus-growth pass:
+
+```text
+sage -t passed: 46 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds `sage/matrix/symplectic_basis.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 599
+non-comment entries. The module adds clean symplectic-basis construction
+coverage under the default node profile without new WASI source tags or
+startup namespace changes.
+
+Focused validation used the Sagelite doctest runner directly with
+`SAGELITE_DOCTEST_TIMEOUT=90` semantics through `sage -t --timeout 90` and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/symplectic-basis-focused.sqlite3`.
+Direct sampling kept nearby matrix and module helpers out of the quiet corpus:
+`matrix/operation_table.py`, `matrix/tests.py`,
+`modules/free_module_pseudohomspace.py`, `modules/free_module_pseudomorphism.py`,
+and `modules/module_functors.py` still have focused block-level failures;
+`matrix/special.py` times out in a random-matrix density loop; and
+`matrix/compute_J_ideal.py`, `matrix/benchmark.py`, `modules/numpy_util.pyx`,
+`modules/complex_double_vector.py`, `typeset/all.py`, and the sampled REPL
+helpers are skipped-only or zero-block under the default browser-compatible
+profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
