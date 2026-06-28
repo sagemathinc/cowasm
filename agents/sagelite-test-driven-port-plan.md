@@ -7264,6 +7264,29 @@ version is 50, and the run metadata records CoWasm commit
 `8ca1ef37aed058fce2523f6eb879b2a3378e780d`, Sagelite package commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, and node profile.
 
+Focused structure infrastructure corpus-growth pass:
+
+```text
+sage -t passed: 368 passed, 0 failed, 71 skipped
+```
+
+That two-file focused validation adds `sage/structure/coerce_dict.pyx` and
+`sage/structure/factory.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 456 non-comment
+entries. Direct sampling recorded `coerce_dict.pyx: 289 passed, 0 failed,
+8 skipped` and `factory.pyx: 79 passed, 0 failed, 63 skipped`; both files are
+quiet under the default node profile without new WASI source tags or startup
+namespace changes.
+
+Direct sampling in the same pass kept `sage/structure/sequence.py` and
+`sage/structure/sage_object.pyx` out of the quiet corpus because they still
+have focused output, GAP-interface, and optional-interface failures. Focused
+validation used `make -C sagemath/sagelite test-sage-doctest-corpus` after
+refreshing the patched Sagelite build tree, with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-structure-infra-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
