@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 57;
+const doctestRunnerVersion = 58;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1087,6 +1087,7 @@ def __cowasm_convert_prompts(text):
     out = []
     standalone_directives = {}
     inline_directives = {}
+    inline_sources = {}
     active_directive_source = None
     suppress_skipped_inline_block = False
     for lineno, line in enumerate(text.splitlines(True), start=1):
@@ -1112,6 +1113,9 @@ def __cowasm_convert_prompts(text):
                 inline_directive_source = __cowasm_inline_directive_source(source)
                 if inline_directive_source:
                     inline_directives[lineno] = inline_directive_source
+                    inline_sources[lineno] = (
+                        source[: source.index(inline_directive_source)].rstrip()
+                    )
                     if __cowasm_should_skip(inline_directive_source):
                         line = (
                             prompt.group(1)
@@ -1126,7 +1130,7 @@ def __cowasm_convert_prompts(text):
                             prompt.group(1)
                             + "sage:"
                             + prompt.group(2)
-                            + source[: source.index(inline_directive_source)].rstrip()
+                            + inline_sources[lineno]
                             + prompt.group(4)
                         )
                 if active_directive_source:
@@ -1141,7 +1145,7 @@ def __cowasm_convert_prompts(text):
             line,
         )
         out.append(line)
-    return "".join(out), standalone_directives, inline_directives
+    return "".join(out), standalone_directives, inline_directives, inline_sources
 
 
 def __cowasm_restore_collapsed_continuation_prompts(line):
@@ -1595,7 +1599,7 @@ def __cowasm_run_file(filename):
         __cowasm_note_state(filename, "collect_docstrings", source=None, expected=None)
         for name, docstring, line_offset in __cowasm_docstrings(filename, original):
             __cowasm_note_state(filename, "parse_doctest", name, line_offset, None, None)
-            converted, standalone_directives, inline_directives = __cowasm_convert_prompts(docstring)
+            converted, standalone_directives, inline_directives, inline_sources = __cowasm_convert_prompts(docstring)
             test = parser.get_doctest(converted, namespace, name, filename, line_offset)
             if not test.examples:
                 continue
@@ -1674,6 +1678,11 @@ def __cowasm_run_file(filename):
                     if example.lineno is not None
                     else None
                 )
+                mapped_inline_source = (
+                    inline_sources.get(example.lineno + 1)
+                    if example.lineno is not None
+                    else None
+                )
                 if __cowasm_directive_only_source(example.source):
                     active_directive_source = __cowasm_merge_directive_source(
                         active_directive_source,
@@ -1685,7 +1694,11 @@ def __cowasm_run_file(filename):
                 index = block_counter
                 block_counter += 1
                 example._cowasm_block_index = index
-                example.sage_source = example.source
+                example.sage_source = (
+                    (mapped_inline_source + "\\n")
+                    if mapped_inline_source is not None
+                    else example.source
+                )
                 example._cowasm_effective_source = __cowasm_merge_directive_source(
                     file_directive_source,
                     __cowasm_merge_directive_source(

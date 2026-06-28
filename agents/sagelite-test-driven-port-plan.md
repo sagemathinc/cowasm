@@ -101,6 +101,10 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   exploratory corpus-growth runs can quickly separate clean runnable coverage
   from skipped-only files, zero-block files, block failures, and file-level
   runtime errors.
+- File-level coverage shape can also be summarized with
+  `file-coverage-summary.sql`, which keeps broad sampling runs readable when
+  most candidates are skipped-only, empty, or blocked by known runtime
+  clusters.
 - Run metadata records the CoWasm commit, documented Sagelite package commit,
   runtime profile, runner version, and resource root, so corpus dashboards can
   distinguish runtime/profile changes from Sagelite source changes.
@@ -2271,6 +2275,13 @@ coverage, not only skipped or empty entries:
 ```sh
 sqlite3 sagelite-doctests.sqlite3 \
   < sagemath/sagelite/src/doctest-sql/file-coverage-shape.sql
+```
+
+For broad exploratory batches, start with the aggregate shape counts:
+
+```sh
+sqlite3 sagelite-doctests.sqlite3 \
+  < sagemath/sagelite/src/doctest-sql/file-coverage-summary.sql
 ```
 
 ### Newly Passing Blocks
@@ -7889,6 +7900,37 @@ pass kept nearby `sage/structure/set_factories.py`, `sage/matrix/operation_table
 `sage/modules/filtered_vector_space.py`, and several small category/misc
 helpers out of the quiet corpus because their current failures are broader
 constructor, backend, timeout, filesystem, or skipped-only clusters.
+
+Follow-up sampling on 2026-06-28 checked additional utility, monoid, crypto,
+data-structure, module, matrix, and category candidates. No new files were
+added to the curated corpus: the runnable utility/matrix files failed around
+filesystem redirection, benchmark/timing behavior, matrix-constructor
+semantics, and random-matrix timeout clusters, while the monoid, crypto,
+Cython helper, and small data-structure candidates were skipped-only or had no
+doctest blocks in the default browser-compatible profile.
+
+The dashboard tooling now includes `file-coverage-summary.sql`, a companion to
+`file-coverage-shape.sql`, so exploratory sampling can first show aggregate
+counts for `file_error`, `has_failures`, `skipped_only`, `no_doctest_blocks`,
+and `clean_runnable_coverage` before drilling into per-file rows. The
+standalone Sagelite smoke has a synthetic SQLite assertion covering all five
+coverage shapes.
+
+Follow-up inline-skip source preservation pass:
+
+```text
+sage -t passed: 21 passed, 0 failed, 7 skipped
+```
+
+Runner version 58 keeps the original logical source for inline-skipped doctest
+blocks in SQLite while continuing to feed Python's doctest parser a parseable
+`pass` placeholder. This preserves queryable sources such as
+`7 + 8  # optional - cowasm_smoke` instead of recording the implementation
+placeholder as the block source. The standalone Sagelite smoke caught this
+while validating the inline metadata path; rerunning
+`make -C sagemath/sagelite test-wasi-sdk-standalone` with `TMPDIR` pointed at
+a workspace temp directory now passes the doctest SQLite smoke with the
+expected inline random and inline skip metadata.
 
 ## Phase 5: Subprocess Strategy
 

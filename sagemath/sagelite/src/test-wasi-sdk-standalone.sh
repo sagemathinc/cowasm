@@ -2189,10 +2189,14 @@ create table files (
   run_id integer not null,
   path text not null,
   status text not null,
+  total_blocks integer not null default 0,
+  passed_blocks integer not null default 0,
   failed_blocks integer not null,
+  skipped_blocks integer not null default 0,
   failure_class text,
   failure_detail text,
-  stderr text
+  stderr text,
+  duration_ms integer not null default 0
 );
 create table blocks (
   file_id integer not null,
@@ -2202,35 +2206,47 @@ create table blocks (
 );
 insert into runs (id) values (1);
 insert into files (
-  id, run_id, path, status, failed_blocks, failure_class, failure_detail, stderr
+  id, run_id, path, status, total_blocks, passed_blocks, failed_blocks,
+  skipped_blocks, failure_class, failure_detail, stderr, duration_ms
 ) values (
   1,
   1,
   'zero-block.py',
   'error',
   0,
+  0,
+  0,
+  0,
   'ModuleNotFoundError',
   'ModuleNotFoundError: No module named ''sage_zero_block''',
-  ''
+  '',
+  0
 ), (
   2,
   1,
   '/tmp/state-crash.py',
   'error',
+  0,
+  0,
   1,
+  0,
   'wasm_signature_mismatch',
   'doctest state: phase=run_example; file=/tmp/state-crash.py; doctest=state-crash; line=42
 doctest source:
 crash()
 
 RuntimeError: function signature mismatch',
-  ''
+  '',
+  0
 ), (
   3,
   1,
   '/tmp/memory-a.py',
   'error',
+  0,
+  0,
   1,
+  0,
   'wasm_trap',
   'doctest state: phase=run_example; file=/tmp/memory-a.py; doctest=memory-a; line=11
 doctest source:
@@ -2238,13 +2254,17 @@ GF(8, ''a'').is_field()
 
 RuntimeError: memory access out of bounds
     at libcxx.so.std::__2::basic_ostream<char, std::__2::char_traits<char>>::sentry::sentry(std::__2::basic_ostream<char, std::__2::char_traits<char>>&) (wasm://wasm/libcxx.so-01a6b506:wasm-function[1500]:0x897b4)',
-  ''
+  '',
+  0
 ), (
   4,
   1,
   '/tmp/memory-b.py',
   'error',
+  0,
+  0,
   1,
+  0,
   'wasm_trap',
   'doctest state: phase=run_example; file=/tmp/memory-b.py; doctest=memory-b; line=22
 doctest source:
@@ -2252,7 +2272,60 @@ PolynomialRing(GF(2), ''j'')
 
 RuntimeError: memory access out of bounds
     at libcxx.so.std::__2::basic_ostream<char, std::__2::char_traits<char>>::sentry::sentry(std::__2::basic_ostream<char, std::__2::char_traits<char>>&) (wasm://wasm/libcxx.so-01a6b506:wasm-function[1500]:0x897b4)',
-  ''
+  '',
+  0
+), (
+  5,
+  1,
+  '/tmp/clean.py',
+  'passed',
+  3,
+  2,
+  0,
+  1,
+  null,
+  null,
+  '',
+  30
+), (
+  6,
+  1,
+  '/tmp/skipped.py',
+  'passed',
+  2,
+  0,
+  0,
+  2,
+  null,
+  null,
+  '',
+  20
+), (
+  7,
+  1,
+  '/tmp/no-blocks.py',
+  'passed',
+  0,
+  0,
+  0,
+  0,
+  null,
+  null,
+  '',
+  10
+), (
+  8,
+  1,
+  '/tmp/block-failure.py',
+  'failed',
+  4,
+  2,
+  1,
+  1,
+  null,
+  null,
+  '',
+  40
 );
 SQL
 doctest_query_failures_by_class="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/failures-by-class.sql")"
@@ -2292,6 +2365,19 @@ if ! printf '%s\n' "$doctest_query_file_error_reruns" | grep -Fxq 'wasm_signatur
   sqlite3 "$doctest_query_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: file-error rerun query did not extract the source-line reproduction command."
 fi
+doctest_query_coverage_summary="$(sqlite3 "$doctest_query_db" <"$src_dir/doctest-sql/file-coverage-summary.sql")"
+for expected_coverage_shape in \
+  'file_error|4|0|0|3|0|0|0' \
+  'has_failures|1|4|2|1|1|3|40' \
+  'skipped_only|1|2|0|0|2|0|20' \
+  'no_doctest_blocks|1|0|0|0|0|0|10' \
+  'clean_runnable_coverage|1|3|2|0|1|2|30'; do
+  if ! printf '%s\n' "$doctest_query_coverage_summary" | grep -Fxq "$expected_coverage_shape"; then
+    printf '%s\n' "$doctest_query_coverage_summary" >&2
+    sqlite3 "$doctest_query_db" ".dump" >&2 || true
+    record_blocker "sagelite-blocked: file-coverage-summary query missed $expected_coverage_shape."
+  fi
+done
 doctest_state_file="$probe_dir/sagelite-doctest-state.py"
 doctest_state_db="$probe_dir/sagelite-doctest-state.sqlite3"
 doctest_state_log="$dist_dir/doctest-state.log"
