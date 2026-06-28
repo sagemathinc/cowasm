@@ -8466,6 +8466,32 @@ target with a temporary eight-file corpus,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/feature-clean-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused feature-descriptor corpus-growth pass:
+
+```text
+sage -t passed: 75 passed, 0 failed, 28 skipped
+```
+
+That 17-file focused validation adds more optional-feature descriptor modules
+to the curated corpus: `sage/features/bliss.py`, `cddlib.py`, `dot2tex.py`,
+`dvipng.py`, `flatter.py`, `four_ti_2.py`, `fricas.py`, `frobby.py`,
+`gap.py`, `gap3.py`, `gfan.py`, `giac.py`, `kenzo.py`, `mip_backends.py`,
+`sat.py`, `sphinx.py`, and `symengine_py.py`. These files add clean
+browser-profile coverage for optional external libraries and interfaces
+without requiring those optional systems to be present, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 560
+non-comment entries.
+
+Direct sampling kept `sage/features/databases.py`, `ecm.py`, `interfaces.py`,
+`latex.py`, `pari.py`, and `pkg_systems.py` out because their focused failures
+still involve WASI subprocess limits, missing `pexpect`, or optional-data
+display drift. It also kept `sage/features/standard.py` out because it
+contributes no doctest blocks. Focused validation used the
+`test-sage-doctest-corpus` make target with a temporary 17-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-feature-descriptors-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
