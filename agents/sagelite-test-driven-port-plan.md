@@ -7676,6 +7676,34 @@ with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/pairing-heap-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused data-structure BLAS/poset corpus-growth pass:
+
+```text
+sage -t passed: 498 passed, 0 failed, 6 skipped
+```
+
+That two-file make-target validation adds
+`sage/data_structures/blas_dict.pyx` and
+`sage/data_structures/mutable_poset.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 494
+non-comment entries. `mutable_poset.py` contributes a large clean mutable
+poset data-structure surface, while `blas_dict.pyx` contributes ordinary
+sparse-dictionary BLAS coverage.
+
+Direct sampling first recorded six `blas_dict.pyx` failures around the
+noncommutative `SymmetricGroupAlgebra` example. The doctest runner now seeds
+`SymmetricGroupAlgebra` in the common startup namespace, the WASI `sage.all`
+patch exposes it for REPL parity, and the added WASI source patch marks the
+Symmetrica-backed symmetric-group algebra multiplication setup as
+`# needs sage.libs.symmetrica`. Focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` after refreshing the
+patched Sagelite build tree, with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/blas-mutable-make.sqlite3`.
+The run records `blas_dict.pyx: 61 passed, 0 failed, 6 skipped` and
+`mutable_poset.py: 437 passed, 0 failed, 0 skipped`; the saved block- and
+file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

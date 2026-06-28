@@ -1330,7 +1330,7 @@ diff -urN a/src/sage/misc/latex_standalone.py b/src/sage/misc/latex_standalone.p
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,181 @@
+@@ -253,74 +253,182 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1428,6 +1428,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.combinat.root_system.coxeter_type import CoxeterType
 +    from sage.combinat.root_system.root_system import RootSystem, WeylDim
 +    from sage.combinat.set_partition_ordered import OrderedSetPartition
++    from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
 +    from sage.combinat.tableau import SemistandardTableaux, StandardTableau, Tableau, Tableaux
 +    from sage.combinat.partition_tuple import PartitionTuples
 +    from sage.combinat.tableau_tuple import StandardTableauTuple, StandardTableauTuples, TableauTuples
@@ -5003,3 +5004,20 @@ diff -urN a/src/sage/data_structures/pairing_heap.pyx b/src/sage/data_structures
 @@ -1034 +1034 @@
 -        sage: _test_PairingHeap_from_C(100)
 +        sage: _test_PairingHeap_from_C(100)                                         # needs sage.symbolic
+diff -urN a/src/sage/data_structures/blas_dict.pyx b/src/sage/data_structures/blas_dict.pyx
+--- a/src/sage/data_structures/blas_dict.pyx
++++ b/src/sage/data_structures/blas_dict.pyx
+@@ -346,5 +346,5 @@
+-        sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+-        sage: s1 = SGA([2, 1, 3]) # (1 2)
+-        sage: s2 = SGA([3, 1, 2]) # (1 3)
+-        sage: D1 = {0: s1}
+-        sage: blas.linear_combination([(D1, s2)], factor_on_left=False) # s1 * s2
++        sage: SGA = SymmetricGroupAlgebra(QQ, 3)                                    # needs sage.libs.symmetrica
++        sage: s1 = SGA([2, 1, 3]) # (1 2)                                           # needs sage.libs.symmetrica
++        sage: s2 = SGA([3, 1, 2]) # (1 3)                                           # needs sage.libs.symmetrica
++        sage: D1 = {0: s1}                                                          # needs sage.libs.symmetrica
++        sage: blas.linear_combination([(D1, s2)], factor_on_left=False) # s1 * s2    # needs sage.libs.symmetrica
+@@ -355 +355 @@
+-        sage: blas.linear_combination([(D1, s2)], factor_on_left=True) # s2 * s1
++        sage: blas.linear_combination([(D1, s2)], factor_on_left=True) # s2 * s1     # needs sage.libs.symmetrica
