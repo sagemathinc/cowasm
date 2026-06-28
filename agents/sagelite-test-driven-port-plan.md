@@ -8381,6 +8381,35 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/huffman-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused small combinatorics corpus-growth pass:
+
+```text
+sage -t passed: 36 passed, 0 failed, 8 skipped
+```
+
+That two-file focused validation adds
+`sage/combinat/ncsf_qsym/combinatorics.py` and
+`sage/combinat/matrices/dlxcpp.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 530
+non-comment entries. The files add lightweight noncommutative symmetric
+function combinatorics helpers and the C++ dancing-links wrapper without new
+WASI source tags or startup namespace changes.
+
+Direct sampling kept nearby candidates out of the quiet corpus:
+`sage/combinat/species/misc.py` and
+`sage/combinat/subword_complex_c.pyx` are skipped-only under the default
+browser profile, `sage/combinat/q_bernoulli.pyx` reaches the known NTL/libcxx
+`memory access out of bounds` trap during finite-field polynomial setup,
+`sage/combinat/sine_gordon.py` has startup-name and diagnostic mismatches, and
+`sage/combinat/posets/linear_extension_iterator.pyx` still needs the poset
+catalog startup surface.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/combinat-light-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -61,6 +61,7 @@ src/sage/combinat/decorated_permutation.py
 src/sage/combinat/degree_sequences.pyx
 src/sage/combinat/diagram.py
 src/sage/combinat/dlx.py
+src/sage/combinat/matrices/dlxcpp.py
 src/sage/combinat/dyck_word.py
 src/sage/combinat/expnums.pyx
 src/sage/combinat/free_module.py
@@ -113,6 +114,7 @@ src/sage/combinat/ranker.py
 src/sage/combinat/regular_sequence_bounded.py
 src/sage/combinat/gray_codes.py
 src/sage/combinat/hall_polynomial.py
+src/sage/combinat/ncsf_qsym/combinatorics.py
 src/sage/combinat/hillman_grassl.py
 src/sage/combinat/integer_lists/lists.py
 src/sage/combinat/integer_lists/base.pyx
