@@ -8288,6 +8288,27 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/repl-preferences-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused coding catalog corpus-growth pass:
+
+```text
+sage -t passed: 5 passed, 0 failed, 0 skipped
+```
+
+That five-file focused validation adds Sage's coding catalog import modules to
+the curated corpus: `sage/coding/bounds_catalog.py`,
+`sage/coding/channels_catalog.py`, `sage/coding/codes_catalog.py`,
+`sage/coding/decoders_catalog.py`, and `sage/coding/encoders_catalog.py`.
+These files give the dashboard lightweight coding-theory catalog coverage
+without new WASI source tags or startup namespace changes.
+
+Direct sampling used `sage -t --profile node --timeout 90` against the patched
+source tree with SQLite output at
+`/home/user/cowasm/.tmp/sagelite-runs/coding-catalog-direct.sqlite3`.
+Focused make-target validation used a temporary five-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/coding-catalog-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

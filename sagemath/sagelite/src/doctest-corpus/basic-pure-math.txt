@@ -34,6 +34,11 @@ src/sage/cpython/type.pyx
 src/sage/cpython/debug.pyx
 src/sage/cpython/getattr.pyx
 src/sage/cpython/dict_del_by_value.pyx
+src/sage/coding/bounds_catalog.py
+src/sage/coding/channels_catalog.py
+src/sage/coding/codes_catalog.py
+src/sage/coding/decoders_catalog.py
+src/sage/coding/encoders_catalog.py
 src/sage/data_structures/bitset.pyx
 src/sage/data_structures/blas_dict.pyx
 src/sage/data_structures/bounded_integer_sequences.pyx
