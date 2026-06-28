@@ -6616,6 +6616,31 @@ run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 49,
 and about 45 minutes of elapsed time.
 
+Focused category wrapper corpus-growth pass:
+
+```text
+sage -t passed: 64 passed, 0 failed, 0 skipped
+```
+
+That focused direct validation adds `sage/categories/graded_lie_algebras.py`
+and `sage/categories/ore_modules.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 416
+non-comment entries. The two added files contribute compact category-wrapper
+coverage with no new WASI source tags or startup namespace changes: direct
+sampling recorded `graded_lie_algebras.py: 12 passed, 0 failed, 0 skipped`
+and `ore_modules.py: 52 passed, 0 failed, 0 skipped`.
+
+The same focused sample kept skipped-only wrappers out of the quiet corpus:
+`sage/modules/numpy_util.pyx`, `sage/modules/complex_double_vector.py`,
+`sage/modules/vector_real_double_dense.pyx`,
+`sage/modules/vector_complex_double_dense.pyx`, and
+`sage/categories/groupoid.py` recorded only deferred skips under the default
+browser-compatible profile. Validation used the direct `sage -t` harness with
+`--profile node`, `--timeout 90`, and
+`--sqlite /home/user/cowasm/.tmp/sagelite-category-wrappers.sqlite3`; the
+saved block- and file-failure cluster queries are empty. A full corpus rerun
+should be performed before recording the next dashboard total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
