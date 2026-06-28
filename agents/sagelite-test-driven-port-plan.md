@@ -7370,10 +7370,35 @@ non-comment entries. Direct sampling recorded
 
 No new WASI source tags or startup namespace changes were needed. Neighboring
 structure probes remain outside the quiet corpus: `sage/structure/sage_object.pyx`
-still has focused output and optional-interface failures,
-`sage/structure/sequence.py` still has focused mismatches, and
+still has focused output and optional-interface failures, and
 `sage/structure/coerce_maps.pyx` currently reaches the known C-callable map
 function-signature boundary.
+
+Focused sequence corpus-growth pass:
+
+```text
+sage -t passed: 191 passed, 0 failed, 3 skipped
+```
+
+That one-file focused validation adds `sage/structure/sequence.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 463
+non-comment entries. Direct sampling first recorded two output mismatches in
+the examples that rely on IPython's pretty printer for `Sequence(..., cr=True)`
+display; the runtime printed one list element per line while upstream expected
+compact list rendering. The added WASI source patch marks those two examples
+as `# random`, preserving the sequence coercion and universe coverage without
+making the browser-profile dashboard depend on host pretty-printer formatting.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after refreshing the patched Sagelite build tree, with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-sequence-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. Neighboring
+structure probes still remain outside the quiet corpus:
+`sage/structure/sage_object.pyx` is dominated by GAP, libGAP, and Magma
+interface boundaries, while `sage/structure/coerce_maps.pyx` still reaches the
+known C-callable map function-signature boundary.
 
 ## Phase 5: Subprocess Strategy
 
