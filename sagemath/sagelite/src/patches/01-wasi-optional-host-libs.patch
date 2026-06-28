@@ -4374,6 +4374,27 @@ diff -urN a/src/sage/misc/banner.py b/src/sage/misc/banner.py
 @@ -24 +24 @@
 -       sage: version()
 +       sage: version()                                                                  # known bug
+diff -urN a/src/sage/misc/classgraph.py b/src/sage/misc/classgraph.py
+--- a/src/sage/misc/classgraph.py
++++ b/src/sage/misc/classgraph.py
+@@ -39 +39 @@
+-        sage: G = class_graph(sage.rings.polynomial.padics); G
++        sage: G = class_graph(sage.rings.polynomial.padics); G                    # needs sage.graphs
+@@ -41 +41 @@
+-        sage: G.vertices(sort=True)
++        sage: G.vertices(sort=True)                                               # needs sage.graphs
+@@ -48 +48 @@
+-        sage: G.edges(sort=True, labels=False)
++        sage: G.edges(sort=True, labels=False)                                    # needs sage.graphs
+@@ -57 +57 @@
+-        sage: class_graph(Parent).edges(sort=True, labels=False)
++        sage: class_graph(Parent).edges(sort=True, labels=False)                  # needs sage.graphs
+@@ -62 +62 @@
+-        sage: class_graph([1,2,3]).edges(sort=True, labels=False)
++        sage: class_graph([1,2,3]).edges(sort=True, labels=False)                 # needs sage.graphs
+@@ -82 +82 @@
+-        sage: G = class_graph(sage.rings.polynomial.padics, depth=2); G
++        sage: G = class_graph(sage.rings.polynomial.padics, depth=2); G           # needs sage.graphs
 diff -urN a/src/sage/misc/converting_dict.py b/src/sage/misc/converting_dict.py
 --- a/src/sage/misc/converting_dict.py
 +++ b/src/sage/misc/converting_dict.py

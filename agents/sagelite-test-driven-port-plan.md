@@ -6738,6 +6738,32 @@ empty. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 49,
 and about 48 minutes of elapsed time.
 
+Focused misc classgraph corpus-growth pass:
+
+```text
+sage -t passed: 2 passed, 0 failed, 6 skipped
+```
+
+That one-file focused validation adds `sage/misc/classgraph.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 419 non-comment
+entries. Direct sampling first recorded 2 passed blocks and 6 failures; the
+failures all imported the stripped graph backend through `DiGraph`, with
+dependent `G.vertices(...)` and `G.edges(...)` examples failing only because
+the graph object was not constructed. The added WASI source patch marks those
+graph-backed examples as `# needs sage.graphs`, leaving the pure dictionary
+`as_graph=False` path as ordinary passing default-profile coverage.
+
+Focused validation used direct `sage -t --timeout 120` against the patched
+build tree with `TMPDIR=/home/user/cowasm/.tmp` and
+`COWASM_SAGELITE_DOCTEST_SOURCE_ROOT=/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`,
+writing `/home/user/cowasm/.tmp/sagelite-classgraph-after-tags.sqlite3`. The
+saved block- and file-failure cluster queries are empty. A make-target restage
+was not run in this pass because the current `/home/user/sagelite` checkout
+has unrelated source-patch dry-run drift; the next full dashboard should
+refresh that checkout or repair the unrelated stale patch hunks before
+recording a new corpus total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

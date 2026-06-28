@@ -356,6 +356,7 @@ src/sage/misc/call.py
 src/sage/misc/callable_dict.pyx
 src/sage/misc/citation.pyx
 src/sage/misc/classcall_metaclass.pyx
+src/sage/misc/classgraph.py
 src/sage/misc/compat.py
 src/sage/misc/constant_function.pyx
 src/sage/misc/converting_dict.py
