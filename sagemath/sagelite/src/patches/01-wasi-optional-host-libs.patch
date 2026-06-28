@@ -1655,13 +1655,18 @@ diff -urN a/src/sage/misc/all.py b/src/sage/misc/all.py
 diff -urN a/src/sage/misc/citation.pyx b/src/sage/misc/citation.pyx
 --- a/src/sage/misc/citation.pyx
 +++ b/src/sage/misc/citation.pyx
-@@ -77,5 +77,5 @@
-         ['Maxima', 'ginac']
+@@ -80,10 +80,11 @@
+         sage: bool({'Maxima', 'ginac'} & set(systems))                                  # needs sage.symbolic
+         True
++        sage: # needs sage.libs.singular
          sage: R.<x,y,z> = QQ[]
          sage: I = R.ideal(x^2+y^2, z^2+y)
--        sage: get_systems('I.primary_decomposition()')
-+        sage: get_systems('I.primary_decomposition()')                                  # needs sage.libs.singular
-         ['Singular']
+         sage: with warnings.catch_warnings():
+         ....:     warnings.simplefilter('ignore')
+         ....:     systems = get_systems('I.primary_decomposition()')
+         sage: 'Singular' in systems
+         True
+     """
 diff -urN a/src/sage/misc/remote_file.py b/src/sage/misc/remote_file.py
 --- a/src/sage/misc/remote_file.py
 +++ b/src/sage/misc/remote_file.py
@@ -4598,9 +4603,9 @@ diff -urN a/src/sage/misc/lazy_import.pyx b/src/sage/misc/lazy_import.pyx
 @@ -336 +336 @@
 -            sage: 'A subset of the real line' in RealSet.__doc__
 +            sage: 'A subset of the real line' in RealSet.__doc__                      # needs sage.symbolic
-@@ -1111 +1111 @@
--        sage: not_there
-+        sage: not_there                                                               # known bug - WASI optional-feature diagnostics use subprocess support
+@@ -1115 +1115 @@
+-        sage: try:
++        sage: try:                                                                  # known bug - WASI optional-feature diagnostics use subprocess support
 @@ -1233 +1233 @@
 -        sage: D
 +        sage: D                                                                       # random
@@ -5077,6 +5082,15 @@ diff -urN a/src/sage/doctest/marked_output.py b/src/sage/doctest/marked_output.p
 @@ -43 +43 @@
 -        sage: MarkedOutput("56 µs")
 +        sage: MarkedOutput("56 µs")                                                 # known bug - Sagelite source conversion mangles this non-ASCII literal
+diff -urN a/src/sage/doctest/rif_tol.py b/src/sage/doctest/rif_tol.py
+--- a/src/sage/doctest/rif_tol.py
++++ b/src/sage/doctest/rif_tol.py
+@@ -49 +49 @@
+-        sage: from sage.doctest.parsing import RIFtol
++        sage: from sage.doctest.rif_tol import RIFtol
+@@ -77 +77 @@
+-        sage: from sage.doctest.parsing import MarkedOutput, SageOutputChecker
++        sage: from sage.doctest.marked_output import MarkedOutput
 diff -urN a/src/sage/cpython/debug.pyx b/src/sage/cpython/debug.pyx
 --- a/src/sage/cpython/debug.pyx
 +++ b/src/sage/cpython/debug.pyx

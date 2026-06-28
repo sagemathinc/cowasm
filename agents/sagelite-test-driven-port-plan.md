@@ -1965,6 +1965,34 @@ with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty; `skips-by-reason`
 groups the four skipped blocks under `optional:ipython`.
 
+Focused doctest tolerance helper corpus-growth pass:
+
+```text
+sage -t passed: 15 passed, 0 failed, 3 skipped
+```
+
+That one-file make-target validation adds `sage/doctest/rif_tol.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 600 non-comment
+entries. Direct sampling first recorded two failures because the examples
+imported `RIFtol`, `MarkedOutput`, and `SageOutputChecker` through
+`sage.doctest.parsing`, whose module import initializes multiprocessing-backed
+optional-software detection and fails under WASI mmap semantics. The WASI
+source patch now imports `RIFtol` from `sage.doctest.rif_tol` and
+`MarkedOutput` from `sage.doctest.marked_output`, preserving the tolerance
+helper examples as default-profile coverage without pulling in the broader
+doctest parser.
+
+The same pass refreshed two existing WASI source patch hunks for current
+Sagelite source drift: `sage/misc/citation.pyx` now wraps the Singular
+citation probe in warning handling, and `sage/misc/lazy_import.pyx` now checks
+the unavailable optional lazy import through `not_there.get_object()`. Focused
+validation used the `test-sage-doctest-corpus` make target after rebuilding a
+fresh patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/rif-tol-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 Focused REPL preparser corpus-growth pass:
 
 ```text
