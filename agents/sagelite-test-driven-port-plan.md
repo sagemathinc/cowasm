@@ -6872,6 +6872,29 @@ records CoWasm commit `e712c10ad93d7c0064e9b3d014797620792f7874`, Sagelite
 source/package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, runner version 49, and about 46 minutes of elapsed time.
 
+Focused integer-valued polynomial corpus-growth pass:
+
+```text
+sage -t passed: 231 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/rings/polynomial/integer_valued_polynomials.py` to the curated corpus.
+The file gives the dashboard direct integer-valued polynomial ring coverage
+without new WASI source tags or startup namespace changes. Focused validation
+used `make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary
+one-file corpus, `TMPDIR=/home/user/cowasm/.tmp/sagelite-validation`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-integer-valued-polynomial-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
+The same sampling pass kept nearby polynomial helpers out of the quiet corpus:
+`sage/rings/polynomial/term_order.py` and `polydict.pyx` still have focused
+block-level failures, `q_integer_valued_polynomials.py` times out in a
+Laurent-polynomial validation path, `symmetric_reduction.pyx` is skipped-only
+under the default browser-compatible profile, and `polynomial_fateman.py`
+currently contributes no doctest blocks.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
