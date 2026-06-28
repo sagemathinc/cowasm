@@ -5158,6 +5158,21 @@ diff -urN a/src/sage/structure/factorization.py b/src/sage/structure/factorizati
              sage: f = 2*x + 2
 +            sage: # known bug
              sage: c = f.content(); g = f//c
+diff -urN a/src/sage/categories/filtered_modules_with_basis.py b/src/sage/categories/filtered_modules_with_basis.py
+--- a/src/sage/categories/filtered_modules_with_basis.py
++++ b/src/sage/categories/filtered_modules_with_basis.py
+@@ -178 +178,2 @@
++                sage: # needs sage.algebras
+                 sage: E.<x,y> = ExteriorAlgebra(QQ)
+@@ -1183 +1184,2 @@
++                    sage: # needs sage.geometry.hyperplane_arrangement
+                     sage: OS = hyperplane_arrangements.braid(3).orlik_solomon_algebra(QQ)
+@@ -1187 +1189,2 @@
++                    sage: # needs sage.matroids
+                     sage: OS = matroids.Uniform(5, 3).orlik_solomon_algebra(ZZ)
+@@ -1191 +1194,2 @@
++                    sage: # needs sage.matroids
+                     sage: OS = matroids.PG(2, 3).orlik_solomon_algebra(ZZ['x','y'])
 diff -urN a/src/sage/structure/set_factories.py b/src/sage/structure/set_factories.py
 --- a/src/sage/structure/set_factories.py
 +++ b/src/sage/structure/set_factories.py

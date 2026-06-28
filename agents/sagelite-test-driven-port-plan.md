@@ -8054,6 +8054,27 @@ because their first runnable examples still hit existing NTL, polynomial, or
 timeout backend clusters, while `algebra_functor.py` and `groupoid.py` were
 skipped-only in the default browser-compatible profile.
 
+Focused filtered-modules-with-basis category corpus-growth pass:
+
+```text
+sage -t passed: 54 passed, 0 failed, 191 skipped
+```
+
+That one-file focused validation adds
+`sage/categories/filtered_modules_with_basis.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 507
+non-comment entries. Direct sampling first recorded 54 passed blocks and
+eight failures, all from optional exterior-algebra, hyperplane-arrangement,
+and matroid examples. The added WASI source patch classifies those backend
+examples with `# needs` metadata, preserving the ordinary filtered-module
+coverage in the browser-compatible dashboard.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/filtered-modules-with-basis-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
