@@ -284,6 +284,7 @@ src/sage/categories/j_trivial_semigroups.py
 src/sage/categories/kac_moody_algebras.py
 src/sage/categories/l_trivial_semigroups.py
 src/sage/categories/lie_conformal_algebras.py
+src/sage/categories/super_lie_conformal_algebras.py
 src/sage/categories/lie_groups.py
 src/sage/categories/magmatic_algebras.py
 src/sage/categories/magmas.py

@@ -1903,7 +1903,28 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-matrix-docs-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
-Follow-up sampling on 2026-06-28 found no new quiet runnable corpus candidate
+Focused super lie-conformal category corpus-growth pass:
+
+```text
+sage -t passed: 3 passed, 0 failed, 18 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/super_lie_conformal_algebras.py` to the curated corpus. The
+doctest runner now seeds the lightweight `LieConformalAlgebras` category
+constructor in the common startup namespace, and the WASI `sage.all` patch
+exposes the same constructor for REPL parity on a fresh patched Sagelite
+source copy. This clears the file's only runnable default-profile failure:
+`NameError: name 'LieConformalAlgebras' is not defined`.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/super-lie-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
+Separate follow-up sampling on 2026-06-28 found no new quiet runnable corpus candidate
 among several adjacent misc, module, category, set, combinatorics, root-system,
 and arithmetic files. Many probes were skipped-only or zero-block under the
 default browser-compatible profile, and the runnable failures clustered around
