@@ -7729,6 +7729,29 @@ with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
 The saved block- and file-failure cluster queries are empty, and the skip
 query reports only the five intended optional dependency skips.
 
+Focused discrete-Gaussian polynomial corpus-growth pass:
+
+```text
+sage -t passed: 21 passed, 0 failed, 3 skipped
+```
+
+That one-file focused validation adds
+`sage/stats/distributions/discrete_gaussian_polynomial.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 496 non-comment
+entries. Direct sampling checked nearby statistics files:
+`sage/stats/distributions/discrete_gaussian_integer.pyx` is skipped-only under
+the default browser-compatible profile, while
+`sage/stats/distributions/discrete_gaussian_lattice.py` still has broad matrix
+and lattice failures, so both stay outside the quiet corpus for now.
+
+The added file is quiet without new WASI source tags or startup namespace
+changes. Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` after refreshing the patched Sagelite build tree,
+with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/discrete-gaussian-polynomial-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
