@@ -6720,6 +6720,24 @@ aggregate is internally consistent with 321 block rows, 317 passed blocks, no
 failed blocks, and 4 skipped blocks. A full corpus rerun should be performed
 before recording the next dashboard total.
 
+Latest checked local corpus run after the 2026-06-27 category-with-axiom
+corpus-growth pass:
+
+```text
+sage -t passed: 32982 passed, 0 failed, 8295 skipped
+```
+
+That make-target validation covers all 418 files in the current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus and writes
+`/home/user/cowasm/.tmp/sagelite-corpus-after-category-with-axiom.sqlite3`.
+The saved SQLite dashboard is internally consistent with 41,277 block rows,
+32,982 passed blocks, no failed blocks, 8,295 skipped blocks, and no
+non-passing file rows. The saved block- and file-failure cluster queries are
+empty. The latest run metadata records CoWasm commit
+`48f7cc326125e5c68e4421ae5c99b98a6c7839d4`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 49,
+and about 48 minutes of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
