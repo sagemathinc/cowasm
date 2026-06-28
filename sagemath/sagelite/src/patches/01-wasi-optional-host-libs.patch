@@ -4771,6 +4771,12 @@ diff -urN a/src/sage/modules/multi_filtered_vector_space.py b/src/sage/modules/m
 @@ -648 +648 @@
 -            sage: V.dual()
 +            sage: V.dual()                                                              # needs sage.libs.pari
+diff -urN a/src/sage/monoids/trace_monoid.py b/src/sage/monoids/trace_monoid.py
+--- a/src/sage/monoids/trace_monoid.py
++++ b/src/sage/monoids/trace_monoid.py
+@@ -612 +612 @@
+-            sage: M._compute_dependence_stack(x)
++            sage: M._compute_dependence_stack(x)                                        # random
 diff -urN a/src/sage/structure/indexed_generators.py b/src/sage/structure/indexed_generators.py
 --- a/src/sage/structure/indexed_generators.py
 +++ b/src/sage/structure/indexed_generators.py
