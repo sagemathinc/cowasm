@@ -1826,6 +1826,29 @@ The doctest runner now seeds `Morphism` beside the existing lightweight
 category constructors, and the WASI `sage.all` patch exposes the same name for
 REPL parity on a fresh patched Sagelite source copy.
 
+Focused matrix documentation corpus-growth pass:
+
+```text
+sage -t passed: 54 passed, 0 failed, 1 skipped
+```
+
+That one-file focused validation adds `sage/matrix/docs.py` to the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 452 non-comment entries. Direct sampling first recorded one failure in the
+matrix mutability example where `matrix(RR,2,[1,10,3.5,2])` reaches the
+current real-field matrix-constructor argument gap in the default node
+profile. The added WASI source patch marks that example as
+`# needs sage.rings.real_mpfr`, consistent with adjacent real-field matrix and
+cartesian-product boundaries, while preserving the rest of the matrix
+documentation examples as default-profile coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-matrix-docs-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

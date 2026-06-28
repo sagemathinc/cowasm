@@ -4772,6 +4772,12 @@ diff -urN a/src/sage/modules/multi_filtered_vector_space.py b/src/sage/modules/m
 @@ -648 +648 @@
 -            sage: V.dual()
 +            sage: V.dual()                                                              # needs sage.libs.pari
+diff -urN a/src/sage/matrix/docs.py b/src/sage/matrix/docs.py
+--- a/src/sage/matrix/docs.py
++++ b/src/sage/matrix/docs.py
+@@ -300 +300 @@
+-    sage: A = matrix(RR,2,[1,10,3.5,2])
++    sage: A = matrix(RR,2,[1,10,3.5,2])                                             # needs sage.rings.real_mpfr
 diff -urN a/src/sage/monoids/trace_monoid.py b/src/sage/monoids/trace_monoid.py
 --- a/src/sage/monoids/trace_monoid.py
 +++ b/src/sage/monoids/trace_monoid.py

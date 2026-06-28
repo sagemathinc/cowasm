@@ -453,4 +453,5 @@ src/sage/modules/vector_rational_dense.pyx
 src/sage/modules/vector_space_homspace.py
 src/sage/modules/vector_space_morphism.py
 src/sage/matrix/constructor.pyx
+src/sage/matrix/docs.py
 src/sage/matrix/matrix_misc.py
