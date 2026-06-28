@@ -97,6 +97,10 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   normalized detail instead of only by broad exception type.
 - Skipped doctest blocks can be grouped with `skips-by-reason.sql`, so optional,
   long, and deferred-test coverage is visible alongside failure clusters.
+- File-level coverage shape can be grouped with `file-coverage-shape.sql`, so
+  exploratory corpus-growth runs can quickly separate clean runnable coverage
+  from skipped-only files, zero-block files, block failures, and file-level
+  runtime errors.
 - Run metadata records the CoWasm commit, documented Sagelite package commit,
   runtime profile, runner version, and resource root, so corpus dashboards can
   distinguish runtime/profile changes from Sagelite source changes.
@@ -1895,6 +1899,24 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-matrix-docs-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Follow-up sampling on 2026-06-28 found no new quiet runnable corpus candidate
+among several adjacent misc, module, category, set, combinatorics, root-system,
+and arithmetic files. Many probes were skipped-only or zero-block under the
+default browser-compatible profile, and the runnable failures clustered around
+broader symbolic reset, IPython/pexpect, filesystem persistence, matrix random
+signature mismatch, free-module finite-field representation drift, and
+filtered-vector-space construction issues. The focused current-source rerun of
+`sage/misc/classcall_metaclass.pyx` confirms the checked-in WASI patch's
+`# random` tag is effective:
+
+```text
+classcall_metaclass.pyx: 75 passed, 0 failed, 15 skipped
+```
+
+The new `file-coverage-shape.sql` query records this sampling lesson as
+dashboard tooling: skipped-only and no-block files are now easy to identify
+before adding them to the curated corpus.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
@@ -2239,6 +2261,16 @@ line-based reproduction commands:
 ```sh
 sqlite3 sagelite-doctests.sqlite3 \
   < sagemath/sagelite/src/doctest-sql/file-error-reruns.sql
+```
+
+### File Coverage Shape
+
+Exploratory corpus-growth runs should identify files that add real runnable
+coverage, not only skipped or empty entries:
+
+```sh
+sqlite3 sagelite-doctests.sqlite3 \
+  < sagemath/sagelite/src/doctest-sql/file-coverage-shape.sql
 ```
 
 ### Newly Passing Blocks
