@@ -6641,6 +6641,24 @@ browser-compatible profile. Validation used the direct `sage -t` harness with
 saved block- and file-failure cluster queries are empty. A full corpus rerun
 should be performed before recording the next dashboard total.
 
+Latest checked local corpus run after the 2026-06-27 category wrapper
+corpus-growth pass:
+
+```text
+sage -t passed: 32649 passed, 0 failed, 8270 skipped
+```
+
+That make-target validation covers all 416 files in the current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus and writes
+`/home/user/cowasm/.tmp/sagelite-corpus-after-category-wrappers.sqlite3`. The
+saved SQLite dashboard is internally consistent with 40,919 block rows,
+32,649 passed blocks, no failed blocks, 8,270 skipped blocks, and no
+non-passing file rows. The saved block- and file-failure cluster queries are
+empty. The latest run metadata records CoWasm commit
+`fc7492e7c132f2e19a3adca9f2599354fbd93447`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 49,
+and about 48 minutes of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
