@@ -6659,6 +6659,38 @@ empty. The latest run metadata records CoWasm commit
 `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 49,
 and about 48 minutes of elapsed time.
 
+Focused finite-dimensional graded Lie category corpus-growth pass:
+
+```text
+sage -t passed: 16 passed, 0 failed, 21 skipped
+```
+
+That one-file direct validation adds
+`sage/categories/finite_dimensional_graded_lie_algebras_with_basis.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 417 non-comment
+entries. The file contributes compact category-wrapper coverage without new
+WASI source tags or startup namespace changes.
+
+Direct validation used the patched source tree with `sage -t --profile node`,
+`--timeout 90`, and
+`--sqlite /home/user/cowasm/.tmp/sagelite-next-small-sample.sqlite3`; the file
+recorded 37 block rows, 16 passed blocks, no failed blocks, and 21 skipped
+blocks. Follow-up make-target validation used a temporary one-file corpus with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-finite-dimensional-graded-lie-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
+The same sampling pass kept `sage/categories/subquotients.py` out because it
+contributes no doctest blocks, kept
+`sage/categories/finitely_generated_lie_conformal_algebras.py` out because it
+adds only skipped rows, and kept `sage/categories/graded_lie_conformal_algebras.py`,
+`sage/categories/lambda_bracket_algebras.py`, `sage/modules/ore_module.py`,
+and `sage/modules/module_functors.py` out because they still hit existing
+symbolic, PARI/cypari2, table-index, or module-functor failure clusters. A
+full corpus rerun should be performed before recording the next dashboard
+total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
