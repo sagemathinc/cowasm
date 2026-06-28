@@ -500,6 +500,7 @@ src/sage/doctest/marked_output.py
 src/sage/repl/display/util.py
 src/sage/repl/rich_output/buffer.py
 src/sage/repl/rich_output/output_basic.py
+src/sage/repl/rich_output/test_backend.py
 src/sage/repl/rich_output/preferences.py
 src/sage/logic/booleval.py
 src/sage/logic/boolformula.py

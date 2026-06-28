@@ -5274,3 +5274,12 @@ diff -urN a/src/sage/matrix/strassen.pyx b/src/sage/matrix/strassen.pyx
 @@ -299 +299 @@
 -        sage: B = A.__copy__(); B._echelon_in_place_classical()
 +        sage: B = A.__copy__(); B._echelon_in_place_classical()                     # random - WASI displays classical echelon pivot return value
+diff -urN a/src/sage/repl/rich_output/test_backend.py b/src/sage/repl/rich_output/test_backend.py
+--- a/src/sage/repl/rich_output/test_backend.py
++++ b/src/sage/repl/rich_output/test_backend.py
+@@ -20 +20 @@
+-    sage: dm.displayhook(1/2)
++    sage: dm.displayhook(1/2)                                                        # needs IPython
+@@ -80 +80,2 @@
++            sage: # needs IPython
+             sage: test_output = dm.displayhook(123)

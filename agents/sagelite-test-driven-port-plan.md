@@ -1942,6 +1942,29 @@ The new `file-coverage-shape.sql` query records this sampling lesson as
 dashboard tooling: skipped-only and no-block files are now easy to identify
 before adding them to the curated corpus.
 
+Focused rich-output test backend corpus-growth pass:
+
+```text
+sage -t passed: 33 passed, 0 failed, 4 skipped
+```
+
+That one-file make-target validation adds
+`sage/repl/rich_output/test_backend.py` to the curated corpus. Direct sampling
+first recorded four failures because the test backend's displayhook path
+imports IPython in the stripped browser-compatible profile; the dependent
+`test_output` examples then failed because the first displayhook example did
+not assign a value. The added WASI source patch marks those displayhook
+examples as `# needs IPython`, preserving the remaining rich-output promotion,
+plain-text output container, and `_rich_repr_` backend behavior as runnable
+default-profile coverage.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/test-backend-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; `skips-by-reason`
+groups the four skipped blocks under `optional:ipython`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
