@@ -416,6 +416,10 @@ src/sage/misc/unknown.py
 src/sage/misc/verbose.py
 src/sage/misc/viewer.py
 src/sage/misc/weak_dict.pyx
+src/sage/structure/formal_sum.py
+src/sage/structure/global_options.py
+src/sage/monoids/free_monoid.py
+src/sage/monoids/free_monoid_element.py
 src/sage/monoids/string_ops.py
 src/sage/modules/free_module_homspace.py
 src/sage/modules/misc.py

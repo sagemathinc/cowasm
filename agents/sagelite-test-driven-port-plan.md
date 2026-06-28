@@ -7016,6 +7016,31 @@ validation used `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=1
 and wrote `/home/user/cowasm/.tmp/sagelite-matrix-misc-make.sqlite3`; the
 saved block- and file-failure cluster queries are empty.
 
+Focused structure and free-monoid corpus-growth pass:
+
+```text
+sage -t passed: 291 passed, 0 failed, 59 skipped
+```
+
+That four-file focused validation adds `sage/structure/formal_sum.py`,
+`sage/structure/global_options.py`, `sage/monoids/free_monoid.py`, and
+`sage/monoids/free_monoid_element.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 433
+non-comment entries. These files add useful formal-sum, global-options, and
+free-monoid coverage without new WASI source tags or startup namespace
+changes.
+
+Direct sampling first kept nearby files out of the quiet corpus:
+`sage/structure/factorization.py` still has a focused polynomial
+object-model failure around factorization content, while
+`sage/structure/indexed_generators.py` and `sage/structure/sequence.py` still
+have display-order and coercion-representation mismatches. Focused validation
+used the `test-sage-doctest-corpus` make target with a temporary four-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-structure-monoid-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
