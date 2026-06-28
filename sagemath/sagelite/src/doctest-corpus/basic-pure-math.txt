@@ -420,6 +420,7 @@ src/sage/monoids/string_ops.py
 src/sage/modules/free_module_homspace.py
 src/sage/modules/misc.py
 src/sage/modules/module.pyx
+src/sage/modules/multi_filtered_vector_space.py
 src/sage/modules/ore_module_homspace.py
 src/sage/modules/quotient_module.py
 src/sage/modules/real_double_vector.py

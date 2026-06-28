@@ -1789,6 +1789,27 @@ sampling pass kept `sage/structure/nonexact.py` and
 `sage/structure/debug_options.pyx` out of the quiet corpus because they still
 have focused symbolic-startup and debug-option display failures.
 
+Focused multi-filtered vector-space corpus-growth pass:
+
+```text
+sage -t passed: 119 passed, 0 failed, 4 skipped
+```
+
+That one-file focused validation adds
+`sage/modules/multi_filtered_vector_space.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 428
+non-comment entries. Direct sampling first recorded 119 passed blocks, 3
+failed blocks, and 1 skipped block. The failures were narrow
+browser-profile boundaries: two `RR` matrix-space construction examples and
+one dual-filtration example that reaches the focused cypari2/PARI object-model
+boundary.
+
+The added WASI source patch marks the real-field examples as
+`# needs sage.rings.real_mpfr` and the dual-filtration example as
+`# needs sage.libs.pari`, preserving the remaining multi-filtration
+constructor, comparison, tensor, and grading doctests as default-profile
+coverage.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

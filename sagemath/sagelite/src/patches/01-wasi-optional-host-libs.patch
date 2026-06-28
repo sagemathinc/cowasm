@@ -4759,3 +4759,15 @@ diff -urN a/src/sage/rings/polynomial/toy_variety.py b/src/sage/rings/polynomial
 @@ -2770 +2770 @@
 -            sage: a.g() is a.f()
 +            sage: a.g() is a.f()                                                      # known bug - warning output is not compared by the Sagelite runner here
+diff -urN a/src/sage/modules/multi_filtered_vector_space.py b/src/sage/modules/multi_filtered_vector_space.py
+--- a/src/sage/modules/multi_filtered_vector_space.py
++++ b/src/sage/modules/multi_filtered_vector_space.py
+@@ -181 +181 @@
+-            sage: MultiFilteredVectorSpace(3, base_ring=QQ).change_ring(RR)
++            sage: MultiFilteredVectorSpace(3, base_ring=QQ).change_ring(RR)             # needs sage.rings.real_mpfr
+@@ -437 +437 @@
+-            sage: MultiFilteredVectorSpace(123, base_ring=RR)
++            sage: MultiFilteredVectorSpace(123, base_ring=RR)                           # needs sage.rings.real_mpfr
+@@ -648 +648 @@
+-            sage: V.dual()
++            sage: V.dual()                                                              # needs sage.libs.pari
