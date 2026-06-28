@@ -485,6 +485,7 @@ src/sage/modules/vector_space_morphism.py
 src/sage/matrix/constructor.pyx
 src/sage/matrix/docs.py
 src/sage/matrix/matrix_misc.py
+src/sage/matrix/strassen.pyx
 src/sage/doctest/check_tolerance.py
 src/sage/doctest/marked_output.py
 src/sage/logic/booleval.py

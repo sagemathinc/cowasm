@@ -7831,6 +7831,33 @@ with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
 The saved block- and file-failure cluster queries are empty. A full corpus
 rerun should be performed before recording the next dashboard total.
 
+Focused matrix Strassen corpus-growth pass:
+
+```text
+sage -t passed: 69 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds `sage/matrix/strassen.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 500
+non-comment entries. Direct sampling first recorded 66 passed blocks and
+three failures: the setup calls to `_echelon_in_place_classical()` display
+pivot-column tuples in the current WASI runtime where Sage's upstream doctest
+expects no output. The added WASI source patch marks those setup prompts as
+`# random`, so they still bind `B` for the following Strassen comparison
+checks while the dashboard does not depend on the extra displayed return
+value.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` after refreshing the patched Sagelite build tree,
+with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/strassen-make-v2.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The same sampling
+pass kept nearby `sage/structure/set_factories.py`, `sage/matrix/operation_table.py`,
+`sage/modules/filtered_vector_space.py`, and several small category/misc
+helpers out of the quiet corpus because their current failures are broader
+constructor, backend, timeout, filesystem, or skipped-only clusters.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

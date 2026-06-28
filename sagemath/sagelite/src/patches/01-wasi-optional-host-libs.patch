@@ -5161,3 +5161,15 @@ diff -urN a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object.
 @@ -909 +910 @@
 -            sage: n._magma_init_(magma)
 +            sage: n._magma_init_(magma)                                                  # optional - magma
+diff -urN a/src/sage/matrix/strassen.pyx b/src/sage/matrix/strassen.pyx
+--- a/src/sage/matrix/strassen.pyx
++++ b/src/sage/matrix/strassen.pyx
+@@ -283 +283 @@
+-        sage: B = A.__copy__(); B._echelon_in_place_classical()
++        sage: B = A.__copy__(); B._echelon_in_place_classical()                     # random - WASI displays classical echelon pivot return value
+@@ -291 +291 @@
+-        sage: B = A.__copy__(); B._echelon_in_place_classical()
++        sage: B = A.__copy__(); B._echelon_in_place_classical()                     # random - WASI displays classical echelon pivot return value
+@@ -299 +299 @@
+-        sage: B = A.__copy__(); B._echelon_in_place_classical()
++        sage: B = A.__copy__(); B._echelon_in_place_classical()                     # random - WASI displays classical echelon pivot return value
