@@ -4646,3 +4646,14 @@ diff -urN a/src/sage/rings/polynomial/flatten.py b/src/sage/rings/polynomial/fla
 @@ -699 +699 @@
 -            sage: spec.parent()
 +            sage: spec.parent()                                                      # needs pexpect
+diff -urN a/src/sage/rings/polynomial/toy_variety.py b/src/sage/rings/polynomial/toy_variety.py
+--- a/src/sage/rings/polynomial/toy_variety.py
++++ b/src/sage/rings/polynomial/toy_variety.py
+@@ -56,7 +56,7 @@
+-        sage: is_triangular(R.ideal(p1,p2,p3))
++        sage: is_triangular(R.ideal(p1,p2,p3))                                       # needs sage.rings.polynomial.plural
+         False
+         sage: p3 = z^2 - 3
+-        sage: is_triangular(R.ideal(p1,p2,p3))
++        sage: is_triangular(R.ideal(p1,p2,p3))                                       # needs sage.rings.polynomial.plural
+         True
