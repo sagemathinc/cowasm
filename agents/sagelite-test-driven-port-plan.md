@@ -1462,6 +1462,29 @@ patched Sagelite source copy. This clears the two `nonexact.py` power-series
 cosine examples without importing the broad symbolic function namespace. The
 runner version is now 51.
 
+Focused proof-preference corpus-growth pass after the 2026-06-28 source-order
+doctest runner fix:
+
+```text
+sage -t passed: 49 passed, 0 failed, 1 skipped
+```
+
+That one-file focused validation adds `sage/structure/proof/proof.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 460 non-comment
+entries. Direct sampling first recorded four proof-preference mismatches
+because the `.py` docstring collector executed module-level function doctests
+before earlier class-method doctests. In this file, the later
+`get_flag()` example calls `proof.all(False)`, which left non-arithmetic proof
+subsystems false when the class-method examples were run afterward.
+
+Runner version 52 preserves physical source order for parsed Python
+docstrings before execution, matching the line-order behavior expected by
+stateful Sage doctests. The focused rerun used direct `sage -t --timeout 90`
+against the patched source tree with
+`COWASM_SAGELITE_DOCTEST_SOURCE_ROOT=/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`
+and wrote `/home/user/cowasm/.tmp/sagelite-proof-source-order.sqlite3`.
+
 Follow-up category examples corpus-growth pass:
 
 ```text

@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 51;
+const doctestRunnerVersion = 52;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1200,6 +1200,7 @@ def __cowasm_docstrings(filename, text):
         if filtered:
             yield os.path.basename(filename), filtered, lineno
         return
+    docstrings = []
     stack = [(os.path.splitext(os.path.basename(filename))[0], tree)]
     while stack:
         name, node = stack.pop(0)
@@ -1211,10 +1212,12 @@ def __cowasm_docstrings(filename, text):
                 and isinstance(first.value, ast.Constant)
                 and isinstance(first.value.value, str)
             ):
-                yield name, first.value.value, max(0, first.lineno - 1)
+                docstrings.append((max(0, first.lineno - 1), name, first.value.value))
         for child in body:
             if isinstance(child, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
                 stack.append((f"{name}.{child.name}", child))
+    for line_offset, name, docstring in sorted(docstrings, key=lambda item: item[0]):
+        yield name, docstring, line_offset
 
 
 def __cowasm_should_skip(source):
