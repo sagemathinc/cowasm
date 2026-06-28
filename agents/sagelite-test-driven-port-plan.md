@@ -8218,6 +8218,27 @@ the quiet corpus because resolving its lattice sampler imports the unavailable
 `sage.symbolic.expression` module, while most unlisted HMM/time-series stats
 files are skipped-only in the default profile.
 
+Focused rich-output preferences corpus-growth pass:
+
+```text
+sage -t passed: 68 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds
+`sage/repl/rich_output/preferences.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 515
+non-comment entries. Direct sampling found the file as the only new clean
+runnable candidate in a small frontend batch: the probability, stats, typeset,
+logic, and rich-output catalog `all.py` wrappers contributed zero doctest
+blocks, while `sage/repl/display/fancy_repr.py` and
+`sage/repl/display/pretty_print.py` still have focused REPL display failures.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/repl-preferences-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
