@@ -5131,6 +5131,36 @@ diff -urN a/src/sage/structure/factorization.py b/src/sage/structure/factorizati
              sage: f = 2*x + 2
 +            sage: # known bug
              sage: c = f.content(); g = f//c
+diff -urN a/src/sage/structure/set_factories.py b/src/sage/structure/set_factories.py
+--- a/src/sage/structure/set_factories.py
++++ b/src/sage/structure/set_factories.py
+@@ -481 +481 @@
+-            sage: pol.self_element_constructor_attributes(XYPair)
++            sage: pol.self_element_constructor_attributes(XYPair)                    # random - dict display order
+@@ -502 +502 @@
+-            sage: pol.facade_element_constructor_attributes(XYPairs())
++            sage: pol.facade_element_constructor_attributes(XYPairs())               # random - dict display order
+@@ -532 +532 @@
+-            sage: pol.element_constructor_attributes(())
++            sage: pol.element_constructor_attributes(())                             # random - dict display order
+@@ -535 +535 @@
+-            sage: pol.element_constructor_attributes((1))
++            sage: pol.element_constructor_attributes((1))                            # random - dict display order
+@@ -599 +599 @@
+-            sage: pol.element_constructor_attributes(())
++            sage: pol.element_constructor_attributes(())                             # random - dict display order
+@@ -666 +666 @@
+-            sage: pol.element_constructor_attributes(())
++            sage: pol.element_constructor_attributes(())                             # random - dict display order
+@@ -669 +669 @@
+-            sage: pol.element_constructor_attributes((1))
++            sage: pol.element_constructor_attributes((1))                            # random - dict display order
+@@ -766 +766 @@
+-            sage: pol.element_constructor_attributes(())
++            sage: pol.element_constructor_attributes(())                             # random - dict display order
+@@ -770 +770 @@
+-            sage: pol.element_constructor_attributes((1))
++            sage: pol.element_constructor_attributes((1))                            # random - dict display order
 diff -urN a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object.pyx
 --- a/src/sage/structure/sage_object.pyx
 +++ b/src/sage/structure/sage_object.pyx

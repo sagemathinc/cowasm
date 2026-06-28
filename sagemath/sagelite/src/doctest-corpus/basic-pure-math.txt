@@ -456,6 +456,7 @@ src/sage/structure/parent_old.pyx
 src/sage/structure/proof/proof.py
 src/sage/structure/richcmp.pyx
 src/sage/structure/sage_object.pyx
+src/sage/structure/set_factories.py
 src/sage/structure/set_factories_example.py
 src/sage/structure/sequence.py
 src/sage/structure/support_view.py
