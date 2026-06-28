@@ -420,6 +420,9 @@ src/sage/structure/formal_sum.py
 src/sage/structure/global_options.py
 src/sage/structure/indexed_generators.py
 src/sage/structure/mutability.pyx
+src/sage/structure/set_factories_example.py
+src/sage/structure/support_view.py
+src/sage/structure/test_factory.py
 src/sage/structure/unique_representation.py
 src/sage/monoids/free_monoid.py
 src/sage/monoids/free_monoid_element.py
