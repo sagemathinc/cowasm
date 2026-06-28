@@ -40,6 +40,7 @@ src/sage/coding/codes_catalog.py
 src/sage/coding/code_bounds.py
 src/sage/coding/decoders_catalog.py
 src/sage/coding/encoders_catalog.py
+src/sage/coding/source_coding/huffman.py
 src/sage/data_structures/bitset.pyx
 src/sage/data_structures/blas_dict.pyx
 src/sage/data_structures/bounded_integer_sequences.pyx
