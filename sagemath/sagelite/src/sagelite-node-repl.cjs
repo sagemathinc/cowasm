@@ -806,13 +806,26 @@ def _cowasm_exception_detail(exc):
 
 
 def __cowasm_resolve_core_lazy_namespace(namespace):
-    for name in ("RIF", "RDF", "CDF", "RLF"):
+    direct_imports = {
+        "RR": ("sage.rings.real_mpfr", "RR"),
+        "CC": ("sage.rings.complex_mpfr", "CC"),
+        "RIF": ("sage.rings.real_mpfi", "RIF"),
+        "RDF": ("sage.rings.real_double", "RDF"),
+        "CDF": ("sage.rings.complex_double", "CDF"),
+        "RLF": ("sage.rings.real_lazy", "RLF"),
+    }
+    for name, (module_name, object_name) in direct_imports.items():
         value = namespace.get(name)
         get_object = getattr(value, "_get_object", None)
-        if get_object is None:
-            continue
+        if get_object is not None:
+            try:
+                namespace[name] = get_object()
+                continue
+            except BaseException:
+                pass
         try:
-            namespace[name] = get_object()
+            module = importlib.import_module(module_name)
+            namespace[name] = getattr(module, object_name)
         except BaseException:
             pass
 
@@ -1411,6 +1424,7 @@ def __cowasm_namespace(filename):
         else:
             for name, value in vars(module).items():
                 namespace.setdefault(name, value)
+            __cowasm_resolve_core_lazy_namespace(namespace)
     namespace["__name__"] = "__main__"
     return namespace
 

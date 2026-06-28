@@ -5306,3 +5306,9 @@ diff -urN a/src/sage/repl/preparse.py b/src/sage/repl/preparse.py
 @@ -1917 +1917 @@
 -        sage: load(t)
 +        sage: load(t)                                                               # needs IPython
+diff -urN a/src/sage/structure/coerce.pyx b/src/sage/structure/coerce.pyx
+--- a/src/sage/structure/coerce.pyx
++++ b/src/sage/structure/coerce.pyx
+@@ -517 +517 @@
+-        sage: ZZ['x','y'].0 + ~Frac(QQ['y']).0
++        sage: ZZ['x','y'].0 + ~Frac(QQ['y']).0                                # needs pexpect
