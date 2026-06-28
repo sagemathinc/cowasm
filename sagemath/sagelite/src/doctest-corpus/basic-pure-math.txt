@@ -51,7 +51,15 @@ src/sage/ext/fast_eval.pyx
 src/sage/ext/memory.pyx
 src/sage/features/bitness.py
 src/sage/features/cython.py
+src/sage/features/ffmpeg.py
+src/sage/features/graphviz.py
+src/sage/features/imagemagick.py
+src/sage/features/info.py
+src/sage/features/internet.py
+src/sage/features/jmol.py
+src/sage/features/sagemath.py
 src/sage/features/tdlib.py
+src/sage/features/threejs.py
 src/sage/libs/flint/ulong_extras_sage.pyx
 src/sage/combinat/SJT.py
 src/sage/combinat/combinat.py

@@ -8439,6 +8439,33 @@ temporary five-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/small-runtime-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused feature-helper corpus-growth pass:
+
+```text
+sage -t passed: 145 passed, 0 failed, 85 skipped
+```
+
+That eight-file focused validation adds small feature-detection modules to the
+curated corpus: `sage/features/ffmpeg.py`, `sage/features/graphviz.py`,
+`sage/features/imagemagick.py`, `sage/features/info.py`,
+`sage/features/internet.py`, `sage/features/jmol.py`,
+`sage/features/sagemath.py`, and `sage/features/threejs.py`. These files add
+clean browser-profile coverage for optional external-tool feature objects and
+Sage package feature metadata, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 543
+non-comment entries.
+
+Direct sampling kept `sage/features/standard.py` out because it contributes no
+doctest blocks, kept `sage/features/join_feature.py` out because one focused
+diagnostic-output example still mismatches, and kept
+`sage/features/pkg_systems.py`, `sage/features/databases.py`, and
+`sage/features/latex.py` out because their focused examples still reach WASI
+subprocess limits. Focused validation used the `test-sage-doctest-corpus` make
+target with a temporary eight-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/feature-clean-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
