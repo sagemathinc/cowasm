@@ -439,6 +439,7 @@ src/sage/monoids/string_monoid.py
 src/sage/monoids/string_monoid_element.py
 src/sage/monoids/string_ops.py
 src/sage/monoids/trace_monoid.py
+src/sage/monoids/indexed_free_monoid.py
 src/sage/modules/free_module_homspace.py
 src/sage/modules/misc.py
 src/sage/modules/module.pyx

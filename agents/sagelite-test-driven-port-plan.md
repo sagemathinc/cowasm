@@ -7210,6 +7210,33 @@ with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-trace-monoid-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Latest checked local corpus run after the 2026-06-28 indexed-free-monoid
+corpus-growth pass:
+
+```text
+sage -t passed: 36685 passed, 0 failed, 8849 skipped
+```
+
+That run records 45,534 block rows across the current 451-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/home/user/cowasm/.tmp/sagelite-runs/indexed-free-monoid-corpus-clean.sqlite3`,
+adding `sage/monoids/indexed_free_monoid.py` to the quiet browser-profile
+dashboard. Focused reruns record
+`indexed_free_monoid.py: 236 passed, 0 failed, 2 skipped` and
+`category_with_axiom.py: 317 passed, 0 failed, 4 skipped`.
+
+The added WASI source patch classifies the indexed-free-monoid PBW basis
+example as `# needs sage.algebras.lie_algebras`, preserving the ordinary
+indexed monoid and free abelian monoid coverage while leaving Lie algebra
+catalog support outside the browser-profile dashboard. The same pass marks a
+`frozenset` axiom display-order check in `category_with_axiom.py` as
+`# random`; the previous run's sole mismatch had identical set elements in a
+different representation order. The saved block- and file-failure cluster
+queries are empty. The latest run metadata records CoWasm commit
+`7e63ef80f575c8367469392e266ec2191ac8097c`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 50,
+and about 50 minutes of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

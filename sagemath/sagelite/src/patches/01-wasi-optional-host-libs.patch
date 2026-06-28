@@ -1284,6 +1284,21 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 @@ -118 +118 @@
 -            ....:     Vector_rational_dense(QQ^(2^56))
 +            ....:     Vector_rational_dense(QQ^(2^56))                                 # known bug
+diff -urN a/src/sage/monoids/indexed_free_monoid.py b/src/sage/monoids/indexed_free_monoid.py
+--- a/src/sage/monoids/indexed_free_monoid.py
++++ b/src/sage/monoids/indexed_free_monoid.py
+@@ -1062,8 +1062,8 @@
+             ...
+             IndexError: 0 is not in the index set
+ 
+-            sage: F = lie_algebras.VirasoroAlgebra(QQ).pbw_basis().indices(); F
++            sage: F = lie_algebras.VirasoroAlgebra(QQ).pbw_basis().indices(); F    # needs sage.algebras.lie_algebras
+             Free abelian monoid indexed by Disjoint union of Family ({'c'}, Integer Ring)
+-            sage: F.gen('c')
++            sage: F.gen('c')                                                       # needs sage.algebras.lie_algebras
+             PBW['c']
+        """
+diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
 @@ -253,74 +253,178 @@
@@ -4233,6 +4248,9 @@ diff -urN a/src/sage/categories/category_with_axiom.py b/src/sage/categories/cat
 @@ -1626 +1626 @@
 -    sage: Rings().axioms()
 +    sage: Rings().axioms()  # random
+@@ -2487 +2487 @@
+-            sage: MagmasAndAdditiveMagmas().Distributive().Unital().axioms()
++            sage: MagmasAndAdditiveMagmas().Distributive().Unital().axioms()           # random
 diff -urN a/src/sage/categories/category_types.py b/src/sage/categories/category_types.py
 --- a/src/sage/categories/category_types.py
 +++ b/src/sage/categories/category_types.py
