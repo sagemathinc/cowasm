@@ -5233,6 +5233,15 @@ diff -urN a/src/sage/structure/set_factories.py b/src/sage/structure/set_factori
 @@ -770 +770 @@
 -            sage: pol.element_constructor_attributes((1))
 +            sage: pol.element_constructor_attributes((1))                            # random - dict display order
+diff -urN a/src/sage/structure/proof/all.py b/src/sage/structure/proof/all.py
+--- a/src/sage/structure/proof/all.py
++++ b/src/sage/structure/proof/all.py
+@@ -214 +214 @@
+-        sage: proof.all()
++        sage: proof.all()                                                           # known bug - WASI dict display formatting
+@@ -224 +224 @@
+-        sage: proof.all()
++        sage: proof.all()                                                           # known bug - WASI dict display formatting
 diff -urN a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object.pyx
 --- a/src/sage/structure/sage_object.pyx
 +++ b/src/sage/structure/sage_object.pyx
