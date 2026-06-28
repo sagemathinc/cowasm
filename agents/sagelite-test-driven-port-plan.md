@@ -8075,6 +8075,26 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/filtered-modules-with-basis-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused lambda-bracket category corpus-growth pass:
+
+```text
+sage -t passed: 9 passed, 0 failed, 45 skipped
+```
+
+That two-file focused validation adds
+`sage/categories/lambda_bracket_algebras.py` and
+`sage/categories/graded_lie_conformal_algebras.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 509
+non-comment entries. Direct sampling and make-target validation both recorded
+clean default-profile results without new WASI source tags or startup
+namespace changes.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/lambda-corpus-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
