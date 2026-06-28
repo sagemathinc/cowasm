@@ -418,6 +418,9 @@ src/sage/misc/viewer.py
 src/sage/misc/weak_dict.pyx
 src/sage/structure/formal_sum.py
 src/sage/structure/global_options.py
+src/sage/structure/indexed_generators.py
+src/sage/structure/mutability.pyx
+src/sage/structure/unique_representation.py
 src/sage/monoids/free_monoid.py
 src/sage/monoids/free_monoid_element.py
 src/sage/monoids/string_ops.py

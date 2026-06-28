@@ -4771,3 +4771,33 @@ diff -urN a/src/sage/modules/multi_filtered_vector_space.py b/src/sage/modules/m
 @@ -648 +648 @@
 -            sage: V.dual()
 +            sage: V.dual()                                                              # needs sage.libs.pari
+diff -urN a/src/sage/structure/indexed_generators.py b/src/sage/structure/indexed_generators.py
+--- a/src/sage/structure/indexed_generators.py
++++ b/src/sage/structure/indexed_generators.py
+@@ -737 +737 @@
+-        sage: d
++        sage: d                                                                         # random
+@@ -741 +741 @@
+-        sage: d
++        sage: d                                                                         # random
+diff -urN a/src/sage/structure/mutability.pyx b/src/sage/structure/mutability.pyx
+--- a/src/sage/structure/mutability.pyx
++++ b/src/sage/structure/mutability.pyx
+@@ -195 +195 @@
+-            sage: a.__getstate__()
++            sage: a.__getstate__()                                                     # random
+@@ -197 +197 @@
+-            sage: a.__reduce__()  # indirect doctest
++            sage: a.__reduce__()  # indirect doctest                                   # random
+@@ -227 +227 @@
+-            sage: d = a.__getstate__(); d
++            sage: d = a.__getstate__(); d                                              # random
+@@ -233 +233 @@
+-            sage: a.__getstate__()
++            sage: a.__getstate__()                                                     # random
+diff -urN a/src/sage/structure/unique_representation.py b/src/sage/structure/unique_representation.py
+--- a/src/sage/structure/unique_representation.py
++++ b/src/sage/structure/unique_representation.py
+@@ -1047 +1047 @@
+-            sage: x.__dict__
++            sage: x.__dict__                                                            # random

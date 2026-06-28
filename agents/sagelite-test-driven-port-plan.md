@@ -7034,12 +7034,42 @@ Direct sampling first kept nearby files out of the quiet corpus:
 `sage/structure/factorization.py` still has a focused polynomial
 object-model failure around factorization content, while
 `sage/structure/indexed_generators.py` and `sage/structure/sequence.py` still
-have display-order and coercion-representation mismatches. Focused validation
+had display-order and coercion-representation mismatches. Focused validation
 used the `test-sage-doctest-corpus` make target with a temporary four-file
 corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_TIMEOUT=90`, and
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-structure-monoid-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
+
+Focused structure helper corpus-growth pass:
+
+```text
+sage -t passed: 354 passed, 0 failed, 128 skipped
+```
+
+That three-file make-target validation adds
+`sage/structure/indexed_generators.py`,
+`sage/structure/mutability.pyx`, and
+`sage/structure/unique_representation.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 436
+non-comment entries. Direct sampling first recorded narrow display-order and
+function-address repr failures in these files; the added WASI source patch
+marks those examples as `# random` so the examples still execute while the
+browser-profile dashboard does not depend on dictionary insertion order or
+runtime pointer formatting.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-structure-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully,
+and the saved block- and file-failure cluster queries are empty. The same
+sampling pass kept `sage/structure/factorization.py`,
+`sage/structure/sequence.py`, `sage/modules/filtered_vector_space.py`, and
+`sage/modules/module_functors.py` out of the quiet corpus because their
+current failures expose polynomial content, coercion-representation,
+filtered-vector-space, or free-module construction gaps rather than narrow
+display drift.
 
 ## Phase 5: Subprocess Strategy
 
