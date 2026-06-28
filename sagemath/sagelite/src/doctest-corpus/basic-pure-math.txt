@@ -498,6 +498,7 @@ src/sage/matrix/strassen.pyx
 src/sage/doctest/check_tolerance.py
 src/sage/doctest/marked_output.py
 src/sage/repl/display/util.py
+src/sage/repl/rich_output/buffer.py
 src/sage/repl/rich_output/output_basic.py
 src/sage/logic/booleval.py
 src/sage/logic/boolformula.py
