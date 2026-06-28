@@ -431,6 +431,8 @@ src/sage/structure/global_options.py
 src/sage/structure/indexed_generators.py
 src/sage/structure/list_clone.pyx
 src/sage/structure/list_clone_demo.pyx
+src/sage/structure/list_clone_timings.py
+src/sage/structure/list_clone_timings_cy.pyx
 src/sage/structure/mutability.pyx
 src/sage/structure/nonexact.py
 src/sage/structure/parent_gens.pyx

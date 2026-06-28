@@ -7451,6 +7451,34 @@ records CoWasm commit `83a7d1026ab8da9608c6e95dbf92d8bf2cab3353`, Sagelite
 package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and
 runner version 53.
 
+Focused list-clone timing corpus-growth pass:
+
+```text
+sage -t passed: 30 passed, 0 failed, 2 skipped
+```
+
+That two-file focused validation adds
+`sage/structure/list_clone_timings.py` and
+`sage/structure/list_clone_timings_cy.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 467
+non-comment entries. The added WASI source patch marks the two
+`timeit(...)` timing loops in `list_clone_timings.py` as `# needs IPython`,
+because Sage's timing helper imports IPython in this runtime. The clone
+protocol setup and Cython helper examples remain active browser-profile
+coverage.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after refreshing the patched Sagelite build tree, with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-list-clone-timings-make.sqlite3`.
+The run records `list_clone_timings.py: 18 passed, 0 failed, 2 skipped` and
+`list_clone_timings_cy.pyx: 12 passed, 0 failed, 0 skipped`; the saved block-
+and file-failure cluster queries are empty. The same sampling pass kept
+`sage/structure/set_factories.py`, `sage/structure/factorization.py`,
+`sage/misc/sage_timeit.py`, and `sage/misc/benchmark.py` out of the quiet
+corpus because their focused failures expose display-order, polynomial
+object-model, IPython timing, or benchmarking gaps that need separate triage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

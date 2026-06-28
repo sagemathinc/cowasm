@@ -4865,6 +4865,15 @@ diff -urN a/src/sage/structure/category_object.pyx b/src/sage/structure/category
 -            sage: S.variable_names()
 +            sage: S = R.quotient_ring(z+y)                                             # needs sage.rings.polynomial.plural
 +            sage: S.variable_names()                                                   # needs sage.rings.polynomial.plural
+diff -urN a/src/sage/structure/list_clone_timings.py b/src/sage/structure/list_clone_timings.py
+--- a/src/sage/structure/list_clone_timings.py
++++ b/src/sage/structure/list_clone_timings.py
+@@ -31 +31 @@
+-    sage: # random
++    sage: # random                                                                      # needs IPython
+@@ -55 +55 @@
+-    sage: # random
++    sage: # random                                                                      # needs IPython
 diff -urN a/src/sage/structure/mutability.pyx b/src/sage/structure/mutability.pyx
 --- a/src/sage/structure/mutability.pyx
 +++ b/src/sage/structure/mutability.pyx
