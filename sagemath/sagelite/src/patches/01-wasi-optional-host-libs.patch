@@ -5038,3 +5038,40 @@ diff -urN a/src/sage/probability/probability_distribution.pyx b/src/sage/probabi
 @@ -1028 +1028 @@
 -            sage: P = T.plot()
 +            sage: P = T.plot()                                                       # needs sage.plot
+diff -urN a/src/sage/structure/factorization.py b/src/sage/structure/factorization.py
+--- a/src/sage/structure/factorization.py
++++ b/src/sage/structure/factorization.py
+@@ -1071,2 +1071,3 @@
+             sage: f = 2*x + 2
++            sage: # known bug
+             sage: c = f.content(); g = f//c
+diff -urN a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object.pyx
+--- a/src/sage/structure/sage_object.pyx
++++ b/src/sage/structure/sage_object.pyx
+@@ -757,2 +757,3 @@
++            sage: # needs sage.libs.gap
+             sage: a = gap(2/3); a
+             2/3
+@@ -762 +763 @@
+-            sage: a = (2/3)._gap_(); a
++            sage: a = (2/3)._gap_(); a                                                  # needs sage.libs.gap
+@@ -764 +765 @@
+-            sage: type(a)
++            sage: type(a)                                                                # needs sage.libs.gap
+@@ -784 +785 @@
+-            sage: (2/3)._gap_init_()
++            sage: (2/3)._gap_init_()                                                    # needs sage.libs.gap
+@@ -811 +812 @@
+-            sage: a = libgap(2/3); a
++            sage: a = libgap(2/3); a                                                     # needs sage.libs.gap
+@@ -813 +814 @@
+-            sage: type(a)
++            sage: type(a)                                                                # needs sage.libs.gap
+@@ -818,2 +819,2 @@
+-            sage: from sage.libs.gap.element import GapElement
+-            sage: isinstance(a, GapElement)
++            sage: from sage.libs.gap.element import GapElement                           # needs sage.libs.gap
++            sage: isinstance(a, GapElement)                                              # needs sage.libs.gap
+@@ -909 +910 @@
+-            sage: n._magma_init_(magma)
++            sage: n._magma_init_(magma)                                                  # optional - magma

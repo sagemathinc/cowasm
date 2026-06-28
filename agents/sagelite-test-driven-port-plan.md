@@ -7778,6 +7778,33 @@ failing during parser setup. Focused validation for `temporary_file.py` records
 `SAGELITE_DOCTEST_ALLOW_FAILURES=0` and `SAGELITE_DOCTEST_TIMEOUT=120`; the
 saved block- and file-failure cluster queries are empty.
 
+Focused structure core corpus-growth pass:
+
+```text
+sage -t passed: 231 passed, 0 failed, 188 skipped
+```
+
+That two-file make-target validation adds `sage/structure/factorization.py`
+and `sage/structure/sage_object.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 498
+non-comment entries. The files add core factorization container and
+`SageObject` representation/conversion coverage. The added WASI source patch
+classifies external GAP/libgap and Magma interface examples as explicit
+optional/dependency skips, and records the polynomial-content common-universe
+sequence in `factorization.py` as a deferred `# known bug` until the
+browser-compatible polynomial implementation exposes that method.
+
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` with a temporary two-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/structure-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully;
+the saved block- and file-failure cluster queries are empty. The same sampling
+pass kept nearby statistics, crypto, and miscellaneous utility files out of
+the quiet corpus because they were skipped-only, zero-block, timeout-prone, or
+still exposed broader warning, symbolic, filesystem, or timing-policy
+failures.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
