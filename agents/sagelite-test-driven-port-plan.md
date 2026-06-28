@@ -8492,6 +8492,32 @@ contributes no doctest blocks. Focused validation used the
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-feature-descriptors-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused extended feature-descriptor corpus-growth pass:
+
+```text
+sage -t passed: 144 passed, 0 failed, 47 skipped
+```
+
+That 28-file focused validation adds more optional-feature descriptor modules
+to the curated corpus: `sage/features/brial.py`, `coxeter3.py`, `csdp.py`,
+`graph_generators.py`, `igraph.py`, `khoca.py`, `latte.py`, `lcalc.py`,
+`lrs.py`, `mcqd.py`, `meataxe.py`, `meson_editable.py`, `msolve.py`,
+`nauty.py`, `normaliz.py`, `palp.py`, `pandoc.py`, `pdf2svg.py`,
+`phitigra.py`, `polymake.py`, `poppler.py`, `qepcad.py`, `rubiks.py`,
+`singular.py`, `sirocco.py`, `sloane_database.py`, `tides.py`, and
+`topcom.py`. These files add clean browser-profile coverage for optional
+external libraries, graph generators, solver backends, and feature metadata
+without requiring those optional systems to be present, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 588
+non-comment entries.
+
+Direct sampling kept `sage/features/planarity.py` out because its focused run
+still has three default-profile failures. Focused validation used the
+`test-sage-doctest-corpus` make target with a temporary 28-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/feature-more-clean-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
