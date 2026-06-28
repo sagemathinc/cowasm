@@ -8669,6 +8669,27 @@ metadata records CoWasm commit `4d3d2329ad2768c0ba6aec7ac101119dc9b31735`,
 Sagelite package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
 profile, and runner version 60.
 
+Focused matrix-helper corpus-growth pass:
+
+```text
+sage -t passed: 17 passed, 0 failed, 5 skipped
+```
+
+That two-file focused validation adds `sage/matrix/echelon_matrix.pyx` and
+`sage/matrix/matrix_cdv.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 598
+non-comment entries. These modules add clean matrix echelon-form and complex
+double-vector helper coverage under the default node profile without new WASI
+source tags or startup namespace changes.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-matrix-small-make.sqlite3`.
+Direct sampling kept nearby matrix, module, and ring helpers out of the quiet
+corpus because they were skipped-only, zero-block, timed out, or still had
+focused block-level failures.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
