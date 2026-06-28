@@ -8095,6 +8095,27 @@ temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/lambda-corpus-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused REPL display utility corpus-growth pass:
+
+```text
+sage -t passed: 6 passed, 0 failed, 1 skipped
+```
+
+That one-file focused validation adds `sage/repl/display/util.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 510
+non-comment entries. Direct sampling first found the file as the only new
+clean runnable candidate in a small helper batch; adjacent candidates such as
+`sage/cpython/string.pyx`, `sage/cpython/cython_metaclass.pyx`, and
+`sage/misc/map_threaded.py` were skipped-only, while
+`sage/repl/inputhook.py` still has focused doctest failures.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/repl-display-util-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
