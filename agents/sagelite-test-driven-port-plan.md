@@ -7355,6 +7355,26 @@ sagemath/sagelite/build/wasi-sdk/src/sage/misc/temporary_file.py` after
 refreshing both the patched build source and installed Sagelite resource copy.
 The saved block-failure query is empty for the latest run.
 
+Focused structure parent-helper corpus-growth pass:
+
+```text
+sage -t passed: 27 passed, 0 failed, 26 skipped
+```
+
+That two-file focused validation adds `sage/structure/parent_gens.pyx` and
+`sage/structure/parent_old.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 462
+non-comment entries. Direct sampling recorded
+`parent_gens.pyx: 24 passed, 0 failed, 17 skipped` and
+`parent_old.pyx: 3 passed, 0 failed, 9 skipped`.
+
+No new WASI source tags or startup namespace changes were needed. Neighboring
+structure probes remain outside the quiet corpus: `sage/structure/sage_object.pyx`
+still has focused output and optional-interface failures,
+`sage/structure/sequence.py` still has focused mismatches, and
+`sage/structure/coerce_maps.pyx` currently reaches the known C-callable map
+function-signature boundary.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
