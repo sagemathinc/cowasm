@@ -7424,6 +7424,33 @@ patched Sagelite build tree, with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty. The runner
 version is now 53.
 
+Focused LaTeX helper corpus-growth pass:
+
+```text
+sage -t passed: 195 passed, 0 failed, 70 skipped
+```
+
+That one-file focused validation adds `sage/misc/latex.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 465
+non-comment entries. Direct sampling first recorded four block failures:
+three default-engine probes attempted subprocess-backed LaTeX feature
+detection, and one relation-symbol example depended on Python string-repr
+backslash formatting. The added WASI source patch marks the engine probes as
+`# needs sage.features.latex` and marks the relation-symbol display check as
+`# random`, preserving the ordinary `Latex` object, macro, preamble, and
+conversion coverage while keeping external TeX executables outside the
+browser-compatible profile.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+after refreshing the patched Sagelite build tree, with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-latex-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The run metadata
+records CoWasm commit `83a7d1026ab8da9608c6e95dbf92d8bf2cab3353`, Sagelite
+package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, and
+runner version 53.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

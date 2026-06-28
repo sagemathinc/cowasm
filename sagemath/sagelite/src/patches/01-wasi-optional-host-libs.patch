@@ -4499,6 +4499,21 @@ diff -urN a/src/sage/misc/defaults.py b/src/sage/misc/defaults.py
 @@ -76 +76 @@
 -        sage: latex_variable_names(3,beta)
 +        sage: latex_variable_names(3,beta)                                              # needs sage.symbolic
+diff -urN a/src/sage/misc/latex.py b/src/sage/misc/latex.py
+--- a/src/sage/misc/latex.py
++++ b/src/sage/misc/latex.py
+@@ -490 +490 @@
+-        sage: default_engine()  # random
++        sage: default_engine()  # random                                                # needs sage.features.latex
+@@ -517 +517 @@
+-        sage: _default_engine()  # random
++        sage: _default_engine()  # random                                               # needs sage.features.latex
+@@ -1001 +1001 @@
+-            sage: latex._relation_symbols()[operator.ge]
++            sage: latex._relation_symbols()[operator.ge]                                # random
+@@ -1576 +1576 @@
+-            sage: latex.engine()  # random
++            sage: latex.engine()  # random                                              # needs sage.features.latex
 diff -urN a/src/sage/misc/latex_macros.py b/src/sage/misc/latex_macros.py
 --- a/src/sage/misc/latex_macros.py
 +++ b/src/sage/misc/latex_macros.py
