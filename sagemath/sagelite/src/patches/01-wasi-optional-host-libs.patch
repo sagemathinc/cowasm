@@ -4811,6 +4811,14 @@ diff -urN a/src/sage/structure/indexed_generators.py b/src/sage/structure/indexe
 @@ -741 +741 @@
 -        sage: d
 +        sage: d                                                                         # random
+diff -urN a/src/sage/structure/category_object.pyx b/src/sage/structure/category_object.pyx
+--- a/src/sage/structure/category_object.pyx
++++ b/src/sage/structure/category_object.pyx
+@@ -473,2 +473,2 @@
+-            sage: S = R.quotient_ring(z+y)
+-            sage: S.variable_names()
++            sage: S = R.quotient_ring(z+y)                                             # needs sage.rings.polynomial.plural
++            sage: S.variable_names()                                                   # needs sage.rings.polynomial.plural
 diff -urN a/src/sage/structure/mutability.pyx b/src/sage/structure/mutability.pyx
 --- a/src/sage/structure/mutability.pyx
 +++ b/src/sage/structure/mutability.pyx
