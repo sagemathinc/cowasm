@@ -1330,7 +1330,7 @@ diff -urN a/src/sage/misc/latex_standalone.py b/src/sage/misc/latex_standalone.p
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,190 @@
+@@ -253,74 +253,191 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1426,6 +1426,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    import sage.algebras.catalog as algebras
 +    from sage.combinat.combination import Combinations
 +    from sage.combinat.combinat import stirling_number2
++    from sage.combinat.free_module import CombinatorialFreeModule
 +    from sage.combinat.composition import Composition, Compositions
 +    from sage.combinat.non_decreasing_parking_function import NonDecreasingParkingFunction, NonDecreasingParkingFunctions
 +    from sage.combinat.parking_functions import ParkingFunction

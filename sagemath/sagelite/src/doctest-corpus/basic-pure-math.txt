@@ -317,6 +317,7 @@ src/sage/categories/sets_with_grading.py
 src/sage/categories/sets_with_partial_maps.py
 src/sage/categories/shephard_groups.py
 src/sage/categories/modules.py
+src/sage/categories/modules_with_basis.py
 src/sage/categories/left_modules.py
 src/sage/categories/right_modules.py
 src/sage/categories/super_algebras.py

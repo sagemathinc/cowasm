@@ -8028,6 +8028,32 @@ reported pre-existing `integer_mod_ring.py` hunk failures later in the large
 Sagelite WASI patch, so the checked validation for this pass is the focused
 category-core run plus `git diff --check`.
 
+Focused modules-with-basis category corpus-growth pass:
+
+```text
+sage -t passed: 104 passed, 0 failed, 523 skipped
+```
+
+That one-file focused validation adds
+`sage/categories/modules_with_basis.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 506
+non-comment entries. Direct sampling first recorded 83 passed blocks and 21
+failures, all downstream of the missing startup name
+`CombinatorialFreeModule` in ordinary upstream category examples. The doctest
+runner now seeds that lightweight constructor in the common doctest namespace,
+and the WASI `sage.all` patch exposes the same name for REPL parity after a
+Sagelite package rebuild.
+
+Focused validation used direct `sage -t --profile node` against the patched
+build tree with SQLite output at
+`/home/user/cowasm/.tmp/sagelite-runs/modules-with-basis-after.sqlite3`; the
+saved block- and file-failure cluster queries are empty. The same sampling
+pass left `fields.py`, `commutative_rings.py`, `rings.py`,
+`quotient_fields.py`, and `euclidean_domains.py` outside the quiet corpus
+because their first runnable examples still hit existing NTL, polynomial, or
+timeout backend clusters, while `algebra_functor.py` and `groupoid.py` were
+skipped-only in the default browser-compatible profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

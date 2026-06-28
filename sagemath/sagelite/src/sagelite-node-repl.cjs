@@ -821,6 +821,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
     imports = (
         ("sage.combinat.combination", ("Combinations",)),
         ("sage.combinat.combinat", ("fibonacci", "stirling_number2")),
+        ("sage.combinat.free_module", ("CombinatorialFreeModule",)),
         ("sage.combinat.composition", ("Composition",)),
         ("sage.combinat.integer_vector", ("IntegerVectors",)),
         ("sage.combinat.integer_lists", ("IntegerListsLex",)),
