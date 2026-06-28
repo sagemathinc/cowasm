@@ -8410,6 +8410,35 @@ temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/combinat-light-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused runtime feature-helper corpus-growth pass:
+
+```text
+sage -t passed: 14 passed, 0 failed, 0 skipped
+```
+
+That five-file focused validation adds small runtime and feature-helper files
+to the curated corpus: `sage/parallel/ncpus.py`,
+`sage/features/bitness.py`, `sage/features/cython.py`,
+`sage/features/tdlib.py`, and `sage/libs/flint/ulong_extras_sage.pyx`.
+These files add clean coverage for CPU-count probing, feature object
+construction, and FLINT integer-factor wrapper behavior without new WASI
+source tags or startup namespace changes, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 535
+non-comment entries.
+
+Direct sampling kept `sage/libs/flint/ulong_extras.pyx` out because one
+focused doctest still fails, and kept `sage/libs/ntl/error.pyx` out because
+loading its NTL example reaches the current `gf2x_mul` dynamic-link import
+boundary. The same small probe found several zero-block or skipped-only
+helpers such as `sage/cpython/string.pyx`, `sage/misc/map_threaded.py`, and
+`sage/cpython/builtin_types.pyx`, which were not added.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary five-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/small-runtime-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
