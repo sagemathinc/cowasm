@@ -8578,6 +8578,43 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_TIMEOUT=90`, and
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/proof-all-make.sqlite3`.
 
+Focused Lie-conformal algebra corpus-growth pass:
+
+```text
+sage -t passed: 23 passed, 0 failed, 1 skipped
+```
+
+That three-file focused validation adds
+`sage/algebras/lie_conformal_algebras/abelian_lie_conformal_algebra.py`,
+`sage/algebras/lie_conformal_algebras/graded_lie_conformal_algebra.py`, and
+`sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 594
+non-comment entries. Direct sampling first recorded startup-name failures for
+Sage's `lie_conformal_algebras` catalog and `LieConformalAlgebra` constructor.
+The doctest runner now seeds both names from
+`sage.algebras.lie_conformal_algebras.all`, and the WASI `sage.all` patch
+exposes the same names for REPL parity on a fresh patched source copy.
+
+The only remaining focused failure was the Virasoro `QQbar` repr example,
+which reaches the current Algebraic Field cache/coercion boundary; the added
+WASI source patch marks that example as `# needs sage.rings.number_field`
+while preserving the rational-field Virasoro construction, category, bracket,
+generator, and `TestSuite` coverage. Focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary
+three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/lie-conformal-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
+The same sampling pass kept `sage/algebras/quaternion_algebra.py`,
+`sage/matrix/change_ring.pyx`, `sage/matrix/misc_flint.pyx`, and
+`sage/matrix/misc_mpfr.pyx` out of the quiet corpus because their focused
+failures still hit unavailable dense integer-matrix imports, matrix real-field
+initialization, or diagnostic drift rather than narrow startup namespace gaps.
+Skipped-only probes such as `sage/misc/sphinxify.py` and
+`sage/categories/bialgebras.py` were also left out.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

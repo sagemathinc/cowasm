@@ -31,6 +31,9 @@ src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
 src/sage/algebras/associated_graded.py
 src/sage/algebras/free_zinbiel_algebra.py
+src/sage/algebras/lie_conformal_algebras/abelian_lie_conformal_algebra.py
+src/sage/algebras/lie_conformal_algebras/graded_lie_conformal_algebra.py
+src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py
 src/sage/cpython/atexit.pyx
 src/sage/cpython/type.pyx
 src/sage/cpython/debug.pyx

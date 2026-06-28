@@ -1341,7 +1341,7 @@ diff -urN a/src/sage/repl/rich_output/buffer.py b/src/sage/repl/rich_output/buff
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,192 @@
+@@ -253,74 +253,193 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1434,6 +1434,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.categories.tensor import tensor
 +    from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 +    from sage.categories.vector_spaces import VectorSpaces
++    from sage.algebras.lie_conformal_algebras.all import LieConformalAlgebra, lie_conformal_algebras
 +    import sage.algebras.catalog as algebras
 +    import sage.coding.codes_catalog as codes
 +    from sage.combinat.combination import Combinations
@@ -5242,6 +5243,12 @@ diff -urN a/src/sage/structure/proof/all.py b/src/sage/structure/proof/all.py
 @@ -224 +224 @@
 -        sage: proof.all()
 +        sage: proof.all()                                                           # known bug - WASI dict display formatting
+diff -urN a/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py
+--- a/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py
++++ b/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_algebra.py
+@@ -79 +79 @@
+-            sage: lie_conformal_algebras.Virasoro(QQbar)
++            sage: lie_conformal_algebras.Virasoro(QQbar)                              # needs sage.rings.number_field
 diff -urN a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object.pyx
 --- a/src/sage/structure/sage_object.pyx
 +++ b/src/sage/structure/sage_object.pyx
