@@ -37,6 +37,7 @@ src/sage/cpython/dict_del_by_value.pyx
 src/sage/coding/bounds_catalog.py
 src/sage/coding/channels_catalog.py
 src/sage/coding/codes_catalog.py
+src/sage/coding/code_bounds.py
 src/sage/coding/decoders_catalog.py
 src/sage/coding/encoders_catalog.py
 src/sage/data_structures/bitset.pyx

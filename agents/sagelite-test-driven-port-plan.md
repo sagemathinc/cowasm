@@ -8309,6 +8309,26 @@ Focused make-target validation used a temporary five-file corpus,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/coding-catalog-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused coding bounds corpus-growth pass:
+
+```text
+sage -t passed: 15 passed, 0 failed, 41 skipped
+```
+
+That one-file focused validation adds `sage/coding/code_bounds.py` to the
+curated corpus. The doctest runner now seeds the lightweight `codes` catalog
+namespace from `sage.coding.codes_catalog`, and the WASI `sage.all` patch
+exposes the same alias for REPL parity. This clears the upstream
+`codes.bounds...` startup-name cluster while keeping LP, GAP/Guava, PARI, and
+symbolic-dependent examples as explicit skipped coverage under the default
+browser-compatible profile.
+
+Focused validation used the `test-sage-doctest-corpus` make target from a
+freshly patched Sagelite source copy with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/code-bounds-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

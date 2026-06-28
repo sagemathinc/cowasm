@@ -1341,7 +1341,7 @@ diff -urN a/src/sage/repl/rich_output/buffer.py b/src/sage/repl/rich_output/buff
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,191 @@
+@@ -253,74 +253,192 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1435,6 +1435,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 +    from sage.categories.vector_spaces import VectorSpaces
 +    import sage.algebras.catalog as algebras
++    import sage.coding.codes_catalog as codes
 +    from sage.combinat.combination import Combinations
 +    from sage.combinat.combinat import stirling_number2
 +    from sage.combinat.free_module import CombinatorialFreeModule
