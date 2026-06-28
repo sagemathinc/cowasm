@@ -7625,6 +7625,34 @@ validation used a temporary one-file corpus with
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/boolformula-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused data-structure corpus-growth pass:
+
+```text
+sage -t passed: 695 passed, 0 failed, 13 skipped
+```
+
+That three-file focused validation adds `sage/data_structures/bitset.pyx`,
+`sage/data_structures/bounded_integer_sequences.pyx`, and
+`sage/data_structures/list_of_pairs.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 491
+non-comment entries. These files add dense Cython coverage for bitsets,
+bounded integer sequences, and pair-list storage without new WASI source tags
+or startup namespace changes.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary three-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/data-structures-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The run records
+`bitset.pyx: 419 passed, 0 failed, 12 skipped`,
+`bounded_integer_sequences.pyx: 262 passed, 0 failed, 1 skipped`, and
+`list_of_pairs.pyx: 14 passed, 0 failed, 0 skipped`. The same sampling pass
+kept `sage/data_structures/stream.py` out because it still reaches a
+polynomial-number-field runtime trap, kept `sage/stats/basic_stats.py` out
+because its focused doctests still have output mismatches, and kept sampled
+crypto and CPython/data-structure wrapper files out because they add only
+skipped or zero-block rows in the default browser-compatible profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
