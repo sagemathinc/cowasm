@@ -7704,6 +7704,31 @@ The run records `blas_dict.pyx: 61 passed, 0 failed, 6 skipped` and
 `mutable_poset.py: 437 passed, 0 failed, 0 skipped`; the saved block- and
 file-failure cluster queries are empty.
 
+Focused probability-distribution corpus-growth pass:
+
+```text
+sage -t passed: 239 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds
+`sage/probability/probability_distribution.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 495
+non-comment entries. Direct sampling also checked adjacent
+`sage/data_structures/binary_search.pyx` and
+`sage/data_structures/bitset_base.pyx`, but both currently contribute zero
+doctest blocks under the default browser-compatible profile.
+
+The added WASI source patch classifies the plotting-only histogram examples as
+`# needs pylab` and the `RealDistribution.plot()` example as
+`# needs sage.plot`, leaving the distribution construction, random sampling,
+and density/cumulative distribution behavior in default-profile coverage.
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` after refreshing the patched Sagelite build tree,
+with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/probability-distribution-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and the skip
+query reports only the five intended optional dependency skips.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

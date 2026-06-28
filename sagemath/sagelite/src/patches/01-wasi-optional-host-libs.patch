@@ -5021,3 +5021,20 @@ diff -urN a/src/sage/data_structures/blas_dict.pyx b/src/sage/data_structures/bl
 @@ -355 +355 @@
 -        sage: blas.linear_combination([(D1, s2)], factor_on_left=True) # s2 * s1
 +        sage: blas.linear_combination([(D1, s2)], factor_on_left=True) # s2 * s1     # needs sage.libs.symmetrica
+diff -urN a/src/sage/probability/probability_distribution.pyx b/src/sage/probability/probability_distribution.pyx
+--- a/src/sage/probability/probability_distribution.pyx
++++ b/src/sage/probability/probability_distribution.pyx
+@@ -119,2 +119,2 @@
+-            sage: h, b = X.generate_histogram_data(bins=10)
+-            sage: h  # rel tol 1e-08
++            sage: h, b = X.generate_histogram_data(bins=10)                         # needs pylab
++            sage: h  # rel tol 1e-08                                                # needs pylab
+@@ -131 +131 @@
+-            sage: b
++            sage: b                                                                  # needs pylab
+@@ -175 +175 @@
+-            sage: with tempfile.NamedTemporaryFile() as f:
++            sage: with tempfile.NamedTemporaryFile() as f:                           # needs pylab
+@@ -1028 +1028 @@
+-            sage: P = T.plot()
++            sage: P = T.plot()                                                       # needs sage.plot

@@ -490,6 +490,7 @@ src/sage/logic/logic.py
 src/sage/logic/logicparser.py
 src/sage/logic/logictable.py
 src/sage/logic/propcalc.py
+src/sage/probability/probability_distribution.pyx
 src/sage/probability/random_variable.py
 src/sage/typeset/ascii_art.py
 src/sage/typeset/character_art.py
