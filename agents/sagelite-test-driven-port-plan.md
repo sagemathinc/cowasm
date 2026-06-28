@@ -7566,6 +7566,39 @@ the saved block- and file-failure cluster queries are empty. The run records
 `marked_output.py: 20 passed, 0 failed, 1 skipped`, and
 `ascii_art.py: 3 passed, 0 failed, 25 skipped`.
 
+Focused logic/typeset/CPython helper corpus-growth pass:
+
+```text
+sage -t passed: 436 passed, 0 failed, 45 skipped
+```
+
+That seven-file focused validation adds `sage/cpython/debug.pyx`,
+`sage/cpython/getattr.pyx`, `sage/logic/logic.py`,
+`sage/logic/logicparser.py`, `sage/logic/propcalc.py`,
+`sage/typeset/character_art.py`, and
+`sage/typeset/character_art_factory.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 487
+non-comment entries. The doctest runner and WASI `sage.all` patch now seed
+`propcalc` and `SymbolicLogic`, matching Sage startup expectations without
+importing the full non-WASI logic aggregate.
+
+The added WASI source patch classifies three narrow browser-profile
+boundaries: `debug.pyx`'s widget attribute-debug example needs `ipywidgets`,
+`logic.py`'s ellipsis-only print-table regression guard is accepted as
+random output, and `character_art_factory.py`'s non-ASCII string example is
+deferred as the existing Sagelite source-conversion literal gap. Focused
+validation used `make -C sagemath/sagelite test-sage-doctest-corpus` after
+refreshing the patched Sagelite build tree, with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/logic-typeset-cpython-make.sqlite3`.
+The run records `debug.pyx: 10 passed, 0 failed, 4 skipped`,
+`getattr.pyx: 64 passed, 0 failed, 10 skipped`,
+`logic.py: 83 passed, 0 failed, 0 skipped`,
+`logicparser.py: 95 passed, 0 failed, 0 skipped`,
+`propcalc.py: 54 passed, 0 failed, 0 skipped`,
+`character_art.py: 98 passed, 0 failed, 5 skipped`, and
+`character_art_factory.py: 32 passed, 0 failed, 26 skipped`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

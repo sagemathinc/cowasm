@@ -1330,7 +1330,7 @@ diff -urN a/src/sage/misc/latex_standalone.py b/src/sage/misc/latex_standalone.p
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,180 @@
+@@ -253,74 +253,181 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1440,6 +1440,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.combinat.words.words import InfiniteWords, Words
 +    from sage.functions.log import exp, log
 +    from sage.functions.trig import cos
++    from sage.logic.all import SymbolicLogic, propcalc
 +    from sage.modules.free_module import FreeModule, VectorSpace, span
 +    from sage.modules.free_module_element import vector
 +    from sage.schemes.generic.spec import Spec
@@ -4922,6 +4923,26 @@ diff -urN a/src/sage/doctest/marked_output.py b/src/sage/doctest/marked_output.p
 @@ -43 +43 @@
 -        sage: MarkedOutput("56 µs")
 +        sage: MarkedOutput("56 µs")                                                 # known bug - Sagelite source conversion mangles this non-ASCII literal
+diff -urN a/src/sage/cpython/debug.pyx b/src/sage/cpython/debug.pyx
+--- a/src/sage/cpython/debug.pyx
++++ b/src/sage/cpython/debug.pyx
+@@ -109,2 +109,2 @@
+-        sage: from ipywidgets import IntSlider
+-        sage: _ = getattr_debug(IntSlider(), "value")
++        sage: from ipywidgets import IntSlider                                        # needs ipywidgets
++        sage: _ = getattr_debug(IntSlider(), "value")                                 # needs ipywidgets
+diff -urN a/src/sage/logic/logic.py b/src/sage/logic/logic.py
+--- a/src/sage/logic/logic.py
++++ b/src/sage/logic/logic.py
+@@ -246 +246 @@
+-            sage: log.print_table(table)
++            sage: log.print_table(table)                                              # random
+diff -urN a/src/sage/typeset/character_art_factory.py b/src/sage/typeset/character_art_factory.py
+--- a/src/sage/typeset/character_art_factory.py
++++ b/src/sage/typeset/character_art_factory.py
+@@ -191 +191 @@
+-            sage: factory.build_from_string('à\nbb\nccc')  # same with unicode
++            sage: factory.build_from_string('à\nbb\nccc')  # same with unicode        # known bug - Sagelite source conversion mangles this non-ASCII literal
 diff -urN a/src/sage/typeset/ascii_art.py b/src/sage/typeset/ascii_art.py
 --- a/src/sage/typeset/ascii_art.py
 +++ b/src/sage/typeset/ascii_art.py

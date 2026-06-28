@@ -924,6 +924,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.root_system.root_system", ("RootSystem", "WeylDim")),
         ("sage.functions.trig", ("cos",)),
         ("sage.functions.other", ("floor",)),
+        ("sage.logic.all", ("propcalc", "SymbolicLogic")),
         ("sage.misc.functional", ("sqrt",)),
         ("sage.modules.free_module", ("FreeModule", "VectorSpace", "span")),
         ("sage.modules.free_module_element", ("vector",)),
