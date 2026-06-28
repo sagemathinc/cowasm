@@ -8194,6 +8194,30 @@ copy with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/basic-stats-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused stats distribution catalog corpus-growth pass:
+
+```text
+sage -t passed: 1 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds
+`sage/stats/distributions/catalog.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 514
+non-comment entries. The file contributes a small but clean startup-catalog
+doctest for importing the statistical distribution catalog under the default
+browser-compatible profile, with no new WASI source tags or startup namespace
+changes.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/stats-distribution-catalog-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The adjacent
+`sage/stats/distributions/discrete_gaussian_lattice.py` probe remains outside
+the quiet corpus because resolving its lattice sampler imports the unavailable
+`sage.symbolic.expression` module, while most unlisted HMM/time-series stats
+files are skipped-only in the default profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

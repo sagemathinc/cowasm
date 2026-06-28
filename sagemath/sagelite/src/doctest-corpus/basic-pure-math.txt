@@ -509,6 +509,7 @@ src/sage/logic/propcalc.py
 src/sage/probability/probability_distribution.pyx
 src/sage/probability/random_variable.py
 src/sage/stats/basic_stats.py
+src/sage/stats/distributions/catalog.py
 src/sage/stats/distributions/discrete_gaussian_polynomial.py
 src/sage/typeset/ascii_art.py
 src/sage/typeset/character_art.py
