@@ -6846,6 +6846,32 @@ because it still reaches the known NTL/libcxx finite-field trap. Low-signal
 zero-block files such as `copying.py`, `proof.py`, `mathml.py`, and
 `map_threaded.py` were sampled but not added.
 
+Latest checked local corpus run after the 2026-06-27 polynomial-flatten
+corpus-growth pass:
+
+```text
+sage -t passed: 33171 passed, 0 failed, 8328 skipped
+```
+
+That full make-target dashboard covers the current 421-file
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus in
+`/home/user/cowasm/.tmp/sagelite-corpus-after-polynomial-flatten.sqlite3`,
+adding `sage/rings/polynomial/flatten.py` to the quiet browser-profile
+dashboard. The SQLite aggregate records 41,499 block rows, no failed blocks,
+and no non-passing file rows. The focused rerun records
+`flatten.py: 132 passed, 0 failed, 18 skipped`.
+
+The added WASI source patch classifies the file's number-field flattening
+example as `# needs sage.rings.number_field`, its affine-space specialization
+example as `# needs sage.schemes`, and its fraction-specialization example as
+`# needs pexpect`. It also marks the specialization-morphism display line as
+`# random` so the `xi` assignment still seeds the following example while
+accepting the WASI morphism repr drift. The saved block- and file-failure
+cluster queries are empty for the full corpus run. The latest run metadata
+records CoWasm commit `e712c10ad93d7c0064e9b3d014797620792f7874`, Sagelite
+source/package commit `875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node
+profile, runner version 49, and about 46 minutes of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
