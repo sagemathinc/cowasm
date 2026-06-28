@@ -1286,7 +1286,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            ....:     Vector_rational_dense(QQ^(2^56))                                 # known bug
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,172 @@
+@@ -253,74 +253,177 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1323,9 +1323,12 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.commutative_rings import CommutativeRings
 +    from sage.categories.coxeter_groups import CoxeterGroups
 +    from sage.categories.division_rings import DivisionRings
++    from sage.categories.domains import Domains
 +    from sage.categories.euclidean_domains import EuclideanDomains
 +    from sage.categories.fields import Fields
++    from sage.categories.finite_coxeter_groups import FiniteCoxeterGroups
 +    from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
++    from sage.categories.finite_dimensional_hopf_algebras_with_basis import FiniteDimensionalHopfAlgebrasWithBasis
 +    from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 +    from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 +    from sage.categories.finite_fields import FiniteFields
@@ -1351,8 +1354,10 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    RingModules = Modules
 +    from sage.categories.modules_with_basis import ModulesWithBasis
 +    from sage.categories.objects import Objects
++    from sage.categories.finite_groups import FiniteGroups
 +    from sage.categories.finite_monoids import FiniteMonoids
 +    from sage.categories.finite_semigroups import FiniteSemigroups
++    from sage.categories.permutation_groups import PermutationGroups
 +    from sage.categories.posets import Posets
 +    from sage.categories.right_modules import RightModules
 +    from sage.categories.ring_ideals import RingIdeals
@@ -4221,6 +4226,12 @@ diff -urN a/src/sage/categories/homset.py b/src/sage/categories/homset.py
          False
 -        sage: loads(dumps(H)) == H
 +        sage: loads(dumps(H)) == H                                                     # needs sage.schemes
+diff -urN a/src/sage/categories/category_with_axiom.py b/src/sage/categories/category_with_axiom.py
+--- a/src/sage/categories/category_with_axiom.py
++++ b/src/sage/categories/category_with_axiom.py
+@@ -1626 +1626 @@
+-    sage: Rings().axioms()
++    sage: Rings().axioms()  # random
 diff -urN a/src/sage/categories/category_types.py b/src/sage/categories/category_types.py
 --- a/src/sage/categories/category_types.py
 +++ b/src/sage/categories/category_types.py

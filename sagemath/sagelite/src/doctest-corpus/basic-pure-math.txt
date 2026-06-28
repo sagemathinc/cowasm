@@ -235,6 +235,7 @@ src/sage/categories/functor.pyx
 src/sage/categories/function_fields.py
 src/sage/categories/homset.py
 src/sage/categories/homsets.py
+src/sage/categories/category_with_axiom.py
 src/sage/categories/map.pyx
 src/sage/categories/morphism.pyx
 src/sage/categories/semigroups.py

@@ -6691,6 +6691,35 @@ symbolic, PARI/cypari2, table-index, or module-functor failure clusters. A
 full corpus rerun should be performed before recording the next dashboard
 total.
 
+Focused category-with-axiom corpus-growth pass:
+
+```text
+sage -t passed: 317 passed, 0 failed, 4 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/category_with_axiom.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 418 non-comment
+entries. Direct sampling first recorded 305 passed blocks, 12 failures, and 4
+skipped blocks. The failures were startup namespace gaps for lightweight
+category constructors used by upstream examples:
+`FiniteGroups`, `FiniteCoxeterGroups`, `Domains`,
+`FiniteDimensionalHopfAlgebrasWithBasis`, and `PermutationGroups`, plus one
+order-sensitive `Rings().axioms()` frozenset display check. The doctest runner
+now seeds those constructors in the common startup namespace, the WASI
+`sage.all` patch exposes them for REPL parity after a Sagelite package
+rebuild, and the unordered frozenset example is marked `# random`.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-category-with-axiom-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully.
+The saved block- and file-failure cluster queries are empty, and the SQLite
+aggregate is internally consistent with 321 block rows, 317 passed blocks, no
+failed blocks, and 4 skipped blocks. A full corpus rerun should be performed
+before recording the next dashboard total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
