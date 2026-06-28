@@ -1439,6 +1439,29 @@ with a temporary five-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/tmp/sagelite-category-examples-make.sqlite3`; the saved
 block- and file-failure cluster queries are empty.
 
+Focused structure-basics corpus-growth pass after the 2026-06-28 doctest
+namespace fix:
+
+```text
+sage -t passed: 16 passed, 0 failed, 0 skipped
+```
+
+That two-file focused validation adds `sage/structure/debug_options.pyx` and
+`sage/structure/nonexact.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 459
+non-comment entries. Direct probes record
+`debug_options.pyx: 5 passed, 0 failed, 0 skipped` and
+`nonexact.py: 11 passed, 0 failed, 0 skipped`.
+
+The doctest runner now mirrors Sage's doctest startup behavior by setting
+`debug.refine_category_hash_check = True` in each common doctest namespace,
+which clears the `debug_options.pyx` mismatch. It also seeds the lightweight
+`cos` function beside the existing `sqrt`, `floor`, `exp`, and `log` startup
+surface, and the WASI `sage.all` patch exposes `cos` for REPL parity on a fresh
+patched Sagelite source copy. This clears the two `nonexact.py` power-series
+cosine examples without importing the broad symbolic function namespace. The
+runner version is now 51.
+
 Follow-up category examples corpus-growth pass:
 
 ```text

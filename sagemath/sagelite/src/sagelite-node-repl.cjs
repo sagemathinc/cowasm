@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 50;
+const doctestRunnerVersion = 51;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -922,6 +922,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.root_system.cartan_type", ("CartanType",)),
         ("sage.combinat.root_system.coxeter_type", ("CoxeterType",)),
         ("sage.combinat.root_system.root_system", ("RootSystem", "WeylDim")),
+        ("sage.functions.trig", ("cos",)),
         ("sage.functions.other", ("floor",)),
         ("sage.misc.functional", ("sqrt",)),
         ("sage.modules.free_module", ("FreeModule", "VectorSpace", "span")),
@@ -960,6 +961,11 @@ def __cowasm_seed_common_doctest_globals(namespace):
         namespace.setdefault("RingModules", namespace["Modules"])
     if "RingIdeals" in namespace:
         namespace.setdefault("Ideals", namespace["RingIdeals"])
+    try:
+        from sage.structure.debug_options import debug
+        debug.refine_category_hash_check = True
+    except BaseException:
+        pass
 
 
 def _cowasm_tags(source):

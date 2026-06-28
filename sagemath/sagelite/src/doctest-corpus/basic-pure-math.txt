@@ -419,6 +419,7 @@ src/sage/misc/viewer.py
 src/sage/misc/weak_dict.pyx
 src/sage/structure/category_object.pyx
 src/sage/structure/coerce_dict.pyx
+src/sage/structure/debug_options.pyx
 src/sage/structure/dynamic_class.py
 src/sage/structure/element_wrapper.pyx
 src/sage/structure/factorization_integer.py
@@ -429,6 +430,7 @@ src/sage/structure/indexed_generators.py
 src/sage/structure/list_clone.pyx
 src/sage/structure/list_clone_demo.pyx
 src/sage/structure/mutability.pyx
+src/sage/structure/nonexact.py
 src/sage/structure/richcmp.pyx
 src/sage/structure/set_factories_example.py
 src/sage/structure/support_view.py
