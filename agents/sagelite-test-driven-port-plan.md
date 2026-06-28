@@ -6787,9 +6787,29 @@ copy, ran a one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0` and
 `SAGELITE_DOCTEST_TIMEOUT=120`, and wrote
 `sagemath/sagelite/dist/wasi-sdk/sagelite-classcall-metaclass-make.sqlite3`.
 The focused run records `classcall_metaclass.pyx: 75 passed, 0 failed, 15
-skipped`, with empty saved block- and file-failure cluster queries. A clean
-full-dashboard rerun remains the next validation step before recording a new
-419-file corpus baseline.
+skipped`, with empty saved block- and file-failure cluster queries.
+
+Clean 419-file corpus baseline after the classcall display-drift tag:
+
+```text
+sage -t passed: 32984 passed, 0 failed, 8301 skipped
+```
+
+The full make-target dashboard over the current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus completed all
+419 files with no non-passing file rows and no failed block rows. It wrote
+`/home/user/cowasm/.tmp/sagelite-corpus-after-classcall-random.sqlite3`; the
+saved block- and file-failure cluster queries are empty. The run confirms the
+`sage/misc/classcall_metaclass.pyx:92` object-address repr random tag cleared
+the prior only block-level failure, with that file now recording `75 passed, 0
+failed, 15 skipped`.
+
+Run metadata: status `passed`, runner version 49, profile `node`, CoWasm commit
+`6cb058720fd543db934cb983b8093f9b7306a9b5`, Sagelite source/package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, source root
+`/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`, invocation cwd
+`/home/user/cowasm/sagemath/sagelite`, started `2026-06-28T03:55:35.141Z`,
+finished `2026-06-28T04:44:26.033Z`, duration 2,930,883 ms.
 
 ## Phase 5: Subprocess Strategy
 
