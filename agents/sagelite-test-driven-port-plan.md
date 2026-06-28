@@ -6598,6 +6598,24 @@ The saved block- and file-failure cluster queries are empty, and the SQLite
 aggregate is internally consistent with 11 block rows, all passed. A full
 corpus rerun should be performed before recording the next dashboard total.
 
+Latest checked local corpus run after the 2026-06-27 stopgap utility
+corpus-growth pass:
+
+```text
+sage -t passed: 32585 passed, 0 failed, 8270 skipped
+```
+
+That make-target validation covers all 414 files in the current
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` corpus and writes
+`/home/user/cowasm/.tmp/sagelite-corpus-after-stopgap.sqlite3`. The saved
+SQLite dashboard is internally consistent with 40,855 block rows, 32,585
+passed blocks, no failed blocks, 8,270 skipped blocks, and no non-passing file
+rows. The saved block- and file-failure cluster queries are empty. The latest
+run metadata records CoWasm commit
+`96b97de1c0811e2263370958379ca6f0b689975a`, Sagelite package commit
+`875c1cc836ddc6feaf3a240db2a8b1f0c3190756`, node profile, runner version 49,
+and about 45 minutes of elapsed time.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
