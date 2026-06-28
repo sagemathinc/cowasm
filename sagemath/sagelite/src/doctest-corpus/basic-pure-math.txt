@@ -416,6 +416,7 @@ src/sage/misc/unknown.py
 src/sage/misc/verbose.py
 src/sage/misc/viewer.py
 src/sage/misc/weak_dict.pyx
+src/sage/structure/dynamic_class.py
 src/sage/structure/element_wrapper.pyx
 src/sage/structure/factorization_integer.py
 src/sage/structure/formal_sum.py

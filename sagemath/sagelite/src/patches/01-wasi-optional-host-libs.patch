@@ -1286,7 +1286,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +            ....:     Vector_rational_dense(QQ^(2^56))                                 # known bug
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,177 @@
+@@ -253,74 +253,178 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1350,6 +1350,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +    from sage.categories.magmas import Magmas
 +    from sage.categories.modular_abelian_varieties import ModularAbelianVarieties
 +    from sage.categories.monoids import Monoids
++    from sage.categories.morphism import Morphism
 +    from sage.categories.modules import Modules
 +    RingModules = Modules
 +    from sage.categories.modules_with_basis import ModulesWithBasis
