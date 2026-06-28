@@ -8329,6 +8329,32 @@ freshly patched Sagelite source copy with a temporary one-file corpus,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/code-bounds-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused rich-output container corpus-growth pass:
+
+```text
+sage -t passed: 121 passed, 0 failed, 0 skipped
+```
+
+That four-file focused validation adds the remaining clean rich-output
+container modules to the curated corpus:
+`sage/repl/rich_output/output_browser.py`,
+`sage/repl/rich_output/output_graphics.py`,
+`sage/repl/rich_output/output_graphics3d.py`, and
+`sage/repl/rich_output/output_video.py`. These files cover browser, 2D
+graphics, 3D graphics, and video output wrapper behavior without new WASI
+source tags or startup namespace changes, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 527
+non-comment entries.
+
+Direct sampling also kept the rich-output backend/display-manager and
+REPL display formatter modules out of the quiet corpus because they still
+have focused display-state failures, while `output_catalog.py` contributes no
+doctest blocks. Focused validation used the `test-sage-doctest-corpus` make
+target with a temporary four-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/rich-output-containers-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
