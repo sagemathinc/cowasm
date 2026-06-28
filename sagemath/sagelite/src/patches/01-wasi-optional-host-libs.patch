@@ -1313,10 +1313,24 @@ diff -urN a/src/sage/monoids/indexed_free_monoid.py b/src/sage/monoids/indexed_f
 +            sage: F.gen('c')                                                       # needs sage.algebras.lie_algebras
              PBW['c']
         """
+diff -urN a/src/sage/misc/latex_standalone.py b/src/sage/misc/latex_standalone.py
+--- a/src/sage/misc/latex_standalone.py
++++ b/src/sage/misc/latex_standalone.py
+@@ -437,5 +437,5 @@
+             sage: lines.append(r'\end{tikzpicture}')
+             sage: s = '\n'.join(lines)
+             sage: t = TikzPicture(s)
+-            sage: t._rich_repr_(dm)      # random result is Text in doctest
++            sage: t._rich_repr_(dm)      # random result is Text in doctest, needs IPython
+             OutputImagePng container
+@@ -445,2 +445,2 @@
+             sage: dm.preferences.graphics = 'vector'
+-            sage: t._rich_repr_(dm)      # random result is Text in doctest
++            sage: t._rich_repr_(dm)      # random result is Text in doctest, needs IPython
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,179 @@
+@@ -253,74 +253,180 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1432,6 +1446,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 +    from sage.sets.family import Family
 +    from sage.sets.positive_integers import PositiveIntegers
++    from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 +    from primecountpy.primecount import prime_pi as _primecount_prime_pi
 +
 +    def prime_pi(x):

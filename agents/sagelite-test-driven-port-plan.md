@@ -7400,6 +7400,30 @@ structure probes still remain outside the quiet corpus:
 interface boundaries, while `sage/structure/coerce_maps.pyx` still reaches the
 known C-callable map function-signature boundary.
 
+Focused LaTeX standalone corpus-growth pass:
+
+```text
+sage -t passed: 194 passed, 0 failed, 129 skipped
+```
+
+That one-file focused validation adds `sage/misc/latex_standalone.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 464
+non-comment entries. Direct sampling first recorded three failures: two
+IPython-only rich-output checks, and one startup-name failure for
+`RecursivelyEnumeratedSet` in a graph-construction setup example.
+
+The added WASI source patch marks the rich-output checks as `# needs IPython`.
+The doctest runner now seeds `RecursivelyEnumeratedSet` in the common startup
+namespace, and the WASI `sage.all` patch exposes the same constructor for REPL
+parity on a fresh patched Sagelite source copy. Focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` after refreshing the
+patched Sagelite build tree, with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-latex-standalone-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The runner
+version is now 53.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

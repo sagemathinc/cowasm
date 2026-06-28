@@ -383,6 +383,7 @@ src/sage/misc/lazy_format.py
 src/sage/misc/lazy_import_cache.py
 src/sage/misc/lazy_list.pyx
 src/sage/misc/latex_macros.py
+src/sage/misc/latex_standalone.py
 src/sage/misc/lazy_string.pyx
 src/sage/misc/messaging.py
 src/sage/misc/method_decorator.py
