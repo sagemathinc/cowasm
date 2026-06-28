@@ -967,6 +967,17 @@ def __cowasm_seed_common_doctest_globals(namespace):
         namespace.setdefault("algebras", algebras)
     except BaseException:
         pass
+    try:
+        import sage.stats.all as stats
+        namespace.setdefault("stats", stats)
+        try:
+            import sage.all as sage_all
+            if not hasattr(sage_all, "stats"):
+                setattr(sage_all, "stats", stats)
+        except BaseException:
+            pass
+    except BaseException:
+        pass
     if "Modules" in namespace:
         namespace.setdefault("RingModules", namespace["Modules"])
     if "ModulesWithBasis" in namespace:

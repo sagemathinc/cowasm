@@ -8165,6 +8165,35 @@ freshly patched Sagelite source copy with a temporary one-file corpus,
 The saved block- and file-failure cluster queries are empty, and `git diff
 --check` passes.
 
+Focused basic statistics corpus-growth pass:
+
+```text
+sage -t passed: 30 passed, 0 failed, 34 skipped
+```
+
+That one-file focused validation adds `sage/stats/basic_stats.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 513
+non-comment entries. Direct sampling first recorded four warning-output
+mismatches, four missing `stats` namespace failures, two downstream missing
+`x` failures from the skipped `TimeSeries` setup, and one symbolic `NaN`
+boundary. The doctest runner now seeds the lightweight `stats` module alias in
+the common namespace, matching the upstream `sage.all` startup expectation
+without importing the full non-WASI statistics aggregate during startup.
+
+The added WASI source patch classifies the known Sagelite warning-stream
+comparison limitation as `# known bug` on the affected deprecated examples and
+marks the empty-list variance `NaN` example as `# needs sage.symbolic`, while
+leaving ordinary mean, mode, variance, median, and moving-average behavior in
+default-profile coverage. Focused validation used direct `sage -t --profile
+node` with SQLite output at
+`/home/user/cowasm/.tmp/sagelite-runs/stats-basic-after.sqlite3`, then the
+`test-sage-doctest-corpus` make target from a freshly patched Sagelite source
+copy with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/basic-stats-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
