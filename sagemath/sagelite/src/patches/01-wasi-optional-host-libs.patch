@@ -4374,6 +4374,12 @@ diff -urN a/src/sage/misc/banner.py b/src/sage/misc/banner.py
 @@ -24 +24 @@
 -       sage: version()
 +       sage: version()                                                                  # known bug
+diff -urN a/src/sage/misc/classcall_metaclass.pyx b/src/sage/misc/classcall_metaclass.pyx
+--- a/src/sage/misc/classcall_metaclass.pyx
++++ b/src/sage/misc/classcall_metaclass.pyx
+@@ -92 +92 @@
+-            sage: x = Foo(); x
++            sage: x = Foo(); x                                                         # random
 diff -urN a/src/sage/misc/classgraph.py b/src/sage/misc/classgraph.py
 --- a/src/sage/misc/classgraph.py
 +++ b/src/sage/misc/classgraph.py

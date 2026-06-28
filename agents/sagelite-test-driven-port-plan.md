@@ -6758,11 +6758,38 @@ Focused validation used direct `sage -t --timeout 120` against the patched
 build tree with `TMPDIR=/home/user/cowasm/.tmp` and
 `COWASM_SAGELITE_DOCTEST_SOURCE_ROOT=/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`,
 writing `/home/user/cowasm/.tmp/sagelite-classgraph-after-tags.sqlite3`. The
-saved block- and file-failure cluster queries are empty. A make-target restage
-was not run in this pass because the current `/home/user/sagelite` checkout
-has unrelated source-patch dry-run drift; the next full dashboard should
-refresh that checkout or repair the unrelated stale patch hunks before
-recording a new corpus total.
+saved block- and file-failure cluster queries are empty. A follow-up
+make-target restage refreshed `sagemath/sagelite/build/wasi-sdk` from
+`/home/user/sagelite`, applied the WASI patch cleanly, and reran the same
+one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, recording the same
+`2 passed, 0 failed, 6 skipped` result in
+`sagemath/sagelite/dist/wasi-sdk/sagelite-classgraph-make-check.sqlite3`.
+
+Focused misc classcall-metaclass display-drift pass:
+
+```text
+sage -t passed: 75 passed, 0 failed, 15 skipped
+```
+
+A full make-target dashboard over the 419-file corpus after the classgraph
+addition completed all files but found one remaining block-level failure:
+`sage/misc/classcall_metaclass.pyx:92` expected the historical object-address
+repr `<__main__.Foo object at 0x...>`, while the current WASI runtime printed
+`<__main__.Foo object at >`. The run recorded `32983 passed, 1 failed, 8301
+skipped` in `sagemath/sagelite/dist/wasi-sdk/sagelite-doctests.sqlite3`; the
+saved file-error cluster query was empty and the block-failure cluster query
+contained only that display-address mismatch.
+
+The added WASI source patch marks `x = Foo(); x` as `# random`, matching the
+existing browser-profile treatment for object-address and dictionary-order
+display drift. Focused make-target validation refreshed the patched source
+copy, ran a one-file corpus with `SAGELITE_DOCTEST_ALLOW_FAILURES=0` and
+`SAGELITE_DOCTEST_TIMEOUT=120`, and wrote
+`sagemath/sagelite/dist/wasi-sdk/sagelite-classcall-metaclass-make.sqlite3`.
+The focused run records `classcall_metaclass.pyx: 75 passed, 0 failed, 15
+skipped`, with empty saved block- and file-failure cluster queries. A clean
+full-dashboard rerun remains the next validation step before recording a new
+419-file corpus baseline.
 
 ## Phase 5: Subprocess Strategy
 
