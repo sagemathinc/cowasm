@@ -7511,6 +7511,33 @@ the quiet corpus because they add only skipped rows, and kept
 `sage/categories/unique_factorization_domains.py` out because they still have
 focused failures or timeout clusters that need separate triage.
 
+Focused self-contained utility corpus-growth pass:
+
+```text
+sage -t passed: 166 passed, 0 failed, 10 skipped
+```
+
+That eight-file focused validation adds
+`sage/cpython/dict_del_by_value.pyx`,
+`sage/doctest/check_tolerance.py`, `sage/logic/booleval.py`,
+`sage/logic/logictable.py`, `sage/probability/random_variable.py`,
+`sage/typeset/unicode_characters.py`, `sage/typeset/symbols.py`, and
+`sage/typeset/unicode_art.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 477
+non-comment entries. These files add tolerance-check helper, boolean-logic,
+truth-table, random-variable, Unicode symbol, and CPython dictionary-helper
+coverage without new WASI source tags or startup namespace changes.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary eight-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/self-contained-clean-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The same sampling
+pass kept `sage/doctest/marked_output.py`, `sage/typeset/ascii_art.py`, and
+`sage/cpython/atexit.pyx` out of the quiet corpus because they currently expose
+doctest parser null-byte handling, IPython display-shell, and `atexit` output
+formatting mismatches.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
