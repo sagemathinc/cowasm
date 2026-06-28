@@ -7003,6 +7003,19 @@ Laurent-polynomial validation path, `symmetric_reduction.pyx` is skipped-only
 under the default browser-compatible profile, and `polynomial_fateman.py`
 currently contributes no doctest blocks.
 
+Focused matrix miscellaneous corpus-growth pass:
+
+```text
+sage -t passed: 22 passed, 0 failed, 0 skipped
+```
+
+That one-file validation adds `sage/matrix/matrix_misc.py` to the curated
+corpus. The file gives the dashboard lightweight matrix utility coverage
+without new WASI source tags or startup namespace changes. Focused make-target
+validation used `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+and wrote `/home/user/cowasm/.tmp/sagelite-matrix-misc-make.sqlite3`; the
+saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
