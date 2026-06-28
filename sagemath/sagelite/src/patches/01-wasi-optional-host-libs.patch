@@ -4840,3 +4840,39 @@ diff -urN a/src/sage/structure/unique_representation.py b/src/sage/structure/uni
 @@ -1047 +1047 @@
 -            sage: x.__dict__
 +            sage: x.__dict__                                                            # random
+diff -urN a/src/sage/misc/temporary_file.py b/src/sage/misc/temporary_file.py
+--- a/src/sage/misc/temporary_file.py
++++ b/src/sage/misc/temporary_file.py
+@@ -233 +233 @@
+-        sage: with open(target_file, 'r') as f:
++        sage: with open(target_file, 'r') as f:                                      # known bug - WASI append mode does not support this overwrite check
+@@ -252,2 +252,2 @@
+-        sage: _ = os.umask(0o022)
+-        sage: with atomic_write(target_file) as f:
++        sage: _ = os.umask(0o022)                                                     # needs host_umask
++        sage: with atomic_write(target_file) as f:                                   # needs host_umask
+@@ -255 +255 @@
+-        sage: '{:#o}'.format(os.stat(target_file).st_mode & 0o777)
++        sage: '{:#o}'.format(os.stat(target_file).st_mode & 0o777)                  # needs host_umask
+@@ -257,2 +257,2 @@
+-        sage: _ = os.umask(0o077)
+-        sage: with atomic_write(target_file, mode=0o777) as f:
++        sage: _ = os.umask(0o077)                                                     # needs host_umask
++        sage: with atomic_write(target_file, mode=0o777) as f:                      # needs host_umask
+@@ -260 +260 @@
+-        sage: '{:#o}'.format(os.stat(target_file).st_mode & 0o777)
++        sage: '{:#o}'.format(os.stat(target_file).st_mode & 0o777)                  # needs host_umask
+@@ -280 +280 @@
+-        sage: with atomic_write(target_file, binary=False,
++        sage: with atomic_write(target_file, binary=False,                           # known bug - Sagelite doctest conversion mangles this non-ASCII literal
+@@ -284 +284 @@
+-        sage: with io.open(target_file, encoding='utf-8') as f:
++        sage: with io.open(target_file, encoding='utf-8') as f:                       # known bug - Sagelite doctest conversion mangles this non-ASCII literal
+@@ -319,2 +319,5 @@
+-        umask = os.umask(0)
+-        os.umask(umask)
++        try:
++            umask = os.umask(0)
++            os.umask(umask)
++        except OSError:
++            umask = 0

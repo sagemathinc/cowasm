@@ -408,6 +408,7 @@ src/sage/misc/sh.py
 src/sage/misc/stopgap.pyx
 src/sage/misc/superseded.py
 src/sage/misc/table.py
+src/sage/misc/temporary_file.py
 src/sage/misc/test_class_pickling.py
 src/sage/misc/test_nested_class.py
 src/sage/misc/timing.py

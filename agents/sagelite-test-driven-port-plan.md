@@ -7287,6 +7287,28 @@ refreshing the patched Sagelite build tree, with
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-structure-infra-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused temporary-file corpus-growth pass:
+
+```text
+sage -t passed: 71 passed, 0 failed, 9 skipped
+```
+
+That one-file focused validation adds `sage/misc/temporary_file.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 457 non-comment
+entries. The added WASI source patch makes `atomic_write` tolerate CoWasm
+profiles where CPython's `os.umask` is present but backed by a failing WASI
+stub, falling back to a zero mask for Sage's mode calculation. The same patch
+classifies direct host-umask permission checks, one WASI append-overwrite
+semantic mismatch, and a non-ASCII doctest conversion mismatch as explicit
+deferred skips.
+
+Focused validation used `sage -t --profile node --timeout 120 --sqlite
+/home/user/cowasm/.tmp/sagelite-temporary-file-after.sqlite3
+sagemath/sagelite/build/wasi-sdk/src/sage/misc/temporary_file.py` after
+refreshing both the patched build source and installed Sagelite resource copy.
+The saved block-failure query is empty for the latest run.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
