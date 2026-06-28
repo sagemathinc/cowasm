@@ -6811,6 +6811,41 @@ Run metadata: status `passed`, runner version 49, profile `node`, CoWasm commit
 `/home/user/cowasm/sagemath/sagelite`, started `2026-06-28T03:55:35.141Z`,
 finished `2026-06-28T04:44:26.033Z`, duration 2,930,883 ms.
 
+Focused misc HTML corpus-growth pass:
+
+```text
+sage -t passed: 55 passed, 0 failed, 9 skipped
+```
+
+That one-file make-target validation adds `sage/misc/html.py` to the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 420 non-comment entries. Direct sampling first recorded 55 passed blocks,
+9 block-level failures, and no file-level errors. The failing examples were
+HTML display-layer drift where the stripped node profile prints raw string
+reprs for `HtmlFragment` results, plus `html.eval(...)` examples that expect
+notebook user globals to be initialized. The added WASI source patch marks
+those display/globals examples as deferred `# known bug` skips, leaving the
+pure parsing and MathJax helper coverage active in the default profile.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `TMPDIR=/home/user/cowasm/.tmp/sagelite-validation`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-html-focused.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully.
+The saved block- and file-failure cluster queries are empty, and the SQLite
+aggregate records 64 total blocks, 55 passed blocks, no failed blocks, and
+9 skipped blocks.
+
+The same misc-frontier sampling pass kept `sage/misc/temporary_file.py` out
+because one docstring currently exposes a doctest-parser whitespace error,
+kept `sage/misc/sage_ostools.pyx` out because most failures exercise POSIX
+file-descriptor redirection and subprocess behavior outside the browser
+profile, kept `sage/misc/functional.py` out because rational-function setup
+timed out in the current profile, and kept `sage/misc/sage_input.py` out
+because it still reaches the known NTL/libcxx finite-field trap. Low-signal
+zero-block files such as `copying.py`, `proof.py`, `mathml.py`, and
+`map_threaded.py` were sampled but not added.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

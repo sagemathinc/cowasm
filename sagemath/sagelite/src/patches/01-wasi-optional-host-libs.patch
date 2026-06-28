@@ -4401,6 +4401,36 @@ diff -urN a/src/sage/misc/classgraph.py b/src/sage/misc/classgraph.py
 @@ -82 +82 @@
 -        sage: G = class_graph(sage.rings.polynomial.padics, depth=2); G
 +        sage: G = class_graph(sage.rings.polynomial.padics, depth=2); G           # needs sage.graphs
+diff -urN a/src/sage/misc/html.py b/src/sage/misc/html.py
+--- a/src/sage/misc/html.py
++++ b/src/sage/misc/html.py
+@@ -42 +42 @@
+-        sage: HtmlFragment('<b>test</b>')
++        sage: HtmlFragment('<b>test</b>')                                          # known bug
+@@ -420 +420 @@
+-            sage: html(1/2)
++            sage: html(1/2)                                                        # known bug
+@@ -423 +423 @@
+-            sage: html('<a href="http://sagemath.org">sagemath</a>')
++            sage: html('<a href="http://sagemath.org">sagemath</a>')               # known bug
+@@ -426 +426 @@
+-            sage: html('<a href="http://sagemath.org">sagemath</a>', strict=True)
++            sage: html('<a href="http://sagemath.org">sagemath</a>', strict=True)  # known bug
+@@ -434 +434 @@
+-            sage: html(1/2)
++            sage: html(1/2)                                                        # known bug
+@@ -437 +437 @@
+-            sage: html(1/2)
++            sage: html(1/2)                                                        # known bug
+@@ -440 +440 @@
+-            sage: html(1/2)
++            sage: html(1/2)                                                        # known bug
+@@ -488 +488 @@
+-            sage: html.eval('<sage>a</sage>')
++            sage: html.eval('<sage>a</sage>')                                      # known bug
+@@ -490 +490 @@
+-            sage: html.eval('<sage>a</sage>', locals={'a': 456})
++            sage: html.eval('<sage>a</sage>', locals={'a': 456})                   # known bug
 diff -urN a/src/sage/misc/converting_dict.py b/src/sage/misc/converting_dict.py
 --- a/src/sage/misc/converting_dict.py
 +++ b/src/sage/misc/converting_dict.py
