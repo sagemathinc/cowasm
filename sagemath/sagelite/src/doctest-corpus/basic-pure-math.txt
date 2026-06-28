@@ -224,12 +224,14 @@ src/sage/categories/finite_dimensional_coalgebras_with_basis.py
 src/sage/categories/finite_dimensional_graded_lie_algebras_with_basis.py
 src/sage/categories/finite_dimensional_hopf_algebras_with_basis.py
 src/sage/categories/finite_dimensional_modules_with_basis.py
+src/sage/categories/finite_dimensional_nilpotent_lie_algebras_with_basis.py
 src/sage/categories/finite_dimensional_semisimple_algebras_with_basis.py
 src/sage/categories/infinite_enumerated_sets.py
 src/sage/categories/finite_sets.py
 src/sage/categories/finite_monoids.py
 src/sage/categories/finite_semigroups.py
 src/sage/categories/finite_weyl_groups.py
+src/sage/categories/finitely_generated_lambda_bracket_algebras.py
 src/sage/categories/finitely_generated_magmas.py
 src/sage/categories/finitely_generated_semigroups.py
 src/sage/categories/functor.pyx

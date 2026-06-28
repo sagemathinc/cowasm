@@ -7479,6 +7479,38 @@ and file-failure cluster queries are empty. The same sampling pass kept
 corpus because their focused failures expose display-order, polynomial
 object-model, IPython timing, or benchmarking gaps that need separate triage.
 
+Focused lambda/nilpotent Lie category corpus-growth pass:
+
+```text
+sage -t passed: 13 passed, 0 failed, 35 skipped
+```
+
+That two-file focused validation adds
+`sage/categories/finite_dimensional_nilpotent_lie_algebras_with_basis.py` and
+`sage/categories/finitely_generated_lambda_bracket_algebras.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 469
+non-comment entries. Direct probes recorded
+`finite_dimensional_nilpotent_lie_algebras_with_basis.py: 12 passed, 0 failed,
+21 skipped` and `finitely_generated_lambda_bracket_algebras.py: 1 passed,
+0 failed, 14 skipped`.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-category-lie-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The same sampling
+pass kept nearby category files such as
+`sage/categories/finitely_generated_lie_conformal_algebras.py`,
+`sage/categories/finite_groups.py`, and several category example files out of
+the quiet corpus because they add only skipped rows, and kept
+`sage/categories/graded_lie_conformal_algebras.py`,
+`sage/categories/kahler_algebras.py`,
+`sage/categories/lattice_posets.py`,
+`sage/categories/principal_ideal_domains.py`, and
+`sage/categories/unique_factorization_domains.py` out because they still have
+focused failures or timeout clusters that need separate triage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
