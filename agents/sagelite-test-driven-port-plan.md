@@ -8744,6 +8744,31 @@ and `modules/module_functors.py` still have focused block-level failures;
 helpers are skipped-only or zero-block under the default browser-compatible
 profile.
 
+Follow-up sampling pass on 2026-06-28 found no new quiet runnable corpus
+candidate among several adjacent REPL, doctest, misc, category, combinatorics,
+root-system, set, arithmetic, monoid, stats, structure, module, and matrix
+helpers. The useful outcome is narrower triage rather than corpus growth:
+remaining uncurated REPL display helpers cluster around unavailable
+IPython/traitlets display infrastructure; `sage/doctest/util.py` and
+`sage/doctest/fixtures.py` still mix IPython, cysignals alarm, filesystem, and
+stateful dependent failures; leftover category, monoid, stats, root-system,
+and set files sampled in this pass are skipped-only or zero-block; and
+`sage/arith/functions.pyx` plus `sage/arith/misc.py` still reach polynomial
+LCM/GCD runtime boundaries, including a `PyTuple_SET_ITEM` assertion in
+`polynomial_element`.
+
+The most informative sampling databases from this pass are under
+`/home/user/cowasm/.tmp/current-run/`, including
+`repl-doctest-sampling-abs.sqlite3`, `repl-extra-sampling.sqlite3`,
+`root-extra-sampling.sqlite3`, and `arith-misc-sampling.sqlite3`. The checked
+`file-coverage-shape.sql`, `file-coverage-summary.sql`, and
+`block-failure-clusters.sql` queries were sufficient for separating
+skipped-only, zero-block, broad-failure, and clean-runnable candidates, so no
+new dashboard query was needed. The next productive corpus-growth pass should
+avoid these sampled files unless it first targets one of the named clusters:
+IPython display availability/tagging, doctest utility alarm/filesystem
+semantics, or polynomial constructor/vectorcall runtime behavior.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
