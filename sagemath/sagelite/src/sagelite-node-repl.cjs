@@ -844,7 +844,12 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.combinat.words.words", ("InfiniteWords", "Words")),
         ("sage.combinat.words.lyndon_word", ("LyndonWords",)),
         ("sage.combinat.words.morphism", ("WordMorphism",)),
+        ("sage.monoids.free_abelian_monoid", ("FreeAbelianMonoid",)),
         ("sage.monoids.free_monoid", ("FreeMonoid",)),
+        ("sage.monoids.string_monoid", (
+            "AlphabeticStrings", "BinaryStrings", "HexadecimalStrings",
+            "OctalStrings", "Radix64Strings",
+        )),
         ("sage.categories.additive_groups", ("AdditiveGroups",)),
         ("sage.categories.additive_magmas", ("AdditiveMagmas",)),
         ("sage.categories.additive_monoids", ("AdditiveMonoids",)),

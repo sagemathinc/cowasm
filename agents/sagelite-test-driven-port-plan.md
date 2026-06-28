@@ -7122,6 +7122,34 @@ Direct sampling in the same area kept zero-block helpers such as
 because their focused doctests still have block-level failures rather than
 clean default-profile coverage.
 
+Focused monoid corpus-growth pass:
+
+```text
+sage -t passed: 485 passed, 0 failed, 77 skipped
+```
+
+That five-file focused make-target validation adds
+`sage/monoids/automatic_semigroup.py`,
+`sage/monoids/free_abelian_monoid.py`,
+`sage/monoids/free_abelian_monoid_element.pyx`,
+`sage/monoids/string_monoid.py`, and
+`sage/monoids/string_monoid_element.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 449
+non-comment entries. The Sagelite doctest runner now seeds
+`FreeAbelianMonoid` and the common string-monoid constructors in the
+doctest namespace, which clears the element files' startup-name failures
+without changing Sage source semantics.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-monoid-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. The same
+sampling pass kept `sage/monoids/monoid.py` and `sage/monoids/hecke_monoid.py`
+out as skip-only files, kept `sage/monoids/indexed_free_monoid.py` out because
+its remaining focused failures require the Lie algebra catalog, and kept
+`sage/monoids/trace_monoid.py` out because one dependence-stack display still
+depends on unordered set/dict rendering.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
