@@ -188,6 +188,7 @@ src/sage/categories/bialgebras_with_basis.py
 src/sage/categories/bimodules.py
 src/sage/categories/cartesian_product.py
 src/sage/categories/category_types.py
+src/sage/categories/category.py
 src/sage/categories/category_singleton.pyx
 src/sage/categories/category_cy_helper.pyx
 src/sage/categories/chain_complexes.py

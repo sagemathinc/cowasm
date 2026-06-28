@@ -858,6 +858,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.algebras", ("Algebras",)),
         ("sage.categories.algebra_ideals", ("AlgebraIdeals",)),
         ("sage.categories.bialgebras", ("Bialgebras",)),
+        ("sage.categories.bimodules", ("Bimodules",)),
         ("sage.categories.coalgebras", ("Coalgebras",)),
         ("sage.categories.coalgebras_with_basis", ("CoalgebrasWithBasis",)),
         ("sage.categories.chain_complexes", ("ChainComplexes",)),
@@ -899,7 +900,10 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.morphism", ("Morphism",)),
         ("sage.categories.modules", ("Modules",)),
         ("sage.categories.modules_with_basis", ("ModulesWithBasis",)),
+        ("sage.categories.number_fields", ("NumberFields",)),
         ("sage.categories.objects", ("Objects",)),
+        ("sage.categories.principal_ideal_domains", ("PrincipalIdealDomains",)),
+        ("sage.categories.quotient_fields", ("QuotientFields",)),
         ("sage.categories.right_modules", ("RightModules",)),
         ("sage.categories.ring_ideals", ("RingIdeals",)),
         ("sage.categories.sets_cat", ("Sets",)),
@@ -918,6 +922,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.semigroups", ("Semigroups",)),
         ("sage.categories.semirings", ("Semirings",)),
         ("sage.categories.tensor", ("tensor",)),
+        ("sage.categories.unique_factorization_domains", ("UniqueFactorizationDomains",)),
         ("sage.categories.finite_monoids", ("FiniteMonoids",)),
         ("sage.categories.finite_semigroups", ("FiniteSemigroups",)),
         ("sage.combinat.root_system.cartan_type", ("CartanType",)),
@@ -962,6 +967,10 @@ def __cowasm_seed_common_doctest_globals(namespace):
         pass
     if "Modules" in namespace:
         namespace.setdefault("RingModules", namespace["Modules"])
+    if "ModulesWithBasis" in namespace:
+        namespace.setdefault("FreeModules", namespace["ModulesWithBasis"])
+    if "Posets" in namespace:
+        namespace.setdefault("PartiallyOrderedSets", namespace["Posets"])
     if "RingIdeals" in namespace:
         namespace.setdefault("Ideals", namespace["RingIdeals"])
     try:

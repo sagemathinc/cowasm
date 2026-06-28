@@ -1330,7 +1330,7 @@ diff -urN a/src/sage/misc/latex_standalone.py b/src/sage/misc/latex_standalone.p
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,182 @@
+@@ -253,74 +253,189 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1357,6 +1357,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.categories.algebras import Algebras
 +    from sage.categories.algebras_with_basis import AlgebrasWithBasis
 +    from sage.categories.bialgebras import Bialgebras
++    from sage.categories.bimodules import Bimodules
 +    from sage.categories.cartesian_product import cartesian_product
 +    from sage.categories.chain_complexes import ChainComplexes
 +    from sage.categories.coalgebras import Coalgebras
@@ -1398,12 +1399,17 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.categories.modules import Modules
 +    RingModules = Modules
 +    from sage.categories.modules_with_basis import ModulesWithBasis
++    FreeModules = ModulesWithBasis
++    from sage.categories.number_fields import NumberFields
 +    from sage.categories.objects import Objects
++    from sage.categories.principal_ideal_domains import PrincipalIdealDomains
++    from sage.categories.quotient_fields import QuotientFields
 +    from sage.categories.finite_groups import FiniteGroups
 +    from sage.categories.finite_monoids import FiniteMonoids
 +    from sage.categories.finite_semigroups import FiniteSemigroups
 +    from sage.categories.permutation_groups import PermutationGroups
 +    from sage.categories.posets import Posets
++    PartiallyOrderedSets = Posets
 +    from sage.categories.right_modules import RightModules
 +    from sage.categories.ring_ideals import RingIdeals
 +    Ideals = RingIdeals
@@ -1414,6 +1420,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.categories.semirings import Semirings
 +    from sage.categories.simplicial_complexes import SimplicialComplexes
 +    from sage.categories.tensor import tensor
++    from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 +    from sage.categories.vector_spaces import VectorSpaces
 +    import sage.algebras.catalog as algebras
 +    from sage.combinat.combination import Combinations
@@ -4336,6 +4343,24 @@ diff -urN a/src/sage/categories/graded_algebras_with_basis.py b/src/sage/categor
                      3
                  """
                  return max(b.degree() for b in self.basis())
+diff -urN a/src/sage/categories/category.py b/src/sage/categories/category.py
+--- a/src/sage/categories/category.py
++++ b/src/sage/categories/category.py
+@@ -1585 +1585 @@
+-            sage: C._make_named_class("element_class",  "ElementMethods")
++            sage: C._make_named_class("element_class",  "ElementMethods")              # known bug
+@@ -1795 +1795 @@
+-            sage: Algebras(QQ).required_methods()
++            sage: Algebras(QQ).required_methods()                                      # random
+@@ -2021 +2021 @@
+-            sage: Monoids().axioms()
++            sage: Monoids().axioms()                                                   # random
+@@ -2023 +2023 @@
+-            sage: (EnumeratedSets().Infinite() & Sets().Facade()).axioms()
++            sage: (EnumeratedSets().Infinite() & Sets().Facade()).axioms()             # random
+@@ -2448 +2448 @@
+-            sage: TCF.axioms()
++            sage: TCF.axioms()                                                         # random
 diff -urN a/src/sage/categories/metric_spaces.py b/src/sage/categories/metric_spaces.py
 --- a/src/sage/categories/metric_spaces.py
 +++ b/src/sage/categories/metric_spaces.py

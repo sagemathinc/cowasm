@@ -7980,6 +7980,33 @@ batch kept adjacent zero-block helpers, skipped-only `sphinxify.py`,
 timeout-prone symbolic `functional.py`, and filesystem-redirection-heavy
 `sage_ostools.pyx` out of the curated corpus for now.
 
+Focused category-core corpus-growth pass:
+
+```text
+sage -t passed: 412 passed, 0 failed, 45 skipped
+```
+
+That one-file direct validation adds `sage/categories/category.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 504
+non-comment entries. The doctest runner now seeds the lightweight category
+constructors and aliases used by upstream category-core examples, including
+`Bimodules`, `FreeModules`, `NumberFields`, `PartiallyOrderedSets`,
+`PrincipalIdealDomains`, `QuotientFields`, and
+`UniqueFactorizationDomains`; the WASI `sage.all` patch exposes the same names
+for REPL parity after a Sagelite package rebuild.
+
+The added WASI source patch classifies category-core warning/dict/set display
+drift as deferred or random output where the underlying category values remain
+unchanged. Direct focused validation used `sage -t --profile node` against the
+already-patched build tree with SQLite output under
+`/home/user/cowasm/.tmp/sagelite-category-after.sqlite3`; `/tmp` could not be
+used because the host returned `Disk quota exceeded` for new temporary
+directories. A full clean-source patch dry-run parsed the new hunks but still
+reported pre-existing `integer_mod_ring.py` hunk failures later in the large
+Sagelite WASI patch, so the checked validation for this pass is the focused
+category-core run plus `git diff --check`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
