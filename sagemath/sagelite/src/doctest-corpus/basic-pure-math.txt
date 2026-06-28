@@ -29,6 +29,8 @@ src/sage/arith/srange.pyx
 src/sage/arith/power.pyx
 src/sage/arith/rational_reconstruction.pyx
 src/sage/arith/numerical_approx.pyx
+src/sage/algebras/associated_graded.py
+src/sage/algebras/free_zinbiel_algebra.py
 src/sage/cpython/atexit.pyx
 src/sage/cpython/type.pyx
 src/sage/cpython/debug.pyx

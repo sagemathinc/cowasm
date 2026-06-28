@@ -8518,6 +8518,32 @@ still has three default-profile failures. Focused validation used the
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/feature-more-clean-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused algebra corpus-growth pass:
+
+```text
+sage -t passed: 216 passed, 0 failed, 0 skipped
+```
+
+That two-file focused validation adds
+`sage/algebras/associated_graded.py` and
+`sage/algebras/free_zinbiel_algebra.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 590
+non-comment entries. These files add clean algebra construction coverage
+without new WASI source tags or startup namespace changes.
+
+Direct sampling kept adjacent algebra files out of the quiet corpus:
+`sage/algebras/free_algebra.py`, `free_algebra_element.py`,
+`nil_coxeter_algebra.py`, and `q_commuting_polynomials.py` still have focused
+block-level failures. Sampling also kept remaining monoid, stats, and
+`sets/real_set.py` candidates out because they are skipped-only or zero-block
+under the default browser profile, and kept small category files such as
+`commutative_rings.py`, `fields.py`, and `finite_fields.py` out because their
+first runnable examples still reach known polynomial-number-field or
+NTL/libcxx runtime boundaries. Focused validation used the
+`test-sage-doctest-corpus` make target with a temporary two-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/algebra-focused-make.sqlite3`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
