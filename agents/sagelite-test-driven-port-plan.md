@@ -8116,6 +8116,32 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/repl-display-util-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused REPL rich-output corpus-growth pass:
+
+```text
+sage -t passed: 46 passed, 0 failed, 1 skipped
+```
+
+That one-file focused validation adds
+`sage/repl/rich_output/output_basic.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 511
+non-comment entries. Adjacent probes kept `sage/repl/rich_output/buffer.py`
+out of the corpus because it has one WASI permission-bit display mismatch:
+the temporary-file write-bit mask reports `128` instead of Sage's expected
+`0`. Broader probes also kept `sage/misc/functional.py` out because its
+symbolic denominator example timed out under the browser-compatible profile.
+Stats Cython probes such as
+`sage/stats/distributions/discrete_gaussian_integer.pyx`,
+`sage/stats/intlist.pyx`, and `sage/stats/time_series.pyx` were skipped-only,
+and `sage/stats/basic_stats.py` still has namespace, symbolic-import, and
+output-drift failures that should be handled in a separate focused pass.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/repl-output-basic.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
