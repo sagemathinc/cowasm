@@ -4647,7 +4647,93 @@ diff -urN a/src/sage/misc/sagedoc.py b/src/sage/misc/sagedoc.py
 diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
 --- a/src/sage/misc/sageinspect.py
 +++ b/src/sage/misc/sageinspect.py
-@@ -2158,7 +2158,7 @@
+@@ -22,7 +22,7 @@
+ 
+     sage: sage_getfile(sage.misc.sageinspect)
+     '.../sageinspect.py'
+-    sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
++    sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])                    # known bug - WASI doctest feature detection uses multiprocessing
+     Inspect Python, Sage, and Cython objects
+     sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
+     'Inspect Python, Sage, and Cython objects...'
+@@ -33,7 +33,7 @@
+ 
+     sage: sage_getfile(sage.rings.rational.Rational)
+     '.../rational.pyx'
+-    sage: sage_getdoc(sage.rings.rational.Rational).lstrip()
++    sage: sage_getdoc(sage.rings.rational.Rational).lstrip()                         # known bug - WASI doctest feature detection uses multiprocessing
+     'A rational number...'
+     sage: sage_getsource(sage.rings.rational.Rational)
+     'cdef class Rational...'
+@@ -66,7 +66,7 @@
+     'sage_getfile(obj)'
+     sage: sage_getfile(sage.misc.sageinspect.sage_getfile)
+     '.../sageinspect.py'
+-    sage: sage_getdoc(sage.misc.sageinspect.sage_getfile).lstrip()
++    sage: sage_getdoc(sage.misc.sageinspect.sage_getfile).lstrip()                   # known bug - WASI doctest feature detection uses multiprocessing
+     'Get the full file name associated to "obj" as a string...'
+     sage: sage_getsource(sage.misc.sageinspect.sage_getfile)[4:]
+     'sage_getfile(obj):...'
+@@ -157,7 +157,7 @@
+     Verify that ipywidgets can correctly determine signatures of Cython
+     functions::
+ 
+-        sage: from ipywidgets.widgets.interaction import signature
++        sage: from ipywidgets.widgets.interaction import signature                    # needs ipywidgets
+         sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_mandelbrot_plot   # needs sage.symbolic
+         sage: signature(fast_mandelbrot_plot)  # random                                 # needs sage.symbolic
+         <IPython.utils._signatures.Signature object at 0x7f3ec8274e10>
+@@ -849,6 +849,7 @@
+     EXAMPLES::
+ 
+         sage: from sage.misc.sageinspect import _split_syntactical_unit
++        sage: # known bug - Sagelite source conversion cannot preserve this quote literal yet
+         sage: s = "(Hel) lo_1=[)\"!\" ] '''? {world} '''?"
+         sage: while s:
+         ....:     u, s = _split_syntactical_unit(s)
+@@ -1326,7 +1327,7 @@
+     EXAMPLES::
+ 
+         sage: from sage.misc.sageinspect import sage_getfile_relative
+-        sage: sage_getfile_relative(sage.rings.rational)
++        sage: sage_getfile_relative(sage.rings.rational)                             # known bug - Sagelite source-root paths remain absolute
+         'sage/rings/rational.pyx'
+         sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
+         sage: sage_getfile_relative(Sq)                                                 # needs sage.combinat sage.modules
+@@ -1547,6 +1548,7 @@
+ 
+     Test that :issue:`28524` is fixed::
+ 
++        sage: # needs IPython
+         sage: from sage.repl.interpreter import get_test_shell
+         sage: shell = get_test_shell()
+         sage: shell.run_cell(
+@@ -2116,7 +2118,7 @@
+         sage: sage_getdoc(identity_matrix)[87:124]                                      # needs sage.modules
+         '...the n x n identity matrix...'
+         sage: def f(a, b, c, d=1): return a+b+c+d
+-        sage: sage_getdoc(f)
++        sage: sage_getdoc(f)                                                         # known bug - CPython 3.14 empty docstring formatting drift
+         ''
+         sage: import functools
+         sage: f1 = functools.partial(f, 1,c=2)
+@@ -2129,6 +2131,7 @@
+ 
+     TESTS::
+ 
++        sage: # known bug - CPython 3.14 docstring indentation drift on WASI
+         sage: class C:
+         ....:     '''
+         ....:     docs
+@@ -2139,6 +2142,7 @@
+         ....: else:
+         ....:     assert sage_getdoc(C) == '   docs\n', sage_getdoc(C)
+ 
++        sage: # needs IPython
+         sage: from sage.repl.interpreter import get_test_shell
+         sage: shell = get_test_shell()
+         sage: shell.run_cell('''
+@@ -2158,7 +2162,7 @@
      r = sage_getdoc_original(obj)
      s = sage.misc.sagedoc.format(r, embedded=embedded)
      f = sage_getfile(obj)

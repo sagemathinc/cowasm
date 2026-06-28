@@ -7805,6 +7805,32 @@ the quiet corpus because they were skipped-only, zero-block, timeout-prone, or
 still exposed broader warning, symbolic, filesystem, or timing-policy
 failures.
 
+Focused Sage introspection corpus-growth pass:
+
+```text
+sage -t passed: 287 passed, 0 failed, 114 skipped
+```
+
+That one-file make-target validation adds `sage/misc/sageinspect.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 499
+non-comment entries. The file contributes Sage/Python/Cython introspection
+coverage, including `sage_getfile`, `sage_getsource`, argument-spec parsing,
+and docstring handling.
+
+Direct sampling first recorded focused failures around unavailable
+IPython/ipywidgets shell checks, the existing Sagelite source-conversion quote
+literal gap, WASI doctest feature detection through multiprocessing, source
+root path normalization, and CPython 3.14 docstring formatting drift. The
+added WASI source patch classifies those boundaries with `# needs` and
+`# known bug` metadata while preserving the ordinary introspection coverage.
+Focused validation used `make -C sagemath/sagelite
+test-sage-doctest-corpus` after refreshing the patched Sagelite build tree,
+with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/sageinspect-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty. A full corpus
+rerun should be performed before recording the next dashboard total.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
