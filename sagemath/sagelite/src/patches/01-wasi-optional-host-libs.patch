@@ -4992,3 +4992,14 @@ diff -urN a/src/sage/misc/temporary_file.py b/src/sage/misc/temporary_file.py
 +            os.umask(umask)
 +        except OSError:
 +            umask = 0
+diff -urN a/src/sage/data_structures/pairing_heap.pyx b/src/sage/data_structures/pairing_heap.pyx
+--- a/src/sage/data_structures/pairing_heap.pyx
++++ b/src/sage/data_structures/pairing_heap.pyx
+@@ -676,2 +676,2 @@
+-        sage: P.push(Graph(2, immutable=True), (1, 7))
+-        sage: P.top()
++        sage: P.push(Graph(2, immutable=True), (1, 7))                              # needs sage.graphs
++        sage: P.top()                                                              # needs sage.graphs
+@@ -1034 +1034 @@
+-        sage: _test_PairingHeap_from_C(100)
++        sage: _test_PairingHeap_from_C(100)                                         # needs sage.symbolic

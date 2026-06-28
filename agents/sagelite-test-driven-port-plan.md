@@ -7653,6 +7653,29 @@ because its focused doctests still have output mismatches, and kept sampled
 crypto and CPython/data-structure wrapper files out because they add only
 skipped or zero-block rows in the default browser-compatible profile.
 
+Focused pairing-heap corpus-growth pass:
+
+```text
+sage -t passed: 281 passed, 0 failed, 13 skipped
+```
+
+That one-file make-target validation adds
+`sage/data_structures/pairing_heap.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 492
+non-comment entries. Direct sampling first recorded 281 passed blocks, 3
+failed blocks, and 10 skipped blocks. The failures were narrow
+browser-profile boundaries: one graph-backed hashable-item example and one
+symbolic `sin`/`cos` helper test. The added WASI source patch marks the graph
+example as `# needs sage.graphs` and the C-level heap helper as
+`# needs sage.symbolic`, preserving the ordinary pairing-heap API and Cython
+heap behavior as default-profile coverage.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/pairing-heap-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

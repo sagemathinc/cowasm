@@ -37,6 +37,7 @@ src/sage/cpython/dict_del_by_value.pyx
 src/sage/data_structures/bitset.pyx
 src/sage/data_structures/bounded_integer_sequences.pyx
 src/sage/data_structures/list_of_pairs.pyx
+src/sage/data_structures/pairing_heap.pyx
 src/sage/combinat/SJT.py
 src/sage/combinat/combinat.py
 src/sage/combinat/combinat_cython.pyx
