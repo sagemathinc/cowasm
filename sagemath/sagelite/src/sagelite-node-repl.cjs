@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 53;
+const doctestRunnerVersion = 57;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1004,6 +1004,14 @@ def __cowasm_merge_directive_source(directive_source, source):
     return directive_source.rstrip() + "\\n" + source
 
 
+def __cowasm_inline_directive_source(source):
+    match = re.search(r"#.*$", source)
+    if not match:
+        return None
+    directive = match.group(0)
+    return directive if _cowasm_tags(directive) else None
+
+
 def __cowasm_deferred_tags(source):
     return [match.group(1).lower() for match in __cowasm_deferred_re.finditer(source)]
 
@@ -1078,10 +1086,21 @@ def __cowasm_block_key(filename, start_line, source_hash):
 def __cowasm_convert_prompts(text):
     out = []
     standalone_directives = {}
+    inline_directives = {}
     active_directive_source = None
+    suppress_skipped_inline_block = False
     for lineno, line in enumerate(text.splitlines(True), start=1):
         line = __cowasm_restore_collapsed_continuation_prompts(line)
         prompt = re.match(r"^(\\s*)sage:( ?)(.*?)(\\r?\\n?)$", line)
+        if suppress_skipped_inline_block and not prompt:
+            if not line.strip():
+                suppress_skipped_inline_block = False
+                out.append(line)
+            else:
+                out.append("\\n")
+            continue
+        if prompt:
+            suppress_skipped_inline_block = False
         if prompt:
             source = prompt.group(3)
             if __cowasm_directive_only_source(source):
@@ -1089,8 +1108,29 @@ def __cowasm_convert_prompts(text):
                     active_directive_source,
                     source,
                 )
-            elif active_directive_source:
-                standalone_directives[lineno] = active_directive_source
+            else:
+                inline_directive_source = __cowasm_inline_directive_source(source)
+                if inline_directive_source:
+                    inline_directives[lineno] = inline_directive_source
+                    if __cowasm_should_skip(inline_directive_source):
+                        line = (
+                            prompt.group(1)
+                            + "sage:"
+                            + prompt.group(2)
+                            + "pass"
+                            + prompt.group(4)
+                        )
+                        suppress_skipped_inline_block = True
+                    else:
+                        line = (
+                            prompt.group(1)
+                            + "sage:"
+                            + prompt.group(2)
+                            + source[: source.index(inline_directive_source)].rstrip()
+                            + prompt.group(4)
+                        )
+                if active_directive_source:
+                    standalone_directives[lineno] = active_directive_source
         elif not line.strip():
             active_directive_source = None
         line = re.sub(r"(?m)^(\\s*)sage:( ?)", r"\\1>>> ", line)
@@ -1101,7 +1141,7 @@ def __cowasm_convert_prompts(text):
             line,
         )
         out.append(line)
-    return "".join(out), standalone_directives
+    return "".join(out), standalone_directives, inline_directives
 
 
 def __cowasm_restore_collapsed_continuation_prompts(line):
@@ -1555,7 +1595,7 @@ def __cowasm_run_file(filename):
         __cowasm_note_state(filename, "collect_docstrings", source=None, expected=None)
         for name, docstring, line_offset in __cowasm_docstrings(filename, original):
             __cowasm_note_state(filename, "parse_doctest", name, line_offset, None, None)
-            converted, standalone_directives = __cowasm_convert_prompts(docstring)
+            converted, standalone_directives, inline_directives = __cowasm_convert_prompts(docstring)
             test = parser.get_doctest(converted, namespace, name, filename, line_offset)
             if not test.examples:
                 continue
@@ -1629,6 +1669,11 @@ def __cowasm_run_file(filename):
                 )
                 if mapped_directive_source:
                     active_directive_source = mapped_directive_source
+                mapped_inline_directive_source = (
+                    inline_directives.get(example.lineno + 1)
+                    if example.lineno is not None
+                    else None
+                )
                 if __cowasm_directive_only_source(example.source):
                     active_directive_source = __cowasm_merge_directive_source(
                         active_directive_source,
@@ -1645,7 +1690,10 @@ def __cowasm_run_file(filename):
                     file_directive_source,
                     __cowasm_merge_directive_source(
                         active_directive_source,
-                        example.sage_source,
+                        __cowasm_merge_directive_source(
+                            mapped_inline_directive_source,
+                            example.sage_source,
+                        ),
                     ),
                 )
                 example._cowasm_expected = example.want

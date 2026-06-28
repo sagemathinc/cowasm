@@ -7752,6 +7752,32 @@ with `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-runs/discrete-gaussian-polynomial-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Inline metadata preservation and skipped-block parser hardening pass:
+
+```text
+sage -t passed: 40548 passed, 0 failed, 9369 skipped
+```
+
+That full make-target validation records 49,917 block rows across the current
+496-file corpus in
+`/home/user/cowasm/.tmp/sagelite-corpus-inline-tags-v2.sqlite3`. Runner
+version 57 preserves inline Sage doctest metadata before Python's doctest
+parser drops comment text, so examples such as
+`x = Foo(); x  # random` are recorded as `expected_kind = random` instead of
+being compared as exact output. Focused validation for
+`sage/misc/classcall_metaclass.pyx` records `75 passed, 0 failed, 15 skipped`
+and confirms the object-address example is a `random_unchecked` pass.
+
+The same runner pass strips recognized inline metadata comments from the code
+fed to the doctest parser and, for default-skipped inline blocks, replaces the
+block with a parseable no-op while preserving physical line numbers with blank
+placeholders. This keeps multiline skipped blocks such as
+`sage/misc/temporary_file.py`'s non-ASCII `atomic_write(...)` examples from
+failing during parser setup. Focused validation for `temporary_file.py` records
+`71 passed, 0 failed, 9 skipped`. The full dashboard was run with
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0` and `SAGELITE_DOCTEST_TIMEOUT=120`; the
+saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

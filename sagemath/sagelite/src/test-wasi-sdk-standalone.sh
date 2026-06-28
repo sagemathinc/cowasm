@@ -1837,6 +1837,18 @@ if [ "$doctest_leading_ellipsis_count" != "1" ]; then
   sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t doctest smoke did not restore protected leading ellipsis output."
 fi
+doctest_inline_random_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'passed' and expected_kind = 'random' and tags like '%random%' and failure_class = 'random_unchecked' and source like 'ZZ.random_element()%';")"
+if [ "$doctest_inline_random_count" != "1" ]; then
+  cat "$doctest_smoke_log" >&2
+  sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest smoke did not preserve inline random metadata."
+fi
+doctest_inline_skip_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'skipped' and skip_reason = 'optional:cowasm_smoke' and tags like '%optional:cowasm_smoke%' and source like '7 + 8%';")"
+if [ "$doctest_inline_skip_count" != "1" ]; then
+  cat "$doctest_smoke_log" >&2
+  sqlite3 "$doctest_smoke_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t doctest smoke did not preserve inline skip metadata."
+fi
 doctest_file_directive_file="$probe_dir/sagelite-doctest-file-directive.py"
 doctest_file_directive_db="$probe_dir/sagelite-doctest-file-directive.sqlite3"
 doctest_file_directive_log="$dist_dir/doctest-file-directive.log"
