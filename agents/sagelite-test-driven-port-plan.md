@@ -10368,6 +10368,34 @@ matrix imports, and
 still exposes an algebraic-real-field cache mismatch beyond the narrow
 symbolic tagging handled here.
 
+Focused point-plot corpus-growth pass:
+
+```text
+sage -t passed: 52 passed, 0 failed, 36 skipped
+```
+
+That one-file make-target validation adds `sage/plot/point.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 676 non-comment
+entries. Direct sampling first recorded 49 passed blocks and 28 focused
+failures. The failures split into a lightweight startup-name gap for `hue`
+and a 3D plotting boundary where `point3d` imports the unavailable
+`sage.ext.interpreters.wrapper_rdf` stack through
+`sage.plot.plot3d.shapes`.
+
+The doctest runner now seeds `hue` from `sage.plot.colors` in the common
+startup namespace, and the WASI `sage.all` patch exposes the same name for
+REPL parity on a fresh patched source copy. The added WASI source patch marks
+the 3D point doctest groups as `# needs sage.plot.plot3d`, preserving the 2D
+point coverage while making the stripped 3D plotting dependency explicit.
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/point-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected `optional:sage.plot.plot3d`, `optional:sage.symbolic`,
+and `optional:sage.schemes` deferrals. The runner version is now 65.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

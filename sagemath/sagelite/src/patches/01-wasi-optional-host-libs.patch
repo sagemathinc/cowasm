@@ -1355,7 +1355,7 @@ diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,196 @@
+@@ -253,74 +253,197 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1483,6 +1483,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.logic.all import SymbolicLogic, propcalc
 +    from sage.modules.free_module import FreeModule, VectorSpace, span
 +    from sage.modules.free_module_element import vector
++    from sage.plot.colors import hue
 +    from sage.schemes.generic.spec import Spec
 +    from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 +    from sage.sets.family import Family
@@ -5703,3 +5704,95 @@ diff -urN a/src/sage/plot/scatter_plot.py b/src/sage/plot/scatter_plot.py
 @@ -181 +181 @@
 -        sage: scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green').show(ymax=100) # These are equivalent
 +        sage: scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green').show(ymax=100) # These are equivalent  # needs matplotlib
+diff -urN a/src/sage/plot/point.py b/src/sage/plot/point.py
+--- a/src/sage/plot/point.py
++++ b/src/sage/plot/point.py
+@@ -113,9 +113,9 @@
+             sage: A = point((1,1),size=22)
+             sage: a = A[0]; a
+             Point set defined by 1 point(s)
+-            sage: b = a.plot3d()
+-            sage: b.size
++            sage: b = a.plot3d()                                                  # needs sage.plot.plot3d
++            sage: b.size                                                           # needs sage.plot.plot3d
+             22
+-            sage: b = a.plot3d(size=3)
+-            sage: b.size
++            sage: b = a.plot3d(size=3)                                             # needs sage.plot.plot3d
++            sage: b.size                                                           # needs sage.plot.plot3d
+             3
+@@ -154 +154 @@
+-            sage: b = a.plot3d()
++            sage: b = a.plot3d()                                                   # needs sage.plot.plot3d
+@@ -164,6 +164,6 @@
+             sage: A = point((1, 1))
+             sage: a = A[0]; a
+             Point set defined by 1 point(s)
+-            sage: b = a.plot3d(z=3)
+-            sage: b.loc[2]
++            sage: b = a.plot3d(z=3)                                                # needs sage.plot.plot3d
++            sage: b.loc[2]                                                         # needs sage.plot.plot3d
+             3.0
+@@ -182 +182 @@
+-            sage: q = p.plot3d(size=22)
++            sage: q = p.plot3d(size=22)                                            # needs sage.plot.plot3d
+@@ -192,7 +192,7 @@
+             sage: P = point([(0, 0), (1, 1)])
+             sage: p = P[0]
+-            sage: q = p.plot3d(z=[2,3])
+-            sage: q.all[0].loc[2]
++            sage: q = p.plot3d(z=[2,3])                                            # needs sage.plot.plot3d
++            sage: q.all[0].loc[2]                                                  # needs sage.plot.plot3d
+             2.0
+-            sage: q.all[1].loc[2]
++            sage: q.all[1].loc[2]                                                  # needs sage.plot.plot3d
+             3.0
+@@ -208,12 +208,12 @@
+             sage: A = point((1, 1), size=22)
+             sage: a = A[0]; a
+             Point set defined by 1 point(s)
+-            sage: b = a.plot3d()
+-            sage: b.size
++            sage: b = a.plot3d()                                                   # needs sage.plot.plot3d
++            sage: b.size                                                           # needs sage.plot.plot3d
+             22
+-            sage: b = a.plot3d(pointsize=23)  # only 2D valid option
+-            sage: b.size
++            sage: b = a.plot3d(pointsize=23)  # only 2D valid option               # needs sage.plot.plot3d
++            sage: b.size                                                           # needs sage.plot.plot3d
+             22
+-            sage: b = a.plot3d(size=23) # correct keyword
+-            sage: b.size
++            sage: b = a.plot3d(size=23) # correct keyword                          # needs sage.plot.plot3d
++            sage: b.size                                                           # needs sage.plot.plot3d
+             23
+@@ -226,9 +226,9 @@
+             sage: P = point([(0, 0), (1, 1), (2, 3)])
+             sage: p = P[0]
+-            sage: q = p.plot3d(z=2)
+-            sage: q.all[1].loc[2]
++            sage: q = p.plot3d(z=2)                                                # needs sage.plot.plot3d
++            sage: q.all[1].loc[2]                                                  # needs sage.plot.plot3d
+             2.0
+-            sage: q = p.plot3d(z=[2,-2])
++            sage: q = p.plot3d(z=[2,-2])                                           # needs sage.plot.plot3d
+             Traceback (most recent call last):
+             ...
+             ValueError: incorrect number of heights given
+@@ -343 +343 @@
+-        sage: point((1, 2, 3))
++        sage: point((1, 2, 3))                                                      # needs sage.plot.plot3d
+@@ -361 +361 @@
+-        sage: point([(0, 0, 1), (1, 1, 1)])
++        sage: point([(0, 0, 1), (1, 1, 1)])                                        # needs sage.plot.plot3d
+@@ -380 +380 @@
+-        sage: point(iter([(1, 1, 1)]))
++        sage: point(iter([(1, 1, 1)]))                                             # needs sage.plot.plot3d
+@@ -463 +463 @@
+-        sage: b = a.plot3d(z=3)
++        sage: b = a.plot3d(z=3)                                                    # needs sage.plot.plot3d
+@@ -474,3 +474,3 @@
+         sage: P = point([(0, 0), (1, 1)])
+         sage: p = P[0]
+-        sage: q = p.plot3d(z=[2,3])
++        sage: q = p.plot3d(z=[2,3])                                                # needs sage.plot.plot3d
