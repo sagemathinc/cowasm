@@ -10988,6 +10988,32 @@ with unpromoted runnable candidates, or explicitly tackle a real cluster such
 as the `matrix_plot` SciPy boundary rather than tagging most of the file into
 skipped-only coverage.
 
+Focused FLINT matrix helper corpus-growth pass:
+
+```text
+sage -t passed: 1 passed, 0 failed, 4 skipped
+```
+
+That one-file make-target validation adds `sage/matrix/misc_flint.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 695
+non-comment entries. Direct sampling first recorded two passing blocks and
+three failures in `matrix_integer_dense_rational_reconstruction(...)`; the
+failures were all tied to the stripped dense integer matrix backend and
+dependent state after that backend import failed.
+
+The added WASI source patch marks those reconstruction examples as
+`# needs sage.matrix.matrix_integer_dense`, preserving default-profile
+coverage for the module's import and setup path without promoting the dense
+integer matrix side module. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/next-probes/misc-flint-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected four `optional:sage.matrix.matrix_integer_dense`
+deferrals.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
