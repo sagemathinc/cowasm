@@ -9785,6 +9785,33 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/padics-tests-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused database and homology support corpus-growth pass:
+
+```text
+sage -t passed: 27 passed, 0 failed, 11 skipped
+```
+
+That two-file focused validation adds
+`sage/databases/db_class_polynomials.py` and
+`sage/homology/koszul_complex.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 656 non-comment
+entries. Direct sampling first found both files as clean non-skipped promotion
+candidates: `db_class_polynomials.py` recorded 4 passed blocks and 11 skipped
+blocks, while `koszul_complex.py` recorded 23 passed blocks and no skips.
+
+The same support-file sampling batch kept skipped-only files such as
+`sage/databases/cunningham_tables.py`, topology catalogs,
+`sage/monoids/monoid.py`, and homology helper modules out of the curated
+corpus. It also kept the sampled computational-mathematics book doctest
+helpers out because they still have runnable default-profile failures rather
+than narrow browser-profile metadata gaps.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/db-koszul-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
