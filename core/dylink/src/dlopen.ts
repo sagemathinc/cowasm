@@ -705,6 +705,51 @@ export default class DlopenManger {
     const isSpace = (c: number) =>
       c == 32 || c == 9 || c == 10 || c == 11 || c == 12 || c == 13;
     const isGraph = (c: number) => c >= 33 && c <= 126;
+    const divideComplexDouble = (
+      a: number,
+      b: number,
+      c: number,
+      d: number
+    ) => {
+      if (Math.abs(c) < Math.abs(d)) {
+        const r = c / d;
+        const denominator = c * r + d;
+        return [(a * r + b) / denominator, (b * r - a) / denominator];
+      }
+      const r = d / c;
+      const denominator = d * r + c;
+      return [(a + b * r) / denominator, (b - a * r) / denominator];
+    };
+    const multiplyComplexDouble = (
+      a: number,
+      b: number,
+      c: number,
+      d: number
+    ) => [a * c - b * d, a * d + b * c];
+    const writeComplexDouble = (
+      resultPtr: number,
+      [real, imaginary]: number[]
+    ) => {
+      const view = new DataView(this.memory.buffer);
+      view.setFloat64(resultPtr, real, true);
+      view.setFloat64(resultPtr + 8, imaginary, true);
+    };
+    const divdc3 = (...args: number[]) => {
+      if (args.length == 5) {
+        const [resultPtr, a, b, c, d] = args;
+        writeComplexDouble(resultPtr, divideComplexDouble(a, b, c, d));
+        return;
+      }
+      return divideComplexDouble(args[0], args[1], args[2], args[3]);
+    };
+    const muldc3 = (...args: number[]) => {
+      if (args.length == 5) {
+        const [resultPtr, a, b, c, d] = args;
+        writeComplexDouble(resultPtr, multiplyComplexDouble(a, b, c, d));
+        return;
+      }
+      return multiplyComplexDouble(args[0], args[1], args[2], args[3]);
+    };
 
     const cLongjmpTag = new (WebAssembly as any).Tag({
       parameters: ["i32"],
@@ -765,6 +810,8 @@ export default class DlopenManger {
       __cxa_current_primary_exception: () => 0,
       __cxa_uncaught_exceptions: () => 0,
       __cxa_end_catch: () => {},
+      __divdc3: divdc3,
+      __muldc3: muldc3,
       getTempRet0: () => 0,
       clock: () => BigInt(Date.now()),
       isalnum: (c: number) => {

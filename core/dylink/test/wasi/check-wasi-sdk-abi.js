@@ -101,6 +101,8 @@ assertImport(side, "env", "free", "function");
 assertImport(side, "env", "add5077", "function");
 assertImport(side, "env", "qsort", "function");
 assertImport(side, "env", "bsearch", "function");
+assertImport(side, "env", "__divdc3", "function");
+assertImport(side, "env", "__muldc3", "function");
 assertImport(side, "env", "__wasm_setjmp", "function");
 assertImport(side, "env", "__wasm_setjmp_test", "function");
 assertImport(side, "env", "__wasm_longjmp", "function");

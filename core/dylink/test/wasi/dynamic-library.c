@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <complex.h>
 #ifdef COWASM_WASI_SDK_TEST
 #include <setjmp.h>
 #endif
@@ -104,6 +105,42 @@ int found_with_strchr(void) {
   const char* found = strchr(text, '-');
   const char* missing = strchr(text, 'z');
   return found != NULL && *found == '-' && missing == NULL;
+}
+
+EXPORTED_SYMBOL
+int divided_complex_double(void) {
+  volatile double a = 5.0;
+  volatile double b = 7.0;
+  volatile double c = 2.0;
+  volatile double d = -3.0;
+  double complex quotient = (a + b * I) / (c + d * I);
+  double real_error = creal(quotient) * 13.0 + 11.0;
+  double imag_error = cimag(quotient) * 13.0 - 29.0;
+  if (real_error < 0) {
+    real_error = -real_error;
+  }
+  if (imag_error < 0) {
+    imag_error = -imag_error;
+  }
+  return real_error < 1e-12 && imag_error < 1e-12;
+}
+
+EXPORTED_SYMBOL
+int multiplied_complex_double(void) {
+  volatile double a = 5.0;
+  volatile double b = 7.0;
+  volatile double c = 2.0;
+  volatile double d = -3.0;
+  double complex product = (a + b * I) * (c + d * I);
+  double real_error = creal(product) - 31.0;
+  double imag_error = cimag(product) + 1.0;
+  if (real_error < 0) {
+    real_error = -real_error;
+  }
+  if (imag_error < 0) {
+    imag_error = -imag_error;
+  }
+  return real_error < 1e-12 && imag_error < 1e-12;
 }
 
 #ifdef COWASM_WASI_SDK_TEST

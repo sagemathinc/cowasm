@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ "$#" -ne 20 ]; then
-  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK" >&2
+if [ "$#" -ne 21 ]; then
+  echo "usage: test-wasi-sdk-standalone.sh BUILD_DIR DIST_DIR BIN_DIR CPYTHON_WASM PY_CYTHON PY_NUMPY PY_GMPY2 PY_MPMATH PY_JINJA2 PY_MESON PY_NINJA PY_PACKAGING PY_PLATFORMDIRS PYTHON_WASM CONWAY_POLYNOMIALS_WASI_SDK PRIMECOUNTPY_WASI_SDK CYSIGNALS_WASI_SDK MEMORY_ALLOCATOR_WASI_SDK POSIX_WASI_SDK LIBCXX_WASI_SDK CYPARI2_WASI_SDK" >&2
   exit 2
 fi
 
@@ -13,19 +13,20 @@ cpython_wasm="$(cd "$4" && pwd)"
 py_cython="$(cd "$5" && pwd)"
 py_numpy="$(cd "$6" && pwd)"
 py_gmpy2="$(cd "$7" && pwd)"
-py_jinja2="$(cd "$8" && pwd)"
-py_meson="$(cd "$9" && pwd)"
-py_ninja="$(cd "${10}" && pwd)"
-py_packaging="$(cd "${11}" && pwd)"
-py_platformdirs="$(cd "${12}" && pwd)"
-python_wasm="$(cd "${13}" && pwd)"
-conway_polynomials_wasi_sdk="$(cd "${14}" && pwd)"
-primecountpy_wasi_sdk="$(cd "${15}" && pwd)"
-cysignals_wasi_sdk="$(cd "${16}" && pwd)"
-memory_allocator_wasi_sdk="$(cd "${17}" && pwd)"
-posix_wasi_sdk="$(cd "${18}" && pwd)"
-libcxx_wasi_sdk="$(cd "${19}" && pwd)"
-cypari2_wasi_sdk="$(cd "${20}" && pwd)"
+py_mpmath="$(cd "$8" && pwd)"
+py_jinja2="$(cd "$9" && pwd)"
+py_meson="$(cd "${10}" && pwd)"
+py_ninja="$(cd "${11}" && pwd)"
+py_packaging="$(cd "${12}" && pwd)"
+py_platformdirs="$(cd "${13}" && pwd)"
+python_wasm="$(cd "${14}" && pwd)"
+conway_polynomials_wasi_sdk="$(cd "${15}" && pwd)"
+primecountpy_wasi_sdk="$(cd "${16}" && pwd)"
+cysignals_wasi_sdk="$(cd "${17}" && pwd)"
+memory_allocator_wasi_sdk="$(cd "${18}" && pwd)"
+posix_wasi_sdk="$(cd "${19}" && pwd)"
+libcxx_wasi_sdk="$(cd "${20}" && pwd)"
+cypari2_wasi_sdk="$(cd "${21}" && pwd)"
 src_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_dir="$(cd "$src_dir/../../.." && pwd)"
 
@@ -265,6 +266,7 @@ pythonpath_parts=(
   "$py_packaging"
   "$py_platformdirs"
   "$py_gmpy2"
+  "$py_mpmath"
   "$py_numpy"
   "$py_cython"
 )

@@ -11088,6 +11088,43 @@ before Electron resources are emitted. A direct `python-wasm` probe against the
 same staged Sagelite `PYTHONPATH` confirms that `ConwayPolynomials()` now
 imports the data package and returns polynomial data under WASI.
 
+Focused compiler-rt complex helper and mpmath dependency pass:
+
+```text
+sagelite-ok meson configure compile install node import electron resources smoke relocated followups recorded
+```
+
+This pass clears the standalone `import sage.all` completion-marker blocker
+seen after the Conway database resource work. A compact repro showed that
+loading `sage.rings.real_mpfr` after integer-ring initialization exited the
+Node `python-wasm` worker before the marker; the same probe under
+`python-wasi-sdk` exposed the underlying dynamic-link diagnostics for missing
+compiler-rt complex helpers, first `__divdc3` and then `__muldc3`.
+
+The dynamic loader now supplies direct JavaScript fallbacks for double-complex
+division and multiplication, including the sret pointer ABI used by clang's
+WASI side modules. The WASI dylink smoke covers both helpers from a real side
+module in direct and archive-linked loader modes. Sagelite's standalone
+dependency contract now also stages CoWasm's existing `py-mpmath` package,
+which lets `sage.libs.mpmath.utils` and `sage.rings.complex_mpfr` import
+normally when `real_mpfr` initializes.
+
+Focused validation first checked compact Node and `python-wasi-sdk` probes:
+
+```text
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RealField
+RealField(53)(2).sqrt()
+```
+
+Both backends now print `1.41421356237310` and reach the completion marker.
+Full validation then rebuilt and staged Sagelite with
+`TMPDIR=/home/user/cowasm/.tmp/current-run/clang-tmp`,
+`SAGELITE_NODE_IMPORT_TIMEOUT=240s`, and
+`SAGELITE_ELECTRON_SMOKE_TIMEOUT=240s`; the standalone target completed the
+Node import ladder, Electron resource checks, doctest smoke, relocation check,
+and follow-up recording.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

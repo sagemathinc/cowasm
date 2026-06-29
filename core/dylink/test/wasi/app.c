@@ -129,6 +129,20 @@ int found_with_strchr() {
   return (*f)();
 }
 
+EXPORTED_SYMBOL
+int divided_complex_double() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "divided_complex_double");
+  return (*f)();
+}
+
+EXPORTED_SYMBOL
+int multiplied_complex_double() {
+  void* handle = dlopen("./dynamic-library.so", 2);
+  FUN_VOID_PTR f = (FUN_VOID_PTR)dlsym(handle, "multiplied_complex_double");
+  return (*f)();
+}
+
 #ifdef COWASM_WASI_SDK_TEST
 EXPORTED_SYMBOL
 int side_setjmp_recovery() {
@@ -231,6 +245,12 @@ int main() {
 
   printf("found_with_strchr() = %d\n", found_with_strchr());
   assert(found_with_strchr() == 1);
+
+  printf("divided_complex_double() = %d\n", divided_complex_double());
+  assert(divided_complex_double() == 1);
+
+  printf("multiplied_complex_double() = %d\n", multiplied_complex_double());
+  assert(multiplied_complex_double() == 1);
 
 #ifdef COWASM_WASI_SDK_TEST
   printf("side_setjmp_recovery() = %d\n", side_setjmp_recovery());
