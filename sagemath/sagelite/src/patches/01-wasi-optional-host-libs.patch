@@ -5614,3 +5614,24 @@ diff -urN a/src/sage/categories/simplicial_sets.py b/src/sage/categories/simplic
 +                    sage: X = S3.wedge(RP2)                                        # needs sage.graphs sage.groups
 +                    sage: XU = X.universal_cover()                                 # needs sage.graphs sage.groups
 +                    sage: [XU.homology(i) for i in range(5)]                       # needs sage.graphs sage.groups
+diff -urN a/src/sage/tests/__init__.py b/src/sage/tests/__init__.py
+--- a/src/sage/tests/__init__.py
++++ b/src/sage/tests/__init__.py
+@@ -39,7 +39,7 @@
+-        sage: (out, err, ret) = check_executable(["cat"], "Hello World!")
+-        sage: out
++        sage: (out, err, ret) = check_executable(["cat"], "Hello World!")           # needs subprocess
++        sage: out                                                                  # needs subprocess
+         'Hello World!'
+-        sage: err
++        sage: err                                                                  # needs subprocess
+         ''
+-        sage: ret
++        sage: ret                                                                  # needs subprocess
+         0
+@@ -49,4 +49,4 @@
+-        sage: (out, err, ret) = check_executable(["sleep", "1"], timeout=0.1)
++        sage: (out, err, ret) = check_executable(["sleep", "1"], timeout=0.1)       # needs subprocess
+         Traceback (most recent call last):
+         ...
+         RuntimeError: timeout in check_executable()

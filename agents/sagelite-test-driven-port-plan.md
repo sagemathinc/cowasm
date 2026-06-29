@@ -10045,6 +10045,39 @@ focused matrix/FLINT failures, and uncovered combinatorics samples such as
 and `posets/bubble_shuffle.py` hit recursion, NTL import, or poset/path-tableau
 failure clusters.
 
+Focused subprocess-boundary test-helper corpus-growth pass:
+
+```text
+sage -t passed: 1 passed, 0 failed, 5 skipped
+```
+
+That one-file focused validation adds `sage/tests/__init__.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 663 non-comment
+entries. Direct sampling first recorded one passing import block and five
+failures because `check_executable(...)` uses `subprocess.Popen`, which is not
+available in the default WASI/browser-compatible profile. The added WASI source
+patch marks the `cat` and `sleep` subprocess examples, plus their dependent
+output checks, as `# needs subprocess`.
+
+Focused validation used the `test-sage-doctest-corpus` make target from a
+freshly patched Sagelite source copy with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/tests-init-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the five deferred examples as `optional:subprocess`.
+
+The same scheduled pass sampled several nearby low-count files without finding
+another promotion candidate. `doctest/parsing_test.py` and `doctest/all.py`
+had zero runnable blocks; `databases/cunningham_tables.py`,
+`databases/odlyzko.py`, `combinat/species/misc.py`, and
+`rings/ring_extension_homset.py` were skipped-only under the default profile.
+Other probes exposed broader clusters that should stay out of the quiet corpus
+for now: `doctest/external.py` and `parallel/decorate.py` need subprocess or
+parallel-runtime triage, `features/planarity.py` needs optional-feature
+metadata, and small scheme or Lie conformal algebra probes still reach broader
+symbolic, algebraic-field, or backend gaps.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

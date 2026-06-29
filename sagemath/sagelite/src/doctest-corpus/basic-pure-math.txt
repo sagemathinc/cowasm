@@ -654,6 +654,7 @@ src/sage/stats/distributions/discrete_gaussian_polynomial.py
 src/sage/symbolic/tests.py
 src/sage/symbolic/symbols.py
 src/sage/games/sudoku.py
+src/sage/tests/__init__.py
 src/sage/tests/cython.pyx
 src/sage/tests/functools_partial_src.py
 src/sage/tests/startup.py
