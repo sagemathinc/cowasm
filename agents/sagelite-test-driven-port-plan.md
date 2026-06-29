@@ -10474,9 +10474,39 @@ The saved block- and file-failure cluster queries are empty; skip grouping
 records the expected `optional:sage.symbolic` and `optional:matplotlib`
 deferrals. The runner version remains 65.
 
+Focused circle-plot corpus-growth pass:
+
+```text
+sage -t passed: 43 passed, 0 failed, 14 skipped
+```
+
+That one-file make-target validation adds `sage/plot/circle.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 680 non-comment
+entries. Direct sampling first recorded 43 passed blocks and 14 focused
+failures. The failures split into the stripped 3D plotting boundary,
+Matplotlib-backed `.show(...)` examples, and a lightweight startup-name gap
+for `Graphics` in the spiral construction example.
+
+The doctest runner now seeds `Graphics` from `sage.plot.graphics` in the
+common startup namespace, and the WASI `sage.all` patch exposes the same name
+for REPL parity on fresh patched source copies. The added WASI source patch
+marks the 3D circle doctest groups as `# needs sage.plot.plot3d` and the
+Matplotlib-backed show examples as `# needs matplotlib`, preserving 2D circle
+construction, option handling, bounding-box, and representation coverage.
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with
+`TMPDIR=/home/user/cowasm/.tmp/current-run/patch-tmp`, a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/circle-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected `optional:sage.plot.plot3d` and `optional:matplotlib`
+deferrals. The runner version remains 65.
+
 The same scheduled plot-primitive probe kept nearby files out of the quiet
 corpus. `sage/plot/arrow.py`,
-`sage/plot/bezier_path.py`, `sage/plot/circle.py`, `sage/plot/disk.py`,
+`sage/plot/bezier_path.py`, `sage/plot/disk.py`,
 `sage/plot/line.py`, `sage/plot/text.py`, `sage/plot/histogram.py`, and
 `sage/plot/primitive.py` still expose focused `NameError`,
 `ModuleNotFoundError`, or output-mismatch clusters. `sage/plot/colors.py`,

@@ -959,6 +959,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.logic.all", ("propcalc", "SymbolicLogic")),
         ("sage.misc.functional", ("sqrt",)),
         ("sage.plot.colors", ("hue",)),
+        ("sage.plot.graphics", ("Graphics",)),
         ("sage.modules.free_module", ("FreeModule", "VectorSpace", "span")),
         ("sage.modules.free_module_element", ("vector",)),
         ("sage.sets.condition_set", ("ConditionSet",)),
