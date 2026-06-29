@@ -1776,9 +1776,9 @@ added WASI source patch marks those two ideal-backed examples as
 `# needs sage.rings.polynomial.plural`, while preserving the rest of the
 educational triangular-factorization doctests as default-profile coverage.
 
-Focused validation used the `test-sage-doctest-corpus` make target against
-the current patched Sagelite source copy, with a temporary one-file corpus,
-`SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_TIMEOUT=90`, and
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-toy-variety-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
@@ -2457,9 +2457,9 @@ curated corpus, bringing
 `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 714
 non-comment entries. The file adds compact optional-feature coverage for the
 Planarity package without new WASI source tags or startup namespace changes.
-Focused validation used the `test-sage-doctest-corpus` make target after
-rebuilding a fresh patched Sagelite source copy, with a temporary one-file
-corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+Focused validation used the `test-sage-doctest-corpus` make target against
+the current patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_TIMEOUT=90`, and
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/planarity-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty, and
