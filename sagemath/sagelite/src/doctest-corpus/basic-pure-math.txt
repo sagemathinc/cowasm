@@ -649,6 +649,7 @@ src/sage/tests/cython.pyx
 src/sage/tests/functools_partial_src.py
 src/sage/tests/startup.py
 src/sage/tests/stl_vector.pyx
+src/sage/tests/test_deprecation.py
 src/sage/typeset/ascii_art.py
 src/sage/typeset/character_art.py
 src/sage/typeset/character_art_factory.py

@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 63;
+const doctestRunnerVersion = 64;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -720,6 +720,14 @@ _cowasm_number_re = re.compile(
 COWASM_RANDOM_ACCEPT = "__COWASM_RANDOM_ACCEPT__\\n"
 COWASM_TOLERANCE_PREFIX = "__COWASM_TOLERANCE__"
 COWASM_LEADING_ELLIPSIS_SENTINEL = "__COWASM_LEADING_ELLIPSIS__"
+
+
+def __cowasm_doctest_showwarning(message, category, filename, lineno, file=None, line=None):
+    output = warnings.formatwarning(message, category, "doctest", lineno, line)
+    if file is not None:
+        file.write(output)
+    else:
+        sys.stdout.write(output)
 
 
 def __cowasm_note_state(
@@ -1887,7 +1895,12 @@ def __cowasm_run_file(filename):
                 previous_physical_end_line = physical_end_line
             __cowasm_note_state(filename, "run_doctest", name, line_offset, None, None)
             before = time.time()
-            result = runner.run(test, clear_globs=False)
+            old_showwarning = warnings.showwarning
+            warnings.showwarning = __cowasm_doctest_showwarning
+            try:
+                result = runner.run(test, clear_globs=False)
+            finally:
+                warnings.showwarning = old_showwarning
             attempted += result.attempted
             failed += result.failed
         duration_ms = int((time.time() - started) * 1000)

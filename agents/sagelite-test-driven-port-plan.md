@@ -9732,6 +9732,31 @@ Focused validation used
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/geometry-hasse-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused warning-capture runner and deprecation-test corpus-growth pass:
+
+```text
+sage -t passed: 4 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds `sage/tests/test_deprecation.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 653 non-comment
+entries. Runner version 64 installs a doctest-local warning hook while each
+parsed doctest object runs, formatting warnings through doctest-captured
+stdout with Sage's historical `doctest:...` filename convention. This clears
+the known warning-output capture gap for `deprecated_function_alias(...)`
+examples without adding source-level `# known bug` tags.
+
+Focused direct validation used
+`COWASM_SAGELITE_DOCTEST_SOURCE_ROOT=/home/user/cowasm/sagemath/sagelite/build/wasi-sdk`
+and wrote
+`/home/user/cowasm/.tmp/current-run/test-deprecation-warning-capture.sqlite3`;
+the saved block- and file-failure cluster queries are empty. The same sampling
+pass reconfirmed that `sage/repl/rich_output/backend_emacs.py` remains outside
+the quiet corpus because its import path is IPython-backed, while
+`sage/misc/sage_ostools.pyx` remains dominated by POSIX `fileno` and
+redirection semantics.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
