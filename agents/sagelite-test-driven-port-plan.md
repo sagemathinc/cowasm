@@ -9026,6 +9026,35 @@ Sagelite source copy, with a temporary two-file corpus,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/parallelism-cython-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused quadratic-form helper corpus-growth pass:
+
+```text
+sage -t passed: 17 passed, 0 failed, 1 skipped
+```
+
+That two-file focused validation adds
+`sage/quadratic_forms/constructions.py` and
+`sage/quadratic_forms/random_quadraticform.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 631 non-comment
+entries. The files add compact quadratic-form constructor and randomized-form
+coverage without requiring PARI local-density, genus-symbol, or mass-formula
+paths.
+
+Focused sampling first recorded `constructions.py` as clean with
+`4 passed, 0 failed, 1 skipped`, then sampled adjacent quadratic-form helpers.
+Only `random_quadraticform.py` was clean among that adjacent batch, with
+`13 passed, 0 failed, 0 skipped`. The same sampling kept
+`sage/quadratic_forms/extras.py`, `quadratic_form__evaluate.pyx`, and
+`quadratic_form__mass.py` out of the quiet corpus because they still have
+focused block-level failures, and kept `quadratic_form__genus.py` out because
+it is skipped-only in the current browser-compatible profile.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quadratic-forms-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
