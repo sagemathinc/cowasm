@@ -657,6 +657,7 @@ src/sage/quadratic_forms/random_quadraticform.py
 src/sage/quadratic_forms/special_values.py
 src/sage/probability/probability_distribution.pyx
 src/sage/probability/random_variable.py
+src/sage/plot/arc.py
 src/sage/plot/bar_chart.py
 src/sage/plot/ellipse.py
 src/sage/plot/point.py

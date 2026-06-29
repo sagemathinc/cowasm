@@ -10447,8 +10447,35 @@ The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` records the single deferred 3D symbolic example under
 `optional:sage.symbolic`.
 
+Focused arc-plot corpus-growth pass:
+
+```text
+sage -t passed: 40 passed, 0 failed, 12 skipped
+```
+
+That one-file make-target validation adds `sage/plot/arc.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 679 non-comment
+entries. Direct sampling first recorded 40 passed blocks, eight existing
+`sage.symbolic` skips, and four focused failures. The failing examples were
+the Matplotlib-backed `_matplotlib_arc()` and `bezier_path()` internals plus a
+dependent `b[0]` prompt after `bezier_path()` failed.
+
+The added WASI source patch marks those Matplotlib-backed arc internals as
+`# needs matplotlib`, preserving the browser-compatible arc construction,
+bounding-box, representation, and 2D graphics coverage. Focused validation
+used the `test-sage-doctest-corpus` make target after rebuilding a fresh
+patched Sagelite source copy, with
+`TMPDIR=/home/user/cowasm/.tmp/current-run/patch-tmp`, a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/arc-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected `optional:sage.symbolic` and `optional:matplotlib`
+deferrals. The runner version remains 65.
+
 The same scheduled plot-primitive probe kept nearby files out of the quiet
-corpus. `sage/plot/arc.py`, `sage/plot/arrow.py`,
+corpus. `sage/plot/arrow.py`,
 `sage/plot/bezier_path.py`, `sage/plot/circle.py`, `sage/plot/disk.py`,
 `sage/plot/line.py`, `sage/plot/text.py`, `sage/plot/histogram.py`, and
 `sage/plot/primitive.py` still expose focused `NameError`,

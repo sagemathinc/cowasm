@@ -5692,6 +5692,20 @@ diff -urN a/src/sage/tests/__init__.py b/src/sage/tests/__init__.py
          Traceback (most recent call last):
          ...
          RuntimeError: timeout in check_executable()
+diff -urN a/src/sage/plot/arc.py b/src/sage/plot/arc.py
+--- a/src/sage/plot/arc.py
++++ b/src/sage/plot/arc.py
+@@ -272 +272 @@
+-            sage: Arc(2,3,2.2,2.2,0,2,3,{})._matplotlib_arc()
++            sage: Arc(2,3,2.2,2.2,0,2,3,{})._matplotlib_arc()                    # needs matplotlib
+@@ -296 +296 @@
+-            sage: Arc(2,3,2.2,2.2,0,2,3,op).bezier_path()
++            sage: Arc(2,3,2.2,2.2,0,2,3,op).bezier_path()                         # needs matplotlib
+@@ -301,2 +301,2 @@
+-            sage: b = a[0].bezier_path()
+-            sage: b[0]
++            sage: b = a[0].bezier_path()                                          # needs matplotlib
++            sage: b[0]                                                            # needs matplotlib
 diff -urN a/src/sage/plot/bar_chart.py b/src/sage/plot/bar_chart.py
 --- a/src/sage/plot/bar_chart.py
 +++ b/src/sage/plot/bar_chart.py
