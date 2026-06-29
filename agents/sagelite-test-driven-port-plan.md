@@ -9599,6 +9599,34 @@ The scratch databases for these probes live under
 `combinat-small-next.sqlite3`. The curated corpus remains at 647
 non-comment entries until the next clean non-skipped candidate is found.
 
+Focused MOLS handbook data corpus-growth pass:
+
+```text
+sage -t passed: 7 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/combinat/designs/MOLS_handbook_data.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 648 non-comment
+entries. The file gives the dashboard small clean combinatorial-design data
+coverage without new WASI source tags or startup namespace changes.
+
+Fresh uncovered-file sampling in the same pass kept skipped-only files such as
+`sage/categories/groupoid.py`, `sage/databases/odlyzko.py`,
+`sage/topology/simplicial_complex_catalog.py`,
+`sage/topology/simplicial_set_catalog.py`, `sage/modular/buzzard.py`,
+`sage/tests/numpy.py`, and `sage/monoids/hecke_monoid.py` out of the quiet
+corpus. Other sampled candidates in tests, symbolic helpers, Lie conformal
+algebras, graded-module homspaces, matrix helpers, and quadratic-form
+evaluation still have focused failures rather than narrow browser-profile
+metadata gaps.
+
+Focused validation used
+`SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/mols-handbook-corpus.txt`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/mols-handbook-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
