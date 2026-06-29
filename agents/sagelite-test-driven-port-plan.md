@@ -8769,6 +8769,32 @@ avoid these sampled files unless it first targets one of the named clusters:
 IPython display availability/tagging, doctest utility alarm/filesystem
 semantics, or polynomial constructor/vectorcall runtime behavior.
 
+Focused doctest-backend corpus-growth pass:
+
+```text
+sage -t passed: 47 passed, 0 failed, 11 skipped
+```
+
+That one-file focused validation adds
+`sage/repl/rich_output/backend_doctest.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 601
+non-comment entries. The doctest runner now switches Sage's display manager
+to `BackendDoctest` while building each per-file doctest namespace, matching
+upstream Sage doctest assumptions and clearing the sampled
+`BackendSimple.validate(...)` failure cluster in backend doctest validation.
+The WASI source patch marks the remaining IPython command-line preference
+comparison as `# needs IPython`, so the browser-compatible profile retains
+the doctest backend's own preference, install, supported-output, display, and
+validation coverage without requiring IPython.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-backend-doctest-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully;
+the saved block- and file-failure cluster queries are empty. The latest run
+metadata records node profile and runner version 61.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

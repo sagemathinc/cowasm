@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 60;
+const doctestRunnerVersion = 61;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1018,6 +1018,17 @@ def __cowasm_seed_common_doctest_globals(namespace):
         pass
 
 
+def __cowasm_install_doctest_backend():
+    try:
+        from sage.repl.rich_output import get_display_manager
+        from sage.repl.rich_output.backend_doctest import BackendDoctest
+        dm = get_display_manager()
+        if getattr(dm, "_backend", None).__class__ is not BackendDoctest:
+            dm.switch_backend(BackendDoctest())
+    except BaseException:
+        pass
+
+
 def _cowasm_tags(source):
     tags = []
     checks = [
@@ -1407,6 +1418,7 @@ def __cowasm_module_name_from_path(filename):
 def __cowasm_namespace(filename):
     namespace = {}
     exec("from sage.all import *", namespace)
+    __cowasm_install_doctest_backend()
     __cowasm_resolve_core_lazy_namespace(namespace)
     try:
         from sage.functions.generalized import sign, sgn

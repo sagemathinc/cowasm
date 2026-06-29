@@ -5341,6 +5341,12 @@ diff -urN a/src/sage/repl/rich_output/test_backend.py b/src/sage/repl/rich_outpu
 @@ -80 +80,2 @@
 +            sage: # needs IPython
              sage: test_output = dm.displayhook(123)
+diff -urN a/src/sage/repl/rich_output/backend_doctest.py b/src/sage/repl/rich_output/backend_doctest.py
+--- a/src/sage/repl/rich_output/backend_doctest.py
++++ b/src/sage/repl/rich_output/backend_doctest.py
+@@ -61 +61,2 @@
++            sage: # needs IPython
+             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
 diff -urN a/src/sage/repl/preparse.py b/src/sage/repl/preparse.py
 --- a/src/sage/repl/preparse.py
 +++ b/src/sage/repl/preparse.py
