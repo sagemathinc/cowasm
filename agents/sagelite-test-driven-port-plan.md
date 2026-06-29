@@ -11014,6 +11014,30 @@ The saved block- and file-failure cluster queries are empty; skip grouping
 records the expected four `optional:sage.matrix.matrix_integer_dense`
 deferrals.
 
+Focused graph dot2tex utility corpus-growth pass:
+
+```text
+sage -t passed: 1 passed, 0 failed, 5 skipped
+```
+
+That one-file focused validation adds `sage/graphs/dot2tex_utils.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 696
+non-comment entries. Direct sampling found the file is already quiet under the
+default browser-compatible profile: the ordinary `have_dot2tex() in
+[True, False]` fallback check runs, while the dot2tex/graphviz and
+matrix-formatting examples remain covered by existing optional `# needs`
+metadata.
+
+Focused validation used the `test-sage-doctest-corpus` make target against
+the patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/next-probes/dot2tex-utils-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected optional `dot2tex`/`graphviz` and `sage.modules`
+deferrals.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
