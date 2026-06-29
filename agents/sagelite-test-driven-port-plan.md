@@ -9119,6 +9119,34 @@ then files needing triage, file-level errors, skipped-only files, and
 zero-block files. This complements `file-coverage-shape.sql` by making broad
 sampling runs easier to turn into the next focused corpus-growth target.
 
+Focused quadratic special-values corpus-growth pass:
+
+```text
+sage -t passed: 11 passed, 0 failed, 19 skipped
+```
+
+That one-file focused validation adds
+`sage/quadratic_forms/special_values.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 633 non-comment
+entries. The file adds compact exact Gamma, Bernoulli, and quadratic L-value
+helper coverage while leaving symbolic and PARI-backed examples under their
+existing upstream `# needs` metadata.
+
+Sampling first ran a mixed low-count helper batch across misc, REPL, matrix,
+homology, module, and quadratic-form files. The saved
+`corpus-candidate-ranking.sql` query identified `special_values.py` as the
+only promotion candidate in that batch, with 100% non-skipped pass rate.
+Nearby candidates stayed out of the quiet corpus: `matrix/change_ring.pyx`,
+`homology/homology_group.py`, and `repl/configuration.py` still have focused
+block-level failures, while several other sampled helpers were skipped-only or
+zero-block under the default browser-compatible profile.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quadratic-special-values-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -620,6 +620,7 @@ src/sage/logic/logictable.py
 src/sage/logic/propcalc.py
 src/sage/quadratic_forms/constructions.py
 src/sage/quadratic_forms/random_quadraticform.py
+src/sage/quadratic_forms/special_values.py
 src/sage/probability/probability_distribution.pyx
 src/sage/probability/random_variable.py
 src/sage/stats/basic_stats.py
