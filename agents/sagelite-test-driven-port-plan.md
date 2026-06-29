@@ -9238,6 +9238,33 @@ overflow. The useful SQLite outputs for this pass are under
 `.tmp/current-run/sample-unlisted-*.sqlite3` and focused probe databases under
 `.tmp/current-run/probe-*.sqlite3`.
 
+Focused structure coercion corpus-growth pass:
+
+```text
+sage -t passed: 114 passed, 0 failed, 44 skipped
+```
+
+That one-file make-target validation adds
+`sage/structure/coerce_actions.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 636
+non-comment entries. The file covers Sage's coercion action machinery without
+exposing the lower-level callable conversion signature mismatch still present
+in adjacent `coerce_maps.pyx`.
+
+Fresh sampling before the addition found no new clean entries among
+`sage/categories/examples/*`, which were skipped-only or zero-block under the
+default browser profile. Larger quadratic-form helpers and asymptotic-ring
+helpers remain out of the quiet corpus because they expose broad block-level
+failures, file-level NTL/libcxx memory traps, or timeouts. The same focused
+structure/timeit probe kept `sage/structure/coerce_maps.pyx` out because it
+still reaches a `CCallableConvertMap_class__call_` function-signature
+mismatch; `sage/misc/sage_timeit.py` and `sage/misc/sage_timeit_class.pyx`
+also still have focused block failures. Validation used
+`SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/coerce-actions-corpus.txt`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/coerce-actions-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

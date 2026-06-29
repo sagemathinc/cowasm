@@ -531,6 +531,7 @@ src/sage/misc/viewer.py
 src/sage/misc/weak_dict.pyx
 src/sage/structure/category_object.pyx
 src/sage/structure/coerce.pyx
+src/sage/structure/coerce_actions.pyx
 src/sage/structure/coerce_dict.pyx
 src/sage/structure/debug_options.pyx
 src/sage/structure/dynamic_class.py
