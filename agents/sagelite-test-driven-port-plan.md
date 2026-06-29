@@ -10078,6 +10078,37 @@ parallel-runtime triage, `features/planarity.py` needs optional-feature
 metadata, and small scheme or Lie conformal algebra probes still reach broader
 symbolic, algebraic-field, or backend gaps.
 
+Focused covering-design and geometry linear-expression corpus-growth pass:
+
+```text
+sage -t passed: 210 passed, 0 failed, 4 skipped
+```
+
+That two-file focused validation adds
+`sage/combinat/designs/covering_design.py` and
+`sage/geometry/linear_expression.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 665
+non-comment entries. A mixed frontier sample first ranked both files as
+`promote_candidate` in `corpus-candidate-ranking.sql`, with 100% non-skipped
+pass rates: `covering_design.py` recorded 46 passed blocks and 3 skipped
+blocks, while `linear_expression.py` recorded 164 passed blocks and 1 skipped
+block.
+
+The same sample kept `sage/categories/finite_coxeter_groups.py` and
+`sage/categories/weyl_groups.py` out as skipped-only files, and kept
+`sage/categories/coxeter_groups.py`, `sage/categories/pushout.py`,
+`sage/combinat/species/empty_species.py`,
+`sage/combinat/species/set_species.py`, `sage/combinat/species/species.py`,
+and `sage/geometry/newton_polygon.py` out because their focused failures still
+hit graph/group startup gaps, the known NTL/libcxx memory trap, species
+startup semantics, or broader geometry output clusters.
+
+Focused validation used
+`SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/covering-linear-corpus.txt`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/covering-linear-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
