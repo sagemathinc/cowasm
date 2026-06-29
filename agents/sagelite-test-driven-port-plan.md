@@ -11653,6 +11653,31 @@ and kept `sage/parallel/map_reduce.py` out because it still has broad
 `.tmp/current-run/modules-new-sample.sqlite3`, and
 `.tmp/current-run/crypto-small-sample.sqlite3`.
 
+Focused OS utility corpus pass:
+
+```text
+sage_ostools.pyx: 13 passed, 0 failed, 28 skipped
+```
+
+This pass adds `sage/misc/sage_ostools.pyx` to the quiet corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 721 non-comment
+entries. Direct sampling first recorded 18 passed blocks and 23 failed blocks:
+the default browser-compatible runtime does not expose stable host-program
+checks for `ls`/`sh`, and its captured `sys.stdout` does not support the
+OS-level file-descriptor redirection examples. The added WASI source patch
+marks host executable checks as `# needs subprocess` and descriptor-level
+redirection examples as `# needs file-descriptor-redirection`, preserving the
+runnable `restore_cwd` and invalid-object behavior under the default profile.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/sage-ostools-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` records the expected `subprocess` and
+`file-descriptor-redirection` boundaries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

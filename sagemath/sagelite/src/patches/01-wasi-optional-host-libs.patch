@@ -6718,3 +6718,83 @@ diff -urN a/src/sage/misc/inline_fortran.py b/src/sage/misc/inline_fortran.py
 @@ -122 +122 @@
 -            sage: fortran.eval("SYNTAX ERROR !@#$")
 +            sage: fortran.eval("SYNTAX ERROR !@#$")                                  # needs subprocess
+diff -urN a/src/sage/misc/sage_ostools.pyx b/src/sage/misc/sage_ostools.pyx
+--- a/src/sage/misc/sage_ostools.pyx
++++ b/src/sage/misc/sage_ostools.pyx
+@@ -30 +30 @@
+-        sage: have_program('ls')
++        sage: have_program('ls')                                                      # needs subprocess
+@@ -38 +38 @@
+-        sage: have_program('sh', '/bin')
++        sage: have_program('sh', '/bin')                                              # needs subprocess
+@@ -139 +139 @@
+-        sage: with redirection(sys.stdout, open(fn, 'w')):
++        sage: with redirection(sys.stdout, open(fn, 'w')):                            # needs file-descriptor-redirection
+@@ -141 +141 @@
+-        sage: with open(fn) as f:
++        sage: with open(fn) as f:                                                     # needs file-descriptor-redirection
+@@ -147,2 +147,2 @@
+-        sage: fd = sys.stdout.fileno()
+-        sage: with redirection(fd, open(fn, 'wb')):
++        sage: fd = sys.stdout.fileno()                                                # needs file-descriptor-redirection
++        sage: with redirection(fd, open(fn, 'wb')):                                   # needs file-descriptor-redirection
+@@ -150 +150 @@
+-        sage: with open(fn) as f:
++        sage: with open(fn) as f:                                                     # needs file-descriptor-redirection
+@@ -156 +156 @@
+-        sage: with open(fn, 'w') as f:
++        sage: with open(fn, 'w') as f:                                                # needs file-descriptor-redirection
+@@ -162 +162 @@
+-        sage: with open(fn) as f:
++        sage: with open(fn) as f:                                                     # needs file-descriptor-redirection
+@@ -170,3 +170,3 @@
+-        sage: f = open(fn, 'w+')
+-        sage: r = redirection(sys.stdout, f, close=False)
+-        sage: with r:
++        sage: f = open(fn, 'w+')                                                      # needs file-descriptor-redirection
++        sage: r = redirection(sys.stdout, f, close=False)                             # needs file-descriptor-redirection
++        sage: with r:                                                                 # needs file-descriptor-redirection
+@@ -174 +174 @@
+-        sage: with r:
++        sage: with r:                                                                 # needs file-descriptor-redirection
+@@ -176 +176 @@
+-        sage: with f:
++        sage: with f:                                                                 # needs file-descriptor-redirection
+@@ -184,2 +184,2 @@
+-        sage: import subprocess
+-        sage: with redirection(sys.stdout, open(fn, 'w')):
++        sage: import subprocess                                                       # needs subprocess
++        sage: with redirection(sys.stdout, open(fn, 'w')):                            # needs subprocess file-descriptor-redirection
+@@ -187 +187 @@
+-        sage: with open(fn) as f:
++        sage: with open(fn) as f:                                                     # needs subprocess file-descriptor-redirection
+@@ -202,2 +202,2 @@
+-        sage: f = open(os.devnull, 'w')
+-        sage: with redirection(sys.stdout, f):
++        sage: f = open(os.devnull, 'w')                                               # needs file-descriptor-redirection
++        sage: with redirection(sys.stdout, f):                                        # needs file-descriptor-redirection
+@@ -208 +208 @@
+-        sage: f.closed
++        sage: f.closed                                                               # needs file-descriptor-redirection
+@@ -213,3 +213,3 @@
+-        sage: f = open(fn, 'w+')
+-        sage: r = redirection(sys.stdout, f, close=True)
+-        sage: with r:
++        sage: f = open(fn, 'w+')                                                      # needs file-descriptor-redirection
++        sage: r = redirection(sys.stdout, f, close=True)                              # needs file-descriptor-redirection
++        sage: with r:                                                                 # needs file-descriptor-redirection
+@@ -217 +217 @@
+-        sage: with r:
++        sage: with r:                                                                 # needs file-descriptor-redirection
+@@ -225 +225 @@
+-        sage: redirection(sys.stdout, 0, close=True)
++        sage: redirection(sys.stdout, 0, close=True)                                  # needs file-descriptor-redirection
+@@ -232 +232 @@
+-        sage: with redirection(-123, open(os.devnull, 'w')):
++        sage: with redirection(-123, open(os.devnull, 'w')):                          # needs file-descriptor-redirection
+@@ -237 +237 @@
+-        sage: with redirection(sys.stdout, -123):
++        sage: with redirection(sys.stdout, -123):                                     # needs file-descriptor-redirection
+@@ -245 +245 @@
+-        sage: with redirection(sys.stdout, open(os.devnull, 'w')) as r:
++        sage: with redirection(sys.stdout, open(os.devnull, 'w')) as r:               # needs file-descriptor-redirection

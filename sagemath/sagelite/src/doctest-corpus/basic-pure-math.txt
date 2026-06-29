@@ -555,6 +555,7 @@ src/sage/misc/remote_file.py
 src/sage/misc/repr.py
 src/sage/misc/rest_index_of_methods.py
 src/sage/misc/sage_eval.py
+src/sage/misc/sage_ostools.pyx
 src/sage/misc/sage_timeit.py
 src/sage/misc/sageinspect.py
 src/sage/misc/sage_unittest.py
