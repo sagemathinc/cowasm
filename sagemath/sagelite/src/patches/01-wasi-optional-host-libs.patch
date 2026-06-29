@@ -6700,3 +6700,9 @@ diff -urN a/src/sage/matrix/args.pyx b/src/sage/matrix/args.pyx
 @@ -1514 +1514 @@
 -            sage: matrix(A, 3, 3, A.one())
 +            sage: matrix(A, 3, 3, A.one())                                            # needs sage.groups
+diff -urN a/src/sage/misc/inline_fortran.py b/src/sage/misc/inline_fortran.py
+--- a/src/sage/misc/inline_fortran.py
++++ b/src/sage/misc/inline_fortran.py
+@@ -122 +122 @@
+-            sage: fortran.eval("SYNTAX ERROR !@#$")
++            sage: fortran.eval("SYNTAX ERROR !@#$")                                  # needs subprocess

@@ -2124,6 +2124,46 @@ if [ "$doctest_namespace_count" != "1" ]; then
   sqlite3 "$doctest_namespace_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t namespace doctest smoke did not preserve Sage globals over module helper globals."
 fi
+doctest_user_globals_db="$probe_dir/sagelite-doctest-user-globals.sqlite3"
+doctest_user_globals_log="$dist_dir/doctest-user-globals.log"
+doctest_user_globals_file="$probe_dir/sagelite-doctest-user-globals.py"
+cat >"$doctest_user_globals_file" <<'PY'
+"""
+Check that helpers using Sage's REPL global registry see doctest globals.
+
+EXAMPLES::
+
+    sage: from sage.repl.user_globals import get_globals
+    sage: get_globals()["user_globals_smoke"] = 41
+    sage: get_globals()["user_globals_smoke"] + 1
+    42
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --sqlite "$doctest_user_globals_db" "$doctest_user_globals_file" \
+      >"$doctest_user_globals_log" 2>&1
+doctest_user_globals_status=$?
+set -e
+if [ "$doctest_user_globals_status" -eq 124 ]; then
+  tail -120 "$doctest_user_globals_log" >&2
+  record_blocker "sagelite-blocked: sage -t user-globals doctest smoke timed out after $node_import_timeout; see $doctest_user_globals_log for the first runtime blocker."
+fi
+if [ "$doctest_user_globals_status" -ne 0 ]; then
+  tail -120 "$doctest_user_globals_log" >&2
+  sqlite3 "$doctest_user_globals_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t user-globals doctest smoke failed; see $doctest_user_globals_log for the first runtime blocker."
+fi
+doctest_user_globals_count="$(sqlite3 "$doctest_user_globals_db" "select count(*) from blocks where status = 'passed' and source like 'get_globals()[\"user_globals_smoke\"] + 1%';")"
+if [ "$doctest_user_globals_count" != "1" ]; then
+  cat "$doctest_user_globals_log" >&2
+  sqlite3 "$doctest_user_globals_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t user-globals doctest smoke did not expose doctest globals through sage.repl.user_globals."
+fi
 doctest_optional_magma_count="$(sqlite3 "$doctest_smoke_db" "select count(*) from blocks where status = 'skipped' and skip_reason = 'optional:magma' and tags like '%optional:magma%';")"
 if [ "$doctest_optional_magma_count" != "1" ]; then
   cat "$doctest_smoke_log" >&2

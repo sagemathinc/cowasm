@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 71;
+const doctestRunnerVersion = 72;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1524,6 +1524,11 @@ def __cowasm_namespace(filename):
                 namespace.setdefault(name, value)
             __cowasm_resolve_core_lazy_namespace(namespace)
     namespace["__name__"] = "__main__"
+    try:
+        from sage.repl.user_globals import set_globals
+        set_globals(namespace)
+    except BaseException:
+        pass
     return namespace
 
 

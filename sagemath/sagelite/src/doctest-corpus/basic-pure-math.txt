@@ -524,6 +524,7 @@ src/sage/misc/fpickle.pyx
 src/sage/misc/function_mangling.pyx
 src/sage/misc/html.py
 src/sage/misc/inherit_comparison.pyx
+src/sage/misc/inline_fortran.py
 src/sage/misc/instancedoc.pyx
 src/sage/misc/lazy_attribute.pyx
 src/sage/misc/lazy_format.py

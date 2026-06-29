@@ -11534,6 +11534,30 @@ and
 The saved block- and file-failure cluster queries are empty, and skip grouping
 shows the expected `optional:ipython` deferrals.
 
+Focused inline Fortran helper corpus pass:
+
+```text
+inline_fortran.py: 11 passed, 0 failed, 7 skipped
+```
+
+This pass adds `sage/misc/inline_fortran.py` to the quiet corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 718
+non-comment entries. Direct sampling first recorded one default-profile
+failure in the synthetic syntax-error compile probe after the doctest runner
+initialized Sage's REPL user-global registry. The remaining failure was the
+expected WASI subprocess boundary, so the added WASI source patch marks that
+compile probe as `# needs subprocess`.
+
+The doctest runner now calls `sage.repl.user_globals.set_globals(...)` with
+each per-file doctest namespace, matching Sage helpers that access REPL
+globals indirectly. Runner version 72 records this behavior, and the
+standalone smoke now has a focused user-globals doctest probe. Focused
+validation used the `test-sage-doctest-corpus` make target after rebuilding a
+fresh patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/inline-fortran-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
