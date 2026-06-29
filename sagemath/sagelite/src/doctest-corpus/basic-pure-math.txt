@@ -55,6 +55,7 @@ src/sage/data_structures/pairing_heap.pyx
 src/sage/ext/fast_eval.pyx
 src/sage/ext/memory.pyx
 src/sage/games/sudoku_backtrack.pyx
+src/sage/features/all.py
 src/sage/features/bitness.py
 src/sage/features/bliss.py
 src/sage/features/brial.py
@@ -95,6 +96,7 @@ src/sage/features/normaliz.py
 src/sage/features/palp.py
 src/sage/features/pandoc.py
 src/sage/features/pdf2svg.py
+src/sage/features/pari.py
 src/sage/features/phitigra.py
 src/sage/features/polymake.py
 src/sage/features/poppler.py
@@ -113,6 +115,7 @@ src/sage/features/tides.py
 src/sage/features/topcom.py
 src/sage/libs/flint/ulong_extras_sage.pyx
 src/sage/interfaces/abc.py
+src/sage/interfaces/read_data.py
 src/sage/combinat/SJT.py
 src/sage/combinat/combinat.py
 src/sage/combinat/combinat_cython.pyx
@@ -609,6 +612,8 @@ src/sage/stats/basic_stats.py
 src/sage/stats/distributions/catalog.py
 src/sage/stats/distributions/discrete_gaussian_polynomial.py
 src/sage/symbolic/symbols.py
+src/sage/tests/functools_partial_src.py
+src/sage/tests/startup.py
 src/sage/typeset/ascii_art.py
 src/sage/typeset/character_art.py
 src/sage/typeset/character_art_factory.py

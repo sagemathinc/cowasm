@@ -2067,6 +2067,29 @@ corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/backend-base-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused utility and startup-test corpus-growth pass:
+
+```text
+sage -t passed: 30 passed, 0 failed, 9 skipped
+```
+
+That five-file make-target validation adds `sage/features/all.py`,
+`sage/features/pari.py`, `sage/interfaces/read_data.py`,
+`sage/tests/functools_partial_src.py`, and `sage/tests/startup.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 617
+non-comment entries. The new files add compact coverage for Sage feature
+aggregation, PARI feature detection, interface data parsing, partial-function
+startup behavior, and Sage startup namespace checks without new WASI source
+tags or startup namespace changes.
+
+Focused validation used the `test-sage-doctest-corpus` make target against a
+temporary five-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/utility-corpus-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; the latest-run
+summary records runner version 61 in the default node profile.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
