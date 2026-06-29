@@ -5296,6 +5296,18 @@ diff -urN a/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_l
 @@ -98 +98 @@
 -            sage: V = lie_conformal_algebras.Affine(QQ, 'A1'); V.ngens()
 +            sage: V = lie_conformal_algebras.Affine(QQ, 'A1'); V.ngens()             # needs sage.graphs
+diff -urN a/src/sage/libs/flint/fmpz_poly.pyx b/src/sage/libs/flint/fmpz_poly.pyx
+--- a/src/sage/libs/flint/fmpz_poly.pyx
++++ b/src/sage/libs/flint/fmpz_poly.pyx
+@@ -5 +5 @@
+-    sage: Fmpz_poly([1, 1])
++    sage: Fmpz_poly([1, 1])                                                       # known bug - warning stream is not captured by Sagelite doctest runner
+diff -urN a/src/sage/libs/flint/ulong_extras.pyx b/src/sage/libs/flint/ulong_extras.pyx
+--- a/src/sage/libs/flint/ulong_extras.pyx
++++ b/src/sage/libs/flint/ulong_extras.pyx
+@@ -7 +7 @@
+-    sage: n_factor_to_list(60, 20)
++    sage: n_factor_to_list(60, 20)                                                # known bug - warning stream is not captured by Sagelite doctest runner
 diff -urN a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object.pyx
 --- a/src/sage/structure/sage_object.pyx
 +++ b/src/sage/structure/sage_object.pyx

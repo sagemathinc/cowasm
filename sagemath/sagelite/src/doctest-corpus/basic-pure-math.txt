@@ -121,7 +121,9 @@ src/sage/features/threejs.py
 src/sage/features/tides.py
 src/sage/features/topcom.py
 src/sage/libs/flint/flint_sage.pyx
+src/sage/libs/flint/fmpz_poly.pyx
 src/sage/libs/flint/ulong_extras_sage.pyx
+src/sage/libs/flint/ulong_extras.pyx
 src/sage/geometry/polyhedron/cdd_file_format.py
 src/sage/geometry/polyhedron/misc.py
 src/sage/interfaces/abc.py

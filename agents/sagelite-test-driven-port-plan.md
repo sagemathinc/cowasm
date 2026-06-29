@@ -9183,6 +9183,33 @@ NTL/libcxx ostream memory trap through finite-field polynomial setup, and
 `sage/misc/functional.py` times out in a symbolic rational-expression
 denominator example.
 
+Focused deprecated FLINT shim corpus-growth pass:
+
+```text
+sage -t passed: 2 passed, 0 failed, 2 skipped
+```
+
+That two-file make-target validation adds `sage/libs/flint/fmpz_poly.pyx` and
+`sage/libs/flint/ulong_extras.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 635 non-comment
+entries. The files exercise the remaining deprecated FLINT lazy-import shims
+beside the existing direct `flint_sage.pyx` and `ulong_extras_sage.pyx`
+coverage. Direct sampling first recorded one warning-output mismatch in each
+file; the added WASI source patch marks those deprecation-warning examples as
+deferred `# known bug` skips, matching the current Sagelite doctest runner
+limitation that warning streams are not captured as doctest stdout.
+
+The same fresh sampling kept `sage/misc/dev_tools.py` and
+`sage/misc/sage_ostools.pyx` out of the quiet corpus because their focused
+failures involve broad import-enumeration and POSIX file-descriptor behavior.
+It also kept low-count Lie-conformal helper files out because their failures
+cluster around algebraic-field coercion, graph-backed affine constructors, and
+number-field/cypari2 boundaries. Focused validation used the
+`test-sage-doctest-corpus` make target with a temporary two-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/flint-shims-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
