@@ -11038,6 +11038,27 @@ The saved block- and file-failure cluster queries are empty; skip grouping
 records the expected optional `dot2tex`/`graphviz` and `sage.modules`
 deferrals.
 
+Follow-up matrix special sampling pass:
+
+```text
+special.py: 407 passed, 91 failed, 89 skipped
+```
+
+`sage/matrix/special.py` is not promoted to the curated corpus yet. Direct
+sampling first timed out in the randomized density-convergence loops in
+`random_matrix(...)`; those loops are now marked `# long time`, matching the
+adjacent density-distribution examples. The next runs then exposed runtime
+boundaries in finite-field echelonizable matrices and matrix randomization for
+unitary/bistochastic constructors. The WASI source patch now classifies those
+early trap clusters as finite-ring requirements or deferred known bugs, so
+future sampling reaches ordinary block-level failures instead of aborting at
+file level.
+
+After those tags, focused make-target validation against a one-file temporary
+corpus still records 91 block failures. The remaining clusters are broader
+matrix-special semantics rather than a narrow browser-profile tagging pass, so
+`special.py` remains outside `basic-pure-math.txt`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

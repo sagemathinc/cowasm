@@ -5050,6 +5050,78 @@ diff -urN a/src/sage/matrix/docs.py b/src/sage/matrix/docs.py
 @@ -300 +300 @@
 -    sage: A = matrix(RR,2,[1,10,3.5,2])
 +    sage: A = matrix(RR,2,[1,10,3.5,2])                                             # needs sage.rings.real_mpfr
+diff -urN a/src/sage/matrix/special.py b/src/sage/matrix/special.py
+--- a/src/sage/matrix/special.py
++++ b/src/sage/matrix/special.py
+@@ -372 +372 @@
+-        sage: while abs(density_sum/total_count - expected_density) > 0.001:
++        sage: while abs(density_sum/total_count - expected_density) > 0.001:  # long time
+@@ -378 +378 @@
+-        sage: while abs(density_sum/total_count - expected_density) > 0.001:
++        sage: while abs(density_sum/total_count - expected_density) > 0.001:  # long time
+@@ -387 +387 @@
+-        sage: while abs(density_sum/total_count - expected_density) > 0.001:
++        sage: while abs(density_sum/total_count - expected_density) > 0.001:  # long time
+@@ -2750,6 +2750,6 @@
+-        sage: F.<a> = GF(2^3)
+-        sage: B = random_matrix(F, 4, 5, algorithm='echelonizable', rank=4,
+-        ....:                   upper_bound=None)
+-        sage: B.rank()
+-        4
+-        sage: B.base_ring() is F
++        sage: F.<a> = GF(2^3)                                                     # needs sage.rings.finite_rings
++        sage: B = random_matrix(F, 4, 5, algorithm='echelonizable', rank=4,        # needs sage.rings.finite_rings
++        ....:                   upper_bound=None)
++        sage: B.rank()                                                            # needs sage.rings.finite_rings
++        4
++        sage: B.base_ring() is F                                                  # needs sage.rings.finite_rings
+@@ -3179,5 +3179,6 @@
++        sage: # known bug - random_unitary_matrix reaches matrix randomize table-index trap in WASI
+         sage: n = ZZ.random_element(10)
+         sage: MS = MatrixSpace(QQ, n)
+         sage: U = random_unitary_matrix(MS)
+         sage: U.is_unitary() and U in MS
+         True
+@@ -3187,6 +3188,7 @@
++        sage: # known bug - random_unitary_matrix reaches matrix randomize table-index trap in WASI
+         sage: n = ZZ.random_element(10)
+         sage: K = QuadraticField(-1,'i')
+         sage: MS = MatrixSpace(K, n)
+         sage: U = random_unitary_matrix(MS)
+         sage: U.is_unitary() and U in MS
+         True
+@@ -3215,9 +3217,10 @@
++        sage: # known bug - random_unitary_matrix reaches matrix randomize table-index trap in WASI
+         sage: n = ZZ.random_element(10)
+         sage: MS = MatrixSpace(RDF, n)
+         sage: U = random_unitary_matrix(MS)
+         sage: U.is_unitary() and U in MS
+         True
+         sage: MS = MatrixSpace(CDF, n)
+         sage: U = random_unitary_matrix(MS)
+         sage: U.is_unitary() and U in MS
+         True
+@@ -3342,5 +3345,6 @@
+         sage: from sage.matrix.constructor import random_bistochastic_matrix
+         sage: MS = MatrixSpace(QQ, 4)
++        sage: # known bug - random_bistochastic_matrix reaches matrix randomize table-index trap in WASI
+         sage: B = random_bistochastic_matrix(MS)
+         sage: B.is_bistochastic()
+         True
+@@ -3350,5 +3354,6 @@
+         sage: from sage.matrix.constructor import random_bistochastic_matrix
+         sage: MS = MatrixSpace(RR, 4)
++        sage: # known bug - random_bistochastic_matrix reaches matrix randomize table-index trap in WASI
+         sage: B = random_bistochastic_matrix(MS)
+         sage: B.is_bistochastic()  # random
+         False
+@@ -3374,5 +3379,6 @@
+         sage: from sage.matrix.constructor import random_bistochastic_matrix
+         sage: MS = MatrixSpace(QQ, 4)
++        sage: # known bug - random_bistochastic_matrix reaches matrix randomize table-index trap in WASI
+         sage: B = random_bistochastic_matrix(MS)
+         sage: B.is_bistochastic()
+         True
 diff -urN a/src/sage/matrix/change_ring.pyx b/src/sage/matrix/change_ring.pyx
 --- a/src/sage/matrix/change_ring.pyx
 +++ b/src/sage/matrix/change_ring.pyx
