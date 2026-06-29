@@ -11323,6 +11323,34 @@ Sagelite source copy, with a temporary one-file corpus,
 The saved block- and file-failure cluster queries are empty; skip grouping
 shows the expected `optional:sage.graphs` deferrals.
 
+Focused quadratic-form mass helper corpus pass:
+
+```text
+quadratic_form__mass.py: 4 passed, 0 failed, 0 skipped
+```
+
+This pass adds `sage/quadratic_forms/quadratic_form__mass.py` to the quiet
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 708 non-comment entries. Direct compact sampling kept nearby dependency
+frontier files out of the corpus because they were skipped-only under the
+default browser-compatible profile, including compact SymPy, SymEngine, NumPy,
+database, map-threaded, ring-extension, species, and plotting helpers.
+
+Earlier in the same scheduled run, `sage/game_theory/catalog_normal_form_games.py`
+and `sage/game_theory/parser.py` were sampled after the lightweight
+`game_theory` startup alias work. They are not yet quiet: the dominant cluster
+is still missing startup names (`game_theory` and `NormalFormGame`), followed
+by broad normal-form output drift, so game-theory catalog coverage remains a
+separate follow-up. `sage/misc/sage_ostools.pyx` also remains outside the quiet
+corpus because its current failures are broad stdout/fileno/subprocess
+semantics rather than a narrow display-tag issue.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quadratic-mass-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
