@@ -659,6 +659,7 @@ src/sage/probability/probability_distribution.pyx
 src/sage/probability/random_variable.py
 src/sage/plot/arc.py
 src/sage/plot/bar_chart.py
+src/sage/plot/bezier_path.py
 src/sage/plot/circle.py
 src/sage/plot/ellipse.py
 src/sage/plot/point.py

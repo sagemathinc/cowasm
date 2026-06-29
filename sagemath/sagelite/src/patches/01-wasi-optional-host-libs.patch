@@ -5707,6 +5707,12 @@ diff -urN a/src/sage/plot/arc.py b/src/sage/plot/arc.py
 -            sage: b[0]
 +            sage: b = a[0].bezier_path()                                          # needs matplotlib
 +            sage: b[0]                                                            # needs matplotlib
+diff -urN a/src/sage/plot/bezier_path.py b/src/sage/plot/bezier_path.py
+--- a/src/sage/plot/bezier_path.py
++++ b/src/sage/plot/bezier_path.py
+@@ -380 +380 @@
+-        sage: bezier_path([[(0,1),(.5,0),(1,1)]]).show(fontsize=50) # These are equivalent
++        sage: bezier_path([[(0,1),(.5,0),(1,1)]]).show(fontsize=50) # These are equivalent  # needs matplotlib
 diff -urN a/src/sage/plot/circle.py b/src/sage/plot/circle.py
 --- a/src/sage/plot/circle.py
 +++ b/src/sage/plot/circle.py

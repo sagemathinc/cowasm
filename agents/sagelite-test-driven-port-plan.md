@@ -10504,11 +10504,37 @@ The saved block- and file-failure cluster queries are empty; skip grouping
 records the expected `optional:sage.plot.plot3d` and `optional:matplotlib`
 deferrals. The runner version remains 65.
 
+Focused bezier-path plot corpus-growth pass:
+
+```text
+sage -t passed: 37 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds `sage/plot/bezier_path.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 681 non-comment
+entries. Direct sampling first recorded 37 passed blocks, four existing
+`sage.symbolic` skips, and one focused failure where the `.show(...)`
+equivalence example imports Matplotlib.
+
+The added WASI source patch marks that Matplotlib-backed show example as
+`# needs matplotlib`, preserving browser-compatible Bezier path construction,
+option handling, min/max, and representation coverage. Focused validation
+used the `test-sage-doctest-corpus` make target after rebuilding a fresh
+patched Sagelite source copy, with
+`TMPDIR=/home/user/cowasm/.tmp/current-run/patch-tmp`, a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/bezier-path-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected `optional:sage.symbolic` and `optional:matplotlib`
+deferrals. The runner version remains 65.
+
 The same scheduled plot-primitive probe kept nearby files out of the quiet
 corpus. `sage/plot/arrow.py`,
-`sage/plot/bezier_path.py`, `sage/plot/disk.py`,
-`sage/plot/line.py`, `sage/plot/text.py`, `sage/plot/histogram.py`, and
-`sage/plot/primitive.py` still expose focused `NameError`,
+`sage/plot/disk.py`, `sage/plot/line.py`, `sage/plot/text.py`,
+`sage/plot/histogram.py`, and `sage/plot/primitive.py` still expose focused
+`NameError`,
 `ModuleNotFoundError`, or output-mismatch clusters. `sage/plot/colors.py`,
 `sage/plot/misc.py`, and the hyperbolic plot primitives were skipped-only
 under the default browser-compatible profile.
