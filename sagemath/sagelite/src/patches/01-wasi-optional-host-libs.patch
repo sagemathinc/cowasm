@@ -4753,6 +4753,49 @@ diff -urN a/src/sage/misc/prandom.py b/src/sage/misc/prandom.py
 @@ -45 +45 @@
 -    sage: timeit('test2()') # random
 +    sage: timeit('test2()') # random                                                    # needs IPython
+diff -urN a/src/sage/misc/sage_timeit.py b/src/sage/misc/sage_timeit.py
+--- a/src/sage/misc/sage_timeit.py
++++ b/src/sage/misc/sage_timeit.py
+@@ -11 +11 @@
+-    sage: timeit('1+1')    # random output
++    sage: timeit('1+1')    # random output                                             # needs IPython
+@@ -57 +57 @@
+-        sage: SageTimeitResult( (1, 2, 3, 4, 's') )
++        sage: SageTimeitResult( (1, 2, 3, 4, 's') )                                    # known bug
+@@ -133 +133 @@
+-        sage: sage_timeit('3^100000', globals(), preparse=True, number=50)      # random output
++        sage: sage_timeit('3^100000', globals(), preparse=True, number=50)      # random output  # needs IPython
+@@ -135 +135 @@
+-        sage: sage_timeit('3^100000', globals(), preparse=False, number=50)     # random output
++        sage: sage_timeit('3^100000', globals(), preparse=False, number=50)     # random output  # needs IPython
+@@ -138 +138 @@
+-        sage: sage_timeit('a^2', globals(), number=50)                            # random output
++        sage: sage_timeit('a^2', globals(), number=50)                            # random output  # needs IPython
+@@ -144 +144 @@
+-        sage: timeit('10^2', number=50)
++        sage: timeit('10^2', number=50)                                                # needs IPython
+@@ -149,2 +149,2 @@
+-        sage: s = sage_timeit('10^2', globals(), repeat=1000)
+-        sage: len(s.series)
++        sage: s = sage_timeit('10^2', globals(), repeat=1000)                          # needs IPython
++        sage: len(s.series)                                                            # needs IPython
+@@ -154 +154 @@
+-        sage: min(s.series)    # random output
++        sage: min(s.series)    # random output                                         # needs IPython
+@@ -173 +173 @@
+-        sage: timeit("print('Hi')", number=50)
++        sage: timeit("print('Hi')", number=50)                                         # needs IPython
+@@ -178 +178 @@
+-        sage: timeit("print('Hi')", seconds=True)   # random output
++        sage: timeit("print('Hi')", seconds=True)   # random output                    # needs IPython
+@@ -180,2 +180,2 @@
+-        sage: t = timeit("print('Hi')", seconds=True)
+-        sage: t     #r random output
++        sage: t = timeit("print('Hi')", seconds=True)                                  # needs IPython
++        sage: t     #r random output                                                   # needs IPython
+@@ -193 +193 @@
+-        sage: timeit("f()")
++        sage: timeit("f()")                                                            # needs IPython
 diff -urN a/src/sage/misc/superseded.py b/src/sage/misc/superseded.py
 --- a/src/sage/misc/superseded.py
 +++ b/src/sage/misc/superseded.py

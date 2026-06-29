@@ -11195,6 +11195,31 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_TIMEOUT=120`, and
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/probes/ntl-error-make.sqlite3`.
 
+Focused Sage timing helper corpus pass:
+
+```text
+sage_timeit.py: 17 passed, 0 failed, 27 skipped
+```
+
+This pass adds `sage/misc/sage_timeit.py` to the quiet corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 701 non-comment
+entries. The WASI source patch tags timing-shell examples that import the
+IPython-backed Sage interpreter as `# needs IPython`, matching the existing
+browser-profile boundary used by other `timeit(...)` doctests, and marks the
+single `SageTimeitResult` repr diagnostic drift as `# known bug`. The remaining
+default-profile coverage exercises the lightweight timing-result constructor,
+representation, and garbage-collection reset behavior without requiring the
+interactive IPython timing shell.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`,
+and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/sage-timeit-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+shows the expected IPython, symbolic, PARI, numpy/modules, and known-bug
+deferrals.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
