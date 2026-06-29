@@ -11157,6 +11157,32 @@ outside the quiet corpus: sampling still reaches `flint_abort` through
 keeps `sage/libs/ntl/error.pyx` outside the corpus because importing
 `ntl.ZZX([0])` currently hits a missing `gf2x_mul` dynamic-link import.
 
+Focused NTL/GF2X side-module link pass:
+
+```text
+error.pyx:40 rerun: 1 passed, 0 failed, 0 skipped
+```
+
+This pass clears the `gf2x_mul` dynamic-link import barrier for the GF2X-backed
+NTL side modules. Sagelite's WASI source patch now links
+`sage.libs.ntl` C++ extension modules with raw `-lntl -lgmp -lgf2x` linker
+flags under WASI, while keeping the compiler include path for GMP explicit.
+The raw linker flags avoid Meson's unsupported `--start-group` archive
+grouping for the current WASI `wasm-ld` path; the package-local clang wrappers
+still filter those group flags for other Meson-generated commands.
+
+Focused validation rebuilt the affected NTL side modules
+(`ntl_GF2X`, `ntl_GF2E`, `ntl_GF2EContext`, `ntl_GF2EX`, and
+`ntl_mat_GF2E`) and confirmed their WebAssembly import tables no longer request
+`env.gf2x_mul`. The previous failing `sage/libs/ntl/error.pyx:40` setup line
+now passes under `sage -t --line 40`.
+
+`sage/libs/ntl/error.pyx` remains outside the quiet corpus. A full-file rerun
+now reaches the next boundary at `a.quo_rem(a)`, where NTL's expected
+`NTLError: DivRem: division by zero` path traps in the existing NTL/libcxx
+ostream `memory access out of bounds` cluster while printing
+`NTL::TerminalError`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
