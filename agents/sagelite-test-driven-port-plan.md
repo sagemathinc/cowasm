@@ -9476,6 +9476,35 @@ capture gap. Focused validation used
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quit-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused module-with-basis morphism corpus-growth pass:
+
+```text
+sage -t passed: 353 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/modules/with_basis/morphism.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 645 non-comment
+entries. The file adds clean default-profile coverage for morphisms between
+modules with basis, including coercion, composition, category behavior,
+matrix-backed actions, and kernel/image helpers, without reaching the known
+dense-matrix or NTL/libcxx runtime boundaries.
+
+Fresh uncovered-module sampling before the addition found
+`with_basis/morphism.py` as the only clean non-skipped promotion candidate in
+that batch. `diamond_cutting.py` and `finite_submodule_iter.pyx` were
+skipped-only; `module_functors.py`, `free_module_pseudohomspace.py`, and
+`free_module_pseudomorphism.py` still have semantic/display failures. Nearby
+exploratory batches also kept skipped-only uncovered misc and monoid helpers
+out of the quiet corpus, while `structure/coerce_maps.pyx` still hits a
+`CCallableConvertMap` function-signature mismatch and category field/ring
+sampling still reaches NTL/libcxx or polynomial-constructor runtime
+boundaries. Focused validation used
+`SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/with-basis-morphism-corpus.txt`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/with-basis-morphism-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
