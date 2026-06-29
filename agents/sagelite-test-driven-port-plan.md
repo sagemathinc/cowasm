@@ -9345,6 +9345,26 @@ used
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/padics-misc-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused Gnuplot interface corpus-growth pass:
+
+```text
+sage -t passed: 1 passed, 0 failed, 1 skipped
+```
+
+That one-file focused validation adds `sage/interfaces/gnuplot.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 640
+non-comment entries. The file contributes a compact startup-interface repr
+doctest while keeping the interactive plotting example behind its existing
+optional `gnuplot`/`not tested` metadata.
+
+Direct sampling first ran the file against the current patched Sagelite source
+tree with `sage -t --timeout 90`, recording `1 passed, 0 failed, 1 skipped`.
+Focused make-target validation used a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/gnuplot-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
