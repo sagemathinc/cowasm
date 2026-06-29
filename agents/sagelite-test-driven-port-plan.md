@@ -9683,6 +9683,25 @@ default profile. `features/planarity.py`, `libs/flint/arith.pyx`,
 subprocess, or output-drift failures rather than clean browser-profile
 coverage.
 
+Follow-up support-file sampling found no additional quiet nonzero corpus
+candidate among several absent small infrastructure files. `features/standard.py`,
+`misc/copying.py`, `misc/func_persist.py`, `misc/map_threaded.py`,
+`logic/all.py`, `repl/rich_output/output_catalog.py`, `probability/all.py`,
+`stats/all.py`, `stats/intlist.pyx`, `data_structures/binary_search.pyx`,
+`homology/chains.py`, `coding/channel.py`, `coding/encoder.py`, and
+`coding/decoder.py` were skipped-only or no-block in the default node profile.
+`doctest/fixtures.py`, `doctest/util.py`, `doctest/external.py`,
+`features/__init__.py`, `parallel/decorate.py`, `parallel/map_reduce.py`,
+`repl/display/formatter.py`, `quadratic_forms/extras.py`,
+`data_structures/stream.py`, `games/hexad.py`, and
+`homology/homology_group.py` still have focused failure clusters around
+external-feature detection, interrupt/subprocess assumptions, IPython-backed
+display formatting, quadratic-form backend drift, stream polynomial setup
+signature mismatch, and finite-field or matrix-backed examples. Existing
+coverage for `misc/package.py` and `misc/namespace_package.py` was confirmed
+clean in the same sampling pass, but both files were already present in the
+curated corpus.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
