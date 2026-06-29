@@ -9757,6 +9757,34 @@ the quiet corpus because its import path is IPython-backed, while
 `sage/misc/sage_ostools.pyx` remains dominated by POSIX `fileno` and
 redirection semantics.
 
+Focused p-adic test-helper corpus-growth pass:
+
+```text
+sage -t passed: 8 passed, 0 failed, 4 skipped
+```
+
+That one-file focused validation adds `sage/rings/padics/tests.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 654 non-comment
+entries. Direct sampling first found the file as the only promotion candidate
+in a mixed uncovered batch; the existing `corpus-candidate-ranking.sql` query
+classified it as `promote_candidate` with 100% non-skipped pass rate.
+
+The same sampling batch kept skipped-only files such as `sage/tests/sympy.py`,
+`sage/tests/numpy.py`, `sage/databases/sloane.py`, `sage/databases/odlyzko.py`,
+and `sage/categories/g_sets.py` out of the curated corpus. It also kept
+`sage/features/planarity.py`, `sage/repl/inputhook.py`,
+`sage/parallel/multiprocessing_sage.py`,
+`sage/combinat/designs/subhypergraph_search.pyx`, and
+`sage/algebras/lie_conformal_algebras/n2_lie_conformal_algebra.py` out because
+they still have runnable default-profile failures.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/padics-tests-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
