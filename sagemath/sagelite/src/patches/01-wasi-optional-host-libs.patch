@@ -5764,6 +5764,31 @@ diff -urN a/src/sage/plot/circle.py b/src/sage/plot/circle.py
 @@ -391 +391 @@
 -        sage: circle((0, 0), 2).show(figsize=[10,10])  # These are equivalent
 +        sage: circle((0, 0), 2).show(figsize=[10,10])  # These are equivalent  # needs matplotlib
+diff -urN a/src/sage/plot/disk.py b/src/sage/plot/disk.py
+--- a/src/sage/plot/disk.py
++++ b/src/sage/plot/disk.py
+@@ -165 +165 @@
+-            sage: p.save(f)
++            sage: p.save(f)                                                       # needs matplotlib
+@@ -204 +204 @@
+-            sage: disk((0,0), 1, (pi/2, 0), fill=False).plot3d(3)
++            sage: disk((0,0), 1, (pi/2, 0), fill=False).plot3d(3)                 # needs sage.plot.plot3d
+@@ -219,2 +219,2 @@
+-            sage: dd = d.plot3d(z=2)
+-            sage: dd.jmol_repr(dd.testing_render_params())[0][-1]
++            sage: dd = d.plot3d(z=2)                                              # needs sage.plot.plot3d
++            sage: dd.jmol_repr(dd.testing_render_params())[0][-1]                 # needs sage.plot.plot3d
+@@ -266 +266 @@
+-        sage: P.show(xmin=-2, xmax=2, ymin=-2, ymax=2)
++        sage: P.show(xmin=-2, xmax=2, ymin=-2, ymax=2)                            # needs matplotlib
+@@ -286 +286 @@
+-        sage: bl.show(figsize=[5,5])
++        sage: bl.show(figsize=[5,5])                                              # needs matplotlib
+@@ -329,2 +329,2 @@
+-        sage: disk((0, 0), 5, (0, pi/2), rgbcolor=(1, 0, 1)).show(  # These are equivalent
+-        ....:     xmin=0, xmax=5, ymin=0, ymax=5, figsize=(2,2))
++        sage: disk((0, 0), 5, (0, pi/2), rgbcolor=(1, 0, 1)).show(  # These are equivalent  # needs matplotlib
++        ....:     xmin=0, xmax=5, ymin=0, ymax=5, figsize=(2,2))                   # needs matplotlib
 diff -urN a/src/sage/plot/bar_chart.py b/src/sage/plot/bar_chart.py
 --- a/src/sage/plot/bar_chart.py
 +++ b/src/sage/plot/bar_chart.py

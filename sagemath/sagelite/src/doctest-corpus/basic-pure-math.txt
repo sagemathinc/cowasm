@@ -661,6 +661,7 @@ src/sage/plot/arc.py
 src/sage/plot/bar_chart.py
 src/sage/plot/bezier_path.py
 src/sage/plot/circle.py
+src/sage/plot/disk.py
 src/sage/plot/ellipse.py
 src/sage/plot/point.py
 src/sage/plot/polygon.py
