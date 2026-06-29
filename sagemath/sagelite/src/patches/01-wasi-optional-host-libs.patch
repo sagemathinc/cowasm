@@ -1409,6 +1409,16 @@ diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras
 -        sage: extend_to_primitive([vector([1,2,3])])
 +        sage: extend_to_primitive([vector([1,2,3])])                                  # random
          [(1, 2, 3), (0, 1, 1), (-1, 0, 0)]
+diff -urN a/src/sage/dynamics/finite_dynamical_system.py b/src/sage/dynamics/finite_dynamical_system.py
+--- a/src/sage/dynamics/finite_dynamical_system.py
++++ b/src/sage/dynamics/finite_dynamical_system.py
+@@ -1075,5 +1075,5 @@
+             sage: BS = finite_dynamical_systems.bulgarian_solitaire
+-            sage: BS(8).cycles()
++            sage: BS(8).cycles()                                                     # random - cycle representatives are only defined up to cyclic rotation
+             [[[4, 3, 1], [3, 3, 2], [3, 2, 2, 1], [4, 2, 1, 1]],
+              [[4, 2, 2], [3, 3, 1, 1]]]
+             sage: BS(6).cycles()
 diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dynamics/finite_dynamical_system_catalog.py
 --- a/src/sage/dynamics/finite_dynamical_system_catalog.py
 +++ b/src/sage/dynamics/finite_dynamical_system_catalog.py
@@ -1568,7 +1578,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.combinat.root_system.root_system import RootSystem, WeylDim
 +    from sage.combinat.set_partition_ordered import OrderedSetPartition
 +    from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
-+    from sage.combinat.tableau import SemistandardTableaux, StandardTableau, Tableau, Tableaux
++    from sage.combinat.tableau import SemistandardTableaux, StandardTableau, StandardTableaux, Tableau, Tableaux
 +    from sage.combinat.partition_tuple import PartitionTuples
 +    from sage.combinat.tableau_tuple import StandardTableauTuple, StandardTableauTuples, TableauTuples
 +    from sage.combinat.words.morphism import WordMorphism

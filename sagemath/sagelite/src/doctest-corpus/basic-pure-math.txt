@@ -67,6 +67,7 @@ src/sage/databases/db_class_polynomials.py
 src/sage/databases/db_modular_polynomials.py
 src/sage/databases/jones.py
 src/sage/dynamics/finite_dynamical_system_catalog.py
+src/sage/dynamics/finite_dynamical_system.py
 src/sage/ext/fast_eval.pyx
 src/sage/ext/memory.pyx
 src/sage/games/sudoku_backtrack.pyx

@@ -2394,6 +2394,32 @@ source copy, with a temporary two-file corpus,
 The saved block- and file-failure cluster queries are empty; the latest-run
 summary records runner version 70 in the default node profile.
 
+Focused finite-dynamical-system corpus-growth pass:
+
+```text
+sage -t passed: 268 passed, 0 failed, 0 skipped
+```
+
+This one-file make-target validation adds
+`sage/dynamics/finite_dynamical_system.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 705 non-comment
+entries. Direct sampling first recorded 265 passed blocks and three failures:
+one Bulgarian-solitaire cycle display where Sagelite chose an equivalent
+cyclic rotation, one missing `StandardTableaux` startup name, and the dependent
+orbit-length check after that setup failure.
+
+The doctest runner now seeds `StandardTableaux` in the common doctest
+namespace, and the WASI `sage.all` patch exposes the same constructor for REPL
+parity on a fresh patched source copy. The WASI source patch marks the
+cycle-representative display as `# random`, preserving execution while
+acknowledging that `cycles()` documents results only up to cyclic rotation.
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/finite-dynamics-core-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
