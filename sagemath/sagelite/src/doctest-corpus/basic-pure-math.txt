@@ -121,6 +121,7 @@ src/sage/features/pandoc.py
 src/sage/features/pdf2svg.py
 src/sage/features/pari.py
 src/sage/features/phitigra.py
+src/sage/features/planarity.py
 src/sage/features/polymake.py
 src/sage/features/poppler.py
 src/sage/features/pkg_systems.py

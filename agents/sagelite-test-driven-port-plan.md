@@ -1776,9 +1776,9 @@ added WASI source patch marks those two ideal-backed examples as
 `# needs sage.rings.polynomial.plural`, while preserving the rest of the
 educational triangular-factorization doctests as default-profile coverage.
 
-Focused validation used the `test-sage-doctest-corpus` make target after
-rebuilding a fresh patched Sagelite source copy, with a temporary one-file
-corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+Focused validation used the `test-sage-doctest-corpus` make target against
+the current patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_TIMEOUT=90`, and
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/sagelite-toy-variety-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
@@ -2445,6 +2445,29 @@ fresh patched Sagelite source copy, with a temporary two-file corpus,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/cellular-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty, and the
 latest-run summary records runner version 70 in the default node profile.
+
+Focused Planarity feature corpus-growth pass:
+
+```text
+sage -t passed: 3 passed, 0 failed, 1 skipped
+```
+
+That one-file make-target validation adds `sage/features/planarity.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 714
+non-comment entries. The file adds compact optional-feature coverage for the
+Planarity package without new WASI source tags or startup namespace changes.
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/planarity-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the only skipped block under the explicit
+`optional:planarity` feature requirement. The latest-run summary records
+CoWasm commit `52157e749afb48ee1766d6af43b5773fc8b00069`, Sagelite package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
+version 70.
 
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
