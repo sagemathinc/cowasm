@@ -9528,6 +9528,33 @@ Focused validation used
 the saved block- and file-failure cluster queries are empty. The runner
 version is now 62.
 
+Focused Sudoku corpus-growth pass:
+
+```text
+sage -t passed: 96 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds `sage/games/sudoku.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 647 non-comment
+entries. The file adds clean default-profile coverage for Sage's exact-cover
+Sudoku solver helpers and puzzle parsing without needing browser-profile
+source tags or startup namespace changes.
+
+Fresh uncovered-file sampling in the same pass found several adjacent support
+files to be skipped-only under the default profile, including CPython string
+helpers, monoid/category examples, crypto stream/block cipher helpers,
+homology chains, and root-system/group helpers. Other sampled candidates
+still hit existing runtime boundaries, including `data_structures/stream.py`
+through a `coerce_maps` function-signature mismatch and `misc/sage_input.py`
+through the known NTL/libcxx finite-field trap.
+
+Focused validation used
+`SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/sudoku-corpus.txt`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/sudoku-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
