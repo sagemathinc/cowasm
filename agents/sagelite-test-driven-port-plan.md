@@ -11125,6 +11125,38 @@ Full validation then rebuilt and staged Sagelite with
 Node import ladder, Electron resource checks, doctest smoke, relocation check,
 and follow-up recording.
 
+Focused FLINT deprecation-wrapper corpus pass:
+
+```text
+sage -t passed: 11 passed, 0 failed, 0 skipped
+```
+
+This pass fixes Sagelite's doctest warning comparison for Sage's common
+multiline warning expectation shape:
+
+```text
+doctest:warning
+...
+DeprecationWarning:
+```
+
+The runner now normalizes that expected form to the warning stream emitted by
+the WASI doctest harness, and the standalone doctest smoke covers the case.
+That unlocks the deprecated FLINT wrapper modules
+`sage/libs/flint/arith.pyx` and `sage/libs/flint/qsieve.pyx`, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 699
+non-comment entries. Focused validation used the `test-sage-doctest-corpus`
+make target with a temporary two-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/next-probes/flint-wrapper-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
+The direct FLINT implementation file `sage/libs/flint/qsieve_sage.pyx` remains
+outside the quiet corpus: sampling still reaches `flint_abort` through
+`qsieve_factor(...)` on the large composite example. Adjacent NTL sampling also
+keeps `sage/libs/ntl/error.pyx` outside the corpus because importing
+`ntl.ZZX([0])` currently hits a missing `gf2x_mul` dynamic-link import.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 69;
+const doctestRunnerVersion = 70;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1590,6 +1590,11 @@ class __CowasmOutputChecker(doctest.OutputChecker):
         return False
 
     def __normalize_expected_warning_output(self, text):
+        text = re.sub(
+            r"(?m)^([ \\t]*)doctest:warning\\r?\\n[ \\t]*\\.\\.\\.\\r?\\n[ \\t]*([A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*Warning):\\r?\\n",
+            r"\\1doctest:...: \\2: \\n",
+            text,
+        )
         return re.sub(
             r"(?m)^([ \\t]*)doctest:warning\\.\\.\\.\\r?\\n[ \\t]*([A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*Warning): ",
             r"\\1doctest:...: \\2: ",
