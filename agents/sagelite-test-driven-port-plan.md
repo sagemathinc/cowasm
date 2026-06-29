@@ -2420,6 +2420,32 @@ and
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/finite-dynamics-core-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused cellular-automata corpus-growth pass:
+
+```text
+sage -t passed: 117 passed, 0 failed, 5 skipped
+```
+
+That two-file make-target validation adds
+`sage/dynamics/cellular_automata/elementary.py` and
+`sage/dynamics/cellular_automata/glca.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 707
+non-comment entries. Direct sampling first recorded 116 startup-name failures
+across the two files because upstream doctests use
+`cellular_automata.Elementary(...)` and
+`cellular_automata.GraftalLace(...)` from Sage's startup namespace without a
+local import.
+
+The doctest runner now seeds the `cellular_automata` catalog module in the
+common doctest namespace, and the WASI `sage.all` patch exposes the same
+catalog alias for REPL parity on a fresh patched source copy. Focused
+validation used the `test-sage-doctest-corpus` make target after rebuilding a
+fresh patched Sagelite source copy, with a temporary two-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/cellular-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and the
+latest-run summary records runner version 70 in the default node profile.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

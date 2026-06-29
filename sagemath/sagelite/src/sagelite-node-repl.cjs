@@ -1029,6 +1029,17 @@ def __cowasm_seed_common_doctest_globals(namespace):
     except BaseException:
         pass
     try:
+        import sage.dynamics.cellular_automata.catalog as cellular_automata
+        namespace.setdefault("cellular_automata", cellular_automata)
+        try:
+            import sage.all as sage_all
+            if not hasattr(sage_all, "cellular_automata"):
+                setattr(sage_all, "cellular_automata", cellular_automata)
+        except BaseException:
+            pass
+    except BaseException:
+        pass
+    try:
         import sage.stats.all as stats
         namespace.setdefault("stats", stats)
         try:
