@@ -9315,6 +9315,36 @@ modules had no doctest blocks. Focused validation used
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/stl-vector-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused p-adic misc corpus-growth pass:
+
+```text
+sage -t passed: 21 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds `sage/rings/padics/misc.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 639 non-comment
+entries. The file gives compact default-profile coverage for p-adic helper
+functions, including rational reconstruction bounds, residue-character checks,
+and simple `sigma`/`tau` computations, while the existing upstream tags keep
+the full p-adic Gauss-sum examples behind explicit `sage.rings.padics` and
+`sage.libs.ntl` skips.
+
+Fresh compact algebra sampling before the addition ranked `padics/misc.py` as
+the only clean non-skipped promotion candidate in that batch. The same pass
+kept several nearby matrix and arithmetic helpers out of the quiet corpus:
+`matrix/change_ring.pyx` and `matrix/misc_flint.pyx` still depend on the
+unavailable `matrix_integer_dense` extension path; `matrix/tests.py` exposes
+kernel/determinant runtime drift; `polynomial/refine_root.pyx` has startup
+namespace setup fallout; `bernmm.pyx` reaches the focused cypari2 object-model
+boundary; and `bernoulli_mod_p.pyx` still fails to load because `gf2x_mul` is
+not callable through the current dynamic-link import table. Focused validation
+used
+`SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/padics-misc-corpus.txt`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/padics-misc-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
