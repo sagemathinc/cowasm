@@ -1355,7 +1355,7 @@ diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,199 @@
+@@ -253,74 +253,203 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1485,6 +1485,10 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.modules.free_module_element import vector
 +    from sage.plot.colors import hue
 +    from sage.plot.graphics import Graphics
++    from sage.plot.line import line
++    from sage.plot.circle import circle
++    from sage.plot.point import point
++    from sage.plot.polygon import polygon
 +    from sage.probability.probability_distribution import RealDistribution
 +    from sage.schemes.generic.spec import Spec
 +    from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
@@ -5805,6 +5809,22 @@ diff -urN a/src/sage/plot/histogram.py b/src/sage/plot/histogram.py
 @@ -88 +88 @@
 -            sage: h.get_minmax_data()
 +            sage: h.get_minmax_data()                                               # known bug
+diff -urN a/src/sage/plot/primitive.py b/src/sage/plot/primitive.py
+--- a/src/sage/plot/primitive.py
++++ b/src/sage/plot/primitive.py
+@@ -97,9 +97,9 @@
+             sage: P = line([(-1,-2), (3,5)], alpha=.5, thickness=4)
+             sage: p = P[0]; p
+             Line defined by 2 points
+-            sage: q=p.plot3d()
+-            sage: q.thickness
++            sage: q=p.plot3d()                                                      # needs sage.plot.plot3d
++            sage: q.thickness                                                       # needs sage.plot.plot3d
+             4
+-            sage: q.texture.opacity
++            sage: q.texture.opacity                                                 # needs sage.plot.plot3d
+             0.5
+         """
 diff -urN a/src/sage/plot/scatter_plot.py b/src/sage/plot/scatter_plot.py
 --- a/src/sage/plot/scatter_plot.py
 +++ b/src/sage/plot/scatter_plot.py

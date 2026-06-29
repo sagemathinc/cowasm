@@ -2253,6 +2253,36 @@ fresh patched Sagelite source copy, with a temporary one-file corpus,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/histogram-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused plot primitive base-class corpus-growth pass:
+
+```text
+sage -t passed: 41 passed, 0 failed, 3 skipped
+```
+
+That one-file make-target validation adds `sage/plot/primitive.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 684
+non-comment entries. Direct sampling first recorded 15 passed blocks, 29
+failed blocks, and 0 skipped blocks. Most failures were startup namespace
+artifacts from upstream primitive doctests using basic plot constructors such
+as `line`, `circle`, `point`, and `polygon` without local imports; the
+remaining non-startup block exercised 3D plot conversion.
+
+The doctest runner now seeds those lightweight 2D plot constructors in the
+common doctest namespace, and the WASI `sage.all` patch exposes the same names
+for REPL parity on a fresh patched Sagelite source copy. The added WASI source
+patch marks the 3D conversion checks as `# needs sage.plot.plot3d`, preserving
+the ordinary primitive option, z-order, hash, representation, and min/max
+coverage as default-profile doctests. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/primitive-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the three deferred blocks under
+`optional:sage.plot.plot3d`. The latest-run summary records runner version 66
+in the default node profile.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

@@ -666,6 +666,7 @@ src/sage/plot/ellipse.py
 src/sage/plot/histogram.py
 src/sage/plot/point.py
 src/sage/plot/polygon.py
+src/sage/plot/primitive.py
 src/sage/plot/scatter_plot.py
 src/sage/stats/basic_stats.py
 src/sage/stats/distributions/catalog.py
