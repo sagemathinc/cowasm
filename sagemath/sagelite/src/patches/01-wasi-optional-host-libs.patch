@@ -5691,3 +5691,15 @@ diff -urN a/src/sage/tests/__init__.py b/src/sage/tests/__init__.py
          Traceback (most recent call last):
          ...
          RuntimeError: timeout in check_executable()
+diff -urN a/src/sage/plot/bar_chart.py b/src/sage/plot/bar_chart.py
+--- a/src/sage/plot/bar_chart.py
++++ b/src/sage/plot/bar_chart.py
+@@ -175 +175 @@
+-        sage: bar_chart([-2,8,-7,3], rgbcolor=(1,0,0)).show(axes=False) # These are equivalent
++        sage: bar_chart([-2,8,-7,3], rgbcolor=(1,0,0)).show(axes=False) # These are equivalent  # needs matplotlib
+diff -urN a/src/sage/plot/scatter_plot.py b/src/sage/plot/scatter_plot.py
+--- a/src/sage/plot/scatter_plot.py
++++ b/src/sage/plot/scatter_plot.py
+@@ -181 +181 @@
+-        sage: scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green').show(ymax=100) # These are equivalent
++        sage: scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green').show(ymax=100) # These are equivalent  # needs matplotlib

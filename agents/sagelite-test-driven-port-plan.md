@@ -2199,6 +2199,32 @@ doctest blocks, `sage/stats/distributions/discrete_gaussian_integer.pyx` and
 and random-matrix runtime clusters, and `sage/quadratic_forms/ternary_qf.py`
 timed out in automorphism enumeration.
 
+Focused plot primitive corpus-growth pass:
+
+```text
+sage -t passed: 39 passed, 0 failed, 2 skipped
+```
+
+That two-file make-target validation adds `sage/plot/bar_chart.py` and
+`sage/plot/scatter_plot.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 675
+non-comment entries. Direct sampling first recorded one failure in each file
+where the otherwise runnable plot primitive doctests called
+`Graphics.show(...)`, which imports the unavailable `matplotlib` display
+backend in the stripped browser-compatible profile. The added WASI source
+patch marks only those display calls as `# needs matplotlib`, preserving
+ordinary bar-chart and scatter-plot construction, primitive representation,
+option, and min/max doctests as default-profile coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary two-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/plot-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the two deferred display examples under
+`optional:matplotlib`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
