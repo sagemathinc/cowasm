@@ -2144,6 +2144,28 @@ scheduled corpus-growth pass should start from a different namespace or choose
 one of these clusters for explicit tagging/runtime work rather than resampling
 the same files.
 
+Focused typeset corpus confirmation pass:
+
+```text
+sage -t passed: 197 passed, 0 failed, 65 skipped
+```
+
+That direct focused validation confirms the current checked-in typeset tail of
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` is quiet under the
+default node profile. The run covered `sage/typeset/ascii_art.py`,
+`character_art.py`, `character_art_factory.py`, `symbols.py`,
+`unicode_art.py`, and `unicode_characters.py`; all six files were already in
+the curated corpus, so no corpus or runtime patch was needed.
+
+The five-file grouped run recorded 170 passed, 0 failed, and 65 skipped blocks
+in `/home/user/cowasm/.tmp/current-run/typeset-sampling.sqlite3`; the separate
+`unicode_characters.py` probe recorded 27 passed, 0 failed, and 0 skipped
+blocks in `/home/user/cowasm/.tmp/current-run/typeset-unicode-characters.sqlite3`.
+The saved block- and file-failure cluster queries are empty. Skip grouping is
+dominated by explicit browser-profile boundaries for symbolic, combinatorics,
+module, and IPython-backed display examples, plus one deferred non-ASCII source
+conversion drift in `character_art_factory.py`.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
