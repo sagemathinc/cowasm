@@ -2121,6 +2121,29 @@ The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` groups the newly deferred examples under their explicit
 feature requirements.
 
+Follow-up sampling on 2026-06-29 did not find a new quiet runnable corpus
+candidate among the nearby feature, rich-output, parallel, monoid, statistics,
+low-level helper, doctest/REPL, misc, category, and structure gaps that were
+probed. The clean feature and parallel helpers with runnable coverage were
+already present in `basic-pure-math.txt`; remaining feature `*_test.py` files
+and small structure helpers contributed zero doctest blocks, while monoid,
+statistics, and several misc helpers were skipped-only under the default
+browser-compatible profile.
+
+The rejected runnable probes exposed broader clusters rather than narrow
+corpus-growth work: rich-output backend files still depend on backend-specific
+display/IPython behavior, doctest and REPL utility files need parser,
+filesystem, or multiprocessing triage, `sage/data_structures/stream.py` still
+reaches the known `polynomial_number_field` memory trap, and
+`sage/ext/fast_callable.pyx`,
+`sage/stats/distributions/discrete_gaussian_lattice.py`,
+`sage/misc/sage_ostools.pyx`, `sage/parallel/decorate.py`, and
+`sage/parallel/map_reduce.py` have sizable failure clusters. Small category
+ring files were also avoided after timeout-prone focused probes. The next
+scheduled corpus-growth pass should start from a different namespace or choose
+one of these clusters for explicit tagging/runtime work rather than resampling
+the same files.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
