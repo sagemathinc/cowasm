@@ -10136,6 +10136,43 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty; the latest-run
 summary records runner version 64 in the default node profile.
 
+Focused q-number and rich-comparison corpus-growth pass:
+
+```text
+sage -t passed: 46 passed, 0 failed, 1 skipped
+```
+
+That two-file make-target validation adds
+`sage/algebras/quantum_groups/q_numbers.py` and
+`sage/structure/richcmp.pxd` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 668 non-comment
+entries. Direct sampling first found both files as clean non-skipped
+candidates in a mixed moderate-count probe: `q_numbers.py` recorded 23 passed
+blocks with no skips, and `richcmp.pxd` recorded 23 passed blocks plus one
+explicit `# needs sage.symbolic` skip.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/q-numbers-richcmp-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; the latest-run
+summary records runner version 64 in the default node profile.
+
+The same scheduled pass sampled several uncovered support files without
+finding another promotion candidate. Display and doctest internals such as
+`repl/display/formatter.py`, `repl/rich_output/backend_emacs.py`,
+`doctest/fixtures.py`, and `doctest/util.py` still have focused output or
+doctest-framework failures. Other probes were skipped-only or empty under the
+default profile, including `misc/package_dir.py`, `misc/profiler.py`,
+`stats/intlist.pyx`, `stats/distributions/discrete_gaussian_integer.pyx`,
+`rings/qqbar_decorators.py`, `databases/symbolic_data.py`,
+`combinat/root_system/braid_move_calculator.py`, `knots/gauss_code.py`, and
+several category-example helpers. Broader runtime clusters remain visible in
+`data_structures/stream.py` and `categories/euclidean_domains.py`, which both
+reach the known polynomial-number-field memory trap, and
+`rings/bernoulli_mod_p.pyx`, which still hits the missing `gf2x_mul` side
+module import.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

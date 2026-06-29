@@ -35,6 +35,7 @@ src/sage/arith/numerical_approx.pyx
 src/sage/algebras/associated_graded.py
 src/sage/algebras/free_zinbiel_algebra.py
 src/sage/algebras/quaternion_algebra.py
+src/sage/algebras/quantum_groups/q_numbers.py
 src/sage/algebras/steenrod/steenrod_algebra_misc.py
 src/sage/algebras/lie_conformal_algebras/abelian_lie_conformal_algebra.py
 src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py
@@ -575,6 +576,7 @@ src/sage/structure/parent_gens.pyx
 src/sage/structure/parent_old.pyx
 src/sage/structure/proof/all.py
 src/sage/structure/proof/proof.py
+src/sage/structure/richcmp.pxd
 src/sage/structure/richcmp.pyx
 src/sage/structure/sage_object.pyx
 src/sage/structure/set_factories.py
