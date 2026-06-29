@@ -59,6 +59,7 @@ src/sage/data_structures/mutable_poset.py
 src/sage/data_structures/pairing_heap.pyx
 src/sage/databases/db_class_polynomials.py
 src/sage/databases/db_modular_polynomials.py
+src/sage/databases/jones.py
 src/sage/ext/fast_eval.pyx
 src/sage/ext/memory.pyx
 src/sage/games/sudoku_backtrack.pyx

@@ -9842,6 +9842,31 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/db-modular-polynomials-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused Jones number-field database corpus-growth pass:
+
+```text
+sage -t passed: 7 passed, 0 failed, 16 skipped
+```
+
+That one-file focused validation adds `sage/databases/jones.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 658 non-comment
+entries. The file gives the dashboard lightweight coverage for the Jones
+number-field database wrapper and representation paths while its optional
+database-backed examples remain explicit skips.
+
+Direct sampling first recorded one failure in `sortkey(QuadraticField(-3))`
+because constructing the quadratic field reaches the current browser-profile
+number-field/polynomial backend boundary. The added WASI source patch marks
+that local example as `# needs sage.rings.number_field`, matching the existing
+scope boundary used elsewhere in the pure-math corpus.
+
+Focused validation used the `test-sage-doctest-corpus` make target from a
+freshly patched Sagelite source copy with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/jones-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -5491,6 +5491,12 @@ diff -urN a/src/sage/homology/matrix_utils.py b/src/sage/homology/matrix_utils.p
 @@ -69 +69 @@
 -        sage: mat.elementary_divisors() == dhsw_snf(mat)
 +        sage: mat.elementary_divisors() == dhsw_snf(mat)                         # random - Sagelite does not yet seed this random-matrix example
+diff -urN a/src/sage/databases/jones.py b/src/sage/databases/jones.py
+--- a/src/sage/databases/jones.py
++++ b/src/sage/databases/jones.py
+@@ -88 +88 @@
+-        sage: sortkey(QuadraticField(-3))
++        sage: sortkey(QuadraticField(-3))                                            # needs sage.rings.number_field
 diff -urN a/src/sage/features/join_feature.py b/src/sage/features/join_feature.py
 --- a/src/sage/features/join_feature.py
 +++ b/src/sage/features/join_feature.py
