@@ -10173,6 +10173,37 @@ reach the known polynomial-number-field memory trap, and
 `rings/bernoulli_mod_p.pyx`, which still hits the missing `gf2x_mul` side
 module import.
 
+Focused structure element header corpus-growth pass:
+
+```text
+sage -t passed: 17 passed, 0 failed, 6 skipped
+```
+
+That one-file make-target validation adds `sage/structure/element.pxd` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 669 non-comment
+entries. A mixed 10-file frontier probe first ranked it as a clean runnable
+promotion candidate with a 100% non-skipped pass rate; the same probe also
+confirmed that `sage/geometry/polyhedron/cdd_file_format.py` remains a clean
+candidate, but that file was already part of the checked corpus.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/structure-element-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records existing optional-feature deferrals for `sage.combinat`,
+`sage.modules`, `sage.libs.gap`, and `sage.rings.real_mpfr`.
+
+The same scheduled probe kept several nearby candidates out of the quiet
+corpus. `coding/guruswami_sudan/utils.py`,
+`combinat/designs/evenly_distributed_sets.pyx`, and `calculus/functions.py`
+were skipped-only under the default profile. `algebras/lie_algebras/abelian.py`,
+`manifolds/structure.py`, `rings/polynomial/toy_d_basis.py`, and
+`quadratic_forms/extras.py` still have focused failures that need separate
+triage, while `rings/finite_rings/conway_polynomials.py` still reaches the
+known NTL/libcxx `memory access out of bounds` trap.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
