@@ -5312,6 +5312,15 @@ diff -urN a/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_alge
 @@ -79 +79 @@
 -            sage: lie_conformal_algebras.Virasoro(QQbar)
 +            sage: lie_conformal_algebras.Virasoro(QQbar)                              # needs sage.rings.number_field
+diff -urN a/src/sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_conformal_algebra.py b/src/sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_conformal_algebra.py
+--- a/src/sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_conformal_algebra.py
++++ b/src/sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_conformal_algebra.py
+@@ -68 +68 @@
+-        sage: R = lie_conformal_algebras.FermionicGhosts(QQbar, ngens=4, names = 'abcd');R
++        sage: R = lie_conformal_algebras.FermionicGhosts(QQbar, ngens=4, names = 'abcd');R  # needs sage.rings.number_field
+@@ -70 +70 @@
+-        sage: R.structure_coefficients()
++        sage: R.structure_coefficients()                                               # needs sage.rings.number_field
 diff -urN a/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py b/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py
 --- a/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py
 +++ b/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py

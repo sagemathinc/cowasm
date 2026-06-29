@@ -10237,6 +10237,39 @@ were skipped-only under the default profile. `algebras/lie_algebras/abelian.py`,
 triage, while `rings/finite_rings/conway_polynomials.py` still reaches the
 known NTL/libcxx `memory access out of bounds` trap.
 
+Focused Fermionic-ghosts Lie conformal algebra corpus-growth pass:
+
+```text
+sage -t passed: 9 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/lie_conformal_algebras/fermionic_ghosts_lie_conformal_algebra.py`
+to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 671
+non-comment entries. Direct sampling first recorded the file as the closest
+Lie-conformal candidate with 9 passed blocks and two `QQbar`-backed failures.
+The added WASI source patch marks those algebraic-field construction and
+structure-coefficient examples as `# needs sage.rings.number_field`,
+consistent with the adjacent Virasoro `QQbar` browser-profile boundary.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/fermionic-ghosts-make.sqlite3`.
+The latest-run summary records runner version 64 in the default node profile,
+and skip grouping records the two deferred
+`optional:sage.rings.number_field` blocks.
+
+The same scheduled sampling pass kept several absent files out of the quiet
+corpus. Lightweight stats, support, and book doctest probes were skipped-only,
+empty, or failed around missing startup names; category probes were mostly
+skipped-only, with `kahler_algebras.py` still failing and
+`principal_ideal_domains.py` plus `unique_factorization_domains.py` timing out
+in polynomial gcd/radical examples. Adjacent monoid files were skipped-only,
+while nearby Lie-conformal modules still expose graph-backed affine imports,
+algebraic-field coercion/cache drift, or broader missing-name clusters.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
