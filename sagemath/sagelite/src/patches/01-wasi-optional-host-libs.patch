@@ -5290,6 +5290,12 @@ diff -urN a/src/sage/algebras/lie_conformal_algebras/virasoro_lie_conformal_alge
 @@ -79 +79 @@
 -            sage: lie_conformal_algebras.Virasoro(QQbar)
 +            sage: lie_conformal_algebras.Virasoro(QQbar)                              # needs sage.rings.number_field
+diff -urN a/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py b/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py
+--- a/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py
++++ b/src/sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py
+@@ -98 +98 @@
+-            sage: V = lie_conformal_algebras.Affine(QQ, 'A1'); V.ngens()
++            sage: V = lie_conformal_algebras.Affine(QQ, 'A1'); V.ngens()             # needs sage.graphs
 diff -urN a/src/sage/structure/sage_object.pyx b/src/sage/structure/sage_object.pyx
 --- a/src/sage/structure/sage_object.pyx
 +++ b/src/sage/structure/sage_object.pyx

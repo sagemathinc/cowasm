@@ -9067,6 +9067,32 @@ temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quadratic-forms-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused finitely generated Lie-conformal helper corpus-growth pass:
+
+```text
+sage -t passed: 11 passed, 0 failed, 1 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/lie_conformal_algebras/finitely_freely_generated_lca.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 632 non-comment
+entries. Direct sampling first recorded 11 passed blocks and one failure where
+`lie_conformal_algebras.Affine(QQ, 'A1')` imports the stripped graph backend
+through the affine Lie algebra constructor. The added WASI source patch marks
+that example as `# needs sage.graphs`, preserving the Virasoro and
+Neveu-Schwarz finitely generated Lie-conformal algebra coverage under the
+default browser-compatible profile.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/finitely-freely-generated-lca-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the deferred example under
+`optional:sage.graphs`.
+
 Follow-up sampling and candidate-ranking tooling pass:
 
 This pass does not add a new corpus file. It samples several adjacent
