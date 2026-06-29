@@ -9291,6 +9291,30 @@ The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` groups the deferred examples under
 `sage.libs.pari`, `sage.libs.eclib`, and `sage.schemes`.
 
+Focused STL-vector smoke corpus-growth pass:
+
+```text
+sage -t passed: 23 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds `sage/tests/stl_vector.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 638 non-comment
+entries. The file gives a compact Cython/C++ smoke for STL `vector` wrapping,
+`libcpp.string`, Cython rich comparison, GMP integer accumulation, and
+`cysignals` guard usage without pulling in the broader Sage test-suite files.
+
+Fresh utility sampling before the addition ranked `stl_vector.pyx` as the only
+clean non-skipped promotion candidate in that batch. The same pass kept
+`sage/tests/test_deprecation.py` out because warning-output capture still
+shows two output mismatches; `sage/stats/r.py`, `sage/tests/lazy_imports.py`,
+and `sage/tests/numpy.py` were skipped-only; and the sampled `all.py` helper
+modules had no doctest blocks. Focused validation used
+`SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/stl-vector-corpus.txt`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/stl-vector-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
