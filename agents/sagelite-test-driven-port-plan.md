@@ -10685,6 +10685,34 @@ records the expected `optional:sage.plot.plot3d`, `optional:matplotlib`, and
 pre-existing `sage.schemes`, `sage.libs.pari`, `sage.rings.complex_double`,
 `sage.symbolic`, and `numpy` deferrals. The runner version is 67.
 
+Focused arrow-plot corpus-growth pass:
+
+```text
+sage -t passed: 48 passed, 0 failed, 17 skipped
+```
+
+That one-file make-target validation adds `sage/plot/arrow.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 687
+non-comment entries. Direct sampling first recorded 48 passing blocks, one
+existing symbolic skip, and 16 focused failures. The failures were the same
+narrow plot-frontier boundaries as the adjacent primitives: 3D arrow examples
+import the stripped `sage.plot.plot3d` wrapper path, and Matplotlib-backed
+render/show examples require the unavailable display backend.
+
+The added WASI source patch marks those 3D and Matplotlib examples, including
+their dependent prompts, as explicit `# needs` skips. This preserves
+browser-compatible arrow construction, option, representation, bounding-box,
+and 2D primitive coverage in the default profile. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/arrow-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected `optional:sage.plot.plot3d`, `optional:matplotlib`, and
+pre-existing `optional:sage.symbolic` deferrals. The runner version remains
+67.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

@@ -5716,6 +5716,51 @@ diff -urN a/src/sage/plot/arc.py b/src/sage/plot/arc.py
 -            sage: b[0]
 +            sage: b = a[0].bezier_path()                                          # needs matplotlib
 +            sage: b[0]                                                            # needs matplotlib
+diff -urN a/src/sage/plot/arrow.py b/src/sage/plot/arrow.py
+--- a/src/sage/plot/arrow.py
++++ b/src/sage/plot/arrow.py
+@@ -260,2 +260,2 @@
+-            sage: q=p.plot3d()
+-            sage: q.thickness
++            sage: q=p.plot3d()                                                    # needs sage.plot.plot3d
++            sage: q.thickness                                                     # needs sage.plot.plot3d
+@@ -287,2 +287,2 @@
+-            sage: A = arrow((0,0),(1,1))[0].plot3d()
+-            sage: A.jmol_repr(A.testing_render_params())[0]
++            sage: A = arrow((0,0),(1,1))[0].plot3d()                              # needs sage.plot.plot3d
++            sage: A.jmol_repr(A.testing_render_params())[0]                       # needs sage.plot.plot3d
+@@ -296,2 +296,2 @@
+-            sage: A = arrow((0,0),(1,1)).plot3d(3)
+-            sage: A.jmol_repr(A.testing_render_params())[0][0]
++            sage: A = arrow((0,0),(1,1)).plot3d(3)                                # needs sage.plot.plot3d
++            sage: A.jmol_repr(A.testing_render_params())[0][0]                    # needs sage.plot.plot3d
+@@ -304,2 +304,2 @@
+-            sage: A=arrow((0,0),(1,1))[0].plot3d(3,4)
+-            sage: A.jmol_repr(A.testing_render_params())[0]
++            sage: A=arrow((0,0),(1,1))[0].plot3d(3,4)                             # needs sage.plot.plot3d
++            sage: A.jmol_repr(A.testing_render_params())[0]                       # needs sage.plot.plot3d
+@@ -344,2 +344,2 @@
+-            sage: fig = Graphics().matplotlib()
+-            sage: sp = fig.add_subplot(1,1,1, label='axis1')
++            sage: fig = Graphics().matplotlib()                                   # needs matplotlib
++            sage: sp = fig.add_subplot(1,1,1, label='axis1')                      # needs matplotlib
+@@ -348,6 +348,6 @@
+-            sage: p1 = a[0]._render_on_subplot(sp)
+-            sage: p2 = b[0]._render_on_subplot(sp)
+-            sage: p1.shrinkA == p2.shrinkA
++            sage: p1 = a[0]._render_on_subplot(sp)                                # needs matplotlib
++            sage: p2 = b[0]._render_on_subplot(sp)                                # needs matplotlib
++            sage: p1.shrinkA == p2.shrinkA                                        # needs matplotlib
+             True
+-            sage: p1.shrinkB == p2.shrinkB
++            sage: p1.shrinkB == p2.shrinkB                                        # needs matplotlib
+             True
+@@ -469 +469 @@
+-        sage: arrow((0,0,1), (1,1,1))
++        sage: arrow((0,0,1), (1,1,1))                                             # needs sage.plot.plot3d
+@@ -642 +642 @@
+-        sage: arrow2d((-2,2), (7,1)).show(frame=True)
++        sage: arrow2d((-2,2), (7,1)).show(frame=True)                             # needs matplotlib
 diff -urN a/src/sage/plot/bezier_path.py b/src/sage/plot/bezier_path.py
 --- a/src/sage/plot/bezier_path.py
 +++ b/src/sage/plot/bezier_path.py
