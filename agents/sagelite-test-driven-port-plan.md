@@ -11628,6 +11628,31 @@ improving the file from `45 passed, 97 failed, 16 skipped` to
 sampler or symbolic/numeric clusters, so the file remains outside the quiet
 default-profile corpus for now.
 
+Scheduled frontier sampling follow-up: no corpus entry was added. A focused
+`sage/arith/misc.py` promotion attempt first confirmed the known polynomial
+`__GCD_sequence(Sequence((2*X+4,2*X^2,2)))` timeout shape, matching the
+already deferred polynomial `LCM_list` boundary in `sage/arith/functions.pyx`.
+After locally deferring those two GCD examples in a probe build, the file
+advanced to a deeper file-level runtime trap in the polynomial CRT example
+`crt(2, 3, x - 1, x + 1)`, reported as
+`RuntimeError: table index is out of bounds`. Because that is a separate
+polynomial-backend runtime failure, `sage/arith/misc.py` remains outside the
+quiet corpus.
+
+Additional uncovered-file sampling kept small crypto helpers out of the corpus
+because `sage/crypto/cipher.py`, `cryptosystem.py`, `classical_cipher.py`,
+`classical.py`, and `util.py` are skipped-only under the default
+browser-compatible profile. The same probe reconfirmed the already-curated
+`sage/parallel/parallelism.py` file as clean (`53 passed, 0 failed, 0 skipped`)
+and kept `sage/parallel/map_reduce.py` out because it still has broad
+`_multiprocessing` and dependent worker-state failures (`146 passed,
+136 failed, 16 skipped`). Useful probe databases are
+`.tmp/current-run/arith-misc-make.sqlite3`,
+`.tmp/current-run/utility-repl-sample.sqlite3`,
+`.tmp/current-run/combinat-new-sample.sqlite3`,
+`.tmp/current-run/modules-new-sample.sqlite3`, and
+`.tmp/current-run/crypto-small-sample.sqlite3`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
