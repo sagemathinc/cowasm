@@ -9555,6 +9555,50 @@ Focused validation used
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/sudoku-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Follow-up frontier sampling pass:
+
+```text
+sage -t passed: 257 passed, 0 failed, 65 skipped
+sage -t failed: 3 passed, 12 failed, 748 skipped
+sage -t failed: 5 passed, 49 failed, 240 skipped
+sage -t failed: 24 passed, 71 failed, 58 skipped
+sage -t failed: 55 passed, 32 failed, 10 skipped
+sage -t failed: 134 passed, 85 failed, 553 skipped
+sage -t failed: 156 passed, 26 failed, 284 skipped
+```
+
+This pass did not promote new files to the curated corpus. The clean
+typeset/logic probe reconfirmed already-curated coverage for
+`sage/typeset/ascii_art.py`, `character_art.py`,
+`character_art_factory.py`, `unicode_art.py`, `sage/logic/logicparser.py`,
+and `sage/logic/booleval.py`. Fresh probes kept several uncovered frontier
+files outside the quiet dashboard:
+
+- `sage/misc/copying.py`, `mathml.py`, `proof.py`,
+  `sage/structure/coerce_exceptions.py`, `gens_py.py`,
+  `sage_object_test.py`, and `sage/structure/proof/__init__.py` have no
+  default-profile doctest blocks.
+- `sage/misc/map_threaded.py`, `package_dir.py`, `cython.py`,
+  `sage/combinat/finite_state_machine_generators.py`,
+  crypto classical/cipher helpers, and several homology/test helpers are
+  skipped-only in the default browser-compatible profile.
+- `sage/repl/rich_output/backend_emacs.py`, `sage/repl/display/formatter.py`,
+  `sage/repl/configuration.py`, and `sage/repl/load.py` still need broader
+  REPL/IPython startup and display triage before they can join the quiet
+  corpus.
+- `sage/homology/homology_group.py`, `chain_complex_morphism.py`,
+  `sage/misc/reset.pyx`, `session.pyx`, `sage/ext/fast_callable.pyx`,
+  `sage/arith/misc.py`, and `sage/combinat/tutorial.py` still hit semantic,
+  runtime, or backend-bound failure clusters rather than narrow display drift.
+
+The scratch databases for these probes live under
+`/home/user/cowasm/.tmp/current-run/`, including
+`misc-probe.sqlite3`, `crypto-repl-probe.sqlite3`,
+`homology-data-probe.sqlite3`, `repl-support-next.sqlite3`,
+`misc-infra-next.sqlite3`, `lowlevel-arith-next.sqlite3`, and
+`combinat-small-next.sqlite3`. The curated corpus remains at 647
+non-comment entries until the next clean non-skipped candidate is found.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
