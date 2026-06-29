@@ -8874,6 +8874,35 @@ the saved block- and file-failure cluster queries are empty. A follow-up full
 but was interrupted after reaching about worker 204 because it was on track for
 a much longer validation pass than the focused check.
 
+Focused display pretty-printer corpus-growth pass:
+
+```text
+sage -t passed: 41 passed, 0 failed, 13 skipped
+```
+
+That two-file focused validation adds `sage/repl/display/fancy_repr.py` and
+`sage/repl/display/pretty_print.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 611
+non-comment entries. These files exercise Sage's core plain-text pretty
+printer and object-representation helpers under the browser-compatible node
+profile.
+
+The added WASI source patch classifies the remaining IPython pretty-printer
+formatting gaps as deferred `# known bug` skips: sorted dictionary display,
+nested sequence line wrapping, set representation through `SomeIPythonRepr`,
+and tall-list ASCII-art layout. Direct sampling kept
+`sage/repl/display/formatter.py` out of the quiet corpus because it still
+clusters around unavailable IPython shell/display-formatter infrastructure.
+
+Focused validation used `make -C sagemath/sagelite test-sage-doctest-corpus`
+with a temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/display-pretty-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully;
+the saved block- and file-failure cluster queries are empty. The latest run
+metadata records node profile, runner version 61, and Sagelite source/package
+commit `f575cf6224f749763d7c875229cbd684e5939e58`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

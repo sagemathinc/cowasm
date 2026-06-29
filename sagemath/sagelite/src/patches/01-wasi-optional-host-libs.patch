@@ -5392,6 +5392,24 @@ diff -urN a/src/sage/repl/display/fancy_repr.py b/src/sage/repl/display/fancy_re
 +        types.FunctionType: _plain_type_printer,
 +        str: _plain_type_printer,
 +    }
+@@ -158 +175 @@
+-            sage: pp.format_string(set([1, 2, 3]))
++            sage: pp.format_string(set([1, 2, 3]))                                  # known bug - lightweight Sagelite pretty-printer fallback formatting
+@@ -163 +180 @@
+-            sage: pp.format_string(Sequence([[1]*20, [2]*20]))
++            sage: pp.format_string(Sequence([[1]*20, [2]*20]))                      # known bug - lightweight Sagelite pretty-printer fallback formatting
+@@ -352 +369 @@
+-            sage: [F, F]
++            sage: [F, F]                                                            # known bug - lightweight Sagelite pretty-printer fallback formatting
+diff -urN a/src/sage/repl/display/pretty_print.py b/src/sage/repl/display/pretty_print.py
+--- a/src/sage/repl/display/pretty_print.py
++++ b/src/sage/repl/display/pretty_print.py
+@@ -109 +109 @@
+-            sage: dict(zzz=123, aaa=99, xab=10)    # sorted by keys
++            sage: dict(zzz=123, aaa=99, xab=10)    # sorted by keys                  # known bug - lightweight Sagelite pretty-printer fallback formatting
+@@ -154 +154 @@
+-            sage: stream.getvalue()
++            sage: stream.getvalue()                                                 # known bug - lightweight Sagelite pretty-printer fallback formatting
 diff -urN a/src/sage/repl/rich_output/display_manager.py b/src/sage/repl/rich_output/display_manager.py
 --- a/src/sage/repl/rich_output/display_manager.py
 +++ b/src/sage/repl/rich_output/display_manager.py

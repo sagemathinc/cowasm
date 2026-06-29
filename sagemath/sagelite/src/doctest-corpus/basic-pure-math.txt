@@ -580,6 +580,8 @@ src/sage/matrix/symplectic_basis.py
 src/sage/doctest/check_tolerance.py
 src/sage/doctest/marked_output.py
 src/sage/doctest/rif_tol.py
+src/sage/repl/display/fancy_repr.py
+src/sage/repl/display/pretty_print.py
 src/sage/repl/display/util.py
 src/sage/repl/preparse.py
 src/sage/repl/rich_output/buffer.py
