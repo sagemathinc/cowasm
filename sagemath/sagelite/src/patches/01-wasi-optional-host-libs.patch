@@ -5583,7 +5583,7 @@ diff -urN a/src/sage/symbolic/tests.py b/src/sage/symbolic/tests.py
 diff -urN a/src/sage/rings/polynomial/refine_root.pyx b/src/sage/rings/polynomial/refine_root.pyx
 --- a/src/sage/rings/polynomial/refine_root.pyx
 +++ b/src/sage/rings/polynomial/refine_root.pyx
-@@ -45,13 +45,13 @@
+@@ -45,12 +45,12 @@
          x^9 - 1
          sage: ipd = CIF['x'](p.derivative()); ipd
          9*x^8
@@ -5600,3 +5600,17 @@ diff -urN a/src/sage/rings/polynomial/refine_root.pyx b/src/sage/rings/polynomia
 +        sage: refine_root(ip, ipd, irt, CIF)                                       # needs sage.symbolic
          0.766044443118978? + 0.642787609686540?*I
      """
+diff -urN a/src/sage/categories/simplicial_sets.py b/src/sage/categories/simplicial_sets.py
+--- a/src/sage/categories/simplicial_sets.py
++++ b/src/sage/categories/simplicial_sets.py
+@@ -582,5 +582,5 @@
+-                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
+-                    sage: S3 = simplicial_sets.Sphere(3)
+-                    sage: X = S3.wedge(RP2)
+-                    sage: XU = X.universal_cover()
+-                    sage: [XU.homology(i) for i in range(5)]
++                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)             # needs sage.graphs sage.groups
++                    sage: S3 = simplicial_sets.Sphere(3)                           # needs sage.graphs sage.groups
++                    sage: X = S3.wedge(RP2)                                        # needs sage.graphs sage.groups
++                    sage: XU = X.universal_cover()                                 # needs sage.graphs sage.groups
++                    sage: [XU.homology(i) for i in range(5)]                       # needs sage.graphs sage.groups

@@ -9979,6 +9979,38 @@ startup semantics, `quadratic_forms/quadratic_form__evaluate.pyx` needs
 quadratic-form startup/import work, and `arith/misc.py` still reaches the
 known polynomial table-index trap.
 
+Focused simplicial-set category corpus-growth pass:
+
+```text
+sage -t passed: 8 passed, 0 failed, 187 skipped
+```
+
+That one-file focused validation adds `sage/categories/simplicial_sets.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 661 non-comment
+entries. Direct sampling first recorded 8 passing blocks, 5 failures, and 182
+skips; the failures were an untagged universal-cover TEST block that used
+`simplicial_sets.RealProjectiveSpace`, `simplicial_sets.Sphere`, and homology
+through the graph/group/topology stack. The added WASI source patch marks that
+dependent setup and checks as `# needs sage.graphs sage.groups`, consistent
+with the surrounding simplicial-set examples.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and used the
+`test-sage-doctest-corpus` make target with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/simplicial-sets-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
+The same pass sampled several uncovered support areas without finding another
+promotion candidate. `sage_ostools.pyx` still depends on WASI file-descriptor
+and subprocess semantics; `sage_input.py` reaches the known NTL/libcxx
+finite-field trap; `sage_timeit.py`, `session.pyx`, `hexad.py`, and several
+REPL display/configuration helpers have focused runtime or display failures;
+and `quotient_fields.py`, `principal_ideal_domains.py`, and
+`unique_factorization_domains.py` time out in polynomial arithmetic. Category
+files such as `posets.py`, `finite_posets.py`, `vector_bundles.py`,
+`groupoid.py`, and `g_sets.py` remain skipped-only under the default profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
