@@ -670,6 +670,7 @@ src/sage/plot/disk.py
 src/sage/plot/ellipse.py
 src/sage/plot/graphics.py
 src/sage/plot/histogram.py
+src/sage/plot/matrix_plot.py
 src/sage/plot/line.py
 src/sage/plot/point.py
 src/sage/plot/polygon.py

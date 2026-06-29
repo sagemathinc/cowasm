@@ -6003,6 +6003,43 @@ diff -urN a/src/sage/plot/histogram.py b/src/sage/plot/histogram.py
 @@ -88 +88 @@
 -            sage: h.get_minmax_data()
 +            sage: h.get_minmax_data()                                               # known bug
+diff -urN a/src/sage/plot/matrix_plot.py b/src/sage/plot/matrix_plot.py
+--- a/src/sage/plot/matrix_plot.py
++++ b/src/sage/plot/matrix_plot.py
+@@ -65 +65 @@
+-        sage: matrix_plot([[1, 0], [0, 1]]).show(fontsize=10) # These are equivalent
++        sage: matrix_plot([[1, 0], [0, 1]]).show(fontsize=10) # These are equivalent  # needs matplotlib
+@@ -81 +81 @@
+-            sage: M[0].get_minmax_data()
++            sage: M[0].get_minmax_data()                                            # random - dict order differs in Sagelite
+@@ -466 +466 @@
+-        sage: matrix_plot(sparse)
++        sage: matrix_plot(sparse)                                                   # needs scipy
+@@ -472 +472 @@
+-        sage: matrix_plot(A, marker=',')
++        sage: matrix_plot(A, marker=',')                                            # needs scipy
+@@ -495 +495 @@
+-        sage: matrix_plot(b.apply_map(abs))
++        sage: matrix_plot(b.apply_map(abs))                                         # needs scipy
+@@ -547 +547 @@
+-        sage: matrix_plot(sparse, subdivisions=True, subdivision_boundaries=[[2,4],[6,8]])
++        sage: matrix_plot(sparse, subdivisions=True, subdivision_boundaries=[[2,4],[6,8]]) # needs scipy
+@@ -554,7 +554,6 @@
+         1
+     """
+     import numpy as np
+-    import scipy.sparse as scipysparse
+     from sage.plot.graphics import Graphics
+     from sage.structure.element import Matrix
+     from sage.rings.real_double import RDF
+@@ -567,6 +566,7 @@
+                 data = np.asarray([d for _,d in entries], dtype=float)
+             except Exception:
+                 raise ValueError("cannot convert entries to floating point numbers")
++            import scipy.sparse as scipysparse
+             positions = np.asarray([[row for (row,col),_ in entries],
+                                     [col for (row,col),_ in entries]], dtype=int)
+             mat = scipysparse.coo_matrix((data,positions), shape=(mat.nrows(), mat.ncols()))
 diff -urN a/src/sage/plot/line.py b/src/sage/plot/line.py
 --- a/src/sage/plot/line.py
 +++ b/src/sage/plot/line.py

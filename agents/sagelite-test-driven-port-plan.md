@@ -2339,6 +2339,37 @@ one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/basic-stats-make-warning-fix.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused matrix-plot corpus-growth pass:
+
+```text
+sage -t passed: 53 passed, 0 failed, 19 skipped
+```
+
+That one-file make-target validation adds `sage/plot/matrix_plot.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 694
+non-comment entries. Direct sampling first recorded 18 passed blocks, 40
+failed blocks, and 14 skipped blocks because `matrix_plot(...)` imported
+`scipy.sparse` unconditionally before handling dense matrix/list inputs or
+input-validation paths.
+
+The WASI source patch now defers the SciPy import until a sparse Sage matrix is
+actually converted to a SciPy COO matrix. This preserves dense matrix-plot
+construction, list-of-list plotting, min/max, title, colorbar option, and
+invalid-input coverage in the browser-compatible profile. The remaining true
+sparse plotting examples are marked `# needs scipy`; the display-only
+`.show(...)` example is marked `# needs matplotlib`; and one dict-order
+`get_minmax_data()` check is marked `# random`.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/matrix-plot-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; `skips-by-reason`
+groups the newly deferred examples under explicit `optional:scipy` and
+`optional:matplotlib` requirements.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
