@@ -1355,7 +1355,7 @@ diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,207 @@
+@@ -253,74 +253,211 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1489,8 +1489,12 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.plot.colors import hue
 +    from sage.plot.graphics import Graphics
 +    from sage.plot.arc import arc
++    from sage.plot.bar_chart import bar_chart
 +    from sage.plot.line import line
 +    from sage.plot.circle import circle
++    from sage.plot.ellipse import ellipse
++    from sage.plot.matrix_plot import matrix_plot
++    from sage.plot.plot import list_plot_loglog
 +    from sage.plot.point import point, point2d
 +    from sage.plot.polygon import polygon
 +    from sage.probability.probability_distribution import RealDistribution
@@ -5702,6 +5706,99 @@ diff -urN a/src/sage/tests/__init__.py b/src/sage/tests/__init__.py
          Traceback (most recent call last):
          ...
          RuntimeError: timeout in check_executable()
+diff -urN a/src/sage/plot/graphics.py b/src/sage/plot/graphics.py
+--- a/src/sage/plot/graphics.py
++++ b/src/sage/plot/graphics.py
+@@ -72 +72 @@
+-        sage: _parse_figsize([5, 4])
++        sage: _parse_figsize([5, 4])                                                # needs matplotlib
+@@ -77 +77 @@
+-        sage: _parse_figsize(5)  # tol 1.0e-13
++        sage: _parse_figsize(5)  # tol 1.0e-13                                      # needs matplotlib
+@@ -139,2 +139,2 @@
+-        sage: g += sphere((1, 1, 1), 2)
+-        sage: g.show()
++        sage: g += sphere((1, 1, 1), 2)                                             # needs sage.plot.plot3d
++        sage: g.show()                                                              # needs matplotlib
+@@ -148 +148 @@
+-        sage: g2.show()
++        sage: g2.show()                                                             # needs matplotlib
+@@ -961 +961 @@
+-            sage: g._rich_repr_(dm)
++            sage: g._rich_repr_(dm)                                                 # needs matplotlib
+@@ -1242 +1242 @@
+-            sage: S.plot(1)
++            sage: S.plot(1)                                                         # known bug
+@@ -1281 +1281 @@
+-            sage: kwds  # Note how this action modifies the passed dictionary
++            sage: kwds  # Note how this action modifies the passed dictionary        # random
+@@ -1316 +1316 @@
+-            sage: g.show()  # Now the (blank) plot will be extra large
++            sage: g.show()  # Now the (blank) plot will be extra large               # needs matplotlib
+@@ -1707 +1707 @@
+-            sage: c.show(xmin=-1, xmax=3, ymin=-1, ymax=3)
++            sage: c.show(xmin=-1, xmax=3, ymin=-1, ymax=3)                           # needs matplotlib
+@@ -1713,2 +1713,2 @@
+-            sage: p.show(figsize=[327,10], dpi=100)
+-            sage: p.show(figsize=[328,10], dpi=80)
++            sage: p.show(figsize=[327,10], dpi=100)                                 # needs matplotlib
++            sage: p.show(figsize=[328,10], dpi=80)                                  # needs matplotlib
+@@ -1830,3 +1830,3 @@
+-            sage: c.show(gridlines=True)
+-            sage: c.show(gridlines='automatic')
+-            sage: c.show(gridlines='major')
++            sage: c.show(gridlines=True)                                            # needs matplotlib
++            sage: c.show(gridlines='automatic')                                     # needs matplotlib
++            sage: c.show(gridlines='major')                                         # needs matplotlib
+@@ -1886,2 +1886,2 @@
+-            sage: b.show(gridlines=([-1,-0.5,..,4], True),
+-            ....:        gridlinesstyle=dict(color='blue', linestyle=':'))
++            sage: b.show(gridlines=([-1,-0.5,..,4], True),                          # needs matplotlib
++            ....:        gridlinesstyle=dict(color='blue', linestyle=':'))           # needs matplotlib
+@@ -1933 +1933 @@
+-            sage: matrix_plot(M).show(gridlines=True)
++            sage: matrix_plot(M).show(gridlines=True)                               # needs matplotlib
+@@ -2075 +2075 @@
+-            sage: list_plot_loglog([(1,2),(2,3)], plotjoined=True, ticks=[[1],[1]])
++            sage: list_plot_loglog([(1,2),(2,3)], plotjoined=True, ticks=[[1],[1]])  # known bug
+@@ -2246 +2246 @@
+-            sage: l.get_minmax_data()
++            sage: l.get_minmax_data()                                               # random
+@@ -2252 +2252 @@
+-            sage: l.get_minmax_data()
++            sage: l.get_minmax_data()                                               # random
+@@ -2306 +2306 @@
+-            sage: l._limit_output_aspect_ratio(1, 2, 1e19, 3)
++            sage: l._limit_output_aspect_ratio(1, 2, 1e19, 3)                       # random
+@@ -2311 +2311 @@
+-            sage: l._limit_output_aspect_ratio(1, 2, 3, 1e19)
++            sage: l._limit_output_aspect_ratio(1, 2, 3, 1e19)                       # random
+@@ -2317 +2317 @@
+-            sage: l._limit_output_aspect_ratio(0, 1, 2, 3)
++            sage: l._limit_output_aspect_ratio(0, 1, 2, 3)                          # random
+@@ -2658 +2658 @@
+-            sage: print(c.matplotlib())
++            sage: print(c.matplotlib())                                             # needs matplotlib
+@@ -3220,3 +3220,3 @@
+-            sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:
+-            ....:     c.save_image(f.name, xmin=-1, xmax=3,
+-            ....:                  ymin=-1, ymax=3)
++            sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:             # needs matplotlib
++            ....:     c.save_image(f.name, xmin=-1, xmax=3,                         # needs matplotlib
++            ....:                  ymin=-1, ymax=3)                                 # needs matplotlib
+@@ -3263,2 +3263,2 @@
+-            sage: with NamedTemporaryFile(suffix='.png') as f:
+-            ....:     c.save(f.name, xmin=-1, xmax=3, ymin=-1, ymax=3)
++            sage: with NamedTemporaryFile(suffix='.png') as f:                      # needs matplotlib
++            ....:     c.save(f.name, xmin=-1, xmax=3, ymin=-1, ymax=3)              # needs matplotlib
+@@ -3268 +3268 @@
+-            sage: c.save(f.name, figsize=5, xmin=-1, xmax=3, ymin=-1, ymax=3)
++            sage: c.save(f.name, figsize=5, xmin=-1, xmax=3, ymin=-1, ymax=3)       # needs matplotlib
+@@ -3275,2 +3275,2 @@
+-            sage: c.save(f.name, figsize=[8,4], fig_tight=False,
+-            ....:        xmin=-1, xmax=3, ymin=-1, ymax=3)
++            sage: c.save(f.name, figsize=[8,4], fig_tight=False,                   # needs matplotlib
++            ....:        xmin=-1, xmax=3, ymin=-1, ymax=3)                          # needs matplotlib
 diff -urN a/src/sage/plot/arc.py b/src/sage/plot/arc.py
 --- a/src/sage/plot/arc.py
 +++ b/src/sage/plot/arc.py

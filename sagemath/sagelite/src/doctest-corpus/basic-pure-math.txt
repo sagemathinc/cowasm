@@ -664,6 +664,7 @@ src/sage/plot/bezier_path.py
 src/sage/plot/circle.py
 src/sage/plot/disk.py
 src/sage/plot/ellipse.py
+src/sage/plot/graphics.py
 src/sage/plot/histogram.py
 src/sage/plot/line.py
 src/sage/plot/point.py

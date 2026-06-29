@@ -10713,6 +10713,37 @@ records the expected `optional:sage.plot.plot3d`, `optional:matplotlib`, and
 pre-existing `optional:sage.symbolic` deferrals. The runner version remains
 67.
 
+Focused graphics-object corpus-growth pass:
+
+```text
+sage -t passed: 166 passed, 0 failed, 242 skipped
+```
+
+That one-file make-target validation adds `sage/plot/graphics.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 688 non-comment
+entries. Direct sampling first recorded 155 passing blocks, 33 failures, and
+220 skipped blocks. The failures were narrow plot-frontier issues: Matplotlib
+render/save/rich-output examples, one 3D sphere setup, startup-name gaps for
+lightweight 2D plot helpers, dict/order display drift, one CPython integer
+formatting diagnostic drift in `Graphics.plot(1)`, and one missing warning
+display in a `list_plot_loglog(...)` tick example.
+
+The doctest runner now seeds `bar_chart`, `ellipse`, `matrix_plot`, and
+`list_plot_loglog` in the common startup namespace, and the WASI `sage.all`
+patch exposes the same names for REPL parity on a fresh patched Sagelite
+source copy. The added WASI source patch marks Matplotlib and 3D display paths
+with explicit `# needs` metadata and classifies the remaining display and
+diagnostic drift as `# random` or deferred `# known bug` metadata. Focused
+validation used the `test-sage-doctest-corpus` make target after rebuilding a
+fresh patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/graphics-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected `optional:matplotlib`, `optional:sage.plot.plot3d`, and
+pre-existing symbolic, latex, polyhedron, and deferred-warning deferrals. The
+runner version is now 68.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
