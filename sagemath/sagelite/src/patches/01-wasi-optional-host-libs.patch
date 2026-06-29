@@ -1341,7 +1341,7 @@ diff -urN a/src/sage/repl/rich_output/buffer.py b/src/sage/repl/rich_output/buff
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,194 @@
+@@ -253,74 +253,195 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1437,6 +1437,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.algebras.lie_conformal_algebras.all import LieConformalAlgebra, lie_conformal_algebras
 +    import sage.algebras.catalog as algebras
 +    import sage.coding.codes_catalog as codes
++    import sage.combinat.designs.design_catalog as designs
 +    from sage.combinat.combination import Combinations
 +    from sage.combinat.combinat import stirling_number2
 +    from sage.combinat.free_module import CombinatorialFreeModule

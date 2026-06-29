@@ -145,6 +145,8 @@ src/sage/combinat/cyclic_sieving_phenomenon.py
 src/sage/combinat/debruijn_sequence.pyx
 src/sage/combinat/decorated_permutation.py
 src/sage/combinat/degree_sequences.pyx
+src/sage/combinat/designs/database.py
+src/sage/combinat/designs/design_catalog.py
 src/sage/combinat/designs/MOLS_handbook_data.py
 src/sage/combinat/diagram.py
 src/sage/combinat/dlx.py

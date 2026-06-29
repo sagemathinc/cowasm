@@ -9627,6 +9627,38 @@ Focused validation used
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/mols-handbook-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused combinatorial-design namespace corpus-growth pass:
+
+```text
+sage -t passed: 271 passed, 0 failed, 168 skipped
+```
+
+That two-file focused validation adds `sage/combinat/designs/database.py` and
+`sage/combinat/designs/design_catalog.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 650 non-comment
+entries. The doctest runner now seeds the lightweight `designs` catalog in the
+common doctest namespace and mirrors it onto `sage.all`; the WASI `sage.all`
+patch exposes the same name for REPL parity on fresh patched Sagelite source
+copies. This clears the previous `NameError: name 'designs' is not defined`
+cluster and gives the browser-profile dashboard clean coverage for small
+combinatorial-design constructors and database availability examples.
+
+Focused validation used
+`SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/design-namespace-corpus.txt`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/design-namespace-allow0.sqlite3`;
+the same run rebuilt a fresh patched Sagelite source copy and confirmed the
+updated WASI patch applies cleanly. The saved block- and file-failure cluster
+queries are empty, and the runner version is now 63.
+
+Fresh exploratory sampling kept several adjacent uncovered files out of the
+quiet corpus. Category-example, coding, monoid, topology, and homology support
+files were mostly skipped-only under the default profile. `sage_timeit.py`,
+`sage_timeit_class.pyx`, and `repl/inputhook.py` still cluster around the
+missing IPython backend; `covering_array.py` still reaches Singular-backed
+construction; small FLINT/qsieve wrappers have output drift; and
+`libs/ntl/error.pyx` still hits a side-module `gf2x_mul` import failure.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
