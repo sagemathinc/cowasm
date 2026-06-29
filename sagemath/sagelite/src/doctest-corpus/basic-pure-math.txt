@@ -513,6 +513,7 @@ src/sage/misc/constant_function.pyx
 src/sage/misc/converting_dict.py
 src/sage/misc/decorators.py
 src/sage/misc/defaults.py
+src/sage/misc/dev_tools.py
 src/sage/misc/derivative.pyx
 src/sage/misc/edit_module.py
 src/sage/misc/element_with_label.py

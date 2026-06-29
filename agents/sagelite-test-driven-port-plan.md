@@ -2498,6 +2498,33 @@ The saved block- and file-failure cluster queries are empty, and
 newly deferred PARI object-model example, plus six
 `optional:sage.rings.number_field` skips.
 
+Focused misc developer-tool corpus-growth pass:
+
+```text
+dev_tools.py: 41 passed, 0 failed, 21 skipped
+```
+
+That one-file make-target validation adds `sage/misc/dev_tools.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 716 non-comment
+entries. Direct sampling first recorded 38 passed blocks, eight focused
+failures, and 16 skips. The failures were narrow browser-profile metadata
+gaps: broad `load_submodules(...)` output depends on which optional Sage
+modules import successfully, the stripped symbolic/modular/graph surfaces
+change import-statement discovery, and Sagelite's tested-module global seeding
+makes two namespace-introspection examples differ from upstream Sage's
+interpreter state.
+
+The added WASI source patch marks broad module-loading output as `# random`,
+classifies symbolic, modular, and graph import-discovery examples with
+explicit `# needs ...` metadata, and defers the two doctest-global namespace
+drifts as `# known bug`. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/dev-tools-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

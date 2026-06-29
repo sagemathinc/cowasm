@@ -4742,6 +4742,33 @@ diff -urN a/src/sage/misc/defaults.py b/src/sage/misc/defaults.py
 @@ -76 +76 @@
 -        sage: latex_variable_names(3,beta)
 +        sage: latex_variable_names(3,beta)                                              # needs sage.symbolic
+diff -urN a/src/sage/misc/dev_tools.py b/src/sage/misc/dev_tools.py
+--- a/src/sage/misc/dev_tools.py
++++ b/src/sage/misc/dev_tools.py
+@@ -154 +154 @@
+-        sage: sage.misc.dev_tools.load_submodules(sage.combinat)
++        sage: sage.misc.dev_tools.load_submodules(sage.combinat)                       # random
+@@ -162 +162 @@
+-        sage: sage.misc.dev_tools.load_submodules(sage.combinat)
++        sage: sage.misc.dev_tools.load_submodules(sage.combinat)                       # random
+@@ -172 +172 @@
+-        sage: sage.misc.dev_tools.load_submodules(sage.geometry)
++        sage: sage.misc.dev_tools.load_submodules(sage.geometry)                       # random
+@@ -252 +252 @@
+-        sage: 'find_objects_from_name' in globals()
++        sage: 'find_objects_from_name' in globals()                                    # known bug
+@@ -360 +360 @@
+-        sage: import_statements('Z')
++        sage: import_statements('Z')                                                   # needs sage.symbolic
+@@ -377 +377 @@
+-        sage: import_statement_string
++        sage: import_statement_string                                                  # known bug
+@@ -388 +388 @@
+-        sage: import_statements('FareySymbol')
++        sage: import_statements('FareySymbol')                                        # needs sage.modular
+@@ -452 +452 @@
+-        sage: import_statements('graph_decompositions')
++        sage: import_statements('graph_decompositions')                               # needs sage.graphs
 diff -urN a/src/sage/misc/latex.py b/src/sage/misc/latex.py
 --- a/src/sage/misc/latex.py
 +++ b/src/sage/misc/latex.py
