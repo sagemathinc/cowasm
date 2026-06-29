@@ -9812,6 +9812,36 @@ temporary two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/db-koszul-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused modular-polynomial database corpus-growth pass:
+
+```text
+sage -t passed: 10 passed, 0 failed, 20 skipped
+```
+
+That one-file focused validation adds
+`sage/databases/db_modular_polynomials.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 657 non-comment
+entries. The file gives the dashboard default-profile coverage for database
+lookup and class-polynomial helper paths while its optional database-backed
+examples remain explicit skips.
+
+The mixed exploratory batch first ranked `db_modular_polynomials.py` as a
+clean promotion candidate. It also reconfirmed that `typeset/ascii_art.py`
+already has clean non-skipped coverage in the corpus, while skipped-only
+module-with-basis and homology helper files stay out of the quiet dashboard.
+The same batch kept `modules/with_basis/indexed_element.pyx`,
+`modules/with_basis/subquotient.py`, `homology/chain_complex_morphism.py`,
+`homology/chain_homotopy.py`, `databases/conway.py`,
+`misc/reset.pyx`, `repl/configuration.py`, and
+`repl/display/formatter.py` out because they still have focused failures or a
+timeout rather than narrow skip-metadata gaps.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/db-modular-polynomials-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
