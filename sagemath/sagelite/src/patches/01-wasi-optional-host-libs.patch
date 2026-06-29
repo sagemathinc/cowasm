@@ -5573,3 +5573,10 @@ diff -urN a/src/sage/arith/functions.pyx b/src/sage/arith/functions.pyx
 @@ -186 +186 @@
 -        sage: LCM_list(Sequence((2*X+4,2*X^2,2)))
 +        sage: LCM_list(Sequence((2*X+4,2*X^2,2)))  # known bug - polynomial LCM times out in the Sagelite WASI profile
+diff -urN a/src/sage/symbolic/tests.py b/src/sage/symbolic/tests.py
+--- a/src/sage/symbolic/tests.py
++++ b/src/sage/symbolic/tests.py
+@@ -26,2 +26,2 @@
+         sage: from sage.symbolic.tests import rational_powers_memleak
+-        sage: rational_powers_memleak()
++        sage: rational_powers_memleak()                                           # needs sage.symbolic
