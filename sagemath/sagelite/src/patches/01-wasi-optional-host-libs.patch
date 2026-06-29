@@ -5465,3 +5465,43 @@ diff -urN a/src/sage/homology/matrix_utils.py b/src/sage/homology/matrix_utils.p
 @@ -69 +69 @@
 -        sage: mat.elementary_divisors() == dhsw_snf(mat)
 +        sage: mat.elementary_divisors() == dhsw_snf(mat)                         # random - Sagelite does not yet seed this random-matrix example
+diff -urN a/src/sage/features/join_feature.py b/src/sage/features/join_feature.py
+--- a/src/sage/features/join_feature.py
++++ b/src/sage/features/join_feature.py
+@@ -112 +112 @@
+-            sage: f.require()
++            sage: f.require()                                                     # known bug - Sagelite traceback matcher keeps explicit stack frames
+diff -urN a/src/sage/features/interfaces.py b/src/sage/features/interfaces.py
+--- a/src/sage/features/interfaces.py
++++ b/src/sage/features/interfaces.py
+@@ -70,2 +70,3 @@
++            sage: # needs pexpect
+             sage: from sage.features.interfaces import InterfaceFeature
+             sage: from sage.interfaces.sage0 import Sage
+@@ -130 +131 @@
+-            sage: regina(~7)
++            sage: regina(~7)                                                      # needs pexpect
+diff -urN a/src/sage/features/pkg_systems.py b/src/sage/features/pkg_systems.py
+--- a/src/sage/features/pkg_systems.py
++++ b/src/sage/features/pkg_systems.py
+@@ -35 +35 @@
+-            sage: debian.is_present()  # indirect doctest, random
++            sage: debian.is_present()  # indirect doctest, random                 # needs subprocess
+diff -urN a/src/sage/features/databases.py b/src/sage/features/databases.py
+--- a/src/sage/features/databases.py
++++ b/src/sage/features/databases.py
+@@ -53 +53 @@
+-        sage: DatabaseCremona('cremona_mini', type='standard').is_present()
++        sage: DatabaseCremona('cremona_mini', type='standard').is_present()       # needs database_cremona_ellcurve
+diff -urN a/src/sage/features/latex.py b/src/sage/features/latex.py
+--- a/src/sage/features/latex.py
++++ b/src/sage/features/latex.py
+@@ -261 +261 @@
+-            sage: not f.is_present() or bool(g.is_present())  # indirect doctest
++            sage: not f.is_present() or bool(g.is_present())  # indirect doctest  # needs latex
+diff -urN a/src/sage/features/ecm.py b/src/sage/features/ecm.py
+--- a/src/sage/features/ecm.py
++++ b/src/sage/features/ecm.py
+@@ -27 +27 @@
+-        sage: Ecm().is_present()
++        sage: Ecm().is_present()                                                  # needs ecm

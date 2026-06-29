@@ -63,8 +63,10 @@ src/sage/features/cddlib.py
 src/sage/features/coxeter3.py
 src/sage/features/csdp.py
 src/sage/features/cython.py
+src/sage/features/databases.py
 src/sage/features/dot2tex.py
 src/sage/features/dvipng.py
+src/sage/features/ecm.py
 src/sage/features/ffmpeg.py
 src/sage/features/flatter.py
 src/sage/features/four_ti_2.py
@@ -79,10 +81,13 @@ src/sage/features/graphviz.py
 src/sage/features/igraph.py
 src/sage/features/imagemagick.py
 src/sage/features/info.py
+src/sage/features/interfaces.py
 src/sage/features/internet.py
 src/sage/features/jmol.py
+src/sage/features/join_feature.py
 src/sage/features/kenzo.py
 src/sage/features/khoca.py
+src/sage/features/latex.py
 src/sage/features/latte.py
 src/sage/features/lcalc.py
 src/sage/features/lrs.py
@@ -100,6 +105,7 @@ src/sage/features/pari.py
 src/sage/features/phitigra.py
 src/sage/features/polymake.py
 src/sage/features/poppler.py
+src/sage/features/pkg_systems.py
 src/sage/features/qepcad.py
 src/sage/features/rubiks.py
 src/sage/features/sat.py

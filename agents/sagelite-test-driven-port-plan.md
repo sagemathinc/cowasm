@@ -2090,6 +2090,33 @@ temporary five-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty; the latest-run
 summary records runner version 61 in the default node profile.
 
+Focused feature-module corpus-growth pass:
+
+```text
+sage -t passed: 153 passed, 0 failed, 49 skipped
+```
+
+That six-file make-target validation adds `sage/features/databases.py`,
+`sage/features/ecm.py`, `sage/features/interfaces.py`,
+`sage/features/join_feature.py`, `sage/features/latex.py`, and
+`sage/features/pkg_systems.py` to the curated corpus. Direct sampling first
+recorded 155 passed blocks, 11 failed blocks, and 40 skipped blocks. The
+failures were narrow browser-profile boundaries around subprocess-backed
+package-system and external-tool feature probes, unavailable pexpect-backed
+interfaces, and one traceback-format drift in `JoinFeature.require()`.
+
+The added WASI source patch marks those examples as `# needs ...` or deferred
+`# known bug` metadata while preserving the ordinary feature-construction,
+feature-result, optional-database, LaTeX, ECM, interface, and package-system
+helper doctests as default-profile coverage. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary six-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/features-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the newly deferred examples under their explicit
+feature requirements.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
