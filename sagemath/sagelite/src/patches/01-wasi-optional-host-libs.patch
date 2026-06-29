@@ -5498,6 +5498,12 @@ diff -urN a/src/sage/doctest/rif_tol.py b/src/sage/doctest/rif_tol.py
 @@ -77 +77 @@
 -        sage: from sage.doctest.parsing import MarkedOutput, SageOutputChecker
 +        sage: from sage.doctest.marked_output import MarkedOutput
+diff -urN a/src/sage/doctest/test.py b/src/sage/doctest/test.py
+--- a/src/sage/doctest/test.py
++++ b/src/sage/doctest/test.py
+@@ -564 +564 @@
+-    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",
++    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",   # needs subprocess
 diff -urN a/src/sage/cpython/debug.pyx b/src/sage/cpython/debug.pyx
 --- a/src/sage/cpython/debug.pyx
 +++ b/src/sage/cpython/debug.pyx

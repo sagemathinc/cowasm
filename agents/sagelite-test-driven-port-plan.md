@@ -2098,6 +2098,30 @@ temporary five-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 The saved block- and file-failure cluster queries are empty; the latest-run
 summary records runner version 61 in the default node profile.
 
+Focused doctest CLI metadata corpus-growth pass:
+
+```text
+sage -t passed: 23 passed, 0 failed, 37 skipped
+```
+
+That one-file make-target validation adds `sage/doctest/test.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 722 non-comment
+entries. Direct sampling first recorded one runnable failure: the invalid
+`--optional=bad-option` subprocess example expects a native child Python
+process, while the WASI browser-compatible profile raises
+`OSError: [Errno 58] wasi does not support processes`. The added WASI source
+patch marks that example as `# needs subprocess`, preserving the non-subprocess
+doctest framework checks as default-profile coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/doctest-test-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; `skips-by-reason`
+groups the new deferred block under `optional:subprocess`.
+
 Focused feature-module corpus-growth pass:
 
 ```text
