@@ -2045,6 +2045,28 @@ fresh patched Sagelite source copy, with a temporary five-file corpus,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/followup-five-make-after-tag.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused rich-output backend-base corpus-growth pass:
+
+```text
+sage -t passed: 86 passed, 0 failed, 14 skipped
+```
+
+That one-file make-target validation adds
+`sage/repl/rich_output/backend_base.py` to the curated corpus. Direct
+sampling first recorded ten failures in IPython-backed plain-text formatting
+and pretty-printer examples; the dependent checks then failed because the
+formatted output variables were not assigned. The added WASI source patch
+marks those display-hook and pretty-printer setup examples as
+`# needs IPython`, preserving the backend representation, capability,
+supported-output, and display-routing doctests as default-profile coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/backend-base-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

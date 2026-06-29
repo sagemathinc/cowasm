@@ -5347,6 +5347,22 @@ diff -urN a/src/sage/repl/rich_output/backend_doctest.py b/src/sage/repl/rich_ou
 @@ -61 +61,2 @@
 +            sage: # needs IPython
              sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
+diff -urN a/src/sage/repl/rich_output/backend_base.py b/src/sage/repl/rich_output/backend_base.py
+--- a/src/sage/repl/rich_output/backend_base.py
++++ b/src/sage/repl/rich_output/backend_base.py
+@@ -35,2 +35,3 @@
++    sage: # needs IPython
+     sage: plain_text = backend.plain_text_formatter(list(range(10)));  plain_text
+     OutputPlainText container
+@@ -255 +256,2 @@
++            sage: # needs IPython
+             sage: from sage.repl.display.pretty_print import SagePrettyPrinter
+@@ -297 +299,2 @@
++            sage: # needs IPython
+             sage: out = backend.plain_text_formatter(list(range(30)))
+@@ -308 +311,2 @@
++            sage: # needs IPython
+             sage: out = backend.plain_text_formatter(list(range(20)), concatenate=True)
 diff -urN a/src/sage/repl/preparse.py b/src/sage/repl/preparse.py
 --- a/src/sage/repl/preparse.py
 +++ b/src/sage/repl/preparse.py
