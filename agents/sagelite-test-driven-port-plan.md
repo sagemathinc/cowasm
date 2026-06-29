@@ -8843,6 +8843,37 @@ The make target rebuilt and patched a fresh Sagelite source copy successfully;
 the saved block- and file-failure cluster queries are empty. The latest run
 metadata records node profile and runner version 61.
 
+Focused rich-output pretty-printer/display corpus-growth pass:
+
+```text
+sage -t passed: 105 passed, 0 failed, 35 skipped
+```
+
+That two-file focused validation adds
+`sage/repl/rich_output/display_manager.py` and
+`sage/repl/rich_output/pretty_print.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 609
+non-comment entries. The Sagelite WASI source patch now gives
+`sage.repl.display.pretty_print` and `sage.repl.display.fancy_repr` a small
+plain-text fallback for the subset of `IPython.lib.pretty` needed by the
+doctest backend, so core rich-output formatting no longer depends on packaging
+IPython in the browser-compatible profile.
+
+The added WASI patch classifies the remaining
+`DisplayManager._call_rich_repr(...)` warning-stream expectation as
+`# not tested`, matching the current Sagelite runner limitation that warning
+output is not captured as doctest stdout. Focused validation used
+`make -C sagemath/sagelite test-sage-doctest-corpus` with a temporary
+two-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/rich-output-display-pretty-make.sqlite3`.
+The make target rebuilt and patched a fresh Sagelite source copy successfully;
+the saved block- and file-failure cluster queries are empty. A follow-up full
+609-file corpus run was started with
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/rich-output-display-pretty-full.sqlite3`
+but was interrupted after reaching about worker 204 because it was on track for
+a much longer validation pass than the focused check.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

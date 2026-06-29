@@ -5332,6 +5332,72 @@ diff -urN a/src/sage/matrix/strassen.pyx b/src/sage/matrix/strassen.pyx
 @@ -299 +299 @@
 -        sage: B = A.__copy__(); B._echelon_in_place_classical()
 +        sage: B = A.__copy__(); B._echelon_in_place_classical()                     # random - WASI displays classical echelon pivot return value
+diff -urN a/src/sage/repl/display/pretty_print.py b/src/sage/repl/display/pretty_print.py
+--- a/src/sage/repl/display/pretty_print.py
++++ b/src/sage/repl/display/pretty_print.py
+@@ -26 +26,26 @@
+-from IPython.lib.pretty import PrettyPrinter
++try:
++    from IPython.lib.pretty import PrettyPrinter
++except ImportError:
++    class PrettyPrinter:
++        def __init__(self, output, max_width, newline, max_seq_length=None):
++            self.output = output
++            self.max_width = max_width
++            self.newline = newline
++            self.max_seq_length = max_seq_length
++
++        def begin_group(self, *args, **kwds):
++            pass
++
++        def end_group(self, *args, **kwds):
++            pass
++
++        def text(self, obj):
++            self.output.write(str(obj))
++
++        def break_(self):
++            self.output.write(self.newline)
++
++        def flush(self):
++            flush = getattr(self.output, "flush", None)
++            if flush is not None:
++                flush()
+diff -urN a/src/sage/repl/display/fancy_repr.py b/src/sage/repl/display/fancy_repr.py
+--- a/src/sage/repl/display/fancy_repr.py
++++ b/src/sage/repl/display/fancy_repr.py
+@@ -16,4 +16,21 @@
+-from IPython.lib.pretty import (
+-    _safe_getattr,
+-    _type_pprinters,
+-)
++try:
++    from IPython.lib.pretty import (
++        _safe_getattr,
++        _type_pprinters,
++    )
++except ImportError:
++    def _safe_getattr(obj, attr, default=None):
++        try:
++            return getattr(obj, attr)
++        except Exception:
++            return default
++
++    def _plain_type_printer(obj, p, cycle):
++        p.text(repr(obj))
++
++    _type_pprinters = {
++        type: _plain_type_printer,
++        types.BuiltinFunctionType: _plain_type_printer,
++        types.FunctionType: _plain_type_printer,
++        str: _plain_type_printer,
++    }
+diff -urN a/src/sage/repl/rich_output/display_manager.py b/src/sage/repl/rich_output/display_manager.py
+--- a/src/sage/repl/rich_output/display_manager.py
++++ b/src/sage/repl/rich_output/display_manager.py
+@@ -572 +572 @@
+-            sage: dm._call_rich_repr(Foo(), {})
++            sage: dm._call_rich_repr(Foo(), {})                                      # not tested - Sagelite runner does not capture warning stream yet
 diff -urN a/src/sage/repl/rich_output/test_backend.py b/src/sage/repl/rich_output/test_backend.py
 --- a/src/sage/repl/rich_output/test_backend.py
 +++ b/src/sage/repl/rich_output/test_backend.py
