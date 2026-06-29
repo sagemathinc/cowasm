@@ -9451,6 +9451,31 @@ failures disallowed but interrupted before it initialized the result database,
 because the current 643-entry corpus exceeded the practical runtime for this
 scheduled slice.
 
+Focused interface quit helper corpus-growth pass:
+
+```text
+sage -t passed: 7 passed, 0 failed, 14 skipped
+```
+
+That one-file make-target validation adds `sage/interfaces/quit.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 644 non-comment
+entries. The file contributes browser-compatible coverage for Sage's spawned
+process bookkeeping and interface shutdown helpers, while the existing
+upstream `# needs sage.libs.pari` and `# needs sage.symbolic` tags keep the
+PARI/GAP/Maxima interface examples outside the default profile.
+
+Fresh focused sampling also found `sage/interfaces/sympy_wrapper.py` and
+`sage/stats/intlist.pyx` to be skipped-only under the default profile.
+`sage/interfaces/tab_completion.py` still has one startup-completion display
+mismatch where `dickman_rho` is absent from the stripped namespace, and
+`sage/tests/test_deprecation.py` remains blocked by the known warning-output
+capture gap. Focused validation used
+`SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/quit-corpus.txt`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quit-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

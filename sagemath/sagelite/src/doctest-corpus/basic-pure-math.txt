@@ -132,6 +132,7 @@ src/sage/geometry/polyhedron/cdd_file_format.py
 src/sage/geometry/polyhedron/misc.py
 src/sage/interfaces/abc.py
 src/sage/interfaces/gnuplot.py
+src/sage/interfaces/quit.py
 src/sage/interfaces/read_data.py
 src/sage/combinat/SJT.py
 src/sage/combinat/combinat.py
