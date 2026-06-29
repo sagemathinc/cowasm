@@ -6204,3 +6204,19 @@ diff -urN a/src/sage/games/quantumino.py b/src/sage/games/quantumino.py
 @@ -562 +562 @@
 -            sage: next(QuantuminoSolver(4, box=(40,2,1)).solve())
 +            sage: next(QuantuminoSolver(4, box=(40,2,1)).solve())  # needs sage.libs.gap
+diff -urN a/src/sage/rings/bernmm.pyx b/src/sage/rings/bernmm.pyx
+--- a/src/sage/rings/bernmm.pyx
++++ b/src/sage/rings/bernmm.pyx
+@@ -76,9 +76,9 @@
+         sage: lst1 = [ bernoulli(2*k, algorithm='bernmm', num_threads=2) for k in [2932, 2957, 3443, 3962, 3973] ]
+-        sage: lst2 = [ bernoulli(2*k, algorithm='pari') for k in [2932, 2957, 3443, 3962, 3973] ]
+-        sage: lst1 == lst2
++        sage: lst2 = [ bernoulli(2*k, algorithm='pari') for k in [2932, 2957, 3443, 3962, 3973] ]  # needs sage.libs.pari
++        sage: lst1 == lst2                                                                         # needs sage.libs.pari
+         True
+         sage: [ Zmod(101)(t) for t in lst1 ]
+         [77, 72, 89, 98, 86]
+-        sage: [ Zmod(101)(t) for t in lst2 ]
++        sage: [ Zmod(101)(t) for t in lst2 ]                                                       # needs sage.libs.pari
+         [77, 72, 89, 98, 86]
+     """

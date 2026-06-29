@@ -10823,6 +10823,31 @@ The saved block- and file-failure cluster queries are empty; skip grouping
 records the expected `optional:sage.plot.plot3d`, `optional:sage.libs.gap`,
 and pre-existing long/deferred skips.
 
+Focused Bernoulli multimodular wrapper corpus-growth pass:
+
+```text
+sage -t passed: 22 passed, 0 failed, 3 skipped
+```
+
+That one-file make-target validation adds `sage/rings/bernmm.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 691 non-comment
+entries. Direct sampling first recorded 22 passing blocks and three failures:
+the PARI-backed `bernoulli(..., algorithm='pari')` comparison setup raised the
+current focused-cypari2 `NotImplementedError`, and two dependent checks then
+failed because `lst2` was not defined.
+
+The added WASI source patch marks those three comparison examples as
+`# needs sage.libs.pari`, preserving the default-profile coverage for the
+native `bernmm_bern_rat` and `bernmm_bern_modp` wrappers, including the
+large-index Bernoulli and modular-reduction checks. Focused validation used
+the `test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/bernmm-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records only the expected `optional:sage.libs.pari` deferrals.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

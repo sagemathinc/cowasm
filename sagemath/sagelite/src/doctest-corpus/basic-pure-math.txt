@@ -8,6 +8,7 @@ src/sage/rings/abc.pyx
 src/sage/rings/integer.pyx
 src/sage/rings/rational.pyx
 src/sage/rings/rational_field.py
+src/sage/rings/bernmm.pyx
 src/sage/rings/real_field.py
 src/sage/rings/real_double.pyx
 src/sage/rings/complex_double.pyx
