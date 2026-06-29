@@ -5273,21 +5273,9 @@ diff -urN a/src/sage/probability/probability_distribution.pyx b/src/sage/probabi
 diff -urN a/src/sage/stats/basic_stats.py b/src/sage/stats/basic_stats.py
 --- a/src/sage/stats/basic_stats.py
 +++ b/src/sage/stats/basic_stats.py
-@@ -122 +122 @@
--        sage: mode(v)
-+        sage: mode(v)  # known bug - warning stream is not captured by Sagelite doctest runner
-@@ -280 +280 @@
--        sage: variance([1..6])
-+        sage: variance([1..6])  # known bug - warning stream is not captured by Sagelite doctest runner
 @@ -290 +290 @@
 -        sage: variance([])
 +        sage: variance([])                                                             # needs sage.symbolic
-@@ -384 +384 @@
--        sage: median([1,2,3,4,5])
-+        sage: median([1,2,3,4,5])  # known bug - warning stream is not captured by Sagelite doctest runner
-@@ -438 +438 @@
--        sage: moving_average([1..10], 1)
-+        sage: moving_average([1..10], 1)  # known bug - warning stream is not captured by Sagelite doctest runner
 diff -urN a/src/sage/structure/factorization.py b/src/sage/structure/factorization.py
 --- a/src/sage/structure/factorization.py
 +++ b/src/sage/structure/factorization.py

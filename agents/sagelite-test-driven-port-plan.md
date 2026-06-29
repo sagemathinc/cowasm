@@ -2315,6 +2315,30 @@ The saved block- and file-failure cluster queries are empty, and
 `optional:sage.symbolic` tags. The latest-run summary records runner version
 67 in the default node profile.
 
+Focused warning-output runner pass:
+
+```text
+sage -t passed: 34 passed, 0 failed, 30 skipped
+```
+
+That one-file make-target validation repairs the current
+`sage/stats/basic_stats.py` corpus entry without adding broad source-level
+skips. Runner version 69 normalizes Sage-style `doctest:warning...` expected
+blocks against the warning format emitted by Sagelite's doctest warning hook,
+and also accepts leading warning output when the remaining stdout matches the
+expected result. This clears the deprecated `mean`, `mode`, `variance`,
+`median`, and `moving_average` examples while preserving their ordinary
+default-profile coverage.
+
+The WASI source patch no longer marks those warning examples as deferred
+`# known bug` blocks; it keeps only the symbolic `variance([])` boundary in
+`basic_stats.py`. Focused validation used the `test-sage-doctest-corpus` make
+target after rebuilding a fresh patched Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/basic-stats-make-warning-fix.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

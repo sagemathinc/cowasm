@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 68;
+const doctestRunnerVersion = 69;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -1566,11 +1566,35 @@ class __CowasmOutputChecker(doctest.OutputChecker):
             return self.__check_tolerant_output(want_body, got, tolerance, optionflags)
         if super().check_output(want, got, optionflags):
             return True
+        if self.__check_warning_output(want, got, optionflags):
+            return True
         if self.__check_exception_line_output(want, got, optionflags):
             return True
         if self.__check_traceback_output(want, got, optionflags):
             return True
         return super().check_output(str(want), str(got), optionflags)
+
+    def __check_warning_output(self, want, got, optionflags):
+        normalized_want = self.__normalize_expected_warning_output(want)
+        if normalized_want != want and super().check_output(normalized_want, got, optionflags):
+            return True
+        got_lines = got.splitlines(True)
+        prefix = ""
+        for index, line in enumerate(got_lines):
+            prefix += line
+            if "Warning:" not in prefix:
+                continue
+            remaining = "".join(got_lines[index + 1:])
+            if super().check_output(want, remaining, optionflags):
+                return True
+        return False
+
+    def __normalize_expected_warning_output(self, text):
+        return re.sub(
+            r"(?m)^([ \\t]*)doctest:warning\\.\\.\\.\\r?\\n[ \\t]*([A-Za-z_]\\w*(?:\\.[A-Za-z_]\\w*)*Warning): ",
+            r"\\1doctest:...: \\2: ",
+            text,
+        )
 
     def __check_exception_line_output(self, want, got, optionflags):
         want_lines = [line.strip() for line in want.strip().splitlines() if line.strip()]
