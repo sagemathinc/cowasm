@@ -8903,6 +8903,28 @@ the saved block- and file-failure cluster queries are empty. The latest run
 metadata records node profile, runner version 61, and Sagelite source/package
 commit `f575cf6224f749763d7c875229cbd684e5939e58`.
 
+Focused JSmol iframe display corpus-growth pass:
+
+```text
+sage -t passed: 24 passed, 0 failed, 1 skipped
+```
+
+That one-file focused validation adds `sage/repl/display/jsmol_iframe.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 612
+non-comment entries. The file exercises the browser-facing JSmol iframe HTML
+generator and `OutputSceneJmol` script inlining path without new WASI source
+tags or startup namespace changes.
+
+Direct adjacent sampling kept `sage/repl/display/formatter.py`,
+`sage/repl/rich_output/backend_emacs.py`, and `sage/repl/configuration.py` out
+of the quiet corpus because their current failures cluster around unavailable
+IPython shell/display-formatter and `traitlets` configuration infrastructure.
+It also kept skipped-only or zero-block REPL helpers such as
+`sage/repl/image.py`, `sage/repl/user_globals.py`,
+`sage/repl/prompts.py`, and `sage/repl/rich_output/output_catalog.py` out of
+the dashboard.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
