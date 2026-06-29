@@ -680,6 +680,7 @@ src/sage/symbolic/complexity_measures.py
 src/sage/symbolic/tests.py
 src/sage/symbolic/symbols.py
 src/sage/games/sudoku.py
+src/sage/games/quantumino.py
 src/sage/tests/__init__.py
 src/sage/tests/cython.pyx
 src/sage/tests/functools_partial_src.py

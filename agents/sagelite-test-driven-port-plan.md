@@ -10796,6 +10796,33 @@ The saved block- and file-failure cluster queries are empty; skip grouping
 records six `deferred:known bug` cachefunc examples, including the four
 deprecated-alias warning-output deferrals.
 
+Focused quantumino corpus-growth pass:
+
+```text
+sage -t passed: 57 passed, 0 failed, 42 skipped
+```
+
+That one-file make-target validation adds `sage/games/quantumino.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 690
+non-comment entries. Direct sampling first recorded 57 passing blocks, 40
+existing skips, and two focused failures. The failures were narrow
+browser-profile boundaries: the top-level `show_pentaminos()` example imports
+the stripped 3D plotting stack, and the skinny-box no-solution check reaches
+GAP-backed Weyl-group setup before raising the expected `StopIteration`.
+
+The added WASI source patch marks those examples as
+`# needs sage.plot.plot3d` and `# needs sage.libs.gap`, preserving the
+browser-compatible Quantumino state, solver setup, iterator, and
+zero-solution count coverage. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quantumino-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected `optional:sage.plot.plot3d`, `optional:sage.libs.gap`,
+and pre-existing long/deferred skips.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

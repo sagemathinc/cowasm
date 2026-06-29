@@ -6195,3 +6195,12 @@ diff -urN a/src/sage/plot/point.py b/src/sage/plot/point.py
          sage: p = P[0]
 -        sage: q = p.plot3d(z=[2,3])
 +        sage: q = p.plot3d(z=[2,3])                                                # needs sage.plot.plot3d
+diff -urN a/src/sage/games/quantumino.py b/src/sage/games/quantumino.py
+--- a/src/sage/games/quantumino.py
++++ b/src/sage/games/quantumino.py
+@@ -55 +55 @@
+-    sage: show_pentaminos()
++    sage: show_pentaminos()                              # needs sage.plot.plot3d
+@@ -562 +562 @@
+-            sage: next(QuantuminoSolver(4, box=(40,2,1)).solve())
++            sage: next(QuantuminoSolver(4, box=(40,2,1)).solve())  # needs sage.libs.gap
