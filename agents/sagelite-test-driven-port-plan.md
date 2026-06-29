@@ -11177,11 +11177,23 @@ Focused validation rebuilt the affected NTL side modules
 `env.gf2x_mul`. The previous failing `sage/libs/ntl/error.pyx:40` setup line
 now passes under `sage -t --line 40`.
 
-`sage/libs/ntl/error.pyx` remains outside the quiet corpus. A full-file rerun
-now reaches the next boundary at `a.quo_rem(a)`, where NTL's expected
-`NTLError: DivRem: division by zero` path traps in the existing NTL/libcxx
-ostream `memory access out of bounds` cluster while printing
-`NTL::TerminalError`.
+Focused NTL zero-divisor error pass:
+
+```text
+error.pyx: 4 passed, 0 failed, 0 skipped
+error.pyx:40 rerun: 1 passed, 0 failed, 0 skipped
+```
+
+This pass adds `sage/libs/ntl/error.pyx` to the quiet corpus. The WASI source
+patch now guards `ntl_ZZX.quo_rem()` against a zero divisor and raises Sage's
+`NTLError: DivRem: division by zero` before NTL reaches `TerminalError`. That
+avoids the current side-module layout where `sage.libs.ntl.error` installs a
+callback into one statically linked NTL copy while `ntl_ZZX` can still reach
+its own unset NTL terminal-printer path and trap in libcxx ostream output.
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/probes/ntl-error-make.sqlite3`.
 
 ## Phase 5: Subprocess Strategy
 

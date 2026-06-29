@@ -684,6 +684,19 @@ diff -urN a/src/sage/libs/ntl/meson.build b/src/sage/libs/ntl/meson.build
 +    link_args: cowasm_ntl_link_args,
    )
  endforeach
+diff -urN a/src/sage/libs/ntl/ntl_ZZX.pyx b/src/sage/libs/ntl/ntl_ZZX.pyx
+--- a/src/sage/libs/ntl/ntl_ZZX.pyx
++++ b/src/sage/libs/ntl/ntl_ZZX.pyx
+@@ -408,6 +408,9 @@
+         """
+         cdef ZZX_c *r
+         cdef ZZX_c *q
++        if ZZX_IsZero(other.x):
++            from sage.libs.ntl.error import NTLError
++            raise NTLError("DivRem: division by zero")
+         sig_on()
+         try:
+             ZZX_quo_rem(&self.x, &other.x, &r, &q)
 diff -urN a/src/sage/matrix/meson.build b/src/sage/matrix/meson.build
 --- a/src/sage/matrix/meson.build
 +++ b/src/sage/matrix/meson.build
