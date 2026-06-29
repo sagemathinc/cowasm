@@ -11558,6 +11558,30 @@ fresh patched Sagelite source copy, with a temporary one-file corpus,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/inline-fortran-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused database namespace corpus pass:
+
+```text
+databases/all.py: 3 passed, 0 failed, 2 skipped
+```
+
+This pass adds `sage/databases/all.py` to the quiet corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 719
+non-comment entries. Direct sampling first recorded one default-profile
+failure in the `CremonaDatabase()` example because it reaches the unavailable
+process-backed Cremona database boundary. The added WASI source patch marks
+that example as `# needs database_cremona_ellcurve`, preserving the runnable
+database namespace checks for Conway polynomials, the Jones number-field
+table, and OEIS.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/databases-all-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` records the expected `database_cremona_ellcurve` and
+`database_symbolic_data` optional skips.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

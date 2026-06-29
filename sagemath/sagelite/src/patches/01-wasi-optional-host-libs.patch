@@ -5950,6 +5950,12 @@ diff -urN a/src/sage/homology/matrix_utils.py b/src/sage/homology/matrix_utils.p
 @@ -69 +69 @@
 -        sage: mat.elementary_divisors() == dhsw_snf(mat)
 +        sage: mat.elementary_divisors() == dhsw_snf(mat)                         # random - Sagelite does not yet seed this random-matrix example
+diff -urN a/src/sage/databases/all.py b/src/sage/databases/all.py
+--- a/src/sage/databases/all.py
++++ b/src/sage/databases/all.py
+@@ -28 +28 @@
+-    sage: CremonaDatabase()
++    sage: CremonaDatabase()                                                       # needs database_cremona_ellcurve
 diff -urN a/src/sage/databases/jones.py b/src/sage/databases/jones.py
 --- a/src/sage/databases/jones.py
 +++ b/src/sage/databases/jones.py
