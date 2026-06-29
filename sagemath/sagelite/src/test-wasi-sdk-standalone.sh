@@ -1917,6 +1917,43 @@ if [ "$doctest_recorded_line" != "$doctest_expected_line" ]; then
   record_blocker "sagelite-blocked: sage -t doctest smoke recorded line $doctest_recorded_line for 2^5, expected $doctest_expected_line."
 fi
 doctest_block_key="$(sqlite3 "$doctest_smoke_db" "select block_key from blocks where source like '2^5%' limit 1;")"
+doctest_tmpdir_root="$probe_dir/sagelite-doctest-tmpdir-root"
+doctest_tmpdir_db_dir="$probe_dir/sagelite-doctest-tmpdir-db"
+doctest_tmpdir_db="$doctest_tmpdir_db_dir/sagelite-doctest-tmpdir.sqlite3"
+doctest_tmpdir_log="$dist_dir/doctest-tmpdir.log"
+mkdir -p "$doctest_tmpdir_db_dir"
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --block-key "$doctest_block_key" \
+      --tmpdir "$doctest_tmpdir_root" \
+      --sqlite "$doctest_tmpdir_db" "$doctest_smoke_file" \
+      >"$doctest_tmpdir_log" 2>&1
+doctest_tmpdir_status=$?
+set -e
+if [ "$doctest_tmpdir_status" -eq 124 ]; then
+  tail -120 "$doctest_tmpdir_log" >&2
+  record_blocker "sagelite-blocked: sage -t tmpdir doctest smoke timed out after $node_import_timeout; see $doctest_tmpdir_log for the first runtime blocker."
+fi
+if [ "$doctest_tmpdir_status" -ne 0 ]; then
+  tail -120 "$doctest_tmpdir_log" >&2
+  record_blocker "sagelite-blocked: sage -t tmpdir doctest smoke failed; see $doctest_tmpdir_log for the first runtime blocker."
+fi
+doctest_tmpdir_counts="$(sqlite3 "$doctest_tmpdir_db" "select status || '|' || total_blocks || '|' || passed_blocks || '|' || failed_blocks || '|' || skipped_blocks from runs order by id desc limit 1;")"
+if [ "$doctest_tmpdir_counts" != "passed|1|1|0|0" ]; then
+  cat "$doctest_tmpdir_log" >&2
+  sqlite3 "$doctest_tmpdir_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t tmpdir doctest smoke wrote unexpected SQLite counts: $doctest_tmpdir_counts"
+fi
+doctest_tmpdir_metadata_count="$(sqlite3 "$doctest_tmpdir_db" "select count(*) from runs where tmp_dir_root = '$doctest_tmpdir_root' and source_root = '$probe_dir';")"
+if [ "$doctest_tmpdir_metadata_count" != "1" ]; then
+  cat "$doctest_tmpdir_log" >&2
+  sqlite3 "$doctest_tmpdir_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t tmpdir doctest smoke did not record tmpdir metadata."
+fi
 doctest_block_key_db="$probe_dir/sagelite-doctest-block-key.sqlite3"
 doctest_block_key_log="$dist_dir/doctest-block-key.log"
 set +e

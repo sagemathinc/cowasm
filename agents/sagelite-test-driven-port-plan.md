@@ -38,6 +38,10 @@ As of 2026-06-23, CoWasm has a first useful test loop:
   - supports `--line` reruns for a specific source line, which gives a direct
     reproduction path for file-level crashes whose state breadcrumbs identify
     the active doctest line before a block row can be written;
+  - supports `--tmpdir` and `COWASM_SAGELITE_DOCTEST_TMPDIR` for placing
+    per-file worker scratch JSON outside the SQLite output directory, so
+    probes can keep their database in a stable writable location while avoiding
+    an unhealthy or quota-limited shared temp directory for worker state;
   - runs physically contiguous, outputless setup prompts before a selected
     `--line` example without recording those setup prompts as extra block
     results, so stateful reruns such as `R.<t> = QQ[]` followed by `2^t`

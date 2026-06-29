@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 70;
+const doctestRunnerVersion = 71;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -205,6 +205,9 @@ function parseDoctestArgs(args, invocationCwd) {
     sourceRoot: process.env.COWASM_SAGELITE_DOCTEST_SOURCE_ROOT
       ? path.resolve(invocationCwd, process.env.COWASM_SAGELITE_DOCTEST_SOURCE_ROOT)
       : null,
+    tmpDirRoot: process.env.COWASM_SAGELITE_DOCTEST_TMPDIR
+      ? path.resolve(invocationCwd, process.env.COWASM_SAGELITE_DOCTEST_TMPDIR)
+      : null,
     files: [],
   };
   for (let i = 0; i < args.length; i += 1) {
@@ -217,6 +220,14 @@ function parseDoctestArgs(args, invocationCwd) {
       options.dbPath = path.resolve(invocationCwd, args[i]);
     } else if (arg.startsWith("--sqlite=")) {
       options.dbPath = path.resolve(invocationCwd, arg.slice("--sqlite=".length));
+    } else if (arg === "--tmpdir") {
+      i += 1;
+      if (i >= args.length) {
+        throw new Error("--tmpdir requires a path");
+      }
+      options.tmpDirRoot = path.resolve(invocationCwd, args[i]);
+    } else if (arg.startsWith("--tmpdir=")) {
+      options.tmpDirRoot = path.resolve(invocationCwd, arg.slice("--tmpdir=".length));
     } else if (arg === "-T" || arg === "--timeout") {
       i += 1;
       if (i >= args.length) {
@@ -336,6 +347,7 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
     runner_version: doctestRunnerVersion,
     resource_root: process.cwd(),
     source_root: options.sourceRoot,
+    tmp_dir_root: options.tmpDirRoot,
     invocation_cwd: invocationCwd,
     status: "error",
     total_blocks: 0,
@@ -346,7 +358,9 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
     files: [],
   };
   fs.mkdirSync(path.dirname(options.dbPath), { recursive: true });
-  const tmpDir = fs.mkdtempSync(path.join(path.dirname(options.dbPath), ".sagelite-doctest-"));
+  const tmpDirRoot = options.tmpDirRoot || path.dirname(options.dbPath);
+  fs.mkdirSync(tmpDirRoot, { recursive: true });
+  const tmpDir = fs.mkdtempSync(path.join(tmpDirRoot, ".sagelite-doctest-"));
   const begin = Date.now();
   try {
     for (const [index, file] of options.files.entries()) {
@@ -402,8 +416,11 @@ async function runDoctestMode(args, invocationCwd, pythonOptions) {
     if (run.status === "error" && run.failed_blocks === 0 && run.files.length > 0) {
       run.failed_blocks = run.files.length;
     }
-    writeDoctestSqlite(options.dbPath, run);
-    fs.rmSync(tmpDir, { recursive: true, force: true });
+    try {
+      writeDoctestSqlite(options.dbPath, run);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
   }
   printDoctestSummary(options.dbPath, run, invocationCwd);
   return run.status === "passed" ? 0 : 1;
@@ -2095,6 +2112,7 @@ function ensureDoctestSchema(dbPath) {
       runner_version INTEGER DEFAULT 1,
       resource_root TEXT,
       source_root TEXT,
+      tmp_dir_root TEXT,
       invocation_cwd TEXT,
       status TEXT NOT NULL,
       total_blocks INTEGER NOT NULL,
@@ -2146,6 +2164,7 @@ function ensureDoctestSchema(dbPath) {
   ensureSqliteColumn(dbPath, "runs", "runner_version", "INTEGER DEFAULT 1");
   ensureSqliteColumn(dbPath, "runs", "resource_root", "TEXT");
   ensureSqliteColumn(dbPath, "runs", "source_root", "TEXT");
+  ensureSqliteColumn(dbPath, "runs", "tmp_dir_root", "TEXT");
   ensureSqliteColumn(dbPath, "runs", "invocation_cwd", "TEXT");
   ensureSqliteColumn(dbPath, "runs", "sagelite_source_commit", "TEXT");
   ensureSqliteColumn(dbPath, "runs", "sagelite_package_commit", "TEXT");
@@ -2220,7 +2239,8 @@ function writeDoctestSqlite(dbPath, run) {
     `INSERT INTO runs (
       started_at, finished_at, git_commit, sagelite_source_commit,
       sagelite_package_commit, command,
-      run_profile, runner_version, resource_root, source_root, invocation_cwd,
+      run_profile, runner_version, resource_root, source_root, tmp_dir_root,
+      invocation_cwd,
       status, total_blocks, passed_blocks, failed_blocks, skipped_blocks, duration_ms
     ) VALUES (
       ${sqlString(run.started_at)}, ${sqlString(run.finished_at)},
@@ -2228,7 +2248,8 @@ function writeDoctestSqlite(dbPath, run) {
       ${sqlString(run.sagelite_package_commit)}, ${sqlString(run.command)},
       ${sqlString(run.run_profile)},
       ${sqlNumber(run.runner_version)}, ${sqlString(run.resource_root)},
-      ${sqlString(run.source_root)}, ${sqlString(run.invocation_cwd)},
+      ${sqlString(run.source_root)}, ${sqlString(run.tmp_dir_root)},
+      ${sqlString(run.invocation_cwd)},
       ${sqlString(run.status)},
       ${sqlNumber(run.total_blocks)}, ${sqlNumber(run.passed_blocks)},
       ${sqlNumber(run.failed_blocks)}, ${sqlNumber(run.skipped_blocks)},
