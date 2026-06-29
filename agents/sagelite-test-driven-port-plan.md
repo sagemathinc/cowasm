@@ -11582,6 +11582,30 @@ The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` records the expected `database_cremona_ellcurve` and
 `database_symbolic_data` optional skips.
 
+Focused OEIS database corpus pass:
+
+```text
+oeis.py: 131 passed, 0 failed, 178 skipped
+```
+
+This pass adds `sage/databases/oeis.py` to the quiet corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 720 non-comment
+entries. The runnable default-profile coverage exercises OEIS local parsing,
+imaginary-entry construction, sequence object accessors, tuple conversion,
+HTML URL extraction, and natural-object helpers while the broad live OEIS
+network examples remain explicitly skipped as `optional internet` coverage.
+
+The added WASI source patch marks the single `HtmlFragment` display comparison
+as `# random` because Sagelite currently compares the plain Python string
+representation instead of Sage's rich-display text. Keeping the example as
+`random` rather than a skip is intentional: the assignment still runs and
+preserves `HTML` for the following `type(HTML)` check. Focused validation used
+the `test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/oeis-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

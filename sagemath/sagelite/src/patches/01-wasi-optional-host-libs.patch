@@ -5962,6 +5962,12 @@ diff -urN a/src/sage/databases/jones.py b/src/sage/databases/jones.py
 @@ -88 +88 @@
 -        sage: sortkey(QuadraticField(-3))
 +        sage: sortkey(QuadraticField(-3))                                            # needs sage.rings.number_field
+diff -urN a/src/sage/databases/oeis.py b/src/sage/databases/oeis.py
+--- a/src/sage/databases/oeis.py
++++ b/src/sage/databases/oeis.py
+@@ -1598 +1598 @@
+-            sage: HTML = s.links(format='html');  HTML
++            sage: HTML = s.links(format='html');  HTML                           # random - Sagelite compares the HtmlFragment string repr
 diff -urN a/src/sage/features/join_feature.py b/src/sage/features/join_feature.py
 --- a/src/sage/features/join_feature.py
 +++ b/src/sage/features/join_feature.py

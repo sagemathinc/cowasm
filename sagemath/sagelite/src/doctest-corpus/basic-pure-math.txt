@@ -68,6 +68,7 @@ src/sage/databases/conway.py
 src/sage/databases/db_class_polynomials.py
 src/sage/databases/db_modular_polynomials.py
 src/sage/databases/jones.py
+src/sage/databases/oeis.py
 src/sage/dynamics/finite_dynamical_system_catalog.py
 src/sage/dynamics/finite_dynamical_system.py
 src/sage/dynamics/cellular_automata/elementary.py
