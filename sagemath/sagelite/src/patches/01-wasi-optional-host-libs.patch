@@ -4906,6 +4906,24 @@ diff -urN a/src/sage/misc/prandom.py b/src/sage/misc/prandom.py
 @@ -45 +45 @@
 -    sage: timeit('test2()') # random
 +    sage: timeit('test2()') # random                                                    # needs IPython
+diff -urN a/src/sage/misc/sage_timeit_class.pyx b/src/sage/misc/sage_timeit_class.pyx
+--- a/src/sage/misc/sage_timeit_class.pyx
++++ b/src/sage/misc/sage_timeit_class.pyx
+@@ -24 +24 @@
+-        sage: timeit('2^10000')
++        sage: timeit('2^10000')                                                        # needs IPython
+@@ -29 +29 @@
+-        sage: timeit('2+2',precision=2,number=20,repeat=5)
++        sage: timeit('2+2',precision=2,number=20,repeat=5)                              # needs IPython
+@@ -34 +34 @@
+-        sage: timeit('2^10000', preparse=False, number=50)
++        sage: timeit('2^10000', preparse=False, number=50)                              # needs IPython
+@@ -67 +67 @@
+-            sage: timeit.eval("2+2")                     # random output
++            sage: timeit.eval("2+2")                     # random output                # needs IPython
+@@ -110 +110 @@
+-            sage: timeit('2^10000', preparse=False, number=100)
++            sage: timeit('2^10000', preparse=False, number=100)                         # needs IPython
 diff -urN a/src/sage/misc/sage_timeit.py b/src/sage/misc/sage_timeit.py
 --- a/src/sage/misc/sage_timeit.py
 +++ b/src/sage/misc/sage_timeit.py
