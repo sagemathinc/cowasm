@@ -44,6 +44,7 @@ src/sage/cpython/type.pyx
 src/sage/cpython/debug.pyx
 src/sage/cpython/getattr.pyx
 src/sage/cpython/dict_del_by_value.pyx
+src/sage/cpython/string.pxd
 src/sage/coding/bounds_catalog.py
 src/sage/coding/channels_catalog.py
 src/sage/coding/codes_catalog.py

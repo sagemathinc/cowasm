@@ -10011,6 +10011,40 @@ and `quotient_fields.py`, `principal_ideal_domains.py`, and
 files such as `posets.py`, `finite_posets.py`, `vector_bundles.py`,
 `groupoid.py`, and `g_sets.py` remain skipped-only under the default profile.
 
+Focused CPython string-helper corpus-growth pass:
+
+```text
+sage -t passed: 8 passed, 0 failed, 0 skipped
+```
+
+That one-file focused validation adds `sage/cpython/string.pxd` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 662 non-comment
+entries. The file gives the dashboard lightweight coverage for CPython string
+conversion helpers used by Cython code paths, without broadening the runtime
+surface.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=60`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/cpython-string-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
+The same scheduled pass sampled several nearby uncovered files without finding
+another promotion candidate. `sage/cpython/builtin_types.pyx` had no runnable
+blocks, `sage/cpython/string.pyx` and `sage/cpython/wrapperdescr.pxd` were
+skipped-only, and `sage/cpython/cython_metaclass.pyx` remained skipped-only.
+Small category examples such as `bialgebras.py`,
+`examples/algebras_with_basis.py`, and
+`examples/graded_connected_hopf_algebras_with_basis.py` also remained
+skipped-only. Other probes exposed broader clusters that should stay out of
+the quiet corpus for now: `categories/fields.py` still reaches the NTL/libcxx
+finite-field trap, `matrix/change_ring.pyx` and `matrix/misc_flint.pyx` have
+focused matrix/FLINT failures, and uncovered combinatorics samples such as
+`abstract_tree.py`, `colored_permutations.py`, `path_tableaux/dyck_path.py`,
+and `posets/bubble_shuffle.py` hit recursion, NTL import, or poset/path-tableau
+failure clusters.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
