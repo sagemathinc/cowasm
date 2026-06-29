@@ -9388,6 +9388,36 @@ with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/flint-arith-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused quaternion wrapper corpus-growth pass:
+
+```text
+sage -t passed: 2 passed, 0 failed, 1 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/quaternion_algebra.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 642 non-comment
+entries. The file gives compact coverage for the backwards-compatible
+quaternion-algebra unpickle wrapper while the WASI source patch classifies the
+matrix-backed constructor example as
+`# needs sage.matrix.matrix_integer_dense`, matching the missing dense-matrix
+extension boundary seen in direct sampling.
+
+Focused validation rebuilt a fresh patched Sagelite source copy and used
+`SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/quaternion-corpus.txt`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quaternion-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
+Fresh sampling in the same pass kept several nearby low-count candidates out
+of the quiet corpus. `sage/misc/functional.py` still times out in symbolic
+rational setup, `sage/misc/sage_ostools.pyx` is dominated by `fileno` and
+redirection-output drift, FLINT/ARB qsieve and arithmetic helpers still have
+backend failures, `sage/coding/two_weight_db.py` reaches the existing
+NTL/libcxx ostream memory trap during namespace loading, and the sampled
+small interface, database, stats, tests, species, and monoid helpers were
+skipped-only or zero-block under the default browser-compatible profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

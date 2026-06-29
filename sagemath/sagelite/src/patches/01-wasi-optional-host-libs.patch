@@ -5245,6 +5245,12 @@ diff -urN a/src/sage/categories/filtered_modules_with_basis.py b/src/sage/catego
 @@ -1191 +1194,2 @@
 +                    sage: # needs sage.matroids
                      sage: OS = matroids.PG(2, 3).orlik_solomon_algebra(ZZ['x','y'])
+diff -urN a/src/sage/algebras/quaternion_algebra.py b/src/sage/algebras/quaternion_algebra.py
+--- a/src/sage/algebras/quaternion_algebra.py
++++ b/src/sage/algebras/quaternion_algebra.py
+@@ -13 +13 @@
+-        sage: sage.algebras.quaternion_algebra.unpickle_QuaternionAlgebra_v0(*t)
++        sage: sage.algebras.quaternion_algebra.unpickle_QuaternionAlgebra_v0(*t)  # needs sage.matrix.matrix_integer_dense
 diff -urN a/src/sage/structure/set_factories.py b/src/sage/structure/set_factories.py
 --- a/src/sage/structure/set_factories.py
 +++ b/src/sage/structure/set_factories.py
