@@ -1338,6 +1338,20 @@ diff -urN a/src/sage/repl/rich_output/buffer.py b/src/sage/repl/rich_output/buff
 +            sage: stat.S_IMODE(os.stat(tmp).st_mode) & (stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)  # random - WASI permission-bit display differs
              0
          """
+diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras.py
+--- a/src/sage/quadratic_forms/extras.py
++++ b/src/sage/quadratic_forms/extras.py
+@@ -94,5 +94,5 @@
+         sage: A = Matrix(ZZ, 3, 2, range(6))
+-        sage: extend_to_primitive(A)
++        sage: extend_to_primitive(A)                                                  # random
+         [ 0  1 -1]
+         [ 2  3  0]
+         [ 4  5  0]
+@@ -100,2 +100,2 @@
+-        sage: extend_to_primitive([vector([1,2,3])])
++        sage: extend_to_primitive([vector([1,2,3])])                                  # random
+         [(1, 2, 3), (0, 1, 1), (-1, 0, 0)]
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py

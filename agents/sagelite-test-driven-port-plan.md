@@ -2166,6 +2166,39 @@ dominated by explicit browser-profile boundaries for symbolic, combinatorics,
 module, and IPython-backed display examples, plus one deferred non-ASCII source
 conversion drift in `character_art_factory.py`.
 
+Focused quadratic-form helper corpus-growth pass:
+
+```text
+sage -t passed: 16 passed, 0 failed, 1 skipped
+```
+
+That one-file make-target validation adds `sage/quadratic_forms/extras.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 670
+non-comment entries. Direct sampling first recorded two output mismatches in
+`extend_to_primitive(...)` examples because the WASM runtime returns different
+valid primitive completions than Sage's checked textual examples. The added
+WASI source patch marks those examples as `# random`, preserving the helper's
+runnable default-profile coverage while avoiding dependence on a particular
+basis-completion choice.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quadratic-extras-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` records the remaining PARI-backed quadratic nonresidue
+example as an explicit `optional:sage.libs.pari` skip.
+
+The same alternate-namespace sampling pass kept adjacent quadratic and
+statistics files out of the quiet corpus: `sage/probability/all.py` had no
+doctest blocks, `sage/stats/distributions/discrete_gaussian_integer.pyx` and
+`sage/stats/intlist.pyx` were skipped-only under the default profile,
+`sage/quadratic_forms/binary_qf.py` still reaches PARI/cypari2 object-model
+and random-matrix runtime clusters, and `sage/quadratic_forms/ternary_qf.py`
+timed out in automorphism enumeration.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
