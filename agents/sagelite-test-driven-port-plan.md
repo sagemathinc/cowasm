@@ -9265,6 +9265,32 @@ also still have focused block failures. Validation used
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/coerce-actions-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused benchmark helper corpus-growth pass:
+
+```text
+sage -t passed: 13 passed, 0 failed, 5 skipped
+```
+
+That one-file make-target validation adds `sage/misc/benchmark.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 637 non-comment
+entries. Direct sampling first recorded 13 passing blocks and five failures:
+the all-benchmark smoke and `bench0()` route through PARI-backed rational
+polynomial factorization, `bench1()` requires the unavailable eclib/mwrank
+interface, and `bench6()`/`bench7()` require elliptic-curve scheme support
+that is outside the stripped browser-compatible startup namespace.
+
+The added WASI source patch marks those backend-heavy examples as explicit
+`# needs` skips while preserving the integer, rational, and polynomial
+arithmetic benchmark helpers as default-profile coverage. Focused validation
+used the `test-sage-doctest-corpus` make target after rebuilding a fresh
+patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/benchmark-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the deferred examples under
+`sage.libs.pari`, `sage.libs.eclib`, and `sage.schemes`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

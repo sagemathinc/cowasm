@@ -461,6 +461,7 @@ src/sage/rings/polynomial/toy_variety.py
 src/sage/matrix/berlekamp_massey.py
 src/sage/misc/abstract_method.py
 src/sage/misc/banner.py
+src/sage/misc/benchmark.py
 src/sage/misc/bindable_class.py
 src/sage/misc/binary_tree.pyx
 src/sage/misc/c3.pyx

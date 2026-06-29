@@ -5532,3 +5532,21 @@ diff -urN a/src/sage/parallel/parallelism.py b/src/sage/parallel/parallelism.py
 @@ -300 +300 @@
 -            sage: Parallelism().get_all()
 +            sage: Parallelism().get_all()  # random - dict display order differs in Sagelite
+diff -urN a/src/sage/misc/benchmark.py b/src/sage/misc/benchmark.py
+--- a/src/sage/misc/benchmark.py
++++ b/src/sage/misc/benchmark.py
+@@ -23 +23 @@
+-        sage: _ = benchmark()
++        sage: _ = benchmark()                                                     # needs sage.libs.pari sage.libs.eclib sage.schemes
+@@ -89 +89 @@
+-        sage: print(bench0()[0])
++        sage: print(bench0()[0])                                                   # needs sage.libs.pari
+@@ -109 +109 @@
+-        sage: print(bench1()[0])
++        sage: print(bench1()[0])                                                   # needs sage.libs.eclib
+@@ -194 +194 @@
+-        sage: print(bench6()[0])
++        sage: print(bench6()[0])                                                   # needs sage.schemes
+@@ -212 +212 @@
+-        sage: print(bench7()[0])
++        sage: print(bench7()[0])                                                   # needs sage.schemes
