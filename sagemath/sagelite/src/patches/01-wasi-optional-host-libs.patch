@@ -5915,6 +5915,60 @@ diff -urN a/src/sage/plot/circle.py b/src/sage/plot/circle.py
 @@ -391 +391 @@
 -        sage: circle((0, 0), 2).show(figsize=[10,10])  # These are equivalent
 +        sage: circle((0, 0), 2).show(figsize=[10,10])  # These are equivalent  # needs matplotlib
+diff -urN a/src/sage/plot/complex_plot.pyx b/src/sage/plot/complex_plot.pyx
+--- a/src/sage/plot/complex_plot.pyx
++++ b/src/sage/plot/complex_plot.pyx
+@@ -522 +522 @@
+-        sage: complex_to_cmap_rgb([[0, 1, 1000]])  # abs tol 1e-4
++        sage: complex_to_cmap_rgb([[0, 1, 1000]])  # abs tol 1e-4                 # needs matplotlib
+@@ -526 +526 @@
+-        sage: complex_to_cmap_rgb([[0, 1, 1000]], cmap='viridis')  # abs tol 1e-4
++        sage: complex_to_cmap_rgb([[0, 1, 1000]], cmap='viridis')  # abs tol 1e-4 # needs matplotlib
+@@ -534,2 +534,2 @@
+-        sage: complex_to_cmap_rgb([[0, 1 + 1j, 3 + 4j]], contoured=True,  # abs tol 1e-4
+-        ....:                     contour_type='logarithmic', contour_base=3)
++        sage: complex_to_cmap_rgb([[0, 1 + 1j, 3 + 4j]], contoured=True,  # abs tol 1e-4 # needs matplotlib
++        ....:                     contour_type='logarithmic', contour_base=3)     # needs matplotlib
+@@ -539,2 +539,2 @@
+-        sage: complex_to_cmap_rgb([[0, 1 + 1j, 3 + 4j]], cmap='turbo',   # abs tol 1e-4
+-        ....:                     contoured=True, contour_type='linear', contour_base=3)
++        sage: complex_to_cmap_rgb([[0, 1 + 1j, 3 + 4j]], cmap='turbo',   # abs tol 1e-4 # needs matplotlib
++        ....:                     contoured=True, contour_type='linear', contour_base=3) # needs matplotlib
+@@ -551,2 +551,2 @@
+-        sage: complex_to_cmap_rgb([[0, 1 + 1j, 2.9 + 4j]], cmap='turbo',  # abs tol 1e-4
+-        ....:                     contoured=True, dark_rate=0.05, contour_base=5)
++        sage: complex_to_cmap_rgb([[0, 1 + 1j, 2.9 + 4j]], cmap='turbo',  # abs tol 1e-4 # needs matplotlib
++        ....:                     contoured=True, dark_rate=0.05, contour_base=5) # needs matplotlib
+@@ -556,2 +556,2 @@
+-        sage: complex_to_cmap_rgb([[0, 1 + 1j, 2.9 + 4j]], cmap='turbo',  # abs tol 1e-4
+-        ....:                     contoured=True, dark_rate=0.85, contour_base=5)
++        sage: complex_to_cmap_rgb([[0, 1 + 1j, 2.9 + 4j]], cmap='turbo',  # abs tol 1e-4 # needs matplotlib
++        ....:                     contoured=True, dark_rate=0.85, contour_base=5) # needs matplotlib
+@@ -781 +781 @@
+-        sage: p = complex_plot(lambda z: z^2-1, (-2, 2), (-2, 2))
++        sage: p = complex_plot(lambda z: z^2-1, (-2, 2), (-2, 2))                 # needs matplotlib
+@@ -787 +787 @@
+-            sage: p = complex_plot(lambda z: z^2-1, (-2, 2), (-2, 2))
++            sage: p = complex_plot(lambda z: z^2-1, (-2, 2), (-2, 2))             # needs matplotlib
+@@ -802,2 +802,2 @@
+-            sage: p = complex_plot(lambda z: z, (-1, 2), (-3, 4))
+-            sage: sorted(p.get_minmax_data().items())
++            sage: p = complex_plot(lambda z: z, (-1, 2), (-3, 4))                 # needs matplotlib
++            sage: sorted(p.get_minmax_data().items())                             # needs matplotlib
+@@ -805,2 +805,2 @@
+-            sage: p = complex_plot(lambda z: z, (1, 2), (3, 4))
+-            sage: sorted(p.get_minmax_data().items())
++            sage: p = complex_plot(lambda z: z, (1, 2), (3, 4))                   # needs matplotlib
++            sage: sorted(p.get_minmax_data().items())                             # needs matplotlib
+@@ -816 +816 @@
+-            sage: isinstance(complex_plot(lambda z: z, (-1,1), (-1,1))[0]._allowed_options(), dict)
++            sage: isinstance(complex_plot(lambda z: z, (-1,1), (-1,1))[0]._allowed_options(), dict) # needs matplotlib
+@@ -826 +826 @@
+-            sage: isinstance(complex_plot(lambda z: z, (-1,1), (-1,1))[0]._repr_(), str)
++            sage: isinstance(complex_plot(lambda z: z, (-1,1), (-1,1))[0]._repr_(), str) # needs matplotlib
+@@ -835 +835 @@
+-            sage: complex_plot(lambda x: x^2, (-5, 5), (-5, 5))
++            sage: complex_plot(lambda x: x^2, (-5, 5), (-5, 5))                   # needs matplotlib
 diff -urN a/src/sage/plot/disk.py b/src/sage/plot/disk.py
 --- a/src/sage/plot/disk.py
 +++ b/src/sage/plot/disk.py

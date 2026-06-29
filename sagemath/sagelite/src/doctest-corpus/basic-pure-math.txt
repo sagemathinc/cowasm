@@ -662,6 +662,7 @@ src/sage/plot/arrow.py
 src/sage/plot/bar_chart.py
 src/sage/plot/bezier_path.py
 src/sage/plot/circle.py
+src/sage/plot/complex_plot.pyx
 src/sage/plot/disk.py
 src/sage/plot/ellipse.py
 src/sage/plot/graphics.py

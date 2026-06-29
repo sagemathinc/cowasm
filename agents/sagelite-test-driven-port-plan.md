@@ -10744,6 +10744,33 @@ records the expected `optional:matplotlib`, `optional:sage.plot.plot3d`, and
 pre-existing symbolic, latex, polyhedron, and deferred-warning deferrals. The
 runner version is now 68.
 
+Focused complex-plot corpus-growth pass:
+
+```text
+sage -t passed: 40 passed, 0 failed, 63 skipped
+```
+
+That one-file make-target validation adds `sage/plot/complex_plot.pyx` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 689 non-comment
+entries. Direct sampling first recorded 40 passed blocks, 15 failed blocks,
+and 48 skipped blocks. The failures were narrow Matplotlib boundaries:
+colormap-backed `complex_to_cmap_rgb(...)` examples and `complex_plot(...)`
+constructor examples import Matplotlib in the stripped browser-compatible
+profile, with two dependent min/max checks failing only because their setup
+plots were unavailable.
+
+The added WASI source patch marks those Matplotlib-backed examples as
+`# needs matplotlib`, preserving the remaining complex-to-RGB, phase, HLS/RGB,
+and option-validation doctests as default-profile coverage. Focused validation
+used the `test-sage-doctest-corpus` make target after rebuilding a fresh
+patched Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/dev/shm/cowasm-sagelite/complex-plot-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected `optional:matplotlib` deferrals plus the pre-existing
+symbolic skips. The runner version remains 68.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
