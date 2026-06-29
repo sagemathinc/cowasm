@@ -11726,6 +11726,36 @@ The saved block- and file-failure cluster queries are empty, and
 `skips-by-reason.sql` records the expected `optional:ipython`, `long time`,
 and `optional:sage.libs.pari` boundaries.
 
+Focused discrete wavelet transform corpus-growth pass:
+
+```text
+dwt.pyx: 9 passed, 0 failed, 11 skipped
+```
+
+This pass adds `sage/calculus/transforms/dwt.pyx` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 724
+non-comment entries. The file adds small, self-contained exact and numerical
+wavelet-transform coverage without requiring new WASI source tags or startup
+namespace changes.
+
+Focused sampling in the same pass kept nearby low-count candidates outside
+the quiet corpus: `sage/crypto/public_key/key_exchange/finite_field_diffie_hellman.py`
+still has finite-field doctest failures, `sage/combinat/species/all.py` and
+`sage/combinat/species/library.py` still have species startup/backend
+failures, and `sage/algebras/lie_algebras/abelian.py` still has Lie-algebra
+startup failures. Skipped-only files such as `sage/knots/gauss_code.py`,
+`sage/coding/hamming_code.py`, `sage/combinat/species/misc.py`,
+`sage/combinat/designs/difference_matrices.py`,
+`sage/rings/factorint_flint.pyx`, and `sage/rings/factorint_pari.pyx`
+remain outside the corpus.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/dwt-make.sqlite3`.
+The latest-run summary records 9 passed, 0 failed, 11 skipped, runner version
+72, and empty saved block- and file-failure cluster queries.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
