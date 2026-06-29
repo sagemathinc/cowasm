@@ -2124,6 +2124,44 @@ if [ "$doctest_namespace_count" != "1" ]; then
   sqlite3 "$doctest_namespace_db" ".dump" >&2 || true
   record_blocker "sagelite-blocked: sage -t namespace doctest smoke did not preserve Sage globals over module helper globals."
 fi
+doctest_stats_namespace_db="$probe_dir/sagelite-doctest-stats-namespace.sqlite3"
+doctest_stats_namespace_log="$dist_dir/doctest-stats-namespace.log"
+doctest_stats_namespace_file="$probe_dir/sagelite-doctest-stats-namespace.py"
+cat >"$doctest_stats_namespace_file" <<'PY'
+"""
+Check that the stripped Sagelite startup namespace includes the stats catalog.
+
+EXAMPLES::
+
+    sage: hasattr(distributions, "DiscreteGaussianDistributionPolynomialSampler")
+    True
+"""
+PY
+set +e
+COWASM_PYTHON_WASM_NODE="$python_wasm/dist/node.js" \
+  COWASM_SAGELITE_ELECTRON_RESOURCES="$electron_resources_dir" \
+  COWASM_SAGELITE_DOCTEST_SOURCE_ROOT="$probe_dir" \
+  timeout "$node_import_timeout" \
+    node "$src_dir/sagelite-node-repl.cjs" -t \
+      --sqlite "$doctest_stats_namespace_db" "$doctest_stats_namespace_file" \
+      >"$doctest_stats_namespace_log" 2>&1
+doctest_stats_namespace_status=$?
+set -e
+if [ "$doctest_stats_namespace_status" -eq 124 ]; then
+  tail -120 "$doctest_stats_namespace_log" >&2
+  record_blocker "sagelite-blocked: sage -t stats-namespace doctest smoke timed out after $node_import_timeout; see $doctest_stats_namespace_log for the first runtime blocker."
+fi
+if [ "$doctest_stats_namespace_status" -ne 0 ]; then
+  tail -120 "$doctest_stats_namespace_log" >&2
+  sqlite3 "$doctest_stats_namespace_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t stats-namespace doctest smoke failed; see $doctest_stats_namespace_log for the first runtime blocker."
+fi
+doctest_stats_namespace_count="$(sqlite3 "$doctest_stats_namespace_db" "select count(*) from blocks where status = 'passed' and source like 'hasattr(distributions, \"DiscreteGaussianDistributionPolynomialSampler\")%';")"
+if [ "$doctest_stats_namespace_count" != "1" ]; then
+  cat "$doctest_stats_namespace_log" >&2
+  sqlite3 "$doctest_stats_namespace_db" ".dump" >&2 || true
+  record_blocker "sagelite-blocked: sage -t stats-namespace doctest smoke did not expose the stats distributions catalog."
+fi
 doctest_user_globals_db="$probe_dir/sagelite-doctest-user-globals.sqlite3"
 doctest_user_globals_log="$dist_dir/doctest-user-globals.log"
 doctest_user_globals_file="$probe_dir/sagelite-doctest-user-globals.py"

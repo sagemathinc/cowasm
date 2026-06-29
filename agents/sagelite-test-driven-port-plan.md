@@ -11606,6 +11606,28 @@ Sagelite source copy, with a temporary one-file corpus,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/oeis-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused stats namespace pass:
+
+```text
+discrete_gaussian_polynomial.py: 21 passed, 0 failed, 3 skipped
+basic_stats.py: 34 passed, 0 failed, 30 skipped
+```
+
+This pass repairs the stripped Sagelite doctest startup namespace so upstream
+stats doctests can resolve the `distributions` catalog alias from
+`sage.stats.all`. The standalone smoke now includes a synthetic
+stats-namespace doctest that checks
+`distributions.DiscreteGaussianDistributionPolynomialSampler` is visible at
+startup. Focused validation records the existing clean polynomial sampler and
+basic-stats files as unchanged under the new seed.
+
+Sampling `sage/stats/distributions/discrete_gaussian_lattice.py` now gets past
+the previous `NameError: name 'distributions' is not defined` startup cluster,
+improving the file from `45 passed, 97 failed, 16 skipped` to
+`47 passed, 95 failed, 16 skipped`. The remaining failures are real lattice
+sampler or symbolic/numeric clusters, so the file remains outside the quiet
+default-profile corpus for now.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
