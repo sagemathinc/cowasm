@@ -1355,7 +1355,7 @@ diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,203 @@
+@@ -253,74 +253,204 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1485,9 +1485,10 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.modules.free_module_element import vector
 +    from sage.plot.colors import hue
 +    from sage.plot.graphics import Graphics
++    from sage.plot.arc import arc
 +    from sage.plot.line import line
 +    from sage.plot.circle import circle
-+    from sage.plot.point import point
++    from sage.plot.point import point, point2d
 +    from sage.plot.polygon import polygon
 +    from sage.probability.probability_distribution import RealDistribution
 +    from sage.schemes.generic.spec import Spec
@@ -5831,6 +5832,36 @@ diff -urN a/src/sage/plot/scatter_plot.py b/src/sage/plot/scatter_plot.py
 @@ -181 +181 @@
 -        sage: scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green').show(ymax=100) # These are equivalent
 +        sage: scatter_plot([(0, 0), (1, 1)], markersize=100, facecolor='green').show(ymax=100) # These are equivalent  # needs matplotlib
+diff -urN a/src/sage/plot/text.py b/src/sage/plot/text.py
+--- a/src/sage/plot/text.py
++++ b/src/sage/plot/text.py
+@@ -131,2 +131,2 @@
+-            sage: s=t.plot3d()
+-            sage: s.jmol_repr(s.testing_render_params())[0][1]
++            sage: s=t.plot3d()                                                    # needs sage.plot.plot3d
++            sage: s.jmol_repr(s.testing_render_params())[0][1]                    # needs sage.plot.plot3d
+@@ -157,4 +157,4 @@
+-            sage: s = t.plot3d()
+-            sage: s.jmol_repr(s.testing_render_params())[0][2]
++            sage: s = t.plot3d()                                                  # needs sage.plot.plot3d
++            sage: s.jmol_repr(s.testing_render_params())[0][2]                    # needs sage.plot.plot3d
+             'label "ABC"'
+-            sage: s._trans
++            sage: s._trans                                                        # needs sage.plot.plot3d
+@@ -329,2 +329,2 @@
+-        sage: with tempfile.NamedTemporaryFile(suffix='.pdf') as f:
+-        ....:     text("sage", (0,0), rgbcolor=(0,0,0)).save(f.name)
++        sage: with tempfile.NamedTemporaryFile(suffix='.pdf') as f:                # needs matplotlib
++        ....:     text("sage", (0,0), rgbcolor=(0,0,0)).save(f.name)              # needs matplotlib
+@@ -402 +402 @@
+-        sage: t = text3d("hi", (1, 2, 3))
++        sage: t = text3d("hi", (1, 2, 3))                                         # needs sage.plot.plot3d
+@@ -407 +407 @@
+-        sage: t.plot3d()  # text at position (1, 2, 0)
++        sage: t.plot3d()  # text at position (1, 2, 0)                             # needs sage.plot.plot3d
+@@ -417 +417 @@
+-        sage: text("MATH IS AWESOME", (0, 0), fontsize=40).show(axes=False)
++        sage: text("MATH IS AWESOME", (0, 0), fontsize=40).show(axes=False)        # needs matplotlib
 diff -urN a/src/sage/plot/polygon.py b/src/sage/plot/polygon.py
 --- a/src/sage/plot/polygon.py
 +++ b/src/sage/plot/polygon.py

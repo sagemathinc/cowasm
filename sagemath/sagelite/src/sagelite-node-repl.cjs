@@ -9,7 +9,7 @@ const { execFileSync, spawn } = require("child_process");
 const pythonWasmModule = resolvePythonWasmModule();
 const { asyncPython } = require(pythonWasmModule);
 const sageliteManifestName = "sagelite-electron-resources.json";
-const doctestRunnerVersion = 66;
+const doctestRunnerVersion = 67;
 
 function resolvePythonWasmModule() {
   if (process.env.COWASM_PYTHON_WASM_NODE) {
@@ -960,9 +960,10 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.misc.functional", ("sqrt",)),
         ("sage.plot.colors", ("hue",)),
         ("sage.plot.graphics", ("Graphics",)),
+        ("sage.plot.arc", ("arc",)),
         ("sage.plot.line", ("line",)),
         ("sage.plot.circle", ("circle",)),
-        ("sage.plot.point", ("point",)),
+        ("sage.plot.point", ("point", "point2d")),
         ("sage.plot.polygon", ("polygon",)),
         ("sage.probability.probability_distribution", ("RealDistribution",)),
         ("sage.modules.free_module", ("FreeModule", "VectorSpace", "span")),

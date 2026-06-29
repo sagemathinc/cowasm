@@ -2283,6 +2283,38 @@ The saved block- and file-failure cluster queries are empty, and
 `optional:sage.plot.plot3d`. The latest-run summary records runner version 66
 in the default node profile.
 
+Focused text-plot corpus-growth pass:
+
+```text
+sage -t passed: 46 passed, 0 failed, 11 skipped
+```
+
+That one-file make-target validation adds `sage/plot/text.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 685
+non-comment entries. Direct sampling first recorded 43 passed blocks, 12
+failed blocks, and 2 skipped blocks. The failures were narrow: 3D text
+examples imported the stripped `sage.plot.plot3d` RDF wrapper path,
+PDF/show examples imported Matplotlib, and one 2D LaTeX text example relied on
+`arc` and `point2d` being available from Sage's startup namespace.
+
+The doctest runner now seeds `arc` and `point2d` in the common doctest
+namespace, and the WASI `sage.all` patch exposes the same names for REPL
+parity on a fresh patched Sagelite source copy. The added WASI source patch
+marks only the 3D text and Matplotlib-backed examples as optional dependency
+boundaries, preserving browser-compatible text construction, option,
+alignment, representation, error, and 2D graphics coverage as default-profile
+doctests. Focused validation used the `test-sage-doctest-corpus` make target
+after rebuilding a fresh patched Sagelite source copy, with a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/plot-frontier/text-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups the deferred blocks under
+`optional:sage.plot.plot3d`, `optional:matplotlib`, and the existing
+`optional:sage.symbolic` tags. The latest-run summary records runner version
+67 in the default node profile.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
