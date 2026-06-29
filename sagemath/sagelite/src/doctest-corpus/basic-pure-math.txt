@@ -666,6 +666,7 @@ src/sage/logic/logicparser.py
 src/sage/logic/logictable.py
 src/sage/logic/propcalc.py
 src/sage/quadratic_forms/constructions.py
+src/sage/quadratic_forms/binary_qf.py
 src/sage/quadratic_forms/count_local_2.pyx
 src/sage/quadratic_forms/extras.py
 src/sage/quadratic_forms/quadratic_form__evaluate.pyx

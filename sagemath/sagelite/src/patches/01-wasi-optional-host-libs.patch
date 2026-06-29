@@ -1409,6 +1409,21 @@ diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras
 -        sage: extend_to_primitive([vector([1,2,3])])
 +        sage: extend_to_primitive([vector([1,2,3])])                                  # random
          [(1, 2, 3), (0, 1, 1), (-1, 0, 0)]
+diff -urN a/src/sage/quadratic_forms/binary_qf.py b/src/sage/quadratic_forms/binary_qf.py
+--- a/src/sage/quadratic_forms/binary_qf.py
++++ b/src/sage/quadratic_forms/binary_qf.py
+@@ -215 +215 @@
+-            sage: (Q*Q).is_equivalent(Q)    # idempotent (hence identity)
++            sage: (Q*Q).is_equivalent(Q)    # idempotent (hence identity)             # needs sage.libs.pari
+@@ -919,0 +920 @@
++            sage: # needs sage.libs.pari
+@@ -1478 +1479 @@
+-            sage: all(BinaryQF([1, 0, -x]).reduced_form().is_reduced() for x in list)
++            sage: all(BinaryQF([1, 0, -x]).reduced_form().is_reduced() for x in list) # needs sage.libs.pari
+@@ -1716,0 +1718 @@
++            sage: # known bug
+@@ -1810,0 +1813 @@
++            sage: # needs sage.libs.pari
 diff -urN a/src/sage/dynamics/finite_dynamical_system.py b/src/sage/dynamics/finite_dynamical_system.py
 --- a/src/sage/dynamics/finite_dynamical_system.py
 +++ b/src/sage/dynamics/finite_dynamical_system.py

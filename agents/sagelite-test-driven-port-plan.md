@@ -11351,6 +11351,30 @@ temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/quadratic-mass-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused binary quadratic form corpus pass:
+
+```text
+binary_qf.py: 242 passed, 0 failed, 117 skipped
+```
+
+This pass adds `sage/quadratic_forms/binary_qf.py` to the quiet corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 709
+non-comment entries. The added WASI source patch classifies the remaining
+PARI/cypari2-backed reduction, equivalence, solve, and class-group examples
+with explicit `# needs sage.libs.pari` metadata, while preserving the
+constructor, discriminant, reduction-state, evaluation, and display coverage
+that passes under the default browser-compatible node profile.
+
+The same patch marks the square-discriminant randomized unimodular-matrix
+setup as a deferred `# known bug`; in the current runtime that setup reaches
+`SystemError: Type does not define the tp_name field.` and only creates
+dependent missing-state failures afterward. Focused validation used a fresh
+patched Sagelite source rebuild and the `test-sage-doctest-corpus` make target
+with a temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/binary-qf-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
