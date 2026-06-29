@@ -1355,7 +1355,7 @@ diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,204 @@
+@@ -253,74 +253,207 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1477,8 +1477,11 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.combinat.words.word_generators import words
 +    from sage.combinat.words.word_options import WordOptions
 +    from sage.combinat.words.words import InfiniteWords, Words
++    from sage.functions.bessel import bessel_J
++    from sage.functions.jacobi import jacobi
 +    from sage.functions.log import exp, log
-+    from sage.functions.trig import cos
++    from sage.functions.other import real_part
++    from sage.functions.trig import cos, sin, tan
 +    from sage.functions.transcendental import dickman_rho
 +    from sage.logic.all import SymbolicLogic, propcalc
 +    from sage.modules.free_module import FreeModule, VectorSpace, span
@@ -5810,6 +5813,27 @@ diff -urN a/src/sage/plot/histogram.py b/src/sage/plot/histogram.py
 @@ -88 +88 @@
 -            sage: h.get_minmax_data()
 +            sage: h.get_minmax_data()                                               # known bug
+diff -urN a/src/sage/plot/line.py b/src/sage/plot/line.py
+--- a/src/sage/plot/line.py
++++ b/src/sage/plot/line.py
+@@ -101 +101 @@
+-            sage: m=l.plot3d(z=2)
++            sage: m=l.plot3d(z=2)                                                  # needs sage.plot.plot3d
+@@ -102 +102 @@
+-            sage: m.texture.opacity
++            sage: m.texture.opacity                                                # needs sage.plot.plot3d
+@@ -104 +104 @@
+-            sage: m.thickness
++            sage: m.thickness                                                      # needs sage.plot.plot3d
+@@ -107 +107 @@
+-            sage: L.plot3d()
++            sage: L.plot3d()                                                       # needs sage.plot.plot3d
+@@ -299 +299 @@
+-        sage: line([(0,0,1), (1,1,1)])
++        sage: line([(0,0,1), (1,1,1)])                                            # needs sage.plot.plot3d
+@@ -427 +427 @@
+-        sage: line([(0,1), (3,4)]).show(figsize=[10, 2]) # These are equivalent
++        sage: line([(0,1), (3,4)]).show(figsize=[10, 2]) # These are equivalent  # needs matplotlib
 diff -urN a/src/sage/plot/primitive.py b/src/sage/plot/primitive.py
 --- a/src/sage/plot/primitive.py
 +++ b/src/sage/plot/primitive.py

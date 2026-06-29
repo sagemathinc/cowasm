@@ -10647,11 +10647,43 @@ records the expected `optional:matplotlib` and
 `optional:sage.plot.plot3d` deferrals. The runner version remains 65.
 
 The same scheduled plot-primitive probe kept nearby files out of the quiet
-corpus. `sage/plot/arrow.py`, `sage/plot/line.py`, `sage/plot/text.py`,
-`sage/plot/histogram.py`, and `sage/plot/primitive.py` still expose focused
-`NameError`, `ModuleNotFoundError`, or output-mismatch clusters.
-`sage/plot/colors.py`, `sage/plot/misc.py`, and the hyperbolic plot
-primitives were skipped-only under the default browser-compatible profile.
+corpus at the time. Follow-up passes promoted `sage/plot/text.py`,
+`sage/plot/histogram.py`, `sage/plot/primitive.py`, and `sage/plot/line.py`;
+`sage/plot/arrow.py` remains outside the quiet corpus. `sage/plot/colors.py`,
+`sage/plot/misc.py`, and the hyperbolic plot primitives were skipped-only
+under the default browser-compatible profile.
+
+Focused line-plot corpus-growth pass:
+
+```text
+sage -t passed: 57 passed, 0 failed, 23 skipped
+```
+
+That one-file make-target validation adds `sage/plot/line.py` to the curated
+corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 686
+non-comment entries. Direct sampling first recorded 40 passing blocks and 23
+focused failures. The failures split between the stripped 3D plotting
+boundary, a Matplotlib-backed `.show(...)` equivalence example, and a
+lightweight startup namespace gap for `sin`, `tan`, `real_part`, `jacobi`, and
+`bessel_J` in line-plot gallery examples.
+
+The doctest runner now seeds those math-function names in the common startup
+namespace, and the WASI `sage.all` patch exposes the same names for REPL
+parity on fresh patched source copies. The added WASI source patch marks the
+3D line examples as `# needs sage.plot.plot3d` and the `.show(...)` example as
+`# needs matplotlib`, preserving browser-compatible line construction, option
+handling, logarithmic scale, complex-point, and gallery curve coverage.
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with
+`TMPDIR=/home/user/cowasm/.tmp/current-run/line-patch-tmp`, a temporary
+one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/line-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+records the expected `optional:sage.plot.plot3d`, `optional:matplotlib`, and
+pre-existing `sage.schemes`, `sage.libs.pari`, `sage.rings.complex_double`,
+`sage.symbolic`, and `numpy` deferrals. The runner version is 67.
 
 ## Phase 5: Subprocess Strategy
 
