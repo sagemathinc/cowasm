@@ -10934,6 +10934,29 @@ records the expected optional `numpy`, `sage.libs.pari`, `sage.symbolic`,
 `sage.rings.number_field`, `sage.groups`, `sage.graphs`, and finite-ring/PARI
 deferrals.
 
+Follow-up sampling after the matrix-argument pass did not find a new quiet
+runnable corpus candidate. Focused probes covered several adjacent and
+alternate namespaces:
+
+```text
+matrix_misc.py + symplectic_basis.py: 68 passed, 0 failed, 0 skipped
+plot colors/misc/step/benchmark: 0 passed, 0 failed, 403 skipped
+plot hyperbolic/density/contour/field/streamline helpers: skipped-only
+matrix_plot.py: 18 passed, 40 failed, 14 skipped
+stats/HMM and selected quadratic helpers: skipped-only or broad failures
+monoid/coding base abstractions: skipped-only
+crypto basic cipher helpers: 0 passed, 0 failed, 1712 skipped
+```
+
+`matrix_misc.py` and `symplectic_basis.py` were already present in the
+curated corpus. `matrix_plot.py` is not a good narrow follow-up yet: most
+failures come from the function's unconditional `scipy.sparse` import, with
+dependent name failures and a few diagnostic mismatches after setup examples
+do not run. The next useful pass should either choose a different namespace
+with unpromoted runnable candidates, or explicitly tackle a real cluster such
+as the `matrix_plot` SciPy boundary rather than tagging most of the file into
+skipped-only coverage.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
