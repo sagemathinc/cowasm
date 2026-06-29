@@ -10270,6 +10270,38 @@ in polynomial gcd/radical examples. Adjacent monoid files were skipped-only,
 while nearby Lie-conformal modules still expose graph-backed affine imports,
 algebraic-field coercion/cache drift, or broader missing-name clusters.
 
+Focused Coxeter-category corpus-growth pass:
+
+```text
+sage -t passed: 184 passed, 0 failed, 455 skipped
+```
+
+That one-file make-target validation adds
+`sage/categories/coxeter_groups.py` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 672
+non-comment entries. Direct sampling first recorded 183 passed blocks and 33
+startup-name failures. The doctest runner now seeds the lightweight
+`FiniteWeylGroups` category constructor in the common startup namespace, and
+the WASI `sage.all` patch exposes the same constructor for REPL parity on a
+fresh patched source copy.
+
+The remaining sampled Coxeter startup failures were explicit browser-profile
+boundaries rather than missing lightweight names: `CoxeterGroup(...)` examples
+route through graph-backed Coxeter/Dynkin diagram construction, while the
+affine `WeylGroup(["B", 3, 1])` reflection-representation example imports the
+stripped GAP-backed matrix-group stack. The added WASI source patch marks
+those contiguous doctest blocks with standalone `# needs sage.graphs` or
+`# needs sage.libs.gap` directives so dependent prompts are skipped together.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with
+`TMPDIR=/home/user/cowasm/.tmp/current-run/patch-tmp`, a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/coxeter-groups-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; the latest-run
+summary records runner version 64 in the default node profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

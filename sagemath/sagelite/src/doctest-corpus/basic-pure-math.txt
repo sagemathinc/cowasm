@@ -314,6 +314,7 @@ src/sage/categories/commutative_ring_ideals.py
 src/sage/categories/complex_reflection_groups.py
 src/sage/categories/complete_discrete_valuation.py
 src/sage/categories/coercion_methods.pyx
+src/sage/categories/coxeter_groups.py
 src/sage/categories/cw_complexes.py
 src/sage/categories/discrete_valuation.py
 src/sage/categories/dedekind_domains.py

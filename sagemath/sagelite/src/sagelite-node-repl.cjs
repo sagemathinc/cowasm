@@ -903,6 +903,7 @@ def __cowasm_seed_common_doctest_globals(namespace):
         ("sage.categories.commutative_additive_semigroups", ("CommutativeAdditiveSemigroups",)),
         ("sage.categories.coxeter_groups", ("CoxeterGroups",)),
         ("sage.categories.finite_coxeter_groups", ("FiniteCoxeterGroups",)),
+        ("sage.categories.finite_weyl_groups", ("FiniteWeylGroups",)),
         ("sage.categories.finite_dimensional_algebras_with_basis", ("FiniteDimensionalAlgebrasWithBasis",)),
         ("sage.categories.finite_dimensional_hopf_algebras_with_basis", ("FiniteDimensionalHopfAlgebrasWithBasis",)),
         ("sage.categories.finite_dimensional_modules_with_basis", ("FiniteDimensionalModulesWithBasis",)),

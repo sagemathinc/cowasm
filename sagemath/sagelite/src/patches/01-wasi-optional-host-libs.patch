@@ -1355,7 +1355,7 @@ diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,195 @@
+@@ -253,74 +253,196 @@
  from sage.arith.all import *
  from sage.matrix.all import *
  
@@ -1397,6 +1397,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.categories.euclidean_domains import EuclideanDomains
 +    from sage.categories.fields import Fields
 +    from sage.categories.finite_coxeter_groups import FiniteCoxeterGroups
++    from sage.categories.finite_weyl_groups import FiniteWeylGroups
 +    from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
 +    from sage.categories.finite_dimensional_hopf_algebras_with_basis import FiniteDimensionalHopfAlgebrasWithBasis
 +    from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
@@ -1594,7 +1595,7 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
  
  if sys.platform != 'win32':
      from cysignals.alarm import alarm, cancel_alarm
-@@ -360,24 +370,25 @@
+@@ -360,24 +371,25 @@
  copyright = license
 
  from sage.misc.persist import register_unpickle_override
@@ -4327,6 +4328,30 @@ diff -urN a/src/sage/categories/category_with_axiom.py b/src/sage/categories/cat
 @@ -2487 +2487 @@
 -            sage: MagmasAndAdditiveMagmas().Distributive().Unital().axioms()
 +            sage: MagmasAndAdditiveMagmas().Distributive().Unital().axioms()           # random
+diff -urN a/src/sage/categories/coxeter_groups.py b/src/sage/categories/coxeter_groups.py
+--- a/src/sage/categories/coxeter_groups.py
++++ b/src/sage/categories/coxeter_groups.py
+@@ -447 +447,2 @@
++                sage: # needs sage.graphs
+                 sage: W = CoxeterGroup(['B', 3])
+@@ -1007 +1008,2 @@
++                sage: # needs sage.graphs
+                 sage: W = CoxeterGroup(['D', 4])
+@@ -1016 +1018,2 @@
++                sage: # needs sage.graphs
+                 sage: W = CoxeterGroup(['I', 13])
+@@ -1023 +1026,2 @@
++                sage: # needs sage.libs.gap
+                 sage: W = WeylGroup(["B", 3, 1])
+@@ -2043 +2045,2 @@
++                sage: # needs sage.graphs
+                 sage: W = CoxeterGroup(["A",2,1])
+@@ -2077 +2080,2 @@
++                sage: # needs sage.graphs
+                 sage: W = CoxeterGroup(['A', 2, 1])
+@@ -2109 +2113,2 @@
++                sage: # needs sage.graphs
+                 sage: W = CoxeterGroup(["A",2,1])
 diff -urN a/src/sage/categories/category_types.py b/src/sage/categories/category_types.py
 --- a/src/sage/categories/category_types.py
 +++ b/src/sage/categories/category_types.py
