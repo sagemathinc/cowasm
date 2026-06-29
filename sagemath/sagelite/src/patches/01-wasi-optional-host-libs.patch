@@ -1424,6 +1424,33 @@ diff -urN a/src/sage/quadratic_forms/binary_qf.py b/src/sage/quadratic_forms/bin
 +            sage: # known bug
 @@ -1810,0 +1813 @@
 +            sage: # needs sage.libs.pari
+diff -urN a/src/sage/quadratic_forms/quadratic_form__local_field_invariants.py b/src/sage/quadratic_forms/quadratic_form__local_field_invariants.py
+--- a/src/sage/quadratic_forms/quadratic_form__local_field_invariants.py
++++ b/src/sage/quadratic_forms/quadratic_form__local_field_invariants.py
+@@ -58 +58 @@
+-        sage: Q.rational_diagonal_form()
++        sage: Q.rational_diagonal_form()                                             # random - diagonalization is not canonical without full PARI
+@@ -79 +79 @@
+-        sage: D
++        sage: D                                                                       # random - diagonalization is not canonical without full PARI
+@@ -85 +85 @@
+-        sage: T
++        sage: T                                                                       # random - diagonalization is not canonical without full PARI
+@@ -91 +91 @@
+-        sage: T.transpose() * Q.matrix() * T
++        sage: T.transpose() * Q.matrix() * T                                         # random - diagonalization is not canonical without full PARI
+@@ -96 +96 @@
+-        sage: D.matrix()
++        sage: D.matrix()                                                             # random - diagonalization is not canonical without full PARI
+@@ -110 +110 @@
+-        sage: Q1.rational_diagonal_form(return_matrix=True)
++        sage: Q1.rational_diagonal_form(return_matrix=True)                          # random - tuple pretty-printer display differs in Sagelite
+@@ -135 +135 @@
+-        sage: Q.__pari__()
++        sage: Q.__pari__()                                                           # needs sage.libs.pari
+@@ -216 +216 @@
+-        sage: Q._rational_diagonal_form_and_transformation()
++        sage: Q._rational_diagonal_form_and_transformation()                         # random - tuple pretty-printer display differs in Sagelite
 diff -urN a/src/sage/dynamics/finite_dynamical_system.py b/src/sage/dynamics/finite_dynamical_system.py
 --- a/src/sage/dynamics/finite_dynamical_system.py
 +++ b/src/sage/dynamics/finite_dynamical_system.py

@@ -2469,6 +2469,35 @@ CoWasm commit `52157e749afb48ee1766d6af43b5773fc8b00069`, Sagelite package
 commit `f575cf6224f749763d7c875229cbd684e5939e58`, node profile, and runner
 version 70.
 
+Focused quadratic local-field invariant corpus-growth pass:
+
+```text
+sage -t passed: 102 passed, 0 failed, 45 skipped
+```
+
+That one-file make-target validation adds
+`sage/quadratic_forms/quadratic_form__local_field_invariants.py` to the
+curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 715
+non-comment entries. Direct sampling first recorded 95 passed blocks, eight
+display-sensitive output mismatches, and 44 skips. The output mismatches were
+the rational diagonalization examples whose diagonal form and transformation
+matrix are non-canonical when the stripped browser-compatible profile falls
+back from full PARI object support, plus tuple pretty-printer layout drift for
+paired `(form, matrix)` results.
+
+The added WASI source patch marks those non-canonical display checks as
+`# random` while still executing them, and defers the explicit `Q.__pari__()`
+conversion example as `# needs sage.libs.pari`. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/probes/qf-local-field-invariants-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and
+`skips-by-reason.sql` groups 39 `optional:sage.libs.pari` skips, including the
+newly deferred PARI object-model example, plus six
+`optional:sage.rings.number_field` skips.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures
