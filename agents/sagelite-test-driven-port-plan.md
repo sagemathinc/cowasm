@@ -2525,6 +2525,32 @@ Sagelite source copy, with a temporary one-file corpus,
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/dev-tools-make.sqlite3`.
 The saved block- and file-failure cluster queries are empty.
 
+Focused runtime-environment corpus-growth pass:
+
+```text
+env.py: 31 passed, 0 failed, 9 skipped
+```
+
+That one-file make-target validation adds `sage/env.py` to the curated
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 717 non-comment entries. Direct sampling first recorded 31 passed blocks,
+six focused failures, and three existing skips. The failures were optional
+runtime-data/tooling assumptions: `cython_aliases(...)` needs the Python
+`pkgconfig` package to inspect C library metadata, and the Cremona data-path
+example only produces a matching non-empty path when the optional Cremona
+database package is installed.
+
+The added WASI source patch tags the `cython_aliases(...)` examples with
+explicit `# needs pkgconfig` metadata and tags the Cremona data-path example
+with `# needs database_cremona_ellcurve`. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=60`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/env-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+shows the expected `pkgconfig`, Cremona data, meson-editable, and Cython
+deferrals.
+
 After the 2026-06-23 dynamic-linking pass, the representative
 `integer.pyx:2266` crash for `pow(-1, 1/2, 0)` passes. The corpus total is
 at that point was still `203 passed, 7 failed, 27 skipped`, but the failures

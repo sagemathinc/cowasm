@@ -186,6 +186,32 @@ diff -urN a/src/meson.build b/src/meson.build
 
  # Add global compiler flags
  add_project_arguments('-X auto_pickle=False', language: 'cython')
+diff -urN a/src/sage/env.py b/src/sage/env.py
+--- a/src/sage/env.py
++++ b/src/sage/env.py
+@@ -1676,12 +1676,12 @@
+         sage: from sage.env import cython_aliases
+-        sage: aliases = cython_aliases(required_modules=())
+-        sage: isinstance(aliases, dict)
++        sage: aliases = cython_aliases(required_modules=())                                  # needs pkgconfig
++        sage: isinstance(aliases, dict)                                                       # needs pkgconfig
+         True
+-        sage: 'ZLIB_LIBRARIES' in cython_aliases(required_modules=('zlib',), optional_modules=())
++        sage: 'ZLIB_LIBRARIES' in cython_aliases(required_modules=('zlib',), optional_modules=())  # needs pkgconfig
+         True
+-        sage: cython_aliases(required_modules=('module-that-is-assumed-to-not-exist'))
++        sage: cython_aliases(required_modules=('module-that-is-assumed-to-not-exist'))        # needs pkgconfig
+         Traceback (most recent call last):
+         ...
+         PackageNotFoundError: ...
+-        sage: cython_aliases(required_modules=(), optional_modules=('module-that-is-assumed-to-not-exist'))
++        sage: cython_aliases(required_modules=(), optional_modules=('module-that-is-assumed-to-not-exist'))  # needs pkgconfig
+         {...}
+@@ -1827,3 +1827,3 @@
+         sage: from sage.env import sage_data_paths
+-        sage: sage_data_paths("cremona")
++        sage: sage_data_paths("cremona")                                                      # needs database_cremona_ellcurve
+         {'.../cremona'}
 diff -urN a/src/sage/rings/integer.pyx b/src/sage/rings/integer.pyx
 --- a/src/sage/rings/integer.pyx
 +++ b/src/sage/rings/integer.pyx

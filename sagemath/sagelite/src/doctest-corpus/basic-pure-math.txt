@@ -3,6 +3,7 @@
 # This corpus is intentionally small and central.  It should run often while
 # the WebAssembly port is still moving quickly, and it should grow only when
 # the added files improve signal rather than just adding noise.
+src/sage/env.py
 src/sage/rings/integer_ring.pyx
 src/sage/rings/abc.pyx
 src/sage/rings/integer.pyx
