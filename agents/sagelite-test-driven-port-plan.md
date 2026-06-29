@@ -11220,6 +11220,33 @@ The saved block- and file-failure cluster queries are empty; skip grouping
 shows the expected IPython, symbolic, PARI, numpy/modules, and known-bug
 deferrals.
 
+Focused finite-dynamical-system catalog corpus pass:
+
+```text
+finite_dynamical_system_catalog.py: 57 passed, 0 failed, 11 skipped
+```
+
+This pass adds `sage/dynamics/finite_dynamical_system_catalog.py` to the quiet
+corpus, bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt`
+to 702 non-comment entries. The doctest runner now seeds Sage's lightweight
+`finite_dynamical_systems` startup alias from
+`sage.dynamics.finite_dynamical_system_catalog`, and the WASI `sage.all` patch
+exposes the same alias for REPL parity after a fresh Sagelite rebuild. The
+same startup pass exposes the lightweight `game_theory` catalog alias for
+future catalog sampling without importing the broader game-theory surface.
+
+The added WASI source patch marks the remaining root-poset and Tamari-lattice
+rowmotion examples as `# needs sage.graphs`, matching the current stripped
+graph-backend boundary while preserving the catalog's permutation,
+bitstring-rotation, tableau-promotion, striker-sweep, and Bulgarian-solitaire
+coverage as default-profile doctests. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary one-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/finite-dynamics-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; skip grouping
+shows the expected `optional:sage.graphs` deferrals.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

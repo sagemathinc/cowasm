@@ -1153,9 +1153,9 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 --- a/src/sage/arith/srange.pyx
 +++ b/src/sage/arith/srange.pyx
 @@ -83,7 +83,7 @@
- 
+
      EXAMPLES::
- 
+
 -        sage: xsrange(10)
 +        sage: xsrange(10)                                                              # known bug
          <...generator object at 0x...>
@@ -1164,7 +1164,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 --- a/src/sage/combinat/integer_lists/base.pyx
 +++ b/src/sage/combinat/integer_lists/base.pyx
 @@ -241,7 +241,7 @@
- 
+
              sage: from sage.combinat.integer_lists.base import IntegerListsBackend
              sage: C = IntegerListsBackend(2, length=3)
 -            sage: C.__getstate__()
@@ -1175,10 +1175,10 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 --- a/src/sage/combinat/integer_lists/invlex.pyx
 +++ b/src/sage/combinat/integer_lists/invlex.pyx
 @@ -414,7 +414,7 @@
- 
+
          Hence a warning is raised when a function is specified as
          input, unless the waiver is signed by setting ``check=False``::
- 
+
 -            sage: L = IntegerListsLex(3, floor=lambda i: 1 if i>=2 else 0)
 +            sage: L = IntegerListsLex(3, floor=lambda i: 1 if i>=2 else 0)              # known bug
              doctest:...
@@ -1233,9 +1233,9 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 --- a/src/sage/combinat/words/words.py
 +++ b/src/sage/combinat/words/words.py
 @@ -1719,7 +1719,7 @@
- 
+
          EXAMPLES::
- 
+
 -            sage: Words('ab')._element_classes
 +            sage: Words('ab')._element_classes                                       # known bug
              {'iter': <class 'sage.combinat.words.word.Word_iter'>,
@@ -1256,7 +1256,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 +++ b/src/sage/sets/condition_set.py
 @@ -96,7 +96,7 @@
          [1, -1, 3, -3, 5, -5]
- 
+
          sage: R = IntegerModRing(8)
 -        sage: R_primes = ConditionSet(R, is_prime); R_primes
 +        sage: R_primes = ConditionSet(R, is_prime); R_primes                            # random
@@ -1313,7 +1313,7 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
          :issue:`9944`. The method ``zero()`` calls this hom space with
          a function, not with a matrix, and that case had previously
          not been taken care of::
- 
+
 -            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
 -            sage: V.Hom(V).zero()   # indirect doctest
 +            sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)                            # known bug
@@ -1324,9 +1324,9 @@ diff -urN a/src/sage/rings/polynomial/polynomial_ring_constructor.py b/src/sage/
 --- a/src/sage/modules/quotient_module.py
 +++ b/src/sage/modules/quotient_module.py
 @@ -540,9 +540,9 @@
- 
+
          Ensure that :issue:`39507` is fixed::
- 
+
 -            sage: V = VectorSpace(GF(2),3)
 -            sage: A = V.subspace([(0,1,0), (1,1,1)])
 -            sage: B = A.subspace([])
@@ -1362,7 +1362,7 @@ diff -urN a/src/sage/monoids/indexed_free_monoid.py b/src/sage/monoids/indexed_f
 @@ -1062,8 +1062,8 @@
              ...
              IndexError: 0 is not in the index set
- 
+
 -            sage: F = lie_algebras.VirasoroAlgebra(QQ).pbw_basis().indices(); F
 +            sage: F = lie_algebras.VirasoroAlgebra(QQ).pbw_basis().indices(); F    # needs sage.algebras.lie_algebras
              Free abelian monoid indexed by Disjoint union of Family ({'c'}, Integer Ring)
@@ -1409,13 +1409,57 @@ diff -urN a/src/sage/quadratic_forms/extras.py b/src/sage/quadratic_forms/extras
 -        sage: extend_to_primitive([vector([1,2,3])])
 +        sage: extend_to_primitive([vector([1,2,3])])                                  # random
          [(1, 2, 3), (0, 1, 1), (-1, 0, 0)]
+diff -urN a/src/sage/dynamics/finite_dynamical_system_catalog.py b/src/sage/dynamics/finite_dynamical_system_catalog.py
+--- a/src/sage/dynamics/finite_dynamical_system_catalog.py
++++ b/src/sage/dynamics/finite_dynamical_system_catalog.py
+@@ -289,19 +289,19 @@
+
+     EXAMPLES::
+
+-        sage: P = RootSystem(["A", 6]).root_poset()
+-        sage: F = finite_dynamical_systems.order_ideal_rowmotion(P)
+-        sage: sorted(F.orbit_lengths())
++        sage: P = RootSystem(["A", 6]).root_poset()                                  # needs sage.graphs
++        sage: F = finite_dynamical_systems.order_ideal_rowmotion(P)                  # needs sage.graphs
++        sage: sorted(F.orbit_lengths())                                               # needs sage.graphs
+         [2, 7, 7, 7, 7, 7, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
+          14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14]
+-        sage: F.is_homomesic(lambda I: len(I))
++        sage: F.is_homomesic(lambda I: len(I))                                       # needs sage.graphs
+         False
+-        sage: F.is_homomesic(lambda I: sum((-1)**(P.rank(i)) for i in I))
++        sage: F.is_homomesic(lambda I: sum((-1)**(P.rank(i)) for i in I))            # needs sage.graphs
+         True
+
+-        sage: P = RootSystem(["A", 3]).root_poset()
+-        sage: F = finite_dynamical_systems.order_ideal_rowmotion(P)
+-        sage: F.verify_inverse_evolution()
++        sage: P = RootSystem(["A", 3]).root_poset()                                  # needs sage.graphs
++        sage: F = finite_dynamical_systems.order_ideal_rowmotion(P)                  # needs sage.graphs
++        sage: F.verify_inverse_evolution()                                           # needs sage.graphs
+         True
+     """
+     from sage.sets.set import Set
+@@ -327,9 +327,9 @@
+
+     EXAMPLES::
+
+-        sage: L = posets.TamariLattice(3)
+-        sage: row = finite_dynamical_systems.semidistributive_rowmotion(L)
+-        sage: all(L.rowmotion_semidistributive(a) == row.evolution()(a) for a in L)
++        sage: L = posets.TamariLattice(3)                                            # needs sage.graphs
++        sage: row = finite_dynamical_systems.semidistributive_rowmotion(L)           # needs sage.graphs
++        sage: all(L.rowmotion_semidistributive(a) == row.evolution()(a) for a in L)  # needs sage.graphs
+         True
+     """
+     H = L._hasse_diagram
 diff -urN a/src/sage/all.py b/src/sage/all.py
 --- a/src/sage/all.py
 +++ b/src/sage/all.py
-@@ -253,74 +253,211 @@
+@@ -253,74 +253,213 @@
  from sage.arith.all import *
  from sage.matrix.all import *
- 
+
 -from sage.symbolic.all import *
 -from sage.modules.all import *
 -from sage.monoids.all import *
@@ -1540,6 +1584,8 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.functions.other import real_part
 +    from sage.functions.trig import cos, sin, tan
 +    from sage.functions.transcendental import dickman_rho
++    import sage.game_theory.catalog as game_theory
++    import sage.dynamics.finite_dynamical_system_catalog as finite_dynamical_systems
 +    from sage.logic.all import SymbolicLogic, propcalc
 +    from sage.modules.free_module import FreeModule, VectorSpace, span
 +    from sage.modules.free_module_element import vector
@@ -1580,91 +1626,91 @@ diff -urN a/src/sage/all.py b/src/sage/all.py
 +    from sage.sets.all import *
 +    from sage.probability.all import *
 +    from sage.interfaces.all import *
- 
+
 -from sage.functions.all import *
 -from sage.calculus.all import *
 +    from sage.functions.all import *
 +    from sage.calculus.all import *
- 
+
 -from sage.cpython.all import *
 +    from sage.cpython.all import *
- 
+
 -from sage.crypto.all import *
 -from sage.crypto import mq
 +    from sage.crypto.all import *
 +    from sage.crypto import mq
- 
+
 -from sage.plot.all import *
 -from sage.plot.plot3d.all import *
 +    from sage.plot.all import *
 +    from sage.plot.plot3d.all import *
- 
+
 -from sage.coding.all import *
 -from sage.combinat.all import *
 +    from sage.coding.all import *
 +    from sage.combinat.all import *
- 
+
 -from sage.lfunctions.all import *
 +    from sage.lfunctions.all import *
- 
+
 -from sage.geometry.all import *
 -from sage.geometry.triangulation.all import *
 -from sage.geometry.riemannian_manifolds.all import *
 +    from sage.geometry.all import *
 +    from sage.geometry.triangulation.all import *
 +    from sage.geometry.riemannian_manifolds.all import *
- 
+
 -from sage.dynamics.all import *
 +    from sage.dynamics.all import *
- 
+
 -from sage.homology.all import *
 +    from sage.homology.all import *
- 
+
 -from sage.topology.all import *
 +    from sage.topology.all import *
- 
+
 -from sage.quadratic_forms.all import *
 +    from sage.quadratic_forms.all import *
- 
+
 -from sage.games.all import *
 +    from sage.games.all import *
- 
+
 -from sage.logic.all import *
 +    from sage.logic.all import *
- 
+
 -from sage.numerical.all import *
 +    from sage.numerical.all import *
- 
+
 -from sage.stats.all import *
 -import sage.stats.all as stats
 +    from sage.stats.all import *
 +    import sage.stats.all as stats
- 
+
 -from sage.parallel.all import *
 +    from sage.parallel.all import *
- 
+
  from sage.ext.fast_callable import fast_callable
  from sage.ext.fast_eval import fast_float
- 
+
 -from sage.sandpiles.all import *
 +if sys.platform != 'wasi':
 +    from sage.sandpiles.all import *
- 
+
 -from sage.tensor.all import *
 +    from sage.tensor.all import *
- 
+
 -from sage.matroids.all import *
 +    from sage.matroids.all import *
- 
+
 -from sage.game_theory.all import *
 +    from sage.game_theory.all import *
- 
+
 -from sage.knots.all import *
 +    from sage.knots.all import *
- 
+
 -from sage.manifolds.all import *
 +    from sage.manifolds.all import *
- 
+
  if sys.platform != 'win32':
      from cysignals.alarm import alarm, cancel_alarm
 @@ -360,24 +371,25 @@
@@ -2198,12 +2244,12 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 -    sage: GF(8,'a').is_field()
 +    sage: GF(8,'a').is_field()                                                        # needs sage.libs.ntl
      True
- 
+
  AUTHORS:
 --- a/src/sage/rings/finite_rings/integer_mod_ring.py
 +++ b/src/sage/rings/finite_rings/integer_mod_ring.py
 @@ -1095,10 +1095,10 @@
- 
+
              sage: K2 = GF(2)
              sage: K3 = GF(3)
 -            sage: K8 = GF(8, 'a')
@@ -2220,22 +2266,22 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 --- a/src/sage/rings/polynomial/polynomial_ring_constructor.py
 +++ b/src/sage/rings/polynomial/polynomial_ring_constructor.py
 @@ -444,9 +444,9 @@
- 
+
      The generic implementation is different in some cases::
- 
+
 -        sage: R = PolynomialRing(GF(2), 'j', implementation='generic'); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)
 +        sage: R = PolynomialRing(GF(2), 'j', implementation='generic'); TestSuite(R).run(skip=['_test_construction', '_test_pickling']); type(R)       # needs sage.libs.ntl
          <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
 -        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)
 +        sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)               # needs sage.libs.ntl
          <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
- 
+
          sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py
 @@ -325,7 +325,7 @@
      right degree (this is always checked)::
- 
+
          sage: F.<x> = QQ[]
 -        sage: factor(x^5 + 2)
 +        sage: factor(x^5 + 2)                                                         # needs sage.libs.pari
@@ -2246,14 +2292,14 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 +++ b/src/sage/rings/finite_rings/integer_mod_ring.py
 @@ -1534,7 +1534,7 @@
          TESTS::
- 
+
              sage: R = Zmod(2)
 -            sage: S.<x> = R[]
 +            sage: S.<x> = R[]                                                         # needs sage.libs.ntl
 -            sage: R._lift_residue_field_root(2, 1, S.zero(), S.zero(), R(0))
 +            sage: R._lift_residue_field_root(2, 1, S.zero(), S.zero(), R(0))           # needs sage.libs.ntl
              (0,)
- 
+
 --- a/src/sage/rings/polynomial/polynomial_ring_constructor.py
 +++ b/src/sage/rings/polynomial/polynomial_ring_constructor.py
 @@ -648,9 +648,9 @@
@@ -2295,14 +2341,14 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 +            sage: R.<x> = Zmod(2^50)[]                                                # needs sage.libs.ntl
 +            sage: (x + 1).roots(multiplicities=False)                                  # needs sage.libs.ntl
              [1125899906842623]
- 
+
          We can also find roots without multiplicities over a ring whose modulus
 --- a/src/sage/rings/polynomial/polynomial_ring_constructor.py
 +++ b/src/sage/rings/polynomial/polynomial_ring_constructor.py
 @@ -432,9 +432,9 @@
          sage: R is S
          True
- 
+
 -        sage: R = PolynomialRing(ZZ, 'j,k', implementation='singular')
 -        sage: S = PolynomialRing(ZZ, 'j,k', implementation=None)
 -        sage: R is S
@@ -2310,12 +2356,12 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 +        sage: S = PolynomialRing(ZZ, 'j,k', implementation=None)                       # needs sage.libs.singular
 +        sage: R is S                                                                   # needs sage.libs.singular
          True
- 
+
          sage: R = PolynomialRing(ZZ, 'p', sparse=True, implementation='generic')
 @@ -449,7 +449,7 @@
         sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)               # needs sage.libs.ntl
          <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
- 
+
 -        sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
 +        sage: R = PolynomialRing(ZZ, 'x,y', implementation='generic'); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R) # known bug
          <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
@@ -2324,7 +2370,7 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 @@ -497,39 +497,39 @@
      Polynomial rings over double-precision real and complex fields are supported
      by the ``'singular'`` implementation::
- 
+
 -        sage: R.<x> = PolynomialRing(RDF, implementation='singular')
 -        sage: x^2 + 1
 +        sage: R.<x> = PolynomialRing(RDF, implementation='singular')                   # needs sage.libs.singular
@@ -2335,10 +2381,10 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 +        sage: C.<x> = PolynomialRing(CDF, implementation='singular')                   # needs sage.libs.singular
 +        sage: x^2 + 1                                                                  # needs sage.libs.singular
          x^2 + 1
- 
+
      The ring printing via libsingular matches the output of the Singular
      interface::
- 
+
 -        sage: from sage.libs.singular.function import singular_function
 -        sage: print(singular_function("print")(R))
 +        sage: from sage.libs.singular.function import singular_function                 # needs sage.libs.singular
@@ -2380,7 +2426,7 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 +        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']) # known bug
          sage: RIF(-2,1)*x
          0.?e1*x
- 
+
 @@ -629,22 +629,22 @@
          Univariate Polynomial Ring in w over Univariate Polynomial Ring in k over Finite Field of size 7
          sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); TestSuite(ZxNTL).run(skip='_test_pickling'); ZxNTL                                         # needs sage.libs.ntl
@@ -2426,13 +2472,13 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 -        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
 +        sage: R.<x,y> = PolynomialRing(RIF,2)                                          # known bug
 +        sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']) # known bug
- 
+
      We verify that multivariate polynomial rings over ``InfinityRing`` from
      :issue:`34675` are fixed::
 @@ -995,11 +995,11 @@
              and Category of commutative algebras over fields
              and Category of infinite sets
- 
+
 -        sage: QQ['t'].category() is EuclideanDomains() & CommutativeAlgebras(QQ.category()).WithBasis().Infinite()
 +        sage: QQ['t'].category() is EuclideanDomains() & CommutativeAlgebras(QQ.category()).WithBasis().Infinite() # needs sage.categories
          True
@@ -2447,10 +2493,10 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py
 @@ -340,12 +340,12 @@
- 
+
      Any type which can be converted to the polynomial ring `GF(p)[x]`
      is accepted as modulus::
- 
+
 -        sage: K.<a> = GF(13^3, modulus=[1,0,0,2])
 -        sage: K.<a> = GF(13^10, modulus=pari("ffinit(13,10)"))
 -        sage: var('x')
@@ -2468,31 +2514,31 @@ diff -urN a/src/sage/sets/disjoint_set.pyx b/src/sage/sets/disjoint_set.pyx
 --- a/src/sage/rings/finite_rings/integer_mod_ring.py
 +++ b/src/sage/rings/finite_rings/integer_mod_ring.py
 @@ -1760,8 +1760,8 @@
- 
+
          We can also find roots without multiplicities over a ring whose modulus
          is a product of primes or prime powers::
- 
+
 -            sage: R.<x> = Zmod(60)[]
 -            sage: (x^2 - 1).roots(multiplicities=False)
 +            sage: R.<x> = Zmod(60)[]                                                  # needs sage.libs.ntl
 +            sage: (x^2 - 1).roots(multiplicities=False)                                # needs sage.libs.ntl
              [29, 41, 49, 1, 59, 11, 19, 31]
- 
+
          We may also ask for roots modulo a quotient of the ring over which the
 diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/rings/finite_rings/finite_field_constructor.py
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py
 @@ -355,14 +355,14 @@
- 
+
      ::
- 
+
 -        sage: K.<a> = GF(5**2, name='a', modulus=x^2 + 2, check_irreducible=False)
 +        sage: K.<a> = GF(5**2, name='a', modulus=x^2 + 2, check_irreducible=False)    # needs sage.libs.pari
- 
+
      Even for prime fields, you can specify a modulus. This will not
      change how Sage computes in this field, but it will change the
      result of the :meth:`modulus` and :meth:`gen` methods::
- 
+
 -        sage: k.<a> = GF(5, modulus='primitive')
 -        sage: k.modulus()
 +        sage: k.<a> = GF(5, modulus='primitive')                                      # needs sage.libs.pari
@@ -2506,7 +2552,7 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 +++ b/src/sage/rings/finite_rings/integer_mod_ring.py
 @@ -1770,7 +1770,7 @@
          polynomial is defined::
- 
+
 -            sage: R.<x> = Zmod(120)[]
 -            sage: (x^2 - 1).roots(multiplicities=False)
 +            sage: R.<x> = Zmod(120)[]                                                 # needs sage.libs.ntl
@@ -2527,9 +2573,9 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
          Traceback (most recent call last):
          ...
          ValueError: the order of a finite field must be a prime power
- 
+
      Finite fields with explicit random modulus are not cached::
- 
+
 -        sage: k.<a> = GF(5**10, modulus='random')
 -        sage: n.<a> = GF(5**10, modulus='random')
 -        sage: while k.modulus() == n.modulus():
@@ -2547,31 +2593,31 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 --- a/src/sage/rings/finite_rings/integer_mod_ring.py
 +++ b/src/sage/rings/finite_rings/integer_mod_ring.py
 @@ -1775,48 +1775,48 @@
- 
+
          TESTS::
- 
+
 -            sage: R.<x> = Zmod(2)[]
 -            sage: x.roots()
 +            sage: R.<x> = Zmod(2)[]                                                   # needs sage.libs.ntl
 +            sage: x.roots()                                                           # needs sage.libs.ntl
              [(0, 1)]
- 
+
          Test polynomials with content::
- 
+
 -            sage: R.<x> = Zmod(4)[]
 -            sage: (2*x).roots(multiplicities=False)
 +            sage: R.<x> = Zmod(4)[]                                                   # needs sage.libs.ntl
 +            sage: (2*x).roots(multiplicities=False)                                   # needs sage.libs.ntl
              [0, 2]
- 
+
 -            sage: R.<x> = Zmod(6)[]
 -            sage: (3*x).roots(multiplicities=False)
 +            sage: R.<x> = Zmod(6)[]                                                   # needs sage.libs.ntl
 +            sage: (3*x).roots(multiplicities=False)                                   # needs sage.libs.ntl
              [0, 2, 4]
- 
+
          Test polynomial with many roots::
- 
+
 -            sage: R.<x> = Zmod(6)[]
 -            sage: f = x * (x - 1) * (x - 2) * (x - 3) * (x - 4) * (x - 5)
 -            sage: len(f.roots(multiplicities=False))
@@ -2579,9 +2625,9 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 +            sage: f = x * (x - 1) * (x - 2) * (x - 3) * (x - 4) * (x - 5)             # needs sage.libs.ntl
 +            sage: len(f.roots(multiplicities=False))                                  # needs sage.libs.ntl
              6
- 
+
          Test finding roots over large prime powers::
- 
+
 -            sage: R.<x> = Zmod(2**16)[]
 -            sage: (x^3 + 5).roots(multiplicities=False)
 +            sage: R.<x> = Zmod(2**16)[]                                               # needs sage.libs.ntl
@@ -2590,7 +2636,7 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 -            sage: (x^2 + 46*x + 1).roots(multiplicities=False)
 +            sage: (x^2 + 46*x + 1).roots(multiplicities=False)                        # needs sage.libs.ntl
              [421, 33189, 16805, 49573, 8613, 41381, 24997, 57765, 7725, 40493, 24109, 56877, 15917, 48685, 32301, 65069]
- 
+
 -            sage: R.<x> = Zmod(3**16)[]
 -            sage: (x^2 + 2).roots(multiplicities=False)
 +            sage: R.<x> = Zmod(3**16)[]                                               # needs sage.libs.ntl
@@ -2602,9 +2648,9 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 -            sage: (x^3 + 8).roots(multiplicities=False)
 +            sage: (x^3 + 8).roots(multiplicities=False)                               # needs sage.libs.ntl
              [14348905, 28697812, 43046719]
- 
+
          Test some larger primes::
- 
+
 -            sage: R.<x> = Zmod(41**4)[]
 -            sage: (x^2 + 2).roots(multiplicities=False)
 +            sage: R.<x> = Zmod(41**4)[]                                               # needs sage.libs.ntl
@@ -2635,19 +2681,19 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
 +        sage: M = GF(4,'a', K.modulus().change_variable_name('y'))                     # needs sage.libs.ntl
 +        sage: K is M                                                                   # needs sage.libs.ntl
          True
- 
+
      You may print finite field elements as integers. This currently
      only works if the order of field is `<2^{16}`, though::
- 
+
 -        sage: k.<a> = GF(2^8, repr='int')
 -        sage: a
 +        sage: k.<a> = GF(2^8, repr='int')                                              # needs sage.libs.ntl
 +        sage: a                                                                        # needs sage.libs.ntl
          2
- 
+
      The following demonstrate coercions for finite fields using Conway
      polynomials::
- 
+
 -        sage: k = GF(5^2); a = k.gen()
 -        sage: l = GF(5^5); b = l.gen()
 -        sage: a + b
@@ -2655,10 +2701,10 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
 +        sage: l = GF(5^5); b = l.gen()                                                 # needs sage.libs.ntl
 +        sage: a + b                                                                    # needs sage.libs.ntl
          3*z10^5 + z10^4 + z10^2 + 3*z10 + 1
- 
+
      Note that embeddings are compatible in lattices of such finite
      fields::
- 
+
 -        sage: m = GF(5^3); c = m.gen()
 -        sage: (a+b)+c == a+(b+c)
 +        sage: m = GF(5^3); c = m.gen()                                                 # needs sage.libs.ntl
@@ -2678,9 +2724,9 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
 +        sage: q = pushout(n, o)                                                        # needs sage.libs.ntl
 +        sage: q(o(b)) == q(n(b))                                                       # needs sage.libs.ntl
          True
- 
+
      Another check that embeddings are defined properly::
- 
+
 -        sage: k = GF(3**10)
 -        sage: l = GF(3**20)
 -        sage: l(k.gen()**10) == l(k.gen())**10
@@ -2688,7 +2734,7 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
 +        sage: l = GF(3**20)                                                            # needs sage.libs.ntl
 +        sage: l(k.gen()**10) == l(k.gen())**10                                        # needs sage.libs.ntl
          True
- 
+
      Using pseudo-Conway polynomials is slow for highly
 diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/finite_rings/integer_mod_ring.py
 --- a/src/sage/rings/finite_rings/integer_mod_ring.py
@@ -2696,15 +2742,15 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 @@ -1878,46 +1878,46 @@
          Sage allows us to coerce polynomials from one modulus to another,
          and that makes the following defined::
- 
+
 -            sage: R.<x> = Zmod(100)[]
 -            sage: (x^2 - 1).roots(Zmod(99), multiplicities=False) == (x^2 - 1).change_ring(Zmod(99)).roots(multiplicities=False)
 +            sage: R.<x> = Zmod(100)[]                                                 # needs sage.libs.ntl
 +            sage: (x^2 - 1).roots(Zmod(99), multiplicities=False) == (x^2 - 1).change_ring(Zmod(99)).roots(multiplicities=False) # needs sage.libs.ntl
              True
- 
+
          We can find roots of high degree polynomials in a reasonable time::
- 
+
 -            sage: set_random_seed(31337)
 -            sage: p = random_prime(2^128)
 -            sage: R.<x> = Zmod(p)[]
@@ -2716,9 +2762,9 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 +            sage: f = R.random_element(degree=5000)                                    # needs sage.libs.ntl
 +            sage: f.roots(multiplicities=False)                                        # needs sage.libs.ntl
              [107295314027801680550847462044796892009, 75545907600948005385964943744536832524]
- 
+
          Roots of 0 or 1 degree polynomials should be computable without factoring the order::
- 
+
 -            sage: set_random_seed(31337)
 -            sage: p = random_prime(2^512)
 -            sage: q = random_prime(2^512)
@@ -2736,9 +2782,9 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 -            sage: R(p*x + 1).roots(multiplicities=False)
 +            sage: R(p*x + 1).roots(multiplicities=False)                               # needs sage.libs.ntl
              []
- 
+
          Even when leading coefficient of linear polynomial is not invertible::
- 
+
 -            sage: set_random_seed(31337)
 -            sage: p = random_prime(2^10)
 -            sage: q = random_prime(2^512)
@@ -2750,9 +2796,9 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 +            sage: R.<x> = Zmod((p**2)*q)[]                                             # needs sage.libs.ntl
 +            sage: len(R(p*x + p*q).roots(multiplicities=False))                        # needs sage.libs.ntl
              857
- 
+
          Test all linear polynomials modulo 10::
- 
+
 -            sage: N = 10 # maybe make a for loop
 -            sage: R = Zmod(N)
 -            sage: for f in R["x"].polynomials(1):
@@ -2819,7 +2865,7 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
 @@ -459,29 +459,29 @@
      You can still pass in ``prefix`` as an argument, which has the
      effect of changing the variable name of the algebraic closure::
- 
+
 -        sage: K = GF(3^10, prefix='w'); L = GF(3^10); K is L
 +        sage: K = GF(3^10, prefix='w'); L = GF(3^10); K is L                          # needs sage.libs.ntl
          False
@@ -2829,11 +2875,11 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
 -        sage: list(K.polynomial()) == list(L.polynomial())
 +        sage: list(K.polynomial()) == list(L.polynomial())                             # needs sage.libs.ntl
          True
- 
+
      TESTS:
- 
+
      Check that :issue:`16934` has been fixed::
- 
+
 -        sage: k1.<a> = GF(17^14, implementation='pari')
 -        sage: _ = a/2
 -        sage: k2.<a> = GF(17^14, implementation='pari')
@@ -2843,9 +2889,9 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
 +        sage: k2.<a> = GF(17^14, implementation='pari')                                # needs sage.libs.pari
 +        sage: k1 is k2                                                                 # needs sage.libs.pari
          True
- 
+
      Check that :issue:`21433` has been fixed::
- 
+
 -        sage: K = GF(5^2)
 -        sage: L = GF(5^4)
 -        sage: from sage.categories.pushout import pushout
@@ -2855,7 +2901,7 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
 +        sage: from sage.categories.pushout import pushout                              # needs sage.libs.ntl
 +        sage: pushout(K,L) is L                                                        # needs sage.libs.ntl
          True
- 
+
      Check that :issue:`25182` has been fixed::
 diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/finite_rings/integer_mod_ring.py
 --- a/src/sage/rings/finite_rings/integer_mod_ring.py
@@ -2874,7 +2920,7 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
              and Category of quotients of semigroups
 @@ -175,7 +175,7 @@
      EXAMPLES::
- 
+
          sage: R = IntegerModRing(33, is_field=True)
 -        sage: R in Fields()
 +        sage: R in Fields()                                                           # needs sage.categories
@@ -2882,18 +2928,18 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
          sage: R.is_field()
          True
 @@ -195,7 +195,7 @@
- 
+
      However, the mistaken assignment is not automatically corrected::
- 
+
 -        sage: R in Fields()
 +        sage: R in Fields()                                                           # needs sage.categories
          True
- 
+
      To avoid side-effects of this test on other tests, we clear the cache of
 @@ -317,14 +317,14 @@
          sage: FF.order()
          29
- 
+
 -        sage: gens = FF.unit_gens()
 -        sage: a = gens[0]
 -        sage: a
@@ -2910,10 +2956,10 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 +        sage: [pow(i) for i in range(16)]                                              # needs sage.libs.pari
          [1, 2, 4, 8, 16, 3, 6, 12, 24, 19, 9, 18, 7, 14, 28, 27]
          sage: TestSuite(FF).run()
- 
+
 @@ -334,14 +334,14 @@
      of fields my re-initialise the category of the integer mod ring::
- 
+
          sage: F19 = IntegerModRing(19, is_field=True)
 -        sage: F19.category().is_subcategory(Fields())
 +        sage: F19.category().is_subcategory(Fields())                                  # needs sage.categories
@@ -2932,7 +2978,7 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
          sage: TestSuite(F23).run()
 @@ -353,12 +353,12 @@
      category of the unique instance::
- 
+
          sage: F31a = IntegerModRing(31)
 -        sage: F31a.category().is_subcategory(Fields())
 +        sage: F31a.category().is_subcategory(Fields())                                 # needs sage.categories
@@ -2943,7 +2989,7 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 -        sage: F31a.category().is_subcategory(Fields())
 +        sage: F31a.category().is_subcategory(Fields())                                 # needs sage.categories
          True
- 
+
      Next we compute with the integers modulo `16`.
 @@ -385,16 +385,16 @@
          sage: b = gens[1]
@@ -2964,11 +3010,11 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
 -        sage: b.multiplicative_order()
 +        sage: b.multiplicative_order()                                                 # needs sage.libs.pari
          4
- 
+
          sage: TestSuite(Z16).run()
 @@ -626,7 +626,7 @@
          Check that :issue:`17453` is fixed::
- 
+
              sage: R = Zmod(5)
 -            sage: R in IntegralDomains()
 +            sage: R in IntegralDomains()                                               # needs sage.categories
@@ -2976,7 +3022,7 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
          """
          return self.is_field(proof)
 @@ -835,10 +835,10 @@
- 
+
              sage: R = Integers(7); R
              Ring of integers modulo 7
 -            sage: R.multiplicative_generator()
@@ -3002,7 +3048,7 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
          try:
 @@ -1398,9 +1398,9 @@
          cyclic factors are computed, but in a different order::
- 
+
              sage: A = Zmod(15)
 -            sage: G = A.unit_group(); G
 +            sage: G = A.unit_group(); G                                                # needs sage.libs.pari
@@ -3014,7 +3060,7 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
              Multiplicative Abelian group isomorphic to C4 x C2
 @@ -1411,9 +1411,9 @@
          but are ordered differently and have different generators::
- 
+
              sage: A = Zmod(40)
 -            sage: G = A.unit_group(); G
 +            sage: G = A.unit_group(); G                                                # needs sage.libs.pari
@@ -3026,7 +3072,7 @@ diff -urN a/src/sage/rings/finite_rings/integer_mod_ring.py b/src/sage/rings/fin
              Multiplicative Abelian group isomorphic to C4 x C2 x C2
 @@ -1421,9 +1421,9 @@
              (17, 31, 21)
- 
+
              sage: A = Zmod(192)
 -            sage: G = A.unit_group(); G
 +            sage: G = A.unit_group(); G                                                # needs sage.libs.pari
@@ -3040,23 +3086,23 @@ diff -urN a/src/sage/rings/finite_rings/finite_field_constructor.py b/src/sage/r
 --- a/src/sage/rings/finite_rings/finite_field_constructor.py
 +++ b/src/sage/rings/finite_rings/finite_field_constructor.py
 @@ -486,22 +486,22 @@
- 
+
      Check that :issue:`25182` has been fixed::
- 
+
 -        sage: GF(next_prime(2^63)^6)
 +        sage: GF(next_prime(2^63)^6)                                                   # needs sage.libs.ntl
          Finite Field in z6 of size 9223372036854775837^6
- 
+
      Check that :issue:`31547` has been fixed::
- 
+
 -        sage: q=2**152
 -        sage: GF(q,'a',modulus='primitive') == GF(q,'a',modulus='primitive')
 +        sage: q=2**152                                                                 # needs sage.libs.ntl
 +        sage: GF(q,'a',modulus='primitive') == GF(q,'a',modulus='primitive')           # needs sage.libs.ntl
          True
- 
+
      Check that a number for ``name`` is interpreted as the degree instead::
- 
+
 -        sage: GF(5, 2)
 +        sage: GF(5, 2)                                                                 # needs sage.libs.ntl
          Finite Field in z2 of size 5^2
@@ -3445,34 +3491,34 @@ diff -urN a/src/sage/combinat/baxter_permutations.py b/src/sage/combinat/baxter_
 +++ b/src/sage/combinat/baxter_permutations.py
 @@ -4,7 +4,6 @@
  from collections.abc import Iterator
- 
+
  from sage.combinat.permutation import Permutations
 -from sage.combinat.posets.lattices import LatticePoset
  from sage.rings.integer import Integer
  from sage.rings.integer_ring import ZZ
  from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 @@ -244,13 +243,14 @@
- 
+
          EXAMPLES::
- 
+
 -            sage: L = BaxterPermutations(4).lattice(); L
 +            sage: L = BaxterPermutations(4).lattice(); L  # needs sage.graphs
              Finite lattice containing 22 elements
- 
+
          REFERENCES:
- 
+
          - [Law2011]_
          """
 +        from sage.combinat.posets.lattices import LatticePoset
          return LatticePoset([list(self), lambda a, b: a.weak_le(b)],
                              check=False)
- 
+
 diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
 --- a/src/sage/combinat/binary_tree.py
 +++ b/src/sage/combinat/binary_tree.py
 @@ -712,36 +712,36 @@
          EXAMPLES::
- 
+
              sage: t1 = BinaryTree([[], None])
 -            sage: t1.graph()
 +            sage: t1.graph()                                                           # needs sage.graphs
@@ -3480,7 +3526,7 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
 -            sage: t1.graph(with_leaves=False)
 +            sage: t1.graph(with_leaves=False)                                          # needs sage.graphs
              Digraph on 2 vertices
- 
+
              sage: t1 = BinaryTree([[], [[], None]])
 -            sage: t1.graph()
 +            sage: t1.graph()                                                           # needs sage.graphs
@@ -3494,7 +3540,7 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
 -            sage: t1.graph(with_leaves=False).edges(sort=True)
 +            sage: t1.graph(with_leaves=False).edges(sort=True)                         # needs sage.graphs
              [(0, 1, None), (0, 2, None), (2, 3, None)]
- 
+
              sage: t1 = BinaryTree()
 -            sage: t1.graph()
 +            sage: t1.graph()                                                           # needs sage.graphs
@@ -3502,14 +3548,14 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
 -            sage: t1.graph(with_leaves=False)
 +            sage: t1.graph(with_leaves=False)                                          # needs sage.graphs
              Digraph on 0 vertices
- 
+
 -            sage: BinaryTree([]).graph()
 +            sage: BinaryTree([]).graph()                                               # needs sage.graphs
              Digraph on 3 vertices
 -            sage: BinaryTree([]).graph(with_leaves=False)
 +            sage: BinaryTree([]).graph(with_leaves=False)                              # needs sage.graphs
              Digraph on 1 vertex
- 
+
              sage: t1 = BinaryTree([[], [[], []]])
 -            sage: t1.graph(with_leaves=False)
 +            sage: t1.graph(with_leaves=False)                                          # needs sage.graphs
@@ -3521,7 +3567,7 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
          from sage.graphs.digraph import DiGraph
 @@ -1026,22 +1026,22 @@
          EXAMPLES::
- 
+
              sage: bt = BinaryTree([[None, [[], None]], None])
 -            sage: ip = bt.tamari_interval(BinaryTree([None, [[None, []], None]])); ip
 +            sage: ip = bt.tamari_interval(BinaryTree([None, [[None, []], None]])); ip  # needs sage.graphs
@@ -3552,7 +3598,7 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
 @@ -1051,19 +1051,19 @@
          Setting ``other`` equal to ``bt`` gives an interval consisting of
          just one element::
- 
+
 -            sage: ip = bt.tamari_interval(bt)
 -            sage: ip
 +            sage: ip = bt.tamari_interval(bt)                                          # needs sage.graphs
@@ -3561,9 +3607,9 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
 -            sage: list(ip.binary_trees())
 +            sage: list(ip.binary_trees())                                              # needs sage.graphs
              [[[., [[., .], .]], .]]
- 
+
          Empty trees work well::
- 
+
              sage: bt = BinaryTree()
 -            sage: ip = bt.tamari_interval(bt)
 -            sage: ip
@@ -3577,7 +3623,7 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
          from sage.combinat.interval_posets import TamariIntervalPosets
 @@ -1561,15 +1561,15 @@
          EXAMPLES::
- 
+
              sage: bt = BinaryTree([])
 -            sage: bt.to_undirected_graph()
 +            sage: bt.to_undirected_graph()                                             # needs sage.graphs
@@ -3585,7 +3631,7 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
 -            sage: bt.to_undirected_graph(with_leaves=True)
 +            sage: bt.to_undirected_graph(with_leaves=True)                             # needs sage.graphs
              Graph on 3 vertices
- 
+
              sage: bt = BinaryTree()
 -            sage: bt.to_undirected_graph()
 +            sage: bt.to_undirected_graph()                                             # needs sage.graphs
@@ -3593,11 +3639,11 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
 -            sage: bt.to_undirected_graph(with_leaves=True)
 +            sage: bt.to_undirected_graph(with_leaves=True)                             # needs sage.graphs
              Graph on 1 vertex
- 
+
          If the tree is labelled, we use its labelling to label the graph.
 @@ -1579,9 +1579,9 @@
          EXAMPLES::
- 
+
              sage: bt = BinaryTree([[],[None,[]]])
 -            sage: bt.canonical_labelling().to_undirected_graph() == bt.to_undirected_graph()
 +            sage: bt.canonical_labelling().to_undirected_graph() == bt.to_undirected_graph()  # needs sage.graphs
@@ -3609,7 +3655,7 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
          if (not with_leaves) and (not self):
 @@ -1690,20 +1690,20 @@
          EXAMPLES::
- 
+
              sage: bt = BinaryTree([])
 -            sage: bt.to_poset()
 +            sage: bt.to_poset()                                                        # needs sage.graphs
@@ -3634,7 +3680,7 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
 -            sage: len(P2.minimal_elements())
 +            sage: len(P2.minimal_elements())                                           # needs sage.graphs
              1
- 
+
          If the tree is labelled, we use its labelling to label the poset.
 @@ -1712,15 +1712,15 @@
              sage: bt = BinaryTree([[],[None,[]]]).canonical_labelling()
@@ -3643,9 +3689,9 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
 -            sage: bt.to_poset().cover_relations()
 +            sage: bt.to_poset().cover_relations()                                      # needs sage.graphs
              [[4, 3], [3, 2], [1, 2]]
- 
+
          Let us check that the empty binary tree is correctly handled::
- 
+
              sage: bt = BinaryTree()
 -            sage: bt.to_poset()
 +            sage: bt.to_poset()                                                        # needs sage.graphs
@@ -3657,7 +3703,7 @@ diff -urN a/src/sage/combinat/binary_tree.py b/src/sage/combinat/binary_tree.py
          if (not with_leaves) and (not self):
 @@ -3364,7 +3364,7 @@
              True
- 
+
              sage: x = g.over(l).over(l).over(g).over(g)
 -            sage: ascii_art(x)
 +            sage: ascii_art(x)                                                         # known bug
@@ -3862,18 +3908,18 @@ diff -urN a/src/sage/combinat/set_partition.py b/src/sage/combinat/set_partition
               'color': 'blue',
               'fill': True,
 @@ -718,7 +718,7 @@
- 
+
          EXAMPLES::
- 
+
 -            sage: SP = SetPartition([[1,6], [3,5,4]]); SP.latex_options()
 +            sage: SP = SetPartition([[1,6], [3,5,4]]); SP.latex_options()               # random
              {'angle': 0,
               'color': 'black',
               'fill': False,
 @@ -2708,7 +2708,7 @@
- 
+
          EXAMPLES::
- 
+
              sage: S = SetPartitions(3)
 -            sage: TestSuite(S).run()
 +            sage: TestSuite(S).run()                                                   # needs sage.symbolic
@@ -4198,7 +4244,7 @@ diff -urN a/src/sage/combinat/root_system/cartan_matrix.py b/src/sage/combinat/r
 +        sage: cm = CartanMatrix(['A',7]).subtype([2,3,5])                               # needs sage.graphs
 +        sage: find_cartan_type_from_matrix(cm)                                          # needs sage.graphs
          A2xA1 relabelled by {1: 2, 2: 3, 3: 5}
- 
+
 -        sage: cm = CartanMatrix(['B',10,1]).subtype([0,1,2,3,5,6,8,9,10])
 -        sage: ct = find_cartan_type_from_matrix(cm); ct
 +        sage: cm = CartanMatrix(['B',10,1]).subtype([0,1,2,3,5,6,8,9,10])                # needs sage.graphs
@@ -4859,7 +4905,7 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
 --- a/src/sage/misc/sageinspect.py
 +++ b/src/sage/misc/sageinspect.py
 @@ -22,7 +22,7 @@
- 
+
      sage: sage_getfile(sage.misc.sageinspect)
      '.../sageinspect.py'
 -    sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
@@ -4868,7 +4914,7 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
      sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
      'Inspect Python, Sage, and Cython objects...'
 @@ -33,7 +33,7 @@
- 
+
      sage: sage_getfile(sage.rings.rational.Rational)
      '.../rational.pyx'
 -    sage: sage_getdoc(sage.rings.rational.Rational).lstrip()
@@ -4888,7 +4934,7 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
 @@ -157,7 +157,7 @@
      Verify that ipywidgets can correctly determine signatures of Cython
      functions::
- 
+
 -        sage: from ipywidgets.widgets.interaction import signature
 +        sage: from ipywidgets.widgets.interaction import signature                    # needs ipywidgets
          sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_mandelbrot_plot   # needs sage.symbolic
@@ -4896,7 +4942,7 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
          <IPython.utils._signatures.Signature object at 0x7f3ec8274e10>
 @@ -849,6 +849,7 @@
      EXAMPLES::
- 
+
          sage: from sage.misc.sageinspect import _split_syntactical_unit
 +        sage: # known bug - Sagelite source conversion cannot preserve this quote literal yet
          sage: s = "(Hel) lo_1=[)\"!\" ] '''? {world} '''?"
@@ -4904,7 +4950,7 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
          ....:     u, s = _split_syntactical_unit(s)
 @@ -1326,7 +1327,7 @@
      EXAMPLES::
- 
+
          sage: from sage.misc.sageinspect import sage_getfile_relative
 -        sage: sage_getfile_relative(sage.rings.rational)
 +        sage: sage_getfile_relative(sage.rings.rational)                             # known bug - Sagelite source-root paths remain absolute
@@ -4912,9 +4958,9 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
          sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
          sage: sage_getfile_relative(Sq)                                                 # needs sage.combinat sage.modules
 @@ -1547,6 +1548,7 @@
- 
+
      Test that :issue:`28524` is fixed::
- 
+
 +        sage: # needs IPython
          sage: from sage.repl.interpreter import get_test_shell
          sage: shell = get_test_shell()
@@ -4929,9 +4975,9 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
          sage: import functools
          sage: f1 = functools.partial(f, 1,c=2)
 @@ -2129,6 +2131,7 @@
- 
+
      TESTS::
- 
+
 +        sage: # known bug - CPython 3.14 docstring indentation drift on WASI
          sage: class C:
          ....:     '''
@@ -4939,7 +4985,7 @@ diff -urN a/src/sage/misc/sageinspect.py b/src/sage/misc/sageinspect.py
 @@ -2139,6 +2142,7 @@
          ....: else:
          ....:     assert sage_getdoc(C) == '   docs\n', sage_getdoc(C)
- 
+
 +        sage: # needs IPython
          sage: from sage.repl.interpreter import get_test_shell
          sage: shell = get_test_shell()

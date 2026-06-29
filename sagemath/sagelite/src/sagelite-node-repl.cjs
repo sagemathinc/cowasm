@@ -1038,6 +1038,28 @@ def __cowasm_seed_common_doctest_globals(namespace):
             pass
     except BaseException:
         pass
+    try:
+        import sage.game_theory.catalog as game_theory
+        namespace.setdefault("game_theory", game_theory)
+        try:
+            import sage.all as sage_all
+            if not hasattr(sage_all, "game_theory"):
+                setattr(sage_all, "game_theory", game_theory)
+        except BaseException:
+            pass
+    except BaseException:
+        pass
+    try:
+        import sage.dynamics.finite_dynamical_system_catalog as finite_dynamical_systems
+        namespace.setdefault("finite_dynamical_systems", finite_dynamical_systems)
+        try:
+            import sage.all as sage_all
+            if not hasattr(sage_all, "finite_dynamical_systems"):
+                setattr(sage_all, "finite_dynamical_systems", finite_dynamical_systems)
+        except BaseException:
+            pass
+    except BaseException:
+        pass
     if "Modules" in namespace:
         namespace.setdefault("RingModules", namespace["Modules"])
     if "ModulesWithBasis" in namespace:
