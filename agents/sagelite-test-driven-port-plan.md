@@ -11401,6 +11401,30 @@ shows only the expected `optional:sage.symbolic` deferrals. Nearby probes kept
 focused failures, while the latter times out in a symbolic denominator
 example.
 
+Focused Emacs rich-output backend corpus pass:
+
+```text
+backend_emacs.py: 3 passed, 0 failed, 12 skipped
+```
+
+This pass adds `sage/repl/rich_output/backend_emacs.py` to the quiet corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 713
+non-comment entries. Direct sampling first recorded 3 passed blocks and 12
+failed blocks because importing `BackendEmacs` reaches
+`sage.repl.rich_output.backend_ipython`, which depends on unavailable IPython
+support in the default browser-compatible profile. The added WASI source patch
+marks the Emacs backend construction, representation, preference, and
+displayhook examples as `# needs IPython`, preserving the output-container
+setup examples as default-profile coverage.
+
+Focused validation used the `test-sage-doctest-corpus` make target after
+rebuilding a fresh patched Sagelite source copy, with a temporary one-file
+corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`,
+and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/backend-emacs-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty, and skip grouping
+shows the expected `optional:ipython` deferrals.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

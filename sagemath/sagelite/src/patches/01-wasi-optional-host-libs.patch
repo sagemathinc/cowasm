@@ -5801,6 +5801,63 @@ diff -urN a/src/sage/repl/preparse.py b/src/sage/repl/preparse.py
 @@ -1917 +1917 @@
 -        sage: load(t)
 +        sage: load(t)                                                               # needs IPython
+diff -urN a/src/sage/repl/rich_output/backend_emacs.py b/src/sage/repl/rich_output/backend_emacs.py
+--- a/src/sage/repl/rich_output/backend_emacs.py
++++ b/src/sage/repl/rich_output/backend_emacs.py
+@@ -27,8 +27,8 @@
+ 
+     EXAMPLES::
+ 
+-        sage: from sage.repl.rich_output.backend_emacs import BackendEmacs
+-        sage: BackendEmacs()
++        sage: from sage.repl.rich_output.backend_emacs import BackendEmacs               # needs IPython
++        sage: BackendEmacs()                                                            # needs IPython
+         Emacs sage-mode
+     """
+ 
+@@ -40,9 +40,9 @@
+ 
+         EXAMPLES::
+ 
+-            sage: from sage.repl.rich_output.backend_emacs import BackendEmacs
+-            sage: backend = BackendEmacs()
+-            sage: backend._repr_()
++            sage: from sage.repl.rich_output.backend_emacs import BackendEmacs           # needs IPython
++            sage: backend = BackendEmacs()                                               # needs IPython
++            sage: backend._repr_()                                                       # needs IPython
+             'Emacs sage-mode'
+         """
+         return 'Emacs sage-mode'
+@@ -61,9 +61,9 @@
+ 
+         EXAMPLES::
+ 
+-            sage: from sage.repl.rich_output.backend_emacs import BackendEmacs
+-            sage: backend = BackendEmacs()
+-            sage: backend.default_preferences()
++            sage: from sage.repl.rich_output.backend_emacs import BackendEmacs           # needs IPython
++            sage: backend = BackendEmacs()                                               # needs IPython
++            sage: backend.default_preferences()                                          # needs IPython
+             Display preferences:
+             * align_latex is not specified
+             * graphics is not specified
+@@ -101,12 +101,12 @@
+ 
+             sage: from sage.repl.rich_output.output_basic import OutputPlainText, OutputLatex
+             sage: plain_text = OutputPlainText.example()
+-            sage: from sage.repl.rich_output.backend_emacs import BackendEmacs
+-            sage: backend = BackendEmacs()
+-            sage: backend.displayhook(plain_text, plain_text)
++            sage: from sage.repl.rich_output.backend_emacs import BackendEmacs           # needs IPython
++            sage: backend = BackendEmacs()                                               # needs IPython
++            sage: backend.displayhook(plain_text, plain_text)                            # needs IPython
+             ({'text/plain': 'Example plain text output'}, {})
+             sage: latex_text = OutputLatex.example()
+-            sage: backend.displayhook(plain_text, latex_text)
++            sage: backend.displayhook(plain_text, latex_text)                            # needs IPython
+             ({'text/plain': 'BEGIN_TEXT:Example plain text output:END_TEXT\nBEGIN_LATEX:\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\int \\sin\\left(x\\right)\\,{d x}:END_LATEX'},
+               {})
+         """
 diff -urN a/src/sage/structure/coerce.pyx b/src/sage/structure/coerce.pyx
 --- a/src/sage/structure/coerce.pyx
 +++ b/src/sage/structure/coerce.pyx

@@ -649,6 +649,7 @@ src/sage/repl/display/util.py
 src/sage/repl/preparse.py
 src/sage/repl/rich_output/buffer.py
 src/sage/repl/rich_output/backend_base.py
+src/sage/repl/rich_output/backend_emacs.py
 src/sage/repl/rich_output/output_browser.py
 src/sage/repl/rich_output/output_basic.py
 src/sage/repl/rich_output/output_graphics.py
