@@ -9210,6 +9210,34 @@ number-field/cypari2 boundaries. Focused validation used the
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/flint-shims-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Scheduled 2026-06-29 sampling follow-up: no corpus entry was added. The
+checked corpus already includes the only clean non-skipped file found in the
+first utility batch, `sage/misc/timing.py`, and
+`sage/stats/distributions/discrete_gaussian_polynomial.py` was also already
+covered. Fresh unlisted utility probes were skipped-only or zero-block for
+`sage/misc/gperftools.py`, `package_dir.py`, `profiler.py`,
+`sphinxify.py`, `sage/stats/intlist.pyx`,
+`sage/stats/distributions/discrete_gaussian_integer.pyx`,
+`sage/stats/time_series.pyx`, `sage/stats/hmm/util.pyx`, and several tiny
+test/all helper modules.
+
+The same sampling pass kept several near candidates out of the quiet corpus:
+`sage/categories/euclidean_domains.py` has 19 passing blocks but still hits a
+polynomial gcd/free-basis `SystemError` and category tester construction
+drift; `sage/stats/distributions/discrete_gaussian_lattice.py` has broad
+stateful setup fallout after its constructor examples fail; and
+`sage/misc/explain_pickle.py`, `persist.pyx`, `reset.pyx`, `session.pyx`, and
+`inline_fortran.py` still have focused block failures. One-file category and
+arithmetic probes also confirmed existing file-level runtime blockers:
+`sage/arith/functions.pyx` times out in polynomial `LCM_list`,
+`sage/categories/commutative_rings.py` reaches the
+`polynomial_number_field` function-signature mismatch,
+`sage/categories/fields.py` reaches the NTL/libcxx finite-field memory trap,
+and `sage/categories/rings.py` reaches the polynomial quotient call-stack
+overflow. The useful SQLite outputs for this pass are under
+`.tmp/current-run/sample-unlisted-*.sqlite3` and focused probe databases under
+`.tmp/current-run/probe-*.sqlite3`.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
