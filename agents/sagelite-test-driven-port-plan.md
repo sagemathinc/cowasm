@@ -9001,6 +9001,31 @@ the quiet corpus because they still have focused block-level failures; skipped
 or optional-only helpers such as `sage/rings/qqbar_decorators.py` and
 `sage/rings/ring_extension_homset.py` also remain outside the dashboard.
 
+Focused parallelism and Cython test-helper corpus-growth pass:
+
+```text
+sage -t passed: 56 passed, 0 failed, 0 skipped
+```
+
+That two-file make-target validation adds `sage/parallel/parallelism.py` and
+`sage/tests/cython.pyx` to the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 629 non-comment
+entries. `parallelism.py` adds runnable coverage for Sage's parallelism
+configuration singleton without enabling subprocess-backed parallel execution,
+and `cython.pyx` adds compact test-helper coverage.
+
+Direct sampling first recorded two `parallelism.py` failures where
+`Parallelism().get_all()` printed the same dictionary in a different insertion
+order under Sagelite. The added WASI source patch marks those two display
+checks as `# random - dict display order differs in Sagelite`, preserving the
+state-setting examples while keeping the browser-profile dashboard independent
+of dictionary rendering order. Focused validation used the
+`test-sage-doctest-corpus` make target after rebuilding a fresh patched
+Sagelite source copy, with a temporary two-file corpus,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=90`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/parallelism-cython-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local

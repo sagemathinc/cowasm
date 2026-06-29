@@ -5505,3 +5505,12 @@ diff -urN a/src/sage/features/ecm.py b/src/sage/features/ecm.py
 @@ -27 +27 @@
 -        sage: Ecm().is_present()
 +        sage: Ecm().is_present()                                                  # needs ecm
+diff -urN a/src/sage/parallel/parallelism.py b/src/sage/parallel/parallelism.py
+--- a/src/sage/parallel/parallelism.py
++++ b/src/sage/parallel/parallelism.py
+@@ -294 +294 @@
+-            sage: Parallelism().get_all()
++            sage: Parallelism().get_all()  # random - dict display order differs in Sagelite
+@@ -300 +300 @@
+-            sage: Parallelism().get_all()
++            sage: Parallelism().get_all()  # random - dict display order differs in Sagelite

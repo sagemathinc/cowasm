@@ -567,6 +567,7 @@ src/sage/monoids/string_ops.py
 src/sage/monoids/trace_monoid.py
 src/sage/monoids/indexed_free_monoid.py
 src/sage/parallel/ncpus.py
+src/sage/parallel/parallelism.py
 src/sage/parallel/reference.py
 src/sage/modules/free_module_homspace.py
 src/sage/modules/misc.py
@@ -622,6 +623,7 @@ src/sage/stats/basic_stats.py
 src/sage/stats/distributions/catalog.py
 src/sage/stats/distributions/discrete_gaussian_polynomial.py
 src/sage/symbolic/symbols.py
+src/sage/tests/cython.pyx
 src/sage/tests/functools_partial_src.py
 src/sage/tests/startup.py
 src/sage/typeset/ascii_art.py
