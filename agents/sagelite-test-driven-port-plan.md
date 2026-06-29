@@ -9702,6 +9702,36 @@ coverage for `misc/package.py` and `misc/namespace_package.py` was confirmed
 clean in the same sampling pass, but both files were already present in the
 curated corpus.
 
+Focused geometry Hasse-diagram corpus-growth pass:
+
+```text
+sage -t passed: 3 passed, 0 failed, 2 skipped
+```
+
+That one-file make-target validation adds `sage/geometry/hasse_diagram.py` to
+the curated corpus, bringing
+`sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 652 non-comment
+entries. The file gives the dashboard a small atomic/coatomic lattice
+construction surface; the only skipped examples are the existing
+`# needs sage.graphs` lattice-display checks.
+
+Fresh small absent-file sampling in the same pass kept skipped-only files such
+as `sage/cpython/cython_metaclass.pyx`, `sage/modules/complex_double_vector.py`,
+`sage/categories/g_sets.py`, `sage/databases/sloane.py`,
+`sage/tests/lazy_imports.py`, and `sage/tests/finite_poset.py` out of the
+quiet corpus. `sage/symbolic/complexity_measures.py`,
+`sage/rings/polynomial/pbori/blocks.py`,
+`sage/rings/polynomial/pbori/nf.py`, and
+`sage/combinat/posets/hochschild_lattice.py` still have focused startup,
+PBoRi, graph, or poset namespace failures rather than clean browser-profile
+coverage.
+
+Focused validation used
+`SAGELITE_DOCTEST_CORPUS=/home/user/cowasm/.tmp/current-run/geometry-hasse-corpus.txt`,
+`SAGELITE_DOCTEST_ALLOW_FAILURES=0`, `SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/geometry-hasse-make.sqlite3`;
+the saved block- and file-failure cluster queries are empty.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
