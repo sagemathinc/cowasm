@@ -10109,6 +10109,33 @@ Focused validation used
 `SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/covering-linear-make.sqlite3`;
 the saved block- and file-failure cluster queries are empty.
 
+Focused Steenrod utility corpus-growth pass:
+
+```text
+sage -t passed: 100 passed, 0 failed, 0 skipped
+```
+
+That one-file make-target validation adds
+`sage/algebras/steenrod/steenrod_algebra_misc.py` to the curated corpus,
+bringing `sagemath/sagelite/src/doctest-corpus/basic-pure-math.txt` to 666
+non-comment entries. A four-file Steenrod sample ranked
+`steenrod_algebra_misc.py` as the only clean promotion candidate, with 100%
+non-skipped pass rate and no deferred skips.
+
+The adjacent `steenrod_algebra.py`, `steenrod_algebra_bases.py`, and
+`steenrod_algebra_mult.py` files remain outside the quiet corpus. Their
+focused failures are dominated by a missing `sage.matrix.matrix_mod2_dense`
+cluster in Steenrod basis conversion, antipode, multiplication, and coproduct
+paths, plus smaller follow-up failures that need runtime/package triage rather
+than narrow browser-profile tagging.
+
+Focused validation used the `test-sage-doctest-corpus` make target with a
+temporary one-file corpus, `SAGELITE_DOCTEST_ALLOW_FAILURES=0`,
+`SAGELITE_DOCTEST_TIMEOUT=120`, and
+`SAGELITE_DOCTEST_DB=/home/user/cowasm/.tmp/current-run/steenrod-misc-make.sqlite3`.
+The saved block- and file-failure cluster queries are empty; the latest-run
+summary records runner version 64 in the default node profile.
+
 ## Phase 5: Subprocess Strategy
 
 Sage has many interfaces that call external programs. In a browser, local
